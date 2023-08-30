@@ -6,10 +6,15 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
-    "target": "ES2021",
+    "target": "es2017",
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
+    "paths": {
+      "@auth": ["./src/accounts/"],
+      "@collection-query": ["./src/shared/collection-query/"],
+      "@api-data": ["./src/shared/api-data/"]
+    },
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": false,
