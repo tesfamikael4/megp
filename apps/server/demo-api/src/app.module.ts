@@ -8,7 +8,8 @@ import { TodoModule } from "./todo/todo.module";
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-    TodoModule
+    TodoModule,
+
   ],
   controllers: [],
   providers: [],

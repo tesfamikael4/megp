@@ -34,32 +34,64 @@ let SupertokensService = exports.SupertokensService = class SupertokensService {
                 }),
                 dashboard_1.default.init(),
                 thirdpartyemailpassword_1.default.init({
+                    signUpFeature: {
+                        formFields: [
+                            {
+                                id: "firstName"
+                            },
+                            {
+                                id: "lastName"
+                            },
+                        ]
+                    },
                     override: {
-                        functions: (originalImplementation) => {
-                            return Object.assign(Object.assign({}, originalImplementation), { emailPasswordSignUp: async function (input) {
-                                    let response = await originalImplementation.emailPasswordSignUp(input);
-                                    if (response.status === "OK") {
+                        apis: (originalImplementation) => {
+                            return Object.assign(Object.assign({}, originalImplementation), { emailPasswordSignUpPOST: async function (input) {
+                                    if (originalImplementation.emailPasswordSignUpPOST === undefined) {
+                                        throw Error("Should never come here");
                                     }
-                                    return response;
-                                }, emailPasswordSignIn: async function (input) {
-                                    let response = await originalImplementation.emailPasswordSignIn(input);
+                                    let response = await originalImplementation.emailPasswordSignUpPOST(input);
                                     if (response.status === "OK") {
-                                    }
-                                    return response;
-                                }, thirdPartySignInUp: async function (input) {
-                                    let response = await originalImplementation.thirdPartySignInUp(input);
-                                    if (response.status === "OK") {
-                                        let accessToken = response.oAuthTokens["access_token"];
-                                        let firstName = response.rawUserInfoFromProvider.fromUserInfoAPI["first_name"];
-                                        if (response.createdNewUser) {
-                                        }
-                                        else {
-                                        }
+                                        let formFields = input.formFields;
+                                        let user = response.user;
                                     }
                                     return response;
                                 } });
                         }
-                    }
+                    },
+                    providers: [
+                        {
+                            config: {
+                                thirdPartyId: "google",
+                                clients: [{
+                                        clientId: "1060725074195-kmeum4crr01uirfl2op9kd5acmi9jutn.apps.googleusercontent.com",
+                                        clientSecret: "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"
+                                    }]
+                            }
+                        },
+                        {
+                            config: {
+                                thirdPartyId: "github",
+                                clients: [{
+                                        clientId: "467101b197249757c71f",
+                                        clientSecret: "e97051221f4b6426e8fe8d51486396703012f5bd"
+                                    }]
+                            }
+                        },
+                        {
+                            config: {
+                                thirdPartyId: "apple",
+                                clients: [{
+                                        clientId: "4398792-io.supertokens.example.service",
+                                        additionalConfig: {
+                                            keyId: "7M48Y4RYDL",
+                                            privateKey: "-----BEGIN PRIVATE KEY-----\nMIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgu8gXs+XYkqXD6Ala9Sf/iJXzhbwcoG5dMh1OonpdJUmgCgYIKoZIzj0DAQehRANCAASfrvlFbFCYqn3I2zeknYXLwtH30JuOKestDbSfZYxZNMqhF/OzdZFTV0zc5u5s3eN+oCWbnvl0hM+9IW0UlkdA\n-----END PRIVATE KEY-----",
+                                            teamId: "YWQCXGJRJL",
+                                        }
+                                    }]
+                            }
+                        }
+                    ],
                 }),
             ]
         });
