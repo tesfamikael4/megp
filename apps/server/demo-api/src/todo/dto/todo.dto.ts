@@ -1,11 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsNotEmpty, IsNumber, IsString, IsDateString } from 'class-validator';
+import {
+  IsBoolean,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  IsDateString,
+  IsArray,
+  IsObject,
+  IsOptional,
+} from 'class-validator';
 import { Todo } from '../entities/todo.entity';
-import { CreateTodoItemDto, UpdateTodoItemDto } from './todo-item.dto';
-
 
 export class CreateTodoDto {
-
   @ApiProperty()
   @IsString()
   name: string;
@@ -13,17 +19,23 @@ export class CreateTodoDto {
   @ApiProperty()
   @IsString()
   description: string;
-  
+
   static fromDto(todoDto: CreateTodoDto): Todo {
     const todo: Todo = new Todo();
-
+    if (!todoDto) {
+      return;
+    }
     todo.name = todoDto.name;
 
     todo.description = todoDto.description;
+
     return todo;
   }
-}
 
+  static fromDtos(todoDto: CreateTodoDto[]) {
+    return todoDto?.map((todo) => CreateTodoDto.fromDto(todo));
+  }
+}
 
 export class UpdateTodoDto extends CreateTodoDto {
   @ApiProperty()
@@ -32,18 +44,20 @@ export class UpdateTodoDto extends CreateTodoDto {
 
   static fromDto(todoDto: UpdateTodoDto): Todo {
     const todo: Todo = new Todo();
-
+    if (!todoDto) {
+      return;
+    }
     todo.id = todoDto.id;
 
     todo.name = todoDto.name;
 
     todo.description = todoDto.description;
+
     return todo;
   }
 }
 
 export class TodoResponseDto extends UpdateTodoDto {
-
   static toDto(todo: Todo): TodoResponseDto {
     const todoDto: TodoResponseDto = new TodoResponseDto();
 
@@ -52,10 +66,11 @@ export class TodoResponseDto extends UpdateTodoDto {
     todoDto.name = todo.name;
 
     todoDto.description = todo.description;
+
     return todoDto;
   }
 
   static toDtos(todoes: Todo[]) {
-    return todoes.map(todo => TodoResponseDto.toDto(todo));
+    return todoes?.map((todo) => TodoResponseDto.toDto(todo));
   }
 }

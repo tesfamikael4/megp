@@ -8,6 +8,9 @@ import { DataResponseFormat } from '@api-data';
 import { TodoItem } from './entities/todo-item.entity';
 import { CreateTodoItemDto, UpdateTodoItemDto, TodoItemResponseDto  } from './dto/todo-item.dto';
 
+import { TodoItemNew } from './entities/todo-item-new.entity';
+import { CreateTodoItemNewDto, UpdateTodoItemNewDto, TodoItemNewResponseDto  } from './dto/todo-item-new.dto';
+
 
 
 @Injectable()
@@ -18,13 +21,16 @@ export class TodoService {
          
     @InjectRepository(TodoItem)
     private readonly todoItemRepository: Repository<TodoItem>,
+     
+    @InjectRepository(TodoItemNew)
+    private readonly todoItemNewRepository: Repository<TodoItemNew>,
   ) {}
 
   async create(todo: CreateTodoDto): Promise<TodoResponseDto> {
     try{
       const todoEntity = CreateTodoDto.fromDto(todo);
       await this.repository.save(todoEntity);
-      return  TodoResponseDto.toDto(todoEntity as TodoResponseDto);   
+      return  TodoResponseDto.toDto(todoEntity);   
     }catch (error) {
         throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
@@ -35,7 +41,7 @@ export class TodoService {
       todo.id = id;
       const todoEntity = UpdateTodoDto.fromDto(todo);
       await this.repository.update( {id: todo.id}, todoEntity);
-      return  TodoResponseDto.toDto(todoEntity as TodoResponseDto);  
+      return  TodoResponseDto.toDto(todoEntity);  
     } catch (error) {
         throw new HttpException(error, HttpStatus.BAD_REQUEST);
     } 
@@ -44,12 +50,12 @@ export class TodoService {
   async findAll(query: CollectionQuery) {
 
     try {
-
+        
         const dataQuery = QueryConstructor.constructQuery<Todo>(
           this.repository,
           query
         );
-        const response = new DataResponseFormat<Todo>();
+        const response = new DataResponseFormat<TodoResponseDto>();
         if (query.count) {
           response.total = await dataQuery.getCount();
         } else {
@@ -65,7 +71,7 @@ export class TodoService {
 
   async findOne(id: string): Promise<TodoResponseDto> {
     try{
-      const todoEntity = await this.repository.findOne({ where: { id }, relations: ['todoItems']});
+      const todoEntity = await this.repository.findOne({ where: { id }});
       return TodoResponseDto.toDto(todoEntity);
     }catch (error) {
         throw new HttpException(error, HttpStatus.BAD_REQUEST);
@@ -82,9 +88,9 @@ export class TodoService {
 
     async addTodoItem(todoItem: CreateTodoItemDto): Promise<TodoItemResponseDto> {
       try{
-        const todoItemEntity = CreateTodoDto.fromDto(todoItem);
+        const todoItemEntity = CreateTodoItemDto.fromDto(todoItem);
         await this.todoItemRepository.save(todoItemEntity);
-        return  TodoResponseDto.toDto(todoItemEntity as TodoResponseDto);   
+        return  TodoItemResponseDto.toDto(todoItemEntity);   
       }catch (error) {
           throw new HttpException(error, HttpStatus.BAD_REQUEST);
       }
@@ -95,7 +101,7 @@ export class TodoService {
         todoItem.id = id;
         const todoItemEntity = UpdateTodoItemDto.fromDto(todoItem);
         await this.todoItemRepository.update( {id: todoItem.id}, todoItemEntity);
-        return  TodoResponseDto.toDto(todoItemEntity as TodoResponseDto);
+        return  TodoItemResponseDto.toDto(todoItemEntity);
       } catch (error) {
           throw new HttpException(error, HttpStatus.BAD_REQUEST);
       } 
@@ -104,6 +110,35 @@ export class TodoService {
     async removeTodoItem(id: string): Promise<void> {
     try{
         await this.todoItemRepository.delete({ id: id });
+      }catch (error) {
+          throw new HttpException(error, HttpStatus.BAD_REQUEST);
+      } 
+    }
+
+    async addTodoItemNew(todoItemNew: CreateTodoItemNewDto): Promise<TodoItemNewResponseDto> {
+      try{
+        const todoItemNewEntity = CreateTodoItemNewDto.fromDto(todoItemNew);
+        await this.todoItemNewRepository.save(todoItemNewEntity);
+        return  TodoItemNewResponseDto.toDto(todoItemNewEntity);   
+      }catch (error) {
+          throw new HttpException(error, HttpStatus.BAD_REQUEST);
+      }
+    }
+
+    async updateTodoItemNew(id:string, todoItemNew: UpdateTodoItemNewDto): Promise<TodoItemNewResponseDto> {
+      try{
+        todoItemNew.id = id;
+        const todoItemNewEntity = UpdateTodoItemNewDto.fromDto(todoItemNew);
+        await this.todoItemNewRepository.update( {id: todoItemNew.id}, todoItemNewEntity);
+        return  TodoItemNewResponseDto.toDto(todoItemNewEntity);
+      } catch (error) {
+          throw new HttpException(error, HttpStatus.BAD_REQUEST);
+      } 
+    }
+
+    async removeTodoItemNew(id: string): Promise<void> {
+    try{
+        await this.todoItemNewRepository.delete({ id: id });
       }catch (error) {
           throw new HttpException(error, HttpStatus.BAD_REQUEST);
       } 

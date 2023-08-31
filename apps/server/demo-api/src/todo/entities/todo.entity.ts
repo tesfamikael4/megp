@@ -2,11 +2,18 @@ import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToOne,
   OneToMany,
-} from "typeorm";
-import { TodoItem } from "./todo-item.entity";
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 
-@Entity({ name: "todoes" })
+import { TodoItem } from './todo-item.entity';
+import { TodoItemNew } from './todo-item-new.entity';
+
+@Entity({ name: 'todoes' })
 export class Todo {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -17,13 +24,15 @@ export class Todo {
   @Column()
   description: string;
 
-  @OneToMany(
-    () => TodoItem,
-    (todoItems) => todoItems.todo,
-    {
-      cascade: true,
-      onDelete: "CASCADE"
-    },
-  )
-  todoItems: TodoItem[];
+  @OneToOne(() => TodoItem, (todoItem) => todoItem.todo, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  todoItem: TodoItem;
+
+  @OneToMany(() => TodoItemNew, (todoItemNew) => todoItemNew.todo, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  todoItemNews: TodoItemNew[];
 }
