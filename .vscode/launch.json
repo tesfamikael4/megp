@@ -5,6 +5,12 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "command": "cd .\\apps\\server\\vendor-registration\\ && npm run start:dev",
+            "name": "Run Vendor Registration ",
+            "request": "launch",
+            "type": "node-terminal"
+        },
+        {
             "command": "cd .\\apps\\server\\supertoken-auth\\ && npm run start:dev",
             "name": "Run Supertoken",
             "request": "launch",
