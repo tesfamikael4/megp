@@ -19,6 +19,7 @@ class CreateEmployeeDto {
         if (!employeeDto) {
             return;
         }
+        employee.superTokenUserId = employeeDto.superTokenUserId;
         employee.username = employeeDto.username;
         employee.firstName = employeeDto.firstName;
         employee.lastName = employeeDto.lastName;
@@ -29,6 +30,11 @@ class CreateEmployeeDto {
         return employeeDto === null || employeeDto === void 0 ? void 0 : employeeDto.map(employee => CreateEmployeeDto.fromDto(employee));
     }
 }
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateEmployeeDto.prototype, "superTokenUserId", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)(),
     (0, class_validator_1.IsString)(),
@@ -57,6 +63,7 @@ class UpdateEmployeeDto extends CreateEmployeeDto {
             return;
         }
         employee.id = employeeDto.id;
+        employee.superTokenUserId = employeeDto.superTokenUserId;
         employee.username = employeeDto.username;
         employee.firstName = employeeDto.firstName;
         employee.lastName = employeeDto.lastName;
@@ -74,6 +81,7 @@ class EmployeeResponseDto extends UpdateEmployeeDto {
     static toDto(employee) {
         const employeeDto = new EmployeeResponseDto();
         employeeDto.id = employee.id;
+        employeeDto.superTokenUserId = employee.superTokenUserId;
         employeeDto.username = employee.username;
         employeeDto.firstName = employee.firstName;
         employeeDto.lastName = employee.lastName;

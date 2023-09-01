@@ -1,5 +1,6 @@
 import { Employee } from '../entities/employee.entity';
 export declare class CreateEmployeeDto {
+    superTokenUserId: string;
     username: string;
     firstName: string;
     lastName: string;

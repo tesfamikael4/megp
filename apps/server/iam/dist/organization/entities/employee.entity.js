@@ -23,6 +23,10 @@ __decorate([
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
+], Employee.prototype, "superTokenUserId", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
 ], Employee.prototype, "username", void 0);
 __decorate([
     (0, typeorm_1.Column)(),

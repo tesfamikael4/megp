@@ -39,6 +39,7 @@ export class OrganizationService {
       organization.employees = [];
 
       const employee = new Employee();
+      employee.superTokenUserId = user.id;
       employee.username = email.value;
       employee.firstName = firstName.value;
       employee.lastName = lastName.value;
