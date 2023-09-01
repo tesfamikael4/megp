@@ -21,7 +21,6 @@ const dashboard_1 = require("supertokens-node/recipe/dashboard");
 const config_interface_1 = require("../config.interface");
 let SupertokensService = class SupertokensService {
     constructor(config) {
-        this.config = config;
         supertokens_node_1.default.init({
             appInfo: config.appInfo,
             supertokens: {
@@ -36,6 +35,18 @@ let SupertokensService = class SupertokensService {
                 thirdpartyemailpassword_1.default.init({
                     signUpFeature: {
                         formFields: [
+                            {
+                                id: "email",
+                                validate: async (value, tenantId) => {
+                                    return undefined;
+                                }
+                            },
+                            {
+                                id: "password",
+                                validate: async (value, tenantId) => {
+                                    return undefined;
+                                }
+                            },
                             {
                                 id: "phoneNumber",
                                 optional: true
@@ -84,8 +95,7 @@ let SupertokensService = class SupertokensService {
                                 } });
                         }
                     },
-                    providers: [
-                        {
+                    providers: [{
                             config: {
                                 thirdPartyId: "google",
                                 clients: [{
@@ -115,8 +125,7 @@ let SupertokensService = class SupertokensService {
                                         }
                                     }]
                             }
-                        }
-                    ],
+                        }],
                 }),
             ]
         });

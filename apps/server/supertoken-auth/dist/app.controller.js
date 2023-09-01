@@ -17,12 +17,14 @@ const common_1 = require("@nestjs/common");
 const app_service_1 = require("./app.service");
 const auth_guard_1 = require("./auth/auth.guard");
 const session_decorator_1 = require("./auth/session.decorator");
+const thirdpartyemailpassword_1 = require("supertokens-node/recipe/thirdpartyemailpassword");
 let AppController = exports.AppController = class AppController {
     constructor(appService) {
         this.appService = appService;
     }
-    getHello() {
-        return this.appService.getHello();
+    async getHello() {
+        const result = await thirdpartyemailpassword_1.default.emailPasswordSignIn("public", "test1112", "123456789A");
+        return result;
     }
     async getTest(session) {
         return {
@@ -35,7 +37,7 @@ __decorate([
     (0, common_1.Get)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
-    __metadata("design:returntype", String)
+    __metadata("design:returntype", Promise)
 ], AppController.prototype, "getHello", null);
 __decorate([
     (0, common_1.Get)('protected'),

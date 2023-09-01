@@ -15,6 +15,7 @@ exports.AuthenticationModule = AuthenticationModule = __decorate([
     (0, common_1.Module)({
         imports: [auth_module_1.AuthModule.forRoot({
                 connectionURI: "http://196.189.44.47:3567",
+                apiKey: "ob0WLJ637sLR730GcEJJVFRcWNlc2PpN",
                 appInfo: {
                     appName: "m-egp",
                     apiDomain: "http://196.189.44.47:3567",

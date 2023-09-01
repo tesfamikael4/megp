@@ -18,10 +18,21 @@ const supertokens_node_1 = require("supertokens-node");
 const session_1 = require("supertokens-node/recipe/session");
 const thirdpartyemailpassword_1 = require("supertokens-node/recipe/thirdpartyemailpassword");
 const dashboard_1 = require("supertokens-node/recipe/dashboard");
+const emailverification_1 = require("supertokens-node/recipe/emailverification");
+const emaildelivery_1 = require("supertokens-node/recipe/thirdpartyemailpassword/emaildelivery");
 const config_interface_1 = require("../config.interface");
 let SupertokensService = exports.SupertokensService = class SupertokensService {
     constructor(config) {
-        this.config = config;
+        let smtpSettings = {
+            host: "smtp.office365.com",
+            password: "Qar60448",
+            port: 587,
+            from: {
+                name: "Test",
+                email: "egpadmin@mofed.gov.et",
+            },
+            secure: false
+        };
         supertokens_node_1.default.init({
             appInfo: config.appInfo,
             supertokens: {
@@ -32,17 +43,29 @@ let SupertokensService = exports.SupertokensService = class SupertokensService {
                 session_1.default.init({
                     exposeAccessTokenToFrontendInCookieBasedAuth: true,
                 }),
+                emailverification_1.default.init({
+                    mode: "REQUIRED",
+                }),
                 dashboard_1.default.init(),
                 thirdpartyemailpassword_1.default.init({
                     signUpFeature: {
                         formFields: [
                             {
-                                id: "firstName"
+                                id: "email",
+                                validate: async (value, tenantId) => {
+                                    return undefined;
+                                }
                             },
                             {
-                                id: "lastName"
+                                id: "password",
+                                validate: async (value, tenantId) => {
+                                    return undefined;
+                                }
                             },
                         ]
+                    },
+                    emailDelivery: {
+                        service: new emaildelivery_1.SMTPService({ smtpSettings })
                     },
                     override: {
                         apis: (originalImplementation) => {
@@ -53,6 +76,15 @@ let SupertokensService = exports.SupertokensService = class SupertokensService {
                                     let response = await originalImplementation.emailPasswordSignUpPOST(input);
                                     if (response.status === "OK") {
                                         let formFields = input.formFields;
+                                        let user = response.user;
+                                    }
+                                    return response;
+                                }, emailPasswordSignInPOST: async function (input) {
+                                    if (originalImplementation.emailPasswordSignInPOST === undefined) {
+                                        throw Error("Should never come here");
+                                    }
+                                    let response = await originalImplementation.emailPasswordSignInPOST(input);
+                                    if (response.status === "OK") {
                                         let user = response.user;
                                     }
                                     return response;

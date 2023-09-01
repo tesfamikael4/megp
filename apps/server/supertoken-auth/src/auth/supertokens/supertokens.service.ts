@@ -3,12 +3,26 @@ import supertokens from "supertokens-node";
 import Session from 'supertokens-node/recipe/session';
 import ThirdPartyEmailPassword from 'supertokens-node/recipe/thirdpartyemailpassword';
 import Dashboard from "supertokens-node/recipe/dashboard";
+import EmailVerification from "supertokens-node/recipe/emailverification";
+import { SMTPService } from "supertokens-node/recipe/thirdpartyemailpassword/emaildelivery";
 
 import { ConfigInjectionToken, AuthModuleConfig } from "../config.interface";
 
 @Injectable()
 export class SupertokensService {
-    constructor(@Inject(ConfigInjectionToken) private config: AuthModuleConfig) {
+    constructor(@Inject(ConfigInjectionToken) config: AuthModuleConfig) {
+        let smtpSettings = {
+            host: "smtp.office365.com",
+            // authUsername: "...", // this is optional. In case not given, from.email will be used
+            password: "Qar60448",
+            port: 587,
+            from: {
+                name: "Test",
+                email: "egpadmin@mofed.gov.et",
+            },
+            secure: false
+        }
+
         supertokens.init({
             appInfo: config.appInfo,
             supertokens: {
@@ -19,17 +33,37 @@ export class SupertokensService {
                 Session.init({
                     exposeAccessTokenToFrontendInCookieBasedAuth: true,
                 }),
+                EmailVerification.init({
+                    mode: "REQUIRED", // or "OPTIONAL"
+                }),
                 Dashboard.init(),
                 ThirdPartyEmailPassword.init({
                     signUpFeature: {
                         formFields: [
                             {
-                                id: "firstName"
+                                id: "email",
+                                validate: async (value, tenantId) => {
+                                    // Your own validation returning a string or undefined if no errors.
+                                    return undefined;
+                                }
                             },
                             {
-                                id: "lastName"
+                                id: "password",
+                                validate: async (value, tenantId) => {
+                                    // Your own validation returning a string or undefined if no errors.
+                                    return undefined;
+                                }
                             },
+                            // {
+                            //     id: "firstName"
+                            // },
+                            // {
+                            //     id: "lastName"
+                            // },
                         ]
+                    },
+                    emailDelivery: {
+                        service: new SMTPService({ smtpSettings })
                     },
                     override: {
                         apis: (originalImplementation) => {
@@ -53,6 +87,19 @@ export class SupertokensService {
                                         // some post sign up logic
                                     }
 
+                                    return response;
+                                },
+                                emailPasswordSignInPOST: async function (input) {
+                                    if (originalImplementation.emailPasswordSignInPOST === undefined) {
+                                        throw Error("Should never come here");
+                                    }
+                                    let response = await originalImplementation.emailPasswordSignInPOST(input);
+                                    if (response.status === "OK") {
+
+                                        let user = response.user
+
+                                        // some post sign up logic
+                                    }
                                     return response;
                                 }
                             }
