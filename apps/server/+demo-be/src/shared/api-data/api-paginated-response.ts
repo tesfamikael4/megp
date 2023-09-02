@@ -2,7 +2,7 @@ import { applyDecorators, Type } from '@nestjs/common';
 import { ApiOkResponse, getSchemaPath } from '@nestjs/swagger';
 import { DataResponseFormat } from './data-response-format';
 export const ApiPaginatedResponse = <TModel extends Type<any>>(
-  model: TModel
+  model: TModel,
 ) => {
   return applyDecorators(
     ApiOkResponse({
@@ -22,6 +22,6 @@ export const ApiPaginatedResponse = <TModel extends Type<any>>(
           },
         ],
       },
-    })
+    }),
   );
 };

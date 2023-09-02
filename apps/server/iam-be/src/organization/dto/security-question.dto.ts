@@ -1,10 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsNotEmpty, IsNumber, IsString, IsDateString, IsArray, IsObject, IsOptional } from 'class-validator';
+import {
+  IsBoolean,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  IsDateString,
+  IsArray,
+  IsObject,
+  IsOptional,
+} from 'class-validator';
 import { SecurityQuestion } from '../entities/security-question.entity';
 
-
 export class CreateSecurityQuestionDto {
-
   @ApiProperty()
   @IsString()
   question: string;
@@ -17,7 +24,9 @@ export class CreateSecurityQuestionDto {
   @IsString()
   employeeId: string;
 
-  static fromDto(securityQuestionDto: CreateSecurityQuestionDto): SecurityQuestion {
+  static fromDto(
+    securityQuestionDto: CreateSecurityQuestionDto,
+  ): SecurityQuestion {
     const securityQuestion: SecurityQuestion = new SecurityQuestion();
     if (!securityQuestionDto) {
       return;
@@ -32,17 +41,20 @@ export class CreateSecurityQuestionDto {
   }
 
   static fromDtos(securityQuestionDto: CreateSecurityQuestionDto[]) {
-    return securityQuestionDto?.map(securityQuestion => CreateSecurityQuestionDto.fromDto(securityQuestion));
+    return securityQuestionDto?.map((securityQuestion) =>
+      CreateSecurityQuestionDto.fromDto(securityQuestion),
+    );
   }
 }
-
 
 export class UpdateSecurityQuestionDto extends CreateSecurityQuestionDto {
   @ApiProperty()
   @IsString()
   id: string;
 
-  static fromDto(securityQuestionDto: UpdateSecurityQuestionDto): SecurityQuestion {
+  static fromDto(
+    securityQuestionDto: UpdateSecurityQuestionDto,
+  ): SecurityQuestion {
     const securityQuestion: SecurityQuestion = new SecurityQuestion();
     if (!securityQuestionDto) {
       return;
@@ -60,9 +72,11 @@ export class UpdateSecurityQuestionDto extends CreateSecurityQuestionDto {
 }
 
 export class SecurityQuestionResponseDto extends UpdateSecurityQuestionDto {
-
-  static toDto(securityQuestion: SecurityQuestion): SecurityQuestionResponseDto {
-    const securityQuestionDto: SecurityQuestionResponseDto = new SecurityQuestionResponseDto();
+  static toDto(
+    securityQuestion: SecurityQuestion,
+  ): SecurityQuestionResponseDto {
+    const securityQuestionDto: SecurityQuestionResponseDto =
+      new SecurityQuestionResponseDto();
 
     securityQuestionDto.id = securityQuestion.id;
 
@@ -76,6 +90,8 @@ export class SecurityQuestionResponseDto extends UpdateSecurityQuestionDto {
   }
 
   static toDtos(securityQuestions: SecurityQuestion[]) {
-    return securityQuestions?.map(securityQuestion => SecurityQuestionResponseDto.toDto(securityQuestion));
+    return securityQuestions?.map((securityQuestion) =>
+      SecurityQuestionResponseDto.toDto(securityQuestion),
+    );
   }
 }

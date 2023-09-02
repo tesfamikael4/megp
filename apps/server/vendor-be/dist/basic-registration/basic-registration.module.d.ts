@@ -1,2 +1,1 @@
-export declare class BasicRegistrationModule {
-}
+export declare class BasicRegistrationModule {}

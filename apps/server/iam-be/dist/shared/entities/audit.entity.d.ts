@@ -1,4 +1,4 @@
 export declare class Audit {
-    createdAt: Date;
-    updatedAt: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }

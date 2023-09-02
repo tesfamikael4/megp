@@ -1,9 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsNotEmpty, IsNumber, IsString, IsDateString, IsArray, IsObject, IsOptional } from 'class-validator';
+import {
+  IsBoolean,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  IsDateString,
+  IsArray,
+  IsObject,
+  IsOptional,
+} from 'class-validator';
 import { Organization } from '../entities/organization.entity';
 
 export class CreateOrganizationDto {
-
   @ApiProperty()
   @IsString()
   name: string;
@@ -27,16 +35,15 @@ export class CreateOrganizationDto {
 
     organization.type = organizationDto.type;
 
-
-
     return organization;
   }
 
   static fromDtos(organizationDto: CreateOrganizationDto[]) {
-    return organizationDto?.map(organization => CreateOrganizationDto.fromDto(organization));
+    return organizationDto?.map((organization) =>
+      CreateOrganizationDto.fromDto(organization),
+    );
   }
 }
-
 
 export class UpdateOrganizationDto extends CreateOrganizationDto {
   @ApiProperty()
@@ -56,16 +63,14 @@ export class UpdateOrganizationDto extends CreateOrganizationDto {
 
     organization.type = organizationDto.type;
 
-
-
     return organization;
   }
 }
 
 export class OrganizationResponseDto extends UpdateOrganizationDto {
-
   static toDto(organization: Organization): OrganizationResponseDto {
-    const organizationDto: OrganizationResponseDto = new OrganizationResponseDto();
+    const organizationDto: OrganizationResponseDto =
+      new OrganizationResponseDto();
 
     organizationDto.id = organization.id;
 
@@ -79,6 +84,8 @@ export class OrganizationResponseDto extends UpdateOrganizationDto {
   }
 
   static toDtos(organizations: Organization[]) {
-    return organizations?.map(organization => OrganizationResponseDto.toDto(organization));
+    return organizations?.map((organization) =>
+      OrganizationResponseDto.toDto(organization),
+    );
   }
 }

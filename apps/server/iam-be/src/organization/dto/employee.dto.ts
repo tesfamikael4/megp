@@ -1,10 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsNotEmpty, IsNumber, IsString, IsDateString, IsArray, IsObject, IsOptional } from 'class-validator';
+import {
+  IsBoolean,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  IsDateString,
+  IsArray,
+  IsObject,
+  IsOptional,
+} from 'class-validator';
 import { Employee } from '../entities/employee.entity';
 
-
 export class CreateEmployeeDto {
-
   @ApiProperty()
   @IsString()
   superTokenUserId: string;
@@ -44,10 +51,9 @@ export class CreateEmployeeDto {
   }
 
   static fromDtos(employeeDto: CreateEmployeeDto[]) {
-    return employeeDto?.map(employee => CreateEmployeeDto.fromDto(employee));
+    return employeeDto?.map((employee) => CreateEmployeeDto.fromDto(employee));
   }
 }
-
 
 export class UpdateEmployeeDto extends CreateEmployeeDto {
   @ApiProperty()
@@ -76,7 +82,6 @@ export class UpdateEmployeeDto extends CreateEmployeeDto {
 }
 
 export class EmployeeResponseDto extends UpdateEmployeeDto {
-
   static toDto(employee: Employee): EmployeeResponseDto {
     const employeeDto: EmployeeResponseDto = new EmployeeResponseDto();
 
@@ -96,6 +101,6 @@ export class EmployeeResponseDto extends UpdateEmployeeDto {
   }
 
   static toDtos(employees: Employee[]) {
-    return employees?.map(employee => EmployeeResponseDto.toDto(employee));
+    return employees?.map((employee) => EmployeeResponseDto.toDto(employee));
   }
 }

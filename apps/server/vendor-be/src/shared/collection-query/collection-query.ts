@@ -86,7 +86,7 @@ export class Filter {
   @ApiProperty()
   @IsEnum(FilterOperators, {
     message: `Operator must be one of ${Object.keys(
-      FilterOperators
+      FilterOperators,
     ).toString()}`,
   })
   operator?: string;

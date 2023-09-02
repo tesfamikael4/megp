@@ -7,12 +7,16 @@ import ThirdPartyEmailPassword from 'supertokens-node/recipe/thirdpartyemailpass
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) { }
+  constructor(private readonly appService: AppService) {}
 
   @Get()
   async getHello() {
     // const res = await ThirdPartyEmailPassword.emailPasswordSignUp("public", "test1112", "123456789A");
-    const result = await ThirdPartyEmailPassword.emailPasswordSignIn("public", "test1112", "123456789A");
+    const result = await ThirdPartyEmailPassword.emailPasswordSignIn(
+      'public',
+      'test1112',
+      '123456789A',
+    );
     // const r = await ThirdPartyEmailPassword.sendResetPasswordEmail("public", "abd456b1-bd8b-4794-a87a-512a1327f26a");
 
     return result;

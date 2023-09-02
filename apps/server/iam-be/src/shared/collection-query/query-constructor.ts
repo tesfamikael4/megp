@@ -6,11 +6,13 @@ import { CollectionQuery } from './collection-query';
 export class QueryConstructor {
   static constructQuery<T extends ObjectLiteral>(
     repository: Repository<T>,
-    query: CollectionQuery
+    query: CollectionQuery,
   ): SelectQueryBuilder<T> {
     const langs = ['am', 'en'];
     const aggregateColumns: any = {};
-    const metaData = repository.manager.connection.getMetadata(repository.target);
+    const metaData = repository.manager.connection.getMetadata(
+      repository.target,
+    );
     metaData.columns.map((c) => {
       aggregateColumns[c.databasePath] = c.type;
     });
@@ -34,7 +36,7 @@ export class QueryConstructor {
       queryBuilder.select(
         select.map((s) => {
           return s.indexOf('.') === -1 ? `${aggregate}.${s}` : s;
-        })
+        }),
       );
     }
     if (includes) {

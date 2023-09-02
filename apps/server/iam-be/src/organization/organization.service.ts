@@ -1,19 +1,29 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { Repository, } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Organization } from './entities/organization.entity';
-import { CollectionQuery, FilterOperators, QueryConstructor } from '@collection-query';
-import { CreateOrganizationDto, UpdateOrganizationDto, OrganizationResponseDto } from './dto/organization.dto';
+import {
+  CollectionQuery,
+  FilterOperators,
+  QueryConstructor,
+} from '@collection-query';
+import {
+  CreateOrganizationDto,
+  UpdateOrganizationDto,
+  OrganizationResponseDto,
+} from './dto/organization.dto';
 import { DataResponseFormat } from '@api-data';
 import { Unit } from './entities/unit.entity';
 import { CreateUnitDto, UpdateUnitDto, UnitResponseDto } from './dto/unit.dto';
 
 import { Employee } from './entities/employee.entity';
-import { CreateEmployeeDto, UpdateEmployeeDto, EmployeeResponseDto } from './dto/employee.dto';
+import {
+  CreateEmployeeDto,
+  UpdateEmployeeDto,
+  EmployeeResponseDto,
+} from './dto/employee.dto';
 import { SecurityQuestion } from './entities/security-question.entity';
 import { stringify } from 'querystring';
-
-
 
 @Injectable()
 export class OrganizationService {
@@ -26,16 +36,23 @@ export class OrganizationService {
 
     @InjectRepository(Employee)
     private readonly employeeRepository: Repository<Employee>,
-  ) { }
+  ) {}
 
   async registerOrganization(user: any, formFields: any) {
     try {
-      const [email, password, firstName, lastName, organizationName, securityQuestions] = formFields;
+      const [
+        email,
+        password,
+        firstName,
+        lastName,
+        organizationName,
+        securityQuestions,
+      ] = formFields;
 
       const organization = new Organization();
       organization.name = organizationName.value;
-      organization.code = "00001";
-      organization.type = "Vendor";
+      organization.code = '00001';
+      organization.type = 'Vendor';
       organization.employees = [];
 
       const employee = new Employee();
@@ -47,28 +64,32 @@ export class OrganizationService {
 
       const securities = securityQuestions.value;
 
-      securities?.forEach(element => {
-        let entries = Object.entries(element);
+      securities?.forEach((element) => {
+        const entries = Object.entries(element);
 
         entries?.forEach(([question, answer]) => {
-          let securityQuestion = new SecurityQuestion();
+          const securityQuestion = new SecurityQuestion();
           securityQuestion.question = question;
           securityQuestion.answer = answer.toString();
 
           employee.securityQuestions.push(securityQuestion);
         });
-
       });
 
       organization.employees.push(employee);
 
       await this.repository.save(organization);
     } catch (error) {
-      console.log("🚀 ~ file: organization.service.ts:64 ~ OrganizationService ~ registerOrganization ~ error:", error)
+      console.log(
+        '🚀 ~ file: organization.service.ts:64 ~ OrganizationService ~ registerOrganization ~ error:',
+        error,
+      );
     }
   }
 
-  async create(organization: CreateOrganizationDto): Promise<OrganizationResponseDto> {
+  async create(
+    organization: CreateOrganizationDto,
+  ): Promise<OrganizationResponseDto> {
     try {
       const organizationEntity = CreateOrganizationDto.fromDto(organization);
       await this.repository.save(organizationEntity);
@@ -78,7 +99,10 @@ export class OrganizationService {
     }
   }
 
-  async update(id: string, organization: UpdateOrganizationDto): Promise<OrganizationResponseDto> {
+  async update(
+    id: string,
+    organization: UpdateOrganizationDto,
+  ): Promise<OrganizationResponseDto> {
     try {
       organization.id = id;
       const organizationEntity = UpdateOrganizationDto.fromDto(organization);
@@ -90,12 +114,10 @@ export class OrganizationService {
   }
 
   async findAll(query: CollectionQuery) {
-
     try {
-
       const dataQuery = QueryConstructor.constructQuery<Organization>(
         this.repository,
-        query
+        query,
       );
       const response = new DataResponseFormat<OrganizationResponseDto>();
       if (query.count) {
@@ -113,7 +135,9 @@ export class OrganizationService {
 
   async findOne(id: string): Promise<OrganizationResponseDto> {
     try {
-      const organizationEntity = await this.repository.findOne({ where: { id } });
+      const organizationEntity = await this.repository.findOne({
+        where: { id },
+      });
       return OrganizationResponseDto.toDto(organizationEntity);
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
@@ -167,7 +191,10 @@ export class OrganizationService {
     }
   }
 
-  async updateEmployee(id: string, employee: UpdateEmployeeDto): Promise<EmployeeResponseDto> {
+  async updateEmployee(
+    id: string,
+    employee: UpdateEmployeeDto,
+  ): Promise<EmployeeResponseDto> {
     try {
       employee.id = id;
       const employeeEntity = UpdateEmployeeDto.fromDto(employee);
@@ -185,5 +212,4 @@ export class OrganizationService {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
-
 }

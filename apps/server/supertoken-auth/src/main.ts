@@ -12,9 +12,8 @@ async function bootstrap() {
     credentials: true,
   });
 
-
   app.useGlobalFilters(new SupertokensExceptionFilter());
-  
+
   const port = 3568;
 
   await app.listen(port, () => {

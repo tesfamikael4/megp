@@ -8,14 +8,13 @@ import {
   OneToMany,
   ManyToOne,
   JoinColumn,
-} from "typeorm";
+} from 'typeorm';
 
 import { Audit } from 'src/shared/entities/audit.entity';
 
 import { Employee } from './employee.entity';
 
-
-@Entity({ name: "security_questions" })
+@Entity({ name: 'security_questions' })
 export class SecurityQuestion extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -32,5 +31,4 @@ export class SecurityQuestion extends Audit {
   @ManyToOne(() => Employee, (employee) => employee.securityQuestions)
   @JoinColumn({ name: 'employeeId' })
   public employee: Employee;
-
 }

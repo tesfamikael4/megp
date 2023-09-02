@@ -8,15 +8,14 @@ import {
   OneToMany,
   ManyToOne,
   JoinColumn,
-} from "typeorm";
+} from 'typeorm';
 
 import { Audit } from 'src/shared/entities/audit.entity';
 
 import { Organization } from './organization.entity';
-import { SecurityQuestion } from "./security-question.entity";
+import { SecurityQuestion } from './security-question.entity';
 
-
-@Entity({ name: "employees" })
+@Entity({ name: 'employees' })
 export class Employee extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -45,9 +44,8 @@ export class Employee extends Audit {
     (securityQuestion) => securityQuestion.employee,
     {
       cascade: true,
-      onDelete: "CASCADE"
+      onDelete: 'CASCADE',
     },
   )
   securityQuestions: SecurityQuestion[];
-
 }
