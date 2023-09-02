@@ -2,7 +2,7 @@ import { Button } from '@megp/core-fe';
 
 function Bo() {
   return (
-    <div>
+    <div className="bg-pink-600">
       <Button />s
     </div>
   );
