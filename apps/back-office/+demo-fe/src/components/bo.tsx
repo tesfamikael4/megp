@@ -8,7 +8,12 @@ function Bo() {
   return (
     <div 
     className="bg-pink-600">
+
+
       <Button />s
+
+
+      
     </div>
   );
 }
