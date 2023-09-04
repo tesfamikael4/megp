@@ -1,4 +1,4 @@
-export interface Mandate {
+export interface User {
   id: string;
   key: string;
   name: string;

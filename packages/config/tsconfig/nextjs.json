@@ -20,6 +20,7 @@
     "strict": false,
     "target": "es5",
     "paths": {
+      "@/store/*": ["./src/store/*"],
       "@/models/*": ["./src/models/*"],
       "@/shared/*": ["./src/app/_shared/*"],
       "@/*": ["./src/*"]

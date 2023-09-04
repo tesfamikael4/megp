@@ -1,4 +1,4 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = { reactStrictMode: true,transpilePackages: ['@megp/core-fe'] };
+const nextConfig = { basePath: '/demo',reactStrictMode: true,transpilePackages: ['@megp/core-fe'] };
 
 module.exports = nextConfig;

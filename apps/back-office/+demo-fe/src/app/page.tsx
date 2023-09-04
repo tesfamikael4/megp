@@ -1,10 +1,11 @@
-import Bo from '../components/bo';
-
+import Link from 'next/link';
+import styles from './page.module.scss';
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      megp
-      <Bo />
+    <main className={styles.center}>
+      <Link href="/dashboard" className="text-blue-900">
+        GO to Dashboard page
+      </Link>
     </main>
   );
 }

@@ -2,6 +2,7 @@ import './globals.css';
 import type { Metadata } from 'next';
 
 import RootStyleRegistry from './mantine';
+import { Providers } from '@/store/provider';
 
 export const metadata: Metadata = {
   title: 'M-egp',
@@ -16,7 +17,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <RootStyleRegistry>{children}</RootStyleRegistry>
+        <Providers>
+          <RootStyleRegistry>{children}</RootStyleRegistry>
+        </Providers>
       </body>
     </html>
   );

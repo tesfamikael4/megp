@@ -1,3 +1,7 @@
 .header {
-  @apply bg-primary-600 h-16 w-full;
+  @apply flex p-4 justify-between bg-primary-600 h-16 w-full;
+}
+
+.link {
+  @apply text-white;
 }
