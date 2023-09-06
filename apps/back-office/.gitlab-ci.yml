@@ -1,16 +1,10 @@
-stages:
-  - triggers
-trigger_demo-fe:
-  stage: triggers
-  trigger:
-    include: +demo-fe/.gitlab-ci.yml
-  rules:
-    - changes:
-        - +demo-fe
-trigger_iam:
-  stage: triggers
-  trigger:
-    include: iam-fe/.gitlab-ci.yml
-  rules:
-    - changes:
-        - iam
+back-office/
+  - .gitlab-ci.yml (main file)
+  - +demo-fe/
+    - .gitlab-ci.yml
+  - iam-fe/
+    - .gitlab-ci.yml
+  - administration-fe/
+    - .gitlab-ci.yml
+  - vendor-fe/
+    - .gitlab-ci.yml
