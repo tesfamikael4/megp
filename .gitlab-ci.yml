@@ -16,35 +16,35 @@
 #         - apps/**/*
 stages:
   - triggers
-trigger_project1:
+trigger_back-office-demo-fe:
   stage: triggers
   trigger:
     include: apps/back-office/+demo-fe/.gitlab-ci.yml
   rules:
     - changes:
         - apps/**/*
-trigger_project2:
+trigger_portal:
   stage: triggers
   trigger:
     include: apps/portal/egp/.gitlab-ci.yml
   rules:
     - changes:
         - apps/**/*
-trigger_project3:
+trigger_back-office-iam-fe:
   stage: triggers
   trigger:
     include: apps/back-office/iam-fe/.gitlab-ci.yml
   rules:
     - changes:
         - apps/**/*
-trigger_project4:
+trigger_back-office-administration:
   stage: triggers
   trigger:
     include: apps/back-office/administration-fe/.gitlab-ci.yml
   rules:
     - changes:
         - apps/**/*
-trigger_project5:
+trigger_back-office-vendor-fe:
   stage: triggers
   trigger:
     include: apps/back-office/vendor-fe/.gitlab-ci.yml
