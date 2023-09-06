@@ -10,7 +10,7 @@ trigger_portal:
 trigger_back-office:
   stage: triggers
   trigger:
-    include: back-office/+demo-fe/.gitlab-ci.yml
+    include: +demo-fe/.gitlab-ci.yml
   rules:
     - changes:
         - apps/**/*
