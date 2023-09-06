@@ -1,10 +1,24 @@
-back-office/
-  - .gitlab-ci.yml (main file)
-  - +demo-fe/
-    - .gitlab-ci.yml
-  - iam-fe/
-    - .gitlab-ci.yml
-  - administration-fe/
-    - .gitlab-ci.yml
-  - vendor-fe/
-    - .gitlab-ci.yml
+include:
+  - project: 'your-group/demo-fe'
+    file: 'demo-fe/.gitlab-ci.yml'
+
+  - project: 'your-group/iam-fe'
+    file: 'iam-fe/.gitlab-ci.yml'
+
+  - project: 'your-group/admin-fe'
+    file: 'admin-fe/.gitlab-ci.yml'
+
+stages:
+  - build
+  - test
+
+build:
+  stage: build
+  script:
+    - # Build commands for back-office project
+
+test:
+  stage: test
+  script:
+    - # Test commands for all projects
+
