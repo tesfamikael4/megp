@@ -3,14 +3,14 @@ stages:
 trigger_portal:
   stage: triggers
   trigger:
-    include: portal/.gitlab-ci.yml
+    include: /portal/egp/.gitlab-ci.yml
   rules:
     - changes:
-        - apps/**/*
+        - apps/**/*/*
 trigger_back-office:
   stage: triggers
   trigger:
-    include: +demo-fe/.gitlab-ci.yml
+    include: back-office/+demo-fe/.gitlab-ci.yml
   rules:
     - changes:
         - apps/**/*/*
