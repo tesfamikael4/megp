@@ -6,11 +6,11 @@ trigger_demo-fe:
     include: +demo-fe/.gitlab-ci.yml
   rules:
     - changes:
-        - +demo-fe/**/*
+        - +demo-fe
 trigger_iam:
   stage: triggers
   trigger:
     include: iam-fe/.gitlab-ci.yml
   rules:
     - changes:
-        - iam/**/*
+        - iam
