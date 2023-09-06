@@ -3,7 +3,7 @@ stages:
 trigger_portal:
   stage: triggers
   trigger:
-    include: /portal/egp/.gitlab-ci.yml
+    include: portal/egp/.gitlab-ci.yml
   rules:
     - changes:
         - apps/**/*/*
