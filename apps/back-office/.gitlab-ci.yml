@@ -1,12 +1,12 @@
 include:
-  - project: 'your-group/demo-fe'
-    file: 'demo-fe/.gitlab-ci.yml'
+  - project: 'megp/+demo-fe'
+    file: '+demo-fe/.gitlab-ci.yml'
 
-  - project: 'your-group/iam-fe'
+  - project: 'megp/iam-fe'
     file: 'iam-fe/.gitlab-ci.yml'
 
-  - project: 'your-group/admin-fe'
-    file: 'admin-fe/.gitlab-ci.yml'
+  - project: 'megp/administration-fe'
+    file: 'administration-fe/.gitlab-ci.yml'
 
 stages:
   - build
@@ -15,10 +15,11 @@ stages:
 build:
   stage: build
   script:
-    - # Build commands for back-office project
+    echo "build"
+    #- # Build commands for back-office project
 
-test:
-  stage: test
-  script:
-    - # Test commands for all projects
+# test:
+#   stage: test
+#   script:
+   # - # Test commands for all projects
 
