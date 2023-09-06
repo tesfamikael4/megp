@@ -1,6 +1,5 @@
 stages:
   - build
-
 build_portal:
   stage: build
   script:
