@@ -3,7 +3,7 @@ stages:
 trigger_project1:
   stage: triggers
   trigger:
-    include: apps/back-office/demo/.gitlab-ci.yml
+    include: apps/back-office/+demo-fe/.gitlab-ci.yml
   rules:
     - changes:
         - apps/**/*
