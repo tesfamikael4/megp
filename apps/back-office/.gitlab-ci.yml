@@ -1,5 +1,5 @@
 include:
-  - project: 'megp/+demo-fe'
+  - project: 'back-office/+demo-fe'
     file: '+demo-fe/.gitlab-ci.yml'
 
   - project: 'megp/iam-fe'
