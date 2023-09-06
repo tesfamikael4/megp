@@ -3,10 +3,10 @@ stages:
 trigger_+demo:
   stage: triggers
   trigger:
-    include: +demo-fe/.gitlab-ci.yml
+    include: back-office/+demo-fe/.gitlab-ci.yml
   rules:
     - changes:
-        - +demo-fe/**/*
+        - back-office/**/*
 trigger_iam-fe:
   stage: triggers
   trigger:
