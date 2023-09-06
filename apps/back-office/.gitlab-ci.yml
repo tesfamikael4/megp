@@ -1,1 +1,31 @@
+stages:
+  - triggers
+trigger_+demo:
+  stage: triggers
+  trigger:
+    include: back-office/+demo/.gitlab-ci.yml
+  rules:
+    - changes:
+        - back-office/**/*
+trigger_iam-fe:
+  stage: triggers
+  trigger:
+    include: back-office/iam-fe/.gitlab-ci.yml
+  rules:
+    - changes:
+        - apps/**/*
+trigger_administration:
+  stage: triggers
+  trigger:
+    include: back-office/administration-fe/.gitlab-ci.yml
+  rules:
+    - changes:
+        - back-office/**/*
+trigger_vendor:
+  stage: triggers
+  trigger:
+    include: back-office/vendor-fe/.gitlab-ci.yml
+  rules:
+    - changes:
+        - back-office/**/*
 
