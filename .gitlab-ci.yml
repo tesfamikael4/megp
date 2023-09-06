@@ -13,5 +13,5 @@ trigger_back-office:
     include: +demo-fe/.gitlab-ci.yml
   rules:
     - changes:
-        - apps/**/*
+        - apps/**/*/*
 
