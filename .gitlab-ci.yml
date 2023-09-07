@@ -1,9 +1,9 @@
 # stages:
 #   - triggers
-# trigger_back-office:
+# trigger_back-office-demo-fe:
 #   stage: triggers
 #   trigger:
-#     include: apps/back-office/.gitlab-ci.yml
+#     include: apps/back-office/+demo-fe/.gitlab-ci.yml
 #   rules:
 #     - changes:
 #         - apps/**/*
@@ -14,40 +14,60 @@
 #   rules:
 #     - changes:
 #         - apps/**/*
+# trigger_back-office-iam-fe:
+#   stage: triggers
+#   trigger:
+#     include: apps/back-office/iam-fe/.gitlab-ci.yml
+#   rules:
+#     - changes:
+#         - apps/**/*
+# trigger_back-office-administration:
+#   stage: triggers
+#   trigger:
+#     include: apps/back-office/administration-fe/.gitlab-ci.yml
+#   rules:
+#     - changes:
+#         - apps/**/*
+# trigger_back-office-vendor-fe:
+#   stage: triggers
+#   trigger:
+#     include: apps/back-office/vendor-fe/.gitlab-ci.yml
+#   rules:
+#     - changes:
+#         - apps/**/*
+image: docker:latest
+services:
+    - docker:dind
 stages:
-  - triggers
-trigger_back-office-demo-fe:
-  stage: triggers
-  trigger:
-    include: apps/back-office/+demo-fe/.gitlab-ci.yml
-  rules:
-    - changes:
-        - apps/**/*
-trigger_portal:
-  stage: triggers
-  trigger:
-    include: apps/portal/egp/.gitlab-ci.yml
-  rules:
-    - changes:
-        - apps/**/*
-trigger_back-office-iam-fe:
-  stage: triggers
-  trigger:
-    include: apps/back-office/iam-fe/.gitlab-ci.yml
-  rules:
-    - changes:
-        - apps/**/*
-trigger_back-office-administration:
-  stage: triggers
-  trigger:
-    include: apps/back-office/administration-fe/.gitlab-ci.yml
-  rules:
-    - changes:
-        - apps/**/*
-trigger_back-office-vendor-fe:
-  stage: triggers
-  trigger:
-    include: apps/back-office/vendor-fe/.gitlab-ci.yml
-  rules:
-    - changes:
-        - apps/**/*
+  - build
+  # - test
+  - deploy
+variables:  
+  CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+  CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE:latest
+before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+build_demo-fe:
+  stage: build
+  script:
+    - cd apps/back-office/+demo-fe
+    - docker build -t $CONTAINER_RELEASE_IMAGE .
+    - docker push $CONTAINER_RELEASE_IMAGE
+
+build_iam-fe:
+  stage: build
+  script:
+    - cd apps/back-office/iam-fe
+    - docker build -t $CONTAINER_RELEASE_IMAGE .
+    - docker push $CONTAINER_RELEASE_IMAGE
+
+build_egp:
+  stage: build
+  script:
+    - cd apps/portal/egp
+    - docker build -t egp .
+deploy:
+  stage: deploy
+  script:
+    - docker-compose up -d
+
