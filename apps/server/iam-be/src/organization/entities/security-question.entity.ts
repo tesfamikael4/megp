@@ -2,6 +2,10 @@ import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToOne,
+  OneToMany,
   ManyToOne,
   JoinColumn,
 } from 'typeorm';

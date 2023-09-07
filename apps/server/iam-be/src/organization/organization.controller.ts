@@ -22,7 +22,6 @@ import { Organization } from './entities/organization.entity';
 import { CollectionQuery } from '@collection-query';
 import { CreateUnitDto, UpdateUnitDto } from './dto/unit.dto';
 import { CreateEmployeeDto, UpdateEmployeeDto } from './dto/employee.dto';
-import { CreateOfficeDto, UpdateOfficeDto } from './dto/office.dto';
 
 @ApiBearerAuth()
 @Controller('organizations')
@@ -55,18 +54,6 @@ export class OrganizationController {
 
   @Patch(':id')
   async update(
-    @Param(
-      'id',
-      new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
-    )
-    id: string,
-    @Body() updateOrganizationDto: UpdateOrganizationDto,
-  ) {
-    return await this.organizationService.update(id, updateOrganizationDto);
-  }
-
-  @Patch(':id')
-  async activate(
     @Param(
       'id',
       new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
@@ -136,33 +123,5 @@ export class OrganizationController {
     id: string,
   ) {
     return await this.organizationService.removeEmployee(id);
-  }
-
-  @Post('add-office')
-  async addOffice(@Body() createOfficeDto: CreateOfficeDto) {
-    return await this.organizationService.addOffice(createOfficeDto);
-  }
-
-  @Patch('update-office/:id')
-  async editOffice(
-    @Param(
-      'id',
-      new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
-    )
-    id: string,
-    @Body() createOfficeDto: UpdateOfficeDto,
-  ) {
-    return await this.organizationService.updateOffice(id, createOfficeDto);
-  }
-
-  @Delete('remove-office/:id')
-  async removeOffice(
-    @Param(
-      'id',
-      new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
-    )
-    id: string,
-  ) {
-    return await this.organizationService.removeOffice(id);
   }
 }
