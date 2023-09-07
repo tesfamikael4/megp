@@ -1,0 +1,7 @@
+stages:
+  - build
+
+build_back-office-vender-fe:
+  stage: build
+  script:
+    - echo "Building back-office-vender-fe"

@@ -1,0 +1,7 @@
+stages:
+  - build
+
+build_back-office-Iam-fe:
+  stage: build
+  script:
+    - echo "Building back-office-Iam-fe"
