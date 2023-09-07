@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  demo-fe:
+    build:
+      context: ./apps/back-office/+demo-fe
+    ports:
+      - 3000:3000
+
+  iam-fe:
+    build:
+      context: ./apps/back-office/iam-fe
+    ports:
+      - 4000:4000
+
+  egp:
+    build:
+      context: ./apps/portal/egp
+    ports:
+      - 5000:5000
+
