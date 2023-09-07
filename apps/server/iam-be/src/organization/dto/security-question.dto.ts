@@ -1,5 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  IsDateString,
+  IsArray,
+  IsObject,
+  IsOptional,
+} from 'class-validator';
 import { SecurityQuestion } from '../entities/security-question.entity';
 
 export class CreateSecurityQuestionDto {
@@ -19,7 +28,9 @@ export class CreateSecurityQuestionDto {
     securityQuestionDto: CreateSecurityQuestionDto,
   ): SecurityQuestion {
     const securityQuestion: SecurityQuestion = new SecurityQuestion();
-
+    if (!securityQuestionDto) {
+      return;
+    }
     securityQuestion.question = securityQuestionDto.question;
 
     securityQuestion.answer = securityQuestionDto.answer;
@@ -45,7 +56,9 @@ export class UpdateSecurityQuestionDto extends CreateSecurityQuestionDto {
     securityQuestionDto: UpdateSecurityQuestionDto,
   ): SecurityQuestion {
     const securityQuestion: SecurityQuestion = new SecurityQuestion();
-
+    if (!securityQuestionDto) {
+      return;
+    }
     securityQuestion.id = securityQuestionDto.id;
 
     securityQuestion.question = securityQuestionDto.question;
