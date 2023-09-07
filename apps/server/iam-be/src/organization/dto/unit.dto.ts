@@ -1,14 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsBoolean,
-  IsNotEmpty,
-  IsNumber,
-  IsString,
-  IsDateString,
-  IsArray,
-  IsObject,
-  IsOptional,
-} from 'class-validator';
+import { IsString } from 'class-validator';
 import { Unit } from '../entities/unit.entity';
 
 export class CreateUnitDto {
@@ -26,9 +17,7 @@ export class CreateUnitDto {
 
   static fromDto(unitDto: CreateUnitDto): Unit {
     const unit: Unit = new Unit();
-    if (!unitDto) {
-      return;
-    }
+
     unit.name = unitDto.name;
 
     unit.parentId = unitDto.parentId;
@@ -50,9 +39,7 @@ export class UpdateUnitDto extends CreateUnitDto {
 
   static fromDto(unitDto: UpdateUnitDto): Unit {
     const unit: Unit = new Unit();
-    if (!unitDto) {
-      return;
-    }
+
     unit.id = unitDto.id;
 
     unit.name = unitDto.name;

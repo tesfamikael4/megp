@@ -1,14 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsBoolean,
-  IsNotEmpty,
-  IsNumber,
-  IsString,
-  IsDateString,
-  IsArray,
-  IsObject,
-  IsOptional,
-} from 'class-validator';
+import { IsString } from 'class-validator';
 import { Employee } from '../entities/employee.entity';
 
 export class CreateEmployeeDto {
@@ -34,9 +25,7 @@ export class CreateEmployeeDto {
 
   static fromDto(employeeDto: CreateEmployeeDto): Employee {
     const employee: Employee = new Employee();
-    if (!employeeDto) {
-      return;
-    }
+
     employee.superTokenUserId = employeeDto.superTokenUserId;
 
     employee.username = employeeDto.username;
@@ -62,9 +51,7 @@ export class UpdateEmployeeDto extends CreateEmployeeDto {
 
   static fromDto(employeeDto: UpdateEmployeeDto): Employee {
     const employee: Employee = new Employee();
-    if (!employeeDto) {
-      return;
-    }
+
     employee.id = employeeDto.id;
 
     employee.superTokenUserId = employeeDto.superTokenUserId;
