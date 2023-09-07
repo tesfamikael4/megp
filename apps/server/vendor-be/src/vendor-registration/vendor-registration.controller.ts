@@ -40,13 +40,10 @@ export class VendorRegistrationsController {
   constructor(private readonly regService: VendorRegistrationsService) {}
   @Post('submit-application')
   async create(@Body() regDto: CreateApplicationDto) {
-    regDto.applicationStatus = RegistrationStatus.Submitted;
-    regDto.submissionDate = new Date();
     return await this.regService.create(regDto);
   }
   @Post('draft-application')
   async draft(@Body() dto: CreateApplicationDto) {
-    dto.applicationStatus = RegistrationStatus.Drafted;
     return await this.regService.create(dto);
   }
 

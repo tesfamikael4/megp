@@ -13,6 +13,8 @@ import { BusinessCategoryEntity } from './business-category.entity';
 import { InvoiceEntity } from './invoice.entity';
 import { CustomCategoryEntity } from './custom-category.entity';
 import { ServicesEntity } from './services.entity';
+import { VendorsEntity } from './vendors.entity';
+//Vendor Service Application
 @Entity({ name: 'applications' })
 export class ApplicationEntity extends CommonEntity {
   @PrimaryGeneratedColumn('uuid')
@@ -55,4 +57,8 @@ export class ApplicationEntity extends CommonEntity {
   @ManyToOne(() => ServicesEntity, (service) => service.applications)
   @JoinColumn({ name: 'service_Id' })
   service: ServicesEntity;
+
+  @ManyToOne(() => VendorsEntity, (v) => v.applications)
+  @JoinColumn({ name: 'vendor_id' })
+  vendor: VendorsEntity;
 }

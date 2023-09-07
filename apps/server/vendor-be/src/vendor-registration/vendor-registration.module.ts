@@ -12,6 +12,9 @@ import { CustomCategoryEntity } from './entities/custom-category.entity';
 import { ServicePricingService } from './service-pricing.service';
 import { ServicePricingController } from './service-pricing.controller';
 import { BusinessCategoryEntity } from './entities/business-category.entity';
+import { VendorBasicsController } from './vendors.controller';
+import { VendorBasicsService } from './vendor-basics.service';
+import { VendorsEntity } from './entities/vendors.entity';
 
 @Module({
   imports: [
@@ -23,9 +26,18 @@ import { BusinessCategoryEntity } from './entities/business-category.entity';
       BusinessCategoryEntity,
       CustomCategoryEntity,
       ServicesEntity,
+      VendorsEntity,
     ]),
   ],
-  providers: [VendorRegistrationsService, ServicePricingService],
-  controllers: [VendorRegistrationsController, ServicePricingController],
+  providers: [
+    VendorRegistrationsService,
+    ServicePricingService,
+    VendorBasicsService,
+  ],
+  controllers: [
+    VendorRegistrationsController,
+    ServicePricingController,
+    VendorBasicsController,
+  ],
 })
 export class VendorRegistrationModule {}

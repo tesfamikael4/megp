@@ -1,11 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import {
-  CollectionQuery,
-  FilterOperators,
-  QueryConstructor,
-} from '@collection-query';
+import { CollectionQuery, QueryConstructor } from '@collection-query';
 import { DataResponseFormat } from '@api-data';
 import { ApplicationEntity } from './entities/application.entity';
 
@@ -30,6 +26,7 @@ export class VendorRegistrationsService {
     try {
       const registrationSettingEntity = CreateApplicationDto.fromDto(setting);
       await this.repository.save(registrationSettingEntity);
+
       return ApplicationResponseDto.fromEntity(registrationSettingEntity);
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
@@ -64,7 +61,9 @@ fetch all applications of vendors
       } else {
         const [result, total] = await dataQuery.getManyAndCount();
         response.total = total;
-        result.map((entity) => ApplicationResponseDto.fromEntity(entity));
+        response.items = result.map((entity) =>
+          ApplicationResponseDto.fromEntity(entity),
+        );
       }
       return response;
     } catch (error) {
@@ -113,7 +112,9 @@ fetch  applications of vendor by Id
       } else {
         const [result, total] = await dataQuery.getManyAndCount();
         response.total = total;
-        result.map((entity) => ServicesResponseDto.fromEntity(entity));
+        response.items = result.map((entity) =>
+          ServicesResponseDto.fromEntity(entity),
+        );
       }
       return response;
     } catch (error) {

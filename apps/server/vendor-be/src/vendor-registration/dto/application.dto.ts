@@ -16,7 +16,7 @@ export class CreateApplicationDto {
   serviceId: string; //new renew  Upgrade
   @ApiProperty()
   @IsNotEmpty()
-  applicationStatus: string;
+  Status: string;
   @ApiProperty()
   businessArea: string; //Goods| Services
   ///system data
@@ -42,7 +42,10 @@ export class CreateApplicationDto {
     entity.vendorId = dto.vendorId;
     entity.serviceId = dto.serviceId;
     entity.businessArea = dto.businessArea;
-    entity.status = dto.applicationStatus;
+    entity.status = dto.Status;
+    if (entity.status) {
+      entity.submissionDate = new Date();
+    }
     entity.submissionDate = dto.submissionDate ? dto.submissionDate : null;
     entity.businessCats = dto.commonCategories
       ? dto.commonCategories.map((item) =>
@@ -87,7 +90,7 @@ export class UpdateApplicationDto extends CreateApplicationDto {
     entity.serviceId = dto.serviceId;
     entity.businessArea = dto.businessArea;
     entity.vendorId = dto.vendorId;
-    entity.status = dto.applicationStatus;
+    entity.status = dto.Status;
     console.log(entity);
     return entity;
   }
@@ -102,7 +105,7 @@ export class ApplicationResponseDto extends UpdateApplicationDto {
     response.vendorId = regDto.vendorId;
     response.serviceId = regDto.serviceId;
     response.businessArea = regDto.businessArea;
-    response.applicationStatus = regDto.status;
+    response.Status = regDto.status;
     response.approvedBy = regDto.approvedBy;
     response.approvedDate = regDto.approvedDate;
     response.submissionDate = regDto.submissionDate;

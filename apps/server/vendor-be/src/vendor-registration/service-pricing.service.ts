@@ -61,7 +61,9 @@ export class ServicePricingService {
       } else {
         const [result, total] = await dataQuery.getManyAndCount();
         response.total = total;
-        result.map((entity) => ServicePriceResponseDto.fromEntity(entity));
+        response.items = result.map((entity) =>
+          ServicePriceResponseDto.fromEntity(entity),
+        );
       }
       return response;
     } catch (error) {
@@ -96,7 +98,6 @@ export class ServicePricingService {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
-
   async remove(id: string): Promise<void> {
     try {
       await this.repository.delete({ id: id });
