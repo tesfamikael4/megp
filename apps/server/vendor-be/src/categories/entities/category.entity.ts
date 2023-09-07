@@ -1,13 +1,11 @@
-import { BusinessAreaEntity } from 'src/registration-settings/entities/business-category.entity';
-import { CustomCategoryEntity } from 'src/registration-settings/entities/custom-category.entity';
 import { CommonEntity } from 'src/shared/entities/common.entity';
+import { BusinessCategoryEntity } from 'src/vendor-registration/entities/business-category.entity';
+import { CustomCategoryEntity } from 'src/vendor-registration/entities/custom-category.entity';
 import {
   Column,
   Entity,
   ManyToOne,
   OneToMany,
-  OneToOne,
-  PrimaryColumn,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 @Entity({ name: 'categories' })
@@ -30,12 +28,15 @@ export class CategoryEntity extends CommonEntity {
   @OneToMany(() => CategoryEntity, (category) => category.parentCategory)
   childCategories: CategoryEntity[];
 
-  @OneToMany(() => BusinessAreaEntity, (regCategory) => regCategory.category)
-  businessCategories: BusinessAreaEntity[];
+  @OneToMany(
+    () => BusinessCategoryEntity,
+    (regCategory) => regCategory.category,
+  )
+  businessCategories: BusinessCategoryEntity[];
 
   @OneToMany(
     () => CustomCategoryEntity,
-    (customCategory) => customCategory.registration,
+    (customCategory) => customCategory.application,
   )
   customCategories: CustomCategoryEntity[];
 }

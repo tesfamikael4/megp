@@ -1,12 +1,5 @@
 import { CommonEntity } from 'src/shared/entities/common.entity';
-import {
-  Column,
-  Entity,
-  OneToMany,
-  OneToOne,
-  PrimaryColumn,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { ApplicationEntity } from './application.entity';
 //service_pricing
 @Entity({ name: 'service_prices' })

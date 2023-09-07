@@ -38,8 +38,8 @@ export class CreateServicePriceDto {
     entity.businessArea = dto.businessArea;
     entity.valueFrom = dto.valueFrom;
     entity.valueTo = dto.valueTo;
-    entity.currency = dto?.currency;
     entity.fee = dto.fee;
+    entity.currency = dto?.currency;
     console.log(dto);
     return entity;
   }

@@ -8,13 +8,14 @@ import {
 } from '@collection-query';
 import { DataResponseFormat } from '@api-data';
 import { ApplicationEntity } from './entities/application.entity';
-import {
-  CreateRegistrationRequisitionDto,
-  RegistrationRequisitionResponseDto,
-  UpdateRegistrationRequisitionDto,
-} from './dto/application.dto';
+
 import { ServicesEntity } from './entities/services.entity';
 import { ServicesResponseDto } from './dto/services.dto';
+import {
+  ApplicationResponseDto,
+  CreateApplicationDto,
+  UpdateApplicationDto,
+} from './dto/application.dto';
 
 @Injectable()
 export class VendorRegistrationsService {
@@ -25,16 +26,11 @@ export class VendorRegistrationsService {
     private readonly serviceRepository: Repository<ServicesEntity>,
   ) {}
 
-  async create(
-    setting: CreateRegistrationRequisitionDto,
-  ): Promise<RegistrationRequisitionResponseDto> {
+  async create(setting: CreateApplicationDto): Promise<ApplicationResponseDto> {
     try {
-      const registrationSettingEntity =
-        CreateRegistrationRequisitionDto.fromDto(setting);
+      const registrationSettingEntity = CreateApplicationDto.fromDto(setting);
       await this.repository.save(registrationSettingEntity);
-      return RegistrationRequisitionResponseDto.fromEntity(
-        registrationSettingEntity,
-      );
+      return ApplicationResponseDto.fromEntity(registrationSettingEntity);
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
@@ -42,46 +38,46 @@ export class VendorRegistrationsService {
 
   async update(
     id: string,
-    regSettingDto: UpdateRegistrationRequisitionDto,
-  ): Promise<RegistrationRequisitionResponseDto> {
+    dto: UpdateApplicationDto,
+  ): Promise<ApplicationResponseDto> {
     try {
-      regSettingDto.id = id;
-      const regSettingEntity =
-        UpdateRegistrationRequisitionDto.fromDto(regSettingDto);
-      await this.repository.update({ id: regSettingDto.id }, regSettingEntity);
-      return RegistrationRequisitionResponseDto.fromEntity(regSettingEntity);
+      dto.id = id;
+      const regSettingEntity = UpdateApplicationDto.fromDto(dto);
+      await this.repository.update({ id: dto.id }, regSettingEntity);
+      return ApplicationResponseDto.fromEntity(regSettingEntity);
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
-
+  /*
+fetch all applications of vendors
+*/
   async findAll(query: CollectionQuery) {
     try {
       const dataQuery = QueryConstructor.constructQuery<ApplicationEntity>(
         this.repository,
         query,
       );
-      const response =
-        new DataResponseFormat<RegistrationRequisitionResponseDto>();
+      const response = new DataResponseFormat<ApplicationResponseDto>();
       if (query.count) {
         response.total = await dataQuery.getCount();
       } else {
         const [result, total] = await dataQuery.getManyAndCount();
         response.total = total;
-        result.map((entity) =>
-          RegistrationRequisitionResponseDto.fromEntity(entity),
-        );
+        result.map((entity) => ApplicationResponseDto.fromEntity(entity));
       }
       return response;
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
-
-  async findOne(id: string): Promise<RegistrationRequisitionResponseDto> {
+  /*
+fetch  applications of vendor by Id
+*/
+  async findOne(id: string): Promise<ApplicationResponseDto> {
     try {
       const todoEntity = await this.repository.findOne({ where: { id } });
-      return RegistrationRequisitionResponseDto.fromEntity(todoEntity);
+      return ApplicationResponseDto.fromEntity(todoEntity);
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }

@@ -27,9 +27,9 @@ export class ServicePricingService {
 
   async create(setting: CreateServicePriceDto): Promise<CreateServicePriceDto> {
     try {
-      const registrationSettingEntity = CreateServicePriceDto.fromDto(setting);
-      await this.repository.save(registrationSettingEntity);
-      return ServicePriceResponseDto.fromEntity(registrationSettingEntity);
+      const entity = CreateServicePriceDto.fromDto(setting);
+      await this.repository.save(entity);
+      return ServicePriceResponseDto.fromEntity(entity);
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
@@ -41,9 +41,9 @@ export class ServicePricingService {
   ): Promise<ServicePriceResponseDto> {
     try {
       regSettingDto.id = id;
-      const regSettingEntity = UpdateServicePriceDto.fromDto(regSettingDto);
-      await this.repository.update({ id: regSettingDto.id }, regSettingEntity);
-      return ServicePriceResponseDto.fromEntity(regSettingEntity);
+      const entity = UpdateServicePriceDto.fromDto(regSettingDto);
+      await this.repository.update({ id: regSettingDto.id }, entity);
+      return ServicePriceResponseDto.fromEntity(entity);
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
@@ -90,8 +90,8 @@ export class ServicePricingService {
 
   async findOne(id: string): Promise<ServicePriceResponseDto> {
     try {
-      const todoEntity = await this.repository.findOne({ where: { id } });
-      return ServicePriceResponseDto.fromEntity(todoEntity);
+      const price = await this.repository.findOne({ where: { id } });
+      return ServicePriceResponseDto.fromEntity(price);
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }

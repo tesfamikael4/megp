@@ -4,8 +4,6 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { ApplicationEntity } from './application.entity';
@@ -24,7 +22,7 @@ export class BusinessCategoryEntity {
   category: CategoryEntity;
   @ManyToOne(
     () => ApplicationEntity,
-    (registration) => registration.businessAreas,
+    (registration) => registration.businessCats,
   )
   @JoinColumn({ name: 'application_id' })
   application: ApplicationEntity;

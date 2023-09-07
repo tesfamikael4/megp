@@ -5,8 +5,6 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
-  OneToOne,
-  PrimaryColumn,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { ServicePriceEntity } from './service-price.entity';
@@ -32,7 +30,7 @@ export class ApplicationEntity extends CommonEntity {
   @Column({ nullable: true, name: 'submission_date' })
   submissionDate: Date;
   @Column({ name: 'application_status' })
-  applicationStatus: string;
+  status: string;
   @Column({ name: 'approved_by', nullable: true, type: 'uuid' })
   approvedBy: string;
   @Column({ name: 'approved_date', nullable: true })
@@ -42,7 +40,6 @@ export class ApplicationEntity extends CommonEntity {
   @ManyToOne(() => ServicePriceEntity, (p) => p.applications)
   @JoinColumn({ name: 'application_Id' })
   price: ServicePriceEntity;
-
   @OneToMany(() => MessageThreadEntity, (message) => message.application)
   messages: MessageThreadEntity[];
 

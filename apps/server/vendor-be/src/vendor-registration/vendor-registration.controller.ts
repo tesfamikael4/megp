@@ -4,7 +4,6 @@ import {
   Delete,
   Get,
   Post,
-  Put,
   Query,
   Param,
   Patch,
@@ -46,9 +45,9 @@ export class VendorRegistrationsController {
     return await this.regService.create(regDto);
   }
   @Post('draft-application')
-  async draft(@Body() regDto: CreateApplicationDto) {
-    regDto.applicationStatus = RegistrationStatus.Drafted;
-    return await this.regService.create(regDto);
+  async draft(@Body() dto: CreateApplicationDto) {
+    dto.applicationStatus = RegistrationStatus.Drafted;
+    return await this.regService.create(dto);
   }
 
   @Get('get-application/:id')
@@ -95,6 +94,7 @@ export class VendorRegistrationsController {
         value,
       };
     });
+    return array;
   }
 
   //child methods

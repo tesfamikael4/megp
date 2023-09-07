@@ -1,11 +1,5 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import {
-  IsNotEmpty,
-  IsOptional,
-  IsUUID,
-  IsNumber,
-  isNumber,
-} from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsUUID } from 'class-validator';
 import { ApplicationEntity } from '../entities/application.entity';
 import { CreateBusinessCategoryDto } from './business-category.dto';
 import { CreateCustomCategoryDto } from './custom-category.dto';
@@ -48,7 +42,7 @@ export class CreateApplicationDto {
     entity.vendorId = dto.vendorId;
     entity.serviceId = dto.serviceId;
     entity.businessArea = dto.businessArea;
-    entity.applicationStatus = dto.applicationStatus;
+    entity.status = dto.applicationStatus;
     entity.submissionDate = dto.submissionDate ? dto.submissionDate : null;
     entity.businessCats = dto.commonCategories
       ? dto.commonCategories.map((item) =>
@@ -93,7 +87,7 @@ export class UpdateApplicationDto extends CreateApplicationDto {
     entity.serviceId = dto.serviceId;
     entity.businessArea = dto.businessArea;
     entity.vendorId = dto.vendorId;
-    entity.applicationStatus = dto.applicationStatus;
+    entity.status = dto.applicationStatus;
     console.log(entity);
     return entity;
   }
@@ -108,7 +102,7 @@ export class ApplicationResponseDto extends UpdateApplicationDto {
     response.vendorId = regDto.vendorId;
     response.serviceId = regDto.serviceId;
     response.businessArea = regDto.businessArea;
-    response.applicationStatus = regDto.applicationStatus;
+    response.applicationStatus = regDto.status;
     response.approvedBy = regDto.approvedBy;
     response.approvedDate = regDto.approvedDate;
     response.submissionDate = regDto.submissionDate;

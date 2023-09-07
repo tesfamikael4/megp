@@ -5,14 +5,14 @@ export enum RegistrationTypes {
   Debar = 'Debar',
 }
 export enum RegistrationStatus {
+  Drafted = 'Drafted',
   Submitted = 'Submitted',
   UnderReview = 'Under Review',
   Rejected = 'Rejected',
   Approved = 'Approved',
-  Drafted = 'Drafted',
 }
 
-export enum RegistrationCategories {
+export enum BusinessAreas {
   Goods = 'Goods',
   Services = 'Services',
   Works = 'Works',

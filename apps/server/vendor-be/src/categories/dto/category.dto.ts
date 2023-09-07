@@ -1,5 +1,5 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsUUID, IsNumber } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsUUID } from 'class-validator';
 import { CategoryEntity } from '../entities/category.entity';
 
 export class CreateCategoryDto {
@@ -59,11 +59,7 @@ export class UpdateCategoryDto extends CreateCategoryDto {
 /*
 CategoryResponseDto 
 */
-export class CategoryResponseDto {
-  id: string;
-  code: string;
-  description: string;
-  businessArea: string;
+export class CategoryResponseDto extends UpdateCategoryDto {
   createdAt: Date;
 
   static fromEntity(dto: CategoryEntity): CategoryResponseDto {

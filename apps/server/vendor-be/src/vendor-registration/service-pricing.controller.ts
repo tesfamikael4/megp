@@ -4,7 +4,6 @@ import {
   Delete,
   Get,
   Post,
-  Put,
   Query,
   Param,
   Patch,
@@ -36,8 +35,8 @@ import { ServicePricingService } from './service-pricing.service';
 export class ServicePricingController {
   constructor(private readonly regSettingService: ServicePricingService) {}
   @Post('create-service-price')
-  async create(@Body() regSettingDto: CreateServicePriceDto) {
-    return await this.regSettingService.create(regSettingDto);
+  async create(@Body() dto: CreateServicePriceDto) {
+    return await this.regSettingService.create(dto);
   }
 
   @Get('get-service-price/:id')
