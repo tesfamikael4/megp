@@ -2,7 +2,7 @@
 
 import { Card, Divider, Group, Text } from '@mantine/core';
 import { ReactElement } from 'react';
-import styles from '../../page.module.scss';
+import styles from './page.module.scss';
 
 type FeaturesCardProps = {
   color: string;

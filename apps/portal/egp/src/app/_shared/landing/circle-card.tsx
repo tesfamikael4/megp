@@ -1,6 +1,6 @@
 import { Box, Text } from '@mantine/core';
 import React from 'react';
-import styles from '../../page.module.scss';
+import styles from './page.module.scss';
 type CircleCardProps = {
   borderColor: string;
   iconColor: string;

@@ -1,0 +1,80 @@
+.header {
+  @apply bg-white border-b-2 md:h-16;
+}
+
+.nav {
+  @apply container mx-auto h-full;
+}
+
+.navLinks {
+  @apply hidden md:flex  md:flex-row md:space-x-4 md:mt-0;
+}
+
+.navActions {
+  @apply hidden md:flex space-x-4 mt-4 md:mt-0;
+}
+.headerContainer {
+  @apply flex md:flex-row justify-between items-center h-full;
+}
+
+.link {
+  @apply text-white;
+}
+
+.heroTitle {
+  @apply my-2 text-2xl leading-snug tracking-normal text-center text-gray-900 md:text-left md:text-4xl font-bold;
+}
+
+.heroSubtitle {
+  @apply my-6 text-base font-normal tracking-normal text-center text-gray-700 md:text-lg md:mr-12 md:text-left;
+}
+
+.highlight {
+  @apply hidden md:flex justify-between gap-4 mt-5;
+}
+.highlightCard {
+  @apply w-1/2 bg-white cursor-pointer hover:shadow-lg p-4;
+}
+
+.featureContainer {
+  @apply py-10 md:py-20;
+}
+
+.featureTitle {
+  @apply font-semibold text-center text-xl md:text-2xl lg:text-3xl;
+}
+
+.featureSubtitle {
+  @apply font-semibold mt-5 text-center text-slate-500 text-sm md:text-base;
+}
+.featureCard {
+  @apply cursor-pointer shadow-sm hover:shadow-xl mt-10 md:mt-0;
+}
+
+.featuresList {
+  @apply flex-col mt-0 md:mt-10 md:flex-row md:space-x-6 lg:space-x-10 justify-center;
+}
+
+.vendor {
+  @apply flex-wrap justify-center md:justify-between my-10;
+}
+
+.circleCard {
+  @apply bg-white rounded-full ;
+}
+
+.footer {
+  @apply bg-slate-700 text-slate-200;
+}
+
+.footerContainer {
+  @apply container mx-auto py-10;
+}
+
+.footerGrid {
+  @apply grid grid-cols-1 md:grid-cols-4 gap-6;
+}
+
+.copyright {
+  @apply text-sm flex flex-col md:flex-row  justify-between;
+}

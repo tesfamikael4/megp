@@ -1,4 +1,5 @@
 'use client';
+
 import styles from './page.module.scss';
 import {
   IconChevronDown,
@@ -23,11 +24,12 @@ import {
   Group,
   Text,
 } from '@mantine/core';
-import { EgpProcess } from './_shared/landing/egp-process-svg';
-import { HighLightCard } from './_shared/landing/highlight-card';
-import { CircleCard } from './_shared/landing/circle-card';
-import { WaveSVG } from './_shared/landing/wave-svg';
-import { FeaturesCard } from './_shared/landing/features-card';
+import { CircleCard } from '@/shared/landing/circle-card';
+import { EgpProcess } from '@/shared/landing/egp-process-svg';
+import { FeaturesCard } from '@/shared/landing/features-card';
+import { HighLightCard } from '@/shared/landing/highlight-card';
+import { WaveSVG } from '@/shared/landing/wave-svg';
+
 export default function Home() {
   const data = [
     {
