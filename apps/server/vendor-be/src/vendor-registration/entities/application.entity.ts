@@ -12,6 +12,7 @@ import { MessageThreadEntity } from './message-thread.entity';
 import { BusinessCategoryEntity } from './business-category.entity';
 import { InvoiceEntity } from './invoice.entity';
 import { CustomCategoryEntity } from './custom-category.entity';
+import { ServicesEntity } from './services.entity';
 @Entity({ name: 'applications' })
 export class ApplicationEntity extends CommonEntity {
   @PrimaryGeneratedColumn('uuid')
@@ -50,4 +51,8 @@ export class ApplicationEntity extends CommonEntity {
 
   @OneToMany(() => CustomCategoryEntity, (cat) => cat.application)
   customCats: CustomCategoryEntity[]; //customeCategories
+
+  @ManyToOne(() => ServicesEntity, (service) => service.applications)
+  @JoinColumn({ name: 'service_Id' })
+  service: ServicesEntity;
 }
