@@ -1,3 +1,19 @@
 .bod {
-  @apply bg-red-500 m-10;
+  @apply m-4 mx-1 md:m-10;
+}
+
+.image {
+  @apply h-auto w-auto
+}
+
+.footer_wrapper {
+    @apply justify-center flex-col gap-1 mt-2
+}
+
+.footer {
+    @apply justify-center gap-1
+}
+
+.footer_text {
+    @apply text-center text-sm
 }

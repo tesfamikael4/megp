@@ -11,6 +11,7 @@
   "dependencies": {
     "@emotion/react": "^11.11.1",
     "@emotion/server": "^11.11.0",
+    "@hookform/resolvers": "^3.3.1",
     "@mantine/carousel": "^6.0.19",
     "@mantine/core": "^6.0.19",
     "@mantine/dates": "^6.0.19",
@@ -39,9 +40,13 @@
     "postcss": "8.4.28",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-hook-form": "^7.46.1",
     "react-redux": "^8.1.2",
+    "supertokens-auth-react": "^0.34.2",
+    "supertokens-web-js": "^0.7.3",
     "tailwindcss": "3.3.3",
-    "typescript": "5.2.2"
+    "typescript": "5.2.2",
+    "zod": "^3.22.2"
   },
   "devDependencies": {
     "sass": "^1.66.1",
