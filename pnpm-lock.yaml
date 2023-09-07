@@ -305,12 +305,66 @@ importers:
 
   apps/back-office/vendor-fe:
     dependencies:
+      '@emotion/react':
+        specifier: ^11.11.1
+        version: 11.11.1(@types/react@18.2.21)(react@18.2.0)
+      '@emotion/server':
+        specifier: ^11.11.0
+        version: 11.11.0
+      '@mantine/carousel':
+        specifier: ^6.0.19
+        version: 6.0.19(@mantine/core@6.0.19)(@mantine/hooks@6.0.19)(embla-carousel-react@8.0.0-rc12)(react@18.2.0)
+      '@mantine/core':
+        specifier: ^6.0.19
+        version: 6.0.19(@emotion/react@11.11.1)(@mantine/hooks@6.0.19)(@types/react@18.2.21)(react-dom@18.2.0)(react@18.2.0)
+      '@mantine/dates':
+        specifier: ^6.0.19
+        version: 6.0.19(@mantine/core@6.0.19)(@mantine/hooks@6.0.19)(dayjs@1.11.9)(react@18.2.0)
+      '@mantine/dropzone':
+        specifier: ^6.0.19
+        version: 6.0.19(@mantine/core@6.0.19)(@mantine/hooks@6.0.19)(react-dom@18.2.0)(react@18.2.0)
+      '@mantine/form':
+        specifier: ^6.0.19
+        version: 6.0.19(react@18.2.0)
+      '@mantine/hooks':
+        specifier: ^6.0.19
+        version: 6.0.19(react@18.2.0)
+      '@mantine/modals':
+        specifier: ^6.0.19
+        version: 6.0.19(@mantine/core@6.0.19)(@mantine/hooks@6.0.19)(react-dom@18.2.0)(react@18.2.0)
+      '@mantine/next':
+        specifier: ^6.0.19
+        version: 6.0.19(@emotion/react@11.11.1)(@emotion/server@11.11.0)(next@13.4.19)(react-dom@18.2.0)(react@18.2.0)
+      '@mantine/notifications':
+        specifier: ^6.0.19
+        version: 6.0.19(@mantine/core@6.0.19)(@mantine/hooks@6.0.19)(react-dom@18.2.0)(react@18.2.0)
+      '@mantine/nprogress':
+        specifier: ^6.0.19
+        version: 6.0.19(@mantine/core@6.0.19)(@mantine/hooks@6.0.19)(react-dom@18.2.0)(react@18.2.0)
+      '@mantine/tiptap':
+        specifier: ^6.0.19
+        version: 6.0.19(@mantine/core@6.0.19)(@mantine/hooks@6.0.19)(@tabler/icons-react@2.32.0)(@tiptap/extension-link@2.1.7)(@tiptap/react@2.1.7)(react@18.2.0)
       '@megp/core-fe':
         specifier: workspace:*
         version: link:../../../packages/fe/core-fe
+      '@reduxjs/toolkit':
+        specifier: ^1.9.5
+        version: 1.9.5(react-redux@8.1.2)(react@18.2.0)
+      '@tabler/icons-react':
+        specifier: ^2.32.0
+        version: 2.32.0(react@18.2.0)
+      '@tiptap/extension-link':
+        specifier: ^2.1.7
+        version: 2.1.7(@tiptap/core@2.1.7)(@tiptap/pm@2.1.7)
+      '@tiptap/react':
+        specifier: ^2.1.7
+        version: 2.1.7(@tiptap/core@2.1.7)(@tiptap/pm@2.1.7)(react-dom@18.2.0)(react@18.2.0)
+      '@tiptap/starter-kit':
+        specifier: ^2.1.7
+        version: 2.1.7(@tiptap/pm@2.1.7)
       '@types/node':
-        specifier: 20.5.8
-        version: 20.5.8
+        specifier: 20.5.7
+        version: 20.5.7
       '@types/react':
         specifier: 18.2.21
         version: 18.2.21
@@ -320,6 +374,15 @@ importers:
       autoprefixer:
         specifier: 10.4.15
         version: 10.4.15(postcss@8.4.28)
+      cookies-next:
+        specifier: ^3.0.0
+        version: 3.0.0
+      dayjs:
+        specifier: ^1.11.9
+        version: 1.11.9
+      embla-carousel-react:
+        specifier: 8.0.0-rc12
+        version: 8.0.0-rc12(react@18.2.0)
       eslint:
         specifier: 8.48.0
         version: 8.48.0
@@ -338,6 +401,9 @@ importers:
       react-dom:
         specifier: 18.2.0
         version: 18.2.0(react@18.2.0)
+      react-redux:
+        specifier: ^8.1.2
+        version: 8.1.2(@types/react-dom@18.2.7)(@types/react@18.2.21)(react-dom@18.2.0)(react@18.2.0)(redux@4.2.1)
       tailwindcss:
         specifier: 3.3.3
         version: 3.3.3(ts-node@10.9.1)
@@ -348,6 +414,9 @@ importers:
       sass:
         specifier: ^1.66.1
         version: 1.66.1
+      tsconfig:
+        specifier: workspace:*
+        version: link:../../../packages/config/tsconfig
 
   apps/portal/egp:
     dependencies:
