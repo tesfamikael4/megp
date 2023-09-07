@@ -1,19 +1,10 @@
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-  OneToOne,
-  OneToMany,
-  ManyToOne,
-  JoinColumn,
-} from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
 import { Audit } from 'src/shared/entities/audit.entity';
 
 import { Unit } from './unit.entity';
 import { Employee } from './employee.entity';
+import { Office } from './office.entity';
 
 @Entity({ name: 'organizations' })
 export class Organization extends Audit {
@@ -29,6 +20,12 @@ export class Organization extends Audit {
   @Column()
   type: string;
 
+  @Column()
+  budgetType: string;
+
+  @Column('boolean', { default: false })
+  isActive: boolean;
+
   @OneToMany(() => Unit, (unit) => unit.organization, {
     cascade: true,
     onDelete: 'CASCADE',
@@ -40,4 +37,10 @@ export class Organization extends Audit {
     onDelete: 'CASCADE',
   })
   employees: Employee[];
+
+  @OneToMany(() => Office, (office) => office.organization, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  offices: Office[];
 }
