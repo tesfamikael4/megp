@@ -95,9 +95,7 @@ deploy:
   script:
     - docker-compose down
     - docker-compose up -d
-  rules:
-     - changes:
-       - apps/**/*
+  
   only:
   - main
 
