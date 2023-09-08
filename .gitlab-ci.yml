@@ -53,6 +53,16 @@ build_demo-fe:
     - cd apps/back-office/+demo-fe
     - docker build -t $CONTAINER_RELEASE_IMAGE .
     - docker push $CONTAINER_RELEASE_IMAGE
+deploy:
+  stage: deploy
+  #tags:
+  script:
+    - docker pull $CONTAINER_RELEASE_IMAGE
+    - docker container rm -f +demo-fe || true
+    - docker run -p 5533:5533 --name +demo-fe $CONTAINER_RELEASE_IMAGE
+  
+  only:
+  - main
   rules:
      - changes:
        - apps/**/*
@@ -63,6 +73,16 @@ build_iam-fe:
     - cd apps/back-office/iam-fe
     - docker build -t $CONTAINER_RELEASE_IMAGE .
     - docker push $CONTAINER_RELEASE_IMAGE
+deploy-iam:
+  stage: deploy
+  #tags:
+  script:
+    - docker pull $CONTAINER_RELEASE_IMAGE
+    - docker container rm -f iam-fe || true
+    - docker run -p 5511:5511 --name iam-fe $CONTAINER_RELEASE_IMAGE
+  
+  only:
+  - main
   rules:
      - changes:
        - apps/**/*
@@ -71,6 +91,16 @@ build_egp:
   script:
     - cd apps/portal/egp
     - docker build -t egp .
+deploy-portal:
+  stage: deploy
+  #tags:
+  script:
+    - docker pull $CONTAINER_RELEASE_IMAGE
+    - docker container rm -f egp || true
+    - docker run -p 5599:5599 --name egp $CONTAINER_RELEASE_IMAGE
+  
+  only:
+  - main
   rules:
      - changes:
        - apps/**/*
@@ -78,7 +108,17 @@ build_administration:
   stage: build
   script:
     - cd apps/back-office/administration-fe .
-    - docker build -t administration-fe .
+    - docker build -t admin-fe .
+deploy-admin:
+  stage: deploy
+  #tags:
+  script:
+    - docker pull $CONTAINER_RELEASE_IMAGE
+    - docker container rm -f admin-fe || true
+    - docker run -p 5522:5522 --name admin-fe $CONTAINER_RELEASE_IMAGE
+  
+  only:
+  - main
   rules:
      - changes:
        - apps/**/*
@@ -87,17 +127,18 @@ build_vendor:
   script:
     - cd apps/back-office/vendor-fe .
     - docker build -t vendor-fe .
-  rules:
-     - changes:
-       - apps/**/*
-deploy:
+deploy-vendor:
   stage: deploy
   #tags:
   script:
     - docker pull $CONTAINER_RELEASE_IMAGE
-    - docker container rm -f megp-vendor-fe || true
+    - docker container rm -f vendor-fe || true
     - docker run -p 5533:5533 --name megp-vendor-fe $CONTAINER_RELEASE_IMAGE
   
   only:
   - main
+  rules:
+     - changes:
+       - apps/**/*
+
 
