@@ -6,7 +6,11 @@ services:
 stages:
   - build
   - deploy
-
+  - build_iam-fe
+  - deploy_iam-fe
+  - build_demo-fe
+  - deploy_demo-fe
+  
 variables:  
   CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
   CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE:latest
