@@ -110,3 +110,5 @@ deploy_vendor:
   rules:
     - changes:
         - apps/back-office/vendor-fe/**/*
+  only:
+   - main
