@@ -53,6 +53,9 @@ build_demo-fe:
     - cd apps/back-office/+demo-fe
     - docker build -t $CONTAINER_RELEASE_IMAGE .
     - docker push $CONTAINER_RELEASE_IMAGE
+  rules:
+     - changes:
+       - apps/**/*
 
 build_iam-fe:
   stage: build
@@ -60,27 +63,41 @@ build_iam-fe:
     - cd apps/back-office/iam-fe
     - docker build -t $CONTAINER_RELEASE_IMAGE .
     - docker push $CONTAINER_RELEASE_IMAGE
-
+  rules:
+     - changes:
+       - apps/**/*
 build_egp:
   stage: build
   script:
     - cd apps/portal/egp
     - docker build -t egp .
+  rules:
+     - changes:
+       - apps/**/*
 build_administration:
   stage: build
   script:
     - cd apps/back-office/administration-fe .
     - docker build -t administration-fe .
+  rules:
+     - changes:
+       - apps/**/*
 build_vendor:
   stage: build
   script:
     - cd apps/back-office/vendor-fe .
     - docker build -t vendor-fe .
+  rules:
+     - changes:
+       - apps/**/*
 deploy:
   stage: deploy
   script:
     - docker-compose down
     - docker-compose up -d
+  rules:
+     - changes:
+       - apps/**/*
   only:
   - main
 
