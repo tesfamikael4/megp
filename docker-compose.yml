@@ -11,7 +11,7 @@ services:
     build:
       context: ./apps/back-office/iam-fe
     ports:
-      - 4000:4000
+      - 5511:5511
 
   egp:
     build:
