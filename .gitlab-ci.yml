@@ -2,116 +2,118 @@ image: docker:latest
 
 services:
   - docker:dind
-
 stages:
   - build
   - deploy
-  - build_iam-fe
-  - deploy_iam-fe
-  - build_demo-fe
-  - deploy_demo-fe
+include:
+  - 'apps/back-office/+demo-fe/.gitlab-ci.yml'
+  - 'apps/portal/egp/.gitlab-ci.yml'
+  - 'apps/back-office/iam-fe/.gitlab-ci.yml'
+  - 'apps/back-office/administration-fe/.gitlab-ci.yml'
+  - 'apps/back-office/vendor-fe/.gitlab-ci.yml'
+
   
-variables:  
-  CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
-  CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE:latest
+# variables:  
+#   CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+#   CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE:latest
 
-before_script:
-  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+# before_script:
+#   - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
 
-build_demo-fe:
-  stage: build
-  script:
-    - cd apps/back-office/+demo-fe
-    - docker build -t $CONTAINER_RELEASE_IMAGE .
-    - docker push $CONTAINER_RELEASE_IMAGE
-  rules:
-    - changes:
-        - apps/back-office/+demo-fe/**/*
+# build_demo-fe:
+#   stage: build
+#   script:
+#     - cd apps/back-office/+demo-fe
+#     - docker build -t $CONTAINER_RELEASE_IMAGE .
+#     - docker push $CONTAINER_RELEASE_IMAGE
+#   rules:
+#     - changes:
+#         - apps/back-office/+demo-fe/**/*
 
-deploy_demo-fe:
-  stage: deploy
-  script:
-    - docker pull $CONTAINER_RELEASE_IMAGE
-    - docker container rm -f demo-fe || true
-    - docker run -p 5533:5533 --name demo-fe $CONTAINER_RELEASE_IMAGE
-  rules:
-    - changes:
-        - apps/back-office/+demo-fe/**/*
+# deploy_demo-fe:
+#   stage: deploy
+#   script:
+#     - docker pull $CONTAINER_RELEASE_IMAGE
+#     - docker container rm -f demo-fe || true
+#     - docker run -p 5533:5533 --name demo-fe $CONTAINER_RELEASE_IMAGE
+#   rules:
+#     - changes:
+#         - apps/back-office/+demo-fe/**/*
 
-build_iam-fe:
-  stage: build
-  script:
-    - cd apps/back-office/iam-fe
-    - docker build -t $CONTAINER_RELEASE_IMAGE .
-    - docker push $CONTAINER_RELEASE_IMAGE
-  rules:
-    - changes:
-        - apps/back-office/iam-fe/**/*
+# build_iam-fe:
+#   stage: build
+#   script:
+#     - cd apps/back-office/iam-fe
+#     - docker build -t $CONTAINER_RELEASE_IMAGE .
+#     - docker push $CONTAINER_RELEASE_IMAGE
+#   rules:
+#     - changes:
+#         - apps/back-office/iam-fe/**/*
 
-deploy_iam-fe:
-  stage: deploy
-  script:
-    - docker pull $CONTAINER_RELEASE_IMAGE
-    - docker container rm -f iam-fe || true
-    - docker run -p 5511:5511 --name iam-fe $CONTAINER_RELEASE_IMAGE
-  rules:
-    - changes:
-        - apps/back-office/iam-fe/**/*
+# deploy_iam-fe:
+#   stage: deploy
+#   script:
+#     - docker pull $CONTAINER_RELEASE_IMAGE
+#     - docker container rm -f iam-fe || true
+#     - docker run -p 5511:5511 --name iam-fe $CONTAINER_RELEASE_IMAGE
+#   rules:
+#     - changes:
+#         - apps/back-office/iam-fe/**/*
 
-build_egp:
-  stage: build
-  script:
-    - cd apps/portal/egp
-    - docker build -t egp .
-  rules:
-    - changes:
-        - apps/portal/egp/**/*
+# build_egp:
+#   stage: build
+#   script:
+#     - cd apps/portal/egp
+#     - docker build -t egp .
+#   rules:
+#     - changes:
+#         - apps/portal/egp/**/*
 
-deploy_portal:
-  stage: deploy
-  script:
-    - docker pull $CONTAINER_RELEASE_IMAGE
-    - docker container rm -f egp || true
-    - docker run -p 5599:5599 --name egp $CONTAINER_RELEASE_IMAGE
-  rules:
-    - changes:
-        - apps/portal/egp/**/*
+# deploy_portal:
+#   stage: deploy
+#   script:
+#     - docker pull $CONTAINER_RELEASE_IMAGE
+#     - docker container rm -f egp || true
+#     - docker run -p 5599:5599 --name egp $CONTAINER_RELEASE_IMAGE
+#   rules:
+#     - changes:
+#         - apps/portal/egp/**/*
 
-build_administration:
-  stage: build
-  script:
-    - cd apps/back-office/administration-fe .
-    - docker build -t admin-fe .
-  rules:
-    - changes:
-        - apps/back-office/administration-fe/**/*
+# build_administration:
+#   stage: build
+#   script:
+#     - cd apps/back-office/administration-fe .
+#     - docker build -t admin-fe .
+#   rules:
+#     - changes:
+#         - apps/back-office/administration-fe/**/*
 
-deploy_admin:
-  stage: deploy
-  script:
-    - docker pull $CONTAINER_RELEASE_IMAGE
-    - docker container rm -f admin-fe || true
-    - docker run -p 5522:5522 --name admin-fe $CONTAINER_RELEASE_IMAGE
-  rules:
-    - changes:
-        - apps/back-office/administration-fe/**/*
+# deploy_admin:
+#   stage: deploy
+#   script:
+#     - docker pull $CONTAINER_RELEASE_IMAGE
+#     - docker container rm -f admin-fe || true
+#     - docker run -p 5522:5522 --name admin-fe $CONTAINER_RELEASE_IMAGE
+#   rules:
+#     - changes:
+#         - apps/back-office/administration-fe/**/*
 
-build_vendor:
-  stage: build
-  script:
-    - cd apps/back-office/vendor-fe .
-    - docker build -t vendor-fe .
-  rules:
-    - changes:
-        - apps/back-office/vendor-fe/**/*
+# build_vendor:
+#   stage: build
+#   script:
+#     - cd apps/back-office/vendor-fe .
+#     - docker build -t vendor-fe .
+#   rules:
+#     - changes:
+#         - apps/back-office/vendor-fe/**/*
 
-deploy_vendor:
-  stage: deploy
-  script:
-    - docker pull $CONTAINER_RELEASE_IMAGE
-    - docker container rm -f vendor-fe || true
-    - docker run -p 5533:5533 --name megp-vendor-fe $CONTAINER_RELEASE_IMAGE
-  rules:
-    - changes:
-        - apps/back-office/vendor-fe/**/*
+# deploy_vendor:
+#   stage: deploy
+#   script:
+#     - docker pull $CONTAINER_RELEASE_IMAGE
+#     - docker container rm -f vendor-fe || true
+#     - docker run -p 5533:5533 --name megp-vendor-fe $CONTAINER_RELEASE_IMAGE
+#   rules:
+#     - changes:
+#         - apps/back-office/vendor-fe/**/*
   
