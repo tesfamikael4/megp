@@ -5,7 +5,7 @@ services:
     build:
       context: ./apps/back-office/+demo-fe
     ports:
-      - 5500:5500
+      - "5500:5500"
 
   iam-fe:
     build:
