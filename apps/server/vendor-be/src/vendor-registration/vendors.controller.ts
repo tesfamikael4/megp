@@ -64,7 +64,8 @@ export class VendorBasicsController {
     return await this.service.update(id, dto);
   }
 
-  @Delete('delete-application/:id')
+  @Delete('delete-vendor/:id')
+  @ApiOkResponse()
   async remove(
     @Param(
       'id',
@@ -72,7 +73,8 @@ export class VendorBasicsController {
     )
     id: string,
   ) {
-    return await this.service.remove(id);
+    await this.service.remove(id);
+    return 'success';
   }
 
   @Get('get-business-areas')

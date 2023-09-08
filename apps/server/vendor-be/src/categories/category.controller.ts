@@ -69,6 +69,7 @@ export class CategoriesController {
   }
 
   @Delete('delete-category/:id')
+  @ApiOkResponse({ type: String })
   async remove(
     @Param(
       'id',
@@ -76,11 +77,18 @@ export class CategoriesController {
     )
     id: string,
   ) {
-    return await this.categoryService.remove(id);
+    await this.categoryService.remove(id);
+    return 'success';
   }
   @Post('restore-category/:id')
   @ApiPaginatedResponse(CategoryResponseDto)
-  async restore(@Param('id') id: string) {
+  async restore(
+    @Param(
+      'id',
+      new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
+    )
+    id: string,
+  ) {
     const result = await this.categoryService.restore(id);
     return result;
   }

@@ -13,6 +13,8 @@ export class CreateCategoryDto {
   @ApiProperty({ enum: ['Goods', 'Services', 'Works'] })
   @IsNotEmpty()
   businessArea: string;
+  @ApiProperty()
+  parentId: string;
 
   /**
    * Transfer Data from DTO object to Entity object

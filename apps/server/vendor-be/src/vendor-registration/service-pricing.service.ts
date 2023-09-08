@@ -27,7 +27,9 @@ export class ServicePricingService {
 
   async create(setting: CreateServicePriceDto): Promise<CreateServicePriceDto> {
     try {
+      const userId = '84067e41-fcd9-4658-af0a-e5017e56156b';
       const entity = CreateServicePriceDto.fromDto(setting);
+      entity.createdBy = userId;
       await this.repository.save(entity);
       return ServicePriceResponseDto.fromEntity(entity);
     } catch (error) {
@@ -37,12 +39,12 @@ export class ServicePricingService {
 
   async update(
     id: string,
-    regSettingDto: UpdateServicePriceDto,
+    dto: UpdateServicePriceDto,
   ): Promise<ServicePriceResponseDto> {
     try {
-      regSettingDto.id = id;
-      const entity = UpdateServicePriceDto.fromDto(regSettingDto);
-      await this.repository.update({ id: regSettingDto.id }, entity);
+      dto.id = id;
+      const entity = UpdateServicePriceDto.fromDto(dto);
+      await this.repository.update({ id: dto.id }, entity);
       return ServicePriceResponseDto.fromEntity(entity);
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
@@ -50,6 +52,7 @@ export class ServicePricingService {
   }
 
   async findAll(query: CollectionQuery) {
+    query.includes.push('services');
     try {
       const dataQuery = QueryConstructor.constructQuery<ServicePriceEntity>(
         this.repository,
@@ -60,6 +63,7 @@ export class ServicePricingService {
         response.total = await dataQuery.getCount();
       } else {
         const [result, total] = await dataQuery.getManyAndCount();
+        console.log(result);
         response.total = total;
         response.items = result.map((entity) =>
           ServicePriceResponseDto.fromEntity(entity),

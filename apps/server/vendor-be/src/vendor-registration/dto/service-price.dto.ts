@@ -6,7 +6,7 @@ export class CreateServicePriceDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsUUID()
-  serviceId: string;
+  serviceId: string; //new, renewal, upgrade
   @ApiProperty()
   @IsNotEmpty()
   businessArea: string; //Goods Services

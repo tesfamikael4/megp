@@ -29,6 +29,7 @@ export class CategoryService {
   async create(dto: CreateCategoryDto): Promise<CategoryResponseDto> {
     try {
       const entity = CreateCategoryDto.fromDto(dto);
+      entity.createdBy = '5a16b0a5-c627-47ec-9133-18a02c40be47';
       await this.repository.save(entity);
       return CategoryResponseDto.fromEntity(entity);
     } catch (error) {
@@ -62,7 +63,9 @@ export class CategoryService {
       } else {
         const [result, total] = await dataQuery.getManyAndCount();
         response.total = total;
-        result.map((entity) => CategoryResponseDto.fromEntity(entity));
+        response.items = result.map((entity) =>
+          CategoryResponseDto.fromEntity(entity),
+        );
       }
       return response;
     } catch (error) {

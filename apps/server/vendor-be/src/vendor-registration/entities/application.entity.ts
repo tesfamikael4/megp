@@ -26,8 +26,8 @@ export class ApplicationEntity extends CommonEntity {
   ///Goods , Services
   @Column({ name: 'business_area' })
   businessArea: string;
-  @Column({ name: 'application_Id', type: 'uuid' })
-  applicationId: string;
+  @Column({ name: 'service_price_id', type: 'uuid' })
+  priceId: string;
   @Column({ name: 'service_fee', type: 'decimal' })
   serviceFee: number;
   @Column({ nullable: true, name: 'submission_date' })
@@ -41,8 +41,9 @@ export class ApplicationEntity extends CommonEntity {
   @Column({ name: 'expire_date', nullable: true })
   expireDate: Date;
   @ManyToOne(() => ServicePriceEntity, (p) => p.applications)
-  @JoinColumn({ name: 'application_Id' })
+  @JoinColumn({ name: 'service_price_id' })
   price: ServicePriceEntity;
+
   @OneToMany(() => MessageThreadEntity, (message) => message.application)
   messages: MessageThreadEntity[];
 
