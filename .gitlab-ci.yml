@@ -92,9 +92,11 @@ build_vendor:
        - apps/**/*
 deploy:
   stage: deploy
+  #tags:
   script:
-    - docker-compose down
-    - docker-compose up -d
+    - docker-compose pull
+    - docker-compose down || true
+    - docker-compose up -d --force-recreate --no-deps --remove-orphans
   
   only:
   - main
