@@ -94,9 +94,9 @@ deploy:
   stage: deploy
   #tags:
   script:
-    - docker-compose pull
-    - docker-compose down || true
-    - docker-compose up -d --force-recreate --no-deps --remove-orphans
+    - docker pull $CONTAINER_RELEASE_IMAGE
+    - docker container rm -f megp-demo-fe || true
+    - docker-compose up -d 5500:5500 --name megp-demo-fe $CONTAINER_RELEASE_IMAGE
   
   only:
   - main
