@@ -5,7 +5,7 @@ services:
     build:
       context: ./apps/back-office/+demo-fe
     ports:
-      - 5599:5599
+      - 5500:5500
 
   iam-fe:
     build:
@@ -17,7 +17,7 @@ services:
     build:
       context: ./apps/portal/egp
     ports:
-      - 5500:5500
+      - 5599:5599
   administration:
     build:
       context: ./apps/back-office/administration-fe
