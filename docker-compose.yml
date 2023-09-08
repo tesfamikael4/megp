@@ -4,6 +4,7 @@ services:
   demo-fe:
     build:
       context: ./apps/back-office/+demo-fe
+      dockerfile: ./apps/back-office/+demo-fe/Dockerfile
     ports:
       - "5500:5500"
 
