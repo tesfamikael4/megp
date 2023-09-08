@@ -134,11 +134,11 @@ deploy-vendor:
     - docker pull $CONTAINER_RELEASE_IMAGE
     - docker container rm -f vendor-fe || true
     - docker run -p 5533:5533 --name megp-vendor-fe $CONTAINER_RELEASE_IMAGE
-  
-  only:
-  - main
   rules:
      - changes:
        - apps/**/*
+  only:
+  - main
+  
 
 
