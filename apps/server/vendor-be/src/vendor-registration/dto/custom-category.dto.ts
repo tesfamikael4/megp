@@ -5,7 +5,7 @@ export class CreateCustomCategoryDto {
   id: string;
   @ApiProperty()
   description: string;
-  applicationId: string;
+  vendorId: string;
 
   static fromDto(dto: CreateCustomCategoryDto): CustomCategoryEntity {
     const entity = new CustomCategoryEntity();
@@ -13,7 +13,7 @@ export class CreateCustomCategoryDto {
       return;
     }
     //   entity.id = dto.id;
-    entity.applicationId = dto.applicationId;
+    entity.vendorId = dto.vendorId;
     entity.description = dto.description;
 
     return entity;

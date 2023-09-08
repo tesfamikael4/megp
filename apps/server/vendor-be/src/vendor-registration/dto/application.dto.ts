@@ -47,16 +47,6 @@ export class CreateApplicationDto {
       entity.submissionDate = new Date();
     }
     entity.submissionDate = dto.submissionDate ? dto.submissionDate : null;
-    entity.businessCats = dto.commonCategories
-      ? dto.commonCategories.map((item) =>
-          CreateBusinessCategoryDto.fromDto(item),
-        )
-      : null;
-    entity.customCats = dto.CustomCategories
-      ? dto.CustomCategories.map((item) =>
-          CreateCustomCategoryDto.fromDto(item),
-        )
-      : null;
 
     console.log(entity);
     return entity;
@@ -106,8 +96,8 @@ export class ApplicationResponseDto extends UpdateApplicationDto {
     response.serviceId = regDto.serviceId;
     response.businessArea = regDto.businessArea;
     response.Status = regDto.status;
-    response.approvedBy = regDto.approvedBy;
-    response.approvedDate = regDto.approvedDate;
+    //response.approvedBy = regDto.approvedBy;
+    // response.approvedDate = regDto.approvedDate;
     response.submissionDate = regDto.submissionDate;
     return response;
   }

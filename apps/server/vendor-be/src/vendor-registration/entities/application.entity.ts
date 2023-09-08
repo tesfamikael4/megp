@@ -8,10 +8,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { ServicePriceEntity } from './service-price.entity';
-import { MessageThreadEntity } from './message-thread.entity';
-import { BusinessCategoryEntity } from './business-category.entity';
 import { InvoiceEntity } from './invoice.entity';
-import { CustomCategoryEntity } from './custom-category.entity';
 import { ServicesEntity } from './services.entity';
 import { VendorsEntity } from './vendors.entity';
 //Vendor Service Application
@@ -21,7 +18,7 @@ export class ApplicationEntity extends CommonEntity {
   id: string;
   @Column({ name: 'vendor_id', type: 'uuid' })
   vendorId: string;
-  @Column({ name: 'service_Id' })
+  @Column({ name: 'service_id', type: 'uuid' })
   serviceId: string;
   ///Goods , Services
   @Column({ name: 'business_area' })
@@ -34,29 +31,26 @@ export class ApplicationEntity extends CommonEntity {
   submissionDate: Date;
   @Column({ name: 'application_status' })
   status: string;
+  /*
   @Column({ name: 'approved_by', nullable: true, type: 'uuid' })
   approvedBy: string;
   @Column({ name: 'approved_date', nullable: true })
   approvedDate: Date;
+  */
   @Column({ name: 'expire_date', nullable: true })
   expireDate: Date;
   @ManyToOne(() => ServicePriceEntity, (p) => p.applications)
   @JoinColumn({ name: 'service_price_id' })
   price: ServicePriceEntity;
 
-  @OneToMany(() => MessageThreadEntity, (message) => message.application)
-  messages: MessageThreadEntity[];
-
-  @OneToMany(() => BusinessCategoryEntity, (business) => business.application)
-  businessCats: BusinessCategoryEntity[]; //business categories
-
-  invoice: InvoiceEntity;
-
-  @OneToMany(() => CustomCategoryEntity, (cat) => cat.application)
-  customCats: CustomCategoryEntity[]; //customeCategories
+  /*
+    @OneToMany(() => MessageThreadEntity, (message) => message.application)
+    messages: MessageThreadEntity[];
+  
+  */
 
   @ManyToOne(() => ServicesEntity, (service) => service.applications)
-  @JoinColumn({ name: 'service_Id' })
+  @JoinColumn({ name: 'service_id' })
   service: ServicesEntity;
 
   @ManyToOne(() => VendorsEntity, (v) => v.applications)

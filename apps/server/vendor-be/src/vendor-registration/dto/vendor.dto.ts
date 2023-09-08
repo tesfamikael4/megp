@@ -1,6 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsJSON, IsNotEmpty, IsUUID } from 'class-validator';
 import { VendorsEntity } from '../entities/vendors.entity';
+import { CreateBusinessCategoryDto } from './business-category.dto';
+import { CreateCustomCategoryDto } from './custom-category.dto';
 
 export class CreateVendorsDto {
   @ApiProperty()
@@ -19,7 +21,10 @@ export class CreateVendorsDto {
   @ApiProperty()
   @IsNotEmpty()
   metaData: JSON;
-
+  @ApiProperty()
+  commonCategories: CreateBusinessCategoryDto[];
+  @ApiProperty()
+  CustomCategories: CreateCustomCategoryDto[];
   static fromDto(dto: CreateVendorsDto): VendorsEntity {
     const entity = new VendorsEntity();
     if (!dto) {
@@ -31,6 +36,17 @@ export class CreateVendorsDto {
     entity.formOfEntity = dto.formOfEntity;
     entity.status = dto.status;
     entity.metaData = dto.metaData;
+    entity.businessCats = dto.commonCategories
+      ? dto.commonCategories.map((item) =>
+          CreateBusinessCategoryDto.fromDto(item),
+        )
+      : null;
+    entity.customCats = dto.CustomCategories
+      ? dto.CustomCategories.map((item) =>
+          CreateCustomCategoryDto.fromDto(item),
+        )
+      : null;
+
     return entity;
   }
 }

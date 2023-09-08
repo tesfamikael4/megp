@@ -7,13 +7,12 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { ApplicationEntity } from './application.entity';
-
+import { VendorsEntity } from './vendors.entity';
 @Entity({ name: 'invoices' })
 export class InvoiceEntity extends CommonEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column({ name: 'application_id', type: 'uuid' })
+  @Column({ name: 'vendor_id', type: 'uuid' })
   applicationId: string;
   //PPDA or Vendor
   @Column({ name: 'amount', type: 'decimal' })
@@ -25,8 +24,9 @@ export class InvoiceEntity extends CommonEntity {
   paymentStatus: string;
   @Column({ name: 'remark' })
   remark: string;
-
-  @OneToOne(() => ApplicationEntity, (requisition) => requisition.invoice)
-  @JoinColumn({ name: 'application_id' })
-  application: ApplicationEntity;
+  /*
+    @ManyToOne(() => VendorsEntity, (vendor) => vendor.invoices)
+    @JoinColumn({ name: 'vendor_id' })
+    vendor: VendorsEntity;
+    */
 }

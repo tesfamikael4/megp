@@ -1,23 +1,21 @@
-import { CategoryEntity } from 'src/categories/entities/category.entity';
 import {
   Column,
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { ApplicationEntity } from './application.entity';
+
+import { VendorsEntity } from './vendors.entity';
 @Entity({ name: 'custom_categories' })
 export class CustomCategoryEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
   @Column({ name: 'description' })
   description: string;
-  @Column({ name: 'application_id', type: 'uuid' })
-  applicationId: string;
-  @ManyToOne(() => ApplicationEntity, (app) => app.customCats)
-  @JoinColumn({ name: 'application_id' })
-  application: ApplicationEntity;
+  @Column({ name: 'vendor_id', type: 'uuid' })
+  vendorId: string;
+  @ManyToOne(() => VendorsEntity, (app) => app.customCats)
+  @JoinColumn({ name: 'vendor_id' })
+  application: VendorsEntity;
 }

@@ -1,6 +1,10 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { ApplicationEntity } from './application.entity';
 import { CommonEntity } from 'src/shared/entities/common.entity';
+import { CustomCategoryEntity } from './custom-category.entity';
+import { BusinessCategoryEntity } from './business-category.entity';
+import { InvoiceEntity } from './invoice.entity';
+import { VendorsBankEntity } from './vendors-bank.entity';
 @Entity({ name: 'vendors' })
 export class VendorsEntity extends CommonEntity {
   @PrimaryGeneratedColumn('uuid')
@@ -19,4 +23,16 @@ export class VendorsEntity extends CommonEntity {
 
   @OneToMany(() => ApplicationEntity, (app) => app.service)
   applications: ApplicationEntity[];
+
+  @OneToMany(() => CustomCategoryEntity, (cat) => cat.application)
+  customCats: CustomCategoryEntity[]; //customeCategories
+
+  @OneToMany(() => BusinessCategoryEntity, (business) => business.vendor)
+  businessCats: BusinessCategoryEntity[]; //business categories
+  /*
+    @OneToMany(() => InvoiceEntity, (invoice) => invoice.vendor)
+    invoices: InvoiceEntity[];
+  */
+  @OneToMany(() => VendorsBankEntity, (b) => b.vendor)
+  vendorAccounts: VendorsBankEntity[];
 }

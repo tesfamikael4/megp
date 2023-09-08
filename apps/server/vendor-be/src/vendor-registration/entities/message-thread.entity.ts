@@ -19,7 +19,9 @@ export class MessageThreadEntity extends CommonEntity {
   messageSource: string;
   @Column({ name: 'messsage' })
   message: string;
-  @ManyToOne(() => ApplicationEntity, (app) => app.messages)
-  @JoinColumn({ name: 'application_id' })
-  application: ApplicationEntity;
+  /*
+    @ManyToOne(() => ApplicationEntity, (app) => app.messages)
+    @JoinColumn({ name: 'application_id' })
+    application: ApplicationEntity;
+    */
 }

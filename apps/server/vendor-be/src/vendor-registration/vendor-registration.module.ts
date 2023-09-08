@@ -15,6 +15,8 @@ import { BusinessCategoryEntity } from './entities/business-category.entity';
 import { VendorBasicsController } from './vendors.controller';
 import { VendorBasicsService } from './vendor-basics.service';
 import { VendorsEntity } from './entities/vendors.entity';
+import { BanksEntity } from './entities/bank.entity';
+import { VendorsBankEntity } from './entities/vendors-bank.entity';
 
 @Module({
   imports: [
@@ -27,6 +29,8 @@ import { VendorsEntity } from './entities/vendors.entity';
       CustomCategoryEntity,
       ServicesEntity,
       VendorsEntity,
+      BanksEntity,
+      VendorsBankEntity,
     ]),
   ],
   providers: [

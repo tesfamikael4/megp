@@ -53,6 +53,7 @@ export class CategoryService {
 
   async findAll(query: CollectionQuery) {
     try {
+      // query.filter.push([{ field: 'business_area', operator: FilterOperators.EqualTo, value: "Services" }])
       const dataQuery = QueryConstructor.constructQuery<CategoryEntity>(
         this.repository,
         query,

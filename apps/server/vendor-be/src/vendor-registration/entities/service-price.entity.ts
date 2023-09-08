@@ -1,18 +1,25 @@
 import { CommonEntity } from 'src/shared/entities/common.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { ApplicationEntity } from './application.entity';
+import { ServicesEntity } from './services.entity';
 //service_pricing
 @Entity({ name: 'service_prices' })
 export class ServicePriceEntity extends CommonEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
   /// services are New , renew, upgrade
-  @Column({ name: 'service_id' })
+  @Column({ name: 'service_id', type: 'uuid' })
   serviceId: string;
   //business area are Goods Services, Works
   @Column({ name: 'business_area' })
   businessArea: string;
-
   @Column({ type: 'decimal', name: 'value_from' })
   valueFrom: number;
 
@@ -23,6 +30,11 @@ export class ServicePriceEntity extends CommonEntity {
   fee: number;
   @Column({ name: 'currency' })
   currency: string;
+
   @OneToMany(() => ApplicationEntity, (app) => app.price)
   applications: ApplicationEntity[];
+
+  @ManyToOne(() => ServicesEntity, (s) => s.priceSettings)
+  @JoinColumn({ name: 'service_id' })
+  service: ServicesEntity;
 }
