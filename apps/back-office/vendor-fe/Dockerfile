@@ -4,7 +4,7 @@ COPY package.json ./
 RUN npm install -g npm@latest
 
 COPY . .
-
+EXPOSE 5533
 CMD ["npm", "run", "dev"]
 
 #RUN mkdir -p /app
