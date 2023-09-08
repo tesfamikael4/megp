@@ -1,71 +1,38 @@
-# stages:
-#   - triggers
-# trigger_back-office-demo-fe:
-#   stage: triggers
-#   trigger:
-#     include: apps/back-office/+demo-fe/.gitlab-ci.yml
-#   rules:
-#     - changes:
-#         - apps/**/*
-# trigger_portal:
-#   stage: triggers
-#   trigger:
-#     include: apps/portal/egp/.gitlab-ci.yml
-#   rules:
-#     - changes:
-#         - apps/**/*
-# trigger_back-office-iam-fe:
-#   stage: triggers
-#   trigger:
-#     include: apps/back-office/iam-fe/.gitlab-ci.yml
-#   rules:
-#     - changes:
-#         - apps/**/*
-# trigger_back-office-administration:
-#   stage: triggers
-#   trigger:
-#     include: apps/back-office/administration-fe/.gitlab-ci.yml
-#   rules:
-#     - changes:
-#         - apps/**/*
-# trigger_back-office-vendor-fe:
-#   stage: triggers
-#   trigger:
-#     include: apps/back-office/vendor-fe/.gitlab-ci.yml
-#   rules:
-#     - changes:
-#         - apps/**/*
 image: docker:latest
+
 services:
-    - docker:dind
+  - docker:dind
+
 stages:
   - build
-  # - test
   - deploy
+
 variables:  
   CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
   CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE:latest
+
 before_script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+
 build_demo-fe:
   stage: build
   script:
     - cd apps/back-office/+demo-fe
     - docker build -t $CONTAINER_RELEASE_IMAGE .
     - docker push $CONTAINER_RELEASE_IMAGE
-deploy:
+  rules:
+    - changes:
+        - apps/back-office/+demo-fe/**/*
+
+deploy_demo-fe:
   stage: deploy
-  #tags:
   script:
     - docker pull $CONTAINER_RELEASE_IMAGE
     - docker container rm -f +demo-fe || true
     - docker run -p 5533:5533 --name +demo-fe $CONTAINER_RELEASE_IMAGE
-  
-  only:
-  - main
   rules:
-     - changes:
-       - apps/**/*
+    - changes:
+        - apps/back-office/+demo-fe/**/*
 
 build_iam-fe:
   stage: build
@@ -73,70 +40,73 @@ build_iam-fe:
     - cd apps/back-office/iam-fe
     - docker build -t $CONTAINER_RELEASE_IMAGE .
     - docker push $CONTAINER_RELEASE_IMAGE
-deploy-iam:
+  rules:
+    - changes:
+        - apps/back-office/iam-fe/**/*
+
+deploy_iam-fe:
   stage: deploy
-  #tags:
   script:
     - docker pull $CONTAINER_RELEASE_IMAGE
     - docker container rm -f iam-fe || true
     - docker run -p 5511:5511 --name iam-fe $CONTAINER_RELEASE_IMAGE
-  
-  only:
-  - main
   rules:
-     - changes:
-       - apps/**/*
+    - changes:
+        - apps/back-office/iam-fe/**/*
+
 build_egp:
   stage: build
   script:
     - cd apps/portal/egp
     - docker build -t egp .
-deploy-portal:
+  rules:
+    - changes:
+        - apps/portal/egp/**/*
+
+deploy_portal:
   stage: deploy
-  #tags:
   script:
     - docker pull $CONTAINER_RELEASE_IMAGE
     - docker container rm -f egp || true
     - docker run -p 5599:5599 --name egp $CONTAINER_RELEASE_IMAGE
-  
-  only:
-  - main
   rules:
-     - changes:
-       - apps/**/*
+    - changes:
+        - apps/portal/egp/**/*
+
 build_administration:
   stage: build
   script:
     - cd apps/back-office/administration-fe .
     - docker build -t admin-fe .
-deploy-admin:
+  rules:
+    - changes:
+        - apps/back-office/administration-fe/**/*
+
+deploy_admin:
   stage: deploy
-  #tags:
   script:
     - docker pull $CONTAINER_RELEASE_IMAGE
     - docker container rm -f admin-fe || true
     - docker run -p 5522:5522 --name admin-fe $CONTAINER_RELEASE_IMAGE
-  
-  only:
-  - main
   rules:
-     - changes:
-       - apps/**/*
+    - changes:
+        - apps/back-office/administration-fe/**/*
+
 build_vendor:
   stage: build
   script:
     - cd apps/back-office/vendor-fe .
     - docker build -t vendor-fe .
-deploy-vendor:
+  rules:
+    - changes:
+        - apps/back-office/vendor-fe/**/*
+
+deploy_vendor:
   stage: deploy
-  #tags:
   script:
     - docker pull $CONTAINER_RELEASE_IMAGE
     - docker container rm -f vendor-fe || true
     - docker run -p 5533:5533 --name megp-vendor-fe $CONTAINER_RELEASE_IMAGE
-  
-  only:
-  - main
-  
-
-
+  rules:
+    - changes:
+        - apps/back-office/vendor-fe/**/*
