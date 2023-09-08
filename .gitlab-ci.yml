@@ -66,9 +66,20 @@ build_egp:
   script:
     - cd apps/portal/egp
     - docker build -t egp .
+build_administration:
+  stage: build
+  script:
+    - cd apps/back-office/administration-fe .
+    - docker build -t administration-fe .
+build_vendor:
+  stage: build
+  script:
+    - cd apps/back-office/vendor-fe .
+    - docker build -t vendor-fe .
 deploy:
   stage: deploy
   script:
+    - docker-compose down
     - docker-compose up -d
   only:
   - main
