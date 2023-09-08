@@ -28,8 +28,8 @@ deploy_demo-fe:
   stage: deploy
   script:
     - docker pull $CONTAINER_RELEASE_IMAGE
-    - docker container rm -f +demo-fe || true
-    - docker run -p 5533:5533 --name +demo-fe $CONTAINER_RELEASE_IMAGE
+    - docker container rm -f demo-fe || true
+    - docker run -p 5533:5533 --name demo-fe $CONTAINER_RELEASE_IMAGE
   rules:
     - changes:
         - apps/back-office/+demo-fe/**/*
