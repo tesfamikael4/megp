@@ -96,7 +96,7 @@ deploy:
   script:
     - docker pull $CONTAINER_RELEASE_IMAGE
     - docker container rm -f megp-demo-fe || true
-    - docker-compose up -d 5500:5500 --name megp-demo-fe $CONTAINER_RELEASE_IMAGE
+    - docker-compose up -d 5500:5500  $CONTAINER_RELEASE_IMAGE
   
   only:
   - main
