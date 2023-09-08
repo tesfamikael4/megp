@@ -10,5 +10,8 @@
   "files.associations": {
     "*.css": "tailwindcss",
     "*.scss": "tailwindcss"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
   }
 }
