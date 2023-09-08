@@ -95,8 +95,8 @@ deploy:
   #tags:
   script:
     - docker pull $CONTAINER_RELEASE_IMAGE
-    - docker container rm -f megp-demo-fe || true
-    - docker run -p 5500:5500 megp-demo-fe $CONTAINER_RELEASE_IMAGE
+    - docker container rm -f megp-vendor-fe || true
+    - docker run -p 5533:5533 --name megp-vendor-fe $CONTAINER_RELEASE_IMAGE
   
   only:
   - main
