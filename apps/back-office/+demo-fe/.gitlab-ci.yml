@@ -17,7 +17,7 @@ build_demo-fe:
   script:
     - cd apps/back-office/+demo-fe
     - docker build -t demo-fe .
-    - docker push $CONTAINER_TEST_IMAGE
+   # - docker push $CONTAINER_TEST_IMAGE
 deploy_demo-fe:
   stage: deploy
   script:
