@@ -1,7 +1,28 @@
 stages:
   - build
+  - deploy
 
-build_back-office-Iam-fe:
+variables:  
+  CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+  CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE:latest
+
+before_script:
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+build_iam-fe:
+  only:
+    changes:
+      - "*"  # run pipeline if a root-level file like Makefile or docker-compose.yml is changed
+      - "apps/**/*" 
   stage: build
   script:
-    - echo "Building back-office-Iam-fe"
+    - cd apps/back-office/iam-fe
+    - docker build -t iam-fe .
+    - docker push $CONTAINER_TEST_IMAGE
+deploy_iam-fe:
+  stage: deploy
+  script:
+    - docker pull $CONTAINER_RELEASE_IMAGE
+    - docker container rm -f iam-fe || true
+    - docker run -d -p 5511:5511 --name iam-fe $CONTAINER_RELEASE_IMAGE
+  only:
+   - main
