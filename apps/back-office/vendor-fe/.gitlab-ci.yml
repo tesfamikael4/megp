@@ -1,7 +1,29 @@
 stages:
   - build
+  - deploy
 
-build_back-office-vender-fe:
+variables:  
+  CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+  CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE:latest
+
+before_script:
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+build_vendor-fe:
+  only:
+    changes:
+      - "*"  # run pipeline if a root-level file like Makefile or docker-compose.yml is changed
+      - "apps/**/*" 
   stage: build
   script:
-    - echo "Building back-office-vender-fe"
+    - cd apps/back-office/vendor-fe
+    - docker build -t vendor-fe .
+    - docker push $CONTAINER_TEST_IMAGE
+deploy_vendor-fe:
+  stage: deploy
+  script:
+    - docker pull $CONTAINER_RELEASE_IMAGE
+    - docker container rm -f vendor-fe || true
+    - docker run -d -p 5533:5533 --name vendor-fe $CONTAINER_RELEASE_IMAGE
+  only:
+   - main
+
