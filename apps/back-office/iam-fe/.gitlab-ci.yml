@@ -9,15 +9,16 @@ variables:
 before_script:
   - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
 build_iam-fe:
+  
+  stage: build
   only:
     changes:
       - "*"  # run pipeline if a root-level file like Makefile or docker-compose.yml is changed
       - "apps/**/*" 
-  stage: build
   script:
     - cd apps/back-office/iam-fe
     - docker build -t iam-fe .
-    - docker push $CONTAINER_TEST_IMAGE
+   # - docker push $CONTAINER_TEST_IMAGE
 deploy_iam-fe:
   stage: deploy
   script:
