@@ -24,6 +24,6 @@ deploy_iam-fe:
   script:
     - docker pull $CONTAINER_RELEASE_IMAGE
     - docker container rm -f iam-fe || true
-    - docker run -d -p 5511:5511 --name iam-fe $CONTAINER_RELEASE_IMAGE
+    - docker run -d -p 3000:3000 --name iam-fe $CONTAINER_RELEASE_IMAGE
   only:
    - main
