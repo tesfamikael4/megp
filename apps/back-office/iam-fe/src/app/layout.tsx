@@ -1,11 +1,24 @@
 import { Providers } from '@/store/provider';
-import './globals.css';
 import type { Metadata } from 'next';
 import RootStyleRegistry from './mantine';
+import { Shell } from '@megp/core-fe';
+
+import { Inter, Roboto_Mono } from 'next/font/google';
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
+});
+
+const roboto_mono = Roboto_Mono({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-roboto-mono',
+});
 
 export const metadata: Metadata = {
-  title: 'M-egp | Demo',
-  description: 'Demo app for M-egp',
+  title: 'M-egp | IAM',
+  description: 'Identity and access management',
 };
 
 export default function RootLayout({
@@ -14,10 +27,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${inter.variable} ${roboto_mono.variable}`}>
       <body>
         <Providers>
-          <RootStyleRegistry>{children}</RootStyleRegistry>
+          <RootStyleRegistry>
+            <Shell> {children}</Shell>
+          </RootStyleRegistry>
         </Providers>
       </body>
     </html>

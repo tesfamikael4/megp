@@ -1,0 +1,41 @@
+.container {
+  @apply flex;
+  background: #fbfbfd;
+  font-size: 0.875rem;
+
+  font-family: 'inter';
+}
+
+.side {
+  @apply flex flex-col h-screen border-r;
+  background-color: #f1f1ff;
+
+  width: 255px;
+}
+.header {
+  @apply bg-primary-700  p-2 flex items-center justify-between;
+  background: #222261;
+  height: 50px;
+  color: #f1f1ff;
+}
+.navigation {
+  @apply flex-auto;
+}
+.body {
+  @apply flex-auto;
+}
+.top {
+  @apply p-2 border-b  flex justify-between items-center;
+  height: 50px;
+  background-color: #f1f1ff;
+}
+.avatar {
+  @apply flex items-center gap-2;
+}
+.main {
+  @apply p-4;
+}
+
+.appName {
+  @apply text-base;
+}

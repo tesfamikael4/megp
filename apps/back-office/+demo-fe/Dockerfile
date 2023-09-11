@@ -3,7 +3,7 @@ WORKDIR /app
 COPY package.json ./
 RUN npm install -g npm@latest
 COPY . .
-EXPOSE 5599
+EXPOSE 5500
 CMD ["npm", "run", "dev"]
 
 #RUN mkdir -p /app
