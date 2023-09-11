@@ -1,5 +1,14 @@
 {
   "extends": "tsconfig/nextjs.json",
-  "include": ["."],
+  "compilerOptions": {
+    "plugins": [{ "name": "next" }],
+    "paths": {
+      "@/components/*": ["./components/*"],
+      "@/context/*": ["./store/*"],
+      "@/models/*": ["./models/*"],
+      "@/utility/*": ["./utility/*"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["dist", "build", "node_modules"]
 }

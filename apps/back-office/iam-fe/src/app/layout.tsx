@@ -4,6 +4,10 @@ import RootStyleRegistry from './mantine';
 import { Shell } from '@megp/core-fe';
 
 import { Inter, Roboto_Mono } from 'next/font/google';
+
+import { createContext } from 'react';
+import { ShellProvider } from './shell';
+
 const inter = Inter({
   subsets: ['latin'],
   display: 'swap',
@@ -28,10 +32,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${inter.variable} ${roboto_mono.variable}`}>
-      <body>
+      <body className="bg-gray-100">
         <Providers>
           <RootStyleRegistry>
-            <Shell> {children}</Shell>
+            <ShellProvider>
+              <Shell> {children}</Shell>
+            </ShellProvider>
           </RootStyleRegistry>
         </Providers>
       </body>

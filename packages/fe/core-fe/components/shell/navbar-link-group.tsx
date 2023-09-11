@@ -1,20 +1,17 @@
 'use client';
-import { useState } from 'react';
 import {
-  Group,
   Box,
   Collapse,
+  Group,
   ThemeIcon,
-  Text,
   UnstyledButton,
   createStyles,
   rem,
 } from '@mantine/core';
-import {
-  IconCalendarStats,
-  IconChevronLeft,
-  IconChevronRight,
-} from '@tabler/icons-react';
+import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
+import Link from 'next/link';
+import { useState } from 'react';
+import { usePathname } from 'next/navigation';
 
 const useStyles = createStyles((theme) => ({
   control: {
@@ -22,15 +19,13 @@ const useStyles = createStyles((theme) => ({
     display: 'block',
     width: '100%',
     padding: `${theme.spacing.xs} ${theme.spacing.md}`,
-    color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
+    color: theme.black,
     fontSize: theme.fontSizes.sm,
 
     '&:hover': {
-      backgroundColor:
-        theme.colorScheme === 'dark'
-          ? theme.colors.dark[7]
-          : theme.colors.gray[0],
-      color: theme.colorScheme === 'dark' ? theme.white : theme.black,
+      backgroundColor: theme.colors.gray[0],
+      color: theme.black,
+      textDecoration: 'none',
     },
   },
 
@@ -42,31 +37,31 @@ const useStyles = createStyles((theme) => ({
     paddingLeft: rem(31),
     marginLeft: rem(30),
     fontSize: theme.fontSizes.sm,
-    color:
-      theme.colorScheme === 'dark'
-        ? theme.colors.dark[0]
-        : theme.colors.gray[7],
-    borderLeft: `${rem(1)} solid ${
-      theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[3]
-    }`,
+    color: theme.colors.gray[7],
+    borderLeft: `${rem(1)} solid ${theme.colors.gray[3]}`,
 
     '&:hover': {
-      backgroundColor:
-        theme.colorScheme === 'dark'
-          ? theme.colors.dark[7]
-          : theme.colors.gray[0],
-      color: theme.colorScheme === 'dark' ? theme.white : theme.black,
+      backgroundColor: theme.colors.gray[0],
+      color: theme.black,
     },
   },
 
   chevron: {
     transition: 'transform 200ms ease',
   },
+
+  active: {
+    backgroundColor: theme.colors[theme.primaryColor][1],
+    color: theme.black,
+    borderRight: `2px solid ${theme.colors[theme.primaryColor][3]}`,
+  },
 }));
 
 interface LinksGroupProps {
   icon: React.FC<any>;
   label: string;
+  link?: string;
+  external?: boolean;
   initiallyOpened?: boolean;
   links?: { label: string; link: string }[];
 }
@@ -74,29 +69,34 @@ interface LinksGroupProps {
 export function LinksGroup({
   icon: Icon,
   label,
+  link,
+  external,
   initiallyOpened,
   links,
-}: LinksGroupProps) {
-  const { classes, theme } = useStyles();
+}: LinksGroupProps): React.ReactElement {
+  const { classes, theme, cx } = useStyles();
   const hasLinks = Array.isArray(links);
+
+  const pathname = usePathname();
+
   const [opened, setOpened] = useState(initiallyOpened || false);
+
   const ChevronIcon = theme.dir === 'ltr' ? IconChevronRight : IconChevronLeft;
-  const items = (hasLinks ? links : []).map((link) => (
-    <Text<'a'>
-      className={classes.link}
-      component="a"
-      href={link.link}
-      key={link.label}
-      onClick={(event) => event.preventDefault()}
-    >
-      {link.label}
-    </Text>
+
+  const items = (hasLinks ? links : []).map((l) => (
+    <Link className={classes.link} href={l.link} key={l.label}>
+      {l.label}
+    </Link>
   ));
+
+  const isActive = pathname === link;
 
   return (
     <>
-      <UnstyledButton
-        className={classes.control}
+      <UnstyledButton<'a' | typeof Link>
+        className={cx(classes.control, { [classes.active]: isActive })}
+        component={external ? 'a' : Link}
+        href={link ?? '#'}
         onClick={() => setOpened((o) => !o)}
       >
         <Group position="apart" spacing={0}>
@@ -122,30 +122,5 @@ export function LinksGroup({
       </UnstyledButton>
       {hasLinks ? <Collapse in={opened}>{items}</Collapse> : null}
     </>
-  );
-}
-
-const mockdata = {
-  label: 'Releases',
-  icon: IconCalendarStats,
-  links: [
-    { label: 'Upcoming releases', link: '/' },
-    { label: 'Previous releases', link: '/' },
-    { label: 'Releases schedule', link: '/' },
-  ],
-};
-
-export function NavbarLinksGroup() {
-  return (
-    <Box
-      sx={(theme) => ({
-        minHeight: rem(220),
-        padding: theme.spacing.md,
-        backgroundColor:
-          theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.white,
-      })}
-    >
-      <LinksGroup {...mockdata} />
-    </Box>
   );
 }

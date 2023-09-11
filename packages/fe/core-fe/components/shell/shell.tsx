@@ -14,67 +14,23 @@ import {
 } from '@mantine/core';
 import { useNetwork, useToggle } from '@mantine/hooks';
 import {
-  IconAdjustments,
-  IconAdjustmentsCog,
-  IconBasketCog,
-  IconBuildingStore,
-  IconCalendarEvent,
-  IconCalendarStats,
-  IconFileAnalytics,
-  IconFileSpreadsheet,
   IconGauge,
   IconHelpCircle,
-  IconLock,
   IconLogout,
   IconMenu2,
   IconMessages,
-  IconNotes,
-  IconPresentationAnalytics,
   IconSettings,
   IconUserCircle,
-  IconUsersGroup,
 } from '@tabler/icons-react';
 import Image from 'next/image';
+import { useContext } from 'react';
+import { Applications, CurrentApplication } from '../../config/applications';
+import { ShellContext } from '../../context/shell.context';
 import { LinksGroup } from './navbar-link-group';
 import Perago from './perago.png';
 import Logo from './ppda.svg';
 import styles from './shell.module.scss';
 
-const mockdata = [
-  { label: 'Dashboard', icon: IconGauge },
-  {
-    label: 'Market news',
-    icon: IconNotes,
-    initiallyOpened: true,
-    links: [
-      { label: 'Overview', link: '/' },
-      { label: 'Forecasts', link: '/' },
-      { label: 'Outlook', link: '/' },
-      { label: 'Real time', link: '/' },
-    ],
-  },
-  {
-    label: 'Releases',
-    icon: IconCalendarStats,
-    links: [
-      { label: 'Upcoming releases', link: '/' },
-      { label: 'Previous releases', link: '/' },
-      { label: 'Releases schedule', link: '/' },
-    ],
-  },
-  { label: 'Analytics', icon: IconPresentationAnalytics },
-  { label: 'Contracts', icon: IconFileAnalytics },
-  { label: 'Settings', icon: IconAdjustments },
-  {
-    label: 'Security',
-    icon: IconLock,
-    links: [
-      { label: 'Enable 2FA', link: '/' },
-      { label: 'Change password', link: '/' },
-      { label: 'Recovery codes', link: '/' },
-    ],
-  },
-];
 const items = [
   { title: 'Administration', href: '#' },
   { title: 'User', href: '#' },
@@ -84,14 +40,40 @@ const items = [
     {item.title}
   </Anchor>
 ));
-export default function Shell({
-  children,
-}: {
+
+interface ShellProps {
   children: React.ReactNode;
-}): React.ReactElement {
-  const links = mockdata.map((item) => (
-    <LinksGroup {...item} key={item.label} />
+}
+
+export function Shell({ children }: ShellProps): React.ReactElement {
+  const shellContext = useContext(ShellContext);
+
+  const currentApplication = CurrentApplication(
+    shellContext?.currentApplication,
+  ).name;
+
+  const applications = Applications.filter(
+    ({ name }) => name !== currentApplication,
+  ).map((item) => (
+    <Menu.Item
+      component="a"
+      href={`/${item.key}`}
+      icon={<item.icon size={14} />}
+      key={item.key}
+    >
+      {item.name}
+    </Menu.Item>
   ));
+
+  const links = [
+    {
+      label: 'Dashboard',
+      icon: IconGauge,
+      link: '/desktop/dashboard',
+      external: true,
+    },
+    ...(shellContext?.menuItems ?? []),
+  ].map((item) => <LinksGroup {...item} key={item.label} />);
 
   const [sideBar, toggle] = useToggle();
   const networkStatus = useNetwork();
@@ -134,7 +116,7 @@ export default function Shell({
                   </svg>
                   <Logo style={{ width: '30px' }} />
                   <Text fw={500} fz="md">
-                    | Vender Management
+                    | {currentApplication}
                   </Text>
                 </div>
               </Menu.Target>
@@ -142,25 +124,7 @@ export default function Shell({
               <Menu.Dropdown>
                 <Menu.Label>Applications</Menu.Label>
 
-                <Menu.Item icon={<IconBuildingStore size={14} />}>
-                  Vender Management
-                </Menu.Item>
-
-                <Menu.Item icon={<IconCalendarEvent size={14} />}>
-                  Planning
-                </Menu.Item>
-                <Menu.Item icon={<IconBasketCog size={14} />}>
-                  Tendering
-                </Menu.Item>
-                <Menu.Item icon={<IconFileSpreadsheet size={14} />}>
-                  Contract
-                </Menu.Item>
-                <Menu.Item icon={<IconAdjustmentsCog size={14} />}>
-                  Administration
-                </Menu.Item>
-                <Menu.Item icon={<IconUsersGroup size={14} />}>
-                  Identity & Access
-                </Menu.Item>
+                {applications}
               </Menu.Dropdown>
             </Menu>
           </div>
@@ -195,6 +159,7 @@ export default function Shell({
                         <Image
                           alt="Perago"
                           height={40}
+                          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                           src={Perago}
                           width={60}
                         />{' '}

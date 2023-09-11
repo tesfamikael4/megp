@@ -1,6 +1,6 @@
 .container {
   @apply flex;
-  background: #fbfbfd;
+
   font-size: 0.875rem;
 
   font-family: 'inter';
@@ -22,7 +22,7 @@
   @apply flex-auto;
 }
 .body {
-  @apply flex-auto;
+  @apply flex-auto bg-gray-100;
 }
 .top {
   @apply p-2 border-b  flex justify-between items-center;
@@ -33,7 +33,8 @@
   @apply flex items-center gap-2;
 }
 .main {
-  @apply p-4;
+  @apply container mx-auto my-4;
+  display: block;
 }
 
 .appName {
