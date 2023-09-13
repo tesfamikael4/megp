@@ -21,7 +21,7 @@ COPY --from=builder /app/out/json/ .
 COPY --from=builder /app/out/yarn.lock ./yarn.lock
 RUN yarn install
  
-# Build the project
+# Build the project ---> replace the file
 COPY --from=builder /app/out/full/ .
 RUN yarn turbo run build --filter=iam-fe...
  

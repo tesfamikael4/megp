@@ -9,8 +9,8 @@ build:
     - pnpm config set store-dir .pnpm-store
   script:
     - pnpm install # install dependencies
-    - pnpm -w run turbo run lint  --filter "[origin/main...HEAD^]"
-    - pnpm -w run turbo run build  --filter "[origin/main...HEAD^]"
+    - pnpm -w run turbo run lint  --filter "[origin/main...HEAD]"
+    - pnpm -w run turbo run build  --filter "[origin/main...HEAD]"
   cache:
     key:
       files:

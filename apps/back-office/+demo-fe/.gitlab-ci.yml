@@ -4,4 +4,4 @@ stages:
 build_back-office-demo-fe:
   stage: build
   script:
-    - echo "Building back-office"
+    - echo "Building back-office test"
