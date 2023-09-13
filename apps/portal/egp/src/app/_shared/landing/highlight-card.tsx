@@ -1,7 +1,7 @@
 'use client';
 
 import { Box, Center, Flex, Text } from '@mantine/core';
-import styles from './page.module.scss';
+import styles from './landing.module.scss';
 
 type HighLightCardProps = {
   type: 'grid' | 'list';

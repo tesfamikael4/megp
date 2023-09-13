@@ -1,6 +1,6 @@
 import { Box, Text } from '@mantine/core';
 import React from 'react';
-import styles from './page.module.scss';
+import styles from './landing.module.scss';
 type CircleCardProps = {
   borderColor: string;
   iconColor: string;
@@ -16,7 +16,7 @@ export const CircleCard = (props: CircleCardProps) => {
       h={250}
     >
       <Box
-        className={`${styles.circleCard} border-8   m-auto ${props.borderColor}`}
+        className={`${styles.circleCard} border-8  ${props.borderColor}`}
         p={20}
         mt={7}
         w={230}

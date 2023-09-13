@@ -13,16 +13,16 @@ export const DropDownMenus = () => {
       </Menu.Target>
       <Menu.Dropdown>
         <Menu.Item>
-          <Link href="/">Vendor List</Link>
+          <Link href="/egp/vendors">Vendor List</Link>
         </Menu.Item>
         <Menu.Item>
-          <Link href="/">Resources</Link>
+          <Link href="/egp/resources">Resources</Link>
         </Menu.Item>
         <Menu.Item>
-          <Link href="/">Help Center</Link>
+          <Link href="/egp/cms/help">Help Center</Link>
         </Menu.Item>
         <Menu.Item>
-          <Link href="/">FAQs</Link>
+          <Link href="/egp/cms/faq">FAQs</Link>
         </Menu.Item>
       </Menu.Dropdown>
     </Menu>

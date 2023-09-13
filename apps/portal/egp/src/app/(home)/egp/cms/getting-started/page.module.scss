@@ -1,0 +1,113 @@
+.container {
+  @apply bg-white mb-5;
+}
+
+.about_card {
+  @apply max-w-4xl mx-auto my-3 bg-gray-100 border rounded p-5;
+}
+
+.about_title {
+  @apply my-3 text-2xl font-bold text-gray-900 text-center;
+}
+
+.get_started_title {
+  @apply mt-6 mb-3 text-2xl font-bold text-center text-gray-900;
+}
+
+.get_started_description {
+  @apply mb-3 text-center text-gray-700;
+}
+
+.to_right_progress_flex {
+  @apply flex flex-row items-start;
+}
+
+.to_right_rounded_outer_box {
+  @apply border-t-4 border-r-4 border-transparent;
+}
+
+.to_right_rounded_inner_box {
+  @apply w-16 h-16 ml-16 border-b-4 border-l-4 border-gray-300 border-dashed rounded-bl-full;
+}
+
+.dashed_line_outer_box {
+  @apply flex-auto border-t-4 border-transparent;
+}
+
+.dashed_line {
+  @apply h-16 border-b-4 border-gray-300 border-dashed;
+}
+
+.rounded_to_bottom {
+  @apply w-16 h-16 mt-16 mr-16 border-t-4 border-r-4 border-gray-300 border-dashed rounded-tr-full;
+}
+
+.to_left_progress_flex {
+  @apply flex flex-row-reverse items-start;
+}
+
+.to_left_rounded_outer_box {
+  @apply border-t-4 border-l-4 border-transparent;
+}
+
+.to_left_rounded_inner_box {
+  @apply w-16 h-16 mr-16 border-b-4 border-r-4 border-gray-300 border-dashed rounded-br-full;
+}
+
+.rounded_to_bottom_from_right {
+  @apply w-16 h-16 mt-16 ml-16 border-t-4 border-l-4 border-gray-300 border-dashed rounded-tl-full;
+}
+
+.steps {
+  @apply flex-col items-center hidden md:flex;
+}
+
+.steps_left {
+  @apply flex flex-col items-center justify-center w-32 py-5  uppercase border border-gray-300 rounded mr-4;
+}
+
+.steps_right {
+  @apply flex flex-col items-center justify-center w-32 py-5  uppercase border border-gray-300 rounded ml-4;
+}
+
+.steps_title {
+  @apply text-xl font-black text-gray-500;
+}
+
+.steps_progress_outer {
+  @apply h-full border-l-4 border-transparent;
+}
+
+.steps_progress_inner_left {
+  @apply h-full mr-4 border-l-4 border-gray-300 border-dashed;
+}
+.steps_progress_inner_right {
+  @apply h-full ml-4 border-l-4 border-gray-300 border-dashed;
+}
+
+.steps_detail_card_outer {
+  @apply flex-auto border border-gray-300 rounded;
+}
+
+.steps_detail_card_inner {
+  @apply flex flex-col items-center p-6 md:flex-row;
+}
+
+.detail_title_box {
+  @apply flex items-center mt-6;
+}
+.detail_title {
+  @apply ml-5 text-xl font-semibold text-gray-900;
+}
+
+.detail_content {
+  @apply mt-3 ml-12 text-justify;
+}
+
+.detail_list {
+  @apply my-2 list-disc ml-6;
+}
+
+.detail_svg {
+  @apply w-full p-5 md:w-64;
+}
