@@ -4,7 +4,7 @@ export function Button(): JSX.Element {
       className="m-3 border-4 border-lime-400 text-purple-700"
       type="button"
     >
-      Buttons
+      Buttons f
     </button>
   );
 }
