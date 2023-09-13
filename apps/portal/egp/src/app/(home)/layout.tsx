@@ -28,13 +28,10 @@ export default function RootLayout({
                 <Link href="/">Home</Link>
               </li>
               <li>
-                <Link href="/">Tenders</Link>
+                <Link href="/egp/bids/all">Tenders</Link>
               </li>
               <li>
-                <Link href="/">Procurement Information</Link>
-              </li>
-              <li>
-                <Link href="/">Registration Services</Link>
+                <Link href="/egp/cms">Procurement Information</Link>
               </li>
               <li>
                 <DropDownMenus />
@@ -44,12 +41,12 @@ export default function RootLayout({
             <ul className={styles.navActions}>
               <li>
                 <Link href="/auth/login" passHref>
-                  Login
+                  Sign In
                 </Link>
               </li>
               <li>
                 <Link href="/auth/signup" passHref>
-                  Sign Up
+                  Create Account
                 </Link>
               </li>
             </ul>

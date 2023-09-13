@@ -48,7 +48,7 @@
   @apply font-semibold mt-5 text-center text-slate-500 text-sm md:text-base;
 }
 .featureCard {
-  @apply cursor-pointer shadow-sm hover:shadow-xl mt-10 md:mt-0;
+  @apply cursor-pointer shadow-sm hover:shadow-xl mt-10 md:mt-0 mx-auto;
 }
 
 .featuresList {
@@ -60,7 +60,7 @@
 }
 
 .circleCard {
-  @apply bg-white rounded-full ;
+  @apply bg-white rounded-full m-auto;
 }
 
 .footer {
