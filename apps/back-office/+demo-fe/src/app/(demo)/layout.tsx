@@ -5,5 +5,5 @@ export default function DefaultLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <section className={styles.bod}>ee{children}</section>;
+  return <section className={styles.bod}>{children}</section>;
 }

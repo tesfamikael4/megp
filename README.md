@@ -8,4 +8,8 @@
 
 ## How to deploy
 
+```
+pnpm -w run turbo run lint  --filter "origin/main...[HEAD^]"
+```
+
 ## Structure
