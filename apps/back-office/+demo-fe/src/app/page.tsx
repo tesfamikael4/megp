@@ -4,7 +4,7 @@ export default function Home() {
   return (
     <main className={styles.center}>
       <Link href="/dashboard" className="text-blue-900">
-        GO to Dashboard page landing
+        GO to Dashboard page (landing)
       </Link>
     </main>
   );
