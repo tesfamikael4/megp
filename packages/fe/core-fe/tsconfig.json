@@ -2,11 +2,12 @@
   "extends": "tsconfig/nextjs.json",
   "compilerOptions": {
     "plugins": [{ "name": "next" }],
+    "baseUrl": "./",
     "paths": {
-      "@/components/*": ["./components/*"],
-      "@/context/*": ["./store/*"],
-      "@/models/*": ["./models/*"],
-      "@/utility/*": ["./utility/*"]
+      "@/components/*": ["./src/components/*"],
+      "@/context/*": ["./src/store/*"],
+      "@/models/*": ["./src/models/*"],
+      "@/utility/*": ["./src/utility/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

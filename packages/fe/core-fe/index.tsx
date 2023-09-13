@@ -1,6 +1,6 @@
-export * from './components/button/button';
-export * from './components/section/section';
-export { default as logger } from './utility/logger';
-export * from './components/shell/shell';
-export * from './models';
-export * from './context';
+export * from './src/components/button/button';
+export * from './src/components/section/section';
+export { default as logger } from './src/utility/logger';
+export * from './src/components/shell/shell';
+export * from './src/models';
+export * from './src/context';

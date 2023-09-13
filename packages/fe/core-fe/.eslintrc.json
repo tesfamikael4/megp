@@ -1,0 +1,6 @@
+{
+  "extends": "custom/react-internal",
+  "rules": {
+    "@typescript-eslint/no-unsafe-return": "off"
+  }
+}
