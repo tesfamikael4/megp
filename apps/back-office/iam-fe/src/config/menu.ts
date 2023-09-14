@@ -1,7 +1,9 @@
 import { MenuItem } from '@megp/core-fe';
 import {
+  IconAdjustmentsHorizontal,
   IconBuildingBank,
   IconBuildingCommunity,
+  IconChartInfographic,
   IconLockSquareRounded,
   IconUsers,
   IconUsersGroup,
@@ -18,14 +20,14 @@ export const Menu: MenuItem[] = [
   { label: 'Groups', icon: IconUsersGroup, link: '/groups' },
   { label: 'Units', icon: IconBuildingCommunity, link: '/units' },
   { label: 'Roles', icon: IconLockSquareRounded, link: '/roles' },
+  { label: 'Report & Analytics', icon: IconChartInfographic, link: '/reports' },
 
-  // {
-  //     label: 'Security',
-  //     icon: IconLock,
-  //     links: [
-  //         { label: 'Enable 2FA', link: '/' },
-  //         { label: 'Change password', link: '/' },
-  //         { label: 'Recovery codes', link: '/' },
-  //     ],
-  // },
+  {
+    label: 'Settings',
+    icon: IconAdjustmentsHorizontal,
+    links: [
+      { label: 'Organization Types', link: '/' },
+      { label: 'Unit Types', link: '/' },
+    ],
+  },
 ];

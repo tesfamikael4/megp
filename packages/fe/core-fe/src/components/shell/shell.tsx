@@ -14,7 +14,6 @@ import {
 } from '@mantine/core';
 import { useNetwork, useToggle } from '@mantine/hooks';
 import {
-  IconGauge,
   IconHelpCircle,
   IconLogout,
   IconMenu2,
@@ -32,7 +31,6 @@ import Logo from './ppda.svg';
 import styles from './shell.module.scss';
 
 const items = [
-  { title: 'Administration', href: '#' },
   { title: 'User', href: '#' },
   { title: 'use-id', href: '#' },
 ].map((item, index) => (
@@ -65,15 +63,9 @@ export function Shell({ children }: ShellProps): React.ReactElement {
     </Menu.Item>
   ));
 
-  const links = [
-    {
-      label: 'Dashboard',
-      icon: IconGauge,
-      link: '/desktop/dashboard',
-      external: true,
-    },
-    ...(shellContext?.menuItems ?? []),
-  ].map((item) => <LinksGroup {...item} key={item.label} />);
+  const links = shellContext?.menuItems.map((item) => (
+    <LinksGroup {...item} key={item.label} />
+  ));
 
   const [sideBar, toggle] = useToggle();
   const networkStatus = useNetwork();
@@ -180,7 +172,10 @@ export function Shell({ children }: ShellProps): React.ReactElement {
               <IconMenu2 size="1rem" />
             </ActionIcon>
             <div>
-              <Breadcrumbs>{items}</Breadcrumbs>
+              <Breadcrumbs>
+                <Anchor href="/launcher/">Home</Anchor>
+                {items}
+              </Breadcrumbs>
             </div>
           </div>
           <Menu shadow="md" trigger="hover" width={200}>

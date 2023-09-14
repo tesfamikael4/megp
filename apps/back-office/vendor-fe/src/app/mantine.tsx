@@ -7,7 +7,7 @@ import {
   MantineThemeOverride,
 } from '@mantine/core';
 import { useServerInsertedHTML } from 'next/navigation';
-
+import './globals.css';
 // must be created outside of the component to persist across renders
 const cache = createEmotionCache({ key: 'my' });
 cache.compat = true;
@@ -40,16 +40,16 @@ export default function RootStyleRegistry({
 
     colors: {
       primary: [
-        '#f6faf3',
-        '#e9f5e3',
-        '#d3eac8',
-        '#afd89d',
-        '#82bd69',
-        '#61a146',
-        '#4c8435',
-        '#3d692c',
-        '#345427',
-        '#2b4522',
+        '#f0f0fa',
+        '#dddcee',
+        '#b6b6de',
+        '#8f8ecf',
+        '#6d6bc2',
+        '#5855ba',
+        '#4d4ab8',
+        '#3f3ca2',
+        '#363591',
+        '#2d2d80',
       ],
     },
 
@@ -67,33 +67,33 @@ export default function RootStyleRegistry({
       },
       Button: {
         defaultProps: {
-          size: 'md',
+          size: 'sm',
         },
       },
 
       Input: {
         defaultProps: {
-          size: 'md',
+          size: 'sm',
         },
       },
       TextInput: {
         defaultProps: {
-          size: 'md',
+          size: 'sm',
         },
       },
       NumberInput: {
         defaultProps: {
-          size: 'md',
+          size: 'sm',
         },
       },
       Select: {
         defaultProps: {
-          size: 'md',
+          size: 'sm',
         },
       },
       PasswordInput: {
         defaultProps: {
-          size: 'md',
+          size: 'sm',
         },
       },
     },
