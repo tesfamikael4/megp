@@ -14,6 +14,13 @@ import {
   IconPackage,
   IconCalendarEvent,
   IconFiles,
+  IconCheckupList,
+  IconSquareLetterX,
+  IconAward,
+  IconSignature,
+  IconUsers,
+  IconUsersGroup,
+  IconBuilding,
 } from '@tabler/icons-react';
 import {
   Box,
@@ -30,31 +37,10 @@ import { FeaturesCard } from '@/shared/landing/features-card';
 import { HighLightCard } from '@/shared/landing/highlight-card';
 import { WaveSVG } from '@/shared/landing/wave-svg';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function Home() {
   const router = useRouter();
-  const data = [
-    {
-      title: '0',
-      subTitle: 'Total Active Tenders',
-      icon: <IconInbox />,
-    },
-    {
-      title: '0',
-      subTitle: 'Tender Published Today',
-      icon: <IconNews />,
-    },
-    {
-      title: '0',
-      subTitle: 'Tenders Closing Today',
-      icon: <IconArchive />,
-    },
-    {
-      title: '0',
-      subTitle: 'Tenders Opening Today',
-      icon: <IconArchive />,
-    },
-  ];
 
   const gettingStarted = () => {
     router.push('/egp/cms/getting-started');
@@ -76,32 +62,101 @@ export default function Home() {
                 realize fast time to value, promote equal opportunities for the
                 business community, and better regulatory compliance.
               </p>
-              <Group>
-                <Button variant="filled" onClick={SignUp}>
+              <Box className="flex justify-center md:justify-start">
+                <Button variant="filled" onClick={SignUp} mr={10}>
                   Sign Up
                 </Button>
                 <Button variant="filled" onClick={gettingStarted}>
                   Get Started
                 </Button>
-              </Group>
+              </Box>
             </Box>
             <Box className="w-0 md:w-1/2">
               <EgpProcess />
             </Box>
           </Flex>
           <div className={styles.highlight}>
-            <HighLightCard type="grid" data={data} />
-            <HighLightCard type="grid" data={data} />
-            <HighLightCard type="grid" data={data} />
+            <HighLightCard
+              type="grid"
+              data={[
+                {
+                  title: '0',
+                  subTitle: 'Total Active Tenders',
+                  icon: <IconInbox />,
+                },
+                {
+                  title: '0',
+                  subTitle: 'Tender Published Today',
+                  icon: <IconNews />,
+                },
+                {
+                  title: '0',
+                  subTitle: 'Tenders Closing Today',
+                  icon: <IconArchive />,
+                },
+                {
+                  title: '0',
+                  subTitle: 'Tenders Opening Today',
+                  icon: <IconArchive />,
+                },
+              ]}
+            />
+            <HighLightCard
+              type="grid"
+              data={[
+                {
+                  title: '0',
+                  subTitle: 'Tenders Under Evaluation',
+                  icon: <IconCheckupList />,
+                },
+                {
+                  title: '0',
+                  subTitle: 'Tenders Cancelled',
+                  icon: <IconSquareLetterX />,
+                },
+                {
+                  title: '0',
+                  subTitle: 'Tenders Awarded',
+                  icon: <IconAward />,
+                },
+                {
+                  title: '0',
+                  subTitle: 'Contracts Signed',
+                  icon: <IconSignature />,
+                },
+              ]}
+            />
+            <HighLightCard
+              type="list"
+              data={[
+                {
+                  title: '0',
+                  subTitle: 'Tenders Published to Date',
+                  icon: <IconInbox />,
+                },
+                {
+                  title: '0',
+                  subTitle: 'Registered Vendors',
+                  icon: <IconUsersGroup />,
+                },
+                {
+                  title: '0',
+                  subTitle: 'Procuring Entities',
+                  icon: <IconBuilding />,
+                },
+              ]}
+            />
           </div>
 
           <Center mt={30}>
-            <IconChevronDown className="cursor-pointer" />
+            <Link href="#features">
+              <IconChevronDown className="cursor-pointer" />
+            </Link>
           </Center>
         </Container>
       </Box>
       {/* Features */}
-      <Box>
+      <Box id="features">
         <Container className={styles.featureContainer}>
           <p className={styles.featureTitle}>What can we do for you today</p>
           <p className={styles.featureSubtitle}>

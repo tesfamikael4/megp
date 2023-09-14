@@ -35,6 +35,15 @@
 .highlightCard {
   @apply w-1/2 bg-white cursor-pointer hover:shadow-lg p-4;
 }
+.highlightListCard {
+  @apply w-full rounded-3xl shadow-lg;
+}
+.highlightList {
+  @apply hover:shadow-lg cursor-pointer w-full border-b  py-2 px-4 z-10 bg-white;
+}
+.highlightListFlex{
+  @apply flex items-center w-full ;
+}
 
 .featureContainer {
   @apply py-10 md:py-20;

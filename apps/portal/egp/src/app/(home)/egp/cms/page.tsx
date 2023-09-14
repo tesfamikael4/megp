@@ -1,3 +1,5 @@
+import { UnderConstruction } from '@/shared/ui/under-construction';
+
 export default function CMS() {
-  return <h1>Comming Soon</h1>;
+  return <UnderConstruction />;
 }

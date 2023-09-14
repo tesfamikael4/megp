@@ -51,9 +51,9 @@ export default function GettingStarted() {
           'Obtain annual procurement plans of government agencies so that the business community gets prepared and respond more effectively.',
           'Access tender notices of various government agencies for the procurement of goods, services and works.',
           'Provide access to tender opening minutes, evaluation reports, contract awards, and other procurement information.',
-          'Register your company in the national suppliers list to participate in government procurement.',
-          'Access registered local and international companies and traders from the national suppliers list.',
-          'Identify suppliers that are debarred from participating in government procurement.',
+          'Register your company in the national vendors list to participate in government procurement.',
+          'Access registered local and international companies and traders from the national vendors list.',
+          'Identify vendors that are debarred from participating in government procurement.',
           'Access various electronic resources related to public procurement',
         ]}
       />
@@ -70,23 +70,23 @@ export default function GettingStarted() {
       />
       <StepsCard
         icon={IconUserEdit}
-        title="Supplier Registration"
+        title="Vendor Registration"
         step="Step 3"
         align="left"
         lists={[
-          'If you wish to be a supplier, you will be required to register your organization as a supplier by clicking on Registration Services link at the top menu.',
-          'You will find supplier registration form and you fill all the details in the provided fields and also attach required legal documents.',
-          'Once you finish filling the form, click on Register and wait for the supplier approval. Once you receive the supplier registration approval notification, as a registered supplier, you can participate in public procurement.',
+          'If you wish to be a vendor, you will be required to register your organization as a vendor by clicking on Registration Services link at the top menu.',
+          'You will find vendor registration form and you fill all the details in the provided fields and also attach required legal documents.',
+          'Once you finish filling the form, click on Register and wait for the vendor approval. Once you receive the vendor registration approval notification, as a registered vendor, you can participate in public procurement.',
         ]}
       />
 
       <StepsCard
-        title="Using supplier tools"
+        title="Using vendor tools"
         icon={IconSettings}
         align="right"
         step="Step 4"
         isEnd={true}
-        description="Once you have registered as a supplier and get approved by FPPA, you can use the following features to participate in public procurement."
+        description="Once you have registered as a vendor and get approved by FPPA, you can use the following features to participate in public procurement."
         lists={[
           'Search for active tender opportunities, and get registered to a tender to access the bidding document free of charge or by paying participation fee. The system will provide you with a unique secrete key or keys to participate in the procurement process. If the tender is a two-envelop tender, you will receive two keys to lock (encrypt) your technical and financial documents separately. You have to protect and keep the key(s) confidential; without it your participation cannot be completed.',
           'Once you get the bidding document, you can send clarification questions, participate in pre-bid conference and conduct site visits, if it is allowed.',
