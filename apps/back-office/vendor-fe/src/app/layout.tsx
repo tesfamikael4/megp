@@ -1,11 +1,11 @@
 import { Providers } from '@/store/provider';
 import { Shell } from '@megp/core-fe';
-import type { Metadata } from 'next';
 import RootStyleRegistry from './mantine';
 
 import { Inter, Roboto_Mono } from 'next/font/google';
 
 import { ShellProvider } from './shell';
+import { Metadata } from 'next';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -21,7 +21,11 @@ const roboto_mono = Roboto_Mono({
 
 export const metadata: Metadata = {
   title: 'M-egp | Vendor',
-  description: 'Identity and access management',
+  description: 'Vendor management',
+  icons: {
+    icon: '/vendors/favicon/android-chrome-512x512.png',
+  },
+  manifest: '/vendors/favicon/site.webmanifest',
 };
 
 export default function RootLayout({
@@ -31,7 +35,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${inter.variable} ${roboto_mono.variable}`}>
-      <body className="bg-gray-100">
+      <body suppressHydrationWarning={true}>
         <Providers>
           <RootStyleRegistry>
             <ShellProvider>

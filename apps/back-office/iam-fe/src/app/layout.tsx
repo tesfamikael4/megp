@@ -23,6 +23,10 @@ const roboto_mono = Roboto_Mono({
 export const metadata: Metadata = {
   title: 'M-egp | IAM',
   description: 'Identity and access management',
+  icons: {
+    icon: '/iam/favicon/android-chrome-512x512.png',
+  },
+  manifest: '/iam/favicon/site.webmanifest',
 };
 
 export default function RootLayout({
@@ -32,7 +36,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${inter.variable} ${roboto_mono.variable}`}>
-      <body className="bg-gray-100">
+      <body suppressHydrationWarning={true}>
         <Providers>
           <RootStyleRegistry>
             <ShellProvider>

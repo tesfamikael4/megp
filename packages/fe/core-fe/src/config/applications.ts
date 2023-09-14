@@ -15,8 +15,8 @@ interface ApplicationType {
 }
 
 export const Applications = [
-  { key: 'vender', name: 'Vender Management', icon: IconBuildingStore },
-  { key: 'Planning', name: 'Planning', icon: IconCalendarEvent },
+  { key: 'vendor', name: 'Vendor Management', icon: IconBuildingStore },
+  { key: 'planning', name: 'Planning', icon: IconCalendarEvent },
   { key: 'tendering', name: 'Tendering', icon: IconBasketCog },
   { key: 'contract', name: 'Contract', icon: IconFileSpreadsheet },
   { key: 'administration', name: 'Administration', icon: IconAdjustmentsCog },

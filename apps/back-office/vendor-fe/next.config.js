@@ -1,5 +1,5 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = { basePath: '/vendor',reactStrictMode: true,transpilePackages: ['@megp/core-fe'],
+const nextConfig = { basePath: '/vendors',reactStrictMode: true,transpilePackages: ['@megp/core-fe'],
 
    webpack(config, { isServer }) {
   // Configures webpack to handle SVG files with SVGR. SVGR optimizes and transforms SVG files

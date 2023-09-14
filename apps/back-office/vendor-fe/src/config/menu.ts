@@ -13,15 +13,15 @@ import {
 } from '@tabler/icons-react';
 
 export const Menu: MenuItem[] = [
-  { label: 'Vendors', icon: IconBuildingStore, link: '/organizations' },
+  { label: 'Vendors', icon: IconBuildingStore, link: '/' },
   {
-    label: 'Registration Service',
+    label: 'New Registration ',
     icon: IconHomePlus,
     link: '/my-organization',
   },
-  { label: 'Upgrade Service', icon: IconHomeUp, link: '/users' },
-  { label: 'Renewal Service', icon: IconHomeRibbon, link: '/groups' },
-  { label: 'Information Change Service', icon: IconHomeStar, link: '/units' },
+  { label: 'Upgrade', icon: IconHomeUp, link: '/users' },
+  { label: 'Renewal', icon: IconHomeRibbon, link: '/groups' },
+  { label: 'Information Change', icon: IconHomeStar, link: '/units' },
   { label: 'Payment', icon: IconReportMoney, link: '/debarment' },
   { label: 'Debarment', icon: IconHomeCancel, link: '/debarment' },
   {
