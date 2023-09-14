@@ -18,6 +18,7 @@ import Link from 'next/link';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { signIn } from 'supertokens-web-js/recipe/emailpassword';
+import { emailPasswordSignIn } from 'supertokens-web-js/recipe/thirdpartyemailpassword';
 import { zodResolver } from '@hookform/resolvers/zod';
 import z from 'zod';
 import { notifications } from '@mantine/notifications';
@@ -47,7 +48,7 @@ export default function Signin() {
   const onSubmit = async (data: any) => {
     try {
       setIsSigningIn(true);
-      let response = await signIn({
+      let response = await emailPasswordSignIn({
         formFields: [
           {
             id: 'email',
@@ -91,7 +92,7 @@ export default function Signin() {
   };
 
   return (
-    <Container className={styles.container}>
+    <Container>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Paper withBorder className={styles.paper_wrapper}>
           <Flex className={styles.flex_wrapper}>
@@ -156,7 +157,10 @@ export default function Signin() {
                 />
                 <Group position="apart" className={styles.group}>
                   <Checkbox label="Remember me" sx={{ lineHeight: 1 }} />
-                  <Link onClick={(event) => event.preventDefault()} href="#">
+                  <Link
+                    href="/auth/forgot-password"
+                    className="text-green-700 hover:text-green-800"
+                  >
                     Forgot password?
                   </Link>
                 </Group>

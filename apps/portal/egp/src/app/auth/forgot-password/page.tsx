@@ -1,3 +1,109 @@
+'use client';
+import { useState } from 'react';
+import {
+  Container,
+  Paper,
+  Text,
+  TextInput,
+  Button,
+  Flex,
+  Box,
+} from '@mantine/core';
+import Image from 'next/image';
+import { IconAt } from '@tabler/icons-react';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import z from 'zod';
+import { sendPasswordResetEmail } from 'supertokens-web-js/recipe/thirdpartyemailpassword';
+import { IconChecks } from '@tabler/icons-react';
+import { notifications } from '@mantine/notifications';
+
+const schema = z.object({
+  email: z.string().email('Please enter a valid email'),
+});
+
+type FormSchema = z.infer<typeof schema>;
+
 export default function ForgotPasswordPage() {
-  return <h1>forgotPassword</h1>;
+  const [loading, setLoading] = useState<boolean>(false);
+  const [response, setResponse] = useState<string>('');
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormSchema>({ resolver: zodResolver(schema) });
+
+  const onSubmit: SubmitHandler<FormSchema> = async (data: FormSchema) => {
+    try {
+      setLoading(true);
+      let response = await sendPasswordResetEmail({
+        formFields: [
+          {
+            id: 'email',
+            value: data.email,
+          },
+        ],
+      });
+      setResponse(response.status);
+      // reset password email sent.
+    } catch (err: any) {
+      if (err.isSuperTokensGeneralError === true) {
+        // this may be a custom error message sent from the API by you.
+        notifications.show({
+          title: 'Error',
+          message: err.message,
+        });
+      } else {
+        notifications.show({
+          title: 'Error',
+          message: 'Oops! Something went wrong.',
+        });
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Container maw={550}>
+      <Paper withBorder className="p-3 md:p-5">
+        <Flex direction={'column'}>
+          <Image
+            src="/forgot-password.svg"
+            width={300}
+            height={300}
+            alt="forgot-password"
+            className="mx-auto"
+          />
+          {response === 'OK' && (
+            <Box className="mt-4">
+              <IconChecks color="#3d692c" size={48} className="mx-auto" />
+              <Text align="center">
+                We have sent you a reset link to the email you provided. Please
+                click on the link to proceed reseting your password.
+              </Text>
+            </Box>
+          )}
+          {response === 'FIELD_ERROR' && (
+            <Text>Oops! Something went wrong.</Text>
+          )}
+          {!response && (
+            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
+              <TextInput
+                label="Please enter your email below so we can send you a reset link: "
+                placeholder="Your email"
+                icon={<IconAt size="0.8rem" />}
+                error={errors.email?.message}
+                {...register('email')}
+              ></TextInput>
+              <Button className="mt-6" type="submit" loading={loading}>
+                Send link
+              </Button>
+            </form>
+          )}
+        </Flex>
+      </Paper>
+    </Container>
+  );
 }
