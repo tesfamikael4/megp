@@ -1,6 +1,6 @@
 'use client';
 
-import { MenuItem } from '@megp/core-fe/models/shell';
+import { MenuItem } from '@megp/core-fe';
 import { createContext, useContext, useState, ReactNode } from 'react';
 
 // Define the context interface
