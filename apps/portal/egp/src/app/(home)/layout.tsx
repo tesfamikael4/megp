@@ -5,6 +5,7 @@ import styles from './page.module.scss';
 
 import { DropDownMenus } from '@/shared/landing/nav-dropdown-menus';
 import Image from 'next/image';
+import { MobileHeader } from '@/shared/layout/mobile-header';
 
 export const metadata: Metadata = {
   title: 'M-egp',
@@ -21,35 +22,39 @@ export default function RootLayout({
       <header className={styles.header}>
         <nav className={styles.nav}>
           <div className={styles.headerContainer}>
-            <Image src="/ppda.png" alt="logo" width="70" height="20" />
+            <Image src="/ppda.png" alt="logo" width="50" height="15" />
 
             <ul className={styles.navLinks}>
-              <li>
+              <li className={styles.navLink}>
                 <Link href="/">Home</Link>
               </li>
-              <li>
+              <li className={styles.navLink}>
                 <Link href="/egp/bids/all">Tenders</Link>
               </li>
-              <li>
+              <li className={styles.navLink}>
                 <Link href="/egp/cms">Procurement Information</Link>
               </li>
-              <li>
+              <li className={styles.navLink}>
+                <Link href="/vendor/dashboard">Registration Service</Link>
+              </li>
+              <li className={styles.navLink}>
                 <DropDownMenus />
               </li>
             </ul>
 
             <ul className={styles.navActions}>
-              <li>
+              <li className={styles.navLink}>
                 <Link href="/auth/login" passHref>
                   Sign In
                 </Link>
               </li>
-              <li>
+              <li className={styles.navLink}>
                 <Link href="/auth/signup" passHref>
                   Create Account
                 </Link>
               </li>
             </ul>
+            <MobileHeader />
           </div>
         </nav>
       </header>
@@ -85,23 +90,17 @@ export default function RootLayout({
                 <br />
                 The Jireh Bible House,
                 <br />
-                Area 3,
-                <br />
-                Off Colby Road,
+                Area 3,Off Colby Road,
                 <br />
                 Private Bag 383,
                 <br />
-                Capital City,
-                <br />
-                Lilongwe 3,
+                Capital City,Lilongwe 3, Malawi
                 <br />
                 Phone: (256)0 887 083 261
                 <br />
                 Email: <a href="mailto:dg@ppda.mw">dg@ppda.mw</a>
                 <br />
                 Website: <a href="http://www.ppda.mw/">www.ppda.mw</a>
-                <br />
-                Malawi
               </address>
             </div>
 
@@ -140,12 +139,14 @@ export default function RootLayout({
             </p>
             <div className="flex">
               <p>Powered By :</p>
-              <Image
-                src="/perago.png"
-                alt="perago logo"
-                height="20"
-                width="70"
-              />
+              <Link href="http://peragosystems.com/home">
+                <Image
+                  src="/perago.png"
+                  alt="perago logo"
+                  height="20"
+                  width="70"
+                />
+              </Link>
             </div>
           </div>
         </section>
