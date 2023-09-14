@@ -12,7 +12,7 @@ export default function AuthLayout({
 }) {
   return (
     <section className={styles.bod} suppressHydrationWarning={true}>
-      <SuperToken>{children}</SuperToken>
+      {children}
       <Flex className={styles.footer_wrapper}>
         <p className={styles.footer_text}>
           Copyright &copy; 2023, Procurement and Disposal of Assets Authority.
