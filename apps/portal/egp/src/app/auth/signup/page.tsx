@@ -19,13 +19,13 @@ import Link from 'next/link';
 import React from 'react';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { signUp } from 'supertokens-web-js/recipe/emailpassword';
 import { doesEmailExist } from 'supertokens-web-js/recipe/thirdpartyemailpassword';
 import Image from 'next/image';
 import countries from './countries';
 import z from 'zod';
 import { notifications } from '@mantine/notifications';
 import styles from './page.module.scss';
+import { emailPasswordSignUp } from 'supertokens-web-js/recipe/thirdpartyemailpassword';
 
 const schema = z.object({
   name: z.string().min(1, { message: 'This field is required.' }),
@@ -113,8 +113,7 @@ const SignUpPage = () => {
   const onSubmit: SubmitHandler<FormSchema> = async (data: FormSchema) => {
     try {
       setIsSigningUp(true);
-      console.log('email exist chekc passed');
-      let response = await signUp({
+      let response = await emailPasswordSignUp({
         formFields: [
           {
             id: 'email',
@@ -126,7 +125,7 @@ const SignUpPage = () => {
           },
         ],
       });
-      router.push('/signin');
+      router.push('/auth/verification');
     } catch (err: any) {
       if (err.isSuperTokensGeneralError === true) {
         //this may be a custom error message sent from the API by you.

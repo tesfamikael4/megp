@@ -9,7 +9,7 @@ import { AuthModule } from './auth/auth.module';
       appInfo: {
         appName: 'm-egp',
         apiDomain: 'http://196.189.44.47:3567',
-        websiteDomain: 'http://196.189.44.47:3569',
+        websiteDomain: 'http://localhost:5500',
         apiBasePath: '/auth',
         websiteBasePath: '/auth',
       },

@@ -1,5 +1,9 @@
-.bod {
+/* .bod {
   @apply m-4 mx-1 md:m-10;
+} */
+
+.bod {
+  @apply flex justify-center items-center h-screen flex-col;
 }
 
 .image {

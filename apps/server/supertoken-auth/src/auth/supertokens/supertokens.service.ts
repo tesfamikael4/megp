@@ -5,6 +5,7 @@ import ThirdPartyEmailPassword from 'supertokens-node/recipe/thirdpartyemailpass
 import Dashboard from 'supertokens-node/recipe/dashboard';
 import EmailVerification from 'supertokens-node/recipe/emailverification';
 import { SMTPService } from 'supertokens-node/recipe/thirdpartyemailpassword/emaildelivery';
+import { SMTPService as EmailVerificationSMTPService } from 'supertokens-node/recipe/emailverification/emaildelivery';
 
 import { ConfigInjectionToken, AuthModuleConfig } from '../config.interface';
 
@@ -17,7 +18,7 @@ export class SupertokensService {
       password: 'Qar60448',
       port: 587,
       from: {
-        name: 'Test',
+        name: 'Account Control',
         email: 'egpadmin@mofed.gov.et',
       },
       secure: false,
@@ -35,6 +36,9 @@ export class SupertokensService {
         }),
         EmailVerification.init({
           mode: 'REQUIRED', // or "OPTIONAL"
+          emailDelivery: {
+            service: new EmailVerificationSMTPService({ smtpSettings }),
+          },
         }),
         Dashboard.init(),
         ThirdPartyEmailPassword.init({
