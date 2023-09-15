@@ -1,0 +1,20 @@
+{
+  "name": "@megp/theme",
+  "version": "0.0.0",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "lint": "eslint ./src --ext .ts,.tsx"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@mantine/core": "^6.0.19"
+  },
+  "devDependencies": {
+    "sass": "^1.66.1",
+    "@megp/tsconfig": "workspace:*",
+    "@megp/eslint-config-custom": "workspace:*"
+  }
+}

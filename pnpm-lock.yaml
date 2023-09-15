@@ -14,6 +14,9 @@ importers:
       '@commitlint/config-conventional':
         specifier: ^17.7.0
         version: 17.7.0
+      '@megp/tsconfig':
+        specifier: workspace:*
+        version: link:packages/config/tsconfig
       eslint:
         specifier: ^8.47.0
         version: 8.47.0
@@ -26,9 +29,6 @@ importers:
       prettier:
         specifier: ^3.0.2
         version: 3.0.2
-      tsconfig:
-        specifier: workspace:*
-        version: link:packages/config/tsconfig
       turbo:
         specifier: latest
         version: 1.10.13
@@ -74,6 +74,9 @@ importers:
       '@mantine/tiptap':
         specifier: ^6.0.19
         version: 6.0.19(@mantine/core@6.0.19)(@mantine/hooks@6.0.19)(@tabler/icons-react@2.32.0)(@tiptap/extension-link@2.1.7)(@tiptap/react@2.1.7)(react@18.2.0)
+      '@megp/theme':
+        specifier: workspace:*
+        version: link:../../../packages/config/theme
       '@reduxjs/toolkit':
         specifier: ^1.9.5
         version: 1.9.5(react-redux@8.1.2)(react@18.2.0)
@@ -135,18 +138,21 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
     devDependencies:
+      '@megp/tsconfig':
+        specifier: workspace:*
+        version: link:../../../packages/config/tsconfig
       sass:
         specifier: ^1.66.1
         version: 1.66.1
-      tsconfig:
-        specifier: workspace:*
-        version: link:../../../packages/config/tsconfig
 
   apps/back-office/administration-fe:
     dependencies:
       '@megp/core-fe':
         specifier: workspace:*
         version: link:../../../packages/fe/core-fe
+      '@megp/theme':
+        specifier: workspace:*
+        version: link:../../../packages/config/theme
       '@types/node':
         specifier: 20.5.8
         version: 20.5.8
@@ -184,6 +190,9 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
     devDependencies:
+      '@megp/tsconfig':
+        specifier: workspace:*
+        version: link:../../../packages/config/tsconfig
       sass:
         specifier: ^1.66.1
         version: 1.66.1
@@ -232,6 +241,9 @@ importers:
       '@megp/core-fe':
         specifier: workspace:*
         version: link:../../../packages/fe/core-fe
+      '@megp/theme':
+        specifier: workspace:*
+        version: link:../../../packages/config/theme
       '@reduxjs/toolkit':
         specifier: ^1.9.5
         version: 1.9.5(react-redux@8.1.2)(react@18.2.0)
@@ -299,12 +311,12 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
     devDependencies:
+      '@megp/tsconfig':
+        specifier: workspace:*
+        version: link:../../../packages/config/tsconfig
       sass:
         specifier: ^1.66.1
         version: 1.66.1
-      tsconfig:
-        specifier: workspace:*
-        version: link:../../../packages/config/tsconfig
 
   apps/back-office/vendor-fe:
     dependencies:
@@ -350,6 +362,9 @@ importers:
       '@megp/core-fe':
         specifier: workspace:*
         version: link:../../../packages/fe/core-fe
+      '@megp/theme':
+        specifier: workspace:*
+        version: link:../../../packages/config/theme
       '@reduxjs/toolkit':
         specifier: ^1.9.5
         version: 1.9.5(react-redux@8.1.2)(react@18.2.0)
@@ -414,12 +429,12 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
     devDependencies:
+      '@megp/tsconfig':
+        specifier: workspace:*
+        version: link:../../../packages/config/tsconfig
       sass:
         specifier: ^1.66.1
         version: 1.66.1
-      tsconfig:
-        specifier: workspace:*
-        version: link:../../../packages/config/tsconfig
 
   apps/portal/egp:
     dependencies:
@@ -538,12 +553,12 @@ importers:
         specifier: ^3.22.2
         version: 3.22.2
     devDependencies:
+      '@megp/tsconfig':
+        specifier: workspace:*
+        version: link:../../../packages/config/tsconfig
       sass:
         specifier: ^1.66.1
         version: 1.66.1
-      tsconfig:
-        specifier: workspace:*
-        version: link:../../../packages/config/tsconfig
 
   apps/server/+demo-be:
     dependencies:
@@ -635,6 +650,9 @@ importers:
         specifier: ^0.3.14
         version: 0.3.17(pg@8.11.3)(ts-node@10.9.1)
     devDependencies:
+      '@megp/eslint-config-custom':
+        specifier: workspace:*
+        version: link:../../../packages/config/eslint-config-custom
       '@nestjs/cli':
         specifier: ^9.0.0
         version: 9.5.0
@@ -677,9 +695,6 @@ importers:
       eslint:
         specifier: ^8.0.1
         version: 8.48.0
-      eslint-config-custom:
-        specifier: workspace:*
-        version: link:../../../packages/config/eslint-config-custom
       eslint-config-prettier:
         specifier: ^8.3.0
         version: 8.8.0(eslint@8.48.0)
@@ -807,6 +822,9 @@ importers:
         specifier: ^0.3.14
         version: 0.3.17(pg@8.11.3)(ts-node@10.9.1)
     devDependencies:
+      '@megp/eslint-config-custom':
+        specifier: workspace:*
+        version: link:../../../packages/config/eslint-config-custom
       '@nestjs/cli':
         specifier: ^9.0.0
         version: 9.5.0
@@ -849,9 +867,6 @@ importers:
       eslint:
         specifier: ^8.0.1
         version: 8.48.0
-      eslint-config-custom:
-        specifier: workspace:*
-        version: link:../../../packages/config/eslint-config-custom
       eslint-config-prettier:
         specifier: ^8.3.0
         version: 8.8.0(eslint@8.48.0)
@@ -1064,6 +1079,9 @@ importers:
         specifier: ^0.3.14
         version: 0.3.17(pg@8.11.3)(ts-node@10.9.1)
     devDependencies:
+      '@megp/eslint-config-custom':
+        specifier: workspace:*
+        version: link:../../../packages/config/eslint-config-custom
       '@nestjs/cli':
         specifier: ^9.0.0
         version: 9.5.0
@@ -1106,9 +1124,6 @@ importers:
       eslint:
         specifier: ^8.0.1
         version: 8.48.0
-      eslint-config-custom:
-        specifier: workspace:*
-        version: link:../../../packages/config/eslint-config-custom
       eslint-config-prettier:
         specifier: ^8.3.0
         version: 8.8.0(eslint@8.48.0)
@@ -1152,6 +1167,22 @@ importers:
         specifier: ^1.10.12
         version: 1.10.12(eslint@8.48.0)
 
+  packages/config/theme:
+    dependencies:
+      '@mantine/core':
+        specifier: ^6.0.19
+        version: 6.0.19(@emotion/react@11.11.1)(@mantine/hooks@6.0.19)(@types/react@18.2.21)(react-dom@18.2.0)(react@18.2.0)
+    devDependencies:
+      '@megp/eslint-config-custom':
+        specifier: workspace:*
+        version: link:../eslint-config-custom
+      '@megp/tsconfig':
+        specifier: workspace:*
+        version: link:../tsconfig
+      sass:
+        specifier: ^1.66.1
+        version: 1.66.1
+
   packages/config/tsconfig: {}
 
   packages/fe/core-fe:
@@ -1175,6 +1206,12 @@ importers:
         specifier: ^0.32.5
         version: 0.32.5
     devDependencies:
+      '@megp/eslint-config-custom':
+        specifier: workspace:*
+        version: link:../../config/eslint-config-custom
+      '@megp/tsconfig':
+        specifier: workspace:*
+        version: link:../../config/tsconfig
       '@turbo/gen':
         specifier: ^1.10.12
         version: 1.10.12(@types/node@20.5.8)(typescript@4.9.5)
@@ -1190,9 +1227,6 @@ importers:
       autoprefixer:
         specifier: 10.4.15
         version: 10.4.15(postcss@8.4.28)
-      eslint-config-custom:
-        specifier: workspace:*
-        version: link:../../config/eslint-config-custom
       postcss:
         specifier: 8.4.28
         version: 8.4.28
@@ -1205,9 +1239,6 @@ importers:
       tailwindcss:
         specifier: 3.3.3
         version: 3.3.3(ts-node@10.9.1)
-      tsconfig:
-        specifier: workspace:*
-        version: link:../../config/tsconfig
       typescript:
         specifier: ^4.5.2
         version: 4.9.5

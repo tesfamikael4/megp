@@ -50,6 +50,6 @@
   },
   "devDependencies": {
     "sass": "^1.66.1",
-    "tsconfig": "workspace:*"
+    "@megp/tsconfig": "workspace:*"
   }
 }
