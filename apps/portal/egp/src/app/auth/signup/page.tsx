@@ -15,9 +15,8 @@ import {
 } from '@mantine/core';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-
-import React from 'react';
-import { useForm, Controller, SubmitHandler } from 'react-hook-form';
+import React, { useEffect } from 'react';
+import { useForm, Controller, SubmitHandler, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { doesEmailExist } from 'supertokens-web-js/recipe/thirdpartyemailpassword';
 import Image from 'next/image';
@@ -25,15 +24,12 @@ import countries from './countries';
 import z from 'zod';
 import { notifications } from '@mantine/notifications';
 import styles from './page.module.scss';
-import { emailPasswordSignUp } from 'supertokens-web-js/recipe/thirdpartyemailpassword';
+import { signupWithEmailPassword } from '../supertokensUtilities';
 
 const schema = z.object({
-  name: z.string().min(1, { message: 'This field is required.' }),
-  formOfBusiness: z.string({ required_error: 'This field is required' }),
-  businessOrigin: z.string({ required_error: 'This field is required' }),
-  country: z.string({ required_error: 'This field is required' }),
+  firstName: z.string().min(1, { message: 'This field is required.' }),
+  lastName: z.string().min(1, { message: 'This field is required.' }),
   phone: z.string().min(1, { message: 'This field is required.' }),
-  district: z.string().optional(),
   securityQuestion1: z.object({
     question: z.string({ required_error: 'This field is required' }),
     answer: z.string().min(1, { message: 'This field is required.' }),
@@ -74,23 +70,19 @@ const SignUpPage = () => {
   } = useForm<FormSchema>({ resolver: zodResolver(schema) });
 
   // Variables
-  const formOfBuisness = [
-    { value: 'soleProprietorship', label: 'Sole Proprietorship' },
-    { value: 'partnership', label: 'Partnership' },
-    { value: 'singleMemberCompany', label: 'Single Member Company' },
-    { value: 'privateLimitedCompany', label: 'Private Limited Company' },
-    { value: 'publicLimitedCompany', label: 'Public Limited Company' },
-    { value: 'stateOwnedCompany', label: 'State Owned Company' },
-    { value: 'forignCompany', label: 'Foreign Company' },
-  ];
 
   const securityQuestion = [
-    { value: '1', label: "What is your mother's maiden name?" },
-    { value: '2', label: 'What is your favorite movie?' },
-    { value: '3', label: "What was your favourite school teacher's name?" },
+    { value: '1', label: 'What was the name of your first childhood friend?' },
+    { value: '2', label: 'In which city did your parents meet?' },
+    { value: '3', label: 'What is the manufacturer of your first car?' },
+    { value: '4', label: "What is your mother's maiden name?" },
+    { value: '5', label: 'What is your favorite movie?' },
+    { value: '6', label: "What was your favourite school teacher's name?" },
   ];
 
-  const businessOrigin = watch('businessOrigin');
+  const securityQuestion1 = watch('securityQuestion1.question');
+  const securityQuestion2 = watch('securityQuestion2.question');
+  const securityQuestion3 = watch('securityQuestion3.question');
 
   // State
   const router = useRouter();
@@ -102,30 +94,23 @@ const SignUpPage = () => {
   const [securityQuestions, setSecurityQuestions] =
     React.useState(securityQuestion);
 
-  //Hooks
-  React.useEffect(() => {
-    if (businessOrigin === 'local') {
-      setValue('country', 'Malawi');
-    }
-  }, [businessOrigin, setValue]);
-
   // Functions
   const onSubmit: SubmitHandler<FormSchema> = async (data: FormSchema) => {
     try {
       setIsSigningUp(true);
-      let response = await emailPasswordSignUp({
-        formFields: [
-          {
-            id: 'email',
-            value: data.email,
-          },
-          {
-            id: 'password',
-            value: data.password,
-          },
-        ],
+      let response = await signupWithEmailPassword({
+        email: data.email,
+        password: data.password,
       });
-      router.push('/auth/verification');
+      if (response.status === 'FIELD_ERROR') {
+        response.formFields.map((formField) => {
+          if (formField.id === 'email') {
+            setEmailExists(true);
+          }
+        });
+      } else {
+        router.push('/auth/verification');
+      }
     } catch (err: any) {
       if (err.isSuperTokensGeneralError === true) {
         //this may be a custom error message sent from the API by you.
@@ -205,7 +190,7 @@ const SignUpPage = () => {
                   })}
                   className={styles.title}
                 >
-                  Sign Up
+                  Create Account
                 </Title>
 
                 <Text color="dimmed" className={styles.title}>
@@ -232,84 +217,24 @@ const SignUpPage = () => {
                   <Accordion.Item value="basicInformation">
                     <Accordion.Control>Basic Information</Accordion.Control>
                     <Accordion.Panel py={10}>
-                      <TextInput
-                        label="Name of Business/Company"
-                        placeholder="Name of Business/Company"
-                        error={errors.name?.message}
-                        {...register('name')}
-                        withAsterisk
-                      />
-                      <Controller
-                        control={control}
-                        name="formOfBusiness"
-                        render={({ field: { onChange, value, name } }) => (
-                          <Select
-                            data={formOfBuisness}
-                            label="Form of Business"
-                            placeholder="Form of Business"
-                            nothingFound="No options"
-                            value={value}
-                            onChange={onChange}
-                            name={name}
-                            error={errors.formOfBusiness?.message}
-                            searchable
-                            withAsterisk
-                          />
-                        )}
-                      />
-                      <Controller
-                        control={control}
-                        name="businessOrigin"
-                        render={({ field: { value, name, onChange } }) => (
-                          <Select
-                            data={[
-                              { value: 'local', label: 'Local' },
-                              { value: 'foreign', label: 'Foreign' },
-                            ]}
-                            label="Business/Company Origin"
-                            placeholder="Business/Company Origin"
-                            value={value}
-                            name={name}
-                            onChange={onChange}
-                            error={errors.businessOrigin?.message}
-                            withAsterisk
-                          />
-                        )}
-                      />
-                      {businessOrigin === 'local' && (
+                      <Flex direction={'row'} className="gap-2">
                         <TextInput
-                          label="District"
-                          placeholder="District"
-                          {...register('district')}
+                          label="First Name"
+                          placeholder="First name"
+                          className="w-1/2"
+                          error={errors.firstName?.message}
+                          {...register('firstName')}
                           withAsterisk
-                          required
                         />
-                      )}
-                      <Controller
-                        control={control}
-                        name="country"
-                        render={({
-                          field: { value, name, onBlur, onChange },
-                        }) => (
-                          <Select
-                            label="Country"
-                            placeholder="Country"
-                            searchable
-                            nothingFound="No options"
-                            data={countries.map((country) => ({
-                              label: country.name,
-                              value: country.name,
-                            }))}
-                            value={value}
-                            disabled={businessOrigin === 'local'}
-                            name={name}
-                            onChange={onChange}
-                            onBlur={onBlur}
-                            error={errors.country?.message}
-                            withAsterisk
-                          />
-                        )}
-                      />
+                        <TextInput
+                          label="Last Name"
+                          placeholder="Last name"
+                          className="w-1/2"
+                          error={errors.lastName?.message}
+                          {...register('lastName')}
+                          withAsterisk
+                        />
+                      </Flex>
                     </Accordion.Panel>
                   </Accordion.Item>
                   <Accordion.Item value="accountInformation">
@@ -356,7 +281,12 @@ const SignUpPage = () => {
                             placeholder={`Select Security Question 1`}
                             searchable
                             nothingFound="No options"
-                            data={securityQuestions}
+                            data={securityQuestion.filter((question) => {
+                              return (
+                                question.value !== securityQuestion2 &&
+                                question.value !== securityQuestion3
+                              );
+                            })}
                             onChange={onChange}
                             value={value}
                             name={name}
@@ -382,7 +312,12 @@ const SignUpPage = () => {
                             placeholder={`Select Security Question 2`}
                             searchable
                             nothingFound="No options"
-                            data={securityQuestions}
+                            data={securityQuestion.filter((question) => {
+                              return (
+                                question.value !== securityQuestion1 &&
+                                question.value !== securityQuestion3
+                              );
+                            })}
                             onChange={onChange}
                             value={value}
                             name={name}
@@ -408,7 +343,12 @@ const SignUpPage = () => {
                             placeholder={`Select Security Question 3`}
                             searchable
                             nothingFound="No options"
-                            data={securityQuestions}
+                            data={securityQuestion.filter((question) => {
+                              return (
+                                question.value !== securityQuestion1 &&
+                                question.value !== securityQuestion2
+                              );
+                            })}
                             onChange={onChange}
                             value={value}
                             name={name}
@@ -434,7 +374,7 @@ const SignUpPage = () => {
                     loading={isSigningUp}
                     onClick={() => setEmailExists(false)}
                   >
-                    Sign up
+                    Create Account
                   </Button>
                 </Flex>
               </Box>

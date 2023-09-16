@@ -3,7 +3,12 @@
 import styles from './layout.module.scss';
 import { Flex } from '@mantine/core';
 import Image from 'next/image';
-import SuperToken from './supertoken';
+import { frontendConfig } from './config/frontendConfig';
+import SuperTokens from 'supertokens-web-js';
+
+if (typeof window !== 'undefined') {
+  SuperTokens.init(frontendConfig());
+}
 
 export default function AuthLayout({
   children,

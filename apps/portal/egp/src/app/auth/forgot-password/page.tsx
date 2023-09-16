@@ -14,9 +14,9 @@ import { IconAt } from '@tabler/icons-react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import z from 'zod';
-import { sendPasswordResetEmail } from 'supertokens-web-js/recipe/thirdpartyemailpassword';
 import { IconChecks } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
+import { requestPassword } from '../supertokensUtilities';
 
 const schema = z.object({
   email: z.string().email('Please enter a valid email'),
@@ -37,13 +37,8 @@ export default function ForgotPasswordPage() {
   const onSubmit: SubmitHandler<FormSchema> = async (data: FormSchema) => {
     try {
       setLoading(true);
-      let response = await sendPasswordResetEmail({
-        formFields: [
-          {
-            id: 'email',
-            value: data.email,
-          },
-        ],
+      let response = await requestPassword({
+        email: data.email,
       });
       setResponse(response.status);
       // reset password email sent.
