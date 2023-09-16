@@ -17,13 +17,12 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { signIn } from 'supertokens-web-js/recipe/emailpassword';
-import { emailPasswordSignIn } from 'supertokens-web-js/recipe/thirdpartyemailpassword';
 import { zodResolver } from '@hookform/resolvers/zod';
 import z from 'zod';
 import { notifications } from '@mantine/notifications';
 import Image from 'next/image';
 import styles from './page.module.scss';
+import { signinWithEmailPassword } from '../supertokensUtilities';
 
 const schema = z
   .object({
@@ -48,17 +47,9 @@ export default function Signin() {
   const onSubmit = async (data: any) => {
     try {
       setIsSigningIn(true);
-      let response = await emailPasswordSignIn({
-        formFields: [
-          {
-            id: 'email',
-            value: data.email,
-          },
-          {
-            id: 'password',
-            value: data.password,
-          },
-        ],
+      let response = await signinWithEmailPassword({
+        email: data.email,
+        password: data.password,
       });
 
       if (
@@ -177,7 +168,7 @@ export default function Signin() {
                 <Text color="dimmed" className={styles.account_que}>
                   Do not have an account yet?{' '}
                   <Link href="/auth/signup" className={styles.signup_link}>
-                    Sign Up
+                    Create Account
                   </Link>
                 </Text>
               </Box>

@@ -9,7 +9,6 @@ import {
   Text,
 } from '@mantine/core';
 import Image from 'next/image';
-import { submitNewPassword } from 'supertokens-web-js/recipe/thirdpartyemailpassword';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import z from 'zod';
@@ -17,6 +16,7 @@ import { useState } from 'react';
 import { IconChecks, IconCircleX } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { notifications } from '@mantine/notifications';
+import { resetPassword } from '../supertokensUtilities';
 
 const schema = z.object({
   password: z
@@ -45,13 +45,8 @@ export default function PasswordResetPage() {
   const onSubmit: SubmitHandler<FormSchema> = async (data: FormSchema) => {
     try {
       setLoading(true);
-      let response = await submitNewPassword({
-        formFields: [
-          {
-            id: 'password',
-            value: data.password,
-          },
-        ],
+      let response = await resetPassword({
+        password: data.password,
       });
       setResponse(response.status);
     } catch (err: any) {

@@ -26,7 +26,7 @@ export default function Verification() {
       } else {
         // email was sent successfully.
         setResponse(
-          'We have sent you a verification link, please click on it to verify you email.',
+          'We have sent you a verification link, please click on it to verify your email.',
         );
       }
     } catch (err: any) {
@@ -50,37 +50,33 @@ export default function Verification() {
   }
 
   return (
-    <>
-      <Container className="md:w-2/5 p-4">
-        <Paper withBorder className="text-center pt-4 pb-4 rounded-md">
-          <Image
-            src="/email.svg"
-            height={400}
-            width={300}
-            alt="email"
-            className="mx-auto"
-          />
-          <Title>Email Verification</Title>
-          <LoadingOverlay visible={loading} />
-          {response === 'EMAIL_ALREADY_VERIFIED_ERROR' && loading === false ? (
-            <>
-              <Text className="mt-8">
-                This email has already been verified!
-              </Text>
-              <Button
-                className="mt-10"
-                onClick={() => router.push('/auth/login')}
-              >
-                Login
-              </Button>
-            </>
-          ) : (
-            <Text size={'lg'} className="mt-10">
-              {response}
-            </Text>
-          )}
-        </Paper>
-      </Container>
-    </>
+    <Container className="md:w-2/5 p-4">
+      <Paper withBorder className="text-center pt-4 pb-4 rounded-md">
+        <Image
+          src="/email.svg"
+          height={400}
+          width={300}
+          alt="email"
+          className="mx-auto"
+        />
+        <Title>Verify Your Email</Title>
+        <LoadingOverlay visible={loading} />
+        {response === 'EMAIL_ALREADY_VERIFIED_ERROR' && loading === false ? (
+          <>
+            <Text className="mt-8">This email has already been verified!</Text>
+            <Button
+              className="mt-10"
+              onClick={() => router.push('/auth/login')}
+            >
+              Login
+            </Button>
+          </>
+        ) : (
+          <Text size={'lg'} className="mt-10">
+            {response}
+          </Text>
+        )}
+      </Paper>
+    </Container>
   );
 }

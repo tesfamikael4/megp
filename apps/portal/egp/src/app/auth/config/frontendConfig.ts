@@ -1,7 +1,7 @@
-import SessionReact from 'supertokens-auth-react/recipe/session';
-import ThirdPartyEmailPasswordReact from 'supertokens-auth-react/recipe/thirdpartyemailpassword';
-import EmailVerificationReact from 'supertokens-auth-react/recipe/emailverification';
 import Router from 'next/router';
+import Session from 'supertokens-web-js/recipe/session';
+import ThirdPartyEmailPassword from 'supertokens-web-js/recipe/thirdpartyemailpassword';
+import EmailVerification from 'supertokens-web-js/recipe/emailverification';
 
 export const frontendConfig = () => {
   return {
@@ -14,9 +14,9 @@ export const frontendConfig = () => {
       websiteBasePath: '/auth',
     },
     recipeList: [
-      SessionReact.init(),
-      ThirdPartyEmailPasswordReact.init(),
-      EmailVerificationReact.init(),
+      Session.init(),
+      ThirdPartyEmailPassword.init(),
+      EmailVerification.init(),
     ],
     windowHandler: (oI) => {
       return {
