@@ -1,20 +1,52 @@
 'use client';
 
-import { Button, Card, Collapse, Group, Text } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+import { Button } from '@mantine/core';
+import useToggle from '../../hooks/use-toogle';
+import styles from './section.module.scss';
 
-export function Section({ children }): React.ReactElement {
-  const [opened, { toggle }] = useDisclosure(false);
+interface SectionProps {
+  children: React.ReactNode;
+  title?: React.ReactNode;
+  subTitle?: React.ReactNode;
+  action?: React.ReactNode;
+  isCollapsible?: boolean;
+
+  // styles
+  mh?: string;
+}
+
+export function Section({
+  title,
+  subTitle,
+  action,
+  children,
+  isCollapsible = true,
+  mh,
+}: SectionProps): React.ReactElement {
+  const [showBody, toggle] = useToggle(true);
 
   return (
-    <Card withBorder>
-      <Group mb={5} position="center">
-        <Button onClick={toggle}>Toggle content</Button>
-      </Group>
+    <div className={`${styles.container} ${!showBody ? styles.collapsed : ''}`}>
+      <div className={styles.header}>
+        <div>
+          <div className={styles.title}>{title}</div>
+          <div className={styles.subTitle}>{subTitle}</div>
+        </div>
+        <div className={styles.action}>
+          {action}
 
-      <Collapse in={opened}>
-        <Text>{children}</Text>
-      </Collapse>
-    </Card>
+          {isCollapsible ? (
+            <Button onClick={toggle} variant="outline" w="82px">
+              {showBody ? 'Collapse' : 'Expand'}
+            </Button>
+          ) : null}
+        </div>
+      </div>
+      {showBody ? (
+        <div className={styles.body} style={{ minHeight: mh }}>
+          {children}
+        </div>
+      ) : null}
+    </div>
   );
 }

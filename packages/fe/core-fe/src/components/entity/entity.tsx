@@ -1,62 +1,51 @@
 'use client';
-import { Box } from '@mantine/core';
+import { Button } from '@mantine/core';
+import { IconPlus } from '@tabler/icons-react';
 import Link from 'next/link';
-import { useState } from 'react';
-import { useSelectedLayoutSegment } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import logger from '../../utility/logger';
+import { toTitleCase } from '../../utility/string';
+import { Section } from '../section/section';
+import type { EntityConfig } from './models/entity';
 
 interface EntityListProps {
-  config: any;
+  config?: EntityConfig;
   mode?: 'list' | 'detail';
 }
+
+const defaultConfig: EntityConfig = {
+  entity: 'list',
+  canAdd: true,
+  addPath: '/list/new',
+  title: <>List</>,
+};
 
 export function EntityList({
   config,
   mode = 'list',
 }: EntityListProps): React.ReactElement {
-  const segment = useSelectedLayoutSegment();
+  const pathname = usePathname();
 
-  logger.log(config, mode);
-
-  const [count, setCount] = useState(0);
-
-  // Function to increment the counter
-  const increment = () => {
-    setCount(count + 1);
-  };
-
-  // Function to decrement the counter
-  const decrement = () => {
-    setCount(count - 1);
-  };
-
+  const options = { ...defaultConfig, ...config };
+  logger.log(pathname);
   return (
-    <Box className="border-green-700 border w-full flex gap-4">
-      <div>
-        Entity Table mode : {mode}=== {segment}
-      </div>
-      <ul>
-        <li>
-          <Link href="/groups/new">new</Link>
-        </li>
-        <li>
-          <Link href="/groups/1">1</Link>
-        </li>
-        <li>
-          <Link href="/groups/2">2</Link>
-        </li>
-        <li>
-          <Link href="/groups/3">3</Link>
-        </li>
-      </ul>
-
-      <h1>Counter: {count}</h1>
-      <button onClick={increment} type="button">
-        Increment
-      </button>
-      <button onClick={decrement} type="button">
-        Decrement
-      </button>
-    </Box>
+    <Section
+      action={
+        options.canAdd ? (
+          <Button
+            component={Link}
+            href={options.addPath ?? `${pathname}/new`}
+            leftIcon={<IconPlus size={16} stroke={2.2} />}
+          >
+            Add {toTitleCase(options.entity)}
+          </Button>
+        ) : null
+      }
+      isCollapsible={false}
+      mh="400px"
+      title={options.title}
+    >
+      {mode}aas
+    </Section>
   );
 }

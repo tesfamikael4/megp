@@ -9,24 +9,26 @@
     "generate:component": "turbo gen react-component"
   },
   "devDependencies": {
+    "@megp/eslint-config-custom": "workspace:*",
+    "@megp/tsconfig": "workspace:*",
     "@turbo/gen": "^1.10.12",
     "@types/node": "^20.5.2",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
     "autoprefixer": "10.4.15",
-    "@megp/eslint-config-custom": "workspace:*",
     "postcss": "8.4.28",
     "react": "^18.2.0",
     "sass": "^1.66.1",
     "tailwindcss": "3.3.3",
-    "@megp/tsconfig": "workspace:*",
     "typescript": "^4.5.2"
   },
   "dependencies": {
     "@mantine/core": "^6.0.19",
     "@mantine/hooks": "^6.0.19",
     "@mantine/next": "^6.0.19",
+    "@megp/theme": "workspace:*",
     "@tabler/icons-react": "^2.32.0",
+    "@tanstack/react-table": "^8.9.11",
     "next": "13.4.19",
     "sharp": "^0.32.5"
   }

@@ -84,17 +84,23 @@ export function LinksGroup({
   const ChevronIcon = theme.dir === 'ltr' ? IconChevronRight : IconChevronLeft;
 
   const items = (hasLinks ? links : []).map((l) => (
-    <Link className={classes.link} href={l.link} key={l.label}>
+    <Link
+      className={cx(classes.link, {
+        [classes.active]: pathname.startsWith(l.link),
+      })}
+      href={l.link}
+      key={l.label}
+    >
       {l.label}
     </Link>
   ));
 
-  const isActive = pathname === link;
-
   return (
     <>
       <UnstyledButton<'a' | typeof Link>
-        className={cx(classes.control, { [classes.active]: isActive })}
+        className={cx(classes.control, {
+          [classes.active]: pathname.startsWith(link ?? '#'),
+        })}
         component={external ? 'a' : Link}
         href={link ?? '#'}
         onClick={() => setOpened((o) => !o)}
