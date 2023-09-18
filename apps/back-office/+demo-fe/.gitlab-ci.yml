@@ -16,7 +16,6 @@ build_demo-fe:
     changes:
       - "*"  # run pipeline if a root-level file like Makefile or docker-compose.yml is changed
       - "apps/back-office/+demo-fe/**/*" 
-      - "packages/fe/core-fe/**/*"
   script:
     - cd apps/back-office/+demo-fe
     - docker build --pull -t $CONTAINER_TEST_IMAGE .
@@ -30,8 +29,7 @@ deploy_demo-fe:
   only:
     changes:
       - "*"  # run pipeline if a root-level file like Makefile or docker-compose.yml is changed
-      - "apps/back-office/+demo-fe/**/*"
-      - "packages/fe/core-fe/**/*" 
+      - "apps/back-office/+demo-fe/**/*" 
   image: docker:latest
   services:
     - docker:dind
