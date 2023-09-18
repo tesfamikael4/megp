@@ -41,5 +41,5 @@ COPY --from=installer /app/apps/back-office/iam-fe/package.json .
 COPY --from=installer --chown=nextjs:nodejs /app/apps/back-office/iam-fe/.next/standalone ./
 COPY --from=installer --chown=nextjs:nodejs /app/apps/back-office/iam-fe/.next/static ./apps/back-office/iam-fe/.next/static
 COPY --from=installer --chown=nextjs:nodejs /app/apps/back-office/iam-fe/public ./apps/back-office/iam-fe/public
- 
+ EXPOSE 5511
 CMD node apps/back-office/iam-fe/server.js
