@@ -17,7 +17,8 @@ build_administration-fe:
       - "apps/server/iam-be/**/*"
   script:
     - cd apps/server/iam-be
+    # - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker build -t $CONTAINER_TEST_IMAGE .
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+   
     - docker push $CONTAINER_TEST_IMAGE
 
