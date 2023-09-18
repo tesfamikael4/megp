@@ -1,26 +1,26 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "command": "cd .\\apps\\server\\iam\\ && npm run start:dev",
-            "name": "Run IAM",
-            "request": "launch",
-            "type": "node-terminal"
-        },
-        {
-            "command": "cd .\\apps\\server\\vendor-registration\\ && npm run start:dev",
-            "name": "Run Vendor Registration ",
-            "request": "launch",
-            "type": "node-terminal"
-        },
-        {
-            "command": "cd .\\apps\\server\\supertoken-auth\\ && npm run start:dev",
-            "name": "Run Supertoken",
-            "request": "launch",
-            "type": "node-terminal"
-        }
-    ]
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "command": "cd .\\apps\\server\\iam-be\\ && npm run start:dev",
+      "name": "Run IAM",
+      "request": "launch",
+      "type": "node-terminal"
+    },
+    {
+      "command": "cd .\\apps\\server\\vendor-registration\\ && npm run start:dev",
+      "name": "Run Vendor Registration ",
+      "request": "launch",
+      "type": "node-terminal"
+    },
+    {
+      "command": "cd .\\apps\\server\\supertoken-auth\\ && npm run start:dev",
+      "name": "Run Supertoken",
+      "request": "launch",
+      "type": "node-terminal"
+    }
+  ]
 }
