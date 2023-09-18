@@ -7,7 +7,8 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install production dependencies
-RUN npm install npm@latest --only=production
+#RUN npm install npm@latest --only=production
+RUN npm install -g npm@latest
 
 # Copy the rest of the application code to the container
 COPY . .
