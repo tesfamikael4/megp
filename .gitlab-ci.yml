@@ -14,6 +14,7 @@ include:
   - 'apps/back-office/administration-fe/.gitlab-ci.yml'
   - 'apps/back-office/vendor-fe/.gitlab-ci.yml'
   - 'apps/server/+demo-be/.gitlab-ci.yml'
+  - 'apps/server/iam-be/.gitlab-ci.yml'
 
 
 # image: node:latest
