@@ -1,17 +1,18 @@
 import { Module } from '@nestjs/common';
 import { AuthModule } from './auth/auth.module';
+import { SupertokensConfigHelper } from './supertokens-config-helper';
 
 @Module({
   imports: [
     AuthModule.forRoot({
-      connectionURI: 'http://196.189.44.47:3567',
-      apiKey: 'ob0WLJ637sLR730GcEJJVFRcWNlc2PpN',
+      connectionURI: SupertokensConfigHelper.CONNECTION_URI,
+      apiKey: SupertokensConfigHelper.API_KEY,
       appInfo: {
-        appName: 'm-egp',
-        apiDomain: 'http://196.189.44.47:3567',
-        websiteDomain: 'http://196.189.44.47:3569',
-        apiBasePath: '/api/auth',
-        websiteBasePath: '/api/auth',
+        appName: SupertokensConfigHelper.APP_NAME,
+        apiDomain: SupertokensConfigHelper.API_DOMAIN,
+        websiteDomain: SupertokensConfigHelper.WEBSITE_DOMAIN,
+        apiBasePath: SupertokensConfigHelper.API_BASE_PATH,
+        websiteBasePath: SupertokensConfigHelper.WEBSITE_BASE_PATH,
       },
     }),
   ],

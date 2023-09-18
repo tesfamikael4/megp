@@ -150,7 +150,7 @@ export class OrganizationService {
         const [result, total] = await dataQuery.getManyAndCount();
         response.total = total;
         const items = OrganizationResponseDto.toDtos(result);
-        if (!items) {
+        if (items) {
           response.items = items;
         }
       }
