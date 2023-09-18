@@ -1,0 +1,22 @@
+stages:
+  - build
+  - deploy
+
+variables:  
+  CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+  CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE:latest
+
+before_script:
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+build_administration-fe:
+   
+  stage: build
+  only:
+    changes:
+      - "*"  # run pipeline if a root-level file like Makefile or docker-compose.yml is changed
+      - "apps/server/+demo-be/**/*"
+  script:
+    - cd apps/back-office/administration-fe
+    - docker build -t $CONTAINER_TEST_IMAGE .
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker push $CONTAINER_TEST_IMAGE
