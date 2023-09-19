@@ -1,12 +1,53 @@
+# stages:
+#   - build
+# #  - push
+#   - deploy
+
+# variables:  
+#   CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+#   CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE:latest
+#   #CONTAINER_TEST_IMAGE: lab.derash.gov.et:5050/root/egp:$CI_COMMIT_REF_SLUG
+# before_script:
+#   - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+
+# build_demo-fe:
+#   stage: build
+#   only:
+#     changes:
+#       - "*"  # run pipeline if a root-level file like Makefile or docker-compose.yml is changed
+#       - "apps/back-office/+demo-fe/**/*" 
+#   script:
+#     - cd apps/back-office/+demo-fe
+#     - docker build --pull -t $CONTAINER_TEST_IMAGE .
+#     - docker push $CONTAINER_TEST_IMAGE
+
+#   # tags:
+#   #   - docker
+
+# deploy_demo-fe:
+#   stage: deploy
+#   only:
+#     changes:
+#       - "*"  # run pipeline if a root-level file like Makefile or docker-compose.yml is changed
+#       - "apps/back-office/+demo-fe/**/*" 
+#   image: docker:latest
+#   services:
+#     - docker:dind
+#   script:
+#     - docker pull $CONTAINER_RELEASE_IMAGE
+#     - docker container rm -f demo-fe || true
+#     - docker run -d -p 5599:5599 --name demo-fe $CONTAINER_RELEASE_IMAGE
+  
+
 stages:
   - build
-#  - push
+  - push
   - deploy
 
-variables:  
+variables:
   CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
   CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE:latest
-  #CONTAINER_TEST_IMAGE: lab.derash.gov.et:5050/root/egp:$CI_COMMIT_REF_SLUG
+
 before_script:
   - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
 
@@ -15,21 +56,29 @@ build_demo-fe:
   only:
     changes:
       - "*"  # run pipeline if a root-level file like Makefile or docker-compose.yml is changed
-      - "apps/back-office/+demo-fe/**/*" 
+      - "apps/back-office/+demo-fe/**/*"
   script:
     - cd apps/back-office/+demo-fe
     - docker build --pull -t $CONTAINER_TEST_IMAGE .
     - docker push $CONTAINER_TEST_IMAGE
 
-  # tags:
-  #   - docker
+push_demo-fe:
+  stage: push
+  only:
+    changes:
+      - "*"  # run pipeline if a root-level file like Makefile or docker-compose.yml is changed
+      - "apps/back-office/+demo-fe/**/*"
+  script:
+    - docker pull $CONTAINER_TEST_IMAGE
+    - docker tag $CONTAINER_TEST_IMAGE $CONTAINER_RELEASE_IMAGE
+    - docker push $CONTAINER_RELEASE_IMAGE
 
 deploy_demo-fe:
   stage: deploy
   only:
     changes:
       - "*"  # run pipeline if a root-level file like Makefile or docker-compose.yml is changed
-      - "apps/back-office/+demo-fe/**/*" 
+      - "apps/back-office/+demo-fe/**/*"
   image: docker:latest
   services:
     - docker:dind
@@ -37,5 +86,3 @@ deploy_demo-fe:
     - docker pull $CONTAINER_RELEASE_IMAGE
     - docker container rm -f demo-fe || true
     - docker run -d -p 5599:5599 --name demo-fe $CONTAINER_RELEASE_IMAGE
-  
-
