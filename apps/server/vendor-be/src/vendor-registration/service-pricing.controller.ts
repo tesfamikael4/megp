@@ -9,6 +9,7 @@ import {
   Patch,
   HttpStatus,
   ParseUUIDPipe,
+  Put,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -20,7 +21,7 @@ import {
 import { ApiPaginatedResponse, DataResponseFormat } from '@api-data';
 import { CollectionQuery } from '@collection-query';
 
-import { RegistrationTypes } from 'src/shared/enums/vendor-enums';
+// import { RegistrationTypes } from 'src/shared/enums/vendor-enums';
 import {
   CreateServicePriceDto,
   ServicePriceResponseDto,
@@ -79,16 +80,36 @@ export class ServicePricingController {
   ) {
     return await this.regSettingService.remove(id);
   }
-  @Get('get-registration-types')
-  async getRegistrationTypes() {
-    const array = Object.entries(RegistrationTypes).map((entry) => {
-      const [key, value] = entry;
-      return {
-        key,
-        value,
-      };
-    });
+  @Put('soft-delete/:id')
+  async softDelete(
+    @Param(
+      'id',
+      new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
+    )
+    id: string,
+  ) {
+    return await this.regSettingService.softDelete(id);
   }
+  @Put('restore/:id')
+  async restore(
+    @Param(
+      'id',
+      new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
+    )
+    id: string,
+  ) {
+    return await this.regSettingService.restore(id);
+  }
+  // @Get('get-registration-types')
+  // async getRegistrationTypes() {
+  //   const array = Object.entries(RegistrationTypes).map((entry) => {
+  //     const [key, value] = entry;
+  //     return {
+  //       key,
+  //       value,
+  //     };
+  //   });
+  // }
 
   //child methods
 }
