@@ -41,7 +41,7 @@
 
 stages:
   - build
-  - push
+  #- push
   - deploy
 
 variables:
@@ -61,19 +61,19 @@ build_demo-fe:
   script:
     - cd apps/back-office/+demo-fe
     - docker build --pull -t $CONTAINER_TEST_IMAGE .
-   # - docker push $CONTAINER_TEST_IMAGE
-
-push_demo-fe:
-  stage: push
-  only:
-    changes:
-      - "*"  # run pipeline if a root-level file like Makefile or docker-compose.yml is changed
-      - "apps/back-office/+demo-fe/**/*"
-
-  script:
     - docker push $CONTAINER_TEST_IMAGE
-    - docker tag $CONTAINER_TEST_IMAGE $CONTAINER_RELEASE_IMAGE
-    - docker push $CONTAINER_RELEASE_IMAGE
+
+# push_demo-fe:
+#   stage: push
+#   only:
+#     changes:
+#       - "*"  # run pipeline if a root-level file like Makefile or docker-compose.yml is changed
+#       - "apps/back-office/+demo-fe/**/*"
+
+#   script:
+#     - docker push $CONTAINER_TEST_IMAGE
+#     - docker tag $CONTAINER_TEST_IMAGE $CONTAINER_RELEASE_IMAGE
+#     - docker push $CONTAINER_RELEASE_IMAGE
 
 deploy_demo-fe:
   
