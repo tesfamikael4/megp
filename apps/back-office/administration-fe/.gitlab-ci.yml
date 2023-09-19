@@ -1,5 +1,6 @@
 stages:
   - build
+  - push
   - deploy
 
 variables:  
@@ -29,9 +30,9 @@ deploy_administration-fe:
       - "*"  # run pipeline if a root-level file like Makefile or docker-compose.yml is changed
       - "apps/back-office/administration-fe/**/*"
       - "packages/fe/core-fe/**/*"
-  image: docker:latest
-  services:
-    - docker:dind
+  # image: docker:latest
+  # services:
+  #   - docker:dind
   #stage: deploy
   script:
     - docker pull $CONTAINER_RELEASE_IMAGE
