@@ -17,6 +17,14 @@ import { VendorBasicsService } from './vendor-basics.service';
 import { VendorsEntity } from './entities/vendors.entity';
 import { BanksEntity } from './entities/bank.entity';
 import { VendorsBankEntity } from './entities/vendors-bank.entity';
+import { ShareholdersEntity } from './entities/shareholder.entity';
+import { FilesEntity } from './entities/file.entity';
+import { BankAccountDetailService } from './services/bankAccountDetail.service';
+import { BankAccountDetailEntity } from './entities/bank-account-detail.entity';
+import { BankAccountDetailController } from './controllers/bankAccountDetail.controller';
+import { ShareholderService } from './services/shareholder.service';
+import { ShareholderController } from './controllers/shareholder.controller';
+
 
 @Module({
   imports: [
@@ -31,17 +39,24 @@ import { VendorsBankEntity } from './entities/vendors-bank.entity';
       VendorsEntity,
       BanksEntity,
       VendorsBankEntity,
+      ShareholdersEntity,
+      FilesEntity,
+      BankAccountDetailEntity,
     ]),
   ],
   providers: [
     VendorRegistrationsService,
     ServicePricingService,
     VendorBasicsService,
+    BankAccountDetailService,
+    ShareholderService,
   ],
   controllers: [
     VendorRegistrationsController,
     ServicePricingController,
     VendorBasicsController,
+    BankAccountDetailController,
+    ShareholderController,
   ],
 })
-export class VendorRegistrationModule {}
+export class VendorRegistrationModule { }

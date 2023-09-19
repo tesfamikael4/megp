@@ -31,13 +31,15 @@ import {
   CreateApplicationDto,
   UpdateApplicationDto,
 } from './dto/application.dto';
+import { InsertAllDataDto } from './dto/save-all.dto';
+import { VendorsBankDto } from './dto/bank-vendor.dto';
 //@ApiBearerAuth()
 @Controller('VendorRegistrations')
 @ApiTags('Vendor-registrations')
 @ApiResponse({ status: 500, description: 'Internal error' })
 @ApiExtraModels(DataResponseFormat)
 export class VendorRegistrationsController {
-  constructor(private readonly regService: VendorRegistrationsService) {}
+  constructor(private readonly regService: VendorRegistrationsService) { }
   @Post('submit-application')
   async create(@Body() regDto: CreateApplicationDto) {
     return await this.regService.create(regDto);
@@ -100,5 +102,39 @@ export class VendorRegistrationsController {
   // @ApiOkResponse({ type: Todo, isArray: false })
   async findServices(@Query() query: CollectionQuery) {
     return await this.regService.findServices(query);
+  }
+  @Get('get-vendors')
+  async getVendors() {
+    return await this.regService.getVendors();
+  }
+  @Get('get-vendor-by-vendorId/:vendorId')
+  async getVendorByVendorId(@Param("vendorId") vendorId: string) {
+    return await this.regService.getVendorId(vendorId);
+  }
+  @Get('get-vendor-by-userId/:userId')
+  async getVendorByuserId(@Param("userId") userId: string) {
+    return await this.regService.getVendorByUserId(userId);
+  }
+
+  @Post('vendor-save-all')
+  async vendorSaveAll(@Body() data: InsertAllDataDto) {
+    console.log('dto', data.data.data.basicRegistration);
+    return await this.regService.registerVendor(data);
+  }
+  //  bank information
+  @Post('add-bank-to-vendor/:vendorId')
+  async addBankToVendor(@Body() data: VendorsBankDto, @Param("vendorId") vendorId: string) {
+    // console.log('dto', data.data.data.basicRegistration);
+    // return await this.regService.addBankToVendor(data);
+  }
+  @Post('add-vendor-information')
+  async addVendorInformation(@Body() data: InsertAllDataDto) {
+    // console.log('dto', data.data.data.basicRegistration);
+    return await this.regService.addVendorInformations(data);
+  }
+  @Post('upload-attachment/:filePath/:fileType/:vendorId')
+  async uploadAttachment(@Param("filePath") filePath: string, @Param("vendorId") vendorId: string, @Param("fileType") fileType: string) {
+    // console.log('dto', data.data.data.basicRegistration);
+    return await this.regService.upload_MRA_TPINAttachment(filePath.trim(), fileType.trim(), vendorId.trim());
   }
 }

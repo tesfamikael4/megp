@@ -14,7 +14,7 @@ export class BanksEntity {
   id: string;
   @Column({ name: 'bank_name' })
   bankName: string;
-  @Column({ name: 'meta_data', type: 'jsonb' })
+  @Column({ name: 'meta_data', type: 'jsonb', nullable: true })
   metaData: JSON;
   @OneToMany(() => VendorsBankEntity, (v) => v.bank)
   vendorAccounts: VendorsBankEntity[];
