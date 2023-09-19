@@ -43,7 +43,7 @@ deploy:
   script:
     - docker pull $CONTAINER_RELEASE_IMAGE
     - docker container rm -f next-app || true
-    - docker run -d -p 5500:5500 --name next-app $CONTAINER_RELEASE_IMAGE
+    - docker run -d -p 5511:5511 --name next-app $CONTAINER_RELEASE_IMAGE
 
 
 
