@@ -6,6 +6,7 @@ services:
 stages:
   - build
   - test
+  - push
   - deploy
   
 include:
