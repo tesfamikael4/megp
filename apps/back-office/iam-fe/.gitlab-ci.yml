@@ -1,6 +1,6 @@
 stages:
   - build
-  - test
+ # - test
   - deploy
 
 variables:
@@ -21,16 +21,6 @@ build:
     - cd apps/back-office/iam-fe
     - docker build -t $CONTAINER_TEST_IMAGE .
     - docker push $CONTAINER_TEST_IMAGE
-
-test:
-  stage: test
-  only:
-    changes:
-      - "*"  # run pipeline if a root-level file like Makefile or docker-compose.yml is changed
-      - "apps/back-office/iam-fe/**/*" 
-      - "packages/fe/core-fe/**/*"
-  script:
-    - echo "Running tests..."
 
 deploy:
   stage: deploy
