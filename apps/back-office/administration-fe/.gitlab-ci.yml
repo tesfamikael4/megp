@@ -3,45 +3,45 @@ stages:
   - push
   - deploy
 
-variables:  
+variables:
   CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
   CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE:latest
 
 before_script:
   - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-build_administration-fe:
-   
+
+build_admin-fe:
   stage: build
   only:
     changes:
-      - "*"  # run pipeline if a root-level file like Makefile or docker-compose.yml is changed
-      - "apps/back-office/administration-fe/**/*"
-      - "packages/fe/core-fe/**/*"
+      - "*"  # run pipeline if a root-level file like package.json or next.config.js is changed
+      - "apps/back-office/administration-fe/**/*" # run pipeline if any changes occur in the pages directory
+      - "packages/fe/core-fe/**/*"# run pipeline if any changes occur in the components directory
   script:
-    - cd apps/back-office/administration-fe
-
+    - cd apps/back-office/iam-fe
     - docker build -t $CONTAINER_TEST_IMAGE .
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker push $CONTAINER_TEST_IMAGE
-  
-deploy_administration-fe:
+
+push_admin-fe:
+  stage: push
+  only:
+    changes:
+      - "*"  # run pipeline if a root-level file like package.json or next.config.js is changed
+      - "apps/back-office/administration-fe/**/*" # run pipeline if any changes occur in the pages directory
+      - "packages/fe/core-fe/**/*" # run pipeline if any changes occur in the components directory
+  script:
+    - docker pull $CONTAINER_TEST_IMAGE
+    - docker tag $CONTAINER_TEST_IMAGE $CONTAINER_RELEASE_IMAGE
+    - docker push $CONTAINER_RELEASE_IMAGE
+
+deploy-admin:
   stage: deploy
   only:
     changes:
-      - "*"  # run pipeline if a root-level file like Makefile or docker-compose.yml is changed
-      - "apps/back-office/administration-fe/**/*"
-      - "packages/fe/core-fe/**/*"
-  # image: docker:latest
-  # services:
-  #   - docker:dind
-  #stage: deploy
+      - "*"  # run pipeline if a root-level file like package.json or next.config.js is changed
+      - "apps/back-office/administration-fe/**/*" # run pipeline if any changes occur in the pages directory
+      - "packages/fe/core-fe/**/*" # run pipeline if any changes occur in the components directory
   script:
     - docker pull $CONTAINER_RELEASE_IMAGE
-    
-    - docker container rm -f administration-fe || true
-    - docker run -d -p 5522:5522 --name administration-fe $CONTAINER_RELEASE_IMAGE
-  # only:
-  #  - main
-  # tags:
-  #   - docker
-
+    - docker container rm -f next-admin || true
+    - docker run -d -p 5522:5522 --name next-admin $CONTAINER_RELEASE_IMAGE
