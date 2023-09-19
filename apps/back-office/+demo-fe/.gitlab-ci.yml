@@ -12,7 +12,7 @@ build_demo_fe:
   script:
     - cd apps/back-office/+demo-fe
     - docker build -t demo-fe:$CI_COMMIT_REF_SLUG .
-    - docker push rdemo-fe:$CI_COMMIT_REF_SLUG
+    - docker push demo-fe:$CI_COMMIT_REF_SLUG
 
 
 push_demo_fe:
