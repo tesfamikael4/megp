@@ -10,8 +10,10 @@ interface SectionProps {
   subTitle?: React.ReactNode;
   action?: React.ReactNode;
   isCollapsible?: boolean;
+  className?: string;
 
   // styles
+  w?: string;
   mh?: string;
 }
 
@@ -20,13 +22,20 @@ export function Section({
   subTitle,
   action,
   children,
+  className = '',
   isCollapsible = true,
+  w = '',
   mh,
 }: SectionProps): React.ReactElement {
   const [showBody, toggle] = useToggle(true);
 
   return (
-    <div className={`${styles.container} ${!showBody ? styles.collapsed : ''}`}>
+    <div
+      className={`${className} ${styles.container} ${
+        !showBody ? styles.collapsed : ''
+      }`}
+      style={{ width: w }}
+    >
       <div className={styles.header}>
         <div>
           <div className={styles.title}>{title}</div>
