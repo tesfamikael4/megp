@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AuthModule } from './auth/auth.module';
 import { SupertokensConfigHelper } from './supertokens-config-helper';
+import { AuthenticationController } from './authentication.controller';
 
 @Module({
   imports: [
@@ -16,7 +17,7 @@ import { SupertokensConfigHelper } from './supertokens-config-helper';
       },
     }),
   ],
-  controllers: [],
+  controllers: [AuthenticationController],
   providers: [],
 })
 export class AuthenticationModule {}

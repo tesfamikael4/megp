@@ -8,6 +8,7 @@ import { OrganizationService } from 'src/organization';
 import EmailVerification from 'supertokens-node/recipe/emailverification';
 import { SMTPService as EmailVerificationSMTPService } from 'supertokens-node/recipe/emailverification/emaildelivery';
 import { SMTPService } from 'supertokens-node/recipe/thirdpartyemailpassword/emaildelivery';
+import UserRoles from 'supertokens-node/recipe/userroles';
 
 @Injectable()
 export class SupertokensService {
@@ -17,9 +18,8 @@ export class SupertokensService {
   ) {
     const smtpSettings = {
       host: process.env.SMTP_HOST,
-      // authUsername: "...", // this is optional. In case not given, from.email will be used
       password: process.env.SMTP_PASSWORD,
-      port: +process.env.SMTP_PORT,
+      port: Number(process.env.SMTP_PORT),
       from: {
         name: 'Account Control',
         email: process.env.SMTP_EMAIL,
@@ -44,6 +44,7 @@ export class SupertokensService {
           },
         }),
         Dashboard.init(),
+        UserRoles.init(),
         ThirdPartyEmailPassword.init({
           signUpFeature: {
             formFields: [

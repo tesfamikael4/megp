@@ -5,14 +5,11 @@ import { TypeOrmConfigHelper } from './typeorm-config-helper';
 
 @Injectable()
 export class TypeOrmConfigService implements TypeOrmOptionsFactory {
-  @Inject(ConfigService)
-  private readonly config: ConfigService;
-
   public createTypeOrmOptions(): TypeOrmModuleOptions {
     return {
       type: 'postgres',
       host: TypeOrmConfigHelper.DATABASE_HOST,
-      port: +TypeOrmConfigHelper.DATABASE_PORT,
+      port: Number(TypeOrmConfigHelper.DATABASE_PORT),
       database: TypeOrmConfigHelper.DATABASE_NAME,
       username: TypeOrmConfigHelper.DATABASE_USER,
       password: TypeOrmConfigHelper.DATABASE_PASSWORD,
