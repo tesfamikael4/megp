@@ -69,7 +69,7 @@ push_demo-fe:
       - "*"  # run pipeline if a root-level file like Makefile or docker-compose.yml is changed
       - "apps/back-office/+demo-fe/**/*"
   script:
-    - docker pull $CONTAINER_TEST_IMAGE
+   # - docker pull $CONTAINER_TEST_IMAGE
     - docker tag $CONTAINER_TEST_IMAGE $CONTAINER_RELEASE_IMAGE
     - docker push $CONTAINER_RELEASE_IMAGE
 
