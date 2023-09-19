@@ -5,7 +5,7 @@ import {
   DynamicModule,
 } from '@nestjs/common';
 
-import { AuthMiddleware } from './auth.middleware';
+import { AuthMiddleware } from './middlewares/auth.middleware';
 import { ConfigInjectionToken, AuthModuleConfig } from './config.interface';
 import { SupertokensService } from './supertokens/supertokens.service';
 import { OrganizationModule } from 'src/organization';
