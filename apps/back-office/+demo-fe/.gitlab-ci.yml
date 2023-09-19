@@ -12,6 +12,8 @@ build_demo_fe:
   script:
     - cd apps/back-office/+demo-fe
     - docker build -t demo-fe:$CI_COMMIT_REF_SLUG .
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+
     - docker push demo-fe:$CI_COMMIT_REF_SLUG
 
 
