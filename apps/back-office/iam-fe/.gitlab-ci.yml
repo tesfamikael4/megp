@@ -15,7 +15,7 @@ build_iam-fe:
   only:
     changes:
       - "*"  # run pipeline if a root-level file like package.json or next.config.js is changed
-      - "pages/**/*" # run pipeline if any changes occur in the pages directory
+      - "apps/back-office/iam-fe/**/*" # run pipeline if any changes occur in the pages directory
       - "components/**/*" # run pipeline if any changes occur in the components directory
   script:
     - cd apps/back-office/iam-fe
@@ -27,7 +27,7 @@ push_iam-fe:
   only:
     changes:
       - "*"  # run pipeline if a root-level file like package.json or next.config.js is changed
-      - "pages/**/*" # run pipeline if any changes occur in the pages directory
+      - "apps/back-office/iam-fe/**/*" # run pipeline if any changes occur in the pages directory
       - "components/**/*" # run pipeline if any changes occur in the components directory
   script:
     - docker pull $CONTAINER_TEST_IMAGE
@@ -39,7 +39,7 @@ deploy:
   only:
     changes:
       - "*"  # run pipeline if a root-level file like package.json or next.config.js is changed
-      - "pages/**/*" # run pipeline if any changes occur in the pages directory
+      - "apps/back-office/iam-fe/**/*" # run pipeline if any changes occur in the pages directory
       - "components/**/*" # run pipeline if any changes occur in the components directory
   script:
     - docker pull $CONTAINER_RELEASE_IMAGE
