@@ -9,7 +9,7 @@ import { Reflector } from '@nestjs/core';
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
-    private readonly reflector: Reflector,
+    private readonly reflector?: Reflector,
     private readonly verifyOptions?: VerifySessionOptions,
   ) {}
 
