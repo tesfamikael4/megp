@@ -1,0 +1,101 @@
+.appshell {
+  @apply relative min-h-screen;
+}
+.asidebar-open {
+  overflow: hidden;
+}
+.header {
+  @apply fixed top-0  right-0 left-0 z-40  backdrop-filter backdrop-blur-sm;
+  background-color: var(--theme-ui-colors-secondary);
+  height: 40px;
+  padding: 0px 12px;
+  border-bottom: 2px solid var(--theme-ui-colors-navText);
+}
+.headerFull {
+  @apply fixed top-0  right-0 left-0 z-40 backdrop-filter backdrop-blur-sm;
+  background-color: var(--theme-ui-colors-secondary);
+  height: 40px;
+  padding: 0px 12px;
+  border-bottom: 2px solid var(--theme-ui-colors-navText);
+}
+.sidebar {
+  @apply fixed left-0 w-14 sm:w-60;
+  padding: 0px 5px;
+  top: 40px;
+  bottom: 0px;
+  background-color: var(--theme-ui-colors-secondary);
+  border: 3px solid var(--theme-ui-colors-navText);
+  transition: margin-right 4s ease-in-out 1s;
+}
+.sidebar-hide {
+  @apply fixed bottom-1 left-0;
+  top: 43px;
+}
+
+.main {
+  @apply ml-14 p-3 sm:ml-60 flex-1 min-h-screen overflow-hidden;
+  padding: 0 0.75rem 0.75rem 0.75rem;
+}
+.mainFull {
+  @apply flex-1 p-3 min-h-screen overflow-hidden;
+}
+.mainContainer {
+  @apply p-1 flex-1 overflow-hidden;
+  margin-top: 85px;
+}
+.mainHeader {
+  @apply left-14 sm:left-60;
+  position: fixed;
+  top: 40px;
+  right: 0px;
+  z-index: 40;
+  flex: 1 1 0%;
+  overflow: hidden;
+  padding: 0.25rem;
+  min-height: 50px;
+  background-color: var(--theme-ui-colors-secondary);
+  border: 3px solid var(--theme-ui-colors-navText);
+  border-left: 2px;
+}
+
+.mainHeaderFull {
+  @apply left-0 sm:left-0;
+  position: fixed;
+  top: 40px;
+  right: 0px;
+  z-index: 40;
+  flex: 1 1 0%;
+  overflow: hidden;
+  padding: 0.25rem;
+  min-height: 50px;
+  background-color: var(--theme-ui-colors-secondary);
+  border: 3px solid var(--theme-ui-colors-navText);
+  border-left: 2px;
+}
+
+.asidebar {
+  @apply fixed w-full top-0 bottom-0 max-h-full z-50 pointer-events-none flex justify-end items-start backdrop-filter backdrop-blur-sm;
+
+  /* @apply fixed top-16 bottom-0 z-50 right-0 w-60 bg-gray-900 text-white p-4; */
+}
+.asidebarBox {
+  @apply outline-none block no-underline box-border shadow-md pointer-events-auto flex-shrink-0 w-[18.5rem] max-w-full max-h-full h-full rounded-none overflow-y-auto;
+
+  /* @apply fixed top-16 bottom-0 z-50 right-0 w-60 bg-gray-900 text-white p-4; */
+}
+.footer {
+  @apply ml-14 sm:ml-60;
+  border: 3px solid var(--theme-ui-colors-navText);
+  border-left: 2px;
+  background-color: var(--theme-ui-colors-secondary);
+  height: 40px;
+}
+.footerFull {
+  @apply h-11;
+  height: 40px;
+  background-color: var(--theme-ui-colors-secondary);
+}
+.container {
+  @apply flex flex-1; /* Adjust the value based on the height of the header */
+  margin-top: 43px;
+}

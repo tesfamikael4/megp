@@ -1,0 +1,16 @@
+.navlinkRoot {
+  @apply  min-h-[100vh];
+} 
+.navlinksTitleWrapper {
+  @apply text-xs  mx-10 px-6  py-4 text-zinc-500 rounded-lg;
+}
+.navlinksTitle {
+  @apply px-3 text-sm font-semibold tracking-wider uppercase;
+}
+
+.navlinksLinkLabel {
+  @apply  text-base;
+}
+.navlinksLinkIcon {
+  @apply  mr-6;
+}

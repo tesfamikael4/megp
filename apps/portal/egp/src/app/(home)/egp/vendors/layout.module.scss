@@ -1,0 +1,10 @@
+.appShellroot {
+  @apply  w-full bg-[#f7fafc];
+}
+
+.appShellmain {
+  @apply border rounded-lg  min-h-[100vh] shadow-lg;
+}
+.appShellChildrenCardHeader{
+   @apply font-semibold text-xl
+}
