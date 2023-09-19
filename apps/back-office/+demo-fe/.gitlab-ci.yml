@@ -60,7 +60,7 @@ build_demo-fe:
   script:
     - cd apps/back-office/+demo-fe
     - docker build --pull -t $CONTAINER_TEST_IMAGE .
-    - docker push $CONTAINER_TEST_IMAGE
+   # - docker push $CONTAINER_TEST_IMAGE
 
 push_demo-fe:
   stage: push
