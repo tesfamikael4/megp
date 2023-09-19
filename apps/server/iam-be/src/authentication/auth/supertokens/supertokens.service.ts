@@ -5,6 +5,9 @@ import ThirdPartyEmailPassword from 'supertokens-node/recipe/thirdpartyemailpass
 import Dashboard from 'supertokens-node/recipe/dashboard';
 import { ConfigInjectionToken, AuthModuleConfig } from '../config.interface';
 import { OrganizationService } from 'src/organization';
+import EmailVerification from 'supertokens-node/recipe/emailverification';
+import { SMTPService as EmailVerificationSMTPService } from 'supertokens-node/recipe/emailverification/emaildelivery';
+import { SMTPService } from 'supertokens-node/recipe/thirdpartyemailpassword/emaildelivery';
 
 @Injectable()
 export class SupertokensService {
@@ -12,6 +15,18 @@ export class SupertokensService {
     @Inject(ConfigInjectionToken) config: AuthModuleConfig,
     organizationService: OrganizationService,
   ) {
+    const smtpSettings = {
+      host: process.env.SMTP_HOST,
+      // authUsername: "...", // this is optional. In case not given, from.email will be used
+      password: process.env.SMTP_PASSWORD,
+      port: +process.env.SMTP_PORT,
+      from: {
+        name: 'Account Control',
+        email: process.env.SMTP_EMAIL,
+      },
+      secure: false,
+    };
+
     supertokens.init({
       appInfo: config.appInfo,
       supertokens: {
@@ -21,6 +36,12 @@ export class SupertokensService {
       recipeList: [
         Session.init({
           exposeAccessTokenToFrontendInCookieBasedAuth: true,
+        }),
+        EmailVerification.init({
+          mode: 'REQUIRED', // or "OPTIONAL"
+          emailDelivery: {
+            service: new EmailVerificationSMTPService({ smtpSettings }),
+          },
         }),
         Dashboard.init(),
         ThirdPartyEmailPassword.init({
@@ -52,6 +73,9 @@ export class SupertokensService {
                 optional: true,
               },
             ],
+          },
+          emailDelivery: {
+            service: new SMTPService({ smtpSettings }),
           },
           override: {
             apis: (originalImplementation) => {
