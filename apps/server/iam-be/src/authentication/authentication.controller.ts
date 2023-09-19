@@ -3,9 +3,8 @@ import { ApiTags } from '@nestjs/swagger';
 import UserRoles from 'supertokens-node/recipe/userroles';
 import { AuthGuard } from './auth/guards';
 import { SessionContainer } from 'supertokens-node/recipe/session';
-import { Session } from './auth/decorators/session.decorator';
 import { PermissionsGuard } from './auth/guards';
-import { AllowAnonymous } from './auth/decorators';
+import { AllowAnonymous, Session } from './auth/decorators';
 
 @Controller('authentications')
 @ApiTags('authentications')
