@@ -10,7 +10,7 @@ variables:
 before_script:
   - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
 
-build:
+build_iam-fe:
   stage: build
   only:
     changes:
@@ -18,6 +18,7 @@ build:
       - "pages/**/*" # run pipeline if any changes occur in the pages directory
       - "components/**/*" # run pipeline if any changes occur in the components directory
   script:
+    - cd apps/back-office/iam-fe
     - docker build -t $CONTAINER_TEST_IMAGE .
     - docker push $CONTAINER_TEST_IMAGE
 
