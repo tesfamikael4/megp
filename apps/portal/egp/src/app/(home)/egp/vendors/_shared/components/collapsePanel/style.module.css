@@ -1,0 +1,7 @@
+
+.collapsePanelRoot {
+  @apply border rounded-lg ;
+}
+.borderRed {
+    @apply border-red-700;
+  }
