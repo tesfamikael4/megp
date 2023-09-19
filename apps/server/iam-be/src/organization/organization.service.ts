@@ -102,7 +102,7 @@ export class OrganizationService {
       if (!organizationEntity) {
         throw new HttpException('Organization not found', HttpStatus.NOT_FOUND);
       }
-      await this.repository.save(organizationEntity);
+      await this.repository.insert(organizationEntity);
       return OrganizationResponseDto.toDto(organizationEntity);
     } catch (error: any) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
