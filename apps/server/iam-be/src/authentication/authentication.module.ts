@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { AuthModule } from './auth/auth.module';
 import { SupertokensConfigHelper } from './supertokens-config-helper';
 import { AuthenticationController } from './authentication.controller';
+import { OrganizationModule } from 'src/organization';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { AuthenticationController } from './authentication.controller';
         websiteBasePath: SupertokensConfigHelper.WEBSITE_BASE_PATH,
       },
     }),
+    OrganizationModule,
   ],
   controllers: [AuthenticationController],
   providers: [],

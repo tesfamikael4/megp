@@ -288,6 +288,14 @@ export class OrganizationService {
     }
   }
 
+  async getUserInfo(superTokenUserId: string) {
+    try {
+      return await this.employeeRepository.findOneBy({ superTokenUserId });
+    } catch (error: any) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
+  }
+
   private generateOrganizationCode() {
     //generate random string?
     const length = 6;

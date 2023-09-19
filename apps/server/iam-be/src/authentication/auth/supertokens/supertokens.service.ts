@@ -36,6 +36,29 @@ export class SupertokensService {
       recipeList: [
         Session.init({
           exposeAccessTokenToFrontendInCookieBasedAuth: true,
+          override: {
+            functions: (originalImplementation) => {
+              return {
+                ...originalImplementation,
+                createNewSession: async function (input) {
+                  const userId = input.userId;
+
+                  const userInfo =
+                    await organizationService.getUserInfo(userId);
+                  // if (userInfo.firstName == 'Test') {
+                  //   throw Error('user banned');
+                  // }
+
+                  input.accessTokenPayload = {
+                    ...input.accessTokenPayload,
+                    userInfo,
+                  };
+
+                  return originalImplementation.createNewSession(input);
+                },
+              };
+            },
+          },
         }),
         EmailVerification.init({
           mode: 'REQUIRED', // or "OPTIONAL"
@@ -44,7 +67,6 @@ export class SupertokensService {
           },
         }),
         Dashboard.init(),
-        UserRoles.init(),
         ThirdPartyEmailPassword.init({
           signUpFeature: {
             formFields: [
@@ -104,6 +126,12 @@ export class SupertokensService {
                       formFields,
                     );
                   }
+
+                  return response;
+                },
+                emailPasswordSignInPOST: async function (input) {
+                  const response =
+                    await originalImplementation.emailPasswordSignInPOST(input);
 
                   return response;
                 },
