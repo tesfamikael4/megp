@@ -22,7 +22,7 @@ build_iam-fe:
     - docker build -t $CONTAINER_TEST_IMAGE .
     - docker push $CONTAINER_TEST_IMAGE
 
-push:
+push_iam-fe:
   stage: push
   only:
     changes:
