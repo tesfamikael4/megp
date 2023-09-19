@@ -53,6 +53,7 @@ before_script:
 
 build_demo-fe:
   stage: build
+
   only:
     changes:
       - "*"  # run pipeline if a root-level file like Makefile or docker-compose.yml is changed
@@ -68,12 +69,14 @@ push_demo-fe:
     changes:
       - "*"  # run pipeline if a root-level file like Makefile or docker-compose.yml is changed
       - "apps/back-office/+demo-fe/**/*"
+
   script:
     - docker push $CONTAINER_TEST_IMAGE
     - docker tag $CONTAINER_TEST_IMAGE $CONTAINER_RELEASE_IMAGE
     - docker push $CONTAINER_RELEASE_IMAGE
 
 deploy_demo-fe:
+  
   stage: deploy
   only:
     changes:
