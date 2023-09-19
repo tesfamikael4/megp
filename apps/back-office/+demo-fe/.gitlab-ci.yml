@@ -14,12 +14,6 @@ build_demo_fe:
     - docker build -t demo-fe:$CI_COMMIT_REF_SLUG .
     - docker push rdemo-fe:$CI_COMMIT_REF_SLUG
 
-test_demo_fe:
-  stage: test
-  image: demo-fe:$CI_COMMIT_REF_SLUG
-  script:
-    - cd apps/back-office/+demo-fe
-    - # Add your test commands here
 
 push_demo_fe:
   stage: push
