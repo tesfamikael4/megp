@@ -27,13 +27,14 @@ import {
   UpdateVendorsDto,
   VendorsResponseDto,
 } from './dto/vendor.dto';
+import { CreateShareholdersDto } from './dto/shareholder.dto';
 //@ApiBearerAuth()
 @Controller('VendorBasics')
 @ApiTags('Vendor-profile')
 @ApiResponse({ status: 500, description: 'Internal error' })
 @ApiExtraModels(DataResponseFormat)
 export class VendorBasicsController {
-  constructor(private readonly service: VendorBasicsService) {}
+  constructor(private readonly service: VendorBasicsService) { }
   @Post('create-profile')
   async create(@Body() regDto: CreateVendorsDto) {
     console.log('dto', regDto);
@@ -87,5 +88,28 @@ export class VendorBasicsController {
       };
     });
     return array;
+  }
+
+  @Get('get-ShareHolders-by-vendorId/vinderId')
+  async getShareHoldersByVendorId(@Param("vinderId") vinderId: string) {
+    console.log('dto', vinderId);
+    return await this.service.getShareHoldersByVendorId(vinderId);
+  }
+  @Get('get-ShareHolders')
+  async getShareHolders() {
+    return await this.service.getShareHolders();
+  }
+  @Get('get-ShareHolder-by-id/:shareholderId')
+  async getShareHolderById(@Param("shareholderId") shareholderId: string) {
+    return await this.service.getShareHolderById(shareholderId);
+  }
+  @Post('create-ShareHolder')
+  async createShareHolderById(@Body() createShareholder: CreateShareholdersDto) {
+    return await this.service.createShareHolderById(createShareholder);
+  }
+  // Bank Crud 
+  @Post('add-bank-information-to-vendor/:vendorId')
+  async addBankInformationToVendor(@Body() createShareholder: CreateShareholdersDto) {
+    return await this.service.createShareHolderById(createShareholder);
   }
 }

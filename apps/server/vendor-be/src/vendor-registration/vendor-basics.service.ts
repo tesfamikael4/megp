@@ -9,12 +9,17 @@ import {
   UpdateVendorsDto,
   VendorsResponseDto,
 } from './dto/vendor.dto';
+import { ShareholdersEntity } from './entities/shareholder.entity';
+import { CreateShareholdersDto } from './dto/shareholder.dto';
 @Injectable()
 export class VendorBasicsService {
   constructor(
     @InjectRepository(VendorsEntity)
     private readonly repository: Repository<VendorsEntity>,
-  ) {}
+    @InjectRepository(ShareholdersEntity)
+    private readonly shareholdersrepository: Repository<ShareholdersEntity>,
+
+  ) { }
 
   async create(dto: CreateVendorsDto): Promise<VendorsResponseDto> {
     try {
@@ -90,5 +95,22 @@ export class VendorBasicsService {
     const response = await this.repository.restore(id);
     if (response.affected > 0) return true;
     return false;
+  }
+  async getShareHoldersByVendorId(vinderId: string): Promise<any> {
+    const response = await this.repository.findOneBy({ id: vinderId });
+    return response.shareholders;
+  }
+  async getShareHolders(): Promise<any> {
+    const response = await this.shareholdersrepository.find();
+    return response;
+  }
+  async getShareHolderById(shareholderId: string): Promise<any> {
+    const response = await this.shareholdersrepository.findOneBy({ id: shareholderId });
+    return response;
+  }
+  async createShareHolderById(shareholderId: CreateShareholdersDto): Promise<any> {
+    const shareholderEntity = CreateShareholdersDto.fromDto(shareholderId)
+    const response = await this.shareholdersrepository.save(shareholderEntity);
+    return response;
   }
 }

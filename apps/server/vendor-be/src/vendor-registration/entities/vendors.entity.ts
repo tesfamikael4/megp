@@ -1,25 +1,34 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { ApplicationEntity } from './application.entity';
 import { CommonEntity } from 'src/shared/entities/common.entity';
+import { ShareholdersEntity } from './shareholder.entity';
+import { BankAccountDetailEntity } from './bank-account-detail.entity';
+import { ApplicationEntity } from './application.entity';
 import { CustomCategoryEntity } from './custom-category.entity';
 import { BusinessCategoryEntity } from './business-category.entity';
-import { InvoiceEntity } from './invoice.entity';
-import { VendorsBankEntity } from './vendors-bank.entity';
 @Entity({ name: 'vendors' })
 export class VendorsEntity extends CommonEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column({ name: 'tin' })
+  @Column({ name: 'tin', nullable: true })
   tin: string;
-  @Column({ name: 'vendor_status' })
+  @Column({ name: 'user_id' })
+  userId: string;
+  @Column({ name: 'vendor_status', default: 'draft' })
   status: string;
   //legal form of entity
   @Column({ name: 'form_of_enity' })
   formOfEntity: string;
-  @Column({ name: 'country' })
+  @Column({ name: 'country', default: 'Malian' })
   country: string;
-  @Column({ name: 'meta_data', type: 'json' })
+
+  @Column({ name: 'meta_data', type: 'json', nullable: true })
   metaData: JSON;
+  @Column({ name: 'name' })
+  name: string;
+  @Column({ name: 'origin' })
+  origin: string;
+  @Column({ name: 'district' })
+  district: string;
 
   @OneToMany(() => ApplicationEntity, (app) => app.service)
   applications: ApplicationEntity[];
@@ -33,6 +42,16 @@ export class VendorsEntity extends CommonEntity {
     @OneToMany(() => InvoiceEntity, (invoice) => invoice.vendor)
     invoices: InvoiceEntity[];
   */
-  @OneToMany(() => VendorsBankEntity, (b) => b.vendor)
-  vendorAccounts: VendorsBankEntity[];
+  // @OneToMany(() => VendorsBankEntity, (b) => b.vendor)
+  // vendorAccounts: VendorsBankEntity[];
+
+  @OneToMany(() => BankAccountDetailEntity, (b) => b.vendor, {
+    cascade: true,
+  })
+  vendorAccounts: BankAccountDetailEntity[];
+
+  @OneToMany(() => ShareholdersEntity, (b) => b.vendor, {
+    cascade: true,
+  })
+  shareholders: ShareholdersEntity[];
 }
