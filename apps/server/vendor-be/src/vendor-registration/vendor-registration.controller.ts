@@ -19,10 +19,10 @@ import {
 } from '@nestjs/swagger';
 import { ApiPaginatedResponse, DataResponseFormat } from '@api-data';
 import { CollectionQuery } from '@collection-query';
-// import {
-//   RegistrationStatus,
-//   RegistrationTypes,
-// } from 'src/shared/enums/vendor-enums';
+import {
+  RegistrationStatus,
+  RegistrationTypes,
+} from 'src/shared/enums/vendor-enums';
 
 import { VendorRegistrationsService } from './vendor-registration.service';
 import { ServicesResponseDto } from './dto/services.dto';
@@ -39,7 +39,7 @@ import { VendorsBankDto } from './dto/bank-vendor.dto';
 @ApiResponse({ status: 500, description: 'Internal error' })
 @ApiExtraModels(DataResponseFormat)
 export class VendorRegistrationsController {
-  constructor(private readonly regService: VendorRegistrationsService) {}
+  constructor(private readonly regService: VendorRegistrationsService) { }
   @Post('submit-application')
   async create(@Body() regDto: CreateApplicationDto) {
     return await this.regService.create(regDto);
@@ -84,17 +84,17 @@ export class VendorRegistrationsController {
     return await this.regService.remove(id);
   }
 
-  // @Get('get-registration-types')
-  // async getRegistrationTypes() {
-  //   const array = Object.entries(RegistrationTypes).map((entry) => {
-  //     const [key, value] = entry;
-  //     return {
-  //       key,
-  //       value,
-  //     };
-  //   });
-  //   return array;
-  // }
+  @Get('get-registration-types')
+  async getRegistrationTypes() {
+    const array = Object.entries(RegistrationTypes).map((entry) => {
+      const [key, value] = entry;
+      return {
+        key,
+        value,
+      };
+    });
+    return array;
+  }
 
   //child methods
   @Get('get-services')
@@ -108,11 +108,11 @@ export class VendorRegistrationsController {
     return await this.regService.getVendors();
   }
   @Get('get-vendor-by-vendorId/:vendorId')
-  async getVendorByVendorId(@Param('vendorId') vendorId: string) {
+  async getVendorByVendorId(@Param("vendorId") vendorId: string) {
     return await this.regService.getVendorId(vendorId);
   }
   @Get('get-vendor-by-userId/:userId')
-  async getVendorByuserId(@Param('userId') userId: string) {
+  async getVendorByuserId(@Param("userId") userId: string) {
     return await this.regService.getVendorByUserId(userId);
   }
 
@@ -123,10 +123,7 @@ export class VendorRegistrationsController {
   }
   //  bank information
   @Post('add-bank-to-vendor/:vendorId')
-  async addBankToVendor(
-    @Body() data: VendorsBankDto,
-    @Param('vendorId') vendorId: string,
-  ) {
+  async addBankToVendor(@Body() data: VendorsBankDto, @Param("vendorId") vendorId: string) {
     // console.log('dto', data.data.data.basicRegistration);
     // return await this.regService.addBankToVendor(data);
   }
@@ -136,27 +133,8 @@ export class VendorRegistrationsController {
     return await this.regService.addVendorInformations(data);
   }
   @Post('upload-attachment/:filePath/:fileType/:vendorId')
-  async uploadAttachment(
-    @Param('filePath') filePath: string,
-    @Param('vendorId') vendorId: string,
-    @Param('fileType') fileType: string,
-  ) {
+  async uploadAttachment(@Param("filePath") filePath: string, @Param("vendorId") vendorId: string, @Param("fileType") fileType: string) {
     // console.log('dto', data.data.data.basicRegistration);
-    return await this.regService.uploadAttachment(
-      filePath.trim(),
-      fileType.trim(),
-      vendorId.trim(),
-    );
-  }
-  @Get('get-attachment/:fileType/:fileName')
-  async getAttachment(
-    @Param('fileType') fileType: string,
-    @Param('fileName') fileName: string,
-  ) {
-    // console.log('dto', data.data.data.basicRegistration);
-    return await this.regService.getAttachment(
-      fileName.trim(),
-      fileType.trim(),
-    );
+    return await this.regService.upload_MRA_TPINAttachment(filePath.trim(), fileType.trim(), vendorId.trim());
   }
 }

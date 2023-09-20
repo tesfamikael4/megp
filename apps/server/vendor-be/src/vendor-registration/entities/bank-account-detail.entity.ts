@@ -18,31 +18,30 @@ import { BanksEntity } from './bank.entity';
 export class BankAccountDetailEntity extends CommonEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column({ name: 'Account_holder_fullname', nullable: true })
+  @Column({ name: 'Account_holder_fullname' })
   AccountHolderFullName: string;
-  @Column({ name: 'Account_number', nullable: true })
+  @Column({ name: 'Account_number' })
   AccountNumber: string;
-  @Column({ name: 'vendor_id', nullable: true })
+  @Column({ name: 'vendor_id' })
   vendorId: string;
-  @Column({ name: 'bank_id', type: 'uuid', nullable: true })
+  @Column({ name: 'bank_id', type: 'uuid' })
   bankId: string;
   ///Goods , Services
-  @Column({ name: 'branch_name', nullable: true })
+  @Column({ name: 'branch_name' })
   branchName: string;
-  @Column({ name: 'branch_address', nullable: true })
+  @Column({ name: 'branch_address' })
   branchAddress: string;
-  @Column({ name: 'currency', nullable: true })
+  @Column({ name: 'currency' })
   currency: string;
-  @Column({ name: 'bank_swift', nullable: true })
+  @Column({ name: 'bank_swift' })
   bankSwift: string;
-  @Column({ name: 'IBAN', nullable: true })
+  @Column({ name: 'IBAN' })
   IBAN: string;
-  @Column({ name: 'status', nullable: true })
+  @Column({ name: 'status' })
   status: string;
-  @Column({ name: 'hash_value', nullable: true })
+  @Column({ name: 'hash_value' })
   hashValue: string;
-  @Column({ name: 'bankName', nullable: true })
-  bankName: string;
+
   @Column({ name: 'meta_data', type: 'jsonb', nullable: true })
   metaData: JSON;
   /*
