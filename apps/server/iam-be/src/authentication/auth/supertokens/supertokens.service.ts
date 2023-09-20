@@ -9,6 +9,7 @@ import EmailVerification from 'supertokens-node/recipe/emailverification';
 import { SMTPService as EmailVerificationSMTPService } from 'supertokens-node/recipe/emailverification/emaildelivery';
 import { SMTPService } from 'supertokens-node/recipe/thirdpartyemailpassword/emaildelivery';
 import UserRoles from 'supertokens-node/recipe/userroles';
+import jwt from 'supertokens-node/lib/build/recipe/jwt';
 
 @Injectable()
 export class SupertokensService {
@@ -67,6 +68,7 @@ export class SupertokensService {
           },
         }),
         Dashboard.init(),
+        jwt.init(),
         ThirdPartyEmailPassword.init({
           signUpFeature: {
             formFields: [

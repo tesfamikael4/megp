@@ -5,10 +5,12 @@ import { Todo } from './entities/todo.entity';
 import { TodoService } from './todo.service';
 import { TodoItem } from './entities/todo-item.entity';
 import { TodoItemNew } from './entities/todo-item-new.entity';
+import { SampleController } from './sample.controller';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Todo, TodoItem, TodoItemNew])],
+  imports: [TypeOrmModule.forFeature([Todo, TodoItem, TodoItemNew]), JwtModule],
   providers: [TodoService],
-  controllers: [TodoController],
+  controllers: [TodoController, SampleController],
 })
 export class TodoModule {}
