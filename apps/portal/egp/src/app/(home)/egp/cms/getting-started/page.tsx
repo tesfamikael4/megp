@@ -46,7 +46,7 @@ export default function GettingStarted() {
         title="Land on Portal"
         icon={IconWorldWww}
         isStart={true}
-        description="Once you have opened the www.egp.ppa.gov.et portal, you can access the following public information about government procurement."
+        description="Once you have opened the www.egp.ppa.gov.mw portal, you can access the following public information about government procurement."
         lists={[
           'Obtain annual procurement plans of government agencies so that the business community gets prepared and respond more effectively.',
           'Access tender notices of various government agencies for the procurement of goods, services and works.',
