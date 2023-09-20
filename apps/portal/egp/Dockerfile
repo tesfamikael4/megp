@@ -7,7 +7,7 @@ RUN apk update
 WORKDIR /app
 RUN npm install -g turbo
 COPY . .
-RUN turbo prune --scope=docs --docker
+RUN turbo prune --scope=egp-fe --docker
 
 # Add lockfile and package.json's of isolated subworkspace
 FROM base AS installer
