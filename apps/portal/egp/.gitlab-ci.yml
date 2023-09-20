@@ -35,7 +35,7 @@ deploy_portal:
   stage: deploy
   only:
     changes:
-      - "*"  # run pipeline if a root-level file like Makefile or docker-compose.yml is changed
+      - "*"  
       - "apps/portal/egp/**/*" 
   script:
     - docker pull $CONTAINER_RELEASE_IMAGE
