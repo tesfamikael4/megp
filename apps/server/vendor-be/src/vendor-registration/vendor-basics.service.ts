@@ -18,8 +18,7 @@ export class VendorBasicsService {
     private readonly repository: Repository<VendorsEntity>,
     @InjectRepository(ShareholdersEntity)
     private readonly shareholdersrepository: Repository<ShareholdersEntity>,
-
-  ) { }
+  ) {}
 
   async create(dto: CreateVendorsDto): Promise<VendorsResponseDto> {
     try {
@@ -67,6 +66,7 @@ export class VendorBasicsService {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
+
   /*
   fetch  applications of vendor by Id
   */
@@ -105,11 +105,15 @@ export class VendorBasicsService {
     return response;
   }
   async getShareHolderById(shareholderId: string): Promise<any> {
-    const response = await this.shareholdersrepository.findOneBy({ id: shareholderId });
+    const response = await this.shareholdersrepository.findOneBy({
+      id: shareholderId,
+    });
     return response;
   }
-  async createShareHolderById(shareholderId: CreateShareholdersDto): Promise<any> {
-    const shareholderEntity = CreateShareholdersDto.fromDto(shareholderId)
+  async createShareHolderById(
+    shareholderId: CreateShareholdersDto,
+  ): Promise<any> {
+    const shareholderEntity = CreateShareholdersDto.fromDto(shareholderId);
     const response = await this.shareholdersrepository.save(shareholderEntity);
     return response;
   }

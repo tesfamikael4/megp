@@ -8,53 +8,51 @@ import { ShareholdersEntity } from '../entities/shareholder.entity';
 import { FilesEntity } from '../entities/file.entity';
 
 export class CreateFileDto {
-    id: string;
-    @ApiProperty()
-    @IsNotEmpty()
-    fileType: string;
+  id: string;
+  @ApiProperty()
+  @IsNotEmpty()
+  fileType: string;
 
-    @ApiProperty()
-    @IsNotEmpty()
-    @IsUUID()
-    fileName: string; //new renew  Upgrade
-    @ApiProperty()
-    @IsNotEmpty()
-    path: string;
-    @ApiProperty()
-    @IsNotEmpty()
-    vendorId: string;
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsUUID()
+  fileName: string; //new renew  Upgrade
+  @ApiProperty()
+  @IsNotEmpty()
+  path: string;
+  @ApiProperty()
+  @IsNotEmpty()
+  vendorId: string;
 
-    /**
-     * Transfer Data from DTO object to Entity object
-     *
-     */
-    static fromDto(dto: CreateFileDto): FilesEntity {
-        const entity = new FilesEntity();
-        if (!dto) {
-            return;
-        }
-        //  entity.id=dto.id;
-        entity.id = dto?.id;
-        entity.vendorId = dto.vendorId;
-        entity.fileName = dto.fileName;
-        entity.fileName = dto.fileName;
-        entity.path = dto?.path;
-
-        console.log(entity);
-        return entity;
+  /**
+   * Transfer Data from DTO object to Entity object
+   *
+   */
+  static fromDto(dto: CreateFileDto): FilesEntity {
+    const entity = new FilesEntity();
+    if (!dto) {
+      return;
     }
+    //  entity.id=dto.id;
+    entity.id = dto?.id;
+    entity.vendorId = dto.vendorId;
+    entity.fileName = dto.fileName;
+    entity.fileType = dto.fileType;
+    entity.path = dto?.path;
 
-    /**
-     * Transfer list of DTO object to Entity  list
-     *
-     */
-    static fromDtos(
-        createShareholdersDto: CreateFileDto[],
-    ): FilesEntity[] {
-        return createShareholdersDto?.map((regDto) =>
-            CreateFileDto.fromDto(regDto),
-        );
-    }
+    console.log(entity);
+    return entity;
+  }
+
+  /**
+   * Transfer list of DTO object to Entity  list
+   *
+   */
+  static fromDtos(createShareholdersDto: CreateFileDto[]): FilesEntity[] {
+    return createShareholdersDto?.map((regDto) =>
+      CreateFileDto.fromDto(regDto),
+    );
+  }
 }
 // export class UpdateShareHoldersDto extends CreateShareholdersDto {
 //     @ApiProperty()
