@@ -19,9 +19,9 @@ import {
 } from '@nestjs/swagger';
 import { ApiPaginatedResponse, DataResponseFormat } from '@api-data';
 import { CollectionQuery } from '@collection-query';
-// import { BusinessAreas } from 'src/shared/enums/vendor-enums';
-import { VendorBasicsService } from './vendor-basics.service';
+import { BusinessAreas } from 'src/shared/enums/vendor-enums';
 
+import { VendorBasicsService } from './vendor-basics.service';
 import {
   CreateVendorsDto,
   UpdateVendorsDto,
@@ -34,7 +34,7 @@ import { CreateShareholdersDto } from './dto/shareholder.dto';
 @ApiResponse({ status: 500, description: 'Internal error' })
 @ApiExtraModels(DataResponseFormat)
 export class VendorBasicsController {
-  constructor(private readonly service: VendorBasicsService) {}
+  constructor(private readonly service: VendorBasicsService) { }
   @Post('create-profile')
   async create(@Body() regDto: CreateVendorsDto) {
     console.log('dto', regDto);
@@ -78,20 +78,20 @@ export class VendorBasicsController {
     return 'success';
   }
 
-  // @Get('get-business-areas')
-  // async getRegistrationTypes() {
-  //   const array = Object.entries(BusinessAreas).map((entry) => {
-  //     const [key, value] = entry;
-  //     return {
-  //       key,
-  //       value,
-  //     };
-  //   });
-  //   return array;
-  // }
+  @Get('get-business-areas')
+  async getRegistrationTypes() {
+    const array = Object.entries(BusinessAreas).map((entry) => {
+      const [key, value] = entry;
+      return {
+        key,
+        value,
+      };
+    });
+    return array;
+  }
 
   @Get('get-ShareHolders-by-vendorId/vinderId')
-  async getShareHoldersByVendorId(@Param('vinderId') vinderId: string) {
+  async getShareHoldersByVendorId(@Param("vinderId") vinderId: string) {
     console.log('dto', vinderId);
     return await this.service.getShareHoldersByVendorId(vinderId);
   }
@@ -100,20 +100,16 @@ export class VendorBasicsController {
     return await this.service.getShareHolders();
   }
   @Get('get-ShareHolder-by-id/:shareholderId')
-  async getShareHolderById(@Param('shareholderId') shareholderId: string) {
+  async getShareHolderById(@Param("shareholderId") shareholderId: string) {
     return await this.service.getShareHolderById(shareholderId);
   }
   @Post('create-ShareHolder')
-  async createShareHolderById(
-    @Body() createShareholder: CreateShareholdersDto,
-  ) {
+  async createShareHolderById(@Body() createShareholder: CreateShareholdersDto) {
     return await this.service.createShareHolderById(createShareholder);
   }
-  // Bank Crud
+  // Bank Crud 
   @Post('add-bank-information-to-vendor/:vendorId')
-  async addBankInformationToVendor(
-    @Body() createShareholder: CreateShareholdersDto,
-  ) {
+  async addBankInformationToVendor(@Body() createShareholder: CreateShareholdersDto) {
     return await this.service.createShareHolderById(createShareholder);
   }
 }

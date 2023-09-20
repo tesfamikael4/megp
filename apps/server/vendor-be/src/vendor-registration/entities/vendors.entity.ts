@@ -16,14 +16,14 @@ export class VendorsEntity extends CommonEntity {
   @Column({ name: 'vendor_status', default: 'draft' })
   status: string;
   //legal form of entity
-  @Column({ name: 'form_of_enity', nullable: true })
+  @Column({ name: 'form_of_enity' })
   formOfEntity: string;
   @Column({ name: 'country', default: 'Malian' })
   country: string;
 
   @Column({ name: 'meta_data', type: 'json', nullable: true })
   metaData: JSON;
-  @Column({ name: 'name', nullable: true })
+  @Column({ name: 'name' })
   name: string;
   @Column({ name: 'origin' })
   origin: string;
