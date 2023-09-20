@@ -1,8 +1,4 @@
 import ThirdPartyEmailPassword from 'supertokens-web-js/recipe/thirdpartyemailpassword';
-import {
-  doesSessionExist,
-  getAccessTokenPayloadSecurely,
-} from 'supertokens-web-js/recipe/session';
 
 type LoginWithEmailPasswordArgs = {
   email: string;
@@ -65,15 +61,4 @@ export const resetPassword = async ({ password }: { password: string }) => {
       },
     ],
   });
-};
-
-export const getAccessTokenPayload = async () => {
-  // 1. check if valid session, if not return null
-  const validSession = await doesSessionExist();
-  if (!validSession) return null;
-  const payload = await getAccessTokenPayloadSecurely();
-
-  if (!payload) return null;
-
-  return payload;
 };

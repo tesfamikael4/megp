@@ -61,6 +61,7 @@ export default function Signin() {
         // sign in successful. The session tokens are automatically handled by
         // the frontend SDK.
         router.push('/');
+        router.refresh();
       }
     } catch (err: any) {
       if (err.isSuperTokensGeneralError === true) {

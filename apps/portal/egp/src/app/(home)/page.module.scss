@@ -7,11 +7,11 @@
 }
 
 .navLinks {
-  @apply hidden md:flex  md:flex-row md:space-x-4 md:mt-0;
+  @apply hidden md:flex  md:flex-row md:space-x-4 md:mt-0 cursor-pointer;
 }
 
 .navLink {
-  @apply pr-3 font-semibold text-slate-600 hover:text-slate-900;
+  @apply pr-3 font-semibold text-slate-600 hover:text-slate-900 cursor-pointer;
 }
 .navActions {
   @apply hidden md:flex space-x-4 mt-4 md:mt-0;

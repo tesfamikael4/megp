@@ -1,5 +1,4 @@
 'use client';
-
 import styles from './layout.module.scss';
 import { Flex } from '@mantine/core';
 import Image from 'next/image';
