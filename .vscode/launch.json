@@ -11,6 +11,12 @@
       "type": "node-terminal"
     },
     {
+      "command": "cd .\\apps\\server\\+demo-be\\ && npm run start:dev",
+      "name": "Run demo",
+      "request": "launch",
+      "type": "node-terminal"
+    },
+    {
       "command": "cd .\\apps\\server\\vendor-registration\\ && npm run start:dev",
       "name": "Run Vendor Registration ",
       "request": "launch",
