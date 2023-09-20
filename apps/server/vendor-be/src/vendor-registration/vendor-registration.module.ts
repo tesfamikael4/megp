@@ -24,7 +24,15 @@ import { BankAccountDetailEntity } from './entities/bank-account-detail.entity';
 import { BankAccountDetailController } from './controllers/bankAccountDetail.controller';
 import { ShareholderService } from './services/shareholder.service';
 import { ShareholderController } from './controllers/shareholder.controller';
-
+import { TradeRegistrationDatabaseEntity } from './entities/trade-registration-database.entity';
+import { TinRegistrationDatabaseEntity } from './entities/tin-registration-database.entity';
+import { TradeRegistrationDatabaseService } from './services/trade-registration-database.service';
+import { TinRegistrationDatabaseService } from './services/tin-registration-database.service';
+import { TradeRegistrationDatabaseController } from './controllers/tradeRegistrationDatabase.controller';
+import { TinRegistrationDatabaseController } from './controllers/tinRegistrationDatabase.controller';
+import { NCICController } from './controllers/ncic.controller';
+import { NCICService } from './services/ncic.service';
+import { NCICEntity } from './entities/ncic.entity';
 
 @Module({
   imports: [
@@ -42,6 +50,9 @@ import { ShareholderController } from './controllers/shareholder.controller';
       ShareholdersEntity,
       FilesEntity,
       BankAccountDetailEntity,
+      TradeRegistrationDatabaseEntity,
+      TinRegistrationDatabaseEntity,
+      NCICEntity,
     ]),
   ],
   providers: [
@@ -50,6 +61,10 @@ import { ShareholderController } from './controllers/shareholder.controller';
     VendorBasicsService,
     BankAccountDetailService,
     ShareholderService,
+
+    TradeRegistrationDatabaseService,
+    TinRegistrationDatabaseService,
+    NCICService,
   ],
   controllers: [
     VendorRegistrationsController,
@@ -57,6 +72,9 @@ import { ShareholderController } from './controllers/shareholder.controller';
     VendorBasicsController,
     BankAccountDetailController,
     ShareholderController,
+    TradeRegistrationDatabaseController,
+    TinRegistrationDatabaseController,
+    NCICController,
   ],
 })
-export class VendorRegistrationModule { }
+export class VendorRegistrationModule {}

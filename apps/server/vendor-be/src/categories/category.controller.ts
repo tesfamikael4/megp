@@ -25,7 +25,7 @@ import {
   CreateCategoryDto,
   UpdateCategoryDto,
 } from './dto/category.dto';
-import { RegistrationTypes } from 'src/shared/enums/vendor-enums';
+// import { RegistrationTypes } from 'src/shared/enums/vendor-enums';
 //@ApiBearerAuth()
 @Controller('Categories')
 @ApiTags('Categories')
@@ -112,19 +112,19 @@ export class CategoriesController {
     return this.categoryService.getArchivedCategories(query);
   }
 
-  @Get('get-registration-types')
-  @ApiOkResponse()
-  async getRegistrationTypes() {
-    console.log(RegistrationTypes.New);
-    const array = Object.entries(RegistrationTypes).map((entry) => {
-      const [key, value] = entry;
-      return {
-        key,
-        value,
-      };
-    });
-    return array;
-  }
+  // @Get('get-registration-types')
+  // @ApiOkResponse()
+  // async getRegistrationTypes() {
+  //   console.log(RegistrationTypes.New);
+  //   const array = Object.entries(RegistrationTypes).map((entry) => {
+  //     const [key, value] = entry;
+  //     return {
+  //       key,
+  //       value,
+  //     };
+  //   });
+  //   return array;
+  // }
 
   //child methods
 }
