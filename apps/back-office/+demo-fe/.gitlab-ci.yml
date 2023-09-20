@@ -9,6 +9,11 @@ before_script:
 
 build_demo_fe:
   stage: build
+  only:
+    changes:
+      - "*"  # run pipeline if a root-level file like Makefile or docker-compose.yml is changed
+      - "apps/back-office/+demo-fe/**/*" 
+
   image: docker:latest
   services:
     - docker:dind
@@ -21,6 +26,11 @@ build_demo_fe:
 
 push_demo_fe:
   stage: push
+  only:
+    changes:
+      - "*"  # run pipeline if a root-level file like Makefile or docker-compose.yml is changed
+      - "apps/back-office/+demo-fe/**/*" 
+
   image: docker:latest
   services:
     - docker:dind
@@ -32,6 +42,11 @@ push_demo_fe:
 
 deploy_demo_fe:
   stage: deploy
+  only:
+    changes:
+      - "*"  # run pipeline if a root-level file like Makefile or docker-compose.yml is changed
+      - "apps/back-office/+demo-fe/**/*" 
+
   script:
     - docker pull demo-fe:latest
     - docker
