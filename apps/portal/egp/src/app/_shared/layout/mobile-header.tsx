@@ -5,9 +5,13 @@ import { Burger, Box, Drawer } from '@mantine/core';
 import Link from 'next/link';
 import styles from './page.module.scss';
 import Image from 'next/image';
+import { doesTokenExist } from '@/app/auth/checkToken';
+import { clearToken } from '@/app/auth/clearToken';
+import { useRouter } from 'next/navigation';
 
 export const MobileHeader = () => {
   const [opened, { toggle }] = useDisclosure(false);
+  const router = useRouter();
   const label = opened ? 'Close navigation' : 'Open navigation';
   return (
     <Box className="block md:hidden">
@@ -47,16 +51,31 @@ export const MobileHeader = () => {
               <li className={styles.navLink}>
                 <Link href="/egp/cms/faq">FAQs</Link>
               </li>
-              <li className={styles.navLink}>
-                <Link href="/auth/login" passHref>
-                  Sign In
-                </Link>
-              </li>
-              <li className={styles.navLink}>
-                <Link href="/auth/signup" passHref>
-                  Create Account
-                </Link>
-              </li>
+              {doesTokenExist() && (
+                <li
+                  onClick={() => {
+                    clearToken();
+                    router.refresh();
+                  }}
+                  className={styles.navLink}
+                >
+                  Logout
+                </li>
+              )}
+              {!doesTokenExist() && (
+                <>
+                  <li className={styles.navLink}>
+                    <Link href="/auth/login" passHref>
+                      Sign In
+                    </Link>
+                  </li>
+                  <li className={styles.navLink}>
+                    <Link href="/auth/signup" passHref>
+                      Create Account
+                    </Link>
+                  </li>
+                </>
+              )}
             </ul>
           </Drawer.Body>
         </Drawer.Content>

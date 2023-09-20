@@ -7,6 +7,7 @@ import { DropDownMenus } from '@/shared/landing/nav-dropdown-menus';
 import Image from 'next/image';
 import { MobileHeader } from '@/shared/layout/mobile-header';
 
+import { NavActions } from '@/shared/layout/nav-action';
 export const metadata: Metadata = {
   title: 'M-egp',
   description: 'Malawi electronic government procurements',
@@ -35,25 +36,13 @@ export default function RootLayout({
                 <Link href="/egp/cms">Procurement Information</Link>
               </li>
               <li className={styles.navLink}>
-                <Link href="/vendor/dashboard">Registration Service</Link>
+                <Link href="/egp/vendors/dashboard">Registration Service</Link>
               </li>
               <li className={styles.navLink}>
                 <DropDownMenus />
               </li>
             </ul>
-
-            <ul className={styles.navActions}>
-              <li className={styles.navLink}>
-                <Link href="/auth/login" passHref>
-                  Sign In
-                </Link>
-              </li>
-              <li className={styles.navLink}>
-                <Link href="/auth/signup" passHref>
-                  Create Account
-                </Link>
-              </li>
-            </ul>
+            <NavActions />
             <MobileHeader />
           </div>
         </nav>

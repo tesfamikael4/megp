@@ -1,4 +1,4 @@
-import Router from 'next/router';
+import Router from 'next/navigation';
 import Session from 'supertokens-web-js/recipe/session';
 import ThirdPartyEmailPassword from 'supertokens-web-js/recipe/thirdpartyemailpassword';
 import EmailVerification from 'supertokens-web-js/recipe/emailverification';
@@ -18,16 +18,5 @@ export const frontendConfig = () => {
       ThirdPartyEmailPassword.init(),
       EmailVerification.init(),
     ],
-    windowHandler: (oI) => {
-      return {
-        ...oI,
-        location: {
-          ...oI.location,
-          setHref: (href) => {
-            Router.push(href);
-          },
-        },
-      };
-    },
   };
 };
