@@ -31,7 +31,14 @@ export class JwtAuthGuard implements CanActivate {
     try {
       const secretOrPublicKey = JwtConstant.JWT_SECRET;
 
-      const payload = jwt.decode(token, secretOrPublicKey);
+      let payload: any;
+
+      jwt.verify(token, secretOrPublicKey, function (err: any, decoded: any) {
+        if (err) {
+          throw new UnauthorizedException(err);
+        }
+        payload = decoded;
+      });
 
       request['user'] = payload;
     } catch (error) {

@@ -37,6 +37,7 @@ export class SupertokensService {
       recipeList: [
         Session.init({
           exposeAccessTokenToFrontendInCookieBasedAuth: true,
+          useDynamicAccessTokenSigningKey: false,
           override: {
             functions: (originalImplementation) => {
               return {
@@ -68,7 +69,22 @@ export class SupertokensService {
           },
         }),
         Dashboard.init(),
-        jwt.init(),
+        jwt.init({
+          override: {
+            functions: (originalImplementation) => {
+              return {
+                ...originalImplementation,
+                createJWT: async function (input) {
+                  input.useStaticSigningKey = true;
+
+                  const response =
+                    await originalImplementation.createJWT(input);
+                  return response;
+                },
+              };
+            },
+          },
+        }),
         ThirdPartyEmailPassword.init({
           signUpFeature: {
             formFields: [
