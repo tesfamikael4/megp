@@ -4,4 +4,4 @@ COPY package.json ./
 RUN npm install --global npm@latest
 COPY . .
 EXPOSE 5500
-CMD ["npm", "run", "dev"]
+CMD ["npm", "start"]
