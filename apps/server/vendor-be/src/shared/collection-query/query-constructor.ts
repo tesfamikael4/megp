@@ -1,5 +1,4 @@
-import { ObjectLiteral, Repository } from 'typeorm';
-import { SelectQueryBuilder } from 'typeorm';
+import { ObjectLiteral, Repository, SelectQueryBuilder } from 'typeorm';
 import { FilterOperators } from './filter_operators';
 import { CollectionQuery } from './collection-query';
 

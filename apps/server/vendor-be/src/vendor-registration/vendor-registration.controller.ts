@@ -43,7 +43,7 @@ import { VendorsBankDto } from './dto/bank-vendor.dto';
 @ApiResponse({ status: 500, description: 'Internal error' })
 @ApiExtraModels(DataResponseFormat)
 export class VendorRegistrationsController {
-  constructor(private readonly regService: VendorRegistrationsService) { }
+  constructor(private readonly regService: VendorRegistrationsService) {}
   @Post('submit-application')
   async create(@Body() regDto: CreateApplicationDto) {
     return await this.regService.create(regDto);
@@ -140,17 +140,31 @@ export class VendorRegistrationsController {
     return await this.regService.addVendorInformations(data);
   }
   @Post('upload-attachment/:filePath/:fileType/:vendorId')
-  async uploadAttachment(@Param("filePath") filePath: string, @Param("vendorId") vendorId: string, @Param("fileType") fileType: string) {
+  async uploadAttachment(
+    @Param('filePath') filePath: string,
+    @Param('vendorId') vendorId: string,
+    @Param('fileType') fileType: string,
+  ) {
     // console.log('dto', data.data.data.basicRegistration);
-    return await this.regService.uploadAttachment(filePath.trim(), fileType.trim(), vendorId.trim());
+    return await this.regService.uploadAttachment(
+      filePath.trim(),
+      fileType.trim(),
+      vendorId.trim(),
+    );
   }
   @Get('get-attachment/:fileName/:fileType')
-  async getAttachment(@Param("fileName") fileName: string, @Param("fileType") fileType: string) {
+  async getAttachment(
+    @Param('fileName') fileName: string,
+    @Param('fileType') fileType: string,
+  ) {
     // console.log('dto', data.data.data.basicRegistration);
-    return await this.regService.getAttachment(fileName.trim(), fileType.trim());
+    return await this.regService.getAttachment(
+      fileName.trim(),
+      fileType.trim(),
+    );
   }
   @Get('get-attachment/:fileType/:fileName')
-  async getAttachment(
+  async getAttachmentByFileName(
     @Param('fileType') fileType: string,
     @Param('fileName') fileName: string,
   ) {
