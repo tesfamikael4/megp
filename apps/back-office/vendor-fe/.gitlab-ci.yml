@@ -20,6 +20,7 @@ build_vendor-fe:
   script:
     - cd apps/back-office/vendor-fe
     - docker build -t $VENDOR_FE_TEST_IMAGE .
+    - docker push $VENDOR_FE_TEST_IMAGE
 push_vendor-fe:
   stage: push
   only:
