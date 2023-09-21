@@ -27,9 +27,11 @@ deploy_iam-be:
     changes:
       - "*"
       - "apps/server/iam-be"
+  image: docker:latest
+  services:
+  - docker:dind
   script:
-    - docker pull $IAMBE_RELEASE_IMAGE
-    
+    - docker pull $IAMBE_RELEASE_IMAGE    
     - docker container rm -f iam-be || true
     - docker run -d -p 6699:6699 --name iam-be $IAMBE_RELEASE_IMAG
 
