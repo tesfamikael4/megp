@@ -1,8 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
-import * as Minio from 'minio';
-import * as Fs from 'fs';
-
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { CollectionQuery, QueryConstructor } from '@collection-query';
@@ -21,10 +18,8 @@ import { InsertAllDataDto } from './dto/save-all.dto';
 import { CreateVendorsDto, VendorsResponseDto } from './dto/vendor.dto';
 import { CreateShareholdersDto } from './dto/shareholder.dto';
 import { FilesEntity } from './entities/file.entity';
-import { CreateFileDto } from './dto/file.dto';
-import { VendorsBankEntity } from './entities/vendors-bank.entity';
-import { VendorsBankDto } from './dto/bank-vendor.dto';
-import { ShareholdersEntity } from './entities/shareholder.entity';
+import { CreateFileDto, GetFileDto } from './dto/file.dto';
+
 @Injectable()
 export class VendorRegistrationsService {
   constructor(
@@ -34,9 +29,7 @@ export class VendorRegistrationsService {
     private readonly serviceRepository: Repository<ServicesEntity>,
     @InjectRepository(VendorsEntity)
     private readonly vendorRepository: Repository<VendorsEntity>,
-    @InjectRepository(FilesEntity)
-    private readonly fileRepository: Repository<FilesEntity>,
-  ) { }
+  ) {}
   async create(setting: CreateApplicationDto): Promise<ApplicationResponseDto> {
     try {
       const registrationSettingEntity = CreateApplicationDto.fromDto(setting);
@@ -169,46 +162,15 @@ fetch  applications of vendor by Id
         vendor.origin = basicRegistration?.businessCompanyOrigin;
         vendor.district = basicRegistration?.district;
         vendor.country = basicRegistration?.country;
-        // Nullable
         vendor.tin = basicRegistration?.tin;
         vendor.status = data?.data?.status;
         vendor.userId = data?.data?.userId;
         vendor.metaData = JSON.parse(JSON.stringify(metadata));
 
         const vendorEntity = CreateVendorsDto.fromDto(vendor);
-        // if (data.data.data.bankAccountDetails.bankAccountDetailsTable) {
-        //   console.log('wwwwwwwwwwwwwwwwwwwwww')
-        //   const bankDetailInfo = data.data.data.bankAccountDetails.bankAccountDetailsTable
-        //   console.log('bankDetailInfobankDetailInfobankDetailInfo : ', bankDetailInfo)
-        //   const bankDetails = bankDetailInfo.map((element) => {
-        //     return {
-        //       AccountHolderFullName: element.AccountHolderFullName,
-        //       AccountNumber: element.AccountNumber,
-        //       IBAN: element.IBAN,
-        //       bank: element.bank,
-        //       bankSwift: element.bankSwift,
-        //       branchAddress: element.branchAddress,
-        //       branchName: element.branchName,
-        //       currency: element.currency,
-        //       hashValue: element.hashValue,
-        //       id: element?.id,
-        //       status: element.status
-        //     }
-        //   })
-        //   console.log('tttttthhhhhhhddddaaaaaaattttaaaaaaaaiiiiisssss: ', bankDetails)
-        //   vendorEntity.vendorAccounts = VendorsBankDto.fromDtos(bankDetails)
-        //   console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx: ', bankDetails)
-
-        // }
         const result = await this.vendorRepository.save(vendorEntity);
-        // going to save shareholders
-        console.log('cccccccccccccccccccccccc : ', data.data.data);
         if (data.data.data?.shareHolders?.shareHoldersTable) {
           const shareHolders = data.data?.data.shareHolders?.shareHoldersTable;
-          console.log(
-            'cccccccccccccccccccccccc : ',
-            data.data.data?.shareHolders?.shareHoldersTable,
-          );
           let shareholdersarray = [];
           shareholdersarray = shareHolders.map((elemet) => {
             return {
@@ -223,10 +185,10 @@ fetch  applications of vendor by Id
             CreateShareholdersDto.fromDtos(shareholdersarray);
           // console.log('arrraay : ', shareholderarrays[0]);
           result.shareholders = shareholderarrays;
-          // console.log('resultresultresultresultresultresult : ', result);
           const result2 = await this.vendorRepository.save(result);
           return result2;
         }
+        return result;
         return result;
       } catch (error) {
         console.log('error : ', error);
@@ -368,13 +330,13 @@ fetch  applications of vendor by Id
       shareHoldersEntity =
         shareHolders.length > 0
           ? shareHolders?.map((elemet) => {
-            return {
-              id: elemet?.id, // this id will make the operation update if its drafted already
-              share: elemet?.share,
-              fullName: elemet?.fullName,
-              Nationality: elemet?.nationality,
-            };
-          })
+              return {
+                id: elemet?.id, // this id will make the operation update if its drafted already
+                share: elemet?.share,
+                fullName: elemet?.fullName,
+                Nationality: elemet?.nationality,
+              };
+            })
           : undefined;
       vendorsEntity.shareholders = shareHoldersEntity;
 
@@ -382,22 +344,22 @@ fetch  applications of vendor by Id
       const bankDetails =
         bankAccountDetails.length > 0
           ? bankAccountDetails.map((element) => {
-            // console.log('elementelementelementelement : ', element)
-            return {
-              id: element?.id,
-              AccountHolderFullName: element.accountHoldersFullName,
-              AccountNumber: element.accountNumber,
-              IBAN: element.iBAN,
-              bankSwift: element.bankSWIFT_BICCode,
-              bankId: element.bankId,
-              bankName: element.bankName,
-              branchAddress: element.bankBranchAddress,
-              branchName: element.branchName,
-              currency: element.currency,
-              hashValue: element.hashValue,
-              status: element.status,
-            };
-          })
+              // console.log('elementelementelementelement : ', element)
+              return {
+                id: element?.id,
+                AccountHolderFullName: element.accountHoldersFullName,
+                AccountNumber: element.accountNumber,
+                IBAN: element.iBAN,
+                bankSwift: element.bankSWIFT_BICCode,
+                bankId: element.bankId,
+                bankName: element.bankName,
+                branchAddress: element.bankBranchAddress,
+                branchName: element.branchName,
+                currency: element.currency,
+                hashValue: element.hashValue,
+                status: element.status,
+              };
+            })
           : undefined;
       vendorsEntity.vendorAccounts = bankDetails;
 
@@ -508,173 +470,6 @@ fetch  applications of vendor by Id
       );
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
-    }
-  }
-  // add vendor Bank
-  // async addBankToVendor(bankDetailInfo: VendorsBankDto): Promise<any> {
-  //   try {
-  //     const bankDetailDto = new VendorsBankDto()
-  //     bankDetailDto.AccountHolderFullName = bankDetailInfo.AccountHolderFullName
-  //     bankDetailDto.AccountNumber = bankDetailInfo.AccountNumber
-  //     bankDetailDto.IBAN = bankDetailInfo.IBAN
-  //     bankDetailDto.bank = bankDetailInfo.bank
-  //     bankDetailDto.bankSwift = bankDetailInfo.bankSwift
-  //     bankDetailDto.branchAddress = bankDetailInfo.branchAddress
-  //     bankDetailDto.branchName = bankDetailInfo.branchName
-  //     bankDetailDto.currency = bankDetailInfo.currency
-  //     bankDetailDto.hashValue = bankDetailInfo.hashValue
-  //     bankDetailDto.id = bankDetailInfo?.id
-  //     bankDetailDto.status = bankDetailInfo.status
-
-  //     // bankDetailDto.vendor = bankDetailInfo?.vendor
-
-  //     const vendorEntity = await this.vendorsBankRepository.save();
-  //     return vendorEntity.map((element) => VendorsResponseDto.fromEntity(element));
-  //   } catch (error) {
-  //     throw new HttpException(error, HttpStatus.BAD_REQUEST);
-  //   }
-  // }
-  // file upload
-  // async uploadAttachment(filePath: string, filename: string) {
-  //   var Minio = require('minio')
-
-  //   try {
-  //     var minioClient = new Minio.Client({
-  //       endPoint: 'localhost',
-  //       port: 9000,
-  //       useSSL: false,
-  //       accessKey: 'uCQ0bN1TSUQbcNtZgpL6',
-  //       secretKey: 'ZPnoE48fJyCiDwD5h4A2bpy6scMtnvuybMcBB808',
-  //     })
-  //     var minioClient = new Minio.Client({
-  //       endPoint: 'localhost',
-  //       port: 9000,
-  //       useSSL: false,
-  //       accessKey: 'uCQ0bN1TSUQbcNtZgpL6',
-  //       secretKey: 'ZPnoE48fJyCiDwD5h4A2bpy6scMtnvuybMcBB808',
-  //     })
-  //     // this is for geting list of folders in the server
-  //     // const buckets = await minioClient.listBuckets()
-  //     // console.log('Success', buckets)
-  //     var Fs = require('fs')
-  //     var file = 'C:/Users/yayas/OneDrive/Desktop/photo_2021-11-01_15-26-13.jpg'
-  //     var fileStream = Fs.createReadStream(file)
-  //     var fileStat = Fs.stat(file, function (err, stats) {
-  //       if (err) {
-  //         return console.log(err)
-  //       }
-  //       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9)
-  //       const filename = 'my_ownName' + '-' + uniqueSuffix
-  //       minioClient.putObject('vendor', filename, fileStream, stats.size, function (err, objInfo) {
-  //         if (err) {
-  //           return console.log(err) // err should be null
-  //         }
-  //         console.log('Success', objInfo)
-  //         return objInfo
-  //       })
-  //     })
-  //     return fileStat
-  //   } catch (error) {
-  //     console.log("error : ", error)
-  //     throw new HttpException(error, HttpStatus.BAD_REQUEST);
-  //   }
-  // }
-  async getAttachment(fileName: string, fileType: string) {
-    try {
-      const minioClient = new Minio.Client({
-        endPoint: 'localhost',
-        port: 9000,
-        useSSL: false,
-        accessKey: 'uCQ0bN1TSUQbcNtZgpL6',
-        secretKey: 'ZPnoE48fJyCiDwD5h4A2bpy6scMtnvuybMcBB808',
-      });
-      let size = 1024;
-      const file_type = fileType.toLocaleLowerCase();
-      console.log('ddddddddddddd : ', file_type, ' : ', fileName);
-      minioClient.getObject(file_type, fileName, function (err, dataStream) {
-        if (err) {
-          return console.log(err);
-        }
-        dataStream.on('data', function (chunk) {
-          size += chunk.length;
-        });
-        dataStream.on('end', function () {
-          console.log('End. Total size = ' + size);
-        });
-        dataStream.on('error', function (err) {
-          console.log(err);
-        });
-      });
-    } catch (error) { }
-  }
-  async uploadAttachment(filePath: string, fileType: string, vendorId: string) {
-    try {
-      const minioClient = new Minio.Client({
-        endPoint: 'localhost',
-        port: 9000,
-        useSSL: false,
-        accessKey: 'uCQ0bN1TSUQbcNtZgpL6',
-        secretKey: 'ZPnoE48fJyCiDwD5h4A2bpy6scMtnvuybMcBB808',
-      });
-      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-      const filename = fileType + '-' + uniqueSuffix;
-
-      let bucket = '';
-      switch (fileType.toLocaleLowerCase()) {
-        case 'business-registration-incorporation-certificate':
-          bucket = 'business-registration-incorporation-certificate';
-          break;
-        case 'general-receipt-bank-deposit-slip':
-          bucket = 'general-receipt-bank-deposit-slip';
-          break;
-        case 'mra-tax-clearance':
-          bucket = 'mra-tax-clearance';
-          break;
-        case 'mra-tax-clearance-certificate':
-          bucket = 'mra-tax-clearance-certificate';
-          break;
-        case 'mra-tpin-certificate':
-          bucket = 'mra-tpin-certificate';
-          break;
-        case 'msme-certificate':
-          bucket = 'msme-certificate';
-          break;
-        case 'previous-ppda-registration-certificate':
-          bucket = 'previous-ppda-registration-certificate';
-          break;
-        default:
-          bucket = 'vendor-attachment';
-      }
-      const metaData = {
-        'Content-Type': 'application/octet-stream',
-        'X-Amz-Meta-Testing': 1234,
-        example: 5678,
-      };
-      const result = minioClient.fPutObject(
-        bucket,
-        filename,
-        filePath,
-        metaData,
-        function (err, etag) {
-          if (err) return console.log(err);
-          console.log('File uploaded successfully.');
-        },
-      );
-
-      const fileDto = new CreateFileDto();
-
-      fileDto.fileType = fileType;
-      fileDto.path = filePath;
-      fileDto.vendorId = vendorId;
-      fileDto.fileName = filename;
-      const fileEntity = CreateFileDto.fromDto(fileDto);
-      console.log(fileEntity);
-      const res = await this.fileRepository.save(fileEntity);
-      return res;
-    } catch (error) {
-      console.log('error : ', error);
-      throw new HttpException(error, HttpStatus.BAD_REQUEST);
-      return error;
     }
   }
 }
