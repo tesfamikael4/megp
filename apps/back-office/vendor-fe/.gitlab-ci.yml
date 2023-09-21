@@ -23,8 +23,9 @@ build_vendor-fe:
 push_vendor-fe:
   stage: push
   only:
-    -"*"
+    - "*"
     - "apps/back-office/vendor-fe/**/*"
+  script:
     - docker push $VENDOR_FE_TEST_IMAGE
 
 deploy_vendor-fe:
