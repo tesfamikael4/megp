@@ -42,8 +42,8 @@ export class AuthenticationController {
   }
 
   @Get('protected')
-  @UseGuards(PermissionsGuard('oa|admin|write'))
-  // @UseGuards(new AuthGuard())
+  // @UseGuards(PermissionsGuard('oa|admin|write'))
+  @UseGuards(new AuthGuard())
   async getTest(@Session() session: SessionContainer): Promise<any> {
     return {
       userId: session.getUserId(),

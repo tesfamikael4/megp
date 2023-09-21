@@ -5,18 +5,26 @@ import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AuthGuard } from './authentication';
+import supertokens from 'supertokens-node';
+import { SupertokensExceptionFilter } from './authentication/auth/filters/auth.filter';
 
 async function bootstrap() {
   const app: NestExpressApplication = await NestFactory.create(AppModule, {
     cors: true,
   });
 
-  app.enableCors();
+  app.enableCors({
+    origin: ['*'],
+    allowedHeaders: ['content-type', ...supertokens.getAllCORSHeaders()],
+    credentials: true,
+  });
 
   const config: ConfigService = app.get(ConfigService);
   const port: number = config.get<number>('PORT') || 3000;
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+
+  app.useGlobalFilters(new SupertokensExceptionFilter());
 
   const reflector = app.get(Reflector);
   app.useGlobalGuards(new AuthGuard(reflector));

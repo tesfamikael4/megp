@@ -102,12 +102,15 @@ export class SupertokensService {
               },
               {
                 id: 'firstName',
+                optional: true,
               },
               {
                 id: 'lastName',
+                optional: true,
               },
               {
                 id: 'organizationName',
+                optional: true,
               },
               {
                 id: 'securityQuestions',
