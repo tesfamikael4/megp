@@ -33,6 +33,8 @@ import { NCICEntity } from './entities/ncic.entity';
 import { TradeRegistrationDatabaseEntity } from './entities/trade-registration-database.entity';
 import { TradeRegistrationDatabaseService } from './services/trade-registration-database.service';
 import { TinRegistrationDatabaseService } from './services/tin-registration-database.service';
+import { FileController } from './controllers/file.controller';
+import { File } from './services/file.service';
 
 @Module({
   imports: [
@@ -65,6 +67,7 @@ import { TinRegistrationDatabaseService } from './services/tin-registration-data
     TradeRegistrationDatabaseService,
     TinRegistrationDatabaseService,
     NCICService,
+    File,
   ],
   controllers: [
     VendorRegistrationsController,
@@ -75,6 +78,7 @@ import { TinRegistrationDatabaseService } from './services/tin-registration-data
     TradeRegistrationDatabaseController,
     TinRegistrationDatabaseController,
     NCICController,
+    FileController,
   ],
 })
-export class VendorRegistrationModule { }
+export class VendorRegistrationModule {}
