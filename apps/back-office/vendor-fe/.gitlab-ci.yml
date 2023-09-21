@@ -6,35 +6,29 @@ variables:
   VENDOR_FE_TEST_IMAGE: $CI_REGISTRY_IMAGE/vendor-fe:$CI_COMMIT_REF_SLUG
   VENDOR_FE_RELEASE_IMAGE: $CI_REGISTRY_IMAGE/vendor-fe:latest
 
-
 before_script:
   - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+
 build_vendor-fe:
-  
   stage: build
   only:
     changes:
-      - "*"  # run pipeline if a root-level file like Makefile or docker-compose.yml is changed
-      - "apps/back-office/vendor-fe/**/*" 
+      - "*"
+      - "apps/back-office/vendor-fe/**/*"
       - "packages/fe/core-fe/**/*"
   script:
     - cd apps/back-office/vendor-fe
     - docker build -t $VENDOR_FE_TEST_IMAGE .
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker push $VENDOR_FE_TEST_IMAGE
+
 deploy_vendor-fe:
   stage: deploy
   only:
     changes:
-      - "*"  # run pipeline if a root-level file like Makefile or docker-compose.yml is changed
-      - "apps/back-office/vendor-fe/**/*" 
+      - "*"
+      - "apps/back-office/vendor-fe/**/*"
       - "packages/fe/core-fe/**/*"
   script:
     - docker pull $VENDOR_FE_RELEASE_IMAGE
     - docker container rm -f vendor-fe || true
     - docker run -d -p 5533:5533 --name vendor-fe $VENDOR_FE_RELEASE_IMAGE
-  # only:
-  #  - main
-
-
-
