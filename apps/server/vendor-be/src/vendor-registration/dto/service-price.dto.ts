@@ -6,18 +6,13 @@ export class CreateServicePriceDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsUUID()
-  serviceId: string; //new, renewal, upgrade
+  serviceId: string;
   @ApiProperty()
   @IsNotEmpty()
-  businessArea: string; //Goods Services
+  businessArea: string;
   @ApiProperty()
   @IsNotEmpty()
-  @IsNumber()
-  valueFrom: number;
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsNumber()
-  valueTo: number;
+  contractValue: string;
   @ApiProperty()
   @IsNotEmpty()
   @IsNumber()
@@ -36,8 +31,8 @@ export class CreateServicePriceDto {
     }
     entity.serviceId = dto.serviceId;
     entity.businessArea = dto.businessArea;
-    entity.valueFrom = dto.valueFrom;
-    entity.valueTo = dto.valueTo;
+    entity.contractValue = dto.contractValue;
+    //entity.valueTo = dto.valueTo;
     entity.fee = dto.fee;
     entity.currency = dto?.currency;
     console.log(dto);
@@ -68,8 +63,7 @@ export class UpdateServicePriceDto extends CreateServicePriceDto {
     entity.id = dto.id;
     entity.businessArea = dto.businessArea;
     entity.serviceId = dto.serviceId;
-    entity.valueFrom = dto.valueFrom;
-    entity.valueTo = dto.valueTo;
+    entity.contractValue = dto.contractValue;
     entity.currency = dto?.currency;
     entity.fee = dto.fee;
     entity.createdAt = new Date();
@@ -85,8 +79,7 @@ export class ServicePriceResponseDto extends UpdateServicePriceDto {
     response.id = dto.id;
     response.serviceId = dto.serviceId;
     response.businessArea = dto.businessArea;
-    response.valueFrom = dto.valueFrom;
-    response.valueTo = dto.valueTo;
+    response.contractValue = dto.contractValue;
     response.currency = dto?.currency;
     response.fee = dto.fee;
     return response;

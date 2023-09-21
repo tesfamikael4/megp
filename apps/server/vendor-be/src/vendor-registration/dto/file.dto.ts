@@ -6,22 +6,22 @@ import { CreateCustomCategoryDto } from './custom-category.dto';
 import { CreateVendorsDto } from './vendor.dto';
 import { ShareholdersEntity } from '../entities/shareholder.entity';
 import { FilesEntity } from '../entities/file.entity';
+import { IsNull } from 'typeorm';
 
 export class CreateFileDto {
   id: string;
   @ApiProperty()
-  @IsNotEmpty()
+  @IsNotEmpty({ message: "File name can't be empty" })
   fileType: string;
 
   @ApiProperty()
-  @IsNotEmpty()
-  @IsUUID()
+  @IsNotEmpty({ message: "File name can't be empty" })
   fileName: string; //new renew  Upgrade
   @ApiProperty()
-  @IsNotEmpty()
+  @IsNotEmpty({ message: "File Path can't be empty" })
   path: string;
   @ApiProperty()
-  @IsNotEmpty()
+  @IsNotEmpty({ message: "Vendor Id can't be empty" })
   vendorId: string;
 
   /**
@@ -92,3 +92,27 @@ RegistrationSettingsResponseDto
 //         return response;
 //     }
 // }
+
+export class GetFileDto {
+  @ApiProperty()
+  @IsNotEmpty()
+  fileName: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  bucketName: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  destination: string;
+}
+
+export class DeleteFileDto {
+  @ApiProperty()
+  @IsNotEmpty()
+  fileName: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  bucketName: string;
+}
