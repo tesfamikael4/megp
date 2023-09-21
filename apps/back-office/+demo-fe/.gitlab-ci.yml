@@ -24,24 +24,9 @@ build_demo_fe:
   script:
     - cd apps/back-office/+demo-fe
     - docker build -t $ DEMOFE_TEST_IMAGE .
+    - docker tag  $DEMOFE_TEST_IMAGE $DEMOFE_RELEASE_IMAGE
     - docker push $DEMOFE_TEST_IMAGE
 
-
-push_demo_fe:
-  stage: push
-  only:
-    changes:
-      - "*"  # run pipeline if a root-level file like Makefile or docker-compose.yml is changed
-      - "apps/back-office/+demo-fe/**/*" 
-
-  image: docker:latest
-  services:
-    - docker:dind
-  script:
-    - docker pull $DEMOFE_TEST_IMAGE
-    - docker tag  $DEMOFE_TEST_IMAGE $DEMOFE_RELEASE_IMAGE
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker push $DEMOFE_RELEASE_IMAGE
 
 deploy_demo_fe:
   stage: deploy
