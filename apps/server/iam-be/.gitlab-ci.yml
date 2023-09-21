@@ -33,6 +33,7 @@ deploy_iam-be:
   script:
     - docker pull $IAMBE_RELEASE_IMAGE    
     - docker container rm -f iam-be || true
+    
     - docker run -d -p 6699:6699 --name iam-be $IAMBE_RELEASE_IMAG
 
 
