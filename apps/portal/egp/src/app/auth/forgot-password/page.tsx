@@ -8,6 +8,7 @@ import {
   Button,
   Flex,
   Box,
+  Title,
 } from '@mantine/core';
 import Image from 'next/image';
 import { IconAt } from '@tabler/icons-react';
@@ -71,6 +72,7 @@ export default function ForgotPasswordPage() {
             alt="forgot-password"
             className="mx-auto"
           />
+          <Title align="center">Reset Password</Title>
           {response === 'OK' && (
             <Box className="mt-4">
               <IconChecks color="#3d692c" size={48} className="mx-auto" />
@@ -86,11 +88,13 @@ export default function ForgotPasswordPage() {
           {!response && (
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
               <TextInput
-                label="Please enter your email below so we can send you a reset link: "
+                label="Email"
+                description="Please enter your email below so we can send you a reset link: "
                 placeholder="Your email"
                 icon={<IconAt size="0.8rem" />}
                 error={errors.email?.message}
                 {...register('email')}
+                className="mt-4"
               ></TextInput>
               <Button className="mt-6" type="submit" loading={loading}>
                 Send link
