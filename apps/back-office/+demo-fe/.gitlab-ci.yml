@@ -1,11 +1,15 @@
 stages:
   - build
-  - test
-  - push
+  #- test
+  #- push
   - deploy
 variables:
+  DEMOFE_TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+  DEMOFE_RELEASE_IMAGE: $CI_REGISTRY_IMAGE:latest
+
 before_script:
   - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+
 
 build_demo_fe:
   stage: build
@@ -19,9 +23,8 @@ build_demo_fe:
     - docker:dind
   script:
     - cd apps/back-office/+demo-fe
-    - docker build -t demo-fe:$CI_COMMIT_REF_SLUG .
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    #- docker push demo-fe:$CI_COMMIT_REF_SLUG
+    - docker build -t $ DEMOFE_TEST_IMAGE .
+    - docker push $DEMOFE_TEST_IMAGE
 
 
 push_demo_fe:
@@ -35,10 +38,10 @@ push_demo_fe:
   services:
     - docker:dind
   script:
-    - docker pull demo-fe:$CI_COMMIT_REF_SLUG
-    - docker tag demo-fe:$CI_COMMIT_REF_SLUG demo-fe:latest
+    - docker pull $DEMOFE_TEST_IMAGE
+    - docker tag  $DEMOFE_TEST_IMAGE $DEMOFE_RELEASE_IMAGE
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker push demo-fe:latest
+    - docker push $DEMOFE_RELEASE_IMAGE
 
 deploy_demo_fe:
   stage: deploy
@@ -48,5 +51,7 @@ deploy_demo_fe:
       - "apps/back-office/+demo-fe/**/*" 
 
   script:
-    - docker pull demo-fe:latest
-    - docker
+    - docker pull $DEMOFE_RELEASE_IMAGE
+    - docker container rm -f demo || true
+    - docker run -d -p 5599:5599 --name demo $PORTAL_RELEASE_IMAGE
+
