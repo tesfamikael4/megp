@@ -10,11 +10,11 @@ stages:
   - deploy
   
 include:
-  - local:'apps/back-office/+demo-fe/.gitlab-ci.yml'
-  - local:'/apps/portal/egp/.gitlab-ci.yml'
-  - local:'apps/back-office/iam-fe/.gitlab-ci.yml'
-  - local:'apps/back-office/administration-fe/.gitlab-ci.yml'
-  - local:'apps/back-office/vendor-fe/.gitlab-ci.yml'
+  - 'apps/back-office/+demo-fe/.gitlab-ci.yml'
+  - '/apps/portal/egp/.gitlab-ci.yml'
+  - 'apps/back-office/iam-fe/.gitlab-ci.yml'
+  - 'apps/back-office/administration-fe/.gitlab-ci.yml'
+  - 'apps/back-office/vendor-fe/.gitlab-ci.yml'
   - local:'apps/server/+demo-be/.gitlab-ci.yml'
   - local:'apps/server/iam-be/.gitlab-ci.yml'
 
