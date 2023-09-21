@@ -23,7 +23,7 @@ build_demo_fe:
     - docker:dind
   script:
     - cd apps/back-office/+demo-fe
-    - docker build -t $ DEMOFE_TEST_IMAGE .
+    - docker build -t $DEMOFE_TEST_IMAGE .
     - docker tag  $DEMOFE_TEST_IMAGE $DEMOFE_RELEASE_IMAGE
     - docker push $DEMOFE_TEST_IMAGE
 
@@ -38,5 +38,5 @@ deploy_demo_fe:
   script:
     - docker pull $DEMOFE_RELEASE_IMAGE
     - docker container rm -f demo || true
-    - docker run -d -p 5599:5599 --name demo $PORTAL_RELEASE_IMAGE
+    - docker run -d -p 5599:5599 --name demo $DEMOFE_RELEASE_IMAGE
 
