@@ -2,12 +2,8 @@
     @apply text-slate-500 text-justify md:p-2 pb-0 p-1
 }
 
-/* .container {
-    @apply md:pt-20 md:w-1/2 p-0 pl-1
-} */
-
 .title {
-    @apply text-center
+    @apply text-center text-3xl font-normal
 }
 
 .paper_wrapper {
@@ -28,6 +24,10 @@
 
 .sign_up_wrapper {
     @apply justify-end mt-6
+}
+
+.sign_up_button {
+    @apply w-full
 }
 
 .sign_in {

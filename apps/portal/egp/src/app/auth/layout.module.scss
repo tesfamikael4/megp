@@ -3,7 +3,7 @@
 } */
 
 .bod {
-  @apply flex justify-center items-center h-screen flex-col;
+  @apply flex justify-center items-center min-h-screen flex-col pt-4 pb-4 md:p-6;
 }
 
 .image {

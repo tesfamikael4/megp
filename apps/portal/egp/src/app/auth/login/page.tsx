@@ -129,14 +129,14 @@ export default function Signin() {
                   className="text-center"
                   sx={(theme) => ({
                     fontFamily: `Greycliff CF, ${theme.fontFamily}`,
-                    fontWeight: 900,
+                    fontWeight: 450,
                   })}
                 >
                   Sign In
                 </Title>
                 <TextInput
-                  label="Username"
-                  placeholder="Your user name"
+                  label="Email / Username"
+                  placeholder="Your email"
                   error={errors.email?.message}
                   {...register('email')}
                 />

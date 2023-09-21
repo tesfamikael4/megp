@@ -89,7 +89,7 @@ const SignUpPage = () => {
   const [isSigningUp, setIsSigningUp] = React.useState(false);
   const [emailExists, setEmailExists] = React.useState(false);
   const [accordionValue, setAccordionValue] = React.useState<string[]>([
-    'basicInformation',
+    'accountInformation',
   ]);
   const [securityQuestions, setSecurityQuestions] =
     React.useState(securityQuestion);
@@ -183,15 +183,7 @@ const SignUpPage = () => {
               styles={{ root: { backgroundColor: 'rgb(243 244 246)' } }}
             >
               <Box>
-                <Title
-                  styles={(theme) => ({
-                    fontFamily: `Greycliff CF, ${theme.fontFamily}`,
-                    fontWeight: 850,
-                  })}
-                  className={styles.title}
-                >
-                  Create Account
-                </Title>
+                <p className={styles.title}>Create Account</p>
 
                 <Text color="dimmed" className={styles.title}>
                   Already have an account?{' '}
@@ -214,9 +206,9 @@ const SignUpPage = () => {
                     },
                   }}
                 >
-                  <Accordion.Item value="basicInformation">
-                    <Accordion.Control>Basic Information</Accordion.Control>
-                    <Accordion.Panel py={10}>
+                  <Accordion.Item value="accountInformation">
+                    <Accordion.Control>Account Information</Accordion.Control>
+                    <Accordion.Panel>
                       <Flex direction={'row'} className="gap-2">
                         <TextInput
                           label="First Name"
@@ -235,11 +227,6 @@ const SignUpPage = () => {
                           withAsterisk
                         />
                       </Flex>
-                    </Accordion.Panel>
-                  </Accordion.Item>
-                  <Accordion.Item value="accountInformation">
-                    <Accordion.Control>Account Information</Accordion.Control>
-                    <Accordion.Panel>
                       <TextInput
                         label="Mobile Phone"
                         placeholder="Your mobile phone"
@@ -272,13 +259,17 @@ const SignUpPage = () => {
                   <Accordion.Item value="securityQuestions">
                     <Accordion.Control>Account Recovery</Accordion.Control>
                     <Accordion.Panel>
+                      <Text>
+                        Fill out the security questions below before procceding.
+                      </Text>
+                      <Divider />
                       <Controller
                         control={control}
                         name="securityQuestion1.question"
                         render={({ field: { value, name, onChange } }) => (
                           <Select
-                            label={`Security Question 1`}
-                            placeholder={`Select Security Question 1`}
+                            label={`Question 1`}
+                            placeholder={`Select Question 1`}
                             searchable
                             nothingFound="No options"
                             data={securityQuestion.filter((question) => {
@@ -296,20 +287,20 @@ const SignUpPage = () => {
                         )}
                       />
                       <TextInput
-                        label={`Security Answer 1`}
-                        placeholder={`Security Answer 1`}
+                        label={`Answer 1`}
+                        placeholder={`Answer 1`}
                         {...register('securityQuestion1.answer')}
                         error={errors.securityQuestion1?.answer?.message}
                         withAsterisk
                       />
-
+                      <Divider />
                       <Controller
                         control={control}
                         name="securityQuestion2.question"
                         render={({ field: { value, name, onChange } }) => (
                           <Select
-                            label={`Security Question 2`}
-                            placeholder={`Select Security Question 2`}
+                            label={`Question 2`}
+                            placeholder={`Select Question 2`}
                             searchable
                             nothingFound="No options"
                             data={securityQuestion.filter((question) => {
@@ -327,20 +318,20 @@ const SignUpPage = () => {
                         )}
                       />
                       <TextInput
-                        label={`Security Answer 2`}
-                        placeholder={`Security Answer 2`}
+                        label={`Answer 2`}
+                        placeholder={`Answer 2`}
                         {...register('securityQuestion2.answer')}
                         error={errors.securityQuestion2?.answer?.message}
                         withAsterisk
                       />
-
+                      <Divider />
                       <Controller
                         control={control}
                         name="securityQuestion3.question"
                         render={({ field: { value, name, onChange } }) => (
                           <Select
-                            label={`Security Question 3`}
-                            placeholder={`Select Security Question 3`}
+                            label={`Question 3`}
+                            placeholder={`Select Question 3`}
                             searchable
                             nothingFound="No options"
                             data={securityQuestion.filter((question) => {
@@ -358,8 +349,8 @@ const SignUpPage = () => {
                         )}
                       />
                       <TextInput
-                        label={`Security Answer 3`}
-                        placeholder={`Security Answer 3`}
+                        label={`Answer 3`}
+                        placeholder={`Answer 3`}
                         {...register('securityQuestion3.answer')}
                         error={errors.securityQuestion3?.answer?.message}
                         withAsterisk
