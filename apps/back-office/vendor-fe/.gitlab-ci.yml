@@ -1,5 +1,6 @@
 stages:
   - build
+  - push
   - deploy
 
 variables:  
@@ -19,6 +20,11 @@ build_vendor-fe:
   script:
     - cd apps/back-office/vendor-fe
     - docker build -t $VENDOR_FE_TEST_IMAGE .
+push_vendor-fe:
+  stage: push
+  only:
+    -"*"
+    - "apps/back-office/vendor-fe/**/*"
     - docker push $VENDOR_FE_TEST_IMAGE
 
 deploy_vendor-fe:
