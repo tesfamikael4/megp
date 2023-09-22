@@ -29,7 +29,11 @@ async function bootstrap() {
   );
 
   SwaggerModule.setup('docs', app, document);
-
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+    }),
+  );
   await app.listen(port, () => {
     console.log('[WEB]', config.get<string>('BASE_URL') + '/docs');
   });

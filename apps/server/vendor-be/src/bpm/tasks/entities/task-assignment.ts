@@ -20,7 +20,7 @@ export class TaskAssignmentEntity extends CommonEntity {
   assigneeName: string;
   @Column({ name: 'assignee_type' })
   assignmentType: string;
-  @ManyToOne(() => TaskEntity, (task) => task.taskAssignments, {
+  @ManyToOne(() => TaskEntity, (task) => task.assignments, {
     orphanedRowAction: 'delete',
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE',

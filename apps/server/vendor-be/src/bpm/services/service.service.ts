@@ -39,7 +39,6 @@ export class BpServiceService {
   }
   async create(dto: CreateBpServiceDto): Promise<BpServiceResponse> {
     const serviceEntity = CreateBpServiceDto.fromDto(dto);
-    console.log(serviceEntity, dto);
     const newService = await this.serviceRepository.save(serviceEntity);
     return BpServiceResponse.toResponse(newService);
   }
