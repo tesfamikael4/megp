@@ -13,13 +13,14 @@ async function bootstrap() {
     cors: true,
   });
 
+  const config: ConfigService = app.get(ConfigService);
+
   app.enableCors({
-    origin: ['*'],
+    origin: [config.get<string>('WEBSITE_DOMAIN')],
     allowedHeaders: ['content-type', ...supertokens.getAllCORSHeaders()],
     credentials: true,
   });
 
-  const config: ConfigService = app.get(ConfigService);
   const port: number = config.get<number>('PORT') || 3000;
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
