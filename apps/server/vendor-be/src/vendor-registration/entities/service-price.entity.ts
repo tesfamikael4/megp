@@ -13,13 +13,13 @@ import { ServicesEntity } from './services.entity';
 export class ServicePriceEntity extends CommonEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column({ name: 'serviceId', type: 'uuid' })
+  @Column({ type: 'uuid' })
   serviceId: string;
   @Column({ name: 'businessArea', enum: ['Goods', 'Services', 'Works'] })
   businessArea: string;
-  @Column({ type: 'decimal', name: 'valueFrom' })
+  @Column({ type: 'decimal' })
   valueFrom: number;
-  @Column({ type: 'decimal', name: 'valueTo' })
+  @Column({ type: 'decimal' })
   valueTo: number;
   @Column({ type: 'decimal', name: 'fee' })
   fee: number;
