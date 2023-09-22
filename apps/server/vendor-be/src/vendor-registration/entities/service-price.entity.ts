@@ -17,8 +17,10 @@ export class ServicePriceEntity extends CommonEntity {
   serviceId: string;
   @Column({ name: 'businessArea', enum: ['Goods', 'Services', 'Works'] })
   businessArea: string;
-  @Column({ name: 'contratValue' })
-  contractValue: string;
+  @Column({ type: 'decimal', name: 'value_from' })
+  valueFrom: number;
+  @Column({ type: 'decimal', name: 'value_to' })
+  valueTo: number;
   @Column({ type: 'decimal', name: 'fee' })
   fee: number;
   @Column({ name: 'currency' })
