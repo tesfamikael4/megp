@@ -39,4 +39,7 @@ deploy_demo_fe:
     - docker pull $DEMOFE_RELEASE_IMAGE
     - docker container rm -f demo || true
     - docker run -d -p 5599:5599 --name demo $DEMOFE_RELEASE_IMAGE
+  rules:
+  - if: '$CI_COMMIT_REF_NAME == "main"'
+    when: always
 
