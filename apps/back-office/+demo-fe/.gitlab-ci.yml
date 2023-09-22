@@ -17,6 +17,9 @@ build_demo_fe:
     changes:
       - "*"  # run pipeline if a root-level file like Makefile or docker-compose.yml is changed
       - "apps/back-office/+demo-fe/**/*" 
+  rules:
+  - if: '$CI_COMMIT_REF_NAME == "main"'
+    when: always
 
   image: docker:latest
   services:
