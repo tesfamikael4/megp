@@ -9,14 +9,12 @@ import supertokens from 'supertokens-node';
 import { SupertokensExceptionFilter } from './authentication/auth/filters/auth.filter';
 
 async function bootstrap() {
-  const app: NestExpressApplication = await NestFactory.create(AppModule, {
-    cors: true,
-  });
+  const app: NestExpressApplication = await NestFactory.create(AppModule);
 
   const config: ConfigService = app.get(ConfigService);
 
   app.enableCors({
-    origin: [config.get<string>('WEBSITE_DOMAIN')],
+    origin: config.get<string>('BASE_URL'),
     allowedHeaders: ['content-type', ...supertokens.getAllCORSHeaders()],
     credentials: true,
   });
