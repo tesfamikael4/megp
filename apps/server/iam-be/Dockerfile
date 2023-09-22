@@ -14,7 +14,7 @@ RUN npm install -g npm@latest
 COPY . .
 
 # Expose the port on which your NestJS application is listening
-EXPOSE 3000
+EXPOSE 6699
 
 # Start the NestJS application
-CMD ["pnpm", "run", "start:prod"]
+CMD ["pnpm", "run", "start"]
