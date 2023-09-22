@@ -19,9 +19,9 @@ build_demo_fe:
   #     - "apps/back-office/+demo-fe/**/*" 
   rules:
   - if: '$CI_COMMIT_REF_NAME == "main"'
-  changes:
+    changes:
       - "apps/back-office/+demo-fe/**/*"
-  when: always
+    when: always
 
   image: docker:latest
   services:
