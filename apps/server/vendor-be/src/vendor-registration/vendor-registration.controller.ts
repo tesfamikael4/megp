@@ -27,6 +27,14 @@ import { CollectionQuery } from '@collection-query';
 //   RegistrationStatus,
 //   RegistrationTypes,
 // } from 'src/shared/enums/vendor-enums';
+// import {
+//   RegistrationStatus,
+//   RegistrationTypes,
+// } from 'src/shared/enums/vendor-enums';
+// import {
+//   RegistrationStatus,
+//   RegistrationTypes,
+// } from 'src/shared/enums/vendor-enums';
 
 import { VendorRegistrationsService } from './vendor-registration.service';
 import { ServicesResponseDto } from './dto/services.dto';
@@ -37,13 +45,14 @@ import {
 } from './dto/application.dto';
 import { InsertAllDataDto } from './dto/save-all.dto';
 import { VendorsBankDto } from './dto/bank-vendor.dto';
+import { CreateFileDto } from './dto/file.dto';
 //@ApiBearerAuth()
 @Controller('VendorRegistrations')
 @ApiTags('Vendor-registrations')
 @ApiResponse({ status: 500, description: 'Internal error' })
 @ApiExtraModels(DataResponseFormat)
 export class VendorRegistrationsController {
-  constructor(private readonly regService: VendorRegistrationsService) { }
+  constructor(private readonly regService: VendorRegistrationsService) {}
   @Post('submit-application')
   async create(@Body() regDto: CreateApplicationDto) {
     return await this.regService.create(regDto);
@@ -131,33 +140,10 @@ export class VendorRegistrationsController {
     @Body() data: VendorsBankDto,
     @Param('vendorId') vendorId: string,
   ) {
-    // console.log('dto', data.data.data.basicRegistration);
     // return await this.regService.addBankToVendor(data);
   }
   @Post('add-vendor-information')
   async addVendorInformation(@Body() data: InsertAllDataDto) {
-    // console.log('dto', data.data.data.basicRegistration);
     return await this.regService.addVendorInformations(data);
-  }
-  @Post('upload-attachment/:filePath/:fileType/:vendorId')
-  async uploadAttachment(@Param("filePath") filePath: string, @Param("vendorId") vendorId: string, @Param("fileType") fileType: string) {
-    // console.log('dto', data.data.data.basicRegistration);
-    return await this.regService.uploadAttachment(filePath.trim(), fileType.trim(), vendorId.trim());
-  }
-  @Get('get-attachment/:fileName/:fileType')
-  async getAttachment(@Param("fileName") fileName: string, @Param("fileType") fileType: string) {
-    // console.log('dto', data.data.data.basicRegistration);
-    return await this.regService.getAttachment(fileName.trim(), fileType.trim());
-  }
-  @Get('get-attachment/:fileType/:fileName')
-  async getAttachment(
-    @Param('fileType') fileType: string,
-    @Param('fileName') fileName: string,
-  ) {
-    // console.log('dto', data.data.data.basicRegistration);
-    return await this.regService.getAttachment(
-      fileName.trim(),
-      fileType.trim(),
-    );
   }
 }

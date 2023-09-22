@@ -2,22 +2,8 @@ import { Providers } from '@/store/provider';
 import { Shell } from '@megp/core-fe';
 import RootStyleRegistry from './mantine';
 
-import { Inter, Roboto_Mono } from 'next/font/google';
-
-import { ShellProvider } from './shell';
 import { Metadata } from 'next';
-
-const inter = Inter({
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-inter',
-});
-
-const roboto_mono = Roboto_Mono({
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-roboto-mono',
-});
+import { ShellProvider } from './shell';
 
 export const metadata: Metadata = {
   title: 'M-egp | Vendor',
@@ -34,7 +20,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${roboto_mono.variable}`}>
+    <html lang="en">
       <body suppressHydrationWarning={true}>
         <Providers>
           <RootStyleRegistry>
