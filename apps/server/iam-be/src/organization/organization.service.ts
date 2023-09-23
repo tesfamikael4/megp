@@ -18,7 +18,6 @@ import {
   UpdateEmployeeDto,
   EmployeeResponseDto,
 } from './dto/employee.dto';
-import { SecurityQuestion } from './entities/security-question.entity';
 import {
   CreateOfficeDto,
   OfficeResponseDto,
@@ -44,14 +43,7 @@ export class OrganizationService {
 
   async registerOrganization(user: any, formFields: any) {
     try {
-      const [
-        email,
-        _,
-        firstName,
-        lastName,
-        organizationName,
-        securityQuestions,
-      ] = formFields;
+      const [email, _, firstName, lastName, organizationName] = formFields;
 
       const organization = new Organization();
       organization.name = organizationName.value;
@@ -65,23 +57,6 @@ export class OrganizationService {
       employee.username = email.value;
       employee.firstName = firstName.value;
       employee.lastName = lastName.value;
-      employee.securityQuestions = [];
-
-      const securities = securityQuestions.value;
-
-      securities?.forEach(
-        (element: { [s: string]: [s: string] } | ArrayLike<string>) => {
-          const entries = Object.entries(element);
-
-          entries?.forEach(([question, answer]) => {
-            const securityQuestion = new SecurityQuestion();
-            securityQuestion.question = question;
-            securityQuestion.answer = answer.toString();
-
-            employee.securityQuestions.push(securityQuestion);
-          });
-        },
-      );
 
       organization.employees.push(employee);
 
