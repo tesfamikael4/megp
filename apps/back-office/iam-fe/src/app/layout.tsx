@@ -1,14 +1,23 @@
 import { Providers } from '@/store/provider';
-import { Shell } from '@megp/core-fe';
 import type { Metadata } from 'next';
 import RootStyleRegistry from './mantine';
+import { Shell } from '@megp/core-fe';
 
+import { Inter, Roboto_Mono } from 'next/font/google';
+
+import { createContext } from 'react';
 import { ShellProvider } from './shell';
 
-import localFont from 'next/font/local';
-const inter = localFont({
-  src: './inter.ttf',
+const inter = Inter({
+  subsets: ['latin'],
   display: 'swap',
+  variable: '--font-inter',
+});
+
+const roboto_mono = Roboto_Mono({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-roboto-mono',
 });
 
 export const metadata: Metadata = {
@@ -26,7 +35,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={inter.className}>
+    <html lang="en" className={`${inter.variable} ${roboto_mono.variable}`}>
       <body suppressHydrationWarning={true}>
         <Providers>
           <RootStyleRegistry>
