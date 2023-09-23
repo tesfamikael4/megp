@@ -10,6 +10,11 @@ import { BusinessProcessService } from './business-process/business-process.serv
 import { TaskService } from './tasks/task.service';
 import { BusinessProcessController } from './controllers/business-process.controller';
 import { TaskController } from './controllers/task.controller';
+import { WorkflowInstanceEntity } from './workflow-instances/entities/workflow-instance';
+import { WorkflowInstanceService } from './workflow-instances/workflow-instance.service';
+import { TaskHandlerEntity } from './workflow-instances/entities/task-handler';
+import { WorkflowInstanceController } from './controllers/workflow-instance.controller';
+import { TaskTrackerEntity } from './workflow-instances/entities/task-tracker';
 
 @Module({
   imports: [
@@ -18,9 +23,22 @@ import { TaskController } from './controllers/task.controller';
       BusinessProcessEntity,
       TaskEntity,
       TaskAssignmentEntity,
+      WorkflowInstanceEntity,
+      TaskHandlerEntity,
+      TaskTrackerEntity,
     ]),
   ],
-  providers: [BpServiceService, BusinessProcessService, TaskService],
-  controllers: [BpServiceController, BusinessProcessController, TaskController],
+  providers: [
+    BpServiceService,
+    BusinessProcessService,
+    TaskService,
+    WorkflowInstanceService,
+  ],
+  controllers: [
+    BpServiceController,
+    BusinessProcessController,
+    TaskController,
+    WorkflowInstanceController,
+  ],
 })
 export class BpmModule {}

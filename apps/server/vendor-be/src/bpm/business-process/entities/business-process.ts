@@ -1,5 +1,6 @@
 import { BpServiceEntity } from 'src/bpm/services/entities/bp-service';
 import { TaskEntity } from 'src/bpm/tasks/entities/task.entity';
+import { WorkflowInstanceEntity } from 'src/bpm/workflow-instances/entities/workflow-instance';
 import { CommonEntity } from 'src/shared/entities/common.entity';
 import {
   Column,
@@ -39,4 +40,14 @@ export class BusinessProcessEntity extends CommonEntity {
     onDelete: 'CASCADE',
   })
   tasks: TaskEntity[];
+
+  @OneToMany(
+    () => WorkflowInstanceEntity,
+    (workflowInstances) => workflowInstances.businessProcess,
+    {
+      // cascade: true,
+      onDelete: 'CASCADE',
+    },
+  )
+  workflowInstances: WorkflowInstanceEntity[];
 }

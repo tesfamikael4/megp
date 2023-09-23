@@ -21,31 +21,30 @@ import {
 @ApiExtraModels(DataResponseFormat)
 export class BusinessProcessController {
   constructor(
-    private readonly businessProcessProvider: BusinessProcessService,
+    private readonly businessProcessService: BusinessProcessService,
   ) {}
   @Get('get-business-processes')
   @ApiPaginatedResponse(BusinessProcessResponse)
   async fetch(@Query() query: CollectionQuery) {
-    return await this.businessProcessProvider.getBusinessProcesses(query);
+    return await this.businessProcessService.getBusinessProcesses(query);
   }
   @Get('get-business-process/:id')
   @ApiOkResponse({ type: BusinessProcessResponse })
   async getServiceById(@Param('id') id: string) {
-    return await this.businessProcessProvider.getById(id);
+    return await this.businessProcessService.getById(id);
   }
   @Post('create-business-process')
   @ApiPaginatedResponse(BusinessProcessResponse)
   async create(@Body() dto: CreateBusinessProcessDto) {
-    console.log(dto);
-    return await this.businessProcessProvider.create(dto);
+    return await this.businessProcessService.create(dto);
   }
   @Post('update-business-process')
   @ApiPaginatedResponse(BusinessProcessResponse)
   async update(@Body() dto: UpdateBusinessProcessDto) {
-    return await this.businessProcessProvider.update(dto);
+    return await this.businessProcessService.update(dto);
   }
   @Get('delete-business-process/:id')
   async delete(@Param('id') id: string) {
-    return await this.businessProcessProvider.delete(id);
+    return await this.businessProcessService.delete(id);
   }
 }
