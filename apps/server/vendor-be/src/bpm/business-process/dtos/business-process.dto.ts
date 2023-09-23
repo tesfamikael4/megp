@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsUUID } from 'class-validator';
 import { BusinessProcessEntity } from '../entities/business-process';
 
 export class CreateBusinessProcessDto {
@@ -10,6 +10,7 @@ export class CreateBusinessProcessDto {
   @IsNotEmpty()
   workflow: object;
   @ApiProperty()
+  @IsNumber()
   version: number;
   @ApiProperty()
   isActive: boolean;
@@ -49,6 +50,7 @@ export class UpdateBusinessProcessDto extends CreateBusinessProcessDto {
   @IsNotEmpty()
   serviceId: string;
   @ApiProperty()
+  @IsNumber()
   version: number;
   @ApiProperty()
   isActive: boolean;

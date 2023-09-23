@@ -25,6 +25,7 @@ export class CreateBpServiceDto {
       return null;
     }
     entity.name = dto.name;
+    entity.key = dto.key;
     entity.description = dto.description;
     entity.organizationId = dto.organizationId;
     entity.organizationName = dto.organizationId;

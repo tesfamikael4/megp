@@ -32,13 +32,12 @@ export class BpServiceController {
     return await this.bpServiceProvider.getById(id);
   }
   @Post('create-service')
-  @ApiPaginatedResponse(BpServiceResponse)
+  @ApiOkResponse({ type: BpServiceResponse })
   async create(@Body() dto: CreateBpServiceDto) {
-    console.log(dto);
     return await this.bpServiceProvider.create(dto);
   }
   @Post('update-service')
-  @ApiPaginatedResponse(BpServiceResponse)
+  @ApiOkResponse({ type: BpServiceResponse })
   async update(@Body() dto: UpdateBpServiceDto) {
     return await this.bpServiceProvider.update(dto);
   }

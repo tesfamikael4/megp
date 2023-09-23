@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Query,
+} from '@nestjs/common';
 import {
   ApiExtraModels,
   ApiOkResponse,
@@ -10,6 +18,11 @@ import { CollectionQuery } from 'src/shared/collection-query';
 import { TaskService } from '../tasks/task.service';
 import { TaskResponse } from '../tasks/task.response';
 import { CreateTaskDto, UpdateTaskDto } from '../tasks/dtos/task.dto';
+import {
+  CreateTaskAssignmentDto,
+  DeleteTaskAssignmentDto,
+  UpdateTaskAssignmentDto,
+} from '../tasks/dtos/task-assignmment.dto';
 @Controller('tasks')
 @ApiTags('tasks')
 @ApiResponse({ status: 500, description: 'Internal error' })
@@ -17,30 +30,44 @@ import { CreateTaskDto, UpdateTaskDto } from '../tasks/dtos/task.dto';
 @ApiResponse({ status: 400, description: 'Bad Request' })
 @ApiExtraModels(DataResponseFormat)
 export class TaskController {
-  constructor(private readonly businessProcessProvider: TaskService) {}
+  constructor(private readonly taskService: TaskService) {}
   @Get('get-tasks')
   @ApiPaginatedResponse(TaskResponse)
   async fetch(@Query() query: CollectionQuery) {
-    return await this.businessProcessProvider.getTasks(query);
+    return await this.taskService.getTasks(query);
   }
   @Get('get-task/:id')
   @ApiOkResponse({ type: TaskResponse })
   async getServiceById(@Param('id') id: string) {
-    return await this.businessProcessProvider.getById(id);
+    return await this.taskService.getById(id);
   }
   @Post('create-task')
-  @ApiPaginatedResponse(TaskResponse)
+  @ApiOkResponse({ type: TaskResponse })
   async create(@Body() dto: CreateTaskDto) {
     console.log(dto);
-    return await this.businessProcessProvider.create(dto);
+    return await this.taskService.create(dto);
   }
   @Post('update-task')
-  @ApiPaginatedResponse(TaskResponse)
+  @ApiOkResponse({ type: TaskResponse })
   async update(@Body() dto: UpdateTaskDto) {
-    return await this.businessProcessProvider.update(dto);
+    return await this.taskService.update(dto);
   }
   @Get('delete-task/:id')
   async delete(@Param('id') id: string) {
-    return await this.businessProcessProvider.delete(id);
+    return await this.taskService.delete(id);
+  }
+  @Post('add-task-assignment')
+  @ApiOkResponse({ type: TaskResponse })
+  async addTaskAssignment(@Body() dto: CreateTaskAssignmentDto) {
+    return await this.taskService.addTaskAssignment(dto);
+  }
+  @Post('update-task-assignment')
+  @ApiOkResponse({ type: TaskResponse })
+  async updateTaskAssignment(@Body() dto: UpdateTaskAssignmentDto) {
+    return await this.taskService.updateTaskAssignment(dto);
+  }
+  @Delete('delete-task-assignment')
+  async deleteTaskAssignment(@Body() dto: DeleteTaskAssignmentDto) {
+    return await this.taskService.removeTaskAssignment(dto);
   }
 }

@@ -9,6 +9,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { TaskAssignmentEntity } from './task-assignment';
+import { TaskHandlerEntity } from 'src/bpm/workflow-instances/entities/task-handler';
 
 @Entity({ name: 'tasks' })
 export class TaskEntity extends CommonEntity {
@@ -43,5 +44,30 @@ export class TaskEntity extends CommonEntity {
       onDelete: 'CASCADE',
     },
   )
-  taskAssignments: TaskAssignmentEntity[];
+  assignments: TaskAssignmentEntity[];
+
+  @OneToMany(() => TaskHandlerEntity, (taskHandler) => taskHandler.task, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  taskHandlers: TaskHandlerEntity[];
+
+  addAssignment(assignment: TaskAssignmentEntity) {
+    if (!this.assignments) {
+      this.assignments = [];
+    }
+    this.assignments.push(assignment);
+  }
+  updateAssignment(assignment: TaskAssignmentEntity) {
+    const index = this.assignments.findIndex((a) => a.id === assignment.id);
+    if (index !== -1) {
+      this.assignments[index] = assignment;
+    }
+  }
+  removeAssignment(assignment: TaskAssignmentEntity) {
+    const index = this.assignments.findIndex((a) => a.id === assignment.id);
+    if (index !== -1) {
+      this.assignments.splice(index, 1);
+    }
+  }
 }

@@ -6,6 +6,11 @@ import { CollectionQuery, QueryConstructor } from 'src/shared/collection-query';
 import { TaskEntity } from './entities/task.entity';
 import { TaskResponse } from './task.response';
 import { CreateTaskDto, UpdateTaskDto } from './dtos/task.dto';
+import {
+  CreateTaskAssignmentDto,
+  DeleteTaskAssignmentDto,
+  UpdateTaskAssignmentDto,
+} from './dtos/task-assignmment.dto';
 
 @Injectable()
 export class TaskService {
@@ -56,5 +61,42 @@ export class TaskService {
     const task = await this.taskRepository.findOne({ where: { id: id } });
     if (!task) throw new NotFoundException('Task not found');
     return await this.taskRepository.delete(id);
+  }
+  async addTaskAssignment(dto: CreateTaskAssignmentDto): Promise<TaskResponse> {
+    const task = await this.taskRepository.findOne({
+      where: { id: dto.taskId },
+      relations: ['assignments'],
+    });
+    if (!task) throw new NotFoundException('Task not found');
+    const taskAssignment = CreateTaskAssignmentDto.fromDto(dto);
+    task.addAssignment(taskAssignment);
+    const result = await this.taskRepository.save(task);
+    return TaskResponse.toResponse(result);
+  }
+  async updateTaskAssignment(
+    dto: UpdateTaskAssignmentDto,
+  ): Promise<TaskResponse> {
+    const task = await this.taskRepository.findOne({
+      where: { id: dto.taskId },
+      relations: ['assignments'],
+    });
+    if (!task) throw new NotFoundException('Task not found');
+    const taskAssignment = UpdateTaskAssignmentDto.fromDto(dto);
+    task.updateAssignment(taskAssignment);
+    const result = await this.taskRepository.save(task);
+    return TaskResponse.toResponse(result);
+  }
+  async removeTaskAssignment(
+    dto: DeleteTaskAssignmentDto,
+  ): Promise<TaskResponse> {
+    const task = await this.taskRepository.findOne({
+      where: { id: dto.taskId },
+      relations: ['assignments'],
+    });
+    if (!task) throw new NotFoundException('Task not found');
+    const taskAssignment = task.assignments.find((a) => a.id === dto.id);
+    task.removeAssignment(taskAssignment);
+    const result = await this.taskRepository.save(task);
+    return TaskResponse.toResponse(result);
   }
 }

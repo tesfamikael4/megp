@@ -13,10 +13,15 @@ before_script:
 
 build_demo_fe:
   stage: build
-  only:
+  # only:
+  #   changes:
+  #     - "*"  # run pipeline if a root-level file like Makefile or docker-compose.yml is changed
+  #     - "apps/back-office/+demo-fe/**/*" 
+  rules:
+  - if: '$CI_COMMIT_REF_NAME == "main"'
     changes:
-      - "*"  # run pipeline if a root-level file like Makefile or docker-compose.yml is changed
-      - "apps/back-office/+demo-fe/**/*" 
+      - "apps/back-office/+demo-fe/**/*"
+    when: always
 
   image: docker:latest
   services:
@@ -30,13 +35,13 @@ build_demo_fe:
 
 deploy_demo_fe:
   stage: deploy
-  only:
-    changes:
-      - "*"  # run pipeline if a root-level file like Makefile or docker-compose.yml is changed
-      - "apps/back-office/+demo-fe/**/*" 
+  rules:
+  - if: '$CI_COMMIT_REF_NAME == "main"'
+    when: always
 
   script:
     - docker pull $DEMOFE_RELEASE_IMAGE
     - docker container rm -f demo || true
     - docker run -d -p 5599:5599 --name demo $DEMOFE_RELEASE_IMAGE
+  
 
