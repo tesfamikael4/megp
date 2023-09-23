@@ -5,14 +5,14 @@ import { ServicePriceEntity } from './service-price.entity';
 export class ServicesEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column()
-  key: string;
-  @Column()
+  @Column({ name: 'description' })
   description: string;
-  @Column({ default: true })
+  @Column({ name: 'is_active', default: true })
   isActive: boolean;
+
   @OneToMany(() => ApplicationEntity, (app) => app.service)
   applications: ApplicationEntity[];
+
   @OneToMany(() => ServicePriceEntity, (prc) => prc.service)
   priceSettings: ServicePriceEntity[];
 }
