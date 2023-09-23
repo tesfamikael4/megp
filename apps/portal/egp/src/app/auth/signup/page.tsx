@@ -27,21 +27,22 @@ import styles from './page.module.scss';
 import { signupWithEmailPassword } from '../supertokensUtilities';
 
 const schema = z.object({
+  organizationName: z.string().min(1, { message: 'This field is required.' }),
   firstName: z.string().min(1, { message: 'This field is required.' }),
   lastName: z.string().min(1, { message: 'This field is required.' }),
   phone: z.string().min(1, { message: 'This field is required.' }),
-  securityQuestion1: z.object({
-    question: z.string({ required_error: 'This field is required' }),
-    answer: z.string().min(1, { message: 'This field is required.' }),
-  }),
-  securityQuestion2: z.object({
-    question: z.string({ required_error: 'This field is required' }),
-    answer: z.string().min(1, { message: 'This field is required.' }),
-  }),
-  securityQuestion3: z.object({
-    question: z.string({ required_error: 'This field is required' }),
-    answer: z.string().min(1, { message: 'This field is required.' }),
-  }),
+  // securityQuestion1: z.object({
+  //   question: z.string({ required_error: 'This field is required' }),
+  //   answer: z.string().min(1, { message: 'This field is required.' }),
+  // }),
+  // securityQuestion2: z.object({
+  //   question: z.string({ required_error: 'This field is required' }),
+  //   answer: z.string().min(1, { message: 'This field is required.' }),
+  // }),
+  // securityQuestion3: z.object({
+  //   question: z.string({ required_error: 'This field is required' }),
+  //   answer: z.string().min(1, { message: 'This field is required.' }),
+  // }),
   email: z
     .string()
     .min(1, { message: 'This field is required.' })
@@ -80,9 +81,9 @@ const SignUpPage = () => {
     { value: '6', label: "What was your favourite school teacher's name?" },
   ];
 
-  const securityQuestion1 = watch('securityQuestion1.question');
-  const securityQuestion2 = watch('securityQuestion2.question');
-  const securityQuestion3 = watch('securityQuestion3.question');
+  // const securityQuestion1 = watch('securityQuestion1.question');
+  // const securityQuestion2 = watch('securityQuestion2.question');
+  // const securityQuestion3 = watch('securityQuestion3.question');
 
   // State
   const router = useRouter();
@@ -96,11 +97,15 @@ const SignUpPage = () => {
 
   // Functions
   const onSubmit: SubmitHandler<FormSchema> = async (data: FormSchema) => {
+    console.log('Onsubmit called');
     try {
       setIsSigningUp(true);
       let response = await signupWithEmailPassword({
         email: data.email,
         password: data.password,
+        organizationName: data.organizationName,
+        firstName: data.firstName,
+        lastName: data.lastName,
       });
       if (response.status === 'FIELD_ERROR') {
         response.formFields.map((formField) => {
@@ -191,7 +196,7 @@ const SignUpPage = () => {
                     Sign In
                   </Link>
                 </Text>
-                <Accordion
+                {/* <Accordion
                   className={styles.accordion}
                   multiple
                   value={accordionValue}
@@ -205,58 +210,66 @@ const SignUpPage = () => {
                       flexDirection: 'column',
                     },
                   }}
-                >
-                  <Accordion.Item value="accountInformation">
+                > */}
+                {/* <Accordion.Item value="accountInformation">
                     <Accordion.Control>Account Information</Accordion.Control>
-                    <Accordion.Panel>
-                      <Flex direction={'row'} className="gap-2">
-                        <TextInput
-                          label="First Name"
-                          placeholder="First name"
-                          className="w-1/2"
-                          error={errors.firstName?.message}
-                          {...register('firstName')}
-                          withAsterisk
-                        />
-                        <TextInput
-                          label="Last Name"
-                          placeholder="Last name"
-                          className="w-1/2"
-                          error={errors.lastName?.message}
-                          {...register('lastName')}
-                          withAsterisk
-                        />
-                      </Flex>
-                      <TextInput
-                        label="Mobile Phone"
-                        placeholder="Your mobile phone"
-                        error={errors.phone?.message}
-                        {...register('phone')}
-                        withAsterisk
-                      />
-                      <TextInput
-                        label="Email"
-                        placeholder="Your email"
-                        error={
-                          errors.email?.message ||
-                          (emailExists ? 'This email already exists' : '')
-                        }
-                        onBlurCapture={(event) =>
-                          checkEmail(event.currentTarget.value)
-                        }
-                        {...register('email')}
-                        withAsterisk
-                      />
-                      <PasswordInput
-                        label="Password"
-                        placeholder="Your password"
-                        error={errors.password?.message}
-                        {...register('password')}
-                        withAsterisk
-                      />
-                    </Accordion.Panel>
-                  </Accordion.Item>
-                  <Accordion.Item value="securityQuestions">
+                    <Accordion.Panel> */}
+                <TextInput
+                  label="Name of the Business/Company"
+                  placeholder="Name of the Business/Company"
+                  className="mt-3"
+                  error={errors.organizationName?.message}
+                  {...register('organizationName')}
+                  withAsterisk
+                />
+                <Flex direction={'row'} className="gap-2">
+                  <TextInput
+                    label="First Name"
+                    placeholder="First name"
+                    className="w-1/2"
+                    error={errors.firstName?.message}
+                    {...register('firstName')}
+                    withAsterisk
+                  />
+                  <TextInput
+                    label="Last Name"
+                    placeholder="Last name"
+                    className="w-1/2"
+                    error={errors.lastName?.message}
+                    {...register('lastName')}
+                    withAsterisk
+                  />
+                </Flex>
+                <TextInput
+                  label="Mobile Phone"
+                  placeholder="Your mobile phone"
+                  error={errors.phone?.message}
+                  {...register('phone')}
+                  withAsterisk
+                />
+                <TextInput
+                  label="Email"
+                  placeholder="Your email"
+                  error={
+                    errors.email?.message ||
+                    (emailExists ? 'This email already exists' : '')
+                  }
+                  onBlurCapture={(event) =>
+                    checkEmail(event.currentTarget.value)
+                  }
+                  {...register('email')}
+                  withAsterisk
+                />
+                <PasswordInput
+                  label="Password"
+                  placeholder="Your password"
+                  error={errors.password?.message}
+                  {...register('password')}
+                  withAsterisk
+                />
+                {/* </Accordion.Panel>
+                  </Accordion.Item> */}
+                {/* <Accordion.Item value="securityQuestions">
                     <Accordion.Control>Account Recovery</Accordion.Control>
                     <Accordion.Panel>
                       <Text>
@@ -357,7 +370,7 @@ const SignUpPage = () => {
                       />
                     </Accordion.Panel>
                   </Accordion.Item>
-                </Accordion>
+                </Accordion> */}
                 <Flex className={styles.sign_up_wrapper}>
                   <Button
                     type="submit"
