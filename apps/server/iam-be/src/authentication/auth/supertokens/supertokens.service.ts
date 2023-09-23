@@ -101,15 +101,13 @@ export class SupertokensService {
                 },
               },
               {
-                id: 'organizationName',
-              },
-              {
                 id: 'firstName',
-                optional: true,
               },
               {
                 id: 'lastName',
-                optional: true,
+              },
+              {
+                id: 'organizationName',
               },
             ],
           },
