@@ -1,0 +1,19 @@
+.section {
+    @apply mb-2 ml-6 flex justify-between border px-4 border-slate-300;
+}
+
+.input {
+    @apply mb-2
+}
+
+.select {
+    @apply mt-4
+}
+
+.buttonprimary {
+    @apply my-4 ml-2
+}
+
+.flexdisplay {
+    @apply flex mt-4
+}

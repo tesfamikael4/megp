@@ -5,12 +5,12 @@ import Link from 'next/link';
 
 export default function GroupPage() {
   return (
-    <Section title="New">
+    <div className="min-w-[800px] min-h-screen">
       <Group>
         <Link href="/groups">list</Link>
-        <Link href="/groups/detail"> Detail</Link>
+        <Link href="/groups/123">group Detail</Link>
       </Group>
-      <div>Detail form</div>
-    </Section>
+      <div>New form</div>
+    </div>
   );
 }
