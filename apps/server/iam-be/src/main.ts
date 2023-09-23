@@ -14,7 +14,7 @@ async function bootstrap() {
   const config: ConfigService = app.get(ConfigService);
 
   app.enableCors({
-    origin: config.get<string>('BASE_URL'),
+    origin: config.get<string>('WEBSITE_DOMAIN'),
     allowedHeaders: ['content-type', ...supertokens.getAllCORSHeaders()],
     credentials: true,
   });
