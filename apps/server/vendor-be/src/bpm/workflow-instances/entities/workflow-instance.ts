@@ -1,0 +1,92 @@
+import { BusinessProcessEntity } from 'src/bpm/business-process/entities/business-process';
+import { CommonEntity } from 'src/shared/entities/common.entity';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { TaskHandlerEntity } from './task-handler';
+import { TaskTrackerEntity } from './task-tracker';
+
+@Entity({ name: 'workflow_instances' })
+export class WorkflowInstanceEntity extends CommonEntity {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+  @Column({ name: 'application_no' })
+  applicationNumber: string;
+  @Column({ name: 'requestor_id' })
+  requestorId: string;
+  @Column({ name: 'status' })
+  status: string;
+  @Column({ name: 'bp_id' })
+  bpId: string;
+  @ManyToOne(
+    () => BusinessProcessEntity,
+    (businessProcess) => businessProcess.workflowInstances,
+    {
+      orphanedRowAction: 'delete',
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE',
+    },
+  )
+  @JoinColumn({ name: 'bp_id' })
+  businessProcess: BusinessProcessEntity;
+  @OneToMany(
+    () => TaskHandlerEntity,
+    (taskHandler) => taskHandler.workflowInstance,
+    {
+      cascade: true,
+      onDelete: 'CASCADE',
+    },
+  )
+  taskHandlers: TaskHandlerEntity[];
+  addHandler(taskHandler: TaskHandlerEntity) {
+    if (!this.taskHandlers) {
+      this.taskHandlers = [];
+    }
+    this.taskHandlers.push(taskHandler);
+  }
+  updateHandler(taskHandler: TaskHandlerEntity) {
+    const index = this.taskHandlers.findIndex((a) => a.id === taskHandler.id);
+    if (index !== -1) {
+      this.taskHandlers[index] = taskHandler;
+    }
+  }
+  removeHandler(taskHandler: TaskHandlerEntity) {
+    const index = this.taskHandlers.findIndex((a) => a.id === taskHandler.id);
+    if (index !== -1) {
+      this.taskHandlers.splice(index, 1);
+    }
+  }
+
+  @OneToMany(
+    () => TaskTrackerEntity,
+    (taskTracker) => taskTracker.workflowInstance,
+    {
+      cascade: true,
+      onDelete: 'CASCADE',
+    },
+  )
+  taskTrackers: TaskTrackerEntity[];
+  addTracker(taskTracker: TaskTrackerEntity) {
+    if (!this.taskTrackers) {
+      this.taskTrackers = [];
+    }
+    this.taskTrackers.push(taskTracker);
+  }
+  updateTracker(taskTracker: TaskTrackerEntity) {
+    const index = this.taskTrackers.findIndex((a) => a.id === taskTracker.id);
+    if (index !== -1) {
+      this.taskTrackers[index] = taskTracker;
+    }
+  }
+  removeTracker(taskTracker: TaskTrackerEntity) {
+    const index = this.taskTrackers.findIndex((a) => a.id === taskTracker.id);
+    if (index !== -1) {
+      this.taskTrackers.splice(index, 1);
+    }
+  }
+}

@@ -10,11 +10,14 @@ export class CreateTaskDto {
   @IsNotEmpty()
   businessProcessId: string;
   @ApiProperty()
+  @IsNotEmpty()
   description: string;
   @ApiProperty()
+  @IsNotEmpty()
   handlerType: string;
+  @ApiProperty()
+  @IsNotEmpty()
   type: string;
-  organizationName: string;
   /**
    * Transfer Data from DTO object to Entity object
    *
@@ -67,6 +70,7 @@ export class UpdateTaskDto extends CreateTaskDto {
     entity.name = dto.name;
     entity.businessProcessId = dto.businessProcessId;
     entity.handlerType = dto.handlerType;
+    entity.type = dto.type;
     entity.businessProcessId = dto.businessProcessId;
     return entity;
   }

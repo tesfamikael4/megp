@@ -1,21 +1,20 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { BusinessProcessResponse } from '../business-process/business-process.response';
-import { TaskEntity } from './entities/task.entity';
-import { TaskAssignmentResponse } from './task-assignment.response';
+import { WorkflowInstanceEntity } from './entities/workflow-instance';
+import { TaskHandlerResponse } from './task-handler.response';
+import { TaskTrackerResponse } from './task-tracker.response';
 
-export class TaskResponse {
+export class WorkflowInstanceResponse {
   @ApiProperty()
   id: string;
   @ApiProperty()
-  businessProcessId: string;
+  bpId: string;
   @ApiProperty()
-  name: string;
+  applicationNumber: string;
   @ApiProperty()
-  description: string;
+  requestorId: string;
   @ApiProperty()
-  handlerType: string;
-  @ApiProperty()
-  type: string;
+  status: string;
   @ApiProperty()
   businessProcess?: BusinessProcessResponse;
   @ApiProperty()
@@ -30,23 +29,28 @@ export class TaskResponse {
   updatedAt: Date;
   @ApiProperty()
   deletedAt: Date;
-  assignments?: TaskAssignmentResponse[];
-  static toResponse(entity: TaskEntity) {
-    const response = new TaskResponse();
+  taskHandlers?: TaskHandlerResponse[];
+  taskTrackers?: TaskTrackerResponse[];
+  static toResponse(entity: WorkflowInstanceEntity) {
+    const response = new WorkflowInstanceResponse();
     response.id = entity.id;
-    response.businessProcessId = entity.businessProcessId;
-    response.name = entity.name;
-    response.description = entity.description;
-    response.handlerType = entity.handlerType;
-    response.type = entity.type;
+    response.bpId = entity.bpId;
+    response.applicationNumber = entity.applicationNumber;
+    response.requestorId = entity.requestorId;
+    response.status = entity.status;
     if (entity.businessProcess) {
       response.businessProcess = BusinessProcessResponse.toResponse(
         entity.businessProcess,
       );
     }
-    if (entity.assignments) {
-      response.assignments = entity.assignments.map((assignment) =>
-        TaskAssignmentResponse.toResponse(assignment),
+    if (entity.taskHandlers) {
+      response.taskHandlers = entity.taskHandlers.map((handler) =>
+        TaskHandlerResponse.toResponse(handler),
+      );
+    }
+    if (entity.taskTrackers) {
+      response.taskTrackers = entity.taskTrackers.map((handler) =>
+        TaskTrackerResponse.toResponse(handler),
       );
     }
     response.createdBy = entity.createdBy;
