@@ -7,26 +7,41 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { VendorsEntity } from './vendors.entity';
+import { PaymentReceiptEntity } from './receipt-attachment';
+
 @Entity({ name: 'invoices' })
-export class InvoiceEntity extends CommonEntity {
+export class InvoiceEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column({ name: 'vendor_id', type: 'uuid' })
-  applicationId: string;
-  //PPDA or Vendor
+  @Column({ name: 'instance_id', type: 'uuid' })
+  instanceId: string;
+  @Column({ name: 'applicationNo' })
+  applicationNo: string;
+  @Column({ name: 'taskName' })
+  taskName: string;
+  @Column({ name: 'taskId' })
+  taskId: string;
+  @Column()
+  serviceName: string;
+  @Column()
+  payerName: string;
+  @Column()
+  payerAccountId: string;
+  @Column()
+  payToAccNo: string;
+  @Column()
+  payToAccName: string;
+  @Column()
+  payToBank: string;
   @Column({ name: 'amount', type: 'decimal' })
   amount: number;
-  @Column({ name: 'paid_on' })
-  paidOn: Date;
+  @Column({ name: 'createdOn' })
+  createdOn: Date;
   //Paid| Pending
-  @Column({ name: 'payment_status' })
+  @Column({ name: 'paymentStatus' })
   paymentStatus: string;
   @Column({ name: 'remark' })
   remark: string;
-  /*
-    @ManyToOne(() => VendorsEntity, (vendor) => vendor.invoices)
-    @JoinColumn({ name: 'vendor_id' })
-    vendor: VendorsEntity;
-    */
+  @OneToOne(() => PaymentReceiptEntity, (rec) => rec.invoice)
+  receipt: PaymentReceiptEntity;
 }
