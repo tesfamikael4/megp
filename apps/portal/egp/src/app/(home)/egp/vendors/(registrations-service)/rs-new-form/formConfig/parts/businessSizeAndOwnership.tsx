@@ -1,6 +1,6 @@
 import { NumberInput, Stack, Tabs } from '@mantine/core';
 import React from 'react';
-import { CouplerPanel } from '../../../../../_shared/components';
+import { CouplerPanel } from '../../../../_shared/components';
 import { IconCash, IconNumber } from '@tabler/icons-react';
 import { Select } from '@mantine/core';
 
@@ -35,6 +35,7 @@ export const BusinessSizeAndOwnership: React.FC<Props> = ({ form }) => {
               {...form.getInputProps(
                 `businessSizeAndOwnership.registeredCapital.currency`,
               )}
+              className="w-[150px]"
             />
           </Stack>
         </CouplerPanel>

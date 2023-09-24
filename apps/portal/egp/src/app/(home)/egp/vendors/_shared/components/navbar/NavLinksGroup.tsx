@@ -114,12 +114,10 @@ export function NavLinksGroup({ icon: Icon, label, link, links }: NavItem) {
         >
           <Group position="apart" spacing={0}>
             <Flex align={'center'}>
-              <Icon
-                size="1.4rem"
-                stroke={1.2}
-                className={styles.navlinksLinkIcon}
-              />
-              <Text className={styles.navlinksLinkLabel}>{label}</Text>
+              <ThemeIcon variant="light" size={30}>
+                <Icon style={{ width: rem(18), height: rem(18) }} />
+              </ThemeIcon>
+              <Box ml="md">{label}</Box>
             </Flex>
           </Group>
         </Link>
@@ -135,11 +133,14 @@ export function NavLinksGroup({ icon: Icon, label, link, links }: NavItem) {
         >
           <Group position="apart" spacing={10}>
             <Flex align={'center'}>
-              <Icon
+              <ThemeIcon variant="light" size={30}>
+                <Icon style={{ width: rem(18), height: rem(18) }} />
+              </ThemeIcon>
+              {/* <Icon
                 size="1.4rem"
                 stroke={1.2}
                 className={styles.navlinksLinkIcon}
-              />
+              /> */}
               <Text className={styles.navlinksLinkLabel}>{label}</Text>
             </Flex>
             {hasLinks && (

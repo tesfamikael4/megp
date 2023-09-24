@@ -57,6 +57,15 @@ export const BasicRegistration: React.FC<Props> = ({ form }) => {
         />
       </Stack>
 
+      <Stack my={15}>
+        <TextInput
+          label="Tin Number"
+          name="tinNumber"
+          id="tinNumber"
+          disabled
+          {...form.getInputProps(`basicRegistration.tinNumber`)}
+        />
+      </Stack>
       <Flex justify={'end'} p={20} gap={20}></Flex>
     </>
   );
