@@ -21,8 +21,8 @@ import {
 } from '@tabler/icons-react';
 import { Select } from '@mantine/core';
 import { randomId } from '@mantine/hooks';
-import CardList from '../../../../../_shared/components/cardList';
-import ActionMenu from '../../../../../_shared/components/actionMenu';
+import CardList from '../../../../_shared/components/cardList';
+import ActionMenu from '../../../../_shared/components/actionMenu';
 
 interface Props {
   form: any;
@@ -44,7 +44,7 @@ export const BankAccountDetails: React.FC<Props> = ({ form }) => {
               padding="lg"
               radius="md"
               withBorder
-              w={200}
+              w={250}
               style={{
                 height: '100%',
                 backgroundColor: '#f5f5f5',
@@ -92,7 +92,7 @@ export const BankAccountDetails: React.FC<Props> = ({ form }) => {
                     withBorder
                     padding="md"
                     radius="md"
-                    w={200}
+                    w={250}
                     shadow="sm"
                   >
                     <Card.Section mb={10}>
@@ -101,6 +101,7 @@ export const BankAccountDetails: React.FC<Props> = ({ form }) => {
                         <Badge c="green">{value.status}</Badge>
                       </Group>
                     </Card.Section>
+
                     <Text
                       weight={700}
                       size="lg"
@@ -112,18 +113,28 @@ export const BankAccountDetails: React.FC<Props> = ({ form }) => {
                       size="sm"
                       color="gray"
                       style={{ marginBottom: '0.5rem' }}
-                      w={'160px'}
+                      w={'200px'}
                       truncate
                     >
-                      AccountNumber: {value.email}
+                      Bank Branch Address: {value.bankBranchAddress}
                     </Text>
-
                     <Text
                       size="sm"
                       color="gray"
                       style={{ marginBottom: '0.5rem' }}
+                      w={'200px'}
+                      truncate
                     >
-                      Phone: {value.mobileNumber}
+                      AccountNumber: {value.accountNumber}
+                    </Text>
+                    <Text
+                      size="sm"
+                      color="gray"
+                      style={{ marginBottom: '0.5rem' }}
+                      w={'200px'}
+                      truncate
+                    >
+                      Account Holders FullName: {value.accountHoldersFullName}
                     </Text>
 
                     <Card.Section mt={30} withBorder>
@@ -224,6 +235,7 @@ export const BankAccountDetails: React.FC<Props> = ({ form }) => {
                 {...form.getInputProps(
                   `bankAccountDetails.bankAccountDetailsTable.${index}.currency`,
                 )}
+                className="w-[150px]"
               />
               <TextInput
                 label="Bank SWIFT/BIC code"

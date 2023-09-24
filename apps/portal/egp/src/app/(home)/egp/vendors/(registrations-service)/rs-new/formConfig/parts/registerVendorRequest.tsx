@@ -14,31 +14,25 @@ import {
   TextInput,
   Box,
 } from '@mantine/core';
-import style from './layout.module.scss';
-import { nationalityOptions } from '../../../../../_shared/config';
+import style from './register.module.scss';
+import { nationalityOptions } from '../../../../_shared/config';
 import { useRouter } from 'next/navigation';
-
+import { createQueryString } from '@/app/(home)/egp/vendors/_shared/lib/url/helper';
 interface Props {
   form: any;
 }
 
 export const RegisterVendorRequestForm: React.FC<Props> = ({ form }) => {
   const router = useRouter();
-  const [isVisible, setIsVisible] = React.useState(false);
   // Create a function to handle the form submission
   const handleSubmit = (values: typeof form.values) => {
-    console.log(values);
-    // setIsVisible(true);
-
-    setTimeout(() => {
-      setIsVisible(false);
-
-      router.push('rs-new-form');
-    }, 3000); // 5000 milliseconds = 5 seconds
+    router.push(
+      'rs-new-form?' + createQueryString(values.requesterInformation),
+    );
   };
+
   return (
     <Box className={style.reqFormCard}>
-      <LoadingOverlay visible={isVisible} overlayBlur={1} />
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <Stack my={15}>
           <TextInput

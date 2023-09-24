@@ -2,7 +2,7 @@ import { Stack, TextInput } from '@mantine/core';
 import { IconLink, IconMapPin, IconPrinter } from '@tabler/icons-react';
 import { IconAt, IconDeviceMobile, IconPhone } from '@tabler/icons-react';
 import React from 'react';
-import { CouplerPanel } from '../../../../../_shared/components';
+import { CouplerPanel } from '../../../../_shared/components';
 import { IconMailbox } from '@tabler/icons-react';
 
 interface Props {

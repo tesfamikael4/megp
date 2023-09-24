@@ -124,6 +124,7 @@ export const initialValues = {
     businessCompanyOrigin: '',
     district: '',
     country: '',
+    tinNumber: '',
   },
   addressInformation: {
     postalAddress: '',
@@ -137,7 +138,6 @@ export const initialValues = {
   },
   contactPersons: {
     contactPersonsTable: contactPersonsTableExamples,
-    // shareHoldersTable: [{ fullName: '', email: '', mobileNumber: '' }],
   },
   businessSizeAndOwnership: {
     registeredCapital: { amount: '', currency: '' },
@@ -146,7 +146,7 @@ export const initialValues = {
     ownershipType: '',
   },
   shareHolders: {
-    shareHoldersTable: [{ fullName: '', nationality: '', share: '' }],
+    shareHoldersTable: [],
   },
   beneficialOwnership: {
     shareHoldersTable: [{ fullName: '', nationality: '' }],

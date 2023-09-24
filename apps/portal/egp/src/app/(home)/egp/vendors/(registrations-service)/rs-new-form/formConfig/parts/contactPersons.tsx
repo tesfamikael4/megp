@@ -8,8 +8,8 @@ import {
   Flex,
   Button,
 } from '@mantine/core';
-import CardList from '../../../../../_shared/components/cardList';
-import ActionMenu from '../../../../../_shared/components/actionMenu';
+import CardList from '../../../../_shared/components/cardList';
+import ActionMenu from '../../../../_shared/components/actionMenu';
 import { IconMenu, IconPencil, IconPlus, IconTrash } from '@tabler/icons-react';
 import { randomId } from '@mantine/hooks';
 
@@ -32,7 +32,7 @@ export const ContactPersons: React.FC<Props> = ({ form }) => {
               padding="lg"
               radius="md"
               withBorder
-              w={200}
+              w={250}
               style={{
                 height: '100%',
                 backgroundColor: '#f5f5f5',
@@ -70,7 +70,7 @@ export const ContactPersons: React.FC<Props> = ({ form }) => {
             <>
               {form.values.contactPersons.contactPersonsTable.map(
                 (value: any, index: number) => (
-                  <Card key={index} withBorder>
+                  <Card key={index} withBorder w={250}>
                     <Card.Section mb={10}>
                       <Group position="apart" p={10}>
                         <div></div>
@@ -82,14 +82,13 @@ export const ContactPersons: React.FC<Props> = ({ form }) => {
                       size="lg"
                       style={{ marginBottom: '0.5rem' }}
                     >
-                      {console.log(value)}
                       {value.firstName} {value.lastName}
                     </Text>
                     <Text
                       size="sm"
                       color="gray"
                       style={{ marginBottom: '0.5rem' }}
-                      w={'160px'}
+                      w={'220px'}
                       truncate
                     >
                       Email: {value.email}

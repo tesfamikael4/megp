@@ -29,16 +29,6 @@ export const NavLinksGroupTitle: React.FC<{
 export function Navbar({ data, hidden }: Props) {
   return (
     <Card className={styles.navlinkRoot} shadow="lg" p={0}>
-      <Card.Section inheritPadding className="py-10 ">
-        <Flex direction={'column'} align={'center'} justify={'center'}>
-          <Box className=" border rounded-[50%] p-2">
-            <IconMyBuilding className="w-10 h-10" />
-          </Box>
-          <Text size={'14px'} weight={600}>
-            Registration Services
-          </Text>
-        </Flex>
-      </Card.Section>
       {data.map((item, key) => (
         <NavLinksGroupTitle
           key={key + item.title}

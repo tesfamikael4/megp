@@ -1,6 +1,6 @@
 import { Stack } from '@mantine/core';
 import React from 'react';
-import CardForm from '../../../../../_shared/components/cardForm';
+import CardForm from '../../../../_shared/components/cardForm';
 
 interface Props {
   form: any;
