@@ -6,6 +6,7 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { TaskHandlerEntity } from './task-handler';
@@ -15,7 +16,7 @@ import { TaskTrackerEntity } from './task-tracker';
 export class WorkflowInstanceEntity extends CommonEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column({ name: 'application_no' })
+  @Column({ name: 'application_number' })
   applicationNumber: string;
   @Column({ name: 'requestor_id' })
   requestorId: string;
@@ -34,33 +35,20 @@ export class WorkflowInstanceEntity extends CommonEntity {
   )
   @JoinColumn({ name: 'bp_id' })
   businessProcess: BusinessProcessEntity;
-  @OneToMany(
+  // @OneToMany(
+  //   () => TaskHandlerEntity,
+  //   (taskHandler) => taskHandler.workflowInstance,
+  //   {
+  //     cascade: true,
+  //     onDelete: 'CASCADE',
+  //   },
+  // )
+  // taskHandlers: TaskHandlerEntity[];
+  @OneToOne(
     () => TaskHandlerEntity,
     (taskHandler) => taskHandler.workflowInstance,
-    {
-      cascade: true,
-      onDelete: 'CASCADE',
-    },
-  )
-  taskHandlers: TaskHandlerEntity[];
-  addHandler(taskHandler: TaskHandlerEntity) {
-    if (!this.taskHandlers) {
-      this.taskHandlers = [];
-    }
-    this.taskHandlers.push(taskHandler);
-  }
-  updateHandler(taskHandler: TaskHandlerEntity) {
-    const index = this.taskHandlers.findIndex((a) => a.id === taskHandler.id);
-    if (index !== -1) {
-      this.taskHandlers[index] = taskHandler;
-    }
-  }
-  removeHandler(taskHandler: TaskHandlerEntity) {
-    const index = this.taskHandlers.findIndex((a) => a.id === taskHandler.id);
-    if (index !== -1) {
-      this.taskHandlers.splice(index, 1);
-    }
-  }
+  ) // specify inverse side as a second parameter
+  taskHandler: TaskHandlerEntity;
 
   @OneToMany(
     () => TaskTrackerEntity,

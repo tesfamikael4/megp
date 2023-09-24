@@ -15,6 +15,7 @@ import { WorkflowInstanceService } from './workflow-instances/workflow-instance.
 import { TaskHandlerEntity } from './workflow-instances/entities/task-handler';
 import { WorkflowInstanceController } from './controllers/workflow-instance.controller';
 import { TaskTrackerEntity } from './workflow-instances/entities/task-tracker';
+import { WorkflowEngineService } from 'src/shared/workflow-engine/workflow-engine.service';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { TaskTrackerEntity } from './workflow-instances/entities/task-tracker';
     BusinessProcessService,
     TaskService,
     WorkflowInstanceService,
+    WorkflowEngineService,
   ],
   controllers: [
     BpServiceController,

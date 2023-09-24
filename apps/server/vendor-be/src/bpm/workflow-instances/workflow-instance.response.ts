@@ -29,7 +29,7 @@ export class WorkflowInstanceResponse {
   updatedAt: Date;
   @ApiProperty()
   deletedAt: Date;
-  taskHandlers?: TaskHandlerResponse[];
+  taskHandler?: TaskHandlerResponse;
   taskTrackers?: TaskTrackerResponse[];
   static toResponse(entity: WorkflowInstanceEntity) {
     const response = new WorkflowInstanceResponse();
@@ -43,10 +43,8 @@ export class WorkflowInstanceResponse {
         entity.businessProcess,
       );
     }
-    if (entity.taskHandlers) {
-      response.taskHandlers = entity.taskHandlers.map((handler) =>
-        TaskHandlerResponse.toResponse(handler),
-      );
+    if (entity.taskHandler) {
+      response.taskHandler = TaskHandlerResponse.toResponse(entity.taskHandler);
     }
     if (entity.taskTrackers) {
       response.taskTrackers = entity.taskTrackers.map((handler) =>

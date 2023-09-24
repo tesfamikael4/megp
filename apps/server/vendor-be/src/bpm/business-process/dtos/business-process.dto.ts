@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsUUID } from 'class-validator';
+import {
+  IsBoolean,
+  IsEmpty,
+  IsNotEmpty,
+  IsNumber,
+  IsUUID,
+} from 'class-validator';
 import { BusinessProcessEntity } from '../entities/business-process';
 
 export class CreateBusinessProcessDto {
@@ -14,6 +20,11 @@ export class CreateBusinessProcessDto {
   version: number;
   @ApiProperty()
   isActive: boolean;
+  @ApiProperty({
+    example: false,
+  })
+  @IsBoolean()
+  convertToStateMachine: boolean;
   organizationId: string;
   organizationName: string;
   /**
