@@ -25,7 +25,7 @@ export class TaskHandlerEntity extends CommonEntity {
   @Column({ name: 'previous_handler_id', nullable: true })
   previousHandlerId: string;
   @Column({ name: 'previous_handler_id' })
-  @Column({ name: 'current_state' })
+  @Column({ name: 'current_state', nullable: true })
   currentState: string;
   @OneToOne(
     () => WorkflowInstanceEntity,

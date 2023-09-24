@@ -7,7 +7,7 @@ export class BpServiceEntity extends CommonEntity {
   id: string;
   @Column({ name: 'name' })
   name: string;
-  @Column({ name: 'key', unique: true })
+  @Column({ name: 'key' })
   key: string;
   @Column({ name: 'description', type: 'text', nullable: true })
   description: string;

@@ -11,6 +11,8 @@ import {
 } from 'typeorm';
 import { TaskHandlerEntity } from './task-handler';
 import { TaskTrackerEntity } from './task-tracker';
+import { VendorsEntity } from 'src/vendor-registration/entities/vendors.entity';
+import { ServicePriceEntity } from 'src/vendor-registration/entities/service-price.entity';
 
 @Entity({ name: 'workflow_instances' })
 export class WorkflowInstanceEntity extends CommonEntity {
@@ -35,15 +37,6 @@ export class WorkflowInstanceEntity extends CommonEntity {
   )
   @JoinColumn({ name: 'bp_id' })
   businessProcess: BusinessProcessEntity;
-  // @OneToMany(
-  //   () => TaskHandlerEntity,
-  //   (taskHandler) => taskHandler.workflowInstance,
-  //   {
-  //     cascade: true,
-  //     onDelete: 'CASCADE',
-  //   },
-  // )
-  // taskHandlers: TaskHandlerEntity[];
   @OneToOne(
     () => TaskHandlerEntity,
     (taskHandler) => taskHandler.workflowInstance,
@@ -59,6 +52,24 @@ export class WorkflowInstanceEntity extends CommonEntity {
     },
   )
   taskTrackers: TaskTrackerEntity[];
+
+  @Column({ name: 'pricing_id', nullable: true })
+  pricingId: string;
+  @ManyToOne(() => ServicePriceEntity, (price) => price.workflowInstances, {
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'pricing_id' })
+  price: ServicePriceEntity;
+
+  @ManyToOne(() => VendorsEntity, (v) => v.instances, {
+    orphanedRowAction: 'delete',
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'requestor_id' })
+  vendor: VendorsEntity;
+
   addTracker(taskTracker: TaskTrackerEntity) {
     if (!this.taskTrackers) {
       this.taskTrackers = [];

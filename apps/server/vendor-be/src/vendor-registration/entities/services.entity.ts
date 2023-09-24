@@ -7,7 +7,7 @@ export class ServicesEntity {
   id: string;
   @Column({ name: 'description' })
   description: string;
-  @Column({ name: 'is_active' })
+  @Column({ name: 'is_active', default: true })
   isActive: boolean;
 
   @OneToMany(() => ApplicationEntity, (app) => app.service)

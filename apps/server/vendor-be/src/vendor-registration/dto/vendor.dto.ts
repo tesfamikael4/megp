@@ -3,8 +3,8 @@ import { IsJSON, IsNotEmpty, IsUUID } from 'class-validator';
 import { VendorsEntity } from '../entities/vendors.entity';
 import { CreateBusinessCategoryDto } from './business-category.dto';
 import { CreateCustomCategoryDto } from './custom-category.dto';
-import { CreateApplicationDto } from './application.dto';
 import { CreateShareholdersDto } from './shareholder.dto';
+import { CreateWorkflowInstanceDto } from 'src/bpm/workflow-instances/dtos/workflow-instance.dto';
 
 export class CreateVendorsDto {
   id: string;
@@ -45,7 +45,7 @@ export class CreateVendorsDto {
   CustomCategories: CreateCustomCategoryDto[];
 
   @ApiProperty()
-  appliactions: CreateApplicationDto[];
+  appliactions: CreateWorkflowInstanceDto[];
   @ApiProperty()
   shareholders: CreateShareholdersDto[];
 
@@ -68,17 +68,17 @@ export class CreateVendorsDto {
     entity.metaData = dto.metaData;
     entity.businessCats = dto.commonCategories
       ? dto.commonCategories.map((item) =>
-        CreateBusinessCategoryDto.fromDto(item),
-      )
+          CreateBusinessCategoryDto.fromDto(item),
+        )
       : null;
     entity.customCats = dto.CustomCategories
       ? dto.CustomCategories.map((item) =>
-        CreateCustomCategoryDto.fromDto(item),
-      )
+          CreateCustomCategoryDto.fromDto(item),
+        )
       : null;
 
-    entity.applications = dto.appliactions
-      ? dto.appliactions.map((item) => CreateApplicationDto.fromDto(item))
+    entity.instances = dto.appliactions
+      ? dto.appliactions.map((item) => CreateWorkflowInstanceDto.fromDto(item))
       : null;
 
     entity.shareholders = dto.shareholders
