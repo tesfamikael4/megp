@@ -14,8 +14,8 @@ import { WorkflowInstanceResponse } from './workflow-instances/workflow-instance
 import { InvoiceResponseDto } from 'src/vendor-registration/dto/invoice.dto';
 import { PaymentReceiptDto } from 'src/vendor-registration/dto/payment-receipt.dto';
 
-@Controller('Application-execution')
-@ApiTags('Application-excution(task handling)')
+@Controller('ApplicationExecution')
+@ApiTags('Application-excution')
 @ApiResponse({ status: 500, description: 'Internal error' })
 @ApiResponse({ status: 404, description: 'Item not found' })
 @ApiResponse({ status: 400, description: 'Bad Request' })
@@ -82,10 +82,11 @@ export class ApplicationExcutionController {
   ) {
     return await this.executeRepository.getCurrunTasks(servicekey, query);
   }
-
-  @Get('get-completed-tasks/:instanceId')
-  @ApiOkResponse({ type: TaskTrackerResponse })
-  async getCompletedTasks(@Param('instanceId') instanceId: string) {
-    return await this.executeRepository.getCompletedTasks(instanceId);
-  }
+  /*
+    @Get('get-completed-tasks/:instanceId')
+    @ApiOkResponse({ type: TaskTrackerResponse })
+    async getCompletedTasks(@Param('instanceId') instanceId: string) {
+      return await this.executeRepository.getCompletedTasks(instanceId);
+    }
+    */
 }

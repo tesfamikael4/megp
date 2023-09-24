@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { InvoiceEntity } from '../entities/invoice.entity';
+import { InvoiceEntity } from '../../bpm/workflow-instances/entities/invoice.entity';
 
 export class InvoiceResponseDto {
   @ApiProperty()

@@ -25,7 +25,7 @@ export class InvoiceEntity {
   serviceName: string;
   @Column()
   payerName: string;
-  @Column()
+  @Column({ name: 'payer_account_id' })
   payerAccountId: string;
   @Column()
   payToAccNo: string;
@@ -42,6 +42,7 @@ export class InvoiceEntity {
   paymentStatus: string;
   @Column({ name: 'remark' })
   remark: string;
-  @OneToOne(() => PaymentReceiptEntity, (rec) => rec.invoice)
+  @OneToOne(() => PaymentReceiptEntity)
+  @JoinColumn()
   receipt: PaymentReceiptEntity;
 }

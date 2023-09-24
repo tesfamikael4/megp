@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { ServicePriceEntity } from './service-price.entity';
-import { InvoiceEntity } from './invoice.entity';
+import { InvoiceEntity } from '../../bpm/workflow-instances/entities/invoice.entity';
 import { ServicesEntity } from './services.entity';
 import { VendorsEntity } from './vendors.entity';
 //Vendor Service Application

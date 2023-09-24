@@ -16,19 +16,19 @@ import {
   PaymentReceiptResponseDto,
 } from 'src/vendor-registration/dto/payment-receipt.dto';
 import { InvoiceResponseDto } from 'src/vendor-registration/dto/invoice.dto';
-import { InvoiceEntity } from 'src/vendor-registration/entities/invoice.entity';
-import { PaymentReceiptEntity } from 'src/vendor-registration/entities/receipt-attachment';
+import { InvoiceEntity } from 'src/bpm/workflow-instances/entities/invoice.entity';
+import { PaymentReceiptEntity } from 'src/bpm/workflow-instances/entities/receipt-attachment';
 @Injectable()
 export class ApplicationExcutionService {
   constructor(
-    @InjectRepository(TaskTrackerEntity)
-    private readonly taskTrackingRepository: Repository<TaskTrackerEntity>,
-    @InjectRepository(TaskHandlerEntity)
-    private readonly taskhandlergRepository: Repository<TaskHandlerEntity>,
     @InjectRepository(InvoiceEntity)
     private readonly invoceRepository: Repository<InvoiceEntity>,
     @InjectRepository(PaymentReceiptEntity)
     private readonly receiptRepository: Repository<PaymentReceiptEntity>,
+    @InjectRepository(TaskTrackerEntity)
+    private readonly taskTrackingRepository: Repository<TaskTrackerEntity>,
+    @InjectRepository(TaskHandlerEntity)
+    private readonly taskhandlergRepository: Repository<TaskHandlerEntity>,
   ) {}
 
   async getCompletedTasks(instanceId: string): Promise<TaskTrackerResponse[]> {
@@ -40,6 +40,7 @@ export class ApplicationExcutionService {
     result = ctasks.map((entity) => TaskTrackerResponse.toResponse(entity));
     return result;
   }
+
   async getCurrunTasks(
     servicekey: string,
     query: CollectionQuery,
@@ -181,13 +182,13 @@ export class ApplicationExcutionService {
     return null;
   }
   async getMyInvoices(
-    invoiceId: string,
+    userId: string,
     query: CollectionQuery,
   ): Promise<DataResponseFormat<InvoiceResponseDto>> {
     query.filter.push([
       {
-        field: 'invoiceId',
-        value: invoiceId,
+        field: 'payer_account_id',
+        value: userId,
         operator: FilterOperators.EqualTo,
       },
     ]);
