@@ -17,7 +17,7 @@ export class TaskService {
   constructor(
     @InjectRepository(TaskEntity)
     private readonly taskRepository: Repository<TaskEntity>,
-  ) {}
+  ) { }
   async getTasks(
     query: CollectionQuery,
   ): Promise<DataResponseFormat<TaskResponse>> {
@@ -53,7 +53,7 @@ export class TaskService {
     task.description = dto.description;
     task.businessProcessId = dto.businessProcessId;
     task.handlerType = dto.handlerType;
-    task.type = dto.type;
+    task.taskType = dto.taskType;
     const result = await this.taskRepository.save(task);
     return TaskResponse.toResponse(result);
   }

@@ -15,7 +15,7 @@ export class TaskResponse {
   @ApiProperty()
   handlerType: string;
   @ApiProperty()
-  type: string;
+  taskType: string;
   @ApiProperty()
   businessProcess?: BusinessProcessResponse;
   @ApiProperty()
@@ -38,7 +38,7 @@ export class TaskResponse {
     response.name = entity.name;
     response.description = entity.description;
     response.handlerType = entity.handlerType;
-    response.type = entity.type;
+    response.taskType = entity.taskType;
     if (entity.businessProcess) {
       response.businessProcess = BusinessProcessResponse.toResponse(
         entity.businessProcess,

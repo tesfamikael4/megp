@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import supertokens from 'supertokens-node';
 import Session from 'supertokens-node/recipe/session';
 import ThirdPartyEmailPassword from 'supertokens-node/recipe/thirdpartyemailpassword';
@@ -102,19 +102,12 @@ export class SupertokensService {
               },
               {
                 id: 'firstName',
-                optional: true,
               },
               {
                 id: 'lastName',
-                optional: true,
               },
               {
                 id: 'organizationName',
-                optional: true,
-              },
-              {
-                id: 'securityQuestions',
-                optional: true,
               },
             ],
           },
@@ -153,9 +146,14 @@ export class SupertokensService {
                 emailPasswordSignInPOST: async function (input) {
                   const response =
                     await originalImplementation.emailPasswordSignInPOST(input);
-
+                  if (response.status === 'OK') {
+                    const isVerified = response.session.getAccessTokenPayload()['st-ev']['v'];
+                    if (!isVerified) {
+                      throw new HttpException('Email not verified', HttpStatus.FORBIDDEN);
+                    }
+                  }
                   return response;
-                },
+                }
               };
             },
           },

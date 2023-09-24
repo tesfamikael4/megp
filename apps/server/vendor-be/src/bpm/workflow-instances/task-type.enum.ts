@@ -7,5 +7,5 @@ export const TaskTypes = {
   INVOICE: 'invoice',
   PAYMENT: 'payment',
   ISR: 'isr',
-  PaymentConfirmation: 'PaymentConfirmation',
+  PaymentConfirmation: 'paymentconfirmation',
 };

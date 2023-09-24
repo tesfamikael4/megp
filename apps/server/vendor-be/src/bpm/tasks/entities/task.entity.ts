@@ -24,7 +24,7 @@ export class TaskEntity extends CommonEntity {
   @Column({ name: 'handler_type' })
   handlerType: string;
   @Column()
-  type: string;
+  taskType: string;
   @ManyToOne(
     () => BusinessProcessEntity,
     (businessProcess) => businessProcess.tasks,

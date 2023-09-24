@@ -43,4 +43,4 @@ import { WorkflowEngineService } from 'src/shared/workflow-engine/workflow-engin
     WorkflowInstanceController,
   ],
 })
-export class BpmModule {}
+export class BpmModule { }

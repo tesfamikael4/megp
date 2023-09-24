@@ -35,7 +35,7 @@ import {
 export class WorkflowInstanceController {
   constructor(
     private readonly workflowInstanceService: WorkflowInstanceService,
-  ) {}
+  ) { }
   @Get('get-workflow-instances')
   @ApiPaginatedResponse(WorkflowInstanceResponse)
   async fetch(@Query() query: CollectionQuery) {

@@ -1,3 +1,4 @@
+/* eslint-disable no-prototype-builtins */
 import React from 'react';
 import { Flex, Group, SimpleGrid, Modal } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
@@ -6,12 +7,13 @@ import { useDisclosure } from '@mantine/hooks';
 interface RenderAddCardProps {
   index: number;
   value: any;
+  type: string;
 }
 interface CardViewProps {
   formConfig: {
     form: any;
     dataLocation: string;
-    schema: any;
+    title: string;
   };
   renderAddCard: (
     openModal: ({ value, index }: RenderAddCardProps) => void,
@@ -22,6 +24,7 @@ interface CardViewProps {
   renderModalFormRemoveButton: (
     index: number,
     close: () => void,
+    type: string,
   ) => React.ReactNode;
 }
 const CardList: React.FC<CardViewProps> = ({
@@ -35,46 +38,48 @@ const CardList: React.FC<CardViewProps> = ({
   const [selectedData, setSelectedData] = React.useState<{
     value: any;
     index: number;
+    type: string;
   }>({
     value: '',
     index: -1,
+    type: '',
   });
 
   const [opened, { open, close }] = useDisclosure(false);
-  const openModal = ({ value, index }: { value: any; index: number }) => {
-    setSelectedData({ value, index });
+  const openModal = ({
+    value,
+    index,
+    type,
+  }: {
+    value: any;
+    index: number;
+    type: string;
+  }) => {
+    setSelectedData({ value, index, type });
     open();
   };
   const closeModal = () => {
-    close();
-    formConfig.form.validate(
-      `${formConfig.dataLocation}.${selectedData?.index}`,
-    ).hasErrors &&
+    if (selectedData.type === 'new') {
+      close();
       formConfig.form.removeListItem(
         formConfig.dataLocation,
         selectedData.index,
       );
-    setSelectedData({
-      value: '',
-      index: -1,
-    });
+      setSelectedData({
+        value: '',
+        index: -1,
+        type: '',
+      });
+    } else {
+      close();
+      formConfig.form.validate(
+        `${formConfig.dataLocation}.${selectedData?.index}`,
+      ).hasErrors;
+    }
   };
+  let error = false;
 
-  // const validateModalForm = () =>
-  //   !formConfig.form.validate(
-  //     `${formConfig.dataLocation}.${selectedData?.index}`,
-  //   ).hasErrors && close();
   const validateModalForm = () => {
-    //   formConfig.form.setFieldError(
-    //     `${formConfig.dataLocation}.${selectedData?.index}.email`,
-    //     'Invalid email',
-    //   );
-
-    // console.log(
-    //   formConfig.form.isValid(
-    //     `${formConfig.dataLocation}.${selectedData?.index}.email`,
-    //   ),
-    // );
     let nestedValue = formConfig.form.values;
 
     for (const prop of formConfig.dataLocation.split('.')) {
@@ -87,7 +92,6 @@ const CardList: React.FC<CardViewProps> = ({
       }
     }
 
-    console.log(nestedValue);
     if (nestedValue && Array.isArray(nestedValue) && nestedValue.length > 0) {
       const firstObject = nestedValue[0];
 
@@ -100,19 +104,21 @@ const CardList: React.FC<CardViewProps> = ({
           if (!isFieldValid) {
             // Set an error message for the field
             formConfig.form.setFieldError(fieldToValidate);
+            error = true;
           }
         }
       }
     }
+    !error && close();
   };
   return (
     <Flex align={'center'} justify={'center'}>
       <SimpleGrid
-        cols={4}
-        spacing="lg"
+        cols={3}
+        spacing="md"
         breakpoints={[
-          { maxWidth: 'md', cols: 3, spacing: 'md' },
-          { maxWidth: 'sm', cols: 2, spacing: 'sm' },
+          { maxWidth: 'md', cols: 2, spacing: 'md' },
+          { maxWidth: 'sm', cols: 1, spacing: 'sm' },
           { maxWidth: 'xs', cols: 1, spacing: 'sm' },
         ]}
       >
@@ -120,7 +126,7 @@ const CardList: React.FC<CardViewProps> = ({
         {renderCardList(openModal)}
       </SimpleGrid>
       <Modal
-        title="Add New User"
+        title={formConfig.title}
         onClose={closeModal}
         opened={opened}
         size="sm"
@@ -130,7 +136,11 @@ const CardList: React.FC<CardViewProps> = ({
 
         <Group mt={'md'} position={'right'}>
           {renderModalFormSaveButton(validateModalForm)}
-          {renderModalFormRemoveButton(selectedData.index, close)}
+          {renderModalFormRemoveButton(
+            selectedData.index,
+            close,
+            selectedData.type,
+          )}
         </Group>
       </Modal>
     </Flex>
