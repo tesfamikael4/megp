@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import EmptyState from '@/shared/ui/empty';
 import {
   useAddOrganizationMandateMutation,
-  useLazyGetOrganiationMandateQuery,
+  useLazyGetOrganiationMandateAssignedQuery,
 } from '@/store/api/organization/organization.api';
 import MandateSelector from './mandate-selector';
 import { usePathname } from 'next/navigation';
@@ -20,7 +20,7 @@ function OrganizationMandateList({ collapsed }) {
   const pathname = usePathname();
   const parts = pathname.split('/');
   const idp = parts[parts.length - 1];
-  const id = idp.toString();
+  const id = idp?.toString();
 
   const [AddOrganizationMandate, { isLoading: updating, data: organization }] =
     useAddOrganizationMandateMutation();
@@ -28,7 +28,7 @@ function OrganizationMandateList({ collapsed }) {
   const [
     getSubscriberMandate,
     { data: mandates, isLoading: itemsLoading, isSuccess },
-  ] = useLazyGetOrganiationMandateQuery();
+  ] = useLazyGetOrganiationMandateAssignedQuery();
 
   const pagination = (data) => {
     setCollectionQuery({ ...collectionQuery, skip: data.skip, top: data.top });
@@ -67,7 +67,7 @@ function OrganizationMandateList({ collapsed }) {
 
   useEffect(() => {
     if (!isCollapsed) getSubscriberMandate(id);
-  }, [isCollapsed, id]);
+  }, [isCollapsed, id, getSubscriberMandate]);
 
   useEffect(() => {
     // setSelectedRows(mandates ? mandates?.organizationMandates?.mandate : []);
@@ -95,6 +95,8 @@ function OrganizationMandateList({ collapsed }) {
       selectedRows={[...selectedRows]}
     />
   );
+
+  console.log(selectedRows);
 
   return (
     <Card className="mt-4 ml-2">

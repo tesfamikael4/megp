@@ -129,10 +129,10 @@ const UserDetailForm = (props: UnitDetailFormProps) => {
   const submitDelete = async () => {
     try {
       await deleteUser(id?.toString()).unwrap();
-
+      notify('success', 'User deleted successfully');
       router.push('/users');
     } catch (err) {
-      console.log(err);
+      notify('success', 'User not deleted successfully');
     }
     setDisplayConfirmationModal(false);
   };
@@ -180,7 +180,7 @@ const UserDetailForm = (props: UnitDetailFormProps) => {
     }
   }, [isUnitSuccess, props.mode, reset, user]);
   /*  */
-
+  console.log(user);
   return (
     <Card className="ml-2">
       <Card.Section className={Style.Section}></Card.Section>
@@ -228,7 +228,9 @@ const UserDetailForm = (props: UnitDetailFormProps) => {
             className={Style.input}
             placeholder={'User Name'}
             label="User Name"
-            error={errors?.email ? errors?.email?.message?.toString() : ''}
+            error={
+              errors?.username ? errors?.username?.message?.toString() : ''
+            }
             required
             {...register('username')}
           />

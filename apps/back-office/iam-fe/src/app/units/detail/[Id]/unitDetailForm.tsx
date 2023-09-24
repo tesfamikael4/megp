@@ -67,7 +67,7 @@ const UnitDetailForm = (props: UnitDetailFormProps) => {
 
   const [displayConfirmationModal, setDisplayConfirmationModal] =
     useState(false);
-
+  const [selectedData, setSelectedData] = useState([]);
   const [
     trigger,
     { data: unit, isLoading: isUnitLoading, isSuccess: isUnitSuccess },
@@ -109,9 +109,12 @@ const UnitDetailForm = (props: UnitDetailFormProps) => {
   };
 
   const handleUpdate = async (data: any) => {
-    console.log({ ...data, id: id?.toString() });
     try {
-      await updateUnit({ ...data, id: id?.toString() });
+      await updateUnit({
+        ...data,
+        id: id?.toString(),
+        organizationId: '099454a9-bf8f-45f5-9a4f-6e9034230250',
+      });
       notify('success', 'unit updating successfully');
     } catch (err) {
       notify('error', 'unit updating successfully');
@@ -170,6 +173,15 @@ const UnitDetailForm = (props: UnitDetailFormProps) => {
     triggerUnitType(true);
   }, [triggerUnitType]);
 
+  useEffect(() => {
+    const selected = units?.items?.filter((u) => {
+      return u.id !== id && unit?.parentId !== u.id;
+    });
+    console.log(selected);
+    setSelectedData(selected);
+  }, [id, unit?.ParentId, units?.items]);
+
+  console.log(selectedData);
   return (
     <Card className="ml-2">
       <Card.Section className={Style.Section}></Card.Section>
@@ -255,12 +267,10 @@ const UnitDetailForm = (props: UnitDetailFormProps) => {
                 required
                 onChange={onChange}
                 data={
-                  units?.items
-                    ?.filter((unit) => unit.id !== id)
-                    .map((unit) => ({
-                      value: unit?.id,
-                      label: unit?.name,
-                    })) || []
+                  selectedData?.map((unit: any) => ({
+                    value: unit?.id,
+                    label: unit?.name,
+                  })) || []
                 }
               />
             )}
@@ -280,7 +290,7 @@ const UnitDetailForm = (props: UnitDetailFormProps) => {
           </Button>
         )}
 
-        {props.mode == 'update' && (
+        {props.mode == 'update' && unit?.name !== 'root' && (
           <div className={Style.flexdisplay}>
             <>
               <Button
