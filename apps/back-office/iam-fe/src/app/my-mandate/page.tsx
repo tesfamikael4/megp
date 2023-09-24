@@ -51,7 +51,7 @@ const OrganizationList = () => {
       trigger(
         {
           items: collectionQuery,
-          id: 'f8e0445d-78ad-4853-a711-67c884e04a2e',
+          id: '099454a9-bf8f-45f5-9a4f-6e9034230250',
         },
         true,
       );

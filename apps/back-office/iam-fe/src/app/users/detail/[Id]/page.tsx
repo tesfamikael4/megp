@@ -68,25 +68,12 @@ const UserNew = () => {
     }
   }, [collectionQuery, trigger]);
 
-  useEffect(() => {
-    if (isuserFetched) {
-      setItems(
-        users?.items?.map((item) => {
-          return {
-            ...item,
-            fullName: ` ${item?.firstName} ${item.lastName}`,
-          };
-        }),
-      );
-    }
-  }, [isuserFetched, users?.items]);
-
   return (
     <>
       <EntityList
         config={config}
         search={onSearch}
-        items={items}
+        items={users?.items}
         viewMode="detail"
         total={3}
         itemsLoading={isuserLoading}

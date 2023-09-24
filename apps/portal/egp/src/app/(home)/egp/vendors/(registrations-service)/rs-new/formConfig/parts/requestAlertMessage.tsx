@@ -1,6 +1,6 @@
 import { Alert, List, Text } from '@mantine/core';
 import { IconAlertCircle, IconPin } from '@tabler/icons-react';
-import style from './layout.module.scss';
+import style from './register.module.scss';
 
 export const RequestAlertMessage = () => {
   return (

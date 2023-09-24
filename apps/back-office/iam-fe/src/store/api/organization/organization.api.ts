@@ -1,8 +1,7 @@
 import { CollectionQuery } from '@/shared/core/models';
 import { collectionQueryBuilder } from '@/shared/core/utilities';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-// import { User } from '@/models/user';
-console.log(`${process.env.BASE_URL}`);
+
 export const organizationApi = createApi({
   reducerPath: 'organizationApi',
   refetchOnFocus: true,
@@ -134,8 +133,16 @@ export const organizationApi = createApi({
         };
       },
     }),
+    getOrganiationMandateAssigned: builder.query<any, string>({
+      query: (id) => {
+        return {
+          url: `organizations/get/${id}?includes[0]=organizationMandates.mandate`,
+          method: 'GET',
+        };
+      },
+    }),
 
-    getOrganiationMandate: builder.query<any, any>({
+    getOrganiationMandate: builder.query<any, { items: any; id: string }>({
       query: (items: { items: CollectionQuery; id: string }) => {
         return {
           url: `organizations/get/${items?.id}?includes[0]=organizationMandates.mandate`,
@@ -170,6 +177,7 @@ export const {
   useAddOrganizationMandateMutation,
   useLazyGetOrganiationMandateQuery,
   useLazyGetAllMandatesQuery,
+  useLazyGetOrganiationMandateAssignedQuery,
 
   useSendUserInvitationLinkQuery,
   useLazyGetUserInvitationLinkQuery,

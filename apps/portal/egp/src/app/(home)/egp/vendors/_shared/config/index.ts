@@ -54,9 +54,14 @@ export const navLinks: NavItemWrapper[] = [
             displayName: 'Upgrade Vendor Information',
           },
           {
-            label: 'Update Bank',
-            link: 'rs-update-bank',
-            displayName: 'Upgrade Vendor Bank Information',
+            label: 'Update Information',
+            link: 'rs-update-info',
+            displayName: 'Upgrade Vendor Information',
+          },
+          {
+            label: 'Add Additional service',
+            link: 'rs-add-additional-service',
+            displayName: 'Upgrade Vendor Information',
           },
         ],
       },

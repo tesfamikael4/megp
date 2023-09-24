@@ -98,7 +98,6 @@ const NewUser = () => {
           return {
             ...item,
             isActive: item.isActive ? 'Yes' : 'No ',
-            fullName: ` ${item?.firstName} ${item.lastName}`,
           };
         }),
       );

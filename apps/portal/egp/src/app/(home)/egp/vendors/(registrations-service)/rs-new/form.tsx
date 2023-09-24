@@ -1,10 +1,10 @@
 'use client';
 import { SimpleGrid } from '@mantine/core';
-import { RegisterVendorRequestForm } from './(form-components)/(layout)/registerVendorRequest';
-import { RequestAlertMessage } from './(form-components)/(layout)/requestAlertMessage';
 import { useForm, zodResolver } from '@mantine/form';
-import { schema } from './(form-components)/(schema)/schema';
-import { initialValues } from './(form-components)/(data)/initialValues';
+import { schema } from './formConfig/schema';
+import { initialValues } from './formConfig/initialValues';
+import { RegisterVendorRequestForm } from './formConfig/parts/registerVendorRequest';
+import { RequestAlertMessage } from './formConfig/parts/requestAlertMessage';
 
 export default function Form() {
   const form = useForm({

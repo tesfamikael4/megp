@@ -56,7 +56,6 @@ const UnitNew = () => {
       setCollectionQuery({ ...collectionQuery, search: data });
     }, 350);
   };
-  const [items, setItems] = useState();
 
   useEffect(() => {
     if (collectionQuery.filter) {
@@ -69,25 +68,12 @@ const UnitNew = () => {
     }
   }, [collectionQuery, trigger]);
 
-  useEffect(() => {
-    if (isUnitFetched) {
-      setItems(
-        users?.items?.map((item) => {
-          return {
-            ...item,
-
-            fullName: ` ${item?.firstName} ${item.lastName}`,
-          };
-        }),
-      );
-    }
-  }, [isUnitFetched, users?.items]);
   return (
     <>
       <EntityList
         config={config}
         search={onSearch}
-        items={items}
+        items={users?.items}
         viewMode="detail"
         total={3}
         itemsLoading={isUnitLoading}

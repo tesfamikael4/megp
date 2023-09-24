@@ -2,7 +2,7 @@ import { ActionIcon, Button, Select, Text } from '@mantine/core';
 import { Stack, TextInput } from '@mantine/core';
 import { IconTrash, IconUserSquareRounded } from '@tabler/icons-react';
 import React from 'react';
-import { Table } from '../../../../../_shared/components';
+import { Table } from '../../../../_shared/components';
 import { randomId } from '@mantine/hooks';
 
 interface Props {

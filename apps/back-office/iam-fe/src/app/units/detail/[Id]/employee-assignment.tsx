@@ -51,8 +51,8 @@ const EmployeeAssignment = (props: EmployeeAssignmentProps) => {
   /* Variables */
   const config: CollectionSelectorConfig = {
     visibleColumn: [
-      { key: 'firstName', name: 'First name' },
-      { key: 'lastName', name: 'Last name' },
+      { key: 'fullName', name: 'Full name' },
+
       { key: 'email', name: 'Email' },
     ],
     title: 'Employees',

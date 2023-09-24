@@ -46,6 +46,7 @@ interface EntityListProps {
   showExportButton?: boolean;
   showSearchButton?: boolean;
   titleColumnHasLocal?: boolean;
+  tree?: boolean;
 }
 
 export function EntityList(props: EntityListProps) {
