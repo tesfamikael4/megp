@@ -108,7 +108,12 @@ const RoleDetailForm = (props: RoleDetailFormProps) => {
 
   const handleUpdate = async (data: any) => {
     try {
-      await updateRole({ ...data, id: id?.toString() });
+      await updateRole({
+        ...data,
+        id: id?.toString(),
+        isSystemRole: false,
+        organizationId: '099454a9-bf8f-45f5-9a4f-6e9034230250',
+      });
       notify('success', 'role updating successfully');
     } catch (err) {
       notify('error', 'errors in updating role');

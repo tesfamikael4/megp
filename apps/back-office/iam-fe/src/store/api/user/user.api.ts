@@ -1,8 +1,8 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { User } from '@/models/user/user';
 import { userBaseUrl } from './base-urls';
-import { CollectionQuery } from '@/shared/core/models';
 import { collectionQueryBuilder } from '@/shared/core/utilities';
+import { CollectionQuery } from '@/shared/core/models';
 
 export const userApi = createApi({
   reducerPath: 'userApi',
@@ -11,6 +11,7 @@ export const userApi = createApi({
     baseUrl: `${process.env.NEXT_PUBLIC_IAM_API}`,
   }),
   tagTypes: ['User', 'Users', 'userUnits', 'userRoles'],
+
   endpoints: (builder) => ({
     getUsers: builder.query<any, any>({
       query: (items: { items: CollectionQuery }) => ({
@@ -22,7 +23,7 @@ export const userApi = createApi({
       providesTags: ['Users'],
     }),
     getUserById: builder.query<User, string>({
-      query: (id) => `get/${id}?includes[0]=userUnits&&includes[1]=userRoles`,
+      query: (id) => `users/get/${id}`,
       providesTags: ['User'],
     }),
     addNewUser: builder.mutation<any, any>({
@@ -42,7 +43,7 @@ export const userApi = createApi({
     updateUser: builder.mutation<any, any>({
       query: (user) => {
         return {
-          url: `/users/update/${user.id}`,
+          url: `users/update/${user.id}`,
           method: 'PATCH',
           body: {
             ...user,
@@ -66,7 +67,7 @@ export const userApi = createApi({
     deleteUser: builder.mutation<any, any>({
       query: (id) => {
         return {
-          url: `/users/${id}`,
+          url: `users/delete/${id}`,
           method: 'DELETE',
         };
       },
