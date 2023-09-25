@@ -12,10 +12,13 @@ export class CreateWorkflowInstanceDto {
   @ApiProperty()
   @IsNotEmpty()
   status: string;
-
   @ApiProperty()
   @IsNotEmpty()
+  pricingId: string;
+  //@ApiProperty()
+  //@IsNotEmpty()
   key: string;
+  createdBy: string;
   /**
    * Transfer Data from DTO object to Entity object
    *
@@ -26,8 +29,9 @@ export class CreateWorkflowInstanceDto {
       return null;
     }
     entity.requestorId = dto.requestorId;
-    // entity.bpId = dto.bpId;
+    entity.pricingId = dto.pricingId;
     entity.status = dto.status;
+    entity.createdBy = dto.createdBy;
     return entity;
   }
 
@@ -51,7 +55,7 @@ export class UpdateWorkflowInstanceDto extends CreateWorkflowInstanceDto {
     }
     entity.id = dto.id;
     entity.requestorId = dto.requestorId;
-    // entity.bpId = dto.bpId;
+    entity.pricingId = dto.pricingId;
     entity.status = dto.status;
     return entity;
   }

@@ -32,6 +32,7 @@ import { StateMetaData } from './state-metadata';
 import { TaskTrackerEntity } from './entities/task-tracker';
 import { TaskTrackerResponse } from './task-tracker.response';
 import { TaskResponse } from '../tasks/task.response';
+import { ServicePriceEntity } from 'src/vendor-registration/entities/service-price.entity';
 
 @Injectable()
 export class WorkflowInstanceService {
@@ -46,7 +47,7 @@ export class WorkflowInstanceService {
     private readonly pbServiceRepository: Repository<BpServiceEntity>,
     @InjectRepository(BusinessProcessEntity)
     private readonly bpRepository: Repository<BusinessProcessEntity>,
-  ) { }
+  ) {}
   async getWorkflowInstances(
     query: CollectionQuery,
   ): Promise<DataResponseFormat<WorkflowInstanceResponse>> {
@@ -78,21 +79,25 @@ export class WorkflowInstanceService {
   async create(dto: CreateWorkflowInstanceDto): Promise<any> {
     const response = {};
     const workflowInstanceEntity = CreateWorkflowInstanceDto.fromDto(dto);
+    const price = await this.dataSource
+      .getRepository(ServicePriceEntity)
+      .findOne({ where: { id: dto.pricingId } });
     const service = await this.dataSource
       .getRepository(BpServiceEntity)
       .createQueryBuilder('services')
       .leftJoinAndSelect('services.businessProcesses', 'businessProcesses')
-      .where('services.key=:key', { key: dto.key })
+      .where('services.id=:id', { id: price.serviceId })
       .andWhere('businessProcesses.isActive=:isActive', { isActive: true })
       .getOne();
-    console.log(service);
     const bp = service.businessProcesses.find((a) => a.isActive === true);
     workflowInstanceEntity.bpId = bp.id;
     workflowInstanceEntity.applicationNumber = Date.now().toString();
-    workflowInstanceEntity.status = "Submitted";
+    workflowInstanceEntity.status = 'Submitted';
+
     const newWorkflowInstance = await this.workflowInstanceRepository.save(
       workflowInstanceEntity,
     );
+
     const machine = createMachine({
       predictableActionArguments: true,
       ...bp.workflow,
@@ -110,21 +115,19 @@ export class WorkflowInstanceService {
           businessProcessId: bp.id,
         })
         .getOne();
+      console.log('task taskName: state.value.toString()', state.value);
+      console.log(bp.workflow);
+      console.log('task', task);
       taskHandler.currentState = state.value.toString();
       taskHandler.instanceId = newWorkflowInstance.id;
       taskHandler.taskId = task.id;
       taskHandler.previousHandlerId = null;
       taskHandler.assignmentStatus = 'Unassigned';
-
       const insertedTaskHandler = await this.dataSource
         .getRepository(TaskHandlerEntity)
         .save(taskHandler);
       task.taskHandlers = [insertedTaskHandler];
-
       response['task'] = task;
-      console.log('Inside transision', response, insertedTaskHandler);
-      // stateMachine.currentState = state.value.toString();
-      // console.log(stateMachine.currentState, state.value);
     });
 
     // Start the stateMachine
@@ -172,10 +175,7 @@ export class WorkflowInstanceService {
 
         this.handleEvent(stateMetaData, nextCommand)
           .then((res) => {
-
             console.log('handleEvent success', res);
-
-
           })
           .catch((err) => {
             console.log('handleEvent error', err);
@@ -201,7 +201,6 @@ export class WorkflowInstanceService {
             throw new BadRequestException(error);
           });
       }
-
     });
     // Start the service
     stateMachine.start();
@@ -222,7 +221,7 @@ export class WorkflowInstanceService {
         return this.confirm(command);
         break;
       case TaskTypes.REVIEW:
-        return this.approve(command)
+        return this.approve(command);
         break;
       case TaskTypes.INVOICE:
         break;
@@ -243,29 +242,17 @@ export class WorkflowInstanceService {
 
   async approve(command: GotoNextStateDto) {
     const eventType = command.action ? command.action : 'SUBMIT';
-    if (eventType.toLocaleLowerCase() === "adjust") {
-
+    if (eventType.toLocaleLowerCase() === 'adjust') {
     } else if (eventType.toLocaleLowerCase() === 'approve') {
-
     } else {
-
     }
-
   }
   async confirm(command: GotoNextStateDto) {
     const eventType = command.action ? command.action : 'SUBMIT';
     if (eventType.toLocaleLowerCase() == 'no') {
-
     } else {
-
     }
-
   }
-
-
-
-
-
 
   async update(
     dto: UpdateWorkflowInstanceDto,
