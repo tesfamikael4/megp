@@ -11,12 +11,17 @@ import { CommonEntity } from 'src/shared/entities/common.entity';
 export class FilesEntity extends CommonEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column({ name: 'file_name' })
+  @Column()
   fileName: string;
-  @Column({ name: 'file_type' })
+  @Column()
   fileType: string;
-  @Column({ name: 'path' })
+  @Column()
+  bucketName: string;
+  @Column()
+  originalName: string;
+  attachmentUrl: string;
+  @Column()
   path: string;
-  @Column({ name: 'vendor_id' })
+  @Column()
   vendorId: string;
 }

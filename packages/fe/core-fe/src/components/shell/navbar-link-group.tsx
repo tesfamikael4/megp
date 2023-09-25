@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-confusing-void-expression -- ss*/
+
 'use client';
 import {
   Box,

@@ -94,6 +94,7 @@ export class WorkflowInstanceService {
     workflowInstanceEntity.applicationNumber = Date.now().toString();
     workflowInstanceEntity.status = 'Submitted';
 
+    workflowInstanceEntity.status = 'Submitted';
     const newWorkflowInstance = await this.workflowInstanceRepository.save(
       workflowInstanceEntity,
     );

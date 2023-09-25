@@ -10,9 +10,8 @@ export class TradeRegistrationDatabaseService {
   constructor(
     @InjectRepository(TradeRegistrationDatabaseEntity)
     private readonly tradeRegistrationDatabaseEntity: Repository<TradeRegistrationDatabaseEntity>,
-  ) { }
+  ) {}
   async fetch(query: CollectionQuery): Promise<any> {
-    console.log(';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;');
     try {
       const dataQuery =
         QueryConstructor.constructQuery<TradeRegistrationDatabaseEntity>(

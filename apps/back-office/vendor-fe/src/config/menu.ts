@@ -39,7 +39,7 @@ export const Menu: MenuItem[] = [
     icon: IconAdjustmentsHorizontal,
     links: [
       { label: 'Workflow', link: '/' },
-      { label: 'Pricing', link: '/' },
+      { label: 'Pricing', link: '/settings/pricing' },
     ],
   },
 ];

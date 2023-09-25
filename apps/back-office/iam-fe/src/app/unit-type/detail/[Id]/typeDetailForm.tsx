@@ -19,7 +19,7 @@ import {
   useDeleteUnitTypeMutation,
 } from '@/store/api/unitType/unitType.api';
 import { useLazyGetUnitTypeQuery } from '@/store/api/unitType/unitType.api';
-import { notify } from '@/shared/ui/notification/utility/notify';
+import { notify } from '@/shared/ui/page';
 
 /* Form schema */
 

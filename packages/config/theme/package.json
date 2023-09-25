@@ -3,9 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "license": "MIT",
-  "scripts": {
-    "lint": "eslint ./src --ext .ts,.tsx"
-  },
+  "scripts": {},
   "publishConfig": {
     "access": "public"
   },

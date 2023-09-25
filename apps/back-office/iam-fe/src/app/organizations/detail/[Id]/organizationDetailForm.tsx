@@ -18,7 +18,7 @@ import {
 import { useLazyGetOrganizationTypeQuery } from '@/store/api/lookUps/lookups.api';
 import { useLazyGetOrganizationSectorsQuery } from '@/store/api/orgSector/orgSector.api';
 
-import { notify } from '@/shared/ui/notification/utility/notify';
+import { notify } from '@/shared/ui/page';
 
 /* Form schema */
 

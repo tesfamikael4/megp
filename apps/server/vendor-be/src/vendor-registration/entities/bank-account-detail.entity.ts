@@ -4,8 +4,6 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 // import { ServicePriceEntity } from './service-price.entity';
@@ -19,9 +17,9 @@ export class BankAccountDetailEntity extends CommonEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
   @Column({ name: 'Account_holder_fullname', nullable: true })
-  AccountHolderFullName: string;
+  accountHolderFullName: string;
   @Column({ name: 'Account_number', nullable: true })
-  AccountNumber: string;
+  accountNumber: string;
   @Column({ name: 'vendor_id', nullable: true })
   vendorId: string;
   @Column({ name: 'bank_id', type: 'uuid', nullable: true })

@@ -2,7 +2,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Organization } from './entities/organization.entity';
-import { CollectionQuery, QueryConstructor } from '@collection-query';
+import {
+  CollectionQuery,
+  FilterOperators,
+  QueryConstructor,
+} from '@collection-query';
 import {
   CreateOrganizationDto,
   UpdateOrganizationDto,
@@ -120,26 +124,22 @@ export class OrganizationService {
   }
 
   async findAll(query: CollectionQuery) {
-    try {
-      const dataQuery = QueryConstructor.constructQuery<Organization>(
-        this.repository,
-        query,
-      );
-      const response = new DataResponseFormat<OrganizationResponseDto>();
-      if (query.count) {
-        response.total = await dataQuery.getCount();
-      } else {
-        const [result, total] = await dataQuery.getManyAndCount();
-        response.total = total;
-        const items = OrganizationResponseDto.toDtos(result);
-        if (items) {
-          response.items = items;
-        }
+    const dataQuery = QueryConstructor.constructQuery<Organization>(
+      this.repository,
+      query,
+    );
+    const response = new DataResponseFormat<OrganizationResponseDto>();
+    if (query.count) {
+      response.total = await dataQuery.getCount();
+    } else {
+      const [result, total] = await dataQuery.getManyAndCount();
+      response.total = total;
+      const items = OrganizationResponseDto.toDtos(result);
+      if (items) {
+        response.items = items;
       }
-      return response;
-    } catch (error: any) {
-      throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
+    return response;
   }
 
   async findOne(id: string): Promise<OrganizationResponseDto | null> {

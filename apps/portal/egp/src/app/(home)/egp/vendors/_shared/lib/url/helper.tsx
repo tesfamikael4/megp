@@ -1,17 +1,16 @@
 import { NavItemWrapper } from '../../types/nav-item';
 
 export const useDisplayNameFinder = (navLinks: NavItemWrapper[]) => {
-  const path = window.location.pathname;
-
+  const path = usePathname();
   for (const navItem of navLinks) {
     if (navItem.children) {
       for (const childItem of navItem.children) {
-        if (childItem.link === path.split('/')[2]) {
+        if (childItem.link === path.split('/')[3]) {
           return childItem.displayName;
         }
         if (childItem.links) {
           for (const subItem of childItem.links) {
-            if (subItem.link === path.split('/')[2]) {
+            if (subItem.link === path.split('/')[3]) {
               return subItem.displayName;
             }
           }
@@ -29,7 +28,7 @@ export const createQueryString = (obj) => {
   return queryString;
 };
 
-import { useSearchParams } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 export function SearchParamsToObject(key = '') {
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);

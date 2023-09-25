@@ -16,7 +16,7 @@ import {
   useDeleteSectorsMutation,
   useUpdateSectorsMutation,
 } from '@/store/api/sector/sector.api';
-import { notify } from '@/shared/ui/notification/utility/notify';
+import { notify } from '@/shared/ui/page';
 
 /* Form schema */
 

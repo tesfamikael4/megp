@@ -1,6 +1,7 @@
 'use client';
 
 import { Menu } from '@/config/menu';
+import { Notifications } from '@mantine/notifications';
 import { ShellContext } from '@megp/core-fe';
 import { ReactNode } from 'react';
 
@@ -14,6 +15,9 @@ export function ShellProvider({ children }: ShellProviderProps) {
     currentApplication: 'vendor',
   };
   return (
-    <ShellContext.Provider value={value}>{children}</ShellContext.Provider>
+    <>
+      <Notifications />
+      <ShellContext.Provider value={value}>{children}</ShellContext.Provider>
+    </>
   );
 }

@@ -17,7 +17,7 @@ export class TaskService {
   constructor(
     @InjectRepository(TaskEntity)
     private readonly taskRepository: Repository<TaskEntity>,
-  ) { }
+  ) {}
   async getTasks(
     query: CollectionQuery,
   ): Promise<DataResponseFormat<TaskResponse>> {

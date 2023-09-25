@@ -3,7 +3,6 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { CommonEntity } from 'src/shared/entities/common.entity';
@@ -12,15 +11,18 @@ import { VendorsEntity } from './vendors.entity';
 export class ShareholdersEntity extends CommonEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column({ name: 'full_name' })
-  fullName: string;
-  @Column({ name: 'vendor_id' })
+  @Column({ nullable: true })
+  firstName: string;
+  @Column({ nullable: true })
+  lastName: string;
+  @Column({ name: 'vendor_id', nullable: true })
   vendorId: string;
-  @Column({ name: 'nationality', default: 'Malian' })
+  @Column({ default: 'Malian' })
   nationality: string;
-  @Column({ name: 'share' })
+  @Column()
   share: string;
-
+  @Column({ nullable: true })
+  key: string;
   @JoinColumn({ name: 'vendor_id' })
   @ManyToOne(() => VendorsEntity, (v) => v.shareholders)
   vendor: VendorsEntity;

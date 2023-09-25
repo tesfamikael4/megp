@@ -1,6 +1,11 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { CollectionQuery, QueryConstructor } from '@collection-query';
 import { DataResponseFormat } from '@api-data';
@@ -15,10 +20,15 @@ import {
 } from './dto/application.dto';
 import { VendorsEntity } from './entities/vendors.entity';
 import { InsertAllDataDto } from './dto/save-all.dto';
-import { CreateVendorsDto, VendorsResponseDto } from './dto/vendor.dto';
+import {
+  CreateVendorsDto,
+  SetVendorStatus,
+  VendorsResponseDto,
+} from './dto/vendor.dto';
 import { CreateShareholdersDto } from './dto/shareholder.dto';
-import { FilesEntity } from './entities/file.entity';
-import { CreateFileDto, GetFileDto } from './dto/file.dto';
+import { WorkflowInstanceEntity } from 'src/bpm/workflow-instances/entities/workflow-instance';
+import { CreateWorkflowInstanceDto } from 'src/bpm/workflow-instances/dtos/workflow-instance.dto';
+import { BpServiceEntity } from 'src/bpm/services/entities/bp-service';
 
 @Injectable()
 export class VendorRegistrationsService {
@@ -29,6 +39,10 @@ export class VendorRegistrationsService {
     private readonly serviceRepository: Repository<ServicesEntity>,
     @InjectRepository(VendorsEntity)
     private readonly vendorRepository: Repository<VendorsEntity>,
+    @InjectRepository(WorkflowInstanceEntity)
+    private readonly workflowInstanceRepository: Repository<WorkflowInstanceEntity>,
+    @InjectRepository(BpServiceEntity)
+    private readonly bpServiceRepository: Repository<BpServiceEntity>,
   ) {}
   async create(setting: CreateApplicationDto): Promise<ApplicationResponseDto> {
     try {
@@ -129,193 +143,40 @@ fetch  applications of vendor by Id
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
-  async registerVendor(data: InsertAllDataDto): Promise<any> {
-    const vender = await this.vendorRepository.find({
-      where: { userId: data.data.userId },
-      relations: ['shareholders'],
-    });
-    console.log(vender);
-    if (!vender) {
-      try {
-        // const stringifiedData = JSON.stringify(data);
-        // const ObjectData = JSON.parse(stringifiedData);
-        // console.log('datadatadatadatadatadatadata ', ObjectData)
-        const metadata = {
-          addressInformation: data.data.data.addressInformation,
-          contactPersons: data.data.data.contactPersons,
-          businessSizeAndOwnership: data.data.data.businessSizeAndOwnership,
-          beneficialOwnership: data.data.data.beneficialOwnership,
-          areasOfBusinessInterest: data.data.data.areasOfBusinessInterest,
-        };
-        // console.log('mmmmmeeeetttaaaadddaaattttaaa : ', metadata);
-        const basicRegistration = data.data.data.basicRegistration;
-        const vendor = new CreateVendorsDto();
-        // this Id will help us to make an update or insertion if the information is saved on the
-        //collapse it must have an Id
-        const vender = await this.vendorRepository.find(data?.data?.userId);
-        console.log(vender);
-        if (vender) {
-          vendor.id = vender[0]?.id;
-        }
-        vendor.name = basicRegistration?.nameOfBusinessCompany;
-        vendor.formOfEntity = basicRegistration?.formOfBusiness;
-        vendor.origin = basicRegistration?.businessCompanyOrigin;
-        vendor.district = basicRegistration?.district;
-        vendor.country = basicRegistration?.country;
-        vendor.tin = basicRegistration?.tin;
-        vendor.status = data?.data?.status;
-        vendor.userId = data?.data?.userId;
-        vendor.metaData = JSON.parse(JSON.stringify(metadata));
 
-        const vendorEntity = CreateVendorsDto.fromDto(vendor);
-        const result = await this.vendorRepository.save(vendorEntity);
-        if (data.data.data?.shareHolders?.shareHoldersTable) {
-          const shareHolders = data.data?.data.shareHolders?.shareHoldersTable;
-          let shareholdersarray = [];
-          shareholdersarray = shareHolders.map((elemet) => {
-            return {
-              // this id will make the operation update if its drafted already
-              id: elemet?.id,
-              fullName: elemet?.fullName,
-              Nationality: elemet?.nationality,
-              Share: elemet?.share,
-            };
-          });
-          const shareholderarrays =
-            CreateShareholdersDto.fromDtos(shareholdersarray);
-          // console.log('arrraay : ', shareholderarrays[0]);
-          result.shareholders = shareholderarrays;
-          const result2 = await this.vendorRepository.save(result);
-          return result2;
-        }
-        return result;
-        return result;
-      } catch (error) {
-        console.log('error : ', error);
-        throw new HttpException(error, HttpStatus.BAD_REQUEST);
-      }
-    } else {
-      try {
-        // const stringifiedData = JSON.stringify(data);
-        // const ObjectData = JSON.parse(stringifiedData);
-        // console.log('datadatadatadatadatadatadata ', ObjectData)
-        const metadata = {
-          addressInformation: data.data.data.addressInformation,
-          contactPersons: data.data.data.contactPersons,
-          businessSizeAndOwnership: data.data.data.businessSizeAndOwnership,
-          beneficialOwnership: data.data.data.beneficialOwnership,
-          areasOfBusinessInterest: data.data.data.areasOfBusinessInterest,
-        };
-        // console.log('mmmmmeeeetttaaaadddaaattttaaa : ', metadata);
-        const basicRegistration = data.data.data.basicRegistration;
-        const vendor = new CreateVendorsDto();
-        // this Id will help us to make an update or insertion if the information is saved on the
-        //collapse it must have an Id
-        const vender = await this.vendorRepository.find(data?.data?.userId);
-        console.log(vender);
-        if (vender) {
-          vendor.id = vender[0]?.id;
-        }
-        vendor.name = basicRegistration?.nameOfBusinessCompany;
-        vendor.formOfEntity = basicRegistration?.formOfBusiness;
-        vendor.origin = basicRegistration?.businessCompanyOrigin;
-        vendor.district = basicRegistration?.district;
-        vendor.country = basicRegistration?.country;
-        // Nullable
-        vendor.tin = basicRegistration?.tin;
-        vendor.status = data?.data?.status;
-        vendor.userId = data?.data?.userId;
-        vendor.metaData = JSON.parse(JSON.stringify(metadata));
-
-        const vendorEntity = CreateVendorsDto.fromDto(vendor);
-        // if (data.data.data.bankAccountDetails.bankAccountDetailsTable) {
-        //   console.log('wwwwwwwwwwwwwwwwwwwwww')
-        //   const bankDetailInfo = data.data.data.bankAccountDetails.bankAccountDetailsTable
-        //   console.log('bankDetailInfobankDetailInfobankDetailInfo : ', bankDetailInfo)
-        //   const bankDetails = bankDetailInfo.map((element) => {
-        //     return {
-        //       AccountHolderFullName: element.AccountHolderFullName,
-        //       AccountNumber: element.AccountNumber,
-        //       IBAN: element.IBAN,
-        //       bank: element.bank,
-        //       bankSwift: element.bankSwift,
-        //       branchAddress: element.branchAddress,
-        //       branchName: element.branchName,
-        //       currency: element.currency,
-        //       hashValue: element.hashValue,
-        //       id: element?.id,
-        //       status: element.status
-        //     }
-        //   })
-        //   console.log('tttttthhhhhhhddddaaaaaaattttaaaaaaaaiiiiisssss: ', bankDetails)
-        //   vendorEntity.vendorAccounts = VendorsBankDto.fromDtos(bankDetails)
-        //   console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx: ', bankDetails)
-
-        // }
-        const result = await this.vendorRepository.save(vendorEntity);
-        // going to save shareholders
-        console.log('cccccccccccccccccccccccc : ', data.data.data);
-        if (data.data.data?.shareHolders?.shareHoldersTable) {
-          const shareHolders = data.data?.data.shareHolders?.shareHoldersTable;
-          console.log(
-            'cccccccccccccccccccccccc : ',
-            data.data.data?.shareHolders?.shareHoldersTable,
-          );
-          let shareholdersarray = [];
-          shareholdersarray = shareHolders.map((elemet) => {
-            return {
-              // this id will make the operation update if its drafted already
-              id: elemet?.id,
-              fullName: elemet?.fullName,
-              Nationality: elemet?.nationality,
-              Share: elemet?.share,
-            };
-          });
-          const shareholderarrays =
-            CreateShareholdersDto.fromDtos(shareholdersarray);
-          // console.log('arrraay : ', shareholderarrays[0]);
-          result.shareholders = shareholderarrays;
-          // console.log('resultresultresultresultresultresult : ', result);
-          const result2 = await this.vendorRepository.save(result);
-          return result2;
-        }
-        return result;
-      } catch (error) {
-        console.log('error : ', error);
-        throw new HttpException(error, HttpStatus.BAD_REQUEST);
-      }
-    }
-    //end of data
-    // console.log('datadatadatadatadatadatadata ', data)
-  }
   async addVendorInformations(data: InsertAllDataDto): Promise<any> {
     const vender = await this.vendorRepository.find({
       where: { userId: data.data.userId, status: 'Save as Draft' },
-      relations: ['shareholders', 'vendorAccounts', 'vendorAccounts.bank'],
+      relations: [
+        'shareholders',
+        'vendorAccounts',
+        'vendorAccounts.bank',
+        'beneficialOwnership',
+        'instances',
+      ],
     });
-    // console.log('vender ', vender)
-    if (data?.data?.status == 'Save as Draft') {
-      // console.log('vendervendervender : ', vender)
+    if (data?.data?.status == 'Save as Draft' || 'Save' || vender.length == 1) {
       const metadata = {
         addressInformation: data.data.data.addressInformation,
-        contactPersons: data.data.data.contactPersons,
-        beneficialOwnership: data.data.data.beneficialOwnership,
+        supportingDocuments: data.data.data.supportingDocuments,
         areasOfBusinessInterest: data.data.data.areasOfBusinessInterest,
-        // bankAccountDetails: data.data.data.bankAccountDetails,
         businessSizeAndOwnership: data.data.data.businessSizeAndOwnership,
+        contactPersons: data.data.data.contactPersons,
       };
-      const businessSizeAndOwnership = data.data.data.businessSizeAndOwnership;
+      const beneficialOwnership =
+        data.data.data.beneficialOwnership.beneficialOwnershipTable;
       const basicRegistration = data.data.data.basicRegistration;
       const shareHolders = data.data.data.shareHolders.shareHoldersTable;
       const bankAccountDetails =
         data.data.data.bankAccountDetails.bankAccountDetailsTable;
-      const supportingDocuments = data.data.data.supportingDocuments;
+      const areasOfBusinessInterest = data.data.data.areasOfBusinessInterest;
 
-      // console.log('bankAccountDetailsbankAccountDetailsbankAccountDetailsbankAc: ', bankAccountDetails)
       const vendorsEntity = vender.length > 0 ? vender[0] : new VendorsEntity();
       // vendorsEntity.id = vender.length > 0 ? vender[0]?.id : undefined
       vendorsEntity.userId = data?.data?.userId;
-      vendorsEntity.status = data?.data?.status;
+      vendorsEntity.tin = data?.data?.tin;
+      vendorsEntity.status =
+        data?.data?.status == 'Save' ? 'Submitted' : data?.data?.status;
       vendorsEntity.metaData = JSON.parse(JSON.stringify(metadata));
       //basicRegistration Information
       vendorsEntity.country = basicRegistration.country;
@@ -329,22 +190,22 @@ fetch  applications of vendor by Id
       let shareHoldersEntity = [];
       shareHoldersEntity =
         shareHolders.length > 0
-          ? shareHolders?.map((elemet) => {
+          ? shareHolders?.map((element) => {
               return {
-                id: elemet?.id, // this id will make the operation update if its drafted already
-                share: elemet?.share,
-                fullName: elemet?.fullName,
-                Nationality: elemet?.nationality,
+                id: element?.id, // this id will make the operation update if its drafted already
+                firstName: element.firstName,
+                lastName: element.lastName,
+                nationality: element.share,
+                share: element.share,
+                key: element.key,
               };
             })
           : undefined;
       vendorsEntity.shareholders = shareHoldersEntity;
 
-      // console.log('dddddddddddddddddddddd : ', vendorsEntity.vendorAccounts)
       const bankDetails =
         bankAccountDetails.length > 0
           ? bankAccountDetails.map((element) => {
-              // console.log('elementelementelementelement : ', element)
               return {
                 id: element?.id,
                 AccountHolderFullName: element.accountHoldersFullName,
@@ -362,10 +223,37 @@ fetch  applications of vendor by Id
             })
           : undefined;
       vendorsEntity.vendorAccounts = bankDetails;
+      // mapping the payload Beneficiary Ownership info
+      let beneficialOwnershipEntity = [];
+      beneficialOwnershipEntity =
+        this.beneficialOwnershipmapper(beneficialOwnership);
+      vendorsEntity.beneficialOwnership = beneficialOwnershipEntity;
+      console.log('vendorsEntityvendorsEntity: ', vendorsEntity);
 
+      // const workflowInstanceEntity = new WorkflowInstanceEntity();
+      // const workflowInstanceEntitys = [];
+      // const response = await this.bpServiceRepository.find({ where: { key: areasOfBusinessInterest.key, isActive: true } });
+      // workflowInstanceEntity.applicationNumber = Date.now() + '-' + Math.round(Math.random() * 1e9);
+      // // workflowInstanceEntity.requestorId = result.id;
+      // workflowInstanceEntity.status = 'Draft';
+      // workflowInstanceEntity.bpId = response[0].id;
+      // workflowInstanceEntitys.push(workflowInstanceEntity)
+      // vendorsEntity.instances = workflowInstanceEntitys;
+
+      console.log('vendorsEntityvendorsEntityvendorsEntity : ', vendorsEntity);
       const result = await this.vendorRepository.save(vendorsEntity);
+      console.log(
+        'after saved the vendor entity with workflow instance : ',
+        vendorsEntity,
+      );
+
       // Bank information Maping
+
       const initialValues = {
+        id: '',
+        status: '',
+        userId: '',
+        tin: '',
         basicRegistration: {
           nameOfBusinessCompany: '',
           formOfBusiness: '',
@@ -393,10 +281,20 @@ fetch  applications of vendor by Id
           ownershipType: '',
         },
         shareHolders: {
-          shareHoldersTable: [{ fullName: '', nationality: '', share: '' }],
+          shareHoldersTable: [
+            {
+              firstName: '',
+              lastName: '',
+              nationality: '',
+              share: '',
+              key: '',
+            },
+          ],
         },
         beneficialOwnership: {
-          shareHoldersTable: [{ fullName: '', nationality: '' }],
+          beneficialOwnershipTable: [
+            { firstName: '', lastName: '', nationality: '' },
+          ],
         },
         areasOfBusinessInterest: {
           areasOfBusinessInterestNames: [],
@@ -414,11 +312,11 @@ fetch  applications of vendor by Id
           mSMECertificate: '',
         },
       };
-      const metadataw = JSON.parse(JSON.stringify(result.metaData));
-      console.log(
-        'metadatawmetadatawmetadatawmetadatawmetadataw : ',
-        metadataw,
-      );
+
+      initialValues.status = result.status;
+      initialValues.userId = result.userId;
+      initialValues.id = result.id;
+      initialValues.tin = result.tin;
       initialValues.basicRegistration.businessCompanyOrigin = result.origin;
       initialValues.basicRegistration.country = result.country;
       initialValues.basicRegistration.district = result.district;
@@ -426,26 +324,34 @@ fetch  applications of vendor by Id
       initialValues.basicRegistration.nameOfBusinessCompany = result.name;
       initialValues.bankAccountDetails.bankAccountDetailsTable =
         result.vendorAccounts;
-      initialValues.shareHolders.shareHoldersTable = result.shareholders;
+      initialValues.shareHolders.shareHoldersTable = result.shareholders
+        ? result.shareholders
+        : [];
+      initialValues.beneficialOwnership.beneficialOwnershipTable =
+        result.beneficialOwnership;
+      initialValues.beneficialOwnership.beneficialOwnershipTable =
+        result.beneficialOwnership;
 
+      const metadataw = JSON.parse(JSON.stringify(result.metaData));
       initialValues.addressInformation = metadataw.addressInformation;
-      initialValues.contactPersons.contactPersonsTable =
-        metadataw.contactPersons;
-      initialValues.beneficialOwnership.shareHoldersTable =
-        metadataw.beneficialOwnership;
+      initialValues.contactPersons = metadataw.contactPersons;
       initialValues.businessSizeAndOwnership =
         metadataw.businessSizeAndOwnership;
-      initialValues.areasOfBusinessInterest.areasOfBusinessInterestInformation =
-        metadataw.areasOfBusinessInterest;
-      // bankAccountDetails: data.data.data.bankAccountDetails,
-      console.log('initialValues : ', initialValues);
+      initialValues.areasOfBusinessInterest = metadataw.areasOfBusinessInterest;
       return initialValues;
     }
   }
   async getVendorId(vendorId: string): Promise<VendorsResponseDto> {
     try {
-      const vendorEntity = await this.vendorRepository.findOneBy({
-        id: vendorId,
+      const vendorEntity = await this.vendorRepository.findOne({
+        where: { id: vendorId },
+        relations: [
+          'shareholders',
+          'vendorAccounts',
+          'vendorAccounts.bank',
+          'beneficialOwnership',
+          'instances',
+        ],
       });
       return VendorsResponseDto.fromEntity(vendorEntity);
     } catch (error) {
@@ -454,8 +360,15 @@ fetch  applications of vendor by Id
   }
   async getVendorByUserId(userId: string): Promise<VendorsResponseDto> {
     try {
-      const vendorEntity = await this.vendorRepository.findOneBy({
-        userId: userId,
+      const vendorEntity = await this.vendorRepository.findOneOrFail({
+        where: { userId: userId },
+        relations: [
+          'shareholders',
+          'vendorAccounts',
+          'vendorAccounts.bank',
+          'beneficialOwnership',
+          'instances',
+        ],
       });
       return VendorsResponseDto.fromEntity(vendorEntity);
     } catch (error) {
@@ -464,7 +377,14 @@ fetch  applications of vendor by Id
   }
   async getVendors(): Promise<VendorsResponseDto[]> {
     try {
-      const vendorEntity = await this.vendorRepository.find();
+      const vendorEntity = await this.vendorRepository.find({
+        relations: [
+          'shareholders',
+          'shareholders',
+          'beneficialOwnership',
+          'instances',
+        ],
+      });
       return vendorEntity.map((element) =>
         VendorsResponseDto.fromEntity(element),
       );
@@ -472,4 +392,79 @@ fetch  applications of vendor by Id
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
+  async setVendorStatus(
+    vendorStatus: SetVendorStatus,
+  ): Promise<VendorsResponseDto> {
+    try {
+      const result = await this.vendorRepository.findOneBy({
+        id: vendorStatus.vendorId,
+      });
+      if (!result) {
+        throw new NotFoundException(
+          `vendor with Id ${vendorStatus.vendorId} is not found`,
+        );
+      }
+      result.status = vendorStatus.status.toString();
+      const vendorEntity = await this.vendorRepository.save(result);
+      return VendorsResponseDto.fromEntity(vendorEntity);
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
+  }
+  async getVendorByStatus(status: string): Promise<VendorsResponseDto[]> {
+    try {
+      const result = await this.vendorRepository.findBy({ status: status });
+      if (!result) {
+        throw new NotFoundException(
+          `vendor with Status ${status} is not found`,
+        );
+      }
+      return result.map((element) => VendorsResponseDto.fromEntity(element));
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async getVendorApplicationInformation(): Promise<any> {
+    try {
+      const result = await this.vendorRepository.find({
+        where: { status: 'Save as Draft' },
+      });
+      if (!result) {
+        throw new NotFoundException(
+          `There is no SUBMITTED  Vendor application found`,
+        );
+      }
+      const data = [];
+
+      result.map((element) => {
+        data.push({
+          id: element.id,
+          userId: element.userId,
+          status: element.status,
+          name: element.name,
+          updatedAt: element.updatedAt,
+          tin: element.tin,
+        });
+      });
+      return data;
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
+  }
+  beneficialOwnershipmapper = (beneficialOwnership: any) => {
+    const beneficialOwnershipData =
+      beneficialOwnership?.length > 0
+        ? beneficialOwnership?.map((element) => {
+            return {
+              id: element?.id,
+              firstName: element.firstName,
+              lastName: element.lastName,
+              nationality: element.nationality,
+              vendorId: element.vendorId,
+            };
+          })
+        : undefined;
+    return beneficialOwnershipData;
+  };
 }
