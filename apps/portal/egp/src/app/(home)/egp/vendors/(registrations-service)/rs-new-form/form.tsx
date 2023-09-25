@@ -98,7 +98,7 @@ export default function Form() {
         combineValue: formGetLatestValues(initialValues, saveFormData),
       });
       // console.log(saveFormData)
-      //form.setValues(formGetLatestValues(initialValues,saveFormData));
+      form.setValues(formGetLatestValues(initialValues, saveFormData));
     }
     return () => {};
   }, [isSaveFormSuccess, saveFormData]);
@@ -120,7 +120,7 @@ export default function Form() {
         data: values,
       },
     });
-    // form.setValues({...initialValues});
+    //  form.setValues({...initialValues});
     // console.log({
     //   status: 'Save as Draft',
     //   values,

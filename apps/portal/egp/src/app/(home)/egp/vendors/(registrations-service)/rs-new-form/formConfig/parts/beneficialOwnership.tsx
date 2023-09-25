@@ -16,15 +16,30 @@ export const BeneficialOwnership: React.FC<Props> = ({ form }) => {
           tableType={'editable'}
           columns={[
             {
-              name: 'Full Name',
+              name: 'First Name',
               render: (index) => (
                 <Stack my={15}>
                   <TextInput
-                    label="Full Name"
+                    label="First Name"
                     icon={<IconUserSquareRounded size={'1rem'} />}
-                    id="fullName"
+                    id="firstName"
                     {...form.getInputProps(
-                      `beneficialOwnership.shareHoldersTable.${index}.fullName`,
+                      `beneficialOwnership.beneficialOwnershipTable.${index}.firstName`,
+                    )}
+                  />
+                </Stack>
+              ),
+            },
+            {
+              name: 'Last Name',
+              render: (index) => (
+                <Stack my={15}>
+                  <TextInput
+                    label="Last Name"
+                    icon={<IconUserSquareRounded size={'1rem'} />}
+                    id="lastName"
+                    {...form.getInputProps(
+                      `beneficialOwnership.beneficialOwnershipTable.${index}.lastName`,
                     )}
                   />
                 </Stack>
@@ -42,7 +57,7 @@ export const BeneficialOwnership: React.FC<Props> = ({ form }) => {
                     searchable
                     nothingFound="No options"
                     {...form.getInputProps(
-                      `beneficialOwnership.shareHoldersTable.${index}.nationality`,
+                      `beneficialOwnership.beneficialOwnershipTable.${index}.nationality`,
                     )}
                   />
                 </Stack>
@@ -55,7 +70,7 @@ export const BeneficialOwnership: React.FC<Props> = ({ form }) => {
                   color="red"
                   onClick={() =>
                     form.removeListItem(
-                      'beneficialOwnership.shareHoldersTable',
+                      'beneficialOwnership.beneficialOwnershipTable',
                       index,
                     )
                   }
@@ -65,17 +80,21 @@ export const BeneficialOwnership: React.FC<Props> = ({ form }) => {
               ),
             },
           ]}
-          data={form.values.beneficialOwnership.shareHoldersTable}
+          data={form.values.beneficialOwnership.beneficialOwnershipTable}
           title={<Text>Table</Text>}
           titlePosition={'start'}
           addcolumn={
             <Button
               onClick={() =>
-                form.insertListItem('beneficialOwnership.shareHoldersTable', {
-                  fullName: '',
-                  nationality: '',
-                  key: randomId(),
-                })
+                form.insertListItem(
+                  'beneficialOwnership.beneficialOwnershipTable',
+                  {
+                    firstName: '',
+                    lastName: '',
+                    nationality: '',
+                    key: randomId(),
+                  },
+                )
               }
               variant="outline"
             >

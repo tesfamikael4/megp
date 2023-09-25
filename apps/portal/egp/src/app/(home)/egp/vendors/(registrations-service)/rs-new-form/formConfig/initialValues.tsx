@@ -149,7 +149,9 @@ export const initialValues = {
     shareHoldersTable: [],
   },
   beneficialOwnership: {
-    shareHoldersTable: [{ fullName: '', nationality: '' }],
+    beneficialOwnershipTable: [
+      { firstName: '', lastName: '', nationality: '' },
+    ],
   },
   areasOfBusinessInterest: {
     areasOfBusinessInterestNames: [],
