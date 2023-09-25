@@ -91,14 +91,11 @@ export default function Form() {
           message: 'Saved!',
         });
 
-      // fullUpdatedObject now contains the merged data from Object 1 into the template of Object 2
       console.log({
         initialValues,
         newValues: saveFormData,
-        combineValue: formGetLatestValues(initialValues, saveFormData),
       });
-      // console.log(saveFormData)
-      form.setValues(formGetLatestValues(initialValues, saveFormData));
+      form.setValues(saveFormData);
     }
     return () => {};
   }, [isSaveFormSuccess, saveFormData]);

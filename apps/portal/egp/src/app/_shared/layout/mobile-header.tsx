@@ -37,7 +37,7 @@ export const MobileHeader = () => {
                 <Link href="/egp/cms">Procurement Information</Link>
               </li>
               <li className={styles.navLink}>
-                <Link href="/vendor/dashboard">Registration Service</Link>
+                <Link href="/egp/vendors/dashboard">Registration Service</Link>
               </li>
               <li className={styles.navLink}>
                 <Link href="/egp/vendors">Vendor List</Link>
