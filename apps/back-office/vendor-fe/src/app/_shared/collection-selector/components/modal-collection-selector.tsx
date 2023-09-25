@@ -2,7 +2,7 @@ import React from 'react';
 import { axiosClient } from '@/shared/core/utilities/axiosClient';
 import { CollectionQuery } from '@/shared/core/models';
 import { collectionQueryBuilder } from '@/shared/core/utilities';
-import { Pagination } from '@/shared/ui/pagination/pagination';
+import { Pagination } from '@/shared/ui/page';
 import {
   Button,
   Card,

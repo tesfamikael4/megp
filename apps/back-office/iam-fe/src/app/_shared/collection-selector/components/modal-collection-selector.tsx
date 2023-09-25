@@ -2,7 +2,7 @@ import React from 'react';
 import { axiosClient } from '@/shared/core/utilities/axiosClient';
 import { CollectionQuery } from '@/shared/core/models';
 import { collectionQueryBuilder } from '@/shared/core/utilities';
-import { Pagination } from '@/shared/ui/pagination/pagination';
+
 import {
   Button,
   Card,
@@ -22,6 +22,7 @@ import {
 } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { CollectionSelectorConfig } from '../model/collection-selector-config';
+import { Pagination } from '@/shared/ui/page';
 /* eslint-disable-next-line */
 interface CollectionSelectorProps {
   config?: CollectionSelectorConfig;

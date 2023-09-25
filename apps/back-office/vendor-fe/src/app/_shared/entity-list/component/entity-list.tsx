@@ -16,7 +16,7 @@ import {
   IconSearch,
 } from '@tabler/icons-react';
 import { EmptyIcon } from '../../ui/emtpy-icon/empty-icon';
-import { Pagination } from '../../ui/pagination/pagination';
+import { Pagination } from '@/shared/ui/page';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
