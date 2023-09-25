@@ -101,6 +101,7 @@ export class ApplicationExcutionService {
           businessProcess: {
             service: true,
           },
+          vendor: true,
         },
       },
       where: {

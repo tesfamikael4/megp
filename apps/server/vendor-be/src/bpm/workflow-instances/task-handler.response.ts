@@ -2,6 +2,8 @@ import { ApiProperty } from '@nestjs/swagger';
 import { TaskHandlerEntity } from './entities/task-handler';
 import { TaskResponse } from '../tasks/task.response';
 import { WorkflowInstanceResponse } from './workflow-instance.response';
+import { VendorsResponseDto } from 'src/vendor-registration/dto/vendor.dto';
+import { BpServiceResponse } from '../services/bp-service.response';
 
 export class TaskHandlerResponse {
   @ApiProperty()
@@ -34,6 +36,10 @@ export class TaskHandlerResponse {
   updatedAt: Date;
   @ApiProperty()
   deletedAt: Date;
+  @ApiProperty()
+  vendor: VendorsResponseDto;
+  @ApiProperty()
+  service: BpServiceResponse;
   static toResponse(entity: TaskHandlerEntity) {
     const response = new TaskHandlerResponse();
     response.id = entity.id;
@@ -51,6 +57,17 @@ export class TaskHandlerResponse {
         entity.workflowInstance,
       );
     }
+    if (entity.workflowInstance.businessProcess.service) {
+      response.service = BpServiceResponse.toResponse(
+        entity.workflowInstance.businessProcess.service,
+      );
+    }
+    if (entity.workflowInstance.vendor) {
+      response.vendor = VendorsResponseDto.fromEntity(
+        entity.workflowInstance.vendor,
+      );
+    }
+
     response.createdBy = entity.createdBy;
     response.updatedBy = entity.updatedBy;
     //response.deletedBy = entity.deletedBy;

@@ -116,11 +116,11 @@ export class VendorsResponseDto extends UpdateVendorsDto {
     response.tin = entity.tin;
     response.userId = entity.userId;
     response.country = entity.country;
+    response.name = entity.name;
     response.status = entity.formOfEntity;
     response.metaData = entity.metaData;
-    entity.district = entity.district;
-    entity.name = entity.name;
-    entity.origin = entity.origin;
+    response.district = entity.district;
+    response.origin = entity.origin;
     return response;
   }
 }
