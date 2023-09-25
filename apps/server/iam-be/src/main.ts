@@ -4,9 +4,9 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { AuthGuard } from './authentication';
+import { AuthGuard } from './supertokens';
 import supertokens from 'supertokens-node';
-import { SupertokensExceptionFilter } from './authentication/auth/filters/auth.filter';
+import { SupertokensExceptionFilter } from './supertokens/auth/filters/auth.filter';
 import { GlobalExceptionFilter } from './shared/exceptions/global-exception.filter';
 
 async function bootstrap() {
