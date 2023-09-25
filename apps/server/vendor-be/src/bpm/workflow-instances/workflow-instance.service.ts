@@ -33,6 +33,7 @@ import { TaskTrackerEntity } from './entities/task-tracker';
 import { TaskTrackerResponse } from './task-tracker.response';
 import { TaskResponse } from '../tasks/task.response';
 import { ServicePriceEntity } from 'src/vendor-registration/entities/service-price.entity';
+import { ApplicationExcutionService } from '../application-execution.service';
 
 @Injectable()
 export class WorkflowInstanceService {
@@ -42,11 +43,11 @@ export class WorkflowInstanceService {
     @InjectRepository(TaskEntity)
     private readonly taskRepository: Repository<TaskEntity>,
     private dataSource: DataSource,
-
     @InjectRepository(BpServiceEntity)
     private readonly pbServiceRepository: Repository<BpServiceEntity>,
     @InjectRepository(BusinessProcessEntity)
     private readonly bpRepository: Repository<BusinessProcessEntity>,
+    private readonly appService: ApplicationExcutionService,
   ) {}
   async getWorkflowInstances(
     query: CollectionQuery,
@@ -140,8 +141,10 @@ export class WorkflowInstanceService {
   async gotoNextStep(nextCommand: GotoNextStateDto) {
     const workflowInstance = await this.workflowInstanceRepository.findOne({
       where: { id: nextCommand.instanceId },
-      relations: ['taskHandler'],
+      relations: ['taskHandler', 'businessProcess'],
     });
+    console.log('workflowInstance---', workflowInstance.businessProcess);
+    console.log('---------------');
     if (!workflowInstance)
       throw new NotFoundException('Workflow Instance not found');
     const currentTaskHandler = workflowInstance.taskHandler;
@@ -214,6 +217,7 @@ export class WorkflowInstanceService {
   }
   async handleEvent(stateMetadata: StateMetaData, command: GotoNextStateDto) {
     const eventType = command.action ? command.action : 'SUBMIT';
+    console.log('eventType', eventType);
     switch (stateMetadata.type.toLocaleLowerCase()) {
       case TaskTypes.APPROVAL:
         console.log(TaskTypes.APPROVAL, command);
@@ -225,6 +229,8 @@ export class WorkflowInstanceService {
         return this.approve(command);
         break;
       case TaskTypes.INVOICE:
+        const taskId = '';
+        this.appService.generateInvoice(taskId, command.instanceId);
         break;
       case TaskTypes.CERTIFICATION:
         console.log(TaskTypes.CERTIFICATION, command);

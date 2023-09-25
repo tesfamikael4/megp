@@ -38,16 +38,16 @@ export class WorkflowInstanceResponse {
     response.applicationNumber = entity.applicationNumber;
     response.requestorId = entity.requestorId;
     response.status = entity.status;
-    if (entity.businessProcess) {
+    if (entity?.businessProcess) {
       response.businessProcess = BusinessProcessResponse.toResponse(
-        entity.businessProcess,
+        entity?.businessProcess,
       );
     }
-    if (entity.taskHandler) {
+    if (entity.taskHandler != undefined) {
       response.taskHandler = TaskHandlerResponse.toResponse(entity.taskHandler);
     }
-    if (entity.taskTrackers) {
-      response.taskTrackers = entity.taskTrackers.map((handler) =>
+    if (entity?.taskTrackers) {
+      response.taskTrackers = entity?.taskTrackers?.map((handler) =>
         TaskTrackerResponse.toResponse(handler),
       );
     }
