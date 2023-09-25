@@ -10,11 +10,12 @@ import {
 import { ApplicationEntity } from './application.entity';
 import { ServicesEntity } from './services.entity';
 import { WorkflowInstanceEntity } from 'src/bpm/workflow-instances/entities/workflow-instance';
+import { BpServiceEntity } from 'src/bpm/services/entities/bp-service';
 @Entity({ name: 'servicePricing' })
 export class ServicePriceEntity extends CommonEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column({ type: 'uuid' })
+  @Column({ type: 'uuid', name: 'serviceId' })
   serviceId: string;
   @Column({ name: 'businessArea', enum: ['Goods', 'Services', 'Works'] })
   businessArea: string;
@@ -29,7 +30,7 @@ export class ServicePriceEntity extends CommonEntity {
   @OneToMany(() => WorkflowInstanceEntity, (app) => app.price)
   workflowInstances: WorkflowInstanceEntity[];
 
-  @ManyToOne(() => ServicesEntity, (s) => s.priceSettings)
+  @ManyToOne(() => BpServiceEntity, (s) => s.prices)
   @JoinColumn({ name: 'serviceId' })
-  service: ServicesEntity;
+  service: BpServiceEntity;
 }

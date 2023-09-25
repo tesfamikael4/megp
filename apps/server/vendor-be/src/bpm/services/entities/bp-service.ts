@@ -1,5 +1,6 @@
 import { BusinessProcessEntity } from 'src/bpm/business-process/entities/business-process';
 import { CommonEntity } from 'src/shared/entities/common.entity';
+import { ServicePriceEntity } from 'src/vendor-registration/entities/service-price.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 @Entity({ name: 'bp_services' })
 export class BpServiceEntity extends CommonEntity {
@@ -13,10 +14,7 @@ export class BpServiceEntity extends CommonEntity {
   description: string;
   @Column({ name: 'is_active', default: true })
   isActive: boolean;
-  @Column({ name: 'organization_id', nullable: true })
-  organizationId: string;
-  @Column({ name: 'organization_name', nullable: true })
-  organizationName: string;
+
   @OneToMany(
     () => BusinessProcessEntity,
     (businessProcess) => businessProcess.service,
@@ -26,4 +24,9 @@ export class BpServiceEntity extends CommonEntity {
     },
   )
   businessProcesses: BusinessProcessEntity[];
+  @OneToMany(() => ServicePriceEntity, (service) => service.service, {
+    // cascade: true,
+    onDelete: 'CASCADE',
+  })
+  prices: ServicePriceEntity[];
 }

@@ -29,10 +29,7 @@ export class ServicePricingService {
     try {
       const userId = '84067e41-fcd9-4658-af0a-e5017e56156b';
       const entity = CreateServicePriceDto.fromDto(setting);
-      console.log('fffffffffff ', entity);
-
       entity.createdBy = userId;
-      console.log('entityentityentity ', entity);
       await this.repository.save(entity);
       return ServicePriceResponseDto.fromEntity(entity);
     } catch (error) {
@@ -58,6 +55,7 @@ export class ServicePricingService {
 
   async findAll(query: CollectionQuery) {
     // query.includes.push('services');
+    query.includes.push('service');
     try {
       const dataQuery = QueryConstructor.constructQuery<ServicePriceEntity>(
         this.repository,

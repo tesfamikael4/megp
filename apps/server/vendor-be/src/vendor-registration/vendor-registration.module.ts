@@ -66,6 +66,7 @@ import { File } from './services/file.service';
     TinRegistrationDatabaseService,
     NCICService,
     File,
+    // AccountService
   ],
   controllers: [
     VendorRegistrationsController,

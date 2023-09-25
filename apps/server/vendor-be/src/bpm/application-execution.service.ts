@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, Not, Repository } from 'typeorm';
 import { DataResponseFormat } from 'src/shared/api-data';
 import {
   CollectionQuery,
@@ -36,8 +36,10 @@ export class ApplicationExcutionService {
       where: { instanceId: instanceId },
       relations: ['tasks', 'workflow_instances'],
     });
-    let result: TaskTrackerResponse[] = [];
-    result = ctasks.map((entity) => TaskTrackerResponse.toResponse(entity));
+    //const result= TaskTrackerResponse[]
+    const result = ctasks.map((entity) =>
+      TaskTrackerResponse.toResponse(entity),
+    );
     return result;
   }
 
@@ -86,10 +88,12 @@ export class ApplicationExcutionService {
             return [];
         }
         */
+
   async getCurruntTaskByService(
     serviceKey: string,
   ): Promise<DataResponseFormat<TaskHandlerResponse>> {
     console.log(serviceKey);
+
     const results = await this.taskhandlergRepository.find({
       relations: {
         task: true,
@@ -97,21 +101,23 @@ export class ApplicationExcutionService {
           businessProcess: {
             service: true,
           },
+          vendor: true,
         },
       },
       where: {
         workflowInstance: {
-          // status: 'Completed',
+          status: Not('Completed'),
           businessProcess: {
             service: { key: serviceKey },
           },
         },
       },
     });
-    console.log(results);
+
+    console.log('result', results);
     const response = new DataResponseFormat<TaskHandlerResponse>();
     response.items = results.map((row) => TaskHandlerResponse.toResponse(row));
-    response.total = 90;
+    response.total = response.items.length;
     return response;
   }
 

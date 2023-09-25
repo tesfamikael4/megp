@@ -35,8 +35,6 @@ export class BpServiceResponse {
     response.name = entity.name;
     response.description = entity.description;
     response.isActive = entity.isActive;
-    response.organizationId = entity.organizationId;
-    response.organizationName = entity.organizationName;
     response.createdBy = entity.createdBy;
     response.updatedBy = entity.updatedBy;
     response.deletedBy = entity.deletedBy;
