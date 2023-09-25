@@ -36,8 +36,10 @@ export class ApplicationExcutionService {
       where: { instanceId: instanceId },
       relations: ['tasks', 'workflow_instances'],
     });
-    let result: TaskTrackerResponse[] = [];
-    result = ctasks.map((entity) => TaskTrackerResponse.toResponse(entity));
+    //const result= TaskTrackerResponse[]
+    const result = ctasks.map((entity) =>
+      TaskTrackerResponse.toResponse(entity),
+    );
     return result;
   }
 
@@ -86,6 +88,7 @@ export class ApplicationExcutionService {
             return [];
         }
         */
+
   async getCurruntTaskByService(
     serviceKey: string,
   ): Promise<DataResponseFormat<TaskHandlerResponse>> {
@@ -108,10 +111,11 @@ export class ApplicationExcutionService {
         },
       },
     });
+
     console.log(results);
     const response = new DataResponseFormat<TaskHandlerResponse>();
     response.items = results.map((row) => TaskHandlerResponse.toResponse(row));
-    response.total = 90;
+    response.total = response.items.length;
     return response;
   }
 

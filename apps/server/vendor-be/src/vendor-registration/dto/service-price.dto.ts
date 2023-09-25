@@ -1,6 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsNotEmpty, IsOptional, IsUUID, IsNumber } from 'class-validator';
 import { ServicePriceEntity } from '../entities/service-price.entity';
+import { BpServiceResponse } from 'src/bpm/services/bp-service.response';
 export class CreateServicePriceDto {
   id: string;
   @ApiProperty()
@@ -23,6 +24,7 @@ export class CreateServicePriceDto {
   @ApiProperty()
   @IsOptional()
   currency?: string;
+
   /**
    * Transfer Data from DTO object to Entity object
    *
@@ -78,15 +80,21 @@ export class UpdateServicePriceDto extends CreateServicePriceDto {
 RegistrationSettingsResponseDto 
 */
 export class ServicePriceResponseDto extends UpdateServicePriceDto {
-  static fromEntity(dto: ServicePriceEntity): ServicePriceResponseDto {
+  @ApiProperty()
+  @IsNotEmpty()
+  service: BpServiceResponse;
+  static fromEntity(entity: ServicePriceEntity): ServicePriceResponseDto {
     const response = new ServicePriceResponseDto();
-    response.id = dto.id;
-    response.serviceId = dto.serviceId;
-    response.businessArea = dto.businessArea;
-    response.valueFrom = dto.valueFrom;
-    response.valueTo = dto.valueTo;
-    response.currency = dto?.currency;
-    response.fee = dto.fee;
+    response.id = entity.id;
+    response.serviceId = entity.serviceId;
+    response.businessArea = entity.businessArea;
+    response.valueFrom = entity.valueFrom;
+    response.valueTo = entity.valueTo;
+    response.currency = entity?.currency;
+    response.fee = entity.fee;
+    response.service = entity.service
+      ? BpServiceResponse.toResponse(entity.service)
+      : null;
     return response;
   }
 }

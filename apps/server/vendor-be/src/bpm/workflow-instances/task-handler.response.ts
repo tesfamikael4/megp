@@ -53,10 +53,10 @@ export class TaskHandlerResponse {
     }
     response.createdBy = entity.createdBy;
     response.updatedBy = entity.updatedBy;
-    response.deletedBy = entity.deletedBy;
+    //response.deletedBy = entity.deletedBy;
     response.createdAt = entity.createdAt;
     response.updatedAt = entity.updatedAt;
-    response.deletedAt = entity.deletedAt;
+    // response.deletedAt = entity.deletedAt;
     return response;
   }
 }

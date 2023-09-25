@@ -27,8 +27,7 @@ export class CreateBpServiceDto {
     entity.name = dto.name;
     entity.key = dto.key;
     entity.description = dto.description;
-    entity.organizationId = dto.organizationId;
-    entity.organizationName = dto.organizationId;
+
     return entity;
   }
 
@@ -61,6 +60,7 @@ export class UpdateBpServiceDto extends CreateBpServiceDto {
     entity.description = dto.description;
     entity.name = dto.name;
     entity.isActive = dto.isActive;
+    entity.key = dto.key;
     return entity;
   }
 }

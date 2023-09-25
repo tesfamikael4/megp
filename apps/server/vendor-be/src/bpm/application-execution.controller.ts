@@ -12,7 +12,10 @@ import { TaskTrackerResponse } from './workflow-instances/task-tracker.response'
 import { ApplicationExcutionService } from './application-execution.service';
 import { WorkflowInstanceResponse } from './workflow-instances/workflow-instance.response';
 import { InvoiceResponseDto } from 'src/vendor-registration/dto/invoice.dto';
-import { PaymentReceiptDto } from 'src/vendor-registration/dto/payment-receipt.dto';
+import {
+  PaymentReceiptDto,
+  PaymentReceiptResponseDto,
+} from 'src/vendor-registration/dto/payment-receipt.dto';
 
 @Controller('ApplicationExecution')
 @ApiTags('Application-excution')
@@ -52,7 +55,7 @@ export class ApplicationExcutionController {
   }
 
   @Post('create-payment')
-  @ApiOkResponse({ type: PaymentReceiptDto })
+  @ApiOkResponse({ type: PaymentReceiptResponseDto })
   async savePayment(
     @Body() command: PaymentReceiptDto,
     //   @UploadedFile() attachment: Express.Multer.File
@@ -87,6 +90,5 @@ export class ApplicationExcutionController {
     @ApiOkResponse({ type: TaskTrackerResponse })
     async getCompletedTasks(@Param('instanceId') instanceId: string) {
       return await this.executeRepository.getCompletedTasks(instanceId);
-    }
-    */
+    }*/
 }
