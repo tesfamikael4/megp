@@ -11,12 +11,14 @@ import { VendorInitiationBody } from '../dto/vendor.dto';
 @ApiResponse({ status: 500, description: 'Internal error' })
 @ApiExtraModels(DataResponseFormat)
 export class NCICController {
-  constructor(private readonly ncicService: NCICService) { }
+  constructor(private readonly ncicService: NCICService) {}
   @Get('fetch')
   async fetch(@Query() query: CollectionQuery) {
     return await this.ncicService.fetch(query);
   }
-  @Get('get-tin-registration-database-service-by-tinNumber/:VendorInitiationData')
+  @Get(
+    'get-tin-registration-database-service-by-tinNumber/:VendorInitiationData',
+  )
   async getTinRegistrationDatabaseServiceByTinNumber(
     @Param('VendorInitiationData') VendorInitiationData: VendorInitiationBody,
   ) {

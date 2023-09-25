@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BankAccountDetailEntity } from '../entities/bank-account-detail.entity';
 import { Repository } from 'typeorm';
@@ -15,7 +20,7 @@ export class BankAccountDetailService {
     private readonly repository: Repository<BankAccountDetailEntity>,
     @InjectRepository(BanksEntity)
     private readonly banksRepository: Repository<BanksEntity>,
-  ) { }
+  ) {}
   async fetch(query: CollectionQuery): Promise<any> {
     try {
       const dataQuery =
@@ -40,7 +45,7 @@ export class BankAccountDetailService {
     try {
       const result = this.banksRepository.find();
       if (!result) {
-        throw new NotFoundException(`There is no bank found in your database`)
+        throw new NotFoundException(`There is no bank found in your database`);
       }
 
       return result;

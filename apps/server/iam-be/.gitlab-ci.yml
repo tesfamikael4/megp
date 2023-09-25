@@ -13,8 +13,8 @@ build_iam-be:
   stage: build
   only:
     changes:
-      - "*"  # run pipeline if a root-level file like Makefile or docker-compose.yml is changed
-      - "apps/server/iam-be/**/*"
+      - '*' # run pipeline if a root-level file like Makefile or docker-compose.yml is changed
+      - 'apps/server/iam-be/**/*'
   script:
     - cd apps/server/iam-be
     - docker build -t $IAMBE_TEST_IMAGE .
