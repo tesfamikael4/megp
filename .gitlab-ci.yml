@@ -8,7 +8,7 @@
 #   - test
 #   - push
 #   - deploy
-  
+
 # include:
 #   - 'apps/back-office/+demo-fe/.gitlab-ci.yml'
 #   - '/apps/portal/egp/.gitlab-ci.yml'
@@ -18,7 +18,6 @@
 #   - 'apps/server/+demo-be/.gitlab-ci.yml'
 #   - 'apps/server/iam-be/.gitlab-ci.yml'
 
-
 image: node:latest
 stages:
   - build
@@ -26,10 +25,7 @@ build:
   stage: build
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-      when: never
-    - if: $CI_PIPELINE_SOURCE == "schedule"
-      when: never
-    - when: on_success
+    - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"
   before_script:
     - corepack enable
     - corepack prepare pnpm@latest-8 --activate
