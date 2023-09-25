@@ -48,11 +48,11 @@ import { BpServiceEntity } from 'src/bpm/services/entities/bp-service';
   imports: [
     TypeOrmModule.forFeature([
       ServicePriceEntity,
-      ApplicationEntity,
+      //ApplicationEntity,
       MessageThreadEntity,
       BusinessCategoryEntity,
       CustomCategoryEntity,
-      ServicesEntity,
+      // ServicesEntity,
       VendorsEntity,
       BanksEntity,
       VendorsBankEntity,

@@ -17,8 +17,6 @@ export class ServicePricingService {
   constructor(
     @InjectRepository(ServicePriceEntity)
     private readonly repository: Repository<ServicePriceEntity>,
-    @InjectRepository(ServicesEntity)
-    private readonly serviceRepository: Repository<ServicesEntity>,
   ) {}
 
   async create(setting: CreateServicePriceDto): Promise<CreateServicePriceDto> {
@@ -71,25 +69,6 @@ export class ServicePricingService {
       return response;
     } catch (error) {
       console.log(error);
-      throw new HttpException(error, HttpStatus.BAD_REQUEST);
-    }
-  }
-  async findServices(query: CollectionQuery) {
-    try {
-      const dataQuery = QueryConstructor.constructQuery<ServicesEntity>(
-        this.serviceRepository,
-        query,
-      );
-      const response = new DataResponseFormat<ServicesResponseDto>();
-      if (query.count) {
-        response.total = await dataQuery.getCount();
-      } else {
-        const [result, total] = await dataQuery.getManyAndCount();
-        response.total = total;
-        result.map((entity) => ServicesResponseDto.fromEntity(entity));
-      }
-      return response;
-    } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
