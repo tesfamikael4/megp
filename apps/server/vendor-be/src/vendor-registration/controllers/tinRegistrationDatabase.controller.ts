@@ -3,6 +3,9 @@ import { ApiExtraModels, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { DataResponseFormat } from 'src/shared/api-data';
 import { CollectionQuery } from 'src/shared/collection-query';
 import { TinRegistrationDatabaseService } from '../services/tin-registration-database.service';
+import { VendorInitiationBody } from '../dto/vendor.dto';
+import { NCICService } from '../services/ncic.service';
+import { TradeRegistrationDatabaseService } from '../services/trade-registration-database.service';
 
 //@ApiBearerAuth()
 @Controller('TinRegistrationDatabaseController')
@@ -12,27 +15,24 @@ import { TinRegistrationDatabaseService } from '../services/tin-registration-dat
 export class TinRegistrationDatabaseController {
   constructor(
     private readonly tinRegistrationDatabaseService: TinRegistrationDatabaseService,
-  ) { }
-  @Get('fetch')
-  async fetch(@Query() query: CollectionQuery) {
-    return await this.tinRegistrationDatabaseService.fetch(query);
-  }
-  @Get('tin-registration-database-service-by-tinNumber/:tinNumber')
+  ) {}
+
+  @Get('tin-registration-database-service-by-tinNumber')
   async TinRegistrationDatabaseServiceByTinNumber(
-    @Param('tinNumber') tinNumber: string,
+    // @Param('vendorInitiationData') vendorInitiationData: VendorInitiationBody,
+    @Query('tinNumber') tinNumber: string,
+    @Query('Country') Country: string,
+    @Query('companyName') companyName: string,
+    @Query('legalFormofEntity') legalFormofEntity: string,
   ) {
+    const vendorInitiationData = {
+      tinNumber: tinNumber,
+      Country: Country,
+      companyName: companyName,
+      legalFormofEntity: legalFormofEntity,
+    };
     return await this.tinRegistrationDatabaseService.getTinRegistrationDatabaseServiceByTinNumber(
-      tinNumber,
-    );
-  }
-  @Get('tin-registration-database-service-by-Id/:id')
-  async getShareholdersByVendorId(
-    @Param('id') Id: string,
-    @Query() query: CollectionQuery,
-  ) {
-    return await this.tinRegistrationDatabaseService.getTinRegistrationDatabaseServiceById(
-      Id,
-      query,
+      vendorInitiationData,
     );
   }
 }

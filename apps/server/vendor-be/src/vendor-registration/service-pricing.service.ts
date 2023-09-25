@@ -1,11 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import {
-  CollectionQuery,
-  FilterOperators,
-  QueryConstructor,
-} from '@collection-query';
+import { CollectionQuery, QueryConstructor } from '@collection-query';
 import { DataResponseFormat } from '@api-data';
 import { ServicePriceEntity } from './entities/service-price.entity';
 import {

@@ -1,9 +1,15 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { NCICEntity } from '../entities/ncic.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CollectionQuery, QueryConstructor } from 'src/shared/collection-query';
 import { DataResponseFormat } from 'src/shared/api-data';
+import { VendorInitiationBody } from '../dto/vendor.dto';
 
 @Injectable()
 export class NCICService {
@@ -32,16 +38,26 @@ export class NCICService {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
-  async getNCICDataTinNumber(tinNumber: string): Promise<any> {
+  async getNCICDataTinNumber(
+    VendorInitiationData: VendorInitiationBody,
+  ): Promise<any> {
     try {
-      return await this.tinRegistrationDatabaseEntity.findOneOrFail({
-        where: { tinNumber: tinNumber },
+      const result = await this.tinRegistrationDatabaseEntity.findOneOrFail({
+        where: { tinNumber: VendorInitiationData.TinNumber },
       });
+      if (!result) {
+        throw new NotFoundException(
+          `Vendor with Tin Number ${VendorInitiationData.TinNumber} is not found in NCIC database`,
+        );
+      }
+
+      return { data: VendorInitiationData, externalSource: result };
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
-  async getNCICDataById(id: string, query: CollectionQuery): Promise<any> {
+
+  async getNCICDataById(id: string): Promise<any> {
     try {
       return await this.tinRegistrationDatabaseEntity.findOneOrFail({
         where: { id: id },

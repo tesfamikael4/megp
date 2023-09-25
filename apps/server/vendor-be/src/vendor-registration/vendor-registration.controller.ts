@@ -10,13 +10,7 @@ import {
   HttpStatus,
   ParseUUIDPipe,
 } from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiExtraModels,
-  ApiOkResponse,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiExtraModels, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ApiPaginatedResponse, DataResponseFormat } from '@api-data';
 import { CollectionQuery } from '@collection-query';
 // import {
@@ -44,15 +38,19 @@ import {
   UpdateApplicationDto,
 } from './dto/application.dto';
 import { InsertAllDataDto } from './dto/save-all.dto';
-import { VendorsBankDto } from './dto/bank-vendor.dto';
-import { CreateFileDto } from './dto/file.dto';
+import { CreateBankAccountDetailDto } from './dto/bank-account-detail.dto';
+import { SetVendorStatus } from './dto/vendor.dto';
+import { BpServiceService } from 'src/bpm/services/service.service';
 //@ApiBearerAuth()
 @Controller('VendorRegistrations')
 @ApiTags('Vendor-registrations')
 @ApiResponse({ status: 500, description: 'Internal error' })
 @ApiExtraModels(DataResponseFormat)
 export class VendorRegistrationsController {
-  constructor(private readonly regService: VendorRegistrationsService) {}
+  constructor(
+    private readonly regService: VendorRegistrationsService,
+  ) // private readonly bpServiceService: BpServiceService
+  {}
   @Post('submit-application')
   async create(@Body() regDto: CreateApplicationDto) {
     return await this.regService.create(regDto);
@@ -129,21 +127,21 @@ export class VendorRegistrationsController {
     return await this.regService.getVendorByUserId(userId);
   }
 
-  @Post('vendor-save-all')
-  async vendorSaveAll(@Body() data: InsertAllDataDto) {
-    console.log('dto', data.data.data.basicRegistration);
-    return await this.regService.registerVendor(data);
-  }
-  //  bank information
-  @Post('add-bank-to-vendor/:vendorId')
-  async addBankToVendor(
-    @Body() data: VendorsBankDto,
-    @Param('vendorId') vendorId: string,
-  ) {
-    // return await this.regService.addBankToVendor(data);
-  }
   @Post('add-vendor-information')
   async addVendorInformation(@Body() data: InsertAllDataDto) {
     return await this.regService.addVendorInformations(data);
+  }
+  @Post('set-application-status')
+  async setVendorStatus(@Body() vendorStatus: SetVendorStatus) {
+    return await this.regService.setVendorStatus(vendorStatus);
+  }
+
+  @Get('get-application-by-status/:status')
+  async getVendorByStatus(@Param('status') status: string) {
+    return await this.regService.getVendorByStatus(status);
+  }
+  @Get('get-vendor-application-information')
+  async getVendorApplicationInformation() {
+    return await this.regService.getVendorApplicationInformation();
   }
 }

@@ -1,9 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsJSON, IsNotEmpty, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsUUID } from 'class-validator';
 import { VendorsEntity } from '../entities/vendors.entity';
 import { CreateBusinessCategoryDto } from './business-category.dto';
 import { CreateCustomCategoryDto } from './custom-category.dto';
-import { CreateShareholdersDto } from './shareholder.dto';
+import { CreateApplicationDto } from './application.dto';
+import {
+  CreateShareholdersDto,
+  ShareholdersResponseDto,
+} from './shareholder.dto';
+import { BankAccountDetailResponse } from './bank-account-detail.dto';
+import { BeneficialOwnershipResponse } from './beneficial-ownership.dto';
 import { CreateWorkflowInstanceDto } from 'src/bpm/workflow-instances/dtos/workflow-instance.dto';
 
 export class CreateVendorsDto {
@@ -44,10 +50,16 @@ export class CreateVendorsDto {
   @ApiProperty()
   CustomCategories: CreateCustomCategoryDto[];
 
-  @ApiProperty()
   appliactions: CreateWorkflowInstanceDto[];
   @ApiProperty()
-  shareholders: CreateShareholdersDto[];
+  shareholders: ShareholdersResponseDto[];
+  BeneficialOwnershipResponse;
+
+  @ApiProperty()
+  bankAccountDetail: BankAccountDetailResponse[];
+
+  @ApiProperty()
+  beneficialOwnership: BeneficialOwnershipResponse[];
 
   static fromDto(dto: CreateVendorsDto): VendorsEntity {
     const entity = new VendorsEntity();
@@ -120,7 +132,46 @@ export class VendorsResponseDto extends UpdateVendorsDto {
     response.status = entity.formOfEntity;
     response.metaData = entity.metaData;
     response.district = entity.district;
+    response.name = entity.name;
     response.origin = entity.origin;
+
+    response.shareholders = entity?.shareholders?.map((element) =>
+      ShareholdersResponseDto.fromEntity(element),
+    );
+    response.bankAccountDetail = entity?.vendorAccounts?.map((element) =>
+      BankAccountDetailResponse.fromEntity(element),
+    );
+    response.beneficialOwnership = entity?.beneficialOwnership?.map((element) =>
+      BeneficialOwnershipResponse.fromEntity(element),
+    );
     return response;
   }
+}
+enum STATUS {
+  'Save as Draft',
+  'SUBMITTED',
+  'APPROVED',
+}
+export class SetVendorStatus {
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsUUID()
+  vendorId: string;
+  @ApiProperty()
+  @IsNotEmpty()
+  status: string;
+}
+export class VendorInitiationBody {
+  @ApiProperty()
+  @IsNotEmpty()
+  TinNumber: string;
+  @ApiProperty()
+  @IsNotEmpty()
+  Country: string;
+  @ApiProperty()
+  @IsNotEmpty()
+  companyName: string;
+  @ApiProperty()
+  @IsNotEmpty()
+  legalFormofEntity: string;
 }

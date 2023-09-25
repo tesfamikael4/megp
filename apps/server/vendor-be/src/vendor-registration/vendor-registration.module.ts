@@ -34,7 +34,15 @@ import { TradeRegistrationDatabaseEntity } from './entities/trade-registration-d
 import { TradeRegistrationDatabaseService } from './services/trade-registration-database.service';
 import { TinRegistrationDatabaseService } from './services/tin-registration-database.service';
 import { FileController } from './controllers/file.controller';
+// import { File } from './services/File';
+import { BeneficialOwnershipController } from './controllers/beneficialOwnership.controller';
+import { BeneficialOwnershipService } from './services/beneficialOwnership.service';
+import { BeneficialOwnership } from './entities/beneficial-ownership.entity';
+import { WorkflowInstanceEntity } from 'src/bpm/workflow-instances/entities/workflow-instance';
 import { File } from './services/file.service';
+import { MulterModule } from '@nestjs/platform-express';
+import { BpServiceService } from 'src/bpm/services/service.service';
+import { BpServiceEntity } from 'src/bpm/services/entities/bp-service';
 
 @Module({
   imports: [
@@ -53,7 +61,10 @@ import { File } from './services/file.service';
       BankAccountDetailEntity,
       TradeRegistrationDatabaseEntity,
       TinRegistrationDatabaseEntity,
+      BeneficialOwnership,
       NCICEntity,
+      WorkflowInstanceEntity,
+      BpServiceEntity,
     ]),
   ],
   providers: [
@@ -66,7 +77,7 @@ import { File } from './services/file.service';
     TinRegistrationDatabaseService,
     NCICService,
     File,
-    // AccountService
+    BeneficialOwnershipService,
   ],
   controllers: [
     VendorRegistrationsController,
@@ -78,6 +89,7 @@ import { File } from './services/file.service';
     TinRegistrationDatabaseController,
     NCICController,
     FileController,
+    BeneficialOwnershipController,
   ],
 })
 export class VendorRegistrationModule {}

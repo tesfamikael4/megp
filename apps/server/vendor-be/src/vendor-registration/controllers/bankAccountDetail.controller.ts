@@ -1,10 +1,10 @@
 import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { ApiExtraModels, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { DataResponseFormat } from 'src/shared/api-data';
-import { VendorsBankDto } from '../dto/bank-vendor.dto';
 import { BankAccountDetailService } from '../services/bankAccountDetail.service';
 import { BankDto } from '../dto/bank.dto';
 import { CollectionQuery } from 'src/shared/collection-query';
+import { CreateBankAccountDetailDto } from '../dto/bank-account-detail.dto';
 
 //@ApiBearerAuth()
 @Controller('BankAccountDetail')
@@ -12,14 +12,14 @@ import { CollectionQuery } from 'src/shared/collection-query';
 @ApiResponse({ status: 500, description: 'Internal error' })
 @ApiExtraModels(DataResponseFormat)
 export class BankAccountDetailController {
-  constructor(private readonly bankService: BankAccountDetailService) {}
+  constructor(private readonly bankService: BankAccountDetailService) { }
   @Get('fetch-bank-account-details')
   async fetch(@Query() query: CollectionQuery) {
     return await this.bankService.fetch(query);
   }
   @Get('fetch-bank')
-  async fetchBank(@Query() query: CollectionQuery) {
-    return await this.bankService.fetchBank(query);
+  async fetchBank() {
+    return await this.bankService.fetchBank();
   }
   @Get('fetch-bank-byId/:bankId')
   async fetchBankById(@Param('bankId') bankId: string) {
@@ -43,16 +43,8 @@ export class BankAccountDetailController {
   async addBank(@Body() bank: BankDto) {
     return await this.bankService.createBank(bank);
   }
-  @Post('add-bank')
-  async addBankw(@Body() bank: BankDto) {
-    return await this.bankService.createBank(bank);
-  }
-  @Post('add-bankdetails')
-  async addBankDetails(@Body() bank: BankDto) {
-    return await this.bankService.createBank(bank);
-  }
-  @Post('add-bank')
-  async addBankDetail(@Body() bank: VendorsBankDto) {
+  @Post('add-bankAccountDetail')
+  async addBankAccountDetail(@Body() bank: CreateBankAccountDetailDto) {
     return await this.bankService.createBankDetail(bank);
   }
   @Post('delete-bank-detail/:bankDetailId')
@@ -70,7 +62,7 @@ export class BankAccountDetailController {
   }
   @Post('update-bank-detail/:bankDetailId')
   async updateBankDetail(
-    @Body() bankDto: VendorsBankDto,
+    @Body() bankDto: CreateBankAccountDetailDto,
     @Param('bankDetailId') bankDetailId: string,
   ) {
     bankDto.id = bankDetailId;
