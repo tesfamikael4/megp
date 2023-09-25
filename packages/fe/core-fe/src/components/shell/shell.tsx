@@ -151,7 +151,6 @@ export function Shell({ children }: ShellProps): React.ReactElement {
                         <Image
                           alt="Perago"
                           height={40}
-                          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                           src={Perago}
                           width={60}
                         />{' '}
@@ -168,7 +167,12 @@ export function Shell({ children }: ShellProps): React.ReactElement {
       <div className={styles.body}>
         <div className={styles.top}>
           <div className="flex items-center gap-2">
-            <ActionIcon onClick={() => toggle()} variant="subtle">
+            <ActionIcon
+              onClick={() => {
+                toggle();
+              }}
+              variant="subtle"
+            >
               <IconMenu2 size="1rem" />
             </ActionIcon>
             <div>

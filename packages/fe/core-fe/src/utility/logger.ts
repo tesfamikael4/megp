@@ -1,15 +1,14 @@
-/* eslint-disable eslint-comments/disable-enable-pair */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable no-console */
+/* eslint-disable @typescript-eslint/no-explicit-any  -- intentional*/
+/* eslint-disable @typescript-eslint/no-empty-function -- intentional*/
+/* eslint-disable no-console -- intentional*/
 
-/* eslint-disable @typescript-eslint/ban-types */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/ban-types -- intentional*/
 
 class LoggerService {
   debugMode = false;
 
   constructor() {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- intentional
     if (typeof window !== 'undefined' && window) {
       this.debugMode = JSON.parse(
         localStorage.getItem('megp:debug') ?? 'false',

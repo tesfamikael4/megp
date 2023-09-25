@@ -21,7 +21,7 @@ interface PhoneInputProps {
   disableValidation?: boolean;
 }
 
-export default function Phone(props: PhoneInputProps) {
+export function Phone(props: PhoneInputProps): React.ReactElement {
   const { phone, handlePhoneValueChange, inputRef, country, setCountry } =
     usePhoneInput({
       defaultCountry: 'mw',
@@ -74,7 +74,9 @@ export default function Phone(props: PhoneInputProps) {
               return (
                 <Menu.Item
                   key={selectedCountry.iso2}
-                  onClick={() => setCountry(selectedCountry.iso2)}
+                  onClick={() => {
+                    setCountry(selectedCountry.iso2);
+                  }}
                   value={selectedCountry.iso2}
                 >
                   <Flex>

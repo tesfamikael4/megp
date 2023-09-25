@@ -1,5 +1,3 @@
-import ReactDOM from 'react-dom';
-import NotificationComponent from '../components/notification';
 export const notify = (
   type: 'success' | 'error' | 'warning' | 'info',
   message: string,
@@ -7,12 +5,12 @@ export const notify = (
   const notificationContainer = document.createElement('div');
   notificationContainer.id = 'notification-container';
   document.body.appendChild(notificationContainer);
-  ReactDOM.render(
-    <NotificationComponent
-      type={type}
-      message={message}
-      container={notificationContainer}
-    />,
-    notificationContainer,
-  );
+  // ReactDOM.render(
+  //   <NotificationComponent
+  //     type={type}
+  //     message={message}
+  //     container={notificationContainer}
+  //   />,
+  //   notificationContainer,
+  // );
 };
