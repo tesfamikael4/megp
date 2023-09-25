@@ -151,7 +151,7 @@ export class SupertokensService {
                   //     response.session.getAccessTokenPayload()['st-ev']['v'];
                   //   if (!isVerified) {
                   //     throw new HttpException(
-                  //       'Email not verified',
+                  //       'email_not_verified',
                   //       HttpStatus.FORBIDDEN,
                   //     );
                   //   }

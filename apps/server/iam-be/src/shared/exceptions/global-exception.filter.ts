@@ -6,11 +6,6 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 
-interface IError {
-  message: string;
-  code_error: string;
-}
-
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
   catch(exception: any, host: ArgumentsHost) {
@@ -22,17 +17,15 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       exception instanceof HttpException
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
+
     const message =
       exception instanceof HttpException
-        ? (exception.getResponse() as IError)
-        : {
-            message: (exception as Error).message,
-            code_error: (exception as Error).name,
-          };
+        ? exception.getResponse()
+        : (exception as Error).message;
 
     const responseData = {
       statusCode: status,
-      ...message,
+      message,
       path: request.url,
       timestamp: new Date().toISOString(),
     };
