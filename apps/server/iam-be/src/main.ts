@@ -7,6 +7,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AuthGuard } from './authentication';
 import supertokens from 'supertokens-node';
 import { SupertokensExceptionFilter } from './authentication/auth/filters/auth.filter';
+import { GlobalExceptionFilter } from './shared/exceptions/global-exception.filter';
 
 async function bootstrap() {
   const app: NestExpressApplication = await NestFactory.create(AppModule);
@@ -24,6 +25,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
   app.useGlobalFilters(new SupertokensExceptionFilter());
+  app.useGlobalFilters(new GlobalExceptionFilter());
 
   const reflector = app.get(Reflector);
   app.useGlobalGuards(new AuthGuard(reflector));

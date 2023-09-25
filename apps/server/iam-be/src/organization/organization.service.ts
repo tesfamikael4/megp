@@ -43,7 +43,7 @@ export class OrganizationService {
 
   async registerOrganization(user: any, formFields: any) {
     try {
-      const [email, _, firstName, lastName, organizationName] = formFields;
+      const [email, _, organizationName, firstName, lastName] = formFields;
 
       const organization = new Organization();
       organization.name = organizationName.value;

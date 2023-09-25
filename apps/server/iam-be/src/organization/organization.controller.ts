@@ -23,6 +23,7 @@ import { CollectionQuery } from '@collection-query';
 import { CreateUnitDto, UpdateUnitDto } from './dto/unit.dto';
 import { CreateEmployeeDto, UpdateEmployeeDto } from './dto/employee.dto';
 import { CreateOfficeDto, UpdateOfficeDto } from './dto/office.dto';
+import { AllowAnonymous } from 'src/authentication/auth/decorators';
 
 @ApiBearerAuth()
 @Controller('organizations')
@@ -49,6 +50,7 @@ export class OrganizationController {
   @Get()
   @ApiPaginatedResponse(Organization)
   @ApiOkResponse({ type: Organization, isArray: false })
+  @AllowAnonymous()
   async findAll(@Query() query: CollectionQuery) {
     return await this.organizationService.findAll(query);
   }
