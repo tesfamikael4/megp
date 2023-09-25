@@ -3,7 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from './shared/typeorm/typeorm.service';
 import { OrganizationModule } from './organization';
-import { AuthenticationModule } from './authentication';
+import { AuthenticationModule } from './supertokens';
 
 @Module({
   imports: [
