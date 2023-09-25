@@ -69,7 +69,6 @@ export class WorkflowInstanceEntity extends CommonEntity {
   })
   @JoinColumn({ name: 'requestor_id' })
   vendor: VendorsEntity;
-
   addTracker(taskTracker: TaskTrackerEntity) {
     if (!this.taskTrackers) {
       this.taskTrackers = [];

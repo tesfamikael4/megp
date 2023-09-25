@@ -152,6 +152,7 @@ fetch  applications of vendor by Id
         'vendorAccounts',
         'vendorAccounts.bank',
         'beneficialOwnership',
+        'instances',
       ],
     });
     if (data?.data?.status == 'Save as Draft' || 'Save' || vender.length == 1) {
@@ -228,30 +229,26 @@ fetch  applications of vendor by Id
         this.beneficialOwnershipmapper(beneficialOwnership);
       vendorsEntity.beneficialOwnership = beneficialOwnershipEntity;
       console.log('vendorsEntityvendorsEntity: ', vendorsEntity);
+
+      // const workflowInstanceEntity = new WorkflowInstanceEntity();
+      // const workflowInstanceEntitys = [];
+      // const response = await this.bpServiceRepository.find({ where: { key: areasOfBusinessInterest.key, isActive: true } });
+      // workflowInstanceEntity.applicationNumber = Date.now() + '-' + Math.round(Math.random() * 1e9);
+      // // workflowInstanceEntity.requestorId = result.id;
+      // workflowInstanceEntity.status = 'Draft';
+      // workflowInstanceEntity.bpId = response[0].id;
+      // workflowInstanceEntitys.push(workflowInstanceEntity)
+      // vendorsEntity.instances = workflowInstanceEntitys;
+
+      console.log('vendorsEntityvendorsEntityvendorsEntity : ', vendorsEntity);
       const result = await this.vendorRepository.save(vendorsEntity);
-
-      if (result) {
-        console.log('going to the workflow instance ');
-        const createWorkflowInstanceDto = new CreateWorkflowInstanceDto();
-        const key = areasOfBusinessInterest.key;
-        const response = await this.bpServiceRepository.find({
-          where: { key: key, isActive: true },
-        });
-        // createWorkflowInstanceDto..applicationNumber = Date.now() + '-' + Math.round(Math.random() * 1e9);
-        createWorkflowInstanceDto.requestorId = result.id;
-        createWorkflowInstanceDto.status = 'Submitted';
-        // createWorkflowInstanceDto.bpId = response[0].id;
-        console.log(
-          'going to the workflow instance  entity',
-          CreateWorkflowInstanceDto.fromDto(createWorkflowInstanceDto),
-        );
-
-        this.bpServiceRepository.save(
-          CreateWorkflowInstanceDto.fromDto(createWorkflowInstanceDto),
-        );
-      }
+      console.log(
+        'after saved the vendor entity with workflow instance : ',
+        vendorsEntity,
+      );
 
       // Bank information Maping
+
       const initialValues = {
         id: '',
         status: '',
@@ -327,9 +324,14 @@ fetch  applications of vendor by Id
       initialValues.basicRegistration.nameOfBusinessCompany = result.name;
       initialValues.bankAccountDetails.bankAccountDetailsTable =
         result.vendorAccounts;
-      initialValues.shareHolders.shareHoldersTable = result.shareholders;
+      initialValues.shareHolders.shareHoldersTable = result.shareholders
+        ? result.shareholders
+        : [];
       initialValues.beneficialOwnership.beneficialOwnershipTable =
         result.beneficialOwnership;
+      initialValues.beneficialOwnership.beneficialOwnershipTable =
+        result.beneficialOwnership;
+
       const metadataw = JSON.parse(JSON.stringify(result.metaData));
       initialValues.addressInformation = metadataw.addressInformation;
       initialValues.contactPersons = metadataw.contactPersons;
@@ -348,6 +350,7 @@ fetch  applications of vendor by Id
           'vendorAccounts',
           'vendorAccounts.bank',
           'beneficialOwnership',
+          'instances',
         ],
       });
       return VendorsResponseDto.fromEntity(vendorEntity);
@@ -364,6 +367,7 @@ fetch  applications of vendor by Id
           'vendorAccounts',
           'vendorAccounts.bank',
           'beneficialOwnership',
+          'instances',
         ],
       });
       return VendorsResponseDto.fromEntity(vendorEntity);
@@ -374,7 +378,12 @@ fetch  applications of vendor by Id
   async getVendors(): Promise<VendorsResponseDto[]> {
     try {
       const vendorEntity = await this.vendorRepository.find({
-        relations: ['shareholders', 'shareholders', 'beneficialOwnership'],
+        relations: [
+          'shareholders',
+          'shareholders',
+          'beneficialOwnership',
+          'instances',
+        ],
       });
       return vendorEntity.map((element) =>
         VendorsResponseDto.fromEntity(element),
