@@ -6,7 +6,6 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { ApplicationEntity } from './application.entity';
 import { VendorsEntity } from './vendors.entity';
 
 @Entity({ name: 'business_categories' })

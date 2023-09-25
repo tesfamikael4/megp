@@ -1,4 +1,4 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsOptional, IsUUID, IsNumber } from 'class-validator';
 import { ServicePriceEntity } from '../entities/service-price.entity';
 import { BpServiceResponse } from 'src/bpm/services/bp-service.response';

@@ -4,6 +4,7 @@ import { ShareholdersEntity } from './shareholder.entity';
 import { BankAccountDetailEntity } from './bank-account-detail.entity';
 import { CustomCategoryEntity } from './custom-category.entity';
 import { BusinessCategoryEntity } from './business-category.entity';
+import { BeneficialOwnership } from './beneficial-ownership.entity';
 import { WorkflowInstanceEntity } from 'src/bpm/workflow-instances/entities/workflow-instance';
 @Entity({ name: 'vendors' })
 export class VendorsEntity extends CommonEntity {
@@ -11,7 +12,7 @@ export class VendorsEntity extends CommonEntity {
   id: string;
   @Column({ name: 'tin', nullable: true })
   tin: string;
-  @Column({ name: 'user_id' })
+  @Column({ name: 'user_id', unique: true })
   userId: string;
   @Column({ name: 'vendor_status', default: 'draft' })
   status: string;
@@ -20,7 +21,8 @@ export class VendorsEntity extends CommonEntity {
   formOfEntity: string;
   @Column({ name: 'country', default: 'Malian' })
   country: string;
-
+  @Column({ default: 'None' })
+  isExisting: string;
   @Column({ name: 'meta_data', type: 'json', nullable: true })
   metaData: JSON;
   @Column({ name: 'name', nullable: true })
@@ -46,6 +48,10 @@ export class VendorsEntity extends CommonEntity {
   })
   shareholders: ShareholdersEntity[];
 
+  @OneToMany(() => BeneficialOwnership, (b) => b.vendor, {
+    cascade: true,
+  })
+  beneficialOwnership: BeneficialOwnership[];
   @OneToMany(() => WorkflowInstanceEntity, (wf) => wf.vendor, {
     cascade: true,
   })

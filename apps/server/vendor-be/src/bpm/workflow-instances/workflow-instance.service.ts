@@ -46,7 +46,7 @@ export class WorkflowInstanceService {
     private readonly pbServiceRepository: Repository<BpServiceEntity>,
     @InjectRepository(BusinessProcessEntity)
     private readonly bpRepository: Repository<BusinessProcessEntity>,
-  ) { }
+  ) {}
   async getWorkflowInstances(
     query: CollectionQuery,
   ): Promise<DataResponseFormat<WorkflowInstanceResponse>> {
@@ -89,7 +89,7 @@ export class WorkflowInstanceService {
     const bp = service.businessProcesses.find((a) => a.isActive === true);
     workflowInstanceEntity.bpId = bp.id;
     workflowInstanceEntity.applicationNumber = Date.now().toString();
-    workflowInstanceEntity.status = "Submitted";
+    workflowInstanceEntity.status = 'Submitted';
     const newWorkflowInstance = await this.workflowInstanceRepository.save(
       workflowInstanceEntity,
     );
@@ -172,10 +172,7 @@ export class WorkflowInstanceService {
 
         this.handleEvent(stateMetaData, nextCommand)
           .then((res) => {
-
             console.log('handleEvent success', res);
-
-
           })
           .catch((err) => {
             console.log('handleEvent error', err);
@@ -201,7 +198,6 @@ export class WorkflowInstanceService {
             throw new BadRequestException(error);
           });
       }
-
     });
     // Start the service
     stateMachine.start();
@@ -222,7 +218,7 @@ export class WorkflowInstanceService {
         return this.confirm(command);
         break;
       case TaskTypes.REVIEW:
-        return this.approve(command)
+        return this.approve(command);
         break;
       case TaskTypes.INVOICE:
         break;
@@ -243,29 +239,17 @@ export class WorkflowInstanceService {
 
   async approve(command: GotoNextStateDto) {
     const eventType = command.action ? command.action : 'SUBMIT';
-    if (eventType.toLocaleLowerCase() === "adjust") {
-
+    if (eventType.toLocaleLowerCase() === 'adjust') {
     } else if (eventType.toLocaleLowerCase() === 'approve') {
-
     } else {
-
     }
-
   }
   async confirm(command: GotoNextStateDto) {
     const eventType = command.action ? command.action : 'SUBMIT';
     if (eventType.toLocaleLowerCase() == 'no') {
-
     } else {
-
     }
-
   }
-
-
-
-
-
 
   async update(
     dto: UpdateWorkflowInstanceDto,

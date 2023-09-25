@@ -11,7 +11,6 @@ import {
   ParseUUIDPipe,
 } from '@nestjs/common';
 import {
-  ApiBearerAuth,
   ApiExtraModels,
   ApiOkResponse,
   ApiResponse,

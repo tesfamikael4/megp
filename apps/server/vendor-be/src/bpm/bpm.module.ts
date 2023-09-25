@@ -34,6 +34,7 @@ import { WorkflowEngineService } from 'src/shared/workflow-engine/workflow-engin
       PaymentReceiptEntity,
     ]),
   ],
+  exports: [BpServiceService],
   providers: [
     BpServiceService,
     BusinessProcessService,
