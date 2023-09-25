@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, Not, Repository } from 'typeorm';
 import { DataResponseFormat } from 'src/shared/api-data';
 import {
   CollectionQuery,
@@ -93,6 +93,7 @@ export class ApplicationExcutionService {
     serviceKey: string,
   ): Promise<DataResponseFormat<TaskHandlerResponse>> {
     console.log(serviceKey);
+
     const results = await this.taskhandlergRepository.find({
       relations: {
         task: true,
@@ -104,7 +105,7 @@ export class ApplicationExcutionService {
       },
       where: {
         workflowInstance: {
-          // status: 'Completed',
+          status: Not('Completed'),
           businessProcess: {
             service: { key: serviceKey },
           },
@@ -112,7 +113,7 @@ export class ApplicationExcutionService {
       },
     });
 
-    console.log(results);
+    console.log('result', results);
     const response = new DataResponseFormat<TaskHandlerResponse>();
     response.items = results.map((row) => TaskHandlerResponse.toResponse(row));
     response.total = response.items.length;

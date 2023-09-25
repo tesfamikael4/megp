@@ -26,7 +26,7 @@ import {
 export class ApplicationExcutionController {
   constructor(private readonly executeRepository: ApplicationExcutionService) {}
 
-  @Get('get-currunt-tasks:/serviceKey')
+  @Get('get-currunt-tasks/:serviceKey')
   @ApiPaginatedResponse(WorkflowInstanceResponse)
   async fetchCurruntTasks(
     @Param('serviceKey') serviceKey: string,
@@ -35,7 +35,7 @@ export class ApplicationExcutionController {
     return await this.executeRepository.getCurruntTaskByService(serviceKey);
   }
 
-  @Get('generate-invoice:/instanceId')
+  @Get('generate-invoice/:instanceId')
   @ApiPaginatedResponse(WorkflowInstanceResponse)
   async generateInvoice(
     @Param('instanceId') instanceId: string,
