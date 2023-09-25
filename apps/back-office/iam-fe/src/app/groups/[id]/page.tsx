@@ -18,7 +18,7 @@ export default function GroupPage() {
   };
 
   return (
-    <div className="min-w-[800px]">
+    <Section title="Detail">
       <Group>
         <Link href="/groups">Detail</Link>
         <Link href="/groups/new">New Detail</Link>
@@ -27,6 +27,6 @@ export default function GroupPage() {
       <h1>Counter: {count}</h1>
       <button onClick={increment}>Increment</button>
       <button onClick={decrement}>Decrement</button>
-    </div>
+    </Section>
   );
 }

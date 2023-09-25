@@ -48,9 +48,8 @@ import { BpServiceService } from 'src/bpm/services/service.service';
 @ApiExtraModels(DataResponseFormat)
 export class VendorRegistrationsController {
   constructor(
-    private readonly regService: VendorRegistrationsService,
-  ) // private readonly bpServiceService: BpServiceService
-  {}
+    private readonly regService: VendorRegistrationsService, // private readonly bpServiceService: BpServiceService
+  ) {}
   @Post('submit-application')
   async create(@Body() regDto: CreateApplicationDto) {
     return await this.regService.create(regDto);

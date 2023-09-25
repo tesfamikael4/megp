@@ -12,7 +12,7 @@ import { CreateBankAccountDetailDto } from '../dto/bank-account-detail.dto';
 @ApiResponse({ status: 500, description: 'Internal error' })
 @ApiExtraModels(DataResponseFormat)
 export class BankAccountDetailController {
-  constructor(private readonly bankService: BankAccountDetailService) { }
+  constructor(private readonly bankService: BankAccountDetailService) {}
   @Get('fetch-bank-account-details')
   async fetch(@Query() query: CollectionQuery) {
     return await this.bankService.fetch(query);

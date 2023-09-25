@@ -1,3 +1,5 @@
+'use client';
+
 import 'react-international-phone/style.css';
 import {
   defaultCountries,
@@ -16,6 +18,7 @@ interface PhoneInputProps {
   value: string;
   onChange: any;
   className?: string;
+  disableValidation?: boolean;
 }
 
 export default function Phone(props: PhoneInputProps) {
@@ -31,6 +34,7 @@ export default function Phone(props: PhoneInputProps) {
 
   const isPhoneValid = (phoneNum: string): boolean => {
     try {
+      if (props.disableValidation) return true;
       return phoneUtil.isValidNumber(phoneUtil.parseAndKeepRawInput(phoneNum));
     } catch (error) {
       return false;
