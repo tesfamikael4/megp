@@ -6,12 +6,21 @@ import style from './layout.module.scss';
 import { Navbar } from './_shared/components/navbar/Navbar';
 import { Notifications } from '@mantine/notifications';
 import { useDisplayNameFinder } from './_shared/lib/url/helper';
-
+import { useEffect } from 'react';
+import { doesTokenExist } from '@/app/auth/checkToken';
+import { redirect } from 'next/navigation';
 interface Props {
   children: React.ReactNode;
 }
 
 export default function VendorLayout({ children }: Props) {
+  useEffect(() => {
+    if (doesTokenExist()) {
+      redirect('/auth/login');
+    }
+    return () => {};
+  }, []);
+
   return (
     <AppShell
       classNames={{
