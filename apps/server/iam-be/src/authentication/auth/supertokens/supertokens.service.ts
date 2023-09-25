@@ -101,13 +101,13 @@ export class SupertokensService {
                 },
               },
               {
+                id: 'organizationName',
+              },
+              {
                 id: 'firstName',
               },
               {
                 id: 'lastName',
-              },
-              {
-                id: 'organizationName',
               },
             ],
           },
@@ -147,13 +147,17 @@ export class SupertokensService {
                   const response =
                     await originalImplementation.emailPasswordSignInPOST(input);
                   if (response.status === 'OK') {
-                    const isVerified = response.session.getAccessTokenPayload()['st-ev']['v'];
+                    const isVerified =
+                      response.session.getAccessTokenPayload()['st-ev']['v'];
                     if (!isVerified) {
-                      throw new HttpException('Email not verified', HttpStatus.FORBIDDEN);
+                      throw new HttpException(
+                        'Email not verified',
+                        HttpStatus.FORBIDDEN,
+                      );
                     }
                   }
                   return response;
-                }
+                },
               };
             },
           },
