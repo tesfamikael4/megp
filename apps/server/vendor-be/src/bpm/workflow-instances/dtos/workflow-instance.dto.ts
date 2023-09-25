@@ -1,20 +1,21 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
 import { WorkflowInstanceEntity } from '../entities/workflow-instance';
 
 export class CreateWorkflowInstanceDto {
-  @ApiProperty()
-  @IsNotEmpty()
-  applicationNumber: string;
-  @ApiProperty()
-  @IsNotEmpty()
-  bpId: string;
+  // @ApiProperty()
+  // @IsNotEmpty()
+  // bpId: string;
   @ApiProperty()
   @IsNotEmpty()
   requestorId: string;
   @ApiProperty()
   @IsNotEmpty()
   status: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  key: string;
   /**
    * Transfer Data from DTO object to Entity object
    *
@@ -24,9 +25,8 @@ export class CreateWorkflowInstanceDto {
     if (!dto) {
       return null;
     }
-    entity.applicationNumber = dto.applicationNumber;
     entity.requestorId = dto.requestorId;
-    entity.bpId = dto.bpId;
+    // entity.bpId = dto.bpId;
     entity.status = dto.status;
     return entity;
   }
@@ -44,16 +44,6 @@ export class UpdateWorkflowInstanceDto extends CreateWorkflowInstanceDto {
   @IsUUID()
   @IsNotEmpty()
   id: string;
-  @ApiProperty()
-  @IsNotEmpty()
-  applicationNumber: string;
-  @ApiProperty()
-  requestorId: string;
-  @ApiProperty()
-  status: string;
-  @ApiProperty()
-  @IsNotEmpty()
-  bpId: string;
   static fromDto(dto: UpdateWorkflowInstanceDto): WorkflowInstanceEntity {
     const entity = new WorkflowInstanceEntity();
     if (!dto) {
@@ -61,10 +51,25 @@ export class UpdateWorkflowInstanceDto extends CreateWorkflowInstanceDto {
     }
     entity.id = dto.id;
     entity.requestorId = dto.requestorId;
-    entity.applicationNumber = dto.applicationNumber;
-    entity.bpId = dto.bpId;
+    // entity.bpId = dto.bpId;
     entity.status = dto.status;
-    entity.bpId = dto.bpId;
     return entity;
   }
+}
+export class GotoNextStateDto {
+  @ApiProperty()
+  @IsNotEmpty()
+  instanceId: string;
+  @ApiProperty()
+  @IsNotEmpty()
+  action: string;
+  @ApiProperty()
+  @IsNotEmpty()
+  data: object;
+  @ApiProperty()
+  @IsNotEmpty()
+  handlerId: string;
+  @ApiProperty()
+  @IsString()
+  remark: string;
 }

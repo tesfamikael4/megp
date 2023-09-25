@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmpty, IsNotEmpty, IsUUID } from 'class-validator';
+import { IsEmpty, IsNotEmpty, IsString, IsUUID } from 'class-validator';
 import { TaskTrackerEntity } from '../entities/task-tracker';
 
 export class CreateTaskTrackerDto {
@@ -15,11 +15,14 @@ export class CreateTaskTrackerDto {
   @ApiProperty()
   handledById: string;
   @ApiProperty()
-  @IsEmpty()
+  @IsString()
   data: object;
   @ApiProperty()
-  @IsEmpty()
+  @IsString()
   action: string;
+  @ApiProperty()
+  @IsString()
+  remark?: string;
   /**
    * Transfer Data from DTO object to Entity object
    *
@@ -35,6 +38,7 @@ export class CreateTaskTrackerDto {
     entity.previousHandlerId = dto.previousHandlerId;
     entity.handledById = dto.handledById;
     entity.action = dto.action;
+    entity.remark = dto.remark;
     return entity;
   }
 
@@ -64,11 +68,14 @@ export class UpdateTaskTrackerDto {
   @IsNotEmpty()
   previousHandlerId: string;
   @ApiProperty()
-  @IsEmpty()
+  @IsString()
   data: object;
   @ApiProperty()
-  @IsEmpty()
+  @IsString()
   action: string;
+  @ApiProperty()
+  @IsString()
+  remark: string;
   static fromDto(dto: UpdateTaskTrackerDto): TaskTrackerEntity {
     const entity = new TaskTrackerEntity();
     if (!dto) {
@@ -82,6 +89,7 @@ export class UpdateTaskTrackerDto {
     entity.previousHandlerId = dto.previousHandlerId;
     entity.handledById = dto.handledById;
     entity.previousHandlerId = dto.previousHandlerId;
+    entity.remark = dto.remark;
     return entity;
   }
 }

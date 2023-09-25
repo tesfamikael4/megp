@@ -17,7 +17,7 @@ export class CreateTaskDto {
   handlerType: string;
   @ApiProperty()
   @IsNotEmpty()
-  type: string;
+  taskType: string;
   /**
    * Transfer Data from DTO object to Entity object
    *
@@ -30,7 +30,7 @@ export class CreateTaskDto {
     entity.name = dto.name;
     entity.description = dto.description;
     entity.businessProcessId = dto.businessProcessId;
-    entity.type = dto.type;
+    entity.taskType = dto.taskType;
     entity.handlerType = dto.handlerType;
     return entity;
   }
@@ -59,7 +59,7 @@ export class UpdateTaskDto extends CreateTaskDto {
   @IsNotEmpty()
   businessProcessId: string;
   @ApiProperty()
-  type: string;
+  taskType: string;
   static fromDto(dto: UpdateTaskDto): TaskEntity {
     const entity = new TaskEntity();
     if (!dto) {
@@ -70,7 +70,7 @@ export class UpdateTaskDto extends CreateTaskDto {
     entity.name = dto.name;
     entity.businessProcessId = dto.businessProcessId;
     entity.handlerType = dto.handlerType;
-    entity.type = dto.type;
+    entity.taskType = dto.taskType;
     entity.businessProcessId = dto.businessProcessId;
     return entity;
   }

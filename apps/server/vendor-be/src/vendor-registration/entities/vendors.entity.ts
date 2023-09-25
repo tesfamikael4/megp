@@ -2,9 +2,9 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { CommonEntity } from 'src/shared/entities/common.entity';
 import { ShareholdersEntity } from './shareholder.entity';
 import { BankAccountDetailEntity } from './bank-account-detail.entity';
-import { ApplicationEntity } from './application.entity';
 import { CustomCategoryEntity } from './custom-category.entity';
 import { BusinessCategoryEntity } from './business-category.entity';
+import { WorkflowInstanceEntity } from 'src/bpm/workflow-instances/entities/workflow-instance';
 @Entity({ name: 'vendors' })
 export class VendorsEntity extends CommonEntity {
   @PrimaryGeneratedColumn('uuid')
@@ -30,20 +30,11 @@ export class VendorsEntity extends CommonEntity {
   @Column({ name: 'district' })
   district: string;
 
-  @OneToMany(() => ApplicationEntity, (app) => app.service)
-  applications: ApplicationEntity[];
-
   @OneToMany(() => CustomCategoryEntity, (cat) => cat.application)
   customCats: CustomCategoryEntity[]; //customeCategories
 
   @OneToMany(() => BusinessCategoryEntity, (business) => business.vendor)
   businessCats: BusinessCategoryEntity[]; //business categories
-  /*
-    @OneToMany(() => InvoiceEntity, (invoice) => invoice.vendor)
-    invoices: InvoiceEntity[];
-  */
-  // @OneToMany(() => VendorsBankEntity, (b) => b.vendor)
-  // vendorAccounts: VendorsBankEntity[];
 
   @OneToMany(() => BankAccountDetailEntity, (b) => b.vendor, {
     cascade: true,
@@ -54,4 +45,9 @@ export class VendorsEntity extends CommonEntity {
     cascade: true,
   })
   shareholders: ShareholdersEntity[];
+
+  @OneToMany(() => WorkflowInstanceEntity, (wf) => wf.vendor, {
+    cascade: true,
+  })
+  instances: WorkflowInstanceEntity[];
 }

@@ -21,6 +21,8 @@ export class TaskHandlerResponse {
   @ApiProperty()
   workflowInstance?: WorkflowInstanceResponse;
   @ApiProperty()
+  currentState: string;
+  @ApiProperty()
   createdBy: string;
   @ApiProperty()
   updatedBy: string;
@@ -38,6 +40,7 @@ export class TaskHandlerResponse {
     response.taskId = entity.taskId;
     response.instanceId = entity.instanceId;
     response.data = entity.data;
+    response.currentState = entity.currentState;
     response.assignmentStatus = entity.assignmentStatus;
     response.previousHandlerId = entity.previousHandlerId;
     if (entity.task) {

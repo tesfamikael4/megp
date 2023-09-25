@@ -9,12 +9,14 @@ import {
   CreateBusinessProcessDto,
   UpdateBusinessProcessDto,
 } from './dtos/business-process.dto';
+import { WorkflowEngineService } from 'src/shared/workflow-engine/workflow-engine.service';
 
 @Injectable()
 export class BusinessProcessService {
   constructor(
     @InjectRepository(BusinessProcessEntity)
     private readonly businessProcessRepository: Repository<BusinessProcessEntity>,
+    private readonly workflowEngineService: WorkflowEngineService,
   ) {}
   async getBusinessProcesses(
     query: CollectionQuery,
@@ -47,6 +49,13 @@ export class BusinessProcessService {
     dto: CreateBusinessProcessDto,
   ): Promise<BusinessProcessResponse> {
     const businessProcessEntity = CreateBusinessProcessDto.fromDto(dto);
+    if (dto.convertToStateMachine) {
+      businessProcessEntity.workflow =
+        await this.workflowEngineService.convertToStateMachine(
+          businessProcessEntity.workflow,
+        );
+      console.log('htrh', businessProcessEntity.workflow);
+    }
     console.log(businessProcessEntity, dto);
     const newService = await this.businessProcessRepository.save(
       businessProcessEntity,

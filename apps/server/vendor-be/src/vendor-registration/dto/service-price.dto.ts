@@ -12,7 +12,10 @@ export class CreateServicePriceDto {
   businessArea: string;
   @ApiProperty()
   @IsNotEmpty()
-  contractValue: string;
+  valueFrom: number;
+  @ApiProperty()
+  @IsNotEmpty()
+  valueTo: number;
   @ApiProperty()
   @IsNotEmpty()
   @IsNumber()
@@ -31,8 +34,8 @@ export class CreateServicePriceDto {
     }
     entity.serviceId = dto.serviceId;
     entity.businessArea = dto.businessArea;
-    entity.contractValue = dto.contractValue;
-    //entity.valueTo = dto.valueTo;
+    entity.valueFrom = dto.valueFrom;
+    entity.valueTo = dto.valueTo;
     entity.fee = dto.fee;
     entity.currency = dto?.currency;
     console.log(dto);
@@ -63,7 +66,8 @@ export class UpdateServicePriceDto extends CreateServicePriceDto {
     entity.id = dto.id;
     entity.businessArea = dto.businessArea;
     entity.serviceId = dto.serviceId;
-    entity.contractValue = dto.contractValue;
+    entity.valueFrom = dto.valueFrom;
+    entity.valueTo = dto.valueTo;
     entity.currency = dto?.currency;
     entity.fee = dto.fee;
     entity.createdAt = new Date();
@@ -79,7 +83,8 @@ export class ServicePriceResponseDto extends UpdateServicePriceDto {
     response.id = dto.id;
     response.serviceId = dto.serviceId;
     response.businessArea = dto.businessArea;
-    response.contractValue = dto.contractValue;
+    response.valueFrom = dto.valueFrom;
+    response.valueTo = dto.valueTo;
     response.currency = dto?.currency;
     response.fee = dto.fee;
     return response;

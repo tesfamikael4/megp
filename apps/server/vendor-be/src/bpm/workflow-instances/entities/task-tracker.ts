@@ -23,11 +23,13 @@ export class TaskTrackerEntity extends CommonEntity {
   handledById: string;
   @Column({ name: 'action' })
   action: string;
-  @Column({ name: 'previous_handler_id' })
+  @Column({ name: 'remark', nullable: true })
+  remark: string;
+  @Column({ name: 'previous_handler_id', nullable: true })
   previousHandlerId: string;
   @ManyToOne(
     () => WorkflowInstanceEntity,
-    (workflowInstance) => workflowInstance.taskHandlers,
+    (workflowInstance) => workflowInstance.taskTrackers,
   )
   @JoinColumn({ name: 'instance_id' })
   workflowInstance: WorkflowInstanceEntity;

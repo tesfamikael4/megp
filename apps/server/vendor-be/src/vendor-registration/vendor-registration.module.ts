@@ -7,7 +7,7 @@ import { ServicesEntity } from './entities/services.entity';
 import { ServicePriceEntity } from './entities/service-price.entity';
 import { ApplicationEntity } from './entities/application.entity';
 import { MessageThreadEntity } from './entities/message-thread.entity';
-import { InvoiceEntity } from './entities/invoice.entity';
+import { InvoiceEntity } from '../bpm/workflow-instances/entities/invoice.entity';
 import { CustomCategoryEntity } from './entities/custom-category.entity';
 import { ServicePricingService } from './service-pricing.service';
 import { ServicePricingController } from './service-pricing.controller';
@@ -42,7 +42,6 @@ import { File } from './services/file.service';
       ServicePriceEntity,
       ApplicationEntity,
       MessageThreadEntity,
-      InvoiceEntity,
       BusinessCategoryEntity,
       CustomCategoryEntity,
       ServicesEntity,
@@ -63,7 +62,6 @@ import { File } from './services/file.service';
     VendorBasicsService,
     BankAccountDetailService,
     ShareholderService,
-
     TradeRegistrationDatabaseService,
     TinRegistrationDatabaseService,
     NCICService,

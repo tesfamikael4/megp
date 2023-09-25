@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { ServicePriceEntity } from './service-price.entity';
-import { InvoiceEntity } from './invoice.entity';
+import { InvoiceEntity } from '../../bpm/workflow-instances/entities/invoice.entity';
 import { ServicesEntity } from './services.entity';
 import { VendorsEntity } from './vendors.entity';
 //Vendor Service Application
@@ -39,9 +39,6 @@ export class ApplicationEntity extends CommonEntity {
   */
   @Column({ name: 'expire_date', nullable: true })
   expireDate: Date;
-  @ManyToOne(() => ServicePriceEntity, (p) => p.applications)
-  @JoinColumn({ name: 'service_price_id' })
-  price: ServicePriceEntity;
 
   /*
     @OneToMany(() => MessageThreadEntity, (message) => message.application)
@@ -52,8 +49,9 @@ export class ApplicationEntity extends CommonEntity {
   @ManyToOne(() => ServicesEntity, (service) => service.applications)
   @JoinColumn({ name: 'service_id' })
   service: ServicesEntity;
-
-  @ManyToOne(() => VendorsEntity, (v) => v.applications)
-  @JoinColumn({ name: 'vendor_id' })
-  vendor: VendorsEntity;
+  /*
+    @ManyToOne(() => VendorsEntity, (v) => v.applications)
+    @JoinColumn({ name: 'vendor_id' })
+    vendor: VendorsEntity;
+    */
 }

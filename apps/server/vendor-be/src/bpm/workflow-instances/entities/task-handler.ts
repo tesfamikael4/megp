@@ -4,6 +4,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { WorkflowInstanceEntity } from './workflow-instance';
@@ -21,27 +22,17 @@ export class TaskHandlerEntity extends CommonEntity {
   data: object;
   @Column({ name: 'assignment_status' })
   assignmentStatus: string;
-  @Column({ name: 'previous_handler_id' })
+  @Column({ name: 'previous_handler_id', nullable: true })
   previousHandlerId: string;
-  @ManyToOne(
+  @Column({ name: 'previous_handler_id' })
+  @Column({ name: 'current_state', nullable: true })
+  currentState: string;
+  @OneToOne(
     () => WorkflowInstanceEntity,
-    (workflowInstance) => workflowInstance.taskHandlers,
-    {
-      orphanedRowAction: 'delete',
-      onUpdate: 'CASCADE',
-      onDelete: 'CASCADE',
-    },
-  )
+    (workflowInstance) => workflowInstance.taskHandler,
+  ) // specify inverse side as a second parameter
   @JoinColumn({ name: 'instance_id' })
   workflowInstance: WorkflowInstanceEntity;
-
-  // @ManyToOne(() => TaskEntity, (task) => task.taskHandlers, {
-  //     orphanedRowAction: 'delete',
-  //     onUpdate: 'CASCADE',
-  //     onDelete: 'CASCADE',
-  // })
-  // @JoinColumn({ name: 'task_id' })
-  // task: TaskEntity;
   @ManyToOne(() => TaskEntity, (task) => task)
   @JoinColumn({ name: 'task_id' })
   task: TaskEntity;

@@ -15,7 +15,11 @@ import { WorkflowInstanceService } from './workflow-instances/workflow-instance.
 import { TaskHandlerEntity } from './workflow-instances/entities/task-handler';
 import { WorkflowInstanceController } from './controllers/workflow-instance.controller';
 import { TaskTrackerEntity } from './workflow-instances/entities/task-tracker';
-
+import { InvoiceEntity } from './workflow-instances/entities/invoice.entity';
+import { PaymentReceiptEntity } from './workflow-instances/entities/receipt-attachment';
+import { ApplicationExcutionService } from './application-execution.service';
+import { ApplicationExcutionController } from './application-execution.controller';
+import { WorkflowEngineService } from 'src/shared/workflow-engine/workflow-engine.service';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -26,6 +30,8 @@ import { TaskTrackerEntity } from './workflow-instances/entities/task-tracker';
       WorkflowInstanceEntity,
       TaskHandlerEntity,
       TaskTrackerEntity,
+      InvoiceEntity,
+      PaymentReceiptEntity,
     ]),
   ],
   providers: [
@@ -33,12 +39,16 @@ import { TaskTrackerEntity } from './workflow-instances/entities/task-tracker';
     BusinessProcessService,
     TaskService,
     WorkflowInstanceService,
+    WorkflowEngineService,
+    ApplicationExcutionService,
+    BusinessProcessService,
   ],
   controllers: [
     BpServiceController,
     BusinessProcessController,
     TaskController,
     WorkflowInstanceController,
+    ApplicationExcutionController,
   ],
 })
 export class BpmModule {}

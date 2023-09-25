@@ -19,11 +19,11 @@ import { WorkflowInstanceService } from '../workflow-instances/workflow-instance
 import { WorkflowInstanceResponse } from '../workflow-instances/workflow-instance.response';
 import {
   CreateWorkflowInstanceDto,
+  GotoNextStateDto,
   UpdateWorkflowInstanceDto,
 } from '../workflow-instances/dtos/workflow-instance.dto';
 import {
   CreateTaskHandlerDto,
-  DeleteTaskHandlerDto,
   UpdateTaskHandlerDto,
 } from '../workflow-instances/dtos/task-handler.dto';
 @Controller('workflow-instances')
@@ -35,7 +35,7 @@ import {
 export class WorkflowInstanceController {
   constructor(
     private readonly workflowInstanceService: WorkflowInstanceService,
-  ) {}
+  ) { }
   @Get('get-workflow-instances')
   @ApiPaginatedResponse(WorkflowInstanceResponse)
   async fetch(@Query() query: CollectionQuery) {
@@ -71,8 +71,10 @@ export class WorkflowInstanceController {
   async updateTaskHandler(@Body() dto: UpdateTaskHandlerDto) {
     return await this.workflowInstanceService.updateTaskHandler(dto);
   }
-  @Delete('delete-workflow-instance-handler')
-  async deleteTaskHandler(@Body() dto: DeleteTaskHandlerDto) {
-    return await this.workflowInstanceService.removeTaskHandler(dto);
+
+  @Post('goto-next-state')
+  @ApiOkResponse({ type: WorkflowInstanceResponse })
+  async gotoNextStateDto(@Body() dto: GotoNextStateDto) {
+    return await this.workflowInstanceService.gotoNextStep(dto);
   }
 }

@@ -23,6 +23,8 @@ export class TaskTrackerResponse {
   @ApiProperty()
   action: string;
   @ApiProperty()
+  remark?: string;
+  @ApiProperty()
   createdBy: string;
   @ApiProperty()
   updatedBy: string;
