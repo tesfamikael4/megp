@@ -52,19 +52,22 @@ export class TaskHandlerResponse {
     if (entity.task) {
       response.task = TaskResponse.toResponse(entity.task);
     }
-    if (entity.workflowInstance) {
+    if (entity?.workflowInstance != undefined) {
       response.workflowInstance = WorkflowInstanceResponse.toResponse(
-        entity.workflowInstance,
+        entity?.workflowInstance,
       );
     }
-    if (entity.workflowInstance.businessProcess.service) {
+
+    if (entity?.workflowInstance?.businessProcess?.service) {
       response.service = BpServiceResponse.toResponse(
-        entity.workflowInstance.businessProcess.service,
+        entity?.workflowInstance?.businessProcess?.service,
       );
     }
-    if (entity.workflowInstance.vendor) {
+
+    const instance = entity?.workflowInstance;
+    if (instance != undefined) {
       response.vendor = VendorsResponseDto.fromEntity(
-        entity.workflowInstance.vendor,
+        entity?.workflowInstance?.vendor,
       );
     }
 

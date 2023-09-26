@@ -38,7 +38,7 @@ export class CreateBusinessProcessDto {
     }
     entity.serviceId = dto.serviceId;
     entity.version = dto.version;
-    entity.workflow = dto.workflow;
+    //entity.workflow = dto.workflow;
     entity.organizationId = dto.organizationId;
     entity.organizationName = dto.organizationId;
     return entity;

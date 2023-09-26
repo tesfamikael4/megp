@@ -33,9 +33,12 @@ import {
 @ApiResponse({ status: 400, description: 'Bad Request' })
 @ApiExtraModels(DataResponseFormat)
 export class WorkflowInstanceController {
+  userId: string;
   constructor(
     private readonly workflowInstanceService: WorkflowInstanceService,
-  ) {}
+  ) {
+    this.userId = 'c785d351-05e3-59dc-15a3-f9da417b1f74';
+  }
   @Get('get-workflow-instances')
   @ApiPaginatedResponse(WorkflowInstanceResponse)
   async fetch(@Query() query: CollectionQuery) {
@@ -49,7 +52,8 @@ export class WorkflowInstanceController {
   @Post('create-workflow-instance')
   @ApiOkResponse({ type: WorkflowInstanceResponse })
   async create(@Body() dto: CreateWorkflowInstanceDto) {
-    console.log(dto);
+    console.log(dto, this.userId);
+
     return await this.workflowInstanceService.create(dto);
   }
   @Post('update-workflow-instance')

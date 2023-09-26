@@ -50,11 +50,11 @@ import { AreasOfBusinessInterestEntity } from './entities/areas-of-business-inte
   imports: [
     TypeOrmModule.forFeature([
       ServicePriceEntity,
-      ApplicationEntity,
+      //ApplicationEntity,
       MessageThreadEntity,
       BusinessCategoryEntity,
       CustomCategoryEntity,
-      ServicesEntity,
+      // ServicesEntity,
       VendorsEntity,
       BanksEntity,
       VendorsBankEntity,

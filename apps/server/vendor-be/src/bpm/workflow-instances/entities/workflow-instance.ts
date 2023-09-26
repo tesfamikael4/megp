@@ -26,6 +26,8 @@ export class WorkflowInstanceEntity extends CommonEntity {
   status: string;
   @Column({ name: 'bp_id' })
   bpId: string;
+  @Column({ name: 'pricing_id', nullable: true })
+  pricingId: string;
   @ManyToOne(
     () => BusinessProcessEntity,
     (businessProcess) => businessProcess.workflowInstances,
@@ -53,8 +55,6 @@ export class WorkflowInstanceEntity extends CommonEntity {
   )
   taskTrackers: TaskTrackerEntity[];
 
-  @Column({ name: 'pricing_id', nullable: true })
-  pricingId: string;
   @ManyToOne(() => ServicePriceEntity, (price) => price.workflowInstances, {
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE',

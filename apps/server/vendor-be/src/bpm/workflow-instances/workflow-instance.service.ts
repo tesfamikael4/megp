@@ -32,6 +32,8 @@ import { StateMetaData } from './state-metadata';
 import { TaskTrackerEntity } from './entities/task-tracker';
 import { TaskTrackerResponse } from './task-tracker.response';
 import { TaskResponse } from '../tasks/task.response';
+import { ServicePriceEntity } from 'src/vendor-registration/entities/service-price.entity';
+import { ApplicationExcutionService } from '../application-execution.service';
 
 @Injectable()
 export class WorkflowInstanceService {
@@ -41,11 +43,11 @@ export class WorkflowInstanceService {
     @InjectRepository(TaskEntity)
     private readonly taskRepository: Repository<TaskEntity>,
     private dataSource: DataSource,
-
     @InjectRepository(BpServiceEntity)
     private readonly pbServiceRepository: Repository<BpServiceEntity>,
     @InjectRepository(BusinessProcessEntity)
     private readonly bpRepository: Repository<BusinessProcessEntity>,
+    private readonly appService: ApplicationExcutionService,
   ) {}
   async getWorkflowInstances(
     query: CollectionQuery,
@@ -78,21 +80,26 @@ export class WorkflowInstanceService {
   async create(dto: CreateWorkflowInstanceDto): Promise<any> {
     const response = {};
     const workflowInstanceEntity = CreateWorkflowInstanceDto.fromDto(dto);
+    const price = await this.dataSource
+      .getRepository(ServicePriceEntity)
+      .findOne({ where: { id: dto.pricingId } });
     const service = await this.dataSource
       .getRepository(BpServiceEntity)
       .createQueryBuilder('services')
       .leftJoinAndSelect('services.businessProcesses', 'businessProcesses')
-      .where('services.key=:key', { key: dto.key })
+      .where('services.id=:id', { id: price.serviceId })
       .andWhere('businessProcesses.isActive=:isActive', { isActive: true })
       .getOne();
-    console.log(service);
     const bp = service.businessProcesses.find((a) => a.isActive === true);
     workflowInstanceEntity.bpId = bp.id;
     workflowInstanceEntity.applicationNumber = Date.now().toString();
     workflowInstanceEntity.status = 'Submitted';
+
+    workflowInstanceEntity.status = 'Submitted';
     const newWorkflowInstance = await this.workflowInstanceRepository.save(
       workflowInstanceEntity,
     );
+
     const machine = createMachine({
       predictableActionArguments: true,
       ...bp.workflow,
@@ -110,21 +117,19 @@ export class WorkflowInstanceService {
           businessProcessId: bp.id,
         })
         .getOne();
+      console.log('task taskName: state.value.toString()', state.value);
+      console.log(bp.workflow);
+      console.log('task', task);
       taskHandler.currentState = state.value.toString();
       taskHandler.instanceId = newWorkflowInstance.id;
       taskHandler.taskId = task.id;
       taskHandler.previousHandlerId = null;
       taskHandler.assignmentStatus = 'Unassigned';
-
       const insertedTaskHandler = await this.dataSource
         .getRepository(TaskHandlerEntity)
         .save(taskHandler);
       task.taskHandlers = [insertedTaskHandler];
-
       response['task'] = task;
-      console.log('Inside transision', response, insertedTaskHandler);
-      // stateMachine.currentState = state.value.toString();
-      // console.log(stateMachine.currentState, state.value);
     });
 
     // Start the stateMachine
@@ -136,8 +141,10 @@ export class WorkflowInstanceService {
   async gotoNextStep(nextCommand: GotoNextStateDto) {
     const workflowInstance = await this.workflowInstanceRepository.findOne({
       where: { id: nextCommand.instanceId },
-      relations: ['taskHandler'],
+      relations: ['taskHandler', 'businessProcess'],
     });
+    console.log('workflowInstance---', workflowInstance.businessProcess);
+    console.log('---------------');
     if (!workflowInstance)
       throw new NotFoundException('Workflow Instance not found');
     const currentTaskHandler = workflowInstance.taskHandler;
@@ -168,6 +175,7 @@ export class WorkflowInstanceService {
             businessProcessId: workflowInstance.bpId,
           },
         });
+        console.log('tas---k', task);
         stateMetaData['type'] = task.taskType;
 
         this.handleEvent(stateMetaData, nextCommand)
@@ -210,6 +218,7 @@ export class WorkflowInstanceService {
   }
   async handleEvent(stateMetadata: StateMetaData, command: GotoNextStateDto) {
     const eventType = command.action ? command.action : 'SUBMIT';
+    console.log('eventType', eventType);
     switch (stateMetadata.type.toLocaleLowerCase()) {
       case TaskTypes.APPROVAL:
         console.log(TaskTypes.APPROVAL, command);
@@ -221,6 +230,8 @@ export class WorkflowInstanceService {
         return this.approve(command);
         break;
       case TaskTypes.INVOICE:
+        const taskId = '';
+        //  this.appService.generateInvoice(taskId, command.instanceId);
         break;
       case TaskTypes.CERTIFICATION:
         console.log(TaskTypes.CERTIFICATION, command);
