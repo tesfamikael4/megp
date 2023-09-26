@@ -11,6 +11,10 @@ import {
 import { BankAccountDetailResponse } from './bank-account-detail.dto';
 import { BeneficialOwnershipResponse } from './beneficial-ownership.dto';
 import { CreateWorkflowInstanceDto } from 'src/bpm/workflow-instances/dtos/workflow-instance.dto';
+import {
+  AreasOfBusinessInterestResponse,
+  CreateAreasOfBusinessInterest,
+} from './areas-of-business-interest';
 
 export class CreateVendorsDto {
   id: string;
@@ -61,6 +65,9 @@ export class CreateVendorsDto {
   @ApiProperty()
   beneficialOwnership: BeneficialOwnershipResponse[];
 
+  @ApiProperty()
+  areasOfBusinessInterest: AreasOfBusinessInterestResponse[];
+
   static fromDto(dto: CreateVendorsDto): VendorsEntity {
     const entity = new VendorsEntity();
     if (!dto) {
@@ -96,7 +103,11 @@ export class CreateVendorsDto {
     entity.shareholders = dto.shareholders
       ? dto.shareholders.map((item) => CreateShareholdersDto.fromDto(item))
       : null;
-
+    entity.areasOfBusinessInterest = dto.areasOfBusinessInterest
+      ? dto.areasOfBusinessInterest.map((item) =>
+          CreateAreasOfBusinessInterest.fromDto(item),
+        )
+      : null;
     return entity;
   }
 }
@@ -129,7 +140,7 @@ export class VendorsResponseDto extends UpdateVendorsDto {
     response.userId = entity.userId;
     response.country = entity.country;
     response.name = entity.name;
-    response.status = entity.formOfEntity;
+    response.status = entity.status;
     response.metaData = entity.metaData;
     response.district = entity.district;
     response.name = entity.name;
@@ -143,6 +154,9 @@ export class VendorsResponseDto extends UpdateVendorsDto {
     );
     response.beneficialOwnership = entity?.beneficialOwnership?.map((element) =>
       BeneficialOwnershipResponse.fromEntity(element),
+    );
+    response.areasOfBusinessInterest = entity?.areasOfBusinessInterest?.map(
+      (element) => AreasOfBusinessInterestResponse.fromEntity(element),
     );
     return response;
   }
