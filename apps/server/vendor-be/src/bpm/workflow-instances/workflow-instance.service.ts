@@ -34,6 +34,7 @@ import { TaskTrackerResponse } from './task-tracker.response';
 import { TaskResponse } from '../tasks/task.response';
 import { ServicePriceEntity } from 'src/vendor-registration/entities/service-price.entity';
 import { ApplicationExcutionService } from '../application-execution.service';
+import { WorkflowInstanceEnum } from '../workflow-instance.enum';
 
 @Injectable()
 export class WorkflowInstanceService {
@@ -162,9 +163,9 @@ export class WorkflowInstanceService {
 
     const stateMachine = interpret(machine).onTransition(async (state) => {
       if (state.value !== currentTaskHandler.currentState) {
-        workflowInstance.status = 'Inprogress';
+        workflowInstance.status = WorkflowInstanceEnum.Inprogress;
         if (state.done) {
-          workflowInstance.status = 'Completed';
+          workflowInstance.status = WorkflowInstanceEnum.Completed;
         }
 
         console.log('Previous State =>' + currentTaskHandler.currentState);
@@ -191,6 +192,7 @@ export class WorkflowInstanceService {
         console.log(currentTaskHandler.currentState, state.value);
         const data = { remark: nextCommand.remark, ...nextCommand.data };
         currentTaskHandler.data = data;
+        currentTaskHandler.taskId = task.id;
         this.dataSource
           .getRepository(TaskHandlerEntity)
           .save(currentTaskHandler)
@@ -263,6 +265,29 @@ export class WorkflowInstanceService {
     if (eventType.toLocaleLowerCase() == 'no') {
     } else {
     }
+  }
+  async adjustApplication(instanceId: string, userId: string) {
+    const instance = await this.workflowInstanceRepository.findOne({
+      where: { id: instanceId },
+    });
+    if (!instance) throw new NotFoundException('WorkflowInstance not found');
+    instance.createdBy = userId;
+    instance.status = WorkflowInstanceEnum.Draft;
+    const result = await this.workflowInstanceRepository.save(instance);
+  }
+
+  async completeApplication(instanceId: string, userId: string) {
+    const instance = await this.workflowInstanceRepository.findOne({
+      where: { id: instanceId },
+    });
+    if (!instance) throw new NotFoundException('WorkflowInstance not found');
+    const today = new Date();
+    instance.createdBy = userId;
+    instance.status = WorkflowInstanceEnum.Completed;
+    instance.approved_at = today.toDateString();
+    const exprireDate = today.setFullYear(today.getFullYear() + 1);
+    instance.expire_date = exprireDate.toString();
+    const result = await this.workflowInstanceRepository.save(instance);
   }
 
   async update(
