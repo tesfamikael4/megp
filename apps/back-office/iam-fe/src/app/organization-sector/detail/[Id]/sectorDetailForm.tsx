@@ -19,7 +19,8 @@ import {
   useLazyGetOrganizationSectorsQuery,
   useDeleteOrganizationSectorMutation,
 } from '@/store/api/orgSector/orgSector.api';
-import { notify } from '@/shared/ui/notification/utility/notify';
+
+import { notifications } from '@mantine/notifications';
 
 /* Form schema */
 
@@ -96,11 +97,19 @@ const OrgSectorDetailForm = (props: OrgSectorDetailFormProps) => {
   const handleCreate = async (data: any) => {
     try {
       const response = await createorgSector(data).unwrap();
-      notify('success', 'orgSector created successfully');
+      notifications.show({
+        message: 'orgSector created successfully',
+        title: 'Success',
+        color: 'green',
+      });
 
       await router.push(`/organization-sector/detail/${response.id}`);
     } catch (err) {
-      notify('error', 'errors in creating orgSector');
+      notifications.show({
+        message: 'errors in creating orgSector',
+        title: 'Error',
+        color: 'red',
+      });
     }
   };
 
@@ -108,18 +117,34 @@ const OrgSectorDetailForm = (props: OrgSectorDetailFormProps) => {
     console.log({ ...data, id: id?.toString() });
     try {
       await updateorgSector({ ...data, id: id?.toString() });
-      notify('success', 'orgSector updating successfully');
+      notifications.show({
+        message: 'orgSector updating successfully',
+        title: 'Success',
+        color: 'green',
+      });
     } catch (err) {
-      notify('error', 'orgSector updating successfully');
+      notifications.show({
+        message: 'error in updating successfully',
+        title: 'Error',
+        color: 'red',
+      });
     }
   };
   const submitDelete = async () => {
     try {
       await deleteorgSector(id?.toString()).unwrap();
-
+      notifications.show({
+        message: 'orgSector Deleting successfully',
+        title: 'Success',
+        color: 'green',
+      });
       router.push('/organization-sector');
     } catch (err) {
-      console.log(err);
+      notifications.show({
+        message: 'error in deleting successfully',
+        title: 'Error',
+        color: 'red',
+      });
     }
     setDisplayConfirmationModal(false);
   };

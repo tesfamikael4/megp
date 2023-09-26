@@ -22,7 +22,6 @@ import countryCodes from '@/shared/core/utilities/country.json';
 import { Select, Card } from '@mantine/core';
 import { useLazyGetOrganizationsAdmimQuery } from '@/store/api/organization/organization.api';
 
-import { notify } from '@/shared/ui/notification/utility/notify';
 import { EmptyIcon } from '@/shared/ui/page';
 import EmptyState from '@/shared/ui/empty';
 

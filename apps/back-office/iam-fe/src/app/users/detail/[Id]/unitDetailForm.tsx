@@ -21,7 +21,7 @@ import {
   useUserActivationMutation,
 } from '@/store/api/user/user.api';
 import { useLazyGetUnitTypeQuery } from '@/store/api/unitType/unitType.api';
-import { notify } from '@/shared/ui/notification/utility/notify';
+import { notifications } from '@mantine/notifications';
 
 /* Form schema */
 
@@ -104,11 +104,19 @@ const UserDetailForm = (props: UnitDetailFormProps) => {
         fullName: `${data.firstName} ${data.lastName}`,
         organizationId: '099454a9-bf8f-45f5-9a4f-6e9034230250',
       }).unwrap();
-      notify('success', 'user created successfully');
+      notifications.show({
+        message: 'User created successfully',
+        title: 'Sucess',
+        color: 'green',
+      });
 
       await router.push(`/users/detail/${response.id}`);
     } catch (err) {
-      notify('error', 'errors in creating unit');
+      notifications.show({
+        message: 'errors in creating unit',
+        title: 'Error',
+        color: 'red',
+      });
     }
   };
 
@@ -121,27 +129,52 @@ const UserDetailForm = (props: UnitDetailFormProps) => {
         fullName: `${data.firstName} ${data.lastName}`,
         organizationId: '099454a9-bf8f-45f5-9a4f-6e9034230250',
       });
-      notify('success', 'User updating successfully');
+      notifications.show({
+        message: 'User updating successfully',
+        title: 'Sucess',
+        color: 'green',
+      });
     } catch (err) {
-      notify('error', 'User updating successfully');
+      notifications.show({
+        message: 'User updating successfully',
+        title: 'Error',
+        color: 'red',
+      });
     }
   };
   const submitDelete = async () => {
     try {
       await deleteUser(id?.toString()).unwrap();
-      notify('success', 'User deleted successfully');
+      notifications.show({
+        message: 'User deleted successfully',
+        title: 'Sucess',
+        color: 'green',
+      });
+
       router.push('/users');
     } catch (err) {
-      notify('success', 'User not deleted successfully');
+      notifications.show({
+        message: 'User not deleted successfully',
+        title: 'Error',
+        color: 'red',
+      });
     }
     setDisplayConfirmationModal(false);
   };
   const handleActive = async (data) => {
     try {
       await activateUser(id?.toString());
-      notify('success', 'User updating successfully');
+      notifications.show({
+        message: 'User updating successfully',
+        title: 'sucess',
+        color: 'green',
+      });
     } catch (err) {
-      notify('error', 'User updating successfully');
+      notifications.show({
+        message: 'error updating successfully',
+        title: 'Error',
+        color: 'red',
+      });
     }
   };
   /*Show delete modal when delete button is clicked */

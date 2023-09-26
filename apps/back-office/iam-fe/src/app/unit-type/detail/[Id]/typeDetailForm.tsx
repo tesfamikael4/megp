@@ -19,7 +19,7 @@ import {
   useDeleteUnitTypeMutation,
 } from '@/store/api/unitType/unitType.api';
 import { useLazyGetUnitTypeQuery } from '@/store/api/unitType/unitType.api';
-import { notify } from '@/shared/ui/notification/utility/notify';
+import { notifications } from '@mantine/notifications';
 
 /* Form schema */
 
@@ -97,11 +97,20 @@ const UnitTypeDetailForm = (props: unitTypeDetailFormProps) => {
         ...data,
         organizationId: '099454a9-bf8f-45f5-9a4f-6e9034230250',
       }).unwrap();
-      notify('success', 'unitType created successfully');
+
+      notifications.show({
+        message: 'unitType created successfully',
+        title: 'Sucess',
+        color: 'green',
+      });
 
       await router.push(`/unit-type/detail/${response.id}`);
     } catch (err) {
-      notify('error', 'errors in creating unitType');
+      notifications.show({
+        message: 'errors in creating unitType',
+        title: 'Error',
+        color: 'red',
+      });
     }
   };
 
@@ -113,9 +122,17 @@ const UnitTypeDetailForm = (props: unitTypeDetailFormProps) => {
         id: id?.toString(),
         organizationId: '099454a9-bf8f-45f5-9a4f-6e9034230250',
       });
-      notify('success', 'unitType updating successfully');
+      notifications.show({
+        message: 'nitType updating successfully',
+        title: 'Sucess',
+        color: 'green',
+      });
     } catch (err) {
-      notify('error', 'unitType updating successfully');
+      notifications.show({
+        message: 'unitType updating successfully',
+        title: 'Error',
+        color: 'red',
+      });
     }
   };
   const submitDelete = async () => {

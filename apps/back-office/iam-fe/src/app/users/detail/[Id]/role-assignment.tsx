@@ -13,6 +13,7 @@ import { usePathname } from 'next/navigation';
 import { CollectionSelectorConfig } from '@/shared/collection-selector-config';
 import ModalCollectionSelector from '@/shared/collection-selector/components/modal-collection-selector';
 import { EmptyIcon, notify } from '@/shared/ui/page';
+import { notifications } from '@mantine/notifications';
 
 /* Component interface */
 type RoleAssignmentProps = {
@@ -72,9 +73,17 @@ const RoleAssignment = (props: RoleAssignmentProps) => {
     try {
       await assignEmployees({ data, id }).unwrap();
       setButtonDisabled(true);
-      notify('success', 'Role has been assigned to user successfully.');
+      notifications.show({
+        message: 'Role has been assigned to user successfully',
+        title: 'Sucess',
+        color: 'green',
+      });
     } catch (err) {
-      notify('error', 'Sorry, an error encountered while assigining role.');
+      notifications.show({
+        message: 'Sorry, an error encountered while assigining role',
+        title: 'Sucess',
+        color: 'red',
+      });
     }
   };
 

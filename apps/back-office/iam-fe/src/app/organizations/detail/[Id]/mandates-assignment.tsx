@@ -10,6 +10,7 @@ import {
   useLazyGetOrganiationMandateQuery,
 } from '@/store/api/organization/organization.api';
 import { useLazyGetMandateByOrganizationIdQuery } from '@/store/api/role/role.api';
+import { notifications } from '@mantine/notifications';
 /* Component interface */
 type MandateAssignmentProps = {
   MandateAssignmentModalOpened: boolean;
@@ -81,12 +82,17 @@ const MandateAssignment = (props: MandateAssignmentProps) => {
     try {
       await assignMandates({ dataSent, id }).unwrap();
       setButtonDisabled(true);
-      notify(
-        'success',
-        'Mandate has been assigned to organization successfully.',
-      );
+      notifications.show({
+        message: 'Mandate has been assigned to organization successfully.',
+        title: 'Sucess',
+        color: 'green',
+      });
     } catch (err) {
-      notify('error', 'Sorry, an error encountered while assigining mandate.');
+      notifications.show({
+        message: 'Sorry, an error encountered while assigining mandate.',
+        title: 'Error',
+        color: 'red',
+      });
     }
   };
 

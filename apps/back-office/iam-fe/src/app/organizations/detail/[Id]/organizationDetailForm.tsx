@@ -108,10 +108,18 @@ const OrganizationDetailForm = (props: OrganizationDetailFormProps) => {
     };
     try {
       const response = await createOrganization(DataSent).unwrap();
-      notify('success', 'organization created successfully');
+      notifications.show({
+        message: 'Organization creating successfully',
+        title: 'Success',
+        color: 'green',
+      });
       await router.push(`/organizations/detail/${response.id}`);
     } catch (err) {
-      notify('error', 'errors in creating organization');
+      notifications.show({
+        message: 'Error in creating organization',
+        title: 'Error',
+        color: 'red',
+      });
     }
   };
 
@@ -128,9 +136,17 @@ const OrganizationDetailForm = (props: OrganizationDetailFormProps) => {
 
     try {
       await updateOrganization({ ...DataSent, id: id?.toString() });
-      notify('success', 'organization updating successfully');
+      notifications.show({
+        message: 'organization updating successfully',
+        title: 'Success',
+        color: 'green',
+      });
     } catch (err) {
-      notify('error', 'errors in updating organization');
+      notifications.show({
+        message: 'errors in updating organization',
+        title: 'Error',
+        color: 'red',
+      });
     }
   };
 
@@ -143,9 +159,17 @@ const OrganizationDetailForm = (props: OrganizationDetailFormProps) => {
 
       try {
         await updateOrganization({ ...DataSent });
-        notify('success', 'organization updating successfully');
+        notifications.show({
+          message: 'organization updating successfully',
+          title: 'Sucess',
+          color: 'green',
+        });
       } catch (err) {
-        notify('error', 'errors in updating organization');
+        notifications.show({
+          message: 'errors in updating organization',
+          title: 'Error',
+          color: 'red',
+        });
       }
     }
   };
@@ -153,10 +177,18 @@ const OrganizationDetailForm = (props: OrganizationDetailFormProps) => {
   const submitDelete = async () => {
     try {
       await deleteOrganization(id?.toString()).unwrap();
-
+      notifications.show({
+        message: 'organization deleting successfully',
+        title: 'Sucess',
+        color: 'green',
+      });
       router.push('/organizations');
     } catch (err) {
-      notify('error', 'errors in deleting organization');
+      notifications.show({
+        message: 'errors in deleting organization',
+        title: 'Error',
+        color: 'red',
+      });
     }
     setDisplayConfirmationModal(false);
   };

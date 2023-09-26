@@ -20,7 +20,7 @@ import {
   useLazyGetUnitQuery,
 } from '@/store/api/unit/unit.api';
 import { useLazyGetUnitTypeQuery } from '@/store/api/unitType/unitType.api';
-import { notify } from '@/shared/ui/notification/utility/notify';
+import { notifications } from '@mantine/notifications';
 
 /* Form schema */
 
@@ -100,11 +100,19 @@ const UnitDetailForm = (props: UnitDetailFormProps) => {
         ...data,
         organizationId: '099454a9-bf8f-45f5-9a4f-6e9034230250',
       }).unwrap();
-      notify('success', 'unit created successfully');
+      notifications.show({
+        message: 'unit created successfully',
+        title: 'Sucess',
+        color: 'green',
+      });
 
       await router.push(`/units/detail/${response.id}`);
     } catch (err) {
-      notify('error', 'errors in creating unit');
+      notifications.show({
+        message: 'errors in creating unit',
+        title: 'Error',
+        color: 'red',
+      });
     }
   };
 
@@ -115,9 +123,17 @@ const UnitDetailForm = (props: UnitDetailFormProps) => {
         id: id?.toString(),
         organizationId: '099454a9-bf8f-45f5-9a4f-6e9034230250',
       });
-      notify('success', 'unit updating successfully');
+      notifications.show({
+        message: 'unit updating successfully',
+        title: 'Sucess',
+        color: 'green',
+      });
     } catch (err) {
-      notify('error', 'unit updating successfully');
+      notifications.show({
+        message: 'unit updating successfully',
+        title: 'Error',
+        color: 'red',
+      });
     }
   };
   const submitDelete = async () => {
@@ -179,9 +195,8 @@ const UnitDetailForm = (props: UnitDetailFormProps) => {
     });
     console.log(selected);
     setSelectedData(selected);
-  }, [id, unit.ParentId, unit?.parentId, units?.items]);
+  }, [id, unit?.parentId, units?.items]);
 
-  console.log(selectedData);
   return (
     <Card className="ml-2">
       <Card.Section className={Style.Section}></Card.Section>

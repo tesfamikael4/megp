@@ -1,9 +1,6 @@
-import { MultiLanguage } from '@jiret/translations';
 import { regions } from '../variables/regions';
 
-export const getRegionLabel: (key: string) => MultiLanguage | null = (
-  key: string,
-) => {
+export const getRegionLabel: (key: string) => any = (key: string) => {
   for (let i = 0; i < regions.length; i++) {
     if (regions[i]?.value === key) {
       return regions[i]?.label;

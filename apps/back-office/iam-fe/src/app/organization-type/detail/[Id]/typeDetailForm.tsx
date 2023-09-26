@@ -19,7 +19,7 @@ import {
   useLazyGetOrganizationTypeQuery,
   useDeleteOrganizationTypeMutation,
 } from '@/store/api/orgType/orgType.api';
-import { notify } from '@/shared/ui/notification/utility/notify';
+import { notifications } from '@mantine/notifications';
 
 /* Form schema */
 
@@ -91,11 +91,19 @@ const OrgTypeDetailForm = (props: OrgTypeDetailFormProps) => {
   const handleCreate = async (data: any) => {
     try {
       const response = await createorgType(data).unwrap();
-      notify('success', 'orgType created successfully');
+      notifications.show({
+        message: 'orgType created successfully.',
+        title: 'Sucess',
+        color: 'green',
+      });
 
       await router.push(`/organization-type/detail/${response.id}`);
     } catch (err) {
-      notify('error', 'errors in creating orgType');
+      notifications.show({
+        message: 'errors in creating orgType.',
+        title: 'Sucess',
+        color: 'green',
+      });
     }
   };
 
@@ -103,18 +111,34 @@ const OrgTypeDetailForm = (props: OrgTypeDetailFormProps) => {
     console.log({ ...data, id: id?.toString() });
     try {
       await updateorgType({ ...data, id: id?.toString() });
-      notify('success', 'orgType updating successfully');
+      notifications.show({
+        message: 'orgType updating successfully',
+        title: 'Sucess',
+        color: 'green',
+      });
     } catch (err) {
-      notify('error', 'orgType updating successfully');
+      notifications.show({
+        message: 'errors in creating orgType.',
+        title: 'Error',
+        color: 'red',
+      });
     }
   };
   const submitDelete = async () => {
     try {
       await deleteorgType(id?.toString()).unwrap();
-
+      notifications.show({
+        message: 'orgType deleting successfully',
+        title: 'Sucess',
+        color: 'green',
+      });
       router.push('/organization-type');
     } catch (err) {
-      console.log(err);
+      notifications.show({
+        message: 'errors in deleting orgType.',
+        title: 'Error',
+        color: 'red',
+      });
     }
     setDisplayConfirmationModal(false);
   };
