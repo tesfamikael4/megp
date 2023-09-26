@@ -16,8 +16,7 @@ import {
   useUpdateInvitedOaMutation,
   useAddInvitedOaMutation,
 } from '@/store/api/organization/organization.api';
-
-import { notify } from '@/shared/ui/notification/utility/notify';
+import { notifications } from '@mantine/notifications';
 
 /* Form schema */
 
@@ -70,19 +69,28 @@ const InviteOaDetailForm = (props: InvitationDetailFormProps) => {
   const handleCreate = async (data: any) => {
     try {
       const response = await createPersonnel(data).unwrap();
-      notify('success', 'Personnel created successfully');
+      // notify('success', 'Personnel created successfully');
+      notifications.show({
+        message: 'Personnel created successfully',
+        title: 'Sucess',
+        color: 'green',
+      });
       await router.push(`/personnel/detail/${response.id}`);
     } catch (err) {
-      notify('error', 'errors in creating personnel');
+      notifications.show({
+        message: 'Error in  createing user',
+        title: 'Error',
+        color: 'red',
+      });
     }
   };
 
   const handleUpdate = async (data: any) => {
     try {
       await updatePersonnel({ ...data, id: id?.toString() });
-      notify('success', 'Personnel updating successfully');
+      // notify('success', 'Personnel updating successfully');
     } catch (err) {
-      notify('error', 'errors in updating personnel');
+      // notify('error', 'errors in updating personnel');
     }
   };
 

@@ -16,7 +16,7 @@ import {
   IconSearch,
 } from '@tabler/icons-react';
 import { EmptyIcon } from '../../ui/emtpy-icon/empty-icon';
-import { Pagination } from '@/shared/ui/page';
+import { Pagination } from '../../ui/pagination/pagination';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -46,6 +46,7 @@ interface EntityListProps {
   showExportButton?: boolean;
   showSearchButton?: boolean;
   titleColumnHasLocal?: boolean;
+  tree?: boolean;
 }
 
 export function EntityList(props: EntityListProps) {

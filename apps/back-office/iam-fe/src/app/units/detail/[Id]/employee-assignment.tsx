@@ -14,7 +14,8 @@ import {
 import { usePathname } from 'next/navigation';
 import { CollectionSelectorConfig } from '@/shared/collection-selector-config';
 import ModalCollectionSelector from '@/shared/collection-selector/components/modal-collection-selector';
-import { EmptyIcon, notify } from '@/shared/ui/page';
+import { EmptyIcon } from '@/shared/ui/page';
+import { notifications } from '@mantine/notifications';
 
 /* Component interface */
 type EmployeeAssignmentProps = {
@@ -76,9 +77,17 @@ const EmployeeAssignment = (props: EmployeeAssignmentProps) => {
     try {
       await assignEmployees({ data, id }).unwrap();
       setButtonDisabled(true);
-      notify('success', 'Unit has been assigned to employees successfully.');
+      notifications.show({
+        message: 'Assigned successfully',
+        title: 'Success',
+        color: 'green',
+      });
     } catch (err) {
-      notify('error', 'Sorry, an error encountered while assigining employee.');
+      notifications.show({
+        message: 'Sorry, an error encountered while assigning employee',
+        title: 'Error',
+        color: 'red',
+      });
     }
   };
 

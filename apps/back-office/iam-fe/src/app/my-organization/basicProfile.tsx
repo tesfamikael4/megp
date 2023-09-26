@@ -19,7 +19,6 @@ import {
   useDeleteOrganizationMutation,
 } from '@/store/api/organization/organization.api';
 
-import { notify } from '@/shared/ui/notification/utility/notify';
 import { useLazyGetOrganizationTypeQuery } from '@/store/api/lookUps/lookups.api';
 import { useLazyGetOrganizationSectorsQuery } from '@/store/api/orgSector/orgSector.api';
 
