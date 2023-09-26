@@ -20,7 +20,7 @@ import {
   useLazyGetUnitQuery,
 } from '@/store/api/unit/unit.api';
 import { useLazyGetUnitTypeQuery } from '@/store/api/unitType/unitType.api';
-import { notify } from '@/shared/ui/page';
+import { notify } from '@/shared/ui/notification/utility/notify';
 
 /* Form schema */
 
@@ -179,7 +179,7 @@ const UnitDetailForm = (props: UnitDetailFormProps) => {
     });
     console.log(selected);
     setSelectedData(selected);
-  }, [id, unit?.ParentId, units?.items]);
+  }, [id, unit.ParentId, unit?.parentId, units?.items]);
 
   console.log(selectedData);
   return (

@@ -19,7 +19,7 @@ import {
   useLazyGetOrganizationTypeQuery,
   useDeleteOrganizationTypeMutation,
 } from '@/store/api/orgType/orgType.api';
-import { notify } from '@/shared/ui/page';
+import { notify } from '@/shared/ui/notification/utility/notify';
 
 /* Form schema */
 

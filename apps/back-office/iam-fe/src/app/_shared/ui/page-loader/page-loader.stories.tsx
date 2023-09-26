@@ -16,7 +16,7 @@ const Template: ComponentStory<typeof PageLoader> = (args: any) => (
         {' '}
         <span className="font-bold">#Have 5 property props</span>
       </Text>
-      <List type={'order'} size={'sm'}>
+      <List type={'ordered'} size={'sm'}>
         <List.Item>
           <span className="font-bold">size:</span> the size of the page loading
           it can be xs|sm|md|lg|xl

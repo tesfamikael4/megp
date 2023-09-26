@@ -18,7 +18,7 @@ export const organizationSectorApi = createApi({
         params: collectionQueryBuilder(items.items),
       }),
 
-      providesTags: ['organizationSector'],
+      providesTags: ['organizationSectors'],
     }),
     getOrganizationSectorById: builder.query<any, string>({
       query: (id) => ({

@@ -18,7 +18,7 @@ import {
 import { useLazyGetOrganizationTypeQuery } from '@/store/api/lookUps/lookups.api';
 import { useLazyGetOrganizationSectorsQuery } from '@/store/api/orgSector/orgSector.api';
 
-import { notify } from '@/shared/ui/page';
+import { notify } from '@/shared/ui/notification/utility/notify';
 
 /* Form schema */
 
@@ -98,12 +98,13 @@ const OrganizationDetailForm = (props: OrganizationDetailFormProps) => {
   const handleCreate = async (data: any) => {
     const DataSent = {
       name: data.name,
-      type: data.type,
       sector: data.sector,
       shortName: data.shortName,
       description: data.description,
       typeId: data?.typeId,
       sectorId: data?.sectorId,
+      type: 'Vendor',
+      budgetType: 'default',
     };
     try {
       const response = await createOrganization(DataSent).unwrap();
@@ -121,6 +122,8 @@ const OrganizationDetailForm = (props: OrganizationDetailFormProps) => {
       description: data.description,
       typeId: data?.typeId,
       sectorId: data?.sectorId,
+      type: '',
+      budgetType: '',
     };
 
     try {

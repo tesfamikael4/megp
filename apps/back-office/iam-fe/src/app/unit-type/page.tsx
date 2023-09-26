@@ -4,7 +4,7 @@ import { EntityListConfiguration } from '@/shared/entity-list/model/entity-list-
 import { useEffect, useRef, useState } from 'react';
 
 import { useLazyGetUnitTypeQuery } from '@/store/api/unitType/unitType.api';
-import { CollectionQuery } from '../application/core/models';
+import { CollectionQuery } from '@/shared/core/models';
 
 const OrgTypeNew = () => {
   const config: EntityListConfiguration = {

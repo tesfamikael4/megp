@@ -54,14 +54,14 @@ const NewUser = () => {
         {
           fieldName: 'status',
           field: 'isActive',
-          value: 'Yes',
+          value: true,
           operator: '=',
           name: 'Active',
         },
         {
           fieldName: 'status',
           field: 'isActive',
-          value: 'No',
+          value: false,
           operator: '=',
           name: 'Inactive',
         },
