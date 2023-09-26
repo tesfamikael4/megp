@@ -1,5 +1,5 @@
 'use client';
-import Organizations from '../detail/[Id]/organizations';
+
 import '../../globals.css';
 export default function Template({ children }: { children: React.ReactNode }) {
   return (

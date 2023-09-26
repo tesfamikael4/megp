@@ -6,6 +6,7 @@ import { CustomCategoryEntity } from './custom-category.entity';
 import { BusinessCategoryEntity } from './business-category.entity';
 import { BeneficialOwnership } from './beneficial-ownership.entity';
 import { WorkflowInstanceEntity } from 'src/bpm/workflow-instances/entities/workflow-instance';
+import { AreasOfBusinessInterestEntity } from './areas-of-business-interest.entity';
 @Entity({ name: 'vendors' })
 export class VendorsEntity extends CommonEntity {
   @PrimaryGeneratedColumn('uuid')
@@ -56,4 +57,9 @@ export class VendorsEntity extends CommonEntity {
     cascade: true,
   })
   instances: WorkflowInstanceEntity[];
+
+  @OneToMany(() => AreasOfBusinessInterestEntity, (b) => b.vendor, {
+    cascade: true,
+  })
+  areasOfBusinessInterest: AreasOfBusinessInterestEntity[];
 }

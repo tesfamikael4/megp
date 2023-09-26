@@ -16,7 +16,7 @@ import {
   IconSearch,
 } from '@tabler/icons-react';
 import { EmptyIcon } from '../../ui/emtpy-icon/empty-icon';
-
+import { Pagination } from '../../ui/pagination/pagination';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -25,7 +25,6 @@ import { EntityListConfiguration } from '../model/entity-list-config';
 import { selectFullScreen } from '../store/entity-list.slice';
 import Ellipsis from './ellipsis';
 import Header from './header';
-import { Pagination } from '@/shared/ui/page';
 
 interface EntityListProps {
   config: EntityListConfiguration;

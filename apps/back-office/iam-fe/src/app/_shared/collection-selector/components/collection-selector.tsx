@@ -1,6 +1,6 @@
 import { Card, Checkbox, Input, Table } from '@mantine/core';
 import { IconSearch } from '@tabler/icons-react';
-import { Pagination } from '@/shared/ui/page';
+import { Pagination } from '../../ui/pagination/pagination';
 import { useEffect, useState } from 'react';
 import { CollectionSelectorConfig } from '../model/collection-selector-config';
 

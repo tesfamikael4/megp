@@ -4,7 +4,7 @@ import OrganizationAdressForm from './organizationAdress';
 import { Accordion, Button } from '@mantine/core';
 import ExtendedProfile from './extendedProfile';
 import BasicProfile from './basicProfile';
-import UnitTypeForm from './unit-type';
+
 import { useState } from 'react';
 import { IconCirclePlus } from '@tabler/icons-react';
 
@@ -41,34 +41,6 @@ const DetailOrganization = () => {
           <ExtendedProfile />
         </CollapsibleCard>
       </div>
-      {/* <div className="mt-4">
-        <CollapsibleCard
-          title={'Unit Type'}
-          subTitle="Define Unit Type"
-          customAction={
-            <Button
-              type="button"
-              size="xs"
-              className="bg-primary "
-              onClick={() => {
-                setAttachmentModalOpened(true);
-              }}
-            >
-              <IconCirclePlus size={18} />
-              Add
-            </Button>
-          }
-        >
-          <UnitTypeForm
-            status="update"
-            attachmentModalOpened={attachmentModalOpened}
-            setAttachmentModalOpened={(event: boolean) =>
-              setAttachmentModalOpened(event)
-            }
-            unitstatus={'update'}
-          />
-        </CollapsibleCard>
-      </div> */}
     </>
   );
 };

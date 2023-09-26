@@ -99,6 +99,20 @@ export const roleApi = createApi({
         method: 'GET',
       }),
     }),
+
+    getMandateByOrganizationId: builder.query<any, string>({
+      query: (id) => ({
+        url: `mandates/get-all-to-assign/${id}`,
+        method: 'GET',
+      }),
+    }),
+
+    getPermissionByOrganizationId: builder.query<any, string>({
+      query: (id) => ({
+        url: `permissions/get-all-under-organization/${id}`,
+        method: 'GET',
+      }),
+    }),
   }),
 });
 
@@ -106,6 +120,8 @@ export const {
   useAssignRoleToMandatePermissionsMutation,
   useLazyGetRolePermissionsQuery,
   useLazyGetAllPermissionsQuery,
+  useLazyGetPermissionByOrganizationIdQuery,
+  useLazyGetMandateByOrganizationIdQuery,
 
   useLazyGetMandateQuery,
   useGetMandateQuery,

@@ -40,9 +40,11 @@ import { BeneficialOwnershipService } from './services/beneficialOwnership.servi
 import { BeneficialOwnership } from './entities/beneficial-ownership.entity';
 import { WorkflowInstanceEntity } from 'src/bpm/workflow-instances/entities/workflow-instance';
 import { File } from './services/file.service';
-import { MulterModule } from '@nestjs/platform-express';
-import { BpServiceService } from 'src/bpm/services/service.service';
 import { BpServiceEntity } from 'src/bpm/services/entities/bp-service';
+import { BusinessProcessEntity } from 'src/bpm/business-process/entities/business-process';
+import { AreasOfBusinessInterestController } from './controllers/areas-of-business-interest.controller';
+import { AreasOfBusinessInterestService } from './services/areas-of-business-interest.service';
+import { AreasOfBusinessInterestEntity } from './entities/areas-of-business-interest.entity';
 
 @Module({
   imports: [
@@ -65,6 +67,8 @@ import { BpServiceEntity } from 'src/bpm/services/entities/bp-service';
       NCICEntity,
       WorkflowInstanceEntity,
       BpServiceEntity,
+      BusinessProcessEntity,
+      AreasOfBusinessInterestEntity,
     ]),
   ],
   providers: [
@@ -78,6 +82,7 @@ import { BpServiceEntity } from 'src/bpm/services/entities/bp-service';
     NCICService,
     File,
     BeneficialOwnershipService,
+    AreasOfBusinessInterestService,
   ],
   controllers: [
     VendorRegistrationsController,
@@ -90,6 +95,7 @@ import { BpServiceEntity } from 'src/bpm/services/entities/bp-service';
     NCICController,
     FileController,
     BeneficialOwnershipController,
+    AreasOfBusinessInterestController,
   ],
 })
 export class VendorRegistrationModule {}

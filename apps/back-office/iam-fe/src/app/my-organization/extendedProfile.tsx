@@ -20,7 +20,7 @@ import {
   useDeleteOrganizationMutation,
 } from '@/store/api/organization/organization.api';
 
-import { notify } from '@/shared/ui/page';
+import { notify } from '@/shared/ui/notification/utility/notify';
 import router from 'next/router';
 
 /* Form schema */

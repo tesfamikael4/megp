@@ -4,7 +4,7 @@ import { EntityListConfiguration } from '@/shared/entity-list/model/entity-list-
 import { CollectionQuery } from '@/shared/core/models/collection.model';
 import { useEffect, useRef, useState } from 'react';
 
-import { useLazyGetOrganiationMandateQuery } from '@/store/api/organization/organization.api';
+import { useLazyGetMyOrgMandateQuery } from '@/store/api/organization/organization.api';
 const OrganizationList = () => {
   const config: EntityListConfiguration = {
     title: 'My Mandates',
@@ -30,7 +30,7 @@ const OrganizationList = () => {
   const [
     trigger,
     { data: mandate, isLoading: ismandateLoading, isSuccess: ismandateFetched },
-  ] = useLazyGetOrganiationMandateQuery();
+  ] = useLazyGetMyOrgMandateQuery();
 
   const orderBy = (data) => {
     setCollectionQuery({ ...collectionQuery, orderBy: [data] });

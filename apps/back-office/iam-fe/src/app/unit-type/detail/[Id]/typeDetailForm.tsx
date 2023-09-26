@@ -19,7 +19,7 @@ import {
   useDeleteUnitTypeMutation,
 } from '@/store/api/unitType/unitType.api';
 import { useLazyGetUnitTypeQuery } from '@/store/api/unitType/unitType.api';
-import { notify } from '@/shared/ui/page';
+import { notify } from '@/shared/ui/notification/utility/notify';
 
 /* Form schema */
 
@@ -108,7 +108,11 @@ const UnitTypeDetailForm = (props: unitTypeDetailFormProps) => {
   const handleUpdate = async (data: any) => {
     console.log({ ...data, id: id?.toString() });
     try {
-      await updateunitType({ ...data, id: id?.toString() });
+      await updateunitType({
+        ...data,
+        id: id?.toString(),
+        organizationId: '099454a9-bf8f-45f5-9a4f-6e9034230250',
+      });
       notify('success', 'unitType updating successfully');
     } catch (err) {
       notify('error', 'unitType updating successfully');
@@ -198,10 +202,15 @@ const UnitTypeDetailForm = (props: unitTypeDetailFormProps) => {
           />
         </div>
 
-        <Divider className="mt-4" />
+        <Divider className="mt-4 " />
 
         {props.mode == 'new' && (
-          <Button type="submit" className={Style.button} size="xs">
+          <Button
+            type="submit"
+            className={Style.buttonprimary}
+            size="xs"
+            loading={isCreating}
+          >
             <Icon.IconDeviceFloppy size={18} />
             Save
           </Button>
@@ -214,6 +223,7 @@ const UnitTypeDetailForm = (props: unitTypeDetailFormProps) => {
                 type="submit"
                 className={Style.buttonprimary}
                 size="xs"
+                loading={isUpdating}
                 leftIcon={
                   <Icon.IconDeviceFloppy
                     size={18}
@@ -231,6 +241,7 @@ const UnitTypeDetailForm = (props: unitTypeDetailFormProps) => {
                 component="button"
                 onClick={showDeleteModal}
                 size="xs"
+                loading={isDeleting}
               >
                 <Icon.IconTrash size="18" className="mr-1" />
                 Delete
