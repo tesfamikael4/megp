@@ -20,7 +20,6 @@ import {
   useDeleteOrganizationMutation,
 } from '@/store/api/organization/organization.api';
 
-import { notify } from '@/shared/ui/notification/utility/notify';
 import router from 'next/router';
 
 /* Form schema */
@@ -99,10 +98,19 @@ const ExtendedProfile = () => {
     };
     try {
       const response = await createOrganization(DataSent).unwrap();
-      notify('success', 'organization created successfully');
+      notifications.show({
+        message: 'organization created successfully.',
+        title: 'Sucess',
+        color: 'gree',
+      });
+
       await router.push(`/organization/detail/${response.id}`);
     } catch (err) {
-      notify('error', 'errors in creating organization');
+      notifications.show({
+        message: 'errors in creating organizatio.',
+        title: 'Sucess',
+        color: 'gree',
+      });
     }
   };
 
@@ -110,18 +118,34 @@ const ExtendedProfile = () => {
     console.log({ ...data, id: id?.toString() });
     try {
       await updateOrganization({ ...data, id: id?.toString() });
-      notify('success', 'organization updating successfully');
+      notifications.show({
+        message: 'organization updating successfully.',
+        title: 'Success',
+        color: 'green',
+      });
     } catch (err) {
-      notify('error', 'errors in updating organization');
+      notifications.show({
+        message: 'organization deleting successfully',
+        title: 'Error',
+        color: 'red',
+      });
     }
   };
   const submitDelete = async () => {
     try {
       await deleteOrganization(id?.toString()).unwrap();
-
+      notifications.show({
+        message: 'success in deleting organization',
+        title: 'Error',
+        color: 'red',
+      });
       router.push('/organization');
     } catch (err) {
-      console.log(err);
+      notifications.show({
+        message: 'errors in deleting organization',
+        title: 'Error',
+        color: 'red',
+      });
     }
     setDisplayConfirmationModal(false);
   };

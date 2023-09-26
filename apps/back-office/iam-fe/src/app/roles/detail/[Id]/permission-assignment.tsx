@@ -4,7 +4,7 @@ import {
   IconDeviceFloppy,
   IconTrash,
 } from '@tabler/icons-react';
-import { notify } from '@/shared/ui/page';
+
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import {
@@ -18,6 +18,7 @@ import { CollectionSelectorConfig } from '@/shared/collection-selector-config';
 import { CollectionQuery } from '@/shared/core/models';
 import ModalCollectionSelector from '@/shared/collection-selector/components/modal-collection-selector';
 import EmptyState from '@/shared/ui/empty';
+import { notifications } from '@mantine/notifications';
 
 /* Component interface */
 type PermissionAssignmentProps = {
@@ -152,13 +153,17 @@ const PermissionAssignment = (props: PermissionAssignmentProps) => {
         data,
         idParse,
       }).unwrap();
-
-      notify('success', 'Permissions have been assigned to role successfully.');
+      notifications.show({
+        message: 'Permissions have been assigned to role successfully',
+        title: 'Success',
+        color: 'green',
+      });
     } catch (err) {
-      notify(
-        'error',
-        'Sorry, an error encountered while assigning permissions.',
-      );
+      notifications.show({
+        message: 'Sorry, an error encountered while assigning permissions',
+        title: 'Error',
+        color: 'red',
+      });
     }
   };
 

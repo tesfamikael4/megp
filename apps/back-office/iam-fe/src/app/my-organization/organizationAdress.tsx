@@ -19,8 +19,6 @@ import {
   useLazyGetOrganizationByIdQuery,
 } from '@/store/api/organization/organization.api';
 
-import { notify } from '@/shared/ui/notification/utility/notify';
-
 /* Form schema */
 
 type OrganizationAdress = {
@@ -153,12 +151,20 @@ const OrganizationAdressForm = () => {
       },
       id: '099454a9-bf8f-45f5-9a4f-6e9034230250',
     };
-    console.log(dataSent);
+
     try {
       await setOrganizationAdress(dataSent);
-      notify('success', 'organization updating successfully');
+      notifications.show({
+        message: 'organization updating successfully.',
+        title: 'Success',
+        color: 'green',
+      });
     } catch (err) {
-      notify('error', 'errors in updating organization');
+      notifications.show({
+        message: 'errors in updating organization.',
+        title: 'Success',
+        color: 'green',
+      });
     }
   };
 

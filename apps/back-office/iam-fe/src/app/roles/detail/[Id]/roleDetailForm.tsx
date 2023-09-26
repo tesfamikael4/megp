@@ -22,8 +22,6 @@ import {
   useDeleteroleMutation,
 } from '@/store/api/role/role.api';
 
-import { notify } from '@/shared/ui/notification/utility/notify';
-
 /* Form schema */
 
 type Role = {
@@ -99,10 +97,19 @@ const RoleDetailForm = (props: RoleDetailFormProps) => {
 
     try {
       const response = await createRole(dataSent).unwrap();
-      notify('success', 'role created successfully');
+
+      notifications.show({
+        message: 'role created successfully',
+        title: 'Sucess',
+        color: 'green',
+      });
       await router.push(`/roles/detail/${response.id}`);
     } catch (err) {
-      notify('error', 'errors in creating role');
+      notifications.show({
+        message: 'errors in creating role',
+        title: 'Error',
+        color: 'red',
+      });
     }
   };
 
@@ -114,19 +121,37 @@ const RoleDetailForm = (props: RoleDetailFormProps) => {
         isSystemRole: false,
         organizationId: '099454a9-bf8f-45f5-9a4f-6e9034230250',
       });
-      notify('success', 'role updating successfully');
+      notifications.show({
+        message: 'role updating successfully',
+        title: 'Sucess',
+        color: 'green',
+      });
     } catch (err) {
-      notify('error', 'errors in updating role');
+      notifications.show({
+        message: 'rerrors in updating role',
+        title: 'Error',
+        color: 'red',
+      });
     }
   };
   const submitDelete = async () => {
     try {
       await deleteRole(id?.toString()).unwrap();
-      notify('success', 'role Deleting successfully');
+      notifications.show({
+        message: 'role Deleting successfully',
+        title: 'Sucess',
+        color: 'green',
+      });
+
       router.push('/roles');
     } catch (err) {
-      notify('success', 'errors in  deleting  role');
+      notifications.show({
+        message: 'errors in  deleting  role',
+        title: 'Error',
+        color: 'red',
+      });
     }
+
     setDisplayConfirmationModal(false);
   };
 

@@ -5,7 +5,6 @@ import React, { useState } from 'react';
 import EmployeeAssignment from './employee-assignment';
 import { Button } from '@mantine/core';
 import { IconCirclePlus } from '@tabler/icons-react';
-import TreeViewDetail from './unitTree';
 
 const DetailUnit = () => {
   const [employeeAssignmentModalOpened, setEmployeeAssignmentModalOpened] =
@@ -25,8 +24,8 @@ const DetailUnit = () => {
       <div className="mt-4">
         <CollapsibleCard
           className="my-4"
-          title={'Employees Assignment'}
-          subTitle="List of employees in this unit"
+          title={'User Assignment'}
+          subTitle="List of User in this unit"
           customAction={
             <>
               {
@@ -51,15 +50,6 @@ const DetailUnit = () => {
               setEmployeeAssignmentModalOpened(visibility)
             }
           />
-        </CollapsibleCard>
-      </div>
-      <div>
-        <CollapsibleCard
-          title={'Unit Detail'}
-          subTitle="View Unit tree"
-          dropped={true}
-        >
-          <TreeViewDetail />
         </CollapsibleCard>
       </div>
     </>
