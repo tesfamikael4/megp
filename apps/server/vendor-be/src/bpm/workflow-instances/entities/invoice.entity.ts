@@ -28,7 +28,6 @@ export class InvoiceEntity {
   amount: number;
   @Column()
   createdOn: Date;
-  //Paid| Pending
   @Column({ name: 'payment_status' })
   paymentStatus: string;
   @Column({ name: 'remark' })
