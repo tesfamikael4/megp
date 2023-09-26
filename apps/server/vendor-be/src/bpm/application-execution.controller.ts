@@ -34,9 +34,17 @@ export class ApplicationExcutionController {
   ) {
     return await this.executeRepository.getCurruntTaskByService(serviceKey);
   }
+  @Get('get-currunt-taskDetail/:instanceId')
+  @ApiOkResponse({ type: WorkflowInstanceResponse })
+  async fetchCurruntTaskDetail(
+    @Param('instanceId') instanceId: string,
+    @Query() query: CollectionQuery,
+  ) {
+    return await this.executeRepository.getCurruntTaskDetail(instanceId);
+  }
 
   @Get('generate-invoice/:instanceId')
-  @ApiPaginatedResponse(WorkflowInstanceResponse)
+  @ApiOkResponse({ type: InvoiceResponseDto })
   async generateInvoice(
     @Param('instanceId') instanceId: string,
     @Query() query: CollectionQuery,

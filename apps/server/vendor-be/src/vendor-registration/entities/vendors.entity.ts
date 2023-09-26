@@ -53,9 +53,7 @@ export class VendorsEntity extends CommonEntity {
     cascade: true,
   })
   beneficialOwnership: BeneficialOwnership[];
-  @OneToMany(() => WorkflowInstanceEntity, (wf) => wf.vendor, {
-    cascade: true,
-  })
+  @OneToMany(() => WorkflowInstanceEntity, (wf) => wf.vendor)
   instances: WorkflowInstanceEntity[];
 
   @OneToMany(() => AreasOfBusinessInterestEntity, (b) => b.vendor, {

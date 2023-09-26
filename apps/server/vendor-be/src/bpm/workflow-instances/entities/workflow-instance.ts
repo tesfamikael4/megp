@@ -62,13 +62,10 @@ export class WorkflowInstanceEntity extends CommonEntity {
   @JoinColumn({ name: 'pricing_id' })
   price: ServicePriceEntity;
 
-  @ManyToOne(() => VendorsEntity, (v) => v.instances, {
-    orphanedRowAction: 'delete',
-    onUpdate: 'CASCADE',
-    onDelete: 'CASCADE',
-  })
+  @ManyToOne(() => VendorsEntity, (v) => v.instances)
   @JoinColumn({ name: 'requestor_id' })
   vendor: VendorsEntity;
+
   addTracker(taskTracker: TaskTrackerEntity) {
     if (!this.taskTrackers) {
       this.taskTrackers = [];

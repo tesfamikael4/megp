@@ -9,9 +9,6 @@ import {
   ServicePriceResponseDto,
   UpdateServicePriceDto,
 } from './dto/service-price.dto';
-import { ServicesEntity } from './entities/services.entity';
-import { ServicesResponseDto } from './dto/services.dto';
-
 @Injectable()
 export class ServicePricingService {
   constructor(

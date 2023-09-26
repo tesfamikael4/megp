@@ -7,8 +7,6 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { ApplicationEntity } from './application.entity';
-import { ServicesEntity } from './services.entity';
 import { WorkflowInstanceEntity } from 'src/bpm/workflow-instances/entities/workflow-instance';
 import { BpServiceEntity } from 'src/bpm/services/entities/bp-service';
 @Entity({ name: 'servicePricing' })
@@ -29,7 +27,6 @@ export class ServicePriceEntity extends CommonEntity {
   currency: string;
   @OneToMany(() => WorkflowInstanceEntity, (app) => app.price)
   workflowInstances: WorkflowInstanceEntity[];
-
   @ManyToOne(() => BpServiceEntity, (s) => s.prices)
   @JoinColumn({ name: 'serviceId' })
   service: BpServiceEntity;

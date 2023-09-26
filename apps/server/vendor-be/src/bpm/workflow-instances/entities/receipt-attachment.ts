@@ -1,11 +1,11 @@
 import {
   Column,
   Entity,
+  JoinColumn,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { ApplicationEntity } from '../../../vendor-registration/entities/application.entity';
 import { ServicePriceEntity } from '../../../vendor-registration/entities/service-price.entity';
 import { InvoiceEntity } from './invoice.entity';
 @Entity({ name: 'receiptAttachments' })
@@ -22,9 +22,9 @@ export class PaymentReceiptEntity {
   filePath: string;
   @Column()
   fileType: string;
-
-  @OneToOne(() => InvoiceEntity)
-  invoice: InvoiceEntity;
+  // @OneToOne(() => InvoiceEntity)
+  // @JoinColumn()
+  // invoice: InvoiceEntity;
 
   @OneToMany(() => ServicePriceEntity, (prc) => prc.service)
   priceSettings: ServicePriceEntity[];

@@ -49,6 +49,7 @@ export class InvoiceResponseDto {
     response.serviceName = entity.serviceName;
     response.paymentStatus = entity.paymentStatus;
     response.remark = entity.remark;
+
     return response;
   }
 }

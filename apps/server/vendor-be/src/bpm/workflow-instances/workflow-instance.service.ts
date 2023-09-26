@@ -83,6 +83,7 @@ export class WorkflowInstanceService {
     const price = await this.dataSource
       .getRepository(ServicePriceEntity)
       .findOne({ where: { id: dto.pricingId } });
+
     const service = await this.dataSource
       .getRepository(BpServiceEntity)
       .createQueryBuilder('services')
@@ -90,6 +91,7 @@ export class WorkflowInstanceService {
       .where('services.id=:id', { id: price.serviceId })
       .andWhere('businessProcesses.isActive=:isActive', { isActive: true })
       .getOne();
+
     const bp = service.businessProcesses.find((a) => a.isActive === true);
     workflowInstanceEntity.bpId = bp.id;
     workflowInstanceEntity.applicationNumber = Date.now().toString();
@@ -216,6 +218,7 @@ export class WorkflowInstanceService {
     const result = await this.workflowInstanceRepository.save(workflowInstance);
     return WorkflowInstanceResponse.toResponse(result);
   }
+
   async handleEvent(stateMetadata: StateMetaData, command: GotoNextStateDto) {
     const eventType = command.action ? command.action : 'SUBMIT';
     console.log('eventType', eventType);
@@ -231,7 +234,7 @@ export class WorkflowInstanceService {
         break;
       case TaskTypes.INVOICE:
         const taskId = '';
-        //  this.appService.generateInvoice(taskId, command.instanceId);
+        this.appService.generateInvoice(taskId, command.instanceId);
         break;
       case TaskTypes.CERTIFICATION:
         console.log(TaskTypes.CERTIFICATION, command);
