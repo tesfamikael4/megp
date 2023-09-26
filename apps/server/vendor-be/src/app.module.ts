@@ -2,10 +2,10 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from './shared/typeorm/typeorm.service';
-import { AuthenticationModule } from './authentication';
 import { CategoriesModule } from './categories/category.module';
 import { VendorRegistrationModule } from './vendor-registration/vendor-registration.module';
 import { BpmModule } from './bpm/bpm.module';
+import { AuthorizationModule } from './authorization';
 
 @Module({
   imports: [
@@ -14,7 +14,7 @@ import { BpmModule } from './bpm/bpm.module';
       isGlobal: true,
     }),
     TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-    AuthenticationModule,
+    AuthorizationModule,
     CategoriesModule,
     VendorRegistrationModule,
     BpmModule,
