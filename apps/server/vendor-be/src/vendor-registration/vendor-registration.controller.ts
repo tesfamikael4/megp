@@ -17,7 +17,6 @@ import { CollectionQuery } from '@collection-query';
 import { VendorRegistrationsService } from './vendor-registration.service';
 import { InsertAllDataDto } from './dto/save-all.dto';
 import { SetVendorStatus } from './dto/vendor.dto';
-
 //@ApiBearerAuth()
 @Controller('VendorRegistrations')
 @ApiTags('Vendor-registrations')

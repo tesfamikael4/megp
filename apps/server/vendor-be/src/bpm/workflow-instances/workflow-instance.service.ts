@@ -175,6 +175,7 @@ export class WorkflowInstanceService {
             businessProcessId: workflowInstance.bpId,
           },
         });
+        console.log('tas---k', task);
         stateMetaData['type'] = task.taskType;
 
         this.handleEvent(stateMetaData, nextCommand)
@@ -230,7 +231,7 @@ export class WorkflowInstanceService {
         break;
       case TaskTypes.INVOICE:
         const taskId = '';
-        this.appService.generateInvoice(taskId, command.instanceId);
+        //  this.appService.generateInvoice(taskId, command.instanceId);
         break;
       case TaskTypes.CERTIFICATION:
         console.log(TaskTypes.CERTIFICATION, command);
