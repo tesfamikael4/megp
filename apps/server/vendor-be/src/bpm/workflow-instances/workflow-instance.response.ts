@@ -5,6 +5,7 @@ import { TaskHandlerResponse } from './task-handler.response';
 import { TaskTrackerResponse } from './task-tracker.response';
 import { BpServiceResponse } from '../services/bp-service.response';
 import { VendorsResponseDto } from 'src/vendor-registration/dto/vendor.dto';
+import { TaskResponse } from '../tasks/task.response';
 
 export class WorkflowInstanceResponse {
   @ApiProperty()
@@ -35,6 +36,7 @@ export class WorkflowInstanceResponse {
   taskTrackers?: TaskTrackerResponse[];
   service: BpServiceResponse;
   vendor: VendorsResponseDto;
+  task: TaskResponse;
   static toResponse(entity: WorkflowInstanceEntity) {
     const response = new WorkflowInstanceResponse();
     response.id = entity.id;
@@ -55,7 +57,10 @@ export class WorkflowInstanceResponse {
 
     if (entity?.taskHandler) {
       response.taskHandler = TaskHandlerResponse.toResponse(entity.taskHandler);
+      response.task = response.taskHandler?.task;
+      response.taskHandler.task = null;
     }
+
     if (entity?.vendor) {
       response.vendor = VendorsResponseDto.fromEntity(entity.vendor);
     }
