@@ -9,7 +9,7 @@ import {
   TextInput,
 } from '@mantine/core';
 import { IconDeviceFloppy, IconTrash } from '@tabler/icons-react';
-import { z } from 'zod';
+import { z, ZodType } from 'zod';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -28,7 +28,16 @@ type PricingDetailFormProps = {
   mode: 'new' | 'update';
 };
 
-const ServiceFeeSchema = z.object({
+type ServiceFeeType = {
+  serviceId: string;
+  businessArea: string;
+  valueFrom: string;
+  valueTo: string;
+  fee: string;
+  currency: string;
+};
+
+const ServiceFeeSchema: ZodType<ServiceFeeType> = z.object({
   serviceId: z.string({
     required_error: 'Service is required',
   }),
@@ -49,7 +58,7 @@ const ServiceFeeSchema = z.object({
   }),
 });
 
-type ServiceFeeType = z.infer<typeof ServiceFeeSchema>;
+// type ServiceFeeType = z.infer<typeof ServiceFeeSchema>;
 
 export const PricingDetailForm = (props: PricingDetailFormProps) => {
   const { id } = useParams();
@@ -58,7 +67,7 @@ export const PricingDetailForm = (props: PricingDetailFormProps) => {
     data: service,
     isLoading: isServiceLoading,
     isSuccess: isServiceFeached,
-  } = useGetServicesQuery();
+  } = useGetServicesQuery({});
   const [addPrice, { isLoading: isAdding }] = useAddPricesMutation();
   const [updatePrice, { isLoading: isUpdating }] = useUpdatePriceMutation();
   const [deletePrice, { isLoading: isDeleting }] = useDeletePricesMutation();
