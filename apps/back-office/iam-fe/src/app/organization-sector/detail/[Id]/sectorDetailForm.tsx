@@ -19,7 +19,7 @@ import {
   useLazyGetOrganizationSectorsQuery,
   useDeleteOrganizationSectorMutation,
 } from '@/store/api/orgSector/orgSector.api';
-import { notify } from '@/shared/ui/page';
+import { notify } from '@/shared/ui/notification/utility/notify';
 
 /* Form schema */
 
@@ -200,7 +200,7 @@ const OrgSectorDetailForm = (props: OrgSectorDetailFormProps) => {
         <Divider className="mt-4" />
 
         {props.mode == 'new' && (
-          <Button type="submit" className="mt-4" size="xs">
+          <Button type="submit" className="mt-4" size="xs" loading={isCreating}>
             <Icon.IconDeviceFloppy size={18} />
             Save
           </Button>
@@ -213,6 +213,7 @@ const OrgSectorDetailForm = (props: OrgSectorDetailFormProps) => {
                 type="submit"
                 className={Style.buttonprimary}
                 size="xs"
+                loading={isUpdating}
                 leftIcon={
                   <Icon.IconDeviceFloppy
                     size={18}
@@ -230,6 +231,7 @@ const OrgSectorDetailForm = (props: OrgSectorDetailFormProps) => {
                 component="button"
                 onClick={showDeleteModal}
                 size="xs"
+                loading={isDeleting}
               >
                 <Icon.IconTrash size="18" className="mr-1" />
                 Delete

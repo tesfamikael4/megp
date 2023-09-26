@@ -13,7 +13,7 @@ export const organizationApi = createApi({
   endpoints: (builder) => ({
     getOrganizations: builder.query<any, any>({
       query: (items: { items: CollectionQuery }) => ({
-        url: 'organizations/get-all',
+        url: 'organizations',
         method: 'GET',
         params: collectionQueryBuilder(items.items),
       }),
@@ -31,7 +31,7 @@ export const organizationApi = createApi({
     addOrganization: builder.mutation<any, any>({
       query: (organization) => {
         return {
-          url: 'organizations/create',
+          url: 'organizations',
           method: 'POST',
           body: organization,
         };
@@ -42,7 +42,7 @@ export const organizationApi = createApi({
     updateOrganization: builder.mutation<any, any>({
       query: (updatedorganization) => {
         return {
-          url: `organizations/update/${updatedorganization.id}`,
+          url: `organizations/${updatedorganization.id}`,
           method: 'PATCH',
           body: updatedorganization,
         };
@@ -52,7 +52,7 @@ export const organizationApi = createApi({
     deleteOrganization: builder.mutation<any, any>({
       query: (id) => {
         return {
-          url: `organizations/delete/${id}`,
+          url: `organizations/${id}`,
           method: 'DELETE',
         };
       },
@@ -133,21 +133,21 @@ export const organizationApi = createApi({
         };
       },
     }),
-    getOrganiationMandateAssigned: builder.query<any, string>({
-      query: (id) => {
-        return {
-          url: `organizations/get/${id}?includes[0]=organizationMandates.mandate`,
-          method: 'GET',
-        };
-      },
-    }),
-
-    getOrganiationMandate: builder.query<any, { items: any; id: string }>({
+    getMyOrgMandate: builder.query<any, any>({
       query: (items: { items: CollectionQuery; id: string }) => {
         return {
           url: `organizations/get/${items?.id}?includes[0]=organizationMandates.mandate`,
           method: 'GET',
           params: collectionQueryBuilder(items.items),
+        };
+      },
+    }),
+
+    getOrganiationMandate: builder.query<any, any>({
+      query: (id) => {
+        return {
+          url: `organizations/get/${id}?includes[0]=organizationMandates.mandate`,
+          method: 'GET',
         };
       },
     }),
@@ -177,7 +177,7 @@ export const {
   useAddOrganizationMandateMutation,
   useLazyGetOrganiationMandateQuery,
   useLazyGetAllMandatesQuery,
-  useLazyGetOrganiationMandateAssignedQuery,
+  useLazyGetMyOrgMandateQuery,
 
   useSendUserInvitationLinkQuery,
   useLazyGetUserInvitationLinkQuery,

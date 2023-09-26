@@ -21,7 +21,7 @@ import {
   useUserActivationMutation,
 } from '@/store/api/user/user.api';
 import { useLazyGetUnitTypeQuery } from '@/store/api/unitType/unitType.api';
-import { notify } from '@/shared/ui/page';
+import { notify } from '@/shared/ui/notification/utility/notify';
 
 /* Form schema */
 

@@ -22,7 +22,7 @@ import {
   useDeleteroleMutation,
 } from '@/store/api/role/role.api';
 
-import { notify } from '@/shared/ui/page';
+import { notify } from '@/shared/ui/notification/utility/notify';
 
 /* Form schema */
 

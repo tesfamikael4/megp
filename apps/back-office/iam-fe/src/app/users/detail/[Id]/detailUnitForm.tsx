@@ -7,7 +7,6 @@ import { Button } from '@mantine/core';
 import { IconCirclePlus } from '@tabler/icons-react';
 import UnitAssignment from './unit-assignment';
 import RoleAssignment from './role-assignment';
-import ExtendedProfile from './extendedProfile';
 
 const DetailUnit = () => {
   const [employeeAssignmentModalOpened, setEmployeeAssignmentModalOpened] =

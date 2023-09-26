@@ -2,7 +2,7 @@ import { EntityList, EntityConfig } from '@megp/core-fe';
 
 export function List() {
   const config: EntityConfig = {
-    entity: 'groups',
+    entity: 'group',
     title: 'Groups',
     canAdd: true,
     addPath: '/groups/new',

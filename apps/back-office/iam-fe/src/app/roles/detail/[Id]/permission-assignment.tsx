@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react';
 import {
   useAssignRoleToMandatePermissionsMutation,
   // useLazyGetMandatePermissionsToAssignQuery,
-  useLazyGetAllPermissionsQuery,
+  useLazyGetPermissionByOrganizationIdQuery,
   useLazyGetroleByIdQuery,
   useLazyGetRolePermissionsQuery,
 } from '@/store/api/role/role.api';
@@ -70,7 +70,8 @@ const PermissionAssignment = (props: PermissionAssignmentProps) => {
       isLoading: isMandatePermissionsFetching,
       isSuccess: isMandatePermissionsFetched,
     },
-  ] = useLazyGetAllPermissionsQuery();
+  ] = useLazyGetPermissionByOrganizationIdQuery();
+  console.log(mandatePermissions);
   const [assignPermissions, { isLoading: isAssigningPermissions }] =
     useAssignRoleToMandatePermissionsMutation();
 
@@ -95,6 +96,7 @@ const PermissionAssignment = (props: PermissionAssignmentProps) => {
       id: item?.permissionId,
       key: item?.permissionKey,
       name: item?.permissionName,
+      organizationId: '099454a9-bf8f-45f5-9a4f-6e9034230250',
     }));
   };
 
@@ -124,6 +126,7 @@ const PermissionAssignment = (props: PermissionAssignmentProps) => {
         applicationKey: permission?.applicationKey,
         applicationName: permission?.applicationName,
         applicationId: permission?.applicationId,
+        organizationId: '099454a9-bf8f-45f5-9a4f-6e9034230250',
       };
     });
     setCurrentAssignedPermissions(dataModified);
@@ -173,7 +176,7 @@ const PermissionAssignment = (props: PermissionAssignmentProps) => {
     if (id?.toString()) {
       triggerRoleByIdFetch(id?.toString(), true);
     }
-  }, [id]);
+  }, [id, triggerRoleByIdFetch]);
 
   useEffect(() => {
     if (id?.toString()) {
@@ -203,21 +206,10 @@ const PermissionAssignment = (props: PermissionAssignmentProps) => {
   }, [assignedPermissions, isAssignedPermissionsFetched]);
 
   useEffect(() => {
-    if (props.permissionAssignmentModalOpened && id) {
-      trigger(
-        {
-          data: mandatePermissionsCollectionQuery,
-          roleId: id?.toString(),
-        },
-        true,
-      );
+    if (props.permissionAssignmentModalOpened) {
+      trigger('099454a9-bf8f-45f5-9a4f-6e9034230250');
     }
-  }, [
-    props.permissionAssignmentModalOpened,
-    id,
-    trigger,
-    mandatePermissionsCollectionQuery,
-  ]);
+  }, [props.permissionAssignmentModalOpened, trigger]);
 
   return (
     <div>

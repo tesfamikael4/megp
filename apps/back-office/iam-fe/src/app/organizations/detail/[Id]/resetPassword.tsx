@@ -28,7 +28,7 @@ import {
   useLazyGetOrganizationsQuery,
 } from '@/store/api/organization/organization.api';
 
-import { notify } from '@/shared/ui/page';
+import { notify } from '@/shared/ui/notification/utility/notify';
 
 /* Form schema */
 
