@@ -8,7 +8,7 @@ export const pricingApi = createApi({
   refetchOnFocus: true,
   tagTypes: ['prices', 'price'],
   baseQuery: fetchBaseQuery({
-    baseUrl: 'http://[::1]:3000/api/',
+    baseUrl: process.env.NEXT_PUBLIC_VENDOR_API,
   }),
   endpoints: (builder) => ({
     getServices: builder.query<any, any>({
