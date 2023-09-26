@@ -1,4 +1,4 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { ConfigService } from '@nestjs/config';
@@ -8,6 +8,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { Server } from '@tus/server';
 import { S3Store } from '@tus/s3-store';
 import * as Minio from 'minio';
+import { JwtAuthGuard } from './authorization';
 
 async function bootstrap() {
   const app: NestExpressApplication = await NestFactory.create(AppModule, {
@@ -20,6 +21,9 @@ async function bootstrap() {
   const port: number = config.get<number>('PORT') || 3000;
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+
+  // const reflector = app.get(Reflector);
+  // app.useGlobalGuards(new JwtAuthGuard(reflector));
 
   app.setGlobalPrefix('api');
 
