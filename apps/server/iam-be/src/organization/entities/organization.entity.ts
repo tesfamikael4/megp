@@ -1,10 +1,21 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToMany,
+  JoinColumn,
+  ManyToOne,
+} from 'typeorm';
 
 import { Audit } from 'src/shared/entities/audit.entity';
 
 import { Unit } from './unit.entity';
-import { Employee } from './employee.entity';
 import { Office } from './office.entity';
+import { OrganizationMandate } from './organization-mandate.entity';
+import { OrganizationSector } from './organization-sector.entity';
+import { OrganizationType } from './organization-type.entity';
+import { UnitType } from './unit-type.entity';
+import { User } from './employee.entity';
 
 @Entity({ name: 'organizations' })
 export class Organization extends Audit {
@@ -16,15 +27,55 @@ export class Organization extends Audit {
 
   @Column()
   code: string;
+  @Column({ nullable: true })
+  shortName: string;
 
-  @Column()
+  @Column({ nullable: true })
+  description: string;
+
+  @Column({ nullable: true })
+  order: string;
+
+  @Column({ nullable: true })
   type: string;
 
-  @Column()
+  @Column({ nullable: true })
   budgetType: string;
 
   @Column('boolean', { default: false })
   isActive: boolean;
+
+  @Column({ default: 'DRAFT' })
+  status: string;
+
+  @Column({ nullable: true, type: 'jsonb' })
+  logo: any;
+
+  @Column({ nullable: true, type: 'jsonb' })
+  address: any;
+
+  @Column({ nullable: true })
+  typeId: string;
+
+  @Column({ nullable: true })
+  sectorId: string;
+
+  @Column({ default: '1.0.0-alpha' })
+  version: string;
+  @Column({ default: false })
+  isLocked: boolean;
+
+  @Column({ nullable: true })
+  deactivateRemark: string;
+
+  @Column({ nullable: true })
+  deleteRemark: string;
+
+  @Column({ nullable: true })
+  taxIdentificationNumber: string;
+
+  @Column({ nullable: true })
+  externalOrganizationCode: string;
 
   @OneToMany(() => Unit, (unit) => unit.organization, {
     cascade: true,
@@ -32,11 +83,41 @@ export class Organization extends Audit {
   })
   units: Unit[];
 
-  @OneToMany(() => Employee, (employee) => employee.organization, {
+  @OneToMany(() => User, (user) => user.organization, {
     cascade: true,
     onDelete: 'CASCADE',
   })
-  employees: Employee[];
+  users: User[];
+
+  @ManyToOne(() => OrganizationType, (type) => type.organizations, {
+    orphanedRowAction: 'delete',
+    onUpdate: 'CASCADE',
+    onDelete: 'RESTRICT',
+  })
+  @JoinColumn({ name: 'typeId' })
+  public organizationType: OrganizationType;
+
+  @ManyToOne(() => OrganizationSector, (sector) => sector.organizations, {
+    orphanedRowAction: 'delete',
+    onUpdate: 'CASCADE',
+    onDelete: 'RESTRICT',
+  })
+  @JoinColumn({ name: 'sectorId' })
+  public sector: OrganizationSector;
+
+  @OneToMany(
+    () => OrganizationMandate,
+    (orgMandate) => orgMandate.organization,
+    {
+      cascade: true,
+    },
+  )
+  organizationMandates: OrganizationMandate[];
+
+  @OneToMany(() => UnitType, (unitType) => unitType.organization, {
+    cascade: true,
+  })
+  unitTypes: UnitType[];
 
   @OneToMany(() => Office, (office) => office.organization, {
     cascade: true,

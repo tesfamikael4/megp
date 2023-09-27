@@ -15,36 +15,40 @@ import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { ApiPaginatedResponse } from '@api-data';
 import {
   CreateOrganizationDto,
+  UpdateAddressOrLogoDto,
   UpdateOrganizationDto,
 } from './dto/organization.dto';
 import { OrganizationService } from './organization.service';
 import { Organization } from './entities/organization.entity';
 import { CollectionQuery } from '@collection-query';
 import { CreateUnitDto, UpdateUnitDto } from './dto/unit.dto';
-import { CreateEmployeeDto, UpdateEmployeeDto } from './dto/employee.dto';
 import { CreateOfficeDto, UpdateOfficeDto } from './dto/office.dto';
 import { AllowAnonymous } from 'src/supertokens/auth/decorators';
+import { CreateUserDto, UpdateUserDto } from './dto/employee.dto';
+import { CreateOrganizationMandateDto } from './dto/organization-mandate.dto';
 
 @ApiBearerAuth()
 @Controller('organizations')
 @ApiTags('organizations')
 export class OrganizationController {
-  constructor(private readonly organizationService: OrganizationService) {}
+  constructor(private readonly organizationService: OrganizationService) { }
 
   @Post()
   async create(@Body() createOrganizationDto: CreateOrganizationDto) {
     return await this.organizationService.create(createOrganizationDto);
   }
 
-  @Get(':id')
+  @Get('get/:id')
   async findOne(
     @Param(
       'id',
       new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
     )
     id: string,
+    @Query() includes: string[],
+    withDeleted: boolean,
   ) {
-    return await this.organizationService.findOne(id);
+    return await this.organizationService.findOne(id, includes, withDeleted);
   }
 
   @Get()
@@ -112,32 +116,32 @@ export class OrganizationController {
     return await this.organizationService.removeUnit(id);
   }
 
-  @Post('add-employee')
-  async addEmployee(@Body() createEmployeeDto: CreateEmployeeDto) {
-    return await this.organizationService.addEmployee(createEmployeeDto);
+  @Post('add-user')
+  async addUser(@Body() createUserDto: CreateUserDto) {
+    return await this.organizationService.addUser(createUserDto);
   }
 
-  @Patch('update-employee/:id')
-  async editEmployee(
+  @Patch('update-user/:id')
+  async editUser(
     @Param(
       'id',
       new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
     )
     id: string,
-    @Body() createEmployeeDto: UpdateEmployeeDto,
+    @Body() createUserDto: UpdateUserDto,
   ) {
-    return await this.organizationService.updateEmployee(id, createEmployeeDto);
+    return await this.organizationService.updateUser(id, createUserDto);
   }
 
-  @Delete('remove-employee/:id')
-  async removeEmployee(
+  @Delete('remove-user/:id')
+  async removeUser(
     @Param(
       'id',
       new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
     )
     id: string,
   ) {
-    return await this.organizationService.removeEmployee(id);
+    return await this.organizationService.removeUser(id);
   }
 
   @Post('add-office')
@@ -166,5 +170,34 @@ export class OrganizationController {
     id: string,
   ) {
     return await this.organizationService.removeOffice(id);
+  }
+
+  @Post('assign-mandates/:id')
+  async assignMandates(
+    @Param(
+      'id',
+      new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
+    )
+    id: string,
+    @Body() organizationMandateResponseDto: CreateOrganizationMandateDto[],
+  ) {
+    return await this.organizationService.assignMandates(
+      id,
+      organizationMandateResponseDto,
+    );
+  }
+  @Patch('set-address/:id')
+  async setAddress(
+    @Param(
+      'id',
+      new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
+    )
+    id: string,
+    @Body() updateAddressOrLogoDto: UpdateAddressOrLogoDto,
+  ) {
+    return await this.organizationService.setAddress(
+      id,
+      updateAddressOrLogoDto,
+    );
   }
 }

@@ -1,8 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
-import { Employee } from '../entities/employee.entity';
+import { IsString, IsOptional, IsBoolean, IsUUID } from 'class-validator';
+import { User } from '../entities/employee.entity';
+import { ContactNumber } from 'src/shared/domain/contact-number';
+import {
+  CreateUserProfileDto,
+  UserProfileResponseDto,
+} from './employee-profile.dto';
+import { CreateUserRoleDto, UserRoleResponseDto } from './employee-role.dto';
+import { CreateUserUnitDto, UserUnitResponseDto } from './employee-unit.dto';
 
-export class CreateEmployeeDto {
+export class CreateUserDto {
   @ApiProperty()
   @IsString()
   superTokenUserId: string;
@@ -21,73 +28,171 @@ export class CreateEmployeeDto {
 
   @ApiProperty()
   @IsString()
-  organizationId: string;
+  fullName: string;
 
-  static fromDto(employeeDto: CreateEmployeeDto): Employee {
-    const employee: Employee = new Employee();
-
-    employee.superTokenUserId = employeeDto.superTokenUserId;
-
-    employee.username = employeeDto.username;
-
-    employee.firstName = employeeDto.firstName;
-
-    employee.lastName = employeeDto.lastName;
-
-    employee.organizationId = employeeDto.organizationId;
-
-    return employee;
-  }
-
-  static fromDtos(employeeDto: CreateEmployeeDto[]) {
-    return employeeDto?.map((employee) => CreateEmployeeDto.fromDto(employee));
-  }
-}
-
-export class UpdateEmployeeDto extends CreateEmployeeDto {
   @ApiProperty()
   @IsString()
-  id: string;
+  @IsOptional()
+  email: string;
 
-  static fromDto(employeeDto: UpdateEmployeeDto): Employee {
-    const employee: Employee = new Employee();
+  @ApiProperty()
+  @IsOptional()
+  phone: ContactNumber;
 
-    employee.id = employeeDto.id;
+  @ApiProperty()
+  @IsBoolean()
+  @IsOptional()
+  isLock: boolean;
 
-    employee.superTokenUserId = employeeDto.superTokenUserId;
+  @ApiProperty()
+  @IsBoolean()
+  @IsOptional()
+  isActive: boolean;
 
-    employee.username = employeeDto.username;
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  status: string;
 
-    employee.firstName = employeeDto.firstName;
+  @ApiProperty()
+  @IsString()
+  organizationId: string;
 
-    employee.lastName = employeeDto.lastName;
+  static fromDto(userDto: CreateUserDto): User {
+    const user: User = new User();
+    // if (!userDto) {
+    //   return;
+    // }
+    user.superTokenUserId = userDto.superTokenUserId;
 
-    employee.organizationId = employeeDto.organizationId;
+    user.username = userDto.username;
 
-    return employee;
+    user.firstName = userDto.firstName;
+
+    user.lastName = userDto.lastName;
+
+    user.fullName = userDto.fullName;
+
+    user.email = userDto.email;
+
+    user.phone = userDto.phone;
+
+    user.isLock = userDto.isLock;
+
+    user.isActive = userDto.isActive;
+
+    user.status = userDto.status;
+
+    user.organizationId = userDto.organizationId;
+
+    return user;
+  }
+
+  static fromDtos(userDto: CreateUserDto[]) {
+    return userDto?.map((user) => CreateUserDto.fromDto(user));
   }
 }
 
-export class EmployeeResponseDto extends UpdateEmployeeDto {
-  static toDto(employee: Employee): EmployeeResponseDto {
-    const employeeDto: EmployeeResponseDto = new EmployeeResponseDto();
+export class UpdateUserDto extends CreateUserDto {
+  @ApiProperty()
+  @IsUUID()
+  id: string;
 
-    employeeDto.id = employee.id;
+  @ApiProperty()
+  userProfile: CreateUserProfileDto;
 
-    employeeDto.superTokenUserId = employee.superTokenUserId;
+  userUnits: CreateUserUnitDto[];
 
-    employeeDto.username = employee.username;
+  userRoles: CreateUserRoleDto[];
+  static fromDto(userDto: UpdateUserDto): User {
+    const user: User = new User();
+    // if (!userDto) {
+    //   return;
+    // }
+    user.id = userDto.id;
 
-    employeeDto.firstName = employee.firstName;
+    user.superTokenUserId = userDto.superTokenUserId;
 
-    employeeDto.lastName = employee.lastName;
+    user.username = userDto.username;
 
-    employeeDto.organizationId = employee.organizationId;
+    user.firstName = userDto.firstName;
 
-    return employeeDto;
+    user.lastName = userDto.lastName;
+
+    user.fullName = userDto.fullName;
+
+    user.email = userDto.email;
+
+    user.phone = userDto.phone;
+
+    user.isLock = userDto.isLock;
+
+    user.isActive = userDto.isActive;
+
+    user.status = userDto.status;
+
+    user.organizationId = userDto.organizationId;
+
+    if (user.userProfile) {
+      user.userProfile = UserProfileResponseDto.fromDto(user.userProfile);
+    }
+
+    if (userDto.userUnits) {
+      user.userUnits = UserUnitResponseDto.fromDtos(user.userUnits);
+    }
+
+    if (userDto.userRoles) {
+      user.userRoles = UserRoleResponseDto.fromDtos(user.userRoles);
+    }
+
+    return user;
+  }
+}
+
+export class UserResponseDto extends UpdateUserDto {
+  static toDto(user: User): UserResponseDto {
+    const userDto: UserResponseDto = new UserResponseDto();
+
+    userDto.id = user.id;
+
+    userDto.superTokenUserId = user.superTokenUserId;
+
+    userDto.username = user.username;
+
+    userDto.firstName = user.firstName;
+
+    userDto.lastName = user.lastName;
+
+    userDto.fullName = user.fullName;
+
+    userDto.email = user.email;
+
+    userDto.phone = user.phone;
+
+    userDto.isLock = user.isLock;
+
+    userDto.isActive = user.isActive;
+
+    userDto.status = user.status;
+
+    userDto.organizationId = user.organizationId;
+
+    if (user.userProfile) {
+      userDto.userProfile = UserProfileResponseDto.toDto(user.userProfile);
+    }
+
+    if (user.userUnits) {
+      userDto.userUnits = UserUnitResponseDto.toDtos(user.userUnits);
+    }
+
+    if (user.userRoles) {
+      userDto.userRoles = UserRoleResponseDto.toDtos(user.userRoles);
+    }
+
+    return userDto;
   }
 
-  static toDtos(employees: Employee[]) {
-    return employees?.map((employee) => EmployeeResponseDto.toDto(employee));
+  static toDtos(users: User[]) {
+    return users?.map((user) => UserResponseDto.toDto(user));
   }
 }
