@@ -1,20 +1,21 @@
 import { vendorRegistrationSlice } from './slice';
-import { FormInitiationRequestProps } from './type';
+import {
+  FormInitiationRequestProps,
+  FormSubmissionRequestProps,
+  FormSubmissionResponseProps,
+  GetApplicationByUserIdResponseProps,
+} from './type';
 export const apiVendorRegistrationQuery =
   vendorRegistrationSlice.injectEndpoints({
     endpoints: (builder) => ({
-      saveForm: builder.query<any, any>({
+      saveForm: builder.query<
+        FormSubmissionResponseProps,
+        FormSubmissionRequestProps
+      >({
         query: (data) => ({
           url: `api/VendorRegistrations/add-vendor-information`, // Include parameters in the URL
           method: 'POST', // Adjust the HTTP method as needed
           body: data,
-        }),
-      }),
-      getFormById: builder.query<{ userId: string }, any>({
-        query: (payload) => ({
-          url: `api/VendorRegistrations/get-vendor-by-userId/`, // Include parameters in the URL
-          method: 'POST', // Adjust the HTTP method as needed
-          params: payload,
         }),
       }),
       getFormInitiationRequest: builder.query<any, FormInitiationRequestProps>({
@@ -24,13 +25,22 @@ export const apiVendorRegistrationQuery =
           params: payload,
         }),
       }),
+      getApplicationByUserId: builder.query<
+        GetApplicationByUserIdResponseProps,
+        { userId: string }
+      >({
+        query: (payload) => ({
+          url: `api/VendorRegistrations/get-vendor-by-userId/${payload.userId}`, // Include parameters in the URL
+          method: 'GET', // Adjust the HTTP method as needed
+        }),
+      }),
     }),
     // overrideExisting: true,
   });
 
 export const {
   useLazySaveFormQuery,
-  useGetFormByIdQuery,
+  useGetApplicationByUserIdQuery,
   useGetFormInitiationRequestQuery,
 } = apiVendorRegistrationQuery;
 

@@ -66,6 +66,7 @@ export const BusinessSizeAndOwnership: React.FC<Props> = ({ form }) => {
               {...form.getInputProps(
                 `businessSizeAndOwnership.paidUpCapital.currency`,
               )}
+              className="w-[150px]"
             />
           </Stack>
         </CouplerPanel>

@@ -68,7 +68,7 @@ export const ContactPersons: React.FC<Props> = ({ form }) => {
           )}
           renderCardList={(openModal) => (
             <>
-              {form.values.contactPersons.contactPersonsTable.map(
+              {form.values.contactPersons?.contactPersonsTable.map(
                 (value: any, index: number) => (
                   <Card key={index} withBorder w={250}>
                     <Card.Section mb={10}>
