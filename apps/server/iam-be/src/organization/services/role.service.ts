@@ -12,7 +12,6 @@ import {
   CreateRolePermissionDto,
   RolePermissionResponseDto,
 } from '../dto/role-permission.dto';
-import { OnEvent } from '@nestjs/event-emitter';
 import { v4 as uuidv4 } from 'uuid';
 import { RolePermission } from '../entities/role-permission.entity';
 import { t } from 'xstate';
@@ -146,18 +145,5 @@ export class RoleService {
     const updatedRoleEntity = await this.repository.save(roleEntity);
 
     return RoleResponseDto.toDto(updatedRoleEntity);
-  }
-
-  @OnEvent('role-permissions.created')
-  async assignPermissionsEvent(event: any): Promise<RoleResponseDto> {
-    const rolePermission = event.rolePermissionsEvent;
-    const id = rolePermission[0].roleId;
-    const roleEntity = await this.repository.findOne({
-      where: { id: id },
-      relations: ['userRoles', 'rolePermissions'],
-    });
-    roleEntity.rolePermissions = rolePermission;
-    const result = await this.repository.save(roleEntity);
-    return RoleResponseDto.toDto(result);
   }
 }

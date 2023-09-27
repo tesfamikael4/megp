@@ -8,6 +8,7 @@ import {
   Delete,
   UseInterceptors,
   Query,
+  Req,
 } from '@nestjs/common';
 import { GenericCrudService } from '../service/generic-crud.service';
 import { DeepPartial } from 'typeorm';
@@ -21,7 +22,7 @@ export class GenericCrudController<T extends BaseEntity> {
   constructor(private readonly service: GenericCrudService<T>) {}
 
   @Post()
-  async create(@Body() itemData: DeepPartial<T>): Promise<T> {
+  async create(@Body() itemData: DeepPartial<T>, user?: any): Promise<T> {
     return this.service.create(itemData);
   }
 

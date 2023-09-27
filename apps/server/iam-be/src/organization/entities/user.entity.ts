@@ -12,10 +12,10 @@ import { Audit } from 'src/shared/entities/audit.entity';
 
 import { Organization } from './organization.entity';
 import { SecurityQuestion } from './security-question.entity';
-import { ContactNumber } from 'src/shared/domain/contact-number';
-import { UserProfile } from './employee-profile.entity';
-import { UserRole } from './employee-role.entity';
-import { UserUnit } from './employee-unit.entity';
+import { UserProfile } from './user-profile.entity';
+import { UserRole } from './user-role.entity';
+import { UserUnit } from './user-unit.entity';
+import { ContactNumber } from 'src/shared/entities/contact-number';
 
 @Entity({ name: 'users' })
 export class User extends Audit {

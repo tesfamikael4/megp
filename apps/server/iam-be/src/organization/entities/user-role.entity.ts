@@ -6,33 +6,34 @@ import {
   JoinColumn,
 } from 'typeorm';
 
-import { Audit } from '../../shared/entities/audit.entity';
-import { Unit } from './unit.entity';
-import { User } from './employee.entity';
+import { Audit } from 'src/shared/entities/audit.entity';
+import { Role } from './role.entity';
+import { Permission } from './permission.entity';
+import { User } from './user.entity';
 
-@Entity({ name: 'user_units' })
-export class UserUnit extends Audit {
+@Entity({ name: 'user_roles' })
+export class UserRole extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
-  unitId: string;
+  roleId: string;
 
   @Column()
   userId: string;
 
   @Column()
-  unitName: string;
+  roleName: string;
 
-  @ManyToOne(() => Unit, (unit) => unit.userUnits, {
+  @ManyToOne(() => Role, (role) => role.userRoles, {
     orphanedRowAction: 'delete',
     onUpdate: 'CASCADE',
     onDelete: 'RESTRICT',
   })
   @JoinColumn()
-  public unit: Unit;
+  public role: Role;
 
-  @ManyToOne(() => User, (user) => user.userUnits, {
+  @ManyToOne(() => User, (user) => user.userRoles, {
     orphanedRowAction: 'delete',
     onUpdate: 'CASCADE',
     onDelete: 'RESTRICT',

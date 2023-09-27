@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsOptional, IsBoolean, IsUUID } from 'class-validator';
-import { User } from '../entities/employee.entity';
-import { ContactNumber } from 'src/shared/domain/contact-number';
+import { User } from '../entities/user.entity';
+import { ContactNumber } from 'src/shared/entities/contact-number';
 import {
   CreateUserProfileDto,
   UserProfileResponseDto,

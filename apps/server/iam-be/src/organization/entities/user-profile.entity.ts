@@ -6,11 +6,11 @@ import {
   JoinColumn,
 } from 'typeorm';
 
-import { Audit } from '../../shared/entities/audit.entity';
+import { Audit } from 'src/shared/entities/audit.entity';
 
-import { ContactNumber } from '../../shared/domain/contact-number';
-import { FileResponseDto } from '../../shared/domain/file-response.dto';
-import { User } from './employee.entity';
+import { User } from './user.entity';
+import { ContactNumber } from 'src/shared/entities/contact-number';
+import { FileResponse } from 'src/shared/entities/file-response';
 
 @Entity({ name: 'user_profiles' })
 export class UserProfile extends Audit {
@@ -43,7 +43,7 @@ export class UserProfile extends Audit {
   @Column({ nullable: true })
   postalCode: string;
   @Column({ type: 'jsonb', nullable: true })
-  profilePhoto: FileResponseDto;
+  profilePhoto: FileResponse;
   @Column({ name: 'user_id' })
   userId: string;
   @OneToOne(() => User, (emp) => emp.userProfile, {

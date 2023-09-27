@@ -1,8 +1,8 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
-import { Audit } from '../../shared/entities/audit.entity';
+import { Audit } from 'src/shared/entities/audit.entity';
 import { RolePermission } from './role-permission.entity';
-import { UserRole } from './employee-role.entity';
+import { UserRole } from './user-role.entity';
 
 @Entity({ name: 'roles' })
 export class Role extends Audit {

@@ -7,7 +7,7 @@ import {
   OneToMany,
 } from 'typeorm';
 
-import { Audit } from '../../shared/entities/audit.entity';
+import { Audit } from 'src/shared/entities/audit.entity';
 import { MandatePermission } from './mandate-permission.entity';
 import { RolePermission } from './role-permission.entity';
 import { Application } from './application.entity';

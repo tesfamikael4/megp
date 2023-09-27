@@ -7,7 +7,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { UserUnit } from './employee-unit.entity';
+import { UserUnit } from './user-unit.entity';
 import { Organization } from './organization.entity';
 import { UnitType } from './unit-type.entity';
 

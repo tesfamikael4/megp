@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
-import { Audit } from '../../shared/entities/audit.entity';
+import { Audit } from 'src/shared/entities/audit.entity';
 import { Organization } from './organization.entity';
 
 @Entity({ name: 'organization_types' })

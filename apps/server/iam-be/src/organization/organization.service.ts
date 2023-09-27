@@ -1,6 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
-import { DataSource, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Organization } from './entities/organization.entity';
 import {
   CollectionQuery,
@@ -16,7 +16,6 @@ import {
 import { DataResponseFormat } from '@api-data';
 import { Unit } from './entities/unit.entity';
 import { CreateUnitDto, UpdateUnitDto, UnitResponseDto } from './dto/unit.dto';
-import { v4 as uuidv4 } from 'uuid';
 
 import {
   CreateOfficeDto,
@@ -29,19 +28,12 @@ import {
   UserResponseDto,
   UpdateUserDto,
 } from './dto/employee.dto';
-import { User } from './entities/employee.entity';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+import { User } from './entities/user.entity';
 import { CreateOrganizationMandateDto } from './dto/organization-mandate.dto';
-import { MandatePermission } from './entities/mandate-permission.entity';
-import { OrganizationMandate } from './entities/organization-mandate.entity';
-import { RolePermission } from './entities/role-permission.entity';
-import { Role } from './entities/role.entity';
 
 @Injectable()
 export class OrganizationService {
   constructor(
-    private dataSource: DataSource,
-    private eventEmitter: EventEmitter2,
     @InjectRepository(Organization)
     private readonly repository: Repository<Organization>,
 

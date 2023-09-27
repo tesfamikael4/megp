@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 
 import { Mandate } from './mandate.entity';
-import { Audit } from '../../shared/entities/audit.entity';
+import { Audit } from 'src/shared/entities/audit.entity';
 import { Organization } from './organization.entity';
 
 @Entity({ name: 'organization_mandates' })

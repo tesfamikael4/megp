@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
-import { Audit } from '../../shared/entities/audit.entity';
+import { Audit } from 'src/shared/entities/audit.entity';
 import { OrganizationMandate } from './organization-mandate.entity';
 import { MandatePermission } from './mandate-permission.entity';
 

@@ -18,14 +18,12 @@ import {
   CreateMandatePermissionDto,
   UpdateMandatePermissionDto,
 } from '../dto/mandate-permission.dto';
-import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 @Injectable()
 export class MandateService {
   constructor(
     @InjectRepository(Mandate)
     private readonly repository: Repository<Mandate>,
     private dataSource: DataSource,
-    private eventEmitter: EventEmitter2,
   ) {}
 
   async create(mandate: CreateMandateDto): Promise<MandateResponseDto> {
@@ -128,21 +126,6 @@ export class MandateService {
     mandateEntity.mandatePermissions = mandatePermissions;
     result = await this.repository.save(mandateEntity);
 
-    return MandateResponseDto.toDto(result);
-  }
-
-  @OnEvent('mandate-permissions.created')
-  async assignPermissionsEvent(event: any): Promise<MandateResponseDto> {
-    let result: Mandate = new Mandate();
-    const mandatePermission = event.mandatePermissionsEvent;
-    const id = mandatePermission[0].mandateId;
-    const mandateEntity1 = await this.repository.find({
-      where: { id },
-      relations: ['organizationMandates', 'mandatePermissions'],
-    });
-    const mandateEntity = mandateEntity1[0];
-    mandateEntity.mandatePermissions = mandatePermission;
-    result = await this.repository.save(mandateEntity);
     return MandateResponseDto.toDto(result);
   }
 }
