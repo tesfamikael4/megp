@@ -37,7 +37,7 @@ async function bootstrap() {
   const reflector = app.get(Reflector);
   // app.useGlobalGuards(new Aut  app.useGlobalGuards(new AuthGuard(reflector));
 
-  app.setGlobalPrefix('api');
+  // app.setGlobalPrefix('api');
 
   const customOptions: SwaggerCustomOptions = {
     swaggerOptions: {
