@@ -7,7 +7,7 @@ import {
   ManyToOne,
 } from 'typeorm';
 
-import { Audit } from '../../shared/entities/audit.entity';
+import { Audit } from 'src/shared/entities/audit.entity';
 import { Unit } from './unit.entity';
 import { Organization } from './organization.entity';
 

@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { FileResponseDto } from '../../shared/domain/file-response.dto';
 import { IsUUID, IsOptional, IsString } from 'class-validator';
-import { ContactNumberCommand } from '../../shared/domain/contact-number.command';
-import { UserProfile } from '../entities/employee-profile.entity';
+import { ContactNumberCommand } from 'src/shared/domain/contact-number.dto';
+import { UserProfile } from '../entities/user-profile.entity';
+// import { FileResponse } from 'src/shared/entities/file-response';
 export class CreateUserProfileDto {
   userId: string;
   @ApiProperty()
@@ -10,7 +10,7 @@ export class CreateUserProfileDto {
   country: string;
   @ApiProperty()
   @IsOptional()
-  profilePhoto: FileResponseDto;
+  profilePhoto: any;
   @ApiProperty()
   @IsOptional()
   region: string;

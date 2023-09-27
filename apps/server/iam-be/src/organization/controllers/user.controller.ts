@@ -14,7 +14,7 @@ import {
 import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { UserService } from '../services/user.service';
 import { CreateUserDto, UpdateUserDto } from '../dto/employee.dto';
-import { User } from '../entities/employee.entity';
+import { User } from '../entities/user.entity';
 import {
   CreateUserUnitDto,
   UserUnitResponseDto,

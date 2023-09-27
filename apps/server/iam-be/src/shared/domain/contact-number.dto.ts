@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber, IsOptional, IsString } from 'class-validator';
-import { ContactNumber } from './contact-number';
+import { ContactNumber } from '../entities/contact-number';
 export class ContactNumberCommand {
   @ApiProperty()
   @IsString()

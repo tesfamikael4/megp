@@ -5,7 +5,7 @@ import { Organization } from './entities/organization.entity';
 import { OrganizationService } from './organization.service';
 import { Office } from './entities/office.entity';
 import { Application } from './entities/application.entity';
-import { User } from './entities/employee.entity';
+import { User } from './entities/user.entity';
 import { Mandate } from './entities/mandate.entity';
 import { OrganizationMandate } from './entities/organization-mandate.entity';
 import { OrganizationSector } from './entities/organization-sector.entity';
@@ -13,7 +13,6 @@ import { OrganizationType } from './entities/organization-type.entity';
 import { Permission } from './entities/permission.entity';
 import { Role } from './entities/role.entity';
 import { SecurityQuestion } from './entities/security-question.entity';
-import { EventEmitterModule } from '@nestjs/event-emitter';
 import { UnitType } from './entities/unit-type.entity';
 import { ApplicationController } from './controllers/application.controller';
 import { MandateController } from './controllers/mandate.controller';
@@ -38,7 +37,6 @@ import { RolePermission } from './entities/role-permission.entity';
 
 @Module({
   imports: [
-    EventEmitterModule.forRoot(),
     TypeOrmModule.forFeature([
       Organization,
       OrganizationMandate,

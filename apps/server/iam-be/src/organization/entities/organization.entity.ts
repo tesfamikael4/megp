@@ -15,7 +15,7 @@ import { OrganizationMandate } from './organization-mandate.entity';
 import { OrganizationSector } from './organization-sector.entity';
 import { OrganizationType } from './organization-type.entity';
 import { UnitType } from './unit-type.entity';
-import { User } from './employee.entity';
+import { User } from './user.entity';
 
 @Entity({ name: 'organizations' })
 export class Organization extends Audit {

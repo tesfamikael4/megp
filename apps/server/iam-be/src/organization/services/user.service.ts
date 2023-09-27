@@ -11,7 +11,7 @@ import {
   UserResponseDto,
   UpdateUserDto,
 } from '../dto/employee.dto';
-import { User } from '../entities/employee.entity';
+import { User } from '../entities/user.entity';
 import { CreateUserUnitDto } from '../dto/employee-unit.dto';
 import { CreateUserRoleDto } from '../dto/employee-role.dto';
 @Injectable()
