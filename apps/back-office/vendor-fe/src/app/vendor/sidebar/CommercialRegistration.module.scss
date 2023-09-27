@@ -1,0 +1,15 @@
+.container {
+  @apply px-4;
+}
+
+.labelValuePair {
+  @apply flex items-center mb-4;
+}
+
+.label {
+  @apply flex-1 text-left mr-2 font-bold;
+}
+
+.value {
+  @apply flex-1;
+}

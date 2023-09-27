@@ -1,7 +1,6 @@
 import { Button, Card, Collapse } from '@mantine/core';
 import * as React from 'react';
 import { useState } from 'react';
-
 type CollapsibleCardProps = {
   dropped?: boolean;
   className?: string;

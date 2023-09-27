@@ -1,0 +1,22 @@
+.supplier_body {
+  @apply bg-white  w-full rounded-md;
+}
+
+.table-row:hover {
+  @apply bg-gray-200 cursor-pointer;
+}
+
+.custom-font-size {
+  @apply text-base font-normal;
+}
+.row_icons {
+  @apply flex gap-5;
+}
+
+.pagination {
+  @apply flex justify-between pb-8;
+}
+.custom-text-color {
+  color: #000000a6;
+  font-variant: tabular-nums;
+}
