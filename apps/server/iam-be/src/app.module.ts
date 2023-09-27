@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from './shared/typeorm/typeorm.service';
 import { OrganizationModule } from './organization';
 import { AuthenticationModule } from './supertokens';
+import { GroupModule } from './groups/group.module';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { AuthenticationModule } from './supertokens';
     TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
     AuthenticationModule,
     OrganizationModule,
+    GroupModule,
   ],
   controllers: [],
   providers: [],
