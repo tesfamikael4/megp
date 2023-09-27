@@ -12,7 +12,7 @@ export default function RsNewFormPage() {
     isSuccess: isApplicationDataSuccess,
     status: applicationDataStatus,
   } = useGetApplicationByUserIdQuery({
-    userId: generateAndSaveKey(),
+    userId: generateAndSaveKey() as string,
   });
   if (isApplicationDataLoading) {
     return <LoadingOverlay visible={true} overlayBlur={1} />;

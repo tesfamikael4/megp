@@ -195,7 +195,7 @@ export default function Form({ pre }: { pre: any }) {
   const handleSubmit = (values: typeof form.values) => {
     saveFormTrigger({
       data: {
-        userId: generateAndSaveKey(),
+        userId: generateAndSaveKey() as string,
         status: 'Save',
         data: {
           ...values,
@@ -210,7 +210,7 @@ export default function Form({ pre }: { pre: any }) {
   const handleSaveAsDraft = (values: any) => {
     saveFormTrigger({
       data: {
-        userId: generateAndSaveKey(),
+        userId: generateAndSaveKey() as string,
         status: 'Save as Draft',
         data: {
           ...values,
