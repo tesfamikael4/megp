@@ -21,14 +21,19 @@ import {
 } from './formConfig/parts';
 import { initialValues } from './formConfig/initialValues';
 import { schema } from './formConfig/schema';
-import { useLazySaveFormQuery } from '@/store/api/vendor_registration/query';
+import {
+  useGetApplicationByUserIdQuery,
+  useLazySaveFormQuery,
+} from '@/store/api/vendor_registration/query';
 import { SearchParamsToObject } from '../../_shared/lib/url/helper';
 import { useGetFormInitiationRequestQuery } from '@/store/api/vendor_registration/query';
 
-export default function Form() {
+export default function Form({ pre }: { pre: any }) {
+  console.log(pre);
+
   const form = useForm({
     initialValues,
-    // validate: zodResolver(schema),
+    //validate: zodResolver(schema),
     validateInputOnBlur: true,
   });
   const {
@@ -39,10 +44,52 @@ export default function Form() {
   } = useGetFormInitiationRequestQuery({
     companyName: SearchParamsToObject('companyName'),
     legalFormofEntity: SearchParamsToObject('legalFormOfEntity'),
-    country: SearchParamsToObject('countryOfRegistration'),
+    Country: SearchParamsToObject('countryOfRegistration'),
     tinNumber: SearchParamsToObject('tinNumber'),
   });
+  React.useEffect(() => {
+    if (pre) {
+      form.setFieldValue('basicRegistration', {
+        ...pre.metaData.basicRegistration,
+      });
 
+      form.setFieldValue('addressInformation', {
+        ...pre.metaData.addressInformation,
+      });
+      form.setFieldValue('addressInformation.geoLocation', {
+        ...pre.metaData.addressInformation.geoLocation,
+      });
+
+      form.setFieldValue('businessSizeAndOwnership', {
+        ...pre.metaData.businessSizeAndOwnership,
+      });
+      form.setFieldValue('businessSizeAndOwnership.registeredCapital', {
+        ...pre.metaData.businessSizeAndOwnership.registeredCapital,
+      });
+      form.setFieldValue('businessSizeAndOwnership.paidUpCapital', {
+        ...pre.metaData.businessSizeAndOwnership.paidUpCapital,
+      });
+      pre.metaData.contactPersons.contactPersonsTable.map((val, index) =>
+        form.insertListItem(`contactPersons.contactPersonsTable`, {
+          ...val,
+        }),
+      );
+      pre.bankAccountDetail.map((val, index) =>
+        form.insertListItem(`bankAccountDetails.bankAccountDetailsTable`, {
+          ...val,
+        }),
+      );
+      pre.beneficialOwnership.map((val, index) =>
+        form.insertListItem(`beneficialOwnership.beneficialOwnershipTable`, {
+          ...val,
+        }),
+      );
+      pre.shareholders.map((val, index) =>
+        form.insertListItem(`shareHolders.shareHoldersTable`, { ...val }),
+      );
+    }
+    return () => {};
+  }, [pre]);
   React.useEffect(() => {
     if (
       getFormInitiationRequestData &&
@@ -66,7 +113,7 @@ export default function Form() {
         );
       getFormInitiationRequestData.data.tinNumber &&
         form.setFieldValue(
-          'basicRegistration.nameOfBusinessCompany',
+          'basicRegistration.tinNumber',
           getFormInitiationRequestData.data.tinNumber,
         );
     }
@@ -90,12 +137,57 @@ export default function Form() {
           title: 'Notification',
           message: 'Saved!',
         });
+      form.reset();
 
-      console.log({
-        initialValues,
-        newValues: saveFormData,
+      form.setFieldValue('basicRegistration', {
+        ...saveFormData.basicRegistration,
       });
-      form.setValues(saveFormData);
+
+      form.setFieldValue('addressInformation', {
+        ...saveFormData.addressInformation,
+      });
+      form.setFieldValue('addressInformation.geoLocation', {
+        ...saveFormData.addressInformation.geoLocation,
+      });
+
+      form.setFieldValue('businessSizeAndOwnership', {
+        ...saveFormData.businessSizeAndOwnership,
+      });
+      form.setFieldValue('businessSizeAndOwnership.registeredCapital', {
+        ...saveFormData.businessSizeAndOwnership.registeredCapital,
+      });
+      form.setFieldValue('businessSizeAndOwnership.paidUpCapital', {
+        ...saveFormData.businessSizeAndOwnership.paidUpCapital,
+      });
+      saveFormData.contactPersons.contactPersonsTable &&
+        saveFormData.contactPersons.contactPersonsTable.map((val, index) =>
+          form.insertListItem(`contactPersons.contactPersonsTable`, {
+            ...val,
+          }),
+        );
+      saveFormData.bankAccountDetails.bankAccountDetailsTable &&
+        saveFormData.bankAccountDetails.bankAccountDetailsTable.map(
+          (val, index) =>
+            form.insertListItem(`bankAccountDetails.bankAccountDetailsTable`, {
+              ...val,
+            }),
+        );
+      saveFormData.beneficialOwnership.beneficialOwnershipTable &&
+        saveFormData.beneficialOwnership.beneficialOwnershipTable.map(
+          (val, index) =>
+            form.insertListItem(
+              `beneficialOwnership.beneficialOwnershipTable`,
+              {
+                ...val,
+              },
+            ),
+        );
+      saveFormData.shareHolders.shareHoldersTable &&
+        saveFormData.shareHolders.shareHoldersTable.map((val, index) =>
+          form.insertListItem(`shareHolders.shareHoldersTable`, {
+            ...val,
+          }),
+        );
     }
     return () => {};
   }, [isSaveFormSuccess, saveFormData]);
@@ -105,7 +197,13 @@ export default function Form() {
       data: {
         userId: generateAndSaveKey(),
         status: 'Save',
-        data: values,
+        data: {
+          ...values,
+          areasOfBusinessInterest: {
+            ...values.areasOfBusinessInterest,
+            key: 'new',
+          },
+        },
       },
     });
   };
@@ -114,14 +212,15 @@ export default function Form() {
       data: {
         userId: generateAndSaveKey(),
         status: 'Save as Draft',
-        data: values,
+        data: {
+          ...values,
+          areasOfBusinessInterest: {
+            ...values.areasOfBusinessInterest,
+            key: 'new',
+          },
+        },
       },
     });
-    //  form.setValues({...initialValues});
-    // console.log({
-    //   status: 'Save as Draft',
-    //   values,
-    // });
   };
   return (
     <Card

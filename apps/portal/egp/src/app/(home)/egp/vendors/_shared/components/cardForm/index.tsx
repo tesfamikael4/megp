@@ -22,6 +22,7 @@ const CardForm: React.FC<Props> = ({ form }) => {
 
   const handleValueChange = (values: typeof form.values) => {
     if (
+      values.areasOfBusinessInterest &&
       values.areasOfBusinessInterest.areasOfBusinessInterestNames.length > 0
     ) {
       const transformSelectedValues2 =
@@ -69,6 +70,7 @@ const CardForm: React.FC<Props> = ({ form }) => {
       }
     } else {
       if (
+        values.areasOfBusinessInterest &&
         values.areasOfBusinessInterest.areasOfBusinessInterestInformation
           .length > 0
       )
@@ -79,38 +81,39 @@ const CardForm: React.FC<Props> = ({ form }) => {
     }
   };
 
-  const selectedCards =
-    form.values.areasOfBusinessInterest.areasOfBusinessInterestInformation.map(
-      (value: any, index) => (
-        <Stack key={index} my={15}>
-          <Card withBorder shadow="sm" radius="md">
-            <Card.Section withBorder inheritPadding py="xs">
-              <Text tt="uppercase" size="lg" weight={500} mb="sm" p={4}>
-                {value.category}
-              </Text>
-            </Card.Section>
-            <Card.Section p={'md'}>
-              <Flex direction={'column'} gap={10}>
-                <TextInput
-                  label="Line Of Business"
-                  {...form.getInputProps(
-                    `areasOfBusinessInterest.areasOfBusinessInterestInformation.${index}.lineOfBusiness`,
-                  )}
-                />
-                <Select
-                  label={'Price Range'}
-                  placeholder="Input 2"
-                  data={['100 - 1000', '1000 - 10000']}
-                  {...form.getInputProps(
-                    `areasOfBusinessInterest.areasOfBusinessInterestInformation.${index}.valueRange`,
-                  )}
-                />
-              </Flex>
-            </Card.Section>
-          </Card>
-        </Stack>
-      ),
-    );
+  const selectedCards = form.values.areasOfBusinessInterest
+    ? form.values.areasOfBusinessInterest.areasOfBusinessInterestInformation.map(
+        (value: any, index) => (
+          <Stack key={index} my={15}>
+            <Card withBorder shadow="sm" radius="md">
+              <Card.Section withBorder inheritPadding py="xs">
+                <Text tt="uppercase" size="lg" weight={500} mb="sm" p={4}>
+                  {value.category}
+                </Text>
+              </Card.Section>
+              <Card.Section p={'md'}>
+                <Flex direction={'column'} gap={10}>
+                  <TextInput
+                    label="Line Of Business"
+                    {...form.getInputProps(
+                      `areasOfBusinessInterest.areasOfBusinessInterestInformation.${index}.lineOfBusiness`,
+                    )}
+                  />
+                  <Select
+                    label={'Price Range'}
+                    placeholder="Input 2"
+                    data={['100 - 1000', '1000 - 10000']}
+                    {...form.getInputProps(
+                      `areasOfBusinessInterest.areasOfBusinessInterestInformation.${index}.valueRange`,
+                    )}
+                  />
+                </Flex>
+              </Card.Section>
+            </Card>
+          </Stack>
+        ),
+      )
+    : [];
 
   return (
     <Box>

@@ -4,6 +4,7 @@ import { IconTrash, IconUserSquareRounded } from '@tabler/icons-react';
 import React from 'react';
 import { Table } from '../../../../_shared/components';
 import { randomId } from '@mantine/hooks';
+import { nationalityOptions } from '../../../../_shared/config';
 
 interface Props {
   form: any;
@@ -20,7 +21,6 @@ export const BeneficialOwnership: React.FC<Props> = ({ form }) => {
               render: (index) => (
                 <Stack my={15}>
                   <TextInput
-                    label="First Name"
                     icon={<IconUserSquareRounded size={'1rem'} />}
                     id="firstName"
                     {...form.getInputProps(
@@ -35,7 +35,6 @@ export const BeneficialOwnership: React.FC<Props> = ({ form }) => {
               render: (index) => (
                 <Stack my={15}>
                   <TextInput
-                    label="Last Name"
                     icon={<IconUserSquareRounded size={'1rem'} />}
                     id="lastName"
                     {...form.getInputProps(
@@ -50,9 +49,8 @@ export const BeneficialOwnership: React.FC<Props> = ({ form }) => {
               render: (index) => (
                 <Stack my={15}>
                   <Select
-                    label="Nationality"
                     id="nationality"
-                    data={['Ethiopian', 'Services', 'Works']}
+                    data={nationalityOptions}
                     placeholder="select"
                     searchable
                     nothingFound="No options"
@@ -80,7 +78,11 @@ export const BeneficialOwnership: React.FC<Props> = ({ form }) => {
               ),
             },
           ]}
-          data={form.values.beneficialOwnership.beneficialOwnershipTable}
+          data={
+            form.values.beneficialOwnership
+              ? form.values.beneficialOwnership.beneficialOwnershipTable
+              : []
+          }
           title={<Text>Table</Text>}
           titlePosition={'start'}
           addcolumn={

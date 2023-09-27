@@ -73,7 +73,7 @@ export const ShareHolders: React.FC<Props> = ({ form }) => {
           )}
           renderCardList={(openModal) => (
             <>
-              {form.values.shareHolders.shareHoldersTable.map(
+              {form.values.shareHolders?.shareHoldersTable.map(
                 (value: any, index: number) => (
                   <Card key={index} withBorder w={250}>
                     <Card.Section mb={10}>
