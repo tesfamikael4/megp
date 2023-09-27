@@ -96,9 +96,7 @@ export class WorkflowInstanceService {
     const bp = service.businessProcesses.find((a) => a.isActive === true);
     workflowInstanceEntity.bpId = bp.id;
     workflowInstanceEntity.applicationNumber = Date.now().toString();
-    workflowInstanceEntity.status = 'Submitted';
-
-    workflowInstanceEntity.status = 'Submitted';
+    workflowInstanceEntity.status = WorkflowInstanceEnum.Submitted;
     const newWorkflowInstance = await this.workflowInstanceRepository.save(
       workflowInstanceEntity,
     );
@@ -120,9 +118,6 @@ export class WorkflowInstanceService {
           businessProcessId: bp.id,
         })
         .getOne();
-      console.log('task taskName: state.value.toString()', state.value);
-      console.log(bp.workflow);
-      console.log('task', task);
       taskHandler.currentState = state.value.toString();
       taskHandler.instanceId = newWorkflowInstance.id;
       taskHandler.taskId = task.id;
@@ -146,8 +141,7 @@ export class WorkflowInstanceService {
       where: { id: nextCommand.instanceId },
       relations: ['taskHandler', 'businessProcess'],
     });
-    console.log('workflowInstance---', workflowInstance.businessProcess);
-    console.log('---------------');
+
     if (!workflowInstance)
       throw new NotFoundException('Workflow Instance not found');
     const currentTaskHandler = workflowInstance.taskHandler;
@@ -168,9 +162,7 @@ export class WorkflowInstanceService {
           workflowInstance.status = WorkflowInstanceEnum.Completed;
         }
 
-        console.log('Previous State =>' + currentTaskHandler.currentState);
         currentTaskHandler.currentState = state.value.toString();
-        console.log('Current State =>' + currentTaskHandler.currentState);
         const stateMetaData = this.getStateMetaData(state.meta);
         const task = await this.taskRepository.findOne({
           where: {
@@ -178,7 +170,6 @@ export class WorkflowInstanceService {
             businessProcessId: workflowInstance.bpId,
           },
         });
-        console.log('tas---k', task);
         stateMetaData['type'] = task.taskType;
 
         this.handleEvent(stateMetaData, nextCommand)
@@ -262,6 +253,7 @@ export class WorkflowInstanceService {
   }
   async confirm(command: GotoNextStateDto) {
     const eventType = command.action ? command.action : 'SUBMIT';
+
     if (eventType.toLocaleLowerCase() == 'no') {
     } else {
     }
@@ -275,7 +267,6 @@ export class WorkflowInstanceService {
     instance.status = WorkflowInstanceEnum.Draft;
     const result = await this.workflowInstanceRepository.save(instance);
   }
-
   async completeApplication(instanceId: string, userId: string) {
     const instance = await this.workflowInstanceRepository.findOne({
       where: { id: instanceId },
