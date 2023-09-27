@@ -3,7 +3,6 @@ import { IsNotEmpty, IsUUID } from 'class-validator';
 import { VendorsEntity } from '../entities/vendors.entity';
 import { CreateBusinessCategoryDto } from './business-category.dto';
 import { CreateCustomCategoryDto } from './custom-category.dto';
-import { CreateApplicationDto } from './application.dto';
 import {
   CreateShareholdersDto,
   ShareholdersResponseDto,
@@ -134,6 +133,7 @@ export class UpdateVendorsDto extends CreateVendorsDto {
 }
 export class VendorsResponseDto extends UpdateVendorsDto {
   static fromEntity(entity: VendorsEntity): VendorsResponseDto {
+    vendor: VendorsResponseDto;
     const response = new VendorsResponseDto();
     response.id = entity.id;
     response.tin = entity.tin;

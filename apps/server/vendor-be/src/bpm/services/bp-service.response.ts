@@ -33,14 +33,14 @@ export class BpServiceResponse {
     response.id = entity.id;
     response.key = entity.key;
     response.name = entity.name;
-    response.description = entity.description;
+    //  response.description = entity.description;
     response.isActive = entity.isActive;
-    response.createdBy = entity.createdBy;
-    response.updatedBy = entity.updatedBy;
-    response.deletedBy = entity.deletedBy;
-    response.createdAt = entity.createdAt;
-    response.updatedAt = entity.updatedAt;
-    response.deletedAt = entity.deletedAt;
+    // response.createdBy = entity.createdBy;
+    // response.updatedBy = entity.updatedBy;
+    // response.deletedBy = entity.deletedBy;
+    //response.createdAt = entity.createdAt;
+    // response.updatedAt = entity.updatedAt;
+    // response.deletedAt = entity.deletedAt;
     return response;
   }
 }

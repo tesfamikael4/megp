@@ -34,6 +34,7 @@ import { TaskTrackerResponse } from './task-tracker.response';
 import { TaskResponse } from '../tasks/task.response';
 import { ServicePriceEntity } from 'src/vendor-registration/entities/service-price.entity';
 import { ApplicationExcutionService } from '../application-execution.service';
+import { WorkflowInstanceEnum } from '../workflow-instance.enum';
 
 @Injectable()
 export class WorkflowInstanceService {
@@ -83,6 +84,7 @@ export class WorkflowInstanceService {
     const price = await this.dataSource
       .getRepository(ServicePriceEntity)
       .findOne({ where: { id: dto.pricingId } });
+
     const service = await this.dataSource
       .getRepository(BpServiceEntity)
       .createQueryBuilder('services')
@@ -90,12 +92,11 @@ export class WorkflowInstanceService {
       .where('services.id=:id', { id: price.serviceId })
       .andWhere('businessProcesses.isActive=:isActive', { isActive: true })
       .getOne();
+
     const bp = service.businessProcesses.find((a) => a.isActive === true);
     workflowInstanceEntity.bpId = bp.id;
     workflowInstanceEntity.applicationNumber = Date.now().toString();
-    workflowInstanceEntity.status = 'Submitted';
-
-    workflowInstanceEntity.status = 'Submitted';
+    workflowInstanceEntity.status = WorkflowInstanceEnum.Submitted;
     const newWorkflowInstance = await this.workflowInstanceRepository.save(
       workflowInstanceEntity,
     );
@@ -117,9 +118,6 @@ export class WorkflowInstanceService {
           businessProcessId: bp.id,
         })
         .getOne();
-      console.log('task taskName: state.value.toString()', state.value);
-      console.log(bp.workflow);
-      console.log('task', task);
       taskHandler.currentState = state.value.toString();
       taskHandler.instanceId = newWorkflowInstance.id;
       taskHandler.taskId = task.id;
@@ -143,8 +141,7 @@ export class WorkflowInstanceService {
       where: { id: nextCommand.instanceId },
       relations: ['taskHandler', 'businessProcess'],
     });
-    console.log('workflowInstance---', workflowInstance.businessProcess);
-    console.log('---------------');
+
     if (!workflowInstance)
       throw new NotFoundException('Workflow Instance not found');
     const currentTaskHandler = workflowInstance.taskHandler;
@@ -160,14 +157,12 @@ export class WorkflowInstanceService {
 
     const stateMachine = interpret(machine).onTransition(async (state) => {
       if (state.value !== currentTaskHandler.currentState) {
-        workflowInstance.status = 'Inprogress';
+        workflowInstance.status = WorkflowInstanceEnum.Inprogress;
         if (state.done) {
-          workflowInstance.status = 'Completed';
+          workflowInstance.status = WorkflowInstanceEnum.Completed;
         }
 
-        console.log('Previous State =>' + currentTaskHandler.currentState);
         currentTaskHandler.currentState = state.value.toString();
-        console.log('Current State =>' + currentTaskHandler.currentState);
         const stateMetaData = this.getStateMetaData(state.meta);
         const task = await this.taskRepository.findOne({
           where: {
@@ -175,7 +170,6 @@ export class WorkflowInstanceService {
             businessProcessId: workflowInstance.bpId,
           },
         });
-        console.log('tas---k', task);
         stateMetaData['type'] = task.taskType;
 
         this.handleEvent(stateMetaData, nextCommand)
@@ -185,10 +179,10 @@ export class WorkflowInstanceService {
           .catch((err) => {
             console.log('handleEvent error', err);
           });
-        console.log('Task fbgrjhg', task);
-        console.log(currentTaskHandler.currentState, state.value);
+
         const data = { remark: nextCommand.remark, ...nextCommand.data };
         currentTaskHandler.data = data;
+        currentTaskHandler.taskId = task.id;
         this.dataSource
           .getRepository(TaskHandlerEntity)
           .save(currentTaskHandler)
@@ -216,6 +210,7 @@ export class WorkflowInstanceService {
     const result = await this.workflowInstanceRepository.save(workflowInstance);
     return WorkflowInstanceResponse.toResponse(result);
   }
+
   async handleEvent(stateMetadata: StateMetaData, command: GotoNextStateDto) {
     const eventType = command.action ? command.action : 'SUBMIT';
     console.log('eventType', eventType);
@@ -231,7 +226,7 @@ export class WorkflowInstanceService {
         break;
       case TaskTypes.INVOICE:
         const taskId = '';
-        //  this.appService.generateInvoice(taskId, command.instanceId);
+        this.appService.generateInvoice(taskId, command.instanceId);
         break;
       case TaskTypes.CERTIFICATION:
         console.log(TaskTypes.CERTIFICATION, command);
@@ -257,9 +252,32 @@ export class WorkflowInstanceService {
   }
   async confirm(command: GotoNextStateDto) {
     const eventType = command.action ? command.action : 'SUBMIT';
+
     if (eventType.toLocaleLowerCase() == 'no') {
     } else {
     }
+  }
+  async adjustApplication(instanceId: string, userId: string) {
+    const instance = await this.workflowInstanceRepository.findOne({
+      where: { id: instanceId },
+    });
+    if (!instance) throw new NotFoundException('WorkflowInstance not found');
+    instance.createdBy = userId;
+    instance.status = WorkflowInstanceEnum.Draft;
+    const result = await this.workflowInstanceRepository.save(instance);
+  }
+  async completeApplication(instanceId: string, userId: string) {
+    const instance = await this.workflowInstanceRepository.findOne({
+      where: { id: instanceId },
+    });
+    if (!instance) throw new NotFoundException('WorkflowInstance not found');
+    const today = new Date();
+    instance.createdBy = userId;
+    instance.status = WorkflowInstanceEnum.Completed;
+    instance.approved_at = today.toDateString();
+    const exprireDate = today.setFullYear(today.getFullYear() + 1);
+    instance.expire_date = exprireDate.toString();
+    const result = await this.workflowInstanceRepository.save(instance);
   }
 
   async update(

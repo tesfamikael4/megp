@@ -7,17 +7,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { CollectionQuery, QueryConstructor } from '@collection-query';
-import { DataResponseFormat } from '@api-data';
-import { ApplicationEntity } from './entities/application.entity';
-
-import { ServicesEntity } from './entities/services.entity';
-import { ServicesResponseDto } from './dto/services.dto';
-import {
-  ApplicationResponseDto,
-  CreateApplicationDto,
-  UpdateApplicationDto,
-} from './dto/application.dto';
 import { VendorsEntity } from './entities/vendors.entity';
 import { InsertAllDataDto } from './dto/save-all.dto';
 import { SetVendorStatus, VendorsResponseDto } from './dto/vendor.dto';
@@ -25,8 +14,6 @@ import { WorkflowInstanceEntity } from 'src/bpm/workflow-instances/entities/work
 import { BpServiceEntity } from 'src/bpm/services/entities/bp-service';
 import { BusinessProcessEntity } from 'src/bpm/business-process/entities/business-process';
 import initialValueSchema from 'src/data';
-import { CreateAreasOfBusinessInterest } from './dto/areas-of-business-interest';
-
 @Injectable()
 export class VendorRegistrationsService {
   constructor(

@@ -1,25 +1,16 @@
-import { CommonEntity } from 'src/shared/entities/common.entity';
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
-import { PaymentReceiptEntity } from './receipt-attachment';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity({ name: 'invoices' })
+@Entity({ name: 'invoice' })
 export class InvoiceEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
   @Column({ name: 'instance_id', nullable: true, type: 'uuid' })
   instanceId: string;
-  @Column({ name: 'applicationNo', nullable: true })
+  @Column({ name: 'application_no', nullable: true })
   applicationNo: string;
-  @Column({ name: 'taskName', nullable: true })
+  @Column({ name: 'task_name', nullable: true })
   taskName: string;
-  @Column({ name: 'taskId', nullable: true })
+  @Column({ name: 'task_id', nullable: true })
   taskId: string;
   @Column({ nullable: true })
   serviceName: string;
@@ -33,16 +24,12 @@ export class InvoiceEntity {
   payToAccName: string;
   @Column()
   payToBank: string;
-  @Column({ name: 'amount', type: 'decimal' })
+  @Column({ type: 'decimal' })
   amount: number;
-  @Column({ name: 'createdOn' })
+  @Column()
   createdOn: Date;
-  //Paid| Pending
-  @Column({ name: 'paymentStatus' })
+  @Column({ name: 'payment_status' })
   paymentStatus: string;
   @Column({ name: 'remark' })
   remark: string;
-  @OneToOne(() => PaymentReceiptEntity)
-  @JoinColumn()
-  receipt: PaymentReceiptEntity;
 }

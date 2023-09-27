@@ -49,12 +49,12 @@ export class TaskResponse {
         TaskAssignmentResponse.toResponse(assignment),
       );
     }
-    response.createdBy = entity.createdBy;
-    response.updatedBy = entity.updatedBy;
-    response.deletedBy = entity.deletedBy;
-    response.createdAt = entity.createdAt;
-    response.updatedAt = entity.updatedAt;
-    response.deletedAt = entity.deletedAt;
+    // response.createdBy = entity.createdBy;
+    //  response.updatedBy = entity.updatedBy;
+    //  response.deletedBy = entity.deletedBy;
+    //  response.createdAt = entity.createdAt;
+    // response.updatedAt = entity.updatedAt;
+    //  response.deletedAt = entity.deletedAt;
     return response;
   }
 }

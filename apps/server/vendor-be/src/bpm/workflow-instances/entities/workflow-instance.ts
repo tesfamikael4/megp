@@ -28,6 +28,10 @@ export class WorkflowInstanceEntity extends CommonEntity {
   bpId: string;
   @Column({ name: 'pricing_id', nullable: true })
   pricingId: string;
+  @Column({ name: 'approved_at', nullable: true })
+  approved_at: string;
+  @Column({ name: 'expire_date', nullable: true })
+  expire_date: string;
   @ManyToOne(
     () => BusinessProcessEntity,
     (businessProcess) => businessProcess.workflowInstances,
@@ -62,13 +66,10 @@ export class WorkflowInstanceEntity extends CommonEntity {
   @JoinColumn({ name: 'pricing_id' })
   price: ServicePriceEntity;
 
-  @ManyToOne(() => VendorsEntity, (v) => v.instances, {
-    orphanedRowAction: 'delete',
-    onUpdate: 'CASCADE',
-    onDelete: 'CASCADE',
-  })
+  @ManyToOne(() => VendorsEntity, (v) => v.instances)
   @JoinColumn({ name: 'requestor_id' })
   vendor: VendorsEntity;
+
   addTracker(taskTracker: TaskTrackerEntity) {
     if (!this.taskTrackers) {
       this.taskTrackers = [];

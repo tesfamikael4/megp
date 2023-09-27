@@ -32,17 +32,17 @@ export class BusinessProcessResponse {
     const response = new BusinessProcessResponse();
     response.id = entity.id;
     response.serviceId = entity.serviceId;
-    response.workflow = entity.workflow;
+    // response.workflow = entity.workflow;
     response.version = entity.version;
     response.isActive = entity.isActive;
-    response.organizationId = entity.organizationId;
-    response.organizationName = entity.organizationName;
+    //response.organizationId = entity.organizationId;
+    // response.organizationName = entity.organizationName;
     response.createdBy = entity.createdBy;
-    response.updatedBy = entity.updatedBy;
-    response.deletedBy = entity.deletedBy;
+    //  response.updatedBy = entity.updatedBy;
+    // response.deletedBy = entity.deletedBy;
     response.createdAt = entity.createdAt;
-    response.updatedAt = entity.updatedAt;
-    response.deletedAt = entity.deletedAt;
+    //  response.updatedAt = entity.updatedAt;
+    // response.deletedAt = entity.deletedAt;
     return response;
   }
 }

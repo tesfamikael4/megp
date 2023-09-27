@@ -18,6 +18,9 @@ import {
 import { InvoiceResponseDto } from 'src/vendor-registration/dto/invoice.dto';
 import { InvoiceEntity } from 'src/bpm/workflow-instances/entities/invoice.entity';
 import { PaymentReceiptEntity } from 'src/bpm/workflow-instances/entities/receipt-attachment';
+import { WorkflowInstanceEntity } from './workflow-instances/entities/workflow-instance';
+import { log } from 'console';
+import { WorkflowInstanceResponse } from './workflow-instances/workflow-instance.response';
 @Injectable()
 export class ApplicationExcutionService {
   constructor(
@@ -29,6 +32,9 @@ export class ApplicationExcutionService {
     private readonly taskTrackingRepository: Repository<TaskTrackerEntity>,
     @InjectRepository(TaskHandlerEntity)
     private readonly taskhandlergRepository: Repository<TaskHandlerEntity>,
+    @InjectRepository(WorkflowInstanceEntity)
+    private readonly wiRepository: Repository<WorkflowInstanceEntity>,
+    private dataSource: DataSource,
   ) {}
 
   async getCompletedTasks(instanceId: string): Promise<TaskTrackerResponse[]> {
@@ -91,33 +97,52 @@ export class ApplicationExcutionService {
 
   async getCurruntTaskByService(
     serviceKey: string,
-  ): Promise<DataResponseFormat<TaskHandlerResponse>> {
+  ): Promise<DataResponseFormat<WorkflowInstanceResponse>> {
     console.log(serviceKey);
-
-    const results = await this.taskhandlergRepository.find({
+    const data = await this.wiRepository.find({
       relations: {
-        task: true,
-        workflowInstance: {
-          businessProcess: {
-            service: true,
-          },
-          vendor: true,
+        vendor: true,
+        businessProcess: {
+          service: true,
+        },
+        taskHandler: {
+          task: true,
         },
       },
       where: {
-        workflowInstance: {
-          status: Not('Completed'),
-          businessProcess: {
-            service: { key: serviceKey },
-          },
+        status: Not('Completed'),
+        businessProcess: {
+          service: { key: serviceKey },
         },
       },
     });
-
-    console.log('result', results);
-    const response = new DataResponseFormat<TaskHandlerResponse>();
-    response.items = results.map((row) => TaskHandlerResponse.toResponse(row));
+    const response = new DataResponseFormat<WorkflowInstanceResponse>();
+    response.items = data.map((row) =>
+      WorkflowInstanceResponse.toResponse(row),
+    );
     response.total = response.items.length;
+    return response;
+  }
+  async getCurruntTaskDetail(
+    instanceId: string,
+  ): Promise<WorkflowInstanceResponse> {
+    const instance = await this.wiRepository.findOne({
+      relations: {
+        vendor: true,
+        businessProcess: {
+          service: true,
+        },
+        taskHandler: {
+          task: true,
+        },
+        taskTrackers: true,
+      },
+      where: {
+        status: Not('Completed'),
+        id: instanceId,
+      },
+    });
+    const response = WorkflowInstanceResponse.toResponse(instance);
     return response;
   }
 
