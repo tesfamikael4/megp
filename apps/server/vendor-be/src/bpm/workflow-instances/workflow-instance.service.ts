@@ -179,8 +179,7 @@ export class WorkflowInstanceService {
           .catch((err) => {
             console.log('handleEvent error', err);
           });
-        console.log('Task fbgrjhg', task);
-        console.log(currentTaskHandler.currentState, state.value);
+
         const data = { remark: nextCommand.remark, ...nextCommand.data };
         currentTaskHandler.data = data;
         currentTaskHandler.taskId = task.id;
