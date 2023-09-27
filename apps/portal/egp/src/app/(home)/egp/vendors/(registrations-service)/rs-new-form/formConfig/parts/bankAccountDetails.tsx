@@ -85,7 +85,7 @@ export const BankAccountDetails: React.FC<Props> = ({ form }) => {
           )}
           renderCardList={(openModal) => (
             <>
-              {form.values.bankAccountDetails.bankAccountDetailsTable.map(
+              {form.values.bankAccountDetails?.bankAccountDetailsTable.map(
                 (value: any, index: number) => (
                   <Card
                     key={index}
