@@ -3,8 +3,12 @@ import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AuthGuard } from './supertokens';
+import {
+  DocumentBuilder,
+  SwaggerCustomOptions,
+  SwaggerModule,
+} from '@nestjs/swagger';
 import supertokens from 'supertokens-node';
 import { SupertokensExceptionFilter } from './supertokens/auth/filters/auth.filter';
 import { GlobalExceptionFilter } from './shared/exceptions/global-exception.filter';
@@ -28,10 +32,14 @@ async function bootstrap() {
   app.useGlobalFilters(new GlobalExceptionFilter());
 
   const reflector = app.get(Reflector);
-  app.useGlobalGuards(new AuthGuard(reflector));
-
-  app.setGlobalPrefix('api');
-
+  // app.useGlobalGuards(new Aut  app.useGlobalGuards(new AuthGuard(reflector));
+  const customOptions: SwaggerCustomOptions = {
+    swaggerOptions: {
+      persistAuthorization: false,
+      docExpansion: 'none',
+    },
+    customSiteTitle: 'Registration System API Documentation',
+  };
   const document = SwaggerModule.createDocument(
     app,
     new DocumentBuilder()
@@ -39,9 +47,12 @@ async function bootstrap() {
       .setDescription('My IAM API')
       .addBearerAuth()
       .build(),
+    {
+      deepScanRoutes: true,
+    },
   );
 
-  SwaggerModule.setup('docs', app, document);
+  SwaggerModule.setup('docs', app, document, customOptions);
 
   await app.listen(port, () => {
     console.log('[WEB]', config.get<string>('BASE_URL') + '/docs');

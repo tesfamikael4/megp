@@ -23,6 +23,8 @@
   "packageManager": "pnpm@8.6.10",
   "name": "megp",
   "dependencies": {
-    "xstate": "^4.38.2"
+    "xstate": "^4.38.2",
+    "@nestjs/event-emitter": "^2.0.2",
+    "v4": "^0.0.1"
   }
 }

@@ -1,24 +1,25 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmOptionsFactory, TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { TypeOrmConfigHelper } from './typeorm-config-helper';
 
 @Injectable()
 export class TypeOrmConfigService implements TypeOrmOptionsFactory {
+  @Inject(ConfigService)
+  private readonly config: ConfigService;
+
   public createTypeOrmOptions(): TypeOrmModuleOptions {
     return {
       type: 'postgres',
-      host: TypeOrmConfigHelper.DATABASE_HOST,
-      port: Number(TypeOrmConfigHelper.DATABASE_PORT),
-      database: TypeOrmConfigHelper.DATABASE_NAME,
-      username: TypeOrmConfigHelper.DATABASE_USER,
-      password: TypeOrmConfigHelper.DATABASE_PASSWORD,
+      host: this.config.get<string>('DATABASE_HOST'),
+      port: this.config.get<number>('DATABASE_PORT'),
+      database: this.config.get<string>('DATABASE_NAME'),
+      username: this.config.get<string>('DATABASE_USER'),
+      password: this.config.get<string>('DATABASE_PASSWORD'),
       entities: ['dist/**/*.entity.{ts,js}'],
       migrations: ['dist/migrations/*.{ts,js}'],
       migrationsTableName: 'typeorm_migrations',
       logger: 'file',
-      synchronize: TypeOrmConfigHelper.NODE_ENV != 'production', // never use TRUE in production!
-      autoLoadEntities: TypeOrmConfigHelper.NODE_ENV != 'production',
+      synchronize: this.config.get<string>('NODE_ENV') != 'production', // never use TRUE in production!
     };
   }
 }

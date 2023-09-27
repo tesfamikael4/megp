@@ -1,6 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { IsBoolean, IsString, IsOptional, IsUUID } from 'class-validator';
 import { Unit } from '../entities/unit.entity';
+import { UnitTypeResponseDto } from './unit-type.dto';
+import { UserUnitResponseDto } from './employee-unit.dto';
 
 export class CreateUnitDto {
   @ApiProperty()
@@ -8,8 +10,24 @@ export class CreateUnitDto {
   name: string;
 
   @ApiProperty()
+  @IsOptional()
   @IsString()
+  description: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  code: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsUUID()
   parentId: string;
+
+  @ApiProperty()
+  @IsUUID()
+  @IsOptional()
+  typeId: string;
 
   @ApiProperty()
   @IsString()
@@ -17,10 +35,18 @@ export class CreateUnitDto {
 
   static fromDto(unitDto: CreateUnitDto): Unit {
     const unit: Unit = new Unit();
-
+    // if (!unitDto) {
+    //   return;
+    // }
     unit.name = unitDto.name;
 
     unit.parentId = unitDto.parentId;
+
+    unit.code = unitDto.code;
+
+    unit.typeId = unitDto.typeId;
+
+    unit.description = unitDto.description;
 
     unit.organizationId = unitDto.organizationId;
 
@@ -36,15 +62,30 @@ export class UpdateUnitDto extends CreateUnitDto {
   @ApiProperty()
   @IsString()
   id: string;
-
+  @ApiProperty()
+  @IsOptional()
+  @IsBoolean()
+  isActive: boolean;
+  unitType: UnitTypeResponseDto;
+  userUnits: UserUnitResponseDto[];
   static fromDto(unitDto: UpdateUnitDto): Unit {
     const unit: Unit = new Unit();
-
+    // if (!unitDto) {
+    //   return;
+    // }
     unit.id = unitDto.id;
 
     unit.name = unitDto.name;
 
     unit.parentId = unitDto.parentId;
+
+    unit.code = unitDto.code;
+
+    unit.isActive = unitDto.isActive;
+
+    unit.typeId = unitDto.typeId;
+
+    unit.description = unitDto.description;
 
     unit.organizationId = unitDto.organizationId;
 
@@ -62,7 +103,21 @@ export class UnitResponseDto extends UpdateUnitDto {
 
     unitDto.parentId = unit.parentId;
 
+    unitDto.code = unit.code;
+
+    unitDto.isActive = unit.isActive;
+
+    unitDto.typeId = unit.typeId;
+
+    unitDto.description = unit.description;
+
     unitDto.organizationId = unit.organizationId;
+    if (unit.unitType) {
+      unitDto.unitType = UnitTypeResponseDto.toDto(unit.unitType);
+    }
+    if (unit.userUnits) {
+      unitDto.userUnits = UserUnitResponseDto.toDtos(unit.userUnits);
+    }
 
     return unitDto;
   }
