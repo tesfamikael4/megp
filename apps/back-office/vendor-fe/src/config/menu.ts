@@ -17,10 +17,10 @@ export const Menu: MenuItem[] = [
   {
     label: 'New Registration ',
     icon: IconHomePlus,
-    link: '/my-organization',
+    link: '/new-registration',
   },
-  { label: 'Upgrade', icon: IconHomeUp, link: '/users' },
-  { label: 'Renewal', icon: IconHomeRibbon, link: '/groups' },
+  { label: 'Upgrade', icon: IconHomeUp, link: '/upgrade' },
+  { label: 'Renewal', icon: IconHomeRibbon, link: '/renewal' },
   { label: 'Information Change', icon: IconHomeStar, link: '/units' },
   { label: 'Payment', icon: IconReportMoney, link: '/debarment' },
   { label: 'Debarment', icon: IconHomeCancel, link: '/debarment' },
