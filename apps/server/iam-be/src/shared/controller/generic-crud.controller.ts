@@ -19,7 +19,7 @@ import { BaseEntity } from '../entities/base.entity';
 @Controller()
 @UseInterceptors(/* your interceptors if any */)
 export class GenericCrudController<T extends BaseEntity> {
-  constructor(private readonly service: GenericCrudService<T>) {}
+  constructor(private readonly service: GenericCrudService<T>) { }
 
   @Post()
   async create(@Body() itemData: DeepPartial<T>, user?: any): Promise<T> {
