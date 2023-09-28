@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { WorkflowInstanceEntity } from 'src/bpm/workflow-instances/entities/workflow-instance';
 import { BpServiceEntity } from 'src/bpm/services/entities/bp-service';
-@Entity({ name: 'servicePricing' })
+@Entity({ name: 'service_pricing' })
 export class ServicePriceEntity extends CommonEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

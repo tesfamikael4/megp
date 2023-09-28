@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 import { ServicePriceEntity } from '../../../vendor-registration/entities/service-price.entity';
 import { InvoiceEntity } from './invoice.entity';
-@Entity({ name: 'receiptAttachments' })
+@Entity({ name: 'receipt_attachments' })
 export class PaymentReceiptEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -22,10 +22,10 @@ export class PaymentReceiptEntity {
   filePath: string;
   @Column()
   fileType: string;
-  // @OneToOne(() => InvoiceEntity)
-  // @JoinColumn()
-  // invoice: InvoiceEntity;
+  @OneToOne(() => InvoiceEntity)
+  @JoinColumn()
+  invoice: InvoiceEntity;
 
-  @OneToMany(() => ServicePriceEntity, (prc) => prc.service)
-  priceSettings: ServicePriceEntity[];
+  // @OneToMany(() => ServicePriceEntity, (prc) => prc.service)
+  // priceSettings: ServicePriceEntity[];
 }

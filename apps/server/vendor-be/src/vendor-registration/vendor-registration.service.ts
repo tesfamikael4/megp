@@ -84,6 +84,27 @@ export class VendorRegistrationsService {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
+  async getVendorById(vendorId: string): Promise<VendorsResponseDto> {
+    try {
+      const vendorEntity = await this.vendorRepository.findOneOrFail({
+        where: { id: vendorId },
+        relations: [
+          'shareholders',
+          'vendorAccounts',
+          'vendorAccounts.bank',
+          'beneficialOwnership',
+          'instances',
+          'areasOfBusinessInterest',
+          'customCats',
+          'businessCats',
+        ],
+      });
+      return VendorsResponseDto.fromEntity(vendorEntity);
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
+  }
+
   async getVendors(): Promise<VendorsResponseDto[]> {
     try {
       const vendorEntity = await this.vendorRepository.find({

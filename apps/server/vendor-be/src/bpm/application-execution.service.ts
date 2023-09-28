@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Not, Repository } from 'typeorm';
+import { DataSource, In, Not, Repository, createQueryBuilder } from 'typeorm';
 import { DataResponseFormat } from 'src/shared/api-data';
 import {
   CollectionQuery,
@@ -21,6 +21,9 @@ import { PaymentReceiptEntity } from 'src/bpm/workflow-instances/entities/receip
 import { WorkflowInstanceEntity } from './workflow-instances/entities/workflow-instance';
 import { log } from 'console';
 import { WorkflowInstanceResponse } from './workflow-instances/workflow-instance.response';
+import { throwIfEmpty } from 'rxjs';
+import { IsNotIn } from 'class-validator';
+import { WorkflowInstanceEnum } from './workflow-instance.enum';
 @Injectable()
 export class ApplicationExcutionService {
   constructor(
@@ -34,7 +37,6 @@ export class ApplicationExcutionService {
     private readonly taskhandlergRepository: Repository<TaskHandlerEntity>,
     @InjectRepository(WorkflowInstanceEntity)
     private readonly wiRepository: Repository<WorkflowInstanceEntity>,
-    private dataSource: DataSource,
   ) {}
 
   async getCompletedTasks(instanceId: string): Promise<TaskTrackerResponse[]> {
@@ -50,25 +52,26 @@ export class ApplicationExcutionService {
   }
 
   async getCurrunTasks(
-    servicekey: string,
+    //    servicekey: string,
     query: CollectionQuery,
-  ): Promise<DataResponseFormat<TaskHandlerResponse>> {
-    const dataQuery = QueryConstructor.constructQuery<TaskHandlerEntity>(
-      this.taskhandlergRepository,
+  ): Promise<DataResponseFormat<WorkflowInstanceResponse>> {
+    const dataQuery = QueryConstructor.constructQuery<WorkflowInstanceEntity>(
+      this.wiRepository,
       query,
     );
-    const response = new DataResponseFormat<TaskHandlerResponse>();
+    const response = new DataResponseFormat<WorkflowInstanceResponse>();
     if (query.count) {
       response.total = await dataQuery.getCount();
     } else {
       const [result, total] = await dataQuery.getManyAndCount();
       response.total = total;
       response.items = result.map((entity) =>
-        TaskHandlerResponse.toResponse(entity),
+        WorkflowInstanceResponse.toResponse(entity),
       );
     }
     return response;
   }
+
   /*
         async getCurruntTaskByService(serviceKey: string): Promise<any[]> {
             const result = this.taskhandlergrepository.find({
@@ -97,8 +100,9 @@ export class ApplicationExcutionService {
 
   async getCurruntTaskByService(
     serviceKey: string,
+    query: CollectionQuery,
   ): Promise<DataResponseFormat<WorkflowInstanceResponse>> {
-    console.log(serviceKey);
+    /*
     const data = await this.wiRepository.find({
       relations: {
         vendor: true,
@@ -110,19 +114,32 @@ export class ApplicationExcutionService {
         },
       },
       where: {
-        status: Not('Completed'),
+        status: In([WorkflowInstanceEnum.Submitted, WorkflowInstanceEnum.Inprogress]),
         businessProcess: {
           service: { key: serviceKey },
         },
       },
     });
+*/
+    const [result, total] = await this.wiRepository
+      .createQueryBuilder('wf')
+      .innerJoin('wf.vendor', 'v')
+      .innerJoinAndSelect('wf.businessProcess', 'bp')
+      .innerJoinAndSelect('bp.service', 'service')
+      .leftJoinAndSelect('wf.taskHandler', 'taskHandler')
+      .innerJoinAndSelect('taskHandler.task', 'task')
+      .where('service.key=:serviceKey', { serviceKey: serviceKey })
+      .skip(query.skip | 0)
+      .take(query.top | 20)
+      .getManyAndCount();
     const response = new DataResponseFormat<WorkflowInstanceResponse>();
-    response.items = data.map((row) =>
+    response.items = result.map((row) =>
       WorkflowInstanceResponse.toResponse(row),
     );
-    response.total = response.items.length;
+    response.total = response.total = total;
     return response;
   }
+
   async getCurruntTaskDetail(
     instanceId: string,
   ): Promise<WorkflowInstanceResponse> {
@@ -135,13 +152,18 @@ export class ApplicationExcutionService {
         taskHandler: {
           task: true,
         },
-        taskTrackers: true,
+        taskTrackers: {
+          task: true,
+        },
       },
       where: {
-        status: Not('Completed'),
+        //status: In([WorkflowInstanceEnum.Submitted, WorkflowInstanceEnum.Inprogress,]),
         id: instanceId,
       },
     });
+    if (!instance) {
+      throw new NotFoundException('Not Found');
+    }
     const response = WorkflowInstanceResponse.toResponse(instance);
     return response;
   }
@@ -162,7 +184,9 @@ export class ApplicationExcutionService {
         instanceId: instanceId,
       },
     });
-    console.log(result);
+    if (!result) {
+      throw new NotFoundException('Not Found');
+    }
     const invoice = new InvoiceEntity();
     invoice.instanceId = result.instanceId;
     invoice.taskName = result.task.name;

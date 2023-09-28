@@ -65,6 +65,7 @@ import { AreasOfBusinessInterestEntity } from './entities/areas-of-business-inte
       AreasOfBusinessInterestEntity,
     ]),
   ],
+  exports: [VendorRegistrationsService],
   providers: [
     VendorRegistrationsService,
     ServicePricingService,
