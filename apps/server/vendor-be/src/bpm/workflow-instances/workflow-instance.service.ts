@@ -37,6 +37,8 @@ import { ServicePriceEntity } from 'src/vendor-registration/entities/service-pri
 import { ApplicationExcutionService } from '../application-execution.service';
 import { WorkflowInstanceEnum } from '../workflow-instance.enum';
 import { VendorRegistrationsService } from 'src/vendor-registration/vendor-registration.service';
+import { TaskType } from '../tasks/entities/taskType';
+import { InvoiceEntity } from './entities/invoice.entity';
 
 @Injectable()
 export class WorkflowInstanceService {
@@ -251,6 +253,18 @@ export class WorkflowInstanceService {
         break;
       case TaskTypes.ISR:
         console.log(TaskTypes.ISR, command);
+        break;
+      case TaskTypes.PAYMENT:
+        const data = await this.dataSource
+          .getRepository(InvoiceEntity)
+          .find({ where: { instanceId: command.instanceId } });
+        data.map((row) => {
+          row.paymentStatus = 'Paid';
+          return this.dataSource
+            .getRepository(InvoiceEntity)
+            .update(row.id, row);
+        });
+
         break;
     }
   }

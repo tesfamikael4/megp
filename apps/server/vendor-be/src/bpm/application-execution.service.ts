@@ -165,6 +165,7 @@ export class ApplicationExcutionService {
       throw new NotFoundException('Not Found');
     }
     const response = WorkflowInstanceResponse.toResponse(instance);
+    response['invoice'] = await this.getInvoiceByInstanceId(instanceId);
     return response;
   }
 
@@ -225,6 +226,21 @@ export class ApplicationExcutionService {
       );
     }
     return response;
+  }
+
+  async getInvoiceByInstanceId(
+    instanceId: string,
+  ): Promise<InvoiceResponseDto[]> {
+    const invoices = await this.invoceRepository.find({
+      where: { instanceId: instanceId, paymentStatus: 'Pending' },
+    });
+    if (invoices) {
+      const items = invoices.map((invoice) =>
+        InvoiceResponseDto.toResponse(invoice),
+      );
+      return items;
+    }
+    return [];
   }
 
   async getInvoice(invoceId: string): Promise<InvoiceResponseDto> {
