@@ -2,7 +2,7 @@
   "extends": "@megp/tsconfig/nextjs.json",
   "compilerOptions": {
     "plugins": [{ "name": "next" }],
-
+    "baseUrl": ".",
     "paths": {
       "@/components/*": ["./src/components/*"],
       "@/context/*": ["./src/context/*"],

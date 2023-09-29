@@ -6,3 +6,6 @@ html,
 body {
   @apply bg-gray-100;
 }
+body {
+  font-size: 14px;
+}

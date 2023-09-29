@@ -1,0 +1,48 @@
+.git
+Dockerfile
+.dockerignore
+npm-debug.log
+README.md
+# dependencies
+node_modules
+**/node_modules
+.pnp
+.pnp.js
+
+# testing
+coverage
+
+# next.js
+.next/
+**/.next/
+out/
+**/out/
+build
+**/build
+
+# nest.js
+dist/
+dist/**/
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# local env files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# turbo
+.turbo
+**/.turbo
+
+# vercel
+.vercel
+**/.vercel
