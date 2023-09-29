@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AuthModule } from './auth/auth.module';
 import { SupertokensConfigHelper } from './supertokens-config-helper';
-import { AuthenticationController } from './authentication.controller';
+import { AuthController } from './auth.controller';
 import { OrganizationModule } from 'src/organization';
 
 @Module({
@@ -19,7 +19,7 @@ import { OrganizationModule } from 'src/organization';
     }),
     OrganizationModule,
   ],
-  controllers: [AuthenticationController],
+  controllers: [AuthController],
   providers: [],
 })
-export class AuthenticationModule {}
+export class AuthenticationModule { }

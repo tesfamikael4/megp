@@ -17,4 +17,4 @@ export class UpdateGroupDto extends CreateGroupDto {
   id: string;
 }
 
-export class GroupResponseDto extends UpdateGroupDto {}
+export class GroupResponseDto extends UpdateGroupDto { }
