@@ -8,15 +8,14 @@ import {
   OneToMany,
   ManyToOne,
   JoinColumn,
-} from "typeorm";
+} from 'typeorm';
 
 import { Audit } from 'src/shared/entities/audit.entity';
 
 import { Mandate } from './mandate.entity';
-import { Organization } from "src/organization/entities/organization.entity";
+import { Organization } from 'src/organization/entities/organization.entity';
 
-
-@Entity({ name: "organization_mandates" })
+@Entity({ name: 'organization_mandates' })
 export class OrganizationMandate extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -24,7 +23,10 @@ export class OrganizationMandate extends Audit {
   @Column()
   organizationId: string;
 
-  @ManyToOne(() => Organization, (organization) => organization.organizationMandates)
+  @ManyToOne(
+    () => Organization,
+    (organization) => organization.organizationMandates,
+  )
   @JoinColumn({ name: 'organizationId' })
   public organization: Organization;
 
@@ -34,5 +36,4 @@ export class OrganizationMandate extends Audit {
   @ManyToOne(() => Mandate, (mandate) => mandate.organizationMandates)
   @JoinColumn({ name: 'mandateId' })
   public mandate: Mandate;
-
 }

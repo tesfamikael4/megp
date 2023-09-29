@@ -31,7 +31,7 @@ import { CreateOrganizationMandateDto } from './dto/organization-mandate.dto';
 @Controller('organizations')
 @ApiTags('organizations')
 export class OrganizationController {
-  constructor(private readonly organizationService: OrganizationService) { }
+  constructor(private readonly organizationService: OrganizationService) {}
 
   @Post()
   async create(@Body() createOrganizationDto: CreateOrganizationDto) {

@@ -8,14 +8,13 @@ import {
   OneToMany,
   ManyToOne,
   JoinColumn,
-} from "typeorm";
+} from 'typeorm';
 
 import { Audit } from 'src/shared/entities/audit.entity';
 
 import { Permission } from './permission.entity';
 
-
-@Entity({ name: "applications" })
+@Entity({ name: 'applications' })
 export class Application extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -26,14 +25,9 @@ export class Application extends Audit {
   @Column()
   description: string;
 
-  @OneToMany(
-    () => Permission,
-    (permissions) => permissions.application,
-    {
-      cascade: true,
-      onDelete: "CASCADE"
-    },
-  )
+  @OneToMany(() => Permission, (permissions) => permissions.application, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   permissions: Permission[];
-
 }

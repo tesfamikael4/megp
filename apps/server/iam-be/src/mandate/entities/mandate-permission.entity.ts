@@ -8,15 +8,14 @@ import {
   OneToMany,
   ManyToOne,
   JoinColumn,
-} from "typeorm";
+} from 'typeorm';
 
 import { Audit } from 'src/shared/entities/audit.entity';
 
 import { Mandate } from './mandate.entity';
-import { Permission } from "src/application/entities/permission.entity";
+import { Permission } from 'src/application/entities/permission.entity';
 
-
-@Entity({ name: "mandate_permissions" })
+@Entity({ name: 'mandate_permissions' })
 export class MandatePermission extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -43,5 +42,4 @@ export class MandatePermission extends Audit {
 
   @Column()
   permissionKey: string;
-
 }

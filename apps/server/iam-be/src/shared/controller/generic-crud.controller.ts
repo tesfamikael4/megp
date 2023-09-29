@@ -19,23 +19,29 @@ import { BaseEntity } from '../entities/base.entity';
 @Controller()
 @UseInterceptors(/* your interceptors if any */)
 export class GenericCrudController<TEntity extends BaseEntity> {
-  constructor(private readonly service: GenericCrudService<TEntity>) { }
+  constructor(private readonly service: GenericCrudService<TEntity>) {}
 
   @Post()
-  async create(@Body() itemData: DeepPartial<TEntity>, @Req() req?: any): Promise<TEntity> {
+  async create(
+    @Body() itemData: DeepPartial<TEntity>,
+    @Req() req?: any,
+  ): Promise<TEntity> {
     return this.service.create(itemData);
   }
 
   @Get()
   async findAll(
     @Query() query: CollectionQuery,
-    @Req() req?: any
+    @Req() req?: any,
   ): Promise<DataResponseFormat<TEntity>> {
     return this.service.findAll(query);
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string, @Req() req?: any): Promise<TEntity | undefined> {
+  async findOne(
+    @Param('id') id: string,
+    @Req() req?: any,
+  ): Promise<TEntity | undefined> {
     return this.service.findOne(id);
   }
 
@@ -43,7 +49,7 @@ export class GenericCrudController<TEntity extends BaseEntity> {
   async update(
     @Param('id') id: string,
     @Body() itemData: Partial<TEntity>,
-    @Req() req?: any
+    @Req() req?: any,
   ): Promise<TEntity | undefined> {
     return this.service.update(id, itemData);
   }

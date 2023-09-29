@@ -81,16 +81,15 @@ export const theme: Partial<MantineThemeOverride> = {
       styles: {
         breadcrumb: {
           fontSize: '14px',
-        }
-      }
+        },
+      },
     },
     AppShell: {
       styles: {
         main: {
-          backgroundColor: '#F3F4F6'
+          backgroundColor: '#F3F4F6',
         },
-
-      }
-    }
+      },
+    },
   },
 };

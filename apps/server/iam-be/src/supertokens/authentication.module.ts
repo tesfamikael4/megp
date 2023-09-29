@@ -22,4 +22,4 @@ import { OrganizationModule } from 'src/organization';
   controllers: [AuthController],
   providers: [],
 })
-export class AuthenticationModule { }
+export class AuthenticationModule {}

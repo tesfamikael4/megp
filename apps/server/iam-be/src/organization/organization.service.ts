@@ -45,11 +45,19 @@ export class OrganizationService {
 
     @InjectRepository(Office)
     private readonly officeRepository: Repository<Office>,
-  ) { }
+  ) {}
 
   async registerOrganization(superTokenUser: any, formFields: any) {
     try {
-      const [username, _, organizationName, firstName, lastName, primaryEmail, primaryPhone] = formFields;
+      const [
+        username,
+        _,
+        organizationName,
+        firstName,
+        lastName,
+        primaryEmail,
+        primaryPhone,
+      ] = formFields;
 
       const organization = new Organization();
       organization.name = organizationName.value;

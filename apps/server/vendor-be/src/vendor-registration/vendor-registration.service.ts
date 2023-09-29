@@ -26,9 +26,8 @@ export class VendorRegistrationsService {
     @InjectRepository(BpServiceEntity)
     private readonly bpServiceRepository: Repository<BpServiceEntity>,
     @InjectRepository(BusinessProcessEntity)
-    private readonly businessProcessEntity: Repository<BusinessProcessEntity>,
-  ) // private readonly workflowInstanceService: WorkflowInstanceService,
-  {}
+    private readonly businessProcessEntity: Repository<BusinessProcessEntity>, // private readonly workflowInstanceService: WorkflowInstanceService,
+  ) {}
 
   async addVendorInformations(data: InsertAllDataDto): Promise<any> {
     const vender = await this.vendorRepository.find({

@@ -8,15 +8,14 @@ import {
   OneToMany,
   ManyToOne,
   JoinColumn,
-} from "typeorm";
+} from 'typeorm';
 
 import { Audit } from 'src/shared/entities/audit.entity';
 
 import { OrganizationMandate } from './organization-mandate.entity';
-import { MandatePermission } from "./mandate-permission.entity";
+import { MandatePermission } from './mandate-permission.entity';
 
-
-@Entity({ name: "mandates" })
+@Entity({ name: 'mandates' })
 export class Mandate extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -44,7 +43,7 @@ export class Mandate extends Audit {
     (organizationMandate) => organizationMandate.mandate,
     {
       cascade: true,
-      onDelete: "CASCADE"
+      onDelete: 'CASCADE',
     },
   )
   organizationMandates: OrganizationMandate[];
@@ -54,9 +53,8 @@ export class Mandate extends Audit {
     (mandatePermission) => mandatePermission.mandate,
     {
       cascade: true,
-      onDelete: "CASCADE"
+      onDelete: 'CASCADE',
     },
   )
   mandatePermissions: MandatePermission[];
-
 }

@@ -16,9 +16,9 @@ import { MandateModule } from './mandate/mandate.module';
     OrganizationModule,
     GroupModule,
     ApplicationModule,
-    MandateModule
+    MandateModule,
   ],
   controllers: [],
   providers: [],
 })
-export class AppModule { }
+export class AppModule {}
