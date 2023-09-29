@@ -1,8 +1,9 @@
-import { Providers } from '@/store/provider';
-import RootStyleRegistry from './mantine';
+import { Shell } from '@megp/core-fe';
 
 import '@megp/theme/theme.scss';
 import { Metadata } from 'next';
+import React from 'react';
+import { ShellProvider } from './shell';
 export const metadata: Metadata = {
   title: 'M-egp | Vendor',
   description: 'Vendor management',
@@ -18,12 +19,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body suppressHydrationWarning={true}>
-        <Providers>
-          <RootStyleRegistry>{children}</RootStyleRegistry>
-        </Providers>
-      </body>
-    </html>
+    <ShellProvider>
+      <Shell> {children}</Shell>
+    </ShellProvider>
   );
 }

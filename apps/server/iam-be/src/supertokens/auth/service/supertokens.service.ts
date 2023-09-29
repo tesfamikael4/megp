@@ -1,7 +1,9 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import supertokens from 'supertokens-node';
 import Session from 'supertokens-node/recipe/session';
-import ThirdPartyEmailPassword, { getUserById } from 'supertokens-node/recipe/thirdpartyemailpassword';
+import ThirdPartyEmailPassword, {
+  getUserById,
+} from 'supertokens-node/recipe/thirdpartyemailpassword';
 import Dashboard from 'supertokens-node/recipe/dashboard';
 import { ConfigInjectionToken, AuthModuleConfig } from '../config.interface';
 import { OrganizationService } from 'src/organization';
@@ -72,17 +74,22 @@ export class SupertokensService {
                   ...originalImplementation,
                   getContent: async function (input) {
                     // email verification content
-                    let { emailVerifyLink, user } = input;
+                    const { emailVerifyLink, user } = input;
 
                     const supertokensUser = await getUserById(user.id);
 
                     // you can even call the original implementation and modify that
-                    let originalContent = await originalImplementation.getContent(input)
-                    originalContent.body = "Username: " + supertokensUser.email + "<br>" + originalContent.body;
+                    const originalContent =
+                      await originalImplementation.getContent(input);
+                    originalContent.body =
+                      'Username: ' +
+                      supertokensUser.email +
+                      '<br>' +
+                      originalContent.body;
                     return originalContent;
-                  }
-                }
-              }
+                  },
+                };
+              },
             }),
           },
         }),
@@ -133,7 +140,7 @@ export class SupertokensService {
               },
               {
                 id: 'primaryPhone',
-                optional: true
+                optional: true,
               },
             ],
           },
@@ -166,8 +173,15 @@ export class SupertokensService {
                       formFields,
                     );
 
-                    const primaryEmail = formFields.find(e => e.id == 'primaryEmail');
-                    await EmailVerification.sendEmailVerificationEmail('public', response.user.id, primaryEmail.value, response);
+                    const primaryEmail = formFields.find(
+                      (e) => e.id == 'primaryEmail',
+                    );
+                    await EmailVerification.sendEmailVerificationEmail(
+                      'public',
+                      response.user.id,
+                      primaryEmail.value,
+                      response,
+                    );
                   }
 
                   return response;
@@ -178,7 +192,6 @@ export class SupertokensService {
 
                   return response;
                 },
-
               };
             },
           },
