@@ -8,12 +8,12 @@ import { BaseEntity } from '../entities/base.entity';
 export class GenericCrudService<T extends BaseEntity> {
   constructor(private readonly repository: Repository<T>) { }
 
-  async create(itemData: DeepPartial<T>, user?: any): Promise<T> {
+  async create(itemData: DeepPartial<T>, req?: any): Promise<T> {
     const item = this.repository.create(itemData);
     return await this.repository.save(item);
   }
 
-  async findAll(query: CollectionQuery) {
+  async findAll(query: CollectionQuery, req?: any) {
     const dataQuery = QueryConstructor.constructQuery<T>(
       this.repository,
       query,
@@ -29,7 +29,7 @@ export class GenericCrudService<T extends BaseEntity> {
     return response;
   }
 
-  async findOne(id: any): Promise<T | undefined> {
+  async findOne(id: any, req?: any): Promise<T | undefined> {
     return await this.repository.findOne({ where: { id } });
   }
 
@@ -39,7 +39,7 @@ export class GenericCrudService<T extends BaseEntity> {
     return this.findOne(id);
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: string, req?: any): Promise<void> {
     await this.findOneOrFail(id);
     await this.repository.delete(id);
   }
