@@ -17,7 +17,6 @@ import { CollectionQuery } from 'src/shared/collection-query';
 import { AllowAnonymous, AuthGuard } from 'src/supertokens';
 import { CreateGroupDto, UpdateGroupDto } from '../dto/group.dto';
 import { ApiTags } from '@nestjs/swagger';
-import { CurrentUser } from 'src/supertokens/auth/decorators/current-user.decorator';
 
 @Controller('groups')
 @ApiTags('groups')

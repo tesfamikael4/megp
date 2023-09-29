@@ -11,7 +11,7 @@ export class AuthGuard implements CanActivate {
   constructor(
     private readonly reflector?: Reflector,
     private readonly verifyOptions?: VerifySessionOptions,
-  ) {}
+  ) { }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const isAnonymousAllowed = this.reflector?.getAllAndOverride<boolean>(
@@ -41,6 +41,9 @@ export class AuthGuard implements CanActivate {
     if (err) {
       throw err;
     }
+
+    const request = context.switchToHttp().getRequest();
+    request['user'] = request.session.getAccessTokenPayload();
 
     return true;
   }
