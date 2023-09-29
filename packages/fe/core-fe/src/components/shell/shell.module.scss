@@ -1,54 +1,14 @@
-.container {
-  @apply flex;
-  height: 100%;
-  position: relative;
-
-  font-size: 0.875rem;
-
-  font-family: 'inter';
-}
-
 .side {
-  @apply flex flex-col h-screen border-r;
   background-color: #f1f1ff;
-  z-index: 1000;
-  width: 255px;
-  position: fixed;
-  top: 0;
-  left: 0;
-  bottom: 0;
 }
 .header {
-  @apply bg-primary-700  p-2 flex items-center justify-between;
+  @apply p-2 flex items-center justify-between;
   background: #222261;
-  height: 50px;
+  height: 40px;
   color: #f1f1ff;
 }
-.navigation {
-  @apply flex-auto;
-}
-.body {
-  @apply flex-auto bg-gray-100;
-  margin-left: 255px;
-  position: relative;
-}
-.top {
-  @apply p-2 border-b  flex justify-between items-center;
-  height: 50px;
-  background-color: #f1f1ff;
-  position: fixed;
-  right: 0;
-  left: 255px;
-  z-index: 1000;
-}
-
-.avatar {
-  @apply flex items-center gap-2;
-}
 .main {
-  @apply container mx-auto  my-4;
-  display: block;
-  margin-top: 80px;
+  @apply container mx-auto block;
 }
 
 .appName {

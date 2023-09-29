@@ -12,23 +12,12 @@ before_script:
 
 build_iam-fe:
   stage: build
-  only:
-    changes:
-      - "*"  # run pipeline if a root-level file like package.json or next.config.js is changed
-      - "apps/back-office/iam-fe/**/*" # run pipeline if any changes occur in the pages directory
-      - "packages/fe/core-fe/**/*"# run pipeline if any changes occur in the components directory
   script:
-    - cd apps/back-office/iam-fe
-    - docker build -t $CONTAINER_TEST_IMAGE .
+    - docker build -f apps/back-office/iam-fe/Dockerfile -t $CONTAINER_TEST_IMAGE .
     - docker push $CONTAINER_TEST_IMAGE
 
 push_iam-fe:
   stage: push
-  only:
-    changes:
-      - "*"  # run pipeline if a root-level file like package.json or next.config.js is changed
-      - "apps/back-office/iam-fe/**/*" # run pipeline if any changes occur in the pages directory
-      - "packages/fe/core-fe/**/*" # run pipeline if any changes occur in the components directory
   script:
     - docker pull $CONTAINER_TEST_IMAGE
     - docker tag $CONTAINER_TEST_IMAGE $CONTAINER_RELEASE_IMAGE
@@ -36,19 +25,10 @@ push_iam-fe:
 
 deploy:
   stage: deploy
-  only:
-    changes:
-      - "*"  # run pipeline if a root-level file like package.json or next.config.js is changed
-      - "apps/back-office/iam-fe/**/*" # run pipeline if any changes occur in the pages directory
-      - "packages/fe/core-fe/**/*" # run pipeline if any changes occur in the components directory
   script:
     - docker pull $CONTAINER_RELEASE_IMAGE
     - docker container rm -f next-app || true
     - docker run -d -p 5511:5511 --name next-app $CONTAINER_RELEASE_IMAGE
-
-
-
-
 # stages:
 #   - build
 #  # - test
@@ -66,7 +46,7 @@ deploy:
 #   only:
 #     changes:
 #       - "*"  # run pipeline if a root-level file like Makefile or docker-compose.yml is changed
-#       - "apps/back-office/iam-fe/**/*" 
+#       - "apps/back-office/iam-fe/**/*"
 #       - "packages/fe/core-fe/**/*"
 #   script:
 #     - cd apps/back-office/iam-fe
@@ -78,7 +58,7 @@ deploy:
 #   only:
 #     changes:
 #       - "*"  # run pipeline if a root-level file like Makefile or docker-compose.yml is changed
-#       - "apps/back-office/iam-fe/**/*" 
+#       - "apps/back-office/iam-fe/**/*"
 #       - "packages/fe/core-fe/**/*"
 #   script:
 #     - docker pull $CONTAINER_RELEASE_IMAGE

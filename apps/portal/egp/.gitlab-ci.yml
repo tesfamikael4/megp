@@ -3,7 +3,7 @@ stages:
   - push
   - deploy
 
-variables:  
+variables:
   CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
   CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE:latest
 
@@ -12,8 +12,8 @@ before_script:
 build_egp:
   only:
     changes:
-      - "*"  # run pipeline if a root-level file like Makefile or docker-compose.yml is changed
-      - "apps/portal/egp/**/*" 
+      - '*' # run pipeline if a root-level file like Makefile or docker-compose.yml is changed
+      - 'apps/portal/egp/**/*'
   stage: build
   script:
     - cd apps/portal/egp
@@ -23,9 +23,9 @@ push_portal:
   stage: push
   only:
     changes:
-      - "*"  # run pipeline if a root-level file like package.json or next.config.js is changed
-      - "apps/portal/egp/**/*" # run pipeline if any changes occur in the pages directory
-      - "packages/fe/core-fe/**/*" # run pipeline if any changes occur in the components directory
+      - '*' # run pipeline if a root-level file like package.json or next.config.js is changed
+      - 'apps/portal/egp/**/*' # run pipeline if any changes occur in the pages directory
+      - 'packages/fe/core-fe/**/*' # run pipeline if any changes occur in the components directory
   script:
     - docker pull $CONTAINER_TEST_IMAGE
     - docker tag $CONTAINER_TEST_IMAGE $CONTAINER_RELEASE_IMAGE
@@ -35,10 +35,9 @@ deploy_portal:
   stage: deploy
   only:
     changes:
-      - "*"  
-      - "apps/portal/egp/**/*" 
+      - '*'
+      - 'apps/portal/egp/**/*'
   script:
     - docker pull $CONTAINER_RELEASE_IMAGE
     - docker container rm -f egp || true
     - docker run -d -p 5500:5500 --name egp $CONTAINER_RELEASE_IMAGE
-

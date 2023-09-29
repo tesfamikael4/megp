@@ -1,5 +1,5 @@
 'use client';
-import { Box, Group } from '@mantine/core';
+import { Group } from '@mantine/core';
 import { Section } from '@megp/core-fe';
 import Link from 'next/link';
 
