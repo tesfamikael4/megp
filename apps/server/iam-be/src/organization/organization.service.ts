@@ -1,5 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Organization } from './entities/organization.entity';
 import {
@@ -11,23 +11,25 @@ import {
   CreateOrganizationDto,
   UpdateOrganizationDto,
   OrganizationResponseDto,
+  UpdateAddressOrLogoDto,
 } from './dto/organization.dto';
 import { DataResponseFormat } from '@api-data';
 import { Unit } from './entities/unit.entity';
 import { CreateUnitDto, UpdateUnitDto, UnitResponseDto } from './dto/unit.dto';
 
-import { Employee } from './entities/employee.entity';
-import {
-  CreateEmployeeDto,
-  UpdateEmployeeDto,
-  EmployeeResponseDto,
-} from './dto/employee.dto';
 import {
   CreateOfficeDto,
   OfficeResponseDto,
   UpdateOfficeDto,
 } from './dto/office.dto';
 import { Office } from './entities/office.entity';
+import {
+  CreateUserDto,
+  UserResponseDto,
+  UpdateUserDto,
+} from './dto/employee.dto';
+import { User } from './entities/user.entity';
+import { CreateOrganizationMandateDto } from './dto/organization-mandate.dto';
 
 @Injectable()
 export class OrganizationService {
@@ -38,8 +40,8 @@ export class OrganizationService {
     @InjectRepository(Unit)
     private readonly unitRepository: Repository<Unit>,
 
-    @InjectRepository(Employee)
-    private readonly employeeRepository: Repository<Employee>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
 
     @InjectRepository(Office)
     private readonly officeRepository: Repository<Office>,
@@ -54,15 +56,15 @@ export class OrganizationService {
       organization.code = this.generateOrganizationCode();
       organization.type = 'Vendor';
       organization.budgetType = 'default';
-      organization.employees = [];
+      organization.users = [];
 
-      const employee = new Employee();
-      employee.superTokenUserId = user.id;
-      employee.username = email.value;
-      employee.firstName = firstName.value;
-      employee.lastName = lastName.value;
+      const user = new User();
+      user.superTokenUserId = user.id;
+      user.username = email.value;
+      user.firstName = firstName.value;
+      user.lastName = lastName.value;
 
-      organization.employees.push(employee);
+      organization.users.push(user);
 
       await this.repository.save(organization);
     } catch (error: any) {
@@ -77,6 +79,9 @@ export class OrganizationService {
     organization: CreateOrganizationDto,
   ): Promise<OrganizationResponseDto | null> {
     try {
+      organization.code = this.generateOrganizationCode();
+      organization.type = 'Vendor';
+      organization.budgetType = 'default';
       const organizationEntity = CreateOrganizationDto.fromDto(organization);
       if (!organizationEntity) {
         throw new HttpException('Organization not found', HttpStatus.NOT_FOUND);
@@ -142,18 +147,17 @@ export class OrganizationService {
     return response;
   }
 
-  async findOne(id: string): Promise<OrganizationResponseDto | null> {
-    try {
-      const organizationEntity = await this.repository.findOne({
-        where: { id },
-      });
-      if (!organizationEntity) {
-        throw new HttpException('Organization not found', HttpStatus.NOT_FOUND);
-      }
-      return OrganizationResponseDto.toDto(organizationEntity);
-    } catch (error: any) {
-      throw error;
-    }
+  async findOne(
+    id: string,
+    includes: any,
+    withDeleted = false,
+  ): Promise<OrganizationResponseDto> {
+    const organizationEntity = await this.repository.findOne({
+      where: { id: id },
+      relations: includes.includes,
+      withDeleted,
+    });
+    return OrganizationResponseDto.toDto(organizationEntity);
   }
 
   async remove(id: string): Promise<void> {
@@ -193,33 +197,30 @@ export class OrganizationService {
     }
   }
 
-  async addEmployee(employee: CreateEmployeeDto): Promise<EmployeeResponseDto> {
+  async addUser(user: CreateUserDto): Promise<UserResponseDto> {
     try {
-      const employeeEntity = CreateEmployeeDto.fromDto(employee);
-      await this.employeeRepository.save(employeeEntity);
-      return EmployeeResponseDto.toDto(employeeEntity);
+      const userEntity = CreateUserDto.fromDto(user);
+      await this.userRepository.save(userEntity);
+      return UserResponseDto.toDto(userEntity);
     } catch (error: any) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
 
-  async updateEmployee(
-    id: string,
-    employee: UpdateEmployeeDto,
-  ): Promise<EmployeeResponseDto> {
+  async updateUser(id: string, user: UpdateUserDto): Promise<UserResponseDto> {
     try {
-      employee.id = id;
-      const employeeEntity = UpdateEmployeeDto.fromDto(employee);
-      await this.employeeRepository.update({ id: employee.id }, employeeEntity);
-      return EmployeeResponseDto.toDto(employeeEntity);
+      user.id = id;
+      const userEntity = UpdateUserDto.fromDto(user);
+      await this.userRepository.update({ id: user.id }, userEntity);
+      return UserResponseDto.toDto(userEntity);
     } catch (error: any) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
 
-  async removeEmployee(id: string): Promise<void> {
+  async removeUser(id: string): Promise<void> {
     try {
-      await this.employeeRepository.delete({ id: id });
+      await this.userRepository.delete({ id: id });
     } catch (error: any) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
@@ -257,7 +258,7 @@ export class OrganizationService {
 
   async removeOffice(id: string): Promise<void> {
     try {
-      await this.employeeRepository.delete({ id: id });
+      await this.userRepository.delete({ id: id });
     } catch (error: any) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
@@ -265,7 +266,7 @@ export class OrganizationService {
 
   async getUserInfo(superTokenUserId: string) {
     try {
-      return await this.employeeRepository.findOneBy({ superTokenUserId });
+      return await this.userRepository.findOneBy({ superTokenUserId });
     } catch (error: any) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
@@ -282,5 +283,34 @@ export class OrganizationService {
       result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return result;
+  }
+  async assignMandates(
+    id: string,
+    organizationMandate: CreateOrganizationMandateDto[],
+  ): Promise<OrganizationResponseDto> {
+    let result: Organization = new Organization();
+    const organizationEntity = await this.repository.findOne({
+      where: { id },
+      relations: ['organizationType', 'sector'],
+    });
+    const organizationMandates =
+      CreateOrganizationMandateDto.fromDtos(organizationMandate);
+    organizationEntity.organizationMandates = organizationMandates;
+    result = await this.repository.save(organizationEntity);
+    return OrganizationResponseDto.toDto(result);
+  }
+  async setAddress(
+    id: string,
+    organization: UpdateAddressOrLogoDto,
+  ): Promise<OrganizationResponseDto> {
+    try {
+      organization.id = id;
+      const organizationEntity = UpdateAddressOrLogoDto.fromDto(organization);
+      Logger.log('save organization works', organizationEntity);
+      await this.repository.update({ id: organization.id }, organizationEntity);
+      return OrganizationResponseDto.toAddressDto(organizationEntity);
+    } catch (error: any) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
   }
 }

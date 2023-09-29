@@ -7,9 +7,7 @@ import {
 } from 'typeorm';
 
 import { Audit } from 'src/shared/entities/audit.entity';
-
-import { Employee } from './employee.entity';
-
+import { User } from './user.entity';
 @Entity({ name: 'security_questions' })
 export class SecurityQuestion extends Audit {
   @PrimaryGeneratedColumn('uuid')
@@ -22,9 +20,9 @@ export class SecurityQuestion extends Audit {
   answer: string;
 
   @Column()
-  employeeId: string;
+  userId: string;
 
-  @ManyToOne(() => Employee, (employee) => employee.securityQuestions)
-  @JoinColumn({ name: 'employeeId' })
-  public employee: Employee;
+  @ManyToOne(() => User, (user) => user.securityQuestions)
+  @JoinColumn({ name: 'userId' })
+  public user: User;
 }

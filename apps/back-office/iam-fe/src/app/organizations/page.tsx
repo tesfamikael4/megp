@@ -95,7 +95,7 @@ const NewOrganization = () => {
         }),
       );
     }
-  });
+  }, [isSuccess, organization?.items]);
 
   return (
     <>

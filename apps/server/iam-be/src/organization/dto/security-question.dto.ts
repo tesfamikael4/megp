@@ -13,7 +13,7 @@ export class CreateSecurityQuestionDto {
 
   @ApiProperty()
   @IsString()
-  employeeId: string;
+  userId: string;
 
   static fromDto(
     securityQuestionDto: CreateSecurityQuestionDto,
@@ -24,7 +24,7 @@ export class CreateSecurityQuestionDto {
 
     securityQuestion.answer = securityQuestionDto.answer;
 
-    securityQuestion.employeeId = securityQuestionDto.employeeId;
+    securityQuestion.userId = securityQuestionDto.userId;
 
     return securityQuestion;
   }
@@ -52,7 +52,7 @@ export class UpdateSecurityQuestionDto extends CreateSecurityQuestionDto {
 
     securityQuestion.answer = securityQuestionDto.answer;
 
-    securityQuestion.employeeId = securityQuestionDto.employeeId;
+    securityQuestion.userId = securityQuestionDto.userId;
 
     return securityQuestion;
   }
@@ -71,7 +71,7 @@ export class SecurityQuestionResponseDto extends UpdateSecurityQuestionDto {
 
     securityQuestionDto.answer = securityQuestion.answer;
 
-    securityQuestionDto.employeeId = securityQuestion.employeeId;
+    securityQuestionDto.userId = securityQuestion.userId;
 
     return securityQuestionDto;
   }

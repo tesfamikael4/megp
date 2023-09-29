@@ -43,6 +43,7 @@ export function formGetLatestValues(
 }
 
 //dev helper functions
+import { setCookie, hasCookie, getCookie } from 'cookies-next';
 
 export function generateAndSaveKey(source = '') {
   // Check if a key is already stored in localStorage
@@ -56,27 +57,23 @@ export function generateAndSaveKey(source = '') {
       },
     );
   }
-  const storedKey = localStorage.getItem('randomKey');
 
   if (source === 'button') {
     // Generate a random key
     const randomKey = uuidv4(); // Adjust the key generation as needed
 
-    // Save the key in localStorage
-    localStorage.setItem('randomKey', randomKey);
+    setCookie('userId', randomKey);
 
     // Return the generated key
     return randomKey;
-  } else if (!storedKey) {
+  } else if (!hasCookie('userId')) {
     const randomKey = uuidv4(); // Adjust the key generation as needed
-
-    // Save the key in localStorage
-    localStorage.setItem('randomKey', randomKey);
+    setCookie('userId', randomKey);
 
     // Return the generated key
     return randomKey;
   } else {
     // Key already exists in localStorage, return it
-    return storedKey;
+    return getCookie('userId');
   }
 }

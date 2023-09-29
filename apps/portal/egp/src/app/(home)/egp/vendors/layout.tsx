@@ -15,7 +15,7 @@ interface Props {
 
 export default function VendorLayout({ children }: Props) {
   useEffect(() => {
-    if (doesTokenExist()) {
+    if (!doesTokenExist()) {
       redirect('/auth/login');
     }
     return () => {};

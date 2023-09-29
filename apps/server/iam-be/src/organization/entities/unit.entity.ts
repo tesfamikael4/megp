@@ -1,18 +1,15 @@
+import { Audit } from 'src/shared/entities/audit.entity';
 import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-  OneToOne,
   OneToMany,
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-
-import { Audit } from 'src/shared/entities/audit.entity';
-
+import { UserUnit } from './user-unit.entity';
 import { Organization } from './organization.entity';
+import { UnitType } from './unit-type.entity';
 
 @Entity({ name: 'units' })
 export class Unit extends Audit {
@@ -22,7 +19,18 @@ export class Unit extends Audit {
   @Column()
   name: string;
 
-  @Column()
+  @Column({ nullable: true })
+  description: string;
+
+  @Column({ nullable: true })
+  typeId: string;
+
+  @Column({ nullable: true })
+  code: string;
+  @Column({ default: true })
+  isActive: boolean;
+
+  @Column({ nullable: true })
   parentId: string;
 
   @Column()
@@ -31,4 +39,18 @@ export class Unit extends Audit {
   @ManyToOne(() => Organization, (organization) => organization.units)
   @JoinColumn({ name: 'organizationId' })
   public organization: Organization;
+
+  @OneToMany(() => UserUnit, (userUnits) => userUnits.unit, {
+    cascade: true,
+    onDelete: 'RESTRICT',
+  })
+  userUnits: UserUnit[];
+
+  @ManyToOne(() => UnitType, (unitType) => unitType.units, {
+    orphanedRowAction: 'delete',
+    onUpdate: 'CASCADE',
+    onDelete: 'RESTRICT',
+  })
+  @JoinColumn({ name: 'typeId' })
+  public unitType: UnitType;
 }
