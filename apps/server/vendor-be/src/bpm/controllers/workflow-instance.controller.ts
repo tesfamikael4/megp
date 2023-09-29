@@ -75,10 +75,17 @@ export class WorkflowInstanceController {
   async updateTaskHandler(@Body() dto: UpdateTaskHandlerDto) {
     return await this.workflowInstanceService.updateTaskHandler(dto);
   }
-
   @Post('goto-next-state')
   @ApiOkResponse({ type: WorkflowInstanceResponse })
   async gotoNextStateDto(@Body() dto: GotoNextStateDto) {
-    return await this.workflowInstanceService.gotoNextStep(dto);
+    const response = await this.workflowInstanceService.gotoNextStep(dto);
+    if (dto.action.toUpperCase() == 'PAY') {
+      dto.action = 'PaymentReview';
+      console.log(' dto.action', dto.action);
+      const r = await this.workflowInstanceService.gotoNextStep(dto);
+      console.log('rrr', r);
+      return response;
+    }
+    return response;
   }
 }

@@ -14,6 +14,8 @@ import { WorkflowInstanceEntity } from 'src/bpm/workflow-instances/entities/work
 import { BpServiceEntity } from 'src/bpm/services/entities/bp-service';
 import { BusinessProcessEntity } from 'src/bpm/business-process/entities/business-process';
 import initialValueSchema from 'src/data';
+//import { WorkflowInstanceService } from 'src/bpm/workflow-instances/workflow-instance.service';
+import { CreateWorkflowInstanceDto } from 'src/bpm/workflow-instances/dtos/workflow-instance.dto';
 @Injectable()
 export class VendorRegistrationsService {
   constructor(
@@ -25,7 +27,8 @@ export class VendorRegistrationsService {
     private readonly bpServiceRepository: Repository<BpServiceEntity>,
     @InjectRepository(BusinessProcessEntity)
     private readonly businessProcessEntity: Repository<BusinessProcessEntity>,
-  ) {}
+  ) // private readonly workflowInstanceService: WorkflowInstanceService,
+  {}
 
   async addVendorInformations(data: InsertAllDataDto): Promise<any> {
     const vender = await this.vendorRepository.find({
@@ -46,6 +49,29 @@ export class VendorRegistrationsService {
       const result = await this.vendorRepository.save(
         await this.fromInitialValue(data, vender),
       );
+      if (data?.data?.status == 'Save') {
+        for (
+          let i = 0;
+          i <
+          data.data.data.areasOfBusinessInterest
+            ?.areasOfBusinessInterestInformation.length;
+          i++
+        ) {
+          const workflowInstanceDto = new CreateWorkflowInstanceDto();
+          workflowInstanceDto.key =
+            Date.now() + '-' + Math.round(Math.random() * 1e9);
+          workflowInstanceDto.status = 'Submit';
+          workflowInstanceDto.requestorId = result.id;
+          workflowInstanceDto.pricingId =
+            data.data.data.areasOfBusinessInterest
+              ?.areasOfBusinessInterestInformation[i]?.pricingId;
+          workflowInstanceDto.data = result;
+          //  const res =
+          // await this.workflowInstanceService.create(workflowInstanceDto);
+          //console.log(res);
+        }
+      }
+
       return this.toInitialValue(result);
     }
   }
@@ -84,6 +110,27 @@ export class VendorRegistrationsService {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
+  async getVendorById(vendorId: string): Promise<VendorsResponseDto> {
+    try {
+      const vendorEntity = await this.vendorRepository.findOneOrFail({
+        where: { id: vendorId },
+        relations: [
+          'shareholders',
+          'vendorAccounts',
+          'vendorAccounts.bank',
+          'beneficialOwnership',
+          'instances',
+          'areasOfBusinessInterest',
+          'customCats',
+          'businessCats',
+        ],
+      });
+      return VendorsResponseDto.fromEntity(vendorEntity);
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
+  }
+
   async getVendors(): Promise<VendorsResponseDto[]> {
     try {
       const vendorEntity = await this.vendorRepository.find({

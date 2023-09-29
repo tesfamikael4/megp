@@ -32,13 +32,16 @@ export class ApplicationExcutionController {
     @Param('serviceKey') serviceKey: string,
     @Query() query: CollectionQuery,
   ) {
-    return await this.executeRepository.getCurruntTaskByService(serviceKey);
+    return await this.executeRepository.getCurruntTaskByService(
+      serviceKey,
+      query,
+    );
   }
   @Get('get-currunt-taskDetail/:instanceId')
   @ApiOkResponse({ type: WorkflowInstanceResponse })
   async fetchCurruntTaskDetail(
     @Param('instanceId') instanceId: string,
-    @Query() query: CollectionQuery,
+    // @Query() query: CollectionQuery,
   ) {
     return await this.executeRepository.getCurruntTaskDetail(instanceId);
   }
@@ -47,7 +50,7 @@ export class ApplicationExcutionController {
   @ApiOkResponse({ type: InvoiceResponseDto })
   async generateInvoice(
     @Param('instanceId') instanceId: string,
-    @Query() query: CollectionQuery,
+    // @Query() query: CollectionQuery,
   ) {
     return await this.executeRepository.generateInvoice(instanceId, instanceId);
   }
@@ -88,10 +91,10 @@ export class ApplicationExcutionController {
   @Get('get-currunt-tasks')
   @ApiPaginatedResponse(TaskHandlerResponse)
   async getCurruntTasks(
-    @Param('servicekey') servicekey: string,
+    //  @Param('servicekey') servicekey: string,
     @Query() query: CollectionQuery,
   ) {
-    return await this.executeRepository.getCurrunTasks(servicekey, query);
+    return await this.executeRepository.getCurrunTasks(query);
   }
   /*
     @Get('get-completed-tasks/:instanceId')

@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -35,6 +36,10 @@ import { TaskResponse } from '../tasks/task.response';
 import { ServicePriceEntity } from 'src/vendor-registration/entities/service-price.entity';
 import { ApplicationExcutionService } from '../application-execution.service';
 import { WorkflowInstanceEnum } from '../workflow-instance.enum';
+//import { VendorRegistrationsService } from 'src/vendor-registration/vendor-registration.service';
+import { TaskType } from '../tasks/entities/taskType';
+import { InvoiceEntity } from './entities/invoice.entity';
+import { VendorRegistrationsService } from 'src/vendor-registration/vendor-registration.service';
 
 @Injectable()
 export class WorkflowInstanceService {
@@ -44,11 +49,13 @@ export class WorkflowInstanceService {
     @InjectRepository(TaskEntity)
     private readonly taskRepository: Repository<TaskEntity>,
     private dataSource: DataSource,
-    @InjectRepository(BpServiceEntity)
-    private readonly pbServiceRepository: Repository<BpServiceEntity>,
+    // @InjectRepository(VendorsEntity)
+    // private readonly vendorRepository: Repository<VendorsEntity>,
     @InjectRepository(BusinessProcessEntity)
     private readonly bpRepository: Repository<BusinessProcessEntity>,
     private readonly appService: ApplicationExcutionService,
+    @Inject(VendorRegistrationsService)
+    private readonly vendorService: VendorRegistrationsService,
   ) {}
   async getWorkflowInstances(
     query: CollectionQuery,
@@ -80,6 +87,7 @@ export class WorkflowInstanceService {
   }
   async create(dto: CreateWorkflowInstanceDto): Promise<any> {
     const response = {};
+
     const workflowInstanceEntity = CreateWorkflowInstanceDto.fromDto(dto);
     const price = await this.dataSource
       .getRepository(ServicePriceEntity)
@@ -108,7 +116,6 @@ export class WorkflowInstanceService {
     const taskHandler = new TaskHandlerEntity();
     response['service'] = service;
     response['application'] = newWorkflowInstance;
-
     const stateMachine = interpret(machine).onTransition(async (state) => {
       const task = await this.dataSource
         .getRepository(TaskEntity)
@@ -118,11 +125,16 @@ export class WorkflowInstanceService {
           businessProcessId: bp.id,
         })
         .getOne();
+      const vendor = await this.vendorService.getVendorById(
+        newWorkflowInstance.requestorId,
+      );
+      // const vendor = dto.data;
       taskHandler.currentState = state.value.toString();
       taskHandler.instanceId = newWorkflowInstance.id;
       taskHandler.taskId = task.id;
       taskHandler.previousHandlerId = null;
       taskHandler.assignmentStatus = 'Unassigned';
+      taskHandler.data = vendor;
       const insertedTaskHandler = await this.dataSource
         .getRepository(TaskHandlerEntity)
         .save(taskHandler);
@@ -132,6 +144,8 @@ export class WorkflowInstanceService {
 
     // Start the stateMachine
     stateMachine.start();
+    if (service.key.toLowerCase() == 'newregistration')
+      stateMachine.send('ISR');
     // Stop the stateMachine when you are no longer using it.
     stateMachine.stop();
     return response;
@@ -227,6 +241,8 @@ export class WorkflowInstanceService {
       case TaskTypes.INVOICE:
         const taskId = '';
         this.appService.generateInvoice(taskId, command.instanceId);
+        /////
+
         break;
       case TaskTypes.CERTIFICATION:
         console.log(TaskTypes.CERTIFICATION, command);
@@ -239,6 +255,18 @@ export class WorkflowInstanceService {
         break;
       case TaskTypes.ISR:
         console.log(TaskTypes.ISR, command);
+        break;
+      case TaskTypes.PAYMENT:
+        const data = await this.dataSource
+          .getRepository(InvoiceEntity)
+          .find({ where: { instanceId: command.instanceId } });
+        data.map((row) => {
+          row.paymentStatus = 'Paid';
+          return this.dataSource
+            .getRepository(InvoiceEntity)
+            .update(row.id, row);
+        });
+
         break;
     }
   }

@@ -20,6 +20,8 @@ import { PaymentReceiptEntity } from './workflow-instances/entities/receipt-atta
 import { ApplicationExcutionService } from './application-execution.service';
 import { ApplicationExcutionController } from './application-execution.controller';
 import { WorkflowEngineService } from 'src/shared/workflow-engine/workflow-engine.service';
+import { VendorRegistrationModule } from 'src/vendor-registration/vendor-registration.module';
+
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -33,11 +35,15 @@ import { WorkflowEngineService } from 'src/shared/workflow-engine/workflow-engin
       InvoiceEntity,
       PaymentReceiptEntity,
     ]),
+    VendorRegistrationModule,
   ],
-  exports: [BpServiceService],
+  exports: [
+    BpServiceService,
+    WorkflowInstanceService,
+    ApplicationExcutionService,
+  ],
   providers: [
     BpServiceService,
-    BusinessProcessService,
     TaskService,
     WorkflowInstanceService,
     WorkflowEngineService,
