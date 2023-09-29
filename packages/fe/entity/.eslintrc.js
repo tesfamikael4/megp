@@ -3,6 +3,6 @@ module.exports = {
   rules: {
     // Add any project-specific rules or overrides here
     '@typescript-eslint/no-extraneous-class': 'off',
-    'import/no-extraneous-dependencies': 'off',
+    // 'import/no-extraneous-dependencies': 'off',
   },
 };

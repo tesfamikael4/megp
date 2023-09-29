@@ -1,5 +1,5 @@
 import { Stack, TextInput, Textarea } from '@mantine/core';
-import { EntityButton } from '@megp/core-fe';
+import { EntityButton } from '@megp/entity';
 
 import { useForm } from 'react-hook-form';
 import {

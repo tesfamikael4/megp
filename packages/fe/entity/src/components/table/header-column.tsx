@@ -2,7 +2,7 @@ import type { ReactElement } from 'react';
 import React, { useEffect, useRef } from 'react';
 import { ActionIcon, Checkbox } from '@mantine/core';
 import { IconArrowRight } from '@tabler/icons-react';
-import styles from '../entity.module.scss';
+import styles from '../entity/entity-list.module.scss';
 
 type Props = {
   indeterminate?: boolean;

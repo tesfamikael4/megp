@@ -1,5 +1,5 @@
+import type { EntityConfig } from '../models/entity';
 import { EntityList } from './entity/entity-list';
-import type { EntityConfig } from '@/models/entity';
 
 interface EntityLayoutProps<T> {
   mode?: 'list' | 'detail' | 'new';

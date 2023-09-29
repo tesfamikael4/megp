@@ -1,5 +1,5 @@
 'use client';
-import { EntityConfig, EntityLayout } from '@megp/core-fe';
+import { EntityConfig, EntityLayout } from '@megp/entity';
 import { usePathname, useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 import { useReadQuery, useListQuery } from './_api/group.api';

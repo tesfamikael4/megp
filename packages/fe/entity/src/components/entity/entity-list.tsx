@@ -25,9 +25,9 @@ import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { actionColumn, selectColumn } from '../table/header-column';
 import Widget from '../table/widget';
+import { visibleColumn } from '../../utilities/table';
+import { defaultEntityConfig, type EntityConfig } from '../../models/entity';
 import styles from './entity-list.module.scss';
-import { visibleColumn } from '@/utilities/table';
-import { defaultEntityConfig, type EntityConfig } from '@/models/entity';
 
 interface EntityListProps<T> {
   mode?: 'list' | 'detail' | 'new';

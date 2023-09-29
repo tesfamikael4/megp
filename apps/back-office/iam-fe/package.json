@@ -24,6 +24,7 @@
     "@mantine/spotlight": "^7.1.0",
     "@mantine/tiptap": "^7.1.0",
     "@megp/core-fe": "workspace:*",
+    "@megp/entity": "workspace:*",
     "@megp/theme": "workspace:*",
     "@reduxjs/toolkit": "^1.9.5",
     "@svgr/webpack": "^8.1.0",
