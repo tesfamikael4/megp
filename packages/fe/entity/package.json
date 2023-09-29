@@ -3,9 +3,41 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "echo 'Add dev script here'",
-    "build": "echo 'Add build script here'",
-    "test": "echo 'Add test script here'",
-    "lint": "echo 'Add lint script here'"
+    "lint": "eslint ./src --ext .ts,.tsx"
+  },
+  "devDependencies": {
+    "@megp/tsconfig": "workspace:*"
+  },
+  "dependencies": {
+    "@mantine/carousel": "^7.1.0",
+    "@mantine/core": "^7.1.0",
+    "@mantine/dates": "^7.1.0",
+    "@mantine/dropzone": "^7.1.0",
+    "@mantine/form": "^7.1.0",
+    "@mantine/hooks": "^7.1.0",
+    "@mantine/modals": "^7.1.0",
+    "@mantine/notifications": "^7.1.0",
+    "@mantine/nprogress": "^7.1.0",
+    "@mantine/spotlight": "^7.1.0",
+    "@mantine/tiptap": "^7.1.0",
+    "@megp/core-fe": "workspace:*",
+    "@megp/eslint-config-custom": "workspace:*",
+    "@megp/theme": "workspace:*",
+    "@reduxjs/toolkit": "^1.9.5",
+    "@tabler/icons-react": "^2.37.0",
+    "@tanstack/react-table": "^8.9.11",
+    "@tiptap/extension-link": "^2.1.11",
+    "@tiptap/react": "^2.1.11",
+    "@tiptap/starter-kit": "^2.1.11",
+    "autoprefixer": "10.4.15",
+    "dayjs": "^1.11.10",
+    "embla-carousel-react": "^7.0.0",
+    "next": "13.5.2",
+    "postcss": "8.4.28",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-redux": "^8.1.2",
+    "sass": "^1.66.1",
+    "tailwindcss": "3.3.3"
   }
 }
