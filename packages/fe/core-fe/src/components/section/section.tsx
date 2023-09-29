@@ -9,7 +9,7 @@ interface SectionProps {
   title?: React.ReactNode;
   subTitle?: React.ReactNode;
   action?: React.ReactNode;
-  isCollapsible?: boolean;
+  collapsible?: boolean;
   className?: string;
 
   // styles
@@ -23,7 +23,7 @@ export function Section({
   action,
   children,
   className = '',
-  isCollapsible = true,
+  collapsible = true,
   w = '',
   mh,
 }: SectionProps): React.ReactElement {
@@ -44,7 +44,7 @@ export function Section({
         <div className={styles.action}>
           {action}
 
-          {isCollapsible ? (
+          {collapsible ? (
             <Button onClick={toggle} variant="outline" w="82px">
               {showBody ? 'Collapse' : 'Expand'}
             </Button>

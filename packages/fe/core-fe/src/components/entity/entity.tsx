@@ -100,7 +100,7 @@ export function EntityList<T>({
         ) : null
       }
       className={`${options.className} relative`}
-      isCollapsible={false}
+      collapsible={false}
       mh="400px"
       title={
         <Tooltip label="Go to list" withArrow>
