@@ -66,9 +66,7 @@ import { WorkflowInstanceService } from 'src/bpm/workflow-instances/workflow-ins
       BpServiceEntity,
       BusinessProcessEntity,
       AreasOfBusinessInterestEntity,
-      TaskEntity,
     ]),
-    BpmModule,
   ],
   exports: [VendorRegistrationsService],
   providers: [
@@ -83,7 +81,7 @@ import { WorkflowInstanceService } from 'src/bpm/workflow-instances/workflow-ins
     File,
     BeneficialOwnershipService,
     AreasOfBusinessInterestService,
-    WorkflowInstanceService,
+    //WorkflowInstanceService,
   ],
   controllers: [
     VendorRegistrationsController,

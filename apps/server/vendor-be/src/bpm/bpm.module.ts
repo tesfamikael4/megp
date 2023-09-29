@@ -35,6 +35,7 @@ import { VendorRegistrationModule } from 'src/vendor-registration/vendor-registr
       InvoiceEntity,
       PaymentReceiptEntity,
     ]),
+    VendorRegistrationModule,
   ],
   exports: [
     BpServiceService,

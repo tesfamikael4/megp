@@ -39,6 +39,7 @@ import { WorkflowInstanceEnum } from '../workflow-instance.enum';
 //import { VendorRegistrationsService } from 'src/vendor-registration/vendor-registration.service';
 import { TaskType } from '../tasks/entities/taskType';
 import { InvoiceEntity } from './entities/invoice.entity';
+import { VendorRegistrationsService } from 'src/vendor-registration/vendor-registration.service';
 
 @Injectable()
 export class WorkflowInstanceService {
@@ -53,9 +54,9 @@ export class WorkflowInstanceService {
     @InjectRepository(BusinessProcessEntity)
     private readonly bpRepository: Repository<BusinessProcessEntity>,
     private readonly appService: ApplicationExcutionService,
-  ) // @Inject(VendorRegistrationsService)
-  // private readonly vendorService: VendorRegistrationsService,
-  {}
+    @Inject(VendorRegistrationsService)
+    private readonly vendorService: VendorRegistrationsService,
+  ) {}
   async getWorkflowInstances(
     query: CollectionQuery,
   ): Promise<DataResponseFormat<WorkflowInstanceResponse>> {
@@ -124,10 +125,10 @@ export class WorkflowInstanceService {
           businessProcessId: bp.id,
         })
         .getOne();
-      // const vendor = await this.vendorService.getVendorById(
-      //   newWorkflowInstance.requestorId,
-      // );
-      const vendor = dto.data;
+      const vendor = await this.vendorService.getVendorById(
+        newWorkflowInstance.requestorId,
+      );
+      // const vendor = dto.data;
       taskHandler.currentState = state.value.toString();
       taskHandler.instanceId = newWorkflowInstance.id;
       taskHandler.taskId = task.id;

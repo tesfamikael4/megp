@@ -14,7 +14,7 @@ import { WorkflowInstanceEntity } from 'src/bpm/workflow-instances/entities/work
 import { BpServiceEntity } from 'src/bpm/services/entities/bp-service';
 import { BusinessProcessEntity } from 'src/bpm/business-process/entities/business-process';
 import initialValueSchema from 'src/data';
-import { WorkflowInstanceService } from 'src/bpm/workflow-instances/workflow-instance.service';
+//import { WorkflowInstanceService } from 'src/bpm/workflow-instances/workflow-instance.service';
 import { CreateWorkflowInstanceDto } from 'src/bpm/workflow-instances/dtos/workflow-instance.dto';
 @Injectable()
 export class VendorRegistrationsService {
@@ -27,8 +27,8 @@ export class VendorRegistrationsService {
     private readonly bpServiceRepository: Repository<BpServiceEntity>,
     @InjectRepository(BusinessProcessEntity)
     private readonly businessProcessEntity: Repository<BusinessProcessEntity>,
-    private readonly workflowInstanceService: WorkflowInstanceService,
-  ) {}
+  ) // private readonly workflowInstanceService: WorkflowInstanceService,
+  {}
 
   async addVendorInformations(data: InsertAllDataDto): Promise<any> {
     const vender = await this.vendorRepository.find({
@@ -66,9 +66,9 @@ export class VendorRegistrationsService {
             data.data.data.areasOfBusinessInterest
               ?.areasOfBusinessInterestInformation[i]?.pricingId;
           workflowInstanceDto.data = result;
-          const res =
-            await this.workflowInstanceService.create(workflowInstanceDto);
-          console.log(res);
+          //  const res =
+          // await this.workflowInstanceService.create(workflowInstanceDto);
+          //console.log(res);
         }
       }
 
