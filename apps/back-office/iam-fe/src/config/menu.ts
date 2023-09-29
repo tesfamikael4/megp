@@ -11,13 +11,13 @@ import {
 
 export const Menu: MenuItem[] = [
   { label: 'Organizations', icon: IconBuildingBank, link: '/organizations' },
-  { label: 'Mandates', icon: IconLockSquareRounded, link: '/mandate' },
   {
     label: 'My Organization',
     icon: IconBuildingBank,
     link: '/my-organization',
   },
-  { label: 'My-mandates', icon: IconLockSquareRounded, link: '/my-mandate' },
+  { label: 'Mandates', icon: IconLockSquareRounded, link: '/mandate' },
+  { label: 'My Mandates', icon: IconLockSquareRounded, link: '/my-mandate' },
   { label: 'Users', icon: IconUsers, link: '/users' },
   { label: 'Groups', icon: IconUsersGroup, link: '/groups' },
   { label: 'Units', icon: IconBuildingCommunity, link: '/units' },

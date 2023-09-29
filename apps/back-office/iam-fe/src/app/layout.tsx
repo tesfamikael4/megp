@@ -1,12 +1,8 @@
 import { Providers } from '@/store/provider';
 import type { Metadata } from 'next';
 import RootStyleRegistry from './mantine';
-import { Shell } from '@megp/core-fe';
 
 import { Inter, Roboto_Mono } from 'next/font/google';
-
-import { createContext } from 'react';
-import { ShellProvider } from './shell';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -40,11 +36,7 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} ${roboto_mono.variable}`}>
       <body suppressHydrationWarning={true}>
         <Providers>
-          <RootStyleRegistry>
-            <ShellProvider>
-              <Shell> {children}</Shell>
-            </ShellProvider>
-          </RootStyleRegistry>
+          <RootStyleRegistry>{children}</RootStyleRegistry>
         </Providers>
       </body>
     </html>
