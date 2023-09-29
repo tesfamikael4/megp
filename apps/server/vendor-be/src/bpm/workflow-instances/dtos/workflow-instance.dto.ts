@@ -19,6 +19,7 @@ export class CreateWorkflowInstanceDto {
   //@IsNotEmpty()
   key: string;
   createdBy: string;
+  data?: any;
   /**
    * Transfer Data from DTO object to Entity object
    *

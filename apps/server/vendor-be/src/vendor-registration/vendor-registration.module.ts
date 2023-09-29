@@ -41,6 +41,9 @@ import { BusinessProcessEntity } from 'src/bpm/business-process/entities/busines
 import { AreasOfBusinessInterestController } from './controllers/areas-of-business-interest.controller';
 import { AreasOfBusinessInterestService } from './services/areas-of-business-interest.service';
 import { AreasOfBusinessInterestEntity } from './entities/areas-of-business-interest.entity';
+import { BpmModule } from 'src/bpm/bpm.module';
+import { TaskEntity } from 'src/bpm/tasks/entities/task.entity';
+import { WorkflowInstanceService } from 'src/bpm/workflow-instances/workflow-instance.service';
 
 @Module({
   imports: [
@@ -63,7 +66,9 @@ import { AreasOfBusinessInterestEntity } from './entities/areas-of-business-inte
       BpServiceEntity,
       BusinessProcessEntity,
       AreasOfBusinessInterestEntity,
+      TaskEntity,
     ]),
+    BpmModule,
   ],
   exports: [VendorRegistrationsService],
   providers: [
@@ -78,6 +83,7 @@ import { AreasOfBusinessInterestEntity } from './entities/areas-of-business-inte
     File,
     BeneficialOwnershipService,
     AreasOfBusinessInterestService,
+    WorkflowInstanceService,
   ],
   controllers: [
     VendorRegistrationsController,
