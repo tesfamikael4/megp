@@ -123,7 +123,7 @@ export class ApplicationExcutionService {
 */
     const [result, total] = await this.wiRepository
       .createQueryBuilder('wf')
-      .innerJoin('wf.vendor', 'v')
+      .leftJoinAndSelect('wf.vendor', 'v')
       .innerJoinAndSelect('wf.businessProcess', 'bp')
       .innerJoinAndSelect('bp.service', 'service')
       .leftJoinAndSelect('wf.taskHandler', 'taskHandler')
