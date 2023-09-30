@@ -45,6 +45,8 @@ build:
 
 deploy:
   stage: deploy
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"
   script:
     - docker pull $CONTAINER_RELEASE_IMAGE
     - docker container rm -f next-app || true
