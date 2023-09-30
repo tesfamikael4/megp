@@ -1,4 +1,4 @@
-import { Box, Button, Collapse } from '@mantine/core';
+import { Collapse } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import Link from 'next/link';
 import classes from './sidebar.module.scss';
@@ -18,9 +18,6 @@ export default function SidebarPage() {
   const [activeComponent, setActiveComponent] = useState(null);
   const [activeLink, setActiveLink] = useState(null); // State to track the active link
 
-  const handleButtonClick = (componentName) => {
-    setActiveComponent(componentName);
-  };
   const handleListItemClick = (link) => {
     setActiveLink(link);
   };
@@ -32,8 +29,6 @@ export default function SidebarPage() {
   };
 
   const response = { data: { taskHandler: { task: { taskType: {} } } } };
-  console.log('responsee');
-  console.log(response.data);
 
   let componentToRender: React.ReactNode = null; // Explicitly specify React.ReactNode as the type
 
@@ -54,7 +49,7 @@ export default function SidebarPage() {
       <div className={classes.completed}>
         <Section title="BPM Completed Tasks" collapsible={false}>
           <ul className={classes.list}>
-            <li
+            <button
               className={`${classes.listItem} ${
                 activeLink === 'Business Application' ? classes.active : ''
               }`}
@@ -134,8 +129,8 @@ export default function SidebarPage() {
                   <CompetencyCertficate />
                 )}
               </div>
-            </li>
-            <li
+            </button>
+            <button
               className={`${classes.listItem} ${
                 activeLink === 'Review by team leade' ? classes.active : ''
               }`}
@@ -151,8 +146,8 @@ export default function SidebarPage() {
               >
                 Review by team leader
               </Link>
-            </li>
-            <li
+            </button>
+            <button
               className={`${classes.listItem} ${
                 activeLink === 'Revision Process' ? classes.active : ''
               }`}
@@ -161,7 +156,7 @@ export default function SidebarPage() {
               <Link href="" onClick={() => handleClick('Payment')}>
                 Invoice
               </Link>
-            </li>
+            </button>
           </ul>
         </Section>
       </div>

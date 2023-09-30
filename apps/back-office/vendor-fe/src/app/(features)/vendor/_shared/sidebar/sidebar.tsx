@@ -1,17 +1,20 @@
-import classes from './sidebar.module.scss';
-import { Tabs } from '@mantine/core';
-import Link from 'next/link';
-import { Button, Group, Text, Collapse, Box } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
 import { Carousel } from '@mantine/carousel';
-import { CommercialRegistration } from '../../sidebar/CommercialRegistration';
+import { Box, Button, Collapse } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import { Section } from '@megp/core-fe';
+import Link from 'next/link';
 import { useState } from 'react';
 import { BusinessClassification } from '../../sidebar/BusinessClassification';
 import { BusinessLicense } from '../../sidebar/BusinessLicense';
+import { CommercialRegistration } from '../../sidebar/CommercialRegistration';
 import { CompetencyCertficate } from '../../sidebar/CompetencyCertficate';
-import { Section } from '@megp/core-fe';
+import classes from './sidebar.module.scss';
 
-export default function SidebarPage({ onItemClick }) {
+export default function SidebarPage({
+  onItemClick,
+}: {
+  onItemClick: (linkName: string) => void;
+}) {
   const [opened, { toggle }] = useDisclosure(false);
   const [activeComponent, setActiveComponent] = useState(null);
   const [activeLink, setActiveLink] = useState(null); // State to track the active link
@@ -33,7 +36,7 @@ export default function SidebarPage({ onItemClick }) {
     <div className={classes.completedTasks}>
       <Section title="BPM Completed Tasks" collapsible={false}>
         <ul className={classes.list}>
-          <li
+          <button
             className={`${classes.listItem} ${
               activeLink === 'Business Application' ? classes.active : ''
             }`}
@@ -103,8 +106,8 @@ export default function SidebarPage({ onItemClick }) {
                 <CompetencyCertficate />
               )}
             </div>
-          </li>
-          <li
+          </button>
+          <button
             className={`${classes.listItem} ${
               activeLink === 'Review by team leade' ? classes.active : ''
             }`}
@@ -120,8 +123,8 @@ export default function SidebarPage({ onItemClick }) {
             >
               Review by team leader
             </Link>
-          </li>
-          <li
+          </button>
+          <button
             className={`${classes.listItem} ${
               activeLink === 'Revision Process' ? classes.active : ''
             }`}
@@ -130,7 +133,7 @@ export default function SidebarPage({ onItemClick }) {
             <Link href="" onClick={() => handleClick('Payment')}>
               Invoice
             </Link>
-          </li>
+          </button>
         </ul>
       </Section>
     </div>

@@ -45,7 +45,6 @@
     "@tiptap/starter-kit": "^2.1.11",
     "@types/google-libphonenumber": "^7.4.26",
     "dayjs": "^1.11.10",
-    "eslint-config-next": "^13.5.2",
     "google-libphonenumber": "^3.2.33",
     "next": "13.5.2",
     "query": "link:@reduxjs/toolkit/query",

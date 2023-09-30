@@ -1,12 +1,13 @@
-import classes from './MainContent.module.scss';
-import PlaceholderIcon from '../_shared/icons/placeholder';
 import TablePage from '../_shared/_elements/table';
-import MainContentHeaderPage from './MainContentHeader';
-import { Button } from '@mantine/core';
-import ReviewVendorRequest from './ReviewVendorRequest';
+import classes from './MainContent.module.scss';
 import PaymentPage from './Payment';
 import ReviewByTeamLeaderPage from './ReviewByTeamLeader';
-export default function MainContentPage({ selectedItem }) {
+import ReviewVendorRequest from './ReviewVendorRequest';
+export default function MainContentPage({
+  selectedItem,
+}: {
+  selectedItem: string;
+}) {
   let content;
 
   switch (selectedItem) {

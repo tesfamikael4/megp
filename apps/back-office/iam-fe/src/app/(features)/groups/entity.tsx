@@ -4,13 +4,14 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 import { useReadQuery, useListQuery } from './_api/group.api';
 import { Group } from '@/models/group';
+import { logger } from '@megp/core-fe';
 
-export function Entity({ children }) {
+export function Entity({ children }: { children: React.ReactElement }) {
   const route = useRouter();
 
   const { data: list, isLoading, isError } = useListQuery();
 
-  console.log('list', list, isLoading, isError);
+  logger.log('list', list, isLoading, isError);
 
   const {
     data: selected,
@@ -18,7 +19,7 @@ export function Entity({ children }) {
     isError: selectedError,
   } = useReadQuery('id');
 
-  console.log('selected', selected, selectedLoading, selectedError);
+  logger.log('selected', selected, selectedLoading, selectedError);
 
   const config: EntityConfig<Group> = useMemo(() => {
     return {
@@ -28,16 +29,16 @@ export function Entity({ children }) {
       primaryKey: 'id',
       title: 'Groups',
       onAdd: () => {
-        console.log('new');
+        logger.log('new');
         route.push(`/groups/new`);
       },
       onDetail: (selected: Group) => {
-        console.log('detail', selected);
+        logger.log('detail', selected);
         route.push(`/groups/${selected.id}`);
       },
 
       onSearch: (search) => {
-        console.log('search', search);
+        logger.log('search', search);
       },
       selectable: true,
       columns: [
@@ -99,7 +100,7 @@ export function Entity({ children }) {
     { id: '55', name: 'Group 5', description: 'Group 4 description' },
   ];
 
-  console.log('mode', mode, pathname);
+  logger.log('mode', mode, pathname);
   return (
     <EntityLayout mode={mode} config={config} data={data} detail={children} />
   );

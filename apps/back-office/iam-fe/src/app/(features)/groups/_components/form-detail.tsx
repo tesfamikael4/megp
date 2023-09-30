@@ -7,6 +7,7 @@ import {
   useUpdateMutation,
   useCreateMutation,
 } from '../_api/group.api';
+import { logger } from '@megp/core-fe';
 
 interface FormDetailProps {
   mode: 'new' | 'detail';
@@ -28,15 +29,15 @@ export function FormDetail({ mode }: FormDetailProps) {
 
   const onCreate = async (data) => {
     const result = await create(data);
-    console.log(data, result);
+    logger.log(data, result);
   };
   const onUpdate = async (data) => {
     const result = await create(update);
-    console.log(data, result);
+    logger.log(data, result);
   };
   const onDelete = async (data) => {
     const result = await remove(data);
-    console.log(data, result);
+    logger.log(data, result);
   };
   const onReset = async () => {
     reset({ ...defaultValues });

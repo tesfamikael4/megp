@@ -11,7 +11,6 @@ export default function SupplierRegistrationPages() {
     serviceKey: 'newRegistration',
   });
 
-  console.log(req.data);
   //console.log('request id' + req.data.id);
 
   const router = useRouter();

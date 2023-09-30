@@ -30,5 +30,11 @@ module.exports = {
         message: 'Unexpected property on console object was called',
       },
     ],
+    'turbo/no-undeclared-env-vars': [
+      'error',
+      {
+        allowList: ['^ENV_[A-Z]+$'],
+      },
+    ],
   },
 };
