@@ -51,6 +51,7 @@
   },
   "devDependencies": {
     "@megp/tsconfig": "workspace:*",
+    "@megp/eslint-config-custom": "workspace:*",
     "postcss": "8.4.28",
     "postcss-preset-mantine": "^1.7.0",
     "postcss-simple-vars": "^7.0.1",

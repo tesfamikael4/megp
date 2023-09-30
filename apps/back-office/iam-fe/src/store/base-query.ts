@@ -3,7 +3,7 @@ import { fetchBaseQuery } from '@reduxjs/toolkit/query';
 export const baseQuery = (baseUrl = '/') => {
   return fetchBaseQuery({
     baseUrl: baseUrl,
-    prepareHeaders: (headers, { getState }) => {
+    prepareHeaders: (headers) => {
       const token = localStorage.getItem('token');
       // If we have a token set in state, let's assume that we should be passing it.
       if (token) {

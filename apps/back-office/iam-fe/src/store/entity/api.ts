@@ -1,13 +1,12 @@
-import { baseQuery } from '@/store/base-query';
 import { createApi } from '@reduxjs/toolkit/query/react';
-
 import { ENTITY_LIST } from './list';
+import { baseQuery } from '@/store/base-query';
 
-type EntityApi = {
+interface EntityApi {
   entitySliceApi: Record<string, any>;
   reducers: Record<string, any>;
   middleware: any[];
-};
+}
 
 const entityApi: EntityApi = {
   entitySliceApi: {},

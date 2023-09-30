@@ -18,7 +18,7 @@ const defaultValues = {
 };
 
 export function FormDetail({ mode }: FormDetailProps) {
-  const { handleSubmit, reset, watch, control, register } = useForm({
+  const { handleSubmit, reset, register } = useForm({
     defaultValues,
   });
 

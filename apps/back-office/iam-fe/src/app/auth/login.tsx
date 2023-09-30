@@ -1,9 +1,9 @@
 'use client';
 
 import { Button } from '@mantine/core';
-import { setCookie } from 'cookies-next';
-import { redirect, useRouter } from 'next/navigation';
 import { logger } from '@megp/core-fe';
+import { setCookie } from 'cookies-next';
+import { useRouter } from 'next/navigation';
 export default function Login() {
   const router = useRouter();
 

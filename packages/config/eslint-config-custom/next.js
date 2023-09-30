@@ -1,42 +1,34 @@
-const { resolve } = require('node:path');
-
-const project = resolve(process.cwd(), 'tsconfig.json');
-
-/*
- * This is a custom ESLint configuration for use with
- * Next.js apps.
- *
- * This config extends the Vercel Engineering Style Guide.
- * For more information, see https://github.com/vercel/style-guide
- *
- */
-
 module.exports = {
   extends: [
-    '@vercel/style-guide/eslint/node',
-    '@vercel/style-guide/eslint/typescript',
-    '@vercel/style-guide/eslint/browser',
-    '@vercel/style-guide/eslint/react',
-    '@vercel/style-guide/eslint/next',
+    'next',
+    'next/core-web-vitals',
+    'plugin:sonar/base',
+    'eslint:recommended',
+    'plugin:sonar/recommended',
+    'plugin:@typescript-eslint/recommended',
     'eslint-config-turbo',
-  ].map(require.resolve),
-  parserOptions: {
-    project,
-  },
+    'plugin:react/recommended',
+    'plugin:jsx-a11y/recommended',
+    'prettier',
+  ],
   globals: {
     React: true,
     JSX: true,
   },
-  settings: {
-    'import/resolver': {
-      typescript: {
-        project,
-      },
-    },
-  },
-  ignorePatterns: ['node_modules/', 'dist/'],
-  // add rules configurations here
+
+  parser: '@typescript-eslint/parser',
+  plugins: ['@typescript-eslint', 'react', 'jsx-a11y'],
+  ignorePatterns: ['build/', 'node_modules/', 'dist/', '.next/', '.turbo/'],
   rules: {
-    'import/no-default-export': 'off',
+    'no-console': 2,
+    'no-alert': 2,
+    'no-restricted-syntax': [
+      'error',
+      {
+        selector:
+          "CallExpression[callee.object.name='console'][callee.property.name!=/^(log|warn|error|info|trace)$/]",
+        message: 'Unexpected property on console object was called',
+      },
+    ],
   },
 };

@@ -2,6 +2,7 @@ import type { ReactElement } from 'react';
 import React, { useEffect, useRef } from 'react';
 import { ActionIcon, Checkbox } from '@mantine/core';
 import { IconArrowRight } from '@tabler/icons-react';
+import { logger } from '@megp/core-fe';
 import styles from '../entity/entity-list.module.scss';
 
 type Props = {
@@ -35,7 +36,8 @@ function IndeterminateCheckbox({
 
 const detailBtn = (info: any, onDetail) => {
   const handleCellClick = () => {
-    onDetail(info.getValue());
+    logger.log(info.row.original);
+    onDetail(info.row.original);
   };
 
   return (
