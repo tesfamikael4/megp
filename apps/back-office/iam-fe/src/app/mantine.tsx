@@ -6,6 +6,8 @@ import { theme as baseTheme } from '@megp/theme/mantine';
 
 import './globals.css';
 import '@mantine/core/styles.css';
+import '@mantine/notifications/styles.css';
+
 export default function RootStyleRegistry({
   children,
 }: {

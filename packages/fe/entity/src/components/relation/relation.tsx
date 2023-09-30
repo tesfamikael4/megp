@@ -1,43 +1,39 @@
-'use client';
-
-import { Box, Button, Tooltip } from '@mantine/core';
+import { Button, Group } from '@mantine/core';
 import { Section } from '@megp/core-fe';
-import { IconPlus } from '@tabler/icons-react';
+import { IconDeviceFloppy, IconPlus } from '@tabler/icons-react';
 import type { ColumnDef } from '@tanstack/react-table';
 import { getCoreRowModel, useReactTable } from '@tanstack/react-table';
-import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
-import { defaultEntityConfig, type EntityConfig } from '../../models/entity';
+import { defaultRelationConfig, type RelationConfig } from '../../models';
 import { visibleColumn } from '../../utilities/table';
 import { Grid } from '../table/grid';
-import { actionColumn, selectColumn } from '../table/header-column';
 
-interface EntityListProps<T> {
-  mode?: 'list' | 'detail' | 'new';
-  config: EntityConfig<T>;
+interface RelationProps<T> {
+  mode?: 'list' | 'detail';
+  config: RelationConfig<T>;
   data: T[];
+
+  //
+  isSaving?: boolean;
 }
-// new list
-export function EntityList<T>({
-  mode,
+export function Relation<T>({
   config,
-  data = [],
-}: EntityListProps<T>): React.ReactElement {
-  // update the options with the default config
-  const options: EntityConfig<T> = useMemo(() => {
-    return { ...defaultEntityConfig, ...config };
+  data,
+  mode = 'list',
+  isSaving = false,
+}: RelationProps<T>): React.ReactElement {
+  const options: RelationConfig<T> = useMemo(() => {
+    return { ...defaultRelationConfig, ...config };
   }, [config]);
 
   // construct header columns with the select column and action column
   const tableColumns = useMemo<ColumnDef<T>[]>(
     () => [
-      ...(options.selectable ? [selectColumn] : []),
       ...options.columns.map((column) => ({
         ...column,
 
         meta: { widget: 'primary' },
       })),
-      ...(options.hasDetail ? [actionColumn(options)] : []),
     ],
     [options],
   );
@@ -48,7 +44,7 @@ export function EntityList<T>({
   useEffect(() => {
     let columnCount = tableColumns.length;
     columnCount = options.selectable ? columnCount - 1 : columnCount;
-    columnCount = options.hasDetail ? columnCount - 1 : columnCount;
+
     const w = mode !== 'list' ? 100 : (1 / columnCount) * 100;
     setWidth(w);
   }, [mode]);
@@ -82,17 +78,8 @@ export function EntityList<T>({
           </Button>
         ) : null
       }
-      className={`${options.className} relative`}
-      collapsible={false}
-      mh="400px"
-      title={
-        <Tooltip label="Go to list" withArrow>
-          <Box component={Link} href={options.basePath}>
-            {options.title}
-          </Box>
-        </Tooltip>
-      }
-      w={mode === 'list' ? '100%' : '35%'}
+      defaultCollapsed
+      title={options.title}
     >
       <Grid
         data={data}
@@ -101,6 +88,19 @@ export function EntityList<T>({
         table={table}
         width={width}
       />
+      {data.length > 0 ? (
+        <Group className="border-t pt-4">
+          {options.onSave ? (
+            <Button
+              leftSection={<IconDeviceFloppy size={14} stroke={1.6} />}
+              loading={isSaving}
+              onClick={() => options.onSave?.(data)}
+            >
+              Save
+            </Button>
+          ) : null}
+        </Group>
+      ) : null}
     </Section>
   );
 }

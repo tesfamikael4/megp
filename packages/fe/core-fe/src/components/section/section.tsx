@@ -10,8 +10,9 @@ interface SectionProps {
   subTitle?: React.ReactNode;
   action?: React.ReactNode;
   collapsible?: boolean;
+  isCollapsed?: boolean;
   className?: string;
-
+  defaultCollapsed?: boolean;
   // styles
   w?: string;
   mh?: string;
@@ -26,8 +27,9 @@ export function Section({
   collapsible = true,
   w = '',
   mh,
+  defaultCollapsed = false,
 }: SectionProps): React.ReactElement {
-  const [showBody, toggle] = useToggle(true);
+  const [showBody, toggle] = useToggle(!defaultCollapsed);
 
   return (
     <div
@@ -42,7 +44,7 @@ export function Section({
           <div className={styles.subTitle}>{subTitle}</div>
         </div>
         <div className={styles.action}>
-          {action}
+          {showBody ? action : null}
 
           {collapsible ? (
             <Button onClick={toggle} variant="outline" w="82px">

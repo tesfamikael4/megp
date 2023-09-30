@@ -50,6 +50,8 @@
   "devDependencies": {
     "@megp/eslint-config-custom": "workspace:*",
     "@megp/tsconfig": "workspace:*",
+    "eslint": "^8.50.0",
+    "eslint-config-next": "^13.5.3",
     "postcss": "8.4.28",
     "postcss-preset-mantine": "^1.7.0",
     "postcss-simple-vars": "^7.0.1",

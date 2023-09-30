@@ -1,6 +1,6 @@
-import type { ColumnDef } from '@tanstack/react-table';
+import type { List } from './list';
 
-export interface EntityConfig<T> {
+export interface EntityConfig<T> extends List<T> {
   basePath: string;
   entity: string;
   mode: 'list' | 'new' | 'detail';
@@ -10,37 +10,19 @@ export interface EntityConfig<T> {
   onDetail?: (selected: T) => void;
   onAdd?: () => void;
 
-  // data
-  primaryKey?: string;
-  primaryContent?: string;
-  columns: ColumnDef<T>[];
-  onSearch?: (search: string) => void;
-  isLoading?: boolean;
-  selectedKey?: string;
-
-  selectable?: boolean;
-  searchable?: boolean;
-  filterable?: boolean;
-  sortable?: boolean;
-  pagination?: boolean;
-
-  // UI
-  title?: React.ReactElement | string;
-  subTitle?: React.ReactElement | string;
-
   // Default
   className?: string;
 }
 
-export const defaultEntityConfig = {
+export const defaultEntityConfig: EntityConfig<{ id: string }> = {
   basePath: '/list',
   entity: 'list',
   mode: 'list',
-  primaryKey: 'id',
+
   primaryContent: 'name',
   hasAdd: true,
   hasDetail: true,
-  addPath: '/list/new',
+
   title: 'List',
   columns: [],
 

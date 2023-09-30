@@ -14,6 +14,8 @@ import {
   Title,
 } from '@mantine/core';
 import { useDisclosure, useNetwork } from '@mantine/hooks';
+import { ModalsProvider } from '@mantine/modals';
+import { Notifications } from '@mantine/notifications';
 import {
   IconHelpCircle,
   IconLogout,
@@ -30,6 +32,7 @@ import { LinksGroup } from './navbar-link-group';
 import Perago from './perago.png';
 import Logo from './ppda.svg';
 import styles from './shell.module.scss';
+
 interface ShellProps {
   children: React.ReactNode;
 }
@@ -64,7 +67,8 @@ export function Shell({ children }: ShellProps): React.ReactElement {
   const networkStatus = useNetwork();
 
   return (
-    <>
+    <ModalsProvider>
+      <Notifications />
       <AppShell
         header={{ height: 40 }}
         layout="alt"
@@ -229,6 +233,6 @@ export function Shell({ children }: ShellProps): React.ReactElement {
           </Box>
         </AppShell.Main>
       </AppShell>
-    </>
+    </ModalsProvider>
   );
 }

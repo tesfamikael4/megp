@@ -3,7 +3,7 @@ import React, { useEffect, useRef } from 'react';
 import { ActionIcon, Checkbox } from '@mantine/core';
 import { IconArrowRight } from '@tabler/icons-react';
 import { logger } from '@megp/core-fe';
-import styles from '../entity/entity-list.module.scss';
+import styles from './grid.module.scss';
 
 type Props = {
   indeterminate?: boolean;

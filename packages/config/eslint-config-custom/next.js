@@ -15,10 +15,9 @@ module.exports = {
     React: true,
     JSX: true,
   },
-
   parser: '@typescript-eslint/parser',
   plugins: ['@typescript-eslint', 'react', 'jsx-a11y'],
-  ignorePatterns: ['build/', 'node_modules/', 'dist/', '.next/', '.turbo/'],
+  ignorePatterns: ['build/', 'node_modules/', 'dist/'],
   rules: {
     'no-console': 2,
     'no-alert': 2,
@@ -28,12 +27,6 @@ module.exports = {
         selector:
           "CallExpression[callee.object.name='console'][callee.property.name!=/^(log|warn|error|info|trace)$/]",
         message: 'Unexpected property on console object was called',
-      },
-    ],
-    'turbo/no-undeclared-env-vars': [
-      'error',
-      {
-        allowList: ['^ENV_[A-Z]+$'],
       },
     ],
   },
