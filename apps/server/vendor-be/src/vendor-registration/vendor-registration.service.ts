@@ -3,10 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import {
   HttpException,
   HttpStatus,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { VendorsEntity } from './entities/vendors.entity';
 import { InsertAllDataDto } from './dto/save-all.dto';
 import { SetVendorStatus, VendorsResponseDto } from './dto/vendor.dto';
@@ -14,21 +15,24 @@ import { WorkflowInstanceEntity } from 'src/bpm/workflow-instances/entities/work
 import { BpServiceEntity } from 'src/bpm/services/entities/bp-service';
 import { BusinessProcessEntity } from 'src/bpm/business-process/entities/business-process';
 import initialValueSchema from 'src/data';
-//import { WorkflowInstanceService } from 'src/bpm/workflow-instances/workflow-instance.service';
 import { CreateWorkflowInstanceDto } from 'src/bpm/workflow-instances/dtos/workflow-instance.dto';
+import { FilesEntity } from './entities/file.entity';
+import { FileResponseDto, GetFileDto } from './dto/file.dto';
+import { WorkflowInstanceService } from 'src/bpm/workflow-instances/workflow-instance.service';
+
 @Injectable()
 export class VendorRegistrationsService {
   constructor(
     @InjectRepository(VendorsEntity)
     private readonly vendorRepository: Repository<VendorsEntity>,
-    @InjectRepository(WorkflowInstanceEntity)
-    private readonly workflowInstanceRepository: Repository<WorkflowInstanceEntity>,
+    @Inject(WorkflowInstanceService)
+    private readonly WorkflowInstanceService: WorkflowInstanceService,
     @InjectRepository(BpServiceEntity)
     private readonly bpServiceRepository: Repository<BpServiceEntity>,
     @InjectRepository(BusinessProcessEntity)
     private readonly businessProcessEntity: Repository<BusinessProcessEntity>,
-  ) // private readonly workflowInstanceService: WorkflowInstanceService,
-  {}
+    private readonly dataSource: DataSource, // private readonly workflowInstanceService: WorkflowInstanceService,
+  ) {}
 
   async addVendorInformations(data: InsertAllDataDto): Promise<any> {
     const vender = await this.vendorRepository.find({
@@ -66,9 +70,7 @@ export class VendorRegistrationsService {
             data.data.data.areasOfBusinessInterest
               ?.areasOfBusinessInterestInformation[i]?.pricingId;
           workflowInstanceDto.data = result;
-          //  const res =
-          // await this.workflowInstanceService.create(workflowInstanceDto);
-          //console.log(res);
+          await this.WorkflowInstanceService.create(workflowInstanceDto);
         }
       }
 
@@ -79,13 +81,12 @@ export class VendorRegistrationsService {
     try {
       const vendorEntity = await this.vendorRepository.findOne({
         where: { id: vendorId },
-        relations: [
-          'shareholders',
-          'vendorAccounts',
-          'vendorAccounts.bank',
-          'beneficialOwnership',
-          'instances',
-        ],
+        relations: {
+          shareholders: true,
+          vendorAccounts: { bank: true },
+          beneficialOwnership: true,
+          instances: true,
+        },
       });
       return VendorsResponseDto.fromEntity(vendorEntity);
     } catch (error) {
@@ -114,18 +115,24 @@ export class VendorRegistrationsService {
     try {
       const vendorEntity = await this.vendorRepository.findOneOrFail({
         where: { id: vendorId },
-        relations: [
-          'shareholders',
-          'vendorAccounts',
-          'vendorAccounts.bank',
-          'beneficialOwnership',
-          'instances',
-          'areasOfBusinessInterest',
-          'customCats',
-          'businessCats',
-        ],
+        relations: {
+          shareholders: true,
+          vendorAccounts: { bank: true },
+          beneficialOwnership: true,
+          areasOfBusinessInterest: true,
+          customCats: true,
+          businessCats: true,
+        },
       });
-      return VendorsResponseDto.fromEntity(vendorEntity);
+      const files = await this.dataSource
+        .getRepository(FilesEntity)
+        .find({ where: { vendorId: vendorId } });
+      const filesResponse = files.map((item) => {
+        return FileResponseDto.toResponseDto(item);
+      });
+      const vendorDto = VendorsResponseDto.fromEntity(vendorEntity);
+      vendorDto['attachments'] = filesResponse;
+      return vendorDto;
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
@@ -134,13 +141,13 @@ export class VendorRegistrationsService {
   async getVendors(): Promise<VendorsResponseDto[]> {
     try {
       const vendorEntity = await this.vendorRepository.find({
-        relations: [
-          'shareholders',
-          'shareholders',
-          'beneficialOwnership',
-          'instances',
-          'areasOfBusinessInterest',
-        ],
+        relations: {
+          shareholders: true,
+          beneficialOwnership: true,
+          instances: true,
+          areasOfBusinessInterest: true,
+        },
+        where: {},
       });
       return vendorEntity.map((element) =>
         VendorsResponseDto.fromEntity(element),

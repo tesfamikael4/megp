@@ -3,7 +3,11 @@ import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import {
+  DocumentBuilder,
+  SwaggerCustomOptions,
+  SwaggerModule,
+} from '@nestjs/swagger';
 
 import { Server } from '@tus/server';
 import { S3Store } from '@tus/s3-store';
@@ -62,13 +66,16 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(
     app,
     new DocumentBuilder()
-      .setTitle('VendorRegistration API')
-      .setDescription('My VendorRegistration API')
+      .setTitle('Vendor Registration API')
+      .setDescription('My Vendor Registration API')
       .addBearerAuth()
       .build(),
   );
+  const customOptions: SwaggerCustomOptions = {
+    swaggerOptions: { docExpansion: 'none' },
+  };
 
-  SwaggerModule.setup('docs', app, document);
+  SwaggerModule.setup('docs', app, document, customOptions);
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,

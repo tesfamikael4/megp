@@ -82,8 +82,7 @@ export class WorkflowInstanceController {
     if (dto.action.toUpperCase() == 'PAY') {
       dto.action = 'PaymentReview';
       console.log(' dto.action', dto.action);
-      const r = await this.workflowInstanceService.gotoNextStep(dto);
-      console.log('rrr', r);
+      const response = await this.workflowInstanceService.gotoNextStep(dto);
       return response;
     }
     return response;

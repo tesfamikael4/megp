@@ -15,12 +15,10 @@ export class BusinessCategoryEntity {
   @Column({ name: 'category_id', type: 'uuid' })
   categoryId: string;
   @Column({ name: 'vendor_id', type: 'uuid' })
-  applicationId: string;
-
+  vendorId: string;
   @ManyToOne(() => CategoryEntity, (category) => category.businessCategories)
   @JoinColumn({ name: 'category_id' })
   category: CategoryEntity;
-
   @ManyToOne(() => VendorsEntity, (vendor) => vendor.businessCats)
   @JoinColumn({ name: 'vendor_id' })
   vendor: VendorsEntity;
