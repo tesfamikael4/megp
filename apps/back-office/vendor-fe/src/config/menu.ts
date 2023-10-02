@@ -13,7 +13,7 @@ import {
 } from '@tabler/icons-react';
 
 export const Menu: MenuItem[] = [
-  { label: 'Vendors', icon: IconBuildingStore, link: '/' },
+  { label: 'Vendors', icon: IconBuildingStore, link: '/vendors' },
   {
     label: 'New Registration ',
     icon: IconHomePlus,
@@ -21,15 +21,15 @@ export const Menu: MenuItem[] = [
   },
   { label: 'Upgrade', icon: IconHomeUp, link: '/upgrade' },
   { label: 'Renewal', icon: IconHomeRibbon, link: '/renewal' },
-  { label: 'Information Change', icon: IconHomeStar, link: '/units' },
-  { label: 'Payment', icon: IconReportMoney, link: '/debarment' },
+  { label: 'Information Change', icon: IconHomeStar, link: '/info-change' },
+  { label: 'Payment', icon: IconReportMoney, link: '/payment' },
   { label: 'Debarment', icon: IconHomeCancel, link: '/debarment' },
   {
     label: 'Preferential Services',
     icon: IconFileSettings,
     links: [
-      { label: 'IBM', link: '/' },
-      { label: 'MSME', link: '/' },
+      { label: 'IBM', link: '/service/ibm' },
+      { label: 'MSME', link: '/service/msme' },
     ],
   },
   { label: 'Report & Analytics', icon: IconChartInfographic, link: '/reports' },
@@ -38,8 +38,8 @@ export const Menu: MenuItem[] = [
     label: 'Settings',
     icon: IconAdjustmentsHorizontal,
     links: [
-      { label: 'Workflow', link: '/' },
-      { label: 'Pricing', link: '/settings/pricing' },
+      { label: 'Workflow', link: '/settings/workflow' },
+      { label: 'Pricing', link: '/settings/pricing/new' },
     ],
   },
 ];

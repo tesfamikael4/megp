@@ -1,7 +1,6 @@
 import { Providers } from '@/store/provider';
 import RootStyleRegistry from './mantine';
 
-import '@megp/theme/theme.scss';
 import { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'M-egp | Vendor',
@@ -12,13 +11,27 @@ export const metadata: Metadata = {
   manifest: '/vendors/favicon/site.webmanifest',
 };
 
+import { Inter, Roboto_Mono } from 'next/font/google';
+
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
+});
+
+const roboto_mono = Roboto_Mono({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-roboto-mono',
+});
+import '@megp/theme/theme.scss';
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${inter.variable} ${roboto_mono.variable}`}>
       <body suppressHydrationWarning={true}>
         <Providers>
           <RootStyleRegistry>{children}</RootStyleRegistry>

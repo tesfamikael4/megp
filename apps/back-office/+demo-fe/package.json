@@ -22,6 +22,7 @@
     "@mantine/nprogress": "^7.1.0",
     "@mantine/spotlight": "^7.1.0",
     "@mantine/tiptap": "^7.1.0",
+    "@megp/core-fe": "workspace:*",
     "@megp/theme": "workspace:*",
     "@reduxjs/toolkit": "^1.9.5",
     "@tabler/icons-react": "^2.34.0",

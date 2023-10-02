@@ -8,6 +8,7 @@ interface MenuContextType {
   currentApplication: string;
 }
 
-export const ShellContext = createContext<MenuContextType | undefined>(
-  undefined,
-);
+export const ShellContext = createContext<MenuContextType>({
+  menuItems: [],
+  currentApplication: '',
+});

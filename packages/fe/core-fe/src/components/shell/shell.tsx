@@ -37,14 +37,14 @@ interface ShellProps {
   children: React.ReactNode;
 }
 
-export function Shell({ children }: ShellProps): React.ReactElement {
+export function Shell({ children }: ShellProps): React.ReactNode {
   const shellContext = useContext(ShellContext);
 
   const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
 
   const currentApplication = CurrentApplication(
-    shellContext?.currentApplication,
+    shellContext.currentApplication,
   ).name;
 
   const applications = Applications.filter(
@@ -60,7 +60,7 @@ export function Shell({ children }: ShellProps): React.ReactElement {
     </Menu.Item>
   ));
 
-  const links = shellContext?.menuItems.map((item) => (
+  const links = shellContext.menuItems.map((item) => (
     <LinksGroup {...item} key={item.label} />
   ));
 
@@ -70,7 +70,7 @@ export function Shell({ children }: ShellProps): React.ReactElement {
     <ModalsProvider>
       <Notifications />
       <AppShell
-        header={{ height: 40 }}
+        header={{ height: '40px' }}
         layout="alt"
         navbar={{
           width: 250,
@@ -227,11 +227,7 @@ export function Shell({ children }: ShellProps): React.ReactElement {
             </div>
           </AppShell.Section>
         </AppShell.Navbar>
-        <AppShell.Main>
-          <Box className={styles.main} p={0}>
-            {children}
-          </Box>
-        </AppShell.Main>
+        <AppShell.Main>{children}</AppShell.Main>
       </AppShell>
     </ModalsProvider>
   );
