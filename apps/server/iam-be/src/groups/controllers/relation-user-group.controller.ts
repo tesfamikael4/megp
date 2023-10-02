@@ -9,22 +9,22 @@ import {
   Req,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { GenericBulkCrudController } from 'src/shared/controller/generic-bulk-crud.controller';
+import { RelationCrudController } from 'src/shared/controller/relation-crud.controller';
 import { UserGroupBulkService } from '../services/group-bulk.service';
 import { UserGroup } from '../entity/user-group.entity';
-import { BulkCrudDecorator, CrudDecorator } from 'src/shared/decorators/crud-options.decorator';
+import { RelationCrudDecorator } from 'src/shared/decorators/crud-options.decorator';
 import { CollectionQuery } from 'src/shared/collection-query';
 import { DataResponseFormat } from 'src/shared/api-data';
 
-@BulkCrudDecorator({
+@RelationCrudDecorator({
   firstEntityIdName: 'groupId',
   firstInclude: 'user',
   secondEntityIdName: 'userId',
   secondInclude: 'group'
 })
-@Controller('user-groups')
-@ApiTags('user-groups')
-export class UserGroupController extends GenericBulkCrudController<UserGroup> {
+@Controller('relation-user-groups')
+@ApiTags('relation-user-groups')
+export class UserGroupController extends RelationCrudController<UserGroup> {
   constructor(
     private readonly groupService: UserGroupBulkService) {
     super(groupService);

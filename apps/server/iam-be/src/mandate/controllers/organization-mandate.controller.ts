@@ -20,11 +20,11 @@ import {
 import { OrganizationMandateService } from '../services/organization-mandate.service';
 import { OrganizationMandate } from '../entities/organization-mandate.entity';
 import { CollectionQuery } from '@collection-query';
-import { GenericCrudController } from 'src/shared/controller/generic-crud.controller';
+import { EntityCrudController } from 'src/shared/controller/entity-crud.controller';
 
 @Controller('organization-mandate-news')
 @ApiTags('organization-mandate-news')
-export class OrganizationMandateController extends GenericCrudController<OrganizationMandate> {
+export class OrganizationMandateController extends EntityCrudController<OrganizationMandate> {
   constructor(
     private readonly organizationMandateService: OrganizationMandateService,
   ) {

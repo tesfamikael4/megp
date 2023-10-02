@@ -10,18 +10,18 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { UserGroup } from '../entity/user-group.entity';
-import { CrudDecorator } from 'src/shared/decorators/crud-options.decorator';
+import { ExtraCrudDecorator } from 'src/shared/decorators/crud-options.decorator';
 import { CollectionQuery } from 'src/shared/collection-query';
 import { DataResponseFormat } from 'src/shared/api-data';
-import { GenericRelationCrudController } from 'src/shared/controller/generic-relation-crud.controller';
+import { ExtraCrudController } from 'src/shared/controller/extra-crud.controller';
 import { UserGroupRelationService } from '../services/group-bulk-relation.service';
 
-@CrudDecorator({
+@ExtraCrudDecorator({
   entityIdName: 'groupId',
 })
-@Controller('user-group-relations')
-@ApiTags('user-group-relations')
-export class UserGroupRelationController extends GenericRelationCrudController<UserGroup> {
+@Controller('extra-user-groups')
+@ApiTags('extra-user-groups')
+export class ExtraUserGroupController extends ExtraCrudController<UserGroup> {
   constructor(
     private readonly groupService: UserGroupRelationService) {
     super(groupService);
@@ -39,3 +39,4 @@ export class UserGroupRelationController extends GenericRelationCrudController<U
   //   return super.findAll(id, query, crudOptions);
   // }
 }
+

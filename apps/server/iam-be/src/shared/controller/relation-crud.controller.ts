@@ -13,14 +13,14 @@ import {
 import { CollectionQuery } from '../collection-query';
 import { DataResponseFormat } from '../api-data';
 import { BaseEntity } from '../entities/base.entity';
-import { GenericBulkCrudService } from '../service/generic-bulk-crud.service';
+import { RelationCrudService } from '../service/relation-crud.service';
 
 @Controller()
 @UseInterceptors(/* your interceptors if any */)
-export class GenericBulkCrudController<TEntity extends BaseEntity> {
+export class RelationCrudController<TEntity extends BaseEntity> {
 
   constructor(
-    private readonly service: GenericBulkCrudService<TEntity>) {
+    private readonly service: RelationCrudService<TEntity>) {
   }
 
   @Post()

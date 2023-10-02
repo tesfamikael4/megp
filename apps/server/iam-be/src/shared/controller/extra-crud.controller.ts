@@ -10,38 +10,35 @@ import {
   Query,
   Req,
 } from '@nestjs/common';
-import { GenericCrudService } from '../service/generic-crud.service';
 import { DeepPartial } from 'typeorm';
 import { CollectionQuery } from '../collection-query';
 import { DataResponseFormat } from '../api-data';
 import { BaseEntity } from '../entities/base.entity';
+import { ExtraCrudService } from '../service/extra-crud.service';
 
 @Controller()
 @UseInterceptors(/* your interceptors if any */)
-export class GenericCrudController<TEntity extends BaseEntity> {
-  constructor(private readonly service: GenericCrudService<TEntity>) {}
+export class ExtraCrudController<TEntity extends BaseEntity> {
+  constructor(private readonly service: ExtraCrudService<TEntity>) { }
 
   @Post()
-  async create(
-    @Body() itemData: DeepPartial<TEntity>,
-    @Req() req?: any,
-  ): Promise<TEntity> {
+  async create(@Body() itemData: DeepPartial<TEntity>, @Req() req?: any): Promise<TEntity> {
     return this.service.create(itemData);
   }
 
-  @Get()
+  @Get('list/:id')
   async findAll(
+    @Param('id') id: string,
     @Query() query: CollectionQuery,
-    @Req() req?: any,
+    @Req() req?: any
   ): Promise<DataResponseFormat<TEntity>> {
-    return this.service.findAll(query);
+    const crudOptions = Reflect.getMetadata('crudOptions', this.constructor);
+
+    return this.service.findAll(id, query, crudOptions);
   }
 
   @Get(':id')
-  async findOne(
-    @Param('id') id: string,
-    @Req() req?: any,
-  ): Promise<TEntity | undefined> {
+  async findOne(@Param('id') id: string, @Req() req?: any): Promise<TEntity | undefined> {
     return this.service.findOne(id);
   }
 
@@ -49,7 +46,7 @@ export class GenericCrudController<TEntity extends BaseEntity> {
   async update(
     @Param('id') id: string,
     @Body() itemData: Partial<TEntity>,
-    @Req() req?: any,
+    @Req() req?: any
   ): Promise<TEntity | undefined> {
     return this.service.update(id, itemData);
   }

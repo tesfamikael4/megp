@@ -9,7 +9,7 @@ import {
   UseInterceptors,
   Query,
 } from '@nestjs/common';
-import { GenericCrudService } from '../service/generic-crud.service';
+import { EntityCrudService } from '../service/generic-crud.service';
 import { DeepPartial } from 'typeorm';
 import { CollectionQuery } from '../collection-query';
 import { DataResponseFormat } from '../api-data';
@@ -17,8 +17,8 @@ import { BaseEntity } from '../entities/base.entity';
 
 @Controller()
 @UseInterceptors(/* your interceptors if any */)
-export class GenericCrudController<T extends BaseEntity> {
-  constructor(private readonly service: GenericCrudService<T>) {}
+export class EntityCrudController<T extends BaseEntity> {
+  constructor(private readonly service: EntityCrudService<T>) { }
 
   @Post()
   async create(@Body() itemData: DeepPartial<T>): Promise<T> {
