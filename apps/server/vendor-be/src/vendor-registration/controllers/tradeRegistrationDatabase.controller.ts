@@ -12,7 +12,7 @@ import { TradeRegistrationDatabaseService } from '../services/trade-registration
 export class TradeRegistrationDatabaseController {
   constructor(
     private readonly tradeRegistrationDatabaseService: TradeRegistrationDatabaseService,
-  ) { }
+  ) {}
   @Get('fetch')
   async fetch(@Query() query: CollectionQuery) {
     return await this.tradeRegistrationDatabaseService.fetch(query);

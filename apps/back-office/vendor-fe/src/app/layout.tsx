@@ -1,10 +1,8 @@
 import { Providers } from '@/store/provider';
-import { Shell } from '@megp/core-fe';
 import RootStyleRegistry from './mantine';
 
+import '@megp/theme/theme.scss';
 import { Metadata } from 'next';
-import { ShellProvider } from './shell';
-
 export const metadata: Metadata = {
   title: 'M-egp | Vendor',
   description: 'Vendor management',
@@ -23,11 +21,7 @@ export default function RootLayout({
     <html lang="en">
       <body suppressHydrationWarning={true}>
         <Providers>
-          <RootStyleRegistry>
-            <ShellProvider>
-              <Shell> {children}</Shell>
-            </ShellProvider>
-          </RootStyleRegistry>
+          <RootStyleRegistry>{children}</RootStyleRegistry>
         </Providers>
       </body>
     </html>

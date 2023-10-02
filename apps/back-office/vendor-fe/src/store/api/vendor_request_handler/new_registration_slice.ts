@@ -46,10 +46,10 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 /* Instruments */
 const URL = process.env.NEXT_PUBLIC_VENDOR_API;
 export const newRegistrationSlice = createApi({
-    reducerPath: 'vendorRequestApi',
-    refetchOnFocus: true,
-    baseQuery: fetchBaseQuery({
-        baseUrl: URL,
-    }),
-    endpoints: () => ({}),
+  reducerPath: 'vendorRequestApi',
+  refetchOnFocus: true,
+  baseQuery: fetchBaseQuery({
+    baseUrl: URL,
+  }),
+  endpoints: () => ({}),
 });

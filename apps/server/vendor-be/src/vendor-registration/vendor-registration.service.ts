@@ -32,7 +32,8 @@ export class VendorRegistrationsService {
     @InjectRepository(BusinessProcessEntity)
     private readonly businessProcessEntity: Repository<BusinessProcessEntity>,
     private readonly dataSource: DataSource, // private readonly workflowInstanceService: WorkflowInstanceService,
-  ) {}
+
+  ) { }
 
   async addVendorInformations(data: InsertAllDataDto): Promise<any> {
     const vender = await this.vendorRepository.find({
@@ -220,14 +221,14 @@ export class VendorRegistrationsService {
     const beneficialOwnershipData =
       beneficialOwnership?.length > 0
         ? beneficialOwnership?.map((element) => {
-            return {
-              id: element?.id,
-              firstName: element.firstName,
-              lastName: element.lastName,
-              nationality: element.nationality,
-              vendorId: element.vendorId,
-            };
-          })
+          return {
+            id: element?.id,
+            firstName: element.firstName,
+            lastName: element.lastName,
+            nationality: element.nationality,
+            vendorId: element.vendorId,
+          };
+        })
         : undefined;
     return beneficialOwnershipData;
   };
@@ -235,14 +236,14 @@ export class VendorRegistrationsService {
     const beneficialOwnershipData =
       areaOfBusinessInterest?.length > 0
         ? areaOfBusinessInterest?.map((element) => {
-            return {
-              id: element?.id,
-              category: element.category,
-              lineOfBusiness: element.lineOfBusiness,
-              priceRange: element.priceRange,
-              vendorId: element?.vendorId,
-            };
-          })
+          return {
+            id: element?.id,
+            category: element.category,
+            lineOfBusiness: element.lineOfBusiness,
+            priceRange: element.priceRange,
+            vendorId: element?.vendorId,
+          };
+        })
         : undefined;
     return beneficialOwnershipData;
   };
@@ -319,35 +320,35 @@ export class VendorRegistrationsService {
     shareHoldersEntity =
       shareHolders.length > 0
         ? shareHolders?.map((element) => {
-            return {
-              id: element?.id, // this id will make the operation update if its drafted already
-              firstName: element.firstName,
-              lastName: element.lastName,
-              nationality: element.share,
-              share: element.share,
-              key: element.key,
-            };
-          })
+          return {
+            id: element?.id, // this id will make the operation update if its drafted already
+            firstName: element.firstName,
+            lastName: element.lastName,
+            nationality: element.share,
+            share: element.share,
+            key: element.key,
+          };
+        })
         : undefined;
     vendorsEntity.shareholders = shareHoldersEntity;
     const bankDetails =
       bankAccountDetails.length > 0
         ? bankAccountDetails.map((element) => {
-            return {
-              id: element?.id,
-              AccountHolderFullName: element.accountHoldersFullName,
-              AccountNumber: element.accountNumber,
-              IBAN: element.iBAN,
-              bankSwift: element.bankSWIFT_BICCode,
-              bankId: element.bankId,
-              bankName: element.bankName,
-              branchAddress: element.bankBranchAddress,
-              branchName: element.branchName,
-              currency: element.currency,
-              hashValue: element.hashValue,
-              status: element.status,
-            };
-          })
+          return {
+            id: element?.id,
+            AccountHolderFullName: element.accountHoldersFullName,
+            AccountNumber: element.accountNumber,
+            IBAN: element.iBAN,
+            bankSwift: element.bankSWIFT_BICCode,
+            bankId: element.bankId,
+            bankName: element.bankName,
+            branchAddress: element.bankBranchAddress,
+            branchName: element.branchName,
+            currency: element.currency,
+            hashValue: element.hashValue,
+            status: element.status,
+          };
+        })
         : undefined;
     vendorsEntity.vendorAccounts = bankDetails;
     // mapping the payload Beneficiary Ownership info

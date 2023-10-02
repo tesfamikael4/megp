@@ -5,6 +5,8 @@ import { TypeOrmConfigService } from './shared/typeorm/typeorm.service';
 import { OrganizationModule } from './organization';
 import { AuthenticationModule } from './supertokens';
 import { GroupModule } from './groups/group.module';
+import { ApplicationModule } from './application/application.module';
+import { MandateModule } from './mandate/mandate.module';
 
 @Module({
   imports: [
@@ -13,6 +15,8 @@ import { GroupModule } from './groups/group.module';
     AuthenticationModule,
     OrganizationModule,
     GroupModule,
+    ApplicationModule,
+    MandateModule,
   ],
   controllers: [],
   providers: [],

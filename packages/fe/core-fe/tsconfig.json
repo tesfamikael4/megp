@@ -2,7 +2,7 @@
   "extends": "@megp/tsconfig/nextjs.json",
   "compilerOptions": {
     "plugins": [{ "name": "next" }],
-
+    "baseUrl": ".",
     "paths": {
       "@/components/*": ["./src/components/*"],
       "@/context/*": ["./src/context/*"],
@@ -12,5 +12,5 @@
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["dist", "build", "node_modules"]
+  "exclude": [".turbo", ".next", "dist", "build", "node_modules"]
 }

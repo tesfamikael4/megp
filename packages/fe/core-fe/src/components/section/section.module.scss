@@ -1,5 +1,5 @@
 .container {
-  @apply bg-white rounded shadow-sm w-full border mb-4;
+  @apply bg-white rounded shadow-sm w-full border;
 }
 .container.collapsed {
   box-shadow: none;

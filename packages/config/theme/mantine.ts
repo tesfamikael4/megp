@@ -4,6 +4,7 @@ export const theme: Partial<MantineThemeOverride> = {
   defaultRadius: 'sm',
   primaryColor: 'primary',
   primaryShade: 7,
+
   breakpoints: {
     xs: '36rem',
     sm: '48rem',
@@ -44,8 +45,9 @@ export const theme: Partial<MantineThemeOverride> = {
         size: 'xs',
       },
       styles: {
-        leftIcon: {
-          marginRight: 1,
+        section: {
+          marginRight: 4,
+          marginLeft: 1,
         },
       },
     },
@@ -73,6 +75,20 @@ export const theme: Partial<MantineThemeOverride> = {
     PasswordInput: {
       defaultProps: {
         size: 'sm',
+      },
+    },
+    Breadcrumbs: {
+      styles: {
+        breadcrumb: {
+          fontSize: '14px',
+        },
+      },
+    },
+    AppShell: {
+      styles: {
+        main: {
+          backgroundColor: '#F3F4F6',
+        },
       },
     },
   },

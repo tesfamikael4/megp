@@ -1,0 +1,31 @@
+.container {
+  @apply bg-white rounded-lg shadow-md w-full;
+}
+.table {
+  @apply border-r-2;
+}
+
+.table th,
+.table td {
+  @apply border-b border-gray-100 px-2 py-1;
+}
+.table th {
+  @apply bg-primary-50 text-gray-600 text-left p-2;
+}
+.table .actionBtn {
+  visibility: hidden;
+}
+
+.table .row {
+  @apply cursor-pointer;
+}
+
+.table .row:nth-child(even) {
+  @apply bg-gray-50;
+}
+.table .row:hover .actionBtn {
+  visibility: visible;
+}
+.table .row:hover {
+  @apply bg-primary-50;
+}

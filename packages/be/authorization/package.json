@@ -12,7 +12,6 @@
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix"
   },
   "dependencies": {
-    "@megp/eslint-config-custom": "workspace:*",
     "@nestjs-modules/mailer": "^1.8.1",
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^2.3.1",
@@ -46,7 +45,6 @@
     "typeorm": "^0.3.14"
   },
   "devDependencies": {
-    "@megp/eslint-config-custom": "workspace:*",
     "@nestjs/cli": "^9.0.0",
     "@nestjs/schematics": "^9.0.0",
     "@nestjs/testing": "^9.0.0",

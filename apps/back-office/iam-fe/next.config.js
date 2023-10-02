@@ -1,7 +1,10 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = { basePath: '/iam',reactStrictMode: true,transpilePackages: ['@megp/core-fe'],
-
-   webpack(config, { isServer }) {
+const nextConfig = { 
+  basePath: '/iam',
+  reactStrictMode: true,
+  transpilePackages: ['@megp/core-fe','@megp/entity'],
+  output: 'standalone',
+  webpack(config, { isServer }) {
   // Configures webpack to handle SVG files with SVGR. SVGR optimizes and transforms SVG files
   // into React components. See https://react-svgr.com/docs/next/
 

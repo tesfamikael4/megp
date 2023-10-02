@@ -9,23 +9,41 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@mantine/core": "^7.1.0",
+    "@mantine/dates": "^7.1.0",
+    "@mantine/dropzone": "^7.1.0",
+    "@mantine/form": "^7.1.0",
+    "@mantine/hooks": "^7.1.0",
+    "@mantine/modals": "^7.1.0",
+    "@mantine/notifications": "^7.1.0",
+    "@mantine/nprogress": "^7.1.0",
+    "@mantine/spotlight": "^7.1.0",
+    "@mantine/tiptap": "^7.1.0",
     "@megp/core-fe": "workspace:*",
     "@megp/theme": "workspace:*",
+    "@tabler/icons-react": "^2.34.0",
+    "@tiptap/extension-link": "^2.1.11",
+    "@tiptap/react": "^2.1.11",
+    "@tiptap/starter-kit": "^2.1.11",
     "@types/node": "20.5.8",
     "@types/react": "18.2.21",
     "@types/react-dom": "18.2.7",
     "autoprefixer": "10.4.15",
-    "eslint": "8.48.0",
-    "eslint-config-next": "13.5.2",
+    "dayjs": "^1.11.10",
     "next": "13.5.2",
-    "postcss": "8.4.28",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "tailwindcss": "3.3.3",
-    "typescript": "5.2.2"
+    "typescript": "^5.1.0"
   },
   "devDependencies": {
     "@megp/tsconfig": "workspace:*",
+    "@megp/eslint-config-custom": "workspace:*",
+    "eslint": "^8.50.0",
+    "eslint-config-next": "^13.5.3",
+    "postcss": "8.4.28",
+    "postcss-preset-mantine": "^1.7.0",
+    "postcss-simple-vars": "^7.0.1",
     "sass": "^1.66.1"
   }
 }

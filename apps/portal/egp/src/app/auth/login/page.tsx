@@ -99,7 +99,7 @@ export default function Signin() {
               <Text
                 className={styles.welcome}
                 size={'xl'}
-                sx={(theme) => ({
+                style={(theme) => ({
                   fontFamily: `Greycliff CF, ${theme.fontFamily}`,
                   fontWeight: 500,
                 })}
@@ -127,7 +127,7 @@ export default function Signin() {
                 )}
                 <Title
                   className="text-center"
-                  sx={(theme) => ({
+                  style={(theme) => ({
                     fontFamily: `Greycliff CF, ${theme.fontFamily}`,
                     fontWeight: 450,
                   })}
@@ -147,8 +147,8 @@ export default function Signin() {
                   {...register('password')}
                   mt="md"
                 />
-                <Group position="apart" className={styles.group}>
-                  <Checkbox label="Remember me" sx={{ lineHeight: 1 }} />
+                <Group justify="space-between" className={styles.group}>
+                  <Checkbox label="Remember me" style={{ lineHeight: 1 }} />
                   <Link
                     href="/auth/forgot-password"
                     className="text-green-700 hover:text-green-800"

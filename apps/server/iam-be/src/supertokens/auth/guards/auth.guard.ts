@@ -42,6 +42,9 @@ export class AuthGuard implements CanActivate {
       throw err;
     }
 
+    const request = context.switchToHttp().getRequest();
+    request['user'] = request.session.getAccessTokenPayload();
+
     return true;
   }
 }

@@ -47,9 +47,17 @@ export class OrganizationService {
     private readonly officeRepository: Repository<Office>,
   ) {}
 
-  async registerOrganization(user: any, formFields: any) {
+  async registerOrganization(superTokenUser: any, formFields: any) {
     try {
-      const [email, _, organizationName, firstName, lastName] = formFields;
+      const [
+        username,
+        _,
+        organizationName,
+        firstName,
+        lastName,
+        primaryEmail,
+        primaryPhone,
+      ] = formFields;
 
       const organization = new Organization();
       organization.name = organizationName.value;
@@ -59,10 +67,12 @@ export class OrganizationService {
       organization.users = [];
 
       const user = new User();
-      user.superTokenUserId = user.id;
-      user.username = email.value;
+      user.superTokenUserId = superTokenUser.id;
+      user.username = username.value;
       user.firstName = firstName.value;
       user.lastName = lastName.value;
+      user.fullName = `${firstName.value} ${lastName.value}`;
+      user.email = primaryEmail.value;
 
       organization.users.push(user);
 

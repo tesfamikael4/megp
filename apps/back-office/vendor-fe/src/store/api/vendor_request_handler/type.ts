@@ -1,6 +1,6 @@
 export interface VendorRequests {
-    serviceKey: string;
+  serviceKey: string;
 }
 export interface VendorRequest {
-    instanceId: string,
+  instanceId: string;
 }
