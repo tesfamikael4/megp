@@ -25,6 +25,7 @@ merge:
 
 build:
   stage: build
+  image: mrucki/dind-node.js
   rules:
     - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"
   before_script:
