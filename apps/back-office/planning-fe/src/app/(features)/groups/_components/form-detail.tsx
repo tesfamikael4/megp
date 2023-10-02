@@ -18,7 +18,7 @@ const defaultValues = {
 };
 
 export function FormDetail({ mode }: FormDetailProps) {
-  const { handleSubmit, reset, watch, control, register } = useForm({
+  const { handleSubmit, reset, register } = useForm({
     defaultValues,
   });
 
@@ -27,16 +27,13 @@ export function FormDetail({ mode }: FormDetailProps) {
   const [remove, { isLoading: isDeleting }] = useDeleteMutation();
 
   const onCreate = async (data) => {
-    const result = await create(data);
-    console.log(data, result);
+    await create(data);
   };
   const onUpdate = async (data) => {
-    const result = await create(update);
-    console.log(data, result);
+    await create(update);
   };
   const onDelete = async (data) => {
-    const result = await remove(data);
-    console.log(data, result);
+    await remove(data);
   };
   const onReset = async () => {
     reset({ ...defaultValues });
