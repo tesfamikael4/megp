@@ -5,6 +5,7 @@ export class CreateCustomCategoryDto {
   id: string;
   @ApiProperty()
   description: string;
+  @ApiProperty()
   vendorId: string;
 
   static fromDto(dto: CreateCustomCategoryDto): CustomCategoryEntity {
@@ -12,10 +13,24 @@ export class CreateCustomCategoryDto {
     if (!dto) {
       return;
     }
-    //   entity.id = dto.id;
     entity.vendorId = dto.vendorId;
     entity.description = dto.description;
 
     return entity;
+  }
+}
+export class CustomCategoryResponseDto extends CreateCustomCategoryDto {
+  @ApiProperty()
+  id: string;
+  static toResponse(entity: CustomCategoryEntity): CustomCategoryResponseDto {
+    const response = new CustomCategoryResponseDto();
+    if (!entity) {
+      return;
+    }
+    response.id = entity.id;
+    response.vendorId = entity.vendorId;
+    response.description = entity.description;
+
+    return response;
   }
 }

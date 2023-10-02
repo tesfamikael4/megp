@@ -7,12 +7,12 @@ import {
 } from '@nestjs/swagger';
 import { ApiPaginatedResponse, DataResponseFormat } from 'src/shared/api-data';
 import { CollectionQuery } from 'src/shared/collection-query';
-import { BusinessProcessService } from '../business-process/business-process.service';
-import { BusinessProcessResponse } from '../business-process/business-process.response';
+import { BusinessProcessService } from '../services/business-process.service';
+import { BusinessProcessResponse } from '../dtos/business-process.response';
 import {
   CreateBusinessProcessDto,
   UpdateBusinessProcessDto,
-} from '../business-process/dtos/business-process.dto';
+} from '../dtos/business-process.dto';
 @Controller('business-processes')
 @ApiTags('business-processes')
 @ApiResponse({ status: 500, description: 'Internal error' })

@@ -1,15 +1,21 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsUUID } from 'class-validator';
 import { VendorsEntity } from '../entities/vendors.entity';
-import { CreateBusinessCategoryDto } from './business-category.dto';
-import { CreateCustomCategoryDto } from './custom-category.dto';
+import {
+  BusinessCategoryResponseDto,
+  CreateBusinessCategoryDto,
+} from './business-category.dto';
+import {
+  CreateCustomCategoryDto,
+  CustomCategoryResponseDto,
+} from './custom-category.dto';
 import {
   CreateShareholdersDto,
   ShareholdersResponseDto,
 } from './shareholder.dto';
 import { BankAccountDetailResponse } from './bank-account-detail.dto';
 import { BeneficialOwnershipResponse } from './beneficial-ownership.dto';
-import { CreateWorkflowInstanceDto } from 'src/bpm/workflow-instances/dtos/workflow-instance.dto';
+import { CreateWorkflowInstanceDto } from 'src/handling/dtos/workflow-instance.dto';
 import {
   AreasOfBusinessInterestResponse,
   CreateAreasOfBusinessInterest,
@@ -51,7 +57,7 @@ export class CreateVendorsDto {
   @ApiProperty()
   commonCategories: CreateBusinessCategoryDto[];
   @ApiProperty()
-  CustomCategories: CreateCustomCategoryDto[];
+  customCategories: CreateCustomCategoryDto[];
 
   appliactions: CreateWorkflowInstanceDto[];
   @ApiProperty()
@@ -89,8 +95,8 @@ export class CreateVendorsDto {
           CreateBusinessCategoryDto.fromDto(item),
         )
       : null;
-    entity.customCats = dto.CustomCategories
-      ? dto.CustomCategories.map((item) =>
+    entity.customCats = dto.customCategories
+      ? dto.customCategories.map((item) =>
           CreateCustomCategoryDto.fromDto(item),
         )
       : null;
@@ -158,14 +164,23 @@ export class VendorsResponseDto extends UpdateVendorsDto {
     response.areasOfBusinessInterest = entity?.areasOfBusinessInterest?.map(
       (element) => AreasOfBusinessInterestResponse.fromEntity(element),
     );
+    if (entity.businessCats)
+      response.commonCategories = entity.businessCats.map((item) =>
+        BusinessCategoryResponseDto.toResponse(item),
+      );
+    if (entity.customCats)
+      response.customCategories = entity.customCats.map((item) =>
+        CustomCategoryResponseDto.toResponse(item),
+      );
+
     return response;
   }
 }
-enum STATUS {
-  'Save as Draft',
-  'SUBMITTED',
-  'APPROVED',
-}
+// enum STATUS {
+//   'Save as Draft',
+//   'SUBMITTED',
+//   'APPROVED',
+// }
 export class SetVendorStatus {
   @ApiProperty()
   @IsNotEmpty()

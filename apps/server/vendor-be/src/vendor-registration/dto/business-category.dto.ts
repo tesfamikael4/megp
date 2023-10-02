@@ -5,7 +5,8 @@ export class CreateBusinessCategoryDto {
   categoryId: string;
   @ApiProperty()
   vendorId: string;
-
+  @ApiProperty()
+  categoryName: string;
   static fromDto(dto: CreateBusinessCategoryDto): BusinessCategoryEntity {
     const entity = new BusinessCategoryEntity();
     if (!dto) {
@@ -19,13 +20,16 @@ export class CreateBusinessCategoryDto {
 }
 export class BusinessCategoryResponseDto extends CreateBusinessCategoryDto {
   id: string;
-  static fromEntity(
-    regDto: BusinessCategoryEntity,
+  static toResponse(
+    entity: BusinessCategoryEntity,
   ): BusinessCategoryResponseDto {
     const response = new BusinessCategoryResponseDto();
-    response.id = regDto.id;
-    response.categoryId = regDto.categoryId;
-    response.vendorId = regDto.vendorId;
+    response.id = entity.id;
+    response.categoryId = entity.categoryId;
+    response.vendorId = entity.vendorId;
+    if (entity.category) {
+      response.categoryName = entity.category.description;
+    }
     return response;
   }
 }

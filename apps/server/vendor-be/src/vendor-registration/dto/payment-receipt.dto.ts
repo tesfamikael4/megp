@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { PaymentReceiptEntity } from '../../bpm/workflow-instances/entities/receipt-attachment';
+import { PaymentReceiptEntity } from '../../handling/entities/receipt-attachment';
 import { CreateFileDto } from './file.dto';
 
 export class PaymentReceiptDto {
