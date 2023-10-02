@@ -6,7 +6,7 @@
     "dev": "next dev -p 5511",
     "build": "next build",
     "build:docker": "cd ../../../ && docker build -f apps/back-office/iam-fe/Dockerfile -t iam-fe  .",
-    "start": "next start",
+    "start": "next start -p 5511",
     "lint": "next lint "
   },
   "dependencies": {
