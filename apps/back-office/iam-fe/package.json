@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev -p 5511",
     "build": "next build",
-    "build:docker": "echo 'Building docker image' && docker build -t iam-fe .",
+    "build:docker": "cd ../../../ && docker build -f apps/back-office/iam-fe/Dockerfile -t iam-fe  .",
     "start": "next start",
     "lint": "next lint "
   },
