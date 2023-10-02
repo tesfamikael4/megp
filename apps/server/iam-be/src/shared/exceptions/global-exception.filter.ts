@@ -6,12 +6,18 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 
+import { Error as STError } from 'supertokens-node';
+
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
   catch(exception: any, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
     const request: any = ctx.getRequest();
+
+    if (exception instanceof STError) {
+      return;
+    }
 
     const status =
       exception instanceof HttpException
