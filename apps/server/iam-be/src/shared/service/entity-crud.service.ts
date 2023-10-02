@@ -5,8 +5,8 @@ import { DataResponseFormat } from '../api-data';
 import { BaseEntity } from '../entities/base.entity';
 
 @Injectable()
-export class GenericCrudService<T extends BaseEntity> {
-  constructor(private readonly repository: Repository<T>) {}
+export class EntityCrudService<T extends BaseEntity> {
+  constructor(private readonly repository: Repository<T>) { }
 
   async create(itemData: DeepPartial<T>, req?: any): Promise<T> {
     const item = this.repository.create(itemData);

@@ -30,6 +30,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       timestamp: new Date().toISOString(),
     };
 
-    return response.status(status).json(responseData);
+    response.status(status).json(responseData);
+    return;
   }
 }
