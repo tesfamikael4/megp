@@ -158,6 +158,8 @@ export class SupertokensService {
                     throw Error('Should never come here');
                   }
 
+                  // input.formFields["email"].value = organizationService.generateUsername();
+
                   // First we call the original implementation
                   const response =
                     await originalImplementation.emailPasswordSignUpPOST(input);
