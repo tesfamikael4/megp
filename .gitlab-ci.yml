@@ -45,7 +45,8 @@ build:
     - pnpm -w run turbo run lint  --filter "...[origin/main...HEAD^]"
     - pnpm -w run turbo run build:docker  --filter "...[origin/main...HEAD^]"
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker push iam-fe
+    - docker tag iam-fe:latest $CI_REGISTRY_IMAGE/iam-fe:latest
+    - docker push $CI_REGISTRY_IMAGE/iam-fe:latest
   cache:
     key:
       files:
