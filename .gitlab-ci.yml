@@ -44,7 +44,7 @@ build:
     - pnpm install
     - pnpm -w run turbo run lint  --filter "...[origin/main...HEAD^]"
     - pnpm -w run turbo run build:docker  --filter "...[origin/main...HEAD^]"
-    - docker push $iam-fe
+    - docker push iam-fe
   cache:
     key:
       files:
