@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev -p 5511",
     "build": "next build",
-    "build:docker": "cd ../../../ && docker build -f apps/back-office/iam-fe/Dockerfile -t iam-fe  . && docker tag iam-fe:latest gitlab.peragosystems.com:5050/megp/megp/iam-fe:latest && - docker push $CI_REGISTRY_IMAGE/iam-fe:latest",
+    "build:docker": "cd ../../../ && docker build -f apps/back-office/iam-fe/Dockerfile -t iam-fe  . && docker tag iam-fe:latest gitlab.peragosystems.com:5050/megp/megp/iam-fe:latest && - docker push gitlab.peragosystems.com:5050/megp/megp/iam-fe:latest",
     "start": "next start -p 5511",
     "lint": "next lint "
   },
