@@ -35,7 +35,7 @@ build:
     - apk --update add nodejs npm git
     
     - npm install -g pnpm
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    
     # - corepack enable
     # - corepack prepare pnpm@latest-8 --activate
     #- pnpm config set store-dir .pnpm-store
@@ -44,6 +44,7 @@ build:
     - pnpm install
     - pnpm -w run turbo run lint  --filter "...[origin/main...HEAD^]"
     - pnpm -w run turbo run build:docker  --filter "...[origin/main...HEAD^]"
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker push iam-fe
   cache:
     key:
