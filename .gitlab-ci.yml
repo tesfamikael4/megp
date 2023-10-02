@@ -34,9 +34,9 @@ build:
   before_script:
     - apk --update add nodejs npm
     - npm install -g pnpm
-    - corepack enable
-    - corepack prepare pnpm@latest-8 --activate
-    - pnpm config set store-dir .pnpm-store
+    # - corepack enable
+    # - corepack prepare pnpm@latest-8 --activate
+    #- pnpm config set store-dir .pnpm-store
     
   script:
     - pnpm install
