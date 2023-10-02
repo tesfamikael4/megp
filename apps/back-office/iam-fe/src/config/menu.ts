@@ -23,7 +23,7 @@ export const Menu: MenuItem[] = [
   { label: 'Units', icon: IconBuildingCommunity, link: '/units' },
   { label: 'Roles', icon: IconLockSquareRounded, link: '/roles' },
   { label: 'Report & Analytics', icon: IconChartInfographic, link: '/reports' },
-  // new comment
+
   {
     label: 'Settings',
     icon: IconAdjustmentsHorizontal,
