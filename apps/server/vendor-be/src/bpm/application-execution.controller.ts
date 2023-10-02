@@ -37,6 +37,7 @@ export class ApplicationExcutionController {
       query,
     );
   }
+
   @Get('get-currunt-taskDetail/:instanceId')
   @ApiOkResponse({ type: WorkflowInstanceResponse })
   async fetchCurruntTaskDetail(
@@ -88,13 +89,10 @@ export class ApplicationExcutionController {
     return await this.executeRepository.savePayment(command);
   }
   ///////////////////////////////////
-  @Get('get-currunt-tasks')
+  @Get('get-active-vendors')
   @ApiPaginatedResponse(TaskHandlerResponse)
-  async getCurruntTasks(
-    //  @Param('servicekey') servicekey: string,
-    @Query() query: CollectionQuery,
-  ) {
-    return await this.executeRepository.getCurrunTasks(query);
+  async getActiveTendors(@Query() query: CollectionQuery) {
+    return await this.executeRepository.activeVendors(query);
   }
   /*
     @Get('get-completed-tasks/:instanceId')

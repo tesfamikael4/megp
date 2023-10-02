@@ -13,7 +13,7 @@ export class VendorsEntity extends CommonEntity {
   id: string;
   @Column({ name: 'tin', nullable: true })
   tin: string;
-  @Column({ name: 'user_id', unique: true })
+  @Column({ name: 'user_id' })
   userId: string;
   @Column({ name: 'vendor_status', default: 'draft' })
   status: string;

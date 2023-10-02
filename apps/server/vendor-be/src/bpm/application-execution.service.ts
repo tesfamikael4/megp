@@ -1,6 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
-import { DataSource, In, Not, Repository, createQueryBuilder } from 'typeorm';
+import {
+  DataSource,
+  In,
+  IsNull,
+  LessThan,
+  LessThanOrEqual,
+  MoreThanOrEqual,
+  Not,
+  Repository,
+  createQueryBuilder,
+} from 'typeorm';
 import { DataResponseFormat } from 'src/shared/api-data';
 import {
   CollectionQuery,
@@ -23,7 +33,17 @@ import { log } from 'console';
 import { WorkflowInstanceResponse } from './workflow-instances/workflow-instance.response';
 import { throwIfEmpty } from 'rxjs';
 import { IsNotIn } from 'class-validator';
-import { WorkflowInstanceEnum } from './workflow-instance.enum';
+import {
+  BusinessStatusEnum,
+  ServiceKeyEnum,
+  WorkflowInstanceEnum,
+} from './workflow-instance.enum';
+import { VendorsResponseDto } from 'src/vendor-registration/dto/vendor.dto';
+import { FilesEntity } from 'src/vendor-registration/entities/file.entity';
+import { FileResponseDto } from 'src/vendor-registration/dto/file.dto';
+import { TaskType } from './tasks/entities/taskType';
+import { TaskTypes } from './workflow-instances/task-type.enum';
+import { ActiveVendorsResponse } from './workflow-instances/dtos/active-vendor-response';
 @Injectable()
 export class ApplicationExcutionService {
   constructor(
@@ -37,6 +57,7 @@ export class ApplicationExcutionService {
     private readonly taskhandlergRepository: Repository<TaskHandlerEntity>,
     @InjectRepository(WorkflowInstanceEntity)
     private readonly wiRepository: Repository<WorkflowInstanceEntity>,
+    private readonly dataSource: DataSource,
   ) {}
 
   async getCompletedTasks(instanceId: string): Promise<TaskTrackerResponse[]> {
@@ -121,17 +142,51 @@ export class ApplicationExcutionService {
       },
     });
 */
-    const [result, total] = await this.wiRepository
+    const [result, total] =
+      /*await this.wiRepository
       .createQueryBuilder('wf')
       .leftJoinAndSelect('wf.vendor', 'v')
-      .innerJoinAndSelect('wf.businessProcess', 'bp')
-      .innerJoinAndSelect('bp.service', 'service')
-      .leftJoinAndSelect('wf.taskHandler', 'taskHandler')
+      .innerJoinAndSelect('wf.taskHandler', 'taskHandler')
       .innerJoinAndSelect('taskHandler.task', 'task')
+      .innerJoinAndSelect('wf.businessProcess', 'bp')
+      .leftJoinAndSelect('bp.service', 'service')
       .where('service.key=:serviceKey', { serviceKey: serviceKey })
+      // .addOrderBy("wf.'bp_id'", "ASC")
       .skip(query.skip | 0)
       .take(query.top | 20)
       .getManyAndCount();
+*/
+      await this.wiRepository.findAndCount({
+        relations: {
+          vendor: true,
+          taskHandler: { task: true },
+          businessProcess: {
+            service: true,
+          },
+        },
+        where: {
+          businessProcess: {
+            service: { key: serviceKey },
+          },
+          taskHandler: { id: Not(IsNull()) },
+        },
+        order: { createdAt: 'ASC' },
+        skip: query.skip | 0,
+        take: query.top | 20,
+      });
+
+    // .leftJoinAndSelect('wf.vendor', 'v')
+    // .innerJoinAndSelect('wf.taskHandler', 'taskHandler')
+    // .innerJoinAndSelect('taskHandler.task', 'task')
+    // .innerJoinAndSelect('wf.businessProcess', 'bp')
+    // .leftJoinAndSelect('bp.service', 'service')
+    // .where('service.key=:serviceKey', { serviceKey: serviceKey })
+    // .addOrderBy("wf.'bp_id'", "ASC")
+    // .skip(query.skip | 0)
+    // .take(query.top | 20)
+    // .getMany();
+    // console.log(x)
+
     const response = new DataResponseFormat<WorkflowInstanceResponse>();
     response.items = result.map((row) =>
       WorkflowInstanceResponse.toResponse(row),
@@ -164,8 +219,35 @@ export class ApplicationExcutionService {
     if (!instance) {
       throw new NotFoundException('Not Found');
     }
+
+    const files = await this.dataSource
+      .getRepository(FilesEntity)
+      .find({ where: { vendorId: instance.requestorId } });
+    const filesResponse = files.map((item) => {
+      return FileResponseDto.toResponseDto(item);
+    });
     const response = WorkflowInstanceResponse.toResponse(instance);
-    response['invoice'] = await this.getInvoiceByInstanceId(instanceId);
+    response['attachments'] = filesResponse;
+    if (
+      response.task.taskType.toLowerCase() == TaskTypes.INVOICE.toLowerCase()
+    ) {
+      response.taskHandler['invoice'] = await this.getInvoiceByInstanceId(
+        instanceId,
+        response.taskHandler.taskId,
+      );
+    }
+    for (let i = 0; i < response.taskTrackers.length; i++) {
+      if (
+        response.taskTrackers[i].task.taskType.toLowerCase() ==
+        TaskTypes.INVOICE.toLowerCase()
+      ) {
+        response.taskTrackers[i]['invoice'] = await this.getInvoiceByInstanceId(
+          instanceId,
+          response.taskTrackers[i].taskId,
+        );
+      }
+    }
+
     return response;
   }
 
@@ -189,6 +271,34 @@ export class ApplicationExcutionService {
       throw new NotFoundException('Not Found');
     }
     const invoice = new InvoiceEntity();
+    const service = result.workflowInstance.businessProcess.service;
+    if (service.key == ServiceKeyEnum.upgrade) {
+      const previousPayment = await this.wiRepository.findOne({
+        relations: {
+          businessProcess: {
+            service: true,
+          },
+          price: true,
+        },
+        where: {
+          businessProcess: { service: { key: ServiceKeyEnum.new } },
+          status: WorkflowInstanceEnum.Completed,
+          approvedAt: Not(IsNull()),
+          price: { businessArea: result.workflowInstance.price.businessArea },
+        },
+      });
+      if (previousPayment) {
+        if (previousPayment.price.fee < result.workflowInstance.price.fee)
+          //if any additional logic will add here
+          invoice.amount =
+            result.workflowInstance.price.fee - previousPayment.price.fee;
+      } else {
+        throw new NotFoundException('Something wend wrong');
+      }
+    } else {
+      invoice.amount = result.workflowInstance.price.fee;
+    }
+
     invoice.instanceId = result.instanceId;
     invoice.taskName = result.task.name;
     invoice.taskId = result.task.id;
@@ -196,8 +306,8 @@ export class ApplicationExcutionService {
     invoice.payToAccNo = '123456789';
     invoice.payToBank = 'Malawi Bank';
     invoice.applicationNo = result.workflowInstance.applicationNumber;
-    invoice.amount = result.workflowInstance.price.fee;
-    invoice.payerAccountId = 'payerId1231234';
+
+    //invoice.payerAccountId = 'payerId1231234';
     invoice.payerName = result.workflowInstance.vendor.name;
     invoice.payerAccountId = result.workflowInstance.vendor.userId;
     invoice.serviceName = result.workflowInstance.businessProcess.service.name;
@@ -230,19 +340,19 @@ export class ApplicationExcutionService {
 
   async getInvoiceByInstanceId(
     instanceId: string,
-  ): Promise<InvoiceResponseDto[]> {
-    const invoices = await this.invoceRepository.find({
-      where: { instanceId: instanceId, paymentStatus: 'Pending' },
+    taskId: string,
+  ): Promise<InvoiceResponseDto> {
+    const invoice = await this.invoceRepository.findOne({
+      where: { instanceId: instanceId, taskId: taskId },
     });
-    if (invoices) {
-      const items = invoices.map((invoice) =>
-        InvoiceResponseDto.toResponse(invoice),
-      );
-      return items;
+    console.log('invoice', invoice);
+    if (invoice) {
+      const invoicedto = InvoiceResponseDto.toResponse(invoice);
+      return invoicedto;
     }
-    return [];
-  }
 
+    return null;
+  }
   async getInvoice(invoceId: string): Promise<InvoiceResponseDto> {
     const invoice = await this.invoceRepository.findOne({
       where: { id: invoceId },
@@ -287,5 +397,54 @@ export class ApplicationExcutionService {
     console.log(entity, dto);
     const newService = await this.receiptRepository.save(entity);
     return PaymentReceiptResponseDto.toResponse(newService);
+  }
+
+  async activeVendors(
+    query: CollectionQuery,
+  ): Promise<DataResponseFormat<ActiveVendorsResponse>> {
+    const today = new Date();
+    const [result, total] = await this.wiRepository.findAndCount({
+      relations: {
+        vendor: true,
+        price: true,
+      },
+      where: {
+        status: WorkflowInstanceEnum.Completed,
+        businessStatus: BusinessStatusEnum.active,
+        // expireDate: Not(LessThan(today.toString()))
+      },
+      skip: query.skip | 0,
+      take: query.top | 20,
+    });
+    const response = new DataResponseFormat<ActiveVendorsResponse>();
+    response.items = result.map((item) =>
+      ActiveVendorsResponse.toResponse(item),
+    );
+    response.total = total;
+
+    return response;
+  }
+
+  async activeMyBusinessStream(
+    userId: string,
+    query: CollectionQuery,
+  ): Promise<ActiveVendorsResponse[]> {
+    const today = new Date();
+    const result = await this.wiRepository.find({
+      relations: {
+        vendor: true,
+        price: true,
+      },
+      where: {
+        status: WorkflowInstanceEnum.Completed,
+        businessStatus: BusinessStatusEnum.active,
+        // expireDate: Not(LessThan(today.toString())),
+        vendor: { userId: userId },
+      },
+    });
+    const response = result.map((item) =>
+      ActiveVendorsResponse.toResponse(item),
+    );
+    return response;
   }
 }

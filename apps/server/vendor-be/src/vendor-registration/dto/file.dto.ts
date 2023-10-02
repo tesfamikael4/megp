@@ -61,3 +61,29 @@ export class DeleteFileDto {
   @IsNotEmpty()
   bucketName: string;
 }
+export class FileResponseDto {
+  @ApiProperty()
+  @IsNotEmpty()
+  // @IsUUID()
+  ownerId: string;
+  @ApiProperty()
+  @IsNotEmpty()
+  fileName: string;
+  @ApiProperty()
+  @IsNotEmpty()
+  fileType: string;
+  path: string;
+  originalName: string;
+  @ApiProperty()
+  @IsNotEmpty()
+  bucketName: string;
+  static toResponseDto(entity: FilesEntity): FileResponseDto {
+    const response: FileResponseDto = new FileResponseDto();
+    response.fileName = entity.fileName;
+    response.fileType = entity.fileType;
+    response.path = entity.path;
+    response.originalName = entity.originalName;
+    response.bucketName = entity.bucketName;
+    return response;
+  }
+}

@@ -29,9 +29,11 @@ export class WorkflowInstanceEntity extends CommonEntity {
   @Column({ name: 'pricing_id', nullable: true })
   pricingId: string;
   @Column({ name: 'approved_at', nullable: true })
-  approved_at: string;
+  approvedAt: string;
   @Column({ name: 'expire_date', nullable: true })
-  expire_date: string;
+  expireDate: string;
+  @Column({ name: 'business_status', default: 'Inactive' })
+  businessStatus: string; //active |inactive
   @ManyToOne(
     () => BusinessProcessEntity,
     (businessProcess) => businessProcess.workflowInstances,
