@@ -1,19 +1,39 @@
-import { Repository, EntityTarget, DeepPartial } from 'typeorm';
+import { Repository, DeepPartial } from 'typeorm';
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CollectionQuery, QueryConstructor } from '../collection-query';
+import {
+  CollectionQuery,
+  FilterOperators,
+  QueryConstructor,
+} from '../collection-query';
 import { DataResponseFormat } from '../api-data';
 import { BaseEntity } from '../entities/base.entity';
+import { ExtraCrudOptions } from '../types/crud-option.type';
 
 @Injectable()
-export class EntityCrudService<T extends BaseEntity> {
+export class ExtraCrudService<T extends BaseEntity> {
   constructor(private readonly repository: Repository<T>) {}
 
-  async create(itemData: DeepPartial<T>): Promise<T> {
+  async create(itemData: DeepPartial<T>, req?: any): Promise<T> {
     const item = this.repository.create(itemData);
     return await this.repository.save(item);
   }
 
-  async findAll(query: CollectionQuery) {
+  async findAll(
+    entityId: string,
+    query: CollectionQuery,
+    extraCrudOptions: ExtraCrudOptions,
+    req?: any,
+  ) {
+    const entityIdName = extraCrudOptions.entityIdName;
+
+    query.filter.push([
+      {
+        field: entityIdName,
+        value: entityId,
+        operator: FilterOperators.EqualTo,
+      },
+    ]);
+
     const dataQuery = QueryConstructor.constructQuery<T>(
       this.repository,
       query,
@@ -29,7 +49,7 @@ export class EntityCrudService<T extends BaseEntity> {
     return response;
   }
 
-  async findOne(id: any): Promise<T | undefined> {
+  async findOne(id: any, req?: any): Promise<T | undefined> {
     return await this.repository.findOne({ where: { id } });
   }
 
@@ -39,7 +59,7 @@ export class EntityCrudService<T extends BaseEntity> {
     return this.findOne(id);
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: string, req?: any): Promise<void> {
     await this.findOneOrFail(id);
     await this.repository.delete(id);
   }

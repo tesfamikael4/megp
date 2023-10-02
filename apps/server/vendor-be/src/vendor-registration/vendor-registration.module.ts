@@ -41,9 +41,16 @@ import { BusinessProcessEntity } from 'src/bpm/business-process/entities/busines
 import { AreasOfBusinessInterestController } from './controllers/areas-of-business-interest.controller';
 import { AreasOfBusinessInterestService } from './services/areas-of-business-interest.service';
 import { AreasOfBusinessInterestEntity } from './entities/areas-of-business-interest.entity';
-import { BpmModule } from 'src/bpm/bpm.module';
-import { TaskEntity } from 'src/bpm/tasks/entities/task.entity';
 import { WorkflowInstanceService } from 'src/bpm/workflow-instances/workflow-instance.service';
+import { TaskAssignmentEntity } from 'src/bpm/tasks/entities/task-assignment';
+import { TaskHandlerEntity } from 'src/bpm/workflow-instances/entities/task-handler';
+import { TaskTrackerEntity } from 'src/bpm/workflow-instances/entities/task-tracker';
+import { InvoiceEntity } from 'src/bpm/workflow-instances/entities/invoice.entity';
+import { PaymentReceiptEntity } from 'src/bpm/workflow-instances/entities/receipt-attachment';
+import { WorkflowInstanceController } from 'src/bpm/controllers/workflow-instance.controller';
+import { ApplicationExcutionController } from 'src/bpm/application-execution.controller';
+import { ApplicationExcutionService } from 'src/bpm/application-execution.service';
+import { TaskEntity } from 'src/bpm/tasks/entities/task.entity';
 
 @Module({
   imports: [
@@ -66,11 +73,16 @@ import { WorkflowInstanceService } from 'src/bpm/workflow-instances/workflow-ins
       BpServiceEntity,
       BusinessProcessEntity,
       AreasOfBusinessInterestEntity,
+      TaskAssignmentEntity,
+      TaskHandlerEntity,
+      TaskTrackerEntity,
+      InvoiceEntity,
+      PaymentReceiptEntity,
+      TaskEntity,
     ]),
   ],
-  exports: [VendorRegistrationsService],
+  exports: [],
   providers: [
-    VendorRegistrationsService,
     ServicePricingService,
     VendorBasicsService,
     BankAccountDetailService,
@@ -81,9 +93,13 @@ import { WorkflowInstanceService } from 'src/bpm/workflow-instances/workflow-ins
     File,
     BeneficialOwnershipService,
     AreasOfBusinessInterestService,
-    //WorkflowInstanceService,
+    WorkflowInstanceService,
+    ApplicationExcutionService,
+    VendorRegistrationsService,
   ],
   controllers: [
+    WorkflowInstanceController,
+    ApplicationExcutionController,
     VendorRegistrationsController,
     ServicePricingController,
     VendorBasicsController,

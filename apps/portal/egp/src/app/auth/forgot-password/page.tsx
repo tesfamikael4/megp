@@ -72,11 +72,11 @@ export default function ForgotPasswordPage() {
             alt="forgot-password"
             className="mx-auto"
           />
-          <Title align="center">Reset Password</Title>
+          <Title className="text-center">Reset Password</Title>
           {response === 'OK' && (
             <Box className="mt-4">
               <IconChecks color="#3d692c" size={48} className="mx-auto" />
-              <Text align="center">
+              <Text className="text-center">
                 We have sent you a reset link to the email you provided. Please
                 click on the link to proceed reseting your password.
               </Text>
@@ -91,7 +91,7 @@ export default function ForgotPasswordPage() {
                 label="Email"
                 description="Please enter your email below so we can send you a reset link: "
                 placeholder="Your email"
-                icon={<IconAt size="0.8rem" />}
+                leftSection={<IconAt size="0.8rem" />}
                 error={errors.email?.message}
                 {...register('email')}
                 className="mt-4"

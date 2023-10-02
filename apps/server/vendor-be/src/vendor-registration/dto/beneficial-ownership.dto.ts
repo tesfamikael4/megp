@@ -3,9 +3,6 @@ import { BeneficialOwnership } from '../entities/beneficial-ownership.entity';
 import { IsNotEmpty, IsUUID } from 'class-validator';
 
 export class CreateBeneficialOwnershipDto {
-  // @ApiProperty()
-  // @IsNotEmpty()
-  // @IsUUID()
   id: string;
   @ApiProperty()
   @IsNotEmpty()
@@ -16,15 +13,13 @@ export class CreateBeneficialOwnershipDto {
   @ApiProperty()
   @IsNotEmpty()
   nationality: string;
-
   @ApiProperty()
   @IsNotEmpty()
   vendorId: string;
-
   createdAt: Date;
   createdBy: string;
-  deletedAt: Date;
-  deletedBy: string;
+  // deletedAt: Date;
+  // deletedBy: string;
   updatedAt: Date;
   updatedBy: string;
 
@@ -40,8 +35,8 @@ export class CreateBeneficialOwnershipDto {
     entity.vendorId = dto.vendorId;
     entity.createdAt = dto.createdAt;
     entity.createdBy = dto.createdBy;
-    entity.deletedAt = dto.deletedAt;
-    entity.deletedBy = dto.deletedBy;
+    // entity.deletedAt = dto.deletedAt;
+    //  entity.deletedBy = dto.deletedBy;
     entity.updatedAt = dto.updatedAt;
     entity.updatedBy = dto.updatedBy;
     return entity;
@@ -65,8 +60,8 @@ export class BeneficialOwnershipResponse extends CreateBeneficialOwnershipDto {
 
     response.createdAt = dto.createdAt;
     response.createdBy = dto.createdBy;
-    response.deletedAt = dto.deletedAt;
-    response.deletedBy = dto.deletedBy;
+    //   response.deletedAt = dto.deletedAt;
+    // response.deletedBy = dto.deletedBy;
     response.updatedAt = dto.updatedAt;
     response.updatedBy = dto.updatedBy;
     return response;

@@ -49,13 +49,9 @@ export class WorkflowInstanceService {
     @InjectRepository(TaskEntity)
     private readonly taskRepository: Repository<TaskEntity>,
     private dataSource: DataSource,
-    // @InjectRepository(VendorsEntity)
-    // private readonly vendorRepository: Repository<VendorsEntity>,
     @InjectRepository(BusinessProcessEntity)
     private readonly bpRepository: Repository<BusinessProcessEntity>,
-    private readonly appService: ApplicationExcutionService,
-    @Inject(VendorRegistrationsService)
-    private readonly vendorService: VendorRegistrationsService,
+    private readonly appService: ApplicationExcutionService, //private readonly vendorService: VendorRegistrationsService,
   ) {}
   async getWorkflowInstances(
     query: CollectionQuery,
@@ -85,9 +81,9 @@ export class WorkflowInstanceService {
       throw new NotFoundException('WorkflowInstance not found');
     return WorkflowInstanceResponse.toResponse(workflowInstance);
   }
+
   async create(dto: CreateWorkflowInstanceDto): Promise<any> {
     const response = {};
-
     const workflowInstanceEntity = CreateWorkflowInstanceDto.fromDto(dto);
     const price = await this.dataSource
       .getRepository(ServicePriceEntity)
@@ -125,16 +121,18 @@ export class WorkflowInstanceService {
           businessProcessId: bp.id,
         })
         .getOne();
-      const vendor = await this.vendorService.getVendorById(
-        newWorkflowInstance.requestorId,
-      );
+      /*
+    const vendor = await this.vendorService.getVendorById(
+      newWorkflowInstance.requestorId,
+    );
+    */
       // const vendor = dto.data;
       taskHandler.currentState = state.value.toString();
       taskHandler.instanceId = newWorkflowInstance.id;
       taskHandler.taskId = task.id;
       taskHandler.previousHandlerId = null;
       taskHandler.assignmentStatus = 'Unassigned';
-      taskHandler.data = vendor;
+      taskHandler.data = dto.data;
       const insertedTaskHandler = await this.dataSource
         .getRepository(TaskHandlerEntity)
         .save(taskHandler);
@@ -158,11 +156,13 @@ export class WorkflowInstanceService {
 
     if (!workflowInstance)
       throw new NotFoundException('Workflow Instance not found');
+
     const currentTaskHandler = workflowInstance.taskHandler;
     const bp = await this.bpRepository.findOne({
       where: { id: workflowInstance.bpId },
     });
     const bpWorkflow = Object.assign({}, bp.workflow);
+
     bpWorkflow['initial'] = currentTaskHandler.currentState;
     const machine = createMachine({
       predictableActionArguments: true,
@@ -170,6 +170,7 @@ export class WorkflowInstanceService {
     });
 
     const stateMachine = interpret(machine).onTransition(async (state) => {
+      console.log(state.toString());
       if (state.value !== currentTaskHandler.currentState) {
         workflowInstance.status = WorkflowInstanceEnum.Inprogress;
         if (state.done) {
@@ -178,14 +179,15 @@ export class WorkflowInstanceService {
 
         currentTaskHandler.currentState = state.value.toString();
         const stateMetaData = this.getStateMetaData(state.meta);
+
         const task = await this.taskRepository.findOne({
           where: {
             name: state.value.toString(),
             businessProcessId: workflowInstance.bpId,
           },
         });
-        stateMetaData['type'] = task.taskType;
 
+        stateMetaData['type'] = task.taskType;
         this.handleEvent(stateMetaData, nextCommand)
           .then((res) => {
             console.log('handleEvent success', res);
@@ -202,7 +204,7 @@ export class WorkflowInstanceService {
           .save(currentTaskHandler)
           .then((response) => {
             this.addTaskTracker({
-              taskId: task.id,
+              taskId: currentTaskHandler.taskId, //task.id,
               instanceId: workflowInstance.id,
               data: nextCommand.data,
               handledById: nextCommand.handlerId,
@@ -302,9 +304,9 @@ export class WorkflowInstanceService {
     const today = new Date();
     instance.createdBy = userId;
     instance.status = WorkflowInstanceEnum.Completed;
-    instance.approved_at = today.toDateString();
+    instance.approvedAt = today.toDateString();
     const exprireDate = today.setFullYear(today.getFullYear() + 1);
-    instance.expire_date = exprireDate.toString();
+    instance.expireDate = exprireDate.toString();
     const result = await this.workflowInstanceRepository.save(instance);
   }
 

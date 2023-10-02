@@ -16,6 +16,7 @@ import { UserProfile } from './user-profile.entity';
 import { UserRole } from './user-role.entity';
 import { UserUnit } from './user-unit.entity';
 import { ContactNumber } from 'src/shared/entities/contact-number';
+import { UserGroup } from 'src/groups/entity/user-group.entity';
 
 @Entity({ name: 'users' })
 export class User extends Audit {
@@ -84,4 +85,10 @@ export class User extends Audit {
     onDelete: 'RESTRICT',
   })
   userUnits: UserUnit[];
+
+  @OneToMany(() => UserGroup, (userGroups) => userGroups.userId, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  userGroups: UserGroup[];
 }

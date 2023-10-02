@@ -20,11 +20,11 @@ import {
 import { PermissionService } from '../services/permission.service';
 import { Permission } from '../entities/permission.entity';
 import { CollectionQuery } from '@collection-query';
-import { GenericCrudController } from 'src/shared/controller/generic-crud.controller';
+import { EntityCrudController } from 'src/shared/controller/entity-crud.controller';
 
 @Controller('permission-news')
 @ApiTags('permission-news')
-export class PermissionNewController extends GenericCrudController<Permission> {
+export class PermissionNewController extends EntityCrudController<Permission> {
   constructor(private readonly permissionService: PermissionService) {
     super(permissionService);
   }

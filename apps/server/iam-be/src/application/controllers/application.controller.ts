@@ -20,11 +20,11 @@ import {
 import { ApplicationService } from '../services/application.service';
 import { Application } from '../entities/application.entity';
 import { CollectionQuery } from '@collection-query';
-import { GenericCrudController } from 'src/shared/controller/generic-crud.controller';
+import { EntityCrudController } from 'src/shared/controller/entity-crud.controller';
 
 @Controller('application-news')
 @ApiTags('application-news')
-export class ApplicationNewController extends GenericCrudController<Application> {
+export class ApplicationNewController extends EntityCrudController<Application> {
   constructor(private readonly applicationService: ApplicationService) {
     super(applicationService);
   }

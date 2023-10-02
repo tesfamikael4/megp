@@ -17,11 +17,11 @@ import { CreateMandateDto, UpdateMandateDto } from '../dto/mandate.dto';
 import { MandateService } from '../services/mandate.service';
 import { Mandate } from '../entities/mandate.entity';
 import { CollectionQuery } from '@collection-query';
-import { GenericCrudController } from 'src/shared/controller/generic-crud.controller';
+import { EntityCrudController } from 'src/shared/controller/entity-crud.controller';
 
 @Controller('mandate-news')
 @ApiTags('mandate-news')
-export class MandateController extends GenericCrudController<Mandate> {
+export class MandateController extends EntityCrudController<Mandate> {
   constructor(private readonly mandateService: MandateService) {
     super(mandateService);
   }

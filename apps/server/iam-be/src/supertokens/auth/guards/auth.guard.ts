@@ -29,6 +29,7 @@ export class AuthGuard implements CanActivate {
     // You can create an optional version of this by passing {sessionRequired: false} to verifySession
     await verifySession(this.verifyOptions)(ctx.getRequest(), resp, (res) => {
       err = res;
+      return;
     });
 
     if (resp.headersSent) {

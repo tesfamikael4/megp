@@ -11,7 +11,7 @@ export abstract class CommonEntity {
   updatedBy?: string;
   @CreateDateColumn({
     type: 'timestamptz',
-    default: 'now()',
+    default: () => 'CURRENT_TIMESTAMP',
     name: 'created_at',
   })
   createdAt: Date;
