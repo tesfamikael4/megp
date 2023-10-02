@@ -25,13 +25,13 @@ merge:
 
 build:
   stage: build
-  image: mrucki/dind-nodejs
   rules:
     - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"
   before_script:
     - corepack enable
     - corepack prepare pnpm@latest-8 --activate
     - pnpm config set store-dir .pnpm-store
+    - apk update && add docker.io 
   script:
     - pnpm install
     - pnpm -w run turbo run lint  --filter "...[origin/main...HEAD^]"
