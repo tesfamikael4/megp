@@ -25,13 +25,15 @@ merge:
 
 build:
   stage: build
-  image: node:latest
+  image: docker:latest
   services:
     - docker:dind
 
   rules:
     - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"
   before_script:
+    - apk --update add nodejs npm
+    - npm install -g pnpm
     - corepack enable
     - corepack prepare pnpm@latest-8 --activate
     - pnpm config set store-dir .pnpm-store
