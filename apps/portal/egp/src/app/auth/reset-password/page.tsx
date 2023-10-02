@@ -82,20 +82,24 @@ export default function PasswordResetPage() {
         {response === 'FIELD_ERROR' && (
           <>
             <IconCircleX color="red" size={48} className="mx-auto" />
-            <Text align="center">Password does not meet requirements.</Text>
+            <Text className="text-center">
+              Password does not meet requirements.
+            </Text>
           </>
         )}
         {response === 'RESET_PASSWORD_INVALID_TOKEN_ERROR' && (
           <>
             <IconCircleX color="red" size={48} className="mx-auto" />
-            <Text align="center">Password reset failed. Please try again.</Text>
+            <Text className="text-center">
+              Password reset failed. Please try again.
+            </Text>
           </>
         )}
         {response === 'OK' && (
           <>
             <Flex direction={'column'}>
               <IconChecks color="#3d692c" size={48} className="mx-auto" />
-              <Text align="center" size={'xl'}>
+              <Text className="text-center" size={'xl'}>
                 Password reset successful!
               </Text>
               <Button
@@ -110,7 +114,7 @@ export default function PasswordResetPage() {
         {!response && (
           <form onSubmit={handleSubmit(onSubmit)}>
             <Flex direction={'column'}>
-              <Title align="center">Reset Password</Title>
+              <Title className="text-center">Reset Password</Title>
               <PasswordInput
                 label="New Password"
                 {...register('password')}

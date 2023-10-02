@@ -132,6 +132,12 @@ importers:
       '@megp/tsconfig':
         specifier: workspace:*
         version: link:../../../packages/config/tsconfig
+      eslint:
+        specifier: ^8.50.0
+        version: 8.50.0
+      eslint-config-next:
+        specifier: ^13.5.3
+        version: 13.5.3(eslint@8.50.0)(typescript@5.2.2)
       postcss:
         specifier: 8.4.28
         version: 8.4.28
@@ -232,6 +238,12 @@ importers:
       '@megp/tsconfig':
         specifier: workspace:*
         version: link:../../../packages/config/tsconfig
+      eslint:
+        specifier: ^8.50.0
+        version: 8.50.0
+      eslint-config-next:
+        specifier: ^13.5.3
+        version: 13.5.3(eslint@8.50.0)(typescript@5.2.2)
       postcss:
         specifier: 8.4.28
         version: 8.4.28
@@ -498,6 +510,12 @@ importers:
       '@megp/tsconfig':
         specifier: workspace:*
         version: link:../../../packages/config/tsconfig
+      eslint:
+        specifier: ^8.50.0
+        version: 8.50.0
+      eslint-config-next:
+        specifier: ^13.5.3
+        version: 13.5.3(eslint@8.50.0)(typescript@5.2.2)
       postcss:
         specifier: 8.4.28
         version: 8.4.28
@@ -628,6 +646,12 @@ importers:
       '@megp/tsconfig':
         specifier: workspace:*
         version: link:../../../packages/config/tsconfig
+      eslint:
+        specifier: ^8.50.0
+        version: 8.50.0
+      eslint-config-next:
+        specifier: ^13.5.3
+        version: 13.5.3(eslint@8.50.0)(typescript@5.2.2)
       postcss:
         specifier: 8.4.28
         version: 8.4.28
@@ -749,6 +773,12 @@ importers:
       '@megp/tsconfig':
         specifier: workspace:*
         version: link:../../../packages/config/tsconfig
+      eslint:
+        specifier: ^8.50.0
+        version: 8.50.0
+      eslint-config-next:
+        specifier: ^13.5.3
+        version: 13.5.3(eslint@8.50.0)(typescript@5.2.2)
       postcss:
         specifier: 8.4.28
         version: 8.4.28
@@ -806,6 +836,12 @@ importers:
       '@mantine/tiptap':
         specifier: ^7.1.0
         version: 7.1.0(@mantine/core@7.1.0)(@mantine/hooks@7.1.0)(@tabler/icons-react@2.34.0)(@tiptap/extension-link@2.1.11)(@tiptap/react@2.1.11)(react-dom@18.2.0)(react@18.2.0)
+      '@megp/core-fe':
+        specifier: workspace:*
+        version: link:../../../packages/fe/core-fe
+      '@megp/theme':
+        specifier: workspace:*
+        version: link:../../../packages/config/theme
       '@reduxjs/toolkit':
         specifier: ^1.9.5
         version: 1.9.5(react-redux@8.1.2)(react@18.2.0)
