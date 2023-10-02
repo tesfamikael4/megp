@@ -42,7 +42,7 @@ build:
     - pnpm install
     - pnpm -w run turbo run lint  --filter "...[origin/main...HEAD^]"
     - pnpm -w run turbo run build:docker  --filter "...[origin/main...HEAD^]"
-    - docker push $CONTAINER_TEST_IMAGE
+    - docker push $iam-fe
   cache:
     key:
       files:
@@ -55,6 +55,6 @@ deploy:
   rules:
     - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"
   script:
-    - docker pull $CONTAINER_RELEASE_IMAGE
-    - docker container rm -f next-app || true
-    - docker run -d -p 5511:5511 --name next-app $CONTAINER_RELEASE_IMAGE
+    - docker pull iam-fe
+    - docker container rm -f iam-fe || true
+    - docker run -d -p 5511:5511 --name iam-fe $iam-fe
