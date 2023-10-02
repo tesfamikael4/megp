@@ -35,7 +35,7 @@ build:
     - apk --update add nodejs npm git
     
     - npm install -g pnpm
-
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     # - corepack enable
     # - corepack prepare pnpm@latest-8 --activate
     #- pnpm config set store-dir .pnpm-store
