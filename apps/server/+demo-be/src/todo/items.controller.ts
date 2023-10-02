@@ -39,12 +39,4 @@ export class ItemsController extends GenericCrudController<Todo> {
   async create(@Body() itemData: CreateTodoDto): Promise<Todo> {
     return await super.create(itemData);
   }
-
-  @Put(':id')
-  async update(
-    @Param('id') id: string,
-    @Body() updateItemDto: UpdateTodoDto,
-  ): Promise<Todo | undefined> {
-    return await super.update(id, updateItemDto);
-  }
 }
