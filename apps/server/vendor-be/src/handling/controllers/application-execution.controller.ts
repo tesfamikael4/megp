@@ -40,7 +40,7 @@ export class ApplicationExcutionController {
   @ApiOkResponse({ type: WorkflowInstanceResponse })
   async fetchCurruntTaskDetail(
     @Param('instanceId') instanceId: string,
-    // @Query() query: CollectionQuery,
+    @Query() query: CollectionQuery,
   ) {
     return await this.executeRepository.getCurruntTaskDetail(instanceId);
   }

@@ -14,11 +14,8 @@ import {
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { ApiPaginatedResponse, DataResponseFormat } from '@api-data';
 import { CollectionQuery } from '@collection-query';
-
-// import { RegistrationTypes } from 'src/shared/enums/vendor-enums';
 import {
   CreateServicePriceDto,
-  ServicePriceResponseDto,
   UpdateServicePriceDto,
 } from './service-price.dto';
 import { ServicePricingService } from './service-pricing.service';
@@ -32,10 +29,9 @@ export class ServicePricingController extends GenericCrudController<ServicePrice
   constructor(private readonly pricingService: ServicePricingService) {
     super(pricingService);
   }
-
   @Post()
   async create(@Body() dto: CreateServicePriceDto) {
-    return await this.pricingService.create(dto);
+    return await super.create(dto);
   }
   @Get('/:id')
   async findOne(
@@ -45,16 +41,15 @@ export class ServicePricingController extends GenericCrudController<ServicePrice
     )
     id: string,
   ) {
-    return await this.pricingService.findOne(id);
+    return await super.findOne(id);
   }
 
   @Get()
   //  @ApiPaginatedResponse(ServicePriceResponseDto)
   // @ApiOkResponse({ type: Todo, isArray: false })
   async findAll(@Query() query: CollectionQuery) {
-    return await this.pricingService.findAll(query);
+    return await super.findAll(query);
   }
-
   @Patch('/:id')
   async update(
     @Param(
@@ -64,7 +59,7 @@ export class ServicePricingController extends GenericCrudController<ServicePrice
     id: string,
     @Body() updateTRegSettingDto: UpdateServicePriceDto,
   ) {
-    return await this.pricingService.update(id, updateTRegSettingDto);
+    return await super.update(id, updateTRegSettingDto);
   }
 
   @Delete('/:id')
@@ -75,7 +70,7 @@ export class ServicePricingController extends GenericCrudController<ServicePrice
     )
     id: string,
   ) {
-    return await this.pricingService.remove(id);
+    return await super.remove(id);
   }
 
   @Put('soft-delete/:id')
@@ -98,16 +93,4 @@ export class ServicePricingController extends GenericCrudController<ServicePrice
   ) {
     return await this.pricingService.restore(id);
   }
-  // @Get('get-registration-types')
-  // async getRegistrationTypes() {
-  //   const array = Object.entries(RegistrationTypes).map((entry) => {
-  //     const [key, value] = entry;
-  //     return {
-  //       key,
-  //       value,
-  //     };
-  //   });
-  // }
-
-  //child methods
 }
