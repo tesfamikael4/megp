@@ -15,7 +15,7 @@ import { Audit } from 'src/shared/entities/audit.entity';
 import { Mandate } from './mandate.entity';
 import { Permission } from 'src/application/entities/permission.entity';
 
-@Entity({ name: 'mandate_permissions' })
+@Entity({ name: 'mandate_permission_news' })
 export class MandatePermission extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;

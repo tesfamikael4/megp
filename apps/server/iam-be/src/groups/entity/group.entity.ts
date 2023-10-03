@@ -1,7 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { UserGroup } from './user-group.entity';
 
-@Entity({ name: 'groups' })
+@Entity({ name: 'group_news' })
 export class Group {
   @PrimaryGeneratedColumn('uuid')
   id: string;

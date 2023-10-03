@@ -45,7 +45,7 @@ export class OrganizationService {
 
     @InjectRepository(Office)
     private readonly officeRepository: Repository<Office>,
-  ) {}
+  ) { }
 
   async registerOrganization(superTokenUser: any, formFields: any) {
     try {
@@ -296,15 +296,7 @@ export class OrganizationService {
   }
 
   generateUsername() {
-    //generate random string?
-    const length = 6;
-    let result = 'ME-';
-    const characters =
-      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    const charactersLength = characters.length;
-    for (let i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
+    let result = `me-${Math.floor(Date.now() / 1000)}-${Math.floor(Math.random() * 1000000000).toString()}`;
     return result;
   }
   async assignMandates(

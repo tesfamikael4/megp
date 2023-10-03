@@ -8,7 +8,7 @@ import {
 import { Group } from './group.entity';
 import { User } from 'src/organization/entities/user.entity';
 
-@Entity({ name: 'user_groups' })
+@Entity({ name: 'user_group_news' })
 export class UserGroup {
   @PrimaryGeneratedColumn('uuid')
   id: string;

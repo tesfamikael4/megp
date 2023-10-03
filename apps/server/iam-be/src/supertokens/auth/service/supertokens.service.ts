@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import supertokens from 'supertokens-node';
 import Session from 'supertokens-node/recipe/session';
 import ThirdPartyEmailPassword, {
@@ -158,7 +158,11 @@ export class SupertokensService {
                     throw Error('Should never come here');
                   }
 
-                  // input.formFields["email"].value = organizationService.generateUsername();
+                  input.formFields.forEach((field) => {
+                    if (field.id == 'email') {
+                      field.value = organizationService.generateUsername();
+                    }
+                  });
 
                   // First we call the original implementation
                   const response =
