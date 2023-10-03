@@ -1,180 +1,147 @@
+import type { CollectionQuery, Where, Order, FilterOperator } from '../models/query'; // Import your types
 
-import { CollectionQuery, Where } from '../models/query';
-
+// Function to encode a CollectionQuery object to a custom URL query string
 export function encodeCollectionQuery(query: CollectionQuery): string {
-  const params: string[] = [];
+  const queryParams: string[] = [];
 
-  // Helper function to add a key-value pair to the params array
-  function addParam(key: string, value: any) {
-    if (value !== undefined && value !== null) {
-      params.push(
-        `${encodeURIComponent(key)}=${encodeURIComponent(value.toString())}`,
-      );
-    }
+  if (query.select) {
+    queryParams.push(`s=${query.select.join(',')}`);
   }
 
-  // Select
-  if (query.select && query.select.length > 0) {
-    addParam('select', query.select.join(','));
+  if (query.where) {
+    queryParams.push(`w=${encodeWhere(query.where)}`);
   }
 
-  // Where
-  if (query.where && query.where.length > 0) {
-    const whereParam = query.where
-      .map((condition) => {
-        if (condition && condition.length > 0) {
-          return (
-            '(' +
-            condition
-              .map((clause) => {
-                return `${clause.column}${clause.operator ? clause.operator : '='
-                  }${clause.value}`;
-              })
-              .join(' AND ') +
-            ')'
-          );
-        }
-        return '';
-      })
-      .filter((condition) => condition !== '')
-      .join(' OR ');
-
-    if (whereParam) {
-      addParam('where', whereParam);
-    }
+  if (query.take !== undefined) {
+    queryParams.push(`t=${query.take}`);
   }
 
-  // Take
-  if (query.take) {
-    addParam('take', query.take);
+  if (query.skip !== undefined) {
+    queryParams.push(`sk=${query.skip}`);
   }
 
-  // Skip
-  if (query.skip) {
-    addParam('skip', query.skip);
+  if (query.orderBy) {
+    queryParams.push(`o=${encodeOrderBy(query.orderBy)}`);
   }
 
-  // OrderBy
-  if (query.orderBy && query.orderBy.length > 0) {
-    const orderByParam = query.orderBy
-      .map((order) => {
-        return `${order.column}${order.direction ? `:${order.direction}` : ''}`;
-      })
-      .join(',');
-
-    if (orderByParam) {
-      addParam('orderBy', orderByParam);
-    }
+  if (query.includes) {
+    queryParams.push(`i=${query.includes.join(',')}`);
   }
 
-  // Includes
-  if (query.includes && query.includes.length > 0) {
-    addParam('includes', query.includes.join(','));
+  if (query.groupBy) {
+    queryParams.push(`g=${query.groupBy.join(',')}`);
   }
 
-  // GroupBy
-  if (query.groupBy && query.groupBy.length > 0) {
-    addParam('groupBy', query.groupBy.join(','));
+  if (query.having) {
+    queryParams.push(`h=${encodeWhere(query.having)}`);
   }
 
-  // Having
-  if (query.having && query.having.length > 0) {
-    const havingParam = query.having
-      .map((condition) => {
-        if (condition && condition.length > 0) {
-          return (
-            '(' +
-            condition
-              .map((clause) => {
-                return `${clause.column}${clause.operator ? clause.operator : '='
-                  }${clause.value}`;
-              })
-              .join(' AND ') +
-            ')'
-          );
-        }
-        return '';
-      })
-      .filter((condition) => condition !== '')
-      .join(' OR ');
-
-    if (havingParam) {
-      addParam('having', havingParam);
-    }
-  }
-
-  // Count
   if (query.count) {
-    addParam('count', 'true');
+    queryParams.push(`c=true`);
   }
 
-  return params.join('&');
+  return queryParams.join('&');
 }
 
-export function decodeCollectionQuery(queryParam: string): CollectionQuery {
+// Function to decode a custom URL query string into a CollectionQuery object
+export function decodeCollectionQuery(queryString: string): CollectionQuery {
   const query: CollectionQuery = {};
+  const queryParams = new URLSearchParams(queryString);
 
-  // Helper function to split a parameter string and create a condition array
-  function createConditionArray(conditionString: string): Where[][] | undefined {
-    return conditionString.split(' OR ').map((condition) => {
-      return condition.split(' AND ').map((clause) => {
-        const [column, operator, value] = clause.split(/(=|>|>=|<|<=|<>|!=|LIKE|ILIKE|~|~\*|IN|IS|IS DISTINCT FROM|@@|contains|<@|&&|&<|&>|-\|-|NOT|OR|AND|ALL|ANY)/);
-        return {
-          column: column.trim(), // Trim here to remove extra spaces
-          operator: operator ? operator.trim() : undefined, // Trim here
-          value: value.trim(), // Trim here
-        } as Where;
-      });
-    });
+  if (queryParams.has('s')) {
+    query.select = queryParams.get('s')!.split(',');
   }
 
-  const paramPairs = queryParam.split('&');
-  for (const paramPair of paramPairs) {
-    const [key, value] = paramPair.split('=');
-    const decodedKey = decodeURIComponent(key);
-    const decodedValue = decodeURIComponent(value);
+  if (queryParams.has('w')) {
+    query.where = decodeWhere(queryParams.get('w')!);
+  }
 
-    switch (decodedKey) {
-      case 'select':
-        query.select = decodedValue.split(',');
-        break;
-      case 'where':
-        query.where = createConditionArray(decodedValue);
-        break;
-      case 'take':
-        query.take = parseInt(decodedValue, 10);
-        break;
-      case 'skip':
-        query.skip = parseInt(decodedValue, 10);
-        break;
-      case 'orderBy':
-        query.orderBy = decodedValue.split(',').map((order) => {
-          const [column, direction] = order.split(':');
-          return {
-            column: decodeURIComponent(column),
-            direction: direction ? decodeURIComponent(direction) as ('asc' | 'desc') : undefined,
-          };
-        });
-        break;
-      case 'includes':
-        query.includes = decodedValue.split(',');
-        break;
-      case 'groupBy':
-        query.groupBy = decodedValue.split(',');
-        break;
-      case 'having':
-        query.having = createConditionArray(decodedValue);
-        break;
-      case 'count':
-        query.count = decodedValue === 'true';
-        break;
-      default:
-        // Ignore unknown parameters
-        break;
-    }
+  if (queryParams.has('t')) {
+    query.take = parseInt(queryParams.get('t')!, 10);
+  }
+
+  if (queryParams.has('sk')) {
+    query.skip = parseInt(queryParams.get('sk')!, 10);
+  }
+
+  if (queryParams.has('o')) {
+    query.orderBy = decodeOrderBy(queryParams.get('o')!);
+  }
+
+  if (queryParams.has('i')) {
+    query.includes = queryParams.get('i')!.split(',');
+  }
+
+  if (queryParams.has('g')) {
+    query.groupBy = queryParams.get('g')!.split(',');
+  }
+
+  if (queryParams.has('h')) {
+    query.having = decodeWhere(queryParams.get('h')!);
+  }
+
+  if (queryParams.has('c')) {
+    query.count = queryParams.get('c') === 'true';
   }
 
   return query;
 }
 
+// Helper function to encode a Where array to a compact string
+function encodeWhere(where: Where[][]): string {
+  return where.map(encodeWhereGroup).join('|');
+}
 
+// Helper function to decode a compact string to a Where array
+function decodeWhere(encoded: string): Where[][] {
+  return encoded.split('|').map(decodeWhereGroup);
+}
+
+// Helper function to encode a Where group to a compact string
+function encodeWhereGroup(group: Where[]): string {
+  return group.map(encodeWhereItem).join(',');
+}
+
+// Helper function to decode a compact string to a Where group
+function decodeWhereGroup(encoded: string): Where[] {
+  return encoded.split(',').map(decodeWhereItem);
+}
+
+// Helper function to encode a Where item to a compact string
+function encodeWhereItem(item: Where): string {
+  return `${item.column}:${item.operator}:${item.value}`;
+}
+
+// Helper function to decode a compact string to a Where item
+function decodeWhereItem(encoded: string): Where {
+  const parts = encoded.split(':');
+  return {
+    column: parts[0],
+    operator: parts[1] as FilterOperator,
+    value: parts[2],
+  };
+}
+
+// Helper function to encode an Order array to a compact string
+function encodeOrderBy(orderBy: Order[]): string {
+  return orderBy.map(encodeOrderItem).join(',');
+}
+
+// Helper function to decode a compact string to an Order array
+function decodeOrderBy(encoded: string): Order[] {
+  return encoded.split(',').map(decodeOrderItem);
+}
+
+// Helper function to encode an Order item to a compact string
+function encodeOrderItem(item: Order): string {
+  return `${item.column}:${item.direction || 'asc'}`;
+}
+
+// Helper function to decode a compact string to an Order item
+function decodeOrderItem(encoded: string): Order {
+  const parts = encoded.split(':');
+  return {
+    column: parts[0],
+    direction: parts[1] as 'asc' | 'desc',
+  };
+}

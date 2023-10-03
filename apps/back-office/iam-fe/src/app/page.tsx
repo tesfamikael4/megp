@@ -5,10 +5,27 @@ import {
   encodeCollectionQuery,
   decodeCollectionQuery,
 } from '@megp/entity';
+import { logger } from '@megp/core-fe';
 export default function Home() {
-  // Example usage:
+  // Example usage
   const query: CollectionQuery = {
-    select: ['id', 'name'],
+    select: [
+      'id',
+      'name',
+      'age',
+      'city',
+      'department',
+      'COUNT(*)',
+      'roles',
+      'profile',
+      'isActive',
+      'createdAt',
+      'updatedAt',
+      'deletedAt',
+      'createdBy',
+      'updatedBy',
+      'deletedBy',
+    ],
     where: [
       [{ column: 'age', value: 30, operator: '>=' }],
       [{ column: 'city', value: 'New York', operator: '=' }],
@@ -22,16 +39,15 @@ export default function Home() {
     count: true,
   };
 
-  const queryString = encodeCollectionQuery(query);
+  const encodedQuery = encodeCollectionQuery(query);
+  const en = encodeURIComponent(encodedQuery);
+  logger.log('Encoded Query:', en, en.length);
+  logger.log('Encoded Query:', encodedQuery, encodedQuery.length);
 
-  // Example usage:
-  // const queryString =
-  //   'select=id,name&where=(age>=30 AND city=New%20York) OR (city=San%20Francisco)&take=10&skip=0&orderBy=name:asc&includes=roles,profile&groupBy=department&having=(COUNT(*)>5)&count=true';
+  const de = decodeURIComponent(en);
 
-  const parsedQuery = decodeCollectionQuery(queryString);
-  console.log(queryString);
-  console.log(parsedQuery);
-  console.log(JSON.stringify(parsedQuery));
+  const decodedQuery = decodeCollectionQuery(de);
+  logger.log('Decoded Query:', decodedQuery);
 
   return (
     <main>

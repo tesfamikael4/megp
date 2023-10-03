@@ -4,5 +4,6 @@ module.exports = {
     // Add any project-specific rules or overrides here
     '@typescript-eslint/no-extraneous-class': 'off',
     // 'import/no-extraneous-dependencies': 'off',
+    '@typescript-eslint/no-non-null-assertion': 'off',
   },
 };
