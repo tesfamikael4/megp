@@ -1,3 +1,4 @@
+'use client';
 import { Button, Group } from '@mantine/core';
 import { Section } from '@megp/core-fe';
 import { IconDeviceFloppy, IconPlus } from '@tabler/icons-react';
