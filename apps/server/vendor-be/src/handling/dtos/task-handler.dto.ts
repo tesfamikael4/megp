@@ -62,6 +62,9 @@ export class UpdateTaskHandlerDto {
   @ApiProperty()
   @IsString()
   data: object;
+  @ApiProperty()
+  @IsNotEmpty()
+  action: string;
   static fromDto(dto: UpdateTaskHandlerDto): TaskHandlerEntity {
     const entity = new TaskHandlerEntity();
     if (!dto) {

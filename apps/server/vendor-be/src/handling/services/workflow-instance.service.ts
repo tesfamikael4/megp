@@ -148,19 +148,21 @@ export class WorkflowInstanceService {
     stateMachine.stop();
     return response;
   }
+
   async gotoNextStep(nextCommand: GotoNextStateDto) {
     const workflowInstance = await this.workflowInstanceRepository.findOne({
       where: { id: nextCommand.instanceId },
-      relations: ['taskHandler', 'businessProcess'],
+      relations: { taskHandler: true, businessProcess: true },
     });
 
     if (!workflowInstance)
       throw new NotFoundException('Workflow Instance not found');
 
     const currentTaskHandler = workflowInstance.taskHandler;
-    const bp = await this.bpRepository.findOne({
+    const bp = workflowInstance.businessProcess;
+    /* = await this.bpRepository.findOne({
       where: { id: workflowInstance.bpId },
-    });
+    });*/
     const bpWorkflow = Object.assign({}, bp.workflow);
 
     bpWorkflow['initial'] = currentTaskHandler.currentState;
@@ -186,7 +188,6 @@ export class WorkflowInstanceService {
             businessProcessId: workflowInstance.bpId,
           },
         });
-
         stateMetaData['type'] = task.taskType;
         this.handleEvent(stateMetaData, nextCommand)
           .then((res) => {

@@ -8,7 +8,6 @@ import {
 import { ApiPaginatedResponse, DataResponseFormat } from 'src/shared/api-data';
 import { CollectionQuery } from 'src/shared/collection-query';
 import { TaskHandlerResponse } from '../dtos/task-handler.response';
-import { TaskTrackerResponse } from '../dtos/task-tracker.response';
 import { ApplicationExcutionService } from '../services/application-execution.service';
 import { WorkflowInstanceResponse } from '../dtos/workflow-instance.response';
 import { InvoiceResponseDto } from 'src/vendor-registration/dto/invoice.dto';
@@ -16,6 +15,12 @@ import {
   PaymentReceiptDto,
   PaymentReceiptResponseDto,
 } from 'src/vendor-registration/dto/payment-receipt.dto';
+import {
+  CreateTaskHandlerDto,
+  UpdateTaskHandlerDto,
+} from '../dtos/task-handler.dto';
+import { UpdateTaskDto } from 'src/bpm/dtos/task.dto';
+import { ActiveVendorsResponse } from '../dtos/active-vendor-response';
 
 @Controller('ApplicationExecution')
 @ApiTags('Application-excution')
@@ -66,7 +71,7 @@ export class ApplicationExcutionController {
     return await this.executeRepository.getInvoice(id);
   }
 
-  @Post('create-payment')
+  @Post('attach-payment-receipt')
   @ApiOkResponse({ type: PaymentReceiptResponseDto })
   async savePayment(
     @Body() command: PaymentReceiptDto,
@@ -90,8 +95,36 @@ export class ApplicationExcutionController {
   }
   ///////////////////////////////////
   @Get('get-active-vendors')
-  @ApiPaginatedResponse(TaskHandlerResponse)
+  @ApiPaginatedResponse(ActiveVendorsResponse)
   async getActiveTendors(@Query() query: CollectionQuery) {
     return await this.executeRepository.activeVendors(query);
+  }
+  @Post('pick-task')
+  async pickTask(dto: UpdateTaskHandlerDto) {
+    return await this.executeRepository.pickTask(dto);
+  }
+  @Post('confirm-task')
+  async ConfirmTask(dto: UpdateTaskHandlerDto) {
+    return await this.executeRepository.ConfirmTask(dto);
+  }
+  @Post('approve-task')
+  async ApproveTask(dto: UpdateTaskHandlerDto) {
+    return await this.executeRepository.ApproveTask(dto);
+  }
+  @Post('confirm-payment')
+  async ConfirmPayment(dto: UpdateTaskHandlerDto) {
+    return await this.executeRepository.ConfirmPayment(dto);
+  }
+  @Post('generate-invoice')
+  async generateCerteficate(dto: UpdateTaskHandlerDto) {
+    return await this.executeRepository.generateCerteficate(dto);
+  }
+  @Post('send-email')
+  async sendEmailNotification(dto: UpdateTaskHandlerDto) {
+    return await this.executeRepository.sendEmailNotification(dto);
+  }
+  @Post('send-sms')
+  async sendSMSNotification(dto: UpdateTaskHandlerDto) {
+    return await this.executeRepository.sendSMSNotification(dto);
   }
 }

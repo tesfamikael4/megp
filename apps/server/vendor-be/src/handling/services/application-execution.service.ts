@@ -45,7 +45,10 @@ import { FileResponseDto } from 'src/vendor-registration/dto/file.dto';
 import { TaskType } from '../../bpm/entities/taskType';
 import { TaskTypes } from '../dtos/task-type.enum';
 import { ActiveVendorsResponse } from '../dtos/active-vendor-response';
-import { CreateTaskHandlerDto } from '../dtos/task-handler.dto';
+import {
+  CreateTaskHandlerDto,
+  UpdateTaskHandlerDto,
+} from '../dtos/task-handler.dto';
 @Injectable()
 export class ApplicationExcutionService {
   constructor(
@@ -455,8 +458,8 @@ export class ApplicationExcutionService {
     return response;
   }
 
-  async pickTask(dto: CreateTaskHandlerDto) {
-    console.log(dto);
+  async pickTask(dto: UpdateTaskHandlerDto) {
+    // await this.wiRepository.
   }
   async ConfirmTask(dto: CreateTaskHandlerDto) {
     console.log(dto);
