@@ -185,7 +185,7 @@ export class WorkflowInstanceService {
         const task = await this.taskRepository.findOne({
           where: {
             name: state.value.toString(),
-            businessProcessId: workflowInstance.bpId,
+            bpId: workflowInstance.bpId,
           },
         });
         stateMetaData['type'] = task.taskType;

@@ -12,36 +12,36 @@ import {
 import { VendorsEntity } from './vendors.entity';
 import { BanksEntity } from './bank.entity';
 //Vendor Service Application
-@Entity({ name: 'BankAccountDetail' })
+@Entity({ name: 'vendor_bank' })
 export class BankAccountDetailEntity extends CommonEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column({ name: 'Account_holder_fullname', nullable: true })
+  @Column({ nullable: true })
   accountHolderFullName: string;
-  @Column({ name: 'Account_number', nullable: true })
+  @Column({ nullable: true })
   accountNumber: string;
-  @Column({ name: 'vendor_id', nullable: true })
+  @Column({ nullable: true })
   vendorId: string;
-  @Column({ name: 'bank_id', type: 'uuid', nullable: true })
+  @Column({ type: 'uuid', nullable: true })
   bankId: string;
   ///Goods , Services
-  @Column({ name: 'branch_name', nullable: true })
+  @Column({ nullable: true })
   branchName: string;
-  @Column({ name: 'branch_address', nullable: true })
+  @Column({ nullable: true })
   branchAddress: string;
-  @Column({ name: 'currency', nullable: true })
+  @Column({ nullable: true })
   currency: string;
-  @Column({ name: 'bank_swift', nullable: true })
+  @Column({ nullable: true })
   bankSwift: string;
-  @Column({ name: 'IBAN', nullable: true })
+  @Column({ nullable: true })
   IBAN: string;
-  @Column({ name: 'status', nullable: true })
+  @Column({ nullable: true })
   status: string;
-  @Column({ name: 'hash_value', nullable: true })
+  @Column({ nullable: true })
   hashValue: string;
-  @Column({ name: 'bankName', nullable: true })
+  @Column({ nullable: true })
   bankName: string;
-  @Column({ name: 'meta_data', type: 'jsonb', nullable: true })
+  @Column({ type: 'jsonb', nullable: true })
   metaData: JSON;
   /*
   @Column({ name: 'approved_by', nullable: true, type: 'uuid' })
@@ -49,12 +49,10 @@ export class BankAccountDetailEntity extends CommonEntity {
   @Column({ name: 'approved_date', nullable: true })
   approvedDate: Date;
   */
-
   @ManyToOne(() => VendorsEntity, (v) => v.vendorAccounts)
-  @JoinColumn({ name: 'vendor_id' })
+  @JoinColumn({ name: 'vendorId' })
   vendor: VendorsEntity;
-
   @ManyToOne(() => BanksEntity, (v) => v.vendorAccounts)
-  @JoinColumn({ name: 'bank_id' })
+  @JoinColumn({ name: 'bankId' })
   bank: BanksEntity;
 }

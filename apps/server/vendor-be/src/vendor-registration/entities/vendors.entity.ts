@@ -13,24 +13,24 @@ export class VendorsEntity extends CommonEntity {
   id: string;
   @Column({ name: 'tin', nullable: true })
   tin: string;
-  @Column({ name: 'user_id' })
+  @Column()
   userId: string;
-  @Column({ name: 'vendor_status', default: 'draft' })
+  @Column({ default: 'draft' })
   status: string;
   //legal form of entity
-  @Column({ name: 'form_of_enity', nullable: true })
+  @Column({ nullable: true })
   formOfEntity: string;
   @Column({ name: 'country', default: 'Malian' })
   country: string;
   @Column({ default: 'None' })
   isExisting: string;
-  @Column({ name: 'meta_data', type: 'json', nullable: true })
+  @Column({ type: 'json', nullable: true })
   metaData: JSON;
-  @Column({ name: 'name', nullable: true })
+  @Column({ nullable: true })
   name: string;
-  @Column({ name: 'origin' })
+  @Column()
   origin: string;
-  @Column({ name: 'district' })
+  @Column()
   district: string;
 
   @OneToMany(() => CustomCategoryEntity, (cat) => cat.application)

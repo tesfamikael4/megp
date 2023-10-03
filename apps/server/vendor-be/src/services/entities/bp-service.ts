@@ -12,7 +12,7 @@ export class BpServiceEntity extends CommonEntity {
   key: string;
   @Column({ name: 'description', type: 'text', nullable: true })
   description: string;
-  @Column({ name: 'is_active', default: true })
+  @Column({ default: true })
   isActive: boolean;
 
   @OneToMany(

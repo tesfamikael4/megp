@@ -34,7 +34,7 @@ export class TaskResponse {
   static toResponse(entity: TaskEntity) {
     const response = new TaskResponse();
     response.id = entity.id;
-    response.businessProcessId = entity.businessProcessId;
+    response.businessProcessId = entity.bpId;
     response.name = entity.name;
     response.description = entity.description;
     response.handlerType = entity.handlerType;

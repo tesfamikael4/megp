@@ -14,26 +14,26 @@ import { TaskEntity } from 'src/bpm/entities/task.entity';
 export class TaskHandlerEntity extends CommonEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column({ name: 'task_id' })
+  @Column()
   taskId: string;
-  @Column({ name: 'instance_id' })
+  @Column()
   instanceId: string;
   @Column({ name: 'data', type: 'jsonb', nullable: true })
   data: object;
-  @Column({ name: 'assignment_status' })
+  @Column()
   assignmentStatus: string;
-  @Column({ name: 'previous_handler_id', nullable: true })
+  @Column({ nullable: true })
   previousHandlerId: string;
-  @Column({ name: 'previous_handler_id' })
-  @Column({ name: 'current_state', nullable: true })
+  @Column()
+  @Column()
   currentState: string;
   @OneToOne(
     () => WorkflowInstanceEntity,
     (workflowInstance) => workflowInstance.taskHandler,
   ) // specify inverse side as a second parameter
-  @JoinColumn({ name: 'instance_id' })
+  @JoinColumn({ name: 'instanceId' })
   workflowInstance: WorkflowInstanceEntity;
   @ManyToOne(() => TaskEntity, (task) => task)
-  @JoinColumn({ name: 'task_id' })
+  @JoinColumn({ name: 'taskId' })
   task: TaskEntity;
 }

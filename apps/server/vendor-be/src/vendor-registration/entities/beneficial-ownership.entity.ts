@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { VendorsEntity } from './vendors.entity';
 
-@Entity({ name: 'beneficialOwnership' })
+@Entity({ name: 'beneficial_ownership' })
 export class BeneficialOwnership extends CommonEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -17,12 +17,12 @@ export class BeneficialOwnership extends CommonEntity {
   firstName: string;
   @Column()
   lastName: string;
-  @Column({ name: 'vendor_id', nullable: true })
+  @Column({ nullable: true })
   vendorId: string;
   @Column()
   nationality: string;
 
-  @JoinColumn({ name: 'vendor_id' })
+  @JoinColumn({ name: 'vendorId' })
   @ManyToOne(() => VendorsEntity, (v) => v.shareholders)
   vendor: VendorsEntity;
 }

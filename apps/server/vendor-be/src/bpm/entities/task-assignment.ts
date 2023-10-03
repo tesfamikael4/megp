@@ -12,19 +12,19 @@ import { TaskEntity } from './task.entity';
 export class TaskAssignmentEntity extends CommonEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column({ name: 'task_id' })
+  @Column()
   taskId: string;
-  @Column({ name: 'assignee_id' })
+  @Column()
   assigneeId: string;
-  @Column({ name: 'assignee_name', nullable: true })
+  @Column({ nullable: true })
   assigneeName: string;
-  @Column({ name: 'assignee_type' })
+  @Column()
   assignmentType: string;
   @ManyToOne(() => TaskEntity, (task) => task.assignments, {
     orphanedRowAction: 'delete',
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE',
   })
-  @JoinColumn({ name: 'task_id' })
+  @JoinColumn({ name: 'taskId' })
   task: TaskEntity;
 }

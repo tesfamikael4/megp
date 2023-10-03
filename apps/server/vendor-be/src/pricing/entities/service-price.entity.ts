@@ -14,7 +14,7 @@ import { BpServiceEntity } from 'src/services/entities/bp-service';
 export class ServicePriceEntity extends CommonEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column({ type: 'uuid', name: 'serviceId' })
+  @Column({ type: 'uuid' })
   serviceId: string;
   @Column({ name: 'businessArea', enum: ['Goods', 'Services', 'Works'] })
   businessArea: string;

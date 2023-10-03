@@ -1,22 +1,22 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity({ name: 'invoice' })
+@Entity({ name: 'invoices' })
 export class InvoiceEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column({ name: 'instance_id', nullable: true, type: 'uuid' })
+  @Column({ type: 'uuid' })
   instanceId: string;
-  @Column({ name: 'application_no', nullable: true })
+  @Column()
   applicationNo: string;
-  @Column({ name: 'task_name', nullable: true })
+  @Column()
   taskName: string;
-  @Column({ name: 'task_id', nullable: true })
+  @Column({ type: 'uuid' })
   taskId: string;
-  @Column({ nullable: true })
+  @Column()
   serviceName: string;
   @Column()
   payerName: string;
-  @Column({ name: 'payer_account_id', nullable: true })
+  @Column()
   payerAccountId: string;
   @Column()
   payToAccNo: string;
@@ -28,8 +28,8 @@ export class InvoiceEntity {
   amount: number;
   @Column()
   createdOn: Date;
-  @Column({ name: 'payment_status' })
+  @Column()
   paymentStatus: string;
-  @Column({ name: 'remark' })
+  @Column()
   remark: string;
 }

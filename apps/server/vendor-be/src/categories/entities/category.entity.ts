@@ -16,10 +16,10 @@ export class CategoryEntity extends CommonEntity {
   code: string;
   @Column({ name: 'description' })
   description: string;
-  @Column({ name: 'business_area' }) //Goods|Services|Works
+  @Column() //Goods|Services|Works
   businessArea: string;
   //self reference
-  @Column({ name: 'parent_id', nullable: true })
+  @Column({ nullable: true })
   parentId: string;
   //self rererencing
   @ManyToOne(() => CategoryEntity, (category) => category.childCategories)

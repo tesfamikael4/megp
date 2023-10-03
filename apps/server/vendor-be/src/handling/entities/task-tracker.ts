@@ -13,27 +13,27 @@ import { TaskEntity } from 'src/bpm/entities/task.entity';
 export class TaskTrackerEntity extends CommonEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column({ name: 'task_id' })
+  @Column()
   taskId: string;
-  @Column({ name: 'instance_id' })
+  @Column()
   instanceId: string;
-  @Column({ name: 'data', type: 'jsonb', nullable: true })
+  @Column({ type: 'jsonb', nullable: true })
   data: object;
-  @Column({ name: 'handled_by_id' })
+  @Column()
   handledById: string;
-  @Column({ name: 'action' })
+  @Column()
   action: string;
-  @Column({ name: 'remark', nullable: true })
+  @Column({ nullable: true })
   remark: string;
-  @Column({ name: 'previous_handler_id', nullable: true })
+  @Column({ nullable: true })
   previousHandlerId: string;
   @ManyToOne(
     () => WorkflowInstanceEntity,
     (workflowInstance) => workflowInstance.taskTrackers,
   )
-  @JoinColumn({ name: 'instance_id' })
+  @JoinColumn({ name: 'instanceId' })
   workflowInstance: WorkflowInstanceEntity;
   @ManyToOne(() => TaskEntity, (task) => task)
-  @JoinColumn({ name: 'task_id' })
+  @JoinColumn({ name: 'taskId' })
   task: TaskEntity;
 }

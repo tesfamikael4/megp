@@ -17,7 +17,7 @@ export class TaskService {
   constructor(
     @InjectRepository(TaskEntity)
     private readonly taskRepository: Repository<TaskEntity>,
-  ) {}
+  ) { }
   async getTasks(
     query: CollectionQuery,
   ): Promise<DataResponseFormat<TaskResponse>> {
@@ -51,7 +51,7 @@ export class TaskService {
     if (!task) throw new NotFoundException('Task not found');
     task.name = dto.name;
     task.description = dto.description;
-    task.businessProcessId = dto.businessProcessId;
+    task.bpId = dto.businessProcessId;
     task.handlerType = dto.handlerType;
     task.taskType = dto.taskType;
     const result = await this.taskRepository.save(task);

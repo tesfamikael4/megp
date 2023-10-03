@@ -4,7 +4,7 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 export class TradeRegistrationDatabaseEntity extends CommonEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column({ name: 'tin_number' })
+  @Column()
   tinNumber: string;
   @Column({ name: 'metadata', type: 'json' })
   metadata: JSON;

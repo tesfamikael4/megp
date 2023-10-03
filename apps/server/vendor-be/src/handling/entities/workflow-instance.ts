@@ -18,21 +18,21 @@ import { ServicePriceEntity } from 'src/pricing/entities/service-price.entity';
 export class WorkflowInstanceEntity extends CommonEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column({ name: 'application_number' })
+  @Column()
   applicationNumber: string;
-  @Column({ name: 'requestor_id' })
+  @Column()
   requestorId: string;
-  @Column({ name: 'status' })
+  @Column()
   status: string;
-  @Column({ name: 'bp_id' })
+  @Column()
   bpId: string;
-  @Column({ name: 'pricing_id', nullable: true })
+  @Column({ nullable: true })
   pricingId: string;
-  @Column({ name: 'approved_at', nullable: true })
+  @Column({ nullable: true })
   approvedAt: string;
-  @Column({ name: 'expire_date', nullable: true })
+  @Column({ nullable: true })
   expireDate: string;
-  @Column({ name: 'business_status', default: 'Inactive' })
+  @Column({ default: 'Inactive' })
   businessStatus: string; //active |inactive
   @ManyToOne(
     () => BusinessProcessEntity,
@@ -43,7 +43,7 @@ export class WorkflowInstanceEntity extends CommonEntity {
       onDelete: 'CASCADE',
     },
   )
-  @JoinColumn({ name: 'bp_id' })
+  @JoinColumn({ name: 'bpId' })
   businessProcess: BusinessProcessEntity;
   @OneToOne(
     () => TaskHandlerEntity,
@@ -65,11 +65,11 @@ export class WorkflowInstanceEntity extends CommonEntity {
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE',
   })
-  @JoinColumn({ name: 'pricing_id' })
+  @JoinColumn({ name: 'pricingId' })
   price: ServicePriceEntity;
 
   @ManyToOne(() => VendorsEntity, (v) => v.instances)
-  @JoinColumn({ name: 'requestor_id' })
+  @JoinColumn({ name: 'requestorId' })
   vendor: VendorsEntity;
 
   addTracker(taskTracker: TaskTrackerEntity) {

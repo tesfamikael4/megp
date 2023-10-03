@@ -1,13 +1,10 @@
 import {
   Column,
   Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-@Entity({ name: 'taskTypes' })
+@Entity({ name: 'task_types' })
 export class TaskType {
   @PrimaryGeneratedColumn('uuid')
   id: string;

@@ -6,9 +6,8 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { ServicePriceEntity } from '../../pricing/entities/service-price.entity';
 import { InvoiceEntity } from './invoice.entity';
-@Entity({ name: 'receipt_attachments' })
+@Entity({ name: 'receipts' })
 export class PaymentReceiptEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

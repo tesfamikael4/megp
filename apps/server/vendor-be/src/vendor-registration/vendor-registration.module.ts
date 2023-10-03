@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { VendorRegistrationsController } from './vendor-registration.controller';
 import { VendorRegistrationsService } from './vendor-registration.service';
-import { MessageThreadEntity } from './entities/message-thread.entity';
 import { CustomCategoryEntity } from './entities/custom-category.entity';
 import { BusinessCategoryEntity } from './entities/business-category.entity';
 import { VendorBasicsController } from './vendors.controller';
@@ -56,7 +55,6 @@ import { ServicePricingController } from 'src/pricing/service-pricing.controller
   imports: [
     TypeOrmModule.forFeature([
       ServicePriceEntity,
-      MessageThreadEntity,
       BusinessCategoryEntity,
       CustomCategoryEntity,
       VendorsEntity,

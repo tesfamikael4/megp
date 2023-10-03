@@ -13,28 +13,28 @@ import { BanksEntity } from './bank.entity';
 export class VendorsBankEntity extends CommonEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column({ name: 'vendor_id' })
+  @Column()
   vendorId: string;
-  @Column({ name: 'bank_id', type: 'uuid' })
+  @Column({ type: 'uuid' })
   bankId: string;
-  @Column({ name: 'bank_branch' })
+  @Column()
   branch: string;
-  @Column({ name: 'account_name' })
+  @Column()
   accountName: string;
   //legal form of entity
-  @Column({ name: 'account_number' })
+  @Column()
   accountNumber: string;
-  @Column({ name: 'account_type' })
+  @Column()
   AccountType: string;
-  @Column({ name: 'is_default' })
+  @Column()
   isDefualt: boolean;
-  @Column({ name: 'meta_data', type: 'jsonb' })
+  @Column({ type: 'jsonb' })
   metaData: JSON;
   @ManyToOne(() => VendorsEntity, (v) => v.vendorAccounts)
-  @JoinColumn({ name: 'vendor_id' })
+  @JoinColumn({ name: 'vendorId' })
   vendor: VendorsEntity;
 
   @ManyToOne(() => BanksEntity, (v) => v.vendorAccounts)
-  @JoinColumn({ name: 'bank_id' })
+  @JoinColumn({ name: 'bankId' })
   bank: BanksEntity;
 }

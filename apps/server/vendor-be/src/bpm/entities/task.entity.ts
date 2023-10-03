@@ -19,9 +19,9 @@ export class TaskEntity extends CommonEntity {
   name: string;
   @Column({ type: 'text', nullable: true })
   description: string;
-  @Column({ name: 'business_process_id' })
-  businessProcessId: string;
-  @Column({ name: 'handler_type' })
+  @Column()
+  bpId: string;
+  @Column()
   handlerType: string;
   @Column()
   taskType: string;
@@ -34,7 +34,7 @@ export class TaskEntity extends CommonEntity {
       onDelete: 'CASCADE',
     },
   )
-  @JoinColumn({ name: 'business_process_id' })
+  @JoinColumn({ name: 'bpId' })
   businessProcess: BusinessProcessEntity;
   @OneToMany(
     () => TaskAssignmentEntity,

@@ -29,7 +29,7 @@ export class CreateTaskDto {
     }
     entity.name = dto.name;
     entity.description = dto.description;
-    entity.businessProcessId = dto.businessProcessId;
+    entity.bpId = dto.businessProcessId;
     entity.taskType = dto.taskType;
     entity.handlerType = dto.handlerType;
     return entity;
@@ -68,10 +68,10 @@ export class UpdateTaskDto extends CreateTaskDto {
     entity.id = dto.id;
     entity.description = dto.description;
     entity.name = dto.name;
-    entity.businessProcessId = dto.businessProcessId;
+    entity.bpId = dto.businessProcessId;
     entity.handlerType = dto.handlerType;
     entity.taskType = dto.taskType;
-    entity.businessProcessId = dto.businessProcessId;
+    //entity.businessProcessId = dto.businessProcessId;
     return entity;
   }
 }

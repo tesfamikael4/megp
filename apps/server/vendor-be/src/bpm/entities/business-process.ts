@@ -15,24 +15,24 @@ import {
 export class BusinessProcessEntity extends CommonEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column({ name: 'service_id' })
+  @Column()
   serviceId: string;
-  @Column({ name: 'workflow', type: 'jsonb' })
+  @Column({ type: 'jsonb' })
   workflow: object;
-  @Column({ name: 'version', type: 'int' })
+  @Column({ type: 'int' })
   version: number;
-  @Column({ name: 'is_active', default: true })
+  @Column({ default: true })
   isActive: boolean;
-  @Column({ name: 'organization_id', nullable: true })
+  @Column({ nullable: true })
   organizationId: string;
-  @Column({ name: 'organization_name', nullable: true })
+  @Column({ nullable: true })
   organizationName: string;
   @ManyToOne(() => BpServiceEntity, (service) => service.businessProcesses, {
     orphanedRowAction: 'delete',
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE',
   })
-  @JoinColumn({ name: 'service_id' })
+  @JoinColumn({ name: 'serviceId' })
   service: BpServiceEntity;
 
   @OneToMany(() => TaskEntity, (task) => task.businessProcess, {
