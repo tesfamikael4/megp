@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 
 import { VendorsBankEntity } from './vendors-bank.entity';
-@Entity({ name: 'banks' })
+@Entity({ name: 'banks11' })
 export class areaofEnterest {
   @PrimaryGeneratedColumn('uuid')
   id: string;

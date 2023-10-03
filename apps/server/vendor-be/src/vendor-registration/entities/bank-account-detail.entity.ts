@@ -12,20 +12,20 @@ import {
 import { VendorsEntity } from './vendors.entity';
 import { BanksEntity } from './bank.entity';
 //Vendor Service Application
-@Entity({ name: 'vendor_bank' })
+@Entity({ name: 'vendors_bank' })
 export class BankAccountDetailEntity extends CommonEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column({ nullable: true })
+  @Column()
   accountHolderFullName: string;
-  @Column({ nullable: true })
+  @Column()
   accountNumber: string;
-  @Column({ nullable: true })
+  @Column()
   vendorId: string;
-  @Column({ type: 'uuid', nullable: true })
+  @Column({ type: 'uuid' })
   bankId: string;
   ///Goods , Services
-  @Column({ nullable: true })
+  @Column({})
   branchName: string;
   @Column({ nullable: true })
   branchAddress: string;
