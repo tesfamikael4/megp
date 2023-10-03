@@ -12,9 +12,9 @@ import { VendorsBankEntity } from './vendors-bank.entity';
 export class BanksEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column({ name: 'bank_name' })
+  @Column({ nullable: true })
   bankName: string;
-  @Column({ name: 'meta_data', type: 'jsonb', nullable: true })
+  @Column({ type: 'jsonb', nullable: true })
   metaData: JSON;
   @OneToMany(() => VendorsBankEntity, (v) => v.bank)
   vendorAccounts: VendorsBankEntity[];

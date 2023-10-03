@@ -13,9 +13,9 @@ export class CustomCategoryEntity {
   id: string;
   @Column({ name: 'description' })
   description: string;
-  @Column({ name: 'vendor_id', type: 'uuid' })
+  @Column({ type: 'uuid' })
   vendorId: string;
   @ManyToOne(() => VendorsEntity, (app) => app.customCats)
-  @JoinColumn({ name: 'vendor_id' })
+  @JoinColumn({ name: 'vendorId' })
   application: VendorsEntity;
 }

@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 import { VendorsEntity } from './vendors.entity';
 
-@Entity({ name: 'AreasOfBusinessInterestEntity' })
+@Entity({ name: 'business_interest_area' })
 export class AreasOfBusinessInterestEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -18,10 +18,10 @@ export class AreasOfBusinessInterestEntity {
   lineOfBusiness: string;
   @Column()
   priceRange: string;
-  @Column({ name: 'vendor_id', nullable: true })
+  @Column({ nullable: true })
   vendorId: string;
 
   @ManyToOne(() => VendorsEntity, (v) => v.areasOfBusinessInterest)
-  @JoinColumn({ name: 'vendor_id' })
+  @JoinColumn({ name: 'vendorId' })
   vendor: VendorsEntity;
 }

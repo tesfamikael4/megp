@@ -7,7 +7,7 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 // import { VendorsBankEntity } from './vendors-bank.entity';
 import { ShareholdersEntity } from './shareholder.entity';
 import { CommonEntity } from 'src/shared/entities/common.entity';
-@Entity({ name: 'file' })
+@Entity({ name: 'files' })
 export class FilesEntity extends CommonEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

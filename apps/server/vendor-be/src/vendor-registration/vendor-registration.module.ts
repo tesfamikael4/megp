@@ -2,11 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { VendorRegistrationsController } from './vendor-registration.controller';
 import { VendorRegistrationsService } from './vendor-registration.service';
-import { ServicePriceEntity } from './entities/service-price.entity';
-import { MessageThreadEntity } from './entities/message-thread.entity';
 import { CustomCategoryEntity } from './entities/custom-category.entity';
-import { ServicePricingService } from './service-pricing.service';
-import { ServicePricingController } from './service-pricing.controller';
 import { BusinessCategoryEntity } from './entities/business-category.entity';
 import { VendorBasicsController } from './vendors.controller';
 import { VendorBasicsService } from './vendor-basics.service';
@@ -34,29 +30,31 @@ import { FileController } from './controllers/file.controller';
 import { BeneficialOwnershipController } from './controllers/beneficialOwnership.controller';
 import { BeneficialOwnershipService } from './services/beneficialOwnership.service';
 import { BeneficialOwnership } from './entities/beneficial-ownership.entity';
-import { WorkflowInstanceEntity } from 'src/bpm/workflow-instances/entities/workflow-instance';
+import { WorkflowInstanceEntity } from 'src/handling/entities/workflow-instance';
 import { File } from './services/file.service';
-import { BpServiceEntity } from 'src/bpm/services/entities/bp-service';
-import { BusinessProcessEntity } from 'src/bpm/business-process/entities/business-process';
+import { BpServiceEntity } from 'src/services/entities/bp-service';
+import { BusinessProcessEntity } from 'src/bpm/entities/business-process';
 import { AreasOfBusinessInterestController } from './controllers/areas-of-business-interest.controller';
 import { AreasOfBusinessInterestService } from './services/areas-of-business-interest.service';
 import { AreasOfBusinessInterestEntity } from './entities/areas-of-business-interest.entity';
-import { WorkflowInstanceService } from 'src/bpm/workflow-instances/workflow-instance.service';
-import { TaskAssignmentEntity } from 'src/bpm/tasks/entities/task-assignment';
-import { TaskHandlerEntity } from 'src/bpm/workflow-instances/entities/task-handler';
-import { TaskTrackerEntity } from 'src/bpm/workflow-instances/entities/task-tracker';
-import { InvoiceEntity } from 'src/bpm/workflow-instances/entities/invoice.entity';
-import { PaymentReceiptEntity } from 'src/bpm/workflow-instances/entities/receipt-attachment';
-import { WorkflowInstanceController } from 'src/bpm/controllers/workflow-instance.controller';
-import { ApplicationExcutionController } from 'src/bpm/application-execution.controller';
-import { ApplicationExcutionService } from 'src/bpm/application-execution.service';
-import { TaskEntity } from 'src/bpm/tasks/entities/task.entity';
+import { WorkflowInstanceService } from 'src/handling/services/workflow-instance.service';
+import { TaskAssignmentEntity } from 'src/bpm/entities/task-assignment';
+import { TaskHandlerEntity } from 'src/handling/entities/task-handler';
+import { TaskTrackerEntity } from 'src/handling/entities/task-tracker';
+import { InvoiceEntity } from 'src/handling/entities/invoice.entity';
+import { PaymentReceiptEntity } from 'src/handling/entities/receipt-attachment';
+import { WorkflowInstanceController } from 'src/handling/controllers/workflow-instance.controller';
+import { ApplicationExcutionController } from 'src/handling/controllers/application-execution.controller';
+import { ApplicationExcutionService } from 'src/handling/services/application-execution.service';
+import { TaskEntity } from 'src/bpm/entities/task.entity';
+import { ServicePriceEntity } from 'src/pricing/entities/service-price.entity';
+import { ServicePricingService } from 'src/pricing/service-pricing.service';
+import { ServicePricingController } from 'src/pricing/service-pricing.controller';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       ServicePriceEntity,
-      MessageThreadEntity,
       BusinessCategoryEntity,
       CustomCategoryEntity,
       VendorsEntity,
@@ -113,4 +111,4 @@ import { TaskEntity } from 'src/bpm/tasks/entities/task.entity';
     AreasOfBusinessInterestController,
   ],
 })
-export class VendorRegistrationModule {}
+export class VendorRegistrationModule { }

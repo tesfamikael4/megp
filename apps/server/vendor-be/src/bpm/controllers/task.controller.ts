@@ -15,14 +15,14 @@ import {
 } from '@nestjs/swagger';
 import { ApiPaginatedResponse, DataResponseFormat } from 'src/shared/api-data';
 import { CollectionQuery } from 'src/shared/collection-query';
-import { TaskService } from '../tasks/task.service';
-import { TaskResponse } from '../tasks/task.response';
-import { CreateTaskDto, UpdateTaskDto } from '../tasks/dtos/task.dto';
+import { TaskService } from '../services/task.service';
+import { TaskResponse } from '../dtos/task.response';
+import { CreateTaskDto, UpdateTaskDto } from '../dtos/task.dto';
 import {
   CreateTaskAssignmentDto,
   DeleteTaskAssignmentDto,
   UpdateTaskAssignmentDto,
-} from '../tasks/dtos/task-assignmment.dto';
+} from '../dtos/task-assignmment.dto';
 @Controller('tasks')
 @ApiTags('tasks')
 @ApiResponse({ status: 500, description: 'Internal error' })

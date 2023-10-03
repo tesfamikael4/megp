@@ -15,7 +15,7 @@ export class ShareholdersEntity extends CommonEntity {
   firstName: string;
   @Column({ nullable: true })
   lastName: string;
-  @Column({ name: 'vendor_id', nullable: true })
+  @Column({ nullable: true })
   vendorId: string;
   @Column({ default: 'Malian' })
   nationality: string;
@@ -23,7 +23,7 @@ export class ShareholdersEntity extends CommonEntity {
   share: string;
   @Column({ nullable: true })
   key: string;
-  @JoinColumn({ name: 'vendor_id' })
+  @JoinColumn({ name: 'vendorId' })
   @ManyToOne(() => VendorsEntity, (v) => v.shareholders)
   vendor: VendorsEntity;
 }

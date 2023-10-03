@@ -12,14 +12,14 @@ import { VendorsEntity } from './vendors.entity';
 export class BusinessCategoryEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column({ name: 'category_id', type: 'uuid' })
+  @Column({ type: 'uuid' })
   categoryId: string;
-  @Column({ name: 'vendor_id', type: 'uuid' })
+  @Column({ type: 'uuid' })
   vendorId: string;
   @ManyToOne(() => CategoryEntity, (category) => category.businessCategories)
-  @JoinColumn({ name: 'category_id' })
+  @JoinColumn({ name: 'categoryId' })
   category: CategoryEntity;
   @ManyToOne(() => VendorsEntity, (vendor) => vendor.businessCats)
-  @JoinColumn({ name: 'vendor_id' })
+  @JoinColumn({ name: 'vendorId' })
   vendor: VendorsEntity;
 }

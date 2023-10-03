@@ -4,8 +4,8 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 export class TinRegistrationDatabaseEntity extends CommonEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column({ name: 'tin_number' })
+  @Column()
   tinNumber: string;
-  @Column({ name: 'metadata', type: 'json' })
+  @Column({ type: 'json' })
   metadata: JSON;
 }
