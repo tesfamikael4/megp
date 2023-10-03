@@ -2,7 +2,7 @@ gitops:
   manifest_projects:
   - id: gitlab.peragosystems.com/megp/megp/
     ref: # either `branch`, `tag` or `commit` can be specified
-      branch: production
+      branch: main
       # commit: <mysha>
       # tag: v1.0
     default_namespace: default
