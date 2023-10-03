@@ -52,7 +52,7 @@ export class WorkflowInstanceService {
     @InjectRepository(BusinessProcessEntity)
     private readonly bpRepository: Repository<BusinessProcessEntity>,
     private readonly appService: ApplicationExcutionService, //private readonly vendorService: VendorRegistrationsService,
-  ) {}
+  ) { }
   async getWorkflowInstances(
     query: CollectionQuery,
   ): Promise<DataResponseFormat<WorkflowInstanceResponse>> {

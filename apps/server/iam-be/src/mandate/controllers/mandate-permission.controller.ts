@@ -20,11 +20,11 @@ import {
 import { MandatePermissionService } from '../services/mandate-permission.service';
 import { MandatePermission } from '../entities/mandate-permission.entity';
 import { CollectionQuery } from '@collection-query';
-import { GenericCrudController } from 'src/shared/controller/generic-crud.controller';
+import { EntityCrudController } from 'src/shared/controller/entity-crud.controller';
 
 @Controller('mandate-permission-news')
 @ApiTags('mandate-permission-news')
-export class MandatePermissionController extends GenericCrudController<MandatePermission> {
+export class MandatePermissionController extends EntityCrudController<MandatePermission> {
   constructor(
     private readonly mandatePermissionService: MandatePermissionService,
   ) {

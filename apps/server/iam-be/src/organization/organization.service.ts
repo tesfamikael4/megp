@@ -294,6 +294,19 @@ export class OrganizationService {
     }
     return result;
   }
+
+  generateUsername() {
+    //generate random string?
+    const length = 6;
+    let result = 'ME-';
+    const characters =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+  }
   async assignMandates(
     id: string,
     organizationMandate: CreateOrganizationMandateDto[],

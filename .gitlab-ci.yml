@@ -25,17 +25,29 @@ merge:
 
 build:
   stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+
   rules:
     - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"
   before_script:
-    - corepack enable
-    - corepack prepare pnpm@latest-8 --activate
-    - pnpm config set store-dir .pnpm-store
+    - apk --update add nodejs npm git
+    
+    - npm install -g pnpm
+    
+    # - corepack enable
+    # - corepack prepare pnpm@latest-8 --activate
+    #- pnpm config set store-dir .pnpm-store
+    
   script:
     - pnpm install
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - pnpm -w run turbo run lint  --filter "...[origin/main...HEAD^]"
     - pnpm -w run turbo run build:docker  --filter "...[origin/main...HEAD^]"
-    - docker push $CONTAINER_TEST_IMAGE
+       
+    # - docker tag iam-fe:la    - docker push $CI_REGISTRY_IMAGE/iam-fe:latesttest $CI_REGISTRY_IMAGE/iam-fe:latest
+
   cache:
     key:
       files:
@@ -45,9 +57,13 @@ build:
 
 deploy:
   stage: deploy
+  image: docker:latest
   rules:
     - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"
+  # before_script:
+  #   - apk --update add curl
   script:
-    - docker pull $CONTAINER_RELEASE_IMAGE
-    - docker container rm -f next-app || true
-    - docker run -d -p 5511:5511 --name next-app $CONTAINER_RELEASE_IMAGE
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker pull $CI_REGISTRY_IMAGE/iam-fe:latest
+    - docker container rm -f iam-fe || true
+    - docker run -d -p 5511:5511 --name iam-fe $CI_REGISTRY_IMAGE/iam-fe:latest

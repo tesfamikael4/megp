@@ -13,6 +13,7 @@ export class PaymentReceiptDto {
   remark: string;
   @ApiProperty()
   file: CreateFileDto;
+
   static fromDto(dto: PaymentReceiptDto): PaymentReceiptEntity {
     const entity = new PaymentReceiptEntity();
     if (!dto) {

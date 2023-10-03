@@ -1,25 +1,19 @@
-import { Repository, DeepPartial } from 'typeorm';
+import { Repository, EntityTarget, DeepPartial } from 'typeorm';
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CollectionQuery, FilterOperators, QueryConstructor } from '../collection-query';
+import { CollectionQuery, QueryConstructor } from '../collection-query';
 import { DataResponseFormat } from '../api-data';
 import { BaseEntity } from '../entities/base.entity';
-import { CrudOptions } from '../types/crud-option.type';
 
 @Injectable()
-export class GenericRelationCrudService<T extends BaseEntity> {
-  constructor(private readonly repository: Repository<T>) { }
+export class EntityCrudService<T extends BaseEntity> {
+  constructor(private readonly repository: Repository<T>) {}
 
   async create(itemData: DeepPartial<T>, req?: any): Promise<T> {
     const item = this.repository.create(itemData);
     return await this.repository.save(item);
   }
 
-  async findAll(entityId: string, query: CollectionQuery, bulkCrudOptions: CrudOptions, req?: any) {
-
-    const entityIdName = bulkCrudOptions.entityIdName;
-
-    query.filter.push([{ field: entityIdName, value: entityId, operator: FilterOperators.EqualTo }]);
-
+  async findAll(query: CollectionQuery, req?: any) {
     const dataQuery = QueryConstructor.constructQuery<T>(
       this.repository,
       query,

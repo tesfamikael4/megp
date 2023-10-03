@@ -2,3 +2,8 @@ export * from './button/button';
 export * from './section/section';
 export * from './shell/shell';
 export * from './phone-input/phone-input';
+export * from './not-found/not-found';
+
+export * from './layout/page-layout';
+export * from './layout/side-bar';
+export * from './layout/side-bar-shell';

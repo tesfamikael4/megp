@@ -29,4 +29,4 @@ import { WorkflowEngineService } from 'src/shared/workflow-engine/workflow-engin
   ],
   controllers: [BpServiceController, BusinessProcessController, TaskController],
 })
-export class BpmModule {}
+export class BpmModule { }

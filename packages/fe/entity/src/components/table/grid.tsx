@@ -57,7 +57,7 @@ export function Grid<T>({
         </Center>
       ) : (
         <>
-          {options.selectable ? (
+          {options.searchable ? (
             <Group justify="end">
               <Input
                 className={mode === 'list' ? 'w-1/4' : 'w-full'}

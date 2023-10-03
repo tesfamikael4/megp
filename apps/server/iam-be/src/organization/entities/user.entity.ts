@@ -86,14 +86,9 @@ export class User extends Audit {
   })
   userUnits: UserUnit[];
 
-
-  @OneToMany(
-    () => UserGroup,
-    (userGroups) => userGroups.userId,
-    {
-      cascade: true,
-      onDelete: "CASCADE"
-    },
-  )
+  @OneToMany(() => UserGroup, (userGroups) => userGroups.userId, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   userGroups: UserGroup[];
 }

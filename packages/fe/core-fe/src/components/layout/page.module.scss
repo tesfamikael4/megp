@@ -1,0 +1,21 @@
+.center {
+  @apply container mx-auto block text-black;
+}
+.full {
+  max-width: 100%;
+}
+
+.sideBarShell {
+  @apply flex gap-4 items-start;
+}
+
+.sideBar {
+  min-width: 250px;
+  @apply bg-white  shadow-sm   border;
+  min-height: 50vh;
+}
+
+.header {
+  @apply flex justify-between items-center py-2 px-3 border-b;
+  min-height: 47px;
+}

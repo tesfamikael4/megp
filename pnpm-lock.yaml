@@ -74,6 +74,9 @@ importers:
       '@mantine/tiptap':
         specifier: ^7.1.0
         version: 7.1.0(@mantine/core@7.1.0)(@mantine/hooks@7.1.0)(@tabler/icons-react@2.34.0)(@tiptap/extension-link@2.1.11)(@tiptap/react@2.1.11)(react-dom@18.2.0)(react@18.2.0)
+      '@megp/core-fe':
+        specifier: workspace:*
+        version: link:../../../packages/fe/core-fe
       '@megp/theme':
         specifier: workspace:*
         version: link:../../../packages/config/theme

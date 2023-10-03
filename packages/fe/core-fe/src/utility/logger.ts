@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any  -- intentional*/
 /* eslint-disable @typescript-eslint/no-empty-function -- intentional*/
 /* eslint-disable no-console -- intentional*/
 
@@ -10,9 +9,10 @@ class LoggerService {
   constructor() {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- intentional
     if (typeof window !== 'undefined' && window) {
-      this.debugMode = JSON.parse(
-        localStorage.getItem('megp:debug') ?? 'false',
-      );
+      this.debugMode =
+        process.env.NODE_ENV === 'development'
+          ? true
+          : JSON.parse(localStorage.getItem('megp:debug') ?? 'false');
     }
   }
 

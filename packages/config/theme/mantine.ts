@@ -89,6 +89,9 @@ export const theme: Partial<MantineThemeOverride> = {
         main: {
           backgroundColor: '#F3F4F6',
         },
+        header: {
+          height: 40,
+        },
       },
     },
   },

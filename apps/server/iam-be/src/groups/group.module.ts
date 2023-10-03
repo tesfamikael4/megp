@@ -3,15 +3,15 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Group } from './entity/group.entity';
 import { GroupService } from './services/group.service';
 import { GroupController } from './controllers/group.controller';
-import { UserGroupController } from './controllers/user-group.controller';
+import { UserGroupController } from './controllers/relation-user-group.controller';
 import { UserGroupBulkService } from './services/group-bulk.service';
 import { UserGroup } from './entity/user-group.entity';
-import { UserGroupRelationController } from './controllers/user-group-relation.controller';
+import { ExtraUserGroupController } from './controllers/extra-user-group.controller';
 import { UserGroupRelationService } from './services/group-bulk-relation.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Group, UserGroup])],
   providers: [GroupService, UserGroupBulkService, UserGroupRelationService],
-  controllers: [GroupController, UserGroupController, UserGroupRelationController],
+  controllers: [GroupController, UserGroupController, ExtraUserGroupController],
 })
-export class GroupModule { }
+export class GroupModule {}

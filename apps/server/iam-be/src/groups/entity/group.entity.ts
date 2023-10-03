@@ -12,14 +12,9 @@ export class Group {
   @Column()
   description: string;
 
-
-  @OneToMany(
-    () => UserGroup,
-    (userGroups) => userGroups.group,
-    {
-      cascade: true,
-      onDelete: "CASCADE"
-    },
-  )
+  @OneToMany(() => UserGroup, (userGroups) => userGroups.group, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   userGroups: UserGroup[];
 }

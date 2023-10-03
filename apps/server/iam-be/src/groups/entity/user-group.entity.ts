@@ -1,4 +1,10 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { Group } from './group.entity';
 import { User } from 'src/organization/entities/user.entity';
 
@@ -13,7 +19,6 @@ export class UserGroup {
   @ManyToOne(() => User, (user) => user.userGroups)
   @JoinColumn({ name: 'userId' })
   public user: User;
-
 
   @Column()
   groupId: string;

@@ -113,4 +113,4 @@ import { ServicePricingController } from 'src/pricing/service-pricing.controller
     AreasOfBusinessInterestController,
   ],
 })
-export class VendorRegistrationModule {}
+export class VendorRegistrationModule { }

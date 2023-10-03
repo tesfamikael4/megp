@@ -8,10 +8,10 @@ import {
   QueryConstructor,
 } from '@collection-query';
 import { DataResponseFormat } from '@api-data';
-import { GenericCrudService } from 'src/shared/service/generic-crud.service';
+import { EntityCrudService } from 'src/shared/service/entity-crud.service';
 
 @Injectable()
-export class MandateService extends GenericCrudService<Mandate> {
+export class MandateService extends EntityCrudService<Mandate> {
   constructor(
     @InjectRepository(Mandate)
     private readonly repositoryMandate: Repository<Mandate>,

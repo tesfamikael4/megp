@@ -14,14 +14,14 @@ import { ItemsService } from './items.service';
 import { Todo } from './entities/todo.entity';
 import { AllowAnonymous } from 'src/authorization';
 import { CreateTodoDto, UpdateTodoDto } from './dto/todo.dto';
-import { GenericCrudController } from 'src/shared/controller/generic-crud.controller';
+import { EntityCrudController } from 'src/shared/controller/generic-crud.controller';
 import { CollectionQuery } from 'src/shared/collection-query';
 import { DataResponseFormat } from 'src/shared/api-data';
 import { ApiTags } from '@nestjs/swagger';
 
 @Controller('items')
 @ApiTags('Items')
-export class ItemsController extends GenericCrudController<Todo> {
+export class ItemsController extends EntityCrudController<Todo> {
   constructor(private readonly itemsService: ItemsService) {
     super(itemsService);
   }

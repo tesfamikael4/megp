@@ -63,7 +63,7 @@ export class ApplicationExcutionService {
     @InjectRepository(WorkflowInstanceEntity)
     private readonly wiRepository: Repository<WorkflowInstanceEntity>,
     private readonly dataSource: DataSource,
-  ) {}
+  ) { }
 
   async getCompletedTasks(instanceId: string): Promise<TaskTrackerResponse[]> {
     const ctasks = await this.taskTrackingRepository.find({

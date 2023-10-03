@@ -14,6 +14,7 @@ export class CreateBusinessCategoryDto {
     }
     //   entity.id = dto.id;
     entity.vendorId = dto.vendorId;
+    entity.vendorId = dto.vendorId;
     entity.categoryId = dto.categoryId;
     return entity;
   }
