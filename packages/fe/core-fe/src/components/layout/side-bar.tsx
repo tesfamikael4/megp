@@ -9,7 +9,7 @@ export function SideBar({
   return (
     <div className={styles.sideBar}>
       <div className={styles.header}> Menu</div>
-      {children}
+      <div className={styles.body}>{children}</div>
     </div>
   );
 }
