@@ -95,10 +95,6 @@ export class ApplicationExcutionController {
   ) {
     return await this.executeRepository.getCurrunTasks(query);
   }
-  /*
-    @Get('get-completed-tasks/:instanceId')
-    @ApiOkResponse({ type: TaskTrackerResponse })
-    async getCompletedTasks(@Param('instanceId') instanceId: string) {
-      return await this.executeRepository.getCompletedTasks(instanceId);
-    }*/
+
+
 }

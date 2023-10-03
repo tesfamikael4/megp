@@ -5,24 +5,22 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 export abstract class CommonEntity {
-  @Column({ name: 'created_by', nullable: true })
+  @Column({ nullable: true })
   createdBy?: string;
-  @Column({ nullable: true, name: 'updated_by' })
+  @Column({ nullable: true })
   updatedBy?: string;
   @CreateDateColumn({
     type: 'timestamptz',
-    default: () => 'CURRENT_TIMESTAMP',
-    name: 'created_at',
+    default: () => 'CURRENT_TIMESTAMP'
   })
   createdAt: Date;
   @UpdateDateColumn({
     type: 'timestamptz',
-    default: 'now()',
-    name: 'updated_at',
+    default: () => 'CURRENT_TIMESTAMP'
   })
   updatedAt: Date;
-  @DeleteDateColumn({ nullable: true, name: 'deleted_at' })
+  @DeleteDateColumn({ nullable: true })
   deletedAt: Date;
-  @Column({ nullable: true, name: 'deleted_by' })
+  @Column({ nullable: true })
   deletedBy: string;
 }
