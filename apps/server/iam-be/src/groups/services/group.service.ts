@@ -13,10 +13,4 @@ export class GroupService extends EntityCrudService<Group> {
     super(groupRepository);
   }
 
-  async createNEw(itemData: Group) {
-
-    //
-
-    // return await super.create(item);
-  }
 }

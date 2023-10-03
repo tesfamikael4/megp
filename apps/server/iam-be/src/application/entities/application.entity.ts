@@ -14,7 +14,7 @@ import { Audit } from 'src/shared/entities/audit.entity';
 
 import { Permission } from './permission.entity';
 
-@Entity({ name: 'applications' })
+@Entity({ name: 'application_news' })
 export class Application extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;

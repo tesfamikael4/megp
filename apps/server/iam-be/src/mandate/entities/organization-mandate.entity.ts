@@ -11,11 +11,10 @@ import {
 } from 'typeorm';
 
 import { Audit } from 'src/shared/entities/audit.entity';
-
 import { Mandate } from './mandate.entity';
 import { Organization } from 'src/organization/entities/organization.entity';
 
-@Entity({ name: 'organization_mandates' })
+@Entity({ name: 'organization_mandate_news' })
 export class OrganizationMandate extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
