@@ -1,15 +1,5 @@
 import React from 'react';
-import {
-  TextInput,
-  Box,
-  Text,
-  Code,
-  Flex,
-  Card,
-  Select,
-  Stack,
-  MultiSelect,
-} from '@mantine/core';
+import { Box, Text, Flex, Select, Stack, MultiSelect } from '@mantine/core';
 import MultiCheckBox from '../multiCheckBox';
 import {
   transformCategoryListData,
@@ -33,13 +23,7 @@ const CardForm: React.FC<Props> = ({ form }) => {
     isLoading: priceRangeIsLoading,
     status: priceRangeStatus,
   } = useGetAreasOfBusinessInterestPriceRangeQuery({});
-  const bankList =
-    priceRangeStatus === 'fulfilled' &&
-    priceRangeData &&
-    priceRangeData.items.length
-      ? transformCategoryPriceRange(priceRangeData.items, 'Goods')
-      : [];
-  console.log(bankList);
+
   React.useEffect(() => {
     handleValueChange(form.values);
     return () => {};

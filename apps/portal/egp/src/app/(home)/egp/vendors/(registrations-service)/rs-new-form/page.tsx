@@ -18,7 +18,6 @@ export default function RsNewFormPage() {
   const legalFormofEntity = SearchParamsToObject('legalFormOfEntity');
   const Country = SearchParamsToObject('countryOfRegistration');
   const tinNumber = SearchParamsToObject('tinNumber');
-  console.log(!applicationId);
   if (applicationId || (companyName && legalFormofEntity && Country)) {
   } else {
     router.push('rs-new');
@@ -60,7 +59,7 @@ export default function RsNewFormPage() {
     }
     return () => {};
   }, []);
-
+  console.log(applicationData);
   return (
     <section>
       <LoadingOverlay

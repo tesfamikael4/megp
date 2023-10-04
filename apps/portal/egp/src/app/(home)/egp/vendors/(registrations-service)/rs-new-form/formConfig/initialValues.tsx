@@ -1,4 +1,4 @@
-export const initialValues: UserData = {
+export const initialValues: InitialValues = {
   basicRegistration: {
     nameOfBusinessCompany: '',
     formOfBusiness: '',
@@ -47,7 +47,7 @@ export const initialValues: UserData = {
     mSMECertificate: '',
   },
 };
-interface UserData {
+export interface InitialValues {
   basicRegistration: {
     nameOfBusinessCompany: string;
     formOfBusiness: string;

@@ -1,10 +1,10 @@
-export interface FormInitiationRequestProps {
+export interface FormInitiationRequest {
   companyName: string;
   legalFormofEntity: string;
   Country: string;
   tinNumber: string;
 }
-export interface FormSubmissionRequestProps {
+export interface FormSubmissionRequest {
   data: {
     userId: string;
     status: string;
@@ -110,7 +110,7 @@ export interface FormSubmissionRequestProps {
   };
 }
 
-export interface FormSubmissionResponseProps {
+export interface FormSubmissionResponse {
   id: string;
   status: string;
   userId: string;
@@ -248,7 +248,7 @@ export interface FormSubmissionResponseProps {
     id: string;
   }>;
 }
-export interface GetApplicationByUserIdResponseProps {
+export interface GetApplicationByUserIdResponse {
   id: string;
   tin: null | string;
   userId: string;
@@ -358,12 +358,12 @@ export interface GetApplicationByUserIdResponseProps {
   }>;
 }
 
-export interface BankListResponseProps {
+export interface BankListResponse {
   id: string;
   bankName: string;
   metaData: Record<string, any>; // You can use Record<string, any> for an empty object
 }
-export interface AreasOfBusinessInterestCategoriesListResponseProps {
+export interface AreasOfBusinessInterestCategoriesListResponse {
   total: number;
   items: {
     id: string;
@@ -374,7 +374,7 @@ export interface AreasOfBusinessInterestCategoriesListResponseProps {
   }[];
 }
 
-export interface AreasOfBusinessInterestPriceRangeResponseProps {
+export interface AreasOfBusinessInterestPriceRangeResponse {
   total: number;
   items: {
     id: string;
