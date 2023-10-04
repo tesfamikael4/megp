@@ -15,6 +15,8 @@ export class CreateWorkflowInstanceDto {
   @ApiProperty()
   @IsNotEmpty()
   pricingId: string;
+  @ApiProperty()
+  bpid: string;
   //@ApiProperty()
   //@IsNotEmpty()
   key: string;

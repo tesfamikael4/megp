@@ -11,7 +11,7 @@ export class CreateBankAccountDetailDto {
   id: string;
   @ApiProperty()
   @IsNotEmpty()
-  accountHolderFullName: string;
+  accountHoldersFullName: string;
   @ApiProperty()
   @IsNotEmpty()
   accountNumber: string;
@@ -26,16 +26,16 @@ export class CreateBankAccountDetailDto {
   branchName: string;
   @ApiProperty()
   // @IsNotEmpty()
-  branchAddress: string;
+  bankBranchAddress: string;
   @ApiProperty()
   // @IsNotEmpty()
   currency: string;
   @ApiProperty()
   // @IsNotEmpty()
-  bankSwift: string;
+  bankSWIFT_BICCode: string;
   @ApiProperty()
   // @IsNotEmpty()
-  IBAN: string;
+  iBAN: string;
   @ApiProperty()
   // @IsNotEmpty()
   status: string;
@@ -56,15 +56,15 @@ export class CreateBankAccountDetailDto {
       return;
     }
     entity.id = dto.id;
-    entity.accountHolderFullName = dto.accountHolderFullName;
+    entity.accountHolderFullName = dto.accountHoldersFullName;
     entity.accountNumber = dto.accountNumber;
     entity.vendorId = dto.vendorId;
     entity.bankId = dto.bankId;
     entity.branchName = dto.branchName;
-    entity.branchAddress = dto.branchAddress;
+    entity.branchAddress = dto.branchName;
     entity.currency = dto.currency;
-    entity.bankSwift = dto.bankSwift;
-    entity.IBAN = dto.IBAN;
+    entity.bankSwift = dto.iBAN;
+    entity.IBAN = dto.iBAN;
     entity.status = dto.status;
     entity.hashValue = dto.hashValue;
     entity.bankName = dto.bankName;
@@ -96,15 +96,15 @@ export class BankAccountDetailResponse extends CreateBankAccountDetailDto {
       return;
     }
     entity.id = dto.id;
-    entity.accountHolderFullName = dto.accountHolderFullName;
+    entity.accountHolderFullName = dto.accountHoldersFullName;
     entity.accountNumber = dto.accountNumber;
     entity.vendorId = dto.vendorId;
     entity.bankId = dto.bankId;
     entity.branchName = dto.branchName;
-    entity.branchAddress = dto.branchAddress;
+    entity.branchAddress = dto.bankBranchAddress;
     entity.currency = dto.currency;
-    entity.bankSwift = dto.bankSwift;
-    entity.IBAN = dto.IBAN;
+    entity.bankSwift = dto.bankSWIFT_BICCode;
+    entity.IBAN = dto.iBAN;
     entity.status = dto.status;
     entity.hashValue = dto.hashValue;
     entity.bankName = dto.bankName;
@@ -118,15 +118,15 @@ export class BankAccountDetailResponse extends CreateBankAccountDetailDto {
       return;
     }
     entity.id = dto?.id;
-    entity.accountHolderFullName = dto.accountHolderFullName;
+    entity.accountHoldersFullName = dto.accountHolderFullName;
     entity.accountNumber = dto.accountNumber;
     entity.vendorId = dto.vendorId;
     entity.bankId = dto.bankId;
     entity.branchName = dto?.branchName;
-    entity.branchAddress = dto?.branchAddress;
+    entity.bankBranchAddress = dto?.branchAddress;
     entity.currency = dto.currency;
-    entity.bankSwift = dto?.bankSwift;
-    entity.IBAN = dto?.IBAN;
+    entity.bankSWIFT_BICCode = dto?.bankSwift;
+    entity.iBAN = dto?.IBAN;
     entity.status = dto?.status;
     entity.hashValue = dto?.hashValue;
     entity.bankName = dto?.bankName;

@@ -2,13 +2,13 @@ const initialValueSchema = {
   id: '',
   status: '',
   userId: '',
-  tin: '',
   basicRegistration: {
     nameOfBusinessCompany: '',
     formOfBusiness: '',
     businessCompanyOrigin: '',
     district: '',
     country: '',
+    tinNumber: '',
   },
   addressInformation: {
     postalAddress: '',
@@ -21,7 +21,7 @@ const initialValueSchema = {
     geoLocation: { xCoordinate: '', yCoordinate: '' },
   },
   contactPersons: {
-    contactPersonsTable: 'contactPersonsTableExamples',
+    contactPersonsTable: [{}],
   },
   businessSizeAndOwnership: {
     registeredCapital: { amount: '', currency: '' },
@@ -42,15 +42,35 @@ const initialValueSchema = {
   },
   beneficialOwnership: {
     beneficialOwnershipTable: [
-      { firstName: '', lastName: '', nationality: '' },
+      { firstName: '', lastName: '', nationality: '', key: '' },
     ],
   },
   areasOfBusinessInterest: {
     areasOfBusinessInterestNames: [],
-    areasOfBusinessInterestInformation: [],
+    areasOfBusinessInterestInformation: [
+      {
+        category: 'string',
+        lineOfBusiness: 'string',
+        priceRange: 'string',
+      },
+    ],
   },
   bankAccountDetails: {
-    bankAccountDetailsTable: [],
+    bankAccountDetailsTable: [
+      {
+        accountHoldersFullName: 'string',
+        accountNumber: '',
+        bankBranchAddress: 'string',
+        currency: 'string',
+        bankSWIFT_BICCode: 'string',
+        iBAN: 'string',
+        status: 'string',
+        bankId: 'string',
+        bankName: 'string',
+        hashValue: 'string',
+        branchName: 'string',
+      },
+    ],
   },
   supportingDocuments: {
     businessRegistration_IncorporationCertificate: '',
@@ -60,7 +80,6 @@ const initialValueSchema = {
     previousPPDARegistrationCertificate: '',
     mSMECertificate: '',
   },
-  instance: {},
 };
 
 export default initialValueSchema;

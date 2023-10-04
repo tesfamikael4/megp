@@ -21,7 +21,8 @@ export class BeneficialOwnership extends CommonEntity {
   vendorId: string;
   @Column()
   nationality: string;
-
+  @Column()
+  key: string;
   @JoinColumn({ name: 'vendorId' })
   @ManyToOne(() => VendorsEntity, (v) => v.shareholders)
   vendor: VendorsEntity;

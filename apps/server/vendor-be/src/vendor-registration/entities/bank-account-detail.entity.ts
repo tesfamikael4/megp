@@ -20,7 +20,7 @@ export class BankAccountDetailEntity extends CommonEntity {
   accountHolderFullName: string;
   @Column()
   accountNumber: string;
-  @Column()
+  @Column({ nullable: true })
   vendorId: string;
   @Column({ type: 'uuid' })
   bankId: string;
