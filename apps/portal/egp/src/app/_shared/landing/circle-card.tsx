@@ -23,10 +23,10 @@ export const CircleCard = (props: CircleCardProps) => {
         h={230}
       >
         <props.icon size="70" className={`mx-auto mb-5 ${props.iconColor}`} />
-        <Text fw="bold" align="center">
+        <Text fw="bold" className="text-center">
           {props.title}
         </Text>
-        <Text size="xs" fw="500" align="center">
+        <Text size="xs" fw="500" className="text-center">
           {props.subTitle}
         </Text>
       </Box>

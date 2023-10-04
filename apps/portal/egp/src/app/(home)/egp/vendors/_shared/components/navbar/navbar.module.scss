@@ -1,11 +1,11 @@
 .navlinkRoot {
-  @apply  min-h-[100vh];
+  @apply  w-64;
 } 
 .navlinksTitleWrapper {
-  @apply text-xs  mx-10 px-6  py-4 text-zinc-500 rounded-lg;
+  @apply text-xs  mx-[var(--mantine-spacing-md)] px-[var(--mantine-spacing-md)]  py-[var(--mantine-spacing-sm)] text-zinc-500 rounded-lg;
 }
 .navlinksTitle {
-  @apply px-3 text-sm font-semibold tracking-wider uppercase;
+  @apply  text-sm font-semibold tracking-wider uppercase;
 }
 
 .navlinksLinkLabel {
@@ -13,4 +13,23 @@
 }
 .navlinksLinkIcon {
   @apply  mr-6;
+}
+
+
+
+
+.navLinksGroupControl {
+  @apply font-[500]  text-xl  px-[var(--mantine-spacing-md)] py-[var(--mantine-spacing-sm)] no-underline	hover:bg-[var(--mantine-color-default-hover)] hover:text-[var(--mantine-color-text)];
+}
+.navLinksGroupActiveControl {
+  @apply font-[700] ;
+}
+.navLinksGroupLink {
+  @apply font-[500] text-sm text-gray-700 w-full ml-[var(--mantine-spacing-xl)] px-[var(--mantine-spacing-md)] py-[var(--mantine-spacing-sm)] no-underline border-l-[1px] border-l-gray-300 	hover:bg-[var(--mantine-color-default-hover)] hover:text-[var(--mantine-color-text)];
+}
+.navLinksGroupActiveLink {
+  @apply bg-[var(--mantine-color-default-hover)] text-[var(--mantine-color-text)] ;
+}
+.navLinksGroupChevron {
+  @apply transition-transform duration-200 ease-in-out ;
 }

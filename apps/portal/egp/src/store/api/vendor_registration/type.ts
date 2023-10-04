@@ -6,8 +6,9 @@ export interface FormInitiationRequestProps {
 }
 export interface FormSubmissionRequestProps {
   data: {
-    status: string;
     userId: string;
+    status: string;
+    id: string;
     data: {
       basicRegistration: {
         nameOfBusinessCompany: string;
@@ -25,19 +26,17 @@ export interface FormSubmissionRequestProps {
         telephone: string;
         fax: string;
         website: string;
-        geoLocation: {
-          xCoordinate: string;
-          yCoordinate: string;
-        };
       };
       contactPersons: {
-        contactPersonsTable: {
-          firstName: string;
-          lastName: string;
-          email: string;
-          mobileNumber: string;
-          key: string;
-        }[];
+        contactPersonsTable:
+          | {
+              firstName: string;
+              lastName: string;
+              email: string;
+              mobileNumber: string;
+              key: string;
+            }[]
+          | [];
       };
       businessSizeAndOwnership: {
         registeredCapital: {
@@ -52,30 +51,52 @@ export interface FormSubmissionRequestProps {
         ownershipType: string;
       };
       shareHolders: {
-        shareHoldersTable: any[]; // You can define the structure here if needed
+        shareHoldersTable:
+          | {
+              firstName: string;
+              lastName: string;
+              nationality: string;
+              share: string;
+              key: string;
+            }[]
+          | [];
       };
       beneficialOwnership: {
-        beneficialOwnershipTable: any[]; // You can define the structure here if needed
+        beneficialOwnershipTable:
+          | {
+              firstName: string;
+              lastName: string;
+              nationality: string;
+              key: string;
+            }[]
+          | [];
       };
       areasOfBusinessInterest: {
-        key: string;
-        areasOfBusinessInterestNames: string[];
-        areasOfBusinessInterestInformation: any[]; // You can define the structure here if needed
+        areasOfBusinessInterestNames: string[] | [];
+        areasOfBusinessInterestInformation:
+          | {
+              category: string;
+              lineOfBusiness: string[];
+              priceRange: string;
+            }[]
+          | [];
       };
       bankAccountDetails: {
-        bankAccountDetailsTable: {
-          AccountHolderFullName: string;
-          AccountNumber: string;
-          IBAN: string;
-          bank: string;
-          bankSwift: string;
-          bankId: string;
-          branchAddress: string;
-          branchName: string;
-          currency: string;
-          hashValue: string;
-          status: string;
-        }[];
+        bankAccountDetailsTable:
+          | {
+              accountHoldersFullName: string;
+              accountNumber: number;
+              bankBranchAddress: string;
+              currency: string;
+              bankSWIFT_BICCode: string;
+              iBAN: string;
+              status: string;
+              bankId: string;
+              bankName: string;
+              hashValue: string;
+              branchName: string;
+            }[]
+          | [];
       };
       supportingDocuments: {
         businessRegistration_IncorporationCertificate: string;
@@ -88,6 +109,7 @@ export interface FormSubmissionRequestProps {
     };
   };
 }
+
 export interface FormSubmissionResponseProps {
   id: string;
   status: string;
@@ -334,4 +356,39 @@ export interface GetApplicationByUserIdResponseProps {
     priceRange: string;
     vendorId: string;
   }>;
+}
+
+export interface BankListResponseProps {
+  id: string;
+  bankName: string;
+  metaData: Record<string, any>; // You can use Record<string, any> for an empty object
+}
+export interface AreasOfBusinessInterestCategoriesListResponseProps {
+  total: number;
+  items: {
+    id: string;
+    code: string;
+    description: string;
+    businessArea: string;
+    createdAt: string;
+  }[];
+}
+
+export interface AreasOfBusinessInterestPriceRangeResponseProps {
+  total: number;
+  items: {
+    id: string;
+    serviceId: string;
+    businessArea: string;
+    valueFrom: string;
+    valueTo: string;
+    currency: string;
+    fee: string;
+    service: {
+      id: string;
+      key: string;
+      name: string;
+      isActive: boolean;
+    };
+  }[];
 }

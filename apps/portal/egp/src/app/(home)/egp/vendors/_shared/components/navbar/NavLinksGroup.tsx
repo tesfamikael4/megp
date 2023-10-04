@@ -8,8 +8,8 @@ import {
   Text,
   ThemeIcon,
   UnstyledButton,
-  createStyles,
   rem,
+  useDirection,
 } from '@mantine/core';
 import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 import Link from 'next/link';
@@ -17,86 +17,24 @@ import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { NavItem } from '../../types/nav-item';
 
-const useStyles = createStyles((theme) => ({
-  control: {
-    fontWeight: 500,
-    display: 'block',
-    width: '100%',
-    padding: `${theme.spacing.xs} ${theme.spacing.md}`,
-    color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
-    fontSize: theme.fontSizes.sm,
-    textDecoration: 'none',
-
-    '&:hover': {
-      backgroundColor:
-        theme.colorScheme === 'dark'
-          ? theme.colors.dark[7]
-          : theme.colors.gray[0],
-      color: theme.colorScheme === 'dark' ? theme.white : theme.black,
-    },
-  },
-
-  activeControl: {
-    fontWeight: 700,
-  },
-
-  link: {
-    fontWeight: 500,
-    display: 'block',
-    textDecoration: 'none',
-    padding: `${theme.spacing.xs} ${theme.spacing.md}`,
-    paddingLeft: rem(31),
-    marginLeft: rem(30),
-    fontSize: theme.fontSizes.sm,
-    color:
-      theme.colorScheme === 'dark'
-        ? theme.colors.dark[0]
-        : theme.colors.gray[7],
-    borderLeft: `${rem(1)} solid ${
-      theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[3]
-    }`,
-
-    '&:hover': {
-      backgroundColor:
-        theme.colorScheme === 'dark'
-          ? theme.colors.dark[7]
-          : theme.colors.gray[0],
-      color: theme.colorScheme === 'dark' ? theme.white : theme.black,
-    },
-  },
-
-  activeLink: {
-    backgroundColor:
-      theme.colorScheme === 'dark'
-        ? theme.colors.dark[7]
-        : theme.colors.gray[0],
-    color:
-      theme.colorScheme === 'dark' ? theme.colors.white : theme.colors.dark,
-  },
-
-  chevron: {
-    transition: 'transform 200ms ease',
-  },
-}));
-
 export function NavLinksGroup({ icon: Icon, label, link, links }: NavItem) {
-  const { classes, theme } = useStyles();
   const pathname = usePathname();
+  const { dir } = useDirection();
 
   const hasLinks = Array.isArray(links);
   const [opened, setOpened] = useState(false);
-  const ChevronIcon = theme.dir === 'ltr' ? IconChevronRight : IconChevronLeft;
+  const ChevronIcon = dir === 'ltr' ? IconChevronRight : IconChevronLeft;
   const items = (hasLinks ? links : []).map((link, key) => {
     if (link.label != '') {
       return (
-        <Link
-          href={link.link}
-          key={key + link.label}
-          className={`${classes.link} ${
-            link.link === pathname && classes.activeLink
-          }`}
-        >
-          {link.label}
+        <Link href={link.link} key={key + link.label}>
+          <Text
+            className={`${styles.navLinksGroupLink} ${
+              link.link === pathname && styles.navLinksGroupActiveLink
+            }`}
+          >
+            {link.label}
+          </Text>
         </Link>
       );
     } else {
@@ -108,18 +46,18 @@ export function NavLinksGroup({ icon: Icon, label, link, links }: NavItem) {
       {link ? (
         <Link
           href={link}
-          className={`${classes.control} ${
-            link === pathname && classes.activeControl
+          className={`${styles.navLinksGroupControl} ${
+            link === pathname && styles.navLinksGroupActiveControl
           }`}
         >
-          <Group position="apart" spacing={0}>
-            <Flex align={'center'}>
+          <Flex className="items-center justify-between">
+            <Flex className="items-center gap-2">
               <ThemeIcon variant="light" size={30}>
                 <Icon style={{ width: rem(18), height: rem(18) }} />
               </ThemeIcon>
-              <Box ml="md">{label}</Box>
+              <Text className="">{label}</Text>
             </Flex>
-          </Group>
+          </Flex>
         </Link>
       ) : (
         <UnstyledButton
@@ -129,33 +67,30 @@ export function NavLinksGroup({ icon: Icon, label, link, links }: NavItem) {
               return;
             }
           }}
-          className={classes.control}
+          className={styles.navLinksGroupControl}
         >
-          <Group position="apart" spacing={10}>
-            <Flex align={'center'}>
+          <Flex className="items-center justify-between">
+            <Flex className="items-center gap-2">
               <ThemeIcon variant="light" size={30}>
                 <Icon style={{ width: rem(18), height: rem(18) }} />
               </ThemeIcon>
-              {/* <Icon
-                size="1.4rem"
-                stroke={1.2}
-                className={styles.navlinksLinkIcon}
-              /> */}
               <Text className={styles.navlinksLinkLabel}>{label}</Text>
             </Flex>
             {hasLinks && (
               <ChevronIcon
-                className={classes.chevron}
                 size="1rem"
                 stroke={1.5}
-                style={{
-                  transform: opened
-                    ? `rotate(${theme.dir === 'rtl' ? -90 : 90}deg)`
-                    : 'none',
-                }}
+                className={`${styles.navLinksGroupChevron} ${
+                  opened
+                    ? dir
+                      ? 'rotate-[90deg]'
+                      : 'rotate-[90deg]'
+                    : ' transform-none'
+                }
+                }`}
               />
             )}
-          </Group>
+          </Flex>
         </UnstyledButton>
       )}
       {hasLinks ? <Collapse in={opened}>{items}</Collapse> : null}

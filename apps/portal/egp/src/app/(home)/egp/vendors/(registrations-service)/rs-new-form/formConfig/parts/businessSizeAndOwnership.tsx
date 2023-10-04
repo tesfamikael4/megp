@@ -28,7 +28,7 @@ export const BusinessSizeAndOwnership: React.FC<Props> = ({ form }) => {
               label="Currency"
               id="currency"
               icon={<IconCash size="1rem" />}
-              data={['USD', 'ETB', 'EUR', 'GBP']}
+              data={['USD', 'ETB', 'EUR', 'GBP', 'KW']}
               placeholder="select"
               searchable
               nothingFound="No options"
@@ -59,7 +59,7 @@ export const BusinessSizeAndOwnership: React.FC<Props> = ({ form }) => {
               label="Currency"
               id="currency"
               icon={<IconCash size="1rem" />}
-              data={['USD', 'ETB', 'EUR', 'GBP']}
+              data={['USD', 'ETB', 'EUR', 'GBP', 'KW']}
               placeholder="select"
               searchable
               nothingFound="No options"

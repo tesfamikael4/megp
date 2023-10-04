@@ -16,7 +16,7 @@ export default function GettingStarted() {
     <Container className={styles.container}>
       <Box className={styles.about_card}>
         <p className={styles.about_title}>About eGP</p>
-        <Text align="justify" mb="md">
+        <Text mb="md">
           eGP is a national electronic government procurement portal that uses
           an electronic system to handle transactions in the public procurement
           process. eGP is designed with innovative measures using information

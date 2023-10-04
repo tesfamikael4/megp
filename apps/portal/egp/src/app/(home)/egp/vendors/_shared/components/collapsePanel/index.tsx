@@ -28,9 +28,6 @@ export const CollapsePanel = (props: any) => {
       className={`${styles.collapsePanelRoot} ${
         convertToObject(props.hasErrors, props.id) ? styles['borderRed'] : ''
       }`}
-      // sx={{
-      //   borderLeft: '10px solid #3d692c',
-      // }}
     >
       <Flex
         className={`${

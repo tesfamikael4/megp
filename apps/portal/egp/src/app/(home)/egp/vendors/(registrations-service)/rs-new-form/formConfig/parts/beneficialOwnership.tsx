@@ -108,7 +108,6 @@ export const BeneficialOwnership: React.FC<Props> = ({ form }) => {
           fontSize="xs"
           striped
           highlightOnHover
-          withBorder
           withColumnBorders
         />
       </Stack>

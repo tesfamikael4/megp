@@ -8,13 +8,38 @@ import {
   Card,
   Select,
   Stack,
+  MultiSelect,
 } from '@mantine/core';
 import MultiCheckBox from '../multiCheckBox';
-
+import {
+  transformCategoryListData,
+  transformCategoryPriceRange,
+} from '../../lib/objectParser/object';
+import {
+  useGetAreasOfBusinessInterestCategoriesListQuery,
+  useGetAreasOfBusinessInterestPriceRangeQuery,
+} from '@/store/api/vendor_registration/query';
 interface Props {
   form: any;
 }
 const CardForm: React.FC<Props> = ({ form }) => {
+  const {
+    data: categoriesListData,
+    isLoading: categoriesListIsLoading,
+    status: categoriesListStatus,
+  } = useGetAreasOfBusinessInterestCategoriesListQuery({});
+  const {
+    data: priceRangeData,
+    isLoading: priceRangeIsLoading,
+    status: priceRangeStatus,
+  } = useGetAreasOfBusinessInterestPriceRangeQuery({});
+  const bankList =
+    priceRangeStatus === 'fulfilled' &&
+    priceRangeData &&
+    priceRangeData.items.length
+      ? transformCategoryPriceRange(priceRangeData.items, 'Goods')
+      : [];
+  console.log(bankList);
   React.useEffect(() => {
     handleValueChange(form.values);
     return () => {};
@@ -29,7 +54,7 @@ const CardForm: React.FC<Props> = ({ form }) => {
         values.areasOfBusinessInterest.areasOfBusinessInterestNames.map(
           (val) => ({
             category: val,
-            lineOfBusiness: '',
+            lineOfBusiness: [],
             priceRange: '',
           }),
         );
@@ -85,31 +110,44 @@ const CardForm: React.FC<Props> = ({ form }) => {
     ? form.values.areasOfBusinessInterest.areasOfBusinessInterestInformation.map(
         (value: any, index) => (
           <Stack key={index} my={15}>
-            <Card withBorder shadow="sm" radius="md">
-              <Card.Section withBorder inheritPadding py="xs">
-                <Text tt="uppercase" size="lg" weight={500} mb="sm" p={4}>
+            <Flex className="shadow-md p-4 rounded-md flex-col border">
+              <Flex className="p-1 border-b">
+                <Text tt="uppercase" p={4} className="font-[500]">
                   {value.category}
                 </Text>
-              </Card.Section>
-              <Card.Section p={'md'}>
-                <Flex direction={'column'} gap={10}>
-                  <TextInput
-                    label="Line Of Business"
-                    {...form.getInputProps(
-                      `areasOfBusinessInterest.areasOfBusinessInterestInformation.${index}.lineOfBusiness`,
-                    )}
-                  />
-                  <Select
-                    label={'Price Range'}
-                    placeholder="Input 2"
-                    data={['100 - 1000', '1000 - 10000']}
-                    {...form.getInputProps(
-                      `areasOfBusinessInterest.areasOfBusinessInterestInformation.${index}.valueRange`,
-                    )}
-                  />
-                </Flex>
-              </Card.Section>
-            </Card>
+              </Flex>
+              <Flex className="flex-col gap-4">
+                <MultiSelect
+                  label="Line Of Business"
+                  {...form.getInputProps(
+                    `areasOfBusinessInterest.areasOfBusinessInterestInformation.${index}.lineOfBusiness`,
+                  )}
+                  data={transformCategoryListData(
+                    categoriesListStatus === 'fulfilled' &&
+                      categoriesListData &&
+                      categoriesListData.items.length
+                      ? categoriesListData.items
+                      : [],
+                    value.category,
+                  )}
+                />
+                <Select
+                  label={'Price Range'}
+                  placeholder="Input 2"
+                  data={transformCategoryPriceRange(
+                    priceRangeStatus === 'fulfilled' &&
+                      priceRangeData &&
+                      priceRangeData.items.length
+                      ? priceRangeData.items
+                      : [],
+                    value.category,
+                  )}
+                  {...form.getInputProps(
+                    `areasOfBusinessInterest.areasOfBusinessInterestInformation.${index}.priceRange`,
+                  )}
+                />
+              </Flex>
+            </Flex>
           </Stack>
         ),
       )
