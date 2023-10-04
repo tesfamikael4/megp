@@ -36,7 +36,6 @@ export const ShareHolders: React.FC<Props> = ({ form }) => {
               shadow="xs"
               padding="lg"
               radius="md"
-              withBorder
               w={250}
               style={{
                 height: '100%',
@@ -75,18 +74,9 @@ export const ShareHolders: React.FC<Props> = ({ form }) => {
             <>
               {form.values.shareHolders?.shareHoldersTable.map(
                 (value: any, index: number) => (
-                  <Card key={index} withBorder w={250}>
-                    <Card.Section mb={10}>
-                      <Group position="apart" p={10}>
-                        <div></div>
-                        {/* <Badge c="green">active</Badge> */}
-                      </Group>
-                    </Card.Section>
-                    <Text
-                      weight={700}
-                      size="lg"
-                      style={{ marginBottom: '0.5rem' }}
-                    >
+                  <Card key={index} w={250}>
+                    <Card.Section mb={10}></Card.Section>
+                    <Text size="lg" style={{ marginBottom: '0.5rem' }}>
                       {value.firstName} {value.lastName}
                     </Text>
                     <Text
@@ -107,7 +97,7 @@ export const ShareHolders: React.FC<Props> = ({ form }) => {
                       share: %{value.share}
                     </Text>
 
-                    <Card.Section mt={30} withBorder>
+                    <Card.Section mt={30}>
                       <Flex justify={'right'} py={3} px={10}>
                         <ActionMenu
                           renderOpenButton={() => <IconMenu size={'1rem'} />}

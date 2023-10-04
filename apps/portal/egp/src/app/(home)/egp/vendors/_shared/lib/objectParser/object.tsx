@@ -77,3 +77,42 @@ export function generateAndSaveKey(source = '') {
     return getCookie('userId');
   }
 }
+
+export const transformCategoryListData = (
+  inputData: any,
+  businessArea: string,
+) =>
+  inputData
+    .filter(
+      (item) => item.businessArea.toLowerCase() === businessArea.toLowerCase(),
+    )
+    .map((item) => ({
+      value: item.id,
+      label: item.description,
+    }));
+export const transformCategoryPriceRange = (
+  inputData: any,
+  businessArea: string,
+) =>
+  inputData
+    .filter(
+      (item) => item.businessArea.toLowerCase() === businessArea.toLowerCase(),
+    )
+    .map((item) => ({
+      value: item.id,
+      label: `${item.valueFrom} to ${item.valueTo} ${item.currency}`,
+    }));
+export const getLabelByValue = (
+  data: {
+    value: string;
+    label: string;
+  }[],
+  targetValue: string,
+): string => {
+  for (const item of data) {
+    if (item.value === targetValue) {
+      return item.label;
+    }
+  }
+  return ''; // Return null if the value is not found in the array
+};

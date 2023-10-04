@@ -25,7 +25,6 @@ export const PageContainer: FC<PageContainerProps> = ({
   fluid = true,
 }) => {
   const theme = useMantineTheme();
-  const titleColor = theme.colorScheme === 'dark' ? 'gray' : 'dark';
 
   return (
     <Container fluid={fluid} className={style.container}>

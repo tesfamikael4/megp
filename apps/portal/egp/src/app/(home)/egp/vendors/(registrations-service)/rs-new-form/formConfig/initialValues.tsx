@@ -1,4 +1,4 @@
-export const initialValues = {
+export const initialValues: UserData = {
   basicRegistration: {
     nameOfBusinessCompany: '',
     formOfBusiness: '',
@@ -15,7 +15,6 @@ export const initialValues = {
     telephone: '',
     fax: '',
     website: '',
-    geoLocation: { xCoordinate: '', yCoordinate: '' },
   },
   contactPersons: {
     contactPersonsTable: [],
@@ -30,9 +29,7 @@ export const initialValues = {
     shareHoldersTable: [],
   },
   beneficialOwnership: {
-    beneficialOwnershipTable: [
-      // { firstName: '', lastName: '', nationality: '' },
-    ],
+    beneficialOwnershipTable: [],
   },
   areasOfBusinessInterest: {
     areasOfBusinessInterestNames: [],
@@ -50,3 +47,101 @@ export const initialValues = {
     mSMECertificate: '',
   },
 };
+interface UserData {
+  basicRegistration: {
+    nameOfBusinessCompany: string;
+    formOfBusiness: string;
+    businessCompanyOrigin: string;
+    district: string;
+    country: string;
+    tinNumber: string;
+  };
+  addressInformation: {
+    postalAddress: string;
+    primaryEmail: string;
+    alternateEmail: string;
+    mobilePhone: string;
+    telephone: string;
+    fax: string;
+    website: string;
+  };
+  contactPersons: {
+    contactPersonsTable:
+      | {
+          firstName: string;
+          lastName: string;
+          email: string;
+          mobileNumber: string;
+          key: string;
+        }[]
+      | [];
+  };
+  businessSizeAndOwnership: {
+    registeredCapital: {
+      amount: string;
+      currency: string;
+    };
+    paidUpCapital: {
+      amount: string;
+      currency: string;
+    };
+    numberOfEmployees: string;
+    ownershipType: string;
+  };
+  shareHolders: {
+    shareHoldersTable:
+      | {
+          firstName: string;
+          lastName: string;
+          nationality: string;
+          share: string;
+          key: string;
+        }[]
+      | [];
+  };
+  beneficialOwnership: {
+    beneficialOwnershipTable:
+      | {
+          firstName: string;
+          lastName: string;
+          nationality: string;
+          key: string;
+        }[]
+      | [];
+  };
+  areasOfBusinessInterest: {
+    areasOfBusinessInterestNames: string[] | [];
+    areasOfBusinessInterestInformation:
+      | {
+          category: string;
+          lineOfBusiness: string[];
+          priceRange: string;
+        }[]
+      | [];
+  };
+  bankAccountDetails: {
+    bankAccountDetailsTable:
+      | {
+          accountHoldersFullName: string;
+          accountNumber: number;
+          bankBranchAddress: string;
+          currency: string;
+          bankSWIFT_BICCode: string;
+          iBAN: string;
+          status: string;
+          bankId: string;
+          bankName: string;
+          hashValue: string;
+          branchName: string;
+        }[]
+      | [];
+  };
+  supportingDocuments: {
+    businessRegistration_IncorporationCertificate: string;
+    mRA_TPINCertificate: string;
+    generalReceipt_BankDepositSlip: string;
+    mRATaxClearanceCertificate: string;
+    previousPPDARegistrationCertificate: string;
+    mSMECertificate: string;
+  };
+}

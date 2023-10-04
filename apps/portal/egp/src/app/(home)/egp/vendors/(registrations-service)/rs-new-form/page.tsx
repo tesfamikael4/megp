@@ -1,78 +1,86 @@
 'use client';
 
-import { useGetApplicationByUserIdQuery } from '@/store/api/vendor_registration/query';
+import {
+  useLazyGetDraftApplicationByUserIdQuery,
+  useLazyGetFormInitiationRequestQuery,
+} from '@/store/api/vendor_registration/query';
 import Form from './form';
-import { generateAndSaveKey } from '../../_shared/lib/objectParser/object';
 import { LoadingOverlay } from '@mantine/core';
+import { useRouter } from 'next/navigation';
+import { useDisclosure } from '@mantine/hooks';
+import { SearchParamsToObject } from '../../_shared/lib/url/helper';
+import { useEffect } from 'react';
 
 export default function RsNewFormPage() {
-  const {
-    data: applicationData,
-    isLoading: isApplicationDataLoading,
-    isSuccess: isApplicationDataSuccess,
-    status: applicationDataStatus,
-  } = useGetApplicationByUserIdQuery({
-    userId: generateAndSaveKey() as string,
-  });
-  if (isApplicationDataLoading) {
-    return <LoadingOverlay visible={true} overlayBlur={1} />;
-  }
-  if (applicationDataStatus == 'fulfilled') {
-    if (applicationData?.status == 'Submitted') {
-      return (
-        <div className="flex justify-center">
-          <div className=" w-full flex flex-row shadow-lg rounded-lg overflow-hidden  px-6 py-4  justify-between ">
-            <div className=" flex justify-center align-top flex-col ">
-              <div className="flex items-center pt-3">
-                <div className="bg-blue-300 w-12 h-12 flex justify-center items-center rounded-full  text-white">
-                  {applicationData.name.charAt(0)}
-                </div>
-                <div className="ml-4 text-xs	">
-                  <p>
-                    <span className="text-lg font-medium">
-                      {applicationData.name}
-                    </span>{' '}
-                  </p>
-                  <p>
-                    <span className="ml-2 font-medium">Case Id: </span>
-                    {applicationData.id}
-                  </p>
-                  <p>
-                    <span className="ml-2 font-medium">Mobile Number: </span>
-                    {applicationData.metaData.addressInformation.mobilePhone}
-                  </p>
-                  <p>
-                    <span className="ml-2 font-medium">Primary Email: </span>
-                    {applicationData.metaData.addressInformation.primaryEmail}
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className="uppercase text-xs text-gray-600 font-bold flex flex-col items-center px-6 py-4 gap-2">
-              Status
-              <div className="text-xs uppercase px-2 py-1 rounded-full border border-collapse font-bold bg-primary-color text-white bg-blue-300">
-                Under Review
-              </div>
-            </div>
-          </div>
-        </div>
-      );
-    }
-    if (applicationData?.status == 'Save as Draft' && applicationData) {
-      return <Form pre={applicationData} />;
-    }
+  const router = useRouter();
+  const applicationId = SearchParamsToObject('applicationId');
+  const companyName = SearchParamsToObject('companyName');
+  const legalFormofEntity = SearchParamsToObject('legalFormOfEntity');
+  const Country = SearchParamsToObject('countryOfRegistration');
+  const tinNumber = SearchParamsToObject('tinNumber');
+  console.log(!applicationId);
+  if (applicationId || (companyName && legalFormofEntity && Country)) {
   } else {
-    return <Form pre={null} />;
+    router.push('rs-new');
   }
 
-  //ef2af63f-b63a-4ed9-bfc0-6e8ee3b8b42k
-  // return (<>
-  // {isSaveFormLoading?<LoadingOverlay
-  //     visible={isSaveFormLoading || isGetFormInitiationRequestLoading}
-  //     overlayBlur={1}
-  //   />}
-  // </>
+  const [
+    trigger,
+    {
+      data: applicationData,
+      isLoading: isApplicationDataLoading,
+      isSuccess: isApplicationDataSuccess,
+      status: applicationDataStatus,
+    },
+  ] = useLazyGetDraftApplicationByUserIdQuery();
 
-  // );
+  const [
+    formInitiationRequestTrigger,
+    {
+      data: getFormInitiationRequestData,
+      isLoading: isGetFormInitiationRequestLoading,
+      isSuccess: isGetFormInitiationRequestSuccess,
+      status: getFormInitiationRequestStatus,
+    },
+  ] = useLazyGetFormInitiationRequestQuery();
+
+  useEffect(() => {
+    if (applicationId) {
+      trigger({
+        vendorId: applicationId,
+      });
+    }
+    if (companyName && legalFormofEntity && Country) {
+      formInitiationRequestTrigger({
+        companyName,
+        legalFormofEntity,
+        Country,
+        tinNumber,
+      });
+    }
+    return () => {};
+  }, []);
+
+  return (
+    <section>
+      <LoadingOverlay
+        visible={isApplicationDataLoading || isGetFormInitiationRequestLoading}
+        overlayProps={{ radius: 'sm', blur: 2 }}
+      />
+      {applicationDataStatus == 'fulfilled' && applicationData ? (
+        <Form formData={applicationData} formInitiationData={null} />
+      ) : (
+        <></>
+      )}
+      {getFormInitiationRequestStatus == 'fulfilled' &&
+      getFormInitiationRequestData ? (
+        <Form
+          formData={null}
+          formInitiationData={getFormInitiationRequestData}
+        />
+      ) : (
+        <></>
+      )}
+    </section>
+  );
 }
-//<Form pre={applicationData} />

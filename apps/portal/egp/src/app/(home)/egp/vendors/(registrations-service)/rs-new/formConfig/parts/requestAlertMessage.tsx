@@ -7,7 +7,7 @@ export const RequestAlertMessage = () => {
     <Alert
       icon={<IconAlertCircle size="1rem" />}
       title={
-        <Text weight={500} size={'sm'}>
+        <Text className="font-[500] text-xs">
           To access the supplier registration electronic form, please provide
           your company tax identification number, country of registration, and
           legal form of your company.
@@ -16,9 +16,7 @@ export const RequestAlertMessage = () => {
       color="cyan"
       className={style.reqAlert}
     >
-      <Text weight={600} m={6}>
-        Why Register?
-      </Text>
+      <Text className="font-[600] m-6">Why Register?</Text>
       <List spacing="sm" size="sm" center icon={<IconPin size="1rem" />}>
         <List.Item>
           Participate actively in tenders. Submit your bids and request for

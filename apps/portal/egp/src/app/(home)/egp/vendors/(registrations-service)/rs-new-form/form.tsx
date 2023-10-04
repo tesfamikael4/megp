@@ -1,11 +1,18 @@
 'use client';
-import { Button, Card, Flex, LoadingOverlay, Tabs, Text } from '@mantine/core';
+import {
+  Button,
+  Card,
+  Code,
+  Flex,
+  LoadingOverlay,
+  Tabs,
+  Text,
+} from '@mantine/core';
 import React from 'react';
 import { useForm, zodResolver } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import {
   convertToObject,
-  formGetLatestValues,
   generateAndSaveKey,
 } from '../../_shared/lib/objectParser/object';
 import {
@@ -21,104 +28,20 @@ import {
 } from './formConfig/parts';
 import { initialValues } from './formConfig/initialValues';
 import { schema } from './formConfig/schema';
-import {
-  useGetApplicationByUserIdQuery,
-  useLazySaveFormQuery,
-} from '@/store/api/vendor_registration/query';
-import { SearchParamsToObject } from '../../_shared/lib/url/helper';
-import { useGetFormInitiationRequestQuery } from '@/store/api/vendor_registration/query';
-
-export default function Form({ pre }: { pre: any }) {
-  console.log(pre);
-
+import { useLazySaveFormQuery } from '@/store/api/vendor_registration/query';
+import { randomId } from '@mantine/hooks';
+export default function Form({
+  formData,
+  formInitiationData,
+}: {
+  formData: any;
+  formInitiationData: any;
+}) {
   const form = useForm({
     initialValues,
-    //validate: zodResolver(schema),
+    //  validate: zodResolver(schema),
     validateInputOnBlur: true,
   });
-  const {
-    data: getFormInitiationRequestData,
-    isLoading: isGetFormInitiationRequestLoading,
-    isSuccess: isGetFormInitiationRequestSuccess,
-    status: getFormInitiationRequestStatus,
-  } = useGetFormInitiationRequestQuery({
-    companyName: SearchParamsToObject('companyName'),
-    legalFormofEntity: SearchParamsToObject('legalFormOfEntity'),
-    Country: SearchParamsToObject('countryOfRegistration'),
-    tinNumber: SearchParamsToObject('tinNumber'),
-  });
-  React.useEffect(() => {
-    if (pre) {
-      form.setFieldValue('basicRegistration', {
-        ...pre.metaData.basicRegistration,
-      });
-
-      form.setFieldValue('addressInformation', {
-        ...pre.metaData.addressInformation,
-      });
-      form.setFieldValue('addressInformation.geoLocation', {
-        ...pre.metaData.addressInformation.geoLocation,
-      });
-
-      form.setFieldValue('businessSizeAndOwnership', {
-        ...pre.metaData.businessSizeAndOwnership,
-      });
-      form.setFieldValue('businessSizeAndOwnership.registeredCapital', {
-        ...pre.metaData.businessSizeAndOwnership.registeredCapital,
-      });
-      form.setFieldValue('businessSizeAndOwnership.paidUpCapital', {
-        ...pre.metaData.businessSizeAndOwnership.paidUpCapital,
-      });
-      pre.metaData.contactPersons.contactPersonsTable.map((val, index) =>
-        form.insertListItem(`contactPersons.contactPersonsTable`, {
-          ...val,
-        }),
-      );
-      pre.bankAccountDetail.map((val, index) =>
-        form.insertListItem(`bankAccountDetails.bankAccountDetailsTable`, {
-          ...val,
-        }),
-      );
-      pre.beneficialOwnership.map((val, index) =>
-        form.insertListItem(`beneficialOwnership.beneficialOwnershipTable`, {
-          ...val,
-        }),
-      );
-      pre.shareholders.map((val, index) =>
-        form.insertListItem(`shareHolders.shareHoldersTable`, { ...val }),
-      );
-    }
-    return () => {};
-  }, [pre]);
-  React.useEffect(() => {
-    if (
-      getFormInitiationRequestData &&
-      isGetFormInitiationRequestSuccess &&
-      getFormInitiationRequestStatus === 'fulfilled'
-    ) {
-      getFormInitiationRequestData.data.companyName &&
-        form.setFieldValue(
-          'basicRegistration.nameOfBusinessCompany',
-          getFormInitiationRequestData.data.companyName,
-        );
-      getFormInitiationRequestData.data.legalFormofEntity &&
-        form.setFieldValue(
-          'basicRegistration.formOfBusiness',
-          getFormInitiationRequestData.data.legalFormofEntity,
-        );
-      getFormInitiationRequestData.data.country &&
-        form.setFieldValue(
-          'basicRegistration.country',
-          getFormInitiationRequestData.data.country,
-        );
-      getFormInitiationRequestData.data.tinNumber &&
-        form.setFieldValue(
-          'basicRegistration.tinNumber',
-          getFormInitiationRequestData.data.tinNumber,
-        );
-    }
-    return () => {};
-  }, [getFormInitiationRequestData, isGetFormInitiationRequestSuccess]);
 
   const [
     saveFormTrigger,
@@ -131,12 +54,74 @@ export default function Form({ pre }: { pre: any }) {
   ] = useLazySaveFormQuery();
 
   React.useEffect(() => {
-    if (isSaveFormSuccess && saveFormData) {
-      saveFormStatus === 'fulfilled' &&
-        notifications.show({
-          title: 'Notification',
-          message: 'Saved!',
+    return () => {
+      if (formData) {
+        form.setFieldValue('basicRegistration', {
+          ...formData.metaData.basicRegistration,
         });
+
+        form.setFieldValue('addressInformation', {
+          ...formData.metaData.addressInformation,
+        });
+        form.setFieldValue('addressInformation.geoLocation', {
+          ...formData.metaData.addressInformation.geoLocation,
+        });
+
+        form.setFieldValue('businessSizeAndOwnership', {
+          ...formData.metaData.businessSizeAndOwnership,
+        });
+        form.setFieldValue('businessSizeAndOwnership.registzeredCapital', {
+          ...formData.metaData.businessSizeAndOwnership.registeredCapital,
+        });
+        form.setFieldValue('businessSizeAndOwnership.paidUpCapital', {
+          ...formData.metaData.businessSizeAndOwnership.paidUpCapital,
+        });
+        formData.metaData.contactPersons.contactPersonsTable.map((val, index) =>
+          form.insertListItem(`contactPersons.contactPersonsTable`, {
+            ...val,
+            key: randomId(),
+          }),
+        );
+        formData.bankAccountDetail.map((val, index) =>
+          form.reorderListItem(
+            `bankAccountDetails.bankAccountDetailsTable.${index}`,
+            {
+              ...val,
+              key: randomId(),
+            },
+          ),
+        );
+        formData.beneficialOwnership.map((val, index) =>
+          form.reorderListItem(
+            `beneficialOwnership.beneficialOwnershipTable.${index}`,
+            {
+              ...val,
+              key: randomId(),
+            },
+          ),
+        );
+        formData.shareholders.map((val, index) =>
+          form.reorderListItem(`shareHolders.shareHoldersTable.${index}`, {
+            ...val,
+            key: randomId(),
+          }),
+        );
+      }
+    };
+  }, []);
+
+  React.useEffect(() => {
+    if (
+      isSaveFormSuccess &&
+      saveFormStatus === 'fulfilled' &&
+      saveFormData &&
+      saveFormData.status === 'Save as Draft'
+    ) {
+      notifications.show({
+        title: 'Notification',
+        message: 'Saved!',
+      });
+      console.log('saveFormData', saveFormData);
       form.reset();
 
       form.setFieldValue('basicRegistration', {
@@ -189,115 +174,104 @@ export default function Form({ pre }: { pre: any }) {
           }),
         );
     }
-    return () => {};
-  }, [isSaveFormSuccess, saveFormData]);
+  }, [isSaveFormSuccess, saveFormData, saveFormStatus]);
 
+  React.useEffect(() => {
+    return () => {
+      if (formInitiationData) {
+        formInitiationData.data.companyName &&
+          form.setFieldValue(
+            'basicRegistration.nameOfBusinessCompany',
+            formInitiationData.data.companyName,
+          );
+        formInitiationData.data.legalFormofEntity &&
+          form.setFieldValue(
+            'basicRegistration.formOfBusiness',
+            formInitiationData.data.legalFormofEntity,
+          );
+        formInitiationData.data.country &&
+          form.setFieldValue(
+            'basicRegistration.country',
+            formInitiationData.data.country,
+          );
+        form.setFieldValue(
+          'basicRegistration.tinNumber',
+          formInitiationData.data.tinNumber
+            ? formInitiationData.data.tinNumber
+            : '',
+        );
+      }
+    };
+  }, []);
+
+  // if (
+  //   isSaveFormSuccess &&
+  //   saveFormStatus === 'fulfilled' &&
+  //   saveFormData &&
+  //   saveFormData.status === 'Save as Draft'
+  // ) {
+  //   return (
+  //     <PopupModal opened={opened} modalHandler={modalHandler}>
+  //       <div className="sm:p-6 max-w-2xl sm:max-w-2xl w-full sm:w-full  transition-all shadow-box text-left  bg-white rounded-md overflow-hidden transform-translate-rotate-skew-scale relative">
+  //         <div className=" rounded-full flex justify-center items-center w-12 h-12 mx-auto">
+  //           <IconDraft />
+  //         </div>
+  //         <Text size="xl" className="sm:mt-3 text-center my-1 ">
+  //           Application Form Submitted Successfully
+  //         </Text>
+  //         <Text size="sm" className="sm:mt-3 text-center my-1 ">
+  //           TN:5656/576768/57676
+  //         </Text>
+  //       </div>
+  //     </PopupModal>
+  //   );
+  // }
   const handleSubmit = (values: typeof form.values) => {
-    saveFormTrigger({
-      data: {
-        userId: generateAndSaveKey() as string,
-        status: 'Save',
-        data: {
-          ...values,
-          areasOfBusinessInterest: {
-            ...values.areasOfBusinessInterest,
-            key: 'new',
-          },
-        },
-      },
-    });
+    // saveFormTrigger({
+    //   data: {
+    //     userId: generateAndSaveKey() as string,
+    //     status: 'Save as Draft',
+    //     id: '',
+    //     data: {
+    //       ...values,
+    //     },
+    //   },
+    // });
   };
-  const handleSaveAsDraft = (values: any) => {
+  const handleSaveAsDraft = (values: typeof form.values) => {
+    console.log('Form Value', values);
     saveFormTrigger({
       data: {
         userId: generateAndSaveKey() as string,
         status: 'Save as Draft',
+        id: '',
         data: {
           ...values,
-          areasOfBusinessInterest: {
-            ...values.areasOfBusinessInterest,
-            key: 'new',
-          },
         },
       },
     });
   };
   return (
-    <Card
-      p={0}
-      sx={{
-        borderRadius: '7px',
-        padding: '0px 10px',
-      }}
-    >
+    <Card p={0} className="shadow-md">
       <LoadingOverlay
-        visible={isSaveFormLoading || isGetFormInitiationRequestLoading}
-        overlayBlur={1}
+        visible={isSaveFormLoading}
+        overlayProps={{ radius: 'sm', blur: 2 }}
       />
 
       <Tabs
         defaultValue="basicRegistration"
         orientation="vertical"
         variant="outline"
-        styles={(theme) => ({
-          tab: {
-            ...theme.fn.focusStyles(),
-            cursor: 'pointer',
-            fontSize: theme.fontSizes.md,
-            fontWeight: 400,
-            display: 'flex',
-            alignItems: 'center',
-            marginLeft: '20px',
-            borderRadius: '0px',
-            width: '300px',
-            '&:not(:first-of-type)': {},
-
-            '&:first-of-type': {
-              // borderTopLeftRadius: theme.radius.md,
-              // borderBottomLeftRadius: theme.radius.md,
-            },
-
-            '&:last-of-type': {
-              // borderTopRightRadius: theme.radius.md,
-              // borderBottomRightRadius: theme.radius.md,
-            },
-
-            '&[data-active]': {
-              // borderLeft: '7px solid #3d692c',
-              background: '#ffffff',
-              marginLeft: '7px',
-              color: 'rgb(51, 50, 56)',
-              borderRadius: '10px 0px 0px 10px',
-              width: '277px',
-              fontWeight: 500,
-            },
-          },
-
-          tabIcon: {
-            marginRight: theme.spacing.xs,
-            display: 'flex',
-            alignItems: 'center',
-          },
-
-          tabsList: {
-            height: '600px',
-            width: '284px',
-            borderRadius: '14px',
-            background: '#e8f1e5',
-            padding: '20px 0px',
-            color: 'rgb(51, 50, 56)',
-          },
-          panel: {
-            padding: '0px 40px',
-            overflow: 'hidden',
-          },
-          tabLabel: {
-            padding: '3px 5px',
-          },
-        })}
       >
-        <Tabs.List>
-          <Tabs.Tab value="basicRegistration">Basic Registration</Tabs.Tab>
+        <Tabs.List className="font-[400] text-xs">
+          <Tabs.Tab value="basicRegistration">
+            <Flex gap={10}>
+              <Text> Basic Registration</Text>
+              {convertToObject(form.errors, 'basicRegistration') && (
+                <Text color="red">*</Text>
+              )}
+            </Flex>
+          </Tabs.Tab>
           <Tabs.Tab value="addressInformation">
             <Flex gap={10}>
               <Text>Address Information</Text>
@@ -364,14 +338,8 @@ export default function Form({ pre }: { pre: any }) {
           </Tabs.Tab>
         </Tabs.List>
 
-        <Flex direction={'column'} w={'100%'}>
+        <Flex className="w-full flex-col gap-4 px-10 py-4 justify-between shadow-md">
           <form onSubmit={form.onSubmit(handleSubmit)}>
-            <Flex justify={'end'}>
-              <Flex gap={10}>
-                {/* <Button>Review</Button> */}
-                <Button type="submit">Submit</Button>
-              </Flex>
-            </Flex>
             <Tabs.Panel value="basicRegistration">
               <BasicRegistration form={form} />
             </Tabs.Panel>
@@ -399,6 +367,8 @@ export default function Form({ pre }: { pre: any }) {
             <Tabs.Panel value="supportingDocuments">
               <SupportingDocuments form={form} />
             </Tabs.Panel>
+
+            <input id="res-big-form-submit" type="submit" hidden />
           </form>
           <Flex justify={'end'}>
             <Button onClick={() => handleSaveAsDraft(form.values)}>
@@ -407,6 +377,10 @@ export default function Form({ pre }: { pre: any }) {
           </Flex>
         </Flex>
       </Tabs>
+      <Text size="sm" fw={500} mt="md">
+        Form values:
+      </Text>
+      <Code block>{JSON.stringify(form.values, null, 2)}</Code>
     </Card>
   );
 }

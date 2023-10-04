@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { Box, Card, Flex, Text, createStyles, rem } from '@mantine/core';
+import { Card, Text } from '@mantine/core';
 import styles from './navbar.module.scss';
 import { NavItem } from '../../types/nav-item';
 import { NavLinksGroup } from './NavLinksGroup';
@@ -17,7 +17,7 @@ export const NavLinksGroupTitle: React.FC<{
 }> = ({ title, navItem }) => {
   return (
     <>
-      <Card.Section withBorder className={styles.navlinksTitleWrapper}>
+      <Card.Section className={styles.navlinksTitleWrapper}>
         <Text className={styles.navlinksTitle}>{title}</Text>
       </Card.Section>
       {navItem.map((item, key) => (
@@ -28,7 +28,7 @@ export const NavLinksGroupTitle: React.FC<{
 };
 export function Navbar({ data, hidden }: Props) {
   return (
-    <Card className={styles.navlinkRoot} shadow="lg" p={0}>
+    <Card className={styles.navlinkRoot} p={0}>
       {data.map((item, key) => (
         <NavLinksGroupTitle
           key={key + item.title}

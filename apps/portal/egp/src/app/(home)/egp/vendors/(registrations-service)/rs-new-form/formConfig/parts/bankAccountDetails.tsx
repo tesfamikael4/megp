@@ -4,6 +4,7 @@ import {
   Card,
   Flex,
   Group,
+  LoadingOverlay,
   NumberInput,
   Stack,
   Text,
@@ -23,12 +24,25 @@ import { Select } from '@mantine/core';
 import { randomId } from '@mantine/hooks';
 import CardList from '../../../../_shared/components/cardList';
 import ActionMenu from '../../../../_shared/components/actionMenu';
+import { useGetBankListQuery } from '@/store/api/vendor_registration/query';
+import { getLabelByValue } from '../../../../_shared/lib/objectParser/object';
 
 interface Props {
   form: any;
 }
 
 export const BankAccountDetails: React.FC<Props> = ({ form }) => {
+  const { data, isLoading, isSuccess, status } = useGetBankListQuery({});
+
+  const bankList =
+    status === 'fulfilled' && data && data.length
+      ? data.map((val) => ({
+          value: val.id,
+          label: val.bankName,
+        }))
+      : [];
+  console.log(bankList);
+
   return (
     <>
       <Stack my={15}>
@@ -39,30 +53,22 @@ export const BankAccountDetails: React.FC<Props> = ({ form }) => {
             title: 'Add Bank Information',
           }}
           renderAddCard={(openModal) => (
-            <Card
-              shadow="xs"
-              padding="lg"
-              radius="md"
-              withBorder
-              w={250}
-              style={{
-                height: '100%',
-                backgroundColor: '#f5f5f5',
-                textAlign: 'center',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexDirection: 'column',
-              }}
+            <Flex
+              className="shadow-md p-10 text-center rounded-md flex-col items-center justify-center w-[250px] border "
               onClick={() => {
                 form.insertListItem(
                   'bankAccountDetails.bankAccountDetailsTable',
                   {
-                    firstName: '',
-                    lastName: '',
-                    email: '',
-                    mobileNumber: '',
-                    key: randomId(),
+                    accountHoldersFullName: '',
+                    accountNumber: '',
+                    bankBranchAddress: '',
+                    currency: '',
+                    bankSWIFT_BICCode: '',
+                    iBAN: '',
+                    status: '',
+                    bankId: '',
+                    bankName: '',
+                    hashValue: randomId(),
                   },
                 );
                 openModal({
@@ -81,32 +87,17 @@ export const BankAccountDetails: React.FC<Props> = ({ form }) => {
               >
                 <IconPlus size={33} />
               </Flex>
-            </Card>
+            </Flex>
           )}
           renderCardList={(openModal) => (
             <>
               {form.values.bankAccountDetails?.bankAccountDetailsTable.map(
                 (value: any, index: number) => (
-                  <Card
+                  <Flex
                     key={index}
-                    withBorder
-                    padding="md"
-                    radius="md"
-                    w={250}
-                    shadow="sm"
+                    className="shadow-md p-4 rounded-md flex-col  w-[250px] border"
                   >
-                    <Card.Section mb={10}>
-                      <Group position="apart" p={10}>
-                        <div></div>
-                        <Badge c="green">{value.status}</Badge>
-                      </Group>
-                    </Card.Section>
-
-                    <Text
-                      weight={700}
-                      size="lg"
-                      style={{ marginBottom: '0.5rem' }}
-                    >
+                    <Text size="lg" className="font-[700] mb[0.5rem]">
                       {value.bankName}
                     </Text>
                     <Text
@@ -137,43 +128,45 @@ export const BankAccountDetails: React.FC<Props> = ({ form }) => {
                       Account Holders FullName: {value.accountHoldersFullName}
                     </Text>
 
-                    <Card.Section mt={30} withBorder>
-                      <Flex justify={'right'} py={3} px={10}>
-                        <ActionMenu
-                          renderOpenButton={() => <IconMenu size={'1rem'} />}
-                          data={[
-                            {
-                              label: 'Edit',
-                              action: () =>
-                                openModal({
-                                  index,
-                                  value,
-                                  type: 'edit',
-                                }),
-                              icon: <IconPencil size={'1rem'} />,
+                    <Flex className=" justify-end border-t">
+                      <ActionMenu
+                        renderOpenButton={() => <IconMenu size={'1rem'} />}
+                        data={[
+                          {
+                            label: 'Edit',
+                            action: () =>
+                              openModal({
+                                index,
+                                value,
+                                type: 'edit',
+                              }),
+                            icon: <IconPencil size={'1rem'} />,
+                          },
+                          {
+                            label: 'Delete',
+                            action: () => {
+                              form.removeListItem(
+                                'contactPersons.contactPersonsTable',
+                                index,
+                              );
+                              close();
                             },
-                            {
-                              label: 'Delete',
-                              action: () => {
-                                form.removeListItem(
-                                  'bankAccountDetails.bankAccountDetailsTable',
-                                  index,
-                                );
-                                close();
-                              },
-                              icon: <IconTrash size={'1rem'} color="red" />,
-                            },
-                          ]}
-                        />
-                      </Flex>
-                    </Card.Section>
-                  </Card>
+                            icon: <IconTrash size={'1rem'} color="red" />,
+                          },
+                        ]}
+                      />
+                    </Flex>
+                  </Flex>
                 ),
               )}
             </>
           )}
           renderModalForm={(index) => (
-            <>
+            <Card>
+              <LoadingOverlay
+                visible={isLoading}
+                overlayProps={{ radius: 'sm', blur: 2 }}
+              />
               <TextInput
                 label="Account Holder Full Name"
                 id="accountHoldersFullName"
@@ -192,22 +185,23 @@ export const BankAccountDetails: React.FC<Props> = ({ form }) => {
                 label="Bank Name"
                 id="bankName"
                 icon={<IconBuildingBank size="1rem" />}
-                data={[
-                  'CDH Investment Bank',
-                  'Ecobank Malawi',
-                  'FDH Bank',
-                  'First Capital Bank Malawi Limited',
-                  'National Bank of Malawi',
-                  'NBS Bank',
-                  'Standard Bank Malawi',
-                  'Standard Bank Malawi',
-                ]}
+                data={bankList}
                 placeholder="select"
                 searchable
                 nothingFound="No options"
                 {...form.getInputProps(
-                  `bankAccountDetails.bankAccountDetailsTable.${index}.bankName`,
+                  `bankAccountDetails.bankAccountDetailsTable.${index}.bankId`,
                 )}
+                onChange={(val) => {
+                  form.setFieldValue(
+                    `bankAccountDetails.bankAccountDetailsTable.${index}.bankId`,
+                    val,
+                  );
+                  form.setFieldValue(
+                    `bankAccountDetails.bankAccountDetailsTable.${index}.bankName`,
+                    getLabelByValue(bankList, val as string),
+                  );
+                }}
               />
               <TextInput
                 label="Branch Name"
@@ -264,6 +258,7 @@ export const BankAccountDetails: React.FC<Props> = ({ form }) => {
                 {...form.getInputProps(
                   `bankAccountDetails.bankAccountDetailsTable.${index}.status`,
                 )}
+                disabled
               />
               <TextInput
                 label="Hash Value"
@@ -272,14 +267,21 @@ export const BankAccountDetails: React.FC<Props> = ({ form }) => {
                 {...form.getInputProps(
                   `bankAccountDetails.bankAccountDetailsTable.${index}.hashValue`,
                 )}
+                disabled
               />
-            </>
+            </Card>
           )}
           renderModalFormSaveButton={(validateModalForm) => (
-            <Button onClick={() => validateModalForm()}>Save</Button>
+            <Button
+              disabled={isLoading ? true : false}
+              onClick={() => validateModalForm()}
+            >
+              Save
+            </Button>
           )}
           renderModalFormRemoveButton={(index, close, type) => (
             <Button
+              disabled={isLoading ? true : false}
               onClick={() => {
                 if (type == 'new') {
                   form.removeListItem(

@@ -74,32 +74,6 @@ export const AddressInformation: React.FC<Props> = ({ form }) => {
           {...form.getInputProps(`addressInformation.website`)}
         />
       </Stack>
-
-      <Stack my={15}>
-        <CouplerPanel label="Geo Location" id="geoLocation">
-          <Stack my={15}>
-            <TextInput
-              label="x-coordinate"
-              icon={<IconMapPin size={'1rem'} />}
-              id="xCoordinate"
-              {...form.getInputProps(
-                `addressInformation.geoLocation.xCoordinate`,
-              )}
-            />
-          </Stack>
-
-          <Stack my={15}>
-            <TextInput
-              label="y-coordinate"
-              icon={<IconMapPin size={'1rem'} />}
-              id="yCoordinate"
-              {...form.getInputProps(
-                `addressInformation.geoLocation.yCoordinate`,
-              )}
-            />
-          </Stack>
-        </CouplerPanel>
-      </Stack>
     </>
   );
 };

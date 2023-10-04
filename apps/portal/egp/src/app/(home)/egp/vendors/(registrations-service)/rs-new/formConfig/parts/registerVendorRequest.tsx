@@ -7,10 +7,8 @@ import {
   Flex,
   Text,
   Stack,
-  Group,
   NumberInput,
   Divider,
-  LoadingOverlay,
   TextInput,
   Box,
 } from '@mantine/core';
@@ -24,7 +22,6 @@ interface Props {
 
 export const RegisterVendorRequestForm: React.FC<Props> = ({ form }) => {
   const router = useRouter();
-  // Create a function to handle the form submission
   const handleSubmit = (values: typeof form.values) => {
     router.push(
       'rs-new-form?' + createQueryString(values.requesterInformation),
@@ -92,7 +89,7 @@ export const RegisterVendorRequestForm: React.FC<Props> = ({ form }) => {
         <Divider size="md" mt={30} />
 
         <Stack my={10}>
-          <Flex align={'center'} gap={10}>
+          <Flex>
             <Checkbox
               {...form.getInputProps(
                 `requesterInformation.termsAndConditions`,
@@ -106,9 +103,9 @@ export const RegisterVendorRequestForm: React.FC<Props> = ({ form }) => {
             </Text>
           </Flex>
         </Stack>
-        <Group position={'right'} mt="xl">
+        <Flex className="mt-10 justify-end">
           <Button type="submit">Start Registration</Button>
-        </Group>
+        </Flex>
       </form>
     </Box>
   );

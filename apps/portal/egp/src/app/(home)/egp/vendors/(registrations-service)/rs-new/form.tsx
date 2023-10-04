@@ -14,12 +14,11 @@ export default function Form() {
 
   return (
     <SimpleGrid
-      cols={2}
-      p={10}
-      breakpoints={[
-        { maxWidth: 'md', cols: 1, spacing: 'xl' },
-        { maxWidth: 'sm', cols: 1, spacing: 'xl' },
-      ]}
+      cols={{ base: 2, sm: 1, md: 1, lg: 2 }}
+      spacing={{ base: 'xl', sm: 'xl' }}
+      verticalSpacing={{ base: 'xl', sm: 'xl' }}
+      className="p-4"
+      bg={'none'}
     >
       <RegisterVendorRequestForm form={form} />
       <RequestAlertMessage />

@@ -19,7 +19,11 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ data, renderOpenButton }) => {
 
       <Menu.Dropdown>
         {data.map((val, index) => (
-          <Menu.Item key={index} icon={val.icon} onClick={() => val.action()}>
+          <Menu.Item
+            key={index}
+            leftSection={val.icon}
+            onClick={() => val.action()}
+          >
             {val.label}
           </Menu.Item>
         ))}

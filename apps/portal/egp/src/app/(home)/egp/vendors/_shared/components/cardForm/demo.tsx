@@ -90,9 +90,15 @@ function DemoCardForm() {
     form.values.areasOfBusinessInterest.areasOfBusinessInterestInformation.map(
       (value: any, index) => (
         <Stack key={index} my={15}>
-          <Card key={index} withBorder shadow="sm" radius="md">
-            <Card.Section withBorder inheritPadding py="xs">
-              <Text tt="uppercase" size="lg" weight={500} mb="sm" p={4}>
+          <Card key={index} shadow="sm" radius="md">
+            <Card.Section inheritPadding py="xs">
+              <Text
+                tt="uppercase"
+                size="lg"
+                className="font-[500]"
+                mb="sm"
+                p={4}
+              >
                 {value.category}
               </Text>
             </Card.Section>
@@ -146,11 +152,6 @@ function DemoCardForm() {
       <Box mt="lg">
         {selectedCards.length > 0 ? selectedCards : 'No cards selected'}
       </Box>
-
-      <Text size="sm" weight={500} mt="md">
-        Form values:
-      </Text>
-      <Code block>{JSON.stringify(form.values, null, 2)}</Code>
     </Box>
   );
 }

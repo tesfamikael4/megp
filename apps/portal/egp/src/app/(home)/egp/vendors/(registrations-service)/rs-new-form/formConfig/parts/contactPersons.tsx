@@ -31,7 +31,6 @@ export const ContactPersons: React.FC<Props> = ({ form }) => {
               shadow="xs"
               padding="lg"
               radius="md"
-              withBorder
               w={250}
               style={{
                 height: '100%',
@@ -70,69 +69,50 @@ export const ContactPersons: React.FC<Props> = ({ form }) => {
             <>
               {form.values.contactPersons?.contactPersonsTable.map(
                 (value: any, index: number) => (
-                  <Card key={index} withBorder w={250}>
-                    <Card.Section mb={10}>
-                      <Group position="apart" p={10}>
-                        <div></div>
-                        {/* <Badge c="green">active</Badge> */}
-                      </Group>
-                    </Card.Section>
-                    <Text
-                      weight={700}
-                      size="lg"
-                      style={{ marginBottom: '0.5rem' }}
-                    >
+                  <Flex
+                    key={index}
+                    className="shadow-md p-4 rounded-md flex-col  w-[250px] border"
+                  >
+                    <div className=" text-lg font-[600]  truncate">
                       {value.firstName} {value.lastName}
-                    </Text>
-                    <Text
-                      size="sm"
-                      color="gray"
-                      style={{ marginBottom: '0.5rem' }}
-                      w={'220px'}
-                      truncate
-                    >
+                    </div>
+                    <div className=" text-sm text-gray-500  w-[220px]  truncate">
                       Email: {value.email}
-                    </Text>
+                    </div>
 
-                    <Text
-                      size="sm"
-                      color="gray"
-                      style={{ marginBottom: '0.5rem' }}
-                    >
+                    <div className=" text-sm text-gray-500  w-[220px] mb-[1rem] truncate">
+                      {' '}
                       Phone: {value.mobileNumber}
-                    </Text>
-
-                    <Card.Section mt={30} withBorder>
-                      <Flex justify={'right'} py={3} px={10}>
-                        <ActionMenu
-                          renderOpenButton={() => <IconMenu size={'1rem'} />}
-                          data={[
-                            {
-                              label: 'Edit',
-                              action: () =>
-                                openModal({
-                                  index,
-                                  value,
-                                  type: 'edit',
-                                }),
-                              icon: <IconPencil size={'1rem'} />,
+                    </div>
+                    <Flex className=" justify-end border-t">
+                      <ActionMenu
+                        renderOpenButton={() => <IconMenu size={'1rem'} />}
+                        data={[
+                          {
+                            label: 'Edit',
+                            action: () =>
+                              openModal({
+                                index,
+                                value,
+                                type: 'edit',
+                              }),
+                            icon: <IconPencil size={'1rem'} />,
+                          },
+                          {
+                            label: 'Delete',
+                            action: () => {
+                              form.removeListItem(
+                                'contactPersons.contactPersonsTable',
+                                index,
+                              );
+                              close();
                             },
-                            {
-                              label: 'Delete',
-                              action: () => {
-                                form.removeListItem(
-                                  'contactPersons.contactPersonsTable',
-                                  index,
-                                );
-                                close();
-                              },
-                              icon: <IconTrash size={'1rem'} color="red" />,
-                            },
-                          ]}
-                        />
-                      </Flex>
-                    </Card.Section>
-                  </Card>
+                            icon: <IconTrash size={'1rem'} color="red" />,
+                          },
+                        ]}
+                      />
+                    </Flex>
+                  </Flex>
                 ),
               )}
             </>

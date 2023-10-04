@@ -112,15 +112,11 @@ const CardList: React.FC<CardViewProps> = ({
     !error && close();
   };
   return (
-    <Flex align={'center'} justify={'center'}>
+    <Flex>
       <SimpleGrid
-        cols={3}
-        spacing="md"
-        breakpoints={[
-          { maxWidth: 'md', cols: 2, spacing: 'md' },
-          { maxWidth: 'sm', cols: 1, spacing: 'sm' },
-          { maxWidth: 'xs', cols: 1, spacing: 'sm' },
-        ]}
+        cols={{ base: 3, sm: 1, xs: 1, md: 3, lg: 3 }}
+        spacing={{ base: 'md', sm: 'sm', xs: 'sm', md: 'md' }}
+        verticalSpacing={{ base: 'md', sm: 'md' }}
       >
         {renderAddCard(openModal)}
         {renderCardList(openModal)}
@@ -129,12 +125,12 @@ const CardList: React.FC<CardViewProps> = ({
         title={formConfig.title}
         onClose={closeModal}
         opened={opened}
-        size="sm"
+        size="lg"
         padding="lg"
       >
         {renderModalForm(selectedData.index)}
 
-        <Group mt={'md'} position={'right'}>
+        <Group mt={'md'} className="mt-6 justify-end">
           {renderModalFormSaveButton(validateModalForm)}
           {renderModalFormRemoveButton(
             selectedData.index,

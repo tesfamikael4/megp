@@ -1,10 +1,14 @@
 .appShellroot {
-  @apply  w-full bg-[#f7fafc];
+  @apply  w-full flex  ;
 }
 
 .appShellmain {
-  @apply border rounded-lg  min-h-[100vh] shadow-lg;
+  @apply border-l-[1px] w-full  min-h-[100vh] ;
 }
 .appShellChildrenCardHeader{
    @apply font-semibold text-xl
+}
+
+.appShellNavBar{
+   @apply relative min-h-[100vh]
 }

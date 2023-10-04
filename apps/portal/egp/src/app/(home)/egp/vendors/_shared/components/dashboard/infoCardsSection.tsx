@@ -7,7 +7,6 @@ import {
   SimpleGrid,
   Text,
   ThemeIcon,
-  createStyles,
 } from '@mantine/core';
 import { IconBrandPlanetscale, IconChevronRight } from '@tabler/icons-react';
 import { IconDraft, IconMyCompanies } from '../customIcon';
@@ -38,15 +37,7 @@ interface InfoCardProps {
 }
 export function InfoCard({ icon: Icon, title, count }: InfoCardProps) {
   return (
-    <Paper
-      h="100%"
-      shadow="md"
-      px="sm"
-      py="sm"
-      radius="md"
-      withBorder
-      w={'210px'}
-    >
+    <Paper h="100%" shadow="md" px="sm" py="sm" radius="md" w={'210px'}>
       <Flex direction={'column'}>
         <Flex align={'flex-start'} justify={'space-between'}>
           <ThemeIcon variant="light" size={60} radius={60}>
@@ -67,38 +58,29 @@ export function InfoCard({ icon: Icon, title, count }: InfoCardProps) {
   );
 }
 
-const useStyles = createStyles((theme) => ({
-  wrapper: {
-    paddingBottom: `calc(${theme.spacing.xl} * 4)`,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-}));
-
 interface InfoCardsGridProps {
   data?: InfoCardProps[];
 }
 
 export function InfoCardsSection({ data = featuresData }: InfoCardsGridProps) {
-  const { classes } = useStyles();
   const features = data.map((feature, index) => (
     <InfoCard {...feature} key={index} />
   ));
 
   return (
-    <Container className={classes.wrapper}>
+    <Flex className="pb-40 items-center flex-col">
       <SimpleGrid
         mt={20}
-        cols={3}
-        spacing="xl"
-        breakpoints={[
-          { maxWidth: 'md', cols: 2, spacing: 'xl' },
-          { maxWidth: 'sm', cols: 1, spacing: 'xl' },
-        ]}
+        cols={{ base: 3, sm: 1, lg: 2 }}
+        spacing={{ base: 7, sm: 7 }}
+        verticalSpacing={{ base: 7, sm: 7 }}
+        // breakpoints={[
+        //   { maxWidth: 'md', cols: 2, spacing: 'xl' },
+        //   { maxWidth: 'sm', cols: 1, spacing: 'xl' },
+        // ]}
       >
         {features}
       </SimpleGrid>
-    </Container>
+    </Flex>
   );
 }
