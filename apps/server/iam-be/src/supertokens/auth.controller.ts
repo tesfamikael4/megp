@@ -15,10 +15,17 @@ import {
   emailPasswordSignIn,
   updateEmailOrPassword,
 } from 'supertokens-node/recipe/thirdpartyemailpassword';
+import { OrganizationService } from 'src/organization';
+import {
+  CheckSecurityQuestionDto,
+  SetSecurityQuestionDto,
+} from 'src/organization/dto/security-question.dto';
 
 @Controller('auth')
 @ApiTags('auth')
 export class AuthController {
+  constructor(private readonly organizationService: OrganizationService) {}
+
   @Post('change-password')
   @UseGuards(new AuthGuard())
   async changePassword(
@@ -56,6 +63,41 @@ export class AuthController {
         HttpStatus.BAD_REQUEST,
       );
     }
+  }
+
+  @Post('set-security-questions')
+  @UseGuards(new AuthGuard())
+  async setSecurityQuestions(
+    @Body() payload: SetSecurityQuestionDto,
+    @Session() session: SessionContainer,
+  ): Promise<any> {
+    return await this.organizationService.setSecurityQuestions(
+      session.getUserId(),
+      payload,
+    );
+  }
+
+  @Post('check-security-questions')
+  async checkSecurityQuestions(
+    @Body() payload: CheckSecurityQuestionDto,
+  ): Promise<any> {
+    return await this.organizationService.checkSecurityQuestions(payload);
+  }
+
+  @Get('security-questions')
+  @UseGuards(new AuthGuard())
+  async getSecurityQuestions(
+    @Session() session: SessionContainer,
+  ): Promise<any> {
+    return await this.organizationService.getSecurityQuestions(
+      session.getUserId(),
+    );
+  }
+
+  @Get('userinfo')
+  @UseGuards(new AuthGuard())
+  async userinfo(@Session() session: SessionContainer): Promise<any> {
+    return await this.organizationService.getUserInfo(session.getUserId());
   }
 
   @Get('protected')

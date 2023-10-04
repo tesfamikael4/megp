@@ -1,6 +1,31 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { IsArray, IsString } from 'class-validator';
 import { SecurityQuestion } from '../entities/security-question.entity';
+
+export class CheckSecurityQuestionDto {
+  @ApiProperty()
+  @IsString()
+  username: string;
+
+  @ApiProperty({ isArray: true, type: () => Questions })
+  @IsArray()
+  questions: Questions[];
+}
+
+export class SetSecurityQuestionDto {
+  @ApiProperty({ isArray: true, type: () => Questions })
+  @IsArray()
+  questions: Questions[];
+}
+export class Questions {
+  @ApiProperty()
+  @IsString()
+  question: string;
+
+  @ApiProperty()
+  @IsString()
+  answer: string;
+}
 
 export class CreateSecurityQuestionDto {
   @ApiProperty()
