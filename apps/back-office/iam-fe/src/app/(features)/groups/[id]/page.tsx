@@ -73,7 +73,7 @@ export default function GroupPage() {
 
   return (
     <Stack>
-      <Section title="Group Detail">
+      <Section title="Group Details">
         <FormDetail mode="detail" />
       </Section>
       <Relation config={relationConfig} data={data} />
