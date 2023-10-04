@@ -9,24 +9,24 @@ import {
 import { CommonEntity } from 'src/shared/entities/common.entity';
 import { VendorsEntity } from './vendors.entity';
 import { BanksEntity } from './bank.entity';
-@Entity({ name: 'vendors_bank' })
+@Entity({ name: 'vendors_bank11' })
 export class VendorsBankEntity extends CommonEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column()
+  @Column({ nullable: true })
   vendorId: string;
   @Column({ type: 'uuid' })
   bankId: string;
-  @Column()
+  @Column({ nullable: true })
   branch: string;
-  @Column()
+  @Column({ nullable: true })
   accountName: string;
   //legal form of entity
-  @Column()
+  @Column({ nullable: true })
   accountNumber: string;
-  @Column()
+  @Column({ nullable: true })
   AccountType: string;
-  @Column()
+  @Column({ nullable: true })
   isDefualt: boolean;
   @Column({ type: 'jsonb' })
   metaData: JSON;

@@ -20,7 +20,7 @@ export class WorkflowInstanceEntity extends CommonEntity {
   id: string;
   @Column()
   applicationNumber: string;
-  @Column()
+  @Column({ nullable: true })
   requestorId: string;
   @Column()
   status: string;

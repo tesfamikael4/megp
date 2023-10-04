@@ -31,6 +31,10 @@ export class VendorRegistrationsController {
   async getVendors() {
     return await this.regService.getVendors();
   }
+  @Get('get-vendor-status-byId/:vendorId')
+  async getVendorStatusById(@Param('vendorId') vendorId: string) {
+    return await this.regService.getVendorStatusByVendorId(vendorId);
+  }
   @Get('get-vendor-by-vendorId/:vendorId')
   async getVendorByVendorId(@Param('vendorId') vendorId: string) {
     return await this.regService.getVendorId(vendorId);
@@ -39,7 +43,10 @@ export class VendorRegistrationsController {
   async getVendorByuserId(@Param('userId') userId: string) {
     return await this.regService.getVendorByUserId(userId);
   }
-
+  @Get('get-vendor-information-by-vendorId/:vendorId')
+  async getVendorInformationByVendorId(@Param('vendorId') vendorId: string) {
+    return await this.regService.getVendorInformation(vendorId);
+  }
   @Post('add-vendor-information')
   async addVendorInformation(@Body() data: InsertAllDataDto) {
     return await this.regService.addVendorInformations(data);
