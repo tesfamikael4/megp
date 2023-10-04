@@ -30,6 +30,11 @@ import {
 } from './dto/employee.dto';
 import { User } from './entities/user.entity';
 import { CreateOrganizationMandateDto } from './dto/organization-mandate.dto';
+import { SecurityQuestion } from './entities/security-question.entity';
+import {
+  CheckSecurityQuestionDto,
+  SetSecurityQuestionDto,
+} from './dto/security-question.dto';
 
 @Injectable()
 export class OrganizationService {
@@ -43,9 +48,12 @@ export class OrganizationService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
 
+    @InjectRepository(SecurityQuestion)
+    private readonly securityQuestionRepository: Repository<SecurityQuestion>,
+
     @InjectRepository(Office)
     private readonly officeRepository: Repository<Office>,
-  ) { }
+  ) {}
 
   async registerOrganization(superTokenUser: any, formFields: any) {
     try {
@@ -267,19 +275,132 @@ export class OrganizationService {
   }
 
   async removeOffice(id: string): Promise<void> {
-    try {
-      await this.userRepository.delete({ id: id });
-    } catch (error: any) {
-      throw new HttpException(error, HttpStatus.BAD_REQUEST);
-    }
+    await this.userRepository.delete({ id: id });
   }
 
   async getUserInfo(superTokenUserId: string) {
-    try {
-      return await this.userRepository.findOneBy({ superTokenUserId });
-    } catch (error: any) {
-      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    return await this.userRepository.findOne({
+      where: { superTokenUserId },
+      relations: ['organization', 'userProfile'],
+    });
+  }
+
+  async canUserBeCreated(email: string) {
+    const user = await this.userRepository.findOne({
+      where: { email },
+    });
+
+    const result = {
+      superTokenUserId: user.superTokenUserId,
+      canUserBeCreated: false,
+    };
+
+    if (!user || user.status == 'DRAFT') {
+      result['canUserBeCreated'] = true;
+      return result;
     }
+
+    return result;
+  }
+
+  async isSecurityQuestionSet(supertokensUserId: string) {
+    const securityQuestion = await this.securityQuestionRepository.exist({
+      where: {
+        user: {
+          superTokenUserId: supertokensUserId,
+        },
+      },
+    });
+
+    return securityQuestion;
+  }
+
+  async getSecurityQuestions(supertokensUserId: string) {
+    const securityQuestion = await this.securityQuestionRepository.find({
+      where: {
+        user: {
+          superTokenUserId: supertokensUserId,
+        },
+      },
+    });
+
+    return securityQuestion;
+  }
+
+  async setSecurityQuestions(
+    supertokensUserId: string,
+    payload: SetSecurityQuestionDto,
+  ) {
+    if (payload.questions.length != 3) {
+      throw new HttpException(
+        'invalid_security_question_length',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const user = await this.userRepository.findOneBy({
+      superTokenUserId: supertokensUserId,
+    });
+    if (!user) {
+      throw new HttpException('user_not_found', HttpStatus.BAD_REQUEST);
+    }
+
+    await this.securityQuestionRepository.delete({ userId: user.id });
+
+    const securityQuestions = this.securityQuestionRepository.create(
+      payload.questions,
+    );
+
+    securityQuestions.forEach((s) => (s.userId = user.id));
+
+    await this.securityQuestionRepository.save(securityQuestions);
+  }
+
+  async checkSecurityQuestions(payload: CheckSecurityQuestionDto) {
+    if (payload.questions.length != 3) {
+      throw new HttpException(
+        'invalid_security_question_length',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const user = await this.userRepository.findOne({
+      where: [
+        {
+          username: payload.username,
+        },
+        {
+          email: payload.username,
+        },
+      ],
+    });
+
+    if (!user) {
+      throw new HttpException('user_not_found', HttpStatus.BAD_REQUEST);
+    }
+
+    const securityQuestions = await this.securityQuestionRepository.find({
+      where: { userId: user.id },
+    });
+
+    for (const question of payload.questions) {
+      const answered = securityQuestions.find(
+        (q) => q.question == question.question,
+      );
+      if (!answered) {
+        return {
+          status: false,
+        };
+      } else if (answered.answer != question.answer) {
+        return {
+          status: false,
+        };
+      }
+    }
+
+    return {
+      status: true,
+    };
   }
 
   private generateOrganizationCode() {
@@ -296,7 +417,9 @@ export class OrganizationService {
   }
 
   generateUsername() {
-    let result = `me-${Math.floor(Date.now() / 1000)}-${Math.floor(Math.random() * 1000000000).toString()}`;
+    const result = `me-${Math.floor(Date.now() / 1000)}-${Math.floor(
+      Math.random() * 1000000000,
+    ).toString()}`;
     return result;
   }
   async assignMandates(

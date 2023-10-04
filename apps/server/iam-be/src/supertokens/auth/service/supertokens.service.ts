@@ -7,7 +7,10 @@ import ThirdPartyEmailPassword, {
 import Dashboard from 'supertokens-node/recipe/dashboard';
 import { ConfigInjectionToken, AuthModuleConfig } from '../config.interface';
 import { OrganizationService } from 'src/organization';
-import EmailVerification from 'supertokens-node/recipe/emailverification';
+import EmailVerification, {
+  createEmailVerificationLink,
+  sendEmailVerificationEmail,
+} from 'supertokens-node/recipe/emailverification';
 import { SMTPService as EmailVerificationSMTPService } from 'supertokens-node/recipe/emailverification/emaildelivery';
 import { SMTPService } from 'supertokens-node/recipe/thirdpartyemailpassword/emaildelivery';
 import UserRoles from 'supertokens-node/recipe/userroles';
@@ -65,7 +68,7 @@ export class SupertokensService {
           },
         }),
         EmailVerification.init({
-          mode: 'REQUIRED', // or "OPTIONAL"
+          mode: 'OPTIONAL', // 'REQUIRED', // or "OPTIONAL"
           emailDelivery: {
             service: new EmailVerificationSMTPService({
               smtpSettings,
@@ -158,6 +161,10 @@ export class SupertokensService {
                     throw Error('Should never come here');
                   }
 
+                  const primaryEmail = input.formFields.find(
+                    (e) => e.id == 'primaryEmail',
+                  );
+
                   input.formFields.forEach((field) => {
                     if (field.id == 'email') {
                       field.value = organizationService.generateUsername();
@@ -179,15 +186,14 @@ export class SupertokensService {
                       formFields,
                     );
 
-                    const primaryEmail = formFields.find(
-                      (e) => e.id == 'primaryEmail',
-                    );
                     await EmailVerification.sendEmailVerificationEmail(
                       'public',
                       response.user.id,
                       primaryEmail.value,
                       response,
                     );
+
+                    response.user['isSecurityQuestionSet'] = false;
                   }
 
                   return response;
@@ -195,6 +201,15 @@ export class SupertokensService {
                 emailPasswordSignInPOST: async function (input) {
                   const response =
                     await originalImplementation.emailPasswordSignInPOST(input);
+
+                  if (response.status === 'OK') {
+                    const isSecurityQuestionSet =
+                      await organizationService.isSecurityQuestionSet(
+                        response.user.id,
+                      );
+                    response.user['isSecurityQuestionSet'] =
+                      isSecurityQuestionSet;
+                  }
 
                   return response;
                 },
