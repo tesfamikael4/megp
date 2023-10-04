@@ -67,3 +67,5 @@ deploy:
     - docker pull $CI_REGISTRY_IMAGE/iam-fe:latest
     - docker container rm -f iam-fe || true
     - docker run -d -p 5511:5511 --name iam-fe $CI_REGISTRY_IMAGE/iam-fe:latest
+  only:
+    - main
