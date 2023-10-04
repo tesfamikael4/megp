@@ -76,7 +76,7 @@ export default function GroupPage() {
       <Section title="Group Detail">
         <FormDetail mode="detail" />
       </Section>
-      {/* <Relation config={relationConfig} data={data} /> */}
+      <Relation config={relationConfig} data={data} />
     </Stack>
   );
 }
