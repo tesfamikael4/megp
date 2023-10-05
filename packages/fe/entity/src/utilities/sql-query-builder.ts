@@ -80,7 +80,7 @@ import { logger } from '@megp/core-fe';
 // const queryBuilder: SelectQueryBuilder<User> = getConnection()
 //     .getRepository(User)
 //     .createQueryBuilder('user');
-
+// test
 // // Define your CollectionQuery
 // const query: CollectionQuery = {
 //     select: ['id', 'name'],
