@@ -3,14 +3,17 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 interface Entity {
   id: string;
 }
-
+interface EntityCollection<T> {
+  items: T[];
+  total: number;
+}
 export const createEntitySlice = <T extends Entity>(
   api: ReturnType<typeof createApi>,
   entityName: string,
 ): any =>
   api.injectEndpoints({
     endpoints: (builder) => ({
-      list: builder.query<T[], void>({
+      list: builder.query<EntityCollection<T>, void>({
         query: () => ({
           url: `/${entityName.toLowerCase()}`,
           method: 'GET',
@@ -18,7 +21,7 @@ export const createEntitySlice = <T extends Entity>(
         providesTags: (result) =>
           result
             ? [
-                ...result.map(({ id }) => ({ type: entityName, id })),
+                ...result.items.map(({ id }) => ({ type: entityName, id })),
                 { type: entityName, id: 'LIST' },
               ]
             : [{ type: entityName, id: 'LIST' }],
@@ -69,7 +72,7 @@ export const EntitySliceApi = createApi({
   tagTypes: ['entity'],
   baseQuery: fetchBaseQuery({ baseUrl: '/' }),
   endpoints: (builder) => ({
-    list: builder.query<any[], void>({
+    list: builder.query<{ items: any[] }, void>({
       query: () => ({
         url: '/entity',
         method: 'Get',
@@ -77,7 +80,10 @@ export const EntitySliceApi = createApi({
       providesTags: (result) =>
         result
           ? [
-              ...result.map(({ id }) => ({ type: 'entity' as const, id })),
+              ...result.items.map(({ id }) => ({
+                type: 'entity' as const,
+                id,
+              })),
               { type: 'entity', id: 'LIST' },
             ]
           : [{ type: 'entity', id: 'LIST' }],

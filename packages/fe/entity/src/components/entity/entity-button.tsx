@@ -1,10 +1,7 @@
 import { Group, Button } from '@mantine/core';
-import {
-  IconDeviceFloppy,
-  IconBackspace,
-  IconTrashX,
-} from '@tabler/icons-react';
+import { IconDeviceFloppy, IconBackspace } from '@tabler/icons-react';
 import React from 'react';
+import { DeleteButton } from './delete-popup';
 
 interface EntityButtonProps {
   mode?: 'new' | 'detail';
@@ -61,15 +58,9 @@ export function EntityButton({
               Update
             </Button>
           ) : null}
+
           {onDelete ? (
-            <Button
-              color="red"
-              leftSection={<IconTrashX size={14} stroke={1.6} />}
-              loading={isDeleting}
-              onClick={onDelete}
-            >
-              Delete
-            </Button>
+            <DeleteButton isDeleting={isDeleting} onDelete={onDelete} />
           ) : null}
         </>
       )}

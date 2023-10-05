@@ -8,7 +8,7 @@ export interface User {
   email: string;
   username: string;
   status: string;
-  isActive: boolean;
+  isActive: boolean | string;
   organizationId: string;
   userRoles?: UserRole[];
   userUnits?: UserUnit[];
