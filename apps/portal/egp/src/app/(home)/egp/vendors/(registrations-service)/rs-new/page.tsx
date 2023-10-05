@@ -17,13 +17,16 @@ export default function RsNewPage() {
   } = useGetApplicationStatusByUserIdQuery({
     userId: generateAndSaveKey() as string,
   });
-
   React.useEffect(() => {
-    applicationDataStatus == 'fulfilled' &&
-      applicationData &&
+    if (applicationDataStatus == 'fulfilled' && applicationData) {
       applicationData?.status == 'Save as Draft' &&
-      router.push('draft-applications');
+        router.push('draft-applications');
+
+      applicationData?.status == 'Submitted' &&
+        router.push('track-applications');
+    }
     return () => {};
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [applicationData, applicationDataStatus]);
 
   return (

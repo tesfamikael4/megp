@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { ActionIcon, Box, LoadingOverlay, Paper, Text } from '@mantine/core';
 import Link from 'next/link';
 import {
@@ -31,22 +31,16 @@ const DraftApplication = () => {
       status: applicationDataDeleteStatus,
     },
   ] = useLazyDeleteApplicationByVendorIdQuery();
-
-  useEffect(() => {
-    isApplicationDataDeleteError &&
-      notifications.show({
-        title: 'Notification Error',
-        message: 'Error!',
-      });
-
-    applicationDataDeleteStatus === 'fulfilled' &&
-      notifications.show({
-        title: 'Notification',
-        message: 'Deleted successfully!',
-      });
-
-    return () => {};
-  }, [applicationDataDeleteStatus, isApplicationDataDeleteError]);
+  isApplicationDataDeleteError &&
+    notifications.show({
+      title: 'Notification Error',
+      message: 'Error!',
+    });
+  applicationDataDeleteStatus === 'fulfilled' &&
+    notifications.show({
+      title: 'Notification',
+      message: 'Deleted successfully!',
+    });
 
   return (
     <Flex className="flex-col w-full h-full p-4">
@@ -56,18 +50,8 @@ const DraftApplication = () => {
       />
       {applicationDataStatus == 'fulfilled' &&
       applicationData &&
-      applicationData?.status == 'Save as Draft' ? (
+      applicationData?.status == 'Submitted' ? (
         <Flex className="px-2 py-6 flex-col rounded-md  sm:px-8 border shadow-md border-gray-300  hover:shadow-lg hover:mb-1 relative">
-          <Box
-            className="absolute right-3 top-3 hover:border hover:border-red-600 hover:rounded-md"
-            onClick={() =>
-              triggerDelete({
-                vendorId: applicationData.id,
-              })
-            }
-          >
-            <IconTrash color="red" size={'1rem'} />
-          </Box>
           <Flex className="items-center justify-between mb-2">
             <Flex className="text-md font-semibold text-slate-500 gap-1 items-center">
               <IconBuilding size={'1rem'} />
@@ -87,13 +71,6 @@ const DraftApplication = () => {
                 {applicationData.tin}
               </p>
             </Flex>
-
-            <Link
-              href={`rs-new-form?applicationId=${applicationData.id}`}
-              className='className="inline-flex justify-center rounded-lg text-sm font-semibold py-2 px-3 text-slate-900 ring-1 ring-slate-900/10 hover:ring-slate-900/20 hover:bg-slate-400"'
-            >
-              Continue
-            </Link>
           </Flex>
         </Flex>
       ) : (

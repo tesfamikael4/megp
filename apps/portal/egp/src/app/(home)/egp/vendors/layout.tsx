@@ -17,7 +17,7 @@ interface Props {
 export default function VendorLayout({ children }: Props) {
   const [opened] = useDisclosure();
   const path = usePathname();
-
+  console.log(path);
   useEffect(() => {
     if (doesTokenExist()) {
       redirect('/auth/login');
@@ -49,14 +49,15 @@ export default function VendorLayout({ children }: Props) {
               <Text size={'xl'} className={style.appShellChildrenCardHeader}>
                 {useDisplayNameFinder(navLinks)}
               </Text>
-              {}
-              <Button
-                onClick={() =>
-                  document.getElementById('res-big-form-submit')?.click()
-                }
-              >
-                Submit
-              </Button>
+              {path === '/egp/vendors/rs-new-form' && (
+                <Button
+                  onClick={() =>
+                    document.getElementById('res-big-form-submit')?.click()
+                  }
+                >
+                  Submit
+                </Button>
+              )}
             </Flex>
           </Card.Section>
           <Card.Section>{children}</Card.Section>

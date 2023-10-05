@@ -41,7 +41,6 @@ export const BankAccountDetails: React.FC<Props> = ({ form }) => {
           label: val.bankName,
         }))
       : [];
-  console.log(bankList);
 
   return (
     <>
@@ -188,7 +187,6 @@ export const BankAccountDetails: React.FC<Props> = ({ form }) => {
                 data={bankList}
                 placeholder="select"
                 searchable
-                nothingFound="No options"
                 {...form.getInputProps(
                   `bankAccountDetails.bankAccountDetailsTable.${index}.bankId`,
                 )}
@@ -225,7 +223,6 @@ export const BankAccountDetails: React.FC<Props> = ({ form }) => {
                 data={['Local', 'Foreign']}
                 placeholder="select"
                 searchable
-                nothingFound="No options"
                 {...form.getInputProps(
                   `bankAccountDetails.bankAccountDetailsTable.${index}.currency`,
                 )}
@@ -254,7 +251,6 @@ export const BankAccountDetails: React.FC<Props> = ({ form }) => {
                 data={['Active', 'Inactive']}
                 placeholder="select"
                 searchable
-                nothingFound="No options"
                 {...form.getInputProps(
                   `bankAccountDetails.bankAccountDetailsTable.${index}.status`,
                 )}

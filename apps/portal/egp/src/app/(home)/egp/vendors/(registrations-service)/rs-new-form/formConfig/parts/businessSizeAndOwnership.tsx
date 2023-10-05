@@ -31,7 +31,6 @@ export const BusinessSizeAndOwnership: React.FC<Props> = ({ form }) => {
               data={['USD', 'ETB', 'EUR', 'GBP', 'KW']}
               placeholder="select"
               searchable
-              nothingFound="No options"
               {...form.getInputProps(
                 `businessSizeAndOwnership.registeredCapital.currency`,
               )}
@@ -62,7 +61,6 @@ export const BusinessSizeAndOwnership: React.FC<Props> = ({ form }) => {
               data={['USD', 'ETB', 'EUR', 'GBP', 'KW']}
               placeholder="select"
               searchable
-              nothingFound="No options"
               {...form.getInputProps(
                 `businessSizeAndOwnership.paidUpCapital.currency`,
               )}
@@ -88,7 +86,6 @@ export const BusinessSizeAndOwnership: React.FC<Props> = ({ form }) => {
           data={['Malawian', 'Local', 'Foreign', 'Mixed']}
           placeholder="select"
           searchable
-          nothingFound="No options"
           {...form.getInputProps(`businessSizeAndOwnership.ownershipType`)}
         />
       </Stack>

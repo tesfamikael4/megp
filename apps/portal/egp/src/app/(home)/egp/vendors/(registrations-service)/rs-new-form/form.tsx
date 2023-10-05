@@ -8,7 +8,7 @@ import {
   Tabs,
   Text,
 } from '@mantine/core';
-import React from 'react';
+import React, { useRef } from 'react';
 import { useForm, zodResolver } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import {
@@ -26,10 +26,18 @@ import {
   BankAccountDetails,
   SupportingDocuments,
 } from './formConfig/parts';
-import { initialValues } from './formConfig/initialValues';
+import {
+  InitialValues,
+  initialValues as initialValuesObject,
+} from './formConfig/initialValues';
 import { schema } from './formConfig/schema';
 import { useLazySaveFormQuery } from '@/store/api/vendor_registration/query';
-import { randomId } from '@mantine/hooks';
+import { randomId, useDisclosure } from '@mantine/hooks';
+import { injectFormValue } from './formConfig/injectFormValue';
+import { PopupModal } from '../../_shared/components/modal';
+import { IconDraft } from '../../_shared/components/customIcon/index';
+import { useRouter } from 'next/navigation';
+
 export default function Form({
   formData,
   formInitiationData,
@@ -37,12 +45,14 @@ export default function Form({
   formData: any;
   formInitiationData: any;
 }) {
-  const form = useForm({
+  const [opened, modalHandler] = useDisclosure();
+  const navigator = useRouter();
+  const initialValues = useRef({ ...initialValuesObject }).current;
+  const form = useForm<InitialValues>({
     initialValues,
-    //  validate: zodResolver(schema),
+    validate: zodResolver(schema),
     validateInputOnBlur: true,
   });
-
   const [
     saveFormTrigger,
     {
@@ -54,130 +64,24 @@ export default function Form({
   ] = useLazySaveFormQuery();
 
   React.useEffect(() => {
-    return () => {
-      if (formData) {
-        form.setFieldValue('basicRegistration', {
-          ...formData.metaData.basicRegistration,
+    if (isSaveFormSuccess && saveFormStatus === 'fulfilled' && saveFormData) {
+      saveFormData.status === 'Save as Draft' &&
+        notifications.show({
+          title: 'Notification',
+          message: 'Saved!',
         });
+      saveFormData.status === 'Submitted' && modalHandler.open();
 
-        form.setFieldValue('addressInformation', {
-          ...formData.metaData.addressInformation,
-        });
-        form.setFieldValue('addressInformation.geoLocation', {
-          ...formData.metaData.addressInformation.geoLocation,
-        });
-
-        form.setFieldValue('businessSizeAndOwnership', {
-          ...formData.metaData.businessSizeAndOwnership,
-        });
-        form.setFieldValue('businessSizeAndOwnership.registzeredCapital', {
-          ...formData.metaData.businessSizeAndOwnership.registeredCapital,
-        });
-        form.setFieldValue('businessSizeAndOwnership.paidUpCapital', {
-          ...formData.metaData.businessSizeAndOwnership.paidUpCapital,
-        });
-        formData.metaData.contactPersons.contactPersonsTable.map((val, index) =>
-          form.insertListItem(`contactPersons.contactPersonsTable`, {
-            ...val,
-            key: randomId(),
-          }),
-        );
-        formData.bankAccountDetail.map((val, index) =>
-          form.reorderListItem(
-            `bankAccountDetails.bankAccountDetailsTable.${index}`,
-            {
-              ...val,
-              key: randomId(),
-            },
-          ),
-        );
-        formData.beneficialOwnership.map((val, index) =>
-          form.reorderListItem(
-            `beneficialOwnership.beneficialOwnershipTable.${index}`,
-            {
-              ...val,
-              key: randomId(),
-            },
-          ),
-        );
-        formData.shareholders.map((val, index) =>
-          form.reorderListItem(`shareHolders.shareHoldersTable.${index}`, {
-            ...val,
-            key: randomId(),
-          }),
-        );
-      }
-    };
-  }, []);
-
-  React.useEffect(() => {
-    if (
-      isSaveFormSuccess &&
-      saveFormStatus === 'fulfilled' &&
-      saveFormData &&
-      saveFormData.status === 'Save as Draft'
-    ) {
-      notifications.show({
-        title: 'Notification',
-        message: 'Saved!',
-      });
-      console.log('saveFormData', saveFormData);
-      form.reset();
-
-      form.setFieldValue('basicRegistration', {
-        ...saveFormData.basicRegistration,
-      });
-
-      form.setFieldValue('addressInformation', {
-        ...saveFormData.addressInformation,
-      });
-      form.setFieldValue('addressInformation.geoLocation', {
-        ...saveFormData.addressInformation.geoLocation,
-      });
-
-      form.setFieldValue('businessSizeAndOwnership', {
-        ...saveFormData.businessSizeAndOwnership,
-      });
-      form.setFieldValue('businessSizeAndOwnership.registeredCapital', {
-        ...saveFormData.businessSizeAndOwnership.registeredCapital,
-      });
-      form.setFieldValue('businessSizeAndOwnership.paidUpCapital', {
-        ...saveFormData.businessSizeAndOwnership.paidUpCapital,
-      });
-      saveFormData.contactPersons.contactPersonsTable &&
-        saveFormData.contactPersons.contactPersonsTable.map((val, index) =>
-          form.insertListItem(`contactPersons.contactPersonsTable`, {
-            ...val,
-          }),
-        );
-      saveFormData.bankAccountDetails.bankAccountDetailsTable &&
-        saveFormData.bankAccountDetails.bankAccountDetailsTable.map(
-          (val, index) =>
-            form.insertListItem(`bankAccountDetails.bankAccountDetailsTable`, {
-              ...val,
-            }),
-        );
-      saveFormData.beneficialOwnership.beneficialOwnershipTable &&
-        saveFormData.beneficialOwnership.beneficialOwnershipTable.map(
-          (val, index) =>
-            form.insertListItem(
-              `beneficialOwnership.beneficialOwnershipTable`,
-              {
-                ...val,
-              },
-            ),
-        );
-      saveFormData.shareHolders.shareHoldersTable &&
-        saveFormData.shareHolders.shareHoldersTable.map((val, index) =>
-          form.insertListItem(`shareHolders.shareHoldersTable`, {
-            ...val,
-          }),
-        );
+      injectFormValue(form, saveFormData);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSaveFormSuccess, saveFormData, saveFormStatus]);
 
   React.useEffect(() => {
     return () => {
+      if (formData) {
+        injectFormValue(form, formData);
+      }
       if (formInitiationData) {
         formInitiationData.data.companyName &&
           form.setFieldValue(
@@ -189,10 +93,10 @@ export default function Form({
             'basicRegistration.formOfBusiness',
             formInitiationData.data.legalFormofEntity,
           );
-        formInitiationData.data.country &&
+        formInitiationData.data.Country &&
           form.setFieldValue(
             'basicRegistration.country',
-            formInitiationData.data.country,
+            formInitiationData.data.Country,
           );
         form.setFieldValue(
           'basicRegistration.tinNumber',
@@ -202,62 +106,66 @@ export default function Form({
         );
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // if (
-  //   isSaveFormSuccess &&
-  //   saveFormStatus === 'fulfilled' &&
-  //   saveFormData &&
-  //   saveFormData.status === 'Save as Draft'
-  // ) {
-  //   return (
-  //     <PopupModal opened={opened} modalHandler={modalHandler}>
-  //       <div className="sm:p-6 max-w-2xl sm:max-w-2xl w-full sm:w-full  transition-all shadow-box text-left  bg-white rounded-md overflow-hidden transform-translate-rotate-skew-scale relative">
-  //         <div className=" rounded-full flex justify-center items-center w-12 h-12 mx-auto">
-  //           <IconDraft />
-  //         </div>
-  //         <Text size="xl" className="sm:mt-3 text-center my-1 ">
-  //           Application Form Submitted Successfully
-  //         </Text>
-  //         <Text size="sm" className="sm:mt-3 text-center my-1 ">
-  //           TN:5656/576768/57676
-  //         </Text>
-  //       </div>
-  //     </PopupModal>
-  //   );
-  // }
   const handleSubmit = (values: typeof form.values) => {
-    // saveFormTrigger({
-    //   data: {
-    //     userId: generateAndSaveKey() as string,
-    //     status: 'Save as Draft',
-    //     id: '',
-    //     data: {
-    //       ...values,
-    //     },
-    //   },
-    // });
-  };
-  const handleSaveAsDraft = (values: typeof form.values) => {
-    console.log('Form Value', values);
     saveFormTrigger({
       data: {
         userId: generateAndSaveKey() as string,
-        status: 'Save as Draft',
-        id: '',
+        status: 'Save',
+        id: formData ? formData.id : '',
         data: {
           ...values,
         },
       },
     });
   };
+  const handleSaveAsDraft = (values: typeof form.values) => {
+    saveFormTrigger({
+      data: {
+        userId: generateAndSaveKey() as string,
+        status: 'Save as Draft',
+        id: formData ? formData.id : '',
+        data: {
+          ...values,
+        },
+      },
+    });
+  };
+
   return (
     <Card p={0} className="shadow-md">
       <LoadingOverlay
         visible={isSaveFormLoading}
         overlayProps={{ radius: 'sm', blur: 2 }}
       />
-
+      {opened ? (
+        <PopupModal
+          opened={opened}
+          modalHandler={{
+            ...modalHandler,
+            close: () => {
+              modalHandler.close();
+              navigator.push('track-applications');
+            },
+          }}
+        >
+          <div className="sm:p-6 max-w-2xl sm:max-w-2xl w-full sm:w-full  transition-all shadow-box text-left  bg-white rounded-md overflow-hidden transform-translate-rotate-skew-scale relative">
+            <div className=" rounded-full flex justify-center items-center w-12 h-12 mx-auto">
+              <IconDraft />
+            </div>
+            <Text size="xl" className="sm:mt-3 text-center my-1 ">
+              Application Form Submitted Successfully
+            </Text>
+            <Text size="sm" className="sm:mt-3 text-center my-1 ">
+              TN:5656/576768/57676
+            </Text>
+          </div>
+        </PopupModal>
+      ) : (
+        ''
+      )}
       <Tabs
         defaultValue="basicRegistration"
         orientation="vertical"
@@ -377,10 +285,6 @@ export default function Form({
           </Flex>
         </Flex>
       </Tabs>
-      <Text size="sm" fw={500} mt="md">
-        Form values:
-      </Text>
-      <Code block>{JSON.stringify(form.values, null, 2)}</Code>
     </Card>
   );
 }

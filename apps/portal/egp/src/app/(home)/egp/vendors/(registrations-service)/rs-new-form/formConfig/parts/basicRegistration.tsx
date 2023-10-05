@@ -1,4 +1,4 @@
-import { Flex, Stack, TextInput } from '@mantine/core';
+import { Flex, Select, Stack, TextInput } from '@mantine/core';
 import React from 'react';
 
 interface Props {
@@ -18,11 +18,32 @@ export const BasicRegistration: React.FC<Props> = ({ form }) => {
       </Stack>
 
       <Stack my={15}>
-        <TextInput
+        <Select
           label="Form of Business"
           name="formOfBusiness"
           id="formOfBusiness"
-          disabled
+          data={[
+            {
+              label: 'Sole Proprietorship',
+              value: 'Sole Proprietorship',
+            },
+            {
+              label: 'Partnership',
+              value: 'Partnership',
+            },
+            {
+              label: 'Private Limited Company',
+              value: 'Private Limited Company',
+            },
+            {
+              label: 'Share Company',
+              value: 'Share Company',
+            },
+            {
+              label: 'Government-Owned Enterprise',
+              value: 'Government-Owned Enterprise',
+            },
+          ]}
           {...form.getInputProps(`basicRegistration.formOfBusiness`)}
         />
       </Stack>
@@ -32,7 +53,6 @@ export const BasicRegistration: React.FC<Props> = ({ form }) => {
           label="Business/Company Origin"
           name="businessCompanyOrigin"
           id="businessCompanyOrigin"
-          disabled
           {...form.getInputProps(`basicRegistration.businessCompanyOrigin`)}
         />
       </Stack>
@@ -42,7 +62,6 @@ export const BasicRegistration: React.FC<Props> = ({ form }) => {
           label="District"
           name="district"
           id="district"
-          disabled
           {...form.getInputProps(`basicRegistration.district`)}
         />
       </Stack>
@@ -62,7 +81,6 @@ export const BasicRegistration: React.FC<Props> = ({ form }) => {
           label="Tin Number"
           name="tinNumber"
           id="tinNumber"
-          disabled
           {...form.getInputProps(`basicRegistration.tinNumber`)}
         />
       </Stack>

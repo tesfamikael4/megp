@@ -1,27 +1,24 @@
 import { vendorRegistrationSlice } from './slice';
 import {
-  BankListResponseProps,
-  FormInitiationRequestProps,
-  FormSubmissionRequestProps,
-  FormSubmissionResponseProps,
-  GetApplicationByUserIdResponseProps,
-  AreasOfBusinessInterestCategoriesListResponseProps,
-  AreasOfBusinessInterestPriceRangeResponseProps,
+  BankListResponse,
+  FormInitiationRequest,
+  FormSubmissionRequest,
+  FormSubmissionResponse,
+  GetApplicationByUserIdResponse,
+  AreasOfBusinessInterestCategoriesListResponse,
+  AreasOfBusinessInterestPriceRangeResponse,
 } from './type';
 export const apiVendorRegistrationQuery =
   vendorRegistrationSlice.injectEndpoints({
     endpoints: (builder) => ({
-      saveForm: builder.query<
-        FormSubmissionResponseProps,
-        FormSubmissionRequestProps
-      >({
+      saveForm: builder.query<FormSubmissionResponse, FormSubmissionRequest>({
         query: (data) => ({
           url: `api/VendorRegistrations/add-vendor-information`,
           method: 'POST',
           body: data,
         }),
       }),
-      getFormInitiationRequest: builder.query<any, FormInitiationRequestProps>({
+      getFormInitiationRequest: builder.query<any, FormInitiationRequest>({
         query: (payload) => ({
           url: `api/TinRegistrationDatabaseController/tin-registration-database-service-by-tinNumber`,
           method: 'GET',
@@ -44,7 +41,7 @@ export const apiVendorRegistrationQuery =
         }),
       }),
       getApplicationByVendorId: builder.query<
-        GetApplicationByUserIdResponseProps,
+        GetApplicationByUserIdResponse,
         { vendorId: string }
       >({
         query: (payload) => ({
@@ -53,11 +50,11 @@ export const apiVendorRegistrationQuery =
         }),
       }),
       getDraftApplicationByUserId: builder.query<
-        GetApplicationByUserIdResponseProps,
+        GetApplicationByUserIdResponse,
         { vendorId: string }
       >({
         query: (payload) => ({
-          url: `api/VendorRegistrations/get-vendor-by-vendorId/${payload.vendorId}`,
+          url: `api/VendorRegistrations/get-vendor-information-by-vendorId/${payload.vendorId}`,
           method: 'GET',
         }),
       }),
@@ -68,14 +65,14 @@ export const apiVendorRegistrationQuery =
           method: 'DELETE',
         }),
       }),
-      getBankList: builder.query<BankListResponseProps[], any>({
+      getBankList: builder.query<BankListResponse[], any>({
         query: () => ({
           url: `api/BankAccountDetail/fetch-bank`,
           method: 'GET',
         }),
       }),
       getAreasOfBusinessInterestCategoriesList: builder.query<
-        AreasOfBusinessInterestCategoriesListResponseProps,
+        AreasOfBusinessInterestCategoriesListResponse,
         any
       >({
         query: () => ({
@@ -84,11 +81,11 @@ export const apiVendorRegistrationQuery =
         }),
       }),
       getAreasOfBusinessInterestPriceRange: builder.query<
-        AreasOfBusinessInterestPriceRangeResponseProps,
+        AreasOfBusinessInterestPriceRangeResponse,
         any
       >({
         query: () => ({
-          url: `api/ServicePricing/get-service-prices`,
+          url: `api/Service-pricing`,
           method: 'GET',
         }),
       }),

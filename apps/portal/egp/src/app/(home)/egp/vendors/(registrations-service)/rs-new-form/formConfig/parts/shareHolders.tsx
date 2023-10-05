@@ -74,8 +74,10 @@ export const ShareHolders: React.FC<Props> = ({ form }) => {
             <>
               {form.values.shareHolders?.shareHoldersTable.map(
                 (value: any, index: number) => (
-                  <Card key={index} w={250}>
-                    <Card.Section mb={10}></Card.Section>
+                  <Flex
+                    key={index}
+                    className="shadow-md p-4 rounded-md flex-col  w-[250px] border"
+                  >
                     <Text size="lg" style={{ marginBottom: '0.5rem' }}>
                       {value.firstName} {value.lastName}
                     </Text>
@@ -97,37 +99,35 @@ export const ShareHolders: React.FC<Props> = ({ form }) => {
                       share: %{value.share}
                     </Text>
 
-                    <Card.Section mt={30}>
-                      <Flex justify={'right'} py={3} px={10}>
-                        <ActionMenu
-                          renderOpenButton={() => <IconMenu size={'1rem'} />}
-                          data={[
-                            {
-                              label: 'Edit',
-                              action: () =>
-                                openModal({
-                                  index,
-                                  value,
-                                  type: 'edit',
-                                }),
-                              icon: <IconPencil size={'1rem'} />,
+                    <Flex className=" justify-end border-t">
+                      <ActionMenu
+                        renderOpenButton={() => <IconMenu size={'1rem'} />}
+                        data={[
+                          {
+                            label: 'Edit',
+                            action: () =>
+                              openModal({
+                                index,
+                                value,
+                                type: 'edit',
+                              }),
+                            icon: <IconPencil size={'1rem'} />,
+                          },
+                          {
+                            label: 'Delete',
+                            action: () => {
+                              form.removeListItem(
+                                'beneficialOwnership.beneficialOwnershipTable',
+                                index,
+                              );
+                              close();
                             },
-                            {
-                              label: 'Delete',
-                              action: () => {
-                                form.removeListItem(
-                                  'shareHolders.shareHoldersTable',
-                                  index,
-                                );
-                                close();
-                              },
-                              icon: <IconTrash size={'1rem'} color="red" />,
-                            },
-                          ]}
-                        />
-                      </Flex>
-                    </Card.Section>
-                  </Card>
+                            icon: <IconTrash size={'1rem'} color="red" />,
+                          },
+                        ]}
+                      />
+                    </Flex>
+                  </Flex>
                 ),
               )}
             </>
@@ -161,7 +161,6 @@ export const ShareHolders: React.FC<Props> = ({ form }) => {
                   data={nationalityOptions}
                   placeholder="select"
                   searchable
-                  nothingFound="No options"
                   {...form.getInputProps(
                     `shareHolders.shareHoldersTable.${index}.nationality`,
                   )}

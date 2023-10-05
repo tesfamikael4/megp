@@ -1,13 +1,5 @@
 import React from 'react';
-import {
-  Card,
-  Stack,
-  TextInput,
-  Group,
-  Text,
-  Flex,
-  Button,
-} from '@mantine/core';
+import { Card, Stack, TextInput, Flex, Button } from '@mantine/core';
 import CardList from '../../../../_shared/components/cardList';
 import ActionMenu from '../../../../_shared/components/actionMenu';
 import { IconMenu, IconPencil, IconPlus, IconTrash } from '@tabler/icons-react';
