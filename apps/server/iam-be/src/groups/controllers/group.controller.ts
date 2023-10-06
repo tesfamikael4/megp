@@ -17,6 +17,7 @@ import { CollectionQuery } from 'src/shared/collection-query';
 import { AllowAnonymous, AuthGuard } from 'src/supertokens';
 import { CreateGroupDto, UpdateGroupDto } from '../dto/group.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { CollectionQueryNew } from 'src/shared/collection-query/query';
 
 @Controller('groups')
 @ApiTags('groups')
@@ -31,6 +32,14 @@ export class GroupController extends EntityCrudController<Group> {
     @Query() query: CollectionQuery,
   ): Promise<DataResponseFormat<Group>> {
     return await super.findAll(query);
+  }
+
+  @Get('test')
+  @AllowAnonymous()
+  async getAll(
+    @Query() query: CollectionQueryNew,
+  ): Promise<DataResponseFormat<Group>> {
+    return await this.groupService.getAllGroups(query);
   }
 
   @Post()
