@@ -23,17 +23,26 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 5511
-        env: {
-         "IAM_BACK_OFFICE_DOMAIN":"http://196.189.44.10:5511",
-         "NEXT_PUBLIC_AUTH_API":"",
-         "NEXT_PUBLIC_IAM_API":"http://196.189.118.110:3569/api",
-         "NEXT_PUBLIC_VENDOR_API":"http://196.189.118.110:6633",
-         "NEXT_PUBLIC_ADMINISTRATION_API":"",
-         "NEXT_PUBLIC_PLANNING_API":"",
-         "NEXT_PUBLIC_TENDER_API":"",
-         "NEXT_PUBLIC_CONTRACT_API":"",
-         "PORT":"5511"
-        }
+        env:
+        - name: IAM_BACK_OFFICE_DOMAIN
+          value: "http://196.189.44.10:5511"
+        - name: NEXT_PUBLIC_AUTH_API
+          value: ""
+        - name: NEXT_PUBLIC_IAM_API
+          value: "http://196.189.118.110:3569/api"
+        - name: NEXT_PUBLIC_VENDOR_API
+          value: "http://196.189.118.110:6633"
+        - name: NEXT_PUBLIC_ADMINISTRATION_API
+          value: ""
+        - name: NEXT_PUBLIC_PLANNING_API
+          value: ""
+        - name: NEXT_PUBLIC_TENDER_API
+          value: ""
+        - name: NEXT_PUBLIC_CONTRACT_API
+          value: ""
+        - name: PORT
+          value: "5511"
+
 ---
 apiVersion: v1
 kind: Service
