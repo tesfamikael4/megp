@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: iam-be-deployment
+  namespace: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: iam-be
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: iam-be
+        version: v1
+    spec:
+      imagePullSecrets:
+      - name: gitlab-secret
+      containers:
+      - name: iam-be
+        image: gitlab.peragosystems.com:5050/megp/megp/iam-fe:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        env: {
+         "IAM_BACK_OFFICE_DOMAIN":"http://196.189.44.10:5511",
+         "NEXT_PUBLIC_AUTH_API":"",
+         "NEXT_PUBLIC_IAM_API":"http://196.189.118.110:3569/api",
+         "NEXT_PUBLIC_VENDOR_API":"http://196.189.118.110:6633",
+         "NEXT_PUBLIC_ADMINISTRATION_API":"",
+         "NEXT_PUBLIC_PLANNING_API":"",
+         "NEXT_PUBLIC_TENDER_API":"",
+         "NEXT_PUBLIC_CONTRACT_API":"",
+         "PORT":"5511"
+        }
