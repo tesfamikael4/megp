@@ -20,6 +20,7 @@ interface GridProps<T> {
   options: any;
   table: t.Table<T>;
   data: any[];
+  isLoading?: boolean;
   width: number;
   mode: any;
 }
@@ -30,12 +31,13 @@ export function Grid<T>({
   data,
   mode,
   width,
+  isLoading = false,
 }: GridProps<T>): React.ReactElement {
   return (
     <Box>
       <LoadingOverlay
         overlayProps={{ radius: 'sm', blur: 2 }}
-        visible={options.isLoading}
+        visible={isLoading}
       />
 
       {data.length === 0 ? (
