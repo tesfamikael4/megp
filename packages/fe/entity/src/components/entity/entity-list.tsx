@@ -16,12 +16,14 @@ interface EntityListProps<T> {
   mode?: 'list' | 'detail' | 'new';
   config: EntityConfig<T>;
   data: T[];
+  isLoading?: boolean;
 }
 // new list
 export function EntityList<T>({
   mode,
   config,
   data = [],
+  isLoading = false,
 }: EntityListProps<T>): React.ReactElement {
   // update the options with the default config
   const options: EntityConfig<T> = useMemo(() => {
@@ -96,6 +98,7 @@ export function EntityList<T>({
     >
       <Grid
         data={data}
+        isLoading={isLoading}
         mode={mode}
         options={options}
         table={table}
