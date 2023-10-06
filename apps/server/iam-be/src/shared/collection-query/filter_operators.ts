@@ -1,11 +1,11 @@
 export const FilterOperators = {
   EqualTo: '=',
-  Between: 'between',
+  Between: 'BETWEEN',
   LessThan: '<',
   LessThanOrEqualTo: '<=',
   GreaterThan: '>',
   GreaterThanOrEqualTo: '>=',
-  In: 'in',
+  In: 'IN',
   NotIn: 'notIn',
   Any: 'ANY',
   NotNull: 'notNull',
