@@ -8,8 +8,13 @@
 
 ## How to deploy
 
+### Docker build and run application
+
 ```
-pnpm -w run turbo run lint  --filter "[origin/main...HEAD^]"
+docker build -f apps/back-office/iam-fe/Dockerfile -t iam-fe  .
+
+docker run -d -p 5566:8080 --name next-app iam-fe
+
 ```
 
 ## Structure

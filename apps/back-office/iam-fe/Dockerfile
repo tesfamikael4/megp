@@ -1,6 +1,8 @@
-FROM node:20.8.0-alpine AS base
+FROM node:20-alpine AS base
 
 # This Dockerfile is copy-pasted into our main docs at /docs/handbook/deploying-with-docker.
+# Make sure you update both files!
+
 FROM base AS builder
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
 RUN apk add --no-cache libc6-compat
@@ -57,6 +59,5 @@ COPY --from=installer /app/apps/back-office/iam-fe/package.json .
 COPY --from=installer --chown=nextjs:nodejs /app/apps/back-office/iam-fe/.next/standalone ./
 COPY --from=installer --chown=nextjs:nodejs /app/apps/back-office/iam-fe/.next/static ./apps/back-office/iam-fe/.next/static
 COPY --from=installer --chown=nextjs:nodejs /app/apps/back-office/iam-fe/public ./apps/back-office/iam-fe/public
-EXPOSE 5511
-CMD ["pnpm", "run", "start"]
-#CMD PORT=8080 HOSTNAME=0.0.0.0 node apps/back-office/iam-fe/server.js
+
+CMD PORT=8080 HOSTNAME=0.0.0.0 node apps/back-office/iam-fe/server.js
