@@ -60,4 +60,4 @@ COPY --from=installer --chown=nextjs:nodejs /app/apps/back-office/iam-fe/.next/s
 COPY --from=installer --chown=nextjs:nodejs /app/apps/back-office/iam-fe/.next/static ./apps/back-office/iam-fe/.next/static
 COPY --from=installer --chown=nextjs:nodejs /app/apps/back-office/iam-fe/public ./apps/back-office/iam-fe/public
 EXPOSE 5511
-#CMD PORT=8080 HOSTNAME=0.0.0.0 node apps/back-office/iam-fe/server.js
+CMD PORT=5511 HOSTNAME=0.0.0.0 node apps/back-office/iam-fe/server.js
