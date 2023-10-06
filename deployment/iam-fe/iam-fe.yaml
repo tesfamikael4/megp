@@ -1,24 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: iam-be-deployment
+  name: iam-fe-deployment
   namespace: dev
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: iam-be
+      app: iam-fe
       version: v1
   template:
     metadata:
       labels:
-        app: iam-be
+        app: iam-fe
         version: v1
     spec:
       imagePullSecrets:
       - name: gitlab-secret
       containers:
-      - name: iam-be
+      - name: iam-fe
         image: gitlab.peragosystems.com:5050/megp/megp/iam-fe:latest
         imagePullPolicy: Always
         ports:
@@ -34,3 +34,18 @@ spec:
          "NEXT_PUBLIC_CONTRACT_API":"",
          "PORT":"5511"
         }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: iam-fe-service
+  namespace: dev
+spec:
+  selector:
+    app: iam-fe
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      nodePort: 5511
