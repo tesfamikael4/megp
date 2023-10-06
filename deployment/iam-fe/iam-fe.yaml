@@ -52,9 +52,8 @@ metadata:
 spec:
   selector:
     app: iam-fe
-    version: v1
   ports:
     - protocol: TCP
       port: 5511
       targetPort: 5511
-  type: NodePort
+  type: LoadBalancer
