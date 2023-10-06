@@ -1,4 +1,4 @@
-import { Repository, EntityTarget, DeepPartial } from 'typeorm';
+import { Repository, DeepPartial } from 'typeorm';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CollectionQuery, QueryConstructor } from '../collection-query';
 import { DataResponseFormat } from '../api-data';
@@ -6,7 +6,7 @@ import { BaseEntity } from '../entities/base.entity';
 
 @Injectable()
 export class EntityCrudService<T extends BaseEntity> {
-  constructor(private readonly repository: Repository<T>) {}
+  constructor(private readonly repository: Repository<T>) { }
 
   async create(itemData: DeepPartial<T>, req?: any): Promise<T> {
     const item = this.repository.create(itemData);
@@ -44,7 +44,7 @@ export class EntityCrudService<T extends BaseEntity> {
     await this.repository.delete(id);
   }
 
-  private async findOneOrFail(id: any): Promise<T> {
+  protected async findOneOrFail(id: any): Promise<T> {
     const item = await this.findOne(id);
     if (!item) {
       throw new NotFoundException(`not_found`);
