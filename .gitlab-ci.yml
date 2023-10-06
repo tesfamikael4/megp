@@ -57,15 +57,15 @@ build:
     paths:
       - .pnpm-store
 
-deploy:
-  stage: deploy
-  image: docker:latest
-  rules:
-    - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"
-  # before_script:
-  #   - apk --update add curl
-  script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker pull $CI_REGISTRY_IMAGE/iam-fe:latest
-    - docker container rm -f iam-fe || true
-    - docker run -d -p 5511:5511 --name iam-fe $CI_REGISTRY_IMAGE/iam-fe:latest
+# deploy:
+#   stage: deploy
+#   image: docker:latest
+#   rules:
+#     - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"
+#   # before_script:
+#   #   - apk --update add curl
+#   script:
+#     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+#     - docker pull $CI_REGISTRY_IMAGE/iam-fe:latest
+#     - docker container rm -f iam-fe || true
+#     - docker run -d -p 5511:5511 --name iam-fe $CI_REGISTRY_IMAGE/iam-fe:latest
