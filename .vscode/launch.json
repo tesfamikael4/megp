@@ -5,13 +5,13 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "command": "cd .\\apps\\server\\iam-be\\ && npm run start:dev",
+      "command": "cd .\\apps\\server\\iam-be\\ && pnpm run start:dev",
       "name": "Run IAM",
       "request": "launch",
       "type": "node-terminal"
     },
     {
-      "command": "cd .\\apps\\server\\+demo-be\\ && npm run start:dev",
+      "command": "cd .\\apps\\server\\+demo-be\\ && pnpm run start:dev",
       "name": "Run demo",
       "request": "launch",
       "type": "node-terminal"

@@ -12,6 +12,9 @@ export class Group {
   @Column()
   description: string;
 
+  @Column({ type: 'jsonb', nullable: true })
+  descriptionJson: any;
+
   @OneToMany(() => UserGroup, (userGroups) => userGroups.group, {
     cascade: true,
     onDelete: 'CASCADE',

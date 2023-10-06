@@ -1,15 +1,15 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { HttpException, Inject, Injectable, HttpStatus } from '@nestjs/common';
 import supertokens from 'supertokens-node';
 import Session from 'supertokens-node/recipe/session';
 import ThirdPartyEmailPassword, {
   getUserById,
+  updateEmailOrPassword,
 } from 'supertokens-node/recipe/thirdpartyemailpassword';
 import Dashboard from 'supertokens-node/recipe/dashboard';
 import { ConfigInjectionToken, AuthModuleConfig } from '../config.interface';
 import { OrganizationService } from 'src/organization';
 import EmailVerification, {
-  createEmailVerificationLink,
-  sendEmailVerificationEmail,
+  verifyEmailUsingToken,
 } from 'supertokens-node/recipe/emailverification';
 import { SMTPService as EmailVerificationSMTPService } from 'supertokens-node/recipe/emailverification/emaildelivery';
 import { SMTPService } from 'supertokens-node/recipe/thirdpartyemailpassword/emaildelivery';
@@ -95,6 +95,29 @@ export class SupertokensService {
               },
             }),
           },
+          override: {
+            apis: (originalImplementation) => {
+              return {
+                ...originalImplementation,
+                verifyEmailPOST: async function (input) {
+                  if (originalImplementation.verifyEmailPOST === undefined) {
+                    throw Error('Should never come here');
+                  }
+
+                  // First we call the original implementation
+                  const response =
+                    await originalImplementation.verifyEmailPOST(input);
+
+                  // Then we check if it was successfully completed
+                  if (response.status === 'OK') {
+                    const { id, email } = response.user;
+                    await organizationService.changeUserStatus(id);
+                  }
+                  return response;
+                },
+              };
+            },
+          },
         }),
         Dashboard.init(),
         jwt.init({
@@ -164,6 +187,54 @@ export class SupertokensService {
                   const primaryEmail = input.formFields.find(
                     (e) => e.id == 'primaryEmail',
                   );
+                  const password = input.formFields.find(
+                    (e) => e.id == 'password',
+                  );
+
+                  const user = await organizationService.canUserBeCreated(
+                    primaryEmail.value,
+                  );
+                  if (user) {
+                    if (user.status != 'DRAFT') {
+                      throw new HttpException(
+                        'email_already_exists',
+                        HttpStatus.CONFLICT,
+                      );
+                    }
+
+                    await updateEmailOrPassword({
+                      userId: user.superTokenUserId,
+                      password: password.value,
+                      tenantIdForPasswordPolicy: 'public',
+                    });
+
+                    await EmailVerification.sendEmailVerificationEmail(
+                      'public',
+                      user.superTokenUserId,
+                      primaryEmail.value,
+                    );
+
+                    const request = {
+                      ...input,
+                      formFields: [
+                        {
+                          id: 'email',
+                          value: user.username,
+                        },
+                        {
+                          id: 'password',
+                          value: password.value,
+                        },
+                      ],
+                    };
+
+                    const response =
+                      await originalImplementation.emailPasswordSignInPOST(
+                        request,
+                      );
+
+                    return response as any;
+                  }
 
                   input.formFields.forEach((field) => {
                     if (field.id == 'email') {

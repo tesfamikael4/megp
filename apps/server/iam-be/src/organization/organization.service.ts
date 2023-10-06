@@ -290,17 +290,23 @@ export class OrganizationService {
       where: { email },
     });
 
-    const result = {
-      superTokenUserId: user.superTokenUserId,
-      canUserBeCreated: false,
-    };
+    return user;
+  }
 
-    if (!user || user.status == 'DRAFT') {
-      result['canUserBeCreated'] = true;
-      return result;
+  async changeUserStatus(superTokenUserId: string) {
+    const user = await this.userRepository.findOne({
+      where: { superTokenUserId },
+    });
+
+    if (user) {
+      user.status = 'Accepted';
+      await this.userRepository.update(
+        { superTokenUserId },
+        { status: 'Accepted' },
+      );
     }
 
-    return result;
+    return user;
   }
 
   async isSecurityQuestionSet(supertokensUserId: string) {
@@ -400,6 +406,7 @@ export class OrganizationService {
 
     return {
       status: true,
+      superTokenUserId: user.superTokenUserId,
     };
   }
 

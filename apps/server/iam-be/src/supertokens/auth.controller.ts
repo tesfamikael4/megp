@@ -12,7 +12,9 @@ import { AuthGuard, PermissionsGuard } from './auth/guards';
 import { SessionContainer } from 'supertokens-node/recipe/session';
 import { AllowAnonymous, Session } from './auth/decorators';
 import {
+  createResetPasswordToken,
   emailPasswordSignIn,
+  resetPasswordUsingToken,
   updateEmailOrPassword,
 } from 'supertokens-node/recipe/thirdpartyemailpassword';
 import { OrganizationService } from 'src/organization';
@@ -65,6 +67,24 @@ export class AuthController {
     }
   }
 
+  @Post('password-reset')
+  async passwordReset(
+    @Body()
+    payload: {
+      superTokenUserId: string;
+      token: string;
+      password: string;
+    },
+  ) {
+    const response = await resetPasswordUsingToken(
+      'public',
+      payload.token,
+      payload.password,
+    );
+
+    return response;
+  }
+
   @Post('set-security-questions')
   @UseGuards(new AuthGuard())
   async setSecurityQuestions(
@@ -81,7 +101,21 @@ export class AuthController {
   async checkSecurityQuestions(
     @Body() payload: CheckSecurityQuestionDto,
   ): Promise<any> {
-    return await this.organizationService.checkSecurityQuestions(payload);
+    const result =
+      await this.organizationService.checkSecurityQuestions(payload);
+    if (result.status) {
+      const token = await createResetPasswordToken(
+        'public',
+        result.superTokenUserId,
+      );
+      if (token.status === 'OK') {
+        result['token'] = token.token;
+
+        return result;
+      }
+    }
+
+    return result;
   }
 
   @Get('security-questions')
