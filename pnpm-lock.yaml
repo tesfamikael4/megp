@@ -721,6 +721,9 @@ importers:
       '@emotion/server':
         specifier: ^11.11.0
         version: 11.11.0
+      '@hookform/resolvers':
+        specifier: ^3.3.1
+        version: 3.3.1(react-hook-form@7.46.1)
       '@mantine/carousel':
         specifier: ^7.1.0
         version: 7.1.0(@mantine/core@7.1.0)(@mantine/hooks@7.1.0)(embla-carousel-react@7.1.0)(react@18.2.0)
@@ -760,6 +763,9 @@ importers:
       '@megp/core-fe':
         specifier: workspace:*
         version: link:../../../packages/fe/core-fe
+      '@megp/entity':
+        specifier: workspace:*
+        version: link:../../../packages/fe/entity
       '@megp/theme':
         specifier: workspace:*
         version: link:../../../packages/config/theme
@@ -805,6 +811,9 @@ importers:
       react-dom:
         specifier: 18.2.0
         version: 18.2.0(react@18.2.0)
+      react-hook-form:
+        specifier: ^7.46.1
+        version: 7.46.1(react@18.2.0)
       react-redux:
         specifier: ^8.1.2
         version: 8.1.2(@types/react-dom@18.2.7)(@types/react@18.2.21)(react-dom@18.2.0)(react@18.2.0)(redux@4.2.1)
@@ -814,6 +823,9 @@ importers:
       typescript:
         specifier: ^5.1.0
         version: 5.2.2
+      zod:
+        specifier: ^3.22.2
+        version: 3.22.2
     devDependencies:
       '@megp/eslint-config-custom':
         specifier: workspace:*

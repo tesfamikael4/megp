@@ -1,6 +1,4 @@
-import {
-  Controller,
-} from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { PrebudgetPlanService } from '../services/prebudget-plan.service';
 import { EntityCrudController } from 'src/shared/controller/entity-crud.controller';

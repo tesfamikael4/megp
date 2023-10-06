@@ -38,8 +38,11 @@ export const Menu: MenuItem[] = [
     label: 'Settings',
     icon: IconAdjustmentsHorizontal,
     links: [
-      { label: 'Workflow', link: '/settings/workflow' },
-      { label: 'Pricing', link: '/settings/pricing/new' },
+      { label: 'Workflow', link: '/' },
+      {
+        label: 'Pricing',
+        link: '/settings/pricing',
+      },
     ],
   },
 ];
