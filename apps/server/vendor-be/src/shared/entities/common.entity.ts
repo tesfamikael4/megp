@@ -11,12 +11,12 @@ export abstract class CommonEntity {
   updatedBy?: string;
   @CreateDateColumn({
     type: 'timestamptz',
-    default: () => 'CURRENT_TIMESTAMP'
+    default: () => 'CURRENT_TIMESTAMP',
   })
   createdAt: Date;
   @UpdateDateColumn({
     type: 'timestamptz',
-    default: () => 'CURRENT_TIMESTAMP'
+    default: () => 'CURRENT_TIMESTAMP',
   })
   updatedAt: Date;
   @DeleteDateColumn({ nullable: true })

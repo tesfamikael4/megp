@@ -19,7 +19,7 @@ import { BaseEntity } from '../entities/base.entity';
 @Controller()
 @UseInterceptors(/* your interceptors if any */)
 export class EntityCrudController<TEntity extends BaseEntity> {
-  constructor(private readonly service: EntityCrudService<TEntity>) { }
+  constructor(private readonly service: EntityCrudService<TEntity>) {}
 
   @Post()
   async create(

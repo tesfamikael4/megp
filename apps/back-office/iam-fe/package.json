@@ -7,6 +7,7 @@
     "build": "next build",
     "build:docker": "cd ../../../ && docker build -f apps/back-office/iam-fe/Dockerfile -t iam-fe  . && docker tag iam-fe:latest gitlab.peragosystems.com:5050/megp/megp/iam-fe:latest &&  docker push gitlab.peragosystems.com:5050/megp/megp/iam-fe:latest",
     "start": "next start -p 5511",
+    "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "lint": "next lint "
   },
   "dependencies": {

@@ -5,6 +5,7 @@
   "main": "./index.ts",
   "types": "./index.ts",
   "scripts": {
+    "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "lint": "eslint ./src --ext .ts,.tsx"
   },
   "devDependencies": {

@@ -23,7 +23,7 @@ import { TaskHandlerResponse } from '../dtos/task-handler.response';
 @ApiResponse({ status: 400, description: 'Bad Request' })
 @ApiExtraModels(DataResponseFormat)
 export class ApplicationExcutionController {
-  constructor(private readonly executeRepository: ApplicationExcutionService) { }
+  constructor(private readonly executeRepository: ApplicationExcutionService) {}
 
   @Get('get-currunt-tasks/:serviceKey')
   @ApiPaginatedResponse(WorkflowInstanceResponse)
@@ -95,6 +95,4 @@ export class ApplicationExcutionController {
   ) {
     return await this.executeRepository.getCurrunTasks(query);
   }
-
-
 }

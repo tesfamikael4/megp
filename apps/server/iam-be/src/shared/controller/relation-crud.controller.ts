@@ -18,7 +18,7 @@ import { RelationCrudService } from '../service/relation-crud.service';
 @Controller()
 @UseInterceptors(/* your interceptors if any */)
 export class RelationCrudController<TEntity extends BaseEntity> {
-  constructor(private readonly service: RelationCrudService<TEntity>) { }
+  constructor(private readonly service: RelationCrudService<TEntity>) {}
 
   @Post()
   async bulkSave(@Body() itemData: any, @Req() req?: any): Promise<any> {

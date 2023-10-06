@@ -14,8 +14,8 @@ merge:
     - pnpm config set store-dir .pnpm-store
   script:
     - pnpm install
-    - pnpm -w run turbo run lint  --filter "...[origin/main...HEAD^]"
-    - pnpm -w run turbo run build  --filter "...[origin/main...HEAD^]"
+    - pnpm -w run turbo run lint  --filter "...[origin/main...HEAD]"
+    - pnpm -w run turbo run build  --filter "...[origin/main...HEAD]"
   cache:
     key:
       files:
@@ -33,19 +33,19 @@ build:
     - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"
   before_script:
     - apk --update add nodejs npm git
-    
+
     - npm install -g pnpm
-    
+
     # - corepack enable
     # - corepack prepare pnpm@latest-8 --activate
     #- pnpm config set store-dir .pnpm-store
-    
+
   script:
     - pnpm install
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - pnpm -w run turbo run lint  --filter "...[origin/main...HEAD^]"
     - pnpm -w run turbo run build:docker  --filter "...[origin/main...HEAD^]"
-       
+
     # - docker tag iam-fe:la    - docker push $CI_REGISTRY_IMAGE/iam-fe:latesttest $CI_REGISTRY_IMAGE/iam-fe:latest
 
   cache:
@@ -67,4 +67,3 @@ deploy:
     - docker pull $CI_REGISTRY_IMAGE/iam-fe:latest
     - docker container rm -f iam-fe || true
     - docker run -d -p 5511:5511 --name iam-fe $CI_REGISTRY_IMAGE/iam-fe:latest
-

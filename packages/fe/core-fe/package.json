@@ -5,6 +5,7 @@
   "types": "./index.tsx",
   "license": "MIT",
   "scripts": {
+    "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "lint": "eslint ./src --ext .ts,.tsx",
     "generate:component": "turbo gen react-component"
   },

@@ -1,2 +1,2 @@
 export * from './table';
-export * from './query-builder'
+export * from './query-builder';

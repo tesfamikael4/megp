@@ -1,4 +1,9 @@
-import type { CollectionQuery, Where, Order, FilterOperator } from '../models/query'; // Import your types
+import type {
+  CollectionQuery,
+  Where,
+  Order,
+  FilterOperator,
+} from '../models/query'; // Import your types
 
 // Function to encode a CollectionQuery object to a custom URL query string
 export function encodeCollectionQuery(query: CollectionQuery): string {

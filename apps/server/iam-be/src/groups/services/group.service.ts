@@ -12,5 +12,4 @@ export class GroupService extends EntityCrudService<Group> {
   ) {
     super(groupRepository);
   }
-
 }
