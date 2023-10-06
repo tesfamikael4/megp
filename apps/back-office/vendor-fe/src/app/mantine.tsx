@@ -7,6 +7,7 @@ import { theme as baseTheme } from '@megp/theme/mantine';
 import './globals.css';
 import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
+import { Notifications } from '@mantine/notifications';
 
 export default function RootStyleRegistry({
   children,
@@ -15,5 +16,10 @@ export default function RootStyleRegistry({
 }) {
   const theme: Partial<MantineThemeOverride> = baseTheme;
 
-  return <MantineProvider theme={theme}>{children}</MantineProvider>;
+  return (
+    <MantineProvider theme={theme}>
+      <Notifications />
+      {children}
+    </MantineProvider>
+  );
 }
