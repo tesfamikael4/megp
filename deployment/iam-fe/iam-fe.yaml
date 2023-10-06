@@ -22,9 +22,9 @@ spec:
         image: gitlab.peragosystems.com:5050/megp/megp/iam-fe:latest
         imagePullPolicy: Always
         ports:
-        - containerPort: 80
+        - containerPort: 5511
         env: {
-         "IAM_BACK_OFFICE_DOMAIN":"http://196.189.44.10:33111",
+         "IAM_BACK_OFFICE_DOMAIN":"http://196.189.44.10:5511",
          "NEXT_PUBLIC_AUTH_API":"",
          "NEXT_PUBLIC_IAM_API":"http://196.189.118.110:3569/api",
          "NEXT_PUBLIC_VENDOR_API":"http://196.189.118.110:6633",
@@ -34,18 +34,18 @@ spec:
          "NEXT_PUBLIC_CONTRACT_API":"",
          "PORT":"5511"
         }
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: iam-fe-service
-  namespace: dev
-spec:
-  selector:
-    app: iam-fe
-  type: NodePort
-  ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 80
-      nodePort: 33111
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: iam-fe-service
+#   namespace: dev
+# spec:
+#   selector:
+#     app: iam-fe
+#   type: NodePort
+#   ports:
+#     - protocol: TCP
+#       port: 80
+#       targetPort: 80
+#       nodePort: 33111
