@@ -19,7 +19,7 @@ spec:
       - name: gitlab-secret
       containers:
       - name: demo-be
-        image: gitlab.peragosystems.com:5050/megp/megp/iam-fe:latest
+        image: gitlab.peragosystems.com:5050/megp/megp/demo-be:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 80
