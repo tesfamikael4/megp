@@ -14,9 +14,6 @@ RUN yarn global add turbo pnpm
 COPY . .
 RUN turbo prune --scope=egp --docker
 
-# remove all empty node_modules folder structure
-RUN rm -rf /app/out/full/*/*/node_modules
-
 # Add lockfile and package.json's of isolated subworkspace
 FROM base AS installer
 RUN apk add --no-cache libc6-compat
@@ -62,5 +59,5 @@ COPY --from=installer /app/apps/portal/egp/package.json .
 COPY --from=installer --chown=nextjs:nodejs /app/apps/portal/egp/.next/standalone ./
 COPY --from=installer --chown=nextjs:nodejs /app/apps/portal/egp/.next/static ./apps/portal/egp/.next/static
 COPY --from=installer --chown=nextjs:nodejs /app/apps/portal/egp/public ./apps/portal/egp/public
-
-CMD node apps/portal/egp/server.js
+#CMD ["pnpm","run","start"]
+CMD PORT=8080 HOSTNAME=0.0.0.0 node apps/portal/egp/server.js
