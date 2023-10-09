@@ -20,13 +20,12 @@ export function Entity({ children }: { children: React.ReactNode }) {
       entity: 'mandate',
       primaryKey: 'id',
       title: 'Mandates',
-      // onAdd: () => {
-      //   route.push(`/my-mandate/new`);
-      // },
+
       onDetail: (selected: Mandate) => {
         route.push(`/mandate/${selected?.id}`);
       },
-
+      hasAdd: false,
+      hasDetail: false,
       onSearch: (search) => {
         // console.log('search', search);
       },

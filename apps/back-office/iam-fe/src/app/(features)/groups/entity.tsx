@@ -9,9 +9,7 @@ import { logger } from '@megp/core-fe';
 export function Entity({ children }: { children: React.ReactElement }) {
   const route = useRouter();
 
-  const { data: list, isLoading, isError } = useListQuery();
-
-  logger.log('list', list, isLoading, isError);
+  const { data: list } = useListQuery();
 
   const {
     data: selected,
@@ -73,35 +71,14 @@ export function Entity({ children }: { children: React.ReactElement }) {
       ? 'new'
       : 'detail';
 
-  const data = [
-    {
-      id: '1',
-      name: 'Group 1',
-      description: 'Group 1 description',
-    },
-    { id: '2', name: 'Group 2', description: 'Group 2 description' },
-    { id: '3', name: 'Group 3', description: 'Group 3 description' },
-    { id: '4', name: 'Group 4', description: 'Group 4 description' },
-    { id: '4', name: 'Group 4', description: 'Group 4 description' },
-    { id: '4', name: 'Group 4', description: 'Group 4 description' },
-    { id: '4', name: 'Group 4', description: 'Group 4 description' },
-    { id: '4', name: 'Group 4', description: 'Group 4 description' },
-    { id: '4', name: 'Group 4', description: 'Group 4 description' },
-    {
-      id: '4',
-      name: 'Group 4',
-      description:
-        'Group 4 descripti Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas, sed laborum eos aperiam hic nobis odio minus corrupti recusandae perferendis numquam harum vitae aliquid sapiente ab. Illo id obcaecati dolorem.on',
-    },
-    { id: '4', name: 'Group 4', description: 'Group 4 description' },
-    { id: '4', name: 'Group 4', description: 'Group 4 description' },
-    { id: '4', name: 'Group 4', description: 'Group 4 description' },
-    { id: '4', name: 'Group 4', description: 'Group 4 description' },
-    { id: '55', name: 'Group 5', description: 'Group 4 description' },
-  ];
-
-  logger.log('mode', mode, pathname);
   return (
-    <EntityLayout mode={mode} config={config} data={data} detail={children} />
+    <>
+      <EntityLayout
+        mode={mode}
+        config={config}
+        data={list?.items ? list.items : []}
+        detail={children}
+      />
+    </>
   );
 }

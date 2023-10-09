@@ -6,31 +6,31 @@ export const ENTITY_LIST: EntityStoreConfig[] = [
     baseUrl: process.env.NEXT_PUBLIC_IAM_API ?? '/api/iam',
   },
   {
-    entity: 'organization',
+    entity: 'organizations',
     baseUrl: process.env.NEXT_PUBLIC_IAM_API ?? '/api/iam',
   },
   {
-    entity: 'organization-sector',
+    entity: 'organizationSectors',
     baseUrl: process.env.NEXT_PUBLIC_IAM_API ?? '/api/iam',
   },
   {
-    entity: 'organization-type',
+    entity: 'organizationTypes',
     baseUrl: process.env.NEXT_PUBLIC_IAM_API ?? '/api/iam',
   },
   {
-    entity: 'unit-type',
+    entity: 'unitTypes',
     baseUrl: process.env.NEXT_PUBLIC_IAM_API ?? '/api/iam',
   },
   {
-    entity: 'unit',
+    entity: 'units',
     baseUrl: process.env.NEXT_PUBLIC_IAM_API ?? '/api/iam',
   },
   {
-    entity: 'user',
+    entity: 'users',
     baseUrl: process.env.NEXT_PUBLIC_IAM_API ?? '/api/iam',
   },
   {
-    entity: 'role',
+    entity: 'roles',
     baseUrl: process.env.NEXT_PUBLIC_IAM_API ?? '/api/iam',
   },
   {
@@ -38,7 +38,7 @@ export const ENTITY_LIST: EntityStoreConfig[] = [
     baseUrl: process.env.NEXT_PUBLIC_IAM_API ?? '/api/iam',
   },
   {
-    entity: 'mandate',
+    entity: 'mandates',
     baseUrl: process.env.NEXT_PUBLIC_IAM_API ?? '/api/iam',
   },
 ];

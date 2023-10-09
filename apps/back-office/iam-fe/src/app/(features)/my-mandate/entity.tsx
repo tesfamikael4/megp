@@ -2,7 +2,7 @@
 import { EntityConfig, EntityLayout } from '@megp/entity';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
-import { useListQuery } from './_api/my-mandate.api';
+import { useGetMyOrgMandateQuery } from '../organizations/_api/mandate.api';
 import { Mandate } from '@/models/mandate';
 
 export function Entity({ children }: { children: React.ReactNode }) {
@@ -10,7 +10,9 @@ export function Entity({ children }: { children: React.ReactNode }) {
 
   const pathname = usePathname();
 
-  const { data: list } = useListQuery();
+  const { data: list } = useGetMyOrgMandateQuery(
+    '099454a9-bf8f-45f5-9a4f-6e9034230250',
+  );
 
   useEffect;
   const config: EntityConfig<Mandate> = useMemo(() => {
@@ -20,9 +22,6 @@ export function Entity({ children }: { children: React.ReactNode }) {
       entity: 'my-mandate',
       primaryKey: 'id',
       title: 'My Mandates',
-      // onAdd: () => {
-      //   route.push(`/my-mandate/new`);
-      // },
       onDetail: (selected: Mandate) => {
         route.push(`/my-mandate/${selected?.id}`);
       },
@@ -31,11 +30,13 @@ export function Entity({ children }: { children: React.ReactNode }) {
         // console.log('search', search);
       },
       selectable: true,
+      hasAdd: false,
+      hasDetail: false,
       columns: [
         {
-          id: 'name',
+          id: 'mandate.name',
           header: 'Name',
-          accessorKey: 'name',
+          accessorKey: 'mandate.name',
           cell: (info) => info.getValue(),
           meta: {
             widget: 'primary',
@@ -43,9 +44,9 @@ export function Entity({ children }: { children: React.ReactNode }) {
         },
 
         {
-          id: 'description',
+          id: 'mandate.description',
           header: 'Description',
-          accessorKey: 'description',
+          accessorKey: 'mandate.description',
           cell: (info) => info.getValue(),
           meta: {
             widget: 'multiline',
@@ -66,7 +67,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
     <EntityLayout
       mode={mode}
       config={config}
-      data={list ? list.items : []}
+      data={list?.organizationMandates ? list?.organizationMandates : []}
       detail={children}
     />
   );

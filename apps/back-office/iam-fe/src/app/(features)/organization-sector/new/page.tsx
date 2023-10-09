@@ -2,9 +2,9 @@
 import { Section } from '@megp/core-fe';
 import { FormDetail } from '../_components/form-detail';
 
-export default function GroupPage() {
+export default function OrganizationSectorPage() {
   return (
-    <Section title="New Organization" collapsible={false}>
+    <Section title="New Organization sector" collapsible={false}>
       <FormDetail mode="new" />
     </Section>
   );
