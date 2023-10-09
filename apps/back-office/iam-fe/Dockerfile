@@ -27,7 +27,9 @@ RUN yarn global add pnpm
 # First install the dependencies (as they change less often)
 COPY .gitignore .gitignore
 COPY --from=builder /app/out/json/ .
+COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/out/pnpm-lock.yaml  ./pnpm-lock.yaml 
+COPY --from=builder /app/node_modules ./node_modules
 RUN pnpm install
 
 # Build the project
@@ -60,5 +62,5 @@ COPY --from=installer --chown=nextjs:nodejs /app/apps/back-office/iam-fe/.next/s
 COPY --from=installer --chown=nextjs:nodejs /app/apps/back-office/iam-fe/.next/static ./apps/back-office/iam-fe/.next/static
 COPY --from=installer --chown=nextjs:nodejs /app/apps/back-office/iam-fe/public ./apps/back-office/iam-fe/public
 EXPOSE 5511
-CMD ["pnpm","start"]
+CMD ["pnpm","run","start"]
 #CMD PORT=8080 HOSTNAME=0.0.0.0 node apps/back-office/iam-fe/server.js
