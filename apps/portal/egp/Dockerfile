@@ -60,4 +60,4 @@ COPY --from=installer --chown=nextjs:nodejs /app/apps/portal/egp/.next/standalon
 COPY --from=installer --chown=nextjs:nodejs /app/apps/portal/egp/.next/static ./apps/portal/egp/.next/static
 COPY --from=installer --chown=nextjs:nodejs /app/apps/portal/egp/public ./apps/portal/egp/public
 #CMD ["pnpm","run","start"]
-CMD PORT=8080 HOSTNAME=0.0.0.0 node apps/portal/egp/server.js
+CMD PORT=5500 HOSTNAME=0.0.0.0 node apps/portal/egp/server.js
