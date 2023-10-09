@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev -p 5500",
     "build": "next build",
-    "start": "next start",
+    "build:docker":"docker build -t portal . && docker tag portal:latest lab.derash.gov.et:5050/megp/megp/portal:latest && docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY && docker push lab.derash.gov.et:5050/megp/megp/portal:latest",
+    "start": "next start -p 5500",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "lint": "next lint"
   },
