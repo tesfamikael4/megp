@@ -1,4 +1,6 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {}
+const nextConfig = {
+    transpilePackages: ['@megp/core-fe'],
+}
 
-module.exports = nextConfig
+module.exports = nextConfig;

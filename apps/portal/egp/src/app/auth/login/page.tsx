@@ -26,7 +26,7 @@ import { signinWithEmailPassword } from '../supertokensUtilities';
 
 const schema = z
   .object({
-    email: z.string().email('Please enter a valid email'),
+    email: z.string(),
     password: z.string(),
   })
   .required();
@@ -60,8 +60,12 @@ export default function Signin() {
       } else {
         // sign in successful. The session tokens are automatically handled by
         // the frontend SDK.
-        router.push('/');
-        router.refresh();
+        if (response.user['isSecurityQuestionSet'] === true) {
+          router.push('/');
+          router.refresh();
+        } else {
+          router.push('/auth/setSecurity');
+        }
       }
     } catch (err: any) {
       if (err.isSuperTokensGeneralError === true) {

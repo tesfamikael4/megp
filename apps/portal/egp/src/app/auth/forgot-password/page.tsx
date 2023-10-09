@@ -9,6 +9,7 @@ import {
   Flex,
   Box,
   Title,
+  Divider,
 } from '@mantine/core';
 import Image from 'next/image';
 import { IconAt } from '@tabler/icons-react';
@@ -18,6 +19,7 @@ import z from 'zod';
 import { IconChecks } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { requestPassword } from '../supertokensUtilities';
+import { useRouter } from 'next/navigation';
 
 const schema = z.object({
   email: z.string().email('Please enter a valid email'),
@@ -28,6 +30,7 @@ type FormSchema = z.infer<typeof schema>;
 export default function ForgotPasswordPage() {
   const [loading, setLoading] = useState<boolean>(false);
   const [response, setResponse] = useState<string>('');
+  const router = useRouter();
 
   const {
     register,
@@ -96,6 +99,14 @@ export default function ForgotPasswordPage() {
                 {...register('email')}
                 className="mt-4"
               ></TextInput>
+              <Divider className="mt-3" />
+              <Text className="text-center line-through">Or</Text>
+              <p
+                className="underline text-primary-800 text-center cursor-pointer"
+                onClick={() => router.push('/auth/pass-reset-by-que')}
+              >
+                Reset Using Security Questions
+              </p>
               <Button className="mt-6" type="submit" loading={loading}>
                 Send link
               </Button>
