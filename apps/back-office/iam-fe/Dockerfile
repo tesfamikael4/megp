@@ -29,7 +29,7 @@ COPY .gitignore .gitignore
 COPY --from=builder /app/out/json/ .
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/out/pnpm-lock.yaml  ./pnpm-lock.yaml 
-COPY --from=builder /app/node_modules ./node_modules
+#COPY --from=builder /app/node_modules ./node_modules
 RUN pnpm install
 
 # Build the project
