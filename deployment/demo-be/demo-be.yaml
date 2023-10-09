@@ -37,7 +37,7 @@ spec:
           - name: DATABASE_USER
             value: "postgres"
           - name: DATABASE_PASSWORD
-            value: "Perago@megpDB"
+            value: "Perago@megpDB!"
           - name: DATABASE_PORT
             value: "5432"
           - name: CONNECTION_URI
