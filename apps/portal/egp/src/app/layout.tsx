@@ -3,6 +3,9 @@ import './globals.css';
 
 import { Providers } from '@/store/provider';
 import RootStyleRegistry from './mantine';
+import { ConfigProvider } from '@/contexts/config';
+import { Config } from '@/models/config';
+import { config } from '@/config/env';
 
 export const metadata: Metadata = {
   title: 'M-egp',
@@ -16,10 +19,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
-        <Providers>
-          <RootStyleRegistry>{children}</RootStyleRegistry>
-        </Providers>
+      <body suppressHydrationWarning={true}>
+        <ConfigProvider config={config}>
+          <Providers>
+            <RootStyleRegistry>{children}</RootStyleRegistry>
+          </Providers>
+        </ConfigProvider>
       </body>
     </html>
   );

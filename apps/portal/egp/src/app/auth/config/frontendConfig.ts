@@ -2,15 +2,17 @@ import Router from 'next/navigation';
 import Session from 'supertokens-web-js/recipe/session';
 import ThirdPartyEmailPassword from 'supertokens-web-js/recipe/thirdpartyemailpassword';
 import EmailVerification from 'supertokens-web-js/recipe/emailverification';
+import { logger } from '@megp/core-fe';
 
-export const frontendConfig = () => {
+export const frontendConfig = (config) => {
+  logger.log(config);
   return {
     appInfo: {
       appName: 'app',
-      apiDomain: process.env.NEXT_PUBLIC_AUTH_API!,
-      apiBasePath: process.env.NEXT_PUBLIC_API_BASE_PATH!,
-      websiteDomain: process.env.NEXT_PUBLIC_WEBSITE_DOMAIN!,
-      websiteBasePath: process.env.NEXT_PUBLIC_WEBSITE_BASE_PATH!,
+      apiDomain: config.ENV_AUTH_API!,
+      apiBasePath: config.ENV_API_BASE_PATH!,
+      websiteDomain: config.ENV_WEBSITE_DOMAIN!,
+      websiteBasePath: config.ENV_WEBSITE_BASE_PATH!,
     },
     recipeList: [
       Session.init(),

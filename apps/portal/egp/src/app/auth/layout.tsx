@@ -4,16 +4,17 @@ import { Flex } from '@mantine/core';
 import Image from 'next/image';
 import { frontendConfig } from './config/frontendConfig';
 import SuperTokens from 'supertokens-web-js';
-
-if (typeof window !== 'undefined') {
-  SuperTokens.init(frontendConfig());
-}
+import { useConfig } from '@/contexts/config';
 
 export default function AuthLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const config = useConfig();
+  if (typeof window !== 'undefined' && !SuperTokens?.init) {
+    SuperTokens.init(frontendConfig(config));
+  }
   return (
     <section className={styles.bod} suppressHydrationWarning={true}>
       {children}
