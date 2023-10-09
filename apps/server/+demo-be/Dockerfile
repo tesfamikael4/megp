@@ -1,52 +1,55 @@
-FROM node:18-alpine As development
+FROM node:20-alpine AS base
 
-# Create app directory
-WORKDIR /usr/src/app
+# This Dockerfile is copy-pasted into our main docs at /docs/handbook/deploying-with-docker.
+# Make sure you update both files!
 
-# Copy application dependency manifests to the container image.
-# A wildcard is used to ensure copying both package.json AND package-lock.json (when available).
-# Copying this first prevents re-running npm install on every code change.
-COPY  package*.json ./
+FROM base AS builder
+# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
+RUN apk add --no-cache libc6-compat
+RUN apk update
 
-# Install app dependencies using the `npm ci` command instead of `npm install`
-RUN pnpm ci
-
-# Bundle app source
-COPY  . .
-
-###################
-# BUILD FOR PRODUCTION
-###################
-
-FROM node:18-alpine As build
-
-WORKDIR /usr/src/app
-
-COPY  package*.json ./
-
-# In order to run `npm run build` we need access to the Nest CLI which is a dev dependency. In the previous development stage we ran `pnpm ci` which installed all dependencies, so we can copy over the node_modules directory from the development image
-COPY  --from=development /usr/src/app/node_modules ./node_modules
-
+# Set working directory
+WORKDIR /app
+RUN yarn global add turbo pnpm
 COPY . .
+RUN turbo prune --scope=+demo-be --docker
 
-# Run the build command which creates the production bundle
-RUN pnpm run build
+# Add lockfile and package.json's of isolated subworkspace
+FROM base AS installer
+RUN apk add --no-cache libc6-compat
+RUN apk update
+WORKDIR /app
 
-# Set NODE_ENV environment variable
-ENV NODE_ENV production
+# Install pnpm
+RUN yarn global add pnpm
+ 
 
-# Running `npm ci` removes the existing node_modules directory and passing in --only=production ensures that only the production dependencies are installed. This ensures that the node_modules directory is as optimized as possible
-RUN pnpm ci --only=production && pnpm cache clean --force
+# First install the dependencies (as they change less often)
+COPY .gitignore .gitignore
+COPY --from=builder /app/out/json/ .
+COPY --from=builder /app/out/pnpm-lock.yaml  ./pnpm-lock.yaml 
+RUN pnpm install
 
-###################
-# PRODUCTION
-###################
+# Build the project and its dependencies
+COPY --from=builder /app/out/full/ .
+COPY turbo.json turbo.json
 
-FROM node:18-alpine As production
+# Uncomment and use build args to enable remote caching
+# ARG TURBO_TEAM
+# ENV TURBO_TEAM=$TURBO_TEAM
 
-# Copy the bundled code from the build stage to the production image
-COPY  --from=build /usr/src/app/node_modules ./node_modules
-COPY  --from=build /usr/src/app/dist ./dist
+# ARG TURBO_TOKEN
+# ENV TURBO_TOKEN=$TURBO_TOKEN
 
-# Start the server using the production build
-CMD [ "pnpm", "dist/main.js" ]
+RUN yarn turbo run build --filter=+demo-be...
+
+FROM base AS runner
+WORKDIR /app
+
+# Don't run production as root
+RUN addgroup --system --gid 1001 nestjs
+RUN adduser --system --uid 1001 nestjs
+USER nestjs
+COPY --from=installer /app .
+
+CMD node apps/server/+demo-be/dist/main.js
