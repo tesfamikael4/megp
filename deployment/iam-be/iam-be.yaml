@@ -67,3 +67,19 @@ spec:
           - name: SMTP_PORT
             value: "2525"
 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: iam-be-service
+  namespace: dev
+spec:
+  selector:
+    app: iam-be
+  ports:
+    - protocol: TCP
+      port: 3569
+      targetPort: 3569
+  type: NodePort
+
+
