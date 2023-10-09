@@ -30,6 +30,9 @@ const schema = z.object({
 });
 
 type FormSchema = z.infer<typeof schema>;
+type props = {
+  mode: 'question-reset' | 'email-reset';
+};
 
 export default function PasswordResetPage() {
   const [response, setResponse] = useState<string>('');
@@ -70,7 +73,7 @@ export default function PasswordResetPage() {
   };
 
   return (
-    <Container className="w-11/12 md:w-2/6">
+    <Container>
       <Paper withBorder className="p-4 md:p-10 rounded-lg">
         <Image
           src="/forgot-password.svg"

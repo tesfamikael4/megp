@@ -6,11 +6,13 @@ type LoginWithEmailPasswordArgs = {
 };
 
 type SignUpWithEmailPasswordArgs = {
-  email: string;
+  email?: string;
   password: string;
   organizationName: string;
   firstName: string;
   lastName: string;
+  primaryEmail: string;
+  primaryPhone: string;
 };
 
 export const signinWithEmailPassword = async ({
@@ -37,12 +39,14 @@ export const signupWithEmailPassword = async ({
   organizationName,
   firstName,
   lastName,
+  primaryEmail,
+  primaryPhone,
 }: SignUpWithEmailPasswordArgs) => {
   return ThirdPartyEmailPassword.emailPasswordSignUp({
     formFields: [
       {
         id: 'email',
-        value: email,
+        value: 'x',
       },
       {
         id: 'password',
@@ -59,6 +63,14 @@ export const signupWithEmailPassword = async ({
       {
         id: 'lastName',
         value: lastName,
+      },
+      {
+        id: 'primaryEmail',
+        value: primaryEmail,
+      },
+      {
+        id: 'primaryPhone',
+        value: primaryPhone,
       },
     ],
   });

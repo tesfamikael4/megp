@@ -10,39 +10,25 @@ import {
   Flex,
   Box,
   Divider,
-  Select,
-  Accordion,
 } from '@mantine/core';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import React, { useEffect } from 'react';
-import { useForm, Controller, SubmitHandler, useWatch } from 'react-hook-form';
+import React from 'react';
+import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { doesEmailExist } from 'supertokens-web-js/recipe/thirdpartyemailpassword';
 import Image from 'next/image';
-import countries from './countries';
 import z from 'zod';
 import { notifications } from '@mantine/notifications';
 import styles from './page.module.scss';
 import { signupWithEmailPassword } from '../supertokensUtilities';
+import { Phone } from '@megp/core-fe';
 
 const schema = z.object({
   organizationName: z.string().min(1, { message: 'This field is required.' }),
   firstName: z.string().min(1, { message: 'This field is required.' }),
   lastName: z.string().min(1, { message: 'This field is required.' }),
   phone: z.string().min(1, { message: 'This field is required.' }),
-  // securityQuestion1: z.object({
-  //   question: z.string({ required_error: 'This field is required' }),
-  //   answer: z.string().min(1, { message: 'This field is required.' }),
-  // }),
-  // securityQuestion2: z.object({
-  //   question: z.string({ required_error: 'This field is required' }),
-  //   answer: z.string().min(1, { message: 'This field is required.' }),
-  // }),
-  // securityQuestion3: z.object({
-  //   question: z.string({ required_error: 'This field is required' }),
-  //   answer: z.string().min(1, { message: 'This field is required.' }),
-  // }),
   email: z
     .string()
     .min(1, { message: 'This field is required.' })
@@ -65,47 +51,25 @@ const SignUpPage = () => {
     register,
     handleSubmit,
     formState: { errors },
-    control,
-    watch,
-    setValue,
   } = useForm<FormSchema>({ resolver: zodResolver(schema) });
-
-  // Variables
-
-  const securityQuestion = [
-    { value: '1', label: 'What was the name of your first childhood friend?' },
-    { value: '2', label: 'In which city did your parents meet?' },
-    { value: '3', label: 'What is the manufacturer of your first car?' },
-    { value: '4', label: "What is your mother's maiden name?" },
-    { value: '5', label: 'What is your favorite movie?' },
-    { value: '6', label: "What was your favourite school teacher's name?" },
-  ];
-
-  // const securityQuestion1 = watch('securityQuestion1.question');
-  // const securityQuestion2 = watch('securityQuestion2.question');
-  // const securityQuestion3 = watch('securityQuestion3.question');
 
   // State
   const router = useRouter();
   const [isSigningUp, setIsSigningUp] = React.useState(false);
   const [emailExists, setEmailExists] = React.useState(false);
-  const [accordionValue, setAccordionValue] = React.useState<string[]>([
-    'accountInformation',
-  ]);
-  const [securityQuestions, setSecurityQuestions] =
-    React.useState(securityQuestion);
+  const [phone, setPhone] = React.useState<string>('');
 
   // Functions
   const onSubmit: SubmitHandler<FormSchema> = async (data: FormSchema) => {
-    console.log('Onsubmit called');
     try {
       setIsSigningUp(true);
       let response = await signupWithEmailPassword({
-        email: data.email,
         password: data.password,
         organizationName: data.organizationName,
         firstName: data.firstName,
         lastName: data.lastName,
+        primaryEmail: data.email,
+        primaryPhone: phone,
       });
       if (response.status === 'FIELD_ERROR') {
         response.formFields.map((formField) => {
@@ -190,30 +154,12 @@ const SignUpPage = () => {
               <Box>
                 <p className={styles.title}>Create Account</p>
 
-                <Text color="dimmed" className={styles.title}>
+                <Text c="dimmed" className="text-center">
                   Already have an account?{' '}
                   <Link href="/auth/login" className={styles.sign_in}>
                     Sign In
                   </Link>
                 </Text>
-                {/* <Accordion
-                  className={styles.accordion}
-                  multiple
-                  value={accordionValue}
-                  onChange={setAccordionValue}
-                  variant="contained"
-                  chevronPosition="left"
-                  styles={{
-                    content: {
-                      gap: '15px',
-                      display: 'flex',
-                      flexDirection: 'column',
-                    },
-                  }}
-                > */}
-                {/* <Accordion.Item value="accountInformation">
-                    <Accordion.Control>Account Information</Accordion.Control>
-                    <Accordion.Panel> */}
                 <TextInput
                   label="Name of the Business/Company"
                   placeholder="Name of the Business/Company"
@@ -240,12 +186,11 @@ const SignUpPage = () => {
                     withAsterisk
                   />
                 </Flex>
-                <TextInput
+                <Phone
                   label="Mobile Phone"
-                  placeholder="Your mobile phone"
-                  error={errors.phone?.message}
-                  {...register('phone')}
-                  withAsterisk
+                  placeholder="Your phone"
+                  value={phone}
+                  onChange={setPhone}
                 />
                 <TextInput
                   label="Email"
@@ -267,110 +212,6 @@ const SignUpPage = () => {
                   {...register('password')}
                   withAsterisk
                 />
-                {/* </Accordion.Panel>
-                  </Accordion.Item> */}
-                {/* <Accordion.Item value="securityQuestions">
-                    <Accordion.Control>Account Recovery</Accordion.Control>
-                    <Accordion.Panel>
-                      <Text>
-                        Fill out the security questions below before procceding.
-                      </Text>
-                      <Divider />
-                      <Controller
-                        control={control}
-                        name="securityQuestion1.question"
-                        render={({ field: { value, name, onChange } }) => (
-                          <Select
-                            label={`Question 1`}
-                            placeholder={`Select Question 1`}
-                            searchable
-                            nothingFound="No options"
-                            data={securityQuestion.filter((question) => {
-                              return (
-                                question.value !== securityQuestion2 &&
-                                question.value !== securityQuestion3
-                              );
-                            })}
-                            onChange={onChange}
-                            value={value}
-                            name={name}
-                            error={errors.securityQuestion1?.question?.message}
-                            withAsterisk
-                          />
-                        )}
-                      />
-                      <TextInput
-                        label={`Answer 1`}
-                        placeholder={`Answer 1`}
-                        {...register('securityQuestion1.answer')}
-                        error={errors.securityQuestion1?.answer?.message}
-                        withAsterisk
-                      />
-                      <Divider />
-                      <Controller
-                        control={control}
-                        name="securityQuestion2.question"
-                        render={({ field: { value, name, onChange } }) => (
-                          <Select
-                            label={`Question 2`}
-                            placeholder={`Select Question 2`}
-                            searchable
-                            nothingFound="No options"
-                            data={securityQuestion.filter((question) => {
-                              return (
-                                question.value !== securityQuestion1 &&
-                                question.value !== securityQuestion3
-                              );
-                            })}
-                            onChange={onChange}
-                            value={value}
-                            name={name}
-                            error={errors.securityQuestion2?.question?.message}
-                            withAsterisk
-                          />
-                        )}
-                      />
-                      <TextInput
-                        label={`Answer 2`}
-                        placeholder={`Answer 2`}
-                        {...register('securityQuestion2.answer')}
-                        error={errors.securityQuestion2?.answer?.message}
-                        withAsterisk
-                      />
-                      <Divider />
-                      <Controller
-                        control={control}
-                        name="securityQuestion3.question"
-                        render={({ field: { value, name, onChange } }) => (
-                          <Select
-                            label={`Question 3`}
-                            placeholder={`Select Question 3`}
-                            searchable
-                            nothingFound="No options"
-                            data={securityQuestion.filter((question) => {
-                              return (
-                                question.value !== securityQuestion1 &&
-                                question.value !== securityQuestion2
-                              );
-                            })}
-                            onChange={onChange}
-                            value={value}
-                            name={name}
-                            error={errors.securityQuestion3?.question?.message}
-                            withAsterisk
-                          />
-                        )}
-                      />
-                      <TextInput
-                        label={`Answer 3`}
-                        placeholder={`Answer 3`}
-                        {...register('securityQuestion3.answer')}
-                        error={errors.securityQuestion3?.answer?.message}
-                        withAsterisk
-                      />
-                    </Accordion.Panel>
-                  </Accordion.Item>
-                </Accordion> */}
                 <Flex className={styles.sign_up_wrapper}>
                   <Button
                     type="submit"
