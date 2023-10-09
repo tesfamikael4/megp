@@ -25,7 +25,7 @@ spec:
         - containerPort: 5511
         env:
         - name: IAM_BACK_OFFICE_DOMAIN
-          value: "http://196.189.44.10:5511"
+          value: "http://196.189.118.110:5511"
         - name: NEXT_PUBLIC_AUTH_API
           value: ""
         - name: NEXT_PUBLIC_IAM_API
