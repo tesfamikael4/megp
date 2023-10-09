@@ -1,4 +1,11 @@
-import { Select, Stack, TextInput, Textarea } from '@mantine/core';
+import {
+  Box,
+  LoadingOverlay,
+  Select,
+  Stack,
+  TextInput,
+  Textarea,
+} from '@mantine/core';
 import { EntityButton } from '@megp/entity';
 import { z, ZodType } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -15,6 +22,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { notifications } from '@mantine/notifications';
 import { Unit } from '@/models/unit';
+import { logger } from '@megp/core-fe';
 
 interface FormDetailProps {
   mode: 'new' | 'detail';
@@ -57,20 +65,22 @@ export function FormDetail({ mode }: FormDetailProps) {
   const [create, { isLoading: isSaving }] = useCreateMutation();
   const [update, { isLoading: isUpdating }] = useUpdateMutation();
   const [remove, { isLoading: isDeleting }] = useDeleteMutation();
-  const { data: selected, isSuccess: selectedSuccess } = useReadQuery(
-    id?.toString(),
-  );
+  const {
+    data: selected,
+    isSuccess: selectedSuccess,
+    isLoading,
+  } = useReadQuery(id?.toString());
   const { data: list, isSuccess } = useListQuery();
   const { data: unitType } = useUnitTypeListQuery();
 
   useEffect(() => {
-    if (isSuccess) {
+    if (isSuccess && selectedSuccess) {
       const posibleParent = list?.items?.filter((u: Unit) => {
-        return u.id !== id && selected?.parentId !== u.id;
+        return u.id !== id && selected?.parentId !== id;
       });
       setParents(posibleParent);
     }
-  }, [id, isSuccess, list?.items, selected?.parentId]);
+  }, [id, isSuccess, list?.items, selected?.parentId, selectedSuccess]);
 
   const onCreate = async (data) => {
     try {
@@ -146,69 +156,71 @@ export function FormDetail({ mode }: FormDetailProps) {
 
   return (
     <Stack>
-      <TextInput
-        label="Code"
-        error={errors?.code ? errors?.code?.message?.toString() : ''}
-        disabled
-        {...register('code')}
-      />
+      <Box pos={'relative'}>
+        <LoadingOverlay visible={isLoading} />
+        <TextInput
+          label="Code"
+          error={errors?.code ? errors?.code?.message?.toString() : ''}
+          disabled
+          {...register('code')}
+        />
 
-      <TextInput
-        withAsterisk
-        label="Name"
-        error={errors?.name ? errors?.name?.message?.toString() : ''}
-        {...register('name')}
-      />
+        <TextInput
+          withAsterisk
+          label="Name"
+          error={errors?.name ? errors?.name?.message?.toString() : ''}
+          {...register('name')}
+        />
 
-      <Textarea
-        label="Description"
-        autosize
-        minRows={2}
-        {...register('description')}
-      />
+        <Textarea
+          label="Description"
+          autosize
+          minRows={2}
+          {...register('description')}
+        />
 
-      <Controller
-        name="typeId"
-        control={control}
-        render={({ field: { onChange, value } }) => (
-          <Select
-            name="name"
-            label="unit Type"
-            value={value}
-            withAsterisk
-            error={errors?.typeId ? errors?.typeId?.message?.toString() : ''}
-            onChange={onChange}
-            data={
-              unitType?.items?.map((type) => ({
-                value: type?.id,
-                label: type?.name,
-              })) || []
-            }
-          />
-        )}
-      />
+        <Controller
+          name="typeId"
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <Select
+              name="name"
+              label="unit Type"
+              value={value}
+              withAsterisk
+              error={errors?.typeId ? errors?.typeId?.message?.toString() : ''}
+              onChange={onChange}
+              data={
+                unitType?.items?.map((type) => ({
+                  value: type?.id,
+                  label: type?.name,
+                })) || []
+              }
+            />
+          )}
+        />
 
-      <Controller
-        name="parentId"
-        control={control}
-        render={({ field: { onChange, value } }) => (
-          <Select
-            withAsterisk
-            label="Parent Unit"
-            value={value}
-            error={errors?.typeId ? errors?.typeId?.message?.toString() : ''}
-            name={'name'}
-            onChange={onChange}
-            data={
-              parents?.map((unit: any) => ({
-                value: unit?.id,
-                label: unit?.name,
-              })) || []
-            }
-          />
-        )}
-      />
-
+        <Controller
+          name="parentId"
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <Select
+              name={'name'}
+              withAsterisk
+              label="Parent Unit"
+              value={value}
+              error={errors?.typeId ? errors?.typeId?.message?.toString() : ''}
+              onChange={onChange}
+              data={
+                parents?.map((unit: any) => ({
+                  value: unit?.id,
+                  label: unit?.name,
+                })) || []
+              }
+            />
+          )}
+        />
+      </Box>
       <EntityButton
         mode={mode}
         onCreate={handleSubmit(onCreate)}

@@ -1,4 +1,11 @@
-import { Select, Stack, TextInput, Textarea } from '@mantine/core';
+import {
+  Box,
+  LoadingOverlay,
+  Select,
+  Stack,
+  TextInput,
+  Textarea,
+} from '@mantine/core';
 import { EntityButton } from '@megp/entity';
 import { z, ZodType } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -10,7 +17,7 @@ import {
   useCreateMutation,
 } from '../_api/organization.api';
 import { useListQuery } from '../../organization-sector/_api/organizationSector.api';
-import { useLazyListQuery } from '../../organization-type/_api/organizationType.api';
+import { useListQuery as useListTypeQuery } from '../../organization-type/_api/organizationType.api';
 import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
@@ -60,12 +67,13 @@ export function FormDetail({ mode }: FormDetailProps) {
   const [create, { isLoading: isSaving }] = useCreateMutation();
   const [update, { isLoading: isUpdating }] = useUpdateMutation();
   const [remove, { isLoading: isDeleting }] = useDeleteMutation();
-  const { data: selected, isSuccess: selectedSuccess } = useReadQuery(
-    id?.toString(),
-  );
+  const {
+    data: selected,
+    isSuccess: selectedSuccess,
+    isLoading,
+  } = useReadQuery(id?.toString());
   const { data: sector } = useListQuery();
-
-  const [triggerOrgType, { data: orgType }] = useLazyListQuery();
+  const { data: orgType } = useListTypeQuery();
 
   const onCreate = async (data) => {
     try {
@@ -133,81 +141,81 @@ export function FormDetail({ mode }: FormDetailProps) {
     }
   }, [mode, reset, selected, selectedSuccess]);
 
-  useEffect(() => {
-    triggerOrgType();
-  }, [triggerOrgType]);
-
   return (
     <Stack>
-      <TextInput
-        withAsterisk
-        label="Name"
-        error={errors?.name ? errors?.name?.message?.toString() : ''}
-        {...register('name')}
-      />
-      <TextInput
-        withAsterisk
-        label="Short name"
-        error={errors?.shortName ? errors?.shortName?.message?.toString() : ''}
-        required
-        {...register('shortName')}
-      />
+      <Box pos="relative">
+        <LoadingOverlay visible={isLoading} />
+        <TextInput
+          withAsterisk
+          label="Name"
+          error={errors?.name ? errors?.name?.message?.toString() : ''}
+          {...register('name')}
+        />
+        <TextInput
+          withAsterisk
+          label="Short name"
+          error={
+            errors?.shortName ? errors?.shortName?.message?.toString() : ''
+          }
+          required
+          {...register('shortName')}
+        />
 
-      <Textarea
-        label="Description"
-        autosize
-        minRows={2}
-        {...register('description')}
-      />
+        <Textarea
+          label="Description"
+          autosize
+          minRows={2}
+          {...register('description')}
+        />
 
-      <Controller
-        name="typeId"
-        control={control}
-        render={({ field: { onChange, value } }) => (
-          <Select
-            name="name"
-            label="Organization Type"
-            value={value}
-            withAsterisk
-            error={errors?.typeId ? errors?.typeId?.message?.toString() : ''}
-            onChange={onChange}
-            data={
-              orgType?.items?.map((type) => ({
-                value: type?.id,
-                label: type?.name,
-              })) || []
-            }
-          />
-        )}
-      />
-      <Controller
-        name="sectorId"
-        control={control}
-        render={({ field: { onChange, value } }) => (
-          <Select
-            withAsterisk
-            name="name"
-            error={
-              errors?.sectorId ? errors?.sectorId?.message?.toString() : ''
-            }
-            label="Organization Sector"
-            value={value}
-            onChange={onChange}
-            data={
-              sector?.items?.map((type) => ({
-                value: type?.id,
-                label: type?.name,
-              })) || []
-            }
-          />
-        )}
-      />
-      <TextInput
-        label={'External Organization Code'}
-        disabled
-        {...register('code')}
-      />
-
+        <Controller
+          name="typeId"
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <Select
+              name="name"
+              label="Organization Type"
+              value={value}
+              withAsterisk
+              error={errors?.typeId ? errors?.typeId?.message?.toString() : ''}
+              onChange={onChange}
+              data={
+                orgType?.items?.map((type) => ({
+                  value: type?.id,
+                  label: type?.name,
+                })) || []
+              }
+            />
+          )}
+        />
+        <Controller
+          name="sectorId"
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <Select
+              withAsterisk
+              name="name"
+              error={
+                errors?.sectorId ? errors?.sectorId?.message?.toString() : ''
+              }
+              label="Organization Sector"
+              value={value}
+              onChange={onChange}
+              data={
+                sector?.items?.map((type) => ({
+                  value: type?.id,
+                  label: type?.name,
+                })) || []
+              }
+            />
+          )}
+        />
+        <TextInput
+          label={'External Organization Code'}
+          disabled
+          {...register('code')}
+        />
+      </Box>
       <EntityButton
         mode={mode}
         onCreate={handleSubmit(onCreate)}

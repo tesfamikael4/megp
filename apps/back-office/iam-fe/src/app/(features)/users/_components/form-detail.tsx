@@ -1,4 +1,4 @@
-import { Stack, TextInput, Textarea } from '@mantine/core';
+import { Box, LoadingOverlay, Stack, TextInput } from '@mantine/core';
 import { EntityButton } from '@megp/entity';
 import { z, ZodType } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -7,10 +7,9 @@ import {
   useReadQuery,
   useDeleteMutation,
   useUpdateMutation,
-  useListQuery,
   useCreateMutation,
 } from '../_api/user.api';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { notifications } from '@mantine/notifications';
 import { User } from '@/models/user/user';
@@ -27,9 +26,9 @@ const defaultValues = {
 };
 
 const userSchema: ZodType<Partial<User>> = z.object({
-  firstName: z.string().min(1, { message: 'Firstname is required' }),
+  firstName: z.string().min(1, { message: 'First Name is required' }),
   username: z.string().min(1, { message: 'User Name is required' }),
-  lastName: z.string().min(1, { message: 'Lastname is required' }),
+  lastName: z.string().min(1, { message: 'Last Name is required' }),
   email: z
     .string()
     .email({ message: 'Must be a valid email' })
@@ -52,10 +51,11 @@ export function FormDetail({ mode }: FormDetailProps) {
   const [create, { isLoading: isSaving }] = useCreateMutation();
   const [update, { isLoading: isUpdating }] = useUpdateMutation();
   const [remove, { isLoading: isDeleting }] = useDeleteMutation();
-  const { data: selected, isSuccess: selectedSuccess } = useReadQuery(
-    id?.toString(),
-  );
-  // const { data: list, isSuccess } = useListQuery();
+  const {
+    data: selected,
+    isSuccess: selectedSuccess,
+    isLoading,
+  } = useReadQuery(id?.toString());
 
   const onCreate = async (data) => {
     try {
@@ -90,7 +90,7 @@ export function FormDetail({ mode }: FormDetailProps) {
         superTokenUserId: '099454a9-bf8f-45f5-9a4f-6e9034230250',
       });
       notifications.show({
-        message: 'duser updated successfully',
+        message: 'user updated successfully',
         title: 'Success',
       });
     } catch {
@@ -134,30 +134,35 @@ export function FormDetail({ mode }: FormDetailProps) {
 
   return (
     <Stack>
-      <TextInput
-        label="First Name"
-        error={errors?.firstName ? errors?.firstName?.message?.toString() : ''}
-        {...register('firstName')}
-      />
+      <Box pos="relative">
+        <LoadingOverlay visible={isLoading} />
+        <TextInput
+          label="First Name"
+          error={
+            errors?.firstName ? errors?.firstName?.message?.toString() : ''
+          }
+          {...register('firstName')}
+        />
 
-      <TextInput
-        withAsterisk
-        label="Last Name"
-        error={errors?.lastName ? errors?.lastName?.message?.toString() : ''}
-        {...register('lastName')}
-      />
+        <TextInput
+          withAsterisk
+          label="Last Name"
+          error={errors?.lastName ? errors?.lastName?.message?.toString() : ''}
+          {...register('lastName')}
+        />
 
-      <TextInput
-        label="User Name"
-        withAsterisk
-        error={errors?.userName ? errors?.userName?.message?.toString() : ''}
-        {...register('username')}
-      />
-      <TextInput
-        label="Email"
-        error={errors?.email ? errors?.email?.message?.toString() : ''}
-        {...register('email')}
-      />
+        <TextInput
+          label="User Name"
+          withAsterisk
+          error={errors?.userName ? errors?.userName?.message?.toString() : ''}
+          {...register('username')}
+        />
+        <TextInput
+          label="Email"
+          error={errors?.email ? errors?.email?.message?.toString() : ''}
+          {...register('email')}
+        />
+      </Box>
 
       <EntityButton
         mode={mode}

@@ -1,11 +1,16 @@
 'use client';
 import { Section } from '@megp/core-fe';
 import { FormDetail } from '../_components/form-detail';
+import { Stack } from '@mantine/core';
+import AddUserModal from '../_components/add-permission';
 
-export default function OrgSectorPage() {
+export default function RoleDetailPage() {
   return (
-    <Section title="Organization Detail">
-      <FormDetail mode="detail" />
-    </Section>
+    <Stack>
+      <Section title="Role Detail">
+        <FormDetail mode="detail" />
+      </Section>
+      <AddUserModal />
+    </Stack>
   );
 }
