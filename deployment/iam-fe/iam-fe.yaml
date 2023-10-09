@@ -56,4 +56,4 @@ spec:
     - protocol: TCP
       port: 5511
       targetPort: 5511
-  type: LoadBalancer
+  type: NodePort
