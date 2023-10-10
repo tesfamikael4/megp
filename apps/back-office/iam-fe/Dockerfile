@@ -61,6 +61,14 @@ COPY --from=installer /app/apps/back-office/iam-fe/package.json .
 COPY --from=installer --chown=nextjs:nodejs /app/apps/back-office/iam-fe/.next/standalone ./
 COPY --from=installer --chown=nextjs:nodejs /app/apps/back-office/iam-fe/.next/static ./apps/back-office/iam-fe/.next/static
 COPY --from=installer --chown=nextjs:nodejs /app/apps/back-office/iam-fe/public ./apps/back-office/iam-fe/public
-#EXPOSE 5511
-#CMD ["pnpm","run","start"]
-CMD PORT=5511 HOSTNAME=0.0.0.0 node apps/back-office/iam-fe/server.js
+
+
+# Set environment variables with default values
+ENV ENV_AUTH_API ""
+ENV ENV_API_BASE_PATH ""
+ENV ENV_WEBSITE_DOMAIN ""
+ENV ENV_WEBSITE_BASE_PATH ""
+ENV ENV_RECAPTCHA_SITE_KEY ""
+
+# Specify the command to run your application, passing the environment variables
+CMD ["node", "apps/back-office/iam-fe/server.js"]
