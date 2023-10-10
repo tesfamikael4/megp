@@ -6,6 +6,7 @@ cd ../../../
 # Build the Docker image using the specified Dockerfile
 docker build -f apps/server/iam-be/Dockerfile -t iam-be .
 
+
 # Tag the Docker image with a custom repository and tag
 docker tag iam-fe:latest gitlab.peragosystems.com:5050/megp/megp/iam-be:latest
 
