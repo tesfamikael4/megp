@@ -54,7 +54,8 @@
     "rxjs": "^7.2.0",
     "swagger-ui-express": "^4.6.2",
     "typeorm": "^0.3.14",
-    "supertokens-node": "^15.1.0"
+    "supertokens-node": "^15.1.0",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",
