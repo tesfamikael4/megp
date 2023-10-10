@@ -38,9 +38,6 @@ COPY turbo.json turbo.json
 # ARG TURBO_TEAM
 # ENV TURBO_TEAM=$TURBO_TEAM
 
-# ARG TURBO_TOKEN
-# ENV TURBO_TOKEN=$TURBO_TOKEN
-
 RUN pnpm turbo run build --filter=egp...
 
 FROM base AS runner
@@ -59,5 +56,14 @@ COPY --from=installer /app/apps/portal/egp/package.json .
 COPY --from=installer --chown=nextjs:nodejs /app/apps/portal/egp/.next/standalone ./
 COPY --from=installer --chown=nextjs:nodejs /app/apps/portal/egp/.next/static ./apps/portal/egp/.next/static
 COPY --from=installer --chown=nextjs:nodejs /app/apps/portal/egp/public ./apps/portal/egp/public
-#CMD ["pnpm","run","start"]
-CMD PORT=5500 HOSTNAME=0.0.0.0 node apps/portal/egp/server.js
+
+
+# Set environment variables with default values
+ENV ENV_AUTH_API ""
+ENV ENV_API_BASE_PATH ""
+ENV ENV_WEBSITE_DOMAIN ""
+ENV ENV_WEBSITE_BASE_PATH ""
+ENV ENV_RECAPTCHA_SITE_KEY ""
+
+# Specify the command to run your application, passing the environment variables
+CMD ["node", "apps/portal/egp/server.js"]
