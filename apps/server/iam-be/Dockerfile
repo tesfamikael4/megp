@@ -1,5 +1,4 @@
 FROM node:20-alpine AS base
-
 # This Dockerfile is copy-pasted into our main docs at /docs/handbook/deploying-with-docker.
 # Make sure you update both files!
 
