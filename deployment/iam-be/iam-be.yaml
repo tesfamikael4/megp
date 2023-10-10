@@ -19,7 +19,7 @@ spec:
       - name: gitlab-secret
       containers:
       - name: iam-be
-        image: gitlab.peragosystems.com:5050/megp/megp/iam-fe:latest
+        image: gitlab.peragosystems.com:5050/megp/megp/iam-be:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 80
@@ -80,6 +80,6 @@ spec:
     - protocol: TCP
       port: 3569
       targetPort: 3569
-  type: NodePort
+  #type: NodePort
 
 
