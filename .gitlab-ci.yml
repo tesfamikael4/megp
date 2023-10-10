@@ -16,8 +16,8 @@ merge:
     - pnpm config set store-dir .pnpm-store
   script:
     - pnpm install
-    - pnpm -w run turbo run lint  --filter "...[origin/main...HEAD^]"
-    - pnpm -w run turbo run build  --filter "...[origin/main...HEAD^]"
+    - pnpm -w run turbo run lint  --filter "...[origin/main...HEAD]"
+    - pnpm -w run turbo run build  --filter "...[origin/main...HEAD]"
   cache:
     key:
       files:
@@ -31,7 +31,7 @@ build:
   services:
     - docker:dind
   rules:
-    - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"
+    - if: $CI_COMMIT_BRANCH == "main" #&& $CI_PIPELINE_SOURCE == "push"
 
   before_script:
     - apk --update add nodejs npm git
