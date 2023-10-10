@@ -8,8 +8,7 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
-    "build:docker": "cd ../../../ && docker build -f apps/server/+demo-be/Dockerfile -t demo-be  . && docker tag demo-be:latest gitlab.peragosystems.com:5050/megp/megp/demo-be:latest &&  docker push gitlab.peragosystems.com:5050/megp/megp/demo-be:latest",
-    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "docker": "bash .bin/docker-build.sh",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
