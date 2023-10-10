@@ -9,6 +9,12 @@ merge:
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
     - if: $CI_COMMIT_BRANCH != "main"
+      when: manual
+      allow_failure: false
+      script:
+        - git checkout main
+        - git merge --no-ff $CI_COMMIT_REF_NAME
+        - git push origin main
   before_script:
     - corepack enable
     - corepack prepare pnpm@latest-8 --activate
