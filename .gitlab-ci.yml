@@ -39,8 +39,8 @@ build:
   script:
     - pnpm install
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - pnpm -w run turbo run lint  --filter "...[origin/main...HEAD]"
-    - pnpm -w run turbo run docker  --filter "...[origin/main...HEAD]"
+    - pnpm -w run turbo run lint  --filter "...[origin/main...HEAD^]"
+    - pnpm -w run turbo run docker  --filter "...[origin/main...HEAD^]"
 
   cache:
     key:
