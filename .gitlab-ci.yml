@@ -31,7 +31,7 @@ build:
   services:
     - docker:dind
   rules:
-    - changes:
+    
         - $CI_DEFAULT_BRANCH
         - main/*
         - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"
