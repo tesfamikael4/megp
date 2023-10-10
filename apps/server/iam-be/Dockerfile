@@ -1,61 +1,55 @@
-###################
-# BUILD FOR LOCAL DEVELOPMENT
-###################
+FROM node:20-alpine AS base
 
-FROM node:20-alpine As development
+# This Dockerfile is copy-pasted into our main docs at /docs/handbook/deploying-with-docker.
+# Make sure you update both files!
 
-# Create app directory
-WORKDIR /usr/src/app
+FROM base AS builder
+# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
+RUN apk add --no-cache libc6-compat
+RUN apk update
 
-# Copy application dependency manifests to the container image.
-# A wildcard is used to ensure copying both package.json AND package-lock.json (when available).
-# Copying this first prevents re-running npm install on every code change.
-COPY --chown=node:node package*.json ./
+# Set working directory
+WORKDIR /app
+RUN yarn global add turbo pnpm
+COPY . .
+RUN turbo prune --scope=iam-be --docker
 
-# Install app dependencies using the `npm ci` command instead of `npm install`
-RUN npm install
+# Add lockfile and package.json's of isolated subworkspace
+FROM base AS installer
+RUN apk add --no-cache libc6-compat
+RUN apk update
+WORKDIR /app
 
-# Bundle app source
-COPY --chown=node:node . .
+# Install pnpm
+RUN yarn global add pnpm
+ 
 
-# Use the node user from the image (instead of the root user)
-USER node
+# First install the dependencies (as they change less often)
+COPY .gitignore .gitignore
+COPY --from=builder /app/out/json/ .
+COPY --from=builder /app/out/pnpm-lock.yaml  ./pnpm-lock.yaml 
+RUN pnpm install
 
-###################
-# BUILD FOR PRODUCTION
-###################
+# Build the project and its dependencies
+COPY --from=builder /app/out/full/ .
+COPY turbo.json turbo.json
 
-FROM node:20-alpine As build
+# Uncomment and use build args to enable remote caching
+# ARG TURBO_TEAM
+# ENV TURBO_TEAM=$TURBO_TEAM
 
-WORKDIR /usr/src/app
+# ARG TURBO_TOKEN
+# ENV TURBO_TOKEN=$TURBO_TOKEN
 
-COPY --chown=node:node package*.json ./
+RUN yarn turbo run build --filter=iam-be...
 
-# In order to run `npm run build` we need access to the Nest CLI which is a dev dependency. In the previous development stage we ran `npm ci` which installed all dependencies, so we can copy over the node_modules directory from the development image
-COPY --chown=node:node --from=development /usr/src/app/node_modules ./node_modules
+FROM base AS runner
+WORKDIR /app
 
-COPY --chown=node:node . .
+# Don't run production as root
+RUN addgroup --system --gid 1001 nestjs
+RUN adduser --system --uid 1001 nestjs
+USER nestjs
+COPY --from=installer /app .
 
-# Run the build command which creates the production bundle
-RUN npm run build
-
-# Set NODE_ENV environment variable
-ENV NODE_ENV production
-
-# Running `npm ci` removes the existing node_modules directory and passing in --only=production ensures that only the production dependencies are installed. This ensures that the node_modules directory is as optimized as possible
-RUN npm ci --only=production && npm cache clean --force
-
-USER node
-
-###################
-# PRODUCTION
-###################
-
-FROM node:20-alpine As production
-
-# Copy the bundled code from the build stage to the production image
-COPY --chown=node:node --from=build /usr/src/app/node_modules ./node_modules
-COPY --chown=node:node --from=build /usr/src/app/dist ./dist
-
-# Start the server using the production build
-CMD [ "node", "dist/main.js" ]
+CMD node apps/server/iam-be/dist/main.js
