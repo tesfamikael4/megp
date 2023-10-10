@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev ",
     "build": "next build",
-    "docker": "bash .bin/docker-build.sh",
+    "docker": "sh .bin/docker-build.sh",
     "lint": "next lint"
   },
   "dependencies": {
