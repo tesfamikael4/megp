@@ -37,15 +37,12 @@ COPY turbo.json turbo.json
 # Uncomment and use build args to enable remote caching
 # ARG TURBO_TEAM
 # ENV TURBO_TEAM=$TURBO_TEAM
-
 # ARG TURBO_TOKEN
 # ENV TURBO_TOKEN=$TURBO_TOKEN
 
 RUN yarn turbo run build --filter=iam-be...
-
 FROM base AS runner
 WORKDIR /app
-
 # Don't run production as root
 RUN addgroup --system --gid 1001 nestjs
 RUN adduser --system --uid 1001 nestjs
