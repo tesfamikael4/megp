@@ -31,10 +31,8 @@ build:
   services:
     - docker:dind
   rules:
-    
-        - $CI_DEFAULT_BRANCH
-        - main/*
-        - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"
+    - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"
+
   before_script:
     - apk --update add nodejs npm git
     - npm install -g pnpm
