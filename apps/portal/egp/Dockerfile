@@ -59,17 +59,12 @@ COPY --from=installer --chown=nextjs:nodejs /app/apps/portal/egp/public ./apps/p
 
 
 # Set environment variables with default values
-#ENV ENV_AUTH_API ""
-#ENV ENV_API_BASE_PATH ""
-#ENV ENV_WEBSITE_DOMAIN ""
-#ENV ENV_WEBSITE_BASE_PATH ""
-#ENV ENV_RECAPTCHA_SITE_KEY ""
-
-ENV NEXT_PUBLIC_AUTH_API=http://196.189.118.110:3569
-ENV NEXT_PUBLIC_API_BASE_PATH=/api/auth
-ENV NEXT_PUBLIC_WEBSITE_DOMAIN=http://196.189.118.110:5500
-ENV NEXT_PUBLIC_WEBSITE_BASE_PATH=/auth
-ENV NEXT_PUBLIC_VENDOR_API=http://196.189.118.110:5533
+ENV ENV_AUTH_API="AUTH_API"
+ENV ENV_API_BASE_PATH="API_BASE_PATH"
+ENV ENV_WEBSITE_DOMAIN="WEBSITE_DOMAIN"
+ENV ENV_WEBSITE_BASE_PATH="WEBSITE_BASE_PATH"
+ENV ENV_PUBLIC_VENDOR_API="VENDOR_API"
+ENV ENV_RECAPTCHA_SITE_KEY ""
 
 # Specify the command to run your application, passing the environment variables
 CMD ["node", "apps/portal/egp/server.js"]
