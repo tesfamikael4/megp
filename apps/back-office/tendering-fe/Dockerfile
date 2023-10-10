@@ -12,7 +12,7 @@ RUN apk update
 WORKDIR /app
 RUN yarn global add turbo pnpm
 COPY . .
-RUN turbo prune --scope=iam-fe --docker
+RUN turbo prune --scope=tendering-fe --docker
 
 # Add lockfile and package.json's of isolated subworkspace
 FROM base AS installer
@@ -27,7 +27,9 @@ RUN yarn global add pnpm
 # First install the dependencies (as they change less often)
 COPY .gitignore .gitignore
 COPY --from=builder /app/out/json/ .
+COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/out/pnpm-lock.yaml  ./pnpm-lock.yaml 
+#COPY --from=builder /app/node_modules ./node_modules
 RUN pnpm install
 
 # Build the project
@@ -41,7 +43,7 @@ COPY turbo.json turbo.json
 # ARG TURBO_TOKEN
 # ENV TURBO_TOKEN=$TURBO_TOKEN
 
-RUN pnpm turbo run build --filter=iam-fe...
+RUN pnpm turbo run build --filter=tendering-fe...
 
 FROM base AS runner
 WORKDIR /app
@@ -51,13 +53,22 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 USER nextjs
 
-COPY --from=installer /app/apps/back-office/iam-fe/next.config.js .
-COPY --from=installer /app/apps/back-office/iam-fe/package.json .
+COPY --from=installer /app/apps/back-office/tendering-fe/next.config.js .
+COPY --from=installer /app/apps/back-office/tendering-fe/package.json .
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
-COPY --from=installer --chown=nextjs:nodejs /app/apps/back-office/iam-fe/.next/standalone ./
-COPY --from=installer --chown=nextjs:nodejs /app/apps/back-office/iam-fe/.next/static ./apps/back-office/iam-fe/.next/static
-COPY --from=installer --chown=nextjs:nodejs /app/apps/back-office/iam-fe/public ./apps/back-office/iam-fe/public
+COPY --from=installer --chown=nextjs:nodejs /app/apps/back-office/tendering-fe/.next/standalone ./
+COPY --from=installer --chown=nextjs:nodejs /app/apps/back-office/tendering-fe/.next/static ./apps/back-office/tendering-fe/.next/static
+COPY --from=installer --chown=nextjs:nodejs /app/apps/back-office/tendering-fe/public ./apps/back-office/tendering-fe/public
 
-CMD PORT=5511 HOSTNAME=0.0.0.0 node apps/back-office/iam-fe/server.js
+
+# Set environment variables with default values
+ENV ENV_AUTH_API ""
+ENV ENV_API_BASE_PATH ""
+ENV ENV_WEBSITE_DOMAIN ""
+ENV ENV_WEBSITE_BASE_PATH ""
+ENV ENV_RECAPTCHA_SITE_KEY ""
+
+# Specify the command to run your application, passing the environment variables
+CMD ["node", "apps/back-office/tendering-fe/server.js"]
