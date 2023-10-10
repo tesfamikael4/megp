@@ -11,7 +11,7 @@
     "copy": "copy \"package.json\" \"dist\" ",
     "copyEnv": "copy \".env\" \"dist\" ",
     "build": "nest build && tsc -p tsconfig.build.json",
-    "docker": "sh .bin/docker-build.sh",
+    "docker": "bash .bin/docker-build.sh",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
