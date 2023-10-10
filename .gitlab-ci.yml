@@ -1,8 +1,5 @@
 image: node:latest
-workflow:
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_APPROVED == "true"'
-      when: always
+  
 stages:
   - merge
   - build
@@ -10,7 +7,9 @@ stages:
 
 merge:
   stage: merge
-  
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_APPROVED == "true"'
+      when: always
   before_script:
     - corepack enable
     - corepack prepare pnpm@latest-8 --activate
@@ -31,9 +30,11 @@ build:
   image: docker:latest
   services:
     - docker:dind
-
   rules:
-    - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"
+    - changes:
+        - $CI_DEFAULT_BRANCH
+        - main/*
+        - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"
   before_script:
     - apk --update add nodejs npm git
     - npm install -g pnpm
