@@ -53,6 +53,15 @@ build:
         - pnpm-lock.yaml
     paths:
       - .pnpm-store
+
+
+deploy_dev:
+  stage: deploy
+  script:
+    - echo "Deploying to the dev environment"
+    - argocd login --insecure --username $ARGOCD_USERNAME --password $ARGOCD_PASSWORD $ARGOCD_SERVER
+    - argocd app set vendor-be --sync-policy automated --project default --dest-server https://kubernetes.default.svc --dest-namespace dev
+    - argocd app sync vendor-be
 # deploy:
 #   stage: deploy
 #   image: docker:latest
