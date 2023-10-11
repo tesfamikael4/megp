@@ -63,12 +63,12 @@ build:
 #     - argocd app set vendor-be --sync-policy automated --project default --dest-server  --dest-namespace dev
 #     - argocd app sync vendor-be
 
-dev:
-  stage: deploy
-  script:
-    - echo "Deploying to dev environment"
-    - argocd app create vendor-be  --repo https://gitlab.peragosystems.com/megp/megp.git --path deployment/vendor-be --dest-server https://kubernetes.default.svc --dest-namespace dev  --sync-policy automated
-    - argocd app sync vendor-be
+# dev:
+#   stage: deploy
+#   script:
+#     - echo "Deploying to dev environment"
+#     - argocd app create vendor-be  --repo https://gitlab.peragosystems.com/megp/megp.git --path deployment/vendor-be --dest-server https://kubernetes.default.svc --dest-namespace dev  --sync-policy automated
+#     - argocd app sync vendor-be
 
 # deploy:
 #   stage: deploy
