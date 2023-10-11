@@ -24,18 +24,22 @@ spec:
   selector:
     matchLabels:
       app: vendor-be
+      version: v1
   template:
     metadata:
       labels:
         app: vendor-be
+        version: v1
     spec:
+      imagePullSecrets:
+      - name: gitlab-secret
       containers:
-      - name: vendor-be
+      - name: iam-be
         image: gitlab.peragosystems.com:5050/megp/megp/vendor-be:latest
-        imagePullSecrets:
-        - name: gitlab-secret
+        imagePullPolicy: Always
         ports:
-        - containerPort: 6633
+        - containerPort: 80
+
         envFrom:
         - configMapRef:
             name: vendor-be-config
