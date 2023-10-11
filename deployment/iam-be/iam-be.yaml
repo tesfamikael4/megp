@@ -80,6 +80,6 @@ spec:
     - protocol: TCP
       port: 3569
       targetPort: 3569
-  #type: NodePort
+  type: NodePort
 
 
