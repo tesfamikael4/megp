@@ -8,7 +8,7 @@ docker build -f apps/server/iam-be/Dockerfile -t iam-be .
 
 
 # Tag the Docker image with a custom repository and tag
-docker tag iam-fe:latest gitlab.peragosystems.com:5050/megp/megp/iam-be:latest
+docker tag iam-be:latest gitlab.peragosystems.com:5050/megp/megp/iam-be:latest
 
 # Push the tagged Docker image to the remote repository
 docker push gitlab.peragosystems.com:5050/megp/megp/iam-be:latest
