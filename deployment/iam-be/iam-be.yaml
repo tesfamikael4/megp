@@ -1,3 +1,32 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: iam-be-config
+data:
+  NODE_ENV: development
+  PORT: "3569"
+  BASE_URL: "http://196.189.118.110:3569"
+  DATABASE_HOST: "196.189.44.10"
+  DATABASE_NAME: "dev_iam"
+  DATABASE_USER: "postgres"
+  DATABASE_PASSWORD: "Perago@megpDB!"
+  DATABASE_PORT: "5432"
+  CONNECTION_URI: "http://196.189.118.110:3567"
+  API_KEY: "uibpuhokjokjbouigoih"
+  APP_NAME: "m-egp"
+  API_DOMAIN: "http://196.189.118.110:3569"
+  WEBSITE_DOMAIN: "http://196.189.118.110:5500"
+  IAM_BACK_OFFICE_DOMAIN: "http://196.189.118.110:5511"
+  API_BASE_PATH: "/api/auth"
+  WEBSITE_BASE_PATH: "/auth"
+  SMTP_HOST: "smtp.elasticemail.com"
+  SMTP_USERNAME: "mmexploit1@gmail.com"
+  SMTP_EMAIL: "mmexploit1@gmail.com"
+  SMTP_PASSWORD: "13CA89B5106857E132AD7933FC3E9CD4BC5B"
+  SMTP_PORT: "2525"
+---
+
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -23,49 +52,53 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 80
-        env:
-          - name: NODE_ENV
-            value: "development"
-          - name: PORT
-            value: "3569"
-          - name: BASE_URL
-            value: "http://196.189.118.110:3569"
-          - name: DATABASE_HOST
-            value: "196.189.44.10"
-          - name: DATABASE_NAME
-            value: "dev_iam"
-          - name: DATABASE_USER
-            value: "postgres"
-          - name: DATABASE_PASSWORD
-            value: "Perago@megpDB!"
-          - name: DATABASE_PORT
-            value: "5432"
-          - name: CONNECTION_URI
-            value: "http://196.189.118.110:3567"
-          - name: API_KEY
-            value: "uibpuhokjokjbouigoih"
-          - name: APP_NAME
-            value: "m-egp"
-          - name: API_DOMAIN
-            value: "http://196.189.118.110:3569"
-          - name: WEBSITE_DOMAIN
-            value: "http://196.189.118.110:5500"
-          - name: IAM_BACK_OFFICE_DOMAIN
-            value: "http://196.189.118.110:5511"
-          - name: API_BASE_PATH
-            value: "/api/auth"
-          - name: WEBSITE_BASE_PATH
-            value: "/auth"
-          - name: SMTP_HOST
-            value: "smtp.elasticemail.com"
-          - name: SMTP_USERNAME
-            value: "mmexploit1@gmail.com"
-          - name: SMTP_EMAIL
-            value: "mmexploit1@gmail.com"
-          - name: SMTP_PASSWORD
-            value: "13CA89B5106857E132AD7933FC3E9CD4BC5B"
-          - name: SMTP_PORT
-            value: "2525"
+        envFrom:
+        - configMapRef:
+            name: iam-be-config
+
+        # env:
+        #   - name: NODE_ENV
+        #     value: "development"
+        #   - name: PORT
+        #     value: "3569"
+        #   - name: BASE_URL
+        #     value: "http://196.189.118.110:3569"
+        #   - name: DATABASE_HOST
+        #     value: "196.189.44.10"
+        #   - name: DATABASE_NAME
+        #     value: "dev_iam"
+        #   - name: DATABASE_USER
+        #     value: "postgres"
+        #   - name: DATABASE_PASSWORD
+        #     value: "Perago@megpDB!"
+        #   - name: DATABASE_PORT
+        #     value: "5432"
+        #   - name: CONNECTION_URI
+        #     value: "http://196.189.118.110:3567"
+        #   - name: API_KEY
+        #     value: "uibpuhokjokjbouigoih"
+        #   - name: APP_NAME
+        #     value: "m-egp"
+        #   - name: API_DOMAIN
+        #     value: "http://196.189.118.110:3569"
+        #   - name: WEBSITE_DOMAIN
+        #     value: "http://196.189.118.110:5500"
+        #   - name: IAM_BACK_OFFICE_DOMAIN
+        #     value: "http://196.189.118.110:5511"
+        #   - name: API_BASE_PATH
+        #     value: "/api/auth"
+        #   - name: WEBSITE_BASE_PATH
+        #     value: "/auth"
+        #   - name: SMTP_HOST
+        #     value: "smtp.elasticemail.com"
+        #   - name: SMTP_USERNAME
+        #     value: "mmexploit1@gmail.com"
+        #   - name: SMTP_EMAIL
+        #     value: "mmexploit1@gmail.com"
+        #   - name: SMTP_PASSWORD
+        #     value: "13CA89B5106857E132AD7933FC3E9CD4BC5B"
+        #   - name: SMTP_PORT
+        #     value: "2525"
 
 ---
 apiVersion: v1
