@@ -22,10 +22,10 @@ spec:
         image: gitlab.peragosystems.com:5050/megp/megp/tendering-fe:latest
         imagePullPolicy: Always
         ports:
-        - containerPort: 5511
+        - containerPort: 5522
         env:
         - name: IAM_BACK_OFFICE_DOMAIN
-          value: "http://196.189.118.110:5511"
+          value: "http://196.189.118.110:5522"
         - name: NEXT_PUBLIC_AUTH_API
           value: ""
         - name: NEXT_PUBLIC_IAM_API
@@ -41,7 +41,7 @@ spec:
         - name: NEXT_PUBLIC_CONTRACT_API
           value: ""
         - name: PORT
-          value: "5511"
+          value: "5522"
 
 ---
 apiVersion: v1
@@ -54,6 +54,6 @@ spec:
     app: tendering-fe
   ports:
     - protocol: TCP
-      port: 5511
-      targetPort: 5511
+      port: 5522
+      targetPort: 5522
   type: NodePort
