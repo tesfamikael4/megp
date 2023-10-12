@@ -10,6 +10,7 @@ export default function Protected({ children }: { children: React.ReactNode }) {
       router.push('/auth/login');
       console.log('Not signed in');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return <>{children}</>;
 }
