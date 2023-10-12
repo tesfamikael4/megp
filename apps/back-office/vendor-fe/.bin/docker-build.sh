@@ -4,13 +4,13 @@
 cd ../../../
 
 # Build the Docker image using the specified Dockerfile
-docker build -f apps/back-office/iam-fe/Dockerfile -t iam-fe .
+docker build -f apps/back-office/vendor-fe/Dockerfile -t vendor-fe .
 
 # Tag the Docker image with a custom repository and tag
-docker tag iam-fe:latest gitlab.peragosystems.com:5050/megp/megp/iam-fe:latest
+docker tag vendor-fe:latest gitlab.peragosystems.com:5050/megp/megp/vendor-fe:v1
 
 # Push the tagged Docker image to the remote repository
-docker push gitlab.peragosystems.com:5050/megp/megp/iam-fe:latest
+docker push gitlab.peragosystems.com:5050/megp/megp/vendor-fe:v1
 
 # Optionally, remove the local Docker image if you don't need it anymore
 # docker rmi iam-fe:latest
