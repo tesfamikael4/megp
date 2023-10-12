@@ -13,6 +13,7 @@ export default function ConsumeVerification() {
 
   useEffect(() => {
     consumeVerificationCode();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function consumeVerificationCode() {

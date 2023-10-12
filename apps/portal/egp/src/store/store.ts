@@ -1,12 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { userApi } from './api/user/user.api';
-import { vendorRegistrationSlice } from './api/vendor_registration/slice';
+import { vendorRegistrationApi } from './api/vendor_registration/api';
 import { middleware } from './middleware';
 import { authApi } from './api/auth/auth.api';
 
 export const store = configureStore({
   reducer: {
-    [vendorRegistrationSlice.reducerPath]: vendorRegistrationSlice.reducer,
+    [vendorRegistrationApi.reducerPath]: vendorRegistrationApi.reducer,
     [authApi.reducerPath]: authApi.reducer,
   },
   devTools: process.env.NODE_ENV !== 'production',

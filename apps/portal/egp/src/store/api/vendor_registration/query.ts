@@ -1,106 +1,75 @@
-import { vendorRegistrationSlice } from './slice';
 import {
-  BankListResponse,
-  FormInitiationRequest,
-  FormSubmissionRequest,
-  FormSubmissionResponse,
-  GetApplicationByUserIdResponse,
-  AreasOfBusinessInterestCategoriesListResponse,
-  AreasOfBusinessInterestPriceRangeResponse,
-} from './type';
-export const apiVendorRegistrationQuery =
-  vendorRegistrationSlice.injectEndpoints({
-    endpoints: (builder) => ({
-      saveForm: builder.query<FormSubmissionResponse, FormSubmissionRequest>({
-        query: (data) => ({
-          url: `api/VendorRegistrations/add-vendor-information`,
-          method: 'POST',
-          body: data,
-        }),
-      }),
-      getFormInitiationRequest: builder.query<any, FormInitiationRequest>({
-        query: (payload) => ({
-          url: `api/TinRegistrationDatabaseController/tin-registration-database-service-by-tinNumber`,
-          method: 'GET',
-          params: payload,
-        }),
-      }),
-      getApplicationStatusByUserId: builder.query<
-        {
-          createdAt: string;
-          id: string;
-          tin: string;
-          status: string;
-          name: string;
-        },
-        { userId: string }
-      >({
-        query: (payload) => ({
-          url: `api/VendorRegistrations/get-vendor-by-userId/${payload.userId}`,
-          method: 'GET',
-        }),
-      }),
-      getApplicationByVendorId: builder.query<
-        GetApplicationByUserIdResponse,
-        { vendorId: string }
-      >({
-        query: (payload) => ({
-          url: `api/VendorRegistrations/get-vendor-by-vendorId/${payload.vendorId}`,
-          method: 'GET',
-        }),
-      }),
-      getDraftApplicationByUserId: builder.query<
-        GetApplicationByUserIdResponse,
-        { vendorId: string }
-      >({
-        query: (payload) => ({
-          url: `api/VendorRegistrations/get-vendor-information-by-vendorId/${payload.vendorId}`,
-          method: 'GET',
-        }),
-      }),
+  BankNamesResponse,
+  CategoriesListResponse,
+  PriceRangeResponse,
+  CreateVendorIdRequest,
+  CreateVendorIdResponse,
+  GetFormRequest,
+  GetFormResponse,
+} from '@/models/vendorRegistration';
+import { vendorRegistrationApi } from './api';
 
-      deleteApplicationByVendorId: builder.query<any, { vendorId: string }>({
-        query: (payload) => ({
-          url: `api/VendorRegistrations/delete-vendor/${payload.vendorId}`,
-          method: 'DELETE',
-        }),
-      }),
-      getBankList: builder.query<BankListResponse[], any>({
-        query: () => ({
-          url: `api/BankAccountDetail/fetch-bank`,
-          method: 'GET',
-        }),
-      }),
-      getAreasOfBusinessInterestCategoriesList: builder.query<
-        AreasOfBusinessInterestCategoriesListResponse,
-        any
-      >({
-        query: () => ({
-          url: `api/Categories/get-all-categories`,
-          method: 'GET',
-        }),
-      }),
-      getAreasOfBusinessInterestPriceRange: builder.query<
-        AreasOfBusinessInterestPriceRangeResponse,
-        any
-      >({
-        query: () => ({
-          url: `api/Service-pricing`,
-          method: 'GET',
-        }),
+export const vendorRegistrationQuery = vendorRegistrationApi.injectEndpoints({
+  endpoints: (builder) => ({
+    getForm: builder.query<GetFormResponse, GetFormRequest>({
+      query: (data) =>
+        `/api/VendorRegistrations/get-vendor-by-vendorId/${data.vendorId}`,
+    }),
+    createVendorId: builder.mutation<
+      CreateVendorIdResponse,
+      CreateVendorIdRequest
+    >({
+      query: (data) => ({
+        url: '/api/VendorRegistrations/vendor-initiation',
+        method: 'POST',
+        body: data,
       }),
     }),
-  });
-export const {
-  useLazySaveFormQuery,
-  useGetApplicationByVendorIdQuery,
-  useLazyGetFormInitiationRequestQuery,
-  useLazyGetDraftApplicationByUserIdQuery,
-  useGetApplicationStatusByUserIdQuery,
-  useLazyDeleteApplicationByVendorIdQuery,
-  useGetBankListQuery,
-  useGetAreasOfBusinessInterestCategoriesListQuery,
-  useGetAreasOfBusinessInterestPriceRangeQuery,
-} = apiVendorRegistrationQuery;
+    addForm: builder.mutation<any, Partial<any>>({
+      query: (newany) => ({
+        url: '/api/VendorRegistrations/add-vendor-information',
+        method: 'POST',
+        body: newany,
+      }),
+    }),
 
-//  # Selector
+    updateForm: builder.mutation<any, any>({
+      query: (updatedany) => ({
+        url: `update/${updatedany.id}`,
+        method: 'PUT',
+        body: updatedany,
+      }),
+    }),
+
+    getBankList: builder.query<BankNamesResponse[], any>({
+      query: () => ({
+        url: `api/BankAccountDetail/fetch-bank`,
+        method: 'GET',
+      }),
+    }),
+
+    getCategoriesList: builder.query<CategoriesListResponse, any>({
+      query: () => ({
+        url: `api/Categories/get-all-categories`,
+        method: 'GET',
+      }),
+    }),
+
+    getPriceRange: builder.query<PriceRangeResponse, any>({
+      query: () => ({
+        url: `api/Service-pricing`,
+        method: 'GET',
+      }),
+    }),
+  }),
+});
+
+export const {
+  useGetFormQuery,
+  useCreateVendorIdMutation,
+  useAddFormMutation,
+  useUpdateFormMutation,
+  useGetBankListQuery,
+  useGetCategoriesListQuery,
+  useGetPriceRangeQuery,
+} = vendorRegistrationQuery;
