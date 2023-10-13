@@ -1,5 +1,5 @@
 import { ObjectLiteral, Repository, SelectQueryBuilder } from 'typeorm';
-import { CollectionQueryNew, Order, Where } from './query'; // Import your models here
+import { CollectionQueryNew, Order, Where } from './query';
 import { FilterOperators } from './filter_operators';
 
 const addFilterConditions = (
@@ -74,11 +74,11 @@ const addFilterParams = (op: string, value: any, column: string, acc: any) => {
   return acc;
 };
 
-function applyWhereConditions<T>(
+const applyWhereConditions = <T>(
   aggregate: string,
   queryBuilder: SelectQueryBuilder<T>,
   whereConditions: Where[][],
-) {
+) => {
   for (const [index, conditions] of whereConditions.entries()) {
     const operator = index === 0 ? 'where' : 'andWhere';
 
@@ -157,46 +157,46 @@ function applyWhereConditions<T>(
     queryBuilder.expressionMap.wheres =
       queryBuilder.expressionMap.wheres.filter((f) => f.condition);
   }
-}
+};
 
-function applyOrderBy<T>(
+const applyOrderBy = <T>(
   aggregate: string,
   queryBuilder: SelectQueryBuilder<T>,
   orderBy: Order[],
-) {
+) => {
   orderBy.forEach(({ column, direction = 'ASC', nulls }) => {
     queryBuilder.addOrderBy(`${aggregate}.${column}`, direction, nulls);
   });
-}
+};
 
-function applyIncludes<T>(
+const applyIncludes = <T>(
   aggregate: string,
   queryBuilder: SelectQueryBuilder<T>,
   includes: string[],
-) {
+) => {
   includes.forEach((relatedEntity) => {
     queryBuilder.leftJoinAndSelect(
       `${aggregate}.${relatedEntity}`,
       relatedEntity,
     );
   });
-}
+};
 
-function applyGroupBy<T>(
+const applyGroupBy = <T>(
   aggregate: string,
   queryBuilder: SelectQueryBuilder<T>,
   groupBy: string[],
-) {
+) => {
   groupBy.forEach((column) => {
     queryBuilder.addGroupBy(`${aggregate}.${column}`);
   });
-}
+};
 
-function applyHaving<T>(
+const applyHaving = <T>(
   aggregate: string,
   queryBuilder: SelectQueryBuilder<T>,
   havingConditions: Where[][],
-) {
+) => {
   for (const conditions of havingConditions) {
     const orConditions = conditions.map(({ column, value, operator: op }) => {
       if (
@@ -251,13 +251,13 @@ function applyHaving<T>(
       queryBuilder.andHaving(`(${orConditions.join(' OR ')})`, queryParams);
     }
   }
-}
+};
 
-export function buildQuery<T>(
+export const buildQuery = <T>(
   aggregate: string,
   queryBuilder: SelectQueryBuilder<T>,
   query: CollectionQueryNew,
-) {
+) => {
   if (query.select) {
     queryBuilder.select(query.select.map((column) => `${aggregate}.${column}`));
   }
@@ -293,7 +293,7 @@ export function buildQuery<T>(
   // if (query.count) {
   //   queryBuilder.addSelect(`COUNT(${aggregate}.*)`, 'total');
   // }
-}
+};
 
 export class QueryConstructorNew {
   static constructQuery<T extends ObjectLiteral>(
@@ -304,19 +304,14 @@ export class QueryConstructorNew {
       // select: ['name'],
       where: [
         // [{ column: 'name', value: 'string', operator: '=' }, { column: 'name', value: 'string1', operator: '=' }],
-        // [{ column: 'name', value: ['string', 'string1'], operator: 'IN' }],
-        [{ column: 'name', value: 'string', operator: '<>' }],
-        // [{ column: 'descriptionJson->>value', value: 20, operator: '!=' }],
+        [{ column: 'name', value: ['string', 'string1'], operator: 'IN' }],
+        // [{ column: 'name', value: 'string', operator: '=' }],
+        // [{ column: 'descriptionJson->>value', value: 20, operator: '=' }],
         // [{ column: 'descriptionJson->value->>value', value: 20, operator: '=' }],
         // [
         //   {
         //     column: 'userGroups.userId',
-        //     value: '1cfafb58-c068-4936-b284-fc4887045e1b',
-        //     operator: '=',
-        //   },
-        //   {
-        //     column: 'id',
-        //     value: '33dc77cd-d987-4e18-8145-8a5a943210a6',
+        //     value: '1cfafb58-c068-4936-b284-fc4887045e1c',
         //     operator: '=',
         //   },
         // ],
@@ -340,9 +335,8 @@ export class QueryConstructorNew {
 
     const aggregate = metaData.tableName;
     const queryBuilder = repository.createQueryBuilder(aggregate);
-    // Usage
+
     buildQuery(aggregate, queryBuilder, query);
-    // const result = await queryBuilder.getRawAndEntities();
 
     const q = queryBuilder.getSql();
 

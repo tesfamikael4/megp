@@ -17,16 +17,16 @@ import {
   resetPasswordUsingToken,
   updateEmailOrPassword,
 } from 'supertokens-node/recipe/thirdpartyemailpassword';
-import { OrganizationService } from 'src/organization';
+import { UserAuthService } from 'src/users/services/user-auth.service';
 import {
   CheckSecurityQuestionDto,
   SetSecurityQuestionDto,
-} from 'src/organization/dto/security-question.dto';
+} from 'src/users/dto/security-question.dto';
 
 @Controller('auth')
 @ApiTags('auth')
 export class AuthController {
-  constructor(private readonly organizationService: OrganizationService) {}
+  constructor(private readonly userAuthService: UserAuthService) {}
 
   @Post('change-password')
   @UseGuards(new AuthGuard())
@@ -91,7 +91,19 @@ export class AuthController {
     @Body() payload: SetSecurityQuestionDto,
     @Session() session: SessionContainer,
   ): Promise<any> {
-    return await this.organizationService.setSecurityQuestions(
+    const user = session.getAccessTokenPayload();
+
+    const isPasswordValid = await emailPasswordSignIn(
+      session!.getTenantId(),
+      user.userInfo.username,
+      payload.password,
+    );
+
+    if (isPasswordValid.status !== 'OK') {
+      throw new HttpException('INVALID_PASSWORD', HttpStatus.BAD_REQUEST);
+    }
+
+    return await this.userAuthService.setSecurityQuestions(
       session.getUserId(),
       payload,
     );
@@ -101,8 +113,7 @@ export class AuthController {
   async checkSecurityQuestions(
     @Body() payload: CheckSecurityQuestionDto,
   ): Promise<any> {
-    const result =
-      await this.organizationService.checkSecurityQuestions(payload);
+    const result = await this.userAuthService.checkSecurityQuestions(payload);
     if (result.status) {
       const token = await createResetPasswordToken(
         'public',
@@ -123,15 +134,13 @@ export class AuthController {
   async getSecurityQuestions(
     @Session() session: SessionContainer,
   ): Promise<any> {
-    return await this.organizationService.getSecurityQuestions(
-      session.getUserId(),
-    );
+    return await this.userAuthService.getSecurityQuestions(session.getUserId());
   }
 
   @Get('userinfo')
   @UseGuards(new AuthGuard())
   async userinfo(@Session() session: SessionContainer): Promise<any> {
-    return await this.organizationService.getUserInfo(session.getUserId());
+    return await this.userAuthService.getUserInfo(session.getUserId());
   }
 
   @Get('protected')
