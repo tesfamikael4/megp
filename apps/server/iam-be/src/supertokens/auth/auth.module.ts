@@ -8,10 +8,10 @@ import {
 import { AuthMiddleware } from './middlewares/auth.middleware';
 import { ConfigInjectionToken, AuthModuleConfig } from './config.interface';
 import { SupertokensService } from './service/supertokens.service';
-import { OrganizationModule } from 'src/organization';
+import { UserModule } from 'src/users/user.module';
 
 @Module({
-  imports: [OrganizationModule],
+  imports: [UserModule],
   providers: [],
   exports: [],
   controllers: [],

@@ -7,20 +7,18 @@ import ThirdPartyEmailPassword, {
 } from 'supertokens-node/recipe/thirdpartyemailpassword';
 import Dashboard from 'supertokens-node/recipe/dashboard';
 import { ConfigInjectionToken, AuthModuleConfig } from '../config.interface';
-import { OrganizationService } from 'src/organization';
-import EmailVerification, {
-  verifyEmailUsingToken,
-} from 'supertokens-node/recipe/emailverification';
+import EmailVerification from 'supertokens-node/recipe/emailverification';
 import { SMTPService as EmailVerificationSMTPService } from 'supertokens-node/recipe/emailverification/emaildelivery';
 import { SMTPService } from 'supertokens-node/recipe/thirdpartyemailpassword/emaildelivery';
 import UserRoles from 'supertokens-node/recipe/userroles';
 import jwt from 'supertokens-node/lib/build/recipe/jwt';
+import { UserAuthService } from 'src/users/services/user-auth.service';
 
 @Injectable()
 export class SupertokensService {
   constructor(
     @Inject(ConfigInjectionToken) config: AuthModuleConfig,
-    organizationService: OrganizationService,
+    userAuthService: UserAuthService,
   ) {
     const smtpSettings = {
       host: process.env.SMTP_HOST,
@@ -50,8 +48,7 @@ export class SupertokensService {
                 createNewSession: async function (input) {
                   const userId = input.userId;
 
-                  const userInfo =
-                    await organizationService.getUserInfo(userId);
+                  const userInfo = await userAuthService.getUserInfo(userId);
                   // if (userInfo.firstName == 'Test') {
                   //   throw Error('user banned');
                   // }
@@ -111,7 +108,7 @@ export class SupertokensService {
                   // Then we check if it was successfully completed
                   if (response.status === 'OK') {
                     const { id, email } = response.user;
-                    await organizationService.changeUserStatus(id);
+                    await userAuthService.changeUserStatus(id);
                   }
                   return response;
                 },
@@ -153,9 +150,6 @@ export class SupertokensService {
                 },
               },
               {
-                id: 'organizationName',
-              },
-              {
                 id: 'firstName',
               },
               {
@@ -191,7 +185,7 @@ export class SupertokensService {
                     (e) => e.id == 'password',
                   );
 
-                  const user = await organizationService.canUserBeCreated(
+                  const user = await userAuthService.canUserBeCreated(
                     primaryEmail.value,
                   );
                   if (user) {
@@ -238,7 +232,7 @@ export class SupertokensService {
 
                   input.formFields.forEach((field) => {
                     if (field.id == 'email') {
-                      field.value = organizationService.generateUsername();
+                      field.value = userAuthService.generateUsername();
                     }
                   });
 
@@ -252,10 +246,7 @@ export class SupertokensService {
                     const formFields = input.formFields;
                     const user = response.user;
 
-                    await organizationService.registerOrganization(
-                      user,
-                      formFields,
-                    );
+                    await userAuthService.registerUser(user, formFields);
 
                     await EmailVerification.sendEmailVerificationEmail(
                       'public',
@@ -275,7 +266,7 @@ export class SupertokensService {
 
                   if (response.status === 'OK') {
                     const isSecurityQuestionSet =
-                      await organizationService.isSecurityQuestionSet(
+                      await userAuthService.isSecurityQuestionSet(
                         response.user.id,
                       );
                     response.user['isSecurityQuestionSet'] =

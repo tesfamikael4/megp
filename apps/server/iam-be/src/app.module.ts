@@ -1,4 +1,9 @@
-import { Module } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from './shared/typeorm/typeorm.service';
@@ -7,6 +12,7 @@ import { AuthenticationModule } from './supertokens';
 import { GroupModule } from './groups/group.module';
 import { ApplicationModule } from './application/application.module';
 import { MandateModule } from './mandate/mandate.module';
+import { UserModule } from './users/user.module';
 
 @Module({
   imports: [
@@ -17,6 +23,7 @@ import { MandateModule } from './mandate/mandate.module';
     GroupModule,
     ApplicationModule,
     MandateModule,
+    UserModule,
   ],
   controllers: [],
   providers: [],
