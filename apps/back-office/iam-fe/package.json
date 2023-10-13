@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev  -p 5511",
     "build": "next build",
     "docker": "bash .bin/docker-build.sh",
-    "start": "next start",
+    "start": "next start  -p 5511",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "lint": "next lint "
   },
