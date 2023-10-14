@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev -p 5544",
     "build": "next build",
-    "docker": "cd ../../../ && docker build -f apps/back-office/planning-fe/Dockerfile -t planning-fe  . && docker tag planning-fe:latest gitlab.peragosystems.com:5050/megp/megp/planning-fe:latest &&  docker push gitlab.peragosystems.com:5050/megp/megp/planning-fe:lates",
+    "docker": "cd ../../../ && docker build -f apps/back-office/planning-fe/Dockerfile -t planning-fe . && docker tag planning-fe:latest gitlab.peragosystems.com:5050/megp/megp/planning-fe:latest &&  docker push gitlab.peragosystems.com:5050/megp/megp/planning-fe:lates",
     "start": "next start",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "lint": "next lint"
