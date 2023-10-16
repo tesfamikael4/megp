@@ -36,6 +36,7 @@ const initialValue: FormData = {
   shareHolders: [],
   beneficialOwnership: [],
   bankAccountDetails: [],
+  areasOfBusinessInterest: [],
   supportingDocuments: {
     businessRegistration_IncorporationCertificate: null,
     mRA_TPINCertificate: null,
@@ -73,8 +74,10 @@ export default function Page({ params }: { params: { vendorId: string } }) {
         <RegistrationForm
           vendorId={params.vendorId}
           initialValues={{
-            ...initialValue,
             ...requestInfo.data,
+            areasOfBusinessInterest: [],
+            // (requestInfo.data?.status === 'Draft')?basic:requestInfo.data?.basic:...requestInfo.data,
+            // ...requestInfo.data
           }}
         />
       ) : (

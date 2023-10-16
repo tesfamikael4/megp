@@ -51,6 +51,7 @@ export const BankAccountDetails: React.FC<Props> = ({
       <CardList
         name={name}
         control={control}
+        title="Bank Account Information List"
         initialValues={{
           accountHoldersFullName: '',
           accountNumber: '',
@@ -195,10 +196,10 @@ export const BankAccountDetails: React.FC<Props> = ({
                       <div className=" text-xs truncate ml-2">
                         Account Holders FullName: {value.accountHoldersFullName}
                       </div>
-                      <div className=" text-xs truncate">
+                      <div className=" text-xs truncate ml-2">
                         AccountNumber: {value.mobileNumber}
                       </div>
-                      <div className=" text-xs  mb-[1rem] truncate">
+                      <div className=" text-xs  mb-[1rem] ml-2 truncate">
                         Bank Branch Address: {value.bankBranchAddress}
                       </div>
                     </Flex>

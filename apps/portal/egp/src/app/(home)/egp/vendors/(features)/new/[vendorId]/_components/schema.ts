@@ -73,6 +73,19 @@ export const beneficialOwnershipSchema = z.object({
     .max(50, { message: 'Name cannot exceed 50 characters' }),
   nationality: z.string().min(2, { message: 'Nationality is required' }),
 });
+export const lineOfBusinessSchema = z.object({
+  id: z
+    .string()
+    .min(2, { message: 'At least one Line Of Business Interest is required' }),
+});
+export const areasOfBusinessInterestSchema = z.object({
+  lineOfBusiness: z
+    .array(lineOfBusinessSchema)
+    .refine((arr) => arr.length > 0, {
+      message: 'At least one Line Of Business Interest is required',
+    }),
+  priceId: z.string().min(2, { message: 'Price Range is required' }),
+});
 export const formDataSchema = z.object({
   basic: z.object({
     name: z
@@ -158,5 +171,10 @@ export const formDataSchema = z.object({
     .array(beneficialOwnershipSchema)
     .refine((arr) => arr.length > 0, {
       message: 'At least one beneficial ownership is required',
+    }),
+  areasOfBusinessInterest: z
+    .array(areasOfBusinessInterestSchema)
+    .refine((arr) => arr.length > 0, {
+      message: 'At least one Areas Of Business Interest is required',
     }),
 });

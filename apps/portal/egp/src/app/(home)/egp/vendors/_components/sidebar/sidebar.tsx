@@ -73,9 +73,9 @@ export function SidebarLinksGroup({
       return (
         <Link href={link.link} key={key + link.label}>
           <Text
-            className={`${styles.sidebarLinksGroupLink} ${
-              link.link === pathname && styles.sidebarLinksGroupActiveLink
-            }`}
+            className={`${styles.sidebarLinksGroupLink}  ${
+              link.link === pathname && 'bg-[--mantine-color-primary-0]'
+            } hover:bg-[--mantine-color-primary-0]`}
           >
             {link.label}
           </Text>
@@ -88,7 +88,12 @@ export function SidebarLinksGroup({
   return (
     <>
       {link ? (
-        <Link href={link} className={`px-2 ${link === pathname && ''}`}>
+        <Link
+          href={link}
+          className={`px-2 py-1 rounded-sm  ${
+            link === pathname && 'bg-[--mantine-color-primary-0]'
+          } hover:bg-[--mantine-color-primary-0]`}
+        >
           <Flex className="items-center justify-between flex-row">
             <Flex className="items-center gap-2 flex-row">
               <ThemeIcon variant="light" size={30}>
@@ -108,9 +113,14 @@ export function SidebarLinksGroup({
           }}
           className={'font-bold  text-8xl no-underline '}
         >
-          <Flex className="items-center justify-between px-2">
+          <Flex
+            className={`items-center justify-between px-2 py-1 rounded-sm  ${
+              link === pathname.split('/')[3] &&
+              'bg-[--mantine-color-primary-0]'
+            } hover:bg-[--mantine-color-primary-0]`}
+          >
             <Flex className="items-center gap-2">
-              <ThemeIcon variant="light" size={30}>
+              <ThemeIcon variant="light" size={28}>
                 <Icon style={{ width: rem(18), height: rem(18) }} />
               </ThemeIcon>
               <Text className={styles.sidebarLinksLinkLabel}>{label}</Text>
