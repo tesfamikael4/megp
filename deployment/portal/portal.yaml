@@ -22,7 +22,7 @@ spec:
         image: gitlab.peragosystems.com:5050/megp/megp/egp:latest
         imagePullPolicy: Always
         ports:
-        - containerPort: 5500
+        - containerPort: 3000
         env:
             - name: NEXT_PUBLIC_AUTH_API
               value: "http://196.189.118.110:3569"
@@ -46,6 +46,6 @@ spec:
     version: v1
   ports:
     - protocol: TCP
-      port: 5500
-      targetPort: 5500
+      port: 3000
+      targetPort: 3000
   type: LoadBalancer
