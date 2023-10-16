@@ -1,4 +1,5 @@
 'use client';
+import { Title } from '@mantine/core';
 import { Button } from '@mantine/core';
 import { redirect, usePathname } from 'next/navigation';
 import { useDisclosure } from '@mantine/hooks';
@@ -11,13 +12,40 @@ interface Props {
 }
 
 export default function VendorLayout({ children }: Props) {
-  const path = usePathname();
+  const useDisplayNameFinder = (navLinks: any) => {
+    const path = usePathname();
+    for (const navItem of navLinks) {
+      if (navItem.children) {
+        for (const childItem of navItem.children) {
+          if (
+            childItem.link &&
+            childItem.link.split('/')[3] === path.split('/')[3]
+          ) {
+            return childItem.displayName;
+          }
+
+          if (childItem.links) {
+            for (const subItem of childItem.links) {
+              if (
+                subItem.link &&
+                subItem.link.split('/')[3] === path.split('/')[3]
+              ) {
+                return subItem.displayName;
+              }
+            }
+          }
+        }
+      }
+    }
+    return ''; // Return null if the link is not found.
+  };
+  const auth = process.env.NEXT_PUBLIC_UI_AUTH || 'true';
   useEffect(() => {
     if (!doesTokenExist()) {
-      redirect('/auth/login');
+      auth !== 'false' && redirect('/auth/login');
     }
     return () => {};
-  }, []);
+  }, [auth]);
   const [isSidebarOpen, setCollapse] = useState(false);
   function toggleSidebar() {
     setCollapse((prev) => !prev);
@@ -34,23 +62,10 @@ export default function VendorLayout({ children }: Props) {
       </nav>
 
       <main className={`flex-grow border border-r w-[72.8125rem]`}>
-        <header className="flex items-center justify-between border-b p-4 w-full">
-          <h1 className="text-2xl font-semibold">Dashboard</h1>
-          {path.includes('/egp/vendors/new/') && (
-            <Button
-              onClick={() =>
-                document.getElementById('res-big-form-submit')?.click()
-              }
-            >
-              Submit
-            </Button>
-          )}
-          {/* <button
-            className={` px-4 py-2 rounded-md  ${isSidebarOpen ? "" : ""}`}
-            onClick={toggleSidebar}
-          >
-            Toggle Sidebar
-          </button> */}
+        <header className="flex items-center border-b p-4 w-full">
+          <Title order={3} size="calc(1rem * var(--mantine-scale))">
+            {useDisplayNameFinder(sidebarLinks)}
+          </Title>
         </header>
         <div className="w-full">{children}</div>
       </main>

@@ -3,7 +3,7 @@ export interface BankNamesResponse {
   bankName: string;
   metaData: Record<string, any>; // You can use Record<string, any> for an empty object
 }
-export interface CategoriesListResponse {
+export interface LineOfBusinessResponse {
   total: number;
   items: {
     id: string;
@@ -188,6 +188,14 @@ export interface FormData {
     firstName: string;
     lastName: string;
     nationality: string;
+  }[];
+  areasOfBusinessInterest: {
+    category: string;
+    lineOfBusiness: {
+      id: string;
+      name: string;
+    }[];
+    priceId: string;
   }[];
   supportingDocuments: {
     businessRegistration_IncorporationCertificate: File | string | null;

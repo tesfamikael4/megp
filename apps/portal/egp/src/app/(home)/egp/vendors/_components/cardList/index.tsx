@@ -1,15 +1,17 @@
 /* eslint-disable no-prototype-builtins */
 import React, { useState } from 'react';
-import { Flex, Modal, Button } from '@mantine/core';
+import { Flex, Button, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { ChangeHandler, useFieldArray } from 'react-hook-form';
 import { IconPlus } from '@tabler/icons-react';
+import { PopupModal } from '../modal';
 
 interface CardListProps {
   control: any;
   name: string;
   initialValues: object;
   itemSchema: any;
+  title?: string;
   modalBody: (
     getInputProps: (
       fieldName: string,
@@ -33,6 +35,7 @@ const CardList: React.FC<CardListProps> = ({
   itemSchema,
   modalBody,
   card,
+  title,
 }) => {
   const [opened, { open, close }] = useDisclosure(false);
   const [modalType, setModalType] = useState<{
@@ -188,14 +191,14 @@ const CardList: React.FC<CardListProps> = ({
         </Flex>
       </Flex>
 
-      <Modal opened={opened} onClose={handleClose} size={'lg'}>
+      <PopupModal opened={opened} onClose={handleClose} size={'lg'}>
         {modalBody(getInputProps)}
 
         <Flex className="mt-6 justify-end gap-4">
           <Button onClick={handleAddItem}>Save</Button>
           <Button onClick={handleClose}>Cancel</Button>
         </Flex>
-      </Modal>
+      </PopupModal>
     </>
   );
 };

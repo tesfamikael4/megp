@@ -1,6 +1,6 @@
 import {
   BankNamesResponse,
-  CategoriesListResponse,
+  LineOfBusinessResponse,
   PriceRangeResponse,
   CreateVendorIdRequest,
   CreateVendorIdResponse,
@@ -9,6 +9,9 @@ import {
 } from '@/models/vendorRegistration';
 import { vendorRegistrationApi } from './api';
 
+// Replace these types with your actual types for any objects
+
+// Define your CRUD API endpoints
 export const vendorRegistrationQuery = vendorRegistrationApi.injectEndpoints({
   endpoints: (builder) => ({
     getForm: builder.query<GetFormResponse, GetFormRequest>({
@@ -41,6 +44,13 @@ export const vendorRegistrationQuery = vendorRegistrationApi.injectEndpoints({
       }),
     }),
 
+    deleteFormDraft: builder.mutation<void, number>({
+      query: (id) => ({
+        url: `delete/${id}`,
+        method: 'DELETE',
+      }),
+    }),
+
     getBankList: builder.query<BankNamesResponse[], any>({
       query: () => ({
         url: `api/BankAccountDetail/fetch-bank`,
@@ -48,7 +58,7 @@ export const vendorRegistrationQuery = vendorRegistrationApi.injectEndpoints({
       }),
     }),
 
-    getCategoriesList: builder.query<CategoriesListResponse, any>({
+    getLineOfBusiness: builder.query<LineOfBusinessResponse, any>({
       query: () => ({
         url: `api/Categories/get-all-categories`,
         method: 'GET',
@@ -69,7 +79,8 @@ export const {
   useCreateVendorIdMutation,
   useAddFormMutation,
   useUpdateFormMutation,
+  useDeleteFormDraftMutation,
   useGetBankListQuery,
-  useGetCategoriesListQuery,
+  useGetLineOfBusinessQuery,
   useGetPriceRangeQuery,
 } = vendorRegistrationQuery;

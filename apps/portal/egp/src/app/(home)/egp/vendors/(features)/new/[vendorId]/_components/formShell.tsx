@@ -7,7 +7,15 @@ import {
   RegisterOptions,
   ChangeHandler,
 } from 'react-hook-form';
-import { Text, Button, Code, Tabs, Flex, LoadingOverlay } from '@mantine/core';
+import {
+  Text,
+  Button,
+  Code,
+  Tabs,
+  Flex,
+  LoadingOverlay,
+  Title,
+} from '@mantine/core';
 import { BasicInfo } from './basicInfo';
 import { ContactPersons } from './contactPersons';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -28,10 +36,12 @@ import { useAddFormMutation } from '@/store/api/vendor_registration/query';
 import { FormData } from '@/models/vendorRegistration';
 import { setCookie, hasCookie, getCookie } from 'cookies-next';
 import { IconDeviceFloppy } from '@tabler/icons-react';
-import { useDisclosure } from '@mantine/hooks';
+import { useDisclosure, useMediaQuery } from '@mantine/hooks';
 import { useRouter } from 'next/navigation';
 import { NotificationService } from '../../../../_components/notification';
 import { PopupModal } from '../../../../_components/modal';
+import AreasOfBusinessInterest from './areasOfBusinessInterest';
+import classes from './tabs.module.scss';
 
 export interface ExtendedRegistrationReturnType
   extends UseFormRegisterReturn<any> {
@@ -163,7 +173,119 @@ const RegistrationForm = ({
     vendorId,
     modalHandler.open,
   ]);
-
+  const [tabState, setTabState] = useState<string | null>(
+    'Basic Registration Information',
+  );
+  const isMobile = useMediaQuery('(max-width: 50em)');
+  interface Tabs {
+    tabValue: string;
+    tabName: string;
+    tabDescription: string;
+    tabPanelComponent: React.ReactNode;
+  }
+  const tabs: Tabs[] = [
+    {
+      tabValue: 'basic',
+      tabName: 'Basic Registration',
+      tabDescription: 'Basic Registration Information',
+      tabPanelComponent: (
+        <BasicInfo register={extendedRegister} control={control} />
+      ),
+    },
+    {
+      tabValue: 'address',
+      tabName: 'Address Information',
+      tabDescription: 'Address Information',
+      tabPanelComponent: (
+        <AddressInformation register={extendedRegister} control={control} />
+      ),
+    },
+    {
+      tabValue: 'contactPersons',
+      tabName: 'Contact Persons',
+      tabDescription: 'Contact Persons List',
+      tabPanelComponent: (
+        <ContactPersons
+          name="contactPersons"
+          control={control}
+          itemSchema={contactPersonSchema}
+        />
+      ),
+    },
+    {
+      tabValue: 'businessSizeAndOwnership',
+      tabName: 'Business Size and Ownership',
+      tabDescription: 'Business Size and Ownership Information',
+      tabPanelComponent: (
+        <BusinessSizeAndOwnership
+          register={extendedRegister}
+          control={control}
+        />
+      ),
+    },
+    {
+      tabValue: 'shareHolders',
+      tabName: 'Shareholders',
+      tabDescription: 'Shareholders List',
+      tabPanelComponent: (
+        <ShareHolders
+          name="shareHolders"
+          control={control}
+          itemSchema={shareHoldersSchema}
+        />
+      ),
+    },
+    {
+      tabValue: 'beneficialOwnership',
+      tabName: 'Beneficial Ownership',
+      tabDescription: 'Beneficial Ownership List',
+      tabPanelComponent: (
+        <BeneficialOwnership
+          name="beneficialOwnership"
+          control={control}
+          itemSchema={beneficialOwnershipSchema}
+        />
+      ),
+    },
+    {
+      tabValue: 'areasOfBusinessInterest',
+      tabName: 'Areas of Business Interest',
+      tabDescription: 'Areas of Business Interest List',
+      tabPanelComponent: (
+        <AreasOfBusinessInterest
+          name="areasOfBusinessInterest"
+          control={control}
+          register={extendedRegister}
+        />
+      ),
+    },
+    {
+      tabValue: 'bankAccountDetails',
+      tabName: 'Bank Account Details',
+      tabDescription: 'Bank Account Details List',
+      tabPanelComponent: (
+        <BankAccountDetails
+          name="bankAccountDetails"
+          control={control}
+          itemSchema={bankAccountSchema}
+        />
+      ),
+    },
+    {
+      tabValue: 'supportingDocuments',
+      tabName: 'Supporting Documents',
+      tabDescription: 'Supporting Documents',
+      tabPanelComponent: (
+        <SupportingDocuments register={extendedRegister} control={control} />
+      ),
+    },
+  ];
+  const handleTabChange = (value: string) => {
+    const selectedTab = tabs.find((tab) => tab.tabValue === value);
+    if (selectedTab?.tabDescription) {
+      setTabState(selectedTab.tabDescription);
+    }
+  };
   return (
     <Flex className="flex-col">
       <LoadingOverlay
@@ -198,149 +320,57 @@ const RegistrationForm = ({
       ) : (
         ''
       )}
-      <Tabs defaultValue="basic" orientation="vertical" variant="outline">
-        <Tabs.List className="text-xs">
-          <Tabs.Tab value="basic">
-            <Flex gap={10}>
-              <Text> Basic Registration</Text>
-              {getFieldsHolderError(formState.errors, 'basic') && (
-                <Text color="red">*</Text>
-              )}
-            </Flex>
-          </Tabs.Tab>
-          <Tabs.Tab value="address">
-            <Flex gap={10}>
-              <Text>Address Information</Text>
-              {getFieldsHolderError(formState.errors, 'address') && (
-                <Text color="red">*</Text>
-              )}
-            </Flex>
-          </Tabs.Tab>
-          <Tabs.Tab value="contactPersons">
-            <Flex gap={10}>
-              <Text>Contact Persons</Text>
-              {getFieldsHolderError(formState.errors, 'contactPersons') && (
-                <Text color="red">*</Text>
-              )}
-            </Flex>
-          </Tabs.Tab>
-          <Tabs.Tab value="businessSizeAndOwnership">
-            <Flex gap={10}>
-              <Text>Business Size and Ownership</Text>
-              {getFieldsHolderError(
-                formState.errors,
-                'businessSizeAndOwnership',
-              ) && <Text color="red">*</Text>}
-            </Flex>
-          </Tabs.Tab>
-          <Tabs.Tab value="shareHolders">
-            <Flex gap={10}>
-              <Text>Shareholders</Text>
-              {getFieldsHolderError(formState.errors, 'shareHolders') && (
-                <Text color="red">*</Text>
-              )}
-            </Flex>
-          </Tabs.Tab>
-          <Tabs.Tab value="beneficialOwnership">
-            <Flex gap={10}>
-              <Text>Beneficial Ownership</Text>
-              {getFieldsHolderError(
-                formState.errors,
-                'beneficialOwnership',
-              ) && <Text color="red">*</Text>}
-            </Flex>
-          </Tabs.Tab>
-          <Tabs.Tab value="areasOfBusinessInterest">
-            <Flex gap={10}>
-              <Text>Areas of Business Interest</Text>
-              {getFieldsHolderError(
-                formState.errors,
-                'areasOfBusinessInterest',
-              ) && <Text color="red">*</Text>}
-            </Flex>
-          </Tabs.Tab>
-          <Tabs.Tab value="bankAccountDetails">
-            <Flex gap={10}>
-              <Text>Bank Account Details</Text>
-              {getFieldsHolderError(formState.errors, 'bankAccountDetails') && (
-                <Text color="red">*</Text>
-              )}
-            </Flex>
-          </Tabs.Tab>
-          <Tabs.Tab value="supportingDocuments">
-            <Flex gap={10}>
-              <Text> Supporting Documents</Text>
-              {getFieldsHolderError(
-                formState.errors,
-                'supportingDocuments',
-              ) && <Text color="red">*</Text>}
-            </Flex>
-          </Tabs.Tab>
-        </Tabs.List>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Tabs
+          defaultValue={'basic'}
+          // variant="pills"
+          orientation={isMobile ? 'horizontal' : 'vertical'}
+          // className="mb-10"
+          onChange={handleTabChange}
+          // classNames={{
+          //   tab:'border p-0',
+          //   tabLabel:'text-sm font-medium',
 
-        <Flex className="w-full flex-col gap-4 px-10 py-4 justify-between shadow-md">
-          <form onSubmit={handleSubmit(onSubmit)} id="res-big-form-submit">
-            <Tabs.Panel value="basic">
-              <BasicInfo register={extendedRegister} control={control} />
-            </Tabs.Panel>
+          // }}
+          classNames={classes}
+        >
+          <Tabs.List className="">
+            {tabs.map((tab) => (
+              <Tabs.Tab
+                key={tab.tabValue}
+                value={tab.tabValue}
+                rightSection={
+                  getFieldsHolderError(formState.errors, tab.tabValue) && (
+                    <Text color="red">*</Text>
+                  )
+                }
+              >
+                {tab.tabName}
+              </Tabs.Tab>
+            ))}
+          </Tabs.List>
 
-            <Tabs.Panel value="address">
-              <AddressInformation
-                register={extendedRegister}
-                control={control}
-              />
-            </Tabs.Panel>
-            <Tabs.Panel value="contactPersons">
-              <ContactPersons
-                name="contactPersons"
-                control={control}
-                itemSchema={contactPersonSchema}
-              />
-            </Tabs.Panel>
-            <Tabs.Panel value="businessSizeAndOwnership">
-              <BusinessSizeAndOwnership
-                register={extendedRegister}
-                control={control}
-              />
-            </Tabs.Panel>
-            <Tabs.Panel value="shareHolders">
-              <ShareHolders
-                name="shareHolders"
-                control={control}
-                itemSchema={shareHoldersSchema}
-              />
-            </Tabs.Panel>
-            <Tabs.Panel value="beneficialOwnership">
-              <BeneficialOwnership
-                name="beneficialOwnership"
-                control={control}
-                itemSchema={beneficialOwnershipSchema}
-              />
-            </Tabs.Panel>
-            {/*  <Tabs.Panel value="areasOfBusinessInterest">
-              <AreasOfBusinessInterest form={form} />
-            </Tabs.Panel>*/}
-            <Tabs.Panel value="bankAccountDetails">
-              <BankAccountDetails
-                name="bankAccountDetails"
-                control={control}
-                itemSchema={bankAccountSchema}
-              />
-            </Tabs.Panel>
-            <Tabs.Panel value="supportingDocuments">
-              <SupportingDocuments
-                register={extendedRegister}
-                control={control}
-              />
-            </Tabs.Panel>
+          <Flex className="w-full flex-col border-b p-4 gap-2">
+            <Flex className="items-center rounded-md justify-between w-full p-3 border-2 shadow-sm bg-[var(--mantine-color-body)]">
+              <Title order={5} size="calc(0.85rem * var(--mantine-scale))">
+                {tabState}
+              </Title>
+              <Button type="submit">Submit</Button>
+            </Flex>
+            <Flex className="w-full border rounded-md flex-col gap-4 p-4 px-10 justify-between shadow-sm min-h-[28rem] bg-[var(--mantine-color-body)]">
+              {tabs.map((tab) => (
+                <Tabs.Panel key={tab.tabValue} value={tab.tabValue}>
+                  {tab.tabPanelComponent}
+                </Tabs.Panel>
+              ))}
 
-            <input id="res-big-form-submit" type="submit" hidden />
-          </form>
-          <Flex justify={'end'}>
-            <Button onClick={() => onSaveAsDraft()}>Save as Draft</Button>
+              <Flex justify={'end'}>
+                <Button onClick={() => onSaveAsDraft()}>Save as Draft</Button>
+              </Flex>
+            </Flex>
           </Flex>
-        </Flex>
-      </Tabs>
+        </Tabs>
+      </form>
       {/* <Text size="sm" fw={500} mt="xl">
         Form values:
       </Text>

@@ -7,7 +7,7 @@ import { IconBuilding, IconCalendar, IconFile } from '@tabler/icons-react';
 import { NotificationService } from '../../_components/notification';
 import { setCookie, hasCookie, getCookie } from 'cookies-next';
 
-const DraftApplication = () => {
+const TrackApplication = () => {
   const vendorId = hasCookie('vendorId')
     ? (getCookie('vendorId') as string)
     : ' ';
@@ -18,22 +18,22 @@ const DraftApplication = () => {
     { refetchOnMountOrArgChange: true },
   );
 
-  useEffect(() => {
-    if (requestInfo.isError) {
-      NotificationService.requestErrorNotification(
-        'Error on fetching form data',
-      );
-    }
+  // useEffect(() => {
+  //   if (requestInfo.isError) {
+  //     NotificationService.requestErrorNotification(
+  //       "Error on fetching form data"
+  //     );
+  //   }
 
-    return () => {};
-  }, [requestInfo.isError]);
+  //   return () => {};
+  // }, [requestInfo.isError]);
   return (
     <Flex className="flex-col w-full h-full p-4">
       <LoadingOverlay
         visible={requestInfo.isLoading}
         overlayProps={{ radius: 'sm', blur: 2 }}
       />
-      {requestInfo.status == 'fulfilled' &&
+      {requestInfo.isSuccess &&
       requestInfo.data &&
       requestInfo.data?.status == 'Submitted' ? (
         <Flex className="px-2 py-6 flex-col rounded-md  sm:px-8 border shadow-md border-gray-300  hover:shadow-lg hover:mb-1 relative">
@@ -62,7 +62,7 @@ const DraftApplication = () => {
         <Flex className="w-full h-full justify-center mt-20">
           <Flex className="flex-col justify-center items-center">
             <IconFile size={'5rem'} stroke={'0.2'} />
-            <Text>No Data</Text>
+            <Text>No data found</Text>
           </Flex>
         </Flex>
       )}
@@ -70,4 +70,4 @@ const DraftApplication = () => {
   );
 };
 
-export default DraftApplication;
+export default TrackApplication;

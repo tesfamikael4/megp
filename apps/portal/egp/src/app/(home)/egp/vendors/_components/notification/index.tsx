@@ -1,12 +1,8 @@
 import { notifications, showNotification } from '@mantine/notifications';
-import { Notification, NotificationOptions } from './type';
 import { IconCheck, IconX } from '@tabler/icons-react';
 export * from './type';
 
 export class NotificationService {
-  static notificationsTost = notifications;
-  private static notificationsContainer: Notification[] = [];
-
   static successNotification(message: string): void {
     showNotification({
       withCloseButton: true,

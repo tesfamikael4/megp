@@ -36,6 +36,7 @@ export const BeneficialOwnership: React.FC<Props> = ({
           lastName: '',
           nationality: '',
         }}
+        title="Beneficial Ownership List"
         itemSchema={itemSchema}
         modalBody={(getInputProps) => (
           <>
@@ -85,7 +86,7 @@ export const BeneficialOwnership: React.FC<Props> = ({
                       <div className=" text-lg font-[600]  truncate">
                         {value.firstName} {value.lastName}
                       </div>
-                      <div className=" text-sm truncate">
+                      <div className=" text-sm truncate ml-2">
                         Nationality: {value.nationality}
                       </div>
                     </Flex>
