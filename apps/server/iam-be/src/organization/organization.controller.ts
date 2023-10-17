@@ -31,7 +31,7 @@ import { AllowAnonymous } from 'src/modules/authorization/decorators/allow-anony
 @Controller('organizations')
 @ApiTags('organizations')
 export class OrganizationController {
-  constructor(private readonly organizationService: OrganizationService) {}
+  constructor(private readonly organizationService: OrganizationService) { }
 
   @Post()
   async create(@Body() createOrganizationDto: CreateOrganizationDto) {
