@@ -34,15 +34,18 @@ export class AuthHelper {
   }
 
   // Generate JWT Token
-  public generateAccessToken(payload: Account): string {
-    return this.jwt.sign(payload, {
-      secret: this.configService.get<string>('JWT_ACCESS_TOKEN_SECRET'),
-      expiresIn: this.configService.get<string>('JWT_ACCESS_TOKEN_EXPIRES'),
-    });
+  public generateAccessToken(payload: any): string {
+    return this.jwt.sign(
+      { ...payload },
+      {
+        secret: this.configService.get<string>('JWT_ACCESS_TOKEN_SECRET'),
+        expiresIn: this.configService.get<string>('JWT_ACCESS_TOKEN_EXPIRES'),
+      },
+    );
   }
 
   // Generate JWT Refresh Token
-  public generateRefreshToken(user: Account): string {
+  public generateRefreshToken(user: any): string {
     return this.jwt.sign(
       { id: user.id },
       {
@@ -76,8 +79,11 @@ export class AuthHelper {
   }
 
   // Validate User's password
-  public isPasswordValid(password: string, userPassword: string): boolean {
-    return bcrypt.compareSync(password, userPassword);
+  public compareHashedValue(
+    originalValue: string,
+    hashedValue: string,
+  ): boolean {
+    return bcrypt.compareSync(originalValue, hashedValue);
   }
 
   // Encode User's password

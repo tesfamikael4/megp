@@ -131,7 +131,7 @@ export class AccountsService {
     if (!account) {
       throw new HttpException('something_went_wrong', HttpStatus.BAD_REQUEST);
     }
-    const isOldPasswordValid: boolean = this.helper.isPasswordValid(
+    const isOldPasswordValid: boolean = this.helper.compareHashedValue(
       changePassword.oldPassword,
       account.password,
     );
@@ -139,7 +139,7 @@ export class AccountsService {
       throw new HttpException('incorrect_old_password', HttpStatus.BAD_REQUEST);
     }
 
-    const isNewPasswordValid: boolean = this.helper.isPasswordValid(
+    const isNewPasswordValid: boolean = this.helper.compareHashedValue(
       changePassword.newPassword,
       account.password,
     );
@@ -172,7 +172,7 @@ export class AccountsService {
         throw new HttpException('something_went_wrong', HttpStatus.BAD_REQUEST);
       }
 
-      const isPasswordValid: boolean = this.helper.isPasswordValid(
+      const isPasswordValid: boolean = this.helper.compareHashedValue(
         password,
         account.password,
       );
@@ -183,9 +183,16 @@ export class AccountsService {
 
       this.repository.update(account.id, account);
 
+      const {
+        password: encryptedPassword,
+        createdAt,
+        updatedAt,
+        ...rest
+      } = account;
+
       const token: LoginResponseDto = {
-        access_token: this.helper.generateAccessToken(account),
-        refresh_token: this.helper.generateRefreshToken(account),
+        access_token: this.helper.generateAccessToken(rest),
+        refresh_token: this.helper.generateRefreshToken(rest),
       };
 
       return token;
@@ -254,11 +261,11 @@ export class AccountsService {
         body = `OPT: ${otp}`;
       }
 
-      await this.emailService.sendEmail(
-        account.email,
-        'Email Verification',
-        body,
-      );
+      // await this.emailService.sendEmail(
+      //   account.email,
+      //   'Email Verification',
+      //   body,
+      // );
 
       return accountVerification.id;
     } catch (error) {
@@ -336,7 +343,7 @@ export class AccountsService {
       throw new HttpException('account_not_found', HttpStatus.BAD_REQUEST);
     }
 
-    const isOldPasswordValid: boolean = this.helper.isPasswordValid(
+    const isOldPasswordValid: boolean = this.helper.compareHashedValue(
       payload.password,
       account.password,
     );
@@ -420,7 +427,7 @@ export class AccountsService {
       );
     } else if (
       isOtp &&
-      !this.helper.isPasswordValid(accountVerification.otp, otp)
+      !this.helper.compareHashedValue(otp, accountVerification.otp)
     ) {
       throw new HttpException(
         'invalid_verification_token',
