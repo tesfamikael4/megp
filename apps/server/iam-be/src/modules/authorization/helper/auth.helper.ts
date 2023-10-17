@@ -34,14 +34,11 @@ export class AuthHelper {
   }
 
   // Generate JWT Token
-  public generateAccessToken(user: Account): string {
-    return this.jwt.sign(
-      { id: user.id, email: user.email },
-      {
-        secret: this.configService.get<string>('JWT_ACCESS_TOKEN_SECRET'),
-        expiresIn: this.configService.get<string>('JWT_ACCESS_TOKEN_EXPIRES'),
-      },
-    );
+  public generateAccessToken(payload: Account): string {
+    return this.jwt.sign(payload, {
+      secret: this.configService.get<string>('JWT_ACCESS_TOKEN_SECRET'),
+      expiresIn: this.configService.get<string>('JWT_ACCESS_TOKEN_EXPIRES'),
+    });
   }
 
   // Generate JWT Refresh Token

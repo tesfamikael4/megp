@@ -29,7 +29,7 @@ export class AccountsService {
     @InjectRepository(SecurityQuestion)
     private readonly securityQuestionRepository: Repository<SecurityQuestion>,
     private readonly helper: AuthHelper,
-  ) {}
+  ) { }
 
   public async createAccount(
     createAccountDto: CreateAccountDto,
