@@ -11,7 +11,7 @@
     "copy": "copy \"package.json\" \"dist\" ",
     "copyEnv": "copy \".env\" \"dist\" ",
     "build": "nest build && tsc -p tsconfig.build.json",
-    "docker": "sh .bin/docker-build.sh",
+    "docker": "cd ../../../ && docker build -f apps/server/iam-be/Dockerfile -t iam-be  . && docker tag iam-be:latest gitlab.peragosystems.com:5050/megp/megp/iam-be:latest &&  docker push gitlab.peragosystems.com:5050/megp/megp/iam-be:latest",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
