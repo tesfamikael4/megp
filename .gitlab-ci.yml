@@ -20,7 +20,7 @@ merge:
     - pnpm config set store-dir .pnpm-store
   script:
     - pnpm install --no-frozen-lockfile
-    - pnpm install uuid
+    - npm install uuid
 
     #- pnpm install
     - pnpm -w run turbo run lint  --filter "...[origin/main...HEAD]"
