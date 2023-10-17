@@ -11,6 +11,7 @@ import { JwtGuard } from './guards/jwt.guard';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthController } from './controllers/auth.controller';
 import { AccountsService } from './services/account.service';
+import { EmailService } from 'src/shared/email/email.service';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { AccountsService } from './services/account.service';
     JwtRefreshTokenStrategy,
     JwtGuard,
     JwtRefreshGuard,
+    EmailService,
   ],
 })
 export class AuthorizationModule {}

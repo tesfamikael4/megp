@@ -18,6 +18,7 @@ import {
   CheckSecurityQuestionDto,
   SetSecurityQuestionDto,
 } from '../dto/security-question.dto';
+import { EmailService } from 'src/shared/email/email.service';
 
 @Injectable()
 export class AccountsService {
@@ -29,7 +30,8 @@ export class AccountsService {
     @InjectRepository(SecurityQuestion)
     private readonly securityQuestionRepository: Repository<SecurityQuestion>,
     private readonly helper: AuthHelper,
-  ) { }
+    private readonly emailService: EmailService,
+  ) {}
 
   public async createAccount(
     createAccountDto: CreateAccountDto,
@@ -47,18 +49,11 @@ export class AccountsService {
           createAccountDto,
           AccountStatusEnum.PENDING,
         );
-        const accountVerification = await this.createAndSendOPT(
-          account,
-          'Email Verification',
-        );
-        return { verificationId: accountVerification.id };
+        const verificationId = await this.createAndSendVerificationOTP(account);
+        return { verificationId };
       } else if (account.status == AccountStatusEnum.PENDING) {
-        await this.createAndSendOPT(account, 'Email Verification');
-        const accountVerification = await this.createAndSendOPT(
-          account,
-          'Email Verification',
-        );
-        return { verificationId: accountVerification.id };
+        const verificationId = await this.createAndSendVerificationOTP(account);
+        return { verificationId };
       }
 
       throw new HttpException('Conflict', HttpStatus.CONFLICT);
@@ -66,26 +61,6 @@ export class AccountsService {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
-
-  private async createNewAccount(
-    accountDto: CreateAccountDto,
-    status: AccountStatusEnum,
-  ) {
-    const { email, password, firstName, lastName, phone } = accountDto;
-
-    const account = new Account();
-    account.username = this.generateUsername();
-    account.email = email;
-    account.firstName = firstName;
-    account.lastName = lastName;
-    account.phone = phone;
-    account.password = this.helper.encodePassword(password);
-    account.status = status;
-
-    await this.repository.save(account);
-    return account;
-  }
-
   public async verifyAccount(
     body: VerifyAccountDto,
   ): Promise<LoginResponseDto | never> {
@@ -114,12 +89,9 @@ export class AccountsService {
     if (!account || account.status != AccountStatusEnum.ACTIVE) {
       throw new HttpException('something_went_wrong', HttpStatus.BAD_REQUEST);
     }
-    const accountVerification = await this.createAndSendOPT(
-      account,
-      'Reset Password',
-    );
+    const verificationId = await this.createAndSendForgetOTP(account);
 
-    return { verificationId: accountVerification.id };
+    return { verificationId };
   }
 
   public async verifyForgetPassword(
@@ -252,47 +224,88 @@ export class AccountsService {
     }
   }
 
-  private async createAndSendOPT(account: Account, subject: string) {
+  private async createNewAccount(
+    accountDto: CreateAccountDto,
+    status: AccountStatusEnum,
+  ) {
+    const { email, password, firstName, lastName, phone } = accountDto;
+
+    const account = new Account();
+    account.username = this.generateUsername();
+    account.email = email;
+    account.firstName = firstName;
+    account.lastName = lastName;
+    account.phone = phone;
+    account.password = this.helper.encodePassword(password);
+    account.status = status;
+
+    await this.repository.save(account);
+    return account;
+  }
+
+  private async createAndSendVerificationOTP(account: Account) {
     try {
-      const verificationExists =
-        await this.accountVerificationRepository.findOneBy({
-          account: { id: account.id },
-          status: AccountVerificationStatusEnum.NEW,
-        });
-      if (verificationExists) {
-        verificationExists.status = AccountVerificationStatusEnum.EXPIRED;
-        await this.accountVerificationRepository.update(
-          verificationExists.id,
-          verificationExists,
-        );
+      const { accountVerification, otp } = await this.createOTP(account);
+
+      let body: string;
+      if (process.env.VERIFICATION_METHOD == 'link') {
+        body = `Link: ${accountVerification.otp}`;
+      } else {
+        body = `OPT: ${otp}`;
       }
 
-      const otp = this.helper.generateOpt();
+      await this.emailService.sendEmail(
+        account.email,
+        'Email Verification',
+        body,
+      );
 
-      const accountVerification: AccountVerification =
-        new AccountVerification();
-      accountVerification.account = account;
-      accountVerification.otp = this.helper.encodePassword(otp);
-      await this.accountVerificationRepository.save(accountVerification);
-
-      // let body: string;
-      // if (subject == 'Email Verification') {
-      //     body = this.verifyEmailTemplate(account.email, accountVerification.otp);
-      // }
-      // else if (subject == 'Reset Password') {
-      //     body = this.verifyEmailTemplate(account.email, accountVerification.otp);
-      // }
-
-      // await this.emailService.sendEmail(account.email, subject, body);
-
-      return {
-        id: accountVerification.id,
-        otp,
-        token: accountVerification.otp,
-      };
+      return accountVerification.id;
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
+  }
+
+  private async createAndSendForgetOTP(account: Account) {
+    try {
+      const { accountVerification, otp } = await this.createOTP(account);
+
+      let body: string;
+      if (process.env.VERIFICATION_METHOD == 'link') {
+        body = `Link: ${accountVerification.otp}`;
+      } else {
+        body = `OPT: ${otp}`;
+      }
+
+      await this.emailService.sendEmail(account.email, 'Reset Password', body);
+
+      return accountVerification.id;
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  private async createOTP(account: Account) {
+    const verificationExists =
+      await this.accountVerificationRepository.findOneBy({
+        account: { id: account.id },
+        status: AccountVerificationStatusEnum.NEW,
+      });
+    if (verificationExists) {
+      verificationExists.status = AccountVerificationStatusEnum.EXPIRED;
+      await this.accountVerificationRepository.update(
+        verificationExists.id,
+        verificationExists,
+      );
+    }
+
+    const otp = this.helper.generateOpt();
+
+    const accountVerification: AccountVerification = new AccountVerification();
+    accountVerification.account = account;
+    accountVerification.otp = this.helper.encodePassword(otp);
+    await this.accountVerificationRepository.save(accountVerification);
+    return { accountVerification, otp };
   }
 
   async isSecurityQuestionSet(accountId: string) {
