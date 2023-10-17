@@ -14,44 +14,15 @@ import {
 } from '@nestjs/common';
 import { DataResponseFormat } from 'src/shared/api-data';
 import { CollectionQuery } from 'src/shared/collection-query';
-import { AllowAnonymous, AuthGuard } from 'src/supertokens';
 import { CreateGroupDto, UpdateGroupDto } from '../dto/group.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { CollectionQueryNew } from 'src/shared/collection-query/query';
+import { AllowAnonymous } from 'src/modules/authorization/decorators/allow-anonymous.decorator';
 
 @Controller('groups')
 @ApiTags('groups')
 export class GroupController extends EntityCrudController<Group> {
   constructor(private readonly groupService: GroupService) {
     super(groupService);
-  }
-
-  @Get()
-  @AllowAnonymous()
-  async findAll(
-    @Query() query: CollectionQuery,
-  ): Promise<DataResponseFormat<Group>> {
-    return await super.findAll(query);
-  }
-
-  @Get('test')
-  @AllowAnonymous()
-  async getAll(
-    @Query() query: CollectionQueryNew,
-  ): Promise<DataResponseFormat<Group>> {
-    return await this.groupService.getAllGroups(query);
-  }
-
-  @Post()
-  async create(@Body() itemData: CreateGroupDto): Promise<Group> {
-    return await super.create(itemData);
-  }
-
-  @Put(':id')
-  async update(
-    @Param('id') id: string,
-    @Body() updateItemDto: UpdateGroupDto,
-  ): Promise<Group | undefined> {
-    return await super.update(id, updateItemDto);
   }
 }

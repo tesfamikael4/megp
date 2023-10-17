@@ -23,9 +23,9 @@ import { Organization } from './entities/organization.entity';
 import { CollectionQuery } from '@collection-query';
 import { CreateUnitDto, UpdateUnitDto } from './dto/unit.dto';
 import { CreateOfficeDto, UpdateOfficeDto } from './dto/office.dto';
-import { AllowAnonymous } from 'src/supertokens/auth/decorators';
 import { CreateUserDto, UpdateUserDto } from './dto/employee.dto';
 import { CreateOrganizationMandateDto } from './dto/organization-mandate.dto';
+import { AllowAnonymous } from 'src/modules/authorization/decorators/allow-anonymous.decorator';
 
 @ApiBearerAuth()
 @Controller('organizations')
