@@ -28,6 +28,7 @@ export const ShareHolders: React.FC<Props> = ({
           nationality: '',
           share: '',
         }}
+        title="Share Holders List"
         itemSchema={itemSchema}
         modalBody={(getInputProps) => (
           <>
@@ -82,15 +83,15 @@ export const ShareHolders: React.FC<Props> = ({
                   className="sm:w-1/2 md:w-1/2 lg:w-1/3 xl:w-1/3 items-center justify-center p-3"
                 >
                   <Flex className="flex-col border w-56 h-40 shadow-md justify-between">
-                    <Flex className="flex-col p-4">
-                      <div className=" text-lg font-[600]  truncate">
+                    <Flex className="flex-col p-3 gap-1">
+                      <div className=" text-lg font-[600] truncate">
                         {value.firstName} {value.lastName}
                       </div>
-                      <div className=" text-sm truncate">
+                      <div className=" text-xs ml-1 truncate">
                         Nationality: {value.nationality}
                       </div>
 
-                      <div className=" text-sm  mb-[1rem] truncate">
+                      <div className=" text-xs ml-1  mb-[1rem] truncate">
                         Share: {value.share}
                       </div>
                     </Flex>

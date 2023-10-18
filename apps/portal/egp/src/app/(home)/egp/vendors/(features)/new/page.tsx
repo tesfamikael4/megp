@@ -1,15 +1,15 @@
 import React from 'react';
 import { Flex } from '@mantine/core';
-import { RegisterVendorRequestForm } from './_components/registerVendorRequest';
-import { RequestAlertMessage } from './_components/requestAlertMessage';
+import { RequestForm } from './_components/requestForm';
+import { AlertMessageCard } from './_components/alertMessageCard';
 export default function Page() {
   return (
     <Flex className="flex-wrap">
       <Flex className="w-full sm:w-1/2 md:w-1/2 lg:w-1/2 xl:w-1/2 items-center justify-center flex-col p-3">
-        <RegisterVendorRequestForm />
+        <RequestForm />
       </Flex>
       <Flex className="w-full sm:w-1/2 md:w-1/2 lg:w-1/2 xl:w-1/2 items-center flex-col p-3">
-        <RequestAlertMessage />
+        <AlertMessageCard />
       </Flex>
     </Flex>
   );

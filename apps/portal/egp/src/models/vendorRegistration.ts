@@ -34,86 +34,10 @@ export interface PriceRangeResponse {
 export interface GetFormRequest {
   vendorId: string;
 }
-export interface GetFormResponse {
+export interface GetFormResponse extends FormData {
   id: string;
   userId: string;
   status: string;
-  basic: {
-    name: string;
-    businessType: string;
-    origin: string;
-    district: string;
-    country: string;
-    tinNumber: string;
-  };
-  address: {
-    postalAddress: string;
-    primaryEmail: string;
-    alternateEmail: string;
-    mobilePhone: string;
-    telephone: string;
-    fax: string;
-    website: string;
-  };
-  contactPersons: {
-    firstName: string;
-    lastName: string;
-    email: string;
-    mobileNumber: string;
-  }[];
-  businessSizeAndOwnership: {
-    numberOfEmployees: string;
-    ownershipType: string;
-    registeredCapital: {
-      amount: string;
-      currency: string;
-    };
-    paidUpCapital: {
-      amount: string;
-      currency: string;
-    };
-  };
-  shareHolders: {
-    id: string;
-    firstName: string;
-    lastName: string;
-    vendorId: string;
-    nationality: string;
-    share: string;
-  }[];
-  beneficialOwnership: {
-    id: string;
-    firstName: string;
-    lastName: string;
-    vendorId: string;
-    nationality: string;
-  }[];
-  areasOfBusinessInterest: {
-    category: string;
-    lineOfBusiness: string[];
-    priceRange: string;
-  }[];
-  bankAccountDetails: {
-    accountHoldersFullName: string;
-    accountNumber: number;
-    bankBranchAddress: string;
-    currency: string;
-    bankSWIFT_BICCode: string;
-    iBAN: string;
-    status: string;
-    bankId: string;
-    bankName: string;
-    hashValue: string;
-    branchName: string;
-  }[];
-  supportingDocuments: {
-    businessRegistration_IncorporationCertificate: string;
-    mRA_TPINCertificate: string;
-    generalReceipt_BankDepositSlip: string;
-    mRATaxClearanceCertificate: string;
-    previousPPDARegistrationCertificate: string;
-    mSMECertificate: string;
-  };
 }
 
 export interface CreateVendorIdRequest {
@@ -148,7 +72,7 @@ export interface FormData {
     website: string;
   };
   bankAccountDetails: {
-    accountHoldersFullName: string;
+    accountHolderFullName: string;
     accountNumber: number;
     bankBranchAddress: string;
     currency: string;
@@ -195,7 +119,7 @@ export interface FormData {
       id: string;
       name: string;
     }[];
-    priceId: string;
+    priceRange: string;
   }[];
   supportingDocuments: {
     businessRegistration_IncorporationCertificate: File | string | null;

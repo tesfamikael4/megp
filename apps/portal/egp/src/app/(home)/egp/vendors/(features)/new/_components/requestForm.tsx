@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Select,
   Flex,
@@ -19,6 +19,10 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCreateVendorIdMutation } from '@/store/api/vendor_registration/query';
 import { NotificationService } from '../../../_components/notification';
+import {
+  AutoFillButton,
+  newRequestFormData,
+} from '../../../_components/autoFillForm';
 
 export interface ExtendedRegistrationReturnType
   extends UseFormRegisterReturn<any> {
@@ -53,7 +57,7 @@ export const formDataSchema = z.object({
     tinNumber: z.string(),
   }),
 });
-export const RegisterVendorRequestForm = () => {
+export const RequestForm = () => {
   const {
     handleSubmit,
     formState,
@@ -133,6 +137,7 @@ export const RegisterVendorRequestForm = () => {
     return () => {};
   }, [requestInfo.data, requestInfo.isSuccess, router]);
 
+  const [accept, setAccept] = useState<boolean>(false);
   return (
     <Box className={style.reqFormCard}>
       <LoadingOverlay
@@ -220,16 +225,26 @@ export const RegisterVendorRequestForm = () => {
         </Flex>
         <Divider size="md" my={20} />
         <Flex className="gap-4">
-          <Checkbox />
-          <Text size={'xs'}>
-            By continuing using the system you certify that you have read the
-            above service request instruction and accept the applicable Terms
-            and Conditions
-          </Text>
+          <Checkbox
+            label={
+              <Text size={'xs'}>
+                I accept by continuing using the system you certify that you
+                have read the above service request instruction and accept the
+                applicable Terms and Conditions
+              </Text>
+            }
+            onChange={() => setAccept(!accept)}
+            checked={accept}
+          />
         </Flex>
 
-        <Flex className="mt-10 justify-end">
-          <Button type="submit">Start Registration</Button>
+        <Flex className="mt-10 justify-end gap-2">
+          {process.env.NODE_ENV !== 'production' && (
+            <AutoFillButton data={newRequestFormData} setValues={setValue} />
+          )}
+          <Button type="submit" disabled={!accept}>
+            Start Registration
+          </Button>
         </Flex>
       </form>
     </Box>

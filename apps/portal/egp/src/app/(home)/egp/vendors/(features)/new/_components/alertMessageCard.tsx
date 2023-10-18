@@ -3,7 +3,7 @@ import { Alert, List, Text } from '@mantine/core';
 import { IconAlertCircle, IconPin } from '@tabler/icons-react';
 import style from './register.module.scss';
 
-export const RequestAlertMessage = () => {
+export const AlertMessageCard = () => {
   return (
     <Alert
       icon={<IconAlertCircle size="1rem" />}
