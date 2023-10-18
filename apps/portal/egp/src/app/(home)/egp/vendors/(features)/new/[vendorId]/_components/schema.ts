@@ -18,7 +18,7 @@ export const contactPersonSchema = z.object({
     .max(15, { message: 'Phone number cannot exceed 15 characters' }),
 });
 export const bankAccountSchema = z.object({
-  accountHoldersFullName: z
+  accountHolderFullName: z
     .string()
     .min(2, {
       message: "Account Holder's Full Name must be at least 2 characters long",
@@ -84,7 +84,7 @@ export const areasOfBusinessInterestSchema = z.object({
     .refine((arr) => arr.length > 0, {
       message: 'At least one Line Of Business Interest is required',
     }),
-  priceId: z.string().min(2, { message: 'Price Range is required' }),
+  priceRange: z.string().min(2, { message: 'Price Range is required' }),
 });
 export const formDataSchema = z.object({
   basic: z.object({
@@ -125,8 +125,8 @@ export const formDataSchema = z.object({
       .max(15, { message: 'Telephone number cannot exceed 15 characters' }),
     fax: z
       .string()
-      .min(10, { message: 'Fax number must be at least 10 characters long' })
-      .max(15, { message: 'Fax number cannot exceed 15 characters' }),
+      .min(6, { message: 'Fax number must be at least 10 characters long' })
+      .max(8, { message: 'Fax number cannot exceed 15 characters' }),
     website: z.string().url({ message: 'Website must be a valid URL' }),
   }),
   businessSizeAndOwnership: z.object({

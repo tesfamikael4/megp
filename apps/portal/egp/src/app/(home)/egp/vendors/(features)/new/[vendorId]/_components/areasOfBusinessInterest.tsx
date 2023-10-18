@@ -1,20 +1,9 @@
 import React from 'react';
-import { useForm, useFieldArray, Control } from 'react-hook-form';
-import {
-  Box,
-  Checkbox,
-  Code,
-  Fieldset,
-  Flex,
-  Group,
-  LoadingOverlay,
-  Select,
-  Text,
-} from '@mantine/core';
+import { useFieldArray } from 'react-hook-form';
+import { Fieldset, Flex, LoadingOverlay, Select } from '@mantine/core';
 import { MultiSelect } from '@mantine/core';
 import MultiCheckBox from '../../../../_components/multiCheckBox';
-import { ExtendedRegistrationReturnType, PassFormDataProps } from './formShell';
-import { FormData } from '@/models/vendorRegistration';
+import { PassFormDataProps } from './formShell';
 import {
   useGetLineOfBusinessQuery,
   useGetPriceRangeQuery,
@@ -77,7 +66,6 @@ export const AreasOfBusinessInterest: React.FC<Props> = ({
   });
   const fieldState = control.getFieldState(name, control._formState);
 
-  console.log(fieldState);
   const getCategoryProps = () => ({
     value: fields.map((item) => item.category),
     onChange: (categorys: string[]) => {
@@ -101,7 +89,7 @@ export const AreasOfBusinessInterest: React.FC<Props> = ({
           append({
             category,
             lineOfBusiness: [], // Start with an empty array
-            priceId: '',
+            priceRange: '',
           });
         }
       });
@@ -110,6 +98,7 @@ export const AreasOfBusinessInterest: React.FC<Props> = ({
     // onFocus: () => clearValidationError(fieldName),
     // onBlur: () => validateField(fieldName),
   });
+
   return (
     <Flex className="flex-col gap-6">
       <LoadingOverlay
@@ -156,6 +145,10 @@ export const AreasOfBusinessInterest: React.FC<Props> = ({
             value={
               register(`${name}.${index}.lineOfBusiness`, 'select').value?.id
             }
+            defaultValue={register(
+              `${name}.${index}.lineOfBusiness`,
+              'select',
+            ).value?.map((v: any) => v.id)}
             onChange={(value) => {
               register(`${name}.${index}.lineOfBusiness`, 'select').onChange(
                 value.map((v) => ({
@@ -186,7 +179,7 @@ export const AreasOfBusinessInterest: React.FC<Props> = ({
                 : [],
               field.category,
             )}
-            {...register(`${name}.${index}.priceId`, 'select')}
+            {...register(`${name}.${index}.priceRange`, 'select')}
           />
         </Fieldset>
       ))}

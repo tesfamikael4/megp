@@ -42,6 +42,10 @@ import { NotificationService } from '../../../../_components/notification';
 import { PopupModal } from '../../../../_components/modal';
 import AreasOfBusinessInterest from './areasOfBusinessInterest';
 import classes from './tabs.module.scss';
+import {
+  AutoFillButton,
+  vendorInformationData,
+} from '../../../../_components/autoFillForm';
 
 export interface ExtendedRegistrationReturnType
   extends UseFormRegisterReturn<any> {
@@ -99,6 +103,7 @@ const RegistrationForm = ({
     resolver: zodResolver(formDataSchema),
     defaultValues: initialValues,
   });
+  console.log(formState.errors);
   const extendedRegister = (
     name: any,
     type?: 'input' | 'select' | 'checkbox' | 'file',
@@ -138,6 +143,7 @@ const RegistrationForm = ({
     submitTrigger({
       data: {
         ...data,
+        areasOfBusinessInterest: [],
         id: vendorId,
         status: 'Save',
       },
@@ -323,15 +329,8 @@ const RegistrationForm = ({
       <form onSubmit={handleSubmit(onSubmit)}>
         <Tabs
           defaultValue={'basic'}
-          // variant="pills"
           orientation={isMobile ? 'horizontal' : 'vertical'}
-          // className="mb-10"
           onChange={handleTabChange}
-          // classNames={{
-          //   tab:'border p-0',
-          //   tabLabel:'text-sm font-medium',
-
-          // }}
           classNames={classes}
         >
           <Tabs.List className="">
@@ -364,7 +363,13 @@ const RegistrationForm = ({
                 </Tabs.Panel>
               ))}
 
-              <Flex justify={'end'}>
+              <Flex justify="end" className="gap-2">
+                {process.env.NODE_ENV !== 'production' && (
+                  <AutoFillButton
+                    data={vendorInformationData}
+                    setValues={setValue}
+                  />
+                )}
                 <Button onClick={() => onSaveAsDraft()}>Save as Draft</Button>
               </Flex>
             </Flex>

@@ -5,48 +5,10 @@ import { useGetFormQuery } from '@/store/api/vendor_registration/query';
 import RegistrationForm from './_components/formShell';
 import { useRouter } from 'next/navigation';
 import { NotificationService } from '../../../_components/notification';
-import { FormData } from '@/models/vendorRegistration';
-import { setCookie, hasCookie, getCookie } from 'cookies-next';
 
-const initialValue: FormData = {
-  basic: {
-    name: '',
-    businessType: '',
-    origin: '',
-    district: '',
-    country: '',
-    tinNumber: '',
-  },
-  businessSizeAndOwnership: {
-    registeredCapital: { amount: '', currency: '' },
-    paidUpCapital: { amount: '', currency: '' },
-    numberOfEmployees: '',
-    ownershipType: '',
-  },
-  address: {
-    postalAddress: '',
-    primaryEmail: '',
-    alternateEmail: '',
-    mobilePhone: '',
-    telephone: '',
-    fax: '',
-    website: '',
-  },
-  contactPersons: [],
-  shareHolders: [],
-  beneficialOwnership: [],
-  bankAccountDetails: [],
-  areasOfBusinessInterest: [],
-  supportingDocuments: {
-    businessRegistration_IncorporationCertificate: null,
-    mRA_TPINCertificate: null,
-    generalReceipt_BankDepositSlip: null,
-    mRATaxClearanceCertificate: null,
-    previousPPDARegistrationCertificate: null,
-    mSMECertificate: null,
-  },
-};
 export default function Page({ params }: { params: { vendorId: string } }) {
+  const auth = process.env.NEXT_PUBLIC_UI_ENV_MODE || 'production';
+
   const router = useRouter();
   const requestInfo = useGetFormQuery({
     vendorId: params.vendorId,
@@ -75,9 +37,6 @@ export default function Page({ params }: { params: { vendorId: string } }) {
           vendorId={params.vendorId}
           initialValues={{
             ...requestInfo.data,
-            areasOfBusinessInterest: [],
-            // (requestInfo.data?.status === 'Draft')?basic:requestInfo.data?.basic:...requestInfo.data,
-            // ...requestInfo.data
           }}
         />
       ) : (

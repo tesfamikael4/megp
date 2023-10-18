@@ -25,6 +25,7 @@ export const ContactPersons: React.FC<Props> = ({
           email: '',
           mobileNumber: '',
         }}
+        title="Contact Persons"
         itemSchema={itemSchema}
         modalBody={(getInputProps) => (
           <>
@@ -78,15 +79,15 @@ export const ContactPersons: React.FC<Props> = ({
                   className="sm:w-1/2 md:w-1/2 lg:w-1/3 xl:w-1/3 items-center justify-center p-3"
                 >
                   <Flex className="flex-col border w-56 h-40 shadow-md justify-between">
-                    <Flex className="flex-col p-4">
+                    <Flex className="flex-col p-3 gap-1">
                       <div className=" text-lg font-[600]  truncate">
                         {value.firstName} {value.lastName}
                       </div>
-                      <div className=" text-sm truncate">
+                      <div className=" text-xs truncate ml-1">
                         Email: {value.email}
                       </div>
 
-                      <div className=" text-sm  mb-[1rem] truncate">
+                      <div className=" text-xs  mb-[1rem] ml-1 truncate">
                         Phone: {value.mobileNumber}
                       </div>
                     </Flex>

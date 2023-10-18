@@ -53,7 +53,7 @@ export const BankAccountDetails: React.FC<Props> = ({
         control={control}
         title="Bank Account Information List"
         initialValues={{
-          accountHoldersFullName: '',
+          accountHolderFullName: '',
           accountNumber: '',
           bankBranchAddress: '',
           currency: '',
@@ -77,8 +77,8 @@ export const BankAccountDetails: React.FC<Props> = ({
                   <TextInput
                     className="w-full"
                     label="Account Holder Full Name"
-                    id="accountHoldersFullName"
-                    {...getInputProps('accountHoldersFullName')}
+                    id="accountHolderFullName"
+                    {...getInputProps('accountHolderFullName')}
                   />
                 </Flex>
                 <Flex className="w-full sm:w-1/2 md:w-1/2 lg:w-1/2 xl:w-1/2 items-center justify-center flex-col p-3">
@@ -189,17 +189,17 @@ export const BankAccountDetails: React.FC<Props> = ({
                   className="sm:w-1/2 md:w-1/2 lg:w-1/3 xl:w-1/3 items-center justify-center p-3"
                 >
                   <Flex className="flex-col border w-56 h-40 shadow-md justify-between">
-                    <Flex className="flex-col p-4">
+                    <Flex className="flex-col p-3 gap-1">
                       <div className=" text-lg font-[600]  truncate">
-                        {value.bankName}
+                        {getLabelByValue(bankList, value.bankId as string)}
                       </div>
-                      <div className=" text-xs truncate ml-2">
-                        Account Holders FullName: {value.accountHoldersFullName}
+                      <div className=" text-xs truncate ml-1">
+                        Account Holders FullName: {value.accountHolderFullName}
                       </div>
-                      <div className=" text-xs truncate ml-2">
-                        AccountNumber: {value.mobileNumber}
+                      <div className=" text-xs truncate ml-1">
+                        AccountNumber: {value.accountNumber}
                       </div>
-                      <div className=" text-xs  mb-[1rem] ml-2 truncate">
+                      <div className=" text-xs  mb-[1rem] ml-1 truncate">
                         Bank Branch Address: {value.bankBranchAddress}
                       </div>
                     </Flex>
