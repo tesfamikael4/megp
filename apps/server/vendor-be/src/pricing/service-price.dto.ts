@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsOptional, IsUUID, IsNumber } from 'class-validator';
-import { ServicePriceEntity } from './entities/service-price.entity';
+import { ServicePrice } from './entities/service-price';
 import { BpServiceResponse } from 'src/services/bp-service.response';
 export class CreateServicePriceDto {
   id: string;
@@ -29,8 +29,8 @@ export class CreateServicePriceDto {
    * Transfer Data from DTO object to Entity object
    *
    */
-  static fromDto(dto: CreateServicePriceDto): ServicePriceEntity {
-    const entity = new ServicePriceEntity();
+  static fromDto(dto: CreateServicePriceDto): ServicePrice {
+    const entity = new ServicePrice();
     if (!dto) {
       return;
     }
@@ -48,9 +48,7 @@ export class CreateServicePriceDto {
    * Transfer list of DTO object to Entity  list
    *
    */
-  static fromDtos(
-    registrationDtos: CreateServicePriceDto[],
-  ): ServicePriceEntity[] {
+  static fromDtos(registrationDtos: CreateServicePriceDto[]): ServicePrice[] {
     return registrationDtos?.map((regDto) =>
       CreateServicePriceDto.fromDto(regDto),
     );
@@ -60,8 +58,8 @@ export class UpdateServicePriceDto extends CreateServicePriceDto {
   @ApiProperty()
   @IsUUID()
   id: string;
-  static fromDto(dto: UpdateServicePriceDto): ServicePriceEntity {
-    const entity = new ServicePriceEntity();
+  static fromDto(dto: UpdateServicePriceDto): ServicePrice {
+    const entity = new ServicePrice();
     if (!dto) {
       return;
     }
@@ -83,7 +81,7 @@ export class ServicePriceResponseDto extends UpdateServicePriceDto {
   @ApiProperty()
   @IsNotEmpty()
   service: BpServiceResponse;
-  static fromEntity(entity: ServicePriceEntity): ServicePriceResponseDto {
+  static fromEntity(entity: ServicePrice): ServicePriceResponseDto {
     const response = new ServicePriceResponseDto();
     response.id = entity.id;
     response.serviceId = entity.serviceId;

@@ -13,6 +13,12 @@ export class TaskHandlerResponse {
   @ApiProperty()
   instanceId: string;
   @ApiProperty()
+  handlerUserId: string;
+  @ApiProperty()
+  handlerName: string;
+  @ApiProperty()
+  pickedAt: Date;
+  @ApiProperty()
   data: object;
   @ApiProperty()
   assignmentStatus: string;
@@ -29,26 +35,28 @@ export class TaskHandlerResponse {
   @ApiProperty()
   updatedBy: string;
   @ApiProperty()
-  deletedBy: string;
-  @ApiProperty()
   createdAt: Date;
   @ApiProperty()
   updatedAt: Date;
   @ApiProperty()
-  deletedAt: Date;
-  @ApiProperty()
   vendor: VendorsResponseDto;
   @ApiProperty()
   service: BpServiceResponse;
+  @ApiProperty()
+  executedAt: Date;
   static toResponse(entity: TaskHandlerEntity) {
     const response = new TaskHandlerResponse();
     response.id = entity.id;
     response.taskId = entity.taskId;
     response.instanceId = entity.instanceId;
+    response.handlerName = entity.handlerName;
+    response.handlerUserId = entity.handlerUserId;
+    response.pickedAt = entity.pickedAt;
     response.data = entity.data;
     response.currentState = entity.currentState;
     response.assignmentStatus = entity.assignmentStatus;
     response.previousHandlerId = entity.previousHandlerId;
+    response.executedAt = entity.executedAt;
     if (entity.task) {
       response.task = TaskResponse.toResponse(entity.task);
     }
@@ -63,7 +71,6 @@ export class TaskHandlerResponse {
         entity?.workflowInstance?.businessProcess?.service,
       );
     }
-
     const instance = entity?.workflowInstance;
     if (instance != undefined) {
       response.vendor = VendorsResponseDto.fromEntity(
@@ -71,12 +78,6 @@ export class TaskHandlerResponse {
       );
     }
 
-    response.createdBy = entity.createdBy;
-    response.updatedBy = entity.updatedBy;
-    //response.deletedBy = entity.deletedBy;
-    response.createdAt = entity.createdAt;
-    response.updatedAt = entity.updatedAt;
-    // response.deletedAt = entity.deletedAt;
     return response;
   }
 }

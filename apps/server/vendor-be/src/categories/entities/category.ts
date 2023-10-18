@@ -9,7 +9,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 @Entity({ name: 'categories' })
-export class CategoryEntity extends CommonEntity {
+export class Category {
   @PrimaryGeneratedColumn('uuid')
   id: string;
   @Column({ name: 'code' })
@@ -22,11 +22,11 @@ export class CategoryEntity extends CommonEntity {
   @Column({ nullable: true })
   parentId: string;
   //self rererencing
-  @ManyToOne(() => CategoryEntity, (category) => category.childCategories)
-  parentCategory: CategoryEntity;
+  @ManyToOne(() => Category, (category) => category.childCategories)
+  parentCategory: Category;
 
-  @OneToMany(() => CategoryEntity, (category) => category.parentCategory)
-  childCategories: CategoryEntity[];
+  @OneToMany(() => Category, (category) => category.parentCategory)
+  childCategories: Category[];
 
   @OneToMany(
     () => BusinessCategoryEntity,

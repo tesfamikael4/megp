@@ -12,20 +12,19 @@ import {
   Put,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { ApiPaginatedResponse, DataResponseFormat } from '@api-data';
+
 import { CollectionQuery } from '@collection-query';
 import {
   CreateServicePriceDto,
   UpdateServicePriceDto,
 } from './service-price.dto';
 import { ServicePricingService } from './service-pricing.service';
-import { ServicePriceEntity } from './entities/service-price.entity';
-import { GenericCrudController } from 'src/shared/controller/generic-crud.controller';
-//@ApiBearerAuth()
+import { EntityCrudController } from 'src/shared/controller';
+import { ServicePrice } from './entities/service-price';
+
 @Controller('Service-pricing')
 @ApiTags('Service Prices setting')
-export class ServicePricingController extends GenericCrudController<ServicePriceEntity> {
-  //constructor(private readonly regSettingService: ServicePricingService) { }
+export class ServicePricingController extends EntityCrudController<ServicePrice> {
   constructor(private readonly pricingService: ServicePricingService) {
     super(pricingService);
   }
@@ -45,8 +44,6 @@ export class ServicePricingController extends GenericCrudController<ServicePrice
   }
 
   @Get()
-  //  @ApiPaginatedResponse(ServicePriceResponseDto)
-  // @ApiOkResponse({ type: Todo, isArray: false })
   async findAll(@Query() query: CollectionQuery) {
     return await super.findAll(query);
   }
@@ -71,26 +68,5 @@ export class ServicePricingController extends GenericCrudController<ServicePrice
     id: string,
   ) {
     return await super.remove(id);
-  }
-
-  @Put('soft-delete/:id')
-  async softDelete(
-    @Param(
-      'id',
-      new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
-    )
-    id: string,
-  ) {
-    return await this.pricingService.softDelete(id);
-  }
-  @Put('restore/:id')
-  async restore(
-    @Param(
-      'id',
-      new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
-    )
-    id: string,
-  ) {
-    return await this.pricingService.restore(id);
   }
 }
