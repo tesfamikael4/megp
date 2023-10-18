@@ -7,9 +7,10 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { TaskEntity } from './task.entity';
+import { Audit } from 'src/shared/entities/audit.entity';
 
 @Entity({ name: 'task_assignments' })
-export class TaskAssignmentEntity extends CommonEntity {
+export class TaskAssignmentEntity extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
   @Column()

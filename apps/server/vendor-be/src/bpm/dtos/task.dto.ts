@@ -1,6 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsUUID } from 'class-validator';
 import { TaskEntity } from '../entities/task.entity';
+import {
+  CreateTaskCkeckListDto,
+  TaskCkeckListDto,
+} from './task-ckeck-list.dto';
 
 export class CreateTaskDto {
   @ApiProperty()
@@ -18,6 +22,11 @@ export class CreateTaskDto {
   @ApiProperty()
   @IsNotEmpty()
   taskType: string;
+  @ApiProperty()
+  @IsNotEmpty()
+  level: string;
+  @ApiProperty()
+  taskCkecklist: CreateTaskCkeckListDto[];
   /**
    * Transfer Data from DTO object to Entity object
    *
@@ -32,6 +41,8 @@ export class CreateTaskDto {
     entity.bpId = dto.businessProcessId;
     entity.taskType = dto.taskType;
     entity.handlerType = dto.handlerType;
+    entity.checkList = dto.taskCkecklist;
+    entity.level = dto.level;
     return entity;
   }
 
@@ -71,6 +82,7 @@ export class UpdateTaskDto extends CreateTaskDto {
     entity.bpId = dto.businessProcessId;
     entity.handlerType = dto.handlerType;
     entity.taskType = dto.taskType;
+    entity.level = dto.level;
     //entity.businessProcessId = dto.businessProcessId;
     return entity;
   }
