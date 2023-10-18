@@ -2,27 +2,20 @@ import { MenuItem } from '@megp/core-fe';
 import {
   IconAdjustmentsHorizontal,
   IconBuildingBank,
-  IconBuildingCommunity,
-  IconChartInfographic,
-  IconLockSquareRounded,
-  IconUsers,
-  IconUsersGroup,
 } from '@tabler/icons-react';
 
 export const Menu: MenuItem[] = [
-  { label: 'Organizations', icon: IconBuildingBank, link: '/organizations' },
+  { label: 'Initiation', icon: IconBuildingBank, link: '/initiation' },
   {
-    label: 'My Organization',
+    label: 'Pre Budget Plan',
     icon: IconBuildingBank,
-    link: '/my-organization',
+    link: '/pre-budget-plan',
   },
-  { label: 'Mandates', icon: IconLockSquareRounded, link: '/mandate' },
-  { label: 'My Mandates', icon: IconLockSquareRounded, link: '/my-mandate' },
-  { label: 'Users', icon: IconUsers, link: '/users' },
-  { label: 'Groups', icon: IconUsersGroup, link: '/groups' },
-  { label: 'Units', icon: IconBuildingCommunity, link: '/units' },
-  { label: 'Roles', icon: IconLockSquareRounded, link: '/roles' },
-  { label: 'Report & Analytics', icon: IconChartInfographic, link: '/reports' },
+  {
+    label: 'Items',
+    icon: IconBuildingBank,
+    link: '/item',
+  },
 
   {
     label: 'Settings',
