@@ -9,7 +9,7 @@ import { TaskResponse } from '../../bpm/dtos/task.response';
 import { CustomCategoryResponseDto } from 'src/vendor-registration/dto/custom-category.dto';
 import { BusinessCategoryResponseDto } from 'src/vendor-registration/dto/business-category.dto';
 import { ServicePriceResponseDto } from 'src/pricing/service-price.dto';
-import { ServicePriceEntity } from 'src/pricing/entities/service-price.entity';
+import { ServicePrice } from 'src/pricing/entities/service-price';
 
 export class WorkflowInstanceResponse {
   @ApiProperty()
@@ -32,7 +32,7 @@ export class WorkflowInstanceResponse {
   service: BpServiceResponse;
   vendor: VendorsResponseDto;
   task: TaskResponse;
-  pricing: ServicePriceEntity;
+  pricing: ServicePrice;
   customCats: CustomCategoryResponseDto[];
   commonCats: BusinessCategoryResponseDto[];
 

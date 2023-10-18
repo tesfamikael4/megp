@@ -3,12 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { WorkflowInstanceEntity } from '../entities/workflow-instance';
 import { Like, MoreThanOrEqual, Repository } from 'typeorm';
 
-@Injectable()
 export class HandlingCommonService {
   constructor(
     @InjectRepository(WorkflowInstanceEntity)
     private readonly wfiRepository: Repository<WorkflowInstanceEntity>,
-  ) {}
+  ) { }
   async generateRandomString(length, prefix = '') {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     const charsLength = characters.length;

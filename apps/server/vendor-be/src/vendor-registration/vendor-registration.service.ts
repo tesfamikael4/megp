@@ -20,7 +20,7 @@ import { FilesEntity } from './entities/file.entity';
 import { FileResponseDto, GetFileDto } from './dto/file.dto';
 import { WorkflowInstanceService } from 'src/handling/services/workflow-instance.service';
 import { CreateBankAccountDetailDto } from './dto/bank-account-detail.dto';
-import { ServicePriceEntity } from 'src/pricing/entities/service-price.entity';
+import { ServicePrice } from 'src/pricing/entities/service-price';
 
 @Injectable()
 export class VendorRegistrationsService {
@@ -34,9 +34,9 @@ export class VendorRegistrationsService {
     @InjectRepository(BusinessProcessEntity)
     private readonly businessProcessEntity: Repository<BusinessProcessEntity>,
     private readonly dataSource: DataSource, // private readonly workflowInstanceService: WorkflowInstanceService,
-    @InjectRepository(ServicePriceEntity)
-    private readonly ServicePriceRepository: Repository<ServicePriceEntity>,
-  ) {}
+    @InjectRepository(ServicePrice)
+    private readonly ServicePriceRepository: Repository<ServicePrice>,
+  ) { }
 
   async addVendorInformations(data: InsertAllDataDto): Promise<any> {
     try {
@@ -71,7 +71,7 @@ export class VendorRegistrationsService {
 
         return this.toInitialValue(result);
       }
-    } catch (error) {}
+    } catch (error) { }
   }
   async getVendorInformation(vendorId: string): Promise<any> {
     try {
@@ -240,13 +240,13 @@ export class VendorRegistrationsService {
     const beneficialOwnershipData =
       beneficialOwnership?.length > 0
         ? beneficialOwnership?.map((element) => {
-            return {
-              id: element?.id,
-              firstName: element.firstName,
-              lastName: element.lastName,
-              nationality: element.nationality,
-            };
-          })
+          return {
+            id: element?.id,
+            firstName: element.firstName,
+            lastName: element.lastName,
+            nationality: element.nationality,
+          };
+        })
         : [];
     return beneficialOwnershipData;
   };
@@ -254,13 +254,13 @@ export class VendorRegistrationsService {
     const beneficialOwnershipData =
       areaOfBusinessInterest?.length > 0
         ? areaOfBusinessInterest?.map((element) => {
-            return {
-              id: element?.id,
-              category: element.category,
-              lineOfBusiness: element.lineOfBusiness,
-              priceRange: element.priceRange,
-            };
-          })
+          return {
+            id: element?.id,
+            category: element.category,
+            lineOfBusiness: element.lineOfBusiness,
+            priceRange: element.priceRange,
+          };
+        })
         : [];
     return beneficialOwnershipData;
   };
@@ -366,15 +366,15 @@ export class VendorRegistrationsService {
     shareHoldersEntity =
       shareHolders.length > 0
         ? shareHolders?.map((element) => {
-            return {
-              id: element?.id, // this id will make the operation update if its drafted already
-              firstName: element.firstName,
-              lastName: element.lastName,
-              nationality: element.share,
-              share: element.share,
-              key: element.key,
-            };
-          })
+          return {
+            id: element?.id, // this id will make the operation update if its drafted already
+            firstName: element.firstName,
+            lastName: element.lastName,
+            nationality: element.share,
+            share: element.share,
+            key: element.key,
+          };
+        })
         : [];
     vendorsEntity.shareholders = shareHoldersEntity;
 
@@ -398,22 +398,22 @@ export class VendorRegistrationsService {
     const bankDetails =
       bankAccountDetails.length > 0
         ? bankAccountDetails.map((element) => {
-            return {
-              id: element?.id,
-              accountHolderFullName: element.accountHoldersFullName,
-              accountNumber: element.accountNumber,
-              IBAN: element.iBAN,
-              bankSwift: element.bankSWIFT_BICCode,
-              bankId: element.bankId,
-              bankName: element.bankName,
-              branchAddress: element.bankBranchAddress,
-              branchName: element.branchName,
-              currency: element.currency,
-              hashValue: element.hashValue,
-              status: element.status,
-              vendorId: '0c8b5d84-aad1-3d59-a8d8-841103a4ec4e',
-            };
-          })
+          return {
+            id: element?.id,
+            accountHolderFullName: element.accountHoldersFullName,
+            accountNumber: element.accountNumber,
+            IBAN: element.iBAN,
+            bankSwift: element.bankSWIFT_BICCode,
+            bankId: element.bankId,
+            bankName: element.bankName,
+            branchAddress: element.bankBranchAddress,
+            branchName: element.branchName,
+            currency: element.currency,
+            hashValue: element.hashValue,
+            status: element.status,
+            vendorId: '0c8b5d84-aad1-3d59-a8d8-841103a4ec4e',
+          };
+        })
         : [];
     // vendorsEntity.vendorAccounts = bankDetails;
     const metadata = {

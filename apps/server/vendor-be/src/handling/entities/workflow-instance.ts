@@ -12,7 +12,7 @@ import {
 import { TaskHandlerEntity } from './task-handler';
 import { TaskTrackerEntity } from './task-tracker';
 import { VendorsEntity } from 'src/vendor-registration/entities/vendors.entity';
-import { ServicePriceEntity } from 'src/pricing/entities/service-price.entity';
+import { ServicePrice } from 'src/pricing/entities/service-price';
 
 @Entity({ name: 'workflow_instances' })
 export class WorkflowInstanceEntity {
@@ -69,33 +69,16 @@ export class WorkflowInstanceEntity {
   )
   taskTrackers: TaskTrackerEntity[];
 
-  @ManyToOne(() => ServicePriceEntity, (price) => price.workflowInstances, {
+  @ManyToOne(() => ServicePrice, (price) => price.workflowInstances, {
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'pricingId' })
-  price: ServicePriceEntity;
+  price: ServicePrice;
 
   @ManyToOne(() => VendorsEntity, (v) => v.instances)
   @JoinColumn({ name: 'requestorId' })
   vendor: VendorsEntity;
 
-  addTracker(taskTracker: TaskTrackerEntity) {
-    if (!this.taskTrackers) {
-      this.taskTrackers = [];
-    }
-    this.taskTrackers.push(taskTracker);
-  }
-  updateTracker(taskTracker: TaskTrackerEntity) {
-    const index = this.taskTrackers.findIndex((a) => a.id === taskTracker.id);
-    if (index !== -1) {
-      this.taskTrackers[index] = taskTracker;
-    }
-  }
-  removeTracker(taskTracker: TaskTrackerEntity) {
-    const index = this.taskTrackers.findIndex((a) => a.id === taskTracker.id);
-    if (index !== -1) {
-      this.taskTrackers.splice(index, 1);
-    }
-  }
+
 }

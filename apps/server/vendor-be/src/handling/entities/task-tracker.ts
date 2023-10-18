@@ -9,8 +9,6 @@ import {
 import { WorkflowInstanceEntity } from './workflow-instance';
 import { TaskEntity } from 'src/bpm/entities/task.entity';
 import { Audit } from 'src/shared/entities/audit.entity';
-import { TaskCkeckListDto } from 'src/bpm/dtos/task-ckeck-list.dto';
-import { JSONObject } from 'supertokens-node/lib/build/types';
 
 @Entity({ name: 'task_trackers' })
 export class TaskTrackerEntity extends Audit {
