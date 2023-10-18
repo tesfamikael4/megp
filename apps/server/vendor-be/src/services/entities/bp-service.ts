@@ -1,5 +1,5 @@
 import { BusinessProcessEntity } from 'src/bpm/entities/business-process';
-import { ServicePriceEntity } from 'src/pricing/entities/service-price.entity';
+import { ServicePrice } from 'src/pricing/entities/service-price';
 import { CommonEntity } from 'src/shared/entities/common.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 @Entity({ name: 'bp_services' })
@@ -24,9 +24,9 @@ export class BpServiceEntity extends CommonEntity {
     },
   )
   businessProcesses: BusinessProcessEntity[];
-  @OneToMany(() => ServicePriceEntity, (service) => service.service, {
+  @OneToMany(() => ServicePrice, (service) => service.service, {
     // cascade: true,
     onDelete: 'CASCADE',
   })
-  prices: ServicePriceEntity[];
+  prices: ServicePrice[];
 }

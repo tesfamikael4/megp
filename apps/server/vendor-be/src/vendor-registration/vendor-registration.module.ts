@@ -47,14 +47,15 @@ import { WorkflowInstanceController } from 'src/handling/controllers/workflow-in
 import { ApplicationExcutionController } from 'src/handling/controllers/application-execution.controller';
 import { ApplicationExcutionService } from 'src/handling/services/application-execution.service';
 import { TaskEntity } from 'src/bpm/entities/task.entity';
-import { ServicePriceEntity } from 'src/pricing/entities/service-price.entity';
+import { ServicePrice } from 'src/pricing/entities/service-price';
 import { ServicePricingService } from 'src/pricing/service-pricing.service';
 import { ServicePricingController } from 'src/pricing/service-pricing.controller';
+import { HandlingCommonService } from 'src/handling/services/handling-common-services';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      ServicePriceEntity,
+      ServicePrice,
       BusinessCategoryEntity,
       CustomCategoryEntity,
       VendorsEntity,
@@ -94,6 +95,7 @@ import { ServicePricingController } from 'src/pricing/service-pricing.controller
     WorkflowInstanceService,
     ApplicationExcutionService,
     VendorRegistrationsService,
+    HandlingCommonService
   ],
   controllers: [
     WorkflowInstanceController,
@@ -111,4 +113,4 @@ import { ServicePricingController } from 'src/pricing/service-pricing.controller
     AreasOfBusinessInterestController,
   ],
 })
-export class VendorRegistrationModule {}
+export class VendorRegistrationModule { }

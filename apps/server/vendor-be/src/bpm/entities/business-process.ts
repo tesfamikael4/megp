@@ -1,7 +1,6 @@
 import { BpServiceEntity } from 'src/services/entities/bp-service';
 import { TaskEntity } from 'src/bpm/entities/task.entity';
 import { WorkflowInstanceEntity } from 'src/handling/entities/workflow-instance';
-
 import {
   Column,
   Entity,

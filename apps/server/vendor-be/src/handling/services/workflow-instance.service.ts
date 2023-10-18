@@ -25,7 +25,7 @@ import { StateMetaData } from '../dtos/state-metadata';
 import { TaskTrackerEntity } from '../entities/task-tracker';
 import { TaskTrackerResponse } from '../dtos/task-tracker.response';
 import { TaskResponse } from '../../bpm/dtos/task.response';
-import { ServicePriceEntity } from 'src/pricing/entities/service-price.entity';
+import { ServicePrice } from 'src/pricing/entities/service-price';
 import {
   BusinessStatusEnum,
   ServiceKeyEnum,
@@ -48,8 +48,8 @@ export class WorkflowInstanceService {
     private readonly workflowInstanceRepository: Repository<WorkflowInstanceEntity>,
     @InjectRepository(TaskEntity)
     private readonly taskRepository: Repository<TaskEntity>,
-    @InjectRepository(ServicePriceEntity)
-    private readonly pricingRepository: Repository<ServicePriceEntity>,
+    @InjectRepository(ServicePrice)
+    private readonly pricingRepository: Repository<ServicePrice>,
     @InjectRepository(TaskHandlerEntity)
     private readonly handlerRepository: Repository<TaskHandlerEntity>,
     @InjectRepository(InvoiceEntity)
@@ -63,7 +63,7 @@ export class WorkflowInstanceService {
     @InjectRepository(PaymentReceiptEntity)
     private readonly receiptRepository: Repository<PaymentReceiptEntity>,
     private readonly commonService: HandlingCommonService,
-  ) {}
+  ) { }
 
   async submitFormBasedTask(
     nextCommand: GotoNextStateDto,
