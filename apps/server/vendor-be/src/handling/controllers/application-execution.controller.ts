@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  Req,
+  Res,
+} from '@nestjs/common';
 import {
   ApiExtraModels,
   ApiOkResponse,
@@ -8,13 +17,10 @@ import {
 import { ApiPaginatedResponse, DataResponseFormat } from 'src/shared/api-data';
 import { CollectionQuery } from 'src/shared/collection-query';
 import { InvoiceResponseDto } from 'src/vendor-registration/dto/invoice.dto';
-import {
-  PaymentReceiptDto,
-  PaymentReceiptResponseDto,
-} from 'src/vendor-registration/dto/payment-receipt.dto';
 import { ApplicationExcutionService } from '../services/application-execution.service';
 import { WorkflowInstanceResponse } from '../dtos/workflow-instance.response';
-import { TaskHandlerResponse } from '../dtos/task-handler.response';
+import { UpdateTaskHandlerDto } from '../dtos/task-handler.dto';
+import { HandlingCommonService } from '../services/handling-common-services';
 
 @Controller('ApplicationExecution')
 @ApiTags('Application-excution')
@@ -23,7 +29,33 @@ import { TaskHandlerResponse } from '../dtos/task-handler.response';
 @ApiResponse({ status: 400, description: 'Bad Request' })
 @ApiExtraModels(DataResponseFormat)
 export class ApplicationExcutionController {
-  constructor(private readonly executeRepository: ApplicationExcutionService) {}
+  userInfo: any;
+  constructor(
+    private readonly executeService: ApplicationExcutionService,
+    private readonly service: HandlingCommonService, //  private readonly wfService: WorkflowInstanceService,
+  ) {
+    this.userInfo = {
+      userId: '078ddca3-ad1c-4028-aa58-7da3ee529fa9',
+      name: 'Dereje Hunew',
+    };
+  }
+  @Get('test')
+  async testmyApi() {
+    const result = await this.service.generateApplicationNumber('PPDA', 'GNR');
+    console.log(result);
+    return result;
+  }
+
+  @Post('pick-task')
+  @ApiOkResponse({ type: WorkflowInstanceResponse })
+  async pickTask(@Body() dto: UpdateTaskHandlerDto) {
+    return await this.executeService.pickTask(dto, this.userInfo);
+  }
+  @Post('unpick-task')
+  @ApiOkResponse({ type: WorkflowInstanceResponse })
+  async unpickTask(@Body() dto: UpdateTaskHandlerDto) {
+    return await this.executeService.unpickTask(dto);
+  }
 
   @Get('get-currunt-tasks/:serviceKey')
   @ApiPaginatedResponse(WorkflowInstanceResponse)
@@ -31,10 +63,7 @@ export class ApplicationExcutionController {
     @Param('serviceKey') serviceKey: string,
     @Query() query: CollectionQuery,
   ) {
-    return await this.executeRepository.getCurruntTaskByService(
-      serviceKey,
-      query,
-    );
+    return await this.executeService.getCurruntTaskByService(serviceKey, query);
   }
   @Get('get-currunt-taskDetail/:instanceId')
   @ApiOkResponse({ type: WorkflowInstanceResponse })
@@ -42,57 +71,40 @@ export class ApplicationExcutionController {
     @Param('instanceId') instanceId: string,
     @Query() query: CollectionQuery,
   ) {
-    return await this.executeRepository.getCurruntTaskDetail(instanceId);
+    return await this.executeService.getCurruntTaskDetail(instanceId);
   }
-
-  @Get('generate-invoice/:instanceId')
-  @ApiOkResponse({ type: InvoiceResponseDto })
-  async generateInvoice(
-    @Param('instanceId') instanceId: string,
-    // @Query() query: CollectionQuery,
-  ) {
-    return await this.executeRepository.generateInvoice(instanceId, instanceId);
+  @Get('generate-certeficate-pdf')
+  async generateCerteficatePdf(@Query() params: any, @Req() req, @Res() res) {
+    const templateUrl = params.templateUrl;
+    const selector = params.selector;
+    console.log(templateUrl, selector);
+    const pdfBuffer = await this.executeService.generateCerteficatePdf(
+      templateUrl,
+      selector,
+    );
+    res.set({
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': 'attachment; filename=ppda-certeficate.pdf',
+      'Content-Length': pdfBuffer.length,
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      Pragma: 'no-cache',
+      Expires: 0,
+    });
+    res.status(200).end(pdfBuffer);
   }
   @Get('get-invoices')
   @ApiPaginatedResponse(InvoiceResponseDto)
   async fetchInvoices(@Query() query: CollectionQuery) {
-    return await this.executeRepository.getInvoices(query);
+    return await this.executeService.getInvoices(query);
   }
   @Get('get-invoice/:id')
   @ApiOkResponse({ type: InvoiceResponseDto })
   async getInvoice(@Param('id') id: string) {
-    return await this.executeRepository.getInvoice(id);
+    return await this.executeService.getInvoice(id);
   }
-
-  @Post('create-payment')
-  @ApiOkResponse({ type: PaymentReceiptResponseDto })
-  async savePayment(
-    @Body() command: PaymentReceiptDto,
-    //   @UploadedFile() attachment: Express.Multer.File
-  ) {
-    // command.createdBy = user.id;
-    /*
-            if (attachment) {
-              const result = await this.fileManagerService.uploadFile(
-                attachment,
-                FileManagerHelper.UPLOADED_FILES_DESTINATION
-              );
-              console.log(attachment);
-              if (result) {
-                command.attachmentUrl = attachment.path;
-                command.type = attachment.mimetype;
-                command.filename = attachment.filename;
-              }
-            */
-    return await this.executeRepository.savePayment(command);
-  }
-  ///////////////////////////////////
-  @Get('get-currunt-tasks')
-  @ApiPaginatedResponse(TaskHandlerResponse)
-  async getCurruntTasks(
-    //  @Param('servicekey') servicekey: string,
-    @Query() query: CollectionQuery,
-  ) {
-    return await this.executeRepository.getCurrunTasks(query);
+  @Get('get-my-invoice/:userId')
+  @ApiOkResponse({ type: InvoiceResponseDto })
+  async getMyInvoice(@Param('userId') userId: string) {
+    return await this.executeService.getMyInvoices(userId);
   }
 }
