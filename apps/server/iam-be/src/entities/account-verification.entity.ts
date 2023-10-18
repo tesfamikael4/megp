@@ -7,7 +7,10 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Account } from './account.entity';
-import { AccountVerificationStatusEnum } from '@enums';
+import {
+  AccountVerificationStatusEnum,
+  AccountVerificationTypeEnum,
+} from '@enums';
 
 @Entity('account_verifications')
 export class AccountVerification extends Audit {
@@ -18,11 +21,18 @@ export class AccountVerification extends Audit {
   public otp: string;
 
   @Column({
-    type: 'text',
-    default: AccountVerificationStatusEnum.NEW,
+    type: 'enum',
     enum: AccountVerificationStatusEnum,
+    default: AccountVerificationStatusEnum.NEW,
   })
-  public status: AccountVerificationStatusEnum;
+  public status: string;
+
+  @Column({
+    type: 'enum',
+    enum: AccountVerificationTypeEnum,
+    default: AccountVerificationTypeEnum.EMAIL_VERIFICATION,
+  })
+  public otpType: string;
 
   @Column({ type: 'text' })
   public accountId: string;

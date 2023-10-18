@@ -26,6 +26,8 @@ export class AuthHelper {
     if (!decoded) {
       throw new UnauthorizedException('invalid_token');
     }
+
+    return decoded;
   }
 
   // Decoding the JWT Token
@@ -35,8 +37,16 @@ export class AuthHelper {
 
   // Generate JWT Token
   public generateAccessToken(payload: any): string {
+    const {
+      password: encryptedPassword,
+      createdAt,
+      updatedAt,
+      securityQuestions,
+      ...rest
+    } = payload;
+
     return this.jwt.sign(
-      { ...payload },
+      { ...rest, isSecurityQuestionSet: securityQuestions?.length != 0 },
       {
         secret: this.configService.get<string>('JWT_ACCESS_TOKEN_SECRET'),
         expiresIn: this.configService.get<string>('JWT_ACCESS_TOKEN_EXPIRES'),
