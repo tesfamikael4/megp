@@ -300,7 +300,11 @@ export class AccountsService {
 
     securityQuestions.forEach((s) => (s.accountId = account.id));
 
-    await this.securityQuestionRepository.save(securityQuestions);
+    await this.securityQuestionRepository.insert(securityQuestions);
+
+    return {
+      status: true,
+    };
   }
 
   async requestResetPasswordWithUsername(payload: CheckSecurityQuestionDto) {
@@ -353,7 +357,6 @@ export class AccountsService {
       verificationId: accountVerification.id,
       otp,
       isOtp: true,
-      status: true,
     };
   }
 
