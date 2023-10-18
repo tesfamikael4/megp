@@ -25,20 +25,24 @@ import {
   CreateCategoryDto,
   UpdateCategoryDto,
 } from './dto/category.dto';
-// import { RegistrationTypes } from 'src/shared/enums/vendor-enums';
-//@ApiBearerAuth()
+
+import { EntityCrudController } from 'src/shared/controller';
+import { Category } from './entities/category';
+
 @Controller('Categories')
 @ApiTags('Categories')
 @ApiResponse({ status: 500, description: 'Internal error' })
 @ApiExtraModels(DataResponseFormat)
-export class CategoriesController {
-  constructor(private readonly categoryService: CategoryService) {}
-  @Post('create-category')
+export class CategoriesController extends EntityCrudController<Category> {
+  constructor(private readonly categoryService: CategoryService) {
+    super(categoryService);
+  }
+  @Post()
   async create(@Body() dto: CreateCategoryDto) {
-    return await this.categoryService.create(dto);
+    return await super.create(dto);
   }
 
-  @Get('get-category-by-id/:id')
+  @Get(':id')
   async findOne(
     @Param(
       'id',
@@ -46,17 +50,15 @@ export class CategoriesController {
     )
     id: string,
   ) {
-    return await this.categoryService.findOne(id);
+    return await super.findOne(id);
   }
 
-  @Get('get-all-categories')
+  @Get()
   @ApiPaginatedResponse(CategoryResponseDto)
-  // @ApiOkResponse({ type: Todo, isArray: false })
   async findAll(@Query() query: CollectionQuery) {
-    return await this.categoryService.findAll(query);
+    return await super.findAll(query);
   }
-
-  @Patch('update-category/:id')
+  @Patch(':id')
   async update(
     @Param(
       'id',
@@ -65,66 +67,6 @@ export class CategoriesController {
     id: string,
     @Body() updateDto: UpdateCategoryDto,
   ) {
-    return await this.categoryService.update(id, updateDto);
+    return await super.update(id, updateDto);
   }
-
-  @Delete('delete-category/:id')
-  @ApiOkResponse({ type: String })
-  async remove(
-    @Param(
-      'id',
-      new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
-    )
-    id: string,
-  ) {
-    await this.categoryService.remove(id);
-    return 'success';
-  }
-  @Post('restore-category/:id')
-  @ApiPaginatedResponse(CategoryResponseDto)
-  async restore(
-    @Param(
-      'id',
-      new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
-    )
-    id: string,
-  ) {
-    const result = await this.categoryService.restore(id);
-    return result;
-  }
-  // Archiving service Provider
-  @Delete('archive-category/:id')
-  @ApiPaginatedResponse(Boolean)
-  async softDelete(
-    @Param(
-      'id',
-      new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
-    )
-    id: string,
-    // user: UserInfo
-  ) {
-    return await this.categoryService.softDelete(id);
-  }
-
-  @Get('get-archived-categories')
-  @ApiPaginatedResponse(CategoryResponseDto)
-  async getArchivedCategories(@Query() query: CollectionQuery) {
-    return this.categoryService.getArchivedCategories(query);
-  }
-
-  // @Get('get-registration-types')
-  // @ApiOkResponse()
-  // async getRegistrationTypes() {
-  //   console.log(RegistrationTypes.New);
-  //   const array = Object.entries(RegistrationTypes).map((entry) => {
-  //     const [key, value] = entry;
-  //     return {
-  //       key,
-  //       value,
-  //     };
-  //   });
-  //   return array;
-  // }
-
-  //child methods
 }

@@ -17,9 +17,9 @@ export class PaymentReceiptEntity {
   referenceNumber: string;
   @Column()
   remark: string;
-  @Column()
+  @Column({ nullable: true })
   filePath: string;
-  @Column()
+  @Column({ nullable: true })
   fileType: string;
   @OneToOne(() => InvoiceEntity)
   @JoinColumn()

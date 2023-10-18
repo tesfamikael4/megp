@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmpty, IsNotEmpty, IsString, IsUUID } from 'class-validator';
 import { TaskTrackerEntity } from '../entities/task-tracker';
+import { TaskCkeckListDto } from 'src/bpm/dtos/task-ckeck-list.dto';
 
 export class CreateTaskTrackerDto {
   @ApiProperty()
@@ -13,7 +14,11 @@ export class CreateTaskTrackerDto {
   @IsNotEmpty()
   instanceId: string;
   @ApiProperty()
-  handledById: string;
+  handlerUserId: string;
+  @ApiProperty()
+  handlerName: string;
+  @ApiProperty()
+  pickedAt: Date;
   @ApiProperty()
   @IsString()
   data: object;
@@ -23,6 +28,8 @@ export class CreateTaskTrackerDto {
   @ApiProperty()
   @IsString()
   remark?: string;
+  @ApiProperty()
+  checkLists: TaskCkeckListDto[];
   /**
    * Transfer Data from DTO object to Entity object
    *
@@ -36,7 +43,7 @@ export class CreateTaskTrackerDto {
     entity.data = dto.data;
     entity.instanceId = dto.instanceId;
     entity.previousHandlerId = dto.previousHandlerId;
-    entity.handledById = dto.handledById;
+    entity.handlerUserId = dto.handlerUserId;
     entity.action = dto.action;
     entity.remark = dto.remark;
     return entity;
@@ -63,7 +70,7 @@ export class UpdateTaskTrackerDto {
   instanceId: string;
   @ApiProperty()
   @IsNotEmpty()
-  handledById: string;
+  handlerUserId: string;
   @ApiProperty()
   @IsNotEmpty()
   previousHandlerId: string;
@@ -76,6 +83,8 @@ export class UpdateTaskTrackerDto {
   @ApiProperty()
   @IsString()
   remark: string;
+  @ApiProperty()
+  checkLists: TaskCkeckListDto[];
   static fromDto(dto: UpdateTaskTrackerDto): TaskTrackerEntity {
     const entity = new TaskTrackerEntity();
     if (!dto) {
@@ -87,18 +96,9 @@ export class UpdateTaskTrackerDto {
     entity.data = dto.data;
     entity.action = dto.action;
     entity.previousHandlerId = dto.previousHandlerId;
-    entity.handledById = dto.handledById;
+    entity.handlerUserId = dto.handlerUserId;
     entity.previousHandlerId = dto.previousHandlerId;
     entity.remark = dto.remark;
     return entity;
   }
-}
-export class DeleteTaskTrackerDto {
-  @ApiProperty()
-  @IsUUID()
-  @IsNotEmpty()
-  id: string;
-  @ApiProperty()
-  @IsNotEmpty()
-  instanceId: string;
 }

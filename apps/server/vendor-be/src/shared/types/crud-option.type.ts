@@ -1,4 +1,4 @@
-export type BulkCrudOptions = {
+export type RelationCrudOptions = {
   firstEntityIdName: string;
   firstInclude: string;
 
@@ -6,6 +6,6 @@ export type BulkCrudOptions = {
   secondInclude: string;
 };
 
-export type CrudOptions = {
+export type ExtraCrudOptions = {
   entityIdName: string;
 };

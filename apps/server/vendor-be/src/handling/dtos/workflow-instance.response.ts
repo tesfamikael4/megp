@@ -8,6 +8,8 @@ import { VendorsResponseDto } from 'src/vendor-registration/dto/vendor.dto';
 import { TaskResponse } from '../../bpm/dtos/task.response';
 import { CustomCategoryResponseDto } from 'src/vendor-registration/dto/custom-category.dto';
 import { BusinessCategoryResponseDto } from 'src/vendor-registration/dto/business-category.dto';
+import { ServicePriceResponseDto } from 'src/pricing/service-price.dto';
+import { ServicePriceEntity } from 'src/pricing/entities/service-price.entity';
 
 export class WorkflowInstanceResponse {
   @ApiProperty()
@@ -23,22 +25,14 @@ export class WorkflowInstanceResponse {
   @ApiProperty()
   businessProcess?: BusinessProcessResponse;
   @ApiProperty()
-  createdBy: string;
-  @ApiProperty()
-  updatedBy: string;
-  @ApiProperty()
-  deletedBy: string;
-  @ApiProperty()
-  createdAt: Date;
-  @ApiProperty()
-  updatedAt: Date;
-  @ApiProperty()
-  deletedAt: Date;
+  submittedAt: Date;
+
   taskHandler?: TaskHandlerResponse;
   taskTrackers?: TaskTrackerResponse[];
   service: BpServiceResponse;
   vendor: VendorsResponseDto;
   task: TaskResponse;
+  pricing: ServicePriceEntity;
   customCats: CustomCategoryResponseDto[];
   commonCats: BusinessCategoryResponseDto[];
 
@@ -49,23 +43,26 @@ export class WorkflowInstanceResponse {
     response.applicationNumber = entity.applicationNumber;
     response.requestorId = entity.requestorId;
     response.status = entity.status;
-
+    response.pricing = entity?.price;
+    response.submittedAt = entity.submittedAt;
     if (entity?.businessProcess) {
       response.businessProcess = BusinessProcessResponse.toResponse(
         entity?.businessProcess,
       );
     }
+
     if (entity?.businessProcess?.service) {
       response.service = BpServiceResponse.toResponse(
         entity?.businessProcess.service,
       );
     }
-    if (entity.vendor.businessCats) {
+
+    if (entity.vendor?.businessCats) {
       response.commonCats = entity.vendor.businessCats.map((item) =>
         BusinessCategoryResponseDto.toResponse(item),
       );
     }
-    if (entity.vendor.customCats) {
+    if (entity.vendor?.customCats) {
     }
 
     if (entity?.taskHandler) {
@@ -84,12 +81,6 @@ export class WorkflowInstanceResponse {
       );
     }
 
-    response.createdBy = entity.createdBy;
-    // response.updatedBy = entity.updatedBy;
-    // response.deletedBy = entity.deletedBy;
-    response.createdAt = entity.createdAt;
-    // response.updatedAt = entity.updatedAt;
-    //  response.deletedAt = entity.deletedAt;
     return response;
   }
 }

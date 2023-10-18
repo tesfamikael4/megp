@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { TaskResponse } from '../../bpm/dtos/task.response';
 import { WorkflowInstanceResponse } from './workflow-instance.response';
 import { TaskTrackerEntity } from '../entities/task-tracker';
+import { TaskCkeckListDto } from 'src/bpm/dtos/task-ckeck-list.dto';
 
 export class TaskTrackerResponse {
   @ApiProperty()
@@ -11,9 +12,13 @@ export class TaskTrackerResponse {
   @ApiProperty()
   instanceId: string;
   @ApiProperty()
-  data: object;
+  handlerUserId: string;
   @ApiProperty()
-  handledById: string;
+  handlerName: string;
+  @ApiProperty()
+  pickedAt: Date;
+  @ApiProperty()
+  data: object;
   @ApiProperty()
   previousHandlerId: string;
   @ApiProperty()
@@ -25,24 +30,18 @@ export class TaskTrackerResponse {
   @ApiProperty()
   remark?: string;
   @ApiProperty()
-  createdBy: string;
-  @ApiProperty()
-  updatedBy: string;
-  @ApiProperty()
-  deletedBy: string;
-  @ApiProperty()
-  createdAt: Date;
-  @ApiProperty()
-  updatedAt: Date;
-  @ApiProperty()
-  deletedAt: Date;
+  taskChecklist: TaskCkeckListDto[];
+
   static toResponse(entity: TaskTrackerEntity) {
     const response = new TaskTrackerResponse();
     response.id = entity.id;
     response.taskId = entity.taskId;
     response.instanceId = entity.instanceId;
+    response.handlerName = entity.handlerName;
+    response.handlerUserId = entity.handlerUserId;
+    response.pickedAt = entity.pickedAt;
     response.data = entity.data;
-    response.handledById = entity.handledById;
+    response.taskChecklist = JSON.parse(entity.checklists);
     response.previousHandlerId = entity.previousHandlerId;
     if (entity.task) {
       response.task = TaskResponse.toResponse(entity.task);
@@ -53,12 +52,7 @@ export class TaskTrackerResponse {
       );
     }
     response.action = entity.action;
-    response.createdBy = entity.createdBy;
-    response.updatedBy = entity.updatedBy;
-    response.deletedBy = entity.deletedBy;
-    response.createdAt = entity.createdAt;
-    response.updatedAt = entity.updatedAt;
-    response.deletedAt = entity.deletedAt;
+
     return response;
   }
 }
