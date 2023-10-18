@@ -25,7 +25,7 @@ import { EmailService } from 'src/shared/email/email.service';
     AuthHelper,
     JwtStrategy,
     JwtRefreshTokenStrategy,
-    JwtGuard,
+    { provide: APP_GUARD, useClass: JwtGuard },
     JwtRefreshGuard,
     EmailService,
   ],

@@ -6,8 +6,6 @@ import {
   Req,
   Get,
   HttpCode,
-  Param,
-  Patch,
 } from '@nestjs/common';
 import { AccountsService } from '../services/account.service';
 import { CreateAccountDto, VerifyAccountDto } from '../dto/account.dto';
@@ -38,7 +36,7 @@ import {
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly accountsService: AccountsService) { }
+  constructor(private readonly accountsService: AccountsService) {}
 
   @Post('signup')
   @AllowAnonymous()
@@ -105,23 +103,11 @@ export class AuthController {
     return await this.accountsService.setSecurityQuestions(user.id, payload);
   }
 
-  @Post('check-security-questions')
+  @Post('reset-password-with-security-questions')
   async checkSecurityQuestions(
     @Body() payload: CheckSecurityQuestionDto,
   ): Promise<any> {
-    const result = await this.accountsService.checkSecurityQuestions(payload);
-    if (result.status) {
-      // const token = await createResetPasswordToken(
-      //   'public',
-      //   result.superTokenUserId,
-      // );
-      // if (token.status === 'OK') {
-      //   result['token'] = token.token;
-      //   return result;
-      // }
-    }
-
-    return result;
+    return await this.accountsService.requestResetPasswordWithUsername(payload);
   }
 
   @Get('userinfo')

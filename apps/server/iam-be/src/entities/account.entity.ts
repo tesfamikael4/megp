@@ -9,13 +9,13 @@ export class Account extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Column({ type: 'text' })
+  @Column({ type: 'text', unique: true })
   username: string;
 
   @Column({ type: 'text' })
   password: string;
 
-  @Column({ type: 'text' })
+  @Column({ type: 'text', unique: true })
   email: string;
 
   @Column({ type: 'text' })
@@ -28,11 +28,17 @@ export class Account extends Audit {
   phone: string;
 
   @Column({
-    type: 'text',
+    type: 'enum',
     enum: AccountStatusEnum,
     default: AccountStatusEnum.PENDING,
   })
-  status: AccountStatusEnum;
+  status: string;
+
+  @Column({ default: 0 })
+  failedAttempts: number;
+
+  @Column({ nullable: true })
+  bannedUntil: Date;
 
   @OneToMany(
     () => AccountVerification,
