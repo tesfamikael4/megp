@@ -19,30 +19,19 @@ export class BusinessProcessResponse {
   @ApiProperty()
   createdBy: string;
   @ApiProperty()
-  updatedBy: string;
-  @ApiProperty()
-  deletedBy: string;
-  @ApiProperty()
   createdAt: Date;
   @ApiProperty()
   updatedAt: Date;
-  @ApiProperty()
-  deletedAt: Date;
+
   static toResponse(entity: BusinessProcessEntity) {
     const response = new BusinessProcessResponse();
     response.id = entity.id;
     response.serviceId = entity.serviceId;
-    // response.workflow = entity.workflow;
     response.version = entity.version;
     response.isActive = entity.isActive;
-    //response.organizationId = entity.organizationId;
-    // response.organizationName = entity.organizationName;
-    response.createdBy = entity.createdBy;
-    //  response.updatedBy = entity.updatedBy;
-    // response.deletedBy = entity.deletedBy;
     response.createdAt = entity.createdAt;
-    //  response.updatedAt = entity.updatedAt;
-    // response.deletedAt = entity.deletedAt;
+    response.updatedAt = entity.updatedAt;
+
     return response;
   }
 }

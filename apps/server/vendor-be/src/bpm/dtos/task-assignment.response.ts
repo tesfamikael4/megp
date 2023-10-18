@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { BusinessProcessResponse } from './business-process.response';
 import { TaskAssignmentEntity } from '../entities/task-assignment';
 import { TaskResponse } from './task.response';
 
@@ -38,12 +37,10 @@ export class TaskAssignmentResponse {
     if (entity.task) {
       response.task = TaskResponse.toResponse(entity.task);
     }
-    response.createdBy = entity.createdBy;
-    response.updatedBy = entity.updatedBy;
-    response.deletedBy = entity.deletedBy;
+
     response.createdAt = entity.createdAt;
     response.updatedAt = entity.updatedAt;
-    response.deletedAt = entity.deletedAt;
+
     return response;
   }
 }

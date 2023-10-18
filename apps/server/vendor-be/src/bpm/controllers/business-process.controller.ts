@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
 import {
   ApiExtraModels,
   ApiOkResponse,
@@ -13,38 +13,33 @@ import {
   CreateBusinessProcessDto,
   UpdateBusinessProcessDto,
 } from '../dtos/business-process.dto';
+import { BusinessProcessEntity } from '../entities/business-process';
+import { EntityCrudController } from 'src/shared/controller';
 @Controller('business-processes')
 @ApiTags('business-processes')
-@ApiResponse({ status: 500, description: 'Internal error' })
-@ApiResponse({ status: 404, description: 'Item not found' })
-@ApiResponse({ status: 400, description: 'Bad Request' })
 @ApiExtraModels(DataResponseFormat)
-export class BusinessProcessController {
-  constructor(
-    private readonly businessProcessService: BusinessProcessService,
-  ) {}
-  @Get('get-business-processes')
+export class BusinessProcessController extends EntityCrudController<BusinessProcessEntity> {
+  constructor(private readonly businessProcessService: BusinessProcessService) {
+    super(businessProcessService);
+  }
+  @Get()
   @ApiPaginatedResponse(BusinessProcessResponse)
   async fetch(@Query() query: CollectionQuery) {
-    return await this.businessProcessService.getBusinessProcesses(query);
+    return await super.findAll(query);
   }
-  @Get('get-business-process/:id')
+  @Get(':id')
   @ApiOkResponse({ type: BusinessProcessResponse })
   async getServiceById(@Param('id') id: string) {
-    return await this.businessProcessService.getById(id);
+    return await super.findOne(id);
   }
-  @Post('create-business-process')
+  @Post()
   @ApiPaginatedResponse(BusinessProcessResponse)
   async create(@Body() dto: CreateBusinessProcessDto) {
-    return await this.businessProcessService.create(dto);
+    return await super.create(dto);
   }
-  @Post('update-business-process')
-  @ApiPaginatedResponse(BusinessProcessResponse)
-  async update(@Body() dto: UpdateBusinessProcessDto) {
-    return await this.businessProcessService.update(dto);
-  }
-  @Get('delete-business-process/:id')
+
+  @Get(':id')
   async delete(@Param('id') id: string) {
-    return await this.businessProcessService.delete(id);
+    return await super.remove(id);
   }
 }
