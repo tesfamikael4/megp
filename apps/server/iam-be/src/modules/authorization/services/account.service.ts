@@ -74,6 +74,7 @@ export class AccountsService {
       await this.repository.update(account.id, account);
 
       const token: LoginResponseDto = {
+        is_security_question_set: account.securityQuestions?.length != 0,
         access_token: this.helper.generateAccessToken(account),
         refresh_token: this.helper.generateRefreshToken(account),
       };
@@ -216,6 +217,7 @@ export class AccountsService {
       this.repository.update(account.id, { failedAttempts, bannedUntil });
 
       const token: LoginResponseDto = {
+        is_security_question_set: account.securityQuestions?.length != 0,
         access_token: this.helper.generateAccessToken(account),
         refresh_token: this.helper.generateRefreshToken(account),
       };

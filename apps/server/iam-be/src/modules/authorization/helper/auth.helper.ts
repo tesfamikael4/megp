@@ -46,7 +46,7 @@ export class AuthHelper {
     } = payload;
 
     return this.jwt.sign(
-      { ...rest, isSecurityQuestionSet: securityQuestions?.length != 0 },
+      { ...rest },
       {
         secret: this.configService.get<string>('JWT_ACCESS_TOKEN_SECRET'),
         expiresIn: this.configService.get<string>('JWT_ACCESS_TOKEN_EXPIRES'),
