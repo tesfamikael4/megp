@@ -19,6 +19,8 @@ export class GoogleLogin {
 
 export class LoginResponseDto {
   @ApiProperty()
+  public is_security_question_set?: boolean;
+  @ApiProperty()
   public access_token: string;
   @ApiProperty()
   public refresh_token?: string;
