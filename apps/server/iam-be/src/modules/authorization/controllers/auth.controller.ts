@@ -64,11 +64,11 @@ export class AuthController {
     return this.accountsService.forgetPassword(forgetPassword.email);
   }
 
-  // @Post('verify-forget-password')
-  // @AllowAnonymous()
-  // verifyForgetPassword(@Body() verifyAccountDto: VerifyAccountDto) {
-  //   return this.accountsService.verifyForgetPassword(verifyAccountDto);
-  // }
+  @Post('verify-forget-password')
+  @AllowAnonymous()
+  verifyForgetPassword(@Body() verifyAccountDto: VerifyAccountDto) {
+    return this.accountsService.verifyForgetPassword(verifyAccountDto);
+  }
 
   @Post('reset-password')
   @AllowAnonymous()
@@ -98,12 +98,13 @@ export class AuthController {
   @UseGuards(JwtGuard)
   async setSecurityQuestions(
     @Body() payload: SetSecurityQuestionDto,
-    @CurrentUser() user,
+    @CurrentUser() user: any,
   ): Promise<any> {
     return await this.accountsService.setSecurityQuestions(user.id, payload);
   }
 
   @Post('reset-password-with-security-questions')
+  @AllowAnonymous()
   async checkSecurityQuestions(
     @Body() payload: CheckSecurityQuestionDto,
   ): Promise<any> {

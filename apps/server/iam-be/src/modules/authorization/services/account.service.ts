@@ -99,12 +99,14 @@ export class AccountsService {
 
   public async verifyForgetPassword(
     body: VerifyAccountDto,
-  ): Promise<boolean | never> {
+  ): Promise<any | never> {
     try {
       const { verificationId, otp, isOtp }: VerifyAccountDto = body;
-      await this.verifyOTP(verificationId, otp, isOtp);
+      await this.verifyOTP(verificationId, otp, isOtp, false);
 
-      return true;
+      return {
+        status: true,
+      };
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
@@ -362,7 +364,12 @@ export class AccountsService {
     };
   }
 
-  private async verifyOTP(verificationId: string, otp: string, isOtp: boolean) {
+  private async verifyOTP(
+    verificationId: string,
+    otp: string,
+    isOtp: boolean,
+    invalidateOtp = true,
+  ) {
     const OTP_LIFE_TIME = process.env.OTP_LIFE_TIME
       ? +process.env.OTP_LIFE_TIME
       : 10;
@@ -405,9 +412,11 @@ export class AccountsService {
       );
     }
 
-    await this.accountVerificationRepository.update(accountVerification.id, {
-      status: AccountVerificationStatusEnum.USED,
-    });
+    if (invalidateOtp) {
+      await this.accountVerificationRepository.update(accountVerification.id, {
+        status: AccountVerificationStatusEnum.USED,
+      });
+    }
 
     const account = await this.repository.findOneBy({
       id: accountVerification.accountId,
