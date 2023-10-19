@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Put,
   Query,
 } from '@nestjs/common';
 import {
@@ -18,56 +19,34 @@ import { CollectionQuery } from 'src/shared/collection-query';
 import { TaskService } from '../services/task.service';
 import { TaskResponse } from '../dtos/task.response';
 import { CreateTaskDto, UpdateTaskDto } from '../dtos/task.dto';
-import {
-  CreateTaskAssignmentDto,
-  DeleteTaskAssignmentDto,
-  UpdateTaskAssignmentDto,
-} from '../dtos/task-assignmment.dto';
+import { TaskEntity } from '../entities/task.entity';
+import { EntityCrudController } from 'src/shared/controller';
 @Controller('tasks')
 @ApiTags('tasks')
-@ApiResponse({ status: 500, description: 'Internal error' })
-@ApiResponse({ status: 404, description: 'Item not found' })
-@ApiResponse({ status: 400, description: 'Bad Request' })
 @ApiExtraModels(DataResponseFormat)
-export class TaskController {
-  constructor(private readonly taskService: TaskService) {}
-  @Get('get-tasks')
+export class TaskController extends EntityCrudController<TaskEntity> {
+  constructor(private readonly taskService: TaskService) {
+    super(taskService);
+  }
+  @Get()
   @ApiPaginatedResponse(TaskResponse)
   async fetch(@Query() query: CollectionQuery) {
-    return await this.taskService.getTasks(query);
+    return await super.findAll(query);
   }
-  @Get('get-task/:id')
+  @Get(':id')
   @ApiOkResponse({ type: TaskResponse })
   async getServiceById(@Param('id') id: string) {
-    return await this.taskService.getById(id);
+    return await super.findOne(id);
   }
-  @Post('create-task')
+  @Post()
   @ApiOkResponse({ type: TaskResponse })
   async create(@Body() dto: CreateTaskDto) {
     console.log(dto);
-    return await this.taskService.create(dto);
+    return await super.create(dto);
   }
-  @Post('update-task')
-  @ApiOkResponse({ type: TaskResponse })
-  async update(@Body() dto: UpdateTaskDto) {
-    return await this.taskService.update(dto);
-  }
-  @Get('delete-task/:id')
+
+  @Get(':id')
   async delete(@Param('id') id: string) {
-    return await this.taskService.delete(id);
-  }
-  @Post('add-task-assignment')
-  @ApiOkResponse({ type: TaskResponse })
-  async addTaskAssignment(@Body() dto: CreateTaskAssignmentDto) {
-    return await this.taskService.addTaskAssignment(dto);
-  }
-  @Post('update-task-assignment')
-  @ApiOkResponse({ type: TaskResponse })
-  async updateTaskAssignment(@Body() dto: UpdateTaskAssignmentDto) {
-    return await this.taskService.updateTaskAssignment(dto);
-  }
-  @Delete('delete-task-assignment')
-  async deleteTaskAssignment(@Body() dto: DeleteTaskAssignmentDto) {
-    return await this.taskService.removeTaskAssignment(dto);
+    return await super.remove(id);
   }
 }

@@ -1,4 +1,4 @@
-import { CategoryEntity } from 'src/categories/entities/category.entity';
+
 import {
   Column,
   Entity,
@@ -7,6 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { VendorsEntity } from './vendors.entity';
+import { Category } from 'src/categories/entities/category';
 
 @Entity({ name: 'business_categories' })
 export class BusinessCategoryEntity {
@@ -16,9 +17,9 @@ export class BusinessCategoryEntity {
   categoryId: string;
   @Column({ type: 'uuid' })
   vendorId: string;
-  @ManyToOne(() => CategoryEntity, (category) => category.businessCategories)
+  @ManyToOne(() => Category, (category) => category.businessCategories)
   @JoinColumn({ name: 'categoryId' })
-  category: CategoryEntity;
+  category: Category;
   @ManyToOne(() => VendorsEntity, (vendor) => vendor.businessCats)
   @JoinColumn({ name: 'vendorId' })
   vendor: VendorsEntity;

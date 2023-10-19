@@ -1,26 +1,15 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
-import {
-  DataSource,
-  In,
-  IsNull,
-  LessThan,
-  LessThanOrEqual,
-  MoreThan,
-  MoreThanOrEqual,
-  Not,
-  Repository,
-  createQueryBuilder,
-} from 'typeorm';
+import { DataSource, IsNull, MoreThan, Not, Repository } from 'typeorm';
 import { DataResponseFormat } from 'src/shared/api-data';
-import {
-  CollectionQuery,
-  FilterOperators,
-  QueryConstructor,
-} from 'src/shared/collection-query';
+import { CollectionQuery, QueryConstructor } from 'src/shared/collection-query';
 import { TaskTrackerResponse } from '../dtos/task-tracker.response';
 import { TaskTrackerEntity } from '../entities/task-tracker';
-import { TaskHandlerResponse } from '../dtos/task-handler.response';
 import { TaskHandlerEntity } from '../entities/task-handler';
 import {
   PaymentReceiptDto,
@@ -30,32 +19,28 @@ import { InvoiceResponseDto } from 'src/vendor-registration/dto/invoice.dto';
 import { InvoiceEntity } from 'src/handling/entities/invoice.entity';
 import { PaymentReceiptEntity } from 'src/handling/entities/receipt-attachment';
 import { WorkflowInstanceEntity } from '../entities/workflow-instance';
-import { log } from 'console';
 import { WorkflowInstanceResponse } from '../dtos/workflow-instance.response';
-import { throwIfEmpty } from 'rxjs';
-import { IsNotIn } from 'class-validator';
 import {
+  AssignmentEnum,
   BusinessStatusEnum,
   ServiceKeyEnum,
   WorkflowInstanceEnum,
 } from '../dtos/workflow-instance.enum';
-import { VendorsResponseDto } from 'src/vendor-registration/dto/vendor.dto';
 import { FilesEntity } from 'src/vendor-registration/entities/file.entity';
 import { FileResponseDto } from 'src/vendor-registration/dto/file.dto';
-import { TaskType } from '../../bpm/entities/taskType';
 import { TaskTypes } from '../dtos/task-type.enum';
 import { ActiveVendorsResponse } from '../dtos/active-vendor-response';
 import {
   CreateTaskHandlerDto,
   UpdateTaskHandlerDto,
 } from '../dtos/task-handler.dto';
+
+import puppeteer from 'puppeteer';
 @Injectable()
 export class ApplicationExcutionService {
   constructor(
     @InjectRepository(InvoiceEntity)
     private readonly invoceRepository: Repository<InvoiceEntity>,
-    @InjectRepository(PaymentReceiptEntity)
-    private readonly receiptRepository: Repository<PaymentReceiptEntity>,
     @InjectRepository(TaskTrackerEntity)
     private readonly taskTrackingRepository: Repository<TaskTrackerEntity>,
     @InjectRepository(TaskHandlerEntity)
@@ -98,99 +83,28 @@ export class ApplicationExcutionService {
     return response;
   }
 
-  /*
-        async getCurruntTaskByService(serviceKey: string): Promise<any[]> {
-            const result = this.taskhandlergrepository.find({
-                relations: {
-                    task: true,
-                    workflowInstance: {
-                        businessProcess: {
-                            service: true,
-                        },
-                    },
-                },
-                where: {
-                    workflowInstance: {
-                        status: 'Completed',
-                        businessProcess: {
-                            service: { key: serviceKey },
-                        },
-                    },
-                },
-            });
-            console.log(result);
-    
-            return [];
-        }
-        */
-
   async getCurruntTaskByService(
     serviceKey: string,
     query: CollectionQuery,
   ): Promise<DataResponseFormat<WorkflowInstanceResponse>> {
-    /*
-    const data = await this.wiRepository.find({
+    const [result, total] = await this.wiRepository.findAndCount({
       relations: {
         vendor: true,
+        taskHandler: { task: true },
         businessProcess: {
           service: true,
         },
-        taskHandler: {
-          task: true,
-        },
       },
       where: {
-        status: In([WorkflowInstanceEnum.Submitted, WorkflowInstanceEnum.Inprogress]),
         businessProcess: {
           service: { key: serviceKey },
         },
+        taskHandler: { id: Not(IsNull()) },
       },
+      order: { submittedAt: 'ASC' },
+      skip: query.skip | 0,
+      take: query.top | 20,
     });
-*/
-    const [result, total] =
-      /*await this.wiRepository
-      .createQueryBuilder('wf')
-      .leftJoinAndSelect('wf.vendor', 'v')
-      .innerJoinAndSelect('wf.taskHandler', 'taskHandler')
-      .innerJoinAndSelect('taskHandler.task', 'task')
-      .innerJoinAndSelect('wf.businessProcess', 'bp')
-      .leftJoinAndSelect('bp.service', 'service')
-      .where('service.key=:serviceKey', { serviceKey: serviceKey })
-      // .addOrderBy("wf.'bp_id'", "ASC")
-      .skip(query.skip | 0)
-      .take(query.top | 20)
-      .getManyAndCount();
-*/
-      await this.wiRepository.findAndCount({
-        relations: {
-          vendor: true,
-          taskHandler: { task: true },
-          businessProcess: {
-            service: true,
-          },
-        },
-        where: {
-          businessProcess: {
-            service: { key: serviceKey },
-          },
-          taskHandler: { id: Not(IsNull()) },
-        },
-        order: { createdAt: 'ASC' },
-        skip: query.skip | 0,
-        take: query.top | 20,
-      });
-
-    // .leftJoinAndSelect('wf.vendor', 'v')
-    // .innerJoinAndSelect('wf.taskHandler', 'taskHandler')
-    // .innerJoinAndSelect('taskHandler.task', 'task')
-    // .innerJoinAndSelect('wf.businessProcess', 'bp')
-    // .leftJoinAndSelect('bp.service', 'service')
-    // .where('service.key=:serviceKey', { serviceKey: serviceKey })
-    // .addOrderBy("wf.'bp_id'", "ASC")
-    // .skip(query.skip | 0)
-    // .take(query.top | 20)
-    // .getMany();
-    // console.log(x)
 
     const response = new DataResponseFormat<WorkflowInstanceResponse>();
     response.items = result.map((row) =>
@@ -360,7 +274,6 @@ export class ApplicationExcutionService {
       const invoicedto = InvoiceResponseDto.toResponse(invoice);
       return invoicedto;
     }
-
     return null;
   }
   async getInvoice(invoceId: string): Promise<InvoiceResponseDto> {
@@ -374,41 +287,17 @@ export class ApplicationExcutionService {
   }
   async getMyInvoices(
     userId: string,
-    query: CollectionQuery,
   ): Promise<DataResponseFormat<InvoiceResponseDto>> {
-    query.filter.push([
-      {
-        field: 'payer_account_id',
-        value: userId,
-        operator: FilterOperators.EqualTo,
-      },
-    ]);
-    const dataQuery = QueryConstructor.constructQuery<InvoiceEntity>(
-      this.invoceRepository,
-      query,
-    );
     const response = new DataResponseFormat<InvoiceResponseDto>();
-    if (query.count) {
-      response.total = await dataQuery.getCount();
-    } else {
-      const [result, total] = await dataQuery.getManyAndCount();
-      response.total = total;
-      response.items = result.map((entity) =>
-        InvoiceResponseDto.toResponse(entity),
-      );
-    }
+    const [result, total] = await this.invoceRepository.findAndCount({
+      where: { payerAccountId: userId },
+    });
+    response.total = total;
+    response.items = result.map((entity) =>
+      InvoiceResponseDto.toResponse(entity),
+    );
     return response;
   }
-
-  async savePayment(
-    dto: PaymentReceiptDto,
-  ): Promise<PaymentReceiptResponseDto> {
-    const entity = PaymentReceiptDto.fromDto(dto);
-    console.log(entity, dto);
-    const newService = await this.receiptRepository.save(entity);
-    return PaymentReceiptResponseDto.toResponse(newService);
-  }
-
   async activeVendors(
     query: CollectionQuery,
   ): Promise<DataResponseFormat<ActiveVendorsResponse>> {
@@ -421,7 +310,7 @@ export class ApplicationExcutionService {
       where: {
         status: WorkflowInstanceEnum.Completed,
         businessStatus: BusinessStatusEnum.active,
-        expireDate: MoreThan(today.toISOString()),
+        expireDate: MoreThan(today),
       },
       skip: query.skip | 0,
       take: query.top | 20,
@@ -435,7 +324,7 @@ export class ApplicationExcutionService {
     return response;
   }
 
-  async activeMyBusinessStreams(
+  async myActiveBusinessStreams(
     userId: string,
     query: CollectionQuery,
   ): Promise<ActiveVendorsResponse[]> {
@@ -448,7 +337,7 @@ export class ApplicationExcutionService {
       where: {
         status: WorkflowInstanceEnum.Completed,
         businessStatus: BusinessStatusEnum.active,
-        // expireDate: MoreThan(today.toISOString()),
+        expireDate: MoreThan(today),
         vendor: { userId: userId },
       },
     });
@@ -458,26 +347,63 @@ export class ApplicationExcutionService {
     return response;
   }
 
-  async pickTask(dto: UpdateTaskHandlerDto) {
-    // await this.wiRepository.
+  async pickTask(
+    dto: UpdateTaskHandlerDto,
+    user: any,
+  ): Promise<WorkflowInstanceResponse> {
+    const wfInstance = await this.wiRepository.findOne({
+      relations: {
+        taskHandler: true,
+      },
+      where: { taskHandler: { taskId: dto.taskId }, id: dto.instanceId },
+    });
+    if (!wfInstance.taskHandler) {
+      throw new BadRequestException();
+    }
+    wfInstance.taskHandler.assignmentStatus = AssignmentEnum.Picked;
+    wfInstance.taskHandler.handlerUserId = user.userId; //
+    wfInstance.taskHandler.handlerName = user.name;
+    wfInstance.taskHandler.pickedAt = new Date();
+    const result = await this.wiRepository.save(wfInstance);
+    if (result) return WorkflowInstanceResponse.toResponse(result);
+    return null;
   }
-  async ConfirmTask(dto: CreateTaskHandlerDto) {
-    console.log(dto);
-  }
-  async ApproveTask(dto: CreateTaskHandlerDto) {
-    console.log(dto);
-  }
-  async ConfirmPayment(dto: CreateTaskHandlerDto) {
-    console.log(dto);
+  async unpickTask(dto: UpdateTaskHandlerDto) {
+    const wfInstance = await this.wiRepository.findOne({
+      relations: {
+        taskHandler: true,
+      },
+      where: { taskHandler: { taskId: dto.taskId }, id: dto.instanceId },
+    });
+    if (!wfInstance.taskHandler) {
+      throw new BadRequestException();
+    }
+    wfInstance.taskHandler.assignmentStatus = AssignmentEnum.Unpicked;
+    wfInstance.taskHandler.handlerUserId = null; //
+    wfInstance.taskHandler.handlerName = null;
+    wfInstance.taskHandler.pickedAt = null;
+    return await this.wiRepository.save(wfInstance);
   }
 
-  async generateCerteficate(dto: CreateTaskHandlerDto) {
-    console.log(dto);
-  }
-  async sendEmailNotification(dto: CreateTaskHandlerDto) {
-    console.log(dto);
-  }
-  async sendSMSNotification(dto: CreateTaskHandlerDto) {
-    console.log(dto);
+  async generateCerteficatePdf(
+    templateUrl: string,
+    selector: string,
+  ): Promise<Buffer> {
+    const browser = await puppeteer.launch({});
+    const page = await browser.newPage();
+    await page.goto(templateUrl);
+    await page.waitForSelector(selector);
+    const buffer = await page.pdf({
+      format: 'A4',
+      printBackground: true,
+      margin: {
+        left: '0px',
+        top: '0px',
+        right: '0px',
+        bottom: '0px',
+      },
+    });
+    await browser.close();
+    return buffer;
   }
 }

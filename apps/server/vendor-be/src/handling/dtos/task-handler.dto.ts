@@ -1,13 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmpty, IsNotEmpty, IsString, IsUUID } from 'class-validator';
 import { TaskHandlerEntity } from '../entities/task-handler';
+import { TaskCkeckListDto } from 'src/bpm/dtos/task-ckeck-list.dto';
 
 export class CreateTaskHandlerDto {
   @ApiProperty()
   @IsNotEmpty()
   taskId: string;
   @ApiProperty()
-  @IsNotEmpty()
   previousHandlerId: string;
   @ApiProperty()
   @IsNotEmpty()
@@ -15,8 +15,9 @@ export class CreateTaskHandlerDto {
   @ApiProperty()
   assignmentStatus: string;
   @ApiProperty()
-  @IsString()
   data: object;
+  @ApiProperty()
+  checkLists: TaskCkeckListDto[];
   /**
    * Transfer Data from DTO object to Entity object
    *
@@ -54,17 +55,20 @@ export class UpdateTaskHandlerDto {
   @IsNotEmpty()
   instanceId: string;
   @ApiProperty()
-  @IsNotEmpty()
+  // @IsNotEmpty()
   assignmentStatus: string;
   @ApiProperty()
-  @IsNotEmpty()
+  // @IsNotEmpty()
   previousHandlerId: string;
   @ApiProperty()
-  @IsString()
+  //@IsString()
   data: object;
   @ApiProperty()
-  @IsNotEmpty()
+  //@IsNotEmpty()
   action: string;
+  @ApiProperty()
+  checkLists: TaskCkeckListDto[];
+
   static fromDto(dto: UpdateTaskHandlerDto): TaskHandlerEntity {
     const entity = new TaskHandlerEntity();
     if (!dto) {

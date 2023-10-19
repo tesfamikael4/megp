@@ -7,10 +7,10 @@ import {
 } from '../collection-query';
 import { DataResponseFormat } from '../api-data';
 import { BaseEntity } from '../entities/base.entity';
-import { CrudOptions } from '../types/crud-option.type';
+import { ExtraCrudOptions } from '../types/crud-option.type';
 
 @Injectable()
-export class GenericRelationCrudService<T extends BaseEntity> {
+export class ExtraCrudService<T extends BaseEntity> {
   constructor(private readonly repository: Repository<T>) {}
 
   async create(itemData: DeepPartial<T>, req?: any): Promise<T> {
@@ -21,10 +21,10 @@ export class GenericRelationCrudService<T extends BaseEntity> {
   async findAll(
     entityId: string,
     query: CollectionQuery,
-    bulkCrudOptions: CrudOptions,
+    extraCrudOptions: ExtraCrudOptions,
     req?: any,
   ) {
-    const entityIdName = bulkCrudOptions.entityIdName;
+    const entityIdName = extraCrudOptions.entityIdName;
 
     query.filter.push([
       {

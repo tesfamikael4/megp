@@ -12,10 +12,10 @@ import {
 import { TaskHandlerEntity } from './task-handler';
 import { TaskTrackerEntity } from './task-tracker';
 import { VendorsEntity } from 'src/vendor-registration/entities/vendors.entity';
-import { ServicePriceEntity } from 'src/pricing/entities/service-price.entity';
+import { ServicePrice } from 'src/pricing/entities/service-price';
 
 @Entity({ name: 'workflow_instances' })
-export class WorkflowInstanceEntity extends CommonEntity {
+export class WorkflowInstanceEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
   @Column()
@@ -24,30 +24,38 @@ export class WorkflowInstanceEntity extends CommonEntity {
   requestorId: string;
   @Column()
   status: string;
+  @Column({ default: 'newRegistration' })
+  key: string;
   @Column()
   bpId: string;
   @Column({ nullable: true })
   pricingId: string;
   @Column({ nullable: true })
-  approvedAt: string;
+  approvedAt: Date;
   @Column({ nullable: true })
-  expireDate: string;
+  expireDate: Date;
   @Column({ default: 'Inactive' })
   businessStatus: string; //active |inactive
-  @ManyToOne(
-    () => BusinessProcessEntity,
-    (businessProcess) => businessProcess.workflowInstances,
-    {
-      orphanedRowAction: 'delete',
-      onUpdate: 'CASCADE',
-      onDelete: 'CASCADE',
-    },
-  )
+  @Column({
+    type: 'timestamptz',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
+  submittedAt: Date;
+
+  @ManyToOne(() => BusinessProcessEntity, (bp) => bp.workflowInstances, {
+    orphanedRowAction: 'delete',
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'bpId' })
   businessProcess: BusinessProcessEntity;
   @OneToOne(
     () => TaskHandlerEntity,
     (taskHandler) => taskHandler.workflowInstance,
+    {
+      //  cascade: true,
+      onDelete: 'CASCADE',
+    },
   ) // specify inverse side as a second parameter
   taskHandler: TaskHandlerEntity;
 
@@ -61,33 +69,16 @@ export class WorkflowInstanceEntity extends CommonEntity {
   )
   taskTrackers: TaskTrackerEntity[];
 
-  @ManyToOne(() => ServicePriceEntity, (price) => price.workflowInstances, {
+  @ManyToOne(() => ServicePrice, (price) => price.workflowInstances, {
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'pricingId' })
-  price: ServicePriceEntity;
+  price: ServicePrice;
 
   @ManyToOne(() => VendorsEntity, (v) => v.instances)
   @JoinColumn({ name: 'requestorId' })
   vendor: VendorsEntity;
 
-  addTracker(taskTracker: TaskTrackerEntity) {
-    if (!this.taskTrackers) {
-      this.taskTrackers = [];
-    }
-    this.taskTrackers.push(taskTracker);
-  }
-  updateTracker(taskTracker: TaskTrackerEntity) {
-    const index = this.taskTrackers.findIndex((a) => a.id === taskTracker.id);
-    if (index !== -1) {
-      this.taskTrackers[index] = taskTracker;
-    }
-  }
-  removeTracker(taskTracker: TaskTrackerEntity) {
-    const index = this.taskTrackers.findIndex((a) => a.id === taskTracker.id);
-    if (index !== -1) {
-      this.taskTrackers.splice(index, 1);
-    }
-  }
+
 }

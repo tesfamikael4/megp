@@ -14,12 +14,12 @@ import { DeepPartial } from 'typeorm';
 import { CollectionQuery } from '../collection-query';
 import { DataResponseFormat } from '../api-data';
 import { BaseEntity } from '../entities/base.entity';
-import { GenericRelationCrudService } from '../service/generic-relation-crud.service';
+import { ExtraCrudService } from '../service/extra-crud.service';
 
 @Controller()
 @UseInterceptors(/* your interceptors if any */)
-export class GenericRelationCrudController<TEntity extends BaseEntity> {
-  constructor(private readonly service: GenericRelationCrudService<TEntity>) {}
+export class ExtraCrudController<TEntity extends BaseEntity> {
+  constructor(private readonly service: ExtraCrudService<TEntity>) {}
 
   @Post()
   async create(

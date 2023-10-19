@@ -1,4 +1,3 @@
-import { CommonEntity } from 'src/shared/entities/common.entity';
 import {
   Column,
   Entity,
@@ -9,9 +8,9 @@ import {
 } from 'typeorm';
 import { WorkflowInstanceEntity } from 'src/handling/entities/workflow-instance';
 import { BpServiceEntity } from 'src/services/entities/bp-service';
-
+import { Audit } from 'src/shared/entities/audit.entity';
 @Entity({ name: 'service_pricing' })
-export class ServicePriceEntity extends CommonEntity {
+export class ServicePrice extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
   @Column({ type: 'uuid' })

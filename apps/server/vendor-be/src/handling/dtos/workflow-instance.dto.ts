@@ -1,11 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
 import { WorkflowInstanceEntity } from '../entities/workflow-instance';
+import { TaskCkeckListDto } from 'src/bpm/dtos/task-ckeck-list.dto';
 
 export class CreateWorkflowInstanceDto {
-  // @ApiProperty()
-  // @IsNotEmpty()
-  // bpId: string;
   @ApiProperty()
   @IsNotEmpty()
   requestorId: string;
@@ -17,15 +15,15 @@ export class CreateWorkflowInstanceDto {
   pricingId: string;
   @ApiProperty()
   bpid: string;
-  //@ApiProperty()
-  //@IsNotEmpty()
+  @ApiProperty()
+  @IsNotEmpty()
   key: string;
   createdBy: string;
   data?: any;
   /**
    * Transfer Data from DTO object to Entity object
    *
-   */
+   **/
   static fromDto(dto: CreateWorkflowInstanceDto): WorkflowInstanceEntity {
     const entity = new WorkflowInstanceEntity();
     if (!dto) {
@@ -34,7 +32,7 @@ export class CreateWorkflowInstanceDto {
     entity.requestorId = dto.requestorId;
     entity.pricingId = dto.pricingId;
     entity.status = dto.status;
-    entity.createdBy = dto.createdBy;
+    entity.key = dto.key;
     return entity;
   }
 
@@ -60,6 +58,7 @@ export class UpdateWorkflowInstanceDto extends CreateWorkflowInstanceDto {
     entity.requestorId = dto.requestorId;
     entity.pricingId = dto.pricingId;
     entity.status = dto.status;
+    entity.key = dto.key;
     return entity;
   }
 }
@@ -71,12 +70,11 @@ export class GotoNextStateDto {
   @IsNotEmpty()
   action: string;
   @ApiProperty()
-  @IsNotEmpty()
   data: object;
   @ApiProperty()
-  @IsNotEmpty()
   handlerId: string;
   @ApiProperty()
-  @IsString()
   remark: string;
+  @ApiProperty()
+  taskChecklist: TaskCkeckListDto[];
 }

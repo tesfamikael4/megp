@@ -7,17 +7,17 @@ import {
 } from '../collection-query';
 import { DataResponseFormat } from '../api-data';
 import { BaseEntity } from '../entities/base.entity';
-import { BulkCrudOptions } from '../types/crud-option.type';
+import { RelationCrudOptions } from '../types/crud-option.type';
 
 @Injectable()
-export class GenericBulkCrudService<TEntity extends BaseEntity> {
+export class RelationCrudService<TEntity extends BaseEntity> {
   constructor(private readonly repository: Repository<TEntity>) {}
 
-  async bulkSave(payload: any, bulkCrudOptions: BulkCrudOptions) {
-    const firstEntityIdName = bulkCrudOptions.firstEntityIdName;
-    const secondEntityIdName = bulkCrudOptions.secondEntityIdName;
+  async bulkSave(payload: any, relationCrudOptions: RelationCrudOptions) {
+    const firstEntityIdName = relationCrudOptions.firstEntityIdName;
+    const secondEntityIdName = relationCrudOptions.secondEntityIdName;
 
-    const include = bulkCrudOptions.firstInclude;
+    const include = relationCrudOptions.firstInclude;
     const entityId: string = payload[firstEntityIdName];
 
     const parsedPayload: any[] = [];
@@ -48,10 +48,10 @@ export class GenericBulkCrudService<TEntity extends BaseEntity> {
   async findAllFirst(
     entityId: string,
     query: CollectionQuery,
-    bulkCrudOptions: BulkCrudOptions,
+    relationCrudOptions: RelationCrudOptions,
   ) {
-    const entityIdName = bulkCrudOptions.firstEntityIdName;
-    const include = bulkCrudOptions.firstInclude;
+    const entityIdName = relationCrudOptions.firstEntityIdName;
+    const include = relationCrudOptions.firstInclude;
 
     return await this.getData(entityId, entityIdName, include, query);
   }
@@ -59,10 +59,10 @@ export class GenericBulkCrudService<TEntity extends BaseEntity> {
   async findAllSecond(
     entityId: string,
     query: CollectionQuery,
-    bulkCrudOptions: BulkCrudOptions,
+    relationCrudOptions: RelationCrudOptions,
   ) {
-    const entityIdName = bulkCrudOptions.secondEntityIdName;
-    const include = bulkCrudOptions.secondInclude;
+    const entityIdName = relationCrudOptions.secondEntityIdName;
+    const include = relationCrudOptions.secondInclude;
 
     return await this.getData(entityId, entityIdName, include, query);
   }

@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsUUID } from 'class-validator';
-import { CategoryEntity } from '../entities/category.entity';
+import { Category } from '../entities/category';
 
 export class CreateCategoryDto {
   id: string;
@@ -20,15 +20,14 @@ export class CreateCategoryDto {
    * Transfer Data from DTO object to Entity object
    *
    */
-  static fromDto(registrationDto: CreateCategoryDto): CategoryEntity {
-    const entity = new CategoryEntity();
+  static fromDto(registrationDto: CreateCategoryDto): Category {
+    const entity = new Category();
     if (!registrationDto) {
       return;
     }
     entity.code = registrationDto.code;
     entity.businessArea = registrationDto.businessArea;
     entity.description = registrationDto.description;
-    // entity.createdBy=
     return entity;
   }
 
@@ -36,7 +35,7 @@ export class CreateCategoryDto {
    * Transfer list of DTO object to Entity  list
    *
    */
-  static fromDtos(registrationDtos: CreateCategoryDto[]): CategoryEntity[] {
+  static fromDtos(registrationDtos: CreateCategoryDto[]): Category[] {
     return registrationDtos?.map((regDto) => CreateCategoryDto.fromDto(regDto));
   }
 }
@@ -44,8 +43,8 @@ export class UpdateCategoryDto extends CreateCategoryDto {
   @ApiProperty()
   @IsUUID()
   id: string;
-  static fromDto(registrationDto: UpdateCategoryDto): CategoryEntity {
-    const entity = new CategoryEntity();
+  static fromDto(registrationDto: UpdateCategoryDto): Category {
+    const entity = new Category();
     if (!registrationDto) {
       return;
     }
@@ -53,7 +52,7 @@ export class UpdateCategoryDto extends CreateCategoryDto {
     entity.code = registrationDto.code;
     entity.businessArea = registrationDto.businessArea;
     entity.description = registrationDto.description;
-    entity.updatedAt = new Date();
+
     // entity.updatedBy=
     return entity;
   }
@@ -64,13 +63,12 @@ CategoryResponseDto
 export class CategoryResponseDto extends UpdateCategoryDto {
   createdAt: Date;
 
-  static fromEntity(dto: CategoryEntity): CategoryResponseDto {
+  static fromEntity(dto: Category): CategoryResponseDto {
     const response = new CategoryResponseDto();
     response.id = dto.id;
     response.code = dto.code;
     response.description = dto.description;
     response.businessArea = dto.businessArea;
-    response.createdAt = dto.createdAt;
 
     return response;
   }

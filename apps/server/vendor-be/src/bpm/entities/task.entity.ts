@@ -1,5 +1,4 @@
 import { BusinessProcessEntity } from 'src/bpm/entities/business-process';
-import { CommonEntity } from 'src/shared/entities/common.entity';
 import {
   Column,
   Entity,
@@ -10,13 +9,15 @@ import {
 } from 'typeorm';
 import { TaskAssignmentEntity } from './task-assignment';
 import { TaskHandlerEntity } from 'src/handling/entities/task-handler';
-
+import { CreateTaskCkeckListDto } from '../dtos/task-ckeck-list.dto';
 @Entity({ name: 'tasks' })
-export class TaskEntity extends CommonEntity {
+export class TaskEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
   @Column()
   name: string;
+  @Column({ nullable: true })
+  level: string;
   @Column({ type: 'text', nullable: true })
   description: string;
   @Column()
@@ -25,6 +26,8 @@ export class TaskEntity extends CommonEntity {
   handlerType: string;
   @Column()
   taskType: string;
+  @Column({ type: 'jsonb', nullable: true })
+  checkList: CreateTaskCkeckListDto[];
   @ManyToOne(
     () => BusinessProcessEntity,
     (businessProcess) => businessProcess.tasks,
@@ -51,23 +54,4 @@ export class TaskEntity extends CommonEntity {
     onDelete: 'CASCADE',
   })
   taskHandlers: TaskHandlerEntity[];
-
-  addAssignment(assignment: TaskAssignmentEntity) {
-    if (!this.assignments) {
-      this.assignments = [];
-    }
-    this.assignments.push(assignment);
-  }
-  updateAssignment(assignment: TaskAssignmentEntity) {
-    const index = this.assignments.findIndex((a) => a.id === assignment.id);
-    if (index !== -1) {
-      this.assignments[index] = assignment;
-    }
-  }
-  removeAssignment(assignment: TaskAssignmentEntity) {
-    const index = this.assignments.findIndex((a) => a.id === assignment.id);
-    if (index !== -1) {
-      this.assignments.splice(index, 1);
-    }
-  }
 }
