@@ -23,7 +23,7 @@ merge:
   script:
     - pnpm install --no-frozen-lockfile
   
-
+     - pnpm add uuid # Install the 'uuid' module
     #- pnpm install
     - pnpm -w run turbo run lint  --filter "...[origin/main...HEAD]"
     - pnpm -w run turbo run build  --filter "...[origin/main...HEAD]"
@@ -45,7 +45,7 @@ build:
   before_script:
     - apk --update add nodejs npm git
     - npm install -g pnpm
-    - npm add uuid
+   
   script:
     - pnpm install --no-frozen-lockfile
    
