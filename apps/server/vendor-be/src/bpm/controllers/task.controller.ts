@@ -17,7 +17,7 @@ import {
 import { ApiPaginatedResponse, DataResponseFormat } from 'src/shared/api-data';
 import { CollectionQuery } from 'src/shared/collection-query';
 import { TaskService } from '../services/task.service';
-import { TaskResponse } from '../dtos/task.response';
+import { TaskResponse } from '../dtos/task.dto';
 import { CreateTaskDto, UpdateTaskDto } from '../dtos/task.dto';
 import { TaskEntity } from '../entities/task.entity';
 import { EntityCrudController } from 'src/shared/controller';

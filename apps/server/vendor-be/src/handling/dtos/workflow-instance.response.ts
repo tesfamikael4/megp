@@ -1,15 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { BusinessProcessResponse } from '../../bpm/dtos/business-process.response';
 import { WorkflowInstanceEntity } from '../entities/workflow-instance';
 import { TaskHandlerResponse } from './task-handler.response';
 import { TaskTrackerResponse } from './task-tracker.response';
 import { BpServiceResponse } from '../../services/bp-service.response';
 import { VendorsResponseDto } from 'src/vendor-registration/dto/vendor.dto';
-import { TaskResponse } from '../../bpm/dtos/task.response';
+import { TaskResponse } from '../../bpm/dtos/task.dto';
 import { CustomCategoryResponseDto } from 'src/vendor-registration/dto/custom-category.dto';
 import { BusinessCategoryResponseDto } from 'src/vendor-registration/dto/business-category.dto';
 import { ServicePriceResponseDto } from 'src/pricing/service-price.dto';
 import { ServicePrice } from 'src/pricing/entities/service-price';
+import { BusinessProcessResponse } from 'src/bpm/dtos/business-process.dto';
 
 export class WorkflowInstanceResponse {
   @ApiProperty()

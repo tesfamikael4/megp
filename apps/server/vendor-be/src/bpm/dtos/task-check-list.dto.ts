@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsUUID } from 'class-validator';
-export class CreateTaskCkeckListDto {
+export class CreateTaskCheckListDto {
   @ApiProperty()
   id: string;
   @ApiProperty()
@@ -9,7 +9,7 @@ export class CreateTaskCkeckListDto {
   isMandatory: string;
 }
 
-export class TaskCkeckListDto extends CreateTaskCkeckListDto {
+export class TaskCheckListDto extends CreateTaskCheckListDto {
   @ApiProperty()
   value: string;
 }

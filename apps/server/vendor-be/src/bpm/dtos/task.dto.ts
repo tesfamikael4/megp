@@ -1,18 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsUUID } from 'class-validator';
 import { TaskEntity } from '../entities/task.entity';
-import {
-  CreateTaskCkeckListDto,
-  TaskCkeckListDto,
-} from './task-ckeck-list.dto';
-
+import { TaskAssignmentResponse } from '../../handling/dtos/task-assignmment.dto';
+import { BusinessProcessResponse } from './business-process.dto';
+import { CreateTaskCheckListDto } from './task-check-list.dto';
 export class CreateTaskDto {
   @ApiProperty()
   @IsNotEmpty()
   name: string;
   @ApiProperty()
   @IsNotEmpty()
-  businessProcessId: string;
+  bpId: string;
   @ApiProperty()
   @IsNotEmpty()
   description: string;
@@ -26,7 +24,7 @@ export class CreateTaskDto {
   @IsNotEmpty()
   level: string;
   @ApiProperty()
-  taskCkecklist: CreateTaskCkeckListDto[];
+  taskCkecklist: CreateTaskCheckListDto[];
   /**
    * Transfer Data from DTO object to Entity object
    *
@@ -38,11 +36,11 @@ export class CreateTaskDto {
     }
     entity.name = dto.name;
     entity.description = dto.description;
-    entity.bpId = dto.businessProcessId;
+    entity.bpId = dto.bpId;
     entity.taskType = dto.taskType;
     entity.handlerType = dto.handlerType;
     entity.checkList = dto.taskCkecklist;
-    entity.level = dto.level;
+    entity.label = dto.level;
     return entity;
   }
 
@@ -68,7 +66,7 @@ export class UpdateTaskDto extends CreateTaskDto {
   handlerType: string;
   @ApiProperty()
   @IsNotEmpty()
-  businessProcessId: string;
+  bpId: string;
   @ApiProperty()
   taskType: string;
   static fromDto(dto: UpdateTaskDto): TaskEntity {
@@ -79,11 +77,55 @@ export class UpdateTaskDto extends CreateTaskDto {
     entity.id = dto.id;
     entity.description = dto.description;
     entity.name = dto.name;
-    entity.bpId = dto.businessProcessId;
+    entity.bpId = dto.bpId;
     entity.handlerType = dto.handlerType;
     entity.taskType = dto.taskType;
-    entity.level = dto.level;
-    //entity.businessProcessId = dto.businessProcessId;
+    entity.label = dto.level;
     return entity;
+  }
+}
+
+export class TaskResponse {
+  @ApiProperty()
+  id: string;
+  @ApiProperty()
+  businessProcessId: string;
+  @ApiProperty()
+  name: string;
+  @ApiProperty()
+  description: string;
+  @ApiProperty()
+  handlerType: string;
+  @ApiProperty()
+  taskType: string;
+  @ApiProperty()
+  label: string;
+  @ApiProperty()
+  businessProcess?: BusinessProcessResponse;
+  createdAt: Date;
+  @ApiProperty()
+  taskCheckList: CreateTaskCheckListDto[];
+  assignments?: TaskAssignmentResponse[];
+  static toResponse(entity: TaskEntity) {
+    const response = new TaskResponse();
+    response.id = entity.id;
+    response.businessProcessId = entity.bpId;
+    response.name = entity.name;
+    response.description = entity.description;
+    response.handlerType = entity.handlerType;
+    response.taskType = entity.taskType;
+    response.taskCheckList = entity.checkList;
+    response.label = entity.label;
+    if (entity.businessProcess) {
+      response.businessProcess = BusinessProcessResponse.toResponse(
+        entity.businessProcess,
+      );
+    }
+    if (entity.assignments) {
+      response.assignments = entity.assignments.map((assignment) =>
+        TaskAssignmentResponse.toResponse(assignment),
+      );
+    }
+    return response;
   }
 }

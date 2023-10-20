@@ -4,7 +4,7 @@ import { BpServiceEntity } from '../services/entities/bp-service';
 import { BpServiceService } from '../services/service.service';
 import { BpServiceController } from '../services/bp-service.controller';
 import { BusinessProcessEntity } from './entities/business-process';
-import { TaskAssignmentEntity } from './entities/task-assignment';
+import { TaskAssignmentEntity } from '../handling/entities/task-assignment';
 import { TaskEntity } from './entities/task.entity';
 import { BusinessProcessService } from './services/business-process.service';
 import { TaskService } from './services/task.service';

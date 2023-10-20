@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { TaskHandlerEntity } from '../entities/task-handler';
-import { TaskResponse } from '../../bpm/dtos/task.response';
+import { TaskResponse } from '../../bpm/dtos/task.dto';
 import { WorkflowInstanceResponse } from './workflow-instance.response';
 import { VendorsResponseDto } from 'src/vendor-registration/dto/vendor.dto';
 import { BpServiceResponse } from '../../services/bp-service.response';

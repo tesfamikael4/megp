@@ -8,8 +8,8 @@ import {
 import { ApiPaginatedResponse, DataResponseFormat } from 'src/shared/api-data';
 import { CollectionQuery } from 'src/shared/collection-query';
 import { BusinessProcessService } from '../services/business-process.service';
-import { BusinessProcessResponse } from '../dtos/business-process.response';
 import {
+  BusinessProcessResponse,
   CreateBusinessProcessDto,
   UpdateBusinessProcessDto,
 } from '../dtos/business-process.dto';

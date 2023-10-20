@@ -7,9 +7,9 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { TaskAssignmentEntity } from './task-assignment';
+import { TaskAssignmentEntity } from '../../handling/entities/task-assignment';
 import { TaskHandlerEntity } from 'src/handling/entities/task-handler';
-import { CreateTaskCkeckListDto } from '../dtos/task-ckeck-list.dto';
+import { CreateTaskCheckListDto } from '../dtos/task-check-list.dto';
 @Entity({ name: 'tasks' })
 export class TaskEntity {
   @PrimaryGeneratedColumn('uuid')
@@ -17,7 +17,7 @@ export class TaskEntity {
   @Column()
   name: string;
   @Column({ nullable: true })
-  level: string;
+  label: string;
   @Column({ type: 'text', nullable: true })
   description: string;
   @Column()
@@ -27,7 +27,7 @@ export class TaskEntity {
   @Column()
   taskType: string;
   @Column({ type: 'jsonb', nullable: true })
-  checkList: CreateTaskCkeckListDto[];
+  checkList: CreateTaskCheckListDto[];
   @ManyToOne(
     () => BusinessProcessEntity,
     (businessProcess) => businessProcess.tasks,

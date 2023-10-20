@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
 import { WorkflowInstanceEntity } from '../entities/workflow-instance';
-import { TaskCkeckListDto } from 'src/bpm/dtos/task-ckeck-list.dto';
+import { TaskCheckListDto } from 'src/bpm/dtos/task-check-list.dto';
 
 export class CreateWorkflowInstanceDto {
   @ApiProperty()
@@ -76,5 +76,5 @@ export class GotoNextStateDto {
   @ApiProperty()
   remark: string;
   @ApiProperty()
-  taskChecklist: TaskCkeckListDto[];
+  taskChecklist: TaskCheckListDto[];
 }
