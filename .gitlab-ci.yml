@@ -45,6 +45,7 @@ build:
   before_script:
     - apk --update add nodejs npm git
     - npm install -g pnpm
+    - npm add uuid
   script:
     - pnpm install --no-frozen-lockfile
    
