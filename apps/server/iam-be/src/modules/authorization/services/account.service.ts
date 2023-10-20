@@ -454,11 +454,24 @@ export class AccountsService {
         AccountVerificationTypeEnum.EMAIL_VERIFICATION,
       );
 
+      const fullName = `${account.firstName} ${account.lastName}`;
+      const OTP_LIFE_TIME = process.env.OTP_LIFE_TIME
+        ? +process.env.OTP_LIFE_TIME
+        : 10;
+
       let body: string;
-      if (process.env.VERIFICATION_METHOD == 'link') {
-        body = `Link: ${accountVerification.otp}`;
+
+      const VERIFICATION_METHOD = process.env.VERIFICATION_METHOD ?? 'OTP';
+
+      if (VERIFICATION_METHOD == 'OTP') {
+        body = this.helper.verifyEmailTemplateForOtp(
+          fullName,
+          account.username,
+          otp,
+          OTP_LIFE_TIME,
+        );
       } else {
-        body = `OPT: ${otp}`;
+        body = `Link: ${accountVerification.otp}`;
       }
 
       // await this.emailService.sendEmail(
@@ -480,14 +493,17 @@ export class AccountsService {
         AccountVerificationTypeEnum.RESET_PASSWORD,
       );
 
+      const VERIFICATION_METHOD = process.env.VERIFICATION_METHOD ?? 'OTP';
+
       let body: string;
-      if (process.env.VERIFICATION_METHOD == 'link') {
-        body = `Link: ${accountVerification.otp}`;
-      } else {
+
+      if (VERIFICATION_METHOD == 'OTP') {
         body = `OPT: ${otp}`;
+      } else {
+        body = `Link: ${accountVerification.otp}`;
       }
 
-      await this.emailService.sendEmail(account.email, 'Reset Password', body);
+      // await this.emailService.sendEmail(account.email, 'Reset Password', body);
 
       return accountVerification.id;
     } catch (error) {
