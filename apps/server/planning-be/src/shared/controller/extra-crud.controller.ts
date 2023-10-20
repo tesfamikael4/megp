@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Controller,
   Get,
@@ -19,7 +20,7 @@ import { ExtraCrudService } from '../service/extra-crud.service';
 @Controller()
 @UseInterceptors(/* your interceptors if any */)
 export class ExtraCrudController<TEntity extends BaseEntity> {
-  constructor(private readonly service: ExtraCrudService<TEntity>) {}
+  constructor(private readonly service: ExtraCrudService<TEntity>) { }
 
   @Post()
   async create(
