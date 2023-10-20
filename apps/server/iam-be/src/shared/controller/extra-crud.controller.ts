@@ -15,6 +15,9 @@ import { CollectionQuery } from '../collection-query';
 import { DataResponseFormat } from '../api-data';
 import { BaseEntity } from '../entities/base.entity';
 import { ExtraCrudService } from '../service/extra-crud.service';
+import { ApiBody } from '@nestjs/swagger';
+
+export class BaseAPIDto {}
 
 @Controller()
 @UseInterceptors(/* your interceptors if any */)
@@ -22,6 +25,7 @@ export class ExtraCrudController<TEntity extends BaseEntity> {
   constructor(private readonly service: ExtraCrudService<TEntity>) {}
 
   @Post()
+  @ApiBody({ type: BaseAPIDto })
   async create(
     @Body() itemData: DeepPartial<TEntity>,
     @Req() req?: any,
@@ -49,6 +53,7 @@ export class ExtraCrudController<TEntity extends BaseEntity> {
   }
 
   @Put(':id')
+  @ApiBody({ type: BaseAPIDto })
   async update(
     @Param('id') id: string,
     @Body() itemData: Partial<TEntity>,
