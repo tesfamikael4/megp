@@ -38,7 +38,7 @@ import { AreasOfBusinessInterestController } from './controllers/areas-of-busine
 import { AreasOfBusinessInterestService } from './services/areas-of-business-interest.service';
 import { AreasOfBusinessInterestEntity } from './entities/areas-of-business-interest.entity';
 import { WorkflowInstanceService } from 'src/handling/services/workflow-instance.service';
-import { TaskAssignmentEntity } from 'src/bpm/entities/task-assignment';
+import { TaskAssignmentEntity } from 'src/handling/entities/task-assignment';
 import { TaskHandlerEntity } from 'src/handling/entities/task-handler';
 import { TaskTrackerEntity } from 'src/handling/entities/task-tracker';
 import { InvoiceEntity } from 'src/handling/entities/invoice.entity';
@@ -95,7 +95,7 @@ import { HandlingCommonService } from 'src/handling/services/handling-common-ser
     WorkflowInstanceService,
     ApplicationExcutionService,
     VendorRegistrationsService,
-    HandlingCommonService
+    HandlingCommonService,
   ],
   controllers: [
     WorkflowInstanceController,
@@ -113,4 +113,4 @@ import { HandlingCommonService } from 'src/handling/services/handling-common-ser
     AreasOfBusinessInterestController,
   ],
 })
-export class VendorRegistrationModule { }
+export class VendorRegistrationModule {}

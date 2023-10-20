@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { TaskResponse } from '../../bpm/dtos/task.response';
+import { TaskResponse } from '../../bpm/dtos/task.dto';
 import { WorkflowInstanceResponse } from './workflow-instance.response';
 import { TaskTrackerEntity } from '../entities/task-tracker';
-import { TaskCkeckListDto } from 'src/bpm/dtos/task-ckeck-list.dto';
+import { TaskCheckListDto } from 'src/bpm/dtos/task-check-list.dto';
 
 export class TaskTrackerResponse {
   @ApiProperty()
@@ -30,7 +30,7 @@ export class TaskTrackerResponse {
   @ApiProperty()
   remark?: string;
   @ApiProperty()
-  taskChecklist: TaskCkeckListDto[];
+  taskChecklist: TaskCheckListDto[];
 
   static toResponse(entity: TaskTrackerEntity) {
     const response = new TaskTrackerResponse();

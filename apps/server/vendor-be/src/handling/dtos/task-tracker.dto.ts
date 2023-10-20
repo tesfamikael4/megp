@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmpty, IsNotEmpty, IsString, IsUUID } from 'class-validator';
 import { TaskTrackerEntity } from '../entities/task-tracker';
-import { TaskCkeckListDto } from 'src/bpm/dtos/task-ckeck-list.dto';
+import { TaskCheckListDto } from 'src/bpm/dtos/task-check-list.dto';
 
 export class CreateTaskTrackerDto {
   @ApiProperty()
@@ -29,7 +29,7 @@ export class CreateTaskTrackerDto {
   @IsString()
   remark?: string;
   @ApiProperty()
-  checkLists: TaskCkeckListDto[];
+  checkLists: TaskCheckListDto[];
   /**
    * Transfer Data from DTO object to Entity object
    *
@@ -84,7 +84,7 @@ export class UpdateTaskTrackerDto {
   @IsString()
   remark: string;
   @ApiProperty()
-  checkLists: TaskCkeckListDto[];
+  checkLists: TaskCheckListDto[];
   static fromDto(dto: UpdateTaskTrackerDto): TaskTrackerEntity {
     const entity = new TaskTrackerEntity();
     if (!dto) {
