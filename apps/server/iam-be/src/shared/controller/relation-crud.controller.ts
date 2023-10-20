@@ -14,6 +14,8 @@ import { CollectionQuery } from '../collection-query';
 import { DataResponseFormat } from '../api-data';
 import { BaseEntity } from '../entities/base.entity';
 import { RelationCrudService } from '../service/relation-crud.service';
+import { BaseAPIDto } from './extra-crud.controller';
+import { ApiBody } from '@nestjs/swagger';
 
 @Controller()
 @UseInterceptors(/* your interceptors if any */)
@@ -21,6 +23,7 @@ export class RelationCrudController<TEntity extends BaseEntity> {
   constructor(private readonly service: RelationCrudService<TEntity>) {}
 
   @Post()
+  @ApiBody({ type: BaseAPIDto })
   async bulkSave(@Body() itemData: any, @Req() req?: any): Promise<any> {
     const crudOptions = Reflect.getMetadata('crudOptions', this.constructor);
 

@@ -15,6 +15,8 @@ import { DeepPartial } from 'typeorm';
 import { CollectionQuery } from '../collection-query';
 import { DataResponseFormat } from '../api-data';
 import { BaseEntity } from '../entities/base.entity';
+import { ApiBody } from '@nestjs/swagger';
+import { BaseAPIDto } from './extra-crud.controller';
 
 @Controller()
 @UseInterceptors(/* your interceptors if any */)
@@ -22,6 +24,7 @@ export class EntityCrudController<TEntity extends BaseEntity> {
   constructor(private readonly service: EntityCrudService<TEntity>) {}
 
   @Post()
+  @ApiBody({ type: BaseAPIDto })
   async create(
     @Body() itemData: DeepPartial<TEntity>,
     @Req() req?: any,
@@ -46,6 +49,7 @@ export class EntityCrudController<TEntity extends BaseEntity> {
   }
 
   @Put(':id')
+  @ApiBody({ type: BaseAPIDto })
   async update(
     @Param('id') id: string,
     @Body() itemData: Partial<TEntity>,
