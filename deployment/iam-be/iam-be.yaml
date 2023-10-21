@@ -1,5 +1,4 @@
 
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -25,63 +24,63 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 80
-    env:
-      NODE_ENV=development
-      PORT=3569
-      BASE_URL=http://196.189.118.110:3569
+    # env:
+    #   NODE_ENV=development
+    #   PORT=3569
+    #   BASE_URL=http://196.189.118.110:3569
 
-      DATABASE_HOST=196.189.44.10
-      DATABASE_NAME=dev_iam
-      DATABASE_USER=postgres
-      DATABASE_PASSWORD=Perago@megpDB!
-      DATABASE_PORT=5432
+    #   DATABASE_HOST=196.189.44.10
+    #   DATABASE_NAME=dev_iam
+    #   DATABASE_USER=postgres
+    #   DATABASE_PASSWORD=Perago@megpDB!
+    #   DATABASE_PORT=5432
 
-      CONNECTION_URI=http://196.189.118.110:3567
-      API_KEY=uibpuhokjokjbouigoih
-      APP_NAME=m-egp
-      API_DOMAIN=http://196.189.118.110:3569
-      WEBSITE_DOMAIN=http://196.189.118.110:5500
-      IAM_BACK_OFFICE_DOMAIN=http://196.189.118.110:5511
-      API_BASE_PATH=/api/auth
-      WEBSITE_BASE_PATH=/auth
-      JWT_ACCESS_TOKEN_SECRET=MAXWS4Fw5v6Dqvomjz7s
-      JWT_ACCESS_TOKEN_EXPIRES=5m
-      JWT_REFRESH_TOKEN_SECRET=OfvWfxHrOjwhXuaTKQee
-      JWT_REFRESH_TOKEN_EXPIRES=1d
+    #   CONNECTION_URI=http://196.189.118.110:3567
+    #   API_KEY=uibpuhokjokjbouigoih
+    #   APP_NAME=m-egp
+    #   API_DOMAIN=http://196.189.118.110:3569
+    #   WEBSITE_DOMAIN=http://196.189.118.110:5500
+    #   IAM_BACK_OFFICE_DOMAIN=http://196.189.118.110:5511
+    #   API_BASE_PATH=/api/auth
+    #   WEBSITE_BASE_PATH=/auth
+    #   JWT_ACCESS_TOKEN_SECRET=MAXWS4Fw5v6Dqvomjz7s
+    #   JWT_ACCESS_TOKEN_EXPIRES=5m
+    #   JWT_REFRESH_TOKEN_SECRET=OfvWfxHrOjwhXuaTKQee
+    #   JWT_REFRESH_TOKEN_EXPIRES=1d
 
-  # env:
-  # - name: NODE_ENV
-  #   value: "development"
-  # - name: PORT
-  #   value: "3569"
-  # - name: BASE_URL
-  #   value: "http://196.189.118.110:3569"
-  # - name: DATABASE_HOST
-  #   value: "196.189.44.10"
-  # - name: DATABASE_NAME
-  #   value: "dev_iam1"
-  # - name: DATABASE_USER
-  #   value: "postgres"
-  # - name: DATABASE_PASSWORD
-  #   value: "Perago@megpDB!"
-  # - name: DATABASE_PORT
-  #   value: "5432"
-  # - name: CONNECTION_URI
-  #   value: "http://196.189.118.110:3567"
-  # - name: API_KEY
-  #   value: "uibpuhokjokjbouigoih"
-  # - name: APP_NAME
-  #   value: "m-egp"
-  # - name: API_DOMAIN
-  #   value: "http://196.189.118.110:3569"
-  # - name: WEBSITE_DOMAIN
-  #   value: "http://196.189.118.110:5500"
-  # - name: IAM_BACK_OFFICE_DOMAIN
-  #   value: "http://196.189.118.110:5511"
-  # - name: API_BASE_PATH
-  #   value: "/api/auth"
-  # - name: WEBSITE_BASE_PATH
-  #   value: "/auth"
+  env:
+  - name: NODE_ENV
+    value: "development"
+  - name: PORT
+    value: "3569"
+  - name: BASE_URL
+    value: "http://196.189.118.110:3569"
+  - name: DATABASE_HOST
+    value: "196.189.44.10"
+  - name: DATABASE_NAME
+    value: "dev_iam1"
+  - name: DATABASE_USER
+    value: "postgres"
+  - name: DATABASE_PASSWORD
+    value: "Perago@megpDB!"
+  - name: DATABASE_PORT
+    value: "5432"
+  - name: CONNECTION_URI
+    value: "http://196.189.118.110:3567"
+  - name: API_KEY
+    value: "uibpuhokjokjbouigoih"
+  - name: APP_NAME
+    value: "m-egp"
+  - name: API_DOMAIN
+    value: "http://196.189.118.110:3569"
+  - name: WEBSITE_DOMAIN
+    value: "http://196.189.118.110:5500"
+  - name: IAM_BACK_OFFICE_DOMAIN
+    value: "http://196.189.118.110:5511"
+  - name: API_BASE_PATH
+    value: "/api/auth"
+  - name: WEBSITE_BASE_PATH
+    value: "/auth"
 
 
 ---
