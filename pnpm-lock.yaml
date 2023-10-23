@@ -115,7 +115,7 @@ importers:
         version: 1.11.10
       next:
         specifier: 13.5.2
-        version: 13.5.2(@babel/core@7.23.0)(react-dom@18.2.0)(react@18.2.0)(sass@1.66.1)
+        version: 13.5.2(@babel/core@7.23.0)(react-dom@18.2.0)(react@18.2.0)(sass@1.69.4)
       react:
         specifier: 18.2.0
         version: 18.2.0
@@ -154,8 +154,8 @@ importers:
         specifier: ^7.0.1
         version: 7.0.1(postcss@8.4.28)
       sass:
-        specifier: ^1.66.1
-        version: 1.66.1
+        specifier: ^1.69.4
+        version: 1.69.4
 
   apps/back-office/administration-fe:
     dependencies:
@@ -248,7 +248,7 @@ importers:
         version: 1.11.10
       next:
         specifier: 13.5.2
-        version: 13.5.2(@babel/core@7.23.0)(react-dom@18.2.0)(react@18.2.0)(sass@1.66.1)
+        version: 13.5.2(@babel/core@7.23.0)(react-dom@18.2.0)(react@18.2.0)(sass@1.69.4)
       react:
         specifier: 18.2.0
         version: 18.2.0
@@ -290,8 +290,8 @@ importers:
         specifier: ^7.0.1
         version: 7.0.1(postcss@8.4.28)
       sass:
-        specifier: ^1.66.1
-        version: 1.66.1
+        specifier: ^1.69.4
+        version: 1.69.4
 
   apps/back-office/iam-fe:
     dependencies:
@@ -390,7 +390,7 @@ importers:
         version: 1.11.10
       next:
         specifier: 13.5.2
-        version: 13.5.2(@babel/core@7.23.0)(react-dom@18.2.0)(react@18.2.0)(sass@1.66.1)
+        version: 13.5.2(@babel/core@7.23.0)(react-dom@18.2.0)(react@18.2.0)(sass@1.69.4)
       react:
         specifier: 18.2.0
         version: 18.2.0
@@ -438,8 +438,8 @@ importers:
         specifier: ^7.0.1
         version: 7.0.1(postcss@8.4.28)
       sass:
-        specifier: ^1.66.1
-        version: 1.66.1
+        specifier: ^1.69.4
+        version: 1.69.4
 
   apps/back-office/planning-fe:
     dependencies:
@@ -538,7 +538,7 @@ importers:
         version: 1.11.10
       next:
         specifier: 13.5.2
-        version: 13.5.2(@babel/core@7.23.0)(react-dom@18.2.0)(react@18.2.0)(sass@1.66.1)
+        version: 13.5.2(@babel/core@7.23.0)(react-dom@18.2.0)(react@18.2.0)(sass@1.69.4)
       react:
         specifier: 18.2.0
         version: 18.2.0
@@ -586,8 +586,8 @@ importers:
         specifier: ^7.0.1
         version: 7.0.1(postcss@8.4.28)
       sass:
-        specifier: ^1.66.1
-        version: 1.66.1
+        specifier: ^1.69.4
+        version: 1.69.4
 
   apps/back-office/tendering-fe:
     dependencies:
@@ -680,7 +680,7 @@ importers:
         version: 1.11.10
       next:
         specifier: 13.5.2
-        version: 13.5.2(@babel/core@7.23.0)(react-dom@18.2.0)(react@18.2.0)(sass@1.66.1)
+        version: 13.5.2(@babel/core@7.23.0)(react-dom@18.2.0)(react@18.2.0)(sass@1.69.4)
       react:
         specifier: 18.2.0
         version: 18.2.0
@@ -722,8 +722,8 @@ importers:
         specifier: ^7.0.1
         version: 7.0.1(postcss@8.4.28)
       sass:
-        specifier: ^1.66.1
-        version: 1.66.1
+        specifier: ^1.69.4
+        version: 1.69.4
 
   apps/back-office/vendor-fe:
     dependencies:
@@ -816,7 +816,7 @@ importers:
         version: 1.11.10
       next:
         specifier: 13.5.2
-        version: 13.5.2(@babel/core@7.23.0)(react-dom@18.2.0)(react@18.2.0)(sass@1.66.1)
+        version: 13.5.2(@babel/core@7.23.0)(react-dom@18.2.0)(react@18.2.0)(sass@1.69.4)
       react:
         specifier: 18.2.0
         version: 18.2.0
@@ -861,8 +861,8 @@ importers:
         specifier: ^7.0.1
         version: 7.0.1(postcss@8.4.28)
       sass:
-        specifier: ^1.66.1
-        version: 1.66.1
+        specifier: ^1.69.4
+        version: 1.69.4
 
   apps/portal/egp:
     dependencies:
@@ -952,7 +952,7 @@ importers:
         version: 1.11.10
       next:
         specifier: 13.5.2
-        version: 13.5.2(@babel/core@7.23.0)(react-dom@18.2.0)(react@18.2.0)(sass@1.66.1)
+        version: 13.5.2(@babel/core@7.23.0)(react-dom@18.2.0)(react@18.2.0)(sass@1.69.4)
       react:
         specifier: 18.2.0
         version: 18.2.0
@@ -994,8 +994,8 @@ importers:
         specifier: ^7.0.1
         version: 7.0.1(postcss@8.4.28)
       sass:
-        specifier: ^1.66.1
-        version: 1.66.1
+        specifier: ^1.69.4
+        version: 1.69.4
 
   apps/server/+demo-be:
     dependencies:
@@ -1936,8 +1936,8 @@ importers:
         specifier: workspace:*
         version: link:../tsconfig
       sass:
-        specifier: ^1.66.1
-        version: 1.66.1
+        specifier: ^1.69.4
+        version: 1.69.4
 
   packages/config/tsconfig: {}
 
@@ -2011,7 +2011,7 @@ importers:
         version: 3.2.33
       next:
         specifier: 13.5.2
-        version: 13.5.2(@babel/core@7.23.0)(react-dom@18.2.0)(react@18.2.0)(sass@1.66.1)
+        version: 13.5.2(@babel/core@7.23.0)(react-dom@18.2.0)(react@18.2.0)(sass@1.69.4)
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
@@ -2056,8 +2056,8 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0
       sass:
-        specifier: ^1.66.1
-        version: 1.66.1
+        specifier: ^1.69.4
+        version: 1.69.4
       tailwindcss:
         specifier: 3.3.3
         version: 3.3.3(ts-node@10.9.1)
@@ -2138,7 +2138,7 @@ importers:
         version: 7.1.0(react@18.2.0)
       next:
         specifier: 13.5.2
-        version: 13.5.2(@babel/core@7.23.0)(react-dom@18.2.0)(react@18.2.0)(sass@1.66.1)
+        version: 13.5.2(@babel/core@7.23.0)(react-dom@18.2.0)(react@18.2.0)(sass@1.69.4)
       postcss:
         specifier: 8.4.28
         version: 8.4.28
@@ -2152,8 +2152,8 @@ importers:
         specifier: ^8.1.2
         version: 8.1.2(@types/react-dom@18.2.7)(@types/react@18.2.21)(react-dom@18.2.0)(react@18.2.0)(redux@4.2.1)
       sass:
-        specifier: ^1.66.1
-        version: 1.66.1
+        specifier: ^1.69.4
+        version: 1.69.4
       tailwindcss:
         specifier: 3.3.3
         version: 3.3.3(ts-node@10.9.1)
@@ -5194,7 +5194,7 @@ packages:
     dependencies:
       '@mantine/ssr': 6.0.19(@emotion/react@11.11.1)(@emotion/server@11.11.0)(react-dom@18.2.0)(react@18.2.0)
       '@mantine/styles': 6.0.19(@emotion/react@11.11.1)(react-dom@18.2.0)(react@18.2.0)
-      next: 13.5.2(@babel/core@7.23.0)(react-dom@18.2.0)(react@18.2.0)(sass@1.66.1)
+      next: 13.5.2(@babel/core@7.23.0)(react-dom@18.2.0)(react@18.2.0)(sass@1.69.4)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
     transitivePeerDependencies:
@@ -15079,7 +15079,7 @@ packages:
     resolution: {integrity: sha512-dBpDMdxv9Irdq66304OLfEmQ9tbNRFnFTuZiLo+bD+r332bBmMJ8GBLXklIXXgxd3+v9+KUnZaUR5PJMa75Gsg==}
     engines: {node: '>= 0.4.0'}
 
-  /next@13.5.2(@babel/core@7.23.0)(react-dom@18.2.0)(react@18.2.0)(sass@1.66.1):
+  /next@13.5.2(@babel/core@7.23.0)(react-dom@18.2.0)(react@18.2.0)(sass@1.69.4):
     resolution: {integrity: sha512-vog4UhUaMYAzeqfiAAmgB/QWLW7p01/sg+2vn6bqc/CxHFYizMzLv6gjxKzl31EVFkfl/F+GbxlKizlkTE9RdA==}
     engines: {node: '>=16.14.0'}
     hasBin: true
@@ -15101,7 +15101,7 @@ packages:
       postcss: 8.4.14
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
-      sass: 1.66.1
+      sass: 1.69.4
       styled-jsx: 5.1.1(@babel/core@7.23.0)(react@18.2.0)
       watchpack: 2.4.0
       zod: 3.21.4
@@ -17223,8 +17223,8 @@ packages:
   /safer-buffer@2.1.2:
     resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
 
-  /sass@1.66.1:
-    resolution: {integrity: sha512-50c+zTsZOJVgFfTgwwEzkjA3/QACgdNsKueWPyAR0mRINIvLAStVQBbPg14iuqEQ74NPDbXzJARJ/O4SI1zftA==}
+  /sass@1.69.4:
+    resolution: {integrity: sha512-+qEreVhqAy8o++aQfCJwp0sklr2xyEzkm9Pp/Igu9wNPoe7EZEQ8X/MBvvXggI2ql607cxKg/RKOwDj6pp2XDA==}
     engines: {node: '>=14.0.0'}
     hasBin: true
     dependencies:

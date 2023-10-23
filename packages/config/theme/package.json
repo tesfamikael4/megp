@@ -11,7 +11,7 @@
     "@mantine/core": "^7.1.0"
   },
   "devDependencies": {
-    "sass": "^1.66.1",
+    "sass": "^1.69.4",
     "@megp/tsconfig": "workspace:*",
     "@megp/eslint-config-custom": "workspace:*"
   }

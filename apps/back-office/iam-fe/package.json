@@ -60,6 +60,6 @@
     "postcss": "8.4.28",
     "postcss-preset-mantine": "^1.7.0",
     "postcss-simple-vars": "^7.0.1",
-    "sass": "^1.66.1"
+    "sass": "^1.69.4"
   }
 }

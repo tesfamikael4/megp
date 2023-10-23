@@ -1,30 +1,19 @@
-image: node:latest
-
 stages:
   - merge
   - build
   - deploy
 
 merge:
+  image: node:20.7.0
   stage: merge
-  #workflow:
   only:
     - merge_requests
-  # rules:
-  #   - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
-  #   - if: $CI_COMMIT_TAG
-  #   - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-  #   - allow_failure: true
-
   before_script:
     - corepack enable
     - corepack prepare pnpm@latest-8 --activate
     - pnpm config set store-dir .pnpm-store
   script:
-    - pnpm install --no-frozen-lockfile
-  
-     
-    #- pnpm install
+    - pnpm install
     - pnpm -w run turbo run lint  --filter "...[origin/main...HEAD]"
     - pnpm -w run turbo run build  --filter "...[origin/main...HEAD]"
   cache:
@@ -58,30 +47,3 @@ build:
         - pnpm-lock.yaml
     paths:
       - .pnpm-store
-# deploy_dev:
-#   stage: deploy
-#   script:
-#     - echo "Deploying to the dev environment"
-#     - argocd login --insecure --username $ARGOCD_USERNAME --password $ARGOCD_PASSWORD $ARGOCD_SERVER
-#     - argocd app set vendor-be --sync-policy automated --project default --dest-server  --dest-namespace dev
-#     - argocd app sync vendor-be
-
-# dev:
-#   stage: deploy
-#   script:
-#     - echo "Deploying to dev environment"
-#     - argocd app create vendor-be  --repo https://gitlab.peragosystems.com/megp/megp.git --path deployment/vendor-be --dest-server https://kubernetes.default.svc --dest-namespace dev  --sync-policy automated
-#     - argocd app sync vendor-be
-
-# deploy:
-#   stage: deploy
-#   image: docker:latest
-#   rules:
-#     - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"
-#   # before_script:
-#   #   - apk --update add curl
-#   script:
-#     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-#     - docker pull $CI_REGISTRY_IMAGE/iam-fe:latest
-#     - docker container rm -f iam-fe || true
-#     - docker run -d -p 5511:5511 --name iam-fe $CI_REGISTRY_IMAGE/iam-fe:latest
