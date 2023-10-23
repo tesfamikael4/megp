@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: portal-deployment
-  namespace: dev
+  #namespace: dev
 spec:
   replicas: 1
   selector:
@@ -39,13 +39,10 @@ apiVersion: v1
 kind: Service
 metadata:
   name: portal-service
-  namespace: dev
 spec:
+  ports:
+  - port: 3000
+    targetPort: 5500
+    protocol: TCP
   selector:
     app: portal
-    version: v1
-  ports:
-    - protocol: TCP
-      port: 3000
-      targetPort: 3000
-  type: LoadBalancer
