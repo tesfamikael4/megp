@@ -17,10 +17,12 @@ const roboto_mono = Roboto_Mono({
 });
 
 import '@megp/theme/theme.scss';
+import { ConfigProvider } from '@/contexts/config';
+import { config } from '@/config/env';
 
 export const metadata: Metadata = {
   title: 'M-egp | Administration',
-  description: 'Identity and access management',
+  description: 'Administration',
   icons: {
     icon: '/administration/favicon/android-chrome-512x512.png',
   },
@@ -35,9 +37,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${roboto_mono.variable}`}>
       <body suppressHydrationWarning={true}>
-        <Providers>
-          <RootStyleRegistry>{children}</RootStyleRegistry>
-        </Providers>
+        <ConfigProvider config={config}>
+          <Providers>
+            <RootStyleRegistry>{children}</RootStyleRegistry>
+          </Providers>
+        </ConfigProvider>
       </body>
     </html>
   );

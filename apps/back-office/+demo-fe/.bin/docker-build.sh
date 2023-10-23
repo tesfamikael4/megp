@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Change directory to the root directory of your project
 cd ../../../
