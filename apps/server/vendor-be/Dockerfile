@@ -31,8 +31,6 @@ COPY --from=builder /app/out/json/ .
 COPY --from=builder /app/out/pnpm-lock.yaml  ./pnpm-lock.yaml 
 RUN pnpm install
 
-# Install the 'uuid' module
-RUN pnpm add uuid
 
 # Build the project and its dependencies
 COPY --from=builder /app/out/full/ .

@@ -58,8 +58,7 @@
     "rxjs": "^7.2.0",
     "supertokens-node": "^15.1.0",
     "swagger-ui-express": "^4.6.2",
-    "typeorm": "^0.3.14",
-    "uuid": "^9.0.1"
+    "typeorm": "^0.3.14"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",
@@ -72,7 +71,6 @@
     "@types/nodemailer": "^6.4.7",
     "@types/passport-jwt": "^3.0.8",
     "@types/supertest": "^2.0.11",
-    "@types/uuid": "^9.0.1",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
     "eslint": "^8.0.1",

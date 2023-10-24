@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from 'crypto';
 
 @Injectable()
 export class WorkflowEngineService {
@@ -8,7 +8,7 @@ export class WorkflowEngineService {
     const edges = uiJson.edges;
     const startNode = nodes.find((node) => node.type === 'start');
     const machine = {};
-    machine['id'] = uuidv4();
+    machine['id'] = randomUUID();
     machine['initial'] = startNode.data.label;
     machine['states'] = {};
     nodes.forEach((element) => {
