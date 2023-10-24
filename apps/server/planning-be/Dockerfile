@@ -39,7 +39,7 @@ COPY turbo.json turbo.json
 # ARG TURBO_TOKEN
 # ENV TURBO_TOKEN=$TURBO_TOKEN
 
-RUN yarn turbo run build --filter=iam-be...
+RUN yarn turbo run build --filter=planning-be...
 FROM base AS runner
 WORKDIR /app
 # Don't run production as root
