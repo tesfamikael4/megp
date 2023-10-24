@@ -1,0 +1,59 @@
+.page {
+  @apply w-[210mm] mx-auto;
+}
+
+.container {
+  @apply border-2 border-slate-500;
+}
+
+.title {
+  @apply text-center text-2xl font-bold mt-5;
+}
+
+.subtitle {
+  @apply text-center  mt-5;
+}
+
+.list_table {
+  @apply w-full mt-2  font-semibold;
+}
+
+.label {
+  @apply w-2/5 text-end;
+}
+
+.separator {
+  @apply w-1/5 text-center;
+}
+
+.value {
+  @apply w-2/5;
+}
+
+.signature {
+  @apply mt-5 mx-auto w-48;
+}
+
+.author {
+  @apply font-semibold text-center;
+}
+
+.scan {
+  @apply text-xs mt-5  text-center;
+}
+
+.qr {
+  @apply w-fit mx-auto mt-10;
+}
+
+.footer {
+  @apply mt-20 text-xs;
+}
+
+.web {
+  @apply w-full text-xs;
+}
+
+.ppda {
+  @apply w-3/5 text-xs text-end;
+}
