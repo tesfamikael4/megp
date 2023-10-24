@@ -18,48 +18,56 @@ import { BaseEntity } from '../entities/base.entity';
 import { ApiBody } from '@nestjs/swagger';
 import { BaseAPIDto } from './extra-crud.controller';
 
-@Controller()
-@UseInterceptors(/* your interceptors if any */)
-export class EntityCrudController<TEntity extends BaseEntity> {
-  constructor(private readonly service: EntityCrudService<TEntity>) {}
+export function EntityCrudController<
+  TEntity extends BaseEntity,
+  TCreateDto = NonNullable<unknown>,
+  TUpdateDto = NonNullable<unknown>,
+>(createDto?: { new (): TCreateDto }, updateDto?: { new (): TUpdateDto }) {
+  @Controller()
+  @UseInterceptors(/* your interceptors if any */)
+  class EntityCrudControllerHost {
+    constructor(public readonly service: EntityCrudService<TEntity>) {}
 
-  @Post()
-  @ApiBody({ type: BaseAPIDto })
-  async create(
-    @Body() itemData: DeepPartial<TEntity>,
-    @Req() req?: any,
-  ): Promise<TEntity> {
-    return this.service.create(itemData);
+    @Post()
+    @ApiBody({ type: createDto || BaseAPIDto })
+    async create(
+      @Body() itemData: DeepPartial<TEntity>,
+      @Req() req?: any,
+    ): Promise<TEntity> {
+      return this.service.create(itemData);
+    }
+
+    @Get()
+    async findAll(
+      @Query() query: CollectionQuery,
+      @Req() req?: any,
+    ): Promise<DataResponseFormat<TEntity>> {
+      return this.service.findAll(query);
+    }
+
+    @Get(':id')
+    async findOne(
+      @Param('id') id: string,
+      @Req() req?: any,
+    ): Promise<TEntity | undefined> {
+      return this.service.findOne(id);
+    }
+
+    @Put(':id')
+    @ApiBody({ type: updateDto || BaseAPIDto })
+    async update(
+      @Param('id') id: string,
+      @Body() itemData: Partial<TEntity>,
+      @Req() req?: any,
+    ): Promise<TEntity | undefined> {
+      return this.service.update(id, itemData);
+    }
+
+    @Delete(':id')
+    async remove(@Param('id') id: string, @Req() req?: any): Promise<void> {
+      return this.service.remove(id);
+    }
   }
 
-  @Get()
-  async findAll(
-    @Query() query: CollectionQuery,
-    @Req() req?: any,
-  ): Promise<DataResponseFormat<TEntity>> {
-    return this.service.findAll(query);
-  }
-
-  @Get(':id')
-  async findOne(
-    @Param('id') id: string,
-    @Req() req?: any,
-  ): Promise<TEntity | undefined> {
-    return this.service.findOne(id);
-  }
-
-  @Put(':id')
-  @ApiBody({ type: BaseAPIDto })
-  async update(
-    @Param('id') id: string,
-    @Body() itemData: Partial<TEntity>,
-    @Req() req?: any,
-  ): Promise<TEntity | undefined> {
-    return this.service.update(id, itemData);
-  }
-
-  @Delete(':id')
-  async remove(@Param('id') id: string, @Req() req?: any): Promise<void> {
-    return this.service.remove(id);
-  }
+  return EntityCrudControllerHost;
 }
