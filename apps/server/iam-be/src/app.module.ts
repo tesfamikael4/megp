@@ -4,12 +4,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { EmailConfig } from './shared/email/email.config';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { TypeOrmConfigService } from './shared/typeorm/typeorm.service';
-import { OrganizationModule } from './modules/registration/organization';
+import { OrganizationModule } from './modules/organization';
 import { AuthorizationModule } from './modules/authorization/authorization.module';
-import { ApplicationModule } from './modules/registration/application/application.module';
-import { GroupModule } from './modules/registration/groups/group.module';
-import { MandateModule } from './modules/registration/mandate/mandate.module';
-import { RoleModule } from './modules/registration/role/role.module';
+import { ApplicationModule } from './modules/application/application.module';
+import { GroupModule } from './modules/groups/group.module';
+import { MandateModule } from './modules/mandate/mandate.module';
+import { RoleModule } from './modules/role/role.module';
 
 @Module({
   imports: [
