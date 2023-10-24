@@ -1163,6 +1163,166 @@ importers:
         specifier: ^4.3.5
         version: 4.9.5
 
+  apps/server/administration-be:
+    dependencies:
+      '@nestjs-modules/mailer':
+        specifier: ^1.8.1
+        version: 1.9.1(@nestjs/common@9.4.3)(@nestjs/core@9.4.3)(nodemailer@6.9.4)
+      '@nestjs/common':
+        specifier: ^9.0.0
+        version: 9.4.3(class-transformer@0.5.1)(class-validator@0.14.0)(reflect-metadata@0.1.13)(rxjs@7.8.1)
+      '@nestjs/config':
+        specifier: ^2.3.1
+        version: 2.3.4(@nestjs/common@9.4.3)(reflect-metadata@0.1.13)(rxjs@7.8.1)
+      '@nestjs/core':
+        specifier: ^9.0.0
+        version: 9.4.3(@nestjs/common@9.4.3)(@nestjs/platform-express@9.4.3)(reflect-metadata@0.1.13)(rxjs@7.8.1)
+      '@nestjs/jwt':
+        specifier: ^10.1.1
+        version: 10.1.1(@nestjs/common@9.4.3)
+      '@nestjs/passport':
+        specifier: ^9.0.3
+        version: 9.0.3(@nestjs/common@9.4.3)(passport@0.6.0)
+      '@nestjs/platform-express':
+        specifier: ^9.0.0
+        version: 9.4.3(@nestjs/common@9.4.3)(@nestjs/core@9.4.3)
+      '@nestjs/schedule':
+        specifier: ^2.2.2
+        version: 2.2.3(@nestjs/common@9.4.3)(@nestjs/core@9.4.3)(reflect-metadata@0.1.13)
+      '@nestjs/swagger':
+        specifier: ^6.3.0
+        version: 6.3.0(@nestjs/common@9.4.3)(@nestjs/core@9.4.3)(class-transformer@0.5.1)(class-validator@0.14.0)(reflect-metadata@0.1.13)
+      '@nestjs/typeorm':
+        specifier: ^9.0.1
+        version: 9.0.1(@nestjs/common@9.4.3)(@nestjs/core@9.4.3)(reflect-metadata@0.1.13)(rxjs@7.8.1)(typeorm@0.3.17)
+      axios:
+        specifier: ^1.3.6
+        version: 1.5.0
+      bcrypt:
+        specifier: ^5.1.0
+        version: 5.1.1
+      class-transformer:
+        specifier: ^0.5.1
+        version: 0.5.1
+      class-validator:
+        specifier: ^0.14.0
+        version: 0.14.0
+      dotenv:
+        specifier: ^16.0.3
+        version: 16.1.4
+      google-auth-library:
+        specifier: ^8.7.0
+        version: 8.9.0
+      intuit-oauth:
+        specifier: ^3.0.1
+        version: 3.0.2
+      jsonwebtoken:
+        specifier: ^9.0.2
+        version: 9.0.2
+      jwk-to-pem:
+        specifier: ^2.0.5
+        version: 2.0.5
+      jwks-rsa:
+        specifier: ^3.0.1
+        version: 3.0.1
+      nodemailer:
+        specifier: ^6.9.1
+        version: 6.9.4
+      passport:
+        specifier: ^0.6.0
+        version: 0.6.0
+      passport-jwt:
+        specifier: ^4.0.1
+        version: 4.0.1
+      pg:
+        specifier: ^8.10.0
+        version: 8.11.3
+      proxy-agent:
+        specifier: ^5.0.0
+        version: 5.0.0
+      proxy-from-env:
+        specifier: ^1.1.0
+        version: 1.1.0
+      pseudomap:
+        specifier: ^1.0.2
+        version: 1.0.2
+      reflect-metadata:
+        specifier: ^0.1.13
+        version: 0.1.13
+      rimraf:
+        specifier: ^3.0.2
+        version: 3.0.2
+      rxjs:
+        specifier: ^7.2.0
+        version: 7.8.1
+      swagger-ui-express:
+        specifier: ^4.6.2
+        version: 4.6.3(express@4.18.2)
+      typeorm:
+        specifier: ^0.3.14
+        version: 0.3.17(pg@8.11.3)(ts-node@10.9.1)
+    devDependencies:
+      '@nestjs/cli':
+        specifier: ^9.0.0
+        version: 9.5.0
+      '@nestjs/schematics':
+        specifier: ^9.0.0
+        version: 9.2.0(chokidar@3.5.3)(typescript@4.9.5)
+      '@nestjs/testing':
+        specifier: ^9.0.0
+        version: 9.4.3(@nestjs/common@9.4.3)(@nestjs/core@9.4.3)(@nestjs/platform-express@9.4.3)
+      '@types/bcrypt':
+        specifier: ^5.0.0
+        version: 5.0.0
+      '@types/express':
+        specifier: ^4.17.13
+        version: 4.17.17
+      '@types/jest':
+        specifier: 28.1.4
+        version: 28.1.4
+      '@types/node':
+        specifier: ^16.18.23
+        version: 16.18.47
+      '@types/nodemailer':
+        specifier: ^6.4.7
+        version: 6.4.9
+      '@types/passport-jwt':
+        specifier: ^3.0.8
+        version: 3.0.9
+      '@types/supertest':
+        specifier: ^2.0.11
+        version: 2.0.12
+      '@types/uuid':
+        specifier: ^9.0.1
+        version: 9.0.3
+      jest:
+        specifier: 28.1.2
+        version: 28.1.2(@types/node@16.18.47)(ts-node@10.9.1)
+      prettier:
+        specifier: ^2.3.2
+        version: 2.8.8
+      source-map-support:
+        specifier: ^0.5.21
+        version: 0.5.21
+      supertest:
+        specifier: ^6.1.3
+        version: 6.3.3
+      ts-jest:
+        specifier: 28.0.5
+        version: 28.0.5(@babel/core@7.23.0)(jest@28.1.2)(typescript@4.9.5)
+      ts-loader:
+        specifier: ^9.2.3
+        version: 9.4.4(typescript@4.9.5)(webpack@5.88.2)
+      ts-node:
+        specifier: ^10.0.0
+        version: 10.9.1(@types/node@16.18.47)(typescript@4.9.5)
+      tsconfig-paths:
+        specifier: 4.0.0
+        version: 4.0.0
+      typescript:
+        specifier: ^4.3.5
+        version: 4.9.5
+
   apps/server/iam-be:
     dependencies:
       '@nestjs-modules/mailer':
@@ -1255,9 +1415,6 @@ importers:
       typeorm:
         specifier: ^0.3.14
         version: 0.3.17(pg@8.11.3)(ts-node@10.9.1)
-      uuid:
-        specifier: ^9.0.1
-        version: 9.0.1
     devDependencies:
       '@nestjs/cli':
         specifier: ^9.0.0
@@ -1289,9 +1446,6 @@ importers:
       '@types/supertest':
         specifier: ^2.0.11
         version: 2.0.12
-      '@types/uuid':
-        specifier: ^9.0.1
-        version: 9.0.3
       '@typescript-eslint/eslint-plugin':
         specifier: ^5.0.0
         version: 5.62.0(@typescript-eslint/parser@5.59.2)(eslint@8.48.0)(typescript@4.9.5)
@@ -6844,7 +6998,7 @@ packages:
       inquirer: 8.2.6
       minimatch: 9.0.3
       node-plop: 0.26.3
-      proxy-agent: 6.3.0
+      proxy-agent: 6.3.1
       semver: 7.5.4
       ts-node: 10.9.1(@types/node@20.5.8)(typescript@5.2.2)
       update-check: 1.5.4
@@ -9645,7 +9799,7 @@ packages:
     dependencies:
       bundle-name: 3.0.0
       default-browser-id: 3.0.0
-      execa: 7.1.1
+      execa: 7.2.0
       titleize: 3.0.0
     dev: true
 
@@ -11042,21 +11196,6 @@ packages:
       strip-final-newline: 2.0.0
     dev: true
 
-  /execa@7.1.1:
-    resolution: {integrity: sha512-wH0eMf/UXckdUYnO21+HDztteVv05rq2GXksxT4fCGeHkBhw1DROXh40wcjMcRqDOWE7iPJ4n3M7e2+YFP+76Q==}
-    engines: {node: ^14.18.0 || ^16.14.0 || >=18.0.0}
-    dependencies:
-      cross-spawn: 7.0.3
-      get-stream: 6.0.1
-      human-signals: 4.3.1
-      is-stream: 3.0.0
-      merge-stream: 2.0.0
-      npm-run-path: 5.1.0
-      onetime: 6.0.0
-      signal-exit: 3.0.7
-      strip-final-newline: 3.0.0
-    dev: true
-
   /execa@7.2.0:
     resolution: {integrity: sha512-UduyVP7TLB5IcAQl+OzLyLcS/l32W/GLg+AhHJ+ow40FOk2U3SAllPwR44v4vmdFwIWqpdwxxpQbF1n5ta9seA==}
     engines: {node: ^14.18.0 || ^16.14.0 || >=18.0.0}
@@ -12129,16 +12268,6 @@ packages:
       - supports-color
     dev: false
 
-  /https-proxy-agent@7.0.1:
-    resolution: {integrity: sha512-Eun8zV0kcYS1g19r78osiQLEFIRspRUDd9tIfBCTBPBeMieF/EsJNL8VI3xOIdYRDEkjQnqOYPsZ2DsWsVsFwQ==}
-    engines: {node: '>= 14'}
-    dependencies:
-      agent-base: 7.1.0
-      debug: 4.3.4
-    transitivePeerDependencies:
-      - supports-color
-    dev: true
-
   /https-proxy-agent@7.0.2:
     resolution: {integrity: sha512-NmLNjm6ucYwtcUmL7JQC1ZQ57LmHP4lT15FQ8D61nak1rO6DH+fz5qNK2Ap5UN4ZapYICE3/0KodcLYSPsPbaA==}
     engines: {node: '>= 14'}
@@ -12147,7 +12276,6 @@ packages:
       debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
-    dev: false
 
   /human-signals@1.1.1:
     resolution: {integrity: sha512-SEQu7vl8KjNL2eoGBLF3+wAjpsNfA9XMlXAYj/3EdaNfAlxKthD1xjEQfGOUhllCGGJVNY34bRr6lPINhNjyZw==}
@@ -15593,22 +15721,6 @@ packages:
       - supports-color
     dev: false
 
-  /pac-proxy-agent@7.0.0:
-    resolution: {integrity: sha512-t4tRAMx0uphnZrio0S0Jw9zg3oDbz1zVhQ/Vy18FjLfP1XOLNUEjaVxYCYRI6NS+BsMBXKIzV6cTLOkO9AtywA==}
-    engines: {node: '>= 14'}
-    dependencies:
-      '@tootallnate/quickjs-emscripten': 0.23.0
-      agent-base: 7.1.0
-      debug: 4.3.4
-      get-uri: 6.0.1
-      http-proxy-agent: 7.0.0
-      https-proxy-agent: 7.0.1
-      pac-resolver: 7.0.0
-      socks-proxy-agent: 8.0.1
-    transitivePeerDependencies:
-      - supports-color
-    dev: true
-
   /pac-proxy-agent@7.0.1:
     resolution: {integrity: sha512-ASV8yU4LLKBAjqIPMbrgtaKIvxQri/yh2OpI+S6hVa9JRkUI3Y3NPFbfngDtY7oFtSMD3w31Xns89mDa3Feo5A==}
     engines: {node: '>= 14'}
@@ -15623,7 +15735,6 @@ packages:
       socks-proxy-agent: 8.0.2
     transitivePeerDependencies:
       - supports-color
-    dev: false
 
   /pac-resolver@5.0.1:
     resolution: {integrity: sha512-cy7u00ko2KVgBAjuhevqpPeHIkCIqPe1v24cydhWjmeuzaBfmUWFCZJ1iAh5TuVzVZoUzXIW7K8sMYOZ84uZ9Q==}
@@ -16344,22 +16455,6 @@ packages:
       - supports-color
     dev: false
 
-  /proxy-agent@6.3.0:
-    resolution: {integrity: sha512-0LdR757eTj/JfuU7TL2YCuAZnxWXu3tkJbg4Oq3geW/qFNT/32T0sp2HnZ9O0lMR4q3vwAt0+xCA8SR0WAD0og==}
-    engines: {node: '>= 14'}
-    dependencies:
-      agent-base: 7.1.0
-      debug: 4.3.4
-      http-proxy-agent: 7.0.0
-      https-proxy-agent: 7.0.1
-      lru-cache: 7.18.3
-      pac-proxy-agent: 7.0.0
-      proxy-from-env: 1.1.0
-      socks-proxy-agent: 8.0.1
-    transitivePeerDependencies:
-      - supports-color
-    dev: true
-
   /proxy-agent@6.3.1:
     resolution: {integrity: sha512-Rb5RVBy1iyqOtNl15Cw/llpeLH8bsb37gM1FUfKQ+Wck6xHlbAhWGUFiTRHtkjqGTA5pSHz6+0hrPW/oECihPQ==}
     engines: {node: '>= 14'}
@@ -16374,7 +16469,6 @@ packages:
       socks-proxy-agent: 8.0.2
     transitivePeerDependencies:
       - supports-color
-    dev: false
 
   /proxy-from-env@1.1.0:
     resolution: {integrity: sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==}
@@ -17524,17 +17618,6 @@ packages:
       - supports-color
     dev: false
 
-  /socks-proxy-agent@8.0.1:
-    resolution: {integrity: sha512-59EjPbbgg8U3x62hhKOFVAmySQUcfRQ4C7Q/D5sEHnZTQRrQlNKINks44DMR1gwXp0p4LaVIeccX2KHTTcHVqQ==}
-    engines: {node: '>= 14'}
-    dependencies:
-      agent-base: 7.1.0
-      debug: 4.3.4
-      socks: 2.7.1
-    transitivePeerDependencies:
-      - supports-color
-    dev: true
-
   /socks-proxy-agent@8.0.2:
     resolution: {integrity: sha512-8zuqoLv1aP/66PHF5TqwJ7Czm3Yv32urJQHrVyhD7mmA6d61Zv8cIXQYPTWwmg6qlupnPvs/QKDmfa4P/qct2g==}
     engines: {node: '>= 14'}
@@ -17544,7 +17627,6 @@ packages:
       socks: 2.7.1
     transitivePeerDependencies:
       - supports-color
-    dev: false
 
   /socks@2.7.1:
     resolution: {integrity: sha512-7maUZy1N7uo6+WVEX6psASxtNlKaNVMlGQKkG/63nEDdLOWNbiUMoLK7X4uYoLhQstau72mLgfEWcXcwsaHbYQ==}
