@@ -1,0 +1,40 @@
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
+
+import { Audit } from 'src/shared/entities/audit.entity';
+
+import { Mandate } from './mandate.entity';
+import { Permission } from '../../application/entities/permission.entity';
+
+@Entity({ name: 'mandate_permissions' })
+export class MandatePermission extends Audit {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @Column()
+  mandateId: string;
+
+  @Column()
+  permissionId: string;
+
+  @ManyToOne(() => Mandate, (mandate) => mandate.mandatePermissions, {
+    orphanedRowAction: 'delete',
+    onUpdate: 'CASCADE',
+    onDelete: 'RESTRICT',
+  })
+  @JoinColumn({ name: 'mandateId' })
+  public mandate: Mandate;
+
+  @ManyToOne(() => Permission, (permission) => permission.mandatePermissions, {
+    orphanedRowAction: 'delete',
+    onUpdate: 'CASCADE',
+    onDelete: 'RESTRICT',
+  })
+  @JoinColumn({ name: 'permissionId' })
+  public permission: Permission;
+}

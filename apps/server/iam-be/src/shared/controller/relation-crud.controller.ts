@@ -4,8 +4,6 @@ import {
   Post,
   Body,
   Param,
-  Put,
-  Delete,
   UseInterceptors,
   Query,
   Req,
