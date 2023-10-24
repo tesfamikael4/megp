@@ -7,6 +7,9 @@
   "license": "UNLICENSED",
   "scripts": {
     "build": "nest build",
+    "docker": "cd ../../../ && docker build -f apps/server/planning-be/Dockerfile -t planning-be  . && docker tag planning-be:latest gitlab.peragosystems.com:5050/megp/megp/planning-be:latest &&  docker push gitlab.peragosystems.com:5050/megp/megp/planning-be:latest",
+
+
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
