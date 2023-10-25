@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import { Container, Text } from '@mantine/core';
-import ChangeSecurity from '@/app/(home)/my/security/changeSecurity';
+import ChangeSecurity from '@/app/(features)/my/security/changeSecurity';
 import { notifications } from '@mantine/notifications';
 
 export default function SetSecurity() {

@@ -2,7 +2,7 @@
 
 import { MantineProvider, MantineThemeOverride } from '@mantine/core';
 
-import { theme as baseTheme } from './utility/theme';
+import { theme as baseTheme } from '@/utilities/theme';
 
 import './globals.css';
 import '@mantine/core/styles.css';
