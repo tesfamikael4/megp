@@ -1,0 +1,32 @@
+.header {
+  height: 56px;
+
+  background-color: var(--mantine-color-body);
+  border-bottom: 1px solid var(--mantine-color-gray-3);
+}
+
+.inner {
+  height: 56px;
+  display: flex;
+
+  align-items: center;
+}
+
+.link {
+  display: block;
+  line-height: 1;
+  padding: 8px 12px;
+
+  text-decoration: none;
+
+  font-size: 14px;
+  font-weight: 500;
+  @apply text-gray-700 rounded;
+}
+
+.link:hover {
+  @apply bg-gray-200;
+}
+.linkLabel {
+  margin-right: 5px;
+}

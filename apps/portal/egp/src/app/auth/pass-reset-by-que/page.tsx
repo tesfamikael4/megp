@@ -1,5 +1,5 @@
 'use client';
-import ChangeSecurity from '@/app/(home)/my/security/changeSecurity';
+import ChangeSecurity from '@/app/(features)/my/security/changeSecurity';
 import {
   Button,
   Flex,
