@@ -15,7 +15,13 @@
 .table .actionBtn {
   visibility: hidden;
 }
-
+.table .menuBtn {
+  @apply flex justify-end;
+}
+.table .tree {
+  /* @apply bg-red-500; */
+  @apply flex;
+}
 .table .row {
   @apply cursor-pointer;
 }
@@ -28,4 +34,10 @@
 }
 .table .row:hover {
   @apply bg-primary-50;
+}
+.tree .button {
+  @apply mr-5;
+}
+.tree .buttonModal {
+  @apply mr-2;
 }

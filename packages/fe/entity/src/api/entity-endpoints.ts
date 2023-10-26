@@ -63,6 +63,56 @@ export const createEntitySlice = <T extends Entity>(
         },
         invalidatesTags: (result, error, id) => [{ type: entityName, id }],
       }),
+      listById: builder.query<EntityCollection<T>, string>({
+        query: (id) => ({
+          url: `/${entityName.toLowerCase()}/list/${id}`,
+          method: 'GET',
+        }),
+        providesTags: (result) =>
+          result
+            ? [
+                ...result.items.map(({ id }) => ({ type: entityName, id })),
+                { type: entityName, id: 'LIST' },
+              ]
+            : [{ type: entityName, id: 'LIST' }],
+      }),
+      relation: builder.mutation<any, any>({
+        query: (body) => {
+          return {
+            url: `/${entityName.toLowerCase()}`,
+            method: 'POST',
+            body,
+          };
+        },
+        invalidatesTags: [{ type: entityName, id: 'LIST' }],
+      }),
+      firstRelation: builder.query<EntityCollection<T>, string>({
+        query: (id) => ({
+          url: `/${entityName}/${id}/second`,
+          method: 'GET',
+        }),
+        providesTags: (result) =>
+          result
+            ? [
+                ...result.items.map(({ id }) => ({ type: entityName, id })),
+                { type: entityName, id: 'LIST' },
+              ]
+            : [{ type: entityName, id: 'LIST' }],
+      }),
+
+      secondRelation: builder.query<EntityCollection<T>, string>({
+        query: (id) => ({
+          url: `/${entityName}/${id}/first`,
+          method: 'GET',
+        }),
+        providesTags: (result) =>
+          result
+            ? [
+                ...result.items.map(({ id }) => ({ type: entityName, id })),
+                { type: entityName, id: 'LIST' },
+              ]
+            : [{ type: entityName, id: 'LIST' }],
+      }),
     }),
     overrideExisting: false,
   });
@@ -124,6 +174,68 @@ export const EntitySliceApi = createApi({
         };
       },
       invalidatesTags: (result, error, id) => [{ type: 'entity', id }],
+    }),
+
+    listById: builder.query<{ items: any[] }, string>({
+      query: (id) => ({
+        url: `/entity/list/${id}`,
+        method: 'GET',
+      }),
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.items.map(({ id }) => ({
+                type: 'entity' as const,
+                id,
+              })),
+              { type: 'entity', id: 'LIST' },
+            ]
+          : [{ type: 'entity', id: 'LIST' }],
+    }),
+
+    relation: builder.mutation<any, any>({
+      query(body) {
+        return {
+          url: `/entity`,
+          method: 'POST',
+          body,
+        };
+      },
+      invalidatesTags: [{ type: 'entity', id: 'LIST' }],
+    }),
+
+    firstRelation: builder.query<{ items: any[] }, string>({
+      query: (id) => ({
+        url: `/entity/${id}/second`,
+        method: 'GET',
+      }),
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.items.map(({ id }) => ({
+                type: 'entity' as const,
+                id,
+              })),
+              { type: 'entity', id: 'LIST' },
+            ]
+          : [{ type: 'entity', id: 'LIST' }],
+    }),
+
+    secondRelation: builder.query<{ items: any[] }, string>({
+      query: (id) => ({
+        url: `/entity/${id}/first`,
+        method: 'GET',
+      }),
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.items.map(({ id }) => ({
+                type: 'entity' as const,
+                id,
+              })),
+              { type: 'entity', id: 'LIST' },
+            ]
+          : [{ type: 'entity', id: 'LIST' }],
     }),
   }),
 });

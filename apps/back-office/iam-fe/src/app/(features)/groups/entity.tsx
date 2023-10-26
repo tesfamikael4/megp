@@ -27,18 +27,16 @@ export function Entity({ children }: { children: React.ReactElement }) {
       primaryKey: 'id',
       title: 'Groups',
       onAdd: () => {
-        logger.log('new');
         route.push(`/groups/new`);
       },
       onDetail: (selected: Group) => {
-        logger.log('detail', selected);
         route.push(`/groups/${selected.id}`);
       },
 
       onSearch: (search) => {
         logger.log('search', search);
       },
-      selectable: true,
+
       columns: [
         {
           id: 'name',

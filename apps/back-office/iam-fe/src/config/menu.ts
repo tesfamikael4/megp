@@ -1,6 +1,7 @@
 import { MenuItem } from '@megp/core-fe';
 import {
   IconAdjustmentsHorizontal,
+  IconApps,
   IconBuildingBank,
   IconBuildingCommunity,
   IconChartInfographic,
@@ -11,12 +12,13 @@ import {
 
 export const Menu: MenuItem[] = [
   { label: 'Organizations', icon: IconBuildingBank, link: '/organizations' },
+  { label: 'Applications', icon: IconApps, link: '/applications' },
+  { label: 'Mandates', icon: IconLockSquareRounded, link: '/mandate' },
   {
     label: 'My Organization',
     icon: IconBuildingBank,
     link: '/my-organization',
   },
-  { label: 'Mandates', icon: IconLockSquareRounded, link: '/mandate' },
   { label: 'My Mandates', icon: IconLockSquareRounded, link: '/my-mandate' },
   { label: 'Users', icon: IconUsers, link: '/users' },
   { label: 'Groups', icon: IconUsersGroup, link: '/groups' },
@@ -29,7 +31,6 @@ export const Menu: MenuItem[] = [
     icon: IconAdjustmentsHorizontal,
     links: [
       { label: 'Organization Types', link: '/organization-type' },
-      { label: 'Organization Sector', link: '/organization-sector' },
       { label: 'Unit Types', link: '/unit-type' },
     ],
   },

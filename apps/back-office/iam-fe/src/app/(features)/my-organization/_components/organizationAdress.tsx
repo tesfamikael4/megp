@@ -1,30 +1,56 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Divider, Flex, Stack, TextInput } from '@mantine/core';
+import {
+  Divider,
+  Flex,
+  Stack,
+  TextInput,
+  Text,
+  LoadingOverlay,
+} from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { Controller, useForm } from 'react-hook-form';
 import { z, ZodType } from 'zod';
-import { Select, Card } from '@mantine/core';
+import { Select } from '@mantine/core';
 import { useSetAddressMutation } from '../_api/adress.api';
 import { OrganizationProfile } from '@/models/organization-profile';
 import { EntityButton } from '@megp/entity';
 import countryCodes from './country-codes.json';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useReadQuery } from '../../organizations/_api/organization.api';
 
+type ModeType = 'new' | 'detail';
+
+const defaultValues = {
+  region: '',
+  zoneOrSubCity: '',
+  city: '',
+  telephone: {
+    countryCode: '',
+    number: '',
+  },
+  fax: {
+    countryCode: '',
+    number: '',
+  },
+  postalCode: '',
+  email: '',
+  houseNumber: '',
+  mobileNumber: {
+    countryCode: '',
+    number: '',
+  },
+};
 /* Component definition */
 const OrganizationAdressForm = () => {
-  /* Hooks */
-
-  const [create, { isLoading: isSaving }] = useSetAddressMutation();
-
   const organizationAddressSchema: ZodType<Partial<OrganizationProfile>> =
     z.object({
       region: z.string(),
       zoneOrSubCity: z.string(),
       city: z.string(),
       telephone: z.object({
-        countryCode: z.string().default('+251').optional(),
+        countryCode: z.string().default('MW').optional(),
         number: z
           .string()
           .default('')
@@ -44,7 +70,7 @@ const OrganizationAdressForm = () => {
           .optional(),
       }),
       fax: z.object({
-        countryCode: z.string().default('+251'),
+        countryCode: z.string().default('MW'),
         number: z.string().refine(
           (value) => {
             if (value === '') {
@@ -61,7 +87,7 @@ const OrganizationAdressForm = () => {
       email: z.string(),
       houseNumber: z.string(),
       mobileNumber: z.object({
-        countryCode: z.string().default('+251').optional(),
+        countryCode: z.string().default('MW'),
         number: z
           .string()
           .default('')
@@ -81,22 +107,42 @@ const OrganizationAdressForm = () => {
       }),
     });
 
+  const [mode, setMode] = useState<ModeType>('new');
+
+  const [create, { isLoading: isSaving }] = useSetAddressMutation();
+  const [update, { isLoading: isUpdating }] = useSetAddressMutation();
+
+  const {
+    data: selected,
+    isSuccess: selectedSuccess,
+    isLoading,
+  } = useReadQuery('099454a9-bf8f-45f5-9a4f-6e9034230250');
+
   const {
     register,
     handleSubmit,
     formState: { errors },
     control,
+    reset,
   } = useForm<OrganizationProfile>({
     resolver: zodResolver(organizationAddressSchema),
   });
 
   const onCreate = async (data) => {
+    const dataSent = {
+      id: '099454a9-bf8f-45f5-9a4f-6e9034230250',
+      address: {
+        ...data,
+      },
+    };
+
     try {
-      await create({ ...data, id: '099454a9-bf8f-45f5-9a4f-6e9034230250' });
+      await create(dataSent);
 
       notifications.show({
         message: ' created successfully',
         title: 'Success',
+        color: 'green',
       });
     } catch (err) {
       notifications.show({
@@ -107,8 +153,60 @@ const OrganizationAdressForm = () => {
     }
   };
 
+  const onUpdate = async (data) => {
+    const dataSent = {
+      id: '099454a9-bf8f-45f5-9a4f-6e9034230250',
+      address: {
+        ...data,
+      },
+    };
+
+    try {
+      await update(dataSent);
+
+      notifications.show({
+        message: ' created successfully',
+        title: 'Success',
+        color: 'green',
+      });
+    } catch (err) {
+      notifications.show({
+        message: 'errors in creating .',
+        title: 'Error',
+        color: 'red',
+      });
+    }
+  };
+
+  const onReset = async () => {
+    reset({ ...defaultValues });
+  };
+
+  useEffect(() => {
+    if (mode === 'detail' && selectedSuccess && selected !== undefined) {
+      reset({
+        region: selected?.address?.region,
+        zoneOrSubCity: selected?.position,
+        city: selected?.address?.city,
+        telephone: selected?.address?.telephone,
+        fax: selected?.address?.fax,
+        postalCode: selected?.address?.postalCode,
+        email: selected?.address?.email,
+        houseNumber: selected?.address?.houseNumber,
+        mobileNumber: selected?.address?.mobileNumber,
+      });
+    }
+  }, [mode, reset, selected, selectedSuccess]);
+
+  useEffect(() => {
+    if (selectedSuccess) {
+      selected.address !== null && setMode('detail');
+    }
+  }, [selected?.address, selectedSuccess]);
+
   return (
-    <Stack>
+    <Stack pos={'relative'}>
+      <LoadingOverlay visible={isLoading} />
       <TextInput label="Region" {...register('region')} />
       <TextInput label="Zone/Subcity" {...register('zoneOrSubCity')} />
 
@@ -134,19 +232,20 @@ const OrganizationAdressForm = () => {
         error={errors?.email ? errors.email.message : ''}
         {...register('email')}
       />
-      <div className="mb-2 flex items-center">
-        <span>Mobile number</span>
-      </div>
+
+      <Text fw={500}>Mobile number</Text>
+
       <Flex>
         <Controller
           name="mobileNumber.countyCode"
           control={control}
-          render={({ field }) => (
+          render={({ field: { onChange, value } }) => (
             <Select
-              {...field}
-              defaultValue="+251"
+              defaultValue={'MW'}
+              value={value}
+              onChange={onChange}
               data={countryCodes.map((item) => ({
-                label: `${item.name} (${item.code})`,
+                label: `${item.name} (${item.dial_code})`,
                 value: item.code,
               }))}
               maxDropdownHeight={400}
@@ -164,16 +263,19 @@ const OrganizationAdressForm = () => {
           {...register('mobileNumber.number')}
         />
       </Flex>
+      <Text fw={500}>Telephone number</Text>
+
       <Flex>
         <Controller
           name="telephone.countyCode"
           control={control}
-          render={({ field }) => (
+          render={({ field: { onChange, value } }) => (
             <Select
-              {...field}
-              defaultValue="+251"
+              defaultValue="MW"
+              value={value}
+              onChange={onChange}
               data={countryCodes.map((item) => ({
-                label: `${item.name} (${item.code})`,
+                label: `${item.name} (${item.dial_code})`,
                 value: item.code,
               }))}
               maxDropdownHeight={400}
@@ -182,6 +284,8 @@ const OrganizationAdressForm = () => {
         />
         <TextInput className="mb-2 grow" {...register('telephone.number')} />
       </Flex>
+      <Text fw={500}>Fax number</Text>
+
       <Flex>
         <Controller
           name="fax.countyCode"
@@ -189,9 +293,9 @@ const OrganizationAdressForm = () => {
           render={({ field }) => (
             <Select
               {...field}
-              defaultValue="+251"
+              defaultValue="MW"
               data={countryCodes.map((item) => ({
-                label: `${item.name} (${item.code})`,
+                label: `${item.name} (${item.dial_code})`,
                 value: item.code,
               }))}
               maxDropdownHeight={400}
@@ -206,9 +310,12 @@ const OrganizationAdressForm = () => {
       </Flex>
 
       <EntityButton
-        mode={'new'}
+        mode={mode}
         onCreate={handleSubmit(onCreate)}
+        onUpdate={handleSubmit(onUpdate)}
+        onReset={onReset}
         isSaving={isSaving}
+        isUpdating={isUpdating}
       />
 
       <Divider className="mt-4" />

@@ -1,4 +1,4 @@
-import { Stack, TextInput, Textarea } from '@mantine/core';
+import { LoadingOverlay, Stack, TextInput, Textarea } from '@mantine/core';
 import { EntityButton } from '@megp/entity';
 import { z, ZodType } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -34,7 +34,6 @@ export function FormDetail({ mode }: FormDetailProps) {
     handleSubmit,
     reset,
     formState: { errors },
-
     register,
   } = useForm({
     resolver: zodResolver(roleSchema),
@@ -45,9 +44,11 @@ export function FormDetail({ mode }: FormDetailProps) {
   const [create, { isLoading: isSaving }] = useCreateMutation();
   const [update, { isLoading: isUpdating }] = useUpdateMutation();
   const [remove, { isLoading: isDeleting }] = useDeleteMutation();
-  const { data: selected, isSuccess: selectedSuccess } = useReadQuery(
-    id?.toString(),
-  );
+  const {
+    data: selected,
+    isSuccess: selectedSuccess,
+    isLoading,
+  } = useReadQuery(id?.toString());
 
   const onCreate = async (data) => {
     try {
@@ -124,7 +125,8 @@ export function FormDetail({ mode }: FormDetailProps) {
   }, [mode, reset, selected, selectedSuccess]);
 
   return (
-    <Stack>
+    <Stack pos={'relative'}>
+      <LoadingOverlay visible={isLoading} />
       <TextInput
         withAsterisk
         label="Name"

@@ -41,7 +41,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
       onSearch: (search) => {
         // console.log('search', search);
       },
-      selectable: true,
+
       columns: [
         {
           id: 'name',
@@ -61,15 +61,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
             widget: 'multiline',
           },
         },
-        {
-          id: 'code',
-          header: 'Code',
-          accessorKey: 'code',
-          cell: (info) => info.getValue(),
-          meta: {
-            widget: 'multiline',
-          },
-        },
+
         {
           id: 'isActive',
           header: 'Active',

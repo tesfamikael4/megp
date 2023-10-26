@@ -1,35 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import { Modal } from '@mantine/core';
 import { Relation, RelationConfig } from '@megp/entity';
-import { Mandate } from '@/models/mandate';
+
 import { notifications } from '@mantine/notifications';
-import { logger } from '@megp/core-fe';
+
 import {
-  useAssignRoleToUserMutation,
-  useGetRoleByUserIdQuery,
-} from '../_api/userAssignment.api';
+  useRelationMutation,
+  useLazySecondRelationQuery,
+} from '../_api/user-role.api';
 import { useParams } from 'next/navigation';
-import { useListQuery } from '../../roles/_api/role.api';
+import { useListByIdQuery } from '../../roles/_api/role.api';
 import { Role } from '@/models/role';
 
 const AddEntityModal = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentAssignedRoles, setCurrentAssignedRoles] = useState<Role[]>([]);
+  const [currentAssigned, setCurrentAssigned] = useState<Role[]>([]);
   const { id } = useParams();
 
-  const [assignRole, { isLoading: isSaving, isSuccess: assigned }] =
-    useAssignRoleToUserMutation();
+  const [assign, { isLoading: isSaving }] = useRelationMutation();
 
-  const {
-    data: userRole,
-    isSuccess: success,
-    isLoading,
-  } = useGetRoleByUserIdQuery(id?.toString());
-  const { data: roles, isSuccess } = useListQuery();
-  logger.log(currentAssignedRoles);
+  const [trigger, { data: roles, isSuccess }] = useLazySecondRelationQuery();
+  const { data: list } = useListByIdQuery(
+    '099454a9-bf8f-45f5-9a4f-6e9034230250',
+  );
 
-  const relationConfig: RelationConfig<Mandate> = {
-    title: 'Roles',
+  const relationConfig: RelationConfig<Role> = {
+    title: 'Roles Assignment',
     columns: [
       {
         id: 'name',
@@ -50,21 +46,20 @@ const AddEntityModal = () => {
         },
       },
     ],
-    onSave: async () => {
-      const data = currentAssignedRoles.map((item) => {
-        return {
-          userId: id?.toString(),
-          roleId: item?.id,
-          roleName: item?.name,
-        };
-      });
+    onSave: async (selected) => {
+      const roles = selected.map((item) => `${item.id}`);
+      const data = {
+        userId: id?.toString(),
+        role: roles,
+      };
 
       try {
-        id && (await assignRole({ data, id: id?.toString() }).unwrap());
+        id && (await assign(data).unwrap());
 
         notifications.show({
-          message: 'role has been assigned to user successfully.',
+          message: 'Role has been assigned to user successfully.',
           title: 'Success',
+          color: 'green',
         });
       } catch (err) {
         notifications.show({
@@ -78,7 +73,7 @@ const AddEntityModal = () => {
       setIsModalOpen(true);
     },
   };
-  const addConfig: RelationConfig<Mandate> = {
+  const addConfig: RelationConfig<Role> = {
     title: 'Roles',
     columns: [
       {
@@ -92,7 +87,7 @@ const AddEntityModal = () => {
       },
     ],
     onSave: (selected) => {
-      setCurrentAssignedRoles(selected);
+      setCurrentAssigned(selected);
       setIsModalOpen(false);
     },
 
@@ -104,26 +99,29 @@ const AddEntityModal = () => {
   };
 
   useEffect(() => {
-    if (success) {
-      const data = userRole?.userRoles.map((role: any) => role?.role);
-      setCurrentAssignedRoles(data);
+    trigger(id?.toString());
+  }, [id, trigger]);
+  useEffect(() => {
+    if (isSuccess) {
+      setCurrentAssigned(
+        roles ? roles.items.map((role: any) => role.role) : [],
+      );
     }
-  }, [assigned, isSuccess, success, userRole?.userRoles]);
+  }, [roles, isSuccess]);
 
   return (
     <>
       <Relation
         config={relationConfig}
-        data={currentAssignedRoles}
+        data={currentAssigned}
         isSaving={isSaving}
-        isLoading={isLoading}
       />
       <Modal title="Roles" opened={isModalOpen} onClose={handleCloseModal}>
         <Relation
           config={addConfig}
-          data={roles ? roles.items : []}
+          data={list ? list.items : []}
           mode="modal"
-          currentSelected={currentAssignedRoles}
+          currentSelected={currentAssigned}
         />
       </Modal>
     </>

@@ -2,17 +2,19 @@
 import { EntityConfig, EntityLayout } from '@megp/entity';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
-import { useGetMyOrgMandateQuery } from '../organizations/_api/mandate.api';
+import { useLazySecondRelationQuery } from '../organizations/_api/organization-mandate.api';
 import { Mandate } from '@/models/mandate';
+import { logger } from '@megp/core-fe';
 
 export function Entity({ children }: { children: React.ReactNode }) {
   const route = useRouter();
 
   const pathname = usePathname();
 
-  const { data: list } = useGetMyOrgMandateQuery(
-    '099454a9-bf8f-45f5-9a4f-6e9034230250',
-  );
+  // const { data: list } = useLazySecondRelationQuery(
+  //   '099454a9-bf8f-45f5-9a4f-6e9034230250',
+  // );
+  const [trigger, { data: list }] = useLazySecondRelationQuery();
 
   useEffect;
   const config: EntityConfig<Mandate> = useMemo(() => {
@@ -29,7 +31,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
       onSearch: (search) => {
         // console.log('search', search);
       },
-      selectable: true,
+
       hasAdd: false,
       hasDetail: false,
       columns: [
@@ -63,11 +65,15 @@ export function Entity({ children }: { children: React.ReactNode }) {
       ? 'new'
       : 'detail';
 
+  useEffect(() => {
+    trigger('099454a9-bf8f-45f5-9a4f-6e9034230250');
+  }, [trigger]);
+  logger.log(list?.items);
   return (
     <EntityLayout
       mode={mode}
       config={config}
-      data={list?.organizationMandates ? list?.organizationMandates : []}
+      data={list?.items ? list?.items : []}
       detail={children}
     />
   );

@@ -1,17 +1,29 @@
 import { Group, Button } from '@mantine/core';
-import { IconDeviceFloppy, IconBackspace } from '@tabler/icons-react';
+import {
+  IconDeviceFloppy,
+  IconBackspace,
+  IconFolderCancel,
+  IconToggleLeft,
+  IconToggleRight,
+} from '@tabler/icons-react';
 import React from 'react';
 import { DeleteButton } from './delete-popup';
 
 interface EntityButtonProps {
   mode?: 'new' | 'detail';
+
   onCreate?: () => void;
   onReset?: () => void;
   onUpdate?: () => void;
   onDelete?: () => void;
+  onCancel?: () => void;
+  onActivate?: () => void;
   isSaving?: boolean;
   isUpdating?: boolean;
   isDeleting?: boolean;
+  isActivating?: boolean;
+
+  data?: any;
 }
 
 export function EntityButton({
@@ -21,8 +33,12 @@ export function EntityButton({
   onUpdate,
   onDelete,
   isSaving,
+  data,
   isUpdating,
   isDeleting,
+  onCancel,
+  onActivate,
+  isActivating,
 }: EntityButtonProps): React.ReactElement {
   return (
     <Group className="border-t pt-4">
@@ -58,9 +74,35 @@ export function EntityButton({
               Update
             </Button>
           ) : null}
+          {data ? (
+            <Button
+              color={data?.isActive ? 'red' : ''}
+              leftSection={
+                data?.isActive ? (
+                  <IconToggleLeft size={14} stroke={1.6} />
+                ) : (
+                  <IconToggleRight size={14} stroke={1.6} />
+                )
+              }
+              loading={isActivating}
+              onClick={onActivate}
+              type="submit"
+            >
+              {data?.isActive ? 'Deactivate' : 'activate'}
+            </Button>
+          ) : null}
 
           {onDelete ? (
             <DeleteButton isDeleting={isDeleting} onDelete={onDelete} />
+          ) : null}
+          {onCancel ? (
+            <Button
+              color="red"
+              leftSection={<IconFolderCancel size={14} stroke={1.6} />}
+              onClick={onCancel}
+            >
+              cancel
+            </Button>
           ) : null}
         </>
       )}

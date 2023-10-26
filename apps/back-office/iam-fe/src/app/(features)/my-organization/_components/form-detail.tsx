@@ -7,8 +7,7 @@ import {
   Textarea,
 } from '@mantine/core';
 import { useReadQuery } from '../../organizations/_api/organization.api';
-import { useListQuery } from '../../organization-sector/_api/organizationSector.api';
-import { useListQuery as useListTypeQuery } from '../../organization-type/_api/organizationType.api';
+import { useListQuery as useListTypeQuery } from '../../organization-type/_api/organization-type.api';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 export function FormDetail() {
@@ -18,7 +17,7 @@ export function FormDetail() {
     isSuccess: selectedSuccess,
     isLoading,
   } = useReadQuery('099454a9-bf8f-45f5-9a4f-6e9034230250');
-  const { data: sector } = useListQuery();
+
   const { data: orgType } = useListTypeQuery();
 
   useEffect(() => {
@@ -29,13 +28,12 @@ export function FormDetail() {
         shortName: selected?.shortName,
         description: selected?.description,
         typeId: selected?.typeId,
-        sectorId: selected?.sectorId,
       });
     }
   }, [reset, selected, selectedSuccess]);
   return (
     <Stack>
-      <Box>
+      <Box pos={'relative'}>
         <LoadingOverlay visible={isLoading} />
         <TextInput disabled label="Name" {...register('name')} />
         <TextInput
@@ -69,31 +67,6 @@ export function FormDetail() {
               }
             />
           )}
-        />
-        <Controller
-          name="sectorId"
-          control={control}
-          render={({ field: { onChange, value } }) => (
-            <Select
-              withAsterisk
-              name="name"
-              label="Organization Sector"
-              value={value}
-              disabled
-              onChange={onChange}
-              data={
-                sector?.items?.map((type) => ({
-                  value: type?.id,
-                  label: type?.name,
-                })) || []
-              }
-            />
-          )}
-        />
-        <TextInput
-          label={'External Organization Code'}
-          disabled
-          {...register('code')}
         />
       </Box>
     </Stack>

@@ -8,7 +8,7 @@ import {
   useCreateMutation,
   useLazyReadQuery,
 } from '../_api/price.api';
-import { logger } from '@megp/core-fe';
+
 import { ZodType, z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Price } from '@/models/price';

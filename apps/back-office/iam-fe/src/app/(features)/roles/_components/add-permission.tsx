@@ -4,32 +4,29 @@ import { Relation, RelationConfig } from '@megp/entity';
 import { Mandate } from '@/models/mandate';
 import { notifications } from '@mantine/notifications';
 import {
-  useAssignPermisionToRoleMutation,
-  useGetPermissionByOrganizationIdQuery,
-  useGetRolePermissionsQuery,
-} from '../_api/others.api';
+  useLazySecondRelationQuery,
+  useRelationMutation,
+} from '../_api/role-permission.api';
+import { useGetPermissionByOrganizationIdQuery } from '../_api/others.api';
 import { useParams } from 'next/navigation';
-import { logger } from '@megp/core-fe';
 
 const AddUserModal = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+
   const [currentAssigned, setCurrentAssigned] = useState<any[]>([]);
   const { id } = useParams();
 
-  const [assignPermission, { isLoading: isSaving }] =
-    useAssignPermisionToRoleMutation();
+  const [assignPermission, { isLoading: isSaving }] = useRelationMutation();
 
-  const {
-    data: rolePermision,
-    isSuccess: userSucced,
-    isLoading,
-  } = useGetRolePermissionsQuery(id?.toString());
-  const { data: roles } = useGetPermissionByOrganizationIdQuery(
+  const [trigger, { data: rolePermision, isSuccess, isLoading }] =
+    useLazySecondRelationQuery();
+
+  const { data: permission } = useGetPermissionByOrganizationIdQuery(
     '099454a9-bf8f-45f5-9a4f-6e9034230250',
   );
 
   const relationConfig: RelationConfig<any> = {
-    title: 'Permission',
+    title: 'Permission Assignment',
     columns: [
       {
         id: 'name',
@@ -41,30 +38,24 @@ const AddUserModal = () => {
         },
       },
     ],
-    onSave: async () => {
-      const data = currentAssigned.map((permission) => {
-        return {
-          roleId: id,
-          permissionId: permission?.id,
-          permissionName: permission?.name,
-          permissionKey: permission?.key,
-          applicationKey: permission?.applicationKey,
-          applicationName: permission?.applicationName,
-          applicationId: permission?.applicationId,
-          organizationId: '099454a9-bf8f-45f5-9a4f-6e9034230250',
-        };
-      });
+    onSave: async (selected) => {
+      const permissions = selected.map((item) => `${item.id}`);
+      const data = {
+        roleId: id?.toString(),
+        permission: permissions,
+      };
+
       try {
-        await assignPermission({ data, idParse: id?.toString() }).unwrap();
+        await assignPermission(data).unwrap();
 
         notifications.show({
-          message: 'user has been assigned to unit successfully.',
+          message: 'Permission has been assigned to role successfully.',
           title: 'Success',
           color: 'green',
         });
       } catch (err) {
         notifications.show({
-          message: 'Sorry, an error encountered while assigning user.',
+          message: 'Sorry, an error encountered while assigning permission.',
           title: 'Error',
           color: 'red',
         });
@@ -88,7 +79,6 @@ const AddUserModal = () => {
       },
     ],
     onSave: (selected) => {
-      logger.log(selected);
       setCurrentAssigned(selected);
 
       setIsModalOpen(false);
@@ -102,16 +92,24 @@ const AddUserModal = () => {
   };
 
   useEffect(() => {
-    if (userSucced) {
-      setCurrentAssigned(rolePermision?.rolePermissions);
+    trigger(id?.toString());
+  }, [id, trigger]);
+
+  useEffect(() => {
+    if (isSuccess) {
+      setCurrentAssigned(
+        rolePermision
+          ? rolePermision.items.map((permission: any) => permission.permission)
+          : [],
+      );
     }
-  }, [userSucced, rolePermision]);
+  }, [rolePermision, isSuccess]);
 
   return (
     <>
       <Relation
         config={relationConfig}
-        data={currentAssigned}
+        data={currentAssigned ? currentAssigned : []}
         isSaving={isSaving}
         isLoading={isLoading}
       />
@@ -119,7 +117,7 @@ const AddUserModal = () => {
         <Relation
           mode="modal"
           config={addConfig}
-          data={roles ? roles.items : []}
+          data={permission ? permission.items : []}
           currentSelected={currentAssigned}
         />
       </Modal>

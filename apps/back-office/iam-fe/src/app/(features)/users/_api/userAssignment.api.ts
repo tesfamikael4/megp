@@ -46,10 +46,21 @@ const userRApi = userRelationApi.injectEndpoints({
       },
       invalidatesTags: ['userRoles'],
     }),
+    AssignGroupToUser: build.mutation<any, any>({
+      query: (data) => {
+        return {
+          url: `/relation-user-groups`,
+          method: 'POST',
+          body: data,
+        };
+      },
+      // invalidatesTags: ['userRoles'],
+    }),
   }),
 });
 
 export const {
+  useAssignGroupToUserMutation,
   useAssignRoleToUserMutation,
   useAssignUnitToUserMutation,
   useGetRoleByUserIdQuery,
