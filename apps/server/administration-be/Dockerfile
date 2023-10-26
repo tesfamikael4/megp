@@ -12,7 +12,7 @@ RUN apk update
 WORKDIR /app
 RUN yarn global add turbo pnpm
 COPY . .
-RUN turbo prune --scope=+demo-be --docker
+RUN turbo prune --scope=administrator-be --docker
 
 # Add lockfile and package.json's of isolated subworkspace
 FROM base AS installer
@@ -41,7 +41,7 @@ COPY turbo.json turbo.json
 # ARG TURBO_TOKEN
 # ENV TURBO_TOKEN=$TURBO_TOKEN
 
-RUN yarn turbo run build --filter=+demo-be...
+RUN yarn turbo run build --filter=administrator-be...
 
 FROM base AS runner
 WORKDIR /app
@@ -52,4 +52,4 @@ RUN adduser --system --uid 1001 nestjs
 USER nestjs
 COPY --from=installer /app .
 
-CMD node apps/server/+demo-be/dist/main.js
+CMD node apps/server/administrator-be/dist/main.js
