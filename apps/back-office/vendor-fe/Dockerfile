@@ -18,6 +18,7 @@ RUN turbo prune --scope=vendor-fe --docker
 FROM base AS installer
 RUN apk add --no-cache libc6-compat
 RUN apk update
+RUN apk update
 
 WORKDIR /app
 
