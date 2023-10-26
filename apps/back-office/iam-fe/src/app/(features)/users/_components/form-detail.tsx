@@ -50,6 +50,7 @@ export function FormDetail({ mode }: FormDetailProps) {
 
   const [create, { isLoading: isSaving }] = useCreateMutation();
   const [update, { isLoading: isUpdating }] = useUpdateMutation();
+  const [activation, { isLoading: isActivating }] = useUpdateMutation();
   const [remove, { isLoading: isDeleting }] = useDeleteMutation();
   const {
     data: selected,
@@ -117,6 +118,30 @@ export function FormDetail({ mode }: FormDetailProps) {
       });
     }
   };
+  const onActivate = async () => {
+    const dataSent = {
+      ...selected,
+      isActive: !selected?.isActive,
+    };
+    try {
+      await activation({ ...dataSent, id: id?.toString() });
+      notifications.show({
+        message: `User ${
+          selected?.isActive ? 'Deactivated' : 'Activated'
+        } successfully`,
+        title: 'Success',
+        color: 'green',
+      });
+    } catch {
+      notifications.show({
+        message: `error in ${
+          selected?.isActive ? 'Deactivating' : 'Activating'
+        }  User`,
+        title: 'Success',
+        color: 'red',
+      });
+    }
+  };
   const onReset = async () => {
     reset({ ...defaultValues });
   };
@@ -133,39 +158,37 @@ export function FormDetail({ mode }: FormDetailProps) {
   }, [mode, reset, selected, selectedSuccess]);
 
   return (
-    <Stack>
-      <Box pos="relative">
-        <LoadingOverlay visible={isLoading} />
-        <TextInput
-          label="First Name"
-          error={
-            errors?.firstName ? errors?.firstName?.message?.toString() : ''
-          }
-          {...register('firstName')}
-        />
+    <Stack pos="relative">
+      <LoadingOverlay visible={isLoading} />
+      <TextInput
+        label="First Name"
+        error={errors?.firstName ? errors?.firstName?.message?.toString() : ''}
+        {...register('firstName')}
+      />
 
-        <TextInput
-          withAsterisk
-          label="Last Name"
-          error={errors?.lastName ? errors?.lastName?.message?.toString() : ''}
-          {...register('lastName')}
-        />
+      <TextInput
+        withAsterisk
+        label="Last Name"
+        error={errors?.lastName ? errors?.lastName?.message?.toString() : ''}
+        {...register('lastName')}
+      />
 
-        <TextInput
-          label="User Name"
-          withAsterisk
-          error={errors?.userName ? errors?.userName?.message?.toString() : ''}
-          {...register('username')}
-        />
-        <TextInput
-          label="Email"
-          error={errors?.email ? errors?.email?.message?.toString() : ''}
-          {...register('email')}
-        />
-      </Box>
+      <TextInput
+        label="User Name"
+        withAsterisk
+        error={errors?.userName ? errors?.userName?.message?.toString() : ''}
+        {...register('username')}
+      />
+      <TextInput
+        label="Email"
+        error={errors?.email ? errors?.email?.message?.toString() : ''}
+        {...register('email')}
+      />
 
       <EntityButton
         mode={mode}
+        data={selected}
+        onActivate={handleSubmit(onActivate)}
         onCreate={handleSubmit(onCreate)}
         onUpdate={handleSubmit(onUpdate)}
         onDelete={handleSubmit(onDelete)}
@@ -173,6 +196,7 @@ export function FormDetail({ mode }: FormDetailProps) {
         isSaving={isSaving}
         isUpdating={isUpdating}
         isDeleting={isDeleting}
+        isActivating={isActivating}
       />
     </Stack>
   );

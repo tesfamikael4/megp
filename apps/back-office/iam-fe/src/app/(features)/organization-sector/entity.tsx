@@ -2,7 +2,7 @@
 import { EntityConfig, EntityLayout } from '@megp/entity';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
-import { useListQuery } from './_api/organizationSector.api';
+import { useListQuery } from './_api/organization-sector.api';
 import { OrganizationSector } from '@/models/organization-sector';
 
 export function Entity({ children }: { children: React.ReactNode }) {
@@ -30,7 +30,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
       onSearch: (search) => {
         // console.log('search', search);
       },
-      selectable: true,
+
       columns: [
         {
           id: 'name',

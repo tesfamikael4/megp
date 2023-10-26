@@ -8,7 +8,7 @@ import {
   useDeleteMutation,
   useUpdateMutation,
   useCreateMutation,
-} from '../_api/unitType.api';
+} from '../_api/unit-type.api';
 import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
@@ -125,27 +125,26 @@ export function FormDetail({ mode }: FormDetailProps) {
   }, [mode, reset, selected, selectedSuccess]);
 
   return (
-    <Stack>
-      <Box pos={'relative'}>
-        <LoadingOverlay visible={isLoading} />
-        <TextInput
-          withAsterisk
-          label="Name"
-          {...register('name')}
-          error={errors?.name ? errors?.name?.message?.toString() : ''}
-          required
-        />
+    <Stack pos={'relative'}>
+      <LoadingOverlay visible={isLoading} />
+      <TextInput
+        withAsterisk
+        label="Name"
+        {...register('name')}
+        error={errors?.name ? errors?.name?.message?.toString() : ''}
+        required
+      />
 
-        <Textarea
-          label="Description"
-          autosize
-          minRows={2}
-          {...register('description')}
-          error={
-            errors?.description ? errors?.description?.message?.toString() : ''
-          }
-        />
-      </Box>
+      <Textarea
+        label="Description"
+        autosize
+        minRows={2}
+        {...register('description')}
+        error={
+          errors?.description ? errors?.description?.message?.toString() : ''
+        }
+      />
+
       <EntityButton
         mode={mode}
         onCreate={handleSubmit(onCreate)}

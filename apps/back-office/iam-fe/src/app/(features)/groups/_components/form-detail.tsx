@@ -110,17 +110,16 @@ export function FormDetail({ mode }: FormDetailProps) {
   }, [mode, reset, selected, selectedSuccess]);
 
   return (
-    <Stack>
-      <Box pos="relative">
-        <LoadingOverlay visible={isLoading} />
-        <TextInput withAsterisk label="Name" {...register('name')} />
-        <Textarea
-          label="Description"
-          autosize
-          minRows={2}
-          {...register('description')}
-        />
-      </Box>
+    <Stack pos="relative">
+      <LoadingOverlay visible={isLoading} />
+      <TextInput withAsterisk label="Name" {...register('name')} />
+      <Textarea
+        label="Description"
+        autosize
+        minRows={2}
+        {...register('description')}
+      />
+
       <EntityButton
         mode={mode}
         onCreate={handleSubmit(onCreate)}

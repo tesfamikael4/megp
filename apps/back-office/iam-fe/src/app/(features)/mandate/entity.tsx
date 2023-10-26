@@ -25,11 +25,11 @@ export function Entity({ children }: { children: React.ReactNode }) {
         route.push(`/mandate/${selected?.id}`);
       },
       hasAdd: false,
-      hasDetail: false,
-      onSearch: (search) => {
-        // console.log('search', search);
-      },
-      selectable: true,
+      hasDetail: true,
+      // onSearch: (search) => {
+      //   // console.log('search', search);
+      // },
+
       columns: [
         {
           id: 'name',

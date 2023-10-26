@@ -10,23 +10,23 @@ export const ENTITY_LIST: EntityStoreConfig[] = [
     baseUrl: process.env.NEXT_PUBLIC_IAM_API ?? '/api/iam',
   },
   {
-    entity: 'organizationSectors',
+    entity: 'organization-sector',
     baseUrl: process.env.NEXT_PUBLIC_IAM_API ?? '/api/iam',
   },
   {
-    entity: 'organizationTypes',
+    entity: 'organization-type',
     baseUrl: process.env.NEXT_PUBLIC_IAM_API ?? '/api/iam',
   },
   {
-    entity: 'unitTypes',
+    entity: 'unit-type',
     baseUrl: process.env.NEXT_PUBLIC_IAM_API ?? '/api/iam',
   },
   {
-    entity: 'units',
+    entity: 'unit',
     baseUrl: process.env.NEXT_PUBLIC_IAM_API ?? '/api/iam',
   },
   {
-    entity: 'users',
+    entity: 'user',
     baseUrl: process.env.NEXT_PUBLIC_IAM_API ?? '/api/iam',
   },
   {
@@ -39,6 +39,38 @@ export const ENTITY_LIST: EntityStoreConfig[] = [
   },
   {
     entity: 'mandates',
+    baseUrl: process.env.NEXT_PUBLIC_IAM_API ?? '/api/iam',
+  },
+  {
+    entity: 'applications',
+    baseUrl: process.env.NEXT_PUBLIC_IAM_API ?? '/api/iam',
+  },
+  {
+    entity: 'permissions',
+    baseUrl: process.env.NEXT_PUBLIC_IAM_API ?? '/api/iam',
+  },
+  {
+    entity: 'user-unit',
+    baseUrl: process.env.NEXT_PUBLIC_IAM_API ?? '/api/iam',
+  },
+  {
+    entity: 'user-groups',
+    baseUrl: process.env.NEXT_PUBLIC_IAM_API ?? '/api/iam',
+  },
+  {
+    entity: 'user-role',
+    baseUrl: process.env.NEXT_PUBLIC_IAM_API ?? '/api/iam',
+  },
+  {
+    entity: 'organization-mandates',
+    baseUrl: process.env.NEXT_PUBLIC_IAM_API ?? '/api/iam',
+  },
+  {
+    entity: 'role-permissions',
+    baseUrl: process.env.NEXT_PUBLIC_IAM_API ?? '/api/iam',
+  },
+  {
+    entity: 'mandate-permissions',
     baseUrl: process.env.NEXT_PUBLIC_IAM_API ?? '/api/iam',
   },
 ];

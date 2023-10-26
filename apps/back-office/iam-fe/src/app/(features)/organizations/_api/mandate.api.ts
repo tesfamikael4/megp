@@ -1,52 +1,11 @@
 import { Mandate } from '@/models/mandate';
-import { mandateApi } from '@/store/api/other/mandate.api';
+import entityApi from '@/store/entity/api';
+import { createEntitySlice, EntitySliceApi } from '@megp/entity';
 
-const organizationMandateApi = mandateApi.injectEndpoints({
-  endpoints: (build) => ({
-    getMandateByOrganization: build.query<{ items: Mandate[] }, string>({
-      query: (id) => {
-        return {
-          url: `mandates/get-all-to-assign/${id}`,
-          method: 'GET',
-        };
-      },
-      providesTags: ['mandates'],
-    }),
+// get base organization api
+const mandateApi = entityApi.entitySliceApi['mandates'];
 
-    getOrganiationMandate: build.query<any, string>({
-      query: (id) => {
-        return {
-          url: `organizations/${id}?includes[0]=organizationMandates.mandate`,
-          method: 'GET',
-        };
-      },
-      providesTags: ['mandates'],
-    }),
-    getMyOrgMandate: build.query<any, string>({
-      query: (id) => {
-        return {
-          url: `organizations/${id}?includes[0]=organizationMandates.mandate`,
-          method: 'GET',
-        };
-      },
-    }),
+export const mandateSliceApi: typeof EntitySliceApi =
+  createEntitySlice<Mandate>(mandateApi as any, 'mandates');
 
-    addOrganizationMandate: build.mutation<any, { dataSent: any; id: string }>({
-      query: ({ dataSent, id }) => {
-        return {
-          url: `/organizations/assign-mandates/${id}`,
-          method: 'POST',
-          body: dataSent,
-        };
-      },
-      invalidatesTags: ['mandates'],
-    }),
-  }),
-});
-
-export const {
-  useGetMandateByOrganizationQuery,
-  useGetMyOrgMandateQuery,
-  useGetOrganiationMandateQuery,
-  useAddOrganizationMandateMutation,
-} = organizationMandateApi;
+export const { useListQuery } = mandateSliceApi;

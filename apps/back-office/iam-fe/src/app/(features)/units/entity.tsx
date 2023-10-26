@@ -2,7 +2,7 @@
 import { EntityConfig, EntityLayout } from '@megp/entity';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import { useListQuery } from './_api/unit.api';
+import { useListByIdQuery } from './_api/unit.api';
 import { Unit } from '@/models/unit';
 
 export function Entity({ children }: { children: React.ReactNode }) {
@@ -12,7 +12,9 @@ export function Entity({ children }: { children: React.ReactNode }) {
 
   const [data, setData] = useState<Unit[]>([]);
 
-  const { data: list, isSuccess } = useListQuery();
+  const { data: list, isSuccess } = useListByIdQuery(
+    '099454a9-bf8f-45f5-9a4f-6e9034230250',
+  );
 
   useEffect(() => {
     if (isSuccess) {
@@ -37,11 +39,11 @@ export function Entity({ children }: { children: React.ReactNode }) {
       onDetail: (selected: Unit) => {
         route.push(`/units/${selected?.id}`);
       },
-
+      // selectable: true,
       onSearch: (search) => {
         // console.log('search', search);
       },
-      selectable: true,
+
       columns: [
         {
           id: 'name',
@@ -92,6 +94,12 @@ export function Entity({ children }: { children: React.ReactNode }) {
       : 'detail';
 
   return (
-    <EntityLayout mode={mode} config={config} data={data} detail={children} />
+    <EntityLayout
+      mode={mode}
+      config={config}
+      data={data}
+      detail={children}
+      hasTree={true}
+    />
   );
 }

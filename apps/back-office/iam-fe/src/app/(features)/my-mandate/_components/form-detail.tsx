@@ -1,12 +1,7 @@
-import { Stack, TextInput, Textarea } from '@mantine/core';
-
-import { z, ZodType } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Mandate } from '@/models/mandate';
+import { LoadingOverlay, Stack, TextInput, Textarea } from '@mantine/core';
 import { useReadQuery } from '../_api/my-mandate.api';
 import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
-
 import { useForm } from 'react-hook-form';
 
 interface FormDetailProps {
@@ -22,9 +17,11 @@ export function FormDetail({ mode }: FormDetailProps) {
 
   const { id } = useParams();
 
-  const { data: selected, isSuccess: selectedSuccess } = useReadQuery(
-    id?.toString(),
-  );
+  const {
+    data: selected,
+    isSuccess: selectedSuccess,
+    isLoading,
+  } = useReadQuery(id?.toString());
 
   useEffect(() => {
     if (mode == 'detail' && selectedSuccess && selected !== undefined) {
@@ -36,7 +33,8 @@ export function FormDetail({ mode }: FormDetailProps) {
   }, [mode, reset, selected, selectedSuccess]);
 
   return (
-    <Stack>
+    <Stack pos={'relative'}>
+      <LoadingOverlay visible={isLoading} />
       <TextInput withAsterisk label="Name" {...register('name')} required />
 
       <Textarea

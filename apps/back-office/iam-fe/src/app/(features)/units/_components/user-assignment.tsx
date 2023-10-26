@@ -1,37 +1,34 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, Stack } from '@mantine/core';
+import { Modal } from '@mantine/core';
 import { Relation, RelationConfig } from '@megp/entity';
 import { User } from '@/models/user/user';
 import { notifications } from '@mantine/notifications';
 
 import {
-  useAssignUserToUnitMutation,
-  useGetUserByUnitIdQuery,
-} from '../_api/others.api';
+  useRelationMutation,
+  useLazyFirstRelationQuery,
+} from '../../users/_api/user-unit.api';
 import { useParams } from 'next/navigation';
-import { useListQuery } from '../../users/_api/user.api';
-import { useReadQuery } from '../_api/unit.api';
-import { logger } from '@megp/core-fe';
+import { useListByIdQuery } from '../../users/_api/user.api';
 
 const AddUserModal = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentAssigned, setCurrentAssigned] = useState<any[]>([]);
+
   const { id } = useParams();
 
-  const [assignUnit, { isLoading: isSaving }] = useAssignUserToUnitMutation();
-  const { data: unit } = useReadQuery(id?.toString());
-  const {
-    data: unitUser,
-    isSuccess: userSucced,
-    isLoading,
-  } = useGetUserByUnitIdQuery(id?.toString());
-  const { data: users } = useListQuery();
+  const [assign, { isLoading: isSaving }] = useRelationMutation();
+  const [trigger, { data: users, isSuccess }] = useLazyFirstRelationQuery();
+
+  const { data: list } = useListByIdQuery(
+    '099454a9-bf8f-45f5-9a4f-6e9034230250',
+  );
 
   const relationConfig: RelationConfig<User> = {
-    title: 'Users',
+    title: 'Users Assignment',
     columns: [
       {
-        id: 'fullName',
+        id: 'name',
         header: 'Name',
         accessorKey: 'fullName',
         cell: (info) => info.getValue(),
@@ -40,17 +37,15 @@ const AddUserModal = () => {
         },
       },
     ],
-    onSave: async () => {
-      const data = currentAssigned.map((user) => {
-        return {
-          userId: user.id,
-          unitId: id?.toString(),
-          unitName: unit?.name,
-        };
-      });
+    onSave: async (selected) => {
+      const users = selected.map((item) => `${item.id}`);
+      const data = {
+        unitId: id?.toString(),
+        user: users,
+      };
 
       try {
-        id && (await assignUnit({ data, id: id?.toString() }).unwrap());
+        id && (await assign(data).unwrap());
 
         notifications.show({
           message: 'user has been assigned to unit successfully.',
@@ -73,8 +68,8 @@ const AddUserModal = () => {
     title: 'Users',
     columns: [
       {
-        id: 'fullName',
-        header: 'Name',
+        id: 'name',
+        header: 'name',
         accessorKey: 'fullName',
         cell: (info) => info.getValue(),
         meta: {
@@ -95,25 +90,28 @@ const AddUserModal = () => {
   };
 
   useEffect(() => {
-    if (userSucced) {
-      const data = unitUser?.userUnits.map((user: any) => user?.user);
+    trigger(id?.toString());
+  }, [id, trigger]);
 
-      setCurrentAssigned(data);
+  useEffect(() => {
+    if (isSuccess) {
+      setCurrentAssigned(
+        users ? users.items.map((user: any) => user.user) : [],
+      );
     }
-  }, [userSucced, unitUser?.userUnits]);
-  logger.log(users);
+  }, [users, isSuccess]);
+
   return (
     <>
       <Relation
         config={relationConfig}
         data={currentAssigned}
         isSaving={isSaving}
-        isLoading={isLoading}
       />
       <Modal title="Users" opened={isModalOpen} onClose={handleCloseModal}>
         <Relation
           config={addConfig}
-          data={users ? users.items : []}
+          data={list ? list.items : []}
           currentSelected={currentAssigned}
           mode="modal"
         />

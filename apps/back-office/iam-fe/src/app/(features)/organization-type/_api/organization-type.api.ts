@@ -3,12 +3,12 @@ import entityApi from '@/store/entity/api';
 import { createEntitySlice, EntitySliceApi } from '@megp/entity';
 
 // get base organization type api
-const organizationTypeApi = entityApi.entitySliceApi['organizationTypes'];
+const organizationTypeApi = entityApi.entitySliceApi['organization-type'];
 
 export const organizationSliceApi: typeof EntitySliceApi =
   createEntitySlice<OrganizationType>(
     organizationTypeApi as any,
-    'organizationTypes',
+    'organization-type',
   );
 
 export const {

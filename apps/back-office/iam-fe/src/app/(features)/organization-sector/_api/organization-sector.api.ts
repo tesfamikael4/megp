@@ -3,12 +3,12 @@ import entityApi from '@/store/entity/api';
 import { createEntitySlice, EntitySliceApi } from '@megp/entity';
 
 // get base organization sector api
-const organizationSectorApi = entityApi.entitySliceApi['organizationSectors'];
+const organizationSectorApi = entityApi.entitySliceApi['organization-sector'];
 
 export const organizationSectorSliceApi: typeof EntitySliceApi =
   createEntitySlice<OrganizationSector>(
     organizationSectorApi as any,
-    'organizationSectors',
+    'organization-sector',
   );
 
 export const {

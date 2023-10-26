@@ -1,48 +1,51 @@
-import { Stack, TextInput, Textarea } from '@mantine/core';
-import { EntityButton } from '@megp/entity';
-import { z, ZodType } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { OrganizationSector } from '@/models/organization-sector';
-
+import { Box, LoadingOverlay, Stack, Table } from '@mantine/core';
 import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { useRouter } from 'next/navigation';
-import { notifications } from '@mantine/notifications';
 import { useForm } from 'react-hook-form';
 import { useReadQuery } from '../_api/mandate.api';
 
-interface FormDetailProps {
-  mode: 'new' | 'detail';
-}
-
-export function FormDetail({ mode }: FormDetailProps) {
-  const { reset, register } = useForm({});
+export function FormDetail() {
+  const { reset } = useForm({});
 
   const { id } = useParams();
 
-  const { data: selected, isSuccess: selectedSuccess } = useReadQuery(
-    id?.toString(),
-  );
+  const {
+    data: selected,
+    isSuccess: selectedSuccess,
+    isLoading,
+  } = useReadQuery(id?.toString());
 
   useEffect(() => {
-    if (mode == 'detail' && selectedSuccess && selected !== undefined) {
+    if (selectedSuccess && selected !== undefined) {
       reset({
         name: selected?.name,
         description: selected?.description,
       });
     }
-  }, [mode, reset, selected, selectedSuccess]);
+  }, [reset, selected, selectedSuccess]);
 
   return (
-    <Stack>
-      <TextInput withAsterisk label="Name" {...register('name')} required />
+    <Stack pos="relative">
+      <LoadingOverlay visible={isLoading} />
+      <div className="mt-4 mb-4 border border-slate-300">
+        <Table className="w-100">
+          <tbody>
+            <tr className="border-b-2 border-slate-300">
+              <td className="w-1/4 bg-gray-100 p-2">
+                <th>Name</th>
+              </td>
+              <td className="p-2">{selected?.name}</td>
+            </tr>
 
-      <Textarea
-        label="Description"
-        autosize
-        minRows={2}
-        {...register('description')}
-      />
+            <tr className="">
+              <td className="bg-gray-100 p-2 ">
+                <th>Description</th>
+              </td>
+              <td className="p-2">{selected?.description}</td>
+            </tr>
+          </tbody>
+        </Table>
+      </div>
     </Stack>
   );
 }

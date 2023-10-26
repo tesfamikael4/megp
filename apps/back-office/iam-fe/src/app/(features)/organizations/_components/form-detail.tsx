@@ -16,8 +16,7 @@ import {
   useUpdateMutation,
   useCreateMutation,
 } from '../_api/organization.api';
-import { useListQuery } from '../../organization-sector/_api/organizationSector.api';
-import { useListQuery as useListTypeQuery } from '../../organization-type/_api/organizationType.api';
+import { useListQuery as useListTypeQuery } from '../../organization-type/_api/organization-type.api';
 import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
@@ -31,7 +30,7 @@ interface FormDetailProps {
 const defaultValues = {
   name: '',
   typeId: null,
-  sectorId: null,
+
   shortName: '',
   description: '',
 };
@@ -44,10 +43,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       invalid_type_error: 'This field is required to be a string',
     }),
     code: z.string().optional(),
-    sectorId: z.string({
-      required_error: 'This field is required',
-      invalid_type_error: 'This field is required to be a string',
-    }),
+
     shortName: z.string().min(1, { message: 'This field is required' }),
     description: z.string().optional(),
   });
@@ -67,12 +63,14 @@ export function FormDetail({ mode }: FormDetailProps) {
   const [create, { isLoading: isSaving }] = useCreateMutation();
   const [update, { isLoading: isUpdating }] = useUpdateMutation();
   const [remove, { isLoading: isDeleting }] = useDeleteMutation();
+  const [activation, { isLoading: isActivating }] = useUpdateMutation();
+
   const {
     data: selected,
     isSuccess: selectedSuccess,
     isLoading,
   } = useReadQuery(id?.toString());
-  const { data: sector } = useListQuery();
+
   const { data: orgType } = useListTypeQuery();
 
   const onCreate = async (data) => {
@@ -84,6 +82,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       notifications.show({
         message: 'organization created successfully',
         title: 'Success',
+        color: 'green',
       });
     } catch (err) {
       notifications.show({
@@ -99,6 +98,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       notifications.show({
         message: 'organization updated successfully',
         title: 'Success',
+        color: 'green',
       });
     } catch {
       notifications.show({
@@ -114,6 +114,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       notifications.show({
         message: 'organization  deleted successfully',
         title: 'Success',
+        color: 'green',
       });
       router.push('/organizations');
     } catch {
@@ -124,6 +125,31 @@ export function FormDetail({ mode }: FormDetailProps) {
       });
     }
   };
+  const onActivate = async () => {
+    const dataSent = {
+      ...selected,
+      isActive: !selected?.isActive,
+    };
+    try {
+      await activation({ ...dataSent, id: id?.toString() });
+      notifications.show({
+        message: `organization ${
+          selected?.isActive ? 'Deactivated' : 'Activated'
+        } successfully`,
+        title: 'Success',
+        color: 'green',
+      });
+    } catch {
+      notifications.show({
+        message: `error in ${
+          selected?.isActive ? 'Deactivating' : 'Activating'
+        }  organization`,
+        title: 'Success',
+        color: 'red',
+      });
+    }
+  };
+
   const onReset = async () => {
     reset({ ...defaultValues });
   };
@@ -136,88 +162,59 @@ export function FormDetail({ mode }: FormDetailProps) {
         shortName: selected?.shortName,
         description: selected?.description,
         typeId: selected?.typeId,
-        sectorId: selected?.sectorId,
       });
     }
   }, [mode, reset, selected, selectedSuccess]);
 
   return (
-    <Stack>
-      <Box pos="relative">
-        <LoadingOverlay visible={isLoading} />
-        <TextInput
-          withAsterisk
-          label="Name"
-          error={errors?.name ? errors?.name?.message?.toString() : ''}
-          {...register('name')}
-        />
-        <TextInput
-          withAsterisk
-          label="Short name"
-          error={
-            errors?.shortName ? errors?.shortName?.message?.toString() : ''
-          }
-          required
-          {...register('shortName')}
-        />
+    <Stack pos="relative">
+      <LoadingOverlay visible={isLoading} />
+      <TextInput
+        withAsterisk
+        label="Name"
+        error={errors?.name ? errors?.name?.message?.toString() : ''}
+        {...register('name')}
+      />
+      <TextInput
+        withAsterisk
+        label="Short name"
+        error={errors?.shortName ? errors?.shortName?.message?.toString() : ''}
+        required
+        {...register('shortName')}
+      />
 
-        <Textarea
-          label="Description"
-          autosize
-          minRows={2}
-          {...register('description')}
-        />
+      <Textarea
+        label="Description"
+        autosize
+        minRows={2}
+        {...register('description')}
+      />
 
-        <Controller
-          name="typeId"
-          control={control}
-          render={({ field: { onChange, value } }) => (
-            <Select
-              name="name"
-              label="Organization Type"
-              value={value}
-              withAsterisk
-              error={errors?.typeId ? errors?.typeId?.message?.toString() : ''}
-              onChange={onChange}
-              data={
-                orgType?.items?.map((type) => ({
-                  value: type?.id,
-                  label: type?.name,
-                })) || []
-              }
-            />
-          )}
-        />
-        <Controller
-          name="sectorId"
-          control={control}
-          render={({ field: { onChange, value } }) => (
-            <Select
-              withAsterisk
-              name="name"
-              error={
-                errors?.sectorId ? errors?.sectorId?.message?.toString() : ''
-              }
-              label="Organization Sector"
-              value={value}
-              onChange={onChange}
-              data={
-                sector?.items?.map((type) => ({
-                  value: type?.id,
-                  label: type?.name,
-                })) || []
-              }
-            />
-          )}
-        />
-        <TextInput
-          label={'External Organization Code'}
-          disabled
-          {...register('code')}
-        />
-      </Box>
+      <Controller
+        name="typeId"
+        control={control}
+        render={({ field: { onChange, value } }) => (
+          <Select
+            name="name"
+            label="Organization Type"
+            value={value}
+            withAsterisk
+            error={errors?.typeId ? errors?.typeId?.message?.toString() : ''}
+            onChange={onChange}
+            data={
+              orgType?.items?.map((type) => ({
+                value: type?.id,
+                label: type?.name,
+              })) || []
+            }
+          />
+        )}
+      />
+
       <EntityButton
         mode={mode}
+        data={selected}
+        onActivate={handleSubmit(onActivate)}
         onCreate={handleSubmit(onCreate)}
         onUpdate={handleSubmit(onUpdate)}
         onDelete={handleSubmit(onDelete)}
@@ -225,6 +222,7 @@ export function FormDetail({ mode }: FormDetailProps) {
         isSaving={isSaving}
         isUpdating={isUpdating}
         isDeleting={isDeleting}
+        isActivating={isActivating}
       />
     </Stack>
   );

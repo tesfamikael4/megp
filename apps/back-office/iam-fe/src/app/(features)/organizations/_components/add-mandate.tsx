@@ -1,30 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import { Modal } from '@mantine/core';
 import { Relation, RelationConfig } from '@megp/entity';
+
 import { Mandate } from '@/models/mandate';
 import { notifications } from '@mantine/notifications';
+import { useListQuery } from '../_api/mandate.api';
 import {
-  useAddOrganizationMandateMutation,
-  useGetMandateByOrganizationQuery,
-  useGetOrganiationMandateQuery,
-} from '../_api/mandate.api';
+  useRelationMutation,
+  useLazySecondRelationQuery,
+} from '../_api/organization-mandate.api';
 import { useParams } from 'next/navigation';
 
 const AddEntityModal = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentAssignedMandates, setCurrentAssignedMandates] = useState<any[]>(
-    [],
-  );
+
+  const [currentAssigned, setCurrentAssigned] = useState<any[]>([]);
   const { id } = useParams();
 
-  const [assignMandates, { isLoading: isSaving }] =
-    useAddOrganizationMandateMutation();
+  const [assignMandates, { isLoading: isSaving }] = useRelationMutation();
 
-  const { data: mandats, isLoading } = useGetMandateByOrganizationQuery(
-    id?.toString(),
-  );
-  const { data: organizationMandates, isSuccess } =
-    useGetOrganiationMandateQuery(id?.toString());
+  const { data: mandates } = useListQuery();
+
+  const [trigger, { data: organizationMandates, isSuccess }] =
+    useLazySecondRelationQuery();
 
   const relationConfig: RelationConfig<Mandate> = {
     title: 'Mandate',
@@ -48,18 +46,15 @@ const AddEntityModal = () => {
         },
       },
     ],
-    onSave: async () => {
-      const dataSent = currentAssignedMandates.map((item) => {
-        return {
-          mandateId: item?.id,
-          mandateName: item?.name,
-          organizationId: id?.toString(),
-          isSingleAssignment: item?.isSingleAssignment,
-        };
-      });
+    onSave: async (selected) => {
+      const mandates = selected.map((item) => `${item.id}`);
+      const data = {
+        organizationId: id?.toString(),
+        mandate: mandates,
+      };
 
       try {
-        id && (await assignMandates({ dataSent, id: id?.toString() }).unwrap());
+        id && (await assignMandates(data).unwrap());
 
         notifications.show({
           message: 'Mandate has been assigned to organization successfully.',
@@ -101,7 +96,7 @@ const AddEntityModal = () => {
       },
     ],
     onSave: (selected) => {
-      setCurrentAssignedMandates(selected);
+      setCurrentAssigned(selected);
       setIsModalOpen(false);
     },
 
@@ -113,29 +108,32 @@ const AddEntityModal = () => {
   };
 
   useEffect(() => {
-    if (isSuccess) {
-      const data = organizationMandates?.organizationMandates?.map(
-        (manda: any) => manda?.mandate,
-      );
+    trigger(id?.toString());
+  }, [id, trigger]);
 
-      setCurrentAssignedMandates(data);
+  useEffect(() => {
+    if (isSuccess) {
+      setCurrentAssigned(
+        organizationMandates
+          ? organizationMandates.items.map((mandate: any) => mandate.mandate)
+          : [],
+      );
     }
-  }, [assignMandates, isSuccess, organizationMandates?.organizationMandates]);
+  }, [isSuccess, organizationMandates]);
 
   return (
     <>
       <Relation
         config={relationConfig}
-        data={currentAssignedMandates}
+        data={currentAssigned}
         isSaving={isSaving}
-        isLoading={isLoading}
       />
       <Modal title="Add Entity" opened={isModalOpen} onClose={handleCloseModal}>
         <Relation
           config={addConfig}
-          data={mandats ? mandats.items : []}
+          data={mandates ? mandates.items : []}
           mode="modal"
-          currentSelected={currentAssignedMandates}
+          currentSelected={currentAssigned}
         />
       </Modal>
     </>

@@ -2,8 +2,11 @@
 import { EntityConfig, EntityLayout } from '@megp/entity';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import { useListQuery } from './_api/user.api';
+// import { useGetUserInOrganizationQuery } from './_api/org-user.api';
+import { useListByIdQuery } from './_api/user.api';
+
 import { User } from '@/models/user/user';
+import { logger } from '@megp/core-fe';
 
 export function Entity({ children }: { children: React.ReactNode }) {
   const route = useRouter();
@@ -12,18 +15,20 @@ export function Entity({ children }: { children: React.ReactNode }) {
 
   const [data, setData] = useState<User[]>([]);
 
-  const { data: list, isSuccess } = useListQuery();
+  const { data: list, isSuccess } = useListByIdQuery(
+    '099454a9-bf8f-45f5-9a4f-6e9034230250',
+  );
 
   useEffect(() => {
     if (isSuccess) {
       setData(
-        list.items.map((item: User) => {
+        list?.items?.map((item: User) => {
           return { ...item, isActive: item.isActive ? 'Yes' : 'No ' };
         }),
       );
     }
   }, [isSuccess, list?.items]);
-
+  logger.log(list);
   const config: EntityConfig<User> = useMemo(() => {
     return {
       basePath: '/users',
@@ -41,10 +46,10 @@ export function Entity({ children }: { children: React.ReactNode }) {
       onSearch: (search) => {
         // console.log('search', search);
       },
-      selectable: true,
+
       columns: [
         {
-          id: 'fullName',
+          id: 'name',
           header: 'Name',
           accessorKey: 'fullName',
           cell: (info) => info.getValue(),

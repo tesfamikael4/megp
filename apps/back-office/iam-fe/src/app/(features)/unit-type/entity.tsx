@@ -2,7 +2,7 @@
 import { EntityConfig, EntityLayout } from '@megp/entity';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
-import { useListQuery } from './_api/unitType.api';
+import { useListByIdQuery } from './_api/unit-type.api';
 import { UnitType } from '@/models/unit-type';
 
 export function Entity({ children }: { children: React.ReactNode }) {
@@ -10,7 +10,9 @@ export function Entity({ children }: { children: React.ReactNode }) {
 
   const pathname = usePathname();
 
-  const { data: list } = useListQuery();
+  const { data: list } = useListByIdQuery(
+    '099454a9-bf8f-45f5-9a4f-6e9034230250',
+  );
 
   useEffect;
   const config: EntityConfig<UnitType> = useMemo(() => {
@@ -30,7 +32,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
       onSearch: (search) => {
         // console.log('search', search);
       },
-      selectable: true,
+
       columns: [
         {
           id: 'name',
