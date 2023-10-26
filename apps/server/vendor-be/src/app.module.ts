@@ -6,7 +6,6 @@ import { CategoriesModule } from './categories/category.module';
 import { VendorRegistrationModule } from './vendor-registration/vendor-registration.module';
 import { BpmModule } from './bpm/bpm.module';
 import { AuthorizationModule } from './authorization';
-
 @Module({
   imports: [
     ConfigModule.forRoot({

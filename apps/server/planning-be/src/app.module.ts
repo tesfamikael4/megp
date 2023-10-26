@@ -4,8 +4,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from './shared/typeorm/typeorm.service';
 import { AuthorizationModule } from './authorization';
 import { PrebudgetModule } from './prebudget/prebudget.module';
-import { ItemMasterModule } from './item-master/item-master.module';
-
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -14,8 +12,6 @@ import { ItemMasterModule } from './item-master/item-master.module';
     }),
     TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
     AuthorizationModule,
-    ItemMasterModule,
-    PrebudgetModule,
   ],
   providers: [],
   controllers: [],
