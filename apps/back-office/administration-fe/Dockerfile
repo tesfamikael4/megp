@@ -64,11 +64,15 @@ COPY --from=installer --chown=nextjs:nodejs /app/apps/back-office/administration
 
 
 # Set environment variables with default values
-ENV ENV_AUTH_API ""
-ENV ENV_API_BASE_PATH ""
-ENV ENV_WEBSITE_DOMAIN ""
-ENV ENV_WEBSITE_BASE_PATH ""
+
+ENV ENV_AUTH_API="AUTH_API"
+ENV ENV_API_BASE_PATH="API_BASE_PATH"
+ENV ENV_WEBSITE_DOMAIN="WEBSITE_DOMAIN"
+ENV ENV_WEBSITE_BASE_PATH="WEBSITE_BASE_PATH"
+ENV ENV_PUBLIC_VENDOR_API="PUB_VENDOR_API"
+ENV ENV_PUBLIC_VENDOR_API="PUB_PLANNING_API"
 ENV ENV_RECAPTCHA_SITE_KEY ""
+
 
 # Specify the command to run your application, passing the environment variables
 CMD ["node", "apps/back-office/administration-fe/server.js"]
