@@ -1,0 +1,33 @@
+.sidebarLinkRoot {
+  @apply w-64;
+}
+.sidebarLinksTitleWrapper {
+  @apply text-xs rounded-lg mx-3  text-zinc-500;
+}
+.sidebarLinksTitle {
+  @apply text-xs font-semibold tracking-wider uppercase;
+  color: var(--mantine-color-gray-7);
+}
+
+.sidebarLinksLinkLabel {
+  @apply text-base;
+}
+.sidebarLinksLinkIcon {
+  @apply mr-6;
+}
+
+.sidebarLinksGroupControl {
+  @apply font-bold  text-8xl no-underline  py-1;
+}
+.sidebarLinksGroupActiveControl {
+  @apply font-bold;
+}
+.sidebarLinksGroupLink {
+  @apply text-sm no-underline ml-8 py-2 px-3;
+  border-left: solid 2px var(--mantine-color-gray-4);
+}
+.sidebarLinksGroupActiveLink {
+}
+.sidebarLinksGroupChevron {
+  @apply transition-transform duration-200 ease-in-out;
+}

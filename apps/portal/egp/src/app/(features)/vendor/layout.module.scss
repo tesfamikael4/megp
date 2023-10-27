@@ -1,0 +1,16 @@
+.nav{
+    @apply min-h-screen transform-gpu transition-transform border border-r;
+      &[data-open='true'] {
+       @apply block md:hidden;
+     }
+     &[data-open='false'] {
+       @apply hidden md:block;
+     }
+     min-width: 250px;
+     background-color: var(--mantine-color-gray-1);
+}
+.main {
+    @apply flex-grow border border-r w-full p-4 ;
+    /* background-color: var(--mantine-color-gray-1); */
+    width: 72.8125rem;
+}
