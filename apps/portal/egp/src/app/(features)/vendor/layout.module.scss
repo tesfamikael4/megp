@@ -7,7 +7,7 @@
        @apply hidden md:block;
      }
      min-width: 250px;
-     background-color: var(--mantine-color-gray-1);
+     /* background-color: var(--mantine-color-gray-1); */
 }
 .main {
     @apply flex-grow border border-r w-full p-4 ;

@@ -9,3 +9,13 @@ export const vendorRegistrationApi = createApi({
   }),
   endpoints: () => ({}),
 });
+
+const URL2 = process.env.NEXT_PUBLIC_VENDOR_DATA_GETAWAY_API;
+export const vendorDataGetawayApi = createApi({
+  reducerPath: 'vendorDataGetaway',
+  refetchOnFocus: true,
+  baseQuery: fetchBaseQuery({
+    baseUrl: URL2,
+  }),
+  endpoints: () => ({}),
+});

@@ -41,13 +41,13 @@ export interface GetFormResponse extends FormData {
 }
 
 export interface CreateVendorIdRequest {
-  status: string;
+  status?: string;
   name: string;
   businessType: string;
   origin: string;
-  district: string;
   country: string;
   tinNumber: string;
+  tinIssuedDate: string;
 }
 export interface CreateVendorIdResponse {
   vendorId: string;

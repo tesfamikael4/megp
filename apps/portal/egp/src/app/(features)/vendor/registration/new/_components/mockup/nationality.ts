@@ -1000,3 +1000,9 @@ export const nationalityOptions = [
     label: 'Zimbabwe',
   },
 ];
+
+export function getNationalityValues(skipValue: string = ''): any {
+  return nationalityOptions
+    .filter((option) => option.value !== skipValue)
+    .map((option) => option.value);
+}

@@ -13,7 +13,7 @@ function StyledStepper() {
       onStepClick={setActive}
       orientation="vertical"
     >
-      <Stepper.Step label="Vendor Basic Information" />
+      <Stepper.Step label="Basic Information" />
       <Stepper.Step label="Detailed Information" />
       <Stepper.Step label="PDDA Registration" />
       <Stepper.Step label="Payment" />
