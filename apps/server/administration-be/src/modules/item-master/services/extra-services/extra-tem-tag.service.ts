@@ -7,10 +7,10 @@ import { ItemTag } from 'src/entities/item-tag.entity';
 import { Tag } from 'src/entities/tag.entity';
 
 @Injectable()
-export class ExtraItemTagService extends ExtraCrudService<Tag> {
+export class ExtraItemTagService extends ExtraCrudService<ItemTag> {
   constructor(
-    @InjectRepository(Tag)
-    private readonly tagRepository: Repository<Tag>,
+    @InjectRepository(ItemTag)
+    private readonly tagRepository: Repository<ItemTag>,
   ) {
     super(tagRepository);
   }

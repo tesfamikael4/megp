@@ -53,6 +53,6 @@ export class ItemMaster extends CommonEntity {
   @Column({ default: true })
   isActive: boolean;
 
-  @OneToMany(() => ItemTag, (entity) => entity.itemMaster)
+  @OneToMany(() => ItemTag, (entity) => entity.itemMaster, { cascade: true })
   itemTags: ItemTag[];
 }
