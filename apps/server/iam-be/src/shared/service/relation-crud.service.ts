@@ -24,12 +24,6 @@ export class RelationCrudService<TEntity extends BaseEntity> {
 
     const childData: any[] = payload[include];
     childData.forEach((data) => {
-      // const child = {};
-      // child[firstEntityIdName] = entityId
-      // child[secondEntityIdName] = data
-
-      // parsedPayload.push(child);
-
       parsedPayload.push({
         [firstEntityIdName]: entityId,
         [secondEntityIdName]: data,

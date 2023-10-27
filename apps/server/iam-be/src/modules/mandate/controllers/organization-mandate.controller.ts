@@ -12,7 +12,10 @@ import { RelationCrudDecorator } from 'src/shared/decorators/crud-options.decora
 })
 @Controller('organization-mandates')
 @ApiTags('organization-mandates')
-export class OrganizationMandateController extends RelationCrudController<OrganizationMandate>() {
+export class OrganizationMandateController extends RelationCrudController<OrganizationMandate>(
+  'mandate',
+  'organization',
+) {
   constructor(
     private readonly organizationMandateService: OrganizationMandateService,
   ) {
