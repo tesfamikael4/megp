@@ -19,6 +19,11 @@ export class ItemMasterService extends EntityCrudService<ItemMaster> {
     itemData.itemCode = await this.getItemCode(itemData.commodityCode);
     return await super.create(itemData);
   }
+  async createWithTags(itemData: ItemMaster, req?: any): Promise<ItemMaster> {
+    itemData.itemCode = await this.getItemCode(itemData.commodityCode);
+
+    return await super.create(itemData);
+  }
 
   async updateStatus(id: string, status: boolean): Promise<ItemMaster> {
     const entity = await this.findOneOrFail(id);

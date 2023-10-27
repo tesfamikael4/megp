@@ -4,13 +4,14 @@ import { ExtraCrudDecorator } from 'src/shared/decorators/crud-options.decorator
 import { ExtraCrudController } from 'src/shared/controller/extra-crud.controller';
 import { ExtraItemTagService } from '../services/extra-services/extra-tem-tag.service';
 import { Tag } from 'src/entities/tag.entity';
+import { ItemTag } from 'src/entities/item-tag.entity';
 
 @ExtraCrudDecorator({
   entityIdName: 'itemMasterId',
 })
 @Controller('extra-item-tags')
 @ApiTags('Extra Item Tag')
-export class ExtraItemTagController extends ExtraCrudController<Tag> {
+export class ExtraItemTagController extends ExtraCrudController<ItemTag> {
   constructor(private readonly extraItemTagService: ExtraItemTagService) {
     super(extraItemTagService);
   }
