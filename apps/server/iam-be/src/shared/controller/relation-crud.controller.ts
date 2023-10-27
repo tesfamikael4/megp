@@ -13,28 +13,34 @@ import { DataResponseFormat } from '../api-data';
 import { BaseEntity } from '../entities/base.entity';
 import { RelationCrudService } from '../service/relation-crud.service';
 import { BaseAPIDto } from './extra-crud.controller';
-import { ApiBody } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody } from '@nestjs/swagger';
 
 export function RelationCrudController<
   TEntity extends BaseEntity,
-  TCreateDto = NonNullable<unknown>,
-  TUpdateDto = NonNullable<unknown>,
->(createDto?: { new (): TCreateDto }, updateDto?: { new (): TUpdateDto }) {
+  TCreateFirstDto = NonNullable<unknown>,
+  TCreateSecondDto = NonNullable<unknown>,
+>(
+  first = 'first',
+  second = 'second',
+  createFirstDto?: { new (): TCreateFirstDto },
+  createSecondDto?: { new (): TCreateSecondDto },
+) {
   @Controller()
   @UseInterceptors(/* your interceptors if any */)
+  @ApiBearerAuth()
   class RelationCrudControllerHost {
     constructor(public readonly service: RelationCrudService<TEntity>) {}
 
-    @Post('first')
-    @ApiBody({ type: BaseAPIDto })
+    @Post(`assign-${first}`)
+    @ApiBody({ type: createFirstDto || BaseAPIDto })
     async bulkSaveFirst(@Body() itemData: any, @Req() req?: any): Promise<any> {
       const crudOptions = Reflect.getMetadata('crudOptions', this.constructor);
 
       return this.service.bulkSaveFirst(itemData, crudOptions);
     }
 
-    @Post('second')
-    @ApiBody({ type: BaseAPIDto })
+    @Post(`assign-${second}`)
+    @ApiBody({ type: createSecondDto || BaseAPIDto })
     async bulkSaveSecond(
       @Body() itemData: any,
       @Req() req?: any,
@@ -44,7 +50,7 @@ export function RelationCrudController<
       return this.service.bulkSaveSecond(itemData, crudOptions);
     }
 
-    @Get(':id/first')
+    @Get(`:id/${first}`)
     async findAllFirst(
       @Param('id') id: string,
       @Query() query: CollectionQuery,
@@ -55,7 +61,7 @@ export function RelationCrudController<
       return this.service.findAllFirst(id, query, crudOptions);
     }
 
-    @Get(':id/second')
+    @Get(`:id/${second}`)
     async findAllSecond(
       @Param('id') id: string,
       @Query() query: CollectionQuery,

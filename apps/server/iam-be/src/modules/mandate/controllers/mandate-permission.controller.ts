@@ -12,7 +12,10 @@ import { RelationCrudDecorator } from 'src/shared/decorators/crud-options.decora
 })
 @Controller('mandate-permissions')
 @ApiTags('mandate-permissions')
-export class MandatePermissionController extends RelationCrudController<MandatePermission>() {
+export class MandatePermissionController extends RelationCrudController<MandatePermission>(
+  'permission',
+  'mandate',
+) {
   constructor(
     private readonly mandatePermissionService: MandatePermissionService,
   ) {

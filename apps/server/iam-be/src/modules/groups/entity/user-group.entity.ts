@@ -15,10 +15,6 @@ export class UserGroup {
 
   @Column()
   userId: string;
-  @Column({ nullable: true })
-  userName: string;
-  @Column({ nullable: true })
-  groupName: string;
 
   @ManyToOne(() => User, (user) => user.userGroups)
   @JoinColumn({ name: 'userId' })

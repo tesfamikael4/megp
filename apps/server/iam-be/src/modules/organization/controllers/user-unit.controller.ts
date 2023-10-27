@@ -12,7 +12,10 @@ import { RelationCrudDecorator } from 'src/shared/decorators/crud-options.decora
 })
 @Controller('user-unit')
 @ApiTags('user-unit')
-export class UserUnitController extends RelationCrudController<UserUnit>() {
+export class UserUnitController extends RelationCrudController<UserUnit>(
+  'unit',
+  'user',
+) {
   constructor(private readonly userUnitService: UserUnitService) {
     super(userUnitService);
   }

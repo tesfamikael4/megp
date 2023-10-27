@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsUUID } from 'class-validator';
+import { IsArray, IsString, IsUUID } from 'class-validator';
 import { UserGroup } from '../entity/user-group.entity';
 
 export class CreateUserGroupDto {
@@ -11,14 +11,6 @@ export class CreateUserGroupDto {
   @IsUUID()
   groupId: string;
 
-  @ApiProperty()
-  @IsString()
-  userName: string;
-
-  @ApiProperty()
-  @IsString()
-  groupName: string;
-
   static fromDto(permissionDto: CreateUserGroupDto): UserGroup {
     const permission: UserGroup = new UserGroup();
     if (!permissionDto) {
@@ -26,10 +18,6 @@ export class CreateUserGroupDto {
     }
 
     permission.groupId = permissionDto.groupId;
-
-    permission.userId = permissionDto.userId;
-
-    permission.userId = permissionDto.userId;
 
     permission.userId = permissionDto.userId;
 
@@ -59,10 +47,6 @@ export class UpdateUserGroupDto extends CreateUserGroupDto {
 
     permission.userId = permissionDto.userId;
 
-    permission.userName = permissionDto.userName;
-
-    permission.groupName = permissionDto.groupName;
-
     return permission;
   }
 }
@@ -77,10 +61,6 @@ export class UserGroupResponseDto extends UpdateUserGroupDto {
 
     permission.userId = permissionDto.userId;
 
-    permission.userName = permissionDto.userName;
-
-    permission.groupName = permissionDto.groupName;
-
     return permissionDto;
   }
 
@@ -89,4 +69,24 @@ export class UserGroupResponseDto extends UpdateUserGroupDto {
       UserGroupResponseDto.toDto(permission),
     );
   }
+}
+
+export class AssignUserDto {
+  @ApiProperty()
+  @IsUUID()
+  groupId: string;
+
+  @ApiProperty()
+  @IsArray()
+  user: string[];
+}
+
+export class AssignGroupDto {
+  @ApiProperty()
+  @IsUUID()
+  userId: string;
+
+  @ApiProperty()
+  @IsArray()
+  group: string[];
 }

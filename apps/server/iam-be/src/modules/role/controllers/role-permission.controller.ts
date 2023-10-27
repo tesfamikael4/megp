@@ -12,7 +12,10 @@ import { RelationCrudDecorator } from 'src/shared/decorators/crud-options.decora
 })
 @Controller('role-permissions')
 @ApiTags('role-permissions')
-export class RolePermissionNewController extends RelationCrudController<RolePermission>() {
+export class RolePermissionNewController extends RelationCrudController<RolePermission>(
+  'permission',
+  'role',
+) {
   constructor(private readonly rolePermissionService: RolePermissionService) {
     super(rolePermissionService);
   }

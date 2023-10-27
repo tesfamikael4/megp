@@ -15,7 +15,7 @@ import { DeepPartial } from 'typeorm';
 import { CollectionQuery } from '../collection-query';
 import { DataResponseFormat } from '../api-data';
 import { BaseEntity } from '../entities/base.entity';
-import { ApiBody } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody } from '@nestjs/swagger';
 import { BaseAPIDto } from './extra-crud.controller';
 
 export function EntityCrudController<
@@ -25,6 +25,7 @@ export function EntityCrudController<
 >(createDto?: { new (): TCreateDto }, updateDto?: { new (): TUpdateDto }) {
   @Controller()
   @UseInterceptors(/* your interceptors if any */)
+  @ApiBearerAuth()
   class EntityCrudControllerHost {
     constructor(public readonly service: EntityCrudService<TEntity>) {}
 
