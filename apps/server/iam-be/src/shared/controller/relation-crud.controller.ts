@@ -25,12 +25,23 @@ export function RelationCrudController<
   class RelationCrudControllerHost {
     constructor(public readonly service: RelationCrudService<TEntity>) {}
 
-    @Post()
+    @Post('first')
     @ApiBody({ type: BaseAPIDto })
-    async bulkSave(@Body() itemData: any, @Req() req?: any): Promise<any> {
+    async bulkSaveFirst(@Body() itemData: any, @Req() req?: any): Promise<any> {
       const crudOptions = Reflect.getMetadata('crudOptions', this.constructor);
 
-      return this.service.bulkSave(itemData, crudOptions);
+      return this.service.bulkSaveFirst(itemData, crudOptions);
+    }
+
+    @Post('second')
+    @ApiBody({ type: BaseAPIDto })
+    async bulkSaveSecond(
+      @Body() itemData: any,
+      @Req() req?: any,
+    ): Promise<any> {
+      const crudOptions = Reflect.getMetadata('crudOptions', this.constructor);
+
+      return this.service.bulkSaveSecond(itemData, crudOptions);
     }
 
     @Get(':id/first')
