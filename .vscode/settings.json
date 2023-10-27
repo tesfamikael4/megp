@@ -1,5 +1,14 @@
 {
-  "cSpell.words": ["libphonenumber", "Mantine", "megp", "Perago"],
+  "cSpell.words": [
+    "bussines",
+    "FPPA",
+    "libphonenumber",
+    "Mantine",
+    "MBRS",
+    "megp",
+    "NCIC",
+    "Perago"
+  ],
   "editor.formatOnPaste": true,
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",

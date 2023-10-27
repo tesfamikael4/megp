@@ -7,11 +7,11 @@ import {
   GetFormRequest,
   GetFormResponse,
 } from '@/models/vendorRegistration';
-import { vendorRegistrationApi } from './api';
+import {
+  vendorDataGetawayApi,
+  vendorRegistrationApi,
+} from '@/store/api/vendor_registration/api';
 
-// Replace these types with your actual types for any objects
-
-// Define your CRUD API endpoints
 export const vendorRegistrationQuery = vendorRegistrationApi.injectEndpoints({
   endpoints: (builder) => ({
     getForm: builder.query<GetFormResponse, GetFormRequest>({
@@ -44,13 +44,6 @@ export const vendorRegistrationQuery = vendorRegistrationApi.injectEndpoints({
       }),
     }),
 
-    deleteFormDraft: builder.mutation<void, number>({
-      query: (id) => ({
-        url: `delete/${id}`,
-        method: 'DELETE',
-      }),
-    }),
-
     getBankList: builder.query<BankNamesResponse[], any>({
       query: () => ({
         url: `api/BankAccountDetail/fetch-bank`,
@@ -74,13 +67,48 @@ export const vendorRegistrationQuery = vendorRegistrationApi.injectEndpoints({
   }),
 });
 
+export const vendorDataGetawayQuery = vendorDataGetawayApi.injectEndpoints({
+  endpoints: (builder) => ({
+    getMRAData: builder.query<any, any>({
+      query: (data) => ({
+        url: `tax-payer/${data.tin}/${data.issuedDate}`,
+        method: 'GET',
+      }),
+    }),
+    getMBRSData: builder.query<any, any>({
+      query: (data) => ({
+        url: `customer-bussines-info/${data.tin}}`,
+        method: 'GET',
+      }),
+    }),
+    getFPPAData: builder.query<any, any>({
+      query: (data) => ({
+        url: `fppa-vendor/${data.tin}`,
+        method: 'GET',
+      }),
+    }),
+    getNCICData: builder.query<any, any>({
+      query: (data) => ({
+        url: `ncic-vendors/${data.tin}`,
+        method: 'GET',
+      }),
+    }),
+  }),
+});
+
 export const {
   useGetFormQuery,
   useCreateVendorIdMutation,
   useAddFormMutation,
   useUpdateFormMutation,
-  useDeleteFormDraftMutation,
   useGetBankListQuery,
   useGetLineOfBusinessQuery,
   useGetPriceRangeQuery,
 } = vendorRegistrationQuery;
+
+export const {
+  useLazyGetMRADataQuery,
+  useLazyGetMBRSDataQuery,
+  useLazyGetFPPADataQuery,
+  useLazyGetNCICDataQuery,
+} = vendorDataGetawayQuery;

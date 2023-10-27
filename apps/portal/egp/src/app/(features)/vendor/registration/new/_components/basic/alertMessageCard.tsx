@@ -1,24 +1,23 @@
 'use client';
 import { Alert, List, Text } from '@mantine/core';
 import { IconAlertCircle, IconPin } from '@tabler/icons-react';
-import style from './register.module.scss';
 
-export const AlertMessageCard = () => {
+export const AlertMessage = () => {
   return (
     <Alert
       icon={<IconAlertCircle size="1rem" />}
       title={
-        <Text className="font-[500] text-xs">
+        <Text size="sm" fz="xs">
           To access the supplier registration electronic form, please provide
           your company tax identification number, country of registration, and
           legal form of your company.
         </Text>
       }
       color="cyan"
-      className={style.reqAlert}
+      className="border rounded-md"
     >
-      <Text className="font-[600] m-6">Why Register?</Text>
-      <List spacing="sm" size="sm" center icon={<IconPin size="1rem" />}>
+      <Text className="m-6">Why Register?</Text>
+      <List spacing="xs" size="xs" center icon={<IconPin size="1rem" />}>
         <List.Item>
           Participate actively in tenders. Submit your bids and request for
           clarifications
@@ -31,7 +30,7 @@ export const AlertMessageCard = () => {
         </List.Item>
       </List>
 
-      <Text mt={20} size="sm">
+      <Text mt={20} size="xs">
         Note: To get approval of your company registration, you need to attach a
         scanned copy of a signed and stamped official power of attorney letter
         from the companys general manager. Falsifying documents and/or

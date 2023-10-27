@@ -1,0 +1,13 @@
+
+.reqFormCard {
+  @apply p-4 shadow-md border rounded-md w-full ;
+}
+.reqAlert {
+  @apply border rounded-md ;
+}
+.reqContainerCardHeader {
+  @apply  mb-[26px] px-3 ; 
+}
+.reqContainerCardBody {
+  @apply  shadow-md rounded-md ; 
+}

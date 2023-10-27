@@ -7,6 +7,8 @@ import { theme as baseTheme } from '@/utilities/theme';
 import './globals.css';
 import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
+import '@mantine/dates/styles.css';
+
 import { Notifications } from '@mantine/notifications';
 
 export default function RootStyleRegistry({
