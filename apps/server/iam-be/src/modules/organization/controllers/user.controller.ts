@@ -18,25 +18,8 @@ import { ExtraCrudDecorator } from 'src/shared/decorators/crud-options.decorator
 })
 @Controller('user')
 @ApiTags('user')
-export class UserController extends ExtraCrudController<User>() {
+export class UserController extends ExtraCrudController<User>(CreateUserDto) {
   constructor(private readonly userService: UserService) {
     super(userService);
-  }
-
-  @Post()
-  async create(@Body() createUserDto: CreateUserDto): Promise<User> {
-    return await super.create(createUserDto);
-  }
-
-  @Put(':id')
-  async update(
-    @Param(
-      'id',
-      new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
-    )
-    id: string,
-    @Body() updateUserDto: UpdateUserDto,
-  ): Promise<User | undefined> {
-    return await super.update(id, updateUserDto);
   }
 }

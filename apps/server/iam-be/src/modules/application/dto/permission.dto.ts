@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsUUID } from 'class-validator';
+import { IsOptional, IsString, IsUUID } from 'class-validator';
 import { Permission } from '../entities/permission.entity';
 
 export class CreatePermissionDto {
@@ -51,6 +51,7 @@ export class CreatePermissionDto {
 export class UpdatePermissionDto extends CreatePermissionDto {
   @ApiProperty()
   @IsUUID()
+  @IsOptional()
   id: string;
 
   static fromDto(permissionDto: UpdatePermissionDto): Permission {

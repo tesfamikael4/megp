@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class CreateGroupDto {
   @ApiProperty()
@@ -9,6 +9,11 @@ export class CreateGroupDto {
   @ApiProperty()
   @IsString()
   description: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsUUID()
+  organizationId: string;
 }
 
 export class UpdateGroupDto extends CreateGroupDto {

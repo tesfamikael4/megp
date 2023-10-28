@@ -12,7 +12,6 @@ import { Audit } from 'src/shared/entities/audit.entity';
 import { Unit } from './unit.entity';
 import { Office } from './office.entity';
 import { OrganizationMandate } from './organization-mandate.entity';
-import { OrganizationSector } from './organization-sector.entity';
 import { OrganizationType } from './organization-type.entity';
 import { UnitType } from './unit-type.entity';
 import { User } from './user.entity';
@@ -57,9 +56,6 @@ export class Organization extends Audit {
   @Column({ nullable: true })
   typeId: string;
 
-  @Column({ nullable: true })
-  sectorId: string;
-
   @Column({ default: '1.0.0-alpha' })
   version: string;
   @Column({ default: false })
@@ -96,14 +92,6 @@ export class Organization extends Audit {
   })
   @JoinColumn({ name: 'typeId' })
   public organizationType: OrganizationType;
-
-  @ManyToOne(() => OrganizationSector, (sector) => sector.organizations, {
-    orphanedRowAction: 'delete',
-    onUpdate: 'CASCADE',
-    onDelete: 'RESTRICT',
-  })
-  @JoinColumn({ name: 'sectorId' })
-  public sector: OrganizationSector;
 
   @OneToMany(
     () => OrganizationMandate,
