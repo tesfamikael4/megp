@@ -43,6 +43,7 @@ export class ItemMaster extends CommonEntity {
 
   @ManyToOne(() => UnitOfMeasurement, (entity) => entity.id)
   @JoinColumn({ name: 'uOMId' })
+  @Column()
   uOMId: string;
   uom: UnitOfMeasurement;
   @Column()
