@@ -1,4 +1,4 @@
-import { Box, LoadingOverlay, Stack, TextInput } from '@mantine/core';
+import { LoadingOverlay, Stack, TextInput } from '@mantine/core';
 import { EntityButton } from '@megp/entity';
 import { z, ZodType } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -72,6 +72,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       notifications.show({
         message: 'user created successfully',
         title: 'Success',
+        color: 'green',
       });
     } catch (err) {
       notifications.show({
@@ -93,6 +94,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       notifications.show({
         message: 'user updated successfully',
         title: 'Success',
+        color: 'green',
       });
     } catch {
       notifications.show({
@@ -108,6 +110,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       notifications.show({
         message: 'user  deleted successfully',
         title: 'Success',
+        color: 'green',
       });
       router.push('/users');
     } catch {

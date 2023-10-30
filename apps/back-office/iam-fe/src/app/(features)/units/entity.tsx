@@ -12,9 +12,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
 
   const [data, setData] = useState<Unit[]>([]);
 
-  const { data: list, isSuccess } = useListByIdQuery(
-    '099454a9-bf8f-45f5-9a4f-6e9034230250',
-  );
+  const { data: list, isSuccess } = useListByIdQuery();
 
   useEffect(() => {
     if (isSuccess) {
@@ -58,15 +56,6 @@ export function Entity({ children }: { children: React.ReactNode }) {
           id: 'description',
           header: 'Description',
           accessorKey: 'description',
-          cell: (info) => info.getValue(),
-          meta: {
-            widget: 'multiline',
-          },
-        },
-        {
-          id: 'code',
-          header: 'Code',
-          accessorKey: 'code',
           cell: (info) => info.getValue(),
           meta: {
             widget: 'multiline',

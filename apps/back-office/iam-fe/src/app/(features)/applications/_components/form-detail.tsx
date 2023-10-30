@@ -1,4 +1,4 @@
-import { Box, LoadingOverlay, Stack, Table } from '@mantine/core';
+import { LoadingOverlay, Stack, Table } from '@mantine/core';
 import { useForm } from 'react-hook-form';
 import { useReadQuery } from '../_api/application.api';
 import { useParams } from 'next/navigation';

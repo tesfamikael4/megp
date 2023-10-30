@@ -7,6 +7,8 @@ const rolePermissionApi = entityApi.entitySliceApi['role-permissions'];
 export const rolePermissionSliceApi: typeof EntitySliceApi = createEntitySlice(
   rolePermissionApi as any,
   'role-permissions',
+  'role',
+  'permission',
 );
 
 export const {

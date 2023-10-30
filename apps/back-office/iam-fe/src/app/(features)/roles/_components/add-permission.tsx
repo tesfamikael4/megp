@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, Stack } from '@mantine/core';
+import { Modal } from '@mantine/core';
 import { Relation, RelationConfig } from '@megp/entity';
 import { Mandate } from '@/models/mandate';
 import { notifications } from '@mantine/notifications';

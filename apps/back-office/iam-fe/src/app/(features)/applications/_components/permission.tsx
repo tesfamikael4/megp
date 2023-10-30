@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Modal } from '@mantine/core';
 import { Text } from '@mantine/core';
 import { Relation, RelationConfig } from '@megp/entity';
-import { useListByIdQuery, useDeleteMutation } from '../_api/permission.api';
+import { useListByAppIdQuery, useDeleteMutation } from '../_api/permission.api';
 import { useParams } from 'next/navigation';
 import { Permission } from '@/models/permission';
 import { PermissionForm } from './permission-form';
@@ -16,7 +16,7 @@ const AddPermisionModal = () => {
   const [unitId, setUnitId] = useState('');
   const { id } = useParams();
 
-  const { data: applicationPermission, isSuccess } = useListByIdQuery(
+  const { data: applicationPermission, isSuccess } = useListByAppIdQuery(
     id?.toString(),
   );
 
@@ -67,6 +67,7 @@ const AddPermisionModal = () => {
       notifications.show({
         message: 'Permission deleted successfully',
         title: 'Success',
+        color: 'green',
       });
     } catch (err) {
       notifications.show({

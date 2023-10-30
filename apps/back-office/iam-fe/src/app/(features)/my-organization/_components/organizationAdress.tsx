@@ -18,7 +18,7 @@ import { OrganizationProfile } from '@/models/organization-profile';
 import { EntityButton } from '@megp/entity';
 import countryCodes from './country-codes.json';
 import { useEffect, useState } from 'react';
-import { useReadQuery } from '../../organizations/_api/organization.api';
+import { useReadQuery } from '../_api/adress.api';
 
 type ModeType = 'new' | 'detail';
 
@@ -26,6 +26,7 @@ const defaultValues = {
   region: '',
   zoneOrSubCity: '',
   city: '',
+  district: '',
   telephone: {
     countryCode: '',
     number: '',
@@ -47,6 +48,7 @@ const OrganizationAdressForm = () => {
   const organizationAddressSchema: ZodType<Partial<OrganizationProfile>> =
     z.object({
       region: z.string(),
+      district: z.string(),
       zoneOrSubCity: z.string(),
       city: z.string(),
       telephone: z.object({
@@ -109,8 +111,12 @@ const OrganizationAdressForm = () => {
 
   const [mode, setMode] = useState<ModeType>('new');
 
+  const [selectedDistrict, setSelectedDistrict] = useState<any>();
+
   const [create, { isLoading: isSaving }] = useSetAddressMutation();
   const [update, { isLoading: isUpdating }] = useSetAddressMutation();
+
+  const regionOption = ['southern', 'northern', 'central'];
 
   const {
     data: selected,
@@ -123,10 +129,26 @@ const OrganizationAdressForm = () => {
     handleSubmit,
     formState: { errors },
     control,
+    watch,
     reset,
   } = useForm<OrganizationProfile>({
     resolver: zodResolver(organizationAddressSchema),
   });
+  const selectedRegion = watch('region');
+
+  useEffect(() => {
+    const districtOptions = {
+      southern: ['Mangochi', 'Neno', 'Nsanje', 'Phalombe', 'Thyolo', 'Zomba'],
+      northern: ['Mzimba', 'Nkhata Bay', 'Rumphi'],
+      central: ['Nkhotakota', 'Ntcheu', 'Ntchisi', 'Salima'],
+    };
+    const updatedOptions =
+      districtOptions[selectedRegion]?.map((item) => ({
+        label: item,
+        value: item,
+      })) || [];
+    setSelectedDistrict(updatedOptions);
+  }, [selectedRegion]);
 
   const onCreate = async (data) => {
     const dataSent = {
@@ -186,7 +208,7 @@ const OrganizationAdressForm = () => {
     if (mode === 'detail' && selectedSuccess && selected !== undefined) {
       reset({
         region: selected?.address?.region,
-        zoneOrSubCity: selected?.position,
+        zoneOrSubCity: selected?.address?.zoneOrSubCity,
         city: selected?.address?.city,
         telephone: selected?.address?.telephone,
         fax: selected?.address?.fax,
@@ -194,6 +216,7 @@ const OrganizationAdressForm = () => {
         email: selected?.address?.email,
         houseNumber: selected?.address?.houseNumber,
         mobileNumber: selected?.address?.mobileNumber,
+        district: selected?.address?.district,
       });
     }
   }, [mode, reset, selected, selectedSuccess]);
@@ -207,14 +230,41 @@ const OrganizationAdressForm = () => {
   return (
     <Stack pos={'relative'}>
       <LoadingOverlay visible={isLoading} />
-      <TextInput label="Region" {...register('region')} />
-      <TextInput label="Zone/Subcity" {...register('zoneOrSubCity')} />
 
-      <TextInput
-        label="City"
-        error={errors?.city ? errors?.city?.message : ''}
-        {...register('city')}
+      <Controller
+        name="region"
+        control={control}
+        render={({ field: { onChange, value } }) => (
+          <Select
+            defaultValue="MW"
+            label={'Region'}
+            value={value}
+            onChange={onChange}
+            data={
+              regionOption?.map((item) => ({
+                label: item,
+                value: item,
+              })) || []
+            }
+            maxDropdownHeight={400}
+          />
+        )}
       />
+      <Controller
+        name="district"
+        control={control}
+        render={({ field: { onChange, value } }) => (
+          <Select
+            defaultValue="MW"
+            label={'District'}
+            value={value}
+            onChange={onChange}
+            data={selectedDistrict}
+            maxDropdownHeight={400}
+          />
+        )}
+      />
+      <TextInput label="Zone/Subcity" {...register('zoneOrSubCity')} />
 
       <TextInput
         label="House number"

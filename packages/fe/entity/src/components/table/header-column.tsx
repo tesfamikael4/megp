@@ -80,7 +80,7 @@ export const selectColumn = {
   ),
 };
 
-export const remove = (openEditModal) => {
+export const remove = (openEditModal, showPopUp) => {
   return {
     id: 'action',
     accessorKey: '',
@@ -99,17 +99,16 @@ export const remove = (openEditModal) => {
       };
 
       return (
-        <ActionIcon
-          className={styles.actionBtn}
-          color="primary"
-          variant="outline"
-        >
+        <ActionIcon color="primary" variant="subtle">
           <Menu shadow="md" width={200}>
             <Menu.Target>
               <IconDotsVertical size={18} />
             </Menu.Target>
             <Menu.Dropdown>
-              <Menu.Item onClick={removeRow}>Delete</Menu.Item>
+              <Menu.Item onClick={removeRow}>
+                {' '}
+                {showPopUp ? 'delete' : 'remove'}
+              </Menu.Item>
               {openEditModal ? (
                 <Menu.Item onClick={enableEdit}>Edit</Menu.Item>
               ) : null}
@@ -165,7 +164,7 @@ export const Expand = (parentUnitId, setParentUnitId) => {
           <Radio
             checked={parentUnitId === props.row.original.id}
             className={styles.buttonModal}
-            disabled={id.toString() === props.row.original.id}
+            disabled={id ? id.toString() === props.row.original.id : false}
             onChange={() => {
               setParentUnitId(props.row.original.id);
             }}

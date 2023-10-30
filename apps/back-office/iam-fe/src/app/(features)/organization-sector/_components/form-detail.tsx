@@ -1,4 +1,4 @@
-import { Box, LoadingOverlay, Stack, TextInput, Textarea } from '@mantine/core';
+import { LoadingOverlay, Stack, TextInput, Textarea } from '@mantine/core';
 import { EntityButton } from '@megp/entity';
 import { z, ZodType } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -61,6 +61,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       notifications.show({
         message: 'organization Sector created successfully',
         title: 'Success',
+        color: 'green',
       });
     } catch (err) {
       notifications.show({
@@ -76,6 +77,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       notifications.show({
         message: 'organization Sector updated successfully',
         title: 'Success',
+        color: 'green',
       });
     } catch {
       notifications.show({
@@ -91,6 +93,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       notifications.show({
         message: 'organization Sector deleted successfully',
         title: 'Success',
+        color: 'green',
       });
       router.push('/organization-sector');
     } catch (err) {

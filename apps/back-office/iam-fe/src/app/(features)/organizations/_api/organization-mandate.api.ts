@@ -9,6 +9,8 @@ export const organizationSliceApi: typeof EntitySliceApi =
   createEntitySlice<Organization>(
     organizationApi as any,
     'organization-mandates',
+    'organization',
+    'mandate',
   );
 
 export const {
@@ -16,3 +18,4 @@ export const {
   useLazySecondRelationQuery,
   useLazyFirstRelationQuery,
 } = organizationSliceApi;
+('');

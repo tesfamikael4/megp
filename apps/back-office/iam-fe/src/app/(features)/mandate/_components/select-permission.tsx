@@ -1,6 +1,6 @@
 // TableComponent.jsx
 import React, { useEffect, useState } from 'react';
-import { useLazyListByIdQuery } from '../../applications/_api/permission.api';
+import { useLazyListByAppIdQuery } from '../../applications/_api/permission.api';
 import { useLazyListQuery } from '../../applications/_api/application.api';
 import {
   Box,
@@ -28,7 +28,7 @@ const MandatePermission = ({
 }: EntityListProps) => {
   const [selectedRow, setSelectedRow] = useState<any>();
 
-  const [trigger, { data: permissionList }] = useLazyListByIdQuery();
+  const [trigger, { data: permissionList }] = useLazyListByAppIdQuery();
 
   const [triggerApp, { data: application }] = useLazyListQuery();
 
@@ -44,6 +44,7 @@ const MandatePermission = ({
     setSelectedRow(application?.items[0]);
   }, [application?.items]);
   logger.log(permission);
+  permissionList;
   return (
     <>
       <Divider my={'sm'} />
@@ -55,7 +56,7 @@ const MandatePermission = ({
             {application?.items?.map((item) => (
               <List.Item
                 key={item.id}
-                className="cursoyyr-pointer"
+                className="cursor-pointer"
                 icon={
                   <Checkbox
                     color="teal"
