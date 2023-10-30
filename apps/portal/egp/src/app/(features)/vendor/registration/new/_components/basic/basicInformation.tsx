@@ -30,6 +30,7 @@ import {
 } from '../../_api/query';
 import { NotificationService } from '@/app/(features)/vendor/_components/notification';
 import { IconCalendar } from '@tabler/icons-react';
+import { setCookie } from 'cookies-next';
 
 type FormData = {
   name: string;
@@ -89,19 +90,21 @@ export const BasicInformation = () => {
     } else {
       create({
         name: data?.name || '',
-        businessType: data?.businessType || '',
+        businessType: data?.businessType || '_',
         origin: data?.origin || '',
-        country: data?.origin || '',
+        country: data?.origin || ' ',
         tinNumber: data?.tinNumber || '',
         tinIssuedDate: data?.tinIssuedDate || '',
+        district: '',
       });
     }
   };
 
   useEffect(() => {
     if (createValues.isSuccess && createValues.data?.vendorId) {
+      setCookie('vendorId', createValues.data.vendorId);
       NotificationService.successNotification('Form Created Successfully!');
-      router.push(`new/detail`);
+      router.push(`detail`);
     }
 
     return () => {};
@@ -126,11 +129,12 @@ export const BasicInformation = () => {
     if (getMRADataValues.isSuccess && getMRADataValues.data?.companyName) {
       create({
         name: getMRADataValues.data?.companyName,
-        businessType: watch().businessType,
+        businessType: watch().businessType || '_',
         origin: watch().origin,
         country: watch().origin,
         tinNumber: watch().tinNumber,
         tinIssuedDate: watch().tinIssuedDate,
+        district: '',
       });
     }
 

@@ -1,0 +1,36 @@
+.Invoice {
+  width: 210mm;
+  height: 297mm;
+  /* display: none; */
+  user-select: none;
+}
+@media print {
+}
+
+@media print {
+  @page {
+    /* Set the title and date to empty strings to hide them */
+    size: A4;
+    margin: 0;
+    content: none;
+  }
+
+  .Invoice {
+    width: 210mm;
+    height: 297mm;
+    display: block;
+  }
+  .Print-Utility {
+    display: none;
+  }
+}
+
+/* @media print {
+  .Invoice-table td,
+  .Invoice-table th {
+    border-bottom: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    line-height: 14px;
+    padding: 3px 7px;
+  }
+} */

@@ -1,3 +1,5 @@
+import { InvoiceData } from './vendorInvoice';
+
 export interface BankNamesResponse {
   id: string;
   bankName: string;
@@ -46,6 +48,7 @@ export interface CreateVendorIdRequest {
   businessType: string;
   origin: string;
   country: string;
+  district: string;
   tinNumber: string;
   tinIssuedDate: string;
 }
@@ -58,7 +61,7 @@ export interface FormData {
     name: string;
     businessType: string;
     origin: string;
-    district: string;
+    district?: string;
     country: string;
     tinNumber: string;
   };
@@ -113,14 +116,17 @@ export interface FormData {
     lastName: string;
     nationality: string;
   }[];
-  areasOfBusinessInterest: {
-    category: string;
-    lineOfBusiness: {
-      id: string;
-      name: string;
-    }[];
-    priceRange: string;
-  }[];
+  areasOfBusinessInterest:
+    | {
+        category: string;
+        lineOfBusiness: {
+          id: string;
+          name: string;
+        }[];
+        priceRange: string;
+      }[]
+    | [];
+  invoice: InvoiceData[] | [];
   supportingDocuments: {
     businessRegistration_IncorporationCertificate: File | string | null;
     mRA_TPINCertificate: File | string | null;

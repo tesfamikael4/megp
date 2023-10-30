@@ -8,8 +8,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <Flex className={styles.nav}>
         <StyledStepper />
       </Flex>
-      <Flex className="p-4 w-full">
-        <Flex>{children}</Flex>
+      <Flex className="w-full">
+        <Flex className="p-4 w-full">{children}</Flex>
       </Flex>
     </Flex>
   );
