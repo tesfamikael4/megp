@@ -12,9 +12,4 @@ export class OrganizationSector extends Audit {
 
   @Column({ nullable: true })
   description: string;
-
-  @OneToMany(() => Organization, (organization) => organization.sector, {
-    cascade: true,
-  })
-  organizations: Organization[];
 }

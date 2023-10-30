@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsString, IsUUID } from 'class-validator';
+import { IsArray, IsUUID } from 'class-validator';
 import { UserGroup } from '../entity/user-group.entity';
 
 export class CreateUserGroupDto {

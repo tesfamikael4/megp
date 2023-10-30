@@ -12,13 +12,10 @@ import {
   OrganizationTypeResponseDto,
 } from './organization-type.dto';
 import {
-  CreateOrganizationSectorDto,
-  OrganizationSectorResponseDto,
-} from './organization-sector.dto';
-import {
   CreateOrganizationMandateDto,
   OrganizationMandateResponseDto,
 } from './organization-mandate.dto';
+import { ContactNumberCommand } from 'src/shared/domain';
 
 export class CreateOrganizationDto {
   @ApiProperty()
@@ -59,11 +56,6 @@ export class CreateOrganizationDto {
   @IsUUID()
   @IsOptional()
   typeId: string;
-
-  @ApiProperty()
-  @IsUUID()
-  @IsOptional()
-  sectorId: string;
 
   @ApiProperty()
   @IsString()
@@ -143,8 +135,6 @@ export class CreateOrganizationDto {
 
     organization.typeId = organizationDto.typeId;
 
-    organization.sectorId = organizationDto.sectorId;
-
     return organization;
   }
 
@@ -202,8 +192,6 @@ export class UpdateOrganizationDto extends CreateOrganizationDto {
 
     organization.typeId = organizationDto.typeId;
 
-    organization.sectorId = organizationDto.sectorId;
-
     if (organizationDto.logo) {
       organization.logo = organizationDto.logo;
     }
@@ -213,15 +201,43 @@ export class UpdateOrganizationDto extends CreateOrganizationDto {
     return organization;
   }
 }
+export class Address {
+  @ApiProperty()
+  region: string;
 
+  @ApiProperty()
+  zoneOrSubCity: string;
+
+  @ApiProperty()
+  city: string;
+
+  @ApiProperty()
+  telephone: ContactNumberCommand;
+
+  @ApiProperty()
+  fax: ContactNumberCommand;
+
+  @ApiProperty()
+  postalCode: string;
+
+  @ApiProperty()
+  email: string;
+
+  @ApiProperty()
+  houseNumber: string;
+
+  @ApiProperty()
+  mobileNumber: ContactNumberCommand;
+}
 export class UpdateAddressOrLogoDto {
   @ApiProperty()
   @IsUUID()
+  @IsOptional()
   id: string;
+  @ApiProperty({ isArray: true, type: () => Address })
+  address: Address;
   @ApiProperty()
-  address: any;
-  @ApiProperty()
-  logo: any;
+  logo: JSON;
   static fromDto(organizationDto: UpdateAddressOrLogoDto): Organization {
     const organization: Organization = new Organization();
     organization.id = organizationDto.id;
@@ -237,7 +253,6 @@ export class UpdateAddressOrLogoDto {
 
 export class OrganizationResponseDto extends UpdateOrganizationDto {
   organizationType: CreateOrganizationTypeDto;
-  sector: CreateOrganizationSectorDto;
   organizationMandates: CreateOrganizationMandateDto[];
   static toDto(organization: Organization): OrganizationResponseDto {
     const organizationDto = new OrganizationResponseDto();
@@ -279,8 +294,6 @@ export class OrganizationResponseDto extends UpdateOrganizationDto {
 
     organizationDto.typeId = organization.typeId;
 
-    organizationDto.sectorId = organization.sectorId;
-
     if (organization.logo) {
       organizationDto.logo = organization.logo;
     }
@@ -290,11 +303,6 @@ export class OrganizationResponseDto extends UpdateOrganizationDto {
     if (organization.organizationType) {
       organizationDto.organizationType = OrganizationTypeResponseDto.toDto(
         organization.organizationType,
-      );
-    }
-    if (organization.sector) {
-      organizationDto.sector = OrganizationSectorResponseDto.toDto(
-        organization.sector,
       );
     }
 

@@ -1,46 +1,38 @@
 import {
-  Body,
   Controller,
-  Post,
-  Put,
   Param,
   ParseUUIDPipe,
   HttpStatus,
+  Get,
+  Query,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import {
-  CreatePermissionDto,
-  UpdatePermissionDto,
-} from '../dto/permission.dto';
+import { CreatePermissionDto } from '../dto/permission.dto';
 import { PermissionService } from '../services/permission.service';
 import { Permission } from '../entities/permission.entity';
 import { ExtraCrudController } from 'src/shared/controller/extra-crud.controller';
 import { ExtraCrudDecorator } from 'src/shared/decorators/crud-options.decorator';
+import { CollectionQuery } from 'src/shared/collection-query';
 @ExtraCrudDecorator({
   entityIdName: 'applicationId',
 })
 @Controller('permissions')
 @ApiTags('permissions')
-export class PermissionNewController extends ExtraCrudController<Permission>() {
+export class PermissionNewController extends ExtraCrudController<Permission>(
+  CreatePermissionDto,
+) {
   constructor(private readonly permissionService: PermissionService) {
     super(permissionService);
   }
-  @Post()
-  async create(
-    @Body() createPermissionDto: CreatePermissionDto,
-  ): Promise<Permission> {
-    return await super.create(createPermissionDto);
-  }
-
-  @Put(':id')
-  async update(
+  @Get('organization/:id')
+  async findUnderOrganization(
     @Param(
       'id',
       new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
     )
     id: string,
-    @Body() updatePermissionDto: UpdatePermissionDto,
-  ): Promise<Permission | undefined> {
-    return await super.update(id, updatePermissionDto);
+    @Query() query: CollectionQuery,
+  ) {
+    return await this.permissionService.findUnderOrganization(id, query);
   }
 }

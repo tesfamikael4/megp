@@ -1,5 +1,13 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToMany,
+  JoinColumn,
+  ManyToOne,
+} from 'typeorm';
 import { UserGroup } from './user-group.entity';
+import { Organization } from 'src/modules/organization/entities/organization.entity';
 
 @Entity({ name: 'groups' })
 export class Group {
@@ -20,4 +28,11 @@ export class Group {
     onDelete: 'CASCADE',
   })
   userGroups: UserGroup[];
+
+  @Column({ nullable: true })
+  organizationId: string;
+
+  @ManyToOne(() => Organization, (organization) => organization)
+  @JoinColumn({ name: 'organizationId' })
+  public organization: Organization;
 }

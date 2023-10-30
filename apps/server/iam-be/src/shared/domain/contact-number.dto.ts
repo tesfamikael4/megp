@@ -9,7 +9,7 @@ export class ContactNumberCommand {
   @ApiProperty()
   @IsNumber()
   @IsOptional()
-  number!: string;
+  number!: number;
   /**
    *A method that maps  contactNumberCommand object data to  contactNumber domain object
    *@returns contactNumber domain object which contains contactNumber  information

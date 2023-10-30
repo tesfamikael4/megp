@@ -1,5 +1,11 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Organization } from '../entities/organization.entity';
 import {
@@ -32,6 +38,7 @@ export class OrganizationService extends EntityCrudService<Organization> {
     organization: UpdateOrganizationDto,
   ): Promise<OrganizationResponseDto | null> {
     organization.id = id;
+    await this.find(id);
     organization.isActive = true;
     const organizationEntity = UpdateOrganizationDto.fromDto(organization);
     await this.repositoryOrganization.update(
@@ -64,17 +71,19 @@ export class OrganizationService extends EntityCrudService<Organization> {
     id: string,
     organization: UpdateAddressOrLogoDto,
   ): Promise<OrganizationResponseDto> {
-    try {
-      organization.id = id;
-      const organizationEntity = UpdateAddressOrLogoDto.fromDto(organization);
-      Logger.log('save organization works', organizationEntity);
-      await this.repositoryOrganization.update(
-        { id: organization.id },
-        organizationEntity,
-      );
-      return OrganizationResponseDto.toAddressDto(organizationEntity);
-    } catch (error: any) {
-      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    organization.id = id;
+    await this.find(id);
+    const organizationEntity = UpdateAddressOrLogoDto.fromDto(organization);
+    Logger.log('save organization works', organizationEntity);
+    await this.repositoryOrganization.update({ id: id }, organizationEntity);
+    return OrganizationResponseDto.toAddressDto(organizationEntity);
+  }
+
+  private async find(id: any): Promise<Organization> {
+    const item = await this.findOne(id);
+    if (!item) {
+      throw new NotFoundException(`not_found`);
     }
+    return item;
   }
 }
