@@ -9,6 +9,7 @@ import { useParams } from 'next/navigation';
 
 import { notifications } from '@mantine/notifications';
 import { Controller, useForm } from 'react-hook-form';
+import { notify } from '@megp/core-fe';
 
 type ModeType = 'new' | 'detail';
 
@@ -71,18 +72,9 @@ export function UserProfileForm() {
     };
     try {
       await create(dataSent);
-
-      notifications.show({
-        message: 'Organization profile updated successfully',
-        title: 'Success',
-        color: 'green',
-      });
+      notify('Success', 'User profile updated successfully');
     } catch (err) {
-      notifications.show({
-        message: 'Errors in creating organization Type.',
-        title: 'Error',
-        color: 'red',
-      });
+      notify('Error', 'Errors in creating user profile.');
     }
   };
   const onUpdate = async (data) => {
@@ -94,17 +86,9 @@ export function UserProfileForm() {
     };
     try {
       await update(dataSent);
-      notifications.show({
-        message: 'Organization profile updated successfully',
-        title: 'Success',
-        color: 'green',
-      });
+      notify('Success', 'User profile updated successfully');
     } catch {
-      notifications.show({
-        message: 'errors in updating organization Type.',
-        title: 'Error',
-        color: 'red',
-      });
+      notify('Error', 'Errors in updating user profile.');
     }
   };
 

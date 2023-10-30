@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Modal } from '@mantine/core';
 import { Relation, RelationConfig } from '@megp/entity';
-import { notifications } from '@mantine/notifications';
 import { useParams } from 'next/navigation';
 import { useListByIdQuery } from '../../users/_api/user.api';
 import {
@@ -9,6 +8,7 @@ import {
   useLazyFirstRelationQuery,
 } from '../_api/user-group.api';
 import { User } from '@/models/user/user';
+import { notify } from '@megp/core-fe';
 
 const AddUserModal = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -44,18 +44,9 @@ const AddUserModal = () => {
 
       try {
         id && (await assignUser(data).unwrap());
-
-        notifications.show({
-          message: 'User has been assigned to group successfully.',
-          title: 'Success',
-          color: 'green',
-        });
+        notify('Success', 'User has been assigned to group successfully.');
       } catch (err) {
-        notifications.show({
-          message: 'Sorry, an error encountered while assigning user.',
-          title: 'Error',
-          color: 'red',
-        });
+        notify('Error', 'Sorry, an error encountered while assigning user.');
       }
     },
     onAdd: () => {

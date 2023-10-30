@@ -13,8 +13,8 @@ import { ZodType, z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useParams } from 'next/navigation';
-import { notifications } from '@mantine/notifications';
 import { useEffect } from 'react';
+import { notify } from '@megp/core-fe';
 
 interface FormDetailProps {
   mode: 'new' | 'detail';
@@ -52,50 +52,27 @@ export function FormDetail({ mode }: FormDetailProps) {
       if ('data' in result) {
         router.push(`/groups/${result?.data?.id}`);
       }
-      notifications.show({
-        message: 'Group created successfully',
-        title: 'Success',
-        color: 'green',
-      });
+      notify('Success', 'Group created successfully');
     } catch (err) {
-      notifications.show({
-        message: 'Errors in creating Group.',
-        title: 'Error',
-        color: 'red',
-      });
+      notify('Error', 'Errors in creating Group.');
     }
   };
   const onUpdate = async (data) => {
     try {
       await update({ ...data, id: id?.toString() });
-      notifications.show({
-        message: 'Group updated successfully',
-        title: 'Success',
-        color: 'green',
-      });
+      notify('Success', 'Group updated successfully');
     } catch {
-      notifications.show({
-        message: 'Errors in updating group.',
-        title: 'Error',
-        color: 'red',
-      });
+      notify('Error', 'Errors in updating group.');
     }
   };
   const onDelete = async () => {
     try {
       await remove(id?.toString()).unwrap();
-      notifications.show({
-        message: 'Group deleted successfully',
-        title: 'Success',
-        color: 'green',
-      });
+      notify('Success', 'Group deleted successfully');
+
       router.push('/groups');
     } catch (err) {
-      notifications.show({
-        message: 'Errors in deleting group.',
-        title: 'Error',
-        color: 'red',
-      });
+      notify('Error', 'Errors in deleting group.');
     }
   };
   const onReset = async () => {

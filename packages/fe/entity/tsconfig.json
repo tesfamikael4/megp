@@ -11,6 +11,12 @@
       "@/utilities/*": ["./src/utilities/*"]
     }
   },
-  "include": ["./src/**/*", "next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": [
+    "./src/**/*",
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "../core-fe/src/components/notification"
+  ],
   "exclude": [".turbo", ".next", "dist", "build", "node_modules"]
 }

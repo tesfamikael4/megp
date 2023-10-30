@@ -19,9 +19,10 @@ import {
 import { useListByIdQuery as useUnitTypeListQuery } from '../../unit-type/_api/unit-type.api';
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { notifications } from '@mantine/notifications';
 import { Unit } from '@/models/unit';
 import { ParentModal } from './parentModal';
+import { notify } from '@megp/core-fe';
+import { notifications } from '@mantine/notifications';
 
 interface FormDetailProps {
   mode: 'new' | 'detail';
@@ -95,17 +96,9 @@ export function FormDetail({ mode }: FormDetailProps) {
       if ('data' in result) {
         router.push(`/units/${result.data.id}`);
       }
-      notifications.show({
-        message: 'unit created successfully',
-        title: 'Success',
-        color: 'green',
-      });
+      notify('Success', 'Unit created successfully');
     } catch (err) {
-      notifications.show({
-        message: 'error in creating unit',
-        title: 'Success',
-        color: 'red',
-      });
+      notify('Error', 'Error in creating unit');
     }
   };
   const onUpdate = async (data) => {
@@ -115,34 +108,19 @@ export function FormDetail({ mode }: FormDetailProps) {
         id: id?.toString(),
         organizationId: '099454a9-bf8f-45f5-9a4f-6e9034230250',
       });
-      notifications.show({
-        message: 'unit updated successfully',
-        title: 'Success',
-        color: 'green',
-      });
+      notify('Success', 'Unit updated successfully');
     } catch {
-      notifications.show({
-        message: 'error in updating unit',
-        title: 'Success',
-        color: 'red',
-      });
+      notify('Error', 'Error in updating unit');
     }
   };
   const onDelete = async () => {
     try {
       await remove(id?.toString());
-      notifications.show({
-        message: 'Unit  deleted successfully',
-        title: 'Success',
-        color: 'green',
-      });
+      notify('Success', 'Unit deleted successfully');
+
       router.push('/units');
     } catch {
-      notifications.show({
-        message: 'Error in deleting unit',
-        title: 'Success',
-        color: 'red',
-      });
+      notify('Error', 'Error in deleting unit');
     }
   };
   const onActivate = async () => {
@@ -152,21 +130,15 @@ export function FormDetail({ mode }: FormDetailProps) {
     };
     try {
       await activation({ ...dataSent, id: id?.toString() });
-      notifications.show({
-        message: `Unit ${
-          selected?.isActive ? 'Deactivated' : 'Activated'
-        } successfully`,
-        title: 'Success',
-        color: 'green',
-      });
+      notify(
+        'Success',
+        `Unit ${selected?.isActive ? 'Deactivated' : 'Activated'} successfully`,
+      );
     } catch {
-      notifications.show({
-        message: `error in ${
-          selected?.isActive ? 'Deactivating' : 'Activating'
-        }  Unit`,
-        title: 'Success',
-        color: 'red',
-      });
+      notify(
+        'Error',
+        `Error in ${selected?.isActive ? 'Deactivating' : 'Activating'}  Unit`,
+      );
     }
   };
 

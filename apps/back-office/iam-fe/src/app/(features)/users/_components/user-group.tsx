@@ -9,6 +9,7 @@ import {
 import { useParams } from 'next/navigation';
 import { useListQuery } from '../../groups/_api/group.api';
 import { Group } from '@/models/group';
+import { notify } from '@megp/core-fe';
 
 const AddEntityModal = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -51,18 +52,9 @@ const AddEntityModal = () => {
 
       try {
         id && (await assign(data).unwrap());
-
-        notifications.show({
-          message: 'Group has been assigned to user successfully.',
-          title: 'Success',
-          color: 'green',
-        });
+        notify('Success', 'Group has been assigned to user successfully.');
       } catch (err) {
-        notifications.show({
-          message: 'Sorry, an error encountered while assigning role.',
-          title: 'Error',
-          color: 'red',
-        });
+        notify('Error', 'Sorry, an error encountered while assigning role.');
       }
     },
     onAdd: () => {

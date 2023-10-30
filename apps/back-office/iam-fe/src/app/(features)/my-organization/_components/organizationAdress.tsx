@@ -9,7 +9,6 @@ import {
   Text,
   LoadingOverlay,
 } from '@mantine/core';
-import { notifications } from '@mantine/notifications';
 import { Controller, useForm } from 'react-hook-form';
 import { z, ZodType } from 'zod';
 import { Select } from '@mantine/core';
@@ -19,6 +18,7 @@ import { EntityButton } from '@megp/entity';
 import countryCodes from './country-codes.json';
 import { useEffect, useState } from 'react';
 import { useReadQuery } from '../_api/adress.api';
+import { notify } from '@megp/core-fe';
 
 type ModeType = 'new' | 'detail';
 
@@ -160,18 +160,9 @@ const OrganizationAdressForm = () => {
 
     try {
       await create(dataSent);
-
-      notifications.show({
-        message: ' created successfully',
-        title: 'Success',
-        color: 'green',
-      });
+      notify('Success', 'Organization address created successfully');
     } catch (err) {
-      notifications.show({
-        message: 'errors in creating .',
-        title: 'Error',
-        color: 'red',
-      });
+      notify('Error', 'Errors in creating organization address');
     }
   };
 
@@ -185,18 +176,9 @@ const OrganizationAdressForm = () => {
 
     try {
       await update(dataSent);
-
-      notifications.show({
-        message: ' created successfully',
-        title: 'Success',
-        color: 'green',
-      });
+      notify('Success', 'Organization address updated successfully');
     } catch (err) {
-      notifications.show({
-        message: 'errors in creating .',
-        title: 'Error',
-        color: 'red',
-      });
+      notify('Error', 'Errors in creating organization address');
     }
   };
 
