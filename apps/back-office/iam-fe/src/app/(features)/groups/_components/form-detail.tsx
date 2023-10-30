@@ -1,4 +1,4 @@
-import { Box, LoadingOverlay, Stack, TextInput, Textarea } from '@mantine/core';
+import { LoadingOverlay, Stack, TextInput, Textarea } from '@mantine/core';
 import { EntityButton } from '@megp/entity';
 
 import { useForm } from 'react-hook-form';
@@ -15,7 +15,6 @@ import { useRouter } from 'next/navigation';
 import { useParams } from 'next/navigation';
 import { notifications } from '@mantine/notifications';
 import { useEffect } from 'react';
-import { relative } from 'path';
 
 interface FormDetailProps {
   mode: 'new' | 'detail';
@@ -56,6 +55,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       notifications.show({
         message: 'Group created successfully',
         title: 'Success',
+        color: 'green',
       });
     } catch (err) {
       notifications.show({
@@ -71,6 +71,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       notifications.show({
         message: 'Group updated successfully',
         title: 'Success',
+        color: 'green',
       });
     } catch {
       notifications.show({
@@ -86,6 +87,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       notifications.show({
         message: 'Group deleted successfully',
         title: 'Success',
+        color: 'green',
       });
       router.push('/groups');
     } catch (err) {

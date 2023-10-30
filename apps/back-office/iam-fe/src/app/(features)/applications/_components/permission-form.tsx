@@ -1,5 +1,4 @@
 import {
-  Box,
   Flex,
   LoadingOverlay,
   Stack,
@@ -131,44 +130,42 @@ export function PermissionForm({
   }, [mode, reset, selected, selectedSuccess]);
 
   return (
-    <Stack>
-      <Box pos={'relative'}>
-        <LoadingOverlay visible={isLoading} />
-        <TextInput
-          withAsterisk
-          label="Name"
-          {...register('name')}
-          error={errors?.name ? errors?.name?.message?.toString() : ''}
-          required
+    <Stack pos={'relative'}>
+      <LoadingOverlay visible={isLoading} />
+      <TextInput
+        withAsterisk
+        label="Name"
+        {...register('name')}
+        error={errors?.name ? errors?.name?.message?.toString() : ''}
+        required
+      />
+      <TextInput
+        withAsterisk
+        label="Key"
+        {...register('key')}
+        error={errors?.key ? errors?.key?.message?.toString() : ''}
+        required
+      />
+      <Textarea
+        label="Description"
+        autosize
+        minRows={2}
+        {...register('description')}
+        error={
+          errors?.description ? errors?.description?.message?.toString() : ''
+        }
+      />
+      <Flex gap="md" justify="flex-start" align="flex-start" direction="row">
+        <EntityButton
+          mode={mode}
+          onCreate={handleSubmit(onCreate)}
+          onUpdate={handleSubmit(onUpdate)}
+          onCancel={handleCloseModal}
+          onReset={onReset}
+          isSaving={isSaving}
+          isUpdating={isUpdating}
         />
-        <TextInput
-          withAsterisk
-          label="Key"
-          {...register('key')}
-          error={errors?.key ? errors?.key?.message?.toString() : ''}
-          required
-        />
-        <Textarea
-          label="Description"
-          autosize
-          minRows={2}
-          {...register('description')}
-          error={
-            errors?.description ? errors?.description?.message?.toString() : ''
-          }
-        />
-        <Flex gap="md" justify="flex-start" align="flex-start" direction="row">
-          <EntityButton
-            mode={mode}
-            onCreate={handleSubmit(onCreate)}
-            onUpdate={handleSubmit(onUpdate)}
-            onCancel={handleCloseModal}
-            onReset={onReset}
-            isSaving={isSaving}
-            isUpdating={isUpdating}
-          />
-        </Flex>
-      </Box>
+      </Flex>
     </Stack>
   );
 }

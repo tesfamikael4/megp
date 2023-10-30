@@ -20,9 +20,7 @@ const AddEntityModal = () => {
   const [assign, { isLoading: isSaving }] = useRelationMutation();
 
   const [trigger, { data: roles, isSuccess }] = useLazySecondRelationQuery();
-  const { data: list } = useListByIdQuery(
-    '099454a9-bf8f-45f5-9a4f-6e9034230250',
-  );
+  const { data: list } = useListByIdQuery();
 
   const relationConfig: RelationConfig<Role> = {
     title: 'Roles Assignment',

@@ -60,6 +60,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       notifications.show({
         message: 'organization Type created successfully',
         title: 'Success',
+        color: 'green',
       });
     } catch (err) {
       notifications.show({
@@ -75,6 +76,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       notifications.show({
         message: 'organization Type updated successfully',
         title: 'Success',
+        color: 'green',
       });
     } catch {
       notifications.show({

@@ -10,18 +10,14 @@ const { reducers, middleware } = entityApi;
 export const store = configureStore({
   reducer: {
     ...reducers,
-    [orgPermissionApi.reducerPath]: orgPermissionApi.reducer,
-    [userRelationApi.reducerPath]: userRelationApi.reducer,
-    [permissionApi.reducerPath]: permissionApi.reducer,
+
     [adressApi.reducerPath]: adressApi.reducer,
   },
   devTools: process.env.NODE_ENV !== 'production',
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
       ...middleware,
-      orgPermissionApi.middleware,
-      userRelationApi.middleware,
-      permissionApi.middleware,
+
       adressApi.middleware,
     ),
 });

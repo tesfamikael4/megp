@@ -1,4 +1,4 @@
-import { Box, LoadingOverlay, Stack, TextInput, Textarea } from '@mantine/core';
+import { LoadingOverlay, Stack, TextInput, Textarea } from '@mantine/core';
 import { EntityButton } from '@megp/entity';
 import { z, ZodType } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -62,6 +62,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       notifications.show({
         message: 'unit Type created successfully',
         title: 'Success',
+        color: 'green',
       });
     } catch (err) {
       notifications.show({
@@ -81,6 +82,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       notifications.show({
         message: 'unit Type updated successfully',
         title: 'Success',
+        color: 'green',
       });
     } catch {
       notifications.show({
@@ -96,6 +98,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       notifications.show({
         message: 'unit Type deleted successfully',
         title: 'Success',
+        color: 'green',
       });
       router.push('/unit-type');
     } catch (err) {

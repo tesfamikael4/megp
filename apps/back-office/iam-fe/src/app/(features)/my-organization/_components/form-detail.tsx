@@ -1,10 +1,10 @@
 import {
-  Box,
   LoadingOverlay,
   Select,
   Stack,
   TextInput,
   Textarea,
+  Box,
 } from '@mantine/core';
 import { useReadQuery } from '../../organizations/_api/organization.api';
 import { useListQuery as useListTypeQuery } from '../../organization-type/_api/organization-type.api';
@@ -32,43 +32,41 @@ export function FormDetail() {
     }
   }, [reset, selected, selectedSuccess]);
   return (
-    <Stack>
-      <Box pos={'relative'}>
-        <LoadingOverlay visible={isLoading} />
-        <TextInput disabled label="Name" {...register('name')} />
-        <TextInput
-          disabled
-          label="Short name"
-          required
-          {...register('shortName')}
-        />
-        <Textarea
-          label="Description"
-          autosize
-          disabled
-          minRows={2}
-          {...register('description')}
-        />
-        <Controller
-          name="typeId"
-          control={control}
-          render={({ field: { onChange, value } }) => (
-            <Select
-              disabled
-              name="name"
-              label="Organization Type"
-              value={value}
-              onChange={onChange}
-              data={
-                orgType?.items?.map((type) => ({
-                  value: type?.id,
-                  label: type?.name,
-                })) || []
-              }
-            />
-          )}
-        />
-      </Box>
+    <Stack pos={'relative'}>
+      <LoadingOverlay visible={isLoading} />
+      <TextInput disabled label="Name" {...register('name')} />
+      <TextInput
+        disabled
+        label="Short name"
+        required
+        {...register('shortName')}
+      />
+      <Textarea
+        label="Description"
+        autosize
+        disabled
+        minRows={2}
+        {...register('description')}
+      />
+      <Controller
+        name="typeId"
+        control={control}
+        render={({ field: { onChange, value } }) => (
+          <Select
+            disabled
+            name="name"
+            label="Organization Type"
+            value={value}
+            onChange={onChange}
+            data={
+              orgType?.items?.map((type) => ({
+                value: type?.id,
+                label: type?.name,
+              })) || []
+            }
+          />
+        )}
+      />
     </Stack>
   );
 }

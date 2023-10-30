@@ -64,6 +64,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       notifications.show({
         message: 'Role created successfully',
         title: 'Success',
+        color: 'green',
       });
     } catch (err) {
       notifications.show({
@@ -85,6 +86,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       notifications.show({
         message: 'Role updated successfully',
         title: 'Success',
+        color: 'green',
       });
     } catch {
       notifications.show({
@@ -100,6 +102,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       notifications.show({
         message: 'Role deleted successfully',
         title: 'Success',
+        color: 'green',
       });
       router.push('/roles');
     } catch (err) {

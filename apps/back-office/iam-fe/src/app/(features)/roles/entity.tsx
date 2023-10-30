@@ -10,9 +10,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
 
   const pathname = usePathname();
 
-  const { data: list } = useListByIdQuery(
-    '099454a9-bf8f-45f5-9a4f-6e9034230250',
-  );
+  const { data: list } = useListByIdQuery();
 
   useEffect;
   const config: EntityConfig<Role> = useMemo(() => {

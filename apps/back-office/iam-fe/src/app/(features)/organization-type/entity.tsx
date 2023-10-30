@@ -1,7 +1,7 @@
 'use client';
 import { EntityConfig, EntityLayout } from '@megp/entity';
 import { usePathname, useRouter } from 'next/navigation';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useListQuery } from './_api/organization-type.api';
 import { OrganizationType } from '@/models/organization-type';
 
@@ -12,7 +12,6 @@ export function Entity({ children }: { children: React.ReactNode }) {
 
   const { data: list } = useListQuery();
 
-  useEffect;
   const config: EntityConfig<OrganizationType> = useMemo(() => {
     return {
       basePath: '/organization-type',

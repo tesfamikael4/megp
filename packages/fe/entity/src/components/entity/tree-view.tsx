@@ -1,7 +1,7 @@
 'use client';
 
 import { ActionIcon, Box, Button, Tooltip } from '@mantine/core';
-import { Section, logger } from '@megp/core-fe';
+import { Section } from '@megp/core-fe';
 import { IconHierarchy2, IconPlus } from '@tabler/icons-react';
 import type { ColumnDef } from '@tanstack/react-table';
 import {
@@ -44,7 +44,6 @@ export function TreeList<T>({
   // construct header columns with the select column and action column
   const tableColumns = useMemo<ColumnDef<T>[]>(
     () => [
-      // ...(mode === 'tree' && treeView ? [expand(ids, rowId, setParentId)] : []),
       ...(treeView && mode !== 'tree' ? [newExpand] : []),
       ...(options.selectable ? [selectColumn] : []),
       ...(!treeView
@@ -58,8 +57,6 @@ export function TreeList<T>({
     ],
     [options, treeView, mode],
   );
-
-  logger.log(dataRender);
 
   const [width, setWidth] = useState(100);
 
@@ -100,14 +97,13 @@ export function TreeList<T>({
 
     treeView ? setData(transformedData) : setData(dataRender);
   }, [dataRender, treeView]);
-  logger.log(mode);
+
   useEffect(() => {
     if (mode === 'tree') {
       setTreeView(true);
     }
   }, [mode]);
 
-  logger.log(expanded);
   const table = useReactTable({
     data,
     autoResetExpanded: false,

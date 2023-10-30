@@ -8,10 +8,13 @@ const userApi = entityApi.entitySliceApi['user-unit'];
 export const userSliceApi: typeof EntitySliceApi = createEntitySlice<User>(
   userApi as any,
   'user-unit',
+  'user',
+  'unit',
 );
 
 export const {
   useRelationMutation,
   useLazySecondRelationQuery,
   useLazyFirstRelationQuery,
+  useReverseRelationMutation,
 } = userSliceApi;

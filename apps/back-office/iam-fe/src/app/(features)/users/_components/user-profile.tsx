@@ -117,6 +117,7 @@ export function UserProfileForm() {
       reset({
         gender: selected?.gender,
         position: selected?.position,
+        phone: selected?.telephone,
       });
     }
   }, [mode, reset, selected, selectedSuccess]);

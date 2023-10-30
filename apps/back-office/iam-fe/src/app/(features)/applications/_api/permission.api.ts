@@ -16,4 +16,6 @@ export const {
   useDeleteMutation,
   useListByIdQuery,
   useLazyListByIdQuery,
+  useListByAppIdQuery,
+  useLazyListByAppIdQuery,
 } = permissionSliceApi;

@@ -9,6 +9,8 @@ export const myMandateSliceApi: typeof EntitySliceApi =
   createEntitySlice<OrganizationSector>(
     mandateApi as any,
     'mandate-permissions',
+    'mandate',
+    'permission',
   );
 
 export const {

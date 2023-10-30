@@ -1,5 +1,4 @@
 import {
-  Box,
   LoadingOverlay,
   Select,
   Stack,
@@ -42,10 +41,8 @@ const unitSchema: ZodType<Partial<Unit>> = z.object({
     invalid_type_error: 'This field is required to be a string',
   }),
   description: z.string().optional(),
-  parentId: z.string({
-    required_error: 'This field is required',
-    invalid_type_error: 'This field is required to be a string',
-  }),
+
+  parentId: z.string().min(1, { message: 'This field is required' }),
 });
 
 export function FormDetail({ mode }: FormDetailProps) {
@@ -68,9 +65,7 @@ export function FormDetail({ mode }: FormDetailProps) {
   const [update, { isLoading: isUpdating }] = useUpdateMutation();
   const [remove, { isLoading: isDeleting }] = useDeleteMutation();
   const [activation, { isLoading: isActivating }] = useUpdateMutation();
-  const { data: list, isSuccess } = useListByIdQuery(
-    '099454a9-bf8f-45f5-9a4f-6e9034230250',
-  );
+  const { data: list, isSuccess } = useListByIdQuery();
 
   const {
     data: selected,
@@ -78,9 +73,7 @@ export function FormDetail({ mode }: FormDetailProps) {
     isLoading,
   } = useReadQuery(id?.toString());
 
-  const { data: unitType } = useUnitTypeListQuery(
-    '099454a9-bf8f-45f5-9a4f-6e9034230250',
-  );
+  const { data: unitType } = useUnitTypeListQuery();
 
   useEffect(() => {
     if (isSuccess && mode === 'detail') {
@@ -105,6 +98,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       notifications.show({
         message: 'unit created successfully',
         title: 'Success',
+        color: 'green',
       });
     } catch (err) {
       notifications.show({
@@ -124,6 +118,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       notifications.show({
         message: 'unit updated successfully',
         title: 'Success',
+        color: 'green',
       });
     } catch {
       notifications.show({
@@ -139,6 +134,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       notifications.show({
         message: 'Unit  deleted successfully',
         title: 'Success',
+        color: 'green',
       });
       router.push('/units');
     } catch {
@@ -192,11 +188,14 @@ export function FormDetail({ mode }: FormDetailProps) {
   }, [mode, reset, selected, selectedSuccess]);
 
   useEffect(() => {
-    reset({ parentId: parentUnitId });
-  }, [parentUnitId, reset]);
-  useEffect(() => {
-    reset({ parentId: parentUnitId });
-  }, [parentUnitId, reset]);
+    reset({
+      parentId: parentUnitId,
+      name: selected?.name,
+      typeId: selected?.typeId,
+      description: selected?.description,
+      code: selected?.code,
+    });
+  }, [parentUnitId, reset, selected, mode]);
 
   return (
     <Stack pos={'relative'}>
@@ -257,8 +256,9 @@ export function FormDetail({ mode }: FormDetailProps) {
                 label="Parent Unit"
                 value={value}
                 readOnly
+                required
                 error={
-                  errors?.typeId ? errors?.typeId?.message?.toString() : ''
+                  errors?.parentId ? errors?.parentId?.message?.toString() : ''
                 }
                 onChange={onChange}
                 data={
@@ -274,7 +274,7 @@ export function FormDetail({ mode }: FormDetailProps) {
 
         <div className="flex-shrink-0 mt-7 ">
           <ParentModal
-            data={parents}
+            data={list ? list.items : []}
             parentUnitId={parentUnitId}
             setParentUnitId={setParentUnitId}
           />

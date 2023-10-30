@@ -2,7 +2,8 @@ export interface OrganizationProfile {
   id: string;
   organizationId: string;
   country?: string;
-  region?: string;
+  region: string;
+  district: string;
   zoneOrSubCity?: string;
   city?: string;
   street?: string;

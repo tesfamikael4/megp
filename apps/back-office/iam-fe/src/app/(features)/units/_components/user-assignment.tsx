@@ -5,7 +5,7 @@ import { User } from '@/models/user/user';
 import { notifications } from '@mantine/notifications';
 
 import {
-  useRelationMutation,
+  useReverseRelationMutation,
   useLazyFirstRelationQuery,
 } from '../../users/_api/user-unit.api';
 import { useParams } from 'next/navigation';
@@ -17,12 +17,10 @@ const AddUserModal = () => {
 
   const { id } = useParams();
 
-  const [assign, { isLoading: isSaving }] = useRelationMutation();
+  const [assign, { isLoading: isSaving }] = useReverseRelationMutation();
   const [trigger, { data: users, isSuccess }] = useLazyFirstRelationQuery();
 
-  const { data: list } = useListByIdQuery(
-    '099454a9-bf8f-45f5-9a4f-6e9034230250',
-  );
+  const { data: list } = useListByIdQuery();
 
   const relationConfig: RelationConfig<User> = {
     title: 'Users Assignment',

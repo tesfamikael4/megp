@@ -51,10 +51,10 @@ export function Relation<T>({
         meta: { widget: 'primary' },
       })),
 
-      ...(mode !== 'modal' ? [remove(openEditModal)] : []),
+      ...(mode !== 'modal' ? [remove(openEditModal, showPopUp)] : []),
     ],
 
-    [options.selectable, options.columns, mode, openEditModal],
+    [options.selectable, options.columns, mode, openEditModal, showPopUp],
   );
 
   const [width, setWidth] = useState(100);

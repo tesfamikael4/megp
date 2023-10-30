@@ -6,7 +6,7 @@ import { createEntitySlice, EntitySliceApi } from '@megp/entity';
 const applicationApi = entityApi.entitySliceApi['applications'];
 
 export const groupSliceApi: typeof EntitySliceApi =
-  createEntitySlice<Application>(applicationApi as any, 'Applications');
+  createEntitySlice<Application>(applicationApi as any, 'Applications', 'user');
 
 export const {
   useListQuery,
