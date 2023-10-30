@@ -1,16 +1,24 @@
 'use client';
 import { Stepper } from '@mantine/core';
 import styles from './stepper.module.scss';
-import { useState } from 'react';
+import { useRouter, usePathname } from 'next/navigation'; // Updated import
 
 function StyledStepper() {
-  const [active, setActive] = useState(0);
+  const router = useRouter();
+  const path = usePathname();
+
+  const routes = ['basic', 'detail', 'pdda', 'payment', 'doc', 'review'];
+
+  const activeStep = routes.indexOf(path.split('/')[4]);
+  const handleStepClick = (stepIndex) => {
+    router.push(routes[stepIndex]);
+  };
 
   return (
     <Stepper
       classNames={styles}
-      active={active}
-      onStepClick={setActive}
+      active={activeStep}
+      onStepClick={handleStepClick}
       orientation="vertical"
     >
       <Stepper.Step label="Basic Information" />
