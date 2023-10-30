@@ -6,7 +6,7 @@ import { BaseEntity } from '../entities/base.entity';
 
 @Injectable()
 export class EntityCrudService<T extends BaseEntity> {
-  constructor(private readonly repository: Repository<T>) { }
+  constructor(private readonly repository: Repository<T>) {}
 
   async create(itemData: DeepPartial<T>, req?: any): Promise<T> {
     const item = this.repository.create(itemData);
