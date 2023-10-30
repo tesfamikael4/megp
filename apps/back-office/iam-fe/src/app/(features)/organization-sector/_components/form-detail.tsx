@@ -12,8 +12,8 @@ import {
 import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
-import { notifications } from '@mantine/notifications';
 import { useForm } from 'react-hook-form';
+import { notify } from '@megp/core-fe';
 
 interface FormDetailProps {
   mode: 'new' | 'detail';
@@ -58,50 +58,27 @@ export function FormDetail({ mode }: FormDetailProps) {
       if ('data' in result) {
         router.push(`/organization-sector/${result?.data?.id}`);
       }
-      notifications.show({
-        message: 'organization Sector created successfully',
-        title: 'Success',
-        color: 'green',
-      });
+      notify('Success', 'Organization Sector created successfully');
     } catch (err) {
-      notifications.show({
-        message: 'errors in deleting organization Sector.',
-        title: 'Error',
-        color: 'red',
-      });
+      notify('Error', 'Errors in deleting organization Sector.');
     }
   };
   const onUpdate = async (data) => {
     try {
       await update({ ...data, id: id?.toString() });
-      notifications.show({
-        message: 'organization Sector updated successfully',
-        title: 'Success',
-        color: 'green',
-      });
+      notify('Success', 'Organization Sector updated successfully');
     } catch {
-      notifications.show({
-        message: 'errors in updating organization Sector.',
-        title: 'Error',
-        color: 'red',
-      });
+      notify('Error', 'Errors in updating organization Sector.');
     }
   };
   const onDelete = async () => {
     try {
       await remove(id?.toString()).unwrap();
-      notifications.show({
-        message: 'organization Sector deleted successfully',
-        title: 'Success',
-        color: 'green',
-      });
+      notify('Success', 'Organization Sector deleted successfully');
+
       router.push('/organization-sector');
     } catch (err) {
-      notifications.show({
-        message: 'errors in deleting organization Sector.',
-        title: 'Error',
-        color: 'red',
-      });
+      notify('Error', 'Errors in deleting organization Sector.');
     }
   };
 

@@ -1,4 +1,4 @@
-import { Box, LoadingOverlay, Stack, TextInput, Textarea } from '@mantine/core';
+import { LoadingOverlay, Stack, TextInput, Textarea } from '@mantine/core';
 import { EntityButton } from '@megp/entity';
 import { z, ZodType } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -12,8 +12,9 @@ import {
 import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
-import { notifications } from '@mantine/notifications';
+
 import { useForm } from 'react-hook-form';
+import { notify } from '@megp/core-fe';
 
 interface FormDetailProps {
   mode: 'new' | 'detail';
@@ -57,49 +58,27 @@ export function FormDetail({ mode }: FormDetailProps) {
       if ('data' in result) {
         router.push(`/organization-type/${result?.data?.id}`);
       }
-      notifications.show({
-        message: 'organization Type created successfully',
-        title: 'Success',
-        color: 'green',
-      });
+      notify('Success', 'Organization Type created successfully');
     } catch (err) {
-      notifications.show({
-        message: 'errors in creating organization Type.',
-        title: 'Error',
-        color: 'red',
-      });
+      notify('Error', 'Errors in creating organization Type.');
     }
   };
   const onUpdate = async (data) => {
     try {
       await update({ ...data, id: id?.toString() });
-      notifications.show({
-        message: 'organization Type updated successfully',
-        title: 'Success',
-        color: 'green',
-      });
+      notify('Success', 'Organization Type updated successfully');
     } catch {
-      notifications.show({
-        message: 'errors in updating organization Type.',
-        title: 'Error',
-        color: 'red',
-      });
+      notify('Error', 'Errors in updating organization Type.');
     }
   };
   const onDelete = async () => {
     try {
       await remove(id?.toString()).unwrap();
-      notifications.show({
-        message: 'organization Type deleted successfully',
-        title: 'Success',
-      });
+      notify('Success', 'Organization Type deleted successfully');
+
       router.push('/organization-type');
     } catch (err) {
-      notifications.show({
-        message: 'errors in deleting organization Type.',
-        title: 'Error',
-        color: 'red',
-      });
+      notify('Error', 'Errors in deleting organization Type.');
     }
   };
 

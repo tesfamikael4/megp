@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Modal } from '@mantine/core';
 import { Relation, RelationConfig } from '@megp/entity';
-import { notifications } from '@mantine/notifications';
 import {
   useLazySecondRelationQuery,
   useRelationMutation,
@@ -12,6 +11,7 @@ import { useParams } from 'next/navigation';
 import MandatePermission from './select-permission';
 
 import { Permission } from '@/models/permission';
+import { notify } from '@megp/core-fe';
 
 const AddPermission = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -48,18 +48,15 @@ const AddPermission = () => {
 
       try {
         await assignPermission(data).unwrap();
-
-        notifications.show({
-          message: 'Permission  has been assigned to role successfully.',
-          title: 'Success',
-          color: 'green',
-        });
+        notify(
+          'Success',
+          'Permission  has been assigned to mandate successfully.',
+        );
       } catch (err) {
-        notifications.show({
-          message: 'Sorry, an error encountered while assigning permission.',
-          title: 'Error',
-          color: 'red',
-        });
+        notify(
+          'Error',
+          'Sorry, an error encountered while assigning permission.',
+        );
       }
     },
     onAdd: () => {

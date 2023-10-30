@@ -12,6 +12,7 @@ import {
 import { useParams } from 'next/navigation';
 import { useListByIdQuery } from '../../units/_api/unit.api';
 import { Unit } from '@/models/unit';
+import { notify } from '@megp/core-fe';
 
 const AddEntityModal = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -53,18 +54,9 @@ const AddEntityModal = () => {
 
       try {
         id && (await assign(data).unwrap());
-
-        notifications.show({
-          message: 'Unit has been assigned to user successfully.',
-          title: 'Success',
-          color: 'green',
-        });
+        notify('Success', 'Unit has been assigned to user successfully.');
       } catch (err) {
-        notifications.show({
-          message: 'Sorry, an error encountered while assigning unit.',
-          title: 'Error',
-          color: 'red',
-        });
+        notify('Error', 'Sorry, an error encountered while assigning unit.');
       }
     },
     onAdd: () => {

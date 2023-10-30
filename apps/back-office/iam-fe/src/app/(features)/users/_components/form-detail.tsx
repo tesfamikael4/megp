@@ -13,6 +13,7 @@ import { useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { notifications } from '@mantine/notifications';
 import { User } from '@/models/user/user';
+import { notify } from '@megp/core-fe';
 
 interface FormDetailProps {
   mode: 'new' | 'detail';
@@ -69,17 +70,9 @@ export function FormDetail({ mode }: FormDetailProps) {
       if ('data' in result) {
         router.push(`/users/${result.data.id}`);
       }
-      notifications.show({
-        message: 'user created successfully',
-        title: 'Success',
-        color: 'green',
-      });
+      notify('Success', 'User created successfully');
     } catch (err) {
-      notifications.show({
-        message: 'error in creating user',
-        title: 'Success',
-        color: 'red',
-      });
+      notify('Error', 'Error in creating user');
     }
   };
   const onUpdate = async (data) => {
@@ -91,34 +84,18 @@ export function FormDetail({ mode }: FormDetailProps) {
         organizationId: '099454a9-bf8f-45f5-9a4f-6e9034230250',
         superTokenUserId: '099454a9-bf8f-45f5-9a4f-6e9034230250',
       });
-      notifications.show({
-        message: 'user updated successfully',
-        title: 'Success',
-        color: 'green',
-      });
+      notify('Success', 'User updated successfully');
     } catch {
-      notifications.show({
-        message: 'error in updating user',
-        title: 'Success',
-        color: 'red',
-      });
+      notify('Error', 'Error in updating user');
     }
   };
   const onDelete = async () => {
     try {
       await remove(id?.toString());
-      notifications.show({
-        message: 'user  deleted successfully',
-        title: 'Success',
-        color: 'green',
-      });
+      notify('Success', 'User deleted successfully');
       router.push('/users');
     } catch {
-      notifications.show({
-        message: 'error in deleting user',
-        title: 'Success',
-        color: 'red',
-      });
+      notify('Error', 'Error in deleting user');
     }
   };
   const onActivate = async () => {
@@ -128,21 +105,15 @@ export function FormDetail({ mode }: FormDetailProps) {
     };
     try {
       await activation({ ...dataSent, id: id?.toString() });
-      notifications.show({
-        message: `User ${
-          selected?.isActive ? 'Deactivated' : 'Activated'
-        } successfully`,
-        title: 'Success',
-        color: 'green',
-      });
+      notify(
+        'Success',
+        `User ${selected?.isActive ? 'Deactivated' : 'Activated'} successfully`,
+      );
     } catch {
-      notifications.show({
-        message: `error in ${
-          selected?.isActive ? 'Deactivating' : 'Activating'
-        }  User`,
-        title: 'Success',
-        color: 'red',
-      });
+      notify(
+        'Error',
+        `error in ${selected?.isActive ? 'Deactivating' : 'Activating'}  User`,
+      );
     }
   };
   const onReset = async () => {

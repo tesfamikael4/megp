@@ -8,3 +8,4 @@ export * from './generate-pdf/generate-pdf';
 export * from './layout/page-layout';
 export * from './layout/side-bar';
 export * from './layout/side-bar-shell';
+export * from './notification/notification';

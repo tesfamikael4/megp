@@ -17,10 +17,11 @@ import {
 import { useReadQuery as useReadAppQuery } from '../_api/application.api';
 import { useEffect } from 'react';
 
-import { notifications } from '@mantine/notifications';
+// import { notifications } from '@mantine/notifications';
 import { useForm } from 'react-hook-form';
 import { Permission } from '@/models/permission';
 import { useParams } from 'next/navigation';
+import { notify } from '@megp/core-fe';
 
 interface FormDetailProps {
   mode: 'new' | 'detail';
@@ -76,18 +77,10 @@ export function PermissionForm({
         applicationKey: selectedApp?.key,
       });
 
-      notifications.show({
-        message: 'permission created successfully',
-        title: 'Success',
-        color: 'green',
-      });
+      notify('Success', 'Permission created successfully');
       handleCloseModal();
     } catch (err) {
-      notifications.show({
-        message: 'errors in creating permission.',
-        title: 'Error',
-        color: 'red',
-      });
+      notify('Error', 'Errors in creating permission.');
     }
   };
 
@@ -100,18 +93,11 @@ export function PermissionForm({
         applicationName: selectedApp?.name,
         applicationKey: selectedApp?.key,
       });
-      notifications.show({
-        message: 'Permission updated successfully',
-        title: 'Success',
-        color: 'green',
-      });
+
+      notify('Success', 'Permission updated successfully');
       handleCloseModal();
     } catch {
-      notifications.show({
-        message: 'Errors in updating permission.',
-        title: 'Error',
-        color: 'red',
-      });
+      notify('Error', 'Errors in updating permission.');
     }
   };
 

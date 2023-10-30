@@ -2,7 +2,6 @@
 import { EntityConfig, EntityLayout } from '@megp/entity';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-// import { useGetUserInOrganizationQuery } from './_api/org-user.api';
 import { useListByIdQuery } from './_api/user.api';
 
 import { User } from '@/models/user/user';

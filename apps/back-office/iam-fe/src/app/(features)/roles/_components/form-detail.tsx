@@ -12,8 +12,8 @@ import {
 import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
-import { notifications } from '@mantine/notifications';
 import { useForm } from 'react-hook-form';
+import { notify } from '@megp/core-fe';
 
 interface FormDetailProps {
   mode: 'new' | 'detail';
@@ -61,17 +61,9 @@ export function FormDetail({ mode }: FormDetailProps) {
       if ('data' in result) {
         router.push(`/roles/${result?.data?.id}`);
       }
-      notifications.show({
-        message: 'Role created successfully',
-        title: 'Success',
-        color: 'green',
-      });
+      notify('Success', 'Role created successfully');
     } catch (err) {
-      notifications.show({
-        message: 'errors in deleting Role.',
-        title: 'Error',
-        color: 'red',
-      });
+      notify('Error', 'Errors in creating Role.');
     }
   };
   const onUpdate = async (data) => {
@@ -83,34 +75,18 @@ export function FormDetail({ mode }: FormDetailProps) {
         isSystemRole: false,
         organizationId: '099454a9-bf8f-45f5-9a4f-6e9034230250',
       });
-      notifications.show({
-        message: 'Role updated successfully',
-        title: 'Success',
-        color: 'green',
-      });
+      notify('Success', 'Role updated successfully');
     } catch {
-      notifications.show({
-        message: 'errors in updating Role.',
-        title: 'Error',
-        color: 'red',
-      });
+      notify('Error', 'Errors in updating Role.');
     }
   };
   const onDelete = async () => {
     try {
       await remove(id?.toString()).unwrap();
-      notifications.show({
-        message: 'Role deleted successfully',
-        title: 'Success',
-        color: 'green',
-      });
+      notify('Success', 'Role deleted successfully');
       router.push('/roles');
     } catch (err) {
-      notifications.show({
-        message: 'errors in deleting Role.',
-        title: 'Error',
-        color: 'red',
-      });
+      notify('Error', 'Errors in deleting Role.');
     }
   };
 

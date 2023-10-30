@@ -10,6 +10,7 @@ import {
 } from '../../users/_api/user-unit.api';
 import { useParams } from 'next/navigation';
 import { useListByIdQuery } from '../../users/_api/user.api';
+import { notify } from '@megp/core-fe';
 
 const AddUserModal = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -44,18 +45,9 @@ const AddUserModal = () => {
 
       try {
         id && (await assign(data).unwrap());
-
-        notifications.show({
-          message: 'user has been assigned to unit successfully.',
-          title: 'Sucess',
-          color: 'green',
-        });
+        notify('Error', 'User has been assigned to unit successfully.');
       } catch (err) {
-        notifications.show({
-          message: 'Sorry, an error encountered while assigning user.',
-          title: 'Error',
-          color: 'red',
-        });
+        notify('Success', 'Sorry, an error encountered while assigning user.');
       }
     },
     onAdd: () => {

@@ -10,6 +10,7 @@ import {
   useLazySecondRelationQuery,
 } from '../_api/organization-mandate.api';
 import { useParams } from 'next/navigation';
+import { notify } from '@megp/core-fe';
 
 const AddEntityModal = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -55,18 +56,12 @@ const AddEntityModal = () => {
 
       try {
         id && (await assignMandates(data).unwrap());
-
-        notifications.show({
-          message: 'Mandate has been assigned to organization successfully.',
-          title: 'Success',
-          color: 'green',
-        });
+        notify(
+          'Success',
+          'Mandate has been assigned to organization successfully.',
+        );
       } catch (err) {
-        notifications.show({
-          message: 'Sorry, an error encountered while assigning mandate.',
-          title: 'Error',
-          color: 'red',
-        });
+        notify('Error', 'Sorry, an error encountered while assigning mandate.');
       }
     },
     onAdd: () => {

@@ -19,8 +19,8 @@ import { useListQuery as useListTypeQuery } from '../../organization-type/_api/o
 import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
-import { notifications } from '@mantine/notifications';
 import { Organization } from '@/models/organization';
+import { notify } from '@megp/core-fe';
 
 interface FormDetailProps {
   mode: 'new' | 'detail';
@@ -78,50 +78,26 @@ export function FormDetail({ mode }: FormDetailProps) {
       if ('data' in result) {
         router.push(`/organizations/${result.data.id}`);
       }
-      notifications.show({
-        message: 'organization created successfully',
-        title: 'Success',
-        color: 'green',
-      });
+      notify('Success', 'Organization created successfully');
     } catch (err) {
-      notifications.show({
-        message: 'error in creating organization',
-        title: 'Success',
-        color: 'red',
-      });
+      notify('Error', 'Error in creating organization');
     }
   };
   const onUpdate = async (data) => {
     try {
       await update({ ...data, id: id?.toString() });
-      notifications.show({
-        message: 'organization updated successfully',
-        title: 'Success',
-        color: 'green',
-      });
+      notify('Success', 'Organization updated successfully');
     } catch {
-      notifications.show({
-        message: 'error in updating organization',
-        title: 'Success',
-        color: 'red',
-      });
+      notify('Error', 'Error in updating organization');
     }
   };
   const onDelete = async () => {
     try {
       await remove(id?.toString());
-      notifications.show({
-        message: 'organization  deleted successfully',
-        title: 'Success',
-        color: 'green',
-      });
+      notify('Success', 'Organization  deleted successfully');
       router.push('/organizations');
     } catch {
-      notifications.show({
-        message: 'error in deleting organization',
-        title: 'Success',
-        color: 'red',
-      });
+      notify('Error', 'Error in deleting organization');
     }
   };
   const onActivate = async () => {
@@ -131,21 +107,19 @@ export function FormDetail({ mode }: FormDetailProps) {
     };
     try {
       await activation({ ...dataSent, id: id?.toString() });
-      notifications.show({
-        message: `organization ${
+      notify(
+        'Success',
+        `organization ${
           selected?.isActive ? 'Deactivated' : 'Activated'
         } successfully`,
-        title: 'Success',
-        color: 'green',
-      });
+      );
     } catch {
-      notifications.show({
-        message: `error in ${
+      notify(
+        'Error',
+        `error in ${
           selected?.isActive ? 'Deactivating' : 'Activating'
         }  organization`,
-        title: 'Success',
-        color: 'red',
-      });
+      );
     }
   };
 
