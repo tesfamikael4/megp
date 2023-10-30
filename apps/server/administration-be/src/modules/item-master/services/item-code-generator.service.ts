@@ -8,14 +8,11 @@ export class ItemCodeGeneratorService {
   constructor(
     @InjectRepository(ItemCodeSequence)
     private readonly repository: Repository<ItemCodeSequence>,
-  ) { }
+  ) {}
 
   public async generate(): Promise<string> {
     const item = this.repository.create({});
     const responseItem = await this.repository.insert(item);
-    return responseItem.identifiers[0]
-      .id
-      .toString()
-      .padStart(5, '0');
+    return responseItem.identifiers[0].id.toString().padStart(5, '0');
   }
 }

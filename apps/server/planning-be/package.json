@@ -8,8 +8,6 @@
   "scripts": {
     "build": "nest build",
     "docker": "sh .bin/docker-build.sh",
-
-
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
