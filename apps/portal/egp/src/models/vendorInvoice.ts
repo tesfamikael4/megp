@@ -15,8 +15,3 @@ export interface InvoiceData {
   paymentStatus: string;
   remark: string;
 }
-
-export interface InvoiceResponse {
-  total: number;
-  items: InvoiceData[] | [];
-}

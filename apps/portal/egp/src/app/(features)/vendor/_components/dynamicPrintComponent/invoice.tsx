@@ -67,7 +67,7 @@ export default function InvoiceTemplate({
       <main className="w-full py-4  min-h-[60%]">
         <div className="flex justify-between items-end p-4 flex-col gap-4  ">
           <div className="flex w-full items-center justify-center">
-            <p className=" text-lg font-bold">
+            <p className=" text-sm font-bold">
               INVOICE{' '}
               <span className=" text-blue-600">
                 #{invoiceData.applicationNo}
@@ -76,8 +76,8 @@ export default function InvoiceTemplate({
           </div>
           <div className="flex w-full items-center justify-between">
             <div className="flex flex-col">
-              <p className="text-md text-gray-400 mb-1 font-bold">Bill To:</p>
-              <p className=" text-lg ml-2 font-semibold">
+              <p className="text-xs text-gray-400 mb-1 font-bold">Bill To:</p>
+              <p className="text-sm ml-2 font-semibold">
                 {invoiceData.payerName}
               </p>
             </div>
@@ -86,18 +86,18 @@ export default function InvoiceTemplate({
           <div className="flex w-full items-center justify-between">
             <div className="flex flex-col"></div>
             <div className="flex flex-col">
-              <p className="text-md text-gray-400 mb-1 font-bold">
+              <p className="text-xs text-gray-400 mb-1 font-bold">
                 Invoice Details:
               </p>
-              <p className=" text-sm ml-2 font-semibold">Date: {invoiceDate}</p>
-              <p className=" text-sm ml-2 font-semibold">
+              <p className=" text-xs ml-2 font-semibold">Date: {invoiceDate}</p>
+              <p className=" text-xs ml-2 font-semibold">
                 For: {invoiceData.serviceName}
               </p>
             </div>
           </div>
         </div>
-        <div className="w-full p-4 mt-20">
-          <table className="border w-full text-sm font-semibold">
+        <div className="w-full p-4 mt-5">
+          <table className="border w-full text-xs font-semibold">
             <thead>
               <tr>
                 <th className="border p-2 w-4">Item No</th>
@@ -134,16 +134,16 @@ export default function InvoiceTemplate({
 
       {/* Footer */}
       <div className="p-4 flex flex-col justify-end  ml-2 w-full min-h-[25%]">
-        <p className="text-md text-gray-400 mb-2 font-semibold">
+        <p className="text-sm text-gray-400 mb-2 font-semibold">
           Payment Instruction
         </p>
-        <p className="text-sm font-semibold">
+        <p className="text-xs font-semibold">
           Account name: {invoiceData.payToAccName}
         </p>
-        <p className="text-sm font-semibold">
+        <p className="text-xs font-semibold">
           Bank name: {invoiceData.payToBank}
         </p>
-        <p className="text-sm font-semibold mb-3">
+        <p className="text-xs font-semibold mb-3">
           Account number: {invoiceData.payToAccNo}
         </p>
 

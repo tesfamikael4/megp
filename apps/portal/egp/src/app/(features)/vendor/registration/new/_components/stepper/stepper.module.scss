@@ -4,15 +4,14 @@
   --mantine-spacing-sm: calc(0.45rem * var(--mantine-scale));
   --mantine-spacing-xs: calc(0.45rem * var(--mantine-scale));
   @apply w-full  h-full flex p-4;
-  min-width: 210px;
-}
-.step {
-  @apply p-0.5;
-}
-.content {
+  min-width: 250px;
 }
 .stepLabel {
-  @apply text-sm font-semibold;
+  @apply text-xs font-semibold;
+  color: var(--mantine-color-gray-6);
+}
+.stepIcon {
+  @apply text-xs font-semibold;
   color: var(--mantine-color-gray-6);
 }
 .stepBody {

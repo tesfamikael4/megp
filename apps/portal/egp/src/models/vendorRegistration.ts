@@ -55,7 +55,36 @@ export interface CreateVendorIdRequest {
 export interface CreateVendorIdResponse {
   vendorId: string;
 }
+export interface GetMBRSDataResponse {
+  tin: string;
+  businessLicenseNumber: string;
+  nationality: string;
+  legalStatus: string;
+  businessName: string;
+  dateRegistered: string;
+  organizationName: string;
+  firstName: string;
+  middleName: string;
+  lastName: string;
+}
 
+export interface GetFPPADataResponse {
+  id: string;
+  tin: string;
+  supplierCode: string;
+  supplierName: string;
+  businessType: string;
+  accountNo: string;
+  accountName: string;
+  mobileNumber: string;
+}
+
+export interface GetNCICDataResponse {
+  id: string;
+  tin: string;
+  level: string;
+  serviceType: string;
+}
 export interface FormData {
   basic: {
     name: string;
@@ -116,16 +145,7 @@ export interface FormData {
     lastName: string;
     nationality: string;
   }[];
-  areasOfBusinessInterest:
-    | {
-        category: string;
-        lineOfBusiness: {
-          id: string;
-          name: string;
-        }[];
-        priceRange: string;
-      }[]
-    | [];
+  areasOfBusinessInterest: AreasOfBusinessInterestType[] | [];
   invoice: InvoiceData[] | [];
   supportingDocuments: {
     businessRegistration_IncorporationCertificate: File | string | null;
@@ -135,4 +155,13 @@ export interface FormData {
     previousPPDARegistrationCertificate: File | string | null;
     mSMECertificate: File | string | null;
   };
+}
+
+export interface AreasOfBusinessInterestType {
+  category: string;
+  lineOfBusiness: {
+    id: string;
+    name: string;
+  }[];
+  priceRange: string;
 }

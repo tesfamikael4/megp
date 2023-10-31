@@ -106,9 +106,12 @@ export const BasicInformation = () => {
       NotificationService.successNotification('Form Created Successfully!');
       router.push(`detail`);
     }
+    if (createValues.isError) {
+      NotificationService.requestErrorNotification('Error on Request');
+    }
 
     return () => {};
-  }, [createValues.data, createValues.isSuccess, router]);
+  }, [createValues.data, createValues.isError, createValues.isSuccess, router]);
 
   useEffect(() => {
     if (getMRADataValues.isSuccess && getMRADataValues.data == null) {

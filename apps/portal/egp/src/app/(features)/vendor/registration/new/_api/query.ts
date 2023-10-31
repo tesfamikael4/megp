@@ -6,6 +6,9 @@ import {
   CreateVendorIdResponse,
   GetFormRequest,
   GetFormResponse,
+  GetNCICDataResponse,
+  GetFPPADataResponse,
+  GetMBRSDataResponse,
 } from '@/models/vendorRegistration';
 import {
   vendorDataGetawayApi,
@@ -53,7 +56,7 @@ export const vendorRegistrationQuery = vendorRegistrationApi.injectEndpoints({
 
     getLineOfBusiness: builder.query<LineOfBusinessResponse, any>({
       query: () => ({
-        url: `api/Categories/get-all-categories`,
+        url: `api/Categories`,
         method: 'GET',
       }),
     }),
@@ -75,19 +78,19 @@ export const vendorDataGetawayQuery = vendorDataGetawayApi.injectEndpoints({
         method: 'GET',
       }),
     }),
-    getMBRSData: builder.query<any, any>({
+    getMBRSData: builder.query<GetMBRSDataResponse, any>({
       query: (data) => ({
-        url: `customer-bussines-info/${data.tin}}`,
+        url: `customer-bussines-info/${data.tin}/BLN54321`,
         method: 'GET',
       }),
     }),
-    getFPPAData: builder.query<any, any>({
+    getFPPAData: builder.query<GetFPPADataResponse, any>({
       query: (data) => ({
         url: `fppa-vendor/${data.tin}`,
         method: 'GET',
       }),
     }),
-    getNCICData: builder.query<any, any>({
+    getNCICData: builder.query<GetNCICDataResponse, any>({
       query: (data) => ({
         url: `ncic-vendors/${data.tin}`,
         method: 'GET',
