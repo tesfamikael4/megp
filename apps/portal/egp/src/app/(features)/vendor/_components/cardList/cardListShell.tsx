@@ -1,10 +1,18 @@
 /* eslint-disable no-prototype-builtins */
 import React, { useState } from 'react';
-import { Flex, Button, Text } from '@mantine/core';
+import {
+  Flex,
+  Button,
+  Text,
+  Modal,
+  SimpleGrid,
+  Card,
+  ActionIcon,
+  Center,
+} from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { ChangeHandler, useFieldArray } from 'react-hook-form';
-import { IconPlus } from '@tabler/icons-react';
-import { PopupModal } from '../modal';
+import { IconPencil, IconPlus, IconTrash } from '@tabler/icons-react';
 
 interface CardListProps {
   control: any;
@@ -28,7 +36,7 @@ interface CardListProps {
     remove: (index: number) => void,
   ) => React.ReactNode;
 }
-const CardList: React.FC<CardListProps> = ({
+export const CardListShell: React.FC<CardListProps> = ({
   control,
   name,
   initialValues,
@@ -168,39 +176,66 @@ const CardList: React.FC<CardListProps> = ({
 
   return (
     <>
-      <Flex className="flex-wrap ">
+      <SimpleGrid cols={3} p="xs">
         {card(handleEdit, handleRemove)}
-        <Flex className="sm:w-1/2 md:w-1/2 lg:w-1/3 xl:w-1/3 items-center justify-center flex-col p-3">
-          <Flex
-            className={`items-center justify-center border rounded-md w-56 h-40  ${
+        <Card withBorder>
+          <Center h={'100%'} mih="100px">
+            <ActionIcon onClick={open} variant="outline" radius={'100%'}>
+              <IconPlus size={33} stroke={1.2} />
+            </ActionIcon>
+          </Center>
+          {/* <Flex
+            className={`items-center justify-center border rounded-md first-letter:${
               fieldState?.error?.message
                 ? 'border-[var(--mantine-color-error)]'
                 : 'shadow-md'
             }`}
             onClick={open}
-          >
-            <Flex className="items-center justify-center w-20 h-20 border-4 rounded-full shadow-md transition-transform hover:scale-105">
-              <IconPlus size={33} />
-            </Flex>
-          </Flex>
+          ></Flex> */}
           {fieldState?.error?.message && (
             <span className="text-[var(--mantine-color-error)] text-xs">
               {fieldState?.error?.message}
             </span>
           )}
-        </Flex>
-      </Flex>
+        </Card>
+      </SimpleGrid>
 
-      <PopupModal opened={opened} onClose={handleClose} size={'lg'}>
+      <Modal opened={opened} onClose={handleClose} size={'lg'} title={title}>
         {modalBody(getInputProps)}
 
         <Flex className="mt-6 justify-end gap-4">
           <Button onClick={handleAddItem}>Save</Button>
-          <Button onClick={handleClose}>Cancel</Button>
+          <Button variant="outline" onClick={handleClose}>
+            Cancel
+          </Button>
         </Flex>
-      </PopupModal>
+      </Modal>
     </>
   );
 };
-
-export default CardList;
+interface SingleCardWrapperProps {
+  remove: () => void;
+  edit: () => void;
+  children: React.ReactNode;
+}
+export const SingleCardWrapper: React.FC<SingleCardWrapperProps> = ({
+  edit,
+  remove,
+  children,
+}) => {
+  return (
+    <Card withBorder>
+      <Card.Section>
+        <Flex className="justify-end">
+          <ActionIcon onClick={edit} variant="subtle">
+            <IconPencil size={'1rem'} color="blue" />
+          </ActionIcon>
+          <ActionIcon onClick={remove} variant="subtle">
+            <IconTrash size={'1rem'} color="red" />
+          </ActionIcon>
+        </Flex>
+      </Card.Section>
+      {children}
+    </Card>
+  );
+};

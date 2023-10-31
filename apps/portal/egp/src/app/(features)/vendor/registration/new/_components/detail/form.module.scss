@@ -1,0 +1,6 @@
+.fie {
+    --__item-border-color:var(--_item-border-color);
+    --mantine-spacing-md: calc(0.8rem*var(--mantine-scale));
+    @apply border;
+    margin-top: 0.8rem
+}

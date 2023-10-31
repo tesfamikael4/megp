@@ -5,10 +5,9 @@ import { useRouter } from 'next/navigation';
 import { NotificationService } from '../../../_components/notification';
 import { useGetFormQuery } from '../_api/query';
 import RegistrationForm from '../_components/detail/formShell';
-import { setCookie, hasCookie, getCookie } from 'cookies-next';
+import { getCookie } from 'cookies-next';
 
 export default function Page() {
-  const auth = process.env.NEXT_PUBLIC_UI_ENV_MODE || 'production';
   const vendorId = getCookie('vendorId') || ' ';
   const router = useRouter();
   const requestInfo = useGetFormQuery({
@@ -16,9 +15,7 @@ export default function Page() {
   });
   useEffect(() => {
     if (requestInfo.isError) {
-      NotificationService.requestErrorNotification(
-        'Error on fetching form data',
-      );
+      NotificationService.requestErrorNotification('Error on fetching data');
       router.push(`basic`);
     }
     if (requestInfo.data?.status === 'Submitted') {
@@ -28,7 +25,7 @@ export default function Page() {
   }, [requestInfo, router]);
 
   return (
-    <section className="w-full">
+    <section className="w-full relative">
       <LoadingOverlay
         visible={requestInfo.isLoading}
         overlayProps={{ radius: 'sm', blur: 2 }}

@@ -1,4 +1,4 @@
-import { Fieldset, Flex, TextInput } from '@mantine/core';
+import { Fieldset, Flex, Group, Stack, TextInput } from '@mantine/core';
 import React from 'react';
 import { IconCash } from '@tabler/icons-react';
 import { Select } from '@mantine/core';
@@ -8,64 +8,81 @@ export const BusinessSizeAndOwnership: React.FC<PassFormDataProps> = ({
   register,
 }) => {
   return (
-    <Flex className="flex-col">
-      <Fieldset legend="Registered Capital" id="registeredCapital">
+    <Stack>
+      <Group grow>
         <TextInput
-          label="Amount"
-          id="amount"
+          label="Registered Capital"
           type="number"
+          rightSectionWidth="80px"
+          rightSection={
+            <Select
+              leftSection={<IconCash size={'1.3rem'} />}
+              data={['USD', 'ETB', 'EUR', 'GBP', 'KW']}
+              placeholder="select"
+              {...register(
+                'businessSizeAndOwnership.registeredCapital.currency',
+                'select',
+              )}
+              rightSection={<></>}
+              rightSectionWidth={0}
+              error={false}
+            />
+          }
           {...register('businessSizeAndOwnership.registeredCapital.amount')}
+          error={
+            register('businessSizeAndOwnership.registeredCapital.amount')
+              .error ||
+            register(
+              'businessSizeAndOwnership.registeredCapital.currency',
+              'select',
+            ).error
+          }
         />
-        <Select
-          label="Currency"
-          leftSection={<IconCash size="1rem" />}
-          data={['USD', 'ETB', 'EUR', 'GBP', 'KW']}
-          placeholder="select"
-          searchable
-          className="w-[150px]"
-          {...register(
-            'businessSizeAndOwnership.registeredCapital.currency',
-            'select',
-          )}
-        />
-      </Fieldset>
 
-      <Fieldset legend="Paid Up Capital" id="paidUpCapital">
         <TextInput
-          label="Amount"
-          id="amount"
+          label="Paid Up Capital"
           type="number"
+          rightSectionWidth="80px"
+          rightSection={
+            <Select
+              leftSection={<IconCash size={'1.3rem'} />}
+              data={['USD', 'ETB', 'EUR', 'GBP', 'KW']}
+              placeholder="select"
+              {...register(
+                'businessSizeAndOwnership.paidUpCapital.currency',
+                'select',
+              )}
+              rightSection={<></>}
+              rightSectionWidth={0}
+              error={false}
+            />
+          }
           {...register(`businessSizeAndOwnership.paidUpCapital.amount`)}
+          error={
+            register(`businessSizeAndOwnership.paidUpCapital.amount`).error ||
+            register(
+              'businessSizeAndOwnership.paidUpCapital.currency',
+              'select',
+            ).error
+          }
+        />
+      </Group>
+      <Group grow>
+        <TextInput
+          label="Number of Employees"
+          id="numberOfEmployees"
+          type="number"
+          {...register(`businessSizeAndOwnership.numberOfEmployees`)}
         />
         <Select
-          label="Currency"
-          id="currency"
-          leftSection={<IconCash size="1rem" />}
-          data={['USD', 'ETB', 'EUR', 'GBP', 'KW']}
+          label="Ownership Type"
+          id="ownershipType"
+          data={['Malawian', 'Local', 'Foreign', 'Mixed']}
           placeholder="select"
           searchable
-          className="w-[150px]"
-          {...register(
-            'businessSizeAndOwnership.paidUpCapital.currency',
-            'select',
-          )}
+          {...register('businessSizeAndOwnership.ownershipType', 'select')}
         />
-      </Fieldset>
-
-      <TextInput
-        label="Number of Employees"
-        id="numberOfEmployees"
-        type="number"
-        {...register(`businessSizeAndOwnership.numberOfEmployees`)}
-      />
-      <Select
-        label="Ownership Type"
-        id="ownershipType"
-        data={['Malawian', 'Local', 'Foreign', 'Mixed']}
-        placeholder="select"
-        searchable
-        {...register('businessSizeAndOwnership.ownershipType', 'select')}
-      />
-    </Flex>
+      </Group>
+    </Stack>
   );
 };

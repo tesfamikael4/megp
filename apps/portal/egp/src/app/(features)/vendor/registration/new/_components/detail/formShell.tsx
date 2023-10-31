@@ -7,7 +7,14 @@ import {
   RegisterOptions,
   ChangeHandler,
 } from 'react-hook-form';
-import { Text, Button, Flex, LoadingOverlay, Accordion } from '@mantine/core';
+import {
+  Text,
+  Button,
+  Flex,
+  LoadingOverlay,
+  Accordion,
+  Stack,
+} from '@mantine/core';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { formDataSchema } from './schema';
 import { FormData } from '@/models/vendorRegistration';
@@ -18,7 +25,7 @@ import { useRouter } from 'next/navigation';
 import { NotificationService } from '../../../../_components/notification';
 import classes from './accordion.module.scss';
 import { PopupModal } from '../../../../_components/modal';
-import { useAddFormMutation } from '../../_api/query';
+import { useAddFormMutation, useLazyGetMBRSDataQuery } from '../../_api/query';
 import { useTabs } from './accordion.data';
 
 export interface ExtendedRegistrationReturnType
@@ -81,6 +88,26 @@ const RegistrationForm = ({
 
   const [submitTrigger, submitRequestInfo] = useAddFormMutation();
   const [saveAsDraftTrigger, saveAsDraftRequestInfo] = useAddFormMutation();
+  const [getMBRSData, getMBRSDataValues] = useLazyGetMBRSDataQuery({});
+
+  useEffect(() => {
+    return () => {
+      getMBRSData({
+        tin: getValues().basic.tinNumber,
+      });
+    };
+  }, []);
+
+  useEffect(() => {
+    if (getMBRSDataValues.isSuccess) {
+      setValue('basic.name', getMBRSDataValues.data.businessName);
+      setValue('basic.country', getMBRSDataValues.data.nationality);
+      setValue('basic.businessType', getMBRSDataValues.data.legalStatus);
+    }
+
+    return () => {};
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [getMBRSDataValues.data, getMBRSDataValues.isSuccess]);
   const router = useRouter();
 
   const extendedRegister = (
@@ -119,8 +146,8 @@ const RegistrationForm = ({
       data: {
         ...data,
         areasOfBusinessInterest: [],
-        id: vendorId,
         status: 'Save',
+        level: 'pdda',
       },
     });
   };
@@ -128,7 +155,6 @@ const RegistrationForm = ({
     saveAsDraftTrigger({
       data: {
         ...getValues(),
-        id: vendorId,
         status: 'Save as Draft',
         level: 'detail',
       },
@@ -139,6 +165,7 @@ const RegistrationForm = ({
     if (submitRequestInfo.isSuccess && submitRequestInfo.data) {
       NotificationService.successNotification('Form Submitted Successfully!');
       setCookie('vendorId', vendorId);
+      router.push(`pdda`);
     }
     if (saveAsDraftRequestInfo.isSuccess && saveAsDraftRequestInfo.data) {
       NotificationService.successNotification('Form Saved Successfully!');
@@ -155,7 +182,7 @@ const RegistrationForm = ({
   ]);
 
   return (
-    <Flex className="flex-col">
+    <Flex className="flex-col w-full relative">
       <LoadingOverlay
         visible={
           submitRequestInfo.isLoading || saveAsDraftRequestInfo.isLoading
@@ -180,14 +207,12 @@ const RegistrationForm = ({
                 {tab.tabName}
               </Accordion.Control>
               <Accordion.Panel>
-                <Flex className="w-full  rounded-md flex-col gap-4 p-4  justify-between shadow-sm min-h-[28rem] bg-[var(--mantine-color-body)]">
+                <Stack>
                   {tab.tabPanelComponent}
-                  <Flex justify="end" className="gap-2">
-                    <Button onClick={() => onSaveAsDraft()}>
-                      Save as Draft
-                    </Button>
+                  <Flex justify="end">
+                    <Button onClick={onSaveAsDraft}>Save as draft</Button>
                   </Flex>
-                </Flex>
+                </Stack>
               </Accordion.Panel>
             </Accordion.Item>
           ))}
