@@ -27,6 +27,7 @@ import { TaskTrackerResponse } from '../dtos/task-tracker.response';
 import { TaskResponse } from '../../bpm/dtos/task.dto';
 import { ServicePrice } from 'src/pricing/entities/service-price';
 import {
+  AssignmentEnum,
   BusinessStatusEnum,
   ServiceKeyEnum,
   WorkflowInstanceEnum,
@@ -63,13 +64,14 @@ export class WorkflowInstanceService {
     @InjectRepository(PaymentReceiptEntity)
     private readonly receiptRepository: Repository<PaymentReceiptEntity>,
     private readonly commonService: HandlingCommonService,
-  ) {}
+  ) { }
 
   async submitFormBasedTask(
     nextCommand: GotoNextStateDto,
     userInfo: any,
   ): Promise<WorkflowInstanceResponse> {
     const response = new WorkflowInstanceResponse();
+
     return response;
   }
   async getCerteficateInfo(
@@ -82,7 +84,7 @@ export class WorkflowInstanceService {
         instances: { price: true },
       },
       where: {
-        // id: vendorId,
+        status: WorkflowInstanceEnum.Approved,
         instances: {
           requestorId: vendorId,
           approvedAt: Not(null),
@@ -129,7 +131,6 @@ export class WorkflowInstanceService {
     userInfo: any = {},
   ): Promise<any> {
     const response = {};
-    console.log(dto);
     const instanceEntity = CreateWorkflowInstanceDto.fromDto(dto);
     const price = await this.pricingRepository.findOne({
       where: { id: instanceEntity.pricingId },
@@ -160,7 +161,10 @@ export class WorkflowInstanceService {
     //const prefix = price.businessArea.charAt(0).toUpperCase();
     const bp = service.businessProcesses.find((a) => a.isActive === true);
     instanceEntity.bpId = bp.id;
+
     instanceEntity.status = WorkflowInstanceEnum.Submitted;
+    instanceEntity.key = service.key;
+    //serviceID
     const wfinstance = await this.saveWorkflowInstance(instanceEntity);
     const machine = createMachine({
       predictableActionArguments: true,
@@ -172,13 +176,14 @@ export class WorkflowInstanceService {
       const task = await this.taskRepository.findOne({
         where: { bpId: bp.id, name: state.value.toString() },
       });
+
       taskHandler.currentState = state.value.toString();
       taskHandler.instanceId = instanceEntity.id;
       taskHandler.taskId = task.id;
       taskHandler.previousHandlerId = null;
-      taskHandler.handlerName = userInfo.name;
+      taskHandler.handlerName = userInfo.name; //userMeta
       taskHandler.handlerUserId = userInfo.userId;
-      taskHandler.assignmentStatus = 'Unpicked';
+      taskHandler.assignmentStatus = AssignmentEnum.Unpicked;
       taskHandler.data = { ...dto.data };
       try {
         const insertedTaskHandler =
@@ -189,6 +194,7 @@ export class WorkflowInstanceService {
         console.log(error);
       }
     });
+
     stateMachine.start();
     stateMachine.stop();
 
@@ -205,7 +211,62 @@ export class WorkflowInstanceService {
     }
     return wfinstance;
   }
+  async generateVendorInvoice(vendorId: string, pricingId: string): Promise<boolean> {
+    const result = await this.pricingRepository.findOne(
+      {
+        relations: { service: true },
+        where: { id: pricingId },
+      });
+    if (!result) {
+      throw new NotFoundException('Not Found');
+    }
+    const invoice = new InvoiceEntity();
+    const service = result.service;
+    //if th service is upgrade
+    if (service.key == ServiceKeyEnum.upgrade) {
+      const previousPayment = await this.workflowInstanceRepository.findOne({
+        relations: {
+          businessProcess: { service: true, }, price: true,
+        }, where: {
+          businessProcess: { service: { key: ServiceKeyEnum.new } },
+          status: WorkflowInstanceEnum.Completed,
+          approvedAt: Not(IsNull()),
+          price: { businessArea: result.businessArea },
+          // requestorId: result.workflowInstance.requestorId,
+        },
+      });
 
+      if (previousPayment) {
+        /*
+        if (previousPayment.price.fee < price.fee) {
+          const netpayment = await this.computeUpgradeServicePaymentAmount(previousPayment, result);
+          invoice.amount = netpayment;
+        }*/
+      } else {
+        throw new NotFoundException('Something went wrong');
+      }
+    } else {
+      invoice.amount = result.fee;
+    }
+    const vendor = await this.vendorRepository.findOne({ where: { id: vendorId } });
+    invoice.instanceId = null; //result.instanceId;
+    invoice.taskName = null; //result.task.name;
+    invoice.taskId = null;//result.task.id;
+    invoice.payToAccName = 'PPDA';
+    invoice.payToAccNo = '123456789';
+    invoice.payToBank = 'Malawi Bank';
+    invoice.pricingId = pricingId;
+    //invoice.applicationNo = result.workflowInstance.applicationNumber;
+    invoice.payerName = vendor.name;
+    invoice.payerAccountId = vendor.userId;
+    invoice.serviceName = service.name;
+    invoice.remark = result.businessArea + ' ,' + service.description;
+    invoice.paymentStatus = 'Pending';
+    invoice.createdOn = new Date();
+    const response = this.invoiceRepository.insert(invoice);
+    if (response) return true;
+    return false;
+  }
   async generateInvoice(instanceId: string, taskId: string): Promise<boolean> {
     const result = await this.handlerRepository.findOne({
       relations: {
@@ -232,12 +293,8 @@ export class WorkflowInstanceService {
     if (service.key == ServiceKeyEnum.upgrade) {
       const previousPayment = await this.workflowInstanceRepository.findOne({
         relations: {
-          businessProcess: {
-            service: true,
-          },
-          price: true,
-        },
-        where: {
+          businessProcess: { service: true, }, price: true,
+        }, where: {
           businessProcess: { service: { key: ServiceKeyEnum.new } },
           status: WorkflowInstanceEnum.Completed,
           approvedAt: Not(IsNull()),
@@ -248,18 +305,8 @@ export class WorkflowInstanceService {
 
       if (previousPayment) {
         if (previousPayment.price.fee < result.workflowInstance.price.fee) {
-          //if any additional logic will add here
-          const previousFeeRate = previousPayment.price.fee / 365;
-          const proposedPaymentRate = result.workflowInstance.price.fee / 365;
-          const datesLeftToExpire = this.commonService.ComputeDateDifference(
-            new Date(),
-            new Date(previousPayment.expireDate),
-          );
-          const unUtilizedMoney = Number(datesLeftToExpire) * previousFeeRate;
-          const expectedFeeForNewLevel =
-            proposedPaymentRate * Number(datesLeftToExpire);
-          const netPaymnetForUpgrade = expectedFeeForNewLevel - unUtilizedMoney;
-          invoice.amount = netPaymnetForUpgrade;
+          const netpayment = await this.computeUpgradeServicePaymentAmount(previousPayment, result);
+          invoice.amount = netpayment;
         }
       } else {
         throw new NotFoundException('Something went wrong');
@@ -285,12 +332,25 @@ export class WorkflowInstanceService {
     return false;
   }
 
+  async computeUpgradeServicePaymentAmount(previousPayment: WorkflowInstanceEntity, taskhandler: TaskHandlerEntity): Promise<number> {
+    const previousFeeRate = previousPayment.price.fee / 365;
+    const proposedPaymentRate = taskhandler.workflowInstance.price.fee / 365;
+    const datesLeftToExpire = this.commonService.ComputeDateDifference(
+      new Date(),
+      new Date(previousPayment.expireDate),
+    );
+    const unUtilizedMoney = Number(datesLeftToExpire) * previousFeeRate;
+    const expectedFeeForNewLevel =
+      proposedPaymentRate * Number(datesLeftToExpire);
+    const netPaymnetForUpgrade = expectedFeeForNewLevel - unUtilizedMoney;
+    return netPaymnetForUpgrade;
+  }
   async gotoNextStep(
     nextCommand: GotoNextStateDto,
     userInfo: any = {
       userId: '96d95fdb-7852-4ddc-982f-0e94d23d15d3',
       name: 'xx',
-    },
+    }
   ) {
     const taskInfo = new TaskEntity();
     const workflowInstance = await this.workflowInstanceRepository.findOne({
@@ -316,14 +376,14 @@ export class WorkflowInstanceService {
         if (stateMetaData['type'] == 'end') {
           workflowInstance.status = WorkflowInstanceEnum.Completed;
           workflowInstance.businessStatus = BusinessStatusEnum.active;
+          //update vendor status approved
+          const vendor = await this.vendorRepository.findOne({ where: { id: workflowInstance.requestorId } });
+          vendor.status = WorkflowInstanceEnum.Approved
+          await this.vendorRepository.save(vendor);
           const today = new Date();
           workflowInstance.approvedAt = today;
-          const exprirYear = today.getFullYear() + 1;
-          workflowInstance.expireDate = new Date(
-            exprirYear,
-            today.getMonth(),
-            today.getDate(),
-          );
+          const exprireYear = today.getFullYear() + 1;
+          workflowInstance.expireDate = new Date(exprireYear, today.getMonth(), today.getDate());
           await this.addTaskTracker({
             taskId: currentTaskHandler?.taskId,
             instanceId: workflowInstance?.id,
@@ -336,6 +396,7 @@ export class WorkflowInstanceService {
             checkLists: nextCommand.taskChecklist,
           });
           await this.handlerRepository.delete(currentTaskHandler.id);
+
         } else {
           const task = await this.taskRepository.findOne({
             where: {
@@ -349,12 +410,13 @@ export class WorkflowInstanceService {
           stateMetaData['type'] = task.taskType;
           taskInfo.handlerType = task.handlerType;
           taskInfo.taskType = task.taskType;
+          //await 
           this.handleEvent(stateMetaData, nextCommand, task.id)
             .then((res) => {
-              console.log('handleEvent success', res);
+              //  console.log('handleEvent success', res);
             })
             .catch((err) => {
-              console.log('handleEvent error', err);
+              // console.log('handleEvent error', err);
             });
           const data = { remark: nextCommand.remark, ...nextCommand.data };
           currentTaskHandler.data = data;
@@ -549,15 +611,8 @@ export class WorkflowInstanceService {
     const result = await this.taskRepository.save(handler);
     return TaskResponse.toResponse(result);
   }
-  // async updateTaskHandler(dto: UpdateTaskHandlerDto): Promise<TaskResponse> {
-  //   const taskHandler = await this.taskRepository.findOne({
-  //     where: { id: dto.id },
-  //   });
-  //   if (!taskHandler) throw new NotFoundException('Task Handler not found');
-  //   const handler = UpdateTaskHandlerDto.fromDto(dto);
-  //   const result = await this.taskRepository.save(handler);
-  //   return TaskResponse.toResponse(result);
-  // }
+
+
   async addTaskTracker(
     dto: CreateTaskTrackerDto,
   ): Promise<TaskTrackerResponse> {
@@ -565,20 +620,7 @@ export class WorkflowInstanceService {
     const result = await this.trackerRepository.save(tracker);
     return TaskTrackerResponse.toResponse(result);
   }
-  // async removeTaskTracker(
-  //   dto: DeleteTaskTrackerDto,
-  // ): Promise<WorkflowInstanceResponse> {
-  //   const workflowInstance = await this.workflowInstanceRepository.findOne({
-  //     where: { id: dto.instanceId },
-  //     relations: ['taskTrackers'],
-  //   });
-  //   if (!workflowInstance)
-  //     throw new NotFoundException('WorkflowInstance not found');
-  //   const tracker = workflowInstance.taskTrackers.find((a) => a.id === dto.id);
-  //   workflowInstance.removeTracker(tracker);
-  //   const result = await this.workflowInstanceRepository.save(workflowInstance);
-  //   return WorkflowInstanceResponse.toResponse(result);
-  // }
+
   getStateMetaData(meta) {
     return Object.keys(meta).reduce((acc, key) => {
       const value = meta[key];
@@ -599,8 +641,8 @@ export class WorkflowInstanceService {
     if (result) {
       const wfDto = new CreateWorkflowInstanceDto();
       wfDto.pricingId = result.pricingId;
-      wfDto.requestorId = userInfo.userId;
-      wfDto.status = WorkflowInstanceEnum.Draft;
+      wfDto.requestorId = dto.requestorId;
+      wfDto.status = WorkflowInstanceEnum.Submitted;
       wfDto.key = ServiceKeyEnum.renewal;
       const response = await this.create(wfDto, userInfo);
       if (response.application) {
