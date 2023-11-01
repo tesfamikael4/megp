@@ -8,7 +8,7 @@ import {
   AccountVerificationStatusEnum,
   AccountVerificationTypeEnum,
 } from '@enums';
-import { AuthHelper } from '../helper/auth.helper';
+import { AuthHelper } from '@auth';
 import {
   ChangePasswordDto,
   LoginDto,

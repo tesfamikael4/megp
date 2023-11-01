@@ -1,21 +1,13 @@
-import {
-  Injectable,
-  HttpException,
-  HttpStatus,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Account } from '@entities';
 import { ConfigService } from '@nestjs/config';
+import { randomInt } from 'crypto';
 
 @Injectable()
 export class AuthHelper {
   constructor(
-    @InjectRepository(Account)
-    private readonly repository: Repository<Account>,
     private readonly jwt: JwtService,
     private readonly configService: ConfigService,
   ) {}
@@ -105,7 +97,9 @@ export class AuthHelper {
 
   // Generate OTP
   public generateOpt(): string {
-    const randomNumber = Math.floor(Math.random() * 900000) + 100000;
+    const randomNumber = randomInt(100000, 999999);
+
+    // const randomNumber = Math.floor(Math.random() * 900000) + 100000;
 
     return '123456'; //randomNumber.toString();
   }

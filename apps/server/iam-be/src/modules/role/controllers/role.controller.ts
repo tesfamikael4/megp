@@ -16,13 +16,16 @@ import { RoleService } from '../services/role.service';
 import { Role } from '../entities/role.entity';
 import { CollectionQuery } from '@collection-query';
 import { EntityCrudController } from 'src/shared/controller/entity-crud.controller';
+import { EntityCrudOptions } from 'src/shared/types/crud-option.type';
+
+const options: EntityCrudOptions = {
+  createDto: CreateRoleDto,
+  updateDto: UpdateRoleDto,
+};
 
 @Controller('roles')
 @ApiTags('roles')
-export class RoleNewController extends EntityCrudController<Role>(
-  CreateRoleDto,
-  UpdateRoleDto,
-) {
+export class RoleNewController extends EntityCrudController<Role>(options) {
   constructor(private readonly roleService: RoleService) {
     super(roleService);
   }

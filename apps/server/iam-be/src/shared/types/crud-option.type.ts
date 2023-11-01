@@ -1,20 +1,19 @@
-export type RelationCrudOptions = {
-  firstEntityIdName: string;
-  firstInclude: string;
-
-  secondEntityIdName: string;
-  secondInclude: string;
+export type EntityCrudOptions = {
+  createDto?: { new (): NonNullable<unknown> };
+  updateDto?: { new (): NonNullable<unknown> };
 };
 
 export type ExtraCrudOptions = {
   entityIdName: string;
+  createDto?: { new (): NonNullable<unknown> };
+  updateDto?: { new (): NonNullable<unknown> };
 };
 
-export type RelationObjectCrudOptions = {
+export interface RelationCrudOptions {
   firstEntityIdName: string;
   firstInclude: string;
-
   secondEntityIdName: string;
   secondInclude: string;
-  object: any;
-};
+  assignFirstDto?: { new (): NonNullable<unknown> };
+  assignSecondDto?: { new (): NonNullable<unknown> };
+}
