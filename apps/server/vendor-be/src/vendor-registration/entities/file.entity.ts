@@ -19,6 +19,7 @@ export class FilesEntity extends CommonEntity {
   bucketName: string;
   @Column()
   originalName: string;
+  @Column()
   attachmentUrl: string;
   @Column()
   path: string;

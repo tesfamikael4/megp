@@ -14,8 +14,8 @@ export class AreasOfBusinessInterestEntity {
   id: string;
   @Column()
   category: string;
-  @Column()
-  lineOfBusiness: string;
+  @Column({ type: 'jsonb', default: [] })
+  lineOfBusiness: string[];
   @Column()
   priceRange: string;
   @Column({ nullable: true })

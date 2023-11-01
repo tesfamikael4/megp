@@ -2,15 +2,19 @@ import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ApiExtraModels, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { DataResponseFormat } from 'src/shared/api-data';
 import { AreasOfBusinessInterestService } from '../services/areas-of-business-interest.service';
+import { EntityCrudController } from 'src/shared/controller';
+import { AreasOfBusinessInterestEntity } from '../entities/areas-of-business-interest.entity';
 
-@Controller('AreasOfBusinessInterestController')
-@ApiTags('AreasOfBusinessInterestController')
+@Controller('areas-of-business-interests')
+@ApiTags('areas-of-business-interests')
 @ApiResponse({ status: 500, description: 'Internal error' })
 @ApiExtraModels(DataResponseFormat)
-export class AreasOfBusinessInterestController {
+export class AreasOfBusinessInterestController extends EntityCrudController<AreasOfBusinessInterestEntity> {
   constructor(
     private readonly areasOfBusinessInterestService: AreasOfBusinessInterestService,
-  ) {}
+  ) {
+    super(areasOfBusinessInterestService);
+  }
   @Get('fetch')
   async fetch() {
     return await this.areasOfBusinessInterestService.fetch();

@@ -21,8 +21,6 @@ export class ShareholdersEntity extends CommonEntity {
   nationality: string;
   @Column()
   share: string;
-  @Column({ nullable: true })
-  key: string;
   @JoinColumn({ name: 'vendorId' })
   @ManyToOne(() => VendorsEntity, (v) => v.shareholders)
   vendor: VendorsEntity;

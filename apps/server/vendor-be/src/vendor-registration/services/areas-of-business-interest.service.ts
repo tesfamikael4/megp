@@ -8,13 +8,16 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AreasOfBusinessInterestEntity } from '../entities/areas-of-business-interest.entity';
 import { AreasOfBusinessInterestResponse } from '../dto/areas-of-business-interest';
+import { EntityCrudService } from 'src/shared/service';
 
 @Injectable()
-export class AreasOfBusinessInterestService {
+export class AreasOfBusinessInterestService extends EntityCrudService<AreasOfBusinessInterestEntity> {
   constructor(
     @InjectRepository(AreasOfBusinessInterestEntity)
     private readonly areasOfBusinessInteresteRepository: Repository<AreasOfBusinessInterestEntity>,
-  ) {}
+  ) {
+    super(areasOfBusinessInteresteRepository);
+  }
   async fetch(): Promise<any> {
     try {
       const result = await this.areasOfBusinessInteresteRepository.find();

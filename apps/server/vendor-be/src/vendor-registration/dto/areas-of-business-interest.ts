@@ -11,7 +11,7 @@ export class CreateAreasOfBusinessInterest {
   @ApiProperty()
   @IsUUID()
   @IsNotEmpty()
-  lineOfBusiness: string;
+  lineOfBusiness: string[];
   @ApiProperty()
   @IsUUID()
   @IsNotEmpty()
@@ -20,6 +20,8 @@ export class CreateAreasOfBusinessInterest {
   @IsUUID()
   @IsNotEmpty()
   vendorId: string;
+
+  userId: string;
   static fromDto(
     dto: CreateAreasOfBusinessInterest,
   ): AreasOfBusinessInterestEntity {

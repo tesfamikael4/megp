@@ -1,82 +1,166 @@
 import { InjectRepository } from '@nestjs/typeorm';
-
 import {
+  BadRequestException,
   HttpException,
   HttpStatus,
   Inject,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { DataSource, In, Repository } from 'typeorm';
 import { VendorsEntity } from './entities/vendors.entity';
-import { InsertAllDataDto } from './dto/save-all.dto';
 import { SetVendorStatus, VendorsResponseDto } from './dto/vendor.dto';
 import { WorkflowInstanceEntity } from 'src/handling/entities/workflow-instance';
 import { BpServiceEntity } from 'src/services/entities/bp-service';
 import { BusinessProcessEntity } from 'src/bpm/entities/business-process';
-import initialValueSchema from 'src/data';
-import { CreateWorkflowInstanceDto } from 'src/handling/dtos/workflow-instance.dto';
+import {
+  CreateWorkflowInstanceDto,
+  GotoNextStateDto,
+} from 'src/handling/dtos/workflow-instance.dto';
 import { FilesEntity } from './entities/file.entity';
-import { FileResponseDto, GetFileDto } from './dto/file.dto';
+import { FileResponseDto } from './dto/file.dto';
 import { WorkflowInstanceService } from 'src/handling/services/workflow-instance.service';
-import { CreateBankAccountDetailDto } from './dto/bank-account-detail.dto';
+import initialValueSchema2 from 'src/data2';
+import { VendorInitiationDto } from './dto/vendor-initiation.dto';
+import { BankAccountDetailEntity } from './entities/bank-account-detail.entity';
 import { ServicePrice } from 'src/pricing/entities/service-price';
+import { EntityCrudService } from 'src/shared/service';
+import { AreasOfBusinessInterestEntity } from './entities/areas-of-business-interest.entity';
+import {
+  AreasOfBusinessInterestResponse,
+  CreateAreasOfBusinessInterest,
+} from './dto/areas-of-business-interest';
+import { InvoiceEntity } from 'src/handling/entities/invoice.entity';
+import { InvoiceResponseDto } from './dto/invoice.dto';
 
 @Injectable()
-export class VendorRegistrationsService {
+export class VendorRegistrationsService extends EntityCrudService<VendorsEntity> {
   constructor(
     @InjectRepository(VendorsEntity)
     private readonly vendorRepository: Repository<VendorsEntity>,
+
     @Inject(WorkflowInstanceService)
     private readonly WorkflowInstanceService: WorkflowInstanceService,
     @InjectRepository(BpServiceEntity)
     private readonly bpServiceRepository: Repository<BpServiceEntity>,
+    @InjectRepository(InvoiceEntity)
+    private readonly invoiceRepository: Repository<InvoiceEntity>,
     @InjectRepository(BusinessProcessEntity)
     private readonly businessProcessEntity: Repository<BusinessProcessEntity>,
     private readonly dataSource: DataSource, // private readonly workflowInstanceService: WorkflowInstanceService,
     @InjectRepository(ServicePrice)
     private readonly ServicePriceRepository: Repository<ServicePrice>,
-  ) { }
-
-  async addVendorInformations(data: InsertAllDataDto): Promise<any> {
+    @InjectRepository(AreasOfBusinessInterestEntity)
+    private readonly areasOfBusinessInterestRepository: Repository<AreasOfBusinessInterestEntity>,
+  ) {
+    super(vendorRepository);
+  }
+  async addVendorInformations(data: any): Promise<any> {
+    this.vendorRepository.findOneOrFail({
+      where: { userId: 'b23f0b00-0a59-4f6d-9fd9-34d6fa960e0' },
+    });
     try {
-      if (data?.data?.status == 'Save as Draft' || 'Save') {
+      if (
+        (data?.status == 'Save as Draft' ||
+          data?.status == 'Save' ||
+          data?.status == 'Submit') &&
+        data?.userId !== undefined &&
+        data?.status !== 'Submitted'
+      ) {
         const result = await this.vendorRepository.save(
           await this.fromInitialValue(data),
         );
-        if (data?.data?.status == 'Save') {
-          for (
-            let i = 0;
-            i <
-            data.data.data.areasOfBusinessInterest
-              ?.areasOfBusinessInterestInformation.length;
-            i++
-          ) {
+
+        if (data?.status == 'Submit') {
+          const instances = [];
+          for (let i = 0; i < data.areasOfBusinessInterest?.length; i++) {
             const workflowInstanceDto = new CreateWorkflowInstanceDto();
-            workflowInstanceDto.key =
-              Date.now() + '-' + Math.round(Math.random() * 1e9);
+            workflowInstanceDto.key = 'newRegistration';
             workflowInstanceDto.status = 'Submit';
             workflowInstanceDto.requestorId = result.id;
             workflowInstanceDto.bpid = result.instances[i].bpId;
             workflowInstanceDto.pricingId =
-              data.data.data.areasOfBusinessInterest
-                ?.areasOfBusinessInterestInformation[i]?.priceRange;
-            // workflowInstanceDto.data = result;
-            console.log('workflowInstanceDto', workflowInstanceDto);
-            await this.WorkflowInstanceService.create(workflowInstanceDto);
+              data.areasOfBusinessInterest[i]?.priceRange;
+
+            const response =
+              await this.WorkflowInstanceService.create(workflowInstanceDto);
+            instances.push(response.application.id);
+          }
+          for (let i = 0; i < instances.length; i++) {
+            const dto = new GotoNextStateDto();
+            dto.instanceId = instances[i];
+            dto.action = 'ISR';
+
+            const res = await this.WorkflowInstanceService.gotoNextStep(dto);
           }
         }
-        // console.log('vendorsEntityvendorsEntityvendorsEntity', result)
-        console.log('ooooooooooooooooooooooooo', this.toInitialValue(result));
-
-        return this.toInitialValue(result);
+        if (result) {
+          return {
+            message: 'Operation successful',
+          };
+        }
+        return {
+          message: 'Operation failed',
+        };
+      } else {
+        throw new BadRequestException(
+          'status can not be different from Save as Draft , Submitted , Save  and UserId can not be undefined ',
+        );
       }
-    } catch (error) { }
+    } catch (error) {
+      throw new BadRequestException('invalid application');
+    }
   }
-  async getVendorInformation(vendorId: string): Promise<any> {
+  async VendorInitiation(
+    vendorInitiationDto: VendorInitiationDto,
+  ): Promise<any> {
+    if (vendorInitiationDto.status === 'Save as Draft') {
+      throw new BadRequestException(`invalid Status`);
+    }
+    try {
+      const vendorsEntity = new VendorsEntity();
+      vendorsEntity.id = vendorInitiationDto.id;
+      vendorsEntity.userId = vendorInitiationDto.userId;
+      vendorsEntity.status = vendorInitiationDto.status;
+      vendorsEntity.name = vendorInitiationDto.name;
+      vendorsEntity.formOfEntity = vendorInitiationDto.businessType;
+      vendorsEntity.origin = vendorInitiationDto.origin;
+      vendorsEntity.district = vendorInitiationDto?.district;
+      vendorsEntity.country = vendorInitiationDto.country;
+      vendorsEntity.origin = vendorInitiationDto.origin;
+      vendorsEntity.tin = vendorInitiationDto.tinNumber;
+      const result = await this.vendorRepository.save(vendorsEntity);
+      if (result) {
+        return { vendorId: result.id };
+      }
+    } catch (error) {
+      throw new BadRequestException();
+    }
+  }
+
+  async getVendorInformation(userId: string): Promise<any> {
     try {
       const vendorEntity = await this.vendorRepository.findOne({
-        where: { id: vendorId },
+        where: { userId: userId },
+        relations: {
+          shareholders: true,
+          vendorAccounts: { bank: true },
+          beneficialOwnership: true,
+          instances: true,
+          areasOfBusinessInterest: true,
+        },
+      });
+      return vendorEntity;
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async getVendorByUserId(userId: string): Promise<typeof initialValueSchema2> {
+    try {
+      const vendorEntity = await this.vendorRepository.findOneOrFail({
+        where: { userId: userId, status: In(['Save as Draft', 'Submitted']) },
         relations: {
           shareholders: true,
           vendorAccounts: { bank: true },
@@ -90,46 +174,81 @@ export class VendorRegistrationsService {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
-  async getVendorByUserId(userId: string): Promise<VendorsResponseDto> {
-    try {
-      const vendorEntity = await this.vendorRepository.findOne({
-        select: ['id', 'createdAt', 'name', 'status', 'tin'],
-        where: { userId: userId, status: In(['Save as Draft', 'Submitted']) },
-      });
-      return VendorsResponseDto.fromEntity(vendorEntity);
-    } catch (error) {
-      throw new HttpException(error, HttpStatus.BAD_REQUEST);
-    }
-  }
-  async getVendorStatusByVendorId(VendorId: string): Promise<string> {
+  async getVendorStatusByVendorId(userId: string): Promise<any> {
     try {
       const vendorStatus = await this.vendorRepository.findOne({
         select: ['status'],
-        where: { id: VendorId },
+        where: { userId: userId },
       });
-      console.log('vendorStatusvendorStatus : ', vendorStatus);
-      return vendorStatus.status;
+      return { vendorStatus: vendorStatus.status };
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
-  async getVendorId(vendorId: string): Promise<VendorsResponseDto> {
+  async getVendorByVendorId(vendorId: string): Promise<any> {
+    try {
+      const vendorStatus = await this.vendorRepository.findOne({
+        where: { id: vendorId },
+      });
+      return vendorStatus ? vendorStatus : {};
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
+  }
+  async getVendorId(vendorId: string): Promise<any> {
     try {
       const vendorEntity = await this.vendorRepository.findOne({
-        where: { id: vendorId },
+        where: { userId: vendorId },
         relations: {
           shareholders: true,
-          vendorAccounts: { bank: true },
-          beneficialOwnership: true,
+          vendorAccounts: true,
           instances: true,
+          beneficialOwnership: true,
+          areasOfBusinessInterest: true,
         },
       });
-      return VendorsResponseDto.fromEntity(vendorEntity);
+      const invoice = await this.invoiceRepository.find({
+        where: { payerAccountId: vendorId },
+      });
+      const vendorEntityRes = { ...vendorEntity, invoice: invoice };
+      return this.toInitialValue(vendorEntityRes);
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
-
+  async getVendorAreaOfInterestByVendorId(userId: string): Promise<any> {
+    try {
+      const vendorEntity = await this.vendorRepository.findOne({
+        where: { userId: userId },
+        relations: {
+          areasOfBusinessInterest: true,
+        },
+      });
+      return vendorEntity.areasOfBusinessInterest.map((element) =>
+        AreasOfBusinessInterestResponse.fromEntity(element),
+      );
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
+  }
+  async addVendorAreaOfInterestByVendorId(
+    createAreasOfBusinessInterest: CreateAreasOfBusinessInterest[],
+  ): Promise<any> {
+    try {
+      const result = await this.vendorRepository.findOne({
+        where: { userId: createAreasOfBusinessInterest[0].userId },
+        relations: { areasOfBusinessInterest: true },
+      });
+      if (!result)
+        return `User  with Id ${createAreasOfBusinessInterest[0].userId} does not Have an active Vendor  `;
+      result.areasOfBusinessInterest = CreateAreasOfBusinessInterest.fromDtos(
+        createAreasOfBusinessInterest,
+      );
+      return this.vendorRepository.save(result);
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
+  }
   async getVendorById(vendorId: string): Promise<VendorsResponseDto> {
     try {
       const vendorEntity = await this.vendorRepository.findOneOrFail({
@@ -156,7 +275,6 @@ export class VendorRegistrationsService {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
-
   async getVendors(): Promise<VendorsResponseDto[]> {
     try {
       const vendorEntity = await this.vendorRepository.find({
@@ -164,9 +282,9 @@ export class VendorRegistrationsService {
           shareholders: true,
           beneficialOwnership: true,
           instances: true,
+          vendorAccounts: true,
           areasOfBusinessInterest: true,
         },
-        where: {},
       });
       return vendorEntity.map((element) =>
         VendorsResponseDto.fromEntity(element),
@@ -175,21 +293,20 @@ export class VendorRegistrationsService {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
-  async setVendorStatus(
-    vendorStatus: SetVendorStatus,
-  ): Promise<VendorsResponseDto> {
+  async setVendorStatus(vendorStatus: SetVendorStatus): Promise<any> {
     try {
-      const result = await this.vendorRepository.findOneBy({
-        id: vendorStatus.vendorId,
+      const result = await this.vendorRepository.findOne({
+        where: { userId: vendorStatus.userId },
       });
       if (!result) {
         throw new NotFoundException(
-          `vendor with Id ${vendorStatus.vendorId} is not found`,
+          `user with Id ${vendorStatus.userId} does not have active vendor`,
         );
       }
       result.status = vendorStatus.status.toString();
-      const vendorEntity = await this.vendorRepository.save(result);
-      return VendorsResponseDto.fromEntity(vendorEntity);
+      return VendorsResponseDto.fromEntity(
+        await this.vendorRepository.save(result),
+      );
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
@@ -207,7 +324,6 @@ export class VendorRegistrationsService {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
-
   async getVendorApplicationInformation(): Promise<any> {
     try {
       const result = await this.vendorRepository.find({
@@ -235,211 +351,97 @@ export class VendorRegistrationsService {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
-
-  beneficialOwnershipmapper = (beneficialOwnership: any) => {
-    const beneficialOwnershipData =
-      beneficialOwnership?.length > 0
-        ? beneficialOwnership?.map((element) => {
-          return {
-            id: element?.id,
-            firstName: element.firstName,
-            lastName: element.lastName,
-            nationality: element.nationality,
-          };
-        })
-        : [];
-    return beneficialOwnershipData;
-  };
-  areaOfBusinessInterest = (areaOfBusinessInterest: any) => {
-    const beneficialOwnershipData =
-      areaOfBusinessInterest?.length > 0
-        ? areaOfBusinessInterest?.map((element) => {
-          return {
-            id: element?.id,
-            category: element.category,
-            lineOfBusiness: element.lineOfBusiness,
-            priceRange: element.priceRange,
-          };
-        })
-        : [];
-    return beneficialOwnershipData;
-  };
-
-  toInitialValue = (result: VendorsEntity) => {
-    const initialValues = initialValueSchema;
-    console.log('resultresultresult : ', result);
-    initialValues.status = result.status;
-    initialValues.userId = result.userId;
-    initialValues.id = result.id;
-    console.log('ffffffffffffffff : ');
-
-    initialValues.basicRegistration.tinNumber = result.tin;
-    initialValues.basicRegistration.businessCompanyOrigin = result.origin;
-    initialValues.basicRegistration.country = result.country;
-    initialValues.basicRegistration.district = result.district;
-    initialValues.basicRegistration.tinNumber = result.tin;
-    initialValues.basicRegistration.formOfBusiness = result.formOfEntity;
-    initialValues.basicRegistration.nameOfBusinessCompany = result.name;
-    let createBankAccountDetailDto: any = [new CreateBankAccountDetailDto()];
-    console.log('gggggggggggggggggggg : ');
-
-    createBankAccountDetailDto = result?.vendorAccounts?.map((element) => {
-      return {
-        id: element?.id,
-        accountHoldersFullName: element.accountHolderFullName,
-        accountNumber: element.accountNumber,
-        vendorId: element.vendorId,
-        bankId: element.bankId,
-        branchName: element.branchName,
-        bankBranchAddress: element.branchName,
-        currency: element.currency,
-        bankSWIFT_BICCode: element.bankSwift,
-        iBAN: element.IBAN,
-        status: element.status,
-        hashValue: element.hashValue,
-        bankName: element.bankName,
-        metaData: element.metaData,
-      };
-    });
-    console.log('ttttttttttttttttttttt', initialValues);
-
-    initialValues.bankAccountDetails.bankAccountDetailsTable =
-      createBankAccountDetailDto;
-
-    initialValues.shareHolders.shareHoldersTable = result.shareholders
-      ? result.shareholders
-      : [];
-
-    initialValues.beneficialOwnership.beneficialOwnershipTable =
-      result.beneficialOwnership;
-    initialValues.areasOfBusinessInterest.areasOfBusinessInterestNames =
-      result.areasOfBusinessInterest?.map((element) => element.category);
-
-    initialValues.areasOfBusinessInterest.areasOfBusinessInterestInformation =
-      this.areaOfBusinessInterest(result.areasOfBusinessInterest);
-    console.log('ggggggggggggggggggggg', initialValues);
-    const metadataw = JSON.parse(JSON.stringify(result.metaData));
-
-    initialValues.addressInformation = metadataw.addressInformation;
-    initialValues.contactPersons = metadataw.contactPersons;
-    initialValues.businessSizeAndOwnership = metadataw.businessSizeAndOwnership;
-    initialValues.bankAccountDetails = metadataw.bankAccountDetails;
-    console.log('ppppppppppppppppppppppppppppppp', initialValues);
-    return initialValues;
-  };
-
-  fromInitialValue = async (data: InsertAllDataDto) => {
+  fromInitialValue = async (data: any) => {
     let vendorsEntity: VendorsEntity = null;
-    if (data.data.id && data.data.id !== '') {
-      console.log('ddddddddddd', data.data.id);
-      vendorsEntity = await this.vendorRepository.findOne({
-        where: { id: data.data.id },
-        relations: {
-          shareholders: true,
-          vendorAccounts: true,
-          beneficialOwnership: true,
-          instances: true,
-          areasOfBusinessInterest: true,
-        },
-      });
-    } else {
-      vendorsEntity = new VendorsEntity();
-    }
-    vendorsEntity.userId = data?.data?.userId;
-    vendorsEntity.status =
-      data?.data?.status == 'Save' ? 'Submitted' : data?.data?.status;
-    const basicRegistration = data.data.data.basicRegistration;
+    vendorsEntity = await this.vendorRepository.findOne({
+      where: { userId: data.userId },
+      relations: {
+        shareholders: true,
+        vendorAccounts: true,
+        beneficialOwnership: true,
+        instances: true,
+        areasOfBusinessInterest: true,
+      },
+    });
+    if (vendorsEntity.status == 'Submitted')
+      throw new BadRequestException(
+        `the application with id ${vendorsEntity.id} is already submitted`,
+      );
 
-    vendorsEntity.tin = basicRegistration.tinNumber;
-    //basicRegistration Information
+    vendorsEntity.userId = data?.userId;
+    vendorsEntity.level = data?.level;
+    vendorsEntity.status =
+      data?.status == 'Submit' ? 'Submitted' : data?.status;
+    const basicRegistration = data.basic;
+    vendorsEntity.tin = data?.tinNumber;
     vendorsEntity.country = basicRegistration.country;
     vendorsEntity.name = basicRegistration.name;
     vendorsEntity.district = basicRegistration.district;
-    vendorsEntity.formOfEntity = basicRegistration.formOfBusiness;
+    vendorsEntity.formOfEntity = basicRegistration.businessType;
     vendorsEntity.country = basicRegistration.country;
-    vendorsEntity.origin = basicRegistration.businessCompanyOrigin;
-    vendorsEntity.name = basicRegistration.nameOfBusinessCompany;
+    vendorsEntity.origin = basicRegistration.origin;
+    vendorsEntity.name = basicRegistration.name;
 
-    //shareHolders Information
-    const shareHolders = data.data.data.shareHolders.shareHoldersTable;
-    let shareHoldersEntity = [];
-    shareHoldersEntity =
-      shareHolders.length > 0
-        ? shareHolders?.map((element) => {
-          return {
-            id: element?.id, // this id will make the operation update if its drafted already
-            firstName: element.firstName,
-            lastName: element.lastName,
-            nationality: element.share,
-            share: element.share,
-            key: element.key,
-          };
-        })
-        : [];
-    vendorsEntity.shareholders = shareHoldersEntity;
+    const shareHolders = data.shareHolders;
+    vendorsEntity.shareholders = shareHolders;
 
-    // mapping the payload Beneficiary Ownership info
-    const beneficialOwnership =
-      data.data.data.beneficialOwnership.beneficialOwnershipTable;
-    const bankAccountDetails =
-      data.data.data.bankAccountDetails.bankAccountDetailsTable;
-
-    let beneficialOwnershipEntity = [];
-    beneficialOwnershipEntity =
-      this.beneficialOwnershipmapper(beneficialOwnership);
-    vendorsEntity.beneficialOwnership = beneficialOwnershipEntity;
-    // vendorsEntity.instances = workflowInstanceEntitys;
-    const areasOfBusinessInterest = data.data.data.areasOfBusinessInterest;
-
-    vendorsEntity.areasOfBusinessInterest = this.areaOfBusinessInterest(
-      areasOfBusinessInterest?.areasOfBusinessInterestInformation,
-    );
-
+    const beneficialOwnership = data.beneficialOwnership;
+    const bankAccountDetails = data.bankAccountDetails;
+    vendorsEntity.beneficialOwnership = beneficialOwnership;
+    vendorsEntity.areasOfBusinessInterest = data.areasOfBusinessInterest;
     const bankDetails =
-      bankAccountDetails.length > 0
+      bankAccountDetails?.length > 0
         ? bankAccountDetails.map((element) => {
-          return {
-            id: element?.id,
-            accountHolderFullName: element.accountHoldersFullName,
-            accountNumber: element.accountNumber,
-            IBAN: element.iBAN,
-            bankSwift: element.bankSWIFT_BICCode,
-            bankId: element.bankId,
-            bankName: element.bankName,
-            branchAddress: element.bankBranchAddress,
-            branchName: element.branchName,
-            currency: element.currency,
-            hashValue: element.hashValue,
-            status: element.status,
-            vendorId: '0c8b5d84-aad1-3d59-a8d8-841103a4ec4e',
-          };
-        })
+            return {
+              id: element?.id,
+              accountHolderFullName: element.accountHoldersFullName,
+              accountNumber: element.accountNumber,
+              IBAN: element.iBAN,
+              bankSwift: element.bankSWIFT_BICCode,
+              bankId: element.bankId,
+              bankName: element.bankName,
+              branchAddress: element.bankBranchAddress,
+              branchName: element.branchName,
+              currency: element.currency,
+              hashValue: element.hashValue,
+              status: element.status,
+              vendorId: vendorsEntity.id,
+            };
+          })
         : [];
-    // vendorsEntity.vendorAccounts = bankDetails;
+    vendorsEntity.vendorAccounts = bankDetails;
     const metadata = {
-      addressInformation: data.data.data.addressInformation,
-      supportingDocuments: data.data.data.supportingDocuments,
-      areasOfBusinessInterest: data.data.data.areasOfBusinessInterest,
-      businessSizeAndOwnership: data.data.data.businessSizeAndOwnership,
-      contactPersons: data.data.data.contactPersons,
-      bankAccountDetails: data.data.data.bankAccountDetails,
+      address: data.address,
+      supportingDocuments: data.supportingDocuments,
+      areasOfBusinessInterest: data.areasOfBusinessInterest,
+      businessSizeAndOwnership: data.businessSizeAndOwnership,
+      contactPersons: data.contactPersons,
     };
-    vendorsEntity.metaData = JSON.parse(JSON.stringify(metadata));
-
-    const workflowInstanceEntitys = [];
-    for (
-      let i = 0;
-      i < areasOfBusinessInterest?.areasOfBusinessInterestInformation?.length;
-      i++
+    if (
+      data?.level == 'ppda' &&
+      data?.status == 'Save' &&
+      data?.invoice?.length !== 0 &&
+      data?.invoice !== undefined
     ) {
+      try {
+        const result = await this.invoiceRepository.insert(data?.invoice);
+      } catch (error) {
+        throw new BadRequestException(
+          'inserting into invoiceRepository Failed',
+        );
+      }
+    }
+    vendorsEntity.metaData = JSON.parse(JSON.stringify(metadata));
+    const workflowInstanceEntitys = [];
+    for (let i = 0; i < data.areasOfBusinessInterest?.length; i++) {
       const workflowInstanceEntity = new WorkflowInstanceEntity();
       const response = await this.ServicePriceRepository.findOne({
         select: ['serviceId'],
         where: {
-          id: areasOfBusinessInterest?.areasOfBusinessInterestInformation[i]
-            .priceRange,
+          id: data.areasOfBusinessInterest[i].priceId,
         },
       });
+
       const bp = await this.businessProcessEntity.findOne({
         select: ['id'],
         where: { serviceId: response.serviceId, isActive: true },
@@ -450,14 +452,122 @@ export class VendorRegistrationsService {
       workflowInstanceEntity.status = 'Draft';
       workflowInstanceEntity.bpId = bp.id;
       workflowInstanceEntity.pricingId =
-        areasOfBusinessInterest?.areasOfBusinessInterestInformation[i]
-          .priceRange;
-      // workflowInstanceEntity.requestorId = result.id;
+        data?.areasOfBusinessInterest[i].priceId;
       workflowInstanceEntitys.push(workflowInstanceEntity);
-
       vendorsEntity.instances = workflowInstanceEntitys;
     }
-    console.log('rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr', vendorsEntity);
+
     return vendorsEntity;
   };
+  toInitialValue = async (result: VendorsEntity) => {
+    const initialValues = initialValueSchema2;
+
+    initialValues.status = result.status;
+    initialValues.level = result.level;
+    initialValues.userId = result.userId;
+    initialValues.id = result.id;
+    initialValues.basic.origin = result.origin;
+    initialValues.basic.country = result.country;
+    initialValues.basic.district = result.district;
+    initialValues.basic.tinNumber = result.tin;
+    initialValues.basic.businessType = result.formOfEntity;
+    initialValues.basic.name = result.name;
+
+    initialValues.shareHolders = result.shareholders ? result.shareholders : [];
+    initialValues.beneficialOwnership = result.beneficialOwnership;
+    initialValues.beneficialOwnership = result.beneficialOwnership;
+    const metadataw = JSON.parse(JSON.stringify(result.metaData));
+
+    initialValues.address = metadataw?.address
+      ? metadataw?.address
+      : initialValues.address;
+    initialValues.contactPersons = metadataw?.contactPersons
+      ? metadataw?.contactPersons
+      : [];
+    initialValues.businessSizeAndOwnership = metadataw?.businessSizeAndOwnership
+      ? metadataw?.businessSizeAndOwnership
+      : initialValues.businessSizeAndOwnership;
+    initialValues.areasOfBusinessInterest =
+      metadataw?.areasOfBusinessInterest?.length > 0
+        ? metadataw?.areasOfBusinessInterest
+        : [];
+    initialValues.bankAccountDetails =
+      result?.vendorAccounts?.length > 0
+        ? this.toBankAccountDetails(result.vendorAccounts)
+        : [];
+    const invoice = await this.invoiceRepository.find({
+      where: { payerAccountId: result.userId },
+    });
+    initialValues.invoice =
+      invoice.length > 0 ? this.toInvoiveResponse(invoice) : [];
+    return initialValues;
+  };
+  toInvoiveResponse(invoive: any[]) {
+    return invoive.map((element) => {
+      return {
+        id: element.id,
+        instanceId: element.instanceId,
+        applicationNo: element.applicationNo,
+        taskId: element.taskId,
+        taskName: element.taskName,
+        payToAccName: element.payToAccName,
+        payToAccNo: element.payToAccNo,
+        payToBank: element.payToBank,
+        payerAccountId: element.payerAccountId,
+        payerName: element.payerName,
+        createdOn: element.createdOn,
+        serviceName: element.serviceName,
+        paymentStatus: element.paymentStatus,
+        remark: element.remark,
+        amount: element.amount,
+      };
+    });
+  }
+  toBankAccountDetails = (bankAccountDetails: any) => {
+    return bankAccountDetails.map((element) => {
+      return {
+        id: element.vendorId,
+        accountHolderFullName: element.accountHolderFullName,
+        accountNumber: element.accountNumber,
+        bankBranchAddress: element.branchAddress,
+        currency: element.currency,
+        bankSWIFT_BICCode: element.bankSwift,
+        iBAN: element.IBAN,
+        status: element.status,
+        bankId: element.bankId,
+        hashValue: element.hashValue,
+        branchName: element.branchName,
+      };
+    });
+  };
+  toBankAccountDetailsEntity = (
+    bankAccountDetails: BankAccountDetailEntity[],
+  ) => {
+    return bankAccountDetails.map((element) => {
+      return {
+        accountHolderFullName: element.accountHolderFullName,
+        accountNumber: element.accountNumber,
+        branchAddress: element.branchAddress,
+        currency: element.currency,
+        bankSwift: element.bankSwift,
+        IBAN: element.IBAN,
+        status: element.status,
+        bankId: element.bankId,
+        hashValue: element.hashValue,
+        branchName: element.branchName,
+      };
+    });
+  };
+  async deleteVendorById(vendorId: string): Promise<any> {
+    try {
+      const result = await this.vendorRepository.softDelete({
+        id: vendorId,
+      });
+      console.log('result');
+      if (result.affected > 0) return true;
+      return false;
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
+  }
 }
