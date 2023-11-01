@@ -29,8 +29,6 @@ merge:
 build:
   stage: build
   image: docker:latest
-  only:
-    - main
   services:
     - docker:dind
   rules:

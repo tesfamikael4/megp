@@ -19,6 +19,7 @@ current_tag_value=$(cat values-dev.yaml | grep "$APP_NAME:" -A 1 | awk '/tag:/ {
 
 # Update the image tag in values.yaml with the CI_COMMIT_SHORT_SHA
 sed -i "s/$APP_NAME:\n  tag: $current_tag_value/$APP_NAME:\n  tag: $CI_COMMIT_SHORT_SHA/" values-dev.yaml
+
 # Display the contents of $CD_MANIFEST_FILE
 cat values-dev.yaml
 
