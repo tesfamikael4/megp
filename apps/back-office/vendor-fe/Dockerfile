@@ -7,7 +7,7 @@ FROM base AS builder
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
 RUN apk add --no-cache libc6-compat
 RUN apk update
-
+RUN apk update
 # Set working directory
 WORKDIR /app
 RUN yarn global add turbo pnpm
@@ -18,8 +18,6 @@ RUN turbo prune --scope=vendor-fe --docker
 FROM base AS installer
 RUN apk add --no-cache libc6-compat
 RUN apk update
-
-
 WORKDIR /app
 
 # Install pnpm
@@ -70,9 +68,10 @@ ENV ENV_AUTH_API="AUTH_API"
 ENV ENV_API_BASE_PATH="API_BASE_PATH"
 ENV ENV_WEBSITE_DOMAIN="WEBSITE_DOMAIN"
 ENV ENV_WEBSITE_BASE_PATH="WEBSITE_BASE_PATH"
-#ENV ENV_PUBLIC_VENDOR_API="PUB_VENDOR_API"
+ENV ENV_PUBLIC_VENDOR_API="PUB_VENDOR_API"
 ENV ENV_RECAPTCHA_SITE_KEY ""
 
 
 # Specify the command to run your application, passing the environment variables
 CMD ["node", "apps/back-office/vendor-fe/server.js"]
+
