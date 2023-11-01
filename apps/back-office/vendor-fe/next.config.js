@@ -8,7 +8,7 @@ const nextConfig = {
   // Configures webpack to handle SVG files with SVGR. SVGR optimizes and transforms SVG files
   // into React components. See https://react-svgr.com/docs/next/
 
-  // Grab the existing rule that handles SVG imports
+
   // @ts-ignore - rules is a private property that is not typed
   const fileLoaderRule = config.module.rules.find((rule) => rule.test?.test?.('.svg'));
 
