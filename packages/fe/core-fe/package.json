@@ -48,6 +48,7 @@
     "dayjs": "^1.11.10",
     "google-libphonenumber": "^3.2.33",
     "next": "13.5.2",
+    "rc-tree": "^5.8.2",
     "react-dom": "^18.2.0",
     "react-international-phone": "^3.1.2",
     "react-redux": "^8.1.2",

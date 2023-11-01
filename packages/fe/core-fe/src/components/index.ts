@@ -4,6 +4,7 @@ export * from './shell/shell';
 export * from './phone-input/phone-input';
 export * from './not-found/not-found';
 export * from './generate-pdf/generate-pdf';
+export * from './tree/tree';
 
 export * from './layout/page-layout';
 export * from './layout/side-bar';
