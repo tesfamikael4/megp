@@ -15,10 +15,10 @@ git clone --single-branch --branch main "https://gitlab.peragosystems.com/megp/g
 cd "applications"
 
 # Extract the current image tag from values.yaml
-current_tag_value=$(cat values-dev.yaml | grep "egp:" -A 1 | awk '/tag:/ {print $2}')
+current_tag_value=$(cat values-dev.yaml | grep "$APP_NAME:" -A 1 | awk '/tag:/ {print $2}')
 
 # Update the image tag in values.yaml with the CI_COMMIT_SHORT_SHA
-sed -i "s/$APP_NAME:\n  tag: $current_tag_value/egp:\n  tag: $CI_COMMIT_SHORT_SHA/" values-dev.yaml
+sed -i "s/$APP_NAME:\n  tag: $current_tag_value/$APP_NAME:\n  tag: $CI_COMMIT_SHORT_SHA/" values-dev.yaml
 # Display the contents of $CD_MANIFEST_FILE
 cat values-dev.yaml
 

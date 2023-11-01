@@ -29,6 +29,8 @@ merge:
 build:
   stage: build
   image: docker:latest
+  only:
+    - main
   services:
     - docker:dind
   rules:
@@ -42,7 +44,7 @@ build:
 
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - pnpm -w run turbo run lint  --filter "...[origin/main...HEAD^]"
-    - pnpm -w run turbo run docker  --filter "...[origin/main...HEAD^]" $CI_COMMIT_SHORT_SHA
+    - pnpm -w run turbo run docker  --filter "...[origin/main...HEAD^]" -- $CI_COMMIT_SHORT_SHA
 
   cache:
     key:
@@ -62,7 +64,7 @@ deploy:
     - pnpm config set store-dir .pnpm-store
   script:
     - pnpm install
-    - pnpm -w run turbo run gitops  --filter "...[origin/main...HEAD]" $CI_COMMIT_SHORT_SHA
+    - pnpm -w run turbo run gitops  --filter "...[origin/main...HEAD]" -- $CI_COMMIT_SHORT_SHA
   cache:
     key:
       files:
