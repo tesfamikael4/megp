@@ -18,8 +18,10 @@ if [ "$1" ]; then
         # Push the tagged Docker image to the remote repository
         docker push "$DOCKER_REGISTRY/$IMAGE_NAME:$1"
 
+        docker pull "$DOCKER_REGISTRY/$IMAGE_NAME:$1"
+
         # Tag the Docker image with a custom repository and tag
-        docker tag "$DOCKER_REGISTRY/$IMAGE_NAME:$1" "$DOCKER_REGISTRY/$IMAGE_NAME:latest"
+        docker tag "$IMAGE_NAME:$1" "$DOCKER_REGISTRY/$IMAGE_NAME:latest"
 
         # Push the tagged Docker image to the remote repository
         docker push "$DOCKER_REGISTRY/$IMAGE_NAME:latest"
