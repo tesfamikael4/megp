@@ -1,23 +1,17 @@
 import {
   BadRequestException,
-  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
-import { DataSource, IsNull, MoreThan, Not, Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { DataSource, In, IsNull, MoreThan, Not, Repository } from 'typeorm';
 import { DataResponseFormat } from 'src/shared/api-data';
 import { CollectionQuery, QueryConstructor } from 'src/shared/collection-query';
 import { TaskTrackerResponse } from '../dtos/task-tracker.response';
 import { TaskTrackerEntity } from '../entities/task-tracker';
 import { TaskHandlerEntity } from '../entities/task-handler';
-import {
-  PaymentReceiptDto,
-  PaymentReceiptResponseDto,
-} from 'src/vendor-registration/dto/payment-receipt.dto';
 import { InvoiceResponseDto } from 'src/vendor-registration/dto/invoice.dto';
 import { InvoiceEntity } from 'src/handling/entities/invoice.entity';
-import { PaymentReceiptEntity } from 'src/handling/entities/receipt-attachment';
 import { WorkflowInstanceEntity } from '../entities/workflow-instance';
 import { WorkflowInstanceResponse } from '../dtos/workflow-instance.response';
 import {
@@ -31,7 +25,6 @@ import { FileResponseDto } from 'src/vendor-registration/dto/file.dto';
 import { TaskTypes } from '../dtos/task-type.enum';
 import { ActiveVendorsResponse } from '../dtos/active-vendor-response';
 import {
-  CreateTaskHandlerDto,
   UpdateTaskHandlerDto,
 } from '../dtos/task-handler.dto';
 
@@ -48,7 +41,7 @@ export class ApplicationExcutionService {
     @InjectRepository(WorkflowInstanceEntity)
     private readonly wiRepository: Repository<WorkflowInstanceEntity>,
     private readonly dataSource: DataSource,
-  ) {}
+  ) { }
 
   async getCompletedTasks(instanceId: string): Promise<TaskTrackerResponse[]> {
     const ctasks = await this.taskTrackingRepository.find({
@@ -87,6 +80,15 @@ export class ApplicationExcutionService {
     serviceKey: string,
     query: CollectionQuery,
   ): Promise<DataResponseFormat<WorkflowInstanceResponse>> {
+
+    let keys = [];
+    if (serviceKey === ServiceKeyEnum.new) {
+      keys = [ServiceKeyEnum.goodsNewRegistration, ServiceKeyEnum.servicesNewRegistration, ServiceKeyEnum.worksNewRegistration];
+    } else if (serviceKey == ServiceKeyEnum.upgrade) {
+      keys = [ServiceKeyEnum.goodsUpgrade, ServiceKeyEnum.servicesUpgrade, ServiceKeyEnum.worksUpgrade];
+    } else if (serviceKey === ServiceKeyEnum.renewal) {
+      keys = [ServiceKeyEnum.goodsRenewal, ServiceKeyEnum.servicesRenewal, ServiceKeyEnum.worksRenewal]
+    }
     const [result, total] = await this.wiRepository.findAndCount({
       relations: {
         vendor: true,
@@ -97,7 +99,7 @@ export class ApplicationExcutionService {
       },
       where: {
         businessProcess: {
-          service: { key: serviceKey },
+          service: { key: In(keys) },
         },
         taskHandler: { id: Not(IsNull()) },
       },
@@ -139,6 +141,9 @@ export class ApplicationExcutionService {
         //status: In([WorkflowInstanceEnum.Submitted, WorkflowInstanceEnum.Inprogress,]),
         id: instanceId,
       },
+      order: {
+        taskTrackers: { createdAt: 'DESC' }
+      }
     });
     if (!instance) {
       throw new NotFoundException('Not Found');
@@ -242,6 +247,7 @@ export class ApplicationExcutionService {
     if (response) return true;
     return false;
   }
+
   async getInvoices(
     query: CollectionQuery,
   ): Promise<DataResponseFormat<InvoiceResponseDto>> {
@@ -290,7 +296,7 @@ export class ApplicationExcutionService {
   ): Promise<DataResponseFormat<InvoiceResponseDto>> {
     const response = new DataResponseFormat<InvoiceResponseDto>();
     const [result, total] = await this.invoceRepository.findAndCount({
-      where: { payerAccountId: userId },
+      where: { payerAccountId: userId, paymentStatus: 'Pending' },
     });
     response.total = total;
     response.items = result.map((entity) =>
@@ -320,15 +326,12 @@ export class ApplicationExcutionService {
       ActiveVendorsResponse.toResponse(item),
     );
     response.total = total;
-
     return response;
   }
 
-  async myActiveBusinessStreams(
-    userId: string,
-    query: CollectionQuery,
+  async getMyBusinessArea(
+    userId: string
   ): Promise<ActiveVendorsResponse[]> {
-    const today = new Date();
     const result = await this.wiRepository.find({
       relations: {
         vendor: true,
@@ -336,9 +339,10 @@ export class ApplicationExcutionService {
       },
       where: {
         status: WorkflowInstanceEnum.Completed,
-        businessStatus: BusinessStatusEnum.active,
-        expireDate: MoreThan(today),
-        vendor: { userId: userId },
+        // businessStatus: BusinessStatusEnum.active,
+        // expireDate: MoreThan(today),
+        vendor: { userId: userId, status: 'Approved' },
+
       },
     });
     const response = result.map((item) =>
@@ -370,9 +374,7 @@ export class ApplicationExcutionService {
   }
   async unpickTask(dto: UpdateTaskHandlerDto) {
     const wfInstance = await this.wiRepository.findOne({
-      relations: {
-        taskHandler: true,
-      },
+      relations: { taskHandler: true },
       where: { taskHandler: { taskId: dto.taskId }, id: dto.instanceId },
     });
     if (!wfInstance.taskHandler) {

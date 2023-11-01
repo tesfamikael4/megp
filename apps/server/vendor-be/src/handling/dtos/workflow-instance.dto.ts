@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsUUID } from 'class-validator';
 import { WorkflowInstanceEntity } from '../entities/workflow-instance';
 import { TaskCheckListDto } from 'src/bpm/dtos/task-check-list.dto';
 

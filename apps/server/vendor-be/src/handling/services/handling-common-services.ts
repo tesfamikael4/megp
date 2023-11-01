@@ -19,15 +19,7 @@ export class HandlingCommonService {
   }
   async generateApplicationNumber(orgCode: string, serviceCode: string) {
     const today = new Date();
-    const dateFormatted = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      today.getDate(),
-      0,
-      0,
-      0,
-      0,
-    );
+    const dateFormatted = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0, 0);
     const shortDate =
       today.getFullYear().toString().slice(-2) +
       '' +

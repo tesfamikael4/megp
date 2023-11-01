@@ -25,7 +25,6 @@ import {
 @ApiResponse({ status: 400, description: 'Bad Request' })
 @ApiExtraModels(DataResponseFormat)
 export class WorkflowInstanceController {
-  userId: string;
   userInfo: any;
   constructor(
     private readonly workflowInstanceService: WorkflowInstanceService,
@@ -88,20 +87,13 @@ export class WorkflowInstanceController {
   @Post('renew')
   @ApiOkResponse({ type: WorkflowInstanceResponse })
   async renew(@Body() dto: UpdateWorkflowInstanceDto) {
-    const response = await this.workflowInstanceService.renewRegistration(
-      dto,
-      this.userInfo,
-    );
-
-    return null;
+    const response = await this.workflowInstanceService.renewRegistration(dto, this.userInfo);
+    return response;
   }
   @Post('upgrade')
   @ApiOkResponse({ type: WorkflowInstanceResponse })
   async upgrade(@Body() dto: UpdateWorkflowInstanceDto) {
-    const response = await this.workflowInstanceService.upgradeRegistration(
-      dto,
-      this.userInfo,
-    );
+    const response = await this.workflowInstanceService.upgradeRegistration(dto, this.userInfo);
     return response;
   }
   @Post('review-application')
@@ -135,18 +127,16 @@ export class WorkflowInstanceController {
 
   @Post('goto-next-state')
   @ApiOkResponse({ type: WorkflowInstanceResponse })
-  async gotoNextStateDto(@Body() dto: GotoNextStateDto) {
+  async gotoNextState(@Body() dto: GotoNextStateDto) {
     const response = await this.workflowInstanceService.gotoNextStep(
       dto,
       this.userInfo,
     );
     const task = await this.workflowInstanceService.getTaskById(
-      response.taskHandler.taskId,
-    );
+      response.taskHandler.taskId);
     if (task) {
       if (task.handlerType == 'System') {
         dto.action = task.taskType;
-        console.log('System task executed');
         const result = await this.workflowInstanceService.gotoNextStep(
           dto,
           this.userInfo,
@@ -162,9 +152,6 @@ export class WorkflowInstanceController {
     @Param('vendorId') vendorId: string,
     @Query() query: CollectionQuery,
   ) {
-    return await this.workflowInstanceService.getCerteficateInfo(
-      vendorId,
-      query,
-    );
+    return await this.workflowInstanceService.getCerteficateInfo(vendorId, query);
   }
 }
