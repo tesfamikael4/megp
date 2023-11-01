@@ -7,19 +7,23 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { CreatePermissionDto } from '../dto/permission.dto';
+import { CreatePermissionDto, UpdatePermissionDto } from '../dto/permission.dto';
 import { PermissionService } from '../services/permission.service';
 import { Permission } from '../entities/permission.entity';
 import { ExtraCrudController } from 'src/shared/controller/extra-crud.controller';
-import { ExtraCrudDecorator } from 'src/shared/decorators/crud-options.decorator';
+import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { CollectionQuery } from 'src/shared/collection-query';
-@ExtraCrudDecorator({
+
+const options: ExtraCrudOptions = {
   entityIdName: 'applicationId',
-})
+  createDto: CreatePermissionDto,
+  updateDto: UpdatePermissionDto,
+};
+
 @Controller('permissions')
 @ApiTags('permissions')
 export class PermissionNewController extends ExtraCrudController<Permission>(
-  CreatePermissionDto,
+  options,
 ) {
   constructor(private readonly permissionService: PermissionService) {
     super(permissionService);

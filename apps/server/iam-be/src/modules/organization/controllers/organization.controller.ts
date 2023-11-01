@@ -14,13 +14,20 @@ import { EntityCrudController } from 'src/shared/controller';
 import {
   CreateOrganizationDto,
   UpdateAddressOrLogoDto,
+  UpdateOrganizationDto,
 } from '../dto/organization.dto';
+import { EntityCrudOptions } from 'src/shared/types/crud-option.type';
+
+const options: EntityCrudOptions = {
+  createDto: CreateOrganizationDto,
+  updateDto: UpdateOrganizationDto,
+};
 
 @ApiBearerAuth()
 @Controller('organizations')
 @ApiTags('organizations')
 export class OrganizationController extends EntityCrudController<Organization>(
-  CreateOrganizationDto,
+  options,
 ) {
   constructor(private readonly organizationService: OrganizationService) {
     super(organizationService);

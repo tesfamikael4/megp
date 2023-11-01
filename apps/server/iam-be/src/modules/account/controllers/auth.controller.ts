@@ -1,3 +1,4 @@
+import { Request } from 'express';
 import {
   Controller,
   Post,
@@ -16,17 +17,14 @@ import {
   LoginResponseDto,
   ResetPasswordDto,
 } from '../dto/login.dto';
-import { AllowAnonymous } from '../decorators/allow-anonymous.decorator';
-import { CurrentUser } from '../decorators/current-user.decorator';
-import JwtRefreshGuard from '../guards/jwt-refresh.guard';
-import { Request } from 'express';
+import { AllowAnonymous, CurrentUser, JwtGuard } from '@auth';
+import JwtRefreshGuard from 'src/shared/authorization/guards/jwt-refresh.guard';
 import {
   ApiBearerAuth,
   ApiOkResponse,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { JwtGuard } from '../guards/jwt.guard';
 import {
   CheckSecurityQuestionDto,
   SetSecurityQuestionDto,

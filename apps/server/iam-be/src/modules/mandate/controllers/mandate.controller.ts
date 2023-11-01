@@ -16,12 +16,16 @@ import { MandateService } from '../services/mandate.service';
 import { Mandate } from '../entities/mandate.entity';
 import { CollectionQuery } from '@collection-query';
 import { EntityCrudController } from 'src/shared/controller/entity-crud.controller';
+import { EntityCrudOptions } from 'src/shared/types/crud-option.type';
+
+const options: EntityCrudOptions = {
+  createDto: CreateMandateDto,
+  updateDto: UpdateMandateDto,
+};
 
 @Controller('mandates')
 @ApiTags('mandates')
-export class MandateController extends EntityCrudController<Mandate>(
-  CreateMandateDto,
-) {
+export class MandateController extends EntityCrudController<Mandate>(options) {
   constructor(private readonly mandateService: MandateService) {
     super(mandateService);
   }

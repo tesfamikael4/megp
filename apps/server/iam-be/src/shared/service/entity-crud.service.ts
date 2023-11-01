@@ -1,4 +1,4 @@
-import { Repository, EntityTarget, DeepPartial } from 'typeorm';
+import { Repository, DeepPartial } from 'typeorm';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CollectionQuery, QueryConstructor } from '../collection-query';
 import { DataResponseFormat } from '../api-data';

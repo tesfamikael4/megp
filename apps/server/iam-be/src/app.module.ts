@@ -5,11 +5,12 @@ import { EmailConfig } from './shared/email/email.config';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { TypeOrmConfigService } from './shared/typeorm/typeorm.service';
 import { OrganizationModule } from './modules/organization';
-import { AuthorizationModule } from './modules/authorization/authorization.module';
 import { ApplicationModule } from './modules/application/application.module';
 import { GroupModule } from './modules/groups/group.module';
 import { MandateModule } from './modules/mandate/mandate.module';
 import { RoleModule } from './modules/role/role.module';
+import { AuthorizationModule } from './shared/authorization/authorization.module';
+import { AccountModule } from './modules/account/account.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { RoleModule } from './modules/role/role.module';
     TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
     MailerModule.forRootAsync({ useClass: EmailConfig }),
     AuthorizationModule,
+    AccountModule,
     OrganizationModule,
     GroupModule,
     RoleModule,

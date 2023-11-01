@@ -12,13 +12,17 @@ import { CreateUnitDto, UpdateUnitDto } from '../dto/unit.dto';
 import { UnitService } from '../services/unit.service';
 import { Unit } from '../entities/unit.entity';
 import { ExtraCrudController } from 'src/shared/controller/extra-crud.controller';
-import { ExtraCrudDecorator } from 'src/shared/decorators/crud-options.decorator';
-@ExtraCrudDecorator({
+import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
+
+const options: ExtraCrudOptions = {
   entityIdName: 'organizationId',
-})
+  createDto: CreateUnitDto,
+  updateDto: UpdateUnitDto,
+};
+
 @Controller('unit')
 @ApiTags('unit')
-export class UnitController extends ExtraCrudController<Unit>() {
+export class UnitController extends ExtraCrudController<Unit>(options) {
   constructor(private readonly unitService: UnitService) {
     super(unitService);
   }

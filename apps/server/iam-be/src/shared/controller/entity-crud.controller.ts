@@ -17,12 +17,16 @@ import { DataResponseFormat } from '../api-data';
 import { BaseEntity } from '../entities/base.entity';
 import { ApiBearerAuth, ApiBody } from '@nestjs/swagger';
 import { BaseAPIDto } from './extra-crud.controller';
+import { EntityCrudOptions } from '../types/crud-option.type';
 
-export function EntityCrudController<
-  TEntity extends BaseEntity,
-  TCreateDto = NonNullable<unknown>,
-  TUpdateDto = NonNullable<unknown>,
->(createDto?: { new (): TCreateDto }, updateDto?: { new (): TUpdateDto }) {
+export function EntityCrudController<TEntity extends BaseEntity>(
+  options?: EntityCrudOptions,
+) {
+  // const {
+  //   createDto,
+  //   updateDto,
+  // } = options;
+
   @Controller()
   @UseInterceptors(/* your interceptors if any */)
   @ApiBearerAuth()
@@ -30,7 +34,7 @@ export function EntityCrudController<
     constructor(public readonly service: EntityCrudService<TEntity>) {}
 
     @Post()
-    @ApiBody({ type: createDto || BaseAPIDto })
+    @ApiBody({ type: options?.createDto || BaseAPIDto })
     async create(
       @Body() itemData: DeepPartial<TEntity>,
       @Req() req?: any,
@@ -55,7 +59,7 @@ export function EntityCrudController<
     }
 
     @Put(':id')
-    @ApiBody({ type: updateDto || BaseAPIDto })
+    @ApiBody({ type: options?.updateDto || BaseAPIDto })
     async update(
       @Param('id') id: string,
       @Body() itemData: Partial<TEntity>,

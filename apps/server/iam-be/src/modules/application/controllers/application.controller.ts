@@ -3,12 +3,21 @@ import { ApiTags } from '@nestjs/swagger';
 import { ApplicationService } from '../services/application.service';
 import { Application } from '../entities/application.entity';
 import { EntityCrudController } from 'src/shared/controller/entity-crud.controller';
-import { CreateApplicationDto } from '../dto/application.dto';
+import {
+  CreateApplicationDto,
+  UpdateApplicationDto,
+} from '../dto/application.dto';
+import { EntityCrudOptions } from 'src/shared/types/crud-option.type';
+
+const options: EntityCrudOptions = {
+  createDto: CreateApplicationDto,
+  updateDto: UpdateApplicationDto,
+};
 
 @Controller('applications')
 @ApiTags('applications')
 export class ApplicationNewController extends EntityCrudController<Application>(
-  CreateApplicationDto,
+  options,
 ) {
   constructor(private readonly applicationService: ApplicationService) {
     super(applicationService);

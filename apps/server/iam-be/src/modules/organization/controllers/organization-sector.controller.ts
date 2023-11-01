@@ -15,10 +15,18 @@ import {
 } from '../dto/organization-sector.dto';
 import { OrganizationSector } from '../entities/organization-sector.entity';
 import { OrganizationSectorService } from '../services/organization-sector.service';
+import { EntityCrudOptions } from 'src/shared/types/crud-option.type';
+
+const options: EntityCrudOptions = {
+  createDto: CreateOrganizationSectorDto,
+  updateDto: CreateOrganizationSectorDto,
+};
 
 @Controller('organization-sector')
 @ApiTags('organization-sector')
-export class OrganizationSectorController extends EntityCrudController<OrganizationSector>() {
+export class OrganizationSectorController extends EntityCrudController<OrganizationSector>(
+  options,
+) {
   constructor(private readonly permissionService: OrganizationSectorService) {
     super(permissionService);
   }

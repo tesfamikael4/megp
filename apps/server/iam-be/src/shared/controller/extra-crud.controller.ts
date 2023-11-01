@@ -16,15 +16,15 @@ import { DataResponseFormat } from '../api-data';
 import { BaseEntity } from '../entities/base.entity';
 import { ExtraCrudService } from '../service/extra-crud.service';
 import { ApiBearerAuth, ApiBody } from '@nestjs/swagger';
-import { AllowAnonymous } from 'src/modules/authorization/decorators/allow-anonymous.decorator';
+import { ExtraCrudOptions } from '../types/crud-option.type';
 
 export class BaseAPIDto {}
 
-export function ExtraCrudController<
-  TEntity extends BaseEntity,
-  TCreateDto = NonNullable<unknown>,
-  TUpdateDto = NonNullable<unknown>,
->(createDto?: { new (): TCreateDto }, updateDto?: { new (): TUpdateDto }) {
+export function ExtraCrudController<TEntity extends BaseEntity>(
+  options: ExtraCrudOptions,
+) {
+  const { entityIdName, createDto, updateDto } = options;
+
   @Controller()
   @UseInterceptors(/* your interceptors if any */)
   @ApiBearerAuth()
@@ -33,7 +33,6 @@ export function ExtraCrudController<
 
     @Post()
     @ApiBody({ type: createDto || BaseAPIDto })
-    @AllowAnonymous()
     async create(
       @Body() itemData: DeepPartial<TEntity>,
       @Req() req?: any,
@@ -47,9 +46,7 @@ export function ExtraCrudController<
       @Query() query: CollectionQuery,
       @Req() req?: any,
     ): Promise<DataResponseFormat<TEntity>> {
-      const crudOptions = Reflect.getMetadata('crudOptions', this.constructor);
-
-      return this.service.findAll(id, query, crudOptions);
+      return this.service.findAll(id, query, options);
     }
 
     @Get(':id')
