@@ -38,6 +38,7 @@
     "@megp/eslint-config-custom": "workspace:*",
     "@megp/theme": "workspace:*",
     "@reduxjs/toolkit": "^1.9.5",
+    "@svgr/webpack": "^8.1.0",
     "@tabler/icons-react": "^2.34.0",
     "@tanstack/react-table": "^8.9.11",
     "@tiptap/extension-link": "^2.1.11",
