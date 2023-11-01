@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev -p 5533",
     "build": "next build",
-    "docker": "sh .bin/docker-build.sh",
+    "docker": "cd ../../../ && docker build -f apps/back-office/vendor-fe/Dockerfile -t vendor-fe  . && docker tag vendor-fe:latest gitlab.peragosystems.com:5050/megp/megp/vendor-fe:latest &&  docker push gitlab.peragosystems.com:5050/megp/megp/vendor-fe:latest",
     "start": "next start",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "lint": "next lint"
