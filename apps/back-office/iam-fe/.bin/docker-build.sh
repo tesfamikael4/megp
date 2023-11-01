@@ -14,14 +14,13 @@ if [ "$1" ]; then
 
     # Check the exit status of the docker build command
     if [ $? -eq 0 ]; then
-        # The build was successful
-        # Push the tagged Docker image to the remote repository
-        docker push "$DOCKER_REGISTRY/$IMAGE_NAME:$1"
-
-        docker pull "$DOCKER_REGISTRY/$IMAGE_NAME:$1"
 
         # Tag the Docker image with a custom repository and tag
+        docker tag "$IMAGE_NAME:$1" "$DOCKER_REGISTRY/$IMAGE_NAME:$1"
         docker tag "$IMAGE_NAME:$1" "$DOCKER_REGISTRY/$IMAGE_NAME:latest"
+
+        # Push the tagged Docker image to the remote repository
+        docker push "$DOCKER_REGISTRY/$IMAGE_NAME:$1"
 
         # Push the tagged Docker image to the remote repository
         docker push "$DOCKER_REGISTRY/$IMAGE_NAME:latest"
