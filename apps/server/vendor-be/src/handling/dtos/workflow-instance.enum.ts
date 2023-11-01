@@ -4,11 +4,23 @@ export enum WorkflowInstanceEnum {
   Inprogress = 'Inprogress',
   Completed = 'Completed',
   Rejected = 'Rejected',
+  Approved = 'Approved',
+
 }
 export enum ServiceKeyEnum {
-  new = 'newRegistration',
+  new = 'new',
   upgrade = 'upgrade',
   renewal = 'renewal',
+  goodsNewRegistration = 'goodsNewRegistration',
+  servicesNewRegistration = 'servicesNewRegistration',
+  worksNewRegistration = 'worksNewRegistration',
+  goodsRenewal = 'goodsRenewal',
+  servicesRenewal = 'servicesRenewal',
+  worksRenewal = 'workRenewal',
+  goodsUpgrade = 'goodsUpgrade',
+  servicesUpgrade = 'servicesUpgrade',
+  worksUpgrade = 'worksUpgrade',
+  profileUpdate = 'profileUpdate'
 }
 
 export enum BusinessStatusEnum {

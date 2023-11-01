@@ -6,11 +6,13 @@ export class InvoiceEntity {
   id: string;
   @Column({ type: 'uuid' })
   instanceId: string;
-  @Column()
+  @Column({ nullable: true })
   applicationNo: string;
-  @Column()
+  @Column({ nullable: true })
+  pricingId: string;
+  @Column({ nullable: true })
   taskName: string;
-  @Column({ type: 'uuid' })
+  @Column({ type: 'uuid', nullable: true })
   taskId: string;
   @Column()
   serviceName: string;

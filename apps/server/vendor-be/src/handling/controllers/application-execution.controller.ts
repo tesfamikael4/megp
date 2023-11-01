@@ -21,6 +21,8 @@ import { ApplicationExcutionService } from '../services/application-execution.se
 import { WorkflowInstanceResponse } from '../dtos/workflow-instance.response';
 import { UpdateTaskHandlerDto } from '../dtos/task-handler.dto';
 import { HandlingCommonService } from '../services/handling-common-services';
+import { VendorsResponseDto } from 'src/vendor-registration/dto/vendor.dto';
+import { ActiveVendorsResponse } from '../dtos/active-vendor-response';
 
 @Controller('ApplicationExecution')
 @ApiTags('Application-excution')
@@ -38,12 +40,6 @@ export class ApplicationExcutionController {
       userId: '078ddca3-ad1c-4028-aa58-7da3ee529fa9',
       name: 'Dereje Hunew',
     };
-  }
-  @Get('test')
-  async testmyApi() {
-    const result = await this.service.generateApplicationNumber('PPDA', 'GNR');
-    console.log(result);
-    return result;
   }
 
   @Post('pick-task')
@@ -65,6 +61,7 @@ export class ApplicationExcutionController {
   ) {
     return await this.executeService.getCurruntTaskByService(serviceKey, query);
   }
+
   @Get('get-currunt-taskDetail/:instanceId')
   @ApiOkResponse({ type: WorkflowInstanceResponse })
   async fetchCurruntTaskDetail(
@@ -106,5 +103,10 @@ export class ApplicationExcutionController {
   @ApiOkResponse({ type: InvoiceResponseDto })
   async getMyInvoice(@Param('userId') userId: string) {
     return await this.executeService.getMyInvoices(userId);
+  }
+  @Get('get-my-business-areas')
+  @ApiOkResponse({ type: ActiveVendorsResponse })
+  async getMyBusinessAreas() {
+    return await this.executeService.getMyBusinessArea(this.userInfo.id);
   }
 }
