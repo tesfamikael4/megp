@@ -25,7 +25,6 @@ import { NCICEntity } from './entities/ncic.entity';
 import { TradeRegistrationDatabaseEntity } from './entities/trade-registration-database.entity';
 import { TradeRegistrationDatabaseService } from './services/trade-registration-database.service';
 import { TinRegistrationDatabaseService } from './services/tin-registration-database.service';
-import { FileController } from './controllers/file.controller';
 // import { File } from './services/File';
 import { BeneficialOwnershipController } from './controllers/beneficialOwnership.controller';
 import { BeneficialOwnershipService } from './services/beneficialOwnership.service';
@@ -51,6 +50,8 @@ import { ServicePrice } from 'src/pricing/entities/service-price';
 import { ServicePricingService } from 'src/pricing/service-pricing.service';
 import { ServicePricingController } from 'src/pricing/service-pricing.controller';
 import { HandlingCommonService } from 'src/handling/services/handling-common-services';
+import { TusService } from './services/tus.service';
+import { UploadController } from './controllers/file.controller';
 
 @Module({
   imports: [
@@ -96,6 +97,7 @@ import { HandlingCommonService } from 'src/handling/services/handling-common-ser
     ApplicationExcutionService,
     VendorRegistrationsService,
     HandlingCommonService,
+    TusService,
   ],
   controllers: [
     WorkflowInstanceController,
@@ -108,9 +110,9 @@ import { HandlingCommonService } from 'src/handling/services/handling-common-ser
     TradeRegistrationDatabaseController,
     TinRegistrationDatabaseController,
     NCICController,
-    FileController,
+    UploadController,
     BeneficialOwnershipController,
     AreasOfBusinessInterestController,
   ],
 })
-export class VendorRegistrationModule {}
+export class VendorRegistrationModule { }

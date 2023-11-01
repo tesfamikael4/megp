@@ -1,117 +1,31 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  UploadedFile,
-  UseInterceptors,
-} from '@nestjs/common';
-import {
-  ApiBody,
-  ApiConsumes,
-  ApiExtraModels,
-  ApiOkResponse,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
-import { DataResponseFormat } from 'src/shared/api-data';
-import { File } from '../services/file.service';
-import { diskStorage } from 'multer';
-import { Multer } from 'multer';
-import * as Minio from 'minio';
-import { CreateFileDto, DeleteFileDto } from '../dto/file.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { All, Controller, Delete, Get, Param, Req, Res } from '@nestjs/common';
+import { TusService } from '../services/tus.service';
+import { UserInfo, userInfo } from 'os';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
-@Controller('File')
+@Controller('upload')
 @ApiTags('File')
 @ApiResponse({ status: 500, description: 'Internal error' })
-@ApiExtraModels(DataResponseFormat)
-export class FileController {
-  constructor(private readonly file: File) {}
-  private minioClient = new Minio.Client({
-    endPoint: 'localhost',
-    port: 9000,
-    useSSL: false,
-    accessKey: process.env.ACCESSKEY,
-    secretKey: process.env.SECRETKEY,
-  });
-  @Get('get-fileName-by-vendorId/:vendorId')
-  async getFileNameByVendorId(@Param('vendorId') vendorId: string) {
-    return await this.file.getFileNameByVendorId(vendorId);
+export class UploadController {
+  constructor(private tusService: TusService) {}
+  @Get(':fileName')
+  async getFile(@Param('fileName') fileName: string, @Req() req, @Res() res) {
+    const userId = 'b23f0b00-0a59-4f6d-9fd9-34d6fa960e0';
+    fileName = userId + '/' + fileName;
+    return this.tusService.getFileFromMinio(req, res, userId, fileName);
   }
-  @Get('get-fileName-byVendorId-fileType/:vendorId/:fileType')
-  async getFileNameByVendorIdFileType(
-    @Param('vendorId') vendorId: string,
-    @Param('fileType') fileType: string,
-  ) {
-    return await this.file.getFileNameByVendorIdFileType(vendorId, fileType);
-  }
-  @Post('upload-attachment')
-  async uploadAttachment(@Body() uploadFileDto: CreateFileDto) {
-    // return await this.file.uploadAttachment(uploadFileDto);
-  }
-  @Get('get-attachment/:fileName/:fileType/:destination')
-  // @ApiQuery({ name: 'destination', required: false })
-  async getAttachment(
+  @Delete(':fileName')
+  async deleteFile(
     @Param('fileName') fileName: string,
-    @Param('fileType') fileType: string,
-    @Param('destination') destination: string,
+    @Req() req,
+    @Res() res,
   ) {
-    // const defaultDestination = destination ? destination : 'C:/megp/' + fileName
-    return await this.file.getAttachment(
-      fileName.trim(),
-      fileType.trim(),
-      destination,
-    );
+    const userId = 'b23f0b00-0a59-4f6d-9fd9-34d6fa960e0';
+    return this.tusService.deleteFileFromMinio(req, res, userId, fileName);
   }
-  @Delete('delete-attachment')
-  async deleteAttachment(@Body() deleteFileDto: DeleteFileDto) {
-    return await this.file.deleteAttachment(deleteFileDto);
-  }
-  // @Post('uts-upload-attachment')
-  // async utsUploadAttachment(@Body() uploadFileDto: CreateFileDto) {
-  //   return await this.file.utsUploadAttachment(uploadFileDto);
-  // }
-  @Post('add-attachment')
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        ownerId: { type: 'string' },
-        bucketName: { type: 'string' },
-        fileName: { type: 'string' },
-        attachmentUrl: {
-          type: 'string',
-          format: 'binary',
-        },
-      },
-    },
-  })
-  @UseInterceptors(
-    FileInterceptor('attachmentUrl', {
-      storage: diskStorage({}),
-      fileFilter: (req, file, callback) => {
-        if (
-          file.mimetype === 'application/pdf' ||
-          file.mimetype.startsWith('image/')
-        ) {
-          callback(null, true);
-        } else {
-          callback(new Error('Only PDF and image files are allowed'), false);
-        }
-      },
-      limits: { fileSize: Math.pow(2024, 200) },
-    }),
-  )
-  async addAttachment(
-    @Body() command: CreateFileDto,
-    @UploadedFile() file: Express.Multer.File,
-  ): Promise<any> {
-    try {
-      return this.file.uploadAttachment(file, command);
-    } catch (error) {}
+  @All('*')
+  async tus(@Req() req, @Res() res) {
+    const userId = 'b23f0b00-0a59-4f6d-9fd9-34d6fa960e0';
+    return this.tusService.handleTus(req, res, userId);
   }
 }

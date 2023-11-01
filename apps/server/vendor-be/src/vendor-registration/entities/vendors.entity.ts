@@ -22,15 +22,16 @@ export class VendorsEntity extends CommonEntity {
   formOfEntity: string;
   @Column({ name: 'country', default: 'Malian' })
   country: string;
-  @Column({ default: 'None' })
-  isExisting: string;
+
   @Column({ type: 'json', nullable: true })
   metaData: JSON;
   @Column({ nullable: true })
   name: string;
-  @Column()
+  @Column({ nullable: true })
+  level: string;
+  @Column({ nullable: true })
   origin: string;
-  @Column()
+  @Column({ nullable: true })
   district: string;
 
   @OneToMany(() => CustomCategoryEntity, (cat) => cat.application)

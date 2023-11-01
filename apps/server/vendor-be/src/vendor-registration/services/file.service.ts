@@ -15,12 +15,13 @@ import { CreateFileDto, DeleteFileDto } from '../dto/file.dto';
 @Injectable()
 export class File {
   private minioClient = new Minio.Client({
-    endPoint: 'localhost',
-    port: 9000,
+    endPoint: '196.189.118.110',
+    port: 9001,
     useSSL: false,
-    accessKey: process.env.ACCESSKEY,
-    secretKey: process.env.SECRETKEY,
+    accessKey: 'Z9mWM1JgRF9Rhlmg5oAR',
+    secretKey: 'pHzEzefblGNBFi8lujOOu0a99g2sv0wl4CXWngMk',
   });
+
   constructor(
     @InjectRepository(FilesEntity)
     private readonly fileRepository: Repository<FilesEntity>,
@@ -63,8 +64,10 @@ export class File {
   }
   async uploadAttachment(file: Express.Multer.File, command: CreateFileDto) {
     try {
+      console.log('ppppppppppppppppppppppppppppppppppppppppppppppppppppp');
       const result = this.uploadToRemoteServer(file, command);
       const fileDto = new CreateFileDto();
+      console.log('fffffffffffffffffffffffffff');
 
       fileDto.bucketName = result.bucketName;
       fileDto.fileName = result.fileName;
@@ -76,6 +79,7 @@ export class File {
       const fileEntity = CreateFileDto.fromDto(fileDto);
       return await this.fileRepository.save(fileEntity);
     } catch (error) {
+      console.log(error);
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
       return error;
     }
@@ -104,12 +108,24 @@ export class File {
       'X-Amz-Meta-Testing': 1234,
       example: 5678,
     };
+    console.log(
+      'bucket : ',
+      bucket,
+      'filename : ',
+      filename,
+      'file.path : ',
+      file.path,
+      'metaData : ',
+      metaData,
+    );
+    console.log(this.minioClient);
     this.minioClient.fPutObject(
       bucket,
       filename,
       file.path,
       metaData,
       function (err, etag) {
+        console.log('the error is : ', err);
         if (err) return err;
       },
     );

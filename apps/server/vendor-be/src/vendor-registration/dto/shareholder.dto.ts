@@ -17,9 +17,6 @@ export class CreateShareholdersDto {
   @ApiProperty()
   @IsNotEmpty()
   share: string;
-  @ApiProperty()
-  @IsNotEmpty()
-  key: string;
 
   vendorId: string;
 
@@ -39,7 +36,6 @@ export class CreateShareholdersDto {
     entity.lastName = dto.lastName;
     entity.nationality = dto.nationality;
     entity.share = dto.share;
-    entity.key = dto.key;
 
     console.log(entity);
     return entity;
@@ -73,7 +69,6 @@ export class UpdateShareHoldersDto extends CreateShareholdersDto {
     entity.vendorId = dto.vendorId;
     entity.firstName = dto.firstName;
     entity.lastName = dto.lastName;
-    entity.key = dto.key;
     entity.share = dto.vendorId;
     entity.nationality = dto.nationality;
     console.log(entity);
@@ -91,7 +86,6 @@ export class ShareholdersResponseDto extends CreateShareholdersDto {
     response.nationality = regDto.nationality;
     response.firstName = regDto.firstName;
     response.nationality = regDto.nationality;
-    response.key = regDto.key;
     response.share = regDto.share;
     return response;
   }
