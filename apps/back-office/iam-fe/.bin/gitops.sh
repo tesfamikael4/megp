@@ -4,7 +4,6 @@
 APP_NAME="$1"
 CI_COMMIT_SHORT_SHA="$2"
 
-
 # Set Git configuration
 git config --global user.name "gitops"
 git config --global user.email "gitops"@gitlab.com
