@@ -52,5 +52,6 @@ deploy:
   # image: your-deployment-image
   before_script:
     - argocd login --username admin --password Megp7890)(*&) --insecure --grpc-web
-    - argocd app sync iam-fe --wait
+    
   script:
+    - argocd app sync iam-fe --wait
