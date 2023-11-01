@@ -47,11 +47,11 @@ build:
         - pnpm-lock.yaml
     paths:
       - .pnpm-store
-deploy:
-  stage: deploy
-  # image: your-deployment-image
-  before_script:
-    - argocd login --username admin --password Megp7890)(*&) --insecure --grpc-web
+# deploy:
+#   stage: deploy
+#   # image: your-deployment-image
+#   before_script:
+#     - argocd login --username admin --password Megp7890)(*&) --insecure --grpc-web
     
-  script:
-    - argocd app sync iam-fe --wait
+#   script:
+#     - argocd app sync iam-fe --wait
