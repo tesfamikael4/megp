@@ -24,6 +24,7 @@
     "typescript": "^5.1.0"
   },
   "dependencies": {
+    "@hookform/resolvers": "^3.3.1",
     "@mantine/core": "^7.1.0",
     "@mantine/dates": "^7.1.0",
     "@mantine/dropzone": "^7.1.0",
@@ -45,13 +46,17 @@
     "@tiptap/react": "^2.1.11",
     "@tiptap/starter-kit": "^2.1.11",
     "@types/google-libphonenumber": "^7.4.26",
+    "cookies-next": "^3.0.0",
     "dayjs": "^1.11.10",
     "google-libphonenumber": "^3.2.33",
+    "jwt-decode": "^3.1.2",
     "next": "13.5.2",
     "rc-tree": "^5.8.2",
     "react-dom": "^18.2.0",
+    "react-hook-form": "^7.46.1",
     "react-international-phone": "^3.1.2",
     "react-redux": "^8.1.2",
-    "sharp": "^0.32.5"
+    "sharp": "^0.32.5",
+    "zod": "^3.22.2"
   }
 }

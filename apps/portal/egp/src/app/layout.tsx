@@ -5,6 +5,7 @@ import { config } from '@/config/env';
 import { ConfigProvider } from '@/contexts/config';
 import { Providers } from '@/store/provider';
 import RootStyleRegistry from './mantine';
+import { AuthProvider } from '@megp/core-fe/src/context/auth.context';
 
 export const metadata: Metadata = {
   title: 'EGP',
@@ -25,7 +26,9 @@ export default function RootLayout({
       <body suppressHydrationWarning={true}>
         <ConfigProvider config={config}>
           <Providers>
-            <RootStyleRegistry>{children}</RootStyleRegistry>
+            <RootStyleRegistry>
+              <AuthProvider>{children}</AuthProvider>
+            </RootStyleRegistry>
           </Providers>
         </ConfigProvider>
       </body>

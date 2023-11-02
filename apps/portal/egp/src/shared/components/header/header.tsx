@@ -3,7 +3,7 @@ import React from 'react';
 import styles from './header.module.scss';
 import Link from 'next/link';
 import Image from 'next/image';
-
+import { useState, useEffect } from 'react';
 import {
   Menu,
   Group,
@@ -19,10 +19,17 @@ import {
   UnstyledButton,
   rem,
   Flex,
+  Loader,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { IconChevronDown } from '@tabler/icons-react';
+import {
+  IconChevronDown,
+  IconLogout,
+  IconUserCircle,
+} from '@tabler/icons-react';
+import { useAuth } from '@megp/core-fe';
 import { theme } from '@/utilities/theme';
+import { useRouter } from 'next/navigation';
 const links = [
   { link: '/home', label: 'Home' },
 
@@ -41,6 +48,32 @@ const links = [
 function Header() {
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] =
     useDisclosure(false);
+
+  const [userInfo, setUserInfo] = useState<any>(undefined);
+  const [userInfoLoading, setIsUserInfoLoading] = useState(false);
+  const { getUserInfo, isAuthenticated, logOut } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (isAuthenticated) {
+        try {
+          setIsUserInfoLoading(true);
+          const userInfo = await getUserInfo();
+          if (!userInfo) {
+            return;
+          }
+          setUserInfo(userInfo);
+        } catch (err) {
+        } finally {
+          setIsUserInfoLoading(false);
+        }
+      }
+    };
+
+    fetchData();
+  }, [isAuthenticated]);
+  const userName = userInfo && userInfo.firstName + ' ' + userInfo.lastName;
 
   const items = links.map((link) => {
     const menuItems = link.links?.map((item) => (
@@ -100,14 +133,46 @@ function Header() {
             <Group gap={5} visibleFrom="sm">
               {items}
             </Group>
-            <Group visibleFrom="sm">
-              <Button component={Link} href="/auth/login">
-                Sign in
-              </Button>
-              <Button component={Link} variant="outline" href="/auth/signup">
-                Create Account
-              </Button>
-            </Group>
+            {userInfo && (
+              <Group visibleFrom="sm">
+                <Menu shadow="md" width={200}>
+                  <Menu.Target>
+                    <div className="flex cursor-pointer">
+                      {userInfoLoading && <Loader />}Hi, {userName}
+                      <IconChevronDown />
+                    </div>
+                  </Menu.Target>
+
+                  <Menu.Dropdown>
+                    <Menu.Item
+                      leftSection={<IconUserCircle />}
+                      onClick={() => router.push('/my/my-profile')}
+                    >
+                      Profile
+                    </Menu.Item>
+                    <Menu.Item
+                      leftSection={<IconLogout />}
+                      onClick={() => {
+                        logOut();
+                        window.location.reload();
+                      }}
+                    >
+                      Log out
+                    </Menu.Item>
+                  </Menu.Dropdown>
+                </Menu>
+              </Group>
+            )}
+            {!userInfo && (
+              <Group visibleFrom="sm">
+                <Button component={Link} href="/auth/login">
+                  Sign in
+                </Button>
+                <Button component={Link} variant="outline" href="/auth/signup">
+                  Create Account
+                </Button>
+              </Group>
+            )}
           </Flex>
         </div>
       </div>

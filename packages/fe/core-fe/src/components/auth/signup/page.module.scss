@@ -2,8 +2,12 @@
     @apply text-slate-500 text-justify md:p-2 pb-0 p-1
 }
 
+.half_width {
+    width: 50%;
+}
+
 .title {
-    @apply text-center text-3xl font-normal
+    @apply text-center text-3xl font-bold
 }
 
 .paper_wrapper {
@@ -26,18 +30,15 @@
     @apply justify-end mt-6
 }
 
-.sign_up_button {
-    @apply w-fit
-}
-
 .sign_in {
     @apply underline hover:text-green-700 text-green-500
 }
 
-.form_wrapper {
-    @apply pt-2 p-2 md:p-10 md:pt-2
+.account_que {
+    @apply text-center mt-2 text-sm
 }
 
-.accordion {
-    @apply rounded-md bg-white gap-10 mt-5
+.signup_link {
+    @apply font-normal underline text-green-700
 }
+

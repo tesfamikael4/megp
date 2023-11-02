@@ -1,15 +1,16 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { verifyEmail } from 'supertokens-web-js/recipe/emailverification';
 import { useRouter } from 'next/navigation';
 import { notifications } from '@mantine/notifications';
 import { Box, Button, Container, Text } from '@mantine/core';
 import { LoadingOverlay } from '@mantine/core';
+import { useAuth } from '@megp/core-fe/src/context/auth.context';
 
 export default function ConsumeVerification() {
   const [error, setError] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
+  const { verify } = useAuth();
 
   useEffect(() => {
     consumeVerificationCode();
@@ -19,32 +20,11 @@ export default function ConsumeVerification() {
   async function consumeVerificationCode() {
     try {
       setLoading(true);
-      let response = await verifyEmail();
-      if (response.status === 'EMAIL_VERIFICATION_INVALID_TOKEN_ERROR') {
-        // This can happen if the verification code is expired or invalid.
-        // You should ask the user to retry
-        setError(
-          'Oops! Seems like the verification link expired. Please try again',
-        );
-      } else {
-        // email was verified successfully.
-        router.push('/auth/login');
-      }
-    } catch (err: any) {
-      if (err.isSuperTokensGeneralError === true) {
-        // this may be a custom error message sent from the API by you.
-        notifications.show({
-          title: 'Error',
-          message: err.message,
-          color: 'red',
-        });
-      } else {
-        notifications.show({
-          title: 'Error',
-          message: 'Oops! Something went wrong!',
-          color: 'red',
-        });
-      }
+      const response = await verify({
+        verificationId: '',
+        otp: '',
+        isOtp: true,
+      });
     } finally {
       setLoading(false);
     }

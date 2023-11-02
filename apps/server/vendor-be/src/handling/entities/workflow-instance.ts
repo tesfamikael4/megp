@@ -79,6 +79,4 @@ export class WorkflowInstanceEntity {
   @ManyToOne(() => VendorsEntity, (v) => v.instances)
   @JoinColumn({ name: 'requestorId' })
   vendor: VendorsEntity;
-
-
 }

@@ -1,6 +1,5 @@
 /* Core */
 
-import { authApi } from './api/auth/auth.api';
 import {
   vendorDataGetawayApi,
   vendorRegistrationApi,
@@ -9,7 +8,6 @@ import {
 const middleware = [
   vendorRegistrationApi.middleware,
   vendorDataGetawayApi.middleware,
-  authApi.middleware,
 ];
 
 export { middleware };
