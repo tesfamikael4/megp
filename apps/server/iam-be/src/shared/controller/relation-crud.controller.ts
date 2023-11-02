@@ -13,7 +13,7 @@ import { DataResponseFormat } from '../api-data';
 import { BaseEntity } from '../entities/base.entity';
 import { RelationCrudService } from '../service/relation-crud.service';
 import { BaseAPIDto } from './extra-crud.controller';
-import { ApiBearerAuth, ApiBody } from '@nestjs/swagger';
+import { ApiBody } from '@nestjs/swagger';
 import { RelationCrudOptions } from '../types/crud-option.type';
 
 export function RelationCrudController<TEntity extends BaseEntity>(
@@ -30,7 +30,6 @@ export function RelationCrudController<TEntity extends BaseEntity>(
 
   @Controller()
   @UseInterceptors(/* your interceptors if any */)
-  @ApiBearerAuth()
   class RelationCrudControllerHost {
     constructor(public readonly service: RelationCrudService<TEntity>) {}
 
