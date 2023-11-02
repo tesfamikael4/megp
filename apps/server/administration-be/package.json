@@ -8,7 +8,7 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
-    "docker": "cd ../../../ && docker build -f apps/server/administration-be/Dockerfile -t admin-be  . && docker tag admin-be:latest gitlab.peragosystems.com:5050/megp/megp/admin-be:latest &&  docker push gitlab.peragosystems.com:5050/megp/megp/admin-be:latest",
+    "docker": "sh .bin/docker-build.sh",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
