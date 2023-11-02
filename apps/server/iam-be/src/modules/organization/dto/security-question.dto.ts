@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsArray, IsString } from 'class-validator';
-import { SecurityQuestion } from '../entities/security-question.entity';
+import { SecurityQuestion } from '@entities';
 
 export class CheckSecurityQuestionDto {
   @ApiProperty()
@@ -38,7 +38,7 @@ export class CreateSecurityQuestionDto {
 
   @ApiProperty()
   @IsString()
-  userId: string;
+  accountId: string;
 
   static fromDto(
     securityQuestionDto: CreateSecurityQuestionDto,
@@ -49,7 +49,7 @@ export class CreateSecurityQuestionDto {
 
     securityQuestion.answer = securityQuestionDto.answer;
 
-    securityQuestion.userId = securityQuestionDto.userId;
+    securityQuestion.accountId = securityQuestionDto.accountId;
 
     return securityQuestion;
   }
@@ -77,7 +77,7 @@ export class UpdateSecurityQuestionDto extends CreateSecurityQuestionDto {
 
     securityQuestion.answer = securityQuestionDto.answer;
 
-    securityQuestion.userId = securityQuestionDto.userId;
+    securityQuestion.accountId = securityQuestionDto.accountId;
 
     return securityQuestion;
   }
@@ -96,7 +96,7 @@ export class SecurityQuestionResponseDto extends UpdateSecurityQuestionDto {
 
     securityQuestionDto.answer = securityQuestion.answer;
 
-    securityQuestionDto.userId = securityQuestion.userId;
+    securityQuestionDto.accountId = securityQuestion.accountId;
 
     return securityQuestionDto;
   }

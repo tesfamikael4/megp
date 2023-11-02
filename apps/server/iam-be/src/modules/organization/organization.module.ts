@@ -1,15 +1,20 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { OrganizationController } from './controllers/organization.controller';
-import { Organization } from './entities/organization.entity';
+import {
+  Organization,
+  Office,
+  User,
+  OrganizationMandate,
+  OrganizationSector,
+  OrganizationType,
+  UnitType,
+  Unit,
+  UserUnit,
+  UserProfile,
+  UserRole,
+} from '@entities';
 import { OrganizationService } from './services/organization.service';
-import { Office } from './entities/office.entity';
-import { User } from './entities/user.entity';
-import { OrganizationMandate } from './entities/organization-mandate.entity';
-import { OrganizationSector } from './entities/organization-sector.entity';
-import { OrganizationType } from './entities/organization-type.entity';
-import { SecurityQuestion } from './entities/security-question.entity';
-import { UnitType } from './entities/unit-type.entity';
 import { OrganizationSectorController } from './controllers/organization-sector.controller';
 import { OrganizationTypeController } from './controllers/organization-type.controller';
 import { UnitTypeController } from './controllers/unit-type.controller';
@@ -20,10 +25,6 @@ import { OrganizationTypeService } from './services/organization-type.service';
 import { UnitTypeService } from './services/unit-type.service';
 import { UserService } from './services/user.service';
 import { UnitService } from './services/unit.service';
-import { Unit } from './entities/unit.entity';
-import { UserUnit } from './entities/user-unit.entity';
-import { UserProfile } from './entities/user-profile.entity';
-import { UserRole } from '../role/entities/user-role.entity';
 import { UserUnitService } from './services/user-unit.service';
 import { UserProfileService } from './services/user-profile.service';
 import { UserRoleService } from '../role/services/user-role.service';
@@ -38,7 +39,6 @@ import { UserRoleController } from '../role/controllers/user-role.controller';
       OrganizationMandate,
       User,
       Unit,
-      SecurityQuestion,
       OrganizationType,
       UnitType,
       OrganizationSector,

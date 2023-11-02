@@ -1,6 +1,6 @@
 import { Controller } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { UserRole } from '../entities/user-role.entity';
+import { UserRole } from '@entities';
 import { UserRoleService } from '../services/user-role.service';
 import { RelationCrudController } from 'src/shared/controller/relation-crud.controller';
 import { RelationCrudOptions } from 'src/shared/types/crud-option.type';

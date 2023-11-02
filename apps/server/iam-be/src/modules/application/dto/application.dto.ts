@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsUUID } from 'class-validator';
-import { Application } from '../entities/application.entity';
+import { Application } from '@entities';
 
 export class CreateApplicationDto {
   @ApiProperty()

@@ -1,6 +1,6 @@
 import { Controller } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { UnitType } from '../entities/unit-type.entity';
+import { UnitType } from '@entities';
 import { UnitTypeService } from '../services/unit-type.service';
 import { ExtraCrudController } from 'src/shared/controller/extra-crud.controller';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';

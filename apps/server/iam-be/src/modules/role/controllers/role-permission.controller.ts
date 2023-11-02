@@ -1,6 +1,6 @@
 import { Controller } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { RolePermission } from '../entities/role-permission.entity';
+import { RolePermission } from '@entities';
 import { RolePermissionService } from '../services/role-permission.service';
 import { RelationCrudController } from 'src/shared/controller/relation-crud.controller';
 import { RelationCrudOptions } from 'src/shared/types/crud-option.type';

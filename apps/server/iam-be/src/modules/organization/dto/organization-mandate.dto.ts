@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsOptional, IsString, IsUUID } from 'class-validator';
-import { OrganizationMandate } from '../entities/organization-mandate.entity';
+import { OrganizationMandate } from '@entities';
 import { MandateResponseDto } from '../../mandate/dto/mandate.dto';
 
 export class CreateOrganizationMandateDto {
@@ -24,11 +24,6 @@ export class CreateOrganizationMandateDto {
     organizationMandate.mandateId = organizationMandateDto.mandateId;
 
     organizationMandate.organizationId = organizationMandateDto.organizationId;
-
-    organizationMandate.mandateName = organizationMandateDto.mandateName;
-
-    organizationMandate.isSingleAssignment =
-      organizationMandateDto.isSingleAssignment;
 
     return organizationMandate;
   }
@@ -56,11 +51,6 @@ export class UpdateOrganizationMandateDto extends CreateOrganizationMandateDto {
 
     organizationMandate.organizationId = organizationMandateDto.organizationId;
 
-    organizationMandate.mandateName = organizationMandateDto.mandateName;
-
-    organizationMandate.isSingleAssignment =
-      organizationMandateDto.isSingleAssignment;
-
     return organizationMandate;
   }
 }
@@ -78,10 +68,6 @@ export class OrganizationMandateResponseDto extends UpdateOrganizationMandateDto
 
     organizationMandateDto.organizationId = organizationMandate.organizationId;
 
-    organizationMandateDto.mandateName = organizationMandate.mandateName;
-
-    organizationMandateDto.isSingleAssignment =
-      organizationMandate.isSingleAssignment;
     if (organizationMandate.mandate) {
       organizationMandateDto.mandate = MandateResponseDto.toDto(
         organizationMandate.mandate,

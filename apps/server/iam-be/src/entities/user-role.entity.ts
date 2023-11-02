@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 
 import { Audit } from 'src/shared/entities/audit.entity';
-import { User } from '../../organization/entities/user.entity';
+import { User } from '@entities';
 import { Role } from './role.entity';
 
 @Entity({ name: 'user_roles' })

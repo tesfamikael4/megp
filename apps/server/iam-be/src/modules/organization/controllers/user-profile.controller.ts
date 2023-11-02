@@ -12,7 +12,7 @@ import {
   CreateUserProfileDto,
   UpdateUserProfileDto,
 } from '../dto/user-profile.dto';
-import { UserProfile } from '../entities/user-profile.entity';
+import { UserProfile } from '@entities';
 import { UserProfileService } from '../services/user-profile.service';
 import { ExtraCrudController } from 'src/shared/controller/extra-crud.controller';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';

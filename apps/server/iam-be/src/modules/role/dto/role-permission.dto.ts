@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
-import { RolePermission } from '../entities/role-permission.entity';
+import { RolePermission } from '@entities';
 
 export class CreateRolePermissionDto {
   id: string;

@@ -15,7 +15,7 @@ import { CollectionQuery } from '../collection-query';
 import { DataResponseFormat } from '../api-data';
 import { BaseEntity } from '../entities/base.entity';
 import { ExtraCrudService } from '../service/extra-crud.service';
-import { ApiBody } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody } from '@nestjs/swagger';
 import { ExtraCrudOptions } from '../types/crud-option.type';
 
 export class BaseAPIDto {}
@@ -27,6 +27,7 @@ export function ExtraCrudController<TEntity extends BaseEntity>(
 
   @Controller()
   @UseInterceptors(/* your interceptors if any */)
+  @ApiBearerAuth()
   class ExtraCrudControllerHost {
     constructor(public readonly service: ExtraCrudService<TEntity>) {}
 

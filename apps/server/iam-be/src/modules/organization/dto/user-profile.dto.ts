@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsOptional, IsString } from 'class-validator';
 import { ContactNumberCommand } from 'src/shared/domain/contact-number.dto';
-import { UserProfile } from '../entities/user-profile.entity';
+import { UserProfile } from '@entities';
 export class CreateUserProfileDto {
   userId: string;
   @ApiProperty()
