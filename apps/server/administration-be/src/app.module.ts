@@ -6,6 +6,7 @@ import { TodoModule } from './todo/todo.module';
 import { AuthorizationModule } from './authorization/authorization.module';
 import { ItemMasterModule } from './modules/item-master/item-master.module';
 import { lookUpDataModule } from './modules/look-up-data/look-up.module';
+import { ClassificationModule } from './modules/classification/classification.module';
 
 @Module({
   imports: [
@@ -14,7 +15,7 @@ import { lookUpDataModule } from './modules/look-up-data/look-up.module';
     lookUpDataModule,
 
     ItemMasterModule,
-
+    ClassificationModule,
     TodoModule,
     AuthorizationModule,
   ],
