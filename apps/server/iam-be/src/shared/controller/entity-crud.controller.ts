@@ -15,21 +15,15 @@ import { DeepPartial } from 'typeorm';
 import { CollectionQuery } from '../collection-query';
 import { DataResponseFormat } from '../api-data';
 import { BaseEntity } from '../entities/base.entity';
-import { ApiBearerAuth, ApiBody } from '@nestjs/swagger';
+import { ApiBody } from '@nestjs/swagger';
 import { BaseAPIDto } from './extra-crud.controller';
 import { EntityCrudOptions } from '../types/crud-option.type';
 
 export function EntityCrudController<TEntity extends BaseEntity>(
   options?: EntityCrudOptions,
 ) {
-  // const {
-  //   createDto,
-  //   updateDto,
-  // } = options;
-
   @Controller()
   @UseInterceptors(/* your interceptors if any */)
-  @ApiBearerAuth()
   class EntityCrudControllerHost {
     constructor(public readonly service: EntityCrudService<TEntity>) {}
 
