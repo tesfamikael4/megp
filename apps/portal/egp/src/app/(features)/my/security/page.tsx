@@ -9,13 +9,13 @@ import {
   Text,
 } from '@mantine/core';
 import { IconDeviceFloppy } from '@tabler/icons-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import z from 'zod';
-import { useForm, Controller, SubmitHandler } from 'react-hook-form';
-import { useChangePasswordMutation } from '@/store/api/auth/auth.api';
-import ChangeSecurity from './changeSecurity';
+import { useForm, type SubmitHandler } from 'react-hook-form';
+import ChangeSecurity from '@megp/core-fe/src/components/auth/setSecurity/change-security';
 import { notifications } from '@mantine/notifications';
+import { useAuth } from '@megp/core-fe/src/context/auth.context';
 
 const schema = z.object({
   oldPassword: z.string().min(1, { message: 'This field is required.' }),
@@ -31,71 +31,45 @@ const schema = z.object({
 type FormSchema = z.infer<typeof schema>;
 
 export default function MyProfilePage() {
-  const [
-    changePassword,
-    {
-      isLoading: isChangingPassword,
-      isSuccess: isChangedPassword,
-      isError: isChangePasswordError,
-      error: changePasswordError,
-    },
-  ] = useChangePasswordMutation();
+  const { changePassword } = useAuth();
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
   } = useForm<FormSchema>({ resolver: zodResolver(schema) });
-  const [errorMessage, setErrorMessage] = useState<string>('');
+  const [isChangingPassword, setIsChangingPassword] = useState<boolean>(false);
 
   const onSubmit: SubmitHandler<FormSchema> = async (data: FormSchema) => {
-    setErrorMessage('');
-    const changePass = await changePassword(data);
-    if (changePass && isChangedPassword) {
-      notifications.show({
-        title: 'Success',
-        message: 'Password Changed Successfully',
-      });
-      reset();
+    try {
+      setIsChangingPassword(true);
+      const changePass = await changePassword(data);
+      if (!changePass) {
+        return;
+      }
+      if (changePass.statusCode) {
+        notifications.show({
+          title: 'Error',
+          color: 'red',
+          message: "Old Password Doesn't Match",
+        });
+      } else {
+        notifications.show({
+          title: 'Success',
+          color: 'green',
+          message: 'Password Changed Successfully',
+        });
+        reset();
+      }
+    } catch (err) {
+    } finally {
+      setIsChangingPassword(false);
     }
   };
-
-  useEffect(() => {
-    if (isChangedPassword) {
-      notifications.show({
-        title: 'Success',
-        message: 'Password Changed Successfully',
-      });
-      reset();
-    }
-  }, [isChangedPassword, reset]);
-
-  useEffect(() => {
-    if (changePasswordError && 'data' in changePasswordError) {
-      const errorData = changePasswordError.data as { message: string };
-      setErrorMessage(errorData.message);
-    }
-  }, [changePasswordError]);
 
   return (
     <>
       <Container className="mt-5">
-        {errorMessage === 'invalid claim' && (
-          <div className="bg-red-400 text-white p-4 w-fit">
-            This email is not verified. Please sign-up again.
-          </div>
-        )}
-        {errorMessage === 'New password cannot be the same as old one' && (
-          <div className="bg-red-400 text-white p-4 w-fit">
-            Old Password cannot be the same as new one. Please enter a different
-            password and try again.
-          </div>
-        )}
-        {errorMessage === 'INVALID_USERNAME_OR_PASSWORD' && (
-          <div className="bg-red-400 text-white p-4 w-fit">
-            The password your entered is incorrect. Please try again.
-          </div>
-        )}
         <form onSubmit={handleSubmit(onSubmit)} className="mt-5">
           <Text>Change Password</Text>
           <Divider className="mb-2" />
@@ -106,20 +80,13 @@ export default function MyProfilePage() {
             {...register('oldPassword')}
             error={errors.oldPassword?.message}
           />
-          <Divider my={15} />
           <PasswordInput
             label="New Password"
             withAsterisk
             placeholder="********"
             {...register('newPassword')}
             error={errors.newPassword?.message}
-          />
-          <Divider my={15} />
-          <PasswordInput
-            label="Confirm Password"
-            withAsterisk
-            placeholder="********"
-            {...register('newPassword')}
+            className="mt-2"
           />
           <Button mt={15} type="submit" loading={isChangingPassword}>
             <IconDeviceFloppy /> Save

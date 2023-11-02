@@ -1,16 +1,15 @@
 'use client';
-import { doesTokenExist } from '@/app/auth/checkToken';
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@megp/core-fe/src/context/auth.context';
 
 export default function Protected({ children }: { children: React.ReactNode }) {
   const router = useRouter();
+  const { isAuthenticated } = useAuth();
   useEffect(() => {
-    if (!doesTokenExist) {
+    if (!isAuthenticated) {
       router.push('/auth/login');
-      console.log('Not signed in');
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isAuthenticated, router]);
   return <>{children}</>;
 }

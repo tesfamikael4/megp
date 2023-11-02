@@ -1,32 +1,23 @@
 'use client';
-import React, { useEffect } from 'react';
+import { useState } from 'react';
 import {
   TextInput,
   PasswordInput,
-  Paper,
-  Title,
-  Text,
-  Container,
   Button,
-  Flex,
-  Box,
   Divider,
   Select,
 } from '@mantine/core';
 import z from 'zod';
-import { useForm, Controller, SubmitHandler, useWatch } from 'react-hook-form';
+import { useForm, Controller, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { IconDeviceFloppy } from '@tabler/icons-react';
-import {
-  useCheckSecurityQuestionsMutation,
-  useSetSecurityQuestionsMutation,
-} from '@/store/api/auth/auth.api';
 import { useRouter } from 'next/navigation';
 import { notifications } from '@mantine/notifications';
-import type { Response } from '@/app/auth/pass-reset-by-que/page';
+import { useAuth } from '../../../context/auth.context';
 
 const schema = z.object({
   username: z.string().optional(),
+  password: z.string().optional(),
   securityQuestion1: z.object({
     question: z.string({ required_error: 'This field is required' }),
     answer: z.string().min(1, { message: 'This field is required.' }),
@@ -42,17 +33,17 @@ const schema = z.object({
 });
 
 type FormSchema = z.infer<typeof schema>;
-type props = {
+interface Params {
   mode: 'new' | 'update' | 'reset-password';
   setContent?: React.Dispatch<React.SetStateAction<'content1' | 'content2'>>;
-  setResponse?: React.Dispatch<React.SetStateAction<Response>>;
-};
+  setResponse?: React.Dispatch<React.SetStateAction<any>>;
+}
 
 export default function ChangeSecurity({
   mode,
   setContent,
   setResponse,
-}: props) {
+}: Params): JSX.Element {
   //react-hook-form
   const {
     register,
@@ -60,7 +51,6 @@ export default function ChangeSecurity({
     formState: { errors },
     control,
     watch,
-    setValue,
     reset,
   } = useForm<FormSchema>({ resolver: zodResolver(schema) });
 
@@ -80,26 +70,12 @@ export default function ChangeSecurity({
   const securityQuestion3 = watch('securityQuestion3.question');
 
   const router = useRouter();
+  const { resetPasswordByQue, setSecurityQuestions } = useAuth();
+
+  const [isChecking, setIsChecking] = useState<boolean>(false);
+  const [isSetting, setIsSetting] = useState<boolean>(false);
 
   //Api calls
-
-  const [
-    setSecurityQuestions,
-    {
-      isLoading: isSettingSecuirtyQuestions,
-      isSuccess: isSetSecurityQuestions,
-      error: isSetSecurityQuestionsError,
-    },
-  ] = useSetSecurityQuestionsMutation();
-
-  const [
-    checkSecurityQuestions,
-    {
-      isLoading: isCheckingSecuirtyQuestions,
-      isSuccess: isCheckSecurityQuestionsSuccess,
-      error: isCheckSecurityQuestionsError,
-    },
-  ] = useCheckSecurityQuestionsMutation();
 
   const onSubmit: SubmitHandler<FormSchema> = async (data: FormSchema) => {
     const questions = Object.keys({
@@ -111,82 +87,78 @@ export default function ChangeSecurity({
       answer: data[key].answer,
     }));
     if (mode === 'new' || mode === 'update') {
-      await setSecurityQuestions({ questions: questions });
-    } else if (mode === 'reset-password') {
-      await checkSecurityQuestions({
-        questions: questions,
-        username: data.username,
-      })
-        .unwrap()
-        .then((res) => {
-          setResponse && setResponse(res);
-          if (res.status === true) {
-            setContent && setContent('content2');
-          } else if (res.status === false) {
-            notifications.show({
-              title: 'Error',
-              message:
-                'Security question qnswers are not correct. Please correct and try again.',
-              color: 'red',
-            });
-          }
-        })
-        .catch((err) => {
+      try {
+        setIsSetting(true);
+        const setSecurity = await setSecurityQuestions({
+          password: data.password ? data.password : '',
+          questions,
+        });
+        if (!setSecurity) {
+          return;
+        }
+        if (setSecurity.statusCode) {
           notifications.show({
             title: 'Error',
-            message: err.message,
             color: 'red',
+            message: 'Incorrect Password.',
           });
+        } else if (setSecurity.status) {
+          notifications.show({
+            title: 'Success',
+            color: 'green',
+            message: 'Security questions set successfully.',
+          });
+          reset();
+          if (mode === 'new') {
+            router.push('/');
+          }
+        }
+      } finally {
+        setIsSetting(false);
+      }
+    } else if (setContent && setResponse) {
+      try {
+        setIsChecking(true);
+        const checkSecurity = await resetPasswordByQue({
+          questions,
+          username: data.username ? data.username : '',
         });
+        if (!checkSecurity) {
+          return;
+        }
+        if (checkSecurity.statusCode === 400) {
+          notifications.show({
+            title: 'Error',
+            color: 'red',
+            message: 'Check username or security answers.',
+          });
+        } else {
+          reset();
+          setContent('content2');
+          setResponse(checkSecurity);
+        }
+      } finally {
+        setIsChecking(false);
+      }
     }
   };
 
-  useEffect(() => {
-    if (isSetSecurityQuestions) {
-      notifications.show({
-        title: 'Success',
-        message: 'Security questions set successfully',
-      });
-      if (mode == 'new') {
-        router.push('/');
-      }
-      reset({
-        securityQuestion1: {
-          question: '',
-          answer: '',
-        },
-        securityQuestion2: {
-          question: '',
-          answer: '',
-        },
-        securityQuestion3: {
-          question: '',
-          answer: '',
-        },
-      });
-    } else if (isSetSecurityQuestionsError) {
-      notifications.show({
-        title: 'Error',
-        message: 'Something went wrong',
-        color: 'red',
-      });
-    }
-  }, [
-    isSetSecurityQuestions,
-    isSetSecurityQuestionsError,
-    mode,
-    reset,
-    router,
-  ]);
-
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      {mode == 'reset-password' && (
+    <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
+      {mode === 'reset-password' ? (
         <TextInput
           label="Username"
           placeholder="Enter your username"
           required
           {...register('username')}
+        />
+      ) : (
+        <PasswordInput
+          label="Password"
+          required
+          {...register('password')}
+          error={errors.password?.message}
+          placeholder="********"
         />
       )}
       <Controller
@@ -194,26 +166,26 @@ export default function ChangeSecurity({
         name="securityQuestion1.question"
         render={({ field: { value, name, onChange } }) => (
           <Select
-            label={`Question 1`}
-            placeholder={`Select Question 1`}
-            searchable
-            nothingFoundMessage="No options"
             data={securityQuestion.filter((question) => {
               return (
                 question !== securityQuestion2 && question !== securityQuestion3
               );
             })}
-            onChange={onChange}
-            value={value}
-            name={name}
             error={errors.securityQuestion1?.question?.message}
+            label="Question 1"
+            name={name}
+            nothingFoundMessage="No options"
+            onChange={onChange}
+            placeholder="Select Question 1"
+            searchable
+            value={value}
             withAsterisk
           />
         )}
       />
       <TextInput
-        label={`Answer 1`}
-        placeholder={`Answer 1`}
+        label="Answer 1"
+        placeholder="Answer 1"
         {...register('securityQuestion1.answer')}
         error={errors.securityQuestion1?.answer?.message}
         withAsterisk
@@ -224,26 +196,26 @@ export default function ChangeSecurity({
         name="securityQuestion2.question"
         render={({ field: { value, name, onChange } }) => (
           <Select
-            label={`Question 2`}
-            placeholder={`Select Question 2`}
-            searchable
-            nothingFoundMessage="No options"
             data={securityQuestion.filter((question) => {
               return (
                 question !== securityQuestion1 && question !== securityQuestion3
               );
             })}
-            onChange={onChange}
-            value={value}
-            name={name}
             error={errors.securityQuestion2?.question?.message}
+            label="Question 2"
+            name={name}
+            nothingFoundMessage="No options"
+            onChange={onChange}
+            placeholder="Select Question 2"
+            searchable
+            value={value}
             withAsterisk
           />
         )}
       />
       <TextInput
-        label={`Answer 2`}
-        placeholder={`Answer 2`}
+        label="Answer 2"
+        placeholder="Answer 2"
         {...register('securityQuestion2.answer')}
         error={errors.securityQuestion2?.answer?.message}
         withAsterisk
@@ -254,39 +226,49 @@ export default function ChangeSecurity({
         name="securityQuestion3.question"
         render={({ field: { value, name, onChange } }) => (
           <Select
-            label={`Question 3`}
-            placeholder={`Select Question 3`}
-            searchable
-            nothingFoundMessage="No options"
             data={securityQuestion.filter((question) => {
               return (
                 question !== securityQuestion1 && question !== securityQuestion2
               );
             })}
-            onChange={onChange}
-            value={value}
-            name={name}
             error={errors.securityQuestion3?.question?.message}
+            label="Question 3"
+            name={name}
+            nothingFoundMessage="No options"
+            onChange={onChange}
+            placeholder="Select Question 3"
+            searchable
+            value={value}
             withAsterisk
           />
         )}
       />
       <TextInput
-        label={`Answer 3`}
-        placeholder={`Answer 3`}
+        label="Answer 3"
+        placeholder="Answer 3"
         {...register('securityQuestion3.answer')}
         error={errors.securityQuestion3?.answer?.message}
         withAsterisk
       />
 
-      {(mode === 'new' || mode === 'update') && (
-        <Button mt={15} type="submit" loading={isSettingSecuirtyQuestions}>
+      {mode === 'new' && (
+        <Button loading={isSetting} mt={15} type="submit">
+          <IconDeviceFloppy /> Save
+        </Button>
+      )}
+      {mode === 'update' && (
+        <Button
+          loading={isSetting}
+          mt={15}
+          style={{ width: 'fit-content' }}
+          type="submit"
+        >
           <IconDeviceFloppy /> Save
         </Button>
       )}
 
       {mode === 'reset-password' && (
-        <Button mt={15} type="submit" loading={isCheckingSecuirtyQuestions}>
+        <Button loading={isChecking} mt={15} type="submit">
           Reset Password
         </Button>
       )}

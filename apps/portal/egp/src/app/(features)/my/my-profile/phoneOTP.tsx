@@ -21,7 +21,7 @@ const schema = z.object({
 });
 type FormSchema = z.infer<typeof schema>;
 
-export default function PhoneOTP() {
+export default function PhoneOTP({ phone }: { phone: string }) {
   const {
     register,
     handleSubmit,
@@ -35,15 +35,16 @@ export default function PhoneOTP() {
 
   return (
     <div className="mt-2">
-      <Text>Verify Your Phone Number</Text>
+      <p className="font-semibold text-xl">Verify Your Phone Number</p>
       <Divider className="mt-2" />
       {otpState === 'unverified' && (
-        <>
+        <div className="flex justify-between items-center">
           {' '}
+          <Text>Phone: {phone}</Text>
           <Button className="mt-4" onClick={() => setOtpState('sent')}>
             Request OTP
           </Button>
-        </>
+        </div>
       )}
       {otpState === 'sent' && (
         <form onSubmit={handleSubmit(onSubmit)}>

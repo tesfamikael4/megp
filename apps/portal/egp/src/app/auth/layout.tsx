@@ -1,39 +1,13 @@
-'use client';
-import styles from './layout.module.scss';
-import { Flex } from '@mantine/core';
-import Image from 'next/image';
-import { frontendConfig } from './config/frontendConfig';
-import SuperTokens from 'supertokens-web-js';
-import { useConfig } from '@/contexts/config';
+import { AuthLayout } from '@megp/core-fe/src/components';
 
-export default function AuthLayout({
+export default function AuthLayoutPage({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const config = useConfig();
-  if (typeof window !== 'undefined' && !SuperTokens?.init) {
-    SuperTokens.init(frontendConfig(config));
-  }
   return (
-    <section className={styles.bod} suppressHydrationWarning={true}>
-      {children}
-      <Flex className={styles.footer_wrapper}>
-        <p className={styles.footer_text}>
-          Copyright &copy; 2023, Procurement and Disposal of Assets Authority.
-          All Rights Reserved.
-        </p>
-        <Flex className={styles.footer}>
-          <p className={styles.footer_text}>Powered by: </p>
-          <Image
-            src="/perago.png"
-            width={80}
-            height={30}
-            alt="logo"
-            className={styles.image}
-          />
-        </Flex>
-      </Flex>
-    </section>
+    <AuthLayout>
+      <section suppressHydrationWarning={true}>{children}</section>
+    </AuthLayout>
   );
 }

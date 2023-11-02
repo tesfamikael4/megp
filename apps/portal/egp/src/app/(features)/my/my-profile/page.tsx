@@ -8,13 +8,18 @@ import {
   TextInput,
   Divider,
   Button,
+  LoadingOverlay,
+  Title,
 } from '@mantine/core';
 import { IconDeviceFloppy } from '@tabler/icons-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import z from 'zod';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import PhoneOTP from './phoneOTP';
+import { useAuth } from '@megp/core-fe/src/context/auth.context';
+import { notifications } from '@mantine/notifications';
+import { useRouter } from 'next/navigation';
 
 const schema = z.object({
   firstName: z.string().min(1, { message: 'This field is required.' }),
@@ -23,42 +28,56 @@ const schema = z.object({
 type FormSchema = z.infer<typeof schema>;
 
 export default function MyProfilePage() {
+  const [userInfoloading, setUserInfoloading] = useState<boolean>(false);
+  const [userInfo, setUserInfo] = useState<any>();
+  const router = useRouter();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<FormSchema>({ resolver: zodResolver(schema) });
 
-  const onSubmit: SubmitHandler<FormSchema> = async (data: FormSchema) => {
-    // console.log(data)
-  };
+  const { getUserInfo, isAuthenticated } = useAuth();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setUserInfoloading(true);
+        const userInfo = await getUserInfo();
+        if (!userInfo) {
+          return;
+        }
+        if (userInfo['statusCode'] >= 400) {
+          notifications.show({
+            title: 'Error',
+            color: 'red',
+            message: userInfo['message'],
+          });
+          router.push('/auth/login');
+        } else {
+          setUserInfo(userInfo);
+        }
+      } catch (err) {
+      } finally {
+        setUserInfoloading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (userInfoloading || !userInfo) {
+    return <LoadingOverlay />;
+  }
 
   return (
     <Container className="mt-10">
-      <Text>Update profile</Text>
+      <p className="font-semibold text-xl">Profile Information</p>
       <Divider className="mb-2" />
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <TextInput
-          label="First Name"
-          withAsterisk
-          placeholder="First Name"
-          {...register('firstName')}
-          error={errors.firstName?.message}
-        />
-        <Divider my={15} />
-        <TextInput
-          label="Last Name"
-          withAsterisk
-          placeholder="Last Name"
-          {...register('lastName')}
-          error={errors.lastName?.message}
-        />
-        <Button mt={15} type="submit">
-          <IconDeviceFloppy /> Update
-        </Button>
-      </form>
-
-      <PhoneOTP />
+      <TextInput label="Username" disabled value={userInfo['username']} />
+      <TextInput label="First Name" disabled value={userInfo['firstName']} />
+      <TextInput label="Last Name" disabled value={userInfo['lastName']} />
+      <PhoneOTP phone={userInfo['phone'] as string} />
     </Container>
   );
 }

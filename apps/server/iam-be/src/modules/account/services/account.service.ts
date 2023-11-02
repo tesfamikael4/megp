@@ -62,7 +62,6 @@ export class AccountsService {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
-
   public async verifyAccount(
     body: VerifyAccountDto,
   ): Promise<LoginResponseDto | never> {
@@ -217,6 +216,13 @@ export class AccountsService {
       }
 
       this.repository.update(account.id, { failedAttempts, bannedUntil });
+
+      const {
+        password: encryptedPassword,
+        createdAt,
+        updatedAt,
+        ...rest
+      } = account;
 
       const token: LoginResponseDto = {
         is_security_question_set: account.securityQuestions?.length != 0,
