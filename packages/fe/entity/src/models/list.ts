@@ -7,6 +7,7 @@ export interface List<T> {
   selectedKey?: string;
 
   selectable?: boolean;
+  disableMultiSelect?: boolean;
   searchable?: boolean;
   filterable?: boolean;
   sortable?: boolean;

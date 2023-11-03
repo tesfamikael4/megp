@@ -28,6 +28,7 @@ interface CheckboxTreeNodeProps extends NodesFields {
   node: any;
   onSelect: (node: any, isChecked: boolean) => void;
   checked: boolean;
+  disableParentSelect: boolean;
 }
 
 export function CheckBoxTreeNode({
@@ -35,18 +36,34 @@ export function CheckBoxTreeNode({
   onSelect,
   checked,
   fields,
+  disableParentSelect,
 }: CheckboxTreeNodeProps): ReactNode {
+  const isLeaf = !node[fields.children ?? 'children']?.length;
+
   return (
     <Box w={200}>
       <Flex align="center">
-        <Checkbox
-          checked={checked}
-          className="mr-1"
-          onChange={(data) => {
-            onSelect(node, data.target.checked);
-          }}
-          size="xs"
-        />
+        {disableParentSelect ? (
+          isLeaf && (
+            <Checkbox
+              checked={checked}
+              className="mr-1"
+              onChange={(data) => {
+                onSelect(node, data.target.checked);
+              }}
+              size="xs"
+            />
+          )
+        ) : (
+          <Checkbox
+            checked={checked}
+            className="mr-1"
+            onChange={(data) => {
+              onSelect(node, data.target.checked);
+            }}
+            size="xs"
+          />
+        )}
         <Text className="ml-4" truncate="end">
           {node[fields.title]}
         </Text>
@@ -59,6 +76,7 @@ interface RadioTreeNodeProps extends NodesFields {
   node: any;
   onSelect: (node: any) => void;
   selectedKey: any;
+  disableParentSelect: boolean;
 }
 
 export function RadioTreeNode({
@@ -66,20 +84,33 @@ export function RadioTreeNode({
   onSelect,
   selectedKey,
   fields,
+  disableParentSelect,
 }: RadioTreeNodeProps): ReactNode {
   const handleRadioChange = (): void => {
     onSelect(node);
   };
+  const isLeaf = !node[fields.children ?? 'children']?.length;
 
   return (
     <Box w={200}>
       <Flex align="center">
-        <Radio
-          checked={selectedKey === node}
-          // className="text-ellipsis "
-          onChange={handleRadioChange}
-          size="xs"
-        />
+        {disableParentSelect ? (
+          isLeaf && (
+            <Radio
+              checked={selectedKey[fields.key] === node[fields.key]}
+              // className="text-ellipsis "
+              onChange={handleRadioChange}
+              size="xs"
+            />
+          )
+        ) : (
+          <Radio
+            checked={selectedKey[fields.key] === node[fields.key]}
+            // className="text-ellipsis "
+            onChange={handleRadioChange}
+            size="xs"
+          />
+        )}
         <Text className="ml-4" truncate="end">
           {node[fields.title]}
         </Text>

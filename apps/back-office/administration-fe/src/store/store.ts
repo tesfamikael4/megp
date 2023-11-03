@@ -3,6 +3,7 @@ import entityApi from './entity/api';
 import { measurementsApi } from './api/measurements/measurements.api';
 import { tagsApi } from './api/tags/tags.api';
 import { categoriesApi } from './api/categories/categories.api';
+import { classificationApi } from './api/classification/classification.api';
 
 const { reducers, middleware } = entityApi;
 
@@ -10,6 +11,7 @@ export const store = configureStore({
   reducer: {
     ...reducers,
     [measurementsApi.reducerPath]: measurementsApi.reducer,
+    [classificationApi.reducerPath]: classificationApi.reducer,
     [tagsApi.reducerPath]: tagsApi.reducer,
     [categoriesApi.reducerPath]: categoriesApi.reducer,
   },
@@ -20,6 +22,7 @@ export const store = configureStore({
       measurementsApi.middleware,
       tagsApi.middleware,
       categoriesApi.middleware,
+      classificationApi.middleware,
     ]),
 });
 

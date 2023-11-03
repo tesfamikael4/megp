@@ -108,7 +108,7 @@ export function Grid<T>({
             </tbody>
           </Table>
           {options.pagination ? (
-            <Group className="mt-4" justify="center">
+            <Group className="my-4" justify="center">
               <Pagination size="sm" total={10} withEdges />
             </Group>
           ) : null}

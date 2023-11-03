@@ -8,7 +8,6 @@ import { logger } from '@megp/core-fe';
 import { Box } from '@mantine/core';
 
 export function Entity({ children }: { children: React.ReactElement }) {
-  const [castedData, setCastedData] = useState<ItemMaster[]>([]);
   const route = useRouter();
 
   const { data: list, isLoading, isError } = useListQuery();
@@ -19,9 +18,10 @@ export function Entity({ children }: { children: React.ReactElement }) {
     return {
       basePath: `/item-master`,
       mode: 'list',
-      entity: 'Item Master',
+      entity: 'Items',
       primaryKey: 'id',
-      title: `Item Master`,
+      primaryContent: 'description',
+      title: `Items`,
       onAdd: () => {
         logger.log('new');
         route.push(`/item-master/new`);
@@ -33,38 +33,49 @@ export function Entity({ children }: { children: React.ReactElement }) {
 
       columns: [
         {
-          id: 'name',
+          id: 'description',
           header: 'Description',
           accessorKey: 'description',
-          cell: (info) => info.getValue(),
-        },
-        {
-          id: 'itemCode',
-          header: 'Item Code',
-          accessorKey: 'itemCode',
-          cell: (info) => info.getValue(),
           meta: {
-            widget: 'primary',
+            widget: 'expand',
           },
+          cell: ({ row: { original } }: any) => (
+            <>
+              {original.description} ({original.itemCode})
+            </>
+          ),
         },
 
         {
           id: 'uOMName',
           header: 'Unit of Measurement',
           accessorKey: 'uOMName',
+          meta: {
+            widget: 'expand',
+          },
           cell: (info) => info.getValue(),
         },
         {
           id: 'commodity',
-          header: 'Commodity ',
+          header: 'Classification ',
           accessorKey: 'commodity',
-          cell: (info) => info.getValue(),
+          meta: {
+            widget: 'expand',
+          },
+          cell: ({ row: { original } }: any) => (
+            <>
+              {original.commodityName} ({original.commodityCode})
+            </>
+          ),
         },
 
         {
           id: 'itemSubcategoryName',
           header: 'Item Catagory',
           accessorKey: 'itemSubcategoryName',
+          meta: {
+            widget: 'expand',
+          },
           cell: (info) => info.getValue(),
         },
       ],
@@ -82,25 +93,12 @@ export function Entity({ children }: { children: React.ReactElement }) {
 
   logger.log('mode', mode, pathname);
 
-  useEffect(() => {
-    const tempData: ItemMaster[] = [];
-    list?.items &&
-      list.items.map((item) => {
-        tempData.push({
-          commodity: `${item.commodityName}  (${item.commodityCode})`,
-          ...item,
-        });
-      });
-
-    setCastedData([...tempData]);
-  }, [list]);
   return (
     <Box className="w-full">
       <EntityLayout
         mode={mode}
         config={config}
-        // data={list?.items ?? []}
-        data={castedData}
+        data={list?.items ?? []}
         detail={children}
       />
     </Box>
