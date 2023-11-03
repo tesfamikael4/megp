@@ -17,7 +17,6 @@ export class Classification extends CommonEntity {
   @Column({ nullable: true })
   key: string;
 
-
   @Column({ nullable: true })
   code: string;
 
@@ -49,13 +48,10 @@ export class Classification extends CommonEntity {
   @OneToMany(() => Classification, (classification) => classification.parent)
   children: Classification[];
 
-  @OneToMany(() => ClassificationPath, (path) => path.ancestor)
-  ancestorPaths: ClassificationPath[];
-
-  // Add the inverse side of the descendantPaths relationship
-  @OneToMany(() => ClassificationPath, (path) => path.descendant)
-  descendantPaths: ClassificationPath[];
-
-
-
+  @OneToMany(
+    () => ClassificationPath,
+    (classificationPath) => classificationPath.classifications,
+    { cascade: true },
+  )
+  classificationPaths: ClassificationPath[];
 }

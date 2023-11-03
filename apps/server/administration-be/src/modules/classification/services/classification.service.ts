@@ -9,4 +9,8 @@ export class ClassificationService extends EntityCrudService<Classification> {
   ) {
     super(classificationRepository);
   }
+  async findByType() {
+    const type = 'commodity';
+    return this.classificationRepository.find({ where: { type: type } });
+  }
 }
