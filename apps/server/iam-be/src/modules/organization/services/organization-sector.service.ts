@@ -5,7 +5,7 @@ import { Injectable } from '@nestjs/common';
 import { QueryConstructorNew } from 'src/shared/collection-query/query-constructor-new';
 import { DataResponseFormat } from 'src/shared/api-data';
 import { CollectionQueryNew } from 'src/shared/collection-query/query';
-import { OrganizationSector } from '../entities/organization-sector.entity';
+import { OrganizationSector } from '@entities';
 
 @Injectable()
 export class OrganizationSectorService extends EntityCrudService<OrganizationSector> {

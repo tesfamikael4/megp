@@ -1,9 +1,6 @@
 import {
-  Body,
   Controller,
   Get,
-  Post,
-  Put,
   Query,
   Param,
   ParseUUIDPipe,
@@ -13,7 +10,7 @@ import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { ApiPaginatedResponse } from '@api-data';
 import { CreateRoleDto, UpdateRoleDto } from '../dto/role.dto';
 import { RoleService } from '../services/role.service';
-import { Role } from '../entities/role.entity';
+import { Role } from '@entities';
 import { CollectionQuery } from '@collection-query';
 import { EntityCrudController } from 'src/shared/controller/entity-crud.controller';
 import { EntityCrudOptions } from 'src/shared/types/crud-option.type';

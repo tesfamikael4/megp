@@ -7,7 +7,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { Organization } from '../entities/organization.entity';
+import { Organization } from '@entities';
 import {
   CreateOrganizationDto,
   UpdateOrganizationDto,

@@ -1,14 +1,14 @@
 import {
   Entity,
   Column,
+  PrimaryGeneratedColumn,
   ManyToOne,
   JoinColumn,
-  PrimaryGeneratedColumn,
 } from 'typeorm';
 
 import { Audit } from 'src/shared/entities/audit.entity';
-import { Organization } from './organization.entity';
-import { Mandate } from '../../mandate/entities/mandate.entity';
+import { Mandate } from './mandate.entity';
+import { Organization } from '@entities';
 
 @Entity({ name: 'organization_mandates' })
 export class OrganizationMandate extends Audit {
@@ -17,6 +17,11 @@ export class OrganizationMandate extends Audit {
 
   @Column()
   organizationId: string;
+
+  @ManyToOne(
+    () => Organization,
+    (organization) => organization.organizationMandates,
+  )
   @ManyToOne(() => Organization, (org) => org.organizationMandates, {
     orphanedRowAction: 'delete',
     onUpdate: 'RESTRICT',
@@ -28,9 +33,6 @@ export class OrganizationMandate extends Audit {
   @Column()
   mandateId: string;
 
-  @Column({ nullable: true })
-  mandateName: string;
-
   @ManyToOne(() => Mandate, (man) => man.organizationMandates, {
     orphanedRowAction: 'delete',
     onUpdate: 'RESTRICT',
@@ -38,7 +40,4 @@ export class OrganizationMandate extends Audit {
   })
   @JoinColumn({ name: 'mandateId' })
   mandate: Mandate;
-
-  @Column({ default: false })
-  isSingleAssignment: boolean;
 }

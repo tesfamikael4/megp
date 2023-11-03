@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString } from 'class-validator';
-import { OrganizationSector } from '../entities/organization-sector.entity';
+import { OrganizationSector } from '@entities';
 
 export class CreateOrganizationSectorDto {
   @ApiProperty()

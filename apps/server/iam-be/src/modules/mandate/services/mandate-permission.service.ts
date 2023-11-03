@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
-import { MandatePermission } from '../entities/mandate-permission.entity';
+import { MandatePermission } from '@entities';
 import { RelationCrudService } from 'src/shared/service/relation-crud.service';
 
 @Injectable()

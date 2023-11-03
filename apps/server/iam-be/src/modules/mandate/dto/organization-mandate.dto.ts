@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString } from 'class-validator';
-import { OrganizationMandate } from '../entities/organization-mandate.entity';
+import { OrganizationMandate } from '@entities';
 
 export class CreateOrganizationMandateDto {
   @ApiProperty()

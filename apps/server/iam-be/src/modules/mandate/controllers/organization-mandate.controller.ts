@@ -1,7 +1,7 @@
 import { Controller } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { RelationCrudController } from 'src/shared/controller/relation-crud.controller';
-import { OrganizationMandate } from '../entities/organization-mandate.entity';
+import { OrganizationMandate } from '@entities';
 import { OrganizationMandateService } from '../services/organization-mandate.service';
 import { RelationCrudOptions } from 'src/shared/types/crud-option.type';
 

@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsOptional, IsString } from 'class-validator';
-import { Office } from '../entities/office.entity';
+import { Office } from '@entities';
 
 export class CreateOfficeDto {
   @ApiProperty()

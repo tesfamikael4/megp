@@ -1,7 +1,7 @@
 import { Controller } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ApplicationService } from '../services/application.service';
-import { Application } from '../entities/application.entity';
+import { Application } from '@entities';
 import { EntityCrudController } from 'src/shared/controller/entity-crud.controller';
 import {
   CreateApplicationDto,

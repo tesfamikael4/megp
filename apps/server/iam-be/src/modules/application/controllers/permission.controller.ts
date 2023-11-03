@@ -7,9 +7,12 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { CreatePermissionDto, UpdatePermissionDto } from '../dto/permission.dto';
+import {
+  CreatePermissionDto,
+  UpdatePermissionDto,
+} from '../dto/permission.dto';
 import { PermissionService } from '../services/permission.service';
-import { Permission } from '../entities/permission.entity';
+import { Permission } from '@entities';
 import { ExtraCrudController } from 'src/shared/controller/extra-crud.controller';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { CollectionQuery } from 'src/shared/collection-query';

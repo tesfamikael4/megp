@@ -1,19 +1,9 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  Put,
-  Query,
-  Param,
-  ParseUUIDPipe,
-  HttpStatus,
-} from '@nestjs/common';
+import { Controller, Get, Query, Param } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ApiPaginatedResponse } from '@api-data';
 import { CreateMandateDto, UpdateMandateDto } from '../dto/mandate.dto';
 import { MandateService } from '../services/mandate.service';
-import { Mandate } from '../entities/mandate.entity';
+import { Mandate } from '@entities';
 import { CollectionQuery } from '@collection-query';
 import { EntityCrudController } from 'src/shared/controller/entity-crud.controller';
 import { EntityCrudOptions } from 'src/shared/types/crud-option.type';

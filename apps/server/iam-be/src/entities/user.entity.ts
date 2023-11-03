@@ -10,13 +10,12 @@ import {
 
 import { Audit } from 'src/shared/entities/audit.entity';
 
-import { Organization } from './organization.entity';
-import { SecurityQuestion } from './security-question.entity';
-import { UserProfile } from './user-profile.entity';
-import { UserRole } from '../../role/entities/user-role.entity';
-import { UserUnit } from './user-unit.entity';
+import { Organization } from '@entities';
+import { UserProfile } from '@entities';
+import { UserRole } from '@entities';
+import { UserUnit } from '@entities';
 import { ContactNumber } from 'src/shared/entities/contact-number';
-import { UserGroup } from '../../groups/entity/user-group.entity';
+import { UserGroup } from '@entities';
 
 @Entity({ name: 'users' })
 export class User extends Audit {
@@ -62,15 +61,7 @@ export class User extends Audit {
   @ManyToOne(() => Organization, (organization) => organization.users)
   @JoinColumn({ name: 'organizationId' })
   public organization: Organization;
-  @OneToMany(
-    () => SecurityQuestion,
-    (securityQuestion) => securityQuestion.user,
-    {
-      cascade: true,
-      onDelete: 'CASCADE',
-    },
-  )
-  securityQuestions: SecurityQuestion[];
+
   @OneToOne(() => UserProfile, (empProf) => empProf.user, {
     cascade: true,
   })
