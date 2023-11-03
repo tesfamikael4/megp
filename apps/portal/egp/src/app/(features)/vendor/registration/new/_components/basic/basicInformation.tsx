@@ -129,21 +129,21 @@ export const BasicInformation = () => {
   ]);
 
   useEffect(() => {
-    if (getMRADataValues.isSuccess && getMRADataValues.data?.companyName) {
+    if (getMRADataValues.data) {
       create({
-        name: getMRADataValues.data?.companyName,
-        businessType: watch().businessType || '_',
+        name: getMRADataValues.data?.TaxpayerName || '',
+        businessType: watch().businessType || '',
         origin: watch().origin,
         country: watch().origin,
         tinNumber: watch().tinNumber,
         tinIssuedDate: watch().tinIssuedDate,
-        district: '',
+        district: getMRADataValues.data?.PostalAddress || '',
       });
     }
 
     return () => {};
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [getMRADataValues.isSuccess]);
+  }, [getMRADataValues.data]);
   return (
     <Box className={style.reqFormCard}>
       <LoadingOverlay

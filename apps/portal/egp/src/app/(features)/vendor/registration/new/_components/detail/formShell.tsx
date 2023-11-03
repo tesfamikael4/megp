@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import {
   useForm,
   Control,
@@ -18,13 +18,11 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod';
 import { formDataSchema } from './schema';
 import { FormData } from '@/models/vendorRegistration';
-import { setCookie, hasCookie, getCookie } from 'cookies-next';
-import { IconDeviceFloppy } from '@tabler/icons-react';
-import { useDisclosure, useMediaQuery } from '@mantine/hooks';
+import { setCookie } from 'cookies-next';
+
 import { useRouter } from 'next/navigation';
 import { NotificationService } from '../../../../_components/notification';
 import classes from './accordion.module.scss';
-import { PopupModal } from '../../../../_components/modal';
 import { useAddFormMutation, useLazyGetMBRSDataQuery } from '../../_api/query';
 import { useTabs } from './accordion.data';
 

@@ -7,7 +7,7 @@ function StyledStepper() {
   const router = useRouter();
   const path = usePathname();
 
-  const routes = ['basic', 'detail', 'pdda', 'payment', 'doc', 'review'];
+  const routes = ['basic', 'detail', 'ppda', 'payment', 'doc', 'review'];
 
   const activeStep = routes.indexOf(path.split('/')[4]);
   const handleStepClick = (stepIndex) => {
@@ -23,7 +23,7 @@ function StyledStepper() {
     >
       <Stepper.Step label="Basic Information" />
       <Stepper.Step label="Detailed Information" />
-      <Stepper.Step label="PDDA Registration" />
+      <Stepper.Step label="Purpose of Registration" />
       <Stepper.Step label="Payment" />
       <Stepper.Step label="Document Attachment" />
       <Stepper.Step label="Review & Submit" />

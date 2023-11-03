@@ -1,7 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
-import { Table } from '@mantine/core';
+import { Flex, Table } from '@mantine/core';
 import { InvoiceData } from '@/models/vendorInvoice';
-import './invoice.css';
 
 export default function InvoiceTemplate({
   invoiceData,
@@ -42,10 +41,10 @@ export default function InvoiceTemplate({
   }
 
   return (
-    <div className="flex flex-col w-full h-full bg-white ">
+    <Flex className="flex-col bg-white ">
       {/* Header */}
-      <div className="flex items-center flex-col gap-4 p-4 min-h-[15%]">
-        <div className="flex w-full items-center gap-2">
+      <Flex className="items-center flex-col gap-4 p-4 min-h-[15%]">
+        <Flex className="flex w-full items-center gap-2">
           <img
             alt="PPDA-Logo"
             className="w-24"
@@ -54,12 +53,12 @@ export default function InvoiceTemplate({
           <h1 className="text2xl  font-extrabold">
             Public Procurement and <br /> Disposal of Assets Authority
           </h1>
-        </div>
+        </Flex>
         <div className="flex w-full font-bold text-xs">
           Private Bag 383, Lilongwe 3, Phone (265)0887083261 / 0887083262 /
           08870083263
         </div>
-      </div>
+      </Flex>
 
       {/* Main Content */}
       <main className="w-full py-4  min-h-[60%]">
@@ -131,7 +130,7 @@ export default function InvoiceTemplate({
       </main>
 
       {/* Footer */}
-      <div className="p-4 flex flex-col justify-end  ml-2 w-full min-h-[25%]">
+      <Flex className="p-4 flex-col justify-end  ml-2 w-full min-h-[25%]">
         <p className="text-sm text-gray-400 mb-2 font-semibold">
           Payment Instruction
         </p>
@@ -153,7 +152,7 @@ export default function InvoiceTemplate({
           in the First Schedule as per Sec.7 (5) of Public Procurement
           Regulations 2020.
         </p>
-      </div>
-    </div>
+      </Flex>
+    </Flex>
   );
 }
