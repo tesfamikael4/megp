@@ -10,4 +10,5 @@ export interface ItemMaster {
   id: string;
   itemSubcategoryId: string;
   measurementId: string;
+  itemTags: string[];
 }

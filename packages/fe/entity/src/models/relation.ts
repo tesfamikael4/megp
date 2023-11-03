@@ -13,6 +13,7 @@ export const defaultRelationConfig: RelationConfig<{ id: string }> = {
 
   // data
   selectable: false,
+  disableMultiSelect: false,
   searchable: false,
   filterable: false,
   sortable: false,
