@@ -41,7 +41,6 @@ export const bankAccountSchema = z.object({
     .min(8, { message: 'IBAN must be at least 8 characters long' })
     .max(34, { message: 'IBAN cannot exceed 34 characters' }),
   bankId: z.string(),
-  bankName: z.string(),
   hashValue: z.string(),
   branchName: z.string(),
 });

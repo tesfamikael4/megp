@@ -19,21 +19,21 @@ export const vendorRegistrationQuery = vendorRegistrationApi.injectEndpoints({
   endpoints: (builder) => ({
     getForm: builder.query<GetFormResponse, GetFormRequest>({
       query: (data) =>
-        `/api/VendorRegistrations/get-vendor-by-vendorId/${data.vendorId}`,
+        `/api/vendor-registrations/get-vendor-by-vendorId/${data.vendorId}`,
     }),
     createVendorId: builder.mutation<
       CreateVendorIdResponse,
       CreateVendorIdRequest
     >({
       query: (data) => ({
-        url: '/api/VendorRegistrations/vendor-initiation',
+        url: '/api/vendor-registrations/vendor-initiation',
         method: 'POST',
         body: data,
       }),
     }),
     addForm: builder.mutation<any, Partial<any>>({
       query: (newany) => ({
-        url: '/api/VendorRegistrations/add-vendor-information',
+        url: '/api/vendor-registrations/add-vendor-information',
         method: 'POST',
         body: newany,
       }),

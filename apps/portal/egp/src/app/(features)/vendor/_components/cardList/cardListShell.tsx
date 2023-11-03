@@ -12,7 +12,7 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { ChangeHandler, useFieldArray } from 'react-hook-form';
-import { IconPencil, IconPlus, IconTrash } from '@tabler/icons-react';
+import { IconPencil, IconPlus, IconTrash, IconX } from '@tabler/icons-react';
 
 interface CardListProps {
   control: any;
@@ -213,6 +213,7 @@ export const CardListShell: React.FC<CardListProps> = ({
     </>
   );
 };
+
 interface SingleCardWrapperProps {
   remove: () => void;
   edit: () => void;
@@ -231,7 +232,7 @@ export const SingleCardWrapper: React.FC<SingleCardWrapperProps> = ({
             <IconPencil size={'1rem'} color="blue" />
           </ActionIcon>
           <ActionIcon onClick={remove} variant="subtle">
-            <IconTrash size={'1rem'} color="red" />
+            <IconX size={'1rem'} color="red" />
           </ActionIcon>
         </Flex>
       </Card.Section>

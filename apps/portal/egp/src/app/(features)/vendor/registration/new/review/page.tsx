@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect } from 'react';
-import FormPreview from '../_components/review';
+import FormPreview from '../_components/review/form-preview';
 import { getCookie } from 'cookies-next';
 import { useAddFormMutation, useGetFormQuery } from '../_api/query';
 import { Button, Flex, LoadingOverlay, Stack } from '@mantine/core';
@@ -27,7 +27,7 @@ function Page() {
   useEffect(() => {
     if (saveValues.isSuccess) {
       NotificationService.successNotification('Submitted Successfully!');
-      // router.push(`/vendor/track-applications`);
+      router.push(`/vendor/track-applications`);
     }
     if (saveValues.isError) {
       NotificationService.requestErrorNotification('Error on Request');

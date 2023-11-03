@@ -6,7 +6,7 @@ import { NotificationService } from '../../../_components/notification';
 import { useGetFormQuery } from '../_api/query';
 import { getCookie } from 'cookies-next';
 
-import { AreasOfBusinessInterestForm } from '../_components/pdda/formShell';
+import { AreasOfBusinessInterestForm } from '../_components/ppda/formShell';
 
 function Page() {
   const vendorId = getCookie('vendorId') || ' ';

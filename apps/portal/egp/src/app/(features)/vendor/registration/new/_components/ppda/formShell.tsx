@@ -11,11 +11,7 @@ import {
   useLazyGetMRADataQuery,
 } from '../../_api/query';
 import { NotificationService } from '@/app/(features)/vendor/_components/notification';
-import { setCookie } from 'cookies-next';
-import {
-  AreasOfBusinessInterestType,
-  FormData,
-} from '@/models/vendorRegistration';
+import { FormData } from '@/models/vendorRegistration';
 import { ExtendedRegistrationReturnType } from '../detail/formShell';
 import AreasOfBusinessInterest from './areasOfBusinessInterest';
 
