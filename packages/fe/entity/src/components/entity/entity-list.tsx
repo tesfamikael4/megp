@@ -36,8 +36,6 @@ export function EntityList<T>({
       ...(options.selectable ? [selectColumn] : []),
       ...options.columns.map((column) => ({
         ...column,
-
-        meta: { widget: 'primary' },
       })),
       ...(options.hasDetail ? [actionColumn(options)] : []),
     ],

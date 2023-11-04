@@ -1,8 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { EntityCrudService } from 'src/shared/service/entity-crud.service';
-import { UserRole } from '../entities/user-role.entity';
+import { UserRole } from '@entities';
 import { RelationCrudService } from 'src/shared/service/relation-crud.service';
 
 @Injectable()

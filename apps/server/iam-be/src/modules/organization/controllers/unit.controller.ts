@@ -10,7 +10,7 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { CreateUnitDto, UpdateUnitDto } from '../dto/unit.dto';
 import { UnitService } from '../services/unit.service';
-import { Unit } from '../entities/unit.entity';
+import { Unit } from '@entities';
 import { ExtraCrudController } from 'src/shared/controller/extra-crud.controller';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 

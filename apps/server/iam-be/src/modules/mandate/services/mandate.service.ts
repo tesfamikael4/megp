@@ -1,12 +1,12 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
-import { Mandate } from '../entities/mandate.entity';
+import { Mandate } from '@entities';
 import { CollectionQuery } from '@collection-query';
 import { DataResponseFormat } from '@api-data';
 import { EntityCrudService } from 'src/shared/service/entity-crud.service';
 import { MandateResponseDto } from '../dto/mandate.dto';
-import { OrganizationMandate } from '../entities/organization-mandate.entity';
+import { OrganizationMandate } from '@entities';
 
 @Injectable()
 export class MandateService extends EntityCrudService<Mandate> {

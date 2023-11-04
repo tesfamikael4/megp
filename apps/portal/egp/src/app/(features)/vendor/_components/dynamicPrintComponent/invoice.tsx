@@ -5,10 +5,8 @@ import './invoice.css';
 
 export default function InvoiceTemplate({
   invoiceData,
-  sizeType,
 }: {
   invoiceData: InvoiceData;
-  sizeType: string;
 }) {
   const data = [
     {
@@ -44,7 +42,7 @@ export default function InvoiceTemplate({
   }
 
   return (
-    <div className="flex flex-col w-full h-full bg-white border-2 shadow-md">
+    <div className="flex flex-col w-full h-full bg-white ">
       {/* Header */}
       <div className="flex items-center flex-col gap-4 p-4 min-h-[15%]">
         <div className="flex w-full items-center gap-2">

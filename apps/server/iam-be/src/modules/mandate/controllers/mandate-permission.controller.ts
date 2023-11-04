@@ -1,7 +1,7 @@
 import { Controller } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { MandatePermissionService } from '../services/mandate-permission.service';
-import { MandatePermission } from '../entities/mandate-permission.entity';
+import { MandatePermission } from '@entities';
 import { RelationCrudController } from 'src/shared/controller/relation-crud.controller';
 import { RelationCrudOptions } from 'src/shared/types/crud-option.type';
 

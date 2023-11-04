@@ -13,7 +13,7 @@ import {
   CreateOrganizationSectorDto,
   UpdateOrganizationSectorDto,
 } from '../dto/organization-sector.dto';
-import { OrganizationSector } from '../entities/organization-sector.entity';
+import { OrganizationSector } from '@entities';
 import { OrganizationSectorService } from '../services/organization-sector.service';
 import { EntityCrudOptions } from 'src/shared/types/crud-option.type';
 

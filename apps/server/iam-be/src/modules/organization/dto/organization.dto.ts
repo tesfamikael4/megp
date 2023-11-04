@@ -6,7 +6,7 @@ import {
   IsOptional,
   IsUUID,
 } from 'class-validator';
-import { Organization } from '../entities/organization.entity';
+import { Organization } from '@entities';
 import {
   CreateOrganizationTypeDto,
   OrganizationTypeResponseDto,
@@ -326,6 +326,6 @@ export class OrganizationResponseDto extends UpdateOrganizationDto {
     const organizationDto = new OrganizationResponseDto();
     organizationDto.address = organization.address;
 
-    return organization;
+    return organizationDto;
   }
 }

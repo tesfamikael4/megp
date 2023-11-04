@@ -7,7 +7,7 @@ import {
   ManyToOne,
 } from 'typeorm';
 import { UserGroup } from './user-group.entity';
-import { Organization } from 'src/modules/organization/entities/organization.entity';
+import { Organization } from '@entities';
 
 @Entity({ name: 'groups' })
 export class Group {

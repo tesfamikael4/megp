@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import { OrganizationService } from '../services/organization.service';
-import { Organization } from '../entities/organization.entity';
+import { Organization } from '@entities';
 import { EntityCrudController } from 'src/shared/controller';
 import {
   CreateOrganizationDto,

@@ -85,6 +85,7 @@ export function Relation<T>({
       rowSelection,
     },
     onRowSelectionChange: setRowSelection,
+    enableMultiRowSelection: !options.disableMultiSelect,
     columns: tableColumns,
     getCoreRowModel: getCoreRowModel(),
     defaultColumn: {

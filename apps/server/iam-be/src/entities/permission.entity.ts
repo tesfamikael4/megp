@@ -10,8 +10,8 @@ import {
 import { Audit } from 'src/shared/entities/audit.entity';
 
 import { Application } from './application.entity';
-import { MandatePermission } from '../../mandate/entities/mandate-permission.entity';
-import { RolePermission } from '../../role/entities/role-permission.entity';
+import { MandatePermission } from '@entities';
+import { RolePermission } from '@entities';
 
 @Entity({ name: 'permissions' })
 export class Permission extends Audit {

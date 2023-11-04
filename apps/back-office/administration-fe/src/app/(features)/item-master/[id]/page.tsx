@@ -4,7 +4,7 @@ import { FormDetail } from '../_components/form-detail';
 
 export default function GroupPage() {
   return (
-    <Section title="Item Master Detail" collapsible={true}>
+    <Section title="Item Detail" collapsible={true}>
       <FormDetail mode="detail" />
     </Section>
   );

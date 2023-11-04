@@ -1,8 +1,8 @@
 import { EntityCrudService } from 'src/shared/service/entity-crud.service';
-import { Group } from '../entity/group.entity';
+import { Group } from '@entities';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { QueryConstructorNew } from 'src/shared/collection-query/query-constructor-new';
 import { DataResponseFormat } from 'src/shared/api-data';
 import { CollectionQueryNew } from 'src/shared/collection-query/query';
@@ -14,11 +14,6 @@ export class GroupService extends EntityCrudService<Group> {
     private readonly groupRepository: Repository<Group>,
   ) {
     super(groupRepository);
-  }
-
-  async create(itemData: Group, req?: any): Promise<Group> {
-    const item = this.groupRepository.create(itemData);
-    return await this.groupRepository.save(item);
   }
 
   async getAllGroups(query: CollectionQueryNew) {

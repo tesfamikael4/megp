@@ -1,10 +1,11 @@
 import { EntityStoreConfig } from '@megp/entity';
+import { config } from '@/config/env';
 
 export const ENTITY_LIST: EntityStoreConfig[] = [
   {
     entity: 'item-masters',
-    baseUrl: 'https://dev-bo.megp.peragosystems.com/administration/api/',
-    // baseUrl: 'http://196.189.118.110:31419/api/',
+    // baseUrl: 'https://dev-bo.megp.peragosystems.com/administration/api/',
+    baseUrl: config.ENV_ADMINISTRATION_API ?? '/administration/api/',
   },
   {
     entity: 'taxonomy',

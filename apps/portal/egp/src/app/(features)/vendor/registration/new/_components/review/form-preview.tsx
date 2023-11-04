@@ -90,7 +90,6 @@ function FormPreview({ data }) {
                       <Text size="xs">{data[tabValue][fieldKey]}</Text>
                     </Flex>
                   )}
-                  {/* {console.log(tabName,data[tabValue])} */}
                   {Array.isArray(data[tabValue]) && renderTable(data[tabValue])}
                 </Accordion.Panel>
               ))}

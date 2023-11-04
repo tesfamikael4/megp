@@ -7,7 +7,7 @@ function PageTitle() {
   const routes = {
     basic: 'Basic Information',
     detail: 'Detailed Information',
-    pdda: 'PDDA Registration',
+    ppda: 'PPDA Registration',
     payment: 'Payment',
     doc: 'Document Attachment',
     review: 'Review & Submit',

@@ -14,7 +14,7 @@ export default function Page() {
     vendorId,
   });
   useEffect(() => {
-    if (requestInfo.isError) {
+    if (requestInfo.error) {
       NotificationService.requestErrorNotification('Error on fetching data');
       router.push(`basic`);
     }
@@ -22,7 +22,7 @@ export default function Page() {
       router.push(`/vendor/track-applications`);
     }
     return () => {};
-  }, [requestInfo, router]);
+  }, [requestInfo.data, requestInfo.error]);
 
   return (
     <section className="w-full relative">

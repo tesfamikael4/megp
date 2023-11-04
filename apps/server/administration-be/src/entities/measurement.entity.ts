@@ -18,7 +18,8 @@ export class Measurement extends CommonEntity {
   name: string;
   @Column()
   shortName: string;
-  @Column()
+
+  @Column({ default: true })
   code: string;
   @OneToMany(() => UnitOfMeasurement, (uom1) => uom1.measurement)
   uoms: UnitOfMeasurement[];

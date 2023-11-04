@@ -8,7 +8,7 @@ import {
 
 import { Audit } from 'src/shared/entities/audit.entity';
 import { Role } from './role.entity';
-import { Permission } from '../../application/entities/permission.entity';
+import { Permission } from '@entities';
 
 @Entity({ name: 'role_permissions' })
 export class RolePermission extends Audit {

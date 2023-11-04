@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsString, IsOptional, IsUUID } from 'class-validator';
-import { Unit } from '../entities/unit.entity';
+import { Unit } from '@entities';
 import { UnitTypeResponseDto } from './unit-type.dto';
 import { UserUnitResponseDto } from './user-unit.dto';
 

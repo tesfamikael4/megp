@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { OrganizationMandate } from '../entities/organization-mandate.entity';
+import { OrganizationMandate } from '@entities';
 import { RelationCrudService } from 'src/shared/service/relation-crud.service';
 
 @Injectable()

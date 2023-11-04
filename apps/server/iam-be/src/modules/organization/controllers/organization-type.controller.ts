@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { EntityCrudController } from 'src/shared/controller/entity-crud.controller';
-import { OrganizationType } from '../entities/organization-type.entity';
+import { OrganizationType } from '@entities';
 import {
   CreateOrganizationTypeDto,
   UpdateOrganizationTypeDto,

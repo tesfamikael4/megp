@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
-import { MandatePermission } from '../entities/mandate-permission.entity';
+import { IsString, IsUUID } from 'class-validator';
+import { MandatePermission } from '@entities';
 
 export class CreateMandatePermissionDto {
   @ApiProperty()

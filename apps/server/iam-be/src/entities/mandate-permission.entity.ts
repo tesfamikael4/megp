@@ -9,7 +9,7 @@ import {
 import { Audit } from 'src/shared/entities/audit.entity';
 
 import { Mandate } from './mandate.entity';
-import { Permission } from '../../application/entities/permission.entity';
+import { Permission } from '@entities';
 
 @Entity({ name: 'mandate_permissions' })
 export class MandatePermission extends Audit {
