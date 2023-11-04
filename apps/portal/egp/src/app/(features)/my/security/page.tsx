@@ -13,9 +13,9 @@ import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import z from 'zod';
 import { useForm, type SubmitHandler } from 'react-hook-form';
-import ChangeSecurity from '@megp/core-fe/src/components/auth/setSecurity/change-security';
+import ChangeSecurity from '@megp/auth/src/components/auth/setSecurity/change-security';
 import { notifications } from '@mantine/notifications';
-import { useAuth } from '@megp/core-fe/src/context/auth.context';
+import { useAuth } from '@megp/auth';
 
 const schema = z.object({
   oldPassword: z.string().min(1, { message: 'This field is required.' }),

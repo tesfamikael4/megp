@@ -27,7 +27,7 @@ import {
   IconLogout,
   IconUserCircle,
 } from '@tabler/icons-react';
-import { useAuth } from '@megp/core-fe';
+import { useAuth } from '@megp/auth';
 import { theme } from '@/utilities/theme';
 import { useRouter } from 'next/navigation';
 const links = [

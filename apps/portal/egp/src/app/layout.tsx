@@ -5,7 +5,7 @@ import { config } from '@/config/env';
 import { ConfigProvider } from '@/contexts/config';
 import { Providers } from '@/store/provider';
 import RootStyleRegistry from './mantine';
-import { AuthProvider } from '@megp/core-fe/src/context/auth.context';
+import { AuthProvider } from '@megp/auth/src/context/auth.context';
 
 export const metadata: Metadata = {
   title: 'EGP',
