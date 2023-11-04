@@ -17,8 +17,6 @@ const roboto_mono = Roboto_Mono({
 });
 
 import '@megp/theme/theme.scss';
-import { ConfigProvider } from '@/contexts/config';
-import { config } from '@/config/env';
 
 export const metadata: Metadata = {
   title: 'M-egp | IAM',
@@ -37,11 +35,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${roboto_mono.variable}`}>
       <body suppressHydrationWarning={true}>
-        <ConfigProvider config={config}>
-          <Providers>
-            <RootStyleRegistry>{children}</RootStyleRegistry>
-          </Providers>
-        </ConfigProvider>
+        <Providers>
+          <RootStyleRegistry>{children}</RootStyleRegistry>
+        </Providers>
       </body>
     </html>
   );
