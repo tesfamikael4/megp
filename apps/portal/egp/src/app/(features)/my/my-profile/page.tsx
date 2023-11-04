@@ -17,7 +17,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import z from 'zod';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import PhoneOTP from './phoneOTP';
-import { useAuth } from '@megp/core-fe/src/context/auth.context';
+import { useAuth } from '@megp/auth';
 import { notifications } from '@mantine/notifications';
 import { useRouter } from 'next/navigation';
 
