@@ -59,7 +59,7 @@ COPY --from=installer --chown=nextjs:nodejs /app/apps/portal/egp/public ./apps/p
 
 
 # Set environment variables with default values
-ENV NEXT_PUBLIC_IAM_API=="/iam/api"
+ENV NEXT_PUBLIC_IAM_API="/iam/api"
 
 
 # Specify the command to run your application, passing the environment variables

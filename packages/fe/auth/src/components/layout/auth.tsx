@@ -10,6 +10,7 @@ import SetSecurity from '../auth/setSecurity/set-security';
 import Otp from '../auth/verification/otp';
 import workflow from './workflow.png';
 import styles from './auth.module.scss';
+import '@mantine/core/styles.css';
 
 const page = {
   login: <Signin />,
