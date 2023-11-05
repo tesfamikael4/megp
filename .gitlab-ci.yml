@@ -63,7 +63,7 @@ deploy:
     - pnpm config set store-dir .pnpm-store
   script:
     - pnpm install
-    - pnpm -w run turbo run gitops  --filter "...[origin/main...HEAD^]" -- $CI_COMMIT_SHORT_SHA $GITLAB_API_TOKEN
+    - pnpm -w run turbo run gitops  --filter "...[origin/main...HEAD^]" -- $CI_COMMIT_SHORT_SHA $GITLAB_PASSWORD
   cache:
     key:
       files:
