@@ -13,6 +13,10 @@ REPO_URL="https://gitlab.peragosystems.com/megp/gitops.git"
 git config credential.helper store
 echo "$REPO_URL $GITLAB_USERNAME:$GITLAB_PASSWORD" > ~/.git-credentials
 
+
+git config --global user.name "$GITLAB_USERNAME"
+git config --global user.email "gitops"@peragosystems.com
+
 # Clone the Git repository
 git clone  --single-branch --branch main https://gitlab.peragosystems.com/megp/gitops.git
 
