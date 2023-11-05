@@ -3,13 +3,15 @@
 # Access the arguments passed to the script
 APP_NAME="$1" # egp, iamFe, iamBe, administrationFe
 CI_COMMIT_SHORT_SHA="$2"
+GITLAB_API_TOKEN="$3"
+
 
 # Set Git configuration
 git config --global user.name "gitops"
-git config --global user.email "gitops@gitlab.com"
+git config --global user.email "gitops@peragosystems.com"
 
 # Clone the Git repository
-git clone --single-branch --branch main "https://gitlab.peragosystems.com/megp/gitops.git"
+git clone  --single-branch --branch main https://$GITLAB_API_TOKEN@gitlab.peragosystems.com/megp/gitops.git
 
 # Change to the chart repository
 cd "applications"

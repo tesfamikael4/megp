@@ -26,30 +26,30 @@ merge:
     paths:
       - .pnpm-store
 
-build:
-  stage: build
-  image: docker:latest
-  services:
-    - docker:dind
-  rules:
-    - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"
+# build:
+#   stage: build
+#   image: docker:latest
+#   services:
+#     - docker:dind
+#   rules:
+#     - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"
 
-  before_script:
-    - apk --update add nodejs npm git
-    - npm install -g pnpm
-  script:
-    - pnpm install --no-frozen-lockfile
+#   before_script:
+#     - apk --update add nodejs npm git
+#     - npm install -g pnpm
+#   script:
+#     - pnpm install --no-frozen-lockfile
 
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - pnpm -w run turbo run lint  --filter "...[origin/main...HEAD^]"
-    - pnpm -w run turbo run docker  --filter "...[origin/main...HEAD^]" -- $CI_COMMIT_SHORT_SHA
+#     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+#     - pnpm -w run turbo run lint  --filter "...[origin/main...HEAD^]"
+#     - pnpm -w run turbo run docker  --filter "...[origin/main...HEAD^]" -- $CI_COMMIT_SHORT_SHA
 
-  cache:
-    key:
-      files:
-        - pnpm-lock.yaml
-    paths:
-      - .pnpm-store
+#   cache:
+#     key:
+#       files:
+#         - pnpm-lock.yaml
+#     paths:
+#       - .pnpm-store
 
 deploy:
   stage: deploy
@@ -63,7 +63,7 @@ deploy:
     - pnpm config set store-dir .pnpm-store
   script:
     - pnpm install
-    - pnpm -w run turbo run gitops  --filter "...[origin/main...HEAD^]" -- $CI_COMMIT_SHORT_SHA
+    - pnpm -w run turbo run gitops  --filter "...[origin/main...HEAD^]" -- $CI_COMMIT_SHORT_SHA $GITLAB_API_TOKEN
   cache:
     key:
       files:
