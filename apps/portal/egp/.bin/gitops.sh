@@ -29,15 +29,17 @@ cd "gitops/applications"
 
 
 # Extract the current image tag from values.yaml for the specified application
-current_tag_value=$(cat values-dev.yaml | grep "$APP_NAME:" -A 1 | awk '/tag:/ {print $2}')
+# current_tag_value=$(cat values-dev.yaml | grep "$APP_NAME:" -A 1 | awk '/tag:/ {print $2}')
 
 
-echo "currentTag: $current_tag_value"
-echo "cnewTag: $CI_COMMIT_SHORT_SHA"
+# echo "currentTag: $current_tag_value"
+echo "newTag: $CI_COMMIT_SHORT_SHA"
 
 # Update the image tag in values.yaml with the new CI_COMMIT_SHORT_SHA
 
-sed -i "s/$APP_NAME:\n  tag: $current_tag_value/$APP_NAME:\n  tag: $CI_COMMIT_SHORT_SHA/" values-dev.yaml
+# sed -i "s/$APP_NAME:\n  tag: $current_tag_value/$APP_NAME:\n  tag: $CI_COMMIT_SHORT_SHA/" values-dev.yaml
+
+yq eval ".${APP_NAME}.tag = \"$CI_COMMIT_SHORT_SHA\"" -i values-dev.yaml
 
 
 # Display the contents of values-dev.yaml
