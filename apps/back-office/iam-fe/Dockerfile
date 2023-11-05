@@ -43,6 +43,10 @@ COPY turbo.json turbo.json
 # ARG TURBO_TOKEN
 # ENV TURBO_TOKEN=$TURBO_TOKEN
 
+# Set environment variables with default values
+ENV NEXT_PUBLIC_IAM_API="/iam/api"
+
+
 RUN pnpm turbo run build --filter=iam-fe...
 
 FROM base AS runner
@@ -63,8 +67,6 @@ COPY --from=installer --chown=nextjs:nodejs /app/apps/back-office/iam-fe/.next/s
 COPY --from=installer --chown=nextjs:nodejs /app/apps/back-office/iam-fe/public ./apps/back-office/iam-fe/public
 
 
-# Set environment variables with default values
-ENV NEXT_PUBLIC_IAM_API="/iam/api"
 
 # Specify the command to run your application, passing the environment variables
 CMD ["node", "apps/back-office/iam-fe/server.js"]

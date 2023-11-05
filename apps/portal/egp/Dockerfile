@@ -38,6 +38,9 @@ COPY turbo.json turbo.json
 # ARG TURBO_TEAM
 # ENV TURBO_TEAM=$TURBO_TEAM
 
+# Set environment variables with default values
+ENV NEXT_PUBLIC_IAM_API="/iam/api"
+
 RUN pnpm turbo run build --filter=egp...
 
 FROM base AS runner
@@ -58,8 +61,7 @@ COPY --from=installer --chown=nextjs:nodejs /app/apps/portal/egp/.next/static ./
 COPY --from=installer --chown=nextjs:nodejs /app/apps/portal/egp/public ./apps/portal/egp/public
 
 
-# Set environment variables with default values
-ENV NEXT_PUBLIC_IAM_API="/iam/api"
+
 
 
 # Specify the command to run your application, passing the environment variables
