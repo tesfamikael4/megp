@@ -14,6 +14,9 @@ git clone --single-branch --branch main "https://gitlab.peragosystems.com/megp/g
 # Change to the chart repository
 cd "applications"
 
+# check https://gitlab.peragosystems.com/megp/gitops/-/blob/main/applications/values-dev.yaml
+
+
 # Extract the current image tag from values.yaml for the specified application
 current_tag_value=$(cat values-dev.yaml | grep "$APP_NAME:" -A 1 | awk '/tag:/ {print $2}')
 
