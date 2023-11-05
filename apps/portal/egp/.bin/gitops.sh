@@ -30,7 +30,7 @@ cd "gitops/applications"
 
 
  
-yq -y eval ".${APP_NAME}.tag = \"$CI_COMMIT_SHORT_SHA\"" -i values-dev.yaml
+yq -y eval "$APP_NAME.tag = $CI_COMMIT_SHORT_SHA" -i values-dev.yaml
  
 # Display the contents of values-dev.yaml
 cat values-dev.yaml
