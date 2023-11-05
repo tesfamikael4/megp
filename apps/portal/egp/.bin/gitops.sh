@@ -36,10 +36,13 @@ echo "currentTag: $current_tag_value"
 echo "cnewTag: $CI_COMMIT_SHORT_SHA"
 
 # Update the image tag in values.yaml with the new CI_COMMIT_SHORT_SHA
-sed -i "s/$APP_NAME:\n  tag: $current_tag_value/$APP_NAME:\n    tag: $CI_COMMIT_SHORT_SHA/" values-dev.yaml
+
+sed -i "s/$APP_NAME:\n  tag: $current_tag_value/$APP_NAME:\n  tag: $CI_COMMIT_SHORT_SHA/" values-dev.yaml
+
 
 # Display the contents of values-dev.yaml
 cat values-dev.yaml
 
+git add .
 # Commit and push the changes
 git commit -am "$APP_NAME update image tag" && git push origin main
