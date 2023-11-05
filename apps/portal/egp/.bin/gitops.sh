@@ -29,13 +29,9 @@ cd "gitops/applications"
 # https://mikefarah.gitbook.io/yq/v/v3.x/
 
 
-# yq -i  "$APP_NAME.tag = $CI_COMMIT_SHORT_SHA" values-dev.yaml -y
+yq -i values-dev.yaml $APP_NAME.tag  $CI_COMMIT_SHORT_SHA -y
 
-# Convert YAML to JSON using yq and update the JSON data with jq
-cat values-dev.yaml | yq eval -o=json '.' | jq --arg appname "$APP_NAME" --arg newtag "$CI_COMMIT_SHORT_SHA" '.[$appname].tag = $newtag' > updated-values-dev.json
-
-# Optionally, convert the updated JSON back to YAML
-yq eval -i -o yaml '.' updated-values-dev.json > values-dev.yaml
+ 
 # Display the contents of values-dev.yaml
 cat values-dev.yaml
 
