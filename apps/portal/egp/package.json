@@ -6,6 +6,7 @@
     "dev": "next dev -p 5500",
     "build": "next build",
     "docker": "sh .bin/docker-build.sh",
+    "gitops": "sh .bin/gitops.sh egp",
     "lint": "next lint"
   },
   "dependencies": {
