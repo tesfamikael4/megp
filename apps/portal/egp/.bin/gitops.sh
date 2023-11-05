@@ -27,7 +27,8 @@ git clone  --single-branch --branch main https://oauth2:$GITLAB_PASSWORD@gitlab.
 cd "gitops/applications"
 
 # https://mikefarah.gitbook.io/yq/v/v3.x/
-yq eval ".${APP_NAME}.tag = \"$CI_COMMIT_SHORT_SHA\"" -i values-dev.yaml
+
+yq w -i values-dev.yaml "$APP_NAME.tag  $CI_COMMIT_SHORT_SHA"
 
 
 # Display the contents of values-dev.yaml
