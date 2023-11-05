@@ -29,8 +29,8 @@ cd "gitops/applications"
 # https://mikefarah.gitbook.io/yq/v/v3.x/
 
 
-yq -i  "$APP_NAME.tag = $CI_COMMIT_SHORT_SHA" values-dev.yaml -y -v
-
+ 
+yq -y eval ".${APP_NAME}.tag = \"$CI_COMMIT_SHORT_SHA\"" -i values-dev.yaml
  
 # Display the contents of values-dev.yaml
 cat values-dev.yaml
