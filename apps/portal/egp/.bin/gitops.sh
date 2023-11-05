@@ -17,13 +17,13 @@ echo "$REPO_URL $GITLAB_USERNAME:$GITLAB_PASSWORD" > ~/.git-credentials
 git config --global user.name "$GITLAB_USERNAME"
 git config --global user.email "gitops"@peragosystems.com
 
+cd ~
+
 # Clone the Git repository
 git clone  --single-branch --branch main https://oauth2:$GITLAB_PASSWORD@gitlab.peragosystems.com/megp/gitops.git 
 
 # Change to the chart repository
 cd "gitops/applications"
-
-cat values-dev.yaml
 
 
 # Extract the current image tag from values.yaml for the specified application
