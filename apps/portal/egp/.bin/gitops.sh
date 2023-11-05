@@ -20,6 +20,10 @@ git config --global user.email "gitops"@peragosystems.com
 # Clone the Git repository
 git clone  --single-branch --branch main https://oauth2:$GITLAB_PASSWORD@gitlab.peragosystems.com/megp/gitops.git
 
+pwd 
+
+ls
+
 # Change to the chart repository
 cd "applications"
 
