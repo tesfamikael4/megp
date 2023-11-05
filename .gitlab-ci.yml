@@ -1,7 +1,6 @@
 stages:
   - merge
   - build
-  - deploy
 
 variables:
   AWS_WEB_IDENTITY_TOKEN_FILE: /tmp/web-identity-token
@@ -26,44 +25,25 @@ merge:
     paths:
       - .pnpm-store
 
-# build:
-#   stage: build
-#   image: docker:latest
-#   services:
-#     - docker:dind
-#   rules:
-#     - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"
-
-#   before_script:
-#     - apk --update add nodejs npm git
-#     - npm install -g pnpm
-#   script:
-#     - pnpm install --no-frozen-lockfile
-
-#     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-#     - pnpm -w run turbo run lint  --filter "...[origin/main...HEAD^]"
-#     - pnpm -w run turbo run docker  --filter "...[origin/main...HEAD^]" -- $CI_COMMIT_SHORT_SHA
-
-#   cache:
-#     key:
-#       files:
-#         - pnpm-lock.yaml
-#     paths:
-#       - .pnpm-store
-
-deploy:
-  stage: deploy
-  image: node:20.7.0
+build:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
   rules:
     - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"
 
   before_script:
-    - corepack enable
-    - corepack prepare pnpm@latest-8 --activate
-    - pnpm config set store-dir .pnpm-store
+    - apk --update add nodejs npm git
+    - npm install -g pnpm
   script:
-    - pnpm install
-    - pnpm -w run turbo run gitops  --filter "...[origin/main...HEAD^]" -- $CI_COMMIT_SHORT_SHA $GITLAB_PASSWORD
+    - pnpm install --no-frozen-lockfile
+
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - pnpm -w run turbo run lint  --filter "...[origin/main...HEAD^]"
+    - pnpm -w run turbo run docker  --filter "...[origin/main...HEAD^]" -- $CI_PIPELINE_ID
+    - pnpm -w run turbo run gitops  --filter "...[origin/main...HEAD^]" -- $CI_PIPELINE_ID $GITLAB_PASSWORD
+
   cache:
     key:
       files:

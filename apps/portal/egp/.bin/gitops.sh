@@ -31,10 +31,6 @@ cd "gitops/applications"
 sed -i "/$APP_NAME:/ { N; s/\(tag:\s*\).*/\1$CI_COMMIT_SHORT_SHA/ }" values-dev.yaml
 
 
- 
-# Display the contents of values-dev.yaml
-cat values-dev.yaml
-
 git add .
 # Commit and push the changes
 git commit -am "$APP_NAME update image tag" && git push origin main
