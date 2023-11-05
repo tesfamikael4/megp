@@ -22,6 +22,8 @@ cd ~
 # Clone the Git repository
 git clone  --single-branch --branch main https://oauth2:$GITLAB_PASSWORD@gitlab.peragosystems.com/megp/gitops.git 
 
+ls
+
 # Change to the chart repository
 cd "gitops/applications"
 
@@ -31,9 +33,10 @@ current_tag_value=$(cat values-dev.yaml | grep "$APP_NAME:" -A 1 | awk '/tag:/ {
 
 
 echo "currentTag: $current_tag_value"
+echo "cnewTag: $CI_COMMIT_SHORT_SHA"
 
 # Update the image tag in values.yaml with the new CI_COMMIT_SHORT_SHA
-sed -i "s/$APP_NAME:\n  tag: $current_tag_value/$APP_NAME:\n  tag: $CI_COMMIT_SHORT_SHA/" values-dev.yaml
+sed -i "s/$APP_NAME:\n  tag: $current_tag_value/$APP_NAME:\n    tag: $CI_COMMIT_SHORT_SHA/" values-dev.yaml
 
 # Display the contents of values-dev.yaml
 cat values-dev.yaml
