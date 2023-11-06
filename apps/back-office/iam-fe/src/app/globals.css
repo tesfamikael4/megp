@@ -1,4 +1,4 @@
-@import './preflight.css';
+@import '@megp/theme/preflight.css';
 @tailwind components;
 @tailwind utilities;
 @import '@mantine/core/styles.css';
