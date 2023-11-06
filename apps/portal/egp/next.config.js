@@ -2,7 +2,7 @@
 const nextConfig = { 
  
   reactStrictMode: true,
-  transpilePackages: ['@megp/core-fe','@megp/entity'],
+  transpilePackages: ['@megp/core-fe','@megp/entity','@megp/auth'],
   output: 'standalone',
   webpack(config, { isServer }) {
   // Configures webpack to handle SVG files with SVGR. SVGR optimizes and transforms SVG files
