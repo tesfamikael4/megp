@@ -80,7 +80,7 @@ export function PasswordReset(): JSX.Element {
               {...register('password')}
               error={errors.password?.message}
             />
-            <Button className="mt-4" loading={loading} type="submit">
+            <Button className="mt-4" loading={loading}>
               Change Password
             </Button>
           </Flex>

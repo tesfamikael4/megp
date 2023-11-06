@@ -154,7 +154,7 @@ export const AreasOfBusinessInterestForm = ({
           />
         </Flex>
         <Flex className="mt-10 justify-end gap-2">
-          <Button type="submit">Submit</Button>
+          <Button>Submit</Button>
         </Flex>
       </form>
     </Box>

@@ -122,7 +122,7 @@ export function SignUp(): JSX.Element {
             {...register('password')}
             withAsterisk
           />
-          <Button className="mt-6" loading={isSigningUp} type="submit">
+          <Button className="mt-6" loading={isSigningUp}>
             Create Account
           </Button>
           <Text c="dimmed" className={styles.account_que}>

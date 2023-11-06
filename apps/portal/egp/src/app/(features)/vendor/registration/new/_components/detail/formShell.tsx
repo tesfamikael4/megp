@@ -217,7 +217,7 @@ const RegistrationForm = ({
         </Accordion>
 
         <Flex justify="end" className="gap-2 mt-4">
-          <Button type="submit">Save</Button>
+          <Button>Save</Button>
         </Flex>
       </form>
     </Flex>

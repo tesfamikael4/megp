@@ -13,7 +13,7 @@ import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import z from 'zod';
 import { useForm, type SubmitHandler } from 'react-hook-form';
-import ChangeSecurity from '@megp/auth/src/components/auth/setSecurity/change-security';
+import { ChangeSecurity } from '@megp/auth/src/components/auth/setSecurity/change-security';
 import { notifications } from '@mantine/notifications';
 import { useAuth } from '@megp/auth';
 
@@ -88,7 +88,7 @@ export default function MyProfilePage() {
             error={errors.newPassword?.message}
             className="mt-2"
           />
-          <Button mt={15} type="submit" loading={isChangingPassword}>
+          <Button mt={15} loading={isChangingPassword}>
             <IconDeviceFloppy /> Save
           </Button>
         </form>

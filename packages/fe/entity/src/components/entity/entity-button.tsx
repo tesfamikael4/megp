@@ -69,7 +69,6 @@ export function EntityButton({
               leftSection={<IconDeviceFloppy size={14} stroke={1.6} />}
               loading={isUpdating}
               onClick={onUpdate}
-              type="submit"
             >
               Update
             </Button>
@@ -86,7 +85,6 @@ export function EntityButton({
               }
               loading={isActivating}
               onClick={onActivate}
-              type="submit"
             >
               {data?.isActive ? 'Deactivate' : 'activate'}
             </Button>

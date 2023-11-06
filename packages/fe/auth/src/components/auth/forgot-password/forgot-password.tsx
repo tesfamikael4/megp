@@ -66,7 +66,7 @@ export function ForgotPassword(): JSX.Element {
           {...register('email')}
           className="mt-3"
         />
-        <Button className="mt-6" loading={loading} type="submit">
+        <Button className="mt-6" loading={loading}>
           Send link
         </Button>{' '}
         <Divider label="Or" labelPosition="center" my="xs" />

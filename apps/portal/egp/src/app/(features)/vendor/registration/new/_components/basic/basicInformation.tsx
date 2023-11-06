@@ -238,9 +238,7 @@ export const BasicInformation = () => {
         </Flex>
 
         <Flex className="mt-10 justify-end gap-2">
-          <Button type="submit" disabled={!accept}>
-            Start Registration
-          </Button>
+          <Button disabled={!accept}>Start Registration</Button>
         </Flex>
       </form>
     </Box>
