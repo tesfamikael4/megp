@@ -15,6 +15,7 @@ export class VendorInitiationDto {
   @ApiProperty()
   @IsNotEmpty()
   name: string;
+  level: string;
   @ApiProperty()
   @IsNotEmpty()
   businessType: string;

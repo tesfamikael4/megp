@@ -1,10 +1,12 @@
 import { IsDate } from 'class-validator';
 
 const initialValueSchema2 = {
-  id: '',
-  userId: 'b23f0b00-0a59-4f6d-9fd9-34d6fa960e0f', //session
-  status: '',
-  level: '',
+  initial: {
+    id: '',
+    userId: 'b23f0b00-0a59-4f6d-9fd9-34d6fa960e0f', //session
+    status: 'Submit',
+    level: 'ppda',
+  },
   basic: {
     name: '',
     businessType: '',
@@ -60,17 +62,19 @@ const initialValueSchema2 = {
 
   bankAccountDetails: [
     {
-      accountHoldersFullName: '',
+      accountHolderFullName: '',
       accountNumber: 0,
-      bankBranchAddress: '',
+      branchAddress: '',
       currency: '',
-      bankSWIFT_BICCode: '',
-      iBAN: '',
+      bankSwift: '',
+      IBAN: '',
       status: '',
       bankId: '',
       bankName: '',
       hashValue: '',
       branchName: '',
+      accountType: '',
+      isDefualt: true,
     },
   ],
   areasOfBusinessInterest: [
@@ -109,5 +113,13 @@ const initialValueSchema2 = {
       amount: '',
     },
   ],
+  supportingDocuments: {
+    businessRegistration_IncorporationCertificate: '',
+    mRA_TPINCertificate: '',
+    generalReceipt_BankDepositSlip: '',
+    mRATaxClearanceCertificate: '',
+    previousPPDARegistrationCertificate: '',
+    mSMECertificate: '',
+  },
 };
 export default initialValueSchema2;

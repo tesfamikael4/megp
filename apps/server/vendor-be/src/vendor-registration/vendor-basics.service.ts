@@ -23,7 +23,7 @@ export class VendorBasicsService {
   async create(dto: CreateVendorsDto): Promise<VendorsResponseDto> {
     try {
       const entity = CreateVendorsDto.fromDto(dto);
-      entity.createdBy = 'b920fb64-fe56-49d8-9411-a9470b37270a';
+      // entity.createdBy = 'b920fb64-fe56-49d8-9411-a9470b37270a';
       console.log(entity);
       await this.repository.save(entity);
       return VendorsResponseDto.fromEntity(entity);

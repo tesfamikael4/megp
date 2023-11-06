@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsUUID } from 'class-validator';
 import { TaskEntity } from '../entities/task.entity';
-import { TaskAssignmentResponse } from '../../handling/dtos/task-assignmment.dto';
+import { TaskAssignmentResponse } from './task-assignmment.dto';
 import { BusinessProcessResponse } from './business-process.dto';
 import { CreateTaskCheckListDto } from './task-check-list.dto';
 export class CreateTaskDto {

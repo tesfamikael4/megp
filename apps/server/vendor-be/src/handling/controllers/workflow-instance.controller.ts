@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  Post,
+  Query,
+} from '@nestjs/common';
 import {
   ApiExtraModels,
   ApiOkResponse,
@@ -14,10 +22,8 @@ import {
   GotoNextStateDto,
   UpdateWorkflowInstanceDto,
 } from '../dtos/workflow-instance.dto';
-import {
-  PaymentReceiptDto,
-  PaymentReceiptResponseDto,
-} from 'src/vendor-registration/dto/payment-receipt.dto';
+import { BusinessProcessService } from 'src/bpm/services/business-process.service';
+import { TaskService } from 'src/bpm/services/task.service';
 @Controller('workflow-instances')
 @ApiTags('workflow-instances')
 @ApiResponse({ status: 500, description: 'Internal error' })
@@ -28,6 +34,8 @@ export class WorkflowInstanceController {
   userInfo: any;
   constructor(
     private readonly workflowInstanceService: WorkflowInstanceService,
+    private readonly bpService: BusinessProcessService,
+    private readonly taskService: TaskService,
   ) {
     this.userInfo = {
       userId: '62e96410-e869-4231-b693-f7e22d498b65',
@@ -35,43 +43,17 @@ export class WorkflowInstanceController {
     };
   }
 
-  @Post('attach-payment-receipt')
-  @ApiOkResponse({ type: PaymentReceiptResponseDto })
-  async savePayment(
-    @Body() command: PaymentReceiptDto,
-    // @UploadedFile() attachment: Express.Multer.File
-  ) {
-    // command.createdBy = user.id;
-    /*       if (attachment) {
-              const result = await this.fileManagerService.uploadFile(
-                attachment,
-                FileManagerHelper.UPLOADED_FILES_DESTINATION
-              );
-              console.log(attachment);
-              if (result) {
-                command.attachmentUrl = attachment.path;
-                command.type = attachment.mimetype;
-                command.filename = attachment.filename;
-              }
-            */
-    const result = await this.workflowInstanceService.savePayment(command);
-    if (result) {
-      const dto = new GotoNextStateDto();
-      const invoice = await this.workflowInstanceService.getInvoice(
-        command.invoiceId,
-      );
-      dto.instanceId = invoice.InstanceId;
-      dto.action = 'PAY';
-      this.workflowInstanceService.gotoNextStep(dto, this.userInfo);
-    }
-    return result;
-  }
-
   @Post('submit-application')
   @ApiOkResponse({ type: WorkflowInstanceResponse })
   async create(@Body() dtos: CreateWorkflowInstanceDto[]) {
     const instances = [];
     for (const wfi of dtos) {
+      const bp = await this.bpService.findBpService(wfi.pricingId);
+      if (!bp) {
+        throw new NotFoundException('Business Process Not Found');
+      }
+      wfi.bpId = bp.id;
+      wfi.serviceId = bp.serviceId;
       const result = await this.workflowInstanceService.create(wfi);
       instances.push(result);
     }
@@ -81,19 +63,24 @@ export class WorkflowInstanceController {
       dto.instanceId = instance.application.id;
       await this.workflowInstanceService.gotoNextStep(dto, this.userInfo);
     }
-
     return instances;
   }
   @Post('renew')
   @ApiOkResponse({ type: WorkflowInstanceResponse })
   async renew(@Body() dto: UpdateWorkflowInstanceDto) {
-    const response = await this.workflowInstanceService.renewRegistration(dto, this.userInfo);
+    const response = await this.workflowInstanceService.renewRegistration(
+      dto,
+      this.userInfo,
+    );
     return response;
   }
   @Post('upgrade')
   @ApiOkResponse({ type: WorkflowInstanceResponse })
   async upgrade(@Body() dto: UpdateWorkflowInstanceDto) {
-    const response = await this.workflowInstanceService.upgradeRegistration(dto, this.userInfo);
+    const response = await this.workflowInstanceService.upgradeRegistration(
+      dto,
+      this.userInfo,
+    );
     return response;
   }
   @Post('review-application')
@@ -124,7 +111,6 @@ export class WorkflowInstanceController {
     );
     return response;
   }
-
   @Post('goto-next-state')
   @ApiOkResponse({ type: WorkflowInstanceResponse })
   async gotoNextState(@Body() dto: GotoNextStateDto) {
@@ -132,8 +118,9 @@ export class WorkflowInstanceController {
       dto,
       this.userInfo,
     );
-    const task = await this.workflowInstanceService.getTaskById(
-      response.taskHandler.taskId);
+    // const task = await this.workflowInstanceService.getTaskById(
+    //   response.taskHandler.taskId);
+    const task = await this.taskService.findOne(response.taskHandler.taskId);
     if (task) {
       if (task.handlerType == 'System') {
         dto.action = task.taskType;
@@ -146,12 +133,16 @@ export class WorkflowInstanceController {
     }
     return response;
   }
+
   @Get('generate-certeficate/:vendorId')
   @ApiOkResponse({ type: WorkflowInstanceResponse })
   async generateCerteficate(
     @Param('vendorId') vendorId: string,
     @Query() query: CollectionQuery,
   ) {
-    return await this.workflowInstanceService.getCerteficateInfo(vendorId, query);
+    return await this.workflowInstanceService.getCerteficateInfo(
+      vendorId,
+      query,
+    );
   }
 }

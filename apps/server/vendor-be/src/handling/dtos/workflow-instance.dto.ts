@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
 import { WorkflowInstanceEntity } from '../entities/workflow-instance';
 import { TaskCheckListDto } from 'src/bpm/dtos/task-check-list.dto';
 
@@ -11,13 +11,11 @@ export class CreateWorkflowInstanceDto {
   @IsNotEmpty()
   status: string;
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
+  serviceId: string;
+  @ApiProperty()
+  bpId: string;
   pricingId: string;
-  @ApiProperty()
-  bpid: string;
-  @ApiProperty()
-  @IsNotEmpty()
-  key: string;
   createdBy: string;
   data?: any;
   /**
@@ -30,9 +28,10 @@ export class CreateWorkflowInstanceDto {
       return null;
     }
     entity.requestorId = dto.requestorId;
-    entity.pricingId = dto.pricingId;
+    entity.bpId = dto.bpId;
+    entity.serviceId = dto.serviceId;
     entity.status = dto.status;
-    entity.key = dto.key;
+    entity.submittedAt = new Date();
     return entity;
   }
 
@@ -56,9 +55,10 @@ export class UpdateWorkflowInstanceDto extends CreateWorkflowInstanceDto {
     }
     entity.id = dto.id;
     entity.requestorId = dto.requestorId;
-    entity.pricingId = dto.pricingId;
+    entity.bpId = dto.bpId;
+    entity.serviceId = dto.serviceId;
     entity.status = dto.status;
-    entity.key = dto.key;
+    entity.submittedAt = new Date();
     return entity;
   }
 }
@@ -70,11 +70,14 @@ export class GotoNextStateDto {
   @IsNotEmpty()
   action: string;
   @ApiProperty()
+  @IsOptional()
+  remark: string;
+  @ApiProperty()
+  @IsOptional()
   data: object;
   @ApiProperty()
   handlerId: string;
   @ApiProperty()
-  remark: string;
-  @ApiProperty()
+  @IsOptional()
   taskChecklist: TaskCheckListDto[];
 }

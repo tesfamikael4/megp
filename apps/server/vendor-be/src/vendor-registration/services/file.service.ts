@@ -11,6 +11,7 @@ import { Repository } from 'typeorm';
 import { FilesEntity } from '../entities/file.entity';
 import path from 'path';
 import { CreateFileDto, DeleteFileDto } from '../dto/file.dto';
+import { VendorRegistrationsService } from '../vendor-registration.service';
 
 @Injectable()
 export class File {
@@ -25,6 +26,8 @@ export class File {
   constructor(
     @InjectRepository(FilesEntity)
     private readonly fileRepository: Repository<FilesEntity>,
+
+    private readonly vendorRegistrationsService: VendorRegistrationsService,
   ) {}
 
   async getFileNameByVendorId(vendorId: string) {

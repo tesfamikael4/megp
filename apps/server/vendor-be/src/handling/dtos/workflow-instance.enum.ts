@@ -5,7 +5,6 @@ export enum WorkflowInstanceEnum {
   Completed = 'Completed',
   Rejected = 'Rejected',
   Approved = 'Approved',
-
 }
 export enum ServiceKeyEnum {
   new = 'new',
@@ -20,7 +19,7 @@ export enum ServiceKeyEnum {
   goodsUpgrade = 'goodsUpgrade',
   servicesUpgrade = 'servicesUpgrade',
   worksUpgrade = 'worksUpgrade',
-  profileUpdate = 'profileUpdate'
+  profileUpdate = 'profileUpdate',
 }
 
 export enum BusinessStatusEnum {
@@ -30,4 +29,10 @@ export enum BusinessStatusEnum {
 export enum AssignmentEnum {
   Picked = 'Picked',
   Unpicked = 'Unpicked',
+}
+export enum HandlerTypeEnum {
+  Assignee = 'Assignee',
+  PreviousHandler = 'Previous Handler',
+  Requestor = 'Requestor',
+  System = 'System',
 }

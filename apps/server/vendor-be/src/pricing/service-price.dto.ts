@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsOptional, IsUUID, IsNumber } from 'class-validator';
 import { ServicePrice } from './entities/service-price';
-import { BpServiceResponse } from 'src/services/bp-service.response';
+import { BpServiceResponse } from 'src/services/bp-service.dto';
 export class CreateServicePriceDto {
   id: string;
   @ApiProperty()
