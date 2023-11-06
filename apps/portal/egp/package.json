@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev -p 5500",
     "build": "next build",
-    "gitops": "sh ../../../.gitops/docker.sh 'apps/portal/egp' egp  egp",
+    "gitops": "sh ../../../.gitops/gitops.sh 'apps/portal/egp' egp  egp",
     "lint": "next lint"
   },
   "dependencies": {

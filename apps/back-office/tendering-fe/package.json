@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev -p 5511",
     "build": "next build",
-    "gitops": "sh ../../../.gitops/docker.sh 'apps/back-office/tendering-fe' tendering-fe tenderingFe",
+    "gitops": "sh ../../../.gitops/gitops.sh 'apps/back-office/tendering-fe' tendering-fe tenderingFe",
     "start": "next start",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "lint": "next lint"

@@ -6,7 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "gitops": "sh ../../../.gitops/docker.sh 'apps/server/iam-be' iam-be iamBe",
+    "gitops": "sh ../../../.gitops/gitops.sh 'apps/server/iam-be' iam-be iamBe",
     "prebuild": "rimraf dist",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "copy": "copy \"package.json\" \"dist\" ",

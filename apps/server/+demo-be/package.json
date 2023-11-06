@@ -8,7 +8,7 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
-    "gitops": "sh ../../../.gitops/docker.sh 'apps/server/+demo-be' demo-be demoBe",
+    "gitops": "sh ../../../.gitops/gitops.sh 'apps/server/+demo-be' demo-be demoBe",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",

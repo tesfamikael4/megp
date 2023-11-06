@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev -p 5522",
     "build": "next build",
-    "gitops": "sh ../../../.gitops/docker.sh 'apps/back-office/administration-fe' administration-fe administrationFe",
+    "gitops": "sh ../../../.gitops/gitops.sh 'apps/back-office/administration-fe' administration-fe administrationFe",
     "start": "next start",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "lint": "next lint"

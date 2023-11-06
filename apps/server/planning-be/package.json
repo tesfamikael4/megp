@@ -6,7 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "gitops": "sh ../../../.gitops/docker.sh 'apps/server/planning-be' planning-be  planningBe",
+    "gitops": "sh ../../../.gitops/gitops.sh 'apps/server/planning-be' planning-be  planningBe",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",

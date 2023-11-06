@@ -7,7 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "prebuild": "rimraf dist",
-    "gitops": "sh ../../../.gitops/docker.sh 'apps/server/vendor-be' vendor-fe vendorFe",
+    "gitops": "sh ../../../.gitops/gitops.sh 'apps/server/vendor-be' vendor-fe vendorFe",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
