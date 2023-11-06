@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev  -p 5511",
     "build": "next build",
-    "docker": "sh ../../../.gitops/docker.sh 'apps/back-office/iam' iam-fe ",
+    "docker": "sh ../../../.gitops/docker.sh 'apps/back-office/iam-fe' iam-fe ",
     "gitops": "sh ../../../.gitops/gitops.sh iam-fe",
     "start": "next start  -p 5511",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
