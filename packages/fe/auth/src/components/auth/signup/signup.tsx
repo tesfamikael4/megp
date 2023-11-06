@@ -127,7 +127,11 @@ export function SignUp(): JSX.Element {
           </Button>
           <Text c="dimmed" className={styles.account_que}>
             Already have an account?{' '}
-            <Link className={styles.signup_link} href="/auth/login">
+            <Link
+              className={styles.signup_link}
+              href="/auth/login"
+              type="submit"
+            >
               Sign In
             </Link>
           </Text>
