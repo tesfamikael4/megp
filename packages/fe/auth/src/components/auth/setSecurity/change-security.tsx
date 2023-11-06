@@ -39,7 +39,7 @@ interface Params {
   setResponse?: React.Dispatch<React.SetStateAction<any>>;
 }
 
-export default function ChangeSecurity({
+export function ChangeSecurity({
   mode,
   setContent,
   setResponse,

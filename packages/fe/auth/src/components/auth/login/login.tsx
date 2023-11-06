@@ -27,7 +27,7 @@ const schema = z
 
 type FormSchema = z.infer<typeof schema>;
 
-export default function Signin(): JSX.Element {
+export function Login(): JSX.Element {
   const [isSigningIn, setIsSigningIn] = useState(false);
   const { login } = useAuth();
 

@@ -5,7 +5,7 @@ import { setCookie } from 'cookies-next';
 import { notifications } from '@mantine/notifications';
 import { useAuth } from '../../../context/auth.context';
 
-export default function Otp({ id }: { id: string }): JSX.Element {
+export function Otp({ id }: { id: string }): JSX.Element {
   const [err, setErr] = useState<any>();
   const [value, setValue] = useState<string>();
   const { verify, error } = useAuth();

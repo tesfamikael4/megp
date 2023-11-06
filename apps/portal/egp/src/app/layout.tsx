@@ -23,7 +23,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" data-mantine-color-scheme="light">
       <body suppressHydrationWarning={true}>
         <ConfigProvider config={config}>
           <Providers>

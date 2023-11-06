@@ -8,7 +8,7 @@ import { notifications } from '@mantine/notifications';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useAuth } from '../../../context/auth.context';
-import ChangeSecurity from '../setSecurity/change-security';
+import { ChangeSecurity } from '../setSecurity/change-security';
 
 export interface Response {
   verificationId: string;
@@ -29,7 +29,7 @@ const schema = z.object({
 
 type FormSchema = z.infer<typeof schema>;
 
-export default function SecurityQPassReset(): JSX.Element {
+export function SecurityQPassReset(): JSX.Element {
   const [content, setContent] = useState<'content1' | 'content2'>('content1');
   const [isChangingPassword, setIsChangingPassword] = useState<boolean>(false);
   const [response, setResponse] = useState<Response>({

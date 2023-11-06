@@ -39,7 +39,7 @@ const schema = z.object({
 
 type FormSchema = z.infer<typeof schema>;
 
-function SignUp(): JSX.Element {
+export function SignUp(): JSX.Element {
   //react-hook-form
   const {
     register,
@@ -136,5 +136,3 @@ function SignUp(): JSX.Element {
     </form>
   );
 }
-
-export default SignUp;

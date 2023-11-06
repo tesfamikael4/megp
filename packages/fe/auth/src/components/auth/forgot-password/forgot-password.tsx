@@ -16,7 +16,7 @@ const schema = z.object({
 
 type FormSchema = z.infer<typeof schema>;
 
-export default function ForgotPassword(): JSX.Element {
+export function ForgotPassword(): JSX.Element {
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
   const { forgetPassword } = useAuth();

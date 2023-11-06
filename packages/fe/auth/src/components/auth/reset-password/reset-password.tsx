@@ -28,7 +28,7 @@ const schema = z.object({
 
 type FormSchema = z.infer<typeof schema>;
 
-export default function PasswordReset(): JSX.Element {
+export function PasswordReset(): JSX.Element {
   const [loading, setLoading] = useState<boolean>(false);
   const { resetPassword } = useAuth();
 
