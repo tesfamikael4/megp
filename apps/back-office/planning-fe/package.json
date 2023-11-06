@@ -5,8 +5,7 @@
   "scripts": {
     "dev": "next dev -p 5544",
     "build": "next build",
-    "docker": "sh ../../../.gitops/docker.sh 'apps/back-office/planning-fe' planning-fe ",
-    "gitops": "sh ../../../.gitops/gitops.sh planning-fe",
+    "gitops": "sh ../../../.gitops/docker.sh 'apps/back-office/planning-fe' planning-fe planningFe",
     "start": "next start -p 5544",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "lint": "next lint"

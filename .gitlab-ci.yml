@@ -41,7 +41,6 @@ build:
 
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - pnpm -w run turbo run lint  --filter "...[origin/main...HEAD^]"
-    - pnpm -w run turbo run docker  --filter "...[origin/main...HEAD^]" -- $CI_PIPELINE_ID
     - pnpm -w run turbo run gitops  --filter "...[origin/main...HEAD^]" -- $CI_PIPELINE_ID $GITLAB_PASSWORD
 
   cache:
