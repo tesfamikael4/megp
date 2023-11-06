@@ -4,7 +4,7 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 export class InvoiceEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column({ type: 'uuid' })
+  @Column({ type: 'uuid', nullable: true })
   instanceId: string;
   @Column({ nullable: true })
   applicationNo: string;

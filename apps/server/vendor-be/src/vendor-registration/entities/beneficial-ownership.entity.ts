@@ -1,4 +1,3 @@
-import { CommonEntity } from 'src/shared/entities/common.entity';
 import {
   Column,
   Entity,
@@ -8,9 +7,10 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { VendorsEntity } from './vendors.entity';
+import { Audit } from 'src/shared/entities/audit.entity';
 
 @Entity({ name: 'beneficial_ownership' })
-export class BeneficialOwnership extends CommonEntity {
+export class BeneficialOwnership extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
   @Column()

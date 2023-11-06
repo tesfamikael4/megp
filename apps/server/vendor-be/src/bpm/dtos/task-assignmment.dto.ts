@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsUUID } from 'class-validator';
 import { TaskAssignmentEntity } from '../entities/task-assignment';
-import { TaskResponse } from '../../bpm/dtos/task.dto';
+import { TaskResponse } from './task.dto';
 
 export class CreateTaskAssignmentDto {
   @ApiProperty()

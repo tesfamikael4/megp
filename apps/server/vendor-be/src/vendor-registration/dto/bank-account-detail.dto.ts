@@ -26,16 +26,16 @@ export class CreateBankAccountDetailDto {
   branchName: string;
   @ApiProperty()
   // @IsNotEmpty()
-  bankBranchAddress: string;
+  branchAddress: string;
   @ApiProperty()
   // @IsNotEmpty()
   currency: string;
   @ApiProperty()
   // @IsNotEmpty()
-  bankSWIFT_BICCode: string;
+  bankSwift: string;
   @ApiProperty()
   // @IsNotEmpty()
-  iBAN: string;
+  IBAN: string;
   @ApiProperty()
   // @IsNotEmpty()
   status: string;
@@ -63,8 +63,8 @@ export class CreateBankAccountDetailDto {
     entity.branchName = dto.branchName;
     entity.branchAddress = dto.branchName;
     entity.currency = dto.currency;
-    entity.bankSwift = dto.iBAN;
-    entity.IBAN = dto.iBAN;
+    entity.bankSwift = dto.bankSwift;
+    entity.IBAN = dto.IBAN;
     entity.status = dto.status;
     entity.hashValue = dto.hashValue;
     entity.bankName = dto.bankName;
@@ -101,10 +101,10 @@ export class BankAccountDetailResponse extends CreateBankAccountDetailDto {
     entity.vendorId = dto.vendorId;
     entity.bankId = dto.bankId;
     entity.branchName = dto.branchName;
-    entity.branchAddress = dto.bankBranchAddress;
+    entity.branchAddress = dto.branchAddress;
     entity.currency = dto.currency;
-    entity.bankSwift = dto.bankSWIFT_BICCode;
-    entity.IBAN = dto.iBAN;
+    entity.bankSwift = dto.bankSwift;
+    entity.IBAN = dto.IBAN;
     entity.status = dto.status;
     entity.hashValue = dto.hashValue;
     entity.bankName = dto.bankName;
@@ -123,10 +123,10 @@ export class BankAccountDetailResponse extends CreateBankAccountDetailDto {
     entity.vendorId = dto.vendorId;
     entity.bankId = dto.bankId;
     entity.branchName = dto?.branchName;
-    entity.bankBranchAddress = dto?.branchAddress;
+    entity.branchAddress = dto?.branchAddress;
     entity.currency = dto.currency;
-    entity.bankSWIFT_BICCode = dto?.bankSwift;
-    entity.iBAN = dto?.IBAN;
+    entity.bankSwift = dto?.bankSwift;
+    entity.IBAN = dto?.IBAN;
     entity.status = dto?.status;
     entity.hashValue = dto?.hashValue;
     entity.bankName = dto?.bankName;

@@ -2,11 +2,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BpServiceEntity } from './entities/bp-service';
 import { Repository } from 'typeorm';
-import { BpServiceResponse } from './bp-service.response';
-import { DataResponseFormat } from 'src/shared/api-data';
-import { CollectionQuery, QueryConstructor } from 'src/shared/collection-query';
-import { CreateBpServiceDto, UpdateBpServiceDto } from './bp-service.dto';
-
+import { EntityCrudService } from 'src/shared/service';
+/*
 @Injectable()
 export class BpServiceService {
   constructor(
@@ -57,5 +54,16 @@ export class BpServiceService {
     const service = await this.serviceRepository.findOne({ where: { id: id } });
     if (!service) throw new NotFoundException('Service not found');
     return await this.serviceRepository.delete(id);
+  }
+}
+*/
+
+@Injectable()
+export class BpServiceService extends EntityCrudService<BpServiceEntity> {
+  constructor(
+    @InjectRepository(BpServiceEntity)
+    private readonly serviceRepository: Repository<BpServiceEntity>,
+  ) {
+    super(serviceRepository);
   }
 }

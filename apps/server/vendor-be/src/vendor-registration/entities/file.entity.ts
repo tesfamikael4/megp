@@ -7,8 +7,9 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 // import { VendorsBankEntity } from './vendors-bank.entity';
 import { ShareholdersEntity } from './shareholder.entity';
 import { CommonEntity } from 'src/shared/entities/common.entity';
+import { Audit } from 'src/shared/entities/audit.entity';
 @Entity({ name: 'files' })
-export class FilesEntity extends CommonEntity {
+export class FilesEntity extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
   @Column()
@@ -19,7 +20,7 @@ export class FilesEntity extends CommonEntity {
   bucketName: string;
   @Column()
   originalName: string;
-  @Column()
+  @Column({ nullable: true })
   attachmentUrl: string;
   @Column()
   path: string;
