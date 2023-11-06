@@ -58,8 +58,8 @@ export class ActiveVendorsResponse {
     response.origin = entity.vendor.origin;
     response.vendorId = entity.vendor.id;
     response.id = entity.id;
-    response.expiryDate = new Date(entity.expireDate);
-    response.approvedOn = new Date(entity.approvedAt);
+    //response.expiryDate = new Date(entity.expireDate);
+    //response.approvedOn = new Date(entity.approvedAt);
     response.status = entity.status;
     response.businessStatus = entity.businessStatus;
 

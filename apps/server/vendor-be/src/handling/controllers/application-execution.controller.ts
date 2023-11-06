@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  NotFoundException,
   Param,
   Post,
   Query,
@@ -19,10 +20,16 @@ import { CollectionQuery } from 'src/shared/collection-query';
 import { InvoiceResponseDto } from 'src/vendor-registration/dto/invoice.dto';
 import { ApplicationExcutionService } from '../services/application-execution.service';
 import { WorkflowInstanceResponse } from '../dtos/workflow-instance.response';
-import { UpdateTaskHandlerDto } from '../dtos/task-handler.dto';
 import { HandlingCommonService } from '../services/handling-common-services';
-import { VendorsResponseDto } from 'src/vendor-registration/dto/vendor.dto';
 import { ActiveVendorsResponse } from '../dtos/active-vendor-response';
+import { CurrentUser } from 'src/authorization';
+import {
+  CreateWorkflowInstanceDto,
+  GotoNextStateDto,
+} from '../dtos/workflow-instance.dto';
+import { BusinessProcessService } from 'src/bpm/services/business-process.service';
+import { WorkflowService } from 'src/bpm/services/workflow.service';
+import { UpdateTaskHandlerDto } from 'src/bpm/dtos/task-handler.dto';
 
 @Controller('ApplicationExecution')
 @ApiTags('Application-excution')
@@ -34,17 +41,40 @@ export class ApplicationExcutionController {
   userInfo: any;
   constructor(
     private readonly executeService: ApplicationExcutionService,
-    private readonly service: HandlingCommonService, //  private readonly wfService: WorkflowInstanceService,
+    private readonly workflowService: WorkflowService,
+    private readonly bpService: BusinessProcessService,
+    private readonly service: HandlingCommonService, //private readonly wfService: WorkflowInstanceService,
   ) {
     this.userInfo = {
       userId: '078ddca3-ad1c-4028-aa58-7da3ee529fa9',
       name: 'Dereje Hunew',
     };
   }
+  @Post('intiate-workflow')
+  @ApiOkResponse({ type: WorkflowInstanceResponse })
+  async testWF(@Body() wfi: CreateWorkflowInstanceDto) {
+    const bp = await this.bpService.findBpService(wfi.pricingId);
+    if (!bp) throw new NotFoundException('BP not found');
+    wfi.serviceId = bp.serviceId;
+    wfi.bpId = bp.id;
+    return await this.workflowService.intiateWorkflowInstance(
+      wfi,
+      this.userInfo,
+    );
+  }
+  @Post('goto-next-step')
+  @ApiOkResponse({ type: WorkflowInstanceResponse })
+  async gottoNextStep(@Body() nextStatedto: GotoNextStateDto) {
+    const response = await this.workflowService.gotoNextStep(
+      nextStatedto,
+      this.userInfo,
+    );
+    return response;
+  }
 
   @Post('pick-task')
   @ApiOkResponse({ type: WorkflowInstanceResponse })
-  async pickTask(@Body() dto: UpdateTaskHandlerDto) {
+  async pickTask(@Body() dto: UpdateTaskHandlerDto, @CurrentUser() user: any) {
     return await this.executeService.pickTask(dto, this.userInfo);
   }
   @Post('unpick-task')
@@ -70,6 +100,7 @@ export class ApplicationExcutionController {
   ) {
     return await this.executeService.getCurruntTaskDetail(instanceId);
   }
+
   @Get('generate-certeficate-pdf')
   async generateCerteficatePdf(@Query() params: any, @Req() req, @Res() res) {
     const templateUrl = params.templateUrl;
@@ -89,6 +120,7 @@ export class ApplicationExcutionController {
     });
     res.status(200).end(pdfBuffer);
   }
+
   @Get('get-invoices')
   @ApiPaginatedResponse(InvoiceResponseDto)
   async fetchInvoices(@Query() query: CollectionQuery) {

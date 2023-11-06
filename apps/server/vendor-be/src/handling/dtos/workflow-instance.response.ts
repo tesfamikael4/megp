@@ -1,15 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { WorkflowInstanceEntity } from '../entities/workflow-instance';
-import { TaskHandlerResponse } from './task-handler.response';
-import { TaskTrackerResponse } from './task-tracker.response';
-import { BpServiceResponse } from '../../services/bp-service.response';
 import { VendorsResponseDto } from 'src/vendor-registration/dto/vendor.dto';
 import { TaskResponse } from '../../bpm/dtos/task.dto';
-import { CustomCategoryResponseDto } from 'src/vendor-registration/dto/custom-category.dto';
-import { BusinessCategoryResponseDto } from 'src/vendor-registration/dto/business-category.dto';
-import { ServicePriceResponseDto } from 'src/pricing/service-price.dto';
 import { ServicePrice } from 'src/pricing/entities/service-price';
 import { BusinessProcessResponse } from 'src/bpm/dtos/business-process.dto';
+import { BpServiceResponse } from 'src/services/bp-service.dto';
+import { TaskHandlerResponse } from 'src/bpm/dtos/task-handler.dto';
+import { TaskTrackerResponse } from 'src/bpm/dtos/task-tracker.dto';
 
 export class WorkflowInstanceResponse {
   @ApiProperty()
@@ -26,15 +23,15 @@ export class WorkflowInstanceResponse {
   businessProcess?: BusinessProcessResponse;
   @ApiProperty()
   submittedAt: Date;
-
+  pricingId;
   taskHandler?: TaskHandlerResponse;
   taskTrackers?: TaskTrackerResponse[];
   service: BpServiceResponse;
   vendor: VendorsResponseDto;
   task: TaskResponse;
   pricing: ServicePrice;
-  customCats: CustomCategoryResponseDto[];
-  commonCats: BusinessCategoryResponseDto[];
+  //customCats: CustomCategoryResponseDto[];
+  //commonCats: BusinessCategoryResponseDto[];
 
   static toResponse(entity: WorkflowInstanceEntity) {
     const response = new WorkflowInstanceResponse();
@@ -57,11 +54,11 @@ export class WorkflowInstanceResponse {
       );
     }
 
-    if (entity.vendor?.businessCats) {
-      response.commonCats = entity.vendor.businessCats.map((item) =>
-        BusinessCategoryResponseDto.toResponse(item),
-      );
-    }
+    // if (entity.vendor?.businessCats) {
+    //   response.commonCats = entity.vendor.businessCats.map((item) =>
+    //     BusinessCategoryResponseDto.toResponse(item),
+    //   );
+    // }
     if (entity.vendor?.customCats) {
     }
 

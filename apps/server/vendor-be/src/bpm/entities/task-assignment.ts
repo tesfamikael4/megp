@@ -1,4 +1,3 @@
-import { CommonEntity } from 'src/shared/entities/common.entity';
 import {
   Column,
   Entity,
@@ -6,7 +5,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { TaskEntity } from '../../bpm/entities/task.entity';
+import { TaskEntity } from './task.entity';
 import { Audit } from 'src/shared/entities/audit.entity';
 
 @Entity({ name: 'task_assignments' })

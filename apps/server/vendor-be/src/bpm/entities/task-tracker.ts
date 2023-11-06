@@ -6,12 +6,13 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { WorkflowInstanceEntity } from './workflow-instance';
+import { WorkflowInstanceEntity } from '../../handling/entities/workflow-instance';
 import { TaskEntity } from 'src/bpm/entities/task.entity';
 import { Audit } from 'src/shared/entities/audit.entity';
+import { TaskCheckListDto } from 'src/bpm/dtos/task-check-list.dto';
 
 @Entity({ name: 'task_trackers' })
-export class TaskTrackerEntity extends Audit {
+export class TaskTrackerEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
   @Column()
@@ -33,12 +34,13 @@ export class TaskTrackerEntity extends Audit {
   @Column({ nullable: true })
   previousHandlerId: string;
   @Column({ type: 'jsonb', nullable: true })
-  checklists: string;
+  checklists: TaskCheckListDto[];
   @Column({
     type: 'timestamptz',
     default: () => 'CURRENT_TIMESTAMP',
   })
-  executedAt: string;
+  @Column({ nullable: true })
+  executedAt: Date;
   @ManyToOne(
     () => WorkflowInstanceEntity,
     (workflowInstance) => workflowInstance.taskTrackers,

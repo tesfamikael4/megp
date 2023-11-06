@@ -13,8 +13,8 @@ export class CreateBpServiceDto {
   description: string;
   @ApiProperty()
   isActive: boolean;
-  organizationId: string;
-  organizationName: string;
+  organizationId?: string;
+  organizationName?: string;
   /**
    * Transfer Data from DTO object to Entity object
    *
@@ -49,6 +49,7 @@ export class UpdateBpServiceDto extends CreateBpServiceDto {
   name: string;
   @ApiProperty()
   description: string;
+  @ApiProperty()
   isActive: boolean;
 
   static fromDto(dto: UpdateBpServiceDto): BpServiceEntity {
@@ -62,5 +63,17 @@ export class UpdateBpServiceDto extends CreateBpServiceDto {
     entity.isActive = dto.isActive;
     entity.key = dto.key;
     return entity;
+  }
+}
+export class BpServiceResponse extends UpdateBpServiceDto {
+  @ApiProperty()
+  CreatedAt: Date;
+  static toResponse(entity: BpServiceEntity) {
+    const response = new BpServiceResponse();
+    response.id = entity.id;
+    response.key = entity.key;
+    response.name = entity.name;
+    response.isActive = entity.isActive;
+    return response;
   }
 }

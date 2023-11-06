@@ -18,7 +18,7 @@ import { ApiPaginatedResponse, DataResponseFormat } from 'src/shared/api-data';
 import { CollectionQuery } from 'src/shared/collection-query';
 import { TaskService } from '../services/task.service';
 import { TaskResponse } from '../dtos/task.dto';
-import { CreateTaskDto, UpdateTaskDto } from '../dtos/task.dto';
+import { CreateTaskDto } from '../dtos/task.dto';
 import { TaskEntity } from '../entities/task.entity';
 import { EntityCrudController } from 'src/shared/controller';
 @Controller('tasks')
@@ -45,7 +45,7 @@ export class TaskController extends EntityCrudController<TaskEntity> {
     return await super.create(dto);
   }
 
-  @Get(':id')
+  @Delete(':id')
   async delete(@Param('id') id: string) {
     return await super.remove(id);
   }

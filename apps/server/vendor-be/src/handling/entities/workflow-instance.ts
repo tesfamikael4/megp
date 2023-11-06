@@ -1,5 +1,4 @@
 import { BusinessProcessEntity } from 'src/bpm/entities/business-process';
-import { CommonEntity } from 'src/shared/entities/common.entity';
 import {
   Column,
   Entity,
@@ -9,10 +8,10 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { TaskHandlerEntity } from './task-handler';
-import { TaskTrackerEntity } from './task-tracker';
 import { VendorsEntity } from 'src/vendor-registration/entities/vendors.entity';
 import { ServicePrice } from 'src/pricing/entities/service-price';
+import { TaskHandlerEntity } from 'src/bpm/entities/task-handler';
+import { TaskTrackerEntity } from 'src/bpm/entities/task-tracker';
 
 @Entity({ name: 'workflow_instances' })
 export class WorkflowInstanceEntity {
@@ -22,19 +21,13 @@ export class WorkflowInstanceEntity {
   applicationNumber: string;
   @Column({ nullable: true })
   requestorId: string;
-  @Column()
+  @Column({ default: 'Submitted' })
   status: string;
-  @Column({ default: 'newRegistration' })
-  key: string;
   @Column()
   bpId: string;
   @Column({ nullable: true })
-  pricingId: string;
+  serviceId: string;
   @Column({ nullable: true })
-  approvedAt: Date;
-  @Column({ nullable: true })
-  expireDate: Date;
-  @Column({ default: 'Inactive' })
   businessStatus: string; //active |inactive
   @Column({
     type: 'timestamptz',
@@ -53,8 +46,8 @@ export class WorkflowInstanceEntity {
     () => TaskHandlerEntity,
     (taskHandler) => taskHandler.workflowInstance,
     {
-      //  cascade: true,
-      onDelete: 'CASCADE',
+      cascade: true,
+      // onDelete: 'CASCADE',
     },
   ) // specify inverse side as a second parameter
   taskHandler: TaskHandlerEntity;

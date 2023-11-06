@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { VendorsBankEntity } from './vendors-bank.entity';
+import { BankAccountDetailEntity } from './bank-account-detail.entity';
 @Entity({ name: 'banks' })
 export class BanksEntity {
   @PrimaryGeneratedColumn('uuid')
@@ -16,6 +16,6 @@ export class BanksEntity {
   bankName: string;
   @Column({ type: 'jsonb', nullable: true })
   metaData: JSON;
-  @OneToMany(() => VendorsBankEntity, (v) => v.bank)
-  vendorAccounts: VendorsBankEntity[];
+  @OneToMany(() => BankAccountDetailEntity, (v) => v.bank)
+  vendorAccounts: BankAccountDetailEntity[];
 }

@@ -8,24 +8,12 @@ import { VendorBasicsController } from './vendors.controller';
 import { VendorBasicsService } from './vendor-basics.service';
 import { VendorsEntity } from './entities/vendors.entity';
 import { BanksEntity } from './entities/bank.entity';
-import { VendorsBankEntity } from './entities/vendors-bank.entity';
 import { ShareholdersEntity } from './entities/shareholder.entity';
 import { FilesEntity } from './entities/file.entity';
 import { BankAccountDetailService } from './services/bankAccountDetail.service';
-import { BankAccountDetailEntity } from './entities/bank-account-detail.entity';
 import { BankAccountDetailController } from './controllers/bankAccountDetail.controller';
 import { ShareholderService } from './services/shareholder.service';
 import { ShareholderController } from './controllers/shareholder.controller';
-import { TinRegistrationDatabaseEntity } from './entities/tin-registration-database.entity';
-import { TradeRegistrationDatabaseController } from './controllers/tradeRegistrationDatabase.controller';
-import { TinRegistrationDatabaseController } from './controllers/tinRegistrationDatabase.controller';
-import { NCICController } from './controllers/ncic.controller';
-import { NCICService } from './services/ncic.service';
-import { NCICEntity } from './entities/ncic.entity';
-import { TradeRegistrationDatabaseEntity } from './entities/trade-registration-database.entity';
-import { TradeRegistrationDatabaseService } from './services/trade-registration-database.service';
-import { TinRegistrationDatabaseService } from './services/tin-registration-database.service';
-// import { File } from './services/File';
 import { BeneficialOwnershipController } from './controllers/beneficialOwnership.controller';
 import { BeneficialOwnershipService } from './services/beneficialOwnership.service';
 import { BeneficialOwnership } from './entities/beneficial-ownership.entity';
@@ -37,9 +25,6 @@ import { AreasOfBusinessInterestController } from './controllers/areas-of-busine
 import { AreasOfBusinessInterestService } from './services/areas-of-business-interest.service';
 import { AreasOfBusinessInterestEntity } from './entities/areas-of-business-interest.entity';
 import { WorkflowInstanceService } from 'src/handling/services/workflow-instance.service';
-import { TaskAssignmentEntity } from 'src/handling/entities/task-assignment';
-import { TaskHandlerEntity } from 'src/handling/entities/task-handler';
-import { TaskTrackerEntity } from 'src/handling/entities/task-tracker';
 import { InvoiceEntity } from 'src/handling/entities/invoice.entity';
 import { PaymentReceiptEntity } from 'src/handling/entities/receipt-attachment';
 import { WorkflowInstanceController } from 'src/handling/controllers/workflow-instance.controller';
@@ -52,7 +37,14 @@ import { ServicePricingController } from 'src/pricing/service-pricing.controller
 import { HandlingCommonService } from 'src/handling/services/handling-common-services';
 import { TusService } from './services/tus.service';
 import { UploadController } from './controllers/file.controller';
-
+import { TaskService } from 'src/bpm/services/task.service';
+import { BusinessProcessService } from 'src/bpm/services/business-process.service';
+import { BankAccountDetailEntity } from './entities/bank-account-detail.entity';
+import { WorkflowService } from 'src/bpm/services/workflow.service';
+import { BpmModule } from 'src/bpm/bpm.module';
+import { TaskAssignmentEntity } from 'src/bpm/entities/task-assignment';
+import { TaskHandlerEntity } from 'src/bpm/entities/task-handler';
+import { TaskTrackerEntity } from 'src/bpm/entities/task-tracker';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -61,42 +53,41 @@ import { UploadController } from './controllers/file.controller';
       CustomCategoryEntity,
       VendorsEntity,
       BanksEntity,
-      VendorsBankEntity,
       ShareholdersEntity,
       FilesEntity,
       BankAccountDetailEntity,
-      TradeRegistrationDatabaseEntity,
-      TinRegistrationDatabaseEntity,
       BeneficialOwnership,
-      NCICEntity,
-      WorkflowInstanceEntity,
-      BpServiceEntity,
-      BusinessProcessEntity,
       AreasOfBusinessInterestEntity,
+      PaymentReceiptEntity,
+      //temporary, will be removed when modularization complete
+      TaskEntity,
+      WorkflowInstanceEntity,
+      InvoiceEntity,
+      TaskEntity,
       TaskAssignmentEntity,
       TaskHandlerEntity,
       TaskTrackerEntity,
-      InvoiceEntity,
-      PaymentReceiptEntity,
-      TaskEntity,
+      BusinessProcessEntity,
+      BpServiceEntity,
     ]),
+    BpmModule,
   ],
   exports: [],
   providers: [
     ServicePricingService,
     VendorBasicsService,
+    TaskService,
+    WorkflowService,
+    BusinessProcessService,
+    HandlingCommonService,
     BankAccountDetailService,
     ShareholderService,
-    TradeRegistrationDatabaseService,
-    TinRegistrationDatabaseService,
-    NCICService,
     File,
     BeneficialOwnershipService,
     AreasOfBusinessInterestService,
     WorkflowInstanceService,
     ApplicationExcutionService,
     VendorRegistrationsService,
-    HandlingCommonService,
     TusService,
   ],
   controllers: [
@@ -107,12 +98,9 @@ import { UploadController } from './controllers/file.controller';
     VendorBasicsController,
     BankAccountDetailController,
     ShareholderController,
-    TradeRegistrationDatabaseController,
-    TinRegistrationDatabaseController,
-    NCICController,
     UploadController,
     BeneficialOwnershipController,
     AreasOfBusinessInterestController,
   ],
 })
-export class VendorRegistrationModule { }
+export class VendorRegistrationModule {}

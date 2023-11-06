@@ -11,7 +11,6 @@ import { BusinessProcessService } from '../services/business-process.service';
 import {
   BusinessProcessResponse,
   CreateBusinessProcessDto,
-  UpdateBusinessProcessDto,
 } from '../dtos/business-process.dto';
 import { BusinessProcessEntity } from '../entities/business-process';
 import { EntityCrudController } from 'src/shared/controller';
