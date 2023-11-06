@@ -1,3 +1,4 @@
+import './globals.css';
 import { Providers } from '@/store/provider';
 import type { Metadata } from 'next';
 import RootStyleRegistry from './mantine';
