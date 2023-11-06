@@ -17,7 +17,7 @@ const page = {
   questions: <SecurityQPassReset />,
   'reset-password': <PasswordReset />,
   'forgot-password': <ForgotPassword />,
-  'set-security': <SetSecurity />,
+  setSecurity: <SetSecurity />,
 };
 
 export function Auth({ path }: { path: string }): JSX.Element {
