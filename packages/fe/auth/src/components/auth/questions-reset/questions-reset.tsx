@@ -101,7 +101,11 @@ export function SecurityQPassReset(): JSX.Element {
                   {...register('password')}
                   error={errors.password?.message}
                 />
-                <Button className="mt-4" loading={isChangingPassword}>
+                <Button
+                  className="mt-4"
+                  loading={isChangingPassword}
+                  type="submit"
+                >
                   Change Password
                 </Button>
               </Flex>

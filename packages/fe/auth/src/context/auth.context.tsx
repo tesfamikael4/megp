@@ -16,7 +16,7 @@ import type {
 } from '../../models/auth';
 
 interface AuthContextValue {
-  user: any;
+  user: Record<string, any>;
   isAuthenticated: boolean;
   error: any;
   signUp: (formFields: SignUp) => Promise<
@@ -128,6 +128,16 @@ function AuthProvider({
     const isSignedIn = hasCookie('token');
     setIsAuthenticated(isSignedIn);
   }, []);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      const token = getCookie('token');
+      if (token) {
+        const userInfo: Record<string, any> = jwtDecode(token);
+        setUser(userInfo);
+      }
+    }
+  }, [isAuthenticated]);
 
   const buildFetchAPI = async function <T>(
     params: BuildFetchAPI,

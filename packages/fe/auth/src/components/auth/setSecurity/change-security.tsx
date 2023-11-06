@@ -252,18 +252,23 @@ export function ChangeSecurity({
       />
 
       {mode === 'new' && (
-        <Button loading={isSetting} mt={15}>
+        <Button loading={isSetting} mt={15} type="submit">
           <IconDeviceFloppy /> Save
         </Button>
       )}
       {mode === 'update' && (
-        <Button loading={isSetting} mt={15} style={{ width: 'fit-content' }}>
+        <Button
+          loading={isSetting}
+          mt={15}
+          style={{ width: 'fit-content' }}
+          type="submit"
+        >
           <IconDeviceFloppy /> Save
         </Button>
       )}
 
       {mode === 'reset-password' && (
-        <Button loading={isChecking} mt={15}>
+        <Button loading={isChecking} mt={15} type="submit">
           Reset Password
         </Button>
       )}

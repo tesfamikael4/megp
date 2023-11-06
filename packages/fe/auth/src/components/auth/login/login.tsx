@@ -97,7 +97,13 @@ export function Login(): JSX.Element {
           Forgot password?
         </Link>
       </Group>
-      <Button className="mt-4" fullWidth loading={isSigningIn} mt="xl">
+      <Button
+        className="mt-4"
+        fullWidth
+        loading={isSigningIn}
+        mt="xl"
+        type="submit"
+      >
         Sign in
       </Button>
       <Text c="dimmed" className={styles.account_que}>
