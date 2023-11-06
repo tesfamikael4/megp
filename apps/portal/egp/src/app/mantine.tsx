@@ -1,10 +1,6 @@
-import '@mantine/core/styles.css';
 import { MantineProvider, MantineThemeOverride } from '@mantine/core';
 
 import { theme as baseTheme } from '@/utilities/theme';
-
-import '@mantine/notifications/styles.css';
-import '@mantine/dates/styles.css';
 
 import { Notifications } from '@mantine/notifications';
 

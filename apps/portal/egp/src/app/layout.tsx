@@ -1,7 +1,5 @@
-import '@mantine/core/styles.css';
-import type { Metadata } from 'next';
 import './globals.css';
-
+import type { Metadata } from 'next';
 import { config } from '@/config/env';
 import { ConfigProvider } from '@/contexts/config';
 import { Providers } from '@/store/provider';
