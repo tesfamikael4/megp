@@ -88,7 +88,7 @@ export default function MyProfilePage() {
             error={errors.newPassword?.message}
             className="mt-2"
           />
-          <Button mt={15} loading={isChangingPassword}>
+          <Button mt={15} type="submit" loading={isChangingPassword}>
             <IconDeviceFloppy /> Save
           </Button>
         </form>

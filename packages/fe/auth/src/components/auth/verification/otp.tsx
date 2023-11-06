@@ -20,6 +20,7 @@ export function Otp({ id }: { id: string }): JSX.Element {
       }, 1000);
     } else if (countdown === 0) {
       setDisabled(false);
+      setDisabled(false);
     }
 
     return () => {
@@ -38,6 +39,7 @@ export function Otp({ id }: { id: string }): JSX.Element {
   }, [error]);
 
   const handleResendClick = () => {
+    setDisabled(true);
     setDisabled(true);
     setCountdown(60);
   };
