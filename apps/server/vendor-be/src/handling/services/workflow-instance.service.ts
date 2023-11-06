@@ -391,6 +391,10 @@ export class WorkflowInstanceService {
             where: { id: workflowInstance.requestorId },
           });
           vendor.status = WorkflowInstanceEnum.Approved;
+          const vendor = await this.vendorRepository.findOne({
+            where: { id: workflowInstance.requestorId },
+          });
+          vendor.status = WorkflowInstanceEnum.Approved;
           await this.vendorRepository.save(vendor);
           await this.addTaskTracker({
             taskId: currentTaskHandler?.taskId,
