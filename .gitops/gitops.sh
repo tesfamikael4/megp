@@ -33,4 +33,4 @@ sed -i "/$APP_NAME:/ { N; s/\(tag:\s*\).*/\1$CI_COMMIT_SHORT_SHA/ }" values-dev.
 
 git add .
 # Commit and push the changes
-git commit -am "$APP_NAME update image tag" && git push origin main
+git commit -am "tag : $APP_NAME" && git push origin main

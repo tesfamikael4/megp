@@ -1,26 +1,26 @@
 #!/bin/sh
 
 # Define variables
-DOCKER_IMAGE_PATH="apps/server/administration-be"
-IMAGE_NAME="administration-be"
+DOCKER_IMAGE_PATH="$1"
+IMAGE_NAME="$2"
 DOCKER_REGISTRY="gitlab.peragosystems.com:5050/megp/megp"
 
 # Change directory to the root directory of your project
 cd ../../../
 
-if [ "$1" ]; then
+if [ "$3" ]; then
     # Build the Docker image using the specified Dockerfile
-    docker build -f "$DOCKER_IMAGE_PATH/Dockerfile" -t "$IMAGE_NAME:$1" .
+    docker build -f "$DOCKER_IMAGE_PATH/Dockerfile" -t "$IMAGE_NAME:$3" .
 
     # Check the exit status of the docker build command
     if [ $? -eq 0 ]; then
 
         # Tag the Docker image with a custom repository and tag
-        docker tag "$IMAGE_NAME:$1" "$DOCKER_REGISTRY/$IMAGE_NAME:$1"
-        docker tag "$IMAGE_NAME:$1" "$DOCKER_REGISTRY/$IMAGE_NAME:latest"
+        docker tag "$IMAGE_NAME:$3" "$DOCKER_REGISTRY/$IMAGE_NAME:$3"
+        docker tag "$IMAGE_NAME:$3" "$DOCKER_REGISTRY/$IMAGE_NAME:latest"
 
         # Push the tagged Docker image to the remote repository
-        docker push "$DOCKER_REGISTRY/$IMAGE_NAME:$1"
+        docker push "$DOCKER_REGISTRY/$IMAGE_NAME:$3"
 
         # Push the tagged Docker image to the remote repository
         docker push "$DOCKER_REGISTRY/$IMAGE_NAME:latest"
