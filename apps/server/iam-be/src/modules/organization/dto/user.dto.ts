@@ -15,10 +15,6 @@ import { CreateUserUnitDto, UserUnitResponseDto } from './user-unit.dto';
 export class CreateUserDto {
   @ApiProperty()
   @IsString()
-  superTokenUserId: string;
-
-  @ApiProperty()
-  @IsString()
   username: string;
 
   @ApiProperty()
@@ -63,7 +59,6 @@ export class CreateUserDto {
 
   static fromDto(userDto: CreateUserDto): User {
     const user: User = new User();
-    user.superTokenUserId = userDto.superTokenUserId;
 
     user.username = userDto.username;
 
@@ -99,8 +94,6 @@ export class UpdateUserDto extends CreateUserDto {
     const user: User = new User();
     user.id = userDto.id;
 
-    user.superTokenUserId = userDto.superTokenUserId;
-
     user.username = userDto.username;
 
     user.firstName = userDto.firstName;
@@ -135,8 +128,6 @@ export class UserResponseDto extends UpdateUserDto {
     const userDto: UserResponseDto = new UserResponseDto();
 
     userDto.id = user.id;
-
-    userDto.superTokenUserId = user.superTokenUserId;
 
     userDto.username = user.username;
 

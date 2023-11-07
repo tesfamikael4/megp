@@ -21,12 +21,6 @@
       "name": "Run Vendor Registration ",
       "request": "launch",
       "type": "node-terminal"
-    },
-    {
-      "command": "cd .\\apps\\server\\supertoken-auth\\ && npm run start:dev",
-      "name": "Run Supertoken",
-      "request": "launch",
-      "type": "node-terminal"
     }
   ]
 }

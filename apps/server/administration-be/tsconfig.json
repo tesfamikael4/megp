@@ -13,8 +13,7 @@
     "paths": {
       "@auth": ["./src/accounts/"],
       "@collection-query": ["./src/shared/collection-query/"],
-      "@api-data": ["./src/shared/api-data/"],
-      "@authentication": ["../supertoken-auth/src/index.ts"]
+      "@api-data": ["./src/shared/api-data/"]
     },
     "incremental": true,
     "skipLibCheck": true,

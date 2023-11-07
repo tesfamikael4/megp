@@ -23,9 +23,6 @@ export class User extends Audit {
   id: string;
 
   @Column()
-  superTokenUserId: string;
-
-  @Column()
   username: string;
 
   @Column()

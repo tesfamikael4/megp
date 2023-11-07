@@ -64,8 +64,6 @@ export function FormDetail({ mode }: FormDetailProps) {
       const result = await create({
         ...data,
         fullName: `${data.firstName} ${data.lastName}`,
-        organizationId: '099454a9-bf8f-45f5-9a4f-6e9034230250',
-        superTokenUserId: '099454a9-bf8f-45f5-9a4f-6e9034230250',
       });
       if ('data' in result) {
         router.push(`/users/${result.data.id}`);
@@ -81,8 +79,6 @@ export function FormDetail({ mode }: FormDetailProps) {
         ...data,
         id: id?.toString(),
         fullName: `${data.firstName} ${data.lastName}`,
-        organizationId: '099454a9-bf8f-45f5-9a4f-6e9034230250',
-        superTokenUserId: '099454a9-bf8f-45f5-9a4f-6e9034230250',
       });
       notify('Success', 'User updated successfully');
     } catch {
