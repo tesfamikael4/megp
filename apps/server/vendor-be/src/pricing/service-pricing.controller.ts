@@ -69,4 +69,9 @@ export class ServicePricingController extends EntityCrudController<ServicePrice>
   ) {
     return await super.remove(id);
   }
+  @Get('get-service-price-by-service-type/:key')
+  async findServicePriceByServiceType(@Param('key') key: string) {
+    return await this.pricingService.findServicePriceByServiceType(key);
+  }
+
 }
