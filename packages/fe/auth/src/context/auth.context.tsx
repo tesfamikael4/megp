@@ -19,6 +19,7 @@ interface AuthContextValue {
   user: Record<string, any>;
   isAuthenticated: boolean;
   error: any;
+  isUser: () => boolean | undefined;
   signUp: (formFields: SignUp) => Promise<
     | {
         verificationId?: string;
@@ -138,6 +139,10 @@ function AuthProvider({
       }
     }
   }, [isAuthenticated]);
+
+  const isUser = () => {
+    return hasCookie('token');
+  };
 
   const buildFetchAPI = async function <T>(
     params: BuildFetchAPI,
@@ -390,6 +395,7 @@ function AuthProvider({
     user,
     isAuthenticated,
     error,
+    isUser,
     signUp,
     verify,
     login,

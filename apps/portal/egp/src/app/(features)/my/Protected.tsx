@@ -5,11 +5,11 @@ import { useAuth } from '@megp/auth';
 
 export default function Protected({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const { isAuthenticated } = useAuth();
+  const { isUser } = useAuth();
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!isUser()) {
       router.push('/auth/login');
     }
-  }, [isAuthenticated, router]);
+  }, []);
   return <>{children}</>;
 }

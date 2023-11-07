@@ -37,7 +37,7 @@ export default function MyProfilePage() {
     formState: { errors },
   } = useForm<FormSchema>({ resolver: zodResolver(schema) });
 
-  const { getUserInfo, isAuthenticated } = useAuth();
+  const { getUserInfo, isAuthenticated, user } = useAuth();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -66,7 +66,7 @@ export default function MyProfilePage() {
     fetchData();
   }, []);
 
-  if (userInfoloading || !userInfo) {
+  if (userInfoloading || !user) {
     return <LoadingOverlay />;
   }
 
@@ -74,10 +74,10 @@ export default function MyProfilePage() {
     <Container className="mt-10">
       <p className="font-semibold text-xl">Profile Information</p>
       <Divider className="mb-2" />
-      <TextInput label="Username" disabled value={userInfo['username']} />
-      <TextInput label="First Name" disabled value={userInfo['firstName']} />
-      <TextInput label="Last Name" disabled value={userInfo['lastName']} />
-      <PhoneOTP phone={userInfo['phone'] as string} />
+      <TextInput label="Username" disabled value={user.username} />
+      <TextInput label="First Name" disabled value={user.firstName} />
+      <TextInput label="Last Name" disabled value={user.lastName} />
+      <PhoneOTP phone={user.phone as string} />
     </Container>
   );
 }
