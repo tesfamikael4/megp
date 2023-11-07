@@ -66,7 +66,7 @@ export class WorkflowInstanceService {
     private readonly receiptRepository: Repository<PaymentReceiptEntity>,
     private readonly bpService: BusinessProcessService,
     private readonly commonService: HandlingCommonService,
-  ) {}
+  ) { }
 
   async submitFormBasedTask(
     nextCommand: GotoNextStateDto,
@@ -392,10 +392,6 @@ export class WorkflowInstanceService {
           });
           vendor.status = WorkflowInstanceEnum.Approved;
           await this.vendorRepository.save(vendor);
-          const today = new Date();
-          //  workflowInstance.approvedAt = today;
-          const exprireYear = today.getFullYear() + 1;
-          // workflowInstance.expireDate = new Date(exprireYear, today.getMonth(), today.getDate());
           await this.addTaskTracker({
             taskId: currentTaskHandler?.taskId,
             instanceId: workflowInstance?.id,
