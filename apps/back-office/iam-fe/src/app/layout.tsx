@@ -17,8 +17,6 @@ const roboto_mono = Roboto_Mono({
   variable: '--font-roboto-mono',
 });
 
-import '@megp/theme/theme.scss';
-
 export const metadata: Metadata = {
   title: 'M-egp | IAM',
   description: 'Identity and access management',

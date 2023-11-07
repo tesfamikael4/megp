@@ -16,7 +16,6 @@ const roboto_mono = Roboto_Mono({
   variable: '--font-roboto-mono',
 });
 
-import '@megp/theme/theme.scss';
 import { ConfigProvider } from '@/contexts/config';
 import { config } from '@/config/env';
 

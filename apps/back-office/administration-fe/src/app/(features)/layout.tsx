@@ -3,8 +3,6 @@ import type { Metadata } from 'next';
 
 import { ShellProvider } from './shell';
 
-import '@megp/theme/theme.scss';
-
 export const metadata: Metadata = {
   title: 'M-egp | Administration',
   description: 'Administration',

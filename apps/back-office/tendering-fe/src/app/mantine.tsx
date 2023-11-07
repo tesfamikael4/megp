@@ -4,8 +4,6 @@ import { MantineProvider, MantineThemeOverride } from '@mantine/core';
 
 import { theme as baseTheme } from '@megp/theme/mantine';
 
-import './globals.css';
-import '@mantine/core/styles.css';
 export default function RootStyleRegistry({
   children,
 }: {

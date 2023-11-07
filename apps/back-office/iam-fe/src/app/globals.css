@@ -3,7 +3,7 @@
 @tailwind utilities;
 @import '@mantine/core/styles.css';
 @import '@mantine/notifications/styles.css';
-
+@import '@megp/theme/theme.css';
 html,
 body {
   @apply bg-gray-100;

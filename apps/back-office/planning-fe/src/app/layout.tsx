@@ -16,8 +16,6 @@ const roboto_mono = Roboto_Mono({
   variable: '--font-roboto-mono',
 });
 
-import '@megp/theme/theme.scss';
-
 export const metadata: Metadata = {
   title: 'M-egp | Planning',
   description: 'Planning and budgeting application for M-egp',
