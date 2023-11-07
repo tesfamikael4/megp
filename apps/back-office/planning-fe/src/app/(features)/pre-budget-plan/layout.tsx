@@ -1,8 +1,15 @@
-import { Entity } from './entity';
-export default function EntityLayout({
+import { Box } from '@mantine/core';
+import { PlanYearTab } from './_components/plan-year-tab';
+
+export default function PreBudgetPlanLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <Entity>{children}</Entity>;
+  return (
+    <Box>
+      <PlanYearTab />
+      {children}
+    </Box>
+  );
 }
