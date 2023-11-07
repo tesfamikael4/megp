@@ -9,14 +9,10 @@ import {
   Group,
   Center,
   Burger,
-  Container,
   Drawer,
-  Box,
   Button,
-  Collapse,
   Divider,
   ScrollArea,
-  UnstyledButton,
   rem,
   Flex,
   Loader,
@@ -51,7 +47,7 @@ function Header() {
 
   const [userInfo, setUserInfo] = useState<any>(undefined);
   const [userInfoLoading, setIsUserInfoLoading] = useState(false);
-  const { getUserInfo, isAuthenticated, logOut } = useAuth();
+  const { getUserInfo, isAuthenticated, logOut, user } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
@@ -73,7 +69,6 @@ function Header() {
 
     fetchData();
   }, [isAuthenticated]);
-  const userName = userInfo && userInfo.firstName + ' ' + userInfo.lastName;
 
   const items = links.map((link) => {
     const menuItems = link.links?.map((item) => (
@@ -133,12 +128,13 @@ function Header() {
             <Group gap={5} visibleFrom="sm">
               {items}
             </Group>
-            {userInfo && (
+            {user && (
               <Group visibleFrom="sm">
                 <Menu shadow="md" width={200}>
                   <Menu.Target>
                     <div className="flex cursor-pointer">
-                      {userInfoLoading && <Loader />}Hi, {userName}
+                      {userInfoLoading && <Loader />}Hi,{' '}
+                      {user.firstName + ' ' + user.lastName}
                       <IconChevronDown />
                     </div>
                   </Menu.Target>
@@ -163,7 +159,7 @@ function Header() {
                 </Menu>
               </Group>
             )}
-            {!userInfo && (
+            {!user && (
               <Group visibleFrom="sm">
                 <Button component={Link} href="/auth/login">
                   Sign in
