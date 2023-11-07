@@ -1,7 +1,7 @@
 import {
   BadRequestException,
   Injectable,
-  NotFoundException,
+  NotFoundException
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -10,6 +10,7 @@ import { WorkflowInstanceResponse } from '../../handling/dtos/workflow-instance.
 import {
   CreateWorkflowInstanceDto,
   GotoNextStateDto,
+  UpdateWorkflowInstanceDto,
 } from '../../handling/dtos/workflow-instance.dto';
 import {
   CreateTaskHandlerDto,
@@ -29,11 +30,11 @@ import {
   WorkflowInstanceEnum,
 } from '../../handling/dtos/workflow-instance.enum';
 import { InvoiceEntity } from '../../handling/entities/invoice.entity';
-import { VendorsEntity } from 'src/vendor-registration/entities/vendors.entity';
 import { HandlingCommonService } from '../../handling/services/handling-common-services';
 import { BusinessProcessService } from 'src/bpm/services/business-process.service';
 import { TaskService } from 'src/bpm/services/task.service';
-
+import { HttpService } from '@nestjs/axios';
+import { firstValueFrom } from 'rxjs';
 @Injectable()
 export class WorkflowService {
   constructor(
@@ -45,13 +46,11 @@ export class WorkflowService {
     private readonly invoiceRepository: Repository<InvoiceEntity>,
     @InjectRepository(TaskTrackerEntity)
     private readonly trackerRepository: Repository<TaskTrackerEntity>,
-    // @InjectRepository(VendorsEntity)
-    //  private readonly vendorRepository: Repository<VendorsEntity>,
     private readonly bpService: BusinessProcessService,
     private readonly commonService: HandlingCommonService,
     private readonly taskService: TaskService,
-  ) {}
-
+    private readonly httpService: HttpService
+  ) { }
   async intiateWorkflowInstance(
     dto: CreateWorkflowInstanceDto,
     userInfo: any,
@@ -129,17 +128,17 @@ export class WorkflowService {
       if (stateMetaData['type'] == 'end') {
         workflowInstance.status = WorkflowInstanceEnum.Completed;
         workflowInstance.businessStatus = BusinessStatusEnum.active;
-        //update vendor status approved
-        //  const vendor = await this.vendorRepository.findOne({ where: { id: workflowInstance.requestorId } });
-        // vendor.status = WorkflowInstanceEnum.Approved
-        //  await this.vendorRepository.save(vendor);
-        const today = new Date();
-        //  workflowInstance.approvedAt = today;
-        const exprireYear = today.getFullYear() + 1;
-        // workflowInstance.expireDate = new Date(exprireYear, today.getMonth(),
-        today.getDate();
-        await this.addTaskTracker(currentTaskHandler, nextCommand, userInfo);
-        await this.handlerRepository.delete(currentTaskHandler.id);
+        const wfInstance = new UpdateWorkflowInstanceDto();
+        wfInstance.requestorId = workflowInstance.requestorId;
+        wfInstance.serviceId = workflowInstance.serviceId;
+        wfInstance.bpId = workflowInstance.bpId;
+        wfInstance.id = workflowInstance.id;
+        const response = await this.notifyApplicationCompletion(wfInstance);
+        if (response) {
+          await this.addTaskTracker(currentTaskHandler, nextCommand, userInfo);
+          await this.handlerRepository.delete(currentTaskHandler.id);
+        }
+
       } else {
         const task = await this.taskService.getTaskByNameAndBP(
           workflowInstance.bpId,
@@ -291,6 +290,35 @@ export class WorkflowService {
       throw new BadRequestException('Task tracker Not Saved ');
     }
   }
+
+  async notifyApplicationCompletion(data: UpdateWorkflowInstanceDto) {
+    return true;
+    const config = {
+      headers: {
+        'Authorization': 'Bearer yourAuthToken',
+        'Other-Header': 'header-value',
+      },
+    };
+    try {
+      const response = await firstValueFrom(this.httpService.post('https://localhost:3000/completeTasks', data, config));
+      if (response.status === 200) {
+        const responseData = response.data;
+        return responseData;
+      } else {
+        throw new Error(`API returned status code ${response.status}`);
+      }
+    } catch (error) {
+      console.error('Error making API request:', error);
+      throw new Error('Failed to retrieve data from the API.');
+    }
+  }
+  async sendEmail(data: any) {
+    console.log("email", data);
+  }
+  async sendSMS(data: any) {
+    console.log("email", data);
+  }
+
   getStateMetaData(meta) {
     return Object.keys(meta).reduce((acc, key) => {
       const value = meta[key];
@@ -300,4 +328,7 @@ export class WorkflowService {
       return acc;
     }, {});
   }
+
+
+
 }

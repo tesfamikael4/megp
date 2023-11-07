@@ -18,6 +18,7 @@ import { TaskAssignmentEntity } from './entities/task-assignment';
 import { InvoiceEntity } from 'src/handling/entities/invoice.entity';
 import { PaymentReceiptEntity } from 'src/handling/entities/receipt-attachment';
 import { HandlingCommonService } from 'src/handling/services/handling-common-services';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { HandlingCommonService } from 'src/handling/services/handling-common-ser
       InvoiceEntity,
       PaymentReceiptEntity,
     ]),
+    HttpModule
   ],
   exports: [
     BpServiceService,
@@ -49,4 +51,4 @@ import { HandlingCommonService } from 'src/handling/services/handling-common-ser
   ],
   controllers: [BpServiceController, BusinessProcessController, TaskController],
 })
-export class BpmModule {}
+export class BpmModule { }

@@ -76,8 +76,6 @@ import { TaskTrackerEntity } from 'src/bpm/entities/task-tracker';
   providers: [
     ServicePricingService,
     VendorBasicsService,
-    TaskService,
-    WorkflowService,
     BusinessProcessService,
     HandlingCommonService,
     BankAccountDetailService,
@@ -103,4 +101,4 @@ import { TaskTrackerEntity } from 'src/bpm/entities/task-tracker';
     AreasOfBusinessInterestController,
   ],
 })
-export class VendorRegistrationModule {}
+export class VendorRegistrationModule { }
