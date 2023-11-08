@@ -1,0 +1,13 @@
+.No {
+  background-color: #ec4758 !important;
+}
+
+.buttonWrapper {
+  @apply pt-2 pb-2 flex gap-3;
+}
+.checkLists {
+  @apply mb-2;
+}
+.mainWrapper {
+  @apply p-3;
+}

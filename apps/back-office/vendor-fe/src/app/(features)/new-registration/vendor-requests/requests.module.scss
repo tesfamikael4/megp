@@ -1,0 +1,30 @@
+.supplier_body {
+  @apply bg-white  rounded-md min-h-[720px];
+}
+
+.table-row:hover {
+  @apply bg-gray-100 cursor-pointer;
+}
+
+.row_icons {
+  @apply flex gap-4 pl-4;
+}
+
+.tableborder {
+  @apply border border-solid border-gray-300;
+}
+.loader {
+  @apply flex justify-center items-center;
+}
+
+.taskName {
+  color: #3f3ca2;
+  font-weight: bold;
+}
+.taskDetail {
+  @apply text-left;
+}
+
+.rowWrapper {
+  @apply flex gap-2 justify-start;
+}
