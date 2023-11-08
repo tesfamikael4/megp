@@ -7,8 +7,9 @@ import { BusinessCategoryEntity } from './business-category.entity';
 import { BeneficialOwnership } from './beneficial-ownership.entity';
 import { WorkflowInstanceEntity } from 'src/handling/entities/workflow-instance';
 import { AreasOfBusinessInterestEntity } from './areas-of-business-interest.entity';
+import { Audit } from 'src/shared/entities/audit.entity';
 @Entity({ name: 'vendors' })
-export class VendorsEntity extends CommonEntity {
+export class VendorsEntity extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
   @Column({ name: 'tin', nullable: true })
@@ -54,6 +55,7 @@ export class VendorsEntity extends CommonEntity {
     cascade: true,
   })
   beneficialOwnership: BeneficialOwnership[];
+
   @OneToMany(() => WorkflowInstanceEntity, (wf) => wf.vendor)
   instances: WorkflowInstanceEntity[];
 

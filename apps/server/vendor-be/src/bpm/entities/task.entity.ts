@@ -7,8 +7,8 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { TaskAssignmentEntity } from '../../handling/entities/task-assignment';
-import { TaskHandlerEntity } from 'src/handling/entities/task-handler';
+import { TaskAssignmentEntity } from './task-assignment';
+import { TaskHandlerEntity } from 'src/bpm/entities/task-handler';
 import { CreateTaskCheckListDto } from '../dtos/task-check-list.dto';
 @Entity({ name: 'tasks' })
 export class TaskEntity {

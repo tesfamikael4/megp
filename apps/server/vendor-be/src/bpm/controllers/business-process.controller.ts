@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Put, Query } from '@nestjs/common';
 import {
   ApiExtraModels,
   ApiOkResponse,
@@ -11,7 +11,6 @@ import { BusinessProcessService } from '../services/business-process.service';
 import {
   BusinessProcessResponse,
   CreateBusinessProcessDto,
-  UpdateBusinessProcessDto,
 } from '../dtos/business-process.dto';
 import { BusinessProcessEntity } from '../entities/business-process';
 import { EntityCrudController } from 'src/shared/controller';
@@ -22,24 +21,17 @@ export class BusinessProcessController extends EntityCrudController<BusinessProc
   constructor(private readonly businessProcessService: BusinessProcessService) {
     super(businessProcessService);
   }
-  @Get()
-  @ApiPaginatedResponse(BusinessProcessResponse)
-  async fetch(@Query() query: CollectionQuery) {
-    return await super.findAll(query);
-  }
-  @Get(':id')
-  @ApiOkResponse({ type: BusinessProcessResponse })
-  async getServiceById(@Param('id') id: string) {
-    return await super.findOne(id);
-  }
+
   @Post()
   @ApiPaginatedResponse(BusinessProcessResponse)
   async create(@Body() dto: CreateBusinessProcessDto) {
     return await super.create(dto);
   }
 
-  @Get(':id')
-  async delete(@Param('id') id: string) {
-    return await super.remove(id);
+  @Patch()
+  @ApiPaginatedResponse(BusinessProcessResponse)
+  async update(@Param('id') id, @Body() dto: CreateBusinessProcessDto) {
+    return await super.update(id, dto);
   }
+
 }

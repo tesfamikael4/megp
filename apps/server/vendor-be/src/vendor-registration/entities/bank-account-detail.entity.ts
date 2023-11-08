@@ -1,4 +1,3 @@
-import { CommonEntity } from 'src/shared/entities/common.entity';
 import {
   Column,
   Entity,
@@ -6,14 +5,12 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-// import { ServicePriceEntity } from './service-price.entity';
-// import { InvoiceEntity } from './invoice.entity';
-// import { ServicesEntity } from './services.entity';
 import { VendorsEntity } from './vendors.entity';
 import { BanksEntity } from './bank.entity';
+import { Audit } from 'src/shared/entities/audit.entity';
 //Vendor Service Application
 @Entity({ name: 'vendors_bank' })
-export class BankAccountDetailEntity extends CommonEntity {
+export class BankAccountDetailEntity extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
   @Column()
@@ -43,6 +40,10 @@ export class BankAccountDetailEntity extends CommonEntity {
   bankName: string;
   @Column({ type: 'jsonb', nullable: true })
   metaData: JSON;
+  @Column({ nullable: true })
+  accountType: string;
+  @Column({ nullable: true })
+  isDefualt: boolean;
   /*
   @Column({ name: 'approved_by', nullable: true, type: 'uuid' })
   approvedBy: string;

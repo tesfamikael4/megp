@@ -41,23 +41,6 @@ export class CategoriesController extends EntityCrudController<Category> {
   async create(@Body() dto: CreateCategoryDto) {
     return await super.create(dto);
   }
-
-  @Get(':id')
-  async findOne(
-    @Param(
-      'id',
-      new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
-    )
-    id: string,
-  ) {
-    return await super.findOne(id);
-  }
-
-  @Get()
-  @ApiPaginatedResponse(CategoryResponseDto)
-  async findAll(@Query() query: CollectionQuery) {
-    return await super.findAll(query);
-  }
   @Patch(':id')
   async update(
     @Param(

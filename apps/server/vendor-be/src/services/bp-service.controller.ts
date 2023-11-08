@@ -1,4 +1,14 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Put,
+  Query,
+} from '@nestjs/common';
 import {
   ApiExtraModels,
   ApiOkResponse,
@@ -8,38 +18,45 @@ import {
 import { ApiPaginatedResponse, DataResponseFormat } from 'src/shared/api-data';
 import { CollectionQuery } from 'src/shared/collection-query';
 import { BpServiceService } from './service.service';
-import { CreateBpServiceDto, UpdateBpServiceDto } from './bp-service.dto';
-import { BpServiceResponse } from './bp-service.response';
+import {
+  BpServiceResponse,
+  CreateBpServiceDto,
+  UpdateBpServiceDto,
+} from './bp-service.dto';
+import { EntityCrudController } from 'src/shared/controller';
+import { BpServiceEntity } from './entities/bp-service';
 @Controller('bp-services')
 @ApiTags('bp-services')
 @ApiResponse({ status: 500, description: 'Internal error' })
 @ApiResponse({ status: 404, description: 'Item not found' })
 @ApiResponse({ status: 400, description: 'Bad Request' })
 @ApiExtraModels(DataResponseFormat)
-export class BpServiceController {
-  constructor(private readonly bpServiceProvider: BpServiceService) {}
-  @Get('get-services')
+export class BpServiceController extends EntityCrudController<BpServiceEntity> {
+  constructor(private readonly bpServiceProvider: BpServiceService) {
+    super(bpServiceProvider);
+  }
+  @Get()
   @ApiPaginatedResponse(BpServiceResponse)
   async fetch(@Query() query: CollectionQuery) {
-    return await this.bpServiceProvider.getServices(query);
+    return await super.findAll(query);
   }
-  @Get('get-service/:id')
+  @Get(':id')
   @ApiOkResponse({ type: BpServiceResponse })
   async getServiceById(@Param('id') id: string) {
-    return await this.bpServiceProvider.getById(id);
+    return await super.findOne(id);
   }
-  @Post('create-service')
+  @Post()
   @ApiOkResponse({ type: BpServiceResponse })
   async create(@Body() dto: CreateBpServiceDto) {
-    return await this.bpServiceProvider.create(dto);
+    return await super.create(dto);
   }
-  @Post('update-service')
+  @Put(':id')
   @ApiOkResponse({ type: BpServiceResponse })
-  async update(@Body() dto: UpdateBpServiceDto) {
-    return await this.bpServiceProvider.update(dto);
+  async update(@Param('id') id: string, @Body() dto: UpdateBpServiceDto) {
+    return await super.update(dto.id, dto);
   }
-  @Get('delete-service/:id')
+  @Delete(':id')
   async delete(@Param('id') id: string) {
-    return await this.bpServiceProvider.delete(id);
+    return await super.remove(id);
   }
 }

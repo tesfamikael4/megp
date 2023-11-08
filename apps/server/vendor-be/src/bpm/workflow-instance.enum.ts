@@ -5,7 +5,7 @@ export enum WorkflowInstanceEnum {
   Completed = 'Completed',
 }
 export enum ServiceKeyEnum {
-  new = 'newRegistration',
+  new = 'new',
   upgrade = 'upgrade',
   renewal = 'renewal',
 }

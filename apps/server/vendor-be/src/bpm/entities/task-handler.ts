@@ -7,17 +7,15 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { WorkflowInstanceEntity } from './workflow-instance';
+import { WorkflowInstanceEntity } from '../../handling/entities/workflow-instance';
 import { TaskEntity } from 'src/bpm/entities/task.entity';
-import { Audit } from 'src/shared/entities/audit.entity';
-
 @Entity({ name: 'task_handlers' })
 export class TaskHandlerEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
   @Column()
   taskId: string;
-  @Column()
+  @Column({ type: 'uuid' })
   instanceId: string;
   @Column({ nullable: true })
   handlerUserId: string;
@@ -31,10 +29,9 @@ export class TaskHandlerEntity {
   data: object;
   @Column()
   currentState: string;
-  @Column()
+  @Column({ default: 'Unpicked' })
   assignmentStatus: string;
-  @Column({ nullable: true })
-  executedAt: Date;
+
   @OneToOne(() => WorkflowInstanceEntity, (wfi) => wfi.taskHandler)
   @JoinColumn({ name: 'instanceId' })
   workflowInstance: WorkflowInstanceEntity;

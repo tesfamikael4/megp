@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  Body,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -7,9 +8,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, In, IsNull, MoreThan, Not, Repository } from 'typeorm';
 import { DataResponseFormat } from 'src/shared/api-data';
 import { CollectionQuery, QueryConstructor } from 'src/shared/collection-query';
-import { TaskTrackerResponse } from '../dtos/task-tracker.response';
-import { TaskTrackerEntity } from '../entities/task-tracker';
-import { TaskHandlerEntity } from '../entities/task-handler';
 import { InvoiceResponseDto } from 'src/vendor-registration/dto/invoice.dto';
 import { InvoiceEntity } from 'src/handling/entities/invoice.entity';
 import { WorkflowInstanceEntity } from '../entities/workflow-instance';
@@ -22,13 +20,14 @@ import {
 } from '../dtos/workflow-instance.enum';
 import { FilesEntity } from 'src/vendor-registration/entities/file.entity';
 import { FileResponseDto } from 'src/vendor-registration/dto/file.dto';
-import { TaskTypes } from '../dtos/task-type.enum';
 import { ActiveVendorsResponse } from '../dtos/active-vendor-response';
-import {
-  UpdateTaskHandlerDto,
-} from '../dtos/task-handler.dto';
-
 import puppeteer from 'puppeteer';
+import { userInfo } from 'os';
+import { TaskTrackerEntity } from 'src/bpm/entities/task-tracker';
+import { TaskHandlerEntity } from 'src/bpm/entities/task-handler';
+import { TaskTypes } from 'src/bpm/dtos/task-type.enum';
+import { UpdateTaskHandlerDto } from 'src/bpm/dtos/task-handler.dto';
+import { TaskTrackerResponse } from 'src/bpm/dtos/task-tracker.dto';
 @Injectable()
 export class ApplicationExcutionService {
   constructor(
@@ -41,8 +40,7 @@ export class ApplicationExcutionService {
     @InjectRepository(WorkflowInstanceEntity)
     private readonly wiRepository: Repository<WorkflowInstanceEntity>,
     private readonly dataSource: DataSource,
-  ) { }
-
+  ) {}
   async getCompletedTasks(instanceId: string): Promise<TaskTrackerResponse[]> {
     const ctasks = await this.taskTrackingRepository.find({
       where: { instanceId: instanceId },
@@ -80,14 +78,25 @@ export class ApplicationExcutionService {
     serviceKey: string,
     query: CollectionQuery,
   ): Promise<DataResponseFormat<WorkflowInstanceResponse>> {
-
     let keys = [];
     if (serviceKey === ServiceKeyEnum.new) {
-      keys = [ServiceKeyEnum.goodsNewRegistration, ServiceKeyEnum.servicesNewRegistration, ServiceKeyEnum.worksNewRegistration];
+      keys = [
+        ServiceKeyEnum.goodsNewRegistration,
+        ServiceKeyEnum.servicesNewRegistration,
+        ServiceKeyEnum.worksNewRegistration,
+      ];
     } else if (serviceKey == ServiceKeyEnum.upgrade) {
-      keys = [ServiceKeyEnum.goodsUpgrade, ServiceKeyEnum.servicesUpgrade, ServiceKeyEnum.worksUpgrade];
+      keys = [
+        ServiceKeyEnum.goodsUpgrade,
+        ServiceKeyEnum.servicesUpgrade,
+        ServiceKeyEnum.worksUpgrade,
+      ];
     } else if (serviceKey === ServiceKeyEnum.renewal) {
-      keys = [ServiceKeyEnum.goodsRenewal, ServiceKeyEnum.servicesRenewal, ServiceKeyEnum.worksRenewal]
+      keys = [
+        ServiceKeyEnum.goodsRenewal,
+        ServiceKeyEnum.servicesRenewal,
+        ServiceKeyEnum.worksRenewal,
+      ];
     }
     const [result, total] = await this.wiRepository.findAndCount({
       relations: {
@@ -142,8 +151,8 @@ export class ApplicationExcutionService {
         id: instanceId,
       },
       order: {
-        taskTrackers: { createdAt: 'DESC' }
-      }
+        taskTrackers: { executedAt: 'DESC' },
+      },
     });
     if (!instance) {
       throw new NotFoundException('Not Found');
@@ -212,7 +221,7 @@ export class ApplicationExcutionService {
         where: {
           businessProcess: { service: { key: ServiceKeyEnum.new } },
           status: WorkflowInstanceEnum.Completed,
-          approvedAt: Not(IsNull()),
+          //  approvedAt: Not(IsNull()),
           price: { businessArea: result.workflowInstance.price.businessArea },
         },
       });
@@ -231,9 +240,10 @@ export class ApplicationExcutionService {
     invoice.instanceId = result.instanceId;
     invoice.taskName = result.task.name;
     invoice.taskId = result.task.id;
-    invoice.payToAccName = 'PPDA';
-    invoice.payToAccNo = '123456789';
-    invoice.payToBank = 'Malawi Bank';
+    invoice.payToAccName =
+      'Public Procurement and Disposal of Assets Authority';
+    invoice.payToAccNo = '000 100 562 4416';
+    invoice.payToBank = 'National Bank of Malawi';
     invoice.applicationNo = result.workflowInstance.applicationNumber;
 
     //invoice.payerAccountId = 'payerId1231234';
@@ -316,7 +326,7 @@ export class ApplicationExcutionService {
       where: {
         status: WorkflowInstanceEnum.Completed,
         businessStatus: BusinessStatusEnum.active,
-        expireDate: MoreThan(today),
+        //  expireDate: MoreThan(today),
       },
       skip: query.skip | 0,
       take: query.top | 20,
@@ -329,9 +339,7 @@ export class ApplicationExcutionService {
     return response;
   }
 
-  async getMyBusinessArea(
-    userId: string
-  ): Promise<ActiveVendorsResponse[]> {
+  async getMyBusinessArea(userId: string): Promise<ActiveVendorsResponse[]> {
     const result = await this.wiRepository.find({
       relations: {
         vendor: true,
@@ -342,7 +350,6 @@ export class ApplicationExcutionService {
         // businessStatus: BusinessStatusEnum.active,
         // expireDate: MoreThan(today),
         vendor: { userId: userId, status: 'Approved' },
-
       },
     });
     const response = result.map((item) =>
@@ -359,13 +366,13 @@ export class ApplicationExcutionService {
       relations: {
         taskHandler: true,
       },
-      where: { taskHandler: { taskId: dto.taskId }, id: dto.instanceId },
+      where: { id: dto.instanceId },
     });
     if (!wfInstance.taskHandler) {
       throw new BadRequestException();
     }
     wfInstance.taskHandler.assignmentStatus = AssignmentEnum.Picked;
-    wfInstance.taskHandler.handlerUserId = user.userId; //
+    wfInstance.taskHandler.handlerUserId = user.userId;
     wfInstance.taskHandler.handlerName = user.name;
     wfInstance.taskHandler.pickedAt = new Date();
     const result = await this.wiRepository.save(wfInstance);
@@ -375,7 +382,7 @@ export class ApplicationExcutionService {
   async unpickTask(dto: UpdateTaskHandlerDto) {
     const wfInstance = await this.wiRepository.findOne({
       relations: { taskHandler: true },
-      where: { taskHandler: { taskId: dto.taskId }, id: dto.instanceId },
+      where: { id: dto.instanceId },
     });
     if (!wfInstance.taskHandler) {
       throw new BadRequestException();

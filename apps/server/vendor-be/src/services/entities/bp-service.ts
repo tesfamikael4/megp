@@ -1,9 +1,10 @@
 import { BusinessProcessEntity } from 'src/bpm/entities/business-process';
 import { ServicePrice } from 'src/pricing/entities/service-price';
+import { Audit } from 'src/shared/entities/audit.entity';
 import { CommonEntity } from 'src/shared/entities/common.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 @Entity({ name: 'bp_services' })
-export class BpServiceEntity extends CommonEntity {
+export class BpServiceEntity extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
   @Column({ name: 'name' })
@@ -19,13 +20,13 @@ export class BpServiceEntity extends CommonEntity {
     () => BusinessProcessEntity,
     (businessProcess) => businessProcess.service,
     {
-      // cascade: true,
+      cascade: true,
       onDelete: 'CASCADE',
     },
   )
   businessProcesses: BusinessProcessEntity[];
-  @OneToMany(() => ServicePrice, (service) => service.service, {
-    // cascade: true,
+  @OneToMany(() => ServicePrice, (price) => price.service, {
+    cascade: true,
     onDelete: 'CASCADE',
   })
   prices: ServicePrice[];

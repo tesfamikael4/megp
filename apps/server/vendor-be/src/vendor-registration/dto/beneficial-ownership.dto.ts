@@ -34,11 +34,11 @@ export class CreateBeneficialOwnershipDto {
     entity.nationality = dto.nationality;
     entity.vendorId = dto.vendorId;
     entity.createdAt = dto.createdAt;
-    entity.createdBy = dto.createdBy;
+    // entity.createdBy = dto.createdBy;
     // entity.deletedAt = dto.deletedAt;
     //  entity.deletedBy = dto.deletedBy;
     entity.updatedAt = dto.updatedAt;
-    entity.updatedBy = dto.updatedBy;
+    // entity.updatedBy = dto.updatedBy;
     return entity;
   }
 }
@@ -59,11 +59,11 @@ export class BeneficialOwnershipResponse extends CreateBeneficialOwnershipDto {
     response.vendorId = dto.vendorId;
 
     response.createdAt = dto.createdAt;
-    response.createdBy = dto.createdBy;
+    // response.createdBy = dto.createdBy;
     //   response.deletedAt = dto.deletedAt;
     // response.deletedBy = dto.deletedBy;
     response.updatedAt = dto.updatedAt;
-    response.updatedBy = dto.updatedBy;
+    // response.updatedBy = dto.updatedBy;
     return response;
   }
 }
