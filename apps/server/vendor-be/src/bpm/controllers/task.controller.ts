@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
   Put,
   Query,
@@ -17,7 +18,7 @@ import {
 import { ApiPaginatedResponse, DataResponseFormat } from 'src/shared/api-data';
 import { CollectionQuery } from 'src/shared/collection-query';
 import { TaskService } from '../services/task.service';
-import { TaskResponse } from '../dtos/task.dto';
+import { TaskResponse, UpdateTaskDto } from '../dtos/task.dto';
 import { CreateTaskDto } from '../dtos/task.dto';
 import { TaskEntity } from '../entities/task.entity';
 import { EntityCrudController } from 'src/shared/controller';
@@ -28,25 +29,17 @@ export class TaskController extends EntityCrudController<TaskEntity> {
   constructor(private readonly taskService: TaskService) {
     super(taskService);
   }
-  @Get()
-  @ApiPaginatedResponse(TaskResponse)
-  async fetch(@Query() query: CollectionQuery) {
-    return await super.findAll(query);
-  }
-  @Get(':id')
-  @ApiOkResponse({ type: TaskResponse })
-  async getServiceById(@Param('id') id: string) {
-    return await super.findOne(id);
-  }
+
   @Post()
   @ApiOkResponse({ type: TaskResponse })
   async create(@Body() dto: CreateTaskDto) {
     console.log(dto);
     return await super.create(dto);
   }
-
-  @Delete(':id')
-  async delete(@Param('id') id: string) {
-    return await super.remove(id);
+  @Patch()
+  @ApiOkResponse({ type: TaskResponse })
+  async update(@Param('id') id: string, @Body() dto: UpdateTaskDto) {
+    return await super.update(id, dto);
   }
+
 }

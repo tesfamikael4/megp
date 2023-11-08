@@ -30,19 +30,11 @@ export class TaskAssignmentController extends EntityCrudController<TaskAssignmen
   async fetch(@Query() query: CollectionQuery) {
     return await super.findAll(query);
   }
-  @Get(':id')
-  @ApiOkResponse({ type: TaskAssignmentResponse })
-  async getById(@Param('id') id: string) {
-    return await super.findOne(id);
-  }
+
   @Post()
   @ApiOkResponse({ type: TaskAssignmentResponse })
   async create(@Body() dto: CreateTaskAssignmentDto) {
     return await super.create(dto);
   }
 
-  @Delete(':id')
-  async delete(@Param('id') id: string) {
-    return await super.remove(id);
-  }
 }
