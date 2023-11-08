@@ -14,6 +14,12 @@ export class UploadController {
     fileName = userId + '/' + fileName;
     return this.tusService.getFileFromMinio(req, res, userId, fileName);
   }
+  @Get(':fileId')
+  async fetchFile(@Param('fileName') fileName: string, @Req() req, @Res() res) {
+    const userId = 'b23f0b00-0a59-4f6d-9fd9-34d6fa960e0';
+    fileName = userId + '/' + fileName;
+    return this.tusService.getFile(req, res, userId, fileName);
+  }
   @Delete(':fileName')
   async deleteFile(
     @Param('fileName') fileName: string,

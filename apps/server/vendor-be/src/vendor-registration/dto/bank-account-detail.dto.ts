@@ -48,6 +48,10 @@ export class CreateBankAccountDetailDto {
   @ApiProperty()
   metaData: JSON;
 
+  @ApiProperty()
+  accountType: string;
+  @ApiProperty()
+  isDefualt: boolean;
   bank: BankDto;
 
   static fromDto(dto: CreateBankAccountDetailDto): BankAccountDetailEntity {
@@ -68,6 +72,8 @@ export class CreateBankAccountDetailDto {
     entity.status = dto.status;
     entity.hashValue = dto.hashValue;
     entity.bankName = dto.bankName;
+    entity.accountType = dto.accountType;
+    entity.isDefualt = dto.isDefualt;
     entity.metaData = dto.metaData;
 
     return entity;
@@ -108,6 +114,8 @@ export class BankAccountDetailResponse extends CreateBankAccountDetailDto {
     entity.status = dto.status;
     entity.hashValue = dto.hashValue;
     entity.bankName = dto.bankName;
+    entity.accountType = dto.accountType;
+    entity.isDefualt = dto.isDefualt;
     entity.metaData = dto.metaData;
 
     return entity;
@@ -130,8 +138,9 @@ export class BankAccountDetailResponse extends CreateBankAccountDetailDto {
     entity.status = dto?.status;
     entity.hashValue = dto?.hashValue;
     entity.bankName = dto?.bankName;
+    entity.accountType = dto?.accountType;
+    entity.isDefualt = dto?.isDefualt;
     entity.metaData = dto?.metaData;
-
     return entity;
   }
   static fromDtos(

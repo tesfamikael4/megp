@@ -45,6 +45,9 @@ import { BpmModule } from 'src/bpm/bpm.module';
 import { TaskAssignmentEntity } from 'src/bpm/entities/task-assignment';
 import { TaskHandlerEntity } from 'src/bpm/entities/task-handler';
 import { TaskTrackerEntity } from 'src/bpm/entities/task-tracker';
+import { BusinessAreaController } from './controllers/business-area.controller';
+import { BusinessAreaEntity } from './entities/business-area';
+import { BusinessAreaService } from './services/business-areaEntity.service';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -69,6 +72,7 @@ import { TaskTrackerEntity } from 'src/bpm/entities/task-tracker';
       TaskTrackerEntity,
       BusinessProcessEntity,
       BpServiceEntity,
+      BusinessAreaEntity,
     ]),
     BpmModule,
   ],
@@ -86,6 +90,7 @@ import { TaskTrackerEntity } from 'src/bpm/entities/task-tracker';
     WorkflowInstanceService,
     ApplicationExcutionService,
     VendorRegistrationsService,
+    BusinessAreaService,
     TusService,
   ],
   controllers: [
@@ -99,6 +104,7 @@ import { TaskTrackerEntity } from 'src/bpm/entities/task-tracker';
     UploadController,
     BeneficialOwnershipController,
     AreasOfBusinessInterestController,
+    BusinessAreaController,
   ],
 })
-export class VendorRegistrationModule { }
+export class VendorRegistrationModule {}

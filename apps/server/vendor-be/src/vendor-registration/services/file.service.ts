@@ -67,10 +67,8 @@ export class File {
   }
   async uploadAttachment(file: Express.Multer.File, command: CreateFileDto) {
     try {
-      console.log('ppppppppppppppppppppppppppppppppppppppppppppppppppppp');
       const result = this.uploadToRemoteServer(file, command);
       const fileDto = new CreateFileDto();
-      console.log('fffffffffffffffffffffffffff');
 
       fileDto.bucketName = result.bucketName;
       fileDto.fileName = result.fileName;

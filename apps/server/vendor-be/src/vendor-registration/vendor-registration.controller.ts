@@ -19,7 +19,7 @@ import { CollectionQuery } from '@collection-query';
 
 import { VendorRegistrationsService } from './vendor-registration.service';
 import { InsertAllDataDto } from './dto/save-all.dto';
-import { SetVendorStatus } from './dto/vendor.dto';
+import { CreateVendorsDto, SetVendorStatus } from './dto/vendor.dto';
 import { Response } from 'express';
 import { VendorInitiationDto } from './dto/vendor-initiation.dto';
 import { CreateAreasOfBusinessInterest } from './dto/areas-of-business-interest';
@@ -144,7 +144,11 @@ export class VendorRegistrationsController {
   async getVendorByStatus(@Param('status') status: string) {
     return await this.regService.getVendorByStatus(status);
   }
-
+  @Post('update-vendor')
+  async updateVendor(@Body() vendor: any) {
+    vendor.userId = 'b23f0b00-0a59-4f6d-9fd9-34d6fa960e0';
+    return await this.regService.setVendorStatus(vendor);
+  }
   @Post('delete-vendor-info/:vendorId')
   async changeVendorUserId(@Param('vendorId') vendorId: string) {
     return await this.regService.deleteVendorById(vendorId);
