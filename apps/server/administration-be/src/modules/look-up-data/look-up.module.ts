@@ -3,15 +3,15 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ItemCategoryService } from './service/item-category.service';
 import { ItemCategoriesController } from './controller/item-category.controller';
 import { MeasurementController } from './controller/measurement.controller';
-import { UnitOfMeasurementController } from './controller/uom.controller';
 import { TagController } from './controller/tag.controller';
 import { MeasurementService } from './service/measurement.service';
-import { UnitOfMeasurementService } from './service/uom.service';
 import { TagService } from './service/tag.service';
 import { ItemCategory } from 'src/entities/item-category.entity';
 import { Measurement } from 'src/entities/measurement.entity';
 import { Tag } from 'src/entities/tag.entity';
 import { UnitOfMeasurement } from 'src/entities/uom.entity';
+import { UnitOfMeasurementController } from './controller/unit-of-measurent.controller';
+import { UnitOfMeasurementService } from './service/unit-of-measurement.service';
 
 @Module({
   imports: [
@@ -35,4 +35,4 @@ import { UnitOfMeasurement } from 'src/entities/uom.entity';
     TagController,
   ],
 })
-export class lookUpDataModule {}
+export class lookUpDataModule { }

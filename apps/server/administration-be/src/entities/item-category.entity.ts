@@ -22,8 +22,6 @@ export class ItemCategory extends CommonEntity {
   parentICategory: ItemCategory;
   @OneToMany(() => ItemCategory, (icategory) => icategory.parentICategory)
   childCategories: ItemCategory[];
-  @OneToOne(() => Measurement, (icategory) => icategory.itemCategory)
-  measurement: ItemCategory;
   @OneToMany(() => ItemMaster, (entity) => entity.itemSubcategory)
   itemMasters: ItemMaster[];
 }

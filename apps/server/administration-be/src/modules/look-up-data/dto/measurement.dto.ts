@@ -1,57 +1,21 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
-  IsEnum,
   IsNotEmpty,
-  IsOptional,
   IsUUID,
-  ValidateIf,
 } from 'class-validator';
 import { Measurement } from 'src/entities/measurement.entity';
-export enum MeasurementType {
-  Length = 'length',
-  Time = 'time',
-  Mass = 'Mass',
-  AmountofMatter = 'AmountofMatter',
-  ElectricCurrent = 'ElectricCurrent',
-  Luminosity = 'Luminosity',
-  Temperature = 'Temperature',
-  // Add more measurement types here
-}
 
-export enum LengthUnit {
-  Meter = 'meter',
-  Kilometer = 'kilometer',
-  Centimeter = 'centimeter',
-}
 
-export enum TimeUnit {
-  Second = 'second',
-  Minute = 'minute',
-  Hour = 'hour',
-}
 export class CreateMeasurementDto {
   id: string;
   @ApiProperty()
   @IsNotEmpty()
-  @IsEnum(MeasurementType)
-  name: MeasurementType;
-
-  @ApiProperty({ enum: LengthUnit, required: false })
-  @IsOptional()
-  @ValidateIf((o) => o.name === MeasurementType.Length)
-  unitLength: LengthUnit;
-
-  @ApiProperty({ enum: TimeUnit, required: false })
-  @IsOptional()
-  @ValidateIf((o) => o.name === MeasurementType.Time)
-  unitTime: TimeUnit;
+  name: string;
 
   @ApiProperty()
   @IsNotEmpty()
   shortName: string;
-  @ApiProperty()
-  @IsNotEmpty()
-  code: string;
+
 
   static fromDto(dto: CreateMeasurementDto): Measurement {
     const entity = new Measurement();
@@ -60,7 +24,6 @@ export class CreateMeasurementDto {
     }
     entity.name = dto.name;
     entity.shortName = dto.shortName;
-    entity.code = dto.code;
     return entity;
   }
 
@@ -82,7 +45,6 @@ export class UpdateMeasurementDto extends CreateMeasurementDto {
     entity.id = dto.id;
     entity.name = dto.name;
     entity.shortName = dto.shortName;
-    entity.code = dto.code;
     entity.createdAt = new Date();
     return entity;
   }
@@ -91,9 +53,8 @@ export class MeasurementResponseDto extends UpdateMeasurementDto {
   static fromEntity(entity: Measurement): MeasurementResponseDto {
     const response = new MeasurementResponseDto();
     response.id = entity.id;
-    response.name = MeasurementType[entity.name];
+    response.name = entity.name;
     response.shortName = entity.shortName;
-    response.code = entity.code;
     return response;
   }
 }
