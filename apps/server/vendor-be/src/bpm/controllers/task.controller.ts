@@ -3,7 +3,9 @@ import {
   Controller,
   Delete,
   Get,
+  HttpStatus,
   Param,
+  ParseUUIDPipe,
   Patch,
   Post,
   Put,
@@ -36,9 +38,9 @@ export class TaskController extends EntityCrudController<TaskEntity> {
     console.log(dto);
     return await super.create(dto);
   }
-  @Patch()
+  @Put(':id')
   @ApiOkResponse({ type: TaskResponse })
-  async update(@Param('id') id: string, @Body() dto: UpdateTaskDto) {
+  async update(@Param('id', new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE })) id: string, @Body() dto: UpdateTaskDto) {
     return await super.update(id, dto);
   }
 

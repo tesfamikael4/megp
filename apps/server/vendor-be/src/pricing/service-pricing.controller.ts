@@ -12,8 +12,6 @@ import {
   Put,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-
-import { CollectionQuery } from '@collection-query';
 import {
   CreateServicePriceDto,
   UpdateServicePriceDto,
@@ -32,21 +30,7 @@ export class ServicePricingController extends EntityCrudController<ServicePrice>
   async create(@Body() dto: CreateServicePriceDto) {
     return await super.create(dto);
   }
-  @Get('/:id')
-  async findOne(
-    @Param(
-      'id',
-      new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
-    )
-    id: string,
-  ) {
-    return await super.findOne(id);
-  }
 
-  @Get()
-  async findAll(@Query() query: CollectionQuery) {
-    return await super.findAll(query);
-  }
   @Patch('/:id')
   async update(
     @Param(
@@ -57,17 +41,6 @@ export class ServicePricingController extends EntityCrudController<ServicePrice>
     @Body() updateTRegSettingDto: UpdateServicePriceDto,
   ) {
     return await super.update(id, updateTRegSettingDto);
-  }
-
-  @Delete('/:id')
-  async remove(
-    @Param(
-      'id',
-      new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
-    )
-    id: string,
-  ) {
-    return await super.remove(id);
   }
   @Get('get-service-price-by-service-type/:key')
   async findServicePriceByServiceType(@Param('key') key: string) {
