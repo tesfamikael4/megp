@@ -1,0 +1,28 @@
+.mainWrapper {
+  @apply p-2;
+}
+
+.Review {
+  background: #e6f7ff;
+  border-radius: 3px;
+  border: 1px solid #91d5ff;
+  @apply p-2;
+}
+.Adjust {
+  background-color: #f8ac59 !important;
+}
+.Reject {
+  background-color: #ec4758 !important;
+}
+.Approve {
+  background-color: #3e61a7 !important;
+}
+.buttonWrapper {
+  @apply pt-2  flex gap-3;
+}
+.checkLists {
+  @apply mb-2;
+}
+.filePicker {
+  @apply pt-2 pb-2;
+}
