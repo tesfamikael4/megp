@@ -7,7 +7,7 @@ import AddUserModal from '../_components/add-permission';
 export default function RoleDetailPage() {
   return (
     <Stack>
-      <Section title="Role Detail">
+      <Section title="Role detail">
         <FormDetail mode="detail" />
       </Section>
       <AddUserModal />

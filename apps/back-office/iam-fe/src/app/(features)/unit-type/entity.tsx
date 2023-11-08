@@ -10,7 +10,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
 
   const pathname = usePathname();
 
-  const { data: list } = useListByIdQuery();
+  const { data: list, isLoading } = useListByIdQuery();
 
   useEffect;
   const config: EntityConfig<UnitType> = useMemo(() => {
@@ -19,13 +19,15 @@ export function Entity({ children }: { children: React.ReactNode }) {
       mode: 'list',
       entity: 'unit-type',
       primaryKey: 'id',
-      title: 'unit Type',
+      title: 'Unit type',
       onAdd: () => {
         route.push(`/unit-type/new`);
       },
       onDetail: (selected: UnitType) => {
         route.push(`/unit-type/${selected?.id}`);
       },
+      pagination: true,
+      searchable: true,
 
       onSearch: (search) => {
         // console.log('search', search);
@@ -48,7 +50,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
           accessorKey: 'description',
           cell: (info) => info.getValue(),
           meta: {
-            widget: 'multiline',
+            widget: 'expand',
           },
         },
       ],
@@ -68,6 +70,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
       config={config}
       data={list ? list.items : []}
       detail={children}
+      isLoading={isLoading}
     />
   );
 }

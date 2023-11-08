@@ -8,7 +8,6 @@ import { Permission } from '@/models/permission';
 import { PermissionForm } from './permission-form';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
-import { logger } from '@megp/core-fe';
 
 const AddPermisionModal = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -79,7 +78,6 @@ const AddPermisionModal = () => {
   };
 
   const openEditModal = (id) => {
-    logger.log(id);
     setIsModalOpen(true);
     setUnitId(id);
     setMode('detail');
@@ -95,7 +93,11 @@ const AddPermisionModal = () => {
         openEditModal={openEditModal}
         collapsed={false}
       />
-      <Modal title="Permission" opened={isModalOpen} onClose={handleCloseModal}>
+      <Modal
+        title={mode === 'new' ? 'New permission' : 'Update permission'}
+        opened={isModalOpen}
+        onClose={handleCloseModal}
+      >
         <PermissionForm
           mode={mode}
           handleCloseModal={handleCloseModal}

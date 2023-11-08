@@ -10,14 +10,14 @@ export function Entity({ children }: { children: React.ReactNode }) {
 
   const pathname = usePathname();
 
-  const { data: list } = useListByIdQuery();
+  const { data: list, isLoading } = useListByIdQuery();
 
   useEffect;
   const config: EntityConfig<Role> = useMemo(() => {
     return {
       basePath: '/roles',
       mode: 'list',
-      entity: 'role',
+      entity: 'Role',
       primaryKey: 'id',
       title: 'Roles',
       onAdd: () => {
@@ -30,6 +30,8 @@ export function Entity({ children }: { children: React.ReactNode }) {
       onSearch: (search) => {
         // console.log('search', search);
       },
+      searchable: true,
+      pagination: true,
 
       columns: [
         {
@@ -48,7 +50,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
           accessorKey: 'description',
           cell: (info) => info.getValue(),
           meta: {
-            widget: 'multiline',
+            widget: 'expand',
           },
         },
       ],
@@ -68,6 +70,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
       config={config}
       data={list ? list.items : []}
       detail={children}
+      isLoading={isLoading}
     />
   );
 }

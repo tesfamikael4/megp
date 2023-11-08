@@ -13,6 +13,7 @@ import {
 import { IconInboxOff, IconPlus, IconSearch } from '@tabler/icons-react';
 import { flexRender } from '@tanstack/react-table';
 import type t from '@tanstack/react-table';
+import { logger } from '@megp/core-fe';
 import styles from './grid.module.scss';
 import Widget from './widget';
 
@@ -62,7 +63,7 @@ export function Grid<T>({
           {options.searchable ? (
             <Group justify="end">
               <Input
-                className={mode === 'list' ? 'w-1/4' : 'w-full'}
+                className={mode === 'list' ? 'w-1/4 mb-2' : 'w-full mb-2'}
                 leftSection={<IconSearch size={16} />}
                 placeholder="Search"
                 size="xs"
@@ -73,6 +74,7 @@ export function Grid<T>({
             <thead>
               {table.getHeaderGroups().map((headerGroup) => (
                 <Table.Tr key={headerGroup.id}>
+                  {logger.log(headerGroup.headers)}
                   {headerGroup.headers.map((header) => (
                     <Table.Th
                       colSpan={header.colSpan}
@@ -82,6 +84,8 @@ export function Grid<T>({
                           header.getSize() !== 150
                             ? header.getSize()
                             : `${width}%`,
+                        textAlign:
+                          header.column.id === 'action' ? 'right' : 'left',
                       }}
                     >
                       {header.isPlaceholder
@@ -108,7 +112,7 @@ export function Grid<T>({
             </tbody>
           </Table>
           {options.pagination ? (
-            <Group className="my-4" justify="center">
+            <Group className="my-4" justify="right">
               <Pagination size="sm" total={10} withEdges />
             </Group>
           ) : null}

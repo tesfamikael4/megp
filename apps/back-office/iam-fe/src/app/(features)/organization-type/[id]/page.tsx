@@ -4,7 +4,7 @@ import { FormDetail } from '../_components/form-detail';
 
 export default function OrgTypeDetailPage() {
   return (
-    <Section title="Organization  type Detail">
+    <Section title="Organization  type detail">
       <FormDetail mode="detail" />
     </Section>
   );

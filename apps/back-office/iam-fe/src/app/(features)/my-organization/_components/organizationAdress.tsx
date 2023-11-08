@@ -8,6 +8,7 @@ import {
   TextInput,
   Text,
   LoadingOverlay,
+  Group,
 } from '@mantine/core';
 import { Controller, useForm } from 'react-hook-form';
 import { z, ZodType } from 'zod';
@@ -116,7 +117,7 @@ const OrganizationAdressForm = () => {
   const [create, { isLoading: isSaving }] = useSetAddressMutation();
   const [update, { isLoading: isUpdating }] = useSetAddressMutation();
 
-  const regionOption = ['southern', 'northern', 'central'];
+  const regionOption = ['Southern', 'Northern', 'Central'];
 
   const {
     data: selected,
@@ -212,58 +213,61 @@ const OrganizationAdressForm = () => {
   return (
     <Stack pos={'relative'}>
       <LoadingOverlay visible={isLoading} />
+      <Group grow>
+        <Controller
+          name="region"
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <Select
+              defaultValue="MW"
+              label={'Region'}
+              value={value}
+              onChange={onChange}
+              data={
+                regionOption?.map((item) => ({
+                  label: item,
+                  value: item,
+                })) || []
+              }
+              maxDropdownHeight={400}
+            />
+          )}
+        />
+        <Controller
+          name="district"
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <Select
+              defaultValue="MW"
+              label={'District'}
+              value={value}
+              onChange={onChange}
+              data={selectedDistrict}
+              maxDropdownHeight={400}
+            />
+          )}
+        />
+      </Group>
 
-      <Controller
-        name="region"
-        control={control}
-        render={({ field: { onChange, value } }) => (
-          <Select
-            defaultValue="MW"
-            label={'Region'}
-            value={value}
-            onChange={onChange}
-            data={
-              regionOption?.map((item) => ({
-                label: item,
-                value: item,
-              })) || []
-            }
-            maxDropdownHeight={400}
-          />
-        )}
-      />
-      <Controller
-        name="district"
-        control={control}
-        render={({ field: { onChange, value } }) => (
-          <Select
-            defaultValue="MW"
-            label={'District'}
-            value={value}
-            onChange={onChange}
-            data={selectedDistrict}
-            maxDropdownHeight={400}
-          />
-        )}
-      />
-      <TextInput label="Zone/Subcity" {...register('zoneOrSubCity')} />
+      {/* <TextInput label="Zone/Subcity" {...register('zoneOrSubCity')} /> */}
 
-      <TextInput
+      {/* <TextInput
         label="House number"
         error={errors?.houseNumber ? errors.houseNumber.message : ''}
         {...register('houseNumber')}
-      />
-
-      <TextInput
-        label="Postal code"
-        error={errors?.postalCode ? errors.postalCode?.message : ''}
-        {...register('postalCode')}
-      />
-      <TextInput
-        label="Email"
-        error={errors?.email ? errors.email.message : ''}
-        {...register('email')}
-      />
+      /> */}
+      <Group grow>
+        <TextInput
+          label="Postal code"
+          error={errors?.postalCode ? errors.postalCode?.message : ''}
+          {...register('postalCode')}
+        />
+        <TextInput
+          label="Email"
+          error={errors?.email ? errors.email.message : ''}
+          {...register('email')}
+        />
+      </Group>
 
       <Text fw={500}>Mobile number</Text>
 

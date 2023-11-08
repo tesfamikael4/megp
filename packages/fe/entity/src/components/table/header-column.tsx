@@ -85,7 +85,7 @@ export const remove = (openEditModal, showPopUp) => {
     id: 'action',
     accessorKey: '',
     size: 40,
-    header: '',
+    header: 'Action',
     cell: ({ row, table }) => {
       const meta = table.options.meta;
 
@@ -107,7 +107,7 @@ export const remove = (openEditModal, showPopUp) => {
             <Menu.Dropdown>
               <Menu.Item onClick={removeRow}>
                 {' '}
-                {showPopUp ? 'delete' : 'remove'}
+                {showPopUp ? 'Delete' : 'Remove'}
               </Menu.Item>
               {openEditModal ? (
                 <Menu.Item onClick={enableEdit}>Edit</Menu.Item>

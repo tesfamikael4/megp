@@ -12,7 +12,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
 
   const [data, setData] = useState<Unit[]>([]);
 
-  const { data: list, isSuccess } = useListByIdQuery();
+  const { data: list, isSuccess, isLoading } = useListByIdQuery();
 
   useEffect(() => {
     if (isSuccess) {
@@ -37,6 +37,8 @@ export function Entity({ children }: { children: React.ReactNode }) {
       onDetail: (selected: Unit) => {
         route.push(`/units/${selected?.id}`);
       },
+      pagination: true,
+      searchable: true,
       // selectable: true,
       onSearch: (search) => {
         // console.log('search', search);
@@ -58,7 +60,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
           accessorKey: 'description',
           cell: (info) => info.getValue(),
           meta: {
-            widget: 'multiline',
+            widget: 'expand',
           },
         },
 
@@ -68,7 +70,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
           accessorKey: 'isActive',
           cell: (info) => info.getValue(),
           meta: {
-            widget: 'multiline',
+            widget: 'expand',
           },
         },
       ],
@@ -89,6 +91,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
       data={data}
       detail={children}
       hasTree={true}
+      isLoading={isLoading}
     />
   );
 }

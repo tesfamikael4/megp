@@ -4,7 +4,7 @@ import { FormDetail } from '../_components/form-detail';
 
 export default function UnitTypeDetailPage() {
   return (
-    <Section title="Unit Type Detail">
+    <Section title="Unit type detail">
       <FormDetail mode="detail" />
     </Section>
   );

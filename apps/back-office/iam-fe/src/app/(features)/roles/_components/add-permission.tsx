@@ -27,7 +27,7 @@ const AddUserModal = () => {
   );
 
   const relationConfig: RelationConfig<any> = {
-    title: 'Permission Assignment',
+    title: 'Permission assignment',
     columns: [
       {
         id: 'name',
@@ -61,7 +61,7 @@ const AddUserModal = () => {
     },
   };
   const addConfig: RelationConfig<Mandate> = {
-    title: 'permission',
+    title: 'Permission',
     columns: [
       {
         id: 'name',

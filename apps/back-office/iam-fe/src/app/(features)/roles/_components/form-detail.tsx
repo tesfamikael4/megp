@@ -106,6 +106,7 @@ export function FormDetail({ mode }: FormDetailProps) {
   return (
     <Stack pos={'relative'}>
       <LoadingOverlay visible={isLoading} />
+
       <TextInput
         withAsterisk
         label="Name"
@@ -113,7 +114,6 @@ export function FormDetail({ mode }: FormDetailProps) {
         error={errors?.name ? errors?.name?.message?.toString() : ''}
         required
       />
-
       <Textarea
         label="Description"
         autosize
@@ -123,7 +123,6 @@ export function FormDetail({ mode }: FormDetailProps) {
           errors?.description ? errors?.description?.message?.toString() : ''
         }
       />
-
       <EntityButton
         mode={mode}
         onCreate={handleSubmit(onCreate)}

@@ -10,7 +10,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
 
   const pathname = usePathname();
 
-  const { data: list } = useListQuery();
+  const { data: list, isLoading } = useListQuery();
 
   const config: EntityConfig<OrganizationType> = useMemo(() => {
     return {
@@ -18,14 +18,15 @@ export function Entity({ children }: { children: React.ReactNode }) {
       mode: 'list',
       entity: 'organization-type',
       primaryKey: 'id',
-      title: 'Organization Type',
+      title: 'Organization type',
       onAdd: () => {
         route.push(`/organization-type/new`);
       },
       onDetail: (selected: OrganizationType) => {
         route.push(`/organization-type/${selected?.id}`);
       },
-
+      pagination: true,
+      searchable: true,
       onSearch: (search) => {
         // console.log('search', search);
       },
@@ -47,7 +48,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
           accessorKey: 'description',
           cell: (info) => info.getValue(),
           meta: {
-            widget: 'multiline',
+            widget: 'expand',
           },
         },
       ],
@@ -67,6 +68,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
       config={config}
       data={list ? list.items : []}
       detail={children}
+      isLoading={isLoading}
     />
   );
 }
