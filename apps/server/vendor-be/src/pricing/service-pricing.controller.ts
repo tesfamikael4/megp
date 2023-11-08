@@ -1,10 +1,8 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   Post,
-  Query,
   Param,
   Patch,
   HttpStatus,
@@ -31,7 +29,7 @@ export class ServicePricingController extends EntityCrudController<ServicePrice>
     return await super.create(dto);
   }
 
-  @Patch('/:id')
+  @Patch(':id')
   async update(
     @Param(
       'id',
