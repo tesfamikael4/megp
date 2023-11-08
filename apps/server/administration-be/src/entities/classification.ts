@@ -43,6 +43,9 @@ export class Classification extends CommonEntity {
     (classification) => classification.children,
     { nullable: true },
   )
+  @JoinColumn({ name: 'parentId' })
+  @Column({ nullable: true })
+  parentId: string;
   parent: Classification;
 
   @OneToMany(() => Classification, (classification) => classification.parent)

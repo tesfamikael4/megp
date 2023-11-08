@@ -18,9 +18,10 @@ export class UnitOfMeasurement extends CommonEntity {
   @Column()
   shortName: string;
   @Column()
-  code: string;
-  @Column()
   measurementId: string;
+  //only temporarly nullable set
+  @Column({ nullable: true })
+  measurementName: string;
   @ManyToOne(() => Measurement, (uom1) => uom1.uoms)
   @JoinColumn({ name: 'measurementId' })
   measurement: Measurement;
