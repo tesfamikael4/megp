@@ -24,7 +24,7 @@ const roboto_mono = Roboto_Mono({
   display: 'swap',
   variable: '--font-roboto-mono',
 });
-import '@megp/theme/theme.scss';
+
 export default function RootLayout({
   children,
 }: {

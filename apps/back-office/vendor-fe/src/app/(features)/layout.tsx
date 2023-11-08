@@ -1,6 +1,5 @@
 import { Shell } from '@megp/core-fe';
 
-import '@megp/theme/theme.scss';
 import { Metadata } from 'next';
 import React from 'react';
 import { ShellProvider } from './shell';
