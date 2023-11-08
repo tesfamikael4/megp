@@ -66,7 +66,7 @@ export class WorkflowInstanceService {
     private readonly receiptRepository: Repository<PaymentReceiptEntity>,
     private readonly bpService: BusinessProcessService,
     private readonly commonService: HandlingCommonService,
-  ) { }
+  ) {}
 
   async submitFormBasedTask(
     nextCommand: GotoNextStateDto,
@@ -387,10 +387,6 @@ export class WorkflowInstanceService {
           workflowInstance.status = WorkflowInstanceEnum.Completed;
           workflowInstance.businessStatus = BusinessStatusEnum.active;
           //update vendor status approved
-          const vendor = await this.vendorRepository.findOne({
-            where: { id: workflowInstance.requestorId },
-          });
-          vendor.status = WorkflowInstanceEnum.Approved;
           const vendor = await this.vendorRepository.findOne({
             where: { id: workflowInstance.requestorId },
           });
