@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { Box, ThemeIcon, NavLink } from '@mantine/core';
+import { Box, NavLink } from '@mantine/core';
 import { usePathname, useRouter } from 'next/navigation'; // Updated import
 import {
   IconBriefcase,
@@ -9,6 +9,7 @@ import {
   IconHeartHandshake,
   IconNotification,
 } from '@tabler/icons-react';
+import styles from './sidebar.module.scss';
 export interface SidebarLinks {
   label: string;
   icon?: any;
@@ -72,17 +73,11 @@ function createNavLinks(
   return links?.map((link) => (
     <NavLink
       label={link.label}
-      leftSection={
-        link.icon && (
-          <ThemeIcon variant="light">
-            <link.icon size="1.3rem" stroke={1.5} />
-          </ThemeIcon>
-        )
-      }
-      childrenOffset={28}
+      leftSection={link.icon && <link.icon size="1.2rem" stroke={1.5} />}
       key={link.label}
       active={currentPath === link.link}
       onClick={() => link.link && router.push(link.link)}
+      className={!link.icon ? styles.sidebarChildren : ''}
     >
       {createNavLinks(link.links, currentPath, router)}
     </NavLink>
@@ -92,7 +87,11 @@ function Sidebar() {
   const router = useRouter();
   const path = usePathname();
 
-  return <Box>{createNavLinks(sidebarLinks, path, router)}</Box>;
+  return (
+    <Box className={styles.sidebarMain}>
+      {createNavLinks(sidebarLinks, path, router)}
+    </Box>
+  );
 }
 
 export default Sidebar;

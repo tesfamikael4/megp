@@ -48,10 +48,15 @@ export const formDataSchema = z.object({
 
 export const AreasOfBusinessInterestForm = ({
   initialValues,
-  vendorId,
+  vendorInfo,
 }: {
   initialValues: FormData;
-  vendorId: string;
+  vendorInfo: {
+    id: string;
+    userId: string; //session
+    status: string;
+    level: string;
+  };
 }) => {
   const {
     handleSubmit,
@@ -78,7 +83,10 @@ export const AreasOfBusinessInterestForm = ({
     save({
       data: {
         ...getValues(),
-        level: 'payment',
+        initial: {
+          ...vendorInfo,
+          level: 'detail',
+        },
       },
     });
   };
@@ -139,6 +147,7 @@ export const AreasOfBusinessInterestForm = ({
       error: fieldState.error?.message,
     };
   };
+  console.log(formState.errors);
   return (
     <Box className="p-2 w-full relative">
       <LoadingOverlay
@@ -154,7 +163,7 @@ export const AreasOfBusinessInterestForm = ({
           />
         </Flex>
         <Flex className="mt-10 justify-end gap-2">
-          <Button>Submit</Button>
+          <Button type="submit">Submit</Button>
         </Flex>
       </form>
     </Box>

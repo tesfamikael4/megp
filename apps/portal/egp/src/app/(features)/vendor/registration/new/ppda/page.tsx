@@ -9,17 +9,15 @@ import { getCookie } from 'cookies-next';
 import { AreasOfBusinessInterestForm } from '../_components/ppda/formShell';
 
 function Page() {
-  const vendorId = getCookie('vendorId') || ' ';
   const router = useRouter();
-  const requestInfo = useGetFormQuery({
-    vendorId,
-  });
+  const requestInfo = useGetFormQuery({});
+
   useEffect(() => {
     if (requestInfo.isError) {
       NotificationService.requestErrorNotification('Error on fetching data');
       router.push(`basic`);
     }
-    if (requestInfo.data?.status === 'Submitted') {
+    if (requestInfo.data?.initial.status === 'Submitted') {
       router.push(`/vendor/track-applications`);
     }
     return () => {};
@@ -33,7 +31,7 @@ function Page() {
       />
       {requestInfo.data && requestInfo.isSuccess ? (
         <AreasOfBusinessInterestForm
-          vendorId={vendorId}
+          vendorInfo={requestInfo.data.initial}
           initialValues={{
             ...requestInfo.data,
           }}

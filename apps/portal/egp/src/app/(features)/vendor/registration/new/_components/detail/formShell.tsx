@@ -63,10 +63,15 @@ function getFieldsHolderError(input: any, keyToCheck: string) {
 
 const RegistrationForm = ({
   initialValues,
-  vendorId,
+  vendorInfo,
 }: {
   initialValues: FormData;
-  vendorId: string;
+  vendorInfo: {
+    id: string;
+    userId: string; //session
+    status: string;
+    level: string;
+  };
 }) => {
   const {
     control,
@@ -97,15 +102,15 @@ const RegistrationForm = ({
   }, []);
 
   useEffect(() => {
-    if (getMBRSDataValues.isSuccess) {
+    if (getMBRSDataValues.data) {
       setValue('basic.name', getMBRSDataValues.data.businessName);
       setValue('basic.country', getMBRSDataValues.data.nationality);
-      setValue('basic.businessType', getMBRSDataValues.data.legalStatus);
+      // setValue('basic.businessType', getMBRSDataValues.data.legalStatus);
     }
 
     return () => {};
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [getMBRSDataValues.data, getMBRSDataValues.isSuccess]);
+  }, [getMBRSDataValues.data]);
   const router = useRouter();
 
   const extendedRegister = (
@@ -117,6 +122,7 @@ const RegistrationForm = ({
     return {
       ...fieldRegister,
       ...(type === 'select' ? { value: getValues(name) } : {}),
+
       onBlur: async (event: {
         target: any;
         type?: any;
@@ -142,10 +148,12 @@ const RegistrationForm = ({
   const onSubmit = (data: FormData) => {
     submitTrigger({
       data: {
-        ...data,
-        areasOfBusinessInterest: [],
-        status: 'Save',
-        level: 'pdda',
+        ...getValues(),
+        initial: {
+          ...vendorInfo,
+          status: 'Save',
+          level: 'ppda',
+        },
       },
     });
   };
@@ -153,8 +161,11 @@ const RegistrationForm = ({
     saveAsDraftTrigger({
       data: {
         ...getValues(),
-        status: 'Save as Draft',
-        level: 'detail',
+        initial: {
+          ...vendorInfo,
+          status: 'Save as Draft',
+          level: 'detail',
+        },
       },
     });
   };
@@ -162,22 +173,18 @@ const RegistrationForm = ({
   useEffect(() => {
     if (submitRequestInfo.isSuccess && submitRequestInfo.data) {
       NotificationService.successNotification('Form Submitted Successfully!');
-      setCookie('vendorId', vendorId);
-      router.push(`pdda`);
-    }
-    if (saveAsDraftRequestInfo.isSuccess && saveAsDraftRequestInfo.data) {
-      NotificationService.successNotification('Form Saved Successfully!');
-      setCookie('vendorId', vendorId);
+      router.push(`ppda`);
     }
     return () => {};
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    submitRequestInfo.data,
-    submitRequestInfo.isSuccess,
-    saveAsDraftRequestInfo.data,
-    saveAsDraftRequestInfo.isSuccess,
-    vendorId,
-  ]);
+  }, [submitRequestInfo.data, submitRequestInfo.isSuccess]);
+
+  useEffect(() => {
+    if (saveAsDraftRequestInfo.isSuccess && saveAsDraftRequestInfo.data) {
+      NotificationService.successNotification('Save as draft Successfully!');
+    }
+    return () => {};
+  }, [saveAsDraftRequestInfo.data, saveAsDraftRequestInfo.isSuccess]);
 
   return (
     <Flex className="flex-col w-full relative">

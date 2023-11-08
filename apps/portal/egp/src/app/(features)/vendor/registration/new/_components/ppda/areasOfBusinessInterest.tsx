@@ -49,7 +49,9 @@ export const AreasOfBusinessInterest: React.FC<Props> = ({
   register,
 }) => {
   const getLineOfBusinessValues = useGetLineOfBusinessQuery({});
-  const getPriceRangeValues = useGetPriceRangeQuery({});
+  const getPriceRangeValues = useGetPriceRangeQuery({
+    type: 'new',
+  });
   const [getFPPAData, getFPPADataValues] = useLazyGetFPPADataQuery({});
   const [getNCICData, getNCICDataValues] = useLazyGetNCICDataQuery({});
 
@@ -211,8 +213,8 @@ export const AreasOfBusinessInterest: React.FC<Props> = ({
               data={transformCategoryPriceRange(
                 getPriceRangeValues.isSuccess &&
                   getPriceRangeValues.data &&
-                  getPriceRangeValues.data.items.length
-                  ? getPriceRangeValues.data.items
+                  getPriceRangeValues.data.length
+                  ? getPriceRangeValues.data
                   : [],
                 field.category,
               )}

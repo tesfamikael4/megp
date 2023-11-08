@@ -15,27 +15,26 @@ export const BasicInfo: React.FC<PassFormDataProps> = ({ register }) => {
         <Select
           required
           label="Form of Business"
-          searchable
           data={[
             {
               label: 'Sole Proprietorship',
-              value: 'Sole Proprietorship',
+              value: 'soleProprietorship',
             },
             {
               label: 'Partnership',
-              value: 'Partnership',
+              value: 'partnership',
             },
             {
               label: 'Private Limited Company',
-              value: 'Private Limited Company',
+              value: 'privateLimitedCompany',
             },
             {
-              label: 'Share Company',
-              value: 'Share Company',
+              label: 'ShareCompany',
+              value: 'shareCompany',
             },
             {
               label: 'Government-Owned Enterprise',
-              value: 'Government-Owned Enterprise',
+              value: 'governmentOwnedEnterprise',
             },
           ]}
           {...register('basic.businessType', 'select')}

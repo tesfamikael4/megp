@@ -84,10 +84,10 @@ export const vendorInformationData = {
     {
       accountHolderFullName: 'Acme Corporation',
       accountNumber: '1234567890',
-      bankBranchAddress: '123 Bank Street',
+      branchAddress: '123 Bank Street',
       currency: 'USD',
-      bankSWIFT_BICCode: 'SWIFT123',
-      iBAN: 'US1234567890',
+      bankSwift: 'SWIFT123',
+      IBAN: 'US1234567890',
       status: 'Active',
       bankId: 'e716e6ca-a117-4c3d-9ae7-38c6ca52d27b',
       bankName: 'First National Bank',

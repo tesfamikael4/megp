@@ -5,20 +5,16 @@ import { useRouter } from 'next/navigation';
 import { NotificationService } from '../../../_components/notification';
 import { useGetFormQuery } from '../_api/query';
 import RegistrationForm from '../_components/detail/formShell';
-import { getCookie } from 'cookies-next';
 
 export default function Page() {
-  const vendorId = getCookie('vendorId') || ' ';
   const router = useRouter();
-  const requestInfo = useGetFormQuery({
-    vendorId,
-  });
+  const requestInfo = useGetFormQuery({});
   useEffect(() => {
     if (requestInfo.error) {
       NotificationService.requestErrorNotification('Error on fetching data');
       router.push(`basic`);
     }
-    if (requestInfo.data?.status === 'Submitted') {
+    if (requestInfo.data?.initial.status === 'Submitted') {
       router.push(`/vendor/track-applications`);
     }
     return () => {};
@@ -32,7 +28,7 @@ export default function Page() {
       />
       {requestInfo.data && requestInfo.isSuccess ? (
         <RegistrationForm
-          vendorId={vendorId}
+          vendorInfo={requestInfo.data.initial}
           initialValues={{
             ...requestInfo.data,
           }}

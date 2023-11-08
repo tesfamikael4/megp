@@ -1,90 +1,4 @@
 import { InvoiceData } from './vendorInvoice';
-
-export interface BankNamesResponse {
-  id: string;
-  bankName: string;
-  metaData: Record<string, any>; // You can use Record<string, any> for an empty object
-}
-export interface LineOfBusinessResponse {
-  total: number;
-  items: {
-    id: string;
-    code: string;
-    description: string;
-    businessArea: string;
-    createdAt: string;
-  }[];
-}
-export interface PriceRangeResponse {
-  total: number;
-  items: {
-    id: string;
-    serviceId: string;
-    businessArea: string;
-    valueFrom: string;
-    valueTo: string;
-    currency: string;
-    fee: string;
-    service: {
-      id: string;
-      key: string;
-      name: string;
-      isActive: boolean;
-    };
-  }[];
-}
-export interface GetFormRequest {
-  vendorId: string;
-}
-export interface GetFormResponse extends FormData {
-  id: string;
-  userId: string;
-  status: string;
-}
-
-export interface CreateVendorIdRequest {
-  status?: string;
-  name: string;
-  businessType: string;
-  origin: string;
-  country: string;
-  district: string;
-  tinNumber: string;
-  tinIssuedDate: string;
-}
-export interface CreateVendorIdResponse {
-  vendorId: string;
-}
-export interface GetMBRSDataResponse {
-  tin: string;
-  businessLicenseNumber: string;
-  nationality: string;
-  legalStatus: string;
-  businessName: string;
-  dateRegistered: string;
-  organizationName: string;
-  firstName: string;
-  middleName: string;
-  lastName: string;
-}
-
-export interface GetFPPADataResponse {
-  id: string;
-  tin: string;
-  supplierCode: string;
-  supplierName: string;
-  businessType: string;
-  accountNo: string;
-  accountName: string;
-  mobileNumber: string;
-}
-
-export interface GetNCICDataResponse {
-  id: string;
-  tin: string;
-  level: string;
-  serviceType: string;
-}
 export interface FormData {
   basic: {
     name: string;
@@ -106,15 +20,17 @@ export interface FormData {
   bankAccountDetails: {
     accountHolderFullName: string;
     accountNumber: number;
-    bankBranchAddress: string;
+    branchAddress: string;
     currency: string;
-    bankSWIFT_BICCode: string;
-    iBAN: string;
+    bankSwift: string;
+    IBAN: string;
     status: string;
     bankId: string;
     bankName: string;
     hashValue: string;
     branchName: string;
+    accountType: '';
+    isDefualt: boolean;
   }[];
   contactPersons: {
     firstName: string;
@@ -148,12 +64,12 @@ export interface FormData {
   areasOfBusinessInterest: AreasOfBusinessInterestType[] | [];
   invoice: InvoiceData[] | [];
   supportingDocuments: {
-    businessRegistration_IncorporationCertificate: File | string | null;
-    mRA_TPINCertificate: File | string | null;
-    generalReceipt_BankDepositSlip: File | string | null;
-    mRATaxClearanceCertificate: File | string | null;
-    previousPPDARegistrationCertificate: File | string | null;
-    mSMECertificate: File | string | null;
+    businessRegistration_IncorporationCertificate: string;
+    mRA_TPINCertificate: string;
+    generalReceipt_BankDepositSlip: string;
+    mRATaxClearanceCertificate: string;
+    previousPPDARegistrationCertificate: string;
+    mSMECertificate: string;
   };
 }
 
@@ -164,4 +80,105 @@ export interface AreasOfBusinessInterestType {
     name: string;
   }[];
   priceRange: string;
+}
+
+export interface AddFormRequestData extends FormData {
+  initial: {
+    id: string;
+    userId: string; //session
+    status: string;
+    level: string;
+  };
+}
+
+export interface AddFormRequest {
+  data: AddFormRequestData | GetFormResponse;
+}
+
+export interface GetFormRequest {
+  vendorId: string;
+}
+
+export interface GetFormResponse extends FormData {
+  initial: {
+    id: string;
+    userId: string; //session
+    status: string;
+    level: string;
+  };
+}
+
+export interface CreateVendorIdRequest {
+  status?: string;
+  name: string;
+  businessType: string;
+  origin: string;
+  country: string;
+  district: string;
+  tinNumber: string;
+  tinIssuedDate: string;
+}
+export interface CreateVendorIdResponse {
+  vendorId: string;
+}
+
+export interface BankNamesResponse {
+  id: string;
+  bankName: string;
+  metaData: Record<string, any>; // You can use Record<string, any> for an empty object
+}
+export interface LineOfBusinessResponse {
+  total: number;
+  items: {
+    id: string;
+    code: string;
+    description: string;
+    businessArea: string;
+    createdAt: string;
+  }[];
+}
+export interface PriceRangeResponse {
+  id: string;
+  serviceId: string;
+  businessArea: string;
+  valueFrom: string;
+  valueTo: string;
+  currency: string;
+  fee: string;
+  service: {
+    id: string;
+    key: string;
+    name: string;
+    isActive: boolean;
+  };
+}
+export interface GetMBRSDataResponse {
+  tin: string;
+  businessLicenseNumber: string;
+  nationality: string;
+  legalStatus: string;
+  businessName: string;
+  dateRegistered: string;
+  organizationName: string;
+  firstName: string;
+  middleName: string;
+  lastName: string;
+}
+
+export interface GetFPPADataResponse {
+  id: string;
+  tin: string;
+  supplierCode: string;
+  supplierName: string;
+  businessType: string;
+  accountNo: string;
+  accountName: string;
+  mobileNumber: string;
+}
+
+export interface GetNCICDataResponse {
+  id: string;
+  tin: string;
+  level: string;
+  serviceType: string;
 }
