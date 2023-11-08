@@ -9,10 +9,8 @@ import { NotificationService } from '../../../_components/notification';
 
 function Page() {
   const router = useRouter();
-  const vendorId = getCookie('vendorId') || ' ';
-  const requestInfo = useGetFormQuery({
-    vendorId,
-  });
+  const requestInfo = useGetFormQuery({});
+  console.log(requestInfo.data?.supportingDocuments);
   const [save, saveValues] = useAddFormMutation();
   useEffect(() => {
     if (requestInfo.isError) {
@@ -33,45 +31,97 @@ function Page() {
     }
     return () => {};
   }, [saveValues.isSuccess, saveValues.isError, router]);
+
   const onSave = () => {
-    save({
-      data: {
-        ...requestInfo.data,
-        level: 'review',
-      },
-    });
+    if (requestInfo.data) {
+      save({
+        data: {
+          ...requestInfo.data,
+          initial: {
+            ...requestInfo.data.initial,
+            level: 'review',
+          },
+        },
+      });
+    }
   };
+
   return (
     <Flex className="w-full flex-col gap-2">
       <UppyAttachmentDashboard
-        tusServerUrl="http://localhost:3000/api/upload/files/"
+        tusServerGetUrl="http://localhost:3000/api/upload/"
+        tusServerPostUrl="http://localhost:3000/api/upload/files/"
         id="businessRegistration_IncorporationCertificate"
         label="Business Registration/Incorporation Certificate"
         placeholder="Upload"
+        metaData={{
+          entityName: 'vendor',
+          fieldName: 'businessRegistration_IncorporationCertificate',
+          instanceId: requestInfo.data?.initial.id,
+        }}
+        storeId={
+          requestInfo.data?.supportingDocuments
+            .businessRegistration_IncorporationCertificate
+        }
       />
       <UppyAttachmentDashboard
-        tusServerUrl="http://localhost:3000/api/upload/files/"
+        tusServerGetUrl="http://localhost:3000/api/upload/"
+        tusServerPostUrl="http://localhost:3000/api/upload/files/"
         id="mRA_TPINCertificate"
         label="MRA TPIN Certificate"
         placeholder="Upload"
+        metaData={{
+          entityName: 'vendor',
+          fieldName: 'mRA_TPINCertificate',
+          instanceId: requestInfo.data?.initial.id,
+        }}
+        storeId={requestInfo.data?.supportingDocuments.mRA_TPINCertificate}
       />
       <UppyAttachmentDashboard
-        tusServerUrl="http://localhost:3000/api/upload/files/"
+        tusServerGetUrl="http://localhost:3000/api/upload/"
+        tusServerPostUrl="http://localhost:3000/api/upload/files/"
         id="generalReceipt_BankDepositSlip"
         label="General Receipt/Bank Deposit Slip"
         placeholder="Upload"
+        metaData={{
+          entityName: 'vendor',
+          fieldName: 'generalReceipt_BankDepositSlip',
+          instanceId: requestInfo.data?.initial.id,
+        }}
+        storeId={
+          requestInfo.data?.supportingDocuments.generalReceipt_BankDepositSlip
+        }
       />
       <UppyAttachmentDashboard
-        tusServerUrl="http://localhost:3000/api/upload/files/"
+        tusServerGetUrl="http://localhost:3000/api/upload/"
+        tusServerPostUrl="http://localhost:3000/api/upload/files/"
         id="mRATaxClearanceCertificate"
         label="MRA Tax Clearance Certificate"
         placeholder="Upload"
+        metaData={{
+          entityName: 'vendor',
+          fieldName: 'mRATaxClearanceCertificate',
+          instanceId: requestInfo.data?.initial.id,
+        }}
+        storeId={
+          requestInfo.data?.supportingDocuments.mRATaxClearanceCertificate
+        }
       />
       <UppyAttachmentDashboard
-        tusServerUrl="http://localhost:3000/api/upload/files/"
+        tusServerGetUrl="http://localhost:3000/api/upload/"
+        tusServerPostUrl="http://localhost:3000/api/upload/files/"
         id="previousPPDARegistrationCertificate"
         label="Previous PPDA Registration Certificate"
         placeholder="Upload"
+        metaData={{
+          entityName: 'vendor',
+          fieldName: 'previousPPDARegistrationCertificate',
+          instanceId: requestInfo.data?.initial.id,
+        }}
+        storeId={
+          requestInfo.data?.supportingDocuments
+            .previousPPDARegistrationCertificate
+        }
       />
       <Flex justify="end" className="gap-2 mt-4">
         <Button onClick={onSave}>Save</Button>

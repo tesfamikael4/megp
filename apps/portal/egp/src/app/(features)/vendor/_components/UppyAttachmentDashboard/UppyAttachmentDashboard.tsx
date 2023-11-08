@@ -14,20 +14,27 @@ import '@uppy/webcam/dist/style.min.css';
 import styles from './uppyDashboard.module.scss';
 
 interface UppyDashboardProps {
-  tusServerUrl: string;
+  tusServerPostUrl: string;
+  tusServerGetUrl: string;
   id: string;
   label: string;
   placeholder: string;
+  metaData: any;
+  storeId: string | undefined;
 }
 
 const UppyAttachmentDashboard: React.FC<UppyDashboardProps> = ({
-  tusServerUrl,
   id,
   label,
   placeholder = 'Upload',
+  metaData,
+  storeId,
+  tusServerPostUrl,
+  tusServerGetUrl,
 }) => {
   const previews = (file: File) => {
     const imageUrl = URL.createObjectURL(file);
+
     return (
       <Image
         maw={50}
@@ -51,20 +58,21 @@ const UppyAttachmentDashboard: React.FC<UppyDashboardProps> = ({
     })
       .use(Webcam)
       .use(Tus, {
-        endpoint: tusServerUrl,
+        endpoint: tusServerPostUrl,
       });
 
     newUppy.on('upload-success', (file: any) => {
       newUppy.setState(file);
     });
 
+    newUppy.setMeta(metaData);
+
     setUppy(newUppy);
 
     return () => {
       newUppy.close();
     };
-  }, [tusServerUrl]);
-
+  }, [tusServerPostUrl]);
   return (
     <>
       {uppy && (
@@ -91,6 +99,14 @@ const UppyAttachmentDashboard: React.FC<UppyDashboardProps> = ({
                 <Flex className={styles.cardImage}>
                   {previews(uppy.getState().data)}
                 </Flex>
+              )}
+              {storeId && (
+                <Image
+                  maw={50}
+                  src={`${tusServerGetUrl}${storeId}`}
+                  radius="md"
+                  alt=""
+                />
               )}
               <Flex
                 className={styles.cardAdd}

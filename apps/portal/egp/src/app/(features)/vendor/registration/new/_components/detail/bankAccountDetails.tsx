@@ -57,14 +57,16 @@ export const BankAccountDetails: React.FC<Props> = ({
         initialValues={{
           accountHolderFullName: '',
           accountNumber: '',
-          bankBranchAddress: '',
+          branchAddress: '',
           currency: '',
-          bankSWIFT_BICCode: '',
-          iBAN: '',
+          bankSwift: '',
+          IBAN: '',
           status: '',
           bankId: '',
           bankName: '',
           hashValue: '',
+          accountType: '',
+          isDefualt: true,
         }}
         itemSchema={itemSchema}
         modalBody={(getInputProps) => (
@@ -109,7 +111,7 @@ export const BankAccountDetails: React.FC<Props> = ({
               <Group grow>
                 <Textarea
                   label="Bank Branch Address"
-                  {...getInputProps('bankBranchAddress')}
+                  {...getInputProps('branchAddress')}
                 />
                 <Select
                   label="Currency"
@@ -122,10 +124,10 @@ export const BankAccountDetails: React.FC<Props> = ({
               <Group grow>
                 <TextInput
                   label="Bank SWIFT/BIC code"
-                  {...getInputProps('bankSWIFT_BICCode')}
+                  {...getInputProps('bankSwift')}
                 />
 
-                <TextInput label="IBAN" {...getInputProps('iBAN')} />
+                <TextInput label="IBAN" {...getInputProps('IBAN')} />
               </Group>
               <Group grow>
                 <Select
@@ -166,7 +168,7 @@ export const BankAccountDetails: React.FC<Props> = ({
                       AccountNumber: {value.accountNumber}
                     </Text>
                     <Text fz="xs" truncate>
-                      Bank Branch Address: {value.bankBranchAddress}
+                      Bank Branch Address: {value.branchAddress}
                     </Text>
                   </Stack>
                 </SingleCardWrapper>

@@ -30,15 +30,15 @@ export const bankAccountSchema = z.object({
     .string()
     .min(4, { message: 'Account Number must be at least 4 digits' })
     .max(9999999999, { message: 'Account Number cannot exceed 10 digits' }),
-  bankBranchAddress: z.string(),
+  branchAddress: z.string().optional(),
   currency: z.string().min(3, { message: 'Currency must be a 3-letter code' }),
-  bankSWIFT_BICCode: z
+  bankSwift: z
     .string()
-    .min(8, { message: 'SWIFT/BIC Code must be at least 8 characters long' })
+    .min(1, { message: 'SWIFT/BIC Code must be at least 8 characters long' })
     .max(11, { message: 'SWIFT/BIC Code cannot exceed 11 characters' }),
-  iBAN: z
+  IBAN: z
     .string()
-    .min(8, { message: 'IBAN must be at least 8 characters long' })
+    .min(1, { message: 'IBAN must be at least 8 characters long' })
     .max(34, { message: 'IBAN cannot exceed 34 characters' }),
   bankId: z.string(),
   hashValue: z.string(),
@@ -79,42 +79,27 @@ export const formDataSchema = z.object({
       .string()
       .min(2, { message: 'Name must be at least 2 characters long' })
       .max(100, { message: 'Name cannot exceed 100 characters' }),
-    businessType: z
-      .string()
-      .min(2, { message: 'Form of business is required' }),
+    businessType: z.string().optional(),
     origin: z.string(),
     district: z.string(),
     country: z.string(),
     tinNumber: z.string(),
   }),
   address: z.object({
-    postalAddress: z
-      .string()
-      .min(5, { message: 'Postal Address must be at least 5 characters long' })
-      .max(150, { message: 'Postal Address cannot exceed 150 characters' }),
+    postalAddress: z.string().optional(),
     primaryEmail: z
       .string()
       .email({ message: 'Primary Email must be a valid email address' }),
-    alternateEmail: z
-      .string()
-      .email({ message: 'Alternate Email must be a valid email address' }),
+    alternateEmail: z.string().optional(),
     mobilePhone: z
       .string()
       .min(10, {
         message: 'Mobile Phone number must be at least 10 characters long',
       })
       .max(15, { message: 'Mobile Phone number cannot exceed 15 characters' }),
-    telephone: z
-      .string()
-      .min(10, {
-        message: 'Telephone number must be at least 10 characters long',
-      })
-      .max(15, { message: 'Telephone number cannot exceed 15 characters' }),
-    fax: z
-      .string()
-      .min(6, { message: 'Fax number must be at least 10 characters long' })
-      .max(8, { message: 'Fax number cannot exceed 15 characters' }),
-    website: z.string().url({ message: 'Website must be a valid URL' }),
+    telephone: z.string().optional(),
+    fax: z.string().optional(),
+    website: z.string().optional(),
   }),
   businessSizeAndOwnership: z.object({
     registeredCapital: z.object({

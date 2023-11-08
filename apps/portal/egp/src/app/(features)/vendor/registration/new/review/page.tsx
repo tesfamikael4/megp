@@ -1,7 +1,6 @@
 'use client';
 import React, { useEffect } from 'react';
 import FormPreview from '../_components/review/form-preview';
-import { getCookie } from 'cookies-next';
 import { useAddFormMutation, useGetFormQuery } from '../_api/query';
 import { Button, Flex, LoadingOverlay, Stack } from '@mantine/core';
 import { NotificationService } from '../../../_components/notification';
@@ -9,10 +8,7 @@ import { useRouter } from 'next/navigation';
 
 function Page() {
   const router = useRouter();
-  const vendorId = getCookie('vendorId') || '';
-  const requestInfo = useGetFormQuery({
-    vendorId,
-  });
+  const requestInfo = useGetFormQuery({});
   const [save, saveValues] = useAddFormMutation();
 
   useEffect(() => {
@@ -35,13 +31,18 @@ function Page() {
     return () => {};
   }, [saveValues.isSuccess, saveValues.isError, router]);
   const onSubmit = () => {
-    save({
-      data: {
-        ...requestInfo.data,
-        level: 'Submitted',
-        status: 'Submit',
-      },
-    });
+    if (requestInfo.data) {
+      save({
+        data: {
+          ...requestInfo.data,
+          initial: {
+            ...requestInfo.data.initial,
+            level: 'Submit',
+            status: 'Submit',
+          },
+        },
+      });
+    }
   };
   return (
     <Stack className=" w-full relative">

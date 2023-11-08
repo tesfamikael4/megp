@@ -18,10 +18,8 @@ import UppyAttachmentDashboard from '../../../_components/UppyAttachmentDashboar
 
 function Page() {
   const router = useRouter();
-  const vendorId = getCookie('vendorId') || ' ';
-  const requestInfo = useGetFormQuery({
-    vendorId,
-  });
+  const requestInfo = useGetFormQuery({});
+
   const [save, saveValues] = useAddFormMutation();
   useEffect(() => {
     if (requestInfo.isError) {
@@ -42,13 +40,19 @@ function Page() {
     }
     return () => {};
   }, [saveValues.isSuccess, saveValues.isError, router]);
+
   const onSave = () => {
-    save({
-      data: {
-        ...requestInfo.data,
-        level: 'doc',
-      },
-    });
+    if (requestInfo.data) {
+      save({
+        data: {
+          ...requestInfo.data,
+          initial: {
+            ...requestInfo.data.initial,
+            level: 'doc',
+          },
+        },
+      });
+    }
   };
   return (
     <Flex className="flex-col w-full relative items-center justify-center">
@@ -66,10 +70,20 @@ function Page() {
             <TextInput label="Transaction Number" />
 
             <UppyAttachmentDashboard
-              tusServerUrl="http://localhost:3000/api/upload/files/"
+              tusServerGetUrl="http://localhost:3000/api/upload/"
+              tusServerPostUrl="http://localhost:3000/api/upload/files/"
               id="paymentSlip"
               label="Payment Slip"
               placeholder="Upload"
+              metaData={{
+                entityName: 'PaymentReceiptEntity',
+                fieldName: 'paymentSlip',
+                instanceId: requestInfo.data?.initial.id,
+              }}
+              storeId={
+                requestInfo.data?.supportingDocuments
+                  .businessRegistration_IncorporationCertificate
+              }
             />
           </Stack>
           <Flex justify="end" className="gap-2 mt-4">

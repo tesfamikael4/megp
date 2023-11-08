@@ -9,6 +9,7 @@ import {
   GetNCICDataResponse,
   GetFPPADataResponse,
   GetMBRSDataResponse,
+  AddFormRequest,
 } from '@/models/vendorRegistration';
 import {
   vendorDataGetawayApi,
@@ -17,9 +18,9 @@ import {
 
 export const vendorRegistrationQuery = vendorRegistrationApi.injectEndpoints({
   endpoints: (builder) => ({
-    getForm: builder.query<GetFormResponse, GetFormRequest>({
-      query: (data) =>
-        `/api/vendor-registrations/get-vendor-by-vendorId/${data.vendorId}`,
+    getForm: builder.query<GetFormResponse, any>({
+      query: () =>
+        `/api/vendor-registrations/get-vendor-by-vendorId/4871de63-b1fa-48da-bdaf-955412a5e989`,
     }),
     createVendorId: builder.mutation<
       CreateVendorIdResponse,
@@ -31,7 +32,7 @@ export const vendorRegistrationQuery = vendorRegistrationApi.injectEndpoints({
         body: data,
       }),
     }),
-    addForm: builder.mutation<any, Partial<any>>({
+    addForm: builder.mutation<any, AddFormRequest>({
       query: (newany) => ({
         url: '/api/vendor-registrations/add-vendor-information',
         method: 'POST',
@@ -61,9 +62,9 @@ export const vendorRegistrationQuery = vendorRegistrationApi.injectEndpoints({
       }),
     }),
 
-    getPriceRange: builder.query<PriceRangeResponse, any>({
-      query: () => ({
-        url: `api/Service-pricing`,
+    getPriceRange: builder.query<PriceRangeResponse[], { type: string }>({
+      query: (data) => ({
+        url: `api/Service-pricing/get-service-price-by-service-type/${data.type}`,
         method: 'GET',
       }),
     }),

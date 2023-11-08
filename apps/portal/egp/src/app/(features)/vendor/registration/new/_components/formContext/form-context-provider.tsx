@@ -26,12 +26,7 @@ const VendorFormContext = createContext<{
   };
   fetchVendorData: (tin: string, issuedDate: string) => void;
 }>({
-  state: {
-    mra: null,
-    mbrs: null,
-    fppa: null,
-    ncic: null,
-  },
+  state: { mra: null, mbrs: null, fppa: null, ncic: null },
   fetchVendorData: (tin, issuedDate) => {},
 });
 
