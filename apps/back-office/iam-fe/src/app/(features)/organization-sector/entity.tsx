@@ -26,6 +26,8 @@ export function Entity({ children }: { children: React.ReactNode }) {
       onDetail: (selected: OrganizationSector) => {
         route.push(`/organization-sector/${selected?.id}`);
       },
+      pagination: true,
+      searchable: true,
 
       onSearch: (search) => {
         // console.log('search', search);
@@ -48,7 +50,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
           accessorKey: 'description',
           cell: (info) => info.getValue(),
           meta: {
-            widget: 'multiline',
+            widget: 'expand',
           },
         },
       ],

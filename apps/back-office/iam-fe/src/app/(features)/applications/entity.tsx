@@ -9,7 +9,7 @@ import { logger } from '@megp/core-fe';
 export function Entity({ children }: { children: React.ReactElement }) {
   const route = useRouter();
 
-  const { data: list } = useListQuery();
+  const { data: list, isLoading } = useListQuery();
 
   const {
     data: selected,
@@ -27,6 +27,8 @@ export function Entity({ children }: { children: React.ReactElement }) {
       primaryKey: 'id',
       title: 'Applications',
       hasAdd: false,
+      pagination: true,
+      searchable: true,
       onDetail: (selected: Application) => {
         route.push(`/applications/${selected.id}`);
       },
@@ -51,7 +53,7 @@ export function Entity({ children }: { children: React.ReactElement }) {
           accessorKey: 'description',
           cell: (info) => info.getValue(),
           meta: {
-            widget: 'multiline',
+            widget: 'expand',
           },
         },
       ],
@@ -74,6 +76,7 @@ export function Entity({ children }: { children: React.ReactElement }) {
         config={config}
         data={list?.items ? list.items : []}
         detail={children}
+        isLoading={isLoading}
       />
     </>
   );

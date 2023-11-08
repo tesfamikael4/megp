@@ -12,7 +12,6 @@ import {
 import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
-import { notifications } from '@mantine/notifications';
 import { useForm } from 'react-hook-form';
 import { notify } from '@megp/core-fe';
 

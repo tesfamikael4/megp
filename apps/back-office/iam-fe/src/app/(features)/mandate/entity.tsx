@@ -10,7 +10,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
 
   const pathname = usePathname();
 
-  const { data: list } = useListQuery();
+  const { data: list, isLoading } = useListQuery();
 
   useEffect;
   const config: EntityConfig<Mandate> = useMemo(() => {
@@ -26,6 +26,8 @@ export function Entity({ children }: { children: React.ReactNode }) {
       },
       hasAdd: false,
       hasDetail: true,
+      pagination: true,
+      searchable: true,
       // onSearch: (search) => {
       //   // console.log('search', search);
       // },
@@ -47,7 +49,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
           accessorKey: 'description',
           cell: (info) => info.getValue(),
           meta: {
-            widget: 'multiline',
+            widget: 'expand',
           },
         },
       ],
@@ -67,6 +69,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
       config={config}
       data={list ? list.items : []}
       detail={children}
+      isLoading={isLoading}
     />
   );
 }

@@ -5,7 +5,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { useListByIdQuery } from './_api/user.api';
 
 import { User } from '@/models/user/user';
-import { logger } from '@megp/core-fe';
 
 export function Entity({ children }: { children: React.ReactNode }) {
   const route = useRouter();
@@ -14,7 +13,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
 
   const [data, setData] = useState<User[]>([]);
 
-  const { data: list, isSuccess } = useListByIdQuery();
+  const { data: list, isSuccess, isLoading } = useListByIdQuery();
 
   useEffect(() => {
     if (isSuccess) {
@@ -25,7 +24,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
       );
     }
   }, [isSuccess, list?.items]);
-  logger.log(list);
+
   const config: EntityConfig<User> = useMemo(() => {
     return {
       basePath: '/users',
@@ -44,6 +43,8 @@ export function Entity({ children }: { children: React.ReactNode }) {
         // console.log('search', search);
       },
 
+      pagination: true,
+      searchable: true,
       columns: [
         {
           id: 'name',
@@ -60,7 +61,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
           accessorKey: 'username',
           cell: (info) => info.getValue(),
           meta: {
-            widget: 'multiline',
+            widget: 'expand',
           },
         },
         {
@@ -69,7 +70,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
           accessorKey: 'email',
           cell: (info) => info.getValue(),
           meta: {
-            widget: 'multiline',
+            widget: 'expand',
           },
         },
 
@@ -79,7 +80,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
           accessorKey: 'isActive',
           cell: (info) => info.getValue(),
           meta: {
-            widget: 'multiline',
+            widget: 'expand',
           },
         },
       ],
@@ -94,6 +95,12 @@ export function Entity({ children }: { children: React.ReactNode }) {
       : 'detail';
 
   return (
-    <EntityLayout mode={mode} config={config} data={data} detail={children} />
+    <EntityLayout
+      mode={mode}
+      config={config}
+      data={data}
+      detail={children}
+      isLoading={isLoading}
+    />
   );
 }

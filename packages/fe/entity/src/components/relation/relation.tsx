@@ -1,5 +1,5 @@
 'use client';
-import { Box, Button, Group, LoadingOverlay } from '@mantine/core';
+import { Button, Group } from '@mantine/core';
 import { Section } from '@megp/core-fe';
 import { IconDeviceFloppy, IconPlus } from '@tabler/icons-react';
 import type { ColumnDef } from '@tanstack/react-table';
@@ -126,16 +126,14 @@ export function Relation<T>({
   }, [data, currentSelected]);
   const body = (
     <>
-      <Box pos="relative">
-        <LoadingOverlay visible={isLoading} />
-        <Grid
-          data={data}
-          mode={mode}
-          options={options}
-          table={table}
-          width={width}
-        />
-      </Box>
+      <Grid
+        data={data}
+        isLoading={isLoading}
+        mode={mode}
+        options={options}
+        table={table}
+        width={width}
+      />
 
       <Group className="border-t pt-4">
         {options.onSave ? (

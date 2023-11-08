@@ -110,6 +110,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       <Textarea
         label="Description"
         autosize
+        withAsterisk
         minRows={2}
         {...register('description')}
         error={

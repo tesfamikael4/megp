@@ -32,25 +32,21 @@ export function FormDetail({ mode }: FormDetailProps) {
   return (
     <Stack pos="relative">
       <LoadingOverlay visible={isLoading} />
-      <div className="mt-4 mb-4 border border-slate-300">
-        <Table className="w-100">
-          <tbody>
-            <tr className="border-b-2 border-slate-300">
-              <td className="w-1/4 bg-gray-100 p-2">
-                <th>Name</th>
-              </td>
-              <td className="p-2">{selected?.name}</td>
-            </tr>
 
-            <tr className="">
-              <td className="bg-gray-100 p-2 ">
-                <th>Description</th>
-              </td>
-              <td className="p-2">{selected?.description}</td>
-            </tr>
-          </tbody>
-        </Table>
-      </div>
+      <Table highlightOnHover withTableBorder withColumnBorders>
+        <Table.Tbody>
+          <Table.Tr>
+            <Table.Td className="bg-slate-200 font-semibold">Name</Table.Td>
+            <Table.Td>{selected?.name}</Table.Td>
+          </Table.Tr>
+          <Table.Tr>
+            <Table.Td className="bg-slate-200 font-semibold">
+              Description
+            </Table.Td>
+            <Table.Td>{selected?.description}</Table.Td>
+          </Table.Tr>
+        </Table.Tbody>
+      </Table>
     </Stack>
   );
 }

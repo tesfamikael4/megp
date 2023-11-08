@@ -4,7 +4,7 @@ import { FormDetail } from '../_components/form-detail';
 
 export default function RolePage() {
   return (
-    <Section title="New Role" collapsible={false}>
+    <Section title="New role" collapsible={false}>
       <FormDetail mode="new" />
     </Section>
   );

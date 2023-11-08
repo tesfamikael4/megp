@@ -11,7 +11,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
 
   const pathname = usePathname();
 
-  const [trigger, { data: list }] = useLazySecondRelationQuery();
+  const [trigger, { data: list, isLoading }] = useLazySecondRelationQuery();
 
   useEffect;
   const config: EntityConfig<Mandate> = useMemo(() => {
@@ -28,6 +28,8 @@ export function Entity({ children }: { children: React.ReactNode }) {
       onSearch: (search) => {
         // console.log('search', search);
       },
+      pagination: true,
+      searchable: true,
 
       hasAdd: false,
       hasDetail: false,
@@ -48,7 +50,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
           accessorKey: 'mandate.description',
           cell: (info) => info.getValue(),
           meta: {
-            widget: 'multiline',
+            widget: 'expand',
           },
         },
       ],
@@ -65,13 +67,14 @@ export function Entity({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     trigger('099454a9-bf8f-45f5-9a4f-6e9034230250');
   }, [trigger]);
-  logger.log(list?.items);
+
   return (
     <EntityLayout
       mode={mode}
       config={config}
       data={list?.items ? list?.items : []}
       detail={children}
+      isLoading={isLoading}
     />
   );
 }

@@ -109,7 +109,6 @@ export function FormDetail({ mode }: FormDetailProps) {
   const [remove, { isLoading: isDeleting }] = useDeleteMutation();
 
   const onCreate = async (data) => {
-    logger.log(data);
     const rawData = {
       ...data,
       itemTags: data.itemTags.map((tags) => ({ tagId: tags })),

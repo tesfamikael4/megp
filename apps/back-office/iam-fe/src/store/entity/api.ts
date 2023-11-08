@@ -1,7 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { ENTITY_LIST } from './list';
 import { baseQuery } from '@/store/base-query';
-import { logger } from '@megp/core-fe';
 
 interface EntityApi {
   entitySliceApi: Record<string, any>;

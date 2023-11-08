@@ -12,6 +12,9 @@
 .table th {
   @apply bg-primary-50 text-gray-600 text-left p-2;
 }
+.table th .action {
+  @apply bg-primary-50 text-gray-600 text-right p-2;
+}
 .table .actionBtn {
   visibility: hidden;
 }

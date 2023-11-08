@@ -17,7 +17,6 @@ import {
 import { useReadQuery as useReadAppQuery } from '../_api/application.api';
 import { useEffect } from 'react';
 
-// import { notifications } from '@mantine/notifications';
 import { useForm } from 'react-hook-form';
 import { Permission } from '@/models/permission';
 import { useParams } from 'next/navigation';
@@ -117,7 +116,8 @@ export function PermissionForm({
 
   return (
     <Stack pos={'relative'}>
-      <LoadingOverlay visible={isLoading} />
+      {mode === 'detail' && <LoadingOverlay visible={isLoading} />}
+
       <TextInput
         withAsterisk
         label="Name"

@@ -123,7 +123,11 @@ const AddEntityModal = () => {
         data={currentAssigned}
         isSaving={isSaving}
       />
-      <Modal title="Add Entity" opened={isModalOpen} onClose={handleCloseModal}>
+      <Modal
+        title="Add Mandate"
+        opened={isModalOpen}
+        onClose={handleCloseModal}
+      >
         <Relation
           config={addConfig}
           data={mandates ? mandates.items : []}

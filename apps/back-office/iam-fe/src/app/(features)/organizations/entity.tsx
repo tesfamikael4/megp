@@ -12,7 +12,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
 
   const [data, setData] = useState<Organization[]>([]);
 
-  const { data: list, isSuccess } = useListQuery();
+  const { data: list, isSuccess, isLoading } = useListQuery();
 
   useEffect(() => {
     if (isSuccess) {
@@ -41,6 +41,8 @@ export function Entity({ children }: { children: React.ReactNode }) {
       onSearch: (search) => {
         // console.log('search', search);
       },
+      searchable: true,
+      pagination: true,
 
       columns: [
         {
@@ -58,7 +60,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
           accessorKey: 'shortName',
           cell: (info) => info.getValue(),
           meta: {
-            widget: 'multiline',
+            widget: 'expand',
           },
         },
 
@@ -68,7 +70,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
           accessorKey: 'isActive',
           cell: (info) => info.getValue(),
           meta: {
-            widget: 'multiline',
+            widget: 'expand',
           },
         },
       ],
@@ -83,6 +85,12 @@ export function Entity({ children }: { children: React.ReactNode }) {
       : 'detail';
 
   return (
-    <EntityLayout mode={mode} config={config} data={data} detail={children} />
+    <EntityLayout
+      mode={mode}
+      config={config}
+      data={data}
+      detail={children}
+      isLoading={isLoading}
+    />
   );
 }

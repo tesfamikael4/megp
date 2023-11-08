@@ -1,11 +1,4 @@
-import {
-  LoadingOverlay,
-  Select,
-  Stack,
-  TextInput,
-  Textarea,
-  Box,
-} from '@mantine/core';
+import { LoadingOverlay, Select, Stack, Textarea } from '@mantine/core';
 import { useReadQuery } from '../../organizations/_api/organization.api';
 import { useListQuery as useListTypeQuery } from '../../organization-type/_api/organization-type.api';
 import { useEffect } from 'react';
@@ -34,13 +27,7 @@ export function FormDetail() {
   return (
     <Stack pos={'relative'}>
       <LoadingOverlay visible={isLoading} />
-      <TextInput disabled label="Name" {...register('name')} />
-      <TextInput
-        disabled
-        label="Short name"
-        required
-        {...register('shortName')}
-      />
+
       <Textarea
         label="Description"
         autosize
