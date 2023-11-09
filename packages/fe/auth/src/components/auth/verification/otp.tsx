@@ -3,14 +3,24 @@ import React, { useEffect, useState } from 'react';
 import { PinInput, Title, Text, Button, Flex } from '@mantine/core';
 import { setCookie } from 'cookies-next';
 import { notifications } from '@mantine/notifications';
+import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '../../../context/auth.context';
 
-export function Otp({ id }: { id: string }): JSX.Element {
+export function Otp({
+  id,
+  mode,
+}: {
+  id: string;
+  mode: 'verify' | 'reset';
+}): JSX.Element {
   const [err, setErr] = useState<any>();
   const [value, setValue] = useState<string>();
-  const { verify, error } = useAuth();
+  const { verify, error, verifyForgetPassword } = useAuth();
   const [disabled, setDisabled] = useState(true);
   const [countdown, setCountdown] = useState(60);
+  const router = useRouter();
+  const path = usePathname();
+
   useEffect(() => {
     let timer: NodeJS.Timeout;
 
@@ -19,7 +29,6 @@ export function Otp({ id }: { id: string }): JSX.Element {
         setCountdown((prevCountdown) => prevCountdown - 1);
       }, 1000);
     } else if (countdown === 0) {
-      setDisabled(false);
       setDisabled(false);
     }
 
@@ -44,28 +53,49 @@ export function Otp({ id }: { id: string }): JSX.Element {
   };
 
   const submitOTP = async (otp) => {
-    const response = await verify({
-      verificationId: id,
-      otp,
-      isOtp: true,
-    });
-    if (!response) {
-      return;
-    }
-    if (response.statusCode) {
-      notifications.show({
-        title: 'Error',
-        color: 'red',
-        message: 'Verification Code Expired. Please resend.',
+    if (mode === 'verify') {
+      const response = await verify({
+        verificationId: id,
+        otp,
+        isOtp: true,
       });
-    } else if (response.is_security_question_set) {
-      setCookie('token', response.access_token);
-      setCookie('refreshToken', response.refresh_token);
-      window.location.href = '/';
+      if (!response) {
+        return;
+      }
+      if (response.statusCode) {
+        notifications.show({
+          title: 'Error',
+          color: 'red',
+          message: 'Verification Code Expired. Please resend.',
+        });
+      } else if (response.is_security_question_set) {
+        setCookie('token', response.access_token);
+        setCookie('refreshToken', response.refresh_token);
+        window.location.href = '/';
+      } else {
+        setCookie('token', response.access_token);
+        setCookie('refreshToken', response.refresh_token);
+        window.location.href = '/auth/setSecurity';
+      }
     } else {
-      setCookie('token', response.access_token);
-      setCookie('refreshToken', response.refresh_token);
-      window.location.href = '/auth/setSecurity';
+      const response = await verifyForgetPassword({
+        verificationId: id,
+        otp,
+        isOtp: true,
+      });
+      if (!response) {
+        return;
+      }
+      if (response.statusCode) {
+        notifications.show({
+          title: 'Error',
+          color: 'red',
+          message: 'Verification Code Expired. Please resend.',
+        });
+      } else {
+        const modifiedUrl = path.replace(/\/auth/g, '');
+        router.push(`/auth/otp/${modifiedUrl}/${otp}`);
+      }
     }
   };
 

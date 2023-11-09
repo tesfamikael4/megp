@@ -56,7 +56,7 @@ interface AuthContextValue {
   >;
   verifyForgetPassword: (
     formFields: Verify,
-  ) => Promise<Record<string, never> | undefined>;
+  ) => Promise<{ statusCode?: number; status?: boolean } | undefined>;
   resetPassword: (
     reset: Reset,
   ) => Promise<{ message?: string; statusCode?: number } | undefined>;
@@ -291,7 +291,10 @@ function AuthProvider({
         queryURL: 'verify-forget-password',
         method: 'POST',
       },
-      z.object({}),
+      z.object({
+        statusCode: z.number().optional(),
+        status: z.boolean().optional(),
+      }),
     );
 
     return response;

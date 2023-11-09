@@ -56,7 +56,9 @@ export default function PhoneOTP({ phone }: { phone: string }) {
             {...register('otp')}
             error={errors.otp?.message}
           />
-          <Button className="mt-4">Verify Code</Button>
+          <Button className="mt-4" type="submit">
+            Verify Code
+          </Button>
         </form>
       )}
       {otpState === 'verified' && (

@@ -1,18 +1,12 @@
 'use client';
-import {
-  Container,
-  Paper,
-  PasswordInput,
-  Button,
-  Title,
-  Flex,
-} from '@mantine/core';
+import { PasswordInput, Button, Title, Flex } from '@mantine/core';
 import Image from 'next/image';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import z from 'zod';
 import { useState } from 'react';
 import { notifications } from '@mantine/notifications';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '../../../context/auth.context';
 
 const schema = z.object({
@@ -28,9 +22,16 @@ const schema = z.object({
 
 type FormSchema = z.infer<typeof schema>;
 
-export function PasswordReset(): JSX.Element {
+export function PasswordReset({
+  verificationId,
+  otp,
+}: {
+  verificationId: string;
+  otp: string;
+}): JSX.Element {
   const [loading, setLoading] = useState<boolean>(false);
   const { resetPassword } = useAuth();
+  const router = useRouter();
 
   const {
     register,
@@ -42,9 +43,9 @@ export function PasswordReset(): JSX.Element {
     try {
       setLoading(true);
       const response = await resetPassword({
-        verificationId: '',
+        verificationId,
         password: data.password,
-        otp: '',
+        otp,
         isOtp: true,
       });
       if (!response) {
@@ -56,6 +57,13 @@ export function PasswordReset(): JSX.Element {
           color: 'red',
           message: response.message,
         });
+      } else {
+        notifications.show({
+          title: 'Succes',
+          color: 'green',
+          message: 'Password reset successfully',
+        });
+        router.push('/auth/login');
       }
     } finally {
       setLoading(false);
@@ -63,29 +71,28 @@ export function PasswordReset(): JSX.Element {
   };
 
   return (
-    <Container>
-      <Paper className="p-4 md:p-10 rounded-lg" withBorder>
-        <Image
-          alt="forgot-password"
-          className="mx-auto"
-          height={300}
-          src="/forgot-password.svg"
-          width={300}
-        />
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Flex direction="column">
-            <Title className="text-center">Reset Password</Title>
-            <PasswordInput
-              label="New Password"
-              {...register('password')}
-              error={errors.password?.message}
-            />
-            <Button className="mt-4" loading={loading} type="submit">
-              Change Password
-            </Button>
-          </Flex>
-        </form>
-      </Paper>
-    </Container>
+    <div>
+      <Image
+        alt="forgot-password"
+        className="mx-auto"
+        height={300}
+        src="/forgot-password.svg"
+        width={300}
+      />
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Flex direction="column">
+          <Title className="text-center">Reset Password</Title>
+          <PasswordInput
+            label="New Password"
+            {...register('password')}
+            error={errors.password?.message}
+            withAsterisk
+          />
+          <Button className="mt-4" loading={loading} type="submit">
+            Change Password
+          </Button>
+        </Flex>
+      </form>
+    </div>
   );
 }
