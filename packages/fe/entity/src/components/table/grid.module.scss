@@ -21,6 +21,9 @@
 .table .menuBtn {
   @apply flex justify-end;
 }
+.table .text {
+  @apply flex justify-start;
+}
 .table .tree {
   /* @apply bg-red-500; */
   @apply flex;

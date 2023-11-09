@@ -49,9 +49,6 @@ export function Entity({ children }: { children: React.ReactNode }) {
           header: 'Description',
           accessorKey: 'description',
           cell: (info) => info.getValue(),
-          meta: {
-            widget: 'expand',
-          },
         },
       ],
     };

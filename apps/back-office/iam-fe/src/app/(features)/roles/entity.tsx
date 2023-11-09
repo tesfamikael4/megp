@@ -32,6 +32,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
       },
       searchable: true,
       pagination: true,
+      sortable: true,
 
       columns: [
         {
@@ -49,9 +50,6 @@ export function Entity({ children }: { children: React.ReactNode }) {
           header: 'Description',
           accessorKey: 'description',
           cell: (info) => info.getValue(),
-          meta: {
-            widget: 'expand',
-          },
         },
       ],
     };

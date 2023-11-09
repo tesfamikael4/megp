@@ -34,6 +34,7 @@ export function Entity({ children }: { children: React.ReactElement }) {
       },
       pagination: true,
       searchable: true,
+      sortable: true,
       onSearch: (search) => {
         logger.log('search', search);
       },
@@ -53,9 +54,6 @@ export function Entity({ children }: { children: React.ReactElement }) {
           header: 'Description',
           accessorKey: 'description',
           cell: (info) => info.getValue(),
-          meta: {
-            widget: 'expand',
-          },
         },
       ],
     };

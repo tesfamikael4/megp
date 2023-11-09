@@ -29,6 +29,7 @@ export function Entity({ children }: { children: React.ReactElement }) {
       hasAdd: false,
       pagination: true,
       searchable: true,
+      sortable: true,
       onDetail: (selected: Application) => {
         route.push(`/applications/${selected.id}`);
       },
@@ -52,9 +53,6 @@ export function Entity({ children }: { children: React.ReactElement }) {
           header: 'Description',
           accessorKey: 'description',
           cell: (info) => info.getValue(),
-          meta: {
-            widget: 'expand',
-          },
         },
       ],
     };

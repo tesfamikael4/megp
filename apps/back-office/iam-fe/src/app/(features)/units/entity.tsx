@@ -39,6 +39,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
       },
       pagination: true,
       searchable: true,
+      sortable: true,
       // selectable: true,
       onSearch: (search) => {
         // console.log('search', search);

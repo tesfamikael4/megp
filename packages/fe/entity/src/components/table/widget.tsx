@@ -25,12 +25,18 @@ function Widget<TData>({
           {flexRender(cell.column.columnDef.cell, cell.getContext())}
         </Text>
       );
+    case 'action':
+      return (
+        <Text className={styles.menuBtn} fz={14} lineClamp={2}>
+          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+        </Text>
+      );
     case 'new':
       return <>{flexRender(cell.column.columnDef.cell, cell.getContext())}</>;
   }
 
   return (
-    <Text className={styles.menuBtn} fz={14} lineClamp={2}>
+    <Text className={styles.text} fz={14} lineClamp={2}>
       {flexRender(cell.column.columnDef.cell, cell.getContext())}
     </Text>
   );

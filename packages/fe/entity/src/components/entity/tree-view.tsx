@@ -8,6 +8,7 @@ import {
   getCoreRowModel,
   getExpandedRowModel,
   useReactTable,
+  getSortedRowModel,
 } from '@tanstack/react-table';
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
@@ -40,6 +41,7 @@ export function TreeList<T>({
   const [expanded, setExpanded] = useState({});
   const [treeView, setTreeView] = useState(false);
   const [data, setData] = useState([]);
+  const [sorting, setSorting] = useState([]);
 
   // construct header columns with the select column and action column
   const tableColumns = useMemo<ColumnDef<T>[]>(
@@ -115,11 +117,16 @@ export function TreeList<T>({
         mode,
       ),
       expanded,
+      sorting,
     },
     enableRowSelection: true,
     getSubRows: (row: any) => row.subRows,
     onExpandedChange: setExpanded,
     getExpandedRowModel: getExpandedRowModel(),
+
+    getSortedRowModel: getSortedRowModel(),
+    onSortingChange: setSorting,
+    enableSortingRemoval: false,
 
     columns: tableColumns,
     getCoreRowModel: getCoreRowModel(),
