@@ -35,6 +35,7 @@ import { BusinessProcessService } from 'src/bpm/services/business-process.servic
 import { TaskService } from 'src/bpm/services/task.service';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
+import { UpdateTaskDto } from '../dtos/task.dto';
 @Injectable()
 export class WorkflowService {
   constructor(
@@ -104,6 +105,7 @@ export class WorkflowService {
   async gotoNextStep(nextCommand: GotoNextStateDto, userInfo: any) {
     nextCommand.action = nextCommand.action.toUpperCase();
     const taskInfo = new TaskEntity();
+    // let nextTask = {};
     const workflowInstance = await this.workflowInstanceRepository.findOne({
       relations: { businessProcess: true, taskHandler: true },
       where: { id: nextCommand.instanceId },
@@ -133,8 +135,23 @@ export class WorkflowService {
         wfInstance.serviceId = workflowInstance.serviceId;
         wfInstance.bpId = workflowInstance.bpId;
         wfInstance.id = workflowInstance.id;
-        const response = await this.notifyApplicationCompletion(wfInstance);
-        if (response) {
+        console.log("stateMetaData['apiUrl']", stateMetaData['apiUrl']);
+        const apiUrl = stateMetaData['apiUrl'];
+        //  if (stateMetaData['apiUrl'])
+        if (apiUrl) {
+          const response = await this.notifyApplicationCompletion(
+            wfInstance,
+            stateMetaData['apiUrl'],
+          );
+          if (response) {
+            await this.addTaskTracker(
+              currentTaskHandler,
+              nextCommand,
+              userInfo,
+            );
+            await this.handlerRepository.delete(currentTaskHandler.id);
+          }
+        } else {
           await this.addTaskTracker(currentTaskHandler, nextCommand, userInfo);
           await this.handlerRepository.delete(currentTaskHandler.id);
         }
@@ -147,7 +164,13 @@ export class WorkflowService {
         stateMetaData['type'] = task.taskType;
         taskInfo.handlerType = task.handlerType;
         taskInfo.taskType = task.taskType;
-        // await this.handleEvent(stateMetaData, nextCommand, task.id);
+        //  nextTask = { ...taskInfo };
+        await this.handleEvent(
+          stateMetaData,
+          nextCommand,
+          task,
+          workflowInstance,
+        );
         const lastExecutedTask = await this.getPrviousHandler(
           workflowInstance.id,
         );
@@ -171,9 +194,22 @@ export class WorkflowService {
         );
       }
     }
+    console.log('taskInfo-----', taskInfo);
     const result = await this.workflowInstanceRepository.save(workflowInstance);
-    return WorkflowInstanceResponse.toResponse(result);
+    const workflow = WorkflowInstanceResponse.toResponse(result);
+    if (taskInfo) {
+      const handler = taskInfo.handlerType;
+      const type = taskInfo.taskType;
+      if (handler == HandlerTypeEnum.System) {
+        const nextTaskdto = new GotoNextStateDto();
+        nextTaskdto.action = type;
+        nextTaskdto.instanceId = workflowInstance.id;
+        await this.gotoNextStep(nextTaskdto, userInfo);
+      }
+    }
+    return workflow;
   }
+
   private async saveWorkflowInstance(
     instanceEntity: WorkflowInstanceEntity,
   ): Promise<WorkflowInstanceEntity> {
@@ -202,22 +238,23 @@ export class WorkflowService {
   async handleEvent(
     stateMetadata: StateMetaData,
     command: GotoNextStateDto,
-    taskId: string,
+    task: TaskEntity,
+    wfi: WorkflowInstanceEntity,
   ) {
     const eventType = command.action ? command.action : 'SUBMIT';
     console.log('eventType', eventType);
-    switch (stateMetadata.type.toLocaleLowerCase()) {
+    switch (stateMetadata.type.toLowerCase()) {
       case TaskTypes.APPROVAL:
         console.log(TaskTypes.APPROVAL, command);
         break;
       case TaskTypes.CONFIRMATION:
         // return this.confirm(command);
         break;
-      case TaskTypes.REVIEW:
-        // return this.approve(command);
+      case TaskTypes.SMS:
+        await this.sendSMS(wfi);
         break;
       case TaskTypes.INVOICE:
-        //  await this.generateInvoice(command.instanceId, taskId);
+        await this.generateInvoice(command.instanceId, task.id);
         break;
       case TaskTypes.CERTIFICATION:
         console.log(TaskTypes.CERTIFICATION, command);
@@ -227,9 +264,6 @@ export class WorkflowService {
         break;
       case TaskTypes.PaymentConfirmation:
         console.log(TaskTypes.PaymentConfirmation, command);
-        break;
-      case TaskTypes.ISR:
-        console.log(TaskTypes.ISR, command);
         break;
       case TaskTypes.PAYMENT:
         const data = await this.invoiceRepository.find({
@@ -290,7 +324,15 @@ export class WorkflowService {
     }
   }
 
-  async notifyApplicationCompletion(data: UpdateWorkflowInstanceDto) {
+  async notifyApplicationCompletion(
+    data: UpdateWorkflowInstanceDto,
+    url: string,
+  ) {
+    // const url2 = 'http://localhost:3000/get-business-area-by-vendorId/' + data.requestorId;
+    const payload = {
+      vendorId: '6b31bfed-c359-1d2a-486d-585a3e4d4305',
+      categoryId: '2c991afc-0e96-c72b-06f5-5c40514c38ae',
+    };
     const config = {
       headers: {
         Authorization: 'Bearer yourAuthToken',
@@ -300,12 +342,12 @@ export class WorkflowService {
     try {
       const response = await firstValueFrom(
         this.httpService.post(
-          'https://localhost:3000/completeTasks',
-          data,
-          config,
+          url,
+          payload,
+          // config,
         ),
       );
-      if (response.status === 200) {
+      if (response.status === 201) {
         const responseData = response.data;
         return responseData;
       } else {
@@ -313,14 +355,18 @@ export class WorkflowService {
       }
     } catch (error) {
       console.error('Error making API request:', error);
-      throw new Error('Failed to retrieve data from the API.');
+      throw new Error('Error making API request');
     }
   }
   async sendEmail(data: any) {
-    console.log('email', data);
+    console.log('email sent', data);
   }
   async sendSMS(data: any) {
     console.log('email', data);
+  }
+
+  async generateInvoice(instanceId: string, taskId: string) {
+    console.log('invoice', instanceId, taskId);
   }
 
   getStateMetaData(meta) {
