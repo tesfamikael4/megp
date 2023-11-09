@@ -370,6 +370,10 @@ export class WorkflowService {
     console.log('invoice', instanceId, taskId);
   }
 
+  async generateInvoice(instanceId: string, taskId: string) {
+    console.log('invoice', instanceId, taskId);
+  }
+
   getStateMetaData(meta) {
     return Object.keys(meta).reduce((acc, key) => {
       const value = meta[key];
