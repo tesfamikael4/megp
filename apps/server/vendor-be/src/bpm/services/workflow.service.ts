@@ -36,6 +36,7 @@ import { TaskService } from 'src/bpm/services/task.service';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import { UpdateTaskDto } from '../dtos/task.dto';
+import { UpdateTaskDto } from '../dtos/task.dto';
 @Injectable()
 export class WorkflowService {
   constructor(
@@ -364,14 +365,6 @@ export class WorkflowService {
   }
   async sendSMS(data: any) {
     console.log('email', data);
-  }
-
-  async generateInvoice(instanceId: string, taskId: string) {
-    console.log('invoice', instanceId, taskId);
-  }
-
-  async generateInvoice(instanceId: string, taskId: string) {
-    console.log('invoice', instanceId, taskId);
   }
 
   async generateInvoice(instanceId: string, taskId: string) {
