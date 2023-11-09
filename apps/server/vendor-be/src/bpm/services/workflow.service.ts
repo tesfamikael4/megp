@@ -51,7 +51,7 @@ export class WorkflowService {
     private readonly bpService: BusinessProcessService,
     private readonly commonService: HandlingCommonService,
     private readonly taskService: TaskService,
-    private readonly httpService: HttpService
+    private readonly httpService: HttpService,
   ) { }
   async intiateWorkflowInstance(
     dto: CreateWorkflowInstanceDto,
