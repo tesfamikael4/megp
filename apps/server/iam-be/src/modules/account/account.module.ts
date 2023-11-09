@@ -13,5 +13,6 @@ import { EmailService } from 'src/shared/email/email.service';
   ],
   controllers: [AuthController],
   providers: [AccountsService, EmailService],
+  exports: [AccountsService],
 })
 export class AccountModule {}

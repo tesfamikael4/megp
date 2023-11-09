@@ -6,13 +6,16 @@ import {
   Param,
   ParseUUIDPipe,
   HttpStatus,
+  Get,
+  Query,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { UserService } from '../services/user.service';
 import { User } from '@entities';
-import { CreateUserDto, UpdateUserDto } from '../dto/user.dto';
+import { CreateUserDto, InviteUserDto, UpdateUserDto } from '../dto/user.dto';
 import { ExtraCrudController } from 'src/shared/controller/extra-crud.controller';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
+import { decodeCollectionQuery } from 'src/shared/collection-query/query-mapper';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'organizationId',
@@ -25,5 +28,22 @@ const options: ExtraCrudOptions = {
 export class UserController extends ExtraCrudController<User>(options) {
   constructor(private readonly userService: UserService) {
     super(userService);
+  }
+
+  @Post()
+  @ApiBody({ type: CreateUserDto })
+  async create(@Body() itemData: CreateUserDto): Promise<any> {
+    return this.userService.create(itemData);
+  }
+
+  @Post('invite')
+  @ApiBody({ type: InviteUserDto })
+  async invite(@Body() itemData: InviteUserDto): Promise<any> {
+    return this.userService.invite(itemData);
+  }
+
+  @Get('test/:query')
+  async test(@Param('query') query: string) {
+    return decodeCollectionQuery(query);
   }
 }

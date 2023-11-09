@@ -26,9 +26,9 @@ export class ExtraCrudService<T extends BaseEntity> {
   ) {
     const entityIdName = extraCrudOptions.entityIdName;
 
-    query.filter.push([
+    query.where.push([
       {
-        field: entityIdName,
+        column: entityIdName,
         value: entityId,
         operator: FilterOperators.EqualTo,
       },

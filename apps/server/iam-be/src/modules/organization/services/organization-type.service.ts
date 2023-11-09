@@ -2,10 +2,9 @@ import { EntityCrudService } from 'src/shared/service/entity-crud.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
-import { QueryConstructorNew } from 'src/shared/collection-query/query-constructor-new';
 import { DataResponseFormat } from 'src/shared/api-data';
-import { CollectionQueryNew } from 'src/shared/collection-query/query';
 import { OrganizationType } from '@entities';
+import { QueryConstructor, CollectionQuery } from 'src/shared/collection-query';
 
 @Injectable()
 export class OrganizationTypeService extends EntityCrudService<OrganizationType> {
@@ -16,9 +15,9 @@ export class OrganizationTypeService extends EntityCrudService<OrganizationType>
     super(groupRepository);
   }
 
-  async getAllOrganizationTypes(query: CollectionQueryNew) {
+  async getAllOrganizationTypes(query: CollectionQuery) {
     try {
-      const dataQuery = QueryConstructorNew.constructQuery<OrganizationType>(
+      const dataQuery = QueryConstructor.constructQuery<OrganizationType>(
         this.groupRepository,
         query,
       );

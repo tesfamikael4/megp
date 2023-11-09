@@ -2,20 +2,21 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Role } from '@entities';
-import { EntityCrudService } from 'src/shared/service/entity-crud.service';
 import { CollectionQuery, QueryConstructor } from 'src/shared/collection-query';
 import { DataResponseFormat } from 'src/shared/api-data';
 import { RoleResponseDto } from '../dto/role.dto';
+import { ExtraCrudService } from 'src/shared/service/extra-crud.service';
 
 @Injectable()
-export class RoleService extends EntityCrudService<Role> {
+export class RoleService extends ExtraCrudService<Role> {
   constructor(
     @InjectRepository(Role)
     private readonly repositoryRole: Repository<Role>,
   ) {
     super(repositoryRole);
   }
-  async findAllUnderOrganization(organizationId, query: CollectionQuery) {
+
+  async findAllUnderOrganization(organizationId: any, query: CollectionQuery) {
     const dataQuery = QueryConstructor.constructQuery<Role>(
       this.repositoryRole,
       query,

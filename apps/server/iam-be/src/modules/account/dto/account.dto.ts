@@ -27,7 +27,7 @@ export class CreateAccountDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  @MinLength(+process.env.PASS ?? 8)
+  @MinLength(Number(process.env.PASSWORD_LENGTH ?? 8))
   public password: string;
 }
 

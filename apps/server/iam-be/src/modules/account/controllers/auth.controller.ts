@@ -56,6 +56,11 @@ export class AuthController {
     return this.accountsService.verifyAccount(verifyAccountDto);
   }
 
+  @Get('me')
+  async getUserInfo(): Promise<any> {
+    return this.accountsService.getUserInfo();
+  }
+
   @Post('forget-password')
   @AllowAnonymous()
   forgetPassword(@Body() forgetPassword: ForgetPasswordDto) {

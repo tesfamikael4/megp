@@ -31,6 +31,7 @@ import { UserRoleService } from '../role/services/user-role.service';
 import { UserUnitController } from './controllers/user-unit.controller';
 import { UserProfileController } from './controllers/user-profile.controller';
 import { UserRoleController } from '../role/controllers/user-role.controller';
+import { AccountModule } from '../account/account.module';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { UserRoleController } from '../role/controllers/user-role.controller';
       UserProfile,
       UserRole,
     ]),
+    AccountModule,
   ],
   providers: [
     OrganizationService,

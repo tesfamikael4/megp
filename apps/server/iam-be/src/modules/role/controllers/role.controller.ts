@@ -5,42 +5,35 @@ import {
   Param,
   ParseUUIDPipe,
   HttpStatus,
+  Req,
 } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { ApiPaginatedResponse } from '@api-data';
+import { ApiPaginatedResponse, DataResponseFormat } from '@api-data';
 import { CreateRoleDto, UpdateRoleDto } from '../dto/role.dto';
 import { RoleService } from '../services/role.service';
 import { Role } from '@entities';
 import { CollectionQuery } from '@collection-query';
-import { EntityCrudController } from 'src/shared/controller/entity-crud.controller';
-import { EntityCrudOptions } from 'src/shared/types/crud-option.type';
+import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
+import { ExtraCrudController } from 'src/shared/controller/extra-crud.controller';
 
-const options: EntityCrudOptions = {
+const options: ExtraCrudOptions = {
+  entityIdName: 'organizationId',
   createDto: CreateRoleDto,
   updateDto: UpdateRoleDto,
 };
 
 @Controller('roles')
 @ApiTags('roles')
-export class RoleNewController extends EntityCrudController<Role>(options) {
+export class RoleNewController extends ExtraCrudController<Role>(options) {
   constructor(private readonly roleService: RoleService) {
     super(roleService);
   }
 
-  @Get('get-all-under-organization/:organizationId')
-  @ApiPaginatedResponse(Role)
-  @ApiOkResponse({ type: Role, isArray: false })
-  async findAllUnderOrganization(
-    @Param(
-      'organizationId',
-      new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
-    )
-    organizationId: string,
+  @Get('list/:id')
+  async findAll(
+    @Param('id') id: string,
     @Query() query: CollectionQuery,
-  ) {
-    return await this.roleService.findAllUnderOrganization(
-      organizationId,
-      query,
-    );
+  ): Promise<DataResponseFormat<any>> {
+    return await this.roleService.findAllUnderOrganization(id, query);
   }
 }
