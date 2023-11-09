@@ -1,7 +1,7 @@
 import {
   BadRequestException,
   Injectable,
-  NotFoundException
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -50,8 +50,8 @@ export class WorkflowService {
     private readonly bpService: BusinessProcessService,
     private readonly commonService: HandlingCommonService,
     private readonly taskService: TaskService,
-    private readonly httpService: HttpService
-  ) { }
+    private readonly httpService: HttpService,
+  ) {}
   async intiateWorkflowInstance(
     dto: CreateWorkflowInstanceDto,
     userInfo: any,
@@ -155,7 +155,6 @@ export class WorkflowService {
           await this.addTaskTracker(currentTaskHandler, nextCommand, userInfo);
           await this.handlerRepository.delete(currentTaskHandler.id);
         }
-
       } else {
         const task = await this.taskService.getTaskByNameAndBP(
           workflowInstance.bpId,
@@ -336,7 +335,7 @@ export class WorkflowService {
     };
     const config = {
       headers: {
-        'Authorization': 'Bearer yourAuthToken',
+        Authorization: 'Bearer yourAuthToken',
         'Other-Header': 'header-value',
       },
     };
@@ -363,7 +362,11 @@ export class WorkflowService {
     console.log('email sent', data);
   }
   async sendSMS(data: any) {
-    console.log("email", data);
+    console.log('email', data);
+  }
+
+  async generateInvoice(instanceId: string, taskId: string) {
+    console.log('invoice', instanceId, taskId);
   }
 
   async generateInvoice(instanceId: string, taskId: string) {
@@ -379,7 +382,4 @@ export class WorkflowService {
       return acc;
     }, {});
   }
-
-
-
 }
