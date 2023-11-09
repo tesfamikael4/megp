@@ -150,7 +150,7 @@ export function Relation<T>({
                 : options.onSave?.(data as T[]);
             }}
           >
-            Save
+            {mode === 'modal' ? 'Done' : 'Save'}
           </Button>
         ) : null}
       </Group>
@@ -169,7 +169,7 @@ export function Relation<T>({
                 leftSection={<IconPlus size={16} stroke={2.2} />}
                 onClick={options.onAdd}
               >
-                Add
+                {openEditModal ? 'Add' : 'Assign'}
               </Button>
             ) : null
           }

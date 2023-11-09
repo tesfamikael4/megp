@@ -28,6 +28,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
       hasDetail: true,
       pagination: true,
       searchable: true,
+      sortable: true,
       // onSearch: (search) => {
       //   // console.log('search', search);
       // },
@@ -48,9 +49,6 @@ export function Entity({ children }: { children: React.ReactNode }) {
           header: 'Description',
           accessorKey: 'description',
           cell: (info) => info.getValue(),
-          meta: {
-            widget: 'expand',
-          },
         },
       ],
     };

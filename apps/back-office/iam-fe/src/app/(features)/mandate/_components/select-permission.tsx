@@ -2,31 +2,24 @@
 import React, { useEffect, useState } from 'react';
 import { useLazyListByAppIdQuery } from '../../applications/_api/permission.api';
 import { useLazyListQuery } from '../../applications/_api/application.api';
-import {
-  Box,
-  Button,
-  Checkbox,
-  Divider,
-  Flex,
-  List,
-  Title,
-} from '@mantine/core';
-
-import { logger } from '@megp/core-fe';
+import { Box, Button, Checkbox, Divider, Flex, Table } from '@mantine/core';
+import styles from '../../../page.module.scss';
 import { Permission } from '@/models/permission';
 
 interface EntityListProps {
   permission: Permission[];
   setPermission: (arg) => void;
   setIsModalOpen: (boolean) => void;
+  handleCloseModal: () => void;
 }
 
 const MandatePermission = ({
   permission,
   setPermission,
-  setIsModalOpen,
+  handleCloseModal,
 }: EntityListProps) => {
   const [selectedRow, setSelectedRow] = useState<any>();
+  const [selectedPermission, setSelectedPermission] = useState<any>([]);
 
   const [trigger, { data: permissionList }] = useLazyListByAppIdQuery();
 
@@ -41,73 +34,95 @@ const MandatePermission = ({
   }, [triggerApp]);
 
   useEffect(() => {
-    setSelectedRow(application?.items[0]);
-  }, [application?.items]);
-  logger.log(permission);
-  permissionList;
+    setSelectedPermission(permission);
+  }, [permission]);
+
   return (
     <>
-      <Divider my={'sm'} />
-      <Flex gap="xl" justify="center" align="flex-start" direction="row">
-        <Box>
-          <Title size="h4">Application</Title>
+      <Box h={400}>
+        <Divider mb={20} />
+        <Flex justify="center" align="flex-start" direction="row" gap={'sm'}>
+          <Table className={styles.table} striped withColumnBorders>
+            <Table.Thead>
+              <Table.Tr className={styles.row}>
+                <Table.Th>Application</Table.Th>
+              </Table.Tr>
+            </Table.Thead>
+            <Table.Tbody>
+              {application?.items?.map((element) => (
+                <Table.Tr key={element.id}>
+                  <Table.Td onClick={() => setSelectedRow(element)}>
+                    {element.name}
+                  </Table.Td>
+                </Table.Tr>
+              ))}
+            </Table.Tbody>
+          </Table>
 
-          <List spacing="xs" size="sm" center my={'sm'} mx={'xg'}>
-            {application?.items?.map((item) => (
-              <List.Item
-                key={item.id}
-                className="cursor-pointer"
-                icon={
-                  <Checkbox
-                    color="teal"
-                    onChange={() => setSelectedRow(item)}
-                    checked={item.id == selectedRow?.id}
-                  ></Checkbox>
-                }
-              >
-                {item.name}
-              </List.Item>
-            ))}
-          </List>
-        </Box>
-        <Box>
-          <Title size="h4">
-            {' '}
-            {permissionList?.items?.length !== 0 ? 'Permission' : ''}
-          </Title>
-          <List spacing="xs" size="sm" center my={'sm'}>
-            {permissionList?.items?.map((item) => (
-              <List.Item
-                key={item.id}
-                className="cursor-pointer"
-                icon={
-                  <Checkbox
-                    color="teal"
-                    checked={permission.some(
-                      (permItem) => permItem.id === item.id,
-                    )}
-                    onChange={() => {
-                      setPermission((prev: Permission[]) => {
-                        if (prev.some((permItem) => permItem.id === item.id)) {
-                          return prev.filter(
-                            (permItem) => permItem.id !== item.id,
-                          );
-                        } else {
-                          return [...prev, item];
-                        }
-                      });
-                    }}
-                  />
-                }
-              >
-                {item.name}
-              </List.Item>
-            ))}
-          </List>
-        </Box>
-      </Flex>
-      <Divider my={'lg'} />
-      <Button onClick={() => setIsModalOpen(false)}>Done</Button>
+          {
+            <Table className={styles.table} striped>
+              {selectedRow === undefined && (
+                <Table.Th> Select application</Table.Th>
+              )}
+              <Table.Thead>
+                <Table.Tr>
+                  {selectedRow !== undefined ? (
+                    <Table.Th>permission</Table.Th>
+                  ) : (
+                    ''
+                  )}
+                </Table.Tr>
+              </Table.Thead>
+              <Table.Tbody>
+                {permissionList?.items?.map((element) => (
+                  <Table.Tr key={element.id}>
+                    <Table.Td>
+                      <Flex>
+                        <Checkbox
+                          className="mr-2 "
+                          size="xs"
+                          checked={selectedPermission.some(
+                            (permItem) => permItem.id === element.id,
+                          )}
+                          onChange={() => {
+                            setSelectedPermission((prev: Permission[]) => {
+                              if (
+                                prev.some(
+                                  (permItem) => permItem.id === element.id,
+                                )
+                              ) {
+                                return prev.filter(
+                                  (permItem) => permItem.id !== element.id,
+                                );
+                              } else {
+                                return [...prev, element];
+                              }
+                            });
+                          }}
+                        />
+
+                        {element.name}
+                      </Flex>
+                    </Table.Td>
+                  </Table.Tr>
+                ))}
+              </Table.Tbody>
+            </Table>
+          }
+        </Flex>
+      </Box>
+      <Box className="flex justify-end mt-2 mb-4">
+        <Button
+          onClick={() => (
+            setPermission(selectedPermission), handleCloseModal()
+          )}
+        >
+          Done
+        </Button>
+        <Button color="red" ml={3} onClick={() => handleCloseModal()}>
+          Cancel
+        </Button>
+      </Box>
     </>
   );
 };

@@ -30,6 +30,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
       },
       pagination: true,
       searchable: true,
+      sortable: true,
 
       hasAdd: false,
       hasDetail: false,
@@ -49,9 +50,6 @@ export function Entity({ children }: { children: React.ReactNode }) {
           header: 'Description',
           accessorKey: 'mandate.description',
           cell: (info) => info.getValue(),
-          meta: {
-            widget: 'expand',
-          },
         },
       ],
     };

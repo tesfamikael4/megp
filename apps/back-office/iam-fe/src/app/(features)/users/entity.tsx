@@ -45,6 +45,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
 
       pagination: true,
       searchable: true,
+      sortable: true,
       columns: [
         {
           id: 'name',
@@ -60,18 +61,12 @@ export function Entity({ children }: { children: React.ReactNode }) {
           header: 'User name',
           accessorKey: 'username',
           cell: (info) => info.getValue(),
-          meta: {
-            widget: 'expand',
-          },
         },
         {
           id: 'email',
           header: 'Email',
           accessorKey: 'email',
           cell: (info) => info.getValue(),
-          meta: {
-            widget: 'expand',
-          },
         },
 
         {
@@ -79,9 +74,6 @@ export function Entity({ children }: { children: React.ReactNode }) {
           header: 'Active',
           accessorKey: 'isActive',
           cell: (info) => info.getValue(),
-          meta: {
-            widget: 'expand',
-          },
         },
       ],
     };

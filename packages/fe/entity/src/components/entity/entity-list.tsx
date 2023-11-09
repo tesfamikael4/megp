@@ -1,10 +1,14 @@
 'use client';
 
 import { Box, Button, Tooltip } from '@mantine/core';
-import { Section } from '@megp/core-fe';
+import { Section, logger } from '@megp/core-fe';
 import { IconPlus } from '@tabler/icons-react';
 import type { ColumnDef } from '@tanstack/react-table';
-import { getCoreRowModel, useReactTable } from '@tanstack/react-table';
+import {
+  getCoreRowModel,
+  useReactTable,
+  getSortedRowModel,
+} from '@tanstack/react-table';
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { defaultEntityConfig, type EntityConfig } from '../../models/entity';
@@ -43,6 +47,7 @@ export function EntityList<T>({
   );
 
   const [width, setWidth] = useState(100);
+  const [sorting, setSorting] = useState([]);
 
   // change the width of the table columns when the mode changes
   useEffect(() => {
@@ -61,14 +66,19 @@ export function EntityList<T>({
         options.primaryContent,
         mode,
       ),
+      sorting,
     },
-
-    columns: tableColumns,
     getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    onSortingChange: setSorting,
+    columns: tableColumns,
+    enableSortingRemoval: false,
+
     defaultColumn: {
       enableHiding: false,
     },
   });
+  logger.log(sorting);
 
   return (
     <Section

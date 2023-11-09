@@ -4,6 +4,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { useListQuery } from './_api/organization.api';
 import { Organization } from '@/models/organization';
+import { Type } from './_components/organization-type';
 
 export function Entity({ children }: { children: React.ReactNode }) {
   const route = useRouter();
@@ -43,6 +44,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
       },
       searchable: true,
       pagination: true,
+      sortable: true,
 
       columns: [
         {
@@ -59,19 +61,18 @@ export function Entity({ children }: { children: React.ReactNode }) {
           header: 'Short Name',
           accessorKey: 'shortName',
           cell: (info) => info.getValue(),
-          meta: {
-            widget: 'expand',
-          },
         },
-
+        {
+          id: 'typeId',
+          header: 'Organization type',
+          accessorKey: 'typeId',
+          cell: (info) => <Type id={info.row.original.typeId} />,
+        },
         {
           id: 'isActive',
           header: 'Active',
           accessorKey: 'isActive',
           cell: (info) => info.getValue(),
-          meta: {
-            widget: 'expand',
-          },
         },
       ],
     };

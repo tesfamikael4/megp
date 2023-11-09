@@ -1,4 +1,5 @@
 import {
+  ActionIcon,
   Box,
   Button,
   Center,
@@ -10,7 +11,12 @@ import {
   Table,
   Text,
 } from '@mantine/core';
-import { IconInboxOff, IconPlus, IconSearch } from '@tabler/icons-react';
+import {
+  IconArrowsSort,
+  IconInboxOff,
+  IconPlus,
+  IconSearch,
+} from '@tabler/icons-react';
 import { flexRender } from '@tanstack/react-table';
 import type t from '@tanstack/react-table';
 import { logger } from '@megp/core-fe';
@@ -94,6 +100,20 @@ export function Grid<T>({
                             header.column.columnDef.header,
                             header.getContext(),
                           )}
+                      {header.column.id !== 'action' && options.sortable ? (
+                        <ActionIcon
+                          onClick={header.column.getToggleSortingHandler()}
+                          size="sm"
+                          variant="transparent"
+                        >
+                          <IconArrowsSort
+                            className="mt-1 ml-1"
+                            color="grey"
+                            height={14}
+                            width={14}
+                          />
+                        </ActionIcon>
+                      ) : null}
                     </Table.Th>
                   ))}
                 </Table.Tr>

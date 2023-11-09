@@ -25,8 +25,7 @@ type ModeType = 'new' | 'detail';
 
 const defaultValues = {
   region: '',
-  zoneOrSubCity: '',
-  city: '',
+
   district: '',
   telephone: {
     countryCode: '',
@@ -38,7 +37,7 @@ const defaultValues = {
   },
   postalCode: '',
   email: '',
-  houseNumber: '',
+
   mobileNumber: {
     countryCode: '',
     number: '',
@@ -48,10 +47,9 @@ const defaultValues = {
 const OrganizationAdressForm = () => {
   const organizationAddressSchema: ZodType<Partial<OrganizationProfile>> =
     z.object({
-      region: z.string(),
-      district: z.string(),
-      zoneOrSubCity: z.string(),
-      city: z.string(),
+      region: z.string().min(1, { message: 'Please select region.' }),
+      district: z.string().min(1, { message: 'Please select district' }),
+
       telephone: z.object({
         countryCode: z.string().default('MW').optional(),
         number: z
@@ -87,8 +85,11 @@ const OrganizationAdressForm = () => {
         ),
       }),
       postalCode: z.string(),
-      email: z.string(),
-      houseNumber: z.string(),
+      email: z
+        .string()
+        .min(1, { message: 'This field required.' })
+        .email('This is not a valid email.'),
+
       mobileNumber: z.object({
         countryCode: z.string().default('MW'),
         number: z
@@ -139,9 +140,9 @@ const OrganizationAdressForm = () => {
 
   useEffect(() => {
     const districtOptions = {
-      southern: ['Mangochi', 'Neno', 'Nsanje', 'Phalombe', 'Thyolo', 'Zomba'],
-      northern: ['Mzimba', 'Nkhata Bay', 'Rumphi'],
-      central: ['Nkhotakota', 'Ntcheu', 'Ntchisi', 'Salima'],
+      Southern: ['Mangochi', 'Neno', 'Nsanje', 'Phalombe', 'Thyolo', 'Zomba'],
+      Northern: ['Mzimba', 'Nkhata Bay', 'Rumphi'],
+      Central: ['Nkhotakota', 'Ntcheu', 'Ntchisi', 'Salima'],
     };
     const updatedOptions =
       districtOptions[selectedRegion]?.map((item) => ({
@@ -249,13 +250,6 @@ const OrganizationAdressForm = () => {
         />
       </Group>
 
-      {/* <TextInput label="Zone/Subcity" {...register('zoneOrSubCity')} /> */}
-
-      {/* <TextInput
-        label="House number"
-        error={errors?.houseNumber ? errors.houseNumber.message : ''}
-        {...register('houseNumber')}
-      /> */}
       <Group grow>
         <TextInput
           label="Postal code"
