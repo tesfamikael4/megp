@@ -19,7 +19,6 @@ import { InvoiceEntity } from 'src/handling/entities/invoice.entity';
 import { PaymentReceiptEntity } from 'src/handling/entities/receipt-attachment';
 import { HandlingCommonService } from 'src/handling/services/handling-common-services';
 import { HttpModule } from '@nestjs/axios';
-import { TaskAssignmentController } from './controllers/task-assignment.controller';
 import { TaskAssignmentService } from './services/task-assignment.service';
 
 @Module({
@@ -41,8 +40,7 @@ import { TaskAssignmentService } from './services/task-assignment.service';
     BpServiceService,
     TaskService,
     BusinessProcessService,
-    WorkflowService
-
+    WorkflowService,
   ],
   providers: [
     BpServiceService,
