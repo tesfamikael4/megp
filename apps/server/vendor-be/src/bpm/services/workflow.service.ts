@@ -1,7 +1,7 @@
 import {
   BadRequestException,
   Injectable,
-  NotFoundException
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -35,7 +35,6 @@ import { BusinessProcessService } from 'src/bpm/services/business-process.servic
 import { TaskService } from 'src/bpm/services/task.service';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
-import { UpdateTaskDto } from '../dtos/task.dto';
 @Injectable()
 export class WorkflowService {
   constructor(
@@ -50,7 +49,7 @@ export class WorkflowService {
     private readonly bpService: BusinessProcessService,
     private readonly commonService: HandlingCommonService,
     private readonly taskService: TaskService,
-    private readonly httpService: HttpService
+    private readonly httpService: HttpService,
   ) { }
   async intiateWorkflowInstance(
     dto: CreateWorkflowInstanceDto,
@@ -155,7 +154,6 @@ export class WorkflowService {
           await this.addTaskTracker(currentTaskHandler, nextCommand, userInfo);
           await this.handlerRepository.delete(currentTaskHandler.id);
         }
-
       } else {
         const task = await this.taskService.getTaskByNameAndBP(
           workflowInstance.bpId,
@@ -336,7 +334,7 @@ export class WorkflowService {
     };
     const config = {
       headers: {
-        'Authorization': 'Bearer yourAuthToken',
+        Authorization: 'Bearer yourAuthToken',
         'Other-Header': 'header-value',
       },
     };
@@ -370,10 +368,6 @@ export class WorkflowService {
     console.log('invoice', instanceId, taskId);
   }
 
-  async generateInvoice(instanceId: string, taskId: string) {
-    console.log('invoice', instanceId, taskId);
-  }
-
   getStateMetaData(meta) {
     return Object.keys(meta).reduce((acc, key) => {
       const value = meta[key];
@@ -383,7 +377,4 @@ export class WorkflowService {
       return acc;
     }, {});
   }
-
-
-
 }
