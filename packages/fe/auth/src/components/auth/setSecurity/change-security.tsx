@@ -151,6 +151,7 @@ export function ChangeSecurity({
           placeholder="Enter your username"
           required
           {...register('username')}
+          withAsterisk
         />
       ) : (
         <PasswordInput
@@ -159,6 +160,7 @@ export function ChangeSecurity({
           {...register('password')}
           error={errors.password?.message}
           placeholder="********"
+          withAsterisk
         />
       )}
       <Controller

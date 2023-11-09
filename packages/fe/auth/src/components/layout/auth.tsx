@@ -3,7 +3,7 @@ import { Box, Divider, Flex, Title } from '@mantine/core';
 import Image from 'next/image';
 import { ForgotPassword } from '../auth/forgot-password/forgot-password';
 import { SecurityQPassReset } from '../auth/questions-reset/questions-reset';
-import { PasswordReset } from '../auth/reset-password/reset-password';
+import { PasswordReset } from '../auth/otp-reset/otp-reset';
 import { SetSecurity } from '../auth/setSecurity/set-security';
 import { SignUp } from '../auth/signup/signup';
 import { Otp } from '../auth/verification/otp';
@@ -15,17 +15,21 @@ const page = {
   login: <Login />,
   signup: <SignUp />,
   questions: <SecurityQPassReset />,
-  'reset-password': <PasswordReset />,
   'forgot-password': <ForgotPassword />,
   setSecurity: <SetSecurity />,
 };
 
 export function Auth({ path }: { path: string }): JSX.Element {
-  const render = path[0].startsWith('verification') ? (
-    <Otp id={path[1]} />
-  ) : (
-    page[path]
-  );
+  const render = () => {
+    if (path[0].startsWith('verification')) {
+      return <Otp id={path[2]} mode="verify" />;
+    } else if (path[0].startsWith('otp-reset')) {
+      return <Otp id={path[1]} mode="reset" />;
+    } else if (path.length > 1 && path[1].startsWith('otp-reset')) {
+      return <PasswordReset otp={path[3]} verificationId={path[2]} />;
+    }
+    return page[path];
+  };
   return (
     <div className="flex flex-row">
       <div className={styles.left_content}>
@@ -36,7 +40,7 @@ export function Auth({ path }: { path: string }): JSX.Element {
           src="/ppda.png"
           width={100}
         />
-        <Box>{render}</Box>
+        <Box>{render()}</Box>
         <div className="absolute bottom-0">
           <p className={styles.footer_text}>
             Copyright &copy; 2023, Procurement and Disposal of Assets Authority.

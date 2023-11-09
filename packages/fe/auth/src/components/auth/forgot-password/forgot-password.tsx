@@ -38,7 +38,7 @@ export function ForgotPassword(): JSX.Element {
           message: response.message,
         });
       } else {
-        router.push(`/auth/verification/otp/${response?.verificationId}`);
+        router.push(`/auth/otp-reset/${response?.verificationId}`);
       }
       // reset password email sent.
     } finally {
