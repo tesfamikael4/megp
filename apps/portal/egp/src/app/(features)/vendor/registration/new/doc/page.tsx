@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 import UppyAttachmentDashboard from '../../../_components/UppyAttachmentDashboard/UppyAttachmentDashboard';
 import { useRouter } from 'next/navigation';
 import { getCookie } from 'cookies-next';
-import { useAddFormMutation, useGetFormQuery } from '../_api/query';
+import { useAddFormMutation, useGetFormQuery } from '../../_api/query';
 import { NotificationService } from '../../../_components/notification';
 
 function Page() {

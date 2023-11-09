@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { LoadingOverlay } from '@mantine/core';
 import { useRouter } from 'next/navigation';
 import { NotificationService } from '../../../_components/notification';
-import { useGetFormQuery } from '../_api/query';
+import { useGetFormQuery } from '../../_api/query';
 import RegistrationForm from '../_components/detail/formShell';
 
 export default function Page() {

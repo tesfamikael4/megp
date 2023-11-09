@@ -4,6 +4,8 @@
 @tailwind utilities;
 @import '@mantine/core/styles.css';
 @import '@mantine/notifications/styles.css';
+@import '@mantine/dates/styles.css';
+
 html,
 body {
   @apply bg-white;

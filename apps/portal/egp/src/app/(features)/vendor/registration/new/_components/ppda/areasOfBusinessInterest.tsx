@@ -10,7 +10,7 @@ import {
   useGetPriceRangeQuery,
   useLazyGetFPPADataQuery,
   useLazyGetNCICDataQuery,
-} from '../../_api/query';
+} from '../../../_api/query';
 
 export const transformCategoryPriceRange = (
   inputData: any,
