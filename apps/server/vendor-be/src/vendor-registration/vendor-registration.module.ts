@@ -65,8 +65,7 @@ import { BusinessAreaService } from './services/business-areaEntity.service';
       TaskAssignmentEntity,
       TaskHandlerEntity,
       TaskTrackerEntity,
-      BusinessProcessEntity,
-      BpServiceEntity,
+
       BusinessAreaEntity,
     ]),
     BpmModule,
