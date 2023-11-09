@@ -22,7 +22,7 @@ const page = {
 export function Auth({ path }: { path: string }): JSX.Element {
   const render = () => {
     if (path[0].startsWith('verification')) {
-      return <Otp id={path[2]} mode="verify" />;
+      return <Otp id={path[1]} mode="verify" />;
     } else if (path[0].startsWith('otp-reset')) {
       return <Otp id={path[1]} mode="reset" />;
     } else if (path.length > 1 && path[1].startsWith('otp-reset')) {
