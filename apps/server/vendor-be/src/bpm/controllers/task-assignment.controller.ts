@@ -1,18 +1,14 @@
 import {
   Body,
   Controller,
-  Delete,
-  Get,
   HttpStatus,
   Param,
   ParseUUIDPipe,
-  Patch,
   Post,
   Put,
-  Query,
 } from '@nestjs/common';
 import { ApiExtraModels, ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { ApiPaginatedResponse, DataResponseFormat } from 'src/shared/api-data';
+import { DataResponseFormat } from 'src/shared/api-data';
 import { EntityCrudController } from 'src/shared/controller';
 import { TaskAssignmentEntity } from '../entities/task-assignment';
 import { TaskAssignmentService } from '../services/task-assignment.service';
