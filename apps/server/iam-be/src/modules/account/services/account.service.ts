@@ -33,7 +33,7 @@ export class AccountsService {
     private readonly securityQuestionRepository: Repository<SecurityQuestion>,
     private readonly helper: AuthHelper,
     private readonly emailService: EmailService,
-  ) {}
+  ) { }
 
   public async createAccount(
     createAccountDto: CreateAccountDto,
