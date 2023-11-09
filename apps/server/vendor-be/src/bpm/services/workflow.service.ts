@@ -1,7 +1,7 @@
 import {
   BadRequestException,
   Injectable,
-  NotFoundException
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -49,8 +49,8 @@ export class WorkflowService {
     private readonly bpService: BusinessProcessService,
     private readonly commonService: HandlingCommonService,
     private readonly taskService: TaskService,
-    private readonly httpService: HttpService
-  ) { }
+    private readonly httpService: HttpService,
+  ) {}
   async intiateWorkflowInstance(
     dto: CreateWorkflowInstanceDto,
     userInfo: any,
@@ -138,7 +138,6 @@ export class WorkflowService {
           await this.addTaskTracker(currentTaskHandler, nextCommand, userInfo);
           await this.handlerRepository.delete(currentTaskHandler.id);
         }
-
       } else {
         const task = await this.taskService.getTaskByNameAndBP(
           workflowInstance.bpId,
@@ -292,15 +291,20 @@ export class WorkflowService {
   }
 
   async notifyApplicationCompletion(data: UpdateWorkflowInstanceDto) {
-    return true;
     const config = {
       headers: {
-        'Authorization': 'Bearer yourAuthToken',
+        Authorization: 'Bearer yourAuthToken',
         'Other-Header': 'header-value',
       },
     };
     try {
-      const response = await firstValueFrom(this.httpService.post('https://localhost:3000/completeTasks', data, config));
+      const response = await firstValueFrom(
+        this.httpService.post(
+          'https://localhost:3000/completeTasks',
+          data,
+          config,
+        ),
+      );
       if (response.status === 200) {
         const responseData = response.data;
         return responseData;
@@ -313,10 +317,10 @@ export class WorkflowService {
     }
   }
   async sendEmail(data: any) {
-    console.log("email", data);
+    console.log('email', data);
   }
   async sendSMS(data: any) {
-    console.log("email", data);
+    console.log('email', data);
   }
 
   getStateMetaData(meta) {
@@ -328,7 +332,4 @@ export class WorkflowService {
       return acc;
     }, {});
   }
-
-
-
 }
