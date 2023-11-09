@@ -18,6 +18,7 @@ export function Otp({
   const { verify, error, verifyForgetPassword } = useAuth();
   const [disabled, setDisabled] = useState(true);
   const [countdown, setCountdown] = useState(60);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
   const path = usePathname();
 
@@ -53,49 +54,50 @@ export function Otp({
   };
 
   const submitOTP = async (otp) => {
-    if (mode === 'verify') {
-      const response = await verify({
-        verificationId: id,
-        otp,
-        isOtp: true,
-      });
-      if (!response) {
-        return;
-      }
-      if (response.statusCode) {
-        notifications.show({
-          title: 'Error',
-          color: 'red',
-          message: 'Verification Code Expired. Please resend.',
+    try {
+      setIsSubmitting(true);
+      if (mode === 'verify') {
+        const response = await verify({
+          verificationId: id,
+          otp,
+          isOtp: true,
         });
-      } else if (response.is_security_question_set) {
-        setCookie('token', response.access_token);
-        setCookie('refreshToken', response.refresh_token);
-        window.location.href = '/';
+        if (!response) {
+          return;
+        }
+        if (response.statusCode) {
+          notifications.show({
+            title: 'Error',
+            color: 'red',
+            message: 'Verification Code Expired. Please resend.',
+          });
+        } else {
+          setCookie('token', response.access_token);
+          setCookie('refreshToken', response.refresh_token);
+          window.location.href = '/auth/setSecurity';
+        }
       } else {
-        setCookie('token', response.access_token);
-        setCookie('refreshToken', response.refresh_token);
-        window.location.href = '/auth/setSecurity';
-      }
-    } else {
-      const response = await verifyForgetPassword({
-        verificationId: id,
-        otp,
-        isOtp: true,
-      });
-      if (!response) {
-        return;
-      }
-      if (response.statusCode) {
-        notifications.show({
-          title: 'Error',
-          color: 'red',
-          message: 'Verification Code Expired. Please resend.',
+        const response = await verifyForgetPassword({
+          verificationId: id,
+          otp,
+          isOtp: true,
         });
-      } else {
-        const modifiedUrl = path.replace(/\/auth/g, '');
-        router.push(`/auth/otp/${modifiedUrl}/${otp}`);
+        if (!response) {
+          return;
+        }
+        if (response.statusCode) {
+          notifications.show({
+            title: 'Error',
+            color: 'red',
+            message: 'Verification Code Expired. Please resend.',
+          });
+        } else {
+          const modifiedUrl = path.replace(/\/auth/g, '');
+          router.push(`/auth/otp/${modifiedUrl}/${otp}`);
+        }
       }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -121,7 +123,9 @@ export function Otp({
         <Button disabled={disabled} onClick={handleResendClick}>
           Resend Code ({formatTime(countdown)})
         </Button>
-        <Button onClick={async () => submitOTP(value)}>Continue</Button>
+        <Button loading={isSubmitting} onClick={async () => submitOTP(value)}>
+          Continue
+        </Button>
       </Flex>
     </div>
   );
