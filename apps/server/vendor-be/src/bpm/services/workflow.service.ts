@@ -51,7 +51,7 @@ export class WorkflowService {
     private readonly commonService: HandlingCommonService,
     private readonly taskService: TaskService,
     private readonly httpService: HttpService,
-  ) {}
+  ) { }
   async intiateWorkflowInstance(
     dto: CreateWorkflowInstanceDto,
     userInfo: any,
@@ -363,10 +363,6 @@ export class WorkflowService {
   }
   async sendSMS(data: any) {
     console.log('email', data);
-  }
-
-  async generateInvoice(instanceId: string, taskId: string) {
-    console.log('invoice', instanceId, taskId);
   }
 
   async generateInvoice(instanceId: string, taskId: string) {
