@@ -14,7 +14,7 @@ import {
   useLazyGetMBRSDataQuery,
   useLazyGetMRADataQuery,
   useLazyGetNCICDataQuery,
-} from '../../_api/query';
+} from '../../../_api/query';
 import { NotificationService } from '../../../../_components/notification';
 
 const VendorFormContext = createContext<{

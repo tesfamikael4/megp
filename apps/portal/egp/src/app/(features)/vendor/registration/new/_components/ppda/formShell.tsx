@@ -9,7 +9,7 @@ import {
   useAddFormMutation,
   useCreateVendorIdMutation,
   useLazyGetMRADataQuery,
-} from '../../_api/query';
+} from '../../../_api/query';
 import { NotificationService } from '@/app/(features)/vendor/_components/notification';
 import { FormData } from '@/models/vendorRegistration';
 import { ExtendedRegistrationReturnType } from '../detail/formShell';

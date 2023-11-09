@@ -23,7 +23,10 @@ import { setCookie } from 'cookies-next';
 import { useRouter } from 'next/navigation';
 import { NotificationService } from '../../../../_components/notification';
 import classes from './accordion.module.scss';
-import { useAddFormMutation, useLazyGetMBRSDataQuery } from '../../_api/query';
+import {
+  useAddFormMutation,
+  useLazyGetMBRSDataQuery,
+} from '../../../_api/query';
 import { useTabs } from './accordion.data';
 
 export interface ExtendedRegistrationReturnType

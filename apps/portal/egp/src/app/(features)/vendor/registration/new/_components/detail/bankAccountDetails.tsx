@@ -13,7 +13,7 @@ import {
   CardListShell,
   SingleCardWrapper,
 } from '../../../../_components/cardList/cardListShell';
-import { useGetBankListQuery } from '../../_api/query';
+import { useGetBankListQuery } from '../../../_api/query';
 
 interface Props extends Partial<PassFormDataProps> {
   itemSchema: any;

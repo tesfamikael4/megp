@@ -26,8 +26,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { FormOfBusiness } from '../mockup/form-of-business';
 import {
   useCreateVendorIdMutation,
+  useLazyGetMBRSDataQuery,
   useLazyGetMRADataQuery,
-} from '../../_api/query';
+} from '../../../_api/query';
 import { NotificationService } from '@/app/(features)/vendor/_components/notification';
 import { IconCalendar } from '@tabler/icons-react';
 import { setCookie } from 'cookies-next';
@@ -80,6 +81,7 @@ export const BasicInformation = () => {
   const [accept, setAccept] = useState<boolean>(false);
   const [create, createValues] = useCreateVendorIdMutation();
   const [getMRAData, getMRADataValues] = useLazyGetMRADataQuery({});
+  const [getMBRSData, getMBRSDataValues] = useLazyGetMBRSDataQuery({});
 
   const onSubmit = (data: typeof formState.defaultValues) => {
     if (data?.origin == 'MW') {
@@ -114,25 +116,28 @@ export const BasicInformation = () => {
   }, [createValues.data, createValues.isError, createValues.isSuccess, router]);
 
   useEffect(() => {
-    if (getMRADataValues.isSuccess && getMRADataValues.data == null) {
+    if (getMRADataValues.data) {
+      getMBRSData({
+        tin: getMRADataValues.data.TIN,
+      });
+      console.log(getMRADataValues.data);
+    }
+    if (getMRADataValues.data == null) {
       console.log(getMRADataValues.data);
       NotificationService.requestErrorNotification('Invalid Request');
     }
-    if (getMRADataValues.isError) {
-      NotificationService.requestErrorNotification('Error on Request');
-    }
     return () => {};
-  }, [
-    getMRADataValues.data,
-    getMRADataValues.isError,
-    getMRADataValues.isSuccess,
-  ]);
+  }, [getMRADataValues.data]);
 
   useEffect(() => {
-    if (getMRADataValues.data) {
+    if (getMRADataValues.data && getMBRSDataValues.data) {
       create({
-        name: getMRADataValues.data?.TaxpayerName || '',
-        businessType: watch().businessType || '',
+        name:
+          getMRADataValues.data?.TaxpayerName ||
+          getMBRSDataValues.data?.businessName ||
+          ' ',
+        businessType:
+          watch().businessType || getMBRSDataValues.data?.legalStatus,
         origin: watch().origin,
         country: watch().origin,
         tinNumber: watch().tinNumber,
@@ -143,7 +148,7 @@ export const BasicInformation = () => {
 
     return () => {};
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [getMRADataValues.data]);
+  }, [getMRADataValues.data, getMBRSDataValues.data]);
   return (
     <Box className={style.reqFormCard}>
       <LoadingOverlay
@@ -238,7 +243,9 @@ export const BasicInformation = () => {
         </Flex>
 
         <Flex className="mt-10 justify-end gap-2">
-          <Button disabled={!accept}>Start Registration</Button>
+          <Button type="submit" disabled={!accept}>
+            Start Registration
+          </Button>
         </Flex>
       </form>
     </Box>

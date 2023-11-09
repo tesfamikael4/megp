@@ -10,7 +10,7 @@ import {
 import React, { useEffect } from 'react';
 import InvoiceTemplate from '../../../_components/dynamicPrintComponent/invoice-sm';
 import { getCookie } from 'cookies-next';
-import { useAddFormMutation, useGetFormQuery } from '../_api/query';
+import { useAddFormMutation, useGetFormQuery } from '../../_api/query';
 import { NotificationService } from '../../../_components/notification';
 import { useRouter } from 'next/navigation';
 import PaymentMethod from '../_components/payment/payment-method';

@@ -1,5 +1,5 @@
 import { Flex } from '@mantine/core';
-import PageTitle from './_components/page-title/title';
+import PageTitle from '../_components/page-title/title';
 import StyledStepper from './_components/stepper/stepper';
 import styles from './layout.module.scss';
 
