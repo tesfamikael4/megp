@@ -9,16 +9,13 @@ import {
   Patch,
   Post,
   Put,
-  Query,
 } from '@nestjs/common';
 import {
   ApiExtraModels,
   ApiOkResponse,
-  ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { ApiPaginatedResponse, DataResponseFormat } from 'src/shared/api-data';
-import { CollectionQuery } from 'src/shared/collection-query';
+import { DataResponseFormat } from 'src/shared/api-data';
 import { TaskService } from '../services/task.service';
 import { TaskResponse, UpdateTaskDto } from '../dtos/task.dto';
 import { CreateTaskDto } from '../dtos/task.dto';
@@ -35,7 +32,6 @@ export class TaskController extends EntityCrudController<TaskEntity> {
   @Post()
   @ApiOkResponse({ type: TaskResponse })
   async create(@Body() dto: CreateTaskDto) {
-    console.log(dto);
     return await super.create(dto);
   }
   @Put(':id')
