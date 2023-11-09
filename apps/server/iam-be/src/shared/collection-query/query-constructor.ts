@@ -83,6 +83,7 @@ const applyWhereConditions = <T>(
   for (const [index, conditions] of whereConditions.entries()) {
     const operator = index === 0 ? 'where' : 'andWhere';
 
+    let count = 0;
     queryBuilder[operator]((subQuery) => {
       const orConditions = conditions.map(({ column, value, operator: op }) => {
         if (column.includes('.')) {
@@ -114,16 +115,19 @@ const applyWhereConditions = <T>(
               );
             }
           } else {
+            const columnValue = `${column}_${++count}`;
+
             return addFilterConditions(
               op,
               value,
               `${aggregate}."${column}"`,
-              column,
+              columnValue,
             );
           }
         }
       });
 
+      count = 0;
       const queryParams = conditions.reduce(
         (acc, { column, value, operator: op }) => {
           if (column.includes('.')) {
@@ -143,7 +147,9 @@ const applyWhereConditions = <T>(
               );
             }
           } else {
-            acc = addFilterParams(op, value, column, acc);
+            const columnValue = `${column}_${++count}`;
+
+            acc = addFilterParams(op, value, columnValue, acc);
           }
           return acc;
         },
@@ -305,9 +311,9 @@ export class QueryConstructor {
     //   // : ['name'],
     //   where: [
     //     // [{ column: 'name', value: 'string', operator: '=' }, { column: 'name', value: 'string1', operator: '=' }],
-    //     [{ column: 'name', value: ['string', 'string1'], operator: 'IN' }],
-    //     // [{ column: 'name', value: 'string', operator: '=' }],
-    //     // [{ column: 'descriptionJson->>value', value: 20, operator: '=' }],
+    //     // [{ column: 'name', value: ['string', 'string1'], operator: 'IN' }],
+    //     [{ column: 'name', value: 'string', operator: '=' }],
+    //     // [{ column: 'descriptionJson->>name', value: 'test', operator: '=' }],
     //     // [{ column: 'descriptionJson->value->>value', value: 20, operator: '=' }],
     //     // [
     //     //   {
@@ -326,7 +332,7 @@ export class QueryConstructor {
     //   // count: true,
     // };
 
-    // const sQ = encodeCollectionQuery(query);
+    const sQ = encodeCollectionQuery(query);
 
     const aggregateColumns: any = {};
     const metaData = repository.manager.connection.getMetadata(

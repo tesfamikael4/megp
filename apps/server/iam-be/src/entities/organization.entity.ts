@@ -58,6 +58,7 @@ export class Organization extends Audit {
 
   @Column({ default: '1.0.0-alpha' })
   version: string;
+
   @Column({ default: false })
   isLocked: boolean;
 

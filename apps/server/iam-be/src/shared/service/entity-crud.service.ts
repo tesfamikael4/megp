@@ -18,6 +18,9 @@ export class EntityCrudService<T extends BaseEntity> {
       this.repository,
       query,
     );
+
+    const d = dataQuery.getQuery();
+
     const response = new DataResponseFormat<T>();
     if (query.count) {
       response.total = await dataQuery.getCount();
