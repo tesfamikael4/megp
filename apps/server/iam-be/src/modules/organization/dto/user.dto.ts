@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsOptional, IsBoolean } from 'class-validator';
+import { IsString, IsOptional, IsBoolean, IsUUID } from 'class-validator';
 import { User } from '@entities';
 import { ContactNumber } from 'src/shared/entities/contact-number';
 import {
@@ -13,6 +13,11 @@ import {
 import { CreateUserUnitDto, UserUnitResponseDto } from './user-unit.dto';
 
 export class CreateUserDto {
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  accountId: string;
+
   @ApiProperty()
   @IsString()
   username: string;
@@ -59,6 +64,7 @@ export class CreateUserDto {
 
   static fromDto(userDto: CreateUserDto): User {
     const user: User = new User();
+    user.accountId = userDto.accountId;
 
     user.username = userDto.username;
 
@@ -94,6 +100,8 @@ export class UpdateUserDto extends CreateUserDto {
     const user: User = new User();
     user.id = userDto.id;
 
+    user.accountId = userDto.accountId;
+
     user.username = userDto.username;
 
     user.firstName = userDto.firstName;
@@ -128,6 +136,8 @@ export class UserResponseDto extends UpdateUserDto {
     const userDto: UserResponseDto = new UserResponseDto();
 
     userDto.id = user.id;
+
+    userDto.accountId = user.accountId;
 
     userDto.username = user.username;
 
@@ -167,4 +177,10 @@ export class UserResponseDto extends UpdateUserDto {
   static toDtos(users: User[]) {
     return users?.map((user) => UserResponseDto.toDto(user));
   }
+}
+
+export class InviteUserDto {
+  @ApiProperty()
+  @IsUUID()
+  id: string;
 }

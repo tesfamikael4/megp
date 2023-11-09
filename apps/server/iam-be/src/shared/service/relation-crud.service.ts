@@ -93,9 +93,9 @@ export class RelationCrudService<TEntity extends BaseEntity> {
     include: string,
     query: CollectionQuery,
   ) {
-    query.filter.push([
+    query.where.push([
       {
-        field: entityIdName,
+        column: entityIdName,
         value: entityId,
         operator: FilterOperators.EqualTo,
       },

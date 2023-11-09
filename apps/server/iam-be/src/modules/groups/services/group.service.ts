@@ -3,9 +3,8 @@ import { Group } from '@entities';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
-import { QueryConstructorNew } from 'src/shared/collection-query/query-constructor-new';
 import { DataResponseFormat } from 'src/shared/api-data';
-import { CollectionQueryNew } from 'src/shared/collection-query/query';
+import { CollectionQuery, QueryConstructor } from 'src/shared/collection-query';
 
 @Injectable()
 export class GroupService extends EntityCrudService<Group> {
@@ -16,9 +15,9 @@ export class GroupService extends EntityCrudService<Group> {
     super(groupRepository);
   }
 
-  async getAllGroups(query: CollectionQueryNew) {
+  async getAllGroups(query: CollectionQuery) {
     try {
-      const dataQuery = QueryConstructorNew.constructQuery<Group>(
+      const dataQuery = QueryConstructor.constructQuery<Group>(
         this.groupRepository,
         query,
       );

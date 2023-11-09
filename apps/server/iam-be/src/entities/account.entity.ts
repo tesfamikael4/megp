@@ -1,8 +1,15 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Audit } from '@audit';
 import { AccountStatusEnum } from '@enums';
 import { AccountVerification } from './account-verification.entity';
 import { SecurityQuestion } from './security-question.entity';
+import { User } from './user.entity';
 
 @Entity('accounts')
 export class Account extends Audit {
@@ -59,4 +66,7 @@ export class Account extends Audit {
     },
   )
   securityQuestions: SecurityQuestion[];
+
+  @OneToOne(() => User, (user) => user.account)
+  user: User;
 }

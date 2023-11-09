@@ -10,7 +10,7 @@ import {
 
 import { Audit } from 'src/shared/entities/audit.entity';
 
-import { Organization } from '@entities';
+import { Account, Organization } from '@entities';
 import { UserProfile } from '@entities';
 import { UserRole } from '@entities';
 import { UserUnit } from '@entities';
@@ -52,12 +52,16 @@ export class User extends Audit {
   @Column()
   organizationId: string;
 
-  @Column({ nullable: true })
-  groupId: string;
-
   @ManyToOne(() => Organization, (organization) => organization.users)
   @JoinColumn({ name: 'organizationId' })
   public organization: Organization;
+
+  @Column({ nullable: true })
+  accountId: string;
+
+  @OneToOne(() => Account, (account) => account.user)
+  @JoinColumn({ name: 'accountId' })
+  public account: Account;
 
   @OneToOne(() => UserProfile, (empProf) => empProf.user, {
     cascade: true,

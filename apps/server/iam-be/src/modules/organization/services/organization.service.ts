@@ -29,8 +29,7 @@ export class OrganizationService extends EntityCrudService<Organization> {
     organization.code = this.generateOrganizationCode();
     organization.type = 'Vendor';
     organization.budgetType = 'default';
-    const organizationEntity = CreateOrganizationDto.fromDto(organization);
-    return await super.create(organizationEntity);
+    return await super.create(organization);
   }
 
   async activate(

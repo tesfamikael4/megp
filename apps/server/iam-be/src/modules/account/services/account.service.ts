@@ -20,6 +20,7 @@ import {
   SetSecurityQuestionDto,
 } from '../dto/security-question.dto';
 import { EmailService } from 'src/shared/email/email.service';
+import { UserService } from 'src/modules/organization/services/user.service';
 
 @Injectable()
 export class AccountsService {
@@ -190,9 +191,9 @@ export class AccountsService {
       let failedAttempts: number;
 
       if (!isPasswordValid) {
-        const MAXIMUM_FAILED_ATTEMPT = process.env.MAXIMUM_FAILED_ATTEMPT
-          ? +process.env.MAXIMUM_FAILED_ATTEMPT
-          : 5;
+        const MAXIMUM_FAILED_ATTEMPT = Number(
+          process.env.MAXIMUM_FAILED_ATTEMPT ?? 5,
+        );
 
         failedAttempts = account.failedAttempts + 1;
 
@@ -233,6 +234,75 @@ export class AccountsService {
       return token;
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async getUserInfo(id = '5477cf8c-9794-4e6a-88b6-97d855558f16') {
+    try {
+      const account = await this.repository.findOne({
+        where: {
+          id,
+        },
+        select: {
+          tenantId: true,
+          id: true,
+          user: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            username: true,
+            email: true,
+            organization: {
+              id: true,
+              name: true,
+              shortName: true,
+            },
+            userRoles: {
+              roleId: true,
+              role: {
+                key: true,
+                rolePermissions: {
+                  permissionId: true,
+                  permission: {
+                    key: true,
+                    applicationId: true,
+                    application: {
+                      key: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        relations: {
+          user: {
+            organization: true,
+            userRoles: {
+              role: {
+                rolePermissions: {
+                  permission: {
+                    application: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        // relations: [
+        //   "user",
+        //   "user.organization",
+        //   "user.userRoles",
+        //   "user.userRoles.role",
+        //   "user.userRoles.role.rolePermissions",
+        //   "user.userRoles.role.rolePermissions.permission",
+        //   "user.userRoles.role.rolePermissions.permission.application",
+        // ]
+      });
+
+      return account;
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.NOT_FOUND);
     }
   }
 
@@ -370,6 +440,50 @@ export class AccountsService {
     };
   }
 
+  async createBackOfficeAccount(input: any) {
+    try {
+      let { email }: CreateAccountDto = input;
+      email = email.toLocaleLowerCase();
+
+      let account: Account = await this.repository.findOne({
+        where: { email },
+      });
+
+      if (account) {
+        throw new HttpException('account_exists', HttpStatus.NOT_FOUND);
+      }
+
+      input.password = this.helper.generateOpt();
+      input.username = this.generateUsername();
+
+      account = await this.createNewAccount(input, AccountStatusEnum.PENDING);
+      return account;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async inviteBackOfficeAccount(accountId: string) {
+    const account: Account = await this.repository.findOne({
+      where: { id: accountId },
+    });
+
+    if (!account) {
+      throw new HttpException('account_not_found', HttpStatus.NOT_FOUND);
+    }
+    const password = this.helper.generateOpt();
+
+    account.password = password;
+    account.status = AccountStatusEnum.INVITED;
+
+    const verification =
+      await this.createAndSendInvitationVerificationOTP(account);
+
+    await this.repository.update(account.id, account);
+
+    return verification;
+  }
+
   private async verifyOTP(
     verificationId: string,
     otp: string,
@@ -461,9 +575,7 @@ export class AccountsService {
       );
 
       const fullName = `${account.firstName} ${account.lastName}`;
-      const OTP_LIFE_TIME = process.env.OTP_LIFE_TIME
-        ? +process.env.OTP_LIFE_TIME
-        : 10;
+      const OTP_LIFE_TIME = Number(process.env.OTP_LIFE_TIME ?? 10);
 
       let body: string;
 
@@ -487,6 +599,36 @@ export class AccountsService {
       // );
 
       return accountVerification.id;
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  private async createAndSendInvitationVerificationOTP(account: Account) {
+    try {
+      const { accountVerification, otp } = await this.createOTP(
+        account,
+        AccountVerificationTypeEnum.INVITATION,
+      );
+
+      const fullName = `${account.firstName} ${account.lastName}`;
+
+      const OTP_LIFE_TIME = Number(process.env.OTP_LIFE_TIME ?? 60);
+
+      const body = this.helper.verifyEmailTemplateForOtp(
+        fullName,
+        account.username,
+        otp,
+        OTP_LIFE_TIME,
+      );
+
+      // await this.emailService.sendEmail(
+      //   account.email,
+      //   'Email Verification',
+      //   body,
+      // );
+
+      return accountVerification;
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
