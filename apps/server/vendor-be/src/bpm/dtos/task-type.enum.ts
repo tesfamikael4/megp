@@ -8,4 +8,6 @@ export const TaskTypes = {
   PAYMENT: 'payment',
   ISR: 'isr',
   PaymentConfirmation: 'paymentconfirmation',
+  EMAIl: 'email',
+  SMS: 'sms',
 };

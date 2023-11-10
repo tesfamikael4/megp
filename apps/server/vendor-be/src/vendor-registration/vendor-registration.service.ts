@@ -11,7 +11,6 @@ import {
 import { Any, DataSource, In, Repository, Transaction } from 'typeorm';
 import { VendorsEntity } from './entities/vendors.entity';
 import { SetVendorStatus, VendorsResponseDto } from './dto/vendor.dto';
-import { WorkflowInstanceEntity } from 'src/handling/entities/workflow-instance';
 import { BpServiceEntity } from 'src/services/entities/bp-service';
 import { BusinessProcessEntity } from 'src/bpm/entities/business-process';
 import { FilesEntity } from './entities/file.entity';
@@ -23,7 +22,6 @@ import { ServicePrice } from 'src/pricing/entities/service-price';
 import { EntityCrudService } from 'src/shared/service';
 import { AreasOfBusinessInterestEntity } from './entities/areas-of-business-interest.entity';
 import { InvoiceEntity } from 'src/handling/entities/invoice.entity';
-import { InvoiceResponseDto } from './dto/invoice.dto';
 import { VendorStatusEnum } from 'src/shared/enumes/vendor-status-enums';
 import { CreateAreasOfBusinessInterest } from './dto/areas-of-business-interest';
 
@@ -35,15 +33,9 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
 
     @Inject(WorkflowInstanceService)
     private readonly WorkflowInstanceService: WorkflowInstanceService,
-    @InjectRepository(BpServiceEntity)
-    private readonly bpServiceRepository: Repository<BpServiceEntity>,
     @InjectRepository(InvoiceEntity)
     private readonly invoiceRepository: Repository<InvoiceEntity>,
-    @InjectRepository(BusinessProcessEntity)
-    private readonly businessProcessRepository: Repository<BusinessProcessEntity>,
     private readonly dataSource: DataSource, // private readonly workflowInstanceService: WorkflowInstanceService,
-    @InjectRepository(ServicePrice)
-    private readonly ServicePriceRepository: Repository<ServicePrice>,
     @InjectRepository(AreasOfBusinessInterestEntity)
     private readonly areasOfBusinessInterestRepository: Repository<AreasOfBusinessInterestEntity>,
   ) {
@@ -105,7 +97,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         /* data for Entity2 */
       };
       // await queryRunner.manager.getRepository(YourEntity2).save(entity2Data);
-    } catch (error) {}
+    } catch (error) { }
   }
   async VendorInitiation(
     vendorInitiationDto: VendorInitiationDto,
