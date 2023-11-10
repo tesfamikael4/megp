@@ -35,8 +35,6 @@ import { BusinessProcessService } from 'src/bpm/services/business-process.servic
 import { TaskService } from 'src/bpm/services/task.service';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
-import { UpdateTaskDto } from '../dtos/task.dto';
-import { UpdateTaskDto } from '../dtos/task.dto';
 @Injectable()
 export class WorkflowService {
   constructor(
