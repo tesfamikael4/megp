@@ -5,7 +5,8 @@ import { TypeOrmConfigService } from './shared/typeorm/typeorm.service';
 import { CategoriesModule } from './categories/category.module';
 import { VendorRegistrationModule } from './vendor-registration/vendor-registration.module';
 import { BpmModule } from './bpm/bpm.module';
-import { AuthorizationModule } from './authorization';
+import { AuthorizationModule } from './shared/authorization';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -21,4 +22,4 @@ import { AuthorizationModule } from './authorization';
   controllers: [],
   providers: [],
 })
-export class AppModule {}
+export class AppModule { }

@@ -44,6 +44,7 @@ import { TaskTrackerEntity } from 'src/bpm/entities/task-tracker';
 import { BusinessAreaController } from './controllers/business-area.controller';
 import { BusinessAreaEntity } from './entities/business-area';
 import { BusinessAreaService } from './services/business-areaEntity.service';
+import { AuthorizationModule } from 'src/shared/authorization';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -68,6 +69,7 @@ import { BusinessAreaService } from './services/business-areaEntity.service';
 
       BusinessAreaEntity,
     ]),
+    AuthorizationModule,
     BpmModule,
   ],
   exports: [],

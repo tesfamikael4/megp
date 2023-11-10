@@ -35,6 +35,7 @@ import { BusinessProcessService } from 'src/bpm/services/business-process.servic
 import { TaskService } from 'src/bpm/services/task.service';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
+import axios from 'axios';
 @Injectable()
 export class WorkflowService {
   constructor(
@@ -50,7 +51,7 @@ export class WorkflowService {
     private readonly commonService: HandlingCommonService,
     private readonly taskService: TaskService,
     private readonly httpService: HttpService,
-  ) {}
+  ) { }
   async intiateWorkflowInstance(
     dto: CreateWorkflowInstanceDto,
     userInfo: any,
@@ -193,7 +194,6 @@ export class WorkflowService {
         );
       }
     }
-    console.log('taskInfo-----', taskInfo);
     const result = await this.workflowInstanceRepository.save(workflowInstance);
     const workflow = WorkflowInstanceResponse.toResponse(result);
     if (taskInfo) {
@@ -327,25 +327,12 @@ export class WorkflowService {
     data: UpdateWorkflowInstanceDto,
     url: string,
   ) {
-    // const url2 = 'http://localhost:3000/get-business-area-by-vendorId/' + data.requestorId;
     const payload = {
-      vendorId: '6b31bfed-c359-1d2a-486d-585a3e4d4305',
+      vendorId: data.requestorId,
       categoryId: '2c991afc-0e96-c72b-06f5-5c40514c38ae',
     };
-    const config = {
-      headers: {
-        Authorization: 'Bearer yourAuthToken',
-        'Other-Header': 'header-value',
-      },
-    };
     try {
-      const response = await firstValueFrom(
-        this.httpService.post(
-          url,
-          payload,
-          // config,
-        ),
-      );
+      const response = await axios.post(url, payload);
       if (response.status === 201) {
         const responseData = response.data;
         return responseData;

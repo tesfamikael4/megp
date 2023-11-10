@@ -18,7 +18,8 @@ import {
 import { ServicePricingService } from './service-pricing.service';
 import { EntityCrudController } from 'src/shared/controller';
 import { ServicePrice } from './entities/service-price';
-import { CurrentUser, JwtAuthGuard } from 'src/authorization';
+import { JwtGuard } from 'src/shared/authorization/guards/jwt.guard'
+import { CurrentUser } from 'src/shared/authorization';
 @ApiBearerAuth()
 @Controller('Service-pricing')
 @ApiTags('Service Prices setting')
@@ -28,7 +29,7 @@ export class ServicePricingController extends EntityCrudController<ServicePrice>
   }
 
   @Post()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtGuard)
   // @UseGuards(PermissionsGuard('admin'))
   // @AllowAnonymous()
   async create(@Body() dto: CreateServicePriceDto) {
@@ -47,7 +48,7 @@ export class ServicePricingController extends EntityCrudController<ServicePrice>
   ) {
     return await super.update(id, updateTRegSettingDto);
   }
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtGuard)
   @Get('get-service-price-by-service-type/:key')
   async findServicePriceByServiceType(@Param('key') key: string, @CurrentUser() user: any) {
     console.log(user);

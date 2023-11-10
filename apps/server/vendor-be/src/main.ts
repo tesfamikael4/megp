@@ -13,7 +13,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Server } from '@tus/server';
 import { S3Store } from '@tus/s3-store';
 import * as Minio from 'minio';
-import { JwtAuthGuard } from './authorization';
+//import { JwtAuthGuard } from './authorization';
 
 async function bootstrap() {
   const app: NestExpressApplication = await NestFactory.create(AppModule, {
