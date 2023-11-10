@@ -252,7 +252,7 @@ export class AccountsService {
     }
   }
 
-  async getUserInfo(id = '12babde4-a493-4ef9-87bc-3f4489df468b') {
+  async getUserInfo(id: string) {
     try {
       const account = await this.repository.findOne({
         where: {
