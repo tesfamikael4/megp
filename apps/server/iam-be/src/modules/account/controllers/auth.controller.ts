@@ -7,6 +7,7 @@ import {
   Req,
   Get,
   HttpCode,
+  Param,
 } from '@nestjs/common';
 import { AccountsService } from '../services/account.service';
 import { CreateAccountDto, VerifyAccountDto } from '../dto/account.dto';
@@ -113,10 +114,5 @@ export class AuthController {
     @Body() payload: CheckSecurityQuestionDto,
   ): Promise<any> {
     return await this.accountsService.requestResetPasswordWithUsername(payload);
-  }
-
-  @Get('userinfo')
-  userinfo(@CurrentUser() user: any) {
-    return user;
   }
 }
