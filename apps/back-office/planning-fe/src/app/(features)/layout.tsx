@@ -1,6 +1,5 @@
 import { Shell } from '@megp/core-fe';
 import type { Metadata } from 'next';
-
 import { ShellProvider } from './shell';
 
 export const metadata: Metadata = {
