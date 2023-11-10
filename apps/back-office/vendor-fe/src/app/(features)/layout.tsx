@@ -5,6 +5,7 @@ import React from 'react';
 import { ShellProvider } from './shell';
 export const metadata: Metadata = {
   title: 'M-egp | Vendor',
+
   description: 'Vendor management',
   icons: {
     icon: '/vendors/favicon/android-chrome-512x512.png',
