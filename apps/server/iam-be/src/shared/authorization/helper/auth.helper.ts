@@ -1,7 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { Account } from '@entities';
 import { ConfigService } from '@nestjs/config';
 import { randomInt } from 'crypto';
 
@@ -29,16 +28,8 @@ export class AuthHelper {
 
   // Generate JWT Token
   public generateAccessToken(payload: any): string {
-    const {
-      password: encryptedPassword,
-      createdAt,
-      updatedAt,
-      securityQuestions,
-      ...rest
-    } = payload;
-
     return this.jwt.sign(
-      { ...rest },
+      { ...payload },
       {
         secret: this.configService.get<string>('JWT_ACCESS_TOKEN_SECRET'),
         expiresIn: this.configService.get<string>('JWT_ACCESS_TOKEN_EXPIRES'),
@@ -47,9 +38,9 @@ export class AuthHelper {
   }
 
   // Generate JWT Refresh Token
-  public generateRefreshToken(user: any): string {
+  public generateRefreshToken(payload: any): string {
     return this.jwt.sign(
-      { id: user.id },
+      { ...payload },
       {
         secret: this.configService.get<string>('JWT_REFRESH_TOKEN_SECRET'),
         expiresIn: this.configService.get<string>('JWT_REFRESH_TOKEN_EXPIRES'),
@@ -57,7 +48,7 @@ export class AuthHelper {
     );
   }
 
-  public async generateToken(account: Account) {
+  public async generateToken(account: any) {
     const [accessToken, refreshToken] = await Promise.all([
       this.jwt.signAsync(
         { id: account.id, email: account.email },

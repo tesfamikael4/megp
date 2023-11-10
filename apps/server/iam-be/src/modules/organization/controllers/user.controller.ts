@@ -42,8 +42,9 @@ export class UserController extends ExtraCrudController<User>(options) {
     return this.userService.invite(itemData);
   }
 
-  @Get('test/:query')
-  async test(@Param('query') query: string) {
-    return decodeCollectionQuery(query);
+  @Get('test')
+  async test(@Query('q') q: string) {
+    console.log(q);
+    return decodeCollectionQuery(q);
   }
 }
