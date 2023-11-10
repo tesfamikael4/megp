@@ -12,8 +12,14 @@ import {
   Res,
   BadRequestException,
   NotFoundException,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiExtraModels, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiExtraModels,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { ApiPaginatedResponse, DataResponseFormat } from '@api-data';
 import { CollectionQuery } from '@collection-query';
 
@@ -29,7 +35,8 @@ import {
   GotoNextStateDto,
 } from 'src/handling/dtos/workflow-instance.dto';
 import { WorkflowInstanceService } from 'src/handling/services/workflow-instance.service';
-//@ApiBearerAuth()
+import { CurrentUser, JwtGuard } from 'src/shared/authorization';
+@ApiBearerAuth()
 @Controller('vendor-registrations')
 @ApiTags('Vendor-registrations')
 @ApiResponse({ status: 500, description: 'Internal error' })
@@ -77,9 +84,13 @@ export class VendorRegistrationsController {
     userId = 'b23f0b00-0a59-4f6d-9fd9-34d6fa960e0';
     return await this.regService.getVendorByUserId(userId);
   }
+  @UseGuards(JwtGuard)
   @Post('add-vendor-information')
-  async addVendorInformation(@Body() data: InsertAllDataDto) {
-    data.data.initial.userId = 'b23f0b00-0a59-4f6d-9fd9-34d6fa960e0';
+  async addVendorInformation(
+    @Body() data: InsertAllDataDto,
+    @CurrentUser() user: any,
+  ) {
+    data.data.initial.userId = user.id;
     const result = await this.regService.addVendorInformations(data.data);
     if (!result) throw new BadRequestException(`vendor registration failed`);
     if (
@@ -128,9 +139,13 @@ export class VendorRegistrationsController {
 
     return { msg: 'Success' };
   }
+  @UseGuards(JwtGuard)
   @Post('vendor-initiation')
-  async VendorInitiation(@Body() vendorInitiationDto: VendorInitiationDto) {
-    vendorInitiationDto.userId = 'b23f0b00-0a59-4f6d-9fd9-34d6fa960e0';
+  async VendorInitiation(
+    @Body() vendorInitiationDto: VendorInitiationDto,
+    @CurrentUser() user: any,
+  ) {
+    vendorInitiationDto.userId = user.id;
     vendorInitiationDto.status = 'Draft';
     vendorInitiationDto.level = 'basic';
     return await this.regService.VendorInitiation(vendorInitiationDto);

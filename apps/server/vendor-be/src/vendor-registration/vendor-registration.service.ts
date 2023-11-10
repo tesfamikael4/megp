@@ -41,7 +41,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
   ) {
     super(vendorRepository);
   }
-
   async addVendorInformations(data: any): Promise<any> {
     if (
       data.initial.status == VendorStatusEnum.SAVEASDRAFT ||
@@ -77,7 +76,44 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       }
     }
   }
+  fromInitialValue = async (data: any) => {
+    let vendorsEntity: VendorsEntity = null;
+    vendorsEntity = await this.vendorRepository.findOne({
+      where: { userId: data.initial.userId },
+      relations: {
+        shareholders: true,
+        vendorAccounts: true,
+        beneficialOwnership: true,
+        instances: true,
+        areasOfBusinessInterest: true,
+      },
+    });
+    if (!vendorsEntity) throw new NotFoundException('Vendor Not Found!!');
+    if (vendorsEntity.status == VendorStatusEnum.SUBMITTED)
+      throw new BadRequestException(`already submitted`);
+    const id = vendorsEntity.id;
+    const newInitial: { level: string; userId: string } = data.initial;
+    vendorsEntity = { id, ...data.basic, ...newInitial };
+    vendorsEntity.status =
+      data.initial.status == 'Submit' ? 'Save as Draft' : data.initial.status;
 
+    vendorsEntity.shareholders = data.shareHolders;
+    vendorsEntity.beneficialOwnership = data.beneficialOwnership;
+    vendorsEntity.areasOfBusinessInterest = data.areasOfBusinessInterest;
+    vendorsEntity.vendorAccounts = data.bankAccountDetails?.map((item) => ({
+      ...item,
+      vendorId: vendorsEntity.id,
+    }));
+    const metadata = {
+      address: data.address,
+      supportingDocuments: data.supportingDocuments,
+      areasOfBusinessInterest: data.areasOfBusinessInterest,
+      businessSizeAndOwnership: data.businessSizeAndOwnership,
+      contactPersons: data.contactPersons,
+    };
+    vendorsEntity.metaData = JSON.parse(JSON.stringify(metadata));
+    return vendorsEntity;
+  };
   async addVendorInformationsWithTransaction(data: any): Promise<any> {
     const queryRunner =
       this.areasOfBusinessInterestRepository.manager.connection.createQueryRunner();
@@ -97,7 +133,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         /* data for Entity2 */
       };
       // await queryRunner.manager.getRepository(YourEntity2).save(entity2Data);
-    } catch (error) { }
+    } catch (error) {}
   }
   async VendorInitiation(
     vendorInitiationDto: VendorInitiationDto,
@@ -276,45 +312,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     }
   }
 
-  fromInitialValue = async (data: any) => {
-    let vendorsEntity: VendorsEntity = null;
-
-    vendorsEntity = await this.vendorRepository.findOneOrFail({
-      where: { userId: data.initial.userId },
-      relations: {
-        shareholders: true,
-        vendorAccounts: true,
-        beneficialOwnership: true,
-        instances: true,
-        areasOfBusinessInterest: true,
-      },
-    });
-    if (!vendorsEntity) throw new NotFoundException('Vendor Not Found!!');
-    if (vendorsEntity.status == VendorStatusEnum.SUBMITTED)
-      throw new BadRequestException(`already submitted`);
-    const id = vendorsEntity.id;
-    const newInitial: { level: string; userId: string } = data.initial;
-    vendorsEntity = { id, ...data.basic, ...newInitial };
-    vendorsEntity.status =
-      data.initial.status == 'Submit' ? 'Save as Draft' : data.initial.status;
-
-    vendorsEntity.shareholders = data.shareHolders;
-    vendorsEntity.beneficialOwnership = data.beneficialOwnership;
-    vendorsEntity.areasOfBusinessInterest = data.areasOfBusinessInterest;
-    vendorsEntity.vendorAccounts = data.bankAccountDetails.map((item) => ({
-      ...item,
-      vendorId: vendorsEntity.id,
-    }));
-    const metadata = {
-      address: data.address,
-      supportingDocuments: data.supportingDocuments,
-      areasOfBusinessInterest: data.areasOfBusinessInterest,
-      businessSizeAndOwnership: data.businessSizeAndOwnership,
-      contactPersons: data.contactPersons,
-    };
-    vendorsEntity.metaData = JSON.parse(JSON.stringify(metadata));
-    return vendorsEntity;
-  };
   toInitialValue = async (result: VendorsEntity) => {
     const initialValues = initialValueSchema2;
 
