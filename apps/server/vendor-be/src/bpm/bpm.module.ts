@@ -20,6 +20,7 @@ import { PaymentReceiptEntity } from 'src/handling/entities/receipt-attachment';
 import { HandlingCommonService } from 'src/handling/services/handling-common-services';
 import { HttpModule } from '@nestjs/axios';
 import { TaskAssignmentService } from './services/task-assignment.service';
+import { AuthorizationModule } from 'src/shared/authorization';
 
 @Module({
   imports: [
@@ -34,7 +35,8 @@ import { TaskAssignmentService } from './services/task-assignment.service';
       InvoiceEntity,
       PaymentReceiptEntity,
     ]),
-    HttpModule
+    HttpModule,
+    AuthorizationModule,
   ],
   exports: [
     BpServiceService,
