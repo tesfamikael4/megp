@@ -1,60 +1,78 @@
 'use client';
 import { EntityConfig, EntityLayout } from '@megp/entity';
 import { useParams, usePathname, useRouter } from 'next/navigation';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Button, Flex, NumberInput, Select, Text } from '@mantine/core';
 import { IconGardenCart, IconPencil } from '@tabler/icons-react';
 import { PreBudgetPlanActivities } from '@/models/pre-budget-plan-activities';
 import { logger } from '@megp/core-fe';
+import { useLazyListByAppIdQuery } from './_api/items.api';
 
 export function Entity({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const { budgetYear, activityId } = useParams();
-  const data = [
-    {
-      id: '6ce66c51-7258-45cb-9e63-6840b63bdfe5',
-      description: 'Alfreds Futterkiste',
-      itemCode: '0074321',
-      currency: 'USD',
-      unitPrice: '4554.25',
-      quantity: 30,
-      UoM: 'Peace',
-      totalEstimatedAmount: 'USD 1,442.32',
-    },
-    {
-      id: '04a426b8-d93b-45aa-b0df-0b4ad3fc9d30',
-      description: 'Antonio Moreno Taqueria',
-      itemCode: '5553932',
-      currency: 'USD',
-      unitPrice: '4554.25',
-      quantity: 30,
-      UoM: 'Peace',
-      totalEstimatedAmount: 'USD 15,889.78',
-    },
-    {
-      id: '8bbdf119-db4c-44de-8c56-476bd0de2e6a',
-      description: 'Around the horn',
-      itemCode: '5557788',
-      currency: 'USD',
-      unitPrice: '4554.25',
-      quantity: 30,
-      UoM: 'Peace',
-      totalEstimatedAmount: 'USD 248,458.55',
-    },
-    {
-      id: '88e5ed05-23ec-4794-9322-d3a297b64b3e',
-      description: 'Berglunds snabbkop',
-      itemCode: '123465',
-      currency: 'USD',
-      unitPrice: '4554.25',
-      quantity: 30,
-      UoM: 'Peace',
-      totalEstimatedAmount: 'USD 1,281,458.00',
-    },
-  ];
+  const [data, setData] = useState<any[]>([]);
+  const [listById, { data: list }] = useLazyListByAppIdQuery();
+
+  useEffect(() => {
+    setData([
+      {
+        id: '6ce66c51-7258-45cb-9e63-6840b63bdfe5',
+        description: 'Alfreds Futterkiste',
+        itemCode: '0074321',
+        currency: 'USD',
+        unitPrice: '4554.25',
+        quantity: 30,
+        UoM: 'Peace',
+        totalEstimatedAmount: 'USD 1,442.32',
+      },
+      {
+        id: '04a426b8-d93b-45aa-b0df-0b4ad3fc9d30',
+        description: 'Antonio Moreno Taqueria',
+        itemCode: '5553932',
+        currency: 'USD',
+        unitPrice: '4554.25',
+        quantity: 30,
+        UoM: 'Peace',
+        totalEstimatedAmount: 'USD 15,889.78',
+      },
+      {
+        id: '8bbdf119-db4c-44de-8c56-476bd0de2e6a',
+        description: 'Around the horn',
+        itemCode: '5557788',
+        currency: 'USD',
+        unitPrice: '4554.25',
+        quantity: 30,
+        UoM: 'Peace',
+        totalEstimatedAmount: 'USD 248,458.55',
+      },
+      {
+        id: '88e5ed05-23ec-4794-9322-d3a297b64b3e',
+        description: 'Berglunds snabbkop',
+        itemCode: '123465',
+        currency: 'USD',
+        unitPrice: '4554.25',
+        quantity: 30,
+        UoM: 'Peace',
+        totalEstimatedAmount: 'USD 1,281,458.00',
+      },
+    ]);
+  }, []);
+
+  useEffect(() => {
+    listById(activityId as string);
+  }, [activityId]);
 
   const EstimatedPrice = ({ cell }: any) => {
     const [isEditorOpened, setIsEditorOpened] = useState(false);
+    const handleOnChange = (e) => {
+      logger.log(data);
+      const tempData: any[] = data.map((d) => {
+        if (d != cell) return d;
+        return { ...d, unitPrice: e };
+      });
+      setData([...tempData]);
+    };
     return (
       <>
         <Flex gap="sm">
@@ -66,10 +84,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
             </>
           )}
           {isEditorOpened && (
-            <NumberInput
-              value={cell.unitPrice}
-              onChange={(data) => logger.log(data)}
-            />
+            <NumberInput value={cell.unitPrice} onChange={handleOnChange} />
           )}
         </Flex>
       </>
@@ -106,7 +121,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
     return {
       basePath: `/pre-budget-plan/${budgetYear}/activities/items/${activityId}`,
       mode: 'list',
-      entity: 'activities',
+      entity: 'Items',
       primaryKey: 'description',
       title: 'Items: Alfreds Futterkiste',
       onAdd: () => {
@@ -165,7 +180,11 @@ export function Entity({ children }: { children: React.ReactNode }) {
           id: 'totalEstimatedAmount',
           header: 'Total Estimated Amount',
           accessorKey: 'totalEstimatedAmount',
-          cell: (info) => info.getValue(),
+          cell: ({ row: { original } }: any) => (
+            <>
+              {original.currency} {original.unitPrice * original.quantity}
+            </>
+          ),
           meta: {
             widget: 'expand',
           },
@@ -187,6 +206,11 @@ export function Entity({ children }: { children: React.ReactNode }) {
       : 'detail';
 
   return (
-    <EntityLayout mode={mode} config={config} data={data} detail={children} />
+    <EntityLayout
+      mode={mode}
+      config={config}
+      data={list?.items ?? []}
+      detail={children}
+    />
   );
 }

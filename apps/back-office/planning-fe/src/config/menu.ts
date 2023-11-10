@@ -12,9 +12,9 @@ export const Menu: MenuItem[] = [
     link: '/pre-budget-plan',
   },
   {
-    label: 'Items',
+    label: 'APP',
     icon: IconBuildingBank,
-    link: '/item',
+    link: '/app',
   },
 
   {

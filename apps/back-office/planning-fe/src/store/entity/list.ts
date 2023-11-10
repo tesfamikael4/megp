@@ -6,15 +6,15 @@ export const ENTITY_LIST: EntityStoreConfig[] = [
     baseUrl: process.env.NEXT_PUBLIC_PLANNING_API ?? '/api/planning',
   },
   {
-    entity: 'plan-initiations',
+    entity: 'apps',
     baseUrl: process.env.NEXT_PUBLIC_PLANNING_API ?? '/api/planning',
   },
   {
-    entity: 'prebudget-plans',
+    entity: 'pre-budget-plan-activities',
     baseUrl: process.env.NEXT_PUBLIC_PLANNING_API ?? '/api/planning',
   },
   {
-    entity: 'prebudget-items',
+    entity: 'pre-budget-plan-items',
     baseUrl: process.env.NEXT_PUBLIC_PLANNING_API ?? '/api/planning',
   },
 ];

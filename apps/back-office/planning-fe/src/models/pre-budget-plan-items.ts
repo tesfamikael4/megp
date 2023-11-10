@@ -10,5 +10,5 @@ export interface PreBudgetPlanItems {
   currency: string;
   quantity: number;
   measurement: string;
-  UoM: string;
+  uom: string;
 }
