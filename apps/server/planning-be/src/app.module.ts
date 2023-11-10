@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from './shared/typeorm/typeorm.service';
-import { AuthorizationModule } from './authorization';
-import { PrebudgetModule } from './prebudget/prebudget.module';
+import { AuthorizationModule } from './shared/authorization/authorization.module';
+import { APPModule } from './modules/planning/app.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -12,6 +12,9 @@ import { PrebudgetModule } from './prebudget/prebudget.module';
     }),
     TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
     AuthorizationModule,
+    ConfigModule.forRoot({ isGlobal: true }),
+    AuthorizationModule,
+    APPModule,
   ],
   providers: [],
   controllers: [],

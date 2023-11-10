@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Repository, DeepPartial } from 'typeorm';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import {
