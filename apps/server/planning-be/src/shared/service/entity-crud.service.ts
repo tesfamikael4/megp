@@ -44,7 +44,7 @@ export class EntityCrudService<T extends BaseEntity> {
     await this.repository.delete(id);
   }
 
-  protected async findOneOrFail(id: any): Promise<T> {
+  private async findOneOrFail(id: any): Promise<T> {
     const item = await this.findOne(id);
     if (!item) {
       throw new NotFoundException(`not_found`);
