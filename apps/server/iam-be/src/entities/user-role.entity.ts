@@ -26,7 +26,7 @@ export class UserRole extends Audit {
     onUpdate: 'CASCADE',
     onDelete: 'RESTRICT',
   })
-  @JoinColumn()
+  @JoinColumn({ name: 'roleId' })
   public role: Role;
 
   @ManyToOne(() => User, (user) => user.userRoles, {
@@ -34,6 +34,6 @@ export class UserRole extends Audit {
     onUpdate: 'CASCADE',
     onDelete: 'RESTRICT',
   })
-  @JoinColumn()
+  @JoinColumn({ name: 'userId' })
   public user: User;
 }

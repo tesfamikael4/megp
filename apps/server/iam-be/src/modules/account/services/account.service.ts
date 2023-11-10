@@ -33,7 +33,7 @@ export class AccountsService {
     private readonly securityQuestionRepository: Repository<SecurityQuestion>,
     private readonly helper: AuthHelper,
     private readonly emailService: EmailService,
-  ) { }
+  ) {}
 
   public async createAccount(
     createAccountDto: CreateAccountDto,
@@ -218,17 +218,32 @@ export class AccountsService {
 
       this.repository.update(account.id, { failedAttempts, bannedUntil });
 
-      const {
-        password: encryptedPassword,
-        createdAt,
-        updatedAt,
-        ...rest
-      } = account;
+      const userInfo = await this.getUserInfo(account.id);
+
+      const permissions = [];
+      userInfo.user?.userRoles?.forEach((userRole) => {
+        userRole?.role?.rolePermissions?.forEach((rolePermission) => {
+          rolePermission?.permission &&
+            permissions.push(rolePermission.permission);
+        });
+      });
+
+      const tokenPayload = {
+        tenantId: userInfo.tenantId,
+        id: userInfo.id,
+        userId: userInfo.user?.id,
+        username: account.username,
+        firstName: account.firstName,
+        lastName: account.lastName,
+        email: account.email,
+        organization: userInfo.user?.organization,
+        permissions,
+      };
 
       const token: LoginResponseDto = {
         is_security_question_set: account.securityQuestions?.length != 0,
-        access_token: this.helper.generateAccessToken(account),
-        refresh_token: this.helper.generateRefreshToken(account),
+        access_token: this.helper.generateAccessToken(tokenPayload),
+        refresh_token: this.helper.generateRefreshToken({ id: account.id }),
       };
 
       return token;
@@ -237,7 +252,7 @@ export class AccountsService {
     }
   }
 
-  async getUserInfo(id = '5477cf8c-9794-4e6a-88b6-97d855558f16') {
+  async getUserInfo(id = '12babde4-a493-4ef9-87bc-3f4489df468b') {
     try {
       const account = await this.repository.findOne({
         where: {
@@ -246,27 +261,32 @@ export class AccountsService {
         select: {
           tenantId: true,
           id: true,
+          firstName: true,
+          lastName: true,
+          username: true,
+          email: true,
           user: {
             id: true,
-            firstName: true,
-            lastName: true,
-            username: true,
-            email: true,
+            accountId: true,
             organization: {
               id: true,
               name: true,
               shortName: true,
             },
             userRoles: {
+              id: true,
               roleId: true,
               role: {
                 key: true,
                 rolePermissions: {
+                  id: true,
                   permissionId: true,
                   permission: {
+                    id: true,
                     key: true,
                     applicationId: true,
                     application: {
+                      id: true,
                       key: true,
                     },
                   },
@@ -289,15 +309,6 @@ export class AccountsService {
             },
           },
         },
-        // relations: [
-        //   "user",
-        //   "user.organization",
-        //   "user.userRoles",
-        //   "user.userRoles.role",
-        //   "user.userRoles.role.rolePermissions",
-        //   "user.userRoles.role.rolePermissions.permission",
-        //   "user.userRoles.role.rolePermissions.permission.application",
-        // ]
       });
 
       return account;

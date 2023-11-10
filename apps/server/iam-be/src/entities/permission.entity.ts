@@ -24,17 +24,11 @@ export class Permission extends Audit {
   @Column()
   description: string;
 
-  @Column({ nullable: true })
+  @Column()
   key: string;
 
   @Column()
   applicationId: string;
-
-  @Column({ nullable: true })
-  applicationName: string;
-
-  @Column({ nullable: true })
-  applicationKey: string;
 
   @ManyToOne(() => Application, (application) => application.permissions)
   @JoinColumn({ name: 'applicationId' })

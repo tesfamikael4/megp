@@ -13,15 +13,11 @@ export class CreatePermissionDto {
 
   @ApiProperty()
   @IsString()
+  key: string;
+
+  @ApiProperty()
+  @IsString()
   applicationId: string;
-
-  @ApiProperty()
-  @IsString()
-  applicationName: string;
-
-  @ApiProperty()
-  @IsString()
-  applicationKey: string;
 
   static fromDto(permissionDto: CreatePermissionDto): Permission {
     const permission: Permission = new Permission();
@@ -32,9 +28,7 @@ export class CreatePermissionDto {
 
     permission.description = permissionDto.description;
 
-    permission.applicationId = permissionDto.applicationId;
-
-    permission.applicationId = permissionDto.applicationId;
+    permission.key = permissionDto.key;
 
     permission.applicationId = permissionDto.applicationId;
 
@@ -65,11 +59,9 @@ export class UpdatePermissionDto extends CreatePermissionDto {
 
     permission.description = permissionDto.description;
 
+    permission.key = permissionDto.key;
+
     permission.applicationId = permissionDto.applicationId;
-
-    permission.applicationName = permissionDto.applicationName;
-
-    permission.applicationKey = permissionDto.applicationKey;
 
     return permission;
   }
@@ -85,11 +77,9 @@ export class PermissionResponseDto extends UpdatePermissionDto {
 
     permissionDto.description = permission.description;
 
+    permissionDto.key = permission.key;
+
     permission.applicationId = permissionDto.applicationId;
-
-    permission.applicationName = permissionDto.applicationName;
-
-    permission.applicationKey = permissionDto.applicationKey;
 
     return permissionDto;
   }
