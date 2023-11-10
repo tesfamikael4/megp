@@ -1,5 +1,6 @@
 import { Providers } from '@/store/provider';
 import RootStyleRegistry from './mantine';
+import './globals.css';
 
 import { Metadata } from 'next';
 export const metadata: Metadata = {

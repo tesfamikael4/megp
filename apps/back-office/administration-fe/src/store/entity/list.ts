@@ -8,7 +8,7 @@ export const ENTITY_LIST: EntityStoreConfig[] = [
     baseUrl: config.ENV_ADMINISTRATION_API ?? '/administration/api/',
   },
   {
-    entity: 'taxonomy',
+    entity: 'classifications',
     baseUrl:
       process.env.NEXT_PUBLIC_ADMINISTRATION_API ?? '/api/administration',
   },

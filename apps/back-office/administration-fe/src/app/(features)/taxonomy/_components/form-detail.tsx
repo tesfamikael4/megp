@@ -1,4 +1,4 @@
-import { FileInput, Stack, TextInput } from '@mantine/core';
+import { Stack, TextInput } from '@mantine/core';
 import { EntityButton } from '@megp/entity';
 
 import { useForm } from 'react-hook-form';
@@ -13,6 +13,7 @@ import { Taxonomy } from '@/models/taxonomy';
 import { z, ZodType } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
+import DataImport from './data-import';
 
 interface FormDetailProps {
   mode: 'new' | 'detail';
@@ -115,12 +116,7 @@ export function FormDetail({ mode }: FormDetailProps) {
         required
         {...register('version')}
       />
-      <FileInput
-        withAsterisk
-        label="Attach File"
-        error={errors?.upload ? errors?.upload?.message?.toString() : ''}
-        required
-      />
+      <DataImport />
 
       <EntityButton
         mode={mode}
