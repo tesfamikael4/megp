@@ -33,7 +33,7 @@ export class AccountsService {
     private readonly securityQuestionRepository: Repository<SecurityQuestion>,
     private readonly helper: AuthHelper,
     private readonly emailService: EmailService,
-  ) {}
+  ) { }
 
   public async createAccount(
     createAccountDto: CreateAccountDto,
@@ -493,6 +493,15 @@ export class AccountsService {
     await this.repository.update(account.id, account);
 
     return verification;
+  }
+
+  async getInvitation(id: string) {
+    return await this.accountVerificationRepository.findOneBy({
+      account: {
+        id,
+      },
+      otpType: AccountVerificationTypeEnum.INVITATION,
+    });
   }
 
   private async verifyOTP(

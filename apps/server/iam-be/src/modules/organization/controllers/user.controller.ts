@@ -39,7 +39,12 @@ export class UserController extends ExtraCrudController<User>(options) {
   @Post('invite')
   @ApiBody({ type: InviteUserDto })
   async invite(@Body() itemData: InviteUserDto): Promise<any> {
-    return this.userService.invite(itemData);
+    return this.userService.sendInvitation(itemData);
+  }
+
+  @Get('invitation/:id')
+  async getInvitation(@Param('id') id: string): Promise<any> {
+    return this.userService.getInvitation(id);
   }
 
   @Get('test')
