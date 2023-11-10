@@ -57,8 +57,9 @@ export class AuthController {
   }
 
   @Get('me')
-  async getUserInfo(): Promise<any> {
-    return this.accountsService.getUserInfo();
+  @UseGuards(JwtGuard)
+  async getUserInfo(@CurrentUser() user: any): Promise<any> {
+    return this.accountsService.getUserInfo(user.id);
   }
 
   @Post('forget-password')
