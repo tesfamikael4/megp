@@ -22,7 +22,7 @@ import { ApplicationExcutionService } from '../services/application-execution.se
 import { WorkflowInstanceResponse } from '../dtos/workflow-instance.response';
 import { HandlingCommonService } from '../services/handling-common-services';
 import { ActiveVendorsResponse } from '../dtos/active-vendor-response';
-import { CurrentUser } from 'src/authorization';
+
 import {
   CreateWorkflowInstanceDto,
   GotoNextStateDto,
@@ -30,6 +30,7 @@ import {
 import { BusinessProcessService } from 'src/bpm/services/business-process.service';
 import { WorkflowService } from 'src/bpm/services/workflow.service';
 import { UpdateTaskHandlerDto } from 'src/bpm/dtos/task-handler.dto';
+import { CurrentUser } from 'src/shared/authorization';
 
 @Controller('ApplicationExecution')
 @ApiTags('Application-excution')
