@@ -17,7 +17,7 @@ export const Menu: MenuItem[] = [
   {
     label: 'New Registration ',
     icon: IconHomePlus,
-    link: '/new-registration',
+    link: '/new',
   },
   { label: 'Upgrade', icon: IconHomeUp, link: '/upgrade' },
   { label: 'Renewal', icon: IconHomeRibbon, link: '/renewal' },

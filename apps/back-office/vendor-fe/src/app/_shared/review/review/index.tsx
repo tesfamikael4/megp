@@ -1,5 +1,12 @@
 import React from 'react';
-import { Accordion, AccordionItem, Flex, Table, Text } from '@mantine/core';
+import {
+  Accordion,
+  AccordionItem,
+  Flex,
+  Table,
+  Text,
+  Box,
+} from '@mantine/core';
 import classes from './accordion.module.scss';
 import tableClasses from './accordion.module.scss';
 
@@ -42,24 +49,28 @@ function renderTable(data) {
   const headers = Object.keys(data[0]);
 
   return (
-    <Table classNames={tableClasses}>
-      <Table.Thead>
-        <Table.Tr>
-          {headers.map((header) => (
-            <Table.Th key={header}>{addSpacesToCamelCase(header)}</Table.Th>
-          ))}
-        </Table.Tr>
-      </Table.Thead>
-      <Table.Tbody>
-        {data.map((item, index) => (
-          <Table.Tr key={index}>
+    <Box className="overflow-x-auto">
+      <Table className={`w-max ${tableClasses}`}>
+        <Table.Thead className="w-fit">
+          <Table.Tr>
             {headers.map((header) => (
-              <Table.Td key={header}>{item[header]}</Table.Td>
+              <Table.Th key={header} className="w-fit">
+                {addSpacesToCamelCase(header)}
+              </Table.Th>
             ))}
           </Table.Tr>
-        ))}
-      </Table.Tbody>
-    </Table>
+        </Table.Thead>
+        <Table.Tbody>
+          {data.map((item, index) => (
+            <Table.Tr key={index}>
+              {headers.map((header) => (
+                <Table.Td key={header}>{item[header]}</Table.Td>
+              ))}
+            </Table.Tr>
+          ))}
+        </Table.Tbody>
+      </Table>
+    </Box>
   );
 }
 function addSpacesToCamelCase(input: string): string {
