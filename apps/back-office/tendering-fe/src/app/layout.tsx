@@ -1,7 +1,7 @@
+import './globals.css';
 import { Providers } from '@/store/provider';
 import type { Metadata } from 'next';
 import RootStyleRegistry from './mantine';
-import './globals.css';
 
 import { Inter, Roboto_Mono } from 'next/font/google';
 
