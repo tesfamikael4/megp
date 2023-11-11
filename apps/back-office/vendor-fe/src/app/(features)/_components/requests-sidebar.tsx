@@ -3,7 +3,7 @@ import { Box, Select, TextInput, Text } from '@mantine/core';
 import { DatePickerInput } from '@mantine/dates';
 import { Button } from '@mantine/core';
 import { Section } from '@megp/core-fe';
-export default function RequestsSidebarPage() {
+export default function RequestsSidebar() {
   return (
     <Section
       title="Filter By"
@@ -16,7 +16,7 @@ export default function RequestsSidebarPage() {
       </Box>
       <Box className={styles.formGroup}>
         <Text>Request Status</Text>
-        <Select placeholder="task status" data={['Waiting', 'Picked']} />
+        <Select placeholder="Task status" data={['Waiting', 'Picked']} />
       </Box>
       <Box className={styles.formGroup}>
         <Text>Customer Name</Text>

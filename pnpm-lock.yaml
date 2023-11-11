@@ -826,6 +826,9 @@ importers:
       next:
         specifier: 13.5.2
         version: 13.5.2(@babel/core@7.23.0)(react-dom@18.2.0)(react@18.2.0)(sass@1.69.4)
+      nextjs-current-url:
+        specifier: ^1.0.3
+        version: 1.0.3(@babel/core@7.23.0)(react-dom@18.2.0)(sass@1.69.4)
       react:
         specifier: 18.2.0
         version: 18.2.0
@@ -835,6 +838,9 @@ importers:
       react-hook-form:
         specifier: ^7.46.1
         version: 7.46.1(react@18.2.0)
+      react-qr-code:
+        specifier: ^2.0.12
+        version: 2.0.12(react@18.2.0)
       react-redux:
         specifier: ^8.1.2
         version: 8.1.2(@types/react-dom@18.2.7)(@types/react@18.2.21)(react-dom@18.2.0)(react@18.2.0)(redux@4.2.1)
