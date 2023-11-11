@@ -4,7 +4,6 @@ import {
   IconBasketCog,
   IconBuildingStore,
   IconCalendarEvent,
-  IconFileSpreadsheet,
   IconUsersGroup,
 } from '@tabler/icons-react';
 
@@ -15,10 +14,10 @@ interface ApplicationType {
 }
 
 export const Applications = [
-  { key: 'vendor', name: 'Vendor Management', icon: IconBuildingStore },
+  { key: 'vendors', name: 'Vendor Management', icon: IconBuildingStore },
   { key: 'planning', name: 'Planning', icon: IconCalendarEvent },
   { key: 'tendering', name: 'Tendering', icon: IconBasketCog },
-  { key: 'contract', name: 'Contract', icon: IconFileSpreadsheet },
+  // { key: 'contract', name: 'Contract', icon: IconFileSpreadsheet },
   { key: 'administration', name: 'Administration', icon: IconAdjustmentsCog },
   { key: 'iam', name: 'Identity & Access', icon: IconUsersGroup },
 ];
