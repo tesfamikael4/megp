@@ -384,7 +384,6 @@ function AuthProvider({
         phone: z.string().optional(),
       }),
     );
-    setUser(response);
     return response;
   };
 
