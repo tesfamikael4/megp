@@ -16,11 +16,10 @@ export class NotificationService {
   static requestErrorNotification(message: string): void {
     showNotification({
       withCloseButton: true,
-      autoClose: 3000,
-      color: 'orange',
-      title: '',
+      autoClose: 5000,
+      color: 'yellow',
+      title: 'Warning',
       message: message,
-      icon: <IconX size="1rem" />,
     });
   }
   static runtimeErrorNotification(): void {
