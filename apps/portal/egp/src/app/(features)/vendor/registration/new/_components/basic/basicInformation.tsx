@@ -81,7 +81,6 @@ export const BasicInformation = () => {
   const [accept, setAccept] = useState<boolean>(false);
   const [create, createValues] = useCreateVendorIdMutation();
   const [getMRAData, getMRADataValues] = useLazyGetMRADataQuery({});
-  const [getMBRSData, getMBRSDataValues] = useLazyGetMBRSDataQuery({});
 
   const onSubmit = (data: typeof formState.defaultValues) => {
     if (data?.origin == 'MW') {
@@ -104,7 +103,6 @@ export const BasicInformation = () => {
 
   useEffect(() => {
     if (createValues.isSuccess && createValues.data?.vendorId) {
-      setCookie('vendorId', createValues.data.vendorId);
       NotificationService.successNotification('Form Created Successfully!');
       router.push(`detail`);
     }
@@ -117,38 +115,22 @@ export const BasicInformation = () => {
 
   useEffect(() => {
     if (getMRADataValues.data) {
-      getMBRSData({
-        tin: getMRADataValues.data.TIN,
-      });
-      console.log(getMRADataValues.data);
-    }
-    if (getMRADataValues.data == null) {
-      console.log(getMRADataValues.data);
-      NotificationService.requestErrorNotification('Invalid Request');
-    }
-    return () => {};
-  }, [getMRADataValues.data]);
-
-  useEffect(() => {
-    if (getMRADataValues.data && getMBRSDataValues.data) {
       create({
-        name:
-          getMRADataValues.data?.TaxpayerName ||
-          getMBRSDataValues.data?.businessName ||
-          ' ',
-        businessType:
-          watch().businessType || getMBRSDataValues.data?.legalStatus,
+        name: getMRADataValues.data?.TaxpayerName || ' ',
+        businessType: watch().businessType || '_',
         origin: watch().origin,
         country: watch().origin,
         tinNumber: watch().tinNumber,
         tinIssuedDate: watch().tinIssuedDate,
-        district: getMRADataValues.data?.PostalAddress || '',
+        district: '',
       });
+    } else if (getMRADataValues.isError) {
+      NotificationService.requestErrorNotification('Invalid Request.');
     }
-
     return () => {};
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [getMRADataValues.data, getMBRSDataValues.data]);
+  }, [getMRADataValues.data, getMRADataValues.isError]);
+
   return (
     <Box className={style.reqFormCard}>
       <LoadingOverlay

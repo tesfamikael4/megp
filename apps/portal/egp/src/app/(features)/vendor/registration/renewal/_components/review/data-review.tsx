@@ -3,47 +3,21 @@
 import { Box, Card, Container, Flex, Stack, Text } from '@mantine/core';
 import styles from './data-review.module.scss';
 import { useRouter } from 'next/navigation';
-import { useAddFormMutation, useGetFormQuery } from '../../../_api/query';
+import { useGetFormQuery } from '../../../_api/query';
 import { useEffect } from 'react';
 import { NotificationService } from '@/app/(features)/vendor/_components/notification';
 
 const DataReview = () => {
   const router = useRouter();
   const requestInfo = useGetFormQuery({});
-  const [save, saveValues] = useAddFormMutation();
   useEffect(() => {
     if (requestInfo.isError) {
-      NotificationService.requestErrorNotification('Error on fetching data');
-      router.push(`basic`);
+      // NotificationService.requestErrorNotification('Error on fetching data');
     }
 
     return () => {};
   }, [requestInfo, router]);
 
-  useEffect(() => {
-    if (saveValues.isSuccess) {
-      NotificationService.successNotification('Submitted Successfully!');
-      router.push(`/vendor/track-applications`);
-    }
-    if (saveValues.isError) {
-      NotificationService.requestErrorNotification('Error on Request');
-    }
-    return () => {};
-  }, [saveValues.isSuccess, saveValues.isError, router]);
-  const onSubmit = () => {
-    if (requestInfo.data) {
-      save({
-        data: {
-          ...requestInfo.data,
-          initial: {
-            ...requestInfo.data.initial,
-            level: 'Submit',
-            status: 'Submit',
-          },
-        },
-      });
-    }
-  };
   return (
     <Stack className={styles.main}>
       <Card py={30} shadow="sm" radius="md">

@@ -114,7 +114,7 @@ export interface CreateVendorIdRequest {
   businessType: string;
   origin: string;
   country: string;
-  district: string;
+  district?: string;
   tinNumber: string;
   tinIssuedDate: string;
 }
