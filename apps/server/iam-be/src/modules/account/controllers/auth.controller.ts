@@ -81,6 +81,12 @@ export class AuthController {
     return this.accountsService.resetPassword(resetPassword);
   }
 
+  @Post('set-password')
+  @AllowAnonymous()
+  setPassword(@Body() resetPassword: ResetPasswordDto) {
+    return this.accountsService.setPassword(resetPassword);
+  }
+
   @Post('change-password')
   @UseGuards(JwtGuard)
   changePassword(

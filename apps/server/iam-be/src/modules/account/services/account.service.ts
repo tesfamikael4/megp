@@ -33,7 +33,7 @@ export class AccountsService {
     private readonly securityQuestionRepository: Repository<SecurityQuestion>,
     private readonly helper: AuthHelper,
     private readonly emailService: EmailService,
-  ) { }
+  ) {}
 
   public async createAccount(
     createAccountDto: CreateAccountDto,
@@ -121,6 +121,29 @@ export class AccountsService {
     const account = await this.repository.findOneBy({
       id: verifyOTP.id,
     });
+
+    account.password = this.helper.encodePassword(password);
+
+    await this.repository.update(account.id, account);
+
+    return account;
+  }
+
+  public async setPassword(resetPassword: ResetPasswordDto) {
+    const { verificationId, otp, password, isOtp }: ResetPasswordDto =
+      resetPassword;
+
+    const verifyOTP = await this.verifyOTP(verificationId, otp, isOtp);
+
+    const account = await this.repository.findOneBy({
+      id: verifyOTP.id,
+    });
+
+    if (!account) {
+      throw new HttpException('user_not_found', HttpStatus.BAD_REQUEST);
+    } else if (account.status != AccountStatusEnum.INVITED) {
+      throw new HttpException('user_already_active', HttpStatus.BAD_REQUEST);
+    }
 
     account.password = this.helper.encodePassword(password);
 
@@ -464,7 +487,6 @@ export class AccountsService {
         throw new HttpException('account_exists', HttpStatus.NOT_FOUND);
       }
 
-      input.password = this.helper.generateOpt();
       input.username = this.generateUsername();
 
       account = await this.createNewAccount(input, AccountStatusEnum.PENDING);
@@ -482,9 +504,32 @@ export class AccountsService {
     if (!account) {
       throw new HttpException('account_not_found', HttpStatus.NOT_FOUND);
     }
-    const password = this.helper.generateOpt();
 
-    account.password = password;
+    const OTP_LIFE_TIME = process.env.OTP_LIFE_TIME
+      ? +process.env.OTP_LIFE_TIME
+      : 10;
+
+    const invitation = await this.accountVerificationRepository.findOne({
+      where: {
+        accountId,
+        otpType: AccountVerificationTypeEnum.INVITATION,
+      },
+      relations: {
+        account: true,
+      },
+    });
+
+    if (
+      invitation.createdAt.getMinutes() + OTP_LIFE_TIME >
+      new Date().getMinutes()
+    ) {
+      return invitation;
+    } else {
+      await this.accountVerificationRepository.update(invitation.id, {
+        status: AccountVerificationStatusEnum.EXPIRED,
+      });
+    }
+
     account.status = AccountStatusEnum.INVITED;
 
     const verification =
@@ -496,11 +541,16 @@ export class AccountsService {
   }
 
   async getInvitation(id: string) {
-    return await this.accountVerificationRepository.findOneBy({
-      account: {
-        id,
+    return await this.accountVerificationRepository.findOne({
+      where: {
+        account: {
+          id,
+        },
+        otpType: AccountVerificationTypeEnum.INVITATION,
       },
-      otpType: AccountVerificationTypeEnum.INVITATION,
+      relations: {
+        account: true,
+      },
     });
   }
 
@@ -580,7 +630,7 @@ export class AccountsService {
     account.firstName = firstName;
     account.lastName = lastName;
     account.phone = phone;
-    account.password = this.helper.encodePassword(password);
+    account.password = password && this.helper.encodePassword(password);
     account.status = status;
 
     await this.repository.save(account);
