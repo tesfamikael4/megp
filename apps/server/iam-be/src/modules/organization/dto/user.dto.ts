@@ -20,6 +20,7 @@ export class CreateUserDto {
 
   @ApiProperty()
   @IsString()
+  @IsOptional()
   username: string;
 
   @ApiProperty()
