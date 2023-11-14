@@ -24,7 +24,7 @@ export class VendorsEntity extends Audit {
   tin: string;
   @Column()
   userId: string;
-  @Column({ name: 'tin', nullable: true })
+  @Column({ name: 'isrVendorId', nullable: true })
   isrVendorId: string;
   @Column({ default: 'draft' })
   status: string;
