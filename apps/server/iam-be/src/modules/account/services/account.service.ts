@@ -519,15 +519,17 @@ export class AccountsService {
       },
     });
 
-    if (
-      invitation.createdAt.getMinutes() + OTP_LIFE_TIME >
-      new Date().getMinutes()
-    ) {
-      return invitation;
-    } else {
-      await this.accountVerificationRepository.update(invitation.id, {
-        status: AccountVerificationStatusEnum.EXPIRED,
-      });
+    if (invitation) {
+      if (
+        invitation.createdAt.getMinutes() + OTP_LIFE_TIME >
+        new Date().getMinutes()
+      ) {
+        return invitation;
+      } else {
+        await this.accountVerificationRepository.update(invitation.id, {
+          status: AccountVerificationStatusEnum.EXPIRED,
+        });
+      }
     }
 
     account.status = AccountStatusEnum.INVITED;
