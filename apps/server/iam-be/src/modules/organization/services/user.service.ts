@@ -36,11 +36,15 @@ export class UserService extends ExtraCrudService<User> {
   }
 
   async getInvitation(id: string): Promise<any> {
-    const user = await this.repositoryUser.findOneBy({ id });
-    if (!user) {
-      throw new HttpException('user_not_found', HttpStatus.NOT_FOUND);
-    }
+    try {
+      const user = await this.repositoryUser.findOneBy({ id });
+      if (!user) {
+        throw new HttpException('user_not_found', HttpStatus.NOT_FOUND);
+      }
 
-    return await this.accountsService.getInvitation(user.accountId);
+      return await this.accountsService.getInvitation(user.accountId);
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.NOT_FOUND);
+    }
   }
 }
