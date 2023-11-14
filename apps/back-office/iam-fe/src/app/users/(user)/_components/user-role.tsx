@@ -2,14 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { Modal } from '@mantine/core';
 import { Relation, RelationConfig } from '@megp/entity';
 
-import { notifications } from '@mantine/notifications';
-
 import {
   useRelationMutation,
   useLazySecondRelationQuery,
-} from '../_api/user-role.api';
+} from '../../_api/user-role.api';
 import { useParams } from 'next/navigation';
-import { useListByIdQuery } from '../../roles/_api/role.api';
+import { useListByIdQuery } from '../../../(features)/roles/_api/role.api';
 import { Role } from '@/models/role';
 import { notify } from '@megp/core-fe';
 
@@ -33,15 +31,6 @@ const AddEntityModal = () => {
         cell: (info) => info.getValue(),
         meta: {
           widget: 'primary',
-        },
-      },
-      {
-        id: 'description',
-        header: 'Description',
-        accessorKey: 'description',
-        cell: (info) => info.getValue(),
-        meta: {
-          widget: 'multiline',
         },
       },
     ],
@@ -82,6 +71,9 @@ const AddEntityModal = () => {
     },
 
     selectable: true,
+    sortable: true,
+    searchable: true,
+    pagination: true,
   };
 
   const handleCloseModal = () => {
@@ -106,12 +98,18 @@ const AddEntityModal = () => {
         data={currentAssigned}
         isSaving={isSaving}
       />
-      <Modal title="Roles" opened={isModalOpen} onClose={handleCloseModal}>
+      <Modal
+        title="Roles"
+        opened={isModalOpen}
+        onClose={handleCloseModal}
+        size={'lg'}
+      >
         <Relation
           config={addConfig}
           data={list ? list.items : []}
           mode="modal"
           currentSelected={currentAssigned}
+          handleCloseModal={handleCloseModal}
         />
       </Modal>
     </>

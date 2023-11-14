@@ -100,7 +100,9 @@ export function Grid<T>({
                             header.column.columnDef.header,
                             header.getContext(),
                           )}
-                      {header.column.id !== 'action' && options.sortable ? (
+                      {header.column.id !== 'action' &&
+                      header.column.id !== 'select' &&
+                      options.sortable ? (
                         <ActionIcon
                           onClick={header.column.getToggleSortingHandler()}
                           size="sm"

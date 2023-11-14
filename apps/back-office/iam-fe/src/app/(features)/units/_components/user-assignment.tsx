@@ -2,14 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { Modal } from '@mantine/core';
 import { Relation, RelationConfig } from '@megp/entity';
 import { User } from '@/models/user/user';
-import { notifications } from '@mantine/notifications';
-
 import {
   useReverseRelationMutation,
   useLazyFirstRelationQuery,
-} from '../../users/_api/user-unit.api';
+} from '../../../users/_api/user-unit.api';
 import { useParams } from 'next/navigation';
-import { useListByIdQuery } from '../../users/_api/user.api';
+import { useListByIdQuery } from '../../../users/_api/user.api';
 import { notify } from '@megp/core-fe';
 
 const AddUserModal = () => {
@@ -45,9 +43,9 @@ const AddUserModal = () => {
 
       try {
         id && (await assign(data).unwrap());
-        notify('Error', 'User has been assigned to unit successfully.');
+        notify('Success', 'User has been assigned to unit successfully.');
       } catch (err) {
-        notify('Success', 'Sorry, an error encountered while assigning user.');
+        notify('Error', 'Sorry, an error encountered while assigning user.');
       }
     },
     onAdd: () => {
@@ -73,6 +71,9 @@ const AddUserModal = () => {
     },
 
     selectable: true,
+    searchable: true,
+    sortable: true,
+    pagination: true,
   };
 
   const handleCloseModal = () => {
@@ -98,12 +99,18 @@ const AddUserModal = () => {
         data={currentAssigned}
         isSaving={isSaving}
       />
-      <Modal title="Users" opened={isModalOpen} onClose={handleCloseModal}>
+      <Modal
+        title="Users Assignment"
+        opened={isModalOpen}
+        onClose={handleCloseModal}
+        size={'lg'}
+      >
         <Relation
           config={addConfig}
           data={list ? list.items : []}
           currentSelected={currentAssigned}
           mode="modal"
+          handleCloseModal={handleCloseModal}
         />
       </Modal>
     </>

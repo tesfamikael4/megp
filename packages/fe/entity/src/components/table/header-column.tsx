@@ -89,6 +89,7 @@ export const remove = (openEditModal, showPopUp) => {
     meta: {
       widget: 'action',
     },
+
     cell: ({ row, table }) => {
       const meta = table.options.meta;
 

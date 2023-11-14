@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Modal } from '@mantine/core';
 import { Relation, RelationConfig } from '@megp/entity';
-
 import { Mandate } from '@/models/mandate';
-import { notifications } from '@mantine/notifications';
 import { useListQuery } from '../_api/mandate.api';
 import {
   useRelationMutation,
@@ -96,6 +94,9 @@ const AddEntityModal = () => {
     },
 
     selectable: true,
+    searchable: true,
+    sortable: true,
+    pagination: true,
   };
 
   const handleCloseModal = () => {
@@ -124,15 +125,17 @@ const AddEntityModal = () => {
         isSaving={isSaving}
       />
       <Modal
-        title="Add Mandate"
+        title="Assign Mandate"
         opened={isModalOpen}
         onClose={handleCloseModal}
+        size={'lg'}
       >
         <Relation
           config={addConfig}
           data={mandates ? mandates.items : []}
           mode="modal"
           currentSelected={currentAssigned}
+          handleCloseModal={handleCloseModal}
         />
       </Modal>
     </>

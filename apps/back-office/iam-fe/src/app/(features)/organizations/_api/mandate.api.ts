@@ -8,4 +8,4 @@ const mandateApi = entityApi.entitySliceApi['mandates'];
 export const mandateSliceApi: typeof EntitySliceApi =
   createEntitySlice<Mandate>(mandateApi as any, 'mandates');
 
-export const { useListQuery } = mandateSliceApi;
+export const { useListQuery, useLazyListQuery } = mandateSliceApi;

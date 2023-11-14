@@ -8,9 +8,9 @@ import { notifications } from '@mantine/notifications';
 import {
   useRelationMutation,
   useLazySecondRelationQuery,
-} from '../_api/user-unit.api';
+} from '../../_api/user-unit.api';
 import { useParams } from 'next/navigation';
-import { useListByIdQuery } from '../../units/_api/unit.api';
+import { useListByIdQuery } from '../../../(features)/units/_api/unit.api';
 import { Unit } from '@/models/unit';
 import { notify } from '@megp/core-fe';
 
@@ -35,15 +35,6 @@ const AddEntityModal = () => {
           widget: 'primary',
         },
       },
-      {
-        id: 'description',
-        header: 'Description',
-        accessorKey: 'description',
-        cell: (info) => info.getValue(),
-        meta: {
-          widget: 'multiline',
-        },
-      },
     ],
     onSave: async (selected) => {
       const units = selected.map((item) => `${item.id}`);
@@ -64,7 +55,7 @@ const AddEntityModal = () => {
     },
   };
   const addConfig: RelationConfig<Unit> = {
-    title: 'Units',
+    title: 'Unit Assignment',
     columns: [
       {
         id: 'name',
@@ -75,15 +66,6 @@ const AddEntityModal = () => {
           widget: 'primary',
         },
       },
-      {
-        id: 'description',
-        header: 'Description',
-        accessorKey: 'description',
-        cell: (info) => info.getValue(),
-        meta: {
-          widget: 'multiline',
-        },
-      },
     ],
     onSave: (selected) => {
       setCurrentAssigned(selected);
@@ -91,6 +73,9 @@ const AddEntityModal = () => {
     },
 
     selectable: true,
+    searchable: true,
+    sortable: true,
+    pagination: true,
   };
 
   const handleCloseModal = () => {
@@ -115,12 +100,18 @@ const AddEntityModal = () => {
         data={currentAssigned}
         isSaving={isSaving}
       />
-      <Modal title="Unit" opened={isModalOpen} onClose={handleCloseModal}>
+      <Modal
+        title="Unit Assignment"
+        opened={isModalOpen}
+        onClose={handleCloseModal}
+        size={'lg'}
+      >
         <Relation
           config={addConfig}
           mode="modal"
           data={list ? list.items : []}
           currentSelected={currentAssigned}
+          handleCloseModal={handleCloseModal}
         />
       </Modal>
     </>

@@ -2,7 +2,7 @@
 import { EntityConfig, EntityLayout } from '@megp/entity';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import { useListByIdQuery } from './_api/user.api';
+import { useListByIdQuery } from '../_api/user.api';
 
 import { User } from '@/models/user/user';
 
@@ -19,7 +19,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
     if (isSuccess) {
       setData(
         list?.items?.map((item: User) => {
-          return { ...item, isActive: item.isActive ? 'Yes' : 'No ' };
+          return { ...item, isActive: item.isActive ? 'Active' : 'Inactive ' };
         }),
       );
     }
@@ -31,7 +31,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
       mode: 'list',
       entity: 'user',
       primaryKey: 'id',
-      title: 'users',
+      title: 'Users',
       onAdd: () => {
         route.push(`/users/new`);
       },

@@ -3,11 +3,9 @@ import { EntityButton } from '@megp/entity';
 import { z, ZodType } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { UserProfile } from '@/models/user-profile';
-import { useUpdateMutation, useReadQuery } from '../_api/user.api';
+import { useUpdateMutation, useReadQuery } from '../../_api/user.api';
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-
-import { notifications } from '@mantine/notifications';
 import { Controller, useForm } from 'react-hook-form';
 import { notify } from '@megp/core-fe';
 

@@ -10,6 +10,7 @@ import {
 import { useGetPermissionByOrganizationIdQuery } from '../_api/others.api';
 import { useParams } from 'next/navigation';
 import { notify } from '@megp/core-fe';
+import { useReadQuery } from '../_api/role.api';
 
 const AddUserModal = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -25,6 +26,8 @@ const AddUserModal = () => {
   const { data: permission } = useGetPermissionByOrganizationIdQuery(
     '099454a9-bf8f-45f5-9a4f-6e9034230250',
   );
+
+  const { data: selected } = useReadQuery(id?.toString());
 
   const relationConfig: RelationConfig<any> = {
     title: 'Permission assignment',
@@ -59,6 +62,7 @@ const AddUserModal = () => {
     onAdd: () => {
       setIsModalOpen(true);
     },
+    hasAdd: selected?.isSystemRole && false,
   };
   const addConfig: RelationConfig<Mandate> = {
     title: 'Permission',
