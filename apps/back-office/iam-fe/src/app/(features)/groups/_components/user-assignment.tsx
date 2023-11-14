@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Modal } from '@mantine/core';
 import { Relation, RelationConfig } from '@megp/entity';
 import { useParams } from 'next/navigation';
-import { useListByIdQuery } from '../../users/_api/user.api';
+import { useListByIdQuery } from '../../../users/_api/user.api';
 import {
   useReverseRelationMutation,
   useLazyFirstRelationQuery,
@@ -65,6 +65,18 @@ const AddUserModal = () => {
           widget: 'primary',
         },
       },
+      {
+        id: 'name',
+        header: 'Email',
+        accessorKey: 'email',
+        cell: (info) => info.getValue(),
+        meta: {
+          widget: 'expand',
+        },
+        // meta: {
+        //   widget: 'expand',
+        // },
+      },
     ],
     onSave: (selected) => {
       setCurrentAssigned(selected);
@@ -72,6 +84,9 @@ const AddUserModal = () => {
     },
 
     selectable: true,
+    sortable: true,
+    searchable: true,
+    pagination: true,
   };
 
   const handleCloseModal = () => {
@@ -95,12 +110,18 @@ const AddUserModal = () => {
         data={currentAssigned}
         isSaving={isSaving}
       />
-      <Modal title="Users" opened={isModalOpen} onClose={handleCloseModal}>
+      <Modal
+        title="Users"
+        opened={isModalOpen}
+        onClose={handleCloseModal}
+        size={'lg'}
+      >
         <Relation
           config={addConfig}
           data={users ? users.items : []}
           currentSelected={currentAssigned}
           mode="modal"
+          handleCloseModal={handleCloseModal}
         />
       </Modal>
     </>

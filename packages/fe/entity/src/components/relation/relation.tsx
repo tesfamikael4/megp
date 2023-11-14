@@ -1,9 +1,17 @@
 'use client';
 import { Button, Group } from '@mantine/core';
 import { Section } from '@megp/core-fe';
-import { IconDeviceFloppy, IconPlus } from '@tabler/icons-react';
+import {
+  IconArrowsCross,
+  IconDeviceFloppy,
+  IconPlus,
+} from '@tabler/icons-react';
 import type { ColumnDef } from '@tanstack/react-table';
-import { getCoreRowModel, useReactTable } from '@tanstack/react-table';
+import {
+  getCoreRowModel,
+  useReactTable,
+  getSortedRowModel,
+} from '@tanstack/react-table';
 import { useEffect, useMemo, useState } from 'react';
 import { defaultRelationConfig, type RelationConfig } from '../../models';
 import { visibleColumn } from '../../utilities/table';
@@ -17,6 +25,7 @@ interface RelationProps<T> {
   currentSelected?: T[];
   isSaving?: boolean;
   isLoading?: boolean;
+  handleCloseModal?: () => void;
 
   showPopUp?: boolean;
   openDeleteModal?: (id) => void;
@@ -33,7 +42,7 @@ export function Relation<T>({
   isSaving,
   isLoading,
   collapsed = true,
-
+  handleCloseModal,
   openDeleteModal,
   showPopUp,
   openEditModal,
@@ -60,6 +69,8 @@ export function Relation<T>({
   const [width, setWidth] = useState(100);
   const [rowSelection, setRowSelection] = useState({});
   const [data, setData] = useState([]);
+  const [sorting, setSorting] = useState([]);
+  // const [isexpanded, setIsExpanded] = useState(true);
 
   // change the width of the table columns when the mode changes
   useEffect(() => {
@@ -83,6 +94,7 @@ export function Relation<T>({
         mode,
       ),
       rowSelection,
+      sorting,
     },
     onRowSelectionChange: setRowSelection,
     enableMultiRowSelection: !options.disableMultiSelect,
@@ -91,6 +103,10 @@ export function Relation<T>({
     defaultColumn: {
       enableHiding: false,
     },
+
+    getSortedRowModel: getSortedRowModel(),
+    onSortingChange: setSorting,
+    enableSortingRemoval: false,
     enableRowSelection: true,
     meta: {
       removeSelectedRows: (selectedRows) => {
@@ -135,23 +151,40 @@ export function Relation<T>({
         width={width}
       />
 
-      <Group className="border-t pt-4">
+      <Group
+        className={
+          mode === 'modal' ? 'border-t pt-4 flex justify-end' : 'border-t pt-4'
+        }
+      >
         {options.onSave ? (
-          <Button
-            leftSection={<IconDeviceFloppy size={14} stroke={1.6} />}
-            loading={isSaving}
-            onClick={() => {
-              mode === 'modal'
-                ? options.onSave?.(
-                    table
-                      .getSelectedRowModel()
-                      .flatRows.map((s: any) => s.original) as T[],
-                  )
-                : options.onSave?.(data as T[]);
-            }}
-          >
-            {mode === 'modal' ? 'Done' : 'Save'}
-          </Button>
+          <>
+            <Button
+              leftSection={<IconDeviceFloppy size={14} stroke={1.6} />}
+              loading={isSaving}
+              onClick={() => {
+                mode === 'modal'
+                  ? options.onSave?.(
+                      table
+                        .getSelectedRowModel()
+                        .flatRows.map((s: any) => s.original) as T[],
+                    )
+                  : options.onSave?.(data as T[]);
+              }}
+            >
+              {mode === 'modal' ? 'Done' : 'Save'}
+            </Button>
+            {handleCloseModal ? (
+              <Button
+                color="red"
+                leftSection={<IconArrowsCross size={14} stroke={1.6} />}
+                onClick={() => {
+                  handleCloseModal();
+                }}
+              >
+                cancel
+              </Button>
+            ) : null}
+          </>
         ) : null}
       </Group>
     </>
@@ -174,6 +207,7 @@ export function Relation<T>({
             ) : null
           }
           defaultCollapsed={Boolean(collapsed)}
+          // setIsExpanded={setIsExpanded}
           title={options.title}
         >
           {body}

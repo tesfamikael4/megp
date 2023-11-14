@@ -9,7 +9,7 @@ export const userRoleSliceApi: typeof EntitySliceApi = createEntitySlice<Role>(
   userRoleApi as any,
   'user-role',
   'user',
-  'unit',
+  'role',
 );
 
 export const { useRelationMutation, useLazySecondRelationQuery } =

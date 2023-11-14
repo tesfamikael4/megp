@@ -65,7 +65,6 @@ const OrganizationAdressForm = () => {
             },
             {
               message: 'Please enter a valid telephone number',
-              path: ['number'],
             },
           )
           .optional(),
@@ -80,7 +79,7 @@ const OrganizationAdressForm = () => {
             return /^\d{9,12}$/.test(value);
           },
           {
-            message: 'Please enter a valid telephone number',
+            message: 'Please enter a valid fax number',
           },
         ),
       }),
@@ -104,7 +103,7 @@ const OrganizationAdressForm = () => {
               return /^\d{9,12}$/.test(value);
             },
             {
-              message: 'Please enter a valid telephone number',
+              message: 'Please enter a valid mobile number',
             },
           )
           .optional(),
@@ -252,14 +251,14 @@ const OrganizationAdressForm = () => {
 
       <Group grow>
         <TextInput
-          label="Postal code"
-          error={errors?.postalCode ? errors.postalCode?.message : ''}
-          {...register('postalCode')}
-        />
-        <TextInput
           label="Email"
           error={errors?.email ? errors.email.message : ''}
           {...register('email')}
+        />
+        <TextInput
+          label="Postal code"
+          error={errors?.postalCode ? errors.postalCode?.message : ''}
+          {...register('postalCode')}
         />
       </Group>
 

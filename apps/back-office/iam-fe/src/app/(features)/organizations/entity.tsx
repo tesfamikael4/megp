@@ -19,7 +19,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
     if (isSuccess) {
       setData(
         list.items.map((item: Organization) => {
-          return { ...item, isActive: item.isActive ? 'Yes' : 'No ' };
+          return { ...item, isActive: item.isActive ? 'Active' : 'Inactive ' };
         }),
       );
     }

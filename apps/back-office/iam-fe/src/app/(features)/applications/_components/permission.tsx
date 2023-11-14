@@ -97,6 +97,7 @@ const AddPermisionModal = () => {
         title={mode === 'new' ? 'New permission' : 'Update permission'}
         opened={isModalOpen}
         onClose={handleCloseModal}
+        size={'lg'}
       >
         <PermissionForm
           mode={mode}

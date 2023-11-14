@@ -14,13 +14,14 @@ import {
   useDeleteMutation,
   useUpdateMutation,
   useCreateMutation,
+  useListQuery,
 } from '../_api/organization.api';
 import { useListQuery as useListTypeQuery } from '../../organization-type/_api/organization-type.api';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import { Organization } from '@/models/organization';
-import { notify } from '@megp/core-fe';
+import { logger, notify } from '@megp/core-fe';
 
 interface FormDetailProps {
   mode: 'new' | 'detail';
@@ -43,7 +44,22 @@ export function FormDetail({ mode }: FormDetailProps) {
     }),
     code: z.string().optional(),
 
-    shortName: z.string().min(1, { message: 'This field is required' }),
+    shortName: z
+      .string()
+      .min(1, { message: 'This field is required' })
+      .refine(
+        (value) => {
+          const organizationsList = list?.items;
+          const isUnique =
+            organizationsList &&
+            organizationsList.every((org) => org.shortName !== value);
+          return isUnique;
+        },
+        {
+          message:
+            'Short name must be unique among existing organization short names',
+        },
+      ),
     description: z.string().optional(),
   });
 
@@ -60,6 +76,7 @@ export function FormDetail({ mode }: FormDetailProps) {
   const { id } = useParams();
 
   const [create, { isLoading: isSaving }] = useCreateMutation();
+  const { data: list } = useListQuery();
   const [update, { isLoading: isUpdating }] = useUpdateMutation();
   const [remove, { isLoading: isDeleting }] = useDeleteMutation();
   const [activation, { isLoading: isActivating }] = useUpdateMutation();
@@ -83,6 +100,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       notify('Error', 'Error in creating organization');
     }
   };
+
   const onUpdate = async (data) => {
     try {
       await update({ ...data, id: id?.toString() });

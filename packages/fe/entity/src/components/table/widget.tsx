@@ -1,6 +1,7 @@
 import type { Cell } from '@tanstack/react-table';
 import { flexRender } from '@tanstack/react-table';
 import { Text } from '@mantine/core';
+import { logger } from '@megp/core-fe';
 import styles from './grid.module.scss';
 
 function Widget<TData>({
@@ -9,6 +10,7 @@ function Widget<TData>({
   cell: Cell<TData, unknown>;
 }): React.ReactElement {
   const { widget } = cell.column.columnDef.meta ?? ({ widget: '' } as any);
+  logger.log(widget);
 
   switch (widget) {
     case 'primary':

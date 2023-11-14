@@ -8,10 +8,9 @@ import {
   useDeleteMutation,
   useUpdateMutation,
   useCreateMutation,
-} from '../_api/user.api';
+} from '../../_api/user.api';
 import { useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { notifications } from '@mantine/notifications';
 import { User } from '@/models/user/user';
 import { notify } from '@megp/core-fe';
 
@@ -21,14 +20,13 @@ interface FormDetailProps {
 
 const defaultValues = {
   firstName: '',
-  username: '',
   lastName: '',
   email: '',
 };
 
 const userSchema: ZodType<Partial<User>> = z.object({
   firstName: z.string().min(1, { message: 'First Name is required' }),
-  username: z.string().min(1, { message: 'User Name is required' }),
+
   lastName: z.string().min(1, { message: 'Last Name is required' }),
   email: z
     .string()
@@ -64,6 +62,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       const result = await create({
         ...data,
         fullName: `${data.firstName} ${data.lastName}`,
+        organizationId: '099454a9-bf8f-45f5-9a4f-6e9034230250',
       });
       if ('data' in result) {
         router.push(`/users/${result.data.id}`);
@@ -79,6 +78,7 @@ export function FormDetail({ mode }: FormDetailProps) {
         ...data,
         id: id?.toString(),
         fullName: `${data.firstName} ${data.lastName}`,
+        organizationId: '099454a9-bf8f-45f5-9a4f-6e9034230250',
       });
       notify('Success', 'User updated successfully');
     } catch {
@@ -121,7 +121,6 @@ export function FormDetail({ mode }: FormDetailProps) {
       reset({
         firstName: selected?.firstName,
         lastName: selected?.lastName,
-        username: selected?.username,
         email: selected?.email,
       });
     }
@@ -143,12 +142,6 @@ export function FormDetail({ mode }: FormDetailProps) {
         {...register('lastName')}
       />
 
-      <TextInput
-        label="User Name"
-        withAsterisk
-        error={errors?.userName ? errors?.userName?.message?.toString() : ''}
-        {...register('username')}
-      />
       <TextInput
         label="Email"
         error={errors?.email ? errors?.email?.message?.toString() : ''}
