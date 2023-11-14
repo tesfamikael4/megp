@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Post,
-  Put,
-  Param,
-  ParseUUIDPipe,
-  HttpStatus,
-} from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import {
   CreateUserProfileDto,
@@ -30,24 +22,5 @@ export class UserProfileController extends ExtraCrudController<UserProfile>(
 ) {
   constructor(private readonly userService: UserProfileService) {
     super(userService);
-  }
-
-  @Post()
-  async create(
-    @Body() createUserProfileDto: CreateUserProfileDto,
-  ): Promise<UserProfile> {
-    return await super.create(createUserProfileDto);
-  }
-
-  @Put(':id')
-  async update(
-    @Param(
-      'id',
-      new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
-    )
-    id: string,
-    @Body() updateUserProfileDto: UpdateUserProfileDto,
-  ): Promise<UserProfile | undefined> {
-    return await super.update(id, updateUserProfileDto);
   }
 }
