@@ -2,10 +2,12 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from './shared/typeorm/typeorm.service';
-import { CategoriesModule } from './categories/category.module';
-import { VendorRegistrationModule } from './vendor-registration/vendor-registration.module';
-import { BpmModule } from './bpm/bpm.module';
+import { VendorRegistrationModule } from './modules/vendor-registration/vendor-registration.module';
 import { AuthorizationModule } from './shared/authorization';
+import { CategoriesModule } from './modules/categories/category.module';
+import { BpmModule } from './modules/bpm/bpm.module';
+import { ServiceModule } from './modules/services/service.module';
+import { ServicePricingModule } from './modules/pricing/pricing.module';
 
 @Module({
   imports: [
@@ -17,9 +19,11 @@ import { AuthorizationModule } from './shared/authorization';
     AuthorizationModule,
     CategoriesModule,
     VendorRegistrationModule,
+    ServiceModule,
+    ServicePricingModule,
     BpmModule,
   ],
   controllers: [],
   providers: [],
 })
-export class AppModule { }
+export class AppModule {}
