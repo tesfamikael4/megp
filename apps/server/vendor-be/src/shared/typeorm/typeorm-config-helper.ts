@@ -28,7 +28,6 @@ export const dataSourceOptions = {
   // logging: 'all',
   synchronize: true, // TypeOrmConfigHelper.NODE_ENV != 'production', // never use TRUE in production!
   autoLoadEntities: true, // TypeOrmConfigHelper.NODE_ENV != 'production',
-  migrationsRun: true,
 } as DataSourceOptions;
 
 const dataSource = new DataSource(dataSourceOptions);

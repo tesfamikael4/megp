@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { ApiExtraModels, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { DataResponseFormat } from 'src/shared/api-data';
-import { BankAccountDetailService } from '../services/bankAccountDetail.service';
+import { BankAccountDetailService } from '../services/bank-account-detail.service';
 import { BankDto } from '../dto/bank.dto';
 import { CollectionQuery } from 'src/shared/collection-query';
 import { CreateBankAccountDetailDto } from '../dto/bank-account-detail.dto';

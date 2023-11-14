@@ -34,4 +34,6 @@ export class InvoiceEntity {
   paymentStatus: string;
   @Column()
   remark: string;
+  @Column({ nullable: true })
+  attachment: string;
 }

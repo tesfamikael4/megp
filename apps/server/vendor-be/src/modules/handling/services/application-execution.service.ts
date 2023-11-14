@@ -74,6 +74,7 @@ export class ApplicationExcutionService {
   async getCurruntTaskByService(
     serviceKey: string,
     query: CollectionQuery,
+    user: any,
   ): Promise<DataResponseFormat<WorkflowInstanceResponse>> {
     let keys = [];
     if (serviceKey === ServiceKeyEnum.new) {
@@ -111,7 +112,7 @@ export class ApplicationExcutionService {
       },
       order: { submittedAt: 'ASC' },
       skip: query.skip | 0,
-      take: query.top | 20,
+      take: query.take | 20,
     });
 
     const response = new DataResponseFormat<WorkflowInstanceResponse>();
@@ -326,7 +327,7 @@ export class ApplicationExcutionService {
         //  expireDate: MoreThan(today),
       },
       skip: query.skip | 0,
-      take: query.top | 20,
+      take: query.take | 20,
     });
     const response = new DataResponseFormat<ActiveVendorsResponse>();
     response.items = result.map((item) =>
@@ -369,7 +370,7 @@ export class ApplicationExcutionService {
       throw new BadRequestException();
     }
     wfInstance.taskHandler.assignmentStatus = AssignmentEnum.Picked;
-    wfInstance.taskHandler.handlerUserId = user.userId;
+    wfInstance.taskHandler.handlerUserId = user.id;
     wfInstance.taskHandler.handlerName = user.name;
     wfInstance.taskHandler.pickedAt = new Date();
     const result = await this.wiRepository.save(wfInstance);

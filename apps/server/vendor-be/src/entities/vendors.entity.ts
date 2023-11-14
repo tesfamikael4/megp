@@ -1,4 +1,11 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { CommonEntity } from 'src/shared/entities/common.entity';
 import { ShareholdersEntity } from './shareholder.entity';
 import { BankAccountDetailEntity } from './bank-account-detail.entity';
@@ -8,6 +15,7 @@ import { BeneficialOwnership } from './beneficial-ownership.entity';
 import { AreasOfBusinessInterestEntity } from './areas-of-business-interest.entity';
 import { Audit } from 'src/shared/entities/audit.entity';
 import { WorkflowInstanceEntity } from './workflow-instance.entity';
+import { IsrVendorsEntity } from './isr-vendors.entity';
 @Entity({ name: 'vendors' })
 export class VendorsEntity extends Audit {
   @PrimaryGeneratedColumn('uuid')
@@ -16,6 +24,8 @@ export class VendorsEntity extends Audit {
   tin: string;
   @Column()
   userId: string;
+  @Column({ name: 'tin', nullable: true })
+  isrVendorId: string;
   @Column({ default: 'draft' })
   status: string;
   //legal form of entity
@@ -63,4 +73,8 @@ export class VendorsEntity extends Audit {
     cascade: true,
   })
   areasOfBusinessInterest: AreasOfBusinessInterestEntity[];
+
+  @OneToOne(() => IsrVendorsEntity)
+  @JoinColumn({ name: 'isrVendorId' })
+  isrVendor: IsrVendorsEntity;
 }

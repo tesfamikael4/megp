@@ -9,6 +9,7 @@ const initialValueSchema = {
   },
   basic: {
     name: '',
+    isrVendorId: '',
     businessType: '',
     origin: '',
     district: '',

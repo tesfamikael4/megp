@@ -7,7 +7,6 @@ import {
 } from 'typeorm';
 import { VendorsEntity } from './vendors.entity';
 import { Category } from './category.entity';
-
 @Entity({ name: 'business_categories' })
 export class BusinessCategoryEntity {
   @PrimaryGeneratedColumn('uuid')

@@ -1,7 +1,7 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { ApiExtraModels, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { DataResponseFormat } from 'src/shared/api-data';
-import { BeneficialOwnershipService } from '../services/beneficialOwnership.service';
+import { BeneficialOwnershipService } from '../services/beneficial-ownership.service';
 
 //@ApiBearerAuth()
 @Controller('BeneficialOwnershipController')

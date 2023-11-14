@@ -6,8 +6,10 @@ import {
   Param,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import {
+  ApiBearerAuth,
   ApiExtraModels,
   ApiOkResponse,
   ApiResponse,
@@ -24,11 +26,10 @@ import {
 } from '../dto/workflow-instance.dto';
 import { BusinessProcessService } from 'src/modules/bpm/services/business-process.service';
 import { TaskService } from 'src/modules/bpm/services/task.service';
+import { CurrentUser, JwtGuard } from 'src/shared/authorization';
+@ApiBearerAuth()
 @Controller('workflow-instances')
 @ApiTags('workflow-instances')
-@ApiResponse({ status: 500, description: 'Internal error' })
-@ApiResponse({ status: 404, description: 'Item not found' })
-@ApiResponse({ status: 400, description: 'Bad Request' })
 @ApiExtraModels(DataResponseFormat)
 export class WorkflowInstanceController {
   userInfo: any;
@@ -36,16 +37,14 @@ export class WorkflowInstanceController {
     private readonly workflowInstanceService: WorkflowInstanceService,
     private readonly bpService: BusinessProcessService,
     private readonly taskService: TaskService,
-  ) {
-    this.userInfo = {
-      userId: '62e96410-e869-4231-b693-f7e22d498b65',
-      name: 'muktar joseph',
-    };
-  }
-
+  ) {}
+  @UseGuards(JwtGuard)
   @Post('submit-application')
   @ApiOkResponse({ type: WorkflowInstanceResponse })
-  async create(@Body() dtos: CreateWorkflowInstanceDto[]) {
+  async create(
+    @Body() dtos: CreateWorkflowInstanceDto[],
+    @CurrentUser() user: any,
+  ) {
     const instances = [];
     for (const wfi of dtos) {
       const bp = await this.bpService.findBpService(wfi.pricingId);
@@ -65,27 +64,39 @@ export class WorkflowInstanceController {
     }
     return instances;
   }
+  @UseGuards(JwtGuard)
   @Post('renew')
   @ApiOkResponse({ type: WorkflowInstanceResponse })
-  async renew(@Body() dto: UpdateWorkflowInstanceDto) {
+  async renew(
+    @Body() dto: UpdateWorkflowInstanceDto,
+    @CurrentUser() user: any,
+  ) {
     const response = await this.workflowInstanceService.renewRegistration(
       dto,
       this.userInfo,
     );
     return response;
   }
+  @UseGuards(JwtGuard)
   @Post('upgrade')
   @ApiOkResponse({ type: WorkflowInstanceResponse })
-  async upgrade(@Body() dto: UpdateWorkflowInstanceDto) {
+  async upgrade(
+    @Body() dto: UpdateWorkflowInstanceDto,
+    @CurrentUser() user: any,
+  ) {
     const response = await this.workflowInstanceService.upgradeRegistration(
       dto,
       this.userInfo,
     );
     return response;
   }
+  @UseGuards(JwtGuard)
   @Post('review-application')
   @ApiOkResponse({ type: WorkflowInstanceResponse })
-  async reviewApplication(@Body() dto: GotoNextStateDto) {
+  async reviewApplication(
+    @Body() dto: GotoNextStateDto,
+    @CurrentUser() user: any,
+  ) {
     const userInfo = { userId: '', name: 'derehy giki' };
     const response = await this.workflowInstanceService.reviewApplication(
       dto,
@@ -93,33 +104,37 @@ export class WorkflowInstanceController {
     );
     return response;
   }
+  @UseGuards(JwtGuard)
   @Post('confirm-task')
   @ApiOkResponse({ type: WorkflowInstanceResponse })
-  async confirmTask(@Body() dto: GotoNextStateDto) {
+  async confirmTask(@Body() dto: GotoNextStateDto, @CurrentUser() user: any) {
     const response = await this.workflowInstanceService.confirm(
       dto,
       this.userInfo,
     );
     return response;
   }
+  @UseGuards(JwtGuard)
   @Post('submit-form-based-task')
   @ApiOkResponse({ type: WorkflowInstanceResponse })
-  async submitTaskFormData(@Body() dto: GotoNextStateDto) {
+  async submitTaskFormData(
+    @Body() dto: GotoNextStateDto,
+    @CurrentUser() user: any,
+  ) {
     const response = await this.workflowInstanceService.submitFormBasedTask(
       dto,
       this.userInfo,
     );
     return response;
   }
+  @UseGuards(JwtGuard)
   @Post('goto-next-state')
   @ApiOkResponse({ type: WorkflowInstanceResponse })
-  async gotoNextState(@Body() dto: GotoNextStateDto) {
+  async gotoNextState(@Body() dto: GotoNextStateDto, @CurrentUser() user: any) {
     const response = await this.workflowInstanceService.gotoNextStep(
       dto,
       this.userInfo,
     );
-    // const task = await this.workflowInstanceService.getTaskById(
-    //   response.taskHandler.taskId);
     const task = await this.taskService.findOne(response.taskHandler.taskId);
     if (task) {
       if (task.handlerType == 'System') {
@@ -133,12 +148,13 @@ export class WorkflowInstanceController {
     }
     return response;
   }
-
+  @UseGuards(JwtGuard)
   @Get('generate-certeficate/:vendorId')
   @ApiOkResponse({ type: WorkflowInstanceResponse })
   async generateCerteficate(
     @Param('vendorId') vendorId: string,
     @Query() query: CollectionQuery,
+    @CurrentUser() user: any,
   ) {
     return await this.workflowInstanceService.getCerteficateInfo(
       vendorId,

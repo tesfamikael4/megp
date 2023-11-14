@@ -2,12 +2,12 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { VendorRegistrationsController } from './controllers/vendor-registration.controller';
 import { VendorRegistrationsService } from './services/vendor-registration.service';
-import { BankAccountDetailService } from './services/bankAccountDetail.service';
-import { BankAccountDetailController } from './controllers/bankAccountDetail.controller';
+import { BankAccountDetailService } from './services/bank-account-detail.service';
+import { BankAccountDetailController } from './controllers/bank-account-detail.controller';
 import { ShareholderService } from './services/shareholder.service';
 import { ShareholderController } from './controllers/shareholder.controller';
-import { BeneficialOwnershipController } from './controllers/beneficialOwnership.controller';
-import { BeneficialOwnershipService } from './services/beneficialOwnership.service';
+import { BeneficialOwnershipController } from './controllers/beneficial-ownership.controller';
+import { BeneficialOwnershipService } from './services/beneficial-ownership.service';
 import { File } from './services/file.service';
 import { AreasOfBusinessInterestController } from './controllers/areas-of-business-interest.controller';
 import { AreasOfBusinessInterestService } from './services/areas-of-business-interest.service';
@@ -25,9 +25,11 @@ import {
   BusinessAreaEntity,
   BusinessCategoryEntity,
   BusinessProcessEntity,
+  Category,
   CustomCategoryEntity,
   FilesEntity,
   InvoiceEntity,
+  IsrVendorsEntity,
   PaymentReceiptEntity,
   ServicePrice,
   ShareholdersEntity,
@@ -45,10 +47,12 @@ import { ApplicationExcutionService } from 'src/modules/handling/services/applic
 import { WorkflowInstanceController } from 'src/modules/handling/controllers/workflow-instance.controller';
 import { ApplicationExcutionController } from 'src/modules/handling/controllers/application-execution.controller';
 import { ServicePricingController } from 'src/modules/pricing/controllers/service-pricing.controller';
+import { CategoriesModule } from '../categories/category.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
+      ServicePrice,
       BusinessCategoryEntity,
       CustomCategoryEntity,
       VendorsEntity,
@@ -59,10 +63,8 @@ import { ServicePricingController } from 'src/modules/pricing/controllers/servic
       BeneficialOwnership,
       AreasOfBusinessInterestEntity,
       PaymentReceiptEntity,
-
-      //temporary, will be removed when modularization complete
       BpServiceEntity,
-      ServicePrice,
+      //temporary, will be removed when modularization complete
       WorkflowInstanceEntity,
       InvoiceEntity,
       TaskAssignmentEntity,
@@ -70,9 +72,11 @@ import { ServicePricingController } from 'src/modules/pricing/controllers/servic
       TaskTrackerEntity,
       BusinessAreaEntity,
       BusinessProcessEntity,
+      IsrVendorsEntity,
     ]),
     AuthorizationModule,
     BpmModule,
+    CategoriesModule,
   ],
   exports: [],
   providers: [
