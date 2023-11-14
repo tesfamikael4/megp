@@ -16,11 +16,11 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const status =
       exception instanceof HttpException
         ? exception.getStatus()
-        : HttpStatus.INTERNAL_SERVER_ERROR;
+        : HttpStatus.BAD_REQUEST;
 
     const message =
       exception instanceof HttpException
-        ? exception.getResponse()
+        ? exception.getResponse()['message']
         : (exception as Error).message;
 
     const responseData = {
@@ -30,6 +30,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       timestamp: new Date().toISOString(),
     };
 
-    return response.status(status).json(responseData);
+    response.status(status).json(responseData);
+    return;
   }
 }

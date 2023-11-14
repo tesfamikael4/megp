@@ -182,9 +182,9 @@ export class VendorsResponseDto extends UpdateVendorsDto {
 //   'APPROVED',
 // }
 export class SetVendorStatus {
-  // @ApiProperty()
-  // @IsNotEmpty()
-  // @IsUUID()
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsUUID()
   userId: string;
   @ApiProperty()
   @IsNotEmpty()

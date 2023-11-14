@@ -25,7 +25,6 @@ import {
   WorkflowInstanceEnum,
 } from '../../handling/dto/workflow-instance.enum';
 import { HandlingCommonService } from '../../handling/services/handling-common-services';
-import { HttpService } from '@nestjs/axios';
 import axios from 'axios';
 import { InvoiceEntity } from 'src/entities/invoice.entity';
 import { TaskTrackerEntity } from 'src/entities/task-tracker.entity';
@@ -48,7 +47,6 @@ export class WorkflowService {
     private readonly bpService: BusinessProcessService,
     private readonly commonService: HandlingCommonService,
     private readonly taskService: TaskService,
-    private readonly httpService: HttpService,
   ) {}
   async intiateWorkflowInstance(
     dto: CreateWorkflowInstanceDto,
@@ -103,7 +101,6 @@ export class WorkflowService {
   async gotoNextStep(nextCommand: GotoNextStateDto, userInfo: any) {
     nextCommand.action = nextCommand.action.toUpperCase();
     const taskInfo = new TaskEntity();
-    // let nextTask = {};
     const workflowInstance = await this.workflowInstanceRepository.findOne({
       relations: { businessProcess: true, taskHandler: true },
       where: { id: nextCommand.instanceId },
@@ -133,9 +130,7 @@ export class WorkflowService {
         wfInstance.serviceId = workflowInstance.serviceId;
         wfInstance.bpId = workflowInstance.bpId;
         wfInstance.id = workflowInstance.id;
-        console.log("stateMetaData['apiUrl']", stateMetaData['apiUrl']);
         const apiUrl = stateMetaData['apiUrl'];
-        //  if (stateMetaData['apiUrl'])
         if (apiUrl) {
           const response = await this.notifyApplicationCompletion(
             wfInstance,
@@ -162,7 +157,6 @@ export class WorkflowService {
         stateMetaData['type'] = task.taskType;
         taskInfo.handlerType = task.handlerType;
         taskInfo.taskType = task.taskType;
-        //  nextTask = { ...taskInfo };
         await this.handleEvent(
           stateMetaData,
           nextCommand,
@@ -238,14 +232,12 @@ export class WorkflowService {
     task: TaskEntity,
     wfi: WorkflowInstanceEntity,
   ) {
-    const eventType = command.action ? command.action : 'SUBMIT';
-    console.log('eventType', eventType);
     switch (stateMetadata.type.toLowerCase()) {
       case TaskTypes.APPROVAL:
         console.log(TaskTypes.APPROVAL, command);
         break;
-      case TaskTypes.CONFIRMATION:
-        // return this.confirm(command);
+      case TaskTypes.EMAIl:
+        this.sendEmail(wfi);
         break;
       case TaskTypes.SMS:
         await this.sendSMS(wfi);

@@ -19,3 +19,4 @@ export * from './task-tracker.entity';
 export * from './task.entity';
 export * from './vendors.entity';
 export * from './workflow-instance.entity';
+export * from './isr-vendors.entity';

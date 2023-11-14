@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ServicePrice } from 'src/entities/service-price.entity';
 import { WorkflowInstanceEntity } from 'src/entities/workflow-instance.entity';
 import { AuthorizationModule } from 'src/shared/authorization';
 import { ApplicationExcutionController } from './controllers/application-execution.controller';

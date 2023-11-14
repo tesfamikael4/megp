@@ -5,9 +5,8 @@ import {
 } from '../types/crud-option.type';
 
 export const RelationCrudDecorator = (options: RelationCrudOptions) => {
-  return SetMetadata('crudOptions', options);
+  return Reflect.metadata('crudOptions', options);
 };
-
 export const ExtraCrudDecorator = (options: ExtraCrudOptions) => {
   return SetMetadata('crudOptions', options);
 };

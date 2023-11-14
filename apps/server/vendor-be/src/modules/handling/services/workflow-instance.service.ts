@@ -44,7 +44,7 @@ import { StateMetaData } from 'src/modules/bpm/dto/state-metadata';
 import { CreateTaskTrackerDto } from 'src/modules/bpm/dto/task-tracker.dto';
 import { WorkflowInstanceEntity } from 'src/entities/workflow-instance.entity';
 import { TaskEntity } from 'src/entities/task.entity';
-import { VendorsEntity } from 'src/entities';
+import { IsrVendorsEntity, VendorsEntity } from 'src/entities';
 @Injectable()
 export class WorkflowInstanceService {
   constructor(
@@ -61,6 +61,8 @@ export class WorkflowInstanceService {
     private readonly trackerRepository: Repository<TaskTrackerEntity>,
     @InjectRepository(VendorsEntity)
     private readonly vendorRepository: Repository<VendorsEntity>,
+    @InjectRepository(IsrVendorsEntity)
+    private readonly isrVendorRepository: Repository<IsrVendorsEntity>,
     @InjectRepository(PaymentReceiptEntity)
     private readonly receiptRepository: Repository<PaymentReceiptEntity>,
     private readonly bpService: BusinessProcessService,
@@ -244,7 +246,7 @@ export class WorkflowInstanceService {
     } else {
       invoice.amount = result.fee;
     }
-    const vendor = await this.vendorRepository.findOne({
+    const vendor = await this.isrVendorRepository.findOne({
       where: { id: vendorId },
     });
     invoice.instanceId = null; //result.instanceId;
@@ -256,7 +258,8 @@ export class WorkflowInstanceService {
     invoice.payToBank = 'National Bank of Malawi';
     invoice.pricingId = pricingId;
     //invoice.applicationNo = result.workflowInstance.applicationNumber;
-    invoice.payerName = vendor.name;
+    const basicObject: any = JSON.parse(JSON.stringify(vendor.basic));
+    invoice.payerName = basicObject.name;
     invoice.payerAccountId = vendor.userId;
     invoice.serviceName = service.name;
     invoice.remark = result.businessArea + ' ,' + service.description;

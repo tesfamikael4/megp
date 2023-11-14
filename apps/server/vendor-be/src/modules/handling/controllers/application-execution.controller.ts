@@ -8,23 +8,29 @@ import {
   Query,
   Req,
   Res,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiExtraModels, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiExtraModels,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { ApiPaginatedResponse, DataResponseFormat } from 'src/shared/api-data';
 import { CollectionQuery } from 'src/shared/collection-query';
 import { InvoiceResponseDto } from 'src/modules/vendor-registration/dto/invoice.dto';
 import { ApplicationExcutionService } from '../services/application-execution.service';
-import { HandlingCommonService } from '../services/handling-common-services';
 import { ActiveVendorsResponse } from '../dto/active-vendor-response';
 import {
   CreateWorkflowInstanceDto,
   GotoNextStateDto,
   WorkflowInstanceResponse,
 } from '../dto/workflow-instance.dto';
-import { CurrentUser } from 'src/shared/authorization';
+import { CurrentUser, JwtGuard } from 'src/shared/authorization';
 import { WorkflowService } from 'src/modules/bpm/services/workflow.service';
 import { BusinessProcessService } from 'src/modules/bpm/services/business-process.service';
 import { UpdateTaskHandlerDto } from 'src/modules/bpm/dto/task-handler.dto';
+@ApiBearerAuth()
 @Controller('application-execution')
 @ApiTags('Application Excution')
 @ApiExtraModels(DataResponseFormat)
@@ -34,12 +40,8 @@ export class ApplicationExcutionController {
     private readonly executeService: ApplicationExcutionService,
     private readonly workflowService: WorkflowService,
     private readonly bpService: BusinessProcessService,
-  ) {
-    this.userInfo = {
-      userId: '078ddca3-ad1c-4028-aa58-7da3ee529fa9',
-      name: 'Dereje Hunew',
-    };
-  }
+  ) {}
+  @UseGuards(JwtGuard)
   @Post('intiate-workflow')
   @ApiOkResponse({ type: WorkflowInstanceResponse })
   async testWF(@Body() wfi: CreateWorkflowInstanceDto) {
@@ -52,6 +54,7 @@ export class ApplicationExcutionController {
       this.userInfo,
     );
   }
+  @UseGuards(JwtGuard)
   @Post('goto-next-step')
   @ApiOkResponse({ type: WorkflowInstanceResponse })
   async gottoNextStep(@Body() nextStatedto: GotoNextStateDto) {
@@ -61,28 +64,35 @@ export class ApplicationExcutionController {
     );
     return response;
   }
-
+  @UseGuards(JwtGuard)
   @Post('pick-task')
   @ApiOkResponse({ type: WorkflowInstanceResponse })
   async pickTask(@Body() dto: UpdateTaskHandlerDto, @CurrentUser() user: any) {
-    return await this.executeService.pickTask(dto, this.userInfo);
+    console.log('user--> ', user);
+    return await this.executeService.pickTask(dto, user);
   }
+  @UseGuards(JwtGuard)
   @Post('unpick-task')
   @ApiOkResponse({ type: WorkflowInstanceResponse })
   async unpickTask(@Body() dto: UpdateTaskHandlerDto) {
     return await this.executeService.unpickTask(dto);
   }
-
+  @UseGuards(JwtGuard)
   @Get('get-currunt-tasks/:serviceKey')
   @ApiPaginatedResponse(WorkflowInstanceResponse)
   async fetchCurruntTasks(
     @Param('serviceKey') serviceKey: string,
     @Query() query: CollectionQuery,
+    @CurrentUser() user: any,
   ) {
-    return await this.executeService.getCurruntTaskByService(serviceKey, query);
+    return await this.executeService.getCurruntTaskByService(
+      serviceKey,
+      query,
+      user,
+    );
   }
-
-  @Get('get-currunt-taskDetail/:instanceId')
+  @UseGuards(JwtGuard)
+  @Get('get-currunt-task-detail/:instanceId')
   @ApiOkResponse({ type: WorkflowInstanceResponse })
   async fetchCurruntTaskDetail(
     @Param('instanceId') instanceId: string,
@@ -90,7 +100,7 @@ export class ApplicationExcutionController {
   ) {
     return await this.executeService.getCurruntTaskDetail(instanceId);
   }
-
+  @UseGuards(JwtGuard)
   @Get('generate-certeficate-pdf')
   async generateCerteficatePdf(@Query() params: any, @Req() req, @Res() res) {
     const templateUrl = params.templateUrl;
@@ -110,25 +120,28 @@ export class ApplicationExcutionController {
     });
     res.status(200).end(pdfBuffer);
   }
-
+  @UseGuards(JwtGuard)
   @Get('get-invoices')
   @ApiPaginatedResponse(InvoiceResponseDto)
   async fetchInvoices(@Query() query: CollectionQuery) {
     return await this.executeService.getInvoices(query);
   }
+  @UseGuards(JwtGuard)
   @Get('get-invoice/:id')
   @ApiOkResponse({ type: InvoiceResponseDto })
   async getInvoice(@Param('id') id: string) {
     return await this.executeService.getInvoice(id);
   }
+  @UseGuards(JwtGuard)
   @Get('get-my-invoice/:userId')
   @ApiOkResponse({ type: InvoiceResponseDto })
-  async getMyInvoice(@Param('userId') userId: string) {
-    return await this.executeService.getMyInvoices(userId);
+  async getMyInvoice(@CurrentUser() user: any) {
+    return await this.executeService.getMyInvoices(user.id);
   }
+  @UseGuards(JwtGuard)
   @Get('get-my-business-areas')
   @ApiOkResponse({ type: ActiveVendorsResponse })
-  async getMyBusinessAreas() {
-    return await this.executeService.getMyBusinessArea(this.userInfo.id);
+  async getMyBusinessAreas(@CurrentUser() user: any) {
+    return await this.executeService.getMyBusinessArea(user.id);
   }
 }
