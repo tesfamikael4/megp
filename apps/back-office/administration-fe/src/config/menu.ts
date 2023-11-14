@@ -15,6 +15,7 @@ export const Menu: MenuItem[] = [
     icon: IconAdjustmentsHorizontal,
     links: [
       { label: 'Procurement Method', link: '/lookup/procurement-method' },
+      { label: 'Budget Category', link: '/lookup/budget-category' },
     ],
   },
 ];
