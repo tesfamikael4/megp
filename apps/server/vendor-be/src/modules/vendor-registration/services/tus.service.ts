@@ -8,7 +8,7 @@ import {
 import tus = require('tus-node-server');
 import * as Minio from 'minio';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, LessThan, MoreThanOrEqual, Not, Repository } from 'typeorm';
 import { UserInfo, userInfo } from 'os';
 import { NestMinioService } from 'nestjs-minio';
 import * as tusClient from 'tus-js-client';
@@ -20,6 +20,7 @@ import {
   PaymentReceiptEntity,
   VendorsEntity,
 } from 'src/entities';
+import { VendorStatusEnum } from 'src/shared/enums/vendor-status-enums';
 const endPointUrl = `http://196.189.118.110:9000`;
 const minioStoreConfig = {
   partSize: 8 * 1024 * 1024, // Each uploaded part will have ~8MB,
@@ -60,20 +61,26 @@ export class TusService implements OnModuleInit {
 
   async handleTus(req, res, userInfo) {
     const userId = userInfo.id;
-    const result = await this.isrVendorRepository.findOneOrFail({
-      where: { userId: userId },
+    const result = await this.isrVendorRepository.findOne({
+      where: {
+        userId: userId,
+        status: In([VendorStatusEnum.ACTIVE, VendorStatusEnum.ADJUSTMENT]),
+      },
     });
-    if (!result) throw new NotFoundException(`vendor not found`);
+    if (!result) throw new NotFoundException(`isr vendor not found`);
+    const fourteenDaysAgo = new Date();
+    fourteenDaysAgo.setDate(new Date().getDate() - 14);
+
+    const areaOfBusinessInterest = result.areasOfBusinessInterest;
     const invoice = await this.invoiceRepository.find({
-      where: { payerAccountId: userId },
+      where: {
+        payerAccountId: userId,
+        paymentStatus: Not('Paid'),
+        createdOn: MoreThanOrEqual(fourteenDaysAgo),
+      },
     });
-    let PaymentStatus = true;
-    invoice.forEach((element) => {
-      if (element.paymentStatus !== 'Paid') {
-        PaymentStatus = false;
-      }
-    });
-    if (PaymentStatus) {
+
+    if (invoice.length > 0) {
       const bucketCreation = await minioClient
         .makeBucket(userId, '')
         .catch((e) => {
@@ -102,7 +109,6 @@ export class TusService implements OnModuleInit {
         const fieldValue = event.file.id;
         const fieldName = uploadMetadata?.fieldName;
         const entityName = uploadMetadata?.entityName;
-
         if (entityName == 'vendor') {
           const resultMetadata = JSON.parse(
             JSON.stringify(result.supportingDocuments),
@@ -130,37 +136,35 @@ export class TusService implements OnModuleInit {
             default:
               break;
           }
-          result.supportingDocuments = resultMetadata;
           try {
-            await this.isrVendorRepository.save(result);
+            await this.isrVendorRepository.update(result.id, {
+              paymentReceipt: resultMetadata,
+            });
           } catch (error) {
             throw new BadRequestException(error);
           }
         } else if (entityName == 'paymentReceipt') {
-          const resultMetadata = JSON.parse(
-            JSON.stringify(result.supportingDocuments),
+          const paymentReceipt = JSON.parse(
+            JSON.stringify(result.paymentReceipt),
           );
-          const uploadMetadataHeader = event.file.upload_metadata;
-          const uploadMetadata = this.parseUploadMetadata(uploadMetadataHeader);
-
-          resultMetadata.paymentReceipt.push({
-            transactionId: uploadMetadata.transactionId,
-            category: uploadMetadata.category,
-            invoiceId: uploadMetadata.invoiceId,
-            attachment: uploadMetadata.event.file.id,
+          paymentReceipt.push({
+            transactionId: uploadMetadata?.transactionId,
+            category: uploadMetadata?.category,
+            invoiceId: uploadMetadata?.invoiceId,
+            attachment: fieldValue,
           });
           try {
-            result.supportingDocuments = resultMetadata;
-            await this.isrVendorRepository.save(result);
+            await this.isrVendorRepository.update(result.id, {
+              paymentReceipt: paymentReceipt,
+            });
             await this.invoiceRepository.update(uploadMetadata.invoiceId, {
               paymentStatus: 'Paid',
-              attachment: uploadMetadata.event.file.id,
+              attachment: fieldValue,
             });
           } catch (error) {
             throw new BadRequestException(`Recept Upload failed`);
           }
         }
-
         this.logger.verbose(`Successfully inserted`);
       });
       return this.tusServer.handle(req, res);
@@ -197,11 +201,16 @@ export class TusService implements OnModuleInit {
     // Pipe the file stream to the response
     fileStream.pipe(response);
   }
+  async canUploadFile(userId: string) {
+    const isrVendor = await this.isrVendorRepository.findOne({
+      where: { userId: userId },
+    });
+    if (!isrVendor) throw new NotFoundException(`isrVendor Not Found`);
+  }
   async getFile(request, response, userId, fileName) {
     const bucketName = userId;
     const objectName = fileName;
     const metadata = await minioClient.statObject(bucketName, objectName);
-
     const fileStream = await minioClient.getObject(bucketName, objectName);
     const uploadMetadataHeader = metadata.metaData.upload_metadata;
     const uploadMetadata = this.parseUploadMetadata(uploadMetadataHeader);

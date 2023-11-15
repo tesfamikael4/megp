@@ -87,7 +87,6 @@ export class VendorRegistrationsController {
     @Body() data: InsertAllDataDto,
     @CurrentUser() userInfo: any,
   ) {
-    console.log(userInfo);
     data.data.initial.userId = userInfo.id;
     const result = await this.regService.addVendorInformations(
       data.data,
@@ -109,6 +108,10 @@ export class VendorRegistrationsController {
   @Post('set-application-status')
   async setVendorStatus(@Body() vendorStatusDto: SetVendorStatus) {
     return await this.regService.setVendorStatus(vendorStatusDto);
+  }
+  @Post('set-isr-vendor-status')
+  async setIsrVendorStatus(@CurrentUser() userInfo: any) {
+    return await this.regService.setIsrVendorStatus(userInfo);
   }
   @Get('get-application-by-status/:status')
   async getVendorByStatus(@Param('status') status: string) {

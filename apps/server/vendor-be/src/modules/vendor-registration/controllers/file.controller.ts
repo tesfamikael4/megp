@@ -32,6 +32,8 @@ export class UploadController {
   }
   @All('*')
   async tus(@Req() req, @Res() res, @CurrentUser() userInfo: any) {
+    userInfo = { id: 'b23f0b00-0a59-4f6d-9fd9-34d6fa960e0' };
+    console.log('userInfo : ', userInfo);
     return this.tusService.handleTus(req, res, userInfo);
   }
 }

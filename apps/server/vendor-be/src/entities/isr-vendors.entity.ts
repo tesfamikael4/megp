@@ -14,7 +14,7 @@ export class IsrVendorsEntity extends Audit {
   id: string;
   @Column()
   userId: string;
-  @Column()
+  @Column({ default: 'Active' })
   status: string;
   @Column({ type: 'jsonb' })
   initial: JSON;
@@ -40,6 +40,8 @@ export class IsrVendorsEntity extends Audit {
   supportingDocuments: JSON;
   @Column({ type: 'jsonb', nullable: true })
   paymentReceipt: JSON;
+  @Column({ nullable: true })
+  remark: string;
 
   @OneToOne(() => VendorsEntity)
   vendor: VendorsEntity;

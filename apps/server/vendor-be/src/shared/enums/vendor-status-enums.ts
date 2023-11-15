@@ -1,0 +1,17 @@
+export enum VendorStatusEnum {
+  SAVEASDRAFT = 'Save as Draft',
+  SAVE = 'Save',
+  SUBMIT = 'Submit',
+  SUBMITTED = 'Submitted',
+  APPROVE = 'APprove',
+  ADJUST = 'Adjust',
+  REJECT = 'Reject',
+  PPDA = 'ppda',
+  COMPLETED = 'Completed',
+  APPROVED = 'Approved',
+  ADJUSTMENT = 'Adjustment',
+  ADJUSTED = 'Adjusted',
+  REJECTED = 'Rejected',
+  ACTIVE = 'Active',
+  PENDING = 'Pending',
+}
