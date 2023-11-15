@@ -1,10 +1,11 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { baseQuery } from '../api';
+import { baseQuery } from '@/store/base-query';
+import { createApi } from '@reduxjs/toolkit/query/react';
+const URL = process.env.NEXT_PUBLIC_VENDOR_API;
 
 export const vendorRegistrationApi = createApi({
   reducerPath: 'vendorRegistration',
   refetchOnFocus: true,
-  baseQuery: baseQuery,
+  baseQuery: baseQuery(URL),
   endpoints: () => ({}),
 });
 
@@ -12,8 +13,6 @@ const URL2 = process.env.NEXT_PUBLIC_VENDOR_DATA_GETAWAY_API;
 export const vendorDataGetawayApi = createApi({
   reducerPath: 'vendorDataGetaway',
   refetchOnFocus: true,
-  baseQuery: fetchBaseQuery({
-    baseUrl: URL2,
-  }),
+  baseQuery: baseQuery(URL2),
   endpoints: () => ({}),
 });
