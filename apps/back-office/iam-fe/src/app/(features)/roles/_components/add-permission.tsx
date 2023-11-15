@@ -30,11 +30,13 @@ const AddUserModal = () => {
   const { data: selected } = useReadQuery(id?.toString());
 
   const relationConfig: RelationConfig<any> = {
-    title: 'Permission assignment',
+    title: `${
+      selected?.isSystemRole ? 'Permissions' : 'Permission assignment'
+    } `,
     columns: [
       {
         id: 'name',
-        header: 'name',
+        header: 'Name',
         accessorKey: 'name',
         cell: (info) => info.getValue(),
         meta: {
@@ -62,14 +64,14 @@ const AddUserModal = () => {
     onAdd: () => {
       setIsModalOpen(true);
     },
-    hasAdd: selected?.isSystemRole && false,
+    hasAdd: selected?.isSystemRole ? false : true,
   };
   const addConfig: RelationConfig<Mandate> = {
     title: 'Permission',
     columns: [
       {
         id: 'name',
-        header: 'PermisionName',
+        header: 'Permission Name',
         accessorKey: 'name',
         cell: (info) => info.getValue(),
         meta: {
@@ -111,6 +113,8 @@ const AddUserModal = () => {
         data={currentAssigned ? currentAssigned : []}
         isSaving={isSaving}
         isLoading={isLoading}
+        readOnly={selected?.isSystemRole ? true : false}
+        collapsed={selected?.isSystemRole ? false : true}
       />
       <Modal title="Permission" opened={isModalOpen} onClose={handleCloseModal}>
         <Relation

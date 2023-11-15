@@ -44,10 +44,10 @@ const UserInvitation = () => {
   useEffect(() => {
     if (isSuccess) {
       const obj = {
-        firstName: userInvited.firstName,
-        lastName: userInvited.lastName,
-        id: userInvited.id,
-        otp: userInvited.otp,
+        firstName: userInvited?.account?.firstName,
+        lastName: userInvited?.account?.lastName,
+        id: userInvited?.id,
+        otp: userInvited?.otp,
       };
       const queryParams = Object.entries(obj).map(
         ([key, value]) =>
