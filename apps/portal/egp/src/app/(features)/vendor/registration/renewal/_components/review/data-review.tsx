@@ -3,13 +3,13 @@
 import { Box, Card, Container, Flex, Stack, Text } from '@mantine/core';
 import styles from './data-review.module.scss';
 import { useRouter } from 'next/navigation';
-import { useGetFormQuery } from '../../../_api/query';
+import { useGetVendorQuery } from '../../../_api/query';
 import { useEffect } from 'react';
 import { NotificationService } from '@/app/(features)/vendor/_components/notification';
 
 const DataReview = () => {
   const router = useRouter();
-  const requestInfo = useGetFormQuery({});
+  const requestInfo = useGetVendorQuery({});
   useEffect(() => {
     if (requestInfo.isError) {
       // NotificationService.requestErrorNotification('Error on fetching data');

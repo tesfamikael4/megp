@@ -24,11 +24,7 @@ import { ChangeHandler, UseFormRegisterReturn, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormOfBusiness } from '../mockup/form-of-business';
-import {
-  useCreateVendorIdMutation,
-  useLazyGetMBRSDataQuery,
-  useLazyGetMRADataQuery,
-} from '../../../_api/query';
+import { useCreateVendorIdMutation } from '../../../_api/query';
 import { NotificationService } from '@/app/(features)/vendor/_components/notification';
 import { IconCalendar } from '@tabler/icons-react';
 import { setCookie } from 'cookies-next';
@@ -80,25 +76,16 @@ export const BasicInformation = () => {
   const router = useRouter();
   const [accept, setAccept] = useState<boolean>(false);
   const [create, createValues] = useCreateVendorIdMutation();
-  const [getMRAData, getMRADataValues] = useLazyGetMRADataQuery({});
-
   const onSubmit = (data: typeof formState.defaultValues) => {
-    if (data?.origin == 'MW') {
-      getMRAData({
-        tin: data?.tinNumber,
-        issuedDate: data?.tinIssuedDate,
-      });
-    } else {
-      create({
-        name: data?.name || '',
-        businessType: data?.businessType || '_',
-        origin: data?.origin || '',
-        country: data?.origin || ' ',
-        tinNumber: data?.tinNumber || '',
-        tinIssuedDate: data?.tinIssuedDate || '',
-        district: '',
-      });
-    }
+    create({
+      name: data?.name || '_',
+      businessType: data?.businessType || '_',
+      origin: data?.origin || '',
+      country: data?.origin || '_',
+      tinNumber: data?.tinNumber || '',
+      tinIssuedDate: data?.tinIssuedDate || '_',
+      district: '_',
+    });
   };
 
   useEffect(() => {
@@ -112,24 +99,6 @@ export const BasicInformation = () => {
 
     return () => {};
   }, [createValues.data, createValues.isError, createValues.isSuccess, router]);
-
-  useEffect(() => {
-    if (getMRADataValues.data) {
-      create({
-        name: getMRADataValues.data?.TaxpayerName || ' ',
-        businessType: watch().businessType || '_',
-        origin: watch().origin,
-        country: watch().origin,
-        tinNumber: watch().tinNumber,
-        tinIssuedDate: watch().tinIssuedDate,
-        district: '',
-      });
-    } else if (getMRADataValues.isError) {
-      NotificationService.requestErrorNotification('Invalid Request.');
-    }
-    return () => {};
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [getMRADataValues.data, getMRADataValues.isError]);
 
   return (
     <Box className={style.reqFormCard}>

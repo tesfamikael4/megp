@@ -18,53 +18,48 @@ import {
 
 export const vendorRegistrationQuery = vendorRegistrationApi.injectEndpoints({
   endpoints: (builder) => ({
+    getVendor: builder.query<GetFormResponse, any>({
+      query: () => `/vendor-registrations/get-isr-vendor-by-userId`,
+    }),
     getForm: builder.query<GetFormResponse, any>({
       query: () =>
-        `/api/vendor-registrations/get-vendor-by-vendorId/4871de63-b1fa-48da-bdaf-955412a5e989`,
+        `/vendor-registrations/get-vendor-by-vendorId/4871de63-b1fa-48da-bdaf-955412a5e989`,
     }),
     createVendorId: builder.mutation<
       CreateVendorIdResponse,
       CreateVendorIdRequest
     >({
       query: (data) => ({
-        url: '/api/vendor-registrations/vendor-initiation',
+        url: '/vendor-registrations/vendor-initiation',
         method: 'POST',
         body: data,
       }),
     }),
     addForm: builder.mutation<any, AddFormRequest>({
       query: (newany) => ({
-        url: '/api/vendor-registrations/add-vendor-information',
+        url: '/vendor-registrations/add-vendor-information',
         method: 'POST',
         body: newany,
       }),
     }),
 
-    updateForm: builder.mutation<any, any>({
-      query: (updatedany) => ({
-        url: `update/${updatedany.id}`,
-        method: 'PUT',
-        body: updatedany,
-      }),
-    }),
-
     getBankList: builder.query<BankNamesResponse[], any>({
       query: () => ({
-        url: `api/BankAccountDetail/fetch-bank`,
+        url: `/BankAccountDetail/fetch-bank`,
         method: 'GET',
       }),
     }),
 
     getLineOfBusiness: builder.query<LineOfBusinessResponse, any>({
       query: () => ({
-        url: `api/Categories`,
+        url: `/Categories`,
         method: 'GET',
       }),
     }),
 
     getPriceRange: builder.query<PriceRangeResponse[], { type: string }>({
       query: (data) => ({
-        url: `api/Service-pricing/get-service-price-by-service-type/${data.type}`,
+        url: `/Service-pricing/get-service-price-by-service-type/${data.type}`,
         method: 'GET',
       }),
     }),
@@ -102,9 +97,9 @@ export const vendorDataGetawayQuery = vendorDataGetawayApi.injectEndpoints({
 
 export const {
   useGetFormQuery,
+  useGetVendorQuery,
   useCreateVendorIdMutation,
   useAddFormMutation,
-  useUpdateFormMutation,
   useGetBankListQuery,
   useGetLineOfBusinessQuery,
   useGetPriceRangeQuery,

@@ -70,7 +70,6 @@ const RegistrationForm = ({
 }: {
   initialValues: FormData;
   vendorInfo: {
-    id: string;
     userId: string; //session
     status: string;
     level: string;
@@ -227,7 +226,7 @@ const RegistrationForm = ({
         </Accordion>
 
         <Flex justify="end" className="gap-2 mt-4">
-          <Button>Save</Button>
+          <Button type="submit">Save</Button>
         </Flex>
       </form>
     </Flex>

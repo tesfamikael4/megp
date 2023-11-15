@@ -12,6 +12,7 @@ import '@uppy/core/dist/style.min.css';
 import '@uppy/dashboard/dist/style.min.css';
 import '@uppy/webcam/dist/style.min.css';
 import styles from './uppyDashboard.module.scss';
+import { getCookie } from 'cookies-next';
 
 interface UppyDashboardProps {
   tusServerPostUrl: string;
@@ -59,6 +60,12 @@ const UppyAttachmentDashboard: React.FC<UppyDashboardProps> = ({
       .use(Webcam)
       .use(Tus, {
         endpoint: tusServerPostUrl,
+        async onBeforeRequest(req) {
+          const token = getCookie('token');
+          if (token) {
+            req.setHeader('Authorization', `Bearer ${token}`);
+          }
+        },
       });
 
     newUppy.on('upload-success', (file: any) => {
