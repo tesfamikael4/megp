@@ -71,6 +71,12 @@ export interface FormData {
     previousPPDARegistrationCertificate: string;
     mSMECertificate: string;
   };
+  paymentReceipt: {
+    transactionId: string;
+    category: string;
+    invoiceId: string;
+    attachment: string;
+  }[];
 }
 
 export interface AreasOfBusinessInterestType {
@@ -84,7 +90,6 @@ export interface AreasOfBusinessInterestType {
 
 export interface AddFormRequestData extends FormData {
   initial: {
-    id: string;
     userId: string; //session
     status: string;
     level: string;
@@ -101,11 +106,11 @@ export interface GetFormRequest {
 
 export interface GetFormResponse extends FormData {
   initial: {
-    id: string;
     userId: string; //session
     status: string;
     level: string;
   };
+  id?: string;
 }
 
 export interface CreateVendorIdRequest {

@@ -27,9 +27,10 @@ import { useAuth } from '@megp/auth';
 import { theme } from '@/utilities/theme';
 import { useRouter } from 'next/navigation';
 const links = [
-  { link: '/home', label: 'Home' },
+  { link: '/', label: 'Home' },
 
-  { link: '/tenders', label: 'Tender' },
+  { link: '/vendor/tender', label: 'Tender' },
+  { link: '/vendor/dashboard', label: 'Vendor' },
 
   {
     link: '#more',
@@ -105,7 +106,7 @@ function Header() {
         key={link.label}
         href={link.link}
         className={styles.link}
-        onClick={(event) => event.preventDefault()}
+        onClick={() => link.link && router.push(link.link)}
       >
         {link.label}
       </a>

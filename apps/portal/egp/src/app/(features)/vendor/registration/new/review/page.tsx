@@ -1,14 +1,14 @@
 'use client';
 import React, { useEffect } from 'react';
 import FormPreview from '../_components/review/form-preview';
-import { useAddFormMutation, useGetFormQuery } from '../../_api/query';
+import { useAddFormMutation, useGetVendorQuery } from '../../_api/query';
 import { Button, Flex, LoadingOverlay, Stack } from '@mantine/core';
 import { NotificationService } from '../../../_components/notification';
 import { useRouter } from 'next/navigation';
 
 function Page() {
   const router = useRouter();
-  const requestInfo = useGetFormQuery({});
+  const requestInfo = useGetVendorQuery({});
   const [save, saveValues] = useAddFormMutation();
 
   useEffect(() => {

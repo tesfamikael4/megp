@@ -8,8 +8,6 @@ import { PassFormDataProps } from './formShell';
 import {
   useGetLineOfBusinessQuery,
   useGetPriceRangeQuery,
-  useLazyGetFPPADataQuery,
-  useLazyGetNCICDataQuery,
 } from '../../../_api/query';
 
 export const transformCategoryPriceRange = (
@@ -52,32 +50,12 @@ export const AreasOfBusinessInterest: React.FC<Props> = ({
   const getPriceRangeValues = useGetPriceRangeQuery({
     type: 'new',
   });
-  const [getFPPAData, getFPPADataValues] = useLazyGetFPPADataQuery({});
-  const [getNCICData, getNCICDataValues] = useLazyGetNCICDataQuery({});
 
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'areasOfBusinessInterest',
   });
   const fieldState = control.getFieldState(name, control._formState);
-
-  useEffect(() => {
-    return () => {
-      const categorys = fields.map((item) => item.category);
-
-      if (categorys.includes('goods')) {
-        getFPPAData({ tin: '1111111111' });
-      }
-      if (categorys.includes('services')) {
-        getFPPAData({ tin: '1111111111' });
-      }
-
-      if (categorys.includes('works')) {
-        getNCICData({ tin: '1111111111' });
-      }
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const getCategoryProps = () => ({
     value: fields.map((item) => item.category),
@@ -92,16 +70,6 @@ export const AreasOfBusinessInterest: React.FC<Props> = ({
         );
         remove(notExistingIndex);
       });
-      if (categorys.includes('goods')) {
-        getFPPAData({ tin: '1111111111' });
-      }
-      if (categorys.includes('services')) {
-        getFPPAData({ tin: '1111111111' });
-      }
-
-      if (categorys.includes('works')) {
-        getNCICData({ tin: '1111111111' });
-      }
       categorys.map((category) => {
         const existingIndex = fields.findIndex(
           (field) => field.category === category,
@@ -122,21 +90,18 @@ export const AreasOfBusinessInterest: React.FC<Props> = ({
   const getLineOfBusinessMultiSelectData = (businessArea: string) => {
     if (businessArea === 'goods' || businessArea === 'services') {
       return [
-        {
-          value: getFPPADataValues.data ? getFPPADataValues.data.id : '',
-          label: getFPPADataValues.data
-            ? getFPPADataValues.data.businessType
-            : '',
-        },
+        'Textile products',
+        'Telecommunications equipment',
+        'Farm implements',
+        'Office equipment',
       ];
     } else if (businessArea === 'works') {
       return [
-        {
-          value: getNCICDataValues.data ? getNCICDataValues.data.id : '',
-          label: getNCICDataValues.data
-            ? getNCICDataValues.data.serviceType
-            : '',
-        },
+        'Construction Works',
+        'Engineering',
+        'Manufacturing',
+        'Maintenance',
+        'Utility',
       ];
     } else {
       return [];
@@ -146,10 +111,7 @@ export const AreasOfBusinessInterest: React.FC<Props> = ({
     <Flex className="flex-col gap-6">
       <LoadingOverlay
         visible={
-          getLineOfBusinessValues.isLoading ||
-          getPriceRangeValues.isLoading ||
-          getNCICDataValues.isLoading ||
-          getFPPADataValues.isLoading
+          getLineOfBusinessValues.isLoading || getPriceRangeValues.isLoading
         }
         overlayProps={{ radius: 'sm', blur: 2 }}
       />
@@ -183,11 +145,7 @@ export const AreasOfBusinessInterest: React.FC<Props> = ({
           <Group grow>
             <MultiSelect
               label="Line Of Business"
-              data={
-                getLineOfBusinessValues.isSuccess
-                  ? getLineOfBusinessMultiSelectData(field.category)
-                  : []
-              }
+              data={getLineOfBusinessMultiSelectData(field.category)}
               placeholder="Select"
               {...register(`${name}.${index}.lineOfBusiness`, 'select')}
               value={

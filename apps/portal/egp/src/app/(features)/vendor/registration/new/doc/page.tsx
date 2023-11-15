@@ -4,13 +4,12 @@ import React, { useEffect } from 'react';
 import UppyAttachmentDashboard from '../../../_components/UppyAttachmentDashboard/UppyAttachmentDashboard';
 import { useRouter } from 'next/navigation';
 import { getCookie } from 'cookies-next';
-import { useAddFormMutation, useGetFormQuery } from '../../_api/query';
+import { useAddFormMutation, useGetVendorQuery } from '../../_api/query';
 import { NotificationService } from '../../../_components/notification';
 
 function Page() {
   const router = useRouter();
-  const requestInfo = useGetFormQuery({});
-  console.log(requestInfo.data?.supportingDocuments);
+  const requestInfo = useGetVendorQuery({});
   const [save, saveValues] = useAddFormMutation();
   useEffect(() => {
     if (requestInfo.isError) {
@@ -57,7 +56,7 @@ function Page() {
         metaData={{
           entityName: 'vendor',
           fieldName: 'businessRegistration_IncorporationCertificate',
-          instanceId: requestInfo.data?.initial.id,
+          instanceId: requestInfo.data?.id,
         }}
         storeId={
           requestInfo.data?.supportingDocuments
@@ -73,7 +72,7 @@ function Page() {
         metaData={{
           entityName: 'vendor',
           fieldName: 'mRA_TPINCertificate',
-          instanceId: requestInfo.data?.initial.id,
+          instanceId: requestInfo.data?.id,
         }}
         storeId={requestInfo.data?.supportingDocuments.mRA_TPINCertificate}
       />
@@ -86,7 +85,7 @@ function Page() {
         metaData={{
           entityName: 'vendor',
           fieldName: 'generalReceipt_BankDepositSlip',
-          instanceId: requestInfo.data?.initial.id,
+          instanceId: requestInfo.data?.id,
         }}
         storeId={
           requestInfo.data?.supportingDocuments.generalReceipt_BankDepositSlip
@@ -101,7 +100,7 @@ function Page() {
         metaData={{
           entityName: 'vendor',
           fieldName: 'mRATaxClearanceCertificate',
-          instanceId: requestInfo.data?.initial.id,
+          instanceId: requestInfo.data?.id,
         }}
         storeId={
           requestInfo.data?.supportingDocuments.mRATaxClearanceCertificate
@@ -116,7 +115,7 @@ function Page() {
         metaData={{
           entityName: 'vendor',
           fieldName: 'previousPPDARegistrationCertificate',
-          instanceId: requestInfo.data?.initial.id,
+          instanceId: requestInfo.data?.id,
         }}
         storeId={
           requestInfo.data?.supportingDocuments

@@ -52,7 +52,6 @@ export const AreasOfBusinessInterestForm = ({
 }: {
   initialValues: FormData;
   vendorInfo: {
-    id: string;
     userId: string; //session
     status: string;
     level: string;
@@ -85,7 +84,7 @@ export const AreasOfBusinessInterestForm = ({
         ...getValues(),
         initial: {
           ...vendorInfo,
-          level: 'detail',
+          level: 'payment',
         },
       },
     });

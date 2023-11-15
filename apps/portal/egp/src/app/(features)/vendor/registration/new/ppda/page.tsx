@@ -3,14 +3,14 @@ import React, { useEffect } from 'react';
 import { LoadingOverlay } from '@mantine/core';
 import { useRouter } from 'next/navigation';
 import { NotificationService } from '../../../_components/notification';
-import { useGetFormQuery } from '../../_api/query';
+import { useGetVendorQuery } from '../../_api/query';
 import { getCookie } from 'cookies-next';
 
 import { AreasOfBusinessInterestForm } from '../_components/ppda/formShell';
 
 function Page() {
   const router = useRouter();
-  const requestInfo = useGetFormQuery({});
+  const requestInfo = useGetVendorQuery({});
 
   useEffect(() => {
     if (requestInfo.isError) {
