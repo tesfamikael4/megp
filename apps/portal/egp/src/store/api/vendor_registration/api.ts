@@ -1,6 +1,6 @@
 import { baseQuery } from '@/store/base-query';
 import { createApi } from '@reduxjs/toolkit/query/react';
-const URL = process.env.NEXT_PUBLIC_VENDOR_API + '/vendors/api';
+const URL = process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api';
 
 export const vendorRegistrationApi = createApi({
   reducerPath: 'vendorRegistration',
