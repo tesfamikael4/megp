@@ -73,4 +73,8 @@ export const ENTITY_LIST: EntityStoreConfig[] = [
     entity: 'mandate-permissions',
     baseUrl: process.env.NEXT_PUBLIC_IAM_API ?? '/iam/api',
   },
+  {
+    entity: 'user-profile',
+    baseUrl: process.env.NEXT_PUBLIC_IAM_API ?? '/iam/api',
+  },
 ];

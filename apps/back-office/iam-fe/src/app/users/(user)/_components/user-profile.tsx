@@ -3,11 +3,15 @@ import { EntityButton } from '@megp/entity';
 import { z, ZodType } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { UserProfile } from '@/models/user-profile';
-import { useUpdateMutation, useReadQuery } from '../../_api/user.api';
+import {
+  useCreateMutation,
+  useReadQuery,
+  useUpdateMutation,
+} from '../../_api/extended.api';
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
-import { notify } from '@megp/core-fe';
+import { logger, notify } from '@megp/core-fe';
 
 type ModeType = 'new' | 'detail';
 
@@ -52,7 +56,7 @@ export function UserProfileForm() {
 
   const [mode, setMode] = useState<ModeType>('new');
 
-  const [create, { isLoading: isSaving }] = useUpdateMutation();
+  const [create, { isLoading: isSaving }] = useCreateMutation();
   const [update, { isLoading: isUpdating }] = useUpdateMutation();
 
   const {
@@ -62,28 +66,24 @@ export function UserProfileForm() {
   } = useReadQuery(id?.toString());
 
   const onCreate = async (data) => {
-    const dataSent = selectedSuccess && {
-      ...selected,
-      telephone: data.phone,
-      gender: data.gender,
-      position: data.position,
-    };
     try {
-      await create(dataSent);
+      await create({
+        userId: id.toString(),
+        extendedProfile: data,
+      });
       notify('Success', 'User profile updated successfully');
+      setMode('detail');
     } catch (err) {
       notify('Error', 'Errors in creating user profile.');
     }
   };
   const onUpdate = async (data) => {
-    const dataSent = selectedSuccess && {
-      ...selected,
-      telephone: data.phone,
-      gender: data.gender,
-      position: data.position,
-    };
     try {
-      await update(dataSent);
+      await update({
+        id: id.toString(),
+        userId: id.toString(),
+        extendedProfile: data,
+      });
       notify('Success', 'User profile updated successfully');
     } catch {
       notify('Error', 'Errors in updating user profile.');
@@ -97,18 +97,18 @@ export function UserProfileForm() {
   useEffect(() => {
     if (mode === 'detail' && selectedSuccess && selected !== undefined) {
       reset({
-        gender: selected?.gender,
-        position: selected?.position,
-        phone: selected?.telephone,
+        gender: selected?.extendedProfile.gender,
+        position: selected?.extendedProfile.position,
+        phone: selected?.extendedProfile.phone,
       });
     }
   }, [mode, reset, selected, selectedSuccess]);
 
   useEffect(() => {
     if (selectedSuccess) {
-      selected.gender !== null && setMode('detail');
+      selected !== null && setMode('detail');
     }
-  }, [selected?.gender, selectedSuccess, id]);
+  }, [selected?.gender, selectedSuccess, id, selected]);
 
   return (
     <Stack pos={'relative'}>
