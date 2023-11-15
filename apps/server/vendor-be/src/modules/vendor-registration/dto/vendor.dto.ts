@@ -189,6 +189,9 @@ export class SetVendorStatus {
   @ApiProperty()
   @IsNotEmpty()
   status: string;
+  @ApiProperty()
+  // @IsNotEmpty()
+  remark: string;
 }
 export class VendorInitiationBody {
   @ApiProperty()
