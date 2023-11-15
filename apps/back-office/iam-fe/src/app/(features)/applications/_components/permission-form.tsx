@@ -13,6 +13,7 @@ import {
   useUpdateMutation,
   useReadQuery,
   useCreateMutation,
+  useListByAppIdQuery,
 } from '../_api/permission.api';
 import { useReadQuery as useReadAppQuery } from '../_api/application.api';
 import { useEffect } from 'react';
@@ -39,10 +40,33 @@ export function PermissionForm({
   handleCloseModal,
   unitId,
 }: FormDetailProps) {
+  const keyRegExp = /^([a-z0-9]+(_[a-z0-9]+)+)$/;
+
   const permissionSchema: ZodType<Partial<Permission>> = z.object({
     name: z.string().min(1, { message: 'This field is required' }),
     description: z.string(),
-    key: z.string().min(1, { message: 'This field is required' }),
+    key: z
+      .string()
+      .min(1, { message: 'This field is required' })
+      .refine(
+        (value) => {
+          return keyRegExp.test(value);
+        },
+        {
+          message: 'Provide valid key',
+        },
+      )
+      .refine(
+        (value) => {
+          const isUnique =
+            isSuccess &&
+            list.items.every((permission) => permission.key !== value);
+          return isUnique;
+        },
+        {
+          message: 'Key must be unique among existing permission key',
+        },
+      ),
   });
 
   const { id } = useParams();
@@ -58,6 +82,7 @@ export function PermissionForm({
 
   const [create, { isLoading: isSaving }] = useCreateMutation();
   const [update, { isLoading: isUpdating }] = useUpdateMutation();
+  const { data: list, isSuccess } = useListByAppIdQuery(id?.toString());
 
   const {
     data: selected,

@@ -7,10 +7,9 @@ import {
   Divider,
   Flex,
   Title,
-  Input,
   TextInput,
 } from '@mantine/core';
-import { useParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { z, ZodType } from 'zod';
 import { useSetPasswordMutation } from '../../_api/invite.api';
 import { notify } from '@megp/core-fe';
@@ -40,7 +39,12 @@ export default function SetPassWord() {
   } = useForm({
     resolver: zodResolver(Schema),
   });
-  const { id, otp } = useParams();
+
+  const searchParams = useSearchParams();
+  const firstName = searchParams.get('firstName');
+  const lastName = searchParams.get('lastName');
+  const id = searchParams.get('id');
+  const otp = searchParams.get('otp');
 
   const [SetPassWord, { isLoading: isSetting }] = useSetPasswordMutation();
 
@@ -48,9 +52,9 @@ export default function SetPassWord() {
     try {
       await SetPassWord({
         ...data,
-        verificationId: id.toString(),
-        otp: otp,
         isOtp: false,
+        verificationId: id,
+        otp: otp,
       });
 
       notify('Success', 'Password set successfully');
@@ -89,18 +93,17 @@ export default function SetPassWord() {
           >
             Register
           </Title>
-          <Input />
 
           <TextInput
             label="First Name"
-            //  value={}
+            value={firstName ? firstName : ''}
             disabled
           />
 
           <TextInput
             label="Last Name"
             disabled
-            //  value={}
+            value={lastName ? lastName : ''}
           />
 
           <PasswordInput
@@ -130,7 +133,7 @@ export default function SetPassWord() {
           </Text>
         </form>
 
-        <div className="absolute bottom-0">
+        <div className="mt-6">
           <p className={styles.footer_text}>
             Copyright &copy; 2023, Procurement and Disposal of Assets Authority.
           </p>

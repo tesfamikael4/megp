@@ -1,6 +1,6 @@
-import { adressApi } from '@/store/api/other/adress.api';
+import { invitationApi } from '@/store/api/other/invitation.api';
 
-const organizationProfileApi = adressApi.injectEndpoints({
+const organizationProfileApi = invitationApi.injectEndpoints({
   endpoints: (builder) => ({
     inviteUser: builder.mutation<any, { id: string }>({
       query: (data) => ({
@@ -8,6 +8,7 @@ const organizationProfileApi = adressApi.injectEndpoints({
         method: 'POST',
         body: data,
       }),
+      invalidatesTags: ['invitation'],
     }),
 
     getUserInvitationLink: builder.query<any, any>({
@@ -17,11 +18,12 @@ const organizationProfileApi = adressApi.injectEndpoints({
           method: 'GET',
         };
       },
+      providesTags: ['invitation'],
     }),
     setPassword: builder.mutation<any, any>({
       query: (data) => {
         return {
-          url: `auth/reset-password`,
+          url: `auth/set-password`,
           method: 'POST',
           body: data,
         };

@@ -32,6 +32,7 @@ interface RelationProps<T> {
   openEditModal?: (id) => void;
   handleId?: (id) => void;
   collapsed?: boolean;
+  readOnly?: boolean;
 }
 
 export function Relation<T>({
@@ -46,6 +47,7 @@ export function Relation<T>({
   openDeleteModal,
   showPopUp,
   openEditModal,
+  readOnly,
 }: RelationProps<T>): React.ReactElement {
   const options: RelationConfig<T> = useMemo(() => {
     return { ...defaultRelationConfig, ...config };
@@ -60,10 +62,19 @@ export function Relation<T>({
         meta: { widget: 'primary' },
       })),
 
-      ...(mode !== 'modal' ? [remove(openEditModal, showPopUp)] : []),
+      ...(mode !== 'modal' && !readOnly
+        ? [remove(openEditModal, showPopUp)]
+        : []),
     ],
 
-    [options.selectable, options.columns, mode, openEditModal, showPopUp],
+    [
+      options.selectable,
+      options.columns,
+      mode,
+      readOnly,
+      openEditModal,
+      showPopUp,
+    ],
   );
 
   const [width, setWidth] = useState(100);
@@ -158,21 +169,24 @@ export function Relation<T>({
       >
         {options.onSave ? (
           <>
-            <Button
-              leftSection={<IconDeviceFloppy size={14} stroke={1.6} />}
-              loading={isSaving}
-              onClick={() => {
-                mode === 'modal'
-                  ? options.onSave?.(
-                      table
-                        .getSelectedRowModel()
-                        .flatRows.map((s: any) => s.original) as T[],
-                    )
-                  : options.onSave?.(data as T[]);
-              }}
-            >
-              {mode === 'modal' ? 'Done' : 'Save'}
-            </Button>
+            {!readOnly && (
+              <Button
+                leftSection={<IconDeviceFloppy size={14} stroke={1.6} />}
+                loading={isSaving}
+                onClick={() => {
+                  mode === 'modal'
+                    ? options.onSave?.(
+                        table
+                          .getSelectedRowModel()
+                          .flatRows.map((s: any) => s.original) as T[],
+                      )
+                    : options.onSave?.(data as T[]);
+                }}
+              >
+                {mode === 'modal' ? 'Done' : 'Save'}
+              </Button>
+            )}
+
             {handleCloseModal ? (
               <Button
                 color="red"
@@ -207,7 +221,6 @@ export function Relation<T>({
             ) : null
           }
           defaultCollapsed={Boolean(collapsed)}
-          // setIsExpanded={setIsExpanded}
           title={options.title}
         >
           {body}

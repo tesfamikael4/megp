@@ -3,6 +3,7 @@ import entityApi from './entity/api';
 import { orgPermissionApi } from './api/other/org-permission.api';
 
 import { adressApi } from './api/other/adress.api';
+import { invitationApi } from './api/other/invitation.api';
 
 const { reducers, middleware } = entityApi;
 
@@ -12,6 +13,7 @@ export const store = configureStore({
     [orgPermissionApi.reducerPath]: orgPermissionApi.reducer,
 
     [adressApi.reducerPath]: adressApi.reducer,
+    [invitationApi.reducerPath]: invitationApi.reducer,
   },
   devTools: process.env.NODE_ENV !== 'production',
   middleware: (getDefaultMiddleware) =>
@@ -19,6 +21,7 @@ export const store = configureStore({
       ...middleware,
       orgPermissionApi.middleware,
       adressApi.middleware,
+      invitationApi.middleware,
     ),
 });
 
