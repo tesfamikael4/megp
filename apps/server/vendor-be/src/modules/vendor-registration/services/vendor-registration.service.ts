@@ -236,12 +236,17 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
   }
   async getIsrVendorByUserId(userId: string): Promise<any> {
     try {
-      const vendorEntity = await this.isrVendorsRepository.findOneOrFail({
+      const vendorEntity = await this.isrVendorsRepository.findOne({
         where: {
           userId: userId,
           status: In([VendorStatusEnum.ACTIVE, VendorStatusEnum.ADJUSTMENT]),
         },
       });
+
+      if (!vendorEntity) {
+        throw new HttpException('vendor_not_found', HttpStatus.BAD_REQUEST);
+      }
+
       const areaOfBusinessInterest = JSON.parse(
         JSON.stringify(vendorEntity.areasOfBusinessInterest),
       );

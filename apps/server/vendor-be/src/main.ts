@@ -13,6 +13,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Server } from '@tus/server';
 import { S3Store } from '@tus/s3-store';
 import * as Minio from 'minio';
+import { GlobalExceptionFilter } from './shared/exceptions/global-exception.filter';
 //import { JwtAuthGuard } from './authorization';
 
 async function bootstrap() {
@@ -26,6 +27,8 @@ async function bootstrap() {
   const port: number = config.get<number>('PORT') || 3000;
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+
+  app.useGlobalFilters(new GlobalExceptionFilter());
 
   // const reflector = app.get(Reflector);
   // app.useGlobalGuards(new JwtAuthGuard(reflector));
