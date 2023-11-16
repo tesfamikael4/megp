@@ -116,24 +116,19 @@ export class WorkflowInstanceResponse extends UpdateWorkflowInstanceDto {
         entity?.businessProcess,
       );
     }
-
     if (entity?.businessProcess?.service) {
       response.service = BpServiceResponse.toResponse(
         entity?.businessProcess.service,
       );
     }
-    if (entity.vendor?.customCats) {
-    }
-
     if (entity?.taskHandler) {
       response.taskHandler = TaskHandlerResponse.toResponse(entity.taskHandler);
       response.task = response.taskHandler?.task;
       response.taskHandler.task = null;
     }
-
-    if (entity?.vendor) {
-      response.vendor = VendorsResponseDto.fromEntity(entity.vendor);
-    }
+    // if (entity?.vendor) {
+    //   response.vendor = VendorsResponseDto.fromEntity(entity.vendor);
+    // }
 
     if (entity?.taskTrackers) {
       response.taskTrackers = entity?.taskTrackers?.map((handler) =>

@@ -14,7 +14,6 @@ import { PaymentReceiptEntity } from 'src/entities/receipt-attachment.entity';
 import { HttpModule } from '@nestjs/axios';
 import { TaskAssignmentService } from './services/task-assignment.service';
 import { AuthorizationModule } from 'src/shared/authorization';
-import { BpServiceEntity } from 'src/entities/bp-service.entity';
 import { BusinessProcessEntity } from 'src/entities/business-process.entity';
 import { TaskEntity } from 'src/entities/task.entity';
 import { TaskAssignmentEntity } from 'src/entities/task-assignment.entity';
@@ -23,6 +22,7 @@ import { TaskTrackerEntity } from 'src/entities/task-tracker.entity';
 import { HandlingCommonService } from '../handling/services/handling-common-services';
 import { BpServiceController } from '../services/controllers/bp-service.controller';
 import { ServiceModule } from '../services/service.module';
+import { EmailService } from 'src/shared/email/email.service';
 
 @Module({
   imports: [
@@ -48,6 +48,7 @@ import { ServiceModule } from '../services/service.module';
     WorkflowEngineService,
     BusinessProcessService,
     HandlingCommonService,
+    EmailService,
   ],
   controllers: [BpServiceController, BusinessProcessController, TaskController],
 })

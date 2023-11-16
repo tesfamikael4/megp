@@ -40,10 +40,13 @@ export class VendorRegistrationsController {
   async getVendors() {
     return await this.regService.getVendors();
   }
+
   @Get('get-vendor-status-byId/:vendorId')
   async getVendorStatusById(@CurrentUser() userInfo: any) {
     return await this.regService.getVendorStatusByVendorId(userInfo.id);
   }
+
+
 
   @Post('add-vendor-area-of-interest-To-vendor')
   async addVendorAreaOfInterestByVendorId(

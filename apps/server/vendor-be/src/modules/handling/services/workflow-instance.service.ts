@@ -67,7 +67,7 @@ export class WorkflowInstanceService {
     private readonly receiptRepository: Repository<PaymentReceiptEntity>,
     private readonly bpService: BusinessProcessService,
     private readonly commonService: HandlingCommonService,
-  ) {}
+  ) { }
 
   async submitFormBasedTask(
     nextCommand: GotoNextStateDto,
@@ -278,7 +278,7 @@ export class WorkflowInstanceService {
             service: true,
           },
           price: true,
-          vendor: true,
+          isrVendor: true,
         },
       },
       where: {
@@ -328,8 +328,12 @@ export class WorkflowInstanceService {
     invoice.payToAccNo = '123456789';
     invoice.payToBank = 'Malawi Bank';
     invoice.applicationNo = result.workflowInstance.applicationNumber;
-    invoice.payerName = result.workflowInstance.vendor.name;
-    invoice.payerAccountId = result.workflowInstance.vendor.userId;
+    // invoice.payerName = result.workflowInstance.vendor.name;
+    invoice.payerAccountId = result.workflowInstance.isrVendor.userId;
+    const basicObject: any = JSON.parse(JSON.stringify(result.workflowInstance.isrVendor.basic));
+    invoice.payerName = basicObject.name;
+    invoice.payerAccountId = basicObject.userId;
+    invoice.serviceName = service.name;
     invoice.serviceName = result.workflowInstance.businessProcess.service.name;
     invoice.remark = 'reamrk';
     invoice.paymentStatus = 'Pending';
