@@ -22,8 +22,10 @@ export const vendorRegistrationQuery = vendorRegistrationApi.injectEndpoints({
       query: () => `/vendor-registrations/get-isr-vendor-by-userId`,
     }),
     getForm: builder.query<GetFormResponse, any>({
-      query: () =>
-        `/vendor-registrations/get-vendor-by-vendorId/4871de63-b1fa-48da-bdaf-955412a5e989`,
+      query: () => `/vendor-registrations/get-vendor-by-vendorId`,
+    }),
+    getInvoice: builder.query<GetFormResponse, any>({
+      query: () => `/vendor-registrations/get-isr-vendor-invoice-by-userId`,
     }),
     createVendorId: builder.mutation<
       CreateVendorIdResponse,
@@ -98,6 +100,7 @@ export const vendorDataGetawayQuery = vendorDataGetawayApi.injectEndpoints({
 export const {
   useGetFormQuery,
   useGetVendorQuery,
+  useLazyGetInvoiceQuery,
   useCreateVendorIdMutation,
   useAddFormMutation,
   useGetBankListQuery,

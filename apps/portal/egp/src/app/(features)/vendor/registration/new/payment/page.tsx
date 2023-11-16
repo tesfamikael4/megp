@@ -10,17 +10,22 @@ import {
 import React, { useEffect, useState } from 'react';
 import InvoiceTemplate from '../../../_components/dynamicPrintComponent/invoice-sm';
 import { getCookie } from 'cookies-next';
-import { useAddFormMutation, useGetVendorQuery } from '../../_api/query';
+import {
+  useAddFormMutation,
+  useGetVendorQuery,
+  useLazyGetInvoiceQuery,
+} from '../../_api/query';
 import { NotificationService } from '../../../_components/notification';
 import { useRouter } from 'next/navigation';
 import PaymentMethod from '../_components/payment/payment-method';
 import UppyAttachmentDashboard from '../../../_components/UppyAttachmentDashboard/UppyAttachmentDashboard';
 
 function Page() {
+  const [invoice, setInvoice] = useState();
   const router = useRouter();
   const [transactionNum, setTransactionNum] = useState<string>('');
   const requestInfo = useGetVendorQuery({});
-
+  const [getInvoice, invoiceInfo] = useLazyGetInvoiceQuery();
   const [save, saveValues] = useAddFormMutation();
   useEffect(() => {
     if (requestInfo.isError) {
@@ -41,6 +46,16 @@ function Page() {
     }
     return () => {};
   }, [saveValues.isSuccess, saveValues.isError, router]);
+
+  useEffect(() => {
+    if (invoiceInfo.isSuccess) {
+      NotificationService.successNotification('Payed Successfully!');
+    }
+    if (invoiceInfo.isError) {
+      NotificationService.requestErrorNotification('Error on Request');
+    }
+    return () => {};
+  }, [invoiceInfo.isSuccess, invoiceInfo.isError]);
 
   const onSave = () => {
     if (requestInfo.data && transactionNum) {
