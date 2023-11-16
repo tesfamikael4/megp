@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { Profile, Security } from './navItems';
-import Protected from './Protected';
+import Protected from '../protected';
 
 export default function DefaultLayout({
   children,

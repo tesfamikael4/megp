@@ -10,17 +10,41 @@ import { Otp } from '../auth/verification/otp';
 import { Login } from '../auth/login/login';
 import styles from './auth.module.scss';
 import workflow from './workflow.png';
+import ppda from './ppda.png';
+import perago from './perago.png';
+
+interface Config {
+  app?: 'portal' | 'bo';
+  basePath?: string;
+}
+
+const defaultConfig = {
+  app: 'bo',
+  basePath: '/',
+};
 
 const page = {
-  login: <Login />,
+  login: <Login app="portal" />,
   signup: <SignUp />,
   questions: <SecurityQPassReset />,
   'forgot-password': <ForgotPassword />,
   setSecurity: <SetSecurity />,
 };
 
-export function Auth({ path }: { path: string }): JSX.Element {
+export function Auth({
+  path,
+  config,
+}: {
+  path: string;
+  config: Config;
+}): JSX.Element {
+  const options = { ...defaultConfig, ...config };
   const render = () => {
+    if (options.app === 'bo' && path[0].startsWith('login')) {
+      return <Login app="bo" basePath={options.basePath} />;
+    } else if (options.app === 'bo' && path !== 'login') {
+      return null;
+    }
     if (path[0].startsWith('verification')) {
       return <Otp id={path[1]} mode="verify" />;
     } else if (path[0].startsWith('otp-reset')) {
@@ -37,7 +61,7 @@ export function Auth({ path }: { path: string }): JSX.Element {
           alt="Malawi Republic"
           className={styles.logo}
           height={100}
-          src="/ppda.png"
+          src={ppda.src}
           width={100}
         />
         <Box>{render()}</Box>
@@ -51,7 +75,7 @@ export function Auth({ path }: { path: string }): JSX.Element {
               alt="logo"
               className="mt-2 ml-1"
               height={30}
-              src="/perago.png"
+              src={perago.src}
               width={80}
             />
           </Flex>

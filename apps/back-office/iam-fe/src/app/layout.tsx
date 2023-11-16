@@ -4,7 +4,6 @@ import type { Metadata } from 'next';
 import RootStyleRegistry from './mantine';
 
 import { Inter, Roboto_Mono } from 'next/font/google';
-import Protected from './Protected';
 import { AuthProvider } from '@megp/auth';
 
 const inter = Inter({
@@ -38,9 +37,7 @@ export default function RootLayout({
       <body suppressHydrationWarning={true}>
         <Providers>
           <RootStyleRegistry>
-            <AuthProvider>
-              <Protected>{children}</Protected>
-            </AuthProvider>
+            <AuthProvider>{children}</AuthProvider>
           </RootStyleRegistry>
         </Providers>
       </body>

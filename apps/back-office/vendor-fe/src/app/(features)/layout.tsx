@@ -1,4 +1,5 @@
 import { Shell } from '@megp/core-fe';
+import Protected from '../Protected';
 
 import { Metadata } from 'next';
 import React from 'react';
@@ -19,8 +20,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ShellProvider>
-      <Shell> {children}</Shell>
-    </ShellProvider>
+    <Protected>
+      <ShellProvider>
+        <Shell> {children}</Shell>
+      </ShellProvider>
+    </Protected>
   );
 }
