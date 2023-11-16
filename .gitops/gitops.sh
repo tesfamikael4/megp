@@ -7,7 +7,7 @@ APP_NAME="$3"
 BUILD_NUMBER="$4"
 GITLAB_PASSWORD="$5"
 
-NEXT_PUBLIC_VERSION="v.$(date +'%Y%m%d').$BUILD_NUMBER"
+VERSION="v.$(date +'%Y%m%d').$BUILD_NUMBER"
 
 DOCKER_REGISTRY="gitlab.peragosystems.com:5050/megp/megp"
 GITLAB_USERNAME="gitops"
