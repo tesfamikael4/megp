@@ -1,0 +1,18 @@
+export const FilterOperators = {
+  EqualTo: '=',
+  Between: 'BETWEEN',
+  LessThan: '<',
+  LessThanOrEqualTo: '<=',
+  GreaterThan: '>',
+  GreaterThanOrEqualTo: '>=',
+  In: 'IN',
+  NotIn: 'NotIn',
+  Any: 'ANY',
+  NotNull: 'NotNull',
+  IsNotNull: 'IsNotNull',
+  IsNull: 'AsNull',
+  NotEqualTo: '!=',
+  Like: 'LIKE',
+  All: 'All',
+  NotEqual: 'NotEqual',
+};
