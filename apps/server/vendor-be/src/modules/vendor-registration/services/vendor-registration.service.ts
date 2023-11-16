@@ -290,6 +290,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     }
   }
 
+
   async addVendorAreaOfInterestByVendorId(
     createAreasOfBusinessInterest: CreateAreasOfBusinessInterest[],
   ): Promise<any> {

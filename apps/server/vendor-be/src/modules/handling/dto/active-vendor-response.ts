@@ -30,6 +30,7 @@ export class ActiveVendorsResponse {
   businessStatus: string;
   @ApiProperty()
   vendorId: string;
+
   static toResponse(entity: WorkflowInstanceEntity): ActiveVendorsResponse {
     const response = new ActiveVendorsResponse();
     if (entity.price) {
@@ -45,15 +46,15 @@ export class ActiveVendorsResponse {
           entity.price.valueTo +
           entity.price.currency;
     }
-    response.tin = entity.vendor.tin;
-    response.userId = entity.vendor.userId;
-    response.country = entity.vendor.country;
-    response.name = entity.vendor.name;
-    response.status = entity.vendor.status;
-    response.district = entity.vendor.district;
-    response.name = entity.vendor.name;
-    response.origin = entity.vendor.origin;
-    response.vendorId = entity.vendor.id;
+    // response.tin = entity.vendor.tin;
+    // response.userId = entity.vendor.userId;
+    // response.country = entity.vendor.country;
+    // response.name = entity.vendor.name;
+    // response.status = entity.vendor.status;
+    // response.district = entity.vendor.district;
+    // response.name = entity.vendor.name;
+    // response.origin = entity.vendor.origin;
+    response.vendorId = entity.isrVendor.id;
     response.id = entity.id;
     response.status = entity.status;
     response.businessStatus = entity.businessStatus;

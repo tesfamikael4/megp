@@ -6,6 +6,7 @@ import { TaskCheckListDto } from './task-check-list.dto';
 import { TaskHandlerEntity } from 'src/entities/task-handler.entity';
 import { TaskResponse } from './task.dto';
 import { WorkflowInstanceResponse } from 'src/modules/handling/dto/workflow-instance.dto';
+import { IsrVendorsEntity } from 'src/entities';
 export class CreateTaskHandlerDto {
   @ApiProperty()
   @IsNotEmpty()
@@ -104,7 +105,7 @@ export class TaskHandlerResponse extends UpdateTaskHandlerDto {
   @ApiProperty()
   createdAt: Date;
   @ApiProperty()
-  vendor: VendorsResponseDto;
+  vendor: IsrVendorsEntity;
   @ApiProperty()
   service: BpServiceResponse;
   @ApiProperty()
@@ -137,9 +138,7 @@ export class TaskHandlerResponse extends UpdateTaskHandlerDto {
     }
     const instance = entity?.workflowInstance;
     if (instance != undefined) {
-      response.vendor = VendorsResponseDto.fromEntity(
-        entity?.workflowInstance?.vendor,
-      );
+      response.vendor = entity.workflowInstance.isrVendor;
     }
 
     return response;

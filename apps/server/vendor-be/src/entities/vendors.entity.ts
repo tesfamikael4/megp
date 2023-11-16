@@ -66,7 +66,7 @@ export class VendorsEntity extends Audit {
   })
   beneficialOwnership: BeneficialOwnership[];
 
-  @OneToMany(() => WorkflowInstanceEntity, (wf) => wf.vendor)
+  @OneToMany(() => WorkflowInstanceEntity, (wf) => wf.isrVendor)
   instances: WorkflowInstanceEntity[];
 
   @OneToMany(() => AreasOfBusinessInterestEntity, (b) => b.vendor, {

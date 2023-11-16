@@ -41,6 +41,19 @@ export class ApplicationExcutionController {
     private readonly workflowService: WorkflowService,
     private readonly bpService: BusinessProcessService,
   ) {}
+
+  @UseGuards(JwtGuard)
+  @Get('email')
+  async email(@Req() request: Request, @CurrentUser() user: any) {
+    const authToken = request.headers['authorization'].split(' ')[1];
+    user['authToken'] = authToken;
+    console.log('@CurrentUser()', user);
+    return await this.workflowService.sendEmail(
+      { requestorId: '6b31bfed-c359-1d2a-486d-585a3e4d4305' },
+      authToken,
+    );
+  }
+
   @UseGuards(JwtGuard)
   @Post('intiate-workflow')
   @ApiOkResponse({ type: WorkflowInstanceResponse })
@@ -57,18 +70,24 @@ export class ApplicationExcutionController {
   @UseGuards(JwtGuard)
   @Post('goto-next-step')
   @ApiOkResponse({ type: WorkflowInstanceResponse })
-  async gottoNextStep(@Body() nextStatedto: GotoNextStateDto) {
+  async gottoNextStep(
+    @Body() nextStatedto: GotoNextStateDto,
+    @Req() request: Request,
+    @CurrentUser() user: any,
+  ) {
+    const authToken = request.headers['authorization'].split(' ')[1];
+    user['token'] = authToken;
     const response = await this.workflowService.gotoNextStep(
       nextStatedto,
-      this.userInfo,
+      user,
     );
     return response;
   }
+
   @UseGuards(JwtGuard)
   @Post('pick-task')
   @ApiOkResponse({ type: WorkflowInstanceResponse })
   async pickTask(@Body() dto: UpdateTaskHandlerDto, @CurrentUser() user: any) {
-    console.log('user--> ', user);
     return await this.executeService.pickTask(dto, user);
   }
   @UseGuards(JwtGuard)

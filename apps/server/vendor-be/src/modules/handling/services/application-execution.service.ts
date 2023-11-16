@@ -38,7 +38,7 @@ export class ApplicationExcutionService {
     @InjectRepository(WorkflowInstanceEntity)
     private readonly wiRepository: Repository<WorkflowInstanceEntity>,
     private readonly dataSource: DataSource,
-  ) {}
+  ) { }
   async getCompletedTasks(instanceId: string): Promise<TaskTrackerResponse[]> {
     const ctasks = await this.taskTrackingRepository.find({
       where: { instanceId: instanceId },
@@ -98,7 +98,7 @@ export class ApplicationExcutionService {
     }
     const [result, total] = await this.wiRepository.findAndCount({
       relations: {
-        vendor: true,
+        isrVendor: true,
         taskHandler: { task: true },
         businessProcess: {
           service: true,
@@ -128,12 +128,7 @@ export class ApplicationExcutionService {
   ): Promise<WorkflowInstanceResponse> {
     const instance = await this.wiRepository.findOne({
       relations: {
-        vendor: {
-          businessCats: {
-            category: true,
-          },
-          customCats: true,
-        },
+        isrVendor: true,
         businessProcess: {
           service: true,
         },
@@ -187,74 +182,7 @@ export class ApplicationExcutionService {
     return response;
   }
 
-  async generateInvoice(taskId: string, instanceId: string): Promise<boolean> {
-    const result = await this.taskhandlergRepository.findOne({
-      relations: {
-        task: true,
-        workflowInstance: {
-          businessProcess: {
-            service: true,
-          },
-          price: true,
-          vendor: true,
-        },
-      },
-      where: {
-        instanceId: instanceId,
-      },
-    });
-    if (!result) {
-      throw new NotFoundException('Not Found');
-    }
-    const invoice = new InvoiceEntity();
-    const service = result.workflowInstance.businessProcess.service;
-    if (service.key == ServiceKeyEnum.upgrade) {
-      const previousPayment = await this.wiRepository.findOne({
-        relations: {
-          businessProcess: {
-            service: true,
-          },
-          price: true,
-        },
-        where: {
-          businessProcess: { service: { key: ServiceKeyEnum.new } },
-          status: WorkflowInstanceEnum.Completed,
-          //  approvedAt: Not(IsNull()),
-          price: { businessArea: result.workflowInstance.price.businessArea },
-        },
-      });
-      if (previousPayment) {
-        if (previousPayment.price.fee < result.workflowInstance.price.fee)
-          //if any additional logic will add here
-          invoice.amount =
-            result.workflowInstance.price.fee - previousPayment.price.fee;
-      } else {
-        throw new NotFoundException('Something wend wrong');
-      }
-    } else {
-      invoice.amount = result.workflowInstance.price.fee;
-    }
 
-    invoice.instanceId = result.instanceId;
-    invoice.taskName = result.task.name;
-    invoice.taskId = result.task.id;
-    invoice.payToAccName =
-      'Public Procurement and Disposal of Assets Authority';
-    invoice.payToAccNo = '000 100 562 4416';
-    invoice.payToBank = 'National Bank of Malawi';
-    invoice.applicationNo = result.workflowInstance.applicationNumber;
-
-    //invoice.payerAccountId = 'payerId1231234';
-    invoice.payerName = result.workflowInstance.vendor.name;
-    invoice.payerAccountId = result.workflowInstance.vendor.userId;
-    invoice.serviceName = result.workflowInstance.businessProcess.service.name;
-    invoice.remark = 'reamrk';
-    invoice.paymentStatus = 'Pending';
-    invoice.createdOn = new Date();
-    const response = this.invoceRepository.insert(invoice);
-    if (response) return true;
-    return false;
-  }
 
   async getInvoices(
     query: CollectionQuery,
@@ -318,7 +246,7 @@ export class ApplicationExcutionService {
     const today = new Date();
     const [result, total] = await this.wiRepository.findAndCount({
       relations: {
-        vendor: true,
+        isrVendor: true,
         price: true,
       },
       where: {
@@ -340,14 +268,14 @@ export class ApplicationExcutionService {
   async getMyBusinessArea(userId: string): Promise<ActiveVendorsResponse[]> {
     const result = await this.wiRepository.find({
       relations: {
-        vendor: true,
+        isrVendor: true,
         price: true,
       },
       where: {
         status: WorkflowInstanceEnum.Completed,
         // businessStatus: BusinessStatusEnum.active,
         // expireDate: MoreThan(today),
-        vendor: { userId: userId, status: 'Approved' },
+        isrVendor: { userId: userId, status: 'Approved' },
       },
     });
     const response = result.map((item) =>

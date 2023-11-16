@@ -8,7 +8,8 @@ import { CategoriesModule } from './modules/categories/category.module';
 import { BpmModule } from './modules/bpm/bpm.module';
 import { ServiceModule } from './modules/services/service.module';
 import { ServicePricingModule } from './modules/pricing/pricing.module';
-
+import { MailerModule } from '@nestjs-modules/mailer';
+import { EmailConfig } from './shared/email/email.config';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -16,6 +17,7 @@ import { ServicePricingModule } from './modules/pricing/pricing.module';
       isGlobal: true,
     }),
     TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
+    MailerModule.forRootAsync({ useClass: EmailConfig }),
     AuthorizationModule,
     CategoriesModule,
     VendorRegistrationModule,

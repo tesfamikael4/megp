@@ -12,6 +12,7 @@ import { ServicePrice } from 'src/entities/service-price.entity';
 import { TaskHandlerEntity } from 'src/entities/task-handler.entity';
 import { TaskTrackerEntity } from 'src/entities/task-tracker.entity';
 import { VendorsEntity } from './vendors.entity';
+import { IsrVendorsEntity } from './isr-vendors.entity';
 @Entity({ name: 'workflow_instances' })
 export class WorkflowInstanceEntity {
   @PrimaryGeneratedColumn('uuid')
@@ -68,7 +69,7 @@ export class WorkflowInstanceEntity {
   @JoinColumn({ name: 'pricingId' })
   price: ServicePrice;
 
-  @ManyToOne(() => VendorsEntity, (v) => v.instances)
+  @ManyToOne(() => IsrVendorsEntity, (v) => v.instances)
   @JoinColumn({ name: 'requestorId' })
-  vendor: VendorsEntity;
+  isrVendor: IsrVendorsEntity;
 }

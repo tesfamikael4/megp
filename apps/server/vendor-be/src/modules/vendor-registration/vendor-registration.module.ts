@@ -51,7 +51,6 @@ import { CategoriesModule } from '../categories/category.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      ServicePrice,
       BusinessCategoryEntity,
       CustomCategoryEntity,
       VendorsEntity,
@@ -62,14 +61,15 @@ import { CategoriesModule } from '../categories/category.module';
       BeneficialOwnership,
       AreasOfBusinessInterestEntity,
       PaymentReceiptEntity,
-      BpServiceEntity,
+      BusinessAreaEntity,
       //temporary, will be removed when modularization complete
       WorkflowInstanceEntity,
+      ServicePrice,
       InvoiceEntity,
       TaskAssignmentEntity,
       TaskHandlerEntity,
       TaskTrackerEntity,
-      BusinessAreaEntity,
+      BpServiceEntity,
       BusinessProcessEntity,
       IsrVendorsEntity,
     ]),

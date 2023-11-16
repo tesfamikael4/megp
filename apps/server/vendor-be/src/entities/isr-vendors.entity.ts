@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { Audit } from 'src/shared/entities/audit.entity';
 import { VendorsEntity } from './vendors.entity';
+import { WorkflowInstanceEntity } from './workflow-instance.entity';
 @Entity({ name: 'isr_vendors' })
 export class IsrVendorsEntity extends Audit {
   @PrimaryGeneratedColumn('uuid')
@@ -45,4 +46,6 @@ export class IsrVendorsEntity extends Audit {
 
   @OneToOne(() => VendorsEntity)
   vendor: VendorsEntity;
+  @OneToMany(() => WorkflowInstanceEntity, (wf) => wf.isrVendor)
+  instances: WorkflowInstanceEntity[];
 }

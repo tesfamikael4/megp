@@ -33,6 +33,7 @@ import { TaskService } from './task.service';
 import { TaskHandlerEntity } from 'src/entities/task-handler.entity';
 import { TaskEntity } from 'src/entities/task.entity';
 import { WorkflowInstanceEntity } from 'src/entities/workflow-instance.entity';
+import { EmailService } from 'src/shared/email/email.service';
 @Injectable()
 export class WorkflowService {
   constructor(
@@ -47,6 +48,7 @@ export class WorkflowService {
     private readonly bpService: BusinessProcessService,
     private readonly commonService: HandlingCommonService,
     private readonly taskService: TaskService,
+    private readonly emailSerice: EmailService,
   ) {}
   async intiateWorkflowInstance(
     dto: CreateWorkflowInstanceDto,
@@ -98,7 +100,7 @@ export class WorkflowService {
     }
     return response;
   }
-  async gotoNextStep(nextCommand: GotoNextStateDto, userInfo: any) {
+  async gotoNextStep(nextCommand: GotoNextStateDto, user: any) {
     nextCommand.action = nextCommand.action.toUpperCase();
     const taskInfo = new TaskEntity();
     const workflowInstance = await this.workflowInstanceRepository.findOne({
@@ -137,15 +139,11 @@ export class WorkflowService {
             stateMetaData['apiUrl'],
           );
           if (response) {
-            await this.addTaskTracker(
-              currentTaskHandler,
-              nextCommand,
-              userInfo,
-            );
+            await this.addTaskTracker(currentTaskHandler, nextCommand, user);
             await this.handlerRepository.delete(currentTaskHandler.id);
           }
         } else {
-          await this.addTaskTracker(currentTaskHandler, nextCommand, userInfo);
+          await this.addTaskTracker(currentTaskHandler, nextCommand, user);
           await this.handlerRepository.delete(currentTaskHandler.id);
         }
       } else {
@@ -157,12 +155,16 @@ export class WorkflowService {
         stateMetaData['type'] = task.taskType;
         taskInfo.handlerType = task.handlerType;
         taskInfo.taskType = task.taskType;
-        await this.handleEvent(
+        const status = await this.handleEvent(
           stateMetaData,
           nextCommand,
           task,
           workflowInstance,
+          user,
         );
+        if (!status) {
+          throw new BadRequestException('Something went wrong');
+        }
         const lastExecutedTask = await this.getPrviousHandler(
           workflowInstance.id,
         );
@@ -179,11 +181,7 @@ export class WorkflowService {
           currentTaskHandler.pickedAt = null;
         }
         await this.handlerRepository.save(currentTaskHandler);
-        await this.addTaskTracker(
-          currentTaskHandlerCopy,
-          nextCommand,
-          userInfo,
-        );
+        await this.addTaskTracker(currentTaskHandlerCopy, nextCommand, user);
       }
     }
     const result = await this.workflowInstanceRepository.save(workflowInstance);
@@ -195,7 +193,7 @@ export class WorkflowService {
         const nextTaskdto = new GotoNextStateDto();
         nextTaskdto.action = type;
         nextTaskdto.instanceId = workflowInstance.id;
-        await this.gotoNextStep(nextTaskdto, userInfo);
+        await this.gotoNextStep(nextTaskdto, user);
       }
     }
     return workflow;
@@ -225,32 +223,27 @@ export class WorkflowService {
     if (trackers.length > 0) return trackers[0];
     return null;
   }
-
   async handleEvent(
     stateMetadata: StateMetaData,
     command: GotoNextStateDto,
     task: TaskEntity,
     wfi: WorkflowInstanceEntity,
+    user?: any,
   ) {
     switch (stateMetadata.type.toLowerCase()) {
       case TaskTypes.APPROVAL:
-        console.log(TaskTypes.APPROVAL, command);
-        break;
+        return this.notify(wfi, stateMetadata['apiUrl'], command, user);
       case TaskTypes.EMAIl:
-        this.sendEmail(wfi);
-        break;
+        return this.sendEmail(wfi, user['token']);
       case TaskTypes.SMS:
-        await this.sendSMS(wfi);
-        break;
+        return await this.sendSMS(wfi);
       case TaskTypes.INVOICE:
-        await this.generateInvoice(command.instanceId, task.id);
-        break;
+        return await this.generateInvoice(command.instanceId, task.id);
       case TaskTypes.CERTIFICATION:
         console.log(TaskTypes.CERTIFICATION, command);
         break;
       case TaskTypes.NOTIFICATION:
         console.log(TaskTypes.NOTIFICATION, command);
-        break;
       case TaskTypes.PaymentConfirmation:
         console.log(TaskTypes.PaymentConfirmation, command);
         break;
@@ -262,8 +255,6 @@ export class WorkflowService {
           row.paymentStatus = 'Paid';
           return this.invoiceRepository.update(row.id, row);
         });
-
-        break;
     }
     return true;
   }
@@ -334,8 +325,70 @@ export class WorkflowService {
       throw new Error('Error making API request');
     }
   }
-  async sendEmail(data: any) {
-    console.log('email sent', data);
+  async notify(
+    wfi: WorkflowInstanceEntity,
+    url: string,
+    metaDate: any,
+    user: any,
+  ) {
+    const payload = {
+      vendorId: wfi.requestorId,
+      action: metaDate?.action,
+      serviceId: wfi.serviceId,
+      bpId: wfi.bpId,
+      remark: metaDate.remark,
+    };
+
+    const accessToken = user['token'];
+    try {
+      const response = await axios.post(url, payload, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      if (response.status === 201) {
+        const responseData = response.data;
+        return responseData;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      console.error('Error making API request:', error);
+      throw new Error('Error making API request');
+    }
+  }
+
+  async sendEmail(wfi: any, accessToken?: string) {
+    const vendor_url = process.env.VENDOR_API ?? '/vendors/api/';
+    const url =
+      vendor_url +
+      '/vendor-registrations/get-isr-vendor-by-id/' +
+      wfi.requestorId;
+    console.log(url);
+    try {
+      const response = await axios.get(url, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      console.log('response--', response);
+      if (response.status === 200) {
+        const responseData = response.data;
+        const subject = 'subject of the email';
+        const body = 'this is to inform you that';
+        await this.emailSerice.sendEmail(
+          'demeke.get23@gmail.com',
+          subject,
+          body,
+        );
+        return responseData;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      console.error('Error making API request:', error);
+      throw new Error('Error making API request');
+    }
   }
   async sendSMS(data: any) {
     console.log('email', data);
@@ -348,9 +401,7 @@ export class WorkflowService {
   getStateMetaData(meta) {
     return Object.keys(meta).reduce((acc, key) => {
       const value = meta[key];
-      // Assuming each meta value is an object
       Object.assign(acc, value);
-
       return acc;
     }, {});
   }
