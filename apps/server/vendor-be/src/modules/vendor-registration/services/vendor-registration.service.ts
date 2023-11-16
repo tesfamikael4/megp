@@ -248,7 +248,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         throw new HttpException('vendor_not_found', HttpStatus.BAD_REQUEST);
       }
       const initial = JSON.parse(JSON.stringify(vendorEntity.initial));
-      if (initial.status == 'Save' && initial.level == 'ppda') {
+      if (initial.status == 'Save as Draft' && initial.level == 'payment') {
         const areaOfBusinessInterest = JSON.parse(
           JSON.stringify(vendorEntity.areasOfBusinessInterest),
         );
