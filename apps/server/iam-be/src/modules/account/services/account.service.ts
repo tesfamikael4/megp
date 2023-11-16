@@ -665,11 +665,11 @@ export class AccountsService {
         body = `Link: ${accountVerification.otp}`;
       }
 
-      // await this.emailService.sendEmail(
-      //   account.email,
-      //   'Email Verification',
-      //   body,
-      // );
+      await this.emailService.sendEmail(
+        account.email,
+        'Email Verification',
+        body,
+      );
 
       return accountVerification.id;
     } catch (error) {
@@ -695,11 +695,11 @@ export class AccountsService {
         OTP_LIFE_TIME,
       );
 
-      // await this.emailService.sendEmail(
-      //   account.email,
-      //   'Email Verification',
-      //   body,
-      // );
+      await this.emailService.sendEmail(
+        account.email,
+        'Email Verification',
+        body,
+      );
 
       return accountVerification;
     } catch (error) {
@@ -724,7 +724,7 @@ export class AccountsService {
         body = `Link: ${accountVerification.otp}`;
       }
 
-      // await this.emailService.sendEmail(account.email, 'Reset Password', body);
+      await this.emailService.sendEmail(account.email, 'Reset Password', body);
 
       return accountVerification.id;
     } catch (error) {

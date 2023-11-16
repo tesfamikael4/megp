@@ -30,12 +30,16 @@ import {
   CheckSecurityQuestionDto,
   SetSecurityQuestionDto,
 } from '../dto/security-question.dto';
+import { EmailService } from 'src/shared/email/email.service';
 
 @ApiBearerAuth()
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly accountsService: AccountsService) {}
+  constructor(
+    private readonly accountsService: AccountsService,
+    private readonly emailService: EmailService,
+  ) {}
 
   @Post('signup')
   @AllowAnonymous()
@@ -120,5 +124,11 @@ export class AuthController {
     @Body() payload: CheckSecurityQuestionDto,
   ): Promise<any> {
     return await this.accountsService.requestResetPasswordWithUsername(payload);
+  }
+
+  @Get('send-email/:email')
+  @AllowAnonymous()
+  async sendEmail(@Param('email') email: string): Promise<any> {
+    return await this.emailService.sendEmail(email, 'test', 'test');
   }
 }
