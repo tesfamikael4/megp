@@ -16,7 +16,7 @@ cd ../../../
 
 if [ "$BUILD_NUMBER" ]; then
     # Build the Docker image using the specified Dockerfile
-    docker build -f "$DOCKER_IMAGE_PATH/Dockerfile" -t "$IMAGE_NAME:$BUILD_NUMBER" .
+    docker build --build-arg PIPELINE_ID="$BUILD_NUMBER" -f "$DOCKER_IMAGE_PATH/Dockerfile" -t "$IMAGE_NAME:$BUILD_NUMBER" .
 
     # Check the exit status of the docker build command
     if [ $? -eq 0 ]; then

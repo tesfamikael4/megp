@@ -77,10 +77,11 @@ function Footer() {
         {/* COPYRIGHT */}
         <div className={styles.copyright}>
           <p>
-            Copyright © 2023, Public Procurement and Disposal of Assets
-            Authority. All Rights Reserved
+            Copyright © {new Date().getFullYear()}, Public Procurement and
+            Disposal of Assets Authority. All Rights Reserved
           </p>
           <div className="flex gap-2 items-center justify-center">
+            <span>{process.env.NEXT_PUBLIC_VERSION}</span>
             <p>Powered By </p>
             <Link href="http://peragosystems.com/home">
               <Image

@@ -210,7 +210,9 @@ export function Shell({ children }: ShellProps): React.ReactNode {
                 <Text color={networkStatus.online ? 'teal' : 'red'} size="sm">
                   {networkStatus.online ? 'Online' : 'Offline'}
                 </Text>
-                <div className="text-center">V.20231231.778</div>{' '}
+                <div className="text-center">
+                  {process.env.NEXT_PUBLIC_VERSION}
+                </div>{' '}
               </div>
               <div className="flex gap-2 justify-between items-center">
                 <div> &copy; 2023 PPDA </div>

@@ -39,6 +39,11 @@ COPY turbo.json turbo.json
 # ENV TURBO_TEAM=$TURBO_TEAM
 
 # Set environment variables with default values
+# Set environment variables with default values
+ARG PIPELINE_ID
+ENV NEXT_PUBLIC_VERSION="v.$(date +'%Y%m%d').$PIPELINE_ID"
+
+
 ENV NEXT_PUBLIC_IAM_API="/iam/api"
 
 RUN pnpm turbo run build --filter=egp...

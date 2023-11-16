@@ -43,6 +43,12 @@ COPY turbo.json turbo.json
 # ARG TURBO_TOKEN
 # ENV TURBO_TOKEN=$TURBO_TOKEN
 
+# Set environment variables with default values
+ARG PIPELINE_ID
+ENV NEXT_PUBLIC_VERSION="v.$(date +'%Y%m%d').$PIPELINE_ID"
+
+
+
 RUN pnpm turbo run build --filter=tendering-fe...
 
 FROM base AS runner
