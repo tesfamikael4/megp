@@ -77,6 +77,9 @@ importers:
       '@mantine/tiptap':
         specifier: ^7.1.7
         version: 7.1.7(@mantine/core@7.1.7)(@mantine/hooks@7.1.7)(@tabler/icons-react@2.34.0)(@tiptap/extension-link@2.1.11)(@tiptap/react@2.1.11)(react-dom@18.2.0)(react@18.2.0)
+      '@megp/auth':
+        specifier: workspace:*
+        version: link:../../../packages/fe/auth
       '@megp/core-fe':
         specifier: workspace:*
         version: link:../../../packages/fe/core-fe
@@ -204,6 +207,9 @@ importers:
       '@mantine/tiptap':
         specifier: ^7.1.7
         version: 7.1.7(@mantine/core@7.1.7)(@mantine/hooks@7.1.7)(@tabler/icons-react@2.34.0)(@tiptap/extension-link@2.1.11)(@tiptap/react@2.1.11)(react-dom@18.2.0)(react@18.2.0)
+      '@megp/auth':
+        specifier: workspace:*
+        version: link:../../../packages/fe/auth
       '@megp/core-fe':
         specifier: workspace:*
         version: link:../../../packages/fe/core-fe
@@ -500,6 +506,9 @@ importers:
       '@mantine/tiptap':
         specifier: ^7.1.7
         version: 7.1.7(@mantine/core@7.1.7)(@mantine/hooks@7.1.7)(@tabler/icons-react@2.37.0)(@tiptap/extension-link@2.1.11)(@tiptap/react@2.1.11)(react-dom@18.2.0)(react@18.2.0)
+      '@megp/auth':
+        specifier: workspace:*
+        version: link:../../../packages/fe/auth
       '@megp/core-fe':
         specifier: workspace:*
         version: link:../../../packages/fe/core-fe
@@ -645,6 +654,9 @@ importers:
       '@mantine/tiptap':
         specifier: ^7.1.7
         version: 7.1.7(@mantine/core@7.1.7)(@mantine/hooks@7.1.7)(@tabler/icons-react@2.37.0)(@tiptap/extension-link@2.1.11)(@tiptap/react@2.1.11)(react-dom@18.2.0)(react@18.2.0)
+      '@megp/auth':
+        specifier: workspace:*
+        version: link:../../../packages/fe/auth
       '@megp/core-fe':
         specifier: workspace:*
         version: link:../../../packages/fe/core-fe
@@ -784,6 +796,9 @@ importers:
       '@mantine/tiptap':
         specifier: ^7.1.7
         version: 7.1.7(@mantine/core@7.1.7)(@mantine/hooks@7.1.7)(@tabler/icons-react@2.34.0)(@tiptap/extension-link@2.1.11)(@tiptap/react@2.1.11)(react-dom@18.2.0)(react@18.2.0)
+      '@megp/auth':
+        specifier: workspace:*
+        version: link:../../../packages/fe/auth
       '@megp/core-fe':
         specifier: workspace:*
         version: link:../../../packages/fe/core-fe
@@ -826,6 +841,9 @@ importers:
       dayjs:
         specifier: ^1.11.10
         version: 1.11.10
+      jwt-decode:
+        specifier: ^3.1.2
+        version: 3.1.2
       next:
         specifier: 13.5.2
         version: 13.5.2(@babel/core@7.23.0)(react-dom@18.2.0)(react@18.2.0)(sass@1.69.4)
@@ -2181,9 +2199,6 @@ importers:
       '@mantine/tiptap':
         specifier: ^7.1.7
         version: 7.1.7(@mantine/core@7.1.7)(@mantine/hooks@7.1.7)(@tabler/icons-react@2.37.0)(@tiptap/extension-link@2.1.11)(@tiptap/react@2.1.11)(react-dom@18.2.0)(react@18.2.0)
-      '@megp/core-fe':
-        specifier: workspace:*
-        version: link:../core-fe
       '@megp/eslint-config-custom':
         specifier: workspace:*
         version: link:../../config/eslint-config-custom
@@ -2217,6 +2232,9 @@ importers:
       dayjs:
         specifier: ^1.11.10
         version: 1.11.10
+      google-libphonenumber:
+        specifier: ^3.2.33
+        version: 3.2.33
       jwt-decode:
         specifier: ^3.1.2
         version: 3.1.2
@@ -2229,6 +2247,9 @@ importers:
       react-hook-form:
         specifier: ^7.46.1
         version: 7.46.1(react@18.2.0)
+      react-international-phone:
+        specifier: ^3.1.2
+        version: 3.1.2(react@18.2.0)
       react-redux:
         specifier: ^8.1.2
         version: 8.1.2(@types/react-dom@18.2.7)(@types/react@18.2.21)(react-dom@18.2.0)(react@18.2.0)(redux@4.2.1)
@@ -2317,6 +2338,9 @@ importers:
       '@mantine/tiptap':
         specifier: ^7.1.7
         version: 7.1.7(@mantine/core@7.1.7)(@mantine/hooks@7.1.7)(@tabler/icons-react@2.34.0)(@tiptap/extension-link@2.1.11)(@tiptap/react@2.1.11)(react-dom@18.2.0)(react@18.2.0)
+      '@megp/auth':
+        specifier: workspace:*
+        version: link:../auth
       '@megp/eslint-config-custom':
         specifier: workspace:*
         version: link:../../config/eslint-config-custom

@@ -27,7 +27,13 @@ const schema = z
 
 type FormSchema = z.infer<typeof schema>;
 
-export function Login(): JSX.Element {
+export function Login({
+  app,
+  basePath,
+}: {
+  app?: 'bo' | 'portal';
+  basePath?: string;
+}): JSX.Element {
   const [isSigningIn, setIsSigningIn] = useState(false);
   const { login } = useAuth();
 
@@ -50,6 +56,10 @@ export function Login(): JSX.Element {
           color: 'red',
           message: 'The email or password you entered is incorrect.',
         });
+      } else if (app === 'bo') {
+        setCookie('token', res.access_token);
+        setCookie('refreshToken', res.refresh_token);
+        window.location.href = `${basePath}`;
       } else if (res.is_security_question_set) {
         setCookie('token', res.access_token);
         setCookie('refreshToken', res.refresh_token);
@@ -106,12 +116,14 @@ export function Login(): JSX.Element {
       >
         Sign in
       </Button>
-      <Text c="dimmed" className={styles.account_que}>
-        Do not have an account yet?{' '}
-        <Link className={styles.signup_link} href="/auth/signup">
-          Create Account
-        </Link>
-      </Text>
+      {app === 'portal' && (
+        <Text c="dimmed" className={styles.account_que}>
+          Do not have an account yet?{' '}
+          <Link className={styles.signup_link} href="/auth/signup">
+            Create Account
+          </Link>
+        </Text>
+      )}
     </form>
   );
 }

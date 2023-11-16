@@ -16,7 +16,7 @@ import type {
 } from '../../models/auth';
 
 interface AuthContextValue {
-  user: Record<string, any>;
+  user: Record<string, any> | undefined;
   isAuthenticated: boolean;
   error: any;
   isUser: () => boolean | undefined;

@@ -1,18 +1,17 @@
 import { VendorRequests, Data } from './type';
 import { VendorRequest } from './type';
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/dist/query/react';
+import { createApi } from '@reduxjs/toolkit/dist/query/react';
+import { baseQuery } from '@/store/base-query';
 
 export const newRegistrationSlice = createApi({
   reducerPath: 'vendorRequestApi',
   refetchOnFocus: true,
   tagTypes: ['Tasks'],
-  baseQuery: fetchBaseQuery({
-    baseUrl: process.env.NEXT_PUBLIC_VENDOR_API,
-  }),
+  baseQuery: baseQuery(process.env.NEXT_PUBLIC_VENDOR_API ?? '/'),
   endpoints: (builder) => ({
     getApplicationRequestDetailById: builder.query<any, VendorRequest>({
       query: (payload) => ({
-        url: `api/ApplicationExecution/get-currunt-taskDetail/${payload.instanceId}`,
+        url: `api/application-execution/get-currunt-task-detail/${payload.instanceId}`,
         method: 'GET',
       }),
       providesTags: ['Tasks'],
@@ -27,7 +26,7 @@ export const newRegistrationSlice = createApi({
     }),
     getAllVendorRequests: builder.query<Data, VendorRequests>({
       query: (payload) => ({
-        url: `api/ApplicationExecution/get-currunt-tasks/${payload.serviceKey}`,
+        url: `api/application-execution/get-currunt-tasks/${payload.serviceKey}`,
         method: 'GET',
       }),
     }),
@@ -38,20 +37,20 @@ export const newRegistrationSlice = createApi({
     }),
     getInvoice: builder.query({
       query: () => ({
-        url: `api/ApplicationExecution/get-invoices`,
+        url: `api/application-execution/get-invoices`,
         method: 'GET',
       }),
     }),
     pickTask: builder.mutation<any, any>({
       query: (data) => ({
-        url: `api/ApplicationExecution/pick-task`,
+        url: `api/application-execution/pick-task`,
         method: 'POST',
         body: data,
       }),
     }),
     unpickTask: builder.mutation<any, any>({
       query: (data) => ({
-        url: `api/ApplicationExecution/unpick-task`,
+        url: `api/application-execution/unpick-task`,
         method: 'POST',
         body: data,
       }),

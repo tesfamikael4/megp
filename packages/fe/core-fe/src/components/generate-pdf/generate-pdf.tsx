@@ -23,7 +23,7 @@ export function GeneratePdf({
 }: GeneratePdfProps): React.ReactElement {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [pdfUrl, setPdfUrl] = useState('');
-  const baseUrl = `${apiUrl}ApplicationExecution/generate-certeficate-pdf?templateUrl=${encodeURIComponent(
+  const baseUrl = `${apiUrl}application-execution/generate-certeficate-pdf?templateUrl=${encodeURIComponent(
     templateUrl,
   )}&selector=${encodeURIComponent(selector)}`;
   const handleDownload = async () => {

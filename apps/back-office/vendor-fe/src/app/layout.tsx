@@ -14,6 +14,8 @@ export const metadata: Metadata = {
 };
 
 import { Inter, Roboto_Mono } from 'next/font/google';
+import { AuthProvider } from '@megp/auth';
+import Protected from './Protected';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -35,7 +37,9 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} ${roboto_mono.variable}`}>
       <body suppressHydrationWarning={true}>
         <Providers>
-          <RootStyleRegistry>{children}</RootStyleRegistry>
+          <RootStyleRegistry>
+            <AuthProvider>{children}</AuthProvider>
+          </RootStyleRegistry>
         </Providers>
       </body>
     </html>

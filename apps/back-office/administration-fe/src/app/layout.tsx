@@ -19,6 +19,7 @@ const roboto_mono = Roboto_Mono({
 
 import { ConfigProvider } from '@/contexts/config';
 import { config } from '@/config/env';
+import { AuthProvider } from '@megp/auth';
 
 export const metadata: Metadata = {
   title: 'M-egp | Administration',
@@ -39,7 +40,9 @@ export default function RootLayout({
       <body suppressHydrationWarning={true}>
         <ConfigProvider config={config}>
           <Providers>
-            <RootStyleRegistry>{children}</RootStyleRegistry>
+            <RootStyleRegistry>
+              <AuthProvider>{children}</AuthProvider>
+            </RootStyleRegistry>
           </Providers>
         </ConfigProvider>
       </body>

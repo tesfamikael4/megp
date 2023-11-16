@@ -26,6 +26,7 @@ import {
 } from '@tabler/icons-react';
 import Image from 'next/image';
 import { useContext } from 'react';
+import { useAuth } from '@megp/auth/src/context/auth.context';
 import { Applications, CurrentApplication } from '../../config/applications';
 import { ShellContext } from '../../context/shell.context';
 import { LinksGroup } from './navbar-link-group';
@@ -39,6 +40,7 @@ interface ShellProps {
 
 export function Shell({ children }: ShellProps): React.ReactNode {
   const shellContext = useContext(ShellContext);
+  const { logOut, user } = useAuth();
 
   const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
@@ -114,9 +116,13 @@ export function Shell({ children }: ShellProps): React.ReactNode {
                   <Box className="flex gap-2 items-center">
                     <Avatar color="primary" radius="xl" size="sm" />
 
-                    <Flex className="flex-col justify-start text-left">
-                      <Text lh={1}>Abebe Mengesha</Text>
-                    </Flex>
+                    {user ? (
+                      <Flex className="flex-col justify-start text-left">
+                        <Text
+                          lh={1}
+                        >{`${user.firstName} ${user.lastName}`}</Text>
+                      </Flex>
+                    ) : null}
                   </Box>
                 </Button>
               </Menu.Target>
@@ -138,7 +144,12 @@ export function Shell({ children }: ShellProps): React.ReactNode {
 
                 <Menu.Divider />
 
-                <Menu.Item leftSection={<IconLogout size={14} />}>
+                <Menu.Item
+                  leftSection={<IconLogout size={14} />}
+                  onClick={() => {
+                    logOut();
+                  }}
+                >
                   Logout
                 </Menu.Item>
               </Menu.Dropdown>

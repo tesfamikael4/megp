@@ -15,8 +15,8 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import z from 'zod';
 import { notifications } from '@mantine/notifications';
-import { Phone } from '@megp/core-fe/src/components/phone-input/phone-input';
 import { useAuth } from '../../../context';
+import { Phone } from '../../phone-input/phone-input';
 import styles from './signup.module.scss';
 
 const schema = z.object({
