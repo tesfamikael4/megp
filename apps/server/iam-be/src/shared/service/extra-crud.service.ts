@@ -59,9 +59,9 @@ export class ExtraCrudService<T extends BaseEntity> {
     return this.findOne(id);
   }
 
-  async remove(id: string, req?: any): Promise<void> {
+  async softDelete(id: string, req?: any): Promise<void> {
     await this.findOneOrFail(id);
-    await this.repository.delete(id);
+    await this.repository.softDelete(id);
   }
 
   private async findOneOrFail(id: any): Promise<T> {
