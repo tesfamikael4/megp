@@ -307,33 +307,6 @@ export class QueryConstructor {
     repository: Repository<T>,
     query: CollectionQuery,
   ): SelectQueryBuilder<T> {
-    // const query: CollectionQuery = {
-    //   // : ['name'],
-    //   where: [
-    //     // [{ column: 'name', value: 'string', operator: '=' }, { column: 'name', value: 'string1', operator: '=' }],
-    //     // [{ column: 'name', value: ['string', 'string1'], operator: 'IN' }],
-    //     [{ column: 'name', value: 'string', operator: '=' }],
-    //     // [{ column: 'descriptionJson->>name', value: 'test', operator: '=' }],
-    //     // [{ column: 'descriptionJson->value->>value', value: 20, operator: '=' }],
-    //     // [
-    //     //   {
-    //     //     column: 'userGroups.userId',
-    //     //     value: '1cfafb58-c068-4936-b284-fc4887045e1c',
-    //     //     operator: '=',
-    //     //   },
-    //     // ],
-    //   ],
-    //   take: 10,
-    //   skip: 0,
-    //   // orderBy: [{ column: 'name', direction: 'ASC' }],
-    //   // includes: ['userGroups'],
-    //   // groupBy: ['name', 'id'],
-    //   // having: [[{ column: 'name', value: 1, operator: '>' }]],
-    //   // count: true,
-    // };
-
-    const sQ = encodeCollectionQuery(query);
-
     const aggregateColumns: any = {};
     const metaData = repository.manager.connection.getMetadata(
       repository.target,
@@ -346,8 +319,6 @@ export class QueryConstructor {
     const queryBuilder = repository.createQueryBuilder(aggregate);
 
     buildQuery(aggregate, queryBuilder, query);
-
-    const q = queryBuilder.getSql();
 
     return queryBuilder;
   }

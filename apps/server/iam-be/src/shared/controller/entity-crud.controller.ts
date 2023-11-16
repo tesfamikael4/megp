@@ -64,8 +64,8 @@ export function EntityCrudController<TEntity extends BaseEntity>(
     }
 
     @Delete(':id')
-    async remove(@Param('id') id: string, @Req() req?: any): Promise<void> {
-      return this.service.remove(id);
+    async softDelete(@Param('id') id: string, @Req() req?: any): Promise<void> {
+      return this.service.softDelete(id);
     }
   }
 
