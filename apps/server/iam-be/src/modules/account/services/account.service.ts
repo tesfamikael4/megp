@@ -2,7 +2,11 @@ import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Account, AccountVerification, SecurityQuestion } from '@entities';
-import { CreateAccountDto, VerifyAccountDto } from '../dto/account.dto';
+import {
+  CreateAccountDto,
+  ResendOtpDto,
+  VerifyAccountDto,
+} from '../dto/account.dto';
 import {
   AccountStatusEnum,
   AccountVerificationStatusEnum,
@@ -555,6 +559,46 @@ export class AccountsService {
         account: true,
       },
     });
+  }
+
+  async resendOtp(payload: ResendOtpDto) {
+    const invitation = await this.accountVerificationRepository.findOne({
+      where: {
+        id: payload.verificationId,
+      },
+      relations: {
+        account: true,
+      },
+    });
+    if (!invitation) {
+      throw new HttpException('verification_not_found', HttpStatus.NOT_FOUND);
+    }
+
+    const OTP_LIFE_TIME = process.env.OTP_LIFE_TIME
+      ? +process.env.OTP_LIFE_TIME
+      : 10;
+
+    if (invitation.status == AccountVerificationStatusEnum.USED) {
+      throw new HttpException(
+        'verification_already_used',
+        HttpStatus.NOT_FOUND,
+      );
+    } else if (
+      invitation.createdAt.getMinutes() + OTP_LIFE_TIME >
+      new Date().getMinutes()
+    ) {
+      return;
+    }
+
+    await this.accountVerificationRepository.update(invitation.id, {
+      status: AccountVerificationStatusEnum.EXPIRED,
+    });
+
+    const verificationId = await this.createAndSendVerificationOTP(
+      invitation.account,
+    );
+
+    return { verificationId };
   }
 
   private async verifyOTP(
