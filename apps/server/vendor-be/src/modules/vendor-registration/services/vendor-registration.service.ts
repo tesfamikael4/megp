@@ -197,7 +197,29 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       throw new BadRequestException();
     }
   }
+  async getIsrVendorInvoiceByUserId(userId: string): Promise<any> {
+    try {
+      const vendorEntity = await this.isrVendorsRepository.findOne({
+        where: {
+          userId: userId,
+          status: In([VendorStatusEnum.ACTIVE, VendorStatusEnum.ADJUSTMENT]),
+        },
+      });
 
+      if (!vendorEntity) {
+        throw new HttpException('vendor_not_found', HttpStatus.BAD_REQUEST);
+      }
+
+      const areaOfBusinessInterest = JSON.parse(
+        JSON.stringify(vendorEntity.areasOfBusinessInterest),
+      );
+      const invoice = await this.getInvoices(areaOfBusinessInterest, userId);
+      return { ...vendorEntity, invoice: invoice };
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
+  }
   async getVendorByUserId(userId: string): Promise<typeof initialValueSchema> {
     try {
       const vendorEntity = await this.vendorRepository.find({
@@ -289,7 +311,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
-
 
   async addVendorAreaOfInterestByVendorId(
     createAreasOfBusinessInterest: CreateAreasOfBusinessInterest[],
