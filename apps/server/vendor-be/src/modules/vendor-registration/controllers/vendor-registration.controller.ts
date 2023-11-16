@@ -46,8 +46,6 @@ export class VendorRegistrationsController {
     return await this.regService.getVendorStatusByVendorId(userInfo.id);
   }
 
-
-
   @Post('add-vendor-area-of-interest-To-vendor')
   async addVendorAreaOfInterestByVendorId(
     @Body() createAreasOfBusinessInterest: CreateAreasOfBusinessInterest[],
@@ -68,6 +66,10 @@ export class VendorRegistrationsController {
   @Get('get-isr-vendor-by-id/:vendorId')
   async getVendorByVendorId(@Param('vendorId') vendorId: string) {
     return await this.regService.getIsrVendorByVendorId(vendorId);
+  }
+  @Get('get-isr-vendor-invoice-by-userId')
+  async getIsrVendorInvoiceByuserId(@CurrentUser() userInfo: any) {
+    return await this.regService.getIsrVendorInvoiceByUserId(userInfo.id);
   }
   @Post('add-vendor-information')
   async addVendorInformation(
