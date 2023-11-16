@@ -17,6 +17,7 @@ import { BaseEntity } from '../entities/base.entity';
 import { ExtraCrudService } from '../service/extra-crud.service';
 import { ApiBearerAuth, ApiBody } from '@nestjs/swagger';
 import { ExtraCrudOptions } from '../types/crud-option.type';
+import { decodeCollectionQuery } from '../collection-query/query-mapper';
 
 export class BaseAPIDto {}
 
@@ -43,9 +44,10 @@ export function ExtraCrudController<TEntity extends BaseEntity>(
     @Get('list/:id')
     async findAll(
       @Param('id') id: string,
-      @Query() query: CollectionQuery,
+      @Query('q') q: string,
       @Req() req?: any,
     ): Promise<DataResponseFormat<TEntity>> {
+      const query = decodeCollectionQuery(q);
       return this.service.findAll(id, query, options);
     }
 
