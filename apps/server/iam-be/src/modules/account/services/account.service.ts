@@ -146,6 +146,7 @@ export class AccountsService {
     }
 
     account.password = this.helper.encodePassword(password);
+    account.status = AccountStatusEnum.ACTIVE;
 
     await this.repository.update(account.id, account);
 
