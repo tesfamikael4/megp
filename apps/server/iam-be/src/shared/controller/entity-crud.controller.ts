@@ -15,7 +15,7 @@ import { DeepPartial } from 'typeorm';
 import { CollectionQuery } from '../collection-query';
 import { DataResponseFormat } from '../api-data';
 import { BaseEntity } from '../entities/base.entity';
-import { ApiBearerAuth, ApiBody } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiQuery } from '@nestjs/swagger';
 import { BaseAPIDto } from './extra-crud.controller';
 import { EntityCrudOptions } from '../types/crud-option.type';
 import { decodeCollectionQuery } from '../collection-query/query-mapper';
@@ -39,8 +39,14 @@ export function EntityCrudController<TEntity extends BaseEntity>(
     }
 
     @Get()
+    @ApiQuery({
+      name: 'q',
+      type: String,
+      description: 'Collection Query Parameter. Optional',
+      required: false,
+    })
     async findAll(
-      @Query('q') q: string,
+      @Query('q') q?: string,
       @Req() req?: any,
     ): Promise<DataResponseFormat<TEntity>> {
       const query = decodeCollectionQuery(q);
