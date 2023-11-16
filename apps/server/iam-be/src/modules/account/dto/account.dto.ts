@@ -44,3 +44,9 @@ export class VerifyAccountDto {
   @IsBoolean()
   public isOtp: boolean;
 }
+
+export class ResendOtpDto {
+  @ApiProperty()
+  @IsString()
+  public verificationId: string;
+}

@@ -10,7 +10,11 @@ import {
   Param,
 } from '@nestjs/common';
 import { AccountsService } from '../services/account.service';
-import { CreateAccountDto, VerifyAccountDto } from '../dto/account.dto';
+import {
+  CreateAccountDto,
+  ResendOtpDto,
+  VerifyAccountDto,
+} from '../dto/account.dto';
 import {
   ChangePasswordDto,
   ForgetPasswordDto,
@@ -39,7 +43,7 @@ export class AuthController {
   constructor(
     private readonly accountsService: AccountsService,
     private readonly emailService: EmailService,
-  ) {}
+  ) { }
 
   @Post('signup')
   @AllowAnonymous()
@@ -124,6 +128,12 @@ export class AuthController {
     @Body() payload: CheckSecurityQuestionDto,
   ): Promise<any> {
     return await this.accountsService.requestResetPasswordWithUsername(payload);
+  }
+
+  @Post('resend-otp')
+  @AllowAnonymous()
+  async resendInvitation(@Body() payload: ResendOtpDto): Promise<any> {
+    return await this.accountsService.resendOtp(payload);
   }
 
   @Get('send-email/:email')
