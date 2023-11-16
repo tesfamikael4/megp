@@ -1,17 +1,10 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   Post,
-  Query,
   Param,
-  Patch,
-  HttpStatus,
-  ParseUUIDPipe,
-  Res,
   BadRequestException,
-  NotFoundException,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -20,28 +13,15 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { ApiPaginatedResponse, DataResponseFormat } from '@api-data';
-import { CollectionQuery } from '@collection-query';
+import { DataResponseFormat } from '@api-data';
 
 import { VendorRegistrationsService } from '../services/vendor-registration.service';
-import { CreateVendorsDto, SetVendorStatus } from '../dto/vendor.dto';
-import { Response } from 'express';
 import { VendorInitiationDto } from '../dto/vendor-initiation.dto';
 import { CreateAreasOfBusinessInterest } from '../dto/areas-of-business-interest';
 
-import {
-  AllowAnonymous,
-  CurrentUser,
-  JwtGuard,
-} from 'src/shared/authorization';
-import { WorkflowInstanceService } from 'src/modules/handling/services/workflow-instance.service';
-import { BusinessProcessService } from 'src/modules/bpm/services/business-process.service';
-import {
-  CreateWorkflowInstanceDto,
-  GotoNextStateDto,
-} from 'src/modules/handling/dto/workflow-instance.dto';
+import { CurrentUser, JwtGuard } from 'src/shared/authorization';
 import { InsertAllDataDto } from '../dto/save-all.dto';
-import { IsrVendorsEntity, VendorsEntity } from 'src/entities';
+import { SetVendorStatus } from '../dto/vendor.dto';
 @ApiBearerAuth()
 @UseGuards(JwtGuard)
 @Controller('vendor-registrations')
@@ -81,6 +61,10 @@ export class VendorRegistrationsController {
   @Get('get-isr-vendor-by-userId')
   async getIsrVendorByuserId(@CurrentUser() userInfo: any) {
     return await this.regService.getIsrVendorByUserId(userInfo.id);
+  }
+  @Get('get-isr-vendor-by-id/:vendorId')
+  async getVendorByVendorId(@Param('vendorId') vendorId: string) {
+    return await this.regService.getIsrVendorByVendorId(vendorId);
   }
   @Post('add-vendor-information')
   async addVendorInformation(
