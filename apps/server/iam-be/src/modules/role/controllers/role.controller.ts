@@ -15,6 +15,7 @@ import { Role } from '@entities';
 import { CollectionQuery } from '@collection-query';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { ExtraCrudController } from 'src/shared/controller/extra-crud.controller';
+import { decodeCollectionQuery } from 'src/shared/collection-query/query-mapper';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'organizationId',
@@ -32,8 +33,10 @@ export class RoleNewController extends ExtraCrudController<Role>(options) {
   @Get('list/:id')
   async findAll(
     @Param('id') id: string,
-    @Query() query: CollectionQuery,
+    @Query('q') q: string,
   ): Promise<DataResponseFormat<any>> {
+    const query = decodeCollectionQuery(q);
+
     return await this.roleService.findAllUnderOrganization(id, query);
   }
 }
