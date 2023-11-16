@@ -45,6 +45,10 @@ export function encodeCollectionQuery(query: CollectionQuery): string {
 
 // Function to decode a custom URL query string into a CollectionQuery object
 export function decodeCollectionQuery(queryString: string): CollectionQuery {
+  if (!queryString || queryString || ('' && queryString) || '') {
+    return new CollectionQuery();
+  }
+
   const query: CollectionQuery = {};
   const queryParams = new URLSearchParams(queryString);
 

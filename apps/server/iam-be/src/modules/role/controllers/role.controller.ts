@@ -7,7 +7,7 @@ import {
   HttpStatus,
   Req,
 } from '@nestjs/common';
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { ApiPaginatedResponse, DataResponseFormat } from '@api-data';
 import { CreateRoleDto, UpdateRoleDto } from '../dto/role.dto';
 import { RoleService } from '../services/role.service';
@@ -31,9 +31,15 @@ export class RoleNewController extends ExtraCrudController<Role>(options) {
   }
 
   @Get('list/:id')
+  @ApiQuery({
+    name: 'q',
+    type: String,
+    description: 'Collection Query Parameter. Optional',
+    required: false,
+  })
   async findAll(
     @Param('id') id: string,
-    @Query('q') q: string,
+    @Query('q') q?: string,
   ): Promise<DataResponseFormat<any>> {
     const query = decodeCollectionQuery(q);
 
