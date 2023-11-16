@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class Initial1700118527343 implements MigrationInterface {
-  name = 'Initial1700118527343';
+export class Initial1700133561728 implements MigrationInterface {
+  name = 'Initial1700133561728';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
@@ -17,13 +17,10 @@ export class Initial1700118527343 implements MigrationInterface {
       `CREATE TABLE "custom_categories" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "description" character varying NOT NULL, "vendorId" uuid NOT NULL, CONSTRAINT "PK_87d32c14a80a1c53a670103666c" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
-      `CREATE TABLE "categories" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "code" character varying NOT NULL, "description" character varying NOT NULL, "businessArea" character varying NOT NULL, "parentId" character varying, "parentCategoryId" uuid, CONSTRAINT "PK_24dbc6126a28ff948da33e97d3b" PRIMARY KEY ("id"))`,
-    );
-    await queryRunner.query(
-      `CREATE TABLE "business_categories" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "categoryId" uuid NOT NULL, "vendorId" uuid NOT NULL, CONSTRAINT "PK_d10a707dfd0ca189233999204e5" PRIMARY KEY ("id"))`,
-    );
-    await queryRunner.query(
       `CREATE TABLE "beneficial_ownership" ("tenantId" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "firstName" character varying NOT NULL, "lastName" character varying NOT NULL, "vendorId" uuid, "nationality" character varying NOT NULL, "key" character varying, CONSTRAINT "PK_410dec44dbc2fb173555c9b079e" PRIMARY KEY ("id"))`,
+    );
+    await queryRunner.query(
+      `CREATE TABLE "business_interest_area" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "category" character varying NOT NULL, "lineOfBusiness" jsonb NOT NULL DEFAULT '[]', "priceRange" character varying NOT NULL, "vendorId" uuid, CONSTRAINT "PK_64c91ee0d2c26b78d2bf73a54c8" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `CREATE TABLE "service_pricing" ("tenantId" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "serviceId" uuid NOT NULL, "businessArea" character varying NOT NULL, "valueFrom" numeric NOT NULL, "valueTo" numeric NOT NULL, "fee" numeric NOT NULL, "currency" character varying NOT NULL, CONSTRAINT "PK_a9d4b6cf683e43141affcc43964" PRIMARY KEY ("id"))`,
@@ -56,16 +53,19 @@ export class Initial1700118527343 implements MigrationInterface {
       `CREATE TABLE "vendors" ("tenantId" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "tin" character varying, "userId" character varying NOT NULL, "isrVendorId" uuid, "status" character varying NOT NULL DEFAULT 'draft', "formOfEntity" character varying, "country" character varying NOT NULL DEFAULT 'Malian', "metaData" json, "name" character varying, "level" character varying, "origin" character varying, "district" character varying, CONSTRAINT "REL_ffb6cf8b48347b97ccf9d51c3d" UNIQUE ("isrVendorId"), CONSTRAINT "PK_9c956c9797edfae5c6ddacc4e6e" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
-      `CREATE TABLE "business_interest_area" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "category" character varying NOT NULL, "lineOfBusiness" jsonb NOT NULL DEFAULT '[]', "priceRange" character varying NOT NULL, "vendorId" uuid, CONSTRAINT "PK_64c91ee0d2c26b78d2bf73a54c8" PRIMARY KEY ("id"))`,
+      `CREATE TABLE "categories" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "code" character varying NOT NULL, "description" character varying NOT NULL, "businessArea" character varying NOT NULL, "parentId" character varying, "parentCategoryId" uuid, CONSTRAINT "PK_24dbc6126a28ff948da33e97d3b" PRIMARY KEY ("id"))`,
+    );
+    await queryRunner.query(
+      `CREATE TABLE "business_categories" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "categoryId" uuid NOT NULL, "vendorId" uuid NOT NULL, CONSTRAINT "PK_d10a707dfd0ca189233999204e5" PRIMARY KEY ("id"))`,
+    );
+    await queryRunner.query(
+      `CREATE TABLE "files" ("tenantId" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "fileName" character varying NOT NULL, "fileType" character varying NOT NULL, "bucketName" character varying NOT NULL, "originalName" character varying NOT NULL, "attachmentUrl" character varying, "path" character varying NOT NULL, "vendorId" character varying NOT NULL, CONSTRAINT "PK_6c16b9093a142e0e7613b04a3d9" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `CREATE TABLE "invoice" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "instanceId" uuid, "applicationNo" character varying, "pricingId" character varying, "taskName" character varying, "taskId" uuid, "serviceName" character varying NOT NULL, "payerName" character varying NOT NULL, "payerAccountId" character varying NOT NULL, "payToAccNo" character varying NOT NULL, "payToAccName" character varying NOT NULL, "payToBank" character varying NOT NULL, "amount" numeric NOT NULL, "createdOn" TIMESTAMP NOT NULL, "paymentStatus" character varying NOT NULL, "remark" character varying NOT NULL, "attachment" character varying, CONSTRAINT "PK_15d25c200d9bcd8a33f698daf18" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `CREATE TABLE "receipts" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "invoiceId" uuid NOT NULL, "referenceNumber" character varying NOT NULL, "remark" character varying NOT NULL, "filePath" character varying, "fileType" character varying, CONSTRAINT "REL_12367eb1bc0e7fb308bc571430" UNIQUE ("invoiceId"), CONSTRAINT "PK_5e8182d7c29e023da6e1ff33bfe" PRIMARY KEY ("id"))`,
-    );
-    await queryRunner.query(
-      `CREATE TABLE "files" ("tenantId" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "fileName" character varying NOT NULL, "fileType" character varying NOT NULL, "bucketName" character varying NOT NULL, "originalName" character varying NOT NULL, "attachmentUrl" character varying, "path" character varying NOT NULL, "vendorId" character varying NOT NULL, CONSTRAINT "PK_6c16b9093a142e0e7613b04a3d9" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `CREATE TABLE "task_types" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, CONSTRAINT "PK_232576669c4df1f0a15e1300ce2" PRIMARY KEY ("id"))`,
@@ -83,16 +83,10 @@ export class Initial1700118527343 implements MigrationInterface {
       `ALTER TABLE "custom_categories" ADD CONSTRAINT "FK_ad4063959f338df8e0649c704e8" FOREIGN KEY ("vendorId") REFERENCES "vendors"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
-      `ALTER TABLE "categories" ADD CONSTRAINT "FK_ccde635bce518afe7c110858cc4" FOREIGN KEY ("parentCategoryId") REFERENCES "categories"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "business_categories" ADD CONSTRAINT "FK_24641c3aafa3d295b5b3a329af0" FOREIGN KEY ("categoryId") REFERENCES "categories"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "business_categories" ADD CONSTRAINT "FK_4b0c6f9bbf3008476dc8b4ec312" FOREIGN KEY ("vendorId") REFERENCES "vendors"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
-    );
-    await queryRunner.query(
       `ALTER TABLE "beneficial_ownership" ADD CONSTRAINT "FK_a3fff4c50177836bd15a18fe0d3" FOREIGN KEY ("vendorId") REFERENCES "vendors"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "business_interest_area" ADD CONSTRAINT "FK_dd0fe1df57d88af04faa025ac88" FOREIGN KEY ("vendorId") REFERENCES "vendors"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
       `ALTER TABLE "service_pricing" ADD CONSTRAINT "FK_e34b51a6faa8f40d89c3f4b343c" FOREIGN KEY ("serviceId") REFERENCES "bp_services"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
@@ -131,7 +125,13 @@ export class Initial1700118527343 implements MigrationInterface {
       `ALTER TABLE "vendors" ADD CONSTRAINT "FK_ffb6cf8b48347b97ccf9d51c3d0" FOREIGN KEY ("isrVendorId") REFERENCES "isr_vendors"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
-      `ALTER TABLE "business_interest_area" ADD CONSTRAINT "FK_dd0fe1df57d88af04faa025ac88" FOREIGN KEY ("vendorId") REFERENCES "vendors"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+      `ALTER TABLE "categories" ADD CONSTRAINT "FK_ccde635bce518afe7c110858cc4" FOREIGN KEY ("parentCategoryId") REFERENCES "categories"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "business_categories" ADD CONSTRAINT "FK_24641c3aafa3d295b5b3a329af0" FOREIGN KEY ("categoryId") REFERENCES "categories"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "business_categories" ADD CONSTRAINT "FK_4b0c6f9bbf3008476dc8b4ec312" FOREIGN KEY ("vendorId") REFERENCES "vendors"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
       `ALTER TABLE "receipts" ADD CONSTRAINT "FK_12367eb1bc0e7fb308bc5714301" FOREIGN KEY ("invoiceId") REFERENCES "invoice"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
@@ -143,7 +143,13 @@ export class Initial1700118527343 implements MigrationInterface {
       `ALTER TABLE "receipts" DROP CONSTRAINT "FK_12367eb1bc0e7fb308bc5714301"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "business_interest_area" DROP CONSTRAINT "FK_dd0fe1df57d88af04faa025ac88"`,
+      `ALTER TABLE "business_categories" DROP CONSTRAINT "FK_4b0c6f9bbf3008476dc8b4ec312"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "business_categories" DROP CONSTRAINT "FK_24641c3aafa3d295b5b3a329af0"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "categories" DROP CONSTRAINT "FK_ccde635bce518afe7c110858cc4"`,
     );
     await queryRunner.query(
       `ALTER TABLE "vendors" DROP CONSTRAINT "FK_ffb6cf8b48347b97ccf9d51c3d0"`,
@@ -182,16 +188,10 @@ export class Initial1700118527343 implements MigrationInterface {
       `ALTER TABLE "service_pricing" DROP CONSTRAINT "FK_e34b51a6faa8f40d89c3f4b343c"`,
     );
     await queryRunner.query(
+      `ALTER TABLE "business_interest_area" DROP CONSTRAINT "FK_dd0fe1df57d88af04faa025ac88"`,
+    );
+    await queryRunner.query(
       `ALTER TABLE "beneficial_ownership" DROP CONSTRAINT "FK_a3fff4c50177836bd15a18fe0d3"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "business_categories" DROP CONSTRAINT "FK_4b0c6f9bbf3008476dc8b4ec312"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "business_categories" DROP CONSTRAINT "FK_24641c3aafa3d295b5b3a329af0"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "categories" DROP CONSTRAINT "FK_ccde635bce518afe7c110858cc4"`,
     );
     await queryRunner.query(
       `ALTER TABLE "custom_categories" DROP CONSTRAINT "FK_ad4063959f338df8e0649c704e8"`,
@@ -206,10 +206,11 @@ export class Initial1700118527343 implements MigrationInterface {
       `ALTER TABLE "shareholders" DROP CONSTRAINT "FK_59629b022dc24fded18674d27b3"`,
     );
     await queryRunner.query(`DROP TABLE "task_types"`);
-    await queryRunner.query(`DROP TABLE "files"`);
     await queryRunner.query(`DROP TABLE "receipts"`);
     await queryRunner.query(`DROP TABLE "invoice"`);
-    await queryRunner.query(`DROP TABLE "business_interest_area"`);
+    await queryRunner.query(`DROP TABLE "files"`);
+    await queryRunner.query(`DROP TABLE "business_categories"`);
+    await queryRunner.query(`DROP TABLE "categories"`);
     await queryRunner.query(`DROP TABLE "vendors"`);
     await queryRunner.query(`DROP TABLE "isr_vendors"`);
     await queryRunner.query(`DROP TABLE "workflow_instances"`);
@@ -220,9 +221,8 @@ export class Initial1700118527343 implements MigrationInterface {
     await queryRunner.query(`DROP TABLE "task_assignments"`);
     await queryRunner.query(`DROP TABLE "bp_services"`);
     await queryRunner.query(`DROP TABLE "service_pricing"`);
+    await queryRunner.query(`DROP TABLE "business_interest_area"`);
     await queryRunner.query(`DROP TABLE "beneficial_ownership"`);
-    await queryRunner.query(`DROP TABLE "business_categories"`);
-    await queryRunner.query(`DROP TABLE "categories"`);
     await queryRunner.query(`DROP TABLE "custom_categories"`);
     await queryRunner.query(`DROP TABLE "vendors_bank"`);
     await queryRunner.query(`DROP TABLE "banks"`);

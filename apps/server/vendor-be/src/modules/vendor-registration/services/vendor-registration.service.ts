@@ -56,7 +56,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           await this.fromInitialValue(data),
         );
         const vendorId = result.id;
-
         if (
           data.initial.level == VendorStatusEnum.PPDA &&
           data.initial.status == VendorStatusEnum.SAVE
@@ -224,7 +223,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
   }
   async getIsrVendorByVendorId(vendorId: string): Promise<any> {
     try {
-      const vendorEntity = await this.isrVendorsRepository.findOneOrFail({
+      const vendorEntity = await this.isrVendorsRepository.findOne({
         where: {
           id: vendorId,
         },
@@ -234,6 +233,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
+
   async getIsrVendorByUserId(userId: string): Promise<any> {
     try {
       const vendorEntity = await this.isrVendorsRepository.findOne({
@@ -250,13 +250,11 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       const areaOfBusinessInterest = JSON.parse(
         JSON.stringify(vendorEntity.areasOfBusinessInterest),
       );
+
       const initial = JSON.parse(JSON.stringify(vendorEntity.initial));
-      if (initial.status == 'Save' && initial.level == 'ppda') {
-        const invoice = await this.getInvoices(areaOfBusinessInterest, userId);
-        return { ...vendorEntity, invoice: invoice };
-      } else {
-        return { ...vendorEntity, invoice: [] };
-      }
+
+      const invoice = await this.getInvoices(areaOfBusinessInterest, userId);
+      return { ...vendorEntity, invoice: invoice };
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
@@ -267,6 +265,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       const element = await this.invoiceRepository.findOne({
         where: {
           payerAccountId: userId,
+          // paymentStatus: In(['Pending']),
           pricingId: areaOfBusinessInterest[index].priceRange,
         },
       });
@@ -275,6 +274,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       const expired = element.createdOn < fourteenDaysAgo;
       invoice.push({ ...element, expired: expired });
     }
+
     return invoice;
   }
   async getVendorStatusByVendorId(userId: string): Promise<any> {

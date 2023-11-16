@@ -25,7 +25,6 @@ import {
   BusinessAreaEntity,
   BusinessCategoryEntity,
   BusinessProcessEntity,
-  Category,
   CustomCategoryEntity,
   FilesEntity,
   InvoiceEntity,
