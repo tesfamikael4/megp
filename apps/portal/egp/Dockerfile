@@ -40,8 +40,8 @@ COPY turbo.json turbo.json
 
 # Set environment variables with default values
 # Set environment variables with default values
-ARG PIPELINE_ID
-ENV NEXT_PUBLIC_VERSION="v.$(date +'%Y%m%d').$PIPELINE_ID"
+ARG VERSION_ARG
+ENV NEXT_PUBLIC_VERSION=$VERSION_ARG
 
 
 ENV NEXT_PUBLIC_IAM_API="/iam/api"

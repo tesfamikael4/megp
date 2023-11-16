@@ -44,8 +44,8 @@ COPY turbo.json turbo.json
 # ENV TURBO_TOKEN=$TURBO_TOKEN
 
 # Set environment variables with default values
-ARG PIPELINE_ID
-ENV NEXT_PUBLIC_VERSION="v.$(date +'%Y%m%d').$PIPELINE_ID"
+ARG VERSION_ARG
+ENV NEXT_PUBLIC_VERSION=$VERSION_ARG
 
 
 
