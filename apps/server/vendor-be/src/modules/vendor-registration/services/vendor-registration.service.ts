@@ -5,17 +5,15 @@ import {
   HttpStatus,
   Inject,
   Injectable,
-  Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { Any, DataSource, In, Not, Repository, Transaction } from 'typeorm';
+import { DataSource, In, Not, Repository } from 'typeorm';
 import { SetVendorStatus, VendorsResponseDto } from '../dto/vendor.dto';
 import { FileResponseDto } from '../dto/file.dto';
 import { VendorInitiationDto } from '../dto/vendor-initiation.dto';
 import { EntityCrudService } from 'src/shared/service';
 import { CreateAreasOfBusinessInterest } from '../dto/areas-of-business-interest';
 import {
-  AreasOfBusinessInterestEntity,
   FilesEntity,
   InvoiceEntity,
   IsrVendorsEntity,
@@ -23,7 +21,6 @@ import {
 } from 'src/entities';
 import { WorkflowInstanceService } from 'src/modules/handling/services/workflow-instance.service';
 import initialValueSchema from '../dto/add-vendor.dto';
-import { json } from 'stream/consumers';
 import { BusinessProcessService } from 'src/modules/bpm/services/business-process.service';
 import {
   CreateWorkflowInstanceDto,
@@ -173,9 +170,17 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       throw new BadRequestException(`invalid status`);
     }
     try {
+      const vendor = this.isrVendorsRepository.find({
+        where: {
+          userId: userInfo.id,
+          status: In([VendorStatusEnum.ACTIVE, VendorStatusEnum.ADJUSTMENT]),
+        },
+      });
+      if ((await vendor).length > 0)
+        throw new BadRequestException(`there is active vendor already`);
       const vendorsEntity = new IsrVendorsEntity();
       vendorsEntity.userId = userInfo.id;
-      vendorsEntity.status = vendorInitiationDto.status;
+      vendorsEntity.status = VendorStatusEnum.ACTIVE;
       const initial = {
         userId: userInfo.id,
         status: vendorInitiationDto.status,
@@ -217,7 +222,18 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
-
+  async getIsrVendorByVendorId(vendorId: string): Promise<any> {
+    try {
+      const vendorEntity = await this.isrVendorsRepository.findOneOrFail({
+        where: {
+          id: vendorId,
+        },
+      });
+      return vendorEntity;
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
+  }
   async getIsrVendorByUserId(userId: string): Promise<any> {
     try {
       const vendorEntity = await this.isrVendorsRepository.findOneOrFail({
@@ -229,10 +245,13 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       const areaOfBusinessInterest = JSON.parse(
         JSON.stringify(vendorEntity.areasOfBusinessInterest),
       );
-      const invoice = await this.getInvoices(areaOfBusinessInterest, userId);
-      const vendorEntityRes = { ...vendorEntity, invoice: invoice };
-
-      return vendorEntityRes;
+      const initial = JSON.parse(JSON.stringify(vendorEntity.initial));
+      if (initial.status == 'Save' && initial.level == 'ppda') {
+        const invoice = await this.getInvoices(areaOfBusinessInterest, userId);
+        return { ...vendorEntity, invoice: invoice };
+      } else {
+        return { ...vendorEntity, invoice: [] };
+      }
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
