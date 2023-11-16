@@ -118,6 +118,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             }
             return response;
           } catch (error) {
+            console.log(error);
             throw new BadRequestException(`workflow service failed`);
           }
         }
@@ -246,15 +247,15 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       if (!vendorEntity) {
         throw new HttpException('vendor_not_found', HttpStatus.BAD_REQUEST);
       }
-
-      const areaOfBusinessInterest = JSON.parse(
-        JSON.stringify(vendorEntity.areasOfBusinessInterest),
-      );
-
       const initial = JSON.parse(JSON.stringify(vendorEntity.initial));
-
-      const invoice = await this.getInvoices(areaOfBusinessInterest, userId);
-      return { ...vendorEntity, invoice: invoice };
+      if (initial.status == 'Save' && initial.level == 'ppda') {
+        const areaOfBusinessInterest = JSON.parse(
+          JSON.stringify(vendorEntity.areasOfBusinessInterest),
+        );
+        const invoice = await this.getInvoices(areaOfBusinessInterest, userId);
+        return { ...vendorEntity, invoice: invoice };
+      }
+      return vendorEntity;
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
