@@ -21,12 +21,12 @@ import PaymentMethod from '../_components/payment/payment-method';
 import UppyAttachmentDashboard from '../../../_components/UppyAttachmentDashboard/UppyAttachmentDashboard';
 
 function Page() {
-  const [invoice, setInvoice] = useState();
   const router = useRouter();
   const [transactionNum, setTransactionNum] = useState<string>('');
   const requestInfo = useGetVendorQuery({});
   const [getInvoice, invoiceInfo] = useLazyGetInvoiceQuery();
   const [save, saveValues] = useAddFormMutation();
+
   useEffect(() => {
     if (requestInfo.isError) {
       NotificationService.requestErrorNotification('Error on fetching data');
@@ -40,7 +40,7 @@ function Page() {
   useEffect(() => {
     if (saveValues.isSuccess) {
       NotificationService.successNotification('Payed Successfully!');
-      router.push(`doc`);
+      // router.push(doc);
     }
     if (saveValues.isError) {
       NotificationService.requestErrorNotification('Error on Request');
@@ -49,11 +49,8 @@ function Page() {
   }, [saveValues.isSuccess, saveValues.isError, router]);
 
   useEffect(() => {
-    if (invoiceInfo.isSuccess) {
-      NotificationService.successNotification('Payed Successfully!');
-    }
     if (invoiceInfo.isError) {
-      NotificationService.requestErrorNotification('Error on Request');
+      NotificationService.requestErrorNotification('Error on getting invoice');
     }
     return () => {};
   }, [invoiceInfo.isSuccess, invoiceInfo.isError]);
@@ -95,27 +92,25 @@ function Page() {
               onChange={(e) => setTransactionNum(e.target.value)}
               required
             />
-
-            <UppyAttachmentDashboard
-              tusServerGetUrl="http://localhost:3000/api/upload/"
-              tusServerPostUrl="http://localhost:3000/api/upload/files/"
-              id="paymentSlip"
-              label="Payment Slip"
-              placeholder="Upload"
-              metaData={{
-                entityName: 'paymentReceipt',
-                fieldName: 'paymentSlip',
-                instanceId: requestInfo.data?.id,
-                transactionId: transactionNum,
-                category: 'goods',
-                invoiceId: '',
-                attachment: '',
-              }}
-              storeId={
-                requestInfo.data?.supportingDocuments
-                  .businessRegistration_IncorporationCertificate
-              }
-            />
+            {invoiceInfo.data?.invoice && invoiceInfo.data?.invoice[0] && (
+              <UppyAttachmentDashboard
+                tusServerGetUrl="http://localhost:3000/api/upload/"
+                tusServerPostUrl="http://localhost:3000/api/upload/files/"
+                id="paymentSlip"
+                label="Payment Slip"
+                placeholder="Upload"
+                metaData={{
+                  entityName: 'paymentReceipt',
+                  fieldName: 'paymentSlip',
+                  instanceId: requestInfo.data?.id,
+                  transactionId: transactionNum,
+                  category: 'goods',
+                  invoiceId: invoiceInfo.data?.invoice[0].id,
+                  attachment: '',
+                }}
+                storeId={invoiceInfo.data?.paymentReceipt[0].attachment}
+              />
+            )}
           </Stack>
           <Flex justify="end" className="gap-2 mt-4">
             <Button onClick={() => onSave()}>Pay</Button>
