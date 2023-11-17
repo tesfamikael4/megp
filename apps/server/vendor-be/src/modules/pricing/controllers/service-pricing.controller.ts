@@ -43,7 +43,7 @@ export class ServicePricingController extends EntityCrudController<ServicePrice>
     return await super.create(dto);
   }
   @UseGuards(JwtGuard)
-  @Patch(':id')
+  @Put('/:id')
   async update(
     @Param(
       'id',

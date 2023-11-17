@@ -46,7 +46,7 @@ export class TaskAssignmentController extends EntityCrudController<TaskAssignmen
     return await super.create(dto);
   }
   @UseGuards(JwtGuard)
-  @Put(':id')
+  @Put('/:id')
   @ApiOkResponse({ type: TaskAssignmentResponse })
   async update(
     @Param(

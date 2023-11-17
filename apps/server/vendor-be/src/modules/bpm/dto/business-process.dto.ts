@@ -17,8 +17,6 @@ export class CreateBusinessProcessDto {
   @ApiProperty({
     example: false,
   })
-  @IsBoolean()
-  convertToStateMachine: boolean;
   organizationId: string;
   organizationName: string;
   /**

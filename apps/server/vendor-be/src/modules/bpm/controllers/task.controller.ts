@@ -44,7 +44,7 @@ export class TaskController extends EntityCrudController<TaskEntity>(options) {
     return await super.create(dto);
   }
   @UseGuards(JwtGuard)
-  @Put(':id')
+  @Put('/:id')
   @ApiOkResponse({ type: TaskResponse })
   async update(
     @Param(
