@@ -67,7 +67,7 @@ export class WorkflowInstanceService {
     private readonly receiptRepository: Repository<PaymentReceiptEntity>,
     private readonly bpService: BusinessProcessService,
     private readonly commonService: HandlingCommonService,
-  ) { }
+  ) {}
 
   async submitFormBasedTask(
     nextCommand: GotoNextStateDto,
@@ -330,7 +330,9 @@ export class WorkflowInstanceService {
     invoice.applicationNo = result.workflowInstance.applicationNumber;
     // invoice.payerName = result.workflowInstance.vendor.name;
     invoice.payerAccountId = result.workflowInstance.isrVendor.userId;
-    const basicObject: any = JSON.parse(JSON.stringify(result.workflowInstance.isrVendor.basic));
+    const basicObject: any = JSON.parse(
+      JSON.stringify(result.workflowInstance.isrVendor.basic),
+    );
     invoice.payerName = basicObject.name;
     invoice.payerAccountId = basicObject.userId;
     invoice.serviceName = service.name;
@@ -361,13 +363,7 @@ export class WorkflowInstanceService {
      */
     return 1;
   }
-  async gotoNextStep(
-    nextCommand: GotoNextStateDto,
-    userInfo: any = {
-      userId: '96d95fdb-7852-4ddc-982f-0e94d23d15d3',
-      name: 'Josef Josi',
-    },
-  ) {
+  async gotoNextStep(nextCommand: GotoNextStateDto, user?: any) {
     const taskInfo = new TaskEntity();
     const workflowInstance = await this.workflowInstanceRepository.findOne({
       relations: { businessProcess: true, taskHandler: true },
@@ -446,10 +442,10 @@ export class WorkflowInstanceService {
             taskId: currentTaskHandlerCopy.taskId,
             instanceId: workflowInstance.id,
             data: nextCommand.data,
-            handlerUserId: userInfo.userId,
+            handlerUserId: user.userId,
             action: nextCommand.action,
             previousHandlerId: currentTaskHandlerCopy.previousHandlerId,
-            handlerName: userInfo.name,
+            handlerName: user.firstName + ' ' + user.lastName,
             pickedAt: currentTaskHandlerCopy.pickedAt,
             checkLists: nextCommand.taskChecklist,
             remark: nextCommand.remark,

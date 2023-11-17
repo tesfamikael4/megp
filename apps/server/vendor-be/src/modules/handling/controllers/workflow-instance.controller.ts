@@ -131,10 +131,7 @@ export class WorkflowInstanceController {
   @Post('goto-next-state')
   @ApiOkResponse({ type: WorkflowInstanceResponse })
   async gotoNextState(@Body() dto: GotoNextStateDto, @CurrentUser() user: any) {
-    const response = await this.workflowInstanceService.gotoNextStep(
-      dto,
-      this.userInfo,
-    );
+    const response = await this.workflowInstanceService.gotoNextStep(dto, user);
     const task = await this.taskService.findOne(response.taskHandler.taskId);
     if (task) {
       if (task.handlerType == 'System') {
