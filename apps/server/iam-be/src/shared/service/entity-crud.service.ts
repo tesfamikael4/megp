@@ -19,8 +19,6 @@ export class EntityCrudService<T extends BaseEntity> {
       query,
     );
 
-    const d = dataQuery.getQuery();
-
     const response = new DataResponseFormat<T>();
     if (query.count) {
       response.total = await dataQuery.getCount();
@@ -47,8 +45,50 @@ export class EntityCrudService<T extends BaseEntity> {
     await this.repository.softDelete(id);
   }
 
+  async restore(id: string, req?: any): Promise<void> {
+    await this.findOneOrFailWithDeleted(id);
+    await this.repository.restore(id);
+  }
+
+  async findAllArchived(query: CollectionQuery, req?: any) {
+    query.where.push([
+      { column: 'deletedAt', value: '', operator: 'IsNotNull' },
+    ]);
+
+    const dataQuery = QueryConstructor.constructQuery<T>(
+      this.repository,
+      query,
+    );
+
+    dataQuery.withDeleted();
+
+    const response = new DataResponseFormat<T>();
+    if (query.count) {
+      response.total = await dataQuery.getCount();
+    } else {
+      const [result, total] = await dataQuery.getManyAndCount();
+      response.total = total;
+      response.items = result;
+    }
+    return response;
+  }
+
   private async findOneOrFail(id: any): Promise<T> {
     const item = await this.findOne(id);
+    if (!item) {
+      throw new NotFoundException(`not_found`);
+    }
+    return item;
+  }
+
+  private async findOneOrFailWithDeleted(id: any): Promise<T> {
+    const item = await this.repository.findOne({
+      where: {
+        id,
+      },
+      withDeleted: true,
+    });
+
     if (!item) {
       throw new NotFoundException(`not_found`);
     }
