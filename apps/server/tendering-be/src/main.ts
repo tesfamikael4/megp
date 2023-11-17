@@ -1,9 +1,13 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import {
+  DocumentBuilder,
+  SwaggerCustomOptions,
+  SwaggerModule,
+} from '@nestjs/swagger';
 import { GlobalExceptionFilter } from './shared/exceptions/global-exception.filter';
 
 async function bootstrap() {
@@ -11,34 +15,42 @@ async function bootstrap() {
     cors: true,
   });
 
+  const config: ConfigService = app.get(ConfigService);
+
   app.enableCors();
 
-  const config: ConfigService = app.get(ConfigService);
   const port: number = config.get<number>('PORT') || 3000;
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
   app.useGlobalFilters(new GlobalExceptionFilter());
+
   // const reflector = app.get(Reflector);
-  // app.useGlobalGuards(new JwtAuthGuard(reflector));
+  // app.useGlobalGuards(new Aut  app.useGlobalGuards(new AuthGuard(reflector));
 
   app.setGlobalPrefix('api');
 
+  const customOptions: SwaggerCustomOptions = {
+    swaggerOptions: {
+      persistAuthorization: false,
+      docExpansion: 'none',
+    },
+    customSiteTitle: 'Registration System API Documentation',
+  };
   const document = SwaggerModule.createDocument(
     app,
     new DocumentBuilder()
-      .setTitle('Planning API')
-      .setDescription('My Planning API')
+      .setTitle('Tendering API')
+      .setDescription('My Tendering API')
       .addBearerAuth()
       .build(),
+    {
+      deepScanRoutes: true,
+    },
   );
 
-  SwaggerModule.setup('docs', app, document);
-  app.useGlobalPipes(
-    new ValidationPipe({
-      transform: true,
-    }),
-  );
+  SwaggerModule.setup('docs', app, document, customOptions);
+
   await app.listen(port, () => {
     console.log('[WEB]', config.get<string>('BASE_URL') + '/docs');
   });
