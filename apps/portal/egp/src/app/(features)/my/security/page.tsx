@@ -7,6 +7,7 @@ import {
   Button,
   PasswordInput,
   Text,
+  Paper,
 } from '@mantine/core';
 import { IconDeviceFloppy } from '@tabler/icons-react';
 import { useState } from 'react';
@@ -71,31 +72,35 @@ export default function MyProfilePage() {
     <>
       <Container className="mt-5">
         <form onSubmit={handleSubmit(onSubmit)} className="mt-5">
-          <Text>Change Password</Text>
-          <Divider className="mb-2" />
-          <PasswordInput
-            label="Old Password"
-            withAsterisk
-            placeholder="********"
-            {...register('oldPassword')}
-            error={errors.oldPassword?.message}
-          />
-          <PasswordInput
-            label="New Password"
-            withAsterisk
-            placeholder="********"
-            {...register('newPassword')}
-            error={errors.newPassword?.message}
-            className="mt-2"
-          />
-          <Button mt={15} type="submit" loading={isChangingPassword}>
-            <IconDeviceFloppy /> Save
-          </Button>
+          <Paper shadow="sm" withBorder className="p-10">
+            <Text className="font-semibold text-xl">Change Password</Text>
+            <Divider className="mb-2" />
+            <PasswordInput
+              label="Old Password"
+              withAsterisk
+              placeholder="********"
+              {...register('oldPassword')}
+              error={errors.oldPassword?.message}
+            />
+            <PasswordInput
+              label="New Password"
+              withAsterisk
+              placeholder="********"
+              {...register('newPassword')}
+              error={errors.newPassword?.message}
+              className="mt-2"
+            />
+            <Button mt={15} type="submit" loading={isChangingPassword}>
+              <IconDeviceFloppy /> Save
+            </Button>
+          </Paper>
         </form>
         <div className="mt-4 mb-4">
-          <Text>Change Security Questions</Text>
-          <Divider className="mb-2" />
-          <ChangeSecurity mode="update" />
+          <Paper shadow="sm" withBorder className="p-10">
+            <Text>Change Security Questions</Text>
+            <Divider className="mb-2" />
+            <ChangeSecurity mode="update" />
+          </Paper>
         </div>
       </Container>
     </>

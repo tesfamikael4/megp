@@ -10,6 +10,9 @@ import {
   Button,
   LoadingOverlay,
   Title,
+  Paper,
+  Box,
+  Skeleton,
 } from '@mantine/core';
 import { IconDeviceFloppy } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
@@ -67,17 +70,33 @@ export default function MyProfilePage() {
   }, []);
 
   if (userInfoloading || !user) {
-    return <LoadingOverlay />;
+    return (
+      <>
+        <Box className="ml-10 mt-15 p-10 w-10/12">
+          <Skeleton height={8} radius="xl" />
+          <Skeleton height={8} mt={10} radius="xl" />
+          <Skeleton height={8} mt={10} radius="xl" />
+          <Skeleton height={8} mt={10} radius="xl" />
+          <Skeleton height={8} mt={50} radius="xl" />
+          <Skeleton height={8} mt={10} radius="xl" />
+          <Skeleton height={8} mt={10} width="70%" radius="xl" />
+        </Box>
+      </>
+    );
   }
 
   return (
-    <Container className="mt-10">
-      <p className="font-semibold text-xl">Profile Information</p>
-      <Divider className="mb-2" />
-      <TextInput label="Username" disabled value={user.username} />
-      <TextInput label="First Name" disabled value={user.firstName} />
-      <TextInput label="Last Name" disabled value={user.lastName} />
-      <PhoneOTP phone={user.phone as string} />
-    </Container>
+    <div className="mt-10 ml-10">
+      <Paper shadow="sm" withBorder className="p-10">
+        <p className="font-semibold text-xl">Profile Information</p>
+        <Divider className="mb-2" />
+        <TextInput label="Username" disabled value={user.username} />
+        <TextInput label="First Name" disabled value={user.firstName} />
+        <TextInput label="Last Name" disabled value={user.lastName} />
+      </Paper>
+      <Paper shadow="sm" withBorder className="p-10 mt-4">
+        <PhoneOTP phone={user.phone as string} email={user.email} />
+      </Paper>
+    </div>
   );
 }
