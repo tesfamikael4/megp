@@ -30,11 +30,12 @@ function Page() {
   useEffect(() => {
     if (requestInfo.isError) {
       NotificationService.requestErrorNotification('Error on fetching data');
-      //  router.push(`basic`);
     }
-
+    if (requestInfo.data) {
+      getInvoice({});
+    }
     return () => {};
-  }, [requestInfo, router]);
+  }, [requestInfo, getInvoice]);
 
   useEffect(() => {
     if (saveValues.isSuccess) {
@@ -70,11 +71,16 @@ function Page() {
       });
     }
   };
+
   return (
     <Flex className="flex-col w-full relative items-center justify-center">
       <Flex className="gap-2 w-full">
         <LoadingOverlay
-          visible={saveValues.isLoading || requestInfo.isLoading}
+          visible={
+            saveValues.isLoading ||
+            requestInfo.isLoading ||
+            invoiceInfo.isLoading
+          }
           overlayProps={{ radius: 'sm', blur: 2 }}
         />
         <Flex className="flex-col border p-4 shadow-md h-fit max-w-3xl w-full">
@@ -102,7 +108,7 @@ function Page() {
                 instanceId: requestInfo.data?.id,
                 transactionId: transactionNum,
                 category: 'goods',
-                invoiceId: requestInfo.data?.invoice[0].id,
+                invoiceId: '',
                 attachment: '',
               }}
               storeId={
@@ -115,9 +121,9 @@ function Page() {
             <Button onClick={() => onSave()}>Pay</Button>
           </Flex>
         </Flex>
-        {requestInfo.data?.invoice[0] && (
+        {invoiceInfo.data?.invoice && invoiceInfo.data?.invoice[0] && (
           <Flex className="max-w-2xl flex-col border shadow-md w-full">
-            <InvoiceTemplate invoiceData={requestInfo.data?.invoice[0]} />
+            <InvoiceTemplate invoiceData={invoiceInfo.data?.invoice[0]} />
           </Flex>
         )}
       </Flex>
