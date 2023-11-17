@@ -1,4 +1,4 @@
-import { Repository } from 'typeorm';
+import { ObjectLiteral, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import {
   CollectionQuery,
@@ -6,11 +6,10 @@ import {
   QueryConstructor,
 } from '../collection-query';
 import { DataResponseFormat } from '../api-data';
-import { BaseEntity } from '../entities/base.entity';
 import { RelationCrudOptions } from '../types/crud-option.type';
 
 @Injectable()
-export class RelationCrudService<TEntity extends BaseEntity> {
+export class RelationCrudService<TEntity extends ObjectLiteral> {
   constructor(private readonly repository: Repository<TEntity>) {}
 
   async bulkSaveFirst(payload: any, relationCrudOptions: RelationCrudOptions) {
@@ -36,7 +35,7 @@ export class RelationCrudService<TEntity extends BaseEntity> {
     await this.repository.delete(deleteCondition);
 
     const data = this.repository.create(parsedPayload);
-    return await this.repository.save(data);
+    return await this.repository.insert(data);
   }
 
   async bulkSaveSecond(payload: any, relationCrudOptions: RelationCrudOptions) {
@@ -62,7 +61,7 @@ export class RelationCrudService<TEntity extends BaseEntity> {
     await this.repository.delete(deleteCondition);
 
     const data = this.repository.create(parsedPayload);
-    return await this.repository.save(data);
+    return await this.repository.insert(data);
   }
 
   async findAllFirst(

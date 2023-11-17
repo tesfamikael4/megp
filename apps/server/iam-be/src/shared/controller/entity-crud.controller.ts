@@ -11,17 +11,15 @@ import {
   Req,
   Patch,
 } from '@nestjs/common';
-import { EntityCrudService } from '../service/entity-crud.service';
-import { DeepPartial } from 'typeorm';
-import { CollectionQuery } from '../collection-query';
+import { EntityCrudService } from '../service';
+import { DeepPartial, ObjectLiteral } from 'typeorm';
 import { DataResponseFormat } from '../api-data';
-import { BaseEntity } from '../entities/base.entity';
 import { ApiBearerAuth, ApiBody, ApiQuery } from '@nestjs/swagger';
 import { BaseAPIDto } from './extra-crud.controller';
 import { EntityCrudOptions } from '../types/crud-option.type';
-import { decodeCollectionQuery } from '../collection-query/query-mapper';
+import { decodeCollectionQuery } from '../collection-query';
 
-export function EntityCrudController<TEntity extends BaseEntity>(
+export function EntityCrudController<TEntity extends ObjectLiteral>(
   options?: EntityCrudOptions,
 ) {
   @Controller()

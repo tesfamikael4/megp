@@ -11,18 +11,16 @@ import {
   Req,
   Patch,
 } from '@nestjs/common';
-import { DeepPartial } from 'typeorm';
-import { CollectionQuery } from '../collection-query';
+import { DeepPartial, ObjectLiteral } from 'typeorm';
 import { DataResponseFormat } from '../api-data';
-import { BaseEntity } from '../entities/base.entity';
-import { ExtraCrudService } from '../service/extra-crud.service';
+import { ExtraCrudService } from '../service';
 import { ApiBearerAuth, ApiBody, ApiQuery } from '@nestjs/swagger';
 import { ExtraCrudOptions } from '../types/crud-option.type';
-import { decodeCollectionQuery } from '../collection-query/query-mapper';
+import { decodeCollectionQuery } from '../collection-query';
 
 export class BaseAPIDto {}
 
-export function ExtraCrudController<TEntity extends BaseEntity>(
+export function ExtraCrudController<TEntity extends ObjectLiteral>(
   options: ExtraCrudOptions,
 ) {
   const { entityIdName, createDto, updateDto } = options;
