@@ -61,25 +61,23 @@ export class TusService implements OnModuleInit {
 
   async handleTus(req, res, userInfo) {
     const userId = userInfo.id;
+
     const result = await this.isrVendorRepository.findOne({
       where: {
         userId: userId,
         status: In([VendorStatusEnum.ACTIVE, VendorStatusEnum.ADJUSTMENT]),
       },
     });
+
     if (!result) throw new NotFoundException(`isr vendor not found`);
-    const fourteenDaysAgo = new Date();
-    fourteenDaysAgo.setDate(new Date().getDate() - 14);
 
     const areaOfBusinessInterest = result.areasOfBusinessInterest;
     const invoice = await this.invoiceRepository.find({
       where: {
         payerAccountId: userId,
         paymentStatus: Not('Paid'),
-        createdOn: MoreThanOrEqual(fourteenDaysAgo),
       },
     });
-
     if (invoice.length > 0) {
       const bucketCreation = await minioClient
         .makeBucket(userId, '')
@@ -109,6 +107,7 @@ export class TusService implements OnModuleInit {
         const fieldValue = event.file.id;
         const fieldName = uploadMetadata?.fieldName;
         const entityName = uploadMetadata?.entityName;
+        const paymentReceipt = [];
         if (entityName == 'vendor') {
           const resultMetadata = JSON.parse(
             JSON.stringify(result.supportingDocuments),
@@ -144,9 +143,9 @@ export class TusService implements OnModuleInit {
             throw new BadRequestException(error);
           }
         } else if (entityName == 'paymentReceipt') {
-          const paymentReceipt = JSON.parse(
-            JSON.stringify(result.paymentReceipt),
-          );
+          // const paymentReceipt = JSON.parse(
+          //   JSON.stringify(result.paymentReceipt),
+          // );
           paymentReceipt.push({
             transactionId: uploadMetadata?.transactionId,
             category: uploadMetadata?.category,
@@ -155,7 +154,7 @@ export class TusService implements OnModuleInit {
           });
           try {
             await this.isrVendorRepository.update(result.id, {
-              paymentReceipt: paymentReceipt,
+              paymentReceipt: JSON.parse(JSON.stringify(paymentReceipt)),
             });
             await this.invoiceRepository.update(uploadMetadata.invoiceId, {
               paymentStatus: 'Paid',
