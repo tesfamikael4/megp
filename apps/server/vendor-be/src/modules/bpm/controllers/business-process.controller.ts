@@ -4,6 +4,7 @@ import {
   Param,
   Patch,
   Post,
+  Put,
   UseGuards,
 } from '@nestjs/common';
 import { ApiExtraModels, ApiTags } from '@nestjs/swagger';
@@ -39,7 +40,7 @@ export class BusinessProcessController extends EntityCrudController<BusinessProc
     return await super.create(dto);
   }
   @UseGuards(JwtGuard)
-  @Patch(':id')
+  @Put('/:id')
   @ApiPaginatedResponse(BusinessProcessResponse)
   async update(@Param('id') id, @Body() dto: CreateBusinessProcessDto) {
     return await super.update(id, dto);

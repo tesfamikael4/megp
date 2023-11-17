@@ -37,7 +37,7 @@ export class BpServiceController extends EntityCrudController<BpServiceEntity>(
     return await super.create(dto);
   }
   @UseGuards(JwtGuard)
-  @Put(':id')
+  @Put('/:id')
   @ApiOkResponse({ type: BpServiceResponse })
   async update(@Param('id') id: string, @Body() dto: UpdateBpServiceDto) {
     return await super.update(dto.id, dto);
