@@ -134,8 +134,7 @@ function Header() {
                 <Menu shadow="md" width={200}>
                   <Menu.Target>
                     <div className="flex cursor-pointer">
-                      {userInfoLoading && <Loader />}Hi,{' '}
-                      {user.firstName + ' ' + user.lastName}
+                      Hi, {user.firstName + ' ' + user.lastName}
                       <IconChevronDown />
                     </div>
                   </Menu.Target>
@@ -145,7 +144,7 @@ function Header() {
                       leftSection={<IconUserCircle />}
                       onClick={() => router.push('/my/my-profile')}
                     >
-                      Profile
+                      Account
                     </Menu.Item>
                     <Menu.Item
                       leftSection={<IconLogout />}

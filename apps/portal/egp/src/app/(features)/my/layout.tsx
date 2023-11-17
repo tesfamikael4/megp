@@ -12,9 +12,9 @@ export default function DefaultLayout({
   return (
     <Protected>
       <section>
-        <div className="w-2/3 border mx-auto min-h-[80vh] mt-4 mb-4 flex">
-          <div className="w-3/12 bg-gray-100">
-            <Link href="/my/my-profile" className="active:bg-primary-800">
+        <div className="border mx-auto min-h-[90vh] flex">
+          <div className="w-2/12 bg-gray-100">
+            <Link href="/my/my-profile" className="active:bg-primary-600">
               <Profile />
             </Link>
             <Link href="/my/security" className="active:bg-primary-800">
