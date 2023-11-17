@@ -51,7 +51,7 @@ export class TusService implements OnModuleInit {
     private readonly paymentReceiptRepository: Repository<PaymentReceiptEntity>,
     @InjectRepository(InvoiceEntity)
     private readonly invoiceRepository: Repository<InvoiceEntity>,
-  ) {}
+  ) { }
   private logger = new Logger('TusService');
   private readonly tusServer = new tus.Server(serverOptions);
   private userId = '';
@@ -140,6 +140,7 @@ export class TusService implements OnModuleInit {
               paymentReceipt: resultMetadata,
             });
           } catch (error) {
+            console.log(error);
             throw new BadRequestException(error);
           }
         } else if (entityName == 'paymentReceipt') {
@@ -161,6 +162,7 @@ export class TusService implements OnModuleInit {
               attachment: fieldValue,
             });
           } catch (error) {
+            console.log(error);
             throw new BadRequestException(`Recept Upload failed`);
           }
         }

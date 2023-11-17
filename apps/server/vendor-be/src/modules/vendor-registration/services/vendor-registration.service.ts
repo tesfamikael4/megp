@@ -403,7 +403,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         vendorEntity.tin = basic.tinNumber;
         vendorEntity.userId = initial.userId;
         vendorEntity.isrVendorId = initial.id;
-
         vendorEntity.shareholders = JSON.parse(
           JSON.stringify(isrVendorData.shareHolders),
         );
