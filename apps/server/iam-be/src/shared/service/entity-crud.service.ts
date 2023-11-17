@@ -1,16 +1,15 @@
-import { Repository, DeepPartial } from 'typeorm';
+import { Repository, DeepPartial, ObjectLiteral } from 'typeorm';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CollectionQuery, QueryConstructor } from '../collection-query';
 import { DataResponseFormat } from '../api-data';
-import { BaseEntity } from '../entities/base.entity';
 
 @Injectable()
-export class EntityCrudService<T extends BaseEntity> {
+export class EntityCrudService<T extends ObjectLiteral> {
   constructor(private readonly repository: Repository<T>) {}
 
   async create(itemData: DeepPartial<T>, req?: any): Promise<T> {
     const item = this.repository.create(itemData);
-    await this.repository.insert(item as any);
+    await this.repository.insert(item);
     return item;
   }
 
