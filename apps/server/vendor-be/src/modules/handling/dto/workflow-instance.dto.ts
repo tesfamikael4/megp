@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
+import { IsrVendorsEntity } from 'src/entities';
 import { ServicePrice } from 'src/entities/service-price.entity';
 import { WorkflowInstanceEntity } from 'src/entities/workflow-instance.entity';
 import { BusinessProcessResponse } from 'src/modules/bpm/dto/business-process.dto';
@@ -97,7 +98,7 @@ export class WorkflowInstanceResponse extends UpdateWorkflowInstanceDto {
   taskHandler?: TaskHandlerResponse;
   taskTrackers?: TaskTrackerResponse[];
   service: BpServiceResponse;
-  vendor: VendorsResponseDto;
+  isrvendor: IsrVendorsEntity;
   task: TaskResponse;
   pricing: ServicePrice;
   @ApiProperty()
@@ -126,9 +127,10 @@ export class WorkflowInstanceResponse extends UpdateWorkflowInstanceDto {
       response.task = response.taskHandler?.task;
       response.taskHandler.task = null;
     }
-    // if (entity?.vendor) {
-    //   response.vendor = VendorsResponseDto.fromEntity(entity.vendor);
-    // }
+    if (entity?.isrVendor) {
+      //response.vendor = VendorsResponseDto.fromEntity(entity.isrVendor);
+      response.isrvendor = entity?.isrVendor;
+    }
 
     if (entity?.taskTrackers) {
       response.taskTrackers = entity?.taskTrackers?.map((handler) =>

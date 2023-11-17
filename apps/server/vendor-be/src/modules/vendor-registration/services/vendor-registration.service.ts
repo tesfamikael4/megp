@@ -66,7 +66,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
               index < data.areasOfBusinessInterest.length;
               index++
             ) {
-              const resul =
+              const invoice =
                 await this.WorkflowInstanceService.generateVendorInvoice(
                   result.id,
                   data.areasOfBusinessInterest[index].priceRange,
@@ -110,11 +110,9 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             for (const instance of instances) {
               const dto = new GotoNextStateDto();
               dto.action = 'ISR';
+              dto.data = result;
               dto.instanceId = instance.application.id;
-              const result = await this.workflowInstanceService.gotoNextStep(
-                dto,
-                userInfo,
-              );
+              await this.workflowInstanceService.gotoNextStep(dto, userInfo);
             }
             return response;
           } catch (error) {
