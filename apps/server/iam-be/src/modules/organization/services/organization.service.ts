@@ -25,9 +25,11 @@ export class OrganizationService extends EntityCrudService<Organization> {
     super(repositoryOrganization);
   }
 
-  async create(organization: Organization): Promise<Organization | null> {
+  async create(
+    organization: CreateOrganizationDto,
+  ): Promise<Organization | null> {
     organization.code = this.generateOrganizationCode();
-    organization.type = 'Vendor';
+    organization.type = 'Back-office';
     organization.budgetType = 'default';
     return await super.create(organization);
   }

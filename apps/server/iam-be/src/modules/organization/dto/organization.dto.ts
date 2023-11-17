@@ -53,11 +53,6 @@ export class CreateOrganizationDto {
   status: string;
 
   @ApiProperty()
-  @IsUUID()
-  @IsOptional()
-  typeId: string;
-
-  @ApiProperty()
   @IsString()
   @IsOptional()
   version: string;
@@ -133,8 +128,6 @@ export class CreateOrganizationDto {
     organization.externalOrganizationCode =
       organizationDto.externalOrganizationCode;
 
-    organization.typeId = organizationDto.typeId;
-
     return organization;
   }
 
@@ -189,8 +182,6 @@ export class UpdateOrganizationDto extends CreateOrganizationDto {
 
     organization.externalOrganizationCode =
       organizationDto.externalOrganizationCode;
-
-    organization.typeId = organizationDto.typeId;
 
     if (organizationDto.logo) {
       organization.logo = organizationDto.logo;
@@ -291,8 +282,6 @@ export class OrganizationResponseDto extends UpdateOrganizationDto {
 
     organizationDto.externalOrganizationCode =
       organization.externalOrganizationCode;
-
-    organizationDto.typeId = organization.typeId;
 
     if (organization.logo) {
       organizationDto.logo = organization.logo;

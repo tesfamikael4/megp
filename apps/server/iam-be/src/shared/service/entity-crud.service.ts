@@ -10,7 +10,8 @@ export class EntityCrudService<T extends BaseEntity> {
 
   async create(itemData: DeepPartial<T>, req?: any): Promise<T> {
     const item = this.repository.create(itemData);
-    return await this.repository.save(item);
+    await this.repository.insert(item as any);
+    return item;
   }
 
   async findAll(query: CollectionQuery, req?: any) {
