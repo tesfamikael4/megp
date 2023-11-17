@@ -103,6 +103,7 @@ export class ApplicationExcutionService {
         businessProcess: {
           service: true,
         },
+        taskTrackers: true
       },
       where: {
         businessProcess: {
