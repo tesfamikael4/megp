@@ -14,4 +14,5 @@ export enum VendorStatusEnum {
   REJECTED = 'Rejected',
   ACTIVE = 'Active',
   PENDING = 'Pending',
+  COMPLETE = 'Complete ',
 }

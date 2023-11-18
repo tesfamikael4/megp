@@ -8,7 +8,10 @@ export class CreateBusinessAreaDto {
   vendorId: string;
   @IsNotEmpty()
   @ApiProperty()
-  categoryId: string;
+  category: string;
+  @IsNotEmpty()
+  @ApiProperty()
+  instanceId: string;
   @ApiProperty()
   status: string;
   @ApiProperty()
@@ -19,7 +22,8 @@ export class CreateBusinessAreaDto {
     const entity = new BusinessAreaEntity();
     if (!dto) return;
     entity.vendorId = dto.vendorId;
-    entity.categoryId = dto.categoryId;
+    entity.instanceId = dto.instanceId;
+    entity.category = dto.category;
     entity.status = dto?.status;
     entity.approvedAt = dto?.approvedAt;
     entity.expireDate = dto?.expireDate;
@@ -40,7 +44,8 @@ export class UpdateBusinessAreaDto extends CreateBusinessAreaDto {
     if (!dto) return;
     entity.id = dto.id;
     entity.vendorId = dto.vendorId;
-    entity.categoryId = dto.categoryId;
+    entity.instanceId = dto.instanceId;
+    entity.category = dto.category;
     entity.status = dto?.status;
     entity.expireDate = dto?.expireDate;
     entity.approvedAt = dto?.approvedAt;
@@ -57,8 +62,9 @@ export class BusinessAreaResponseDto extends CreateBusinessAreaDto {
   static toResponse(entity: BusinessAreaEntity): BusinessAreaResponseDto {
     const response = new BusinessAreaResponseDto();
     response.id = entity.id;
-    response.categoryId = entity.categoryId;
+    response.category = entity.category;
     response.vendorId = entity.vendorId;
+    response.instanceId = entity.instanceId;
     response.status = entity.status;
     response.expireDate = entity.expireDate;
     response.approvedAt = entity.approvedAt;
