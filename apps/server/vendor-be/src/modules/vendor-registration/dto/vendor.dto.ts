@@ -188,10 +188,24 @@ export class SetVendorStatus {
   userId: string;
   @ApiProperty()
   @IsNotEmpty()
+  @IsUUID()
+  isrVendorId: string;
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsUUID()
+  instanceId: string;
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsUUID()
+  serviceId: string;
+  @ApiProperty()
+  @IsNotEmpty()
   status: string;
   @ApiProperty()
-  // @IsNotEmpty()
+  @IsNotEmpty()
   remark: string;
+  @ApiProperty()
+  category: string;
 }
 export class VendorInitiationBody {
   @ApiProperty()

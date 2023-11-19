@@ -25,6 +25,7 @@ export class CreateWorkflowInstanceDto {
   pricingId: string;
   createdBy: string;
   data?: any;
+  user: string;
   /**
    * Transfer Data from DTO object to Entity object
    *
