@@ -29,6 +29,8 @@ export class WorkflowInstanceEntity {
   serviceId: string;
   @Column({ nullable: true })
   businessStatus: string; //active |inactive
+  @Column({ nullable: true, type: 'jsonb' })
+  user: string;
   @Column({
     type: 'timestamptz',
     default: () => 'CURRENT_TIMESTAMP',

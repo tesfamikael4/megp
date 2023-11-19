@@ -30,15 +30,10 @@ import { SetVendorStatus } from '../dto/vendor.dto';
 @ApiExtraModels(DataResponseFormat)
 export class VendorRegistrationsController {
   userInfo: any;
-  constructor(private readonly regService: VendorRegistrationsService) {
-    this.userInfo = {
-      userId: 'b23f0b00-0a59-4f6d-9fd9-34d6fa960e0',
-      name: 'muktar joseph',
-    };
-  }
-  @Get('get-vendors')
+  constructor(private readonly regService: VendorRegistrationsService) {}
+  @Get('get-isr-vendors')
   async getVendors() {
-    return await this.regService.getVendors();
+    return await this.regService.getIsrVendors();
   }
 
   @Get('get-vendor-status-byId/:vendorId')
@@ -51,8 +46,7 @@ export class VendorRegistrationsController {
     @Body() createAreasOfBusinessInterest: CreateAreasOfBusinessInterest[],
     @CurrentUser() userInfo: any,
   ) {
-    createAreasOfBusinessInterest[0].userId =
-      'b23f0b00-0a59-4f6d-9fd9-34d6fa960e0';
+    createAreasOfBusinessInterest[0].userId = userInfo.id;
     return await this.regService.addVendorAreaOfInterestByVendorId(userInfo.id);
   }
   @Get('get-vendor-by-userId')
@@ -70,6 +64,15 @@ export class VendorRegistrationsController {
   @Get('get-isr-vendor-invoice-by-userId')
   async getIsrVendorInvoiceByuserId(@CurrentUser() userInfo: any) {
     return await this.regService.getIsrVendorInvoiceByUserId(userInfo.id);
+  }
+  @Get('get-isr-vendor-info-by-userId')
+  async getPendingIsrVendorByuserId(@CurrentUser() userInfo: any) {
+    return await this.regService.getPendingIsrVendorByuserId(userInfo.id);
+  }
+
+  @Get('get-completed-isr-vendor-by-userId')
+  async getCompletedIsrVendorByuserId(@CurrentUser() userInfo: any) {
+    return await this.regService.getCompletedIsrVendorByuserId(userInfo.id);
   }
   @Post('add-vendor-information')
   async addVendorInformation(
@@ -89,11 +92,18 @@ export class VendorRegistrationsController {
     @Body() vendorInitiationDto: VendorInitiationDto,
     @CurrentUser() user: any,
   ) {
-    vendorInitiationDto.status = 'Draft';
+    vendorInitiationDto.status = 'Save as Draft';
     vendorInitiationDto.level = 'basic';
-    return await this.regService.VendorInitiation(vendorInitiationDto, user);
+    return await this.regService.vendorInitiation(vendorInitiationDto, user);
   }
-
+  @Post('approve-vendor-services')
+  async approveVednorServices(@Body() vendorStatusDto: SetVendorStatus) {
+    return await this.regService.approveVendor(vendorStatusDto);
+  }
+  @Post('adjust-vendor-services')
+  async adjustVednorServices(@Body() vendorStatusDto: SetVendorStatus) {
+    return await this.regService.adjustVendor(vendorStatusDto);
+  }
   @Post('set-application-status')
   async setVendorStatus(@Body() vendorStatusDto: SetVendorStatus) {
     return await this.regService.setVendorStatus(vendorStatusDto);

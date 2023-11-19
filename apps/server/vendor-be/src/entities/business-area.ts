@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { VendorsEntity } from './vendors.entity';
 import { ParseIntPipe } from '@nestjs/common';
+import { IsrVendorsEntity } from './isr-vendors.entity';
 
 @Entity({ name: 'business-areas' })
 export class BusinessAreaEntity {
@@ -16,19 +17,22 @@ export class BusinessAreaEntity {
   @Column({ type: 'uuid' })
   vendorId: string;
   @Column({ type: 'uuid' })
-  instanceId: string;
+  serviceId: string;
   @Column({ type: 'uuid' })
+  instanceId: string;
+  @Column()
   category: string;
   @Column({ default: new Date() })
   approvedAt: Date;
   @Column({ default: () => `CURRENT_TIMESTAMP + INTERVAL '1 year'` })
   expireDate: Date;
-  @Column({ default: 'Active' })
+  @Column({ default: 'Pending' })
   status: string;
-
-  @ManyToOne(() => VendorsEntity, (vendor) => vendor.businessCats)
+  @Column({ nullable: true })
+  remark: string;
+  @ManyToOne(() => IsrVendorsEntity, (vendor) => vendor.vendor)
   @JoinColumn({ name: 'vendorId' })
-  vendor: VendorsEntity;
+  vendor: IsrVendorsEntity;
 
   @BeforeInsert()
   setDefaultExpireYear() {
