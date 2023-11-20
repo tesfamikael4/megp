@@ -24,6 +24,8 @@ export class APP {
   @Column()
   description: string;
 
-  @OneToOne(() => PreBudgetPlan, (preBudgetPlans) => preBudgetPlans.app)
+  @OneToOne(() => PreBudgetPlan, (preBudgetPlans) => preBudgetPlans.app, {
+    cascade: true,
+  })
   preBudgetPlans: PreBudgetPlan;
 }

@@ -18,15 +18,13 @@ export class APPService extends EntityCrudService<APP> {
 
   async create(itemData: CreateAPPDto): Promise<APP> {
     const item = this.repositoryAPP.create(itemData);
-    await this.repositoryAPP.save(item);
 
     const preBud = new PreBudgetPlan();
     preBud.currency = '';
     preBud.totalEstimatedAmount = 0;
-    preBud.appId = item.id;
+    item.preBudgetPlans = preBud;
 
-    await this.repositoryPreBudgetPlan.save(preBud);
-
+    await this.repositoryAPP.save(item);
     return item;
   }
 }
