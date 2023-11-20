@@ -10,8 +10,10 @@ import { AreasOfBusinessInterestForm } from '../_components/ppda/formShell';
 
 function Page() {
   const router = useRouter();
-  const requestInfo = useGetVendorQuery({});
-
+  const requestInfo = useGetVendorQuery(
+    {},
+    { refetchOnMountOrArgChange: true },
+  );
   useEffect(() => {
     if (requestInfo.isError) {
       NotificationService.requestErrorNotification('Error on fetching data');

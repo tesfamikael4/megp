@@ -8,7 +8,10 @@ import RegistrationForm from '../_components/detail/formShell';
 
 export default function Page() {
   const router = useRouter();
-  const requestInfo = useGetVendorQuery({});
+  const requestInfo = useGetVendorQuery(
+    {},
+    { refetchOnMountOrArgChange: true },
+  );
   useEffect(() => {
     if (requestInfo.error) {
       NotificationService.requestErrorNotification('Error on fetching data');

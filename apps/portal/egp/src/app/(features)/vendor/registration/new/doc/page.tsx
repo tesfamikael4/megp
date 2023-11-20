@@ -3,7 +3,6 @@ import { Flex, Button } from '@mantine/core';
 import React, { useEffect } from 'react';
 import UppyAttachmentDashboard from '../../../_components/UppyAttachmentDashboard/UppyAttachmentDashboard';
 import { useRouter } from 'next/navigation';
-import { getCookie } from 'cookies-next';
 import { useAddFormMutation, useGetVendorQuery } from '../../_api/query';
 import { NotificationService } from '../../../_components/notification';
 
@@ -44,12 +43,14 @@ function Page() {
       });
     }
   };
+  const FILE_SERVER_URL =
+    process.env.NEXT_PUBLIC_VENDOR_API + '/upload/' ?? '/venders/api/upload';
 
   return (
     <Flex className="w-full flex-col gap-2">
       <UppyAttachmentDashboard
-        tusServerGetUrl="http://localhost:3000/api/upload/"
-        tusServerPostUrl="http://localhost:3000/api/upload/files/"
+        tusServerGetUrl={FILE_SERVER_URL}
+        tusServerPostUrl={FILE_SERVER_URL}
         id="businessRegistration_IncorporationCertificate"
         label="Business Registration/Incorporation Certificate"
         placeholder="Upload"
@@ -64,8 +65,8 @@ function Page() {
         }
       />
       <UppyAttachmentDashboard
-        tusServerGetUrl="http://localhost:3000/api/upload/"
-        tusServerPostUrl="http://localhost:3000/api/upload/files/"
+        tusServerGetUrl={FILE_SERVER_URL}
+        tusServerPostUrl={FILE_SERVER_URL}
         id="mRA_TPINCertificate"
         label="MRA TPIN Certificate"
         placeholder="Upload"
@@ -77,8 +78,8 @@ function Page() {
         storeId={requestInfo.data?.supportingDocuments.mRA_TPINCertificate}
       />
       <UppyAttachmentDashboard
-        tusServerGetUrl="http://localhost:3000/api/upload/"
-        tusServerPostUrl="http://localhost:3000/api/upload/files/"
+        tusServerGetUrl={FILE_SERVER_URL}
+        tusServerPostUrl={FILE_SERVER_URL}
         id="generalReceipt_BankDepositSlip"
         label="General Receipt/Bank Deposit Slip"
         placeholder="Upload"
@@ -92,8 +93,8 @@ function Page() {
         }
       />
       <UppyAttachmentDashboard
-        tusServerGetUrl="http://localhost:3000/api/upload/"
-        tusServerPostUrl="http://localhost:3000/api/upload/files/"
+        tusServerGetUrl={FILE_SERVER_URL}
+        tusServerPostUrl={FILE_SERVER_URL}
         id="mRATaxClearanceCertificate"
         label="MRA Tax Clearance Certificate"
         placeholder="Upload"
@@ -107,8 +108,8 @@ function Page() {
         }
       />
       <UppyAttachmentDashboard
-        tusServerGetUrl="http://localhost:3000/api/upload/"
-        tusServerPostUrl="http://localhost:3000/api/upload/files/"
+        tusServerGetUrl={FILE_SERVER_URL}
+        tusServerPostUrl={FILE_SERVER_URL}
         id="previousPPDARegistrationCertificate"
         label="Previous PPDA Registration Certificate"
         placeholder="Upload"

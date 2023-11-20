@@ -6,7 +6,6 @@ export const baseQuery = (baseUrl = '/') => {
     baseUrl: baseUrl,
     prepareHeaders: (headers) => {
       const token = getCookie('token');
-      console.log(token);
       if (token) {
         headers.set('authorization', `Bearer ${token}`);
       }

@@ -100,6 +100,20 @@ export interface AddFormRequest {
   data: AddFormRequestData | GetFormResponse;
 }
 
+export interface ApplicationService {
+  serviceStatus: string;
+  serviceRemark: string | null;
+  category: string;
+  trackingNumber: string | null;
+}
+export interface GetVendorInfoResponse {
+  name: string;
+  tinNumber: string;
+  level: string;
+  vendorStatus: string;
+  areasOfBusinessInterest: AreasOfBusinessInterestType[];
+  services: ApplicationService[];
+}
 export interface GetFormRequest {
   vendorId: string;
 }
@@ -132,6 +146,7 @@ export interface BankNamesResponse {
   bankName: string;
   metaData: Record<string, any>; // You can use Record<string, any> for an empty object
 }
+
 export interface LineOfBusinessResponse {
   total: number;
   items: {
@@ -142,6 +157,7 @@ export interface LineOfBusinessResponse {
     createdAt: string;
   }[];
 }
+
 export interface PriceRangeResponse {
   id: string;
   serviceId: string;
@@ -157,6 +173,7 @@ export interface PriceRangeResponse {
     isActive: boolean;
   };
 }
+
 export interface GetMBRSDataResponse {
   tin: string;
   businessLicenseNumber: string;

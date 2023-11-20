@@ -6,15 +6,11 @@ import {
   Stack,
   TextInput,
   Center,
+  Box,
 } from '@mantine/core';
 import React, { useEffect, useState } from 'react';
 import InvoiceTemplate from '../../../_components/dynamicPrintComponent/invoice-sm';
-import { getCookie } from 'cookies-next';
-import {
-  useAddFormMutation,
-  useGetVendorQuery,
-  useLazyGetInvoiceQuery,
-} from '../../_api/query';
+import { useAddFormMutation, useGetInvoiceQuery } from '../../_api/query';
 import { NotificationService } from '../../../_components/notification';
 import { useRouter } from 'next/navigation';
 import PaymentMethod from '../_components/payment/payment-method';
@@ -23,45 +19,49 @@ import UppyAttachmentDashboard from '../../../_components/UppyAttachmentDashboar
 function Page() {
   const router = useRouter();
   const [transactionNum, setTransactionNum] = useState<string>('');
-  const requestInfo = useGetVendorQuery({});
-  const [getInvoice, invoiceInfo] = useLazyGetInvoiceQuery();
+  const invoiceInfo = useGetInvoiceQuery(
+    {},
+    { refetchOnMountOrArgChange: true },
+  );
   const [save, saveValues] = useAddFormMutation();
-
-  useEffect(() => {
-    if (requestInfo.isError) {
-      NotificationService.requestErrorNotification('Error on fetching data');
-    }
-    if (requestInfo.data) {
-      getInvoice({});
-    }
-    return () => {};
-  }, [requestInfo, getInvoice]);
-
-  useEffect(() => {
-    if (saveValues.isSuccess) {
-      NotificationService.successNotification('Payed Successfully!');
-      // router.push(doc);
-    }
-    if (saveValues.isError) {
-      NotificationService.requestErrorNotification('Error on Request');
-    }
-    return () => {};
-  }, [saveValues.isSuccess, saveValues.isError, router]);
 
   useEffect(() => {
     if (invoiceInfo.isError) {
       NotificationService.requestErrorNotification('Error on getting invoice');
     }
     return () => {};
-  }, [invoiceInfo.isSuccess, invoiceInfo.isError]);
+  }, [invoiceInfo.isError]);
+
+  useEffect(() => {
+    if (invoiceInfo.data?.invoice && invoiceInfo.data?.invoice?.length <= 0) {
+      NotificationService.requestErrorNotification('Error on getting invoice');
+    }
+
+    return () => {};
+  }, [invoiceInfo.data]);
+
+  useEffect(() => {
+    if (saveValues.isError) {
+      NotificationService.requestErrorNotification('Error on Request');
+    }
+    return () => {};
+  }, [saveValues.isError]);
+
+  useEffect(() => {
+    if (saveValues.isSuccess) {
+      NotificationService.successNotification('Payed Successfully!');
+      router.push('doc');
+    }
+    return () => {};
+  }, [saveValues.isSuccess]);
 
   const onSave = () => {
-    if (requestInfo.data && transactionNum) {
+    if (invoiceInfo.data && transactionNum) {
       save({
         data: {
-          ...requestInfo.data,
+          ...invoiceInfo.data,
           initial: {
-            ...requestInfo.data.initial,
+            ...invoiceInfo.data.initial,
             level: 'doc',
           },
         },
@@ -69,17 +69,26 @@ function Page() {
     }
   };
 
+  if (invoiceInfo.isLoading) {
+    return (
+      <Box pos="relative" className="w-full h-full">
+        <LoadingOverlay
+          visible={true}
+          zIndex={1000}
+          overlayProps={{ radius: 'sm', blur: 2 }}
+        />
+      </Box>
+    );
+  }
+  if (invoiceInfo.isError) {
+    return null;
+  }
+  const FILE_SERVER_URL =
+    process.env.NEXT_PUBLIC_VENDOR_API + '/upload/' ?? '/venders/api/upload';
+
   return (
     <Flex className="flex-col w-full relative items-center justify-center">
       <Flex className="gap-2 w-full">
-        <LoadingOverlay
-          visible={
-            saveValues.isLoading ||
-            requestInfo.isLoading ||
-            invoiceInfo.isLoading
-          }
-          overlayProps={{ radius: 'sm', blur: 2 }}
-        />
         <Flex className="flex-col border p-4 shadow-md h-fit max-w-3xl w-full">
           <Center>
             <PaymentMethod />
@@ -94,21 +103,21 @@ function Page() {
             />
             {invoiceInfo.data?.invoice && invoiceInfo.data?.invoice[0] && (
               <UppyAttachmentDashboard
-                tusServerGetUrl="http://localhost:3000/api/upload/"
-                tusServerPostUrl="http://localhost:3000/api/upload/files/"
+                tusServerGetUrl={FILE_SERVER_URL}
+                tusServerPostUrl={FILE_SERVER_URL}
                 id="paymentSlip"
                 label="Payment Slip"
                 placeholder="Upload"
                 metaData={{
                   entityName: 'paymentReceipt',
                   fieldName: 'paymentSlip',
-                  instanceId: requestInfo.data?.id,
+                  instanceId: invoiceInfo.data?.id,
                   transactionId: transactionNum,
                   category: 'goods',
                   invoiceId: invoiceInfo.data?.invoice[0].id,
                   attachment: '',
                 }}
-                storeId={invoiceInfo.data?.paymentReceipt[0].attachment}
+                storeId={invoiceInfo.data?.invoice[0].attachment ?? ''}
               />
             )}
           </Stack>
