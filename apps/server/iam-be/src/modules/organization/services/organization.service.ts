@@ -16,11 +16,15 @@ import {
 } from '../dto/organization.dto';
 
 import { EntityCrudService } from 'src/shared/service';
+import { AccountsService } from 'src/modules/account/services/account.service';
+import { UserService } from './user.service';
 @Injectable()
 export class OrganizationService extends EntityCrudService<Organization> {
   constructor(
     @InjectRepository(Organization)
     private readonly repositoryOrganization: Repository<Organization>,
+    private readonly accountsService: AccountsService,
+    private readonly userService: UserService,
   ) {
     super(repositoryOrganization);
   }
@@ -29,9 +33,17 @@ export class OrganizationService extends EntityCrudService<Organization> {
     organization: CreateOrganizationDto,
   ): Promise<Organization | null> {
     organization.code = this.generateOrganizationCode();
-    organization.type = 'Back-office';
-    organization.budgetType = 'default';
-    return await super.create(organization);
+    organization.type = 'BACK-OFFICE';
+    organization.budgetType = 'DEFAULT';
+
+    const account =
+      await this.accountsService.createDefaultOrganizationAccount(organization);
+
+    const result = await super.create(organization);
+
+    await this.userService.createDefaultOrganizationUser(account, result.id);
+
+    return result;
   }
 
   async activate(
