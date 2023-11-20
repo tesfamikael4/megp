@@ -5,9 +5,9 @@ import { usePathname, useRouter } from 'next/navigation'; // Updated import
 import {
   IconBriefcase,
   IconDashboard,
-  IconFolderPlus,
   IconHeartHandshake,
   IconNotification,
+  IconUserCog,
 } from '@tabler/icons-react';
 import styles from './sidebar.module.scss';
 export interface SidebarLinks {
@@ -35,7 +35,7 @@ export const sidebarLinks: SidebarLinks[] = [
   },
   {
     label: 'Vendor Service',
-    icon: IconFolderPlus,
+    icon: IconUserCog,
     links: [
       {
         label: 'New',
@@ -56,6 +56,10 @@ export const sidebarLinks: SidebarLinks[] = [
       {
         label: 'Add Additional service',
         link: '/vendor/registration/additional-service',
+      },
+      {
+        label: 'Track Application',
+        link: '/vendor/registration/track-applications',
       },
     ],
   },

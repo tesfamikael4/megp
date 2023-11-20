@@ -10,7 +10,7 @@
      /* background-color: var(--mantine-color-gray-1); */
 }
 .main {
-    @apply flex-grow border border-r w-full ;
+    @apply flex-grow border border-r w-full min-h-screen;
     /* background-color: var(--mantine-color-gray-1); */
     width: 72.8125rem;
 }

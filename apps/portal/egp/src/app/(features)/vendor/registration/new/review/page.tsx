@@ -8,7 +8,10 @@ import { useRouter } from 'next/navigation';
 
 function Page() {
   const router = useRouter();
-  const requestInfo = useGetVendorQuery({});
+  const requestInfo = useGetVendorQuery(
+    {},
+    { refetchOnMountOrArgChange: true },
+  );
   const [save, saveValues] = useAddFormMutation();
 
   useEffect(() => {
@@ -23,7 +26,7 @@ function Page() {
   useEffect(() => {
     if (saveValues.isSuccess) {
       NotificationService.successNotification('Submitted Successfully!');
-      router.push(`/vendor/track-applications`);
+      router.push(`/vendor/registration/track-applications`);
     }
     if (saveValues.isError) {
       NotificationService.requestErrorNotification('Error on Request');

@@ -14,4 +14,5 @@ export interface InvoiceData {
   createdOn: string; // You can use a date-time library like moment.js for date parsing and formatting
   paymentStatus: string;
   remark: string;
+  attachment: string;
 }

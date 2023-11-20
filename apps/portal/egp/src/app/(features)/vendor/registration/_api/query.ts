@@ -10,6 +10,7 @@ import {
   GetFPPADataResponse,
   GetMBRSDataResponse,
   AddFormRequest,
+  GetVendorInfoResponse,
 } from '@/models/vendorRegistration';
 import {
   vendorDataGetawayApi,
@@ -20,6 +21,9 @@ export const vendorRegistrationQuery = vendorRegistrationApi.injectEndpoints({
   endpoints: (builder) => ({
     getVendor: builder.query<GetFormResponse, any>({
       query: () => `/vendor-registrations/get-isr-vendor-by-userId`,
+    }),
+    getVendorInfo: builder.query<GetVendorInfoResponse, any>({
+      query: () => `/vendor-registrations/get-isr-vendor-info-by-userId`,
     }),
     getForm: builder.query<GetFormResponse, any>({
       query: () => `/vendor-registrations/get-vendor-by-vendorId`,
@@ -100,7 +104,8 @@ export const vendorDataGetawayQuery = vendorDataGetawayApi.injectEndpoints({
 export const {
   useGetFormQuery,
   useGetVendorQuery,
-  useLazyGetInvoiceQuery,
+  useGetVendorInfoQuery,
+  useGetInvoiceQuery,
   useCreateVendorIdMutation,
   useAddFormMutation,
   useGetBankListQuery,

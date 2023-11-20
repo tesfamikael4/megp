@@ -1,0 +1,16 @@
+.main {
+  @apply flex border w-full p-4 h-full bg-gray-100;
+}
+
+.nav {
+  @apply flex flex-col  gap-3;
+  background-color: var(--mantine-color-gray-1);
+}
+
+.detailWrapper {
+  @apply flex flex-col gap-3 p-3 h-full ;
+  background-color: var(--mantine-color-gray-1);
+}
+.detail {
+  @apply flex flex-col gap-3 p-3 h-full;
+}
