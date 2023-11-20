@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsUUID } from 'class-validator';
-import { VendorsResponseDto } from 'src/modules/vendor-registration/dto/vendor.dto';
 import { BpServiceResponse } from 'src/modules/services/dto/bp-service.dto';
 import { TaskCheckListDto } from './task-check-list.dto';
 import { TaskHandlerEntity } from 'src/entities/task-handler.entity';
@@ -111,14 +110,18 @@ export class TaskHandlerResponse extends UpdateTaskHandlerDto {
   @ApiProperty()
   executedAt: Date;
   static toResponse(entity: TaskHandlerEntity) {
-    let user = null;
-    if (Object.values(entity.handlerUser).length != 0)
-      user = JSON.parse(entity?.handlerUser);
     const response = new TaskHandlerResponse();
     response.id = entity.id;
     response.taskId = entity.taskId;
     response.instanceId = entity.instanceId;
-    response.handlerName = user?.firstName + ' ' + user?.lastName;
+    if (entity?.handlerUser) {
+      const json = JSON.stringify(entity?.handlerUser);
+      const parsed = JSON.parse(json);
+      response.handlerName = parsed.firstName + ' ' + parsed.lastName;
+    } else {
+      response.handlerName = null;
+    }
+
     response.handlerUserId = entity.handlerUserId;
     response.pickedAt = entity.pickedAt;
     response.data = entity.data;

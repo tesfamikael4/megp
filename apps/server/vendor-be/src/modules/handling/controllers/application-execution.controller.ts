@@ -90,14 +90,17 @@ export class ApplicationExcutionController {
   @UseGuards(JwtGuard)
   @Post('intiate-workflow')
   @ApiOkResponse({ type: WorkflowInstanceResponse })
-  async testWF(@Body() wfi: CreateWorkflowInstanceDto) {
+  async testWF(@Body() wfi: CreateWorkflowInstanceDto, @CurrentUser() user, @Req() request: Request,) {
+    const authToken = request.headers['authorization'].split(' ')[1];
+    user['token'] = authToken;
+
     const bp = await this.bpService.findBpService(wfi.pricingId);
     if (!bp) throw new NotFoundException('BP not found');
     wfi.serviceId = bp.serviceId;
     wfi.bpId = bp.id;
     return await this.workflowService.intiateWorkflowInstance(
       wfi,
-      this.userInfo,
+      user,
     );
   }
 

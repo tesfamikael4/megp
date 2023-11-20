@@ -21,7 +21,7 @@ export class WorkflowInstanceEntity {
   @Column({ nullable: true })
   requestorId: string;
   @Column({ nullable: true, type: 'jsonb' })
-  user: string;
+  user: object;
   @Column({ nullable: true })
   userId: string;
   @Column({ default: 'Submitted' })

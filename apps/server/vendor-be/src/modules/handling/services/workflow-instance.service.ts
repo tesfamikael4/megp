@@ -67,7 +67,7 @@ export class WorkflowInstanceService {
     private readonly receiptRepository: Repository<PaymentReceiptEntity>,
     private readonly bpService: BusinessProcessService,
     private readonly commonService: HandlingCommonService,
-  ) {}
+  ) { }
 
   async submitFormBasedTask(
     nextCommand: GotoNextStateDto,
@@ -442,7 +442,7 @@ export class WorkflowInstanceService {
             taskId: currentTaskHandlerCopy.taskId,
             instanceId: workflowInstance.id,
             data: nextCommand.data,
-            handlerUserId: user.id,
+            handlerUserId: user?.id,
             action: nextCommand.action,
             previousHandlerId: currentTaskHandlerCopy.previousHandlerId,
             handlerUser: user,
