@@ -30,7 +30,7 @@ const MandatePermission = ({
   }, [selectedRow, trigger]);
 
   useEffect(() => {
-    triggerApp();
+    triggerApp({});
   }, [triggerApp]);
 
   useEffect(() => {

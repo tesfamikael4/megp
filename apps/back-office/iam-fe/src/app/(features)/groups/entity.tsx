@@ -9,7 +9,7 @@ import { logger } from '@megp/core-fe';
 export function Entity({ children }: { children: React.ReactElement }) {
   const route = useRouter();
 
-  const { data: list, isLoading } = useListQuery();
+  const { data: list, isLoading } = useListQuery({});
 
   const {
     data: selected,

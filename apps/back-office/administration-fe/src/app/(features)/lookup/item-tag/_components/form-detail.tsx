@@ -23,7 +23,7 @@ export function ItemTagForm(props: ItemTagFormPropType) {
 
   const [name, setName] = useState('');
   const [error, setError] = useState('');
-  const { data } = useListQuery();
+  const { data } = useListQuery({});
 
   const [remove, { isLoading: isDeleting }] = useDeleteMutation();
   const [add, { isLoading: isSaving }] = useCreateMutation();

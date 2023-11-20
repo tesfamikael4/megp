@@ -10,7 +10,7 @@ import { Box } from '@mantine/core';
 export function Entity({ children }: { children: React.ReactElement }) {
   const route = useRouter();
 
-  const { data: list, isLoading, isError } = useListQuery();
+  const { data: list, isLoading, isError } = useListQuery({});
 
   logger.log('list', list, isLoading, isError);
 

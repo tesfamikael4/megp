@@ -1,4 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import type { CollectionQuery } from '../models';
+import { encodeCollectionQuery } from '../utilities/query-builder';
 
 interface Entity {
   id: string;
@@ -7,6 +9,7 @@ interface EntityCollection<T> {
   items: T[];
   total: number;
 }
+
 export const createEntitySlice = <T extends Entity>(
   api: ReturnType<typeof createApi>,
   entityName: string,
@@ -16,11 +19,18 @@ export const createEntitySlice = <T extends Entity>(
   api.injectEndpoints({
     endpoints: (builder) => {
       return {
-        list: builder.query<EntityCollection<T>, void>({
-          query: () => ({
-            url: `/${entityName.toLowerCase()}`,
-            method: 'GET',
-          }),
+        list: builder.query<EntityCollection<T>, CollectionQuery | undefined>({
+          query: (collectionQuery) => {
+            let q = '';
+            if (collectionQuery) {
+              const query = encodeCollectionQuery(collectionQuery);
+              q = `q?${query}`;
+            }
+            return {
+              url: `/${entityName.toLowerCase()}${q}`,
+              method: 'GET',
+            };
+          },
           providesTags: (result) =>
             result
               ? [
@@ -152,11 +162,21 @@ export const EntitySliceApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: '/' }),
   endpoints: (builder) => {
     return {
-      list: builder.query<{ items: any[] }, void>({
-        query: () => ({
-          url: '/entity',
-          method: 'Get',
-        }),
+      list: builder.query<
+        { items: any[]; total: number },
+        CollectionQuery | undefined
+      >({
+        query: (collectionQuery) => {
+          let q = '';
+          if (collectionQuery) {
+            const query = encodeCollectionQuery(collectionQuery);
+            q = `q?${query}`;
+          }
+          return {
+            url: `/entity${q}`,
+            method: 'GET',
+          };
+        },
         providesTags: (result) =>
           result
             ? [

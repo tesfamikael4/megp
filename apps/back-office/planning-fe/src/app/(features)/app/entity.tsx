@@ -7,7 +7,7 @@ import { useListQuery } from './_api/app.api';
 
 export function Entity({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const { data: list } = useListQuery();
+  const { data: list } = useListQuery({});
 
   const config: EntityConfig<any> = useMemo(() => {
     return {

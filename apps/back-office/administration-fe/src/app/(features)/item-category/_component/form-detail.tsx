@@ -54,7 +54,7 @@ export function FormDetail({ mode }: FormDetailProps) {
     data: listData,
     isSuccess: listSuccess,
     isLoading: listLoading,
-  } = useListQuery();
+  } = useListQuery({});
   const onCreate = async (data) => {
     try {
       await create(data);

@@ -10,7 +10,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
 
   const pathname = usePathname();
 
-  const { data: list, isLoading } = useListQuery();
+  const { data: list, isLoading } = useListQuery({});
 
   useEffect;
   const config: EntityConfig<Mandate> = useMemo(() => {
