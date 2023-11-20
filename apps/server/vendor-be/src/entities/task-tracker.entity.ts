@@ -20,8 +20,8 @@ export class TaskTrackerEntity {
   data: object;
   @Column({ nullable: true })
   handlerUserId: string;
-  @Column({ nullable: true })
-  handlerName: string;
+  @Column({ nullable: true, type: 'jsonb' })
+  handlerUser: string;
   @Column({ nullable: true })
   pickedAt: Date;
   @Column()

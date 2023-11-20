@@ -17,7 +17,7 @@ export class CreateTaskTrackerDto {
   @ApiProperty()
   handlerUserId: string;
   @ApiProperty()
-  handlerName: string;
+  handlerUser: string;
   @ApiProperty()
   pickedAt: Date;
   @ApiProperty()
@@ -46,7 +46,7 @@ export class CreateTaskTrackerDto {
     entity.instanceId = dto.instanceId;
     entity.previousHandlerId = dto.previousHandlerId;
     entity.handlerUserId = dto.handlerUserId;
-    entity.handlerName = dto.handlerName;
+    entity.handlerUser = dto.handlerUser;
     entity.action = dto.action;
     entity.executedAt = dto.executedAt;
     entity.remark = dto.remark;
@@ -84,7 +84,7 @@ export class UpdateTaskTrackerDto extends CreateTaskTrackerDto {
     entity.remark = dto.remark;
     entity.executedAt = dto.executedAt;
     entity.pickedAt = dto.pickedAt;
-    entity.handlerName = dto.handlerName;
+    entity.handlerUser = dto.handlerUser;
     entity.checklists = dto.checkLists;
     return entity;
   }
@@ -102,7 +102,7 @@ export class TaskTrackerResponse extends UpdateTaskTrackerDto {
     response.id = entity.id;
     response.taskId = entity.taskId;
     response.instanceId = entity.instanceId;
-    response.handlerName = entity.handlerName;
+    response.handlerUser = entity.handlerUser;
     response.handlerUserId = entity.handlerUserId;
     response.pickedAt = entity.pickedAt;
     response.data = entity.data;

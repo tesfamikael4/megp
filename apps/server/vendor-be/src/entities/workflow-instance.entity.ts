@@ -11,7 +11,6 @@ import {
 import { ServicePrice } from 'src/entities/service-price.entity';
 import { TaskHandlerEntity } from 'src/entities/task-handler.entity';
 import { TaskTrackerEntity } from 'src/entities/task-tracker.entity';
-import { VendorsEntity } from './vendors.entity';
 import { IsrVendorsEntity } from './isr-vendors.entity';
 @Entity({ name: 'workflow_instances' })
 export class WorkflowInstanceEntity {
@@ -21,6 +20,10 @@ export class WorkflowInstanceEntity {
   applicationNumber: string;
   @Column({ nullable: true })
   requestorId: string;
+  @Column({ nullable: true, type: 'jsonb' })
+  user: string;
+  @Column({ nullable: true })
+  userId: string;
   @Column({ default: 'Submitted' })
   status: string;
   @Column()
@@ -29,8 +32,6 @@ export class WorkflowInstanceEntity {
   serviceId: string;
   @Column({ nullable: true })
   businessStatus: string; //active |inactive
-  @Column({ nullable: true, type: 'jsonb' })
-  user: string;
   @Column({
     type: 'timestamptz',
     default: () => 'CURRENT_TIMESTAMP',

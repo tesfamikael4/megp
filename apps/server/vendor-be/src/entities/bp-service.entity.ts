@@ -6,11 +6,11 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 export class BpServiceEntity extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column({ name: 'name' })
+  @Column()
   name: string;
-  @Column({ name: 'key', unique: true })
+  @Column({ unique: true })
   key: string;
-  @Column({ name: 'description', type: 'text', nullable: true })
+  @Column({ nullable: true })
   description: string;
   @Column({ default: true })
   isActive: boolean;

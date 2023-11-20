@@ -172,7 +172,7 @@ export class WorkflowInstanceService {
       taskHandler.instanceId = wfinstance.id;
       taskHandler.taskId = task.id;
       taskHandler.previousHandlerId = null;
-      taskHandler.handlerName = userInfo.name; //userMeta
+      taskHandler.handlerUser = userInfo; //userMeta
       taskHandler.handlerUserId = userInfo.userId;
       taskHandler.assignmentStatus = AssignmentEnum.Unpicked;
       taskHandler.data = { ...dto.data };
@@ -400,7 +400,7 @@ export class WorkflowInstanceService {
             data: nextCommand?.data,
             action: nextCommand?.action,
             previousHandlerId: currentTaskHandler?.id,
-            handlerName: currentTaskHandler.handlerName,
+            handlerUser: currentTaskHandler.handlerUser,
             handlerUserId: currentTaskHandler.handlerUserId,
             pickedAt: currentTaskHandler.pickedAt
               ? currentTaskHandler.pickedAt
@@ -433,7 +433,7 @@ export class WorkflowInstanceService {
             : null;
           if (task.handlerType != HandlerTypeEnum.PreviousHandler) {
             currentTaskHandler.handlerUserId = null;
-            currentTaskHandler.handlerName = null;
+            currentTaskHandler.handlerUser = null;
             currentTaskHandler.assignmentStatus = AssignmentEnum.Unpicked;
             currentTaskHandler.pickedAt = null;
           }
@@ -442,10 +442,10 @@ export class WorkflowInstanceService {
             taskId: currentTaskHandlerCopy.taskId,
             instanceId: workflowInstance.id,
             data: nextCommand.data,
-            handlerUserId: user.userId,
+            handlerUserId: user.id,
             action: nextCommand.action,
             previousHandlerId: currentTaskHandlerCopy.previousHandlerId,
-            handlerName: user.firstName + ' ' + user.lastName,
+            handlerUser: user,
             pickedAt: currentTaskHandlerCopy.pickedAt,
             checkLists: nextCommand.taskChecklist,
             remark: nextCommand.remark,
@@ -532,7 +532,7 @@ export class WorkflowInstanceService {
     });
     const handler = { ...instance.taskHandler };
     handler.handlerUserId = userInfo.userId;
-    handler.handlerName = userInfo.name;
+    handler.handlerUser = userInfo;
     if (eventType.toLowerCase() === 'adjust') {
       instance.status = WorkflowInstanceEnum.Draft;
     } else if (eventType.toLowerCase() === 'approve') {
@@ -553,7 +553,7 @@ export class WorkflowInstanceService {
       where: { id: command.instanceId },
     });
     const handler = { ...instance.taskHandler };
-    handler.handlerName = userInfo.name;
+    handler.handlerUser = userInfo;
     handler.handlerUserId = userInfo.userId;
     handler.data = command.data;
     const tracker = new TaskTrackerEntity();

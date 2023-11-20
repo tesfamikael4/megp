@@ -38,7 +38,7 @@ export class ApplicationExcutionService {
     @InjectRepository(WorkflowInstanceEntity)
     private readonly wiRepository: Repository<WorkflowInstanceEntity>,
     private readonly dataSource: DataSource,
-  ) { }
+  ) {}
   async getCompletedTasks(instanceId: string): Promise<TaskTrackerResponse[]> {
     const ctasks = await this.taskTrackingRepository.find({
       where: { instanceId: instanceId },
@@ -103,7 +103,7 @@ export class ApplicationExcutionService {
         businessProcess: {
           service: true,
         },
-        taskTrackers: true
+        taskTrackers: true,
       },
       where: {
         businessProcess: {
@@ -182,8 +182,6 @@ export class ApplicationExcutionService {
 
     return response;
   }
-
-
 
   async getInvoices(
     query: CollectionQuery,
@@ -300,7 +298,7 @@ export class ApplicationExcutionService {
     }
     wfInstance.taskHandler.assignmentStatus = AssignmentEnum.Picked;
     wfInstance.taskHandler.handlerUserId = user.id;
-    wfInstance.taskHandler.handlerName = user.name;
+    wfInstance.taskHandler.handlerUser = user;
     wfInstance.taskHandler.pickedAt = new Date();
     const result = await this.wiRepository.save(wfInstance);
     if (result) return WorkflowInstanceResponse.toResponse(result);
@@ -316,7 +314,7 @@ export class ApplicationExcutionService {
     }
     wfInstance.taskHandler.assignmentStatus = AssignmentEnum.Unpicked;
     wfInstance.taskHandler.handlerUserId = null; //
-    wfInstance.taskHandler.handlerName = null;
+    wfInstance.taskHandler.handlerUser = null;
     wfInstance.taskHandler.pickedAt = null;
     return await this.wiRepository.save(wfInstance);
   }

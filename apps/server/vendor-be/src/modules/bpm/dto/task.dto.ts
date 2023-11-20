@@ -24,6 +24,8 @@ export class CreateTaskDto {
   @IsNotEmpty()
   level: string;
   @ApiProperty()
+  orderBy: number;
+  @ApiProperty()
   taskCkecklist: CreateTaskCheckListDto[];
   /**
    * Transfer Data from DTO object to Entity object
@@ -41,6 +43,7 @@ export class CreateTaskDto {
     entity.handlerType = dto.handlerType;
     entity.checkList = dto.taskCkecklist;
     entity.label = dto.level;
+    entity.orderBy = dto.orderBy;
     return entity;
   }
 
@@ -57,18 +60,7 @@ export class UpdateTaskDto extends CreateTaskDto {
   @IsUUID()
   @IsNotEmpty()
   id: string;
-  @ApiProperty()
-  @IsNotEmpty()
-  name: string;
-  @ApiProperty()
-  description: string;
-  @ApiProperty()
-  handlerType: string;
-  @ApiProperty()
-  @IsNotEmpty()
-  bpId: string;
-  @ApiProperty()
-  taskType: string;
+
   static fromDto(dto: UpdateTaskDto): TaskEntity {
     const entity = new TaskEntity();
     if (!dto) {
@@ -81,25 +73,12 @@ export class UpdateTaskDto extends CreateTaskDto {
     entity.handlerType = dto.handlerType;
     entity.taskType = dto.taskType;
     entity.label = dto.level;
+    entity.orderBy = dto.orderBy;
     return entity;
   }
 }
 
-export class TaskResponse {
-  @ApiProperty()
-  id: string;
-  @ApiProperty()
-  businessProcessId: string;
-  @ApiProperty()
-  name: string;
-  @ApiProperty()
-  description: string;
-  @ApiProperty()
-  handlerType: string;
-  @ApiProperty()
-  taskType: string;
-  @ApiProperty()
-  label: string;
+export class TaskResponse extends UpdateTaskDto {
   @ApiProperty()
   businessProcess?: BusinessProcessResponse;
   createdAt: Date;
@@ -109,13 +88,14 @@ export class TaskResponse {
   static toResponse(entity: TaskEntity) {
     const response = new TaskResponse();
     response.id = entity.id;
-    response.businessProcessId = entity.bpId;
+    response.bpId = entity.bpId;
     response.name = entity.name;
     response.description = entity.description;
     response.handlerType = entity.handlerType;
     response.taskType = entity.taskType;
     response.taskCheckList = entity.checkList;
-    response.label = entity.label;
+    response.level = entity.label;
+    response.orderBy = entity.orderBy;
     if (entity.businessProcess) {
       response.businessProcess = BusinessProcessResponse.toResponse(
         entity.businessProcess,

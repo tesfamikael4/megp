@@ -9,7 +9,6 @@ import { TaskHandlerResponse } from 'src/modules/bpm/dto/task-handler.dto';
 import { TaskTrackerResponse } from 'src/modules/bpm/dto/task-tracker.dto';
 import { TaskResponse } from 'src/modules/bpm/dto/task.dto';
 import { BpServiceResponse } from 'src/modules/services/dto/bp-service.dto';
-import { VendorsResponseDto } from 'src/modules/vendor-registration/dto/vendor.dto';
 export class CreateWorkflowInstanceDto {
   @ApiProperty()
   @IsNotEmpty()
@@ -21,6 +20,7 @@ export class CreateWorkflowInstanceDto {
   @IsOptional()
   serviceId: string;
   @ApiProperty()
+  @IsOptional()
   bpId: string;
   pricingId: string;
   createdBy: string;
@@ -56,6 +56,7 @@ export class UpdateWorkflowInstanceDto extends CreateWorkflowInstanceDto {
   @IsUUID()
   @IsNotEmpty()
   id: string;
+  user: any;
   static fromDto(dto: UpdateWorkflowInstanceDto): WorkflowInstanceEntity {
     const entity = new WorkflowInstanceEntity();
     if (!dto) {
@@ -67,6 +68,7 @@ export class UpdateWorkflowInstanceDto extends CreateWorkflowInstanceDto {
     entity.serviceId = dto.serviceId;
     entity.status = dto.status;
     entity.submittedAt = new Date();
+    entity.user = dto?.user;
     return entity;
   }
 }
@@ -113,6 +115,7 @@ export class WorkflowInstanceResponse extends UpdateWorkflowInstanceDto {
     response.status = entity.status;
     response.pricing = entity?.price;
     response.submittedAt = entity.submittedAt;
+    response.user = entity?.user;
     if (entity?.businessProcess) {
       response.businessProcess = BusinessProcessResponse.toResponse(
         entity?.businessProcess,
@@ -129,7 +132,6 @@ export class WorkflowInstanceResponse extends UpdateWorkflowInstanceDto {
       response.taskHandler.task = null;
     }
     if (entity?.isrVendor) {
-      //response.vendor = VendorsResponseDto.fromEntity(entity.isrVendor);
       response.isrvendor = entity?.isrVendor;
     }
 

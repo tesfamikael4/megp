@@ -17,4 +17,10 @@ export class TaskService extends EntityCrudService<TaskEntity> {
       where: { bpId: bpId, name: name },
     });
   }
+  async getTasksByBP(bpId: string): Promise<TaskEntity[]> {
+    return await this.taskRepository.find({
+      where: { bpId: bpId },
+      order: { orderBy: 'ASC' },
+    });
+  }
 }

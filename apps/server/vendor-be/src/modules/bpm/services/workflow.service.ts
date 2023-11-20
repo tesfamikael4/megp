@@ -15,25 +15,36 @@ import {
   CreateTaskHandlerDto,
   TaskHandlerResponse,
 } from '../dto/task-handler.dto';
-import { createMachine } from 'xstate';
+import { StateNode, createMachine } from 'xstate';
 import { TaskTypes } from '../dto/task-type.enum';
 import { StateMetaData } from '../dto/state-metadata';
 import {
   AssignmentEnum,
   BusinessStatusEnum,
   HandlerTypeEnum,
+  ReviewStatus,
   WorkflowInstanceEnum,
 } from '../../handling/dto/workflow-instance.enum';
 import { HandlingCommonService } from '../../handling/services/handling-common-services';
 import axios from 'axios';
-import { InvoiceEntity } from 'src/entities/invoice.entity';
-import { TaskTrackerEntity } from 'src/entities/task-tracker.entity';
+
 import { BusinessProcessService } from './business-process.service';
 import { TaskService } from './task.service';
-import { TaskHandlerEntity } from 'src/entities/task-handler.entity';
-import { TaskEntity } from 'src/entities/task.entity';
-import { WorkflowInstanceEntity } from 'src/entities/workflow-instance.entity';
+
 import { EmailService } from 'src/shared/email/email.service';
+import {
+  InvoiceEntity,
+  TaskEntity,
+  TaskHandlerEntity,
+  TaskTrackerEntity,
+  WorkflowInstanceEntity,
+} from 'src/entities';
+import { CollectionQuery, QueryConstructor } from 'src/shared/collection-query';
+import { DataResponseFormat } from 'src/shared/api-data';
+import { env } from 'process';
+import { ActivityResponseDto } from '../dto/activities.dto';
+import { TaskResponse } from '../dto/task.dto';
+import { TaskTrackerResponse } from '../dto/task-tracker.dto';
 @Injectable()
 export class WorkflowService {
   constructor(
@@ -52,10 +63,12 @@ export class WorkflowService {
   ) {}
   async intiateWorkflowInstance(
     dto: CreateWorkflowInstanceDto,
-    userInfo: any,
+    user: any,
   ): Promise<any> {
     const response = {};
     const instanceEntity = CreateWorkflowInstanceDto.fromDto(dto);
+    instanceEntity.user = user;
+    instanceEntity.userId = user.id;
     const serviceBp = await this.bpService.findWorkflowByServiceAndBP(
       dto.serviceId,
       dto.bpId,
@@ -80,7 +93,7 @@ export class WorkflowService {
     taskHandler.instanceId = wfinstance.id;
     taskHandler.taskId = task.id;
     taskHandler.previousHandlerId = null;
-    taskHandler.handlerName = null; //userInfo.name; //userMeta
+    taskHandler.handlerUser = null; //userInfo.name; //userMeta
     taskHandler.handlerUserId = null; // userInfo.userId;
     taskHandler.assignmentStatus = AssignmentEnum.Unpicked;
     taskHandler.data = { ...dto.data };
@@ -96,7 +109,7 @@ export class WorkflowService {
       const nextCommand = new GotoNextStateDto();
       nextCommand.instanceId = wfinstance.id;
       nextCommand.action = 'ISR';
-      await this.gotoNextStep(nextCommand, userInfo);
+      await this.gotoNextStep(nextCommand, user);
     }
     return response;
   }
@@ -134,9 +147,11 @@ export class WorkflowService {
         wfInstance.id = workflowInstance.id;
         const apiUrl = stateMetaData['apiUrl'];
         if (apiUrl) {
-          const response = await this.notifyApplicationCompletion(
+          wfInstance.user = workflowInstance.user;
+          const response = await this.notifyCompletion(
             wfInstance,
             stateMetaData['apiUrl'],
+            user,
           );
           if (response) {
             await this.addTaskTracker(currentTaskHandler, nextCommand, user);
@@ -176,7 +191,7 @@ export class WorkflowService {
           : null;
         if (task.handlerType != HandlerTypeEnum.PreviousHandler) {
           currentTaskHandler.handlerUserId = null;
-          currentTaskHandler.handlerName = null;
+          currentTaskHandler.handlerUser = null;
           currentTaskHandler.assignmentStatus = AssignmentEnum.Unpicked;
           currentTaskHandler.pickedAt = null;
         }
@@ -197,6 +212,51 @@ export class WorkflowService {
       }
     }
     return workflow;
+  }
+
+  async getActivities(instanceId: string): Promise<ActivityResponseDto[]> {
+    const activities = [];
+    const executedTasks = [];
+    const wfi = await this.workflowInstanceRepository.findOne({
+      relations: { taskHandler: true },
+      where: { id: instanceId },
+    });
+    const tasks = await this.taskService.getTasksByBP(wfi.bpId);
+    const completedTasks = await this.trackerRepository.find({
+      where: { instanceId: instanceId },
+      order: { executedAt: 'ASC' },
+    });
+
+    for (let i = 0; i < tasks.length; i++) {
+      const task = tasks[i];
+      const activity = new ActivityResponseDto();
+      activity.taskHandler = null;
+      activity.taskTracker = null;
+      activity.task = TaskResponse.toResponse(task);
+      activity.task.taskCheckList = null;
+      for (let index = 0; index < completedTasks.length; index++) {
+        const element = completedTasks[index];
+        console.log('element', element);
+        if (
+          element.taskId === task.id &&
+          executedTasks.filter((row) => row.taskId == task.id).length == 0
+        ) {
+          activity.taskTracker = TaskTrackerResponse.toResponse(element);
+          activity.taskTracker.data = null;
+          executedTasks.push(element.taskId);
+        }
+      }
+      if (task.id === wfi.taskHandler.taskId) {
+        const handler = wfi.taskHandler;
+        handler.task = null;
+        handler.workflowInstance = null;
+        activity.taskHandler = TaskHandlerResponse.toResponse(handler);
+      }
+      activities.push(activity);
+    }
+
+    console.log('activities', activities);
+    return activities;
   }
 
   private async saveWorkflowInstance(
@@ -228,11 +288,17 @@ export class WorkflowService {
     command: GotoNextStateDto,
     task: TaskEntity,
     wfi: WorkflowInstanceEntity,
-    user?: any,
+    user: any,
   ) {
     switch (stateMetadata.type.toLowerCase()) {
       case TaskTypes.APPROVAL:
-        return this.notify(wfi, stateMetadata['apiUrl'], command, user);
+        if (
+          command.action.toUpperCase() == ReviewStatus.Adjust.toUpperCase() ||
+          command.action.toUpperCase() == ReviewStatus.Reject.toUpperCase()
+        ) {
+          return this.notify(wfi, stateMetadata['apiUrl'], command, user);
+        }
+        break;
       case TaskTypes.EMAIl:
         return this.sendEmail(wfi, user['token']);
       case TaskTypes.SMS:
@@ -291,7 +357,7 @@ export class WorkflowService {
     entity.handlerUserId = userInfo.userId;
     entity.action = nextCommand.action;
     entity.previousHandlerId = currentTaskHandlerCopy.previousHandlerId;
-    entity.handlerName = userInfo.name;
+    entity.handlerUser = userInfo;
     entity.pickedAt = currentTaskHandlerCopy.pickedAt;
     entity.checklists = nextCommand.taskChecklist;
     entity.remark = nextCommand.remark;
@@ -304,17 +370,28 @@ export class WorkflowService {
     }
   }
 
-  async notifyApplicationCompletion(
-    data: UpdateWorkflowInstanceDto,
+  async notifyCompletion(
+    wfi: UpdateWorkflowInstanceDto,
     url: string,
+    user: any,
   ) {
+    const requesterUser = JSON.parse(wfi.user);
     const payload = {
-      vendorId: data.requestorId,
-      categoryId: '2c991afc-0e96-c72b-06f5-5c40514c38ae',
+      vendorId: wfi.requestorId,
+      instanceId: wfi.id,
+      serviceId: wfi.serviceId,
+      status: WorkflowInstanceEnum.Completed,
+      userId: requesterUser.id,
     };
-
+    const accessToken = user['token'];
     try {
-      const response = await axios.post(url, payload);
+      const response = await axios.post(url, payload, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      console.log('response  -- ', response);
       if (response.status === 201) {
         const responseData = response.data;
         return responseData;
@@ -332,15 +409,20 @@ export class WorkflowService {
     metaDate: any,
     user: any,
   ) {
+    if (!url) {
+      const vendor_url = process.env.VENDOR_API ?? '/vendors/api/';
+      url = vendor_url + '/vendor-registrations/set-application-status';
+    }
+    const accessToken = user['token'];
+    const requesterUser = JSON.parse(wfi.user);
     const payload = {
       vendorId: wfi.requestorId,
-      action: metaDate?.action,
+      instanceId: wfi.id,
+      status: metaDate.action,
       serviceId: wfi.serviceId,
-      bpId: wfi.bpId,
       remark: metaDate.remark,
+      userId: requesterUser.id,
     };
-
-    const accessToken = user['token'];
     try {
       const response = await axios.post(url, payload, {
         headers: {
@@ -348,7 +430,7 @@ export class WorkflowService {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-
+      console.log('response-----', response);
       if (response.status === 201) {
         const responseData = response.data;
         return responseData;
@@ -397,6 +479,38 @@ export class WorkflowService {
 
   async generateInvoice(instanceId: string, taskId: string) {
     console.log('invoice', instanceId, taskId);
+  }
+
+  async countStates(stateNode: StateNode): Promise<number> {
+    let count = 1;
+    if (stateNode.states) {
+      for (const childStateNode of Object.values(stateNode.states)) {
+        count += await this.countStates(childStateNode);
+      }
+    }
+    return count;
+  }
+  async getCurruntCustomerTask(
+    query: CollectionQuery,
+    user: any,
+  ): Promise<DataResponseFormat<WorkflowInstanceResponse>> {
+    const dataQuery = QueryConstructor.constructQuery<WorkflowInstanceEntity>(
+      this.workflowInstanceRepository,
+      query,
+    );
+    dataQuery
+      .innerJoin('workflow_instances.taskHandler', 'handler')
+      .innerJoin('handler.task', 'task')
+      .andWhere('workflow_instances.userId=:userId', { userId: user.id })
+      .andWhere('task.handlerType=:handlerType', { handlerType: 'Requestor' })
+      .orderBy('workflow_instances.submittedAt', 'DESC');
+    const d = new DataResponseFormat<WorkflowInstanceResponse>();
+    const [result, total] = await dataQuery.getManyAndCount();
+    d.items = result.map((entity) =>
+      WorkflowInstanceResponse.toResponse(entity),
+    );
+    d.total = total;
+    return d;
   }
 
   getStateMetaData(meta) {
