@@ -76,7 +76,7 @@ export function FormDetail({ mode }: FormDetailProps) {
   const { id } = useParams();
 
   const [create, { isLoading: isSaving }] = useCreateMutation();
-  const { data: list } = useListQuery();
+  const { data: list } = useListQuery({});
   const [update, { isLoading: isUpdating }] = useUpdateMutation();
   const [remove, { isLoading: isDeleting }] = useDeleteMutation();
   const [activation, { isLoading: isActivating }] = useUpdateMutation();
@@ -87,7 +87,7 @@ export function FormDetail({ mode }: FormDetailProps) {
     isLoading,
   } = useReadQuery(id?.toString());
 
-  const { data: orgType } = useListTypeQuery();
+  const { data: orgType } = useListTypeQuery({});
 
   const onCreate = async (data) => {
     try {

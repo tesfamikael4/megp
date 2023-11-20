@@ -18,7 +18,7 @@ const AddEntityModal = () => {
 
   const [assignMandates, { isLoading: isSaving }] = useRelationMutation();
 
-  const { data: mandates } = useListQuery();
+  const { data: mandates } = useListQuery({});
 
   const [trigger, { data: organizationMandates, isSuccess }] =
     useLazySecondRelationQuery();

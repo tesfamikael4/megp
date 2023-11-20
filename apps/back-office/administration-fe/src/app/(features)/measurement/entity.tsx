@@ -8,7 +8,7 @@ import { logger } from '@megp/core-fe';
 
 export function Entity({ children }: { children: React.ReactElement }) {
   const route = useRouter();
-  const { data: list } = useListQuery();
+  const { data: list } = useListQuery({});
 
   const config: EntityConfig<Measurement> = useMemo(() => {
     return {

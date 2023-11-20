@@ -14,7 +14,7 @@ export function Entity({
   hasTree?: boolean;
 }) {
   const route = useRouter();
-  const { data: list } = useListQuery();
+  const { data: list } = useListQuery({});
 
   // const {
   //   data: selected,

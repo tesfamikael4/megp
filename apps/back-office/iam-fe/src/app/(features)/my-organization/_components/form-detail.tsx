@@ -17,7 +17,7 @@ export function FormDetail() {
     isLoading,
   } = useReadQuery('099454a9-bf8f-45f5-9a4f-6e9034230250');
 
-  const { data: orgType } = useListTypeQuery();
+  const { data: orgType } = useListTypeQuery({});
 
   useEffect(() => {
     if (selectedSuccess && selected !== undefined) {

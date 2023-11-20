@@ -10,7 +10,7 @@ export function Entity({ children }: { children: React.ReactElement }) {
   const route = useRouter();
 
   const [tags, setTags] = useState<Tag[]>([]);
-  const { data: uoms, isSuccess, isLoading, isFetching } = useListQuery();
+  const { data: uoms, isSuccess, isLoading, isFetching } = useListQuery({});
 
   useEffect(() => {
     if (isSuccess) {
