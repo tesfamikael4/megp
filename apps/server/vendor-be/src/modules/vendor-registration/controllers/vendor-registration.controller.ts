@@ -93,7 +93,7 @@ export class VendorRegistrationsController {
     @CurrentUser() user: any,
   ) {
     vendorInitiationDto.status = 'Save as Draft';
-    vendorInitiationDto.level = 'basic';
+    vendorInitiationDto.level = 'detail';
     return await this.regService.vendorInitiation(vendorInitiationDto, user);
   }
   @Post('approve-vendor-services')

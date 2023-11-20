@@ -114,8 +114,11 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           businessAreaEntity.instanceId = workflowInstance.application.id;
           businessAreaEntity.category = interests[i].category;
           businessAreaEntity.serviceId = bp.serviceId;
+          businessAreaEntity.applicationNumber =
+            workflowInstance.application.applicationNumber;
           businessAreaEntity.status = VendorStatusEnum.PENDING;
           businessAreaEntity.vendorId = result.id;
+          console.log(businessAreaEntity);
           const res = await this.addBusinessArea(businessAreaEntity);
           if (!res)
             throw new BadRequestException(`adding_business_area_failed`);
@@ -145,11 +148,11 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         status: In([VendorStatusEnum.ACTIVE, VendorStatusEnum.ADJUSTMENT]),
       },
     });
-    if (!vendorsEntity) throw new NotFoundException('Vendor Not Found!!');
+    if (!vendorsEntity) throw new NotFoundException('vendor_not_found!!');
     const initial = JSON.parse(JSON.stringify(vendorsEntity.initial));
 
     if (initial.status == VendorStatusEnum.SUBMITTED)
-      throw new BadRequestException(`already submitted`);
+      throw new BadRequestException(`already_submitted`);
     initial.status =
       data.initial.status == 'Submit' ? 'Save as Draft' : data.initial.status;
     vendorsEntity.initial = data.initial;
@@ -296,36 +299,32 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     vendorInitiationDto: VendorInitiationDto,
     userInfo: any,
   ): Promise<any> {
-    try {
-      const vendor = await this.isrVendorsRepository.findOne({
-        where: {
-          userId: userInfo.id,
-          status: In([VendorStatusEnum.ACTIVE, VendorStatusEnum.ADJUSTMENT]),
-        },
-      });
-      if (vendor) throw new BadRequestException(`have_vendor_already`);
-
-      const vendorByTinExists = await this.isrVendorsRepository.findOne({
-        where: { tinNumber: vendorInitiationDto.tinNumber },
-      });
-      if (vendorByTinExists) throw new BadRequestException(`tin_aLready_used`);
-      const vendorsEntity = new IsrVendorsEntity();
-      vendorsEntity.userId = userInfo.id;
-      vendorsEntity.tinNumber = vendorInitiationDto.tinNumber;
-      vendorsEntity.status = VendorStatusEnum.ACTIVE;
-      const initial = {
+    const vendor = await this.isrVendorsRepository.findOne({
+      where: {
         userId: userInfo.id,
-        status: vendorInitiationDto.status,
-        level: vendorInitiationDto.level,
-      };
-      vendorsEntity.initial = JSON.parse(JSON.stringify(initial));
-      vendorsEntity.basic = JSON.parse(JSON.stringify(vendorInitiationDto));
-      const result = await this.isrVendorsRepository.save(vendorsEntity);
-      if (result) {
-        return { vendorId: result.id };
-      }
-    } catch (error) {
-      throw new BadRequestException(error);
+        status: In([VendorStatusEnum.ACTIVE, VendorStatusEnum.ADJUSTMENT]),
+      },
+    });
+    if (vendor) throw new BadRequestException(`have_vendor_already`);
+    const vendorByTinExists = await this.isrVendorsRepository.findOne({
+      where: { tinNumber: vendorInitiationDto.tinNumber },
+    });
+    if (vendorByTinExists) throw new BadRequestException(`tin_aLready_used`);
+    const vendorsEntity = new IsrVendorsEntity();
+    vendorsEntity.userId = userInfo.id;
+    vendorsEntity.tinNumber = vendorInitiationDto.tinNumber;
+    vendorsEntity.status = VendorStatusEnum.ACTIVE;
+    const initial = {
+      userId: userInfo.id,
+      status: vendorInitiationDto.status,
+      level: vendorInitiationDto.level,
+    };
+    vendorsEntity.initial = JSON.parse(JSON.stringify(initial));
+    vendorsEntity.basic = JSON.parse(JSON.stringify(vendorInitiationDto));
+    const result = await this.isrVendorsRepository.save(vendorsEntity);
+    if (!result) throw new BadRequestException(`isrvendor_initiation_failed`);
+    if (result) {
+      return { vendorId: result.id };
     }
   }
 
@@ -338,26 +337,22 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     }
   }
   async getIsrVendorInvoiceByUserId(userId: string): Promise<any> {
-    try {
-      const vendorEntity = await this.isrVendorsRepository.findOne({
-        where: {
-          userId: userId,
-          status: In([VendorStatusEnum.ACTIVE, VendorStatusEnum.ADJUSTMENT]),
-        },
-      });
+    const vendorEntity = await this.isrVendorsRepository.findOne({
+      where: {
+        userId: userId,
+        status: In([VendorStatusEnum.ACTIVE, VendorStatusEnum.ADJUSTMENT]),
+      },
+    });
 
-      if (!vendorEntity) {
-        throw new HttpException('isr_vendor_not_found', HttpStatus.BAD_REQUEST);
-      }
-
-      const areaOfBusinessInterest = JSON.parse(
-        JSON.stringify(vendorEntity.areasOfBusinessInterest),
-      );
-      const invoice = await this.getInvoices(areaOfBusinessInterest, userId);
-      return { ...vendorEntity, invoice: invoice };
-    } catch (error) {
-      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    if (!vendorEntity) {
+      throw new HttpException('isr_vendor_not_found', HttpStatus.BAD_REQUEST);
     }
+
+    const areaOfBusinessInterest = JSON.parse(
+      JSON.stringify(vendorEntity.areasOfBusinessInterest),
+    );
+    const invoice = await this.getInvoices(areaOfBusinessInterest, userId);
+    return { ...vendorEntity, invoice: invoice };
   }
 
   async getCompletedIsrVendorByuserId(userId: string): Promise<any> {
@@ -421,15 +416,43 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       },
     });
     if (!vendorEntity) throw new BadRequestException(`vendor_not_found`);
+
     const basic: any = JSON.parse(JSON.stringify(vendorEntity.basic));
     const initial: any = JSON.parse(JSON.stringify(vendorEntity.initial));
+    const areasOfBusinessInterest: any = JSON.parse(
+      JSON.stringify(vendorEntity.areasOfBusinessInterest),
+    );
+    const servicesInterface = [];
+    const areaOfBusinessInterest = await this.businessAreaRepository.find({
+      where: {
+        vendorId: vendorEntity.id,
+        status: In([
+          VendorStatusEnum.PENDING,
+          VendorStatusEnum.COMPLETED,
+          VendorStatusEnum.ADJUSTMENT,
+        ]),
+      },
+    });
+    if (!areaOfBusinessInterest)
+      throw new BadRequestException(`business_area_not_found`);
+    for (let index = 0; index < areaOfBusinessInterest?.length; index++) {
+      servicesInterface.push({
+        serviceStatus: areaOfBusinessInterest[index]?.status,
+        serviceRemark: areaOfBusinessInterest[index]?.remark,
+        category: areaOfBusinessInterest[index]?.category,
+        trackingNumbe: areaOfBusinessInterest[index]?.applicationNumber,
+      });
+    }
     return {
       name: basic?.name,
-      tinNumer: basic?.tinNumber,
+      tinNumber: basic?.tinNumber,
       level: initial?.level,
-      initial: initial?.status,
+      vendorStatus: initial?.status,
+      areasOfBusinessInterest: areasOfBusinessInterest,
+      services: servicesInterface,
     };
   }
+
   async getIsrVendorByUserId(userId: string): Promise<any> {
     try {
       const vendorEntity = await this.isrVendorsRepository.findOne({
@@ -454,11 +477,10 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
   }
   async getInvoices(areaOfBusinessInterest: any[], userId: string) {
     const invoice = [];
-    for (let index = 0; index < areaOfBusinessInterest.length; index++) {
+    for (let index = 0; index < areaOfBusinessInterest?.length; index++) {
       const element = await this.invoiceRepository.findOne({
         where: {
           payerAccountId: userId,
-          // paymentStatus: In(['Pending']),
           pricingId: areaOfBusinessInterest[index].priceRange,
         },
       });

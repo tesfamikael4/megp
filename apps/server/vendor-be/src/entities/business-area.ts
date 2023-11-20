@@ -24,7 +24,10 @@ export class BusinessAreaEntity {
   category: string;
   @Column({ default: new Date() })
   approvedAt: Date;
-  @Column({ default: () => "CURRENT_TIMESTAMP + INTERVAL '1 year' " })
+  @Column({ nullable: true })
+  applicationNumber: string;
+
+  @Column({ default: () => `CURRENT_TIMESTAMP + INTERVAL '1 year'` })
   expireDate: Date;
   @Column({ default: 'Pending' })
   status: string;
