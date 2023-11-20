@@ -246,32 +246,42 @@ export class AccountsService {
 
       this.repository.update(account.id, { failedAttempts, bannedUntil });
 
-      const userInfo = await this.getUserInfo(account.id);
-
-      const permissions = [];
-      userInfo.user?.userRoles?.forEach((userRole) => {
-        userRole?.role?.rolePermissions?.forEach((rolePermission) => {
-          rolePermission?.permission &&
-            permissions.push(rolePermission.permission);
-        });
-      });
-
-      const tokenPayload = {
-        tenantId: userInfo.tenantId,
-        id: userInfo.id,
-        userId: userInfo.user?.id,
-        username: account.username,
-        firstName: account.firstName,
-        lastName: account.lastName,
-        email: account.email,
-        organization: userInfo.user?.organization,
-        permissions,
-      };
+      const tokenPayload = await this.getAccessTokenPayload(account);
 
       const token: LoginResponseDto = {
         is_security_question_set: account.securityQuestions?.length != 0,
         access_token: this.helper.generateAccessToken(tokenPayload),
         refresh_token: this.helper.generateRefreshToken({ id: account.id }),
+      };
+
+      return token;
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  public async refreshToken(req: any): Promise<LoginResponseDto | never> {
+    try {
+      const user = req.user;
+      if (!user) {
+        throw new HttpException(
+          'invalid_refresh_token',
+          HttpStatus.UNAUTHORIZED,
+        );
+      }
+      const account: Account = await this.repository.findOneBy({
+        id: user['id'],
+      });
+
+      if (!account) {
+        //|| account.status != "active"
+        throw new HttpException('something_went_wrong', HttpStatus.BAD_REQUEST);
+      }
+
+      const tokenPayload = await this.getAccessTokenPayload(account);
+
+      const token: LoginResponseDto = {
+        access_token: this.helper.generateAccessToken(tokenPayload),
       };
 
       return token;
@@ -345,34 +355,30 @@ export class AccountsService {
     }
   }
 
-  public async refreshToken(req: any): Promise<LoginResponseDto | never> {
-    try {
-      const user = req.user;
-      if (!user) {
-        throw new HttpException(
-          'invalid_refresh_token',
-          HttpStatus.UNAUTHORIZED,
-        );
-      }
-      const account: Account = await this.repository.findOneBy({
-        id: user['id'],
+  async getAccessTokenPayload(account: Account) {
+    const userInfo = await this.getUserInfo(account.id);
+
+    const permissions = [];
+    userInfo.user?.userRoles?.forEach((userRole) => {
+      userRole?.role?.rolePermissions?.forEach((rolePermission) => {
+        rolePermission?.permission &&
+          permissions.push(rolePermission.permission);
       });
+    });
 
-      if (!account) {
-        //|| account.status != "active"
-        throw new HttpException('something_went_wrong', HttpStatus.BAD_REQUEST);
-      }
+    const tokenPayload = {
+      tenantId: userInfo.tenantId,
+      id: userInfo.id,
+      userId: userInfo.user?.id,
+      username: account.username,
+      firstName: account.firstName,
+      lastName: account.lastName,
+      email: account.email,
+      organization: userInfo.user?.organization ?? {},
+      permissions,
+    };
 
-      this.repository.update(account.id, account);
-
-      const token: LoginResponseDto = {
-        access_token: this.helper.generateAccessToken(account),
-      };
-
-      return token;
-    } catch (error) {
-      throw new HttpException(error, HttpStatus.BAD_REQUEST);
-    }
+    return tokenPayload;
   }
 
   async isSecurityQuestionSet(accountId: string) {
