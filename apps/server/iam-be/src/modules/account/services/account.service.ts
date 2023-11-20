@@ -514,7 +514,7 @@ export class AccountsService {
 
       input.username = code.toLocaleLowerCase();
       input.email = email;
-      input.password = '123123';
+      input.password = process.env.DEFAULT_ORG_ADMIN_PASSWORD ?? '123123';
 
       account = await this.createDefaultAccount(
         input,
