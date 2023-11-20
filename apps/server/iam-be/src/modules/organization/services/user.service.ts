@@ -51,4 +51,13 @@ export class UserService extends ExtraCrudService<User> {
       throw new HttpException(error, HttpStatus.NOT_FOUND);
     }
   }
+
+  async createDefaultOrganizationUser(input: any, organizationId: string) {
+    const { id, ...user } = input;
+
+    user.organizationId = organizationId;
+    user.accountId = id;
+
+    await this.repositoryUser.insert(user);
+  }
 }

@@ -33,6 +33,14 @@ export class OrganizationController extends EntityCrudController<Organization>(
     super(organizationService);
   }
 
+  // @Post()
+  // @ApiBody({ type: CreateOrganizationDto })
+  // async create(
+  //   @Body() itemData: CreateOrganizationDto,
+  // ): Promise<any> {
+  //   return this.organizationService.create(itemData);
+  // }
+
   @Patch('set-address/:id')
   @ApiBody({ type: UpdateAddressOrLogoDto })
   async setAddress(

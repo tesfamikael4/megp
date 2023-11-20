@@ -492,9 +492,34 @@ export class AccountsService {
         throw new HttpException('account_exists', HttpStatus.NOT_FOUND);
       }
 
-      input.username = this.generateUsername();
-
       account = await this.createNewAccount(input, AccountStatusEnum.PENDING);
+      return account;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async createDefaultOrganizationAccount(input: any) {
+    try {
+      const { code } = input;
+      const email = `${code.toLocaleLowerCase()}@megp.com`;
+
+      let account: Account = await this.repository.findOne({
+        where: { email },
+      });
+
+      if (account) {
+        throw new HttpException('account_exists', HttpStatus.NOT_FOUND);
+      }
+
+      input.username = code.toLocaleLowerCase();
+      input.email = email;
+      input.password = '123123';
+
+      account = await this.createDefaultAccount(
+        input,
+        AccountStatusEnum.ACTIVE,
+      );
       return account;
     } catch (error) {
       throw error;
@@ -680,7 +705,25 @@ export class AccountsService {
     account.password = password && this.helper.encodePassword(password);
     account.status = status;
 
-    await this.repository.save(account);
+    await this.repository.insert(account);
+    return account;
+  }
+
+  private async createDefaultAccount(
+    accountDto: any,
+    status: AccountStatusEnum,
+  ) {
+    const { email, password, username, name } = accountDto;
+
+    const account = new Account();
+    account.username = username;
+    account.email = email;
+    account.firstName = name;
+    account.lastName = name;
+    account.password = this.helper.encodePassword(password);
+    account.status = status;
+
+    await this.repository.insert(account);
     return account;
   }
 
