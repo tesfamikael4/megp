@@ -22,10 +22,12 @@ export class CreateWorkflowInstanceDto {
   @ApiProperty()
   @IsOptional()
   bpId: string;
+  @ApiProperty()
+  @IsOptional()
   pricingId: string;
   createdBy: string;
   data?: any;
-  user: string;
+  user: any;
   /**
    * Transfer Data from DTO object to Entity object
    *

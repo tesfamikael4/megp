@@ -18,8 +18,8 @@ export class TaskHandlerEntity {
   instanceId: string;
   @Column({ nullable: true })
   handlerUserId: string;
-  @Column({ default: {}, type: 'jsonb' })
-  handlerUser: string;
+  @Column({ nullable: true, type: 'jsonb' })
+  handlerUser: object;
   @Column({ nullable: true })
   previousHandlerId: string;
   @Column({ nullable: true })
@@ -30,7 +30,6 @@ export class TaskHandlerEntity {
   currentState: string;
   @Column({ default: 'Unpicked' })
   assignmentStatus: string;
-
   @OneToOne(() => WorkflowInstanceEntity, (wfi) => wfi.taskHandler)
   @JoinColumn({ name: 'instanceId' })
   workflowInstance: WorkflowInstanceEntity;

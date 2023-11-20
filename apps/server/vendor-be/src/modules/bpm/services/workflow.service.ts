@@ -60,7 +60,7 @@ export class WorkflowService {
     private readonly commonService: HandlingCommonService,
     private readonly taskService: TaskService,
     private readonly emailSerice: EmailService,
-  ) {}
+  ) { }
   async intiateWorkflowInstance(
     dto: CreateWorkflowInstanceDto,
     user: any,
@@ -68,13 +68,15 @@ export class WorkflowService {
     const response = {};
     const instanceEntity = CreateWorkflowInstanceDto.fromDto(dto);
     instanceEntity.user = user;
-    instanceEntity.userId = user.id;
+    instanceEntity.userId = user?.id;
+
     const serviceBp = await this.bpService.findWorkflowByServiceAndBP(
       dto.serviceId,
       dto.bpId,
     );
     if (!serviceBp || !dto.requestorId)
       throw new NotFoundException('Business Process Not Found');
+    console.log("service  Bp", serviceBp);
     instanceEntity.applicationNumber =
       await this.commonService.generateApplicationNumber('PPDA', 'GNR');
     const wfinstance =
@@ -86,6 +88,7 @@ export class WorkflowService {
     const taskHandler = new TaskHandlerEntity();
     response['application'] = wfinstance;
     const init = machine.initial.toString();
+    console.log(" instanceEntity.user ------", instanceEntity.user);
     console.log(init);
     const task = await this.taskService.getTaskByNameAndBP(serviceBp.id, init);
     if (!task) throw new NotFoundException('Task Not found');
@@ -214,13 +217,17 @@ export class WorkflowService {
     return workflow;
   }
 
-  async getActivities(instanceId: string): Promise<ActivityResponseDto[]> {
+  async getActivities(instanceId: string) {
     const activities = [];
     const executedTasks = [];
     const wfi = await this.workflowInstanceRepository.findOne({
       relations: { taskHandler: true },
       where: { id: instanceId },
     });
+    console.log(instanceId);
+    if (!wfi) throw new NotFoundException("Not Found")
+    console.log("wfiwfiwfi", wfi);
+
     const tasks = await this.taskService.getTasksByBP(wfi.bpId);
     const completedTasks = await this.trackerRepository.find({
       where: { instanceId: instanceId },
@@ -358,6 +365,7 @@ export class WorkflowService {
     entity.action = nextCommand.action;
     entity.previousHandlerId = currentTaskHandlerCopy.previousHandlerId;
     entity.handlerUser = userInfo;
+    //entity.handlerUser?.user?.token=null;
     entity.pickedAt = currentTaskHandlerCopy.pickedAt;
     entity.checklists = nextCommand.taskChecklist;
     entity.remark = nextCommand.remark;
@@ -414,14 +422,14 @@ export class WorkflowService {
       url = vendor_url + '/vendor-registrations/set-application-status';
     }
     const accessToken = user['token'];
-    const requesterUser = JSON.parse(wfi.user);
+    const requesterUser = JSON.parse(JSON.stringify(wfi.user));
     const payload = {
       vendorId: wfi.requestorId,
       instanceId: wfi.id,
       status: metaDate.action,
       serviceId: wfi.serviceId,
       remark: metaDate.remark,
-      userId: requesterUser.id,
+      userId: requesterUser?.id,
     };
     try {
       const response = await axios.post(url, payload, {

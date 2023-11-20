@@ -16,8 +16,8 @@ export class CreateTaskTrackerDto {
   instanceId: string;
   @ApiProperty()
   handlerUserId: string;
-  @ApiProperty()
-  handlerUser: string;
+
+  handlerUser: object;
   @ApiProperty()
   pickedAt: Date;
   @ApiProperty()
