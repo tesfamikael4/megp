@@ -59,7 +59,7 @@ export class PreBudgetPlanActivity {
   @Column()
   name: string;
 
-  @Column({ default: 'Ref-' })
+  @Column()
   procurementReference: string;
 
   @Column()
@@ -92,11 +92,8 @@ export class PreBudgetPlanActivity {
   @Column({ type: 'json' })
   multiYearBudget: JSON;
 
-  @Column()
-  indigenousPreference: boolean;
-
-  @Column({ type: 'json' })
-  preferenceValue: JSON;
+  @Column({ default: 'Others' })
+  preference: string;
 
   @Column({ nullable: true })
   remark: string;
@@ -104,6 +101,6 @@ export class PreBudgetPlanActivity {
   @BeforeInsert()
   generateRandomNumber(): void {
     const randomNum = Math.floor(10000 + Math.random() * 90000); // Generates a random 5-digit number
-    this.procurementReference += randomNum.toString();
+    this.procurementReference = 'REF-' + randomNum.toString();
   }
 }
