@@ -111,11 +111,14 @@ export class TaskHandlerResponse extends UpdateTaskHandlerDto {
   @ApiProperty()
   executedAt: Date;
   static toResponse(entity: TaskHandlerEntity) {
+    let user = null;
+    if (Object.values(entity.handlerUser).length != 0)
+      user = JSON.parse(entity?.handlerUser);
     const response = new TaskHandlerResponse();
     response.id = entity.id;
     response.taskId = entity.taskId;
     response.instanceId = entity.instanceId;
-    response.handlerName = entity.handlerName;
+    response.handlerName = user?.firstName + ' ' + user?.lastName;
     response.handlerUserId = entity.handlerUserId;
     response.pickedAt = entity.pickedAt;
     response.data = entity.data;

@@ -30,6 +30,7 @@ import { CurrentUser, JwtGuard } from 'src/shared/authorization';
 import { WorkflowService } from 'src/modules/bpm/services/workflow.service';
 import { BusinessProcessService } from 'src/modules/bpm/services/business-process.service';
 import { UpdateTaskHandlerDto } from 'src/modules/bpm/dto/task-handler.dto';
+import { ActivityResponseDto } from 'src/modules/bpm/dto/activities.dto';
 @ApiBearerAuth()
 @Controller('application-execution')
 @ApiTags('Application Excution')
@@ -40,7 +41,7 @@ export class ApplicationExcutionController {
     private readonly executeService: ApplicationExcutionService,
     private readonly workflowService: WorkflowService,
     private readonly bpService: BusinessProcessService,
-  ) {}
+  ) { }
 
   @UseGuards(JwtGuard)
   @Get('email')
@@ -54,6 +55,38 @@ export class ApplicationExcutionController {
     );
   }
 
+  /*
+    @UseGuards(JwtGuard)
+    @Get('notify-complation')
+    async notifyComplation(@Req() request: Request, @CurrentUser() user: any) {
+      const authToken = request.headers['authorization'].split(' ')[1];
+      user['authToken'] = authToken;   
+      const url =
+        'https://dev-bo.megp.peragosystems.com/vendors/api/business-area"';
+      const wfi = new UpdateWorkflowInstanceDto();
+      const sample = {
+        vendorId: '4e5c1009-fedb-43ab-ae32-bc0f23503686',
+        bpId: '96d95fdb-7852-4ddc-982f-0e94d23d15d3',
+        serviceId: '5f764d17-a165-42ab-879d-358bc03fe5d8',
+        action: WorkflowInstanceEnum.Completed,
+      };
+      return await this.workflowService.notifyCompletion(wfi, url, user);
+    }*/
+  /*
+  @UseGuards(JwtGuard)
+  @Post('notify')
+
+  async notify(@Body() test: TestDto, @CurrentUser() user: any, @Req() request: any) {
+    const wfi = new WorkflowInstanceEntity()
+    wfi.id = test.wfi.id;
+    wfi.serviceId = test.wfi.serviceId;
+    wfi.requestorId = test.wfi.requestorId;
+    const authToken = request.headers['authorization'].split(' ')[1];
+    console.log(wfi)
+    user['token'] = authToken;
+    await this.workflowService.notify(wfi, test.metaData.url, test.metaData, user)
+  }
+  */
   @UseGuards(JwtGuard)
   @Post('intiate-workflow')
   @ApiOkResponse({ type: WorkflowInstanceResponse })
@@ -67,6 +100,7 @@ export class ApplicationExcutionController {
       this.userInfo,
     );
   }
+
   @UseGuards(JwtGuard)
   @Post('goto-next-step')
   @ApiOkResponse({ type: WorkflowInstanceResponse })
@@ -111,6 +145,16 @@ export class ApplicationExcutionController {
     );
   }
   @UseGuards(JwtGuard)
+  @Get('get-customer-tasks')
+  @ApiPaginatedResponse(WorkflowInstanceResponse)
+  async fetchCustomerTasks(
+    @Query() query: CollectionQuery,
+    @CurrentUser() user: any,
+  ) {
+    return await this.workflowService.getCurruntCustomerTask(query, user);
+  }
+
+  @UseGuards(JwtGuard)
   @Get('get-currunt-task-detail/:instanceId')
   @ApiOkResponse({ type: WorkflowInstanceResponse })
   async fetchCurruntTaskDetail(
@@ -118,6 +162,13 @@ export class ApplicationExcutionController {
     @Query() query: CollectionQuery,
   ) {
     return await this.executeService.getCurruntTaskDetail(instanceId);
+  }
+  @UseGuards(JwtGuard)
+  @Get('get-activities-progress/:instanceId')
+  @ApiPaginatedResponse(ActivityResponseDto)
+  async fetchActivity(@Param('instanceId') instanceId: string) {
+    const result = await this.workflowService.getActivities(instanceId);
+    return result;
   }
   @UseGuards(JwtGuard)
   @Get('generate-certeficate-pdf')
@@ -139,6 +190,7 @@ export class ApplicationExcutionController {
     });
     res.status(200).end(pdfBuffer);
   }
+
   @UseGuards(JwtGuard)
   @Get('get-invoices')
   @ApiPaginatedResponse(InvoiceResponseDto)
@@ -152,11 +204,12 @@ export class ApplicationExcutionController {
     return await this.executeService.getInvoice(id);
   }
   @UseGuards(JwtGuard)
-  @Get('get-my-invoice/:userId')
+  @Get('get-my-invoice')
   @ApiOkResponse({ type: InvoiceResponseDto })
   async getMyInvoice(@CurrentUser() user: any) {
     return await this.executeService.getMyInvoices(user.id);
   }
+
   @UseGuards(JwtGuard)
   @Get('get-my-business-areas')
   @ApiOkResponse({ type: ActiveVendorsResponse })

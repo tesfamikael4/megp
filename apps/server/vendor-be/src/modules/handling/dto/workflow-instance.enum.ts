@@ -10,9 +10,9 @@ export enum ServiceKeyEnum {
   new = 'new',
   upgrade = 'upgrade',
   renewal = 'renewal',
-  goodsNewRegistration = 'goodsNewRegistration',
-  servicesNewRegistration = 'servicesNewRegistration',
-  worksNewRegistration = 'worksNewRegistration',
+  goodsNewRegistration = 'GoodsNewRegistration',
+  servicesNewRegistration = 'ServicesNewRegistration',
+  worksNewRegistration = 'WorksNewRegistration',
   goodsRenewal = 'GoodsRenewal',
   servicesRenewal = 'ServicesRenewal',
   worksRenewal = 'WorksRenewal',
@@ -35,4 +35,9 @@ export enum HandlerTypeEnum {
   PreviousHandler = 'Previous Handler',
   Requestor = 'Requestor',
   System = 'System',
+}
+export enum ReviewStatus {
+  Approve = 'Approve',
+  Reject = 'Reject',
+  Adjust = 'Adjust',
 }

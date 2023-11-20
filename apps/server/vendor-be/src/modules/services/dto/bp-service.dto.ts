@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
 import { BpServiceEntity } from '../../../entities/bp-service.entity';
 export class CreateBpServiceDto {
   @ApiProperty()
@@ -47,8 +47,10 @@ export class UpdateBpServiceDto extends CreateBpServiceDto {
   @IsNotEmpty()
   name: string;
   @ApiProperty()
+  @IsOptional()
   description: string;
   @ApiProperty()
+  @IsOptional()
   isActive: boolean;
 
   static fromDto(dto: UpdateBpServiceDto): BpServiceEntity {

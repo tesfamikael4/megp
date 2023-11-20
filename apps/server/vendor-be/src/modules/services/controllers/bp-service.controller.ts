@@ -40,6 +40,6 @@ export class BpServiceController extends EntityCrudController<BpServiceEntity>(
   @Put('/:id')
   @ApiOkResponse({ type: BpServiceResponse })
   async update(@Param('id') id: string, @Body() dto: UpdateBpServiceDto) {
-    return await super.update(dto.id, dto);
+    return await super.update(id, dto);
   }
 }

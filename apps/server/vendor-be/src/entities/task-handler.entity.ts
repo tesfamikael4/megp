@@ -18,8 +18,8 @@ export class TaskHandlerEntity {
   instanceId: string;
   @Column({ nullable: true })
   handlerUserId: string;
-  @Column({ nullable: true })
-  handlerName: string;
+  @Column({ default: {}, type: 'jsonb' })
+  handlerUser: string;
   @Column({ nullable: true })
   previousHandlerId: string;
   @Column({ nullable: true })

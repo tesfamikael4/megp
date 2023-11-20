@@ -24,6 +24,8 @@ export class TaskEntity {
   bpId: string;
   @Column()
   handlerType: string;
+  @Column({ default: 1 })
+  orderBy: number;
   @Column()
   taskType: string;
   @Column({ type: 'jsonb', nullable: true })

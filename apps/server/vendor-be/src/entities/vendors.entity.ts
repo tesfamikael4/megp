@@ -20,7 +20,7 @@ import { IsrVendorsEntity } from './isr-vendors.entity';
 export class VendorsEntity extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column({ name: 'tin', nullable: true })
+  @Column({ name: 'tin', nullable: true, unique: true })
   tin: string;
   @Column()
   userId: string;
