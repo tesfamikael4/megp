@@ -22,7 +22,7 @@ export class CreateTaskDto {
   taskType: string;
   @ApiProperty()
   @IsNotEmpty()
-  level: string;
+  label: string;
   @ApiProperty()
   orderBy: number;
   @ApiProperty()
@@ -42,7 +42,7 @@ export class CreateTaskDto {
     entity.taskType = dto.taskType;
     entity.handlerType = dto.handlerType;
     entity.checkList = dto.taskCkecklist;
-    entity.label = dto.level;
+    entity.label = dto.label;
     entity.orderBy = dto.orderBy;
     return entity;
   }
@@ -72,7 +72,7 @@ export class UpdateTaskDto extends CreateTaskDto {
     entity.bpId = dto.bpId;
     entity.handlerType = dto.handlerType;
     entity.taskType = dto.taskType;
-    entity.label = dto.level;
+    entity.label = dto.label;
     entity.orderBy = dto.orderBy;
     return entity;
   }
@@ -94,7 +94,7 @@ export class TaskResponse extends UpdateTaskDto {
     response.handlerType = entity.handlerType;
     response.taskType = entity.taskType;
     response.taskCheckList = entity.checkList;
-    response.level = entity.label;
+    response.label = entity.label;
     response.orderBy = entity.orderBy;
     if (entity.businessProcess) {
       response.businessProcess = BusinessProcessResponse.toResponse(
