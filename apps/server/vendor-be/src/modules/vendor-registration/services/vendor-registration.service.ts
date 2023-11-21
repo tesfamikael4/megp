@@ -31,6 +31,7 @@ import {
 import { VendorStatusEnum } from 'src/shared/enums/vendor-status-enums';
 import { WorkflowService } from 'src/modules/bpm/services/workflow.service';
 import { error } from 'console';
+import { errorExecution } from 'xstate/lib/actionTypes';
 
 @Injectable()
 export class VendorRegistrationsService extends EntityCrudService<VendorsEntity> {
@@ -60,6 +61,11 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       const result = await this.isrVendorsRepository.save(
         await this.fromInitialValue(data),
       );
+
+      console.log("data.initial.level ", data.initial.level);
+      console.log("data.initial.status ", data.initial.status);
+      console.log("data.areasOfBusinessInterest", data.areasOfBusinessInterest);
+
       if (!result) throw new HttpException(`adding_isr_failed`, 500);
       if (
         data.initial.level == VendorStatusEnum.PPDA &&
@@ -159,11 +165,12 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
   }
 
   fromInitialValue = async (data: any) => {
+    console.log("data", data);
     let vendorsEntity: IsrVendorsEntity = null;
     vendorsEntity = await this.isrVendorsRepository.findOne({
       where: {
-        userId: data.initial.userId,
-        status: In([VendorStatusEnum.ACTIVE, VendorStatusEnum.ADJUSTMENT]),
+        userId: data.initial.userId
+        ///status: In([VendorStatusEnum.ACTIVE, VendorStatusEnum.ADJUSTMENT]),
       },
     });
     if (!vendorsEntity) throw new NotFoundException('vendor_not_found!!');
@@ -246,7 +253,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       try {
         const res = await this.vendorRepository.save(vendorEntity);
         if (!res) throw new BadRequestException(`vendor_insertion_failed`);
-      } catch (error) {}
+      } catch (error) { }
     }
     const businessArea = await this.businessAreaRepository.findOne({
       where: { vendorId: result.id, instanceId: vendorStatusDto.instanceId },
@@ -374,11 +381,12 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         status: In([VendorStatusEnum.ACTIVE, VendorStatusEnum.ADJUSTMENT]),
       },
     });
-    if (vendor) throw new BadRequestException(`have_vendor_already`);
+    if (vendor) return { id: vendor.id, message: "vendor existed" };
     const vendorByTinExists = await this.isrVendorsRepository.findOne({
       where: { tinNumber: vendorInitiationDto.tinNumber },
     });
-    if (vendorByTinExists) throw new BadRequestException(`tin_aLready_used`);
+    if (vendorByTinExists) return { tin: vendorInitiationDto.tinNumber, message: 'TIN already already exist' };
+
     const vendorsEntity = new IsrVendorsEntity();
     vendorsEntity.userId = userInfo.id;
     vendorsEntity.tinNumber = vendorInitiationDto.tinNumber;
@@ -390,10 +398,13 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     };
     vendorsEntity.initial = JSON.parse(JSON.stringify(initial));
     vendorsEntity.basic = JSON.parse(JSON.stringify(vendorInitiationDto));
-    const result = await this.isrVendorsRepository.save(vendorsEntity);
-    if (!result) throw new BadRequestException(`isrvendor_initiation_failed`);
-    if (result) {
-      return { vendorId: result.id };
+    try {
+      const result = await this.isrVendorsRepository.save(vendorsEntity);
+      if (result) {
+        return { vendorId: result.id };
+      }
+    } catch (error) {
+      throw new Error('Vendor info not saved');
     }
   }
 
@@ -484,7 +495,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         ]),
       },
     });
-    if (!vendorEntity) throw new BadRequestException(`vendor_not_found`);
+    if (!vendorEntity) return { level: 'basic', status: 'new' };
 
     const basic: any = JSON.parse(JSON.stringify(vendorEntity.basic));
     const initial: any = JSON.parse(JSON.stringify(vendorEntity.initial));
@@ -502,8 +513,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         ]),
       },
     });
-    if (!areaOfBusinessInterest)
-      throw new BadRequestException(`business_area_not_found`);
+    // if (!areaOfBusinessInterest)
+    //   throw new BadRequestException(`business_area_not_found`);
     for (let index = 0; index < areaOfBusinessInterest?.length; index++) {
       servicesInterface.push({
         serviceStatus: areaOfBusinessInterest[index]?.status,

@@ -30,8 +30,8 @@ import { SetVendorStatus } from '../dto/vendor.dto';
 @ApiResponse({ status: 500, description: 'Internal error' })
 @ApiExtraModels(DataResponseFormat)
 export class VendorRegistrationsController {
-  userInfo: any;
-  constructor(private readonly regService: VendorRegistrationsService) {}
+
+  constructor(private readonly regService: VendorRegistrationsService) { }
   @Get('get-isr-vendors')
   async getVendors() {
     return await this.regService.getIsrVendors();
@@ -82,7 +82,6 @@ export class VendorRegistrationsController {
     @Req() request: Request,
   ) {
     const authToken = request.headers['authorization'].split(' ')[1];
-
     userInfo['token'] = authToken;
     data.data.initial.userId = userInfo.id;
     const result = await this.regService.addVendorInformations(
