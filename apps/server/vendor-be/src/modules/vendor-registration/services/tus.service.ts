@@ -21,7 +21,7 @@ import {
   VendorsEntity,
 } from 'src/entities';
 import { VendorStatusEnum } from 'src/shared/enums/vendor-status-enums';
-const endPointUrl = `http://196.189.118.110:9000`;
+const endPointUrl = process.env.MINIO_END_POINT_URL;
 const minioStoreConfig = {
   partSize: 8 * 1024 * 1024, // Each uploaded part will have ~8MB,
   accessKeyId: process.env.ACCESSKEY,
@@ -31,11 +31,11 @@ const minioStoreConfig = {
   // signatureVersion: 'v2',
 };
 const serverOptions = {
-  path: '/api/upload',
+  path: '/vendors/api/upload',
 };
 const minioClient = new Minio.Client({
-  endPoint: '196.189.118.110',
-  port: 9000,
+  endPoint: endPointUrl,
+  port: parseInt(process.env.MINIO_PORT),
   useSSL: false,
   accessKey: process.env.ACCESSKEY,
   secretKey: process.env.SECRETKEY,
@@ -51,7 +51,7 @@ export class TusService implements OnModuleInit {
     private readonly paymentReceiptRepository: Repository<PaymentReceiptEntity>,
     @InjectRepository(InvoiceEntity)
     private readonly invoiceRepository: Repository<InvoiceEntity>,
-  ) { }
+  ) {}
   private logger = new Logger('TusService');
   private readonly tusServer = new tus.Server(serverOptions);
   private userId = '';
@@ -140,13 +140,9 @@ export class TusService implements OnModuleInit {
               paymentReceipt: resultMetadata,
             });
           } catch (error) {
-            console.log(error);
             throw new BadRequestException(error);
           }
         } else if (entityName == 'paymentReceipt') {
-          // const paymentReceipt = JSON.parse(
-          //   JSON.stringify(result.paymentReceipt),
-          // );
           paymentReceipt.push({
             transactionId: uploadMetadata?.transactionId,
             category: uploadMetadata?.category,
@@ -187,20 +183,20 @@ export class TusService implements OnModuleInit {
     return metadata;
   }
   async getFileFromMinio(request, response, userId, fileName) {
-    const [bucketName, objectName] = fileName.split('/');
-    const metadata = await minioClient.statObject(bucketName, objectName);
-
-    const fileStream = await minioClient.getObject(bucketName, objectName);
-    const uploadMetadataHeader = metadata.metaData.upload_metadata;
-    const uploadMetadata = this.parseUploadMetadata(uploadMetadataHeader);
-
-    response.setHeader('Content-Type', uploadMetadata.type);
-    response.setHeader(
-      'Content-Disposition',
-      `filename="${uploadMetadata.name}"`,
+    const [bucketName1, objectName1] = fileName.split('/');
+    const objectKey = objectName1;
+    const bucketName = bucketName1;
+    const expiration = 60 * 5;
+    const metadata = await minioClient.statObject(bucketName, objectKey);
+    const presignedUrl = await minioClient.presignedGetObject(
+      bucketName,
+      objectKey,
+      expiration,
     );
-    // Pipe the file stream to the response
-    fileStream.pipe(response);
+    const uploadMetadata = this.parseUploadMetadata(
+      metadata.metaData.upload_metadata,
+    );
+    return { url: presignedUrl, metaData: uploadMetadata };
   }
   async canUploadFile(userId: string) {
     const isrVendor = await this.isrVendorRepository.findOne({
@@ -215,7 +211,6 @@ export class TusService implements OnModuleInit {
     const fileStream = await minioClient.getObject(bucketName, objectName);
     const uploadMetadataHeader = metadata.metaData.upload_metadata;
     const uploadMetadata = this.parseUploadMetadata(uploadMetadataHeader);
-
     response.setHeader('Content-Type', uploadMetadata.type);
     response.setHeader(
       'Content-Disposition',

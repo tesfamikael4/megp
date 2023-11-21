@@ -29,6 +29,8 @@ import {
   GotoNextStateDto,
 } from 'src/modules/handling/dto/workflow-instance.dto';
 import { VendorStatusEnum } from 'src/shared/enums/vendor-status-enums';
+import { WorkflowService } from 'src/modules/bpm/services/workflow.service';
+import { error } from 'console';
 
 @Injectable()
 export class VendorRegistrationsService extends EntityCrudService<VendorsEntity> {
@@ -39,17 +41,16 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     private readonly businessAreaRepository: Repository<BusinessAreaEntity>,
     @InjectRepository(IsrVendorsEntity)
     private readonly isrVendorsRepository: Repository<IsrVendorsEntity>,
-    @Inject(WorkflowInstanceService)
-    private readonly WorkflowInstanceService: WorkflowInstanceService,
+
     @InjectRepository(InvoiceEntity)
     private readonly invoiceRepository: Repository<InvoiceEntity>,
     private readonly dataSource: DataSource, // private readonly workflowInstanceService: WorkflowInstanceService,
+    private readonly workflowService: WorkflowService,
     private readonly workflowInstanceService: WorkflowInstanceService,
     private readonly bpService: BusinessProcessService,
   ) {
     super(vendorRepository);
   }
-
   async addVendorInformations(data: any, userInfo: any): Promise<any> {
     if (
       data.initial.status == VendorStatusEnum.SAVEASDRAFT ||
@@ -59,7 +60,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       const result = await this.isrVendorsRepository.save(
         await this.fromInitialValue(data),
       );
-      if (!result) throw new BadRequestException(`adding_isr_failed`);
+      if (!result) throw new HttpException(`adding_isr_failed`, 500);
       if (
         data.initial.level == VendorStatusEnum.PPDA &&
         data.initial.status == VendorStatusEnum.SAVE
@@ -70,17 +71,14 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           index++
         ) {
           const invoice =
-            await this.WorkflowInstanceService.generateVendorInvoice(
+            await this.workflowInstanceService.generateVendorInvoice(
               result.id,
               data.areasOfBusinessInterest[index].priceRange,
             );
-          if (!invoice)
-            throw new BadRequestException(`invoice_creation_failed`);
+          if (!invoice) throw new HttpException('invoice_creation_failed', 500);
         }
-
         return { msg: 'Success' };
-      }
-      if (
+      } else if (
         data.initial.status == VendorStatusEnum.SUBMIT &&
         data.initial.level == VendorStatusEnum.SUBMIT
       ) {
@@ -91,48 +89,68 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         const response = [];
         const interests = data.areasOfBusinessInterest;
         for (let i = 0; i < interests.length; i++) {
-          const bp = await this.bpService.findBpService(
-            interests[i].priceRange,
-          );
-          if (!bp) {
-            throw new NotFoundException('Business Process Not Found');
+          try {
+            const bp = await this.bpService.findBpService(
+              interests[i].priceRange,
+            );
+
+            if (!bp) {
+              throw new NotFoundException('Business Process Not Found');
+            }
+
+            wfi.bpId = bp.id;
+            wfi.serviceId = bp.serviceId;
+            wfi.requestorId = result.id;
+            wfi.data = result;
+            let workflowInstance = null;
+            const businessArea = await this.businessAreaRepository.findOne({
+              where: {
+                serviceId: bp.serviceId,
+                vendorId: wfi.requestorId,
+                status: VendorStatusEnum.PENDING,
+              },
+            });
+
+            if (businessArea) {
+              const dto = new GotoNextStateDto();
+              dto.action = 'ISR';
+              dto.data = result;
+              dto.instanceId = businessArea.instanceId;
+
+              workflowInstance = await this.workflowService.gotoNextStep(
+                dto,
+                userInfo,
+              );
+            } else {
+              workflowInstance =
+                await this.workflowService.intiateWorkflowInstance(
+                  wfi,
+                  userInfo,
+                );
+            }
+
+            if (!workflowInstance)
+              throw new BadRequestException(`workflowInstanceService_failed`);
+            instances.push(workflowInstance);
+            response.push({
+              applicationNumber: workflowInstance.application.applicationNumber,
+              instanceNumber: workflowInstance.application.id,
+              vendorId: workflowInstance.application.requestorId,
+            });
+            const businessAreaEntity = new BusinessAreaEntity();
+            businessAreaEntity.instanceId = workflowInstance.application.id;
+            businessAreaEntity.category = interests[i].category;
+            businessAreaEntity.serviceId = bp.serviceId;
+            businessAreaEntity.applicationNumber =
+              workflowInstance.application.applicationNumber;
+            businessAreaEntity.status = VendorStatusEnum.PENDING;
+            businessAreaEntity.vendorId = result.id;
+            const res = await this.addBusinessArea(businessAreaEntity);
+            if (!res)
+              throw new BadRequestException(`adding_business_area_failed`);
+          } catch (error) {
+            console.log(error);
           }
-          wfi.bpId = bp.id;
-          wfi.serviceId = bp.serviceId;
-          wfi.requestorId = result.id;
-          const workflowInstance =
-            await this.workflowInstanceService.create(wfi);
-          if (!workflowInstance)
-            throw new BadRequestException(`workflowInstanceService_failed`);
-          instances.push(workflowInstance);
-          response.push({
-            applicationNumber: workflowInstance.application.applicationNumber,
-            instanceNumber: workflowInstance.application.id,
-            vendorId: workflowInstance.application.requestorId,
-          });
-          const businessAreaEntity = new BusinessAreaEntity();
-          businessAreaEntity.instanceId = workflowInstance.application.id;
-          businessAreaEntity.category = interests[i].category;
-          businessAreaEntity.serviceId = bp.serviceId;
-          businessAreaEntity.applicationNumber =
-            workflowInstance.application.applicationNumber;
-          businessAreaEntity.status = VendorStatusEnum.PENDING;
-          businessAreaEntity.vendorId = result.id;
-          console.log(businessAreaEntity);
-          const res = await this.addBusinessArea(businessAreaEntity);
-          if (!res)
-            throw new BadRequestException(`adding_business_area_failed`);
-        }
-        for (const instance of instances) {
-          const dto = new GotoNextStateDto();
-          dto.action = 'ISR';
-          dto.data = result;
-          dto.instanceId = instance.application.id;
-          const gotonest = await this.workflowInstanceService.gotoNextStep(
-            dto,
-            userInfo,
-          );
-          if (!gotonest) throw new BadRequestException(`gotoNextStep_failed`);
         }
         return response;
       }
@@ -181,77 +199,112 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       },
     });
     if (!result) throw new NotFoundException(`isr_Vendor_not_found`);
-    if (vendorStatusDto.status == VendorStatusEnum.COMPLETED) {
-      const isrVendorData = result;
-      const basic = JSON.parse(JSON.stringify(isrVendorData.basic));
-      const initial = JSON.parse(JSON.stringify(isrVendorData.initial));
-      if (result.status !== VendorStatusEnum.COMPLETED) {
-        initial.status = VendorStatusEnum.COMPLETED;
-        initial.level = VendorStatusEnum.COMPLETED;
-        const isrVendorUpdate = await this.isrVendorsRepository.update(
-          result.id,
-          {
-            status: VendorStatusEnum.COMPLETED,
-            initial: initial,
-          },
-        );
-        if (!isrVendorUpdate)
-          throw new BadRequestException(`isr_vendor_update_failed`);
-        const vendorEntity = new VendorsEntity();
-        vendorEntity.status = VendorStatusEnum.APPROVED;
-        vendorEntity.level = VendorStatusEnum.COMPLETED;
-        vendorEntity.name = basic.name;
-        vendorEntity.formOfEntity = basic.businessType;
-        vendorEntity.origin = basic.origin;
-        vendorEntity.district = basic.district;
-        vendorEntity.country = basic.country;
-        vendorEntity.tin = basic.tinNumber;
-        vendorEntity.userId = initial.userId;
-        vendorEntity.isrVendorId = result.id;
-        vendorEntity.shareholders = JSON.parse(
-          JSON.stringify(isrVendorData.shareHolders),
-        );
-        vendorEntity.vendorAccounts = JSON.parse(
-          JSON.stringify(isrVendorData.bankAccountDetails),
-        );
-        vendorEntity.areasOfBusinessInterest = JSON.parse(
-          JSON.stringify(isrVendorData.areasOfBusinessInterest),
-        );
-        vendorEntity.beneficialOwnership = JSON.parse(
-          JSON.stringify(isrVendorData.beneficialOwnership),
-        );
-        let tempMetadata = null;
-        tempMetadata = {
-          address: isrVendorData.address,
-          contactPersons: isrVendorData.contactPersons,
-          businessSizeAndOwnership: isrVendorData.businessSizeAndOwnership,
-          supportingDocuments: isrVendorData.supportingDocuments,
-          paymentReceipt: isrVendorData.paymentReceipt,
-        };
-        vendorEntity.metaData = tempMetadata;
+    const isrVendorData = result;
+    const basic = JSON.parse(JSON.stringify(isrVendorData.basic));
+    const initial = JSON.parse(JSON.stringify(isrVendorData.initial));
+    if (result.status !== VendorStatusEnum.COMPLETED) {
+      initial.status = VendorStatusEnum.COMPLETED;
+      initial.level = VendorStatusEnum.COMPLETED;
+      result.status = VendorStatusEnum.COMPLETED;
+      result.initial = initial;
+
+      const isrVendorUpdate = await this.isrVendorsRepository.save(result);
+      if (!isrVendorUpdate)
+        throw new BadRequestException(`isr_vendor_update_failed`);
+      const vendorEntity = new VendorsEntity();
+      vendorEntity.status = VendorStatusEnum.APPROVED;
+      vendorEntity.level = VendorStatusEnum.COMPLETED;
+      vendorEntity.name = basic.name;
+      vendorEntity.formOfEntity = basic.businessType;
+      vendorEntity.origin = basic.origin;
+      vendorEntity.district = basic.district;
+      vendorEntity.country = basic.country;
+      vendorEntity.tin = basic.tinNumber;
+      vendorEntity.userId = initial.userId;
+      vendorEntity.isrVendorId = result.id;
+      vendorEntity.shareholders = JSON.parse(
+        JSON.stringify(isrVendorData.shareHolders),
+      );
+      vendorEntity.vendorAccounts = JSON.parse(
+        JSON.stringify(isrVendorData.bankAccountDetails),
+      );
+      vendorEntity.areasOfBusinessInterest = JSON.parse(
+        JSON.stringify(isrVendorData.areasOfBusinessInterest),
+      );
+      vendorEntity.beneficialOwnership = JSON.parse(
+        JSON.stringify(isrVendorData.beneficialOwnership),
+      );
+      let tempMetadata = null;
+      tempMetadata = {
+        address: isrVendorData.address,
+        contactPersons: isrVendorData.contactPersons,
+        businessSizeAndOwnership: isrVendorData.businessSizeAndOwnership,
+        supportingDocuments: isrVendorData.supportingDocuments,
+        paymentReceipt: isrVendorData.paymentReceipt,
+      };
+      vendorEntity.metaData = tempMetadata;
+      try {
         const res = await this.vendorRepository.save(vendorEntity);
         if (!res) throw new BadRequestException(`vendor_insertion_failed`);
-      }
-      const businessArea = await this.businessAreaRepository.findOne({
-        where: { vendorId: result.id, instanceId: vendorStatusDto.instanceId },
-      });
-      if (!businessArea)
-        throw new BadRequestException(`businessArea_not_found`);
-      const besinessArea = await this.businessAreaRepository.update(
-        businessArea.id,
-        { status: VendorStatusEnum.APPROVED, remark: vendorStatusDto.remark },
-      );
-      if (!besinessArea)
-        throw new BadRequestException(`business_area_update_failed`);
-      return {
-        ...businessArea,
-        status: VendorStatusEnum.APPROVED,
-        remark: vendorStatusDto.remark,
-      };
+      } catch (error) {}
     }
-    return result;
+    const businessArea = await this.businessAreaRepository.findOne({
+      where: { vendorId: result.id, instanceId: vendorStatusDto.instanceId },
+    });
+    if (!businessArea) throw new BadRequestException(`businessArea_not_found`);
+    businessArea.status = VendorStatusEnum.APPROVED;
+    businessArea.remark = vendorStatusDto.remark;
+    const besinessArea = await this.businessAreaRepository.save(businessArea);
+    if (!besinessArea)
+      throw new BadRequestException(`business_area_update_failed`);
+    return besinessArea;
   }
-  async adjustVendor(vendorStatusDto: SetVendorStatus): Promise<any> {
+  async updateVendor(vendorStatusDto: SetVendorStatus): Promise<any> {
+    if (vendorStatusDto.status == VendorStatusEnum.ADJUST) {
+      const res = this.adjustmentVendor(vendorStatusDto);
+      if (res) return vendorStatusDto;
+    } else {
+      const result = await this.isrVendorsRepository.findOne({
+        where: {
+          userId: vendorStatusDto.userId,
+          status: In([
+            VendorStatusEnum.ACTIVE,
+            VendorStatusEnum.ADJUSTMENT,
+            VendorStatusEnum.COMPLETED,
+          ]),
+        },
+      });
+
+      if (!result) throw new NotFoundException(`isr_Vendor_not_found`);
+      // if vendor have no previously approved service
+      if (result.status !== VendorStatusEnum.COMPLETED) {
+        const initial = JSON.parse(JSON.stringify(result.initial));
+        initial.status = VendorStatusEnum.REJECTED;
+        result.status = VendorStatusEnum.REJECTED;
+        const resul = await this.isrVendorsRepository.save(result);
+        if (!resul) throw new BadRequestException(`isrVendor_Update_failed`);
+      } else {
+        // if vendor have  previously approved service
+        const currentBusinessArea = await this.businessAreaRepository.findOne({
+          where: {
+            vendorId: result.id,
+            instanceId: vendorStatusDto.instanceId,
+          },
+        });
+        if (!currentBusinessArea)
+          throw new BadRequestException(`businessArea_not_found`);
+        currentBusinessArea.status = VendorStatusEnum.REJECTED;
+        currentBusinessArea.remark = vendorStatusDto.remark;
+        const businessArea =
+          await this.businessAreaRepository.save(currentBusinessArea);
+        if (!businessArea)
+          throw new BadRequestException(`business_area_rejection_failed`);
+      }
+      // return { msg: 'Success' };
+      return vendorStatusDto;
+    }
+  }
+  async adjustmentVendor(vendorStatusDto: SetVendorStatus): Promise<any> {
     const result = await this.isrVendorsRepository.findOne({
       where: {
         userId: vendorStatusDto.userId,
@@ -264,36 +317,52 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     });
 
     if (!result) throw new NotFoundException(`isr_Vendor_not_found`);
-    switch (vendorStatusDto.status) {
-      case VendorStatusEnum.REJECT:
-        vendorStatusDto.status = VendorStatusEnum.REJECTED;
-        break;
-      case VendorStatusEnum.ADJUST:
-        vendorStatusDto.status = VendorStatusEnum.ADJUSTMENT;
-        break;
-      default:
-        throw new BadRequestException(`invalid_status`);
-    }
+    const initial = JSON.parse(JSON.stringify(result?.initial));
+    console.log(result);
+    //if there is no previously approved service by the isr vendorId
     if (result.status !== VendorStatusEnum.COMPLETED) {
-      const resul = await this.isrVendorsRepository.update(result.id, {
-        status: vendorStatusDto.status,
-        remark: vendorStatusDto.remark,
+      initial.level = VendorStatusEnum.DETAIL;
+      initial.status = VendorStatusEnum.SAVEASDRAFT;
+      result.initial = initial;
+      const resul = await this.isrVendorsRepository.save(result);
+      if (!resul) throw new BadRequestException(`Unable_to_save_isrVendor`);
+
+      return resul;
+    } else {
+      //if there isx  previously approved service by the vendorId
+      initial.level = VendorStatusEnum.PPDA;
+      initial.status = VendorStatusEnum.SAVEASDRAFT;
+      const currentBusinessArea = await this.businessAreaRepository.findOne({
+        where: { vendorId: result.id, instanceId: vendorStatusDto.instanceId },
       });
-      if (!resul) throw new BadRequestException(`isrVendor_Update_failed`);
+      if (!currentBusinessArea)
+        throw new BadRequestException(`businessArea_not_found`);
+      currentBusinessArea.status = vendorStatusDto.status;
+      currentBusinessArea.remark = vendorStatusDto.remark;
+      const businessArea =
+        await this.businessAreaRepository.save(currentBusinessArea);
+      if (!businessArea)
+        throw new BadRequestException(`business_area_update_failed`);
+      return businessArea;
     }
-    const currentBusinessArea = await this.businessAreaRepository.findOne({
-      where: { vendorId: result.id, instanceId: vendorStatusDto.instanceId },
-    });
-    if (!currentBusinessArea)
-      throw new BadRequestException(`businessArea_not_found`);
-    const businessArea = await this.businessAreaRepository.update(
-      currentBusinessArea.id,
-      { status: vendorStatusDto.status, remark: vendorStatusDto.remark },
-    );
-    if (!businessArea)
-      throw new BadRequestException(`business_area_update_failed`);
     // return { msg: 'Success' };
-    return currentBusinessArea;
+  }
+  async updateVendorStatus(
+    vendorId: string,
+    vendorStatus: string,
+  ): Promise<any> {
+    const resul = await this.vendorRepository.update(vendorId, {
+      status: vendorStatus,
+    });
+    if (!resul) throw new BadRequestException(`isrVendor_Update_failed`);
+    return true;
+  }
+  async updateIsrVendorStatus(isrVendorId: string, initial: any): Promise<any> {
+    const resul = await this.isrVendorsRepository.update(isrVendorId, {
+      initial: initial,
+    });
+    if (!resul) throw new BadRequestException(`isrVendor_Update_failed`);
+    return true;
   }
   async vendorInitiation(
     vendorInitiationDto: VendorInitiationDto,

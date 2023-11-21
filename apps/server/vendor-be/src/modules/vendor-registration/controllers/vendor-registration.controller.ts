@@ -6,6 +6,7 @@ import {
   Param,
   BadRequestException,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -78,7 +79,11 @@ export class VendorRegistrationsController {
   async addVendorInformation(
     @Body() data: InsertAllDataDto,
     @CurrentUser() userInfo: any,
+    @Req() request: Request,
   ) {
+    const authToken = request.headers['authorization'].split(' ')[1];
+
+    userInfo['token'] = authToken;
     data.data.initial.userId = userInfo.id;
     const result = await this.regService.addVendorInformations(
       data.data,
@@ -87,6 +92,7 @@ export class VendorRegistrationsController {
     if (!result) throw new BadRequestException(`vendor registration failed`);
     return result;
   }
+
   @Post('vendor-initiation')
   async VendorInitiation(
     @Body() vendorInitiationDto: VendorInitiationDto,
@@ -100,9 +106,10 @@ export class VendorRegistrationsController {
   async approveVednorServices(@Body() vendorStatusDto: SetVendorStatus) {
     return await this.regService.approveVendor(vendorStatusDto);
   }
-  @Post('adjust-vendor-services')
-  async adjustVednorServices(@Body() vendorStatusDto: SetVendorStatus) {
-    return await this.regService.adjustVendor(vendorStatusDto);
+
+  @Post('update-vendor-services')
+  async updateVednorServices(@Body() vendorStatusDto: SetVendorStatus) {
+    return await this.regService.updateVendor(vendorStatusDto);
   }
   @Post('set-application-status')
   async setVendorStatus(@Body() vendorStatusDto: SetVendorStatus) {
