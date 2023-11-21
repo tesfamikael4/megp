@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Tag } from 'src/entities/tag.entity';
-import { EntityCrudService } from 'src/shared/service/entity-crud.service';
+import { EntityCrudService } from 'src/shared/service';
 import { Repository } from 'typeorm';
 
 @Injectable()

@@ -1,4 +1,3 @@
-import { CommonEntity } from 'src/shared/entities/common.entity';
 import {
   Column,
   Entity,
@@ -9,8 +8,9 @@ import {
 } from 'typeorm';
 import { Measurement } from './measurement.entity';
 import { ItemMaster } from './item-master.entity';
+import { Audit } from 'src/shared/entities';
 @Entity({ name: 'unit_of_measurements' })
-export class UnitOfMeasurement extends CommonEntity {
+export class UnitOfMeasurement extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
   @Column()

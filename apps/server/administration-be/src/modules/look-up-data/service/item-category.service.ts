@@ -1,15 +1,11 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import {
-  CreateItemCategoryDto,
-  ItemCategoryResponseDto,
-} from '../dto/item-category.dto';
+import { ItemCategoryResponseDto } from '../dto/item-category.dto';
 import { DataResponseFormat } from 'src/shared/api-data';
-import { CollectionQuery, QueryConstructor } from 'src/shared/collection-query';
-import { EntityCrudService } from 'src/shared/service';
 import { ItemCategory } from 'src/entities/item-category.entity';
-
+import { EntityCrudService } from 'src/shared/service';
+import { CollectionQuery } from 'src/shared/collection-query';
 @Injectable()
 export class ItemCategoryService extends EntityCrudService<ItemCategory> {
   constructor(
@@ -45,7 +41,6 @@ export class ItemCategoryService extends EntityCrudService<ItemCategory> {
           id: item.id,
           name: item.name,
           parentId: item.parentId,
-          // subCatItem: [], // Initialize the subCatItem property
           childCategories: this.buildCatAndSubCat(items, item.id),
         };
         catTree.push(newItem);

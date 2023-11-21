@@ -1,4 +1,3 @@
-import { CommonEntity } from 'src/shared/entities/common.entity';
 import {
   Column,
   Entity,
@@ -11,27 +10,21 @@ import { ItemCategory } from './item-category.entity';
 import { Classification } from './classification';
 import { ItemTag } from './item-tag.entity';
 import { UnitOfMeasurement } from './uom.entity';
+import { Audit } from 'src/shared/entities';
 
 @Entity({ name: 'item_masters' })
-export class ItemMaster extends CommonEntity {
+export class ItemMaster extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
   @Column()
   itemCode: string;
-
   @Column()
   description: string;
-
-  // @ManyToOne(() => Classification, (entity) => entity.itemMasters)
-  // @JoinColumn({ name: 'commodityCode', referencedColumnName: 'code' })
   @Column()
   commodityCode: string;
-
   commodity: Classification;
-
   @Column()
   commodityName: string;
-
   @ManyToOne(() => ItemCategory, (entity) => entity.id)
   @JoinColumn({ name: 'itemSubcategoryId' })
   itemSubcategoryId: string;
@@ -54,6 +47,8 @@ export class ItemMaster extends CommonEntity {
   @Column({ default: true })
   isActive: boolean;
 
-  @OneToMany(() => ItemTag, (entity) => entity.itemMaster, { cascade: ['insert', 'update'] })
+  @OneToMany(() => ItemTag, (entity) => entity.itemMaster, {
+    cascade: ['insert', 'update'],
+  })
   itemTags: ItemTag[];
 }

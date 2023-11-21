@@ -1,16 +1,15 @@
+import { Audit } from 'src/shared/entities';
 import { ClassificationPath } from './classification-path';
 import {
   Column,
   Entity,
   JoinColumn,
   OneToMany,
-  OneToOne,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { CommonEntity } from 'src/shared/entities/common.entity';
 @Entity({ name: 'classification' })
-export class Classification extends CommonEntity {
+export class Classification extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

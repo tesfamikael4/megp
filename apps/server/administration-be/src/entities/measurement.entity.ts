@@ -1,14 +1,9 @@
-import { CommonEntity } from 'src/shared/entities/common.entity';
-import {
-  Column,
-  Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { UnitOfMeasurement } from './uom.entity';
+import { Audit } from 'src/shared/entities';
 
 @Entity({ name: 'measurements' })
-export class Measurement extends CommonEntity {
+export class Measurement extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
   @Column()
