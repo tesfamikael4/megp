@@ -93,7 +93,6 @@ export class ApplicationExcutionController {
   async testWF(@Body() wfi: CreateWorkflowInstanceDto, @CurrentUser() user, @Req() request: Request,) {
     const authToken = request.headers['authorization'].split(' ')[1];
     user['token'] = authToken;
-
     const bp = await this.bpService.findBpService(wfi.pricingId);
     if (!bp) throw new NotFoundException('BP not found');
     wfi.serviceId = bp.serviceId;
@@ -115,8 +114,7 @@ export class ApplicationExcutionController {
     const authToken = request.headers['authorization'].split(' ')[1];
     user['token'] = authToken;
     const response = await this.workflowService.gotoNextStep(
-      nextStatedto,
-      user,
+      nextStatedto, user,
     );
     return response;
   }

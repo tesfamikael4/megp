@@ -67,16 +67,16 @@ export class WorkflowService {
   ): Promise<any> {
     const response = {};
     const instanceEntity = CreateWorkflowInstanceDto.fromDto(dto);
-    instanceEntity.user = user;
     instanceEntity.userId = user?.id;
-
+    const userInfo = { ...user };
+    userInfo.token = null;
+    instanceEntity.user = userInfo;
     const serviceBp = await this.bpService.findWorkflowByServiceAndBP(
       dto.serviceId,
       dto.bpId,
     );
     if (!serviceBp || !dto.requestorId)
       throw new NotFoundException('Business Process Not Found');
-    console.log("service  Bp", serviceBp);
     instanceEntity.applicationNumber =
       await this.commonService.generateApplicationNumber('PPDA', 'GNR');
     const wfinstance =
@@ -88,17 +88,15 @@ export class WorkflowService {
     const taskHandler = new TaskHandlerEntity();
     response['application'] = wfinstance;
     const init = machine.initial.toString();
-    console.log(" instanceEntity.user ------", instanceEntity.user);
-    console.log(init);
     const task = await this.taskService.getTaskByNameAndBP(serviceBp.id, init);
     if (!task) throw new NotFoundException('Task Not found');
     taskHandler.currentState = init;
     taskHandler.instanceId = wfinstance.id;
     taskHandler.taskId = task.id;
-    taskHandler.previousHandlerId = null;
-    taskHandler.handlerUser = null; //userInfo.name; //userMeta
-    taskHandler.handlerUserId = null; // userInfo.userId;
-    taskHandler.assignmentStatus = AssignmentEnum.Unpicked;
+    // taskHandler.previousHandlerId = null;
+    // taskHandler.handlerUser = null; //userInfo.name; //userMeta
+    // taskHandler.handlerUserId = null; // userInfo.userId;
+    // taskHandler.assignmentStatus = AssignmentEnum.Unpicked;
     taskHandler.data = { ...dto.data };
     try {
       const insertedTaskHandler =
@@ -149,21 +147,19 @@ export class WorkflowService {
         wfInstance.bpId = workflowInstance.bpId;
         wfInstance.id = workflowInstance.id;
         const apiUrl = stateMetaData['apiUrl'];
-        if (apiUrl) {
-          wfInstance.user = workflowInstance.user;
-          const response = await this.notifyCompletion(
-            wfInstance,
-            stateMetaData['apiUrl'],
-            user,
-          );
-          if (response) {
-            await this.addTaskTracker(currentTaskHandler, nextCommand, user);
-            await this.handlerRepository.delete(currentTaskHandler.id);
-          }
-        } else {
+        wfInstance.user = workflowInstance.user;
+        const response = await this.notifyCompletion(
+          wfInstance,
+          apiUrl,
+          user,
+          nextCommand
+        );
+        if (response) {
           await this.addTaskTracker(currentTaskHandler, nextCommand, user);
           await this.handlerRepository.delete(currentTaskHandler.id);
         }
+        // await this.addTaskTracker(currentTaskHandler, nextCommand, user);
+        // await this.handlerRepository.delete(currentTaskHandler.id);
       } else {
         const task = await this.taskService.getTaskByNameAndBP(
           workflowInstance.bpId,
@@ -300,8 +296,8 @@ export class WorkflowService {
     switch (stateMetadata.type.toLowerCase()) {
       case TaskTypes.APPROVAL:
         if (
-          command.action.toUpperCase() == ReviewStatus.Adjust.toUpperCase() ||
-          command.action.toUpperCase() == ReviewStatus.Reject.toUpperCase()
+          command.action.toUpperCase() == ReviewStatus.Adjust.toUpperCase()
+          // ||  command.action.toUpperCase() == ReviewStatus.Reject.toUpperCase()
         ) {
           return this.notify(wfi, stateMetadata['apiUrl'], command, user);
         }
@@ -382,17 +378,31 @@ export class WorkflowService {
     wfi: UpdateWorkflowInstanceDto,
     url: string,
     user: any,
+    command: any
   ) {
-    const requesterUser = JSON.parse(wfi.user);
     const payload = {
-      vendorId: wfi.requestorId,
+      isrVendorId: wfi.requestorId,
       instanceId: wfi.id,
       serviceId: wfi.serviceId,
       status: WorkflowInstanceEnum.Completed,
-      userId: requesterUser.id,
+      userId: wfi.user.id,
+      remark: command.remark
     };
+    console.log("command-->", command);
+    console.log("payload", payload)
     const accessToken = user['token'];
+    let method = '';
+    if (command.action == 'REJECT') {
+      method = 'update-vendor-services';
+    } else {
+      method = 'approve-vendor-services';
+    }
+    if (!url) {
+      const vendor_url = process.env.VENDOR_API ?? '/vendors/api/';
+      url = vendor_url + '/vendor-registrations/' + method;
+    }
     try {
+      // url = "http://localhost:3000/api/vendor-registrations/approve-vendor-services"
       const response = await axios.post(url, payload, {
         headers: {
           'Content-Type': 'application/json',
@@ -419,17 +429,16 @@ export class WorkflowService {
   ) {
     if (!url) {
       const vendor_url = process.env.VENDOR_API ?? '/vendors/api/';
-      url = vendor_url + '/vendor-registrations/set-application-status';
+      url = vendor_url + '/vendor-registrations/update-vendor-services';
     }
     const accessToken = user['token'];
-    const requesterUser = JSON.parse(JSON.stringify(wfi.user));
     const payload = {
-      vendorId: wfi.requestorId,
+      isrVendorId: wfi.requestorId,
       instanceId: wfi.id,
       status: metaDate.action,
       serviceId: wfi.serviceId,
       remark: metaDate.remark,
-      userId: requesterUser?.id,
+      userId: wfi.userId,
     };
     try {
       const response = await axios.post(url, payload, {

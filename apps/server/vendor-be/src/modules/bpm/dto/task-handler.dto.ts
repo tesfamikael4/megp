@@ -114,14 +114,13 @@ export class TaskHandlerResponse extends UpdateTaskHandlerDto {
     response.id = entity.id;
     response.taskId = entity.taskId;
     response.instanceId = entity.instanceId;
-    if (entity?.handlerUser) {
+    if (entity?.handlerUser && Object.values(entity?.handlerUser).length > 0) {
       const json = JSON.stringify(entity?.handlerUser);
       const parsed = JSON.parse(json);
       response.handlerName = parsed.firstName + ' ' + parsed.lastName;
     } else {
       response.handlerName = null;
     }
-
     response.handlerUserId = entity.handlerUserId;
     response.pickedAt = entity.pickedAt;
     response.data = entity.data;
