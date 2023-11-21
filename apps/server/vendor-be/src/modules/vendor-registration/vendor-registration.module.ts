@@ -47,6 +47,7 @@ import { WorkflowInstanceController } from 'src/modules/handling/controllers/wor
 import { ApplicationExcutionController } from 'src/modules/handling/controllers/application-execution.controller';
 import { ServicePricingController } from 'src/modules/pricing/controllers/service-pricing.controller';
 import { CategoriesModule } from '../categories/category.module';
+import { InvoiceService } from './services/invoice.service';
 
 @Module({
   imports: [
@@ -90,6 +91,7 @@ import { CategoriesModule } from '../categories/category.module';
     ApplicationExcutionService,
     VendorRegistrationsService,
     BusinessAreaService,
+    InvoiceService,
     TusService,
   ],
   controllers: [

@@ -52,4 +52,10 @@ export class ServicePricingService extends EntityCrudService<ServicePrice> {
       },
     });
   }
+  async findPricingWithServiceById(id: string) {
+    return this.pricingRepository.findOne({
+      relations: { service: true },
+      where: { id: id },
+    });
+  }
 }

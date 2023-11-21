@@ -74,7 +74,7 @@ export class TusService implements OnModuleInit {
     const areaOfBusinessInterest = result.areasOfBusinessInterest;
     const invoice = await this.invoiceRepository.find({
       where: {
-        payerAccountId: userId,
+        userId: userId,
         paymentStatus: Not('Paid'),
       },
     });

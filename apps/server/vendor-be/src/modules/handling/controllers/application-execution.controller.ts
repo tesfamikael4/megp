@@ -31,17 +31,18 @@ import { WorkflowService } from 'src/modules/bpm/services/workflow.service';
 import { BusinessProcessService } from 'src/modules/bpm/services/business-process.service';
 import { UpdateTaskHandlerDto } from 'src/modules/bpm/dto/task-handler.dto';
 import { ActivityResponseDto } from 'src/modules/bpm/dto/activities.dto';
+import { InvoiceService } from 'src/modules/vendor-registration/services/invoice.service';
 @ApiBearerAuth()
 @Controller('application-execution')
 @ApiTags('Application Excution')
 @ApiExtraModels(DataResponseFormat)
 export class ApplicationExcutionController {
-  userInfo: any;
   constructor(
     private readonly executeService: ApplicationExcutionService,
     private readonly workflowService: WorkflowService,
     private readonly bpService: BusinessProcessService,
-  ) { }
+    private readonly invoiceService: InvoiceService,
+  ) {}
 
   @UseGuards(JwtGuard)
   @Get('email')
@@ -90,17 +91,18 @@ export class ApplicationExcutionController {
   @UseGuards(JwtGuard)
   @Post('intiate-workflow')
   @ApiOkResponse({ type: WorkflowInstanceResponse })
-  async testWF(@Body() wfi: CreateWorkflowInstanceDto, @CurrentUser() user, @Req() request: Request,) {
+  async testWF(
+    @Body() wfi: CreateWorkflowInstanceDto,
+    @CurrentUser() user,
+    @Req() request: Request,
+  ) {
     const authToken = request.headers['authorization'].split(' ')[1];
     user['token'] = authToken;
     const bp = await this.bpService.findBpService(wfi.pricingId);
     if (!bp) throw new NotFoundException('BP not found');
     wfi.serviceId = bp.serviceId;
     wfi.bpId = bp.id;
-    return await this.workflowService.intiateWorkflowInstance(
-      wfi,
-      user,
-    );
+    return await this.workflowService.intiateWorkflowInstance(wfi, user);
   }
 
   @UseGuards(JwtGuard)
@@ -114,11 +116,20 @@ export class ApplicationExcutionController {
     const authToken = request.headers['authorization'].split(' ')[1];
     user['token'] = authToken;
     const response = await this.workflowService.gotoNextStep(
-      nextStatedto, user,
+      nextStatedto,
+      user,
     );
     return response;
   }
 
+  @UseGuards(JwtGuard)
+  @Post('generate-invoice/:id')
+  @ApiOkResponse({ type: InvoiceResponseDto })
+  async generateInvoice(@Param('id') id: string, @CurrentUser() user: any) {
+    const vendor: object = { name: 'xxxxxx vvvvvvvvv' };
+
+    return await this.invoiceService.generateInvoice(id, user, vendor);
+  }
   @UseGuards(JwtGuard)
   @Post('pick-task')
   @ApiOkResponse({ type: WorkflowInstanceResponse })
@@ -196,19 +207,19 @@ export class ApplicationExcutionController {
   @Get('get-invoices')
   @ApiPaginatedResponse(InvoiceResponseDto)
   async fetchInvoices(@Query() query: CollectionQuery) {
-    return await this.executeService.getInvoices(query);
+    return await this.invoiceService.getInvoices(query);
   }
   @UseGuards(JwtGuard)
   @Get('get-invoice/:id')
   @ApiOkResponse({ type: InvoiceResponseDto })
   async getInvoice(@Param('id') id: string) {
-    return await this.executeService.getInvoice(id);
+    return await this.invoiceService.getInvoice(id);
   }
   @UseGuards(JwtGuard)
   @Get('get-my-invoice')
   @ApiOkResponse({ type: InvoiceResponseDto })
   async getMyInvoice(@CurrentUser() user: any) {
-    return await this.executeService.getMyInvoices(user.id);
+    return await this.invoiceService.getMyInvoices(user.id);
   }
 
   @UseGuards(JwtGuard)

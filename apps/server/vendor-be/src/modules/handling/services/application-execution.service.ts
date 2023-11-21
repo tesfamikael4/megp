@@ -26,6 +26,7 @@ import { TaskTypes } from 'src/modules/bpm/dto/task-type.enum';
 import { UpdateTaskHandlerDto } from 'src/modules/bpm/dto/task-handler.dto';
 import { WorkflowInstanceResponse } from '../dto/workflow-instance.dto';
 import { FilesEntity } from 'src/entities';
+import { InvoiceService } from 'src/modules/vendor-registration/services/invoice.service';
 @Injectable()
 export class ApplicationExcutionService {
   constructor(
@@ -38,6 +39,7 @@ export class ApplicationExcutionService {
     @InjectRepository(WorkflowInstanceEntity)
     private readonly wiRepository: Repository<WorkflowInstanceEntity>,
     private readonly dataSource: DataSource,
+    private readonly invoiceService: InvoiceService,
   ) {}
   async getCompletedTasks(instanceId: string): Promise<TaskTrackerResponse[]> {
     const ctasks = await this.taskTrackingRepository.find({
@@ -163,82 +165,28 @@ export class ApplicationExcutionService {
     if (
       response.task.taskType.toLowerCase() == TaskTypes.INVOICE.toLowerCase()
     ) {
-      response.taskHandler['invoice'] = await this.getInvoiceByInstanceId(
-        instanceId,
-        response.taskHandler.taskId,
-      );
+      response.taskHandler['invoice'] =
+        await this.invoiceService.getInvoiceByInstanceId(
+          instanceId,
+          response.taskHandler.taskId,
+        );
     }
     for (let i = 0; i < response.taskTrackers.length; i++) {
       if (
         response.taskTrackers[i].task.taskType.toLowerCase() ==
         TaskTypes.INVOICE.toLowerCase()
       ) {
-        response.taskTrackers[i]['invoice'] = await this.getInvoiceByInstanceId(
-          instanceId,
-          response.taskTrackers[i].taskId,
-        );
+        response.taskTrackers[i]['invoice'] =
+          await this.invoiceService.getInvoiceByInstanceId(
+            instanceId,
+            response.taskTrackers[i].taskId,
+          );
       }
     }
 
     return response;
   }
 
-  async getInvoices(
-    query: CollectionQuery,
-  ): Promise<DataResponseFormat<InvoiceResponseDto>> {
-    const dataQuery = QueryConstructor.constructQuery<InvoiceEntity>(
-      this.invoceRepository,
-      query,
-    );
-    const response = new DataResponseFormat<InvoiceResponseDto>();
-    if (query.count) {
-      response.total = await dataQuery.getCount();
-    } else {
-      const [result, total] = await dataQuery.getManyAndCount();
-      response.total = total;
-      response.items = result.map((entity) =>
-        InvoiceResponseDto.toResponse(entity),
-      );
-    }
-    return response;
-  }
-
-  async getInvoiceByInstanceId(
-    instanceId: string,
-    taskId: string,
-  ): Promise<InvoiceResponseDto> {
-    const invoice = await this.invoceRepository.findOne({
-      where: { instanceId: instanceId, taskId: taskId },
-    });
-    console.log('invoice', invoice);
-    if (invoice) {
-      const invoicedto = InvoiceResponseDto.toResponse(invoice);
-      return invoicedto;
-    }
-    return null;
-  }
-  async getInvoice(invoceId: string): Promise<InvoiceResponseDto> {
-    const invoice = await this.invoceRepository.findOne({
-      where: { id: invoceId },
-    });
-    if (invoice) {
-      return InvoiceResponseDto.toResponse(invoice);
-    }
-    return null;
-  }
-  async getMyInvoices(
-    userId: string,
-  ): Promise<DataResponseFormat<InvoiceResponseDto>> {
-    const response = new DataResponseFormat<InvoiceResponseDto>();
-    const [result, total] = await this.invoceRepository.findAndCount({
-      where: { payerAccountId: userId, paymentStatus: 'Pending' },
-    });
-    response.total = total;
-    response.items = result.map((entity) =>
-      InvoiceResponseDto.toResponse(entity),
-    );
-    return response;
-  }
   async activeVendors(
     query: CollectionQuery,
   ): Promise<DataResponseFormat<ActiveVendorsResponse>> {
