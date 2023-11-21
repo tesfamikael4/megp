@@ -3,7 +3,6 @@ import {
   BadRequestException,
   HttpException,
   HttpStatus,
-  Inject,
   Injectable,
   Logger,
   NotFoundException,
@@ -21,7 +20,6 @@ import {
   IsrVendorsEntity,
   VendorsEntity,
 } from 'src/entities';
-import { WorkflowInstanceService } from 'src/modules/handling/services/workflow-instance.service';
 import initialValueSchema from '../dto/add-vendor.dto';
 import { BusinessProcessService } from 'src/modules/bpm/services/business-process.service';
 import {
@@ -30,8 +28,7 @@ import {
 } from 'src/modules/handling/dto/workflow-instance.dto';
 import { VendorStatusEnum } from 'src/shared/enums/vendor-status-enums';
 import { WorkflowService } from 'src/modules/bpm/services/workflow.service';
-import { error } from 'console';
-import { errorExecution } from 'xstate/lib/actionTypes';
+import { InvoiceService } from './invoice.service';
 
 @Injectable()
 export class VendorRegistrationsService extends EntityCrudService<VendorsEntity> {
@@ -47,8 +44,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     private readonly invoiceRepository: Repository<InvoiceEntity>,
     private readonly dataSource: DataSource, // private readonly workflowInstanceService: WorkflowInstanceService,
     private readonly workflowService: WorkflowService,
-    private readonly workflowInstanceService: WorkflowInstanceService,
     private readonly bpService: BusinessProcessService,
+    private readonly invoiceService: InvoiceService,
   ) {
     super(vendorRepository);
   }
@@ -58,13 +55,12 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       data.initial.status == VendorStatusEnum.SAVE ||
       data.initial.status == VendorStatusEnum.SUBMIT
     ) {
-      const result = await this.isrVendorsRepository.save(
-        await this.fromInitialValue(data),
-      );
+      const isrVendor = await this.fromInitialValue(data);
+      const result = await this.isrVendorsRepository.save(isrVendor);
 
-      console.log("data.initial.level ", data.initial.level);
-      console.log("data.initial.status ", data.initial.status);
-      console.log("data.areasOfBusinessInterest", data.areasOfBusinessInterest);
+      console.log('data.initial.level ', data.initial.level);
+      console.log('data.initial.status ', data.initial.status);
+      console.log('data.areasOfBusinessInterest', data.areasOfBusinessInterest);
 
       if (!result) throw new HttpException(`adding_isr_failed`, 500);
       if (
@@ -76,11 +72,12 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           index < data.areasOfBusinessInterest.length;
           index++
         ) {
-          const invoice =
-            await this.workflowInstanceService.generateVendorInvoice(
-              result.id,
-              data.areasOfBusinessInterest[index].priceRange,
-            );
+          result.basic['id'] = result.id;
+          const invoice = await this.invoiceService.generateInvoice(
+            data.areasOfBusinessInterest[index].priceRange,
+            userInfo,
+            result.basic,
+          );
           if (!invoice) throw new HttpException('invoice_creation_failed', 500);
         }
         return { msg: 'Success' };
@@ -90,7 +87,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       ) {
         const wfi = new CreateWorkflowInstanceDto();
         wfi.user = userInfo;
-
         const instances = [];
         const response = [];
         const interests = data.areasOfBusinessInterest;
@@ -103,7 +99,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             if (!bp) {
               throw new NotFoundException('Business Process Not Found');
             }
-
             wfi.bpId = bp.id;
             wfi.serviceId = bp.serviceId;
             wfi.requestorId = result.id;
@@ -122,7 +117,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
               dto.action = 'ISR';
               dto.data = result;
               dto.instanceId = businessArea.instanceId;
-
               workflowInstance = await this.workflowService.gotoNextStep(
                 dto,
                 userInfo,
@@ -165,17 +159,16 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
   }
 
   fromInitialValue = async (data: any) => {
-    console.log("data", data);
+    console.log('data', data);
     let vendorsEntity: IsrVendorsEntity = null;
     vendorsEntity = await this.isrVendorsRepository.findOne({
       where: {
-        userId: data.initial.userId
+        userId: data.initial.userId,
         ///status: In([VendorStatusEnum.ACTIVE, VendorStatusEnum.ADJUSTMENT]),
       },
     });
     if (!vendorsEntity) throw new NotFoundException('vendor_not_found!!');
     const initial = JSON.parse(JSON.stringify(vendorsEntity.initial));
-
     if (initial.status == VendorStatusEnum.SUBMITTED)
       throw new BadRequestException(`already_submitted`);
     initial.status =
@@ -253,7 +246,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       try {
         const res = await this.vendorRepository.save(vendorEntity);
         if (!res) throw new BadRequestException(`vendor_insertion_failed`);
-      } catch (error) { }
+      } catch (error) {}
     }
     const businessArea = await this.businessAreaRepository.findOne({
       where: { vendorId: result.id, instanceId: vendorStatusDto.instanceId },
@@ -381,11 +374,15 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         status: In([VendorStatusEnum.ACTIVE, VendorStatusEnum.ADJUSTMENT]),
       },
     });
-    if (vendor) return { id: vendor.id, message: "vendor existed" };
+    if (vendor) return { id: vendor.id, message: 'vendor exist' };
     const vendorByTinExists = await this.isrVendorsRepository.findOne({
       where: { tinNumber: vendorInitiationDto.tinNumber },
     });
-    if (vendorByTinExists) return { tin: vendorInitiationDto.tinNumber, message: 'TIN already already exist' };
+    if (vendorByTinExists)
+      return {
+        tin: vendorInitiationDto.tinNumber,
+        message: 'TIN already already exist',
+      };
 
     const vendorsEntity = new IsrVendorsEntity();
     vendorsEntity.userId = userInfo.id;
@@ -431,8 +428,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     const areaOfBusinessInterest = JSON.parse(
       JSON.stringify(vendorEntity.areasOfBusinessInterest),
     );
-    const invoice = await this.getInvoices(areaOfBusinessInterest, userId);
-    return { ...vendorEntity, invoice: invoice };
+    const invoices = await this.getInvoices(areaOfBusinessInterest, userId);
+    return { ...vendorEntity, invoice: invoices };
   }
 
   async getCompletedIsrVendorByuserId(userId: string): Promise<any> {
@@ -462,7 +459,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       });
       const invoice = await this.invoiceRepository.find({
         where: {
-          payerAccountId: vendorEntity[0].id,
+          userId: vendorEntity[0].id,
           paymentStatus: Not('Paid'),
         },
       });
@@ -546,9 +543,9 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         },
       });
 
-      if (!vendorEntity) {
-        throw new HttpException('vendor_not_found', HttpStatus.BAD_REQUEST);
-      }
+      // if (!vendorEntity) {
+      //   throw new HttpException('vendor_not_found', HttpStatus.BAD_REQUEST);
+      // }
       return vendorEntity;
     } catch (error) {
       Logger.log(error);
@@ -560,11 +557,11 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     for (let index = 0; index < areaOfBusinessInterest?.length; index++) {
       const element = await this.invoiceRepository.findOne({
         where: {
-          payerAccountId: userId,
+          userId: userId,
           pricingId: areaOfBusinessInterest[index].priceRange,
         },
       });
-      if (!element) throw new BadRequestException(`invoice_not_created`);
+      if (!element) return null;
       const fourteenDaysAgo = new Date();
       fourteenDaysAgo.setDate(new Date().getDate() - 14);
       const expired = element.createdOn < fourteenDaysAgo;
@@ -743,7 +740,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         ? this.toBankAccountDetails(result.vendorAccounts)
         : [];
     const invoice = await this.invoiceRepository.find({
-      where: { payerAccountId: result.userId },
+      where: { userId: result.userId },
     });
     initialValues.invoice =
       invoice.length > 0 ? this.toInvoiveResponse(invoice) : [];

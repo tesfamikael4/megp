@@ -4,7 +4,6 @@ import {
   Get,
   Post,
   Param,
-  Patch,
   HttpStatus,
   ParseUUIDPipe,
   Put,

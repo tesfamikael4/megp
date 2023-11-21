@@ -67,7 +67,7 @@ export class WorkflowInstanceService {
     private readonly receiptRepository: Repository<PaymentReceiptEntity>,
     private readonly bpService: BusinessProcessService,
     private readonly commonService: HandlingCommonService,
-  ) { }
+  ) {}
 
   async submitFormBasedTask(
     nextCommand: GotoNextStateDto,
@@ -205,164 +205,7 @@ export class WorkflowInstanceService {
     }
     return wfinstance;
   }
-  async generateVendorInvoice(
-    vendorId: string,
-    pricingId: string,
-  ): Promise<boolean> {
-    const result = await this.pricingRepository.findOne({
-      relations: { service: true },
-      where: { id: pricingId },
-    });
-    if (!result) {
-      throw new NotFoundException('Not Found');
-    }
-    const invoice = new InvoiceEntity();
-    const service = result.service;
-    //if th service is upgrade
-    if (service.key == ServiceKeyEnum.upgrade) {
-      const previousPayment = await this.workflowInstanceRepository.findOne({
-        relations: {
-          businessProcess: { service: true },
-          price: true,
-        },
-        where: {
-          businessProcess: { service: { key: ServiceKeyEnum.new } },
-          status: WorkflowInstanceEnum.Completed,
-          //  approvedAt: Not(IsNull()),
-          price: { businessArea: result.businessArea },
-          // requestorId: result.workflowInstance.requestorId,
-        },
-      });
 
-      if (previousPayment) {
-        /*
-        if (previousPayment.price.fee < price.fee) {
-          const netpayment = await this.computeUpgradeServicePaymentAmount(previousPayment, result);
-          invoice.amount = netpayment;
-        }*/
-      } else {
-        throw new NotFoundException('Something went wrong');
-      }
-    } else {
-      invoice.amount = result.fee;
-    }
-    const vendor = await this.isrVendorRepository.findOne({
-      where: { id: vendorId },
-    });
-    invoice.instanceId = null; //result.instanceId;
-    invoice.taskName = null; //result.task.name;
-    invoice.taskId = null; //result.task.id;
-    invoice.payToAccName =
-      'Public Procurement and Disposal of Assets Authority';
-    invoice.payToAccNo = '000 100 562 4416';
-    invoice.payToBank = 'National Bank of Malawi';
-    invoice.pricingId = pricingId;
-    //invoice.applicationNo = result.workflowInstance.applicationNumber;
-    const basicObject: any = JSON.parse(JSON.stringify(vendor.basic));
-    invoice.payerName = basicObject.name;
-    invoice.payerAccountId = vendor.userId;
-    invoice.serviceName = service.name;
-    invoice.remark = result.businessArea + ' ,' + service.description;
-    invoice.paymentStatus = 'Pending';
-    invoice.createdOn = new Date();
-    const response = this.invoiceRepository.insert(invoice);
-    if (response) return true;
-    return false;
-  }
-  async generateInvoice(instanceId: string, taskId: string): Promise<boolean> {
-    const result = await this.handlerRepository.findOne({
-      relations: {
-        task: true,
-        workflowInstance: {
-          businessProcess: {
-            service: true,
-          },
-          price: true,
-          isrVendor: true,
-        },
-      },
-      where: {
-        instanceId: instanceId,
-        taskId: taskId,
-      },
-    });
-    if (!result) {
-      throw new NotFoundException('Not Found');
-    }
-    const invoice = new InvoiceEntity();
-    const service = result.workflowInstance.businessProcess.service;
-    //if th service is upgrade
-    if (service.key == ServiceKeyEnum.upgrade) {
-      const previousPayment = await this.workflowInstanceRepository.findOne({
-        relations: {
-          businessProcess: { service: true },
-          price: true,
-        },
-        where: {
-          businessProcess: { service: { key: ServiceKeyEnum.new } },
-          status: WorkflowInstanceEnum.Completed,
-          //   approvedAt: Not(IsNull()),
-          price: { businessArea: result.workflowInstance.price.businessArea },
-          requestorId: result.workflowInstance.requestorId,
-        },
-      });
-
-      if (previousPayment) {
-        if (previousPayment.price.fee < result.workflowInstance.price.fee) {
-          const netpayment = await this.computeUpgradeServicePaymentAmount(
-            previousPayment,
-            result,
-          );
-          invoice.amount = netpayment;
-        }
-      } else {
-        throw new NotFoundException('Something went wrong');
-      }
-    } else {
-      invoice.amount = result.workflowInstance.price.fee;
-    }
-    invoice.instanceId = result.instanceId;
-    invoice.taskName = result.task.name;
-    invoice.taskId = result.task.id;
-    invoice.payToAccName = 'PPDA';
-    invoice.payToAccNo = '123456789';
-    invoice.payToBank = 'Malawi Bank';
-    invoice.applicationNo = result.workflowInstance.applicationNumber;
-    // invoice.payerName = result.workflowInstance.vendor.name;
-    invoice.payerAccountId = result.workflowInstance.isrVendor.userId;
-    const basicObject: any = JSON.parse(
-      JSON.stringify(result.workflowInstance.isrVendor.basic),
-    );
-    invoice.payerName = basicObject.name;
-    invoice.payerAccountId = basicObject.userId;
-    invoice.serviceName = service.name;
-    invoice.serviceName = result.workflowInstance.businessProcess.service.name;
-    invoice.remark = 'reamrk';
-    invoice.paymentStatus = 'Pending';
-    invoice.createdOn = new Date();
-    const response = this.invoiceRepository.insert(invoice);
-    if (response) return true;
-    return false;
-  }
-
-  async computeUpgradeServicePaymentAmount(
-    previousPayment: WorkflowInstanceEntity,
-    taskhandler: TaskHandlerEntity,
-  ): Promise<number> {
-    /* const previousFeeRate = previousPayment.price.fee / 365;
-     const proposedPaymentRate = taskhandler.workflowInstance.price.fee / 365;
-     const datesLeftToExpire = this.commonService.ComputeDateDifference(
-       new Date(),
-       new Date(previousPayment.expireDate),
-     );
-     const unUtilizedMoney = Number(datesLeftToExpire) * previousFeeRate;
-     const expectedFeeForNewLevel =
-       proposedPaymentRate * Number(datesLeftToExpire);
-     const netPaymnetForUpgrade = expectedFeeForNewLevel - unUtilizedMoney;
-     return netPaymnetForUpgrade;
-     */
-    return 1;
-  }
   async gotoNextStep(nextCommand: GotoNextStateDto, user?: any) {
     const taskInfo = new TaskEntity();
     const workflowInstance = await this.workflowInstanceRepository.findOne({
@@ -493,7 +336,7 @@ export class WorkflowInstanceService {
         // return this.approve(command);
         break;
       case TaskTypes.INVOICE:
-        await this.generateInvoice(command.instanceId, taskId);
+        // await this.generateInvoice(command.instanceId, taskId);
         break;
       case TaskTypes.CERTIFICATION:
         console.log(TaskTypes.CERTIFICATION, command);

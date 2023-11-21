@@ -8,18 +8,20 @@ export class InvoiceEntity {
   instanceId: string;
   @Column({ nullable: true })
   applicationNo: string;
-  @Column({ nullable: true })
+  @Column()
   pricingId: string;
   @Column({ nullable: true })
   taskName: string;
   @Column({ type: 'uuid', nullable: true })
   taskId: string;
+  @Column({ nullable: true })
+  serviceId: string;
   @Column()
   serviceName: string;
   @Column()
   payerName: string;
   @Column()
-  payerAccountId: string;
+  userId: string;
   @Column()
   payToAccNo: string;
   @Column()

@@ -43,7 +43,7 @@ export class InvoiceResponseDto {
     response.payToAccName = entity.payToAccName;
     response.payToAccNo = entity.payToAccNo;
     response.payToBank = entity.payToBank;
-    response.payerAccountId = entity.payerAccountId;
+    response.payerAccountId = entity.userId;
     response.payerName = entity.payerName;
     response.createdOn = entity.createdOn;
     response.serviceName = entity.serviceName;

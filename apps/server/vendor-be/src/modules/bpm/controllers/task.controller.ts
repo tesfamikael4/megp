@@ -1,12 +1,9 @@
 import {
   Body,
   Controller,
-  Delete,
-  Get,
   HttpStatus,
   Param,
   ParseUUIDPipe,
-  Patch,
   Post,
   Put,
   UseGuards,
