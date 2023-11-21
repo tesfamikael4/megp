@@ -9,53 +9,92 @@ import {
   UseInterceptors,
   Query,
   Req,
+  Patch,
 } from '@nestjs/common';
-import { EntityCrudService } from '../service/entity-crud.service';
-import { DeepPartial } from 'typeorm';
-import { CollectionQuery } from '../collection-query';
+import { EntityCrudService } from '../service';
+import { DeepPartial, ObjectLiteral } from 'typeorm';
 import { DataResponseFormat } from '../api-data';
-import { BaseEntity } from '../entities/base.entity';
+import { ApiBearerAuth, ApiBody, ApiQuery } from '@nestjs/swagger';
+import { BaseAPIDto } from './extra-crud.controller';
+import { EntityCrudOptions } from '../types/crud-option.type';
+import { decodeCollectionQuery } from '../collection-query';
 
-@Controller()
-@UseInterceptors(/* your interceptors if any */)
-export class EntityCrudController<TEntity extends BaseEntity> {
-  constructor(private readonly service: EntityCrudService<TEntity>) {}
+export function EntityCrudController<TEntity extends ObjectLiteral>(
+  options?: EntityCrudOptions,
+) {
+  @Controller()
+  @UseInterceptors(/* your interceptors if any */)
+  @ApiBearerAuth()
+  class EntityCrudControllerHost {
+    constructor(public readonly service: EntityCrudService<TEntity>) {}
 
-  @Post()
-  async create(
-    @Body() itemData: DeepPartial<TEntity>,
-    @Req() req?: any,
-  ): Promise<TEntity> {
-    return this.service.create(itemData);
+    @Post()
+    @ApiBody({ type: options?.createDto || BaseAPIDto })
+    async create(
+      @Body() itemData: DeepPartial<TEntity>,
+      @Req() req?: any,
+    ): Promise<TEntity> {
+      return this.service.create(itemData);
+    }
+
+    @Get()
+    @ApiQuery({
+      name: 'q',
+      type: String,
+      description: 'Collection Query Parameter. Optional',
+      required: false,
+    })
+    async findAll(
+      @Query('q') q?: string,
+      @Req() req?: any,
+    ): Promise<DataResponseFormat<TEntity>> {
+      const query = decodeCollectionQuery(q);
+      return this.service.findAll(query);
+    }
+
+    @Get(':id')
+    async findOne(
+      @Param('id') id: string,
+      @Req() req?: any,
+    ): Promise<TEntity | undefined> {
+      return this.service.findOne(id);
+    }
+
+    @Put(':id')
+    @ApiBody({ type: options?.updateDto || BaseAPIDto })
+    async update(
+      @Param('id') id: string,
+      @Body() itemData: Partial<TEntity>,
+      @Req() req?: any,
+    ): Promise<TEntity | undefined> {
+      return this.service.update(id, itemData);
+    }
+
+    @Delete(':id')
+    async softDelete(@Param('id') id: string, @Req() req?: any): Promise<void> {
+      return this.service.softDelete(id);
+    }
+
+    @Patch('restore/:id')
+    async restore(@Param('id') id: string, @Req() req?: any): Promise<void> {
+      return this.service.restore(id);
+    }
+
+    @Get('/archived/items')
+    @ApiQuery({
+      name: 'q',
+      type: String,
+      description: 'Collection Query Parameter. Optional',
+      required: false,
+    })
+    async findAllArchived(
+      @Query('q') q?: string,
+      @Req() req?: any,
+    ): Promise<DataResponseFormat<TEntity>> {
+      const query = decodeCollectionQuery(q);
+      return this.service.findAllArchived(query);
+    }
   }
 
-  @Get()
-  async findAll(
-    @Query() query: CollectionQuery,
-    @Req() req?: any,
-  ): Promise<DataResponseFormat<TEntity>> {
-    return this.service.findAll(query);
-  }
-
-  @Get(':id')
-  async findOne(
-    @Param('id') id: string,
-    @Req() req?: any,
-  ): Promise<TEntity | undefined> {
-    return this.service.findOne(id);
-  }
-
-  @Put(':id')
-  async update(
-    @Param('id') id: string,
-    @Body() itemData: Partial<TEntity>,
-    @Req() req?: any,
-  ): Promise<TEntity | undefined> {
-    return this.service.update(id, itemData);
-  }
-
-  @Delete(':id')
-  async remove(@Param('id') id: string, @Req() req?: any): Promise<void> {
-    return this.service.remove(id);
-  }
+  return EntityCrudControllerHost;
 }

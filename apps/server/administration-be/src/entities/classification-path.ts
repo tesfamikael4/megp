@@ -3,8 +3,6 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Classification } from './classification';
@@ -19,19 +17,7 @@ export class ClassificationPath {
   descendantId: string;
   @Column()
   depth: number;
-
   @ManyToOne(() => Classification, (e) => e.classificationPaths)
   @JoinColumn({ name: 'classificationId' })
   classifications: Classification;
-  // @ManyToOne(
-  //   () => Classification,
-  //   (classification) => classification.ancestorPaths,
-  // )
-  // ancestor: Classification;
-
-  // @ManyToOne(
-  //   () => Classification,
-  //   (classification) => classification.descendantPaths,
-  // )
-  // descendant: Classification;
 }

@@ -1,13 +1,21 @@
-import { EntityCrudController } from 'src/shared/controller/entity-crud.controller';
 import { ItemMasterService } from '../services/item-master.service';
 import { ApiTags } from '@nestjs/swagger';
 import { Body, Controller, Get, Param, Put } from '@nestjs/common';
 import { ItemCodeGeneratorService } from '../services/item-code-generator.service';
 import { ItemMaster } from 'src/entities/item-master.entity';
-
+import { EntityCrudOptions } from 'src/shared/types/crud-option.type';
+import { CreateItemMasterDto } from '../dtos/create-item-master.dto';
+import { UpdateItemMasterDto } from '../dtos/update-item-master.dto';
+import { EntityCrudController } from 'src/shared/controller';
+const options: EntityCrudOptions = {
+  createDto: CreateItemMasterDto,
+  updateDto: UpdateItemMasterDto,
+};
 @Controller('item-masters')
 @ApiTags('Item Master')
-export class ItemMasterConroller extends EntityCrudController<ItemMaster> {
+export class ItemMasterConroller extends EntityCrudController<ItemMaster>(
+  options,
+) {
   constructor(
     private readonly itemMasterService: ItemMasterService,
     private readonly itemCodeGenerateService: ItemCodeGeneratorService,

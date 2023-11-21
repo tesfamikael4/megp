@@ -16,9 +16,10 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       entities: ['dist/**/*.entity.{ts,js}'],
       migrations: ['dist/migrations/*.{ts,js}'],
       migrationsTableName: 'typeorm_migrations',
-      logger: 'file',
-      synchronize: TypeOrmConfigHelper.NODE_ENV != 'production', // never use TRUE in production!
-      autoLoadEntities: TypeOrmConfigHelper.NODE_ENV != 'production',
+      // logger: 'advanced-console',
+      // logging: 'all',
+      synchronize: true, // TypeOrmConfigHelper.NODE_ENV != 'production', // never use TRUE in production!
+      autoLoadEntities: true, // TypeOrmConfigHelper.NODE_ENV != 'production',
     };
   }
 }

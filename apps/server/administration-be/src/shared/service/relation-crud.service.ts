@@ -1,4 +1,4 @@
-import { Repository } from 'typeorm';
+import { ObjectLiteral, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import {
   CollectionQuery,
@@ -6,14 +6,13 @@ import {
   QueryConstructor,
 } from '../collection-query';
 import { DataResponseFormat } from '../api-data';
-import { BaseEntity } from '../entities/base.entity';
 import { RelationCrudOptions } from '../types/crud-option.type';
 
 @Injectable()
-export class RelationCrudService<TEntity extends BaseEntity> {
+export class RelationCrudService<TEntity extends ObjectLiteral> {
   constructor(private readonly repository: Repository<TEntity>) {}
 
-  async bulkSave(payload: any, relationCrudOptions: RelationCrudOptions) {
+  async bulkSaveFirst(payload: any, relationCrudOptions: RelationCrudOptions) {
     const firstEntityIdName = relationCrudOptions.firstEntityIdName;
     const secondEntityIdName = relationCrudOptions.secondEntityIdName;
 
@@ -24,12 +23,6 @@ export class RelationCrudService<TEntity extends BaseEntity> {
 
     const childData: any[] = payload[include];
     childData.forEach((data) => {
-      // const child = {};
-      // child[firstEntityIdName] = entityId
-      // child[secondEntityIdName] = data
-
-      // parsedPayload.push(child);
-
       parsedPayload.push({
         [firstEntityIdName]: entityId,
         [secondEntityIdName]: data,
@@ -42,7 +35,33 @@ export class RelationCrudService<TEntity extends BaseEntity> {
     await this.repository.delete(deleteCondition);
 
     const data = this.repository.create(parsedPayload);
-    return await this.repository.save(data);
+    return await this.repository.insert(data);
+  }
+
+  async bulkSaveSecond(payload: any, relationCrudOptions: RelationCrudOptions) {
+    const firstEntityIdName = relationCrudOptions.firstEntityIdName;
+    const secondEntityIdName = relationCrudOptions.secondEntityIdName;
+
+    const include = relationCrudOptions.secondInclude;
+    const entityId: string = payload[secondEntityIdName];
+
+    const parsedPayload: any[] = [];
+
+    const childData: any[] = payload[include];
+    childData.forEach((data) => {
+      parsedPayload.push({
+        [secondEntityIdName]: entityId,
+        [firstEntityIdName]: data,
+      });
+    });
+
+    const deleteCondition = {};
+    deleteCondition[secondEntityIdName] = entityId;
+
+    await this.repository.delete(deleteCondition);
+
+    const data = this.repository.create(parsedPayload);
+    return await this.repository.insert(data);
   }
 
   async findAllFirst(
@@ -73,9 +92,9 @@ export class RelationCrudService<TEntity extends BaseEntity> {
     include: string,
     query: CollectionQuery,
   ) {
-    query.filter.push([
+    query.where.push([
       {
-        field: entityIdName,
+        column: entityIdName,
         value: entityId,
         operator: FilterOperators.EqualTo,
       },

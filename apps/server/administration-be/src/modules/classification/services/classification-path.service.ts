@@ -1,8 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { EntityCrudService } from 'src/shared/service/entity-crud.service';
 import { ClassificationPath } from 'src/entities/classification-path';
-import { ExtraCrudService } from 'src/shared/service/extra-crud.service';
+import { ExtraCrudService } from 'src/shared/service';
 
 export class ClassificationPathService extends ExtraCrudService<ClassificationPath> {
   constructor(

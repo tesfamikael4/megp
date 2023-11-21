@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { Repository, DeepPartial } from 'typeorm';
+import { Repository, DeepPartial, ObjectLiteral } from 'typeorm';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import {
   CollectionQuery,
@@ -7,16 +6,16 @@ import {
   QueryConstructor,
 } from '../collection-query';
 import { DataResponseFormat } from '../api-data';
-import { BaseEntity } from '../entities/base.entity';
 import { ExtraCrudOptions } from '../types/crud-option.type';
 
 @Injectable()
-export class ExtraCrudService<T extends BaseEntity> {
+export class ExtraCrudService<T extends ObjectLiteral> {
   constructor(private readonly repository: Repository<T>) {}
 
   async create(itemData: DeepPartial<T>, req?: any): Promise<T> {
     const item = this.repository.create(itemData);
-    return await this.repository.save(item);
+    await this.repository.insert(item);
+    return item;
   }
 
   async findAll(
@@ -27,9 +26,9 @@ export class ExtraCrudService<T extends BaseEntity> {
   ) {
     const entityIdName = extraCrudOptions.entityIdName;
 
-    query.filter.push([
+    query.where.push([
       {
-        field: entityIdName,
+        column: entityIdName,
         value: entityId,
         operator: FilterOperators.EqualTo,
       },
@@ -60,13 +59,55 @@ export class ExtraCrudService<T extends BaseEntity> {
     return this.findOne(id);
   }
 
-  async remove(id: string, req?: any): Promise<void> {
+  async softDelete(id: string, req?: any): Promise<void> {
     await this.findOneOrFail(id);
-    await this.repository.delete(id);
+    await this.repository.softDelete(id);
+  }
+
+  async restore(id: string, req?: any): Promise<void> {
+    await this.findOneOrFailWithDeleted(id);
+    await this.repository.restore(id);
+  }
+
+  async findAllArchived(query: CollectionQuery, req?: any) {
+    query.where.push([
+      { column: 'deletedAt', value: '', operator: 'IsNotNull' },
+    ]);
+
+    const dataQuery = QueryConstructor.constructQuery<T>(
+      this.repository,
+      query,
+    );
+
+    dataQuery.withDeleted();
+
+    const response = new DataResponseFormat<T>();
+    if (query.count) {
+      response.total = await dataQuery.getCount();
+    } else {
+      const [result, total] = await dataQuery.getManyAndCount();
+      response.total = total;
+      response.items = result;
+    }
+    return response;
   }
 
   private async findOneOrFail(id: any): Promise<T> {
     const item = await this.findOne(id);
+    if (!item) {
+      throw new NotFoundException(`not_found`);
+    }
+    return item;
+  }
+
+  private async findOneOrFailWithDeleted(id: any): Promise<T> {
+    const item = await this.repository.findOne({
+      where: {
+        id,
+      },
+      withDeleted: true,
+    });
+
     if (!item) {
       throw new NotFoundException(`not_found`);
     }
