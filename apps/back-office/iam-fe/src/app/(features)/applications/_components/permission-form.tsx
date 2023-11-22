@@ -53,7 +53,7 @@ export function PermissionForm({
           return keyRegExp.test(value);
         },
         {
-          message: 'Provide valid key',
+          message: 'Invalid key format',
         },
       )
       .refine(

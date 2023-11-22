@@ -86,6 +86,9 @@ const AddUserModal = () => {
     },
 
     selectable: true,
+    pagination: true,
+    sortable: true,
+    searchable: true,
   };
 
   const handleCloseModal = () => {
@@ -116,12 +119,17 @@ const AddUserModal = () => {
         readOnly={selected?.isSystemRole ? true : false}
         collapsed={selected?.isSystemRole ? false : true}
       />
-      <Modal title="Permission" opened={isModalOpen} onClose={handleCloseModal}>
+      <Modal
+        title="permission assignment"
+        opened={isModalOpen}
+        onClose={handleCloseModal}
+      >
         <Relation
           mode="modal"
           config={addConfig}
           data={permission ? permission.items : []}
           currentSelected={currentAssigned}
+          handleCloseModal={handleCloseModal}
         />
       </Modal>
     </>

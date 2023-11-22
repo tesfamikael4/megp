@@ -99,11 +99,7 @@ export function Relation<T>({
   const table = useReactTable({
     data,
     state: {
-      columnVisibility: visibleColumn(
-        tableColumns,
-        options.primaryContent,
-        mode,
-      ),
+      columnVisibility: visibleColumn(tableColumns, options.primaryContent),
       rowSelection,
       sorting,
     },

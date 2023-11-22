@@ -12,4 +12,5 @@ export interface User {
   organizationId: string;
   userRoles?: UserRole[];
   userUnits?: UserUnit[];
+  fullName: string;
 }

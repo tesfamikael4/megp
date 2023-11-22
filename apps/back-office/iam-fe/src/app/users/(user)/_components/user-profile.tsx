@@ -65,6 +65,8 @@ export function UserProfileForm() {
     isLoading,
   } = useReadQuery(id?.toString());
 
+  logger.log(selected);
+
   const onCreate = async (data) => {
     try {
       await create({
@@ -109,6 +111,7 @@ export function UserProfileForm() {
       selected !== null && setMode('detail');
     }
   }, [selected?.gender, selectedSuccess, id, selected]);
+  logger.log(selected);
 
   return (
     <Stack pos={'relative'}>

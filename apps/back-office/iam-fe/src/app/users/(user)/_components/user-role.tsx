@@ -53,7 +53,7 @@ const AddEntityModal = () => {
     },
   };
   const addConfig: RelationConfig<Role> = {
-    title: 'Roles',
+    title: 'Roles assignment',
     columns: [
       {
         id: 'name',
@@ -99,7 +99,7 @@ const AddEntityModal = () => {
         isSaving={isSaving}
       />
       <Modal
-        title="Roles"
+        title="Role assignment"
         opened={isModalOpen}
         onClose={handleCloseModal}
         size={'lg'}

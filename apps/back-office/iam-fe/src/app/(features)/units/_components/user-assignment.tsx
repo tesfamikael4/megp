@@ -8,7 +8,7 @@ import {
 } from '../../../users/_api/user-unit.api';
 import { useParams } from 'next/navigation';
 import { useListByIdQuery } from '../../../users/_api/user.api';
-import { notify } from '@megp/core-fe';
+import { logger, notify } from '@megp/core-fe';
 
 const AddUserModal = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -20,9 +20,10 @@ const AddUserModal = () => {
   const [trigger, { data: users, isSuccess }] = useLazyFirstRelationQuery();
 
   const { data: list } = useListByIdQuery();
+  logger.log(list);
 
   const relationConfig: RelationConfig<User> = {
-    title: 'Users Assignment',
+    title: 'User Assignment',
     columns: [
       {
         id: 'name',
@@ -57,12 +58,18 @@ const AddUserModal = () => {
     columns: [
       {
         id: 'name',
-        header: 'name',
+        header: 'Name',
         accessorKey: 'fullName',
         cell: (info) => info.getValue(),
         meta: {
           widget: 'primary',
         },
+      },
+      {
+        id: 'email',
+        header: 'Email',
+        accessorKey: 'email',
+        cell: (info) => info.getValue(),
       },
     ],
     onSave: (selected) => {
@@ -87,10 +94,13 @@ const AddUserModal = () => {
   useEffect(() => {
     if (isSuccess) {
       setCurrentAssigned(
-        users ? users.items.map((user: any) => user.user) : [],
+        users
+          ? users.items.map((user: any) => user.user !== null && user.user)
+          : [],
       );
     }
   }, [users, isSuccess]);
+  logger.log(currentAssigned);
 
   return (
     <>
@@ -100,7 +110,7 @@ const AddUserModal = () => {
         isSaving={isSaving}
       />
       <Modal
-        title="Users Assignment"
+        title="User Assignment"
         opened={isModalOpen}
         onClose={handleCloseModal}
         size={'lg'}

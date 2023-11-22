@@ -1,5 +1,13 @@
-import { Button, LoadingOverlay } from '@mantine/core';
-import { IconInfoCircle } from '@tabler/icons-react';
+import {
+  ActionIcon,
+  Button,
+  CopyButton,
+  Flex,
+  LoadingOverlay,
+  Tooltip,
+  rem,
+} from '@mantine/core';
+import { IconCheck, IconCopy, IconInfoCircle } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import {
   useInviteUserMutation,
@@ -62,7 +70,7 @@ const UserInvitation = () => {
 
   return (
     <>
-      <div className="bg-white p-4 mt-4">
+      <div className="bg-white p-4 mt-1">
         <LoadingOverlay visible={isLoading} />
         <div className="flex border border-[#91d5ff] bg-[#e6f7ff] p-4">
           <span>
@@ -71,9 +79,33 @@ const UserInvitation = () => {
           <div className="ml-4 grow">
             <h3 className="text-base">User Invitation</h3>
             {userInvited && (
-              <p className="max-w-[400px] break-all p-4 text-sm">
-                {invitationLink}
-              </p>
+              <>
+                <p className="min-w-[600px] break-all p-4 text-sm">
+                  {invitationLink}
+
+                  <CopyButton value={invitationLink} timeout={2000}>
+                    {({ copied, copy }) => (
+                      <Tooltip
+                        label={copied ? 'Copied' : 'Copy'}
+                        withArrow
+                        position="right"
+                      >
+                        <ActionIcon
+                          color={copied ? 'teal' : 'gray'}
+                          variant="subtle"
+                          onClick={copy}
+                        >
+                          {copied ? (
+                            <IconCheck style={{ width: rem(16) }} />
+                          ) : (
+                            <IconCopy style={{ width: rem(16) }} />
+                          )}
+                        </ActionIcon>
+                      </Tooltip>
+                    )}
+                  </CopyButton>
+                </p>
+              </>
             )}
 
             <Button

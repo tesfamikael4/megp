@@ -20,6 +20,7 @@ import ppda from './ppda.png';
 import perago from './perago.png';
 import styles from './auth.module.scss';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 interface Password {
   password: string;
@@ -27,7 +28,14 @@ interface Password {
 
 export default function SetPassWord() {
   const Schema: ZodType<Password> = z.object({
-    password: z.string().min(1, { message: 'This field is required' }),
+    password: z
+      .string()
+      .min(1, { message: 'This field is required.' })
+      .min(8, { message: 'Password must be at least 8 characters' })
+      .regex(/[a-zA-Z]/, {
+        message: 'Password must have at least one alphabet character',
+      })
+      .regex(/[0-9]/, { message: 'Password must have at least one number' }),
   });
 
   const {
@@ -39,6 +47,7 @@ export default function SetPassWord() {
   } = useForm({
     resolver: zodResolver(Schema),
   });
+  const router = useRouter();
 
   const searchParams = useSearchParams();
   const firstName = searchParams.get('firstName');
@@ -58,6 +67,7 @@ export default function SetPassWord() {
       });
 
       notify('Success', 'Password set successfully');
+      router.push(`/auth/login`);
     } catch (err) {
       notify('Error', 'Error in setting password ');
     }
@@ -123,7 +133,7 @@ export default function SetPassWord() {
             type="submit"
             loading={isSetting}
           >
-            register
+            Register
           </Button>
           <Text c="dimmed" className={styles.account_que}>
             Already have an account?{' '}

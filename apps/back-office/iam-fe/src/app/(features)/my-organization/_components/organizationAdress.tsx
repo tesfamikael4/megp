@@ -139,9 +139,40 @@ const OrganizationAdressForm = () => {
 
   useEffect(() => {
     const districtOptions = {
-      Southern: ['Mangochi', 'Neno', 'Nsanje', 'Phalombe', 'Thyolo', 'Zomba'],
-      Northern: ['Mzimba', 'Nkhata Bay', 'Rumphi'],
-      Central: ['Nkhotakota', 'Ntcheu', 'Ntchisi', 'Salima'],
+      Southern: [
+        'Balaka',
+        'Blantyre',
+        'Chikwawa',
+        'Chiradzulu',
+        'Machinga',
+        'Mangochi',
+        'Mulanje',
+        'Mwanza',
+        'Neno',
+        'Nsanje',
+        'Phalombe',
+        'Thyolo',
+        'Zomba',
+      ],
+      Northern: [
+        'Chitipa ',
+        'Karonga',
+        'Likoma',
+        'Mzimba',
+        'Nkhata Bay',
+        'Rumphi',
+      ],
+      Central: [
+        'Dedza',
+        'Dowa',
+        'Kasungu',
+        'Lilongwe',
+        'Mchinji',
+        'Nkhotakota',
+        'Ntcheu',
+        'Ntchisi',
+        'Salima',
+      ],
     };
     const updatedOptions =
       districtOptions[selectedRegion]?.map((item) => ({

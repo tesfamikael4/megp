@@ -78,7 +78,7 @@ export function EntityList<T>({
     onRequestChange?.({
       skip: from,
       take: to,
-      where: [[{ column: '', value: search, operator: 'ILIKE' }]],
+      // where: [[{ column: 'name', value: '', operator: '=' }]],
     });
   }, [page]);
 
@@ -90,7 +90,7 @@ export function EntityList<T>({
       onRequestChange?.({
         skip: from,
         take: to,
-        where: [[{ column: '', value: search, operator: 'ILIKE' }]],
+        // where: [[{ column: 'name', value: '', operator: '=' }]],
       });
     } else {
       setPage(1);

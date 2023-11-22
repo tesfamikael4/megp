@@ -35,15 +35,6 @@ const AddEntityModal = () => {
           widget: 'primary',
         },
       },
-      {
-        id: 'description',
-        header: 'Description',
-        accessorKey: 'description',
-        cell: (info) => info.getValue(),
-        meta: {
-          widget: 'multiline',
-        },
-      },
     ],
     onSave: async (selected) => {
       const mandates = selected.map((item) => `${item.id}`);
@@ -76,15 +67,6 @@ const AddEntityModal = () => {
         cell: (info) => info.getValue(),
         meta: {
           widget: 'primary',
-        },
-      },
-      {
-        id: 'description',
-        header: 'Description',
-        accessorKey: 'description',
-        cell: (info) => info.getValue(),
-        meta: {
-          widget: 'multiline',
         },
       },
     ],
@@ -125,7 +107,7 @@ const AddEntityModal = () => {
         isSaving={isSaving}
       />
       <Modal
-        title="Assign Mandate"
+        title="Mandate assignment"
         opened={isModalOpen}
         onClose={handleCloseModal}
         size={'lg'}

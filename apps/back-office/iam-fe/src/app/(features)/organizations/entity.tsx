@@ -73,10 +73,13 @@ export function Entity({ children }: { children: React.ReactNode }) {
       : pathname === `/organizations/new`
       ? 'new'
       : 'detail';
+
   const onRequestChange = (request: CollectionQuery) => {
     logger.log(request);
+
     trigger(request);
   };
+
   return (
     <EntityLayout
       mode={mode}

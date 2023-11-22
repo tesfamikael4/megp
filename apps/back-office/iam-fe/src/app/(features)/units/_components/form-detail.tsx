@@ -244,7 +244,7 @@ export function FormDetail({ mode }: FormDetailProps) {
           />
         </div>
 
-        <div className="flex-shrink-0 mt-7 ">
+        <div className="flex-shrink-0 mt-6 ">
           <ParentModal
             data={list ? list.items : []}
             parentUnitId={parentUnitId}

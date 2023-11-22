@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@mantine/core';
+import { Button, Group } from '@mantine/core';
 import type { ColumnDef } from '@tanstack/react-table';
 import {
   getCoreRowModel,
@@ -103,25 +103,25 @@ export function TreeList<T>({
     },
   });
 
-  useEffect(() => {
-    function generateExpandedObject(items, parentKey = '') {
-      let expandedObject = {};
+  // useEffect(() => {
+  //   function generateExpandedObject(items, parentKey = '') {
+  //     let expandedObject = {};
 
-      items.forEach((item, index) => {
-        const newKey = parentKey ? `${parentKey}.${index}` : `${index}`;
-        expandedObject[newKey] = true;
+  //     items.forEach((item, index) => {
+  //       const newKey = parentKey ? `${parentKey}.${index}` : `${index}`;
+  //       expandedObject[newKey] = true;
 
-        if (item.subRows && item.subRows.length > 0) {
-          const childObject = generateExpandedObject(item.subRows, newKey);
-          expandedObject = { ...expandedObject, ...childObject };
-        }
-      });
+  //       if (item.subRows && item.subRows.length > 0) {
+  //         const childObject = generateExpandedObject(item.subRows, newKey);
+  //         expandedObject = { ...expandedObject, ...childObject };
+  //       }
+  //     });
 
-      return expandedObject;
-    }
+  //     return expandedObject;
+  //   }
 
-    setExpanded(generateExpandedObject(data));
-  }, [data]);
+  //   setExpanded(generateExpandedObject(data));
+  // }, [data]);
 
   return (
     <>
@@ -135,14 +135,16 @@ export function TreeList<T>({
       />
 
       {setIsModalOpen ? (
-        <Button
-          className="mt-4"
-          onClick={() => {
-            setIsModalOpen(false);
-          }}
-        >
-          Done
-        </Button>
+        <Group className="border-t pt-4 flex justify-end">
+          <Button
+            className="mt-4 "
+            onClick={() => {
+              setIsModalOpen(false);
+            }}
+          >
+            Done
+          </Button>
+        </Group>
       ) : null}
     </>
   );
