@@ -20,7 +20,7 @@ export class InvoiceEntity {
   serviceName: string;
   @Column()
   payerName: string;
-  @Column()
+  @Column({ nullable: true })
   userId: string;
   @Column()
   payToAccNo: string;
