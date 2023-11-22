@@ -11,18 +11,18 @@ import {
 } from '@mantine/core';
 import { Relation, RelationConfig } from '@megp/entity';
 // import { useListQuery } from '../_api/item-master.api';
-import { useDisclosure } from '@mantine/hooks';
 import { IconBinaryTree, IconColumns, IconPlus } from '@tabler/icons-react';
 import { Tree, logger } from '@megp/core-fe';
 import { useGetItemMasterQuery } from '@/store/api/administration/administration.api';
 
 interface ItemSelectorProps {
   onDone: (item: any) => void;
+  opened: boolean;
+  close: () => void;
 }
 
-const ItemSelector = ({ onDone }: ItemSelectorProps) => {
+const ItemSelector = ({ onDone, opened, close }: ItemSelectorProps) => {
   const [mode, setMode] = useState<'tree' | 'table'>('table');
-  const [opened, { open, close }] = useDisclosure(false);
   const { data: list } = useGetItemMasterQuery({} as any);
   const addConfig: RelationConfig<any> = {
     title: 'Items',
@@ -51,14 +51,13 @@ const ItemSelector = ({ onDone }: ItemSelectorProps) => {
       },
     ],
     onSave: (selected) => {
-      onDone(selected[0]);
-      logger.log(selected[0]);
+      onDone(selected);
+      // logger.log(selected);
       close();
     },
     searchable: true,
     selectable: true,
     pagination: true,
-    disableMultiSelect: true,
   };
 
   const changeMode = () => {
@@ -71,11 +70,11 @@ const ItemSelector = ({ onDone }: ItemSelectorProps) => {
 
   return (
     <>
-      <Center>
+      {/* <Center>
         <Button variant="outline" onClick={open}>
           <IconPlus size={17} /> Add Items
         </Button>
-      </Center>
+      </Center> */}
       <Modal
         title={
           <Flex justify="space-between" className="w-full">
@@ -123,7 +122,7 @@ const ItemSelector = ({ onDone }: ItemSelectorProps) => {
                 disableModal
                 disableParentSelect
                 onDone={(item) => {
-                  logger.log(item);
+                  // logger.log(item);
                   close();
                 }}
               />

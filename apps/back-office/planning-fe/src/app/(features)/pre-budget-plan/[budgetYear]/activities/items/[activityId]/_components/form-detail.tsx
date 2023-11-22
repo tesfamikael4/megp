@@ -55,11 +55,13 @@ export const FormDetail = ({ mode }: FormDetailProps) => {
     reset,
     formState: { errors },
     control,
+    watch,
     setValue,
   } = useForm<PreBudgetPlanItems>({
     resolver: zodResolver(itemSchema),
   });
   const router = useRouter();
+  const currency = watch('currency') ?? '';
   const { budgetYear, activityId, id } = useParams();
 
   const [specification, setSpecifications] = useState({
@@ -113,6 +115,10 @@ export const FormDetail = ({ mode }: FormDetailProps) => {
       updatedSpecs[category].splice(index, 1);
       setSpecifications(updatedSpecs);
     };
+
+    if (!specification) {
+      return <></>;
+    }
     return (
       <>
         <Flex justify="space-between">
@@ -129,7 +135,7 @@ export const FormDetail = ({ mode }: FormDetailProps) => {
         </Flex>
         <Table highlightOnHover withTableBorder withColumnBorders>
           <Table.Tbody>
-            {Object.keys(specification).map((key) => (
+            {Object?.keys(specification).map((key) => (
               <>
                 <Table.Tr>
                   <Table.Td className="bg-slate-200 font-semibold text-center w-1/4">
@@ -320,9 +326,9 @@ export const FormDetail = ({ mode }: FormDetailProps) => {
   }, [isItemSuccess, item, setValue]);
   return (
     <>
-      {mode == 'new' && Object.keys(selectedItem).length == 0 && (
-        <ItemSelector onDone={(item) => setSelectedItem(item)} />
-      )}
+      {/* {mode == 'new' && Object.keys(selectedItem).length == 0 && (
+        // <ItemSelector onDone={(item) => setSelectedItem(item)} />
+      )} */}
       {(mode == 'detail' || Object.keys(selectedItem).length != 0) && (
         <Stack pos="relative">
           <LoadingOverlay
@@ -360,7 +366,7 @@ export const FormDetail = ({ mode }: FormDetailProps) => {
           </Table>
 
           <Flex gap="md">
-            <Controller
+            {/* <Controller
               name="currency"
               control={control}
               render={({ field: { name, onChange, value } }) => (
@@ -375,7 +381,7 @@ export const FormDetail = ({ mode }: FormDetailProps) => {
                   disabled
                 />
               )}
-            />
+            /> */}
             <Controller
               name="unitPrice"
               control={control}
@@ -384,6 +390,7 @@ export const FormDetail = ({ mode }: FormDetailProps) => {
                   name={name}
                   value={value}
                   onChange={(data) => onChange(parseInt(data as string))}
+                  leftSection={currency}
                   withAsterisk
                   label="Estimated Unit Price"
                   thousandSeparator=","

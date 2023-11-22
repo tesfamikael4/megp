@@ -7,84 +7,77 @@ import { IconGardenCart, IconPencil } from '@tabler/icons-react';
 import { PreBudgetPlanActivities } from '@/models/pre-budget-plan-activities';
 import { logger } from '@megp/core-fe';
 import { useLazyListByAppIdQuery } from './_api/items.api';
+import { useDisclosure } from '@mantine/hooks';
+import ItemSelector from './_components/item-selector';
+import { useLazyGetUnitOfMeasurementsQuery } from '@/store/api/administration/administration.api';
+import { useLazyReadQuery } from '../../(activities)/_api/activities.api';
 
 export function Entity({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const { budgetYear, activityId } = useParams();
   const [data, setData] = useState<any[]>([]);
-  const [listById, { data: list }] = useLazyListByAppIdQuery();
+  const [listById, { data: list, isSuccess }] = useLazyListByAppIdQuery();
+  const [opened, { open, close }] = useDisclosure(false);
+  const [getActivity, { data: activity }] = useLazyReadQuery();
 
   useEffect(() => {
-    setData([
-      {
-        id: '6ce66c51-7258-45cb-9e63-6840b63bdfe5',
-        description: 'Alfreds Futterkiste',
-        itemCode: '0074321',
-        currency: 'USD',
-        unitPrice: '4554.25',
-        quantity: 30,
-        UoM: 'Peace',
-        totalEstimatedAmount: 'USD 1,442.32',
-      },
-      {
-        id: '04a426b8-d93b-45aa-b0df-0b4ad3fc9d30',
-        description: 'Antonio Moreno Taqueria',
-        itemCode: '5553932',
-        currency: 'USD',
-        unitPrice: '4554.25',
-        quantity: 30,
-        UoM: 'Peace',
-        totalEstimatedAmount: 'USD 15,889.78',
-      },
-      {
-        id: '8bbdf119-db4c-44de-8c56-476bd0de2e6a',
-        description: 'Around the horn',
-        itemCode: '5557788',
-        currency: 'USD',
-        unitPrice: '4554.25',
-        quantity: 30,
-        UoM: 'Peace',
-        totalEstimatedAmount: 'USD 248,458.55',
-      },
-      {
-        id: '88e5ed05-23ec-4794-9322-d3a297b64b3e',
-        description: 'Berglunds snabbkop',
-        itemCode: '123465',
-        currency: 'USD',
-        unitPrice: '4554.25',
-        quantity: 30,
-        UoM: 'Peace',
-        totalEstimatedAmount: 'USD 1,281,458.00',
-      },
-    ]);
-  }, []);
+    isSuccess && setData([...(list?.items ?? [])]);
+  }, [list, isSuccess]);
 
   useEffect(() => {
     listById(activityId as string);
   }, [activityId]);
+  useEffect(() => {
+    getActivity(activityId as string);
+  }, [activityId, getActivity]);
 
-  const EstimatedPrice = ({ cell }: any) => {
+  const EstimatedPrice = ({
+    getValue,
+    row: { index, original },
+    column: { id },
+    table,
+  }: any) => {
     const [isEditorOpened, setIsEditorOpened] = useState(false);
-    const handleOnChange = (e) => {
-      logger.log(data);
-      const tempData: any[] = data.map((d) => {
-        if (d != cell) return d;
-        return { ...d, unitPrice: e };
-      });
-      setData([...tempData]);
+    const initialValue = getValue();
+    const [value, setValue] = useState(initialValue);
+    const onBlur = () => {
+      setIsEditorOpened(false);
+
+      setData((old) =>
+        old.map((row, i) => {
+          if (i === index) {
+            return {
+              ...old[index],
+              [id]: value,
+            };
+          }
+          return row;
+        }),
+      );
     };
+    useEffect(() => {
+      setValue(initialValue);
+    }, [initialValue]);
     return (
       <>
         <Flex gap="sm">
-          <Text>{cell.currency}</Text>
           {!isEditorOpened && (
             <>
-              <Text>{cell.unitPrice}</Text>
-              <IconPencil onClick={() => setIsEditorOpened(true)} />
+              <Text>{original?.currency}</Text>
+              <Text>{original?.unitPrice}</Text>
+              <IconPencil
+                onClick={() => setIsEditorOpened(true)}
+                className="ml-auto"
+              />
             </>
           )}
           {isEditorOpened && (
-            <NumberInput value={cell.unitPrice} onChange={handleOnChange} />
+            <NumberInput
+              leftSection={original.currency}
+              value={value}
+              onChange={setValue}
+              onBlur={onBlur}
+            />
           )}
         </Flex>
       </>
@@ -93,23 +86,40 @@ export function Entity({ children }: { children: React.ReactNode }) {
 
   const Quantity = ({ cell }: any) => {
     const [isEditorOpened, setIsEditorOpened] = useState(false);
+    const [getUoM, { data: uom }] = useLazyGetUnitOfMeasurementsQuery();
+
+    const handleOnChange = (e) => {
+      logger.log(data);
+      const tempData: any[] = data.map((d) => {
+        if (d != cell) return d;
+        return { ...d, quantity: e };
+      });
+      setData([...tempData]);
+    };
+
+    useEffect(() => {
+      isEditorOpened && getUoM(cell.measurement);
+    }, [isEditorOpened]);
     return (
       <>
         <Flex gap="sm">
           {!isEditorOpened && (
             <>
               <Text>{cell.quantity}</Text>
-              <Text>{cell.UoM}</Text>
-              <IconPencil onClick={() => setIsEditorOpened(true)} />
+              {/* <Text>{cell.uom}</Text> */}
+              <IconPencil
+                onClick={() => setIsEditorOpened(true)}
+                className="ml-auto"
+              />
             </>
           )}
           {isEditorOpened && (
             <>
-              <NumberInput
-                value={cell.quantity}
-                onChange={(data) => logger.log(data)}
+              <NumberInput value={cell.quantity} onChange={handleOnChange} />
+              <Select
+                value={cell.uom}
+                data={uom?.items?.map((u) => ({ value: u.id, label: u.name }))}
               />
-              <Select value={cell.UoM} data={['Peace', 'Kg']} />
             </>
           )}
         </Flex>
@@ -123,11 +133,9 @@ export function Entity({ children }: { children: React.ReactNode }) {
       mode: 'list',
       entity: 'Items',
       primaryKey: 'description',
-      title: 'Items: Alfreds Futterkiste',
+      title: `Items: ${activity?.name ?? ''}`,
       onAdd: () => {
-        router.push(
-          `/pre-budget-plan/${budgetYear}/activities/items/${activityId}/new`,
-        );
+        open();
       },
       onDetail: (selected: PreBudgetPlanActivities) => {
         router.push(
@@ -158,9 +166,14 @@ export function Entity({ children }: { children: React.ReactNode }) {
         {
           id: 'price',
           header: 'Estimated Unit Price',
-          accessorKey: 'price',
-          cell: ({ row: { original } }: any) => (
-            <EstimatedPrice cell={original} />
+          accessorKey: 'unitPrice',
+          cell: ({ getValue, row, column, table }) => (
+            <EstimatedPrice
+              getValue={getValue}
+              row={row}
+              column={column}
+              table={table}
+            />
           ),
           meta: {
             widget: 'expand',
@@ -193,7 +206,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
       searchable: true,
       pagination: true,
     };
-  }, [router]);
+  }, [router, data]);
 
   const pathname = usePathname();
 
@@ -205,12 +218,32 @@ export function Entity({ children }: { children: React.ReactNode }) {
       ? 'new'
       : 'detail';
 
+  const handelAddItem = (items) => {
+    logger.log('items:', items);
+    const castedData = items.map((item) => ({
+      unitPrice: 0,
+      currency: activity?.currency,
+      quantity: 0,
+      uom: item.uOMId,
+      preBudgetPlanActivityId: activityId,
+      description: item.description,
+      metaData: item,
+      itemCode: item.itemCode,
+      measurement: item.measurementId,
+    }));
+
+    setData([...castedData, ...data]);
+  };
+
   return (
-    <EntityLayout
-      mode={mode}
-      config={config}
-      data={list?.items ?? []}
-      detail={children}
-    />
+    <>
+      <EntityLayout
+        mode={mode}
+        config={config}
+        data={list?.items ?? []}
+        detail={children}
+      />
+      <ItemSelector onDone={handelAddItem} opened={opened} close={close} />
+    </>
   );
 }

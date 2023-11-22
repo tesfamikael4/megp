@@ -42,7 +42,7 @@ export function Table<T>({ data, config }: TableProps<T>): ReactElement {
                     key={header.id}
                     style={{
                       width:
-                        header.getSize() !== 150 ? header.getSize() : `${30}%`,
+                        header.getSize() !== 150 ? header.getSize() : `${5}%`,
                       textAlign:
                         header.column.id === 'action' ? 'right' : 'left',
                     }}
@@ -63,7 +63,12 @@ export function Table<T>({ data, config }: TableProps<T>): ReactElement {
               <MantineTable.Tr className={styles.row} key={row.id}>
                 {row.getVisibleCells().map((cell) => (
                   <MantineTable.Td className={styles.td} key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    <Text fz={14} lineClamp={2}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
+                    </Text>
                   </MantineTable.Td>
                 ))}
               </MantineTable.Tr>

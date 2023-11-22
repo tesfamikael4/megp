@@ -5,5 +5,6 @@ export default function EntityLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <Entity>{children}</Entity>;
+  // return <Entity>{children}</Entity>;
+  return <>{children}</>;
 }
