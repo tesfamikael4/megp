@@ -20,6 +20,7 @@ import { MultiFieldInput } from './multi-field-input';
 import { notifications } from '@mantine/notifications';
 import {
   useCreateMutation,
+  useDeleteMutation,
   useLazyReadQuery,
   useUpdateMutation,
 } from '../_api/activities.api';
@@ -47,9 +48,9 @@ const activitiesSchema: ZodType<Partial<PreBudgetPlanActivities>> = z.object({
   currency: z.string({
     required_error: 'Currency is required',
   }),
+  preference: z.string().default(''),
   remark: z.string().default(''),
   isMultiYear: z.boolean().default(false),
-  indigenousPreference: z.boolean().default(false),
 });
 
 export const FormDetail = ({ mode }: FormDetailProps) => {
@@ -67,20 +68,15 @@ export const FormDetail = ({ mode }: FormDetailProps) => {
     resolver: zodResolver(activitiesSchema),
   });
   const isMultiYear = watch('isMultiYear');
-  const indigenousPreference = watch('indigenousPreference');
   const fundingSource = watch('fundingSource');
   const [budgetYear, setBudgetYear] = useState({});
   const [donors, setDonors] = useState({});
-  const [preferenceValue, setPreferenceValue] = useState({
-    msme: '',
-    ibm: '',
-    mg: '',
-  });
 
   //rtk query
   const [create, { isLoading: isCreating }] = useCreateMutation();
   const [getActivity, { data, isSuccess }] = useLazyReadQuery();
   const [update, { isLoading: isUpdating }] = useUpdateMutation();
+  const [remove, { isLoading: isDeleting }] = useDeleteMutation();
 
   //event handler
   const onCreate = async (data) => {
@@ -88,7 +84,6 @@ export const FormDetail = ({ mode }: FormDetailProps) => {
       ...data,
       multiYearBudget: data.isMultiYear ? budgetYear : {},
       donor: data.fundingSource == 'Treasury' ? {} : donors,
-      preferenceValue: data.indigenousPreference ? preferenceValue : {},
       preBudgetPlanId: preBudgetPlanId,
     };
     logger.log(rawData);
@@ -109,6 +104,23 @@ export const FormDetail = ({ mode }: FormDetailProps) => {
       });
     }
   };
+  const onDelete = async () => {
+    try {
+      await remove(id as string).unwrap();
+      notifications.show({
+        title: 'Success',
+        message: 'Deleted Success-fully',
+        color: 'green',
+      });
+      router.push(`/pre-budget-plan/${preBudgetPlanId}/activities/`);
+    } catch (err) {
+      notifications.show({
+        title: 'Error',
+        message: 'Something went wrong',
+        color: 'red',
+      });
+    }
+  };
 
   const onUpdate = async (data) => {
     const rawData = {
@@ -116,7 +128,6 @@ export const FormDetail = ({ mode }: FormDetailProps) => {
       ...data,
       multiYearBudget: data.isMultiYear ? budgetYear : {},
       donor: data.fundingSource == 'Treasury' ? {} : donors,
-      preferenceValue: data.indigenousPreference ? preferenceValue : {},
       preBudgetPlanId: preBudgetPlanId,
     };
     try {
@@ -156,15 +167,14 @@ export const FormDetail = ({ mode }: FormDetailProps) => {
       setValue('currency', data.currency);
       setValue('description', data.description);
       setValue('fundingSource', data.fundingSource);
-      setValue('indigenousPreference', data.indigenousPreference);
       setValue('isMultiYear', data.isMultiYear);
       setValue('isMultiYear', data.isMultiYear);
       setValue('procurementMethod', data.procurementMethod);
       setValue('procurementReference', data.procurementReference);
       setValue('procurementType', data.procurementType);
       setValue('remark', data.remark);
+      setValue('preference', data.preference);
       setBudgetYear({ ...data.multiYearBudget });
-      setPreferenceValue({ ...data.preferenceValue });
       setDonors({ ...data.donor });
     }
   }, [mode, isSuccess, data, setValue]);
@@ -264,10 +274,19 @@ export const FormDetail = ({ mode }: FormDetailProps) => {
           className="w-full"
           {...register('isMultiYear')}
         />
-        <Checkbox
-          label="Indigenous Preference"
-          className="w-full"
-          {...register('indigenousPreference')}
+        <Controller
+          name="preference"
+          control={control}
+          render={({ field: { name, value, onChange } }) => (
+            <Select
+              name={name}
+              value={value}
+              onChange={onChange}
+              label="Preference"
+              data={['MSME', 'IBM', 'Marginalized Group']}
+              className="w-full"
+            />
+          )}
         />
         <Controller
           name="currency"
@@ -296,62 +315,6 @@ export const FormDetail = ({ mode }: FormDetailProps) => {
           withAsterisk
         />
       )}
-      {indigenousPreference && (
-        <>
-          <Divider my="xs" label="Preference" labelPosition="left" />
-          <Flex gap="md">
-            <TextInput
-              value="MSME"
-              label="Preference"
-              className="w-full"
-              disabled
-            />
-            <TextInput
-              type="number"
-              label="Allocated Percentage"
-              className="w-full"
-              rightSection="%"
-              value={preferenceValue.msme}
-              onChange={(data) =>
-                setPreferenceValue({
-                  ...preferenceValue,
-                  msme: data.target.value,
-                })
-              }
-            />
-          </Flex>
-          <Flex gap="md">
-            <TextInput value="IBM" className="w-full" disabled />
-            <TextInput
-              type="number"
-              className="w-full"
-              rightSection="%"
-              value={preferenceValue.ibm}
-              onChange={(data) =>
-                setPreferenceValue({
-                  ...preferenceValue,
-                  ibm: data.target.value,
-                })
-              }
-            />
-          </Flex>
-          <Flex gap="md">
-            <TextInput value="Marginalized Group" className="w-full" disabled />
-            <TextInput
-              type="number"
-              className="w-full"
-              rightSection="%"
-              value={preferenceValue.mg}
-              onChange={(data) =>
-                setPreferenceValue({
-                  ...preferenceValue,
-                  mg: data.target.value,
-                })
-              }
-            />
-          </Flex>
-        </>
-      )}
 
       {fundingSource && fundingSource !== 'Treasury' && (
         <MultiFieldInput
@@ -374,10 +337,11 @@ export const FormDetail = ({ mode }: FormDetailProps) => {
         mode={mode}
         isSaving={isCreating}
         isUpdating={isUpdating}
+        isDeleting={isDeleting}
         onCreate={handleSubmit(onCreate)}
         onReset={onReset}
         onUpdate={handleSubmit(onUpdate)}
-        onDelete={handleSubmit(onCreate)}
+        onDelete={handleSubmit(onDelete)}
       />
     </Stack>
   );

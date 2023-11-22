@@ -13,7 +13,6 @@ export interface PreBudgetPlanActivities {
   donor: object;
   isMultiYear: boolean;
   multiYearBudget: object;
-  indigenousPreference: boolean;
-  preferenceValue: object;
+  preference: string;
   remark: string;
 }

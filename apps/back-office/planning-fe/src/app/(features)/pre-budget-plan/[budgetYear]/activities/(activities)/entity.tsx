@@ -14,48 +14,6 @@ export function Entity({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const { budgetYear } = useParams();
   const [listById, { data: list }] = useLazyListByAppIdQuery();
-  // const data = [
-  //   {
-  //     id: '6ce66c51-7258-45cb-9e63-6840b63bdfe5',
-  //     name: 'Alfreds Futterkiste',
-  //     ref: '030-0074321',
-  //     preference: 'Maria Andres',
-  //     procurementType: 'Buying',
-  //     procurementMethod: 'Open',
-  //     fundingSource: 'Loan',
-  //     totalEstimatedAmount: 'USD 1,442.32',
-  //   },
-  //   {
-  //     id: '04a426b8-d93b-45aa-b0df-0b4ad3fc9d30',
-  //     name: 'Antonio Moreno Taqueria',
-  //     ref: '(5) 555-3932',
-  //     preference: 'Antonio Moreno',
-  //     procurementType: 'Buying',
-  //     procurementMethod: 'Open',
-  //     fundingSource: 'IR',
-  //     totalEstimatedAmount: 'USD 15,889.78',
-  //   },
-  //   {
-  //     id: '8bbdf119-db4c-44de-8c56-476bd0de2e6a',
-  //     name: 'Around the horn',
-  //     ref: '(171) 555-7788',
-  //     preference: 'Thomas Hardly',
-  //     procurementType: 'Buying',
-  //     procurementMethod: 'Limited',
-  //     fundingSource: 'Treasury',
-  //     totalEstimatedAmount: 'USD 248,458.55',
-  //   },
-  //   {
-  //     id: '88e5ed05-23ec-4794-9322-d3a297b64b3e',
-  //     name: 'Berglunds snabbkop',
-  //     ref: '0921-123465',
-  //     preference: 'Christina Berglunds',
-  //     procurementType: 'Buying',
-  //     procurementMethod: 'Selective',
-  //     fundingSource: 'Treasury',
-  //     totalEstimatedAmount: 'USD 1,281,458.00',
-  //   },
-  // ];
 
   const config: EntityConfig<any> = useMemo(() => {
     return {
@@ -111,6 +69,15 @@ export function Entity({ children }: { children: React.ReactNode }) {
           },
         },
         {
+          id: 'preference',
+          header: 'Preference',
+          accessorKey: 'preference',
+          cell: (info) => info.getValue(),
+          meta: {
+            widget: 'expand',
+          },
+        },
+        {
           id: 'fundingSource',
           header: 'Funding Source',
           accessorKey: 'fundingSource',
@@ -147,7 +114,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
           },
         },
       ],
-      searchable: true,
+      // searchable: true,
       pagination: true,
     };
   }, [router]);
