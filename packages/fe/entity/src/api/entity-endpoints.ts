@@ -24,7 +24,7 @@ export const createEntitySlice = <T extends Entity>(
             let q = '';
             if (collectionQuery) {
               const query = encodeCollectionQuery(collectionQuery);
-              q = `q?${query}`;
+              q = `?q=${query}`;
             }
             return {
               url: `/${entityName.toLowerCase()}${q}`,
@@ -170,7 +170,7 @@ export const EntitySliceApi = createApi({
           let q = '';
           if (collectionQuery) {
             const query = encodeCollectionQuery(collectionQuery);
-            q = `q?${query}`;
+            q = `?q${query}`;
           }
           return {
             url: `/entity${q}`,

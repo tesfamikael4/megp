@@ -3,20 +3,12 @@ import {
   Box,
   Button,
   Center,
-  Group,
-  Input,
   LoadingOverlay,
-  Pagination,
   Stack,
   Table,
   Text,
 } from '@mantine/core';
-import {
-  IconArrowsSort,
-  IconInboxOff,
-  IconPlus,
-  IconSearch,
-} from '@tabler/icons-react';
+import { IconArrowsSort, IconInboxOff, IconPlus } from '@tabler/icons-react';
 import { flexRender } from '@tanstack/react-table';
 import type t from '@tanstack/react-table';
 import { logger } from '@megp/core-fe';
@@ -36,7 +28,7 @@ export function Grid<T>({
   options,
   table,
   data,
-  mode,
+
   width,
   isLoading = false,
 }: GridProps<T>): React.ReactElement {
@@ -66,7 +58,7 @@ export function Grid<T>({
         </Center>
       ) : (
         <>
-          {options.searchable ? (
+          {/* {options.searchable ? (
             <Group justify="end">
               <Input
                 className={mode === 'list' ? 'w-1/4 mb-2' : 'w-full mb-2'}
@@ -75,7 +67,7 @@ export function Grid<T>({
                 size="xs"
               />
             </Group>
-          ) : null}
+          ) : null} */}
           <Table className={styles.table} highlightOnHover striped>
             <thead>
               {table.getHeaderGroups().map((headerGroup) => (
@@ -133,11 +125,11 @@ export function Grid<T>({
               ))}
             </tbody>
           </Table>
-          {options.pagination ? (
+          {/* {options.pagination ? (
             <Group className="my-4" justify="right">
               <Pagination size="sm" total={10} withEdges />
             </Group>
-          ) : null}
+          ) : null} */}
         </>
       )}
     </Box>

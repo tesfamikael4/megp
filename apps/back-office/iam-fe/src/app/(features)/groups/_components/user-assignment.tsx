@@ -8,7 +8,7 @@ import {
   useLazyFirstRelationQuery,
 } from '../_api/user-group.api';
 import { User } from '@/models/user/user';
-import { notify } from '@megp/core-fe';
+import { logger, notify } from '@megp/core-fe';
 
 const AddUserModal = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -21,13 +21,14 @@ const AddUserModal = () => {
     useLazyFirstRelationQuery();
 
   const { data: users } = useListByIdQuery();
+  logger.log(users);
 
   const relationConfig: RelationConfig<User> = {
     title: 'Users Assignment',
     columns: [
       {
         id: 'name',
-        header: 'name',
+        header: 'Name',
         accessorKey: 'fullName',
         cell: (info) => info.getValue(),
         meta: {
@@ -66,16 +67,10 @@ const AddUserModal = () => {
         },
       },
       {
-        id: 'name',
+        id: 'email',
         header: 'Email',
         accessorKey: 'email',
         cell: (info) => info.getValue(),
-        meta: {
-          widget: 'expand',
-        },
-        // meta: {
-        //   widget: 'expand',
-        // },
       },
     ],
     onSave: (selected) => {

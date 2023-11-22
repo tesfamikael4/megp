@@ -135,26 +135,6 @@ export function TreeList<T>({
     },
   });
 
-  useEffect(() => {
-    function generateExpandedObject(items, parentKey = '') {
-      let expandedObject = {};
-
-      items.forEach((item, index) => {
-        const newKey = parentKey ? `${parentKey}.${index}` : `${index}`;
-        expandedObject[newKey] = true;
-
-        if (item.subRows && item.subRows.length > 0) {
-          const childObject = generateExpandedObject(item.subRows, newKey);
-          expandedObject = { ...expandedObject, ...childObject };
-        }
-      });
-
-      return expandedObject;
-    }
-
-    setExpanded(generateExpandedObject(data));
-  }, [data]);
-
   return (
     <Section
       action={

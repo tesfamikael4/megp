@@ -2,9 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Modal } from '@mantine/core';
 import { Relation, RelationConfig } from '@megp/entity';
 
-import { notifications } from '@mantine/notifications';
-
-// import { useGetUnitByUserIdQuery } from '../_api/user.api';
 import {
   useRelationMutation,
   useLazySecondRelationQuery,

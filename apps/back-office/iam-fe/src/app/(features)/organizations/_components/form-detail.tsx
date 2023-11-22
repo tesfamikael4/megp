@@ -49,7 +49,9 @@ export function FormDetail({ mode }: FormDetailProps) {
       .min(1, { message: 'This field is required' })
       .refine(
         (value) => {
-          const organizationsList = list?.items;
+          const organizationsList = list?.items.filter(
+            (item) => item?.id !== id?.toString(),
+          );
           const isUnique =
             organizationsList &&
             organizationsList.every((org) => org.shortName !== value);
