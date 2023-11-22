@@ -20,6 +20,7 @@ export const dataSourceOptions = {
   password: TypeOrmConfigHelper.DATABASE_PASSWORD,
   entities: ['dist/**/*.entity.{ts,js}'],
   migrations: ['dist/migrations/*.{ts,js}'],
+  migrationsRun: true,
   cli: {
     migrationsDir: 'src/migrations',
   },

@@ -9,7 +9,7 @@ import {
 import { Audit } from 'src/shared/entities/audit.entity';
 import { Account } from './account.entity';
 
-@Entity({ name: 'security_question_news' })
+@Entity({ name: 'security_questions' })
 export class SecurityQuestion extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
