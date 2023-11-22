@@ -54,4 +54,7 @@ export class PreBudgetPlanItems {
 
   @Column()
   uom: string;
+
+  @Column()
+  uomName: string;
 }
