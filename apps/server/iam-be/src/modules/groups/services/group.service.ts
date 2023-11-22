@@ -30,10 +30,7 @@ export class GroupService extends EntityCrudService<Group> {
 
       return response;
     } catch (error) {
-      console.log(
-        '🚀 ~ file: group.service.ts:32 ~ GroupService ~ getAllGroups ~ error:',
-        error,
-      );
+      throw error;
     }
   }
 }

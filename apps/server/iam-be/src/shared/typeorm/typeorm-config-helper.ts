@@ -26,7 +26,7 @@ export const dataSourceOptions = {
   migrationsTableName: 'typeorm_migrations',
   // logger: 'advanced-console',
   // logging: 'all',
-  synchronize: true, // TypeOrmConfigHelper.NODE_ENV != 'production', // never use TRUE in production!
+  synchronize: false, // TypeOrmConfigHelper.NODE_ENV != 'production', // never use TRUE in production!
   autoLoadEntities: true, // TypeOrmConfigHelper.NODE_ENV != 'production',
 } as DataSourceOptions;
 

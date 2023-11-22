@@ -1,4 +1,4 @@
-import { ObjectLiteral, Repository } from 'typeorm';
+import { IsNull, ObjectLiteral, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import {
   CollectionQuery,
@@ -35,7 +35,8 @@ export class RelationCrudService<TEntity extends ObjectLiteral> {
     await this.repository.delete(deleteCondition);
 
     const data = this.repository.create(parsedPayload);
-    return await this.repository.insert(data);
+    await this.repository.insert(data);
+    return data;
   }
 
   async bulkSaveSecond(payload: any, relationCrudOptions: RelationCrudOptions) {
@@ -61,7 +62,8 @@ export class RelationCrudService<TEntity extends ObjectLiteral> {
     await this.repository.delete(deleteCondition);
 
     const data = this.repository.create(parsedPayload);
-    return await this.repository.insert(data);
+    await this.repository.insert(data);
+    return data;
   }
 
   async findAllFirst(
@@ -71,8 +73,15 @@ export class RelationCrudService<TEntity extends ObjectLiteral> {
   ) {
     const entityIdName = relationCrudOptions.firstEntityIdName;
     const include = relationCrudOptions.firstInclude;
+    const filterInclude = relationCrudOptions.secondInclude;
 
-    return await this.getData(entityId, entityIdName, include, query);
+    return await this.getData(
+      entityId,
+      entityIdName,
+      include,
+      filterInclude,
+      query,
+    );
   }
 
   async findAllSecond(
@@ -82,14 +91,22 @@ export class RelationCrudService<TEntity extends ObjectLiteral> {
   ) {
     const entityIdName = relationCrudOptions.secondEntityIdName;
     const include = relationCrudOptions.secondInclude;
+    const filterInclude = relationCrudOptions.firstInclude;
 
-    return await this.getData(entityId, entityIdName, include, query);
+    return await this.getData(
+      entityId,
+      entityIdName,
+      include,
+      filterInclude,
+      query,
+    );
   }
 
   async getData(
     entityId: string,
     entityIdName: string,
     include: string,
+    filterInclude: string,
     query: CollectionQuery,
   ) {
     query.where.push([
@@ -100,12 +117,31 @@ export class RelationCrudService<TEntity extends ObjectLiteral> {
       },
     ]);
 
+    query.where.push([
+      {
+        column: `${include}.deletedAt`,
+        value: entityId,
+        operator: FilterOperators.IsNull,
+      },
+    ]);
+
+    query.where.push([
+      {
+        column: `${filterInclude}.deletedAt`,
+        value: entityId,
+        operator: FilterOperators.IsNull,
+      },
+    ]);
+
     query.includes.push(include);
+    query.includes.push(filterInclude);
 
     const dataQuery = QueryConstructor.constructQuery<TEntity>(
       this.repository,
       query,
+      true,
     );
+
     const response = new DataResponseFormat<TEntity>();
     if (query.count) {
       response.total = await dataQuery.getCount();

@@ -30,10 +30,7 @@ export class OrganizationSectorService extends EntityCrudService<OrganizationSec
 
       return response;
     } catch (error) {
-      console.log(
-        '🚀 ~ file: group.service.ts:32 ~ OrganizationSectorService ~ getAllOrganizationSectors ~ error:',
-        error,
-      );
+      throw error;
     }
   }
 }

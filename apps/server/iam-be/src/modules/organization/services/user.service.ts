@@ -28,14 +28,27 @@ export class UserService extends ExtraCrudService<User> {
 
   async sendInvitation(input: InviteUserDto): Promise<any> {
     try {
-      const user = await this.repositoryUser.findOneBy({ id: input.id });
+      const user = await this.repositoryUser.findOne({
+        where: { id: input.id },
+        relations: {
+          userRoles: true,
+          userUnits: true,
+        },
+      });
       if (!user) {
         throw new HttpException('user_not_found', HttpStatus.NOT_FOUND);
       }
 
+      if (user.userRoles.length < 1 || user.userUnits.length < 1) {
+        throw new HttpException(
+          'user_role_and_unit_not_assigned',
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
       return await this.accountsService.inviteBackOfficeAccount(user.accountId);
     } catch (error) {
-      throw new HttpException(error, HttpStatus.NOT_FOUND);
+      throw error;
     }
   }
 
@@ -48,7 +61,7 @@ export class UserService extends ExtraCrudService<User> {
 
       return await this.accountsService.getInvitation(user.accountId);
     } catch (error) {
-      throw new HttpException(error, HttpStatus.NOT_FOUND);
+      throw error;
     }
   }
 

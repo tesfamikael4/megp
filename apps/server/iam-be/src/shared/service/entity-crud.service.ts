@@ -41,8 +41,8 @@ export class EntityCrudService<T extends ObjectLiteral> {
   }
 
   async softDelete(id: string, req?: any): Promise<void> {
-    await this.findOneOrFail(id);
-    await this.repository.softDelete(id);
+    const item = await this.findOneOrFail(id);
+    await this.repository.softRemove(item);
   }
 
   async restore(id: string, req?: any): Promise<void> {
