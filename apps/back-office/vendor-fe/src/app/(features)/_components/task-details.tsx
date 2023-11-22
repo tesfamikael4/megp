@@ -1,43 +1,23 @@
 import { useGetVendorQuery } from '@/store/api/vendor_request_handler/new-registration-api';
 import { GeneratePdf, Section } from '@megp/core-fe';
-import { Button, Paper, Skeleton, Box, Flex, Grid } from '@mantine/core';
+import { Button, Paper, Skeleton, Box, Flex, Grid, Text } from '@mantine/core';
 import React, { useEffect, useState } from 'react';
 import FormPreview from '@/shared/review/review';
 
 export default function TaskDetails({
   tracker,
   setContent,
+  data,
 }: {
   tracker: any;
   setContent: React.Dispatch<React.SetStateAction<'details' | 'tasks'>>;
+  data: any;
 }) {
-  const id = tracker.id as string;
-  const [skip, setSkip] = useState(true);
-  const { data: vendorInfo } = useGetVendorQuery({ id }, { skip: skip });
-
-  useEffect(() => {
-    if (tracker.task.taskType === 'ISR') {
-      setSkip(false);
-    }
-  }, []);
-
-  if (tracker.task.taskType === 'ISR' && vendorInfo == undefined) {
+  if (tracker.task.taskType === 'ISR') {
     return (
-      <Paper className="p-5 w-full mt-4">
-        <Skeleton height={8} radius="xl" />
-        <Skeleton height={8} mt={10} radius="xl" />
-        <Skeleton height={8} mt={10} radius="xl" />
-        <Skeleton height={8} mt={10} width="70%" radius="xl" />
-      </Paper>
-    );
-  }
-
-  if (tracker.task.taskType === 'ISR' && vendorInfo != undefined) {
-    return (
-      <Section
-        collapsible={false}
-        title={tracker.task.label}
-        action={
+      <Section collapsible={false} title={'Completed Tasks'}>
+        <Flex className="bg-gray-100 p-4 justify-between">
+          <Text className="text-primary-900">{tracker.task.label}</Text>
           <Button
             onClick={() => {
               setContent('tasks');
@@ -45,9 +25,8 @@ export default function TaskDetails({
           >
             Back
           </Button>
-        }
-      >
-        <FormPreview data={vendorInfo} />;
+        </Flex>
+        <FormPreview data={data} />;
       </Section>
     );
   }
@@ -56,7 +35,7 @@ export default function TaskDetails({
     return (
       <Section
         collapsible={false}
-        title={tracker.task.label}
+        title={'Completed Tasks'}
         action={
           <Button
             onClick={() => {
@@ -82,7 +61,7 @@ export default function TaskDetails({
   return (
     <Section
       collapsible={false}
-      title={tracker.task.label}
+      title={'Completed Tasks'}
       action={
         <Button
           onClick={() => {
@@ -94,6 +73,7 @@ export default function TaskDetails({
       }
     >
       <Box>
+        <Text>{tracker.task.label}</Text>
         <Flex direction="column">
           <Grid className="mb-4">
             <Grid.Col span={6}>Action Taken</Grid.Col>

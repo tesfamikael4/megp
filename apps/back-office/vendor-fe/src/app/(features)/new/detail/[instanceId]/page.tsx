@@ -81,33 +81,35 @@ export default function NewRequestDetail() {
           <Flex direction="row" className="w-8/12">
             <Box className="p-3">
               <Avatar color="cyan" radius="xl" size="lg">
-                {response.data?.vendor.name?.charAt(0)}
+                {response.data?.isrvendor?.basic.name?.charAt(0)}
               </Avatar>
             </Box>
-            <Flex direction="column" className="w-full border-r-2">
-              <Text className="text-primary-800 font-bold" size="xl">
-                Vendor: {response.data.vendor.name}
-              </Text>
-              <Text>Requester: {response.data.vendor.name}</Text>
-              <Text>Vendor Type: {response.data.vendor.origin}</Text>
+            <Flex
+              direction="column"
+              className="w-full border-r-[1px] text-sm justify-center"
+            >
+              <Box className="text-primary-800 font-bold" size="xl">
+                {response.data.isrvendor?.basic.name}
+              </Box>
+              <Box>Country: {response.data.isrvendor?.basic.origin}</Box>
             </Flex>
           </Flex>
-          <Flex direction="column" className="border-l-gray-200 w-4/12 ml-3">
-            <Flex direction="row" className="items-center gap-1">
+          <Flex direction="column" className="border-l-gray-50 w-4/12 ml-3">
+            <Flex direction="row" className="items-center gap-1 text-sm">
               <IconTicket size={18} />
-              <Text>{response.data.applicationNumber}</Text>
+              <Box>{response.data.applicationNumber}</Box>
             </Flex>
-            <Flex direction="row" className="items-center gap-1">
+            <Flex direction="row" className="items-center gap-1 text-sm">
               <IconClockHour2 size={18} />
-              <Text>{response.data?.submittedAt?.split('T')[0]}</Text>
+              <Box>{response.data?.submittedAt?.split('T')[0]}</Box>
             </Flex>
-            <Flex direction="row" className="items-center gap-1">
+            <Flex direction="row" className="items-center gap-1 text-sm">
               <IconProgress size={18} />
-              <Text>
+              <Box>
                 {response.data.status === 'Inprogress'
                   ? 'In progress'
                   : 'Completed'}
-              </Text>
+              </Box>
             </Flex>
           </Flex>
         </Flex>
@@ -120,14 +122,15 @@ export default function NewRequestDetail() {
                 collapsible={false}
                 title="Completed Tasks"
                 className="h-fit"
+                mh={'300px'}
               >
                 {[...response.data.taskTrackers]
                   .reverse()
                   .map((tracker, index) => (
                     <Box
                       key={index}
-                      className={`text-base p-3 cursor-pointer hover:bg-gray-300 ${
-                        index % 2 === 0 ? 'bg-gray-200' : ''
+                      className={`p-3 cursor-pointer hover:bg-gray-300 text-sm ${
+                        index % 2 === 0 ? 'bg-gray-100' : ''
                       }`}
                       onClick={() => {
                         setTaskTracker(tracker);
@@ -142,16 +145,28 @@ export default function NewRequestDetail() {
             </Box>
           )}
           {content === 'details' && (
-            <Box className="w-1/2">
-              <TaskDetails tracker={tracker} setContent={setContent} />
+            <Box className="w-1/2 min-h-400">
+              <TaskDetails
+                tracker={tracker}
+                setContent={setContent}
+                data={response.data?.isrvendor}
+              />
             </Box>
           )}
-          <Box className="w-1/2">
+          <Box className="w-1/2 min-h-[400px]">
             <Section
               collapsible={false}
               title="Current Task"
-              className="h-fit w-1/2"
-              action={
+              className="w-1/2"
+              mh={'300px'}
+            >
+              <Flex className="text-sm bg-gray-100 p-3" justify="space-between">
+                <Box>
+                  <Box className="text-primary-800 font-semibold">
+                    {response.data.task.name}
+                  </Box>
+                  <Box>{response.data.task.description}</Box>
+                </Box>
                 <Button
                   onClick={() => {
                     handlePickButton();
@@ -161,14 +176,7 @@ export default function NewRequestDetail() {
                 >
                   {pickLabel}
                 </Button>
-              }
-            >
-              <Box className="text-base bg-gray-100 p-3">
-                <Text className="text-primary-800">
-                  Task: {response.data.task.name}
-                </Text>
-                <Text>Description: {response.data.task.description}</Text>
-              </Box>
+              </Flex>
               {isPicked && (
                 <TaskHandler
                   taskType={taskType}

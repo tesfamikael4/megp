@@ -48,7 +48,7 @@ export default function NewRegistration() {
 
   return (
     <Flex direction="row" gap="sm">
-      <Section collapsible={false} title="New Request Handling">
+      <Section collapsible={false} title="Vendor Registration Applications">
         {response.data?.items.map((item, index) => (
           <Box
             key={index}
@@ -57,48 +57,52 @@ export default function NewRegistration() {
             <Flex
               direction="row"
               justify="space-between"
-              className="items-center border border-gray-200 p-3 cursor-pointer hover:bg-gray-100"
+              className={`items-center border border-gray-200 p-3 cursor-pointer hover:bg-primary-50 ${
+                index % 2 === 0 ? 'bg-gray-100' : ''
+              }`}
             >
               <Box className="pr-3">
                 <Avatar color="cyan" radius="xl" size="lg">
-                  {item.vendor.name?.charAt(0)}
+                  {item.isrvendor?.basic.name?.charAt(0)}
                 </Avatar>
               </Box>
-              <Flex direction="column" className="gap-[0.125rem] w-2/3">
-                <Text className="text-primary-800 font-bold">
-                  Vendor: {item.vendor.name}
-                </Text>
-                <Text>Requester: {item.vendor.name}</Text>
-                <Text>Vendor Type: {item.vendor.origin}</Text>
-                <Text>Task: {item.task.name}</Text>
-              </Flex>
+              <Box className="gap-[0.125rem] w-2/3">
+                <Box className="text-sm">
+                  <Box className="text-primary-800 font-bold">
+                    {item.isrvendor?.basic.name}
+                  </Box>
+                  <Box>
+                    <span className="font-semibold">Country:</span>{' '}
+                    {item.isrvendor?.basic.origin}
+                  </Box>
+                  <Box>
+                    <span className="font-semibold">Current Task:</span>{' '}
+                    {item.task?.name}
+                  </Box>
+                </Box>
+              </Box>
               <Flex
                 direction="column"
                 className="gap-[0.125rem] border-l border-gray-200 w-1/3 pl-2"
               >
-                <Flex direction="row" className="items-center gap-1">
+                <Flex direction="row" className="items-center gap-1 text-sm">
                   <Tooltip label="Tracking number">
                     <IconTicket size={18} />
                   </Tooltip>
-                  <Text>{item.applicationNumber}</Text>
+                  <Box>{item.applicationNumber}</Box>
                 </Flex>
-                <Flex direction="row" className="items-center gap-1">
+                <Flex direction="row" className="items-center gap-1 text-sm">
                   <Tooltip label="Business area">
                     <IconFileInvoice size={18} />
                   </Tooltip>
-                  <Text>{item.service.name}</Text>
+                  <Box>{item.service.name}</Box>
                 </Flex>
-                <Flex direction="row" className="items-center gap-1">
-                  <Tooltip label="Status">
-                    <IconTag size={18} />
-                  </Tooltip>
-                  <Text>{item.vendor.status}</Text>
-                </Flex>
-                <Flex direction="row" className="items-center  gap-1">
+
+                <Flex direction="row" className="items-center  gap-1 text-sm">
                   <Tooltip label="Executed time">
                     <IconClockHour2 size={18} />
                   </Tooltip>
-                  <Text>{item.submittedAt.split('T')[0]}</Text>
+                  <Box>{item.submittedAt.split('T')[0]}</Box>
                 </Flex>
               </Flex>
             </Flex>
