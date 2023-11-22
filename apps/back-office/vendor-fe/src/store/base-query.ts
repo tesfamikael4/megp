@@ -6,7 +6,7 @@ export const baseQuery = (baseUrl = '/') => {
   return fetchBaseQuery({
     baseUrl: baseUrl,
     prepareHeaders: async (headers) => {
-      const baseURL = process.env.NEXT_PUBLIC_IAM_API ?? '/iam';
+      const baseURL = process.env.NEXT_PUBLIC_IAM_API ?? '/iam/api';
       const token = getCookie('token');
       const refreshToken = getCookie('refreshToken');
       // If we have a token set in state, let's assume that we should be passing it.
