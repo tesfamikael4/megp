@@ -7,7 +7,7 @@ export const newRegistrationSlice = createApi({
   reducerPath: 'vendorRequestApi',
   refetchOnFocus: true,
   tagTypes: ['Tasks'],
-  baseQuery: baseQuery(process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api'),
+  baseQuery: baseQuery(process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors'),
   endpoints: (builder) => ({
     getApplicationRequestDetailById: builder.query<any, VendorRequest>({
       query: (payload) => ({
