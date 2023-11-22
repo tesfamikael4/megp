@@ -158,7 +158,6 @@ export class TusService implements OnModuleInit {
               attachment: fieldValue,
             });
           } catch (error) {
-            console.log(error);
             throw new BadRequestException(`Recept Upload failed`);
           }
         }
