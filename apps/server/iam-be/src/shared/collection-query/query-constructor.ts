@@ -1,7 +1,7 @@
 import { ObjectLiteral, Repository, SelectQueryBuilder } from 'typeorm';
 import { CollectionQuery, Order, Where } from './query';
 import { FilterOperators } from './filter_operators';
-import { encodeCollectionQuery } from './query-mapper';
+import { decodeCollectionQuery, encodeCollectionQuery } from './query-mapper';
 
 const addFilterConditions = (
   op: string,
@@ -42,6 +42,8 @@ const addFilterConditions = (
   } else if (op === FilterOperators.Any) {
     return `${queryCondition} = ANY(:${queryParam})`;
   } else if (op === FilterOperators.Like) {
+    return `${queryCondition} LIKE(:${queryParam})`;
+  } else if (op === FilterOperators.ILike) {
     return `${queryCondition} ILIKE(:${queryParam})`;
   } else if (op === FilterOperators.NotEqual) {
     return `${queryCondition} <> :${queryParam}`;
@@ -306,6 +308,7 @@ export class QueryConstructor {
   static constructQuery<T extends ObjectLiteral>(
     repository: Repository<T>,
     query: CollectionQuery,
+    withDelete = false,
   ): SelectQueryBuilder<T> {
     const aggregateColumns: any = {};
     const metaData = repository.manager.connection.getMetadata(
@@ -317,6 +320,10 @@ export class QueryConstructor {
 
     const aggregate = metaData.tableName;
     const queryBuilder = repository.createQueryBuilder(aggregate);
+
+    if (withDelete) {
+      queryBuilder.withDeleted();
+    }
 
     buildQuery(aggregate, queryBuilder, query);
 

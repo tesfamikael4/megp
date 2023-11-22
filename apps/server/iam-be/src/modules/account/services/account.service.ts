@@ -1,4 +1,10 @@
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Account, AccountVerification, SecurityQuestion } from '@entities';
@@ -24,7 +30,6 @@ import {
   SetSecurityQuestionDto,
 } from '../dto/security-question.dto';
 import { EmailService } from 'src/shared/email/email.service';
-import { UserService } from 'src/modules/organization/services/user.service';
 
 @Injectable()
 export class AccountsService {
@@ -42,51 +47,43 @@ export class AccountsService {
   public async createAccount(
     createAccountDto: CreateAccountDto,
   ): Promise<any | never> {
-    try {
-      let { email }: CreateAccountDto = createAccountDto;
-      email = email.toLocaleLowerCase();
+    let { email }: CreateAccountDto = createAccountDto;
+    email = email.toLocaleLowerCase();
 
-      let account: Account = await this.repository.findOne({
-        where: { email },
-      });
+    let account: Account = await this.repository.findOne({
+      where: { email },
+    });
 
-      if (!account) {
-        account = await this.createNewAccount(
-          createAccountDto,
-          AccountStatusEnum.PENDING,
-        );
-        const verificationId = await this.createAndSendVerificationOTP(account);
-        return { verificationId };
-      } else if (account.status == AccountStatusEnum.PENDING) {
-        const verificationId = await this.createAndSendVerificationOTP(account);
-        return { verificationId };
-      }
-
-      throw new HttpException('Conflict', HttpStatus.CONFLICT);
-    } catch (error) {
-      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    if (!account) {
+      account = await this.createNewAccount(
+        createAccountDto,
+        AccountStatusEnum.PENDING,
+      );
+      const verificationId = await this.createAndSendVerificationOTP(account);
+      return { verificationId };
+    } else if (account.status == AccountStatusEnum.PENDING) {
+      const verificationId = await this.createAndSendVerificationOTP(account);
+      return { verificationId };
     }
+
+    throw new BadRequestException('Conflict');
   }
   public async verifyAccount(
     body: VerifyAccountDto,
   ): Promise<LoginResponseDto | never> {
-    try {
-      const { verificationId, otp, isOtp }: VerifyAccountDto = body;
-      const account = await this.verifyOTP(verificationId, otp, isOtp);
+    const { verificationId, otp, isOtp }: VerifyAccountDto = body;
+    const account = await this.verifyOTP(verificationId, otp, isOtp);
 
-      account.status = AccountStatusEnum.ACTIVE;
-      await this.repository.update(account.id, account);
+    account.status = AccountStatusEnum.ACTIVE;
+    await this.repository.update(account.id, account);
 
-      const token: LoginResponseDto = {
-        is_security_question_set: account.securityQuestions?.length != 0,
-        access_token: this.helper.generateAccessToken(account),
-        refresh_token: this.helper.generateRefreshToken(account),
-      };
+    const token: LoginResponseDto = {
+      is_security_question_set: account.securityQuestions?.length != 0,
+      access_token: this.helper.generateAccessToken(account),
+      refresh_token: this.helper.generateRefreshToken(account),
+    };
 
-      return token;
-    } catch (error) {
-      throw new HttpException(error, HttpStatus.BAD_REQUEST);
-    }
+    return token;
   }
 
   public async forgetPassword(email: string) {
@@ -104,16 +101,12 @@ export class AccountsService {
   public async verifyForgetPassword(
     body: VerifyAccountDto,
   ): Promise<any | never> {
-    try {
-      const { verificationId, otp, isOtp }: VerifyAccountDto = body;
-      await this.verifyOTP(verificationId, otp, isOtp, false);
+    const { verificationId, otp, isOtp }: VerifyAccountDto = body;
+    await this.verifyOTP(verificationId, otp, isOtp, false);
 
-      return {
-        status: true,
-      };
-    } catch (error) {
-      throw new HttpException(error, HttpStatus.BAD_REQUEST);
-    }
+    return {
+      status: true,
+    };
   }
 
   public async resetPassword(resetPassword: ResetPasswordDto) {
@@ -191,168 +184,153 @@ export class AccountsService {
   }
 
   public async login(body: LoginDto): Promise<LoginResponseDto | never> {
-    try {
-      let { username }: LoginDto = body;
-      username = username.toLocaleLowerCase();
+    let { username }: LoginDto = body;
+    username = username.toLocaleLowerCase();
 
-      const password = body.password;
+    const password = body.password;
 
-      const account: Account = await this.repository.findOne({
-        where: [{ username }, { email: username }, { phone: username }],
-        relations: ['securityQuestions'],
-      });
+    const account: Account = await this.repository.findOne({
+      where: [{ username }, { email: username }, { phone: username }],
+      relations: ['securityQuestions'],
+    });
 
-      if (
-        !account ||
-        account.status != AccountStatusEnum.ACTIVE ||
-        account.bannedUntil > new Date()
-      ) {
-        throw new HttpException('something_went_wrong', HttpStatus.BAD_REQUEST);
-      }
+    if (
+      !account ||
+      account.status != AccountStatusEnum.ACTIVE ||
+      account.bannedUntil > new Date()
+    ) {
+      throw new HttpException('something_went_wrong', HttpStatus.BAD_REQUEST);
+    }
 
-      const isPasswordValid: boolean = this.helper.compareHashedValue(
-        password,
-        account.password,
+    const isPasswordValid: boolean = this.helper.compareHashedValue(
+      password,
+      account.password,
+    );
+
+    let bannedUntil: any;
+    let failedAttempts: number;
+
+    if (!isPasswordValid) {
+      const MAXIMUM_FAILED_ATTEMPT = Number(
+        process.env.MAXIMUM_FAILED_ATTEMPT ?? 5,
       );
 
-      let bannedUntil: any;
-      let failedAttempts: number;
+      failedAttempts = account.failedAttempts + 1;
 
-      if (!isPasswordValid) {
-        const MAXIMUM_FAILED_ATTEMPT = Number(
-          process.env.MAXIMUM_FAILED_ATTEMPT ?? 5,
+      if (account.failedAttempts >= MAXIMUM_FAILED_ATTEMPT) {
+        const minute = this.getRandomNumber();
+        const durationOfBan = new Date();
+
+        bannedUntil = new Date(
+          durationOfBan.setMinutes(durationOfBan.getMinutes() + minute),
         );
 
-        failedAttempts = account.failedAttempts + 1;
-
-        if (account.failedAttempts >= MAXIMUM_FAILED_ATTEMPT) {
-          const minute = this.getRandomNumber();
-          const durationOfBan = new Date();
-
-          bannedUntil = new Date(
-            durationOfBan.setMinutes(durationOfBan.getMinutes() + minute),
-          );
-
-          failedAttempts = 0;
-        }
-
-        await this.repository.update(account.id, {
-          failedAttempts,
-          bannedUntil,
-        });
-
-        throw new HttpException('something_went_wrong', HttpStatus.BAD_REQUEST);
+        failedAttempts = 0;
       }
 
-      this.repository.update(account.id, { failedAttempts, bannedUntil });
+      await this.repository.update(account.id, {
+        failedAttempts,
+        bannedUntil,
+      });
 
-      const tokenPayload = await this.getAccessTokenPayload(account);
-
-      const token: LoginResponseDto = {
-        is_security_question_set: account.securityQuestions?.length != 0,
-        access_token: this.helper.generateAccessToken(tokenPayload),
-        refresh_token: this.helper.generateRefreshToken({ id: account.id }),
-      };
-
-      return token;
-    } catch (error) {
-      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+      throw new HttpException('something_went_wrong', HttpStatus.BAD_REQUEST);
     }
+
+    this.repository.update(account.id, { failedAttempts, bannedUntil });
+
+    const tokenPayload = await this.getAccessTokenPayload(account);
+
+    const token: LoginResponseDto = {
+      is_security_question_set: account.securityQuestions?.length != 0,
+      access_token: this.helper.generateAccessToken(tokenPayload),
+      refresh_token: this.helper.generateRefreshToken({ id: account.id }),
+    };
+
+    return token;
   }
 
   public async refreshToken(req: any): Promise<LoginResponseDto | never> {
-    try {
-      const user = req.user;
-      if (!user) {
-        throw new HttpException(
-          'invalid_refresh_token',
-          HttpStatus.UNAUTHORIZED,
-        );
-      }
-      const account: Account = await this.repository.findOneBy({
-        id: user['id'],
-      });
-
-      if (!account) {
-        //|| account.status != "active"
-        throw new HttpException('something_went_wrong', HttpStatus.BAD_REQUEST);
-      }
-
-      const tokenPayload = await this.getAccessTokenPayload(account);
-
-      const token: LoginResponseDto = {
-        access_token: this.helper.generateAccessToken(tokenPayload),
-      };
-
-      return token;
-    } catch (error) {
-      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    const user = req.user;
+    if (!user) {
+      throw new HttpException('invalid_refresh_token', HttpStatus.UNAUTHORIZED);
     }
+    const account: Account = await this.repository.findOneBy({
+      id: user['id'],
+    });
+
+    if (!account) {
+      //|| account.status != "active"
+      throw new HttpException('something_went_wrong', HttpStatus.BAD_REQUEST);
+    }
+
+    const tokenPayload = await this.getAccessTokenPayload(account);
+
+    const token: LoginResponseDto = {
+      access_token: this.helper.generateAccessToken(tokenPayload),
+    };
+
+    return token;
   }
 
   async getUserInfo(id: string) {
-    try {
-      const account = await this.repository.findOne({
-        where: {
-          id,
-        },
-        select: {
-          tenantId: true,
+    const account = await this.repository.findOne({
+      where: {
+        id,
+      },
+      select: {
+        tenantId: true,
+        id: true,
+        firstName: true,
+        lastName: true,
+        username: true,
+        email: true,
+        user: {
           id: true,
-          firstName: true,
-          lastName: true,
-          username: true,
-          email: true,
-          user: {
+          accountId: true,
+          organization: {
             id: true,
-            accountId: true,
-            organization: {
-              id: true,
-              name: true,
-              shortName: true,
-            },
-            userRoles: {
-              id: true,
-              roleId: true,
-              role: {
-                key: true,
-                rolePermissions: {
+            name: true,
+            shortName: true,
+          },
+          userRoles: {
+            id: true,
+            roleId: true,
+            role: {
+              key: true,
+              rolePermissions: {
+                id: true,
+                permissionId: true,
+                permission: {
                   id: true,
-                  permissionId: true,
-                  permission: {
+                  key: true,
+                  applicationId: true,
+                  application: {
                     id: true,
                     key: true,
-                    applicationId: true,
-                    application: {
-                      id: true,
-                      key: true,
-                    },
                   },
                 },
               },
             },
           },
         },
-        relations: {
-          user: {
-            organization: true,
-            userRoles: {
-              role: {
-                rolePermissions: {
-                  permission: {
-                    application: true,
-                  },
+      },
+      relations: {
+        user: {
+          organization: true,
+          userRoles: {
+            role: {
+              rolePermissions: {
+                permission: {
+                  application: true,
                 },
               },
             },
           },
         },
-      });
+      },
+    });
 
-      return account;
-    } catch (error) {
-      throw new HttpException(error, HttpStatus.NOT_FOUND);
-    }
+    return account;
   }
 
   async getAccessTokenPayload(account: Account) {
@@ -486,50 +464,39 @@ export class AccountsService {
   }
 
   async createBackOfficeAccount(input: any) {
-    try {
-      let { email }: CreateAccountDto = input;
-      email = email.toLocaleLowerCase();
+    let { email }: CreateAccountDto = input;
+    email = email.toLocaleLowerCase();
 
-      let account: Account = await this.repository.findOne({
-        where: { email },
-      });
+    let account: Account = await this.repository.findOne({
+      where: { email },
+    });
 
-      if (account) {
-        throw new HttpException('account_exists', HttpStatus.NOT_FOUND);
-      }
-
-      account = await this.createNewAccount(input, AccountStatusEnum.PENDING);
-      return account;
-    } catch (error) {
-      throw error;
+    if (account) {
+      throw new HttpException('account_exists', HttpStatus.NOT_FOUND);
     }
+
+    account = await this.createNewAccount(input, AccountStatusEnum.PENDING);
+    return account;
   }
 
   async createDefaultOrganizationAccount(input: any) {
-    try {
-      const { code } = input;
-      const email = `${code.toLocaleLowerCase()}@megp.com`;
+    const { code } = input;
+    const email = `${code.toLocaleLowerCase()}@megp.com`;
 
-      let account: Account = await this.repository.findOne({
-        where: { email },
-      });
+    let account: Account = await this.repository.findOne({
+      where: { email },
+    });
 
-      if (account) {
-        throw new HttpException('account_exists', HttpStatus.NOT_FOUND);
-      }
-
-      input.username = code.toLocaleLowerCase();
-      input.email = email;
-      input.password = process.env.DEFAULT_ORG_ADMIN_PASSWORD ?? '123123';
-
-      account = await this.createDefaultAccount(
-        input,
-        AccountStatusEnum.ACTIVE,
-      );
-      return account;
-    } catch (error) {
-      throw error;
+    if (account) {
+      throw new HttpException('account_exists', HttpStatus.NOT_FOUND);
     }
+
+    input.username = code.toLocaleLowerCase();
+    input.email = email;
+    input.password = process.env.DEFAULT_ORG_ADMIN_PASSWORD ?? '123123';
+
+    account = await this.createDefaultAccount(input, AccountStatusEnum.ACTIVE);
+    return account;
   }
 
   async inviteBackOfficeAccount(accountId: string) {
@@ -541,9 +508,7 @@ export class AccountsService {
       throw new HttpException('account_not_found', HttpStatus.NOT_FOUND);
     }
 
-    const OTP_LIFE_TIME = process.env.OTP_LIFE_TIME
-      ? +process.env.OTP_LIFE_TIME
-      : 10;
+    const OTP_LIFE_TIME = Number(process.env.OTP_LIFE_TIME ?? 10);
 
     const invitation = await this.accountVerificationRepository.findOne({
       where: {
@@ -605,9 +570,7 @@ export class AccountsService {
       throw new HttpException('verification_not_found', HttpStatus.NOT_FOUND);
     }
 
-    const OTP_LIFE_TIME = process.env.OTP_LIFE_TIME
-      ? +process.env.OTP_LIFE_TIME
-      : 10;
+    const OTP_LIFE_TIME = Number(process.env.OTP_LIFE_TIME ?? 10);
 
     if (invitation.status == AccountVerificationStatusEnum.USED) {
       throw new HttpException(
@@ -638,9 +601,7 @@ export class AccountsService {
     isOtp: boolean,
     invalidateOtp = true,
   ) {
-    const OTP_LIFE_TIME = process.env.OTP_LIFE_TIME
-      ? +process.env.OTP_LIFE_TIME
-      : 10;
+    const OTP_LIFE_TIME = Number(process.env.OTP_LIFE_TIME ?? 10);
 
     const accountVerification =
       await this.accountVerificationRepository.findOneBy({
@@ -734,95 +695,83 @@ export class AccountsService {
   }
 
   private async createAndSendVerificationOTP(account: Account) {
-    try {
-      const { accountVerification, otp } = await this.createOTP(
-        account,
-        AccountVerificationTypeEnum.EMAIL_VERIFICATION,
-      );
+    const { accountVerification, otp } = await this.createOTP(
+      account,
+      AccountVerificationTypeEnum.EMAIL_VERIFICATION,
+    );
 
-      const fullName = `${account.firstName} ${account.lastName}`;
-      const OTP_LIFE_TIME = Number(process.env.OTP_LIFE_TIME ?? 10);
+    const fullName = `${account.firstName} ${account.lastName}`;
+    const OTP_LIFE_TIME = Number(process.env.OTP_LIFE_TIME ?? 10);
 
-      let body: string;
+    let body: string;
 
-      const VERIFICATION_METHOD = process.env.VERIFICATION_METHOD ?? 'OTP';
+    const VERIFICATION_METHOD = process.env.VERIFICATION_METHOD ?? 'OTP';
 
-      if (VERIFICATION_METHOD == 'OTP') {
-        body = this.helper.verifyEmailTemplateForOtp(
-          fullName,
-          account.username,
-          otp,
-          OTP_LIFE_TIME,
-        );
-      } else {
-        body = `Link: ${accountVerification.otp}`;
-      }
-
-      await this.emailService.sendEmail(
-        account.email,
-        'Email Verification',
-        body,
-      );
-
-      return accountVerification.id;
-    } catch (error) {
-      throw new HttpException(error, HttpStatus.BAD_REQUEST);
-    }
-  }
-
-  private async createAndSendInvitationVerificationOTP(account: Account) {
-    try {
-      const { accountVerification, otp } = await this.createOTP(
-        account,
-        AccountVerificationTypeEnum.INVITATION,
-      );
-
-      const fullName = `${account.firstName} ${account.lastName}`;
-
-      const OTP_LIFE_TIME = Number(process.env.OTP_LIFE_TIME ?? 60);
-
-      const body = this.helper.verifyEmailTemplateForOtp(
+    if (VERIFICATION_METHOD == 'OTP') {
+      body = this.helper.verifyEmailTemplateForOtp(
         fullName,
         account.username,
         otp,
         OTP_LIFE_TIME,
       );
-
-      await this.emailService.sendEmail(
-        account.email,
-        'Email Verification',
-        body,
-      );
-
-      return accountVerification;
-    } catch (error) {
-      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    } else {
+      body = `Link: ${accountVerification.otp}`;
     }
+
+    await this.emailService.sendEmail(
+      account.email,
+      'Email Verification',
+      body,
+    );
+
+    return accountVerification.id;
+  }
+
+  private async createAndSendInvitationVerificationOTP(account: Account) {
+    const { accountVerification, otp } = await this.createOTP(
+      account,
+      AccountVerificationTypeEnum.INVITATION,
+    );
+
+    const fullName = `${account.firstName} ${account.lastName}`;
+
+    const OTP_LIFE_TIME = Number(process.env.OTP_LIFE_TIME ?? 60);
+
+    const body = this.helper.verifyEmailTemplateForOtp(
+      fullName,
+      account.username,
+      otp,
+      OTP_LIFE_TIME,
+    );
+
+    await this.emailService.sendEmail(
+      account.email,
+      'Email Verification',
+      body,
+    );
+
+    return accountVerification;
   }
 
   private async createAndSendForgetOTP(account: Account) {
-    try {
-      const { accountVerification, otp } = await this.createOTP(
-        account,
-        AccountVerificationTypeEnum.RESET_PASSWORD,
-      );
+    const { accountVerification, otp } = await this.createOTP(
+      account,
+      AccountVerificationTypeEnum.RESET_PASSWORD,
+    );
 
-      const VERIFICATION_METHOD = process.env.VERIFICATION_METHOD ?? 'OTP';
+    const VERIFICATION_METHOD = process.env.VERIFICATION_METHOD ?? 'OTP';
 
-      let body: string;
+    let body: string;
 
-      if (VERIFICATION_METHOD == 'OTP') {
-        body = `OPT: ${otp}`;
-      } else {
-        body = `Link: ${accountVerification.otp}`;
-      }
-
-      await this.emailService.sendEmail(account.email, 'Reset Password', body);
-
-      return accountVerification.id;
-    } catch (error) {
-      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    if (VERIFICATION_METHOD == 'OTP') {
+      body = `OPT: ${otp}`;
+    } else {
+      body = `Link: ${accountVerification.otp}`;
     }
+
+    await this.emailService.sendEmail(account.email, 'Reset Password', body);
+
+    return accountVerification.id;
   }
 
   private async createOTP(

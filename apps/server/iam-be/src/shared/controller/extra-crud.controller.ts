@@ -84,7 +84,7 @@ export function ExtraCrudController<TEntity extends ObjectLiteral>(
       return this.service.restore(id);
     }
 
-    @Get('list/archived/items')
+    @Get('list/archived/items/:id')
     @ApiQuery({
       name: 'q',
       type: String,
@@ -92,11 +92,12 @@ export function ExtraCrudController<TEntity extends ObjectLiteral>(
       required: false,
     })
     async findAllArchived(
+      @Param('id') id: string,
       @Query('q') q?: string,
       @Req() req?: any,
     ): Promise<DataResponseFormat<TEntity>> {
       const query = decodeCollectionQuery(q);
-      return this.service.findAllArchived(query);
+      return this.service.findAllArchived(id, query, options);
     }
   }
 

@@ -14,6 +14,7 @@ export class Application extends Audit {
 
   @Column()
   description: string;
+
   @Column({ nullable: true })
   key: string;
 

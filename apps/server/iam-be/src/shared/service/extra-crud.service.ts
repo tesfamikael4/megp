@@ -60,8 +60,8 @@ export class ExtraCrudService<T extends ObjectLiteral> {
   }
 
   async softDelete(id: string, req?: any): Promise<void> {
-    await this.findOneOrFail(id);
-    await this.repository.softDelete(id);
+    const item = await this.findOneOrFail(id);
+    await this.repository.softRemove(item);
   }
 
   async restore(id: string, req?: any): Promise<void> {
@@ -69,9 +69,24 @@ export class ExtraCrudService<T extends ObjectLiteral> {
     await this.repository.restore(id);
   }
 
-  async findAllArchived(query: CollectionQuery, req?: any) {
+  async findAllArchived(
+    entityId: string,
+    query: CollectionQuery,
+    extraCrudOptions: ExtraCrudOptions,
+    req?: any,
+  ) {
     query.where.push([
       { column: 'deletedAt', value: '', operator: 'IsNotNull' },
+    ]);
+
+    const entityIdName = extraCrudOptions.entityIdName;
+
+    query.where.push([
+      {
+        column: entityIdName,
+        value: entityId,
+        operator: FilterOperators.EqualTo,
+      },
     ]);
 
     const dataQuery = QueryConstructor.constructQuery<T>(

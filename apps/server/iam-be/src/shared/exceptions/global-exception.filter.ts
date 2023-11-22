@@ -4,10 +4,13 @@ import {
   ExceptionFilter,
   HttpException,
   HttpStatus,
+  Logger,
 } from '@nestjs/common';
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
+  private readonly logger = new Logger(GlobalExceptionFilter.name);
+
   catch(exception: any, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
@@ -18,10 +21,14 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         ? exception.getStatus()
         : HttpStatus.BAD_REQUEST;
 
-    const message =
+    let message =
       exception instanceof HttpException
         ? exception.getResponse()['message']
         : (exception as Error).message;
+
+    if (!message && exception.message) {
+      message = exception.message;
+    }
 
     const responseData = {
       statusCode: status,
@@ -29,6 +36,8 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       path: request.url,
       timestamp: new Date().toISOString(),
     };
+
+    this.logger.error(responseData);
 
     response.status(status).json(responseData);
     return;
