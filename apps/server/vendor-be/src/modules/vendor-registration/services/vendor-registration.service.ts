@@ -57,15 +57,10 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     ) {
       const isrVendor = await this.fromInitialValue(data);
       const result = await this.isrVendorsRepository.save(isrVendor);
-
-      console.log('data.initial.level ', data.initial.level);
-      console.log('data.initial.status ', data.initial.status);
-      console.log('data.areasOfBusinessInterest', data.areasOfBusinessInterest);
-
       if (!result) throw new HttpException(`adding_isr_failed`, 500);
       if (
-        data.initial.level == VendorStatusEnum.PPDA &&
-        data.initial.status == VendorStatusEnum.SAVE
+        data.initial.level.trim() === VendorStatusEnum.PAYMENT &&
+        data.initial.status.trim() === VendorStatusEnum.SAVE
       ) {
         for (
           let index = 0;
@@ -73,12 +68,17 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           index++
         ) {
           result.basic['id'] = result.id;
-          const invoice = await this.invoiceService.generateInvoice(
-            data.areasOfBusinessInterest[index].priceRange,
-            userInfo,
-            result.basic,
-          );
-          if (!invoice) throw new HttpException('invoice_creation_failed', 500);
+          try {
+            const invoice = await this.invoiceService.generateInvoice(
+              data.areasOfBusinessInterest[index].priceRange,
+              userInfo,
+              result.basic,
+            );
+            if (!invoice)
+              throw new HttpException('invoice_creation_failed', 500);
+          } catch (error) {
+            throw new HttpException('invoice_generation_failed', 500);
+          }
         }
         return { msg: 'Success' };
       } else if (
@@ -149,7 +149,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             if (!res)
               throw new BadRequestException(`adding_business_area_failed`);
           } catch (error) {
-            console.log(error);
+            throw new HttpException('workflow_initiation_failed', 500);
           }
         }
         return response;
@@ -159,7 +159,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
   }
 
   fromInitialValue = async (data: any) => {
-    console.log('data', data);
     let vendorsEntity: IsrVendorsEntity = null;
     vendorsEntity = await this.isrVendorsRepository.findOne({
       where: {
@@ -318,7 +317,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
 
     if (!result) throw new NotFoundException(`isr_Vendor_not_found`);
     const initial = JSON.parse(JSON.stringify(result?.initial));
-    console.log(result);
     //if there is no previously approved service by the isr vendorId
     if (result.status !== VendorStatusEnum.COMPLETED) {
       initial.level = VendorStatusEnum.DETAIL;
@@ -404,7 +402,9 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       throw new Error('Vendor info not saved');
     }
   }
-
+  async deleteIsrVendor(userInfo: any) {
+    await this.isrVendorsRepository.softDelete(userInfo.id);
+  }
   async addBusinessArea(businessAreaEntity: BusinessAreaEntity): Promise<any> {
     try {
       const result = await this.businessAreaRepository.save(businessAreaEntity);
@@ -424,7 +424,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     if (!vendorEntity) {
       throw new HttpException('isr_vendor_not_found', HttpStatus.BAD_REQUEST);
     }
-
     const areaOfBusinessInterest = JSON.parse(
       JSON.stringify(vendorEntity.areasOfBusinessInterest),
     );
@@ -481,7 +480,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
-  async getPendingIsrVendorByuserId(userId: string): Promise<any> {
+  async getPendingIsrVendorByUserId(userId: string): Promise<any> {
     const vendorEntity = await this.isrVendorsRepository.findOne({
       where: {
         userId: userId,
@@ -542,10 +541,10 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           ]),
         },
       });
-
       // if (!vendorEntity) {
       //   throw new HttpException('vendor_not_found', HttpStatus.BAD_REQUEST);
       // }
+
       return vendorEntity;
     } catch (error) {
       Logger.log(error);

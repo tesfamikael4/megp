@@ -30,8 +30,7 @@ import { SetVendorStatus } from '../dto/vendor.dto';
 @ApiResponse({ status: 500, description: 'Internal error' })
 @ApiExtraModels(DataResponseFormat)
 export class VendorRegistrationsController {
-
-  constructor(private readonly regService: VendorRegistrationsService) { }
+  constructor(private readonly regService: VendorRegistrationsService) {}
   @Get('get-isr-vendors')
   async getVendors() {
     return await this.regService.getIsrVendors();
@@ -68,9 +67,8 @@ export class VendorRegistrationsController {
   }
   @Get('get-isr-vendor-info-by-userId')
   async getPendingIsrVendorByuserId(@CurrentUser() userInfo: any) {
-    return await this.regService.getPendingIsrVendorByuserId(userInfo.id);
+    return await this.regService.getPendingIsrVendorByUserId(userInfo.id);
   }
-
   @Get('get-completed-isr-vendor-by-userId')
   async getCompletedIsrVendorByuserId(@CurrentUser() userInfo: any) {
     return await this.regService.getCompletedIsrVendorByuserId(userInfo.id);
@@ -91,7 +89,10 @@ export class VendorRegistrationsController {
     if (!result) throw new BadRequestException(`vendor registration failed`);
     return result;
   }
-
+  @Post('delete-isr-vendor')
+  async deleteIsVendor(@CurrentUser() user: any) {
+    return await this.regService.deleteIsrVendor(user);
+  }
   @Post('vendor-initiation')
   async VendorInitiation(
     @Body() vendorInitiationDto: VendorInitiationDto,
