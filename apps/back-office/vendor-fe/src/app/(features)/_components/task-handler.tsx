@@ -147,7 +147,7 @@ export default function TaskHandler({
           <Button
             onClick={() => handleButtonClick('NO')}
             className="bg-red-600 hover:bg-red-700"
-            loading={loading['YES']}
+            loading={loading['NO']}
           >
             No
           </Button>
