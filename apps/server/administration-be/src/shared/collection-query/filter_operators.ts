@@ -10,7 +10,7 @@ export const FilterOperators = {
   Any: 'ANY',
   NotNull: 'NotNull',
   IsNotNull: 'IsNotNull',
-  IsNull: 'AsNull',
+  IsNull: 'IsNull',
   NotEqualTo: '!=',
   Like: 'LIKE',
   All: 'All',

@@ -20,13 +20,14 @@ export const dataSourceOptions = {
   password: TypeOrmConfigHelper.DATABASE_PASSWORD,
   entities: ['dist/**/*.entity.{ts,js}'],
   migrations: ['dist/migrations/*.{ts,js}'],
+  migrationsRun: true,
   cli: {
     migrationsDir: 'src/migrations',
   },
   migrationsTableName: 'typeorm_migrations',
   // logger: 'advanced-console',
   // logging: 'all',
-  synchronize: true, // TypeOrmConfigHelper.NODE_ENV != 'production', // never use TRUE in production!
+  synchronize: false, // TypeOrmConfigHelper.NODE_ENV != 'production', // never use TRUE in production!
   autoLoadEntities: true, // TypeOrmConfigHelper.NODE_ENV != 'production',
 } as DataSourceOptions;
 

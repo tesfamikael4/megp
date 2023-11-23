@@ -1,16 +1,14 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Classification } from 'src/entities/classification';
 import { ClassificationService } from './services/classification.service';
 import { ClassificationController } from './controllers/classification-controller';
-import { ClassificationPath } from 'src/entities/classification-path';
-import { ClassificationPathService } from './services/classification-path.service';
-import { ClassificationPathController } from './controllers/classification-path.controller';
+import { TaxonomyCodeSetController } from './controllers/taxonomy-codeset-controller';
+import { TaxonomyCodeSetService } from './services/taxonomy-code_set.service';
+import { TaxonomyCodeSet } from 'src/entities/taxonomy-code-set.entity';
+import { Classification } from 'src/entities/classification.entity';
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Classification, ClassificationPath]),
-  ],
-  providers: [ClassificationService, ClassificationPathService],
-  controllers: [ClassificationController, ClassificationPathController],
+  imports: [TypeOrmModule.forFeature([TaxonomyCodeSet, Classification])],
+  providers: [ClassificationService, TaxonomyCodeSetService],
+  controllers: [ClassificationController, TaxonomyCodeSetController],
 })
-export class ClassificationModule { }
+export class ClassificationModule {}

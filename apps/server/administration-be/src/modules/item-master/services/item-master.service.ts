@@ -3,7 +3,7 @@ import { In, Repository } from 'typeorm';
 import { ItemCodeGeneratorService } from './item-code-generator.service';
 import { Inject } from '@nestjs/common';
 import { ItemMaster } from 'src/entities/item-master.entity';
-import { Classification } from 'src/entities/classification';
+import { Classification } from 'src/entities/classification.entity';
 import { EntityCrudService } from 'src/shared/service';
 export class ItemMasterService extends EntityCrudService<ItemMaster> {
   constructor(
@@ -38,9 +38,9 @@ export class ItemMasterService extends EntityCrudService<ItemMaster> {
     return commodityCode + '-' + generatedCode;
   }
 
-  async findByParentClassification(parentId: string) {
+  async findByParentClassification(parentCode: string) {
     const classifications = await this.classificationRepository.find({
-      where: { parentId },
+      where: { parentCode },
     });
     const codes = classifications.map((c) => c.code);
     return this.itemMasterRepository.find({

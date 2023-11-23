@@ -1,9 +1,15 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class Initial1700484503043 implements MigrationInterface {
-  name = 'Initial1700484503043';
+export class Initial1700723821656 implements MigrationInterface {
+  name = 'Initial1700723821656';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      `CREATE TABLE "taxonomy_code_sets" ("tenantId" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "version" character varying NOT NULL, CONSTRAINT "PK_9284782a82451049c23ddba6209" PRIMARY KEY ("id"))`,
+    );
+    await queryRunner.query(
+      `CREATE TABLE "classifications" ("tenantId" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "taxonomyCodeSetId" uuid, "parentCode" character varying, "key" character varying, "code" character varying NOT NULL, "title" character varying, "definition" character varying, "type" character varying, "synonym" character varying, "acronym" character varying, "isActive" boolean NOT NULL DEFAULT true, CONSTRAINT "UQ_c1ff45c45e53ed4f9e6d5e7ccfa" UNIQUE ("code"), CONSTRAINT "PK_58d976e264f75fc0ea006718856" PRIMARY KEY ("id"))`,
+    );
     await queryRunner.query(
       `CREATE TABLE "tags" ("tenantId" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, CONSTRAINT "PK_e7dc17249a1148a1970748eda99" PRIMARY KEY ("id"))`,
     );
@@ -23,13 +29,10 @@ export class Initial1700484503043 implements MigrationInterface {
       `CREATE TABLE "item_categories" ("tenantId" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "parentId" character varying, "parentICategoryId" uuid, CONSTRAINT "PK_db3359595abacbe15cf2f89c07e" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
-      `CREATE TABLE "todo_items" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "todoId" uuid NOT NULL, "name" character varying NOT NULL, CONSTRAINT "REL_88ed0a172f6419adb5e78ef238" UNIQUE ("todoId"), CONSTRAINT "PK_7ad331e73b03da55c148c2b5595" PRIMARY KEY ("id"))`,
+      `ALTER TABLE "classifications" ADD CONSTRAINT "FK_6e7ea8ebd15673577f2e650d6f2" FOREIGN KEY ("parentCode") REFERENCES "classifications"("code") ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
-      `CREATE TABLE "todoes" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "description" character varying NOT NULL, CONSTRAINT "PK_6c52da48c2f591c9ef9818d9d45" PRIMARY KEY ("id"))`,
-    );
-    await queryRunner.query(
-      `CREATE TABLE "todo_item_news" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "todoId" uuid NOT NULL, "name" character varying NOT NULL, CONSTRAINT "PK_f55c8e86fedc1f0266e7e0b4d66" PRIMARY KEY ("id"))`,
+      `ALTER TABLE "classifications" ADD CONSTRAINT "FK_a73e36325d685c0f348096190c5" FOREIGN KEY ("taxonomyCodeSetId") REFERENCES "taxonomy_code_sets"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
       `ALTER TABLE "item_tags" ADD CONSTRAINT "FK_d0d098ba6673fa09f82f8a8bdf2" FOREIGN KEY ("itemMasterId") REFERENCES "item_masters"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
@@ -49,21 +52,9 @@ export class Initial1700484503043 implements MigrationInterface {
     await queryRunner.query(
       `ALTER TABLE "item_categories" ADD CONSTRAINT "FK_df4d3c5a130dc5807ad9b5b8624" FOREIGN KEY ("parentICategoryId") REFERENCES "item_categories"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
-    await queryRunner.query(
-      `ALTER TABLE "todo_items" ADD CONSTRAINT "FK_88ed0a172f6419adb5e78ef238c" FOREIGN KEY ("todoId") REFERENCES "todoes"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "todo_item_news" ADD CONSTRAINT "FK_213f2671ddc371b82fc9b679e28" FOREIGN KEY ("todoId") REFERENCES "todoes"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
-    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      `ALTER TABLE "todo_item_news" DROP CONSTRAINT "FK_213f2671ddc371b82fc9b679e28"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "todo_items" DROP CONSTRAINT "FK_88ed0a172f6419adb5e78ef238c"`,
-    );
     await queryRunner.query(
       `ALTER TABLE "item_categories" DROP CONSTRAINT "FK_df4d3c5a130dc5807ad9b5b8624"`,
     );
@@ -82,14 +73,19 @@ export class Initial1700484503043 implements MigrationInterface {
     await queryRunner.query(
       `ALTER TABLE "item_tags" DROP CONSTRAINT "FK_d0d098ba6673fa09f82f8a8bdf2"`,
     );
-    await queryRunner.query(`DROP TABLE "todo_item_news"`);
-    await queryRunner.query(`DROP TABLE "todoes"`);
-    await queryRunner.query(`DROP TABLE "todo_items"`);
+    await queryRunner.query(
+      `ALTER TABLE "classifications" DROP CONSTRAINT "FK_a73e36325d685c0f348096190c5"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "classifications" DROP CONSTRAINT "FK_6e7ea8ebd15673577f2e650d6f2"`,
+    );
     await queryRunner.query(`DROP TABLE "item_categories"`);
     await queryRunner.query(`DROP TABLE "item_masters"`);
     await queryRunner.query(`DROP TABLE "unit_of_measurements"`);
     await queryRunner.query(`DROP TABLE "measurements"`);
     await queryRunner.query(`DROP TABLE "item_tags"`);
     await queryRunner.query(`DROP TABLE "tags"`);
+    await queryRunner.query(`DROP TABLE "classifications"`);
+    await queryRunner.query(`DROP TABLE "taxonomy_code_sets"`);
   }
 }

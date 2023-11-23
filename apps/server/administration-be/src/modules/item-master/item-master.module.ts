@@ -6,7 +6,7 @@ import { ExtraItemTagController } from './controllers/extra-item-tag.controller'
 import { ExtraItemTagService } from './services/extra-services/extra-tem-tag.service';
 import { ItemCodeSequence } from 'src/entities/item-code-sequence';
 import { ItemTag } from 'src/entities/item-tag.entity';
-import { Classification } from 'src/entities/classification';
+import { Classification } from 'src/entities/classification.entity';
 import { ItemCategory } from 'src/entities/item-category.entity';
 import { Measurement } from 'src/entities/measurement.entity';
 import { Tag } from 'src/entities/tag.entity';
@@ -27,4 +27,4 @@ import { ItemMaster } from 'src/entities/item-master.entity';
   providers: [ItemMasterService, ItemCodeGeneratorService, ExtraItemTagService],
   controllers: [ItemMasterConroller, ExtraItemTagController],
 })
-export class ItemMasterModule { }
+export class ItemMasterModule {}
