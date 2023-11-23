@@ -42,7 +42,7 @@ export class ApplicationExcutionController {
     private readonly workflowService: WorkflowService,
     private readonly bpService: BusinessProcessService,
     private readonly invoiceService: InvoiceService,
-  ) {}
+  ) { }
 
   @UseGuards(JwtGuard)
   @Get('email')
@@ -170,8 +170,8 @@ export class ApplicationExcutionController {
   @Get('get-currunt-task-detail/:instanceId')
   @ApiOkResponse({ type: WorkflowInstanceResponse })
   async fetchCurruntTaskDetail(
-    @Param('instanceId') instanceId: string,
-    @Query() query: CollectionQuery,
+    @Param('instanceId') instanceId: string
+
   ) {
     return await this.executeService.getCurruntTaskDetail(instanceId);
   }

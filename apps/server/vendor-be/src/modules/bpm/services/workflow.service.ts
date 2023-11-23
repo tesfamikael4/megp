@@ -60,7 +60,7 @@ export class WorkflowService {
     private readonly commonService: HandlingCommonService,
     private readonly taskService: TaskService,
     private readonly emailSerice: EmailService,
-  ) { }
+  ) {}
   async intiateWorkflowInstance(
     dto: CreateWorkflowInstanceDto,
     user: any,
@@ -152,7 +152,7 @@ export class WorkflowService {
           wfInstance,
           apiUrl,
           user,
-          nextCommand
+          nextCommand,
         );
         if (response) {
           await this.addTaskTracker(currentTaskHandler, nextCommand, user);
@@ -221,8 +221,8 @@ export class WorkflowService {
       where: { id: instanceId },
     });
     console.log(instanceId);
-    if (!wfi) throw new NotFoundException("Not Found")
-    console.log("wfiwfiwfi", wfi);
+    if (!wfi) throw new NotFoundException('Not Found');
+    console.log('wfiwfiwfi', wfi);
 
     const tasks = await this.taskService.getTasksByBP(wfi.bpId);
     const completedTasks = await this.trackerRepository.find({
@@ -353,6 +353,8 @@ export class WorkflowService {
     nextCommand: GotoNextStateDto,
     userInfo: any,
   ): Promise<boolean> {
+    const user = { ...userInfo };
+    user.token = null;
     const entity = new TaskTrackerEntity();
     entity.taskId = currentTaskHandlerCopy.taskId;
     entity.instanceId = nextCommand.instanceId;
@@ -360,7 +362,7 @@ export class WorkflowService {
     entity.handlerUserId = userInfo.userId;
     entity.action = nextCommand.action;
     entity.previousHandlerId = currentTaskHandlerCopy.previousHandlerId;
-    entity.handlerUser = userInfo;
+    entity.handlerUser = user;
     //entity.handlerUser?.user?.token=null;
     entity.pickedAt = currentTaskHandlerCopy.pickedAt;
     entity.checklists = nextCommand.taskChecklist;
@@ -378,7 +380,7 @@ export class WorkflowService {
     wfi: UpdateWorkflowInstanceDto,
     url: string,
     user: any,
-    command: any
+    command: any,
   ) {
     const payload = {
       isrVendorId: wfi.requestorId,
@@ -386,10 +388,10 @@ export class WorkflowService {
       serviceId: wfi.serviceId,
       status: WorkflowInstanceEnum.Completed,
       userId: wfi.user.id,
-      remark: command.remark
+      remark: command.remark,
     };
-    console.log("command-->", command);
-    console.log("payload", payload)
+    console.log('command-->', command);
+    console.log('payload', payload);
     const accessToken = user['token'];
     let method = '';
     if (command.action == 'REJECT') {

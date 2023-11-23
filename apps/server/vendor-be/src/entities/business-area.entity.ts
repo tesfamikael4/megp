@@ -6,11 +6,9 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { VendorsEntity } from './vendors.entity';
-import { ParseIntPipe } from '@nestjs/common';
 import { IsrVendorsEntity } from './isr-vendors.entity';
 
-@Entity({ name: 'business-areas' })
+@Entity({ name: 'business_areas' })
 export class BusinessAreaEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

@@ -79,6 +79,8 @@ export class VendorRegistrationsController {
     @CurrentUser() userInfo: any,
     @Req() request: Request,
   ) {
+    console.log('rrrrrrr', data);
+    console.log('tttttttttt', userInfo);
     const authToken = request.headers['authorization'].split(' ')[1];
     userInfo['token'] = authToken;
     data.data.initial.userId = userInfo.id;
