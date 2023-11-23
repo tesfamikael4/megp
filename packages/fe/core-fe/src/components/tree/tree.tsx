@@ -49,7 +49,11 @@ export function Tree<T>({
   const [checkedKey, setCheckedKey] = useState<Partial<T>>({});
   const [checkedKeys, setCheckedKeys] = useState<Partial<T[]>>([]);
   const [opened, { open, close }] = useDisclosure(false);
-  const [treeData, setTreeData] = useState<Partial<T[]>>([]);
+  const [treeData, setTreeData] = useState<Partial<T[]>>(data);
+
+  useEffect(() => {
+    setTreeData([...data.map((child) => ({ ...child }))]);
+  }, [data]);
 
   const handleCheckBoxSelect = (keys: Partial<T>, isChecked: boolean): void => {
     if (isChecked) {
@@ -64,7 +68,7 @@ export function Tree<T>({
     // console.log(key);
   };
   const handleClick = (node: Partial<T>): void => {
-    const parents = getParents(data, node[fieldNames.key] as string);
+    const parents = getParents(treeData, node[fieldNames.key] as string);
     onClick?.(node, parents);
   };
 
@@ -73,26 +77,48 @@ export function Tree<T>({
     close();
   };
 
+  const loop = (inputData, accessor, children, curKey): any[] => {
+    inputData.forEach((item, key) => {
+      if (key === Number(curKey[accessor])) {
+        if (item.children && item.children.length > 0) {
+          const updatedAccessor = accessor + 2;
+          loop(item.children, updatedAccessor, children, curKey);
+        } else {
+          const updatedDescendent = [...children];
+          inputData[key].children = updatedDescendent;
+        }
+      }
+    });
+    return inputData;
+  };
+
+  const updateData = (existingData, curKey, node): any[] => {
+    const { children } = node;
+    const updatedData = loop(existingData, 2, children, curKey);
+    return updatedData;
+  };
+
   //lazy load
-  const handleLoadData = (treeNode: any) =>
-    new Promise<void>((resolve) => {
-      if (!treeNode.children) {
+  const handleLoadData = (treeNode: any) => {
+    return new Promise<void>((resolve) => {
+      if (!treeNode.children || treeNode.children.length === 0) {
         fetch(`${url}/${treeNode[fieldNames.key]}`)
           .then((response) => response.json())
           .then((res) => {
-            const children = [res.items];
+            const children = res.items;
             treeNode.children = children;
-            setTreeData([...treeData]);
+            const newTreeNode = updateData(treeData, treeNode.pos, treeNode);
+            setTreeData([...newTreeNode]);
             resolve();
           })
           .catch(() => {
-            // console.error('Error fetching data: ', error);
             resolve();
           });
       } else {
         resolve();
       }
     });
+  };
 
   //get parents
   const getParents = (
@@ -160,7 +186,7 @@ export function Tree<T>({
           showIcon={false}
           showLine
           titleRender={(node) => renderTitle(node as unknown as Partial<T>)}
-          treeData={data as DataNode[]}
+          treeData={treeData as DataNode[]}
         />
       )}
 
