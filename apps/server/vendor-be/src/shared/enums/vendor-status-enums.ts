@@ -3,7 +3,7 @@ export enum VendorStatusEnum {
   SAVE = 'Save',
   SUBMIT = 'Submit',
   SUBMITTED = 'Submitted',
-  APPROVE = 'APprove',
+  APPROVE = 'Approve',
   ADJUST = 'Adjust',
   REJECT = 'Reject',
   PPDA = 'ppda',
