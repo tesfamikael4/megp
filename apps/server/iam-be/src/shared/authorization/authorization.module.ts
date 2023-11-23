@@ -7,6 +7,7 @@ import { JwtRefreshTokenStrategy } from './strategy/jwt-refresh-token.strategy';
 import JwtRefreshGuard from './guards/jwt-refresh.guard';
 import { JwtGuard } from './guards/jwt.guard';
 import { APP_GUARD } from '@nestjs/core';
+import { ApiKeyGuard } from './guards/api-key.guard';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { APP_GUARD } from '@nestjs/core';
     JwtGuard,
     // { provide: APP_GUARD, useClass: JwtGuard },
     JwtRefreshGuard,
+    ApiKeyGuard,
   ],
   exports: [AuthHelper],
 })
