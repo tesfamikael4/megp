@@ -1,5 +1,12 @@
 import React from 'react';
-import { Flex, Group, Stack, Text, TextInput } from '@mantine/core';
+import {
+  Flex,
+  Group,
+  NumberInput,
+  Stack,
+  Text,
+  TextInput,
+} from '@mantine/core';
 import { Select } from '@mantine/core';
 
 import { IconMenu, IconPencil, IconTrash } from '@tabler/icons-react';
@@ -10,6 +17,7 @@ import {
 } from '../../../../_components/cardList/cardListShell';
 import ActionMenu from '../../../../_components/actionMenu';
 import { nationalityOptions } from '../mockup/nationality';
+import { usePrivilege } from '../../_context/privilege-context';
 
 interface Props extends Partial<PassFormDataProps> {
   itemSchema: any;
@@ -20,6 +28,8 @@ export const ShareHolders: React.FC<Props> = ({
   itemSchema,
   name,
 }) => {
+  const { checkAccess } = usePrivilege();
+
   return (
     <>
       <CardListShell
@@ -33,6 +43,7 @@ export const ShareHolders: React.FC<Props> = ({
         }}
         title="Share Holders List"
         itemSchema={itemSchema}
+        disabled={!checkAccess('detail')}
         modalBody={(getInputProps) => (
           <>
             <Stack>
@@ -58,11 +69,13 @@ export const ShareHolders: React.FC<Props> = ({
                   {...getInputProps('nationality', 'select')}
                 />
 
-                <TextInput
-                  type="number"
+                <NumberInput
                   label="Share"
                   placeholder="Enter Share"
-                  {...getInputProps('share')}
+                  {...getInputProps('share', 'number')}
+                  min={1}
+                  max={100}
+                  suffix="%"
                 />
               </Group>
             </Stack>
@@ -76,6 +89,7 @@ export const ShareHolders: React.FC<Props> = ({
                   key={index}
                   edit={() => edit(index)}
                   remove={() => remove(index)}
+                  disabled={!checkAccess('detail')}
                 >
                   <Stack gap={0}>
                     <Text fw={600} truncate>
@@ -85,7 +99,7 @@ export const ShareHolders: React.FC<Props> = ({
                       Nationality: {value.nationality}
                     </Text>
                     <Text fz="xs" truncate>
-                      Share: {value.share}
+                      Share: {value.share}%
                     </Text>
                   </Stack>
                 </SingleCardWrapper>

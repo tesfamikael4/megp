@@ -28,6 +28,7 @@ import { useCreateVendorIdMutation } from '../../../_api/query';
 import { NotificationService } from '@/app/(features)/vendor/_components/notification';
 import { IconCalendar } from '@tabler/icons-react';
 import { setCookie } from 'cookies-next';
+import { usePrivilege } from '../../_context/privilege-context';
 
 type FormData = {
   name: string;
@@ -72,7 +73,7 @@ export const BasicInformation = () => {
         tinIssuedDate: '',
       },
     });
-
+  const { checkAccess, lockElements } = usePrivilege();
   const router = useRouter();
   const [accept, setAccept] = useState<boolean>(false);
   const [create, createValues] = useCreateVendorIdMutation();
@@ -118,6 +119,7 @@ export const BasicInformation = () => {
               value && (await setValue('origin', value))
             }
             error={formState.errors.origin && formState.errors.origin.message}
+            {...lockElements('basic')}
           />
           {watch().origin !== 'MW' && watch().origin !== '' ? (
             <>
@@ -127,6 +129,7 @@ export const BasicInformation = () => {
                 id="name"
                 {...register(`name`)}
                 error={formState.errors.name && formState.errors.name.message}
+                {...lockElements('basic')}
               />
               <Select
                 className="w-full"
@@ -141,6 +144,7 @@ export const BasicInformation = () => {
                   formState.errors.businessType &&
                   formState.errors.businessType.message
                 }
+                {...lockElements('basic')}
               />
             </>
           ) : (
@@ -155,6 +159,7 @@ export const BasicInformation = () => {
             error={
               formState.errors.tinNumber && formState.errors.tinNumber.message
             }
+            {...lockElements('basic')}
           />
           <DatePickerInput
             valueFormat="YYYY/MM/DD"
@@ -176,6 +181,7 @@ export const BasicInformation = () => {
               formState.errors.tinIssuedDate &&
               formState.errors.tinIssuedDate.message
             }
+            {...lockElements('basic')}
           />
         </Flex>
         <Divider size="md" my={20} />
@@ -190,13 +196,16 @@ export const BasicInformation = () => {
             }
             onChange={() => setAccept(!accept)}
             checked={accept}
+            {...lockElements('basic')}
           />
         </Flex>
 
         <Flex className="mt-10 justify-end gap-2">
-          <Button type="submit" disabled={!accept}>
-            Start Registration
-          </Button>
+          {checkAccess('basic') && (
+            <Button type="submit" disabled={!accept}>
+              Start Registration
+            </Button>
+          )}
         </Flex>
       </form>
     </Box>

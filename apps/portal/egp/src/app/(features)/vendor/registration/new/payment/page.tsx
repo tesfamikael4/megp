@@ -15,8 +15,10 @@ import { NotificationService } from '../../../_components/notification';
 import { useRouter } from 'next/navigation';
 import PaymentMethod from '../_components/payment/payment-method';
 import UppyAttachmentDashboard from '../../../_components/UppyAttachmentDashboard/UppyAttachmentDashboard';
+import { usePrivilege } from '../_context/privilege-context';
 
 function Page() {
+  const { checkAccess, updateAccess, lockElements } = usePrivilege();
   const router = useRouter();
   const [transactionNum, setTransactionNum] = useState<string>('');
   const invoiceInfo = useGetInvoiceQuery(
@@ -41,6 +43,14 @@ function Page() {
   }, [invoiceInfo.data]);
 
   useEffect(() => {
+    if (invoiceInfo.data?.initial.level) {
+      updateAccess(invoiceInfo.data?.initial.level);
+    }
+
+    return () => {};
+  }, [updateAccess, invoiceInfo.data?.initial.level]);
+
+  useEffect(() => {
     if (saveValues.isError) {
       NotificationService.requestErrorNotification('Error on Request');
     }
@@ -53,6 +63,7 @@ function Page() {
       router.push('doc');
     }
     return () => {};
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [saveValues.isSuccess]);
 
   const onSave = () => {
@@ -83,8 +94,7 @@ function Page() {
   if (invoiceInfo.isError) {
     return null;
   }
-  const FILE_SERVER_URL =
-    process.env.NEXT_PUBLIC_VENDOR_API + '/upload/' ?? '/venders/api/upload';
+  const FILE_SERVER_URL = process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api';
 
   return (
     <Flex className="flex-col w-full relative items-center justify-center">
@@ -100,11 +110,12 @@ function Page() {
               value={transactionNum}
               onChange={(e) => setTransactionNum(e.target.value)}
               required
+              {...lockElements('payment')}
             />
             {invoiceInfo.data?.invoice && invoiceInfo.data?.invoice[0] && (
               <UppyAttachmentDashboard
-                tusServerGetUrl={FILE_SERVER_URL}
-                tusServerPostUrl={FILE_SERVER_URL}
+                tusServerGetUrl={FILE_SERVER_URL + '/upload/'}
+                tusServerPostUrl={FILE_SERVER_URL + '/upload/'}
                 id="paymentSlip"
                 label="Payment Slip"
                 placeholder="Upload"
@@ -118,11 +129,14 @@ function Page() {
                   attachment: '',
                 }}
                 storeId={invoiceInfo.data?.invoice[0].attachment ?? ''}
+                disabled={!checkAccess('payment')}
               />
             )}
           </Stack>
           <Flex justify="end" className="gap-2 mt-4">
-            <Button onClick={() => onSave()}>Pay</Button>
+            {checkAccess('payment') && (
+              <Button onClick={() => onSave()}>Pay</Button>
+            )}
           </Flex>
         </Flex>
         {invoiceInfo.data?.invoice && invoiceInfo.data?.invoice[0] && (

@@ -14,6 +14,7 @@ import {
   SingleCardWrapper,
 } from '../../../../_components/cardList/cardListShell';
 import { useGetBankListQuery } from '../../../_api/query';
+import { usePrivilege } from '../../_context/privilege-context';
 
 interface Props extends Partial<PassFormDataProps> {
   itemSchema: any;
@@ -25,6 +26,8 @@ export const BankAccountDetails: React.FC<Props> = ({
   itemSchema,
   name,
 }) => {
+  const { checkAccess } = usePrivilege();
+
   const { data, isLoading, isSuccess, status } = useGetBankListQuery({});
 
   const bankList =
@@ -69,6 +72,7 @@ export const BankAccountDetails: React.FC<Props> = ({
           isDefualt: true,
         }}
         itemSchema={itemSchema}
+        disabled={!checkAccess('detail')}
         modalBody={(getInputProps) => (
           <>
             <LoadingOverlay
@@ -129,22 +133,7 @@ export const BankAccountDetails: React.FC<Props> = ({
 
                 <TextInput label="IBAN" {...getInputProps('IBAN')} />
               </Group>
-              <Group grow>
-                <Select
-                  label="Status"
-                  data={['Active', 'Inactive']}
-                  placeholder="select"
-                  searchable
-                  {...getInputProps('status', 'select')}
-                  disabled
-                />
-
-                <TextInput
-                  label="Hash Value"
-                  {...getInputProps('hashValue')}
-                  disabled
-                />
-              </Group>
+              <Group grow></Group>
             </Stack>
           </>
         )}
@@ -156,6 +145,7 @@ export const BankAccountDetails: React.FC<Props> = ({
                   key={index}
                   edit={() => edit(index)}
                   remove={() => remove(index)}
+                  disabled={!checkAccess('detail')}
                 >
                   <Stack gap={0}>
                     <Text fw={600} truncate>

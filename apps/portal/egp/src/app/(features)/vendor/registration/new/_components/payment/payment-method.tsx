@@ -32,11 +32,6 @@ const PaymentMethod: React.FC<PaymentMethodProps> = () => {
         )} */}
 
       <SegmentedControl
-        styles={{
-          root: {
-            //   border: form.errors['Method'] ? '1px solid #f60000' : 'none',
-          },
-        }}
         radius="lg"
         data={[
           {

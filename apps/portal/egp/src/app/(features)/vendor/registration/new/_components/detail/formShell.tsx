@@ -28,6 +28,7 @@ import {
   useLazyGetMBRSDataQuery,
 } from '../../../_api/query';
 import { useTabs } from './accordion.data';
+import { usePrivilege } from '../../_context/privilege-context';
 
 export interface ExtendedRegistrationReturnType
   extends UseFormRegisterReturn<any> {
@@ -39,7 +40,7 @@ export interface ExtendedRegistrationReturnType
 export interface PassFormDataProps {
   register: (
     name: any,
-    type?: 'input' | 'select' | 'checkbox' | 'file',
+    type?: 'input' | 'select' | 'checkbox' | 'file' | 'number',
     options?: RegisterOptions<FormData, any> | undefined,
   ) => ExtendedRegistrationReturnType;
   control: Control<FormData, any>;
@@ -90,40 +91,28 @@ const RegistrationForm = ({
     resolver: zodResolver(formDataSchema),
     defaultValues: initialValues,
   });
-
+  const { checkAccess, lockElements, updateAccess } = usePrivilege();
   const [submitTrigger, submitRequestInfo] = useAddFormMutation();
   const [saveAsDraftTrigger, saveAsDraftRequestInfo] = useAddFormMutation();
-  const [getMBRSData, getMBRSDataValues] = useLazyGetMBRSDataQuery({});
 
   useEffect(() => {
     return () => {
-      getMBRSData({
-        tin: getValues().basic.tinNumber,
-      });
+      updateAccess(vendorInfo.level);
     };
-  }, []);
+  }, [updateAccess, vendorInfo.level]);
 
-  useEffect(() => {
-    if (getMBRSDataValues.data) {
-      setValue('basic.name', getMBRSDataValues.data.businessName);
-      setValue('basic.country', getMBRSDataValues.data.nationality);
-      // setValue('basic.businessType', getMBRSDataValues.data.legalStatus);
-    }
-
-    return () => {};
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [getMBRSDataValues.data]);
   const router = useRouter();
 
   const extendedRegister = (
     name: any,
-    type?: 'input' | 'select' | 'checkbox' | 'file',
+    type?: 'input' | 'select' | 'checkbox' | 'file' | 'number',
   ): ExtendedRegistrationReturnType => {
     const fieldRegister = register(name);
     const fieldState = getFieldState(name, formState);
     return {
       ...fieldRegister,
       ...(type === 'select' ? { value: getValues(name) } : {}),
+      ...(type === 'number' ? { value: getValues(name) } : {}),
 
       onBlur: async (event: {
         target: any;
@@ -140,10 +129,11 @@ const RegistrationForm = ({
         return await fieldRegister.onBlur(event);
       },
       onChange:
-        type === 'select' || type === 'file'
+        type === 'select' || type === 'file' || type === 'number'
           ? async (e) => await setValue(name, e)
           : fieldRegister.onChange,
       error: fieldState.error?.message,
+      ...lockElements('detail'),
     };
   };
 
@@ -217,7 +207,9 @@ const RegistrationForm = ({
                 <Stack>
                   {tab.tabPanelComponent}
                   <Flex justify="end">
-                    <Button onClick={onSaveAsDraft}>Save as draft</Button>
+                    {checkAccess('detail') && (
+                      <Button onClick={onSaveAsDraft}>Save as draft</Button>
+                    )}
                   </Flex>
                 </Stack>
               </Accordion.Panel>
@@ -226,7 +218,7 @@ const RegistrationForm = ({
         </Accordion>
 
         <Flex justify="end" className="gap-2 mt-4">
-          <Button type="submit">Save</Button>
+          {checkAccess('detail') && <Button type="submit">Save</Button>}
         </Flex>
       </form>
     </Flex>

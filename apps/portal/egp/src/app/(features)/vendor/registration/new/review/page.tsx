@@ -5,6 +5,7 @@ import { useAddFormMutation, useGetVendorQuery } from '../../_api/query';
 import { Button, Flex, LoadingOverlay, Stack } from '@mantine/core';
 import { NotificationService } from '../../../_components/notification';
 import { useRouter } from 'next/navigation';
+import { usePrivilege } from '../_context/privilege-context';
 
 function Page() {
   const router = useRouter();
@@ -13,7 +14,15 @@ function Page() {
     { refetchOnMountOrArgChange: true },
   );
   const [save, saveValues] = useAddFormMutation();
+  const { checkAccess, updateAccess } = usePrivilege();
 
+  useEffect(() => {
+    if (requestInfo.data?.initial.level) {
+      updateAccess(requestInfo.data?.initial.level);
+    }
+
+    return () => {};
+  }, [updateAccess, requestInfo.data?.initial.level]);
   useEffect(() => {
     if (requestInfo.isError) {
       NotificationService.requestErrorNotification('Error on fetching data');
@@ -55,7 +64,7 @@ function Page() {
       />
       {requestInfo.data && <FormPreview data={requestInfo.data} />}
       <Flex className="justify-end">
-        <Button onClick={onSubmit}>Submit</Button>
+        {checkAccess('review') && <Button onClick={onSubmit}>Submit</Button>}
       </Flex>
     </Stack>
   );

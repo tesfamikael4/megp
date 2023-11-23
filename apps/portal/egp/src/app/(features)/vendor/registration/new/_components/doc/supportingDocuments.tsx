@@ -1,84 +1,146 @@
-import { FileInput, Stack } from '@mantine/core';
-import { IconUpload } from '@tabler/icons-react';
-import React from 'react';
-import { PassFormDataProps } from '../detail/formShell';
+'use client';
+import { Flex, Button } from '@mantine/core';
+import React, { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAddFormMutation, useGetVendorQuery } from '../../../_api/query';
+import { NotificationService } from '@/app/(features)/vendor/_components/notification';
+import UppyAttachmentDashboard from '@/app/(features)/vendor/_components/UppyAttachmentDashboard/UppyAttachmentDashboard';
+import { usePrivilege } from '../../_context/privilege-context';
 
-export const SupportingDocuments: React.FC<PassFormDataProps> = ({
-  register,
-}) => {
+export default function SupportingDocuments() {
+  const router = useRouter();
+  const requestInfo = useGetVendorQuery({});
+  const [save, saveValues] = useAddFormMutation();
+  const { checkAccess, updateAccess } = usePrivilege();
+
+  useEffect(() => {
+    if (requestInfo.data?.initial.level) {
+      updateAccess(requestInfo.data?.initial.level);
+    }
+
+    return () => {};
+  }, [updateAccess, requestInfo.data?.initial.level]);
+
+  useEffect(() => {
+    if (requestInfo.isError) {
+      NotificationService.requestErrorNotification('Error on fetching data');
+      //  router.push(`basic`);
+    }
+
+    return () => {};
+  }, [requestInfo, router]);
+
+  useEffect(() => {
+    if (saveValues.isSuccess) {
+      NotificationService.successNotification('File Uploaded Successfully!');
+      router.push(`review`);
+    }
+    if (saveValues.isError) {
+      NotificationService.requestErrorNotification('Error on Request');
+    }
+    return () => {};
+  }, [saveValues.isSuccess, saveValues.isError, router]);
+
+  const onSave = () => {
+    if (requestInfo.data) {
+      save({
+        data: {
+          ...requestInfo.data,
+          initial: {
+            ...requestInfo.data.initial,
+            level: 'review',
+          },
+        },
+      });
+    }
+  };
+  const FILE_SERVER_URL = process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api';
+
   return (
-    <>
-      <Stack my={15}>
-        <FileInput
-          label="Business Registration/Incorporation Certificate"
-          id="businessRegistration_IncorporationCertificate"
-          placeholder="Upload"
-          leftSection={<IconUpload size={'1rem'} />}
-          {...register(
-            `supportingDocuments.businessRegistration_IncorporationCertificate`,
-            'file',
-          )}
-        />
-      </Stack>
-
-      <Stack my={15}>
-        <FileInput
-          label="MRA TPIN Certificate"
-          id="mRA_TPINCertificate"
-          placeholder="Upload"
-          leftSection={<IconUpload size={'1rem'} />}
-          {...register(`supportingDocuments.mRA_TPINCertificate`, 'file')}
-        />
-      </Stack>
-
-      <Stack my={15}>
-        <FileInput
-          label="General Receipt/Bank Deposit Slip"
-          id="generalReceipt_BankDepositSlip"
-          placeholder="Upload"
-          leftSection={<IconUpload size={'1rem'} />}
-          {...register(
-            `supportingDocuments.generalReceipt_BankDepositSlip`,
-            'file',
-          )}
-        />
-      </Stack>
-
-      <Stack my={15}>
-        <FileInput
-          label="MRA Tax Clearance Certificate"
-          id="mRATaxClearanceCertificate"
-          placeholder="Upload"
-          leftSection={<IconUpload size={'1rem'} />}
-          {...register(
-            `supportingDocuments.mRATaxClearanceCertificate`,
-            'file',
-          )}
-        />
-      </Stack>
-
-      <Stack my={15}>
-        <FileInput
-          label="Previous PPDA Registration Certificate"
-          id="previousPPDARegistrationCertificate"
-          placeholder="Upload"
-          leftSection={<IconUpload size={'1rem'} />}
-          {...register(
-            `supportingDocuments.previousPPDARegistrationCertificate`,
-            'file',
-          )}
-        />
-      </Stack>
-
-      <Stack my={15}>
-        <FileInput
-          label="MSME Certificate "
-          id="mSMECertificate "
-          placeholder="Upload"
-          leftSection={<IconUpload size={'1rem'} />}
-          {...register(`supportingDocuments.mSMECertificate`, 'file')}
-        />
-      </Stack>
-    </>
+    <Flex className="w-full flex-col gap-2">
+      <UppyAttachmentDashboard
+        tusServerGetUrl={FILE_SERVER_URL + '/upload/'}
+        tusServerPostUrl={FILE_SERVER_URL + '/upload/'}
+        id="businessRegistration_IncorporationCertificate"
+        label="Business Registration/Incorporation Certificate"
+        placeholder="Upload"
+        metaData={{
+          entityName: 'vendor',
+          fieldName: 'businessRegistration_IncorporationCertificate',
+          instanceId: requestInfo.data?.id,
+        }}
+        storeId={
+          requestInfo.data?.supportingDocuments
+            .businessRegistration_IncorporationCertificate
+        }
+        disabled={!checkAccess('doc')}
+      />
+      <UppyAttachmentDashboard
+        tusServerGetUrl={FILE_SERVER_URL + '/upload/'}
+        tusServerPostUrl={FILE_SERVER_URL + '/upload/'}
+        id="mRA_TPINCertificate"
+        label="MRA TPIN Certificate"
+        placeholder="Upload"
+        metaData={{
+          entityName: 'vendor',
+          fieldName: 'mRA_TPINCertificate',
+          instanceId: requestInfo.data?.id,
+        }}
+        storeId={requestInfo.data?.supportingDocuments.mRA_TPINCertificate}
+        disabled={!checkAccess('doc')}
+      />
+      <UppyAttachmentDashboard
+        tusServerGetUrl={FILE_SERVER_URL + '/upload/'}
+        tusServerPostUrl={FILE_SERVER_URL + '/upload/'}
+        id="generalReceipt_BankDepositSlip"
+        label="General Receipt/Bank Deposit Slip"
+        placeholder="Upload"
+        metaData={{
+          entityName: 'vendor',
+          fieldName: 'generalReceipt_BankDepositSlip',
+          instanceId: requestInfo.data?.id,
+        }}
+        storeId={
+          requestInfo.data?.supportingDocuments.generalReceipt_BankDepositSlip
+        }
+        disabled={!checkAccess('doc')}
+      />
+      <UppyAttachmentDashboard
+        tusServerGetUrl={FILE_SERVER_URL + '/upload/'}
+        tusServerPostUrl={FILE_SERVER_URL + '/upload/'}
+        id="mRATaxClearanceCertificate"
+        label="MRA Tax Clearance Certificate"
+        placeholder="Upload"
+        metaData={{
+          entityName: 'vendor',
+          fieldName: 'mRATaxClearanceCertificate',
+          instanceId: requestInfo.data?.id,
+        }}
+        storeId={
+          requestInfo.data?.supportingDocuments.mRATaxClearanceCertificate
+        }
+        disabled={!checkAccess('doc')}
+      />
+      <UppyAttachmentDashboard
+        tusServerGetUrl={FILE_SERVER_URL + '/upload/'}
+        tusServerPostUrl={FILE_SERVER_URL + '/upload/'}
+        id="previousPPDARegistrationCertificate"
+        label="Previous PPDA Registration Certificate"
+        placeholder="Upload"
+        metaData={{
+          entityName: 'vendor',
+          fieldName: 'previousPPDARegistrationCertificate',
+          instanceId: requestInfo.data?.id,
+        }}
+        storeId={
+          requestInfo.data?.supportingDocuments
+            .previousPPDARegistrationCertificate
+        }
+        disabled={!checkAccess('doc')}
+      />
+      <Flex justify="end" className="gap-2 mt-4">
+        {checkAccess('doc') && <Button onClick={onSave}>Save</Button>}
+      </Flex>
+    </Flex>
   );
-};
+}

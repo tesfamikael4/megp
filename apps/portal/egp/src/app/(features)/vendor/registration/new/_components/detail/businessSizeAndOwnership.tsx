@@ -1,4 +1,11 @@
-import { Fieldset, Flex, Group, Stack, TextInput } from '@mantine/core';
+import {
+  Fieldset,
+  Flex,
+  Group,
+  NumberInput,
+  Stack,
+  TextInput,
+} from '@mantine/core';
 import React from 'react';
 import { IconCash } from '@tabler/icons-react';
 import { Select } from '@mantine/core';
@@ -10,9 +17,8 @@ export const BusinessSizeAndOwnership: React.FC<PassFormDataProps> = ({
   return (
     <Stack>
       <Group grow>
-        <TextInput
+        <NumberInput
           label="Registered Capital"
-          type="number"
           rightSectionWidth="80px"
           rightSection={
             <Select
@@ -28,7 +34,10 @@ export const BusinessSizeAndOwnership: React.FC<PassFormDataProps> = ({
               error={false}
             />
           }
-          {...register('businessSizeAndOwnership.registeredCapital.amount')}
+          {...register(
+            'businessSizeAndOwnership.registeredCapital.amount',
+            'number',
+          )}
           error={
             register('businessSizeAndOwnership.registeredCapital.amount')
               .error ||
@@ -37,11 +46,13 @@ export const BusinessSizeAndOwnership: React.FC<PassFormDataProps> = ({
               'select',
             ).error
           }
+          thousandSeparator
+          min={1}
+          max={100000000000000000}
         />
 
-        <TextInput
+        <NumberInput
           label="Paid Up Capital"
-          type="number"
           rightSectionWidth="80px"
           rightSection={
             <Select
@@ -57,13 +68,22 @@ export const BusinessSizeAndOwnership: React.FC<PassFormDataProps> = ({
               error={false}
             />
           }
-          {...register(`businessSizeAndOwnership.paidUpCapital.amount`)}
+          {...register(
+            `businessSizeAndOwnership.paidUpCapital.amount`,
+            'number',
+          )}
           error={
-            register(`businessSizeAndOwnership.paidUpCapital.amount`).error ||
+            register(`businessSizeAndOwnership.paidUpCapital.amount`, 'number')
+              .error ||
             register(
               'businessSizeAndOwnership.paidUpCapital.currency',
               'select',
             ).error
+          }
+          thousandSeparator
+          min={1}
+          max={
+            register('businessSizeAndOwnership.registeredCapital.amount').value
           }
         />
       </Group>

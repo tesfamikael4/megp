@@ -38,35 +38,42 @@ export const sidebarLinks: SidebarLinks[] = [
     icon: IconUserCog,
     links: [
       {
-        label: 'New',
+        label: 'Get registration',
         link: '/vendor/registration/new/basic',
       },
       {
-        label: 'Renewal',
+        label: 'Renew registration',
         link: '/vendor/registration/renewal',
       },
       {
-        label: 'Upgrade',
+        label: 'Upgrade registration',
         link: '/vendor/registration/upgrade',
       },
       {
-        label: 'Update Information',
-        link: '/vendor/registration/update-info',
+        label: 'Msme registration',
+        link: '/vendor/registration/msme',
       },
       {
-        label: 'Add Additional service',
-        link: '/vendor/registration/additional-service',
+        label: 'Dbm registration',
+        link: '/vendor/registration/dbm',
+      },
+      {
+        label: 'Debarment Study',
+        link: '/vendor/registration/debarment-study',
+      },
+      {
+        label: 'Cancel registration',
+        link: '/vendor/registration/cancel',
       },
       {
         label: 'Track Application',
         link: '/vendor/registration/track-applications',
       },
+      {
+        label: 'My Briefcase',
+        link: '/vendor/registration/my-briefcase',
+      },
     ],
-  },
-  {
-    label: 'My Briefcase',
-    icon: IconBriefcase,
-    link: '/vendor/my-briefcase',
   },
 ];
 function createNavLinks(
