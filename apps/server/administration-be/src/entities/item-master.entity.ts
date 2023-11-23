@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { ItemCategory } from './item-category.entity';
-import { Classification } from './classification';
+import { Classification } from './classification.entity';
 import { ItemTag } from './item-tag.entity';
 import { UnitOfMeasurement } from './uom.entity';
 import { Audit } from 'src/shared/entities';
