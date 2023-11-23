@@ -26,6 +26,7 @@ import { EmailService } from 'src/shared/email/email.service';
 import { DataSeederController } from './controllers/data-seeder.controller';
 import { ServicePricingModule } from '../pricing/pricing.module';
 import { BanksEntity } from 'src/entities';
+import { CategoriesModule } from '../categories/category.module';
 
 @Module({
   imports: [
@@ -38,14 +39,13 @@ import { BanksEntity } from 'src/entities';
       WorkflowInstanceEntity,
       InvoiceEntity,
       PaymentReceiptEntity,
-      BanksEntity
+      BanksEntity,
     ]),
     HttpModule,
     AuthorizationModule,
     ServiceModule,
     ServicePricingModule,
-
-
+    CategoriesModule,
   ],
   exports: [TaskService, BusinessProcessService, WorkflowService],
   providers: [
@@ -57,6 +57,11 @@ import { BanksEntity } from 'src/entities';
     HandlingCommonService,
     EmailService,
   ],
-  controllers: [BpServiceController, BusinessProcessController, TaskController, DataSeederController],
+  controllers: [
+    BpServiceController,
+    BusinessProcessController,
+    TaskController,
+    DataSeederController,
+  ],
 })
-export class BpmModule { }
+export class BpmModule {}

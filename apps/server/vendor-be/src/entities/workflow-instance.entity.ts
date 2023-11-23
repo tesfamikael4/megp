@@ -22,13 +22,13 @@ export class WorkflowInstanceEntity {
   requestorId: string;
   @Column({ nullable: true, type: 'jsonb' })
   user: object;
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'uuid' })
   userId: string;
   @Column({ default: 'Submitted' })
   status: string;
   @Column()
   bpId: string;
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'uuid' })
   serviceId: string;
   @Column({ nullable: true })
   businessStatus: string; //active |inactive

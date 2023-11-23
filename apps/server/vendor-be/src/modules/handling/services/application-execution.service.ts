@@ -114,8 +114,8 @@ export class ApplicationExcutionService {
         taskHandler: { id: Not(IsNull()) },
       },
       order: { submittedAt: 'ASC' },
-      skip: query.skip | 0,
-      take: query.take | 20,
+      // skip: query.skip | 0,
+      // take: query.take | 20,
     });
 
     const response = new DataResponseFormat<WorkflowInstanceResponse>();

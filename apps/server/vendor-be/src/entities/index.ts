@@ -3,7 +3,7 @@ export * from './bank-account-detail.entity';
 export * from './bank.entity';
 export * from './beneficial-ownership.entity';
 export * from './bp-service.entity';
-export * from './business-area';
+export * from './business-area.entity';
 export * from './business-category.entity';
 export * from './business-process.entity';
 export * from './category.entity';
