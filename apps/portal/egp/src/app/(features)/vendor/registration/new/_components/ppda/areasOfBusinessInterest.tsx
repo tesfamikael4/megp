@@ -9,6 +9,7 @@ import {
   useGetLineOfBusinessQuery,
   useGetPriceRangeQuery,
 } from '../../../_api/query';
+import { usePrivilege } from '../../_context/privilege-context';
 
 export const transformCategoryPriceRange = (
   inputData: any,
@@ -50,6 +51,7 @@ export const AreasOfBusinessInterest: React.FC<Props> = ({
   const getPriceRangeValues = useGetPriceRangeQuery({
     type: 'new',
   });
+  const { lockElements } = usePrivilege();
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -86,22 +88,41 @@ export const AreasOfBusinessInterest: React.FC<Props> = ({
     error: fieldState?.error?.message,
     // onFocus: () => clearValidationError(fieldName),
     // onBlur: () => validateField(fieldName),
+    ...lockElements('ppda'),
   });
   const getLineOfBusinessMultiSelectData = (businessArea: string) => {
-    if (businessArea === 'goods' || businessArea === 'services') {
+    if (businessArea === 'services') {
       return [
-        'Textile products',
-        'Telecommunications equipment',
-        'Farm implements',
-        'Office equipment',
+        'Maintenance of Motor Vehicles',
+        'Maintenance of Office Equipment, Refrigeration & Air-Conditioning',
+        'Cleaning Services',
+        'Plumbing Services',
+        'Transport Services',
+        'Travel Agency',
+        'Consultancy',
+        'Provision of Security Services',
+        'Servicing of Firefighting Equipment',
+      ];
+    } else if (businessArea === 'goods') {
+      return [
+        'Office Equipment',
+        'Farm Implements',
+        'Plant and Motor Vehicle Spares',
+        'Laboratory & Hospital Equipment',
+        'Tools and Hardware',
+        'Office Consumables',
+        'Plumbing Materials',
+        'Telecommunications Equipment',
+        'Textile Products',
       ];
     } else if (businessArea === 'works') {
       return [
-        'Construction Works',
-        'Engineering',
-        'Manufacturing',
-        'Maintenance',
-        'Utility',
+        'Building',
+        'Civil',
+        'Consultants',
+        'Electrical',
+        'Specialist',
+        'Temporal Consultant',
       ];
     } else {
       return [];

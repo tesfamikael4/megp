@@ -2,24 +2,24 @@
 import { Stepper } from '@mantine/core';
 import styles from './stepper.module.scss';
 import { useRouter, usePathname } from 'next/navigation'; // Updated import
-interface StyledStepperProps {
-  initialStep: string;
-}
+import { usePrivilege } from '../../_context/privilege-context';
 
-function StyledStepper<StyledStepperProps>({ initialStep }) {
+function StyledStepper() {
+  const { accessLevel } = usePrivilege();
+
   const router = useRouter();
   const path = usePathname();
   const routes = ['basic', 'detail', 'ppda', 'payment', 'doc', 'review'];
 
-  console.log(routes.slice(0, routes.indexOf(initialStep)).includes('detail'));
+  console.log(routes.slice(0, routes.indexOf(accessLevel)).includes('detail'));
   const canAccessRoute = (route) => {
-    return routes.slice(0, routes.indexOf(initialStep)).includes(route);
+    return routes.slice(0, routes.indexOf(accessLevel)).includes(route);
   };
 
   const activeStep = routes.indexOf(path.split('/')[4]);
 
   const handleStepClick = (stepIndex) => {
-    (canAccessRoute(routes[stepIndex]) || initialStep == routes[stepIndex]) &&
+    (canAccessRoute(routes[stepIndex]) || accessLevel == routes[stepIndex]) &&
       router.push(routes[stepIndex]);
   };
 

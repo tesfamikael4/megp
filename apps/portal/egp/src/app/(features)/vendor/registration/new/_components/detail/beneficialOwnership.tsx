@@ -7,6 +7,7 @@ import {
   SingleCardWrapper,
 } from '../../../../_components/cardList/cardListShell';
 import { nationalityOptions } from '../mockup/nationality';
+import { usePrivilege } from '../../_context/privilege-context';
 
 interface Props extends Partial<PassFormDataProps> {
   itemSchema: any;
@@ -17,6 +18,8 @@ export const BeneficialOwnership: React.FC<Props> = ({
   itemSchema,
   name,
 }) => {
+  const { checkAccess } = usePrivilege();
+
   return (
     <>
       <CardListShell
@@ -29,6 +32,7 @@ export const BeneficialOwnership: React.FC<Props> = ({
         }}
         title="Beneficial Ownership List"
         itemSchema={itemSchema}
+        disabled={!checkAccess('detail')}
         modalBody={(getInputProps) => (
           <Stack>
             <Group grow>
@@ -64,6 +68,7 @@ export const BeneficialOwnership: React.FC<Props> = ({
                   key={index}
                   edit={() => edit(index)}
                   remove={() => remove(index)}
+                  disabled={!checkAccess('detail')}
                 >
                   <Stack gap={0}>
                     <Text fw={600} truncate>

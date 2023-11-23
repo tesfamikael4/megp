@@ -1,5 +1,5 @@
 import React from 'react';
-import { Accordion, AccordionItem, Flex, Table, Text } from '@mantine/core';
+import { Accordion, Flex, Table, Text } from '@mantine/core';
 import classes from './accordion.module.scss';
 import tableClasses from './accordion.module.scss';
 
@@ -67,6 +67,8 @@ function addSpacesToCamelCase(input: string): string {
 
   return spacedString.charAt(0).toUpperCase() + spacedString.slice(1);
 }
+const fieldOrder = ['Name', 'Mobile Phone', 'Primary Email'];
+
 function FormPreview({ data }) {
   return (
     <Accordion variant="separated" classNames={classes}>
@@ -82,6 +84,7 @@ function FormPreview({ data }) {
               <Accordion.Control>{tabName}</Accordion.Control>
               {Object.keys(data[tabValue]).map((fieldKey) => (
                 <Accordion.Panel key={fieldKey}>
+                  {/* {renderField(fieldKey, data[tabValue][fieldKey])} */}
                   {typeof data[tabValue][fieldKey] === 'string' && (
                     <Flex className="gap-2 items-center">
                       <Text size="xs" fw={700} tt="capitalize">
@@ -90,9 +93,46 @@ function FormPreview({ data }) {
                       <Text size="xs">{data[tabValue][fieldKey]}</Text>
                     </Flex>
                   )}
+                  {typeof data[tabValue][fieldKey] === 'object' &&
+                    !Array.isArray(data[tabValue]) && (
+                      <Flex className="gap-2 items-center">
+                        <Text size="xs" fw={700} tt="capitalize">
+                          {addSpacesToCamelCase(fieldKey)}:
+                        </Text>
+                        {Object.keys(data[tabValue][fieldKey]).map(
+                          (nestedKey) => (
+                            <Flex
+                              className="gap-2 items-center"
+                              key={nestedKey}
+                            >
+                              <Text size="xs" fw={600} tt="capitalize">
+                                {addSpacesToCamelCase(nestedKey)}:
+                              </Text>
+                              <Text size="xs">
+                                {data[tabValue][fieldKey][nestedKey]}
+                              </Text>
+                            </Flex>
+                          ),
+                        )}
+                      </Flex>
+                    )}
                   {Array.isArray(data[tabValue]) && renderTable(data[tabValue])}
                 </Accordion.Panel>
               ))}
+              {}
+              {/* {fieldOrder.map((fieldName) => {
+                const fieldData = data[tabValue][fieldName];
+                if (fieldData !== undefined) {
+                  return renderField(fieldName, fieldData);
+                }
+                return null;
+              })}
+              {Object.keys(data[tabValue])
+                .filter((fieldKey) => !fieldOrder.includes(fieldKey))
+                .map((fieldKey) => {
+                  const fieldData = data[tabValue][fieldKey];
+                  return renderField(fieldKey, fieldData);
+                })} */}
             </Accordion.Item>
           );
         }

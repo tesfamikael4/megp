@@ -58,7 +58,10 @@ export const shareHoldersSchema = z.object({
     .string()
     .min(1, { message: 'Share is required ' })
     .refine((value) => !isNaN(Number(value)) && Number(value) > 0, {
-      message: 'Number of Share must be greater than 1 ',
+      message: 'Number of Share must be greater than 1% ',
+    })
+    .refine((value) => Number(value) <= 100, {
+      message: 'Number of Share must be less than 100% ',
     }),
 });
 export const beneficialOwnershipSchema = z.object({
@@ -103,21 +106,11 @@ export const formDataSchema = z.object({
   }),
   businessSizeAndOwnership: z.object({
     registeredCapital: z.object({
-      amount: z
-        .string()
-        .min(1, { message: 'Amount is required ' })
-        .refine((value) => !isNaN(Number(value)) && Number(value) > 0, {
-          message: 'Amount must be greater than 1 ',
-        }),
+      amount: z.string().min(1, { message: 'Amount is required ' }),
       currency: z.string(),
     }),
     paidUpCapital: z.object({
-      amount: z
-        .string()
-        .min(1, { message: 'Amount is required ' })
-        .refine((value) => !isNaN(Number(value)) && Number(value) > 0, {
-          message: 'Amount must be greater than 1 ',
-        }),
+      amount: z.string().min(1, { message: 'Amount is required ' }),
       currency: z.string(),
     }),
     numberOfEmployees: z

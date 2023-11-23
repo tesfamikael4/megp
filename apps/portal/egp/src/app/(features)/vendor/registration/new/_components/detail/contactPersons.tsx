@@ -5,6 +5,7 @@ import {
   SingleCardWrapper,
 } from '../../../../_components/cardList/cardListShell';
 import { PassFormDataProps } from './formShell';
+import { usePrivilege } from '../../_context/privilege-context';
 
 interface Props extends Partial<PassFormDataProps> {
   itemSchema: any;
@@ -15,6 +16,8 @@ export const ContactPersons: React.FC<Props> = ({
   itemSchema,
   name,
 }) => {
+  const { checkAccess } = usePrivilege();
+
   return (
     <>
       <CardListShell
@@ -28,6 +31,7 @@ export const ContactPersons: React.FC<Props> = ({
         }}
         title="Contact Persons"
         itemSchema={itemSchema}
+        disabled={!checkAccess('detail')}
         modalBody={(getInputProps) => (
           <Stack>
             <Group grow>
@@ -68,6 +72,7 @@ export const ContactPersons: React.FC<Props> = ({
                   key={index}
                   edit={() => edit(index)}
                   remove={() => remove(index)}
+                  disabled={!checkAccess('detail')}
                 >
                   <Stack gap={0}>
                     <Text fw={600} truncate>

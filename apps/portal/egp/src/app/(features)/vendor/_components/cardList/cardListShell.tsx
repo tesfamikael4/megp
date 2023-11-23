@@ -23,7 +23,7 @@ interface CardListProps {
   modalBody: (
     getInputProps: (
       fieldName: string,
-      type?: 'input' | 'select' | 'checkbox',
+      type?: 'input' | 'select' | 'checkbox' | 'number',
     ) => {
       name: string;
       value: any;
@@ -35,6 +35,7 @@ interface CardListProps {
     edit: (index: number) => void,
     remove: (index: number) => void,
   ) => React.ReactNode;
+  disabled: boolean;
 }
 export const CardListShell: React.FC<CardListProps> = ({
   control,
@@ -44,6 +45,7 @@ export const CardListShell: React.FC<CardListProps> = ({
   modalBody,
   card,
   title,
+  disabled,
 }) => {
   const [opened, { open, close }] = useDisclosure(false);
   const [modalType, setModalType] = useState<{
@@ -116,12 +118,12 @@ export const CardListShell: React.FC<CardListProps> = ({
 
   const getInputProps = (
     fieldName: string,
-    type?: 'input' | 'select' | 'checkbox',
+    type?: 'input' | 'select' | 'checkbox' | 'number',
   ) => ({
     name: fieldName,
     value: item && item[fieldName] ? item[fieldName] : '',
     onChange:
-      type == 'select'
+      type == 'select' || type == 'number'
         ? (e: any) =>
             setItem((prevItem) => ({
               ...prevItem,
@@ -142,6 +144,7 @@ export const CardListShell: React.FC<CardListProps> = ({
         : null,
     onFocus: () => clearValidationError(fieldName),
     onBlur: () => validateField(fieldName),
+    disabled,
   });
 
   const handleAddItem = () => {
@@ -173,25 +176,22 @@ export const CardListShell: React.FC<CardListProps> = ({
   const handleRemove = (index: number) => {
     remove(index);
   };
-
+  console.log(disabled);
   return (
     <>
       <SimpleGrid cols={3} p="xs">
         {card(handleEdit, handleRemove)}
         <Card withBorder>
           <Center h={'100%'} mih="100px">
-            <ActionIcon onClick={open} variant="outline" radius={'100%'}>
+            <ActionIcon
+              onClick={open}
+              variant="outline"
+              radius={'100%'}
+              disabled={disabled}
+            >
               <IconPlus size={33} stroke={1.2} />
             </ActionIcon>
           </Center>
-          {/* <Flex
-            className={`items-center justify-center border rounded-md first-letter:${
-              fieldState?.error?.message
-                ? 'border-[var(--mantine-color-error)]'
-                : 'shadow-md'
-            }`}
-            onClick={open}
-          ></Flex> */}
           {fieldState?.error?.message && (
             <span className="text-[var(--mantine-color-error)] text-xs">
               {fieldState?.error?.message}
@@ -217,21 +217,23 @@ export const CardListShell: React.FC<CardListProps> = ({
 interface SingleCardWrapperProps {
   remove: () => void;
   edit: () => void;
+  disabled: boolean;
   children: React.ReactNode;
 }
 export const SingleCardWrapper: React.FC<SingleCardWrapperProps> = ({
   edit,
   remove,
   children,
+  disabled,
 }) => {
   return (
     <Card withBorder>
       <Card.Section>
         <Flex className="justify-end">
-          <ActionIcon onClick={edit} variant="subtle">
+          <ActionIcon onClick={edit} variant="subtle" disabled={disabled}>
             <IconPencil size={'1rem'} color="blue" />
           </ActionIcon>
-          <ActionIcon onClick={remove} variant="subtle">
+          <ActionIcon onClick={remove} variant="subtle" disabled={disabled}>
             <IconX size={'1rem'} color="red" />
           </ActionIcon>
         </Flex>

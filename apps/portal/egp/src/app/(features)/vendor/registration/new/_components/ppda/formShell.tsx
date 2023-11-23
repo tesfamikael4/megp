@@ -14,6 +14,7 @@ import { NotificationService } from '@/app/(features)/vendor/_components/notific
 import { FormData } from '@/models/vendorRegistration';
 import { ExtendedRegistrationReturnType } from '../detail/formShell';
 import AreasOfBusinessInterest from './areasOfBusinessInterest';
+import { usePrivilege } from '../../_context/privilege-context';
 
 export interface PassFormDataProps {
   register: (
@@ -74,22 +75,14 @@ export const AreasOfBusinessInterestForm = ({
   });
 
   const router = useRouter();
-  const [accept, setAccept] = useState<boolean>(false);
   const [save, saveValues] = useAddFormMutation();
-  const [getMRAData, getMRADataValues] = useLazyGetMRADataQuery({});
+  const { checkAccess, lockElements, updateAccess } = usePrivilege();
 
-  const onSubmit = (data: typeof formState.defaultValues) => {
-    save({
-      data: {
-        ...getValues(),
-        initial: {
-          ...vendorInfo,
-          level: 'payment',
-        },
-      },
-    });
-  };
-
+  useEffect(() => {
+    return () => {
+      updateAccess(vendorInfo.level);
+    };
+  }, [updateAccess, vendorInfo.level]);
   useEffect(() => {
     if (saveValues.isSuccess) {
       NotificationService.successNotification('Submitted Successfully!');
@@ -100,21 +93,6 @@ export const AreasOfBusinessInterestForm = ({
     }
     return () => {};
   }, [saveValues.isSuccess, saveValues.isError, router]);
-
-  useEffect(() => {
-    if (getMRADataValues.isSuccess && getMRADataValues.data == null) {
-      console.log(getMRADataValues.data);
-      NotificationService.requestErrorNotification('Invalid Request');
-    }
-    if (getMRADataValues.isError) {
-      NotificationService.requestErrorNotification('Error on Request');
-    }
-    return () => {};
-  }, [
-    getMRADataValues.data,
-    getMRADataValues.isError,
-    getMRADataValues.isSuccess,
-  ]);
 
   const extendedRegister = (
     name: any,
@@ -144,9 +122,21 @@ export const AreasOfBusinessInterestForm = ({
           ? async (e) => await setValue(name, e)
           : fieldRegister.onChange,
       error: fieldState.error?.message,
+      ...lockElements('ppda'),
     };
   };
-  console.log(formState.errors);
+
+  const onSubmit = (data: typeof formState.defaultValues) => {
+    save({
+      data: {
+        ...getValues(),
+        initial: {
+          ...vendorInfo,
+          level: 'payment',
+        },
+      },
+    });
+  };
   return (
     <Box className="p-2 w-full relative">
       <LoadingOverlay
@@ -162,7 +152,7 @@ export const AreasOfBusinessInterestForm = ({
           />
         </Flex>
         <Flex className="mt-10 justify-end gap-2">
-          <Button type="submit">Submit</Button>
+          {checkAccess('ppda') && <Button type="submit">Submit</Button>}
         </Flex>
       </form>
     </Box>

@@ -22,6 +22,7 @@ interface UppyDashboardProps {
   placeholder: string;
   metaData: any;
   storeId: string | undefined;
+  disabled?: boolean;
 }
 
 const UppyAttachmentDashboard: React.FC<UppyDashboardProps> = ({
@@ -32,6 +33,7 @@ const UppyAttachmentDashboard: React.FC<UppyDashboardProps> = ({
   storeId,
   tusServerPostUrl,
   tusServerGetUrl,
+  disabled,
 }) => {
   const previews = (file: File) => {
     const imageUrl = URL.createObjectURL(file);
@@ -117,7 +119,11 @@ const UppyAttachmentDashboard: React.FC<UppyDashboardProps> = ({
               )}
               <Flex
                 className={styles.cardAdd}
-                onClick={() => setShowUppyModal(true)}
+                onClick={() =>
+                  disabled && typeof disabled === 'boolean' && disabled
+                    ? {}
+                    : setShowUppyModal(true)
+                }
               >
                 <IconPlus size={18} />
                 <Text size="xs">{placeholder}</Text>
