@@ -89,10 +89,6 @@ export class VendorRegistrationsController {
     if (!result) throw new BadRequestException(`vendor registration failed`);
     return result;
   }
-  @Post('delete-isr-vendor')
-  async deleteIsVendor(@CurrentUser() user: any) {
-    return await this.regService.deleteIsrVendor(user);
-  }
   @Post('vendor-initiation')
   async VendorInitiation(
     @Body() vendorInitiationDto: VendorInitiationDto,

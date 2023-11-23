@@ -57,6 +57,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     ) {
       const isrVendor = await this.fromInitialValue(data);
       const result = await this.isrVendorsRepository.save(isrVendor);
+
       if (!result) throw new HttpException(`adding_isr_failed`, 500);
       if (
         data.initial.level.trim() === VendorStatusEnum.PAYMENT &&
@@ -77,7 +78,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             if (!invoice)
               throw new HttpException('invoice_creation_failed', 500);
           } catch (error) {
-            throw new HttpException('invoice_generation_failed', 500);
+            throw Error('invoice_generation_failed');
           }
         }
         return { msg: 'Success' };
@@ -140,6 +141,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
                 instanceNumber: workflowInstance.application.id,
                 vendorId: workflowInstance.application.requestorId,
               });
+
               const businessAreaEntity = new BusinessAreaEntity();
               businessAreaEntity.instanceId = workflowInstance.application.id;
               businessAreaEntity.category = interests[i].category;
@@ -155,9 +157,12 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             if (!workflowInstance)
               throw new BadRequestException(`workflowInstanceService_failed`);
           } catch (error) {
-            throw new HttpException(`adding_business_area_failed`, 500);
+            throw Error(`adding_business_area_failed`);
           }
         }
+        result.status = VendorStatusEnum.SUBMITTED;
+        const res = await this.isrVendorsRepository.save(result);
+        if (!res) throw new HttpException(`isr_vendor_submission_failed`, 500);
 
         return response;
       }
@@ -173,6 +178,10 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         ///status: In([VendorStatusEnum.ACTIVE, VendorStatusEnum.ADJUSTMENT]),
       },
     });
+    if (vendorsEntity.status === VendorStatusEnum.SUBMITTED)
+      throw new HttpException('vendor_already_submitted', 500);
+    if (vendorsEntity.status === VendorStatusEnum.APPROVED)
+      throw new HttpException('vendor_already_approved', 500);
     if (!vendorsEntity) throw new NotFoundException('vendor_not_found!!');
     const initial = JSON.parse(JSON.stringify(vendorsEntity.initial));
     if (initial.status == VendorStatusEnum.SUBMITTED)
@@ -194,7 +203,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     return vendorsEntity;
   };
   async approveVendor(vendorStatusDto: SetVendorStatus): Promise<any> {
-    console.log(vendorStatusDto);
     const result = await this.isrVendorsRepository.findOne({
       where: {
         userId: vendorStatusDto.userId,
@@ -203,11 +211,11 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           VendorStatusEnum.ADJUSTMENT,
           VendorStatusEnum.COMPLETED,
           VendorStatusEnum.APPROVED,
+          VendorStatusEnum.SUBMITTED,
         ]),
       },
     });
     if (!result) throw new NotFoundException(`isr_Vendor_not_found`);
-    console.log(result);
     if (vendorStatusDto.status == VendorStatusEnum.APPROVE) {
       const isrVendorData = result;
       const basic = JSON.parse(JSON.stringify(isrVendorData.basic));
@@ -217,7 +225,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         initial.level = VendorStatusEnum.COMPLETED;
         result.status = VendorStatusEnum.APPROVED;
         result.initial = initial;
-        console.log(result);
         const isrVendorUpdate = await this.isrVendorsRepository.save(result);
         if (!isrVendorUpdate)
           throw new BadRequestException(`isr_vendor_update_failed`);
@@ -256,7 +263,9 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         try {
           const res = await this.vendorRepository.save(vendorEntity);
           if (!res) throw new BadRequestException(`vendor_insertion_failed`);
-        } catch (error) { }
+        } catch (error) {
+          throw Error(error);
+        }
       }
       const businessArea = await this.businessAreaRepository.findOne({
         where: { vendorId: result.id, instanceId: vendorStatusDto.instanceId },
@@ -311,6 +320,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             VendorStatusEnum.ADJUSTMENT,
             VendorStatusEnum.COMPLETED,
             VendorStatusEnum.APPROVED,
+            VendorStatusEnum.SUBMITTED,
           ]),
         },
       });
@@ -352,6 +362,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           VendorStatusEnum.ACTIVE,
           VendorStatusEnum.ADJUSTMENT,
           VendorStatusEnum.COMPLETED,
+          VendorStatusEnum.SUBMITTED,
         ]),
       },
     });
@@ -414,6 +425,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           VendorStatusEnum.ACTIVE,
           VendorStatusEnum.ADJUSTMENT,
           VendorStatusEnum.APPROVED,
+          VendorStatusEnum.SUBMITTED,
         ]),
       },
     });
@@ -444,18 +456,15 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         return { vendorId: result.id };
       }
     } catch (error) {
-      throw new Error('Vendor info not saved');
+      throw Error('Vendor_info_not_saved');
     }
-  }
-  async deleteIsrVendor(userInfo: any) {
-    await this.isrVendorsRepository.softDelete(userInfo.id);
   }
   async addBusinessArea(businessAreaEntity: BusinessAreaEntity): Promise<any> {
     try {
       const result = await this.businessAreaRepository.save(businessAreaEntity);
       return result;
     } catch (error) {
-      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+      throw Error(error);
     }
   }
   async getIsrVendorInvoiceByUserId(userId: string): Promise<any> {
@@ -466,6 +475,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           VendorStatusEnum.ACTIVE,
           VendorStatusEnum.ADJUSTMENT,
           VendorStatusEnum.APPROVED,
+          VendorStatusEnum.SUBMITTED,
         ]),
       },
     });
@@ -485,12 +495,16 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       const vendorEntity = await this.isrVendorsRepository.findOne({
         where: {
           userId: userId,
-          status: In([VendorStatusEnum.COMPLETED, VendorStatusEnum.APPROVED]),
+          status: In([
+            VendorStatusEnum.COMPLETED,
+            VendorStatusEnum.APPROVED,
+            VendorStatusEnum.SUBMITTED,
+          ]),
         },
       });
       return vendorEntity;
     } catch (error) {
-      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+      throw Error(error);
     }
   }
   async getVendorByUserId(userId: string): Promise<typeof initialValueSchema> {
@@ -514,7 +528,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       const vendorEntityRes = { ...vendorEntity[0], invoice: invoice };
       return this.toInitialValue(vendorEntityRes);
     } catch (error) {
-      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+      throw Error(error);
     }
   }
   async getIsrVendorByVendorId(vendorId: string): Promise<any> {
@@ -526,7 +540,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       });
       return vendorEntity;
     } catch (error) {
-      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+      throw Error(error);
     }
   }
   async getPendingIsrVendorByUserId(userId: string): Promise<any> {
@@ -538,6 +552,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           VendorStatusEnum.ADJUSTMENT,
           VendorStatusEnum.REJECTED,
           VendorStatusEnum.APPROVED,
+          VendorStatusEnum.SUBMITTED,
         ]),
       },
     });
@@ -556,6 +571,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           VendorStatusEnum.COMPLETED,
           VendorStatusEnum.ADJUSTMENT,
           VendorStatusEnum.APPROVED,
+          VendorStatusEnum.SUBMITTED,
         ]),
       },
     });
@@ -580,6 +596,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             VendorStatusEnum.ADJUSTMENT,
             VendorStatusEnum.COMPLETED,
             VendorStatusEnum.APPROVED,
+            VendorStatusEnum.SUBMITTED,
           ]),
         },
       });
@@ -589,8 +606,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
 
       return vendorEntity;
     } catch (error) {
-      Logger.log(error);
-      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+      throw Error(error);
     }
   }
   async getInvoices(areaOfBusinessInterest: any[], userId: string) {
@@ -619,7 +635,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       });
       return { vendorStatus: vendorStatus.status };
     } catch (error) {
-      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+      throw Error(error);
     }
   }
   async addVendorAreaOfInterestByVendorId(
@@ -637,7 +653,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       );
       return this.vendorRepository.save(result);
     } catch (error) {
-      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+      throw Error(error);
     }
   }
   async getVendorById(vendorId: string): Promise<VendorsResponseDto> {
@@ -663,7 +679,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       vendorDto['attachments'] = filesResponse;
       return vendorDto;
     } catch (error) {
-      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+      throw Error(error);
     }
   }
   async getIsrVendors(): Promise<any[]> {
@@ -671,7 +687,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       const vendorEntity = await this.isrVendorsRepository.find();
       return vendorEntity;
     } catch (error) {
-      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+      throw Error(error);
     }
   }
   async setVendorStatus(vendorStatusDto: SetVendorStatus): Promise<any> {
@@ -684,6 +700,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             VendorStatusEnum.ADJUSTMENT,
             VendorStatusEnum.APPROVED,
             VendorStatusEnum.REJECTED,
+            VendorStatusEnum.SUBMITTED,
           ]),
         },
       });
@@ -706,7 +723,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       if (!resul) throw new BadRequestException(`Update Failed`);
       return { msg: 'Success' };
     } catch (error) {
-      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+      throw Error(error);
     }
   }
   async setIsrVendorStatus(userId: string): Promise<any> {
@@ -718,6 +735,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             VendorStatusEnum.ACTIVE,
             VendorStatusEnum.ADJUSTMENT,
             VendorStatusEnum.APPROVED,
+            VendorStatusEnum.SUBMITTED,
           ]),
         },
       });
@@ -726,7 +744,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       initial.status = 'Save as Draft';
       initial.level = 'level';
     } catch (error) {
-      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+      throw Error(error);
     }
   }
   async getVendorByStatus(status: string): Promise<VendorsResponseDto[]> {
@@ -739,7 +757,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       }
       return result.map((element) => VendorsResponseDto.fromEntity(element));
     } catch (error) {
-      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+      throw Error(error);
     }
   }
 
@@ -841,7 +859,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       if (result.affected > 0) return true;
       return false;
     } catch (error) {
-      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+      throw Error(error);
     }
   }
 }
