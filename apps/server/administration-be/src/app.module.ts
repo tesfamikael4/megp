@@ -6,6 +6,14 @@ import { ItemMasterModule } from './modules/item-master/item-master.module';
 import { lookUpDataModule } from './modules/look-up-data/look-up.module';
 import { ClassificationModule } from './modules/classification/classification.module';
 import { AuthorizationModule } from './shared/authorization/authorization.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { BudgetCategoriesModule } from './modules/budget-categories/budget-categories.module';
+import { CustomerBussinesInfoModule } from './modules/customer-bussines-info/customer-bussines-info.module';
+import { FppaVendorModule } from './modules/fppa-vendor/fppa-vendor.module';
+import { NcicVendorsModule } from './modules/ncic-vendors/ncic-vendors.module';
+import { CronJobSchedulerModule } from './modules/schedule/cron-job-scheduler.module';
+import { TaxPayerModule } from './modules/tax-payer/tax-payer.module';
+import { TccDocumentValidationModule } from './modules/tcc-document-validation/tcc-document-validation.module';
 
 @Module({
   imports: [
@@ -15,6 +23,14 @@ import { AuthorizationModule } from './shared/authorization/authorization.module
     lookUpDataModule,
     ItemMasterModule,
     AuthorizationModule,
+    TaxPayerModule,
+    CustomerBussinesInfoModule,
+    TccDocumentValidationModule,
+    FppaVendorModule,
+    NcicVendorsModule,
+    ScheduleModule.forRoot(),
+    CronJobSchedulerModule,
+    BudgetCategoriesModule,
   ],
   controllers: [],
   providers: [],
