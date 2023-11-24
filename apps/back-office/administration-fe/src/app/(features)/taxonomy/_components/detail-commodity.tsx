@@ -1,5 +1,6 @@
-import { Text, Table, Textarea, ScrollArea } from '@mantine/core';
+import { Text, Table, ScrollArea } from '@mantine/core';
 import { useState } from 'react';
+import { useListQuery } from '../_api/taxonomy.api';
 
 export const DetailCommodity = ({ selectedData, parents }: any) => {
   const [showMore, setShowMore] = useState(false);
@@ -8,17 +9,34 @@ export const DetailCommodity = ({ selectedData, parents }: any) => {
     setShowMore(!showMore);
   };
 
-  const rows = selectedData.children?.map((element) => (
+  const { data } = useListQuery({
+    where: [
+      [
+        {
+          column: 'code',
+          value: selectedData?.code,
+          operator: '=',
+        },
+      ],
+    ],
+  });
+  const rows = data?.items?.map((element) => (
     <Table.Tr key={element.title}>
       <Table.Td>
         <Text>{`[${element.code}]:${element.title}`}</Text>
       </Table.Td>
       <Table.Td>
         <Text size="md" onClick={toggleShowMore} className="cursor-pointer">
-          {showMore
-            ? element.definition
-            : element.definition.slice(0, 70) + '...'}
-          <span className="text-xs"> {showMore ? 'See Less' : 'See More'}</span>
+          {element.definition &&
+            (showMore
+              ? element.definition
+              : element.definition.slice(0, 70) + '...')}
+          {element.definition && (
+            <span className="text-xs">
+              {' '}
+              {showMore ? 'See Less' : 'See More'}
+            </span>
+          )}
         </Text>
       </Table.Td>
       <Table.Td>{element.synonym}</Table.Td>
@@ -39,7 +57,7 @@ export const DetailCommodity = ({ selectedData, parents }: any) => {
             </Table.Tr>
             <Table.Tr className="border-dashed border-2 ">
               <Table.Th className="bg-[#f1f1ff] w-36  ">Key</Table.Th>
-              <Table.Td>{selectedData.Key}</Table.Td>
+              <Table.Td>{selectedData.key}</Table.Td>
             </Table.Tr>
             <Table.Tr className="border-dashed border-2 ">
               <Table.Th className="bg-[#f1f1ff] w-36  ">Path</Table.Th>
@@ -59,7 +77,11 @@ export const DetailCommodity = ({ selectedData, parents }: any) => {
             <Table.Tr className="border-dashed border-2 ">
               <Table.Th className="bg-[#f1f1ff] w-36">Description</Table.Th>
               <Table.Td>
-                <Textarea>{selectedData.definition}</Textarea>
+                <ScrollArea h={60}>
+                  <Text>
+                    {selectedData.definition && selectedData.definition}
+                  </Text>
+                </ScrollArea>
               </Table.Td>
             </Table.Tr>
             <Table.Tr className="border-dashed border-2 ">

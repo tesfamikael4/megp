@@ -2,21 +2,20 @@ import { Stack, TextInput } from '@mantine/core';
 import { EntityButton } from '@megp/entity';
 
 import { useForm } from 'react-hook-form';
-import {
-  useUpdateMutation,
-  useCreateMutation,
-  useReadQuery,
-} from '../_api/taxonomy.api';
-import { useParams, useRouter } from 'next/navigation';
+import { useUpdateMutation, useReadQuery } from '../_api/taxonomy.api';
+import { useParams } from 'next/navigation';
 import { notifications } from '@mantine/notifications';
 import { Taxonomy } from '@/models/taxonomy';
 import { z, ZodType } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import DataImport from './data-import';
+import { transformJSONData } from './utils/jsonFormatter';
+import { useCreateTaxonomiesMutation } from '@/store/api/taxonomies/taxonomies.api';
 
 interface FormDetailProps {
   mode: 'new' | 'detail';
+  refetch: any;
 }
 
 const defaultValues = {
@@ -25,11 +24,11 @@ const defaultValues = {
   upload: '',
 };
 
-export function FormDetail({ mode }: FormDetailProps) {
+export function FormDetail({ mode, refetch }: FormDetailProps) {
   const taxonomySchema: ZodType<Partial<Taxonomy>> = z.object({
     name: z.string().min(1, { message: 'This field is required' }),
     version: z.string().min(1, { message: 'This field is required' }),
-    upload: z.string().min(1, { message: 'This field is required' }),
+    upload: z.any().refine((val) => val.length > 0, 'File is required'),
   });
 
   const {
@@ -37,34 +36,41 @@ export function FormDetail({ mode }: FormDetailProps) {
     reset,
     formState: { errors },
     register,
+    setValue,
   } = useForm<Taxonomy>({
     resolver: zodResolver(taxonomySchema),
     defaultValues,
   });
 
-  const router = useRouter();
   const { id } = useParams();
 
-  const [create, { isLoading: isSaving }] = useCreateMutation();
-  const [update, { isLoading: isUpdating }] = useUpdateMutation();
+  const [create, { isLoading: isSaving, isSuccess }] =
+    useCreateTaxonomiesMutation();
+  const [update, { isLoading: isUpdating, isSuccess: isUpdateSuccess }] =
+    useUpdateMutation();
   const { data: selected, isSuccess: selectedSuccess } = useReadQuery(
     id?.toString(),
   );
 
   const onCreate = async (data) => {
+    const formattedData = transformJSONData(data.upload);
+
     try {
-      const result = await create(data);
-      if ('data' in result) {
-        router.push(`/taxonomy/${result.data.id}`);
-      }
-      notifications.show({
-        message: 'Taxonomy created successfully',
-        title: 'Success',
+      await create({
+        name: data.name,
+        version: data.version,
+        excelData: formattedData,
       });
+      refetch();
+      if (isSuccess)
+        notifications.show({
+          message: 'Taxonomy created successfully',
+          title: 'Success',
+        });
     } catch (err) {
       notifications.show({
         message: 'error in creating taxonomy',
-        title: 'Success',
+        title: 'Error',
         color: 'red',
       });
     }
@@ -75,14 +81,15 @@ export function FormDetail({ mode }: FormDetailProps) {
         ...data,
         id: id?.toString(),
       });
-      notifications.show({
-        message: 'Taxonomy updated successfully',
-        title: 'Success',
-      });
+      if (isUpdateSuccess)
+        notifications.show({
+          message: 'Taxonomy updated successfully',
+          title: 'Success',
+        });
     } catch {
       notifications.show({
         message: 'error in updating taxonomy',
-        title: 'Success',
+        title: 'Error',
         color: 'red',
       });
     }
@@ -116,7 +123,7 @@ export function FormDetail({ mode }: FormDetailProps) {
         required
         {...register('version')}
       />
-      <DataImport />
+      <DataImport setValue={(data) => setValue('upload', data)} />
 
       <EntityButton
         mode={mode}

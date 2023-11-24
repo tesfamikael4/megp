@@ -5,7 +5,7 @@ import { createEntitySlice, EntitySliceApi } from '@megp/entity';
 const taxonomyApi = entityApi.entitySliceApi['classifications'];
 
 export const taxonomySliceApi: typeof EntitySliceApi =
-  createEntitySlice<Taxonomy>(taxonomyApi as any, 'classifications');
+  createEntitySlice<Taxonomy>(taxonomyApi as any, 'classifications/children');
 
 export const {
   useListQuery,

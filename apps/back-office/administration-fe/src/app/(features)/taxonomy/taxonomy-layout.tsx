@@ -5,14 +5,16 @@ import { useState } from 'react';
 import { useDisclosure } from '@mantine/hooks';
 import { Box, Button, Card, Modal, ScrollArea, Text } from '@mantine/core';
 import { IconPlus } from '@tabler/icons-react';
-import { FormDetail } from './_components/form-detail';
 import { DetailCommodity } from './_components/detail-commodity';
 import { items } from './data';
+import { useListQuery } from './_api/taxonomy.api';
+import { FormDetail } from './_components/form-detail';
 
 const TaxonomyLayout = () => {
   const [opened, { open, close }] = useDisclosure(false);
   const [parents, setParents] = useState<any>();
   const [selectedData, setSelectedData] = useState<any>({});
+  const { data, refetch } = useListQuery(undefined);
 
   return (
     <>
@@ -44,9 +46,12 @@ const TaxonomyLayout = () => {
         >
           <ScrollArea h={400} type="scroll" scrollbarSize={6}>
             <Tree
-              fieldNames={{ title: 'title', key: 'id' }}
+              fieldNames={{ title: 'title', key: 'code' }}
               mode="view"
-              data={items}
+              url={(code) =>
+                `http://localhost:3000/api/classifications/children?code=${code}`
+              }
+              data={data ? data.items : []}
               selectedKeys={[selectedData.key]}
               onClick={(node, parents) => {
                 setSelectedData(node);
@@ -60,7 +65,7 @@ const TaxonomyLayout = () => {
           </ScrollArea>
 
           <Modal size={'xl'} opened={opened} onClose={close} title="Taxonomy">
-            <FormDetail mode="new" />
+            <FormDetail mode="new" refetch={refetch} />
           </Modal>
         </Section>
 
