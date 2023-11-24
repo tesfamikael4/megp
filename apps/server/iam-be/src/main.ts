@@ -41,7 +41,7 @@ async function bootstrap() {
     app,
     new DocumentBuilder()
       .setTitle('IAM API')
-      .setDescription('My IAM API')
+      .setDescription(`My IAM API. Version: ${process.env.VERSION}`)
       .addBearerAuth()
       .build(),
     {
