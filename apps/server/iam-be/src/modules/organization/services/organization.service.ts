@@ -36,12 +36,12 @@ export class OrganizationService extends EntityCrudService<Organization> {
     organization.type = 'BACK-OFFICE';
     organization.budgetType = 'DEFAULT';
 
-    const account =
-      await this.accountsService.createDefaultOrganizationAccount(organization);
+    // const account =
+    //   await this.accountsService.createDefaultOrganizationAccount(organization);
 
     const result = await super.create(organization);
 
-    await this.userService.createDefaultOrganizationUser(account, result.id);
+    // await this.userService.createDefaultOrganizationUser(account, result.id);
 
     return result;
   }

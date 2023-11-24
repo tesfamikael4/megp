@@ -22,7 +22,13 @@ import {
   LoginResponseDto,
   ResetPasswordDto,
 } from '../dto/login.dto';
-import { AllowAnonymous, ApiKeyGuard, CurrentUser, JwtGuard } from '@auth';
+import {
+  AllowAnonymous,
+  ApiKeyGuard,
+  CurrentUser,
+  JwtGuard,
+  PermissionsGuard,
+} from '@auth';
 import JwtRefreshGuard from 'src/shared/authorization/guards/jwt-refresh.guard';
 import {
   ApiBearerAuth,
@@ -141,6 +147,12 @@ export class AuthController {
   @AllowAnonymous()
   async sendEmail(@Param('email') email: string): Promise<any> {
     return await this.emailService.sendEmail(email, 'test', 'test');
+  }
+
+  @Get('test-permission')
+  @UseGuards(JwtGuard, PermissionsGuard('organization|role'))
+  async testPermission(@CurrentUser() user: any) {
+    return user;
   }
 
   @Get('test')
