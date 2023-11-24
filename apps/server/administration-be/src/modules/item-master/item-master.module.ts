@@ -4,7 +4,7 @@ import { ItemMasterService } from './services/item-master.service';
 import { ItemMasterConroller } from './controllers/item-master-controller';
 import { ExtraItemTagController } from './controllers/extra-item-tag.controller';
 import { ExtraItemTagService } from './services/extra-services/extra-tem-tag.service';
-import { ItemCodeSequence } from 'src/entities/item-code-sequence';
+import { ItemCodeSequence } from 'src/entities/item-code-sequence.entity';
 import { ItemTag } from 'src/entities/item-tag.entity';
 import { Classification } from 'src/entities/classification.entity';
 import { ItemCategory } from 'src/entities/item-category.entity';

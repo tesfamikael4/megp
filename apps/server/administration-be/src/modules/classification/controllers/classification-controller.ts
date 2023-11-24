@@ -30,13 +30,14 @@ export class ClassificationController extends ExtraCrudController<Classification
   constructor(private readonly classificationService: ClassificationService) {
     super(classificationService);
   }
-  @Get('children/:code')
+  @Get('children')
   @ApiQuery({
     name: 'code',
     type: String,
     required: false,
   })
   getChildren(@Query() query: CollectionQuery, @Query('code') code?: string) {
+    console.log('');
     return this.classificationService.findChildren(query, code);
   }
 }
