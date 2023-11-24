@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
-import { ItemCodeSequence } from 'src/entities/item-code-sequence';
+import { ItemCodeSequence } from 'src/entities/item-code-sequence.entity';
 
 @Injectable()
 export class ItemCodeGeneratorService {
