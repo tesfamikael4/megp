@@ -35,6 +35,7 @@ import {
   SetSecurityQuestionDto,
 } from '../dto/security-question.dto';
 import { EmailService } from 'src/shared/email/email.service';
+import axios from 'axios';
 
 @ApiBearerAuth()
 @ApiTags('auth')
@@ -145,6 +146,20 @@ export class AuthController {
   @Get('test')
   @UseGuards(ApiKeyGuard)
   async testApiKey() {
-    return;
+    return true;
+  }
+
+  @Get('req-test')
+  @AllowAnonymous()
+  async requestApiKey() {
+    const request = await axios.get('http://localhost:3569/api/auth/test', {
+      headers: {
+        'X-API-KEY': '25bc1622e5fb42cca3d3e62e90a3a20f',
+      },
+    });
+
+    const result = await request.data;
+
+    return result;
   }
 }
