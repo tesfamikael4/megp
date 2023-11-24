@@ -1,20 +1,32 @@
 import { MenuItem } from '@megp/core-fe';
 import {
   IconAdjustmentsHorizontal,
-  IconBuildingBank,
+  IconCalendarEvent,
+  IconCalendarStats,
+  IconCoins,
+  IconReportAnalytics,
 } from '@tabler/icons-react';
 
 export const Menu: MenuItem[] = [
-  { label: 'Initiation', icon: IconBuildingBank, link: '/initiation' },
   {
     label: 'Pre Budget Plan',
-    icon: IconBuildingBank,
+    icon: IconCalendarStats,
     link: '/pre-budget-plan',
   },
   {
-    label: 'APP',
-    icon: IconBuildingBank,
-    link: '/app',
+    label: 'Post Budget Plan',
+    icon: IconCalendarEvent,
+    link: '/post-budget-plan',
+  },
+  {
+    label: 'Budget',
+    icon: IconCoins,
+    link: '/budget',
+  },
+  {
+    label: 'Report',
+    icon: IconReportAnalytics,
+    link: '/report',
   },
 
   {
