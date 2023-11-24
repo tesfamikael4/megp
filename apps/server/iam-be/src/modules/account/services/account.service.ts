@@ -254,12 +254,13 @@ export class AccountsService {
     if (!user) {
       throw new HttpException('invalid_refresh_token', HttpStatus.UNAUTHORIZED);
     }
+    const id = user.id;
+
     const account: Account = await this.repository.findOneBy({
-      id: user['id'],
+      id,
     });
 
     if (!account) {
-      //|| account.status != "active"
       throw new HttpException('something_went_wrong', HttpStatus.BAD_REQUEST);
     }
 
