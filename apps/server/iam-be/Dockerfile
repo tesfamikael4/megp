@@ -38,8 +38,6 @@ COPY turbo.json turbo.json
 # ENV TURBO_TEAM=$TURBO_TEAM
 # ARG TURBO_TOKEN
 # ENV TURBO_TOKEN=$TURBO_TOKEN
-ARG VERSION_ARG
-ENV VERSION=$VERSION_ARG
 
 RUN yarn turbo run build --filter=iam-be...
 FROM base AS runner
@@ -49,5 +47,9 @@ RUN addgroup --system --gid 1001 nestjs
 RUN adduser --system --uid 1001 nestjs
 USER nestjs
 COPY --from=installer /app .
+
+ARG VERSION_ARG
+ENV VERSION=$VERSION_ARG
+
 
 CMD node apps/server/iam-be/dist/main.js
