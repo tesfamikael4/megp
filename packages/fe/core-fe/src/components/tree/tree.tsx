@@ -16,7 +16,7 @@ interface TreeProps<T> {
   multiSelect?: boolean;
   required?: boolean;
   lazyLoad?: boolean;
-  url?: string;
+  url?: (code: string) => string;
   disableModal?: boolean;
   disableParentSelect?: boolean;
   fieldNames: { title: string; key: string; children?: string };
@@ -43,7 +43,7 @@ export function Tree<T>({
   multiSelect = false,
   disableModal = false,
   required = false,
-  url = '',
+  url,
   disableParentSelect = false,
 }: TreeProps<T>): ReactNode {
   const [checkedKey, setCheckedKey] = useState<Partial<T>>({});
@@ -102,7 +102,7 @@ export function Tree<T>({
   const handleLoadData = (treeNode: any) => {
     return new Promise<void>((resolve) => {
       if (!treeNode.children || treeNode.children.length === 0) {
-        fetch(`${url}/${treeNode[fieldNames.key]}`)
+        fetch(url ? url(treeNode[fieldNames.key] as string) : '')
           .then((response) => response.json())
           .then((res) => {
             const children = res.items;

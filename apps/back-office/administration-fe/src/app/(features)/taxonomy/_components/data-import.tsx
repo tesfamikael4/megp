@@ -3,8 +3,7 @@ import React, { useState } from 'react';
 import { Box, FileInput } from '@mantine/core';
 import Papa from 'papaparse';
 
-const DataImport = () => {
-  const [, setJsonData] = useState([]);
+const DataImport = ({ setValue }: { setValue: (data) => void }) => {
   const [, setFileName] = useState('');
   const [, setIsLoading] = useState(false);
 
@@ -15,7 +14,7 @@ const DataImport = () => {
       skipEmptyLines: true,
       complete: (results) => {
         if (results.data && results.data.length > 0) {
-          setJsonData(results.data);
+          setValue(results.data);
         }
         setIsLoading(false);
       },
