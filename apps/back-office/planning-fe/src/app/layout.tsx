@@ -5,6 +5,7 @@ import RootStyleRegistry from './mantine';
 
 import { Inter, Roboto_Mono } from 'next/font/google';
 import { AuthProvider } from '@megp/auth';
+import '@mantine/dates/styles.css';
 
 const inter = Inter({
   subsets: ['latin'],

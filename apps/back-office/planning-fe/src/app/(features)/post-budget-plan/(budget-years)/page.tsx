@@ -16,7 +16,7 @@ export default function PreBudgetPlan() {
   useEffect(() => {
     if (isSuccess && list !== undefined) {
       const temp = [...list.items];
-      router.push(`/pre-budget-plan/${temp[temp.length - 1]?.id}/activities`);
+      router.push(`/post-budget-plan/${temp[temp.length - 1]?.id}/activities`);
     }
   }, [list, isSuccess, router]);
   return (

@@ -560,6 +560,9 @@ importers:
       next:
         specifier: 13.5.2
         version: 13.5.2(@babel/core@7.23.0)(react-dom@18.2.0)(react@18.2.0)(sass@1.69.4)
+      papaparse:
+        specifier: ^5.4.1
+        version: 5.4.1
       react:
         specifier: 18.2.0
         version: 18.2.0
