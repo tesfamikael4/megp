@@ -12,4 +12,13 @@ export class CategoryService extends EntityCrudService<Category> {
   ) {
     super(categoryRepository);
   }
+
+  async saveBulk(categories: any[]) {
+    try {
+      await this.categoryRepository.save(categories);
+      return true;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
 }

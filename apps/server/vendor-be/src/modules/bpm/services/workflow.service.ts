@@ -41,7 +41,6 @@ import {
 } from 'src/entities';
 import { CollectionQuery, QueryConstructor } from 'src/shared/collection-query';
 import { DataResponseFormat } from 'src/shared/api-data';
-import { env } from 'process';
 import { ActivityResponseDto } from '../dto/activities.dto';
 import { TaskResponse } from '../dto/task.dto';
 import { TaskTrackerResponse } from '../dto/task-tracker.dto';
@@ -60,7 +59,7 @@ export class WorkflowService {
     private readonly commonService: HandlingCommonService,
     private readonly taskService: TaskService,
     private readonly emailSerice: EmailService,
-  ) {}
+  ) { }
   async intiateWorkflowInstance(
     dto: CreateWorkflowInstanceDto,
     user: any,
@@ -79,8 +78,9 @@ export class WorkflowService {
       throw new NotFoundException('Business Process Not Found');
     instanceEntity.applicationNumber =
       await this.commonService.generateApplicationNumber('PPDA', 'GNR');
-    const wfinstance =
-      await this.workflowInstanceRepository.save(instanceEntity);
+    const wfinstance = await this.workflowInstanceRepository.save(
+      instanceEntity
+    );
     const machine = createMachine({
       predictableActionArguments: true,
       ...serviceBp.workflow,
@@ -99,8 +99,9 @@ export class WorkflowService {
     // taskHandler.assignmentStatus = AssignmentEnum.Unpicked;
     taskHandler.data = { ...dto.data };
     try {
-      const insertedTaskHandler =
-        await this.handlerRepository.save(taskHandler);
+      const insertedTaskHandler = await this.handlerRepository.save(
+        taskHandler,
+      );
       task.taskHandlers = [insertedTaskHandler];
       response['task'] = task;
     } catch (error) {
@@ -118,13 +119,14 @@ export class WorkflowService {
     nextCommand.action = nextCommand.action.toUpperCase();
     const taskInfo = new TaskEntity();
     const workflowInstance = await this.workflowInstanceRepository.findOne({
-      relations: { businessProcess: true, taskHandler: true },
+      relations: { businessProcess: true, taskHandler: { task: true } },
       where: { id: nextCommand.instanceId },
     });
     if (!workflowInstance || !workflowInstance.taskHandler)
       throw new NotFoundException('Workflow Instance not initiated Properly');
     const currentTaskHandler = workflowInstance.taskHandler;
     const currentTaskHandlerCopy = { ...workflowInstance.taskHandler };
+    const curruntTask = { ...workflowInstance.taskHandler.task };
     const bp = workflowInstance.businessProcess;
     const bpWorkflow = Object.assign({}, bp.workflow);
     bpWorkflow['initial'] = currentTaskHandler.currentState;
@@ -138,6 +140,8 @@ export class WorkflowService {
       workflowInstance.status = WorkflowInstanceEnum.Inprogress;
       currentTaskHandler.currentState = nextStepState.value.toString();
       const stateMetaData = this.getStateMetaData(nextStepState.meta);
+      console.log('stateMetaData', stateMetaData);
+
       if (stateMetaData['type'] == 'end') {
         workflowInstance.status = WorkflowInstanceEnum.Completed;
         workflowInstance.businessStatus = BusinessStatusEnum.active;
@@ -163,19 +167,24 @@ export class WorkflowService {
       } else {
         const task = await this.taskService.getTaskByNameAndBP(
           workflowInstance.bpId,
-          nextStepState.value.toString(),
+          nextStepState.value.toString()
         );
         if (!task) throw new NotFoundException('Task not found');
-        stateMetaData['type'] = task.taskType;
+
+        stateMetaData['type'] = curruntTask.taskType;
         taskInfo.handlerType = task.handlerType;
         taskInfo.taskType = task.taskType;
+        console.log(' taskInfo.taskType ', taskInfo.taskType);
+
         const status = await this.handleEvent(
           stateMetaData,
           nextCommand,
-          task,
+          curruntTask,
           workflowInstance,
           user,
         );
+        console.log('curruntTask', curruntTask);
+        return
         if (!status) {
           throw new BadRequestException('Something went wrong');
         }
@@ -198,6 +207,8 @@ export class WorkflowService {
         await this.addTaskTracker(currentTaskHandlerCopy, nextCommand, user);
       }
     }
+    console.log('workflowInstance', workflowInstance);
+    return;
     const result = await this.workflowInstanceRepository.save(workflowInstance);
     const workflow = WorkflowInstanceResponse.toResponse(result);
     if (taskInfo) {
@@ -293,6 +304,7 @@ export class WorkflowService {
     wfi: WorkflowInstanceEntity,
     user: any,
   ) {
+    console.log('stateMetadata.type', stateMetadata.type);
     switch (stateMetadata.type.toLowerCase()) {
       case TaskTypes.APPROVAL:
         if (
@@ -382,26 +394,28 @@ export class WorkflowService {
     user: any,
     command: any,
   ) {
+    const status =
+      command.action.toLowerCase() == 'approve' ? 'Approve' : 'Reject';
     const payload = {
       isrVendorId: wfi.requestorId,
       instanceId: wfi.id,
       serviceId: wfi.serviceId,
-      status: WorkflowInstanceEnum.Completed,
+      status: status,
       userId: wfi.user.id,
       remark: command.remark,
     };
     console.log('command-->', command);
     console.log('payload', payload);
     const accessToken = user['token'];
-    let method = '';
-    if (command.action == 'REJECT') {
-      method = 'update-vendor-services';
-    } else {
-      method = 'approve-vendor-services';
-    }
+    //const method = '';
+    // if (command.action == 'REJECT') {
+    //   method = 'update-vendor-services';
+    // } else {
+    //   method = 'approve-vendor-services';
+    // }
     if (!url) {
       const vendor_url = process.env.VENDOR_API ?? '/vendors/api/';
-      url = vendor_url + '/vendor-registrations/' + method;
+      url = vendor_url + '/vendor-registrations/update-vendor-services';
     }
     try {
       // url = "http://localhost:3000/api/vendor-registrations/approve-vendor-services"
@@ -434,14 +448,17 @@ export class WorkflowService {
       url = vendor_url + '/vendor-registrations/update-vendor-services';
     }
     const accessToken = user['token'];
+    const action = metaDate.action == 'ADJUST' ? 'Adjust' : '';
     const payload = {
       isrVendorId: wfi.requestorId,
       instanceId: wfi.id,
-      status: metaDate.action,
+      status: action,
       serviceId: wfi.serviceId,
       remark: metaDate.remark,
       userId: wfi.userId,
     };
+    console.log('payload ', payload);
+
     try {
       const response = await axios.post(url, payload, {
         headers: {

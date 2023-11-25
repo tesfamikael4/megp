@@ -28,8 +28,9 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     user: any,
     vendor: any,
   ): Promise<boolean> {
-    const result =
-      await this.pricingService.findPricingWithServiceById(pricingId);
+    const result = await this.pricingService.findPricingWithServiceById(
+      pricingId,
+    );
     if (!result) {
       throw new NotFoundException('Not Found, please set the price range');
     }

@@ -143,8 +143,9 @@ export class WorkflowInstanceService {
     console.log('instanceEntity--before save', instanceEntity);
     instanceEntity.applicationNumber =
       await this.commonService.generateApplicationNumber('PPDA', 'GNR');
-    const wfinstance =
-      await this.workflowInstanceRepository.save(instanceEntity);
+    const wfinstance = await this.workflowInstanceRepository.save(
+      instanceEntity,
+    );
     const machine = createMachine({
       predictableActionArguments: true,
       ...serviceBp.workflow,
@@ -177,8 +178,9 @@ export class WorkflowInstanceService {
       taskHandler.assignmentStatus = AssignmentEnum.Unpicked;
       taskHandler.data = { ...dto.data };
       try {
-        const insertedTaskHandler =
-          await this.handlerRepository.save(taskHandler);
+        const insertedTaskHandler = await this.handlerRepository.save(
+          taskHandler,
+        );
         task.taskHandlers = [insertedTaskHandler];
         response['task'] = task;
         console.log('handler repository');

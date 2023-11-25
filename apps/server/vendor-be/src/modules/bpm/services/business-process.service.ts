@@ -36,4 +36,12 @@ export class BusinessProcessService extends EntityCrudService<BusinessProcessEnt
     });
     return result;
   }
+  async saveBulk(bps: any[]) {
+    try {
+      await this.bpRepository.save(bps);
+      return true;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
 }

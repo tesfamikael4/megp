@@ -119,8 +119,9 @@ export class BankAccountDetailService {
   }
   async deleteBankDetail(vendorsBankDetailId: string): Promise<any> {
     try {
-      const bankAccountDetail =
-        await this.repository.delete(vendorsBankDetailId);
+      const bankAccountDetail = await this.repository.delete(
+        vendorsBankDetailId,
+      );
       return bankAccountDetail;
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
@@ -140,8 +141,9 @@ export class BankAccountDetailService {
   }
   async deleteBank(vendorsBankId: string): Promise<any> {
     try {
-      const bankAccountDetail =
-        await this.banksRepository.delete(vendorsBankId);
+      const bankAccountDetail = await this.banksRepository.delete(
+        vendorsBankId,
+      );
       return bankAccountDetail;
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
@@ -150,8 +152,9 @@ export class BankAccountDetailService {
   async updateBank(bankDto: BankDto): Promise<any> {
     try {
       const bankDetailEntity = BankDto.fromDto(bankDto);
-      const bankAccountDetail =
-        await this.banksRepository.save(bankDetailEntity);
+      const bankAccountDetail = await this.banksRepository.save(
+        bankDetailEntity,
+      );
       return bankAccountDetail;
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
