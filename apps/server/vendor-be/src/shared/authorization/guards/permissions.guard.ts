@@ -3,19 +3,18 @@ import { CanActivate, ExecutionContext, Type } from '@nestjs/common';
 export function PermissionsGuard(permissions: string): Type<CanActivate> {
   class PermissionsGuardMixin implements CanActivate {
     canActivate(context: ExecutionContext) {
-      const requiredRoles = permissions.split('|');
-      if (requiredRoles.length < 1) {
+      const requiredPermissions = permissions.split('|');
+      if (requiredPermissions.length < 1) {
         return true;
       }
 
       const request = context.switchToHttp().getRequest();
-      const roles: string[] = request.user;
+      const user: any = request.user;
+      const userPermissions = user?.permissions;
 
-      // return requiredRoles.some((requiredPermission) =>
-      //   roles?.includes(requiredPermission.trim())
-      // );
-
-      return true;
+      return requiredPermissions.some((requiredPermission) =>
+        userPermissions?.find((x: any) => x.key == requiredPermission.trim()),
+      );
     }
   }
 

@@ -11,4 +11,12 @@ export class BpServiceService extends EntityCrudService<BpServiceEntity> {
   ) {
     super(serviceRepository);
   }
+  async saveBulk(services: any[]) {
+    try {
+      await this.serviceRepository.save(services);
+      return true;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
 }

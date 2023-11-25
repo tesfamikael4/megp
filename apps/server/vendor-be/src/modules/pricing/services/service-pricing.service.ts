@@ -58,4 +58,12 @@ export class ServicePricingService extends EntityCrudService<ServicePrice> {
       where: { id: id },
     });
   }
+  async saveBulk(prices: any[]) {
+    try {
+      await this.pricingRepository.save(prices);
+      return true;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
 }

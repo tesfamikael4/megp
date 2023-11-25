@@ -23,4 +23,12 @@ export class TaskService extends EntityCrudService<TaskEntity> {
       order: { orderBy: 'ASC' },
     });
   }
+  async saveBulk(tasks: any[]) {
+    try {
+      await this.taskRepository.save(tasks);
+      return true;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
 }

@@ -112,6 +112,7 @@ export class ApplicationExcutionService {
           service: { key: In(keys) },
         },
         taskHandler: { id: Not(IsNull()) },
+        status: Not(WorkflowInstanceEnum.Completed),
       },
       order: { submittedAt: 'ASC' },
       // skip: query.skip | 0,

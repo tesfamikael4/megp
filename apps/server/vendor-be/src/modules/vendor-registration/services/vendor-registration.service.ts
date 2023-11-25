@@ -1,6 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   BadRequestException,
+  Body,
   HttpException,
   HttpStatus,
   Injectable,
@@ -49,6 +50,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
   ) {
     super(vendorRepository);
   }
+
   async addVendorInformations(data: any, userInfo: any): Promise<any> {
     if (
       data.initial.status == VendorStatusEnum.SAVEASDRAFT ||
@@ -96,7 +98,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             const bp = await this.bpService.findBpService(
               interests[i].priceRange,
             );
-
             if (!bp) {
               throw new NotFoundException('Business Process Not Found');
             }
@@ -104,32 +105,34 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             wfi.serviceId = bp.serviceId;
             wfi.requestorId = result.id;
             wfi.data = result;
-            let workflowInstance = null;
+            // let workflowInstance = null;
             const businessArea = await this.businessAreaRepository.findOne({
               where: {
                 serviceId: bp.serviceId,
                 vendorId: wfi.requestorId,
-                status: VendorStatusEnum.PENDING,
+                status: In([
+                  VendorStatusEnum.PENDING,
+                  VendorStatusEnum.ADJUSTMENT,
+                ]),
               },
             });
-
+            console.log('businessArea', businessArea);
             if (businessArea) {
               const dto = new GotoNextStateDto();
               dto.action = 'ISR';
               dto.data = result;
               dto.instanceId = businessArea.instanceId;
-              workflowInstance = await this.workflowService.gotoNextStep(
+              const workflowInstance = await this.workflowService.gotoNextStep(
                 dto,
                 userInfo,
               );
-
               response.push({
                 applicationNumber: workflowInstance.applicationNumber,
                 instanceNumber: workflowInstance.id,
                 vendorId: workflowInstance.requestorId,
               });
             } else {
-              workflowInstance =
+              const workflowInstance =
                 await this.workflowService.intiateWorkflowInstance(
                   wfi,
                   userInfo,
@@ -151,19 +154,25 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
               businessAreaEntity.status = VendorStatusEnum.PENDING;
               businessAreaEntity.vendorId = result.id;
               const res = await this.addBusinessArea(businessAreaEntity);
-              if (!res)
-                throw new HttpException(`adding_business_area_failed`, 500);
+              // if (!res)
+              //   throw new HttpException(`adding_business_area_failed`, 500);
             }
-            if (!workflowInstance)
-              throw new BadRequestException(`workflowInstanceService_failed`);
+            // if (!workflowInstance)
+            //   throw new BadRequestException(`workflowInstanceService_failed`);
           } catch (error) {
+            console.log(error);
             throw Error(`adding_business_area_failed`);
           }
         }
-        result.status = VendorStatusEnum.SUBMITTED;
-        const res = await this.isrVendorsRepository.save(result);
-        if (!res) throw new HttpException(`isr_vendor_submission_failed`, 500);
-
+        if (instances.length > 0) {
+          console.log('instances--', instances);
+          result.status = VendorStatusEnum.SUBMITTED;
+          const res = await this.isrVendorsRepository.save(result);
+          if (!res)
+            throw new HttpException(`isr_vendor_submission_failed`, 500);
+        } else {
+          return 'workflow Instance Not Created';
+        }
         return response;
       }
       return { msg: 'Success' };
@@ -171,21 +180,22 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
   }
 
   fromInitialValue = async (data: any) => {
-    let vendorsEntity: IsrVendorsEntity = null;
+    let vendorsEntity = new IsrVendorsEntity();
     vendorsEntity = await this.isrVendorsRepository.findOne({
       where: {
         userId: data.initial.userId,
         ///status: In([VendorStatusEnum.ACTIVE, VendorStatusEnum.ADJUSTMENT]),
       },
     });
+    if (!vendorsEntity) throw new NotFoundException('vendor_not_found!!');
+    const initial = JSON.parse(JSON.stringify(vendorsEntity.initial));
     if (vendorsEntity.status === VendorStatusEnum.SUBMITTED)
       throw new HttpException('vendor_already_submitted', 500);
     if (vendorsEntity.status === VendorStatusEnum.APPROVED)
       throw new HttpException('vendor_already_approved', 500);
-    if (!vendorsEntity) throw new NotFoundException('vendor_not_found!!');
-    const initial = JSON.parse(JSON.stringify(vendorsEntity.initial));
-    if (initial.status == VendorStatusEnum.SUBMITTED)
-      throw new BadRequestException(`already_submitted`);
+
+    // if (initial.status == VendorStatusEnum.SUBMITTED)
+    //   throw new BadRequestException(`already_submitted`);
     initial.status =
       data.initial.status == 'Submit' ? 'Save as Draft' : data.initial.status;
     vendorsEntity.initial = data.initial;
@@ -298,8 +308,9 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           throw new BadRequestException(`businessArea_not_found`);
         currentBusinessArea.status = VendorStatusEnum.REJECTED;
         currentBusinessArea.remark = vendorStatusDto.remark;
-        const businessArea =
-          await this.businessAreaRepository.save(currentBusinessArea);
+        const businessArea = await this.businessAreaRepository.save(
+          currentBusinessArea,
+        );
         if (!businessArea)
           throw new BadRequestException(`business_area_rejection_failed`);
       }
@@ -309,6 +320,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
   }
   async updateVendor(vendorStatusDto: SetVendorStatus): Promise<any> {
     if (vendorStatusDto.status == VendorStatusEnum.ADJUST) {
+
       const res = this.adjustmentVendor(vendorStatusDto);
       if (res) return vendorStatusDto;
     } else {
@@ -345,8 +357,9 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           throw new BadRequestException(`businessArea_not_found`);
         currentBusinessArea.status = VendorStatusEnum.REJECTED;
         currentBusinessArea.remark = vendorStatusDto.remark;
-        const businessArea =
-          await this.businessAreaRepository.save(currentBusinessArea);
+        const businessArea = await this.businessAreaRepository.save(
+          currentBusinessArea,
+        );
         if (!businessArea)
           throw new BadRequestException(`business_area_rejection_failed`);
       }
@@ -389,8 +402,9 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         throw new BadRequestException(`businessArea_not_found`);
       currentBusinessArea.status = vendorStatusDto.status;
       currentBusinessArea.remark = vendorStatusDto.remark;
-      const businessArea =
-        await this.businessAreaRepository.save(currentBusinessArea);
+      const businessArea = await this.businessAreaRepository.save(
+        currentBusinessArea,
+      );
       if (!businessArea)
         throw new BadRequestException(`business_area_update_failed`);
       return businessArea;
@@ -431,17 +445,16 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     });
     if (vendor) return { id: vendor.id, message: 'vendor exist' };
     const vendorByTinExists = await this.isrVendorsRepository.findOne({
-      where: { tinNumber: vendorInitiationDto.tinNumber },
+      where: { tinNumber: vendorInitiationDto?.tinNumber },
     });
     if (vendorByTinExists)
       return {
         tin: vendorInitiationDto.tinNumber,
         message: 'TIN already already exist',
       };
-
     const vendorsEntity = new IsrVendorsEntity();
     vendorsEntity.userId = userInfo.id;
-    vendorsEntity.tinNumber = vendorInitiationDto.tinNumber;
+    vendorsEntity.tinNumber = vendorInitiationDto?.tinNumber;
     vendorsEntity.status = VendorStatusEnum.ACTIVE;
     const initial = {
       userId: userInfo.id,
