@@ -2,15 +2,11 @@ import { Text, Group, Badge, Paper, Flex, Button } from '@mantine/core';
 import style from './stats-card.module.scss';
 import { ApplicationService } from '@/models/vendorRegistration';
 import { IconEye } from '@tabler/icons-react';
-interface StatsListProps {
-  name: string;
-  tinNumber: string;
-  serviceStatus: string;
-  serviceRemark: string;
-  category: string;
-  serviceActionType: string;
-  trackingNum: string;
-  date: string;
+import { Application } from './application-list';
+
+interface Props {
+  data: Application;
+  view: (data: any) => void;
 }
 const badgeColor: { [key: string]: string } = {
   Rejected: 'red.4',
@@ -19,7 +15,7 @@ const badgeColor: { [key: string]: string } = {
   Completed: 'Green.4',
   Pending: 'blue.4',
 };
-export function StatsListCard(data: ApplicationService) {
+export const StatsListCard: React.FC<Props> = ({ data, view }) => {
   return (
     <Paper className={style.card} withBorder>
       <Flex className="flex-col justify-between h-full">
@@ -28,8 +24,8 @@ export function StatsListCard(data: ApplicationService) {
             <Badge size="sm" color={badgeColor[data.serviceStatus]}>
               {data.serviceStatus}
             </Badge>
-            <Text ta="left" fw={600} fz="sm">
-              <span className="font-bold text-gray-400">Tracking Number: </span>
+            <Text ta="left" fw={500} fz="sm">
+              <span className=" text-gray-400">Tracking Number: </span>
               {data.trackingNumber}Tr32445
             </Text>
           </Flex>
@@ -39,17 +35,19 @@ export function StatsListCard(data: ApplicationService) {
           </Text>
         </Group>
         <Group justify="space-between" align="start">
-          <Text ta="left" fw={600} fz="sm">
-            <span className="font-bold text-gray-400">Category: </span>
+          <Text ta="left" fw={500} fz="xs">
+            <span className=" text-gray-400">Category: </span>
             {data.category}
           </Text>
         </Group>
         <Group justify="flex-end" align="start">
           <Flex className="flex-col items-center">
-            <Button variant="outline">view</Button>
+            <Button variant="outline" onClick={() => view(data)}>
+              view
+            </Button>
           </Flex>
         </Group>
       </Flex>
     </Paper>
   );
-}
+};
