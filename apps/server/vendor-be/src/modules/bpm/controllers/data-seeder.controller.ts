@@ -7,18 +7,10 @@ import {
 } from '@nestjs/swagger';
 import { DataResponseFormat } from 'src/shared/api-data';
 import { TaskService } from '../services/task.service';
-import { TaskEntity } from 'src/entities/task.entity';
 import { JwtGuard } from 'src/shared/authorization';
 import { BusinessProcessService } from '../services/business-process.service';
 import { BpServiceService } from 'src/modules/services/services/service.service';
-import {
-  BanksEntity,
-  BpServiceEntity,
-  BusinessProcessEntity,
-  Category,
-  ServicePrice,
-  TaskAssignmentEntity,
-} from 'src/entities';
+import { BanksEntity, TaskAssignmentEntity } from 'src/entities';
 import { ServicePricingService } from 'src/modules/pricing/services/service-pricing.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -48,9 +40,8 @@ export class DataSeederController {
         id: 'a044b8d0-d653-5dd3-fd34-1f67d19ebf03',
         name: 'Profile update',
         key: 'profileUpdate',
-        isActive: 't',
-        createdAt: '4/11/2023 12:53:00.-1f',
-        updatedAt: '4/11/2023 12:53:00.-1f',
+        isActive: true,
+
         tenantId: 0,
         description: null,
       },
@@ -58,9 +49,8 @@ export class DataSeederController {
         id: 'be80a5d2-6de5-4310-bd3a-b67258535bbd',
         name: 'Local',
         key: 'local',
-        isActive: 't',
-        createdAt: '4/11/2023 12:53:00.-1f',
-        updatedAt: '4/11/2023 12:53:00.-1f',
+        isActive: true,
+
         tenantId: 0,
         description: null,
       },
@@ -68,9 +58,8 @@ export class DataSeederController {
         id: '26ff8e51-0f68-9c28-2ea4-a32a5e1f184f',
         name: 'IBM',
         key: 'ibm',
-        isActive: 't',
-        createdAt: '4/11/2023 12:53:00.-1f',
-        updatedAt: '4/11/2023 12:53:00.-1f',
+        isActive: true,
+
         tenantId: 0,
         description: null,
       },
@@ -78,9 +67,8 @@ export class DataSeederController {
         id: 'a63fb5b9-9896-8c73-4fd0-882d4e9a6e9a',
         name: 'MSME',
         key: 'msme',
-        isActive: 't',
-        createdAt: '4/11/2023 12:53:00.-1f',
-        updatedAt: '4/11/2023 12:53:00.-1f',
+        isActive: true,
+
         tenantId: 0,
         description: null,
       },
@@ -88,9 +76,8 @@ export class DataSeederController {
         id: '1a885fbb-cde1-4349-a9cf-cddcecb59e8d',
         name: 'Debar',
         key: 'debar',
-        isActive: 't',
-        createdAt: '4/11/2023 12:53:00.-1f',
-        updatedAt: '4/11/2023 12:53:00.-1f',
+        isActive: true,
+
         tenantId: 0,
         description: null,
       },
@@ -98,9 +85,8 @@ export class DataSeederController {
         id: 'f40139f8-2861-4c95-a491-08033b13daf4',
         name: 'Release(Permit)',
         key: 'release',
-        isActive: 't',
-        createdAt: '4/11/2023 12:53:00.-1f',
-        updatedAt: '4/11/2023 12:53:00.-1f',
+        isActive: true,
+
         tenantId: 0,
         description: null,
       },
@@ -108,9 +94,8 @@ export class DataSeederController {
         id: '76be510e-033e-415b-9e3e-8f9795c01756',
         name: 'Services Renewal',
         key: 'ServicesRenewal',
-        isActive: 't',
-        createdAt: '11/11/2023 21:13:14.-1f',
-        updatedAt: '11/11/2023 21:13:14.-1f',
+        isActive: true,
+
         tenantId: 0,
         description: null,
       },
@@ -118,9 +103,8 @@ export class DataSeederController {
         id: '7fcb88b0-86e3-4f11-950a-f24f09323d0d',
         name: 'Works Renewal',
         key: 'WorksRenewal',
-        isActive: 't',
-        createdAt: '11/11/2023 21:13:14.-1f',
-        updatedAt: '11/11/2023 21:13:14.-1f',
+        isActive: true,
+
         tenantId: 0,
         description: null,
       },
@@ -128,9 +112,8 @@ export class DataSeederController {
         id: '897e5182-927b-4f1d-bd25-10fb99a13d37',
         name: 'Goods Upgrade',
         key: 'GoodsUpgrade',
-        isActive: 't',
-        createdAt: '11/11/2023 21:09:34.-1f',
-        updatedAt: '11/11/2023 21:09:34.-1f',
+        isActive: true,
+
         tenantId: 0,
         description: null,
       },
@@ -138,9 +121,8 @@ export class DataSeederController {
         id: '29bbe5d9-8d44-4ffa-aa2f-4d12f4d7018b',
         name: 'Services Upgrade',
         key: 'ServicesUpgrade',
-        isActive: 't',
-        createdAt: '11/11/2023 21:09:34.-1f',
-        updatedAt: '11/11/2023 21:09:34.-1f',
+        isActive: true,
+
         tenantId: 0,
         description: null,
       },
@@ -148,9 +130,8 @@ export class DataSeederController {
         id: 'cf7ef60f-01dc-4228-b203-89e5d3a3c9aa',
         name: 'Works Upgrade',
         key: 'WorksUpgrade',
-        isActive: 't',
-        createdAt: '11/11/2023 21:08:17.-1f',
-        updatedAt: '11/11/2023 21:08:17.-1f',
+        isActive: true,
+
         tenantId: 0,
         description: null,
       },
@@ -158,9 +139,8 @@ export class DataSeederController {
         id: '62e96410-e869-4231-b693-f7e22d498b65',
         name: 'Goods Renewal',
         key: 'GoodsRenewal',
-        isActive: 't',
-        createdAt: '4/11/2023 12:53:00.-1f',
-        updatedAt: '4/11/2023 12:53:00.-1f',
+        isActive: true,
+
         tenantId: 0,
         description: null,
       },
@@ -168,9 +148,8 @@ export class DataSeederController {
         id: 'bb6934e1-9706-1e1b-c02f-b35c3e6153a4',
         name: 'New Registration for Goods',
         key: 'GoodsNewRegistration',
-        isActive: 't',
-        createdAt: '4/11/2023 12:53:00.-1f',
-        updatedAt: '19/11/2023 08:02:35.-1f',
+        isActive: true,
+
         tenantId: 0,
         description: null,
       },
@@ -178,9 +157,8 @@ export class DataSeederController {
         id: '3f78dced-838d-4757-ade0-4fd0444c142a',
         name: 'Registration Works',
         key: 'WorksNewRegistration',
-        isActive: 't',
-        createdAt: '4/11/2023 12:53:00.-1f',
-        updatedAt: '4/11/2023 12:53:00.-1f',
+        isActive: true,
+
         tenantId: 0,
         description: null,
       },
@@ -188,22 +166,12 @@ export class DataSeederController {
         id: '5f764d17-a165-42ab-879d-358bc03fe5d8',
         name: 'Registration for Services',
         key: 'ServicesNewRegistration',
-        isActive: 't',
-        createdAt: '4/11/2023 12:53:00.-1f',
-        updatedAt: '4/11/2023 12:53:00.-1f',
+        isActive: true,
         tenantId: 0,
         description: null,
       },
     ];
-    const entity = new BpServiceEntity();
-    for (const service of serviceToSeed) {
-      entity.id = service.id;
-      entity.description = service.description;
-      entity.name = service.name;
-      entity.isActive = service.isActive == 't' ? true : false;
-      entity.key = service.key;
-      await this.serviceService.create(entity);
-    }
+    await this.serviceService.saveBulk(serviceToSeed);
     // await dataSource.createEntityManager().save<BpServiceEntity>(services);
   }
   @UseGuards(JwtGuard)
@@ -213,265 +181,227 @@ export class DataSeederController {
     const bpsToSeed = [
       {
         tenantId: 0,
-        createdAt: '22-11-2023 10:40:27.-1f',
-        updatedAt: '22-11-2023 10:40:27.-1f',
+
         id: '0f7d46b9-ffd6-4b4c-91f8-9e290d675053',
         serviceId: 'a044b8d0-d653-5dd3-fd34-1f67d19ebf03',
         workflow:
           '{"id": "Profile update Workflow", "states": {"End": {"on": {}, "meta": {"type": "end"}}, "Approval of Vendor Profile Update Request": {"on": {"Adjust": "Submission of Vendor Profile Update Request", "Reject": "End", "Approve": "Approval of Vendor Profile Update Request By Director General (Head of PDE)"}, "meta": {"type": "Approval"}}, "Submission of Vendor Profile Update Request": {"on": {"ISR": "Approval of Vendor Profile Update Request"}, "meta": {"type": {"start": true}}}, "Approval of Vendor Profile Update Request By Director General (Head of PDE)": {"on": {"NO": "Submission of Vendor Profile Update Request", "YES": "End"}}}, "initial": "Submission of Vendor Profile Update Request"}',
         version: 1,
-        isActive: 't',
+        isActive: true,
         organizationId: null,
         organizationName: null,
       },
       {
         tenantId: 0,
-        createdAt: '22-11-2023 10:40:27.-1f',
-        updatedAt: '22-11-2023 10:40:27.-1f',
+
         id: '96d95fdb-7852-4ddc-982f-0e94d23d15d3',
         serviceId: '5f764d17-a165-42ab-879d-358bc03fe5d8',
         workflow:
           '{"id": "Services Registration", "states": {"End": {"on": {}, "meta": {"type": "end", "apiUrl": "https://dev-bo.megp.peragosystems.com/vendors/api/business-area"}}, "Generate Vendor Registration Certificate": {"on": {"FAIL": "Generate Vendor Registration Certificate", "SUCCESS": "End"}, "meta": {"type": "Certificate"}}, "Approval of New Vendor Registration Request": {"on": {"ADJUST": "Submission of New Vendor Registration Request", "REJECT": "End", "APPROVE": "Approval of Vendor Registration Request By CRO"}, "meta": {"type": "Approval"}}, "Submission of New Vendor Registration Request": {"on": {"ISR": "Approval of New Vendor Registration Request"}, "meta": {"type": {"start": true}}}, "Approval of Vendor Registration Request By CRO": {"on": {"NO": "Approval of New Vendor Registration Request", "YES": "Final Approval of New Vendor Registration by RRM"}, "meta": {"type": "Confirmation"}}, "Final Approval of New Vendor Registration by RRM": {"on": {"NO": "Approval of Vendor Registration Request By CRO", "YES": "Generate Vendor Registration Certificate"}, "meta": {"type": "Confirmation"}}}, "initial": "Submission of New Vendor Registration Request"}',
         version: 1,
-        isActive: 't',
+        isActive: true,
         organizationId: null,
         organizationName: null,
       },
       {
         tenantId: 0,
-        createdAt: '22-11-2023 10:40:27.-1f',
-        updatedAt: '22-11-2023 10:40:27.-1f',
         id: '745c9643-1f1d-464f-860c-3087bfc1a7c1',
         serviceId: '3f78dced-838d-4757-ade0-4fd0444c142a',
         workflow:
           '{"id": "Works New Registration  Workflow", "states": {"End": {"on": {}, "meta": {"type": "end"}}, "Approval of Vendor Profile Update Request": {"on": {"Adjust": "Submission of Vendor Profile Update Request", "Reject": "End", "Approve": "Approval of Vendor Profile Update Request By Director General (Head of PDE)"}, "meta": {"type": "Approval"}}, "Submission of Vendor Profile Update Request": {"on": {"ISR": "Approval of Vendor Profile Update Request"}, "meta": {"type": {"start": true}}}, "Approval of Vendor Profile Update Request By Director General (Head of PDE)": {"on": {"NO": "Submission of Vendor Profile Update Request", "YES": "End"}}}, "initial": "Submission of Vendor Profile Update Request"}',
         version: 1,
-        isActive: 't',
+        isActive: true,
         organizationId: null,
         organizationName: null,
       },
       {
         tenantId: 0,
-        createdAt: '22-11-2023 10:40:27.-1f',
-        updatedAt: '22-11-2023 10:40:27.-1f',
+
         id: 'b97fb7aa-2442-4e5d-8b42-42bd6ef41138',
         serviceId: '76be510e-033e-415b-9e3e-8f9795c01756',
         workflow: '{}',
         version: 0,
-        isActive: 't',
+        isActive: true,
         organizationId: null,
         organizationName: null,
       },
       {
         tenantId: 0,
-        createdAt: '22-11-2023 10:40:27.-1f',
-        updatedAt: '22-11-2023 10:40:27.-1f',
+
         id: 'd822c2d4-1023-4328-a172-adfcd78a30d4',
         serviceId: 'bb6934e1-9706-1e1b-c02f-b35c3e6153a4',
         workflow:
           '{"id": "Goods Registration", "states": {"End": {"on": {}, "meta": {"type": "end", "apiUrl": "https://dev-bo.megp.peragosystems.com/vendors/api/business-area"}}, "Generate Vendor Registration Certificate": {"on": {"FAIL": "Generate Vendor Registration Certificate", "SUCCESS": "End"}, "meta": {"type": "Certificate"}}, "Approval of New Vendor Registration Request": {"on": {"ADJUST": "Submission of New Vendor Registration Request", "REJECT": "End", "APPROVE": "Approval of Vendor Registration Request By CRO"}, "meta": {"type": "Approval"}}, "Submission of New Vendor Registration Request": {"on": {"ISR": "Approval of New Vendor Registration Request"}, "meta": {"type": {"start": true}}}, "Approval of Vendor Registration Request By CRO": {"on": {"NO": "Approval of New Vendor Registration Request", "YES": "Final Approval of New Vendor Registration by RRM"}, "meta": {"type": "Confirmation"}}, "Final Approval of New Vendor Registration by RRM": {"on": {"NO": "Approval of Vendor Registration Request By CRO", "YES": "Generate Vendor Registration Certificate"}, "meta": {"type": "Confirmation"}}}, "initial": "Submission of New Vendor Registration Request"}',
         version: 0,
-        isActive: 't',
+        isActive: true,
         organizationId: null,
         organizationName: null,
       },
       {
         tenantId: 0,
-        createdAt: '22-11-2023 10:40:27.-1f',
-        updatedAt: '22-11-2023 10:40:27.-1f',
+
         id: '543d59c0-3b13-401f-bb78-058de7f65a11',
         serviceId: '7fcb88b0-86e3-4f11-950a-f24f09323d0d',
         workflow: '{}',
         version: 0,
-        isActive: 't',
+        isActive: true,
         organizationId: null,
         organizationName: null,
       },
       {
         tenantId: 0,
-        createdAt: '22-11-2023 10:40:27.-1f',
-        updatedAt: '22-11-2023 10:40:27.-1f',
+
         id: 'cd17ba61-a510-4fed-9e50-a3f10b6570d3',
         serviceId: '62e96410-e869-4231-b693-f7e22d498b65',
         workflow: '{}',
         version: 0,
-        isActive: 't',
+        isActive: true,
         organizationId: null,
         organizationName: null,
       },
       {
         tenantId: 0,
-        createdAt: '22-11-2023 10:40:27.-1f',
-        updatedAt: '22-11-2023 10:40:27.-1f',
+
         id: 'abe4ba2c-a260-4bbb-bc8d-f101c33b6dc1',
         serviceId: '897e5182-927b-4f1d-bd25-10fb99a13d37',
         workflow: '{}',
         version: 0,
-        isActive: 't',
+        isActive: true,
         organizationId: null,
         organizationName: null,
       },
       {
         tenantId: 0,
-        createdAt: '22-11-2023 10:40:27.-1f',
-        updatedAt: '22-11-2023 10:40:27.-1f',
+
         id: '11a07c2b-2b12-44bc-894e-a1aede0194c4',
         serviceId: '29bbe5d9-8d44-4ffa-aa2f-4d12f4d7018b',
         workflow: '{}',
         version: 0,
-        isActive: 't',
+        isActive: true,
         organizationId: null,
         organizationName: null,
       },
       {
         tenantId: 0,
-        createdAt: '22-11-2023 10:40:27.-1f',
-        updatedAt: '22-11-2023 10:40:27.-1f',
+
         id: '950e28cf-ad82-4159-8b2c-f147bbe3685f',
         serviceId: 'cf7ef60f-01dc-4228-b203-89e5d3a3c9aa',
         workflow: '{}',
         version: 0,
-        isActive: 't',
+        isActive: true,
         organizationId: null,
         organizationName: null,
       },
       {
         tenantId: 0,
-        createdAt: '22-11-2023 10:40:27.-1f',
-        updatedAt: '22-11-2023 10:40:27.-1f',
+
         id: 'd324da2a-d68a-44e1-866c-bf34151e91cc',
         serviceId: 'be80a5d2-6de5-4310-bd3a-b67258535bbd',
         workflow: '{}',
         version: 0,
-        isActive: 't',
+        isActive: true,
         organizationId: null,
         organizationName: null,
       },
       {
         tenantId: 0,
-        createdAt: '22-11-2023 10:40:27.-1f',
-        updatedAt: '22-11-2023 10:40:27.-1f',
+
         id: '329201c3-3218-4e6c-8478-39bee76a43a6',
         serviceId: '26ff8e51-0f68-9c28-2ea4-a32a5e1f184f',
         workflow: '{}',
         version: 0,
-        isActive: 't',
+        isActive: true,
         organizationId: null,
         organizationName: null,
       },
       {
         tenantId: 0,
-        createdAt: '22-11-2023 10:40:27.-1f',
-        updatedAt: '22-11-2023 10:40:27.-1f',
+
         id: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b40',
         serviceId: 'a63fb5b9-9896-8c73-4fd0-882d4e9a6e9a',
         workflow: '{}',
         version: 0,
-        isActive: 't',
+        isActive: true,
         organizationId: null,
         organizationName: null,
       },
       {
         tenantId: 0,
-        createdAt: '22-11-2023 10:40:27.-1f',
-        updatedAt: '22-11-2023 10:40:27.-1f',
+
         id: '7539e439-4e3f-4f9c-9151-b21ca7a808fc',
         serviceId: '1a885fbb-cde1-4349-a9cf-cddcecb59e8d',
         workflow: '{}',
         version: 0,
-        isActive: 't',
+        isActive: true,
         organizationId: null,
         organizationName: null,
       },
       {
         tenantId: 0,
-        createdAt: '22-11-2023 10:40:27.-1f',
-        updatedAt: '22-11-2023 10:40:27.-1f',
+
         id: 'c9e26805-33f4-4021-9554-0578df019386',
         serviceId: 'f40139f8-2861-4c95-a491-08033b13daf4',
         workflow: '{}',
         version: 0,
-        isActive: 't',
+        isActive: true,
         organizationId: null,
         organizationName: null,
       },
       {
         tenantId: 0,
-        createdAt: '22-11-2023 10:40:27.-1f',
-        updatedAt: '22-11-2023 10:40:27.-1f',
+
         id: 'a5350ef3-a8ec-4f98-8a4a-b3c87765234e',
         serviceId: 'be80a5d2-6de5-4310-bd3a-b67258535bbd',
         workflow: '{}',
         version: 0,
-        isActive: 't',
+        isActive: true,
         organizationId: null,
         organizationName: null,
       },
       {
         tenantId: 0,
-        createdAt: '22-11-2023 10:40:27.-1f',
-        updatedAt: '22-11-2023 10:40:27.-1f',
+
         id: '51fe1c97-c1d2-4dbe-9709-6f23f29ba0ba',
         serviceId: '26ff8e51-0f68-9c28-2ea4-a32a5e1f184f',
         workflow: '{}',
         version: 0,
-        isActive: 't',
+        isActive: true,
         organizationId: null,
         organizationName: null,
       },
       {
         tenantId: 0,
-        createdAt: '22-11-2023 10:40:27.-1f',
-        updatedAt: '22-11-2023 10:40:27.-1f',
         id: '0b29c2f8-a0e4-4fa2-9a92-0ada7aa0ba49',
         serviceId: 'a63fb5b9-9896-8c73-4fd0-882d4e9a6e9a',
         workflow: '{}',
         version: 0,
-        isActive: 't',
+        isActive: true,
         organizationId: null,
         organizationName: null,
       },
       {
         tenantId: 0,
-        createdAt: '22-11-2023 10:40:27.-1f',
-        updatedAt: '22-11-2023 10:40:27.-1f',
+
         id: '0a353ad3-229a-4329-a697-fac97d94b30c',
         serviceId: '1a885fbb-cde1-4349-a9cf-cddcecb59e8d',
         workflow: '{}',
         version: 0,
-        isActive: 't',
+        isActive: true,
         organizationId: null,
         organizationName: null,
       },
       {
         tenantId: 0,
-        createdAt: '22-11-2023 10:40:27.-1f',
-        updatedAt: '22-11-2023 10:40:27.-1f',
         id: 'bfdd841a-9152-4c39-a9f2-25b7dc7c0c4c',
         serviceId: 'f40139f8-2861-4c95-a491-08033b13daf4',
         workflow: '{}',
         version: 0,
-        isActive: 't',
+        isActive: true,
         organizationId: null,
         organizationName: null,
       },
     ];
-    for (const bp of bpsToSeed) {
-      const entity = new BusinessProcessEntity();
-      const object = JSON.parse(JSON.stringify(bp));
-      entity.id = object.id;
-      entity.version = object.version;
-      entity.serviceId = object.serviceId;
-      entity.workflow = JSON.parse(object.workflow);
-      entity.isActive = object.isActive == 't' ? true : false;
-      entity.organizationId = object?.organizationId;
-      entity.organizationName = object?.organizationId;
-      try {
-        await this.bpService.create(entity);
-      } catch (error) {
-        console.log(error);
-      }
-    }
+    await this.bpService.saveBulk(bpsToSeed);
   }
   @UseGuards(JwtGuard)
   @Post('seed-task-types')
@@ -642,18 +572,7 @@ export class DataSeederController {
         orderBy: 7,
       },
     ];
-    for (const task of tasksToSeed) {
-      const entity = new TaskEntity();
-      entity.name = task.name;
-      entity.description = task.description;
-      entity.bpId = task.bpId;
-      entity.taskType = task.taskType;
-      entity.handlerType = task.handlerType;
-      entity.checkList = JSON.parse(task.checkList);
-      entity.label = task.label;
-      entity.orderBy = task.orderBy;
-      await this.taskService.create(entity);
-    }
+    await this.taskService.saveBulk(tasksToSeed);
   }
   @UseGuards(JwtGuard)
   @Post('seed-pricing')
@@ -668,8 +587,7 @@ export class DataSeederController {
         valueTo: 10000000,
         fee: 10000,
         currency: 'MK',
-        createdAt: '9/11/2023 08:34:25.-1f',
-        updatedAt: '9/11/2023 08:34:25.-1f',
+
         tenantId: 0,
       },
       {
@@ -680,8 +598,7 @@ export class DataSeederController {
         valueTo: 30000000,
         fee: 20000,
         currency: 'MK',
-        createdAt: '9/11/2023 08:34:25.-1f',
-        updatedAt: '9/11/2023 08:34:25.-1f',
+
         tenantId: 0,
       },
       {
@@ -692,8 +609,7 @@ export class DataSeederController {
         valueTo: 80000000,
         fee: 30000,
         currency: 'MK',
-        createdAt: '9/11/2023 08:34:25.-1f',
-        updatedAt: '9/11/2023 08:34:25.-1f',
+
         tenantId: 0,
       },
       {
@@ -704,8 +620,7 @@ export class DataSeederController {
         valueTo: 100000000,
         fee: 60000,
         currency: 'MK',
-        createdAt: '9/11/2023 08:34:25.-1f',
-        updatedAt: '9/11/2023 08:34:25.-1f',
+
         tenantId: 0,
       },
       {
@@ -716,8 +631,7 @@ export class DataSeederController {
         valueTo: 500000000,
         fee: 100000,
         currency: 'MK',
-        createdAt: '9/11/2023 08:34:25.-1f',
-        updatedAt: '9/11/2023 08:34:25.-1f',
+
         tenantId: 0,
       },
       {
@@ -728,8 +642,7 @@ export class DataSeederController {
         valueTo: -1,
         fee: 500000,
         currency: 'MK',
-        createdAt: '9/11/2023 08:34:25.-1f',
-        updatedAt: '9/11/2023 08:34:25.-1f',
+
         tenantId: 0,
       },
       {
@@ -740,8 +653,7 @@ export class DataSeederController {
         valueTo: 100000,
         fee: 1,
         currency: 'MK',
-        createdAt: '9/11/2023 08:34:25.-1f',
-        updatedAt: '9/11/2023 08:34:25.-1f',
+
         tenantId: 0,
       },
       {
@@ -752,8 +664,7 @@ export class DataSeederController {
         valueTo: 56666,
         fee: 1000,
         currency: 'MK',
-        createdAt: '9/11/2023 08:34:25.-1f',
-        updatedAt: '9/11/2023 08:34:25.-1f',
+
         tenantId: 0,
       },
       {
@@ -764,8 +675,7 @@ export class DataSeederController {
         valueTo: 12,
         fee: 12,
         currency: 'MK',
-        createdAt: '9/11/2023 08:34:25.-1f',
-        updatedAt: '9/11/2023 08:34:25.-1f',
+
         tenantId: 0,
       },
       {
@@ -776,8 +686,7 @@ export class DataSeederController {
         valueTo: 1000000,
         fee: 4000,
         currency: 'MK',
-        createdAt: '9/11/2023 08:34:25.-1f',
-        updatedAt: '9/11/2023 08:34:25.-1f',
+
         tenantId: 0,
       },
       {
@@ -788,8 +697,7 @@ export class DataSeederController {
         valueTo: 1000000000,
         fee: 200000,
         currency: 'MK',
-        createdAt: '9/11/2023 08:34:25.-1f',
-        updatedAt: '9/11/2023 08:34:25.-1f',
+
         tenantId: 0,
       },
       {
@@ -800,8 +708,7 @@ export class DataSeederController {
         valueTo: 10000000,
         fee: 10000,
         currency: 'MK',
-        createdAt: '9/11/2023 08:34:25.-1f',
-        updatedAt: '9/11/2023 08:34:25.-1f',
+
         tenantId: 0,
       },
       {
@@ -812,8 +719,7 @@ export class DataSeederController {
         valueTo: 30000000,
         fee: 20000,
         currency: 'MK',
-        createdAt: '9/11/2023 08:34:25.-1f',
-        updatedAt: '9/11/2023 08:34:25.-1f',
+
         tenantId: 0,
       },
       {
@@ -824,8 +730,7 @@ export class DataSeederController {
         valueTo: 80000000,
         fee: 30000,
         currency: 'MK',
-        createdAt: '9/11/2023 08:34:25.-1f',
-        updatedAt: '9/11/2023 08:34:25.-1f',
+
         tenantId: 0,
       },
       {
@@ -836,8 +741,7 @@ export class DataSeederController {
         valueTo: 100000000,
         fee: 60000,
         currency: 'MK',
-        createdAt: '9/11/2023 08:34:25.-1f',
-        updatedAt: '9/11/2023 08:34:25.-1f',
+
         tenantId: 0,
       },
       {
@@ -848,8 +752,7 @@ export class DataSeederController {
         valueTo: 500000000,
         fee: 100000,
         currency: 'MK',
-        createdAt: '9/11/2023 08:34:25.-1f',
-        updatedAt: '9/11/2023 08:34:25.-1f',
+
         tenantId: 0,
       },
       {
@@ -860,8 +763,7 @@ export class DataSeederController {
         valueTo: 1000000000,
         fee: 200000,
         currency: 'MK',
-        createdAt: '9/11/2023 08:34:25.-1f',
-        updatedAt: '9/11/2023 08:34:25.-1f',
+
         tenantId: 0,
       },
       {
@@ -872,31 +774,18 @@ export class DataSeederController {
         valueTo: -1,
         fee: 100000000500000,
         currency: 'MK',
-        createdAt: '9/11/2023 08:34:25.-1f',
-        updatedAt: '9/11/2023 08:34:25.-1f',
         tenantId: 0,
       },
     ];
-    for (const price of pricesToSeed) {
-      const entity = new ServicePrice();
-      entity.id = price.id;
-      entity.businessArea = price.businessArea;
-      entity.serviceId = price.serviceId;
-      entity.valueFrom = price.valueFrom;
-      entity.valueTo = price.valueTo;
-      entity.currency = price?.currency;
-      entity.fee = price.fee;
-      // entity.createdAt = new Date(price.createdAt);
-      // entity.updatedAt = new Date(price.updatedAt);
-      await this.pricingService.create(entity);
-    }
+
+    await this.pricingService.saveBulk(pricesToSeed);
   }
 
   @UseGuards(JwtGuard)
   @Post('seed-banks')
   @ApiOkResponse()
   async seedBanks() {
-    const banksToSeed = [
+    const banksToSeed: any = [
       {
         id: '008ae6c2-b041-46b9-a3ad-cba6bb1e7814',
         bankName: 'CDH Investment Bank',
@@ -939,13 +828,7 @@ export class DataSeederController {
         metaData: '{}',
       },
     ];
-    for (const bank of banksToSeed) {
-      let entity = new BanksEntity();
-      const { metaData, ...reduced } = { ...bank };
-      const metaDataJson = JSON.parse(metaData);
-      entity = { metaData: metaDataJson, vendorAccounts: [], ...reduced };
-      await this.bankRepository.save(entity);
-    }
+    await this.bankRepository.save(banksToSeed);
   }
   @UseGuards(JwtGuard)
   @Post('seed-categories')
@@ -1081,19 +964,13 @@ export class DataSeederController {
         parentId: null,
       },
     ];
-    for (const cat of categoriesToSeed) {
-      await this.categoryService.create(cat);
-    }
+    await this.categoryService.saveBulk(categoriesToSeed);
   }
   @UseGuards(JwtGuard)
   @Post('seed-task-assignment')
   @ApiOkResponse()
   async seedTaskAssignment() {
     const taskAssignments = [];
-    for (const assign of taskAssignments) {
-      let entity = new TaskAssignmentEntity();
-      entity = { ...assign };
-      await this.assignmentRepository.save(entity);
-    }
+    await this.assignmentRepository.save(taskAssignments);
   }
 }

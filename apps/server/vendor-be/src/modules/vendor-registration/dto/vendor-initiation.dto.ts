@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
 import { VendorsEntity } from 'src/entities';
 
 export class VendorInitiationDto {
@@ -18,17 +18,17 @@ export class VendorInitiationDto {
   @IsNotEmpty()
   businessType: string;
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   origin: string;
   @ApiProperty()
   // @IsNotEmpty()
   district: string;
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   country: string;
   @ApiProperty()
-  @IsNotEmpty()
-  tinNumber: string;
+  @IsOptional()
+  tinNumber?: string;
 
   /**
    * Transfer Data from DTO object to Entity object
@@ -48,7 +48,7 @@ export class VendorInitiationDto {
     entity.origin = dto.origin;
     entity.district = dto.district;
     entity.country = dto.country;
-    entity.origin = dto.origin;
+    entity.origin = dto?.origin;
     return entity;
   }
 

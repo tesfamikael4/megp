@@ -12,4 +12,12 @@ export class TaskAssignmentService extends EntityCrudService<TaskAssignmentEntit
   ) {
     super(assignmentRepository);
   }
+  async saveBulk(assignments: any[]) {
+    try {
+      await this.assignmentRepository.save(assignments);
+      return true;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
 }

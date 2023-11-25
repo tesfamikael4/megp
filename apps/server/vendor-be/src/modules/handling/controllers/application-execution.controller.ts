@@ -32,6 +32,7 @@ import { BusinessProcessService } from 'src/modules/bpm/services/business-proces
 import { UpdateTaskHandlerDto } from 'src/modules/bpm/dto/task-handler.dto';
 import { ActivityResponseDto } from 'src/modules/bpm/dto/activities.dto';
 import { InvoiceService } from 'src/modules/vendor-registration/services/invoice.service';
+import { WorkflowInstanceEntity } from 'src/entities';
 @ApiBearerAuth()
 @Controller('application-execution')
 @ApiTags('Application Excution')
@@ -42,7 +43,7 @@ export class ApplicationExcutionController {
     private readonly workflowService: WorkflowService,
     private readonly bpService: BusinessProcessService,
     private readonly invoiceService: InvoiceService,
-  ) { }
+  ) {}
 
   @UseGuards(JwtGuard)
   @Get('email')
@@ -73,36 +74,53 @@ export class ApplicationExcutionController {
       };
       return await this.workflowService.notifyCompletion(wfi, url, user);
     }*/
-  /*
+
   @UseGuards(JwtGuard)
   @Post('notify')
-
-  async notify(@Body() test: TestDto, @CurrentUser() user: any, @Req() request: any) {
-    const wfi = new WorkflowInstanceEntity()
+  async notify(
+    @Body() test: any,
+    @CurrentUser() user: any,
+    @Req() request: any,
+  ) {
+    const wfi = new WorkflowInstanceEntity();
     wfi.id = test.wfi.id;
     wfi.serviceId = test.wfi.serviceId;
     wfi.requestorId = test.wfi.requestorId;
     const authToken = request.headers['authorization'].split(' ')[1];
-    console.log(wfi)
+    console.log(wfi);
     user['token'] = authToken;
-    await this.workflowService.notify(wfi, test.metaData.url, test.metaData, user)
+    await this.workflowService.notify(
+      wfi,
+      test.metaData.url,
+      test.metaData,
+      user,
+    );
   }
-  */
+
   @UseGuards(JwtGuard)
   @Post('intiate-workflow')
-  @ApiOkResponse({ type: WorkflowInstanceResponse })
+  //@ApiOkResponse({ type: WorkflowInstanceResponse })
+  @ApiPaginatedResponse(WorkflowInstanceResponse)
   async testWF(
-    @Body() wfi: CreateWorkflowInstanceDto,
+    @Body() wfi: CreateWorkflowInstanceDto[],
     @CurrentUser() user,
     @Req() request: Request,
   ) {
     const authToken = request.headers['authorization'].split(' ')[1];
     user['token'] = authToken;
-    const bp = await this.bpService.findBpService(wfi.pricingId);
-    if (!bp) throw new NotFoundException('BP not found');
-    wfi.serviceId = bp.serviceId;
-    wfi.bpId = bp.id;
-    return await this.workflowService.intiateWorkflowInstance(wfi, user);
+    const intances = [];
+    for (let i = 0; i < wfi.length; i++) {
+      const bp = await this.bpService.findBpService(wfi[i].pricingId);
+      if (!bp) throw new NotFoundException('BP not found');
+      wfi[i].serviceId = bp.serviceId;
+      wfi[i].bpId = bp.id;
+      const result = await this.workflowService.intiateWorkflowInstance(
+        wfi[i],
+        user,
+      );
+      intances.push(result);
+    }
+    return intances;
   }
 
   @UseGuards(JwtGuard)
@@ -169,10 +187,7 @@ export class ApplicationExcutionController {
   @UseGuards(JwtGuard)
   @Get('get-currunt-task-detail/:instanceId')
   @ApiOkResponse({ type: WorkflowInstanceResponse })
-  async fetchCurruntTaskDetail(
-    @Param('instanceId') instanceId: string
-
-  ) {
+  async fetchCurruntTaskDetail(@Param('instanceId') instanceId: string) {
     return await this.executeService.getCurruntTaskDetail(instanceId);
   }
   @UseGuards(JwtGuard)

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
 import { BankDto } from './bank.dto';
 import { CreateVendorsDto } from './vendor.dto';
 import { BankAccountDetailEntity } from 'src/entities';
@@ -8,10 +8,11 @@ export class CreateBankAccountDetailDto {
   // @ApiProperty()
   // @IsNotEmpty()
   // @IsUUID()
+  @IsOptional()
   id: string;
   @ApiProperty()
   @IsNotEmpty()
-  accountHoldersFullName: string;
+  accountHolderFullName: string;
   @ApiProperty()
   @IsNotEmpty()
   accountNumber: string;
@@ -22,33 +23,35 @@ export class CreateBankAccountDetailDto {
   @IsNotEmpty()
   bankId: string;
   @ApiProperty()
-  // @IsNotEmpty()
+  @IsOptional()
   branchName: string;
   @ApiProperty()
-  // @IsNotEmpty()
+  @IsOptional()
   branchAddress: string;
   @ApiProperty()
-  // @IsNotEmpty()
+  @IsOptional()
   currency: string;
   @ApiProperty()
-  // @IsNotEmpty()
+  @IsOptional()
   bankSwift: string;
   @ApiProperty()
-  // @IsNotEmpty()
+  @IsOptional()
   IBAN: string;
   @ApiProperty()
-  // @IsNotEmpty()
+  @IsOptional()
   status: string;
   @ApiProperty()
-  // @IsNotEmpty()
+  @IsOptional()
   hashValue: string;
   @ApiProperty()
-  // @IsNotEmpty()
+  @IsOptional()
   bankName: string;
   @ApiProperty()
+  @IsOptional()
   metaData: JSON;
 
   @ApiProperty()
+  @IsNotEmpty()
   accountType: string;
   @ApiProperty()
   isDefualt: boolean;
@@ -59,8 +62,8 @@ export class CreateBankAccountDetailDto {
     if (!dto) {
       return;
     }
-    entity.id = dto.id;
-    entity.accountHolderFullName = dto.accountHoldersFullName;
+    entity.id = dto?.id;
+    entity.accountHolderFullName = dto.accountHolderFullName;
     entity.accountNumber = dto.accountNumber;
     entity.vendorId = dto.vendorId;
     entity.bankId = dto.bankId;
@@ -102,7 +105,7 @@ export class BankAccountDetailResponse extends CreateBankAccountDetailDto {
       return;
     }
     entity.id = dto.id;
-    entity.accountHolderFullName = dto.accountHoldersFullName;
+    entity.accountHolderFullName = dto.accountHolderFullName;
     entity.accountNumber = dto.accountNumber;
     entity.vendorId = dto.vendorId;
     entity.bankId = dto.bankId;
@@ -126,7 +129,7 @@ export class BankAccountDetailResponse extends CreateBankAccountDetailDto {
       return;
     }
     entity.id = dto?.id;
-    entity.accountHoldersFullName = dto.accountHolderFullName;
+    entity.accountHolderFullName = dto.accountHolderFullName;
     entity.accountNumber = dto.accountNumber;
     entity.vendorId = dto.vendorId;
     entity.bankId = dto.bankId;
