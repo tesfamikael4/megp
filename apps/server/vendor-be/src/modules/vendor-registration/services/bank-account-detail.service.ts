@@ -46,7 +46,6 @@ export class BankAccountDetailService {
       if (!result) {
         throw new NotFoundException(`There is no bank found in your database`);
       }
-
       return result;
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
