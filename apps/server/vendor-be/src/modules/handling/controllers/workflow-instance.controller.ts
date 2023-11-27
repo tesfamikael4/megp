@@ -12,7 +12,6 @@ import {
   ApiBearerAuth,
   ApiExtraModels,
   ApiOkResponse,
-  ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import { DataResponseFormat } from 'src/shared/api-data';
@@ -37,7 +36,7 @@ export class WorkflowInstanceController {
     private readonly workflowInstanceService: WorkflowInstanceService,
     private readonly bpService: BusinessProcessService,
     private readonly taskService: TaskService,
-  ) {}
+  ) { }
   @UseGuards(JwtGuard)
   @Post('submit-application')
   @ApiOkResponse({ type: WorkflowInstanceResponse })
@@ -97,10 +96,10 @@ export class WorkflowInstanceController {
     @Body() dto: GotoNextStateDto,
     @CurrentUser() user: any,
   ) {
-    const userInfo = { userId: '', name: 'derehy giki' };
+
     const response = await this.workflowInstanceService.reviewApplication(
       dto,
-      userInfo,
+      user,
     );
     return response;
   }
