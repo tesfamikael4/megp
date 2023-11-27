@@ -41,8 +41,7 @@ export function Table<T>({ data, config }: TableProps<T>): ReactElement {
                     colSpan={header.colSpan}
                     key={header.id}
                     style={{
-                      width:
-                        header.getSize() !== 150 ? header.getSize() : `${5}%`,
+                      width: 'auto',
                       textAlign:
                         header.column.id === 'action' ? 'right' : 'left',
                     }}
