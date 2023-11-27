@@ -23,10 +23,12 @@ export const DetailCommodity = ({ selectedData, parents }: any) => {
   const rows = data?.items?.map((element) => (
     <Table.Tr key={element.title}>
       <Table.Td>
-        <Text>{`[${element.code}]:${element.title}`}</Text>
+        <Text size="sm">{`[${element.code}]:${
+          element.title.slice(0, 30) + '...'
+        }`}</Text>
       </Table.Td>
       <Table.Td>
-        <Text size="md" onClick={toggleShowMore} className="cursor-pointer">
+        <Text size="sm" onClick={toggleShowMore} className="cursor-pointer">
           {element.definition &&
             (showMore
               ? element.definition
@@ -39,8 +41,12 @@ export const DetailCommodity = ({ selectedData, parents }: any) => {
           )}
         </Text>
       </Table.Td>
-      <Table.Td>{element.synonym}</Table.Td>
-      <Table.Td>{element.acronym}</Table.Td>
+      <Table.Td>
+        <Text size="sm">{element.synonym}</Text>
+      </Table.Td>
+      <Table.Td>
+        <Text size="sm">{element.acronym}</Text>
+      </Table.Td>
     </Table.Tr>
   ));
 
@@ -52,12 +58,14 @@ export const DetailCommodity = ({ selectedData, parents }: any) => {
             <Table.Tr className="border-dashed border-2 ">
               <Table.Th className="bg-[#f1f1ff] w-36 ">Title</Table.Th>
               <Table.Td>
-                <Text>{`[${selectedData.code}]:${selectedData.title}`}</Text>
+                <Text size="sm">{`[${selectedData.code}]:${selectedData.title}`}</Text>
               </Table.Td>
             </Table.Tr>
             <Table.Tr className="border-dashed border-2 ">
               <Table.Th className="bg-[#f1f1ff] w-36  ">Key</Table.Th>
-              <Table.Td>{selectedData.key}</Table.Td>
+              <Table.Td>
+                <Text size="sm">{selectedData.key}</Text>
+              </Table.Td>
             </Table.Tr>
             <Table.Tr className="border-dashed border-2 ">
               <Table.Th className="bg-[#f1f1ff] w-36  ">Path</Table.Th>
@@ -77,8 +85,11 @@ export const DetailCommodity = ({ selectedData, parents }: any) => {
             <Table.Tr className="border-dashed border-2 ">
               <Table.Th className="bg-[#f1f1ff] w-36">Description</Table.Th>
               <Table.Td>
-                <ScrollArea h={60}>
-                  <Text>
+                <ScrollArea h={50}>
+                  <Text
+                    size="sm"
+                    className="border-solid border-2 border-[#b5b4ee] rounded-md"
+                  >
                     {selectedData.definition && selectedData.definition}
                   </Text>
                 </ScrollArea>
@@ -87,13 +98,13 @@ export const DetailCommodity = ({ selectedData, parents }: any) => {
             <Table.Tr className="border-dashed border-2 ">
               <Table.Th className="bg-[#f1f1ff] w-36    ">Synonym</Table.Th>
               <Table.Td>
-                <Text>{selectedData.synonym}</Text>
+                <Text size="sm">{selectedData.synonym}</Text>
               </Table.Td>
             </Table.Tr>
             <Table.Tr>
               <Table.Th className="bg-[#f1f1ff] w-36  ">Acronym</Table.Th>
               <Table.Td className=" ">
-                <Text>{selectedData.acronym}</Text>
+                <Text size="sm">{selectedData.acronym}</Text>
               </Table.Td>
             </Table.Tr>
           </Table.Tbody>
