@@ -1,11 +1,7 @@
 import React from 'react';
 
 const TaxonomyDetail = () => {
-  return (
-    <div className="flex-grow">
-      <div className="w-full"></div>
-    </div>
-  );
+  return <></>;
 };
 
 export default TaxonomyDetail;
