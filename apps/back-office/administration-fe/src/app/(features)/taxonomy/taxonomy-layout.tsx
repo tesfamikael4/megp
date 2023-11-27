@@ -65,7 +65,7 @@ const TaxonomyLayout = () => {
           </ScrollArea>
 
           <Modal size={'xl'} opened={opened} onClose={close} title="Taxonomy">
-            <FormDetail mode="new" refetch={refetch} />
+            <FormDetail mode="new" refetch={refetch} close={close} />
           </Modal>
         </Section>
 

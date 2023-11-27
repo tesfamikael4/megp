@@ -16,6 +16,7 @@ import { useCreateTaxonomiesMutation } from '@/store/api/taxonomies/taxonomies.a
 interface FormDetailProps {
   mode: 'new' | 'detail';
   refetch: any;
+  close: () => void;
 }
 
 const defaultValues = {
@@ -24,7 +25,7 @@ const defaultValues = {
   upload: '',
 };
 
-export function FormDetail({ mode, refetch }: FormDetailProps) {
+export function FormDetail({ mode, refetch, close }: FormDetailProps) {
   const taxonomySchema: ZodType<Partial<Taxonomy>> = z.object({
     name: z.string().min(1, { message: 'This field is required' }),
     version: z.string().min(1, { message: 'This field is required' }),
@@ -61,12 +62,14 @@ export function FormDetail({ mode, refetch }: FormDetailProps) {
         version: data.version,
         excelData: formattedData,
       });
-      refetch();
-      if (isSuccess)
+      if (isSuccess) {
+        refetch();
         notifications.show({
           message: 'Taxonomy created successfully',
           title: 'Success',
         });
+        return close();
+      }
     } catch (err) {
       notifications.show({
         message: 'error in creating taxonomy',
