@@ -143,45 +143,49 @@ export const BudgetSelector = () => {
         accessorKey: 'COA',
       },
       {
+        id: 'action',
         header: 'Allocated Budget',
         accessorKey: 'allocated budget',
         cell: ({ row: { original } }) => (
-          <>
+          <p className="text-right">
             {original['allocated budget'].toLocaleString('en-US', {
               style: 'currency',
               currency: original.currency,
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
             })}
-          </>
+          </p>
         ),
       },
+
       {
-        header: 'Balance',
-        accessorKey: 'balance',
-        cell: ({ row: { original } }) => (
-          <>
-            {original.balance.toLocaleString('en-US', {
-              style: 'currency',
-              currency: original.currency,
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            })}
-          </>
-        ),
-      },
-      {
+        id: 'action',
         header: 'Planned Value',
         accessorKey: 'planned value',
         cell: ({ row: { original } }) => (
-          <>
+          <p className="text-right">
             {original['planned value'].toLocaleString('en-US', {
               style: 'currency',
               currency: original.currency,
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
             })}
-          </>
+          </p>
+        ),
+      },
+      {
+        id: 'action',
+        header: 'Balance',
+        accessorKey: 'balance',
+        cell: ({ row: { original } }) => (
+          <p className="text-right">
+            {original.balance.toLocaleString('en-US', {
+              style: 'currency',
+              currency: original.currency,
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
+          </p>
         ),
       },
       {
