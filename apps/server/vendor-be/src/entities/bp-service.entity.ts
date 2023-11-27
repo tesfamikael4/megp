@@ -2,6 +2,7 @@ import { BusinessProcessEntity } from 'src/entities/business-process.entity';
 import { ServicePrice } from 'src/entities/service-price.entity';
 import { Audit } from 'src/shared/entities/audit.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { WorkflowInstanceEntity } from './workflow-instance.entity';
 @Entity({ name: 'bp_services' })
 export class BpServiceEntity extends Audit {
   @PrimaryGeneratedColumn('uuid')
@@ -14,7 +15,11 @@ export class BpServiceEntity extends Audit {
   description: string;
   @Column({ default: true })
   isActive: boolean;
-
+  @OneToMany(() => WorkflowInstanceEntity, (wf) => wf.service, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  instances: WorkflowInstanceEntity[];
   @OneToMany(
     () => BusinessProcessEntity,
     (businessProcess) => businessProcess.service,

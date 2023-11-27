@@ -20,12 +20,12 @@ export class BusinessAreaEntity {
   instanceId: string;
   @Column()
   category: string;
-  @Column({ default: new Date() })
+  @Column({ nullable: true })
   approvedAt: Date;
   @Column({ nullable: true })
   applicationNumber: string;
 
-  @Column({ default: () => `CURRENT_TIMESTAMP + INTERVAL '1 year'` })
+  @Column({ nullable: true })
   expireDate: Date;
   @Column({ default: 'Pending' })
   status: string;
@@ -37,9 +37,11 @@ export class BusinessAreaEntity {
 
   @BeforeInsert()
   setDefaultExpireYear() {
-    if (!this.expireDate) {
-      this.expireDate = new Date();
-      this.expireDate.setFullYear(this.expireDate.getFullYear() + 1);
+    if (this.status == 'Approved') {
+      if (!this.expireDate) {
+        this.expireDate = new Date();
+        this.expireDate.setFullYear(this.expireDate.getFullYear() + 1);
+      }
     }
   }
 }

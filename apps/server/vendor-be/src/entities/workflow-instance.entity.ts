@@ -12,6 +12,7 @@ import { ServicePrice } from 'src/entities/service-price.entity';
 import { TaskHandlerEntity } from 'src/entities/task-handler.entity';
 import { TaskTrackerEntity } from 'src/entities/task-tracker.entity';
 import { IsrVendorsEntity } from './isr-vendors.entity';
+import { BpServiceEntity } from './bp-service.entity';
 @Entity({ name: 'workflow_instances' })
 export class WorkflowInstanceEntity {
   @PrimaryGeneratedColumn('uuid')
@@ -37,6 +38,9 @@ export class WorkflowInstanceEntity {
     default: () => 'CURRENT_TIMESTAMP',
   })
   submittedAt: Date;
+  @ManyToOne(() => BpServiceEntity, (ser) => ser.instances, {})
+  @JoinColumn({ name: 'serviceId' })
+  service: BpServiceEntity;
 
   @ManyToOne(() => BusinessProcessEntity, (bp) => bp.workflowInstances, {
     orphanedRowAction: 'delete',

@@ -142,6 +142,9 @@ export class WorkflowInstanceResponse extends UpdateWorkflowInstanceDto {
         TaskTrackerResponse.toResponse(handler),
       );
     }
+    if (entity?.service) {
+      response.service = BpServiceResponse.toResponse(entity?.service);
+    }
 
     return response;
   }
