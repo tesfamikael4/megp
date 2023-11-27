@@ -12,8 +12,9 @@ export function PermissionsGuard(permissions: string): Type<CanActivate> {
       const user: any = request.user;
       const userPermissions = user?.permissions;
 
-      return requiredPermissions.some((requiredPermission) =>
-        userPermissions?.find((x: any) => x.key == requiredPermission.trim()),
+      return requiredPermissions.some(
+        (requiredPermission) =>
+          userPermissions?.find((x: any) => x.key == requiredPermission.trim()),
       );
     }
   }

@@ -515,8 +515,9 @@ export class WorkflowService {
       query,
     );
     dataQuery
-      .innerJoin('workflow_instances.taskHandler', 'handler')
-      .innerJoin('handler.task', 'task')
+      .innerJoinAndSelect('workflow_instances.taskHandler', 'handler')
+      .innerJoinAndSelect('handler.task', 'task')
+      .innerJoinAndSelect('workflow_instances.service', 'service')
       .andWhere('workflow_instances.userId=:userId', { userId: user.id })
       .andWhere('task.handlerType=:handlerType', { handlerType: 'Requestor' })
       .orderBy('workflow_instances.submittedAt', 'DESC');

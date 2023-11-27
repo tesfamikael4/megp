@@ -1,5 +1,5 @@
 export enum VendorStatusEnum {
-  SAVEASDRAFT = 'Save as Draft',
+  DRAFT = 'Draft',
   SAVE = 'Save',
   SUBMIT = 'Submit',
   SUBMITTED = 'Submitted',

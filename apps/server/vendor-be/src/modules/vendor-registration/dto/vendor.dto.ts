@@ -176,11 +176,6 @@ export class VendorsResponseDto extends UpdateVendorsDto {
     return response;
   }
 }
-// enum STATUS {
-//   'Save as Draft',
-//   'SUBMITTED',
-//   'APPROVED',
-// }
 export class SetVendorStatus {
   @ApiProperty()
   @IsNotEmpty()
