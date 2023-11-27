@@ -43,8 +43,7 @@ export class ApplicationExcutionController {
     private readonly workflowService: WorkflowService,
     private readonly bpService: BusinessProcessService,
     private readonly invoiceService: InvoiceService,
-  ) {}
-
+  ) { }
   @UseGuards(JwtGuard)
   @Get('email')
   async email(@Req() request: Request, @CurrentUser() user: any) {
@@ -80,20 +79,16 @@ export class ApplicationExcutionController {
   async notify(
     @Body() test: any,
     @CurrentUser() user: any,
-    @Req() request: any,
   ) {
     const wfi = new WorkflowInstanceEntity();
     wfi.id = test.wfi.id;
     wfi.serviceId = test.wfi.serviceId;
     wfi.requestorId = test.wfi.requestorId;
-    const authToken = request.headers['authorization'].split(' ')[1];
     console.log(wfi);
-    user['token'] = authToken;
     await this.workflowService.notify(
       wfi,
       test.metaData.url,
-      test.metaData,
-      user,
+      test.metaData
     );
   }
 
@@ -128,11 +123,11 @@ export class ApplicationExcutionController {
   @ApiOkResponse({ type: WorkflowInstanceResponse })
   async gottoNextStep(
     @Body() nextStatedto: GotoNextStateDto,
-    @Req() request: Request,
+    //  @Req() request: Request,
     @CurrentUser() user: any,
   ) {
-    const authToken = request.headers['authorization'].split(' ')[1];
-    user['token'] = authToken;
+    // const authToken = request.headers['authorization'].split(' ')[1];
+    // user['token'] = authToken;
     const response = await this.workflowService.gotoNextStep(
       nextStatedto,
       user,
@@ -140,14 +135,6 @@ export class ApplicationExcutionController {
     return response;
   }
 
-  @UseGuards(JwtGuard)
-  @Post('generate-invoice/:id')
-  @ApiOkResponse({ type: InvoiceResponseDto })
-  async generateInvoice(@Param('id') id: string, @CurrentUser() user: any) {
-    const vendor: object = { name: 'xxxxxx vvvvvvvvv' };
-
-    return await this.invoiceService.generateInvoice(id, user, vendor);
-  }
   @UseGuards(JwtGuard)
   @Post('pick-task')
   @ApiOkResponse({ type: WorkflowInstanceResponse })
