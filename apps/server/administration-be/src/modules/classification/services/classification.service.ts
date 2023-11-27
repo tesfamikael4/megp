@@ -29,25 +29,7 @@ export class ClassificationService extends ExtraCrudService<Classification> {
     ]);
   }
 
-  async findChildren(query: CollectionQuery, code?: string) {
-    if (code) {
-      query.where.push([
-        {
-          column: 'parentCode',
-          value: code,
-          operator: '=',
-        },
-      ]);
-    } else {
-      query.where.push([
-        {
-          column: 'parentCode',
-          value: code,
-          operator: 'IsNull',
-        },
-      ]);
-    }
-
+  async findChildren(query: CollectionQuery) {
     const dataQuery = QueryConstructor.constructQuery<Classification>(
       this.classificationRepository,
       query,

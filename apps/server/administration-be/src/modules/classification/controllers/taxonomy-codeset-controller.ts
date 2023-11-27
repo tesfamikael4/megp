@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { TaxonomyCodeSet } from 'src/entities/taxonomy-code-set.entity';
 import { EntityCrudController } from 'src/shared/controller';
@@ -22,5 +22,10 @@ export class TaxonomyCodeSetController extends EntityCrudController<TaxonomyCode
   @Post()
   create(@Body() createTaxonomyCodeSetDto: CreateTaxonomyCodeSetDto) {
     return this.taxonomyCodeSetService.create(createTaxonomyCodeSetDto);
+  }
+
+  @Get('/latest')
+  findLatest() {
+    return this.taxonomyCodeSetService.findLatest();
   }
 }

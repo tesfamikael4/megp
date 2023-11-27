@@ -8,10 +8,11 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 async function bootstrap() {
   const app: NestExpressApplication = await NestFactory.create(AppModule, {
     cors: true,
+    rawBody: true,
   });
 
   app.enableCors();
-
+  app.useBodyParser('json', { limit: '500mb' });
   const config: ConfigService = app.get(ConfigService);
   const port: number = config.get<number>('PORT') || 3000;
 
