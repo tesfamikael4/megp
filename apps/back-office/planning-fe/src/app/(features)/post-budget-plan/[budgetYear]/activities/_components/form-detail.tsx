@@ -27,7 +27,7 @@ import {
   useUpdateMutation,
 } from '../_api/activities.api';
 import { useParams, useRouter } from 'next/navigation';
-import { FrameworkSelector } from './framework-selector';
+import { FrameworkSelector } from '../../../../_components/framework-selector';
 
 interface FormDetailProps {
   mode: 'detail' | 'new';
@@ -251,7 +251,7 @@ export const FormDetail = ({ mode }: FormDetailProps) => {
                 'Request for Proposal (RFP) ',
                 'Single Source Procurement ',
                 'Framework',
-                'Signed Framework Contract',
+                'Purchased Orders',
               ]}
               className="w-full"
               withAsterisk
@@ -285,7 +285,7 @@ export const FormDetail = ({ mode }: FormDetailProps) => {
           )}
         />
       </Flex>
-      {method === 'Signed Framework Contract' && <FrameworkSelector />}
+      {method === 'Purchased Orders' && <FrameworkSelector />}
       <Flex gap="md" align="center">
         <Controller
           name="fundingSource"
