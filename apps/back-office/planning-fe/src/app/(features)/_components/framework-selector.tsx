@@ -8,12 +8,12 @@ import {
   Modal,
   Radio,
   TextInput,
-  Table as MantineTable,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { Table, TableConfig } from '@megp/core-fe';
 import { IconChevronRight } from '@tabler/icons-react';
 import { useState } from 'react';
+import { DetailTable } from './detail-table';
 
 export const FrameworkSelector = () => {
   const [opened, { close, open }] = useDisclosure(false);
@@ -65,7 +65,7 @@ export const FrameworkSelector = () => {
     <>
       <Flex gap="md" align="end">
         <TextInput
-          label="Framework Contract"
+          label="Purchased Orders"
           className="w-full"
           readOnly
           value={value}
@@ -73,12 +73,7 @@ export const FrameworkSelector = () => {
         <Button onClick={open}>Select</Button>
       </Flex>
 
-      <Modal
-        opened={opened}
-        onClose={close}
-        title="Framework Contract"
-        size="lg"
-      >
+      <Modal opened={opened} onClose={close} title="Purchased Orders" size="lg">
         {!detail && (
           <>
             <Table
@@ -134,57 +129,30 @@ export const FrameworkSelector = () => {
 
         {detail && (
           <>
-            <MantineTable highlightOnHover withTableBorder withColumnBorders>
-              <MantineTable.Tbody>
-                <MantineTable.Tr>
-                  <MantineTable.Td className="bg-slate-200 font-semibold w-1/5">
-                    Contract No
-                  </MantineTable.Td>
-                  <MantineTable.Td>
-                    {(detail as any)?.contractNo}
-                  </MantineTable.Td>
-                </MantineTable.Tr>
-
-                <MantineTable.Tr>
-                  <MantineTable.Td className="bg-slate-200 font-semibold w-1/5">
-                    Title
-                  </MantineTable.Td>
-                  <MantineTable.Td>{(detail as any)?.title}</MantineTable.Td>
-                </MantineTable.Tr>
-
-                <MantineTable.Tr>
-                  <MantineTable.Td className="bg-slate-200 font-semibold w-1/5">
-                    Supplier
-                  </MantineTable.Td>
-                  <MantineTable.Td>{(detail as any)?.supplier}</MantineTable.Td>
-                </MantineTable.Tr>
-
-                <MantineTable.Tr>
-                  <MantineTable.Td className="bg-slate-200 font-semibold w-1/5">
-                    Status
-                  </MantineTable.Td>
-                  <MantineTable.Td>{(detail as any)?.status}</MantineTable.Td>
-                </MantineTable.Tr>
-
-                <MantineTable.Tr>
-                  <MantineTable.Td className="bg-slate-200 font-semibold w-1/5">
-                    Signed Date
-                  </MantineTable.Td>
-                  <MantineTable.Td>
-                    {(detail as any)?.signedDate}
-                  </MantineTable.Td>
-                </MantineTable.Tr>
-
-                <MantineTable.Tr>
-                  <MantineTable.Td className="bg-slate-200 font-semibold w-1/5">
-                    Closing Date
-                  </MantineTable.Td>
-                  <MantineTable.Td>
-                    {(detail as any)?.closingDate}
-                  </MantineTable.Td>
-                </MantineTable.Tr>
-              </MantineTable.Tbody>
-            </MantineTable>
+            <DetailTable
+              data={[
+                {
+                  key: 'Contract No',
+                  value: (detail as any)?.contractNo,
+                },
+                {
+                  key: 'Title',
+                  value: (detail as any)?.title,
+                },
+                {
+                  key: 'Supplier',
+                  value: (detail as any)?.supplier,
+                },
+                {
+                  key: 'Signed Date',
+                  value: (detail as any)?.signedDate,
+                },
+                {
+                  key: 'Closing Date',
+                  value: (detail as any)?.closingDate,
+                },
+              ]}
+            />
 
             <Group justify="end" gap="md" className="mt-2">
               <Button onClick={() => setDetail(undefined)}>Back</Button>
