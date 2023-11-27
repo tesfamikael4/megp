@@ -3,8 +3,9 @@ import {
   Column,
   PrimaryGeneratedColumn,
   OneToMany,
-  OneToOne,
   JoinColumn,
+  ManyToOne,
+  BeforeInsert,
 } from 'typeorm';
 
 import { Audit } from 'src/shared/entities/audit.entity';
@@ -56,7 +57,12 @@ export class ProcurementRequisition extends Audit {
   )
   procurementRequisitionAttachments: ProcurementRequisitionAttachment[];
 
-  @OneToOne(() => PostBudgetPlan)
+  @ManyToOne(() => PostBudgetPlan, (postBudgetPlan) => postBudgetPlan)
   @JoinColumn({ name: 'postBudgetPlanId' })
   public postBudgetPlan: PostBudgetPlan;
+  @BeforeInsert()
+  generateRandomNumber(): void {
+    const randomNum = Math.floor(100000 + Math.random() * 900000);
+    this.referenceNumber = `REF-${randomNum}`;
+  }
 }

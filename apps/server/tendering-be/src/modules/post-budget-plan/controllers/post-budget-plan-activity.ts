@@ -2,17 +2,17 @@ import { Controller } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { PostBudgetPlanActivity } from 'src/entities';
 import { ExtraCrudController } from 'src/shared/controller';
-import { PostBudgetPlanActivityService } from '../services/post-budget-plan-activity.service copy';
-import {
-  CreatePostBudgetPlanDto,
-  UpdatePostBudgetPlanDto,
-} from '../dto/post-budget-plan.dto';
+import { PostBudgetPlanActivityService } from '../services/post-budget-plan-activity.service';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
+import {
+  CreatePostBudgetPlanActivityDto,
+  UpdatePostBudgetPlanActivityDto,
+} from '../dto/post-budget-plan-activity.dto';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'postBudgetPlanId',
-  createDto: CreatePostBudgetPlanDto,
-  updateDto: UpdatePostBudgetPlanDto,
+  createDto: CreatePostBudgetPlanActivityDto,
+  updateDto: UpdatePostBudgetPlanActivityDto,
 };
 
 @Controller('post-budget-plan-activities')
