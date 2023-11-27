@@ -10,7 +10,7 @@ export class TaxonomyCodeSet extends Audit {
   @Column()
   name: string;
 
-  @Column()
+  @Column({ unique: true })
   version: string;
 
   @OneToMany(

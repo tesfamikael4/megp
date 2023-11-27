@@ -15,7 +15,10 @@ import { Classification } from 'src/entities/classification.entity';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { CreateClassificationDto } from '../dtos/create-classfication.dto';
 import { ExtraCrudController } from 'src/shared/controller';
-import { CollectionQuery } from 'src/shared/collection-query';
+import {
+  CollectionQuery,
+  decodeCollectionQuery,
+} from 'src/shared/collection-query';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'taxonomyCodeSetId',
@@ -32,12 +35,22 @@ export class ClassificationController extends ExtraCrudController<Classification
   }
   @Get('children')
   @ApiQuery({
-    name: 'code',
+    name: 'q',
     type: String,
     required: false,
   })
-  getChildren(@Query() query: CollectionQuery, @Query('code') code?: string) {
-    console.log('');
-    return this.classificationService.findChildren(query, code);
+  getChildren(@Query('q') q?: string) {
+    let query = new CollectionQuery();
+    if (q) query = decodeCollectionQuery(q);
+    else
+      query.where.push([
+        {
+          column: 'parentCode',
+          value: null,
+          operator: 'IsNull',
+        },
+      ]);
+
+    return this.classificationService.findChildren(query);
   }
 }

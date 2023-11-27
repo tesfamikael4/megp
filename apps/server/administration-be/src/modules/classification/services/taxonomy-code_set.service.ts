@@ -15,6 +15,12 @@ export class TaxonomyCodeSetService extends EntityCrudService<TaxonomyCodeSet> {
   ) {
     super(taxonomyCodeSetRepository);
   }
+  findLatest() {
+    return this.taxonomyCodeSetRepository.findOne({
+      order: { createdAt: 'DESC' },
+      where: {},
+    });
+  }
   async create(
     taxonomyCodeSetDto: CreateTaxonomyCodeSetDto,
   ): Promise<TaxonomyCodeSet> {
@@ -22,6 +28,8 @@ export class TaxonomyCodeSetService extends EntityCrudService<TaxonomyCodeSet> {
       name: taxonomyCodeSetDto.name,
       version: taxonomyCodeSetDto.version,
     });
+    const commodities = taxonomyCodeSetDto.excelData.commodities;
+    const chunkSize = 4000;
     if (taxonomy) {
       await this.classificationService.upsert(
         taxonomyCodeSetDto.excelData.segments,
@@ -35,10 +43,19 @@ export class TaxonomyCodeSetService extends EntityCrudService<TaxonomyCodeSet> {
         taxonomyCodeSetDto.excelData.classes,
         taxonomy.id,
       );
-      await this.classificationService.upsert(
-        taxonomyCodeSetDto.excelData.commodities,
-        taxonomy.id,
-      );
+
+      /**
+       *error: bind message has 57251 parameter formats but 0 parameters QueryFailedError: bin
+       * chunked the data to prevent the above error
+       */
+      for (let i = 0; i < commodities.length; i += chunkSize) {
+        const chunk = commodities.slice(i, i + chunkSize);
+        try {
+          await this.classificationService.upsert(chunk, taxonomy.id);
+        } catch (error) {
+          console.error(`Error processing chunk ${i / chunkSize + 1}:`, error);
+        }
+      }
     }
     return taxonomy;
   }
