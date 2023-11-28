@@ -11,7 +11,6 @@ function StyledStepper() {
   const path = usePathname();
   const routes = ['basic', 'detail', 'ppda', 'payment', 'doc', 'review'];
 
-  console.log(routes.slice(0, routes.indexOf(accessLevel)).includes('detail'));
   const canAccessRoute = (route) => {
     return routes.slice(0, routes.indexOf(accessLevel)).includes(route);
   };

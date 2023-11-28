@@ -119,7 +119,7 @@ export const BankAccountDetails: React.FC<Props> = ({
                 />
                 <Select
                   label="Currency"
-                  data={['Local', 'Foreign']}
+                  data={['USD', 'ETB', 'EUR', 'GBP', 'MKW']}
                   placeholder="select"
                   searchable
                   {...getInputProps('currency', 'select')}
