@@ -1,18 +1,21 @@
 'use client';
-import { EntityConfig, EntityLayout } from '@megp/entity';
+import { CollectionQuery, EntityConfig, EntityLayout } from '@megp/entity';
 import { usePathname, useRouter } from 'next/navigation';
-import { useEffect, useMemo } from 'react';
-import { useListByIdQuery } from './_api/role.api';
+import { useEffect, useMemo, useState } from 'react';
+import { useLazyListByIdQuery } from './_api/role.api';
 import { Role } from '@/models/role';
+import { useAuth } from '@megp/auth';
 
 export function Entity({ children }: { children: React.ReactNode }) {
+  const [onRequest, setOnRequest] = useState<any>();
+
   const route = useRouter();
+  const { user } = useAuth();
 
   const pathname = usePathname();
 
-  const { data: list, isLoading } = useListByIdQuery();
+  const [trigger, { data, isFetching }] = useLazyListByIdQuery();
 
-  useEffect;
   const config: EntityConfig<Role> = useMemo(() => {
     return {
       basePath: '/roles',
@@ -62,13 +65,23 @@ export function Entity({ children }: { children: React.ReactNode }) {
       ? 'new'
       : 'detail';
 
+  useEffect(() => {
+    const onRequestChange = (request: CollectionQuery) => {
+      trigger({ id: user?.organization?.id, collectionQuery: request });
+    };
+
+    user?.organization?.id !== undefined && setOnRequest(onRequestChange);
+  }, [trigger, user?.organization?.id]);
+
   return (
     <EntityLayout
       mode={mode}
       config={config}
-      data={list ? list.items : []}
+      data={data?.items ?? []}
+      total={data?.total ?? 0}
       detail={children}
-      isLoading={isLoading}
+      isLoading={isFetching}
+      onRequestChange={onRequest}
     />
   );
 }

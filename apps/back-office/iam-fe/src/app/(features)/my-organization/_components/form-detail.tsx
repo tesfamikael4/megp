@@ -9,13 +9,15 @@ import { useReadQuery } from '../../organizations/_api/organization.api';
 import { useListQuery as useListTypeQuery } from '../../organization-type/_api/organization-type.api';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { useAuth } from '@megp/auth';
 export function FormDetail() {
   const { reset, control, register } = useForm();
+  const { user } = useAuth();
   const {
     data: selected,
     isSuccess: selectedSuccess,
     isLoading,
-  } = useReadQuery('099454a9-bf8f-45f5-9a4f-6e9034230250');
+  } = useReadQuery(user?.organization?.id);
 
   const { data: orgType } = useListTypeQuery({});
 

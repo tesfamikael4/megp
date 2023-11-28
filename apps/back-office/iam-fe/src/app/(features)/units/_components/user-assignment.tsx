@@ -1,26 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import { Modal } from '@mantine/core';
-import { Relation, RelationConfig } from '@megp/entity';
+import { CollectionQuery, Relation, RelationConfig } from '@megp/entity';
 import { User } from '@/models/user/user';
 import {
   useReverseRelationMutation,
   useLazyFirstRelationQuery,
 } from '../../../users/_api/user-unit.api';
 import { useParams } from 'next/navigation';
-import { useListByIdQuery } from '../../../users/_api/user.api';
+
+import { useLazyListByIdQuery } from '../../../users/_api/user.api';
 import { logger, notify } from '@megp/core-fe';
+import { useAuth } from '@megp/auth';
 
 const AddUserModal = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentAssigned, setCurrentAssigned] = useState<any[]>([]);
 
   const { id } = useParams();
+  const { user } = useAuth();
 
   const [assign, { isLoading: isSaving }] = useReverseRelationMutation();
   const [trigger, { data: users, isSuccess }] = useLazyFirstRelationQuery();
 
-  const { data: list } = useListByIdQuery();
-  logger.log(list);
+  const [triggerData, { data }] = useLazyListByIdQuery();
 
   const relationConfig: RelationConfig<User> = {
     title: 'User Assignment',
@@ -88,7 +90,7 @@ const AddUserModal = () => {
   };
 
   useEffect(() => {
-    trigger(id?.toString());
+    trigger({ id: id?.toString(), collectionQuery: undefined });
   }, [id, trigger]);
 
   useEffect(() => {
@@ -100,7 +102,10 @@ const AddUserModal = () => {
       );
     }
   }, [users, isSuccess]);
-  logger.log(currentAssigned);
+
+  const onRequestChange = (request: CollectionQuery) => {
+    triggerData({ id: user?.organization?.id, collectionQuery: request });
+  };
 
   return (
     <>
@@ -117,10 +122,11 @@ const AddUserModal = () => {
       >
         <Relation
           config={addConfig}
-          data={list ? list.items : []}
+          data={data ? data.items : []}
           currentSelected={currentAssigned}
           mode="modal"
           handleCloseModal={handleCloseModal}
+          onRequestChange={onRequestChange}
         />
       </Modal>
     </>

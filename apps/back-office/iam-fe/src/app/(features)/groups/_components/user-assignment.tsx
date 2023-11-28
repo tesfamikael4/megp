@@ -1,27 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import { Modal } from '@mantine/core';
-import { Relation, RelationConfig } from '@megp/entity';
+import { CollectionQuery, Relation, RelationConfig } from '@megp/entity';
 import { useParams } from 'next/navigation';
-import { useListByIdQuery } from '../../../users/_api/user.api';
+import { useLazyListByIdQuery } from '../../../users/_api/user.api';
 import {
   useReverseRelationMutation,
   useLazyFirstRelationQuery,
 } from '../_api/user-group.api';
 import { User } from '@/models/user/user';
 import { logger, notify } from '@megp/core-fe';
+import { useAuth } from '@megp/auth';
 
 const AddUserModal = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [currentAssigned, setCurrentAssigned] = useState<User[]>([]);
   const { id } = useParams();
+  const { user } = useAuth();
 
   const [assignUser, { isLoading: isSaving }] = useReverseRelationMutation();
-  const [trigger, { data: user, isSuccess: userSucceed }] =
+  const [trigger, { data: users, isSuccess: userSucceed }] =
     useLazyFirstRelationQuery();
 
-  const { data: users } = useListByIdQuery();
-  logger.log(users);
+  const [triggerData, { data, isFetching }] = useLazyListByIdQuery();
 
   const relationConfig: RelationConfig<User> = {
     title: 'Users Assignment',
@@ -89,14 +90,19 @@ const AddUserModal = () => {
   };
 
   useEffect(() => {
-    trigger(id?.toString());
-  }, [id, trigger]);
-
-  useEffect(() => {
     if (userSucceed) {
-      setCurrentAssigned(user ? user.items.map((user: any) => user.user) : []);
+      setCurrentAssigned(
+        users ? users.items.map((user: any) => user.user) : [],
+      );
     }
-  }, [user, userSucceed]);
+  }, [users, userSucceed]);
+
+  const onRequestChange = (request: CollectionQuery) => {
+    triggerData({ id: user?.organization?.id, collectionQuery: request });
+  };
+  const onRequestChangeList = (request: CollectionQuery) => {
+    trigger({ id: id?.toString(), collectionQuery: undefined });
+  };
 
   return (
     <>
@@ -104,6 +110,7 @@ const AddUserModal = () => {
         config={relationConfig}
         data={currentAssigned}
         isSaving={isSaving}
+        onRequestChange={onRequestChangeList}
       />
       <Modal
         title="Users"
@@ -113,10 +120,13 @@ const AddUserModal = () => {
       >
         <Relation
           config={addConfig}
-          data={users ? users.items : []}
+          data={data ? data.items : []}
           currentSelected={currentAssigned}
           mode="modal"
           handleCloseModal={handleCloseModal}
+          onRequestChange={onRequestChange}
+          total={data?.total ?? 0}
+          isLoading={isFetching}
         />
       </Modal>
     </>

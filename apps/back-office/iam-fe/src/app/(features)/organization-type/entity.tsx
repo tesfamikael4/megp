@@ -1,8 +1,8 @@
 'use client';
-import { EntityConfig, EntityLayout } from '@megp/entity';
+import { CollectionQuery, EntityConfig, EntityLayout } from '@megp/entity';
 import { usePathname, useRouter } from 'next/navigation';
 import { useMemo } from 'react';
-import { useListQuery } from './_api/organization-type.api';
+import { useLazyListQuery } from './_api/organization-type.api';
 import { OrganizationType } from '@/models/organization-type';
 
 export function Entity({ children }: { children: React.ReactNode }) {
@@ -10,7 +10,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
 
   const pathname = usePathname();
 
-  const { data: list, isLoading } = useListQuery({});
+  const [trigger, { data, isFetching }] = useLazyListQuery();
 
   const config: EntityConfig<OrganizationType> = useMemo(() => {
     return {
@@ -59,14 +59,19 @@ export function Entity({ children }: { children: React.ReactNode }) {
       : pathname === `/organization-type/new`
       ? 'new'
       : 'detail';
+  const onRequestChange = (request: CollectionQuery) => {
+    trigger(request);
+  };
 
   return (
     <EntityLayout
       mode={mode}
       config={config}
-      data={list ? list.items : []}
+      data={data?.items ?? []}
+      total={data?.total ?? 0}
       detail={children}
-      isLoading={isLoading}
+      isLoading={isFetching}
+      onRequestChange={onRequestChange}
     />
   );
 }

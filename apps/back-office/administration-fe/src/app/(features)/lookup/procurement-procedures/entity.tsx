@@ -4,13 +4,18 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
 import { useListByIdQuery } from './_api/procurement-procedures.api';
 import { ProcurementProcedure } from '@/models/procurement-procedures';
+import { useAuth } from '@megp/auth';
 
 export function Entity({ children }: { children: React.ReactNode }) {
   const route = useRouter();
+  const { user } = useAuth();
 
   const pathname = usePathname();
 
-  const { isLoading } = useListByIdQuery();
+  const { isLoading } = useListByIdQuery({
+    id: user?.organization?.id,
+    collectionQuery: undefined,
+  });
 
   useEffect;
   const config: EntityConfig<ProcurementProcedure> = useMemo(() => {
