@@ -191,7 +191,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             if (!invoice)
               throw new HttpException('invoice_creation_failed', 500);
           } catch (error) {
-            throw Error('invoice_generation_failed');
+            throw error;
           }
         }
         return { msg: 'Success' };
@@ -437,17 +437,20 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       },
     });
     if (vendor) return { id: vendor.id, message: 'vendor exist' };
-    const vendorByTinExists = await this.isrVendorsRepository.findOne({
-      where: {
-        tinNumber: vendorInitiationDto.tinNumber,
-        status: In(this.updateVendorEnums),
-      },
-    });
-    if (vendorByTinExists)
-      return {
-        tin: vendorInitiationDto.tinNumber,
-        message: 'tin_already_already_exist',
-      };
+    if (vendorInitiationDto.tinNumber) {
+      const vendorByTinExists = await this.isrVendorsRepository.findOne({
+        where: {
+          tinNumber: vendorInitiationDto.tinNumber,
+          status: In(this.updateVendorEnums),
+        },
+      });
+      if (vendorByTinExists)
+        return {
+          tin: vendorInitiationDto.tinNumber,
+          message: 'tin_already_already_exist',
+        };
+    }
+    console.log(vendorInitiationDto);
     const vendorsEntity = new IsrVendorsEntity();
     vendorsEntity.userId = userInfo.id;
     vendorsEntity.tinNumber = vendorInitiationDto?.tinNumber;
@@ -465,7 +468,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         return { vendorId: result.id };
       }
     } catch (error) {
-      throw Error('Vendor_info_not_saved');
+      throw error;
     }
   }
   async getIsrVendorInvoiceByUserId(userId: string): Promise<any> {
@@ -488,13 +491,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     const vendorEntity = await this.isrVendorsRepository.findOne({
       where: {
         userId: userId,
-        status: In([
-          VendorStatusEnum.ACTIVE,
-          VendorStatusEnum.ADJUSTMENT,
-          VendorStatusEnum.REJECTED,
-          VendorStatusEnum.APPROVED,
-          VendorStatusEnum.SUBMITTED,
-        ]),
+        status: In([this.updateVendorEnums]),
       },
     });
     if (!vendorEntity) return { level: 'basic', status: 'new' };
@@ -549,7 +546,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       const vendorEntityRes = { ...vendorEntity[0], invoice: invoice };
       return vendorEntityRes;
     } catch (error) {
-      throw Error(error);
+      throw error;
     }
   }
   async getIsrVendorByVendorId(vendorId: string): Promise<any> {
@@ -561,7 +558,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       });
       return vendorEntity;
     } catch (error) {
-      throw Error(error);
+      throw error;
     }
   }
   async getIsrVendorByUserId(userId: string): Promise<any> {
@@ -574,7 +571,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       });
       return vendorEntity;
     } catch (error) {
-      throw Error(error);
+      throw error;
     }
   }
   async getInvoices(areaOfBusinessInterest: any[], userId: string) {
