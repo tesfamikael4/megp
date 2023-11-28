@@ -78,10 +78,11 @@ export function Tree<T>({
   };
 
   const loop = (inputData, accessor, children, curKey): any[] => {
+    const arrayOfKeys = curKey.split('-');
     inputData.forEach((item, key) => {
-      if (key === Number(curKey[accessor])) {
+      if (key === Number(arrayOfKeys[accessor])) {
         if (item.children && item.children.length > 0) {
-          const updatedAccessor = accessor + 2;
+          const updatedAccessor = accessor + 1;
           loop(item.children, updatedAccessor, children, curKey);
         } else {
           const updatedDescendent = [...children];
@@ -94,7 +95,7 @@ export function Tree<T>({
 
   const updateData = (existingData, curKey, node): any[] => {
     const { children } = node;
-    const updatedData = loop(existingData, 2, children, curKey);
+    const updatedData = loop(existingData, 1, children, curKey);
     return updatedData;
   };
 

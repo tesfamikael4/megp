@@ -15,7 +15,7 @@ import { useCreateTaxonomiesMutation } from '@/store/api/taxonomies/taxonomies.a
 
 interface FormDetailProps {
   mode: 'new' | 'detail';
-  refetch: any;
+  refetch: () => void;
   close: () => void;
 }
 
@@ -45,8 +45,7 @@ export function FormDetail({ mode, refetch, close }: FormDetailProps) {
 
   const { id } = useParams();
 
-  const [create, { isLoading: isSaving, isSuccess }] =
-    useCreateTaxonomiesMutation();
+  const [create, { isLoading: isSaving }] = useCreateTaxonomiesMutation();
   const [update, { isLoading: isUpdating, isSuccess: isUpdateSuccess }] =
     useUpdateMutation();
   const { data: selected, isSuccess: selectedSuccess } = useReadQuery(
@@ -62,14 +61,12 @@ export function FormDetail({ mode, refetch, close }: FormDetailProps) {
         version: data.version,
         excelData: formattedData,
       });
-      if (isSuccess) {
-        refetch();
-        notifications.show({
-          message: 'Taxonomy created successfully',
-          title: 'Success',
-        });
-        return close();
-      }
+      refetch();
+      notifications.show({
+        message: 'Taxonomy created successfully',
+        title: 'Success',
+      });
+      close();
     } catch (err) {
       notifications.show({
         message: 'error in creating taxonomy',

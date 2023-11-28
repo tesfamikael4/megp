@@ -13,7 +13,11 @@ export const taxonomiesApi = createApi({
         method: 'POST',
       }),
     }),
+    getLatestTaxonomies: build.query({
+      query: () => `taxonomies/latest`,
+    }),
   }),
 });
 
-export const { useCreateTaxonomiesMutation } = taxonomiesApi;
+export const { useCreateTaxonomiesMutation, useGetLatestTaxonomiesQuery } =
+  taxonomiesApi;

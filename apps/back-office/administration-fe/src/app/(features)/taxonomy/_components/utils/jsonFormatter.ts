@@ -23,6 +23,8 @@ export const transformJSONData = (data) => {
         type: 'SEGMENT',
         parentCode: null,
         key: item['Key'],
+        synonym: item['Synonym'],
+        acronym: item['Acronym'],
         definition: item['Segment Definition'],
       });
       existingSegments[segmentCode] = true;
@@ -35,6 +37,8 @@ export const transformJSONData = (data) => {
         type: 'FAMILY',
         parentCode: segmentCode,
         key: item['Key'],
+        synonym: item['Synonym'],
+        acronym: item['Acronym'],
         definition: item['Family Definition'],
       });
       existingFamilies[familyCode] = true;
@@ -47,6 +51,8 @@ export const transformJSONData = (data) => {
         type: 'CLASS',
         parentCode: familyCode,
         key: item['Key'],
+        synonym: item['Synonym'],
+        acronym: item['Acronym'],
         definition: item['Item Definition'],
       });
       existingClasses[classCode] = true;
@@ -59,6 +65,8 @@ export const transformJSONData = (data) => {
         type: 'COMMODITY',
         parentCode: classCode,
         key: item['Key'],
+        synonym: item['Synonym'],
+        acronym: item['Acronym'],
         definition: item['Commodity Definition'],
       });
       existingCommodities[commodityCode] = true;
