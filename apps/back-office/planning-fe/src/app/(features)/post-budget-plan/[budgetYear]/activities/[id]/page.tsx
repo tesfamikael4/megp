@@ -2,7 +2,7 @@
 import { Tabs } from '@mantine/core';
 import { Section } from '@megp/core-fe';
 import { FormDetail } from '../_components/form-detail';
-import { Items } from '../_components/items';
+import { Items } from '@/app/(features)/_components/items';
 import TimelineTab from '@/app/(features)/_components/timeline-tab';
 import { BudgetTab } from '../_components/budget-tab';
 import { Documents } from '@/app/(features)/_components/documents';

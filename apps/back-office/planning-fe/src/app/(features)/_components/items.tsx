@@ -29,9 +29,9 @@ import {
   useDeleteMutation,
   useLazyListByAppIdQuery,
   useUpdateMutation,
-} from '../../../../_api/items.api';
+} from '../_api/items.api';
 import { modals } from '@mantine/modals';
-import { DetailItem } from '../../../../_components/deatil-item';
+import { DetailItem } from './deatil-item';
 import ItemSelector from '@/app/(features)/_components/item-selector';
 
 export function Items() {
@@ -190,7 +190,7 @@ export function Items() {
       <>
         <Menu shadow="md">
           <Menu.Target>
-            <IconDotsVertical className="ml-auto" />
+            <IconDotsVertical className="ml-auto text-gray-500" size={16} />
           </Menu.Target>
 
           <Menu.Dropdown>
