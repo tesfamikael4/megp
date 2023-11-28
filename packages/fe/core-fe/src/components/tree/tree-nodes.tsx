@@ -17,7 +17,7 @@ export function TreeNode({ node, onSelect, fields }: TreeNodeProps): ReactNode {
       onClick={() => {
         onSelect(node);
       }}
-      w={200}
+      w={300}
     >
       <Text truncate="end">{node[fields.title]}</Text>
     </Box>
