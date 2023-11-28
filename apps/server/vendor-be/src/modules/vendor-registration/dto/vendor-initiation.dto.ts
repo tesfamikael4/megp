@@ -11,11 +11,11 @@ export class VendorInitiationDto {
   // @IsNotEmpty()
   status: string;
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   name: string;
   level: string;
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   businessType: string;
   @ApiProperty()
   @IsOptional()
