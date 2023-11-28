@@ -51,7 +51,6 @@ export class VendorRegistrationsController {
   async getPendingIsrVendorByuserId(@CurrentUser() userInfo: any) {
     return await this.regService.getPendingIsrVendorByUserId(userInfo.id);
   }
-
   @UseGuards(JwtGuard)
   @Get('get-isr-vendor-by-id/:vendorId')
   async getVendorByVendorId(@Param('vendorId') vendorId: string) {
