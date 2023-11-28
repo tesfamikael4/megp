@@ -85,7 +85,15 @@ export const DetailCommodity = ({
             <Table.Tr className="border-dashed border-2 ">
               <Table.Th className="bg-[#f1f1ff] w-36  ">Path</Table.Th>
               <Table.Td>
-                <Breadcrumbs separator="→">
+                <Breadcrumbs
+                  separator="→"
+                  style={{
+                    display: 'flex',
+                    items: 'center',
+                    flexWrap: 'wrap',
+                    gap: '5px',
+                  }}
+                >
                   {parents.map((parent, index) => {
                     return (
                       <Text
