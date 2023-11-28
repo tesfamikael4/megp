@@ -26,6 +26,7 @@ export const createEntitySlice = <T extends Entity>(
               const query = encodeCollectionQuery(collectionQuery);
               q = `?q=${query}`;
             }
+
             return {
               url: `/${entityName.toLowerCase()}${q}`,
               method: 'GET',
@@ -78,11 +79,21 @@ export const createEntitySlice = <T extends Entity>(
           },
           invalidatesTags: (result, error, id) => [{ type: entityName, id }],
         }),
-        listById: builder.query<EntityCollection<T>, void>({
-          query: () => ({
-            url: `/${entityName.toLowerCase()}/list/099454a9-bf8f-45f5-9a4f-6e9034230250`,
-            method: 'GET',
-          }),
+        listById: builder.query<
+          EntityCollection<T>,
+          { id: string; collectionQuery: CollectionQuery | undefined }
+        >({
+          query: ({ id, collectionQuery }) => {
+            let q = '';
+            if (collectionQuery) {
+              const query = encodeCollectionQuery(collectionQuery);
+              q = `?q=${query}`;
+            }
+            return {
+              url: `/${entityName.toLowerCase()}/list/${id}${q}`,
+              method: 'GET',
+            };
+          },
           providesTags: (result) =>
             result
               ? [
@@ -124,11 +135,21 @@ export const createEntitySlice = <T extends Entity>(
           },
           invalidatesTags: [{ type: entityName, id: 'LIST' }],
         }),
-        firstRelation: builder.query<EntityCollection<T>, string>({
-          query: (id) => ({
-            url: `/${entityName}/${id}/${firstEntity}`,
-            method: 'GET',
-          }),
+        firstRelation: builder.query<
+          EntityCollection<T>,
+          { id: string; collectionQuery: CollectionQuery | undefined }
+        >({
+          query: ({ id, collectionQuery }) => {
+            let q = '';
+            if (collectionQuery) {
+              const query = encodeCollectionQuery(collectionQuery);
+              q = `?q=${query}`;
+            }
+            return {
+              url: `/${entityName}/${id}/${firstEntity}${q}`,
+              method: 'GET',
+            };
+          },
           providesTags: (result) =>
             result
               ? [
@@ -138,11 +159,21 @@ export const createEntitySlice = <T extends Entity>(
               : [{ type: entityName, id: 'LIST' }],
         }),
 
-        secondRelation: builder.query<EntityCollection<T>, string>({
-          query: (id) => ({
-            url: `/${entityName}/${id}/${secondEntity}`,
-            method: 'GET',
-          }),
+        secondRelation: builder.query<
+          EntityCollection<T>,
+          { id: string; collectionQuery: CollectionQuery | undefined }
+        >({
+          query: ({ id, collectionQuery }) => {
+            let q = '';
+            if (collectionQuery) {
+              const query = encodeCollectionQuery(collectionQuery);
+              q = `?q=${query}`;
+            }
+            return {
+              url: `/${entityName}/${id}/${secondEntity}${q}`,
+              method: 'GET',
+            };
+          },
           providesTags: (result) =>
             result
               ? [
@@ -226,11 +257,21 @@ export const EntitySliceApi = createApi({
         invalidatesTags: (result, error, id) => [{ type: 'entity', id }],
       }),
 
-      listById: builder.query<{ items: any[] }, void>({
-        query: () => ({
-          url: `/entity/list/099454a9-bf8f-45f5-9a4f-6e9034230250`,
-          method: 'GET',
-        }),
+      listById: builder.query<
+        { items: any[]; total: number },
+        { id: string; collectionQuery: CollectionQuery | undefined }
+      >({
+        query: ({ id, collectionQuery }) => {
+          let q = '';
+          if (collectionQuery) {
+            const query = encodeCollectionQuery(collectionQuery);
+            q = `?q${query}`;
+          }
+          return {
+            url: `/entity/list/${id}${q}`,
+            method: 'GET',
+          };
+        },
         providesTags: (result) =>
           result
             ? [
@@ -280,11 +321,21 @@ export const EntitySliceApi = createApi({
         invalidatesTags: [{ type: 'entity', id: 'LIST' }],
       }),
 
-      firstRelation: builder.query<{ items: any[] }, string>({
-        query: (id) => ({
-          url: `/entity/${id}/firstEntity`,
-          method: 'GET',
-        }),
+      firstRelation: builder.query<
+        { items: any[]; total: number },
+        { id: string; collectionQuery: CollectionQuery | undefined }
+      >({
+        query: ({ id, collectionQuery }) => {
+          let q = '';
+          if (collectionQuery) {
+            const query = encodeCollectionQuery(collectionQuery);
+            q = `?q${query}`;
+          }
+          return {
+            url: `/entity/${id}/firstEntity${q}`,
+            method: 'GET',
+          };
+        },
         providesTags: (result) =>
           result
             ? [
@@ -297,11 +348,21 @@ export const EntitySliceApi = createApi({
             : [{ type: 'entity', id: 'LIST' }],
       }),
 
-      secondRelation: builder.query<{ items: any[] }, string>({
-        query: (id) => ({
-          url: `/entity/${id}/secondEntity`,
-          method: 'GET',
-        }),
+      secondRelation: builder.query<
+        { items: any[]; total: number },
+        { id: string; collectionQuery: CollectionQuery | undefined }
+      >({
+        query: ({ id, collectionQuery }) => {
+          let q = '';
+          if (collectionQuery) {
+            const query = encodeCollectionQuery(collectionQuery);
+            q = `?q${query}`;
+          }
+          return {
+            url: `/entity/${id}/secondEntity${q}`,
+            method: 'GET',
+          };
+        },
         providesTags: (result) =>
           result
             ? [

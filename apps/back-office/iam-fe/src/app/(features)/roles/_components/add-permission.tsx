@@ -96,7 +96,10 @@ const AddUserModal = () => {
   };
 
   useEffect(() => {
-    trigger(id?.toString());
+    trigger({
+      id: id?.toString(),
+      collectionQuery: undefined,
+    });
   }, [id, trigger]);
 
   useEffect(() => {

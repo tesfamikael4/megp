@@ -20,6 +20,7 @@ import countryCodes from './country-codes.json';
 import { useEffect, useState } from 'react';
 import { useReadQuery } from '../_api/adress.api';
 import { notify } from '@megp/core-fe';
+import { useAuth } from '@megp/auth';
 
 type ModeType = 'new' | 'detail';
 
@@ -111,6 +112,7 @@ const OrganizationAdressForm = () => {
     });
 
   const [mode, setMode] = useState<ModeType>('new');
+  const { user } = useAuth();
 
   const [selectedDistrict, setSelectedDistrict] = useState<any>();
 
@@ -123,7 +125,7 @@ const OrganizationAdressForm = () => {
     data: selected,
     isSuccess: selectedSuccess,
     isLoading,
-  } = useReadQuery('099454a9-bf8f-45f5-9a4f-6e9034230250');
+  } = useReadQuery(user?.organization?.id);
 
   const {
     register,
@@ -184,7 +186,7 @@ const OrganizationAdressForm = () => {
 
   const onCreate = async (data) => {
     const dataSent = {
-      id: '099454a9-bf8f-45f5-9a4f-6e9034230250',
+      id: user?.organization?.id,
       address: {
         ...data,
       },
@@ -200,7 +202,7 @@ const OrganizationAdressForm = () => {
 
   const onUpdate = async (data) => {
     const dataSent = {
-      id: '099454a9-bf8f-45f5-9a4f-6e9034230250',
+      id: user?.organization?.id,
       address: {
         ...data,
       },

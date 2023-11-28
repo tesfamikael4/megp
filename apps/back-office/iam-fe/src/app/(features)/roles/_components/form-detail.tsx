@@ -14,6 +14,7 @@ import { useParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { notify } from '@megp/core-fe';
+import { useAuth } from '@megp/auth';
 
 interface FormDetailProps {
   mode: 'new' | 'detail';
@@ -40,6 +41,7 @@ export function FormDetail({ mode }: FormDetailProps) {
   });
   const router = useRouter();
   const { id } = useParams();
+  const { user } = useAuth();
 
   const [create, { isLoading: isSaving }] = useCreateMutation();
   const [update, { isLoading: isUpdating }] = useUpdateMutation();
@@ -55,7 +57,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       const result = await create({
         ...data,
         key: '',
-        organizationId: '099454a9-bf8f-45f5-9a4f-6e9034230250',
+        organizationId: `${user?.organization?.id}`,
         isSystemRole: false,
       });
       if ('data' in result) {
@@ -73,7 +75,7 @@ export function FormDetail({ mode }: FormDetailProps) {
         id: id?.toString(),
         key: '',
         isSystemRole: false,
-        organizationId: '099454a9-bf8f-45f5-9a4f-6e9034230250',
+        organizationId: `${user?.organization?.id}`,
       });
       notify('Success', 'Role updated successfully');
     } catch {

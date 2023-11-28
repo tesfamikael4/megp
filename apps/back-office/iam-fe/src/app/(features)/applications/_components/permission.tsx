@@ -34,6 +34,7 @@ const AddPermisionModal = () => {
         },
       },
     ],
+    pagination: true,
 
     onAdd: () => {
       setMode('new');
@@ -92,6 +93,7 @@ const AddPermisionModal = () => {
         openDeleteModal={openDeleteModal}
         openEditModal={openEditModal}
         collapsed={false}
+        total={applicationPermission?.items.length}
       />
       <Modal
         title={mode === 'new' ? 'New permission' : 'Update permission'}

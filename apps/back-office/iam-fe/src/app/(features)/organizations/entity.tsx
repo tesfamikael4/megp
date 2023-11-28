@@ -52,6 +52,12 @@ export function Entity({ children }: { children: React.ReactNode }) {
           cell: (info) => info.getValue(),
         },
         {
+          id: 'code',
+          header: 'Code',
+          accessorKey: 'code',
+          cell: (info) => info.getValue(),
+        },
+        {
           id: 'typeId',
           header: 'Organization type',
           accessorKey: 'typeId',
@@ -75,7 +81,13 @@ export function Entity({ children }: { children: React.ReactNode }) {
       : 'detail';
 
   const onRequestChange = (request: CollectionQuery) => {
-    logger.log(request);
+    request?.where?.push([
+      {
+        column: 'type',
+        value: 'BACK-OFFICE',
+        operator: '=',
+      },
+    ]);
 
     trigger(request);
   };
@@ -84,7 +96,14 @@ export function Entity({ children }: { children: React.ReactNode }) {
     <EntityLayout
       mode={mode}
       config={config}
-      data={data?.items ?? []}
+      data={
+        data?.items?.map((item: Organization) => {
+          return {
+            ...item,
+            isActive: item.isActive ? 'Active' : 'Inactive ',
+          };
+        }) ?? []
+      }
       total={data?.total ?? 0}
       detail={children}
       isLoading={isFetching}

@@ -23,6 +23,7 @@ import { Unit } from '@/models/unit';
 import { ParentModal } from './parentModal';
 import { notify } from '@megp/core-fe';
 import { notifications } from '@mantine/notifications';
+import { useAuth } from '@megp/auth';
 
 interface FormDetailProps {
   mode: 'new' | 'detail';
@@ -43,7 +44,7 @@ const unitSchema: ZodType<Partial<Unit>> = z.object({
   }),
   description: z.string().optional(),
 
-  parentId: z.string().min(1, { message: 'This field is required' }),
+  parentId: z.string().optional(),
 });
 
 export function FormDetail({ mode }: FormDetailProps) {
@@ -58,6 +59,7 @@ export function FormDetail({ mode }: FormDetailProps) {
   });
   const router = useRouter();
   const { id } = useParams();
+  const { user } = useAuth();
 
   const [parents, setParents] = useState<Unit[]>([]);
   const [parentUnitId, setParentUnitId] = useState<string>('');
@@ -66,7 +68,11 @@ export function FormDetail({ mode }: FormDetailProps) {
   const [update, { isLoading: isUpdating }] = useUpdateMutation();
   const [remove, { isLoading: isDeleting }] = useDeleteMutation();
   const [activation, { isLoading: isActivating }] = useUpdateMutation();
-  const { data: list, isSuccess } = useListByIdQuery();
+  const { data: list, isSuccess } = useListByIdQuery({
+    id: user?.organization?.id,
+    collectionQuery: undefined,
+  });
+  // const [trigger, { data, isFetching }] = useLazyListByIdQuery();
 
   const {
     data: selected,
@@ -74,7 +80,10 @@ export function FormDetail({ mode }: FormDetailProps) {
     isLoading,
   } = useReadQuery(id?.toString());
 
-  const { data: unitType } = useUnitTypeListQuery();
+  const { data: unitType } = useUnitTypeListQuery({
+    id: user?.organization?.id,
+    collectionQuery: undefined,
+  });
 
   useEffect(() => {
     if (isSuccess && mode === 'detail') {
@@ -91,7 +100,8 @@ export function FormDetail({ mode }: FormDetailProps) {
     try {
       const result = await create({
         ...data,
-        organizationId: '099454a9-bf8f-45f5-9a4f-6e9034230250',
+        parentId: data?.parentId ? data?.parentId : null,
+        organizationId: user?.organization?.id,
       });
       if ('data' in result) {
         router.push(`/units/${result.data.id}`);
@@ -106,7 +116,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       await update({
         ...data,
         id: id?.toString(),
-        organizationId: '099454a9-bf8f-45f5-9a4f-6e9034230250',
+        organizationId: user?.organization?.id,
       });
       notify('Success', 'Unit updated successfully');
     } catch {

@@ -88,6 +88,7 @@ interface AuthContextValue {
         lastName?: string;
         phone?: string;
         message?: string;
+        user?: Record<string, any>;
       }
     | undefined
   >;
@@ -372,7 +373,7 @@ function AuthProvider({
     const response = await buildFetchAPI(
       {
         formFields: null,
-        queryURL: 'userinfo',
+        queryURL: 'me',
         method: 'GET',
       },
       z.object({
@@ -382,6 +383,7 @@ function AuthProvider({
         lastName: z.string().optional(),
         message: z.string().optional(),
         phone: z.string().optional(),
+        user: z.object({ userRoles: z.any() }).optional(),
       }),
     );
     return response;

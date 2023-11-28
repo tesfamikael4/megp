@@ -13,6 +13,7 @@ import { useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { User } from '@/models/user/user';
 import { notify } from '@megp/core-fe';
+import { useAuth } from '@megp/auth';
 
 interface FormDetailProps {
   mode: 'new' | 'detail';
@@ -46,6 +47,7 @@ export function FormDetail({ mode }: FormDetailProps) {
   });
   const router = useRouter();
   const { id } = useParams();
+  const { user } = useAuth();
 
   const [create, { isLoading: isSaving }] = useCreateMutation();
   const [update, { isLoading: isUpdating }] = useUpdateMutation();
@@ -62,7 +64,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       const result = await create({
         ...data,
         fullName: `${data.firstName} ${data.lastName}`,
-        organizationId: '099454a9-bf8f-45f5-9a4f-6e9034230250',
+        organizationId: user?.organization?.id,
       });
       if ('data' in result) {
         router.push(`/users/${result.data.id}`);

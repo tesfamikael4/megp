@@ -1,23 +1,15 @@
 'use client';
-import { EntityConfig, EntityLayout } from '@megp/entity';
+import { CollectionQuery, EntityConfig, EntityLayout } from '@megp/entity';
 import { usePathname, useRouter } from 'next/navigation';
 import { useMemo } from 'react';
-import { useReadQuery, useListQuery } from './_api/application.api';
+import { useLazyListQuery } from './_api/application.api';
 import { Application } from '@/models/application';
 import { logger } from '@megp/core-fe';
 
 export function Entity({ children }: { children: React.ReactElement }) {
   const route = useRouter();
 
-  const { data: list, isLoading } = useListQuery({});
-
-  const {
-    data: selected,
-    isLoading: selectedLoading,
-    isError: selectedError,
-  } = useReadQuery('id');
-
-  logger.log('selected', selected, selectedLoading, selectedError);
+  const [trigger, { data, isFetching }] = useLazyListQuery();
 
   const config: EntityConfig<Application> = useMemo(() => {
     return {
@@ -67,14 +59,20 @@ export function Entity({ children }: { children: React.ReactElement }) {
       ? 'new'
       : 'detail';
 
+  const onRequestChange = (request: CollectionQuery) => {
+    trigger(request);
+  };
+
   return (
     <>
       <EntityLayout
         mode={mode}
         config={config}
-        data={list?.items ? list.items : []}
+        data={data?.items ?? []}
+        total={data?.total ?? 0}
         detail={children}
-        isLoading={isLoading}
+        isLoading={isFetching}
+        onRequestChange={onRequestChange}
       />
     </>
   );

@@ -14,4 +14,5 @@ export const {
   useCreateMutation,
   useUpdateMutation,
   useDeleteMutation,
+  useLazyListQuery,
 } = myMandateSliceApi;

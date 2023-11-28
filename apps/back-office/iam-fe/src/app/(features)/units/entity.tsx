@@ -1,28 +1,20 @@
 'use client';
-import { EntityConfig, EntityLayout } from '@megp/entity';
+import { CollectionQuery, EntityConfig, EntityLayout } from '@megp/entity';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import { useListByIdQuery } from './_api/unit.api';
+import { useLazyListByIdQuery } from './_api/unit.api';
 import { Unit } from '@/models/unit';
+import { useAuth } from '@megp/auth';
+import { logger } from '@megp/core-fe';
 
 export function Entity({ children }: { children: React.ReactNode }) {
   const route = useRouter();
+  const { user } = useAuth();
 
   const pathname = usePathname();
+  const [onRequest, setOnRequest] = useState<any>();
 
-  const [data, setData] = useState<Unit[]>([]);
-
-  const { data: list, isSuccess, isLoading } = useListByIdQuery();
-
-  useEffect(() => {
-    if (isSuccess) {
-      setData(
-        list.items.map((item: Unit) => {
-          return { ...item, isActive: item.isActive ? 'Active' : 'Inactive ' };
-        }),
-      );
-    }
-  }, [isSuccess, list?.items]);
+  const [trigger, { data, isFetching }] = useLazyListByIdQuery();
 
   const config: EntityConfig<Unit> = useMemo(() => {
     return {
@@ -85,14 +77,30 @@ export function Entity({ children }: { children: React.ReactNode }) {
       ? 'new'
       : 'detail';
 
+  useEffect(() => {
+    const onRequestChange = (request: CollectionQuery) => {
+      trigger({ id: user?.organization?.id, collectionQuery: request });
+    };
+
+    user?.organization?.id !== undefined && setOnRequest(onRequestChange);
+  }, [trigger, user?.organization?.id]);
   return (
     <EntityLayout
       mode={mode}
+      // hasTree
       config={config}
-      data={data}
+      data={
+        data?.items?.map((item: Unit) => {
+          return {
+            ...item,
+            isActive: item.isActive ? 'Active' : 'Inactive ',
+          };
+        }) ?? []
+      }
+      total={data?.total ?? 0}
       detail={children}
-      hasTree={true}
-      isLoading={isLoading}
+      isLoading={isFetching}
+      onRequestChange={onRequest}
     />
   );
 }

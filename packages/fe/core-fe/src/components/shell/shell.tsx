@@ -25,7 +25,7 @@ import {
   IconUserCircle,
 } from '@tabler/icons-react';
 import Image from 'next/image';
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useAuth } from '@megp/auth/src/context/auth.context';
 import { Applications, CurrentApplication } from '../../config/applications';
 import { ShellContext } from '../../context/shell.context';
@@ -40,7 +40,22 @@ interface ShellProps {
 
 export function Shell({ children }: ShellProps): React.ReactNode {
   const shellContext = useContext(ShellContext);
-  const { logOut, user } = useAuth();
+  const { logOut, user, getUserInfo } = useAuth();
+
+  const [userInfo, setUserInfo] = useState<any>();
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const userInfoP = await getUserInfo();
+
+        userInfoP && setUserInfo(userInfoP);
+      } finally {
+        null;
+      }
+    };
+
+    void fetchData();
+  }, []);
 
   const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
@@ -101,12 +116,8 @@ export function Shell({ children }: ShellProps): React.ReactNode {
                 visibleFrom="sm"
               />
 
-              {/* <Breadcrumbs>
-              <Anchor href="/launcher/">Home</Anchor>
-              {items}
-            </Breadcrumbs> */}
               <Title c="primary" fz={16}>
-                Organization Name
+                {user?.organization?.name}
               </Title>
             </Group>
 
@@ -121,6 +132,7 @@ export function Shell({ children }: ShellProps): React.ReactNode {
                         <Text
                           lh={1}
                         >{`${user.firstName} ${user.lastName}`}</Text>
+                        {userInfo?.user?.userRoles[0]?.name}
                       </Flex>
                     ) : null}
                   </Box>
@@ -141,6 +153,17 @@ export function Shell({ children }: ShellProps): React.ReactNode {
                 <Menu.Item leftSection={<IconHelpCircle size={14} />}>
                   Help
                 </Menu.Item>
+
+                {userInfo?.user?.userRoles.map((role) => {
+                  return (
+                    <Menu.Item
+                      key={role.id}
+                      leftSection={<IconUserCircle size={14} />}
+                    >
+                      {role?.name}
+                    </Menu.Item>
+                  );
+                })}
 
                 <Menu.Divider />
 

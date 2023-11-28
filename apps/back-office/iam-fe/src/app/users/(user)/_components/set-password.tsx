@@ -133,7 +133,7 @@ export default function SetPassWord() {
             type="submit"
             loading={isSetting}
           >
-            Register
+            Sign up
           </Button>
           <Text c="dimmed" className={styles.account_que}>
             Already have an account?{' '}

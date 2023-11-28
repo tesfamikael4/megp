@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Modal } from '@mantine/core';
-import { Relation, RelationConfig } from '@megp/entity';
+import { CollectionQuery, Relation, RelationConfig } from '@megp/entity';
 import { Mandate } from '@/models/mandate';
-import { useListQuery } from '../_api/mandate.api';
+import { useLazyListQuery } from '../_api/mandate.api';
 import {
   useRelationMutation,
   useLazySecondRelationQuery,
 } from '../_api/organization-mandate.api';
 import { useParams } from 'next/navigation';
-import { notify } from '@megp/core-fe';
+import { logger, notify } from '@megp/core-fe';
 
 const AddEntityModal = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -18,7 +18,7 @@ const AddEntityModal = () => {
 
   const [assignMandates, { isLoading: isSaving }] = useRelationMutation();
 
-  const { data: mandates } = useListQuery({});
+  const [triggerMandate, { data, isFetching }] = useLazyListQuery();
 
   const [trigger, { data: organizationMandates, isSuccess }] =
     useLazySecondRelationQuery();
@@ -86,7 +86,10 @@ const AddEntityModal = () => {
   };
 
   useEffect(() => {
-    trigger(id?.toString());
+    trigger({
+      id: id?.toString(),
+      collectionQuery: undefined,
+    });
   }, [id, trigger]);
 
   useEffect(() => {
@@ -99,6 +102,11 @@ const AddEntityModal = () => {
     }
   }, [isSuccess, organizationMandates]);
 
+  const onRequestChange = (request: CollectionQuery) => {
+    logger.log(request);
+
+    triggerMandate(request);
+  };
   return (
     <>
       <Relation
@@ -114,10 +122,13 @@ const AddEntityModal = () => {
       >
         <Relation
           config={addConfig}
-          data={mandates ? mandates.items : []}
+          data={data ? data.items : []}
           mode="modal"
           currentSelected={currentAssigned}
           handleCloseModal={handleCloseModal}
+          onRequestChange={onRequestChange}
+          total={data?.total ?? 0}
+          isLoading={isFetching}
         />
       </Modal>
     </>
