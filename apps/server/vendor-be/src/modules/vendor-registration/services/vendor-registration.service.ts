@@ -63,6 +63,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       wfi.user = userInfo;
       const response = [];
       const interests = data.areasOfBusinessInterest;
+      if (interests?.length <= 0)
+        throw new HttpException('areasOfBusinessInterest_notfound', 500);
       for (let i = 0; i < interests.length; i++) {
         try {
           const bp = await this.bpService.findBpService(
@@ -149,12 +151,13 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           throw error;
         }
       }
-      if (response.length === 0) {
-        const initial = JSON.parse(JSON.stringify(result.initial));
-        initial.state = '';
-        const res = await this.isrVendorsRepository.save(result);
-      }
+      if (response.length == 0)
+        throw new HttpException('areasOfBusinessInterest_notfound', 500);
       result.status = VendorStatusEnum.SUBMITTED;
+      const initial = JSON.parse(JSON.stringify(result.initial));
+      initial.status = VendorStatusEnum.SUBMITTED;
+      initial.level = VendorStatusEnum.SUBMITTED;
+      result.initial = initial;
       const res = await this.isrVendorsRepository.save(result);
       if (!res) throw new HttpException(`isr_vendor_submission_failed`, 500);
       return response;
@@ -450,7 +453,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           message: 'tin_already_already_exist',
         };
     }
-    console.log(vendorInitiationDto);
     const vendorsEntity = new IsrVendorsEntity();
     vendorsEntity.userId = userInfo.id;
     vendorsEntity.tinNumber = vendorInitiationDto?.tinNumber;
@@ -491,7 +493,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     const vendorEntity = await this.isrVendorsRepository.findOne({
       where: {
         userId: userId,
-        status: In([this.updateVendorEnums]),
+        status: In(this.updateVendorEnums),
       },
     });
     if (!vendorEntity) return { level: 'basic', status: 'new' };
