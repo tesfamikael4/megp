@@ -4,6 +4,7 @@ import {
   Logger,
   NotFoundException,
   BadRequestException,
+  HttpException,
 } from '@nestjs/common';
 import tus = require('tus-node-server');
 import * as Minio from 'minio';
@@ -125,12 +126,15 @@ export class TusService implements OnModuleInit {
               break;
           }
           try {
-            await this.isrVendorRepository.update(result.id, {
-              paymentReceipt: resultMetadata,
-            });
+            result.supportingDocuments = resultMetadata;
+            const res = await this.isrVendorRepository.save(result);
+            if (!res)
+              throw new HttpException(
+                'updating_supporting_document_failed',
+                500,
+              );
           } catch (error) {
-            console.log(error);
-            throw new BadRequestException(error);
+            throw error;
           }
         } else if (entityName == 'paymentReceipt') {
           // const paymentReceipt = JSON.parse(
@@ -143,16 +147,21 @@ export class TusService implements OnModuleInit {
             serviceId: uploadMetadata?.serviceId,
             attachment: fieldValue,
           });
+
           try {
             await this.isrVendorRepository.update(result.id, {
               paymentReceipt: JSON.parse(JSON.stringify(paymentReceipt)),
             });
+            const invoice = await this.invoiceRepository.findOne({
+              where: { id: uploadMetadata.invoiceId },
+            });
+            invoice.paymentStatus = 'Paid';
+            invoice.attachment = fieldName;
             await this.invoiceRepository.update(uploadMetadata.invoiceId, {
               paymentStatus: 'Paid',
               attachment: fieldValue,
             });
           } catch (error) {
-            console.log(error);
             throw error;
           }
         }
@@ -180,17 +189,16 @@ export class TusService implements OnModuleInit {
     const [bucketName, objectName] = fileName.split('/');
     const metadata = await minioClient.statObject(bucketName, objectName);
 
-    const fileStream = await minioClient.getObject(bucketName, objectName);
+    const fileStream = await minioClient.presignedGetObject(
+      bucketName,
+      objectName,
+    );
     const uploadMetadataHeader = metadata.metaData.upload_metadata;
     const uploadMetadata = this.parseUploadMetadata(uploadMetadataHeader);
-
-    response.setHeader('Content-Type', uploadMetadata.type);
-    response.setHeader(
-      'Content-Disposition',
-      `filename="${uploadMetadata.name}"`,
-    );
-    // Pipe the file stream to the response
-    fileStream.pipe(response);
+    return {
+      url: fileStream,
+      metadata: uploadMetadata,
+    };
   }
   async canUploadFile(userId: string) {
     const isrVendor = await this.isrVendorRepository.findOne({
@@ -220,7 +228,7 @@ export class TusService implements OnModuleInit {
       await minioClient.removeObject(bucketName, objectName);
       response.send(true);
     } catch (error) {
-      throw new BadRequestException(error);
+      throw error;
     }
   }
 }
