@@ -11,6 +11,7 @@ import {
   GetMBRSDataResponse,
   AddFormRequest,
   GetVendorInfoResponse,
+  GetActivitiesProgressResponse,
 } from '@/models/vendorRegistration';
 import {
   vendorDataGetawayApi,
@@ -69,6 +70,15 @@ export const vendorRegistrationQuery = vendorRegistrationApi.injectEndpoints({
         method: 'GET',
       }),
     }),
+    getActivitiesProgress: builder.query<
+      GetActivitiesProgressResponse,
+      { instanceId: string }
+    >({
+      query: (data) => ({
+        url: `application-execution/get-activities-progress/${data.instanceId}`,
+        method: 'GET',
+      }),
+    }),
   }),
 });
 
@@ -111,6 +121,7 @@ export const {
   useGetBankListQuery,
   useGetLineOfBusinessQuery,
   useGetPriceRangeQuery,
+  useGetActivitiesProgressQuery,
 } = vendorRegistrationQuery;
 
 export const {

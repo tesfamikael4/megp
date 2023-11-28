@@ -7,13 +7,19 @@ import { useGetVendorQuery } from '../../_api/query';
 import { getCookie } from 'cookies-next';
 
 import { AreasOfBusinessInterestForm } from '../_components/ppda/formShell';
+import { usePrivilege } from '../_context/privilege-context';
 
 function Page() {
+  const { updateAccess } = usePrivilege();
+
   const router = useRouter();
   const requestInfo = useGetVendorQuery(
     {},
     { refetchOnMountOrArgChange: true },
   );
+  if (requestInfo.data?.initial.level) {
+    updateAccess(requestInfo.data?.initial.level);
+  }
   useEffect(() => {
     if (requestInfo.isError) {
       NotificationService.requestErrorNotification('Error on fetching data');

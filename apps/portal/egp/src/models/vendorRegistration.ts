@@ -4,9 +4,8 @@ export interface FormData {
     name: string;
     businessType: string;
     origin: string;
-    district?: string;
-    country: string;
     tinNumber: string;
+    tinIssuedDate: '';
   };
   address: {
     postalAddress: string;
@@ -128,19 +127,19 @@ export interface GetFormResponse extends FormData {
 }
 
 export interface CreateVendorIdRequest {
-  status?: string;
   name: string;
   businessType: string;
   origin: string;
-  country: string;
-  district?: string;
   tinNumber: string;
   tinIssuedDate: string;
 }
 export interface CreateVendorIdResponse {
+  message?: string;
   vendorId: string;
 }
-
+export interface CreateVendorIdResponse {
+  vendorId: string;
+}
 export interface BankNamesResponse {
   id: string;
   bankName: string;
@@ -204,3 +203,35 @@ export interface GetNCICDataResponse {
   level: string;
   serviceType: string;
 }
+
+type Task = {
+  id: string;
+  bpId: string;
+  name: string;
+  description: string;
+  handlerType: string;
+  taskType: string;
+  taskCheckList: null;
+  label: string;
+  orderBy: number;
+};
+
+type TaskHandler = {
+  id: string;
+  taskId: string;
+  instanceId: string;
+  handlerName: null;
+  handlerUserId: null;
+  pickedAt: null;
+  data: any; // Replace 'any' with a more specific type if possible
+  currentState: string;
+  assignmentStatus: string;
+  previousHandlerId: null;
+};
+
+type TaskItem = {
+  taskHandler: TaskHandler | null;
+  taskTracker: null;
+  task: Task;
+};
+export type GetActivitiesProgressResponse = TaskItem[];

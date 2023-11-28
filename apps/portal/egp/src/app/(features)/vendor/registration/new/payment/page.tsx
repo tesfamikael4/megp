@@ -10,7 +10,11 @@ import {
 } from '@mantine/core';
 import React, { useEffect, useState } from 'react';
 import InvoiceTemplate from '../../../_components/dynamicPrintComponent/invoice-sm';
-import { useAddFormMutation, useGetInvoiceQuery } from '../../_api/query';
+import {
+  useAddFormMutation,
+  useGetInvoiceQuery,
+  useGetVendorQuery,
+} from '../../_api/query';
 import { NotificationService } from '../../../_components/notification';
 import { useRouter } from 'next/navigation';
 import PaymentMethod from '../_components/payment/payment-method';
@@ -22,6 +26,10 @@ function Page() {
   const router = useRouter();
   const [transactionNum, setTransactionNum] = useState<string>('');
   const invoiceInfo = useGetInvoiceQuery(
+    {},
+    { refetchOnMountOrArgChange: true },
+  );
+  const requestInfo = useGetVendorQuery(
     {},
     { refetchOnMountOrArgChange: true },
   );
@@ -67,14 +75,15 @@ function Page() {
   }, [saveValues.isSuccess]);
 
   const onSave = () => {
-    if (invoiceInfo.data && transactionNum) {
+    if (invoiceInfo.data && requestInfo.data && transactionNum) {
       save({
         data: {
-          ...invoiceInfo.data,
+          ...requestInfo.data,
           initial: {
-            ...invoiceInfo.data.initial,
+            ...requestInfo.data.initial,
             level: 'doc',
           },
+          invoice: invoiceInfo.data?.invoice,
         },
       });
     }

@@ -21,7 +21,6 @@ export class NotificationService {
       title: 'Warning',
       message: message,
     });
-    notifications.clean();
   }
   static runtimeErrorNotification(): void {
     notifications.show({

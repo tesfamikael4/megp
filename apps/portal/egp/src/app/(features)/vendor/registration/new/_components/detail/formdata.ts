@@ -9,9 +9,9 @@ export const formData: GetFormResponse = {
   basic: {
     name: '',
     origin: '',
-    country: '',
     tinNumber: '',
     businessType: '',
+    tinIssuedDate: '',
   },
   address: {
     postalAddress: '',

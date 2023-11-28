@@ -97,7 +97,7 @@ const RegistrationForm = ({
 
   useEffect(() => {
     return () => {
-      updateAccess(vendorInfo.level);
+      updateAccess('detail');
     };
   }, [updateAccess, vendorInfo.level]);
 
@@ -155,7 +155,7 @@ const RegistrationForm = ({
         ...getValues(),
         initial: {
           ...vendorInfo,
-          status: 'Save as Draft',
+          status: 'Draft',
           level: 'detail',
         },
       },
