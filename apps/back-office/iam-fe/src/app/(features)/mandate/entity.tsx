@@ -1,8 +1,8 @@
 'use client';
-import { EntityConfig, EntityLayout } from '@megp/entity';
+import { CollectionQuery, EntityConfig, EntityLayout } from '@megp/entity';
 import { usePathname, useRouter } from 'next/navigation';
-import { useEffect, useMemo } from 'react';
-import { useListQuery } from './_api/mandate.api';
+import { useMemo } from 'react';
+import { useLazyListQuery } from './_api/mandate.api';
 import { Mandate } from '@/models/mandate';
 
 export function Entity({ children }: { children: React.ReactNode }) {
@@ -10,9 +10,8 @@ export function Entity({ children }: { children: React.ReactNode }) {
 
   const pathname = usePathname();
 
-  const { data: list, isLoading } = useListQuery({});
+  const [trigger, { data, isFetching }] = useLazyListQuery();
 
-  useEffect;
   const config: EntityConfig<Mandate> = useMemo(() => {
     return {
       basePath: '/mandate',
@@ -61,13 +60,19 @@ export function Entity({ children }: { children: React.ReactNode }) {
       ? 'new'
       : 'detail';
 
+  const onRequestChange = (request: CollectionQuery) => {
+    trigger(request);
+  };
+
   return (
     <EntityLayout
       mode={mode}
       config={config}
-      data={list ? list.items : []}
+      data={data?.items ?? []}
+      total={data?.total ?? 0}
       detail={children}
-      isLoading={isLoading}
+      isLoading={isFetching}
+      onRequestChange={onRequestChange}
     />
   );
 }

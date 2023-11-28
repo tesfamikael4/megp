@@ -13,7 +13,8 @@ import {
   getSortedRowModel,
 } from '@tanstack/react-table';
 import { useEffect, useMemo, useState } from 'react';
-import { defaultRelationConfig, type RelationConfig } from '../../models';
+import { defaultRelationConfig } from '../../models';
+import type { CollectionQuery, RelationConfig } from '../../models';
 import { visibleColumn } from '../../utilities/table';
 import { Grid } from '../table/grid';
 import { remove, selectColumn } from '../table/header-column';
@@ -26,13 +27,14 @@ interface RelationProps<T> {
   isSaving?: boolean;
   isLoading?: boolean;
   handleCloseModal?: () => void;
-
+  onRequestChange?: (request: CollectionQuery) => void;
   showPopUp?: boolean;
   openDeleteModal?: (id) => void;
   openEditModal?: (id) => void;
   handleId?: (id) => void;
   collapsed?: boolean;
   readOnly?: boolean;
+  total?: number;
 }
 
 export function Relation<T>({
@@ -46,8 +48,10 @@ export function Relation<T>({
   handleCloseModal,
   openDeleteModal,
   showPopUp,
+  onRequestChange,
   openEditModal,
   readOnly,
+  total,
 }: RelationProps<T>): React.ReactElement {
   const options: RelationConfig<T> = useMemo(() => {
     return { ...defaultRelationConfig, ...config };
@@ -153,8 +157,10 @@ export function Relation<T>({
         data={data}
         isLoading={isLoading}
         mode={mode}
+        onRequestChange={onRequestChange}
         options={options}
         table={table}
+        total={total}
         width={width}
       />
 

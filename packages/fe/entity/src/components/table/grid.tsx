@@ -3,15 +3,27 @@ import {
   Box,
   Button,
   Center,
+  Flex,
+  Group,
   LoadingOverlay,
   Stack,
   Table,
   Text,
+  TextInput,
+  Pagination,
 } from '@mantine/core';
-import { IconArrowsSort, IconInboxOff, IconPlus } from '@tabler/icons-react';
+import {
+  IconArrowsSort,
+  IconInboxOff,
+  IconPlus,
+  IconSearch,
+} from '@tabler/icons-react';
 import { flexRender } from '@tanstack/react-table';
 import type t from '@tanstack/react-table';
 import { logger } from '@megp/core-fe';
+import { useState, useEffect } from 'react';
+import { useDebouncedState } from '@mantine/hooks';
+import type { CollectionQuery } from '../../models/query';
 import styles from './grid.module.scss';
 import Widget from './widget';
 
@@ -22,22 +34,102 @@ interface GridProps<T> {
   isLoading?: boolean;
   width: number;
   mode: any;
+  total?: number;
+  onRequestChange?: (request: CollectionQuery) => void;
+}
+
+const perPage = 15;
+
+function calculateTotalPages(totalItems: number, itemsPerPage: number): number {
+  if (totalItems <= 0 || itemsPerPage <= 0) {
+    return 0; // No pages if no items or itemsPerPage is non-positive.
+  }
+
+  return Math.ceil(totalItems / itemsPerPage);
 }
 
 export function Grid<T>({
   options,
   table,
   data,
-
+  total = 0,
+  mode,
   width,
   isLoading = false,
+  onRequestChange,
 }: GridProps<T>): React.ReactElement {
+  const [search, setSearch] = useDebouncedState('', 500);
+  const [page, setPage] = useState(1);
+
+  const totalPages = calculateTotalPages(total, perPage);
+
+  useEffect(() => {
+    const from = (page - 1) * perPage;
+    const to = from + perPage - 1;
+
+    onRequestChange?.({
+      skip: from,
+      take: to,
+      where: search
+        ? [
+            [
+              {
+                column: `${options.columns[0]?.accessorKey}`,
+                value: search,
+                operator: 'LIKE',
+              },
+            ],
+          ]
+        : [],
+    });
+  }, [page]);
+
+  useEffect(() => {
+    if (page === 1) {
+      const from = (page - 1) * perPage;
+      const to = from + perPage - 1;
+
+      onRequestChange?.({
+        skip: from,
+        take: to,
+        where: search
+          ? [
+              [
+                {
+                  column: `${options.columns[0]?.accessorKey}`,
+                  value: search,
+                  operator: 'LIKE',
+                },
+              ],
+            ]
+          : [],
+      });
+    } else {
+      setPage(1);
+    }
+  }, [search]);
   return (
     <Box>
       <LoadingOverlay
         overlayProps={{ radius: 'sm', blur: 2 }}
         visible={isLoading}
       />
+
+      {options.searchable ? (
+        <Flex justify="flex-end" mb="md" mt="md">
+          <TextInput
+            className={mode === 'list' ? 'w-1/4' : 'w-full'}
+            leftSection={<IconSearch size="sm" stroke={1.5} />}
+            miw={300}
+            onChange={(event) => {
+              setSearch(event.currentTarget.value);
+            }}
+            placeholder="Search"
+            rightSectionWidth={30}
+            size="xs"
+          />
+        </Flex>
+      ) : null}
 
       {data.length === 0 ? (
         <Center c="dimmed" className="h-full min-h-[300px]">
@@ -58,16 +150,6 @@ export function Grid<T>({
         </Center>
       ) : (
         <>
-          {/* {options.searchable ? (
-            <Group justify="end">
-              <Input
-                className={mode === 'list' ? 'w-1/4 mb-2' : 'w-full mb-2'}
-                leftSection={<IconSearch size={16} />}
-                placeholder="Search"
-                size="xs"
-              />
-            </Group>
-          ) : null} */}
           <Table className={styles.table} highlightOnHover striped>
             <thead>
               {table.getHeaderGroups().map((headerGroup) => (
@@ -125,11 +207,20 @@ export function Grid<T>({
               ))}
             </tbody>
           </Table>
-          {/* {options.pagination ? (
-            <Group className="my-4" justify="right">
-              <Pagination size="sm" total={10} withEdges />
+
+          {data.length > 0 && options.pagination ? (
+            <Group justify="space-between" mb="lg" mt="lg">
+              <Text>Total : {total.toLocaleString()} results</Text>
+
+              <Pagination
+                onChange={setPage}
+                size="sm"
+                total={totalPages}
+                value={page}
+                withEdges
+              />
             </Group>
-          ) : null} */}
+          ) : null}
         </>
       )}
     </Box>

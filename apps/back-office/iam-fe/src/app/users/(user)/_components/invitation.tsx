@@ -1,5 +1,6 @@
 import {
   ActionIcon,
+  Box,
   Button,
   CopyButton,
   Flex,
@@ -71,54 +72,56 @@ const UserInvitation = () => {
   return (
     <>
       <div className="bg-white p-4 mt-1">
-        <LoadingOverlay visible={isLoading} />
-        <div className="flex border border-[#91d5ff] bg-[#e6f7ff] p-4">
-          <span>
-            <IconInfoCircle className="flex" size={28} color="#2986cc" />
-          </span>
-          <div className="ml-4 grow">
-            <h3 className="text-base">User Invitation</h3>
-            {userInvited && (
-              <>
-                <p className="min-w-[600px] break-all p-4 text-sm">
-                  {invitationLink}
+        <Box pos={'relative'}>
+          <LoadingOverlay visible={isLoading} />
+          <div className="flex border border-[#91d5ff] bg-[#e6f7ff] p-4">
+            <span>
+              <IconInfoCircle className="flex" size={28} color="#2986cc" />
+            </span>
+            <div className="ml-4 grow">
+              <h3 className="text-base">User Invitation</h3>
+              {userInvited && (
+                <>
+                  <p className="min-w-[600px] break-all p-4 text-sm">
+                    {invitationLink}
 
-                  <CopyButton value={invitationLink} timeout={2000}>
-                    {({ copied, copy }) => (
-                      <Tooltip
-                        label={copied ? 'Copied' : 'Copy'}
-                        withArrow
-                        position="right"
-                      >
-                        <ActionIcon
-                          color={copied ? 'teal' : 'gray'}
-                          variant="subtle"
-                          onClick={copy}
+                    <CopyButton value={invitationLink} timeout={2000}>
+                      {({ copied, copy }) => (
+                        <Tooltip
+                          label={copied ? 'Copied' : 'Copy'}
+                          withArrow
+                          position="right"
                         >
-                          {copied ? (
-                            <IconCheck style={{ width: rem(16) }} />
-                          ) : (
-                            <IconCopy style={{ width: rem(16) }} />
-                          )}
-                        </ActionIcon>
-                      </Tooltip>
-                    )}
-                  </CopyButton>
-                </p>
-              </>
-            )}
+                          <ActionIcon
+                            color={copied ? 'teal' : 'gray'}
+                            variant="subtle"
+                            onClick={copy}
+                          >
+                            {copied ? (
+                              <IconCheck style={{ width: rem(16) }} />
+                            ) : (
+                              <IconCopy style={{ width: rem(16) }} />
+                            )}
+                          </ActionIcon>
+                        </Tooltip>
+                      )}
+                    </CopyButton>
+                  </p>
+                </>
+              )}
 
-            <Button
-              variant="outline"
-              onClick={OnInviteUser}
-              loading={isInvitingUser}
-              disabled={userInvited !== null}
-              className="mt-2 w-full"
-            >
-              Invite User
-            </Button>
+              <Button
+                variant="outline"
+                onClick={OnInviteUser}
+                loading={isInvitingUser}
+                disabled={userInvited !== null}
+                className="mt-2 w-full"
+              >
+                Invite User
+              </Button>
+            </div>
           </div>
-        </div>
+        </Box>
       </div>
     </>
   );

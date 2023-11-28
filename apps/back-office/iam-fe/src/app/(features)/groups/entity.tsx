@@ -1,23 +1,17 @@
 'use client';
-import { EntityConfig, EntityLayout } from '@megp/entity';
+import { CollectionQuery, EntityConfig, EntityLayout } from '@megp/entity';
 import { usePathname, useRouter } from 'next/navigation';
 import { useMemo } from 'react';
-import { useReadQuery, useListQuery } from './_api/group.api';
+import { useLazyListQuery } from './_api/group.api';
 import { Group } from '@/models/group';
 import { logger } from '@megp/core-fe';
 
 export function Entity({ children }: { children: React.ReactElement }) {
   const route = useRouter();
 
-  const { data: list, isLoading } = useListQuery({});
+  const pathname = usePathname();
 
-  const {
-    data: selected,
-    isLoading: selectedLoading,
-    isError: selectedError,
-  } = useReadQuery('id');
-
-  logger.log('selected', selected, selectedLoading, selectedError);
+  const [trigger, { data, isFetching }] = useLazyListQuery();
 
   const config: EntityConfig<Group> = useMemo(() => {
     return {
@@ -59,8 +53,6 @@ export function Entity({ children }: { children: React.ReactElement }) {
     };
   }, [route]);
 
-  const pathname = usePathname();
-
   const mode =
     pathname === `/groups`
       ? 'list'
@@ -68,14 +60,22 @@ export function Entity({ children }: { children: React.ReactElement }) {
       ? 'new'
       : 'detail';
 
+  const onRequestChange = (request: CollectionQuery) => {
+    logger.log(request);
+
+    trigger(request);
+  };
+
   return (
     <>
       <EntityLayout
         mode={mode}
         config={config}
-        data={list?.items ? list.items : []}
+        data={data?.items ?? []}
+        total={data?.total ?? 0}
         detail={children}
-        isLoading={isLoading}
+        isLoading={isFetching}
+        onRequestChange={onRequestChange}
       />
     </>
   );

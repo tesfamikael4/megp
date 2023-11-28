@@ -24,7 +24,11 @@ export const Menu: MenuItem[] = [
   { label: 'Groups', icon: IconUsersGroup, link: '/groups' },
   { label: 'Units', icon: IconBuildingCommunity, link: '/units' },
   { label: 'Roles', icon: IconLockSquareRounded, link: '/roles' },
-  { label: 'Report & Analytics', icon: IconChartInfographic, link: '/reports' },
+  {
+    label: 'Report & Analytics',
+    icon: IconChartInfographic,
+    link: '/reports',
+  },
 
   {
     label: 'Settings',

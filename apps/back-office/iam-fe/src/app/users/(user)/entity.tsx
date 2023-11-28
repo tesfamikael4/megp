@@ -1,29 +1,19 @@
 'use client';
-import { EntityConfig, EntityLayout } from '@megp/entity';
+import { CollectionQuery, EntityConfig, EntityLayout } from '@megp/entity';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import { useListByIdQuery } from '../_api/user.api';
-
+import { useLazyListByIdQuery } from '../_api/user.api';
 import { User } from '@/models/user/user';
+import { useAuth } from '@megp/auth';
 
 export function Entity({ children }: { children: React.ReactNode }) {
   const route = useRouter();
+  const [onRequest, setOnRequest] = useState<any>();
 
   const pathname = usePathname();
+  const { user } = useAuth();
 
-  const [data, setData] = useState<User[]>([]);
-
-  const { data: list, isSuccess, isLoading } = useListByIdQuery();
-
-  useEffect(() => {
-    if (isSuccess) {
-      setData(
-        list?.items?.map((item: User) => {
-          return { ...item, isActive: item.isActive ? 'Active' : 'Inactive ' };
-        }),
-      );
-    }
-  }, [isSuccess, list?.items]);
+  const [trigger, { data, isFetching }] = useLazyListByIdQuery();
 
   const config: EntityConfig<User> = useMemo(() => {
     return {
@@ -86,13 +76,30 @@ export function Entity({ children }: { children: React.ReactNode }) {
       ? 'new'
       : 'detail';
 
+  useEffect(() => {
+    const onRequestChange = (request: CollectionQuery) => {
+      trigger({ id: user?.organization?.id, collectionQuery: request });
+    };
+
+    user?.organization?.id !== undefined && setOnRequest(onRequestChange);
+  }, [trigger, user?.organization?.id]);
+
   return (
     <EntityLayout
       mode={mode}
       config={config}
-      data={data}
+      data={
+        data?.items?.map((item: User) => {
+          return {
+            ...item,
+            isActive: item.isActive ? 'Active' : 'Inactive ',
+          };
+        }) ?? []
+      }
+      total={data?.total ?? 0}
       detail={children}
-      isLoading={isLoading}
+      isLoading={isFetching}
+      onRequestChange={onRequest}
     />
   );
 }

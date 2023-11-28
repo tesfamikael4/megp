@@ -1,24 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import { Modal } from '@mantine/core';
-import { Relation, RelationConfig } from '@megp/entity';
+import { CollectionQuery, Relation, RelationConfig } from '@megp/entity';
 
 import {
   useRelationMutation,
   useLazySecondRelationQuery,
 } from '../../_api/user-unit.api';
 import { useParams } from 'next/navigation';
-import { useListByIdQuery } from '../../../(features)/units/_api/unit.api';
+import { useLazyListByIdQuery } from '../../../(features)/units/_api/unit.api';
 import { Unit } from '@/models/unit';
 import { notify } from '@megp/core-fe';
+import { useAuth } from '@megp/auth';
 
 const AddEntityModal = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentAssigned, setCurrentAssigned] = useState<Unit[]>([]);
   const { id } = useParams();
+  const { user } = useAuth();
 
   const [assign, { isLoading: isSaving }] = useRelationMutation();
   const [trigger, { data: units, isSuccess }] = useLazySecondRelationQuery();
-  const { data: list } = useListByIdQuery();
+
+  const [triggerData, { data, isFetching }] = useLazyListByIdQuery();
 
   const relationConfig: RelationConfig<Unit> = {
     title: 'Units Assignment',
@@ -79,7 +82,10 @@ const AddEntityModal = () => {
     setIsModalOpen(false);
   };
   useEffect(() => {
-    trigger(id?.toString());
+    trigger({
+      id: id?.toString(),
+      collectionQuery: undefined,
+    });
   }, [id, trigger]);
 
   useEffect(() => {
@@ -89,6 +95,11 @@ const AddEntityModal = () => {
       );
     }
   }, [units, isSuccess]);
+
+  const onRequestChange = (request: CollectionQuery) => {
+    user?.organization?.id !== undefined &&
+      triggerData({ id: user?.organization?.id, collectionQuery: request });
+  };
 
   return (
     <>
@@ -106,9 +117,12 @@ const AddEntityModal = () => {
         <Relation
           config={addConfig}
           mode="modal"
-          data={list ? list.items : []}
+          data={data ? data.items : []}
           currentSelected={currentAssigned}
           handleCloseModal={handleCloseModal}
+          onRequestChange={onRequestChange}
+          total={data?.total ?? 0}
+          isLoading={isFetching}
         />
       </Modal>
     </>

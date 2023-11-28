@@ -14,6 +14,7 @@ import { useParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { notify } from '@megp/core-fe';
+import { useAuth } from '@megp/auth';
 
 interface FormDetailProps {
   mode: 'new' | 'detail';
@@ -40,6 +41,7 @@ export function FormDetail({ mode }: FormDetailProps) {
   });
   const router = useRouter();
   const { id } = useParams();
+  const { user } = useAuth();
 
   const [create, { isLoading: isSaving }] = useCreateMutation();
   const [update, { isLoading: isUpdating }] = useUpdateMutation();
@@ -54,7 +56,7 @@ export function FormDetail({ mode }: FormDetailProps) {
     try {
       const result = await create({
         ...data,
-        organizationId: '099454a9-bf8f-45f5-9a4f-6e9034230250',
+        organizationId: user?.organization?.id,
       });
       if ('data' in result) {
         router.push(`/unit-type/${result?.data?.id}`);
@@ -69,7 +71,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       await update({
         ...data,
         id: id?.toString(),
-        organizationId: '099454a9-bf8f-45f5-9a4f-6e9034230250',
+        organizationId: user?.organization?.id,
       });
       notify('Success', 'Unit Type updated successfully');
     } catch {

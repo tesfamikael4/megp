@@ -17,4 +17,5 @@ export const {
   useUpdateMutation,
   useDeleteMutation,
   useListByIdQuery,
+  useLazyListByIdQuery,
 } = userSliceApi;

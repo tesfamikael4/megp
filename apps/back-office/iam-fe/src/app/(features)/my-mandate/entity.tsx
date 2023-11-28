@@ -1,17 +1,18 @@
 'use client';
-import { EntityConfig, EntityLayout } from '@megp/entity';
+import { CollectionQuery, EntityConfig, EntityLayout } from '@megp/entity';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
 import { useLazySecondRelationQuery } from '../organizations/_api/organization-mandate.api';
 import { Mandate } from '@/models/mandate';
-import { logger } from '@megp/core-fe';
+import { useAuth } from '@megp/auth';
 
 export function Entity({ children }: { children: React.ReactNode }) {
   const route = useRouter();
+  const { user } = useAuth();
 
   const pathname = usePathname();
 
-  const [trigger, { data: list, isLoading }] = useLazySecondRelationQuery();
+  const [trigger, { data, isFetching }] = useLazySecondRelationQuery();
 
   useEffect;
   const config: EntityConfig<Mandate> = useMemo(() => {
@@ -36,7 +37,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
       hasDetail: false,
       columns: [
         {
-          id: 'mandate.name',
+          id: 'name',
           header: 'Name',
           accessorKey: 'mandate.name',
           cell: (info) => info.getValue(),
@@ -62,17 +63,22 @@ export function Entity({ children }: { children: React.ReactNode }) {
       ? 'new'
       : 'detail';
 
-  useEffect(() => {
-    trigger('099454a9-bf8f-45f5-9a4f-6e9034230250');
-  }, [trigger]);
+  const onRequestChange = (request: CollectionQuery) => {
+    trigger({
+      id: user?.organization.id,
+      collectionQuery: request,
+    });
+  };
 
   return (
     <EntityLayout
       mode={mode}
       config={config}
-      data={list?.items ? list?.items : []}
+      data={data?.items ?? []}
+      total={data?.total ?? 0}
       detail={children}
-      isLoading={isLoading}
+      isLoading={isFetching}
+      onRequestChange={onRequestChange}
     />
   );
 }

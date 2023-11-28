@@ -9,6 +9,7 @@ export interface EntityConfig<T> extends List<T> {
   hasDetail?: boolean;
   onDetail?: (selected: T) => void;
   onAdd?: () => void;
+  primaryContent?: string;
 
   // Default
   className?: string;
