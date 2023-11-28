@@ -6,7 +6,10 @@ import {
   CardListShell,
   SingleCardWrapper,
 } from '../../../../_components/cardList/cardListShell';
-import { nationalityOptions } from '../mockup/nationality';
+import {
+  getNationalityValues,
+  nationalityOptions,
+} from '../mockup/nationality';
 import { usePrivilege } from '../../_context/privilege-context';
 
 interface Props extends Partial<PassFormDataProps> {
@@ -54,7 +57,7 @@ export const BeneficialOwnership: React.FC<Props> = ({
               <Select
                 label="Nationality"
                 searchable
-                data={nationalityOptions}
+                data={getNationalityValues()}
                 {...getInputProps('nationality', 'select')}
               />
             </Group>

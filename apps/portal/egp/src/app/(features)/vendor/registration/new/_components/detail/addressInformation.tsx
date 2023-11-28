@@ -1,6 +1,7 @@
 import { Group, Stack, TextInput } from '@mantine/core';
 import React from 'react';
 import { PassFormDataProps } from './formShell';
+import { Phone } from '@megp/core-fe';
 
 export const AddressInformation: React.FC<PassFormDataProps> = ({
   register,
@@ -16,7 +17,6 @@ export const AddressInformation: React.FC<PassFormDataProps> = ({
         <TextInput
           label="Primary Email"
           {...register(`address.primaryEmail`)}
-          required
         />
       </Group>
       <Group grow>
@@ -24,12 +24,11 @@ export const AddressInformation: React.FC<PassFormDataProps> = ({
           label="Alternate Email"
           {...register(`address.alternateEmail`)}
         />
-
-        <TextInput
-          label="Mobile Phone"
-          {...register(`address.mobilePhone`)}
-          required
-        />
+        {/* <Phone
+          placeholder="Your phone"
+          {...register(`address.mobilePhone`, 'select')}
+        /> */}
+        <TextInput label="Mobile Phone" {...register(`address.mobilePhone`)} />
       </Group>
       <Group grow>
         <TextInput label="Telephone" {...register(`address.telephone`)} />

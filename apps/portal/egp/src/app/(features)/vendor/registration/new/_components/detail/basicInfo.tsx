@@ -1,6 +1,7 @@
 import { Flex, Group, Select, Stack, TextInput } from '@mantine/core';
 import React from 'react';
 import { PassFormDataProps } from './formShell';
+import { getNationalityValues } from '../mockup/nationality';
 
 export const BasicInfo: React.FC<PassFormDataProps> = ({ register }) => {
   return (
@@ -41,15 +42,57 @@ export const BasicInfo: React.FC<PassFormDataProps> = ({ register }) => {
         />
       </Group>
       <Group grow>
-        <TextInput
-          required
+        <Select
           label="Business/Company Origin"
-          {...register(`basic.origin`)}
+          data={getNationalityValues()}
+          {...register(`basic.origin`, 'select')}
+          disabled
         />
-        <TextInput label="District" {...register(`basic.district`)} />
+        {register('basic.origin', 'select').value == 'Malawi' && (
+          <Select
+            label="District"
+            data={[
+              'Balaka',
+              'Blantyre',
+              'Chikwawa',
+              'Chiradzulu',
+              'Chitipa',
+              'Dedza',
+              'Dowa',
+              'Karonga',
+              'Kasungu',
+              'Likoma',
+              'Lilongwe',
+              'Machinga',
+              'Mangochi',
+              'Mchinji',
+              'Mulanje',
+              'Mwanza',
+              'Mzimba',
+              'Neno',
+              'Nkhata Bay',
+              'Nkhotakota',
+              'Nsanje',
+              'Ntcheu',
+              'Ntchisi',
+              'Phalombe',
+              'Rumphi',
+              'Salima',
+              'Thyolo',
+              'Zomba',
+            ]}
+            {...register(`basic.district`, 'select')}
+          />
+        )}
       </Group>
       <Group grow>
-        <TextInput required label="Country" {...register(`basic.country`)} />
+        <Select
+          required
+          searchable
+          label="Country"
+          data={getNationalityValues()}
+          {...register(`basic.country`, 'select')}
+        />
         <TextInput
           required
           label="Tin Number"

@@ -72,14 +72,13 @@ export default function SupportingDocuments() {
       </Box>
     );
   }
-  if (requestInfo.data?.supportingDocuments || requestInfo.isError) {
+  if (requestInfo.data?.supportingDocuments === null || requestInfo.isError) {
     ('hello error');
     return null;
   }
-
   return (
     <Flex className="w-full flex-col gap-2">
-      {requestInfo.data?.supportingDocuments && (
+      {requestInfo.data?.supportingDocuments !== null && (
         <>
           <UppyAttachmentDashboard
             tusServerGetUrl={FILE_SERVER_URL + '/upload/'}

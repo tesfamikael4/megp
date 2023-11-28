@@ -40,7 +40,7 @@ type FormData = {
 
 const formDataSchema = z.discriminatedUnion('origin', [
   z.object({
-    origin: z.literal('MW'),
+    origin: z.literal('Malawi'),
     tinNumber: z
       .string()
       .min(6, { message: 'TIN Number must have at least 10 characters' })
@@ -48,7 +48,7 @@ const formDataSchema = z.discriminatedUnion('origin', [
     tinIssuedDate: z.string(),
   }),
   z.object({
-    origin: z.enum(getNationalityValues('MW')),
+    origin: z.enum(getNationalityValues('Malawi')),
     name: z
       .string()
       .min(2, { message: 'Name must be at least 2 characters long' })
@@ -80,8 +80,8 @@ export const BasicInformation = () => {
   const onSubmit = (data: typeof formState.defaultValues) => {
     console.log(data);
     create({
-      name: data?.name ?? '',
-      businessType: data?.businessType ?? '',
+      name: data?.name ?? '_',
+      businessType: data?.businessType ?? '_',
       origin: data?.origin ?? '',
       tinNumber: data?.tinNumber ?? '',
       tinIssuedDate: data?.tinIssuedDate ?? '',
@@ -117,7 +117,7 @@ export const BasicInformation = () => {
             className="w-full"
             label="Country of origin"
             searchable
-            data={nationalityOptions}
+            data={getNationalityValues()}
             {...register('origin')}
             onChange={async (value) =>
               value && (await setValue('origin', value))
@@ -126,7 +126,7 @@ export const BasicInformation = () => {
             {...lockElements('basic')}
             required
           />
-          {watch().origin !== 'MW' && watch().origin !== '' ? (
+          {watch().origin !== 'Malawi' && watch().origin !== '' ? (
             <>
               <TextInput
                 className="w-full"
