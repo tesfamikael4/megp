@@ -53,16 +53,16 @@ const formDataSchema = z.discriminatedUnion('origin', [
       .string()
       .min(2, { message: 'Name must be at least 2 characters long' })
       .max(100, { message: 'Name cannot exceed 100 characters' }),
-    tinNumber: z.string().optional(),
-    tinIssuedDate: z.string().optional(),
     businessType: z
       .string()
       .min(2, { message: 'Form of business is required' }),
+    tinNumber: z.string().optional(),
+    tinIssuedDate: z.string().optional(),
   }),
 ]);
 
 export const BasicInformation = () => {
-  const { handleSubmit, formState, register, setValue, watch } =
+  const { handleSubmit, formState, register, setValue, watch, setError } =
     useForm<FormData>({
       resolver: zodResolver(formDataSchema),
       defaultValues: {
@@ -78,21 +78,26 @@ export const BasicInformation = () => {
   const [accept, setAccept] = useState<boolean>(false);
   const [create, createValues] = useCreateVendorIdMutation();
   const onSubmit = (data: typeof formState.defaultValues) => {
+    console.log(data);
     create({
-      name: data?.name || '_',
-      businessType: data?.businessType || '_',
-      origin: data?.origin || '',
-      country: data?.origin || '_',
-      tinNumber: data?.tinNumber || '',
-      tinIssuedDate: data?.tinIssuedDate || '_',
-      district: '_',
+      name: data?.name ?? '',
+      businessType: data?.businessType ?? '',
+      origin: data?.origin ?? '',
+      tinNumber: data?.tinNumber ?? '',
+      tinIssuedDate: data?.tinIssuedDate ?? '',
     });
   };
 
   useEffect(() => {
     if (createValues.isSuccess && createValues.data?.vendorId) {
-      NotificationService.successNotification('Form Created Successfully!');
+      NotificationService.successNotification(
+        'Request Submitted Successfully!',
+      );
       router.push(`detail`);
+    }
+    if (createValues.data?.message) {
+      setError('tinNumber', { message: createValues.data?.message });
+      NotificationService.requestErrorNotification(createValues.data?.message);
     }
     if (createValues.isError) {
       NotificationService.requestErrorNotification('Error on Request');
@@ -100,7 +105,6 @@ export const BasicInformation = () => {
 
     return () => {};
   }, [createValues.data, createValues.isError, createValues.isSuccess, router]);
-
   return (
     <Box className={style.reqFormCard}>
       <LoadingOverlay
@@ -120,6 +124,7 @@ export const BasicInformation = () => {
             }
             error={formState.errors.origin && formState.errors.origin.message}
             {...lockElements('basic')}
+            required
           />
           {watch().origin !== 'MW' && watch().origin !== '' ? (
             <>

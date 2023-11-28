@@ -16,6 +16,7 @@ export const AddressInformation: React.FC<PassFormDataProps> = ({
         <TextInput
           label="Primary Email"
           {...register(`address.primaryEmail`)}
+          required
         />
       </Group>
       <Group grow>
@@ -24,7 +25,11 @@ export const AddressInformation: React.FC<PassFormDataProps> = ({
           {...register(`address.alternateEmail`)}
         />
 
-        <TextInput label="Mobile Phone" {...register(`address.mobilePhone`)} />
+        <TextInput
+          label="Mobile Phone"
+          {...register(`address.mobilePhone`)}
+          required
+        />
       </Group>
       <Group grow>
         <TextInput label="Telephone" {...register(`address.telephone`)} />

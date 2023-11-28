@@ -5,13 +5,19 @@ import { useRouter } from 'next/navigation';
 import { NotificationService } from '../../../_components/notification';
 import { useGetVendorQuery } from '../../_api/query';
 import RegistrationForm from '../_components/detail/formShell';
+import { usePrivilege } from '../_context/privilege-context';
 
 export default function Page() {
   const router = useRouter();
+  const { updateAccess } = usePrivilege();
+
   const requestInfo = useGetVendorQuery(
     {},
     { refetchOnMountOrArgChange: true },
   );
+  if (requestInfo.data?.initial.level) {
+    updateAccess(requestInfo.data?.initial.level);
+  }
   useEffect(() => {
     if (requestInfo.error) {
       NotificationService.requestErrorNotification('Error on fetching data');

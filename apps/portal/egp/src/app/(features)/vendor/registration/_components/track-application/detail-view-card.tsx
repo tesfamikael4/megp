@@ -4,6 +4,7 @@ import { ActionIcon, Badge, Box, Button, Card, Progress } from '@mantine/core';
 import { IconArrowLeft } from '@tabler/icons-react';
 import ProgressBar from './progressBar';
 import { Application } from './application-list';
+import { useRouter } from 'next/navigation';
 
 interface Props {
   data: Application;
@@ -17,7 +18,7 @@ const badgeColor: { [key: string]: string } = {
   Pending: 'blue.4',
 };
 const DetailViewCard: React.FC<Props> = ({ data, close }) => {
-  console.log(data);
+  const router = useRouter();
   return (
     <Box className={styles.card}>
       <Box className={styles.cardHeader}>
@@ -29,10 +30,16 @@ const DetailViewCard: React.FC<Props> = ({ data, close }) => {
         </Badge>
       </Box>
       <Box className={styles.cardBody}>
-        <ProgressBar />
+        <ProgressBar instanceId={data.trackingNumber} />
       </Box>
       <Box className={styles.cardFooter}>
-        <Button>Adjust</Button>
+        {data.serviceStatus === 'Adjust' && (
+          <Button
+            onClick={() => router.push('/vendor/registration/new/detail')}
+          >
+            Adjust
+          </Button>
+        )}
       </Box>
     </Box>
   );
