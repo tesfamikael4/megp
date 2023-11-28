@@ -93,17 +93,17 @@ export function Entity({ children }: { children: React.ReactNode }) {
         },
         {
           id: 'totalEstimatedAmount',
-          header: 'Total  Amount',
+          header: () => <div className="text-right">Total Amount</div>,
           accessorKey: 'totalEstimatedAmount',
           cell: ({ row: { original } }) => (
-            <>
+            <p className="text-right">
               {original.totalEstimatedAmount.toLocaleString('en-US', {
                 style: 'currency',
                 currency: original.currency,
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
               })}
-            </>
+            </p>
           ),
           meta: {
             widget: 'expand',
@@ -169,7 +169,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
       <>
         <Menu shadow="md">
           <Menu.Target>
-            <IconDotsVertical className="ml-auto" />
+            <IconDotsVertical className="ml-auto text-gray-500" size={16} />
           </Menu.Target>
 
           <Menu.Dropdown>
@@ -186,17 +186,6 @@ export function Entity({ children }: { children: React.ReactNode }) {
             >
               Edit
             </Menu.Item>
-            {/* <Menu.Divider />
-            <Menu.Item
-              leftSection={<IconFileImport size={15} />}
-            >
-              Import
-            </Menu.Item>
-            <Menu.Item
-              leftSection={<IconFileExport size={15} />}
-            >
-              Export
-            </Menu.Item> */}
             <Menu.Divider />
             <Menu.Item
               color="red"
