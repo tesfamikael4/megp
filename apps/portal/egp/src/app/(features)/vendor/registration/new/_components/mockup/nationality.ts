@@ -1003,6 +1003,6 @@ export const nationalityOptions = [
 
 export function getNationalityValues(skipValue: string = ''): any {
   return nationalityOptions
-    .filter((option) => option.value !== skipValue)
-    .map((option) => option.value);
+    .filter((option) => option.label !== skipValue)
+    .map((option) => option.label);
 }

@@ -16,7 +16,10 @@ import {
   SingleCardWrapper,
 } from '../../../../_components/cardList/cardListShell';
 import ActionMenu from '../../../../_components/actionMenu';
-import { nationalityOptions } from '../mockup/nationality';
+import {
+  nationalityOptions,
+  getNationalityValues,
+} from '../mockup/nationality';
 import { usePrivilege } from '../../_context/privilege-context';
 
 interface Props extends Partial<PassFormDataProps> {
@@ -65,7 +68,7 @@ export const ShareHolders: React.FC<Props> = ({
                 <Select
                   label="Nationality"
                   searchable
-                  data={nationalityOptions}
+                  data={getNationalityValues()}
                   {...getInputProps('nationality', 'select')}
                 />
 
