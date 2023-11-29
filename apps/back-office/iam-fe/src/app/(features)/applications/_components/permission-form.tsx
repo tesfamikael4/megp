@@ -58,9 +58,10 @@ export function PermissionForm({
       )
       .refine(
         (value) => {
+          const permissions = list?.items.filter((item) => item?.id !== unitId);
           const isUnique =
-            isSuccess &&
-            list.items.every((permission) => permission.key !== value);
+            permissions &&
+            permissions.every((permission) => permission?.key !== value);
           return isUnique;
         },
         {
@@ -82,7 +83,7 @@ export function PermissionForm({
 
   const [create, { isLoading: isSaving }] = useCreateMutation();
   const [update, { isLoading: isUpdating }] = useUpdateMutation();
-  const { data: list, isSuccess } = useListByAppIdQuery(id?.toString());
+  const { data: list } = useListByAppIdQuery(id?.toString());
 
   const {
     data: selected,
@@ -113,9 +114,6 @@ export function PermissionForm({
       await update({
         ...data,
         id: unitId,
-        applicationId: id?.toString(),
-        applicationName: selectedApp?.name,
-        applicationKey: selectedApp?.key,
       });
 
       notify('Success', 'Permission updated successfully');

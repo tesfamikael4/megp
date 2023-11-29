@@ -1,13 +1,21 @@
 'use client';
 
-import { Box, Button, Tooltip, LoadingOverlay, Stack } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Tooltip,
+  LoadingOverlay,
+  Stack,
+  ActionIcon,
+} from '@mantine/core';
 import { Section } from '@megp/core-fe';
-import { IconPlus } from '@tabler/icons-react';
+import { IconHierarchy2, IconPlus } from '@tabler/icons-react';
 import type { ColumnDef } from '@tanstack/react-table';
 import {
   getCoreRowModel,
   useReactTable,
   getSortedRowModel,
+  getExpandedRowModel,
 } from '@tanstack/react-table';
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
@@ -15,10 +23,10 @@ import { defaultEntityConfig, type EntityConfig } from '../../models/entity';
 import type { CollectionQuery } from '../../models/query';
 import { visibleColumn } from '../../utilities/table';
 import { Grid } from '../table/grid';
-import { actionColumn, selectColumn } from '../table/header-column';
+import { actionColumn, selectColumn, newExpand } from '../table/header-column';
 
 interface EntityListProps<T> {
-  mode?: 'list' | 'detail' | 'new';
+  mode?: 'list' | 'detail' | 'new' | 'tree';
   config: EntityConfig<T>;
   data: T[];
   total?: number;
@@ -26,49 +34,43 @@ interface EntityListProps<T> {
   hasPagination?: boolean;
   onRequestChange?: (request: CollectionQuery) => void;
   isLoading?: boolean;
+  hasTree?: boolean;
 }
 
-// const perPage = 15;
-
-// function calculateTotalPages(totalItems: number, itemsPerPage: number): number {
-//   if (totalItems <= 0 || itemsPerPage <= 0) {
-//     return 0; // No pages if no items or itemsPerPage is non-positive.
-//   }
-
-//   return Math.ceil(totalItems / itemsPerPage);
-// }
-
-// new list
 export function EntityList<T>({
   mode,
   config,
-  data = [],
+  data: dataRender = [],
   total = 0,
-
+  hasTree,
   onRequestChange,
   isLoading = false,
 }: EntityListProps<T>): React.ReactElement {
-  // const [page, setPage] = useState(1);
-
   // update the options with the default config
   const options: EntityConfig<T> = useMemo(() => {
     return { ...defaultEntityConfig, ...config };
   }, [config]);
 
+  const [expanded, setExpanded] = useState({});
+  const [treeView, setTreeView] = useState(false);
+  const [width, setWidth] = useState(100);
+  const [data, setData] = useState([]);
+  const [sorting, setSorting] = useState([]);
+
   // construct header columns with the select column and action column
   const tableColumns = useMemo<ColumnDef<T>[]>(
     () => [
+      ...(treeView && mode !== 'tree' ? [newExpand] : []),
       ...(options.selectable ? [selectColumn] : []),
-      ...options.columns.map((column) => ({
-        ...column,
-      })),
+      ...(!treeView
+        ? options.columns.map((column) => ({
+            ...column,
+          }))
+        : []),
       ...(options.hasDetail ? [actionColumn(options)] : []),
     ],
-    [options],
+    [treeView, mode, options],
   );
-
-  const [width, setWidth] = useState(100);
-  const [sorting, setSorting] = useState([]);
 
   // change the width of the table columns when the mode changes
   useEffect(() => {
@@ -79,6 +81,41 @@ export function EntityList<T>({
     setWidth(w);
   }, [mode]);
 
+  useEffect(() => {
+    function transformData(originalData: T[]) {
+      const transformedData = [];
+
+      const map = new Map();
+
+      originalData.forEach((item: any) => {
+        map.set(item?.id, { ...item, subRows: [] });
+      });
+
+      map.forEach((item: any) => {
+        const parentId = item?.parentId;
+        const parent = map.get(parentId);
+
+        if (parent) {
+          parent.subRows.push(item);
+        } else {
+          transformedData.push(item as never);
+        }
+      });
+
+      return transformedData;
+    }
+
+    const transformedData = transformData(dataRender);
+
+    treeView ? setData(transformedData) : setData(dataRender);
+  }, [dataRender, treeView]);
+
+  useEffect(() => {
+    if (mode === 'tree') {
+      setTreeView(true);
+    }
+  }, [mode]);
+
   const table = useReactTable({
     data,
     state: {
@@ -87,6 +124,7 @@ export function EntityList<T>({
         options.primaryContent,
         mode,
       ),
+      expanded,
       sorting,
     },
     getCoreRowModel: getCoreRowModel(),
@@ -94,7 +132,10 @@ export function EntityList<T>({
     onSortingChange: setSorting,
     columns: tableColumns,
     enableSortingRemoval: false,
-
+    enableRowSelection: true,
+    getSubRows: (row: any) => row.subRows,
+    onExpandedChange: setExpanded,
+    getExpandedRowModel: getExpandedRowModel(),
     defaultColumn: {
       enableHiding: false,
     },
@@ -103,14 +144,21 @@ export function EntityList<T>({
   return (
     <Section
       action={
-        options.hasAdd ? (
-          <Button
-            leftSection={<IconPlus size={16} stroke={2.2} />}
-            onClick={options.onAdd}
-          >
-            Add
-          </Button>
-        ) : null
+        <>
+          {hasTree ? (
+            <ActionIcon onClick={() => setTreeView(!treeView)}>
+              <IconHierarchy2 />
+            </ActionIcon>
+          ) : null}
+          {options.hasAdd ? (
+            <Button
+              leftSection={<IconPlus size={16} stroke={2.2} />}
+              onClick={options.onAdd}
+            >
+              Add
+            </Button>
+          ) : null}
+        </>
       }
       className={`${options.className} relative`}
       collapsible={false}

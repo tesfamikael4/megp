@@ -56,7 +56,7 @@ const AddUserModal = () => {
     },
   };
   const addConfig: RelationConfig<User> = {
-    title: 'Users ',
+    title: 'User assignment',
     columns: [
       {
         id: 'name',
@@ -113,7 +113,7 @@ const AddUserModal = () => {
         onRequestChange={onRequestChangeList}
       />
       <Modal
-        title="Users"
+        title="User assignment"
         opened={isModalOpen}
         onClose={handleCloseModal}
         size={'lg'}

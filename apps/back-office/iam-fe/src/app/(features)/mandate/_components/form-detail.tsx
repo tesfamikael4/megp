@@ -30,11 +30,13 @@ export function FormDetail() {
       <Table highlightOnHover withTableBorder withColumnBorders>
         <Table.Tbody>
           <Table.Tr>
-            <Table.Td className="bg-slate-200 font-semibold">Name</Table.Td>
+            <Table.Td className="bg-slate-200 font-semibold w-1/3">
+              Name
+            </Table.Td>
             <Table.Td>{selected?.name}</Table.Td>
           </Table.Tr>
           <Table.Tr>
-            <Table.Td className="bg-slate-200 font-semibold">
+            <Table.Td className="bg-slate-200 font-semibold w-1/3">
               Description
             </Table.Td>
             <Table.Td>{selected?.description}</Table.Td>
