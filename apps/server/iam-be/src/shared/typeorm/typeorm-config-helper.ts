@@ -1,4 +1,6 @@
+import * as dotenv from 'dotenv';
 import { DataSource, DataSourceOptions } from 'typeorm';
+dotenv.config({ path: '.env' });
 
 export const TypeOrmConfigHelper = {
   DATABASE_HOST: process.env.DATABASE_HOST,
@@ -8,7 +10,6 @@ export const TypeOrmConfigHelper = {
   DATABASE_PASSWORD: process.env.DATABASE_PASSWORD,
   NODE_ENV: process.env.NODE_ENV,
 };
-
 export const dataSourceOptions = {
   type: 'postgres',
   host: TypeOrmConfigHelper.DATABASE_HOST,
