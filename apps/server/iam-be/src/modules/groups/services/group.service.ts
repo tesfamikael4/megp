@@ -5,9 +5,10 @@ import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { DataResponseFormat } from 'src/shared/api-data';
 import { CollectionQuery, QueryConstructor } from 'src/shared/collection-query';
+import { ExtraCrudService } from 'src/shared/service';
 
 @Injectable()
-export class GroupService extends EntityCrudService<Group> {
+export class GroupService extends ExtraCrudService<Group> {
   constructor(
     @InjectRepository(Group)
     private readonly groupRepository: Repository<Group>,
