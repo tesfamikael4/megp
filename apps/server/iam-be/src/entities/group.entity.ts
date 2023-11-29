@@ -8,9 +8,10 @@ import {
 } from 'typeorm';
 import { UserGroup } from './user-group.entity';
 import { Organization } from '@entities';
+import { Audit } from 'src/shared/entities';
 
 @Entity({ name: 'groups' })
-export class Group {
+export class Group extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
