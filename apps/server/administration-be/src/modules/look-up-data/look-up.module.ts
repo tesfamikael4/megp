@@ -12,11 +12,15 @@ import { Tag } from 'src/entities/tag.entity';
 import { UnitOfMeasurement } from 'src/entities/uom.entity';
 import { UnitOfMeasurementController } from './controller/unit-of-measurent.controller';
 import { UnitOfMeasurementService } from './service/unit-of-measurement.service';
+import { Currency } from 'src/entities/currency.entity';
+import { CurrencyService } from './service/currency.service';
+import { CurrencyController } from './controller/currency.controller';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       ItemCategory,
+      Currency,
       Measurement,
       UnitOfMeasurement,
       Tag,
@@ -24,15 +28,17 @@ import { UnitOfMeasurementService } from './service/unit-of-measurement.service'
   ],
   providers: [
     ItemCategoryService,
+    CurrencyService,
     MeasurementService,
     UnitOfMeasurementService,
     TagService,
   ],
   controllers: [
     ItemCategoriesController,
+    CurrencyController,
     MeasurementController,
     UnitOfMeasurementController,
     TagController,
   ],
 })
-export class lookUpDataModule { }
+export class lookUpDataModule {}
