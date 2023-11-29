@@ -61,7 +61,10 @@ const TaxonomyLayout = () => {
               fieldNames={{ title: 'title', key: 'code' }}
               mode="view"
               url={(code) =>
-                `${process.env.NEXT_PUBLIC_ADMINISTRATION_API}classifications/children?q=w%3DparentCode%3A%3D%3A${code}`
+                `${
+                  process.env.NEXT_PUBLIC_ADMINISTRATION_API ??
+                  '/administration/api/'
+                }classifications/children?q=w%3DparentCode%3A%3D%3A${code}`
               }
               data={data ? data.items : []}
               selectedKeys={[selectedData.key]}
