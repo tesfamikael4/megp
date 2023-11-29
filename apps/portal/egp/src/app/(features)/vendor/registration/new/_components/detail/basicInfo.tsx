@@ -8,13 +8,11 @@ export const BasicInfo: React.FC<PassFormDataProps> = ({ register }) => {
     <Stack>
       <Group grow>
         <TextInput
-          required
           label="Name of Business/Company"
           id="name"
           {...register(`basic.name`)}
         />
         <Select
-          required
           label="Form of Business"
           data={[
             {
@@ -87,17 +85,12 @@ export const BasicInfo: React.FC<PassFormDataProps> = ({ register }) => {
       </Group>
       <Group grow>
         <Select
-          required
           searchable
           label="Country"
           data={getNationalityValues()}
           {...register(`basic.country`, 'select')}
         />
-        <TextInput
-          required
-          label="Tin Number"
-          {...register(`basic.tinNumber`)}
-        />
+        <TextInput label="Tin Number" {...register(`basic.tinNumber`)} />
       </Group>
     </Stack>
   );
