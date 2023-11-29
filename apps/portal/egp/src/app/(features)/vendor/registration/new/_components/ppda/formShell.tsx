@@ -125,11 +125,12 @@ export const AreasOfBusinessInterestForm = ({
       ...lockElements('ppda'),
     };
   };
-
+  // console.log(initialValues);
   const onSubmit = (data: typeof formState.defaultValues) => {
     save({
       data: {
-        ...getValues(),
+        ...initialValues,
+        areasOfBusinessInterest: getValues().areasOfBusinessInterest,
         initial: {
           ...vendorInfo,
           level: 'payment',
