@@ -99,19 +99,26 @@ export interface AddFormRequest {
   data: AddFormRequestData | GetFormResponse;
 }
 
-export interface ApplicationService {
-  serviceStatus: string;
-  serviceRemark: string | null;
+export interface ApplicationInfo {
+  id: string;
+  vendorId: string;
+  serviceId: string;
+  instanceId: string;
   category: string;
-  trackingNumber: string | null;
+  approvedAt: string | null;
+  applicationNumber: string;
+  expireDate: string | null;
+  status: string;
+  remark: string | null;
 }
 export interface GetVendorInfoResponse {
   name: string;
   tinNumber: string;
   level: string;
   vendorStatus: string;
+  Status: string;
   areasOfBusinessInterest: AreasOfBusinessInterestType[];
-  services: ApplicationService[];
+  services: ApplicationInfo[];
 }
 export interface GetFormRequest {
   vendorId: string;
