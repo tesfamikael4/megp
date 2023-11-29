@@ -24,7 +24,7 @@ export default function Page() {
       router.push(`basic`);
     }
     if (requestInfo.data?.initial.status === 'Submitted') {
-      router.push(`/vendor/track-applications`);
+      router.push(`/vendor/registration/track-applications`);
     }
     return () => {};
   }, [requestInfo.data, requestInfo.error]);
