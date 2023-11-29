@@ -353,47 +353,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       throw new HttpException(`business_area_rejection_failed`, 500);
     return businessArea;
   }
-  async updateVendors(vendorStatusDto: SetVendorStatus): Promise<any> {
-    if (vendorStatusDto.status == VendorStatusEnum.ADJUST) {
-      const res = this.adjustVendor(vendorStatusDto);
-      if (res) return vendorStatusDto;
-    } else {
-      const result = await this.isrVendorsRepository.findOne({
-        where: {
-          userId: vendorStatusDto.userId,
-          status: In(this.updateVendorEnums),
-        },
-      });
-
-      if (!result) throw new NotFoundException(`isr_Vendor_not_found`);
-      // if vendor have no previously approved service
-      if (result.status !== VendorStatusEnum.COMPLETED) {
-        const initial = JSON.parse(JSON.stringify(result.initial));
-        initial.status = VendorStatusEnum.REJECTED;
-        result.status = VendorStatusEnum.REJECTED;
-        const resul = await this.isrVendorsRepository.save(result);
-        if (!resul) throw new BadRequestException(`isrVendor_Update_failed`);
-      } else {
-        // if vendor have  previously approved service
-        const currentBusinessArea = await this.businessAreaRepository.findOne({
-          where: {
-            vendorId: result.id,
-            instanceId: vendorStatusDto.instanceId,
-          },
-        });
-        if (!currentBusinessArea)
-          throw new NotFoundException(`businessArea_not_found`);
-        currentBusinessArea.status = VendorStatusEnum.REJECTED;
-        currentBusinessArea.remark = vendorStatusDto.remark;
-        const businessArea =
-          await this.businessAreaRepository.save(currentBusinessArea);
-        if (!businessArea)
-          throw new BadRequestException(`business_area_rejection_failed`);
-      }
-      // return { msg: 'Success' };
-      return vendorStatusDto;
-    }
-  }
   async adjustVendor(vendorStatusDto: SetVendorStatus): Promise<any> {
     const result = await this.isrVendorsRepository.findOne({
       where: {
@@ -408,12 +367,17 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     if (result.status !== VendorStatusEnum.COMPLETED) {
       initial.level = VendorStatusEnum.DETAIL;
       initial.status = VendorStatusEnum.DRAFT;
-      result.status = VendorStatusEnum.ACTIVE;
+      result.status = VendorStatusEnum.ADJUSTMENT;
       result.initial = initial;
-      const resul = await this.isrVendorsRepository.save(result);
-
-      if (!resul) throw new BadRequestException(`unable_to_save_isrVendor`);
+    } else {
+      initial.level = VendorStatusEnum.PPDA;
+      initial.status = VendorStatusEnum.DRAFT;
+      result.status = VendorStatusEnum.ADJUSTMENT;
+      result.initial = initial;
     }
+    const resul = await this.isrVendorsRepository.save(result);
+
+    if (!resul) throw new BadRequestException(`unable_to_save_isrVendor`);
     //if there is  previously approved service by the vendorId
     const currentBusinessArea = await this.businessAreaRepository.findOne({
       where: { vendorId: result.id, instanceId: vendorStatusDto.instanceId },
