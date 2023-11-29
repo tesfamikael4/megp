@@ -10,7 +10,7 @@ export const ENTITY_LIST: EntityStoreConfig[] = [
   {
     entity: 'classifications',
     baseUrl:
-      process.env.NEXT_PUBLIC_ADMINISTRATION_API ?? 'administration/api/',
+      process.env.NEXT_PUBLIC_ADMINISTRATION_API ?? '/administration/api/',
   },
   {
     entity: 'tag',
