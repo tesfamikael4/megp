@@ -1,64 +1,30 @@
 'use client';
-import { Box, Flex, Grid, Group, Paper, SimpleGrid, Text } from '@mantine/core';
+import {
+  Box,
+  Flex,
+  Grid,
+  Group,
+  LoadingOverlay,
+  Paper,
+  SimpleGrid,
+  Text,
+} from '@mantine/core';
 import { useState, type FC } from 'react';
 import { StatsListCard } from './stats-card';
 import { useGetVendorInfoQuery } from '../../_api/query';
 import styles from './application-list.module.scss';
 import DetailViewCard from './detail-view-card';
 import { useDisclosure } from '@mantine/hooks';
-export interface Application {
-  name: string;
-  serviceStatus: string;
-  serviceRemark: string;
-  category: string;
-  serviceActionType: string;
-  trackingNumber: string;
-  date: string;
-}
-const sampleData: Application[] = [
-  {
-    name: 'John Doe',
-    serviceStatus: 'Adjust',
-    serviceRemark: 'No issues',
-    category: 'Goods',
-    serviceActionType: 'Update',
-    trackingNumber: 'TRK123',
-    date: '2023-11-20',
-  },
-  {
-    name: 'Jane Smith',
-    serviceStatus: 'Rejected',
-    serviceRemark: 'Pending verification',
-    category: 'Service Category B',
-    serviceActionType: 'Create',
-    trackingNumber: 'TRK456',
-    date: '2023-11-21',
-  },
-  {
-    name: 'Bob Johnson',
-    serviceStatus: 'Submitted',
-    serviceRemark: 'Service in progress',
-    category: 'Service Category C',
-    serviceActionType: 'Delete',
-    trackingNumber: 'TRK789',
-    date: '2023-11-22',
-  },
-  {
-    name: 'Alice Brown',
-    serviceStatus: 'Adjust',
-    serviceRemark: 'Verification failed',
-    category: 'Services',
-    serviceActionType: 'Create',
-    trackingNumber: 'TRK101',
-    date: '2023-11-23',
-  },
-];
+import { ApplicationInfo } from '@/models/vendorRegistration';
 
 const ApplicationList = () => {
-  const [selectData, setSelectData] = useState<Application | null>(null);
+  const [selectData, setSelectData] = useState<ApplicationInfo | null>(null);
   const [opened, { open, close }] = useDisclosure(false);
-
-  const handleDetailOpen = (data: Application) => {
+  const requestInfo = useGetVendorInfoQuery(
+    {},
+    { refetchOnMountOrArgChange: true },
+  );
+  const handleDetailOpen = (data: ApplicationInfo) => {
     open();
     setSelectData(data);
   };
@@ -67,6 +33,20 @@ const ApplicationList = () => {
     setSelectData(null);
   };
 
+  if (requestInfo.isLoading) {
+    return (
+      <Box pos="relative" className="w-full h-full">
+        <LoadingOverlay
+          visible={true}
+          zIndex={1000}
+          overlayProps={{ radius: 'sm', blur: 2 }}
+        />
+      </Box>
+    );
+  }
+  if (!requestInfo.data || requestInfo.isError) {
+    return null;
+  }
   return (
     <Box className={styles.root}>
       <Flex className={styles.header}>
@@ -78,7 +58,7 @@ const ApplicationList = () => {
       </Flex>
       <Box className={styles.mainGrid}>
         <Box className={opened ? styles.cardListWrap : styles.cardList}>
-          {sampleData.map((data, index) => (
+          {requestInfo.data?.services.map((data, index) => (
             <StatsListCard key={index} data={data} view={handleDetailOpen} />
           ))}
         </Box>

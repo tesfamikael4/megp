@@ -1,11 +1,10 @@
 import { Text, Group, Badge, Paper, Flex, Button } from '@mantine/core';
 import style from './stats-card.module.scss';
-import { ApplicationService } from '@/models/vendorRegistration';
+import { ApplicationInfo } from '@/models/vendorRegistration';
 import { IconEye } from '@tabler/icons-react';
-import { Application } from './application-list';
 
 interface Props {
-  data: Application;
+  data: ApplicationInfo;
   view: (data: any) => void;
 }
 const badgeColor: { [key: string]: string } = {
@@ -21,17 +20,17 @@ export const StatsListCard: React.FC<Props> = ({ data, view }) => {
       <Flex className="flex-col justify-between h-full">
         <Group justify="space-between" align="start">
           <Flex className="flex-col gap-3">
-            <Badge size="sm" color={badgeColor[data.serviceStatus]}>
-              {data.serviceStatus}
+            <Badge size="sm" color={badgeColor[data.status]}>
+              {data.status}
             </Badge>
             <Text ta="left" fw={500} fz="sm">
               <span className=" text-gray-400">Tracking Number: </span>
-              {data.trackingNumber}Tr32445
+              {data.applicationNumber}
             </Text>
           </Flex>
 
           <Text c="dimmed" ta="left" fz="xs">
-            11/20/2023
+            {data.approvedAt}
           </Text>
         </Group>
         <Group justify="space-between" align="start">
