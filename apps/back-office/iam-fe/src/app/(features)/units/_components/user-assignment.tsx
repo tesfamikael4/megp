@@ -56,7 +56,7 @@ const AddUserModal = () => {
     },
   };
   const addConfig: RelationConfig<User> = {
-    title: 'Users',
+    title: 'Users assignment',
     columns: [
       {
         id: 'name',
@@ -127,6 +127,7 @@ const AddUserModal = () => {
           mode="modal"
           handleCloseModal={handleCloseModal}
           onRequestChange={onRequestChange}
+          total={data?.total ?? 0}
         />
       </Modal>
     </>

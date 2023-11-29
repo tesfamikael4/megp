@@ -87,7 +87,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
   return (
     <EntityLayout
       mode={mode}
-      // hasTree
+      hasTree
       config={config}
       data={
         data?.items?.map((item: Unit) => {

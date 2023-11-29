@@ -22,7 +22,6 @@ import { useParams, useRouter } from 'next/navigation';
 import { Unit } from '@/models/unit';
 import { ParentModal } from './parentModal';
 import { notify } from '@megp/core-fe';
-import { notifications } from '@mantine/notifications';
 import { useAuth } from '@megp/auth';
 
 interface FormDetailProps {
@@ -72,7 +71,6 @@ export function FormDetail({ mode }: FormDetailProps) {
     id: user?.organization?.id,
     collectionQuery: undefined,
   });
-  // const [trigger, { data, isFetching }] = useLazyListByIdQuery();
 
   const {
     data: selected,
@@ -163,7 +161,6 @@ export function FormDetail({ mode }: FormDetailProps) {
         parentId: selected?.parentId,
         typeId: selected?.typeId,
         description: selected?.description,
-        code: selected?.code,
       });
       setParentUnitId(selected?.parentId);
     }
@@ -175,7 +172,6 @@ export function FormDetail({ mode }: FormDetailProps) {
       name: selected?.name,
       typeId: selected?.typeId,
       description: selected?.description,
-      code: selected?.code,
     });
   }, [parentUnitId, reset, selected, mode]);
 
@@ -184,12 +180,6 @@ export function FormDetail({ mode }: FormDetailProps) {
       <LoadingOverlay
         visible={isLoading}
         overlayProps={{ radius: 'sm', blur: 2 }}
-      />
-      <TextInput
-        label="Code"
-        error={errors?.code ? errors?.code?.message?.toString() : ''}
-        disabled
-        {...register('code')}
       />
 
       <TextInput
