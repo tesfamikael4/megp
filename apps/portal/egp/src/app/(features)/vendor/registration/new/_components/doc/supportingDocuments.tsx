@@ -60,8 +60,6 @@ export default function SupportingDocuments() {
   };
   const FILE_SERVER_URL = process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api';
   if (requestInfo.isLoading) {
-    ('hello isLoading');
-
     return (
       <Box pos="relative" className="w-full h-full">
         <LoadingOverlay
@@ -73,7 +71,6 @@ export default function SupportingDocuments() {
     );
   }
   if (requestInfo.data?.supportingDocuments === null || requestInfo.isError) {
-    ('hello error');
     return null;
   }
   return (

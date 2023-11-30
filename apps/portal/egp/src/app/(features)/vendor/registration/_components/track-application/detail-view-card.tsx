@@ -3,11 +3,11 @@ import styles from './detail-view-card.module.scss';
 import { ActionIcon, Badge, Box, Button, Card, Progress } from '@mantine/core';
 import { IconArrowLeft } from '@tabler/icons-react';
 import ProgressBar from './progressBar';
-import { Application } from './application-list';
 import { useRouter } from 'next/navigation';
+import { ApplicationInfo } from '@/models/vendorRegistration';
 
 interface Props {
-  data: Application;
+  data: ApplicationInfo;
   close: () => void;
 }
 const badgeColor: { [key: string]: string } = {
@@ -25,15 +25,15 @@ const DetailViewCard: React.FC<Props> = ({ data, close }) => {
         <ActionIcon variant="transparent" onClick={close}>
           <IconArrowLeft size={18} />
         </ActionIcon>
-        <Badge size="sm" color={badgeColor[data.serviceStatus]}>
-          {data.serviceStatus}
+        <Badge size="sm" color={badgeColor[data.status]}>
+          {data.status}
         </Badge>
       </Box>
       <Box className={styles.cardBody}>
-        <ProgressBar instanceId={data.trackingNumber} />
+        <ProgressBar instanceId={data.instanceId} />
       </Box>
       <Box className={styles.cardFooter}>
-        {data.serviceStatus === 'Adjust' && (
+        {data.status === 'Adjust' && (
           <Button
             onClick={() => router.push('/vendor/registration/new/detail')}
           >

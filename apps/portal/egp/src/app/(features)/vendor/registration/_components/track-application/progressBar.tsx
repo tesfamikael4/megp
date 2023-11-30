@@ -7,7 +7,7 @@ type Props = {
 
 const ProgressBar: React.FC<Props> = ({ instanceId }) => {
   const requestInfo = useGetActivitiesProgressQuery({
-    instanceId: '80f4963e-2d5d-4bcd-a767-da4fc46bb2d8',
+    instanceId,
   });
 
   if (requestInfo.isLoading) {
@@ -55,55 +55,6 @@ const ProgressBar: React.FC<Props> = ({ instanceId }) => {
               </Text>
             </Timeline.Item>
           ))}
-        {/* <Timeline.Item
-          bullet={<IconForms size={12} />}
-          title="Submitted Vendor Registration Request"
-        >
-          <Text c="dimmed" size="sm">
-            Remark: You&apos;ve created new branch{' '}
-          </Text>
-        </Timeline.Item>
-
-        <Timeline.Item
-          bullet={<IconCheck size={12} />}
-          title="Reviewed Vendor Registration Request"
-        >
-          <Text c="dimmed" size="sm">
-            Remark: You&apos;ve pushed 23 commits to
-          </Text>
-        </Timeline.Item>
-
-        <Timeline.Item
-          title="Approval of Vendor Registration Request By CRO"
-          bullet={<IconNotification size={12} />}
-          lineVariant="dashed"
-        >
-          <Text c="dimmed" size="sm">
-            Remark: Notification
-          </Text>
-        </Timeline.Item>
-
-        <Timeline.Item
-          title="Final Approval of New Vendor Registration by RRM"
-          bullet={<IconCheck size={12} />}
-        >
-          <Text c="dimmed" size="sm">
-            <Text variant="link" component="span" inherit>
-              Remark: Robert Gluesticker
-            </Text>
-          </Text>
-        </Timeline.Item>
-
-        <Timeline.Item
-          title="Generate Vendor Registration Certificate"
-          bullet={<IconCertificate size={12} />}
-        >
-          <Text c="dimmed" size="sm">
-            <Text variant="link" component="span" inherit>
-              Remark: Robert Gluesticker
-            </Text>
-          </Text>
-        </Timeline.Item> */}
       </Timeline>
     );
   }
