@@ -2,18 +2,18 @@ import { LoadingOverlay, Stack, TextInput } from '@mantine/core';
 import { EntityButton } from '@megp/entity';
 import { z, ZodType } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  useReadQuery,
-  useDeleteMutation,
-  useUpdateMutation,
-  useCreateMutation,
-} from '../_api/measurement.api';
 import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import { notifications } from '@mantine/notifications';
 import { useForm } from 'react-hook-form';
-import { Measurement } from '@/models/measurement';
+import { Currency } from '@/models/currency';
+import {
+  useCreateMutation,
+  useDeleteMutation,
+  useReadQuery,
+  useUpdateMutation,
+} from '../_api/currency.api';
 
 interface FormDetailProps {
   mode: 'new' | 'detail';
@@ -21,13 +21,13 @@ interface FormDetailProps {
 
 const defaultValues = {
   name: '',
-  shortName: '',
+  description: '',
 };
 
 export function FormDetail({ mode }: FormDetailProps) {
-  const measurementSchema: ZodType<Partial<Measurement>> = z.object({
+  const measurementSchema: ZodType<Partial<Currency>> = z.object({
     name: z.string().min(1, { message: 'This field is required' }),
-    shortName: z.string().min(1, { message: 'This field is required' }),
+    description: z.string().min(1, { message: 'This field is required' }),
   });
 
   const {
@@ -55,10 +55,10 @@ export function FormDetail({ mode }: FormDetailProps) {
     try {
       const result = await create(data);
       if ('data' in result) {
-        router.push(`/measurement/${result?.data?.id}`);
+        router.push(`/currency/${result?.data?.id}`);
       }
       notifications.show({
-        message: 'measurement created successfully',
+        message: 'currency created successfully',
         title: 'Success',
         color: 'green',
       });
@@ -74,13 +74,13 @@ export function FormDetail({ mode }: FormDetailProps) {
     try {
       await update({ ...data, id: id?.toString() });
       notifications.show({
-        message: 'measurement updated successfully',
+        message: 'currency updated successfully',
         title: 'Success',
         color: 'green',
       });
     } catch {
       notifications.show({
-        message: 'errors in updating measurement.',
+        message: 'errors in updating currency.',
         title: 'Error',
         color: 'red',
       });
@@ -90,14 +90,14 @@ export function FormDetail({ mode }: FormDetailProps) {
     try {
       await remove(id?.toString()).unwrap();
       notifications.show({
-        message: 'measurement deleted successfully',
+        message: 'currency deleted successfully',
         title: 'Success',
         color: 'green',
       });
-      router.push('/measurement');
+      router.push('/currency');
     } catch (err) {
       notifications.show({
-        message: 'errors in deleting measurement.',
+        message: 'errors in deleting currency.',
         title: 'Error',
         color: 'red',
       });
@@ -112,7 +112,7 @@ export function FormDetail({ mode }: FormDetailProps) {
     if (mode == 'detail' && selectedSuccess && selected !== undefined) {
       reset({
         name: selected?.name,
-        shortName: selected?.shortName,
+        description: selected?.description,
       });
     }
   }, [mode, reset, selected, selectedSuccess]);
@@ -129,9 +129,11 @@ export function FormDetail({ mode }: FormDetailProps) {
       />{' '}
       <TextInput
         withAsterisk
-        label="Abbreviations"
-        {...register('shortName')}
-        error={errors?.shortName ? errors?.shortName?.message?.toString() : ''}
+        label="description"
+        {...register('description')}
+        error={
+          errors?.description ? errors?.description?.message?.toString() : ''
+        }
         required
       />{' '}
       <EntityButton
