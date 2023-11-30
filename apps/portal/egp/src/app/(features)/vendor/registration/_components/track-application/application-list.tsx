@@ -16,7 +16,6 @@ import styles from './application-list.module.scss';
 import DetailViewCard from './detail-view-card';
 import { useDisclosure } from '@mantine/hooks';
 import { ApplicationInfo } from '@/models/vendorRegistration';
-import { Data } from '../../../../../../../../../back-office/vendor-fe/src/store/api/vendor_request_handler/type';
 import { IconFile } from '@tabler/icons-react';
 
 const ApplicationList = () => {
