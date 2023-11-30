@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { BusinessProcessService } from './services/business-process.service';
@@ -27,6 +27,7 @@ import { DataSeederController } from './controllers/data-seeder.controller';
 import { ServicePricingModule } from '../pricing/pricing.module';
 import { BanksEntity } from 'src/entities';
 import { CategoriesModule } from '../categories/category.module';
+import { VendorRegistrationModule } from '../vendor-registration/vendor-registration.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { CategoriesModule } from '../categories/category.module';
     ServiceModule,
     ServicePricingModule,
     CategoriesModule,
+    forwardRef(() => VendorRegistrationModule)
   ],
   exports: [TaskService, BusinessProcessService, WorkflowService],
   providers: [
@@ -64,4 +66,4 @@ import { CategoriesModule } from '../categories/category.module';
     DataSeederController,
   ],
 })
-export class BpmModule {}
+export class BpmModule { }

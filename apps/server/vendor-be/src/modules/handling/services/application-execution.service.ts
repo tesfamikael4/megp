@@ -12,6 +12,7 @@ import { InvoiceEntity } from 'src/entities/invoice.entity';
 import {
   AssignmentEnum,
   BusinessStatusEnum,
+  HandlerTypeEnum,
   ServiceKeyEnum,
   WorkflowInstanceEnum,
 } from '../dto/workflow-instance.enum';
@@ -40,7 +41,7 @@ export class ApplicationExcutionService {
     private readonly wiRepository: Repository<WorkflowInstanceEntity>,
     private readonly dataSource: DataSource,
     private readonly invoiceService: InvoiceService,
-  ) {}
+  ) { }
   async getCompletedTasks(instanceId: string): Promise<TaskTrackerResponse[]> {
     const ctasks = await this.taskTrackingRepository.find({
       where: { instanceId: instanceId },
@@ -111,7 +112,7 @@ export class ApplicationExcutionService {
         businessProcess: {
           service: { key: In(keys) },
         },
-        taskHandler: { id: Not(IsNull()) },
+        taskHandler: { id: Not(IsNull()), task: { handlerType: Not(HandlerTypeEnum.Requestor) } },
         status: Not(WorkflowInstanceEnum.Completed),
       },
       order: { submittedAt: 'ASC' },

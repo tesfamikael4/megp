@@ -7,7 +7,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { DataSource, In, Not, Repository } from 'typeorm';
+import { In, Not, Repository } from 'typeorm';
 import { SetVendorStatus } from '../dto/vendor.dto';
 import { VendorInitiationDto } from '../dto/vendor-initiation.dto';
 import { EntityCrudService } from 'src/shared/service';
