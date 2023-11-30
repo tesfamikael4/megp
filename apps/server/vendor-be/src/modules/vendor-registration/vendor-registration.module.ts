@@ -78,7 +78,7 @@ import { InvoiceService } from './services/invoice.service';
     BpmModule,
     CategoriesModule,
   ],
-  exports: [],
+  exports: [VendorRegistrationsService],
   providers: [
     ServicePricingService,
     HandlingCommonService,
@@ -107,4 +107,4 @@ import { InvoiceService } from './services/invoice.service';
     BusinessAreaController,
   ],
 })
-export class VendorRegistrationModule {}
+export class VendorRegistrationModule { }
