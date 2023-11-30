@@ -1,10 +1,10 @@
 'use client';
-import { EntityConfig, EntityLayout } from '@megp/entity';
+import { CollectionQuery, EntityConfig, EntityLayout } from '@megp/entity';
 import { usePathname, useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 import { Measurement } from '@/models/measurement';
 import { logger } from '@megp/core-fe';
-import { useListQuery } from './_api/item-category';
+import { useLazyListQuery } from './_api/item-category';
 
 export function Entity({
   children,
@@ -14,15 +14,7 @@ export function Entity({
   hasTree?: boolean;
 }) {
   const route = useRouter();
-  const { data: list } = useListQuery({});
-
-  // const {
-  //   data: selected,
-  //   isLoading: selectedLoading,
-  //   isError: selectedError,
-  // } = useReadQuery('id');
-
-  // logger.log('selected', selected, selectedLoading, selectedError);
+  const [trigger, { data }] = useLazyListQuery();
 
   const config: EntityConfig<Measurement> = useMemo(() => {
     return {
@@ -31,6 +23,10 @@ export function Entity({
       entity: 'item-Categories',
       primaryKey: 'id',
       title: 'item-Categories',
+      hasAdd: true,
+      pagination: true,
+      searchable: true,
+      sortable: true,
       onDetail: (selected: Measurement) => {
         route.push(`/item-category/${selected.id}`);
       },
@@ -73,6 +69,9 @@ export function Entity({
       : pathname === `/item-category/new`
       ? 'new'
       : 'detail';
+  const onRequestChange = (request: CollectionQuery) => {
+    trigger(request);
+  };
 
   return (
     <>
@@ -81,7 +80,9 @@ export function Entity({
           hasTree={true}
           mode={mode}
           config={config}
-          data={list?.items ? list.items : []}
+          data={data?.items ?? []}
+          total={data?.total ?? 0}
+          onRequestChange={onRequestChange}
           detail={children}
         />
       ) : (
@@ -89,7 +90,9 @@ export function Entity({
           hasTree={false}
           mode={mode}
           config={config}
-          data={list?.items ? list.items : []}
+          data={data?.items ?? []}
+          total={data?.total ?? 0}
+          onRequestChange={onRequestChange}
           detail={children}
         />
       )}
