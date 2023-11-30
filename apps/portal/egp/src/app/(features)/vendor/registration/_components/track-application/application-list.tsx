@@ -71,7 +71,7 @@ const ApplicationList = () => {
       ) : (
         <Flex className="w-full h-full items-center justify-center flex-col">
           <IconFile size={30} />
-          No Data
+          No Data Found
         </Flex>
       )}
     </Box>
