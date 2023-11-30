@@ -165,6 +165,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       throw new HttpException('already Submitted ', 500);
     }
   }
+
   async addVendorInformations(data: any, userInfo: any): Promise<any> {
     if (
       data.initial.status == VendorStatusEnum.DRAFT ||
@@ -197,13 +198,14 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             throw error;
           }
         }
-        return { msg: 'Success' };
+        // return { msg: 'Success' };
       } else if (
         data.initial.level.trim() === VendorStatusEnum.SUBMIT &&
         data.initial.status.trim() === VendorStatusEnum.SUBMIT
       ) {
         return this.submitVendorInformations(data, userInfo);
       }
+
       return { msg: 'Success' };
     }
   }
