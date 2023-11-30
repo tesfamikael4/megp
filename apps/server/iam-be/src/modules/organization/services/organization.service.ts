@@ -18,6 +18,7 @@ import {
 import { EntityCrudService } from 'src/shared/service';
 import { AccountsService } from 'src/modules/account/services/account.service';
 import { UserService } from './user.service';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 @Injectable()
 export class OrganizationService extends EntityCrudService<Organization> {
   constructor(
@@ -25,6 +26,7 @@ export class OrganizationService extends EntityCrudService<Organization> {
     private readonly repositoryOrganization: Repository<Organization>,
     private readonly accountsService: AccountsService,
     private readonly userService: UserService,
+    private eventEmitter: EventEmitter2,
   ) {
     super(repositoryOrganization);
   }
@@ -42,6 +44,15 @@ export class OrganizationService extends EntityCrudService<Organization> {
     const result = await super.create(organization);
 
     // await this.userService.createDefaultOrganizationUser(account, result.id);
+
+    if (result) {
+      this.eventEmitter.emit('create.default.unit', {
+        organizationId: result.id,
+        name: result.name,
+        description: result.description,
+        code: result.code,
+      });
+    }
 
     return result;
   }

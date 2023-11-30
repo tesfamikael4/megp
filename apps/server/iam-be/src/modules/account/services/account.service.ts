@@ -298,6 +298,7 @@ export class AccountsService {
             roleId: true,
             role: {
               key: true,
+              name: true,
               rolePermissions: {
                 id: true,
                 permissionId: true,
