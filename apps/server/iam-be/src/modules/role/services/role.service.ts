@@ -21,8 +21,6 @@ export class RoleService extends ExtraCrudService<Role> {
       this.repositoryRole,
       query,
     )
-      .innerJoin('roles.rolePermissions', 'rolePermissions')
-      .innerJoin('rolePermissions.permission', 'permission')
       .orWhere('roles.organizationId = :organizationId', { organizationId })
       .orWhere('roles.organizationId IS NULL');
     const response = new DataResponseFormat<RoleResponseDto>();

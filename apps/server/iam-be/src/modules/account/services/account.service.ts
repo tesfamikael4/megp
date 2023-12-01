@@ -339,7 +339,9 @@ export class AccountsService {
     const userInfo = await this.getUserInfo(account.id);
 
     const permissions = [];
+    const roles = [];
     userInfo.user?.userRoles?.forEach((userRole) => {
+      roles.push(userRole.role);
       userRole?.role?.rolePermissions?.forEach((rolePermission) => {
         rolePermission?.permission &&
           permissions.push(rolePermission.permission);
@@ -356,6 +358,7 @@ export class AccountsService {
       email: account.email,
       organization: userInfo.user?.organization ?? {},
       permissions,
+      roles,
     };
 
     return tokenPayload;

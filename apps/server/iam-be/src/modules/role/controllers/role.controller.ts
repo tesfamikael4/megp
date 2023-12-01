@@ -1,18 +1,9 @@
-import {
-  Controller,
-  Get,
-  Query,
-  Param,
-  ParseUUIDPipe,
-  HttpStatus,
-  Req,
-} from '@nestjs/common';
-import { ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger';
-import { ApiPaginatedResponse, DataResponseFormat } from '@api-data';
+import { Controller, Get, Query, Param } from '@nestjs/common';
+import { ApiQuery, ApiTags } from '@nestjs/swagger';
+import { DataResponseFormat } from '@api-data';
 import { CreateRoleDto, UpdateRoleDto } from '../dto/role.dto';
 import { RoleService } from '../services/role.service';
 import { Role } from '@entities';
-import { CollectionQuery } from '@collection-query';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { ExtraCrudController } from 'src/shared/controller/extra-crud.controller';
 import { decodeCollectionQuery } from 'src/shared/collection-query/query-mapper';
