@@ -8,6 +8,7 @@ import {
   useDeleteMutation,
   useUpdateMutation,
   useCreateMutation,
+  useListQuery,
 } from '../_api/organization-type.api';
 import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
@@ -27,7 +28,21 @@ const defaultValues = {
 
 export function FormDetail({ mode }: FormDetailProps) {
   const organizationSchema: ZodType<Partial<OrganizationType>> = z.object({
-    name: z.string().min(1, { message: 'This field is required' }),
+    name: z
+      .string()
+      .min(1, { message: 'This field is required' })
+      .refine(
+        (value) => {
+          const lists = orgType?.items.filter(
+            (item) => item?.id !== id?.toString(),
+          );
+          const isUnique = lists && lists.every((org) => org.name !== value);
+          return isUnique;
+        },
+        {
+          message: 'Organization type name must be unique among existing names',
+        },
+      ),
     description: z.string().min(1, { message: 'This field is required' }),
   });
 
@@ -51,6 +66,7 @@ export function FormDetail({ mode }: FormDetailProps) {
     isSuccess: selectedSuccess,
     isLoading,
   } = useReadQuery(id?.toString());
+  const { data: orgType } = useListQuery({});
 
   const onCreate = async (data) => {
     try {

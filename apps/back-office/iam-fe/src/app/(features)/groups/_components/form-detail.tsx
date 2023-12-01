@@ -15,6 +15,7 @@ import { useRouter } from 'next/navigation';
 import { useParams } from 'next/navigation';
 import { useEffect } from 'react';
 import { notify } from '@megp/core-fe';
+import { useAuth } from '@megp/auth';
 
 interface FormDetailProps {
   mode: 'new' | 'detail';
@@ -36,6 +37,7 @@ export function FormDetail({ mode }: FormDetailProps) {
 
   const router = useRouter();
   const { id } = useParams();
+  const { user } = useAuth();
 
   const [create, { isLoading: isSaving }] = useCreateMutation();
   const [update, { isLoading: isUpdating }] = useUpdateMutation();
@@ -48,7 +50,10 @@ export function FormDetail({ mode }: FormDetailProps) {
 
   const onCreate = async (data) => {
     try {
-      const result = await create(data);
+      const result = await create({
+        ...data,
+        organizationId: user?.organization?.id,
+      });
       if ('data' in result) {
         router.push(`/groups/${result?.data?.id}`);
       }
@@ -59,7 +64,11 @@ export function FormDetail({ mode }: FormDetailProps) {
   };
   const onUpdate = async (data) => {
     try {
-      await update({ ...data, id: id?.toString() });
+      await update({
+        ...data,
+        id: id?.toString(),
+        organizationId: user?.organization?.id,
+      });
       notify('Success', 'Group updated successfully');
     } catch {
       notify('Error', 'Errors in updating group.');
@@ -94,6 +103,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       <TextInput withAsterisk label="Name" {...register('name')} />
       <Textarea
         label="Description"
+        withAsterisk
         autosize
         minRows={2}
         {...register('description')}

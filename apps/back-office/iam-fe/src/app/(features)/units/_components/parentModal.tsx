@@ -61,7 +61,6 @@ export function ParentModal({
         />
       </Modal>
       <Button
-        color="red"
         className="flex justify-center align-middle"
         leftSection={<IconTrashX size={14} stroke={1.6} />}
         onClick={() => setIsModalOpen(true)}

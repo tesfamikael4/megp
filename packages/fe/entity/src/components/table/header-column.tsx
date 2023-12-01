@@ -6,7 +6,10 @@ import {
   IconArrowRight,
   IconDotsVertical,
   IconMinus,
+  IconPencil,
   IconPlus,
+  IconTrash,
+  IconX,
 } from '@tabler/icons-react';
 import styles from './grid.module.scss';
 
@@ -109,13 +112,31 @@ export const remove = (openEditModal, showPopUp) => {
               <IconDotsVertical size={18} />
             </Menu.Target>
             <Menu.Dropdown>
-              <Menu.Item onClick={removeRow}>
-                {' '}
-                {showPopUp ? 'Delete' : 'Remove'}
-              </Menu.Item>
               {openEditModal ? (
-                <Menu.Item onClick={enableEdit}>Edit</Menu.Item>
+                <Menu.Item
+                  leftSection={<IconPencil size={15} />}
+                  onClick={enableEdit}
+                >
+                  Edit
+                </Menu.Item>
               ) : null}
+              {showPopUp ? (
+                <Menu.Item
+                  color="red"
+                  leftSection={<IconTrash size={15} />}
+                  onClick={removeRow}
+                >
+                  Delete
+                </Menu.Item>
+              ) : (
+                <Menu.Item
+                  color="red"
+                  leftSection={<IconX size={15} />}
+                  onClick={removeRow}
+                >
+                  Remove
+                </Menu.Item>
+              )}
             </Menu.Dropdown>
           </Menu>
         </ActionIcon>

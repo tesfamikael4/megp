@@ -1,4 +1,5 @@
 import {
+  List,
   LoadingOverlay,
   Select,
   Stack,
@@ -21,7 +22,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Unit } from '@/models/unit';
 import { ParentModal } from './parentModal';
-import { notify } from '@megp/core-fe';
+import { logger, notify } from '@megp/core-fe';
 import { useAuth } from '@megp/auth';
 
 interface FormDetailProps {
@@ -35,18 +36,33 @@ const defaultValues = {
   description: '',
 };
 
-const unitSchema: ZodType<Partial<Unit>> = z.object({
-  name: z.string().min(1, { message: 'This field is required' }),
-  typeId: z.string({
-    required_error: 'This field is required',
-    invalid_type_error: 'This field is required to be a string',
-  }),
-  description: z.string().optional(),
-
-  parentId: z.string().optional(),
-});
-
 export function FormDetail({ mode }: FormDetailProps) {
+  const unitSchema: ZodType<Partial<Unit>> = z.object({
+    name: z
+      .string()
+      .min(1, { message: 'This field is required' })
+      .refine(
+        (value) => {
+          const lists = list?.items?.filter(
+            (item) => item?.id !== id?.toString(),
+          );
+          logger.log(lists);
+          const isUnique = lists && lists.every((unit) => unit.name !== value);
+          return isUnique;
+        },
+        {
+          message: 'Unit name must be unique among existing unit names',
+        },
+      ),
+    typeId: z.string({
+      required_error: 'This field is required',
+      invalid_type_error: 'This field is required to be a string',
+    }),
+    description: z.string().optional(),
+
+    parentId: z.string().optional(),
+  });
+
   const {
     handleSubmit,
     reset,
@@ -61,6 +77,7 @@ export function FormDetail({ mode }: FormDetailProps) {
   const { user } = useAuth();
 
   const [parents, setParents] = useState<Unit[]>([]);
+  const [parent, setParent] = useState<Unit[]>([]);
   const [parentUnitId, setParentUnitId] = useState<string>('');
 
   const [create, { isLoading: isSaving }] = useCreateMutation();
@@ -84,6 +101,12 @@ export function FormDetail({ mode }: FormDetailProps) {
   });
 
   useEffect(() => {
+    if (isSuccess) {
+      setParent(list?.items?.filter((unit) => unit.parentId === null));
+    }
+  }, [isSuccess, list?.items]);
+  logger.log(parent);
+  useEffect(() => {
     if (isSuccess && mode === 'detail') {
       const posibleParent = list?.items?.filter((u: Unit) => {
         return u.id !== id && selected?.parentId !== id;
@@ -98,7 +121,7 @@ export function FormDetail({ mode }: FormDetailProps) {
     try {
       const result = await create({
         ...data,
-        parentId: data?.parentId ? data?.parentId : null,
+        parentId: data?.parentId ? data?.parentId : parent[0].id,
         organizationId: user?.organization?.id,
       });
       if ('data' in result) {

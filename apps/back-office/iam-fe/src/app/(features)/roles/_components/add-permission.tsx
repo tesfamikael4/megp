@@ -1,19 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { Modal } from '@mantine/core';
 import { Relation, RelationConfig } from '@megp/entity';
-import { Mandate } from '@/models/mandate';
 
 import {
   useLazySecondRelationQuery,
   useRelationMutation,
 } from '../_api/role-permission.api';
-import { useGetPermissionByOrganizationIdQuery } from '../_api/others.api';
 import { useParams } from 'next/navigation';
 import { notify } from '@megp/core-fe';
 import { useReadQuery } from '../_api/role.api';
+import MandatePermission from '../../mandate/_components/select-permission';
+import { Permission } from '@/models/permission';
 
-const AddUserModal = () => {
+const AddPermissionModal = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [permission, setPermission] = useState<Permission[]>([]);
 
   const [currentAssigned, setCurrentAssigned] = useState<any[]>([]);
   const { id } = useParams();
@@ -22,10 +23,6 @@ const AddUserModal = () => {
 
   const [trigger, { data: rolePermision, isSuccess, isLoading }] =
     useLazySecondRelationQuery();
-
-  const { data: permission } = useGetPermissionByOrganizationIdQuery(
-    '099454a9-bf8f-45f5-9a4f-6e9034230250',
-  );
 
   const { data: selected } = useReadQuery(id?.toString());
 
@@ -66,30 +63,6 @@ const AddUserModal = () => {
     },
     hasAdd: selected?.isSystemRole ? false : true,
   };
-  const addConfig: RelationConfig<Mandate> = {
-    title: 'Permission',
-    columns: [
-      {
-        id: 'name',
-        header: 'Permission Name',
-        accessorKey: 'name',
-        cell: (info) => info.getValue(),
-        meta: {
-          widget: 'primary',
-        },
-      },
-    ],
-    onSave: (selected) => {
-      setCurrentAssigned(selected);
-
-      setIsModalOpen(false);
-    },
-
-    selectable: true,
-    pagination: true,
-    sortable: true,
-    searchable: true,
-  };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
@@ -109,8 +82,17 @@ const AddUserModal = () => {
           ? rolePermision.items.map((permission: any) => permission.permission)
           : [],
       );
+      setPermission(
+        rolePermision
+          ? rolePermision.items.map((permission: any) => permission.permission)
+          : [],
+      );
     }
   }, [rolePermision, isSuccess]);
+
+  useEffect(() => {
+    setCurrentAssigned(permission);
+  }, [permission]);
 
   return (
     <>
@@ -123,15 +105,15 @@ const AddUserModal = () => {
         collapsed={selected?.isSystemRole ? false : true}
       />
       <Modal
-        title="permission assignment"
+        title="Permission assignment"
         opened={isModalOpen}
         onClose={handleCloseModal}
+        size={'lg'}
       >
-        <Relation
-          mode="modal"
-          config={addConfig}
-          data={permission ? permission.items : []}
-          currentSelected={currentAssigned}
+        <MandatePermission
+          permission={permission}
+          setPermission={setPermission}
+          setIsModalOpen={setIsModalOpen}
           handleCloseModal={handleCloseModal}
         />
       </Modal>
@@ -139,4 +121,4 @@ const AddUserModal = () => {
   );
 };
 
-export default AddUserModal;
+export default AddPermissionModal;
