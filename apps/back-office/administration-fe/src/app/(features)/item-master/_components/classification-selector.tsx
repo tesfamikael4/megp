@@ -91,6 +91,7 @@ const ClassificationSelector = ({
         }}
         opened={opened}
         onClose={close}
+        size="lg"
       >
         {mode == 'table' ? (
           <Relation
@@ -101,22 +102,14 @@ const ClassificationSelector = ({
           />
         ) : (
           <Tree
-            fieldNames={{ key: 'id', title: 'name', children: 'children' }}
-            data={[
-              {
-                id: '001',
-                name: 'test 123',
-                children: [{ id: '003', name: 'test 2' }],
-              },
-              {
-                id: '002',
-                name: 'test 123',
-                children: [{ id: '004', name: 'test 2' }],
-              },
-            ]}
+            fieldNames={{ title: 'title', key: 'code' }}
+            data={list ? list.items : []}
             mode="select"
             disableModal
             disableParentSelect
+            url={(code) =>
+              `${process.env.NEXT_PUBLIC_ADMINISTRATION_API}classifications/children?q=w%3DparentCode%3A%3D%3A${code}`
+            }
             selectedKeys={selectedData}
             onDone={(item) => {
               onDone(item);
