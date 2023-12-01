@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
 import { TaskAssignmentResponse } from './task-assignmment.dto';
 import { BusinessProcessResponse } from './business-process.dto';
 import { CreateTaskCheckListDto } from './task-check-list.dto';
@@ -24,6 +24,7 @@ export class CreateTaskDto {
   @IsNotEmpty()
   label: string;
   @ApiProperty()
+  @IsOptional()
   orderBy: number;
   @ApiProperty()
   taskCkecklist: CreateTaskCheckListDto[];
