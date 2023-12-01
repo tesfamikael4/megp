@@ -37,7 +37,23 @@ const defaultValues = {
 
 export function FormDetail({ mode }: FormDetailProps) {
   const organizationSchema: ZodType<Partial<Organization>> = z.object({
-    name: z.string().min(1, { message: 'This field is required' }),
+    name: z
+      .string()
+      .min(1, { message: 'This field is required' })
+      .refine(
+        (value) => {
+          const organizationsList = list?.items.filter(
+            (item) => item?.id !== id?.toString(),
+          );
+          const isUnique =
+            organizationsList &&
+            organizationsList.every((org) => org.name !== value);
+          return isUnique;
+        },
+        {
+          message: 'Name must be unique among existing organization names',
+        },
+      ),
     typeId: z.string({
       required_error: 'This field is required',
       invalid_type_error: 'This field is required to be a string',

@@ -67,7 +67,7 @@ const MandatePermission = ({
               <Table.Thead>
                 <Table.Tr>
                   {selectedRow !== undefined ? (
-                    <Table.Th>permission</Table.Th>
+                    <Table.Th>Permission</Table.Th>
                   ) : (
                     ''
                   )}

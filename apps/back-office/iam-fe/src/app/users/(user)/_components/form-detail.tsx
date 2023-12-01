@@ -12,7 +12,7 @@ import {
 import { useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { User } from '@/models/user/user';
-import { notify } from '@megp/core-fe';
+import { logger, notify } from '@megp/core-fe';
 import { useAuth } from '@megp/auth';
 
 interface FormDetailProps {
@@ -49,7 +49,8 @@ export function FormDetail({ mode }: FormDetailProps) {
   const { id } = useParams();
   const { user } = useAuth();
 
-  const [create, { isLoading: isSaving }] = useCreateMutation();
+  const [create, { isLoading: isSaving, isSuccess: saved }] =
+    useCreateMutation();
   const [update, { isLoading: isUpdating }] = useUpdateMutation();
   const [activation, { isLoading: isActivating }] = useUpdateMutation();
   const [remove, { isLoading: isDeleting }] = useDeleteMutation();
@@ -61,7 +62,7 @@ export function FormDetail({ mode }: FormDetailProps) {
 
   const onCreate = async (data) => {
     try {
-      const result = await create({
+      const result: any = await create({
         ...data,
         fullName: `${data.firstName} ${data.lastName}`,
         organizationId: user?.organization?.id,
@@ -69,7 +70,9 @@ export function FormDetail({ mode }: FormDetailProps) {
       if ('data' in result) {
         router.push(`/users/${result.data.id}`);
       }
-      notify('Success', 'User created successfully');
+      saved && notify('Success', 'User created successfully');
+      result?.error?.data?.message === 'account_exists' &&
+        notify('Error', 'Account already exist');
     } catch (err) {
       notify('Error', 'Error in creating user');
     }

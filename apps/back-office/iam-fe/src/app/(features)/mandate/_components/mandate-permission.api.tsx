@@ -5,8 +5,6 @@ import {
   useLazySecondRelationQuery,
   useRelationMutation,
 } from '../_api/mandate-permission.api';
-import { useDisclosure } from '@mantine/hooks';
-import { Button } from '@mantine/core';
 
 import { useParams } from 'next/navigation';
 
@@ -108,7 +106,7 @@ const AddPermission = () => {
         collapsed={false}
       />
       <Modal
-        title="Select permission"
+        title="Permission assignment"
         opened={isModalOpen}
         onClose={handleCloseModal}
         size={'lg'}
