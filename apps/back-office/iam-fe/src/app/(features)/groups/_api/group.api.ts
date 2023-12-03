@@ -18,4 +18,6 @@ export const {
   useDeleteMutation,
   useLazyListQuery,
   useLazyListByIdQuery,
+  useLazyListArchivedByIdQuery,
+  useRestoreMutation,
 } = groupSliceApi;

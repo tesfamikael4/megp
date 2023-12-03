@@ -5,6 +5,7 @@ import {
   IconBuildingBank,
   IconBuildingCommunity,
   IconChartInfographic,
+  IconFileZip,
   IconLockSquareRounded,
   IconUsers,
   IconUsersGroup,
@@ -29,7 +30,17 @@ export const Menu: MenuItem[] = [
     icon: IconChartInfographic,
     link: '/reports',
   },
-
+  {
+    label: 'Archive',
+    icon: IconFileZip,
+    links: [
+      { label: 'Organization', link: '/archived/organization' },
+      { label: 'Users', link: '/archived/users' },
+      { label: 'Unit', link: '/archived/units' },
+      { label: 'Group', link: '/archived/group' },
+      { label: 'Role', link: '/archived/roles' },
+    ],
+  },
   {
     label: 'Settings',
     icon: IconAdjustmentsHorizontal,

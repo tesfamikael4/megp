@@ -18,4 +18,6 @@ export const {
   useDeleteMutation,
   useListByIdQuery,
   useLazyListByIdQuery,
+  useLazyListArchivedByIdQuery,
+  useRestoreMutation,
 } = unitSliceApi;
