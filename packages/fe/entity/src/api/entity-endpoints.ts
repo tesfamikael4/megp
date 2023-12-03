@@ -40,6 +40,55 @@ export const createEntitySlice = <T extends Entity>(
                 ]
               : [{ type: entityName, id: 'LIST' }],
         }),
+        listArchived: builder.query<
+          EntityCollection<T>,
+          CollectionQuery | undefined
+        >({
+          query: (collectionQuery) => {
+            let q = '';
+            if (collectionQuery) {
+              const query = encodeCollectionQuery(collectionQuery);
+              q = `?q=${query}`;
+            }
+
+            return {
+              url: `/${entityName.toLowerCase()}/archived/items${q}`,
+              method: 'GET',
+            };
+          },
+          providesTags: (result) =>
+            result
+              ? [
+                  ...result.items.map(({ id }) => ({ type: entityName, id })),
+                  { type: entityName, id: 'LIST' },
+                ]
+              : [{ type: entityName, id: 'LIST' }],
+        }),
+
+        listArchivedById: builder.query<
+          EntityCollection<T>,
+          { id: string; collectionQuery: CollectionQuery | undefined }
+        >({
+          query: ({ id, collectionQuery }) => {
+            let q = '';
+            if (collectionQuery) {
+              const query = encodeCollectionQuery(collectionQuery);
+              q = `?q=${query}`;
+            }
+            return {
+              url: `/${entityName.toLowerCase()}/list/archived/items/${id}${q}`,
+              method: 'GET',
+            };
+          },
+          providesTags: (result) =>
+            result
+              ? [
+                  ...result.items.map(({ id }) => ({ type: entityName, id })),
+                  { type: entityName, id: 'LIST' },
+                ]
+              : [{ type: entityName, id: 'LIST' }],
+        }),
+
         read: builder.query<T, string>({
           query: (id) => ({
             url: `/${entityName.toLowerCase()}/${id}`,
@@ -69,6 +118,15 @@ export const createEntitySlice = <T extends Entity>(
           invalidatesTags: (result, error, { id }) => [
             { type: entityName, id },
           ],
+        }),
+        restore: builder.mutation<T, string>({
+          query(id) {
+            return {
+              url: `/${entityName.toLowerCase()}/restore/${id}`,
+              method: 'PATCH',
+            };
+          },
+          invalidatesTags: (result, error, id) => [{ type: entityName, id }],
         }),
         delete: builder.mutation<{ success: boolean; id: string }, string>({
           query(id) {
@@ -219,6 +277,32 @@ export const EntitySliceApi = createApi({
               ]
             : [{ type: 'entity', id: 'LIST' }],
       }),
+      listArchived: builder.query<
+        { items: any[]; total: number },
+        CollectionQuery | undefined
+      >({
+        query: (collectionQuery) => {
+          let q = '';
+          if (collectionQuery) {
+            const query = encodeCollectionQuery(collectionQuery);
+            q = `?q${query}`;
+          }
+          return {
+            url: `/entity/archived/items${q}`,
+            method: 'GET',
+          };
+        },
+        providesTags: (result) =>
+          result
+            ? [
+                ...result.items.map(({ id }) => ({
+                  type: 'entity' as const,
+                  id,
+                })),
+                { type: 'entity', id: 'LIST' },
+              ]
+            : [{ type: 'entity', id: 'LIST' }],
+      }),
       read: builder.query<any, string>({
         query: (id) => ({
           url: `/entity/${id}`,
@@ -247,6 +331,15 @@ export const EntitySliceApi = createApi({
         },
         invalidatesTags: (result, error, { id }) => [{ type: 'entity', id }],
       }),
+      restore: builder.mutation<any, string>({
+        query(id) {
+          return {
+            url: `/entity/restore/${id}`,
+            method: 'PATCH',
+          };
+        },
+        invalidatesTags: (result, error, id) => [{ type: 'entity', id }],
+      }),
       delete: builder.mutation<{ success: boolean; id: string }, string>({
         query(id) {
           return {
@@ -269,6 +362,32 @@ export const EntitySliceApi = createApi({
           }
           return {
             url: `/entity/list/${id}${q}`,
+            method: 'GET',
+          };
+        },
+        providesTags: (result) =>
+          result
+            ? [
+                ...result.items.map(({ id }) => ({
+                  type: 'entity' as const,
+                  id,
+                })),
+                { type: 'entity', id: 'LIST' },
+              ]
+            : [{ type: 'entity', id: 'LIST' }],
+      }),
+      listArchivedById: builder.query<
+        { items: any[]; total: number },
+        { id: string; collectionQuery: CollectionQuery | undefined }
+      >({
+        query: ({ id, collectionQuery }) => {
+          let q = '';
+          if (collectionQuery) {
+            const query = encodeCollectionQuery(collectionQuery);
+            q = `?q${query}`;
+          }
+          return {
+            url: `/entity/list/archived/items/${id}${q}`,
             method: 'GET',
           };
         },

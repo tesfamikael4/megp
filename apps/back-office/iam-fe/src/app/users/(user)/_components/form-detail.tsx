@@ -12,7 +12,7 @@ import {
 import { useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { User } from '@/models/user/user';
-import { logger, notify } from '@megp/core-fe';
+import { notify } from '@megp/core-fe';
 import { useAuth } from '@megp/auth';
 
 interface FormDetailProps {

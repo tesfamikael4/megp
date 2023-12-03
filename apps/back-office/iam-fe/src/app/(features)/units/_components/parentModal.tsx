@@ -1,4 +1,4 @@
-import { Button, Modal, Text } from '@mantine/core';
+import { Button, Modal } from '@mantine/core';
 import { EntityConfig } from '@megp/entity';
 import { TreeList } from '@megp/entity/src/components/entity/modal-tree';
 import { IconTrashX } from '@tabler/icons-react';

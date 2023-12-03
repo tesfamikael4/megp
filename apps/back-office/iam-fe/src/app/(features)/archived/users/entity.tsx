@@ -1,75 +1,73 @@
 'use client';
+import { Organization } from '@/models/organization';
 import { CollectionQuery, EntityConfig, EntityLayout } from '@megp/entity';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useLazyListByIdQuery } from './_api/unit.api';
-import { Unit } from '@/models/unit';
+import { useLazyListArchivedByIdQuery } from '../../../users/_api/user.api';
+import { Restore } from './_components/restore';
 import { useAuth } from '@megp/auth';
 
 export function Entity({ children }: { children: React.ReactNode }) {
-  const route = useRouter();
+  const [onRequest, setOnRequest] = useState<any>();
+
   const { user } = useAuth();
 
   const pathname = usePathname();
-  const [onRequest, setOnRequest] = useState<any>();
 
-  const [trigger, { data, isFetching }] = useLazyListByIdQuery();
+  const [trigger, { data, isFetching }] = useLazyListArchivedByIdQuery();
 
-  const config: EntityConfig<Unit> = useMemo(() => {
+  const config: EntityConfig<Organization> = useMemo(() => {
     return {
-      basePath: '/units',
+      basePath: '/archived/users',
       mode: 'list',
-      entity: 'unit',
-      primaryKey: 'id',
-      title: 'Units',
-      onAdd: () => {
-        route.push(`/units/new`);
-      },
-      onDetail: (selected: Unit) => {
-        route.push(`/units/${selected?.id}`);
-      },
-      pagination: true,
+      entity: 'user',
+      title: 'Archived users',
       searchable: true,
+      pagination: true,
       sortable: true,
+      hasAdd: false,
+      hasDetail: false,
 
       columns: [
         {
           id: 'name',
           header: 'Name',
-          accessorKey: 'name',
+          accessorKey: 'fullName',
           cell: (info) => info.getValue(),
           meta: {
             widget: 'primary',
           },
         },
         {
-          id: 'description',
-          header: 'Description',
-          accessorKey: 'description',
+          id: 'username',
+          header: 'User name',
+          accessorKey: 'username',
           cell: (info) => info.getValue(),
           meta: {
             widget: 'expand',
           },
         },
         {
-          id: 'isActive',
-          header: 'Active',
-          accessorKey: 'isActive',
+          id: 'email',
+          header: 'Email',
+          accessorKey: 'email',
           cell: (info) => info.getValue(),
           meta: {
             widget: 'expand',
           },
         },
+
+        {
+          id: 'action',
+          header: 'Action',
+          accessorKey: 'action',
+          cell: (info) => <Restore original={info.row.original} />,
+        },
       ],
     };
-  }, [route]);
+  }, []);
 
-  const mode =
-    pathname === `/units`
-      ? 'list'
-      : pathname === `/units/new`
-      ? 'new'
-      : 'detail';
+  const mode = pathname === `/archived/users` ? 'list' : 'detail';
 
   const onRequestChange = useCallback(
     (request: CollectionQuery) => {
@@ -81,13 +79,13 @@ export function Entity({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     setOnRequest(onRequestChange);
   }, [onRequestChange, onRequest]);
+
   return (
     <EntityLayout
       mode={mode}
-      hasTree
       config={config}
       data={
-        data?.items?.map((item: Unit) => {
+        data?.items?.map((item: Organization) => {
           return {
             ...item,
             isActive: item.isActive ? 'Active' : 'Inactive ',

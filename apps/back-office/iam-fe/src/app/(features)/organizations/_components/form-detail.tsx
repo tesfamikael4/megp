@@ -17,11 +17,11 @@ import {
   useListQuery,
 } from '../_api/organization.api';
 import { useListQuery as useListTypeQuery } from '../../organization-type/_api/organization-type.api';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import { Organization } from '@/models/organization';
-import { logger, notify } from '@megp/core-fe';
+import { notify } from '@megp/core-fe';
 
 interface FormDetailProps {
   mode: 'new' | 'detail';
