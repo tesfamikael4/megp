@@ -1,7 +1,7 @@
 import { Audit } from '@audit';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity({ name: 'budget-categories' })
+@Entity({ name: 'budget_categories' })
 export class BudgetCategory extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;

@@ -19,7 +19,7 @@
       "@entities": ["./src/entities/"],
       "@generic-services": ["./src/shared/service/"],
       "@generic-controllers": ["./src/shared/controller/"],
-      "@common-http": ["./src/shared/common-http/"]
+      "@common-http": ["./src/modules/common-http"]
     },
     "incremental": true,
     "skipLibCheck": true,

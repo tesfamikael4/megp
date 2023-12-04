@@ -1,7 +1,7 @@
 import { Audit } from '@audit';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity({ name: 'fppa-vendors-infos' })
+@Entity({ name: 'fppa_vendors_infos' })
 export class FppaVendor extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
