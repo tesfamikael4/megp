@@ -36,6 +36,12 @@ export class UserController extends ExtraCrudController<User>(options) {
     return this.userService.create(itemData);
   }
 
+  @Post('create-organization-admin')
+  @ApiBody({ type: CreateUserDto })
+  async createOrganizationAdmin(@Body() itemData: CreateUserDto): Promise<any> {
+    return this.userService.createOrganizationAdmin(itemData);
+  }
+
   @Post('invite')
   @ApiBody({ type: InviteUserDto })
   async invite(@Body() itemData: InviteUserDto): Promise<any> {
