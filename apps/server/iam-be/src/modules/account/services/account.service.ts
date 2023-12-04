@@ -339,9 +339,9 @@ export class AccountsService {
     const userInfo = await this.getUserInfo(account.id);
 
     const permissions = [];
-    const roles = [];
+    const roles = new Set();
     userInfo.user?.userRoles?.forEach((userRole) => {
-      roles.push(userRole.role);
+      roles.add(userRole.role);
       userRole?.role?.rolePermissions?.forEach((rolePermission) => {
         rolePermission?.permission &&
           permissions.push(rolePermission.permission);

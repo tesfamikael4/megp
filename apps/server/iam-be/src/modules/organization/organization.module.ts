@@ -32,10 +32,8 @@ import { UserUnitController } from './controllers/user-unit.controller';
 import { UserProfileController } from './controllers/user-profile.controller';
 import { UserRoleController } from '../role/controllers/user-role.controller';
 import { AccountModule } from '../account/account.module';
-import { EventEmitterModule } from '@nestjs/event-emitter';
 @Module({
   imports: [
-    EventEmitterModule.forRoot(),
     TypeOrmModule.forFeature([
       Organization,
       OrganizationMandate,

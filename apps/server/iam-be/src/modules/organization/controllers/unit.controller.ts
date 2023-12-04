@@ -13,7 +13,6 @@ import { UnitService } from '../services/unit.service';
 import { Unit } from '@entities';
 import { ExtraCrudController } from 'src/shared/controller/extra-crud.controller';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
-import { OnEvent } from '@nestjs/event-emitter';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'organizationId',
@@ -33,11 +32,6 @@ export class UnitController extends ExtraCrudController<Unit>(options) {
     return await super.create(createUnitDto);
   }
 
-  // default unit
-  @OnEvent('create.default.unit')
-  async createDefault(@Body() createUnitDto: CreateUnitDto): Promise<Unit> {
-    return await super.create(createUnitDto);
-  }
   @Put(':id')
   async update(
     @Param(
