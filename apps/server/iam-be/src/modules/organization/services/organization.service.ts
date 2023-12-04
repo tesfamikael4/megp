@@ -37,11 +37,6 @@ export class OrganizationService extends EntityCrudService<Organization> {
 
     const result = await this.repositoryOrganization.save(organization);
 
-    // const account =
-    //   await this.accountsService.createDefaultOrganizationAccount(organization);
-
-    // await this.userService.createDefaultOrganizationUser(account, result.id);
-
     return result;
   }
 
@@ -55,7 +50,6 @@ export class OrganizationService extends EntityCrudService<Organization> {
   }
 
   private generateOrganizationCode() {
-    //generate random string?
     const length = 6;
     let result = '';
     const characters =

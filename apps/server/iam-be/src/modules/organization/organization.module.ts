@@ -32,6 +32,8 @@ import { UserUnitController } from './controllers/user-unit.controller';
 import { UserProfileController } from './controllers/user-profile.controller';
 import { UserRoleController } from '../role/controllers/user-role.controller';
 import { AccountModule } from '../account/account.module';
+import { RoleModule } from '../role/role.module';
+
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -48,6 +50,7 @@ import { AccountModule } from '../account/account.module';
       UserRole,
     ]),
     AccountModule,
+    RoleModule,
   ],
   providers: [
     OrganizationService,
