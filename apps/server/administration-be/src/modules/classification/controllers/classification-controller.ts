@@ -1,24 +1,11 @@
-import { EntityCrudController } from 'src/shared/controller/entity-crud.controller';
-import { ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
-import {
-  Controller,
-  Query,
-  Param,
-  Post,
-  Get,
-  UploadedFile,
-  UseInterceptors,
-  Body,
-} from '@nestjs/common';
+import { ApiQuery, ApiTags } from '@nestjs/swagger';
+import { Controller, Query, Get } from '@nestjs/common';
 import { ClassificationService } from '../services/classification.service';
 import { Classification } from 'src/entities/classification.entity';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { CreateClassificationDto } from '../dtos/create-classfication.dto';
 import { ExtraCrudController } from 'src/shared/controller';
-import {
-  CollectionQuery,
-  decodeCollectionQuery,
-} from 'src/shared/collection-query';
+import { decodeCollectionQuery } from 'src/shared/collection-query';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'taxonomyCodeSetId',
@@ -33,24 +20,18 @@ export class ClassificationController extends ExtraCrudController<Classification
   constructor(private readonly classificationService: ClassificationService) {
     super(classificationService);
   }
-  @Get('children')
+  @Get()
   @ApiQuery({
     name: 'q',
     type: String,
     required: false,
   })
   getChildren(@Query('q') q?: string) {
-    let query = new CollectionQuery();
-    if (q) query = decodeCollectionQuery(q);
-    else
-      query.where.push([
-        {
-          column: 'parentCode',
-          value: null,
-          operator: 'IsNull',
-        },
-      ]);
-
-    return this.classificationService.findChildren(query);
+    try {
+      const query = decodeCollectionQuery(q);
+      return this.classificationService.findChildren(query);
+    } catch (error) {
+      throw error;
+    }
   }
 }
