@@ -1,14 +1,15 @@
 'use client';
-import { EntityConfig, EntityLayout } from '@megp/entity';
+import { CollectionQuery, EntityConfig, EntityLayout } from '@megp/entity';
 import { usePathname, useRouter } from 'next/navigation';
 import { useMemo } from 'react';
-import { useListQuery } from './_api/measurement.api';
+import { useLazyListQuery, useListQuery } from './_api/measurement.api';
 import { Measurement } from '@/models/measurement';
 import { logger } from '@megp/core-fe';
 
 export function Entity({ children }: { children: React.ReactElement }) {
   const route = useRouter();
-  const { data: list } = useListQuery({});
+  // const { data: list } = useListQuery({});
+  const [trigger, { data }] = useLazyListQuery();
 
   const config: EntityConfig<Measurement> = useMemo(() => {
     return {
@@ -17,6 +18,10 @@ export function Entity({ children }: { children: React.ReactElement }) {
       entity: 'measurements',
       primaryKey: 'id',
       title: 'Measurements',
+      hasAdd: true,
+      pagination: true,
+      searchable: true,
+      sortable: true,
       onDetail: (selected: Measurement) => {
         route.push(`/measurement/${selected.id}`);
       },
@@ -59,14 +64,20 @@ export function Entity({ children }: { children: React.ReactElement }) {
       : pathname === `/measurement/new`
       ? 'new'
       : 'detail';
+  const onRequestChange = (request: CollectionQuery) => {
+    trigger(request);
+  };
 
   return (
     <>
       <EntityLayout
         mode={mode}
         config={config}
-        data={list?.items ? list.items : []}
+        // data={list?.items ? list.items : []}
         detail={children}
+        data={data?.items ?? []}
+        total={data?.total ?? 0}
+        onRequestChange={onRequestChange}
       />
     </>
   );

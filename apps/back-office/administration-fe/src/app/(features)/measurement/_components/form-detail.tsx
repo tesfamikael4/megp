@@ -60,6 +60,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       notifications.show({
         message: 'measurement created successfully',
         title: 'Success',
+        color: 'green',
       });
     } catch (err) {
       notifications.show({
@@ -75,6 +76,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       notifications.show({
         message: 'measurement updated successfully',
         title: 'Success',
+        color: 'green',
       });
     } catch {
       notifications.show({
@@ -90,6 +92,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       notifications.show({
         message: 'measurement deleted successfully',
         title: 'Success',
+        color: 'green',
       });
       router.push('/measurement');
     } catch (err) {

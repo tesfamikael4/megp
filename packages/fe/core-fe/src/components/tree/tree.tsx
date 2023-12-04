@@ -213,7 +213,7 @@ export function Tree<T>({
             titleRender={(node) =>
               renderSelectTitle(node as unknown as Partial<T>)
             }
-            treeData={data as DataNode[]}
+            treeData={treeData as DataNode[]}
           />
 
           <Group className="mt-4">
@@ -233,7 +233,7 @@ export function Tree<T>({
           titleRender={(node) =>
             renderSelectTitle(node as unknown as Partial<T>)
           }
-          treeData={data as DataNode[]}
+          treeData={treeData as DataNode[]}
         />
 
         <Group className="mt-5">

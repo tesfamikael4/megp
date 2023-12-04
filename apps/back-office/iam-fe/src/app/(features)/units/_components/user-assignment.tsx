@@ -9,7 +9,7 @@ import {
 import { useParams } from 'next/navigation';
 
 import { useLazyListByIdQuery } from '../../../users/_api/user.api';
-import { logger, notify } from '@megp/core-fe';
+import { notify } from '@megp/core-fe';
 import { useAuth } from '@megp/auth';
 
 const AddUserModal = () => {

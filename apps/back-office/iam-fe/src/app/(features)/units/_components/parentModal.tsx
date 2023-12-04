@@ -1,4 +1,4 @@
-import { Button, Modal, Text } from '@mantine/core';
+import { Button, Modal } from '@mantine/core';
 import { EntityConfig } from '@megp/entity';
 import { TreeList } from '@megp/entity/src/components/entity/modal-tree';
 import { IconTrashX } from '@tabler/icons-react';
@@ -61,7 +61,6 @@ export function ParentModal({
         />
       </Modal>
       <Button
-        color="red"
         className="flex justify-center align-middle"
         leftSection={<IconTrashX size={14} stroke={1.6} />}
         onClick={() => setIsModalOpen(true)}

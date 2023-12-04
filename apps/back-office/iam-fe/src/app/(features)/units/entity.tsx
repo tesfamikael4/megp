@@ -1,11 +1,10 @@
 'use client';
 import { CollectionQuery, EntityConfig, EntityLayout } from '@megp/entity';
 import { usePathname, useRouter } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLazyListByIdQuery } from './_api/unit.api';
 import { Unit } from '@/models/unit';
 import { useAuth } from '@megp/auth';
-import { logger } from '@megp/core-fe';
 
 export function Entity({ children }: { children: React.ReactNode }) {
   const route = useRouter();
@@ -20,7 +19,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
     return {
       basePath: '/units',
       mode: 'list',
-      entity: 'units',
+      entity: 'unit',
       primaryKey: 'id',
       title: 'Units',
       onAdd: () => {
@@ -32,10 +31,6 @@ export function Entity({ children }: { children: React.ReactNode }) {
       pagination: true,
       searchable: true,
       sortable: true,
-      // selectable: true,
-      onSearch: (search) => {
-        // console.log('search', search);
-      },
 
       columns: [
         {
@@ -56,7 +51,6 @@ export function Entity({ children }: { children: React.ReactNode }) {
             widget: 'expand',
           },
         },
-
         {
           id: 'isActive',
           header: 'Active',
@@ -77,13 +71,16 @@ export function Entity({ children }: { children: React.ReactNode }) {
       ? 'new'
       : 'detail';
 
-  useEffect(() => {
-    const onRequestChange = (request: CollectionQuery) => {
+  const onRequestChange = useCallback(
+    (request: CollectionQuery) => {
       trigger({ id: user?.organization?.id, collectionQuery: request });
-    };
+    },
+    [trigger, user?.organization?.id],
+  );
 
-    user?.organization?.id !== undefined && setOnRequest(onRequestChange);
-  }, [trigger, user?.organization?.id]);
+  useEffect(() => {
+    setOnRequest(onRequestChange);
+  }, [onRequestChange, onRequest]);
   return (
     <EntityLayout
       mode={mode}
@@ -100,7 +97,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
       total={data?.total ?? 0}
       detail={children}
       isLoading={isFetching}
-      onRequestChange={onRequest}
+      onRequestChange={onRequestChange}
     />
   );
 }

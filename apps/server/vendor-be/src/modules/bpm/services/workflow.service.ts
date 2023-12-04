@@ -1,7 +1,9 @@
 import {
   BadRequestException,
+  Inject,
   Injectable,
   NotFoundException,
+  forwardRef,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -44,6 +46,7 @@ import { DataResponseFormat } from 'src/shared/api-data';
 import { ActivityResponseDto } from '../dto/activities.dto';
 import { TaskResponse } from '../dto/task.dto';
 import { TaskTrackerResponse } from '../dto/task-tracker.dto';
+import { VendorRegistrationsService } from 'src/modules/vendor-registration/services/vendor-registration.service';
 @Injectable()
 export class WorkflowService {
   VENDOR_API_KEY: string;
@@ -60,6 +63,7 @@ export class WorkflowService {
     private readonly commonService: HandlingCommonService,
     private readonly taskService: TaskService,
     private readonly emailSerice: EmailService,
+    @Inject(forwardRef(() => VendorRegistrationsService)) private readonly vendorRegService: VendorRegistrationsService
   ) {
     this.VENDOR_API_KEY = process.env.VENDOR_API_ACCESS_KEY ?? 'dGtjFGcLjKU6pXRYx1tOnqGeycJtxJoavgwqYgDd';
 
@@ -158,6 +162,8 @@ export class WorkflowService {
           await this.addTaskTracker(currentTaskHandler, nextCommand, user);
           await this.handlerRepository.delete(currentTaskHandler.id);
           workflowInstance.taskHandler = null;
+        } else {
+          throw new Error("Unable to update vender status")
         }
       } else {
         const task = await this.taskService.getTaskByNameAndBP(
@@ -393,41 +399,49 @@ export class WorkflowService {
       status: status,
       userId: wfi.user.id,
       remark: command.remark,
+      category: ""
     };
     console.log('command-->', command);
     console.log('payload', payload);
-    const vendor_url = process.env.VENDOR_API ?? '/vendors/api/';
-    url = vendor_url + '/vendor-registrations/update-vendor-services';
-
-    const headers = {
-      'Content-Type': 'application/json',
-      'x-api-key': this.VENDOR_API_KEY,
+    const result = this.vendorRegService.updateVendor(payload);
+    if (result) {
+      return true;
+    } else {
+      return false;
     }
-    try {
-      const response = await axios.post(url, payload, {
-        headers,
-      });
-      console.log('response  -- ', response);
-      if (response.status === 201) {
-        const responseData = response.data;
-        return responseData;
-      } else {
-        throw new Error(`API returned status code ${response.status}`);
-      }
-    } catch (error) {
-      console.error('Error making API request:', error);
-      throw new Error('Error making API request');
-    }
+    /*
+        const vendor_url = process.env.VENDOR_API ?? '/vendors/api/';
+        url = vendor_url + '/vendor-registrations/update-vendor-services';
+    
+        const headers = {
+          'Content-Type': 'application/json',
+          'x-api-key': this.VENDOR_API_KEY,
+        }
+        try {
+          const response = await axios.post(url, payload, {
+            headers,
+          });
+          console.log('response  -- ', response);
+          if (response.status === 201) {
+            const responseData = response.data;
+            return responseData;
+          } else {
+            throw new Error(`API returned status code ${response.status}`);
+          }
+        } catch (error) {
+          console.error('Error making API request:', error);
+          throw new Error('Error making API request');
+        }
+        */
   }
   async notify(
     wfi: WorkflowInstanceEntity,
     url: string,
     metaDate: any
   ) {
-
-    const vendor_url = process.env.VENDOR_API ?? '/vendors/api/';
-    url = vendor_url + '/vendor-registrations/adjust-vendor-services';
-    console.log("vendor_url", vendor_url);
+    // const vendor_url = process.env.VENDOR_API ?? '/vendors/api/';
+    // url = vendor_url + '/vendor-registrations/adjust-vendor-services';
+    // console.log("vendor_url", vendor_url);
     const action = metaDate.action == 'ADJUST' ? 'Adjust' : '';
     const payload = {
       isrVendorId: wfi.requestorId,
@@ -436,6 +450,7 @@ export class WorkflowService {
       serviceId: wfi.serviceId,
       remark: metaDate.remark,
       userId: wfi.userId,
+      category: ""
     };
     console.log('payload ', payload);
     const headers = {
@@ -446,19 +461,29 @@ export class WorkflowService {
     //   'Content-Type': 'application/json',
     //     Authorization: `Bearer ${accessToken}`,
     //     }
-    try {
-      const response = await axios.post(url, payload, { headers });
-      console.log('response-----', response);
-      if (response.status === 201) {
-        const responseData = response.data;
-        return responseData;
-      } else {
-        return null;
-      }
-    } catch (error) {
-      console.error('Error making API request:', error);
-      throw new Error('Error making API request');
+    //
+    const result = await this.vendorRegService.adjustVendor(payload);
+    console.log("result---", result);
+    if (result) {
+      return true;
+    } else {
+      return false;
     }
+    /*
+        try {
+          const response = await axios.post(url, payload, { headers });
+          console.log('response-----', response);
+          if (response.status === 201) {
+            const responseData = response.data;
+            return responseData;
+          } else {
+            return null;
+          }
+        } catch (error) {
+          console.error('Error making API request:', error);
+          throw new Error('Error making API request');
+        }
+        */
   }
 
   async sendEmail(wfi: any, accessToken?: string) {

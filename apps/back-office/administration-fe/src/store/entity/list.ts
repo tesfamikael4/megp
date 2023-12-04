@@ -1,11 +1,11 @@
 import { EntityStoreConfig } from '@megp/entity';
-import { config } from '@/config/env';
 
 export const ENTITY_LIST: EntityStoreConfig[] = [
   {
     entity: 'item-masters',
     // baseUrl: 'https://dev-bo.megp.peragosystems.com/administration/api/',
-    baseUrl: config.ENV_ADMINISTRATION_API ?? '/administration/api/',
+    baseUrl:
+      process.env.NEXT_PUBLIC_ADMINISTRATION_API ?? '/administration/api/',
   },
   {
     entity: 'classifications',
@@ -19,19 +19,28 @@ export const ENTITY_LIST: EntityStoreConfig[] = [
   },
   {
     entity: 'measurements',
-    baseUrl: process.env.NEXT_PUBLIC_ADMINISTRATION_API + '/api',
+    baseUrl:
+      process.env.NEXT_PUBLIC_ADMINISTRATION_API ?? '/administration/api/',
   },
   {
     entity: 'item-Categories',
-    baseUrl: process.env.NEXT_PUBLIC_ADMINISTRATION_API + '/api',
+    baseUrl:
+      process.env.NEXT_PUBLIC_ADMINISTRATION_API ?? '/administration/api/',
   },
   {
     entity: 'item-Categories/get-trees',
-    baseUrl: process.env.NEXT_PUBLIC_ADMINISTRATION_API + '/api',
+    baseUrl:
+      process.env.NEXT_PUBLIC_ADMINISTRATION_API ?? '/administration/api/',
   },
   {
     entity: 'extra-unit-of-measurements',
-    baseUrl: process.env.NEXT_PUBLIC_ADMINISTRATION_API + '/api',
+    baseUrl:
+      process.env.NEXT_PUBLIC_ADMINISTRATION_API ?? '/api/administration',
+  },
+  {
+    entity: 'currencies',
+    baseUrl:
+      process.env.NEXT_PUBLIC_ADMINISTRATION_API ?? '/administration/api/',
   },
   {
     entity: 'procurement-method',

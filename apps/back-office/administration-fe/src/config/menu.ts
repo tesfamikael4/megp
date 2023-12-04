@@ -10,6 +10,7 @@ export const Menu: MenuItem[] = [
   { label: 'Item Master', icon: IconBuildingBank, link: '/item-master' },
   { label: 'Item Category', icon: IconBuildingBank, link: '/item-category' },
   { label: 'Measurements', icon: IconBuildingBank, link: '/measurement' },
+  { label: 'Currency', icon: IconBuildingBank, link: '/currency' },
   {
     label: 'Settings',
     icon: IconAdjustmentsHorizontal,

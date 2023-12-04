@@ -15,4 +15,6 @@ export const {
   useCreateMutation,
   useUpdateMutation,
   useDeleteMutation,
+  useLazyListArchivedQuery,
+  useRestoreMutation,
 } = organizationSliceApi;

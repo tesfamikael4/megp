@@ -24,7 +24,7 @@ import {
 import { VendorStatusEnum } from 'src/shared/enums/vendor-status-enums';
 const endPointUrl = `http://196.189.118.110:9000`;
 const serverOptions = {
-  path: '/api/upload',
+  path: '/vendors/api/upload',
 };
 const minioClient = new Minio.Client({
   endPoint: process.env.MINIO_END_POINT_URL,
