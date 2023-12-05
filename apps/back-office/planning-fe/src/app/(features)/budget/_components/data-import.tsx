@@ -4,7 +4,7 @@ import { Box, FileInput } from '@mantine/core';
 import Papa from 'papaparse';
 import { IconFile } from '@tabler/icons-react';
 
-const DataImport = ({ setData }: { setData: any }) => {
+const DataImport = ({ onDone }: { onDone: any }) => {
   const [, setJsonData] = useState([]);
   const [, setFileName] = useState('');
   const [, setIsLoading] = useState(false);
@@ -17,7 +17,7 @@ const DataImport = ({ setData }: { setData: any }) => {
       complete: (results) => {
         if (results.data && results.data.length > 0) {
           setJsonData(results.data);
-          setData(results.data);
+          onDone(results.data);
         }
         setIsLoading(false);
       },

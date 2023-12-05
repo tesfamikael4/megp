@@ -1,7 +1,7 @@
 'use client';
-import { EntityConfig, EntityLayout } from '@megp/entity';
+import { CollectionQuery, EntityConfig, EntityLayout } from '@megp/entity';
 import { useParams, usePathname, useRouter } from 'next/navigation';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { Button, Group, Menu, Modal, Text } from '@mantine/core';
 import {
   IconDotsVertical,
@@ -9,11 +9,8 @@ import {
   IconPencil,
   IconTrash,
 } from '@tabler/icons-react';
-import { PreBudgetPlanActivities } from '@/models/pre-budget-plan-activities';
-import {
-  useDeleteMutation,
-  useLazyListByAppIdQuery,
-} from './_api/activities.api';
+import { BudgetPlanActivities } from '@/models/budget-plan-activities';
+import { useDeleteMutation, useLazyListByIdQuery } from './_api/activities.api';
 import { notifications } from '@mantine/notifications';
 import { modals } from '@mantine/modals';
 import { logger } from '@megp/core-fe';
@@ -23,7 +20,7 @@ import { DetailActivity } from '@/app/(features)/_components/detail-activity';
 export function Entity({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const { budgetYear } = useParams();
-  const [listById, { data: list }] = useLazyListByAppIdQuery();
+  const [listById, { data: list }] = useLazyListByIdQuery();
   const [remove] = useDeleteMutation();
 
   const config: EntityConfig<any> = useMemo(() => {
@@ -36,7 +33,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
       onAdd: () => {
         router.push(`/post-budget-plan/${budgetYear}/activities/new`);
       },
-      onDetail: (selected: PreBudgetPlanActivities) => {
+      onDetail: (selected: BudgetPlanActivities) => {
         router.push(
           `/post-budget-plan/${budgetYear}/activities/${selected.id}`,
         );
@@ -44,6 +41,8 @@ export function Entity({ children }: { children: React.ReactNode }) {
 
       selectable: true,
       hasDetail: false,
+      searchable: true,
+      pagination: true,
       columns: [
         {
           id: 'procurementReference',
@@ -82,15 +81,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
             widget: 'expand',
           },
         },
-        {
-          id: 'fundingSource',
-          header: 'Funding Source',
-          accessorKey: 'fundingSource',
-          cell: (info) => info.getValue(),
-          meta: {
-            widget: 'expand',
-          },
-        },
+
         {
           id: 'totalEstimatedAmount',
           header: () => <div className="text-right">Total Amount</div>,
@@ -128,9 +119,9 @@ export function Entity({ children }: { children: React.ReactNode }) {
       ? 'new'
       : 'detail';
 
-  useEffect(() => {
-    listById(budgetYear as string);
-  }, [budgetYear, listById]);
+  const onRequestChange = (request: CollectionQuery) => {
+    listById({ id: budgetYear as string, collectionQuery: request });
+  };
 
   const Action = ({ cell }: any) => {
     const [opened, { open, close }] = useDisclosure(false);
@@ -210,9 +201,11 @@ export function Entity({ children }: { children: React.ReactNode }) {
   return (
     <EntityLayout
       mode={mode}
+      total={list?.total ?? 0}
       config={config}
       data={list?.items ?? []}
       detail={children}
+      onRequestChange={onRequestChange}
     />
   );
 }
