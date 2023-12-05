@@ -18,8 +18,7 @@
       "@enums": ["./src/shared/enums/"],
       "@entities": ["./src/entities/"],
       "@generic-services": ["./src/shared/service/"],
-      "@generic-controllers": ["./src/shared/controller/"],
-      "@common-http": ["./src/modules/common-http"]
+      "@generic-controllers": ["./src/shared/controller/"]
     },
     "incremental": true,
     "skipLibCheck": true,

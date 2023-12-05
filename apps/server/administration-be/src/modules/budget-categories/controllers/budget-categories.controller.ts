@@ -1,15 +1,17 @@
 import { Controller } from '@nestjs/common';
 import { BudgetCategoriesService } from '../services/budget-categories.service';
-import { BudgetCreateCategoryDto } from '../dto/budget-create-category.dto';
 import { BudgetCategory } from '@entities';
 import { EntityCrudController } from '@generic-controllers';
-import { BudgetUpdateCategoryDto } from '../dto/budget-update-category.dto';
 import { EntityCrudOptions } from 'src/shared/types/crud-option.type';
 import { ApiExtraModels, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { DataResponseFormat } from '@api-data';
+import {
+  CreateBudgetCategoryDto,
+  UpdateBudgetCategoryDto,
+} from '../dto/budget-category.dto';
 const options: EntityCrudOptions = {
-  createDto: BudgetCreateCategoryDto,
-  updateDto: BudgetUpdateCategoryDto,
+  createDto: CreateBudgetCategoryDto,
+  updateDto: UpdateBudgetCategoryDto,
 };
 @Controller('budget-categories')
 @ApiTags('budget-categories')

@@ -12,8 +12,10 @@ import { DataResponseFormat } from '@api-data';
 import { FppaDataValidation } from '../dto/fppa-data-validation';
 import { EntityCrudController } from '@generic-controllers';
 import { EntityCrudOptions } from 'src/shared/types/crud-option.type';
-import { CreateFppaVendorDto } from '../dto/create-fppa-vendor.dto';
-import { UpdateFppaVendorDto } from '../dto/update-fppa-vendor.dto';
+import {
+  CreateFppaVendorDto,
+  UpdateFppaVendorDto,
+} from '../dto/fppa-vendor.dto';
 const options: EntityCrudOptions = {
   createDto: CreateFppaVendorDto,
   updateDto: UpdateFppaVendorDto,

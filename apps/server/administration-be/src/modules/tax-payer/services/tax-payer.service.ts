@@ -4,16 +4,15 @@ import { TaxPayer } from '@entities';
 import { DeleteResult, Repository } from 'typeorm';
 import * as fs from 'fs';
 import * as path from 'path';
-import { CommonHttpService } from '@common-http';
 import { TinValidation } from '../dto/tin-validation.model';
 import { EntityCrudService } from 'src/shared/service';
 import { TaxpayerData } from '../dto/taxpayer-data-response ';
+import axios, { AxiosError } from 'axios';
 @Injectable()
 export class TaxPayerService extends EntityCrudService<TaxPayer> {
   constructor(
     @InjectRepository(TaxPayer)
     private readonly taxPayerRepo: Repository<TaxPayer>,
-    private readonly commonHttpService: CommonHttpService,
   ) {
     super(taxPayerRepo);
   }
@@ -46,15 +45,21 @@ export class TaxPayerService extends EntityCrudService<TaxPayer> {
       const body = {
         tinNumber: tin,
       };
-      const response = await this.commonHttpService.sendPostRequest(
-        urlPath,
-        body,
-      );
-      if (response) {
-        if (issuedDateStr) {
+      const url =
+        process.env.BASE_URL_EXTERNAL_API +
+        process.env.ADDITIONAL_ROUTE +
+        urlPath;
+      const headers = {
+        UID: process.env.UID,
+        APIKEY: process.env.APIKEY,
+      };
+      const response = await axios.post(url, body, { headers });
+      if (response.status === 200) {
+        const result = response.data;
+        if (result && issuedDateStr) {
           const issuedDate = new Date(issuedDateStr);
           if (!isNaN(issuedDate.getTime())) {
-            const registrationDate = new Date(response.registrationDate);
+            const registrationDate = new Date(result.registrationDate);
             const issuedDateWithoutTime = new Date(
               issuedDate.getFullYear(),
               issuedDate.getMonth(),
@@ -70,7 +75,7 @@ export class TaxPayerService extends EntityCrudService<TaxPayer> {
               issuedDateWithoutTime.getTime() ===
               registrationDateWithoutTime.getTime()
             ) {
-              return response.data;
+              return result;
             } else {
               return 'IssuedDate or TIN is not equal ';
             }
@@ -78,13 +83,24 @@ export class TaxPayerService extends EntityCrudService<TaxPayer> {
             return 'Invalid IssuedDate';
           }
         } else {
-          return 'IssuedDate is missing';
+          return null;
         }
       } else {
-        return null;
+        // Handle non-200 status codes here
+        const errorMessage = `api_failed: ${response.status} : ${response.statusText}`;
+        throw new Error(errorMessage);
       }
     } catch (error) {
-      throw error;
+      // Handle network errors, timeouts.
+      if (axios.isAxiosError(error)) {
+        const axiosError = error as AxiosError;
+        const errorMessage = `api_failed: ${
+          axiosError.response?.status || 'unknown'
+        } : ${axiosError.message}`;
+        throw new Error(errorMessage);
+      } else {
+        throw error;
+      }
     }
   }
 
@@ -96,12 +112,10 @@ export class TaxPayerService extends EntityCrudService<TaxPayer> {
       );
       const configFIle = fs.readFileSync(filePath, 'utf-8').toString();
       const apiData = JSON.parse(configFIle);
-      for (const apiTaxPayer of apiData) {
-        await this.taxPayerRepo.upsert(apiTaxPayer, {
-          skipUpdateIfNoValuesChanged: true,
-          conflictPaths: ['tin'],
-        });
-      }
+      await this.taxPayerRepo.upsert(apiData, {
+        skipUpdateIfNoValuesChanged: true,
+        conflictPaths: ['tin'],
+      });
     } catch (error) {
       throw error;
     }

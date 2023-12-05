@@ -12,8 +12,7 @@ import { DataResponseFormat } from '@api-data';
 import { EntityCrudController } from '@generic-controllers';
 import { TinValidation } from '../dto/tin-validation.model';
 import { EntityCrudOptions } from 'src/shared/types/crud-option.type';
-import { CreateTaxPayerDto } from '../dto/create-tax-payer.dto';
-import { UpdateTaxPayerDto } from '../dto/update-tax-payer.dto';
+import { CreateTaxPayerDto, UpdateTaxPayerDto } from '../dto/tax-payer.dto';
 const options: EntityCrudOptions = {
   createDto: CreateTaxPayerDto,
   updateDto: UpdateTaxPayerDto,

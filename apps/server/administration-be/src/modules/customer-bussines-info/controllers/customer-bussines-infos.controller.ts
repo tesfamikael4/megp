@@ -12,8 +12,11 @@ import { DataResponseFormat } from '@api-data';
 import { TraderDataValidation } from '../dto/trader-data-validation';
 import { EntityCrudController } from '@generic-controllers';
 import { EntityCrudOptions } from 'src/shared/types/crud-option.type';
-import { CreateCustomerBussinesInfoDto } from '../dto/create-customer-bussines-info.dto';
-import { UpdateCustomerBussinesInfoDto } from '../dto/update-customer-bussines-info.dto';
+import {
+  CreateCustomerBussinesInfoDto,
+  UpdateCustomerBussinesInfoDto,
+} from '../dto/customer-business-info.dto';
+
 const options: EntityCrudOptions = {
   createDto: CreateCustomerBussinesInfoDto,
   updateDto: UpdateCustomerBussinesInfoDto,

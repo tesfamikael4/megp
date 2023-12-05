@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { IsString, IsUUID } from 'class-validator';
 
 export class CreateFppaVendorDto {
   @ApiProperty()
@@ -29,4 +29,12 @@ export class CreateFppaVendorDto {
   @ApiProperty()
   @IsString()
   mobileNumber: string;
+}
+export class UpdateFppaVendorDto extends CreateFppaVendorDto {
+  @ApiProperty({
+    format: 'uuid',
+    required: true,
+  })
+  @IsUUID()
+  id: string;
 }

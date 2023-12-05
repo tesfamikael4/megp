@@ -1,7 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
-import { Column } from 'typeorm';
-
+import { IsString, IsUUID } from 'class-validator';
 export class CreateTaxPayerDto {
   @ApiProperty()
   @IsString()
@@ -30,4 +28,12 @@ export class CreateTaxPayerDto {
   @ApiProperty()
   @IsString()
   registrationDate: Date;
+}
+export class UpdateTaxPayerDto extends CreateTaxPayerDto {
+  @ApiProperty({
+    format: 'uuid',
+    required: true,
+  })
+  @IsUUID()
+  id: string;
 }

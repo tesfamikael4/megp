@@ -1,7 +1,9 @@
 import { Controller } from '@nestjs/common';
-import { CreateProcurementThresholdDto } from '../dto/create-procurement-threshold.dto';
+import {
+  CreateProcurementThresholdDto,
+  UpdateProcurementThresholdDto,
+} from '../dto/procurement-threshold.dto';
 import { ProcurementThresholdService } from '../services/procurement-threshold.service';
-import { UpdateProcurementThresholdDto } from '../dto/update-procurement-threshold.dto';
 import { ApiExtraModels, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { EntityCrudOptions } from 'src/shared/types/crud-option.type';
 import { DataResponseFormat } from '@api-data';

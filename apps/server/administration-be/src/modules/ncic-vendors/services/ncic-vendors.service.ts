@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CreateNcicVendorDto } from '../dto/create-ncic-vendor.dto';
+import { CreateNcicVendorDto } from '../dto/ncic-vendor.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { NcicVendor } from '@entities';
 import { DeleteResult, Repository } from 'typeorm';
@@ -55,12 +55,10 @@ export class NcicVendorsService extends EntityCrudService<NcicVendor> {
       );
       const configFIle = fs.readFileSync(filePath, 'utf-8').toString();
       const apiData = JSON.parse(configFIle);
-      for (const item of apiData) {
-        await this.ncicVendorRepository.upsert(item, {
-          skipUpdateIfNoValuesChanged: true,
-          conflictPaths: ['tin'],
-        });
-      }
+      await this.ncicVendorRepository.upsert(apiData, {
+        skipUpdateIfNoValuesChanged: true,
+        conflictPaths: ['tin'],
+      });
     } catch (error) {
       throw error;
     }

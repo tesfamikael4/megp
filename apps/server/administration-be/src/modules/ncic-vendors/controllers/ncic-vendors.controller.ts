@@ -1,11 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Param,
-  NotFoundException,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { NcicVendorsService } from '../services/ncic-vendors.service';
 import {
   ApiExtraModels,
@@ -19,8 +12,10 @@ import { NcicVendor } from 'src/entities/ncic-vendor.entity';
 import { DataResponseFormat } from 'src/shared/api-data';
 import { NcicDataValidation } from '../dto/ncic-data-validation';
 import { EntityCrudController } from 'src/shared/controller';
-import { CreateNcicVendorDto } from '../dto/create-ncic-vendor.dto';
-import { UpdateNcicVendorDto } from '../dto/update-ncic-vendor.dto';
+import {
+  CreateNcicVendorDto,
+  UpdateNcicVendorDto,
+} from '../dto/ncic-vendor.dto';
 import { EntityCrudOptions } from 'src/shared/types/crud-option.type';
 const options: EntityCrudOptions = {
   createDto: CreateNcicVendorDto,

@@ -1,5 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { CreateCustomerBussinesInfoDto } from '../dto/create-customer-bussines-info.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CustomerBussinesInfo } from '@entities';
 import { DeleteResult, Repository } from 'typeorm';
@@ -7,6 +6,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { EntityCrudService } from '@generic-services';
 import { TraderDataValidation } from '../dto/trader-data-validation';
+import { CreateCustomerBussinesInfoDto } from '../dto/customer-business-info.dto';
 @Injectable()
 export class CustomerBussinesInfoService extends EntityCrudService<CustomerBussinesInfo> {
   constructor(
@@ -65,12 +65,10 @@ export class CustomerBussinesInfoService extends EntityCrudService<CustomerBussi
       );
       const configFIle = fs.readFileSync(filePath, 'utf-8').toString();
       const apiData = JSON.parse(configFIle);
-      for (const customerBusiness of apiData) {
-        await this.customerBussinesInfoRepo.upsert(customerBusiness, {
-          skipUpdateIfNoValuesChanged: true,
-          conflictPaths: ['tin'],
-        });
-      }
+      await this.customerBussinesInfoRepo.upsert(apiData, {
+        skipUpdateIfNoValuesChanged: true,
+        conflictPaths: ['tin'],
+      });
     } catch (error) {
       throw error;
     }

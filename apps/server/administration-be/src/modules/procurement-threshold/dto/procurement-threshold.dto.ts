@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { IsString, IsUUID } from 'class-validator';
 
 export class CreateProcurementThresholdDto {
   @ApiProperty()
@@ -17,4 +17,12 @@ export class CreateProcurementThresholdDto {
   @ApiProperty()
   @IsString()
   approvalDelegation: string;
+}
+export class UpdateProcurementThresholdDto extends CreateProcurementThresholdDto {
+  @ApiProperty({
+    format: 'uuid',
+    required: true,
+  })
+  @IsUUID()
+  id: string;
 }

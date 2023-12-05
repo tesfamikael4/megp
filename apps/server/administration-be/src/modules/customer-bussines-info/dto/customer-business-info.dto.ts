@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDate, IsOptional, IsString } from 'class-validator';
+import { IsDate, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class CreateCustomerBussinesInfoDto {
   @ApiProperty()
@@ -45,4 +45,12 @@ export class CreateCustomerBussinesInfoDto {
   @IsString()
   @IsOptional()
   lastName: string;
+}
+export class UpdateCustomerBussinesInfoDto extends CreateCustomerBussinesInfoDto {
+  @ApiProperty({
+    format: 'uuid',
+    required: true,
+  })
+  @IsUUID()
+  id: string;
 }

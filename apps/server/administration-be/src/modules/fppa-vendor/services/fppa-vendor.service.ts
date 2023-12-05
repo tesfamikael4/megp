@@ -61,12 +61,10 @@ export class FppaVendorService extends EntityCrudService<FppaVendor> {
       );
       const configFIle = fs.readFileSync(filePath, 'utf-8').toString();
       const apiData = JSON.parse(configFIle);
-      for (const item of apiData) {
-        await this.fppaVendorRepository.upsert(item, {
-          skipUpdateIfNoValuesChanged: true,
-          conflictPaths: ['tin'],
-        });
-      }
+      await this.fppaVendorRepository.upsert(apiData, {
+        skipUpdateIfNoValuesChanged: true,
+        conflictPaths: ['tin'],
+      });
     } catch (error) {
       throw error;
     }

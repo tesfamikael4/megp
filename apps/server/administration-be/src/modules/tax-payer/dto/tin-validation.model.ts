@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { CreateTaxPayerDto } from './create-tax-payer.dto';
+import { CreateTaxPayerDto } from './tax-payer.dto';
 import { IsArray } from 'class-validator';
 import { TaxPayer } from 'src/entities/tax-payer.entity';
 

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { IsString, IsUUID } from 'class-validator';
 
 export class CreateNcicVendorDto {
   @ApiProperty()
@@ -45,4 +45,12 @@ export class CreateNcicVendorDto {
   @ApiProperty()
   @IsString()
   region: string;
+}
+export class UpdateNcicVendorDto extends CreateNcicVendorDto {
+  @ApiProperty({
+    format: 'uuid',
+    required: true,
+  })
+  @IsUUID()
+  id: string;
 }
