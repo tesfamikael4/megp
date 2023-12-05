@@ -183,7 +183,6 @@ function AuthProvider({
             });
 
           if (refreshedToken) {
-            // Update the headers with the new token
             headers.Authorization = `Bearer ${refreshedToken.access_token}`;
             setCookie('token', refreshedToken.access_token);
           } else {
