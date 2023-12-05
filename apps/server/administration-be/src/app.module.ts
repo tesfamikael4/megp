@@ -14,6 +14,7 @@ import { NcicVendorsModule } from './modules/ncic-vendors/ncic-vendors.module';
 import { CronJobSchedulerModule } from './modules/schedule/cron-job-scheduler.module';
 import { TaxPayerModule } from './modules/tax-payer/tax-payer.module';
 import { TccDocumentValidationModule } from './modules/tcc-document-validation/tcc-document-validation.module';
+import { ProcurementThresholdModule } from './modules/procurement-threshold/procurement-threshold.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { TccDocumentValidationModule } from './modules/tcc-document-validation/t
     ScheduleModule.forRoot(),
     CronJobSchedulerModule,
     BudgetCategoriesModule,
+    ProcurementThresholdModule,
   ],
   controllers: [],
   providers: [],

@@ -12,3 +12,4 @@ export * from './measurement.entity';
 
 export * from './tag.entity';
 export * from './uom.entity';
+export * from './procurement-threshold.entity';
