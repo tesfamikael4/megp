@@ -88,7 +88,7 @@ interface AuthContextValue {
         lastName?: string;
         phone?: string;
         message?: string;
-        user?: Record<string, any>;
+        user?: Record<string, any> | null;
       }
     | undefined
   >;
@@ -183,7 +183,6 @@ function AuthProvider({
             });
 
           if (refreshedToken) {
-            // Update the headers with the new token
             headers.Authorization = `Bearer ${refreshedToken.access_token}`;
             setCookie('token', refreshedToken.access_token);
           } else {
@@ -383,7 +382,7 @@ function AuthProvider({
         lastName: z.string().optional(),
         message: z.string().optional(),
         phone: z.string().optional(),
-        user: z.object({ userRoles: z.any() }).optional(),
+        user: z.object({ userRoles: z.any() }).optional().nullable(),
       }),
     );
     return response;
