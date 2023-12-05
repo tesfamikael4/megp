@@ -120,9 +120,15 @@ export const DetailCommodity = ({
             <Table.Tr className="border-dashed border-2 ">
               <Table.Th className="bg-[#f1f1ff] w-36">Description</Table.Th>
               <Table.Td>
-                <ScrollArea h={50}>
+                <ScrollArea
+                  h={50}
+                  className={`${
+                    selectedData.definition &&
+                    'border-2 border-blue-400 rounded-md'
+                  }`}
+                >
                   {selectedData.definition && (
-                    <Text size="sm" className="rounded-md p-2">
+                    <Text size="sm" className=" p-2  ">
                       {selectedData.definition}
                     </Text>
                   )}
