@@ -18,7 +18,7 @@ export const newRegistrationSlice = createApi({
     }),
     goToNextState: builder.mutation<any, any>({
       query: (data) => ({
-        url: `api/workflow-instances/goto-next-state`,
+        url: `api/application-execution/goto-next-step`,
         method: 'POST',
         body: data,
       }),
