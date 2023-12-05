@@ -3,7 +3,13 @@ import React, { useState } from 'react';
 import { Box, FileInput } from '@mantine/core';
 import Papa from 'papaparse';
 
-const DataImport = ({ setValue }: { setValue: (data) => void }) => {
+const DataImport = ({
+  setValue,
+  error,
+}: {
+  setValue: (data) => void;
+  error: string | undefined;
+}) => {
   const [, setFileName] = useState('');
   const [, setIsLoading] = useState(false);
 
@@ -45,6 +51,7 @@ const DataImport = ({ setValue }: { setValue: (data) => void }) => {
         onChange={(value) => handleConvertButtonClick(value)}
         required
         withAsterisk
+        error={error ? error : null}
       />
     </Box>
   );

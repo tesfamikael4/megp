@@ -14,7 +14,17 @@ const TaxonomyLayout = () => {
   const [opened, { open, close }] = useDisclosure(false);
   const [parents, setParents] = useState<any>();
   const [selectedData, setSelectedData] = useState<any>({});
-  const { data, refetch } = useListQuery(undefined);
+  const { data, refetch } = useListQuery({
+    where: [
+      [
+        {
+          column: 'parentCode',
+          value: 'IsNull',
+          operator: 'IsNull',
+        },
+      ],
+    ],
+  });
   const { data: taxonomy, refetch: fetch } = useGetLatestTaxonomiesQuery(null);
 
   const handleRefetch = () => {
@@ -64,7 +74,7 @@ const TaxonomyLayout = () => {
                 `${
                   process.env.NEXT_PUBLIC_ADMINISTRATION_API ??
                   '/administration/api/'
-                }classifications/children?q=w%3DparentCode%3A%3D%3A${code}`
+                }classifications?q=w%3DparentCode%3A%3D%3A${code}`
               }
               data={data ? data.items : []}
               selectedKeys={[selectedData.key]}
