@@ -23,6 +23,5 @@ export class JwtRefreshTokenStrategy extends PassportStrategy(
 
   async validate(payload: any) {
     return payload;
-    // return this.helper.validateUser(payload);
   }
 }

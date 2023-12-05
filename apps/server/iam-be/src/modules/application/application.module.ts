@@ -10,5 +10,6 @@ import { PermissionService } from './services/permission.service';
   imports: [TypeOrmModule.forFeature([Application, Permission])],
   providers: [ApplicationService, PermissionService],
   controllers: [ApplicationNewController, PermissionNewController],
+  exports: [PermissionService],
 })
 export class ApplicationModule {}
