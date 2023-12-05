@@ -1,5 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { IsNull, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Classification } from 'src/entities/classification.entity';
 import { CreateClassificationDto } from '../dtos/create-classfication.dto';
 import { ExtraCrudService } from 'src/shared/service';
@@ -30,6 +30,10 @@ export class ClassificationService extends ExtraCrudService<Classification> {
   }
 
   async findChildren(query: CollectionQuery) {
+    return await this.getClassifications(query);
+  }
+
+  private async getClassifications(query: CollectionQuery) {
     const dataQuery = QueryConstructor.constructQuery<Classification>(
       this.classificationRepository,
       query,
