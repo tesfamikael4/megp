@@ -19,7 +19,7 @@ import { CurrentUser, JwtGuard } from 'src/shared/authorization';
 @ApiResponse({ status: 500, description: 'Internal error' })
 export class UploadController {
   constructor(private tusService: TusService) {}
-  @Get(':fileName')
+  @Get('get-file/:fileName')
   async getFile(
     @Param('fileName') fileName: string,
     @Req() req,
@@ -41,6 +41,7 @@ export class UploadController {
     fileName = userId + '/' + fileName;
     return this.tusService.getFile(req, res, userId, fileName);
   }
+
   @Delete(':fileName')
   async deleteFile(
     @Param('fileName') fileName: string,

@@ -22,7 +22,8 @@ import {
   VendorsEntity,
 } from 'src/entities';
 import { VendorStatusEnum } from 'src/shared/enums/vendor-status-enums';
-const endPointUrl = `http://196.189.118.110:9000`;
+const endPointUrl =
+  'http://' + process.env.MINIO_END_POINT_URL + ':' + process.env.PORT;
 const serverOptions = {
   path: '/vendors/api/upload',
 };
@@ -61,7 +62,6 @@ export class TusService implements OnModuleInit {
         status: In([VendorStatusEnum.ACTIVE, VendorStatusEnum.ADJUSTMENT]),
       },
     });
-
     if (!result) throw new NotFoundException(`isr vendor not found`);
     const areaOfBusinessInterest = result.areasOfBusinessInterest;
     const invoice = await this.invoiceRepository.find({
