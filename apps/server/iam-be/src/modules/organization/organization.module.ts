@@ -32,10 +32,10 @@ import { UserUnitController } from './controllers/user-unit.controller';
 import { UserProfileController } from './controllers/user-profile.controller';
 import { UserRoleController } from '../role/controllers/user-role.controller';
 import { AccountModule } from '../account/account.module';
-import { EventEmitterModule } from '@nestjs/event-emitter';
+import { RoleModule } from '../role/role.module';
+
 @Module({
   imports: [
-    EventEmitterModule.forRoot(),
     TypeOrmModule.forFeature([
       Organization,
       OrganizationMandate,
@@ -50,6 +50,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
       UserRole,
     ]),
     AccountModule,
+    RoleModule,
   ],
   providers: [
     OrganizationService,

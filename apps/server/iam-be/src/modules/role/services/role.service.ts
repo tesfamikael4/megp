@@ -35,4 +35,20 @@ export class RoleService extends ExtraCrudService<Role> {
 
     return response;
   }
+
+  async findOrganizationAdminRole(
+    organizationId: string,
+  ): Promise<Role | undefined> {
+    return await this.repositoryRole.findOne({
+      where: {
+        organizationId,
+        key: process.env.ORGANIZATION_ADMIN_ROLE ?? 'ORGANIZATION_ADMIN',
+        // rolePermissions: {
+        //   permission: {
+        //     key: ''
+        //   }
+        // }
+      },
+    });
+  }
 }

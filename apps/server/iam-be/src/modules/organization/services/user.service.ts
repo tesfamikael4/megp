@@ -1,10 +1,12 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { User } from '@entities';
+import { User, UserRole, UserUnit } from '@entities';
 import { ExtraCrudService } from 'src/shared/service/extra-crud.service';
 import { CreateUserDto, InviteUserDto } from '../dto/user.dto';
 import { AccountsService } from 'src/modules/account/services/account.service';
+import { UnitService } from './unit.service';
+import { RoleService } from 'src/modules/role/services/role.service';
 
 @Injectable()
 export class UserService extends ExtraCrudService<User> {
@@ -12,6 +14,8 @@ export class UserService extends ExtraCrudService<User> {
     @InjectRepository(User)
     private readonly repositoryUser: Repository<User>,
     private readonly accountsService: AccountsService,
+    private readonly unitService: UnitService,
+    private readonly roleService: RoleService,
   ) {
     super(repositoryUser);
   }
@@ -23,6 +27,36 @@ export class UserService extends ExtraCrudService<User> {
     itemData.accountId = account.id;
     itemData.username = account.username;
     const item = this.repositoryUser.create(itemData);
+    await this.repositoryUser.insert(item);
+    return item;
+  }
+
+  async createOrganizationAdmin(itemData: CreateUserDto): Promise<any> {
+    const account =
+      await this.accountsService.createBackOfficeAccount(itemData);
+
+    itemData.accountId = account.id;
+    itemData.username = account.username;
+    const item = this.repositoryUser.create(itemData);
+
+    const unit = await this.unitService.findRootUnit(item.organizationId);
+    if (unit) {
+      const userUnit = new UserUnit();
+      userUnit.unitId = unit.id;
+
+      item.userUnits = [userUnit];
+    }
+
+    const role = await this.roleService.findOrganizationAdminRole(
+      item.organizationId,
+    );
+    if (role) {
+      const userRole = new UserRole();
+      userRole.roleId = role.id;
+
+      item.userRoles = [userRole];
+    }
+
     return await this.repositoryUser.save(item);
   }
 
