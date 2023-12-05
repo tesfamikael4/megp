@@ -104,7 +104,7 @@ export function Items() {
       },
       {
         id: 'unitPrice',
-        header: 'Unit Price',
+        header: () => <div className="text-right">Unit Price</div>,
         accessorKey: 'unitPrice',
         cell: ({ getValue, row, column }) => (
           <EstimatedPrice
@@ -131,17 +131,17 @@ export function Items() {
 
       {
         id: 'totalEstimatedAmount',
-        header: 'Total Amount',
+        header: () => <div className="text-right">Total Amount</div>,
         accessorKey: 'totalEstimatedAmount',
         cell: ({ row: { original } }: any) => (
-          <>
+          <p className="text-right">
             {(original.unitPrice * original.quantity).toLocaleString('en-US', {
               style: 'currency',
               currency: original?.currency,
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
             })}
-          </>
+          </p>
         ),
       },
       {
@@ -280,7 +280,11 @@ export function Items() {
     }, [initialValue]);
     return (
       <>
-        <Flex gap="sm" onDoubleClick={() => setIsEditorOpened(true)}>
+        <Flex
+          gap="sm"
+          justify="end"
+          onDoubleClick={() => setIsEditorOpened(true)}
+        >
           {!isEditorOpened && (
             <>
               <Text>

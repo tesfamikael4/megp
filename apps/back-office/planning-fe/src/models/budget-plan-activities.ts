@@ -1,10 +1,11 @@
-export interface PreBudgetPlanActivities {
+export interface BudgetPlanActivities {
   id: string;
   preBudgetPlanId: string;
   name: string;
   procurementReference: string;
   description: string;
   totalEstimatedAmount: number;
+  calculatedAmount: number;
   currency: string;
   fundingSource: string;
   procurementMethod: string;
@@ -14,5 +15,6 @@ export interface PreBudgetPlanActivities {
   isMultiYear: boolean;
   multiYearBudget: object;
   preference: string;
+  procurementProcess: string;
   remark: string;
 }

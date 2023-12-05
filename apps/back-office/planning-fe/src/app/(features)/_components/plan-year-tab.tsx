@@ -1,6 +1,10 @@
 'use client';
 
-import { useGetPreBudgetPlansQuery } from '@/store/api/pre-budget-plan/pre-budget-plan.api';
+import {
+  useApprovePreBudgetMutation,
+  useCreateAppMutation,
+  useGetPreBudgetPlansQuery,
+} from '@/store/api/pre-budget-plan/pre-budget-plan.api';
 import {
   ActionIcon,
   Badge,
@@ -26,25 +30,102 @@ import {
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { FormDetail } from './form-detail';
+import { logger } from '@megp/core-fe';
+import { notifications } from '@mantine/notifications';
+import { modals } from '@mantine/modals';
+import { useGetPostBudgetPlansQuery } from '@/store/api/post-budget-plan/post-budget-plan.api';
 
-export const PlanYearTab = () => {
-  const { data } = useGetPreBudgetPlansQuery({} as any);
+export const PlanYearTab = ({ page }: { page: 'pre' | 'post' }) => {
+  const { data: pre } = useGetPreBudgetPlansQuery({} as any);
+  const { data: post } = useGetPostBudgetPlansQuery({} as any);
   const { budgetYear } = useParams();
   const router = useRouter();
   const [selectedYear, setSelectedYear] = useState({});
   const btnStyle =
     'w-fit px-3 py-1 bg-white cursor-pointer border-l border-r border-t hover:shadow-lg ';
   const [opened, { toggle }] = useDisclosure(true);
-  const [modalOpened, { open, close }] = useDisclosure(false);
+  const [modalOpened, { close }] = useDisclosure(false);
+  const [approve, { isLoading }] = useApprovePreBudgetMutation();
+  const [appCreate] = useCreateAppMutation();
+
+  const submitPlan = () => {
+    modals.openConfirmModal({
+      title: ` ${(selectedYear as any)?.app.planName}`,
+      centered: true,
+      children: (
+        <Text size="sm">
+          {`Are you sure you want to submit  APP ${(selectedYear as any)?.app
+            .budgetYear}?  (Pre-Budget)`}
+        </Text>
+      ),
+      labels: { confirm: 'Yes', cancel: 'No' },
+      onConfirm: handelSubmit,
+    });
+  };
+
+  const onAppCreate = async () => {
+    try {
+      const res = await appCreate('next').unwrap();
+      close();
+      notifications.show({
+        title: 'Success',
+        message: 'APP Created successfully',
+        color: 'green',
+      });
+      router.push(`/pre-budget-plan/${res.id}/activities`);
+    } catch (err) {
+      notifications.show({
+        title: 'Error',
+        message: 'Something went wrong',
+        color: 'red',
+      });
+    }
+  };
+
+  const createApp = () => {
+    modals.openConfirmModal({
+      title: ` New Annual Procurement Plan`,
+      centered: true,
+      children: (
+        <Text size="sm">
+          {`Create Annual Procurement Plan ${
+            Number((selectedYear as any).app.budgetYear) + 1
+          } ?`}
+        </Text>
+      ),
+      labels: { confirm: 'Yes', cancel: 'No' },
+      onConfirm: onAppCreate,
+    });
+  };
+
+  const handelSubmit = async () => {
+    try {
+      await approve((selectedYear as any)?.id).unwrap();
+      notifications.show({
+        title: 'Success',
+        message: 'Pre budget plan submitted successfully',
+        color: 'green',
+      });
+    } catch (err) {
+      logger.log(err);
+      notifications.show({
+        title: 'Error',
+        message: 'Something went wrong',
+        color: 'red',
+      });
+    }
+  };
 
   useEffect(() => {
-    const tempData = data?.items?.filter((d) => d.id == budgetYear) ?? [];
+    const tempData =
+      (page == 'pre' ? pre : post)?.items?.filter((d) => d.id == budgetYear) ??
+      [];
     setSelectedYear(tempData[0]);
-  }, [budgetYear]);
+  }, [budgetYear, pre, post, page]);
   return (
     <Box className="mb-2">
       <Flex>
-        {data?.items?.map((d) => (
+        {(page == 'pre' ? pre : post)?.items?.map((d) => (
           <Box
             className={
               budgetYear == d.id
@@ -52,18 +133,20 @@ export const PlanYearTab = () => {
                 : btnStyle + ' border-b'
             }
             key={d.id}
-            onClick={() => router.push(`/post-budget-plan/${d.id}/activities`)}
+            onClick={() =>
+              router.push(`/${page}-budget-plan/${d.id}/activities`)
+            }
           >
             {d.app.budgetYear}
           </Box>
         ))}
 
-        {data?.items?.length === 1 && (
+        {(page == 'pre' ? pre : post)?.items?.length === 1 && (
           <Box
             className={
               'w-fit px-3 py-1 cursor-pointer border-l border-r border-t hover:shadow-lg bg-gray-300 '
             }
-            onClick={open}
+            onClick={createApp}
           >
             <Flex align="center">
               <IconPlus size={16} />
@@ -78,11 +161,23 @@ export const PlanYearTab = () => {
             <Text fw="500" className="text-lg">
               {(selectedYear as any)?.app?.planName}
             </Text>
-            <Badge color="yellow" size="sm" radius="md">
-              Draft
+            <Badge
+              color={
+                (selectedYear as any)?.status == 'Draft' ? 'yellow' : 'green'
+              }
+              size="sm"
+              radius="md"
+            >
+              {(selectedYear as any)?.status}
             </Badge>
           </Group>
-          <Button>Submit</Button>
+          <Button
+            onClick={submitPlan}
+            loading={isLoading}
+            disabled={(selectedYear as any)?.status == 'Approved'}
+          >
+            Submit
+          </Button>
         </Flex>
         <Collapse in={opened}>
           <Flex justify="space-between" mt={20}>
@@ -100,7 +195,7 @@ export const PlanYearTab = () => {
             </Group>
             <Group className="w-1/4">
               <IconPennantFilled />
-              <Text> Draft</Text>
+              <Text> {(selectedYear as any)?.status}</Text>
             </Group>
           </Flex>
 
@@ -115,7 +210,7 @@ export const PlanYearTab = () => {
             </Group>
             <Group className="w-1/4">
               <IconPointFilled className="text-green-500 " />
-              <Text>20% MG</Text>
+              <Text>20% Marginalized Group</Text>
             </Group>
             <Group className="w-1/4">
               <IconPointFilled className="text-green-500 " />

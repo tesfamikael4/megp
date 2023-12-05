@@ -1,7 +1,7 @@
 'use client';
 import { Tabs } from '@mantine/core';
 import { Section } from '@megp/core-fe';
-import { FormDetail } from '../_components/form-detail';
+import { FormDetail } from '@/app/(features)/_components/activity-form-detail';
 import { Items } from '@/app/(features)/_components/items';
 import TimelineTab from '@/app/(features)/_components/timeline-tab';
 import { BudgetTab } from '../_components/budget-tab';
@@ -21,7 +21,7 @@ export default function NewActivity() {
           </Tabs.List>
 
           <Tabs.Panel value="definition" className="pt-2">
-            <FormDetail mode="detail" />
+            <FormDetail mode="detail" page="post" />
           </Tabs.Panel>
 
           <Tabs.Panel value="items">

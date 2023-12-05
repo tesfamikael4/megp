@@ -1,22 +1,23 @@
 'use client';
 
-import { useGetPreBudgetPlansQuery } from '@/store/api/pre-budget-plan/pre-budget-plan.api';
-import { Loader, Center, Stack, Button, Modal } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
-import { logger } from '@megp/core-fe';
+import { Loader, Center, Stack, Text } from '@mantine/core';
+
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { FormDetail } from '../../_components/form-detail';
+import { useGetPostBudgetPlansQuery } from '@/store/api/post-budget-plan/post-budget-plan.api';
+import { IconInboxOff } from '@tabler/icons-react';
 
 export default function PreBudgetPlan() {
-  const { data: list, isSuccess } = useGetPreBudgetPlansQuery({} as any);
-  const [opened, { open, close }] = useDisclosure(false);
+  const { data: list, isSuccess } = useGetPostBudgetPlansQuery({} as any);
   const router = useRouter();
 
   useEffect(() => {
     if (isSuccess && list !== undefined) {
       const temp = [...list.items];
-      router.push(`/post-budget-plan/${temp[temp.length - 1]?.id}/activities`);
+      temp.length !== 0 &&
+        router.push(
+          `/post-budget-plan/${temp[temp.length - 1]?.id}/activities`,
+        );
     }
   }, [list, isSuccess, router]);
   return (
@@ -25,20 +26,13 @@ export default function PreBudgetPlan() {
         <Stack align="center">
           {!list && <Loader />}
           {list?.items?.length == 0 && (
-            <Button onClick={open} variant="outline">
-              Create New APP
-            </Button>
+            <>
+              <IconInboxOff size={60} />
+              <Text color="black">Pre-Budget Plan not approved yet</Text>
+            </>
           )}
         </Stack>
       </Center>
-
-      <Modal
-        opened={opened}
-        onClose={close}
-        title="New Annual Procurement Plan"
-      >
-        <FormDetail mode="new" />
-      </Modal>
     </>
   );
 }

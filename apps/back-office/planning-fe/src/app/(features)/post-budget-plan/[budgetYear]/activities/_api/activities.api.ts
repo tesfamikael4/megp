@@ -3,22 +3,22 @@ import entityApi from '@/store/entity/api';
 import { createEntitySlice, EntitySliceApi } from '@megp/entity';
 
 // get base group api
-const preBudgetPlanActivitiesApi =
-  entityApi.entitySliceApi['pre-budget-plan-activities'];
+const postBudgetPlanActivitiesApi =
+  entityApi.entitySliceApi['post-budget-plan-activities'];
 
-export const preBudgetPlanActivitiesSliceApi: typeof EntitySliceApi =
+export const postBudgetPlanActivitiesSliceApi: typeof EntitySliceApi =
   createEntitySlice<AnnualProcurementPlan>(
-    preBudgetPlanActivitiesApi as any,
-    'pre-budget-plan-activities',
+    postBudgetPlanActivitiesApi as any,
+    'post-budget-plan-activities',
   );
 
 export const {
   useListQuery,
   useListByAppIdQuery,
-  useLazyListByAppIdQuery,
+  useLazyListByIdQuery,
   useReadQuery,
   useLazyReadQuery,
   useCreateMutation,
   useUpdateMutation,
   useDeleteMutation,
-} = preBudgetPlanActivitiesSliceApi;
+} = postBudgetPlanActivitiesSliceApi;
