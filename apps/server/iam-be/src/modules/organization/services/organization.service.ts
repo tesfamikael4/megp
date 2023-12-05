@@ -9,12 +9,14 @@ import {
 } from '../dto/organization.dto';
 
 import { EntityCrudService } from 'src/shared/service';
+import { RoleService } from 'src/modules/role/services/role.service';
 
 @Injectable()
 export class OrganizationService extends EntityCrudService<Organization> {
   constructor(
     @InjectRepository(Organization)
     private readonly repositoryOrganization: Repository<Organization>,
+    private readonly roleService: RoleService,
   ) {
     super(repositoryOrganization);
   }
@@ -28,12 +30,15 @@ export class OrganizationService extends EntityCrudService<Organization> {
     organization.budgetType = 'DEFAULT';
 
     const unit = new Unit();
-    unit.id = organization.id;
     unit.name = organization.name;
     unit.description = organization.description;
     unit.code = organization.code;
 
     organization.units = [unit];
+
+    const role = await this.roleService.prepareOrganizationDefaultRole();
+
+    organization.roles = [role];
 
     const result = await this.repositoryOrganization.save(organization);
 

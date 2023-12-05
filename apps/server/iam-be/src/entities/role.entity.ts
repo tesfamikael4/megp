@@ -1,8 +1,16 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToMany,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 
 import { Audit } from 'src/shared/entities/audit.entity';
 import { RolePermission } from './role-permission.entity';
 import { UserRole } from './user-role.entity';
+import { Organization } from './organization.entity';
 
 @Entity({ name: 'roles' })
 export class Role extends Audit {
@@ -23,6 +31,14 @@ export class Role extends Audit {
 
   @Column({ nullable: true })
   organizationId: string;
+
+  @ManyToOne(() => Organization, (organization) => organization.roles, {
+    orphanedRowAction: 'delete',
+    onUpdate: 'CASCADE',
+    onDelete: 'RESTRICT',
+  })
+  @JoinColumn({ name: 'organizationId' })
+  public organization: Organization;
 
   @OneToMany(() => RolePermission, (rolePermissions) => rolePermissions.role, {
     cascade: true,

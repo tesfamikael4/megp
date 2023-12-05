@@ -1,17 +1,19 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { Role } from '@entities';
+import { Role, RolePermission } from '@entities';
 import { CollectionQuery, QueryConstructor } from 'src/shared/collection-query';
 import { DataResponseFormat } from 'src/shared/api-data';
 import { RoleResponseDto } from '../dto/role.dto';
 import { ExtraCrudService } from 'src/shared/service/extra-crud.service';
+import { PermissionService } from 'src/modules/application/services/permission.service';
 
 @Injectable()
 export class RoleService extends ExtraCrudService<Role> {
   constructor(
     @InjectRepository(Role)
     private readonly repositoryRole: Repository<Role>,
+    private readonly permissionService: PermissionService,
   ) {
     super(repositoryRole);
   }
@@ -42,7 +44,9 @@ export class RoleService extends ExtraCrudService<Role> {
     return await this.repositoryRole.findOne({
       where: {
         organizationId,
-        key: process.env.ORGANIZATION_ADMIN_ROLE ?? 'ORGANIZATION_ADMIN',
+        key:
+          process.env.ORGANIZATION_ADMINISTRATOR_ROLE_KEY ??
+          'ORGANIZATION_ADMINISTRATOR',
         // rolePermissions: {
         //   permission: {
         //     key: ''
@@ -50,5 +54,27 @@ export class RoleService extends ExtraCrudService<Role> {
         // }
       },
     });
+  }
+
+  async prepareOrganizationDefaultRole() {
+    const role = new Role();
+    role.name = 'Organization Administrator';
+    role.description = 'Organization Administrator';
+    role.key =
+      process.env.ORGANIZATION_ADMINISTRATOR_ROLE_KEY ??
+      'ORGANIZATION_ADMINISTRATOR';
+    role.isSystemRole = true;
+    role.rolePermissions = [];
+
+    const permissions =
+      await this.permissionService.findOrganizationAdminPermission();
+    for (const permission of permissions) {
+      const rolePermission = new RolePermission();
+      rolePermission.permissionId = permission.id;
+
+      role.rolePermissions.push(rolePermission);
+    }
+
+    return role;
   }
 }

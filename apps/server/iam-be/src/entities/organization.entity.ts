@@ -15,6 +15,7 @@ import { OrganizationMandate } from './organization-mandate.entity';
 import { OrganizationType } from './organization-type.entity';
 import { UnitType } from './unit-type.entity';
 import { User } from './user.entity';
+import { Role } from './role.entity';
 
 @Entity({ name: 'organizations' })
 export class Organization extends Audit {
@@ -113,4 +114,10 @@ export class Organization extends Audit {
     onDelete: 'CASCADE',
   })
   offices: Office[];
+
+  @OneToMany(() => Role, (roles) => roles.organization, {
+    cascade: true,
+    onDelete: 'RESTRICT',
+  })
+  roles: Role[];
 }
