@@ -1,6 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Permission } from '@entities';
 import { ExtraCrudService } from 'src/shared/service/extra-crud.service';
 import { DataResponseFormat } from 'src/shared/api-data';
@@ -14,6 +14,17 @@ export class PermissionService extends ExtraCrudService<Permission> {
     private readonly repositoryPermission: Repository<Permission>,
   ) {
     super(repositoryPermission);
+  }
+
+  async findOrganizationAdminPermission(): Promise<Permission[] | undefined> {
+    const permission = process.env.USER_PERMISSION_KEY ?? 'permission';
+    const user = process.env.USER_PERMISSION_KEY ?? 'user';
+
+    return await this.repositoryPermission.find({
+      where: {
+        key: In([permission, user]),
+      },
+    });
   }
 
   async findUnderOrganization(organizationId, query: CollectionQuery) {

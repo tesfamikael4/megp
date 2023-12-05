@@ -1,5 +1,10 @@
 import { Get, Controller, Query } from '@nestjs/common';
-import { ApiExtraModels, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiExtraModels,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { ApiPaginatedResponse, DataResponseFormat } from 'src/shared/api-data';
 import {
   CreateItemCategoryDto,
@@ -10,7 +15,10 @@ import { ItemCategoryService } from '../service/item-category.service';
 import { ItemCategory } from 'src/entities/item-category.entity';
 import { EntityCrudController } from 'src/shared/controller';
 import { EntityCrudOptions } from 'src/shared/types/crud-option.type';
-import { CollectionQuery } from 'src/shared/collection-query';
+import {
+  CollectionQuery,
+  decodeCollectionQuery,
+} from 'src/shared/collection-query';
 const options: EntityCrudOptions = {
   createDto: CreateItemCategoryDto,
   updateDto: UpdateItemCategoryDto,
@@ -26,8 +34,15 @@ export class ItemCategoriesController extends EntityCrudController<ItemCategory>
     super(itemCategoryService);
   }
   @Get('get-trees')
+  @ApiQuery({
+    name: 'q',
+    type: String,
+    required: false,
+  })
   @ApiPaginatedResponse(ItemCategoryResponseDto)
-  async findAllCateAndSubCat(@Query() query: CollectionQuery) {
-    return await this.itemCategoryService.findAllCateAndSubCat(query);
+  async findAllCateAndSubCat(@Query('q') q: string) {
+    const query = decodeCollectionQuery(q);
+    console.log(query);
+    return await this.itemCategoryService.findItems(query);
   }
 }

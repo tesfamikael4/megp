@@ -21,7 +21,7 @@ WORKDIR /app
 
 # Install pnpm
 RUN yarn global add pnpm
- 
+
 
 # First install the dependencies (as they change less often)
 COPY .gitignore .gitignore
@@ -41,7 +41,11 @@ COPY turbo.json turbo.json
 
 RUN yarn turbo run build --filter=iam-be...
 FROM base AS runner
-WORKDIR /app
+WORKDIR /
+
+# Install pnpm
+RUN yarn global add pnpm
+
 # Don't run production as root
 RUN addgroup --system --gid 1001 nestjs
 RUN adduser --system --uid 1001 nestjs
@@ -50,6 +54,7 @@ COPY --from=installer /app .
 
 ARG VERSION_ARG
 ENV VERSION=$VERSION_ARG
+ENV NODE_ENV=production
 
 
 CMD node apps/server/iam-be/dist/main.js

@@ -72,7 +72,8 @@ export type FilterOperator =
   | 'OR'
   | 'AND'
   | 'ALL'
-  | 'ANY';
+  | 'ANY'
+  | 'IsNull';
 
 export interface CollectionResult<T> {
   total: number;

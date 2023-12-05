@@ -10,18 +10,50 @@ type DetailCommodityProps = {
   parents: Taxonomy[];
 };
 
+const TableRow = ({ rowData }: { rowData: Taxonomy }) => {
+  const [showMore, setShowMore] = useState(false);
+
+  const toggleShowMore = () => {
+    setShowMore(!showMore);
+  };
+  return (
+    <Table.Tr key={rowData.title}>
+      <Table.Td>
+        <Text
+          w={250}
+          truncate="end"
+          title={rowData?.title}
+        >{`[${rowData.code}]:${rowData.title}`}</Text>
+      </Table.Td>
+      <Table.Td>
+        <Text size="sm" onClick={toggleShowMore} className="cursor-pointer">
+          {rowData.definition &&
+            (showMore
+              ? rowData.definition
+              : rowData.definition.slice(0, 70) + '...')}
+          {rowData.definition && (
+            <span className="text-xs">
+              {showMore ? 'See Less' : 'See More'}
+            </span>
+          )}
+        </Text>
+      </Table.Td>
+      <Table.Td>
+        <Text size="sm">{rowData.synonym}</Text>
+      </Table.Td>
+      <Table.Td>
+        <Text size="sm">{rowData.acronym}</Text>
+      </Table.Td>
+    </Table.Tr>
+  );
+};
+
 export const DetailCommodity = ({
   selectedData,
   setSelectedData,
   parents,
   setParents,
 }: DetailCommodityProps) => {
-  const [showMore, setShowMore] = useState(false);
-
-  const toggleShowMore = () => {
-    setShowMore(!showMore);
-  };
-
   const { data: children } = useListQuery({
     where: [
       [
@@ -34,35 +66,7 @@ export const DetailCommodity = ({
     ],
   });
   const rows = children?.items?.map((element) => (
-    <Table.Tr key={element.title}>
-      <Table.Td>
-        <Text
-          w={250}
-          truncate="end"
-          title={element?.title}
-        >{`[${element.code}]:${element.title}`}</Text>
-      </Table.Td>
-      <Table.Td>
-        <Text size="sm" onClick={toggleShowMore} className="cursor-pointer">
-          {element.definition &&
-            (showMore
-              ? element.definition
-              : element.definition.slice(0, 70) + '...')}
-          {element.definition && (
-            <span className="text-xs">
-              {' '}
-              {showMore ? 'See Less' : 'See More'}
-            </span>
-          )}
-        </Text>
-      </Table.Td>
-      <Table.Td>
-        <Text size="sm">{element.synonym}</Text>
-      </Table.Td>
-      <Table.Td>
-        <Text size="sm">{element.acronym}</Text>
-      </Table.Td>
-    </Table.Tr>
+    <TableRow key={element.id} rowData={element} />
   ));
 
   return Object.keys(selectedData).length !== 0 ? (
