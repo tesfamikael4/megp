@@ -70,7 +70,7 @@ const PrivilegeContextProvider: React.FC<PropsWithChildren> = ({
     return {
       accessLevel,
       checkAccess: (path: string) => path === accessLevel,
-      lockElements: (path: string) => ({ disabled: !(path === accessLevel) }),
+      lockElements: (path: string) => ({ disabled: false }),
       updateAccess: (path: string) => setAccessLevel(path),
     };
   }, [accessLevel]);

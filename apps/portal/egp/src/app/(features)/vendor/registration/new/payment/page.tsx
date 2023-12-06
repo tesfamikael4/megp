@@ -138,7 +138,6 @@ function Page() {
                   attachment: '',
                 }}
                 storeId={invoiceInfo.data?.invoice[0].attachment ?? ''}
-                disabled={!checkAccess('payment')}
               />
             )}
           </Stack>

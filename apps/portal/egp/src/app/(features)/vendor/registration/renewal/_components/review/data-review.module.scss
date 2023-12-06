@@ -1,11 +1,17 @@
-
-.main{
-    @apply p-4;
-    max-width: 500px !important;
-    height: 100%;
-    
+.main {
+  @apply p-6 gap-4;
+  height: 100%;
 }
 
-.cardTittle{
-    @apply p-1;
+.card {
+  @apply border bg-white;
+  max-height: 400px;
+  min-width: 400px;
+}
+.cardHeader {
+  @apply p-2.5 border-b border-t;
+}
+
+.cardBody {
+  @apply p-2.5 mb-4;
 }
