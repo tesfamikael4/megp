@@ -12,19 +12,55 @@ import {
 } from '@tabler/icons-react';
 
 export const Menu: MenuItem[] = [
-  { label: 'Organizations', icon: IconBuildingBank, link: '/organizations' },
-  { label: 'Applications', icon: IconApps, link: '/applications' },
-  { label: 'Mandates', icon: IconLockSquareRounded, link: '/mandate' },
+  {
+    label: 'Organizations',
+    icon: IconBuildingBank,
+    link: '/organizations',
+    permission: ['organization'],
+  },
+  {
+    label: 'Applications',
+    icon: IconApps,
+    link: '/applications',
+    permission: ['permission'],
+  },
+  {
+    label: 'Mandates',
+    icon: IconLockSquareRounded,
+    link: '/mandate',
+    permission: ['mandate'],
+  },
   {
     label: 'My Organization',
     icon: IconBuildingBank,
     link: '/my-organization',
+    permission: ['my_organization'],
   },
-  { label: 'My Mandates', icon: IconLockSquareRounded, link: '/my-mandate' },
-  { label: 'Users', icon: IconUsers, link: '/users' },
-  { label: 'Groups', icon: IconUsersGroup, link: '/groups' },
-  { label: 'Units', icon: IconBuildingCommunity, link: '/units' },
-  { label: 'Roles', icon: IconLockSquareRounded, link: '/roles' },
+  {
+    label: 'My Mandates',
+    icon: IconLockSquareRounded,
+    link: '/my-mandate',
+    permission: ['my_mandate'],
+  },
+  { label: 'Users', icon: IconUsers, link: '/users', permission: ['user'] },
+  {
+    label: 'Groups',
+    icon: IconUsersGroup,
+    link: '/groups',
+    permission: ['group'],
+  },
+  {
+    label: 'Units',
+    icon: IconBuildingCommunity,
+    link: '/units',
+    permission: ['unit'],
+  },
+  {
+    label: 'Roles',
+    icon: IconLockSquareRounded,
+    link: '/roles',
+    permission: ['role'],
+  },
   {
     label: 'Report & Analytics',
     icon: IconChartInfographic,
