@@ -5,6 +5,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { IconBinaryTree, IconColumns } from '@tabler/icons-react';
 import { Tree, logger } from '@megp/core-fe';
 import { useGetClassificationsQuery } from '@/store/api/classification/classification.api';
+import { useListQuery } from '../../taxonomy/_api/taxonomy.api';
 
 interface ClassificationSelectorProps {
   selectedData: any;
@@ -20,7 +21,17 @@ const ClassificationSelector = ({
   const [opened, { open, close }] = useDisclosure(false);
   const [mode, setMode] = useState<'tree' | 'table'>('table');
   const [currentAssigned] = useState([]);
-  const { data: list } = useGetClassificationsQuery({} as any);
+  const { data: list } = useListQuery({
+    where: [
+      [
+        {
+          column: 'parentCode',
+          value: 'IsNull',
+          operator: 'IsNull',
+        },
+      ],
+    ],
+  });
   const addConfig: RelationConfig<any> = {
     title: 'Classifications',
     columns: [
@@ -108,7 +119,10 @@ const ClassificationSelector = ({
             disableModal
             disableParentSelect
             url={(code) =>
-              `${process.env.NEXT_PUBLIC_ADMINISTRATION_API}classifications/children?q=w%3DparentCode%3A%3D%3A${code}`
+              `${
+                process.env.NEXT_PUBLIC_ADMINISTRATION_API ??
+                '/administration/api/'
+              }classifications?q=w%3DparentCode%3A%3D%3A${code}`
             }
             selectedKeys={selectedData}
             onDone={(item) => {
