@@ -13,7 +13,12 @@
     "paths": {
       "@auth": ["./src/accounts/"],
       "@collection-query": ["./src/shared/collection-query/"],
-      "@api-data": ["./src/shared/api-data/"]
+      "@api-data": ["./src/shared/api-data/"],
+      "@audit": ["./src/shared/entities/"],
+      "@enums": ["./src/shared/enums/"],
+      "@entities": ["./src/entities/"],
+      "@generic-services": ["./src/shared/service/"],
+      "@generic-controllers": ["./src/shared/controller/"]
     },
     "incremental": true,
     "skipLibCheck": true,
