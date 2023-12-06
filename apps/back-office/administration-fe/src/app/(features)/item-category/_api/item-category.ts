@@ -3,10 +3,10 @@ import entityApi from '@/store/entity/api';
 import { createEntitySlice, EntitySliceApi } from '@megp/entity';
 
 // get base group api
-const itemCategoryApi = entityApi.entitySliceApi['item-Categories'];
+const itemCategoryApi = entityApi.entitySliceApi['item-categories'];
 
 export const itemCategorySliceApi: typeof EntitySliceApi =
-  createEntitySlice<ItemCategory>(itemCategoryApi as any, 'item-Categories');
+  createEntitySlice<ItemCategory>(itemCategoryApi as any, 'item-categories');
 
 export const {
   useListQuery,
