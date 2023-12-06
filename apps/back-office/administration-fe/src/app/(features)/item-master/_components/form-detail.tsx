@@ -259,7 +259,7 @@ export function FormDetail({ mode }: FormDetailProps) {
             `${
               process.env.NEXT_PUBLIC_ADMINISTRATION_API ??
               '/administration/api/'
-            }item-Categories?q=w%3DparentId%3A%3D%3A${id}`
+            }item-categories?q=w%3DparentId%3A%3D%3A${id}`
           }
           onDone={(item: any) => {
             setValue('itemSubcategoryName', item?.name);
