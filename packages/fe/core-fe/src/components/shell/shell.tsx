@@ -40,25 +40,11 @@ interface ShellProps {
 
 export function Shell({ children }: ShellProps): React.ReactNode {
   const shellContext = useContext(ShellContext);
-  const { logOut, user, getUserInfo } = useAuth();
-
-  const [userInfo, setUserInfo] = useState<any>();
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const userInfoP = await getUserInfo();
-
-        userInfoP && setUserInfo(userInfoP);
-      } finally {
-        null;
-      }
-    };
-
-    void fetchData();
-  }, []);
+  const { logOut, user, setRole, role } = useAuth();
 
   const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
+  const [filterdMenu, setFilterdMenu] = useState<any[]>([]);
 
   const currentApplication = CurrentApplication(
     shellContext.currentApplication,
@@ -77,7 +63,20 @@ export function Shell({ children }: ShellProps): React.ReactNode {
     </Menu.Item>
   ));
 
-  const links = shellContext.menuItems.map((item) => (
+  useEffect(() => {
+    const filtered = shellContext.menuItems.filter((menuItem) => {
+      return menuItem.permission?.some(
+        (menuPermission) =>
+          user?.permissions.some(
+            (userPermission) => userPermission.key === menuPermission,
+          ),
+      );
+    });
+
+    setFilterdMenu(filtered);
+  }, [user, shellContext.menuItems]);
+
+  const links = filterdMenu.map((item) => (
     <LinksGroup {...item} key={item.label} />
   ));
 
@@ -132,7 +131,7 @@ export function Shell({ children }: ShellProps): React.ReactNode {
                         <Text
                           lh={1}
                         >{`${user.firstName} ${user.lastName}`}</Text>
-                        {userInfo?.user?.userRoles[0]?.name}
+                        {role}
                       </Flex>
                     ) : null}
                   </Box>
@@ -154,13 +153,14 @@ export function Shell({ children }: ShellProps): React.ReactNode {
                   Help
                 </Menu.Item>
 
-                {userInfo?.user?.userRoles.map((role) => {
+                {user?.roles.map((selected) => {
                   return (
                     <Menu.Item
-                      key={role.id}
+                      key={selected.id}
                       leftSection={<IconUserCircle size={14} />}
+                      onClick={setRole(selected?.key)}
                     >
-                      {role?.name}
+                      {selected?.name}
                     </Menu.Item>
                   );
                 })}
