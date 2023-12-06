@@ -52,4 +52,8 @@ RUN adduser --system --uid 1001 nestjs
 USER nestjs
 COPY --from=installer /app .
 
+ARG VERSION_ARG
+ENV VERSION=$VERSION_ARG
+ENV NODE_ENV=production
+
 CMD node apps/server/administration-be/dist/main.js
