@@ -1,10 +1,11 @@
 'use client';
 
-import { Box, NumberInput } from '@mantine/core';
-import { Table, TableConfig, logger } from '@megp/core-fe';
+import { Box, Button, Group, NumberInput } from '@mantine/core';
+import { Table, TableConfig } from '@megp/core-fe';
 
 import { useState } from 'react';
 import { DatePickerInput } from '@mantine/dates';
+import { IconDeviceFloppy } from '@tabler/icons-react';
 
 const tableData = [
   {
@@ -57,7 +58,7 @@ export default function TimelineTab() {
         header: 'Period',
         accessorKey: 'period',
         cell: ({ getValue, row, column }) => (
-          <EstimatedPrice getValue={getValue} row={row} column={column} />
+          <Period getValue={getValue} row={row} column={column} />
         ),
       },
       {
@@ -65,18 +66,13 @@ export default function TimelineTab() {
         header: 'Due Date',
         accessorKey: 'date',
         cell: ({ getValue, row, column }) => (
-          <Quantity getValue={getValue} row={row} column={column} />
+          <DueDate getValue={getValue} row={row} column={column} />
         ),
       },
     ],
   };
 
-  const EstimatedPrice = ({
-    getValue,
-    row: { index, original },
-    column: { id },
-    mode = 'new',
-  }: any) => {
+  const Period = ({ getValue, row: { index }, column: { id } }: any) => {
     const initialValue = getValue();
     const [value, setValue] = useState<string | number>(initialValue);
 
@@ -104,7 +100,7 @@ export default function TimelineTab() {
               date: currentDate,
             };
           } else {
-            return row; // Or handle it in some other way based on your requirements
+            return row;
           }
         }),
       );
@@ -122,11 +118,7 @@ export default function TimelineTab() {
       </>
     );
   };
-  const Quantity = ({
-    getValue,
-    row: { index, original },
-    column: { id },
-  }: any) => {
+  const DueDate = ({ getValue, row: { index }, column: { id } }: any) => {
     const initialValue = getValue();
     const [value, setValue] = useState<Date | null>(initialValue);
 
@@ -168,6 +160,11 @@ export default function TimelineTab() {
   return (
     <div className="mt-4">
       {data.length != 0 && <Table config={listConfig} data={data} />}
+      <Group className="mt-2" justify="end">
+        <Button>
+          <IconDeviceFloppy size={16} /> Save
+        </Button>
+      </Group>
     </div>
   );
 }

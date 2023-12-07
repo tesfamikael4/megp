@@ -8,7 +8,7 @@ export default function PreBudgetPlanLayout({
 }) {
   return (
     <Box>
-      <PlanYearTab />
+      <PlanYearTab page="pre" />
       <Entity>{children}</Entity>
     </Box>
   );

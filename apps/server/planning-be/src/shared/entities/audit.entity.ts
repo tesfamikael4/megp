@@ -1,4 +1,9 @@
-import { Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 export class Audit {
   @Column({ default: 0 })
@@ -9,4 +14,7 @@ export class Audit {
 
   @UpdateDateColumn({ type: 'timestamp' })
   public updatedAt!: Date;
+
+  @DeleteDateColumn({ type: 'timestamp' })
+  public deletedAt!: Date;
 }

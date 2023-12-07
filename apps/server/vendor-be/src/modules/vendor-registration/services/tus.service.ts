@@ -23,7 +23,7 @@ import {
 } from 'src/entities';
 import { VendorStatusEnum } from 'src/shared/enums/vendor-status-enums';
 const endPointUrl =
-  'http://' + process.env.MINIO_END_POINT_URL + ':' + process.env.PORT;
+  'http://' + process.env.MINIO_END_POINT_URL + ':' + process.env.MINIO_PORT;
 const serverOptions = {
   path: '/vendors/api/upload',
 };
@@ -54,120 +54,125 @@ export class TusService implements OnModuleInit {
   }
 
   async handleTus(req, res, userInfo) {
-    const userId = userInfo.id;
+    try {
+      const userId = userInfo.id;
 
-    const result = await this.isrVendorRepository.findOne({
-      where: {
-        userId: userId,
-        status: In([VendorStatusEnum.ACTIVE, VendorStatusEnum.ADJUSTMENT]),
-      },
-    });
-    if (!result) throw new NotFoundException(`isr vendor not found`);
-    const areaOfBusinessInterest = result.areasOfBusinessInterest;
-    const invoice = await this.invoiceRepository.find({
-      where: {
-        userId: userId,
-        paymentStatus: Not('Paid'),
-      },
-    });
-    if (invoice.length > 0) {
-      const bucket = await minioClient.bucketExists(userId);
-      if (!bucket) await minioClient.makeBucket(userId, '');
-      const minioStoreConfig1 = {
-        partSize: 8 * 1024 * 1024,
-        accessKeyId: process.env.ACCESSKEY,
-        secretAccessKey: process.env.SECRETKEY,
-        endpoint: endPointUrl,
-        bucket: userId,
-        s3ForcePathStyle: true,
-      };
-      this.tusServer.datastore = new tus.S3Store(minioStoreConfig1);
-      this.tusServer.on(tus.EVENTS.EVENT_FILE_CREATED, async (event) => {
-        this.logger.verbose(
-          `Upload Created for file ${JSON.stringify(event.file)}`,
-        );
+      const result = await this.isrVendorRepository.findOne({
+        where: {
+          userId: userId,
+          status: In([VendorStatusEnum.ACTIVE, VendorStatusEnum.ADJUSTMENT]),
+        },
       });
-      this.tusServer.on(tus.EVENTS.EVENT_UPLOAD_COMPLETE, async (event) => {
-        this.logger.verbose(
-          `Upload complete for file ${JSON.stringify(event.file)}`,
-        );
-
-        const uploadMetadataHeader = event.file.upload_metadata;
-        const uploadMetadata = this.parseUploadMetadata(uploadMetadataHeader);
-        const fieldValue = event.file.id;
-        const fieldName = uploadMetadata?.fieldName;
-        const entityName = uploadMetadata?.entityName;
-        const paymentReceipt = [];
-        if (entityName == 'vendor') {
-          const resultMetadata = JSON.parse(
-            JSON.stringify(result.supportingDocuments),
+      if (!result) throw new NotFoundException(`isr vendor not found`);
+      const areaOfBusinessInterest = result.areasOfBusinessInterest;
+      const invoice = await this.invoiceRepository.find({
+        where: {
+          userId: userId,
+          paymentStatus: Not('Paid'),
+        },
+      });
+      if (invoice.length > 0) {
+        const bucket = await minioClient.bucketExists(userId);
+        if (!bucket) await minioClient.makeBucket(userId, '');
+        const minioStoreConfig1 = {
+          partSize: 8 * 1024 * 1024,
+          accessKeyId: process.env.ACCESSKEY,
+          secretAccessKey: process.env.SECRETKEY,
+          endpoint: endPointUrl,
+          bucket: userId,
+          s3ForcePathStyle: true,
+        };
+        this.tusServer.datastore = new tus.S3Store(minioStoreConfig1);
+        this.tusServer.on(tus.EVENTS.EVENT_FILE_CREATED, async (event) => {
+          this.logger.verbose(
+            `Upload Created for file ${JSON.stringify(event.file)}`,
           );
-          switch (fieldName) {
-            case 'businessRegistration_IncorporationCertificate':
-              resultMetadata.businessRegistration_IncorporationCertificate =
-                fieldValue;
-              break;
-            case 'mRA_TPINCertificate':
-              resultMetadata.mRA_TPINCertificate = fieldValue;
-              break;
-            case 'generalReceipt_BankDepositSlip':
-              resultMetadata.generalReceipt_BankDepositSlip = fieldValue;
-              break;
-            case 'mRATaxClearanceCertificate':
-              resultMetadata.mRATaxClearanceCertificate = fieldValue;
-              break;
-            case 'previousPPDARegistrationCertificate':
-              resultMetadata.previousPPDARegistrationCertificate = fieldValue;
-              break;
-            case 'mSMECertificate':
-              resultMetadata.mSMECertificate = fieldValue;
-              break;
-            default:
-              break;
-          }
-          try {
-            result.supportingDocuments = resultMetadata;
-            const res = await this.isrVendorRepository.save(result);
-            if (!res)
-              throw new HttpException(
-                'updating_supporting_document_failed',
-                500,
-              );
-          } catch (error) {
-            throw error;
-          }
-        } else if (entityName == 'paymentReceipt') {
-          // const paymentReceipt = JSON.parse(
-          //   JSON.stringify(result.paymentReceipt),
-          // );
-          paymentReceipt.push({
-            transactionId: uploadMetadata?.transactionId,
-            category: uploadMetadata?.category,
-            invoiceId: uploadMetadata?.invoiceId,
-            serviceId: uploadMetadata?.serviceId,
-            attachment: fieldValue,
-          });
+        });
+        this.tusServer.on(tus.EVENTS.EVENT_UPLOAD_COMPLETE, async (event) => {
+          this.logger.verbose(
+            `Upload complete for file ${JSON.stringify(event.file)}`,
+          );
 
-          try {
-            await this.isrVendorRepository.update(result.id, {
-              paymentReceipt: JSON.parse(JSON.stringify(paymentReceipt)),
-            });
-            const invoice = await this.invoiceRepository.findOne({
-              where: { id: uploadMetadata.invoiceId },
-            });
-            invoice.paymentStatus = 'Paid';
-            invoice.attachment = fieldName;
-            await this.invoiceRepository.update(uploadMetadata.invoiceId, {
-              paymentStatus: 'Paid',
+          const uploadMetadataHeader = event.file.upload_metadata;
+          const uploadMetadata = this.parseUploadMetadata(uploadMetadataHeader);
+          const fieldValue = event.file.id;
+          const fieldName = uploadMetadata?.fieldName;
+          const entityName = uploadMetadata?.entityName;
+          const paymentReceipt = [];
+          if (entityName == 'vendor') {
+            const resultMetadata = JSON.parse(
+              JSON.stringify(result.supportingDocuments),
+            );
+            switch (fieldName) {
+              case 'businessRegistration_IncorporationCertificate':
+                resultMetadata.businessRegistration_IncorporationCertificate =
+                  fieldValue;
+                break;
+              case 'mRA_TPINCertificate':
+                resultMetadata.mRA_TPINCertificate = fieldValue;
+                break;
+              case 'generalReceipt_BankDepositSlip':
+                resultMetadata.generalReceipt_BankDepositSlip = fieldValue;
+                break;
+              case 'mRATaxClearanceCertificate':
+                resultMetadata.mRATaxClearanceCertificate = fieldValue;
+                break;
+              case 'previousPPDARegistrationCertificate':
+                resultMetadata.previousPPDARegistrationCertificate = fieldValue;
+                break;
+              case 'mSMECertificate':
+                resultMetadata.mSMECertificate = fieldValue;
+                break;
+              default:
+                break;
+            }
+            try {
+              result.supportingDocuments = resultMetadata;
+              const res = await this.isrVendorRepository.save(result);
+              if (!res)
+                throw new HttpException(
+                  'updating_supporting_document_failed',
+                  500,
+                );
+            } catch (error) {
+              throw error;
+            }
+          } else if (entityName == 'paymentReceipt') {
+            // const paymentReceipt = JSON.parse(
+            //   JSON.stringify(result.paymentReceipt),
+            // );
+            paymentReceipt.push({
+              transactionId: uploadMetadata?.transactionId,
+              category: uploadMetadata?.category,
+              invoiceId: uploadMetadata?.invoiceId,
+              serviceId: uploadMetadata?.serviceId,
               attachment: fieldValue,
             });
-          } catch (error) {
-            throw error;
+
+            try {
+              await this.isrVendorRepository.update(result.id, {
+                paymentReceipt: JSON.parse(JSON.stringify(paymentReceipt)),
+              });
+              const invoice = await this.invoiceRepository.findOne({
+                where: { id: uploadMetadata.invoiceId },
+              });
+              invoice.paymentStatus = 'Paid';
+              invoice.attachment = fieldName;
+              await this.invoiceRepository.update(uploadMetadata.invoiceId, {
+                paymentStatus: 'Paid',
+                attachment: fieldValue,
+              });
+            } catch (error) {
+              throw error;
+            }
           }
-        }
-        this.logger.verbose(`Successfully inserted`);
-      });
-      return this.tusServer.handle(req, res);
+          this.logger.verbose(`Successfully inserted`);
+        });
+        return this.tusServer.handle(req, res);
+      }
+    } catch (error) {
+      console.log(error);
+      throw error;
     }
   }
   private async initializeTusServer() {

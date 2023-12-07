@@ -1,4 +1,4 @@
-import { Controller } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { APP } from 'src/entities';
 import { APPService } from '../services/app.service';
@@ -16,5 +16,11 @@ const options: EntityCrudOptions = {
 export class APPController extends EntityCrudController<APP>(options) {
   constructor(private readonly appService: APPService) {
     super(appService);
+  }
+
+  @Post('auto-create')
+  @ApiTags('apps')
+  async autoCreate(@Body() create: any): Promise<APP> {
+    return await this.appService.autoCreate(create);
   }
 }

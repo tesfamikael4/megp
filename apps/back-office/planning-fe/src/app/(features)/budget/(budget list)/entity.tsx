@@ -3,55 +3,11 @@ import { EntityConfig, EntityLayout } from '@megp/entity';
 import { usePathname, useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 import { logger } from '@megp/core-fe';
-import { DateInput } from '@mantine/dates';
+import { useListQuery } from '../../_api/app.api';
 
 export function Entity({ children }: { children: React.ReactElement }) {
   const route = useRouter();
-
-  const items = [
-    {
-      id: '1',
-      budgetYear: '2016',
-      startDate: 'Jan 11, 2016',
-      endDate: 'Dec 11, 2016',
-    },
-    {
-      id: '2',
-      budgetYear: '2017',
-      startDate: 'Jan 11, 2017',
-      endDate: 'Dec 11, 2017',
-    },
-    {
-      id: '3',
-      budgetYear: '2018',
-      startDate: 'Jan 11, 2018',
-      endDate: 'Dec 11, 2018',
-    },
-    {
-      id: '4',
-      budgetYear: '2019',
-      startDate: 'Jan 11, 2019',
-      endDate: 'Dec 11, 2019',
-    },
-    {
-      id: '5',
-      budgetYear: '2020',
-      startDate: 'Jan 11, 2020',
-      endDate: 'Dec 11, 2020',
-    },
-    {
-      id: '6',
-      budgetYear: '2021',
-      startDate: 'Jan 11, 2021',
-      endDate: 'Dec 11, 2021',
-    },
-    {
-      id: '7',
-      budgetYear: '2022',
-      startDate: 'Jan 11, 2022',
-      endDate: 'Dec 11, 2022',
-    },
-  ];
+  const { data: list } = useListQuery({} as any);
 
   const config: EntityConfig<any> = useMemo(() => {
     return {
@@ -62,7 +18,7 @@ export function Entity({ children }: { children: React.ReactElement }) {
       title: 'Budget',
       hasAdd: false,
       onDetail: (selected: any) => {
-        route.push(`/budget/${selected.budgetYear}`);
+        route.push(`/budget/${selected.id}`);
       },
       pagination: true,
       sortable: true,
@@ -84,7 +40,7 @@ export function Entity({ children }: { children: React.ReactElement }) {
           id: 'startDate',
           header: 'Start Date',
           accessorKey: 'startDate',
-          cell: (info) => info.getValue(),
+          cell: ({ row: { original } }: any) => `Jan 1, ${original.budgetYear}`,
           meta: {
             widget: 'expand',
           },
@@ -93,7 +49,8 @@ export function Entity({ children }: { children: React.ReactElement }) {
           id: 'endDate',
           header: 'End Date',
           accessorKey: 'endDate',
-          cell: (info) => info.getValue(),
+          cell: ({ row: { original } }: any) =>
+            `Dec 30, ${original.budgetYear}`,
           meta: {
             widget: 'expand',
           },
@@ -116,7 +73,7 @@ export function Entity({ children }: { children: React.ReactElement }) {
       <EntityLayout
         mode={mode}
         config={config}
-        data={items ? items.reverse() : []}
+        data={list?.items ?? []}
         detail={children}
       />
     </>

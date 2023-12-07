@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import entityApi from './entity/api';
 import { preBudgetPlanApi } from './api/pre-budget-plan/pre-budget-plan.api';
+import { postBudgetPlanApi } from './api/post-budget-plan/post-budget-plan.api';
 import { administrationApi } from './api/administration/administration.api';
 
 const { reducers, middleware } = entityApi;
@@ -9,6 +10,7 @@ export const store = configureStore({
   reducer: {
     ...reducers,
     [preBudgetPlanApi.reducerPath]: preBudgetPlanApi.reducer,
+    [postBudgetPlanApi.reducerPath]: postBudgetPlanApi.reducer,
     [administrationApi.reducerPath]: administrationApi.reducer,
   },
   devTools: process.env.NODE_ENV !== 'production',
@@ -16,6 +18,7 @@ export const store = configureStore({
     getDefaultMiddleware().concat([
       ...middleware,
       preBudgetPlanApi.middleware,
+      postBudgetPlanApi.middleware,
       administrationApi.middleware,
     ]),
 });

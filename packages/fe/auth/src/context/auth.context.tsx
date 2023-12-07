@@ -1,4 +1,5 @@
 'use client';
+
 import jwtDecode from 'jwt-decode';
 import { hasCookie, deleteCookie, getCookie, setCookie } from 'cookies-next';
 import React, { createContext, useContext, useEffect, useState } from 'react';
@@ -92,6 +93,8 @@ interface AuthContextValue {
       }
     | undefined
   >;
+  setRole: any;
+  role: any;
 }
 
 interface BuildFetchAPI {
@@ -124,6 +127,7 @@ function AuthProvider({
   const [user, setUser] = useState<any>();
   const [error, setError] = useState<any>();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [role, setRole] = useState(user?.roles[0].key);
   const router = useRouter();
 
   useEffect(() => {
@@ -137,6 +141,7 @@ function AuthProvider({
       if (token) {
         const userInfo: Record<string, any> = jwtDecode(token);
         setUser(userInfo);
+        setRole(userInfo.roles[0].key);
       }
     }
   }, [isAuthenticated]);
@@ -410,6 +415,8 @@ function AuthProvider({
     resetPasswordByQue,
     setSecurityQuestions,
     getUserInfo,
+    setRole,
+    role,
   };
 
   return (

@@ -35,6 +35,7 @@ import {
 } from '@/store/api/tags/tags.api';
 import { useGetCategoriesQuery } from '@/store/api/categories/categories.api';
 import ClassificationSelector from './classification-selector';
+import { useListQuery } from '../../item-category/_api/item-category';
 
 interface FormDetailProps {
   mode: 'new' | 'detail';
@@ -90,8 +91,24 @@ export function FormDetail({ mode }: FormDetailProps) {
 
   const { data: measurements, isLoading: isMeasurementLoading } =
     useGetMeasurementsQuery({} as any);
-  const { data: categories, isLoading: isCategoriesLoading } =
-    useGetCategoriesQuery({} as any);
+  // const { data: categories, isLoading: isCategoriesLoading } =
+  //   useGetCategoriesQuery({} as any);
+  const { data: categories, isLoading: isCategoriesLoading } = useListQuery({
+    where: [
+      [
+        {
+          column: 'parentId',
+          value: '',
+          operator: '=',
+        },
+        {
+          column: 'parentId',
+          value: 'IsNull',
+          operator: 'IsNull',
+        },
+      ],
+    ],
+  });
   const { data: tags, isLoading: isTagLoading } = useGetTagsQuery({} as any);
   const [
     getUnitOfMeasurements,
@@ -234,10 +251,16 @@ export function FormDetail({ mode }: FormDetailProps) {
           error={errors?.description?.message as string | undefined}
         />
         <Tree
-          fieldNames={{ title: 'name', children: 'childCategories', key: 'id' }}
+          fieldNames={{ title: 'name', key: 'id' }}
           mode="select"
           label="Item Category"
           data={categories?.items ?? []}
+          url={(id) =>
+            `${
+              process.env.NEXT_PUBLIC_ADMINISTRATION_API ??
+              '/administration/api/'
+            }item-categories?q=w%3DparentId%3A%3D%3A${id}`
+          }
           onDone={(item: any) => {
             setValue('itemSubcategoryName', item?.name);
             setValue('itemSubcategoryId', item?.id);

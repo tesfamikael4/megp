@@ -6,16 +6,12 @@ import { AuthHelper } from '../helper/auth.helper';
 
 Injectable();
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(
-    @Inject(ConfigService)
-    config: ConfigService,
-    @Inject(AuthHelper)
-    private readonly helper: AuthHelper,
-  ) {
+  constructor() {
     const strategyOptions: StrategyOptions = {
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: config.get('JWT_ACCESS_TOKEN_SECRET'),
+      secretOrKey:
+        process.env.JWT_ACCESS_TOKEN_SECRET ?? 'MAXWS4Fw5v6Dqvomjz7s',
     };
 
     super(strategyOptions);
@@ -23,6 +19,5 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   async validate(payload: any) {
     return payload;
-    // return this.helper.validateUser(payload);
   }
 }

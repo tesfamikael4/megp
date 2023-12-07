@@ -1,4 +1,4 @@
-import { Repository } from 'typeorm';
+import { IsNull, ObjectLiteral, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import {
   CollectionQuery,
@@ -6,11 +6,10 @@ import {
   QueryConstructor,
 } from '../collection-query';
 import { DataResponseFormat } from '../api-data';
-import { BaseEntity } from '../entities/base.entity';
 import { RelationCrudOptions } from '../types/crud-option.type';
 
 @Injectable()
-export class RelationCrudService<TEntity extends BaseEntity> {
+export class RelationCrudService<TEntity extends ObjectLiteral> {
   constructor(private readonly repository: Repository<TEntity>) {}
 
   async bulkSaveFirst(payload: any, relationCrudOptions: RelationCrudOptions) {
@@ -36,7 +35,8 @@ export class RelationCrudService<TEntity extends BaseEntity> {
     await this.repository.delete(deleteCondition);
 
     const data = this.repository.create(parsedPayload);
-    return await this.repository.save(data);
+    await this.repository.insert(data);
+    return data;
   }
 
   async bulkSaveSecond(payload: any, relationCrudOptions: RelationCrudOptions) {
@@ -62,7 +62,8 @@ export class RelationCrudService<TEntity extends BaseEntity> {
     await this.repository.delete(deleteCondition);
 
     const data = this.repository.create(parsedPayload);
-    return await this.repository.save(data);
+    await this.repository.insert(data);
+    return data;
   }
 
   async findAllFirst(
@@ -72,8 +73,15 @@ export class RelationCrudService<TEntity extends BaseEntity> {
   ) {
     const entityIdName = relationCrudOptions.firstEntityIdName;
     const include = relationCrudOptions.firstInclude;
+    const filterInclude = relationCrudOptions.secondInclude;
 
-    return await this.getData(entityId, entityIdName, include, query);
+    return await this.getData(
+      entityId,
+      entityIdName,
+      include,
+      filterInclude,
+      query,
+    );
   }
 
   async findAllSecond(
@@ -83,30 +91,57 @@ export class RelationCrudService<TEntity extends BaseEntity> {
   ) {
     const entityIdName = relationCrudOptions.secondEntityIdName;
     const include = relationCrudOptions.secondInclude;
+    const filterInclude = relationCrudOptions.firstInclude;
 
-    return await this.getData(entityId, entityIdName, include, query);
+    return await this.getData(
+      entityId,
+      entityIdName,
+      include,
+      filterInclude,
+      query,
+    );
   }
 
   async getData(
     entityId: string,
     entityIdName: string,
     include: string,
+    filterInclude: string,
     query: CollectionQuery,
   ) {
-    query.filter.push([
+    query.where.push([
       {
-        field: entityIdName,
+        column: entityIdName,
         value: entityId,
         operator: FilterOperators.EqualTo,
       },
     ]);
 
+    query.where.push([
+      {
+        column: `${include}.deletedAt`,
+        value: entityId,
+        operator: FilterOperators.IsNull,
+      },
+    ]);
+
+    query.where.push([
+      {
+        column: `${filterInclude}.deletedAt`,
+        value: entityId,
+        operator: FilterOperators.IsNull,
+      },
+    ]);
+
     query.includes.push(include);
+    query.includes.push(filterInclude);
 
     const dataQuery = QueryConstructor.constructQuery<TEntity>(
       this.repository,
       query,
+      true,
     );
+
     const response = new DataResponseFormat<TEntity>();
     if (query.count) {
       response.total = await dataQuery.getCount();

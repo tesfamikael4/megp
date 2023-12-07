@@ -1,19 +1,18 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { PreBudgetPlan } from 'src/entities';
-import { PreBudgetPlanService } from '../services/pre-budget-plan.service';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
-import { ExtraCrudController } from 'src/shared/controller';
 import { ApiPaginatedResponse } from 'src/shared/api-data';
-import { CollectionQuery } from 'src/shared/collection-query';
 import {
   CreatePreBudgetPlanDto,
   UpdatePreBudgetPlanDto,
 } from '../dtos/pre-budget-plan.dto';
+import { PreBudgetPlanService } from '../services/pre-budget-plan.service';
+import { ExtraCrudController } from 'src/shared/controller';
+import { decodeCollectionQuery } from 'src/shared/collection-query';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'appid',
-  createDto: CreatePreBudgetPlanDto,
   updateDto: UpdatePreBudgetPlanDto,
 };
 
@@ -28,7 +27,14 @@ export class PreBudgetPlanController extends ExtraCrudController<PreBudgetPlan>(
 
   @Get('get-with-app')
   @ApiPaginatedResponse(PreBudgetPlan)
-  async getMandatesToAssign(@Query() query: CollectionQuery) {
+  async getPreBudgetWithApp(@Query('q') q: string) {
+    const query = decodeCollectionQuery(q);
     return await this.preBudgetPlanService.findPreBudgetPlans(query);
+  }
+
+  @Post('approve-pre-budget/:id')
+  @ApiPaginatedResponse(PreBudgetPlan)
+  async approvePreBudget(@Param('id') id: string) {
+    return await this.preBudgetPlanService.copySelectedPreToPost(id);
   }
 }

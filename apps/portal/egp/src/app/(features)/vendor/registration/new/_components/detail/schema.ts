@@ -93,7 +93,9 @@ export const formDataSchema = z.object({
     primaryEmail: z
       .string()
       .email({ message: 'Primary Email must be a valid email address' }),
-    alternateEmail: z.string().optional(),
+    alternateEmail: z
+      .string()
+      .email({ message: 'Alternate Email must be a valid email address' }),
     mobilePhone: z
       .string()
       .min(10, {
@@ -107,11 +109,13 @@ export const formDataSchema = z.object({
   businessSizeAndOwnership: z.object({
     registeredCapital: z.object({
       amount: z.string().min(1, { message: 'Amount is required ' }),
-      currency: z.string(),
+      currency: z
+        .string()
+        .min(1, { message: 'Registered capital is required ' }),
     }),
     paidUpCapital: z.object({
       amount: z.string().min(1, { message: 'Amount is required ' }),
-      currency: z.string(),
+      currency: z.string().min(1, { message: 'Paid up capital is required ' }),
     }),
     numberOfEmployees: z
       .string()

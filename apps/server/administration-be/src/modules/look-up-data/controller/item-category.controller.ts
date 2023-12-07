@@ -23,8 +23,8 @@ const options: EntityCrudOptions = {
   createDto: CreateItemCategoryDto,
   updateDto: UpdateItemCategoryDto,
 };
-@Controller('item-Categories')
-@ApiTags('item Categories')
+@Controller('item-categories')
+@ApiTags('item categories')
 @ApiResponse({ status: 500, description: 'Internal error' })
 @ApiExtraModels(DataResponseFormat)
 export class ItemCategoriesController extends EntityCrudController<ItemCategory>(
@@ -33,7 +33,7 @@ export class ItemCategoriesController extends EntityCrudController<ItemCategory>
   constructor(private readonly itemCategoryService: ItemCategoryService) {
     super(itemCategoryService);
   }
-  @Get('get-trees')
+  @Get()
   @ApiQuery({
     name: 'q',
     type: String,

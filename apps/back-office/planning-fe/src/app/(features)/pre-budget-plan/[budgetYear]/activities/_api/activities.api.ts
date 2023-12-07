@@ -15,7 +15,7 @@ export const preBudgetPlanActivitiesSliceApi: typeof EntitySliceApi =
 export const {
   useListQuery,
   useListByAppIdQuery,
-  useLazyListByAppIdQuery,
+  useLazyListByIdQuery,
   useReadQuery,
   useLazyReadQuery,
   useCreateMutation,

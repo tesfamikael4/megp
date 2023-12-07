@@ -1,11 +1,10 @@
 'use client';
 
-import { Box, Card, Container, Flex, Stack, Text } from '@mantine/core';
+import { Box, Button, Card, Flex, Stack, Text } from '@mantine/core';
 import styles from './data-review.module.scss';
 import { useRouter } from 'next/navigation';
 import { useGetVendorQuery } from '../../../_api/query';
 import { useEffect } from 'react';
-import { NotificationService } from '@/app/(features)/vendor/_components/notification';
 
 const DataReview = () => {
   const router = useRouter();
@@ -19,14 +18,14 @@ const DataReview = () => {
   }, [requestInfo, router]);
 
   return (
-    <Stack className={styles.main}>
-      <Card py={30} shadow="sm" radius="md">
-        <Card.Section inheritPadding withBorder mb={15}>
-          <Text fz={14} fw={600} className={styles.cardTittle}>
+    <Flex className={styles.main}>
+      <Box className={styles.card}>
+        <Box className={styles.cardHeader}>
+          <Text fz={13} fw={500}>
             Vendor Profile
           </Text>
-        </Card.Section>
-        <Stack>
+        </Box>
+        <Stack className={styles.cardBody}>
           <Flex className=" items-center gap-2">
             <Text fz={12} fw={500}>
               Company Name :
@@ -46,14 +45,12 @@ const DataReview = () => {
             <Text fz="xs">Test Name</Text>
           </Flex>
         </Stack>
-      </Card>
-      <Card py={30} shadow="sm" radius="md">
-        <Card.Section inheritPadding withBorder mb={15}>
-          <Text fz={14} fw={600} className={styles.cardTittle}>
+        <Box className={styles.cardHeader}>
+          <Text fz={13} fw={500}>
             Area of Registration
           </Text>
-        </Card.Section>
-        <Stack>
+        </Box>
+        <Stack className={styles.cardBody}>
           <Flex className=" items-center flex-col">
             <Flex className="justify-between w-full">
               <Text fz={14} fw={600} className="text-gray-400">
@@ -112,8 +109,12 @@ const DataReview = () => {
             </Flex>
           </Flex>
         </Stack>
-      </Card>
-    </Stack>
+        <Flex justify={'end'}>
+          <Button>renewal</Button>
+        </Flex>
+      </Box>
+      <Box className={styles.card}></Box>
+    </Flex>
   );
 };
 

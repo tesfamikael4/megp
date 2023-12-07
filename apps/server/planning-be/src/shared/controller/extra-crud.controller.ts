@@ -9,18 +9,18 @@ import {
   UseInterceptors,
   Query,
   Req,
+  Patch,
 } from '@nestjs/common';
-import { DeepPartial } from 'typeorm';
-import { CollectionQuery } from '../collection-query';
+import { DeepPartial, ObjectLiteral } from 'typeorm';
 import { DataResponseFormat } from '../api-data';
-import { BaseEntity } from '../entities/base.entity';
-import { ExtraCrudService } from '../service/extra-crud.service';
-import { ApiBearerAuth, ApiBody } from '@nestjs/swagger';
+import { ExtraCrudService } from '../service';
+import { ApiBearerAuth, ApiBody, ApiQuery } from '@nestjs/swagger';
 import { ExtraCrudOptions } from '../types/crud-option.type';
+import { decodeCollectionQuery } from '../collection-query';
 
 export class BaseAPIDto {}
 
-export function ExtraCrudController<TEntity extends BaseEntity>(
+export function ExtraCrudController<TEntity extends ObjectLiteral>(
   options: ExtraCrudOptions,
 ) {
   const { entityIdName, createDto, updateDto } = options;
@@ -41,11 +41,18 @@ export function ExtraCrudController<TEntity extends BaseEntity>(
     }
 
     @Get('list/:id')
+    @ApiQuery({
+      name: 'q',
+      type: String,
+      description: 'Collection Query Parameter. Optional',
+      required: false,
+    })
     async findAll(
       @Param('id') id: string,
-      @Query() query: CollectionQuery,
+      @Query('q') q: string,
       @Req() req?: any,
     ): Promise<DataResponseFormat<TEntity>> {
+      const query = decodeCollectionQuery(q);
       return this.service.findAll(id, query, options);
     }
 
@@ -68,8 +75,29 @@ export function ExtraCrudController<TEntity extends BaseEntity>(
     }
 
     @Delete(':id')
-    async remove(@Param('id') id: string, @Req() req?: any): Promise<void> {
-      return this.service.remove(id);
+    async softDelete(@Param('id') id: string, @Req() req?: any): Promise<void> {
+      return this.service.softDelete(id);
+    }
+
+    @Patch('restore/:id')
+    async restore(@Param('id') id: string, @Req() req?: any): Promise<void> {
+      return this.service.restore(id);
+    }
+
+    @Get('list/archived/items/:id')
+    @ApiQuery({
+      name: 'q',
+      type: String,
+      description: 'Collection Query Parameter. Optional',
+      required: false,
+    })
+    async findAllArchived(
+      @Param('id') id: string,
+      @Query('q') q?: string,
+      @Req() req?: any,
+    ): Promise<DataResponseFormat<TEntity>> {
+      const query = decodeCollectionQuery(q);
+      return this.service.findAllArchived(id, query, options);
     }
   }
 

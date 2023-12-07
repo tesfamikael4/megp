@@ -3,7 +3,6 @@
 import { Menu } from '@/config/menu';
 import { ShellContext } from '@megp/core-fe';
 import { ReactNode } from 'react';
-
 interface ShellProviderProps {
   children: ReactNode;
 }

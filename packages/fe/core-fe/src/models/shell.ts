@@ -4,4 +4,5 @@ export interface MenuItem {
   link?: string;
   initiallyOpened?: boolean;
   links?: { label: string; link: string }[];
+  permission?: string[];
 }
