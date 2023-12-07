@@ -9,6 +9,7 @@ import {
 import { Audit } from 'src/shared/entities/audit.entity';
 import { VendorsEntity } from './vendors.entity';
 import { WorkflowInstanceEntity } from './workflow-instance.entity';
+import { BusinessAreaEntity } from './business-area.entity';
 @Entity({ name: 'isr_vendors' })
 export class IsrVendorsEntity extends Audit {
   @PrimaryGeneratedColumn('uuid')
@@ -21,6 +22,8 @@ export class IsrVendorsEntity extends Audit {
   status: string;
   @Column({ type: 'jsonb' })
   initial: JSON;
+  @Column({ nullable: true })
+  vendorId: string;
   @Column({ type: 'jsonb' })
   basic: JSON;
   @Column({ type: 'jsonb', nullable: true })
@@ -47,7 +50,11 @@ export class IsrVendorsEntity extends Audit {
   remark: string;
 
   @OneToOne(() => VendorsEntity)
+  @JoinColumn({ name: 'vendorId' })
   vendor: VendorsEntity;
   @OneToMany(() => WorkflowInstanceEntity, (wf) => wf.isrVendor)
   instances: WorkflowInstanceEntity[];
+
+  @OneToMany(() => BusinessAreaEntity, (BusinessArea) => BusinessArea.isrVendor)
+  BusinessArea: BusinessAreaEntity[];
 }

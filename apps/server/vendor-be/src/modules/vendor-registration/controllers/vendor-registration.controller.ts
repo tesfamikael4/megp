@@ -20,7 +20,12 @@ import { DataResponseFormat } from '@api-data';
 import { VendorRegistrationsService } from '../services/vendor-registration.service';
 import { VendorInitiationDto } from '../dto/vendor-initiation.dto';
 
-import { ApiKeyGuard, CurrentUser, JwtGuard } from 'src/shared/authorization';
+import {
+  AllowAnonymous,
+  ApiKeyGuard,
+  CurrentUser,
+  JwtGuard,
+} from 'src/shared/authorization';
 import { InsertAllDataDto } from '../dto/save-all.dto';
 import { SetVendorStatus } from '../dto/vendor.dto';
 import { CollectionQuery } from 'src/shared/collection-query';
@@ -36,11 +41,15 @@ export class VendorRegistrationsController {
   async getVendors() {
     return await this.regService.getIsrVendors();
   }
-  @UseGuards(JwtGuard)
-  @Get('get-vendor-by-userId')
+  // @UseGuards(JwtGuard)
+  @AllowAnonymous()
+  @Get('get-vendor-by-userId/:userId')
   async getVendorByuserId(@CurrentUser() userInfo: any) {
+    console.log(userInfo.id);
+    // return await this.regService.getVendorByUserId(userInfo.id);
     return await this.regService.getVendorByUserId(userInfo.id);
   }
+
   @UseGuards(JwtGuard)
   @Get('get-isr-vendor-by-userId')
   async getIsrVendorByuserId(@CurrentUser() userInfo: any) {
@@ -116,5 +125,11 @@ export class VendorRegistrationsController {
   @Post('adjust-vendor-services')
   async adjustVednorServices(@Body() vendorStatusDto: SetVendorStatus) {
     return await this.regService.adjustVendor(vendorStatusDto);
+  }
+  // @UseGuards(JwtGuard)
+  @AllowAnonymous()
+  @Get('get-vendor-byId-for-certificate/:isrvendorId')
+  async getVendorByIdForCertificate(@Param('isrvendorId') isrvendorId: string) {
+    return await this.regService.getVendorByIdForCertificate(isrvendorId);
   }
 }
