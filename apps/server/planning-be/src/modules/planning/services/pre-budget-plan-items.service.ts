@@ -2,8 +2,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { PreBudgetPlanActivity, PreBudgetPlanItems } from 'src/entities';
-import { ExtraCrudService } from 'src/shared/service';
 import { BulkItemsDto } from '../dtos/pre-budget-plan-items.dto';
+import { ExtraCrudService } from 'src/shared/service';
 
 @Injectable()
 export class PreBudgetPlanItemsService extends ExtraCrudService<PreBudgetPlanItems> {
@@ -23,7 +23,7 @@ export class PreBudgetPlanItemsService extends ExtraCrudService<PreBudgetPlanIte
     const activities = await this.repositoryPreBudgetPlanActivity.findOne({
       where: { id: item.preBudgetPlanActivityId },
     });
-    activities.totalEstimatedAmount += item.unitPrice * item.quantity;
+    activities.calculatedAmount += item.unitPrice * item.quantity;
 
     await this.repositoryPreBudgetPlanActivity.update(
       activities.id,
@@ -44,7 +44,7 @@ export class PreBudgetPlanItemsService extends ExtraCrudService<PreBudgetPlanIte
     });
 
     for (const item of items) {
-      activity.totalEstimatedAmount += item.unitPrice * item.quantity;
+      activity.calculatedAmount += item.unitPrice * item.quantity;
     }
 
     await this.repositoryPreBudgetPlanActivity.update(activity.id, activity);
@@ -66,7 +66,7 @@ export class PreBudgetPlanItemsService extends ExtraCrudService<PreBudgetPlanIte
     const preAmount = item.quantity * item.unitPrice;
     const currentAmount = itemData.quantity * itemData.unitPrice;
 
-    activities.totalEstimatedAmount -= preAmount - currentAmount;
+    activities.calculatedAmount -= preAmount - currentAmount;
 
     await this.repositoryPreBudgetPlanActivity.update(
       activities.id,
@@ -83,7 +83,7 @@ export class PreBudgetPlanItemsService extends ExtraCrudService<PreBudgetPlanIte
     const activities = await this.repositoryPreBudgetPlanActivity.findOne({
       where: { id: item.preBudgetPlanActivityId },
     });
-    activities.totalEstimatedAmount -= item.unitPrice * item.quantity;
+    activities.calculatedAmount -= item.unitPrice * item.quantity;
 
     await this.repositoryPreBudgetPlanActivity.update(
       activities.id,

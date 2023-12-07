@@ -12,7 +12,7 @@ import {
 import { PreBudgetPlan } from './pre-budget-plan.entity';
 import { PreBudgetPlanItems } from './pre-budget-plan-items.entity';
 import { PreBudgetPlanTimeline } from './pre-budget-plan-timeline.entity';
-import { PreBudgePlantDisbursement } from './pre-budge-plant-disbursement.entity';
+import { PreBudgetPlanDisbursement } from './pre-budget-plan-disbursement.entity';
 import { PreBudgetPlanFrameworkContract } from './pre-budget-plan-framework-contract.entity';
 
 @Entity({ name: 'pre_budget_plan_activities' })
@@ -43,11 +43,11 @@ export class PreBudgetPlanActivity {
   preBudgetPlanTimelines: PreBudgetPlanTimeline[];
 
   @OneToMany(
-    () => PreBudgePlantDisbursement,
-    (preBudgePlantDisbursements) =>
-      preBudgePlantDisbursements.preBudgetPlanActivity,
+    () => PreBudgetPlanDisbursement,
+    (preBudgetPlanDisbursements) =>
+      preBudgetPlanDisbursements.preBudgetPlanActivity,
   )
-  preBudgePlantDisbursements: PreBudgePlantDisbursement[];
+  preBudgetPlanDisbursements: PreBudgetPlanDisbursement[];
 
   @OneToMany(
     () => PreBudgetPlanFrameworkContract,
@@ -67,6 +67,9 @@ export class PreBudgetPlanActivity {
 
   @Column({ default: 0 })
   totalEstimatedAmount: number;
+
+  @Column({ default: 0 })
+  calculatedAmount: number;
 
   @Column()
   currency: string;
@@ -94,6 +97,9 @@ export class PreBudgetPlanActivity {
 
   @Column({ default: 'Others' })
   preference: string;
+
+  @Column({ default: 'Online' })
+  procurementProcess: string;
 
   @Column({ nullable: true })
   remark: string;

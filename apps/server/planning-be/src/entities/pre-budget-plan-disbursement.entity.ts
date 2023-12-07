@@ -10,8 +10,8 @@ import {
 
 import { PreBudgetPlanActivity } from './pre-budget-plan-activity.entity';
 
-@Entity({ name: 'pre_budge_plant_disbursements' })
-export class PreBudgePlantDisbursement {
+@Entity({ name: 'pre_budge_plan_disbursements' })
+export class PreBudgetPlanDisbursement {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -20,7 +20,7 @@ export class PreBudgePlantDisbursement {
 
   @ManyToOne(
     () => PreBudgetPlanActivity,
-    (preBudgetPlanActivity) => preBudgetPlanActivity.preBudgePlantDisbursements,
+    (preBudgetPlanActivity) => preBudgetPlanActivity.preBudgetPlanDisbursements,
   )
   @JoinColumn({ name: 'preBudgetPlanActivityId' })
   public preBudgetPlanActivity: PreBudgetPlanActivity;

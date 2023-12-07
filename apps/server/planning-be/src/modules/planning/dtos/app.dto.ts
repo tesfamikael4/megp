@@ -25,4 +25,9 @@ export class UpdateAPPDto extends CreateAPPDto {
   id: string;
 }
 
+export class CreateAPPAuto {
+  @ApiProperty()
+  @IsString()
+  year: string;
+}
 export class APPResponseDto extends UpdateAPPDto {}
