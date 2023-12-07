@@ -29,6 +29,12 @@ const AddOa = () => {
         },
       },
       {
+        id: 'email',
+        header: 'Email',
+        accessorKey: 'email',
+        cell: (info) => info.getValue(),
+      },
+      {
         id: 'action',
         header: 'Actions',
         accessorKey: 'action',
@@ -50,8 +56,8 @@ const AddOa = () => {
   };
 
   useEffect(() => {
-    trigger({ id: id?.toString(), collectionQuery: undefined });
-  }, [id, trigger]);
+    !isModalOpen && trigger({ id: id?.toString(), collectionQuery: undefined });
+  }, [id, trigger, isModalOpen]);
 
   return (
     <>

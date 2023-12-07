@@ -1,4 +1,4 @@
-import { Button, LoadingOverlay, Stack, TextInput } from '@mantine/core';
+import { Group, LoadingOverlay, Stack, TextInput } from '@mantine/core';
 import { z, ZodType } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -7,7 +7,7 @@ import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { User } from '@/models/user/user';
 import { notify } from '@megp/core-fe';
-import { IconBackspace, IconDeviceFloppy } from '@tabler/icons-react';
+import { EntityButton } from '@megp/entity';
 
 interface FormDetailProps {
   mode: 'new' | 'detail';
@@ -43,8 +43,7 @@ export function FormDetail({ mode, handleCloseModal }: FormDetailProps) {
 
   const { id } = useParams();
 
-  const [create, { isLoading: isSaving, isSuccess: saved }] =
-    useInviteOaMutation();
+  const [create, { isLoading: isSaving }] = useInviteOaMutation();
 
   const {
     data: selected,
@@ -60,9 +59,10 @@ export function FormDetail({ mode, handleCloseModal }: FormDetailProps) {
         organizationId: id?.toString(),
       });
 
-      saved && notify('Success', 'User created successfully');
+      notify('Success', 'User created successfully');
       result?.error?.data?.message === 'account_exists' &&
         notify('Error', 'Account already exist');
+      handleCloseModal ? handleCloseModal() : null;
     } catch (err) {
       notify('Error', 'Error in creating user');
     }
@@ -103,25 +103,14 @@ export function FormDetail({ mode, handleCloseModal }: FormDetailProps) {
         error={errors?.email ? errors?.email?.message?.toString() : ''}
         {...register('email')}
       />
-
-      <Button
-        leftSection={<IconDeviceFloppy size={14} stroke={1.6} />}
-        loading={isSaving}
-        onClick={() => {
-          handleSubmit(onCreate);
-          handleCloseModal ? handleCloseModal() : null;
-        }}
-      >
-        Save
-      </Button>
-
-      <Button
-        leftSection={<IconBackspace size={14} stroke={1.6} />}
-        onClick={onReset}
-        variant="default"
-      >
-        Reset
-      </Button>
+      <Group justify="end">
+        <EntityButton
+          mode={mode}
+          onCreate={handleSubmit(onCreate)}
+          onReset={onReset}
+          isSaving={isSaving}
+        />
+      </Group>
     </Stack>
   );
 }
