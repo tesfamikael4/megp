@@ -28,16 +28,8 @@ export class AuthHelper {
 
   // Generate JWT Token
   public generateAccessToken(payload: any): string {
-    const {
-      password: encryptedPassword,
-      createdAt,
-      updatedAt,
-      securityQuestions,
-      ...rest
-    } = payload;
-
     return this.jwt.sign(
-      { ...rest },
+      { ...payload },
       {
         secret: this.configService.get<string>('JWT_ACCESS_TOKEN_SECRET'),
         expiresIn: this.configService.get<string>('JWT_ACCESS_TOKEN_EXPIRES'),
@@ -46,9 +38,9 @@ export class AuthHelper {
   }
 
   // Generate JWT Refresh Token
-  public generateRefreshToken(user: any): string {
+  public generateRefreshToken(payload: any): string {
     return this.jwt.sign(
-      { id: user.id },
+      { ...payload },
       {
         secret: this.configService.get<string>('JWT_REFRESH_TOKEN_SECRET'),
         expiresIn: this.configService.get<string>('JWT_REFRESH_TOKEN_EXPIRES'),

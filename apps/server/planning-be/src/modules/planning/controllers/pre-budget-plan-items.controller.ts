@@ -3,8 +3,8 @@ import { ApiTags } from '@nestjs/swagger';
 import { PreBudgetPlanItems } from 'src/entities';
 import { PreBudgetPlanItemsService } from '../services/pre-budget-plan-items.service';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
-import { ExtraCrudController } from 'src/shared/controller';
 import { BulkItemsDto } from '../dtos/pre-budget-plan-items.dto';
+import { ExtraCrudController } from 'src/shared/controller';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'preBudgetPlanActivityId',
