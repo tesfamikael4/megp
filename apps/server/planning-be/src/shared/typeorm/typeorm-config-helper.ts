@@ -11,7 +11,7 @@ export const TypeOrmConfigHelper = {
 };
 
 const pathPrefix =
-  process.env.NODE_ENV === 'production' ? 'apps/server/planning/' : '';
+  process.env.NODE_ENV === 'production' ? 'apps/server/planning-be/' : '';
 
 export const dataSourceOptions = {
   type: 'postgres',
