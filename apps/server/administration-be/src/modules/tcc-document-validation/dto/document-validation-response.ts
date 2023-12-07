@@ -1,12 +1,14 @@
-interface DocumentValidationResponse {
+import { DocumentData } from './document-data';
+
+export class DocumentValidationResponse {
   Category: {
-    ClassId: number;
-    ClassName: string;
-    DocSubClassId: number;
-    DocSubClassName: string;
+    classId: number;
+    className: string;
+    docSubClassId: number;
+    docSubClassName: string;
   };
-  OnlineCopyUrl: string;
-  ValidationCode: number;
-  DocumentData: DocumentData;
-  DocumentAsBase64Json: string;
+  onlineCopyUrl: string;
+  validationCode: number;
+  documentData: DocumentData;
+  documentAsBase64Json: string;
 }

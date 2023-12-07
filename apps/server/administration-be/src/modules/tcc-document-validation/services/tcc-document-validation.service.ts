@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import axios, { AxiosError } from 'axios';
+import { DocumentValidationResponse } from '../dto/document-validation-response';
 
 @Injectable()
 export class TccDocumentValidationService {

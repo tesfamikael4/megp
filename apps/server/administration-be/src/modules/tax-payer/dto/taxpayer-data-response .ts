@@ -1,9 +1,9 @@
 export class TaxpayerData {
-  TIN: string;
-  TaxpayerName: string;
-  TradingNames: string[];
-  PostalAddress: string;
-  BusinessSectorISIC: string;
-  TaxpayerSegment: string;
-  RegistrationDate: string;
+  tin: string;
+  taxpayerName: string;
+  tradingNames: string[];
+  postalAddress: string;
+  businessSectorISIC: string;
+  taxpayerSegment: string;
+  registrationDate: string;
 }

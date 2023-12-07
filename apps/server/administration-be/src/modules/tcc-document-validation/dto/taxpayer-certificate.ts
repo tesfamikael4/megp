@@ -1,14 +1,14 @@
-interface TaxpayerCertificate {
-  CertificateNumber: string;
-  TpFullName: string;
-  TradingName: string;
-  TPIN: string;
-  DateIssued: string;
-  TaxYearStartDate: string;
-  TaxYearEndDate: string;
-  ClearancePurpose: string;
-  RecipientName: string;
-  IdentityDescription: string;
-  IdentificationNumber: string;
-  ValidityEndDate: string;
+export class TaxpayerCertificate {
+  certificateNumber: string;
+  tpFullName: string;
+  tradingName: string;
+  tPIN: string;
+  dateIssued: string;
+  taxYearStartDate: string;
+  taxYearEndDate: string;
+  clearancePurpose: string;
+  recipientName: string;
+  identityDescription: string;
+  identificationNumber: string;
+  validityEndDate: string;
 }
