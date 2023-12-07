@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsArray } from 'class-validator';
-import { TaxPayer } from 'src/entities/tax-payer.entity';
+import { TaxPayer } from '@entities';
 
 export class TinValidation {
   @ApiProperty({ isArray: true, type: () => TaxPayer })
