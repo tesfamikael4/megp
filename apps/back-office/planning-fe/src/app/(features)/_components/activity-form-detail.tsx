@@ -229,6 +229,10 @@ export const FormDetail = ({ mode, page }: FormDetailProps) => {
   }, [mode, id, getPreActivity, page, getPostActivity]);
 
   useEffect(() => {
+    method === 'Purchased Orders' && setValue('totalEstimatedAmount', 0);
+  }, [method]);
+
+  useEffect(() => {
     if (mode === 'detail' && (isPreSuccess || isPostSuccess)) {
       if (page == 'pre') {
         setValue('name', preActivity?.name);
@@ -321,6 +325,7 @@ export const FormDetail = ({ mode, page }: FormDetailProps) => {
               className="w-full"
               error={errors?.totalEstimatedAmount?.message}
               withAsterisk
+              disabled={method === 'Purchased Orders'}
             />
           )}
         />

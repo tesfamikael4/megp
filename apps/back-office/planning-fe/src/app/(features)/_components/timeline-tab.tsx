@@ -4,7 +4,7 @@ import { Box, Button, Group, NumberInput } from '@mantine/core';
 import { Table, TableConfig } from '@megp/core-fe';
 
 import { useState } from 'react';
-import { DatePickerInput } from '@mantine/dates';
+import { DateInput } from '@mantine/dates';
 import { IconDeviceFloppy } from '@tabler/icons-react';
 
 const tableData = [
@@ -139,15 +139,17 @@ export default function TimelineTab() {
     return (
       <>
         {index === 0 ? (
-          <DatePickerInput
+          <DateInput
+            valueFormat="DD-MMM-YYYY"
             onChange={setValue}
             value={value}
             placeholder="Pick date"
             onBlur={onBlur}
           />
         ) : (
-          <DatePickerInput
-            clearable
+          <DateInput
+            // clearable
+            valueFormat="DD-MMM-YYYY"
             defaultValue={value}
             disabled
             placeholder="Pick date"
