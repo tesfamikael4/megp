@@ -16,7 +16,6 @@ export class OrganizationService extends EntityCrudService<Organization> {
   constructor(
     @InjectRepository(Organization)
     private readonly repositoryOrganization: Repository<Organization>,
-    private readonly roleService: RoleService,
   ) {
     super(repositoryOrganization);
   }
@@ -35,10 +34,6 @@ export class OrganizationService extends EntityCrudService<Organization> {
     unit.code = organization.code;
 
     organization.units = [unit];
-
-    const role = await this.roleService.prepareOrganizationDefaultRole();
-
-    organization.roles = [role];
 
     const result = await this.repositoryOrganization.save(organization);
 

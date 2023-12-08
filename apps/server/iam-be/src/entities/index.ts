@@ -20,3 +20,6 @@ export * from './user-profile.entity';
 export * from './user-role.entity';
 export * from './user-unit.entity';
 export * from './user.entity';
+export * from './role-system.entity';
+export * from './role-system-permission.entity';
+export * from './user-role-system.entity';

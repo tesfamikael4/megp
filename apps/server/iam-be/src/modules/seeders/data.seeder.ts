@@ -3,8 +3,18 @@ import { DataSource, Repository } from 'typeorm';
 import { Seeder, SeederConstructor, runSeeder } from 'typeorm-extension';
 
 import dataSource from 'src/shared/typeorm/typeorm-config-helper';
-import { Application, Permission, Role, RolePermission } from 'src/entities';
-import { applications, permissions, roles, rolePermissions } from './seed-data';
+import {
+  Application,
+  Permission,
+  RoleSystem,
+  RoleSystemPermission,
+} from 'src/entities';
+import {
+  applications,
+  permissions,
+  roleSystems,
+  roleSystemPermissions,
+} from './seed-data';
 
 @Injectable()
 export class DataSeeder implements Seeder {
@@ -13,22 +23,35 @@ export class DataSeeder implements Seeder {
 
     const applicationRepository: Repository<Application> =
       dataSource.getRepository(Application);
+
     const permissionRepository: Repository<Permission> =
       dataSource.getRepository(Permission);
-    const roleRepository: Repository<Role> = dataSource.getRepository(Role);
-    const rolePermissionRepository: Repository<RolePermission> =
-      dataSource.getRepository(RolePermission);
 
-    await applicationRepository.upsert(applications, ['key']);
+    const roleSystemRepository: Repository<RoleSystem> =
+      dataSource.getRepository(RoleSystem);
 
-    await permissionRepository.upsert(permissions, ['key']);
+    const roleSystemPermissionRepository: Repository<RoleSystemPermission> =
+      dataSource.getRepository(RoleSystemPermission);
 
-    // await roleRepository.upsert(roles, {
-    //     skipUpdateIfNoValuesChanged: true,
-    //     conflictPaths: ['key'],
-    // })
+    await applicationRepository.upsert(applications, {
+      skipUpdateIfNoValuesChanged: true,
+      conflictPaths: ['key'],
+    });
 
-    // await rolePermissionRepository.upsert(rolePermissions, ["roleId", "permissionId"])
+    await permissionRepository.upsert(permissions, {
+      skipUpdateIfNoValuesChanged: true,
+      conflictPaths: ['key'],
+    });
+
+    await roleSystemRepository.upsert(roleSystems, {
+      skipUpdateIfNoValuesChanged: true,
+      conflictPaths: ['key'],
+    });
+
+    await roleSystemPermissionRepository.upsert(roleSystemPermissions, {
+      skipUpdateIfNoValuesChanged: true,
+      conflictPaths: ['roleSystemId', 'permissionId'],
+    });
   }
 }
 

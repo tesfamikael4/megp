@@ -14,7 +14,7 @@ import { UserRole } from './user-role.entity';
 import { Organization } from './organization.entity';
 
 @Entity({ name: 'roles' })
-// @Unique(['key', 'organizationId'])
+@Unique(['key', 'organizationId'])
 export class Role extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -28,7 +28,7 @@ export class Role extends Audit {
   @Column({ default: false })
   isSystemRole: boolean;
 
-  @Column({ unique: true })
+  @Column()
   key: string;
 
   @Column({ nullable: true })
