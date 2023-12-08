@@ -8,28 +8,31 @@ import { applications, permissions, roles, rolePermissions } from './seed-data';
 
 @Injectable()
 export class DataSeeder implements Seeder {
+  public async run(dataSource: DataSource): Promise<any> {
+    await dataSource.initialize();
 
-    public async run(
-        dataSource: DataSource,
-    ): Promise<any> {
-        await dataSource.initialize()
+    const applicationRepository: Repository<Application> =
+      dataSource.getRepository(Application);
+    const permissionRepository: Repository<Permission> =
+      dataSource.getRepository(Permission);
+    const roleRepository: Repository<Role> = dataSource.getRepository(Role);
+    const rolePermissionRepository: Repository<RolePermission> =
+      dataSource.getRepository(RolePermission);
 
-        const applicationRepository: Repository<Application> = dataSource.getRepository(Application)
-        const permissionRepository: Repository<Permission> = dataSource.getRepository(Permission)
-        const roleRepository: Repository<Role> = dataSource.getRepository(Role)
-        const rolePermissionRepository: Repository<RolePermission> = dataSource.getRepository(RolePermission)
+    await applicationRepository.upsert(applications, ['key']);
 
-        await applicationRepository.upsert(applications, ["key"])
+    await permissionRepository.upsert(permissions, ['key']);
 
-        await permissionRepository.upsert(permissions, ["key"])
+    // await roleRepository.upsert(roles, {
+    //     skipUpdateIfNoValuesChanged: true,
+    //     conflictPaths: ['key'],
+    // })
 
-        await roleRepository.upsert(roles, ["key"])
-
-        await rolePermissionRepository.upsert(rolePermissions, ["roleId", "permissionId"])
-    }
+    // await rolePermissionRepository.upsert(rolePermissions, ["roleId", "permissionId"])
+  }
 }
 
 const applicationSeederConstructor: SeederConstructor = DataSeeder;
 (async () => {
-    await runSeeder(dataSource, applicationSeederConstructor)
+  await runSeeder(dataSource, applicationSeederConstructor);
 })();
