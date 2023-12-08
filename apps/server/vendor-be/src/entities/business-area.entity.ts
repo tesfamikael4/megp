@@ -4,6 +4,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -37,7 +38,7 @@ export class BusinessAreaEntity {
   @JoinColumn({ name: 'vendorId' })
   isrVendor: IsrVendorsEntity;
 
-  @OneToOne(() => BpServiceEntity, (vendor) => vendor.businessArea)
+  @ManyToOne(() => BpServiceEntity, (vendor) => vendor.businessArea)
   @JoinColumn({ name: 'serviceId' })
   BpService: BpServiceEntity;
 
