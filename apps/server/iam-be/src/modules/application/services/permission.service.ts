@@ -17,12 +17,14 @@ export class PermissionService extends ExtraCrudService<Permission> {
   }
 
   async findOrganizationAdminPermission(): Promise<Permission[] | undefined> {
-    const permission = process.env.USER_PERMISSION_KEY ?? 'permission';
     const user = process.env.USER_PERMISSION_KEY ?? 'user';
+    const unit = process.env.UNIT_PERMISSION_KEY ?? 'unit';
+    const role = process.env.ROLE_PERMISSION_KEY ?? 'role';
+    const group = process.env.GROUP_PERMISSION_KEY ?? 'group';
 
     return await this.repositoryPermission.find({
       where: {
-        key: In([permission, user]),
+        key: In([user, unit, role, group]),
       },
     });
   }

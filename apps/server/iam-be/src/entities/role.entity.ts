@@ -5,6 +5,7 @@ import {
   OneToMany,
   ManyToOne,
   JoinColumn,
+  Unique,
 } from 'typeorm';
 
 import { Audit } from 'src/shared/entities/audit.entity';
@@ -13,6 +14,7 @@ import { UserRole } from './user-role.entity';
 import { Organization } from './organization.entity';
 
 @Entity({ name: 'roles' })
+// @Unique(['key', 'organizationId'])
 export class Role extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -35,7 +37,7 @@ export class Role extends Audit {
   @ManyToOne(() => Organization, (organization) => organization.roles, {
     orphanedRowAction: 'delete',
     onUpdate: 'CASCADE',
-    onDelete: 'RESTRICT'
+    onDelete: 'RESTRICT',
   })
   @JoinColumn({ name: 'organizationId' })
   public organization: Organization;
@@ -48,7 +50,7 @@ export class Role extends Audit {
 
   @OneToMany(() => UserRole, (userRoles) => userRoles.role, {
     cascade: true,
-    onDelete: 'RESTRICT'
+    onDelete: 'RESTRICT',
   })
   userRoles: UserRole[];
 }
