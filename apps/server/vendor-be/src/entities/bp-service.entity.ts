@@ -45,7 +45,7 @@ export class BpServiceEntity extends Audit {
   })
   prices: ServicePrice[];
 
-  @OneToOne(
+  @OneToMany(
     () => BusinessAreaEntity,
     (businessArea) => businessArea.BpService,
     {
