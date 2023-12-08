@@ -502,15 +502,15 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           vendorAccounts: { bank: true },
           beneficialOwnership: true,
           areasOfBusinessInterest: true,
-          isrVendor: { BusinessArea: true },
+          isrVendor: { businessAreas: true },
         },
       });
       if (!vendorEntity) return null;
 
       const { isrVendor, ...vendor } = vendorEntity;
-      const { BusinessArea } = isrVendor;
+      const { businessAreas } = isrVendor;
 
-      const vendorEntityRes = { vendor, BusinessArea };
+      const vendorEntityRes = { vendor, businessAreas };
       return vendorEntityRes;
     } catch (error) {
       console.log(error);
@@ -568,13 +568,19 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       throw error;
     }
   }
-  async getVendorByIdForCertificate(isrvendorId) {
+  async getVendorByIdForCertificate(isrvendorId: string) {
     const result = await this.vendorRepository.findOne({
-      where: { isrVendorId: isrvendorId },
+      where: {
+        isrVendorId: isrvendorId,
+        //isrVendor: { businessAreas: { status: In(['Approved', 'APPROVED']) }}
+      },
       relations: {
-        isrVendor: { BusinessArea: { BpService: true } },
+        isrVendor: { businessAreas: { BpService: true } },
+        areasOfBusinessInterest: true
       },
     });
-    return result;
+
+    return result
   }
+
 }
