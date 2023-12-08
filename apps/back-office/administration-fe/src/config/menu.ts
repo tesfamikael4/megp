@@ -21,6 +21,10 @@ export const Menu: MenuItem[] = [
         label: 'Procurement Procedures',
         link: '/lookup/procurement-procedures',
       },
+      {
+        label: 'Threshold',
+        link: '/procurement-thresholds',
+      },
     ],
   },
 ];
