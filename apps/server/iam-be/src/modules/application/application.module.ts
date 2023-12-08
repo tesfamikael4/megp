@@ -12,4 +12,4 @@ import { PermissionService } from './services/permission.service';
   controllers: [ApplicationNewController, PermissionNewController],
   exports: [PermissionService],
 })
-export class ApplicationModule {}
+export class ApplicationModule { }

@@ -24,7 +24,7 @@ export class Permission extends Audit {
   @Column()
   description: string;
 
-  @Column()
+  @Column({ unique: true })
   key: string;
 
   @Column()

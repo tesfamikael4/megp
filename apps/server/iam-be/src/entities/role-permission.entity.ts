@@ -4,6 +4,7 @@ import {
   ManyToOne,
   JoinColumn,
   PrimaryGeneratedColumn,
+  Unique,
 } from 'typeorm';
 
 import { Audit } from 'src/shared/entities/audit.entity';
@@ -11,6 +12,7 @@ import { Role } from './role.entity';
 import { Permission } from '@entities';
 
 @Entity({ name: 'role_permissions' })
+@Unique(['roleId', 'permissionId'])
 export class RolePermission extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
