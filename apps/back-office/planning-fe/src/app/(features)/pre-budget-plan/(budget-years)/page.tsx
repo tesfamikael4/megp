@@ -86,7 +86,7 @@ export default function PreBudgetPlan() {
           <Radio
             label="Next Year"
             checked={type === 'next'}
-            onChange={() => setType('current')}
+            onChange={() => setType('next')}
           />
         </Group>
         <Button onClick={onCreate} loading={isLoading} className="mt-5">

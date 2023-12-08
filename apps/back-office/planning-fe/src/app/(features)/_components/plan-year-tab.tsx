@@ -176,7 +176,9 @@ export const PlanYearTab = ({ page }: { page: 'pre' | 'post' }) => {
             loading={isLoading}
             disabled={(selectedYear as any)?.status == 'Approved'}
           >
-            Submit
+            {(selectedYear as any)?.status == 'Approved'
+              ? 'Submitted'
+              : 'Submit'}
           </Button>
         </Flex>
         <Collapse in={opened}>
