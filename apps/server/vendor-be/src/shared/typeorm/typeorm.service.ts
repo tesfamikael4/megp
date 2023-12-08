@@ -18,7 +18,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       migrationsTableName: 'typeorm_migrations',
       // logger: 'advanced-console',
       // logging: 'all',
-      synchronize: false, // TypeOrmConfigHelper.NODE_ENV != 'production', // never use TRUE in production!
+      synchronize: true, // TypeOrmConfigHelper.NODE_ENV != 'production', // never use TRUE in production!
       autoLoadEntities: true, // TypeOrmConfigHelper.NODE_ENV != 'production',
     };
   }
