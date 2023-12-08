@@ -117,7 +117,7 @@ type BuildFetchAPIResponse<T> = T;
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-const baseURL = process.env.NEXT_PUBLIC_IAM_API;
+const baseURL = process.env.NEXT_PUBLIC_IAM_API ?? '/iam/api';
 
 function AuthProvider({
   children,
