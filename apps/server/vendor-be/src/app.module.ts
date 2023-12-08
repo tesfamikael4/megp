@@ -10,6 +10,7 @@ import { ServiceModule } from './modules/services/service.module';
 import { ServicePricingModule } from './modules/pricing/pricing.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { EmailConfig } from './shared/email/email.config';
+import { CertificateModule } from './modules/certificates/certificate.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -24,8 +25,9 @@ import { EmailConfig } from './shared/email/email.config';
     ServiceModule,
     ServicePricingModule,
     BpmModule,
+    CertificateModule
   ],
   controllers: [],
   providers: [],
 })
-export class AppModule {}
+export class AppModule { }

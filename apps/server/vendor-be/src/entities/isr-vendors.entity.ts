@@ -55,6 +55,6 @@ export class IsrVendorsEntity extends Audit {
   @OneToMany(() => WorkflowInstanceEntity, (wf) => wf.isrVendor)
   instances: WorkflowInstanceEntity[];
 
-  @OneToMany(() => BusinessAreaEntity, (BusinessArea) => BusinessArea.isrVendor)
-  BusinessArea: BusinessAreaEntity[];
+  @OneToMany(() => BusinessAreaEntity, (businessArea) => businessArea.isrVendor)
+  businessAreas: BusinessAreaEntity[];
 }

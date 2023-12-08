@@ -11,4 +11,4 @@ import { AuthorizationModule } from 'src/shared/authorization';
   providers: [ServicePricingService],
   controllers: [ServicePricingController],
 })
-export class ServicePricingModule {}
+export class ServicePricingModule { }
