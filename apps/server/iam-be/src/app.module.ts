@@ -12,6 +12,7 @@ import { RoleModule } from './modules/role/role.module';
 import { AuthorizationModule } from './shared/authorization/authorization.module';
 import { AccountModule } from './modules/account/account.module';
 import { DataSeeder } from './modules/seeders/data.seeder';
+import { RoleSystemModule } from './modules/role-system/role-system.module';
 
 @Module({
   imports: [
@@ -25,8 +26,9 @@ import { DataSeeder } from './modules/seeders/data.seeder';
     RoleModule,
     ApplicationModule,
     MandateModule,
+    RoleSystemModule,
   ],
   controllers: [],
   providers: [DataSeeder],
 })
-export class AppModule { }
+export class AppModule {}

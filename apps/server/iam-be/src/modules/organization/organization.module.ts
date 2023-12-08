@@ -32,7 +32,7 @@ import { UserUnitController } from './controllers/user-unit.controller';
 import { UserProfileController } from './controllers/user-profile.controller';
 import { UserRoleController } from '../role/controllers/user-role.controller';
 import { AccountModule } from '../account/account.module';
-import { RoleModule } from '../role/role.module';
+import { RoleSystemModule } from '../role-system/role-system.module';
 
 @Module({
   imports: [
@@ -50,7 +50,7 @@ import { RoleModule } from '../role/role.module';
       UserRole,
     ]),
     AccountModule,
-    RoleModule,
+    RoleSystemModule,
   ],
   providers: [
     OrganizationService,
