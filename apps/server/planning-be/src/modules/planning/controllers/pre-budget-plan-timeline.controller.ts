@@ -1,9 +1,10 @@
-import { Controller } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { PreBudgetPlanTimeline } from 'src/entities';
 import { PreBudgetPlanTimelineService } from '../services/pre-budget-plan-timeline.service';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { ExtraCrudController } from 'src/shared/controller';
+import { BulkTimelineDto } from '../dtos/pre-budget-plan-timeline.dto';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'preBudgetPlanActivityId',
@@ -18,5 +19,11 @@ export class PreBudgetPlanTimelineController extends ExtraCrudController<PreBudg
     private readonly preBudgetPlanTimelineService: PreBudgetPlanTimelineService,
   ) {
     super(preBudgetPlanTimelineService);
+  }
+  @Post('bulk-create')
+  async bulkCreate(
+    @Body() timelines: BulkTimelineDto,
+  ): Promise<BulkTimelineDto> {
+    return this.preBudgetPlanTimelineService.bulkCreate(timelines);
   }
 }
