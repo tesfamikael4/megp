@@ -33,7 +33,7 @@ export default function NewActivity() {
           </Tabs.Panel>
 
           <Tabs.Panel value="timeline">
-            <TimelineTab />
+            <TimelineTab page="post" />
           </Tabs.Panel>
 
           <Tabs.Panel value="budget">
