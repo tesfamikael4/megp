@@ -7,8 +7,7 @@ import { S3Store } from '@tus/s3-store';
 // import tus from 'tus-js-client';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Not, Repository } from 'typeorm';
-import path from 'path';
+import { In, Repository } from 'typeorm';
 import { CreateFileDto, DeleteFileDto } from '../dto/file.dto';
 import { VendorRegistrationsService } from './vendor-registration.service';
 import { FilesEntity, InvoiceEntity, IsrVendorsEntity } from 'src/entities';
@@ -47,7 +46,9 @@ export class File {
       return (
         await this.fileRepository.findOne({ where: { vendorId: vendorId } })
       ).fileName;
-    } catch (error) {}
+    } catch (error) {
+      throw error;
+    }
   }
   async getFileNameByVendorIdFileType(vendorId: string, bucketName: string) {
     try {
@@ -56,7 +57,9 @@ export class File {
           where: { vendorId: vendorId, fileType: bucketName },
         })
       ).fileName;
-    } catch (error) {}
+    } catch (error) {
+      throw error;
+    }
   }
   async getAttachment(
     fileName: string,
@@ -75,11 +78,13 @@ export class File {
           return 'successfully downloaded';
         },
       );
-    } catch (error) {}
+    } catch (error) {
+      throw error;
+    }
   }
+
   async getAttachmentpresignedObject(fileName: string) {
     try {
-      console.log(fileName);
       const bucketName = 'megp';
       const result = this.minioClient.presignedGetObject(bucketName, fileName);
       return result;
@@ -104,7 +109,6 @@ export class File {
       return await this.fileRepository.save(fileEntity);
     } catch (error) {
       console.log(error);
-      throw new HttpException(error, HttpStatus.BAD_REQUEST);
       return error;
     }
   }
@@ -118,7 +122,6 @@ export class File {
       const result = await this.fileRepository.delete(deleteFileDto.fileName);
       return result.affected > 0 ? true : false;
     } catch (error) {
-      throw new HttpException(error, HttpStatus.BAD_REQUEST);
       return error;
     }
   }

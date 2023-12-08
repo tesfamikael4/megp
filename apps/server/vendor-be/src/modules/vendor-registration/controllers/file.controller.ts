@@ -32,7 +32,7 @@ export class UploadController {
   constructor(
     private tusService: TusService,
     private fileService: File,
-  ) {}
+  ) { }
   @Get('get-file/:fileName')
   async getFile(
     @Param('fileName') fileName: string,
