@@ -69,7 +69,7 @@ const PrivilegeContextProvider: React.FC<PropsWithChildren> = ({
   const contextValue = useMemo(() => {
     return {
       accessLevel,
-      checkAccess: (path: string) => path === accessLevel,
+      checkAccess: (path: string) => true,
       lockElements: (path: string) => ({ disabled: false }),
       updateAccess: (path: string) => setAccessLevel(path),
     };
