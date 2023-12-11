@@ -2,19 +2,15 @@ import React, { useEffect, useState } from 'react';
 import {
   Box,
   Modal,
-  TextInput,
   Tooltip,
   Flex,
   Text,
-  Center,
   Button,
   ActionIcon,
   Checkbox,
   Group,
   Table as MantineTable,
 } from '@mantine/core';
-import { Relation, RelationConfig } from '@megp/entity';
-// import { useListQuery } from '../_api/item-master.api';
 import {
   IconBinaryTree,
   IconChevronRight,
@@ -22,7 +18,10 @@ import {
   IconPlus,
 } from '@tabler/icons-react';
 import { Table, TableConfig, Tree, logger } from '@megp/core-fe';
-import { useGetItemMasterQuery } from '@/store/api/administration/administration.api';
+import {
+  useGetClassificationsQuery,
+  useGetItemMasterQuery,
+} from '@/store/api/administration/administration.api';
 
 interface ItemSelectorProps {
   onDone: (item: any) => void;
@@ -33,6 +32,17 @@ interface ItemSelectorProps {
 const ItemSelector = ({ onDone, opened, close }: ItemSelectorProps) => {
   const [mode, setMode] = useState<'tree' | 'table'>('table');
   const { data: list } = useGetItemMasterQuery({} as any);
+  const { data: classifications } = useGetClassificationsQuery({
+    where: [
+      [
+        {
+          column: 'parentCode',
+          value: 'IsNull',
+          operator: 'IsNull',
+        },
+      ],
+    ],
+  } as any);
   const [detail, setDetail] = useState(undefined);
   const [selected, setSelected] = useState<any>([]);
   const addConfig: TableConfig<any> = {
@@ -79,14 +89,6 @@ const ItemSelector = ({ onDone, opened, close }: ItemSelectorProps) => {
         },
       },
     ],
-    // onSave: (selected) => {
-    //   onDone(selected);
-    //   // logger.log(selected);
-    //   close();
-    // },
-    // searchable: true,
-    // selectable: true,
-    // pagination: true,
   };
 
   const changeMode = () => {
@@ -99,23 +101,28 @@ const ItemSelector = ({ onDone, opened, close }: ItemSelectorProps) => {
 
   return (
     <>
-      {/* <Center>
-        <Button variant="outline" onClick={open}>
-          <IconPlus size={17} /> Add Items
-        </Button>
-      </Center> */}
       <Modal
         title={
           <Flex justify="space-between" className="w-full">
             <Text className="font-bold">Item Selector</Text>
-            <Tooltip label={mode == 'table' ? 'Tree View' : 'Grid View'}>
-              <Box
-                className="text-slate-600 cursor-pointer"
-                onClick={changeMode}
-              >
-                {mode == 'table' ? <IconBinaryTree /> : <IconColumns />}
-              </Box>
-            </Tooltip>
+            <Group>
+              <Tooltip label={mode == 'table' ? 'Tree View' : 'Grid View'}>
+                <Box
+                  className="text-slate-600 cursor-pointer"
+                  onClick={changeMode}
+                >
+                  {mode == 'table' ? <IconBinaryTree /> : <IconColumns />}
+                </Box>
+              </Tooltip>
+              <Tooltip label="Add new item">
+                <Box
+                  className="text-slate-600 cursor-pointer"
+                  // onClick={changeMode}
+                >
+                  <IconPlus />
+                </Box>
+              </Tooltip>
+            </Group>
           </Flex>
         }
         styles={{
@@ -127,52 +134,34 @@ const ItemSelector = ({ onDone, opened, close }: ItemSelectorProps) => {
           },
         }}
         opened={opened}
-        size={mode == 'tree' ? '55rem' : 'lg'}
+        size={mode == 'tree' ? '75%' : 'lg'}
         onClose={close}
       >
         {!detail && (
           <>
-            <Flex>
+            <Flex className="h-[30rem] overflow-y-hidden">
               {mode === 'tree' && (
-                <Box className="border-t-2">
+                <Box className="border-t-2 overflow-y-scroll w-2/5 ">
                   <Tree
-                    fieldNames={{
-                      key: 'id',
-                      title: 'name',
-                      children: 'children',
-                    }}
-                    data={[
-                      {
-                        id: '001',
-                        name: 'test 123',
-                        children: [{ id: '003', name: 'test 2' }],
-                      },
-                      {
-                        id: '002',
-                        name: 'test 123',
-                        children: [{ id: '004', name: 'test 2' }],
-                      },
-                    ]}
+                    fieldNames={{ title: 'title', key: 'code' }}
+                    data={classifications ? classifications.items : []}
                     mode="view"
                     disableModal
                     disableParentSelect
-                    onDone={(item) => {
-                      // logger.log(item);
-                      close();
-                    }}
+                    url={(code) =>
+                      `${
+                        process.env.NEXT_PUBLIC_ADMINISTRATION_API ??
+                        '/administration/api/'
+                      }classifications?q=w%3DparentCode%3A%3D%3A${code}`
+                    }
                   />
                 </Box>
               )}
 
               <Box
-                className={mode == 'tree' ? 'border-l-2 pl-2 w-full' : 'w-full'}
+                className={mode == 'tree' ? 'border-l-2 pl-2 w-3/5' : 'w-full'}
               >
                 <Table config={addConfig} data={list ? list.items : []} />
-                {/* <Relation
-                config={addConfig}
-                mode="modal"
-                data={list ? list.items : []}
-              /> */}
               </Box>
             </Flex>
 
