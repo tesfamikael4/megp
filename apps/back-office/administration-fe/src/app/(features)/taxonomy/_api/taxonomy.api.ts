@@ -9,6 +9,7 @@ export const taxonomySliceApi: typeof EntitySliceApi =
 
 export const {
   useListQuery,
+  useLazyListQuery,
   useReadQuery,
   useLazyReadQuery,
   useCreateMutation,
