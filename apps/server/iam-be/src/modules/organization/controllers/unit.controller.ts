@@ -27,11 +27,6 @@ export class UnitController extends ExtraCrudController<Unit>(options) {
     super(unitService);
   }
 
-  @Post()
-  async create(@Body() createUnitDto: CreateUnitDto): Promise<Unit> {
-    return await super.create(createUnitDto);
-  }
-
   @Put(':id')
   async update(
     @Param(

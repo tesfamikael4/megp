@@ -1,6 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { Inject, Injectable, NotFoundException, Scope } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
 import { Organization, Unit } from '@entities';
 import {
   CreateOrganizationDto,
@@ -10,14 +10,35 @@ import {
 
 import { EntityCrudService } from 'src/shared/service';
 import { RoleService } from 'src/modules/role/services/role.service';
+import { REQUEST } from '@nestjs/core';
+import { ENTITY_MANAGER_KEY } from '@interceptors';
 
 @Injectable()
 export class OrganizationService extends EntityCrudService<Organization> {
   constructor(
     @InjectRepository(Organization)
     private readonly repositoryOrganization: Repository<Organization>,
+    private readonly roleService: RoleService,
+    @Inject(REQUEST) private request: Request,
   ) {
     super(repositoryOrganization);
+  }
+
+  async transactionTest(organizationDto: CreateOrganizationDto) {
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
+    const organization = manager
+      .getRepository(Organization)
+      .create(organizationDto);
+    await manager.getRepository(Organization).insert(organization);
+
+    const unit = new Unit();
+    unit.name = organization.name;
+    unit.description = organization.description;
+    unit.code = organization.code;
+    unit.organizationId = organization.id;
+    await manager.getRepository(Unit).insert(unit);
+    await manager.getRepository(Unit).insert(unit);
   }
 
   async create(

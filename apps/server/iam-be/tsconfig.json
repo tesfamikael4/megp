@@ -18,7 +18,8 @@
       "@entities": ["./src/entities/"],
       "@generic-services": ["./src/shared/service/"],
       "@generic-controllers": ["./src/shared/controller/"],
-      "@auth": ["./src/shared/authorization/"]
+      "@auth": ["./src/shared/authorization/"],
+      "@interceptors": ["./src/shared/interceptors/"]
     },
     "incremental": true,
     "skipLibCheck": true,
