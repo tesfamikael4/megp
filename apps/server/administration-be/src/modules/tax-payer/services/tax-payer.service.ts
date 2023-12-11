@@ -8,6 +8,7 @@ import { TinValidation } from '../dto/tin-validation.model';
 import { EntityCrudService } from 'src/shared/service';
 import { TaxpayerData } from '../dto/taxpayer-data-response ';
 import axios, { AxiosError } from 'axios';
+import { plainToClass } from 'class-transformer';
 @Injectable()
 export class TaxPayerService extends EntityCrudService<TaxPayer> {
   constructor(
@@ -55,7 +56,7 @@ export class TaxPayerService extends EntityCrudService<TaxPayer> {
       };
       const response = await axios.post(url, body, { headers });
       if (response.status === 200) {
-        const result = response.data;
+        const result = plainToClass(TaxpayerData, response.data);
         if (result && issuedDateStr) {
           const issuedDate = new Date(issuedDateStr);
           if (!isNaN(issuedDate.getTime())) {
