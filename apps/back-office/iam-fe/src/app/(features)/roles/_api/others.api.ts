@@ -11,4 +11,7 @@ const organizationMandateApi = orgPermissionApi.injectEndpoints({
   }),
 });
 
-export const { useGetPermissionByOrganizationIdQuery } = organizationMandateApi;
+export const {
+  useGetPermissionByOrganizationIdQuery,
+  useLazyGetPermissionByOrganizationIdQuery,
+} = organizationMandateApi;

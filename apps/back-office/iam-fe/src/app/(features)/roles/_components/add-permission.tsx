@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Modal } from '@mantine/core';
 import { Relation, RelationConfig } from '@megp/entity';
-
 import {
   useLazySecondRelationQuery,
   useRelationMutation,
@@ -9,8 +8,10 @@ import {
 import { useParams } from 'next/navigation';
 import { notify } from '@megp/core-fe';
 import { useReadQuery } from '../_api/role.api';
-import MandatePermission from '../../mandate/_components/select-permission';
+import { useLazyGetPermissionByOrganizationIdQuery } from '../_api/others.api';
+import MandatePermission from './permission-assign';
 import { Permission } from '@/models/permission';
+import { useAuth } from '@megp/auth';
 
 const AddPermissionModal = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
