@@ -6,7 +6,7 @@ import { DeleteResult, Repository } from 'typeorm';
 import * as fs from 'fs';
 import * as path from 'path';
 import { NcicDataValidation } from '../dto/ncic-data-validation';
-import { EntityCrudService } from 'src/shared/service';
+import { EntityCrudService } from '@generic-services';
 
 @Injectable()
 export class NcicVendorsService extends EntityCrudService<NcicVendor> {
