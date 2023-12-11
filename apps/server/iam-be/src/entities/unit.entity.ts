@@ -42,14 +42,13 @@ export class Unit extends Audit {
 
   @OneToMany(() => UserUnit, (userUnits) => userUnits.unit, {
     cascade: true,
-    onDelete: 'RESTRICT',
+    onDelete: 'CASCADE',
   })
   userUnits: UserUnit[];
 
   @ManyToOne(() => UnitType, (unitType) => unitType.units, {
-    // orphanedRowAction: 'delete',
     onUpdate: 'CASCADE',
-    onDelete: 'RESTRICT',
+    onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'typeId' })
   public unitType: UnitType;

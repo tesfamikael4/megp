@@ -24,7 +24,7 @@ export class UserUnit extends Audit {
   @ManyToOne(() => Unit, (unit) => unit.userUnits, {
     orphanedRowAction: 'delete',
     onUpdate: 'CASCADE',
-    onDelete: 'RESTRICT',
+    onDelete: 'CASCADE',
   })
   @JoinColumn()
   public unit: Unit;
@@ -32,7 +32,7 @@ export class UserUnit extends Audit {
   @ManyToOne(() => User, (user) => user.userUnits, {
     orphanedRowAction: 'delete',
     onUpdate: 'CASCADE',
-    onDelete: 'RESTRICT',
+    onDelete: 'CASCADE',
   })
   @JoinColumn()
   public user: User;

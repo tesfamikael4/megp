@@ -23,7 +23,7 @@ export class RoleSystem extends Audit {
     (roleSystemPermissions) => roleSystemPermissions.roleSystem,
     {
       cascade: true,
-      onDelete: 'RESTRICT',
+      onDelete: 'CASCADE',
     },
   )
   roleSystemPermissions: RoleSystemPermission[];
@@ -33,7 +33,7 @@ export class RoleSystem extends Audit {
     (userRoleSystems) => userRoleSystems.roleSystem,
     {
       cascade: true,
-      onDelete: 'RESTRICT',
+      onDelete: 'CASCADE',
     },
   )
   userRoleSystems: UserRoleSystem[];

@@ -70,19 +70,19 @@ export class User extends Audit {
 
   @OneToMany(() => UserRole, (userRoles) => userRoles.user, {
     cascade: true,
-    onDelete: 'RESTRICT',
+    onDelete: 'CASCADE',
   })
   userRoles: UserRole[];
 
   @OneToMany(() => UserRoleSystem, (userRoleSystems) => userRoleSystems.user, {
     cascade: true,
-    onDelete: 'RESTRICT',
+    onDelete: 'CASCADE',
   })
   userRoleSystems: UserRoleSystem[];
 
   @OneToMany(() => UserUnit, (userUnits) => userUnits.user, {
     cascade: true,
-    onDelete: 'RESTRICT',
+    onDelete: 'CASCADE',
   })
   userUnits: UserUnit[];
 

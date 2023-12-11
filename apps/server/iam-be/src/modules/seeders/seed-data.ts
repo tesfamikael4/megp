@@ -116,3 +116,45 @@ export const roleSystemPermissions = [
     permissionId: '881d06f9-8528-49f2-959a-a986fc12983f',
   },
 ];
+
+export const account = {
+  id: '97766b0e-9d8d-46fc-a3de-65c394e73d86',
+  username: 'super_admin',
+  firstName: 'Super',
+  lastName: 'Admin',
+  email: 'super_admin@megp.com',
+  status: 'ACTIVE',
+};
+
+export const organization = {
+  id: 'c7865a67-d289-4671-b264-bc899ef870cb',
+  name: 'Default Organization',
+  code: '123456',
+  shortName: 'default',
+  isActive: true,
+};
+
+export const unit = {
+  id: 'bcf2e233-3572-45b3-b104-14023c76173a',
+  name: 'Default Organization',
+  code: '123456',
+  isActive: true,
+  organizationId: 'c7865a67-d289-4671-b264-bc899ef870cb',
+};
+
+export const user = {
+  ...account,
+  id: '9ebe3930-54fe-4974-bc7c-2c3bcffe196c',
+  accountId: account.id,
+  organizationId: 'c7865a67-d289-4671-b264-bc899ef870cb',
+  userRoleSystems: [
+    {
+      roleSystemId: '8014efcd-f9e3-43ad-b449-a2acf0b22b60',
+    },
+  ],
+  userUnits: [
+    {
+      unitId: 'bcf2e233-3572-45b3-b104-14023c76173a',
+    },
+  ],
+};

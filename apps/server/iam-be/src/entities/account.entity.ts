@@ -67,6 +67,8 @@ export class Account extends Audit {
   )
   securityQuestions: SecurityQuestion[];
 
-  @OneToOne(() => User, (user) => user.account)
+  @OneToOne(() => User, (user) => user.account, {
+    onDelete: 'CASCADE',
+  })
   user: User;
 }
