@@ -174,4 +174,10 @@ export class AuthController {
 
     return result;
   }
+
+  @Post('test-hook')
+  @AllowAnonymous()
+  testHook(@Body() verifyAccountDto: any) {
+    return verifyAccountDto;
+  }
 }
