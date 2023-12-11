@@ -144,17 +144,5 @@ export class WorkflowInstanceController {
     }
     return response;
   }
-  @UseGuards(JwtGuard)
-  @Get('generate-certeficate/:vendorId')
-  @ApiOkResponse({ type: WorkflowInstanceResponse })
-  async generateCerteficate(
-    @Param('vendorId') vendorId: string,
-    @Query() query: CollectionQuery,
-    @CurrentUser() user: any,
-  ) {
-    return await this.workflowInstanceService.getCerteficateInfo(
-      vendorId,
-      query,
-    );
-  }
+
 }
