@@ -11,7 +11,13 @@ export const classificationApi = createApi({
     getClassifications: builder.query<any, null>({
       query: () => 'classifications/children',
     }),
+    getClassificationPath: builder.query<any, any>({
+      query: ({ code }) => ({
+        url: `classifications/path/${code}`,
+      }),
+    }),
   }),
 });
 
-export const { useGetClassificationsQuery } = classificationApi;
+export const { useGetClassificationsQuery, useGetClassificationPathQuery } =
+  classificationApi;

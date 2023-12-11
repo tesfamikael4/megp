@@ -1,7 +1,8 @@
 import { Text, Table, ScrollArea, Breadcrumbs } from '@mantine/core';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useListQuery } from '../_api/taxonomy.api';
 import { Taxonomy } from '@/models/taxonomy';
+import { useGetClassificationPathQuery } from '@/store/api/classification/classification.api';
 
 type DetailCommodityProps = {
   selectedData: Taxonomy;
@@ -27,14 +28,21 @@ const TableRow = ({ rowData }: { rowData: Taxonomy }) => {
       </Table.Td>
       <Table.Td>
         <Text size="sm" onClick={toggleShowMore} className="cursor-pointer">
-          {rowData.definition &&
-            (showMore
-              ? rowData.definition
-              : rowData.definition.slice(0, 70) + '...')}
           {rowData.definition && (
-            <span className="text-xs">
-              {showMore ? 'See Less' : 'See More'}
-            </span>
+            <>
+              {rowData.definition.length <= 100 ? (
+                rowData.definition
+              ) : (
+                <>
+                  {showMore
+                    ? rowData.definition
+                    : rowData.definition.slice(0, 100) + '...'}
+                  <span className="text-xs ml-3 text-blue-500">
+                    {showMore ? 'See Less' : 'See More'}
+                  </span>
+                </>
+              )}
+            </>
           )}
         </Text>
       </Table.Td>
@@ -65,6 +73,16 @@ export const DetailCommodity = ({
       ],
     ],
   });
+
+  const { data: hierarchy } = useGetClassificationPathQuery({
+    code: selectedData?.code,
+  });
+  useEffect(() => {
+    if (hierarchy) {
+      setParents(hierarchy);
+    }
+  }, [hierarchy, setParents]);
+
   const rows = children?.items?.map((element) => (
     <TableRow key={element.id} rowData={element} />
   ));
@@ -98,21 +116,22 @@ export const DetailCommodity = ({
                     gap: '5px',
                   }}
                 >
-                  {parents.map((parent, index) => {
-                    return (
-                      <Text
-                        key={parent.id}
-                        span
-                        onClick={() => {
-                          setSelectedData(parent);
-                          setParents(parents.slice(0, index + 1));
-                        }}
-                        className="cursor-pointer"
-                      >
-                        {parent.title}
-                      </Text>
-                    );
-                  })}
+                  {parents &&
+                    parents.map((parent, index) => {
+                      return (
+                        <Text
+                          key={parent.id}
+                          span
+                          onClick={() => {
+                            setSelectedData(parent);
+                            setParents(parents.slice(0, index + 1));
+                          }}
+                          className="cursor-pointer"
+                        >
+                          {parent.title}
+                        </Text>
+                      );
+                    })}
                 </Breadcrumbs>
               </Table.Td>
             </Table.Tr>
