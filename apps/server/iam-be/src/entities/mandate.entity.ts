@@ -43,7 +43,7 @@ export class Mandate extends Audit {
     (mandatePermission) => mandatePermission.mandate,
     {
       cascade: true,
-      onDelete: 'RESTRICT',
+      onDelete: 'CASCADE',
     },
   )
   mandatePermissions: MandatePermission[];

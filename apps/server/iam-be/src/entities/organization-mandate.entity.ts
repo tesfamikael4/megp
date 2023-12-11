@@ -25,7 +25,7 @@ export class OrganizationMandate extends Audit {
   @ManyToOne(() => Organization, (org) => org.organizationMandates, {
     orphanedRowAction: 'delete',
     onUpdate: 'RESTRICT',
-    onDelete: 'RESTRICT',
+    onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'organizationId' })
   organization: Organization;
@@ -36,7 +36,7 @@ export class OrganizationMandate extends Audit {
   @ManyToOne(() => Mandate, (man) => man.organizationMandates, {
     orphanedRowAction: 'delete',
     onUpdate: 'RESTRICT',
-    onDelete: 'RESTRICT',
+    onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'mandateId' })
   mandate: Mandate;

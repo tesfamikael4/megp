@@ -27,6 +27,7 @@ export class Organization extends Audit {
 
   @Column()
   code: string;
+
   @Column({ nullable: true })
   shortName: string;
 
@@ -90,7 +91,7 @@ export class Organization extends Audit {
   @ManyToOne(() => OrganizationType, (type) => type.organizations, {
     orphanedRowAction: 'delete',
     onUpdate: 'CASCADE',
-    onDelete: 'RESTRICT',
+    onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'typeId' })
   public organizationType: OrganizationType;
@@ -117,7 +118,7 @@ export class Organization extends Audit {
 
   @OneToMany(() => Role, (roles) => roles.organization, {
     cascade: true,
-    onDelete: 'RESTRICT',
+    onDelete: 'CASCADE',
   })
   roles: Role[];
 }
