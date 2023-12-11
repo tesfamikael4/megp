@@ -1,3 +1,4 @@
+import { encodeCollectionQuery } from '@megp/entity';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export const administrationApi = createApi({
@@ -14,8 +15,24 @@ export const administrationApi = createApi({
     getUnitOfMeasurements: builder.query<any, null>({
       query: (id) => `extra-unit-of-measurements/list/${id}`,
     }),
+    getClassifications: builder.query<any, null>({
+      query: (collectionQuery) => {
+        let q = '';
+        if (collectionQuery) {
+          const query = encodeCollectionQuery(collectionQuery);
+          q = `?q=${query}`;
+        }
+        return {
+          url: `classifications${q}`,
+          method: 'GET',
+        };
+      },
+    }),
   }),
 });
 
-export const { useGetItemMasterQuery, useLazyGetUnitOfMeasurementsQuery } =
-  administrationApi;
+export const {
+  useGetItemMasterQuery,
+  useLazyGetUnitOfMeasurementsQuery,
+  useGetClassificationsQuery,
+} = administrationApi;
