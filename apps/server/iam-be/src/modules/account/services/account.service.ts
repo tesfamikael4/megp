@@ -315,6 +315,28 @@ export class AccountsService {
               },
             },
           },
+          userRoleSystems: {
+            id: true,
+            roleSystemId: true,
+            roleSystem: {
+              id: true,
+              key: true,
+              name: true,
+              roleSystemPermissions: {
+                id: true,
+                permissionId: true,
+                permission: {
+                  id: true,
+                  key: true,
+                  applicationId: true,
+                  application: {
+                    id: true,
+                    key: true,
+                  },
+                },
+              },
+            },
+          },
         },
       },
       relations: {
@@ -323,6 +345,15 @@ export class AccountsService {
           userRoles: {
             role: {
               rolePermissions: {
+                permission: {
+                  application: true,
+                },
+              },
+            },
+          },
+          userRoleSystems: {
+            roleSystem: {
+              roleSystemPermissions: {
                 permission: {
                   application: true,
                 },
@@ -341,6 +372,7 @@ export class AccountsService {
 
     const permissions = [];
     const roles = [];
+    const roleSystems = [];
     userInfo.user?.userRoles?.forEach((userRole) => {
       const role = {
         id: userRole.role.id,
@@ -351,6 +383,21 @@ export class AccountsService {
       roles.push(role);
 
       userRole?.role?.rolePermissions?.forEach((rolePermission) => {
+        rolePermission?.permission &&
+          permissions.push(rolePermission.permission);
+      });
+    });
+
+    userInfo.user?.userRoleSystems?.forEach((userRole) => {
+      const roleSystem = {
+        id: userRole.roleSystem.id,
+        key: userRole.roleSystem.key,
+        name: userRole.roleSystem.name,
+      };
+
+      roleSystems.push(roleSystem);
+
+      userRole?.roleSystem?.roleSystemPermissions?.forEach((rolePermission) => {
         rolePermission?.permission &&
           permissions.push(rolePermission.permission);
       });
@@ -367,6 +414,7 @@ export class AccountsService {
       organization: userInfo.user?.organization ?? {},
       permissions,
       roles,
+      roleSystems,
     };
 
     return tokenPayload;

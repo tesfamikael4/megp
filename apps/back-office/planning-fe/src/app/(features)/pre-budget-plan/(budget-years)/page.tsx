@@ -10,14 +10,12 @@ import {
   Stack,
   Button,
   Modal,
-  Text,
   Group,
+  Radio,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { logger } from '@megp/core-fe';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
-import { FormDetail } from '../../_components/form-detail';
+import { useEffect, useState } from 'react';
 import { notifications } from '@mantine/notifications';
 
 export default function PreBudgetPlan() {
@@ -25,6 +23,7 @@ export default function PreBudgetPlan() {
   const [opened, { open, close }] = useDisclosure(false);
   const router = useRouter();
   const [appCreate, { isLoading }] = useCreateAppMutation();
+  const [type, setType] = useState<string>('');
 
   useEffect(() => {
     if (isSuccess && list !== undefined) {
@@ -34,7 +33,7 @@ export default function PreBudgetPlan() {
     }
   }, [list, isSuccess, router]);
 
-  const onCreate = async (type) => {
+  const onCreate = async () => {
     try {
       const res = await appCreate(type).unwrap();
       close();
@@ -77,20 +76,22 @@ export default function PreBudgetPlan() {
         onClose={close}
         title="New Annual Procurement Plan"
       >
-        {/* <FormDetail mode="new" /> */}
-        <p className="text-center mb-4">Select budget year</p>
-        <Group gap="md" justify="center">
-          <Button onClick={() => onCreate('current')} loading={isLoading}>
-            Current Year
-          </Button>
-          <Button
-            onClick={() => onCreate('next')}
-            variant="outline"
-            loading={isLoading}
-          >
-            Next Year
-          </Button>
+        <p className=" mb-4">Select budget year</p>
+        <Group gap="md">
+          <Radio
+            label="Current Year"
+            checked={type === 'current'}
+            onChange={() => setType('current')}
+          />
+          <Radio
+            label="Next Year"
+            checked={type === 'next'}
+            onChange={() => setType('next')}
+          />
         </Group>
+        <Button onClick={onCreate} loading={isLoading} className="mt-5">
+          Create
+        </Button>
       </Modal>
     </>
   );

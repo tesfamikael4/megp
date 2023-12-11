@@ -19,13 +19,19 @@ export class Budget {
   coa: string;
 
   @Column()
-  allocatedBudget: string;
+  description: string;
 
   @Column()
-  plannedValue: string;
+  fundingSource: string;
 
   @Column()
-  balance: string;
+  allocatedBudget: number;
+
+  @Column()
+  plannedValue: number;
+
+  @Column()
+  balance: number;
 
   @Column()
   currency: string;

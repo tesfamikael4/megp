@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export const postBudgetPlanApi = createApi({
   reducerPath: 'postBudgetPlanApi',
-  tagTypes: ['post-budget-plan'],
+  tagTypes: ['post-budget-plan', 'post-budget-timeline'],
   refetchOnFocus: true,
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.NEXT_PUBLIC_PLANNING_API ?? '/planning/api/',
@@ -26,6 +26,18 @@ export const postBudgetPlanApi = createApi({
         body: data,
       }),
     }),
+    createPostActivityTimeline: builder.mutation<any, any[]>({
+      query: (timeline: any[]) => ({
+        url: `post-budget-plan-timelines/bulk-create`,
+        method: 'POST',
+        body: { timeline },
+      }),
+      invalidatesTags: ['post-budget-timeline'],
+    }),
+    getPostBudgetTimeline: builder.query<any, string>({
+      query: (id: string) => `post-budget-plan-timelines/list/${id}`,
+      providesTags: ['post-budget-timeline'],
+    }),
   }),
 });
 
@@ -34,4 +46,6 @@ export const {
   useLazyGetPostBudgetPlansQuery,
   useCreateMultipleItemsMutation,
   useApprovePostBudgetMutation,
+  useCreatePostActivityTimelineMutation,
+  useLazyGetPostBudgetTimelineQuery,
 } = postBudgetPlanApi;

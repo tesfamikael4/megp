@@ -25,7 +25,7 @@ export class PostBudgetPlanTimeline {
   @JoinColumn({ name: 'postBudgetPlanActivityId' })
   public postBudgetPlanActivity: PostBudgetPlanActivity;
 
-  @Column()
+  @Column({ nullable: true })
   activityName: string;
 
   @Column()
@@ -38,8 +38,11 @@ export class PostBudgetPlanTimeline {
   operationMethod: string;
 
   @Column()
-  period: string;
+  period: number;
 
   @Column()
+  order: number;
+
+  @Column({ default: 'draft' })
   status: string;
 }

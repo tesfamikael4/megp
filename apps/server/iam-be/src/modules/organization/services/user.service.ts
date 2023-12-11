@@ -1,12 +1,12 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { User, UserRole, UserUnit } from '@entities';
+import { User, UserRole, UserRoleSystem, UserUnit } from '@entities';
 import { ExtraCrudService } from 'src/shared/service/extra-crud.service';
 import { CreateUserDto, InviteUserDto } from '../dto/user.dto';
 import { AccountsService } from 'src/modules/account/services/account.service';
 import { UnitService } from './unit.service';
-import { RoleService } from 'src/modules/role/services/role.service';
+import { RoleSystemService } from 'src/modules/role-system/services/role-system.service';
 
 @Injectable()
 export class UserService extends ExtraCrudService<User> {
@@ -15,7 +15,7 @@ export class UserService extends ExtraCrudService<User> {
     private readonly repositoryUser: Repository<User>,
     private readonly accountsService: AccountsService,
     private readonly unitService: UnitService,
-    private readonly roleService: RoleService,
+    private readonly roleSystemService: RoleSystemService,
   ) {
     super(repositoryUser);
   }
@@ -47,14 +47,15 @@ export class UserService extends ExtraCrudService<User> {
       item.userUnits = [userUnit];
     }
 
-    const role = await this.roleService.findOrganizationAdminRole(
-      item.organizationId,
-    );
-    if (role) {
-      const userRole = new UserRole();
-      userRole.roleId = role.id;
+    const roleSystem =
+      await this.roleSystemService.getOrganizationAdministratorRole();
 
-      item.userRoles = [userRole];
+    if (roleSystem) {
+      const userRoleSystem = new UserRoleSystem();
+
+      userRoleSystem.roleSystemId = roleSystem.id;
+
+      item.userRoleSystems = [userRoleSystem];
     }
 
     return await this.repositoryUser.save(item);
@@ -66,6 +67,7 @@ export class UserService extends ExtraCrudService<User> {
         where: { id: input.id },
         relations: {
           userRoles: true,
+          userRoleSystems: true,
           userUnits: true,
         },
       });
@@ -73,7 +75,10 @@ export class UserService extends ExtraCrudService<User> {
         throw new HttpException('user_not_found', HttpStatus.NOT_FOUND);
       }
 
-      if (user.userRoles.length < 1 || user.userUnits.length < 1) {
+      if (
+        (user.userRoles.length < 1 && user.userRoleSystems.length < 1) ||
+        user.userUnits.length < 1
+      ) {
         throw new HttpException(
           'user_role_and_unit_not_assigned',
           HttpStatus.NOT_FOUND,

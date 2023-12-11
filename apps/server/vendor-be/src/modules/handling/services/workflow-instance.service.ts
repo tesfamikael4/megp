@@ -67,7 +67,7 @@ export class WorkflowInstanceService {
     private readonly receiptRepository: Repository<PaymentReceiptEntity>,
     private readonly bpService: BusinessProcessService,
     private readonly commonService: HandlingCommonService,
-  ) {}
+  ) { }
 
   async submitFormBasedTask(
     nextCommand: GotoNextStateDto,
@@ -76,30 +76,7 @@ export class WorkflowInstanceService {
     const response = new WorkflowInstanceResponse();
     return response;
   }
-  async getCerteficateInfo(
-    vendorId: string,
-    query: CollectionQuery,
-  ): Promise<VendorsResponseDto> {
-    console.log(vendorId);
-    const vendor = await this.vendorRepository.findOne({
-      relations: {
-        instances: { price: true },
-      },
-      where: {
-        status: WorkflowInstanceEnum.Approved,
-        instances: {
-          requestorId: vendorId,
-          //  approvedAt: Not(null),
-          status: WorkflowInstanceEnum.Completed,
-          price: { businessArea: In(['Goods', 'Services']) },
-          businessStatus: 'Active',
-        },
-      },
-    });
-    if (!vendor) throw new NotFoundException('Not Found');
-    const response = VendorsResponseDto.fromEntity(vendor);
-    return response;
-  }
+
   async getWorkflowInstances(
     query: CollectionQuery,
   ): Promise<DataResponseFormat<WorkflowInstanceResponse>> {
@@ -119,15 +96,7 @@ export class WorkflowInstanceService {
     }
     return response;
   }
-  async getById(id: string): Promise<WorkflowInstanceResponse> {
-    const workflowInstance = await this.workflowInstanceRepository.findOne({
-      where: { id: id },
-      relations: { taskHandler: { task: true }, businessProcess: true },
-    });
-    if (!workflowInstance)
-      throw new NotFoundException('WorkflowInstance not found');
-    return WorkflowInstanceResponse.toResponse(workflowInstance);
-  }
+
   async create(
     dto: CreateWorkflowInstanceDto,
     userInfo: any = {},
@@ -167,8 +136,7 @@ export class WorkflowInstanceService {
       //   where: { bpId: serviceBp.id, name: state.value.toString() },
       // });
       if (!task) throw new NotFoundException('Task Not found');
-      console.log('task is ', task);
-      console.log('instance id ', wfinstance);
+
       taskHandler.currentState = state.value.toString();
       taskHandler.instanceId = wfinstance.id;
       taskHandler.taskId = task.id;

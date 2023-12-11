@@ -73,8 +73,10 @@ export function Shell({ children }: ShellProps): React.ReactNode {
       );
     });
 
-    setFilterdMenu(filtered);
-  }, [user, shellContext.menuItems]);
+    currentApplication === 'Identity & Access'
+      ? setFilterdMenu(filtered)
+      : setFilterdMenu(shellContext.menuItems);
+  }, [user, shellContext.menuItems, currentApplication]);
 
   const links = filterdMenu.map((item) => (
     <LinksGroup {...item} key={item.label} />

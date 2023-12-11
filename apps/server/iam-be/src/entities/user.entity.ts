@@ -10,7 +10,7 @@ import {
 
 import { Audit } from 'src/shared/entities/audit.entity';
 
-import { Account, Organization } from '@entities';
+import { Account, Organization, UserRoleSystem } from '@entities';
 import { UserProfile } from '@entities';
 import { UserRole } from '@entities';
 import { UserUnit } from '@entities';
@@ -73,6 +73,12 @@ export class User extends Audit {
     onDelete: 'RESTRICT',
   })
   userRoles: UserRole[];
+
+  @OneToMany(() => UserRoleSystem, (userRoleSystems) => userRoleSystems.user, {
+    cascade: true,
+    onDelete: 'RESTRICT',
+  })
+  userRoleSystems: UserRoleSystem[];
 
   @OneToMany(() => UserUnit, (userUnits) => userUnits.user, {
     cascade: true,

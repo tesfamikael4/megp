@@ -55,26 +55,4 @@ export class RoleService extends ExtraCrudService<Role> {
       },
     });
   }
-
-  async prepareOrganizationDefaultRole() {
-    const role = new Role();
-    role.name = 'Organization Administrator';
-    role.description = 'Organization Administrator';
-    role.key =
-      process.env.ORGANIZATION_ADMINISTRATOR_ROLE_KEY ??
-      'ORGANIZATION_ADMINISTRATOR';
-    role.isSystemRole = true;
-    role.rolePermissions = [];
-
-    const permissions =
-      await this.permissionService.findOrganizationAdminPermission();
-    for (const permission of permissions) {
-      const rolePermission = new RolePermission();
-      rolePermission.permissionId = permission.id;
-
-      role.rolePermissions.push(rolePermission);
-    }
-
-    return role;
-  }
 }

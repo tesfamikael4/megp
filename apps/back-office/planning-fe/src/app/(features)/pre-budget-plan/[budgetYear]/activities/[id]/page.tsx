@@ -31,7 +31,7 @@ export default function NewActivity() {
           </Tabs.Panel>
 
           <Tabs.Panel value="timeline">
-            <TimelineTab />
+            <TimelineTab page="pre" />
           </Tabs.Panel>
         </Tabs>
       </Section>

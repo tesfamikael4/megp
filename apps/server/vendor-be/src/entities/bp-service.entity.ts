@@ -1,14 +1,24 @@
 import { BusinessProcessEntity } from 'src/entities/business-process.entity';
 import { ServicePrice } from 'src/entities/service-price.entity';
 import { Audit } from 'src/shared/entities/audit.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { WorkflowInstanceEntity } from './workflow-instance.entity';
+import { BusinessAreaEntity } from './business-area.entity';
 @Entity({ name: 'bp_services' })
 export class BpServiceEntity extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
   @Column()
   name: string;
+  @Column({ nullable: true })
+  businessAreaId: string;
   @Column({ unique: true })
   key: string;
   @Column({ nullable: true })
@@ -34,4 +44,15 @@ export class BpServiceEntity extends Audit {
     onDelete: 'CASCADE',
   })
   prices: ServicePrice[];
+
+  @OneToMany(
+    () => BusinessAreaEntity,
+    (businessArea) => businessArea.BpService,
+    {
+      cascade: true,
+      onDelete: 'CASCADE',
+    },
+  )
+  @JoinColumn({ name: 'businessAreaId' })
+  businessArea: BusinessAreaEntity[];
 }

@@ -56,23 +56,6 @@ export class ApplicationExcutionController {
     );
   }
 
-  /*
-    @UseGuards(JwtGuard)
-    @Get('notify-complation')
-    async notifyComplation(@Req() request: Request, @CurrentUser() user: any) {
-      const authToken = request.headers['authorization'].split(' ')[1];
-      user['authToken'] = authToken;   
-      const url =
-        'https://dev-bo.megp.peragosystems.com/vendors/api/business-area"';
-      const wfi = new UpdateWorkflowInstanceDto();
-      const sample = {
-        vendorId: '4e5c1009-fedb-43ab-ae32-bc0f23503686',
-        bpId: '96d95fdb-7852-4ddc-982f-0e94d23d15d3',
-        serviceId: '5f764d17-a165-42ab-879d-358bc03fe5d8',
-        action: WorkflowInstanceEnum.Completed,
-      };
-      return await this.workflowService.notifyCompletion(wfi, url, user);
-    }*/
 
   @UseGuards(JwtGuard)
   @Post('notify')
@@ -98,11 +81,8 @@ export class ApplicationExcutionController {
   @ApiPaginatedResponse(WorkflowInstanceResponse)
   async testWF(
     @Body() wfi: CreateWorkflowInstanceDto[],
-    @CurrentUser() user,
-    @Req() request: Request,
+    @CurrentUser() user
   ) {
-    const authToken = request.headers['authorization'].split(' ')[1];
-    user['token'] = authToken;
     const intances = [];
     for (let i = 0; i < wfi.length; i++) {
       const bp = await this.bpService.findBpService(wfi[i].pricingId);
@@ -123,11 +103,8 @@ export class ApplicationExcutionController {
   @ApiOkResponse({ type: WorkflowInstanceResponse })
   async gottoNextStep(
     @Body() nextStatedto: GotoNextStateDto,
-    //  @Req() request: Request,
     @CurrentUser() user: any,
   ) {
-    // const authToken = request.headers['authorization'].split(' ')[1];
-    // user['token'] = authToken;
     const response = await this.workflowService.gotoNextStep(
       nextStatedto,
       user,
@@ -147,6 +124,7 @@ export class ApplicationExcutionController {
   async unpickTask(@Body() dto: UpdateTaskHandlerDto) {
     return await this.executeService.unpickTask(dto);
   }
+
   @UseGuards(JwtGuard)
   @Get('get-currunt-tasks/:serviceKey')
   @ApiPaginatedResponse(WorkflowInstanceResponse)
@@ -155,12 +133,13 @@ export class ApplicationExcutionController {
     @Query() query: CollectionQuery,
     @CurrentUser() user: any,
   ) {
-    return await this.executeService.getCurruntTaskByService(
+    return await this.executeService.getCurruntTaskByServiceKey(
       serviceKey,
       query,
-      user,
+      user
     );
   }
+
   @UseGuards(JwtGuard)
   @Get('get-customer-tasks')
   @ApiPaginatedResponse(WorkflowInstanceResponse)
@@ -184,27 +163,6 @@ export class ApplicationExcutionController {
     const result = await this.workflowService.getActivities(instanceId);
     return result;
   }
-  @UseGuards(JwtGuard)
-  @Get('generate-certeficate-pdf')
-  async generateCerteficatePdf(@Query() params: any, @Req() req, @Res() res) {
-    const templateUrl = params.templateUrl;
-    const selector = params.selector;
-    console.log(templateUrl, selector);
-    const pdfBuffer = await this.executeService.generateCerteficatePdf(
-      templateUrl,
-      selector,
-    );
-    res.set({
-      'Content-Type': 'application/pdf',
-      'Content-Disposition': 'attachment; filename=ppda-certeficate.pdf',
-      'Content-Length': pdfBuffer.length,
-      'Cache-Control': 'no-cache, no-store, must-revalidate',
-      Pragma: 'no-cache',
-      Expires: 0,
-    });
-    res.status(200).end(pdfBuffer);
-  }
-
   @UseGuards(JwtGuard)
   @Get('get-invoices')
   @ApiPaginatedResponse(InvoiceResponseDto)

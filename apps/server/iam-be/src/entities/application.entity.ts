@@ -15,7 +15,7 @@ export class Application extends Audit {
   @Column()
   description: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, unique: true })
   key: string;
 
   @OneToMany(() => Permission, (permissions) => permissions.application, {
@@ -24,3 +24,5 @@ export class Application extends Audit {
   })
   permissions: Permission[];
 }
+
+

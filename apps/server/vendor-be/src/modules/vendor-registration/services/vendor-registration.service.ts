@@ -495,25 +495,25 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
 
   async getVendorByUserId(userId: string): Promise<any> {
     try {
-      const vendorEntity = await this.vendorRepository.find({
-        where: { userId: userId },
+      const vendorEntity = await this.vendorRepository.findOne({
+        where: { userId: userId, status: In(this.updateVendorEnums) },
         relations: {
           shareholders: true,
           vendorAccounts: { bank: true },
           beneficialOwnership: true,
-          instances: true,
           areasOfBusinessInterest: true,
+          isrVendor: { businessAreas: true },
         },
       });
-      const invoice = await this.invoiceRepository.find({
-        where: {
-          userId: vendorEntity[0].id,
-          paymentStatus: Not('Paid'),
-        },
-      });
-      const vendorEntityRes = { ...vendorEntity[0], invoice: invoice };
+      if (!vendorEntity) return null;
+
+      const { isrVendor, ...vendor } = vendorEntity;
+      const { businessAreas } = isrVendor;
+
+      const vendorEntityRes = { vendor, businessAreas };
       return vendorEntityRes;
     } catch (error) {
+      console.log(error);
       throw error;
     }
   }
@@ -568,4 +568,19 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       throw error;
     }
   }
+  async getVendorByIdForCertificate(isrvendorId: string) {
+    const result = await this.vendorRepository.findOne({
+      where: {
+        isrVendorId: isrvendorId,
+        //isrVendor: { businessAreas: { status: In(['Approved', 'APPROVED']) }}
+      },
+      relations: {
+        isrVendor: { businessAreas: { BpService: true } },
+        areasOfBusinessInterest: true
+      },
+    });
+
+    return result
+  }
+
 }
