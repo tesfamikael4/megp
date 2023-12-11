@@ -9,7 +9,6 @@ import {
 } from '../dto/organization.dto';
 
 import { EntityCrudService } from 'src/shared/service';
-import { RoleService } from 'src/modules/role/services/role.service';
 import { REQUEST } from '@nestjs/core';
 import { ENTITY_MANAGER_KEY } from '@interceptors';
 
@@ -18,7 +17,6 @@ export class OrganizationService extends EntityCrudService<Organization> {
   constructor(
     @InjectRepository(Organization)
     private readonly repositoryOrganization: Repository<Organization>,
-    private readonly roleService: RoleService,
     @Inject(REQUEST) private request: Request,
   ) {
     super(repositoryOrganization);
