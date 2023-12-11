@@ -73,6 +73,54 @@ export class ApplicationExcutionService {
     }
     return response;
   }
+  async getCurruntTaskByServiceKey(serviceKey: string,
+    query: CollectionQuery, user: any
+  ): Promise<DataResponseFormat<WorkflowInstanceResponse>> {
+    let keys = [];
+    if (serviceKey === ServiceKeyEnum.new) {
+      keys = [
+        ServiceKeyEnum.goodsNewRegistration,
+        ServiceKeyEnum.servicesNewRegistration,
+        ServiceKeyEnum.worksNewRegistration,
+      ];
+    } else if (serviceKey == ServiceKeyEnum.upgrade) {
+      keys = [
+        ServiceKeyEnum.goodsUpgrade,
+        ServiceKeyEnum.servicesUpgrade,
+        ServiceKeyEnum.worksUpgrade,
+      ];
+    } else if (serviceKey === ServiceKeyEnum.renewal) {
+      keys = [
+        ServiceKeyEnum.goodsRenewal,
+        ServiceKeyEnum.servicesRenewal,
+        ServiceKeyEnum.worksRenewal,
+      ];
+    }
+    const dataQuery = QueryConstructor.constructQuery<WorkflowInstanceEntity>(
+      this.wiRepository,
+      query,
+    );
+    dataQuery
+      .innerJoinAndSelect('workflow_instances.taskHandler', 'handler')
+      .innerJoinAndSelect('handler.task', 'task')
+      .leftJoinAndSelect('workflow_instances.service', 'service')
+      .leftJoinAndSelect('workflow_instances.isrVendor', 'vendor')
+      .innerJoinAndSelect('workflow_instances.businessProcess', 'bp')
+      .leftJoinAndSelect('workflow_instances.taskTrackers', 'taskTracker')
+      .andWhere('service.key In(:...keys)', { keys: keys })
+      .andWhere('workflow_instances.status !=:status ', { status: WorkflowInstanceEnum.Completed })
+      .andWhere('task.handlerType !=:handlerType', { handlerType: HandlerTypeEnum.Requestor })
+      .orderBy('workflow_instances.submittedAt', 'ASC');
+    const d = new DataResponseFormat<WorkflowInstanceResponse>();
+    const [result, total] = await dataQuery.getManyAndCount();
+    d.items = result.map((entity) => {
+      return WorkflowInstanceResponse.toResponse(entity)
+    }
+
+    );
+    d.total = total;
+    return d;
+  }
 
   async getCurruntTaskByService(
     serviceKey: string,
@@ -121,8 +169,11 @@ export class ApplicationExcutionService {
     });
 
     const response = new DataResponseFormat<WorkflowInstanceResponse>();
-    response.items = result.map((row) =>
-      WorkflowInstanceResponse.toResponse(row),
+    response.items = result.map((row) => {
+      console.log(row.id);
+      return WorkflowInstanceResponse.toResponse(row)
+    }
+
     );
     response.total = response.total = total;
     return response;
@@ -269,25 +320,5 @@ export class ApplicationExcutionService {
     return await this.wiRepository.save(wfInstance);
   }
 
-  async generateCerteficatePdf(
-    templateUrl: string,
-    selector: string,
-  ): Promise<Buffer> {
-    const browser = await puppeteer.launch({});
-    const page = await browser.newPage();
-    await page.goto(templateUrl);
-    await page.waitForSelector(selector);
-    const buffer = await page.pdf({
-      format: 'A4',
-      printBackground: true,
-      margin: {
-        left: '0px',
-        top: '0px',
-        right: '0px',
-        bottom: '0px',
-      },
-    });
-    await browser.close();
-    return buffer;
-  }
+
 }
