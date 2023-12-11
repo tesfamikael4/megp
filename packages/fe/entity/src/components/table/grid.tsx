@@ -65,16 +65,15 @@ export function Grid<T>({
 
   useEffect(() => {
     const from = (page - 1) * perPage;
-    const to = from + perPage - 1;
 
     onRequestChange?.({
       skip: from,
-      take: to,
+      take: perPage,
       where: search
         ? [
             [
               {
-                column: `${options.columns[0]?.accessorKey}`,
+                column: `${options.primaryContent}`,
                 value: search,
                 operator: 'LIKE',
               },
@@ -87,11 +86,9 @@ export function Grid<T>({
   useEffect(() => {
     if (page === 1) {
       const from = (page - 1) * perPage;
-      const to = from + perPage - 1;
-
       onRequestChange?.({
         skip: from,
-        take: to,
+        take: perPage,
         where: search
           ? [
               [
