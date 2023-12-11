@@ -25,7 +25,7 @@ export class MandatePermission extends Audit {
   @ManyToOne(() => Mandate, (mandate) => mandate.mandatePermissions, {
     orphanedRowAction: 'delete',
     onUpdate: 'CASCADE',
-    onDelete: 'RESTRICT',
+    onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'mandateId' })
   public mandate: Mandate;
@@ -33,7 +33,7 @@ export class MandatePermission extends Audit {
   @ManyToOne(() => Permission, (permission) => permission.mandatePermissions, {
     orphanedRowAction: 'delete',
     onUpdate: 'CASCADE',
-    onDelete: 'RESTRICT',
+    onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'permissionId' })
   public permission: Permission;

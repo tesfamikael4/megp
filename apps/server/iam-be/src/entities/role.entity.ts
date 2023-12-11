@@ -37,20 +37,20 @@ export class Role extends Audit {
   @ManyToOne(() => Organization, (organization) => organization.roles, {
     orphanedRowAction: 'delete',
     onUpdate: 'CASCADE',
-    onDelete: 'RESTRICT',
+    onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'organizationId' })
   public organization: Organization;
 
   @OneToMany(() => RolePermission, (rolePermissions) => rolePermissions.role, {
     cascade: true,
-    onDelete: 'RESTRICT',
+    onDelete: 'CASCADE',
   })
   rolePermissions: RolePermission[];
 
   @OneToMany(() => UserRole, (userRoles) => userRoles.role, {
     cascade: true,
-    onDelete: 'RESTRICT',
+    onDelete: 'CASCADE',
   })
   userRoles: UserRole[];
 }

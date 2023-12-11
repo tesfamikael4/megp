@@ -25,7 +25,7 @@ export class UserRoleSystem extends Audit {
   @ManyToOne(() => RoleSystem, (roleSystem) => roleSystem.userRoleSystems, {
     orphanedRowAction: 'delete',
     onUpdate: 'CASCADE',
-    onDelete: 'RESTRICT',
+    onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'roleSystemId' })
   public roleSystem: RoleSystem;
@@ -33,7 +33,7 @@ export class UserRoleSystem extends Audit {
   @ManyToOne(() => User, (user) => user.userRoleSystems, {
     orphanedRowAction: 'delete',
     onUpdate: 'CASCADE',
-    onDelete: 'RESTRICT',
+    onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'userId' })
   public user: User;
