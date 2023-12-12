@@ -32,7 +32,7 @@ export class UploadController {
   constructor(
     private tusService: TusService,
     private fileService: File,
-  ) { }
+  ) {}
   @Get('get-file/:fileName')
   async getFile(
     @Param('fileName') fileName: string,
@@ -96,8 +96,47 @@ export class UploadController {
     @Param('fileName2') fileName2: string,
   ) {
     const fileName1 = fileName + '/' + fileName2;
-    console.log(fileName1);
     return this.fileService.getAttachmentpresignedObject(fileName1);
+  }
+
+  @Post(
+    'upload-supporting-document-attachment/:feildName/:serviceId/:invoiceId',
+  )
+  @UseInterceptors(FileInterceptor('attachmentUrl'))
+  async uploadSupportingDocumentAttachment(
+    @UploadedFile() file: Express.Multer.File,
+    @CurrentUser() userInfo: any,
+    @Param('feildName') feildName: string,
+    @Param('serviceId') serviceId: string,
+    @Param('invoiceId') invoiceId: string,
+  ) {
+    console.log(userInfo);
+    if (!file) {
+      return { error: 'File not received' };
+    }
+    const paymentReceiptDto = {
+      feildName: feildName,
+      serviceId: serviceId,
+      invoiceId: invoiceId,
+    };
+    console.log(paymentReceiptDto);
+
+    const result = await this.fileService.uploadSupportingDocumentAttachment(
+      file,
+      userInfo.id,
+      paymentReceiptDto,
+    );
+    return result;
+  }
+  @Get('get-supporting-document-attachment-pre-signed-object/:fileName')
+  async getSupportingDocumentAttachmentpresignedObject(
+    @Param('fileName') fileName: string,
+    @CurrentUser() userInfo: any,
+  ) {
+    return await this.fileService.getSupportingDocumentAttachmentpresignedObject(
+      fileName,
+      userInfo.id,
+    );
   }
   @All('*')
   async tus(@Req() req, @Res() res, @CurrentUser() userInfo: any) {

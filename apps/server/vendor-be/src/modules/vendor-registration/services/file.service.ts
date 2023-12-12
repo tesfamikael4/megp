@@ -83,16 +83,6 @@ export class File {
     }
   }
 
-  async getAttachmentpresignedObject(fileName: string) {
-    try {
-      const bucketName = 'megp';
-      const result = this.minioClient.presignedGetObject(bucketName, fileName);
-      return result;
-    } catch (error) {
-      console.log(error);
-      throw error;
-    }
-  }
   async uploadAttachment(file: Express.Multer.File, command: CreateFileDto) {
     try {
       const result = this.uploadToRemoteServer(file, command);
@@ -112,7 +102,6 @@ export class File {
       return error;
     }
   }
-
   async deleteAttachment(deleteFileDto: DeleteFileDto) {
     try {
       await this.minioClient.removeObject(
@@ -135,24 +124,12 @@ export class File {
       'X-Amz-Meta-Testing': 1234,
       example: 5678,
     };
-    console.log(
-      'bucket : ',
-      bucket,
-      'filename : ',
-      filename,
-      'file.path : ',
-      file.path,
-      'metaData : ',
-      metaData,
-    );
-    console.log(this.minioClient);
     this.minioClient.fPutObject(
       bucket,
       filename,
       file.path,
       metaData,
       function (err, etag) {
-        console.log('the error is : ', err);
         if (err) return err;
       },
     );
@@ -219,10 +196,15 @@ export class File {
         where: { userId: userId, status: In(this.updateVendorEnums) },
       });
       if (!result) throw new HttpException('isr vendor not found ', 500);
+      const fileUploadName = 'paymentReceipt';
+      const payment = JSON.parse(JSON.stringify(result.paymentReceipt));
+      if (payment.attachmentUrl !== '') {
+        const objectName = `${userId}/${fileUploadName}/${payment.attachment}`;
+        await this.minioClient.removeObject('megp', objectName);
+      }
       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-      const filename = `${userId}/${uniqueSuffix}_${file.filename}.${
-        file.mimetype.split('/')[1]
-      }`;
+      const fileId = `${uniqueSuffix}_${file.originalname}`;
+      const filename = `${userId}/${fileUploadName}/${fileId}`;
       const bucket = 'megp';
       const metaData = {
         'Content-Type': 'application/octet-stream',
@@ -238,7 +220,7 @@ export class File {
         transactionId: paymentReceiptDto?.transactionId,
         invoiceId: paymentReceiptDto?.invoiceId,
         serviceId: paymentReceiptDto?.serviceId,
-        attachment: filename,
+        attachment: fileId,
       };
       const isrVendor = await this.isrVendorsRepository.update(result.id, {
         paymentReceipt: JSON.parse(JSON.stringify(paymentReceipt)),
@@ -263,29 +245,112 @@ export class File {
       throw error;
     }
   }
-  // tusUpload(file: Express.Multer.File, command: CreateFileDto) {
-  //   const fileBuffer = Fs.readFileSync(file.path);
+  async uploadSupportingDocumentAttachment(
+    file: Express.Multer.File,
+    userId: string,
+    paymentReceiptDto: any,
+  ) {
+    try {
+      const result = await this.isrVendorsRepository.findOne({
+        where: { userId: userId, status: In(this.updateVendorEnums) },
+      });
+      if (!result) throw new HttpException('isr vendor not found ', 500);
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+      const fileUploadName = 'SupportingDocument';
+      const fileId = `${uniqueSuffix}_${file.originalname}`;
+      const filename = `${userId}/${fileUploadName}/${fileId}`;
+      const bucket = 'megp';
+      const metaData = {
+        'Content-Type': 'application/octet-stream',
+        'X-Amz-Meta-Testing': 1234,
+      };
+      const fname = paymentReceiptDto.feildName;
+      const resultData = await this.minioClient.putObject(
+        bucket,
+        filename,
+        file.buffer,
+        metaData,
+      );
 
-  //   // Create a Blob object from the Buffer
-  //   const blob = new Blob([fileBuffer], { type: file.mimetype });
-  //   const tusClient = new tus.Upload(blob, {
-  //     endpoint: '<tus-server-endpoint>',
-  //     // resume: true,
-  //     retryDelays: [0, 1000, 3000, 5000], // Retry delays in milliseconds
-  //     metadata: {
-  //       filename: '<file-name>',
-  //       'Content-Type': '<content-type>',
-  //     },
-  //     onError: function (error) {
-  //       console.log('Upload failed: ', error);
-  //     },
-  //     onProgress: function (bytesUploaded, bytesTotal) {
-  //       const percentage = ((bytesUploaded / bytesTotal) * 100).toFixed(2);
-  //       console.log(`Upload progress: ${percentage}%`);
-  //     },
-  //     onSuccess: function () {
-  //       console.log('Upload complete');
-  //     },
-  //   });
-  // }
+      const resultMetadata = JSON.parse(
+        JSON.stringify(result.supportingDocuments),
+      );
+      switch (paymentReceiptDto.feildName) {
+        case 'businessRegistration_IncorporationCertificate':
+          if (resultMetadata[fname] !== '') {
+            const objectName = `${userId}/${fileUploadName}/${resultMetadata[fname]}`;
+            await this.minioClient.removeObject('megp', objectName);
+          }
+          resultMetadata.businessRegistration_IncorporationCertificate = fileId;
+
+          break;
+        case 'mRA_TPINCertificate':
+          if (resultMetadata[fname] !== '') {
+            const objectName = `${userId}/${fileUploadName}/${resultMetadata[fname]}`;
+            await this.minioClient.removeObject('megp', objectName);
+          }
+          resultMetadata.mRA_TPINCertificate = fileId;
+          break;
+        case 'generalReceipt_BankDepositSlip':
+          if (resultMetadata[fname] !== '') {
+            const objectName = `${userId}/${fileUploadName}/${resultMetadata[fname]}`;
+            await this.minioClient.removeObject('megp', objectName);
+          }
+          resultMetadata.generalReceipt_BankDepositSlip = fileId;
+          break;
+        case 'mRATaxClearanceCertificate':
+          if (resultMetadata[fname] !== '') {
+            const objectName = `${userId}/${fileUploadName}/${resultMetadata[fname]}`;
+            await this.minioClient.removeObject('megp', objectName);
+          }
+          resultMetadata.mRATaxClearanceCertificate = fileId;
+          break;
+        case 'previousPPDARegistrationCertificate':
+          if (resultMetadata[fname] !== '') {
+            const objectName = `${userId}/${fileUploadName}/${resultMetadata[fname]}`;
+            await this.minioClient.removeObject('megp', objectName);
+          }
+          resultMetadata.previousPPDARegistrationCertificate = fileId;
+          break;
+        case 'mSMECertificate':
+          if (resultMetadata[fname] !== '') {
+            const objectName = `${userId}/${fileUploadName}/${resultMetadata[fname]}`;
+            await this.minioClient.removeObject('megp', objectName);
+          }
+          resultMetadata.mSMECertificate = fileId;
+          break;
+        default:
+          break;
+      }
+      result.supportingDocuments = resultMetadata;
+      const isrVendor = await this.isrVendorsRepository.save(result);
+      if (!isrVendor) throw new HttpException(`isrVendor_update _failed`, 500);
+      return isrVendor.supportingDocuments;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
+  async getAttachmentpresignedObject(fileName: string) {
+    try {
+      const bucketName = 'megp';
+      const result = this.minioClient.presignedGetObject(bucketName, fileName);
+      return result;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
+  async getSupportingDocumentAttachmentpresignedObject(fileId: string, userId) {
+    try {
+      const bucketName = 'megp';
+      const fileUploadName = 'SupportingDocument';
+      const filename = `${userId}/${fileUploadName}/${fileId}`;
+      const result = this.minioClient.presignedGetObject(bucketName, filename);
+      return result;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
 }
