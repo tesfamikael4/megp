@@ -3,29 +3,29 @@ import { CollectionQuery, EntityConfig, EntityLayout } from '@megp/entity';
 import { usePathname, useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 import { logger } from '@megp/core-fe';
-import { useLazyListQuery } from './_api/district.api';
-import { District } from '@/models/district';
+import { useLazyListQuery } from './_api/region.api';
+import { Region } from '@/models/region';
 
 export function Entity({ children }: { children: React.ReactElement }) {
   const route = useRouter();
   const [trigger, { data }] = useLazyListQuery();
 
-  const config: EntityConfig<District> = useMemo(() => {
+  const config: EntityConfig<Region> = useMemo(() => {
     return {
-      basePath: '/lookup/district',
+      basePath: '/region',
       mode: 'list',
-      entity: 'district',
+      entity: 'region',
       primaryKey: 'id',
-      title: 'District',
+      title: 'Region',
       hasAdd: true,
       pagination: true,
       searchable: true,
       sortable: true,
-      onDetail: (selected: District) => {
-        route.push(`/lookup/district/${selected.id}`);
+      onDetail: (selected: Region) => {
+        route.push(`/region/${selected.id}`);
       },
       onAdd: () => {
-        route.push(`/lookup/district/new`);
+        route.push(`/region/new`);
       },
 
       onSearch: (search) => {
@@ -42,6 +42,15 @@ export function Entity({ children }: { children: React.ReactElement }) {
             widget: 'primary',
           },
         },
+        {
+          id: 'description',
+          header: 'Description',
+          accessorKey: 'description',
+          cell: (info) => info.getValue(),
+          meta: {
+            widget: 'multiline',
+          },
+        },
       ],
     };
   }, [route]);
@@ -49,9 +58,9 @@ export function Entity({ children }: { children: React.ReactElement }) {
   const pathname = usePathname();
 
   const mode =
-    pathname === `/lookup/district`
+    pathname === `/region`
       ? 'list'
-      : pathname === `/lookup/district/new`
+      : pathname === `/region/new`
       ? 'new'
       : 'detail';
   const onRequestChange = (request: CollectionQuery) => {

@@ -1,4 +1,4 @@
-import { LoadingOverlay, Stack, TextInput } from '@mantine/core';
+import { LoadingOverlay, Stack, TextInput, Textarea } from '@mantine/core';
 import { EntityButton } from '@megp/entity';
 import { z, ZodType } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -12,8 +12,8 @@ import {
   useDeleteMutation,
   useReadQuery,
   useUpdateMutation,
-} from '../_api/district.api';
-import { District } from '@/models/district';
+} from '../_api/region.api';
+import { Region } from '@/models/region';
 
 interface FormDetailProps {
   mode: 'new' | 'detail';
@@ -21,10 +21,11 @@ interface FormDetailProps {
 
 const defaultValues = {
   name: '',
+  description: '',
 };
 
 export function FormDetail({ mode }: FormDetailProps) {
-  const measurementSchema: ZodType<Partial<District>> = z.object({
+  const measurementSchema: ZodType<Partial<Region>> = z.object({
     name: z.string().min(1, { message: 'This field is required' }),
   });
 
@@ -53,17 +54,17 @@ export function FormDetail({ mode }: FormDetailProps) {
     try {
       const result = await create(data);
       if ('data' in result) {
-        router.push(`/district/${result?.data?.id}`);
+        router.push(`/region/${result?.data?.id}`);
       }
       notifications.show({
-        message: 'District created successfully',
+        message: 'Region created successfully',
         title: 'Success',
         color: 'green',
       });
     } catch (err) {
       notifications.show({
         color: 'red',
-        message: 'errors in creating district.',
+        message: 'errors in creating region.',
         title: 'Error',
       });
     }
@@ -72,13 +73,13 @@ export function FormDetail({ mode }: FormDetailProps) {
     try {
       await update({ ...data, id: id?.toString() });
       notifications.show({
-        message: 'District updated successfully',
+        message: 'Region updated successfully',
         title: 'Success',
         color: 'green',
       });
     } catch {
       notifications.show({
-        message: 'errors in updating district.',
+        message: 'errors in updating region.',
         title: 'Error',
         color: 'red',
       });
@@ -88,14 +89,14 @@ export function FormDetail({ mode }: FormDetailProps) {
     try {
       await remove(id?.toString()).unwrap();
       notifications.show({
-        message: 'District deleted successfully',
+        message: 'Region deleted successfully',
         title: 'Success',
         color: 'green',
       });
-      router.push('/district');
+      router.push('/region');
     } catch (err) {
       notifications.show({
-        message: 'errors in deleting district.',
+        message: 'errors in deleting region.',
         title: 'Error',
         color: 'red',
       });
@@ -124,6 +125,7 @@ export function FormDetail({ mode }: FormDetailProps) {
         error={errors?.name ? errors?.name?.message?.toString() : ''}
         required
       />
+      <Textarea label="Description" {...register('description')} />
       <EntityButton
         mode={mode}
         onCreate={handleSubmit(onCreate)}

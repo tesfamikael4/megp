@@ -11,6 +11,7 @@ export const Menu: MenuItem[] = [
   { label: 'Item Category', icon: IconBuildingBank, link: '/item-category' },
   { label: 'Measurements', icon: IconBuildingBank, link: '/measurement' },
   { label: 'Currency', icon: IconBuildingBank, link: '/currency' },
+  { label: 'Region', icon: IconBuildingBank, link: '/region' },
   {
     label: 'Settings',
     icon: IconAdjustmentsHorizontal,
@@ -24,10 +25,6 @@ export const Menu: MenuItem[] = [
       {
         label: 'Threshold',
         link: '/procurement-thresholds',
-      },
-      {
-        label: 'District',
-        link: '/lookup/district',
       },
     ],
   },
