@@ -95,8 +95,8 @@ export class PreBudgetPlanActivity {
   @Column({ type: 'json' })
   multiYearBudget: JSON;
 
-  @Column({ default: 'Others' })
-  preference: string;
+  @Column({ default: ['Others'], type: 'jsonb' })
+  preference: string[];
 
   @Column({ default: 'Online' })
   procurementProcess: string;
