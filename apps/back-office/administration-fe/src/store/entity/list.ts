@@ -63,7 +63,7 @@ export const ENTITY_LIST: EntityStoreConfig[] = [
       process.env.NEXT_PUBLIC_ADMINISTRATION_API ?? '/api/administration',
   },
   {
-    entity: 'district',
+    entity: 'region',
     baseUrl:
       process.env.NEXT_PUBLIC_ADMINISTRATION_API ?? '/api/administration',
   },

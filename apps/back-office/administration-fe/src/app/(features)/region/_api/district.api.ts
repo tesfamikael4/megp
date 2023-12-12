@@ -9,6 +9,7 @@ export const districtSliceApi: typeof EntitySliceApi =
 
 export const {
   useListQuery,
+  useListByAppIdQuery,
   useReadQuery,
   useCreateMutation,
   useUpdateMutation,
