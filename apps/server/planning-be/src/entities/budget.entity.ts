@@ -18,19 +18,19 @@ export class Budget {
   @Column()
   coa: string;
 
-  @Column()
+  @Column({ nullable: true })
   description: string;
 
-  @Column()
-  fundingSource: string;
+  @Column({ type: 'jsonb', default: [] })
+  fundingSource: string[];
 
-  @Column()
+  @Column({ type: 'bigint' })
   allocatedBudget: number;
 
-  @Column()
+  @Column({ type: 'bigint' })
   plannedValue: number;
 
-  @Column()
+  @Column({ type: 'bigint' })
   balance: number;
 
   @Column()
