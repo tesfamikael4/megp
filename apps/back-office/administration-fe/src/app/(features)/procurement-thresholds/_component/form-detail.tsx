@@ -90,9 +90,9 @@ export function FormDetail({ mode }: FormDetailProps) {
       });
     } catch {
       notifications.show({
-        message: 'errors in updating threshold.',
-        title: 'Error',
         color: 'red',
+        message: 'errors in creating threshold.',
+        title: 'Error',
       });
     }
   };
