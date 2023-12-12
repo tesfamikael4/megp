@@ -25,6 +25,10 @@ export const Menu: MenuItem[] = [
         label: 'Threshold',
         link: '/procurement-thresholds',
       },
+      {
+        label: 'District',
+        link: '/lookup/district',
+      },
     ],
   },
 ];
