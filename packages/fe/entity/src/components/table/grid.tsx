@@ -75,7 +75,7 @@ export function Grid<T>({
               {
                 column: `${options.primaryContent}`,
                 value: search,
-                operator: 'LIKE',
+                operator: 'ILIKE',
               },
             ],
           ]
@@ -95,7 +95,7 @@ export function Grid<T>({
                 {
                   column: `${options.columns[0]?.accessorKey}`,
                   value: search,
-                  operator: 'LIKE',
+                  operator: 'ILIKE',
                 },
               ],
             ]

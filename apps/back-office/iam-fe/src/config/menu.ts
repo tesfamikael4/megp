@@ -34,13 +34,13 @@ export const Menu: MenuItem[] = [
     label: 'My Organization',
     icon: IconBuildingBank,
     link: '/my-organization',
-    permission: ['my_organization'],
+    permission: ['user'],
   },
   {
     label: 'My Mandates',
     icon: IconLockSquareRounded,
     link: '/my-mandate',
-    permission: ['my_mandate'],
+    permission: ['user'],
   },
   { label: 'Users', icon: IconUsers, link: '/users', permission: ['user'] },
   {
