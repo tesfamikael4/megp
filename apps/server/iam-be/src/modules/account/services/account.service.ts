@@ -528,11 +528,8 @@ export class AccountsService {
   }
 
   async createBackOfficeAccount(input: any) {
-    let { email }: CreateAccountDto = input;
-    email = email.toLocaleLowerCase();
-
     let account: Account = await this.repository.findOne({
-      where: { email },
+      where: { email: input.email },
     });
 
     if (account) {

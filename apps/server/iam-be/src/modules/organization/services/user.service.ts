@@ -21,6 +21,10 @@ export class UserService extends ExtraCrudService<User> {
   }
 
   async create(itemData: CreateUserDto): Promise<any> {
+    if (itemData.email) {
+      itemData.email = itemData.email.toLowerCase();
+    }
+
     const account =
       await this.accountsService.createBackOfficeAccount(itemData);
 
@@ -32,6 +36,10 @@ export class UserService extends ExtraCrudService<User> {
   }
 
   async createOrganizationAdmin(itemData: CreateUserDto): Promise<any> {
+    if (itemData.email) {
+      itemData.email = itemData.email.toLowerCase();
+    }
+
     const account =
       await this.accountsService.createBackOfficeAccount(itemData);
 
