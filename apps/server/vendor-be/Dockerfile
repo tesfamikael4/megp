@@ -46,12 +46,16 @@ COPY turbo.json turbo.json
 RUN yarn turbo run build --filter=vendor-be...
 
 FROM base AS runner
-WORKDIR /app
+WORKDIR /
 
 # Don't run production as root
 RUN addgroup --system --gid 1001 nestjs
 RUN adduser --system --uid 1001 nestjs
 USER nestjs
 COPY --from=installer /app .
+
+ARG VERSION_ARG
+ENV VERSION=$VERSION_ARG
+ENV NODE_ENV=production
 
 CMD node apps/server/vendor-be/dist/main.js
