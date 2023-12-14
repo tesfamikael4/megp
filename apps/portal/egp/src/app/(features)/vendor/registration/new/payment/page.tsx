@@ -20,6 +20,7 @@ import { useRouter } from 'next/navigation';
 import PaymentMethod from '../_components/payment/payment-method';
 import UppyAttachmentDashboard from '../../../_components/UppyAttachmentDashboard/UppyAttachmentDashboard';
 import { usePrivilege } from '../_context/privilege-context';
+import FileUploader from '../../../_components/file-uploader/upload';
 
 function Page() {
   const { checkAccess, updateAccess, lockElements } = usePrivilege();
@@ -122,9 +123,15 @@ function Page() {
               {...lockElements('payment')}
             />
             {invoiceInfo.data?.invoice && invoiceInfo.data?.invoice[0] && (
-              <UppyAttachmentDashboard
-                tusServerGetUrl={FILE_SERVER_URL + '/upload/'}
-                tusServerPostUrl={FILE_SERVER_URL + '/upload/'}
+              <FileUploader
+                serverGetUrl={
+                  FILE_SERVER_URL +
+                  '/upload/get-attachment-pre-signed-object/142dd945-4ae9-449e-a49f-eee02723bf73/1702038035649-372017923_undefined.png'
+                }
+                serverPostUrl={
+                  FILE_SERVER_URL +
+                  '/upload/upload-file-to-minio/TransactionId/e29650a8-889a-4009-9a43-a2e8e5da8cb2/5aece916-282d-431a-b496-607602f6ccfc'
+                }
                 id="paymentSlip"
                 label="Payment Slip"
                 placeholder="Upload"
@@ -139,6 +146,23 @@ function Page() {
                 }}
                 storeId={invoiceInfo.data?.invoice[0].attachment ?? ''}
               />
+              // <UppyAttachmentDashboard
+              //   tusServerGetUrl={FILE_SERVER_URL + '/upload/'}
+              //   tusServerPostUrl={FILE_SERVER_URL + '/upload/'}
+              //   id="paymentSlip"
+              //   label="Payment Slip"
+              //   placeholder="Upload"
+              //   metaData={{
+              //     entityName: 'paymentReceipt',
+              //     fieldName: 'paymentSlip',
+              //     instanceId: invoiceInfo.data?.id,
+              //     transactionId: transactionNum,
+              //     category: 'goods',
+              //     invoiceId: invoiceInfo.data?.invoice[0].id,
+              //     attachment: '',
+              //   }}
+              //   storeId={invoiceInfo.data?.invoice[0].attachment ?? ''}
+              // />
             )}
           </Stack>
           <Flex justify="end" className="gap-2 mt-4">
