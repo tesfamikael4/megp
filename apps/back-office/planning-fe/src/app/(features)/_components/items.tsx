@@ -38,10 +38,9 @@ import DataImport from './data-import';
 
 export function Items() {
   const [opened, { open, close }] = useDisclosure(false);
-  const [
-    openedImportModal,
-    { open: openImportModal, close: closeImportModal },
-  ] = useDisclosure(false);
+  const [openedImportModal, { close: closeImportModal }] = useDisclosure(false);
+  //   { open: openImportModal, close: closeImportModal },
+  // ] = useDisclosure(false);
   const [data, setData] = useState<any[]>([]);
   const [newItems, setNewItems] = useState<any[]>([]);
   const [getActivity, { data: activity }] = useLazyReadQuery();
@@ -65,7 +64,7 @@ export function Items() {
       },
       {
         id: 'unitPrice',
-        header: 'Unit Price',
+        header: () => <div className="text-right">Unit Price</div>,
         accessorKey: 'unitPrice',
         cell: ({ getValue, row, column }) => (
           <EstimatedPrice getValue={getValue} row={row} column={column} />
@@ -422,9 +421,9 @@ export function Items() {
   return (
     <Box>
       <Group justify="end" className="my-2" gap="md">
-        <Button onClick={openImportModal}>
+        {/* <Button onClick={openImportModal}>
           <IconFileImport size={18} /> Import
-        </Button>
+        </Button> */}
         <Button onClick={open}>
           <IconPlus size={18} /> Add
         </Button>

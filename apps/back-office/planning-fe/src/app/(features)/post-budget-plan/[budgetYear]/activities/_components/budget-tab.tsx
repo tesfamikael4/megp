@@ -115,7 +115,11 @@ export const BudgetTab = () => {
 
   useEffect(() => {
     if (data) {
-      setBudgetYear(data?.multiYearBudget ?? []);
+      setBudgetYear(
+        data?.multiYearBudget?.length !== 0
+          ? data?.multiYearBudget
+          : [{ year: 2023, percentage: 0 }],
+      );
     }
   }, [data]);
 
@@ -141,7 +145,8 @@ export const BudgetTab = () => {
       <BudgetSelector />
 
       {data?.isMultiYear && (
-        <Box className="mt-2">
+        <Box className="mt-5">
+          <Divider label="Disbursement" />
           {budgetYear.reduce(
             (item, sum) => (item + sum.percentage) as number,
             0,
