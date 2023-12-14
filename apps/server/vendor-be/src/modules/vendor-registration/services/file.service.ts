@@ -24,7 +24,7 @@ export class File {
     accessKey: process.env.ACCESSKEY,
     secretKey: process.env.SECRETKEY,
   });
-
+  private bucketName = process.env.BUCKETNAME;
   constructor(
     @InjectRepository(FilesEntity)
     private readonly fileRepository: Repository<FilesEntity>,
@@ -33,7 +33,7 @@ export class File {
     private readonly vendorRegistrationsService: VendorRegistrationsService,
     @InjectRepository(InvoiceEntity)
     private readonly invoiceRepository: Repository<InvoiceEntity>,
-  ) {}
+  ) { }
   private updateVendorEnums = [
     VendorStatusEnum.ACTIVE,
     VendorStatusEnum.ADJUSTMENT,
@@ -271,7 +271,6 @@ export class File {
         file.buffer,
         metaData,
       );
-
       const resultMetadata = JSON.parse(
         JSON.stringify(result.supportingDocuments),
       );
@@ -331,22 +330,29 @@ export class File {
       throw error;
     }
   }
-  async getAttachmentpresignedObject(fileName: string) {
+  async getAttachmentpresignedObject(fileId: string) {
     try {
-      const bucketName = 'megp';
-      const result = this.minioClient.presignedGetObject(bucketName, fileName);
+      const result = this.minioClient.presignedGetObject(
+        this.bucketName,
+        fileId,
+      );
       return result;
     } catch (error) {
       console.log(error);
       throw error;
     }
   }
-  async getSupportingDocumentAttachmentpresignedObject(fileId: string, userId) {
+  async getSupportingDocumentAttachmentpresignedObject(
+    filename: string,
+    userId,
+  ) {
     try {
-      const bucketName = 'megp';
       const fileUploadName = 'SupportingDocument';
-      const filename = `${userId}/${fileUploadName}/${fileId}`;
-      const result = this.minioClient.presignedGetObject(bucketName, filename);
+      const fileId = `${userId}/${fileUploadName}/${filename}`;
+      const result = this.minioClient.presignedGetObject(
+        this.bucketName,
+        fileId,
+      );
       return result;
     } catch (error) {
       console.log(error);

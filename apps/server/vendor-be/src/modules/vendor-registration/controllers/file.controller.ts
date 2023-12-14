@@ -90,37 +90,30 @@ export class UploadController {
     );
     return result;
   }
-  @Get('get-attachment-pre-signed-object/:fileName/:fileName2')
+  @Get('get-attachment-pre-signed-object/:fileName')
   async getAttachmentpresignedObject(
     @Param('fileName') fileName: string,
-    @Param('fileName2') fileName2: string,
+    @CurrentUser() userInfo: any,
   ) {
-    const fileName1 = fileName + '/' + fileName2;
-    return this.fileService.getAttachmentpresignedObject(fileName1);
+    const fieldName = 'paymentReceipt';
+    const fileId = `${userInfo.id}/${fieldName}/${fileName}`;
+    return this.fileService.getAttachmentpresignedObject(fileId);
   }
-
-  @Post(
-    'upload-supporting-document-attachment/:feildName/:serviceId/:invoiceId',
-  )
+  @Post('upload-supporting-document-attachment/:fieldName/:serviceId/')
   @UseInterceptors(FileInterceptor('attachmentUrl'))
   async uploadSupportingDocumentAttachment(
     @UploadedFile() file: Express.Multer.File,
     @CurrentUser() userInfo: any,
-    @Param('feildName') feildName: string,
+    @Param('fieldName') fieldName: string,
     @Param('serviceId') serviceId: string,
-    @Param('invoiceId') invoiceId: string,
   ) {
-    console.log(userInfo);
     if (!file) {
       return { error: 'File not received' };
     }
     const paymentReceiptDto = {
-      feildName: feildName,
+      fieldName: fieldName,
       serviceId: serviceId,
-      invoiceId: invoiceId,
     };
-    console.log(paymentReceiptDto);
-
     const result = await this.fileService.uploadSupportingDocumentAttachment(
       file,
       userInfo.id,
