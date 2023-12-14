@@ -1,5 +1,5 @@
 import { ApiQuery, ApiTags } from '@nestjs/swagger';
-import { Controller, Query, Get } from '@nestjs/common';
+import { Controller, Query, Get, Param, Req } from '@nestjs/common';
 import { ClassificationService } from '../services/classification.service';
 import { Classification } from 'src/entities/classification.entity';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
@@ -33,5 +33,10 @@ export class ClassificationController extends ExtraCrudController<Classification
     } catch (error) {
       throw error;
     }
+  }
+
+  @Get('path/:code')
+  getClassificationHistory(@Param('code') code: string, @Req() req?: any) {
+    return this.classificationService.findClassificationHistory(code);
   }
 }
