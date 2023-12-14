@@ -3,6 +3,6 @@ export interface MenuItem {
   icon: any;
   link?: string;
   initiallyOpened?: boolean;
-  links?: { label: string; link: string }[];
+  links?: { label: string; link: string; permission?: string[] }[];
   permission?: string[];
 }

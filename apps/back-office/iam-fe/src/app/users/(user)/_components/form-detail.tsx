@@ -165,6 +165,7 @@ export function FormDetail({ mode }: FormDetailProps) {
         isUpdating={isUpdating}
         isDeleting={isDeleting}
         isActivating={isActivating}
+        entity="user"
       />
     </Stack>
   );

@@ -42,7 +42,7 @@ const perPage = 15;
 
 function calculateTotalPages(totalItems: number, itemsPerPage: number): number {
   if (totalItems <= 0 || itemsPerPage <= 0) {
-    return 0; // No pages if no items or itemsPerPage is non-positive.
+    return 0;
   }
 
   return Math.ceil(totalItems / itemsPerPage);
@@ -116,7 +116,7 @@ export function Grid<T>({
         <Flex justify="flex-end" mb="md" mt="md">
           <TextInput
             className={mode === 'list' ? 'w-1/4' : 'w-full'}
-            leftSection={<IconSearch size="sm" stroke={1.5} />}
+            leftSection={<IconSearch size={16} stroke={0.5} />}
             miw={300}
             onChange={(event) => {
               setSearch(event.currentTarget.value);
@@ -207,7 +207,9 @@ export function Grid<T>({
 
           {data.length > 0 && options.pagination ? (
             <Group justify="space-between" mb="lg" mt="lg">
-              <Text>Total : {total.toLocaleString()} results</Text>
+              {total !== 0 && (
+                <Text>Total : {total.toLocaleString()} results</Text>
+              )}
 
               <Pagination
                 onChange={setPage}

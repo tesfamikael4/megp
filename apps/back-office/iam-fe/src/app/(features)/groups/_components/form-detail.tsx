@@ -118,6 +118,7 @@ export function FormDetail({ mode }: FormDetailProps) {
         isSaving={isSaving}
         isUpdating={isUpdating}
         isDeleting={isDeleting}
+        entity="group"
       />
     </Stack>
   );
