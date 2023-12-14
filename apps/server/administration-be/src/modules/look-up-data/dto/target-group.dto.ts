@@ -1,8 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsUUID } from 'class-validator';
 import { Currency } from 'src/entities/currency.entity';
+import { TargetGroup } from 'src/entities/target-group.entity';
 
-export class CreateCurrencyDto {
+export class CreateTargetGroupDto {
   id: string;
   @ApiProperty()
   @IsNotEmpty()
@@ -10,50 +11,45 @@ export class CreateCurrencyDto {
   @ApiProperty()
   @IsNotEmpty()
   description: string;
-  @ApiProperty()
-  abbreviation: string;
 
-  static fromDto(dto: CreateCurrencyDto): Currency {
-    const entity = new Currency();
+  static fromDto(dto: CreateTargetGroupDto): TargetGroup {
+    const entity = new TargetGroup();
     if (!dto) {
       return null;
     }
     entity.name = dto.name;
     entity.description = dto.description;
-    entity.abbreviation = dto.abbreviation;
     return entity;
   }
 
-  static fromDtos(dto: CreateCurrencyDto[]): Currency[] {
-    return dto?.map((d) => CreateCurrencyDto.fromDto(d));
+  static fromDtos(dto: CreateTargetGroupDto[]): TargetGroup[] {
+    return dto?.map((d) => CreateTargetGroupDto.fromDto(d));
   }
 }
 
-export class UpdateCurrencyDto extends CreateCurrencyDto {
+export class UpdateTargetGroupDto extends CreateTargetGroupDto {
   @ApiProperty()
   @IsUUID()
   id: string;
 
-  static fromDto(dto: UpdateCurrencyDto): Currency {
-    const entity = new Currency();
+  static fromDto(dto: UpdateTargetGroupDto): TargetGroup {
+    const entity = new TargetGroup();
     if (!dto) {
       return;
     }
     entity.id = dto.id;
     entity.name = dto.name;
     entity.description = dto.description;
-    entity.abbreviation = dto.abbreviation;
     entity.createdAt = new Date();
     return entity;
   }
 }
-export class CurrencyResponseDto extends UpdateCurrencyDto {
-  static fromEntity(entity: Currency): CurrencyResponseDto {
-    const response = new CurrencyResponseDto();
+export class TargetGroupResponseDto extends UpdateTargetGroupDto {
+  static fromEntity(entity: Currency): TargetGroupResponseDto {
+    const response = new TargetGroupResponseDto();
     response.id = entity.id;
     response.name = entity.name;
     response.description = entity.description;
-    response.abbreviation = entity.abbreviation;
     return response;
   }
 }

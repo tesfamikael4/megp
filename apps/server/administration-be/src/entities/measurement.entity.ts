@@ -6,9 +6,9 @@ import { Audit } from 'src/shared/entities';
 export class Measurement extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column()
+  @Column({ unique: true })
   name: string;
-  @Column()
+  @Column({ unique: true })
   shortName: string;
   @OneToMany(() => UnitOfMeasurement, (uom1) => uom1.measurement)
   uoms: UnitOfMeasurement[];
