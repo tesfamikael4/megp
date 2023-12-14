@@ -232,6 +232,7 @@ export function FormDetail({ mode }: FormDetailProps) {
         isUpdating={isUpdating}
         isDeleting={isDeleting}
         isActivating={isActivating}
+        entity="organization"
       />
     </Stack>
   );

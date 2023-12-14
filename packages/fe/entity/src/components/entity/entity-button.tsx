@@ -3,15 +3,14 @@ import {
   IconDeviceFloppy,
   IconBackspace,
   IconFolderCancel,
-  IconToggleLeft,
-  IconToggleRight,
 } from '@tabler/icons-react';
 import React from 'react';
 import { DeleteButton } from './delete-popup';
+import { ActivateButton } from './activate-popup';
 
 interface EntityButtonProps {
   mode?: 'new' | 'detail';
-
+  entity?: string;
   onCreate?: () => void;
   onReset?: () => void;
   onUpdate?: () => void;
@@ -28,6 +27,7 @@ interface EntityButtonProps {
 
 export function EntityButton({
   mode,
+  entity,
   onCreate,
   onReset,
   onUpdate,
@@ -74,26 +74,21 @@ export function EntityButton({
               Update
             </Button>
           ) : null}
-          {data ? (
-            <Button
-              color={data?.isActive ? 'red' : ''}
-              leftSection={
-                data?.isActive ? (
-                  <IconToggleLeft size={14} stroke={1.6} />
-                ) : (
-                  <IconToggleRight size={14} stroke={1.6} />
-                )
-              }
-              loading={isActivating}
-              onClick={onActivate}
-              type="submit"
-            >
-              {data?.isActive ? 'Deactivate' : 'activate'}
-            </Button>
+          {onActivate ? (
+            <ActivateButton
+              data={data}
+              entity={entity}
+              isActivating={isActivating}
+              onActivate={onActivate}
+            />
           ) : null}
 
           {onDelete ? (
-            <DeleteButton isDeleting={isDeleting} onDelete={onDelete} />
+            <DeleteButton
+              entity={entity}
+              isDeleting={isDeleting}
+              onDelete={onDelete}
+            />
           ) : null}
           {onCancel ? (
             <Button

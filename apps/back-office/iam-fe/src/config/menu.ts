@@ -70,19 +70,27 @@ export const Menu: MenuItem[] = [
     label: 'Archive',
     icon: IconFileZip,
     links: [
-      { label: 'Organization', link: '/archived/organization' },
-      { label: 'Users', link: '/archived/users' },
-      { label: 'Unit', link: '/archived/units' },
-      { label: 'Group', link: '/archived/group' },
-      { label: 'Role', link: '/archived/roles' },
+      {
+        label: 'Organization',
+        link: '/archived/organization',
+        permission: ['organization'],
+      },
+      { label: 'Users', link: '/archived/users', permission: ['user'] },
+      { label: 'Unit', link: '/archived/units', permission: ['unit'] },
+      { label: 'Group', link: '/archived/group', permission: ['group'] },
+      { label: 'Role', link: '/archived/roles', permission: ['role'] },
     ],
   },
   {
     label: 'Settings',
     icon: IconAdjustmentsHorizontal,
     links: [
-      { label: 'Organization Types', link: '/organization-type' },
-      { label: 'Unit Types', link: '/unit-type' },
+      {
+        label: 'Organization Types',
+        link: '/organization-type',
+        permission: ['organization'],
+      },
+      { label: 'Unit Types', link: '/unit-type', permission: ['user'] },
     ],
   },
 ];

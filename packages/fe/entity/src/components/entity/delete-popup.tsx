@@ -6,11 +6,13 @@ import { usePathname } from 'next/navigation';
 interface DeleteButtonProps {
   onDelete: () => void;
   isDeleting?: boolean;
+  entity?: string;
 }
 
 export function DeleteButton({
   onDelete,
   isDeleting,
+  entity,
 }: DeleteButtonProps): React.ReactElement {
   const pathname = usePathname();
   const parts = pathname.split('/');
@@ -18,11 +20,13 @@ export function DeleteButton({
 
   const openDeleteModal = () => {
     modals.openConfirmModal({
-      title: `Delete ${entityName}`,
+      title: `Delete ${entity ? entity : entityName}`,
       centered: true,
       children: (
         <Text size="sm">
-          {`Are you sure you want to delete this ${entityName} `}
+          {`Are you sure you want to delete this ${
+            entity ? entity : entityName
+          } `}
         </Text>
       ),
       labels: { confirm: 'Yes', cancel: 'No' },
