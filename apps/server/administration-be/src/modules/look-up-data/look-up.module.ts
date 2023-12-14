@@ -15,12 +15,24 @@ import { UnitOfMeasurementService } from './service/unit-of-measurement.service'
 import { Currency } from 'src/entities/currency.entity';
 import { CurrencyService } from './service/currency.service';
 import { CurrencyController } from './controller/currency.controller';
+import { TargetGroup } from 'src/entities/target-group.entity';
+import { Region } from 'src/entities/region.entity';
+import { District } from 'src/entities/district.entity';
+import { TargetGroupService } from './service/target-group.service';
+import { RegionService } from './service/region.service';
+import { DistrictService } from './service/district.service';
+import { DistrictController } from './controller/district.controller';
+import { TargetGroupController } from './controller/target-group.controller';
+import { RegionController } from './controller/region.controller';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       ItemCategory,
       Currency,
+      TargetGroup,
+      Region,
+      District,
       Measurement,
       UnitOfMeasurement,
       Tag,
@@ -29,6 +41,9 @@ import { CurrencyController } from './controller/currency.controller';
   providers: [
     ItemCategoryService,
     CurrencyService,
+    TargetGroupService,
+    RegionService,
+    DistrictService,
     MeasurementService,
     UnitOfMeasurementService,
     TagService,
@@ -36,9 +51,12 @@ import { CurrencyController } from './controller/currency.controller';
   controllers: [
     ItemCategoriesController,
     CurrencyController,
+    TargetGroupController,
+    RegionController,
+    DistrictController,
     MeasurementController,
     UnitOfMeasurementController,
     TagController,
   ],
 })
-export class lookUpDataModule {}
+export class lookUpDataModule { }

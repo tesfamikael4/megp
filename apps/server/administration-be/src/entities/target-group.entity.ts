@@ -1,14 +1,12 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { Audit } from 'src/shared/entities';
 
-@Entity({ name: 'currencies' })
-export class Currency extends Audit {
+@Entity({ name: 'target_groups' })
+export class TargetGroup extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
   @Column()
   name: string;
   @Column()
   description: string;
-  @Column()
-  abbreviation: string;
 }
