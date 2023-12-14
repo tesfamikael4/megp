@@ -14,9 +14,9 @@ export function Entity({ children }: { children: React.ReactElement }) {
     return {
       basePath: '/region',
       mode: 'list',
-      entity: 'region',
+      entity: 'regions',
       primaryKey: 'id',
-      title: 'Region',
+      title: 'Regions',
       hasAdd: true,
       pagination: true,
       searchable: true,
@@ -40,15 +40,6 @@ export function Entity({ children }: { children: React.ReactElement }) {
           cell: (info) => info.getValue(),
           meta: {
             widget: 'primary',
-          },
-        },
-        {
-          id: 'description',
-          header: 'Description',
-          accessorKey: 'description',
-          cell: (info) => info.getValue(),
-          meta: {
-            widget: 'multiline',
           },
         },
       ],
