@@ -54,5 +54,5 @@ export class BpServiceEntity extends Audit {
     },
   )
   @JoinColumn({ name: 'businessAreaId' })
-  businessArea: BusinessAreaEntity[];
+  businessAreas: BusinessAreaEntity[];
 }

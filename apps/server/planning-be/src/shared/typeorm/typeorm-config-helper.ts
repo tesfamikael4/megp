@@ -25,7 +25,7 @@ export const dataSourceOptions = {
   migrationsRun: true,
   migrationsTableName: 'typeorm_migrations',
   logger: 'advanced-console',
-  logging: 'all',
+  logging: ["error"],
   synchronize: false,
   autoLoadEntities: true,
 } as DataSourceOptions;

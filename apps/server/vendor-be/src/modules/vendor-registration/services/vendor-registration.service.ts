@@ -572,15 +572,13 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     const result = await this.vendorRepository.findOne({
       where: {
         isrVendorId: isrvendorId,
-        //isrVendor: { businessAreas: { status: In(['Approved', 'APPROVED']) }}
+        isrVendor: { businessAreas: { status: In(['Approved', 'APPROVED']) } },
       },
       relations: {
-        isrVendor: { businessAreas: { BpService: true } },
-        areasOfBusinessInterest: true
+        isrVendor: { businessAreas: { BpService: true, servicePrice: true } },
+        areasOfBusinessInterest: true,
       },
     });
-
-    return result
+    return result;
   }
-
 }

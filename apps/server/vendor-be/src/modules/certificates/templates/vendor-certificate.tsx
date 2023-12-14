@@ -1,12 +1,18 @@
-import ReactPDF, {  Document,Page,Text,View,Image,StyleSheet} from '@react-pdf/renderer';
+import ReactPDF, {
+  Document,
+  Page,
+  Text,
+  View,
+  Image,
+  StyleSheet,
+} from '@react-pdf/renderer';
 
 const signatureImage = 'src/modules/certificates/assets/signature.png';
 const headerImage = 'src/modules/certificates/assets/headerImage.png';
 
 const CertificatePDF = ({ id, data, qrCodeUrl }) => {
-   
-  return  ReactPDF.renderToStream(
-  <Document>
+  return ReactPDF.renderToStream(
+    <Document>
       <Page size={[595, 842]} style={styles.page}>
         <View style={styles.container}>
           <Image style={styles.header} src={headerImage} />
@@ -42,7 +48,7 @@ const CertificatePDF = ({ id, data, qrCodeUrl }) => {
           </View>
         </View>
       </Page>
-    </Document>
+    </Document>,
   );
 };
 
@@ -86,15 +92,15 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   label: {
-    width: '40%',
+    width: '35%',
     textAlign: 'right',
   },
   separator: {
-    width: '20%',
+    width: '10%',
     textAlign: 'center',
   },
   value: {
-    width: '40%',
+    width: '55%',
   },
   signature: {
     padding: 10,

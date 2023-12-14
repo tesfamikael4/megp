@@ -1,15 +1,18 @@
 import * as dotenv from 'dotenv';
+import { SeederOptions } from 'typeorm-extension';
 import { DataSource, DataSourceOptions } from 'typeorm';
 dotenv.config({ path: '.env' });
 
 export const TypeOrmConfigHelper = {
-  DATABASE_HOST: process.env.DATABASE_HOST,
-  DATABASE_PORT: process.env.DATABASE_PORT,
-  DATABASE_NAME: process.env.DATABASE_NAME,
-  DATABASE_USER: process.env.DATABASE_USER,
-  DATABASE_PASSWORD: process.env.DATABASE_PASSWORD,
-  NODE_ENV: process.env.NODE_ENV,
+  DATABASE_HOST: process.env.DATABASE_HOST ?? 'localhost',
+  DATABASE_PORT: process.env.DATABASE_PORT ?? '5433',
+  DATABASE_NAME: process.env.DATABASE_NAME ?? 'vendor_dev03',
+  DATABASE_USER: process.env.DATABASE_USER ?? 'postgres',
+  DATABASE_PASSWORD: process.env.DATABASE_PASSWORD ?? 'root',
 };
+
+const pathPrefix =
+  process.env.NODE_ENV === 'production' ? 'apps/server/vendor-be/' : '';
 
 export const dataSourceOptions = {
   type: 'postgres',
@@ -18,17 +21,16 @@ export const dataSourceOptions = {
   database: TypeOrmConfigHelper.DATABASE_NAME,
   username: TypeOrmConfigHelper.DATABASE_USER,
   password: TypeOrmConfigHelper.DATABASE_PASSWORD,
-  entities: ['dist/**/*.entity.{ts,js}'],
-  migrations: ['dist/migrations/*.{ts,js}'],
-  cli: {
-    migrationsDir: 'src/migrations',
-  },
+  entities: [`${pathPrefix}dist/**/*.entity.{ts,js}`],
+  migrations: [`${pathPrefix}dist/migrations/*.{ts,js}`],
+  migrationsRun: true,
+  seeds: [`${pathPrefix}dist/modules/seeders/**.seeder.{ts,js}`],
   migrationsTableName: 'typeorm_migrations',
-  // logger: 'advanced-console',
-  // logging: 'all',
-  synchronize: true, // TypeOrmConfigHelper.NODE_ENV != 'production', // never use TRUE in production!
-  autoLoadEntities: true, // TypeOrmConfigHelper.NODE_ENV != 'production',
-} as DataSourceOptions;
+  logger: 'advanced-console',
+  logging: 'all',
+  synchronize: false,
+  autoLoadEntities: true,
+} as DataSourceOptions & SeederOptions;
 
 const dataSource = new DataSource(dataSourceOptions);
 
