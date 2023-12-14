@@ -7,10 +7,10 @@ import { RelationCrudOptions } from 'src/shared/types/crud-option.type';
 import { UserRoleSystem } from 'src/entities/user-role-system.entity';
 
 const options: RelationCrudOptions = {
-  firstEntityIdName: 'roleId',
+  firstEntityIdName: 'roleSystemId',
   firstInclude: 'user',
   secondEntityIdName: 'userId',
-  secondInclude: 'role',
+  secondInclude: 'roleSystem',
   // assignFirstDto: CreatePermissionDto,
   // assignSecondDto: UpdatePermissionDto
 };

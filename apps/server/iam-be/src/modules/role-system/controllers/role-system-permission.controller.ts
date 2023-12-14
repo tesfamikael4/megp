@@ -17,7 +17,7 @@ const options: RelationCrudOptions = {
 
 @Controller('role-system-permissions')
 @ApiTags('role-system-permissions')
-export class RoleSystemPermissionNewController extends RelationCrudController<RoleSystemPermission>(
+export class RoleSystemPermissionController extends RelationCrudController<RoleSystemPermission>(
   options,
 ) {
   constructor(
