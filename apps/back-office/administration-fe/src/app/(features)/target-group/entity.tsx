@@ -3,29 +3,29 @@ import { CollectionQuery, EntityConfig, EntityLayout } from '@megp/entity';
 import { usePathname, useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 import { logger } from '@megp/core-fe';
-import { Currency } from '@/models/currency';
-import { useLazyListQuery } from './_api/currency.api';
+import { useLazyListQuery } from './_api/target-group.api';
+import { TargetGroup } from '@/models/target-group';
 
 export function Entity({ children }: { children: React.ReactElement }) {
   const route = useRouter();
   const [trigger, { data }] = useLazyListQuery();
 
-  const config: EntityConfig<Currency> = useMemo(() => {
+  const config: EntityConfig<TargetGroup> = useMemo(() => {
     return {
-      basePath: '/currencies',
+      basePath: '/Target-groups',
       mode: 'list',
-      entity: 'currencies',
+      entity: 'Target-groups',
       primaryKey: 'id',
-      title: 'currencies',
+      title: 'Target-groups',
       hasAdd: true,
       pagination: true,
       searchable: true,
       sortable: true,
-      onDetail: (selected: Currency) => {
-        route.push(`/currency/${selected.id}`);
+      onDetail: (selected: TargetGroup) => {
+        route.push(`/target-group/${selected.id}`);
       },
       onAdd: () => {
-        route.push(`/currency/new`);
+        route.push(`/target-group/new`);
       },
 
       onSearch: (search) => {
@@ -51,15 +51,6 @@ export function Entity({ children }: { children: React.ReactElement }) {
             widget: 'multiline',
           },
         },
-        {
-          id: 'abbreviation',
-          header: 'abbreviation',
-          accessorKey: 'abbreviation',
-          cell: (info) => info.getValue(),
-          meta: {
-            widget: 'multiline',
-          },
-        },
       ],
     };
   }, [route]);
@@ -67,9 +58,9 @@ export function Entity({ children }: { children: React.ReactElement }) {
   const pathname = usePathname();
 
   const mode =
-    pathname === `/currency`
+    pathname === `/target-group`
       ? 'list'
-      : pathname === `/currency/new`
+      : pathname === `/target-group/new`
       ? 'new'
       : 'detail';
   const onRequestChange = (request: CollectionQuery) => {

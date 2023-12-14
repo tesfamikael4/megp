@@ -30,9 +30,9 @@ export function Unit({
   handleCloseModal,
   measurementId,
 }: FormDetailProps) {
-  const permissionSchema: ZodType<Partial<MeasurementUnit>> = z.object({
+  const unitSchema: ZodType<Partial<MeasurementUnit>> = z.object({
     name: z.string().min(1, { message: 'This field is required' }),
-    shortName: z.string(),
+    shortName: z.string().min(1).optional(),
   });
 
   const { id } = useParams();
@@ -43,7 +43,7 @@ export function Unit({
     formState: { errors },
     register,
   } = useForm({
-    resolver: zodResolver(permissionSchema),
+    resolver: zodResolver(unitSchema),
   });
 
   const [create, { isLoading: isSaving }] = useCreateMutation();
@@ -109,11 +109,11 @@ export function Unit({
         required
       />
       <TextInput
-        withAsterisk
+        // withAsterisk
         label="Short Name"
         {...register('shortName')}
         error={errors?.key ? errors?.key?.message?.toString() : ''}
-        required
+        // required
       />
       <Flex gap="md" justify="flex-start" align="flex-start" direction="row">
         <EntityButton
