@@ -21,7 +21,6 @@ interface FormDetailProps {
 
 const defaultValues = {
   name: '',
-  description: '',
 };
 
 export function FormDetail({ mode }: FormDetailProps) {
@@ -71,7 +70,7 @@ export function FormDetail({ mode }: FormDetailProps) {
   };
   const onUpdate = async (data) => {
     try {
-      await update({ ...data, id: id?.toString() });
+      await update({ ...data, id: id?.toString() }).unwrap();
       notifications.show({
         message: 'Region updated successfully',
         title: 'Success',
@@ -125,7 +124,6 @@ export function FormDetail({ mode }: FormDetailProps) {
         error={errors?.name ? errors?.name?.message?.toString() : ''}
         required
       />
-      <Textarea label="Description" {...register('description')} />
       <EntityButton
         mode={mode}
         onCreate={handleSubmit(onCreate)}

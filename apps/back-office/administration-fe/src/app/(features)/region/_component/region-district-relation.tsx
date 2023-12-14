@@ -11,11 +11,12 @@ import {
 } from '../_api/district.api';
 import { District } from '@/models/district';
 import { DistrictForm } from './district';
+import { notifications } from '@mantine/notifications';
 
 const AddDistrict = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [mode, setMode] = useState<'new' | 'detail'>('new');
-  const [regionId, setRegionId] = useState('');
+  const [districtId, setDistrictId] = useState('');
   const { id } = useParams();
 
   const { data: district, isSuccess } = useListRegionId(id?.toString());
@@ -23,7 +24,7 @@ const AddDistrict = () => {
   const [remove] = useDeleteMutation();
 
   const relationConfig: RelationConfig<District> = {
-    title: 'District ',
+    title: 'Districts ',
     columns: [
       {
         id: 'name',
@@ -64,16 +65,25 @@ const AddDistrict = () => {
   const onDelete = async (id) => {
     try {
       await remove(id).unwrap();
-      notify('Success', 'District deleted successfully');
+      notifications.show({
+        message: 'District deleted successfully',
+        title: 'Success',
+        color: 'green',
+      });
+      handleCloseModal();
     } catch (err) {
-      notify('Error', 'Errors in deleting district.');
+      notifications.show({
+        message: 'errors in deleting district.',
+        title: 'Error',
+        color: 'red',
+      });
     }
   };
 
   const openEditModal = (id) => {
     logger.log(id);
     setIsModalOpen(true);
-    setRegionId(id);
+    setDistrictId(id);
     setMode('detail');
   };
 
@@ -86,12 +96,17 @@ const AddDistrict = () => {
         openDeleteModal={openDeleteModal}
         openEditModal={openEditModal}
         collapsed={false}
+        total={district?.items.length}
       />
-      <Modal title="District" opened={isModalOpen} onClose={handleCloseModal}>
+      <Modal
+        title={mode === 'new' ? 'New District' : 'Update District'}
+        opened={isModalOpen}
+        onClose={handleCloseModal}
+      >
         <DistrictForm
           mode={mode}
           handleCloseModal={handleCloseModal}
-          regionId={regionId}
+          districtId={districtId}
         />
       </Modal>
     </>

@@ -1,16 +1,14 @@
-import { LoadingOverlay, Stack, TextInput, Textarea } from '@mantine/core';
+import { LoadingOverlay, Stack, TextInput } from '@mantine/core';
 import { EntityButton } from '@megp/entity';
 import { z, ZodType } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { useRouter } from 'next/navigation';
 import { notifications } from '@mantine/notifications';
 import { useForm } from 'react-hook-form';
 import {
   useCreateMutation,
-  useDeleteMutation,
-  useReadQuery,
+  useLazyReadQuery,
   useUpdateMutation,
 } from '../_api/district.api';
 import { District } from '@/models/district';
@@ -18,18 +16,17 @@ import { District } from '@/models/district';
 interface FormDetailProps {
   mode: 'new' | 'detail';
   handleCloseModal: () => void;
-  regionId: string;
+  districtId: string;
 }
 
 const defaultValues = {
   name: '',
-  description: '',
 };
 
 export function DistrictForm({
   mode,
   handleCloseModal,
-  regionId,
+  districtId,
 }: FormDetailProps) {
   const measurementSchema: ZodType<Partial<District>> = z.object({
     name: z.string().min(1, { message: 'This field is required' }),
@@ -44,23 +41,21 @@ export function DistrictForm({
   } = useForm({
     resolver: zodResolver(measurementSchema),
   });
-  const router = useRouter();
   const { id } = useParams();
 
   const [create, { isLoading: isSaving }] = useCreateMutation();
   const [update, { isLoading: isUpdating }] = useUpdateMutation();
-  const [remove, { isLoading: isDeleting }] = useDeleteMutation();
-  const {
-    data: selected,
-    isSuccess: selectedSuccess,
-    isLoading,
-  } = useReadQuery(id?.toString());
+  const [getDistrict, { data: distric, isSuccess, isLoading }] =
+    useLazyReadQuery();
 
   const onCreate = async (data) => {
     try {
-      const result = await create({ data, regionId: id?.toString() });
+      const result = await create({
+        ...data,
+        regionId: id?.toString(),
+      });
       if ('data' in result) {
-        router.push(`/region/district/${result?.data?.id}`);
+        handleCloseModal();
       }
       notifications.show({
         message: 'District created successfully',
@@ -77,7 +72,8 @@ export function DistrictForm({
   };
   const onUpdate = async (data) => {
     try {
-      await update({ ...data, id: id?.toString() });
+      await update({ ...distric, ...data }).unwrap();
+      handleCloseModal();
       notifications.show({
         message: 'District updated successfully',
         title: 'Success',
@@ -91,35 +87,24 @@ export function DistrictForm({
       });
     }
   };
-  const onDelete = async () => {
-    try {
-      await remove(id?.toString()).unwrap();
-      notifications.show({
-        message: 'District deleted successfully',
-        title: 'Success',
-        color: 'green',
-      });
-      router.push('/region/district');
-    } catch (err) {
-      notifications.show({
-        message: 'errors in deleting district.',
-        title: 'Error',
-        color: 'red',
-      });
-    }
-  };
 
   const onReset = async () => {
     reset({ ...defaultValues });
   };
 
   useEffect(() => {
-    if (mode == 'detail' && selectedSuccess && selected !== undefined) {
+    if (mode == 'detail') {
+      getDistrict(districtId);
+    }
+  }, [districtId, getDistrict, mode]);
+
+  useEffect(() => {
+    if (isSuccess) {
       reset({
-        name: selected?.name,
+        name: distric?.name,
       });
     }
-  }, [mode, reset, selected, selectedSuccess]);
+  }, [distric, isSuccess, reset]);
 
   return (
     <Stack pos="relative">
@@ -135,11 +120,10 @@ export function DistrictForm({
         mode={mode}
         onCreate={handleSubmit(onCreate)}
         onUpdate={handleSubmit(onUpdate)}
-        onDelete={handleSubmit(onDelete)}
+        onCancel={handleCloseModal}
         onReset={onReset}
         isSaving={isSaving}
         isUpdating={isUpdating}
-        isDeleting={isDeleting}
       />
     </Stack>
   );
