@@ -3,6 +3,7 @@ import {
   Column,
   Entity,
   JoinColumn,
+  ManyToMany,
   ManyToOne,
   OneToMany,
   OneToOne,
@@ -10,6 +11,7 @@ import {
 } from 'typeorm';
 import { IsrVendorsEntity } from './isr-vendors.entity';
 import { BpServiceEntity } from './bp-service.entity';
+import { ServicePrice } from './service-price.entity';
 
 @Entity({ name: 'business_areas' })
 export class BusinessAreaEntity {
@@ -17,6 +19,8 @@ export class BusinessAreaEntity {
   id: string;
   @Column({ type: 'uuid' })
   vendorId: string;
+  @Column({ type: 'uuid', nullable: true })
+  priceRangeId: string;
   @Column({ type: 'uuid' })
   serviceId: string;
   @Column({ type: 'uuid' })
@@ -38,10 +42,12 @@ export class BusinessAreaEntity {
   @JoinColumn({ name: 'vendorId' })
   isrVendor: IsrVendorsEntity;
 
-  @ManyToOne(() => BpServiceEntity, (vendor) => vendor.businessArea)
+  @ManyToOne(() => BpServiceEntity, (vendor) => vendor.businessAreas)
   @JoinColumn({ name: 'serviceId' })
   BpService: BpServiceEntity;
-
+  @ManyToOne(() => ServicePrice, (servicePrice) => servicePrice.businessAreas)
+  @JoinColumn({ name: 'priceRangeId' })
+  servicePrice: ServicePrice;
   @BeforeInsert()
   setDefaultExpireYear() {
     if (this.status == 'Approved') {

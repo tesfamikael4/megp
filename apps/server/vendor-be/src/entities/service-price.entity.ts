@@ -9,10 +9,12 @@ import {
 import { WorkflowInstanceEntity } from 'src/entities/workflow-instance.entity';
 import { BpServiceEntity } from 'src/entities/bp-service.entity';
 import { Audit } from 'src/shared/entities/audit.entity';
+import { BusinessAreaEntity } from './business-area.entity';
 @Entity({ name: 'service_pricing' })
 export class ServicePrice extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
   @Column({ type: 'uuid' })
   serviceId: string;
   @Column({ name: 'businessArea', enum: ['Goods', 'Services', 'Works'] })
@@ -30,4 +32,9 @@ export class ServicePrice extends Audit {
   @ManyToOne(() => BpServiceEntity, (s) => s.prices)
   @JoinColumn({ name: 'serviceId' })
   service: BpServiceEntity;
+  @OneToMany(
+    () => BusinessAreaEntity,
+    (businessArea) => businessArea.servicePrice,
+  )
+  businessAreas: BusinessAreaEntity[];
 }

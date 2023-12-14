@@ -35,7 +35,7 @@ import { CollectionQuery } from 'src/shared/collection-query';
 @ApiResponse({ status: 500, description: 'Internal error' })
 @ApiExtraModels(DataResponseFormat)
 export class VendorRegistrationsController {
-  constructor(private readonly regService: VendorRegistrationsService) {}
+  constructor(private readonly regService: VendorRegistrationsService) { }
   @UseGuards(JwtGuard)
   @Get('get-isr-vendors')
   async getVendors() {
@@ -74,11 +74,8 @@ export class VendorRegistrationsController {
   @Post('add-vendor-information')
   async addVendorInformation(
     @Body() data: InsertAllDataDto,
-    @CurrentUser() userInfo: any,
-    @Req() request: Request,
+    @CurrentUser() userInfo: any
   ) {
-    const authToken = request.headers['authorization'].split(' ')[1];
-    userInfo['token'] = authToken;
     data.data.initial.userId = userInfo.id;
     const result = await this.regService.addVendorInformations(
       data.data,
@@ -91,11 +88,9 @@ export class VendorRegistrationsController {
   @Post('submit-vendor-information')
   async submitVendorInformations(
     @Body() data: InsertAllDataDto,
-    @CurrentUser() userInfo: any,
-    @Req() request: Request,
+    @CurrentUser() userInfo: any
+
   ) {
-    const authToken = request.headers['authorization'].split(' ')[1];
-    userInfo['token'] = authToken;
     data.data.initial.userId = userInfo.id;
     const result = await this.regService.submitVendorInformations(
       data.data,
