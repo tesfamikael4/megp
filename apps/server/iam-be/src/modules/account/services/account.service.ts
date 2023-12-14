@@ -68,6 +68,7 @@ export class AccountsService {
 
     throw new BadRequestException('Conflict');
   }
+
   public async verifyAccount(
     body: VerifyAccountDto,
   ): Promise<LoginResponseDto | never> {
@@ -77,10 +78,12 @@ export class AccountsService {
     account.status = AccountStatusEnum.ACTIVE;
     await this.repository.update(account.id, account);
 
+    const tokenPayload = await this.getAccessTokenPayload(account);
+
     const token: LoginResponseDto = {
       is_security_question_set: account.securityQuestions?.length != 0,
-      access_token: this.helper.generateAccessToken(account),
-      refresh_token: this.helper.generateRefreshToken(account),
+      access_token: this.helper.generateAccessToken(tokenPayload),
+      refresh_token: this.helper.generateRefreshToken({ id: account.id }),
     };
 
     return token;

@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Inject, Injectable, NotFoundException, Scope } from '@nestjs/common';
 import { EntityManager, Repository } from 'typeorm';
-import { Organization, Unit } from '@entities';
+import { Organization, Role, Unit } from '@entities';
 import {
   CreateOrganizationDto,
   OrganizationResponseDto,
@@ -11,6 +11,7 @@ import {
 import { EntityCrudService } from 'src/shared/service';
 import { REQUEST } from '@nestjs/core';
 import { ENTITY_MANAGER_KEY } from '@interceptors';
+import { defaultOrganizationRoles } from 'src/modules/seeders/seed-data';
 
 @Injectable()
 export class OrganizationService extends EntityCrudService<Organization> {
@@ -53,6 +54,8 @@ export class OrganizationService extends EntityCrudService<Organization> {
     unit.code = organization.code;
 
     organization.units = [unit];
+
+    organization.roles = defaultOrganizationRoles as Role[];
 
     const result = await this.repositoryOrganization.save(organization);
 
