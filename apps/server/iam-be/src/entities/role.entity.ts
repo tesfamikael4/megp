@@ -31,7 +31,7 @@ export class Role extends Audit {
   @Column()
   key: string;
 
-  @Column({ nullable: true })
+  @Column()
   organizationId: string;
 
   @ManyToOne(() => Organization, (organization) => organization.roles, {

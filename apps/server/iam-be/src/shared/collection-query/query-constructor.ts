@@ -19,6 +19,9 @@ const addFilterConditions = (
   } else if (op === FilterOperators.In && Array.isArray(value)) {
     // Handle "in" operator for the main ${aggregate}
     return `${queryCondition} IN (:...${queryParam})`;
+  } else if (op === FilterOperators.NotIn && Array.isArray(value)) {
+    // Handle "in" operator for the main ${aggregate}
+    return `${queryCondition} Not IN (:...${queryParam})`;
   } else if (op === FilterOperators.IsNull) {
     // Handle "isNull" operator for the main ${aggregate}
     return `${queryCondition} IS NULL`;
@@ -90,11 +93,12 @@ const applyWhereConditions = <T>(
       const orConditions = conditions.map(({ column, value, operator: op }) => {
         if (column.includes('.')) {
           const [relation, field] = column.split('.'); // Assuming "relation.field" format
+          const fieldValue = `${field}_${++count}`;
           return addFilterConditions(
             op,
             value,
             `${relation}.${field}`,
-            `${relation}_${field}`,
+            `${relation}_${fieldValue}`,
           );
         } else {
           // Handle conditions for the main entity
@@ -134,7 +138,8 @@ const applyWhereConditions = <T>(
         (acc, { column, value, operator: op }) => {
           if (column.includes('.')) {
             const [relation, field] = column.split('.');
-            acc = addFilterParams(op, value, `${relation}_${field}`, acc);
+            const fieldValue = `${field}_${++count}`;
+            acc = addFilterParams(op, value, `${relation}_${fieldValue}`, acc);
           } else if (column.includes('->>')) {
             const [mainColumn, nestedColumn] = column.split('->>');
             if (mainColumn.includes('->')) {
