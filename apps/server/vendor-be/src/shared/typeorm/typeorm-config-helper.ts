@@ -1,6 +1,7 @@
 import * as dotenv from 'dotenv';
 import { SeederOptions } from 'typeorm-extension';
 import { DataSource, DataSourceOptions } from 'typeorm';
+
 dotenv.config({ path: '.env' });
 
 export const TypeOrmConfigHelper = {
