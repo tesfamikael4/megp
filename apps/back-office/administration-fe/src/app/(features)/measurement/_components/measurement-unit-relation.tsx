@@ -6,11 +6,12 @@ import { useParams } from 'next/navigation';
 import { MeasurementUnit } from '@/models/measurement-unit';
 import { Unit } from './unit';
 import { modals } from '@mantine/modals';
-import { logger, notify } from '@megp/core-fe';
+import { logger } from '@megp/core-fe';
 import {
   useListByAppIdQuery as useListMeasurementId,
   useDeleteMutation,
 } from '../_api/unit.api';
+import { notifications } from '@mantine/notifications';
 
 const AddUnit = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -44,7 +45,7 @@ const AddUnit = () => {
         },
       },
     ],
-
+    pagination: true,
     onAdd: () => {
       setMode('new');
       setIsModalOpen(true);
@@ -73,12 +74,19 @@ const AddUnit = () => {
   const onDelete = async (id) => {
     try {
       await remove(id).unwrap();
-      notify('Success', 'Unit deleted successfully');
+      notifications.show({
+        message: 'Unit deleted successfully',
+        title: 'error',
+        color: 'red',
+      });
     } catch (err) {
-      notify('Error', 'Errors in deleting unit.');
+      notifications.show({
+        message: 'Errors in deleting Unit.',
+        title: 'Error',
+        color: 'red',
+      });
     }
   };
-
   const openEditModal = (id) => {
     logger.log(id);
     setIsModalOpen(true);
@@ -95,8 +103,13 @@ const AddUnit = () => {
         openDeleteModal={openDeleteModal}
         openEditModal={openEditModal}
         collapsed={false}
+        total={unit?.items.length}
       />
-      <Modal title="unit" opened={isModalOpen} onClose={handleCloseModal}>
+      <Modal
+        title={mode === 'new' ? 'new unit' : 'Update Unit'}
+        opened={isModalOpen}
+        onClose={handleCloseModal}
+      >
         <Unit
           mode={mode}
           handleCloseModal={handleCloseModal}

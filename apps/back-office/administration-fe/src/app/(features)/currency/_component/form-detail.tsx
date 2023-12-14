@@ -22,12 +22,14 @@ interface FormDetailProps {
 const defaultValues = {
   name: '',
   description: '',
+  abbreviation: '',
 };
 
 export function FormDetail({ mode }: FormDetailProps) {
-  const measurementSchema: ZodType<Partial<Currency>> = z.object({
+  const currencySchema: ZodType<Partial<Currency>> = z.object({
     name: z.string().min(1, { message: 'This field is required' }),
-    description: z.string().min(1, { message: 'This field is required' }),
+    description: z.string().min(1),
+    abbreviation: z.string().min(1),
   });
 
   const {
@@ -37,7 +39,7 @@ export function FormDetail({ mode }: FormDetailProps) {
 
     register,
   } = useForm({
-    resolver: zodResolver(measurementSchema),
+    resolver: zodResolver(currencySchema),
   });
   const router = useRouter();
   const { id } = useParams();
@@ -113,6 +115,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       reset({
         name: selected?.name,
         description: selected?.description,
+        abbreviation: selected?.abbreviation,
       });
     }
   }, [mode, reset, selected, selectedSuccess]);
@@ -128,13 +131,22 @@ export function FormDetail({ mode }: FormDetailProps) {
         required
       />{' '}
       <TextInput
-        withAsterisk
+        // withAsterisk
         label="description"
         {...register('description')}
         error={
           errors?.description ? errors?.description?.message?.toString() : ''
         }
-        required
+        // required
+      />{' '}
+      <TextInput
+        // withAsterisk
+        label="abbreviation"
+        {...register('abbreviation')}
+        error={
+          errors?.abbreviation ? errors?.abbreviation?.message?.toString() : ''
+        }
+        // required
       />{' '}
       <EntityButton
         mode={mode}

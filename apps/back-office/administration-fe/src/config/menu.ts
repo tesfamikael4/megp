@@ -11,6 +11,7 @@ export const Menu: MenuItem[] = [
   { label: 'Item Category', icon: IconBuildingBank, link: '/item-category' },
   { label: 'Measurements', icon: IconBuildingBank, link: '/measurement' },
   { label: 'Currency', icon: IconBuildingBank, link: '/currency' },
+  { label: 'Target Group', icon: IconBuildingBank, link: '/target-group' },
   { label: 'Region', icon: IconBuildingBank, link: '/region' },
   {
     label: 'Settings',
