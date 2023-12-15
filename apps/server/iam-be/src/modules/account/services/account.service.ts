@@ -301,7 +301,6 @@ export class AccountsService {
             roleId: true,
             role: {
               id: true,
-              key: true,
               name: true,
               rolePermissions: {
                 id: true,
@@ -379,7 +378,6 @@ export class AccountsService {
     userInfo.user?.userRoles?.forEach((userRole) => {
       const role = {
         id: userRole.role.id,
-        key: userRole.role.key,
         name: userRole.role.name,
       };
 

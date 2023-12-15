@@ -13,7 +13,6 @@ export class RoleService extends ExtraCrudService<Role> {
   constructor(
     @InjectRepository(Role)
     private readonly repositoryRole: Repository<Role>,
-    private readonly permissionService: PermissionService,
   ) {
     super(repositoryRole);
   }
@@ -36,23 +35,5 @@ export class RoleService extends ExtraCrudService<Role> {
     }
 
     return response;
-  }
-
-  async findOrganizationAdminRole(
-    organizationId: string,
-  ): Promise<Role | undefined> {
-    return await this.repositoryRole.findOne({
-      where: {
-        organizationId,
-        key:
-          process.env.ORGANIZATION_ADMINISTRATOR_ROLE_KEY ??
-          'ORGANIZATION_ADMINISTRATOR',
-        // rolePermissions: {
-        //   permission: {
-        //     key: ''
-        //   }
-        // }
-      },
-    });
   }
 }
