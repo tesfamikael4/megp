@@ -215,7 +215,6 @@ export const defaultOrganizationRoles = [
   {
     name: 'Procuring Unit Head',
     description: 'Procuring Unit Head',
-    key: 'procuring_unit_head',
     isSystemRole: true,
     rolePermissions: [
       {
@@ -229,7 +228,6 @@ export const defaultOrganizationRoles = [
   {
     name: 'Head of Procuring Entity',
     description: 'Head of Procuring Entity',
-    key: 'head_of_procuring_entity',
     isSystemRole: true,
     rolePermissions: [
       {
