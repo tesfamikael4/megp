@@ -92,7 +92,7 @@ import { InvoiceService } from './services/invoice.service';
     VendorRegistrationsService,
     BusinessAreaService,
     InvoiceService,
-    TusService,
+    // TusService,
   ],
   controllers: [
     WorkflowInstanceController,
@@ -107,4 +107,4 @@ import { InvoiceService } from './services/invoice.service';
     BusinessAreaController,
   ],
 })
-export class VendorRegistrationModule { }
+export class VendorRegistrationModule {}

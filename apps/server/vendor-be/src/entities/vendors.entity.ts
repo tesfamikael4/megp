@@ -35,7 +35,7 @@ export class VendorsEntity extends Audit {
   country: string;
 
   @Column({ type: 'json', nullable: true })
-  metaData: JSON;
+  metaData: any;
   @Column({ nullable: true })
   name: string;
   @Column({ nullable: true })
