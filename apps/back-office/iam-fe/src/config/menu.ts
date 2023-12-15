@@ -1,4 +1,5 @@
 import { MenuItem } from '@megp/core-fe';
+import { IconDeviceAnalytics, IconLoadBalancer } from '@tabler/icons-react';
 import {
   IconAdjustmentsHorizontal,
   IconApps,
@@ -59,6 +60,12 @@ export const Menu: MenuItem[] = [
     label: 'Roles',
     icon: IconLockSquareRounded,
     link: '/roles',
+    permission: ['role'],
+  },
+  {
+    label: 'System role',
+    icon: IconDeviceAnalytics,
+    link: '/system-role',
     permission: ['role'],
   },
   {

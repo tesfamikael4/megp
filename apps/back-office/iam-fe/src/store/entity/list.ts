@@ -34,6 +34,10 @@ export const ENTITY_LIST: EntityStoreConfig[] = [
     baseUrl: process.env.NEXT_PUBLIC_IAM_API ?? '/iam/api',
   },
   {
+    entity: 'role-systems',
+    baseUrl: process.env.NEXT_PUBLIC_IAM_API ?? '/iam/api',
+  },
+  {
     entity: 'my-mandate',
     baseUrl: process.env.NEXT_PUBLIC_IAM_API ?? '/iam/api',
   },
@@ -75,6 +79,10 @@ export const ENTITY_LIST: EntityStoreConfig[] = [
   },
   {
     entity: 'user-profile',
+    baseUrl: process.env.NEXT_PUBLIC_IAM_API ?? '/iam/api',
+  },
+  {
+    entity: 'user-role-systems',
     baseUrl: process.env.NEXT_PUBLIC_IAM_API ?? '/iam/api',
   },
 ];
