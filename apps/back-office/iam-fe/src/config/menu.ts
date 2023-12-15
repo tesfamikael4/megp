@@ -97,7 +97,7 @@ export const Menu: MenuItem[] = [
         link: '/organization-type',
         permission: ['organization'],
       },
-      { label: 'Unit Types', link: '/unit-type', permission: ['user'] },
+      { label: 'Unit Types', link: '/unit-type', permission: ['unit'] },
     ],
   },
 ];
