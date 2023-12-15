@@ -73,8 +73,24 @@ export function Shell({ children }: ShellProps): React.ReactNode {
       );
     });
 
+    const filterNested = shellContext.menuItems
+      .filter((menuItems: any) => menuItems.links)
+      .map((menuItems: any) => {
+        return {
+          ...menuItems,
+          links: menuItems.links.filter((menuItem: any) => {
+            return menuItem.permission?.some(
+              (menuPermission) =>
+                user?.permissions.some((userPermission) => {
+                  return userPermission.key === menuPermission;
+                }),
+            );
+          }),
+        };
+      });
+
     currentApplication === 'Identity & Access'
-      ? setFilterdMenu(filtered)
+      ? setFilterdMenu([...filtered, ...filterNested])
       : setFilterdMenu(shellContext.menuItems);
   }, [user, shellContext.menuItems, currentApplication]);
 

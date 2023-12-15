@@ -87,6 +87,7 @@ export function FormDetail({ mode, handleCloseModal }: FormDetailProps) {
       <LoadingOverlay visible={isLoading} />
       <TextInput
         label="First Name"
+        withAsterisk
         error={errors?.firstName ? errors?.firstName?.message?.toString() : ''}
         {...register('firstName')}
       />
