@@ -6,7 +6,6 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { CommonEntity } from 'src/shared/entities/common.entity';
 import { ShareholdersEntity } from './shareholder.entity';
 import { BankAccountDetailEntity } from './bank-account-detail.entity';
 import { CustomCategoryEntity } from './custom-category.entity';

@@ -3,10 +3,7 @@ import {
   Column,
   Entity,
   JoinColumn,
-  ManyToMany,
   ManyToOne,
-  OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { IsrVendorsEntity } from './isr-vendors.entity';
@@ -19,7 +16,7 @@ export class BusinessAreaEntity {
   id: string;
   @Column({ type: 'uuid' })
   vendorId: string;
-  @Column({ type: 'uuid', nullable: true })
+  @Column({ type: 'uuid' })
   priceRangeId: string;
   @Column({ type: 'uuid' })
   serviceId: string;
