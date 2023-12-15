@@ -15,7 +15,7 @@ export class CertificateService {
   constructor(
     private readonly vendorService: VendorRegistrationsService,
     private readonly wfService: WorkflowService,
-  ) {}
+  ) { }
   formatNumber(priceRange: ServicePrice) {
     let valueTo = '';
     let valueFrom = '';
@@ -66,7 +66,7 @@ export class CertificateService {
           margin: 0,
         })) ?? '';
       const app = await this.wfService.getInstance(instanceId);
-      if (app?.status != WorkflowInstanceEnum.Approved) {
+      if (app?.status != WorkflowInstanceEnum.Completed) {
         const command = new GotoNextStateDto();
         command.instanceId = instanceId;
         command.action = 'SUCCESS';
@@ -76,7 +76,7 @@ export class CertificateService {
         await this.vendorService.getVendorByIdForCertificate(vendorId);
       console.log('vendorInfo-->', vendorInfo);
       if (!vendorInfo) throw new NotFoundException();
-      const address = JSON.parse(JSON.stringify(vendorInfo.metaData));
+      const address = vendorInfo.metaData; // JSON.parse(JSON.stringify();
       let goodsCategory = '',
         serviceCategory = '';
       let goodsExpiry = '',

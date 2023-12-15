@@ -137,9 +137,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
                 workflowInstance.application.applicationNumber;
               businessAreaEntity.status = VendorStatusEnum.PENDING;
               businessAreaEntity.vendorId = result.id;
-              businessAreaEntity.priceRangeId =
-                result.areasOfBusinessInterest.priceRangeId;
-
+              businessAreaEntity.priceRangeId = interests[i].priceRange;
               const res =
                 await this.businessAreaRepository.save(businessAreaEntity);
               if (!res)
@@ -310,6 +308,9 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       if (!businessArea) throw new HttpException(`businessArea_not_found`, 500);
       businessArea.status = VendorStatusEnum.APPROVED;
       businessArea.approvedAt = new Date();
+      const expireDate = new Date();
+      expireDate.setFullYear(expireDate.getFullYear() + 1)
+      businessArea.expireDate = expireDate
       businessArea.remark = vendorStatusDto.remark;
       const besinessArea = await this.businessAreaRepository.save(businessArea);
       if (!besinessArea)

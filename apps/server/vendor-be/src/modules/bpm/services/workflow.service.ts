@@ -79,8 +79,7 @@ export class WorkflowService {
     instanceEntity.userId = user?.id;
     instanceEntity.user = user;
     const serviceBp = await this.bpService.findWorkflowByServiceAndBP(
-      dto.serviceId,
-      dto.bpId,
+      dto.serviceId, dto.bpId
     );
     if (!serviceBp || !dto.requestorId)
       throw new NotFoundException('Business Process Not Found');
@@ -396,8 +395,8 @@ export class WorkflowService {
     const commandLower = command.action.toLowerCase();
     const status =
       commandLower == 'approve' ||
-      commandLower == 'yes' ||
-      commandLower == 'success'
+        commandLower == 'yes' ||
+        commandLower == 'success'
         ? 'Approve'
         : 'Reject';
     const payload = {

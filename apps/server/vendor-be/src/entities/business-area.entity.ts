@@ -1,5 +1,4 @@
 import {
-  BeforeInsert,
   Column,
   Entity,
   JoinColumn,
@@ -45,13 +44,6 @@ export class BusinessAreaEntity {
   @ManyToOne(() => ServicePrice, (servicePrice) => servicePrice.businessAreas)
   @JoinColumn({ name: 'priceRangeId' })
   servicePrice: ServicePrice;
-  @BeforeInsert()
-  setDefaultExpireYear() {
-    if (this.status == 'Approved') {
-      if (!this.expireDate) {
-        this.expireDate = new Date();
-        this.expireDate.setFullYear(this.expireDate.getFullYear() + 1);
-      }
-    }
-  }
+
+
 }
