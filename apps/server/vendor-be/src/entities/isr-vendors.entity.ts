@@ -21,31 +21,31 @@ export class IsrVendorsEntity extends Audit {
   @Column({ default: 'Active' })
   status: string;
   @Column({ type: 'jsonb' })
-  initial: JSON;
+  initial: any;
   @Column({ nullable: true })
   vendorId: string;
   @Column({ type: 'jsonb' })
-  basic: JSON;
+  basic: any;
   @Column({ type: 'jsonb', nullable: true })
-  address: JSON;
+  address: any;
   @Column({ type: 'jsonb', nullable: true })
-  contactPersons: JSON;
+  contactPersons: any;
   @Column({ type: 'jsonb', nullable: true })
-  businessSizeAndOwnership: JSON;
+  businessSizeAndOwnership: any;
   @Column({ type: 'jsonb', nullable: true })
-  shareHolders: JSON;
+  shareHolders: any;
   @Column({ type: 'jsonb', nullable: true })
-  beneficialOwnership: JSON;
+  beneficialOwnership: any;
   @Column({ type: 'jsonb', nullable: true })
-  bankAccountDetails: JSON;
+  bankAccountDetails: any;
   @Column({ type: 'jsonb', nullable: true })
-  areasOfBusinessInterest: JSON;
+  areasOfBusinessInterest: any;
   @Column({ type: 'jsonb', nullable: true })
-  invoice: JSON;
+  invoice: any;
   @Column({ type: 'jsonb', nullable: true })
-  supportingDocuments: JSON;
+  supportingDocuments: any;
   @Column({ type: 'jsonb', nullable: true })
-  paymentReceipt: JSON;
+  paymentReceipt: any;
   @Column({ nullable: true })
   remark: string;
 

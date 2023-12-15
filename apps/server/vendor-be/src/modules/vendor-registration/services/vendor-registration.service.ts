@@ -137,6 +137,9 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
                 workflowInstance.application.applicationNumber;
               businessAreaEntity.status = VendorStatusEnum.PENDING;
               businessAreaEntity.vendorId = result.id;
+              businessAreaEntity.priceRangeId =
+                result.areasOfBusinessInterest.priceRangeId;
+
               const res =
                 await this.businessAreaRepository.save(businessAreaEntity);
               if (!res)
@@ -252,12 +255,19 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     if (!result) throw new NotFoundException(`isr_Vendor_not_found`);
     if (vendorStatusDto.status == VendorStatusEnum.APPROVE) {
       const isrVendorData = result;
-      const basic = JSON.parse(JSON.stringify(isrVendorData.basic));
-      const initial = JSON.parse(JSON.stringify(isrVendorData.initial));
+      const basic = isrVendorData.basic;
+      const initial = isrVendorData.initial;
+      const areasOfBusinessInterest = isrVendorData.areasOfBusinessInterest;
       if (result.status !== VendorStatusEnum.COMPLETED) {
-        initial.status = VendorStatusEnum.COMPLETED;
-        initial.level = VendorStatusEnum.COMPLETED;
-        result.status = VendorStatusEnum.APPROVED;
+        if (areasOfBusinessInterest.length == 3) {
+          initial.status = VendorStatusEnum.COMPLETED;
+          initial.level = VendorStatusEnum.COMPLETED;
+          result.status = VendorStatusEnum.APPROVED;
+        } else {
+          initial.status = VendorStatusEnum.DRAFT;
+          initial.level = VendorStatusEnum.PPDA;
+          result.status = VendorStatusEnum.APPROVED;
+        }
         result.initial = initial;
         const isrVendorUpdate = await this.isrVendorsRepository.save(result);
         if (!isrVendorUpdate)
@@ -273,18 +283,11 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         vendorEntity.tin = basic.tinNumber;
         vendorEntity.userId = initial.userId;
         vendorEntity.isrVendorId = result.id;
-        vendorEntity.shareholders = JSON.parse(
-          JSON.stringify(isrVendorData.shareHolders),
-        );
-        vendorEntity.vendorAccounts = JSON.parse(
-          JSON.stringify(isrVendorData.bankAccountDetails),
-        );
-        vendorEntity.areasOfBusinessInterest = JSON.parse(
-          JSON.stringify(isrVendorData.areasOfBusinessInterest),
-        );
-        vendorEntity.beneficialOwnership = JSON.parse(
-          JSON.stringify(isrVendorData.beneficialOwnership),
-        );
+        vendorEntity.shareholders = isrVendorData.shareHolders;
+        vendorEntity.vendorAccounts = isrVendorData.bankAccountDetails;
+        vendorEntity.areasOfBusinessInterest =
+          isrVendorData.areasOfBusinessInterest;
+        vendorEntity.beneficialOwnership = isrVendorData.beneficialOwnership;
         let tempMetadata = null;
         tempMetadata = {
           address: isrVendorData.address,
