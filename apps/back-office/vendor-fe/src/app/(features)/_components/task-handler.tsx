@@ -88,6 +88,7 @@ export default function TaskHandler({
             try {
               await generateCertificate({
                 vendorId: requesterID as string,
+                instanceId: instanceID as string,
               }).unwrap();
               notifications.show({
                 title: 'Success',
