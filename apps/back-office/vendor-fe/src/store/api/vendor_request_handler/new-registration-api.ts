@@ -56,9 +56,12 @@ export const newRegistrationSlice = createApi({
         body: data,
       }),
     }),
-    generateCertificate: builder.mutation<any, { vendorId: string }>({
+    generateCertificate: builder.mutation<
+      any,
+      { vendorId: string; instanceId: string }
+    >({
       query: (payload) => ({
-        url: `api/certificates/generate-certeficate?vendorId=${payload.vendorId}`,
+        url: `api/certificates/generate-certeficate/${payload.vendorId}/${payload.instanceId}`,
         method: 'GET',
       }),
     }),
