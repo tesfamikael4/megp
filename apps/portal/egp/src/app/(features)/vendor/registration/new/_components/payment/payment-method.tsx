@@ -25,11 +25,6 @@ const PaymentMethod: React.FC<PaymentMethodProps> = () => {
       <Title order={5} ta="center" mt="sm">
         Choose payment method
       </Title>
-      {/* {form.errors['Method'] && (
-          <Badge color="red" size="md" variant="outline">
-            {form.errors['Method']}
-          </Badge>
-        )} */}
 
       <SegmentedControl
         radius="lg"

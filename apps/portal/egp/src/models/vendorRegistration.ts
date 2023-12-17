@@ -75,7 +75,7 @@ export interface FormData {
     category: string;
     invoiceId: string;
     attachment: string;
-  }[];
+  };
 }
 
 export interface AreasOfBusinessInterestType {

@@ -145,7 +145,7 @@ export const uploadFile = async (
   }
 };
 
-const createStringFromParams = (
+export const createPostUrl = (
   attachment: string,
   invoiceId: string,
   serviceId: string,
@@ -153,5 +153,7 @@ const createStringFromParams = (
 ): string => {
   return `/upload/upload-file-to-minio/TransactionId/${attachment}-${invoiceId}-${serviceId}-${transactionId}`;
 };
-
+export const createGetUrl = (attachment: string): string => {
+  return `/upload/get-attachment-pre-signed-object/142dd945-4ae9-449e-a49f-eee02723bf73/${attachment}`;
+};
 // Example usage
