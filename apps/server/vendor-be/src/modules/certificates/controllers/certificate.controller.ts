@@ -1,16 +1,16 @@
-import { Controller, Get, Param, Query, Res } from '@nestjs/common';
+import { Controller, Get, Param, Query, Res, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
 
 import { Readable } from 'stream';
 import { CertificateService } from '../services/certificate.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { userInfo } from 'os';
-import { CurrentUser } from 'src/shared/authorization';
+import { CurrentUser, JwtGuard } from 'src/shared/authorization';
 @ApiBearerAuth()
 @Controller('certificates')
 @ApiTags('certificates generator')
 export class CertificateController {
-  constructor(private readonly certificateService: CertificateService) {}
+  constructor(private readonly certificateService: CertificateService) { }
+  @UseGuards(JwtGuard)
   @Get('generate-certeficate/:vendorId/:instanceId')
   async generateCertificate(
     @Param('vendorId') vendorId: string,
@@ -19,7 +19,7 @@ export class CertificateController {
     @CurrentUser() user: any,
   ): Promise<void> {
     try {
-      console.log('instanceId', instanceId);
+      console.log('user info', user);
       //  const certificateData = { userName };
       const pdfStream: Readable =
         await this.certificateService.generateCertificate(

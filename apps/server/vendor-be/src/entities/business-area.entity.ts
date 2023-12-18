@@ -34,7 +34,7 @@ export class BusinessAreaEntity {
   status: string;
   @Column({ nullable: true })
   remark: string;
-  @ManyToOne(() => IsrVendorsEntity, (vendor) => vendor.vendor)
+  @ManyToOne(() => IsrVendorsEntity, (vendor) => vendor.businessAreas)
   @JoinColumn({ name: 'vendorId' })
   isrVendor: IsrVendorsEntity;
 

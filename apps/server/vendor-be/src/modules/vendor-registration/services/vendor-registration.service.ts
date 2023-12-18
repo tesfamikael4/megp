@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { In, Not, Repository } from 'typeorm';
 import { SetVendorStatus } from '../dto/vendor.dto';
-import { VendorInitiationDto } from '../dto/vendor-initiation.dto';
+import { VendorInitiationDto, VendorInitiationResponseDto } from '../dto/vendor-initiation.dto';
 import { EntityCrudService } from 'src/shared/service';
 import {
   BusinessAreaEntity,
@@ -25,6 +25,10 @@ import {
 import { VendorStatusEnum } from 'src/shared/enums/vendor-status-enums';
 import { WorkflowService } from 'src/modules/bpm/services/workflow.service';
 import { InvoiceService } from './invoice.service';
+import { CollectionQuery, QueryConstructor } from 'src/shared/collection-query';
+import { DataResponseFormat } from 'src/shared/api-data';
+import { ActiveVendorsResponse } from 'src/modules/handling/dto/active-vendor-response';
+import { WorkflowInstanceEnum } from 'src/modules/handling/dto/workflow-instance.enum';
 
 @Injectable()
 export class VendorRegistrationsService extends EntityCrudService<VendorsEntity> {
@@ -267,10 +271,13 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           result.status = VendorStatusEnum.APPROVED;
         }
         result.initial = initial;
+        console.log("result----------", result);
         const isrVendorUpdate = await this.isrVendorsRepository.save(result);
         if (!isrVendorUpdate)
           throw new BadRequestException(`isr_vendor_update_failed`);
+        // if (isrVendorUpdate.status != VendorStatusEnum.APPROVED) {
         const vendorEntity = new VendorsEntity();
+        vendorEntity.id = result.id;
         vendorEntity.status = VendorStatusEnum.APPROVED;
         vendorEntity.level = VendorStatusEnum.COMPLETED;
         vendorEntity.name = basic.name;
@@ -294,13 +301,18 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           supportingDocuments: isrVendorData.supportingDocuments,
           paymentReceipt: isrVendorData.paymentReceipt,
         };
+        console.log(" vendorEntity.vendorAccounts", vendorEntity.vendorAccounts);
         vendorEntity.metaData = tempMetadata;
         try {
-          const res = await this.vendorRepository.save(vendorEntity);
-          if (!res) throw new BadRequestException(`vendor_insertion_failed`);
+          await this.vendorRepository.save(vendorEntity);
+          // if (!res) throw new BadRequestException(`vendor_insertion_failed`);
         } catch (error) {
+          console.log(" vendorEntity error", error);
           throw error;
         }
+        // }
+        //
+
       }
       const businessArea = await this.businessAreaRepository.findOne({
         where: { vendorId: result.id, instanceId: vendorStatusDto.instanceId },
@@ -363,12 +375,12 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     const result = await this.isrVendorsRepository.findOne({
       where: {
         userId: vendorStatusDto.userId,
-        status: In(this.updateVendorEnums),
-      },
+        status: In(this.updateVendorEnums)
+      }
     });
 
     if (!result) throw new NotFoundException(`isr_Vendor_not_found`);
-    const initial = JSON.parse(JSON.stringify(result?.initial));
+    const initial = result?.initial;//JSON.parse(JSON.stringify(result?.initial));
     //if there is no previously approved service by the isr vendorId
     if (result.status !== VendorStatusEnum.COMPLETED) {
       initial.level = VendorStatusEnum.DETAIL;
@@ -585,4 +597,19 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     });
     return result;
   }
+  async getVendors(user: any,
+    query: CollectionQuery
+  ): Promise<DataResponseFormat<VendorInitiationResponseDto>> {
+    const dataQuery = QueryConstructor.constructQuery<VendorsEntity>(
+      this.vendorRepository, query);
+    dataQuery.andWhere('vendors.status=:status', { status: WorkflowInstanceEnum.Approved })
+    const [items, total] = await dataQuery.getManyAndCount();
+    const response = new DataResponseFormat<VendorInitiationResponseDto>();
+    response.items = items.map((item) =>
+      VendorInitiationResponseDto.toResponse(item));
+    response.total = total;
+    return response;
+  }
+
+
 }

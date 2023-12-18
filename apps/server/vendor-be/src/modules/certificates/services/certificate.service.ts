@@ -66,7 +66,8 @@ export class CertificateService {
           margin: 0,
         })) ?? '';
       const app = await this.wfService.getInstance(instanceId);
-      if (app?.status != WorkflowInstanceEnum.Completed) {
+      console.log("app-------", app);
+      if (app.status != WorkflowInstanceEnum.Completed) {
         const command = new GotoNextStateDto();
         command.instanceId = instanceId;
         command.action = 'SUCCESS';

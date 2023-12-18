@@ -92,7 +92,7 @@ export class UpdateVendorInitiationDto extends VendorInitiationDto {
 RegistrationSettingsResponseDto
 */
 export class VendorInitiationResponseDto extends VendorInitiationDto {
-  static fromEntity(regDto: VendorsEntity): VendorInitiationResponseDto {
+  static toResponse(regDto: VendorsEntity): VendorInitiationResponseDto {
     const response = new VendorInitiationResponseDto();
     response.id = regDto.id;
     response.userId = regDto.userId;

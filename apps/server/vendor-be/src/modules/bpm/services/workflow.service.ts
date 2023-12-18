@@ -314,7 +314,7 @@ export class WorkflowService {
         }
         break;
       case TaskTypes.EMAIl:
-        return this.sendEmail(wfi, user['token']);
+        return this.sendEmail(wfi);
       case TaskTypes.SMS:
         return await this.sendSMS(wfi);
       case TaskTypes.INVOICE:
@@ -362,15 +362,14 @@ export class WorkflowService {
   async addTaskTracker(
     currentTaskHandlerCopy: TaskHandlerEntity,
     nextCommand: GotoNextStateDto,
-    userInfo: any,
+    user: any,
   ): Promise<boolean> {
-    const user = { ...userInfo };
-    user.token = null;
+
     const entity = new TaskTrackerEntity();
     entity.taskId = currentTaskHandlerCopy.taskId;
     entity.instanceId = nextCommand.instanceId;
     entity.data = nextCommand.data;
-    entity.handlerUserId = userInfo.userId;
+    entity.handlerUserId = user.id;
     entity.action = nextCommand.action;
     entity.previousHandlerId = currentTaskHandlerCopy.previousHandlerId;
     entity.handlerUser = user;
