@@ -189,10 +189,15 @@ const applyIncludes = <T>(
   includes: string[],
 ) => {
   includes.forEach((relatedEntity) => {
-    queryBuilder.leftJoinAndSelect(
-      `${aggregate}.${relatedEntity}`,
-      relatedEntity,
-    );
+    if (relatedEntity.includes('.')) {
+      const [parent, child] = relatedEntity.split('.');
+      queryBuilder.leftJoinAndSelect(`${parent}.${child}`, `${child}`);
+    } else {
+      queryBuilder.leftJoinAndSelect(
+        `${aggregate}.${relatedEntity}`,
+        relatedEntity,
+      );
+    }
   });
 };
 
