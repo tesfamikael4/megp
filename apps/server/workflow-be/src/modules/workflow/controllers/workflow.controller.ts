@@ -1,9 +1,10 @@
-import { Controller } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Workflow } from 'src/entities';
 import { WorkflowService } from '../services/workflow.service';
 import { EntityCrudOptions } from 'src/shared/types/crud-option.type';
 import { EntityCrudController } from 'src/shared/controller';
+import { XMachineService } from '../services/xMachine.service';
 
 const options: EntityCrudOptions = {};
 
@@ -14,5 +15,13 @@ export class WorkflowController extends EntityCrudController<Workflow>(
 ) {
   constructor(private readonly workflowService: WorkflowService) {
     super(workflowService);
+  }
+  @Post('initiate')
+  async approveWorkflow(@Body() data: any) {
+    return this.workflowService.approveWorkflow(
+      data.workflowType,
+      data.metaData,
+      data.activityId,
+    );
   }
 }

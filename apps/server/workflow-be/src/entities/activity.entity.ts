@@ -5,9 +5,12 @@ import {
   OneToMany,
   ManyToOne,
   JoinColumn,
+  OneToOne,
 } from 'typeorm';
 import { Step } from './step.entity';
 import { Workflow } from './workflow.entity';
+import { Permission } from './permission.entity';
+import { Instance } from './instance.entity';
 
 @Entity({ name: 'activities' })
 export class Activity {
@@ -27,6 +30,13 @@ export class Activity {
   @OneToMany(() => Step, (step) => step.activity)
   steps: Step[];
 
-  @Column({ type: 'jsonb' })
-  permission: string[];
+  @OneToOne(() => Permission, (permission) => permission.activity, {
+    cascade: true,
+  })
+  permissions: Permission;
+
+  @OneToOne(() => Instance, (instance) => instance.activity, {
+    cascade: true,
+  })
+  instance: Instance;
 }
