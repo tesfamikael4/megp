@@ -59,7 +59,7 @@ export default function Invitation({ user }: invitationProps) {
 
   useEffect(() => {
     trigger(user?.id);
-  }, [user, trigger]);
+  }, [user, trigger, viewLink]);
 
   useEffect(() => {
     if (isSuccess) {

@@ -9,6 +9,7 @@ export const organizationSliceApi: typeof EntitySliceApi =
 
 export const {
   useListQuery,
+  useLazyListByIdQuery,
   useLazyListQuery,
   useReadQuery,
   useCreateMutation,

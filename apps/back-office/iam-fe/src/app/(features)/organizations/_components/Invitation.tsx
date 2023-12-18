@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, Button } from '@mantine/core';
 import { RelationConfig } from '@megp/entity';
-import { useLazyListByIdQuery } from '../../../users/_api/user.api';
+import { useLazyListByIdQuery } from '../_api/adress.api';
 import { useParams } from 'next/navigation';
 import { FormDetail } from './form';
-import { Section, Table } from '@megp/core-fe';
+import { Section, Table, logger } from '@megp/core-fe';
 import { IconPlus } from '@tabler/icons-react';
 import Invitation from './action';
 import { User } from '@/models/user/user';
 
 const AddOa = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(true);
 
   const { id } = useParams();
 
@@ -56,14 +57,15 @@ const AddOa = () => {
   };
 
   useEffect(() => {
-    !isModalOpen && trigger({ id: id?.toString(), collectionQuery: undefined });
-  }, [id, trigger, isModalOpen]);
+    !isCollapsed && trigger(id?.toString());
+  }, [id, trigger, isModalOpen, isCollapsed]);
 
   return (
     <>
       <Section
         title={'Manage organization administrator'}
         defaultCollapsed={true}
+        setIsCollapsed={setIsCollapsed}
         action={
           <Button
             onClick={() => setIsModalOpen(true)}

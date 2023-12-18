@@ -7,7 +7,7 @@ import {
   useLazySecondRelationQuery,
 } from '../../_api//user-role-system';
 import { useParams } from 'next/navigation';
-import { useLazyListQuery } from '../../../(features)/system-role/_api/role.api';
+import { useLazyListByIdQuery } from '../../../(features)/system-role/_api/role.api';
 import { Role } from '@/models/role';
 import { notify } from '@megp/core-fe';
 import { useAuth } from '@megp/auth';
@@ -22,7 +22,7 @@ const AddSystemRole = () => {
 
   const [trigger, { data: systemRoles, isSuccess }] =
     useLazySecondRelationQuery();
-  const [triggerData, { data, isFetching }] = useLazyListQuery();
+  const [triggerData, { data, isFetching }] = useLazyListByIdQuery();
 
   const relationConfig: RelationConfig<Role> = {
     title: 'System Roles Assignment',
@@ -106,7 +106,8 @@ const AddSystemRole = () => {
   }, [isSuccess, systemRoles]);
 
   const onRequestChange = (request: CollectionQuery) => {
-    user?.organization?.id !== undefined && triggerData(request);
+    user?.organization?.id !== undefined &&
+      triggerData({ id: user?.organization?.id, collectionQuery: request });
   };
 
   return (
