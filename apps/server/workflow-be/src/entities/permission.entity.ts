@@ -2,20 +2,16 @@ import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
+  OneToMany,
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-
+import { Step } from './step.entity';
+import { Workflow } from './workflow.entity';
 import { Activity } from './activity.entity';
 
-type approver = {
-  userId: string;
-  name: string;
-  permission: string[];
-};
-
-@Entity({ name: 'steps' })
-export class Step {
+@Entity({ name: 'permissions' })
+export class Permission {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -25,16 +21,7 @@ export class Step {
   @Column()
   activityId: string;
 
-  @ManyToOne(() => Activity, (activity) => activity.steps)
+  @ManyToOne(() => Activity, (activity) => activity.permissions)
   @JoinColumn({ name: 'activityId' })
   public activity: Activity;
-
-  @Column({ type: 'simple-array' })
-  approvers: approver[];
-
-  @Column()
-  rule: string;
-
-  @Column()
-  order: number;
 }

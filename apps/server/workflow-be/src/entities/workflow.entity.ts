@@ -1,4 +1,10 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToMany,
+  OneToOne,
+} from 'typeorm';
 import { Activity } from './activity.entity';
 
 @Entity({ name: 'workflows' })
@@ -9,6 +15,8 @@ export class Workflow {
   @Column()
   name: string;
 
-  @OneToMany(() => Activity, (activity) => activity.workflow)
-  activities: Activity[];
+  @OneToOne(() => Activity, (activity) => activity.workflow, {
+    cascade: true,
+  })
+  activities: Activity;
 }

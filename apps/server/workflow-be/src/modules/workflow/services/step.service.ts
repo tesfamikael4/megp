@@ -1,8 +1,8 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { Step } from 'src/entities';
-import { ExtraCrudService } from 'src/shared/service';
+import { Injectable } from '@nestjs/common';
+import { ExtraCrudService } from '../../../shared/service';
+import { Step } from '../../../entities';
 
 @Injectable()
 export class StepService extends ExtraCrudService<Step> {
