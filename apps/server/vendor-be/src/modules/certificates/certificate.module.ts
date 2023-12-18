@@ -4,10 +4,11 @@ import { CertificateService } from './services/certificate.service';
 import { VendorRegistrationModule } from '../vendor-registration/vendor-registration.module';
 import { ServicePricingModule } from '../pricing/pricing.module';
 import { BpmModule } from '../bpm/bpm.module';
+import { AuthorizationModule } from 'src/shared/authorization';
 
 @Module({
-  imports: [VendorRegistrationModule, BpmModule, ServicePricingModule],
+  imports: [VendorRegistrationModule, BpmModule, AuthorizationModule, ServicePricingModule],
   controllers: [CertificateController],
   providers: [CertificateService],
 })
-export class CertificateModule {}
+export class CertificateModule { }

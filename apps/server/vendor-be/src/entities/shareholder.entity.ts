@@ -5,7 +5,6 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { CommonEntity } from 'src/shared/entities/common.entity';
 import { VendorsEntity } from './vendors.entity';
 import { Audit } from 'src/shared/entities/audit.entity';
 @Entity({ name: 'shareholders' })

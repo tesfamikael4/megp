@@ -241,30 +241,7 @@ export class ApplicationExcutionService {
     return response;
   }
 
-  async activeVendors(
-    query: CollectionQuery,
-  ): Promise<DataResponseFormat<ActiveVendorsResponse>> {
-    const today = new Date();
-    const [result, total] = await this.wiRepository.findAndCount({
-      relations: {
-        isrVendor: true,
-        price: true,
-      },
-      where: {
-        status: WorkflowInstanceEnum.Completed,
-        businessStatus: BusinessStatusEnum.active,
-        //  expireDate: MoreThan(today),
-      },
-      skip: query.skip | 0,
-      take: query.take | 20,
-    });
-    const response = new DataResponseFormat<ActiveVendorsResponse>();
-    response.items = result.map((item) =>
-      ActiveVendorsResponse.toResponse(item),
-    );
-    response.total = total;
-    return response;
-  }
+
 
   async getMyBusinessArea(userId: string): Promise<ActiveVendorsResponse[]> {
     const result = await this.wiRepository.find({
@@ -274,8 +251,6 @@ export class ApplicationExcutionService {
       },
       where: {
         status: WorkflowInstanceEnum.Completed,
-        // businessStatus: BusinessStatusEnum.active,
-        // expireDate: MoreThan(today),
         isrVendor: { userId: userId, status: 'Approved' },
       },
     });

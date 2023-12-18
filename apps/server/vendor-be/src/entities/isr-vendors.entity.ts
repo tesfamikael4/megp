@@ -1,13 +1,10 @@
 import {
   Column,
   Entity,
-  JoinColumn,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Audit } from 'src/shared/entities/audit.entity';
-import { VendorsEntity } from './vendors.entity';
 import { WorkflowInstanceEntity } from './workflow-instance.entity';
 import { BusinessAreaEntity } from './business-area.entity';
 @Entity({ name: 'isr_vendors' })
@@ -22,8 +19,6 @@ export class IsrVendorsEntity extends Audit {
   status: string;
   @Column({ type: 'jsonb' })
   initial: any;
-  @Column({ nullable: true })
-  vendorId: string;
   @Column({ type: 'jsonb' })
   basic: any;
   @Column({ type: 'jsonb', nullable: true })
@@ -48,10 +43,6 @@ export class IsrVendorsEntity extends Audit {
   paymentReceipt: any;
   @Column({ nullable: true })
   remark: string;
-
-  @OneToOne(() => VendorsEntity)
-  @JoinColumn({ name: 'vendorId' })
-  vendor: VendorsEntity;
   @OneToMany(() => WorkflowInstanceEntity, (wf) => wf.isrVendor)
   instances: WorkflowInstanceEntity[];
 

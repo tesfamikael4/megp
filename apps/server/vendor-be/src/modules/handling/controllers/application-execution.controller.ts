@@ -33,6 +33,8 @@ import { UpdateTaskHandlerDto } from 'src/modules/bpm/dto/task-handler.dto';
 import { ActivityResponseDto } from 'src/modules/bpm/dto/activities.dto';
 import { InvoiceService } from 'src/modules/vendor-registration/services/invoice.service';
 import { WorkflowInstanceEntity } from 'src/entities';
+import { VendorRegistrationsService } from 'src/modules/vendor-registration/services/vendor-registration.service';
+import { VendorInitiationResponseDto } from 'src/modules/vendor-registration/dto/vendor-initiation.dto';
 @ApiBearerAuth()
 @Controller('application-execution')
 @ApiTags('Application Excution')
@@ -43,20 +45,14 @@ export class ApplicationExcutionController {
     private readonly workflowService: WorkflowService,
     private readonly bpService: BusinessProcessService,
     private readonly invoiceService: InvoiceService,
+    private readonly vendorService: VendorRegistrationsService
   ) { }
   @UseGuards(JwtGuard)
   @Get('email')
   async email(@Req() request: Request, @CurrentUser() user: any) {
-    const authToken = request.headers['authorization'].split(' ')[1];
-    user['authToken'] = authToken;
-    console.log('@CurrentUser()', user);
     return await this.workflowService.sendEmail(
-      { requestorId: '6b31bfed-c359-1d2a-486d-585a3e4d4305' },
-      authToken,
-    );
+      { requestorId: '6b31bfed-c359-1d2a-486d-585a3e4d4305' });
   }
-
-
   @UseGuards(JwtGuard)
   @Post('notify')
   async notify(
@@ -187,5 +183,11 @@ export class ApplicationExcutionController {
   @ApiOkResponse({ type: ActiveVendorsResponse })
   async getMyBusinessAreas(@CurrentUser() user: any) {
     return await this.executeService.getMyBusinessArea(user.id);
+  }
+  @UseGuards(JwtGuard)
+  @Get('get-vendors')
+  @ApiOkResponse({ type: VendorInitiationResponseDto })
+  async getVendors(@Query() query: CollectionQuery, @CurrentUser() user: any) {
+    return await this.vendorService.getVendors(user, query);
   }
 }
