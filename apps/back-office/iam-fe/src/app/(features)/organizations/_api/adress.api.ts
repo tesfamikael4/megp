@@ -2,16 +2,16 @@ import { adressApi } from '@/store/api/other/adress.api';
 
 const organizationProfileApi = adressApi.injectEndpoints({
   endpoints: (builder) => ({
-    read: builder.query<any, string>({
-      query: (id: any) => ({
+    read: builder.query<any, any>({
+      query: () => ({
         url: `user/invitation`,
         method: 'GET',
       }),
       providesTags: ['user'],
     }),
     listById: builder.query<any, string>({
-      query: (id: any) => ({
-        url: `/user/list/${id}`,
+      query: (id) => ({
+        url: `/user/organization-admin/${id}`,
         method: 'GET',
       }),
       providesTags: ['user'],

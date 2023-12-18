@@ -1,6 +1,7 @@
 'use client';
 
 import { Button } from '@mantine/core';
+import { useEffect } from 'react';
 import useToggle from '../../hooks/use-toogle';
 import styles from './section.module.scss';
 
@@ -11,6 +12,7 @@ interface SectionProps {
   action?: React.ReactNode;
   collapsible?: boolean;
   isCollapsed?: boolean;
+  setIsCollapsed?: (boolean) => void;
   className?: string;
   defaultCollapsed?: boolean;
   // styles
@@ -27,10 +29,17 @@ export function Section({
   collapsible = true,
   w = '',
   mh,
+  setIsCollapsed,
+
   defaultCollapsed = false,
 }: SectionProps): React.ReactElement {
   const [showBody, toggle] = useToggle(!defaultCollapsed);
 
+  useEffect(() => {
+    if (setIsCollapsed) {
+      !showBody ? setIsCollapsed(true) : setIsCollapsed(false);
+    }
+  }, [setIsCollapsed, showBody]);
   return (
     <div
       className={`${className} ${styles.container} ${
