@@ -9,13 +9,14 @@ import {
   Get,
   Query,
 } from '@nestjs/common';
-import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { UserService } from '../services/user.service';
 import { User } from '@entities';
 import { CreateUserDto, InviteUserDto, UpdateUserDto } from '../dto/user.dto';
 import { ExtraCrudController } from 'src/shared/controller/extra-crud.controller';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { decodeCollectionQuery } from 'src/shared/collection-query/query-mapper';
+import { DataResponseFormat } from 'src/shared/api-data';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'organizationId',
@@ -34,6 +35,21 @@ export class UserController extends ExtraCrudController<User>(options) {
   @ApiBody({ type: CreateUserDto })
   async create(@Body() itemData: CreateUserDto): Promise<any> {
     return this.userService.create(itemData);
+  }
+
+  @Get('organization-admin/:id')
+  @ApiQuery({
+    name: 'q',
+    type: String,
+    description: 'Collection Query Parameter. Optional',
+    required: false,
+  })
+  async getOrganizationAdmins(
+    @Param('id') id: string,
+    @Query('q') q: string,
+  ): Promise<DataResponseFormat<User>> {
+    const query = decodeCollectionQuery(q);
+    return this.userService.getOrganizationAdmins(id, query);
   }
 
   @Post('create-organization-admin')

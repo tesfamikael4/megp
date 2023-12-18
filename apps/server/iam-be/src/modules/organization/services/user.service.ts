@@ -1,12 +1,18 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { User, UserRole, UserRoleSystem, UserUnit } from '@entities';
+import { User, UserRoleSystem, UserUnit } from '@entities';
 import { ExtraCrudService } from 'src/shared/service/extra-crud.service';
 import { CreateUserDto, InviteUserDto } from '../dto/user.dto';
 import { AccountsService } from 'src/modules/account/services/account.service';
 import { UnitService } from './unit.service';
 import { RoleSystemService } from 'src/modules/role-system/services/role-system.service';
+import {
+  CollectionQuery,
+  FilterOperators,
+  QueryConstructor,
+} from 'src/shared/collection-query';
+import { DataResponseFormat } from 'src/shared/api-data';
 
 @Injectable()
 export class UserService extends ExtraCrudService<User> {
@@ -33,6 +39,40 @@ export class UserService extends ExtraCrudService<User> {
     const item = this.repositoryUser.create(itemData);
     await this.repositoryUser.insert(item);
     return item;
+  }
+
+  async getOrganizationAdmins(organizationId: string, query: CollectionQuery) {
+    query.where.push([
+      {
+        column: 'organizationId',
+        value: organizationId,
+        operator: FilterOperators.EqualTo,
+      },
+    ]);
+
+    const ORGANIZATION_ADMINISTRATOR_ROLE_KEY =
+      process.env.ORGANIZATION_ADMINISTRATOR_ROLE_KEY ??
+      'ORGANIZATION_ADMINISTRATOR';
+
+    const dataQuery = QueryConstructor.constructQuery<User>(
+      this.repositoryUser,
+      query,
+    )
+      .leftJoin('users.userRoleSystems', 'userRoleSystems')
+      .leftJoin('userRoleSystems.roleSystem', 'roleSystem')
+      .andWhere('roleSystem.key=:ORGANIZATION_ADMINISTRATOR_ROLE_KEY', {
+        ORGANIZATION_ADMINISTRATOR_ROLE_KEY,
+      });
+
+    const response = new DataResponseFormat<User>();
+    if (query.count) {
+      response.total = await dataQuery.getCount();
+    } else {
+      const [result, total] = await dataQuery.getManyAndCount();
+      response.total = total;
+      response.items = result;
+    }
+    return response;
   }
 
   async createOrganizationAdmin(itemData: CreateUserDto): Promise<any> {
