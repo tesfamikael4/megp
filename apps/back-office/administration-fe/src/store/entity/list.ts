@@ -15,7 +15,7 @@ export const ENTITY_LIST: EntityStoreConfig[] = [
   {
     entity: 'tag',
     baseUrl:
-      process.env.NEXT_PUBLIC_ADMINISTRATION_API ?? '/api/administration',
+      process.env.NEXT_PUBLIC_ADMINISTRATION_API ?? '/administration/api/',
   },
   {
     entity: 'measurements',
@@ -50,31 +50,31 @@ export const ENTITY_LIST: EntityStoreConfig[] = [
   {
     entity: 'procurement-method',
     baseUrl:
-      process.env.NEXT_PUBLIC_ADMINISTRATION_API ?? '/api/administration',
+      process.env.NEXT_PUBLIC_ADMINISTRATION_API ?? '/administration/api/',
   },
   {
     entity: 'budget-category',
     baseUrl:
-      process.env.NEXT_PUBLIC_ADMINISTRATION_API ?? '/api/administration',
+      process.env.NEXT_PUBLIC_ADMINISTRATION_API ?? '/administration/api/',
   },
   {
     entity: 'procurement-procedures',
     baseUrl:
-      process.env.NEXT_PUBLIC_ADMINISTRATION_API ?? '/api/administration',
+      process.env.NEXT_PUBLIC_ADMINISTRATION_API ?? '/administration/api/',
   },
   {
     entity: ' procurement-thresholds',
     baseUrl:
-      process.env.NEXT_PUBLIC_ADMINISTRATION_API ?? '/api/administration',
+      process.env.NEXT_PUBLIC_ADMINISTRATION_API ?? '/administration/api/',
   },
   {
     entity: 'regions',
     baseUrl:
-      process.env.NEXT_PUBLIC_ADMINISTRATION_API ?? '/api/administration',
+      process.env.NEXT_PUBLIC_ADMINISTRATION_API ?? '/administration/api/',
   },
   {
     entity: 'districts',
     baseUrl:
-      process.env.NEXT_PUBLIC_ADMINISTRATION_API ?? '/api/administration',
+      process.env.NEXT_PUBLIC_ADMINISTRATION_API ?? '/administration/api/',
   },
 ];
