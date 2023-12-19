@@ -15,12 +15,13 @@ import { useAuth } from '@megp/auth';
 const AddSystemRole = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentAssigned, setCurrentAssigned] = useState<Role[]>([]);
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(true);
   const { id } = useParams();
   const { user } = useAuth();
 
   const [assign, { isLoading: isSaving }] = useRelationMutation();
 
-  const [trigger, { data: systemRoles, isSuccess }] =
+  const [trigger, { data: systemRoles, isSuccess, isLoading }] =
     useLazySecondRelationQuery();
   const [triggerData, { data, isFetching }] = useLazyListByIdQuery();
 
@@ -90,11 +91,14 @@ const AddSystemRole = () => {
   };
 
   useEffect(() => {
-    trigger({
-      id: id?.toString(),
-      collectionQuery: undefined,
-    });
-  }, [id, trigger]);
+    if (!isCollapsed) {
+      trigger({
+        id: id?.toString(),
+        collectionQuery: undefined,
+      });
+    }
+  }, [id, isCollapsed, trigger]);
+
   useEffect(() => {
     if (isSuccess) {
       setCurrentAssigned(
@@ -116,6 +120,8 @@ const AddSystemRole = () => {
         config={relationConfig}
         data={currentAssigned}
         isSaving={isSaving}
+        isLoading={isLoading}
+        setIsCollapsed={setIsCollapsed}
       />
       <Modal
         title="System role assignment"

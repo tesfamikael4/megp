@@ -21,7 +21,6 @@ export default function UserDetailPage() {
         <Section title="Extended Profile" defaultCollapsed>
           <UserProfileForm />
         </Section>
-
         <EmployeeInvitation />
       </Stack>
     </>

@@ -73,9 +73,10 @@ export function Entity({ children }: { children: React.ReactNode }) {
 
   const onRequestChange = useCallback(
     (request: CollectionQuery) => {
-      trigger({ id: user?.organization?.id, collectionQuery: request });
+      user !== undefined &&
+        trigger({ id: user?.organization?.id, collectionQuery: request });
     },
-    [trigger, user?.organization?.id],
+    [trigger, user],
   );
 
   useEffect(() => {

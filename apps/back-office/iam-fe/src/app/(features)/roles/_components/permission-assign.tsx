@@ -1,10 +1,7 @@
 // TableComponent.jsx
 import React, { useEffect, useState } from 'react';
 import { useLazyListByAppIdQuery } from '../../applications/_api/permission.api';
-import {
-  useGetPermissionByOrganizationIdQuery,
-  useLazyGetPermissionByOrganizationIdQuery,
-} from '../../roles/_api/others.api';
+import { useLazyGetPermissionByOrganizationIdQuery } from '../../roles/_api/others.api';
 import { useLazyListQuery } from '../../applications/_api/application.api';
 import { Box, Button, Checkbox, Divider, Flex, Table } from '@mantine/core';
 import styles from '../../../page.module.scss';
@@ -70,7 +67,7 @@ const MandatePermission = ({
             </Table.Thead>
             <Table.Tbody>
               {application?.items?.map((element) => (
-                <Table.Tr key={element.id}>
+                <Table.Tr key={element.id} className="cursor-pointer">
                   <Table.Td onClick={() => setSelectedRow(element)}>
                     {element.name}
                   </Table.Td>

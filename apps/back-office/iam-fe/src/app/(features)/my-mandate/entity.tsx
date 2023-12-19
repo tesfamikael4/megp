@@ -26,10 +26,6 @@ export function Entity({ children }: { children: React.ReactNode }) {
       onDetail: (selected: MyMandate) => {
         route.push(`/my-mandate/${selected?.mandateId}`);
       },
-
-      onSearch: (search) => {
-        // console.log('search', search);
-      },
       pagination: true,
       searchable: true,
       sortable: true,

@@ -8,18 +8,20 @@ import {
   useLazyFirstRelationQuery,
 } from '../_api/user-group.api';
 import { User } from '@/models/user/user';
-import { logger, notify } from '@megp/core-fe';
+import { notify } from '@megp/core-fe';
 import { useAuth } from '@megp/auth';
 
 const AddUserModal = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(true);
+  const [onRequest, setOnRequest] = useState<any>();
 
   const [currentAssigned, setCurrentAssigned] = useState<User[]>([]);
   const { id } = useParams();
   const { user } = useAuth();
 
   const [assignUser, { isLoading: isSaving }] = useReverseRelationMutation();
-  const [trigger, { data: users, isSuccess: userSucceed }] =
+  const [trigger, { data: users, isSuccess: userSucceed, isLoading }] =
     useLazyFirstRelationQuery();
 
   const [triggerData, { data, isFetching }] = useLazyListByIdQuery();
@@ -100,9 +102,14 @@ const AddUserModal = () => {
   const onRequestChange = (request: CollectionQuery) => {
     triggerData({ id: user?.organization?.id, collectionQuery: request });
   };
-  const onRequestChangeList = (request: CollectionQuery) => {
-    trigger({ id: id?.toString(), collectionQuery: undefined });
-  };
+
+  useEffect(() => {
+    const onRequestChangeList = (request: CollectionQuery) => {
+      !isCollapsed &&
+        trigger({ id: id?.toString(), collectionQuery: undefined });
+    };
+    setOnRequest(onRequestChangeList);
+  }, [id, isCollapsed, trigger]);
 
   return (
     <>
@@ -110,7 +117,9 @@ const AddUserModal = () => {
         config={relationConfig}
         data={currentAssigned}
         isSaving={isSaving}
-        onRequestChange={onRequestChangeList}
+        onRequestChange={onRequest}
+        isLoading={isLoading}
+        setIsCollapsed={setIsCollapsed}
       />
       <Modal
         title="User assignment"
