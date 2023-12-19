@@ -17,9 +17,11 @@ const AddEntityModal = () => {
   const [currentAssigned, setCurrentAssigned] = useState<Unit[]>([]);
   const { id } = useParams();
   const { user } = useAuth();
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(true);
 
   const [assign, { isLoading: isSaving }] = useRelationMutation();
-  const [trigger, { data: units, isSuccess }] = useLazySecondRelationQuery();
+  const [trigger, { data: units, isSuccess, isLoading }] =
+    useLazySecondRelationQuery();
 
   const [triggerData, { data, isFetching }] = useLazyListByIdQuery();
 
@@ -82,11 +84,13 @@ const AddEntityModal = () => {
     setIsModalOpen(false);
   };
   useEffect(() => {
-    trigger({
-      id: id?.toString(),
-      collectionQuery: undefined,
-    });
-  }, [id, trigger]);
+    if (!isCollapsed) {
+      trigger({
+        id: id?.toString(),
+        collectionQuery: undefined,
+      });
+    }
+  }, [id, isCollapsed, trigger]);
 
   useEffect(() => {
     if (isSuccess) {
@@ -98,6 +102,7 @@ const AddEntityModal = () => {
 
   const onRequestChange = (request: CollectionQuery) => {
     user?.organization?.id !== undefined &&
+      isModalOpen &&
       triggerData({ id: user?.organization?.id, collectionQuery: request });
   };
 
@@ -107,6 +112,8 @@ const AddEntityModal = () => {
         config={relationConfig}
         data={currentAssigned}
         isSaving={isSaving}
+        setIsCollapsed={setIsCollapsed}
+        isLoading={isLoading}
       />
       <Modal
         title="Unit Assignment"

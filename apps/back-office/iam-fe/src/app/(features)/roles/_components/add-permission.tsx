@@ -8,14 +8,13 @@ import {
 import { useParams } from 'next/navigation';
 import { notify } from '@megp/core-fe';
 import { useReadQuery } from '../_api/role.api';
-import { useLazyGetPermissionByOrganizationIdQuery } from '../_api/others.api';
 import MandatePermission from './permission-assign';
 import { Permission } from '@/models/permission';
-import { useAuth } from '@megp/auth';
 
 const AddPermissionModal = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [permission, setPermission] = useState<Permission[]>([]);
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(true);
 
   const [currentAssigned, setCurrentAssigned] = useState<any[]>([]);
   const { id } = useParams();
@@ -70,11 +69,13 @@ const AddPermissionModal = () => {
   };
 
   useEffect(() => {
-    trigger({
-      id: id?.toString(),
-      collectionQuery: undefined,
-    });
-  }, [id, trigger]);
+    if (!isCollapsed) {
+      trigger({
+        id: id?.toString(),
+        collectionQuery: undefined,
+      });
+    }
+  }, [id, isCollapsed, trigger]);
 
   useEffect(() => {
     if (isSuccess) {
@@ -104,6 +105,7 @@ const AddPermissionModal = () => {
         isLoading={isLoading}
         readOnly={selected?.isSystemRole ? true : false}
         collapsed={selected?.isSystemRole ? false : true}
+        setIsCollapsed={setIsCollapsed}
       />
       <Modal
         title="Permission assignment"

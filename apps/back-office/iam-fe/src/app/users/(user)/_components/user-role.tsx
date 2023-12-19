@@ -15,12 +15,14 @@ import { useAuth } from '@megp/auth';
 const AddEntityModal = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentAssigned, setCurrentAssigned] = useState<Role[]>([]);
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(true);
   const { id } = useParams();
   const { user } = useAuth();
 
   const [assign, { isLoading: isSaving }] = useRelationMutation();
 
-  const [trigger, { data: roles, isSuccess }] = useLazySecondRelationQuery();
+  const [trigger, { data: roles, isSuccess, isLoading }] =
+    useLazySecondRelationQuery();
   const [triggerData, { data, isFetching }] = useLazyListByIdQuery();
 
   const relationConfig: RelationConfig<Role> = {
@@ -83,11 +85,14 @@ const AddEntityModal = () => {
   };
 
   useEffect(() => {
-    trigger({
-      id: id?.toString(),
-      collectionQuery: undefined,
-    });
-  }, [id, trigger]);
+    if (!isCollapsed) {
+      trigger({
+        id: id?.toString(),
+        collectionQuery: undefined,
+      });
+    }
+  }, [id, isCollapsed, trigger]);
+
   useEffect(() => {
     if (isSuccess) {
       setCurrentAssigned(
@@ -107,6 +112,8 @@ const AddEntityModal = () => {
         config={relationConfig}
         data={currentAssigned}
         isSaving={isSaving}
+        isLoading={isLoading}
+        setIsCollapsed={setIsCollapsed}
       />
       <Modal
         title="Role assignment"

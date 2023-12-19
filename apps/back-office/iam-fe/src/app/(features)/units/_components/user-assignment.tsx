@@ -15,14 +15,16 @@ import { useAuth } from '@megp/auth';
 const AddUserModal = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentAssigned, setCurrentAssigned] = useState<any[]>([]);
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(true);
 
   const { id } = useParams();
   const { user } = useAuth();
 
   const [assign, { isLoading: isSaving }] = useReverseRelationMutation();
-  const [trigger, { data: users, isSuccess }] = useLazyFirstRelationQuery();
+  const [trigger, { data: users, isSuccess, isLoading }] =
+    useLazyFirstRelationQuery();
 
-  const [triggerData, { data }] = useLazyListByIdQuery();
+  const [triggerData, { data, isLoading: isFetching }] = useLazyListByIdQuery();
 
   const relationConfig: RelationConfig<User> = {
     title: 'User Assignment',
@@ -90,8 +92,10 @@ const AddUserModal = () => {
   };
 
   useEffect(() => {
-    trigger({ id: id?.toString(), collectionQuery: undefined });
-  }, [id, trigger]);
+    if (!isCollapsed) {
+      trigger({ id: id?.toString(), collectionQuery: undefined });
+    }
+  }, [id, isCollapsed, trigger]);
 
   useEffect(() => {
     if (isSuccess) {
@@ -113,6 +117,8 @@ const AddUserModal = () => {
         config={relationConfig}
         data={currentAssigned}
         isSaving={isSaving}
+        isLoading={isLoading}
+        setIsCollapsed={setIsCollapsed}
       />
       <Modal
         title="User Assignment"
@@ -125,6 +131,7 @@ const AddUserModal = () => {
           data={data ? data.items : []}
           currentSelected={currentAssigned}
           mode="modal"
+          isLoading={isFetching}
           handleCloseModal={handleCloseModal}
           onRequestChange={onRequestChange}
           total={data?.total ?? 0}

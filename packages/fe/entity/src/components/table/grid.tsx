@@ -106,7 +106,7 @@ export function Grid<T>({
     }
   }, [search]);
   return (
-    <Box>
+    <Box pos="relative">
       <LoadingOverlay
         overlayProps={{ radius: 'sm', blur: 2 }}
         visible={isLoading}
