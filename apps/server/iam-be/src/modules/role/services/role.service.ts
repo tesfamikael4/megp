@@ -22,8 +22,16 @@ export class RoleService extends ExtraCrudService<Role> {
       this.repositoryRole,
       query,
     )
-      .orWhere('roles.organizationId = :organizationId', { organizationId })
-      .orWhere('roles.organizationId IS NULL');
+      .leftJoin('roles.rolePermissions', 'rolePermissions')
+      .leftJoin('rolePermissions.permission', 'permission')
+      .leftJoin('permission.mandatePermissions', 'mandatePermissions')
+      .leftJoin('mandatePermissions.mandate', 'mandate')
+      .leftJoin('mandate.organizationMandates', 'organizationMandates')
+      .andWhere('organizationMandates.organizationId=:organizationId', {
+        organizationId,
+      })
+      .andWhere('roles.organizationId = :organizationId', { organizationId });
+
     const response = new DataResponseFormat<RoleResponseDto>();
 
     if (query.count) {
