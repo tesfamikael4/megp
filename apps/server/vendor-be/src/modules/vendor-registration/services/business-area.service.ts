@@ -1,12 +1,6 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { BeneficialOwnershipResponse } from '../dto/beneficial-ownership.dto';
 import { EntityCrudService } from 'src/shared/service';
 import { BusinessAreaResponseDto } from '../dto/business-area.dto';
 import { BusinessAreaEntity } from 'src/entities';
@@ -29,5 +23,11 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
+  }
+  async getBusinessAreaWithPrice(id: string): Promise<BusinessAreaEntity> {
+    return this.businessAreaRepository.findOne({
+      where: { id: id },
+      relations: { servicePrice: true },
+    });
   }
 }

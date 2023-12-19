@@ -209,7 +209,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             throw error;
           }
         }
-        // return { msg: 'Success' };
       } else if (
         data.initial.level.trim() === VendorStatusEnum.SUBMIT &&
         data.initial.status.trim() === VendorStatusEnum.SUBMIT
@@ -277,10 +276,12 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           result.status = VendorStatusEnum.APPROVED;
         }
         result.initial = initial;
+        console.log('result----------', result);
         const isrVendorUpdate = await this.isrVendorsRepository.save(result);
         if (!isrVendorUpdate)
           throw new HttpException(`isr_vendor_update_failed`, 500);
         const vendorEntity = new VendorsEntity();
+        vendorEntity.id = result.id;
         vendorEntity.id = result.id;
         vendorEntity.status = VendorStatusEnum.APPROVED;
         vendorEntity.level = VendorStatusEnum.COMPLETED;
@@ -305,13 +306,20 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           supportingDocuments: isrVendorData.supportingDocuments,
           paymentReceipt: isrVendorData.paymentReceipt,
         };
+        console.log(
+          ' vendorEntity.vendorAccounts',
+          vendorEntity.vendorAccounts,
+        );
         vendorEntity.metaData = tempMetadata;
         try {
           const res = await this.vendorRepository.save(vendorEntity);
           if (!res) throw new HttpException(`vendor_insertion_failed`, 500);
         } catch (error) {
+          console.log(' vendorEntity error', error);
           throw error;
         }
+        // }
+        //
       }
       const nextYear = new Date();
       nextYear.setFullYear(nextYear.getFullYear() + 1);
@@ -602,6 +610,26 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     });
     return result;
   }
+  async getVendors(
+    user: any,
+    query: CollectionQuery,
+  ): Promise<DataResponseFormat<VendorInitiationResponseDto>> {
+    const dataQuery = QueryConstructor.constructQuery<VendorsEntity>(
+      this.vendorRepository,
+      query,
+    );
+    dataQuery.andWhere('vendors.status=:status', {
+      status: WorkflowInstanceEnum.Approved,
+    });
+    const [items, total] = await dataQuery.getManyAndCount();
+    const response = new DataResponseFormat<VendorInitiationResponseDto>();
+    response.items = items.map((item) =>
+      VendorInitiationResponseDto.toResponse(item),
+    );
+    response.total = total;
+    return response;
+  }
+
   async GetMBRSData(mbrsDataDto: any) {
     try {
       const url = `https://dev-bo.megp.peragosystems.com/api/tax-payers/${mbrsDataDto.tinNumber}/${mbrsDataDto.issuedDate}`;
@@ -873,10 +901,19 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     if (!isrVendor) throw new HttpException('isr vendor update failed', 500);
     return result;
   }
-  async getApprovedVendorById(isrVendorId: string) {
-    const result = await this.isrVendorsRepository.findOne({
-      where: { id: isrVendorId },
+  async getApprovedVendorById(id: string) {
+    const result = await this.vendorRepository.findOne({
+      where: { id: id },
+      relations: {
+        areasOfBusinessInterest: true,
+        shareholders: true,
+        beneficialOwnership: true,
+        vendorAccounts: true,
+        customCats: true,
+        businessCats: true
+      }
     });
     return result;
   }
+
 }

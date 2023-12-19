@@ -53,7 +53,7 @@ export class CertificateService {
     try {
       const fileName = `${vendorId}-certificate.pdf`;
       const dirPath = path.join(
-        'src/',
+        process.cwd(),
         'modules',
         'certificates',
         'gen-certificates',
@@ -66,7 +66,6 @@ export class CertificateService {
           margin: 0,
         })) ?? '';
       const app = await this.wfService.getInstance(instanceId);
-      console.log("app-------", app);
       if (app.status != WorkflowInstanceEnum.Completed) {
         const command = new GotoNextStateDto();
         command.instanceId = instanceId;
@@ -75,7 +74,6 @@ export class CertificateService {
       }
       const vendorInfo =
         await this.vendorService.getVendorByIdForCertificate(vendorId);
-      console.log('vendorInfo-->', vendorInfo);
       if (!vendorInfo) throw new NotFoundException();
       const address = vendorInfo.metaData; // JSON.parse(JSON.stringify();
       let goodsCategory = '',
@@ -114,7 +112,7 @@ export class CertificateService {
 
       if (!(result instanceof Readable)) {
         throw new Error(
-          'Certificate function did not return a Readable stream',
+          'Certificate function did not return a Readable stream'
         );
       }
       result.pipe(writeStream);
@@ -126,7 +124,7 @@ export class CertificateService {
       return fileStream;
     } catch (err) {
       console.error('Error:', err);
-      throw new Error('Internal Server Error');
+      throw new Error('Internal Server Error' + err);
     }
   }
   formatExpireDates(goodsExpiry: string, serviceExpiry: string) {
