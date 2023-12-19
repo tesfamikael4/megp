@@ -67,7 +67,7 @@ const addFilterParams = (op: string, value: any, column: string, acc: any) => {
   } else if (op === FilterOperators.In && Array.isArray(value)) {
     // Handle "in" operator for the main ${aggregate}
     acc[column] = value;
-  } else if (op === FilterOperators.Like) {
+  } else if (op === FilterOperators.Like || op === FilterOperators.ILike) {
     // Handle "in" operator for the main ${aggregate}
     acc[column] = `%${value}%`;
   } else if (op === FilterOperators.All || op === FilterOperators.Any) {
