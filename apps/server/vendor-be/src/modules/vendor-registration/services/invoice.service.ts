@@ -1,10 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import {
-  InvoiceEntity,
-  TaskHandlerEntity,
-  WorkflowInstanceEntity,
-} from 'src/entities';
+import { BusinessAreaEntity, InvoiceEntity, ServicePrice } from 'src/entities';
 import { ServiceKeyEnum } from 'src/modules/handling/dto/workflow-instance.enum';
 import { ServicePricingService } from 'src/modules/pricing/services/service-pricing.service';
 import { DataResponseFormat } from 'src/shared/api-data';
@@ -12,6 +8,8 @@ import { EntityCrudService } from 'src/shared/service';
 import { Repository } from 'typeorm';
 import { InvoiceResponseDto } from '../dto/invoice.dto';
 import { CollectionQuery, QueryConstructor } from 'src/shared/collection-query';
+import { HandlingCommonService } from 'src/modules/handling/services/handling-common-services';
+import { BusinessAreaService } from './business-area.service';
 
 @Injectable()
 export class InvoiceService extends EntityCrudService<InvoiceEntity> {
@@ -19,29 +17,38 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     @InjectRepository(InvoiceEntity)
     private readonly invoiceRepository: Repository<InvoiceEntity>,
     private readonly pricingService: ServicePricingService,
+    private readonly commonService: HandlingCommonService,
+    private readonly baService: BusinessAreaService,
   ) {
     super(invoiceRepository);
   }
 
   async generateInvoice(
-    pricingId: string,
+    currentPriceRange: string,
     user: any,
     vendor: any,
+    businessArea?: BusinessAreaEntity,
   ): Promise<boolean> {
-    const result = await this.pricingService.findPricingWithServiceById(
-      pricingId,
-    );
-    if (!result) {
+    const curruntPricing =
+      await this.pricingService.findPricingWithServiceById(currentPriceRange);
+
+    if (!curruntPricing) {
       throw new NotFoundException('Not Found, please set the price range');
     }
     const invoice = new InvoiceEntity();
-    const service = result.service;
+    const service = curruntPricing.service;
     //if th service is upgrade
 
     if (service.key == ServiceKeyEnum.upgrade) {
-      await this.generateInvoiceForUpgrade();
+      const baServicePrice = await this.baService.getBusinessAreaWithPrice(
+        businessArea.id,
+      );
+      invoice.amount = this.computingPaymentForUpgrade(
+        baServicePrice,
+        curruntPricing,
+      );
     } else {
-      invoice.amount = result.fee;
+      invoice.amount = curruntPricing.fee;
     }
     invoice.instanceId = null; //result.instanceId;
     invoice.taskName = null; //result.task.name;
@@ -50,64 +57,41 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
       'Public Procurement and Disposal of Assets Authority';
     invoice.payToAccNo = '000 100 562 4416';
     invoice.payToBank = 'National Bank of Malawi';
-    invoice.pricingId = pricingId;
+    invoice.pricingId = curruntPricing.id;
     //invoice.applicationNo = result.workflowInstance.applicationNumber;
     //  const basicObject: any = JSON.parse(JSON.stringify(vendor.basic));
     invoice.payerName = vendor.name;
     invoice.userId = user.id;
-    invoice.serviceId = result.service.id;
+    invoice.serviceId = curruntPricing.service.id;
     invoice.serviceName = service.name;
-    invoice.remark = result.businessArea + ' ,' + service.description;
+    invoice.remark = curruntPricing.businessArea + ' ,' + service.description;
     invoice.paymentStatus = 'Pending';
     invoice.createdOn = new Date();
-    const response = await this.invoiceRepository.insert(invoice);
+    const response = await this.invoiceRepository.save(invoice);
     if (response) return true;
     return false;
   }
-  async generateInvoiceForUpgrade() {
-    /*
-                    const previousPayment = await this.workflowInstanceRepository.findOne({
-                        relations: {
-                            businessProcess: { service: true },
-                            price: true,
-                        },
-                        where: {
-                            businessProcess: { service: { key: ServiceKeyEnum.new } },
-                            status: WorkflowInstanceEnum.Completed,
-                            //  approvedAt: Not(IsNull()),
-                            price: { businessArea: result.businessArea },
-                            // requestorId: result.workflowInstance.requestorId,
-                        },
-                    });
-        
-                    if (previousPayment) {
-                        /*
-                        if (previousPayment.price.fee < price.fee) {
-                          const netpayment = await this.computeUpgradeServicePaymentAmount(previousPayment, result);
-                          invoice.amount = netpayment;
-                        }
-                    } else {
-                        throw new NotFoundException('Something went wrong');
-                    }
-                    */
-  }
-  async computeUpgradeServicePaymentAmount(
-    previousPayment: WorkflowInstanceEntity,
-    taskhandler: TaskHandlerEntity,
-  ): Promise<number> {
-    /* const previousFeeRate = previousPayment.price.fee / 365;
-         const proposedPaymentRate = taskhandler.workflowInstance.price.fee / 365;
-         const datesLeftToExpire = this.commonService.ComputeDateDifference(
-           new Date(),
-           new Date(previousPayment.expireDate),
-         );
-         const unUtilizedMoney = Number(datesLeftToExpire) * previousFeeRate;
-         const expectedFeeForNewLevel =
-           proposedPaymentRate * Number(datesLeftToExpire);
-         const netPaymnetForUpgrade = expectedFeeForNewLevel - unUtilizedMoney;
-         return netPaymnetForUpgrade;
-         */
-    return 1;
+  computingPaymentForUpgrade(
+    ba: BusinessAreaEntity,
+    curruntPricing: ServicePrice,
+  ) {
+    if (ba) {
+      if (ba.servicePrice.fee < curruntPricing.fee) {
+        const previousFeeRate = ba.servicePrice.fee / 365;
+        const proposedPaymentRate = curruntPricing.fee / 365;
+        const datesLeftToExpire = this.commonService.ComputeDateDifference(
+          new Date(),
+          new Date(ba.expireDate),
+        );
+        const unUtilizedMoney = Number(datesLeftToExpire) * previousFeeRate;
+        const expectedFeeForNewLevel =
+          proposedPaymentRate * Number(datesLeftToExpire);
+        const netPaymnetForUpgrade = expectedFeeForNewLevel - unUtilizedMoney;
+        return netPaymnetForUpgrade;
+      } else {
+        return 0;
+      }
+    }
   }
 
   async getInvoices(
