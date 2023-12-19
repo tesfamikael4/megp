@@ -35,7 +35,7 @@ import { CollectionQuery } from 'src/shared/collection-query';
 @ApiResponse({ status: 500, description: 'Internal error' })
 @ApiExtraModels(DataResponseFormat)
 export class VendorRegistrationsController {
-  constructor(private readonly regService: VendorRegistrationsService) { }
+  constructor(private readonly regService: VendorRegistrationsService) {}
   @UseGuards(JwtGuard)
   @Get('get-isr-vendors')
   async getVendors() {
@@ -74,7 +74,7 @@ export class VendorRegistrationsController {
   @Post('add-vendor-information')
   async addVendorInformation(
     @Body() data: InsertAllDataDto,
-    @CurrentUser() userInfo: any
+    @CurrentUser() userInfo: any,
   ) {
     data.data.initial.userId = userInfo.id;
     const result = await this.regService.addVendorInformations(
@@ -88,8 +88,7 @@ export class VendorRegistrationsController {
   @Post('submit-vendor-information')
   async submitVendorInformations(
     @Body() data: InsertAllDataDto,
-    @CurrentUser() userInfo: any
-
+    @CurrentUser() userInfo: any,
   ) {
     data.data.initial.userId = userInfo.id;
     const result = await this.regService.submitVendorInformations(
@@ -126,5 +125,11 @@ export class VendorRegistrationsController {
   @Get('get-vendor-byId-for-certificate/:isrvendorId')
   async getVendorByIdForCertificate(@Param('isrvendorId') isrvendorId: string) {
     return await this.regService.getVendorByIdForCertificate(isrvendorId);
+  }
+  // @UseGuards(JwtGuard)
+  @AllowAnonymous()
+  @Get('get-approved-vendor-byId/:isrvendorId')
+  async getApprovedVendorById(@Param('isrvendorId') isrvendorId: string) {
+    return await this.regService.getApprovedVendorById(isrvendorId);
   }
 }
