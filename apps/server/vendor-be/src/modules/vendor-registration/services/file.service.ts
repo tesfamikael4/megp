@@ -33,7 +33,7 @@ export class File {
     private readonly vendorRegistrationsService: VendorRegistrationsService,
     @InjectRepository(InvoiceEntity)
     private readonly invoiceRepository: Repository<InvoiceEntity>,
-  ) { }
+  ) {}
   private updateVendorEnums = [
     VendorStatusEnum.ACTIVE,
     VendorStatusEnum.ADJUSTMENT,
@@ -197,9 +197,15 @@ export class File {
       });
       if (!result) throw new HttpException('isr vendor not found ', 500);
       const fileUploadName = 'paymentReceipt';
-      const payment = JSON.parse(JSON.stringify(result.paymentReceipt));
-      if (payment.attachmentUrl !== '') {
-        const objectName = `${userId}/${fileUploadName}/${payment.attachment}`;
+      const paymentReceipts = result.paymentReceipt;
+      const foundObject = paymentReceipts.filter(
+        (obj) => obj.invoiceId !== paymentReceiptDto.invoiceId,
+      );
+      const alreadyExisting = paymentReceipts.find(
+        (obj) => obj.invoiceId === paymentReceiptDto.invoiceId,
+      );
+      if (alreadyExisting) {
+        const objectName = `${userId}/${fileUploadName}/${alreadyExisting.attachment}`;
         await this.minioClient.removeObject('megp', objectName);
       }
       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
@@ -222,9 +228,9 @@ export class File {
         serviceId: paymentReceiptDto?.serviceId,
         attachment: fileId,
       };
-      const isrVendor = await this.isrVendorsRepository.update(result.id, {
-        paymentReceipt: JSON.parse(JSON.stringify(paymentReceipt)),
-      });
+      foundObject.push(paymentReceipt);
+      result.paymentReceipt = foundObject;
+      const isrVendor = await this.isrVendorsRepository.save(result);
       if (!isrVendor) throw new HttpException(`isrVendor_update _failed`, 500);
       const invoice = await this.invoiceRepository.update(
         paymentReceiptDto.invoiceId,
@@ -264,7 +270,7 @@ export class File {
         'Content-Type': 'application/octet-stream',
         'X-Amz-Meta-Testing': 1234,
       };
-      const fname = paymentReceiptDto.feildName;
+      const fname = paymentReceiptDto.fieldName;
       const resultData = await this.minioClient.putObject(
         bucket,
         filename,
@@ -274,14 +280,13 @@ export class File {
       const resultMetadata = JSON.parse(
         JSON.stringify(result.supportingDocuments),
       );
-      switch (paymentReceiptDto.feildName) {
+      switch (paymentReceiptDto.fieldName) {
         case 'businessRegistration_IncorporationCertificate':
           if (resultMetadata[fname] !== '') {
             const objectName = `${userId}/${fileUploadName}/${resultMetadata[fname]}`;
             await this.minioClient.removeObject('megp', objectName);
           }
           resultMetadata.businessRegistration_IncorporationCertificate = fileId;
-
           break;
         case 'mRA_TPINCertificate':
           if (resultMetadata[fname] !== '') {

@@ -66,9 +66,9 @@ export class UploadController {
   //   return this.tusService.deleteFileFromMinio(req, res, userId, fileName);
   // }
 
-  @Post('upload-file-to-minio/:transactionId/:serviceId/:invoiceId')
+  @Post('upload-payment-receipt/:transactionId/:serviceId/:invoiceId')
   @UseInterceptors(FileInterceptor('attachmentUrl'))
-  async uploadFile(
+  async uploadPaymentRecept(
     @UploadedFile() file: Express.Multer.File,
     @CurrentUser() userInfo: any,
     @Param('transactionId') transactionId: string,

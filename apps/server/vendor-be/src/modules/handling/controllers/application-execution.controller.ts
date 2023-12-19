@@ -45,40 +45,31 @@ export class ApplicationExcutionController {
     private readonly workflowService: WorkflowService,
     private readonly bpService: BusinessProcessService,
     private readonly invoiceService: InvoiceService,
-    private readonly vendorService: VendorRegistrationsService
-  ) { }
+    private readonly vendorService: VendorRegistrationsService,
+  ) {}
   @UseGuards(JwtGuard)
   @Get('email')
   async email(@Req() request: Request, @CurrentUser() user: any) {
-    return await this.workflowService.sendEmail(
-      { requestorId: '6b31bfed-c359-1d2a-486d-585a3e4d4305' });
+    return await this.workflowService.sendEmail({
+      requestorId: '6b31bfed-c359-1d2a-486d-585a3e4d4305',
+    });
   }
   @UseGuards(JwtGuard)
   @Post('notify')
-  async notify(
-    @Body() test: any,
-    @CurrentUser() user: any,
-  ) {
+  async notify(@Body() test: any, @CurrentUser() user: any) {
     const wfi = new WorkflowInstanceEntity();
     wfi.id = test.wfi.id;
     wfi.serviceId = test.wfi.serviceId;
     wfi.requestorId = test.wfi.requestorId;
     console.log(wfi);
-    await this.workflowService.notify(
-      wfi,
-      test.metaData.url,
-      test.metaData
-    );
+    await this.workflowService.notify(wfi, test.metaData.url, test.metaData);
   }
 
   @UseGuards(JwtGuard)
   @Post('intiate-workflow')
   //@ApiOkResponse({ type: WorkflowInstanceResponse })
   @ApiPaginatedResponse(WorkflowInstanceResponse)
-  async testWF(
-    @Body() wfi: CreateWorkflowInstanceDto[],
-    @CurrentUser() user
-  ) {
+  async testWF(@Body() wfi: CreateWorkflowInstanceDto[], @CurrentUser() user) {
     const intances = [];
     for (let i = 0; i < wfi.length; i++) {
       const bp = await this.bpService.findBpService(wfi[i].pricingId);
@@ -132,7 +123,7 @@ export class ApplicationExcutionController {
     return await this.executeService.getCurruntTaskByServiceKey(
       serviceKey,
       query,
-      user
+      user,
     );
   }
 
@@ -188,6 +179,6 @@ export class ApplicationExcutionController {
   @Get('get-vendors')
   @ApiOkResponse({ type: VendorInitiationResponseDto })
   async getVendors(@Query() query: CollectionQuery, @CurrentUser() user: any) {
-    return await this.vendorService.getVendors(user, query);
+    return await this.vendorService.getIsrVendors();
   }
 }

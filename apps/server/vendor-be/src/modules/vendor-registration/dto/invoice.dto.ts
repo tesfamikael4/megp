@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsOptional } from 'class-validator';
 import { InvoiceEntity } from 'src/entities';
 
 export class InvoiceResponseDto {
@@ -52,4 +53,15 @@ export class InvoiceResponseDto {
 
     return response;
   }
+}
+export class GenerateInvoice {
+  @ApiProperty()
+  @IsNotEmpty()
+  priceRangeId: string;
+  @ApiProperty()
+  @IsNotEmpty()
+  userInfo: any;
+  @ApiProperty()
+  @IsOptional()
+  basic: any;
 }
