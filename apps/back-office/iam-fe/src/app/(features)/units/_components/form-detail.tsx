@@ -37,22 +37,7 @@ const defaultValues = {
 
 export function FormDetail({ mode }: FormDetailProps) {
   const unitSchema: ZodType<Partial<Unit>> = z.object({
-    name: z
-      .string()
-      .min(1, { message: 'This field is required' })
-      .refine(
-        (value) => {
-          const lists = list?.items?.filter(
-            (item) => item?.id !== id?.toString(),
-          );
-          logger.log(lists);
-          const isUnique = lists && lists.every((unit) => unit.name !== value);
-          return isUnique;
-        },
-        {
-          message: 'Unit name must be unique among existing unit names',
-        },
-      ),
+    name: z.string().min(1, { message: 'This field is required' }),
     typeId: z.string({
       required_error: 'This field is required',
       invalid_type_error: 'This field is required to be a string',

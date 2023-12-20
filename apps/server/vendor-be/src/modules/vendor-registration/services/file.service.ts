@@ -10,7 +10,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { CreateFileDto, DeleteFileDto } from '../dto/file.dto';
 import { VendorRegistrationsService } from './vendor-registration.service';
-import { FilesEntity, InvoiceEntity, IsrVendorsEntity } from 'src/entities';
+import {
+  BusinessAreaEntity,
+  FilesEntity,
+  InvoiceEntity,
+  IsrVendorsEntity,
+} from 'src/entities';
 import { VendorStatusEnum } from 'src/shared/enums/vendor-status-enums';
 import { PaymentReceiptDto } from '../dto/payment-receipt.dto';
 import { Readable } from 'typeorm/platform/PlatformTools';
@@ -33,6 +38,8 @@ export class File {
     private readonly vendorRegistrationsService: VendorRegistrationsService,
     @InjectRepository(InvoiceEntity)
     private readonly invoiceRepository: Repository<InvoiceEntity>,
+    @InjectRepository(BusinessAreaEntity)
+    private readonly businessAreaRepository: Repository<BusinessAreaEntity>,
   ) {}
   private updateVendorEnums = [
     VendorStatusEnum.ACTIVE,
@@ -211,13 +218,12 @@ export class File {
       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
       const fileId = `${uniqueSuffix}_${file.originalname}`;
       const filename = `${userId}/${fileUploadName}/${fileId}`;
-      const bucket = 'megp';
       const metaData = {
         'Content-Type': 'application/octet-stream',
         'X-Amz-Meta-Testing': 1234,
       };
       const resultData = await this.minioClient.putObject(
-        bucket,
+        this.bucketName,
         filename,
         file.buffer,
         metaData,
@@ -353,6 +359,54 @@ export class File {
   ) {
     try {
       const fileUploadName = 'SupportingDocument';
+      const fileId = `${userId}/${fileUploadName}/${filename}`;
+      const result = this.minioClient.presignedGetObject(
+        this.bucketName,
+        fileId,
+      );
+      return result;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
+
+  async uploadCertificate(
+    file: Express.Multer.File,
+    userId: string,
+    businessAreaId: string,
+  ) {
+    try {
+      const result = await this.businessAreaRepository.findOne({
+        where: { id: businessAreaId },
+      });
+      if (!result) throw new HttpException('business area not found ', 500);
+      const fileUploadName = 'certificate';
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+      const fileId = `${uniqueSuffix}_${file.originalname}`;
+      const filename = `${userId}/${fileUploadName}/${fileId}`;
+      const metaData = {
+        'Content-Type': 'application/octet-stream',
+        'X-Amz-Meta-Testing': 1234,
+      };
+      const resultData = await this.minioClient.putObject(
+        this.bucketName,
+        filename,
+        file.buffer,
+        metaData,
+      );
+      result.certificateUrl = fileId;
+      const data = await this.businessAreaRepository.save(result);
+      if (!result) throw new HttpException('business area update failed', 500);
+      return data;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
+  async getCertificate(filename: string, userId: string) {
+    try {
+      const fileUploadName = 'certificate';
       const fileId = `${userId}/${fileUploadName}/${filename}`;
       const result = this.minioClient.presignedGetObject(
         this.bucketName,

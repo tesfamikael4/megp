@@ -1,7 +1,9 @@
 import { Repository, DeepPartial, ObjectLiteral } from 'typeorm';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException, Req } from '@nestjs/common';
 import { CollectionQuery, QueryConstructor } from '../collection-query';
 import { DataResponseFormat } from '../api-data';
+import { Request } from 'express';
+import { REQUEST } from '@nestjs/core';
 
 @Injectable()
 export class EntityCrudService<T extends ObjectLiteral> {

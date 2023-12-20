@@ -14,7 +14,7 @@ import { AccountModule } from './modules/account/account.module';
 import { DataSeeder } from './modules/seeders/data.seeder';
 import { RoleSystemModule } from './modules/role-system/role-system.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
-import { TransactionInterceptor } from '@interceptors';
+import { TenantInterceptor, TransactionInterceptor } from '@interceptors';
 
 @Module({
   imports: [
@@ -37,6 +37,10 @@ import { TransactionInterceptor } from '@interceptors';
       provide: APP_INTERCEPTOR,
       useClass: TransactionInterceptor,
     },
+    // {
+    //   provide: APP_INTERCEPTOR,
+    //   useClass: TenantInterceptor,
+    // },
   ],
 })
 export class AppModule {}

@@ -40,34 +40,10 @@ export function PermissionForm({
   handleCloseModal,
   unitId,
 }: FormDetailProps) {
-  const keyRegExp = /^([a-z0-9]+(_[a-z0-9]+)+)$/;
-
   const permissionSchema: ZodType<Partial<Permission>> = z.object({
     name: z.string().min(1, { message: 'This field is required' }),
     description: z.string(),
-    key: z
-      .string()
-      .min(1, { message: 'This field is required' })
-      .refine(
-        (value) => {
-          return keyRegExp.test(value);
-        },
-        {
-          message: 'Invalid key format',
-        },
-      )
-      .refine(
-        (value) => {
-          const permissions = list?.items.filter((item) => item?.id !== unitId);
-          const isUnique =
-            permissions &&
-            permissions.every((permission) => permission?.key !== value);
-          return isUnique;
-        },
-        {
-          message: 'Key must be unique among existing permission key',
-        },
-      ),
+    key: z.string().min(1, { message: 'This field is required' }),
   });
 
   const { id } = useParams();
@@ -83,7 +59,6 @@ export function PermissionForm({
 
   const [create, { isLoading: isSaving }] = useCreateMutation();
   const [update, { isLoading: isUpdating }] = useUpdateMutation();
-  const { data: list } = useListByAppIdQuery(id?.toString());
 
   const {
     data: selected,

@@ -5,6 +5,7 @@ import { TypeOrmConfigService } from './shared/typeorm/typeorm.service';
 import { AuthorizationModule } from './shared/authorization/authorization.module';
 import { ProcurementRequisitionModule } from './modules/ProcurementRequistion/procurement-requisition.module';
 import { PostBudgetPlanModule } from './modules/post-budget-plan/post-budget-planmodule';
+import { SpdModule } from './modules/spd/spd.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { PostBudgetPlanModule } from './modules/post-budget-plan/post-budget-pla
     AuthorizationModule,
     ProcurementRequisitionModule,
     PostBudgetPlanModule,
+    SpdModule,
   ],
   providers: [],
   controllers: [],

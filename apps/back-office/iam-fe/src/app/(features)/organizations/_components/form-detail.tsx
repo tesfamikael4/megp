@@ -14,7 +14,6 @@ import {
   useDeleteMutation,
   useUpdateMutation,
   useCreateMutation,
-  useListQuery,
 } from '../_api/organization.api';
 import { useListQuery as useListTypeQuery } from '../../organization-type/_api/organization-type.api';
 import { useEffect } from 'react';
@@ -37,23 +36,7 @@ const defaultValues = {
 
 export function FormDetail({ mode }: FormDetailProps) {
   const organizationSchema: ZodType<Partial<Organization>> = z.object({
-    name: z
-      .string()
-      .min(1, { message: 'This field is required' })
-      .refine(
-        (value) => {
-          const organizationsList = list?.items.filter(
-            (item) => item?.id !== id?.toString(),
-          );
-          const isUnique =
-            organizationsList &&
-            organizationsList.every((org) => org.name !== value);
-          return isUnique;
-        },
-        {
-          message: 'Name must be unique among existing organization names',
-        },
-      ),
+    name: z.string().min(1, { message: 'This field is required' }),
     typeId: z.string({
       required_error: 'This field is required',
       invalid_type_error: 'This field is required to be a string',
@@ -76,7 +59,6 @@ export function FormDetail({ mode }: FormDetailProps) {
   const { id } = useParams();
 
   const [create, { isLoading: isSaving }] = useCreateMutation();
-  const { data: list } = useListQuery({});
   const [update, { isLoading: isUpdating }] = useUpdateMutation();
   const [remove, { isLoading: isDeleting }] = useDeleteMutation();
   const [activation, { isLoading: isActivating }] = useUpdateMutation();
