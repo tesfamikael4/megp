@@ -16,7 +16,7 @@ export class WorkflowController extends EntityCrudController<Workflow>(
   constructor(private readonly workflowService: WorkflowService) {
     super(workflowService);
   }
-  @Post('initiate')
+  @Post('approve-workflow')
   async approveWorkflow(@Body() data: any) {
     return this.workflowService.approveWorkflow(
       data.workflowType,

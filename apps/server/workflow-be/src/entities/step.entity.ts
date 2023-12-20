@@ -4,9 +4,11 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   JoinColumn,
+  OneToOne,
 } from 'typeorm';
 
 import { Activity } from './activity.entity';
+import { Instance } from './instance.entity';
 
 type approver = {
   userId: string;
@@ -29,11 +31,20 @@ export class Step {
   @JoinColumn({ name: 'activityId' })
   public activity: Activity;
 
+  @OneToOne(() => Instance, (instance) => instance.step)
+  instance: Instance;
+
   @Column({ type: 'simple-array' })
   approvers: approver[];
 
+  @Column({ type: 'simple-array' })
+  approvalMethods: approver[];
+
+  @Column({ type: 'simple-array' })
+  approverTypes: approver[];
+
   @Column()
-  rule: string;
+  type: string;
 
   @Column()
   order: number;
