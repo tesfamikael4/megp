@@ -3,3 +3,7 @@ export * from './procurement-requisition-activity.entity';
 export * from './procurement-requisition-attachment.entity';
 export * from './post-budget-plan.entity';
 export * from './post-budget-plan-activity.entity';
+export * from './spd.entity';
+export * from './spd-scc.entity';
+export * from './spd-technical-scoring.entity';
+export * from './spd-bds.entity';
