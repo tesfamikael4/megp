@@ -17,4 +17,5 @@ export enum VendorStatusEnum {
   COMPLETE = 'Complete',
   DETAIL = 'Detail',
   PAYMENT = 'payment',
+  RENEWAL = 'Renewal',
 }

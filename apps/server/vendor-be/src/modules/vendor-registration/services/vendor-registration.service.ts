@@ -31,7 +31,6 @@ import { CollectionQuery, QueryConstructor } from 'src/shared/collection-query';
 import { DataResponseFormat } from 'src/shared/api-data';
 import { WorkflowInstanceEnum } from 'src/modules/handling/dto/workflow-instance.enum';
 import { HttpService } from '@nestjs/axios';
-import { response } from 'express';
 import axios from 'axios';
 import { FppaDataDto, MbrsData, NCICDataDto } from '../dto/mbrsData.dto';
 import { GenerateInvoice } from '../dto/invoice.dto';
@@ -276,7 +275,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           result.status = VendorStatusEnum.APPROVED;
         }
         result.initial = initial;
-        console.log('result----------', result);
         const isrVendorUpdate = await this.isrVendorsRepository.save(result);
         if (!isrVendorUpdate)
           throw new HttpException(`isr_vendor_update_failed`, 500);
@@ -306,20 +304,13 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           supportingDocuments: isrVendorData.supportingDocuments,
           paymentReceipt: isrVendorData.paymentReceipt,
         };
-        console.log(
-          ' vendorEntity.vendorAccounts',
-          vendorEntity.vendorAccounts,
-        );
         vendorEntity.metaData = tempMetadata;
         try {
           const res = await this.vendorRepository.save(vendorEntity);
           if (!res) throw new HttpException(`vendor_insertion_failed`, 500);
         } catch (error) {
-          console.log(' vendorEntity error', error);
           throw error;
         }
-        // }
-        //
       }
       const nextYear = new Date();
       nextYear.setFullYear(nextYear.getFullYear() + 1);
@@ -700,16 +691,45 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     }
   }
   async startRenewal(userId: string) {
-    const result = await this.isrVendorsRepository.findOne({
+    const result = await this.vendorRepository.findOne({
       where: {
         userId: userId,
       },
     });
-    result.initial.level = VendorStatusEnum.PPDA;
-    result.initial.status = VendorStatusEnum.DRAFT;
+    if (!result) throw new HttpException('vendor not found', 500);
+    const data = await this.isrVendorsRepository.findOne({
+      where: {
+        userId: userId,
+      },
+    });
+    data.initial.level = VendorStatusEnum.PPDA;
+    data.initial.status = VendorStatusEnum.DRAFT;
+    result.id = undefined;
+    result.status = VendorStatusEnum.RENEWAL;
     const res = await this.isrVendorsRepository.save(result);
     // const initial = businessAreas
-    return result;
+    return res;
+  }
+  async getRenewalIsrVendor(userId: string) {
+    const result = await this.isrVendorsRepository.findOne({
+      where: {
+        userId: userId,
+        status: VendorStatusEnum.RENEWAL,
+      },
+    });
+    if (!result) throw new HttpException('vendor not found', 500);
+    const data = await this.isrVendorsRepository.findOne({
+      where: {
+        userId: userId,
+      },
+    });
+    data.initial.level = VendorStatusEnum.PPDA;
+    data.initial.status = VendorStatusEnum.DRAFT;
+    result.id = undefined;
+    result.status = VendorStatusEnum.RENEWAL;
+    const res = await this.isrVendorsRepository.save(result);
+    // const initial = businessAreas
+    return res;
   }
   async invoiceGenerateService(data: GenerateInvoice) {
     try {
@@ -792,9 +812,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         businessAreaEntity.priceRangeId = interests.priceRange;
         const res = await this.businessAreaRepository.save(businessAreaEntity);
         if (!res) throw new HttpException(`adding_business_area_failed`, 500);
-        // }
-        // }
-
         if (!response)
           throw new HttpException('workflow_initiation_failed', 500);
         result.status = VendorStatusEnum.SUBMITTED;
@@ -901,19 +918,18 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     if (!isrVendor) throw new HttpException('isr vendor update failed', 500);
     return result;
   }
-  async getApprovedVendorById(id: string) {
+  async getApprovedVendorById(VendorId: string) {
     const result = await this.vendorRepository.findOne({
-      where: { id: id },
+      where: { id: VendorId },
       relations: {
         areasOfBusinessInterest: true,
         shareholders: true,
         beneficialOwnership: true,
         vendorAccounts: true,
         customCats: true,
-        businessCats: true
-      }
+        businessCats: true,
+      },
     });
     return result;
   }
-
 }

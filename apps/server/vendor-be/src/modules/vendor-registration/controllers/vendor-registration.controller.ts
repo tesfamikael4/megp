@@ -35,7 +35,7 @@ import { CollectionQuery } from 'src/shared/collection-query';
 @ApiResponse({ status: 500, description: 'Internal error' })
 @ApiExtraModels(DataResponseFormat)
 export class VendorRegistrationsController {
-  constructor(private readonly regService: VendorRegistrationsService) {}
+  constructor(private readonly regService: VendorRegistrationsService) { }
   @UseGuards(JwtGuard)
   @Get('get-isr-vendors')
   async getVendors() {
@@ -128,8 +128,14 @@ export class VendorRegistrationsController {
   }
   // @UseGuards(JwtGuard)
   @AllowAnonymous()
-  @Get('get-approved-vendor-byId/:isrvendorId')
-  async getApprovedVendorById(@Param('isrvendorId') isrvendorId: string) {
-    return await this.regService.getApprovedVendorById(isrvendorId);
+  @Get('get-approved-vendor-byId/:vendorId')
+  async getApprovedVendorById(@Param('vendorId') vendorId: string) {
+    return await this.regService.getApprovedVendorById(vendorId);
+  }
+  @UseGuards(JwtGuard)
+  @AllowAnonymous()
+  @Get('get-renewal-isr-vendor')
+  async getRenewalIsrVendor(@CurrentUser() userInfo: any) {
+    return await this.regService.getRenewalIsrVendor(userInfo);
   }
 }

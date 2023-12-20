@@ -131,6 +131,30 @@ export class UploadController {
       userInfo.id,
     );
   }
+  @Post('upload-certificate/:businessAreaId')
+  @UseInterceptors(FileInterceptor('attachmentUrl'))
+  async uploadCertificate(
+    @UploadedFile() file: Express.Multer.File,
+    @CurrentUser() userInfo: any,
+    @Param('businessAreaId') businessAreaId: string,
+  ) {
+    if (!file) {
+      return { error: 'File not received' };
+    }
+    const result = await this.fileService.uploadCertificate(
+      file,
+      userInfo.id,
+      businessAreaId,
+    );
+    return result;
+  }
+  @Get('get-certificate/:fileId')
+  async getCertificate(
+    @Param('fileId') fileId: string,
+    @CurrentUser() userInfo: any,
+  ) {
+    return await this.fileService.getCertificate(fileId, userInfo.id);
+  }
   // @All('*')
   // async tus(@Req() req, @Res() res, @CurrentUser() userInfo: any) {
   //   return this.tusService.handleTus(req, res, userInfo);
