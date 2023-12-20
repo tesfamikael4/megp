@@ -49,6 +49,12 @@ export function Entity({ children }: { children: React.ReactNode }) {
           accessorKey: 'description',
           cell: (info) => info.getValue(),
         },
+        {
+          id: 'isSingleAssignment',
+          header: 'Single Assignment ',
+          accessorKey: 'isSingleAssignment',
+          cell: (info) => info.getValue(),
+        },
       ],
     };
   }, [route]);
@@ -68,7 +74,14 @@ export function Entity({ children }: { children: React.ReactNode }) {
     <EntityLayout
       mode={mode}
       config={config}
-      data={data?.items ?? []}
+      data={
+        data?.items?.map((item: Mandate) => {
+          return {
+            ...item,
+            isSingleAssignment: item.isSingleAssignment ? 'Yes' : 'No ',
+          };
+        }) ?? []
+      }
       total={data?.total ?? 0}
       detail={children}
       isLoading={isFetching}
