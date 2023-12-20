@@ -29,22 +29,7 @@ const defaultValues = {
 
 export function FormDetail({ mode }: FormDetailProps) {
   const groupSchema: ZodType<Partial<Group>> = z.object({
-    name: z
-      .string()
-      .min(1, { message: 'This field is required' })
-      .refine(
-        (value) => {
-          const lists = groups?.items.filter(
-            (item) => item?.id !== id?.toString(),
-          );
-          const isUnique =
-            lists && lists.every((group) => group.name !== value);
-          return isUnique;
-        },
-        {
-          message: 'Group name must be unique among existing group names',
-        },
-      ),
+    name: z.string().min(1, { message: 'This field is required' }),
     description: z.string().min(1, { message: 'This field is required' }),
   });
 
@@ -69,11 +54,6 @@ export function FormDetail({ mode }: FormDetailProps) {
     isSuccess: selectedSuccess,
     isLoading,
   } = useReadQuery(id?.toString());
-
-  const { data: groups } = useListByIdQuery({
-    id: user?.organization?.id,
-    collectionQuery: undefined,
-  });
 
   const onCreate = async (data) => {
     try {

@@ -8,7 +8,6 @@ import {
   useDeleteMutation,
   useUpdateMutation,
   useCreateMutation,
-  useListByIdQuery,
 } from '../_api/role.api';
 import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
@@ -28,21 +27,7 @@ const defaultValues = {
 
 export function FormDetail({ mode }: FormDetailProps) {
   const roleSchema: ZodType<Partial<Role>> = z.object({
-    name: z
-      .string()
-      .min(1, { message: 'This field is required' })
-      .refine(
-        (value) => {
-          const lists = roles?.items.filter(
-            (item) => item?.id !== id?.toString(),
-          );
-          const isUnique = lists && lists.every((org) => org.name !== value);
-          return isUnique;
-        },
-        {
-          message: 'Role name must be unique among existing role names',
-        },
-      ),
+    name: z.string().min(1, { message: 'This field is required' }),
     description: z.string().min(1, { message: 'This field is required' }),
   });
 
@@ -66,16 +51,11 @@ export function FormDetail({ mode }: FormDetailProps) {
     isSuccess: selectedSuccess,
     isLoading,
   } = useReadQuery(id?.toString());
-  const { data: roles } = useListByIdQuery({
-    id: user?.organization?.id,
-    collectionQuery: undefined,
-  });
 
   const onCreate = async (data) => {
     try {
       const result = await create({
         ...data,
-        key: '',
         organizationId: `${user?.organization?.id}`,
         isSystemRole: false,
       });
@@ -92,7 +72,6 @@ export function FormDetail({ mode }: FormDetailProps) {
       await update({
         ...data,
         id: id?.toString(),
-        key: '',
         isSystemRole: false,
         organizationId: `${user?.organization?.id}`,
       });

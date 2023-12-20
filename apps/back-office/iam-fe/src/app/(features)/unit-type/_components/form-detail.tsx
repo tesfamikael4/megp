@@ -8,7 +8,6 @@ import {
   useDeleteMutation,
   useUpdateMutation,
   useCreateMutation,
-  useListByIdQuery,
 } from '../_api/unit-type.api';
 import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
@@ -28,21 +27,7 @@ const defaultValues = {
 
 export function FormDetail({ mode }: FormDetailProps) {
   const unitTypeSchema: ZodType<Partial<UnitType>> = z.object({
-    name: z
-      .string()
-      .min(1, { message: 'This field is required' })
-      .refine(
-        (value) => {
-          const lists = unitType?.items.filter(
-            (item) => item?.id !== id?.toString(),
-          );
-          const isUnique = lists && lists.every((type) => type.name !== value);
-          return isUnique;
-        },
-        {
-          message: 'Unit type name must be unique among existing names',
-        },
-      ),
+    name: z.string().min(1, { message: 'This field is required' }),
     description: z.string().min(1, { message: 'This field is required' }),
   });
 
@@ -66,10 +51,6 @@ export function FormDetail({ mode }: FormDetailProps) {
     isSuccess: selectedSuccess,
     isLoading,
   } = useReadQuery(id?.toString());
-  const { data: unitType } = useListByIdQuery({
-    id: user?.organization?.id,
-    collectionQuery: undefined,
-  });
 
   const onCreate = async (data) => {
     try {
