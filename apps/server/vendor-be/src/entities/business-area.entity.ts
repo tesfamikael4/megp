@@ -28,7 +28,8 @@ export class BusinessAreaEntity {
   approvedAt: Date;
   @Column({ nullable: true })
   applicationNumber: string;
-
+  @Column({ nullable: true })
+  certificateUrl: string;
   @Column({ nullable: true })
   expireDate: Date;
   @Column({ default: 'Pending' })
@@ -45,6 +46,4 @@ export class BusinessAreaEntity {
   @ManyToOne(() => ServicePrice, (servicePrice) => servicePrice.businessAreas)
   @JoinColumn({ name: 'priceRangeId' })
   servicePrice: ServicePrice;
-
-
 }
