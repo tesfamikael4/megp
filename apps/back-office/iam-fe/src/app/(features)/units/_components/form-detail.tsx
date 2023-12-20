@@ -246,11 +246,9 @@ export function FormDetail({ mode }: FormDetailProps) {
             render={({ field: { onChange, value } }) => (
               <Select
                 name={'name'}
-                withAsterisk
                 label="Parent Unit"
                 value={value}
                 readOnly
-                required
                 error={
                   errors?.parentId ? errors?.parentId?.message?.toString() : ''
                 }
@@ -287,6 +285,7 @@ export function FormDetail({ mode }: FormDetailProps) {
         isUpdating={isUpdating}
         isDeleting={isDeleting}
         isActivating={isActivating}
+        entity="unit"
       />
     </Stack>
   );

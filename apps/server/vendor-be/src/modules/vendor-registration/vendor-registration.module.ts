@@ -48,6 +48,7 @@ import { ApplicationExcutionController } from 'src/modules/handling/controllers/
 import { ServicePricingController } from 'src/modules/pricing/controllers/service-pricing.controller';
 import { CategoriesModule } from '../categories/category.module';
 import { InvoiceService } from './services/invoice.service';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
@@ -77,6 +78,7 @@ import { InvoiceService } from './services/invoice.service';
     AuthorizationModule,
     BpmModule,
     CategoriesModule,
+    HttpModule,
   ],
   exports: [VendorRegistrationsService],
   providers: [
@@ -92,7 +94,8 @@ import { InvoiceService } from './services/invoice.service';
     VendorRegistrationsService,
     BusinessAreaService,
     InvoiceService,
-    TusService,
+
+    // TusService,
   ],
   controllers: [
     WorkflowInstanceController,
@@ -107,4 +110,4 @@ import { InvoiceService } from './services/invoice.service';
     BusinessAreaController,
   ],
 })
-export class VendorRegistrationModule { }
+export class VendorRegistrationModule {}

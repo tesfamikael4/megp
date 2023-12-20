@@ -13,6 +13,8 @@ import { AuthorizationModule } from './shared/authorization/authorization.module
 import { AccountModule } from './modules/account/account.module';
 import { DataSeeder } from './modules/seeders/data.seeder';
 import { RoleSystemModule } from './modules/role-system/role-system.module';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { TransactionInterceptor } from '@interceptors';
 
 @Module({
   imports: [
@@ -29,6 +31,12 @@ import { RoleSystemModule } from './modules/role-system/role-system.module';
     RoleSystemModule,
   ],
   controllers: [],
-  providers: [DataSeeder],
+  providers: [
+    DataSeeder,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: TransactionInterceptor,
+    },
+  ],
 })
 export class AppModule {}

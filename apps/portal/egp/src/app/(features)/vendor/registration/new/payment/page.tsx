@@ -7,6 +7,7 @@ import {
   TextInput,
   Center,
   Box,
+  Accordion,
 } from '@mantine/core';
 import React, { useEffect, useState } from 'react';
 import InvoiceTemplate from '../../../_components/dynamicPrintComponent/invoice-sm';
@@ -18,8 +19,11 @@ import {
 import { NotificationService } from '../../../_components/notification';
 import { useRouter } from 'next/navigation';
 import PaymentMethod from '../_components/payment/payment-method';
-import UppyAttachmentDashboard from '../../../_components/UppyAttachmentDashboard/UppyAttachmentDashboard';
 import { usePrivilege } from '../_context/privilege-context';
+import FileUploader from '../../../_components/file-uploader/upload';
+import { createGetUrl } from '../../../_components/file-uploader/hooks';
+import classes from './accordion.module.scss';
+import { InvoiceData } from '@/models/vendorInvoice';
 
 function Page() {
   const { checkAccess, updateAccess, lockElements } = usePrivilege();
@@ -75,7 +79,7 @@ function Page() {
   }, [saveValues.isSuccess]);
 
   const onSave = () => {
-    if (invoiceInfo.data && requestInfo.data && transactionNum) {
+    if (invoiceInfo.data && requestInfo.data) {
       save({
         data: {
           ...requestInfo.data,
@@ -106,51 +110,107 @@ function Page() {
   const FILE_SERVER_URL = process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api';
 
   return (
-    <Flex className="flex-col w-full relative items-center justify-center">
-      <Flex className="gap-2 w-full">
-        <Flex className="flex-col border p-4 shadow-md h-fit max-w-3xl w-full">
-          <Center>
-            <PaymentMethod />
-          </Center>
+    <Flex className="flex-col w-full relative min-h-[70vh] justify-between">
+      <Box className=" max-w-[850px]">
+        <Accordion variant="separated" classNames={classes}>
+          {invoiceInfo.data?.invoice &&
+            invoiceInfo.data?.invoice.length > 0 && (
+              <>
+                {invoiceInfo.data?.invoice.map((invoice, key) => (
+                  <Accordion.Item
+                    key={key}
+                    className={classes.item}
+                    value={invoice.id}
+                  >
+                    <Accordion.Control>{invoice.serviceName}</Accordion.Control>
+                    <Accordion.Panel>
+                      <Flex className="gap-2 w-full">
+                        <Flex className="flex-col border p-4  h-fit max-w-[390px] w-full">
+                          <Center>
+                            <PaymentMethod />
+                          </Center>
 
-          <Stack className="mt-10">
-            <TextInput
-              label="Transaction Number"
-              value={transactionNum}
-              onChange={(e) => setTransactionNum(e.target.value)}
-              required
-              {...lockElements('payment')}
-            />
-            {invoiceInfo.data?.invoice && invoiceInfo.data?.invoice[0] && (
-              <UppyAttachmentDashboard
-                tusServerGetUrl={FILE_SERVER_URL + '/upload/'}
-                tusServerPostUrl={FILE_SERVER_URL + '/upload/'}
-                id="paymentSlip"
-                label="Payment Slip"
-                placeholder="Upload"
-                metaData={{
-                  entityName: 'paymentReceipt',
-                  fieldName: 'paymentSlip',
-                  instanceId: invoiceInfo.data?.id,
-                  transactionId: transactionNum,
-                  category: 'goods',
-                  invoiceId: invoiceInfo.data?.invoice[0].id,
-                  attachment: '',
-                }}
-                storeId={invoiceInfo.data?.invoice[0].attachment ?? ''}
-              />
+                          <Stack className="mt-10">
+                            <TextInput
+                              label="Transaction Number"
+                              value={transactionNum}
+                              onChange={(e) =>
+                                setTransactionNum(e.target.value)
+                              }
+                              required
+                              {...lockElements('payment')}
+                            />
+                            {invoiceInfo.data?.invoice &&
+                              invoiceInfo.data?.invoice[0] && (
+                                <FileUploader
+                                  serverGetUrl={
+                                    FILE_SERVER_URL +
+                                    createGetUrl(
+                                      invoiceInfo.data?.paymentReceipt
+                                        .attachment,
+                                    )
+                                  }
+                                  serverPostUrl={
+                                    FILE_SERVER_URL +
+                                    '/upload/upload-file-to-minio/TransactionId/e29650a8-889a-4009-9a43-a2e8e5da8cb2/5aece916-282d-431a-b496-607602f6ccfc'
+                                  }
+                                  id="paymentSlip"
+                                  label="Payment Slip"
+                                  placeholder="Upload"
+                                  metaData={{
+                                    entityName: 'paymentReceipt',
+                                    fieldName: 'paymentSlip',
+                                    instanceId: invoiceInfo.data?.id,
+                                    transactionId: transactionNum,
+                                    category: 'goods',
+                                    invoiceId: invoiceInfo.data?.invoice[0].id,
+                                    attachment: '',
+                                  }}
+                                  storeId={
+                                    invoiceInfo.data?.invoice[0].attachment ??
+                                    ''
+                                  }
+                                />
+                                // <UppyAttachmentDashboard
+                                //   tusServerGetUrl={FILE_SERVER_URL + '/upload/'}
+                                //   tusServerPostUrl={FILE_SERVER_URL + '/upload/'}
+                                //   id="paymentSlip"
+                                //   label="Payment Slip"
+                                //   placeholder="Upload"
+                                //   metaData={{
+                                //     entityName: 'paymentReceipt',
+                                //     fieldName: 'paymentSlip',
+                                //     instanceId: invoiceInfo.data?.id,
+                                //     transactionId: transactionNum,
+                                //     category: 'goods',
+                                //     invoiceId: invoiceInfo.data?.invoice[0].id,
+                                //     attachment: '',
+                                //   }}
+                                //   storeId={invoiceInfo.data?.invoice[0].attachment ?? ''}
+                                // />
+                              )}
+                          </Stack>
+                          <Flex justify="end" className="gap-2 mt-4">
+                            <Button>Pay</Button>
+                          </Flex>
+                        </Flex>
+                        <Flex
+                          key={key}
+                          className="min-w-[450px] flex-col border shadow-md w-full"
+                        >
+                          <InvoiceTemplate invoiceData={invoice} />
+                        </Flex>
+                      </Flex>
+                    </Accordion.Panel>
+                  </Accordion.Item>
+                ))}
+              </>
             )}
-          </Stack>
-          <Flex justify="end" className="gap-2 mt-4">
-            {checkAccess('payment') && (
-              <Button onClick={() => onSave()}>Pay</Button>
-            )}
-          </Flex>
-        </Flex>
-        {invoiceInfo.data?.invoice && invoiceInfo.data?.invoice[0] && (
-          <Flex className="max-w-2xl flex-col border shadow-md w-full">
-            <InvoiceTemplate invoiceData={invoiceInfo.data?.invoice[0]} />
-          </Flex>
+        </Accordion>
+      </Box>
+      <Flex justify="end" className="gap-2 mt-4">
+        {checkAccess('payment') && (
+          <Button onClick={() => onSave()}>Continue</Button>
         )}
       </Flex>
     </Flex>

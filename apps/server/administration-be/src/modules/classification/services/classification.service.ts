@@ -50,4 +50,35 @@ export class ClassificationService extends ExtraCrudService<Classification> {
 
     return response;
   }
+  async findClassificationHistory(code: string): Promise<any[]> {
+    const classification = await this.classificationRepository.findOne({
+      where: {
+        code,
+      },
+    });
+
+    if (!classification) {
+      return [];
+    }
+
+    return this.buildHierarchy(classification, []);
+  }
+
+  private async buildHierarchy(
+    classification: any,
+    hierarchy: any[],
+  ): Promise<any[]> {
+    if (classification.parentCode) {
+      const parent = await this.classificationRepository.findOne({
+        where: {
+          code: classification.parentCode,
+        },
+      });
+
+      await this.buildHierarchy(parent, hierarchy);
+    }
+
+    hierarchy.push(classification);
+    return hierarchy;
+  }
 }

@@ -7,10 +7,11 @@ export class CreateCurrencyDto {
   @ApiProperty()
   @IsNotEmpty()
   name: string;
-
   @ApiProperty()
   @IsNotEmpty()
   description: string;
+  @ApiProperty()
+  abbreviation: string;
 
   static fromDto(dto: CreateCurrencyDto): Currency {
     const entity = new Currency();
@@ -19,6 +20,7 @@ export class CreateCurrencyDto {
     }
     entity.name = dto.name;
     entity.description = dto.description;
+    entity.abbreviation = dto.abbreviation;
     return entity;
   }
 
@@ -40,6 +42,7 @@ export class UpdateCurrencyDto extends CreateCurrencyDto {
     entity.id = dto.id;
     entity.name = dto.name;
     entity.description = dto.description;
+    entity.abbreviation = dto.abbreviation;
     entity.createdAt = new Date();
     return entity;
   }
@@ -50,6 +53,7 @@ export class CurrencyResponseDto extends UpdateCurrencyDto {
     response.id = entity.id;
     response.name = entity.name;
     response.description = entity.description;
+    response.abbreviation = entity.abbreviation;
     return response;
   }
 }

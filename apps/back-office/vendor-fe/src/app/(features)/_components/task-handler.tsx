@@ -1,5 +1,8 @@
 'use ';
-import { useGoToNextStateMutation } from '@/store/api/vendor_request_handler/new-registration-api';
+import {
+  useGenerateCertificateMutation,
+  useGoToNextStateMutation,
+} from '@/store/api/vendor_request_handler/new-registration-api';
 import { Box, Checkbox, Textarea, Button, Flex } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { GeneratePdf } from '@megp/core-fe';
@@ -11,13 +14,16 @@ export default function TaskHandler({
   instanceID,
   taskCheckLists,
   setIsPicked,
+  requesterID,
 }: {
   taskType: string | undefined;
   instanceID: string | undefined;
   taskCheckLists: any[];
+  requesterID: string | undefined;
   setIsPicked: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const [mutate] = useGoToNextStateMutation();
+  const [generateCertificate] = useGenerateCertificateMutation();
   const [loading, setLoading] = useState({});
   const [remark, setRemark] = useState<string>();
   const [selectedChecklistItems, setSelectedChecklistItems] = useState<
@@ -69,14 +75,36 @@ export default function TaskHandler({
   if (taskType === 'Certificate') {
     return (
       <Flex gap="md">
-        <GeneratePdf
+        {/* <GeneratePdf
           label="Download Cerficate"
           selector="#qr"
           templateUrl={`${process.env.NEXT_PUBLIC_VENDOR_DOMAIN}/certificate`}
           className=""
           mode="download"
           apiUrl={`${process.env.NEXT_PUBLIC_VENDOR_API}/api/`}
-        />
+        /> */}
+        <Button
+          onClick={async () => {
+            try {
+              await generateCertificate({
+                vendorId: requesterID as string,
+                instanceId: instanceID as string,
+              }).unwrap();
+              notifications.show({
+                title: 'Success',
+                message: 'Certificate generated successfully.',
+              });
+            } catch (err) {
+              notifications.show({
+                title: 'Error',
+                color: 'red',
+                message: 'Something went wrong.',
+              });
+            }
+          }}
+        >
+          Generate Certificate
+        </Button>
         <Button
           loading={loading['SUCCESS']}
           onClick={() => {
@@ -120,14 +148,20 @@ export default function TaskHandler({
             Approve
           </Button>
           <Button
-            onClick={() => handleButtonClick('ADJUST')}
+            onClick={() => {
+              handleButtonClick('ADJUST');
+              router.push('/new');
+            }}
             className="bg-yellow-500 hover:bg-yellow-600"
             loading={loading['ADJUST']}
           >
             Adjust
           </Button>
           <Button
-            onClick={() => handleButtonClick('REJECT')}
+            onClick={() => {
+              handleButtonClick('REJECT');
+              router.push('/new');
+            }}
             className="bg-red-600 hover:bg-red-700"
             loading={loading['REJECT']}
           >
@@ -145,7 +179,10 @@ export default function TaskHandler({
             Yes
           </Button>
           <Button
-            onClick={() => handleButtonClick('NO')}
+            onClick={() => {
+              handleButtonClick('NO');
+              router.push('/new');
+            }}
             className="bg-red-600 hover:bg-red-700"
             loading={loading['NO']}
           >

@@ -51,6 +51,15 @@ export function Entity({ children }: { children: React.ReactElement }) {
             widget: 'multiline',
           },
         },
+        {
+          id: 'abbreviation',
+          header: 'abbreviation',
+          accessorKey: 'abbreviation',
+          cell: (info) => info.getValue(),
+          meta: {
+            widget: 'multiline',
+          },
+        },
       ],
     };
   }, [route]);

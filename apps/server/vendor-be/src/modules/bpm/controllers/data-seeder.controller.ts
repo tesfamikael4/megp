@@ -30,7 +30,7 @@ export class DataSeederController {
     @InjectRepository(TaskAssignmentEntity)
     private readonly assignmentRepository: Repository<TaskAssignmentEntity>,
     private readonly categoryService: CategoryService,
-  ) {}
+  ) { }
   @UseGuards(JwtGuard)
   @Post('seed-services')
   @ApiOkResponse()
@@ -185,7 +185,7 @@ export class DataSeederController {
         id: '0f7d46b9-ffd6-4b4c-91f8-9e290d675053',
         serviceId: 'a044b8d0-d653-5dd3-fd34-1f67d19ebf03',
         workflow:
-          '{"id": "Profile update Workflow", "states": {"End": {"on": {}, "meta": {"type": "end"}}, "Approval of Vendor Profile Update Request": {"on": {"Adjust": "Submission of Vendor Profile Update Request", "Reject": "End", "Approve": "Approval of Vendor Profile Update Request By Director General (Head of PDE)"}, "meta": {"type": "Approval"}}, "Submission of Vendor Profile Update Request": {"on": {"ISR": "Approval of Vendor Profile Update Request"}, "meta": {"type": {"start": true}}}, "Approval of Vendor Profile Update Request By Director General (Head of PDE)": {"on": {"NO": "Submission of Vendor Profile Update Request", "YES": "End"}}}, "initial": "Submission of Vendor Profile Update Request"}',
+          { "id": "Profile update Workflow", "states": { "End": { "on": {}, "meta": { "type": "end" } }, "Approval of Vendor Profile Update Request": { "on": { "Adjust": "Submission of Vendor Profile Update Request", "Reject": "End", "Approve": "Approval of Vendor Profile Update Request By Director General (Head of PDE)" }, "meta": { "type": "Approval" } }, "Submission of Vendor Profile Update Request": { "on": { "ISR": "Approval of Vendor Profile Update Request" }, "meta": { "type": { "start": true } } }, "Approval of Vendor Profile Update Request By Director General (Head of PDE)": { "on": { "NO": "Submission of Vendor Profile Update Request", "YES": "End" } } }, "initial": "Submission of Vendor Profile Update Request" },
         version: 1,
         isActive: true,
         organizationId: null,
@@ -197,7 +197,7 @@ export class DataSeederController {
         id: '96d95fdb-7852-4ddc-982f-0e94d23d15d3',
         serviceId: '5f764d17-a165-42ab-879d-358bc03fe5d8',
         workflow:
-          '{"id": "Services Registration", "states": {"End": {"on": {}, "meta": {"type": "end", "apiUrl": "https://dev-bo.megp.peragosystems.com/vendors/api/business-area"}}, "Generate Vendor Registration Certificate": {"on": {"FAIL": "Generate Vendor Registration Certificate", "SUCCESS": "End"}, "meta": {"type": "Certificate"}}, "Approval of New Vendor Registration Request": {"on": {"ADJUST": "Submission of New Vendor Registration Request", "REJECT": "End", "APPROVE": "Approval of Vendor Registration Request By CRO"}, "meta": {"type": "Approval"}}, "Submission of New Vendor Registration Request": {"on": {"ISR": "Approval of New Vendor Registration Request"}, "meta": {"type": {"start": true}}}, "Approval of Vendor Registration Request By CRO": {"on": {"NO": "Approval of New Vendor Registration Request", "YES": "Final Approval of New Vendor Registration by RRM"}, "meta": {"type": "Confirmation"}}, "Final Approval of New Vendor Registration by RRM": {"on": {"NO": "Approval of Vendor Registration Request By CRO", "YES": "Generate Vendor Registration Certificate"}, "meta": {"type": "Confirmation"}}}, "initial": "Submission of New Vendor Registration Request"}',
+          { "id": "Services Registration", "states": { "End": { "on": {}, "meta": { "type": "end", "apiUrl": "https://dev-bo.megp.peragosystems.com/vendors/api/business-area" } }, "Generate Vendor Registration Certificate": { "on": { "FAIL": "Generate Vendor Registration Certificate", "SUCCESS": "End" }, "meta": { "type": "Certificate" } }, "Approval of New Vendor Registration Request": { "on": { "ADJUST": "Submission of New Vendor Registration Request", "REJECT": "End", "APPROVE": "Approval of Vendor Registration Request By CRO" }, "meta": { "type": "Approval" } }, "Submission of New Vendor Registration Request": { "on": { "ISR": "Approval of New Vendor Registration Request" }, "meta": { "type": { "start": true } } }, "Approval of Vendor Registration Request By CRO": { "on": { "NO": "Approval of New Vendor Registration Request", "YES": "Final Approval of New Vendor Registration by RRM" }, "meta": { "type": "Confirmation" } }, "Final Approval of New Vendor Registration by RRM": { "on": { "NO": "Approval of Vendor Registration Request By CRO", "YES": "Generate Vendor Registration Certificate" }, "meta": { "type": "Confirmation" } } }, "initial": "Submission of New Vendor Registration Request" },
         version: 1,
         isActive: true,
         organizationId: null,
@@ -208,7 +208,7 @@ export class DataSeederController {
         id: '745c9643-1f1d-464f-860c-3087bfc1a7c1',
         serviceId: '3f78dced-838d-4757-ade0-4fd0444c142a',
         workflow:
-          '{"id": "Works New Registration  Workflow", "states": {"End": {"on": {}, "meta": {"type": "end"}}, "Approval of Vendor Profile Update Request": {"on": {"Adjust": "Submission of Vendor Profile Update Request", "Reject": "End", "Approve": "Approval of Vendor Profile Update Request By Director General (Head of PDE)"}, "meta": {"type": "Approval"}}, "Submission of Vendor Profile Update Request": {"on": {"ISR": "Approval of Vendor Profile Update Request"}, "meta": {"type": {"start": true}}}, "Approval of Vendor Profile Update Request By Director General (Head of PDE)": {"on": {"NO": "Submission of Vendor Profile Update Request", "YES": "End"}}}, "initial": "Submission of Vendor Profile Update Request"}',
+          { "id": "Works New Registration  Workflow", "states": { "End": { "on": {}, "meta": { "type": "end" } }, "Approval of Vendor Profile Update Request": { "on": { "Adjust": "Submission of Vendor Profile Update Request", "Reject": "End", "Approve": "Approval of Vendor Profile Update Request By Director General (Head of PDE)" }, "meta": { "type": "Approval" } }, "Submission of Vendor Profile Update Request": { "on": { "ISR": "Approval of Vendor Profile Update Request" }, "meta": { "type": { "start": true } } }, "Approval of Vendor Profile Update Request By Director General (Head of PDE)": { "on": { "NO": "Submission of Vendor Profile Update Request", "YES": "End" } } }, "initial": "Submission of Vendor Profile Update Request" },
         version: 1,
         isActive: true,
         organizationId: null,
@@ -219,7 +219,7 @@ export class DataSeederController {
 
         id: 'b97fb7aa-2442-4e5d-8b42-42bd6ef41138',
         serviceId: '76be510e-033e-415b-9e3e-8f9795c01756',
-        workflow: '{}',
+        workflow: {},
         version: 0,
         isActive: true,
         organizationId: null,
@@ -231,7 +231,7 @@ export class DataSeederController {
         id: 'd822c2d4-1023-4328-a172-adfcd78a30d4',
         serviceId: 'bb6934e1-9706-1e1b-c02f-b35c3e6153a4',
         workflow:
-          '{"id": "Goods Registration", "states": {"End": {"on": {}, "meta": {"type": "end", "apiUrl": "https://dev-bo.megp.peragosystems.com/vendors/api/business-area"}}, "Generate Vendor Registration Certificate": {"on": {"FAIL": "Generate Vendor Registration Certificate", "SUCCESS": "End"}, "meta": {"type": "Certificate"}}, "Approval of New Vendor Registration Request": {"on": {"ADJUST": "Submission of New Vendor Registration Request", "REJECT": "End", "APPROVE": "Approval of Vendor Registration Request By CRO"}, "meta": {"type": "Approval"}}, "Submission of New Vendor Registration Request": {"on": {"ISR": "Approval of New Vendor Registration Request"}, "meta": {"type": {"start": true}}}, "Approval of Vendor Registration Request By CRO": {"on": {"NO": "Approval of New Vendor Registration Request", "YES": "Final Approval of New Vendor Registration by RRM"}, "meta": {"type": "Confirmation"}}, "Final Approval of New Vendor Registration by RRM": {"on": {"NO": "Approval of Vendor Registration Request By CRO", "YES": "Generate Vendor Registration Certificate"}, "meta": {"type": "Confirmation"}}}, "initial": "Submission of New Vendor Registration Request"}',
+          { "id": "Goods Registration", "states": { "End": { "on": {}, "meta": { "type": "end", "apiUrl": "https://dev-bo.megp.peragosystems.com/vendors/api/business-area" } }, "Generate Vendor Registration Certificate": { "on": { "FAIL": "Generate Vendor Registration Certificate", "SUCCESS": "End" }, "meta": { "type": "Certificate" } }, "Approval of New Vendor Registration Request": { "on": { "ADJUST": "Submission of New Vendor Registration Request", "REJECT": "End", "APPROVE": "Approval of Vendor Registration Request By CRO" }, "meta": { "type": "Approval" } }, "Submission of New Vendor Registration Request": { "on": { "ISR": "Approval of New Vendor Registration Request" }, "meta": { "type": { "start": true } } }, "Approval of Vendor Registration Request By CRO": { "on": { "NO": "Approval of New Vendor Registration Request", "YES": "Final Approval of New Vendor Registration by RRM" }, "meta": { "type": "Confirmation" } }, "Final Approval of New Vendor Registration by RRM": { "on": { "NO": "Approval of Vendor Registration Request By CRO", "YES": "Generate Vendor Registration Certificate" }, "meta": { "type": "Confirmation" } } }, "initial": "Submission of New Vendor Registration Request" },
         version: 0,
         isActive: true,
         organizationId: null,
@@ -242,7 +242,7 @@ export class DataSeederController {
 
         id: '543d59c0-3b13-401f-bb78-058de7f65a11',
         serviceId: '7fcb88b0-86e3-4f11-950a-f24f09323d0d',
-        workflow: '{}',
+        workflow: {},
         version: 0,
         isActive: true,
         organizationId: null,
@@ -253,7 +253,7 @@ export class DataSeederController {
 
         id: 'cd17ba61-a510-4fed-9e50-a3f10b6570d3',
         serviceId: '62e96410-e869-4231-b693-f7e22d498b65',
-        workflow: '{}',
+        workflow: {},
         version: 0,
         isActive: true,
         organizationId: null,
@@ -264,7 +264,7 @@ export class DataSeederController {
 
         id: 'abe4ba2c-a260-4bbb-bc8d-f101c33b6dc1',
         serviceId: '897e5182-927b-4f1d-bd25-10fb99a13d37',
-        workflow: '{}',
+        workflow: {},
         version: 0,
         isActive: true,
         organizationId: null,
@@ -275,7 +275,7 @@ export class DataSeederController {
 
         id: '11a07c2b-2b12-44bc-894e-a1aede0194c4',
         serviceId: '29bbe5d9-8d44-4ffa-aa2f-4d12f4d7018b',
-        workflow: '{}',
+        workflow: {},
         version: 0,
         isActive: true,
         organizationId: null,
@@ -286,7 +286,7 @@ export class DataSeederController {
 
         id: '950e28cf-ad82-4159-8b2c-f147bbe3685f',
         serviceId: 'cf7ef60f-01dc-4228-b203-89e5d3a3c9aa',
-        workflow: '{}',
+        workflow: {},
         version: 0,
         isActive: true,
         organizationId: null,
@@ -297,7 +297,7 @@ export class DataSeederController {
 
         id: 'd324da2a-d68a-44e1-866c-bf34151e91cc',
         serviceId: 'be80a5d2-6de5-4310-bd3a-b67258535bbd',
-        workflow: '{}',
+        workflow: {},
         version: 0,
         isActive: true,
         organizationId: null,
@@ -308,7 +308,7 @@ export class DataSeederController {
 
         id: '329201c3-3218-4e6c-8478-39bee76a43a6',
         serviceId: '26ff8e51-0f68-9c28-2ea4-a32a5e1f184f',
-        workflow: '{}',
+        workflow: {},
         version: 0,
         isActive: true,
         organizationId: null,
@@ -319,7 +319,7 @@ export class DataSeederController {
 
         id: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b40',
         serviceId: 'a63fb5b9-9896-8c73-4fd0-882d4e9a6e9a',
-        workflow: '{}',
+        workflow: {},
         version: 0,
         isActive: true,
         organizationId: null,
@@ -330,7 +330,7 @@ export class DataSeederController {
 
         id: '7539e439-4e3f-4f9c-9151-b21ca7a808fc',
         serviceId: '1a885fbb-cde1-4349-a9cf-cddcecb59e8d',
-        workflow: '{}',
+        workflow: {},
         version: 0,
         isActive: true,
         organizationId: null,
@@ -341,7 +341,7 @@ export class DataSeederController {
 
         id: 'c9e26805-33f4-4021-9554-0578df019386',
         serviceId: 'f40139f8-2861-4c95-a491-08033b13daf4',
-        workflow: '{}',
+        workflow: {},
         version: 0,
         isActive: true,
         organizationId: null,
@@ -352,7 +352,7 @@ export class DataSeederController {
 
         id: 'a5350ef3-a8ec-4f98-8a4a-b3c87765234e',
         serviceId: 'be80a5d2-6de5-4310-bd3a-b67258535bbd',
-        workflow: '{}',
+        workflow: {},
         version: 0,
         isActive: true,
         organizationId: null,
@@ -363,7 +363,7 @@ export class DataSeederController {
 
         id: '51fe1c97-c1d2-4dbe-9709-6f23f29ba0ba',
         serviceId: '26ff8e51-0f68-9c28-2ea4-a32a5e1f184f',
-        workflow: '{}',
+        workflow: {},
         version: 0,
         isActive: true,
         organizationId: null,
@@ -373,7 +373,7 @@ export class DataSeederController {
         tenantId: 0,
         id: '0b29c2f8-a0e4-4fa2-9a92-0ada7aa0ba49',
         serviceId: 'a63fb5b9-9896-8c73-4fd0-882d4e9a6e9a',
-        workflow: '{}',
+        workflow: {},
         version: 0,
         isActive: true,
         organizationId: null,
@@ -384,7 +384,7 @@ export class DataSeederController {
 
         id: '0a353ad3-229a-4329-a697-fac97d94b30c',
         serviceId: '1a885fbb-cde1-4349-a9cf-cddcecb59e8d',
-        workflow: '{}',
+        workflow: {},
         version: 0,
         isActive: true,
         organizationId: null,
@@ -394,7 +394,7 @@ export class DataSeederController {
         tenantId: 0,
         id: 'bfdd841a-9152-4c39-a9f2-25b7dc7c0c4c',
         serviceId: 'f40139f8-2861-4c95-a491-08033b13daf4',
-        workflow: '{}',
+        workflow: {},
         version: 0,
         isActive: true,
         organizationId: null,
@@ -450,7 +450,7 @@ export class DataSeederController {
         handlerType: 'Assignee',
         taskType: 'Approval',
         checkList:
-          '[{"id": "96d95fdb-7852-4ddc-982f-0e94d23d15d3", "description": "All the required information and related documents fullfilled", "isMandatory": "true"}]',
+          [{ "id": "96d95fdb-7852-4ddc-982f-0e94d23d15d3", "description": "All the required information and related documents fullfilled", "isMandatory": "true" }],
         orderBy: 3,
       },
       {
@@ -473,7 +473,7 @@ export class DataSeederController {
         handlerType: 'Assignee',
         taskType: 'Confirmation',
         checkList:
-          '[{"id": "96d95fdb-7852-4ddc-982f-0e94d23d15d3", "description": "The paid amount is equal to the invoive", "isMandatory": "true"}, {"id": "96d95fdb-7852-4ddc-982f-0e94d23d15d4", "description": "The reciept is valid", "isMandatory": "true"}]',
+          [{ "id": "96d95fdb-7852-4ddc-982f-0e94d23d15d3", "description": "The paid amount is equal to the invoive", "isMandatory": "true" }, { "id": "96d95fdb-7852-4ddc-982f-0e94d23d15d4", "description": "The reciept is valid", "isMandatory": "true" }],
         orderBy: 1,
       },
       {
@@ -485,7 +485,7 @@ export class DataSeederController {
         handlerType: 'Assignee',
         taskType: 'Confirmation',
         checkList:
-          '[{"id": "96d95fdb-7852-4ddc-982f-0e94d23d15d3", "description": "All the required information and related documents fullfilled", "isMandatory": "true"}]',
+          [{ "id": "96d95fdb-7852-4ddc-982f-0e94d23d15d3", "description": "All the required information and related documents fullfilled", "isMandatory": "true" }],
         orderBy: 5,
       },
       {
@@ -497,7 +497,7 @@ export class DataSeederController {
         handlerType: 'Assignee',
         taskType: 'Approval',
         checkList:
-          '[{"id": "96d95fdb-7852-4ddc-982f-0e94d23d15d3", "description": "All the required information and related documents fullfilled", "isMandatory": "true"}]',
+          [{ "id": "96d95fdb-7852-4ddc-982f-0e94d23d15d3", "description": "All the required information and related documents fullfilled", "isMandatory": "true" }],
         orderBy: 2,
       },
       {
@@ -509,7 +509,7 @@ export class DataSeederController {
         handlerType: 'Assignee',
         taskType: 'Confirmation',
         checkList:
-          '[{"id": "96d95fdb-7852-4ddc-982f-0e94d23d15d3", "description": "The paid amount is equal to the invoive", "isMandatory": "true"}, {"id": "96d95fdb-7852-4ddc-982f-0e94d23d15d4", "description": "The reciept is valid", "isMandatory": "true"}]',
+          [{ "id": "96d95fdb-7852-4ddc-982f-0e94d23d15d3", "description": "The paid amount is equal to the invoive", "isMandatory": "true" }, { "id": "96d95fdb-7852-4ddc-982f-0e94d23d15d4", "description": "The reciept is valid", "isMandatory": "true" }],
         orderBy: 1,
       },
       {
@@ -521,7 +521,7 @@ export class DataSeederController {
         handlerType: 'Assignee',
         taskType: 'Confirmation',
         checkList:
-          '[{"id": "96d95fdb-7852-4ddc-982f-0e94d23d15d3", "description": "All the required information and related documents fullfilled", "isMandatory": "true"}]',
+          [{ "id": "96d95fdb-7852-4ddc-982f-0e94d23d15d3", "description": "All the required information and related documents fullfilled", "isMandatory": "true" }],
         orderBy: 3,
       },
       {
@@ -533,7 +533,7 @@ export class DataSeederController {
         handlerType: 'Requestor',
         taskType: 'ISR',
         checkList:
-          '[{"id": "96d95fdb-7852-4ddc-982f-0e94d23d15d3", "description": "The paid amount is equal to the invoive", "isMandatory": "true"}, {"id": "96d95fdb-7852-4ddc-982f-0e94d23d15d4", "description": "The reciept is valid", "isMandatory": "true"}]',
+          [{ "id": "96d95fdb-7852-4ddc-982f-0e94d23d15d3", "description": "The paid amount is equal to the invoive", "isMandatory": "true" }, { "id": "96d95fdb-7852-4ddc-982f-0e94d23d15d4", "description": "The reciept is valid", "isMandatory": "true" }],
         orderBy: 1,
       },
       {
@@ -545,7 +545,7 @@ export class DataSeederController {
         handlerType: 'Assignee',
         taskType: 'Confirmation',
         checkList:
-          '[{"id": "96d95fdb-7852-4ddc-982f-0e94d23d15d3", "description": "All the required information and related documents fullfilled", "isMandatory": "true"}]',
+          [{ "id": "96d95fdb-7852-4ddc-982f-0e94d23d15d3", "description": "All the required information and related documents fullfilled", "isMandatory": "true" }],
         orderBy: 4,
       },
       {
@@ -568,7 +568,7 @@ export class DataSeederController {
         handlerType: 'Assignee',
         taskType: 'Confirmation',
         checkList:
-          '[{"id": "96d95fdb-7852-4ddc-982f-0e94d23d15d3", "description": "All the required information and related documents fullfilled", "isMandatory": "true"}]',
+          [{ "id": "96d95fdb-7852-4ddc-982f-0e94d23d15d3", "description": "All the required information and related documents fullfilled", "isMandatory": "true" }],
         orderBy: 7,
       },
     ];

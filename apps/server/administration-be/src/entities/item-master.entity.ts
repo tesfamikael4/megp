@@ -27,6 +27,7 @@ export class ItemMaster extends Audit {
   commodityName: string;
   @ManyToOne(() => ItemCategory, (entity) => entity.id)
   @JoinColumn({ name: 'itemSubcategoryId' })
+  @Column()
   itemSubcategoryId: string;
 
   itemSubcategory: ItemCategory;

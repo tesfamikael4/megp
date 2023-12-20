@@ -6,6 +6,7 @@ import {
   OneToMany,
   ManyToOne,
   JoinColumn,
+  BeforeInsert,
 } from 'typeorm';
 
 import { PostBudgetPlan } from './post-budget-plan.entity';
@@ -74,7 +75,7 @@ export class PostBudgetPlanActivity {
   @Column()
   totalEstimatedAmount: number;
 
-  @Column()
+  @Column({ default: 0 })
   calculatedAmount: number;
 
   @Column()
@@ -101,12 +102,18 @@ export class PostBudgetPlanActivity {
   @Column({ type: 'json' })
   multiYearBudget: JSON;
 
-  @Column({ default: 'Others' })
-  preference: string;
+  @Column({ default: ['Others'], type: 'jsonb' })
+  preference: string[];
 
   @Column({ default: 'Online' })
   procurementProcess: string;
 
   @Column({ nullable: true })
   remark: string;
+
+  @BeforeInsert()
+  generateRandomNumber(): void {
+    const randomNum = Math.floor(10000 + Math.random() * 90000); // Generates a random 5-digit number
+    this.procurementReference = 'REF-' + randomNum.toString();
+  }
 }

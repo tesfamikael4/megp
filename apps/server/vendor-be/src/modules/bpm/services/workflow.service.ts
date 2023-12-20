@@ -63,10 +63,12 @@ export class WorkflowService {
     private readonly commonService: HandlingCommonService,
     private readonly taskService: TaskService,
     private readonly emailSerice: EmailService,
-    @Inject(forwardRef(() => VendorRegistrationsService)) private readonly vendorRegService: VendorRegistrationsService
+    @Inject(forwardRef(() => VendorRegistrationsService))
+    private readonly vendorRegService: VendorRegistrationsService,
   ) {
-    this.VENDOR_API_KEY = process.env.VENDOR_API_ACCESS_KEY ?? 'dGtjFGcLjKU6pXRYx1tOnqGeycJtxJoavgwqYgDd';
-
+    this.VENDOR_API_KEY =
+      process.env.VENDOR_API_ACCESS_KEY ??
+      'dGtjFGcLjKU6pXRYx1tOnqGeycJtxJoavgwqYgDd';
   }
   async intiateWorkflowInstance(
     dto: CreateWorkflowInstanceDto,
@@ -77,14 +79,14 @@ export class WorkflowService {
     instanceEntity.userId = user?.id;
     instanceEntity.user = user;
     const serviceBp = await this.bpService.findWorkflowByServiceAndBP(
-      dto.serviceId,
-      dto.bpId,
+      dto.serviceId, dto.bpId
     );
     if (!serviceBp || !dto.requestorId)
       throw new NotFoundException('Business Process Not Found');
     instanceEntity.applicationNumber =
       await this.commonService.generateApplicationNumber('PPDA', 'GNR');
-    const wfinstance = await this.workflowInstanceRepository.save(instanceEntity);
+    const wfinstance =
+      await this.workflowInstanceRepository.save(instanceEntity);
     const machine = createMachine({
       predictableActionArguments: true,
       ...serviceBp.workflow,
@@ -100,9 +102,8 @@ export class WorkflowService {
 
     taskHandler.data = { ...dto.data };
     try {
-      const insertedTaskHandler = await this.handlerRepository.save(
-        taskHandler,
-      );
+      const insertedTaskHandler =
+        await this.handlerRepository.save(taskHandler);
       task.taskHandlers = [insertedTaskHandler];
       response['task'] = task;
     } catch (error) {
@@ -127,13 +128,15 @@ export class WorkflowService {
       throw new NotFoundException('Workflow Instance not initiated Properly');
     const currentTaskHandler = workflowInstance.taskHandler;
     const currentTaskHandlerCopy = { ...workflowInstance.taskHandler };
-    const curruntTask = await this.taskService.findOne(currentTaskHandler.taskId);
+    const curruntTask = await this.taskService.findOne(
+      currentTaskHandler.taskId,
+    );
     const bp = workflowInstance.businessProcess;
     const bpWorkflow = Object.assign({}, bp.workflow);
     bpWorkflow['initial'] = currentTaskHandler.currentState;
     const machine = createMachine({
       predictableActionArguments: true,
-      ...bpWorkflow
+      ...bpWorkflow,
     });
     const curruntState = currentTaskHandler.currentState;
     const nextStepState = machine.transition(curruntState, nextCommand.action);
@@ -142,7 +145,6 @@ export class WorkflowService {
       currentTaskHandler.currentState = nextStepState.value.toString();
       const stateMetaData = this.getStateMetaData(nextStepState.meta);
       console.log('stateMetaData', stateMetaData);
-
       if (stateMetaData['type'] == 'end') {
         workflowInstance.status = WorkflowInstanceEnum.Completed;
         workflowInstance.businessStatus = BusinessStatusEnum.active;
@@ -156,18 +158,20 @@ export class WorkflowService {
         const response = await this.notifyCompletion(
           wfInstance,
           apiUrl,
-          nextCommand
+          nextCommand,
         );
         if (response) {
           await this.addTaskTracker(currentTaskHandler, nextCommand, user);
           await this.handlerRepository.delete(currentTaskHandler.id);
           workflowInstance.taskHandler = null;
         } else {
-          throw new Error("Unable to update vender status")
+          throw new Error('Unable to update vender status');
         }
       } else {
         const task = await this.taskService.getTaskByNameAndBP(
-          workflowInstance.bpId, nextStepState.value.toString());
+          workflowInstance.bpId,
+          nextStepState.value.toString(),
+        );
         if (!task) throw new NotFoundException('Task not found');
         stateMetaData['type'] = curruntTask.taskType;
         taskInfo.handlerType = task.handlerType;
@@ -310,7 +314,7 @@ export class WorkflowService {
         }
         break;
       case TaskTypes.EMAIl:
-        return this.sendEmail(wfi, user['token']);
+        return this.sendEmail(wfi);
       case TaskTypes.SMS:
         return await this.sendSMS(wfi);
       case TaskTypes.INVOICE:
@@ -358,15 +362,14 @@ export class WorkflowService {
   async addTaskTracker(
     currentTaskHandlerCopy: TaskHandlerEntity,
     nextCommand: GotoNextStateDto,
-    userInfo: any,
+    user: any,
   ): Promise<boolean> {
-    const user = { ...userInfo };
-    user.token = null;
+
     const entity = new TaskTrackerEntity();
     entity.taskId = currentTaskHandlerCopy.taskId;
     entity.instanceId = nextCommand.instanceId;
     entity.data = nextCommand.data;
-    entity.handlerUserId = userInfo.userId;
+    entity.handlerUserId = user.id;
     entity.action = nextCommand.action;
     entity.previousHandlerId = currentTaskHandlerCopy.previousHandlerId;
     entity.handlerUser = user;
@@ -390,8 +393,11 @@ export class WorkflowService {
   ) {
     const commandLower = command.action.toLowerCase();
     const status =
-      (commandLower == 'approve' || commandLower == 'yes' ||
-        commandLower == 'success') ? 'Approve' : 'Reject';
+      commandLower == 'approve' ||
+        commandLower == 'yes' ||
+        commandLower == 'success'
+        ? 'Approve'
+        : 'Reject';
     const payload = {
       isrVendorId: wfi.requestorId,
       instanceId: wfi.id,
@@ -399,11 +405,10 @@ export class WorkflowService {
       status: status,
       userId: wfi.user.id,
       remark: command.remark,
-      category: ""
+      category: '',
     };
-    console.log('command-->', command);
-    console.log('payload', payload);
-    const result = this.vendorRegService.updateVendor(payload);
+    const result = await this.vendorRegService.updateVendor(payload);
+
     if (result) {
       return true;
     } else {
@@ -434,11 +439,7 @@ export class WorkflowService {
         }
         */
   }
-  async notify(
-    wfi: WorkflowInstanceEntity,
-    url: string,
-    metaDate: any
-  ) {
+  async notify(wfi: WorkflowInstanceEntity, url: string, metaDate: any) {
     // const vendor_url = process.env.VENDOR_API ?? '/vendors/api/';
     // url = vendor_url + '/vendor-registrations/adjust-vendor-services';
     // console.log("vendor_url", vendor_url);
@@ -450,20 +451,19 @@ export class WorkflowService {
       serviceId: wfi.serviceId,
       remark: metaDate.remark,
       userId: wfi.userId,
-      category: ""
+      category: '',
     };
     console.log('payload ', payload);
     const headers = {
       'Content-Type': 'application/json',
       'x-api-key': this.VENDOR_API_KEY,
-    }
+    };
     // headers: {
     //   'Content-Type': 'application/json',
     //     Authorization: `Bearer ${accessToken}`,
     //     }
     //
     const result = await this.vendorRegService.adjustVendor(payload);
-    console.log("result---", result);
     if (result) {
       return true;
     } else {
@@ -488,7 +488,9 @@ export class WorkflowService {
 
   async sendEmail(wfi: any, accessToken?: string) {
     const vendor_url = process.env.VENDOR_API ?? '/vendors/api/';
-    const url = vendor_url + '/vendor-registrations/get-isr-vendor-by-id/' +
+    const url =
+      vendor_url +
+      '/vendor-registrations/get-isr-vendor-by-id/' +
       wfi.requestorId;
     console.log(url);
     try {
@@ -549,9 +551,13 @@ export class WorkflowService {
     const d = new DataResponseFormat<WorkflowInstanceResponse>();
     const [result, total] = await dataQuery.getManyAndCount();
     d.items = result.map((entity) =>
-      WorkflowInstanceResponse.toResponse(entity));
+      WorkflowInstanceResponse.toResponse(entity),
+    );
     d.total = total;
     return d;
+  }
+  getInstance(id: string) {
+    return this.workflowInstanceRepository.findOne({ where: { id: id } });
   }
 
   getStateMetaData(meta) {

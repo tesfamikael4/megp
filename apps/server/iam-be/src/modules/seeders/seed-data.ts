@@ -1,9 +1,33 @@
 export const applications = [
   {
+    id: 'bd787e8d-6c8a-48e0-83ac-9b0e9998a476',
+    name: 'Administration',
+    description: 'Administration',
+    key: 'administration',
+  },
+  {
     id: 'b9e0b1b1-0244-463b-b0dd-307b60360bb9',
     name: 'Registration',
     description: 'registration',
     key: 'registration',
+  },
+  {
+    id: '0d77f313-e4e1-4f95-8380-5365f0b6e90f',
+    name: 'Planning',
+    description: 'Planning',
+    key: 'planning',
+  },
+  {
+    id: 'd305e6e0-d36d-44fe-ab42-271dbd547e7b',
+    name: 'Tendering',
+    description: 'Tendering',
+    key: 'tendering',
+  },
+  {
+    id: '4b22ff46-e6ee-4ea0-adbd-86df7430c06e',
+    name: 'Vendor',
+    description: 'Vendor',
+    key: 'vendor',
   },
 ];
 
@@ -63,6 +87,34 @@ export const permissions = [
     description: 'Group',
     key: 'group',
     applicationId: 'b9e0b1b1-0244-463b-b0dd-307b60360bb9',
+  },
+  {
+    id: '5a7f9c73-87ed-42bf-a419-6c3de58d8764',
+    name: 'Administration',
+    description: 'Administration',
+    key: 'administration',
+    applicationId: 'bd787e8d-6c8a-48e0-83ac-9b0e9998a476',
+  },
+  {
+    id: '1185317e-c60e-470d-818c-a7ca8b6199f0',
+    name: 'Planning',
+    description: 'Planning',
+    key: 'planning',
+    applicationId: '0d77f313-e4e1-4f95-8380-5365f0b6e90f',
+  },
+  {
+    id: '0c3fc2ab-a5d1-4818-9aa8-0ea77757be31',
+    name: 'Tendering',
+    description: 'Tendering',
+    key: 'tendering',
+    applicationId: 'd305e6e0-d36d-44fe-ab42-271dbd547e7b',
+  },
+  {
+    id: '763a57ce-cba2-47e3-ac5c-16ae6c49978a',
+    name: 'Vendor',
+    description: 'Vendor',
+    key: 'vendor',
+    applicationId: '4b22ff46-e6ee-4ea0-adbd-86df7430c06e',
   },
 ];
 
@@ -158,3 +210,32 @@ export const user = {
     },
   ],
 };
+
+export const defaultOrganizationRoles = [
+  {
+    name: 'Procuring Unit Head',
+    description: 'Procuring Unit Head',
+    isSystemRole: true,
+    rolePermissions: [
+      {
+        permissionId: '5a7f9c73-87ed-42bf-a419-6c3de58d8764',
+      },
+      {
+        permissionId: '1185317e-c60e-470d-818c-a7ca8b6199f0',
+      },
+    ],
+  },
+  {
+    name: 'Head of Procuring Entity',
+    description: 'Head of Procuring Entity',
+    isSystemRole: true,
+    rolePermissions: [
+      {
+        permissionId: '0c3fc2ab-a5d1-4818-9aa8-0ea77757be31',
+      },
+      {
+        permissionId: '763a57ce-cba2-47e3-ac5c-16ae6c49978a',
+      },
+    ],
+  },
+];

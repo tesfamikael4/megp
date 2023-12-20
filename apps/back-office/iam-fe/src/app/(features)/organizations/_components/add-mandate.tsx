@@ -8,10 +8,11 @@ import {
   useLazySecondRelationQuery,
 } from '../_api/organization-mandate.api';
 import { useParams } from 'next/navigation';
-import { logger, notify } from '@megp/core-fe';
+import { notify } from '@megp/core-fe';
 
 const AddEntityModal = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(true);
 
   const [currentAssigned, setCurrentAssigned] = useState<any[]>([]);
   const { id } = useParams();
@@ -86,11 +87,13 @@ const AddEntityModal = () => {
   };
 
   useEffect(() => {
-    trigger({
-      id: id?.toString(),
-      collectionQuery: undefined,
-    });
-  }, [id, trigger]);
+    if (!isCollapsed) {
+      trigger({
+        id: id?.toString(),
+        collectionQuery: undefined,
+      });
+    }
+  }, [id, isCollapsed, trigger]);
 
   useEffect(() => {
     if (isSuccess) {
@@ -103,15 +106,15 @@ const AddEntityModal = () => {
   }, [isSuccess, organizationMandates]);
 
   const onRequestChange = (request: CollectionQuery) => {
-    logger.log(request);
-
-    triggerMandate(request);
+    isModalOpen && triggerMandate(request);
   };
+
   return (
     <>
       <Relation
         config={relationConfig}
         data={currentAssigned}
+        setIsCollapsed={setIsCollapsed}
         isSaving={isSaving}
       />
       <Modal

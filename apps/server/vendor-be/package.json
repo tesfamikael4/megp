@@ -23,8 +23,8 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "typeorm": "ts-node ./node_modules/typeorm/cli",
     "migration:run": "npm run typeorm migration:run -- -d ./src/shared/typeorm/typeorm-config-helper.ts",
-    "migration:generate": "npm run typeorm -- -d ./src/shared/typeorm/typeorm-config-helper.ts migration:generate ./src/migrations/initial",
-    "migration:create": "npm run typeorm -- migration:create ./src/migrations/initial",
+    "migration:generate": "npm run typeorm -- -d ./src/shared/typeorm/typeorm-config-helper.ts migration:generate ./src/migrations/%npm_config_name%",
+    "migration:create": "npm run typeorm -- migration:create ./src/migrations/%npm_config_name%",
     "migration:revert": "npm run typeorm -- -d ../src/shared/typeorm/typeorm-config-helper.ts migration:revert"
   },
   "dependencies": {
@@ -71,6 +71,7 @@
     "tus-js-client": "^3.1.1",
     "tus-node-server": "^0.9.0",
     "typeorm": "^0.3.14",
+    "typeorm-extension": "^3.2.0",
     "xstate": "^4.38.2"
   },
   "devDependencies": {

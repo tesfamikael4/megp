@@ -16,6 +16,7 @@ import {
   IconDeviceFloppy,
   IconDotsVertical,
   IconEye,
+  IconFileImport,
   IconPlus,
   IconTrash,
 } from '@tabler/icons-react';
@@ -33,9 +34,13 @@ import {
 import { modals } from '@mantine/modals';
 import { DetailItem } from './deatil-item';
 import ItemSelector from '@/app/(features)/_components/item-selector';
+import DataImport from './data-import';
 
 export function Items() {
   const [opened, { open, close }] = useDisclosure(false);
+  const [openedImportModal, { close: closeImportModal }] = useDisclosure(false);
+  //   { open: openImportModal, close: closeImportModal },
+  // ] = useDisclosure(false);
   const [data, setData] = useState<any[]>([]);
   const [newItems, setNewItems] = useState<any[]>([]);
   const [getActivity, { data: activity }] = useLazyReadQuery();
@@ -59,7 +64,7 @@ export function Items() {
       },
       {
         id: 'unitPrice',
-        header: 'Unit Price',
+        header: () => <div className="text-right">Unit Price</div>,
         accessorKey: 'unitPrice',
         cell: ({ getValue, row, column }) => (
           <EstimatedPrice getValue={getValue} row={row} column={column} />
@@ -415,7 +420,10 @@ export function Items() {
 
   return (
     <Box>
-      <Group justify="end" className="my-2">
+      <Group justify="end" className="my-2" gap="md">
+        {/* <Button onClick={openImportModal}>
+          <IconFileImport size={18} /> Import
+        </Button> */}
         <Button onClick={open}>
           <IconPlus size={18} /> Add
         </Button>
@@ -443,6 +451,20 @@ export function Items() {
         </>
       )}
       <ItemSelector onDone={handelAddItem} opened={opened} close={close} />
+      <Modal
+        opened={openedImportModal}
+        onClose={closeImportModal}
+        title="Import Items"
+      >
+        <DataImport onDone={handelAddItem} />
+        <Button
+          className="mt-4 ml-auto"
+          onClick={closeImportModal}
+          // loading={isLoading}
+        >
+          Done
+        </Button>
+      </Modal>
     </Box>
   );
 }

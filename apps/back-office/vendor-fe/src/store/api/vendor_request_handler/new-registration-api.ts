@@ -29,6 +29,7 @@ export const newRegistrationSlice = createApi({
         url: `api/application-execution/get-currunt-tasks/${payload.serviceKey}`,
         method: 'GET',
       }),
+      providesTags: ['Tasks'],
     }),
     getVendor: builder.query<any, { id: string }>({
       query: (payload) => ({
@@ -55,6 +56,15 @@ export const newRegistrationSlice = createApi({
         body: data,
       }),
     }),
+    generateCertificate: builder.mutation<
+      any,
+      { vendorId: string; instanceId: string }
+    >({
+      query: (payload) => ({
+        url: `api/certificates/generate-certeficate/${payload.vendorId}/${payload.instanceId}`,
+        method: 'GET',
+      }),
+    }),
   }),
 });
 
@@ -67,4 +77,5 @@ export const {
   useUnpickTaskMutation,
   useGetVendorQuery,
   useLazyGetVendorQuery,
+  useGenerateCertificateMutation,
 } = newRegistrationSlice;

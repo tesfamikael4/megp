@@ -7,7 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, In, IsNull, Not, Repository } from 'typeorm';
 import { DataResponseFormat } from 'src/shared/api-data';
 import { CollectionQuery, QueryConstructor } from 'src/shared/collection-query';
-import { InvoiceResponseDto } from 'src/modules/vendor-registration/dto/invoice.dto';
+
 import { InvoiceEntity } from 'src/entities/invoice.entity';
 import {
   AssignmentEnum,
@@ -18,7 +18,7 @@ import {
 } from '../dto/workflow-instance.enum';
 import { FileResponseDto } from 'src/modules/vendor-registration/dto/file.dto';
 import { ActiveVendorsResponse } from '../dto/active-vendor-response';
-import puppeteer from 'puppeteer';
+
 import { TaskTrackerEntity } from 'src/entities/task-tracker.entity';
 import { TaskHandlerEntity } from 'src/entities/task-handler.entity';
 import { WorkflowInstanceEntity } from 'src/entities/workflow-instance.entity';
@@ -198,6 +198,7 @@ export class ApplicationExcutionService {
       where: {
         //status: In([WorkflowInstanceEnum.Submitted, WorkflowInstanceEnum.Inprogress,]),
         id: instanceId,
+        taskHandler: { id: Not(IsNull()) }
       },
       order: {
         taskTrackers: { executedAt: 'DESC' },
@@ -240,30 +241,7 @@ export class ApplicationExcutionService {
     return response;
   }
 
-  async activeVendors(
-    query: CollectionQuery,
-  ): Promise<DataResponseFormat<ActiveVendorsResponse>> {
-    const today = new Date();
-    const [result, total] = await this.wiRepository.findAndCount({
-      relations: {
-        isrVendor: true,
-        price: true,
-      },
-      where: {
-        status: WorkflowInstanceEnum.Completed,
-        businessStatus: BusinessStatusEnum.active,
-        //  expireDate: MoreThan(today),
-      },
-      skip: query.skip | 0,
-      take: query.take | 20,
-    });
-    const response = new DataResponseFormat<ActiveVendorsResponse>();
-    response.items = result.map((item) =>
-      ActiveVendorsResponse.toResponse(item),
-    );
-    response.total = total;
-    return response;
-  }
+
 
   async getMyBusinessArea(userId: string): Promise<ActiveVendorsResponse[]> {
     const result = await this.wiRepository.find({
@@ -273,8 +251,6 @@ export class ApplicationExcutionService {
       },
       where: {
         status: WorkflowInstanceEnum.Completed,
-        // businessStatus: BusinessStatusEnum.active,
-        // expireDate: MoreThan(today),
         isrVendor: { userId: userId, status: 'Approved' },
       },
     });

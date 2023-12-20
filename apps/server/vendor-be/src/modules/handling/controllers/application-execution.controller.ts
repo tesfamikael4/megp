@@ -14,10 +14,10 @@ import {
   ApiBearerAuth,
   ApiExtraModels,
   ApiOkResponse,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 import { ApiPaginatedResponse, DataResponseFormat } from 'src/shared/api-data';
-import { CollectionQuery } from 'src/shared/collection-query';
 import { InvoiceResponseDto } from 'src/modules/vendor-registration/dto/invoice.dto';
 import { ApplicationExcutionService } from '../services/application-execution.service';
 import { ActiveVendorsResponse } from '../dto/active-vendor-response';
@@ -33,6 +33,9 @@ import { UpdateTaskHandlerDto } from 'src/modules/bpm/dto/task-handler.dto';
 import { ActivityResponseDto } from 'src/modules/bpm/dto/activities.dto';
 import { InvoiceService } from 'src/modules/vendor-registration/services/invoice.service';
 import { WorkflowInstanceEntity } from 'src/entities';
+import { VendorRegistrationsService } from 'src/modules/vendor-registration/services/vendor-registration.service';
+import { VendorInitiationResponseDto } from 'src/modules/vendor-registration/dto/vendor-initiation.dto';
+import { decodeCollectionQuery } from 'src/shared/collection-query/query-mapper';
 @ApiBearerAuth()
 @Controller('application-execution')
 @ApiTags('Application Excution')
@@ -43,46 +46,31 @@ export class ApplicationExcutionController {
     private readonly workflowService: WorkflowService,
     private readonly bpService: BusinessProcessService,
     private readonly invoiceService: InvoiceService,
+    private readonly vendorService: VendorRegistrationsService,
   ) { }
   @UseGuards(JwtGuard)
   @Get('email')
   async email(@Req() request: Request, @CurrentUser() user: any) {
-    const authToken = request.headers['authorization'].split(' ')[1];
-    user['authToken'] = authToken;
-    console.log('@CurrentUser()', user);
-    return await this.workflowService.sendEmail(
-      { requestorId: '6b31bfed-c359-1d2a-486d-585a3e4d4305' },
-      authToken,
-    );
+    return await this.workflowService.sendEmail({
+      requestorId: '6b31bfed-c359-1d2a-486d-585a3e4d4305',
+    });
   }
-
-
   @UseGuards(JwtGuard)
   @Post('notify')
-  async notify(
-    @Body() test: any,
-    @CurrentUser() user: any,
-  ) {
+  async notify(@Body() test: any, @CurrentUser() user: any) {
     const wfi = new WorkflowInstanceEntity();
     wfi.id = test.wfi.id;
     wfi.serviceId = test.wfi.serviceId;
     wfi.requestorId = test.wfi.requestorId;
     console.log(wfi);
-    await this.workflowService.notify(
-      wfi,
-      test.metaData.url,
-      test.metaData
-    );
+    await this.workflowService.notify(wfi, test.metaData.url, test.metaData);
   }
 
   @UseGuards(JwtGuard)
   @Post('intiate-workflow')
   //@ApiOkResponse({ type: WorkflowInstanceResponse })
   @ApiPaginatedResponse(WorkflowInstanceResponse)
-  async testWF(
-    @Body() wfi: CreateWorkflowInstanceDto[],
-    @CurrentUser() user
-  ) {
+  async testWF(@Body() wfi: CreateWorkflowInstanceDto[], @CurrentUser() user) {
     const intances = [];
     for (let i = 0; i < wfi.length; i++) {
       const bp = await this.bpService.findBpService(wfi[i].pricingId);
@@ -124,29 +112,37 @@ export class ApplicationExcutionController {
   async unpickTask(@Body() dto: UpdateTaskHandlerDto) {
     return await this.executeService.unpickTask(dto);
   }
-
   @UseGuards(JwtGuard)
   @Get('get-currunt-tasks/:serviceKey')
+  @ApiQuery({
+    name: 'q',
+    type: String,
+    required: false,
+  })
   @ApiPaginatedResponse(WorkflowInstanceResponse)
   async fetchCurruntTasks(
     @Param('serviceKey') serviceKey: string,
-    @Query() query: CollectionQuery,
+    @Query('q') q: string,
     @CurrentUser() user: any,
   ) {
+    const query = decodeCollectionQuery(q);
     return await this.executeService.getCurruntTaskByServiceKey(
       serviceKey,
       query,
-      user
+      user,
     );
   }
 
   @UseGuards(JwtGuard)
   @Get('get-customer-tasks')
+  @ApiQuery({
+    name: 'q',
+    type: String,
+    required: false,
+  })
   @ApiPaginatedResponse(WorkflowInstanceResponse)
-  async fetchCustomerTasks(
-    @Query() query: CollectionQuery,
-    @CurrentUser() user: any,
-  ) {
+  async fetchCustomerTasks(@Query('q') q: string, @CurrentUser() user: any) {
+    const query = decodeCollectionQuery(q);
     return await this.workflowService.getCurruntCustomerTask(query, user);
   }
 
@@ -165,8 +161,14 @@ export class ApplicationExcutionController {
   }
   @UseGuards(JwtGuard)
   @Get('get-invoices')
+  @ApiQuery({
+    name: 'q',
+    type: String,
+    required: false,
+  })
   @ApiPaginatedResponse(InvoiceResponseDto)
-  async fetchInvoices(@Query() query: CollectionQuery) {
+  async fetchInvoices(@Query('q') q: string) {
+    const query = decodeCollectionQuery(q);
     return await this.invoiceService.getInvoices(query);
   }
   @UseGuards(JwtGuard)
@@ -187,5 +189,22 @@ export class ApplicationExcutionController {
   @ApiOkResponse({ type: ActiveVendorsResponse })
   async getMyBusinessAreas(@CurrentUser() user: any) {
     return await this.executeService.getMyBusinessArea(user.id);
+  }
+  @UseGuards(JwtGuard)
+  @Get('get-vendors')
+  @ApiQuery({
+    name: 'q',
+    type: String,
+    required: false,
+  })
+  @ApiOkResponse({ type: VendorInitiationResponseDto })
+  async getVendors(@Query('q') q: string, @CurrentUser() user: any) {
+    const query = decodeCollectionQuery(q);
+    return await this.vendorService.getVendors(user, query);
+  }
+  @UseGuards(JwtGuard)
+  @Get('get-vendor-detail/:vendorId')
+  async getApprovedVendorById(@Param('vendorId') vendorId: string) {
+    return await this.vendorService.getApprovedVendorById(vendorId);
   }
 }

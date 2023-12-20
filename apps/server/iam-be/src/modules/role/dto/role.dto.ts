@@ -13,10 +13,6 @@ export class CreateRoleDto {
   description: string;
 
   @ApiProperty()
-  @IsString()
-  key: string;
-
-  @ApiProperty()
   @IsBoolean()
   isSystemRole: boolean;
 
@@ -30,8 +26,6 @@ export class CreateRoleDto {
     role.name = roleDto.name;
 
     role.description = roleDto.description;
-
-    role.key = roleDto.key;
 
     role.isSystemRole = roleDto.isSystemRole;
 
@@ -56,8 +50,6 @@ export class UpdateRoleDto extends CreateRoleDto {
 
     role.description = roleDto.description;
 
-    role.key = roleDto.key;
-
     role.isSystemRole = roleDto.isSystemRole;
 
     role.organizationId = roleDto.organizationId;
@@ -76,8 +68,6 @@ export class RoleResponseDto extends UpdateRoleDto {
     roleDto.name = role.name;
 
     roleDto.description = role.description;
-
-    roleDto.key = role.key;
 
     roleDto.isSystemRole = role.isSystemRole;
 

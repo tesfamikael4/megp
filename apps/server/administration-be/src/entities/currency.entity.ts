@@ -9,4 +9,6 @@ export class Currency extends Audit {
   name: string;
   @Column()
   description: string;
+  @Column()
+  abbreviation: string;
 }

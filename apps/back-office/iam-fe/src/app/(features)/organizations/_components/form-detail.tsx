@@ -59,25 +59,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       invalid_type_error: 'This field is required to be a string',
     }),
     code: z.string().optional(),
-
-    shortName: z
-      .string()
-      .min(1, { message: 'This field is required' })
-      .refine(
-        (value) => {
-          const organizationsList = list?.items.filter(
-            (item) => item?.id !== id?.toString(),
-          );
-          const isUnique =
-            organizationsList &&
-            organizationsList.every((org) => org.shortName !== value);
-          return isUnique;
-        },
-        {
-          message:
-            'Short name must be unique among existing organization short names',
-        },
-      ),
+    shortName: z.string().min(1, { message: 'This field is required' }),
     description: z.string().optional(),
   });
 
@@ -232,6 +214,7 @@ export function FormDetail({ mode }: FormDetailProps) {
         isUpdating={isUpdating}
         isDeleting={isDeleting}
         isActivating={isActivating}
+        entity="organization"
       />
     </Stack>
   );

@@ -1,13 +1,10 @@
 import {
   Column,
   Entity,
-  JoinColumn,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Audit } from 'src/shared/entities/audit.entity';
-import { VendorsEntity } from './vendors.entity';
 import { WorkflowInstanceEntity } from './workflow-instance.entity';
 import { BusinessAreaEntity } from './business-area.entity';
 @Entity({ name: 'isr_vendors' })
@@ -21,37 +18,31 @@ export class IsrVendorsEntity extends Audit {
   @Column({ default: 'Active' })
   status: string;
   @Column({ type: 'jsonb' })
-  initial: JSON;
-  @Column({ nullable: true })
-  vendorId: string;
+  initial: any;
   @Column({ type: 'jsonb' })
-  basic: JSON;
+  basic: any;
   @Column({ type: 'jsonb', nullable: true })
-  address: JSON;
+  address: any;
   @Column({ type: 'jsonb', nullable: true })
-  contactPersons: JSON;
+  contactPersons: any;
   @Column({ type: 'jsonb', nullable: true })
-  businessSizeAndOwnership: JSON;
+  businessSizeAndOwnership: any;
   @Column({ type: 'jsonb', nullable: true })
-  shareHolders: JSON;
+  shareHolders: any;
   @Column({ type: 'jsonb', nullable: true })
-  beneficialOwnership: JSON;
+  beneficialOwnership: any;
   @Column({ type: 'jsonb', nullable: true })
-  bankAccountDetails: JSON;
+  bankAccountDetails: any;
   @Column({ type: 'jsonb', nullable: true })
-  areasOfBusinessInterest: JSON;
+  areasOfBusinessInterest: any;
   @Column({ type: 'jsonb', nullable: true })
-  invoice: JSON;
+  invoice: any;
   @Column({ type: 'jsonb', nullable: true })
-  supportingDocuments: JSON;
+  supportingDocuments: any;
   @Column({ type: 'jsonb', nullable: true })
-  paymentReceipt: JSON;
+  paymentReceipt: any;
   @Column({ nullable: true })
   remark: string;
-
-  @OneToOne(() => VendorsEntity)
-  @JoinColumn({ name: 'vendorId' })
-  vendor: VendorsEntity;
   @OneToMany(() => WorkflowInstanceEntity, (wf) => wf.isrVendor)
   instances: WorkflowInstanceEntity[];
 

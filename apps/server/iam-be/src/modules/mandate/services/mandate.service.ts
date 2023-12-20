@@ -1,8 +1,8 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, IsNull, Repository } from 'typeorm';
 import { Mandate } from '@entities';
-import { CollectionQuery } from '@collection-query';
+import { CollectionQuery, QueryConstructor } from '@collection-query';
 import { DataResponseFormat } from '@api-data';
 import { EntityCrudService } from 'src/shared/service/entity-crud.service';
 import { MandateResponseDto } from '../dto/mandate.dto';
@@ -13,47 +13,51 @@ export class MandateService extends EntityCrudService<Mandate> {
   constructor(
     @InjectRepository(Mandate)
     private readonly repositoryMandate: Repository<Mandate>,
-    private dataSource: DataSource,
+    @InjectRepository(OrganizationMandate)
+    private readonly repositoryOrganizationMandate: Repository<OrganizationMandate>,
   ) {
     super(repositoryMandate);
   }
-  async fetchMandatesToAssign(
-    organizationId: string,
-    query: CollectionQuery,
-  ): Promise<DataResponseFormat<MandateResponseDto>> {
-    const assignedMandates = await this.dataSource
-      .createQueryBuilder()
-      .select('organizationMandates')
-      .from(OrganizationMandate, 'organizationMandates')
-      .innerJoin(
-        'organizationMandates.mandate',
-        'mandate',
-        'mandate.id = organizationMandates.mandateId',
-      )
-      .where('mandate.isSingleAssignment = :isSingleAssignment', {
-        isSingleAssignment: true,
-      })
-      .andWhere('organizationMandates.organizationId != :organizationId', {
-        organizationId,
-      })
-      .getMany();
-    const a: any = [];
-    assignedMandates.map((element) => {
-      a.push(element.mandateId);
+
+  async fetchMandatesToAssign(organizationId: string, query: CollectionQuery) {
+    const assignedMandates = await this.repositoryOrganizationMandate.find({
+      where: {
+        mandate: {
+          isSingleAssignment: true,
+        },
+      },
     });
-    const dataQuery = this.repositoryMandate.createQueryBuilder('mandate');
-    dataQuery.innerJoin('mandate.mandatePermissions', 'mandatePermissions'); // it should have at least one mandate permission to assign
-    if (a.length > 0) {
-      dataQuery.andWhere('mandate.id NOT IN (:...ids)', { ids: a });
+    const mandateId = [];
+
+    assignedMandates.forEach((element) => {
+      if (element.organizationId != organizationId) {
+        mandateId.push(element.mandateId);
+      }
+    });
+
+    if (mandateId.length > 0) {
+      query.where.push([
+        {
+          column: 'id',
+          value: mandateId,
+          operator: 'NotIn',
+        },
+      ]);
     }
-    const d = new DataResponseFormat<MandateResponseDto>();
+
+    const dataQuery = QueryConstructor.constructQuery<Mandate>(
+      this.repositoryMandate,
+      query,
+    );
+
+    const response = new DataResponseFormat<Mandate>();
     if (query.count) {
-      d.total = await dataQuery.getCount();
+      response.total = await dataQuery.getCount();
     } else {
       const [result, total] = await dataQuery.getManyAndCount();
-      d.items = result.map((entity) => MandateResponseDto.toDto(entity));
-      d.total = total;
+      response.items = result;
+      response.total = total;
     }
-    return d;
+    return response;
   }
 }

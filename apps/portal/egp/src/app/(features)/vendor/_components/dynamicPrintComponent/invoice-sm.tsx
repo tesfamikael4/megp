@@ -7,22 +7,6 @@ export default function InvoiceTemplate({
 }: {
   invoiceData: InvoiceData;
 }) {
-  const data = [
-    {
-      itemNo: 1,
-      description: 'Office Supplies',
-      contractValue: 5000,
-      totalLevyAmount: 250,
-    },
-    {
-      itemNo: 2,
-      description: 'IT Equipment',
-      contractValue: 12000,
-      totalLevyAmount: 600,
-    },
-    // Add more data objects as needed
-  ];
-
   const date = new Date(invoiceData.createdOn);
 
   // Convert the date to a desired format, e.g., "YYYY-MM-DD HH:mm:ss"
@@ -35,10 +19,6 @@ export default function InvoiceTemplate({
     second: '2-digit',
   });
   const maxRows = 7; // Maximum number of rows to display
-
-  if (data.length > maxRows) {
-    data.splice(0, data.length - maxRows); // Remove old rows if more than maxRows
-  }
 
   return (
     <Flex className="flex-col bg-white ">
@@ -65,10 +45,7 @@ export default function InvoiceTemplate({
         <div className="flex justify-between items-end p-4 flex-col gap-4  ">
           <div className="flex w-full items-center justify-center">
             <p className=" text-sm font-bold">
-              INVOICE{' '}
-              <span className=" text-blue-600">
-                #{invoiceData.applicationNo}
-              </span>
+              INVOICE <span className=" text-blue-600">#{invoiceData.id}</span>
             </p>
           </div>
           <div className="flex w-full items-center justify-between">
@@ -93,40 +70,7 @@ export default function InvoiceTemplate({
             </div>
           </div>
         </div>
-        <div className="w-full p-4 mt-5">
-          <table className="border w-full text-xs font-semibold">
-            <thead>
-              <tr>
-                <th className="border p-2 w-4">Item No</th>
-                <th className="border p-2">Description of Procurement</th>
-                <th className="border p-2 w-32">Contract Value</th>
-                <th className="border p-2 w-40">Total Levy Amount</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.map((item, index) => (
-                <tr key={index}>
-                  <td className="border p-2 text-center">{item.itemNo}</td>
-                  <td className="border p-2 items-center">
-                    {item.description}
-                  </td>
-                  <td className="border p-2 text-center">
-                    {item.contractValue}
-                  </td>
-                  <td className="border p-2 text-center">
-                    {item.totalLevyAmount}
-                  </td>
-                </tr>
-              ))}
-              <tr className="w-full">
-                <td></td>
-                <td></td>
-                <td></td>
-                <td className="p-2 border text-center">{invoiceData.amount}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <div className="w-full p-4 mt-5"></div>
       </main>
 
       {/* Footer */}

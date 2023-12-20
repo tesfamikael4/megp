@@ -6,6 +6,7 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import { OrganizationService } from '../services/organization.service';
@@ -33,13 +34,11 @@ export class OrganizationController extends EntityCrudController<Organization>(
     super(organizationService);
   }
 
-  // @Post()
-  // @ApiBody({ type: CreateOrganizationDto })
-  // async create(
-  //   @Body() itemData: CreateOrganizationDto,
-  // ): Promise<any> {
-  //   return this.organizationService.create(itemData);
-  // }
+  @Post('transaction-test')
+  @ApiBody({ type: CreateOrganizationDto })
+  async transactionTest(@Body() itemData: CreateOrganizationDto): Promise<any> {
+    return this.organizationService.transactionTest(itemData);
+  }
 
   @Patch('set-address/:id')
   @ApiBody({ type: UpdateAddressOrLogoDto })

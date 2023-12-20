@@ -13,7 +13,6 @@ export class RoleService extends ExtraCrudService<Role> {
   constructor(
     @InjectRepository(Role)
     private readonly repositoryRole: Repository<Role>,
-    private readonly permissionService: PermissionService,
   ) {
     super(repositoryRole);
   }
@@ -23,8 +22,16 @@ export class RoleService extends ExtraCrudService<Role> {
       this.repositoryRole,
       query,
     )
-      .orWhere('roles.organizationId = :organizationId', { organizationId })
-      .orWhere('roles.organizationId IS NULL');
+      .leftJoin('roles.rolePermissions', 'rolePermissions')
+      .leftJoin('rolePermissions.permission', 'permission')
+      .leftJoin('permission.mandatePermissions', 'mandatePermissions')
+      .leftJoin('mandatePermissions.mandate', 'mandate')
+      .leftJoin('mandate.organizationMandates', 'organizationMandates')
+      .andWhere('organizationMandates.organizationId=:organizationId', {
+        organizationId,
+      })
+      .andWhere('roles.organizationId = :organizationId', { organizationId });
+
     const response = new DataResponseFormat<RoleResponseDto>();
 
     if (query.count) {
@@ -36,23 +43,5 @@ export class RoleService extends ExtraCrudService<Role> {
     }
 
     return response;
-  }
-
-  async findOrganizationAdminRole(
-    organizationId: string,
-  ): Promise<Role | undefined> {
-    return await this.repositoryRole.findOne({
-      where: {
-        organizationId,
-        key:
-          process.env.ORGANIZATION_ADMINISTRATOR_ROLE_KEY ??
-          'ORGANIZATION_ADMINISTRATOR',
-        // rolePermissions: {
-        //   permission: {
-        //     key: ''
-        //   }
-        // }
-      },
-    });
   }
 }

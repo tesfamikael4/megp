@@ -27,7 +27,7 @@ const defaultValues = {
 export function FormDetail({ mode }: FormDetailProps) {
   const measurementSchema: ZodType<Partial<Measurement>> = z.object({
     name: z.string().min(1, { message: 'This field is required' }),
-    shortName: z.string().min(1, { message: 'This field is required' }),
+    shortName: z.string().min(1).optional(),
   });
 
   const {
@@ -128,11 +128,11 @@ export function FormDetail({ mode }: FormDetailProps) {
         required
       />{' '}
       <TextInput
-        withAsterisk
+        // withAsterisk
         label="Abbreviations"
         {...register('shortName')}
         error={errors?.shortName ? errors?.shortName?.message?.toString() : ''}
-        required
+        // required
       />{' '}
       <EntityButton
         mode={mode}

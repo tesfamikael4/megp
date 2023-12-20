@@ -75,10 +75,7 @@ export class VendorRegistrationsController {
   async addVendorInformation(
     @Body() data: InsertAllDataDto,
     @CurrentUser() userInfo: any,
-    @Req() request: Request,
   ) {
-    const authToken = request.headers['authorization'].split(' ')[1];
-    userInfo['token'] = authToken;
     data.data.initial.userId = userInfo.id;
     const result = await this.regService.addVendorInformations(
       data.data,
@@ -92,10 +89,7 @@ export class VendorRegistrationsController {
   async submitVendorInformations(
     @Body() data: InsertAllDataDto,
     @CurrentUser() userInfo: any,
-    @Req() request: Request,
   ) {
-    const authToken = request.headers['authorization'].split(' ')[1];
-    userInfo['token'] = authToken;
     data.data.initial.userId = userInfo.id;
     const result = await this.regService.submitVendorInformations(
       data.data,
@@ -131,5 +125,11 @@ export class VendorRegistrationsController {
   @Get('get-vendor-byId-for-certificate/:isrvendorId')
   async getVendorByIdForCertificate(@Param('isrvendorId') isrvendorId: string) {
     return await this.regService.getVendorByIdForCertificate(isrvendorId);
+  }
+  // @UseGuards(JwtGuard)
+  @AllowAnonymous()
+  @Get('get-approved-vendor-byId/:isrvendorId')
+  async getApprovedVendorById(@Param('isrvendorId') isrvendorId: string) {
+    return await this.regService.getApprovedVendorById(isrvendorId);
   }
 }

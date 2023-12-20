@@ -6,7 +6,6 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { CommonEntity } from 'src/shared/entities/common.entity';
 import { ShareholdersEntity } from './shareholder.entity';
 import { BankAccountDetailEntity } from './bank-account-detail.entity';
 import { CustomCategoryEntity } from './custom-category.entity';
@@ -35,7 +34,7 @@ export class VendorsEntity extends Audit {
   country: string;
 
   @Column({ type: 'json', nullable: true })
-  metaData: JSON;
+  metaData: any;
   @Column({ nullable: true })
   name: string;
   @Column({ nullable: true })

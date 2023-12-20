@@ -13,6 +13,7 @@ const options: EntityCrudOptions = {
   createDto: CreateAreasOfBusinessInterest,
   updateDto: UpdateAreasOfBusinessInterest,
 };
+
 @Controller('areas-of-business-interests')
 @ApiTags('areas-of-business-interests')
 @ApiResponse({ status: 500, description: 'Internal error' })

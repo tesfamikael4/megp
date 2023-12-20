@@ -3,14 +3,13 @@ import { Stack, Button, Modal, Group } from '@mantine/core';
 import { Section, Table, TableConfig, logger } from '@megp/core-fe';
 import { useParams } from 'next/navigation';
 import { useDisclosure } from '@mantine/hooks';
-
-import DataImport from '../_components/data-import';
 import { useEffect, useState } from 'react';
 import { DetailTable } from '../../_components/detail-table';
 import { useLazyReadQuery } from '../../_api/app.api';
 import { useLazyListByAppIdQuery } from '../_api/budget.api';
 import { notifications } from '@mantine/notifications';
 import { useBulkCreateMutation } from '@/store/api/budget/budget.api';
+import DataImport from '../../_components/data-import';
 
 const ModalDetail = ({ data }: { data: any }) => {
   const [opened, { open, close }] = useDisclosure(false);

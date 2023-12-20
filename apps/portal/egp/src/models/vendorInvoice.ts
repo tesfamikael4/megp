@@ -1,18 +1,21 @@
 export interface InvoiceData {
+  amount: string;
+  applicationNo: null;
+  attachment: null;
+  createdOn: string;
+  expired: boolean;
   id: string;
-  InstanceId: string;
-  applicationNo: string;
-  taskName: string;
-  taskId: string;
-  serviceName: string;
-  payerName: string;
-  payerAccountId: string;
-  payToAccNo: string;
+  instanceId: null;
   payToAccName: string;
+  payToAccNo: string;
   payToBank: string;
-  amount: number;
-  createdOn: string; // You can use a date-time library like moment.js for date parsing and formatting
+  payerName: string;
   paymentStatus: string;
+  pricingId: string;
   remark: string;
-  attachment: string;
+  serviceId: string;
+  serviceName: string;
+  taskId: null;
+  taskName: null;
+  userId: string;
 }

@@ -33,6 +33,7 @@ interface RelationProps<T> {
   openEditModal?: (id) => void;
   handleId?: (id) => void;
   collapsed?: boolean;
+  setIsCollapsed?: (boolean) => void;
   readOnly?: boolean;
   total?: number;
 }
@@ -44,6 +45,7 @@ export function Relation<T>({
   currentSelected,
   isSaving,
   isLoading,
+  setIsCollapsed,
   collapsed = true,
   handleCloseModal,
   openDeleteModal,
@@ -223,6 +225,7 @@ export function Relation<T>({
             ) : null
           }
           defaultCollapsed={Boolean(collapsed)}
+          setIsCollapsed={setIsCollapsed}
           title={options.title}
         >
           {body}

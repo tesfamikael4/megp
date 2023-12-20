@@ -2,19 +2,65 @@
 import React from 'react';
 import { Section, Tree } from '@megp/core-fe';
 import { useState } from 'react';
-import { useDisclosure } from '@mantine/hooks';
-import { Box, Button, Card, Modal, ScrollArea, Text } from '@mantine/core';
+import { useDebouncedState, useDisclosure } from '@mantine/hooks';
+import {
+  Box,
+  Button,
+  Card,
+  Flex,
+  List,
+  Modal,
+  ScrollArea,
+  Text,
+  TextInput,
+} from '@mantine/core';
 import { IconPlus } from '@tabler/icons-react';
 import { DetailCommodity } from './_components/detail-commodity';
-import { useListQuery } from './_api/taxonomy.api';
+import { useLazyListQuery, useListQuery } from './_api/taxonomy.api';
 import { FormDetail } from './_components/form-detail';
 import { useGetLatestTaxonomiesQuery } from '@/store/api/taxonomies/taxonomies.api';
+import { IconSearch } from '@tabler/icons-react';
+import { CollectionQuery, RelationConfig } from '@megp/entity';
+import { TaxonomyList } from './_components/TaxonomyList';
 
 const TaxonomyLayout = () => {
   const [opened, { open, close }] = useDisclosure(false);
   const [parents, setParents] = useState<any>();
   const [selectedData, setSelectedData] = useState<any>({});
-  const { data, refetch } = useListQuery({
+  const [search, setSearch] = useDebouncedState('', 500);
+
+  const addConfig: RelationConfig<any> = {
+    columns: [
+      {
+        id: 'name',
+        header: '',
+        accessorKey: 'title',
+        meta: {
+          widget: 'expand',
+        },
+        cell: ({ row: { original } }: any) => (
+          <Flex
+            py={5}
+            px={'xs'}
+            gap={'sm'}
+            my={5}
+            onClick={() => setSelectedData(original)}
+            title={original.title}
+          >
+            [{original.code}]{' '}
+            <Text w={350} truncate={'end'}>
+              {original.title}
+            </Text>
+          </Flex>
+        ),
+      },
+    ],
+    searchable: true,
+    disableMultiSelect: true,
+    pagination: true,
+  };
+
+  const queryOptions: CollectionQuery = {
     where: [
       [
         {
@@ -24,7 +70,9 @@ const TaxonomyLayout = () => {
         },
       ],
     ],
-  });
+  };
+
+  const { data, refetch } = useListQuery(queryOptions);
   const { data: taxonomy, refetch: fetch } = useGetLatestTaxonomiesQuery(null);
 
   const handleRefetch = () => {
@@ -32,6 +80,7 @@ const TaxonomyLayout = () => {
     fetch();
   };
 
+  const [handleSearch, { data: searchedData, isLoading }] = useLazyListQuery();
   return (
     <>
       <Card>
@@ -66,26 +115,50 @@ const TaxonomyLayout = () => {
           title="Taxonomy"
           subTitle="Taxonomy List"
         >
-          <ScrollArea h={600} type="scroll" scrollbarSize={6}>
-            <Tree
-              fieldNames={{ title: 'title', key: 'code' }}
-              mode="view"
-              url={(code) =>
-                `${
-                  process.env.NEXT_PUBLIC_ADMINISTRATION_API ??
-                  '/administration/api/'
-                }classifications?q=w%3DparentCode%3A%3D%3A${code}`
-              }
-              data={data ? data.items : []}
-              selectedKeys={[selectedData.key]}
-              onClick={(node, parents) => {
-                setSelectedData(node);
-                setParents(parents);
+          <Flex justify="flex-end" mb="md" mt="md">
+            <TextInput
+              className={'w-full'}
+              leftSection={<IconSearch size="sm" stroke={1.5} />}
+              miw={300}
+              onChange={(event) => {
+                setSearch(event.currentTarget.value);
               }}
+              placeholder="Search"
+              rightSectionWidth={30}
+              size="xs"
             />
+          </Flex>
+          <ScrollArea h={600} type="scroll" scrollbarSize={6}>
+            {search ? (
+              <TaxonomyList
+                config={addConfig}
+                data={searchedData ? searchedData.items : []}
+                total={searchedData ? searchedData.total : 0}
+                search={search}
+                onRequestChange={handleSearch}
+                isLoading={isLoading}
+              />
+            ) : (
+              <Tree
+                fieldNames={{ title: 'title', key: 'code' }}
+                mode="view"
+                url={(code) =>
+                  `${
+                    process.env.NEXT_PUBLIC_ADMINISTRATION_API ??
+                    '/administration/api/'
+                  }classifications?q=w%3DparentCode%3A%3D%3A${code}`
+                }
+                data={data ? data.items : []}
+                selectedKeys={[selectedData.key]}
+                onClick={(node, parents) => {
+                  setSelectedData(node);
+                  setParents(parents);
+                }}
+              />
+            )}
 
             {Object.keys(data ? data?.items : []).length === 0 && (
-              <Box className="ml-24 mt-40">No Imported Data</Box>
+              <Box className="ml-24 mt-40">No Data</Box>
             )}
           </ScrollArea>
 

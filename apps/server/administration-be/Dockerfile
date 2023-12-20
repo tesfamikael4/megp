@@ -44,7 +44,10 @@ COPY turbo.json turbo.json
 RUN yarn turbo run build --filter=administration-be...
 
 FROM base AS runner
-WORKDIR /app
+WORKDIR /
+
+# Install pnpm
+RUN yarn global add pnpm
 
 # Don't run production as root
 RUN addgroup --system --gid 1001 nestjs

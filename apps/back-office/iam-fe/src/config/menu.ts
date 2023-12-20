@@ -1,4 +1,5 @@
 import { MenuItem } from '@megp/core-fe';
+import { IconDeviceAnalytics, IconLoadBalancer } from '@tabler/icons-react';
 import {
   IconAdjustmentsHorizontal,
   IconApps,
@@ -34,13 +35,13 @@ export const Menu: MenuItem[] = [
     label: 'My Organization',
     icon: IconBuildingBank,
     link: '/my-organization',
-    permission: ['my_organization'],
+    permission: ['user'],
   },
   {
     label: 'My Mandates',
     icon: IconLockSquareRounded,
     link: '/my-mandate',
-    permission: ['my_mandate'],
+    permission: ['user'],
   },
   { label: 'Users', icon: IconUsers, link: '/users', permission: ['user'] },
   {
@@ -62,6 +63,12 @@ export const Menu: MenuItem[] = [
     permission: ['role'],
   },
   {
+    label: 'System role',
+    icon: IconDeviceAnalytics,
+    link: '/system-role',
+    permission: ['role'],
+  },
+  {
     label: 'Report & Analytics',
     icon: IconChartInfographic,
     link: '/reports',
@@ -70,19 +77,27 @@ export const Menu: MenuItem[] = [
     label: 'Archive',
     icon: IconFileZip,
     links: [
-      { label: 'Organization', link: '/archived/organization' },
-      { label: 'Users', link: '/archived/users' },
-      { label: 'Unit', link: '/archived/units' },
-      { label: 'Group', link: '/archived/group' },
-      { label: 'Role', link: '/archived/roles' },
+      {
+        label: 'Organization',
+        link: '/archived/organization',
+        permission: ['organization'],
+      },
+      { label: 'Users', link: '/archived/users', permission: ['user'] },
+      { label: 'Unit', link: '/archived/units', permission: ['unit'] },
+      { label: 'Group', link: '/archived/group', permission: ['group'] },
+      { label: 'Role', link: '/archived/roles', permission: ['role'] },
     ],
   },
   {
     label: 'Settings',
     icon: IconAdjustmentsHorizontal,
     links: [
-      { label: 'Organization Types', link: '/organization-type' },
-      { label: 'Unit Types', link: '/unit-type' },
+      {
+        label: 'Organization Types',
+        link: '/organization-type',
+        permission: ['organization'],
+      },
+      { label: 'Unit Types', link: '/unit-type', permission: ['unit'] },
     ],
   },
 ];

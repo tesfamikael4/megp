@@ -25,8 +25,9 @@ export class Unit extends Audit {
   @Column({ nullable: true })
   typeId: string;
 
-  @Column({ nullable: true })
+  @Column({ unique: true, nullable: true })
   code: string;
+
   @Column({ default: true })
   isActive: boolean;
 

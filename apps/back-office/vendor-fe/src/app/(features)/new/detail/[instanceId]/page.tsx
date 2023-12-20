@@ -183,6 +183,7 @@ export default function NewRequestDetail() {
                   instanceID={response.data.id}
                   taskCheckLists={response.data.task.taskCheckList}
                   setIsPicked={setIsPicked}
+                  requesterID={response.data.requestorId}
                 />
               )}
             </Section>

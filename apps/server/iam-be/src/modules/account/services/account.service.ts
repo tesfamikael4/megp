@@ -68,6 +68,7 @@ export class AccountsService {
 
     throw new BadRequestException('Conflict');
   }
+
   public async verifyAccount(
     body: VerifyAccountDto,
   ): Promise<LoginResponseDto | never> {
@@ -77,10 +78,12 @@ export class AccountsService {
     account.status = AccountStatusEnum.ACTIVE;
     await this.repository.update(account.id, account);
 
+    const tokenPayload = await this.getAccessTokenPayload(account);
+
     const token: LoginResponseDto = {
       is_security_question_set: account.securityQuestions?.length != 0,
-      access_token: this.helper.generateAccessToken(account),
-      refresh_token: this.helper.generateRefreshToken(account),
+      access_token: this.helper.generateAccessToken(tokenPayload),
+      refresh_token: this.helper.generateRefreshToken({ id: account.id }),
     };
 
     return token;
@@ -298,7 +301,6 @@ export class AccountsService {
             roleId: true,
             role: {
               id: true,
-              key: true,
               name: true,
               rolePermissions: {
                 id: true,
@@ -376,7 +378,6 @@ export class AccountsService {
     userInfo.user?.userRoles?.forEach((userRole) => {
       const role = {
         id: userRole.role.id,
-        key: userRole.role.key,
         name: userRole.role.name,
       };
 
@@ -525,11 +526,8 @@ export class AccountsService {
   }
 
   async createBackOfficeAccount(input: any) {
-    let { email }: CreateAccountDto = input;
-    email = email.toLocaleLowerCase();
-
     let account: Account = await this.repository.findOne({
-      where: { email },
+      where: { email: input.email },
     });
 
     if (account) {

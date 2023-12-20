@@ -2,9 +2,8 @@
 import { CollectionQuery, EntityConfig, EntityLayout } from '@megp/entity';
 import { usePathname, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useLazyListByIdQuery, useLazyListQuery } from './_api/group.api';
+import { useLazyListByIdQuery } from './_api/group.api';
 import { Group } from '@/models/group';
-import { logger } from '@megp/core-fe';
 import { useAuth } from '@megp/auth';
 
 export function Entity({ children }: { children: React.ReactElement }) {
@@ -32,9 +31,6 @@ export function Entity({ children }: { children: React.ReactElement }) {
       pagination: true,
       searchable: true,
       sortable: true,
-      onSearch: (search) => {
-        logger.log('search', search);
-      },
 
       columns: [
         {

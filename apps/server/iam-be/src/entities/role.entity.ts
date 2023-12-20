@@ -14,7 +14,6 @@ import { UserRole } from './user-role.entity';
 import { Organization } from './organization.entity';
 
 @Entity({ name: 'roles' })
-@Unique(['key', 'organizationId'])
 export class Role extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -29,9 +28,6 @@ export class Role extends Audit {
   isSystemRole: boolean;
 
   @Column()
-  key: string;
-
-  @Column({ nullable: true })
   organizationId: string;
 
   @ManyToOne(() => Organization, (organization) => organization.roles, {

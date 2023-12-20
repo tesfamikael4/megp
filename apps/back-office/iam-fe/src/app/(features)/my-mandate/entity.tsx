@@ -1,40 +1,37 @@
 'use client';
 import { CollectionQuery, EntityConfig, EntityLayout } from '@megp/entity';
 import { usePathname, useRouter } from 'next/navigation';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useLazySecondRelationQuery } from '../organizations/_api/organization-mandate.api';
-import { Mandate } from '@/models/mandate';
+import { MyMandate } from '@/models/mandate';
 import { useAuth } from '@megp/auth';
 
 export function Entity({ children }: { children: React.ReactNode }) {
   const route = useRouter();
   const { user } = useAuth();
+  const [request, setRequest] = useState<any>();
 
   const pathname = usePathname();
 
   const [trigger, { data, isFetching }] = useLazySecondRelationQuery();
 
   useEffect;
-  const config: EntityConfig<Mandate> = useMemo(() => {
+  const config: EntityConfig<MyMandate> = useMemo(() => {
     return {
       basePath: '/my-mandate',
       mode: 'list',
       entity: 'my-mandate',
       primaryKey: 'id',
       title: 'My Mandates',
-      onDetail: (selected: Mandate) => {
-        route.push(`/my-mandate/${selected?.id}`);
-      },
-
-      onSearch: (search) => {
-        // console.log('search', search);
+      onDetail: (selected: MyMandate) => {
+        route.push(`/my-mandate/${selected?.mandateId}`);
       },
       pagination: true,
       searchable: true,
       sortable: true,
 
       hasAdd: false,
-      hasDetail: false,
+      hasDetail: true,
       columns: [
         {
           id: 'name',
@@ -52,6 +49,12 @@ export function Entity({ children }: { children: React.ReactNode }) {
           accessorKey: 'mandate.description',
           cell: (info) => info.getValue(),
         },
+        {
+          id: 'isSingleAssignment',
+          header: 'Single Assignment ',
+          accessorKey: 'isSingleAssignment',
+          cell: (info) => info.getValue(),
+        },
       ],
     };
   }, [route]);
@@ -62,23 +65,33 @@ export function Entity({ children }: { children: React.ReactNode }) {
       : pathname === `/my-mandate/new`
       ? 'new'
       : 'detail';
-
-  const onRequestChange = (request: CollectionQuery) => {
-    trigger({
-      id: user?.organization.id,
-      collectionQuery: request,
-    });
-  };
+  useEffect(() => {
+    const onRequestChange = (request: CollectionQuery) => {
+      user &&
+        trigger({
+          id: user.organization.id,
+          collectionQuery: request,
+        });
+    };
+    setRequest(onRequestChange);
+  }, [trigger, user]);
 
   return (
     <EntityLayout
       mode={mode}
       config={config}
-      data={data?.items ?? []}
+      data={
+        data?.items?.map((item: MyMandate) => {
+          return {
+            ...item,
+            isSingleAssignment: item.mandate.isSingleAssignment ? 'Yes' : 'No ',
+          };
+        }) ?? []
+      }
       total={data?.total ?? 0}
       detail={children}
       isLoading={isFetching}
-      onRequestChange={onRequestChange}
+      onRequestChange={request}
     />
   );
 }

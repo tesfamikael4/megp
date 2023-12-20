@@ -83,7 +83,7 @@ export function FormDetail({ mode }: FormDetailProps) {
         ...data,
         id: id?.toString(),
         fullName: `${data.firstName} ${data.lastName}`,
-        organizationId: '099454a9-bf8f-45f5-9a4f-6e9034230250',
+        organizationId: user?.organization?.id,
       });
       notify('Success', 'User updated successfully');
     } catch {
@@ -165,6 +165,7 @@ export function FormDetail({ mode }: FormDetailProps) {
         isUpdating={isUpdating}
         isDeleting={isDeleting}
         isActivating={isActivating}
+        entity="user"
       />
     </Stack>
   );
