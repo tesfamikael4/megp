@@ -12,8 +12,11 @@ interface StateMachineConfig {
           on: {
             [event: string]: {
               guard?: any;
-              actions?: Array<{ type: string; params: { status: string } }>;
-              target: string;
+              actions?: Array<{
+                type: string;
+                params: { id: any; status: any };
+              }>;
+              target?: any;
             };
           };
         }
@@ -33,16 +36,22 @@ export class XMachineService {
   ) {}
 
   async createMachineConfig(activityId, currentApprover: string): Promise<any> {
+    const adjust = '';
     const steps = await this.repositoryStep.find({ where: { activityId } });
 
     const stateMachineConfig = this.createStateMachineConfig(steps as any);
 
     const machine = setup({
       actions: {
-        recordAction: async (_, params: any) => {
+        recordAction: async ({ context, event }, params: any) => {
+          console.log({ event });
+          if (context.adj != '') {
+            params.status = context.adj;
+          }
           const data = {
             status: params.status,
             activityId: activityId,
+            stepId: params.id,
           };
           await this.repositoryInstance.upsert([data], {
             skipUpdateIfNoValuesChanged: true,
@@ -60,8 +69,10 @@ export class XMachineService {
       },
     }).createMachine({
       id: 'workflow',
-      initial: `${currentApprover}App`,
-      context: {},
+      initial: `${currentApprover}`,
+      context: {
+        adj: adjust,
+      },
       states: stateMachineConfig.states as any,
     });
     return machine;
@@ -72,7 +83,7 @@ export class XMachineService {
 
     for (let i = 0; i < steps.length; i++) {
       const step = steps[i];
-      const currentState = `${step.name}App`;
+      const currentState = `${step.name}`;
 
       stateMachineConfig.states[currentState] = {
         on: {
@@ -81,18 +92,42 @@ export class XMachineService {
               { type: 'isApproved', params: { status: 'Approved' } },
               { type: 'isApproved', params: { status: 'Approved' } },
             ]),
-            actions: [{ type: 'recordAction', params: { status: 'Approved' } }],
-            target:
-              i < steps.length - 1 ? `${steps[i + 1].name}App` : 'Approved',
+            actions: [
+              {
+                type: 'recordAction',
+                params: {
+                  id: i < steps.length - 1 ? steps[i + 1].id : step.id,
+                  status:
+                    i < steps.length - 1 ? `${steps[i + 1].name}` : 'Approved',
+                },
+              },
+            ],
+            target: i < steps.length - 1 ? `${steps[i + 1].name}` : 'Approved',
           },
           [`${step.name}.reject`]: {
-            target: i > 0 ? `${steps[i - 1].name}App` : currentState,
-            actions: [{ type: 'recordAction', params: { status: 'Reject' } }],
+            target: i > 0 ? `${steps[i - 1].name}` : currentState,
+            actions: [
+              {
+                type: 'recordAction',
+                params: {
+                  id: i < steps.length - 1 ? steps[i + 1].id : step.id,
+                  status: i > 0 ? `${steps[i - 1].name}` : 'Rejected',
+                },
+              },
+            ],
           },
           [`${step.name}.Adjust`]: {
-            target:
-              i < steps.length - 1 ? `${steps[i + 1].name}App` : currentState,
-            actions: [{ type: 'recordAction', params: { status: 'Adjust' } }],
+            // target: (context, event) => console.log({event}),
+            actions: [
+              {
+                type: 'recordAction',
+                params: {
+                  id: i > 0 && i < steps.length - 1 ? steps[i + 1].id : step.id,
+                  status: steps[0].name,
+                  // i < steps.length - 1 ? `${steps[i + 1].name}` : 'Rejected',
+                },
+              },
+            ],
           },
         },
       };
