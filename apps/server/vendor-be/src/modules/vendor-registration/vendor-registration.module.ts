@@ -8,7 +8,6 @@ import { ShareholderService } from './services/shareholder.service';
 import { ShareholderController } from './controllers/shareholder.controller';
 import { BeneficialOwnershipController } from './controllers/beneficial-ownership.controller';
 import { BeneficialOwnershipService } from './services/beneficial-ownership.service';
-import { File } from './services/file.service';
 import { AreasOfBusinessInterestController } from './controllers/areas-of-business-interest.controller';
 import { AreasOfBusinessInterestService } from './services/areas-of-business-interest.service';
 import { TusService } from './services/tus.service';
@@ -49,6 +48,7 @@ import { ServicePricingController } from 'src/modules/pricing/controllers/servic
 import { CategoriesModule } from '../categories/category.module';
 import { InvoiceService } from './services/invoice.service';
 import { HttpModule } from '@nestjs/axios';
+import { FileService } from './services/file.service';
 
 @Module({
   imports: [
@@ -86,7 +86,7 @@ import { HttpModule } from '@nestjs/axios';
     HandlingCommonService,
     BankAccountDetailService,
     ShareholderService,
-    File,
+    FileService,
     BeneficialOwnershipService,
     AreasOfBusinessInterestService,
     WorkflowInstanceService,
