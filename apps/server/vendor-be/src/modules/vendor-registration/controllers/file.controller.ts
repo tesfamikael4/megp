@@ -22,7 +22,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import multer, { diskStorage, memoryStorage } from 'multer';
 import { extname } from 'path';
-import { File } from '../services/file.service';
+import { FileService } from '../services/file.service';
 
 @Controller('upload')
 @ApiTags('File')
@@ -31,7 +31,7 @@ import { File } from '../services/file.service';
 export class UploadController {
   constructor(
     // private tusService: TusService,
-    private fileService: File,
+    private fileService: FileService,
   ) {}
   // @Get('get-file/:fileName')
   // async getFile(

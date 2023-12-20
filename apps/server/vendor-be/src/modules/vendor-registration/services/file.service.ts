@@ -21,7 +21,7 @@ import { PaymentReceiptDto } from '../dto/payment-receipt.dto';
 import { Readable } from 'typeorm/platform/PlatformTools';
 
 @Injectable()
-export class File {
+export class FileService {
   private minioClient = new Minio.Client({
     endPoint: process.env.MINIO_END_POINT_URL,
     port: parseInt(process.env.MINIO_PORT),
@@ -205,10 +205,10 @@ export class File {
       if (!result) throw new HttpException('isr vendor not found ', 500);
       const fileUploadName = 'paymentReceipt';
       const paymentReceipts = result.paymentReceipt;
-      const foundObject = paymentReceipts.filter(
+      const foundObject = paymentReceipts?.filter(
         (obj) => obj.invoiceId !== paymentReceiptDto.invoiceId,
       );
-      const alreadyExisting = paymentReceipts.find(
+      const alreadyExisting = paymentReceipts?.find(
         (obj) => obj.invoiceId === paymentReceiptDto.invoiceId,
       );
       if (alreadyExisting) {
@@ -236,6 +236,8 @@ export class File {
       };
       foundObject.push(paymentReceipt);
       result.paymentReceipt = foundObject;
+      result.initial.level = VendorStatusEnum.DOC;
+      result.initial.status = VendorStatusEnum.SAVE;
       const isrVendor = await this.isrVendorsRepository.save(result);
       if (!isrVendor) throw new HttpException(`isrVendor_update _failed`, 500);
       const invoice = await this.invoiceRepository.update(
