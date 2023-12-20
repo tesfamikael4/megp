@@ -318,6 +318,14 @@ export class QueryConstructor {
       aggregateColumns[c.databasePath] = c.type;
     });
 
+    if (!metaData.propertiesMap['tenantId']) {
+      query = this.removeFilter(query, 'tenantId');
+    }
+
+    if (!metaData.propertiesMap['organizationId']) {
+      query = this.removeFilter(query, 'organizationId');
+    }
+
     const aggregate = metaData.tableName;
     const queryBuilder = repository.createQueryBuilder(aggregate);
 
@@ -325,8 +333,22 @@ export class QueryConstructor {
       queryBuilder.withDeleted();
     }
 
+    query = this.removeEmtpyFilter(query);
+
     buildQuery(aggregate, queryBuilder, query);
 
     return queryBuilder;
+  }
+
+  static removeEmtpyFilter(query: CollectionQuery) {
+    query.where = query.where.filter((x) => x.length > 0);
+    return query;
+  }
+
+  static removeFilter(query: CollectionQuery, key: string) {
+    query.where = query.where.map((x) => {
+      return x.filter((y) => y.column != key);
+    });
+    return query;
   }
 }
