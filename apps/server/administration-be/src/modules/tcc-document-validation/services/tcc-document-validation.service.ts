@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import axios, { AxiosError } from 'axios';
+import { plainToClass } from 'class-transformer';
+import { DocumentValidationResponse } from '../dto/document-validation-response';
 
 @Injectable()
 export class TccDocumentValidationService {
@@ -24,7 +26,9 @@ export class TccDocumentValidationService {
       };
       const response = await axios.post(url, body, { headers });
       if (response.status === 200) {
-        return response.data;
+        const result = plainToClass(DocumentValidationResponse, response.data);
+        return result;
+        //return response.data;
       } else {
         // Handle non-200 status codes here
         const errorMessage = `api_failed: ${response.status} : ${response.statusText}`;

@@ -1,9 +1,18 @@
+import { Expose } from 'class-transformer';
+
 export class TaxpayerData {
-  TIN: string;
-  TaxpayerName: string;
-  TradingNames: string[];
-  PostalAddress: string;
-  BusinessSectorISIC: string;
-  TaxpayerSegment: string;
-  RegistrationDate: string;
+  @Expose({ name: 'TIN' })
+  tin: string;
+  @Expose({ name: 'TaxpayerName' })
+  taxpayerName: string;
+  @Expose({ name: 'TradingNames' })
+  tradingNames: string[];
+  @Expose({ name: 'PostalAddress' })
+  postalAddress: string;
+  @Expose({ name: 'BusinessSectorISIC' })
+  businessSectorISIC: string;
+  @Expose({ name: 'TaxpayerSegment' })
+  taxpayerSegment: string;
+  @Expose({ name: 'RegistrationDate' })
+  registrationDate: string;
 }

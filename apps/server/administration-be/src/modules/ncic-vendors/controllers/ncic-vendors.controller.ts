@@ -17,6 +17,7 @@ import {
   UpdateNcicVendorDto,
 } from '../dto/ncic-vendor.dto';
 import { EntityCrudOptions } from 'src/shared/types/crud-option.type';
+import { GetFPPAVendorByTinDto } from 'src/modules/fppa-vendor/dto/fppa-data-validation';
 const options: EntityCrudOptions = {
   createDto: CreateNcicVendorDto,
   updateDto: UpdateNcicVendorDto,
@@ -53,7 +54,7 @@ export class NcicVendorsController extends EntityCrudController<NcicVendor>(
     type: FppaVendor,
   })
   @ApiResponse({ status: 404, description: 'Vendor not found' })
-  async getNCICVenderByTin(@Param('tin') tin: string) {
-    return this.ncicVendorsService.getNCICVenderByTin(tin);
+  async getNCICVenderByTin(@Param() parm: GetFPPAVendorByTinDto) {
+    return this.ncicVendorsService.getNCICVenderByTin(parm.tin);
   }
 }
