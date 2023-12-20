@@ -39,7 +39,7 @@ export class TaxPayerService extends EntityCrudService<TaxPayer> {
 
   async getVenderByTinAndIssuedDate(
     tin: string,
-    issuedDateStr: Date,
+    issuedDateStr: string,
   ): Promise<TaxpayerData | null | string> {
     try {
       const urlPath = '/ValidateTIN';
@@ -57,8 +57,10 @@ export class TaxPayerService extends EntityCrudService<TaxPayer> {
       const response = await axios.post(url, body, { headers });
       if (response.status === 200) {
         const result = plainToClass(TaxpayerData, response.data);
-        if (result && issuedDateStr) {
-          const issuedDate = new Date(issuedDateStr);
+        const [year, month, day] = issuedDateStr.split('-').map(Number);
+        const parsedIssuedDate = new Date(year, month - 1, day);
+        if (result && parsedIssuedDate) {
+          const issuedDate = new Date(parsedIssuedDate);
           if (!isNaN(issuedDate.getTime())) {
             const registrationDate = new Date(result.registrationDate);
             const issuedDateWithoutTime = new Date(

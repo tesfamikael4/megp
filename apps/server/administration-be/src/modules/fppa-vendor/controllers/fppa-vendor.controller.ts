@@ -9,7 +9,10 @@ import {
 } from '@nestjs/swagger';
 import { FppaVendor } from '@entities';
 import { DataResponseFormat } from '@api-data';
-import { FppaDataValidation } from '../dto/fppa-data-validation';
+import {
+  FppaDataValidation,
+  GetFPPAVendorByTinDto,
+} from '../dto/fppa-data-validation';
 import { EntityCrudController } from '@generic-controllers';
 import { EntityCrudOptions } from 'src/shared/types/crud-option.type';
 import {
@@ -37,23 +40,7 @@ export class FppaVendorsController extends EntityCrudController<FppaVendor>(
   }
 
   @Get(':tin')
-  @ApiOperation({
-    summary: 'Get Vendor Information By TIN',
-    description:
-      'Retrieve user information by providing the Tax Identification Number (TIN).',
-  })
-  @ApiParam({
-    name: 'tin',
-    type: String,
-    description: 'Tax Identification Number (TIN) of the user',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Successfully retrieved tax payer information',
-    type: FppaVendor,
-  })
-  @ApiResponse({ status: 404, description: 'Vendor not found' })
-  async getFPPAVenderByTin(@Param('tin') tin: string) {
-    return this.fppaVendorService.getFPPAVenderByTin(tin);
+  async getFPPAVenderByTin(@Param() parms: GetFPPAVendorByTinDto) {
+    return this.fppaVendorService.getFPPAVenderByTin(parms.tin);
   }
 }

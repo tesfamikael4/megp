@@ -9,7 +9,10 @@ import {
 } from '@nestjs/swagger';
 import { CustomerBussinesInfo } from '@entities';
 import { DataResponseFormat } from '@api-data';
-import { TraderDataValidation } from '../dto/trader-data-validation';
+import {
+  GetTraderInfoDto,
+  TraderDataValidation,
+} from '../dto/trader-data-validation';
 import { EntityCrudController } from '@generic-controllers';
 import { EntityCrudOptions } from 'src/shared/types/crud-option.type';
 import {
@@ -42,36 +45,12 @@ export class CustomerBussinesInfosController extends EntityCrudController<Custom
   }
 
   @Get(':tin/:licenseNumber')
-  @ApiOperation({
-    summary: 'Get Trader Information By Tin And Trade License number',
-    description:
-      'Retrieve trader information by providing the Tax Identification Number (TIN) and Trade License Number.',
-  })
-  @ApiParam({
-    name: 'tin',
-    type: String,
-    required: true,
-    description: 'Tax Identification Number (TIN) of the trader',
-  })
-  @ApiParam({
-    name: 'licenseNumber',
-    type: String,
-    required: true,
-    description: 'Trade License Number of the trader',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Successfully retrieved trader information',
-    type: CustomerBussinesInfo,
-  })
-  @ApiResponse({ status: 404, description: 'Trader Information not found' })
   async getTraderInfoByTinAndTradeLicenseNumber(
-    @Param('tin') tin: string,
-    @Param('licenseNumber') licenseNumber: string,
+    @Param() params: GetTraderInfoDto,
   ) {
     return this.customerBussinesInfoService.getTraderInfoByTinAndTradeLicenseNumber(
-      tin,
-      licenseNumber,
+      params.tin,
+      params.licenseNumber,
     );
   }
 }
