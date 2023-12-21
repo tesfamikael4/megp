@@ -20,7 +20,6 @@ import {
 } from '@tabler/icons-react';
 import { flexRender } from '@tanstack/react-table';
 import type t from '@tanstack/react-table';
-import { logger } from '@megp/core-fe';
 import { useState, useEffect } from 'react';
 import { useDebouncedState } from '@mantine/hooks';
 import type { CollectionQuery } from '../../models/query';
@@ -151,7 +150,6 @@ export function Grid<T>({
             <thead>
               {table.getHeaderGroups().map((headerGroup) => (
                 <Table.Tr key={headerGroup.id}>
-                  {logger.log(headerGroup.headers)}
                   {headerGroup.headers.map((header) => (
                     <Table.Th
                       colSpan={header.colSpan}
