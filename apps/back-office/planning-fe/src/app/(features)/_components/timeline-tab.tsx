@@ -18,48 +18,54 @@ import {
 
 const tableData = [
   {
-    operationMethod: 'Procurement Initiation',
+    timeline: 'Procurement Initiation',
     period: 0,
-    toDate: new Date(),
+    dueDate: new Date(),
   },
   {
-    operationMethod: 'Procurement Requisition',
+    timeline: 'Procurement Requisition',
     period: 10,
-    toDate: new Date(),
+    dueDate: new Date(),
   },
   {
-    operationMethod: 'Tender Publication',
+    timeline: 'Tender Publication',
     period: 10,
-    toDate: new Date(),
+    dueDate: new Date(),
   },
   {
-    operationMethod: 'Tender Submission',
+    timeline: 'Tender Submission',
     period: 10,
-    toDate: new Date(),
+    dueDate: new Date(),
   },
   {
-    operationMethod: ' Evaluation',
+    timeline: ' Evaluation',
     period: 10,
-    toDate: new Date(),
+    dueDate: new Date(),
   },
   {
-    operationMethod: 'Award',
+    timeline: 'Award',
     period: 10,
-    toDate: new Date(),
+    dueDate: new Date(),
   },
   {
-    operationMethod: 'Contract Signing',
+    timeline: 'Contract Signing',
     period: 10,
-    toDate: new Date(),
+    dueDate: new Date(),
   },
   {
-    operationMethod: 'Contract Closure',
+    timeline: 'Contract Closure',
     period: 10,
-    toDate: new Date(),
+    dueDate: new Date(),
   },
 ];
 
-export default function TimelineTab({ page }: { page: 'pre' | 'post' }) {
+export default function TimelineTab({
+  page,
+  disableFields = false,
+}: {
+  page: 'pre' | 'post';
+  disableFields?: boolean;
+}) {
   const [data, setData] = useState<any[]>(tableData);
   const { id } = useParams();
   const [createPreTimeline, { isLoading: isPreTimelineCreating }] =
@@ -78,7 +84,7 @@ export default function TimelineTab({ page }: { page: 'pre' | 'post' }) {
     columns: [
       {
         header: 'Name',
-        accessorKey: 'operationMethod',
+        accessorKey: 'timeline',
       },
       {
         id: 'period',
@@ -91,7 +97,7 @@ export default function TimelineTab({ page }: { page: 'pre' | 'post' }) {
       {
         id: 'date',
         header: 'Due Date',
-        accessorKey: 'toDate',
+        accessorKey: 'dueDate',
         cell: ({ getValue, row, column }) => (
           <DueDate getValue={getValue} row={row} column={column} />
         ),
@@ -119,12 +125,12 @@ export default function TimelineTab({ page }: { page: 'pre' | 'post' }) {
           const cumulativeSum = old
             .slice(0, i + 1)
             .reduce((sum, item) => sum + item.period, 0);
-          const currentDate = new Date(old[0].toDate ?? new Date());
+          const currentDate = new Date(old[0].dueDate ?? new Date());
           currentDate.setDate(currentDate.getDate() + cumulativeSum);
           if (!isNaN(currentDate.getTime())) {
             return {
               ...row,
-              toDate: currentDate,
+              dueDate: currentDate,
             };
           } else {
             return row;
@@ -150,6 +156,7 @@ export default function TimelineTab({ page }: { page: 'pre' | 'post' }) {
             rightSection={
               <Box className=" text-black border-l-2 p-2 mr-2">Days</Box>
             }
+            disabled={disableFields}
           />
         )}
       </>
@@ -182,14 +189,13 @@ export default function TimelineTab({ page }: { page: 'pre' | 'post' }) {
           placeholder="Pick date"
           onBlur={onBlur}
           minDate={new Date()}
-          disabled={index != 0}
+          disabled={index != 0 || disableFields}
         />
       </>
     );
   };
 
   const handleSave = async () => {
-    const initialDay = data[0];
     const activityId =
       page == 'pre'
         ? { preBudgetPlanActivityId: id }
@@ -197,10 +203,10 @@ export default function TimelineTab({ page }: { page: 'pre' | 'post' }) {
     const castedData = data.map((d, index) => {
       return {
         ...activityId,
-        fromDate: index === 0 ? initialDay.toDate : data[index - 1].toDate,
-        toDate: d.toDate,
+        // fromDate: index === 0 ? initialDay.dueDate : data[index - 1].dueDate,
+        dueDate: d.dueDate,
         period: d.period,
-        operationMethod: d.operationMethod,
+        timeline: d.timeline,
         order: index,
       };
     });
@@ -232,7 +238,7 @@ export default function TimelineTab({ page }: { page: 'pre' | 'post' }) {
     if (page == 'pre' && isPreTimelineSuccess && preTimeline.total !== 0) {
       const castedData = preTimeline?.items?.map((t) => ({
         ...t,
-        toDate: new Date(t.toDate),
+        dueDate: new Date(t.dueDate),
         fromDate: new Date(t.fromDate),
       }));
       setData([...castedData]);
@@ -243,7 +249,7 @@ export default function TimelineTab({ page }: { page: 'pre' | 'post' }) {
     ) {
       const castedData = postTimeline?.items?.map((t) => ({
         ...t,
-        toDate: new Date(t.toDate),
+        dueDate: new Date(t.dueDate),
         fromDate: new Date(t.fromDate),
       }));
       setData([...castedData]);
@@ -263,6 +269,7 @@ export default function TimelineTab({ page }: { page: 'pre' | 'post' }) {
         <Button
           onClick={handleSave}
           loading={isPreTimelineCreating || isPostTimelineCreating}
+          disabled={disableFields}
         >
           <IconDeviceFloppy size={16} /> Save
         </Button>

@@ -22,33 +22,57 @@ import {
 } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { useLazyReadQuery } from '../_api/activities.api';
+import { useLazyReadQuery as useLazyReadPostActivityQuery } from '../_api/post-activity.api';
 import { useParams } from 'next/navigation';
 import { useLazyGetUnitOfMeasurementsQuery } from '@/store/api/administration/administration.api';
 import { useCreateMultipleItemsMutation } from '@/store/api/pre-budget-plan/pre-budget-plan.api';
+import { useCreateMultipleItemsMutation as usePostCreateMultipleItemsMutation } from '@/store/api/post-budget-plan/post-budget-plan.api';
 import { notifications } from '@mantine/notifications';
 import {
   useDeleteMutation,
   useLazyListByAppIdQuery,
   useUpdateMutation,
 } from '../_api/items.api';
+import {
+  useDeleteMutation as useDeletePostMutation,
+  useLazyListByAppIdQuery as useLazyListPostByAppIdQuery,
+  useUpdateMutation as useUpdatePostMutation,
+} from '../_api/post-items.api';
 import { modals } from '@mantine/modals';
 import { DetailItem } from './deatil-item';
 import ItemSelector from '@/app/(features)/_components/item-selector';
 import DataImport from './data-import';
 
-export function Items() {
+export function Items({
+  page,
+  disableFields = false,
+}: {
+  page: 'pre' | 'post';
+  disableFields?: boolean;
+}) {
   const [opened, { open, close }] = useDisclosure(false);
   const [openedImportModal, { close: closeImportModal }] = useDisclosure(false);
   //   { open: openImportModal, close: closeImportModal },
   // ] = useDisclosure(false);
   const [data, setData] = useState<any[]>([]);
   const [newItems, setNewItems] = useState<any[]>([]);
-  const [getActivity, { data: activity }] = useLazyReadQuery();
-  const [addItems, { isLoading: isAddingItems, isSuccess: isAdded }] =
+  const [getPreActivity, { data: preActivity }] = useLazyReadQuery();
+  const [getPostActivity, { data: postActivity }] =
+    useLazyReadPostActivityQuery();
+  const [addPreItems, { isLoading: isPreAddingItems, isSuccess: isPreAdded }] =
     useCreateMultipleItemsMutation();
-  const [listById, { data: list, isSuccess }] = useLazyListByAppIdQuery();
-  const [remove] = useDeleteMutation();
-  const [update] = useUpdateMutation();
+  const [
+    addPostItems,
+    { isLoading: isPostAddingItems, isSuccess: isPostAdded },
+  ] = usePostCreateMultipleItemsMutation();
+  const [listPreById, { data: preList, isSuccess: isPreSuccess }] =
+    useLazyListByAppIdQuery();
+  const [listPostById, { data: postList, isSuccess: isPostSuccess }] =
+    useLazyListPostByAppIdQuery();
+  const [removePre] = useDeleteMutation();
+  const [removePost] = useDeletePostMutation();
+  const [updatePre] = useUpdateMutation();
+  const [updatePost] = useUpdatePostMutation();
   const { id } = useParams();
 
   const config: TableConfig<any> = {
@@ -176,12 +200,21 @@ export function Items() {
     };
     const handleDelete = async () => {
       try {
-        await remove(cell.id).unwrap();
-        notifications.show({
-          title: 'Success',
-          message: 'Item Deleted Success-fully',
-          color: 'green',
-        });
+        if (page == 'pre') {
+          await removePre(cell.id).unwrap();
+          notifications.show({
+            title: 'Success',
+            message: 'Item Deleted Success-fully',
+            color: 'green',
+          });
+        } else {
+          await removePost(cell.id).unwrap();
+          notifications.show({
+            title: 'Success',
+            message: 'Item Deleted Success-fully',
+            color: 'green',
+          });
+        }
       } catch (err) {
         logger.log(err);
         notifications.show({
@@ -207,6 +240,7 @@ export function Items() {
               color="red"
               leftSection={<IconTrash size={15} />}
               onClick={openDeleteModal}
+              disabled={disableFields}
             >
               Delete
             </Menu.Item>
@@ -237,12 +271,21 @@ export function Items() {
 
     const updateData = async (data) => {
       try {
-        await update(data).unwrap();
-        notifications.show({
-          title: 'Success',
-          message: 'Updated Success-fully',
-          color: 'green',
-        });
+        if (page == 'pre') {
+          await updatePre(data).unwrap();
+          notifications.show({
+            title: 'Success',
+            message: 'Updated Success-fully',
+            color: 'green',
+          });
+        } else {
+          await updatePost(data).unwrap();
+          notifications.show({
+            title: 'Success',
+            message: 'Updated Success-fully',
+            color: 'green',
+          });
+        }
       } catch (err) {
         notifications.show({
           title: 'Error',
@@ -288,7 +331,7 @@ export function Items() {
         <Flex
           gap="sm"
           justify="end"
-          onDoubleClick={() => setIsEditorOpened(true)}
+          onDoubleClick={() => setIsEditorOpened(disableFields ? false : true)}
         >
           {!isEditorOpened && (
             <>
@@ -349,7 +392,11 @@ export function Items() {
     return (
       <>
         {!isEditorOpened && (
-          <Text onDoubleClick={() => setIsEditorOpened(true)}>
+          <Text
+            onDoubleClick={() =>
+              setIsEditorOpened(disableFields ? false : true)
+            }
+          >
             {original?.quantity}
           </Text>
           // <Text>{original?.uomName}</Text>
@@ -372,15 +419,17 @@ export function Items() {
     logger.log('items:', items);
     const castedData = items.map((item) => ({
       unitPrice: 0,
-      currency: activity?.currency,
+      currency: page == 'pre' ? preActivity?.currency : postActivity?.currency,
       quantity: 0,
       uom: item.uOMId,
       uomName: item.uOMName,
-      preBudgetPlanActivityId: id,
+      [page == 'pre' ? 'preBudgetPlanActivityId' : 'postBudgetPlanActivityId']:
+        id,
       description: item.description,
       metaData: item,
       itemCode: item.itemCode,
       measurement: item.measurementId,
+      classification: item.commodityCode,
     }));
 
     setNewItems([...castedData, ...newItems]);
@@ -388,12 +437,21 @@ export function Items() {
 
   const handelOnSave = async () => {
     try {
-      await addItems({ items: newItems }).unwrap();
-      notifications.show({
-        title: 'Success',
-        message: 'Items Created Success-fully',
-        color: 'green',
-      });
+      if (page == 'pre') {
+        await addPreItems({ items: newItems }).unwrap();
+        notifications.show({
+          title: 'Success',
+          message: 'Items Created Success-fully',
+          color: 'green',
+        });
+      } else {
+        await addPostItems({ items: newItems }).unwrap();
+        notifications.show({
+          title: 'Success',
+          message: 'Items Created Success-fully',
+          color: 'green',
+        });
+      }
       setNewItems([]);
     } catch (err) {
       logger.log(err);
@@ -407,16 +465,20 @@ export function Items() {
 
   //use effect
   useEffect(() => {
-    getActivity(id as string);
-  }, [id, getActivity]);
+    page == 'pre'
+      ? getPreActivity(id as string)
+      : getPostActivity(id as string);
+  }, [id, getPreActivity, page, getPostActivity]);
 
   useEffect(() => {
-    listById(id as string);
-  }, [id, isAdded]);
+    page == 'pre' && listPreById(id as string);
+    page == 'post' && listPostById(id as string);
+  }, [id, isPreAdded, isPostAdded]);
 
   useEffect(() => {
-    isSuccess && setData([...(list?.items ?? [])]);
-  }, [list, isSuccess]);
+    page == 'pre' && isPreSuccess && setData([...(preList?.items ?? [])]);
+    page == 'post' && isPostSuccess && setData([...(postList?.items ?? [])]);
+  }, [isPreSuccess, preList, postList, isPostSuccess, page]);
 
   return (
     <Box>
@@ -424,7 +486,7 @@ export function Items() {
         {/* <Button onClick={openImportModal}>
           <IconFileImport size={18} /> Import
         </Button> */}
-        <Button onClick={open}>
+        <Button onClick={open} disabled={disableFields}>
           <IconPlus size={18} /> Add
         </Button>
       </Group>
@@ -435,7 +497,10 @@ export function Items() {
           </Text>
           <Table config={config} data={newItems} />
           <Flex justify="end" className="my-2" gap="sm">
-            <Button onClick={handelOnSave} loading={isAddingItems}>
+            <Button
+              onClick={handelOnSave}
+              loading={isPreAddingItems || isPostAddingItems}
+            >
               <IconDeviceFloppy /> Save
             </Button>
             <Button variant="outline">Clean</Button>

@@ -15,10 +15,9 @@ import { IconChevronRight } from '@tabler/icons-react';
 import { useState } from 'react';
 import { DetailTable } from './detail-table';
 
-export const FrameworkSelector = () => {
+export const FrameworkSelector = ({ contract, onSelect }: any) => {
   const [opened, { close, open }] = useDisclosure(false);
-  const [selectedContract, setSelectedContract] = useState('');
-  const [value, setValue] = useState('');
+  const [selectedContract, setSelectedContract] = useState(contract);
   const [detail, setDetail] = useState(undefined);
 
   const config: TableConfig<any> = {
@@ -29,8 +28,8 @@ export const FrameworkSelector = () => {
         accessorKey: 'contractNo',
         cell: ({ row: { original } }: any) => (
           <Radio
-            onChange={() => setSelectedContract(original.contractNo)}
-            checked={selectedContract === original.contractNo}
+            onChange={() => setSelectedContract(original)}
+            checked={selectedContract?.contractNo === original.contractNo}
           />
         ),
       },
@@ -65,10 +64,10 @@ export const FrameworkSelector = () => {
     <>
       <Flex gap="md" align="end">
         <TextInput
-          label="Purchased Orders"
+          label="Signed Contracts"
           className="w-full"
           readOnly
-          value={value}
+          value={contract.title ?? ''}
         />
         <Button onClick={open}>Select</Button>
       </Flex>
@@ -117,7 +116,7 @@ export const FrameworkSelector = () => {
             <Group justify="end" className="mt-2">
               <Button
                 onClick={() => {
-                  setValue(selectedContract);
+                  onSelect(selectedContract);
                   close();
                 }}
               >
@@ -158,8 +157,8 @@ export const FrameworkSelector = () => {
               <Button onClick={() => setDetail(undefined)}>Back</Button>
               <Button
                 onClick={() => {
-                  setSelectedContract((detail as any)?.contractNo);
-                  setValue((detail as any)?.contractNo);
+                  setSelectedContract(detail);
+                  onSelect(detail);
                   close();
                   setDetail(undefined);
                 }}

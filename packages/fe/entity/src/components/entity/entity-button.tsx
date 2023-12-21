@@ -21,6 +21,7 @@ interface EntityButtonProps {
   isUpdating?: boolean;
   isDeleting?: boolean;
   isActivating?: boolean;
+  disabled?: boolean;
 
   data?: any;
 }
@@ -36,6 +37,7 @@ export function EntityButton({
   data,
   isUpdating,
   isDeleting,
+  disabled,
   onCancel,
   onActivate,
   isActivating,
@@ -46,6 +48,7 @@ export function EntityButton({
         <>
           {onCreate ? (
             <Button
+              disabled={disabled}
               leftSection={<IconDeviceFloppy size={14} stroke={1.6} />}
               loading={isSaving}
               onClick={onCreate}
@@ -54,6 +57,7 @@ export function EntityButton({
             </Button>
           ) : null}
           <Button
+            disabled={disabled}
             leftSection={<IconBackspace size={14} stroke={1.6} />}
             onClick={onReset}
             variant="default"
@@ -66,6 +70,7 @@ export function EntityButton({
         <>
           {onUpdate ? (
             <Button
+              disabled={disabled}
               leftSection={<IconDeviceFloppy size={14} stroke={1.6} />}
               loading={isUpdating}
               onClick={onUpdate}
@@ -85,6 +90,7 @@ export function EntityButton({
 
           {onDelete ? (
             <DeleteButton
+              disabled={disabled}
               entity={entity}
               isDeleting={isDeleting}
               onDelete={onDelete}

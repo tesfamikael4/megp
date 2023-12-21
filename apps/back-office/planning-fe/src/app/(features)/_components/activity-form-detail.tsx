@@ -7,13 +7,15 @@ import {
   Checkbox,
   Divider,
   Flex,
+  Modal,
+  MultiSelect,
   NumberInput,
   Select,
   Stack,
   TextInput,
   Textarea,
 } from '@mantine/core';
-import { logger } from '@megp/core-fe';
+import { Tree, logger } from '@megp/core-fe';
 import { EntityButton } from '@megp/entity';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -32,40 +34,34 @@ import {
   useUpdateMutation as useUpdatePostActivityMutation,
 } from '../_api/post-activity.api';
 import { useParams, useRouter } from 'next/navigation';
-import { FrameworkSelector } from './framework-selector';
+import { useGetClassificationsQuery } from '@/store/api/administration/administration.api';
+import { useDisclosure } from '@mantine/hooks';
 
 interface FormDetailProps {
   mode: 'detail' | 'new';
   page: 'pre' | 'post';
+  disableFields?: boolean;
 }
 
 const activitiesSchema: ZodType<Partial<BudgetPlanActivities>> = z.object({
   name: z.string().min(1, { message: 'Name is required' }),
   description: z.string().min(1, { message: 'Description is required' }),
-  procurementMethod: z.string({
-    required_error: 'Procurement Method is required',
-  }),
-  procurementType: z.string({
-    required_error: 'Procurement Type is required',
-  }),
-  fundingSource: z.string({
-    required_error: 'Funding Source  is required',
-  }),
+
   currency: z.string({
     required_error: 'Currency is required',
   }),
-  totalEstimatedAmount: z.number({
+  estimatedAmount: z.number({
     required_error: 'Estimated Amount is required',
   }),
-  procurementProcess: z.string({
-    required_error: 'Procurement Process is required',
-  }),
-  preference: z.string().default('Not Applicable'),
   remark: z.string().default(''),
   isMultiYear: z.boolean().default(false),
 });
 
-export const FormDetail = ({ mode, page }: FormDetailProps) => {
+export const FormDetail = ({
+  mode,
+  page,
+  disableFields = false,
+}: FormDetailProps) => {
   const router = useRouter();
   const { budgetYear: budgetPlanId, id } = useParams();
   const {
@@ -79,6 +75,21 @@ export const FormDetail = ({ mode, page }: FormDetailProps) => {
   } = useForm<BudgetPlanActivities>({
     resolver: zodResolver(activitiesSchema),
   });
+  const [opened, { open, close }] = useDisclosure();
+  const [tags, setTags] = useState<any>([]);
+
+  //
+  const { data: classifications } = useGetClassificationsQuery({
+    where: [
+      [
+        {
+          column: 'parentCode',
+          value: 'IsNull',
+          operator: 'IsNull',
+        },
+      ],
+    ],
+  } as any);
 
   // pre rtk query
   const [createPre, { isLoading: isPreCreating }] = useCreateMutation();
@@ -104,14 +115,16 @@ export const FormDetail = ({ mode, page }: FormDetailProps) => {
       page == 'pre'
         ? {
             ...data,
-            multiYearBudget: [],
-            donor: {},
+            // multiYearBudget: [],
+            // donor: {},
+            classification: tags,
             preBudgetPlanId: budgetPlanId,
           }
         : {
             ...data,
-            multiYearBudget: [],
-            donor: {},
+            // multiYearBudget: [],
+            // donor: {},
+            classification: tags,
             postBudgetPlanId: budgetPlanId,
           };
     logger.log(rawData);
@@ -177,12 +190,14 @@ export const FormDetail = ({ mode, page }: FormDetailProps) => {
             id,
             ...preActivity,
             ...newData,
+            classification: tags,
             preBudgetPlanId: budgetPlanId,
           }
         : {
             id,
             ...postActivity,
             ...newData,
+            classification: tags,
             postBudgetPlanId: budgetPlanId,
           };
     try {
@@ -214,10 +229,7 @@ export const FormDetail = ({ mode, page }: FormDetailProps) => {
   const onReset = () => {
     reset({
       name: '',
-      procurementReference: '',
       description: '',
-      procurementMethod: '',
-      procurementType: '',
     });
   };
 
@@ -229,40 +241,26 @@ export const FormDetail = ({ mode, page }: FormDetailProps) => {
   }, [mode, id, getPreActivity, page, getPostActivity]);
 
   useEffect(() => {
-    method === 'Purchased Orders' && setValue('totalEstimatedAmount', 0);
-  }, [method]);
-
-  useEffect(() => {
     if (mode === 'detail' && (isPreSuccess || isPostSuccess)) {
       if (page == 'pre') {
         setValue('name', preActivity?.name);
         setValue('currency', preActivity?.currency);
         setValue('description', preActivity?.description);
-        setValue('fundingSource', preActivity?.fundingSource);
         setValue('isMultiYear', preActivity?.isMultiYear);
-        setValue('isMultiYear', preActivity?.isMultiYear);
-        setValue('procurementMethod', preActivity?.procurementMethod);
         setValue('procurementReference', preActivity?.procurementReference);
-        setValue('procurementType', preActivity?.procurementType);
         setValue('remark', preActivity?.remark);
-        setValue('preference', preActivity?.preference);
-        setValue('procurementProcess', preActivity?.procurementProcess);
-        setValue('totalEstimatedAmount', preActivity?.totalEstimatedAmount);
+        setValue('estimatedAmount', preActivity?.estimatedAmount);
+        setTags(preActivity?.classification ?? []);
       }
       if (page == 'post') {
         setValue('name', postActivity?.name);
         setValue('currency', postActivity?.currency);
         setValue('description', postActivity?.description);
-        setValue('fundingSource', postActivity?.fundingSource);
         setValue('isMultiYear', postActivity?.isMultiYear);
-        setValue('isMultiYear', postActivity?.isMultiYear);
-        setValue('procurementMethod', postActivity?.procurementMethod);
         setValue('procurementReference', postActivity?.procurementReference);
-        setValue('procurementType', postActivity?.procurementType);
         setValue('remark', postActivity?.remark);
-        setValue('preference', postActivity?.preference);
-        setValue('procurementProcess', postActivity?.procurementProcess);
-        setValue('totalEstimatedAmount', postActivity?.totalEstimatedAmount);
+        setValue('estimatedAmount', postActivity?.estimatedAmount);
+        setTags(preActivity?.classification ?? []);
       }
     }
   }, [
@@ -282,6 +280,7 @@ export const FormDetail = ({ mode, page }: FormDetailProps) => {
         withAsterisk
         {...register('name')}
         error={errors.name?.message}
+        disabled={disableFields}
       />
 
       <Textarea
@@ -292,6 +291,7 @@ export const FormDetail = ({ mode, page }: FormDetailProps) => {
         maxRows={10}
         {...register('description')}
         error={errors.description?.message}
+        disabled={disableFields}
       />
 
       <Flex gap="md">
@@ -310,11 +310,12 @@ export const FormDetail = ({ mode, page }: FormDetailProps) => {
               withAsterisk
               placeholder="Select Procurement Type"
               error={errors?.currency?.message}
+              disabled={disableFields}
             />
           )}
         />
         <Controller
-          name="totalEstimatedAmount"
+          name="estimatedAmount"
           control={control}
           render={({ field: { name, value, onChange } }) => (
             <NumberInput
@@ -323,9 +324,9 @@ export const FormDetail = ({ mode, page }: FormDetailProps) => {
               value={value}
               onChange={(d) => onChange(parseInt(d as string))}
               className="w-full"
-              error={errors?.totalEstimatedAmount?.message}
+              error={errors?.estimatedAmount?.message}
               withAsterisk
-              disabled={method === 'Purchased Orders'}
+              disabled={method === 'Purchased Orders' || disableFields}
             />
           )}
         />
@@ -335,7 +336,27 @@ export const FormDetail = ({ mode, page }: FormDetailProps) => {
         label="is Multi Year"
         className="w-full"
         {...register('isMultiYear')}
+        disabled={disableFields}
       />
+      <Flex gap="md" align="end">
+        <MultiSelect
+          label="Tag Classification"
+          value={tags.map((t) => t.code)}
+          data={tags.map((t) => ({
+            label: t.title + ' (' + t.code + ')',
+            value: t.code,
+          }))}
+          className="w-full"
+          onChange={(data) => {
+            setTags(tags.filter((t) => data.includes(t.code)));
+            logger.log({ data });
+          }}
+          disabled={disableFields}
+        />
+        <Button onClick={open} disabled={disableFields}>
+          Select
+        </Button>
+      </Flex>
 
       <Textarea
         label="Remark"
@@ -343,132 +364,8 @@ export const FormDetail = ({ mode, page }: FormDetailProps) => {
         minRows={2}
         maxRows={10}
         {...register('remark')}
+        disabled={disableFields}
       />
-
-      <Divider label="Procurement Mechanization" />
-
-      <Flex gap="md">
-        <Controller
-          name="procurementMethod"
-          control={control}
-          render={({ field: { value, name, onChange } }) => (
-            <Select
-              withCheckIcon={false}
-              name={name}
-              value={value}
-              onChange={onChange}
-              label="Procurement Method"
-              data={[
-                'Request for Quotation (RFQ) ',
-                'National Competitive Bidding (NCB)',
-                'International Competitive Bidding (ICB) ',
-                'Request for Proposal (RFP) ',
-                'Single Source Procurement ',
-                'Framework',
-                'Purchased Orders',
-              ]}
-              className="w-full"
-              withAsterisk
-              placeholder="Select Procurement Method"
-              error={errors?.procurementMethod?.message}
-            />
-          )}
-        />
-        <Controller
-          name="procurementType"
-          control={control}
-          render={({ field: { name, value, onChange } }) => (
-            <Select
-              withCheckIcon={false}
-              name={name}
-              value={value}
-              onChange={onChange}
-              label="Procurement Type"
-              data={[
-                'Goods',
-                'Works',
-                'Non Consulting Services',
-                'Consultancy Services',
-                'Motor Vehicle Repair',
-              ]}
-              className="w-full"
-              withAsterisk
-              placeholder="Select Procurement Type"
-              error={errors?.procurementType?.message}
-            />
-          )}
-        />
-      </Flex>
-      {method === 'Purchased Orders' && <FrameworkSelector />}
-      <Flex gap="md" align="center">
-        <Controller
-          name="fundingSource"
-          control={control}
-          render={({ field: { name, value, onChange } }) => (
-            <Select
-              withCheckIcon={false}
-              name={name}
-              value={value}
-              onChange={onChange}
-              label="Funding Source"
-              data={['Loan', 'Internal Revenue', 'Treasury']}
-              className="w-full"
-              withAsterisk
-              placeholder="Select Funding Source"
-              error={errors?.fundingSource?.message}
-            />
-          )}
-        />
-        <Controller
-          name="procurementProcess"
-          control={control}
-          render={({ field: { name, value, onChange } }) => (
-            <Select
-              name={name}
-              value={value}
-              onChange={onChange}
-              label="Procurement Process"
-              data={['Online', 'Offline']}
-              className="w-full"
-              withCheckIcon={false}
-              error={errors?.procurementProcess?.message}
-              withAsterisk
-            />
-          )}
-        />
-      </Flex>
-      <Flex gap="md">
-        <Controller
-          name="preference"
-          control={control}
-          render={({ field: { name, value, onChange } }) => (
-            <Select
-              withCheckIcon={false}
-              name={name}
-              value={value}
-              onChange={onChange}
-              label="Supplier Target Group"
-              data={[
-                { value: 'Not Applicable', label: 'Not Applicable' },
-                { value: 'IBM', label: 'Indigenous Black Malawian' },
-                { value: 'MSME', label: 'Micro, Small And Medium Enterprises' },
-                { value: 'Marginalized Group', label: 'Marginalized Group' },
-                { value: 'Others', label: 'Others' },
-              ]}
-              className="w-full"
-            />
-          )}
-        />
-
-        <Select
-          withCheckIcon={false}
-          label="Status"
-          value="Draft"
-          disabled
-          data={['Draft']}
-          className="w-full"
-        />
-      </Flex>
 
       <EntityButton
         mode={mode}
@@ -479,7 +376,39 @@ export const FormDetail = ({ mode, page }: FormDetailProps) => {
         onReset={onReset}
         onUpdate={handleSubmit(onUpdate)}
         onDelete={handleSubmit(onDelete)}
+        disabled={disableFields}
       />
+
+      <Modal
+        opened={opened}
+        onClose={close}
+        title="Select Classifications"
+        size="lg"
+      >
+        <Tree
+          fieldNames={{ title: 'title', key: 'code' }}
+          data={classifications ? classifications.items : []}
+          mode="select"
+          disableModal
+          selectedKeys={tags}
+          multiSelect
+          url={(code) =>
+            `${
+              process.env.NEXT_PUBLIC_ADMINISTRATION_API ??
+              '/administration/api/'
+            }classifications?q=w%3DparentCode%3A%3D%3A${code}`
+          }
+          onDone={(data) => {
+            logger.log({ data });
+            const castedData = (data as any[]).map((d) => ({
+              title: d.title,
+              code: d.code,
+            }));
+            setTags(castedData);
+            close();
+          }}
+        />
+      </Modal>
     </Stack>
   );
 };

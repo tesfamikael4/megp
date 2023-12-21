@@ -7,9 +7,7 @@ import {
   Text,
   Button,
   ActionIcon,
-  Checkbox,
   Group,
-  Table as MantineTable,
 } from '@mantine/core';
 import {
   IconBinaryTree,
@@ -17,11 +15,14 @@ import {
   IconColumns,
   IconPlus,
 } from '@tabler/icons-react';
-import { Table, TableConfig, Tree, logger } from '@megp/core-fe';
+import { TableConfig, Tree } from '@megp/core-fe';
 import {
   useGetClassificationsQuery,
-  useGetItemMasterQuery,
+  useLazyGetItemMasterQuery,
 } from '@/store/api/administration/administration.api';
+import { NewItem } from './new-item-form';
+import { DetailTable } from './detail-table';
+import { CollectionSelector } from './collection-selector';
 
 interface ItemSelectorProps {
   onDone: (item: any) => void;
@@ -30,8 +31,8 @@ interface ItemSelectorProps {
 }
 
 const ItemSelector = ({ onDone, opened, close }: ItemSelectorProps) => {
-  const [mode, setMode] = useState<'tree' | 'table'>('table');
-  const { data: list } = useGetItemMasterQuery({} as any);
+  const [mode, setMode] = useState<'tree' | 'table' | 'new'>('table');
+  const [getItemMaster, { data: list }] = useLazyGetItemMasterQuery();
   const { data: classifications } = useGetClassificationsQuery({
     where: [
       [
@@ -44,28 +45,9 @@ const ItemSelector = ({ onDone, opened, close }: ItemSelectorProps) => {
     ],
   } as any);
   const [detail, setDetail] = useState(undefined);
-  const [selected, setSelected] = useState<any>([]);
   const addConfig: TableConfig<any> = {
     // title: 'Items',
     columns: [
-      {
-        id: 'select',
-        header: '',
-        accessorKey: 'select',
-        cell: ({ row: { original } }: any) => (
-          <Checkbox
-            checked={selected.includes(original)}
-            onChange={(data) => {
-              if (data.target.checked) setSelected([...selected, original]);
-              else
-                setSelected([...selected.filter((s) => s.id !== original.id)]);
-            }}
-          />
-        ),
-        meta: {
-          widget: 'primary',
-        },
-      },
       {
         id: 'name',
         header: 'Items',
@@ -90,6 +72,27 @@ const ItemSelector = ({ onDone, opened, close }: ItemSelectorProps) => {
       },
     ],
   };
+
+  const detailData = [
+    {
+      key: 'Classification',
+      value: `Segment > Famliy > Class > ${(detail as any)?.commodityName} | ${(
+        detail as any
+      )?.commodityCode}`,
+    },
+    {
+      key: 'Item Code',
+      value: (detail as any)?.itemCode,
+    },
+    {
+      key: 'Description',
+      value: (detail as any)?.description,
+    },
+    {
+      key: 'Unit of Measurement',
+      value: (detail as any)?.uOMName,
+    },
+  ];
 
   const changeMode = () => {
     mode === 'table' ? setMode('tree') : setMode('table');
@@ -117,7 +120,7 @@ const ItemSelector = ({ onDone, opened, close }: ItemSelectorProps) => {
               <Tooltip label="Add new item">
                 <Box
                   className="text-slate-600 cursor-pointer"
-                  // onClick={changeMode}
+                  onClick={() => setMode('new')}
                 >
                   <IconPlus />
                 </Box>
@@ -137,9 +140,10 @@ const ItemSelector = ({ onDone, opened, close }: ItemSelectorProps) => {
         size={mode == 'tree' ? '75%' : 'lg'}
         onClose={close}
       >
-        {!detail && (
+        {mode == 'new' && <NewItem />}
+        {!detail && mode != 'new' && (
           <>
-            <Flex className="h-[30rem] overflow-y-hidden">
+            <Flex className="max-h-[40rem] overflow-y-hidden">
               {mode === 'tree' && (
                 <Box className="border-t-2 overflow-y-scroll w-2/5 ">
                   <Tree
@@ -161,64 +165,27 @@ const ItemSelector = ({ onDone, opened, close }: ItemSelectorProps) => {
               <Box
                 className={mode == 'tree' ? 'border-l-2 pl-2 w-3/5' : 'w-full'}
               >
-                <Table config={addConfig} data={list ? list.items : []} />
+                <CollectionSelector
+                  config={addConfig}
+                  data={list ? list.items : []}
+                  total={list ? list.total : 0}
+                  onDone={(data) => {
+                    onDone(data);
+                    close();
+                  }}
+                  multiSelect
+                  onRequestChange={(collectionQuery) => {
+                    getItemMaster(collectionQuery);
+                  }}
+                />
               </Box>
             </Flex>
-
-            <Group justify="end" className="mt-2">
-              <Button
-                onClick={() => {
-                  // logger.log({ selected });
-                  onDone(selected);
-                  close();
-                  setSelected([]);
-                }}
-              >
-                Add
-              </Button>
-            </Group>
           </>
         )}
 
-        {detail && (
+        {detail && mode != 'new' && (
           <>
-            <MantineTable highlightOnHover withTableBorder withColumnBorders>
-              <MantineTable.Tbody>
-                <MantineTable.Tr>
-                  <MantineTable.Td className="bg-slate-200 font-semibold w-1/5">
-                    Classification
-                  </MantineTable.Td>
-                  <MantineTable.Td>
-                    Segment {'>'} Famliy {'>'} Class {'>'}{' '}
-                    {(detail as any)?.commodityName} |{' '}
-                    {(detail as any)?.commodityCode}
-                  </MantineTable.Td>
-                </MantineTable.Tr>
-
-                <MantineTable.Tr>
-                  <MantineTable.Td className="bg-slate-200 font-semibold w-1/5">
-                    Item Code
-                  </MantineTable.Td>
-                  <MantineTable.Td>{(detail as any)?.itemCode}</MantineTable.Td>
-                </MantineTable.Tr>
-
-                <MantineTable.Tr>
-                  <MantineTable.Td className="bg-slate-200 font-semibold w-1/5">
-                    Description
-                  </MantineTable.Td>
-                  <MantineTable.Td>
-                    {(detail as any)?.description}
-                  </MantineTable.Td>
-                </MantineTable.Tr>
-
-                <MantineTable.Tr>
-                  <MantineTable.Td className="bg-slate-200 font-semibold w-1/5">
-                    Unit of Measurement
-                  </MantineTable.Td>
-                  <MantineTable.Td>{(detail as any)?.uOMName}</MantineTable.Td>
-                </MantineTable.Tr>
-              </MantineTable.Tbody>
-            </MantineTable>
+            <DetailTable data={detailData} />
 
             <Group justify="end" className="mt-2">
               <Button
