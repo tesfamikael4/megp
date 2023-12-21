@@ -82,6 +82,42 @@ export const selectColumn = {
     </div>
   ),
 };
+export const relationSelectColumn = (selected, setSelected) => {
+  const id = selected.map((sel) => sel.id);
+
+  return {
+    id: 'select',
+    meta: {
+      widget: 'select',
+    },
+    size: 40,
+    header: ({ table }) => {
+      return (
+        <IndeterminateCheckbox
+          checked={table.getIsAllRowsSelected()}
+          indeterminate={table.getIsSomeRowsSelected()}
+          onChange={table.getToggleAllRowsSelectedHandler()}
+        />
+      );
+    },
+    cell: ({ row }) => {
+      return (
+        <div>
+          <Checkbox
+            checked={id.includes(row.original.id)}
+            onChange={(data) => {
+              if (data.target.checked) setSelected([...selected, row.original]);
+              else
+                setSelected([
+                  ...selected.filter((s) => s.id !== row.original.id),
+                ]);
+            }}
+          />
+        </div>
+      );
+    },
+  };
+};
 
 export const remove = (openEditModal, showPopUp) => {
   return {

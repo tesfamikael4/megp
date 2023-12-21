@@ -17,7 +17,7 @@ import { defaultRelationConfig } from '../../models';
 import type { CollectionQuery, RelationConfig } from '../../models';
 import { visibleColumn } from '../../utilities/table';
 import { Grid } from '../table/grid';
-import { remove, selectColumn } from '../table/header-column';
+import { relationSelectColumn, remove } from '../table/header-column';
 
 interface RelationProps<T> {
   mode?: 'list' | 'detail' | 'modal';
@@ -59,10 +59,14 @@ export function Relation<T>({
     return { ...defaultRelationConfig, ...config };
   }, [config]);
 
+  const [selected, setSelected] = useState<T[]>([]);
+
   // construct header columns with the select column and action column
   const tableColumns = useMemo<ColumnDef<T>[]>(
     () => [
-      ...(options.selectable && mode === 'modal' ? [selectColumn] : []),
+      ...(options.selectable && mode === 'modal'
+        ? [relationSelectColumn(selected, setSelected)]
+        : []),
       ...options.columns.map((column) => ({
         ...column,
         meta: { widget: 'primary' },
@@ -73,21 +77,13 @@ export function Relation<T>({
         : []),
     ],
 
-    [
-      options.selectable,
-      options.columns,
-      mode,
-      readOnly,
-      openEditModal,
-      showPopUp,
-    ],
+    [options, mode, selected, readOnly, openEditModal, showPopUp],
   );
 
   const [width, setWidth] = useState(100);
   const [rowSelection, setRowSelection] = useState({});
   const [data, setData] = useState([]);
   const [sorting, setSorting] = useState([]);
-  // const [isexpanded, setIsExpanded] = useState(true);
 
   // change the width of the table columns when the mode changes
   useEffect(() => {
@@ -153,6 +149,11 @@ export function Relation<T>({
 
     setRowSelection(selectedRowa);
   }, [data, currentSelected]);
+
+  useEffect(() => {
+    currentSelected && setSelected(() => [...selected, ...currentSelected]);
+  }, [currentSelected]);
+
   const body = (
     <>
       <Grid
@@ -179,11 +180,7 @@ export function Relation<T>({
                 loading={isSaving}
                 onClick={() => {
                   mode === 'modal'
-                    ? options.onSave?.(
-                        table
-                          .getSelectedRowModel()
-                          .flatRows.map((s: any) => s.original) as T[],
-                      )
+                    ? options.onSave?.(selected as T[])
                     : options.onSave?.(data as T[]);
                 }}
               >
