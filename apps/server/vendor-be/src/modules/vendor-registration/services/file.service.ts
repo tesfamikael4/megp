@@ -5,7 +5,12 @@ import { S3Store } from '@tus/s3-store';
 
 // import tus from 'tus-node-server';
 // import tus from 'tus-js-client';
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { CreateFileDto, DeleteFileDto } from '../dto/file.dto';
@@ -413,10 +418,45 @@ export class FileService {
       throw error;
     }
   }
-  async getCertificate(filename: string, userId: string) {
+
+  async uploadCertificate2(
+    file: Buffer,
+    vendorId: string,
+    businessAreaId: string,
+  ) {
+    try {
+      const result = await this.businessAreaRepository.findOne({
+        where: { id: businessAreaId },
+      });
+      if (!result) throw new HttpException('business area not found ', 500);
+      const fileUploadName = 'certificate';
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+      const fileId = `${uniqueSuffix}_${'certeficate'}`;
+      const filename = `${vendorId}/${fileUploadName}/${fileId}`;
+      const metaData = {
+        'Content-Type': 'application/octet-stream',
+        'X-Amz-Meta-Testing': 1234,
+      };
+      console.log('file', file);
+      const resultData = await this.minioClient.putObject(
+        this.bucketName,
+        filename,
+        file,
+        metaData,
+      );
+      result.certificateUrl = fileId;
+      const data = await this.businessAreaRepository.save(result);
+      if (!result) throw new HttpException('business area update failed', 500);
+      return data;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
+  async getCertificate(filename: string, vendorId: string) {
     try {
       const fileUploadName = 'certificate';
-      const fileId = `${userId}/${fileUploadName}/${filename}`;
+      const fileId = `${vendorId}/${fileUploadName}/${filename}`;
       const result = this.minioClient.presignedGetObject(
         this.bucketName,
         fileId,

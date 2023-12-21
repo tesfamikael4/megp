@@ -433,7 +433,7 @@ export class DataSeederController {
       {
         id: '4459af13-b86d-4b79-b1b9-2cb2dda76386',
         name: 'Submission of New Vendor Registration Request',
-        label: 'Submiited Vendor Registration Request',
+        label: 'Submited Vendor Registration Request',
         description: 'Submission of New Vendor Registration Request',
         bpId: '96d95fdb-7852-4ddc-982f-0e94d23d15d3',
         handlerType: 'Requestor',
@@ -456,7 +456,7 @@ export class DataSeederController {
       {
         id: '1a20640c-5e65-4325-a471-cf20aa19da4c',
         name: 'Submission of New Vendor Registration Request',
-        label: 'Submiited Vendor Registration Request',
+        label: 'Submited Vendor Registration Request',
         description: 'Submission of New Vendor Registration Request',
         bpId: 'd822c2d4-1023-4328-a172-adfcd78a30d4',
         handlerType: 'Requestor',

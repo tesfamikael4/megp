@@ -5,11 +5,15 @@ import { Readable } from 'stream';
 import { CertificateService } from '../services/certificate.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CurrentUser, JwtGuard } from 'src/shared/authorization';
+import { FileService } from 'src/modules/vendor-registration/services/file.service';
 @ApiBearerAuth()
 @Controller('certificates')
 @ApiTags('certificates generator')
 export class CertificateController {
-  constructor(private readonly certificateService: CertificateService) { }
+  constructor(
+    private readonly certificateService: CertificateService,
+    private readonly fileService: FileService,
+  ) { }
   @UseGuards(JwtGuard)
   @Get('generate-certeficate/:vendorId/:instanceId')
   async generateCertificate(
@@ -33,11 +37,21 @@ export class CertificateController {
         'Content-Disposition',
         `attachment; filename=${vendorId}_certificate.pdf`,
       );
-      // Pipe the PDF stream to the response
       pdfStream.pipe(res);
+
     } catch (err) {
       console.error('Error:', err);
       res.status(500).send('Internal Server Error');
     }
+  }
+  @Get('get-certificate/:vendorId/:fileId')
+  async getCertificate(
+    @Param('fileId') fileId: string,
+    @Param('vendorId') vendorId: string,
+    @CurrentUser() userInfo: any,
+  ) {
+    console.log('fileId', userInfo);
+
+    return await this.fileService.getCertificate(fileId, vendorId);
   }
 }

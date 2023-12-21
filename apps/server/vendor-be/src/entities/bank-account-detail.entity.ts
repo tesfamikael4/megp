@@ -44,12 +44,7 @@ export class BankAccountDetailEntity extends Audit {
   accountType: string;
   @Column({ nullable: true })
   isDefualt: boolean;
-  /*
-  @Column({ name: 'approved_by', nullable: true, type: 'uuid' })
-  approvedBy: string;
-  @Column({ name: 'approved_date', nullable: true })
-  approvedDate: Date;
-  */
+
   @ManyToOne(() => VendorsEntity, (v) => v.vendorAccounts)
   @JoinColumn({ name: 'vendorId' })
   vendor: VendorsEntity;

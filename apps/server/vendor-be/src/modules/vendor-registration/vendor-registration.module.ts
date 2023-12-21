@@ -80,7 +80,7 @@ import { FileService } from './services/file.service';
     CategoriesModule,
     HttpModule,
   ],
-  exports: [VendorRegistrationsService],
+  exports: [VendorRegistrationsService, FileService],
   providers: [
     ServicePricingService,
     HandlingCommonService,

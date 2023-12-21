@@ -9,12 +9,14 @@ import { ServicePrice } from 'src/entities';
 import { WorkflowService } from 'src/modules/bpm/services/workflow.service';
 import { GotoNextStateDto } from 'src/modules/handling/dto/workflow-instance.dto';
 import { WorkflowInstanceEnum } from 'src/modules/handling/dto/workflow-instance.enum';
+import { FileService } from 'src/modules/vendor-registration/services/file.service';
 
 @Injectable()
 export class CertificateService {
   constructor(
     private readonly vendorService: VendorRegistrationsService,
     private readonly wfService: WorkflowService,
+    private readonly fileService: FileService,
   ) { }
   formatNumber(priceRange: ServicePrice) {
     let valueTo = '';
@@ -51,16 +53,19 @@ export class CertificateService {
     user: any,
   ): Promise<Readable> {
     try {
-      const fileName = `${vendorId}-certificate.pdf`;
-      const dirPath = path.join(
-        process.cwd(),
-        'modules',
-        'certificates',
-        'gen-certificates',
-      );
-      mkdirSync(dirPath, { recursive: true });
-      const filePath = path.join(dirPath, fileName);
-      const writeStream = createWriteStream(filePath);
+      let buffer: Buffer;
+
+      // const fileName = `${vendorId}-certificate.pdf`;
+      // const dirPath = path.join(
+      //   process.cwd(),
+      //   'modules',
+      //   'certificates',
+      //   'gen-certificates',
+      // );
+      // mkdirSync(dirPath, { recursive: true });
+      // const filePath = path.join(dirPath, fileName);
+      // const writeStream = createWriteStream(filePath);
+
       const qrUrl =
         (await toDataURL('https://dev.megp.peragosystems.com/', {
           margin: 0,
@@ -81,9 +86,11 @@ export class CertificateService {
       let goodsExpiry = '',
         serviceExpiry = '',
         expireDate = '';
+      let businessAreaId = '';
       const bas = vendorInfo.isrVendor.businessAreas;
       bas.map((bArea) => {
         const range = bArea.servicePrice;
+        businessAreaId = bArea.id;
         const formatedCategory = this.formatNumber(range);
         if (bArea.category.toLowerCase() == 'goods') {
           goodsCategory = formatedCategory;
@@ -110,23 +117,29 @@ export class CertificateService {
         qrCodeUrl: qrUrl,
       });
 
+      const chunks = [];
+      result.on('data', (chunk) => {
+        chunks.push(chunk);
+      });
+
+      result.on('end', () => {
+        buffer = Buffer.concat(chunks);
+        this.fileService.uploadCertificate2(buffer, vendorId, businessAreaId);
+      });
+
       if (!(result instanceof Readable)) {
         throw new Error(
-          'Certificate function did not return a Readable stream'
+          'Certificate function did not return a Readable stream',
         );
       }
-      result.pipe(writeStream);
-      await new Promise<void>((resolve, reject) => {
-        writeStream.on('finish', resolve);
-        writeStream.on('error', reject);
-      });
-      const fileStream = createReadStream(filePath);
-      return fileStream;
+
+      return result;
     } catch (err) {
       console.error('Error:', err);
       throw new Error('Internal Server Error' + err);
     }
   }
+
   formatExpireDates(goodsExpiry: string, serviceExpiry: string) {
     if (goodsExpiry == serviceExpiry) {
       return goodsExpiry;

@@ -123,7 +123,7 @@ export class BankAccountDetailResponse extends CreateBankAccountDetailDto {
 
     return entity;
   }
-  static fromEntity(dto: BankAccountDetailEntity): BankAccountDetailResponse {
+  static toResponse(dto: BankAccountDetailEntity): BankAccountDetailResponse {
     const entity = new BankAccountDetailResponse();
     if (!dto) {
       return;

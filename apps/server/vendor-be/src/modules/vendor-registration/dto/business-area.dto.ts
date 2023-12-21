@@ -74,3 +74,38 @@ export class BusinessAreaResponseDto extends CreateBusinessAreaDto {
     return entity.map((element) => this.toResponse(element));
   }
 }
+
+export class BusinessAreaDetailResponseDto {
+  @ApiProperty()
+  @IsNotEmpty()
+  id: string;
+  @ApiProperty()
+  category: string;
+  @ApiProperty()
+  status: string;
+  @ApiProperty()
+  approvedAt: Date;
+  @ApiProperty()
+  expireDate: Date;
+  @ApiProperty()
+  service: string;
+  @ApiProperty()
+  priceFrom: number;
+  @ApiProperty()
+  priceTo: number;
+  @ApiProperty()
+  currency: string;
+  static toResponse(entity: BusinessAreaEntity): BusinessAreaDetailResponseDto {
+    const response = new BusinessAreaDetailResponseDto();
+    response.id = entity.id;
+    response.category = entity.category;
+    response.status = entity.status;
+    response.expireDate = entity?.expireDate;
+    response.approvedAt = entity?.approvedAt;
+    response.service = entity.BpService.name;
+    response.priceFrom = entity.servicePrice.valueFrom;
+    response.priceTo = entity.servicePrice.valueTo;
+    response.currency = entity.servicePrice.currency;
+    return response;
+  }
+}
