@@ -18,6 +18,10 @@ export const ENTITY_LIST: EntityStoreConfig[] = [
     baseUrl: process.env.NEXT_PUBLIC_PLANNING_API ?? '/planning/api',
   },
   {
+    entity: 'pre-procurement-mechanism',
+    baseUrl: process.env.NEXT_PUBLIC_PLANNING_API ?? '/planning/api',
+  },
+  {
     entity: 'pre-budget-plan-items',
     baseUrl: process.env.NEXT_PUBLIC_PLANNING_API ?? '/planning/api',
   },
@@ -27,6 +31,14 @@ export const ENTITY_LIST: EntityStoreConfig[] = [
   },
   {
     entity: 'post-budget-plan-activities',
+    baseUrl: process.env.NEXT_PUBLIC_PLANNING_API ?? '/planning/api',
+  },
+  {
+    entity: 'post-procurement-mechanism',
+    baseUrl: process.env.NEXT_PUBLIC_PLANNING_API ?? '/planning/api',
+  },
+  {
+    entity: 'post-budget-plan-items',
     baseUrl: process.env.NEXT_PUBLIC_PLANNING_API ?? '/planning/api',
   },
 ];

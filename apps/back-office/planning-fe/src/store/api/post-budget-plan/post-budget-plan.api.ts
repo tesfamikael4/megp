@@ -12,6 +12,9 @@ export const postBudgetPlanApi = createApi({
       query: () => 'post-budget-plans/get-with-app',
       providesTags: ['post-budget-plan'],
     }),
+    getPostBudgetPlan: builder.query<any, string>({
+      query: (id: string) => `post-budget-plans/${id}`,
+    }),
     approvePostBudget: builder.mutation<any, string>({
       query: (id: string) => ({
         url: `post-budget-plans/approve-post-budget/${id}`,
@@ -47,5 +50,6 @@ export const {
   useCreateMultipleItemsMutation,
   useApprovePostBudgetMutation,
   useCreatePostActivityTimelineMutation,
+  useGetPostBudgetPlanQuery,
   useLazyGetPostBudgetTimelineQuery,
 } = postBudgetPlanApi;

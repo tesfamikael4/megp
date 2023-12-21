@@ -16,10 +16,14 @@ import { modals } from '@mantine/modals';
 import { logger } from '@megp/core-fe';
 import { useDisclosure } from '@mantine/hooks';
 import { DetailActivity } from '@/app/(features)/_components/detail-activity';
+import { useGetPreBudgetPlanQuery } from '@/store/api/pre-budget-plan/pre-budget-plan.api';
 
 export function Entity({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const { budgetYear } = useParams();
+  const { data: preBudgetYear } = useGetPreBudgetPlanQuery(
+    budgetYear as string,
+  );
   const [listById, { data: list }] = useLazyListByIdQuery();
   const [remove] = useDeleteMutation();
 
@@ -30,6 +34,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
       entity: 'activities',
       primaryKey: 'name',
       title: 'Activities',
+      hasAdd: preBudgetYear?.status == 'Draft',
       onAdd: () => {
         router.push(`/pre-budget-plan/${budgetYear}/activities/new`);
       },
@@ -62,31 +67,40 @@ export function Entity({ children }: { children: React.ReactNode }) {
         },
 
         {
-          id: 'procurementType',
-          header: ' Type',
-          accessorKey: 'procurementType',
+          id: 'description',
+          header: ' Description',
+          accessorKey: 'description',
           cell: (info) => info.getValue(),
           meta: {
             widget: 'expand',
           },
         },
-        {
-          id: 'procurementMethod',
-          header: ' Method',
-          accessorKey: 'procurementMethod',
-          cell: (info) => info.getValue(),
-          meta: {
-            widget: 'expand',
-          },
-        },
+        // {
+        //   id: 'procurementType',
+        //   header: ' Type',
+        //   accessorKey: 'procurementType',
+        //   cell: (info) => info.getValue(),
+        //   meta: {
+        //     widget: 'expand',
+        //   },
+        // },
+        // {
+        //   id: 'procurementMethod',
+        //   header: ' Method',
+        //   accessorKey: 'procurementMethod',
+        //   cell: (info) => info.getValue(),
+        //   meta: {
+        //     widget: 'expand',
+        //   },
+        // },
 
         {
-          id: 'totalEstimatedAmount',
+          id: 'calculatedAmount',
           header: () => <div className="text-right">Total Amount</div>,
-          accessorKey: 'totalEstimatedAmount',
+          accessorKey: 'calculatedAmount',
           cell: ({ row: { original } }) => (
             <p className="text-right">
-              {original.totalEstimatedAmount.toLocaleString('en-US', {
+              {original.calculatedAmount.toLocaleString('en-US', {
                 style: 'currency',
                 currency: original.currency,
                 minimumFractionDigits: 2,
@@ -106,7 +120,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
         },
       ],
     };
-  }, [router]);
+  }, [router, preBudgetYear]);
 
   const pathname = usePathname();
 

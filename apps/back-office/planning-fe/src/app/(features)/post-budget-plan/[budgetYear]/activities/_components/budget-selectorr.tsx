@@ -1,6 +1,8 @@
 'use client';
 
-import { useListByAppIdQuery } from '@/app/(features)/budget/_api/budget.api';
+import { DetailTable } from '@/app/(features)/_components/detail-table';
+import { useLazyListByAppIdQuery } from '@/app/(features)/budget/_api/budget.api';
+import { useGetPostBudgetPlanQuery } from '@/store/api/post-budget-plan/post-budget-plan.api';
 import {
   ActionIcon,
   Button,
@@ -10,12 +12,14 @@ import {
   Radio,
   TextInput,
   Table as MantineTable,
+  Box,
+  LoadingOverlay,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { Table, TableConfig } from '@megp/core-fe';
 import { IconChevronRight } from '@tabler/icons-react';
 import { useParams } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export const BudgetSelector = () => {
   const [opened, { close, open }] = useDisclosure(false);
@@ -23,7 +27,47 @@ export const BudgetSelector = () => {
   const [value, setValue] = useState('');
   const [detail, setDetail] = useState(undefined);
   const { budgetYear } = useParams();
-  const { data } = useListByAppIdQuery(budgetYear as string);
+  // const { data } = useListByAppIdQuery(budgetYear as string);
+  const [getBudget, { data, isLoading }] = useLazyListByAppIdQuery();
+  const {
+    data: postBudget,
+    isLoading: isPostBudgetLoading,
+    isSuccess,
+  } = useGetPostBudgetPlanQuery(budgetYear as string);
+  const detailInfo = [
+    {
+      key: 'Budget Line',
+      value: (detail as any)?.coa,
+    },
+    {
+      key: 'Description',
+      value: (detail as any)?.description,
+    },
+    {
+      key: 'Funding Source',
+      value: (detail as any)?.fundingSource,
+    },
+    {
+      key: 'Allocated Budget',
+      value: (detail as any)?.allocatedBudget,
+    },
+    {
+      key: 'Planned Value',
+      value: (detail as any)?.plannedValue,
+    },
+    {
+      key: 'Balance',
+      value: (detail as any)?.balance,
+    },
+    {
+      key: 'Currency',
+      value: (detail as any)?.currency,
+    },
+    {
+      key: 'Type',
+      value: (detail as any)?.type,
+    },
+  ];
 
   const config: TableConfig<any> = {
     columns: [
@@ -33,23 +77,23 @@ export const BudgetSelector = () => {
         accessorKey: 'contractNo',
         cell: ({ row: { original } }: any) => (
           <Radio
-            onChange={() => setSelectedContract(original.COA)}
-            checked={selectedContract === original.COA}
+            onChange={() => setSelectedContract(original.coa)}
+            checked={selectedContract === original.coa}
           />
         ),
       },
       {
-        id: 'COA',
-        header: 'COA',
-        accessorKey: 'COA',
+        id: 'coa',
+        header: 'Budget Line',
+        accessorKey: 'coa',
       },
       {
         id: 'action',
         header: 'Allocated Budget',
-        accessorKey: 'allocated budget',
+        accessorKey: 'allocatedBudget',
         cell: ({ row: { original } }) => (
           <p className="text-right">
-            {original['allocated budget'].toLocaleString('en-US', {
+            {original['allocatedBudget'].toLocaleString('en-US', {
               style: 'currency',
               currency: original.currency,
               minimumFractionDigits: 2,
@@ -65,7 +109,7 @@ export const BudgetSelector = () => {
         accessorKey: 'planned value',
         cell: ({ row: { original } }) => (
           <p className="text-right">
-            {original['planned value'].toLocaleString('en-US', {
+            {original['plannedValue'].toLocaleString('en-US', {
               style: 'currency',
               currency: original.currency,
               minimumFractionDigits: 2,
@@ -101,11 +145,16 @@ export const BudgetSelector = () => {
       },
     ],
   };
+
+  useEffect(() => {
+    isSuccess && getBudget(postBudget?.appId);
+  }, [getBudget, isSuccess, postBudget]);
   return (
-    <>
+    <Box pos="relative">
+      <LoadingOverlay visible={isLoading || isPostBudgetLoading} />
       <Flex gap="md" align="end">
         <TextInput
-          label="Select Chart of account"
+          label="Select Budget Line"
           className="w-full"
           readOnly
           value={value}
@@ -116,7 +165,7 @@ export const BudgetSelector = () => {
       <Modal
         opened={opened}
         onClose={close}
-        title="Chart of Account"
+        title="Budget Line"
         size="55rem"
         // centered
       >
@@ -139,71 +188,7 @@ export const BudgetSelector = () => {
 
         {detail && (
           <>
-            <MantineTable highlightOnHover withTableBorder withColumnBorders>
-              <MantineTable.Tbody>
-                <MantineTable.Tr>
-                  <MantineTable.Td className="bg-slate-200 font-semibold w-1/5">
-                    COA
-                  </MantineTable.Td>
-                  <MantineTable.Td>{(detail as any)?.COA}</MantineTable.Td>
-                </MantineTable.Tr>
-
-                <MantineTable.Tr>
-                  <MantineTable.Td className="bg-slate-200 font-semibold w-1/5">
-                    Allocated budget
-                  </MantineTable.Td>
-                  <MantineTable.Td>
-                    {(detail as any)?.['allocated budget'].toLocaleString(
-                      'en-US',
-                      {
-                        style: 'currency',
-                        currency: (detail as any).currency,
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      },
-                    )}
-                  </MantineTable.Td>
-                </MantineTable.Tr>
-
-                <MantineTable.Tr>
-                  <MantineTable.Td className="bg-slate-200 font-semibold w-1/5">
-                    Planned value
-                  </MantineTable.Td>
-                  <MantineTable.Td>
-                    {(detail as any)?.['planned value'].toLocaleString(
-                      'en-US',
-                      {
-                        style: 'currency',
-                        currency: (detail as any).currency,
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      },
-                    )}
-                  </MantineTable.Td>
-                </MantineTable.Tr>
-
-                <MantineTable.Tr>
-                  <MantineTable.Td className="bg-slate-200 font-semibold w-1/5">
-                    Balance
-                  </MantineTable.Td>
-                  <MantineTable.Td>
-                    {(detail as any)?.balance.toLocaleString('en-US', {
-                      style: 'currency',
-                      currency: (detail as any).currency,
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    })}
-                  </MantineTable.Td>
-                </MantineTable.Tr>
-
-                <MantineTable.Tr>
-                  <MantineTable.Td className="bg-slate-200 font-semibold w-1/5">
-                    Type
-                  </MantineTable.Td>
-                  <MantineTable.Td>{(detail as any)?.type}</MantineTable.Td>
-                </MantineTable.Tr>
-              </MantineTable.Tbody>
-            </MantineTable>
+            <DetailTable data={detailInfo} />
 
             <Group justify="end" gap="md" className="mt-2">
               <Button onClick={() => setDetail(undefined)}>Back</Button>
@@ -221,6 +206,6 @@ export const BudgetSelector = () => {
           </>
         )}
       </Modal>
-    </>
+    </Box>
   );
 };

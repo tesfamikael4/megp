@@ -9,11 +9,34 @@ export const administrationApi = createApi({
       process.env.NEXT_PUBLIC_ADMINISTRATION_API ?? '/administration/api/',
   }),
   endpoints: (builder) => ({
-    getItemMaster: builder.query<any, null>({
-      query: () => 'item-masters',
+    getItemMaster: builder.query<any, any>({
+      query: (collectionQuery) => {
+        let q = '';
+        if (collectionQuery) {
+          const query = encodeCollectionQuery(collectionQuery);
+          q = `?q=${query}`;
+        }
+        return { url: `item-masters${q}`, method: 'GET' };
+      },
     }),
-    getUnitOfMeasurements: builder.query<any, null>({
-      query: (id) => `extra-unit-of-measurements/list/${id}`,
+    getMeasurements: builder.query<any, null>({
+      query: () => 'measurements',
+    }),
+    getUnitOfMeasurements: builder.query<any, string>({
+      query: (id: string) => `extra-unit-of-measurements/list/${id}`,
+    }),
+    getTags: builder.query<any, null>({
+      query: () => `tags`,
+    }),
+    getCategories: builder.query<any, any>({
+      query: (collectionQuery) => {
+        let q = '';
+        if (collectionQuery) {
+          const query = encodeCollectionQuery(collectionQuery);
+          q = `?q=${query}`;
+        }
+        return { url: `item-categories${q}`, method: 'GET' };
+      },
     }),
     getClassifications: builder.query<any, null>({
       query: (collectionQuery) => {
@@ -33,6 +56,10 @@ export const administrationApi = createApi({
 
 export const {
   useGetItemMasterQuery,
+  useLazyGetItemMasterQuery,
   useLazyGetUnitOfMeasurementsQuery,
   useGetClassificationsQuery,
+  useGetTagsQuery,
+  useGetMeasurementsQuery,
+  useGetCategoriesQuery,
 } = administrationApi;

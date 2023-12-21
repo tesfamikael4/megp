@@ -7,12 +7,14 @@ interface DeleteButtonProps {
   onDelete: () => void;
   isDeleting?: boolean;
   entity?: string;
+  disabled?: boolean;
 }
 
 export function DeleteButton({
   onDelete,
   isDeleting,
   entity,
+  disabled,
 }: DeleteButtonProps): React.ReactElement {
   const pathname = usePathname();
   const parts = pathname.split('/');
@@ -40,6 +42,7 @@ export function DeleteButton({
   return (
     <Button
       color="red"
+      disabled={disabled}
       leftSection={<IconTrashX size={14} stroke={1.6} />}
       loading={isDeleting}
       onClick={openDeleteModal}

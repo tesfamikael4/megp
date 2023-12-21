@@ -4,7 +4,7 @@ export interface BudgetPlanActivities {
   name: string;
   procurementReference: string;
   description: string;
-  totalEstimatedAmount: number;
+  estimatedAmount: number;
   calculatedAmount: number;
   currency: string;
   fundingSource: string;

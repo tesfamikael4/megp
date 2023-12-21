@@ -17,6 +17,9 @@ export const preBudgetPlanApi = createApi({
       query: () => 'pre-budget-plans/get-with-app',
       providesTags: ['pre-budget-plan'],
     }),
+    getPreBudgetPlan: builder.query<any, string>({
+      query: (id: string) => `pre-budget-plans/${id}`,
+    }),
     approvePreBudget: builder.mutation<any, string>({
       query: (id: string) => ({
         url: `pre-budget-plans/approve-pre-budget/${id}`,
@@ -63,4 +66,5 @@ export const {
   useApprovePreBudgetMutation,
   useCreateAppMutation,
   useCreatePreActivityTimelineMutation,
+  useGetPreBudgetPlanQuery,
 } = preBudgetPlanApi;
