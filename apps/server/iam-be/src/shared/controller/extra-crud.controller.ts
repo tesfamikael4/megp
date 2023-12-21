@@ -37,7 +37,7 @@ export function ExtraCrudController<TEntity extends ObjectLiteral>(
       @Body() itemData: DeepPartial<TEntity>,
       @Req() req?: any,
     ): Promise<TEntity> {
-      return this.service.create(itemData);
+      return this.service.create(itemData, req);
     }
 
     @Get('list/:id')
