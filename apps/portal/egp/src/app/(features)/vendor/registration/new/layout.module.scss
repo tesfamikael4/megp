@@ -1,6 +1,7 @@
-.nav{
-    background-color: var(--mantine-color-gray-1);
+.nav {
+  @apply border;
+  background-color: var(--mantine-color-gray-1);
 }
 .main {
-    @apply border  w-full p-4 h-full;
+  @apply w-full p-4 h-full;
 }

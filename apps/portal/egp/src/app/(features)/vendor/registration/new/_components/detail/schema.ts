@@ -95,7 +95,8 @@ export const formDataSchema = z.object({
       .email({ message: 'Primary Email must be a valid email address' }),
     alternateEmail: z
       .string()
-      .email({ message: 'Alternate Email must be a valid email address' }),
+      .email({ message: 'Alternate Email must be a valid email address' })
+      .optional(),
     mobilePhone: z
       .string()
       .min(10, {

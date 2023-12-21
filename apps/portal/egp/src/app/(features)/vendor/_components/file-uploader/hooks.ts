@@ -58,11 +58,12 @@ export const uploadFile = async (
 ): Promise<UploadFileResult> => {
   try {
     const jwtToken = getCookie('token');
-
+    console.log(formData);
     const response = await fetch(serverPostUrl, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${jwtToken}`,
+        // 'Content-Type': 'multipart/form-data'
       },
       body: formData,
     });
@@ -146,14 +147,13 @@ export const uploadFile = async (
 };
 
 export const createPostUrl = (
-  attachment: string,
   invoiceId: string,
   serviceId: string,
   transactionId: string,
 ): string => {
-  return `/upload/upload-file-to-minio/TransactionId/${attachment}-${invoiceId}-${serviceId}-${transactionId}`;
+  return `/upload/upload-payment-receipt/${transactionId}/${serviceId}/${invoiceId}`;
 };
-export const createGetUrl = (attachment: string): string => {
-  return `/upload/get-attachment-pre-signed-object/142dd945-4ae9-449e-a49f-eee02723bf73/${attachment}`;
+export const createGetUrl = (userId: string, attachment: string): string => {
+  return `/upload/get-attachment-pre-signed-object/${attachment}`;
 };
 // Example usage

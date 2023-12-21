@@ -75,7 +75,7 @@ export interface FormData {
     category: string;
     invoiceId: string;
     attachment: string;
-  };
+  }[];
 }
 
 export interface AreasOfBusinessInterestType {
@@ -235,10 +235,36 @@ type TaskHandler = {
   assignmentStatus: string;
   previousHandlerId: null;
 };
-
+interface HandlerUser {
+  id: string;
+  exp: number;
+  iat: number;
+  email: string;
+  roles: any[]; // You might want to replace 'any[]' with the actual type of roles
+  lastName: string;
+  tenantId: number;
+  username: string;
+  firstName: string;
+  permissions: any[]; // You might want to replace 'any[]' with the actual type of permissions
+  roleSystems: any[]; // You might want to replace 'any[]' with the actual type of roleSystems
+  organization: any; // You might want to replace 'any' with the actual type of organization
+}
+type TaskTracker = {
+  id: string;
+  taskId: string;
+  instanceId: string;
+  handlerUser: HandlerUser;
+  handlerUserId: string;
+  pickedAt: null | any; // You might want to replace 'any' with the actual type of pickedAt
+  data: null | any; // You might want to replace 'any' with the actual type of data
+  taskChecklist: null | any; // You might want to replace 'any' with the actual type of taskChecklist
+  previousHandlerId: null | any; // You might want to replace 'any' with the actual type of previousHandlerId
+  executedAt: string;
+  remark: null | any; // You might want to replace 'any' with the actual type of remark
+};
 type TaskItem = {
   taskHandler: TaskHandler | null;
-  taskTracker: null;
+  taskTracker: TaskTracker | null;
   task: Task;
 };
 export type GetActivitiesProgressResponse = TaskItem[];

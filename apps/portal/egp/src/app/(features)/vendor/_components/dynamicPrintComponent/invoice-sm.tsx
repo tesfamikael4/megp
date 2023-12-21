@@ -5,9 +5,33 @@ import { InvoiceData } from '@/models/vendorInvoice';
 export default function InvoiceTemplate({
   invoiceData,
 }: {
-  invoiceData: InvoiceData;
+  invoiceData: InvoiceData[];
 }) {
-  const date = new Date(invoiceData.createdOn);
+  const data = {
+    id: invoiceData[0].id ?? '',
+    instanceId: invoiceData[0].instanceId ?? '',
+    applicationNo: invoiceData[0].applicationNo ?? '',
+    pricingId: invoiceData[0].pricingId ?? '',
+    taskName: invoiceData[0].taskName ?? '',
+    taskId: invoiceData[0].taskId ?? '',
+    serviceId: invoiceData[0].serviceId ?? '',
+    serviceName: invoiceData[0].serviceName ?? '',
+    payerName: invoiceData[0].payerName ?? '',
+    userId: invoiceData[0].userId ?? '',
+    payToAccNo: invoiceData[0].payToAccNo ?? '',
+    payToAccName: invoiceData[0].payToAccName ?? '',
+    payToBank: invoiceData[0].payToBank ?? '',
+    amount: invoiceData[0].amount ?? '',
+    createdOn: invoiceData[0].createdOn ?? '',
+    paymentStatus: invoiceData[0].paymentStatus ?? '',
+    remark: invoiceData[0].remark ?? '',
+    attachment: invoiceData[0].attachment ?? '',
+    expired: invoiceData[0].expired ?? '',
+  };
+  if (invoiceData.length <= 0) {
+    return <></>;
+  }
+  const date = new Date(invoiceData[0].createdOn);
 
   // Convert the date to a desired format, e.g., "YYYY-MM-DD HH:mm:ss"
   const invoiceDate = date.toLocaleString('en-US', {
@@ -45,15 +69,13 @@ export default function InvoiceTemplate({
         <div className="flex justify-between items-end p-4 flex-col gap-4  ">
           <div className="flex w-full items-center justify-center">
             <p className=" text-sm font-bold">
-              INVOICE <span className=" text-blue-600">#{invoiceData.id}</span>
+              INVOICE <span className=" text-blue-600">#{data.id}</span>
             </p>
           </div>
           <div className="flex w-full items-center justify-between">
             <div className="flex flex-col">
               <p className="text-xs text-gray-400 mb-1 font-bold">Bill To:</p>
-              <p className="text-sm ml-2 font-semibold">
-                {invoiceData.payerName}
-              </p>
+              <p className="text-sm ml-2 font-semibold">{data.payerName}</p>
             </div>
             <div className="flex flex-col"></div>
           </div>
@@ -65,12 +87,54 @@ export default function InvoiceTemplate({
               </p>
               <p className=" text-xs ml-2 font-semibold">Date: {invoiceDate}</p>
               <p className=" text-xs ml-2 font-semibold">
-                For: {invoiceData.serviceName}
+                For: {data.serviceName}
               </p>
             </div>
           </div>
         </div>
-        <div className="w-full p-4 mt-5"></div>
+        <div className="w-full p-4 mt-5">
+          <div className="w-full p-4 mt-5">
+            <table className="border w-full text-xs font-semibold">
+              <thead>
+                <tr>
+                  <th className="border p-2 w-4">No</th>
+                  <th className="border p-2">Service name</th>
+                  <th className="border p-2 w-32">Contract Value</th>
+                  <th className="border p-2 w-40">Total Levy Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  {
+                    itemNo: 'item',
+                    description: 'description',
+                    contractValue: 'contractValue',
+                    totalLevyAmount: 'totalLevyAmount',
+                  },
+                ].map((item, index) => (
+                  <tr key={index}>
+                    <td className="border p-2 text-center">{index + 1}</td>
+                    <td className="border p-2 items-center">
+                      {item.description}
+                    </td>
+                    <td className="border p-2 text-center">
+                      {item.contractValue}
+                    </td>
+                    <td className="border p-2 text-center">
+                      {item.totalLevyAmount}
+                    </td>
+                  </tr>
+                ))}
+                <tr className="w-full">
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td className="p-2 border text-center">{data.amount}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </main>
 
       {/* Footer */}
@@ -79,13 +143,11 @@ export default function InvoiceTemplate({
           Payment Instruction
         </p>
         <p className="text-xs font-semibold">
-          Account name: {invoiceData.payToAccName}
+          Account name: {data.payToAccName}
         </p>
-        <p className="text-xs font-semibold">
-          Bank name: {invoiceData.payToBank}
-        </p>
+        <p className="text-xs font-semibold">Bank name: {data.payToBank}</p>
         <p className="text-xs font-semibold mb-3">
-          Account number: {invoiceData.payToAccNo}
+          Account number: {data.payToAccNo}
         </p>
 
         <p className="text-sm font-bold mb-1">Terms and Conditions</p>

@@ -1,17 +1,19 @@
 .main {
-  @apply p-6 gap-4;
+  @apply p-4 w-full;
   height: 100%;
 }
 
 .card {
-  @apply border bg-white;
-  max-height: 400px;
-  min-width: 400px;
+  @apply bg-white min-h-[50vh] w-full p-4;
 }
 .cardHeader {
-  @apply p-2.5 border-b border-t;
+  @apply flex p-2.5 gap-2 items-center;
 }
 
 .cardBody {
-  @apply p-2.5 mb-4;
+  @apply p-2.5 mb-4 pl-8   w-full flex-col justify-between;
+}
+
+.cardFooter {
+  @apply flex p-2.5 gap-2;
 }
