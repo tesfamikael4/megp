@@ -17,7 +17,7 @@ export class RoleService extends ExtraCrudService<Role> {
     super(repositoryRole);
   }
 
-  async findAllUnderOrganization(organizationId: any, query: CollectionQuery) {
+  async findAllRoleForAssignment(organizationId: any, query: CollectionQuery) {
     const dataQuery = QueryConstructor.constructQuery<Role>(
       this.repositoryRole,
       query,

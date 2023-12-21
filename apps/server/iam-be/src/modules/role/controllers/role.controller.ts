@@ -21,19 +21,19 @@ export class RoleNewController extends ExtraCrudController<Role>(options) {
     super(roleService);
   }
 
-  @Get('list/:id')
+  @Get('list/:id/assignment')
   @ApiQuery({
     name: 'q',
     type: String,
     description: 'Collection Query Parameter. Optional',
     required: false,
   })
-  async findAll(
+  async findAllRoleForAssignment(
     @Param('id') id: string,
     @Query('q') q?: string,
   ): Promise<DataResponseFormat<any>> {
     const query = decodeCollectionQuery(q);
 
-    return await this.roleService.findAllUnderOrganization(id, query);
+    return await this.roleService.findAllRoleForAssignment(id, query);
   }
 }
