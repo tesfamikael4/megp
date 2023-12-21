@@ -1,6 +1,14 @@
 import React from 'react';
 import styles from './detail-view-card.module.scss';
-import { ActionIcon, Badge, Box, Button, Card, Progress } from '@mantine/core';
+import {
+  ActionIcon,
+  Badge,
+  Box,
+  Button,
+  Card,
+  Paper,
+  Progress,
+} from '@mantine/core';
 import { IconArrowLeft } from '@tabler/icons-react';
 import ProgressBar from './progressBar';
 import { useRouter } from 'next/navigation';
@@ -11,16 +19,16 @@ interface Props {
   close: () => void;
 }
 const badgeColor: { [key: string]: string } = {
-  Rejected: 'red.4',
-  Submitted: 'blue.4',
-  Adjust: 'yellow.4',
-  Completed: 'Green.4',
-  Pending: 'blue.4',
+  Rejected: 'red.6',
+  Submitted: 'green.8',
+  Adjust: 'yellow.6',
+  Completed: 'green.8',
+  Pending: 'blue.8',
 };
 const DetailViewCard: React.FC<Props> = ({ data, close }) => {
   const router = useRouter();
   return (
-    <Box className={styles.card}>
+    <Paper shadow="xs" className={styles.card}>
       <Box className={styles.cardHeader}>
         <ActionIcon variant="transparent" onClick={close}>
           <IconArrowLeft size={18} />
@@ -41,7 +49,7 @@ const DetailViewCard: React.FC<Props> = ({ data, close }) => {
           </Button>
         )}
       </Box>
-    </Box>
+    </Paper>
   );
 };
 export default DetailViewCard;

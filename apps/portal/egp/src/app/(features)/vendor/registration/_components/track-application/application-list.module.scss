@@ -21,6 +21,7 @@
 .cardListWrap {
   @apply w-full  grid grid-cols-1 gap-3;
   max-width: 350px;
+  height: fit-content;
 }
 .detail {
   @apply w-full min-h-screen;

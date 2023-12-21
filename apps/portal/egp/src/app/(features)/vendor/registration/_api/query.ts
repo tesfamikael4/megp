@@ -13,6 +13,11 @@ import {
   GetVendorInfoResponse,
   GetActivitiesProgressResponse,
 } from '@/models/vendorRegistration';
+import { PaymentReceiptItem } from '@/shared/schema/paymentReceiptItemSchema';
+import {
+  IPaymentSlipUploadResponseSchema,
+  IPaymentSlipUploadSchema,
+} from '@/shared/schema/paymentSlipUploadSchema';
 import {
   vendorDataGetawayApi,
   vendorRegistrationApi,
@@ -79,6 +84,28 @@ export const vendorRegistrationQuery = vendorRegistrationApi.injectEndpoints({
         method: 'GET',
       }),
     }),
+    uploadPaymentSlip: builder.query<
+      IPaymentSlipUploadResponseSchema,
+      IPaymentSlipUploadSchema
+    >({
+      query(data) {
+        const formData = new FormData();
+        formData.append('attachmentUrl', data.file);
+        return {
+          url: `/upload/upload-payment-receipt/${data.transactionNumber}/${data.serviceId}/${data.invoiceId}`,
+          method: 'POST',
+          body: formData,
+        };
+      },
+    }),
+    getPaymentSlip: builder.query<string, PaymentReceiptItem>({
+      query(data) {
+        return {
+          url: `/upload/get-attachment-pre-signed-object/${data.attachment}`,
+          method: 'GET',
+        };
+      },
+    }),
   }),
 });
 
@@ -122,6 +149,8 @@ export const {
   useGetLineOfBusinessQuery,
   useGetPriceRangeQuery,
   useGetActivitiesProgressQuery,
+  useLazyUploadPaymentSlipQuery,
+  useLazyGetPaymentSlipQuery,
 } = vendorRegistrationQuery;
 
 export const {

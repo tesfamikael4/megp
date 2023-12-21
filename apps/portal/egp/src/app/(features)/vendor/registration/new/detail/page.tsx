@@ -99,12 +99,7 @@ export default function Page() {
             },
             paymentReceipt:
               requestInfo.data.paymentReceipt == null
-                ? {
-                    transactionId: '',
-                    category: '',
-                    invoiceId: '',
-                    attachment: '',
-                  }
+                ? []
                 : requestInfo.data.paymentReceipt,
           }}
         />

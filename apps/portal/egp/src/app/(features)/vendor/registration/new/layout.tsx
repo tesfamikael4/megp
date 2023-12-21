@@ -11,7 +11,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <Flex className={styles.nav}>
           <StyledStepper />
         </Flex>
-        <Flex className="w-full flex-col">
+        <Flex className="w-full flex-col border border-l-0">
           <Flex className="w-full border-b p-3">
             <PageTitle />
           </Flex>

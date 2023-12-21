@@ -28,10 +28,8 @@ const ProgressBar: React.FC<Props> = ({ instanceId }) => {
     const taskNames: string[] = requestInfo.data.map(
       (taskItem) => taskItem.task.name,
     );
-    const activists = requestInfo.data
-      .map((taskItem) => taskItem)
-      .filter((taskItem) => taskItem.task.handlerType === 'Assignee')
-      .reverse();
+    const activists = requestInfo.data.map((taskItem) => taskItem);
+    // .filter((taskItem) => taskItem.task.handlerType === 'Assignee');
     const activeTask: number = activists.reduceRight(
       (lastIndex: number, taskItem, index: number) =>
         taskItem.taskHandler !== null ? index : lastIndex,
@@ -46,13 +44,30 @@ const ProgressBar: React.FC<Props> = ({ instanceId }) => {
         {activists &&
           activists.map((taskItem, index) => (
             <Timeline.Item
-              key={index}
-              bullet={activeTask > index ? <IconCheck size={12} /> : index + 1}
-              title={taskItem.task.label}
+              key={taskItem.task.orderBy}
+              bullet={
+                activeTask > index ? (
+                  <IconCheck size={12} />
+                ) : (
+                  <Text fz={'xs'} fw={500}>
+                    {index + 1}
+                  </Text>
+                )
+              }
+              title={
+                <Text fz={'xs'} fw={600}>
+                  {taskItem.task.label}
+                </Text>
+              }
             >
-              <Text c="dimmed" size="sm">
-                Remark:
+              <Text ml={5} c="dimmed" fz={11} fw={500}>
+                {taskItem.task.description}
               </Text>
+              {taskItem.taskTracker?.remark && (
+                <Text c="dimmed" fz="xs">
+                  Remark: {taskItem.taskTracker?.remark}
+                </Text>
+              )}
             </Timeline.Item>
           ))}
       </Timeline>

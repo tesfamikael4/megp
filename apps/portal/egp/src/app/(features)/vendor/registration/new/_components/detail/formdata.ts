@@ -48,10 +48,5 @@ export const formData: GetFormResponse = {
     previousPPDARegistrationCertificate: '',
     mSMECertificate: '',
   },
-  paymentReceipt: {
-    transactionId: '',
-    category: '',
-    invoiceId: '',
-    attachment: '',
-  },
+  paymentReceipt: [],
 };

@@ -1,10 +1,12 @@
 'use client';
 
-import { Box, Button, Card, Flex, Stack, Text } from '@mantine/core';
+import { Box, Button, Card, Flex, Paper, Stack, Text } from '@mantine/core';
 import styles from './data-review.module.scss';
 import { useRouter } from 'next/navigation';
 import { useGetVendorQuery } from '../../../_api/query';
 import { useEffect } from 'react';
+import CardLayout from '../card-layout/card-layout';
+import { IconAddressBook, IconUserCheck } from '@tabler/icons-react';
 
 const DataReview = () => {
   const router = useRouter();
@@ -18,103 +20,81 @@ const DataReview = () => {
   }, [requestInfo, router]);
 
   return (
-    <Flex className={styles.main}>
-      <Box className={styles.card}>
+    <Box className={styles.main}>
+      <Paper shadow="xs" className={styles.card}>
         <Box className={styles.cardHeader}>
-          <Text fz={13} fw={500}>
-            Vendor Profile
+          <IconUserCheck size={20} stroke={1.6} />
+          <Text fz={16} fw={700} color="gray.5">
+            Profile
           </Text>
         </Box>
-        <Stack className={styles.cardBody}>
-          <Flex className=" items-center gap-2">
-            <Text fz={12} fw={500}>
-              Company Name :
-            </Text>
-            <Text fz="xs">Test Name</Text>
-          </Flex>
-          <Flex className=" items-center gap-2">
-            <Text fz={12} fw={500}>
-              Tin Number :
-            </Text>
-            <Text fz="xs">1291655</Text>
-          </Flex>
-          <Flex className=" items-center gap-2">
-            <Text fz={12} fw={500}>
-              M-EGP Registration No:
-            </Text>
-            <Text fz="xs">Test Name</Text>
-          </Flex>
-        </Stack>
+        <Flex className={styles.cardBody}>
+          <Stack>
+            <Flex className=" items-center gap-2">
+              <Text fz={12} fw={700}>
+                Company Name :
+              </Text>
+              <Text fz="xs">{requestInfo.data?.basic.name}</Text>
+            </Flex>
+            <Flex className=" items-center gap-2">
+              <Text fz={12} fw={700}>
+                Tin Number :
+              </Text>
+              <Text fz="xs">{requestInfo.data?.basic.tinNumber}</Text>
+            </Flex>
+            <Flex className=" items-center gap-2">
+              <Text fz={12} fw={700}>
+                M-EGP Registration No:
+              </Text>
+              <Text fz="xs">{requestInfo.data?.id}</Text>
+            </Flex>
+            <Flex className=" items-center gap-2">
+              <Text fz={12} fw={700}>
+                Country of origin:
+              </Text>
+              <Text fz="xs">{requestInfo.data?.basic.origin}</Text>
+            </Flex>
+          </Stack>
+        </Flex>
         <Box className={styles.cardHeader}>
-          <Text fz={13} fw={500}>
-            Area of Registration
+          <IconAddressBook size={20} stroke={1.6} />
+          <Text fz={16} fw={700} color="gray.5">
+            Address
           </Text>
         </Box>
-        <Stack className={styles.cardBody}>
-          <Flex className=" items-center flex-col">
-            <Flex className="justify-between w-full">
-              <Text fz={14} fw={600} className="text-gray-400">
-                For
+        <Flex className={styles.cardBody}>
+          <Stack>
+            <Flex className=" items-center gap-2">
+              <Text fz={12} fw={700}>
+                Mobile number :
               </Text>
-              <Text fz={14} fw={600} className="text-gray-400">
-                Price Range
-              </Text>
+              <Text fz="xs">{requestInfo.data?.address.mobilePhone}</Text>
             </Flex>
-
-            <Flex className="items-center justify-between w-full">
-              <Text fz={12} fw={600}>
-                Goods
+            <Flex className=" items-center gap-2">
+              <Text fz={12} fw={700}>
+                Email :
               </Text>
-              <Text fz={12} fw={600}>
-                Price Range
-              </Text>
+              <Text fz="xs">{requestInfo.data?.address.primaryEmail}</Text>
             </Flex>
-          </Flex>
-          <Flex className=" items-center flex-col">
-            <Flex className="justify-between w-full">
-              <Text fz={14} fw={600} className="text-gray-400">
-                For
+            <Flex className=" items-center gap-2">
+              <Text fz={12} fw={700}>
+                Fax :
               </Text>
-              <Text fz={14} fw={600} className="text-gray-400">
-                Price Range
-              </Text>
+              <Text fz="xs">{requestInfo.data?.address.fax}</Text>
             </Flex>
-
-            <Flex className="items-center justify-between w-full">
-              <Text fz={12} fw={600}>
-                Service
+            <Flex className=" items-center gap-2">
+              <Text fz={12} fw={700}>
+                Website:
               </Text>
-              <Text fz={12} fw={600}>
-                Price Range
-              </Text>
+              <Text fz="xs">{requestInfo.data?.address.website}</Text>
             </Flex>
-          </Flex>
-          <Flex className=" items-center flex-col">
-            <Flex className="justify-between w-full">
-              <Text fz={14} fw={600} className="text-gray-400">
-                For
-              </Text>
-              <Text fz={14} fw={600} className="text-gray-400">
-                Price Range
-              </Text>
-            </Flex>
-
-            <Flex className="items-center justify-between w-full">
-              <Text fz={12} fw={600}>
-                Works
-              </Text>
-              <Text fz={12} fw={600}>
-                Price Range
-              </Text>
-            </Flex>
-          </Flex>
-        </Stack>
-        <Flex justify={'end'}>
+          </Stack>
+        </Flex>
+        <Flex justify={'end'} p={10}>
           <Button>renewal</Button>
         </Flex>
-      </Box>
-      <Box className={styles.card}></Box>
-    </Flex>
+      </Paper>
+    </Box>
   );
 };
 

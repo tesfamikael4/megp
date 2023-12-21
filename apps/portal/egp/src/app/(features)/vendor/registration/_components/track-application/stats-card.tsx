@@ -8,23 +8,25 @@ interface Props {
   view: (data: any) => void;
 }
 const badgeColor: { [key: string]: string } = {
-  Rejected: 'red.4',
-  Submitted: 'blue.4',
-  Adjust: 'yellow.4',
-  Completed: 'Green.4',
-  Pending: 'blue.4',
+  Rejected: 'red.6',
+  Submitted: 'green.8',
+  Adjust: 'yellow.6',
+  Completed: 'green.8',
+  Pending: 'blue.8',
 };
 export const StatsListCard: React.FC<Props> = ({ data, view }) => {
   return (
-    <Paper className={style.card} withBorder>
+    <Paper shadow="xs" className={style.card}>
       <Flex className="flex-col justify-between h-full">
         <Group justify="space-between" align="start">
           <Flex className="flex-col gap-3">
-            <Badge size="sm" color={badgeColor[data.status]}>
-              {data.status}
+            <Badge size="xs" color={badgeColor[data.status]}>
+              <Text fw={500} fz={11}>
+                {data.status}
+              </Text>
             </Badge>
-            <Text ta="left" fw={500} fz="sm">
-              <span className=" text-gray-400">Tracking Number: </span>
+            <Text ta="left" fw={600} fz="sm">
+              <span className=" text-gray-500">Tracking Number: </span>
               {data.applicationNumber}
             </Text>
           </Flex>
@@ -34,8 +36,8 @@ export const StatsListCard: React.FC<Props> = ({ data, view }) => {
           </Text>
         </Group>
         <Group justify="space-between" align="start">
-          <Text ta="left" fw={500} fz="xs">
-            <span className=" text-gray-400">Category: </span>
+          <Text ta="left" fw={600} fz="xs">
+            <span className=" text-gray-500">Category: </span>
             {data.category}
           </Text>
         </Group>
