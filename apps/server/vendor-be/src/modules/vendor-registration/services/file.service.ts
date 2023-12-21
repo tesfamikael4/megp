@@ -40,7 +40,7 @@ export class FileService {
     private readonly invoiceRepository: Repository<InvoiceEntity>,
     @InjectRepository(BusinessAreaEntity)
     private readonly businessAreaRepository: Repository<BusinessAreaEntity>,
-  ) {}
+  ) { }
   private updateVendorEnums = [
     VendorStatusEnum.ACTIVE,
     VendorStatusEnum.ADJUSTMENT,
@@ -228,6 +228,11 @@ export class FileService {
         file.buffer,
         metaData,
       );
+      result.paymentReceipt = foundObject;
+      result.initial.level = VendorStatusEnum.DOC;
+      result.initial.status = VendorStatusEnum.SAVE;
+      const isrVendor = await this.isrVendorsRepository.save(result);
+
       const paymentReceipt = {
         transactionId: paymentReceiptDto?.transactionId,
         invoiceId: paymentReceiptDto?.invoiceId,
@@ -235,19 +240,19 @@ export class FileService {
         attachment: fileId,
       };
       foundObject.push(paymentReceipt);
-      result.paymentReceipt = foundObject;
-      result.initial.level = VendorStatusEnum.DOC;
-      result.initial.status = VendorStatusEnum.SAVE;
-      const isrVendor = await this.isrVendorsRepository.save(result);
       if (!isrVendor) throw new HttpException(`isrVendor_update _failed`, 500);
-      const invoice = await this.invoiceRepository.update(
-        paymentReceiptDto.invoiceId,
-        {
-          paymentStatus: 'Paid',
-          attachment: resultData.etag,
-        },
-      );
-      if (!invoice) throw new HttpException(`invoice_update _failed`, 500);
+      const paymentReceiptsData = result?.paymentReceipt
+
+      for (let index = 0; index < paymentReceiptsData?.length; index++) {
+        const invoice = await this.invoiceRepository.update(
+          paymentReceiptsData[index].invoiceId,
+          {
+            paymentStatus: 'Paid',
+            attachment: fileId,
+          },
+        );
+        if (!invoice) throw new HttpException(`invoice_update _failed`, 500);
+      }
 
       const response = new CreateFileDto();
       response.attachmentUrl = file.path;
@@ -345,11 +350,12 @@ export class FileService {
   }
   async getAttachmentpresignedObject(fileId: string) {
     try {
-      const result = this.minioClient.presignedGetObject(
+      const result = await this.minioClient.presignedGetObject(
         this.bucketName,
         fileId,
       );
-      return result;
+      const httpsResult = result.replace(/^http:/, 'https:');
+      return httpsResult;
     } catch (error) {
       console.log(error);
       throw error;

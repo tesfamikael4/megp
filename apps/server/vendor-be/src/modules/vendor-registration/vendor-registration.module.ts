@@ -110,4 +110,4 @@ import { FileService } from './services/file.service';
     BusinessAreaController,
   ],
 })
-export class VendorRegistrationModule {}
+export class VendorRegistrationModule { }
