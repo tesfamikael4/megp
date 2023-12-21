@@ -5,9 +5,9 @@ import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import {
   CreateSpdSettingsDto,
   UpdateSpdSettingsDto,
-} from '../dto/spd-settings.dto';
-import { SpdSettings } from 'src/entities/spd-settings.entity';
-import { SpdSettingsService } from '../service/spd-settings.service';
+} from '../dto/spd-setting.dto';
+import { SpdSetting } from 'src/entities/spd-setting.entity';
+import { SpdSettingService } from '../service/spd-setting.service';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'spdId',
@@ -17,10 +17,10 @@ const options: ExtraCrudOptions = {
 @ApiBearerAuth()
 @Controller('spd-settings')
 @ApiTags('Spd-Settings')
-export class SpdSettingsController extends EntityCrudController<SpdSettings>(
+export class SpdSettingsController extends EntityCrudController<SpdSetting>(
   options,
 ) {
-  constructor(private readonly spdSettingsService: SpdSettingsService) {
+  constructor(private readonly spdSettingsService: SpdSettingService) {
     super(spdSettingsService);
   }
 }

@@ -32,7 +32,7 @@ export class CreateSpdBdsDto {
 
   @ApiProperty()
   @IsString()
-  manadate: string;
+  mandate: string;
 
   @ApiProperty()
   @IsString()

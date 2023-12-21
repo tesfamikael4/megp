@@ -2,13 +2,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { EntityCrudService } from 'src/shared/service';
-import { SpdEntity } from 'src/entities/spd.entity';
+import { Spd } from 'src/entities/spd.entity';
 
 @Injectable()
-export class SpdService extends EntityCrudService<SpdEntity> {
+export class SpdService extends EntityCrudService<Spd> {
   constructor(
-    @InjectRepository(SpdEntity)
-    private readonly spdRepository: Repository<SpdEntity>,
+    @InjectRepository(Spd)
+    private readonly spdRepository: Repository<Spd>,
   ) {
     super(spdRepository);
   }

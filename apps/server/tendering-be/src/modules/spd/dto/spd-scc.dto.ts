@@ -31,7 +31,7 @@ export class CreateSpdSccDto {
   @IsString()
   @ApiProperty()
   @IsNotEmpty()
-  manadate: string;
+  mandate: string;
 
   @IsString()
   @ApiProperty()

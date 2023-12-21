@@ -5,11 +5,11 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { SpdEntity } from './spd.entity';
+import { Spd } from './spd.entity';
 import { Audit } from 'src/shared/entities';
 
 @Entity({ name: 'spd_bds' })
-export class SpdBdsEntity extends Audit {
+export class SpdBds extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -32,7 +32,7 @@ export class SpdBdsEntity extends Audit {
   value: any;
 
   @Column()
-  manadate: string;
+  mandate: string;
 
   @Column()
   inputType: string;
@@ -55,7 +55,7 @@ export class SpdBdsEntity extends Audit {
   @Column()
   isInternalUse: boolean;
 
-  @ManyToOne(() => SpdEntity, (spd) => spd.bds)
+  @ManyToOne(() => Spd, (spd) => spd.bds)
   @JoinColumn({ name: 'spdId' })
-  spd: SpdEntity;
+  spd: Spd;
 }

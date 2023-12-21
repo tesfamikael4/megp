@@ -1,13 +1,14 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { SpdSccEntity } from './spd-scc.entity';
-import { SpdBdsEntity } from './spd-bds.entity';
-import { SpdTechnicalScoringEntity } from './spd-technical-scoring.entity';
+import { SpdScc } from './spd-scc.entity';
+import { SpdBds } from './spd-bds.entity';
+import { SpdTechnicalScoring } from './spd-technical-scoring.entity';
 import { Audit } from 'src/shared/entities';
-import { SpdPrefeenceMargins } from './spd-prefeence-margins.entity';
-import { SpdRequiredDocumentaryEvidences } from './spd-required-documentary-evidences.entity';
-import { SpdSettings } from './spd-settings.entity';
+import { SpdPreferenceMargin } from './spd-preference-margin.entity';
+import { SpdRequiredDocumentaryEvidence } from './spd-required-documentary-evidence.entity';
+import { SpdSetting } from './spd-setting.entity';
+
 @Entity({ name: 'spd' })
-export class SpdEntity extends Audit {
+export class Spd extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -41,43 +42,43 @@ export class SpdEntity extends Audit {
   @Column()
   isActive: boolean;
 
-  @OneToMany(() => SpdSccEntity, (scc) => scc.spd, {
+  @OneToMany(() => SpdScc, (scc) => scc.spd, {
     cascade: true,
     onDelete: 'CASCADE',
   })
-  sccs: SpdSccEntity[];
+  sccs: SpdScc[];
 
-  @OneToMany(() => SpdBdsEntity, (bds) => bds.spd, {
+  @OneToMany(() => SpdBds, (bds) => bds.spd, {
     cascade: true,
     onDelete: 'CASCADE',
   })
-  bds: SpdBdsEntity[];
+  bds: SpdBds[];
 
-  @OneToMany(() => SpdTechnicalScoringEntity, (scoring) => scoring.spd, {
+  @OneToMany(() => SpdTechnicalScoring, (scoring) => scoring.spd, {
     cascade: true,
     onDelete: 'CASCADE',
   })
-  technicalScorings: SpdTechnicalScoringEntity[];
+  technicalScorings: SpdTechnicalScoring[];
 
-  @OneToMany(() => SpdPrefeenceMargins, (prefeence) => prefeence.spd, {
+  @OneToMany(() => SpdPreferenceMargin, (preference) => preference.spd, {
     cascade: true,
     onDelete: 'CASCADE',
   })
-  spdPrefeenceMargins: SpdPrefeenceMargins[];
+  spdPreferenceMargins: SpdPreferenceMargin[];
 
   @OneToMany(
-    () => SpdRequiredDocumentaryEvidences,
+    () => SpdRequiredDocumentaryEvidence,
     (documentary) => documentary.spd,
     {
       cascade: true,
       onDelete: 'CASCADE',
     },
   )
-  spdRequiredDocumentaryEvidences: SpdRequiredDocumentaryEvidences[];
+  spdRequiredDocumentaryEvidences: SpdRequiredDocumentaryEvidence[];
 
-  @OneToMany(() => SpdSettings, (settings) => settings.spd, {
+  @OneToMany(() => SpdSetting, (settings) => settings.spd, {
     cascade: true,
     onDelete: 'CASCADE',
   })
-  spdSettings: SpdSettings[];
+  spdSettings: SpdSetting[];
 }

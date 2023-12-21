@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsNumber, IsString, IsUUID } from 'class-validator';
 
-export class CreateSpdPrefeenceMarginsDto {
+export class CreateSpdPreferenceMarginsDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
@@ -28,10 +28,10 @@ export class CreateSpdPrefeenceMarginsDto {
   margin: number;
 }
 
-export class UpdateSpdPrefeenceMarginsDto {
+export class UpdateSpdPreferenceMarginsDto {
   @ApiProperty()
   @IsUUID()
   id: string;
 }
 
-export class SpdPrefeenceMarginsResponseDto extends UpdateSpdPrefeenceMarginsDto {}
+export class SpdPreferenceMarginsResponseDto extends UpdateSpdPreferenceMarginsDto {}

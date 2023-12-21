@@ -5,10 +5,11 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { SpdEntity } from './spd.entity';
+import { Spd } from './spd.entity';
+import { Audit } from 'src/shared/entities';
 
-@Entity({ name: 'spd-required-documentary-evidences' })
-export class SpdRequiredDocumentaryEvidences {
+@Entity({ name: 'spd_required_documentary_evidences' })
+export class SpdRequiredDocumentaryEvidence extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -31,7 +32,7 @@ export class SpdRequiredDocumentaryEvidences {
   checkOnSecondOpening: boolean;
 
   @Column()
-  checkOnSecondCompilance: boolean;
+  checkOnSecondCompliance: boolean;
 
   @Column()
   requiredTo: string;
@@ -39,7 +40,7 @@ export class SpdRequiredDocumentaryEvidences {
   @Column()
   isRequired: boolean;
 
-  @ManyToOne(() => SpdEntity, (spd) => spd.spdRequiredDocumentaryEvidences)
+  @ManyToOne(() => Spd, (spd) => spd.spdRequiredDocumentaryEvidences)
   @JoinColumn({ name: 'spdId' })
-  spd: SpdEntity;
+  spd: Spd;
 }
