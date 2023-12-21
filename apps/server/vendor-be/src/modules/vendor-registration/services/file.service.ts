@@ -1,5 +1,5 @@
 import * as Minio from 'minio';
-import * as Fs from 'fs';
+import * as fs from 'fs';
 import { Server } from '@tus/server';
 import { S3Store } from '@tus/s3-store';
 
@@ -19,6 +19,7 @@ import {
 import { VendorStatusEnum } from 'src/shared/enums/vendor-status-enums';
 import { PaymentReceiptDto } from '../dto/payment-receipt.dto';
 import { Readable } from 'typeorm/platform/PlatformTools';
+import axios from 'axios';
 
 @Injectable()
 export class FileService {
@@ -40,7 +41,7 @@ export class FileService {
     private readonly invoiceRepository: Repository<InvoiceEntity>,
     @InjectRepository(BusinessAreaEntity)
     private readonly businessAreaRepository: Repository<BusinessAreaEntity>,
-  ) { }
+  ) {}
   private updateVendorEnums = [
     VendorStatusEnum.ACTIVE,
     VendorStatusEnum.ADJUSTMENT,
@@ -241,7 +242,7 @@ export class FileService {
       };
       foundObject.push(paymentReceipt);
       if (!isrVendor) throw new HttpException(`isrVendor_update _failed`, 500);
-      const paymentReceiptsData = result?.paymentReceipt
+      const paymentReceiptsData = result?.paymentReceipt;
 
       for (let index = 0; index < paymentReceiptsData?.length; index++) {
         const invoice = await this.invoiceRepository.update(
@@ -421,6 +422,16 @@ export class FileService {
         fileId,
       );
       return result;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
+  async getFile(userId, fielId) {
+    try {
+      const fileUploadName = 'paymentReceipt';
+      const filename = `${userId}/${fileUploadName}/${fielId}`;
+      return this.minioClient.getObject('megp', filename);
     } catch (error) {
       console.log(error);
       throw error;

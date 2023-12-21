@@ -1,5 +1,6 @@
 import {
   All,
+  Body,
   Controller,
   Delete,
   Get,
@@ -23,6 +24,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import multer, { diskStorage, memoryStorage } from 'multer';
 import { extname } from 'path';
 import { FileService } from '../services/file.service';
+import { Response } from 'express';
 
 @Controller('upload')
 @ApiTags('File')
@@ -32,7 +34,7 @@ export class UploadController {
   constructor(
     // private tusService: TusService,
     private fileService: FileService,
-  ) { }
+  ) {}
   // @Get('get-file/:fileName')
   // async getFile(
   //   @Param('fileName') fileName: string,
@@ -154,6 +156,21 @@ export class UploadController {
     @CurrentUser() userInfo: any,
   ) {
     return await this.fileService.getCertificate(fileId, userInfo.id);
+  }
+
+  @Get('get-file/:fileId')
+  async getfile(
+    @Param('fileId') fileId: string,
+    @CurrentUser() userInfo: any,
+    @Res() res: Response,
+  ) {
+    try {
+      const fileStream = await this.fileService.getFile(userInfo.id, fileId);
+      res.setHeader('Content-Type', 'image/png');
+      fileStream.pipe(res);
+    } catch (error) {
+      throw error;
+    }
   }
   // @All('*')
   // async tus(@Req() req, @Res() res, @CurrentUser() userInfo: any) {
