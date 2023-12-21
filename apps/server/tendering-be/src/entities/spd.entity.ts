@@ -1,14 +1,11 @@
-import {
-  Column,
-  Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  ManyToOne,
-} from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { SpdSccEntity } from './spd-scc.entity';
 import { SpdBdsEntity } from './spd-bds.entity';
 import { SpdTechnicalScoringEntity } from './spd-technical-scoring.entity';
 import { Audit } from 'src/shared/entities';
+import { SpdPrefeenceMargins } from './spd-prefeence-margins.entity';
+import { SpdRequiredDocumentaryEvidences } from './spd-required-documentary-evidences.entity';
+import { SpdSettings } from './spd-settings.entity';
 @Entity({ name: 'spd' })
 export class SpdEntity extends Audit {
   @PrimaryGeneratedColumn('uuid')
@@ -61,4 +58,26 @@ export class SpdEntity extends Audit {
     onDelete: 'CASCADE',
   })
   technicalScorings: SpdTechnicalScoringEntity[];
+
+  @OneToMany(() => SpdPrefeenceMargins, (prefeence) => prefeence.spd, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  spdPrefeenceMargins: SpdPrefeenceMargins[];
+
+  @OneToMany(
+    () => SpdRequiredDocumentaryEvidences,
+    (documentary) => documentary.spd,
+    {
+      cascade: true,
+      onDelete: 'CASCADE',
+    },
+  )
+  spdRequiredDocumentaryEvidences: SpdRequiredDocumentaryEvidences[];
+
+  @OneToMany(() => SpdSettings, (settings) => settings.spd, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  spdSettings: SpdSettings[];
 }
