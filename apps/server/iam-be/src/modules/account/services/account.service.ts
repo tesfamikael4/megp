@@ -6,7 +6,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { IsNull, Not, Repository } from 'typeorm';
 import { Account, AccountVerification, SecurityQuestion } from '@entities';
 import {
   CreateAccountDto,
@@ -30,6 +30,7 @@ import {
   SetSecurityQuestionDto,
 } from '../dto/security-question.dto';
 import { EmailService } from 'src/shared/email/email.service';
+import { organization } from '../../seeders/seed-data';
 
 @Injectable()
 export class AccountsService {
@@ -277,96 +278,53 @@ export class AccountsService {
   }
 
   async getUserInfo(id: string) {
-    const account = await this.repository.findOne({
-      where: {
-        id,
-      },
-      select: {
-        tenantId: true,
-        id: true,
-        firstName: true,
-        lastName: true,
-        username: true,
-        email: true,
-        user: {
-          id: true,
-          accountId: true,
-          organization: {
-            id: true,
-            name: true,
-            shortName: true,
-          },
-          userRoles: {
-            id: true,
-            roleId: true,
-            role: {
-              id: true,
-              name: true,
-              rolePermissions: {
-                id: true,
-                permissionId: true,
-                permission: {
-                  id: true,
-                  key: true,
-                  applicationId: true,
-                  application: {
-                    id: true,
-                    key: true,
-                  },
-                },
-              },
-            },
-          },
-          userRoleSystems: {
-            id: true,
-            roleSystemId: true,
-            roleSystem: {
-              id: true,
-              key: true,
-              name: true,
-              roleSystemPermissions: {
-                id: true,
-                permissionId: true,
-                permission: {
-                  id: true,
-                  key: true,
-                  applicationId: true,
-                  application: {
-                    id: true,
-                    key: true,
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-      relations: {
-        user: {
-          organization: true,
-          userRoles: {
-            role: {
-              rolePermissions: {
-                permission: {
-                  application: true,
-                },
-              },
-            },
-          },
-          userRoleSystems: {
-            roleSystem: {
-              roleSystemPermissions: {
-                permission: {
-                  application: true,
-                },
-              },
-            },
-          },
-        },
-      },
-    });
+    const newAccount = await this.repository
+      .createQueryBuilder('accounts')
+      // .select([
+      //   'accounts.tenantId',
+      //   'accounts.id',
+      //   'accounts.firstName',
+      //   'accounts.lastName',
+      //   'accounts.username',
+      //   'accounts.email',
+      // ])
+      .leftJoinAndSelect('accounts.user', 'user')
+      .leftJoinAndSelect('user.organization', 'organization')
+      .leftJoin(
+        'organization.organizationMandates',
+        'organizationMandates',
+        'organizationMandates.organizationId = user.organizationId OR organizationMandates.organizationId IS NULL',
+      )
+      .leftJoin('organizationMandates.mandate', 'mandate')
+      .leftJoin('mandate.mandatePermissions', 'mandatePermissions')
+      .leftJoinAndSelect('user.userRoles', 'userRoles')
+      .leftJoinAndSelect('userRoles.role', 'role')
+      .leftJoinAndSelect(
+        'role.rolePermissions',
+        'rolePermissions',
+        'mandatePermissions.permissionId = rolePermissions.permissionId',
+      )
+      .leftJoinAndSelect('rolePermissions.permission', 'permissionRole')
+      .leftJoinAndSelect('permissionRole.application', 'applicationRole')
+      .leftJoinAndSelect('user.userRoleSystems', 'userRoleSystems')
+      .leftJoinAndSelect('userRoleSystems.roleSystem', 'roleSystem')
+      .leftJoinAndSelect(
+        'roleSystem.roleSystemPermissions',
+        'roleSystemPermissions',
+        'mandatePermissions.permissionId = roleSystemPermissions.permissionId',
+      )
+      .leftJoinAndSelect(
+        'roleSystemPermissions.permission',
+        'permissionRoleSystem',
+      )
+      .leftJoinAndSelect(
+        'permissionRoleSystem.application',
+        'applicationRoleSystem',
+      )
+      .andWhere('accounts.id = :id', { id })
+      .getOne();
 
-    return account;
+    return newAccount;
   }
 
   async getAccessTokenPayload(account: Account) {
@@ -384,8 +342,18 @@ export class AccountsService {
       roles.push(role);
 
       userRole?.role?.rolePermissions?.forEach((rolePermission) => {
-        rolePermission?.permission &&
-          permissions.push(rolePermission.permission);
+        if (rolePermission?.permission) {
+          permissions.push({
+            id: rolePermission.permission.id,
+            name: rolePermission.permission.name,
+            key: rolePermission.permission.key,
+            applicationId: rolePermission.permission.applicationId,
+            application: {
+              id: rolePermission.permission.application.id,
+              key: rolePermission.permission.application.key,
+            },
+          });
+        }
       });
     });
 
@@ -399,11 +367,31 @@ export class AccountsService {
       roleSystems.push(roleSystem);
 
       userRole?.roleSystem?.roleSystemPermissions?.forEach((rolePermission) => {
-        rolePermission?.permission &&
-          permissions.push(rolePermission.permission);
+        if (rolePermission?.permission) {
+          permissions.push({
+            id: rolePermission.permission.id,
+            name: rolePermission.permission.name,
+            key: rolePermission.permission.key,
+            applicationId: rolePermission.permission.applicationId,
+            application: {
+              id: rolePermission.permission.application.id,
+              key: rolePermission.permission.application.key,
+            },
+          });
+        }
       });
     });
 
+    let organization = {};
+    if (userInfo.user?.organization) {
+      const org = userInfo.user?.organization;
+      organization = {
+        id: org.id,
+        name: org.name,
+        shortName: org.shortName,
+        code: org.code,
+      };
+    }
     const tokenPayload = {
       tenantId: userInfo.tenantId,
       id: userInfo.id,
@@ -412,7 +400,7 @@ export class AccountsService {
       firstName: account.firstName,
       lastName: account.lastName,
       email: account.email,
-      organization: userInfo.user?.organization ?? {},
+      organization: organization,
       permissions,
       roles,
       roleSystems,
