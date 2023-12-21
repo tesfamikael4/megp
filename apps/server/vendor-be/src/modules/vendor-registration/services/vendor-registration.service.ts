@@ -255,6 +255,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     return vendorsEntity;
   };
   async updateVendor(vendorStatusDto: SetVendorStatus): Promise<any> {
+    console.log("vendorStatusDto--->", vendorStatusDto);
     const result = await this.isrVendorsRepository.findOne({
       where: {
         userId: vendorStatusDto.userId,
@@ -282,7 +283,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         if (!isrVendorUpdate)
           throw new HttpException(`isr_vendor_update_failed`, 500);
         const vendorEntity = new VendorsEntity();
-        vendorEntity.id = result.id;
         vendorEntity.id = result.id;
         vendorEntity.status = VendorStatusEnum.APPROVED;
         vendorEntity.level = VendorStatusEnum.COMPLETED;
@@ -319,9 +319,9 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       nextYear.setFullYear(nextYear.getFullYear() + 1);
       const businessArea = await this.businessAreaRepository.findOne({
         where: {
-          vendorId: result.id,
-          instanceId: vendorStatusDto.instanceId,
-          expireDate: nextYear,
+          vendorId: vendorStatusDto.isrVendorId,
+          instanceId: vendorStatusDto.instanceId
+          //expireDate: nextYear,
         },
       });
       if (!businessArea) throw new HttpException(`businessArea_not_found`, 500);
