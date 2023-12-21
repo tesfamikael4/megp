@@ -211,6 +211,35 @@ export const user = {
   ],
 };
 
+export const mandate = {
+  id: 'cfae02f0-4242-4080-8ad2-72643af464b1',
+  name: 'Super Admin',
+  description: 'Super Admin',
+  key: 'SUPER_ADMIN',
+  isActive: true,
+  isSingleAssignment: true,
+  versionNo: '0.1',
+  organizationMandates: [
+    {
+      organizationId: 'c7865a67-d289-4671-b264-bc899ef870cb',
+    },
+  ],
+  mandatePermissions: [
+    {
+      permissionId: '9e3529e7-0385-491e-a0a7-185e7f9f89e7',
+    },
+    {
+      permissionId: '0a5863ae-34c4-4a07-9e76-145df8cddab2',
+    },
+    {
+      permissionId: '9a6f6273-3a48-4121-98e9-4a8d1afcf366',
+    },
+    {
+      permissionId: 'aa9acb5c-aefb-41c9-8808-cb4817463ae0',
+    },
+  ],
+};
+
 export const defaultOrganizationRoles = [
   {
     name: 'Procuring Unit Head',

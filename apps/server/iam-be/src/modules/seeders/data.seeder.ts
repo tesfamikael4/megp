@@ -6,6 +6,7 @@ import dataSource from 'src/shared/typeorm/typeorm-config-helper';
 import {
   Account,
   Application,
+  Mandate,
   Organization,
   Permission,
   RoleSystem,
@@ -22,6 +23,7 @@ import {
   organization,
   user,
   unit,
+  mandate,
 } from './seed-data';
 import * as bcrypt from 'bcrypt';
 
@@ -51,6 +53,9 @@ export class DataSeeder implements Seeder {
     const unitRepository: Repository<Unit> = dataSource.getRepository(Unit);
 
     const userRepository: Repository<User> = dataSource.getRepository(User);
+
+    const mandateRepository: Repository<Mandate> =
+      dataSource.getRepository(Mandate);
 
     await applicationRepository.upsert(applications, {
       skipUpdateIfNoValuesChanged: true,
@@ -92,6 +97,11 @@ export class DataSeeder implements Seeder {
       await unitRepository.insert(unit);
 
       await userRepository.save(user);
+    }
+
+    const mandateExists = await mandateRepository.findOneBy({ id: mandate.id });
+    if (!mandateExists) {
+      await mandateRepository.save(mandate);
     }
   }
 }
