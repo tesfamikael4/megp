@@ -155,6 +155,8 @@ export class UploadController {
     @Param('fileId') fileId: string,
     @CurrentUser() userInfo: any,
   ) {
+    console.log('fileId', userInfo);
+
     return await this.fileService.getCertificate(fileId, userInfo.id);
   }
 

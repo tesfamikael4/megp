@@ -34,6 +34,9 @@ import { HttpService } from '@nestjs/axios';
 import axios from 'axios';
 import { FppaDataDto, MbrsData, NCICDataDto } from '../dto/mbrsData.dto';
 import { GenerateInvoice } from '../dto/invoice.dto';
+import { IsrVendorDetailResponseDto, IsrVendorsResponseDto } from '../dto/isrvendor.dto';
+import { BusinessAreaDetailResponseDto } from '../dto/business-area.dto';
+import { BankAccountDetailResponse } from '../dto/bank-account-detail.dto';
 
 @Injectable()
 export class VendorRegistrationsService extends EntityCrudService<VendorsEntity> {
@@ -921,15 +924,68 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
   async getApprovedVendorById(VendorId: string) {
     const result = await this.vendorRepository.findOne({
       where: { id: VendorId },
+      select: {
+        id: true,
+        name: true, tin: true, formOfEntity: true, country: true,
+        metaData: true, status: true,
+        vendorAccounts: { accountHolderFullName: true, accountNumber: true, bankName: true, branchName: true, currency: true, IBAN: true, status: true, isDefualt: true, branchAddress: true },
+        shareholders: { firstName: true, lastName: true, nationality: true, share: true },
+        beneficialOwnership: { firstName: true, lastName: true, key: true },
+        areasOfBusinessInterest: { category: true, lineOfBusiness: true },
+        isrVendor: { id: true, businessAreas: true }
+      },
       relations: {
         areasOfBusinessInterest: true,
         shareholders: true,
         beneficialOwnership: true,
         vendorAccounts: true,
-        customCats: true,
-        businessCats: true,
+        isrVendor: { businessAreas: { servicePrice: true, BpService: true } }
       },
     });
-    return result;
+    const { isrVendor, ...rest } = result;
+    const vendor = {
+      ...rest,
+      businessAreas: result.isrVendor.businessAreas.map((ba) => BusinessAreaDetailResponseDto.toResponse(ba)),
+    }
+
+    return vendor;
   }
+  async getRejectedVendors(user: any, query: CollectionQuery) {
+    const dataQuery = QueryConstructor.constructQuery<IsrVendorsEntity>(
+      this.isrVendorsRepository,
+      query
+    )
+      .andWhere('isr_vendors.status =:status', { status: WorkflowInstanceEnum.Rejected })
+      .orderBy('isr_vendors.updatedAt', 'ASC');
+
+    const d = new DataResponseFormat<IsrVendorsResponseDto>();
+    const [result, total] = await dataQuery.getManyAndCount();
+    d.items = result.map((entity) => {
+      return IsrVendorsResponseDto.toResponse(entity)
+    }
+    );
+    d.total = total;
+    return d;
+  }
+
+  async getRejectedISRVendorById(VendorId: string): Promise<any> {
+    const result = await this.isrVendorsRepository.findOne({
+      where: { id: VendorId, status: WorkflowInstanceEnum.Rejected },
+      relations: {
+        businessAreas: { servicePrice: true, BpService: true },
+        instances: true
+      },
+    });
+    const vendor = {
+      ...result,
+      businessAreas: result.businessAreas.map((ba) => BusinessAreaDetailResponseDto.toResponse(ba)),
+      areasOfBusinessInterest: result.areasOfBusinessInterest.map((entity) => {
+        return { name: entity.lineOfBusiness[0].name, category: entity.category }
+      }
+      )
+    }
+    return vendor;
+  }
+
+
 }

@@ -47,7 +47,7 @@ export class ApplicationExcutionController {
     private readonly bpService: BusinessProcessService,
     private readonly invoiceService: InvoiceService,
     private readonly vendorService: VendorRegistrationsService,
-  ) { }
+  ) {}
   @UseGuards(JwtGuard)
   @Get('email')
   async email(@Req() request: Request, @CurrentUser() user: any) {
@@ -202,9 +202,26 @@ export class ApplicationExcutionController {
     const query = decodeCollectionQuery(q);
     return await this.vendorService.getVendors(user, query);
   }
+
   @UseGuards(JwtGuard)
   @Get('get-vendor-detail/:vendorId')
   async getApprovedVendorById(@Param('vendorId') vendorId: string) {
     return await this.vendorService.getApprovedVendorById(vendorId);
+  }
+  @UseGuards(JwtGuard)
+  @Get('get-rejected-vendors')
+  @ApiQuery({
+    name: 'q',
+    type: String,
+    required: false,
+  })
+  async getRejectedVendors(@CurrentUser() user, @Query('q') q: string) {
+    const query = decodeCollectionQuery(q);
+    return await this.vendorService.getRejectedVendors(user, query);
+  }
+  @UseGuards(JwtGuard)
+  @Get('get-rejected-vendor-detail/:vendorId')
+  async getRejectedVendorById(@Param('vendorId') vendorId: string) {
+    return await this.vendorService.getRejectedISRVendorById(vendorId);
   }
 }
