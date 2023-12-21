@@ -5,18 +5,20 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { SpdEntity } from './spd.entity';
+import { Spd } from './spd.entity';
 
-@Entity({ name: 'spd-settings' })
-export class SpdSettings {
+@Entity({ name: 'spd_settings' })
+export class SpdSetting {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
   @Column()
   spdId: string;
+
   @Column()
   content: string;
 
-  @ManyToOne(() => SpdEntity, (spd) => spd.spdSettings)
+  @ManyToOne(() => Spd, (spd) => spd.spdSettings)
   @JoinColumn({ name: 'spdId' })
-  spd: SpdEntity;
+  spd: Spd;
 }

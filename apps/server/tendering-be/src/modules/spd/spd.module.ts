@@ -9,28 +9,27 @@ import { SpdBdsController } from './controller/spd-bds.controller';
 import { SpdSccController } from './controller/spd-scc.controller';
 
 import { SpdTechnicalScoringController } from './controller/spd-technical-scoring.controller';
-import {
-  SpdBdsEntity,
-  SpdSccEntity,
-  SpdTechnicalScoringEntity,
-  SpdEntity,
-} from 'src/entities';
-import { SpdPrefeenceMarginsController } from './controller/spd-prefeence-margins.controller';
-import { SpdRequiredDocumentaryEvidencesController } from './controller/spd-required-documentary-evidences.controller';
-import { SpdSettingsController } from './controller/spd-settings.controller';
-import { SpdPrefeenceMargins } from 'src/entities/spd-prefeence-margins.entity';
-import { SpdRequiredDocumentaryEvidences } from 'src/entities/spd-required-documentary-evidences.entity';
-import { SpdSettings } from 'src/entities/spd-settings.entity';
+import { SpdBds, SpdScc, SpdTechnicalScoring, Spd } from 'src/entities';
+import { SpdPreferenceMarginController } from './controller/spd-preference-margin.controller';
+import { SpdRequiredDocumentaryEvidencesController } from './controller/spd-required-documentary-evidence.controller';
+import { SpdSettingsController } from './controller/spd-setting.controller';
+import { SpdPreferenceMargin } from 'src/entities/spd-preference-margin.entity';
+import { SpdRequiredDocumentaryEvidence } from 'src/entities/spd-required-documentary-evidence.entity';
+import { SpdSetting } from 'src/entities/spd-setting.entity';
+import { SpdPreferenceMarginService } from './service/spd-preference-margin.service';
+import { SpdRequiredDocumentaryEvidenceService } from './service/spd-required-documentary-evidence.service';
+import { SpdSettingService } from './service/spd-setting.service';
+
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      SpdEntity,
-      SpdBdsEntity,
-      SpdSccEntity,
-      SpdTechnicalScoringEntity,
-      SpdPrefeenceMargins,
-      SpdRequiredDocumentaryEvidences,
-      SpdSettings,
+      Spd,
+      SpdBds,
+      SpdScc,
+      SpdTechnicalScoring,
+      SpdPreferenceMargin,
+      SpdRequiredDocumentaryEvidence,
+      SpdSetting,
     ]),
   ],
   providers: [
@@ -38,16 +37,16 @@ import { SpdSettings } from 'src/entities/spd-settings.entity';
     SpdSccService,
     SpdBdsService,
     SpdTechnicalScoringService,
-    SpdPrefeenceMargins,
-    SpdRequiredDocumentaryEvidences,
-    SpdSettings,
+    SpdPreferenceMarginService,
+    SpdRequiredDocumentaryEvidenceService,
+    SpdSettingService,
   ],
   controllers: [
     SpdController,
     SpdBdsController,
     SpdSccController,
     SpdTechnicalScoringController,
-    SpdPrefeenceMarginsController,
+    SpdPreferenceMarginController,
     SpdRequiredDocumentaryEvidencesController,
     SpdSettingsController,
   ],

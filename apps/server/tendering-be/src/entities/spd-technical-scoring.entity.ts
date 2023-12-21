@@ -5,11 +5,11 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { SpdEntity } from './spd.entity';
+import { Spd } from './spd.entity';
 import { Audit } from 'src/shared/entities';
 
 @Entity({ name: 'spd_technical_scoring' })
-export class SpdTechnicalScoringEntity extends Audit {
+export class SpdTechnicalScoring extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -52,7 +52,7 @@ export class SpdTechnicalScoringEntity extends Audit {
   @Column()
   isRangeBasedCriteria: boolean;
 
-  @ManyToOne(() => SpdEntity, (spd) => spd.technicalScorings)
+  @ManyToOne(() => Spd, (spd) => spd.technicalScorings)
   @JoinColumn({ name: 'spdId' })
-  spd: SpdEntity;
+  spd: Spd;
 }

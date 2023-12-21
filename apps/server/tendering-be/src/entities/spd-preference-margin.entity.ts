@@ -6,10 +6,10 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Audit } from 'src/shared/entities';
-import { SpdEntity } from './spd.entity';
+import { Spd } from './spd.entity';
 
-@Entity({ name: 'spd-prefeence-margins' })
-export class SpdPrefeenceMargins extends Audit {
+@Entity({ name: 'spd_preference_margins' })
+export class SpdPreferenceMargin extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -27,7 +27,7 @@ export class SpdPrefeenceMargins extends Audit {
   @Column({ type: 'numeric' })
   margin: number;
 
-  @ManyToOne(() => SpdEntity, (spd) => spd.spdPrefeenceMargins)
+  @ManyToOne(() => Spd, (spd) => spd.spdPreferenceMargins)
   @JoinColumn({ name: 'spdId' })
-  spd: SpdEntity;
+  spd: Spd;
 }
