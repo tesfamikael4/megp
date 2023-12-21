@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Step, Workflow } from 'src/entities';
 import { Instance } from 'src/entities/instance.entity';
+import { State } from 'src/entities/state.entity';
 import { Repository } from 'typeorm';
 import { and, setup } from 'xstate';
 
@@ -33,13 +34,16 @@ export class XMachineService {
     private readonly repositoryStep: Repository<Step>,
     @InjectRepository(Instance)
     private readonly repositoryInstance: Repository<Instance>,
+    @InjectRepository(State)
+    private readonly repositoryState: Repository<State>,
   ) {}
 
-  async createMachineConfig(activityId, currentApprover: string): Promise<any> {
+  async createMachineConfig(
+    activityId,
+    currentApprover: string,
+    state,
+  ): Promise<any> {
     const adjust = '';
-    const steps = await this.repositoryStep.find({ where: { activityId } });
-
-    const stateMachineConfig = this.createStateMachineConfig(steps as any);
 
     const machine = setup({
       actions: {
@@ -73,12 +77,12 @@ export class XMachineService {
       context: {
         adj: adjust,
       },
-      states: stateMachineConfig.states as any,
+      states: state,
     });
     return machine;
   }
 
-  private createStateMachineConfig(steps: any[]): StateMachineConfig {
+  createStateMachineConfig(steps: any[]): StateMachineConfig {
     const stateMachineConfig: StateMachineConfig = { states: {} };
 
     for (let i = 0; i < steps.length; i++) {

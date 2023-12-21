@@ -17,8 +17,8 @@ type approver = {
   approvalMethod: string;
 };
 
-@Entity({ name: 'steps' })
-export class Step {
+@Entity({ name: 'default_steps' })
+export class DefaultStep {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -38,7 +38,7 @@ export class Step {
   @Column({ type: 'jsonb' })
   approvers: approver[];
 
-  @Column()
+  @Column({ default: 'default' })
   type: string;
 
   @Column()

@@ -1,10 +1,4 @@
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  OneToMany,
-  OneToOne,
-} from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToOne } from 'typeorm';
 import { Activity } from './activity.entity';
 
 @Entity({ name: 'workflows' })
@@ -19,4 +13,7 @@ export class Workflow {
     cascade: true,
   })
   activities: Activity;
+
+  @Column({ type: 'jsonb' })
+  metadata: any;
 }
