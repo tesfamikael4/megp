@@ -232,8 +232,6 @@ export class WorkflowService {
     });
     console.log(instanceId);
     if (!wfi) throw new NotFoundException('Not Found');
-    console.log('wfiwfiwfi', wfi);
-
     const tasks = await this.taskService.getTasksByBP(wfi.bpId);
     const completedTasks = await this.trackerRepository.find({
       where: { instanceId: instanceId },
@@ -259,7 +257,7 @@ export class WorkflowService {
           executedTasks.push(element.taskId);
         }
       }
-      if (task.id === wfi.taskHandler.taskId) {
+      if (task.id === wfi.taskHandler?.taskId) {
         const handler = wfi.taskHandler;
         handler.task = null;
         handler.workflowInstance = null;

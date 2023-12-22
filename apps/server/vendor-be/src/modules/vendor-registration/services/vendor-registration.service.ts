@@ -349,14 +349,22 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     if (!result) throw new HttpException(`isr_Vendor_not_found`, 500);
     // if vendor have no previously approved service
     const res = await this.businessAreaRepository.findOne({
-      where: { vendorId: result.id, status: Not(VendorStatusEnum.REJECTED) },
+      where: {
+        vendorId: result.id,
+        instanceId: Not(vendorStatusDto.instanceId),
+        status: In([
+          VendorStatusEnum.APPROVED,
+          VendorStatusEnum.PENDING,
+          VendorStatusEnum.ADJUSTMENT
+        ])
+      },
     });
+    console.log("res--------------", res)
     if (!res) {
       const vendorservice = await this.businessAreaRepository.findOne({
         where: { vendorId: result.id },
       });
       const initial = JSON.parse(JSON.stringify(result.initial));
-
       initial.status = VendorStatusEnum.REJECTED;
       result.status = VendorStatusEnum.REJECTED;
       const resul = await this.isrVendorsRepository.save(result);
