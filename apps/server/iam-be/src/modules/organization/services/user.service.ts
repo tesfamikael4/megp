@@ -75,6 +75,75 @@ export class UserService extends ExtraCrudService<User> {
     return response;
   }
 
+  async findAllUserByPermission(
+    organizationId: string,
+    permission: string,
+    query: CollectionQuery,
+  ) {
+    query.where.push([
+      {
+        column: 'organizationId',
+        value: organizationId,
+        operator: FilterOperators.EqualTo,
+      },
+    ]);
+
+    const dataQuery = QueryConstructor.constructQuery<User>(
+      this.repositoryUser,
+      query,
+    )
+      .leftJoin('users.userRoles', 'userRoles')
+      .leftJoin('userRoles.role', 'role')
+      .leftJoin('role.rolePermissions', 'rolePermissions')
+      .leftJoin(
+        'rolePermissions.permission',
+        'permission',
+        'permission.key =:permission',
+        { permission },
+      )
+      .leftJoin('permission.mandatePermissions', 'mandatePermissions')
+      .leftJoin('mandatePermissions.mandate', 'mandate')
+      .leftJoin('mandate.organizationMandates', 'organizationMandates')
+
+      .leftJoin('users.userRoleSystems', 'userRoleSystems')
+      .leftJoin('userRoleSystems.roleSystem', 'roleSystem')
+      .leftJoin('roleSystem.roleSystemPermissions', 'roleSystemPermissions')
+      .leftJoin(
+        'roleSystemPermissions.permission',
+        'permissionSystem',
+        'permissionSystem.key =:permission',
+        { permission },
+      )
+      .leftJoin(
+        'permissionSystem.mandatePermissions',
+        'mandatePermissionSystems',
+      )
+      .leftJoin('mandatePermissionSystems.mandate', 'mandateSystem')
+      .leftJoin(
+        'mandateSystem.organizationMandates',
+        'organizationMandateSystems',
+      )
+      .andWhere(
+        'organizationMandates.organizationId=:organizationIdRole OR organizationMandateSystems.organizationId=:organizationIdRoleSystem',
+        {
+          organizationIdRole: organizationId,
+          organizationIdRoleSystem: organizationId,
+        },
+      );
+
+    const response = new DataResponseFormat<User>();
+
+    if (query.count) {
+      response.total = await dataQuery.getCount();
+    } else {
+      const [result, total] = await dataQuery.getManyAndCount();
+      response.total = total;
+      response.items = result;
+    }
+
+    return response;
+  }
+
   async createOrganizationAdmin(itemData: CreateUserDto): Promise<any> {
     if (itemData.email) {
       itemData.email = itemData.email.toLowerCase();

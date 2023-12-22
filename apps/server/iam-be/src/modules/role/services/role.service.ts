@@ -17,13 +17,53 @@ export class RoleService extends ExtraCrudService<Role> {
     super(repositoryRole);
   }
 
-  async findAllRoleForAssignment(organizationId: any, query: CollectionQuery) {
+  async findAllRoleForAssignment(
+    organizationId: string,
+    query: CollectionQuery,
+  ) {
     const dataQuery = QueryConstructor.constructQuery<Role>(
       this.repositoryRole,
       query,
     )
       .leftJoin('roles.rolePermissions', 'rolePermissions')
       .leftJoin('rolePermissions.permission', 'permission')
+      .leftJoin('permission.mandatePermissions', 'mandatePermissions')
+      .leftJoin('mandatePermissions.mandate', 'mandate')
+      .leftJoin('mandate.organizationMandates', 'organizationMandates')
+      .andWhere('organizationMandates.organizationId=:organizationId', {
+        organizationId,
+      })
+      .andWhere('roles.organizationId = :organizationId', { organizationId });
+
+    const response = new DataResponseFormat<Role>();
+
+    if (query.count) {
+      response.total = await dataQuery.getCount();
+    } else {
+      const [result, total] = await dataQuery.getManyAndCount();
+      response.total = total;
+      response.items = result;
+    }
+
+    return response;
+  }
+
+  async findAllRoleByPermission(
+    organizationId: string,
+    permission: string,
+    query: CollectionQuery,
+  ) {
+    const dataQuery = QueryConstructor.constructQuery<Role>(
+      this.repositoryRole,
+      query,
+    )
+      .leftJoin('roles.rolePermissions', 'rolePermissions')
+      .leftJoin(
+        'rolePermissions.permission',
+        'permission',
+        'permission.key =:permission',
+        { permission },
+      )
       .leftJoin('permission.mandatePermissions', 'mandatePermissions')
       .leftJoin('mandatePermissions.mandate', 'mandate')
       .leftJoin('mandate.organizationMandates', 'organizationMandates')
