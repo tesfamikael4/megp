@@ -24,14 +24,12 @@ export class CertificateController {
   ): Promise<void> {
     try {
       console.log('user info', user);
-      //  const certificateData = { userName };
       const pdfStream: Readable =
         await this.certificateService.generateCertificate(
           vendorId,
           instanceId,
           user,
         );
-      // Set up the response headers
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader(
         'Content-Disposition',
@@ -51,7 +49,6 @@ export class CertificateController {
     @CurrentUser() userInfo: any,
   ) {
     console.log('fileId', userInfo);
-
     return await this.fileService.getCertificate(fileId, vendorId);
   }
 }

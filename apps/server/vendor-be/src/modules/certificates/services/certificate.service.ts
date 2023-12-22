@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { createReadStream, createWriteStream, mkdirSync } from 'fs';
+
 import { Readable } from 'stream';
 import { toDataURL } from 'qrcode';
-import * as path from 'path';
+
 import Certificate from 'src/modules/certificates/templates/vendor-certificate';
 import { VendorRegistrationsService } from 'src/modules/vendor-registration/services/vendor-registration.service';
 import { ServicePrice } from 'src/entities';
@@ -54,17 +54,6 @@ export class CertificateService {
   ): Promise<Readable> {
     try {
       let buffer: Buffer;
-
-      // const fileName = `${vendorId}-certificate.pdf`;
-      // const dirPath = path.join(
-      //   process.cwd(),
-      //   'modules',
-      //   'certificates',
-      //   'gen-certificates',
-      // );
-      // mkdirSync(dirPath, { recursive: true });
-      // const filePath = path.join(dirPath, fileName);
-      // const writeStream = createWriteStream(filePath);
 
       const qrUrl =
         (await toDataURL('https://dev.megp.peragosystems.com/', {
