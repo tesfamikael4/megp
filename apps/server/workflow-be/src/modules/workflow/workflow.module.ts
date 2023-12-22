@@ -12,21 +12,40 @@ import { ActivityController } from './controllers/activity.controller';
 import { ActivityService } from './services/activity.service';
 import { Activity } from 'src/entities/activity.entity';
 import { InstanceController } from './controllers/instance.controller';
+import { StateService } from './services/state.service';
+import { StateController } from './controllers/state.controller';
+import { State } from 'src/entities/state.entity';
+import { DefaultStep } from 'src/entities/defaultStep.entity';
+import { DefaultStepService } from './services/defaultStep.service';
+import { DefaultStepController } from './controllers/defaultStep.controller';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Workflow, Step, Instance, Activity])],
+  imports: [
+    TypeOrmModule.forFeature([
+      Workflow,
+      Step,
+      Instance,
+      Activity,
+      State,
+      DefaultStep,
+    ]),
+  ],
   providers: [
     WorkflowService,
     StepService,
+    DefaultStepService,
     XMachineService,
     InstanceService,
     ActivityService,
+    StateService,
   ],
   controllers: [
     WorkflowController,
     StepController,
+    DefaultStepController,
     ActivityController,
     InstanceController,
+    StateController,
   ],
 })
 export class WorkflowModule {}

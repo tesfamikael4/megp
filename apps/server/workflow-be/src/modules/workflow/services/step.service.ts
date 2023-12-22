@@ -12,12 +12,13 @@ export class StepService extends ExtraCrudService<Step> {
   ) {
     super(repositoryStep);
   }
+
   async bulkCreate(steps: Step[]): Promise<Step[]> {
-    const budget = await this.repositoryStep.find({
+    const preStep = await this.repositoryStep.find({
       where: { activityId: steps[0].activityId },
     });
-    if (budget.length > 0) {
-      await this.repositoryStep.delete(budget as any);
+    if (preStep.length > 0) {
+      await this.repositoryStep.delete(preStep as any);
     }
     const items = this.repositoryStep.create(steps);
     await this.repositoryStep.save(items);
