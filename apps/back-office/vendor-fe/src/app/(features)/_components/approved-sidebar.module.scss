@@ -1,0 +1,15 @@
+.sidebarwrapper {
+  @apply bg-white  rounded-md min-h-[720px];
+  min-height: 500px;
+}
+
+.formGroup {
+  @apply pt-4 pl-3 pr-3;
+}
+
+.sidebarFilterForm {
+  @apply pt-4;
+}
+.sidebarButtons {
+  @apply flex gap-2 mt-4 ml-3 w-full;
+}
