@@ -5,7 +5,7 @@ import { CollectionQuery, encodeCollectionQuery } from '@megp/entity';
 export const approvedRejectedApi = createApi({
   reducerPath: 'approvedRejectedApi',
   refetchOnFocus: true,
-  baseQuery: baseQuery(process.env.NEXT_PUBLIC_VENDOR_API ?? '/api/vendors'),
+  baseQuery: baseQuery(process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api/'),
   endpoints: (builder) => ({
     getVendors: builder.query<
       { items: any[]; total: number },
@@ -18,14 +18,14 @@ export const approvedRejectedApi = createApi({
           q = `?q=${query}`;
         }
         return {
-          url: `api/application-execution/get-vendors${q}`,
+          url: `application-execution/get-vendors${q}`,
           method: 'GET',
         };
       },
     }),
     getVendorDetail: builder.query<any, { vendorId: string }>({
       query: ({ vendorId }) =>
-        `api/application-execution/get-vendor-detail/${vendorId}`,
+        `application-execution/get-vendor-detail/${vendorId}`,
     }),
     getRejectedVendorList: builder.query<any, CollectionQuery | undefined>({
       query: (collectionQuery) => {
@@ -36,7 +36,7 @@ export const approvedRejectedApi = createApi({
         }
 
         return {
-          url: `api/application-execution/get-rejected-vendors${q}`,
+          url: `application-execution/get-rejected-vendors${q}`,
           method: 'GET',
         };
       },
@@ -49,7 +49,7 @@ export const approvedRejectedApi = createApi({
     }),
     getRejectedApplicationDetail: builder.query<any, { vendorId: string }>({
       query: ({ vendorId }) =>
-        `api/application-execution/get-vendor-detail/${vendorId}`,
+        `application-execution/get-vendor-detail/${vendorId}`,
     }),
   }),
 });
