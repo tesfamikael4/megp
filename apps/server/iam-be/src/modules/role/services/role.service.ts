@@ -32,14 +32,14 @@ export class RoleService extends ExtraCrudService<Role> {
       })
       .andWhere('roles.organizationId = :organizationId', { organizationId });
 
-    const response = new DataResponseFormat<RoleResponseDto>();
+    const response = new DataResponseFormat<Role>();
 
     if (query.count) {
       response.total = await dataQuery.getCount();
     } else {
       const [result, total] = await dataQuery.getManyAndCount();
       response.total = total;
-      response.items = RoleResponseDto.toDtos(result);
+      response.items = result;
     }
 
     return response;

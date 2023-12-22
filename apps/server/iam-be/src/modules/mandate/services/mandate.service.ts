@@ -1,6 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
-import { DataSource, IsNull, Repository } from 'typeorm';
+import { DataSource, Equal, IsNull, Not, Repository } from 'typeorm';
 import { Mandate } from '@entities';
 import { CollectionQuery, QueryConstructor } from '@collection-query';
 import { DataResponseFormat } from '@api-data';
@@ -25,6 +25,7 @@ export class MandateService extends EntityCrudService<Mandate> {
         mandate: {
           isSingleAssignment: true,
         },
+        organizationId: Not(Equal(organizationId)),
       },
     });
     const mandateId = [];
@@ -55,8 +56,8 @@ export class MandateService extends EntityCrudService<Mandate> {
       response.total = await dataQuery.getCount();
     } else {
       const [result, total] = await dataQuery.getManyAndCount();
-      response.items = result;
       response.total = total;
+      response.items = result;
     }
     return response;
   }
