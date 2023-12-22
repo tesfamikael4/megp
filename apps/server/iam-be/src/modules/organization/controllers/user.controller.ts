@@ -52,6 +52,27 @@ export class UserController extends ExtraCrudController<User>(options) {
     return this.userService.getOrganizationAdmins(id, query);
   }
 
+  @Get('list/:organizationId/permission/:permission')
+  @ApiQuery({
+    name: 'q',
+    type: String,
+    description: 'Collection Query Parameter. Optional',
+    required: false,
+  })
+  async findAllRoleByPermission(
+    @Param('organizationId') organizationId: string,
+    @Param('permission') permission: string,
+    @Query('q') q?: string,
+  ): Promise<DataResponseFormat<any>> {
+    const query = decodeCollectionQuery(q);
+
+    return await this.userService.findAllUserByPermission(
+      organizationId,
+      permission,
+      query,
+    );
+  }
+
   @Post('create-organization-admin')
   @ApiBody({ type: CreateUserDto })
   async createOrganizationAdmin(@Body() itemData: CreateUserDto): Promise<any> {

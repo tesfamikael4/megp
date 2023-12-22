@@ -36,4 +36,25 @@ export class RoleNewController extends ExtraCrudController<Role>(options) {
 
     return await this.roleService.findAllRoleForAssignment(id, query);
   }
+
+  @Get('list/:organizationId/permission/:permission')
+  @ApiQuery({
+    name: 'q',
+    type: String,
+    description: 'Collection Query Parameter. Optional',
+    required: false,
+  })
+  async findAllRoleByPermission(
+    @Param('organizationId') organizationId: string,
+    @Param('permission') permission: string,
+    @Query('q') q?: string,
+  ): Promise<DataResponseFormat<any>> {
+    const query = decodeCollectionQuery(q);
+
+    return await this.roleService.findAllRoleByPermission(
+      organizationId,
+      permission,
+      query,
+    );
+  }
 }
