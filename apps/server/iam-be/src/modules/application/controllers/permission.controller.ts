@@ -6,7 +6,7 @@ import {
   Get,
   Query,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiQuery, ApiTags } from '@nestjs/swagger';
 import {
   CreatePermissionDto,
   UpdatePermissionDto,
@@ -15,7 +15,10 @@ import { PermissionService } from '../services/permission.service';
 import { Permission } from '@entities';
 import { ExtraCrudController } from 'src/shared/controller/extra-crud.controller';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
-import { CollectionQuery } from 'src/shared/collection-query';
+import {
+  CollectionQuery,
+  decodeCollectionQuery,
+} from 'src/shared/collection-query';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'applicationId',
@@ -31,15 +34,17 @@ export class PermissionNewController extends ExtraCrudController<Permission>(
   constructor(private readonly permissionService: PermissionService) {
     super(permissionService);
   }
+
   @Get('organization/:id')
-  async findUnderOrganization(
-    @Param(
-      'id',
-      new ParseUUIDPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
-    )
-    id: string,
-    @Query() query: CollectionQuery,
-  ) {
+  @ApiQuery({
+    name: 'q',
+    type: String,
+    description: 'Collection Query Parameter. Optional',
+    required: false,
+  })
+  async findUnderOrganization(@Param('id') id: string, @Query('q') q: string) {
+    const query = decodeCollectionQuery(q);
+
     return await this.permissionService.findUnderOrganization(id, query);
   }
 }
