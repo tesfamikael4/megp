@@ -1,30 +1,43 @@
-import { Injectable, NestMiddleware } from '@nestjs/common';
-import { Request, Response, NextFunction } from 'express';
+import {
+  CallHandler,
+  ExecutionContext,
+  Injectable,
+  NestInterceptor,
+} from '@nestjs/common';
+import { Request } from 'express';
 import { DataSource } from 'typeorm';
+import { catchError, concatMap, finalize } from 'rxjs';
+
+export const ENTITY_MANAGER_KEY = 'ENTITY_MANAGER';
 
 @Injectable()
-export class TransactionMiddleware implements NestMiddleware {
+export class TransactionInterceptor implements NestInterceptor {
   constructor(private connection: DataSource) {}
 
-  async use(req: Request, res: Response, next: NextFunction) {
+  async intercept(
+    context: ExecutionContext,
+    next: CallHandler<any>,
+  ): Promise<any> {
+    const req = context.switchToHttp().getRequest<Request>();
+
     const queryRunner = this.connection.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
-    req['queryRunner'] = queryRunner;
 
-    try {
-      // Execute the request and continue the middleware chain
-      await next();
+    req[ENTITY_MANAGER_KEY] = queryRunner.manager;
 
-      // Commit the transaction if no errors occurred
-      await queryRunner.commitTransaction();
-    } catch (error) {
-      // Rollback the transaction if an error occurred
-      await queryRunner.rollbackTransaction();
-      throw error;
-    } finally {
-      // Release the queryRunner after the response is sent
-      await queryRunner.release();
-    }
+    return next.handle().pipe(
+      concatMap(async (data) => {
+        await queryRunner.commitTransaction();
+        return data;
+      }),
+      catchError(async (e) => {
+        await queryRunner.rollbackTransaction();
+        throw e;
+      }),
+      finalize(async () => {
+        await queryRunner.release();
+      }),
+    );
   }
 }

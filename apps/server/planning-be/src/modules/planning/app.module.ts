@@ -2,24 +2,21 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {
   APP,
+  BudgetYear,
   PostBudgetPlan,
-  PreBudgetPlanDisbursement,
   PreBudgetPlan,
   PreBudgetPlanActivity,
-  PreBudgetPlanFrameworkContract,
   PreBudgetPlanItems,
   PreBudgetPlanTimeline,
+  PreBudgetRequisitioner,
+  PreProcurementMechanism,
 } from 'src/entities';
 import { APPService } from './services/app.service';
-import { PreBudgetPlanDisbursementService } from './services/pre-budget-plan-disbursement.service';
 import { PreBudgetPlanActivityService } from './services/pre-budget-plan-activity.service';
-import { PreBudgetPlanFrameworkContractService } from './services/pre-budget-plan-framework-contract.service';
 import { PreBudgetPlanItemsService } from './services/pre-budget-plan-items.service';
 import { PreBudgetPlanTimelineService } from './services/pre-budget-plan-timeline.service';
 import { APPController } from './controllers/app.controller';
-import { PreBudgetPlanDisbursementController } from './controllers/pre-budget-plan-disbursement.controller';
 import { PreBudgetPlanActivityController } from './controllers/pre-budget-plan-activity.controller';
-import { PreBudgetPlanFrameworkContractController } from './controllers/pre-budget-plan-framework-contract.controller';
 import { PreBudgetPlanItemsController } from './controllers/pre-budget-plan-items.controller';
 import { PreBudgetPlanTimelineController } from './controllers/pre-budget-plan-timeline.controller';
 import { PreBudgetPlanController } from './controllers/pre-budget-plan.controller';
@@ -29,40 +26,46 @@ import { PostModule } from '../post-budget-plan/post.module';
 import { BudgetController } from './controllers/budget.controller';
 import { BudgetService } from './services/budget.service';
 import { Budget } from 'src/entities/budget.entity';
+import { PreProcurementMechanismController } from './controllers/pre-procurement-mechanism.controller';
+import { PreProcurementMechanismService } from './services/pre-procurement-mechanism.service';
+import { PreBudgetRequisitionerService } from './services/pre-budget-requisitioner.service';
+import { PreBudgetRequisitionerController } from './controllers/pre-budget-requisitioner.controller';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       APP,
       Budget,
-      PreBudgetPlanDisbursement,
+      BudgetYear,
       PreBudgetPlanActivity,
-      PreBudgetPlanFrameworkContract,
       PreBudgetPlanItems,
       PreBudgetPlanTimeline,
       PreBudgetPlan,
+      PreProcurementMechanism,
+      PreBudgetRequisitioner,
     ]),
     PostModule,
   ],
   providers: [
     APPService,
     BudgetService,
-    PreBudgetPlanDisbursementService,
     PreBudgetPlanActivityService,
-    PreBudgetPlanFrameworkContractService,
     PreBudgetPlanItemsService,
     PreBudgetPlanTimelineService,
     PreBudgetPlanService,
-    // PostBudgetPlanService
+    // PostBudgetPlanService,
+    PreProcurementMechanismService,
+    PreBudgetRequisitionerService,
+    // BudgetYearService
   ],
   controllers: [
     APPController,
     BudgetController,
-    PreBudgetPlanDisbursementController,
     PreBudgetPlanActivityController,
-    PreBudgetPlanFrameworkContractController,
     PreBudgetPlanItemsController,
     PreBudgetPlanTimelineController,
     PreBudgetPlanController,
+    PreProcurementMechanismController,
+    PreBudgetRequisitionerController,
   ],
 })
 export class APPModule {}

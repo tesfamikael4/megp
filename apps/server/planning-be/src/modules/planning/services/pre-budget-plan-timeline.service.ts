@@ -16,6 +16,14 @@ export class PreBudgetPlanTimelineService extends ExtraCrudService<PreBudgetPlan
     super(repositoryPreBudgetPlanTimeline);
   }
 
+  async getByActivityId(activityId) {
+    return this.repositoryPreBudgetPlanTimeline.find({
+      where: {
+        preBudgetPlanActivityId: activityId,
+      },
+    });
+  }
+
   async bulkCreate(timelines: BulkTimelineDto): Promise<BulkTimelineDto> {
     this.repositoryPreBudgetPlanTimeline.delete({
       preBudgetPlanActivityId: timelines.timeline[0].preBudgetPlanActivityId,

@@ -11,8 +11,8 @@ import {
 import { PreBudgetPlanActivity } from './pre-budget-plan-activity.entity';
 import { OrgAudit } from 'src/shared/entities';
 
-@Entity({ name: 'pre_budget_plan_timelines' })
-export class PreBudgetPlanTimeline extends OrgAudit {
+@Entity({ name: 'pre_budget_plan_requisitioners' })
+export class PreBudgetRequisitioner extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -21,23 +21,14 @@ export class PreBudgetPlanTimeline extends OrgAudit {
 
   @ManyToOne(
     () => PreBudgetPlanActivity,
-    (preBudgetPlanActivity) => preBudgetPlanActivity.preBudgetPlanTimelines,
+    (preBudgetPlanActivity) => preBudgetPlanActivity.preBudgetRequisitioners,
   )
   @JoinColumn({ name: 'preBudgetPlanActivityId' })
   public preBudgetPlanActivity: PreBudgetPlanActivity;
 
-  @Column({ nullable: true })
-  timeline: string;
-
   @Column()
-  order: number;
+  name: string;
 
-  @Column()
-  dueDate: Date;
-
-  @Column()
-  period: number;
-
-  @Column({ default: 'draft' })
-  status: string;
+  @Column({ type: 'uuid' })
+  userId: string;
 }

@@ -12,8 +12,8 @@ import { PostBudgetPlanActivity } from './post-budget-plan-activity.entity';
 import { ItemBudgetLine } from './item-budget-line.entity';
 import { Budget } from './budget.entity';
 
-@Entity({ name: 'post_budget_plan_items' })
-export class PostBudgetPlanItem {
+@Entity({ name: 'activity_budget_lines' })
+export class ActivityBudgetLine {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -22,45 +22,24 @@ export class PostBudgetPlanItem {
 
   @ManyToOne(
     () => PostBudgetPlanActivity,
-    (postBudgetPlanActivity) => postBudgetPlanActivity.postBudgetPlanItems,
+    (postBudgetPlanActivity) => postBudgetPlanActivity.activityBudgetLines,
   )
   @JoinColumn({ name: 'postBudgetPlanActivityId' })
   public postBudgetPlanActivity: PostBudgetPlanActivity;
 
-  @Column({ nullable: true })
-  budgetId: string;
+  @Column()
+  BudgetId: string;
 
-  @ManyToOne(() => Budget, (budget) => budget.postBudgetPlanItems)
+  @ManyToOne(() => Budget, (budget) => budget.activityBudgetLine)
   @JoinColumn({ name: 'budgetId' })
   public budget: Budget;
 
   @OneToMany(
     () => ItemBudgetLine,
-    (itemBudgetLine) => itemBudgetLine.postBudgetPlanItems,
+    (itemBudgetLine) => itemBudgetLine.activityBudgetLine,
   )
   itemBudgetLines: ItemBudgetLine[];
 
   @Column()
-  itemCode: string;
-
-  @Column()
-  description: string;
-
-  @Column({ type: 'json', nullable: true })
-  specification: JSON;
-
-  @Column()
-  unitPrice: number;
-
-  @Column()
-  currency: string;
-
-  @Column()
-  quantity: number;
-
-  @Column()
-  measurement: string;
-
-  @Column()
-  uom: string;
+  amount: string;
 }

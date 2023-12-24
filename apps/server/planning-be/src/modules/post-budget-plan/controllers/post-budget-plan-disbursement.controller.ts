@@ -1,4 +1,4 @@
-import { Controller } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { PostBudgetPlanDisbursement } from 'src/entities';
 import { PostBudgetPlanDisbursementService } from '../services/post-budget-plan-disbursement.service';
@@ -18,5 +18,10 @@ export class PostBudgePlantDisbursementController extends ExtraCrudController<Po
     private readonly postBudgetPlanDisbursementService: PostBudgetPlanDisbursementService,
   ) {
     super(postBudgetPlanDisbursementService);
+  }
+
+  @Post('bulk-create')
+  async bulkCreate(@Body() itemData: any): Promise<any> {
+    return this.postBudgetPlanDisbursementService.bulkCreate(itemData);
   }
 }

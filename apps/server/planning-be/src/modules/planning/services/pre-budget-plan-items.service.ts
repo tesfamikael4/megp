@@ -91,4 +91,9 @@ export class PreBudgetPlanItemsService extends ExtraCrudService<PreBudgetPlanIte
     );
     await this.repositoryPreBudgetPlanItems.delete(id);
   }
+
+  codeGenerate() {
+    const randomNum = Math.floor(1000000 + Math.random() * 9000000); // Generates a random 5-digit number
+    return 'REF-' + randomNum.toString();
+  }
 }

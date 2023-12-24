@@ -10,6 +10,8 @@ export class BudgetService extends ExtraCrudService<Budget> {
   constructor(
     @InjectRepository(Budget)
     private readonly repositoryBudget: Repository<Budget>,
+    @InjectRepository(APP)
+    private readonly repositoryApp: Repository<APP>,
   ) {
     super(repositoryBudget);
   }
@@ -22,9 +24,13 @@ export class BudgetService extends ExtraCrudService<Budget> {
       if (budget.length > 0) {
         await this.repositoryBudget.delete(budget as any);
       }
+      const app = await this.repositoryApp.findOneBy({
+        id: data.appId,
+      });
       const items = data.budgets.map((budget) => ({
         ...budget,
         appId: data.appId,
+        budgetYearId: app.budgetYearId,
       }));
       await this.repositoryBudget.create(items);
       return await this.repositoryBudget.save(items);

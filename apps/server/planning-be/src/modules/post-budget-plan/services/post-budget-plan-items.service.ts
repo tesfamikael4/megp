@@ -1,15 +1,98 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { PostBudgetPlanItems } from 'src/entities';
+import {
+  PostBudgetPlanActivity,
+  PostBudgetPlanItem,
+  PreBudgetPlanItems,
+} from 'src/entities';
 import { ExtraCrudService } from 'src/shared/service';
+import { BulkItemsDto } from 'src/modules/planning/dtos/pre-budget-plan-items.dto';
 
 @Injectable()
-export class PostBudgetPlanItemsService extends ExtraCrudService<PostBudgetPlanItems> {
+export class PostBudgetPlanItemService extends ExtraCrudService<PostBudgetPlanItem> {
   constructor(
-    @InjectRepository(PostBudgetPlanItems)
-    private readonly repositoryPostBudgetPlanItems: Repository<PostBudgetPlanItems>,
+    @InjectRepository(PostBudgetPlanItem)
+    private readonly repositoryPostBudgetPlanItems: Repository<PostBudgetPlanItem>,
+    @InjectRepository(PostBudgetPlanActivity)
+    private readonly repositoryPostBudgetPlanActivity: Repository<PostBudgetPlanActivity>,
   ) {
     super(repositoryPostBudgetPlanItems);
+  }
+
+  async create(itemData: PostBudgetPlanItem): Promise<PostBudgetPlanItem> {
+    const item = this.repositoryPostBudgetPlanItems.create(itemData);
+    await this.repositoryPostBudgetPlanItems.save(item);
+
+    const activities = await this.repositoryPostBudgetPlanActivity.findOne({
+      where: { id: item.postBudgetPlanActivityId },
+    });
+    activities.calculatedAmount += item.unitPrice * item.quantity;
+
+    await this.repositoryPostBudgetPlanActivity.update(
+      activities.id,
+      activities,
+    );
+
+    return item;
+  }
+
+  async bulkCreate(itemData: BulkItemsDto): Promise<BulkItemsDto> {
+    const items = this.repositoryPostBudgetPlanItems.create(
+      itemData.items as any,
+    );
+    await this.repositoryPostBudgetPlanItems.save(items);
+
+    const activity = await this.repositoryPostBudgetPlanActivity.findOne({
+      where: { id: itemData.items[0].preBudgetPlanActivityId },
+    });
+
+    for (const item of items) {
+      activity.calculatedAmount += item.unitPrice * item.quantity;
+    }
+
+    await this.repositoryPostBudgetPlanActivity.update(activity.id, activity);
+
+    return itemData;
+  }
+
+  async update(
+    id: string,
+    itemData: any,
+  ): Promise<PostBudgetPlanItem | undefined> {
+    const item = await this.repositoryPostBudgetPlanItems.findOneOrFail({
+      where: { id: id },
+    });
+    const activities = await this.repositoryPostBudgetPlanActivity.findOne({
+      where: { id: item.postBudgetPlanActivityId },
+    });
+
+    const preAmount = item.quantity * item.unitPrice;
+    const currentAmount = itemData.quantity * itemData.unitPrice;
+
+    activities.calculatedAmount -= preAmount - currentAmount;
+
+    await this.repositoryPostBudgetPlanActivity.update(
+      activities.id,
+      activities,
+    );
+    await this.repositoryPostBudgetPlanItems.update(id, itemData);
+    return this.repositoryPostBudgetPlanItems.findOne({ where: { id: id } });
+  }
+
+  async remove(id: string): Promise<void> {
+    const item = await this.repositoryPostBudgetPlanItems.findOneOrFail({
+      where: { id: id },
+    });
+    const activities = await this.repositoryPostBudgetPlanActivity.findOne({
+      where: { id: item.postBudgetPlanActivityId },
+    });
+    activities.calculatedAmount -= item.unitPrice * item.quantity;
+
+    await this.repositoryPostBudgetPlanActivity.update(
+      activities.id,
+      activities,
+    );
+    await this.repositoryPostBudgetPlanItems.delete(id);
   }
 }

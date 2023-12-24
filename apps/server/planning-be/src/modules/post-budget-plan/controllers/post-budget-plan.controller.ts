@@ -8,7 +8,7 @@ import { ApiPaginatedResponse } from 'src/shared/api-data';
 import { CollectionQuery } from 'src/shared/collection-query';
 
 const options: ExtraCrudOptions = {
-  entityIdName: 'preBudgetPlanId',
+  entityIdName: 'preBudgetPlanActivityId',
 };
 
 @Controller('post-budget-plans')
@@ -22,7 +22,7 @@ export class PostBudgetPlanController extends ExtraCrudController<PostBudgetPlan
 
   @Get('get-with-app')
   @ApiPaginatedResponse(PostBudgetPlan)
-  async getPreBudgetWithApp(@Query() query: CollectionQuery) {
+  async getPostBudgetWithApp(@Query() query: CollectionQuery) {
     return await this.postBudgetPlanService.findPostBudgetPlans(query);
   }
 }

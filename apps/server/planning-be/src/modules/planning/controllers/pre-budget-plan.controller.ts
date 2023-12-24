@@ -1,4 +1,11 @@
-import { Controller, Get, Param, Post, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  UseInterceptors,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { PreBudgetPlan } from 'src/entities';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
@@ -10,6 +17,7 @@ import {
 import { PreBudgetPlanService } from '../services/pre-budget-plan.service';
 import { ExtraCrudController } from 'src/shared/controller';
 import { decodeCollectionQuery } from 'src/shared/collection-query';
+import { TransactionInterceptor } from 'src/shared/interceptors';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'appid',
@@ -34,7 +42,14 @@ export class PreBudgetPlanController extends ExtraCrudController<PreBudgetPlan>(
 
   @Post('approve-pre-budget/:id')
   @ApiPaginatedResponse(PreBudgetPlan)
+  @UseInterceptors(TransactionInterceptor)
   async approvePreBudget(@Param('id') id: string) {
     return await this.preBudgetPlanService.copySelectedPreToPost(id);
+  }
+
+  @Get('get-analytics/:id')
+  @ApiPaginatedResponse(PreBudgetPlan)
+  async getAnalytics(@Param('id') id: string) {
+    return await this.preBudgetPlanService.getAnalytics(id);
   }
 }
