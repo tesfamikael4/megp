@@ -9,9 +9,10 @@ import {
 } from 'typeorm';
 
 import { PreBudgetPlanActivity } from './pre-budget-plan-activity.entity';
+import { OrgAudit } from 'src/shared/entities';
 
 @Entity({ name: 'pre_budget_plan_items' })
-export class PreBudgetPlanItems {
+export class PreBudgetPlanItems extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -25,20 +26,11 @@ export class PreBudgetPlanItems {
   @JoinColumn({ name: 'preBudgetPlanActivityId' })
   public preBudgetPlanActivity: PreBudgetPlanActivity;
 
-  @Column({ default: 'UNSPSC' })
-  itemCodeReferenceType: string;
-
   @Column()
   itemCode: string;
 
-  @Column({ type: 'json' })
-  metaData: JSON;
-
   @Column()
   description: string;
-
-  @Column({ type: 'json', nullable: true })
-  specification: JSON;
 
   @Column()
   unitPrice: number;
@@ -57,4 +49,7 @@ export class PreBudgetPlanItems {
 
   @Column()
   uomName: string;
+
+  @Column()
+  classification: string;
 }

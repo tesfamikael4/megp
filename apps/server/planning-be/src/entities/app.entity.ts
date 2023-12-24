@@ -11,9 +11,11 @@ import {
 import { PreBudgetPlan } from './pre-budget-plan.entity';
 import { PostBudgetPlan } from './post-budget-plan.entity';
 import { Budget } from './budget.entity';
+import { OrgAudit } from 'src/shared/entities';
+import { BudgetYear } from './budget-year.entity';
 
 @Entity({ name: 'apps' })
-export class APP {
+export class APP extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -22,6 +24,13 @@ export class APP {
 
   @Column()
   budgetYear: string;
+
+  @Column()
+  budgetYearId: string;
+
+  @OneToOne(() => BudgetYear, (budgetYear) => budgetYear.budget)
+  @JoinColumn({ name: 'budgetYearId' })
+  public budgetYears: BudgetYear;
 
   @Column({ nullable: true })
   description: string;

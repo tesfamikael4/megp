@@ -7,12 +7,11 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-
 import { PostBudgetPlanActivity } from './post-budget-plan-activity.entity';
-import { BudgetYear } from './budget-year.entity';
+import { OrgAudit } from 'src/shared/entities';
 
-@Entity({ name: 'post_budget_plan_disbursements' })
-export class PostBudgetPlanDisbursement {
+@Entity({ name: 'post_procurement_mechanisms' })
+export class PostProcurementMechanism extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -22,27 +21,29 @@ export class PostBudgetPlanDisbursement {
   @ManyToOne(
     () => PostBudgetPlanActivity,
     (postBudgetPlanActivity) =>
-      postBudgetPlanActivity.postBudgePlantDisbursements,
+      postBudgetPlanActivity.postProcurementMechanisms,
   )
   @JoinColumn({ name: 'postBudgetPlanActivityId' })
   public postBudgetPlanActivity: PostBudgetPlanActivity;
 
-  @OneToOne(() => BudgetYear, (budgetYear) => budgetYear.budget)
-  @JoinColumn({ name: 'budget_year' })
-  public budgetYear: BudgetYear;
+  @Column()
+  fundingSource: string;
 
   @Column()
-  budgetYearName: string;
+  procurementMethod: string;
 
   @Column()
-  quarter: string;
+  procurementType: string;
+
+  @Column({ type: 'jsonb' })
+  donor: any;
+
+  @Column({ type: 'jsonb' })
+  targetGroup: any;
 
   @Column()
-  order: number;
+  isOnline: boolean;
 
-  @Column()
-  amount: number;
-
-  @Column()
-  currency: string;
+  @Column({ type: 'json' })
+  contract: JSON;
 }

@@ -2,17 +2,15 @@ import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
-  OneToOne,
-  OneToMany,
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
 
 import { PostBudgetPlanActivity } from './post-budget-plan-activity.entity';
-import { ItemCoATag } from './item-coa-tag.entity';
+import { OrgAudit } from 'src/shared/entities';
 
-@Entity({ name: 'activity_coa_tags' })
-export class ActivityCoATag {
+@Entity({ name: 'post_budget_activity_documents' })
+export class PostBudgetActivityDocument extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -21,20 +19,24 @@ export class ActivityCoATag {
 
   @ManyToOne(
     () => PostBudgetPlanActivity,
-    (postBudgetPlanActivity) => postBudgetPlanActivity.activityCoATags,
+    (postBudgetPlanActivity) =>
+      postBudgetPlanActivity.postBudgetActivityDocuments,
   )
   @JoinColumn({ name: 'postBudgetPlanActivityId' })
   public postBudgetPlanActivity: PostBudgetPlanActivity;
 
-  @OneToMany(() => ItemCoATag, (itemCoAtags) => itemCoAtags.activityCoAtag)
-  itemCoAtags: ItemCoATag[];
+  @Column()
+  fileName: string;
 
   @Column()
-  coAid: string;
+  fileType: string;
 
   @Column()
-  name: string;
+  bucketName: string;
 
   @Column()
-  coAcode: string;
+  originalName: string;
+
+  @Column()
+  path: string;
 }

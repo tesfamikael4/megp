@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
-import { APP, PreBudgetPlan } from 'src/entities';
+import { LessThan, MoreThan, MoreThanOrEqual, Not, Repository } from 'typeorm';
+import { APP, BudgetYear, PreBudgetPlan } from 'src/entities';
 import { EntityCrudService } from 'src/shared/service';
 import { CreateAPPAuto, CreateAPPDto } from '../dtos/app.dto';
 
@@ -12,6 +12,8 @@ export class APPService extends EntityCrudService<APP> {
     private readonly repositoryAPP: Repository<APP>,
     @InjectRepository(PreBudgetPlan)
     private readonly repositoryPreBudgetPlan: Repository<PreBudgetPlan>,
+    @InjectRepository(BudgetYear)
+    private readonly repositoryBudgetYear: Repository<BudgetYear>,
   ) {
     super(repositoryAPP);
   }
@@ -20,13 +22,26 @@ export class APPService extends EntityCrudService<APP> {
     const item = new APP();
 
     const year = new Date().getFullYear();
-    if (input.type == 'current') {
-      item.budgetYear = String(year);
-    } else if (input.type == 'next') {
-      item.budgetYear = String(year + 1);
+
+    let budYear = '';
+    if (input.type == 'next') {
+      budYear = String(year + 1);
     } else {
       throw new BadRequestException('invalid_type');
     }
+
+    // const budgetYear = await this.repositoryBudgetYear.findOne({
+    //   where: {
+    //     startDate: MoreThanOrEqual(year),
+    //     endDate: LessThan(year),
+    //   }
+    // })
+
+    const budgetYear = await this.repositoryBudgetYear.findOne({
+      where: {
+        name: budYear,
+      },
+    });
 
     const app = await this.repositoryAPP.findOne({
       where: { budgetYear: item.budgetYear },
@@ -35,13 +50,18 @@ export class APPService extends EntityCrudService<APP> {
       throw new BadRequestException('app_exist');
     }
 
-    item.planName = 'Annual Procurement Plan ' + item.budgetYear;
+    item.planName = 'Annual Procurement Plan ' + budYear;
     const preBud = new PreBudgetPlan();
-    preBud.currency = '';
-    preBud.totalEstimatedAmount = 0;
-    item.preBudgetPlans = preBud;
 
-    await this.repositoryAPP.save(item);
+    preBud.estimatedAmount = {};
+    item.preBudgetPlans = preBud;
+    const createApp = {
+      ...item,
+      budgetYearId: budgetYear.id,
+      budgetYear: budYear,
+    };
+
+    await this.repositoryAPP.save(createApp);
     return item;
   }
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { PreBudgetPlanItems } from 'src/entities';
 import { PreBudgetPlanItemsService } from '../services/pre-budget-plan-items.service';
@@ -24,5 +24,10 @@ export class PreBudgetPlanItemsController extends ExtraCrudController<PreBudgetP
   @Post('bulk-create')
   async bulkCreate(@Body() itemData: BulkItemsDto): Promise<BulkItemsDto> {
     return this.preBudgetPlanItemsService.bulkCreate(itemData);
+  }
+
+  @Get('code-generate')
+  async codeGenerate(): Promise<string> {
+    return this.preBudgetPlanItemsService.codeGenerate();
   }
 }

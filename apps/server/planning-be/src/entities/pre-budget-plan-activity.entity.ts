@@ -12,11 +12,13 @@ import {
 import { PreBudgetPlan } from './pre-budget-plan.entity';
 import { PreBudgetPlanItems } from './pre-budget-plan-items.entity';
 import { PreBudgetPlanTimeline } from './pre-budget-plan-timeline.entity';
-import { PreBudgetPlanDisbursement } from './pre-budget-plan-disbursement.entity';
-import { PreBudgetPlanFrameworkContract } from './pre-budget-plan-framework-contract.entity';
+import { PreBudgetRequisitioner } from './pre-budget-plan-requisitioner.entity';
+import { PreProcurementMechanism } from './pre-procurement-mechanism.entity';
+import { OrgAudit } from 'src/shared/entities';
+import { PreBudgetActivityDocument } from './pre-budget-activity-document.entity';
 
 @Entity({ name: 'pre_budget_plan_activities' })
-export class PreBudgetPlanActivity {
+export class PreBudgetPlanActivity extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -43,18 +45,23 @@ export class PreBudgetPlanActivity {
   preBudgetPlanTimelines: PreBudgetPlanTimeline[];
 
   @OneToMany(
-    () => PreBudgetPlanDisbursement,
-    (preBudgetPlanDisbursements) =>
-      preBudgetPlanDisbursements.preBudgetPlanActivity,
+    () => PreProcurementMechanism,
+    (preProcurementMechanism) => preProcurementMechanism.preBudgetPlanActivity,
   )
-  preBudgetPlanDisbursements: PreBudgetPlanDisbursement[];
+  preProcurementMechanisms: PreProcurementMechanism[];
 
   @OneToMany(
-    () => PreBudgetPlanFrameworkContract,
-    (preBudgetPlanFrameworkContracts) =>
-      preBudgetPlanFrameworkContracts.preBudgetPlanActivity,
+    () => PreBudgetRequisitioner,
+    (preBudgetRequisitioner) => preBudgetRequisitioner.preBudgetPlanActivity,
   )
-  preBudgetPlanFrameworkContracts: PreBudgetPlanFrameworkContract[];
+  preBudgetRequisitioners: PreBudgetRequisitioner[];
+
+  @OneToMany(
+    () => PreBudgetActivityDocument,
+    (preBudgetActivityDocument) =>
+      preBudgetActivityDocument.preBudgetPlanActivity,
+  )
+  preBudgetActivityDocuments: PreBudgetActivityDocument[];
 
   @Column()
   name: string;
@@ -66,7 +73,7 @@ export class PreBudgetPlanActivity {
   description: string;
 
   @Column({ default: 0 })
-  totalEstimatedAmount: number;
+  estimatedAmount: number;
 
   @Column({ default: 0 })
   calculatedAmount: number;
@@ -74,35 +81,17 @@ export class PreBudgetPlanActivity {
   @Column()
   currency: string;
 
-  @Column()
-  fundingSource: string;
-
-  @Column()
-  procurementMethod: string;
-
-  @Column()
-  procurementType: string;
-
   @Column({ default: 'Draft' })
-  procurementStatus: string;
-
-  @Column({ type: 'json' })
-  donor: JSON;
+  status: string;
 
   @Column()
   isMultiYear: boolean;
 
-  @Column({ type: 'json' })
-  multiYearBudget: JSON;
-
-  @Column({ default: ['Others'], type: 'jsonb' })
-  preference: string[];
-
-  @Column({ default: 'Online' })
-  procurementProcess: string;
-
   @Column({ nullable: true })
   remark: string;
+
+  @Column({ type: 'jsonb', nullable: true })
+  classification: any;
 
   @BeforeInsert()
   generateRandomNumber(): void {

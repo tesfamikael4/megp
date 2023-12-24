@@ -9,9 +9,10 @@ import {
 } from 'typeorm';
 
 import { PostBudgetPlanActivity } from './post-budget-plan-activity.entity';
+import { OrgAudit } from 'src/shared/entities';
 
-@Entity({ name: 'post_budget_plan_timelines' })
-export class PostBudgetPlanTimeline {
+@Entity({ name: 'post_budget_plan_requisitioners' })
+export class PostBudgetRequisitioner extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -20,23 +21,14 @@ export class PostBudgetPlanTimeline {
 
   @ManyToOne(
     () => PostBudgetPlanActivity,
-    (postBudgetPlanActivity) => postBudgetPlanActivity.postBudgetPlanTimelines,
+    (postBudgetPlanActivity) => postBudgetPlanActivity.postBudgetRequisitioners,
   )
   @JoinColumn({ name: 'postBudgetPlanActivityId' })
   public postBudgetPlanActivity: PostBudgetPlanActivity;
 
-  @Column({ nullable: true })
-  timeline: string;
-
   @Column()
-  order: number;
+  name: string;
 
-  @Column()
-  dueDate: Date;
-
-  @Column()
-  period: number;
-
-  @Column({ default: 'draft' })
-  status: string;
+  @Column({ type: 'uuid' })
+  userId: string;
 }

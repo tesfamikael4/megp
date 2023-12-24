@@ -40,11 +40,8 @@ export class PostBudgetPlan {
   )
   postBudgetPlanActivities: PostBudgetPlanActivity[];
 
-  @Column()
-  totalEstimatedAmount: number;
-
-  @Column()
-  currency: string;
+  @Column({ type: 'json' })
+  estimatedAmount: JSON;
 
   @Column()
   status: string;

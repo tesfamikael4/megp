@@ -11,9 +11,10 @@ import {
 import { APP } from './app.entity';
 import { PreBudgetPlanActivity } from './pre-budget-plan-activity.entity';
 import { PostBudgetPlan } from './post-budget-plan.entity';
+import { OrgAudit } from 'src/shared/entities';
 
 @Entity({ name: 'pre_budget_plans' })
-export class PreBudgetPlan {
+export class PreBudgetPlan extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -39,11 +40,8 @@ export class PreBudgetPlan {
   )
   preBudgetPlanActivities: PreBudgetPlanActivity[];
 
-  @Column()
-  totalEstimatedAmount: number;
-
-  @Column()
-  currency: string;
+  @Column({ type: 'json' })
+  estimatedAmount: any;
 
   @Column({ default: 'Draft' })
   status: string;

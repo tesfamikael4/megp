@@ -7,11 +7,11 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-
 import { PreBudgetPlanActivity } from './pre-budget-plan-activity.entity';
+import { OrgAudit } from 'src/shared/entities';
 
-@Entity({ name: 'pre_budget_plan_framework_contracts' })
-export class PreBudgetPlanFrameworkContract {
+@Entity({ name: 'pre_procurement_mechanisms' })
+export class PreProcurementMechanism extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -20,18 +20,29 @@ export class PreBudgetPlanFrameworkContract {
 
   @ManyToOne(
     () => PreBudgetPlanActivity,
-    (preBudgetPlanActivity) =>
-      preBudgetPlanActivity.preBudgetPlanFrameworkContracts,
+    (preBudgetPlanActivity) => preBudgetPlanActivity.preProcurementMechanisms,
   )
   @JoinColumn({ name: 'preBudgetPlanActivityId' })
   public preBudgetPlanActivity: PreBudgetPlanActivity;
 
   @Column()
-  contractName: string;
+  fundingSource: string;
 
   @Column()
-  contractNumber: string;
+  procurementMethod: string;
 
   @Column()
-  agreement: string;
+  procurementType: string;
+
+  @Column({ type: 'jsonb' })
+  donor: any;
+
+  @Column({ type: 'jsonb' })
+  targetGroup: any;
+
+  @Column()
+  isOnline: boolean;
+
+  @Column({ type: 'json' })
+  contract: JSON;
 }

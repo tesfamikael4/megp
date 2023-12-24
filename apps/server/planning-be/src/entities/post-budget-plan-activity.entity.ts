@@ -10,11 +10,13 @@ import {
 } from 'typeorm';
 
 import { PostBudgetPlan } from './post-budget-plan.entity';
-import { PostBudgetPlanItems } from './post-budget-plan-items.entity';
+import { PostBudgetPlanItem } from './post-budget-plan-items.entity';
 import { PostBudgetPlanTimeline } from './post-budget-plan-timeline.entity';
-import { PostBudgetPlanFrameworkContract } from './post-budget-plan-framework-contract.entity';
-import { ActivityCoATag } from './activity-coa-tag.entity';
+import { ActivityBudgetLine } from './activity-budget-line.entity';
 import { PostBudgetPlanDisbursement } from './post-budget-plan-disbursement.entity';
+import { PostBudgetActivityDocument } from './post-budget-activity-document.entity';
+import { PostBudgetRequisitioner } from './post-budget-plan-requisitioner.entity';
+import { PostProcurementMechanism } from './post-procurement-mechanism.entity';
 
 @Entity({ name: 'post_budget_plan_activities' })
 export class PostBudgetPlanActivity {
@@ -32,10 +34,10 @@ export class PostBudgetPlanActivity {
   public postBudgetPlan: PostBudgetPlan;
 
   @OneToMany(
-    () => PostBudgetPlanItems,
+    () => PostBudgetPlanItem,
     (postBudgetPlanItems) => postBudgetPlanItems.postBudgetPlanActivity,
   )
-  postBudgetPlanItems: PostBudgetPlanItems[];
+  postBudgetPlanItems: PostBudgetPlanItem[];
 
   @OneToMany(
     () => PostBudgetPlanTimeline,
@@ -51,17 +53,30 @@ export class PostBudgetPlanActivity {
   postBudgePlantDisbursements: PostBudgetPlanDisbursement[];
 
   @OneToMany(
-    () => PostBudgetPlanFrameworkContract,
-    (postBudgetPlanFrameworkContracts) =>
-      postBudgetPlanFrameworkContracts.postBudgetPlanActivity,
+    () => PostBudgetActivityDocument,
+    (postBudgetActivityDocument) =>
+      postBudgetActivityDocument.postBudgetPlanActivity,
   )
-  postBudgetPlanFrameworkContracts: PostBudgetPlanFrameworkContract[];
+  postBudgetActivityDocuments: PostBudgetActivityDocument[];
 
   @OneToMany(
-    () => ActivityCoATag,
-    (activityCoATag) => activityCoATag.postBudgetPlanActivity,
+    () => PostBudgetRequisitioner,
+    (postBudgetRequisitioner) => postBudgetRequisitioner.postBudgetPlanActivity,
   )
-  activityCoATags: ActivityCoATag[];
+  postBudgetRequisitioners: PostBudgetRequisitioner[];
+
+  @OneToMany(
+    () => PostProcurementMechanism,
+    (postProcurementMechanism) =>
+      postProcurementMechanism.postBudgetPlanActivity,
+  )
+  postProcurementMechanisms: PostProcurementMechanism[];
+
+  @OneToMany(
+    () => ActivityBudgetLine,
+    (activityBudgetLine) => activityBudgetLine.postBudgetPlanActivity,
+  )
+  activityBudgetLines: ActivityBudgetLine[];
 
   @Column()
   name: string;
@@ -73,43 +88,25 @@ export class PostBudgetPlanActivity {
   description: string;
 
   @Column()
-  totalEstimatedAmount: number;
+  estimatedAmount: number;
 
   @Column({ default: 0 })
   calculatedAmount: number;
+
+  @Column({ default: 'Draft' })
+  status: string;
 
   @Column()
   currency: string;
 
   @Column()
-  fundingSource: string;
-
-  @Column()
-  procurementMethod: string;
-
-  @Column()
-  procurementType: string;
-
-  @Column({ default: 'Draft' })
-  procurementStatus: string;
-
-  @Column({ type: 'json' })
-  donor: JSON;
-
-  @Column()
   isMultiYear: boolean;
-
-  @Column({ type: 'json' })
-  multiYearBudget: JSON;
-
-  @Column({ default: ['Others'], type: 'jsonb' })
-  preference: string[];
-
-  @Column({ default: 'Online' })
-  procurementProcess: string;
 
   @Column({ nullable: true })
   remark: string;
+
+  @Column({ type: 'jsonb', nullable: true })
+  classification: any;
 
   @BeforeInsert()
   generateRandomNumber(): void {

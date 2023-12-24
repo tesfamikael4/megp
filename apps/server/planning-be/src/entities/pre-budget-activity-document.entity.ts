@@ -2,16 +2,15 @@ import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
-  OneToOne,
-  OneToMany,
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
 
 import { PreBudgetPlanActivity } from './pre-budget-plan-activity.entity';
+import { OrgAudit } from 'src/shared/entities';
 
-@Entity({ name: 'pre_budge_plan_disbursements' })
-export class PreBudgetPlanDisbursement {
+@Entity({ name: 'pre_budget_activity_documents' })
+export class PreBudgetActivityDocument extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -20,23 +19,23 @@ export class PreBudgetPlanDisbursement {
 
   @ManyToOne(
     () => PreBudgetPlanActivity,
-    (preBudgetPlanActivity) => preBudgetPlanActivity.preBudgetPlanDisbursements,
+    (preBudgetPlanActivity) => preBudgetPlanActivity.preBudgetActivityDocuments,
   )
   @JoinColumn({ name: 'preBudgetPlanActivityId' })
   public preBudgetPlanActivity: PreBudgetPlanActivity;
 
   @Column()
-  quarterName: string;
+  fileName: string;
 
   @Column()
-  description: string;
-
-  @Column({ type: 'json' })
-  metaData: JSON;
+  fileType: string;
 
   @Column()
-  amount: number;
+  bucketName: string;
 
   @Column()
-  unitPrice: number;
+  originalName: string;
+
+  @Column()
+  path: string;
 }
