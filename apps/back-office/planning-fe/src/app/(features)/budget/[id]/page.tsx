@@ -17,7 +17,7 @@ const ModalDetail = ({ data }: { data: any }) => {
   const detailData = [
     {
       key: 'Budget Code',
-      value: (data as any)?.coa,
+      value: (data as any)?.budgetCode,
     },
     {
       key: 'Description',
@@ -25,7 +25,7 @@ const ModalDetail = ({ data }: { data: any }) => {
     },
     {
       key: 'Allocated Budget',
-      value: (data as any)?.allocatedBudget.toLocaleString('en-US', {
+      value: parseInt((data as any)?.allocatedBudget).toLocaleString('en-US', {
         style: 'currency',
         currency: data.currency,
         minimumFractionDigits: 2,
@@ -33,8 +33,8 @@ const ModalDetail = ({ data }: { data: any }) => {
       }),
     },
     {
-      key: 'Revised Value',
-      value: (data as any)?.revisedAmount.toLocaleString('en-US', {
+      key: 'Revised Budget',
+      value: parseInt((data as any)?.revisedBudget).toLocaleString('en-US', {
         style: 'currency',
         currency: data.currency,
         minimumFractionDigits: 2,
@@ -42,8 +42,8 @@ const ModalDetail = ({ data }: { data: any }) => {
       }),
     },
     {
-      key: 'Available Amount',
-      value: (data as any)?.availableAmount.toLocaleString('en-US', {
+      key: 'Available Budget',
+      value: parseInt((data as any)?.availableBudget).toLocaleString('en-US', {
         style: 'currency',
         currency: data.currency,
         minimumFractionDigits: 2,
@@ -108,14 +108,14 @@ export default function DetailPage() {
   const [getBudgetYear, { data: budgetYear }] = useLazyReadQuery();
   const config: TableConfig<any> = {
     columns: [
-      { header: 'Budget Code', accessorKey: 'coa' },
+      { header: 'Budget Code', accessorKey: 'budgetCode' },
       {
         id: 'action',
         header: 'Allocated Budget',
         accessorKey: 'allocatedBudget',
         cell: ({ row: { original } }) => (
           <p className="text-right">
-            {original.allocatedBudget.toLocaleString('en-US', {
+            {parseInt(original.allocatedBudget).toLocaleString('en-US', {
               style: 'currency',
               currency: original.currency,
               minimumFractionDigits: 2,
@@ -127,11 +127,11 @@ export default function DetailPage() {
 
       {
         id: 'action',
-        header: 'Revised Value ',
-        accessorKey: 'revisedAmount',
+        header: 'Revised Budget ',
+        accessorKey: 'revisedBudget',
         cell: ({ row: { original } }) => (
           <p className="text-right">
-            {original.revisedAmount.toLocaleString('en-US', {
+            {parseInt(original.revisedBudget).toLocaleString('en-US', {
               style: 'currency',
               currency: original.currency,
               minimumFractionDigits: 2,
@@ -142,11 +142,11 @@ export default function DetailPage() {
       },
       {
         id: 'action',
-        header: 'Obligated Amount',
-        accessorKey: 'obligatedAmount',
+        header: 'Obligated Budget',
+        accessorKey: 'obligatedBudget',
         cell: ({ row: { original } }) => (
           <p className="text-right">
-            {original.availableAmount.toLocaleString('en-US', {
+            {parseInt(original.obligatedBudget).toLocaleString('en-US', {
               style: 'currency',
               currency: original.currency,
               minimumFractionDigits: 2,
@@ -157,11 +157,11 @@ export default function DetailPage() {
       },
       {
         id: 'action',
-        header: 'Available Amount',
-        accessorKey: 'availableAmount',
+        header: 'Available Budget',
+        accessorKey: 'availableBudget',
         cell: ({ row: { original } }) => (
           <p className="text-right">
-            {original.availableAmount.toLocaleString('en-US', {
+            {parseInt(original.availableBudget).toLocaleString('en-US', {
               style: 'currency',
               currency: original.currency,
               minimumFractionDigits: 2,

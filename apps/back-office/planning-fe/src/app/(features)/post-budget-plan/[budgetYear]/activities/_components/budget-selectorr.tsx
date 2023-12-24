@@ -36,28 +36,49 @@ export const BudgetSelector = () => {
   } = useGetPostBudgetPlanQuery(budgetYear as string);
   const detailInfo = [
     {
-      key: 'Budget Line',
-      value: (detail as any)?.coa,
+      key: 'Budget Code',
+      value: (detail as any)?.budgetCode,
     },
     {
       key: 'Description',
       value: (detail as any)?.description,
     },
     {
+      key: 'Allocated Budget',
+      value: parseInt((detail as any)?.allocatedBudget).toLocaleString(
+        'en-US',
+        {
+          style: 'currency',
+          currency: (detail as any)?.currency ?? 'MKW',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        },
+      ),
+    },
+    {
+      key: 'Revised Budget',
+      value: parseInt((detail as any)?.revisedBudget).toLocaleString('en-US', {
+        style: 'currency',
+        currency: (detail as any)?.currency ?? 'MKW',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }),
+    },
+    {
+      key: 'Available Budget',
+      value: parseInt((detail as any)?.availableBudget).toLocaleString(
+        'en-US',
+        {
+          style: 'currency',
+          currency: (detail as any)?.currency ?? 'MKW',
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        },
+      ),
+    },
+    {
       key: 'Funding Source',
       value: (detail as any)?.fundingSource,
-    },
-    {
-      key: 'Allocated Budget',
-      value: (detail as any)?.allocatedBudget,
-    },
-    {
-      key: 'Planned Value',
-      value: (detail as any)?.plannedValue,
-    },
-    {
-      key: 'Balance',
-      value: (detail as any)?.balance,
     },
     {
       key: 'Currency',
@@ -77,15 +98,15 @@ export const BudgetSelector = () => {
         accessorKey: 'contractNo',
         cell: ({ row: { original } }: any) => (
           <Radio
-            onChange={() => setSelectedContract(original.coa)}
-            checked={selectedContract === original.coa}
+            onChange={() => setSelectedContract(original.budgetCode)}
+            checked={selectedContract === original.budgetCode}
           />
         ),
       },
       {
-        id: 'coa',
+        id: 'budgetCode',
         header: 'Budget Line',
-        accessorKey: 'coa',
+        accessorKey: 'budgetCode',
       },
       {
         id: 'action',
@@ -93,7 +114,7 @@ export const BudgetSelector = () => {
         accessorKey: 'allocatedBudget',
         cell: ({ row: { original } }) => (
           <p className="text-right">
-            {original['allocatedBudget'].toLocaleString('en-US', {
+            {parseInt(original.allocatedBudget).toLocaleString('en-US', {
               style: 'currency',
               currency: original.currency,
               minimumFractionDigits: 2,
@@ -105,11 +126,11 @@ export const BudgetSelector = () => {
 
       {
         id: 'action',
-        header: 'Planned Value',
-        accessorKey: 'planned value',
+        header: 'Revised Budget',
+        accessorKey: 'revisedBudget',
         cell: ({ row: { original } }) => (
           <p className="text-right">
-            {original['plannedValue'].toLocaleString('en-US', {
+            {parseInt(original.revisedBudget).toLocaleString('en-US', {
               style: 'currency',
               currency: original.currency,
               minimumFractionDigits: 2,
@@ -120,11 +141,11 @@ export const BudgetSelector = () => {
       },
       {
         id: 'action',
-        header: 'Balance',
-        accessorKey: 'balance',
+        header: 'Available Budget',
+        accessorKey: 'availableBudget',
         cell: ({ row: { original } }) => (
           <p className="text-right">
-            {original.balance.toLocaleString('en-US', {
+            {parseInt(original.availableBudget).toLocaleString('en-US', {
               style: 'currency',
               currency: original.currency,
               minimumFractionDigits: 2,
