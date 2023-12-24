@@ -8,6 +8,7 @@ import { Items } from '@/app/(features)/_components/items';
 import { ActivityMechanization } from '@/app/(features)/_components/activity-mechanization';
 import { useGetPreBudgetPlanQuery } from '@/store/api/pre-budget-plan/pre-budget-plan.api';
 import { useParams } from 'next/navigation';
+import { Requisitioner } from '@/app/(features)/_components/requisitioner';
 
 export default function NewActivity() {
   const { budgetYear } = useParams();
@@ -25,6 +26,7 @@ export default function NewActivity() {
             <Tabs.Tab value="items">Items</Tabs.Tab>
             <Tabs.Tab value="documents">Documents</Tabs.Tab>
             <Tabs.Tab value="timeline">Timeline</Tabs.Tab>
+            <Tabs.Tab value="requisitioner">Requisitioner</Tabs.Tab>
           </Tabs.List>
 
           <Tabs.Panel value="definition" className="pt-2">
@@ -48,6 +50,10 @@ export default function NewActivity() {
 
           <Tabs.Panel value="timeline">
             <TimelineTab page="pre" disableFields={disableFields} />
+          </Tabs.Panel>
+
+          <Tabs.Panel value="requisitioner">
+            <Requisitioner page="pre" disableFields={disableFields} />
           </Tabs.Panel>
         </Tabs>
       </Section>

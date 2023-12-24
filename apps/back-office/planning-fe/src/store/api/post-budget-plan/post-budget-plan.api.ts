@@ -1,15 +1,28 @@
+import { encodeCollectionQuery } from '@megp/entity';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export const postBudgetPlanApi = createApi({
   reducerPath: 'postBudgetPlanApi',
-  tagTypes: ['post-budget-plan', 'post-budget-timeline'],
+  tagTypes: [
+    'post-budget-plan',
+    'post-budget-timeline',
+    'post-budget-requisitioner',
+    'post-budget-disbursement',
+  ],
   refetchOnFocus: true,
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.NEXT_PUBLIC_PLANNING_API ?? '/planning/api/',
   }),
   endpoints: (builder) => ({
     getPostBudgetPlans: builder.query<any, null>({
-      query: () => 'post-budget-plans/get-with-app',
+      query: (collectionQuery) => {
+        let q = '';
+        if (collectionQuery) {
+          const query = encodeCollectionQuery(collectionQuery);
+          q = `?q=${query}`;
+        }
+        return { url: `post-budget-plans/get-with-app${q}`, method: 'GET' };
+      },
       providesTags: ['post-budget-plan'],
     }),
     getPostBudgetPlan: builder.query<any, string>({
@@ -41,12 +54,44 @@ export const postBudgetPlanApi = createApi({
       query: (id: string) => `post-budget-plan-timelines/list/${id}`,
       providesTags: ['post-budget-timeline'],
     }),
+    getPostBudgetRequisitioner: builder.query<any, string>({
+      query: (id: string) => `post-budget-requisitioner/list/${id}`,
+      providesTags: ['post-budget-requisitioner'],
+    }),
+
+    createPostBudgetRequisitioner: builder.mutation<any, any>({
+      query: (data) => ({
+        url: 'post-budget-requisitioner/bulk-create',
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['post-budget-requisitioner'],
+    }),
+
+    getPostBudgetDisbursement: builder.query<any, string>({
+      query: (id: string) => `post-budge-plan-disbursements/list/${id}`,
+      providesTags: ['post-budget-disbursement'],
+    }),
+
+    createPostBudgetDisbursement: builder.mutation<any, any>({
+      query: (data) => ({
+        url: 'post-budge-plan-disbursements/bulk-create',
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['post-budget-disbursement'],
+    }),
   }),
 });
 
 export const {
-  useGetPostBudgetPlansQuery,
+  useLazyGetPostBudgetRequisitionerQuery,
+  useCreatePostBudgetRequisitionerMutation,
+  useCreatePostBudgetDisbursementMutation,
+  useGetPostBudgetDisbursementQuery,
+
   useLazyGetPostBudgetPlansQuery,
+  useGetPostBudgetPlansQuery,
   useCreateMultipleItemsMutation,
   useApprovePostBudgetMutation,
   useCreatePostActivityTimelineMutation,

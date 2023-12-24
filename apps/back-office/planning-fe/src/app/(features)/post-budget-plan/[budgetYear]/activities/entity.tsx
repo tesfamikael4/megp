@@ -43,6 +43,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
       hasDetail: false,
       searchable: true,
       pagination: true,
+      sortable: true,
       columns: [
         {
           id: 'procurementReference',
@@ -62,20 +63,10 @@ export function Entity({ children }: { children: React.ReactNode }) {
             widget: 'primary',
           },
         },
-
         {
-          id: 'procurementType',
-          header: ' Type',
-          accessorKey: 'procurementType',
-          cell: (info) => info.getValue(),
-          meta: {
-            widget: 'expand',
-          },
-        },
-        {
-          id: 'procurementMethod',
-          header: ' Method',
-          accessorKey: 'procurementMethod',
+          id: 'description',
+          header: ' Description',
+          accessorKey: 'description',
           cell: (info) => info.getValue(),
           meta: {
             widget: 'expand',
@@ -88,7 +79,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
           accessorKey: 'totalEstimatedAmount',
           cell: ({ row: { original } }) => (
             <p className="text-right">
-              {original.totalEstimatedAmount.toLocaleString('en-US', {
+              {original.estimatedAmount.toLocaleString('en-US', {
                 style: 'currency',
                 currency: original.currency,
                 minimumFractionDigits: 2,

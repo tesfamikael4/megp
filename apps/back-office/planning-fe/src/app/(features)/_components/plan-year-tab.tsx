@@ -4,6 +4,7 @@ import {
   useApprovePreBudgetMutation,
   useCreateAppMutation,
   useGetPreBudgetPlansQuery,
+  useLazyGetPreBudgetPlansQuery,
 } from '@/store/api/pre-budget-plan/pre-budget-plan.api';
 import {
   ActionIcon,
@@ -33,11 +34,14 @@ import { FormDetail } from './form-detail';
 import { logger } from '@megp/core-fe';
 import { notifications } from '@mantine/notifications';
 import { modals } from '@mantine/modals';
-import { useGetPostBudgetPlansQuery } from '@/store/api/post-budget-plan/post-budget-plan.api';
+import {
+  useGetPostBudgetPlansQuery,
+  useLazyGetPostBudgetPlansQuery,
+} from '@/store/api/post-budget-plan/post-budget-plan.api';
 
 export const PlanYearTab = ({ page }: { page: 'pre' | 'post' }) => {
-  const { data: pre } = useGetPreBudgetPlansQuery({} as any);
-  const { data: post } = useGetPostBudgetPlansQuery({} as any);
+  const [getPre, { data: pre }] = useLazyGetPreBudgetPlansQuery();
+  const [getPost, { data: post }] = useLazyGetPostBudgetPlansQuery();
   const { budgetYear } = useParams();
   const router = useRouter();
   const [selectedYear, setSelectedYear] = useState({});
@@ -122,6 +126,15 @@ export const PlanYearTab = ({ page }: { page: 'pre' | 'post' }) => {
       [];
     setSelectedYear(tempData[0]);
   }, [budgetYear, pre, post, page]);
+
+  useEffect(() => {
+    if (page == 'pre') {
+      getPre({} as any);
+    }
+    if (page == 'post') {
+      getPost({} as any);
+    }
+  }, [getPost, getPre, page]);
   return (
     <Box className="mb-2">
       <Flex>

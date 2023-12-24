@@ -7,6 +7,7 @@ import TimelineTab from '@/app/(features)/_components/timeline-tab';
 import { BudgetTab } from '../_components/budget-tab';
 import { Documents } from '@/app/(features)/_components/documents';
 import { ActivityMechanization } from '@/app/(features)/_components/activity-mechanization';
+import { Requisitioner } from '@/app/(features)/_components/requisitioner';
 
 export default function NewActivity() {
   return (
@@ -20,6 +21,7 @@ export default function NewActivity() {
             <Tabs.Tab value="documents">Documents</Tabs.Tab>
             <Tabs.Tab value="timeline">Timeline</Tabs.Tab>
             <Tabs.Tab value="budget">Budget</Tabs.Tab>
+            <Tabs.Tab value="requisitioner">Requisitioner</Tabs.Tab>
           </Tabs.List>
 
           <Tabs.Panel value="definition" className="pt-2">
@@ -43,6 +45,9 @@ export default function NewActivity() {
 
           <Tabs.Panel value="budget">
             <BudgetTab />
+          </Tabs.Panel>
+          <Tabs.Panel value="requisitioner">
+            <Requisitioner page="post" />
           </Tabs.Panel>
         </Tabs>
       </Section>

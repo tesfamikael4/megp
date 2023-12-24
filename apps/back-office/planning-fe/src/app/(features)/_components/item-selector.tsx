@@ -140,7 +140,14 @@ const ItemSelector = ({ onDone, opened, close }: ItemSelectorProps) => {
         size={mode == 'tree' ? '75%' : 'lg'}
         onClose={close}
       >
-        {mode == 'new' && <NewItem />}
+        {mode == 'new' && (
+          <NewItem
+            onDone={(data) => {
+              onDone([data]);
+              close();
+            }}
+          />
+        )}
         {!detail && mode != 'new' && (
           <>
             <Flex className="max-h-[40rem] overflow-y-hidden">
