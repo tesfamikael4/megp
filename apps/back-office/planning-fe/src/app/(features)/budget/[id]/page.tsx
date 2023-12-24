@@ -33,8 +33,8 @@ const ModalDetail = ({ data }: { data: any }) => {
       }),
     },
     {
-      key: 'Planned Value',
-      value: (data as any)?.plannedValue.toLocaleString('en-US', {
+      key: 'Revised Value',
+      value: (data as any)?.revisedAmount.toLocaleString('en-US', {
         style: 'currency',
         currency: data.currency,
         minimumFractionDigits: 2,
@@ -42,13 +42,17 @@ const ModalDetail = ({ data }: { data: any }) => {
       }),
     },
     {
-      key: 'Balance',
-      value: (data as any)?.balance.toLocaleString('en-US', {
+      key: 'Available Amount',
+      value: (data as any)?.availableAmount.toLocaleString('en-US', {
         style: 'currency',
         currency: data.currency,
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
       }),
+    },
+    {
+      key: 'Funding Source',
+      value: (data as any)?.fundingSource,
     },
     {
       key: 'Currency',
@@ -123,11 +127,11 @@ export default function DetailPage() {
 
       {
         id: 'action',
-        header: 'Planned Value ',
-        accessorKey: 'plannedValue',
+        header: 'Revised Value ',
+        accessorKey: 'revisedAmount',
         cell: ({ row: { original } }) => (
           <p className="text-right">
-            {original.plannedValue.toLocaleString('en-US', {
+            {original.revisedAmount.toLocaleString('en-US', {
               style: 'currency',
               currency: original.currency,
               minimumFractionDigits: 2,
@@ -138,11 +142,26 @@ export default function DetailPage() {
       },
       {
         id: 'action',
-        header: 'Balance',
-        accessorKey: 'balance',
+        header: 'Obligated Amount',
+        accessorKey: 'obligatedAmount',
         cell: ({ row: { original } }) => (
           <p className="text-right">
-            {original.balance.toLocaleString('en-US', {
+            {original.availableAmount.toLocaleString('en-US', {
+              style: 'currency',
+              currency: original.currency,
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
+          </p>
+        ),
+      },
+      {
+        id: 'action',
+        header: 'Available Amount',
+        accessorKey: 'availableAmount',
+        cell: ({ row: { original } }) => (
+          <p className="text-right">
+            {original.availableAmount.toLocaleString('en-US', {
               style: 'currency',
               currency: original.currency,
               minimumFractionDigits: 2,

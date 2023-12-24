@@ -9,21 +9,19 @@ import {
   TextInput,
   Textarea,
 } from '@mantine/core';
-import { EntityButton } from '@megp/entity';
 
 import { Controller, useForm } from 'react-hook-form';
 import { ZodType, z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
-import { notifications } from '@mantine/notifications';
-import { Tree } from '@megp/core-fe';
+import { Tree, logger } from '@megp/core-fe';
 import {
   useGetMeasurementsQuery,
   useGetTagsQuery,
   useLazyGetUnitOfMeasurementsQuery,
   useGetCategoriesQuery,
 } from '@/store/api/administration/administration.api';
-// // import ClassificationSelector from './classification-selector';
+import ClassificationSelector from './classification-selector';
 
 const itemSchema: ZodType<Partial<any>> = z.object({
   commodityCode: z.string({
@@ -57,10 +55,9 @@ const itemSchema: ZodType<Partial<any>> = z.object({
   ),
 });
 
-export function NewItem() {
+export function NewItem({ onDone }: any) {
   const {
     handleSubmit,
-    reset,
     register,
     setValue,
     control,
@@ -69,7 +66,6 @@ export function NewItem() {
   } = useForm<Partial<any>>({
     resolver: zodResolver(itemSchema),
   });
-  // const { id } = useParams();
 
   const { data: measurements, isLoading: isMeasurementLoading } =
     useGetMeasurementsQuery({} as any);
@@ -102,36 +98,13 @@ export function NewItem() {
   ] = useLazyGetUnitOfMeasurementsQuery();
 
   const onCreate = async (data) => {
-    // const rawData = {
-    //   ...data,
-    //   itemTags: data.itemTags.map((tags) => ({ tagId: tags })),
-    // };
-    try {
-      notifications.show({
-        color: 'green',
-        message: 'Success-fully created',
-        title: 'Success',
-      });
-    } catch (e) {
-      notifications.show({
-        color: 'red',
-        message: 'Something went wrong',
-        title: 'Error',
-      });
-    }
-  };
+    const rawData = {
+      ...data,
+      itemTags: data.itemTags.map((tags) => ({ tagId: tags })),
+      itemCode: '1234-5678',
+    };
 
-  const onReset = async () => {
-    reset({
-      commodityCode: '',
-      commodityName: '',
-      description: '',
-      itemSubcategoryName: '',
-      itemSubcategoryId: '',
-      uOMId: '',
-      uOMName: '',
-      itemTags: [],
-    });
+    onDone(rawData);
   };
 
   useEffect(() => {
@@ -150,7 +123,7 @@ export function NewItem() {
         <Flex gap="md" align="end">
           <TextInput
             label="Item Code"
-            value={'itemCode'}
+            value={'1234-5678'}
             disabled
             className="w-full"
           />
@@ -239,7 +212,7 @@ export function NewItem() {
             )}
           />
         </Flex>
-        {/* <ClassificationSelector
+        <ClassificationSelector
           onDone={(item) => {
             setValue('commodityName', item.title);
             setValue('commodityCode', item.code);
@@ -249,7 +222,7 @@ export function NewItem() {
             name: watch('commodityName'),
           }}
           error={errors.commodityName?.message as string | null}
-        /> */}
+        />
 
         <Controller
           name="itemTags"
@@ -271,11 +244,15 @@ export function NewItem() {
             />
           )}
         />
-        <EntityButton
-          mode={'new'}
-          onCreate={handleSubmit(onCreate)}
-          onReset={onReset}
-        />
+
+        <Button
+          className="w-fit"
+          onClick={handleSubmit(onCreate, (err) => {
+            logger.log({ err });
+          })}
+        >
+          Add
+        </Button>
       </Stack>
     </Box>
   );

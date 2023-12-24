@@ -7,6 +7,7 @@ export const preBudgetPlanApi = createApi({
     'pre-budget-plan',
     'post-budget-plan',
     'pre-budget-timeline',
+    'pre-budget-requisitioner',
   ],
   refetchOnFocus: true,
   baseQuery: fetchBaseQuery({
@@ -55,11 +56,26 @@ export const preBudgetPlanApi = createApi({
       query: (id: string) => `pre-budget-plan-timelines/list/${id}`,
       providesTags: ['pre-budget-timeline'],
     }),
+    getPreBudgetRequisitioner: builder.query<any, string>({
+      query: (id: string) => `pre-budget-requisitioner/list/${id}`,
+      providesTags: ['pre-budget-requisitioner'],
+    }),
+
+    createPreBudgetRequisitioner: builder.mutation<any, any>({
+      query: (data) => ({
+        url: 'pre-budget-requisitioner/bulk-create',
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['pre-budget-requisitioner'],
+    }),
   }),
 });
 
 export const {
   useLazyGetPreBudgetTimelineQuery,
+  useCreatePreBudgetRequisitionerMutation,
+  useLazyGetPreBudgetRequisitionerQuery,
   useGetPreBudgetPlansQuery,
   useLazyGetPreBudgetPlansQuery,
   useCreateMultipleItemsMutation,

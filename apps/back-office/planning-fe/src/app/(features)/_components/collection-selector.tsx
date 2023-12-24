@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Checkbox,
   Group,
@@ -41,14 +42,18 @@ export const CollectionSelector = ({
         header: '',
         accessorKey: 'select',
         cell: ({ row: { original } }: any) => (
-          <Checkbox
-            checked={selected.includes(original)}
-            onChange={(data) => {
-              if (data.target.checked) setSelected([...selected, original]);
-              else
-                setSelected([...selected.filter((s) => s.id !== original.id)]);
-            }}
-          />
+          <Box className="w-fit">
+            <Checkbox
+              checked={selected.includes(original)}
+              onChange={(data) => {
+                if (data.target.checked) setSelected([...selected, original]);
+                else
+                  setSelected([
+                    ...selected.filter((s) => s.id !== original.id),
+                  ]);
+              }}
+            />
+          </Box>
         ),
         meta: {
           widget: 'primary',

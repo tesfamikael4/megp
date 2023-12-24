@@ -46,6 +46,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
       hasDetail: false,
       searchable: true,
       pagination: true,
+      sortable: true,
       columns: [
         {
           id: 'procurementReference',
@@ -75,24 +76,6 @@ export function Entity({ children }: { children: React.ReactNode }) {
             widget: 'expand',
           },
         },
-        // {
-        //   id: 'procurementType',
-        //   header: ' Type',
-        //   accessorKey: 'procurementType',
-        //   cell: (info) => info.getValue(),
-        //   meta: {
-        //     widget: 'expand',
-        //   },
-        // },
-        // {
-        //   id: 'procurementMethod',
-        //   header: ' Method',
-        //   accessorKey: 'procurementMethod',
-        //   cell: (info) => info.getValue(),
-        //   meta: {
-        //     widget: 'expand',
-        //   },
-        // },
 
         {
           id: 'calculatedAmount',
@@ -194,6 +177,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
               color="red"
               leftSection={<IconTrash size={15} />}
               onClick={openDeleteModal}
+              disabled={preBudgetYear?.status != 'Draft'}
             >
               Delete
             </Menu.Item>

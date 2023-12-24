@@ -59,6 +59,7 @@ export const {
   useLazyGetItemMasterQuery,
   useLazyGetUnitOfMeasurementsQuery,
   useGetClassificationsQuery,
+  useLazyGetClassificationsQuery,
   useGetTagsQuery,
   useGetMeasurementsQuery,
   useGetCategoriesQuery,

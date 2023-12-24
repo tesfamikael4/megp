@@ -14,94 +14,133 @@ import { useLazyReadQuery, useUpdateMutation } from '../_api/activities.api';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { IconPlus } from '@tabler/icons-react';
-import { Table, TableConfig, logger } from '@megp/core-fe';
-import { notifications } from '@mantine/notifications';
+import { Table, TableConfig, logger, notify } from '@megp/core-fe';
+import {
+  useCreatePostBudgetDisbursementMutation,
+  useGetPostBudgetDisbursementQuery,
+  useGetPostBudgetPlansQuery,
+} from '@/store/api/post-budget-plan/post-budget-plan.api';
 
 export const BudgetTab = () => {
   const [getActivity, { data, isLoading }] = useLazyReadQuery();
-  const [update, { isLoading: isUpdating }] = useUpdateMutation();
+  const [createDisbursement, { isLoading: isDisbursementCreating }] =
+    useCreatePostBudgetDisbursementMutation();
+  const { id, budgetYear } = useParams();
+  const { data: budgetYearWithApp, isLoading: isGetWithAppLoading } =
+    useGetPostBudgetPlansQuery({
+      where: [[{ column: 'id', value: budgetYear, operator: '=' }]],
+    } as any);
+  const {
+    data: disbursement,
+    isSuccess: isDisbursementSuccess,
+    isLoading: isDisbursementLoading,
+  } = useGetPostBudgetDisbursementQuery(id as string);
   const config: TableConfig<any> = {
     columns: [
       {
         header: 'Budget Year',
-        accessorKey: 'year',
+        accessorKey: 'budgetYearName',
       },
       {
-        header: 'Allocated Percentage',
-        accessorKey: 'percentage',
-        cell: ({ row: { original } }) => (
-          <AllocatedPercentage original={original} />
-        ),
+        header: 'Quarter',
+        accessorKey: 'quarter',
       },
       {
-        header: () => <p className="text-right"> Allocated Budget</p>,
-        accessorKey: 'budget',
-        cell: ({ row: { original } }: any) => (
-          <p className="text-right">
-            {(
-              (original.percentage / 100) *
-              data?.totalEstimatedAmount
-            ).toLocaleString('en-US', {
+        id: 'action',
+        header: 'Amount',
+        accessorKey: 'amount',
+        cell: ({ row: { original } }) => <Amount original={original} />,
+      },
+    ],
+  };
+
+  const [budgetYearDisbursement, setBudgetYearDisbursement] = useState<
+    Record<string, any>[]
+  >([
+    {
+      budgetYearId: budgetYearWithApp?.items?.[0].app.budgetYearId,
+      budgetYearName: budgetYearWithApp?.items?.[0].app.budgetYear,
+      amount: 0,
+      quarter: '1st Quarter',
+      order: 0,
+    },
+    {
+      budgetYearId: budgetYearWithApp?.items?.[0].app.budgetYearId,
+      budgetYearName: budgetYearWithApp?.items?.[0].app.budgetYear,
+      amount: 0,
+      quarter: '2nd Quarter',
+      order: 0,
+    },
+    {
+      budgetYearId: budgetYearWithApp?.items?.[0].app.budgetYearId,
+      budgetYearName: budgetYearWithApp?.items?.[0].app.budgetYear,
+      amount: 0,
+      quarter: '3rd Quarter',
+      order: 0,
+    },
+    {
+      budgetYearId: budgetYearWithApp?.items?.[0].app.budgetYearId,
+      budgetYearName: budgetYearWithApp?.items?.[0].app.budgetYear,
+      amount: 0,
+      quarter: '4th Quarter',
+      order: 0,
+    },
+  ]);
+
+  const handleAdd = () => {
+    // const lastYear = budgetYear[budgetYear.length - 1];
+    // if (
+    //   budgetYear.reduce((item, sum) => (item + sum.amount) as number, 0) >=
+    //   100
+    // ) {
+    //   return;
+    // } else {
+    //   setBudgetYear([
+    //     ...budgetYear,
+    //     { year: lastYear.year + 1, amount: 0 },
+    //   ]);
+    // }
+  };
+
+  const Amount = ({ original }: any) => {
+    const [isEditorOpened, setIsEditorOpened] = useState(false);
+    const [amount, setAmount] = useState(original.amount);
+    const onBlur = () => {
+      setIsEditorOpened(false);
+      const temp = budgetYearDisbursement.map((b) => {
+        if (
+          b.quarter === original.quarter &&
+          b.budgetYearId === original.budgetYearId
+        ) {
+          return { ...b, amount: parseInt(amount) };
+        }
+        return b;
+      });
+
+      setBudgetYearDisbursement([...temp]);
+    };
+    return (
+      <>
+        {!isEditorOpened && (
+          <Text onClick={() => setIsEditorOpened(true)} className="text-end">
+            {original.amount.toLocaleString('en-US', {
               style: 'currency',
               currency: data?.currency ?? 'MKW',
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
             })}
-          </p>
-        ),
-      },
-    ],
-  };
-  const { id } = useParams();
-  const [budgetYear, setBudgetYear] = useState<Record<string, number>[]>([]);
-
-  const handleAdd = () => {
-    const lastYear = budgetYear[budgetYear.length - 1];
-    if (
-      budgetYear.reduce((item, sum) => (item + sum.percentage) as number, 0) >=
-      100
-    ) {
-      return;
-    } else {
-      setBudgetYear([
-        ...budgetYear,
-        { year: lastYear.year + 1, percentage: 0 },
-      ]);
-    }
-  };
-
-  const AllocatedPercentage = ({ original }: any) => {
-    const [isEditorOpened, setIsEditorOpened] = useState(false);
-    const [perc, setPerc] = useState(original.percentage);
-    const onBlur = () => {
-      setIsEditorOpened(false);
-      const temp = budgetYear.map((b) => {
-        if (b.year === original.year) {
-          return { ...b, percentage: parseInt(perc) };
-        }
-        return b;
-      });
-
-      setBudgetYear([...temp]);
-    };
-    return (
-      <>
-        {!isEditorOpened && (
-          <Text onClick={() => setIsEditorOpened(true)}>
-            {original.percentage}%
           </Text>
         )}
         {isEditorOpened && (
           <>
             <TextInput
-              value={perc}
+              value={amount}
               type="number"
-              onChange={(value) => {
-                setPerc(value.target.value);
+              onChange={(e) => {
+                setAmount(e.target.value);
               }}
               onBlur={onBlur}
-              className="w-1/2"
-              rightSection="%"
+              rightSection={data?.currency ?? 'MKW'}
             />
           </>
         )}
@@ -114,57 +153,61 @@ export const BudgetTab = () => {
   }, [getActivity, id]);
 
   useEffect(() => {
-    if (data) {
-      setBudgetYear(
-        data?.multiYearBudget?.length !== 0
-          ? data?.multiYearBudget
-          : [{ year: 2023, percentage: 0 }],
-      );
+    if (isDisbursementSuccess) {
+      disbursement.total != 0 && setBudgetYearDisbursement(disbursement.items);
     }
-  }, [data]);
+  }, [disbursement, isDisbursementSuccess]);
+
+  useEffect(() => {
+    if (budgetYearWithApp) {
+      const temp = budgetYearDisbursement.map((b) => ({
+        ...b,
+        budgetYearId: budgetYearWithApp?.items?.[0].app.budgetYearId,
+        budgetYearName: budgetYearWithApp?.items?.[0].app.budgetYear,
+      }));
+
+      setBudgetYearDisbursement(temp);
+    }
+  }, [budgetYearWithApp]);
 
   const onSave = async () => {
+    logger.log({ budgetYearDisbursement });
+    const castedData = budgetYearDisbursement.map((b) => ({
+      ...b,
+      postBudgetPlanActivityId: id,
+      currency: data?.currency,
+    }));
+    logger.log({ castedData });
     try {
-      await update({ ...data, multiYearBudget: budgetYear });
-      notifications.show({
-        title: 'Success',
-        message: 'Updated Successfully',
-        color: 'green',
-      });
+      await createDisbursement(castedData);
+      notify('Success', 'Saved Successfully');
     } catch (err) {
-      notifications.show({
-        title: 'Error',
-        message: 'Something went wrong',
-        color: 'red',
-      });
+      notify('Error', 'Something went wrong');
     }
   };
   return (
     <Box className="mt-2" pos="relative">
-      <LoadingOverlay visible={isLoading} />
+      <LoadingOverlay
+        visible={isLoading || isDisbursementLoading || isGetWithAppLoading}
+      />
       <BudgetSelector />
 
-      {data?.isMultiYear && (
-        <Box className="mt-5">
-          <Divider label="Disbursement" />
-          {budgetYear.reduce(
-            (item, sum) => (item + sum.percentage) as number,
-            0,
-          ) <= 100 && (
-            <Flex justify="end" align="center" className="mt-2 text-slate-500 ">
-              <IconPlus size="16" />
-              <Text fw="500" onClick={handleAdd} className="cursor-pointer">
-                Add
-              </Text>
-            </Flex>
-          )}
-          <Table config={config} data={budgetYear} />
-        </Box>
-      )}
+      <Box className="mt-5">
+        <Divider label="Disbursement" />
+        {data?.isMultiYear && (
+          <Flex justify="end" align="center" className="mt-2 text-slate-500 ">
+            <IconPlus size="16" />
+            <Text fw="500" onClick={handleAdd} className="cursor-pointer">
+              Add
+            </Text>
+          </Flex>
+        )}
+      </Box>
+      <Table config={config} data={budgetYearDisbursement} />
 
       <Group justify="end" className="mt-2">
         <Divider h={2} />
-        <Button loading={isUpdating} onClick={onSave}>
+        <Button loading={isDisbursementCreating} onClick={onSave}>
           Save
         </Button>
       </Group>
