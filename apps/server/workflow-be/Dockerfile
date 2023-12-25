@@ -11,7 +11,7 @@ RUN apk update
 WORKDIR /app
 RUN yarn global add turbo pnpm
 COPY . .
-RUN turbo prune --scope=planning-be --docker
+RUN turbo prune --scope=workflow-be --docker
 
 # Add lockfile and package.json's of isolated subworkspace
 FROM base AS installer
@@ -39,7 +39,7 @@ COPY turbo.json turbo.json
 # ARG TURBO_TOKEN
 # ENV TURBO_TOKEN=$TURBO_TOKEN
 
-RUN yarn turbo run build --filter=planning-be...
+RUN yarn turbo run build --filter=workflow-be...
 FROM base AS runner
 WORKDIR /app
 # Don't run production as root
@@ -48,5 +48,5 @@ RUN adduser --system --uid 1001 nestjs
 USER nestjs
 COPY --from=installer /app .
 
-CMD node apps/server/planning-be/dist/main.js
+CMD node apps/server/workflow-be/dist/main.js
 
