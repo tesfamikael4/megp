@@ -9,6 +9,7 @@ import {
 
 import { Activity } from './activity.entity';
 import { Instance } from './instance.entity';
+import { OrgAudit } from 'src/shared/entities';
 
 type approver = {
   id: string;
@@ -18,7 +19,7 @@ type approver = {
 };
 
 @Entity({ name: 'default_steps' })
-export class DefaultStep {
+export class DefaultStep extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

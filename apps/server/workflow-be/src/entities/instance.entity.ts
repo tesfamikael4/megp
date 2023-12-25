@@ -9,9 +9,10 @@ import {
 
 import { Activity } from './activity.entity';
 import { Step } from './step.entity';
+import { OrgAudit } from 'src/shared/entities';
 
 @Entity({ name: 'instances' })
-export class Instance {
+export class Instance extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
