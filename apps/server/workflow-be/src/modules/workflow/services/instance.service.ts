@@ -1,5 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
 import { Repository } from 'typeorm';
 import { Step, Workflow } from 'src/entities';
 import { EntityCrudService } from 'src/shared/service';
@@ -14,11 +15,16 @@ export class InstanceService extends EntityCrudService<Instance> {
     private readonly repositoryInstance: Repository<Instance>,
     @InjectRepository(Step)
     private readonly repositoryStep: Repository<Step>,
+
+    @Inject('WORKFLOW_RMQ_SERVICE')
+    private readonly planningRMQClient: ClientProxy,
   ) {
     super(repositoryInstance);
+    planningRMQClient.connect();
   }
   // Listen
   async initiate(activityId) {
+    return 'initiated';
     const steps = await this.repositoryStep.find({ where: { activityId } });
     const data = {
       activityId,
@@ -32,6 +38,13 @@ export class InstanceService extends EntityCrudService<Instance> {
     return await this.repositoryInstance.findOne({
       where: { activityId: id },
       relations: ['step'],
+    });
+  }
+
+  async approveWorkflow() {
+    this.planningRMQClient.emit('workflow-approved', {
+      workflow: 'approved',
+      activityId: '420f699d-5c87-47a9-91d6-cb74535a0730',
     });
   }
 }

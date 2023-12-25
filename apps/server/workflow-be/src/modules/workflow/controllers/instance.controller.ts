@@ -1,4 +1,5 @@
 import { Body, Controller, Post } from '@nestjs/common';
+import { EventPattern } from '@nestjs/microservices';
 import { InstanceService } from '../services/instance.service';
 import { Instance } from '../../../entities/instance.entity';
 import { EntityCrudController } from 'src/shared/controller';
@@ -20,7 +21,14 @@ export class InstanceController extends EntityCrudController<Instance>(
   }
 
   @Post('initiate')
+  @EventPattern('initiate-workflow')
   async initiate(@Body() data: any) {
+    console.log('Workflow initiated');
     return this.instanceService.initiate(data.activityId);
+  }
+
+  @Post('approve-workflow')
+  async approveWorkflow() {
+    await this.instanceService.approveWorkflow();
   }
 }

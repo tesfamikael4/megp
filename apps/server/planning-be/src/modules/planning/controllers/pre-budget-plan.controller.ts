@@ -17,6 +17,7 @@ import {
 import { PreBudgetPlanService } from '../services/pre-budget-plan.service';
 import { ExtraCrudController } from 'src/shared/controller';
 import { decodeCollectionQuery } from 'src/shared/collection-query';
+import { EventPattern } from '@nestjs/microservices';
 import { TransactionInterceptor } from 'src/shared/interceptors';
 
 const options: ExtraCrudOptions = {
@@ -51,5 +52,18 @@ export class PreBudgetPlanController extends ExtraCrudController<PreBudgetPlan>(
   @ApiPaginatedResponse(PreBudgetPlan)
   async getAnalytics(@Param('id') id: string) {
     return await this.preBudgetPlanService.getAnalytics(id);
+  }
+
+  @Post('initiate-workflow')
+  async initiateWorkflow() {
+    await this.preBudgetPlanService.initateWorkflow();
+  }
+
+  @EventPattern('workflow-approved')
+  async handleApprovedWorkflow() {
+    // TODO: Handle Approved Workflow Here. This is initiated from the workflow applicaiton
+    console.log(
+      'Handle Approved Workflow Here. This is initiated from the workflow applicaiton',
+    );
   }
 }

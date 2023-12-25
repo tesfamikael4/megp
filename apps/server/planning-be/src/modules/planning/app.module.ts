@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 import {
   APP,
   BudgetYear,
@@ -42,6 +43,19 @@ import { PreBudgetRequisitionerController } from './controllers/pre-budget-requi
       PreBudgetPlan,
       PreProcurementMechanism,
       PreBudgetRequisitioner,
+    ]),
+    ClientsModule.register([
+      {
+        name: 'PLANNING_RMQ_SERVICE',
+        transport: Transport.RMQ,
+        options: {
+          urls: ['amqp://guest:guest@localhost:5672/'],
+          queue: 'work-plan',
+          queueOptions: {
+            durable: false,
+          },
+        },
+      },
     ]),
     PostModule,
   ],
