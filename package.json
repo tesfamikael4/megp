@@ -23,5 +23,10 @@
     "turbo": "latest"
   },
   "packageManager": "pnpm@8.6.10",
-  "name": "megp"
+  "name": "megp",
+  "dependencies": {
+    "@nestjs/microservices": "^10.3.0",
+    "amqp-connection-manager": "^4.1.14",
+    "amqplib": "^0.10.3"
+  }
 }

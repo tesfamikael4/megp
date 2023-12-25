@@ -1,6 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Inject, Injectable } from '@nestjs/common';
 import { EntityManager, Repository } from 'typeorm';
+import { ClientProxy } from '@nestjs/microservices';
 import {
   APP,
   PostBudgetPlan,
@@ -36,6 +37,10 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
     @InjectRepository(PreBudgetPlanActivity)
     private readonly preBudgetActivityRepository: Repository<PreBudgetPlanActivity>,
     @InjectRepository(PreBudgetPlanItems)
+    private readonly preBudgetItemsRepository: Repository<PreBudgetPlanItems>,
+    @Inject('PLANNING_RMQ_SERVICE')
+    private readonly planningRMQClient: ClientProxy,
+
     private readonly postBudgetPlanService: PostBudgetPlanService,
     private readonly postBudgetPlanActivityService: PostBudgetPlanActivityService,
     private readonly postBudgetPlanItemService: PostBudgetPlanItemService,
@@ -47,6 +52,7 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
     private readonly request: Request,
   ) {
     super(repositoryPreBudgetPlan);
+    planningRMQClient.connect();
   }
 
   async create(itemData: PreBudgetPlan): Promise<PreBudgetPlan> {
@@ -175,5 +181,11 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
     } catch (error) {
       throw error;
     }
+  }
+
+  async initateWorkflow() {
+    this.planningRMQClient.emit('initiate-workflow', {
+      activityId: '420f699d-5c87-47a9-91d6-cb74535a0730',
+    });
   }
 }

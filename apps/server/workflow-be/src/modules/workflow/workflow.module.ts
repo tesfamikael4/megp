@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 import { Step, Workflow } from 'src/entities';
 import { WorkflowController } from './controllers/workflow.controller';
 import { StepController } from './controllers/step.controller';
@@ -28,6 +29,19 @@ import { DefaultStepController } from './controllers/defaultStep.controller';
       Activity,
       State,
       DefaultStep,
+    ]),
+    ClientsModule.register([
+      {
+        name: 'WORKFLOW_RMQ_SERVICE',
+        transport: Transport.RMQ,
+        options: {
+          urls: ['amqp://guest:guest@localhost:5672/'],
+          queue: 'work-plan',
+          queueOptions: {
+            durable: false,
+          },
+        },
+      },
     ]),
   ],
   providers: [
