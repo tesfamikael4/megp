@@ -22,21 +22,22 @@ export class WorkflowService extends EntityCrudService<Workflow> {
   }
 
   async approveWorkflow(workflowType, metaData, activityId) {
-    const state = this.repositoryState.findOneBy({ activityId });
+    const state = await this.repositoryState.findOneBy({ activityId });
 
     if (!state) throw new Error('state not found');
 
     try {
       const workflowMachine = await this.xMachineService.createMachineConfig(
         activityId,
-        metaData.name,
-        state,
+        metaData,
+        state.state,
       );
+
       const actor = createActor(workflowMachine);
       let currentState = '';
-      actor.subscribe((state) => {
-        currentState = state.value;
-        console.log(state.value);
+      actor.subscribe((states) => {
+        currentState = states.value;
+        console.log(states.value);
       });
 
       actor.start();
@@ -45,7 +46,7 @@ export class WorkflowService extends EntityCrudService<Workflow> {
       return {
         status: 'success',
         workflowID: currentState,
-        init: workflowMachine.initialState,
+        // init: workflowMachine.initialState,
       };
     } catch (error) {
       return {

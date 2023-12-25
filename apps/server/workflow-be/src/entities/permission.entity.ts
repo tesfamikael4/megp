@@ -18,6 +18,9 @@ export class Permission {
   @Column()
   name: string;
 
+  @Column({ type: 'uuid' })
+  permissionId: string;
+
   @Column()
   activityId: string;
 

@@ -12,8 +12,8 @@ import { Instance } from './instance.entity';
 
 type approver = {
   id: string;
-  approverName: string;
-  approvalType: string;
+  approver: string;
+  approverType: string;
   approvalMethod: string;
 };
 

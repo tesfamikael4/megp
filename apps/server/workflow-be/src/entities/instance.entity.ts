@@ -33,4 +33,7 @@ export class Instance {
 
   @Column()
   status: string;
+
+  @Column({ type: 'jsonb' })
+  metadata: any[];
 }

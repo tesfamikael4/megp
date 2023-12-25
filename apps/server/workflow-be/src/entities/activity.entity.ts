@@ -11,6 +11,7 @@ import { Step } from './step.entity';
 import { Workflow } from './workflow.entity';
 import { Permission } from './permission.entity';
 import { Instance } from './instance.entity';
+import { DefaultStep } from './defaultStep.entity';
 
 @Entity({ name: 'activities' })
 export class Activity {
@@ -29,6 +30,9 @@ export class Activity {
 
   @OneToMany(() => Step, (step) => step.activity)
   steps: Step[];
+
+  @OneToMany(() => DefaultStep, (defaultStep) => defaultStep.activity)
+  defaultSteps: DefaultStep[];
 
   @OneToOne(() => Permission, (permission) => permission.activity, {
     cascade: true,
