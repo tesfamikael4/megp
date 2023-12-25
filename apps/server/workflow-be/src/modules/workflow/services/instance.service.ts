@@ -73,10 +73,7 @@ export class InstanceService extends EntityCrudService<Instance> {
     });
   }
 
-  async approveWorkflow() {
-    this.workflowRMQClient.emit('workflow-approved', {
-      workflow: 'approved',
-      activityId: '420f699d-5c87-47a9-91d6-cb74535a0730',
-    });
+  async approveWorkflow(data) {
+    this.workflowRMQClient.emit('workflow-approved', data);
   }
 }
