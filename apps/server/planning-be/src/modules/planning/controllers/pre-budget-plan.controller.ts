@@ -11,10 +11,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { PreBudgetPlan } from 'src/entities';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { ApiPaginatedResponse } from 'src/shared/api-data';
-import {
-  CreatePreBudgetPlanDto,
-  UpdatePreBudgetPlanDto,
-} from '../dtos/pre-budget-plan.dto';
+import { UpdatePreBudgetPlanDto } from '../dtos/pre-budget-plan.dto';
 import { PreBudgetPlanService } from '../services/pre-budget-plan.service';
 import { ExtraCrudController } from 'src/shared/controller';
 import { decodeCollectionQuery } from 'src/shared/collection-query';
