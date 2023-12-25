@@ -18,14 +18,14 @@ export const approvedRejectedApi = createApi({
           q = `?q=${query}`;
         }
         return {
-          url: `application-execution/get-vendors${q}`,
+          url: `api/application-execution/get-vendors${q}`,
           method: 'GET',
         };
       },
     }),
     getVendorDetail: builder.query<any, { vendorId: string }>({
       query: ({ vendorId }) =>
-        `application-execution/get-vendor-detail/${vendorId}`,
+        `api/application-execution/get-vendor-detail/${vendorId}`,
     }),
     getRejectedVendorList: builder.query<any, CollectionQuery | undefined>({
       query: (collectionQuery) => {
@@ -36,7 +36,7 @@ export const approvedRejectedApi = createApi({
         }
 
         return {
-          url: `application-execution/get-rejected-vendors${q}`,
+          url: `api/application-execution/get-rejected-vendors${q}`,
           method: 'GET',
         };
       },
@@ -49,7 +49,7 @@ export const approvedRejectedApi = createApi({
     }),
     getRejectedApplicationDetail: builder.query<any, { vendorId: string }>({
       query: ({ vendorId }) =>
-        `application-execution/get-vendor-detail/${vendorId}`,
+        `api/application-execution/get-vendor-detail/${vendorId}`,
     }),
   }),
 });
