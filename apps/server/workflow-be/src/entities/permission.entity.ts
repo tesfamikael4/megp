@@ -9,9 +9,10 @@ import {
 import { Step } from './step.entity';
 import { Workflow } from './workflow.entity';
 import { Activity } from './activity.entity';
+import { OrgAudit } from 'src/shared/entities';
 
 @Entity({ name: 'permissions' })
-export class Permission {
+export class Permission extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
