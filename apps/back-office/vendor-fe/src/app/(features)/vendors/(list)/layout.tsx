@@ -9,7 +9,7 @@ import {
   useLazyGetVendorsQuery,
 } from '@/store/api/vendor_request_handler/approved-rejected-api';
 import { CollectionQuery, Where } from '@megp/entity';
-import VendorFilterSidebar from '../_components/approved-sidebar';
+import VendorFilterSidebar from '../../_components/approved-sidebar';
 
 const Vendors = ({ children }: { children: React.ReactElement }) => {
   const [filter, setFilter] = useState({
@@ -27,17 +27,18 @@ const Vendors = ({ children }: { children: React.ReactElement }) => {
 
   const handleTabChange = (tab: 'approved' | 'rejected') => {
     setActiveTab(tab);
-    setQuery({ take: 15, skip: 0 });
     setFilter({ name: '', businessType: '' });
+
+    // console.log(query)
+    if (tab === 'approved') {
+      handleFilter(query, tab);
+    } else if (tab === 'rejected') handleFilter(query, tab);
   };
+
+  // this will handle fetch when all the filter fields are empty
   useEffect(() => {
     if (!filter.name && !filter.businessType) {
-      if (activeTab === 'approved') getFilteredList({ take: 15, skip: 0 });
-      else getRejectedVendorList({ take: 15, skip: 0 });
-    } else {
-      if (activeTab === 'approved') {
-        handleFilter(query, activeTab);
-      } else if (activeTab === 'rejected') handleFilter(query, activeTab);
+      handleFilter({ take: 15, skip: 0 }, activeTab);
     }
   }, [filter.name, filter.businessType, activeTab]);
 
@@ -85,7 +86,7 @@ const Vendors = ({ children }: { children: React.ReactElement }) => {
           <Entity
             list={filteredList ?? { items: [], total: 0 }}
             isLoading={isLoading}
-            title="Approved Vendors"
+            title="approved"
             onRequestChange={(query: CollectionQuery) => {
               setQuery(query);
               handleFilter(query);
@@ -98,7 +99,7 @@ const Vendors = ({ children }: { children: React.ReactElement }) => {
           <Entity
             list={rejectedVendorList ?? { items: [], total: 0 }}
             isLoading={isLoading}
-            title="Rejected Vendors"
+            title="rejected"
             onRequestChange={(query: CollectionQuery) => {
               setQuery(query);
               handleFilter(query);

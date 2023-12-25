@@ -26,20 +26,15 @@ export default function Entity({
       basePath: `/vendors`,
       mode: 'list',
       entity:
-        title == 'Approved Vendors'
-          ? 'Approved vendors'
-          : 'Rejected Applications',
+        title == 'approved' ? 'Approved Vendors' : 'Rejected Applications',
       primaryKey: 'id',
       primaryContent: 'description',
       title: '',
       hasAdd: false,
       onDetail: (selected: Vendor) => {
         const param = new URLSearchParams();
-        param.set(
-          'type',
-          title == 'Approved Vendors' ? 'approved' : 'rejected',
-        );
-        router.push(`/vendors/${selected.id}` + '?' + param.toString());
+        param.set('type', title);
+        router.push(`/vendors/${selected.id}`);
       },
 
       columns: [
