@@ -31,6 +31,10 @@ import { PreProcurementMechanismController } from './controllers/pre-procurement
 import { PreProcurementMechanismService } from './services/pre-procurement-mechanism.service';
 import { PreBudgetRequisitionerService } from './services/pre-budget-requisitioner.service';
 import { PreBudgetRequisitionerController } from './controllers/pre-budget-requisitioner.controller';
+import * as dotenv from 'dotenv';
+
+dotenv.config({ path: '.env' });
+
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -49,8 +53,8 @@ import { PreBudgetRequisitionerController } from './controllers/pre-budget-requi
         name: 'PLANNING_RMQ_SERVICE',
         transport: Transport.RMQ,
         options: {
-          urls: ['amqp://guest:guest@localhost:5672/'],
-          queue: 'work-plan',
+          urls: [process.env.RMQ_URL],
+          queue: 'work-plan-initiate',
           queueOptions: {
             durable: false,
           },

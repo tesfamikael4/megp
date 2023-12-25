@@ -19,6 +19,14 @@ import { State } from 'src/entities/state.entity';
 import { DefaultStep } from 'src/entities/defaultStep.entity';
 import { DefaultStepService } from './services/defaultStep.service';
 import { DefaultStepController } from './controllers/defaultStep.controller';
+import { Permission } from 'src/entities/permission.entity';
+import { PermissionService } from './services/permission.service';
+import { PermissionController } from './controllers/permission.controller';
+import { AuthHelper } from 'src/shared/authorization';
+import { JwtService } from '@nestjs/jwt';
+import * as dotenv from 'dotenv';
+
+dotenv.config({ path: '.env' });
 
 @Module({
   imports: [
@@ -29,14 +37,15 @@ import { DefaultStepController } from './controllers/defaultStep.controller';
       Activity,
       State,
       DefaultStep,
+      Permission,
     ]),
     ClientsModule.register([
       {
         name: 'WORKFLOW_RMQ_SERVICE',
         transport: Transport.RMQ,
         options: {
-          urls: ['amqp://guest:guest@localhost:5672/'],
-          queue: 'work-plan',
+          urls: [process.env.RMQ_URL],
+          queue: 'work-plan-approve',
           queueOptions: {
             durable: false,
           },
@@ -52,6 +61,9 @@ import { DefaultStepController } from './controllers/defaultStep.controller';
     InstanceService,
     ActivityService,
     StateService,
+    PermissionService,
+    AuthHelper,
+    JwtService,
   ],
   controllers: [
     WorkflowController,
@@ -60,6 +72,7 @@ import { DefaultStepController } from './controllers/defaultStep.controller';
     ActivityController,
     InstanceController,
     StateController,
+    PermissionController,
   ],
 })
 export class WorkflowModule {}

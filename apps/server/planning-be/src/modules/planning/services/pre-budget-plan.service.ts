@@ -1,9 +1,8 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { Inject, Injectable } from '@nestjs/common';
 import { EntityManager, Repository } from 'typeorm';
+import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import {
-  APP,
   PostBudgetPlan,
   PostBudgetPlanActivity,
   PostBudgetPlanItem,
@@ -11,9 +10,6 @@ import {
   PreBudgetPlan,
   PreBudgetPlanActivity,
   PreBudgetPlanItems,
-  PreBudgetPlanTimeline,
-  PreBudgetRequisitioner,
-  PreProcurementMechanism,
 } from 'src/entities';
 import { DataResponseFormat } from 'src/shared/api-data';
 import { PostBudgetPlanService } from 'src/modules/post-budget-plan/services/post-budget-plan.service';
@@ -183,9 +179,9 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
     }
   }
 
-  async initateWorkflow() {
+  async initateWorkflow(name) {
     this.planningRMQClient.emit('initiate-workflow', {
-      activityId: '420f699d-5c87-47a9-91d6-cb74535a0730',
+      name: name,
     });
   }
 }

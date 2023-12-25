@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Get,
   Param,
@@ -55,8 +56,8 @@ export class PreBudgetPlanController extends ExtraCrudController<PreBudgetPlan>(
   }
 
   @Post('initiate-workflow')
-  async initiateWorkflow() {
-    await this.preBudgetPlanService.initateWorkflow();
+  async initiateWorkflow(@Body() data: any) {
+    await this.preBudgetPlanService.initateWorkflow(data.name);
   }
 
   @EventPattern('workflow-approved')

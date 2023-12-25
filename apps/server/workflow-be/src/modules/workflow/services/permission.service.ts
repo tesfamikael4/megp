@@ -1,0 +1,29 @@
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { ExtraCrudService } from '../../../shared/service';
+import { Permission } from 'src/entities/permission.entity';
+import { XMachineService } from './xMachine.service';
+import { Step } from 'src/entities';
+
+@Injectable()
+export class PermissionService extends ExtraCrudService<Permission> {
+  constructor(
+    @InjectRepository(Permission)
+    private readonly repositoryPermission: Repository<Permission>,
+  ) {
+    super(repositoryPermission);
+  }
+  async bulkCreate(permissions: Permission[]): Promise<Permission[]> {
+    const prePermission = await this.repositoryPermission.find({
+      where: { activityId: permissions[0].activityId },
+    });
+    if (prePermission.length > 0) {
+      await this.repositoryPermission.delete(prePermission as any);
+    }
+    const items = this.repositoryPermission.create(permissions);
+    await this.repositoryPermission.save(items);
+
+    return permissions;
+  }
+}

@@ -1,4 +1,4 @@
-import { Post, Body, Controller } from '@nestjs/common';
+import { Post, Body, Controller, Param } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { ExtraCrudController } from 'src/shared/controller';
@@ -16,8 +16,8 @@ export class StateController extends ExtraCrudController<State>(options) {
     super(stateService);
   }
 
-  @Post()
-  async create(@Body() activityId: any): Promise<any> {
+  @Post(':activityId')
+  async create(@Param('activityId') activityId: any): Promise<any> {
     this.stateService.createState(activityId);
   }
 }

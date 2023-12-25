@@ -3,17 +3,33 @@ import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { ExtraCrudService } from '../../../shared/service';
 import { Step } from '../../../entities';
+import { DefaultStep } from 'src/entities/defaultStep.entity';
 
 @Injectable()
 export class StepService extends ExtraCrudService<Step> {
   constructor(
     @InjectRepository(Step)
     private readonly repositoryStep: Repository<Step>,
+    @InjectRepository(DefaultStep)
+    private readonly repositoryDefaultStep: Repository<DefaultStep>,
   ) {
     super(repositoryStep);
   }
 
   async bulkCreate(steps: Step[]): Promise<Step[]> {
+    if (steps.some((obj) => obj.type === 'mandatory')) {
+      const defaultSteps = await this.repositoryDefaultStep.find({
+        where: {
+          activityId: steps[0].activityId,
+        },
+        order: { order: 'ASC' },
+      });
+
+      const isCorrect = this.checkOrder(defaultSteps, steps);
+      if (!isCorrect) {
+        throw new Error('DefaultOrderIsMandatory');
+      }
+    }
     const preStep = await this.repositoryStep.find({
       where: { activityId: steps[0].activityId },
     });
@@ -24,5 +40,37 @@ export class StepService extends ExtraCrudService<Step> {
     await this.repositoryStep.save(items);
 
     return steps;
+  }
+
+  private checkOrder(defaultStep: any, steps: any): boolean {
+    const orderList = [];
+
+    for (const element of defaultStep) {
+      const name = element.name;
+      const matchingStep = steps.find((step) => step.name === name);
+
+      if (matchingStep) {
+        orderList.push(matchingStep);
+      }
+    }
+
+    for (let i = 1; i < orderList.length; i++) {
+      const currentStep = orderList[i];
+      const previousStep = orderList[i - 1];
+
+      if (currentStep.order <= previousStep.order) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  async orderStep(activityId: string) {
+    const [items, total] = await this.repositoryStep.findAndCount({
+      where: { activityId: activityId },
+      order: { order: 'ASC' },
+    });
+    return { items, total };
   }
 }

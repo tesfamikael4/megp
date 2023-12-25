@@ -1,5 +1,10 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { EventPattern } from '@nestjs/microservices';
+import {
+  Ctx,
+  EventPattern,
+  RmqContext,
+  Transport,
+} from '@nestjs/microservices';
 import { InstanceService } from '../services/instance.service';
 import { Instance } from '../../../entities/instance.entity';
 import { EntityCrudController } from 'src/shared/controller';
@@ -22,9 +27,13 @@ export class InstanceController extends EntityCrudController<Instance>(
 
   @Post('initiate')
   @EventPattern('initiate-workflow')
-  async initiate(@Body() data: any) {
-    console.log('Workflow initiated');
+  async initiate(@Body() data: any, @Ctx() context: RmqContext) {
     return this.instanceService.initiate(data.activityId);
+  }
+
+  @Post('goto')
+  async goto(@Body() data: any) {
+    return this.instanceService.goto(data.activityId, data.details, data.goto);
   }
 
   @Post('approve-workflow')

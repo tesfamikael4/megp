@@ -1,24 +1,25 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { GlobalExceptionFilter } from './shared/exceptions/global-exception.filter';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import * as dotenv from 'dotenv';
+
+dotenv.config({ path: '.env' });
 
 async function bootstrap() {
   const app: NestExpressApplication = await NestFactory.create(AppModule, {
     cors: true,
   });
 
-  app.enableCors();
-
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.RMQ,
     options: {
-      urls: ['amqp://guest:guest@localhost:5672/'], //dotenv
-      queue: 'work-plan',
+      // noAck: false,
+      urls: [process.env.RMQ_URL],
+      queue: 'work-plan-initiate',
       queueOptions: {
         durable: false,
       },
@@ -27,8 +28,9 @@ async function bootstrap() {
 
   await app.startAllMicroservices();
 
-  const config: ConfigService = app.get(ConfigService);
-  const port: number = config.get<number>('PORT') || 3000;
+  app.enableCors();
+
+  const port: number = Number(process.env.PORT) || 3000;
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
@@ -54,7 +56,7 @@ async function bootstrap() {
     }),
   );
   await app.listen(port, () => {
-    console.log('[WEB]', config.get<string>('BASE_URL') + '/docs');
+    console.log('[WEB]', process.env.BASE_URL + '/docs');
   });
 }
 

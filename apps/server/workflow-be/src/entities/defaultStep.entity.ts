@@ -32,12 +32,6 @@ export class DefaultStep {
   @JoinColumn({ name: 'activityId' })
   public activity: Activity;
 
-  @OneToOne(() => Instance, (instance) => instance.step)
-  instance: Instance;
-
-  @Column({ type: 'jsonb' })
-  approvers: approver[];
-
   @Column({ default: 'default' })
   type: string;
 

@@ -4,7 +4,8 @@ import { Step, Workflow } from 'src/entities';
 import { Instance } from 'src/entities/instance.entity';
 import { State } from 'src/entities/state.entity';
 import { Repository } from 'typeorm';
-import { and, setup } from 'xstate';
+import { setup } from 'xstate';
+import axios from 'axios';
 
 interface StateMachineConfig {
   states: {
@@ -12,7 +13,7 @@ interface StateMachineConfig {
       | {
           on: {
             [event: string]: {
-              guard?: any;
+              guard?: any | Promise<any>;
               actions?: Array<{
                 type: string;
                 params: { id: any; status: any };
@@ -21,7 +22,7 @@ interface StateMachineConfig {
             };
           };
         }
-      | { type: string };
+      | { type: string | any };
   };
 }
 
@@ -38,13 +39,36 @@ export class XMachineService {
     private readonly repositoryState: Repository<State>,
   ) {}
 
-  async createMachineConfig(
-    activityId,
-    currentApprover: string,
-    state,
-  ): Promise<any> {
+  async createMachineConfig(activityId, details, state): Promise<any> {
     const adjust = '';
+    let isWorkGroup = {
+      value: false,
+      method: '',
+    };
+    let isAllChecked = false;
+    const existingData = await this.repositoryInstance.findOne({
+      where: { activityId: activityId },
+    });
 
+    isWorkGroup = await this.checkGroup(existingData.stepId);
+    if (isWorkGroup.value) {
+      isAllChecked = await this.canContinue(isWorkGroup, activityId);
+      if (!isAllChecked) {
+        if (existingData) {
+          existingData.metadata.push({
+            userId: details.userId,
+            actions: details.action,
+            remark: details.remark,
+            approver: details.approver,
+            at: String(Date.now()),
+            stepId: existingData.stepId,
+          });
+          await this.repositoryInstance.update(existingData.id, {
+            metadata: existingData.metadata,
+          });
+        }
+      }
+    }
     const machine = setup({
       actions: {
         recordAction: async ({ context, event }, params: any) => {
@@ -52,28 +76,51 @@ export class XMachineService {
           if (context.adj != '') {
             params.status = context.adj;
           }
-          const data = {
-            status: params.status,
-            activityId: activityId,
-            stepId: params.id,
-          };
-          await this.repositoryInstance.upsert([data], {
-            skipUpdateIfNoValuesChanged: true,
-            conflictPaths: ['activityId'],
-          });
+          if (existingData) {
+            existingData.metadata.push({
+              userId: details.userId,
+              actions: details.action,
+              remark: details.remark,
+              approver: details.approver,
+              at: String(Date.now()),
+              stepId: params.id,
+            });
+            await this.repositoryInstance.update(existingData.id, {
+              status: params.status,
+              stepId: params.id,
+              metadata: existingData.metadata,
+            });
+          } else {
+            const data = {
+              status: params.status,
+              activityId: activityId,
+              stepId: params.id,
+              metadata: [
+                {
+                  userId: details.userId,
+                  actions: details.action,
+                  remark: details.remark,
+                  approver: details.approver,
+                  at: String(Date.now()),
+                  stepId: params.id,
+                },
+              ],
+            };
+
+            await this.repositoryInstance.create(data);
+          }
         },
       },
       guards: {
         isApproved: ({ context }, params) => {
-          return true;
-        },
-        isApprovedt: ({ context }, params) => {
-          return true;
+          console.log({ context });
+          console.log({ params });
+          return isWorkGroup.value ? isAllChecked : true;
         },
       },
     }).createMachine({
       id: 'workflow',
-      initial: `${currentApprover}`,
+      initial: `${details.name}`,
       context: {
         adj: adjust,
       },
@@ -92,10 +139,10 @@ export class XMachineService {
       stateMachineConfig.states[currentState] = {
         on: {
           [`${step.name}.Approved`]: {
-            guard: and([
-              { type: 'isApproved', params: { status: 'Approved' } },
-              { type: 'isApproved', params: { status: 'Approved' } },
-            ]),
+            // guard: and([
+            //   { type: 'isApproved', params: { status: 'Approved' } }
+            // ]),
+            guard: 'isApproved',
             actions: [
               {
                 type: 'recordAction',
@@ -121,7 +168,7 @@ export class XMachineService {
             ],
           },
           [`${step.name}.Adjust`]: {
-            // target: (context, event) => console.log({event}),
+            target: (context, event) => console.log({ event }),
             actions: [
               {
                 type: 'recordAction',
@@ -137,8 +184,81 @@ export class XMachineService {
       };
     }
 
-    stateMachineConfig.states.Approved = { type: 'final' };
+    stateMachineConfig.states.Approved = { type: 'Approved' };
+    stateMachineConfig.states.Rejected = { type: 'Rejected' };
 
     return stateMachineConfig;
+  }
+
+  private async checkGroup(stepId: any): Promise<any> {
+    const currentStep = await this.repositoryStep.findOne({
+      where: { id: stepId },
+    });
+    if (currentStep.approvers[0].approverType != 'Group') {
+      return {
+        value: false,
+        method: currentStep.approvers[0].approvalMethod,
+      };
+    }
+    return {
+      value: true,
+      method: currentStep.approvers[0].approvalMethod,
+    };
+  }
+
+  async canContinue(info, activityId) {
+    const existingData = await this.repositoryInstance.findOne({
+      where: { activityId: activityId },
+    });
+
+    if (!existingData) {
+      throw new Error('InstanceNotInitiated');
+    }
+    const currentStep = await this.repositoryStep.findOne({
+      where: { id: existingData.stepId },
+    });
+    if (info.value && info.method == 'Consensus') {
+      const members = await this.getGroupMembers(currentStep.approvers[0].id);
+      for (const member of members.items) {
+        const user = existingData.metadata.find(
+          (item) => item.userId === member.userId,
+        );
+
+        if (!(user && user.actions === 'Approved')) {
+          return false;
+        }
+      }
+    }
+    if (info.value && info.method == 'Majority') {
+      const members = await this.getGroupMembers(currentStep.approvers[0].id);
+      let approvedMembers = 0;
+      for (const member of members.items) {
+        const user = existingData.metadata.find(
+          (item) => item.userId === member.userId,
+        );
+        approvedMembers += 1;
+        if (
+          !(
+            user &&
+            user.action === 'Approved' &&
+            approvedMembers > members.total / 2
+          )
+        ) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  private async getGroupMembers(groupId) {
+    const apiUrl = `https://dev-bo.megp.peragosystems.com/iam/api/user-groups/${groupId}/user`;
+
+    try {
+      const response = await axios.get(apiUrl);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
   }
 }

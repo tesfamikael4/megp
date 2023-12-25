@@ -13,7 +13,4 @@ export class Workflow {
     cascade: true,
   })
   activities: Activity;
-
-  @Column({ type: 'jsonb' })
-  metadata: any;
 }

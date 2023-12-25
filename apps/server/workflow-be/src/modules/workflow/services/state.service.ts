@@ -20,7 +20,10 @@ export class StateService extends ExtraCrudService<State> {
 
   // Listen
   async createState(activityId): Promise<any> {
-    const steps = await this.repositoryStep.find({ where: { activityId } });
+    const steps = await this.repositoryStep.find({
+      where: { activityId },
+      order: { order: 'ASC' },
+    });
 
     if (steps.length == 0) throw new Error('step not found');
 
