@@ -13,6 +13,7 @@ import {
   EntityCrudOptions,
   ExtraCrudOptions,
 } from 'src/shared/types/crud-option.type';
+import { StateService } from '../services/state.service';
 
 const options: EntityCrudOptions = {};
 
@@ -21,14 +22,18 @@ const options: EntityCrudOptions = {};
 export class InstanceController extends EntityCrudController<Instance>(
   options,
 ) {
-  constructor(private readonly instanceService: InstanceService) {
+  constructor(
+    private readonly instanceService: InstanceService,
+    private readonly stateService: StateService,
+  ) {
     super(instanceService);
   }
 
   @Post('initiate')
   @EventPattern('initiate-workflow')
   async initiate(@Body() data: any, @Ctx() context: RmqContext) {
-    return this.instanceService.initiate(data.activityId);
+    await this.stateService.createState(data.activityId);
+    return await this.instanceService.initiate(data.name);
   }
 
   @Post('goto')
@@ -37,7 +42,7 @@ export class InstanceController extends EntityCrudController<Instance>(
   }
 
   @Post('approve-workflow')
-  async approveWorkflow() {
-    await this.instanceService.approveWorkflow();
+  async approveWorkflow(@Body() data: any) {
+    await this.instanceService.approveWorkflow(data);
   }
 }

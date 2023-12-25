@@ -6,6 +6,7 @@ import { State } from 'src/entities/state.entity';
 import { Repository } from 'typeorm';
 import { setup } from 'xstate';
 import axios from 'axios';
+import { InstanceService } from './instance.service';
 
 interface StateMachineConfig {
   states: {
@@ -16,7 +17,7 @@ interface StateMachineConfig {
               guard?: any | Promise<any>;
               actions?: Array<{
                 type: string;
-                params: { id: any; status: any };
+                params: { id: any; currentId?: any; status: any };
               }>;
               target?: any;
             };
@@ -37,6 +38,8 @@ export class XMachineService {
     private readonly repositoryInstance: Repository<Instance>,
     @InjectRepository(State)
     private readonly repositoryState: Repository<State>,
+
+    private readonly instanceService: InstanceService,
   ) {}
 
   async createMachineConfig(activityId, details, state): Promise<any> {
@@ -52,7 +55,11 @@ export class XMachineService {
 
     isWorkGroup = await this.checkGroup(existingData.stepId);
     if (isWorkGroup.value) {
-      isAllChecked = await this.canContinue(isWorkGroup, activityId);
+      isAllChecked = await this.canContinue(
+        isWorkGroup,
+        activityId,
+        details.action,
+      );
       if (!isAllChecked) {
         if (existingData) {
           existingData.metadata.push({
@@ -83,18 +90,25 @@ export class XMachineService {
               remark: details.remark,
               approver: details.approver,
               at: String(Date.now()),
-              stepId: params.id,
+              stepId: params.currentId,
             });
             await this.repositoryInstance.update(existingData.id, {
               status: params.status,
               stepId: params.id,
               metadata: existingData.metadata,
             });
+            if (params.status == 'Approved') {
+              await this.instanceService.approveWorkflow({
+                workflow: 'approved',
+                activityId: activityId,
+              });
+            }
           } else {
             const data = {
               status: params.status,
               activityId: activityId,
               stepId: params.id,
+              organizationId: details.organizationId,
               metadata: [
                 {
                   userId: details.userId,
@@ -148,6 +162,7 @@ export class XMachineService {
                 type: 'recordAction',
                 params: {
                   id: i < steps.length - 1 ? steps[i + 1].id : step.id,
+                  currentId: i < steps.length - 1 && step.id,
                   status:
                     i < steps.length - 1 ? `${steps[i + 1].name}` : 'Approved',
                 },
@@ -194,7 +209,7 @@ export class XMachineService {
     const currentStep = await this.repositoryStep.findOne({
       where: { id: stepId },
     });
-    if (currentStep.approvers[0].approverType != 'Group') {
+    if (currentStep.approvers[0].approverType != 'WorkGroup') {
       return {
         value: false,
         method: currentStep.approvers[0].approvalMethod,
@@ -206,7 +221,7 @@ export class XMachineService {
     };
   }
 
-  async canContinue(info, activityId) {
+  async canContinue(info, activityId, action) {
     const existingData = await this.repositoryInstance.findOne({
       where: { activityId: activityId },
     });
@@ -218,6 +233,10 @@ export class XMachineService {
       where: { id: existingData.stepId },
     });
     if (info.value && info.method == 'Consensus') {
+      if (action == 'Reject') {
+        return true;
+      }
+
       const members = await this.getGroupMembers(currentStep.approvers[0].id);
       for (const member of members.items) {
         const user = existingData.metadata.find(

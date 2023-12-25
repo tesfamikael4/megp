@@ -43,8 +43,8 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(
     app,
     new DocumentBuilder()
-      .setTitle('Planning API')
-      .setDescription('My Planning API')
+      .setTitle('Workflow API')
+      .setDescription('My Workflow API')
       .addBearerAuth()
       .build(),
   );
