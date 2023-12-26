@@ -1,3 +1,5 @@
+import ApplicationList from '../_components/application-list';
+
 export default function UpgradePage() {
-  return <div>upgrade</div>;
+  return <ApplicationList serviceKey="upgrade" title="Upgrade" />;
 }

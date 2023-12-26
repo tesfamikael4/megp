@@ -5,9 +5,9 @@ import {
 } from '@/store/api/vendor_request_handler/new-registration-api';
 import { Box, Checkbox, Textarea, Button, Flex } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { GeneratePdf } from '@megp/core-fe';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { GeneratePdf } from './generatePdf';
 
 export default function TaskHandler({
   taskType,
@@ -23,7 +23,6 @@ export default function TaskHandler({
   setIsPicked: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const [mutate] = useGoToNextStateMutation();
-  const [generateCertificate] = useGenerateCertificateMutation();
   const [loading, setLoading] = useState({});
   const [remark, setRemark] = useState<string>();
   const [selectedChecklistItems, setSelectedChecklistItems] = useState<
@@ -75,44 +74,13 @@ export default function TaskHandler({
   if (taskType === 'Certificate') {
     return (
       <Flex gap="md">
-        {/* <GeneratePdf
+        <GeneratePdf
           label="Download Cerficate"
-          selector="#qr"
-          templateUrl={`${process.env.NEXT_PUBLIC_VENDOR_DOMAIN}/certificate`}
+          id={`${requesterID as string}/${instanceID as string}`}
           className=""
-          mode="download"
+          mode="view"
           apiUrl={`${process.env.NEXT_PUBLIC_VENDOR_API}/api/`}
-        /> */}
-        <Button
-          onClick={async () => {
-            try {
-              await generateCertificate({
-                vendorId: requesterID as string,
-                instanceId: instanceID as string,
-              }).unwrap();
-              notifications.show({
-                title: 'Success',
-                message: 'Certificate generated successfully.',
-              });
-            } catch (err) {
-              notifications.show({
-                title: 'Error',
-                color: 'red',
-                message: 'Something went wrong.',
-              });
-            }
-          }}
-        >
-          Generate Certificate
-        </Button>
-        <Button
-          loading={loading['SUCCESS']}
-          onClick={() => {
-            handleButtonClick('SUCCESS');
-          }}
-        >
-          Mark as completed
-        </Button>
+        />
       </Flex>
     );
   }
