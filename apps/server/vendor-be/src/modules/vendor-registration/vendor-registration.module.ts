@@ -49,6 +49,7 @@ import { CategoriesModule } from '../categories/category.module';
 import { InvoiceService } from './services/invoice.service';
 import { HttpModule } from '@nestjs/axios';
 import { FileService } from './services/file.service';
+import { ServicePricingModule } from '../pricing/pricing.module';
 
 @Module({
   imports: [
@@ -79,6 +80,7 @@ import { FileService } from './services/file.service';
     BpmModule,
     CategoriesModule,
     HttpModule,
+    ServicePricingModule,
   ],
   exports: [VendorRegistrationsService, FileService],
   providers: [
@@ -110,4 +112,4 @@ import { FileService } from './services/file.service';
     BusinessAreaController,
   ],
 })
-export class VendorRegistrationModule { }
+export class VendorRegistrationModule {}

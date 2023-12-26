@@ -17,6 +17,7 @@ import {
   BusinessAreaEntity,
   InvoiceEntity,
   IsrVendorsEntity,
+  ServicePrice,
   VendorsEntity,
 } from 'src/entities';
 import { BusinessProcessService } from 'src/modules/bpm/services/business-process.service';
@@ -29,14 +30,21 @@ import { WorkflowService } from 'src/modules/bpm/services/workflow.service';
 import { InvoiceService } from './invoice.service';
 import { CollectionQuery, QueryConstructor } from 'src/shared/collection-query';
 import { DataResponseFormat } from 'src/shared/api-data';
-import { WorkflowInstanceEnum } from 'src/modules/handling/dto/workflow-instance.enum';
+import {
+  ServiceKeyEnum,
+  WorkflowInstanceEnum,
+} from 'src/modules/handling/dto/workflow-instance.enum';
 import { HttpService } from '@nestjs/axios';
 import axios from 'axios';
 import { FppaDataDto, MbrsData, NCICDataDto } from '../dto/mbrsData.dto';
 import { GenerateInvoice } from '../dto/invoice.dto';
-import { IsrVendorDetailResponseDto, IsrVendorsResponseDto } from '../dto/isrvendor.dto';
+import {
+  IsrVendorDetailResponseDto,
+  IsrVendorsResponseDto,
+} from '../dto/isrvendor.dto';
 import { BusinessAreaDetailResponseDto } from '../dto/business-area.dto';
 import { BankAccountDetailResponse } from '../dto/bank-account-detail.dto';
+import { ServicePricingService } from 'src/modules/pricing/services/service-pricing.service';
 
 @Injectable()
 export class VendorRegistrationsService extends EntityCrudService<VendorsEntity> {
@@ -53,6 +61,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     private readonly bpService: BusinessProcessService,
     private readonly invoiceService: InvoiceService,
     private readonly httpService: HttpService,
+    private readonly pricingService: ServicePricingService,
   ) {
     super(vendorRepository);
   }
@@ -255,7 +264,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     return vendorsEntity;
   };
   async updateVendor(vendorStatusDto: SetVendorStatus): Promise<any> {
-    console.log("vendorStatusDto--->", vendorStatusDto);
+    console.log('vendorStatusDto--->', vendorStatusDto);
     const result = await this.isrVendorsRepository.findOne({
       where: {
         userId: vendorStatusDto.userId,
@@ -320,7 +329,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       const businessArea = await this.businessAreaRepository.findOne({
         where: {
           vendorId: vendorStatusDto.isrVendorId,
-          instanceId: vendorStatusDto.instanceId
+          instanceId: vendorStatusDto.instanceId,
           //expireDate: nextYear,
         },
       });
@@ -355,11 +364,11 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         status: In([
           VendorStatusEnum.APPROVED,
           VendorStatusEnum.PENDING,
-          VendorStatusEnum.ADJUSTMENT
-        ])
+          VendorStatusEnum.ADJUSTMENT,
+        ]),
       },
     });
-    console.log("res--------------", res)
+    console.log('res--------------', res);
     if (!res) {
       const vendorservice = await this.businessAreaRepository.findOne({
         where: { vendorId: result.id },
@@ -934,44 +943,66 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       where: { id: VendorId },
       select: {
         id: true,
-        name: true, tin: true, formOfEntity: true, country: true,
-        metaData: true, status: true,
-        vendorAccounts: { accountHolderFullName: true, accountNumber: true, bankName: true, branchName: true, currency: true, IBAN: true, status: true, isDefualt: true, branchAddress: true },
-        shareholders: { firstName: true, lastName: true, nationality: true, share: true },
+        name: true,
+        tin: true,
+        formOfEntity: true,
+        country: true,
+        metaData: true,
+        status: true,
+        vendorAccounts: {
+          accountHolderFullName: true,
+          accountNumber: true,
+          bankName: true,
+          branchName: true,
+          currency: true,
+          IBAN: true,
+          status: true,
+          isDefualt: true,
+          branchAddress: true,
+        },
+        shareholders: {
+          firstName: true,
+          lastName: true,
+          nationality: true,
+          share: true,
+        },
         beneficialOwnership: { firstName: true, lastName: true, key: true },
         areasOfBusinessInterest: { category: true, lineOfBusiness: true },
-        isrVendor: { id: true, businessAreas: true }
+        isrVendor: { id: true, businessAreas: true },
       },
       relations: {
         areasOfBusinessInterest: true,
         shareholders: true,
         beneficialOwnership: true,
         vendorAccounts: true,
-        isrVendor: { businessAreas: { servicePrice: true, BpService: true } }
+        isrVendor: { businessAreas: { servicePrice: true, BpService: true } },
       },
     });
     const { isrVendor, ...rest } = result;
     const vendor = {
       ...rest,
-      businessAreas: result.isrVendor.businessAreas.map((ba) => BusinessAreaDetailResponseDto.toResponse(ba)),
-    }
+      businessAreas: result.isrVendor.businessAreas.map((ba) =>
+        BusinessAreaDetailResponseDto.toResponse(ba),
+      ),
+    };
 
     return vendor;
   }
   async getRejectedVendors(user: any, query: CollectionQuery) {
     const dataQuery = QueryConstructor.constructQuery<IsrVendorsEntity>(
       this.isrVendorsRepository,
-      query
+      query,
     )
-      .andWhere('isr_vendors.status =:status', { status: WorkflowInstanceEnum.Rejected })
+      .andWhere('isr_vendors.status =:status', {
+        status: WorkflowInstanceEnum.Rejected,
+      })
       .orderBy('isr_vendors.updatedAt', 'ASC');
 
     const d = new DataResponseFormat<IsrVendorsResponseDto>();
     const [result, total] = await dataQuery.getManyAndCount();
     d.items = result.map((entity) => {
-      return IsrVendorsResponseDto.toResponse(entity)
-    }
-    );
+      return IsrVendorsResponseDto.toResponse(entity);
+    });
     d.total = total;
     return d;
   }
@@ -981,19 +1012,274 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       where: { id: VendorId, status: WorkflowInstanceEnum.Rejected },
       relations: {
         businessAreas: { servicePrice: true, BpService: true },
-        instances: true
+        instances: true,
       },
     });
     const vendor = {
       ...result,
-      businessAreas: result.businessAreas.map((ba) => BusinessAreaDetailResponseDto.toResponse(ba)),
+      businessAreas: result.businessAreas.map((ba) =>
+        BusinessAreaDetailResponseDto.toResponse(ba),
+      ),
       areasOfBusinessInterest: result.areasOfBusinessInterest.map((entity) => {
-        return { name: entity.lineOfBusiness[0].name, category: entity.category }
-      }
-      )
-    }
+        return {
+          name: entity.lineOfBusiness[0].name,
+          category: entity.category,
+        };
+      }),
+    };
     return vendor;
   }
+  async getApprovedVendorServiceByUserId(userId: string): Promise<any> {
+    try {
+      console.log('userId userId', userId);
+      const vendorEntity = await this.vendorRepository.findOne({
+        select: {
+          isrVendor: { id: true, tinNumber: true, businessAreas: true },
+        },
+        where: {
+          userId: userId,
+          status: VendorStatusEnum.APPROVED,
+          isrVendor: { businessAreas: { status: VendorStatusEnum.APPROVED } },
+        },
+        relations: {
+          areasOfBusinessInterest: true,
+          isrVendor: { businessAreas: { servicePrice: true } },
+        },
+      });
+      if (!vendorEntity)
+        return {
+          status: {
+            level: 'info',
+            status: 'Draft',
+          },
+          data: [],
+        };
+      const areaOfBusinessInterest = await this.businessAreaRepository.find({
+        where: {
+          vendorId: vendorEntity.id,
+          status: VendorStatusEnum.APPROVED,
+        },
+      });
+      return {
+        status: areaOfBusinessInterest[0].businessAreaState,
+        data: areaOfBusinessInterest.map((value, index) => ({
+          id: value.id,
+          areaOfBusinessInterest: vendorEntity.areasOfBusinessInterest.filter(
+            (element) => element.category === value.category,
+          )[0],
+        })),
+      };
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async submitServiceRenewal(userInfo: any, areaBusinessArea: any) {
+    const response = [];
+    const isrVendorData = await this.isrVendorsRepository.findOne({
+      where: { userId: userInfo.id },
+    });
+    console.log('isr_vendor', isrVendorData);
+    try {
+      for (let index = 0; index < areaBusinessArea?.length; index++) {
+        console.log(
+          'businessAreaData businessAreaData ',
+          areaBusinessArea[index],
+        );
 
+        const businessAreaData = await this.businessAreaRepository.findOne({
+          where: { id: areaBusinessArea[index] },
+          relations: { servicePrice: true, BpService: true },
+        });
+        console.log('businessAreaData businessAreaData ', businessAreaData);
+        if (
+          businessAreaData.BpService.key ===
+            ServiceKeyEnum.goodsNewRegistration ||
+          businessAreaData.BpService.key ===
+            ServiceKeyEnum.servicesNewRegistration ||
+          businessAreaData.BpService.key === ServiceKeyEnum.worksNewRegistration
+        ) {
+          let key = '';
+          switch (businessAreaData.BpService.key) {
+            case ServiceKeyEnum.goodsNewRegistration:
+              key = ServiceKeyEnum.goodsRenewal;
+              break;
+            case ServiceKeyEnum.worksNewRegistration:
+              key = ServiceKeyEnum.worksRenewal;
+              break;
+            case ServiceKeyEnum.servicesNewRegistration:
+              key = ServiceKeyEnum.servicesRenewal;
+              break;
+            default:
+              break;
+          }
+          const renewalRange =
+            await this.pricingService.findserviceByRangeAndKey(
+              key,
+              businessAreaData.servicePrice.valueFrom,
+              businessAreaData.servicePrice.valueTo,
+            );
+          const bpservice = await this.bpService.findBpService(
+            renewalRange[0].id,
+          );
+          const wfi = new CreateWorkflowInstanceDto();
+          wfi.user = userInfo;
+          wfi.bpId = bpservice.id;
+          wfi.serviceId = bpservice.service.id;
+          wfi.requestorId = isrVendorData.id;
+          wfi.data = isrVendorData;
+          const workflowInstance =
+            await this.workflowService.intiateWorkflowInstance(wfi, userInfo);
+          if (!workflowInstance)
+            throw new HttpException(`workflow_initiation_failed`, 500);
+          response.push({
+            applicationNumber: workflowInstance.application.applicationNumber,
+            instanceNumber: workflowInstance.application.id,
+            vendorId: workflowInstance.application.requestorId,
+          });
+          const businessAreaEntity = new BusinessAreaEntity();
+          businessAreaEntity.instanceId = workflowInstance.application.id;
+          businessAreaEntity.category = businessAreaData.category;
+          businessAreaEntity.serviceId = bpservice.service.id;
+          businessAreaEntity.applicationNumber =
+            workflowInstance.application.applicationNumber;
+          businessAreaEntity.status = VendorStatusEnum.PENDING;
+          businessAreaEntity.vendorId = isrVendorData.id;
+          businessAreaEntity.priceRangeId = renewalRange[0].id;
+          const res =
+            await this.businessAreaRepository.save(businessAreaEntity);
+          if (!res) throw new HttpException(`adding_business_area_failed`, 500);
+        } else {
+          const bpservice = await this.bpService.findBpService(
+            businessAreaData.priceRangeId,
+          );
+          const wfi = new CreateWorkflowInstanceDto();
+          wfi.user = userInfo;
+          wfi.bpId = bpservice.id;
+          wfi.serviceId = bpservice.service.id;
+          wfi.requestorId = isrVendorData.id;
+          wfi.data = isrVendorData;
+          const workflowInstance =
+            await this.workflowService.intiateWorkflowInstance(wfi, userInfo);
+          if (!workflowInstance)
+            throw new HttpException(`workflow_initiation_failed`, 500);
+          response.push({
+            applicationNumber: workflowInstance.application.applicationNumber,
+            instanceNumber: workflowInstance.application.id,
+            vendorId: workflowInstance.application.requestorId,
+          });
+          const businessAreaEntity = new BusinessAreaEntity();
+          businessAreaEntity.instanceId = workflowInstance.application.id;
+          businessAreaEntity.category = businessAreaData.category;
+          businessAreaEntity.serviceId = bpservice.service.id;
+          businessAreaEntity.applicationNumber =
+            workflowInstance.application.applicationNumber;
+          businessAreaEntity.status = VendorStatusEnum.PENDING;
+          businessAreaEntity.vendorId = isrVendorData.id;
+          businessAreaEntity.priceRangeId = businessAreaData.priceRangeId;
+          const res =
+            await this.businessAreaRepository.save(businessAreaEntity);
+          if (!res) throw new HttpException(`adding_business_area_failed`, 500);
+        }
+      }
+      if (!response) throw new HttpException('workflow_initiation_failed', 500);
+      return response;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
+  async generateInvoiceForServiceRenewal(userInfo: any, priceRangeId: any) {
+    const response = [];
+    const isrVendorData = await this.isrVendorsRepository.findOne({
+      where: { userId: userInfo.id },
+    });
+    try {
+      isrVendorData.basic['id'] = isrVendorData.id;
+      try {
+        const invoice = await this.invoiceService.generateInvoice(
+          priceRangeId,
+          userInfo,
+          isrVendorData.basic,
+        );
+        if (!invoice) throw new HttpException('invoice_creation_failed', 500);
+        response.push(invoice);
+      } catch (error) {
+        throw error;
+      }
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+    return response;
+  }
+  async getServiceInvoiceForRenewal(userInfo: any, data: any) {
+    try {
+      if (
+        data?.status == VendorStatusEnum.DRAFT ||
+        data?.level == VendorStatusEnum.INFO
+      ) {
+        for (let index = 0; index < data.data?.length; index++) {
+          const resu = await this.businessAreaRepository.update(
+            data.data[index].id,
+            {
+              businessAreaState: {
+                status: VendorStatusEnum.DRAFT,
+                level: VendorStatusEnum.PAYMENT,
+              },
+            },
+          );
+          if (!resu)
+            throw new HttpException('business area update failed', 500);
+        }
+        for (let index = 0; index < data.data.length; index++) {
+          const businessAreaId = data.data[index].id;
+          const businessareaData = await this.businessAreaRepository.findOne({
+            where: { id: businessAreaId },
+            relations: { BpService: true, servicePrice: true },
+          });
 
+          if (this.monthDiff(businessareaData.expireDate, new Date()) > 3)
+            throw new HttpException('renewal period not allowed ', 500);
+          if (
+            businessareaData.BpService.key ===
+              ServiceKeyEnum.goodsNewRegistration ||
+            businessareaData.BpService.key ===
+              ServiceKeyEnum.servicesNewRegistration ||
+            businessareaData.BpService.key ===
+              ServiceKeyEnum.worksNewRegistration
+          ) {
+            const renewalRange =
+              await this.pricingService.findserviceByRangeAndKey(
+                businessareaData.BpService.key,
+                businessareaData.servicePrice.valueFrom,
+                businessareaData.servicePrice.valueTo,
+              );
+            const result = await this.generateInvoiceForServiceRenewal(
+              userInfo,
+              renewalRange[0].id,
+            );
+          } else {
+            const result = await this.generateInvoiceForServiceRenewal(
+              userInfo,
+              businessareaData.priceRangeId,
+            );
+          }
+        }
+      }
+      const invoices = await this.invoiceService.getActiveMyInvoices(
+        userInfo.id,
+      );
+      return invoices;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  monthDiff(expireDate: Date, today: Date): number {
+    let months;
+    months = (today.getFullYear() - expireDate.getFullYear()) * 12;
+    months -= expireDate.getMonth();
+    months += today.getMonth();
+    return months;
+  }
 }

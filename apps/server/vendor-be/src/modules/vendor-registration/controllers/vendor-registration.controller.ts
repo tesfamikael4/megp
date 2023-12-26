@@ -35,7 +35,7 @@ import { CollectionQuery } from 'src/shared/collection-query';
 @ApiResponse({ status: 500, description: 'Internal error' })
 @ApiExtraModels(DataResponseFormat)
 export class VendorRegistrationsController {
-  constructor(private readonly regService: VendorRegistrationsService) { }
+  constructor(private readonly regService: VendorRegistrationsService) {}
   @UseGuards(JwtGuard)
   @Get('get-isr-vendors')
   async getVendors() {
@@ -109,7 +109,7 @@ export class VendorRegistrationsController {
     vendorInitiationDto.level = 'detail';
     return await this.regService.vendorInitiation(vendorInitiationDto, user);
   }
-  @UseGuards(ApiKeyGuard)
+  // @UseGuards(ApiKeyGuard)
   @Post('update-vendor-services')
   async approveVednorServices(@Body() vendorStatusDto: SetVendorStatus) {
     return await this.regService.updateVendor(vendorStatusDto);
@@ -137,5 +137,32 @@ export class VendorRegistrationsController {
   @Get('get-renewal-isr-vendor')
   async getRenewalIsrVendor(@CurrentUser() userInfo: any) {
     return await this.regService.getRenewalIsrVendor(userInfo);
+  }
+  @UseGuards(JwtGuard)
+  @Get('get-approved-vendor-service-byUserId')
+  async getApprovedVendorServiceByUserId(@CurrentUser() userInfo: any) {
+    return await this.regService.getApprovedVendorServiceByUserId(userInfo.id);
+  }
+  @UseGuards(JwtGuard)
+  @Get('get-service-invoice-for-renewal')
+  async getServiceInvoiceForRenewal(
+    @CurrentUser() userInfo: any,
+    @Body() areaOfBusinessInterest: any,
+  ) {
+    return await this.regService.getServiceInvoiceForRenewal(
+      userInfo.id,
+      areaOfBusinessInterest,
+    );
+  }
+  @UseGuards(JwtGuard)
+  @Post('submit-service-renewal')
+  async submitServiceRenewal(
+    @CurrentUser() userInfo: any,
+    @Body() areaOfBusinessInterest: any[],
+  ) {
+    return await this.regService.submitServiceRenewal(
+      userInfo.id,
+      areaOfBusinessInterest,
+    );
   }
 }
