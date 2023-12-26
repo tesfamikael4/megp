@@ -431,7 +431,7 @@ export class FileService {
       if (!result) throw new HttpException('business area not found ', 500);
       const fileUploadName = 'certificate';
       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-      const fileId = `${uniqueSuffix}_${'certeficate'}`;
+      const fileId = `${uniqueSuffix}_${'certeficate.pdf'}`;
       const filename = `${userId}/${fileUploadName}/${fileId}`;
       const metaData = {
         'Content-Type': 'application/octet-stream',

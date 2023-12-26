@@ -36,6 +36,11 @@ export class BusinessAreaEntity {
   status: string;
   @Column({ nullable: true })
   remark: string;
+  @Column({ type: 'jsonb', default: { status: 'Draft', level: 'info' } })
+  businessAreaState: {
+    level: string;
+    status: string;
+  };
   @ManyToOne(() => IsrVendorsEntity, (vendor) => vendor.businessAreas)
   @JoinColumn({ name: 'vendorId' })
   isrVendor: IsrVendorsEntity;
