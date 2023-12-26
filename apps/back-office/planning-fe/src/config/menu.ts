@@ -33,9 +33,9 @@ export const Menu: MenuItem[] = [
     label: 'Settings',
     icon: IconAdjustmentsHorizontal,
     links: [
-      { label: 'Organization Types', link: '/organization-type' },
-      { label: 'Organization Sector', link: '/organization-sector' },
-      { label: 'Unit Types', link: '/unit-type' },
+      // { label: 'Organization Types', link: '/organization-type' },
+      // { label: 'Organization Sector', link: '/organization-sector' },
+      // { label: 'Unit Types', link: '/unit-type' },
     ],
   },
 ];
