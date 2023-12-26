@@ -11,6 +11,7 @@ import { ServicePricingModule } from './modules/pricing/pricing.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { EmailConfig } from './shared/email/email.config';
 import { CertificateModule } from './modules/certificates/certificate.module';
+import { NotificationModule } from './modules/notifications/notification.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -25,7 +26,8 @@ import { CertificateModule } from './modules/certificates/certificate.module';
     ServiceModule,
     ServicePricingModule,
     BpmModule,
-    CertificateModule
+    CertificateModule,
+    NotificationModule
   ],
   controllers: [],
   providers: [],

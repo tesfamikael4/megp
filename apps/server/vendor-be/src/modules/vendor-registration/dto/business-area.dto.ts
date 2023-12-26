@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
 import { BusinessAreaEntity } from 'src/entities';
 export class CreateBusinessAreaDto {
   @ApiProperty()
@@ -59,6 +59,9 @@ export class BusinessAreaResponseDto extends CreateBusinessAreaDto {
   @ApiProperty()
   @IsNotEmpty()
   id: string;
+  @ApiProperty()
+  @IsOptional()
+  certificateUrl: string
   static toResponse(entity: BusinessAreaEntity): BusinessAreaResponseDto {
     const response = new BusinessAreaResponseDto();
     response.id = entity.id;
@@ -68,6 +71,7 @@ export class BusinessAreaResponseDto extends CreateBusinessAreaDto {
     response.status = entity.status;
     response.expireDate = entity.expireDate;
     response.approvedAt = entity.approvedAt;
+    response.certificateUrl = entity?.certificateUrl
     return response;
   }
   static toResponses(entity: BusinessAreaEntity[]): BusinessAreaResponseDto[] {
@@ -95,6 +99,9 @@ export class BusinessAreaDetailResponseDto {
   priceTo: number;
   @ApiProperty()
   currency: string;
+  @ApiProperty()
+  certificateUrl: string
+
   static toResponse(entity: BusinessAreaEntity): BusinessAreaDetailResponseDto {
     const response = new BusinessAreaDetailResponseDto();
     response.id = entity.id;
@@ -106,6 +113,7 @@ export class BusinessAreaDetailResponseDto {
     response.priceFrom = entity.servicePrice.valueFrom;
     response.priceTo = entity.servicePrice.valueTo;
     response.currency = entity.servicePrice.currency;
+    response.certificateUrl = entity?.certificateUrl
     return response;
   }
 }
