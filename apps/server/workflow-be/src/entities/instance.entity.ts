@@ -35,6 +35,9 @@ export class Instance extends OrgAudit {
   @Column()
   status: string;
 
+  @Column('uuid')
+  itemId: string;
+
   @Column({ type: 'jsonb' })
   metadata: any[];
 }

@@ -179,9 +179,15 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
     }
   }
 
-  async initateWorkflow(name) {
-    this.planningRMQClient.emit('initiate-workflow', {
+  async initiateWorkflow(name, id) {
+    const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
+    await entityManager.getRepository(PreBudgetPlan).update(id, {
+      status: 'Submitted',
+    });
+    await this.planningRMQClient.emit('initiate-workflow', {
       name: name,
+      id: id,
     });
   }
 }

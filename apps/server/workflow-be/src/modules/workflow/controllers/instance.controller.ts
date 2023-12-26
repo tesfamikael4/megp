@@ -33,7 +33,7 @@ export class InstanceController extends EntityCrudController<Instance>(
   @EventPattern('initiate-workflow')
   async initiate(@Body() data: any, @Ctx() context: RmqContext) {
     await this.stateService.createState(data.activityId);
-    return await this.instanceService.initiate(data.name);
+    return await this.instanceService.initiate(data.name, data.id);
   }
 
   @Post('goto')

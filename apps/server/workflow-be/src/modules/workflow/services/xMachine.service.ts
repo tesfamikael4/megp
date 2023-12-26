@@ -101,6 +101,7 @@ export class XMachineService {
               await this.instanceService.approveWorkflow({
                 workflow: 'approved',
                 activityId: activityId,
+                itemId: existingData.itemId,
               });
             }
           } else {
