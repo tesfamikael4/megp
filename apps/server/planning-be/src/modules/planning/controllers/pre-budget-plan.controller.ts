@@ -62,6 +62,6 @@ export class PreBudgetPlanController extends ExtraCrudController<PreBudgetPlan>(
   @ApiPaginatedResponse(PreBudgetPlan)
   @UseInterceptors(TransactionInterceptor)
   async handleApprovedWorkflow(@Body() data: any) {
-    return await this.preBudgetPlanService.copySelectedPreToPost(data.id);
+    return await this.preBudgetPlanService.copySelectedPreToPost(data);
   }
 }
