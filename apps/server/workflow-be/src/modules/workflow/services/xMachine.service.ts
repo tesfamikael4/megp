@@ -55,11 +55,7 @@ export class XMachineService {
 
     isWorkGroup = await this.checkGroup(existingData.stepId);
     if (isWorkGroup.value) {
-      isAllChecked = await this.canContinue(
-        isWorkGroup,
-        activityId,
-        details.action,
-      );
+      isAllChecked = await this.canContinue(isWorkGroup, activityId, details);
       if (!isAllChecked) {
         if (existingData) {
           existingData.metadata.push({
@@ -222,7 +218,7 @@ export class XMachineService {
     };
   }
 
-  async canContinue(info, activityId, action) {
+  async canContinue(info, activityId, details) {
     const existingData = await this.repositoryInstance.findOne({
       where: { activityId: activityId },
     });
@@ -233,41 +229,36 @@ export class XMachineService {
     const currentStep = await this.repositoryStep.findOne({
       where: { id: existingData.stepId },
     });
+    const prevMetadata = existingData.metadata.filter(
+      (x) => x.stepId == existingData.stepId,
+    );
+    const members = await this.getGroupMembers(currentStep.approvers[0].id);
     if (info.value && info.method == 'Consensus') {
-      if (action == 'Reject') {
+      if (details.action == 'reject') {
         return true;
       }
 
-      const members = await this.getGroupMembers(currentStep.approvers[0].id);
-      for (const member of members.items) {
-        const user = existingData.metadata.find(
-          (item) => item.userId === member.userId,
-        );
+      if (prevMetadata.length == members.total - 1) {
+        return true;
+      }
+    }
 
-        if (!(user && user.actions === 'Approved')) {
-          return false;
-        }
-      }
-    }
     if (info.value && info.method == 'Majority') {
-      const members = await this.getGroupMembers(currentStep.approvers[0].id);
-      let approvedMembers = 0;
-      for (const member of members.items) {
-        const user = existingData.metadata.find(
-          (item) => item.userId === member.userId,
-        );
-        approvedMembers += 1;
-        if (
-          !(
-            user &&
-            user.action === 'Approved' &&
-            approvedMembers > members.total / 2
-          )
-        ) {
-          return false;
-        }
+      const approvedCount = prevMetadata.filter(
+        (x) => x.actions === 'Approved',
+      ).length;
+      const rejectMembers = prevMetadata.filter(
+        (x) => x.actions === 'reject',
+      ).length;
+
+      if (
+        approvedCount > members.total / 2 ||
+        rejectMembers > members.total / 2
+      ) {
+        return true;
       }
     }
+
     return true;
   }
 
