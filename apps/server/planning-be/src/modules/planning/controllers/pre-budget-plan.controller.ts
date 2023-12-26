@@ -53,15 +53,15 @@ export class PreBudgetPlanController extends ExtraCrudController<PreBudgetPlan>(
   }
 
   @Post('initiate-workflow')
+  @UseInterceptors(TransactionInterceptor)
   async initiateWorkflow(@Body() data: any) {
-    await this.preBudgetPlanService.initateWorkflow(data.name);
+    await this.preBudgetPlanService.initiateWorkflow(data.name, data.id);
   }
 
   @EventPattern('workflow-approved')
-  async handleApprovedWorkflow() {
-    // TODO: Handle Approved Workflow Here. This is initiated from the workflow applicaiton
-    console.log(
-      'Handle Approved Workflow Here. This is initiated from the workflow applicaiton',
-    );
+  @ApiPaginatedResponse(PreBudgetPlan)
+  @UseInterceptors(TransactionInterceptor)
+  async handleApprovedWorkflow(@Body() data: any) {
+    return await this.preBudgetPlanService.copySelectedPreToPost(data.id);
   }
 }
