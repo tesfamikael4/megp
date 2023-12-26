@@ -48,7 +48,7 @@ export class FileService {
     private readonly invoiceRepository: Repository<InvoiceEntity>,
     @InjectRepository(BusinessAreaEntity)
     private readonly businessAreaRepository: Repository<BusinessAreaEntity>,
-  ) { }
+  ) {}
   private updateVendorEnums = [
     VendorStatusEnum.ACTIVE,
     VendorStatusEnum.ADJUSTMENT,
@@ -220,6 +220,7 @@ export class FileService {
       const alreadyExisting = paymentReceipts?.find(
         (obj) => obj.invoiceId === paymentReceiptDto.invoiceId,
       );
+
       if (alreadyExisting) {
         const objectName = `${userId}/${fileUploadName}/${alreadyExisting.attachment}`;
         await this.minioClient.removeObject('megp', objectName);
@@ -238,17 +239,17 @@ export class FileService {
         file.buffer,
         metaData,
       );
-      result.paymentReceipt = foundObject;
-      result.initial.level = VendorStatusEnum.DOC;
-      result.initial.status = VendorStatusEnum.SAVE;
-      const isrVendor = await this.isrVendorsRepository.save(result);
-
       const paymentReceipt = {
         transactionId: paymentReceiptDto?.transactionId,
         invoiceId: paymentReceiptDto?.invoiceId,
         serviceId: paymentReceiptDto?.serviceId,
         attachment: fileId,
       };
+      result.paymentReceipt = paymentReceipt;
+      result.initial.level = VendorStatusEnum.DOC;
+      result.initial.status = VendorStatusEnum.SAVE;
+      const isrVendor = await this.isrVendorsRepository.save(result);
+
       foundObject.push(paymentReceipt);
       if (!isrVendor) throw new HttpException(`isrVendor_update _failed`, 500);
       const paymentReceiptsData = result?.paymentReceipt;

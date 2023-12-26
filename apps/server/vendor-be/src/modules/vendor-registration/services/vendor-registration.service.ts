@@ -1093,9 +1093,9 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         console.log('businessAreaData businessAreaData ', businessAreaData);
         if (
           businessAreaData.BpService.key ===
-          ServiceKeyEnum.goodsNewRegistration ||
+            ServiceKeyEnum.goodsNewRegistration ||
           businessAreaData.BpService.key ===
-          ServiceKeyEnum.servicesNewRegistration ||
+            ServiceKeyEnum.servicesNewRegistration ||
           businessAreaData.BpService.key === ServiceKeyEnum.worksNewRegistration
         ) {
           let key = '';
@@ -1242,11 +1242,11 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             throw new HttpException('renewal period not allowed ', 500);
           if (
             businessareaData.BpService.key ===
-            ServiceKeyEnum.goodsNewRegistration ||
+              ServiceKeyEnum.goodsNewRegistration ||
             businessareaData.BpService.key ===
-            ServiceKeyEnum.servicesNewRegistration ||
+              ServiceKeyEnum.servicesNewRegistration ||
             businessareaData.BpService.key ===
-            ServiceKeyEnum.worksNewRegistration
+              ServiceKeyEnum.worksNewRegistration
           ) {
             const renewalRange =
               await this.pricingService.findserviceByRangeAndKey(
