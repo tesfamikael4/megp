@@ -23,8 +23,9 @@ export const preBudgetPlanApi = createApi({
     }),
     approvePreBudget: builder.mutation<any, string>({
       query: (id: string) => ({
-        url: `pre-budget-plans/approve-pre-budget/${id}`,
+        url: `pre-budget-plans/initiate-workflow`,
         method: 'POST',
+        body: { name: 'preBudgetApproval', id: id },
       }),
       invalidatesTags: ['pre-budget-plan', 'post-budget-plan'],
     }),
