@@ -60,7 +60,9 @@ export class CertificateService {
           margin: 0,
         })) ?? '';
       const app = await this.wfService.getInstance(instanceId);
-      if (app.status != WorkflowInstanceEnum.Completed) {
+      console.log("app", app);
+      const userId = app?.userId;
+      if (app?.status != WorkflowInstanceEnum.Completed) {
         const command = new GotoNextStateDto();
         command.instanceId = instanceId;
         command.action = 'SUCCESS';
@@ -113,7 +115,7 @@ export class CertificateService {
 
       result.on('end', () => {
         buffer = Buffer.concat(chunks);
-        this.fileService.uploadCertificate2(buffer, vendorId, businessAreaId);
+        this.fileService.uploadCertificate2(buffer, userId, businessAreaId);
       });
 
       if (!(result instanceof Readable)) {

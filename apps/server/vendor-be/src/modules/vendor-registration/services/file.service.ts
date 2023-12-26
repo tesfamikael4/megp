@@ -46,7 +46,7 @@ export class FileService {
     private readonly invoiceRepository: Repository<InvoiceEntity>,
     @InjectRepository(BusinessAreaEntity)
     private readonly businessAreaRepository: Repository<BusinessAreaEntity>,
-  ) {}
+  ) { }
   private updateVendorEnums = [
     VendorStatusEnum.ACTIVE,
     VendorStatusEnum.ADJUSTMENT,
@@ -421,7 +421,7 @@ export class FileService {
 
   async uploadCertificate2(
     file: Buffer,
-    vendorId: string,
+    userId: string,
     businessAreaId: string,
   ) {
     try {
@@ -432,7 +432,7 @@ export class FileService {
       const fileUploadName = 'certificate';
       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
       const fileId = `${uniqueSuffix}_${'certeficate'}`;
-      const filename = `${vendorId}/${fileUploadName}/${fileId}`;
+      const filename = `${userId}/${fileUploadName}/${fileId}`;
       const metaData = {
         'Content-Type': 'application/octet-stream',
         'X-Amz-Meta-Testing': 1234,
@@ -453,10 +453,10 @@ export class FileService {
       throw error;
     }
   }
-  async getCertificate(filename: string, vendorId: string) {
+  async getCertificate(filename: string, userId: string) {
     try {
       const fileUploadName = 'certificate';
-      const fileId = `${vendorId}/${fileUploadName}/${filename}`;
+      const fileId = `${userId}/${fileUploadName}/${filename}`;
       const result = this.minioClient.presignedGetObject(
         this.bucketName,
         fileId,
@@ -467,7 +467,7 @@ export class FileService {
       throw error;
     }
   }
-  async getFile(userId, fielId) {
+  async getFile(userId: string, fielId: string) {
     try {
       const fileUploadName = 'paymentReceipt';
       const filename = `${userId}/${fileUploadName}/${fielId}`;
