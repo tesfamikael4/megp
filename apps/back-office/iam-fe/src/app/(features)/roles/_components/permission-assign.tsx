@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLazyListByAppIdQuery } from '../../applications/_api/permission.api';
 import { useLazyGetPermissionByOrganizationIdQuery } from '../../roles/_api/others.api';
-import { useLazyListQuery } from '../../applications/_api/application.api';
+import { useLazyApplicationUnderOrganizationQuery } from '../_api/others.api';
 import { Box, Button, Checkbox, Divider, Flex, Table } from '@mantine/core';
 import styles from '../../../page.module.scss';
 import { Permission } from '@/models/permission';
@@ -30,7 +30,8 @@ const MandatePermission = ({
   const [triggerPermission, { data: permissionListUnderOrganization }] =
     useLazyGetPermissionByOrganizationIdQuery();
 
-  const [triggerApp, { data: application }] = useLazyListQuery();
+  const [triggerApp, { data: application }] =
+    useLazyApplicationUnderOrganizationQuery();
 
   useEffect(() => {
     trigger(selectedRow?.id);
@@ -41,8 +42,8 @@ const MandatePermission = ({
   }, [user, triggerPermission]);
 
   useEffect(() => {
-    triggerApp({});
-  }, [triggerApp]);
+    triggerApp({ id: user?.organization.id, collectionQuery: undefined });
+  }, [triggerApp, user]);
 
   useEffect(() => {
     setSelectedPermission(permission);

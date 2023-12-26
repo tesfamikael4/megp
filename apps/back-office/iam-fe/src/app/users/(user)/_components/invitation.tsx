@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   CopyButton,
-  Flex,
   LoadingOverlay,
   Tooltip,
   rem,
@@ -13,7 +12,7 @@ import { useEffect, useState } from 'react';
 import {
   useInviteUserMutation,
   useLazyGetUserInvitationLinkQuery,
-} from '../../_api/invite.api';
+} from '../../_api/custom.api';
 import { useParams } from 'next/navigation';
 import { notify } from '@megp/core-fe';
 

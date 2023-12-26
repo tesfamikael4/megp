@@ -1,4 +1,5 @@
 import { adressApi } from '@/store/api/other/adress.api';
+import { CollectionQuery, encodeCollectionQuery } from '@megp/entity';
 
 const organizationProfileApi = adressApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -26,6 +27,22 @@ const organizationProfileApi = adressApi.injectEndpoints({
       },
       invalidatesTags: ['user'],
     }),
+    mandateToAssign: builder.query<
+      any,
+      { id: string; collectionQuery: CollectionQuery | undefined }
+    >({
+      query: ({ id, collectionQuery }) => {
+        let q = '';
+        if (collectionQuery) {
+          const query = encodeCollectionQuery(collectionQuery);
+          q = `?q=${query}`;
+        }
+        return {
+          url: `mandates/organization/${id}${q}`,
+          method: 'GET',
+        };
+      },
+    }),
   }),
 });
 
@@ -34,4 +51,6 @@ export const {
   useReadQuery,
   useListByIdQuery,
   useLazyListByIdQuery,
+  useLazyMandateToAssignQuery,
+  useMandateToAssignQuery,
 } = organizationProfileApi;

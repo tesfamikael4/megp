@@ -11,7 +11,7 @@ import {
 } from '@mantine/core';
 import { useSearchParams } from 'next/navigation';
 import { z, ZodType } from 'zod';
-import { useSetPasswordMutation } from '../../_api/invite.api';
+import { useSetPasswordMutation } from '../../_api/custom.api';
 import { notify } from '@megp/core-fe';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';

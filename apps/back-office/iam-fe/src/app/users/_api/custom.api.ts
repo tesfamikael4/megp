@@ -1,4 +1,8 @@
+import type { CollectionQuery } from '@megp/entity';
+import { encodeCollectionQuery } from '@megp/entity';
+
 import { invitationApi } from '@/store/api/other/invitation.api';
+import { logger } from '@megp/core-fe';
 
 const organizationProfileApi = invitationApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -29,6 +33,24 @@ const organizationProfileApi = invitationApi.injectEndpoints({
         };
       },
     }),
+    roleToAssign: builder.query<
+      any,
+      { id: string; collectionQuery: CollectionQuery | undefined }
+    >({
+      query: ({ id, collectionQuery }) => {
+        let q = '';
+        if (collectionQuery) {
+          const query = encodeCollectionQuery(collectionQuery);
+          q = `?q=${query}`;
+        }
+        logger.log(id);
+
+        return {
+          url: `roles/list/${id}/assignment${q}`,
+          method: 'GET',
+        };
+      },
+    }),
   }),
 });
 
@@ -36,4 +58,6 @@ export const {
   useInviteUserMutation,
   useLazyGetUserInvitationLinkQuery,
   useSetPasswordMutation,
+  useLazyRoleToAssignQuery,
+  useRoleToAssignQuery,
 } = organizationProfileApi;

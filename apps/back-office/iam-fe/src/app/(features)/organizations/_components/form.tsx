@@ -2,7 +2,7 @@ import { Group, LoadingOverlay, Stack, TextInput } from '@mantine/core';
 import { z, ZodType } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { useReadQuery, useInviteOaMutation } from '../_api/adress.api';
+import { useReadQuery, useInviteOaMutation } from '../_api/custom.api';
 import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { User } from '@/models/user/user';
