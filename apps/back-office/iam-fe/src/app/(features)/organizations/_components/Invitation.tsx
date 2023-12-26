@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, Button } from '@mantine/core';
 import { RelationConfig } from '@megp/entity';
-import { useLazyListByIdQuery } from '../_api/adress.api';
+import { useLazyListByIdQuery } from '../_api/custom.api';
 import { useParams } from 'next/navigation';
 import { FormDetail } from './form';
 import { Section, Table, logger } from '@megp/core-fe';

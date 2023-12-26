@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Modal } from '@mantine/core';
 import { CollectionQuery, Relation, RelationConfig } from '@megp/entity';
-
 import {
   useRelationMutation,
   useLazySecondRelationQuery,
 } from '../../_api/user-role.api';
 import { useParams } from 'next/navigation';
-import { useLazyListByIdQuery } from '../../../(features)/roles/_api/role.api';
+import { useLazyRoleToAssignQuery } from '../../_api/custom.api';
 import { Role } from '@/models/role';
 import { notify } from '@megp/core-fe';
 import { useAuth } from '@megp/auth';
@@ -23,7 +22,7 @@ const AddEntityModal = () => {
 
   const [trigger, { data: roles, isSuccess, isLoading }] =
     useLazySecondRelationQuery();
-  const [triggerData, { data, isFetching }] = useLazyListByIdQuery();
+  const [triggerData, { data, isFetching }] = useLazyRoleToAssignQuery();
 
   const relationConfig: RelationConfig<Role> = {
     title: 'Roles Assignment',

@@ -13,7 +13,7 @@ import {
 import {
   useInviteUserMutation,
   useLazyGetUserInvitationLinkQuery,
-} from '../../../users/_api/invite.api';
+} from '../../../users/_api/custom.api';
 
 import { notify } from '@megp/core-fe';
 import {

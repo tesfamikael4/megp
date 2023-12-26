@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Modal } from '@mantine/core';
 import { CollectionQuery, Relation, RelationConfig } from '@megp/entity';
 import { Mandate } from '@/models/mandate';
-import { useLazyListQuery } from '../_api/mandate.api';
+import { useLazyMandateToAssignQuery } from '../_api/custom.api';
 import {
   useRelationMutation,
   useLazySecondRelationQuery,
@@ -19,7 +19,7 @@ const AddEntityModal = () => {
 
   const [assignMandates, { isLoading: isSaving }] = useRelationMutation();
 
-  const [triggerMandate, { data, isFetching }] = useLazyListQuery();
+  const [triggerMandate, { data, isFetching }] = useLazyMandateToAssignQuery();
 
   const [trigger, { data: organizationMandates, isSuccess }] =
     useLazySecondRelationQuery();
@@ -106,7 +106,9 @@ const AddEntityModal = () => {
   }, [isSuccess, organizationMandates]);
 
   const onRequestChange = (request: CollectionQuery) => {
-    isModalOpen && triggerMandate(request);
+    isModalOpen &&
+      id &&
+      triggerMandate({ id: id.toString(), collectionQuery: request });
   };
 
   return (
