@@ -10,6 +10,7 @@ import {
   HttpStatus,
   Injectable,
   NotFoundException,
+  Res,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
@@ -25,6 +26,7 @@ import { VendorStatusEnum } from 'src/shared/enums/vendor-status-enums';
 import { PaymentReceiptDto } from '../dto/payment-receipt.dto';
 import { Readable } from 'typeorm/platform/PlatformTools';
 import axios from 'axios';
+import { Response } from 'express';
 
 @Injectable()
 export class FileService {
@@ -205,6 +207,7 @@ export class FileService {
     paymentReceiptDto: any,
   ) {
     try {
+      console.log('fffffffffffffffffff : ', file.mimetype);
       const result = await this.isrVendorsRepository.findOne({
         where: { userId: userId, status: In(this.updateVendorEnums) },
       });
@@ -224,8 +227,9 @@ export class FileService {
       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
       const fileId = `${uniqueSuffix}_${file.originalname}`;
       const filename = `${userId}/${fileUploadName}/${fileId}`;
+
       const metaData = {
-        'Content-Type': 'application/octet-stream',
+        'Content-Type': file.mimetype,
         'X-Amz-Meta-Testing': 1234,
       };
       const resultData = await this.minioClient.putObject(
@@ -467,11 +471,15 @@ export class FileService {
       throw error;
     }
   }
-  async getFile(userId: string, fielId: string) {
+
+  async getFile(userId, fielId, @Res() res: Response) {
     try {
       const fileUploadName = 'paymentReceipt';
       const filename = `${userId}/${fileUploadName}/${fielId}`;
-      return this.minioClient.getObject('megp', filename);
+      const fileInfo = await this.minioClient.statObject('megp', filename);
+      const contentType = fileInfo.metaData['content-type'];
+      res.setHeader('Content-Type', contentType);
+      return (await this.minioClient.getObject('megp', filename)).pipe(res);
     } catch (error) {
       console.log(error);
       throw error;

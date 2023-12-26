@@ -1,6 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
-import { In, Repository } from 'typeorm';
+import { In, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 import { ServicePrice } from '../../../entities/service-price.entity';
 import { EntityCrudService } from 'src/shared/service';
 import { ServiceKeyEnum } from 'src/modules/handling/dto/workflow-instance.enum';
@@ -65,5 +65,19 @@ export class ServicePricingService extends EntityCrudService<ServicePrice> {
     } catch (error) {
       throw new Error(error);
     }
+  }
+  async findserviceByRangeAndKey(
+    key: string,
+    rangeFrom: number,
+    rangeTo: number,
+  ) {
+    return this.pricingRepository.find({
+      relations: { service: true },
+      where: {
+        service: { key: key },
+        valueFrom: MoreThanOrEqual(rangeFrom),
+        valueTo: LessThanOrEqual(rangeTo),
+      },
+    });
   }
 }

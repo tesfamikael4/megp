@@ -167,9 +167,7 @@ export class UploadController {
     @Res() res: Response,
   ) {
     try {
-      const fileStream = await this.fileService.getFile(userInfo.id, fileId);
-      res.setHeader('Content-Type', 'image/png');
-      fileStream.pipe(res);
+      return this.fileService.getFile(userInfo.id, fileId, res);
     } catch (error) {
       throw error;
     }
