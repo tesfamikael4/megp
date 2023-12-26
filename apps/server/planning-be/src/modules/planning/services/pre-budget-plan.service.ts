@@ -89,11 +89,11 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
     return {};
   }
 
-  async copySelectedPreToPost(preBudgetPlanID: string): Promise<void> {
+  async copySelectedPreToPost(data: any): Promise<void> {
     try {
-      const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+      const entityManager: EntityManager = data.ENTITY_MANAGER;
       const sourceEntity = await this.repositoryPreBudgetPlan.findOneOrFail({
-        where: { id: preBudgetPlanID },
+        where: { id: data.itemId },
       });
 
       await entityManager.getRepository(PreBudgetPlan).update(sourceEntity.id, {
@@ -101,7 +101,7 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
       });
 
       const activities = await this.preBudgetActivityRepository.find({
-        where: { preBudgetPlanId: preBudgetPlanID },
+        where: { preBudgetPlanId: data.itemId },
         relations: [
           'preBudgetPlanItems',
           'preBudgetPlanTimelines',
@@ -113,7 +113,7 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
       const postBudget = {
         ...sourceEntity,
         status: 'Draft',
-        preBudgetPlanId: preBudgetPlanID,
+        preBudgetPlanId: data.itemId,
         id: undefined,
       };
       await entityManager
