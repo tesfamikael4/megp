@@ -37,7 +37,7 @@ export const DetailActivity = ({ cell }: any) => {
     },
     {
       key: 'Total Estimated Amount',
-      value: cell.totalEstimatedAmount.toLocaleString('en-US', {
+      value: cell.estimatedAmount.toLocaleString('en-US', {
         style: 'currency',
         currency: cell.currency,
         minimumFractionDigits: 2,
@@ -46,7 +46,7 @@ export const DetailActivity = ({ cell }: any) => {
     },
     {
       key: 'Total Calculated Amount',
-      value: cell.totalEstimatedAmount.toLocaleString('en-US', {
+      value: cell.estimatedAmount.toLocaleString('en-US', {
         style: 'currency',
         currency: cell.currency,
         minimumFractionDigits: 2,

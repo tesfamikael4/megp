@@ -15,7 +15,9 @@ export default function NewActivity() {
   const { data: preBudgetYear } = useGetPreBudgetPlanQuery(
     budgetYear as string,
   );
-  const disableFields = preBudgetYear ? preBudgetYear.status != 'Draft' : false;
+  const disableFields = preBudgetYear
+    ? preBudgetYear.status != 'Draft' && preBudgetYear.status != 'Adjust'
+    : false;
   return (
     <>
       <Section title="Activity">

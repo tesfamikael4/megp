@@ -335,6 +335,7 @@ export const ActivityMechanization = ({
           withAsterisk
           value={donor[0] ?? ''}
           onChange={(e) => setDonor([e.target.value])}
+          disabled={disableFields}
         />
       )}
       <Controller

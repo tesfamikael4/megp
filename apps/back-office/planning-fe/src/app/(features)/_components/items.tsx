@@ -503,7 +503,9 @@ export function Items({
             >
               <IconDeviceFloppy /> Save
             </Button>
-            <Button variant="outline">Clean</Button>
+            <Button variant="outline" onClick={() => setNewItems([])}>
+              Reset
+            </Button>
           </Flex>
         </>
       )}

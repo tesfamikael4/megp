@@ -52,6 +52,14 @@ export const PlanYearTab = ({ page }: { page: 'pre' | 'post' }) => {
   const [approve, { isLoading }] = useApprovePreBudgetMutation();
   const [appCreate] = useCreateAppMutation();
 
+  const badgeColor = {
+    Draft: 'yellow',
+    Submitted: 'blue',
+    Approved: 'green',
+    Adjust: 'yellow',
+    Adjusted: 'blue',
+  };
+
   const submitPlan = () => {
     modals.openConfirmModal({
       title: ` ${(selectedYear as any)?.app.planName}`,
@@ -175,9 +183,7 @@ export const PlanYearTab = ({ page }: { page: 'pre' | 'post' }) => {
               {(selectedYear as any)?.app?.planName}
             </Text>
             <Badge
-              color={
-                (selectedYear as any)?.status == 'Draft' ? 'yellow' : 'green'
-              }
+              color={badgeColor[(selectedYear as any)?.status] ?? 'yellow'}
               size="sm"
               radius="md"
             >
@@ -187,9 +193,13 @@ export const PlanYearTab = ({ page }: { page: 'pre' | 'post' }) => {
           <Button
             onClick={submitPlan}
             loading={isLoading}
-            disabled={(selectedYear as any)?.status == 'Approved'}
+            disabled={
+              (selectedYear as any)?.status != 'Draft' &&
+              (selectedYear as any)?.status != 'Adjust'
+            }
           >
-            {(selectedYear as any)?.status == 'Approved'
+            {(selectedYear as any)?.status != 'Draft' &&
+            (selectedYear as any)?.status != 'Adjust'
               ? 'Submitted'
               : 'Submit'}
           </Button>
