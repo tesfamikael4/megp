@@ -72,7 +72,6 @@ export class XMachineService {
             stepId: existingData.stepId,
             version: existingData.version,
           });
-          console.log({ metadata: existingData.metadata });
 
           await this.repositoryInstance.update(existingData.id, {
             metadata: existingData.metadata,
@@ -227,7 +226,8 @@ export class XMachineService {
       where: { id: existingData.stepId },
     });
     const prevMetadata = existingData.metadata.filter(
-      (x) => x.stepId == existingData.stepId,
+      (x) =>
+        x.stepId == existingData.stepId && x.version == existingData.version,
     );
     const members = await this.getGroupMembers(currentStep.approvers[0].id);
     if (info.value && info.method == 'Consensus') {
