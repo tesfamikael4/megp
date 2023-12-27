@@ -66,6 +66,8 @@ export class XMachineService {
             at: String(Date.now()),
             stepId: existingData.stepId,
           });
+          console.log({ metadata: existingData.metadata });
+
           await this.repositoryInstance.update(existingData.id, {
             metadata: existingData.metadata,
           });
@@ -88,6 +90,8 @@ export class XMachineService {
               at: String(Date.now()),
               stepId: params.currentId,
             });
+            console.log({ metadata: existingData.metadata });
+
             await this.repositoryInstance.update(existingData.id, {
               status: params.status,
               stepId: params.id,
@@ -117,6 +121,7 @@ export class XMachineService {
                 },
               ],
             };
+            console.log({ metadata: data.metadata });
 
             await this.repositoryInstance.create(data);
           }
@@ -247,7 +252,7 @@ export class XMachineService {
       }
     }
 
-    return true;
+    return false;
   }
 
   private async getGroupMembers(groupId) {
