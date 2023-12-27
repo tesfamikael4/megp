@@ -1,6 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { BusinessAreaEntity, InvoiceEntity, ServicePrice } from 'src/entities';
+import {
+  BpServiceEntity,
+  BusinessAreaEntity,
+  InvoiceEntity,
+  ServicePrice,
+} from 'src/entities';
 import { ServiceKeyEnum } from 'src/modules/handling/dto/workflow-instance.enum';
 import { ServicePricingService } from 'src/modules/pricing/services/service-pricing.service';
 import { DataResponseFormat } from 'src/shared/api-data';
@@ -23,7 +28,7 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     super(invoiceRepository);
   }
 
-  async generateInvoice(
+  async generateInvoice2(
     currentPriceRange: string,
     user: any,
     vendor: any,
@@ -67,6 +72,54 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     invoice.remark = curruntPricing.businessArea + ' ,' + service.description;
     invoice.paymentStatus = 'Pending';
     invoice.createdOn = new Date();
+    const response = await this.invoiceRepository.save(invoice);
+    if (response) return true;
+    return false;
+  }
+  async generateInvoice(
+    currentPriceRange: string,
+    user: any,
+    vendor: any,
+  ): Promise<boolean> {
+    const curruntPricing =
+      await this.pricingService.findPricingWithServiceById(currentPriceRange);
+    if (!curruntPricing) {
+      throw new NotFoundException('Not Found, please set the price range');
+    }
+    const service = curruntPricing.service;
+    const invoice: InvoiceEntity = this.mapInvoice(
+      curruntPricing,
+      vendor,
+      user,
+      service,
+    );
+    invoice.amount = curruntPricing.fee;
+    const response = await this.invoiceRepository.save(invoice);
+    if (response) return true;
+    return false;
+  }
+  async generateInvoiceForUpgrade(
+    currentPriceRange: string,
+    user: any,
+    vendor: any,
+    businessArea: BusinessAreaEntity,
+  ): Promise<boolean> {
+    const curruntPricing =
+      await this.pricingService.findPricingWithServiceById(currentPriceRange);
+    const service = curruntPricing.service;
+    const invoice: InvoiceEntity = this.mapInvoice(
+      curruntPricing,
+      vendor,
+      user,
+      service,
+    );
+    const baServicePrice = await this.baService.getBusinessAreaWithPrice(
+      businessArea.id,
+    );
+    invoice.amount = this.computingPaymentForUpgrade(
+      baServicePrice,
+      curruntPricing,
+    );
     const response = await this.invoiceRepository.save(invoice);
     if (response) return true;
     return false;
@@ -168,5 +221,29 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
       InvoiceResponseDto.toResponse(entity),
     );
     return response;
+  }
+  mapInvoice(
+    curruntPricing: ServicePrice,
+    user: any,
+    vendor: any,
+    service: BpServiceEntity,
+  ): InvoiceEntity {
+    const invoice = new InvoiceEntity();
+    invoice.payToAccName =
+      'Public Procurement and Disposal of Assets Authority';
+    invoice.payToAccNo = '000 100 562 4416';
+    invoice.payToBank = 'National Bank of Malawi';
+    invoice.paymentStatus = 'Pending';
+    invoice.createdOn = new Date();
+    invoice.pricingId = curruntPricing.id;
+    invoice.serviceId = curruntPricing.service.id;
+    invoice.payerName = vendor.name;
+    invoice.userId = user.id;
+    invoice.instanceId = null; //result.instanceId;
+    invoice.taskName = null; //result.task.name;
+    invoice.taskId = null; //result.task.id;
+    invoice.serviceName = service.name;
+    invoice.remark = curruntPricing.businessArea + ' ,' + service.description;
+    return invoice;
   }
 }

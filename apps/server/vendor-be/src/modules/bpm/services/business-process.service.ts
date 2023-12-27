@@ -36,6 +36,16 @@ export class BusinessProcessService extends EntityCrudService<BusinessProcessEnt
     });
     return result;
   }
+  async findBpWithServiceByKey(key: string): Promise<BusinessProcessEntity> {
+    const result = await this.bpRepository.findOne({
+      relations: { service: true },
+      where: {
+        isActive: true,
+        service: { key: key },
+      },
+    });
+    return result;
+  }
   async saveBulk(bps: any[]) {
     try {
       await this.bpRepository.save(bps);

@@ -1074,113 +1074,49 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       console.log(error);
     }
   }
-  async submitServiceRenewal(userInfo: any, areaBusinessArea: any) {
+  async submitServiceRenewal(userInfo: any, BusinessArea: any) {
     const response = [];
     const isrVendorData = await this.isrVendorsRepository.findOne({
       where: { userId: userInfo.id },
     });
     console.log('isr_vendor', isrVendorData);
     try {
-      for (let index = 0; index < areaBusinessArea?.length; index++) {
-        console.log(
-          'businessAreaData businessAreaData ',
-          areaBusinessArea[index],
-        );
-
+      for (let index = 0; index < BusinessArea?.length; index++) {
+        console.log('businessAreaData businessAreaData ', BusinessArea[index]);
         const businessAreaData = await this.businessAreaRepository.findOne({
-          where: { id: areaBusinessArea[index] },
+          where: { id: BusinessArea[index] },
           relations: { servicePrice: true, BpService: true },
         });
-        console.log('businessAreaData businessAreaData ', businessAreaData);
-        if (
-          businessAreaData.BpService.key ===
-            ServiceKeyEnum.goodsNewRegistration ||
-          businessAreaData.BpService.key ===
-            ServiceKeyEnum.servicesNewRegistration ||
-          businessAreaData.BpService.key === ServiceKeyEnum.worksNewRegistration
-        ) {
-          let key = '';
-          switch (businessAreaData.BpService.key) {
-            case ServiceKeyEnum.goodsNewRegistration:
-              key = ServiceKeyEnum.goodsRenewal;
-              break;
-            case ServiceKeyEnum.worksNewRegistration:
-              key = ServiceKeyEnum.worksRenewal;
-              break;
-            case ServiceKeyEnum.servicesNewRegistration:
-              key = ServiceKeyEnum.servicesRenewal;
-              break;
-            default:
-              break;
-          }
-          const renewalRange =
-            await this.pricingService.findserviceByRangeAndKey(
-              key,
-              businessAreaData.servicePrice.valueFrom,
-              businessAreaData.servicePrice.valueTo,
-            );
-          const bpservice = await this.bpService.findBpService(
-            renewalRange[0].id,
-          );
-          const wfi = new CreateWorkflowInstanceDto();
-          wfi.user = userInfo;
-          wfi.bpId = bpservice.id;
-          wfi.serviceId = bpservice.service.id;
-          wfi.requestorId = isrVendorData.id;
-          wfi.data = isrVendorData;
-          const workflowInstance =
-            await this.workflowService.intiateWorkflowInstance(wfi, userInfo);
-          if (!workflowInstance)
-            throw new HttpException(`workflow_initiation_failed`, 500);
-          response.push({
-            applicationNumber: workflowInstance.application.applicationNumber,
-            instanceNumber: workflowInstance.application.id,
-            vendorId: workflowInstance.application.requestorId,
-          });
-          const businessAreaEntity = new BusinessAreaEntity();
-          businessAreaEntity.instanceId = workflowInstance.application.id;
-          businessAreaEntity.category = businessAreaData.category;
-          businessAreaEntity.serviceId = bpservice.service.id;
-          businessAreaEntity.applicationNumber =
-            workflowInstance.application.applicationNumber;
-          businessAreaEntity.status = VendorStatusEnum.PENDING;
-          businessAreaEntity.vendorId = isrVendorData.id;
-          businessAreaEntity.priceRangeId = renewalRange[0].id;
-          const res =
-            await this.businessAreaRepository.save(businessAreaEntity);
-          if (!res) throw new HttpException(`adding_business_area_failed`, 500);
-        } else {
-          const bpservice = await this.bpService.findBpService(
-            businessAreaData.priceRangeId,
-          );
-          const wfi = new CreateWorkflowInstanceDto();
-          wfi.user = userInfo;
-          wfi.bpId = bpservice.id;
-          wfi.serviceId = bpservice.service.id;
-          wfi.requestorId = isrVendorData.id;
-          wfi.data = isrVendorData;
-          const workflowInstance =
-            await this.workflowService.intiateWorkflowInstance(wfi, userInfo);
-          if (!workflowInstance)
-            throw new HttpException(`workflow_initiation_failed`, 500);
-          response.push({
-            applicationNumber: workflowInstance.application.applicationNumber,
-            instanceNumber: workflowInstance.application.id,
-            vendorId: workflowInstance.application.requestorId,
-          });
-          const businessAreaEntity = new BusinessAreaEntity();
-          businessAreaEntity.instanceId = workflowInstance.application.id;
-          businessAreaEntity.category = businessAreaData.category;
-          businessAreaEntity.serviceId = bpservice.service.id;
-          businessAreaEntity.applicationNumber =
-            workflowInstance.application.applicationNumber;
-          businessAreaEntity.status = VendorStatusEnum.PENDING;
-          businessAreaEntity.vendorId = isrVendorData.id;
-          businessAreaEntity.priceRangeId = businessAreaData.priceRangeId;
-          const res =
-            await this.businessAreaRepository.save(businessAreaEntity);
-          if (!res) throw new HttpException(`adding_business_area_failed`, 500);
-        }
+
+        const bpservice = await this.bpService.findBpService(
+          businessAreaData.priceRangeId,
+        );
+        const wfi = new CreateWorkflowInstanceDto();
+        wfi.user = userInfo;
+        wfi.bpId = bpservice.id;
+        wfi.serviceId = bpservice.service.id;
+        wfi.requestorId = isrVendorData.id;
+        wfi.data = isrVendorData;
+        const workflowInstance =
+          await this.workflowService.intiateWorkflowInstance(wfi, userInfo);
+        if (!workflowInstance)
+          throw new HttpException(`workflow_initiation_failed`, 500);
+        response.push({
+          applicationNumber: workflowInstance.application.applicationNumber,
+          instanceNumber: workflowInstance.application.id,
+          vendorId: workflowInstance.application.requestorId,
+        });
+        const businessAreaEntity = new BusinessAreaEntity();
+        businessAreaEntity.instanceId = workflowInstance.application.id;
+        businessAreaEntity.category = businessAreaData.category;
+        businessAreaEntity.serviceId = bpservice.service.id;
+        businessAreaEntity.applicationNumber =
+          workflowInstance.application.applicationNumber;
+        businessAreaEntity.status = VendorStatusEnum.PENDING;
+        businessAreaEntity.vendorId = isrVendorData.id;
+        businessAreaEntity.priceRangeId = businessAreaData.priceRangeId;
+        const res = await this.businessAreaRepository.save(businessAreaEntity);
+        if (!res) throw new HttpException(`adding_business_area_failed`, 500);
       }
       if (!response) throw new HttpException('workflow_initiation_failed', 500);
       return response;
@@ -1203,6 +1139,42 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           isrVendorData.basic,
         );
         if (!invoice) throw new HttpException('invoice_creation_failed', 500);
+
+        response.push(invoice);
+      } catch (error) {
+        throw error;
+      }
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+    return response;
+  }
+  async generateInvoiceForServiceUpgrade(
+    userInfo: any,
+    currentpriceRangeId: any,
+    oldBusinessAreaEntity: BusinessAreaEntity,
+  ) {
+    const response = [];
+    const isrVendorData = await this.isrVendorsRepository.findOne({
+      where: { userId: userInfo.id },
+    });
+    try {
+      isrVendorData.basic['id'] = isrVendorData.id;
+      try {
+        // currentPriceRange: string,
+        //   user: any,
+        //     vendor: any,
+        //       businessArea: BusinessAreaEntity
+
+        const invoice = await this.invoiceService.generateInvoiceForUpgrade(
+          currentpriceRangeId,
+          userInfo,
+          isrVendorData.basic,
+          oldBusinessAreaEntity,
+        );
+        if (!invoice) throw new HttpException('invoice_creation_failed', 500);
+
         response.push(invoice);
       } catch (error) {
         throw error;
@@ -1219,28 +1191,15 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         data?.status == VendorStatusEnum.DRAFT ||
         data?.level == VendorStatusEnum.INFO
       ) {
-        for (let index = 0; index < data.data?.length; index++) {
-          const resu = await this.businessAreaRepository.update(
-            data.data[index].id,
-            {
-              businessAreaState: {
-                status: VendorStatusEnum.DRAFT,
-                level: VendorStatusEnum.PAYMENT,
-              },
-            },
-          );
-          if (!resu)
-            throw new HttpException('business area update failed', 500);
-        }
         for (let index = 0; index < data.data.length; index++) {
           const businessAreaId = data.data[index].id;
           const businessareaData = await this.businessAreaRepository.findOne({
             where: { id: businessAreaId },
             relations: { BpService: true, servicePrice: true },
           });
-
-          if (this.monthDiff(businessareaData.expireDate, new Date()) > 3)
-            throw new HttpException('renewal period not allowed ', 500);
+          // commented for testing purpose
+          // if (this.monthDiff(businessareaData.expireDate, new Date()) > 3)
+          //   throw new HttpException('renewal period not allowed ', 500);
           if (
             businessareaData.BpService.key ===
               ServiceKeyEnum.goodsNewRegistration ||
@@ -1249,12 +1208,25 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             businessareaData.BpService.key ===
               ServiceKeyEnum.worksNewRegistration
           ) {
+            const key = await this.mapServiceType(businessAreaId, 'renewal');
             const renewalRange =
               await this.pricingService.findserviceByRangeAndKey(
-                businessareaData.BpService.key,
+                key,
                 businessareaData.servicePrice.valueFrom,
                 businessareaData.servicePrice.valueTo,
               );
+
+            const { id, ...other } = data.data[index];
+            const business = await this.businessAreaRepository.findOne(id);
+            const service = await this.bpService.findBpWithServiceByKey(key);
+            business.id = undefined;
+            business.serviceId = service.serviceId;
+            business.priceRangeId = renewalRange[0].id;
+            const resu = await this.businessAreaRepository.save(business);
+
+            if (!resu)
+              throw new HttpException('business area update failed', 500);
+
             const result = await this.generateInvoiceForServiceRenewal(
               userInfo,
               renewalRange[0].id,
@@ -1275,34 +1247,28 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       console.log(error);
     }
   }
+  async getNewRenewalServices(vendorId) {
+    const result = await this.businessAreaRepository.find({
+      where: { status: VendorStatusEnum.PENDING, vendorId: vendorId },
+    });
+    return result;
+  }
   async getServiceInvoiceForUpgrade(userInfo: any, data: any) {
     try {
       if (
         data?.status == VendorStatusEnum.DRAFT ||
         data?.level == VendorStatusEnum.INFO
       ) {
-        for (let index = 0; index < data.data?.length; index++) {
-          const resu = await this.businessAreaRepository.update(
-            data.data[index].id,
-            {
-              businessAreaState: {
-                status: VendorStatusEnum.DRAFT,
-                level: VendorStatusEnum.PAYMENT,
-              },
-            },
-          );
-          if (!resu)
-            throw new HttpException('business area update failed', 500);
-        }
+        for (let index = 0; index < data.data?.length; index++) {}
         for (let index = 0; index < data.data.length; index++) {
           const businessAreaId = data.data[index].id;
           const businessareaData = await this.businessAreaRepository.findOne({
             where: { id: businessAreaId },
             relations: { BpService: true, servicePrice: true },
           });
-
-          if (this.monthDiff(businessareaData.expireDate, new Date()) > 3)
-            throw new HttpException('renewal period not allowed ', 500);
+          // commented for testing purpose
+          // if (this.monthDiff(businessareaData.expireDate, new Date()) > 3)
+          //   throw new HttpException('renewal period not allowed ', 500);
           if (
             businessareaData.BpService.key ===
               ServiceKeyEnum.goodsNewRegistration ||
@@ -1311,20 +1277,36 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             businessareaData.BpService.key ===
               ServiceKeyEnum.worksNewRegistration
           ) {
+            const key = await this.mapServiceType(businessAreaId, 'renewal');
             const renewalRange =
               await this.pricingService.findserviceByRangeAndKey(
-                businessareaData.BpService.key,
+                key,
                 businessareaData.servicePrice.valueFrom,
                 businessareaData.servicePrice.valueTo,
               );
-            const result = await this.generateInvoiceForServiceRenewal(
+
+            const { id, ...other } = data.data[index];
+            const oldBusiness = await this.businessAreaRepository.findOne(id);
+            const business = oldBusiness;
+            const service = await this.bpService.findBpWithServiceByKey(key);
+            business.id = undefined;
+            business.serviceId = service.serviceId;
+            business.priceRangeId = renewalRange[0].id;
+            const resu = await this.businessAreaRepository.save(business);
+
+            if (!resu)
+              throw new HttpException('business area update failed', 500);
+
+            const result = await this.generateInvoiceForServiceUpgrade(
               userInfo,
               renewalRange[0].id,
+              oldBusiness,
             );
           } else {
-            const result = await this.generateInvoiceForServiceRenewal(
+            const result = await this.generateInvoiceForServiceUpgrade(
               userInfo,
               businessareaData.priceRangeId,
+              businessareaData,
             );
           }
         }
@@ -1336,6 +1318,62 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     } catch (error) {
       console.log(error);
     }
+  }
+  async mapServiceType(businessAreaId, operationType: string) {
+    const businessAreaData = await this.businessAreaRepository.findOne({
+      where: { id: businessAreaId },
+      relations: { servicePrice: true, BpService: true },
+    });
+    let key = '';
+    if (operationType == 'renewal') {
+      switch (businessAreaData.BpService.key) {
+        case ServiceKeyEnum.goodsNewRegistration:
+          key = ServiceKeyEnum.goodsRenewal;
+          break;
+        case ServiceKeyEnum.worksNewRegistration:
+          key = ServiceKeyEnum.worksRenewal;
+          break;
+        case ServiceKeyEnum.servicesNewRegistration:
+          key = ServiceKeyEnum.servicesRenewal;
+          break;
+        case ServiceKeyEnum.goodsUpgrade:
+          key = ServiceKeyEnum.goodsRenewal;
+          break;
+        case ServiceKeyEnum.worksUpgrade:
+          key = ServiceKeyEnum.worksRenewal;
+          break;
+        case ServiceKeyEnum.servicesUpgrade:
+          key = ServiceKeyEnum.servicesRenewal;
+          break;
+        default:
+          break;
+      }
+    } else if (operationType == 'upgrade') {
+      switch (businessAreaData.BpService.key) {
+        case ServiceKeyEnum.goodsNewRegistration:
+          key = ServiceKeyEnum.goodsUpgrade;
+          break;
+        case ServiceKeyEnum.worksNewRegistration:
+          key = ServiceKeyEnum.worksUpgrade;
+          break;
+        case ServiceKeyEnum.servicesNewRegistration:
+          key = ServiceKeyEnum.servicesUpgrade;
+          break;
+        case ServiceKeyEnum.goodsRenewal:
+          key = ServiceKeyEnum.goodsUpgrade;
+          break;
+        case ServiceKeyEnum.worksRenewal:
+          key = ServiceKeyEnum.worksUpgrade;
+          break;
+        case ServiceKeyEnum.servicesRenewal:
+          key = ServiceKeyEnum.servicesUpgrade;
+          break;
+        default:
+          break;
+      }
+    }
+
+    return key;
   }
   monthDiff(expireDate: Date, today: Date): number {
     let months;
