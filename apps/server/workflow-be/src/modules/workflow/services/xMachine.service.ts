@@ -113,7 +113,7 @@ export class XMachineService {
                   remark: details.remark,
                   approver: details.approver,
                   at: String(Date.now()),
-                  stepId: params.id,
+                  stepId: params.currentId,
                 },
               ],
             };
@@ -158,8 +158,8 @@ export class XMachineService {
               {
                 type: 'recordAction',
                 params: {
-                  id: i < steps.length - 1 ? steps[i + 1].id : step.id,
-                  currentId: i < steps.length - 1 && step.id,
+                  id: i < steps.length - 1 ? steps[i + 1].id : null,
+                  currentId: step.id,
                   status:
                     i < steps.length - 1 ? `${steps[i + 1].name}` : 'Approved',
                 },
@@ -173,21 +173,9 @@ export class XMachineService {
               {
                 type: 'recordAction',
                 params: {
-                  id: i < steps.length - 1 ? steps[i + 1].id : step.id,
-                  status: i > 0 ? `${steps[i - 1].name}` : 'Rejected',
-                },
-              },
-            ],
-          },
-          [`${step.name}.Adjust`]: {
-            target: (context, event) => console.log({ event }),
-            actions: [
-              {
-                type: 'recordAction',
-                params: {
-                  id: i > 0 && i < steps.length - 1 ? steps[i + 1].id : step.id,
-                  status: steps[0].name,
-                  // i < steps.length - 1 ? `${steps[i + 1].name}` : 'Rejected',
+                  id: i == 0 ? null : steps[i - 1].id,
+                  currentId: step.id,
+                  status: i == 0 ? 'Rejected' : `${steps[i - 1].name}`,
                 },
               },
             ],
