@@ -37,3 +37,41 @@ function getUniqueColor(name: string): string {
   const colorCode: number = hashCode(name) % 0xffffff; // Limit to a range for RGB values
   return `#${('00000' + colorCode.toString(16)).slice(-6)}`; // Return a hex color code
 }
+
+//Date formatter
+export function formatDateTimeFromString(dateString: string): string | null {
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) {
+    return null; // Invalid date string
+  }
+
+  const months: string[] = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
+
+  const day: number = date.getDate();
+  const month: string = months[date.getMonth()];
+  const year: number = date.getFullYear();
+  const hours: number = date.getHours();
+  const minutes: number = date.getMinutes();
+  const period: string = hours >= 12 ? 'PM' : 'AM';
+  const twelveHourFormat: number = hours % 12 || 12; // Convert 24-hour to 12-hour format
+
+  const formattedDate = `${day.toString().padStart(2, '0')}-${month}-${year}`;
+  const formattedTime = `${twelveHourFormat}:${minutes
+    .toString()
+    .padStart(2, '0')}${period}`;
+
+  return `${formattedDate} ${formattedTime}`;
+}

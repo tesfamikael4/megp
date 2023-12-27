@@ -1,7 +1,7 @@
 import RequestDetail from '@/app/(features)/_components/application-list/details';
 
-const NewApplicationDetail = () => {
+const RenewalApplicationDetail = () => {
   return <RequestDetail />;
 };
 
-export default NewApplicationDetail;
+export default RenewalApplicationDetail;
