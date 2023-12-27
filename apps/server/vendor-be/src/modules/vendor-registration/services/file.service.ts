@@ -281,6 +281,7 @@ export class FileService {
     paymentReceiptDto: any,
   ) {
     try {
+      console.log('paymentReceiptDto paymentReceiptDto : ', paymentReceiptDto);
       const result = await this.isrVendorsRepository.findOne({
         where: { userId: userId, status: In(this.updateVendorEnums) },
       });
@@ -291,7 +292,7 @@ export class FileService {
       const filename = `${userId}/${fileUploadName}/${fileId}`;
       const bucket = 'megp';
       const metaData = {
-        'Content-Type': 'application/octet-stream',
+        'Content-Type': file.mimetype,
         'X-Amz-Meta-Testing': 1234,
       };
       const fname = paymentReceiptDto.fieldName;
@@ -468,7 +469,7 @@ export class FileService {
         'Content-Disposition',
         `attachment; filename=${fileId}_certificate.pdf`,
       );
-      result.pipe(res)
+      result.pipe(res);
       // const result = this.minioClient.presignedGetObject(
       //   this.bucketName,
       //   fileId,
@@ -481,7 +482,7 @@ export class FileService {
     }
   }
 
-  async getFile(userId, fielId, @Res() res: Response) {
+  async getFile(userId, fielId, fileUploadName, @Res() res: Response) {
     try {
       const fileUploadName = 'paymentReceipt';
       const filename = `${userId}/${fileUploadName}/${fielId}`;

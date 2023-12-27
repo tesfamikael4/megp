@@ -165,4 +165,15 @@ export class VendorRegistrationsController {
       areaOfBusinessInterest,
     );
   }
+  @UseGuards(JwtGuard)
+  @Post('generate-service-invoice-for-upgrade')
+  async generateServiceInvoiceForUpgrade(
+    @CurrentUser() userInfo: any,
+    @Body() areaOfBusinessInterest: any,
+  ) {
+    return await this.regService.getServiceInvoiceForUpgrade(
+      userInfo.id,
+      areaOfBusinessInterest,
+    );
+  }
 }
