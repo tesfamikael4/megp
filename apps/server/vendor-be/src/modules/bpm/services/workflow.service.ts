@@ -47,6 +47,7 @@ import { ActivityResponseDto } from '../dto/activities.dto';
 import { TaskResponse } from '../dto/task.dto';
 import { TaskTrackerResponse } from '../dto/task-tracker.dto';
 import { VendorRegistrationsService } from 'src/modules/vendor-registration/services/vendor-registration.service';
+import { BusinessAreaService } from 'src/modules/vendor-registration/services/business-area.service';
 @Injectable()
 export class WorkflowService {
   VENDOR_API_KEY: string;
@@ -65,6 +66,7 @@ export class WorkflowService {
     private readonly emailSerice: EmailService,
     @Inject(forwardRef(() => VendorRegistrationsService))
     private readonly vendorRegService: VendorRegistrationsService,
+    private readonly businessAreaService: BusinessAreaService
   ) {
     this.VENDOR_API_KEY =
       process.env.VENDOR_API_ACCESS_KEY ??
@@ -220,6 +222,7 @@ export class WorkflowService {
         await this.gotoNextStep(nextTaskdto, user);
       }
     }
+    workflow.businessArea = await this.businessAreaService.getBusinessAreaByInstanceId(nextCommand.instanceId);
     return workflow;
   }
 

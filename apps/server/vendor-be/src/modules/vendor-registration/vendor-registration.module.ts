@@ -82,7 +82,7 @@ import { ServicePricingModule } from '../pricing/pricing.module';
     HttpModule,
     ServicePricingModule,
   ],
-  exports: [VendorRegistrationsService, FileService],
+  exports: [VendorRegistrationsService, FileService, BusinessAreaService],
   providers: [
     ServicePricingService,
     HandlingCommonService,

@@ -34,7 +34,7 @@ export class UploadController {
   constructor(
     // private tusService: TusService,
     private fileService: FileService,
-  ) {}
+  ) { }
   // @Get('get-file/:fileName')
   // async getFile(
   //   @Param('fileName') fileName: string,
@@ -154,10 +154,11 @@ export class UploadController {
   async getCertificate(
     @Param('fileId') fileId: string,
     @CurrentUser() userInfo: any,
+    @Res() res
   ) {
     console.log('fileId', userInfo);
 
-    return await this.fileService.getCertificate(fileId, userInfo.id);
+    return await this.fileService.getCertificate(fileId, userInfo.id, res);
   }
 
   @Get('get-file/:fileId')

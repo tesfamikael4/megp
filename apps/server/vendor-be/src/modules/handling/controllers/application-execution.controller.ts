@@ -47,7 +47,7 @@ export class ApplicationExcutionController {
     private readonly bpService: BusinessProcessService,
     private readonly invoiceService: InvoiceService,
     private readonly vendorService: VendorRegistrationsService,
-  ) {}
+  ) { }
   @UseGuards(JwtGuard)
   @Get('email')
   async email(@Req() request: Request, @CurrentUser() user: any) {
