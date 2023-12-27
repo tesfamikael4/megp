@@ -291,6 +291,7 @@ export class FileService {
       const fileId = `${uniqueSuffix}_${file.originalname}`;
       const filename = `${userId}/${fileUploadName}/${fileId}`;
       const bucket = 'megp';
+      console.log('rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr : ', file.mimetype);
       const metaData = {
         'Content-Type': file.mimetype,
         'X-Amz-Meta-Testing': 1234,
@@ -484,7 +485,6 @@ export class FileService {
 
   async getFile(userId, fielId, fileUploadName, @Res() res: Response) {
     try {
-      const fileUploadName = 'paymentReceipt';
       const filename = `${userId}/${fileUploadName}/${fielId}`;
       const fileInfo = await this.minioClient.statObject('megp', filename);
       const contentType = fileInfo.metaData['content-type'];

@@ -167,6 +167,7 @@ export class UploadController {
     @Res() res: Response,
   ) {
     try {
+      console.log('dddddddddddddddddd');
       return this.fileService.getFile(userInfo.id, fileId, fileUploadName, res);
     } catch (error) {
       throw error;
