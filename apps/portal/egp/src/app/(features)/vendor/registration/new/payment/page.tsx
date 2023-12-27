@@ -32,8 +32,7 @@ import {
 import { paymentReceiptItemSchema } from '../../../../../../shared/schema/paymentReceiptItemSchema';
 import { useRouter } from 'next/navigation';
 import { NotificationService } from '../../../_components/notification';
-const VENDOR_URL =
-  process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api' + '/upload/get-file/';
+const VENDOR_URL = process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api';
 
 function Page() {
   const router = useRouter();
