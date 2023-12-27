@@ -158,7 +158,7 @@ export class VendorRegistrationsController {
   @Post('submit-service-renewal/:areaOfBusinessInterest')
   async submitServiceRenewal(
     @CurrentUser() userInfo: any,
-    @Param() areaOfBusinessInterest: string,
+    @Param('areaOfBusinessInterest') areaOfBusinessInterest: string,
   ) {
     const areaOfBusinessInterestData = areaOfBusinessInterest.split(',');
     return await this.regService.submitServiceRenewal(
