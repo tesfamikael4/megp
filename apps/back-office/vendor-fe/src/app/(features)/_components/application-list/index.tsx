@@ -23,7 +23,8 @@ import {
 } from '@/store/api/vendor_request_handler/new-registration-api';
 import { useRouter } from 'next/navigation';
 import RequestsSidebar from '../requests-sidebar';
-import { processCompanyName } from '../../util';
+import { formatDateTimeFromString, processCompanyName } from '../../util';
+import { Where } from '@megp/entity';
 
 const perPage = 15;
 
@@ -70,6 +71,64 @@ export default function ApplicationList({
       },
     });
   }, [page, serviceKey]);
+
+  const handleFilter = (filter) => {
+    setPage(1);
+    const where: Where[] = [];
+    if (filter.trackingNumber) {
+      where.push({
+        column: 'applicationNumber',
+        operator: '=',
+        value: filter.trackingNumber,
+      });
+    }
+    if (filter.customerName) {
+      where.push({
+        column: 'name',
+        operator: 'ILIKE',
+        value: filter.customerName,
+      });
+    }
+    if (filter.status) {
+      where.push({
+        column: 'status',
+        operator: '=',
+        value: filter.status,
+      });
+    }
+    if (filter.from) {
+      where.push({
+        column: 'submittedAt',
+        operator: '<=',
+        value: filter.from,
+      });
+
+      if (filter.to) {
+        where.push({
+          column: 'submittedAt',
+          operator: '>=',
+          value: filter.to,
+        });
+      } else {
+        where.push({
+          column: 'submittedAt',
+          operator: '>=',
+          value: new Date(),
+        });
+      }
+    }
+
+    // getVendorRequest({
+    //   serviceKey,
+    //   collectionQuery: {
+    //     take: 15,
+    //     skip: 0,
+    //     where: [
+    //       where
+    //     ]
+    //   }
+    // })
+  };
 
   if (!data) {
     return (
@@ -119,7 +178,17 @@ export default function ApplicationList({
           return (
             <Box
               key={index}
-              onClick={() => router.push(`/new/detail/${item.id}`)}
+              onClick={() =>
+                router.push(
+                  `/${
+                    title === 'Registration'
+                      ? 'new'
+                      : title === 'Renewal'
+                      ? 'renewal'
+                      : 'upgrade'
+                  }/detail/${item.id}`,
+                )
+              }
             >
               <Flex
                 direction="row"
@@ -169,7 +238,7 @@ export default function ApplicationList({
                     <Tooltip label="Executed time">
                       <IconClockHour2 size={18} />
                     </Tooltip>
-                    <Box>{item.submittedAt.split('T')[0]}</Box>
+                    <Box>{formatDateTimeFromString(item.submittedAt)}</Box>
                   </Flex>
                 </Flex>
               </Flex>
@@ -193,7 +262,7 @@ export default function ApplicationList({
         ) : null}
       </Section>
       <Box className="w-2/6">
-        <RequestsSidebar />
+        <RequestsSidebar handleFilter={handleFilter} />
       </Box>
     </Flex>
   );

@@ -79,7 +79,7 @@ export default function TaskHandler({
           id={`${requesterID as string}/${instanceID as string}`}
           className=""
           mode="view"
-          apiUrl={`${process.env.NEXT_PUBLIC_VENDOR_API}/api/`}
+          apiUrl={`${process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api/'}`}
         />
       </Flex>
     );
