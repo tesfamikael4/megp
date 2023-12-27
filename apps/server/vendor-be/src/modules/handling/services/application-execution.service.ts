@@ -100,6 +100,7 @@ export class ApplicationExcutionService {
       this.wiRepository,
       query,
     );
+    console.log("q", dataQuery);
     dataQuery
       .innerJoinAndSelect('workflow_instances.taskHandler', 'handler')
       .innerJoinAndSelect('handler.task', 'task')

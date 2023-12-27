@@ -30,4 +30,10 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
       relations: { servicePrice: true },
     });
   }
+  async getBusinessAreaByInstanceId(instanceId: string): Promise<BusinessAreaEntity> {
+    return this.businessAreaRepository.findOne({
+      where: { instanceId: instanceId }
+
+    });
+  }
 }

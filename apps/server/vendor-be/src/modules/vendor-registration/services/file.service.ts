@@ -458,14 +458,22 @@ export class FileService {
       throw error;
     }
   }
-  async getCertificate(filename: string, userId: string) {
+  async getCertificate(filename: string, userId: string, res: Response) {
     try {
       const fileUploadName = 'certificate';
       const fileId = `${userId}/${fileUploadName}/${filename}`;
-      const result = this.minioClient.presignedGetObject(
-        this.bucketName,
-        fileId,
+      const result = await this.minioClient.getObject('megp', fileId);
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader(
+        'Content-Disposition',
+        `attachment; filename=${fileId}_certificate.pdf`,
       );
+      result.pipe(res)
+      // const result = this.minioClient.presignedGetObject(
+      //   this.bucketName,
+      //   fileId,
+      // );
+
       return result;
     } catch (error) {
       console.log(error);

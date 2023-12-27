@@ -47,8 +47,9 @@ export class CertificateController {
     @Param('fileId') fileId: string,
     @Param('vendorId') vendorId: string,
     @CurrentUser() userInfo: any,
+    @Res() resp: Response
   ) {
     console.log('fileId', userInfo);
-    return await this.fileService.getCertificate(fileId, vendorId);
+    return await this.fileService.getCertificate(fileId, vendorId, resp);
   }
 }
