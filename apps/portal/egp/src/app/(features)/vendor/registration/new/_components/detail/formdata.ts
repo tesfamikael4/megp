@@ -48,5 +48,5 @@ export const formData: GetFormResponse = {
     previousPPDARegistrationCertificate: '',
     mSMECertificate: '',
   },
-  paymentReceipt: [],
+  paymentReceipt: null,
 };

@@ -4,7 +4,6 @@ import {
   PriceRangeResponse,
   CreateVendorIdRequest,
   CreateVendorIdResponse,
-  GetFormRequest,
   GetFormResponse,
   GetNCICDataResponse,
   GetFPPADataResponse,
@@ -12,6 +11,7 @@ import {
   AddFormRequest,
   GetVendorInfoResponse,
   GetActivitiesProgressResponse,
+  GetForRenewalVendorResponse,
 } from '@/models/vendorRegistration';
 import { PaymentReceiptItem } from '@/shared/schema/paymentReceiptItemSchema';
 import {
@@ -34,8 +34,19 @@ export const vendorRegistrationQuery = vendorRegistrationApi.injectEndpoints({
     getForm: builder.query<GetFormResponse, any>({
       query: () => `/vendor-registrations/get-vendor-by-vendorId`,
     }),
+    getForRenewalVendor: builder.query<GetForRenewalVendorResponse, any>({
+      query: () => `/vendor-registrations/get-approved-vendor-service-byUserId`,
+    }),
     getInvoice: builder.query<GetFormResponse, any>({
       query: () => `/vendor-registrations/get-isr-vendor-invoice-by-userId`,
+    }),
+    getRenewalInvoice: builder.query<GetFormResponse, String[]>({
+      query: (data) => ({
+        url: `/vendor-registrations/get-service-invoice-for-renewal/${data.join(
+          ',',
+        )}`,
+        method: 'GET',
+      }),
     }),
     createVendorId: builder.mutation<
       CreateVendorIdResponse,
@@ -103,6 +114,9 @@ export const vendorRegistrationQuery = vendorRegistrationApi.injectEndpoints({
         return {
           url: `/upload/get-attachment-pre-signed-object/${data.attachment}`,
           method: 'GET',
+          headers: {
+            // Set Content-Type to image/png for PNG images
+          },
         };
       },
     }),
@@ -151,6 +165,8 @@ export const {
   useGetActivitiesProgressQuery,
   useLazyUploadPaymentSlipQuery,
   useLazyGetPaymentSlipQuery,
+  useGetForRenewalVendorQuery,
+  useLazyGetRenewalInvoiceQuery,
 } = vendorRegistrationQuery;
 
 export const {

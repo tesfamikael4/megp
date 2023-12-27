@@ -97,10 +97,7 @@ export default function Page() {
               previousPPDARegistrationCertificate: '',
               mSMECertificate: '',
             },
-            paymentReceipt:
-              requestInfo.data.paymentReceipt == null
-                ? []
-                : requestInfo.data.paymentReceipt,
+            paymentReceipt: requestInfo.data.paymentReceipt,
           }}
         />
       ) : (

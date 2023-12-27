@@ -16,8 +16,7 @@ import {
   useLazyGetPaymentSlipQuery,
   useLazyUploadPaymentSlipQuery,
 } from '../../_api/query';
-import PaymentMethod from '../_components/payment/payment-method';
-import { usePrivilege } from '../_context/privilege-context';
+
 import FileUploader from '../../../_components/file-uploader/upload';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SubmitHandler, useForm } from 'react-hook-form';
@@ -29,53 +28,54 @@ import {
   invoiceArraySchema,
   invoiceDataSchema,
 } from '@/shared/schema/invoiceSchema';
-import { paymentReceiptItemSchema } from '../../../../../../shared/schema/paymentReceiptItemSchema';
+import {
+  paymentReceiptArraySchema,
+  paymentReceiptItemSchema,
+} from '../../../../../../shared/schema/paymentReceiptItemSchema';
+import { isUrl } from '@/shared/schema/commonSchema';
 import { useRouter } from 'next/navigation';
 import { NotificationService } from '../../../_components/notification';
-const VENDOR_URL =
-  process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api' + '/upload/get-file/';
+import PaymentMethod from '../../new/_components/payment/payment-method';
 
 function Page() {
   const router = useRouter();
-  const { checkAccess } = usePrivilege();
   const [invoiceSlipImageUrl, setInvoiceSlipImageUrl] = useState<string | null>(
     null,
   );
-
+  const [invoiceSlipImageSource, setInvoiceSlipImageSource] = useState<
+    string | null
+  >(null);
   const invoiceInfo = useGetInvoiceQuery(
     {},
     { refetchOnMountOrArgChange: true },
   );
   const [uploadFile, uploadFileInfo] = useLazyUploadPaymentSlipQuery();
-
+  const [getFile, getFileInfo] = useLazyGetPaymentSlipQuery();
   const { register, formState, setValue, watch, handleSubmit } =
     useForm<IPaymentSlipUploadSchema>({
       defaultValues: {
-        invoiceId: '',
-        serviceId: '',
-        transactionNumber: '',
+        invoiceId: '47e6c7a0-0365-4bc6-a7fa-0f54344d280e',
+        serviceId: 'bb6934e1-9706-1e1b-c02f-b35c3e6153a4',
+        transactionNumber: '1231231231',
         file: undefined,
       },
       resolver: zodResolver(paymentSlipUploadSchema),
     });
+  console.log(getFileInfo);
 
   const onSubmitHandler: SubmitHandler<IPaymentSlipUploadSchema> = (values) => {
+    console.log('Selected file:', values.file);
     uploadFile(values);
   };
 
   const handleFileChange = (file: File) => {
     setValue('file', file);
   };
-
   useEffect(() => {
     if (
-      invoiceInfo.data &&
       invoiceInfo.data?.paymentReceipt &&
       invoiceInfo.data?.paymentReceipt.attachment
     ) {
-      setInvoiceSlipImageUrl(
-        `${VENDOR_URL}/upload/get-file/${invoiceInfo.data?.paymentReceipt.attachment}`,
-      );
     }
 
     return () => {};
@@ -88,24 +88,26 @@ function Page() {
     ) {
       setValue('invoiceId', invoiceInfo.data?.invoice[0].id ?? '');
       setValue('serviceId', invoiceInfo.data?.invoice[0].serviceId ?? '');
-      if (invoiceInfo.data && invoiceInfo.data?.paymentReceipt) {
-        setValue(
-          'transactionNumber',
-          invoiceInfo.data?.paymentReceipt.transactionId ?? '',
-        );
-      }
     }
 
     return () => {};
   }, [invoiceInfo.data]);
 
   useEffect(() => {
-    if (paymentReceiptItemSchema.safeParse(uploadFileInfo.data).success) {
-      NotificationService.successNotification('Payed Successfully!');
-      router.push('doc');
+    if (getFileInfo.error) {
+      const errorResponse = getFileInfo.error as any;
+      isUrl(errorResponse.data) && setInvoiceSlipImageUrl(errorResponse.data);
+      setInvoiceSlipImageSource(errorResponse.data);
     }
+
+    if (getFileInfo.data) {
+      console.log(uploadFileInfo.data);
+      const errorResponse = getFileInfo.error as any;
+      isUrl(errorResponse.data) && setInvoiceSlipImageUrl(errorResponse.data);
+    }
+
     return () => {};
-  }, [invoiceInfo.data, uploadFileInfo.data]);
+  }, [getFileInfo.data, getFileInfo.error]);
 
   if (invoiceInfo.isLoading) {
     return (
@@ -167,11 +169,12 @@ function Page() {
                 placeholder="Choose File"
                 error={formState.errors.file && 'Payment slip is required'}
                 onChange={handleFileChange}
-                getImageUrl={invoiceSlipImageUrl}
+                getImageUrl={invoiceSlipImageSource}
+                onRemove={() => setInvoiceSlipImageUrl(null)}
               />
             </Stack>
             <Flex justify="end" className="gap-2 mt-4">
-              {checkAccess('payment') && <Button type="submit">Pay</Button>}
+              <Button type="submit">Pay</Button>
             </Flex>
           </form>
           <Flex className="min-w-[450px] flex-col border w-full">

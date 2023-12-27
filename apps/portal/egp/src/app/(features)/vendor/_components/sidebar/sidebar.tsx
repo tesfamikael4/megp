@@ -43,7 +43,7 @@ export const sidebarLinks: SidebarLinks[] = [
       },
       {
         label: 'Renew registration',
-        link: '/vendor/registration/renewal/basic',
+        link: '/vendor/registration/renewal/info',
       },
       {
         label: 'Upgrade registration',
@@ -54,7 +54,7 @@ export const sidebarLinks: SidebarLinks[] = [
         link: '/vendor/registration/msme',
       },
       {
-        label: 'Dbm registration',
+        label: 'Ibm registration',
         link: '/vendor/registration/dbm',
       },
       {
