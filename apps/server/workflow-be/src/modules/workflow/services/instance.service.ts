@@ -58,6 +58,7 @@ export class InstanceService extends EntityCrudService<Instance> {
         approver: details.approver,
         at: String(Date.now()),
         stepId: goto.id,
+        version: existingData.version + 1,
       });
       await this.repositoryInstance.update(existingData.id, {
         status: goto.status,

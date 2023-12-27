@@ -53,6 +53,11 @@ export class XMachineService {
       where: { activityId: activityId },
     });
 
+    const ver =
+      details.action == 'reject'
+        ? existingData.version + 1
+        : existingData.version;
+
     isWorkGroup = await this.checkGroup(existingData.stepId);
     if (isWorkGroup.value) {
       isAllChecked = await this.canContinue(isWorkGroup, activityId, details);
@@ -65,6 +70,7 @@ export class XMachineService {
             approver: details.approver,
             at: String(Date.now()),
             stepId: existingData.stepId,
+            version: existingData.version,
           });
           console.log({ metadata: existingData.metadata });
 
@@ -89,6 +95,7 @@ export class XMachineService {
               approver: details.approver,
               at: String(Date.now()),
               stepId: params.currentId,
+              version: ver,
             });
             console.log({ metadata: existingData.metadata });
 
@@ -118,6 +125,7 @@ export class XMachineService {
                   approver: details.approver,
                   at: String(Date.now()),
                   stepId: params.currentId,
+                  version: ver,
                 },
               ],
             };
@@ -155,9 +163,6 @@ export class XMachineService {
       stateMachineConfig.states[currentState] = {
         on: {
           [`${step.name}.Approved`]: {
-            // guard: and([
-            //   { type: 'isApproved', params: { status: 'Approved' } }
-            // ]),
             guard: 'isApproved',
             actions: [
               {
