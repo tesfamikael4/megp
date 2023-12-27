@@ -35,7 +35,7 @@ import { CollectionQuery } from 'src/shared/collection-query';
 @ApiResponse({ status: 500, description: 'Internal error' })
 @ApiExtraModels(DataResponseFormat)
 export class VendorRegistrationsController {
-  constructor(private readonly regService: VendorRegistrationsService) { }
+  constructor(private readonly regService: VendorRegistrationsService) {}
   @UseGuards(JwtGuard)
   @Get('get-isr-vendors')
   async getVendors() {
@@ -155,14 +155,15 @@ export class VendorRegistrationsController {
     );
   }
   @UseGuards(JwtGuard)
-  @Post('submit-service-renewal')
+  @Post('submit-service-renewal/:areaOfBusinessInterest')
   async submitServiceRenewal(
     @CurrentUser() userInfo: any,
-    @Body() areaOfBusinessInterest: any[],
+    @Param() areaOfBusinessInterest: string,
   ) {
+    const areaOfBusinessInterestData = areaOfBusinessInterest.split(',');
     return await this.regService.submitServiceRenewal(
       userInfo.id,
-      areaOfBusinessInterest,
+      areaOfBusinessInterestData,
     );
   }
 }
