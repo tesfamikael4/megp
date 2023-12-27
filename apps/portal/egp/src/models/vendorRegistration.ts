@@ -1,3 +1,4 @@
+import { ApprovedVendorServiceSchema } from '@/shared/schema/venderRenewalSchema';
 import { InvoiceData } from './vendorInvoice';
 export interface FormData {
   basic: {
@@ -75,7 +76,7 @@ export interface FormData {
     category: string;
     invoiceId: string;
     attachment: string;
-  }[];
+  } | null;
 }
 
 export interface AreasOfBusinessInterestType {
@@ -268,3 +269,5 @@ type TaskItem = {
   task: Task;
 };
 export type GetActivitiesProgressResponse = TaskItem[];
+
+export type GetForRenewalVendorResponse = ApprovedVendorServiceSchema;

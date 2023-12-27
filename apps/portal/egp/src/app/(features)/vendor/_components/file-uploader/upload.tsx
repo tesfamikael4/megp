@@ -1,8 +1,16 @@
 'use client';
-import React, { ChangeEvent, useEffect, useState } from 'react';
-import { ActionIcon, Flex, Image, Text } from '@mantine/core';
+import React, {
+  ChangeEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
+import { ActionIcon, Flex, Text } from '@mantine/core';
 import { IconPlus, IconTrash } from '@tabler/icons-react';
 import styles from './upload.module.scss';
+import { getCookie } from 'cookies-next';
+import { Image } from 'next/dist/client/image-component';
 
 interface FileUploaderProps {
   id: string;
@@ -25,20 +33,22 @@ const FileUploader: React.FC<FileUploaderProps> = ({
   getImageUrl,
   onRemove,
 }) => {
-  const [current, setCurrent] = useState<File | null>();
-
-  const previews = (file: File) => {
-    const convertImageUrl = URL.createObjectURL(file);
-    return (
-      <Image
-        maw={50}
-        src={convertImageUrl}
-        onLoad={() => URL.revokeObjectURL(convertImageUrl)}
-        radius="md"
-        alt=""
-      />
-    );
-  };
+  const [current, setCurrent] = useState<string | null>(null);
+  useEffect(() => {
+    const authToken = getCookie('token');
+    function fetchWithAuthentication(url, authToken) {
+      const headers = new Headers();
+      headers.set('Authorization', `Bearer ${authToken}`);
+      return fetch(url, { headers })
+        .then((response) => response.blob())
+        .then((blob) => URL.createObjectURL(blob))
+        .then((objectUrl) => setCurrent(objectUrl));
+    }
+    if (typeof getImageUrl === 'string') {
+      fetchWithAuthentication(getImageUrl, authToken);
+    }
+    return () => {};
+  }, [getImageUrl]);
 
   const handleUploadClick = () => {
     const fileInput = document.getElementById(
@@ -59,7 +69,9 @@ const FileUploader: React.FC<FileUploaderProps> = ({
       e.currentTarget.files[0]
     ) {
       const selectedFile = e.currentTarget.files[0];
-      setCurrent(selectedFile);
+      const convertImageUrl = URL.createObjectURL(selectedFile);
+
+      setCurrent(convertImageUrl);
 
       if (onChange) {
         onChange(selectedFile);
@@ -67,9 +79,6 @@ const FileUploader: React.FC<FileUploaderProps> = ({
     }
   };
   const handleRemove = () => {
-    if (getImageUrl && onRemove) {
-      onRemove();
-    }
     setCurrent(null);
   };
 
@@ -81,22 +90,27 @@ const FileUploader: React.FC<FileUploaderProps> = ({
         </Text>
 
         <Flex className={styles.inner}>
-          {getImageUrl ? (
+          {current ? (
             <Flex className={styles.cardImage}>
-              <Image maw={50} src={getImageUrl} radius="md" alt="" />
-              <ActionIcon
-                p={0}
-                miw={'1px'}
-                variant="transparent"
-                className={styles.trashIcon}
-                onClick={handleRemove}
-              >
-                <IconTrash size={16} color="red" />
-              </ActionIcon>
-            </Flex>
-          ) : current ? (
-            <Flex className={styles.cardImage}>
-              {current && previews(current)}
+              <Image
+                src={
+                  current ??
+                  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAQAAADa613fAAAAaElEQVR42u3PQREAAAwCoNm/9CL496ABuREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREWkezG8AZQ6nfncAAAAASUVORK5CYII='
+                }
+                alt="image"
+                width={50}
+                height={50}
+                onLoad={async (p) => {
+                  p.currentTarget.classList.add(
+                    'animate-pulse',
+                    'bg-slate-300',
+                  );
+                  URL.revokeObjectURL(current);
+                }}
+                onLoadingComplete={(p) => {
+                  p.classList.remove('animate-pulse', 'bg-slate-300');
+                }}
+              />
               <ActionIcon
                 p={0}
                 miw={'1px'}
@@ -108,7 +122,10 @@ const FileUploader: React.FC<FileUploaderProps> = ({
               </ActionIcon>
             </Flex>
           ) : (
-            ''
+            <Flex className={styles.cardAdd} onClick={handleUploadClick}>
+              <IconPlus size={18} />
+              <Text size="xs">{placeholder}</Text>
+            </Flex>
           )}
 
           <input
@@ -117,14 +134,6 @@ const FileUploader: React.FC<FileUploaderProps> = ({
             onChange={handleOnChange}
             style={{ display: 'none' }}
           />
-          {current || getImageUrl ? (
-            ''
-          ) : (
-            <Flex className={styles.cardAdd} onClick={handleUploadClick}>
-              <IconPlus size={18} />
-              <Text size="xs">{placeholder}</Text>
-            </Flex>
-          )}
         </Flex>
         <Text fz={'xs'} color="red">
           {error}

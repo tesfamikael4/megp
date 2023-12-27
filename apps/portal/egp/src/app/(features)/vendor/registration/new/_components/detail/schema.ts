@@ -42,7 +42,7 @@ export const bankAccountSchema = z.object({
     .max(34, { message: 'IBAN cannot exceed 34 characters' }),
   bankId: z.string(),
   hashValue: z.string(),
-  branchName: z.string(),
+  branchName: z.string().min(3, { message: 'Bank name is required ' }),
 });
 export const shareHoldersSchema = z.object({
   firstName: z
@@ -80,7 +80,7 @@ export const formDataSchema = z.object({
   basic: z.object({
     name: z
       .string()
-      .min(2, { message: 'Name must be at least 2 characters long' })
+      .min(2, { message: 'Name must be at l5ast 2 characters long' })
       .max(100, { message: 'Name cannot exceed 100 characters' }),
     businessType: z.string().optional(),
     origin: z.string(),

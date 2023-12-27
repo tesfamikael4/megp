@@ -1,23 +1,28 @@
 'use client';
-
 import { Box, Button, Card, Flex, Paper, Stack, Text } from '@mantine/core';
 import styles from './data-review.module.scss';
 import { useRouter } from 'next/navigation';
-import { useGetVendorQuery } from '../../../_api/query';
+import {
+  useGetForRenewalVendorQuery,
+  useGetVendorQuery,
+} from '../../../_api/query';
 import { useEffect } from 'react';
-import CardLayout from '../card-layout/card-layout';
 import { IconAddressBook, IconUserCheck } from '@tabler/icons-react';
 
 const DataReview = () => {
   const router = useRouter();
+  const requestRenewalVendorInfo = useGetForRenewalVendorQuery({});
   const requestInfo = useGetVendorQuery({});
-  useEffect(() => {
-    if (requestInfo.isError) {
-      // NotificationService.requestErrorNotification('Error on fetching data');
-    }
 
-    return () => {};
-  }, [requestInfo, router]);
+  // useEffect(() => {
+  //   if (requestInfo.isError) {
+  //     // NotificationService.requestErrorNotification('Error on fetching data');
+  //   }
+
+  //   return () => {};
+  // }, [requestInfo, router]);
+  if (requestInfo.data) {
+  }
 
   return (
     <Box className={styles.main}>
@@ -91,7 +96,7 @@ const DataReview = () => {
           </Stack>
         </Flex>
         <Flex justify={'end'} p={10}>
-          <Button>renewal</Button>
+          <Button onClick={() => router.push('ppda')}>renewal</Button>
         </Flex>
       </Paper>
     </Box>
