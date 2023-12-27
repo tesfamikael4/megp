@@ -187,16 +187,17 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       throw new HttpException('already Submitted ', 500);
     }
   }
-
   async addVendorInformations(data: any, userInfo: any): Promise<any> {
     if (
       data.initial.status == VendorStatusEnum.DRAFT ||
       data.initial.status == VendorStatusEnum.SAVE ||
       data.initial.status == VendorStatusEnum.SUBMIT
     ) {
+      if (data?.paymentReceipt == undefined || data?.paymentReceipt == null) {
+        data.paymentReceipt = [];
+      }
       const isrVendor = await this.fromInitialValue(data);
       const result = await this.isrVendorsRepository.save(isrVendor);
-
       if (!result) throw new HttpException(`adding_isr_failed`, 500);
       if (
         data.initial.level.trim() === VendorStatusEnum.PAYMENT &&

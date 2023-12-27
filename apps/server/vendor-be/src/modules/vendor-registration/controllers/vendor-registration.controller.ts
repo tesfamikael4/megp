@@ -144,8 +144,8 @@ export class VendorRegistrationsController {
     return await this.regService.getApprovedVendorServiceByUserId(userInfo.id);
   }
   @UseGuards(JwtGuard)
-  @Get('get-service-invoice-for-renewal')
-  async getServiceInvoiceForRenewal(
+  @Post('generate-service-invoice-for-renewal')
+  async generateServiceInvoiceForRenewal(
     @CurrentUser() userInfo: any,
     @Body() areaOfBusinessInterest: any,
   ) {
@@ -155,15 +155,14 @@ export class VendorRegistrationsController {
     );
   }
   @UseGuards(JwtGuard)
-  @Post('submit-service-renewal/:areaOfBusinessInterest')
+  @Post('submit-service-renewal')
   async submitServiceRenewal(
     @CurrentUser() userInfo: any,
-    @Param('areaOfBusinessInterest') areaOfBusinessInterest: string,
+    @Body() areaOfBusinessInterest: any[],
   ) {
-    const areaOfBusinessInterestData = areaOfBusinessInterest.split(',');
     return await this.regService.submitServiceRenewal(
       userInfo.id,
-      areaOfBusinessInterestData,
+      areaOfBusinessInterest,
     );
   }
 }
