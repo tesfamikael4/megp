@@ -95,13 +95,13 @@ export class XMachineService {
               approver: details.approver,
               at: String(Date.now()),
               stepId: params.currentId,
-              version: ver,
+              version: existingData.version,
             });
-            console.log({ metadata: existingData.metadata });
 
             await this.repositoryInstance.update(existingData.id, {
               status: params.status,
               stepId: params.id,
+              version: ver,
               metadata: existingData.metadata,
             });
             if (params.status == 'Approved') {
@@ -129,7 +129,6 @@ export class XMachineService {
                 },
               ],
             };
-            console.log({ metadata: data.metadata });
 
             await this.repositoryInstance.create(data);
           }
