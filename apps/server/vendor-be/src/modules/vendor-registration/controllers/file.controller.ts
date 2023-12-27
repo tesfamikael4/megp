@@ -34,7 +34,7 @@ export class UploadController {
   constructor(
     // private tusService: TusService,
     private fileService: FileService,
-  ) { }
+  ) {}
   // @Get('get-file/:fileName')
   // async getFile(
   //   @Param('fileName') fileName: string,
@@ -101,20 +101,18 @@ export class UploadController {
     const fileId = `${userInfo.id}/${fieldName}/${fileName}`;
     return this.fileService.getAttachmentpresignedObject(fileId);
   }
-  @Post('upload-supporting-document-attachment/:fieldName/:serviceId/')
+  @Post('upload-supporting-document-attachment/:fieldName')
   @UseInterceptors(FileInterceptor('attachmentUrl'))
   async uploadSupportingDocumentAttachment(
     @UploadedFile() file: Express.Multer.File,
     @CurrentUser() userInfo: any,
     @Param('fieldName') fieldName: string,
-    @Param('serviceId') serviceId: string,
   ) {
     if (!file) {
       return { error: 'File not received' };
     }
     const paymentReceiptDto = {
       fieldName: fieldName,
-      serviceId: serviceId,
     };
     const result = await this.fileService.uploadSupportingDocumentAttachment(
       file,
@@ -154,21 +152,22 @@ export class UploadController {
   async getCertificate(
     @Param('fileId') fileId: string,
     @CurrentUser() userInfo: any,
-    @Res() res
+    @Res() res,
   ) {
     console.log('fileId', userInfo);
 
     return await this.fileService.getCertificate(fileId, userInfo.id, res);
   }
 
-  @Get('get-file/:fileId')
+  @Get('get-file/:fileUploadName/:fileId')
   async getfile(
+    @Param('fileUploadName') fileUploadName: string,
     @Param('fileId') fileId: string,
     @CurrentUser() userInfo: any,
     @Res() res: Response,
   ) {
     try {
-      return this.fileService.getFile(userInfo.id, fileId, res);
+      return this.fileService.getFile(userInfo.id, fileId, fileUploadName, res);
     } catch (error) {
       throw error;
     }

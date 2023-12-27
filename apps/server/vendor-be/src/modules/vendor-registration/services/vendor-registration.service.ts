@@ -1275,7 +1275,68 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       console.log(error);
     }
   }
+  async getServiceInvoiceForUpgrade(userInfo: any, data: any) {
+    try {
+      if (
+        data?.status == VendorStatusEnum.DRAFT ||
+        data?.level == VendorStatusEnum.INFO
+      ) {
+        for (let index = 0; index < data.data?.length; index++) {
+          const resu = await this.businessAreaRepository.update(
+            data.data[index].id,
+            {
+              businessAreaState: {
+                status: VendorStatusEnum.DRAFT,
+                level: VendorStatusEnum.PAYMENT,
+              },
+            },
+          );
+          if (!resu)
+            throw new HttpException('business area update failed', 500);
+        }
+        for (let index = 0; index < data.data.length; index++) {
+          const businessAreaId = data.data[index].id;
+          const businessareaData = await this.businessAreaRepository.findOne({
+            where: { id: businessAreaId },
+            relations: { BpService: true, servicePrice: true },
+          });
 
+          if (this.monthDiff(businessareaData.expireDate, new Date()) > 3)
+            throw new HttpException('renewal period not allowed ', 500);
+          if (
+            businessareaData.BpService.key ===
+              ServiceKeyEnum.goodsNewRegistration ||
+            businessareaData.BpService.key ===
+              ServiceKeyEnum.servicesNewRegistration ||
+            businessareaData.BpService.key ===
+              ServiceKeyEnum.worksNewRegistration
+          ) {
+            const renewalRange =
+              await this.pricingService.findserviceByRangeAndKey(
+                businessareaData.BpService.key,
+                businessareaData.servicePrice.valueFrom,
+                businessareaData.servicePrice.valueTo,
+              );
+            const result = await this.generateInvoiceForServiceRenewal(
+              userInfo,
+              renewalRange[0].id,
+            );
+          } else {
+            const result = await this.generateInvoiceForServiceRenewal(
+              userInfo,
+              businessareaData.priceRangeId,
+            );
+          }
+        }
+      }
+      const invoices = await this.invoiceService.getActiveMyInvoices(
+        userInfo.id,
+      );
+      return invoices;
+    } catch (error) {
+      console.log(error);
+    }
+  }
   monthDiff(expireDate: Date, today: Date): number {
     let months;
     months = (today.getFullYear() - expireDate.getFullYear()) * 12;
