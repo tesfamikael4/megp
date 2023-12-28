@@ -19,6 +19,7 @@ import {
   CollectionQuery,
   QueryConstructor,
   FilterOperators,
+  decodeCollectionQuery,
 } from 'src/shared/collection-query';
 import { PostBudgetPlanTimelineService } from 'src/modules/post-budget-plan/services/post-budget-plan-timeline.service';
 import { PostBudgetRequisitionerService } from 'src/modules/post-budget-plan/services/post-budget-requisitioner.service';
@@ -28,6 +29,7 @@ import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 import { PostBudgetRequisitioner } from 'src/entities/post-budget-plan-requisitioner.entity';
 import { PostProcurementMechanism } from 'src/entities/post-procurement-mechanism.entity';
 import { ExtraCrudService } from 'src/shared/service';
+import { SelectQueryBuilder } from 'typeorm';
 
 @Injectable()
 export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
@@ -40,13 +42,6 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
     private readonly preBudgetItemsRepository: Repository<PreBudgetPlanItems>,
     @Inject('PLANNING_RMQ_SERVICE')
     private readonly planningRMQClient: ClientProxy,
-
-    private readonly postBudgetPlanService: PostBudgetPlanService,
-    private readonly postBudgetPlanActivityService: PostBudgetPlanActivityService,
-    private readonly postBudgetPlanItemService: PostBudgetPlanItemService,
-    private readonly postBudgetPlanTimelineService: PostBudgetPlanTimelineService,
-    private readonly postBudgetRequisitionerService: PostBudgetRequisitionerService,
-    private readonly postProcurementMechanismService: PostProcurementMechanismService,
 
     @Inject(REQUEST)
     private readonly request: Request,
@@ -61,7 +56,9 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
     return item;
   }
 
-  async findPreBudgetPlans(organizationId: string, query: CollectionQuery) {
+  async findPreBudgetPlans(organizationId: string, q: string) {
+    const query = decodeCollectionQuery(q);
+
     query.includes.push('app');
     query.where.push([
       {
@@ -88,6 +85,16 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
 
   async getAnalytics(preBudgetPlanID: string) {
     const analytics = {};
+    const queryBuilder: SelectQueryBuilder<PreBudgetPlan> =
+      this.repositoryPreBudgetPlan.createQueryBuilder('preBudgetPlan');
+
+    const result = await queryBuilder
+      .leftJoinAndSelect(
+        'preBudgetPlan.preBudgetPlanActivities',
+        'preBudgetPlanActivities',
+      )
+      .where('preBudgetPlan.id = :value', { value: preBudgetPlanID })
+      .getOne();
 
     const activities = await this.preBudgetActivityRepository.find({
       where: { preBudgetPlanId: preBudgetPlanID },
@@ -97,7 +104,7 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
     for (const act of activities) {
       act.preProcurementMechanisms?.map((item) => item.targetGroup);
     }
-    return {};
+    return result.preBudgetPlanActivities;
   }
 
   async copySelectedPreToPost(data: any): Promise<void> {
