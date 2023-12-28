@@ -12,12 +12,17 @@ import {
   GetVendorInfoResponse,
   GetActivitiesProgressResponse,
   GetForRenewalVendorResponse,
+  PostForRenewalVendorResponse,
+  PostForRenewalVendorRequest,
+  RenewalInvoiceRenewalVendorResponse,
+  RenewalInvoiceRenewalVendorRequest,
 } from '@/models/vendorRegistration';
 import { PaymentReceiptItem } from '@/shared/schema/paymentReceiptItemSchema';
 import {
   IPaymentSlipUploadResponseSchema,
   IPaymentSlipUploadSchema,
 } from '@/shared/schema/paymentSlipUploadSchema';
+import { ISupportingDocUploadSchema } from '@/shared/schema/supportingDocUploadSchema';
 import {
   vendorDataGetawayApi,
   vendorRegistrationApi,
@@ -28,24 +33,40 @@ export const vendorRegistrationQuery = vendorRegistrationApi.injectEndpoints({
     getVendor: builder.query<GetFormResponse, any>({
       query: () => `/vendor-registrations/get-isr-vendor-by-userId`,
     }),
+    getVendorOnDemand: builder.query<GetFormResponse, any>({
+      query: () => `/vendor-registrations/get-isr-vendor-by-userId`,
+    }),
     getVendorInfo: builder.query<GetVendorInfoResponse, any>({
       query: () => `/vendor-registrations/get-isr-vendor-info-by-userId`,
     }),
     getForm: builder.query<GetFormResponse, any>({
       query: () => `/vendor-registrations/get-vendor-by-vendorId`,
     }),
-    getForRenewalVendor: builder.query<GetForRenewalVendorResponse, any>({
-      query: () => `/vendor-registrations/get-approved-vendor-service-byUserId`,
-    }),
     getInvoice: builder.query<GetFormResponse, any>({
       query: () => `/vendor-registrations/get-isr-vendor-invoice-by-userId`,
     }),
-    getRenewalInvoice: builder.query<GetFormResponse, String[]>({
+    getForRenewalVendor: builder.query<GetForRenewalVendorResponse, any>({
+      query: () => `/vendor-registrations/get-approved-vendor-service-byUserId`,
+    }),
+    PostRenewalVendor: builder.query<GetForRenewalVendorResponse, any>({
+      query: () => `/vendor-registrations/submit-service-renewal`,
+    }),
+
+    postRenewalInvoice: builder.query<any, PostForRenewalVendorRequest>({
       query: (data) => ({
-        url: `/vendor-registrations/get-service-invoice-for-renewal/${data.join(
-          ',',
-        )}`,
-        method: 'GET',
+        url: `/vendor-registrations/generate-service-invoice-for-renewal`,
+        method: 'POST',
+        body: data,
+      }),
+    }),
+    getRenewalInvoice: builder.query<
+      RenewalInvoiceRenewalVendorResponse,
+      RenewalInvoiceRenewalVendorRequest
+    >({
+      query: (data) => ({
+        url: `/vendor-registrations/generate-service-invoice-for-renewal`,
+        method: 'POST',
+        body: data,
       }),
     }),
     createVendorId: builder.mutation<
@@ -109,6 +130,20 @@ export const vendorRegistrationQuery = vendorRegistrationApi.injectEndpoints({
         };
       },
     }),
+    uploadSupportingDoc: builder.query<
+      IPaymentSlipUploadResponseSchema,
+      ISupportingDocUploadSchema
+    >({
+      query(data) {
+        const formData = new FormData();
+        formData.append('attachmentUrl', data.file);
+        return {
+          url: `/upload/upload-supporting-document-attachment/${data.fieldName}`,
+          method: 'POST',
+          body: formData,
+        };
+      },
+    }),
     getPaymentSlip: builder.query<string, PaymentReceiptItem>({
       query(data) {
         return {
@@ -155,6 +190,7 @@ export const vendorDataGetawayQuery = vendorDataGetawayApi.injectEndpoints({
 export const {
   useGetFormQuery,
   useGetVendorQuery,
+  useLazyGetVendorOnDemandQuery,
   useGetVendorInfoQuery,
   useGetInvoiceQuery,
   useCreateVendorIdMutation,
@@ -164,9 +200,11 @@ export const {
   useGetPriceRangeQuery,
   useGetActivitiesProgressQuery,
   useLazyUploadPaymentSlipQuery,
+  useLazyUploadSupportingDocQuery,
   useLazyGetPaymentSlipQuery,
   useGetForRenewalVendorQuery,
-  useLazyGetRenewalInvoiceQuery,
+  useGetRenewalInvoiceQuery,
+  useLazyPostRenewalInvoiceQuery,
 } = vendorRegistrationQuery;
 
 export const {

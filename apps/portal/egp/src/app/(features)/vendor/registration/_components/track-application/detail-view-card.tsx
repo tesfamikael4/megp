@@ -6,8 +6,10 @@ import {
   Box,
   Button,
   Card,
+  Flex,
   Paper,
   Progress,
+  Text,
 } from '@mantine/core';
 import { IconArrowLeft } from '@tabler/icons-react';
 import ProgressBar from './progressBar';
@@ -21,7 +23,7 @@ interface Props {
 const badgeColor: { [key: string]: string } = {
   Rejected: 'red.6',
   Submitted: 'green.8',
-  Adjust: 'yellow.6',
+  Adjustment: 'yellow.6',
   Completed: 'green.8',
   Pending: 'blue.8',
 };
@@ -30,9 +32,13 @@ const DetailViewCard: React.FC<Props> = ({ data, close }) => {
   return (
     <Paper shadow="xs" className={styles.card}>
       <Box className={styles.cardHeader}>
-        <ActionIcon variant="transparent" onClick={close}>
-          <IconArrowLeft size={18} />
-        </ActionIcon>
+        <Flex gap={'xs'}>
+          <ActionIcon variant="transparent" onClick={close}>
+            <IconArrowLeft size={18} />
+          </ActionIcon>
+          <Text fz={'sm'}>{data.applicationNumber}</Text>
+        </Flex>
+
         <Badge size="sm" color={badgeColor[data.status]}>
           {data.status}
         </Badge>

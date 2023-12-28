@@ -51,9 +51,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
   }, [getImageUrl]);
 
   const handleUploadClick = () => {
-    const fileInput = document.getElementById(
-      'file-uploader-input',
-    ) as HTMLInputElement | null;
+    const fileInput = document.getElementById(id) as HTMLInputElement | null;
 
     // Check if the file input element exists
     if (fileInput) {
@@ -93,6 +91,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
           {current ? (
             <Flex className={styles.cardImage}>
               <Image
+                id={id}
                 src={
                   current ??
                   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAQAAADa613fAAAAaElEQVR42u3PQREAAAwCoNm/9CL496ABuREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREREWkezG8AZQ6nfncAAAAASUVORK5CYII='
@@ -130,7 +129,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
 
           <input
             type="file"
-            id="file-uploader-input"
+            id={id}
             onChange={handleOnChange}
             style={{ display: 'none' }}
           />

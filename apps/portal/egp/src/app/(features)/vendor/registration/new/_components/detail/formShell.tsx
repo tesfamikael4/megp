@@ -94,14 +94,13 @@ const RegistrationForm = ({
   const { checkAccess, lockElements, updateAccess } = usePrivilege();
   const [submitTrigger, submitRequestInfo] = useAddFormMutation();
   const [saveAsDraftTrigger, saveAsDraftRequestInfo] = useAddFormMutation();
+  const router = useRouter();
 
   useEffect(() => {
-    return () => {
-      updateAccess('detail');
-    };
-  }, [updateAccess, vendorInfo.level]);
+    updateAccess(vendorInfo.level);
 
-  const router = useRouter();
+    return () => {};
+  }, [updateAccess, vendorInfo.level]);
 
   const extendedRegister = (
     name: any,
