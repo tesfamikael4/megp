@@ -15,26 +15,26 @@ export const DetailActivity = ({ cell }: any) => {
       key: 'Description',
       value: cell.description,
     },
-    {
-      key: 'Method',
-      value: cell.procurementMethod,
-    },
-    {
-      key: 'Type',
-      value: cell.procurementType,
-    },
-    {
-      key: 'Funding Source',
-      value: cell.fundingSource,
-    },
+    // {
+    //   key: 'Method',
+    //   value: cell.procurementMethod,
+    // },
+    // {
+    //   key: 'Type',
+    //   value: cell.procurementType,
+    // },
+    // {
+    //   key: 'Funding Source',
+    //   value: cell.fundingSource,
+    // },
     {
       key: 'Currency',
       value: cell.currency,
     },
-    {
-      key: 'Supplier Target Group',
-      value: cell.preference,
-    },
+    // {
+    //   key: 'Supplier Target Group',
+    //   value: cell.preference,
+    // },
     {
       key: 'Total Estimated Amount',
       value: cell.estimatedAmount.toLocaleString('en-US', {
