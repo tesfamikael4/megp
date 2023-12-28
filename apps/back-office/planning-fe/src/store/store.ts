@@ -4,6 +4,7 @@ import { preBudgetPlanApi } from './api/pre-budget-plan/pre-budget-plan.api';
 import { postBudgetPlanApi } from './api/post-budget-plan/post-budget-plan.api';
 import { administrationApi } from './api/administration/administration.api';
 import { iamApi } from './api/iam/iam.api';
+import { workflowApi } from './api/workflow/workflow.api';
 
 const { reducers, middleware } = entityApi;
 
@@ -14,6 +15,7 @@ export const store = configureStore({
     [postBudgetPlanApi.reducerPath]: postBudgetPlanApi.reducer,
     [administrationApi.reducerPath]: administrationApi.reducer,
     [iamApi.reducerPath]: iamApi.reducer,
+    [workflowApi.reducerPath]: workflowApi.reducer,
   },
   devTools: process.env.NODE_ENV !== 'production',
   middleware: (getDefaultMiddleware) =>
@@ -23,6 +25,7 @@ export const store = configureStore({
       postBudgetPlanApi.middleware,
       administrationApi.middleware,
       iamApi.middleware,
+      workflowApi.middleware,
     ]),
 });
 

@@ -1,13 +1,12 @@
 import { encodeCollectionQuery } from '@megp/entity';
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-
+import { createApi } from '@reduxjs/toolkit/query/react';
+import { baseQuery } from '@/store/base-query';
 export const administrationApi = createApi({
   reducerPath: 'administrationApi',
   refetchOnFocus: true,
-  baseQuery: fetchBaseQuery({
-    baseUrl:
-      process.env.NEXT_PUBLIC_ADMINISTRATION_API ?? '/administration/api/',
-  }),
+  baseQuery: baseQuery(
+    process.env.NEXT_PUBLIC_ADMINISTRATION_API ?? '/administration/api/',
+  ),
   endpoints: (builder) => ({
     getItemMaster: builder.query<any, any>({
       query: (collectionQuery) => {
