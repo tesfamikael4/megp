@@ -5,6 +5,7 @@ import { APPService } from '../services/app.service';
 import { EntityCrudOptions } from 'src/shared/types/crud-option.type';
 import { EntityCrudController } from 'src/shared/controller';
 import { CreateAPPDto, UpdateAPPDto } from '../dtos/app.dto';
+import { CurrentUser } from 'src/shared/authorization';
 
 const options: EntityCrudOptions = {
   createDto: CreateAPPDto,
@@ -20,7 +21,9 @@ export class APPController extends EntityCrudController<APP>(options) {
 
   @Post('auto-create')
   @ApiTags('apps')
-  async autoCreate(@Body() create: any): Promise<APP> {
+  async autoCreate(@Body() create: any, @CurrentUser() user): Promise<APP> {
+    create.organizationId = user.organization.id;
+
     return await this.appService.autoCreate(create);
   }
 }
