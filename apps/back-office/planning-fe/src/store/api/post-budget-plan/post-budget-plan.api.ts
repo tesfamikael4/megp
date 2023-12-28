@@ -1,5 +1,6 @@
+import { baseQuery } from '@/store/base-query';
 import { encodeCollectionQuery } from '@megp/entity';
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi } from '@reduxjs/toolkit/query/react';
 
 export const postBudgetPlanApi = createApi({
   reducerPath: 'postBudgetPlanApi',
@@ -10,9 +11,9 @@ export const postBudgetPlanApi = createApi({
     'post-budget-disbursement',
   ],
   refetchOnFocus: true,
-  baseQuery: fetchBaseQuery({
-    baseUrl: process.env.NEXT_PUBLIC_PLANNING_API ?? '/planning/api/',
-  }),
+  baseQuery: baseQuery(
+    process.env.NEXT_PUBLIC_PLANNING_API ?? '/planning/api/',
+  ),
   endpoints: (builder) => ({
     getPostBudgetPlans: builder.query<any, null>({
       query: (collectionQuery) => {

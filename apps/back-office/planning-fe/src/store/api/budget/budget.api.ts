@@ -1,12 +1,13 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { baseQuery } from '@/store/base-query';
+import { createApi } from '@reduxjs/toolkit/query/react';
 
 export const budgetsApi = createApi({
   reducerPath: 'budgetsApi',
   tagTypes: ['budgets'],
   refetchOnFocus: true,
-  baseQuery: fetchBaseQuery({
-    baseUrl: process.env.NEXT_PUBLIC_PLANNING_API ?? '/planning/api/',
-  }),
+  baseQuery: baseQuery(
+    process.env.NEXT_PUBLIC_PLANNING_API ?? '/planning/api/',
+  ),
   endpoints: (builder) => ({
     bulkCreate: builder.mutation<any, any>({
       query: (data) => ({
