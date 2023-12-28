@@ -23,15 +23,6 @@ export class BudgetYear extends OrgAudit {
   })
   app: APP;
 
-  @OneToOne(
-    () => PostBudgetPlanDisbursement,
-    (postBudgetPlanDisbursement) => postBudgetPlanDisbursement.budgetYear,
-    {
-      cascade: true,
-    },
-  )
-  postBudgetPlanDisbursement: PostBudgetPlanDisbursement;
-
   @Column()
   name: string;
 

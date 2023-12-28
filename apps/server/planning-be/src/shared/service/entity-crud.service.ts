@@ -7,7 +7,10 @@ import { DataResponseFormat } from '../api-data';
 export class EntityCrudService<T extends ObjectLiteral> {
   constructor(private readonly repository: Repository<T>) {}
 
-  async create(itemData: DeepPartial<T>, req?: any): Promise<T> {
+  async create(itemData: DeepPartial<any>, req?: any): Promise<any> {
+    if (req?.user?.organization) {
+      itemData.organizationId = req.user.organization.id;
+    }
     const item = this.repository.create(itemData);
     await this.repository.insert(item);
     return item;
