@@ -42,7 +42,10 @@ export function FormDetail({ mode }: FormDetailProps) {
         {
           message: 'Name must be unique among existing tag names',
         },
-      ),
+      )
+      .refine((value) => /^[A-Za-z ]+$/.test(value), {
+        message: 'Tag name must contain only alphabetic characters',
+      }),
   });
 
   const {
@@ -65,13 +68,14 @@ export function FormDetail({ mode }: FormDetailProps) {
 
   const onCreate = async (data) => {
     try {
-      const result = await create(data).unwrap();
+      const result = await create(data);
       if ('data' in result) {
         router.push(`/tag/${result?.data?.id}`);
       }
       notifications.show({
         message: 'tag created successfully',
         title: 'Success',
+        color: 'green',
       });
     } catch (err) {
       notifications.show({
@@ -87,6 +91,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       notifications.show({
         message: 'tag updated successfully',
         title: 'Success',
+        color: 'green',
       });
     } catch {
       notifications.show({
@@ -102,6 +107,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       notifications.show({
         message: 'tag deleted successfully',
         title: 'Success',
+        color: 'green',
       });
       router.push('/tag');
     } catch (err) {
