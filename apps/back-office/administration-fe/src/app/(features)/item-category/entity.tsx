@@ -22,11 +22,9 @@ export function Entity({
       mode: 'list',
       entity: 'item-Categories',
       primaryKey: 'id',
-      title: 'item-Categories',
-      hasAdd: true,
-      pagination: true,
-      searchable: true,
-      sortable: true,
+      title: 'Item-Categories',
+      // hasAdd: true,
+
       onDetail: (selected: Measurement) => {
         route.push(`/item-category/${selected.id}`);
       },
@@ -37,6 +35,9 @@ export function Entity({
       onSearch: (search) => {
         logger.log('search', search);
       },
+      pagination: true,
+      searchable: true,
+      sortable: true,
 
       columns: [
         {

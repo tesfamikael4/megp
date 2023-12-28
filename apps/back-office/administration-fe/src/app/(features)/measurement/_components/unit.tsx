@@ -58,10 +58,10 @@ export function Unit({
         measurementId: id?.toString(),
       });
 
-      notify('Success', 'Unit created successfully');
+      notify('Success', 'Unit of Measurement Created Successfully');
       handleCloseModal();
     } catch (err) {
-      notify('Error', 'Errors in creating unit.');
+      notify('Error', 'Error in Creating Unit of Measurement.');
     }
   };
 
@@ -72,10 +72,10 @@ export function Unit({
         id: selected?.id,
       });
 
-      notify('Success', 'Unit updated successfully');
+      notify('Success', 'Unit of Measurement Updated Successfully');
       handleCloseModal();
     } catch {
-      notify('Error', 'Errors in updating unit.');
+      notify('Error', 'Error in Updating Unit of Measurement.');
     }
   };
 
@@ -110,7 +110,7 @@ export function Unit({
       />
       <TextInput
         // withAsterisk
-        label="Short Name"
+        label="Abbreviation"
         {...register('shortName')}
         error={errors?.key ? errors?.key?.message?.toString() : ''}
         // required

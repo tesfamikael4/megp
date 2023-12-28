@@ -57,14 +57,18 @@ export function FormDetail({ mode }: FormDetailProps) {
   } = useListQuery({});
   const onCreate = async (data) => {
     try {
-      await create(data);
+      const result = await create(data);
+      if ('data' in result) {
+        router.push(`/item-category/${result?.data?.id}`);
+      }
       notifications.show({
-        message: 'item-Categories created successfully',
+        message: 'Item-Category created successfully',
         title: 'Success',
+        color: 'green',
       });
     } catch (err) {
       notifications.show({
-        message: 'errors in deleting item-Categories.',
+        message: 'errors in deleting Item-Category.',
         title: 'Error',
         color: 'red',
       });
@@ -74,12 +78,13 @@ export function FormDetail({ mode }: FormDetailProps) {
     try {
       await update({ ...data, id: id?.toString() });
       notifications.show({
-        message: 'item-Categories updated successfully',
+        message: 'Item-Category Updated successfully',
         title: 'Success',
+        color: 'green',
       });
     } catch {
       notifications.show({
-        message: 'errors in updating item-Categories.',
+        message: 'Error in Updating Item-Category.',
         title: 'Error',
         color: 'red',
       });
@@ -89,13 +94,13 @@ export function FormDetail({ mode }: FormDetailProps) {
     try {
       await remove(id?.toString()).unwrap();
       notifications.show({
-        message: 'item-Categories deleted successfully',
+        message: 'Item-Category Deleted Successfully',
         title: 'Success',
       });
       router.push('/item-Category');
     } catch (err) {
       notifications.show({
-        message: 'errors in deleting item-Categories.',
+        message: 'Error in Deleting Item-Category.',
         title: 'Error',
         color: 'red',
       });
@@ -104,14 +109,18 @@ export function FormDetail({ mode }: FormDetailProps) {
   const onReset = async () => {
     reset({ ...defaultValues });
   };
+  const defaultName = listData?.items?.find(
+    (item) => item.id === selected?.parentId,
+  );
+  const parentName = defaultName?.name || '';
   useEffect(() => {
     if (mode == 'detail' && selectedSuccess && selected !== undefined) {
       reset({
         name: selected?.name,
-        parentId: selected?.parentId,
+        parentId: parentName,
       });
     }
-  }, [mode, reset, selected, selectedSuccess]);
+  }, [mode, reset, selected, selectedSuccess, parentName]);
 
   return (
     <Stack pos="relative">

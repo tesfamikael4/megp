@@ -16,7 +16,7 @@ export function Entity({ children }: { children: React.ReactElement }) {
       mode: 'list',
       entity: 'currencies',
       primaryKey: 'id',
-      title: 'currencies',
+      title: 'Currencies',
       hasAdd: true,
       pagination: true,
       searchable: true,
