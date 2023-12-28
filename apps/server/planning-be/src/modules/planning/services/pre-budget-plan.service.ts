@@ -15,8 +15,11 @@ import { DataResponseFormat } from 'src/shared/api-data';
 import { PostBudgetPlanService } from 'src/modules/post-budget-plan/services/post-budget-plan.service';
 import { PostBudgetPlanActivityService } from 'src/modules/post-budget-plan/services/post-budget-plan-activity.service';
 import { PostBudgetPlanItemService } from 'src/modules/post-budget-plan/services/post-budget-plan-items.service';
-import { ExtraCrudService } from 'src/shared/service';
-import { CollectionQuery, QueryConstructor } from 'src/shared/collection-query';
+import {
+  CollectionQuery,
+  QueryConstructor,
+  FilterOperators,
+} from 'src/shared/collection-query';
 import { PostBudgetPlanTimelineService } from 'src/modules/post-budget-plan/services/post-budget-plan-timeline.service';
 import { PostBudgetRequisitionerService } from 'src/modules/post-budget-plan/services/post-budget-requisitioner.service';
 import { PostProcurementMechanismService } from 'src/modules/post-budget-plan/services/post-procurement-mechanism.service';
@@ -24,6 +27,7 @@ import { REQUEST } from '@nestjs/core';
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 import { PostBudgetRequisitioner } from 'src/entities/post-budget-plan-requisitioner.entity';
 import { PostProcurementMechanism } from 'src/entities/post-procurement-mechanism.entity';
+import { ExtraCrudService } from 'src/shared/service';
 
 @Injectable()
 export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
@@ -57,8 +61,15 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
     return item;
   }
 
-  async findPreBudgetPlans(query: CollectionQuery) {
+  async findPreBudgetPlans(organizationId: string, query: CollectionQuery) {
     query.includes.push('app');
+    query.where.push([
+      {
+        column: 'organizationId',
+        value: organizationId,
+        operator: FilterOperators.EqualTo,
+      },
+    ]);
     const dataQuery = QueryConstructor.constructQuery<PreBudgetPlan>(
       this.repositoryPreBudgetPlan,
       query,

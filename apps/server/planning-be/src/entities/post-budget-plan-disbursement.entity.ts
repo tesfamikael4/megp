@@ -28,12 +28,8 @@ export class PostBudgetPlanDisbursement extends OrgAudit {
   @JoinColumn({ name: 'postBudgetPlanActivityId' })
   public postBudgetPlanActivity: PostBudgetPlanActivity;
 
-  @OneToOne(() => BudgetYear, (budgetYear) => budgetYear.budget)
-  @JoinColumn({ name: 'budget_year' })
-  public budgetYear: BudgetYear;
-
   @Column()
-  budgetYearName: string;
+  budgetYear: string;
 
   @Column()
   quarter: string;
