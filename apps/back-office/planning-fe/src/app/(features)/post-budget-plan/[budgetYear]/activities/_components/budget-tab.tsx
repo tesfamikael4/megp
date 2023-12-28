@@ -1,4 +1,5 @@
 import {
+  Accordion,
   Box,
   Button,
   Divider,
@@ -37,10 +38,10 @@ export const BudgetTab = () => {
   } = useGetPostBudgetDisbursementQuery(id as string);
   const config: TableConfig<any> = {
     columns: [
-      {
-        header: 'Budget Year',
-        accessorKey: 'budgetYearName',
-      },
+      // {
+      //   header: 'Budget Year',
+      //   accessorKey: 'budgetYear',
+      // },
       {
         header: 'Quarter',
         accessorKey: 'quarter',
@@ -59,47 +60,49 @@ export const BudgetTab = () => {
   >([
     {
       budgetYearId: budgetYearWithApp?.items?.[0].app.budgetYearId,
-      budgetYearName: budgetYearWithApp?.items?.[0].app.budgetYear,
+      budgetYear: budgetYearWithApp?.items?.[0].app.budgetYear,
       amount: 0,
       quarter: '1st Quarter',
       order: 0,
     },
     {
       budgetYearId: budgetYearWithApp?.items?.[0].app.budgetYearId,
-      budgetYearName: budgetYearWithApp?.items?.[0].app.budgetYear,
+      budgetYear: budgetYearWithApp?.items?.[0].app.budgetYear,
       amount: 0,
       quarter: '2nd Quarter',
-      order: 0,
+      order: 1,
     },
     {
       budgetYearId: budgetYearWithApp?.items?.[0].app.budgetYearId,
-      budgetYearName: budgetYearWithApp?.items?.[0].app.budgetYear,
+      budgetYear: budgetYearWithApp?.items?.[0].app.budgetYear,
       amount: 0,
       quarter: '3rd Quarter',
-      order: 0,
+      order: 2,
     },
     {
       budgetYearId: budgetYearWithApp?.items?.[0].app.budgetYearId,
-      budgetYearName: budgetYearWithApp?.items?.[0].app.budgetYear,
+      budgetYear: budgetYearWithApp?.items?.[0].app.budgetYear,
       amount: 0,
       quarter: '4th Quarter',
-      order: 0,
+      order: 3,
     },
   ]);
 
+  const [castedDisbursement, setCastedDisbursement] = useState<any>({});
+
   const handleAdd = () => {
-    // const lastYear = budgetYear[budgetYear.length - 1];
-    // if (
-    //   budgetYear.reduce((item, sum) => (item + sum.amount) as number, 0) >=
-    //   100
-    // ) {
-    //   return;
-    // } else {
-    //   setBudgetYear([
-    //     ...budgetYear,
-    //     { year: lastYear.year + 1, amount: 0 },
-    //   ]);
-    // }
+    const lastYear = budgetYearDisbursement[budgetYearDisbursement.length - 1];
+    const temp: any[] = [];
+    ['1st', '2nd', '3rd', '4th'].map((quarter, index) => {
+      logger.log({ quarter });
+      temp.push({
+        budgetYear: parseInt(lastYear.budgetYear) + 1,
+        amount: 0,
+        quarter: `${quarter} Quarter`,
+        order: index,
+      });
+    });
+    setBudgetYearDisbursement([...budgetYearDisbursement, ...temp]);
   };
 
   const Amount = ({ original }: any) => {
@@ -163,12 +166,26 @@ export const BudgetTab = () => {
       const temp = budgetYearDisbursement.map((b) => ({
         ...b,
         budgetYearId: budgetYearWithApp?.items?.[0].app.budgetYearId,
-        budgetYearName: budgetYearWithApp?.items?.[0].app.budgetYear,
+        budgetYear: budgetYearWithApp?.items?.[0].app.budgetYear,
       }));
 
       setBudgetYearDisbursement(temp);
     }
   }, [budgetYearWithApp]);
+
+  useEffect(() => {
+    const temp = {};
+    budgetYearDisbursement.map((b) => {
+      if (!temp[b.budgetYear]) {
+        const quarter = budgetYearDisbursement.filter(
+          (k) => k.budgetYear === b.budgetYear,
+        );
+        temp[b.budgetYear] = quarter;
+      }
+    });
+    logger.log({ temp });
+    setCastedDisbursement(temp);
+  }, [budgetYearDisbursement]);
 
   const onSave = async () => {
     logger.log({ budgetYearDisbursement });
@@ -203,7 +220,16 @@ export const BudgetTab = () => {
           </Flex>
         )}
       </Box>
-      <Table config={config} data={budgetYearDisbursement} />
+      <Accordion variant="contained">
+        {Object.keys(castedDisbursement).map((year) => (
+          <Accordion.Item value={year} className="bg-white" key={year}>
+            <Accordion.Control>{year}</Accordion.Control>
+            <Accordion.Panel>
+              <Table config={config} data={castedDisbursement[year]} />
+            </Accordion.Panel>
+          </Accordion.Item>
+        ))}
+      </Accordion>
 
       <Group justify="end" className="mt-2">
         <Divider h={2} />
