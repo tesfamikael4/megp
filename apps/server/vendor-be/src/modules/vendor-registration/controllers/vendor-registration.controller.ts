@@ -68,6 +68,7 @@ export class VendorRegistrationsController {
   @UseGuards(JwtGuard)
   @Get('get-isr-vendor-invoice-by-userId')
   async getIsrVendorInvoiceByuserId(@CurrentUser() userInfo: any) {
+    console.log('eeeeeeeeeeeeeeeeeeeee', userInfo.id);
     return await this.regService.getIsrVendorInvoiceByUserId(userInfo.id);
   }
   @UseGuards(JwtGuard)

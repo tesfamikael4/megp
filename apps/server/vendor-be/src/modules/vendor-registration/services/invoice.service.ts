@@ -175,7 +175,6 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     const invoice = await this.invoiceRepository.findOne({
       where: { instanceId: instanceId, taskId: taskId },
     });
-    console.log('invoice', invoice);
     if (invoice) {
       const invoicedto = InvoiceResponseDto.toResponse(invoice);
       return invoicedto;
@@ -225,8 +224,8 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
   }
   mapInvoice(
     curruntPricing: ServicePrice,
-    user: any,
     vendor: any,
+    user: any,
     service: BpServiceEntity,
   ): InvoiceEntity {
     const invoice = new InvoiceEntity();
