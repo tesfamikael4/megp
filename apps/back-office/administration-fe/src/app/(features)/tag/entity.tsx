@@ -1,14 +1,14 @@
 'use client';
-import { EntityConfig, EntityLayout } from '@megp/entity';
+import { EntityConfig, CollectionQuery, EntityLayout } from '@megp/entity';
 import { usePathname, useRouter } from 'next/navigation';
 import { useMemo } from 'react';
-import { useListQuery } from './_api/tags.api';
+import { useLazyListQuery } from './_api/tags.api';
 import { logger } from '@megp/core-fe';
 import { Tag } from '@/models/Tag';
 
 export function Entity({ children }: { children: React.ReactElement }) {
   const route = useRouter();
-  const { data: list } = useListQuery({} as any);
+  const [trigger, { data }] = useLazyListQuery();
 
   const config: EntityConfig<Tag> = useMemo(() => {
     return {
@@ -17,6 +17,9 @@ export function Entity({ children }: { children: React.ReactElement }) {
       entity: 'tag',
       primaryKey: 'id',
       title: 'Tags',
+      searchable: true,
+      pagination: true,
+      sortable: true,
       onDetail: (selected: Tag) => {
         route.push(`/tag/${selected.id}`);
       },
@@ -47,13 +50,18 @@ export function Entity({ children }: { children: React.ReactElement }) {
   const mode =
     pathname === `/tag` ? 'list' : pathname === `/tag/new` ? 'new' : 'detail';
 
+  const onRequestChange = (request: CollectionQuery) => {
+    trigger(request);
+  };
   return (
     <>
       <EntityLayout
         mode={mode}
         config={config}
-        data={list?.items ? list.items : []}
+        data={data?.items ?? []}
+        total={data?.total ?? 0}
         detail={children}
+        onRequestChange={onRequestChange}
       />
     </>
   );
