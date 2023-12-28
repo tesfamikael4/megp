@@ -34,11 +34,15 @@ export class APPService extends EntityCrudService<APP> {
     const budgetYear = await this.repositoryBudgetYear.findOne({
       where: {
         name: budYear,
+        organizationId: input.organizationId,
       },
     });
 
     const app = await this.repositoryAPP.findOne({
-      where: { budgetYear: budYear },
+      where: {
+        budgetYear: budYear,
+        organizationId: input.organizationId,
+      },
     });
     if (app) {
       throw new BadRequestException('app_exist');
