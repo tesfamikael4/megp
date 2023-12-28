@@ -10,9 +10,10 @@ import {
 
 import { ActivityBudgetLine } from './activity-budget-line.entity';
 import { PostBudgetPlanItem } from './post-budget-plan-items.entity';
+import { OrgAudit } from 'src/shared/entities';
 
 @Entity({ name: 'item_budget_line' })
-export class ItemBudgetLine {
+export class ItemBudgetLine extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

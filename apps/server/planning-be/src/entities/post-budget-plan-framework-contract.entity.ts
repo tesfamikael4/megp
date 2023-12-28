@@ -9,9 +9,10 @@
 // } from 'typeorm';
 
 // import { PostBudgetPlanActivity } from './post-budget-plan-activity.entity';
+// import { OrgAudit } from 'src/shared/entities';
 
 // @Entity({ name: 'post_budget_plan_framework_contracts' })
-// export class PostBudgetPlanFrameworkContract {
+// export class PostBudgetPlanFrameworkContract extends OrgAudit{
 //   @PrimaryGeneratedColumn('uuid')
 //   id: string;
 
