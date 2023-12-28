@@ -176,4 +176,10 @@ export class VendorRegistrationsController {
       areaOfBusinessInterest,
     );
   }
+
+  @UseGuards(JwtGuard)
+  @Get('get-service-by-userId')
+  async getServiceByUserId(@CurrentUser() userInfo: any) {
+    return await this.regService.getVendorServiceByUserId(userInfo.id);
+  }
 }

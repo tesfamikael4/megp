@@ -1092,6 +1092,44 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       throw error;
     }
   }
+  async getVendorServiceByUserId(userId: string): Promise<any> {
+    try {
+      const vendorEntity = await this.vendorRepository.findOne({
+        where: {
+          userId: userId,
+        },
+        relations: {
+          areasOfBusinessInterest: true,
+        },
+      });
+      if (!vendorEntity)
+        return {
+          status: {
+            level: 'info',
+            status: 'Draft',
+          },
+          data: [],
+        };
+      const areaOfBusinessInterest = await this.businessAreaRepository.find({
+        where: {
+          vendorId: vendorEntity.id,
+          status: VendorStatusEnum.APPROVED,
+        },
+      });
+      return {
+        status: areaOfBusinessInterest[0].businessAreaState,
+        data: areaOfBusinessInterest.map((value, index) => ({
+          id: value.id,
+          areaOfBusinessInterest: vendorEntity.areasOfBusinessInterest.filter(
+            (element) => element.category === value.category,
+          )[0],
+        })),
+      };
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
   async submitServiceRenewal(userInfo: any, BusinessArea: any) {
     const response = [];
     const isrVendorData = await this.isrVendorsRepository.findOne({
@@ -1271,6 +1309,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       console.log(error);
     }
   }
+
   async getMyInvoices(userId) {
     const invoices = await this.invoiceService.getActiveMyInvoices(userId);
     return invoices;
