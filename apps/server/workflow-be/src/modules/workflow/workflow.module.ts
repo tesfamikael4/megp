@@ -56,11 +56,11 @@ dotenv.config({ path: '.env' });
   providers: [
     WorkflowService,
     StepService,
-    DefaultStepService,
     XMachineService,
+    DefaultStepService,
+    StateService,
     InstanceService,
     ActivityService,
-    StateService,
     PermissionService,
     AuthHelper,
     JwtService,
@@ -73,6 +73,10 @@ dotenv.config({ path: '.env' });
     InstanceController,
     StateController,
     PermissionController,
+  ],
+  exports: [
+    // StateService,
+    XMachineService,
   ],
 })
 export class WorkflowModule {}
