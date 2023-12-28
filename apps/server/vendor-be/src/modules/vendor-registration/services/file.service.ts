@@ -207,7 +207,6 @@ export class FileService {
     paymentReceiptDto: any,
   ) {
     try {
-      console.log('fffffffffffffffffff : ', file.mimetype);
       const result = await this.isrVendorsRepository.findOne({
         where: { userId: userId, status: In(this.updateVendorEnums) },
       });

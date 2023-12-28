@@ -94,6 +94,7 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
       service,
     );
     invoice.amount = curruntPricing.fee;
+    invoice.payerName = vendor.name;
     const response = await this.invoiceRepository.save(invoice);
     if (response) return true;
     return false;
