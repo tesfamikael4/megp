@@ -18,7 +18,7 @@ export class BudgetYear extends OrgAudit {
   @OneToMany(() => Budget, (budget) => budget.budgetYears)
   budget: Budget;
 
-  @OneToOne(() => APP, (app) => app.budgetYears, {
+  @OneToMany(() => APP, (app) => app.budgetYears, {
     cascade: true,
   })
   app: APP;
