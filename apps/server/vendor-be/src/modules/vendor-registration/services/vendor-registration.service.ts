@@ -188,47 +188,51 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     }
   }
   async addVendorInformations(data: any, userInfo: any): Promise<any> {
-    if (
-      data.initial.status == VendorStatusEnum.DRAFT ||
-      data.initial.status == VendorStatusEnum.SAVE ||
-      data.initial.status == VendorStatusEnum.SUBMIT
-    ) {
-      if (data?.paymentReceipt == undefined || data?.paymentReceipt == null) {
-        data.paymentReceipt = [];
-      }
-      const isrVendor = await this.fromInitialValue(data);
-      const result = await this.isrVendorsRepository.save(isrVendor);
-      if (!result) throw new HttpException(`adding_isr_failed`, 500);
+    try {
       if (
-        data.initial.level.trim() === VendorStatusEnum.PAYMENT &&
-        data.initial.status.trim() === VendorStatusEnum.SAVE
+        data.initial.status == VendorStatusEnum.DRAFT ||
+        data.initial.status == VendorStatusEnum.SAVE ||
+        data.initial.status == VendorStatusEnum.SUBMIT
       ) {
-        for (
-          let index = 0;
-          index < data.areasOfBusinessInterest.length;
-          index++
-        ) {
-          result.basic['id'] = result.id;
-          try {
-            const invoice = await this.invoiceService.generateInvoice(
-              data.areasOfBusinessInterest[index].priceRange,
-              userInfo,
-              result.basic,
-            );
-            if (!invoice)
-              throw new HttpException('invoice_creation_failed', 500);
-          } catch (error) {
-            throw error;
-          }
+        if (data?.paymentReceipt == undefined || data?.paymentReceipt == null) {
+          data.paymentReceipt = [];
         }
-      } else if (
-        data.initial.level.trim() === VendorStatusEnum.SUBMIT &&
-        data.initial.status.trim() === VendorStatusEnum.SUBMIT
-      ) {
-        return this.submitVendorInformations(data, userInfo);
-      }
+        const isrVendor = await this.fromInitialValue(data);
+        const result = await this.isrVendorsRepository.save(isrVendor);
+        if (!result) throw new HttpException(`adding_isr_failed`, 500);
+        if (
+          data.initial.level.trim() === VendorStatusEnum.PAYMENT &&
+          data.initial.status.trim() === VendorStatusEnum.SAVE
+        ) {
+          for (
+            let index = 0;
+            index < data.areasOfBusinessInterest.length;
+            index++
+          ) {
+            result.basic['id'] = result.id;
+            try {
+              const invoice = await this.invoiceService.generateInvoice(
+                data.areasOfBusinessInterest[index].priceRange,
+                userInfo,
+                result.basic,
+              );
+              if (!invoice)
+                throw new HttpException('invoice_creation_failed', 500);
+            } catch (error) {
+              throw error;
+            }
+          }
+        } else if (
+          data.initial.level.trim() === VendorStatusEnum.SUBMIT &&
+          data.initial.status.trim() === VendorStatusEnum.SUBMIT
+        ) {
+          return this.submitVendorInformations(data, userInfo);
+        }
 
-      return { msg: 'Success' };
+        return { msg: 'Success' };
+      }
+    } catch (error) {
+      console.log(error);
     }
   }
   fromInitialValue = async (data: any) => {
@@ -493,7 +497,15 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     }
     const areaOfBusinessInterest = vendorEntity.areasOfBusinessInterest;
     const invoices = await this.getInvoices(areaOfBusinessInterest, userId);
-    return { ...vendorEntity, invoice: invoices };
+    let totalAmount = 0;
+    invoices.map((element) => {
+      totalAmount = Number(totalAmount) + Number(element.amount);
+    });
+    console.log(
+      'rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr : ',
+      totalAmount,
+    );
+    return { ...vendorEntity, invoice: invoices, totalAmount: totalAmount };
   }
   async getPendingIsrVendorByUserId(userId: string): Promise<any> {
     const vendorEntity = await this.isrVendorsRepository.findOne({
@@ -1074,6 +1086,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       console.log(error);
     }
   }
+
   async submitServiceRenewal(userInfo: any, BusinessArea: any) {
     const response = [];
     const isrVendorData = await this.isrVendorsRepository.findOne({
