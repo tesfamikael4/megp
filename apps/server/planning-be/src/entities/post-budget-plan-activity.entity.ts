@@ -17,9 +17,10 @@ import { PostBudgetPlanDisbursement } from './post-budget-plan-disbursement.enti
 import { PostBudgetActivityDocument } from './post-budget-activity-document.entity';
 import { PostBudgetRequisitioner } from './post-budget-plan-requisitioner.entity';
 import { PostProcurementMechanism } from './post-procurement-mechanism.entity';
+import { OrgAudit } from 'src/shared/entities';
 
 @Entity({ name: 'post_budget_plan_activities' })
-export class PostBudgetPlanActivity {
+export class PostBudgetPlanActivity extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

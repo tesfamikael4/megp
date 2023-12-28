@@ -11,9 +11,10 @@ import {
 import { APP } from './app.entity';
 import { PostBudgetPlanActivity } from './post-budget-plan-activity.entity';
 import { PreBudgetPlan } from './pre-budget-plan.entity';
+import { OrgAudit } from 'src/shared/entities';
 
 @Entity({ name: 'post_budget_plans' })
-export class PostBudgetPlan {
+export class PostBudgetPlan extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
