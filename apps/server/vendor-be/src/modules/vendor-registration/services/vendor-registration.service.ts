@@ -1087,7 +1087,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       throw error;
     }
   }
-
   async submitServiceRenewal(userInfo: any, BusinessArea: any) {
     const response = [];
     const isrVendorData = await this.isrVendorsRepository.findOne({
@@ -1251,7 +1250,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           }
         }
       }
-
       const invoices = await this.invoiceService.getActiveMyInvoices(
         userInfo.id,
       );
@@ -1259,6 +1257,10 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     } catch (error) {
       console.log(error);
     }
+  }
+  async getMyInvoices(userId) {
+    const invoices = await this.invoiceService.getActiveMyInvoices(userId);
+    return invoices;
   }
   async getNewRenewalServices(vendorId) {
     const result = await this.businessAreaRepository.find({

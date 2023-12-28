@@ -45,7 +45,6 @@ export class VendorRegistrationsController {
   @AllowAnonymous()
   @Get('get-vendor-by-userId/:userId')
   async getVendorByuserId(@CurrentUser() userInfo: any) {
-    console.log(userInfo.id);
     // return await this.regService.getVendorByUserId(userInfo.id);
     return await this.regService.getVendorByUserId(userInfo.id);
   }
@@ -151,7 +150,7 @@ export class VendorRegistrationsController {
     @Body() areaOfBusinessInterest: any,
   ) {
     return await this.regService.getServiceInvoiceForRenewal(
-      userInfo.id,
+      userInfo,
       areaOfBusinessInterest,
     );
   }
