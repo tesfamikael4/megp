@@ -26,8 +26,14 @@ const defaultValues = {
 
 export function FormDetail({ mode }: FormDetailProps) {
   const measurementSchema: ZodType<Partial<Measurement>> = z.object({
-    name: z.string().min(1, { message: 'This field is required' }),
-    shortName: z.string().min(1).optional(),
+    name: z
+      .string()
+      .min(1, { message: 'Name is required' })
+      .transform((str) => str.toLowerCase()),
+    shortName: z
+      .string()
+      .optional()
+      .transform((str) => (str ? str.toLowerCase() : '')),
   });
 
   const {
@@ -52,35 +58,52 @@ export function FormDetail({ mode }: FormDetailProps) {
   } = useReadQuery(id?.toString());
 
   const onCreate = async (data) => {
+    const transformedData = {
+      ...data,
+      name: data.name.toLowerCase(),
+      shortName: data.shortName?.toLowerCase(),
+    };
     try {
-      const result = await create(data);
+      const result = await create(transformedData).unwrap();
       if ('data' in result) {
         router.push(`/measurement/${result?.data?.id}`);
       }
       notifications.show({
-        message: 'measurement created successfully',
+        message: 'Measurement Created Successfully',
         title: 'Success',
         color: 'green',
       });
-    } catch (err) {
-      notifications.show({
-        message: 'errors in deleting measurement.',
-        title: 'Error',
-        color: 'red',
-      });
+    } catch (error) {
+      if (
+        error.data?.statusCode === 400 &&
+        error.data?.message.includes('UQ_ecda7925be57c32d6f988ac50b6')
+      ) {
+        // Display a user-friendly error notification
+        notifications.show({
+          message: 'A measurement with this name already exists.',
+          title: 'Error',
+          color: 'red',
+        });
+      } else {
+        notifications.show({
+          message: 'Errors in Creating Measurement.',
+          title: 'Error',
+          color: 'red',
+        });
+      }
     }
   };
   const onUpdate = async (data) => {
     try {
       await update({ ...data, id: id?.toString() });
       notifications.show({
-        message: 'measurement updated successfully',
+        message: 'Measurement Updated Successfully',
         title: 'Success',
         color: 'green',
       });
     } catch {
       notifications.show({
-        message: 'errors in updating measurement.',
+        message: 'Error in Updating Measurement.',
         title: 'Error',
         color: 'red',
       });
@@ -90,14 +113,14 @@ export function FormDetail({ mode }: FormDetailProps) {
     try {
       await remove(id?.toString()).unwrap();
       notifications.show({
-        message: 'measurement deleted successfully',
+        message: 'Measurement Deleted Successfully',
         title: 'Success',
         color: 'green',
       });
       router.push('/measurement');
     } catch (err) {
       notifications.show({
-        message: 'errors in deleting measurement.',
+        message: 'Error in Deleting Measurement.',
         title: 'Error',
         color: 'red',
       });

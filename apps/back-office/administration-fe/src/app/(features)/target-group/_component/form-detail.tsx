@@ -27,7 +27,7 @@ const defaultValues = {
 export function FormDetail({ mode }: FormDetailProps) {
   const targetGroupSchema: ZodType<Partial<TargetGroup>> = z.object({
     name: z.string().min(1, { message: 'This field is required' }),
-    description: z.string().min(1),
+    description: z.string().optional(),
   });
 
   const {
@@ -58,13 +58,13 @@ export function FormDetail({ mode }: FormDetailProps) {
         router.push(`/target-group/${result?.data?.id}`);
       }
       notifications.show({
-        message: 'Target Group created successfully',
+        message: 'Target Group Created Successfully',
         title: 'Success',
         color: 'green',
       });
     } catch (err) {
       notifications.show({
-        message: 'errors in deleting Target group.',
+        message: 'Error in Deleting Target group.',
         title: 'Error',
         color: 'red',
       });
@@ -74,13 +74,13 @@ export function FormDetail({ mode }: FormDetailProps) {
     try {
       await update({ ...data, id: id?.toString() });
       notifications.show({
-        message: 'Target Group updated successfully',
+        message: 'Target Group Updated Successfully',
         title: 'Success',
         color: 'green',
       });
     } catch {
       notifications.show({
-        message: 'errors in updating Target Group.',
+        message: 'Error in Updating Target Group.',
         title: 'Error',
         color: 'red',
       });
@@ -90,14 +90,14 @@ export function FormDetail({ mode }: FormDetailProps) {
     try {
       await remove(id?.toString()).unwrap();
       notifications.show({
-        message: 'Target Group deleted successfully',
+        message: 'Target Group Deleted Successfully',
         title: 'Success',
         color: 'green',
       });
       router.push('/target-group');
     } catch (err) {
       notifications.show({
-        message: 'errors in deleting Target-group.',
+        message: 'Errors in Deleting Target-group.',
         title: 'Error',
         color: 'red',
       });
@@ -129,7 +129,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       />{' '}
       <TextInput
         // withAsterisk
-        label="description"
+        label="Description"
         {...register('description')}
         error={
           errors?.description ? errors?.description?.message?.toString() : ''

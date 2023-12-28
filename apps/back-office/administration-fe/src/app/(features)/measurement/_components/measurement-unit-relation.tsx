@@ -24,7 +24,7 @@ const AddUnit = () => {
   const [remove] = useDeleteMutation();
 
   const relationConfig: RelationConfig<MeasurementUnit> = {
-    title: 'Measurement Unit',
+    title: 'Unit of Measurement',
     columns: [
       {
         id: 'name',
@@ -61,7 +61,7 @@ const AddUnit = () => {
       title: `Delete `,
       centered: true,
       children: (
-        <Text size="sm">{`Are you sure you want to delete this unit `}</Text>
+        <Text size="sm">{`Are You Sure You Want To Delete This Unit of Measurement `}</Text>
       ),
       labels: { confirm: 'Yes', cancel: 'No' },
       confirmProps: { color: 'red' },
@@ -75,13 +75,13 @@ const AddUnit = () => {
     try {
       await remove(id).unwrap();
       notifications.show({
-        message: 'Unit deleted successfully',
+        message: 'Unit of Measurement deleted successfully',
         title: 'error',
         color: 'red',
       });
     } catch (err) {
       notifications.show({
-        message: 'Errors in deleting Unit.',
+        message: 'Error in Deleting Unit of Measurement.',
         title: 'Error',
         color: 'red',
       });
@@ -106,7 +106,7 @@ const AddUnit = () => {
         total={unit?.items.length}
       />
       <Modal
-        title={mode === 'new' ? 'new unit' : 'Update Unit'}
+        title={mode === 'new' ? 'New Unit of Measurement' : 'Update Unit'}
         opened={isModalOpen}
         onClose={handleCloseModal}
       >

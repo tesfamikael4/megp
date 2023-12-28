@@ -28,7 +28,7 @@ const defaultValues = {
 export function FormDetail({ mode }: FormDetailProps) {
   const currencySchema: ZodType<Partial<Currency>> = z.object({
     name: z.string().min(1, { message: 'This field is required' }),
-    description: z.string().min(1),
+    description: z.string().optional(),
     abbreviation: z.string().min(1),
   });
 
@@ -60,13 +60,13 @@ export function FormDetail({ mode }: FormDetailProps) {
         router.push(`/currency/${result?.data?.id}`);
       }
       notifications.show({
-        message: 'currency created successfully',
+        message: 'Currency created successfully',
         title: 'Success',
         color: 'green',
       });
     } catch (err) {
       notifications.show({
-        message: 'errors in deleting measurement.',
+        message: 'Error in deleting Currency.',
         title: 'Error',
         color: 'red',
       });
@@ -76,13 +76,13 @@ export function FormDetail({ mode }: FormDetailProps) {
     try {
       await update({ ...data, id: id?.toString() });
       notifications.show({
-        message: 'currency updated successfully',
+        message: 'Currency Updated successfully',
         title: 'Success',
         color: 'green',
       });
     } catch {
       notifications.show({
-        message: 'errors in updating currency.',
+        message: 'Error in Updating Currency.',
         title: 'Error',
         color: 'red',
       });
@@ -92,14 +92,14 @@ export function FormDetail({ mode }: FormDetailProps) {
     try {
       await remove(id?.toString()).unwrap();
       notifications.show({
-        message: 'currency deleted successfully',
+        message: 'currency Deleted successfully',
         title: 'Success',
         color: 'green',
       });
       router.push('/currency');
     } catch (err) {
       notifications.show({
-        message: 'errors in deleting currency.',
+        message: 'Error in Deleting currency.',
         title: 'Error',
         color: 'red',
       });
@@ -132,7 +132,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       />{' '}
       <TextInput
         // withAsterisk
-        label="description"
+        label="Description"
         {...register('description')}
         error={
           errors?.description ? errors?.description?.message?.toString() : ''
@@ -141,7 +141,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       />{' '}
       <TextInput
         // withAsterisk
-        label="abbreviation"
+        label="Abbreviation"
         {...register('abbreviation')}
         error={
           errors?.abbreviation ? errors?.abbreviation?.message?.toString() : ''
