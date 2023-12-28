@@ -38,7 +38,7 @@ export class APPService extends EntityCrudService<APP> {
     });
 
     const app = await this.repositoryAPP.findOne({
-      where: { budgetYear: item.budgetYear },
+      where: { budgetYear: budYear },
     });
     if (app) {
       throw new BadRequestException('app_exist');
@@ -50,6 +50,7 @@ export class APPService extends EntityCrudService<APP> {
 
     preBud.estimatedAmount = {};
     item.preBudgetPlans = preBud;
+    item.preBudgetPlans.organizationId = input.organizationId;
     const createApp = {
       ...item,
       budgetYearId: budgetYear.id,
