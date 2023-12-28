@@ -1253,7 +1253,10 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       const invoices = await this.invoiceService.getActiveMyInvoices(
         userInfo.id,
       );
-      return invoices;
+      const isrVendor = await this.isrVendorsRepository.findOne({
+        where: { userId: userInfo.id },
+      });
+      return { ...invoices, paymentReceipt: isrVendor.paymentReceipt };
     } catch (error) {
       console.log(error);
     }
