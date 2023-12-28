@@ -7,20 +7,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, In, IsNull, Not, Repository } from 'typeorm';
 import { DataResponseFormat } from 'src/shared/api-data';
 import { CollectionQuery, QueryConstructor } from 'src/shared/collection-query';
-
-import { InvoiceEntity } from 'src/entities/invoice.entity';
 import {
   AssignmentEnum,
-  BusinessStatusEnum,
   HandlerTypeEnum,
   ServiceKeyEnum,
   WorkflowInstanceEnum,
 } from '../dto/workflow-instance.enum';
 import { FileResponseDto } from 'src/modules/vendor-registration/dto/file.dto';
 import { ActiveVendorsResponse } from '../dto/active-vendor-response';
-
 import { TaskTrackerEntity } from 'src/entities/task-tracker.entity';
-import { TaskHandlerEntity } from 'src/entities/task-handler.entity';
 import { WorkflowInstanceEntity } from 'src/entities/workflow-instance.entity';
 import { TaskTrackerResponse } from 'src/modules/bpm/dto/task-tracker.dto';
 import { TaskTypes } from 'src/modules/bpm/dto/task-type.enum';
@@ -31,12 +26,9 @@ import { InvoiceService } from 'src/modules/vendor-registration/services/invoice
 @Injectable()
 export class ApplicationExcutionService {
   constructor(
-    @InjectRepository(InvoiceEntity)
-    private readonly invoceRepository: Repository<InvoiceEntity>,
+
     @InjectRepository(TaskTrackerEntity)
     private readonly taskTrackingRepository: Repository<TaskTrackerEntity>,
-    @InjectRepository(TaskHandlerEntity)
-    private readonly taskhandlergRepository: Repository<TaskHandlerEntity>,
     @InjectRepository(WorkflowInstanceEntity)
     private readonly wiRepository: Repository<WorkflowInstanceEntity>,
     private readonly dataSource: DataSource,
@@ -77,6 +69,15 @@ export class ApplicationExcutionService {
     query: CollectionQuery, user: any
   ): Promise<DataResponseFormat<WorkflowInstanceResponse>> {
     let keys = [];
+    // query.includes.push("isrVendor");
+    // const qq: CollectionQuery = {
+    //   ...query, includes: ["isrVendor"], where: [[{
+    //     column: "workflow_instances.isrVendor.name",
+    //     operator: "ILIKE",
+    //     value: "Test"
+    //   }]]
+    // }
+
     if (serviceKey === ServiceKeyEnum.new) {
       keys = [
         ServiceKeyEnum.goodsNewRegistration,
@@ -100,7 +101,6 @@ export class ApplicationExcutionService {
       this.wiRepository,
       query,
     );
-    console.log("q", dataQuery);
     dataQuery
       .innerJoinAndSelect('workflow_instances.taskHandler', 'handler')
       .innerJoinAndSelect('handler.task', 'task')
@@ -123,62 +123,6 @@ export class ApplicationExcutionService {
     return d;
   }
 
-  async getCurruntTaskByService(
-    serviceKey: string,
-    query: CollectionQuery,
-    user: any,
-  ): Promise<DataResponseFormat<WorkflowInstanceResponse>> {
-    let keys = [];
-    if (serviceKey === ServiceKeyEnum.new) {
-      keys = [
-        ServiceKeyEnum.goodsNewRegistration,
-        ServiceKeyEnum.servicesNewRegistration,
-        ServiceKeyEnum.worksNewRegistration,
-      ];
-    } else if (serviceKey == ServiceKeyEnum.upgrade) {
-      keys = [
-        ServiceKeyEnum.goodsUpgrade,
-        ServiceKeyEnum.servicesUpgrade,
-        ServiceKeyEnum.worksUpgrade,
-      ];
-    } else if (serviceKey === ServiceKeyEnum.renewal) {
-      keys = [
-        ServiceKeyEnum.goodsRenewal,
-        ServiceKeyEnum.servicesRenewal,
-        ServiceKeyEnum.worksRenewal,
-      ];
-    }
-    const [result, total] = await this.wiRepository.findAndCount({
-      relations: {
-        isrVendor: true,
-        taskHandler: { task: true },
-        businessProcess: {
-          service: true,
-        },
-        taskTrackers: true,
-      },
-      where: {
-        businessProcess: {
-          service: { key: In(keys) },
-        },
-        taskHandler: { id: Not(IsNull()), task: { handlerType: Not(HandlerTypeEnum.Requestor) } },
-        status: Not(WorkflowInstanceEnum.Completed),
-      },
-      order: { submittedAt: 'ASC' },
-      // skip: query.skip | 0,
-      // take: query.take | 20,
-    });
-
-    const response = new DataResponseFormat<WorkflowInstanceResponse>();
-    response.items = result.map((row) => {
-      console.log(row.id);
-      return WorkflowInstanceResponse.toResponse(row)
-    }
-
-    );
-    response.total = response.total = total;
-    return response;
-  }
 
   async getCurruntTaskDetail(
     instanceId: string,

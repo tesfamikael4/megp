@@ -7,6 +7,7 @@ export function PermissionsGuard(permissions: string): Type<CanActivate> {
       if (requiredPermissions.length < 1) {
         return true;
       }
+
       const request = context.switchToHttp().getRequest();
       const user: any = request.user;
       const userPermissions = user?.permissions;

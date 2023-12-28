@@ -13,7 +13,7 @@ const headerImage = 'src/modules/certificates/assets/headerImage.png';
 const CertificatePDF = ({ id, data, qrCodeUrl }) => {
   return ReactPDF.renderToStream(
     <Document>
-      <Page size={[595, 842]} style={styles.page}>
+      <Page size="A4" style={styles.page}>
         <View style={styles.container}>
           <Image style={styles.header} src={headerImage} />
           <View style={styles.content}>
