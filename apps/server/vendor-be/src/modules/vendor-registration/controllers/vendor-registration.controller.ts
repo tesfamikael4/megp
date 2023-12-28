@@ -172,7 +172,7 @@ export class VendorRegistrationsController {
     @Body() areaOfBusinessInterest: any,
   ) {
     return await this.regService.getServiceInvoiceForUpgrade(
-      userInfo.id,
+      userInfo,
       areaOfBusinessInterest,
     );
   }
