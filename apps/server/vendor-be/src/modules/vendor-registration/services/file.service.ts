@@ -14,7 +14,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
-import { CreateFileDto, DeleteFileDto } from '../dto/file.dto';
+import { CreateFileDto, DeleteFileDto, UploadFileDto } from '../dto/file.dto';
 import { VendorRegistrationsService } from './vendor-registration.service';
 import {
   BusinessAreaEntity,
@@ -97,7 +97,6 @@ export class FileService {
       throw error;
     }
   }
-
   async uploadAttachment(file: Express.Multer.File, command: CreateFileDto) {
     try {
       const result = this.uploadToRemoteServer(file, command);
@@ -136,7 +135,6 @@ export class FileService {
     const bucket = command.bucketName;
     const metaData = {
       'Content-Type': 'application/octet-stream',
-      'X-Amz-Meta-Testing': 1234,
       example: 5678,
     };
     this.minioClient.fPutObject(
@@ -175,7 +173,6 @@ export class FileService {
     const serverUrl = 'http://your-tus-server-url.com/files';
     const metaData = {
       'Content-Type': 'application/octet-stream',
-      'X-Amz-Meta-Testing': 1234,
       example: 5678,
     };
     this.minioClient.fPutObject(
@@ -230,7 +227,6 @@ export class FileService {
 
       const metaData = {
         'Content-Type': file.mimetype,
-        'X-Amz-Meta-Testing': 1234,
       };
       const resultData = await this.minioClient.putObject(
         this.bucketName,
@@ -274,13 +270,69 @@ export class FileService {
       throw error;
     }
   }
+  async uploadPaymentReceiptAttachment(
+    file: Express.Multer.File,
+    uploadFileDto: UploadFileDto,
+  ) {
+    try {
+      const userId = uploadFileDto.userInfo.id;
+      const result = await this.isrVendorsRepository.findOne({
+        where: { userId: userId, status: In(this.updateVendorEnums) },
+      });
+      if (!result) throw new HttpException('isr vendor not found ', 500);
+      const fileUploadName = 'paymentReceipt';
+      if (uploadFileDto.attachment !== null) {
+        const objectName = `${userId}/${fileUploadName}/${uploadFileDto.attachment}`;
+        // const fileAlreadyUploaded = await this.minioClient.statObject(this.bucketName, objectName)
+        // if (fileAlreadyUploaded) return "file already uploaded"
+        if (uploadFileDto.attachment || uploadFileDto.attachment !== '') {
+          await this.minioClient.removeObject(this.bucketName, objectName);
+        }
+      }
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+      const fileId = `${uniqueSuffix}_${file.originalname}`;
+      const filename = `${userId}/${fileUploadName}/${fileId}`;
+      const metaData = {
+        'Content-Type': file.mimetype,
+      };
+      const resultData = await this.minioClient.putObject(
+        this.bucketName,
+        filename,
+        file.buffer,
+        metaData,
+      );
+      const paymentReceipt = {
+        transactionId: uploadFileDto?.transactionId,
+        invoiceIds: uploadFileDto?.invoiceIds,
+        attachment: fileId,
+      };
+      result.paymentReceipt = paymentReceipt;
+      result.initial.level = VendorStatusEnum.DOC;
+      result.initial.status = VendorStatusEnum.SAVE;
+      const isrVendor = await this.isrVendorsRepository.save(result);
+      if (!isrVendor) throw new HttpException(`isrVendor_update _failed`, 500);
+      for (let index = 0; index < uploadFileDto?.invoiceIds?.length; index++) {
+        const invoice = await this.invoiceRepository.update(
+          uploadFileDto?.invoiceIds[index],
+          {
+            paymentStatus: 'Paid',
+            attachment: fileId,
+          },
+        );
+        if (!invoice) throw new HttpException(`invoice_update _failed`, 500);
+      }
+      return paymentReceipt;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
   async uploadSupportingDocumentAttachment(
     file: Express.Multer.File,
     userId: string,
     paymentReceiptDto: any,
   ) {
     try {
-      console.log('paymentReceiptDto paymentReceiptDto : ', paymentReceiptDto);
       const result = await this.isrVendorsRepository.findOne({
         where: { userId: userId, status: In(this.updateVendorEnums) },
       });
@@ -290,10 +342,8 @@ export class FileService {
       const fileId = `${uniqueSuffix}_${file.originalname}`;
       const filename = `${userId}/${fileUploadName}/${fileId}`;
       const bucket = 'megp';
-      console.log('rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr : ', file.mimetype);
       const metaData = {
         'Content-Type': file.mimetype,
-        'X-Amz-Meta-Testing': 1234,
       };
       const fname = paymentReceiptDto.fieldName;
       const resultData = await this.minioClient.putObject(
@@ -407,7 +457,6 @@ export class FileService {
       const filename = `${userId}/${fileUploadName}/${fileId}`;
       const metaData = {
         'Content-Type': 'application/octet-stream',
-        'X-Amz-Meta-Testing': 1234,
       };
       const resultData = await this.minioClient.putObject(
         this.bucketName,
@@ -441,9 +490,7 @@ export class FileService {
       const filename = `${userId}/${fileUploadName}/${fileId}`;
       const metaData = {
         'Content-Type': 'application/octet-stream',
-        'X-Amz-Meta-Testing': 1234,
       };
-      console.log('file', file);
       const resultData = await this.minioClient.putObject(
         this.bucketName,
         filename,

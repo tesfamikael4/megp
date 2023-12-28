@@ -25,6 +25,7 @@ import multer, { diskStorage, memoryStorage } from 'multer';
 import { extname } from 'path';
 import { FileService } from '../services/file.service';
 import { Response } from 'express';
+import { UploadFileDto } from '../dto/file.dto';
 
 @Controller('upload')
 @ApiTags('File')
@@ -89,6 +90,35 @@ export class UploadController {
       file,
       userInfo.id,
       paymentReceiptDto,
+    );
+    return result;
+  }
+  @Post('upload-payment-receipt-new/:transactionId/:invoiceId/:attachment')
+  @UseInterceptors(FileInterceptor('attachmentUrl'))
+  async uploadPaymentReceptNew(
+    @UploadedFile() file: Express.Multer.File,
+    @CurrentUser() userInfo: any,
+    @Param('transactionId') transactionId: string,
+    @Param('invoiceId') invoiceId: string,
+    @Param('attachment') attachment: string,
+  ) {
+    if (!file) {
+      return { error: 'File not received' };
+    }
+    const invoiceIds = invoiceId.split(',');
+    const uploadFileDto: UploadFileDto = {
+      transactionId: transactionId,
+      invoiceIds: invoiceIds,
+      userInfo: userInfo,
+      attachment: attachment == 'null' ? null : attachment,
+    };
+    console.log(
+      'jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj : ',
+      uploadFileDto,
+    );
+    const result = await this.fileService.uploadPaymentReceiptAttachment(
+      file,
+      uploadFileDto,
     );
     return result;
   }

@@ -66,7 +66,7 @@ export class WorkflowService {
     private readonly emailSerice: EmailService,
     @Inject(forwardRef(() => VendorRegistrationsService))
     private readonly vendorRegService: VendorRegistrationsService,
-    private readonly businessAreaService: BusinessAreaService
+    private readonly businessAreaService: BusinessAreaService,
   ) {
     this.VENDOR_API_KEY =
       process.env.VENDOR_API_ACCESS_KEY ??
@@ -81,7 +81,8 @@ export class WorkflowService {
     instanceEntity.userId = user?.id;
     instanceEntity.user = user;
     const serviceBp = await this.bpService.findWorkflowByServiceAndBP(
-      dto.serviceId, dto.bpId
+      dto.serviceId,
+      dto.bpId,
     );
     if (!serviceBp || !dto.requestorId)
       throw new NotFoundException('Business Process Not Found');
@@ -222,7 +223,10 @@ export class WorkflowService {
         await this.gotoNextStep(nextTaskdto, user);
       }
     }
-    workflow.businessArea = await this.businessAreaService.getBusinessAreaByInstanceId(nextCommand.instanceId);
+    workflow.businessArea =
+      await this.businessAreaService.getBusinessAreaByInstanceId(
+        nextCommand.instanceId,
+      );
     return workflow;
   }
 
@@ -330,7 +334,7 @@ export class WorkflowService {
         break;
       case TaskTypes.PAYMENT:
         const data = await this.invoiceRepository.find({
-          where: { instanceId: command.instanceId },
+          where: { businessAreaId: command.instanceId },
         });
         data.map((row) => {
           row.paymentStatus = 'Paid';
@@ -365,7 +369,6 @@ export class WorkflowService {
     nextCommand: GotoNextStateDto,
     user: any,
   ): Promise<boolean> {
-
     const entity = new TaskTrackerEntity();
     entity.taskId = currentTaskHandlerCopy.taskId;
     entity.instanceId = nextCommand.instanceId;
@@ -395,8 +398,8 @@ export class WorkflowService {
     const commandLower = command.action.toLowerCase();
     const status =
       commandLower == 'approve' ||
-        commandLower == 'yes' ||
-        commandLower == 'success'
+      commandLower == 'yes' ||
+      commandLower == 'success'
         ? 'Approve'
         : 'Reject';
     const payload = {

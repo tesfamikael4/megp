@@ -37,7 +37,7 @@ export class InvoiceResponseDto {
   static toResponse(entity: InvoiceEntity): InvoiceResponseDto {
     const response = new InvoiceResponseDto();
     response.id = entity.id;
-    response.InstanceId = entity.instanceId;
+    response.InstanceId = entity.businessAreaId;
     response.applicationNo = entity.applicationNo;
     response.taskId = entity.taskId;
     response.taskName = entity.taskName;

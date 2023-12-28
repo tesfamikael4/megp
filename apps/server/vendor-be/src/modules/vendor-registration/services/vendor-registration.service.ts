@@ -211,16 +211,12 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           ) {
             result.basic['id'] = result.id;
             try {
-              console.log('the user from ppda is ---------------- ', userInfo);
               const invoice = await this.invoiceService.generateInvoice(
                 data.areasOfBusinessInterest[index].priceRange,
                 userInfo,
                 result.basic,
               );
-              console.log(
-                'invoiceinvoiceinvoiceinvoiceinvoiceinvoiceinvoiceinvoiceinvoiceinvoice ',
-                invoice,
-              );
+
               if (!invoice)
                 throw new HttpException('invoice_creation_failed', 500);
             } catch (error) {
@@ -1207,7 +1203,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         data?.status == VendorStatusEnum.DRAFT ||
         data?.level == VendorStatusEnum.INFO
       ) {
-        console.log('111111111111111111111');
         for (let index = 0; index < data.data.length; index++) {
           const businessAreaId = data.data[index].id;
           const businessareaData = await this.businessAreaRepository.findOne({
@@ -1219,11 +1214,11 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           //   throw new HttpException('renewal period not allowed ', 500);
           if (
             businessareaData.BpService.key ===
-            ServiceKeyEnum.goodsNewRegistration ||
+              ServiceKeyEnum.goodsNewRegistration ||
             businessareaData.BpService.key ===
-            ServiceKeyEnum.servicesNewRegistration ||
+              ServiceKeyEnum.servicesNewRegistration ||
             businessareaData.BpService.key ===
-            ServiceKeyEnum.worksNewRegistration
+              ServiceKeyEnum.worksNewRegistration
           ) {
             const key = await this.mapServiceType(businessAreaId, 'renewal');
             const renewalRange =
@@ -1256,7 +1251,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           }
         }
       }
-      console.log('222222222222222222222');
 
       const invoices = await this.invoiceService.getActiveMyInvoices(
         userInfo.id,
@@ -1278,7 +1272,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         data?.status == VendorStatusEnum.DRAFT ||
         data?.level == VendorStatusEnum.INFO
       ) {
-        for (let index = 0; index < data.data?.length; index++) { }
+        for (let index = 0; index < data.data?.length; index++) {}
         for (let index = 0; index < data.data.length; index++) {
           const businessAreaId = data.data[index].id;
           const businessareaData = await this.businessAreaRepository.findOne({
@@ -1290,11 +1284,11 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           //   throw new HttpException('renewal period not allowed ', 500);
           if (
             businessareaData.BpService.key ===
-            ServiceKeyEnum.goodsNewRegistration ||
+              ServiceKeyEnum.goodsNewRegistration ||
             businessareaData.BpService.key ===
-            ServiceKeyEnum.servicesNewRegistration ||
+              ServiceKeyEnum.servicesNewRegistration ||
             businessareaData.BpService.key ===
-            ServiceKeyEnum.worksNewRegistration
+              ServiceKeyEnum.worksNewRegistration
           ) {
             const key = await this.mapServiceType(businessAreaId, 'renewal');
             const renewalRange =
