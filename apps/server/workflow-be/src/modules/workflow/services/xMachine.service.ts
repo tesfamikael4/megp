@@ -55,7 +55,7 @@ export class XMachineService {
 
     const ver =
       details.action == 'reject'
-        ? existingData.version + 1
+        ? ++existingData.version
         : existingData.version;
 
     isWorkGroup = await this.checkGroup(existingData.stepId);
@@ -102,6 +102,7 @@ export class XMachineService {
             await this.repositoryInstance.update(existingData.id, {
               status: params.status,
               stepId: params.id,
+              version: ver,
               metadata: existingData.metadata,
             });
             if (params.status == 'Approved') {
@@ -248,6 +249,8 @@ export class XMachineService {
       const rejectMembers = prevMetadata.filter(
         (x) => x.actions === 'reject',
       ).length;
+
+      details.action == 'reject' ? rejectMembers + 1 : approvedCount + 1;
 
       if (
         approvedCount > members.total / 2 ||
