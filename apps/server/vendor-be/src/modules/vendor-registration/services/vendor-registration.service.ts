@@ -195,7 +195,12 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         data.initial.status == VendorStatusEnum.SUBMIT
       ) {
         if (data?.paymentReceipt == undefined || data?.paymentReceipt == null) {
-          data.paymentReceipt = [];
+          data.paymentReceipt = {
+            transactionId: '',
+            category: '',
+            invoiceId: '',
+            attachment: '',
+          };
         }
         const isrVendor = await this.fromInitialValue(data);
         const result = await this.isrVendorsRepository.save(isrVendor);
@@ -1254,9 +1259,14 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         userInfo.id,
       );
       const isrVendor = await this.isrVendorsRepository.findOne({
-        where: { userId: userInfo.id },
+        where: { businessAreas: { status: 'Pending' }, userId: userInfo.id },
+        relations: { businessAreas: true },
       });
-      return { ...invoices, paymentReceipt: isrVendor.paymentReceipt };
+      return {
+        ...invoices,
+        paymentReceipt: isrVendor.paymentReceipt,
+        businessAreas: isrVendor.businessAreas,
+      };
     } catch (error) {
       console.log(error);
     }
