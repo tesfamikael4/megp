@@ -5,6 +5,7 @@ import { VendorRegistrationModule } from '../vendor-registration/vendor-registra
 import { ServicePricingModule } from '../pricing/pricing.module';
 import { BpmModule } from '../bpm/bpm.module';
 import { AuthorizationModule } from 'src/shared/authorization';
+import { HandlingModule } from '../handling/handling.module';
 
 @Module({
   imports: [VendorRegistrationModule, BpmModule, AuthorizationModule, ServicePricingModule],

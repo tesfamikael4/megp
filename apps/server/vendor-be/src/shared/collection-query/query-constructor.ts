@@ -1,7 +1,7 @@
 import { ObjectLiteral, Repository, SelectQueryBuilder } from 'typeorm';
 import { CollectionQuery, Order, Where } from './query';
 import { FilterOperators } from './filter_operators';
-import { encodeCollectionQuery } from './query-mapper';
+import { decodeCollectionQuery, encodeCollectionQuery } from './query-mapper';
 
 const addFilterConditions = (
   op: string,
@@ -19,6 +19,9 @@ const addFilterConditions = (
   } else if (op === FilterOperators.In && Array.isArray(value)) {
     // Handle "in" operator for the main ${aggregate}
     return `${queryCondition} IN (:...${queryParam})`;
+  } else if (op === FilterOperators.NotIn && Array.isArray(value)) {
+    // Handle "in" operator for the main ${aggregate}
+    return `${queryCondition} Not IN (:...${queryParam})`;
   } else if (op === FilterOperators.IsNull) {
     // Handle "isNull" operator for the main ${aggregate}
     return `${queryCondition} IS NULL`;
@@ -42,6 +45,8 @@ const addFilterConditions = (
   } else if (op === FilterOperators.Any) {
     return `${queryCondition} = ANY(:${queryParam})`;
   } else if (op === FilterOperators.Like) {
+    return `${queryCondition} LIKE(:${queryParam})`;
+  } else if (op === FilterOperators.ILike) {
     return `${queryCondition} ILIKE(:${queryParam})`;
   } else if (op === FilterOperators.NotEqual) {
     return `${queryCondition} <> :${queryParam}`;
@@ -62,7 +67,7 @@ const addFilterParams = (op: string, value: any, column: string, acc: any) => {
   } else if (op === FilterOperators.In && Array.isArray(value)) {
     // Handle "in" operator for the main ${aggregate}
     acc[column] = value;
-  } else if (op === FilterOperators.Like) {
+  } else if (op === FilterOperators.Like || op === FilterOperators.ILike) {
     // Handle "in" operator for the main ${aggregate}
     acc[column] = `%${value}%`;
   } else if (op === FilterOperators.All || op === FilterOperators.Any) {
@@ -88,11 +93,12 @@ const applyWhereConditions = <T>(
       const orConditions = conditions.map(({ column, value, operator: op }) => {
         if (column.includes('.')) {
           const [relation, field] = column.split('.'); // Assuming "relation.field" format
+          const fieldValue = `${field}_${++count}`;
           return addFilterConditions(
             op,
             value,
             `${relation}.${field}`,
-            `${relation}_${field}`,
+            `${relation}_${fieldValue}`,
           );
         } else {
           // Handle conditions for the main entity
@@ -132,7 +138,8 @@ const applyWhereConditions = <T>(
         (acc, { column, value, operator: op }) => {
           if (column.includes('.')) {
             const [relation, field] = column.split('.');
-            acc = addFilterParams(op, value, `${relation}_${field}`, acc);
+            const fieldValue = `${field}_${++count}`;
+            acc = addFilterParams(op, value, `${relation}_${fieldValue}`, acc);
           } else if (column.includes('->>')) {
             const [mainColumn, nestedColumn] = column.split('->>');
             if (mainColumn.includes('->')) {
@@ -182,10 +189,15 @@ const applyIncludes = <T>(
   includes: string[],
 ) => {
   includes.forEach((relatedEntity) => {
-    queryBuilder.leftJoinAndSelect(
-      `${aggregate}.${relatedEntity}`,
-      relatedEntity,
-    );
+    if (relatedEntity.includes('.')) {
+      const [parent, child] = relatedEntity.split('.');
+      queryBuilder.leftJoinAndSelect(`${parent}.${child}`, `${child}`);
+    } else {
+      queryBuilder.leftJoinAndSelect(
+        `${aggregate}.${relatedEntity}`,
+        relatedEntity,
+      );
+    }
   });
 };
 
@@ -306,34 +318,8 @@ export class QueryConstructor {
   static constructQuery<T extends ObjectLiteral>(
     repository: Repository<T>,
     query: CollectionQuery,
+    withDelete = false,
   ): SelectQueryBuilder<T> {
-    // const query: CollectionQuery = {
-    //   // : ['name'],
-    //   where: [
-    //     // [{ column: 'name', value: 'string', operator: '=' }, { column: 'name', value: 'string1', operator: '=' }],
-    //     // [{ column: 'name', value: ['string', 'string1'], operator: 'IN' }],
-    //     [{ column: 'name', value: 'string', operator: '=' }],
-    //     // [{ column: 'descriptionJson->>name', value: 'test', operator: '=' }],
-    //     // [{ column: 'descriptionJson->value->>value', value: 20, operator: '=' }],
-    //     // [
-    //     //   {
-    //     //     column: 'userGroups.userId',
-    //     //     value: '1cfafb58-c068-4936-b284-fc4887045e1c',
-    //     //     operator: '=',
-    //     //   },
-    //     // ],
-    //   ],
-    //   take: 10,
-    //   skip: 0,
-    //   // orderBy: [{ column: 'name', direction: 'ASC' }],
-    //   // includes: ['userGroups'],
-    //   // groupBy: ['name', 'id'],
-    //   // having: [[{ column: 'name', value: 1, operator: '>' }]],
-    //   // count: true,
-    // };
-
-    const sQ = encodeCollectionQuery(query);
-
     const aggregateColumns: any = {};
     const metaData = repository.manager.connection.getMetadata(
       repository.target,
@@ -345,10 +331,33 @@ export class QueryConstructor {
     const aggregate = metaData.tableName;
     const queryBuilder = repository.createQueryBuilder(aggregate);
 
+    if (withDelete) {
+      queryBuilder.withDeleted();
+    }
+
+    if (!metaData.propertiesMap['tenantId']) {
+      query = this.removeFilter(query, 'tenantId');
+    }
+
+    if (!metaData.propertiesMap['organizationId']) {
+      query = this.removeFilter(query, 'organizationId');
+    }
+
+    query = this.removeEmtpyFilter(query);
+
     buildQuery(aggregate, queryBuilder, query);
 
-    const q = queryBuilder.getSql();
-
     return queryBuilder;
+  }
+  static removeEmtpyFilter(query: CollectionQuery) {
+    query.where = query.where.filter((x) => x.length > 0);
+    return query;
+  }
+
+  static removeFilter(query: CollectionQuery, key: string) {
+    query.where = query.where.map((x) => {
+      return x.filter((y) => y.column != key);
+    });
+    return query;
   }
 }

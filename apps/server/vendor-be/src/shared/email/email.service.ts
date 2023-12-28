@@ -1,5 +1,5 @@
 import { MailerService } from '@nestjs-modules/mailer';
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class EmailService {
@@ -14,7 +14,7 @@ export class EmailService {
       });
       return result;
     } catch (error) {
-      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+      throw error;
     }
   }
 }

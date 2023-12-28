@@ -8,15 +8,15 @@ import {
   Query,
   Req,
 } from '@nestjs/common';
-import { CollectionQuery } from '../collection-query';
 import { DataResponseFormat } from '../api-data';
-import { BaseEntity } from '../entities/base.entity';
-import { RelationCrudService } from '../service/relation-crud.service';
+import { RelationCrudService } from '../service';
 import { BaseAPIDto } from './extra-crud.controller';
-import { ApiBearerAuth, ApiBody } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiQuery } from '@nestjs/swagger';
 import { RelationCrudOptions } from '../types/crud-option.type';
+import { ObjectLiteral } from 'typeorm';
+import { decodeCollectionQuery } from '../collection-query';
 
-export function RelationCrudController<TEntity extends BaseEntity>(
+export function RelationCrudController<TEntity extends ObjectLiteral>(
   options: RelationCrudOptions,
 ) {
   const {
@@ -50,20 +50,34 @@ export function RelationCrudController<TEntity extends BaseEntity>(
     }
 
     @Get(`:id/${firstInclude}`)
+    @ApiQuery({
+      name: 'q',
+      type: String,
+      description: 'Collection Query Parameter. Optional',
+      required: false,
+    })
     async findAllFirst(
       @Param('id') id: string,
-      @Query() query: CollectionQuery,
+      @Query('q') q: string,
       @Req() req?: any,
     ): Promise<DataResponseFormat<TEntity>> {
+      const query = decodeCollectionQuery(q);
       return this.service.findAllFirst(id, query, options);
     }
 
     @Get(`:id/${secondInclude}`)
+    @ApiQuery({
+      name: 'q',
+      type: String,
+      description: 'Collection Query Parameter. Optional',
+      required: false,
+    })
     async findAllSecond(
       @Param('id') id: string,
-      @Query() query: CollectionQuery,
+      @Query('q') q: string,
       @Req() req?: any,
     ): Promise<DataResponseFormat<TEntity>> {
+      const query = decodeCollectionQuery(q);
       return this.service.findAllSecond(id, query, options);
     }
   }
