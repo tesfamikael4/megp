@@ -13,7 +13,15 @@ import {
 } from '@tabler/icons-react';
 
 export const Menu: MenuItem[] = [
-  { label: 'Vendors', icon: IconBuildingStore, link: '/vendors' },
+  {
+    label: 'Applications',
+    icon: IconBuildingStore,
+    links: [
+      { label: 'Approved Vendors', link: '/vendors/approved' },
+      { label: 'Debarred Vendors', link: '/vendors/debarred' },
+      { label: 'Rejected Application', link: '/vendors/rejected' },
+    ],
+  },
   {
     label: 'New Registration ',
     icon: IconHomePlus,

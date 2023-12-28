@@ -26,7 +26,7 @@ export default function TaskDetails({
             Back
           </Button>
         </Flex>
-        <FormPreview data={data} />;
+        <FormPreview data={data} />
       </Section>
     );
   }

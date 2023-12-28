@@ -46,7 +46,7 @@ const tabs = [
   },
   {
     tabValue: 'vendorAccounts',
-    tabName: 'Vendor Accounts',
+    tabName: 'Bank Account Details',
   },
   {
     tabValue: 'areasOfBusinessInterest',
@@ -60,12 +60,40 @@ const tabs = [
     tabValue: 'businessCats',
     tabName: 'Business Categories',
   },
+  {
+    tabValue: 'supportingDocuments',
+    tabName: 'Supporting Documents',
+  },
+  {
+    tabValue: 'paymentReceipt',
+    tabName: 'Payment Receipts',
+  },
+  {
+    tabValue: 'businessAreas',
+    tabName: 'Business Areas',
+  },
 ];
+
+const filterColumns = {
+  vendorAccounts: [
+    { name: 'accountHolderFullName', as: 'fullName' },
+    { name: 'accountNumber' },
+    { name: 'bankName' },
+    { name: 'IBAN' },
+    { name: 'isDefualt' },
+  ],
+  contactPersons: [
+    { name: 'firstName' },
+    { name: 'lastName' },
+    { name: 'email' },
+    { name: 'mobileNumber' },
+  ],
+};
 
 const findATabNameByValue = (value) =>
   tabs.find((tab) => tab.tabValue === value);
 
-function renderTable(data) {
+function renderTable(data, selected) {
   if (data.length === 0) {
     return null; // No data to display in the table
   }
@@ -83,32 +111,49 @@ function renderTable(data) {
       <Table className={`w-max ${tableClasses}`}>
         <Table.Thead className="w-fit">
           <Table.Tr>
-            {headers.map(
-              (header) =>
-                header !== 'id' && (
-                  <Table.Th key={header} className="w-fit">
-                    {addSpacesToCamelCase(header)}
-                  </Table.Th>
-                ),
-            )}
+            {filterColumns[selected]
+              ? filterColumns[selected].map(
+                  (header) =>
+                    header !== 'id' && (
+                      <Table.Th key={header.name} className="w-fit">
+                        {addSpacesToCamelCase(header.as || header.name)}
+                      </Table.Th>
+                    ),
+                )
+              : headers.map(
+                  (header) =>
+                    header !== 'id' && (
+                      <Table.Th key={header} className="w-fit">
+                        {addSpacesToCamelCase(header)}
+                      </Table.Th>
+                    ),
+                )}
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
           {data.map((item, index) => (
             <Table.Tr key={index}>
-              {headers.map((header) => {
-                if (typeof item[header] === 'object') {
-                  renderTable(item[header] ?? []);
+              {(filterColumns[selected]
+                ? filterColumns[selected]
+                : headers
+              ).map((header) => {
+                if (typeof item[header?.name ?? header] === 'object') {
+                  renderTable(
+                    item[header?.name ?? header] ?? [],
+                    header?.name ?? header,
+                  );
                   return null;
                 }
                 return (
-                  header !== 'id' && (
-                    <Table.Td key={header}>
-                      {isDate(item[header])
-                        ? new Date(item[header]).toLocaleDateString()
-                        : typeof item[header] == 'boolean'
-                        ? JSON.stringify(item[header])
-                        : item[header]}
+                  (header?.name ?? header) !== 'id' && (
+                    <Table.Td key={header?.name ?? header}>
+                      {isDate(item[header?.name ?? header])
+                        ? new Date(
+                            item[header?.name ?? header],
+                          ).toLocaleDateString()
+                        : typeof item[header?.name ?? header] == 'boolean'
+                        ? JSON.stringify(item[header?.name ?? header])
+                        : item[header?.name ?? header]}
                     </Table.Td>
                   )
                 );
@@ -199,7 +244,7 @@ function FormPreview({ data }: { data: any }) {
             ))}
           {selected &&
             Array.isArray(data[selected]) &&
-            renderTable(data[selected])}
+            renderTable(data[selected], selected)}
         </Section>
       </ScrollArea>
     </Flex>

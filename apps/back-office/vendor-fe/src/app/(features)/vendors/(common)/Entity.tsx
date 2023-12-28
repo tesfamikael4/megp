@@ -26,15 +26,24 @@ export default function Entity({
       basePath: `/vendors`,
       mode: 'list',
       entity:
-        title == 'approved' ? 'Approved Vendors' : 'Rejected Applications',
+        title == 'approved'
+          ? 'Approved Vendors'
+          : title == 'rejected'
+          ? 'Rejected Applications'
+          : 'Debarred Vendors',
       primaryKey: 'id',
       primaryContent: 'description',
-      title: '',
+      title:
+        title == 'approved'
+          ? 'Approved Vendors'
+          : title == 'rejected'
+          ? 'Rejected Applications'
+          : 'Debarred Vendors',
       hasAdd: false,
       onDetail: (selected: Vendor) => {
         const param = new URLSearchParams();
         param.set('type', title);
-        router.push(`/vendors/${selected.id}`);
+        router.push(`/vendors/${title}/${selected.id}`);
       },
 
       columns: [
@@ -49,7 +58,7 @@ export default function Entity({
         },
         {
           id: 'businessType',
-          header: 'Service Type ',
+          header: 'Business Type ',
           accessorKey: 'businessType',
           meta: {
             widget: 'expand',
