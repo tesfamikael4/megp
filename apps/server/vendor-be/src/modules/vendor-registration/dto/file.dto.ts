@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
 import { FilesEntity } from 'src/entities';
 
 export class CreateFileDto {
@@ -86,4 +86,19 @@ export class FileResponseDto {
     response.bucketName = entity.bucketName;
     return response;
   }
+}
+export class UploadFileDto {
+  @ApiProperty()
+  @IsNotEmpty()
+  transactionId: string;
+  @ApiProperty()
+  @IsNotEmpty()
+  // @IsUUID()
+  invoiceIds: string[];
+  @ApiProperty()
+  // @IsNotEmpty()
+  @IsOptional()
+  userInfo: any;
+
+  attachment: string;
 }

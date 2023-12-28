@@ -55,7 +55,7 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     } else {
       invoice.amount = curruntPricing.fee;
     }
-    invoice.instanceId = null; //result.instanceId;
+    invoice.businessAreaId = null; //result.instanceId;
     invoice.taskName = null; //result.task.name;
     invoice.taskId = null; //result.task.id;
     invoice.payToAccName =
@@ -173,7 +173,7 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     taskId: string,
   ): Promise<InvoiceResponseDto> {
     const invoice = await this.invoiceRepository.findOne({
-      where: { instanceId: instanceId, taskId: taskId },
+      where: { businessAreaId: instanceId, taskId: taskId },
     });
     if (invoice) {
       const invoicedto = InvoiceResponseDto.toResponse(invoice);
@@ -239,7 +239,7 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     invoice.serviceId = curruntPricing.service.id;
     invoice.payerName = vendor.name;
     invoice.userId = user.id;
-    invoice.instanceId = null; //result.instanceId;
+    invoice.businessAreaId = null; //result.instanceId;
     invoice.taskName = null; //result.task.name;
     invoice.taskId = null; //result.task.id;
     invoice.serviceName = service.name;

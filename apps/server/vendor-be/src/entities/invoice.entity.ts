@@ -5,7 +5,7 @@ export class InvoiceEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
   @Column({ type: 'uuid', nullable: true })
-  instanceId: string;
+  businessAreaId: string;
   @Column({ nullable: true })
   applicationNo: string;
   @Column()
