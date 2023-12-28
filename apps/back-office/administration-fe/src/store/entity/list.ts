@@ -12,10 +12,11 @@ export const ENTITY_LIST: EntityStoreConfig[] = [
     baseUrl:
       process.env.NEXT_PUBLIC_ADMINISTRATION_API ?? '/administration/api/',
   },
+
   {
     entity: 'tags',
     baseUrl:
-      process.env.NEXT_PUBLIC_ADMINISTRATION_API ?? '/api/administration',
+      process.env.NEXT_PUBLIC_ADMINISTRATION_API ?? '/administration/api/',
   },
   {
     entity: 'tag',
