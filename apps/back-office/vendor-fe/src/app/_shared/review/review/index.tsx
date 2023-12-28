@@ -39,6 +39,18 @@ const tabs = [
     tabValue: 'bankAccountDetails',
     tabName: 'Bank Account Details',
   },
+  {
+    tabValue: 'supportingDocuments',
+    tabName: 'Supporting Documents',
+  },
+  {
+    tabValue: 'paymentReceipt',
+    tabName: 'Payment Receipts',
+  },
+  {
+    tabValue: 'businessAreas',
+    tabName: 'Business Areas',
+  },
 ];
 
 function renderTable(data) {
@@ -91,19 +103,22 @@ function FormPreview({ data }: { data: any }) {
               value={tabValue}
             >
               <Accordion.Control>{tabName}</Accordion.Control>
-              {Object.keys(data[tabValue]).map((fieldKey) => (
-                <Accordion.Panel key={fieldKey}>
-                  {typeof data[tabValue][fieldKey] === 'string' && (
-                    <Flex className="gap-2 items-center">
-                      <Text size="xs" fw={700} tt="capitalize">
-                        {addSpacesToCamelCase(fieldKey)}:
-                      </Text>
-                      <Text size="xs">{data[tabValue][fieldKey]}</Text>
-                    </Flex>
-                  )}
-                  {Array.isArray(data[tabValue]) && renderTable(data[tabValue])}
-                </Accordion.Panel>
-              ))}
+              {Object.keys(data[tabValue]).map((fieldKey) => {
+                return (
+                  <Accordion.Panel key={fieldKey}>
+                    {typeof data[tabValue][fieldKey] === 'string' && (
+                      <Flex className="gap-2 items-center">
+                        <Text size="xs" fw={700} tt="capitalize">
+                          {addSpacesToCamelCase(fieldKey)}:
+                        </Text>
+                        <Text size="xs">{data[tabValue][fieldKey]}</Text>
+                      </Flex>
+                    )}
+                    {Array.isArray(data[tabValue]) &&
+                      renderTable(data[tabValue])}
+                  </Accordion.Panel>
+                );
+              })}
             </Accordion.Item>
           );
         }
