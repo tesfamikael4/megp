@@ -22,27 +22,18 @@ const options: EntityCrudOptions = {};
 export class InstanceController extends EntityCrudController<Instance>(
   options,
 ) {
-  constructor(
-    private readonly instanceService: InstanceService,
-    private readonly stateService: StateService,
-  ) {
+  constructor(private readonly instanceService: InstanceService) {
     super(instanceService);
   }
 
   @Post('initiate')
   @EventPattern('initiate-workflow')
   async initiate(@Body() data: any, @Ctx() context: RmqContext) {
-    await this.stateService.createState(data.activityId);
     return await this.instanceService.initiate(data.name, data.id);
   }
 
   @Post('goto')
   async goto(@Body() data: any) {
     return this.instanceService.goto(data.activityId, data.details, data.goto);
-  }
-
-  @Post('approve-workflow')
-  async approveWorkflow(@Body() data: any) {
-    await this.instanceService.approveWorkflow(data);
   }
 }

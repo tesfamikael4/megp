@@ -8,6 +8,8 @@ import { XMachineService } from './xMachine.service';
 import { createActor } from 'xstate';
 import { Instance } from 'src/entities/instance.entity';
 import { Activity } from 'src/entities/activity.entity';
+import { StateService } from './state.service';
+import { State } from 'src/entities/state.entity';
 
 @Injectable()
 export class InstanceService extends EntityCrudService<Instance> {
@@ -18,6 +20,11 @@ export class InstanceService extends EntityCrudService<Instance> {
     private readonly repositoryStep: Repository<Step>,
     @InjectRepository(Activity)
     private readonly repositoryActivity: Repository<Activity>,
+    @InjectRepository(State)
+    private readonly repositoryState: Repository<State>,
+
+    private readonly stateService: StateService,
+
     @Inject('WORKFLOW_RMQ_SERVICE')
     private readonly workflowRMQClient: ClientProxy,
   ) {
@@ -42,6 +49,8 @@ export class InstanceService extends EntityCrudService<Instance> {
       stepId: steps[0].id,
       metadata: [],
     };
+    await this.stateService.createState(act.id);
+
     const instance = this.repositoryInstance.create(data);
     return this.repositoryInstance.save(instance);
   }
@@ -57,12 +66,14 @@ export class InstanceService extends EntityCrudService<Instance> {
         remark: details.remark,
         approver: details.approver,
         at: String(Date.now()),
-        stepId: goto.id,
-        version: existingData.version + 1,
+        goto: goto.id,
+        stepId: existingData.stepId,
+        version: existingData.version,
       });
       await this.repositoryInstance.update(existingData.id, {
         status: goto.status,
         stepId: goto.id,
+        version: existingData.version + 1,
         metadata: existingData.metadata,
       });
     }
@@ -73,9 +84,5 @@ export class InstanceService extends EntityCrudService<Instance> {
       where: { activityId: id },
       relations: ['step'],
     });
-  }
-
-  async approveWorkflow(data) {
-    this.workflowRMQClient.emit('workflow-approved', data);
   }
 }
