@@ -1,9 +1,8 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { LessThan, MoreThan, MoreThanOrEqual, Not, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { APP, BudgetYear, PreBudgetPlan } from 'src/entities';
 import { EntityCrudService } from 'src/shared/service';
-import { CreateAPPAuto, CreateAPPDto } from '../dtos/app.dto';
 
 @Injectable()
 export class APPService extends EntityCrudService<APP> {
@@ -26,16 +25,11 @@ export class APPService extends EntityCrudService<APP> {
     let budYear = '';
     if (input.type == 'next') {
       budYear = String(year + 1);
+    } else if (input.type == 'current') {
+      budYear = String(year);
     } else {
       throw new BadRequestException('invalid_type');
     }
-
-    // const budgetYear = await this.repositoryBudgetYear.findOne({
-    //   where: {
-    //     startDate: MoreThanOrEqual(year),
-    //     endDate: LessThan(year),
-    //   }
-    // })
 
     const budgetYear = await this.repositoryBudgetYear.findOne({
       where: {
@@ -51,6 +45,7 @@ export class APPService extends EntityCrudService<APP> {
     }
 
     item.planName = 'Annual Procurement Plan ' + budYear;
+    item.organizationId = input.organizationId;
     const preBud = new PreBudgetPlan();
 
     preBud.estimatedAmount = {};
@@ -59,6 +54,7 @@ export class APPService extends EntityCrudService<APP> {
       ...item,
       budgetYearId: budgetYear.id,
       budgetYear: budYear,
+      organizationId: input.organizationId,
     };
 
     await this.repositoryAPP.save(createApp);
