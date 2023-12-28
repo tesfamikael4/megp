@@ -34,7 +34,6 @@ export class APPService extends EntityCrudService<APP> {
     const budgetYear = await this.repositoryBudgetYear.findOne({
       where: {
         name: budYear,
-        organizationId: input.organizationId,
       },
     });
 
