@@ -8,6 +8,8 @@ export class InvoiceResponseDto {
   @ApiProperty()
   InstanceId: string;
   @ApiProperty()
+  userId: string;
+  @ApiProperty()
   applicationNo: string;
   @ApiProperty()
   taskName: string;
@@ -37,6 +39,7 @@ export class InvoiceResponseDto {
   static toResponse(entity: InvoiceEntity): InvoiceResponseDto {
     const response = new InvoiceResponseDto();
     response.id = entity.id;
+    response.userId = entity.userId;
     response.InstanceId = entity.businessAreaId;
     response.applicationNo = entity.applicationNo;
     response.taskId = entity.taskId;
