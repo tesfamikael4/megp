@@ -15,13 +15,17 @@ export default function InvoiceTemplate({
     taskName: invoiceData[0].taskName ?? '',
     taskId: invoiceData[0].taskId ?? '',
     serviceId: invoiceData[0].serviceId ?? '',
-    serviceName: invoiceData[0].serviceName ?? '',
+    serviceName: invoiceData,
     payerName: invoiceData[0].payerName ?? '',
     userId: invoiceData[0].userId ?? '',
     payToAccNo: invoiceData[0].payToAccNo ?? '',
     payToAccName: invoiceData[0].payToAccName ?? '',
     payToBank: invoiceData[0].payToBank ?? '',
-    amount: invoiceData[0].amount ?? '',
+    amount:
+      invoiceData.reduce(
+        (sum, item) => sum + (parseInt(item.amount) || 0),
+        0,
+      ) ?? '',
     createdOn: invoiceData[0].createdOn ?? '',
     paymentStatus: invoiceData[0].paymentStatus ?? '',
     remark: invoiceData[0].remark ?? '',
@@ -86,8 +90,12 @@ export default function InvoiceTemplate({
                 Invoice Details:
               </p>
               <p className=" text-xs ml-2 font-semibold">Date: {invoiceDate}</p>
-              <p className=" text-xs ml-2 font-semibold">
-                For: {data.serviceName}
+
+              <p className=" text-xs ml-2 font-semibold flex gap-2">
+                For:
+                {data.serviceName.map((name, key) => (
+                  <span key={key}>{name.serviceName},</span>
+                ))}
               </p>
             </div>
           </div>
@@ -99,37 +107,29 @@ export default function InvoiceTemplate({
                 <tr>
                   <th className="border p-2 w-4">No</th>
                   <th className="border p-2">Service name</th>
-                  <th className="border p-2 w-32">Contract Value</th>
-                  <th className="border p-2 w-40">Total Levy Amount</th>
+                  <th className="border p-2 w-40">Amount</th>
                 </tr>
               </thead>
               <tbody>
-                {[
-                  {
-                    itemNo: 'item',
-                    description: 'description',
-                    contractValue: 'contractValue',
-                    totalLevyAmount: 'totalLevyAmount',
-                  },
-                ].map((item, index) => (
+                {invoiceData.map((item, index) => (
                   <tr key={index}>
                     <td className="border p-2 text-center">{index + 1}</td>
                     <td className="border p-2 items-center">
-                      {item.description}
+                      {item.serviceName}
                     </td>
-                    <td className="border p-2 text-center">
-                      {item.contractValue}
-                    </td>
-                    <td className="border p-2 text-center">
-                      {item.totalLevyAmount}
-                    </td>
+                    <td className="border p-2 text-center">${item.amount}</td>
                   </tr>
                 ))}
                 <tr className="w-full">
                   <td></td>
                   <td></td>
-                  <td></td>
-                  <td className="p-2 border text-center">{data.amount}</td>
+                  <td className="p-2 border text-center">
+                    $
+                    {invoiceData.reduce(
+                      (sum, item) => sum + (parseInt(item.amount) || 0),
+                      0,
+                    )}
+                  </td>
                 </tr>
               </tbody>
             </table>

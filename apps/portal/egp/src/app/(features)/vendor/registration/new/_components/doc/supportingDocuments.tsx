@@ -1,20 +1,105 @@
 'use client';
 import { Flex, Button, Box, LoadingOverlay } from '@mantine/core';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAddFormMutation, useGetVendorQuery } from '../../../_api/query';
+import {
+  useAddFormMutation,
+  useGetVendorQuery,
+  useLazyGetVendorOnDemandQuery,
+  useLazyUploadSupportingDocQuery,
+} from '../../../_api/query';
 import { NotificationService } from '@/app/(features)/vendor/_components/notification';
 import UppyAttachmentDashboard from '@/app/(features)/vendor/_components/UppyAttachmentDashboard/UppyAttachmentDashboard';
 import { usePrivilege } from '../../_context/privilege-context';
+import FileUploader from '../../../../_components/file-uploader/upload';
+const VENDOR_URL = process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api';
 
 export default function SupportingDocuments() {
   const router = useRouter();
-  const requestInfo = useGetVendorQuery(
-    {},
-    { refetchOnMountOrArgChange: true },
-  );
+  const [request, requestInfo] = useLazyGetVendorOnDemandQuery();
+  const docInfo = useGetVendorQuery({}, { refetchOnMountOrArgChange: true });
   const [save, saveValues] = useAddFormMutation();
   const { checkAccess, updateAccess } = usePrivilege();
+
+  const [uploadFile, uploadFileInfo] = useLazyUploadSupportingDocQuery();
+
+  const [businessRegistrationFile, setBusinessRegistrationFile] =
+    useState<File | null>(null);
+  const [mRATPINCertificateFile, setMRATPINCertificateFile] =
+    useState<File | null>(null);
+  const [generalReceiptFile, setGeneralReceiptFile] = useState<File | null>(
+    null,
+  );
+  const [mRATaxClearanceFile, setMRATaxClearanceFile] = useState<File | null>(
+    null,
+  );
+  const [previousPPDARegistrationFile, setPreviousPPDARegistrationFile] =
+    useState<File | null>(null);
+
+  // Define state variables for each imageUrl
+  const [businessRegistrationImageUrl, setBusinessRegistrationImageUrl] =
+    useState<string | null>(null);
+  const [mRATPINCertificateImageUrl, setMRATPINCertificateImageUrl] = useState<
+    string | null
+  >(null);
+  const [generalReceiptImageUrl, setGeneralReceiptImageUrl] = useState<
+    string | null
+  >(null);
+  const [mRATaxClearanceImageUrl, setMRATaxClearanceImageUrl] = useState<
+    string | null
+  >(null);
+  const [
+    previousPPDARegistrationImageUrl,
+    setPreviousPPDARegistrationImageUrl,
+  ] = useState<string | null>(null);
+
+  // Define separate handler functions for each FileUploader
+  const handleBusinessRegistrationChange = (file: File) => {
+    setBusinessRegistrationFile(file);
+    // Your additional logic here
+  };
+
+  const handleMRATPINCertificateChange = (file: File) => {
+    setMRATPINCertificateFile(file);
+    // Your additional logic here
+  };
+
+  const handleGeneralReceiptChange = (file: File) => {
+    setGeneralReceiptFile(file);
+    // Your additional logic here
+  };
+
+  const handleMRATaxClearanceChange = (file: File) => {
+    setMRATaxClearanceFile(file);
+    // Your additional logic here
+  };
+
+  const handlePreviousPPDARegistrationChange = (file: File) => {
+    setPreviousPPDARegistrationFile(file);
+    // Your additional logic here
+  };
+
+  useEffect(() => {
+    if (docInfo.data && docInfo.data?.supportingDocuments) {
+      setBusinessRegistrationImageUrl(
+        `${VENDOR_URL}/upload/get-file/SupportingDocument/${docInfo.data?.supportingDocuments.businessRegistration_IncorporationCertificate}`,
+      );
+      setMRATPINCertificateImageUrl(
+        `${VENDOR_URL}/upload/get-file/SupportingDocument/${docInfo.data?.supportingDocuments.mRATaxClearanceCertificate}`,
+      );
+      setPreviousPPDARegistrationImageUrl(
+        `${VENDOR_URL}/upload/get-file/SupportingDocument/${docInfo.data?.supportingDocuments.previousPPDARegistrationCertificate}`,
+      );
+      setGeneralReceiptImageUrl(
+        `${VENDOR_URL}/upload/get-file/SupportingDocument/${docInfo.data?.supportingDocuments.generalReceipt_BankDepositSlip}`,
+      );
+      setMRATaxClearanceImageUrl(
+        `${VENDOR_URL}/upload/get-file/SupportingDocument/${docInfo.data?.supportingDocuments.mRATaxClearanceCertificate}`,
+      );
+    }
+
+    return () => {};
+  }, [docInfo.data]);
 
   useEffect(() => {
     if (requestInfo.data?.initial.level) {
@@ -45,7 +130,7 @@ export default function SupportingDocuments() {
     return () => {};
   }, [saveValues.isSuccess, saveValues.isError, router]);
 
-  const onSave = () => {
+  useEffect(() => {
     if (requestInfo.data) {
       save({
         data: {
@@ -57,7 +142,59 @@ export default function SupportingDocuments() {
         },
       });
     }
+
+    return () => {};
+  }, [requestInfo.data]);
+
+  const onSave = async () => {
+    try {
+      if (businessRegistrationFile) {
+        await uploadFile({
+          file: businessRegistrationFile,
+          fieldName: 'businessRegistration_IncorporationCertificate',
+        });
+      }
+
+      if (mRATPINCertificateFile) {
+        await uploadFile({
+          file: mRATPINCertificateFile,
+          fieldName: 'mRA_TPINCertificate',
+        });
+      }
+
+      if (generalReceiptFile) {
+        await uploadFile({
+          file: generalReceiptFile,
+          fieldName: 'generalReceipt_BankDepositSlip',
+        });
+      }
+
+      if (mRATaxClearanceFile) {
+        await uploadFile({
+          file: mRATaxClearanceFile,
+          fieldName: 'mRATaxClearanceCertificate',
+        });
+      }
+
+      if (previousPPDARegistrationFile) {
+        await uploadFile({
+          file: previousPPDARegistrationFile,
+          fieldName: 'previousPPDARegistrationCertificate',
+        });
+      }
+      request({});
+
+      // Now that all files are uploaded, you can proceed with saving the data
+
+      NotificationService.successNotification('Files Uploaded Successfully!');
+      router.push('review');
+    } catch (error) {
+      NotificationService.requestErrorNotification(
+        'Error on file upload or save',
+      );
+    }
   };
+
   const FILE_SERVER_URL = process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api';
   if (requestInfo.isLoading) {
     return (
@@ -77,89 +214,50 @@ export default function SupportingDocuments() {
     <Flex className="w-full flex-col gap-2">
       {requestInfo.data?.supportingDocuments !== null && (
         <>
-          <UppyAttachmentDashboard
-            tusServerGetUrl={FILE_SERVER_URL + '/upload/'}
-            tusServerPostUrl={FILE_SERVER_URL + '/upload/'}
+          <FileUploader
             id="businessRegistration_IncorporationCertificate"
             label="Business Registration/Incorporation Certificate"
-            placeholder="Upload"
-            metaData={{
-              entityName: 'vendor',
-              fieldName: 'businessRegistration_IncorporationCertificate',
-              instanceId: requestInfo.data?.id,
-            }}
-            storeId={
-              requestInfo.data?.supportingDocuments
-                .businessRegistration_IncorporationCertificate
-            }
-            disabled={!checkAccess('doc')}
+            placeholder="Choose File"
+            onChange={handleBusinessRegistrationChange}
+            getImageUrl={businessRegistrationImageUrl}
           />
-          <UppyAttachmentDashboard
-            tusServerGetUrl={FILE_SERVER_URL + '/upload/'}
-            tusServerPostUrl={FILE_SERVER_URL + '/upload/'}
+
+          <FileUploader
             id="mRA_TPINCertificate"
             label="MRA TPIN Certificate"
-            placeholder="Upload"
-            metaData={{
-              entityName: 'vendor',
-              fieldName: 'mRA_TPINCertificate',
-              instanceId: requestInfo.data?.id,
-            }}
-            storeId={requestInfo.data?.supportingDocuments.mRA_TPINCertificate}
-            disabled={!checkAccess('doc')}
+            placeholder="Choose File"
+            onChange={handleMRATPINCertificateChange}
+            getImageUrl={mRATPINCertificateImageUrl}
           />
-          <UppyAttachmentDashboard
-            tusServerGetUrl={FILE_SERVER_URL + '/upload/'}
-            tusServerPostUrl={FILE_SERVER_URL + '/upload/'}
+
+          {/* FileUploader for General Receipt/Bank Deposit Slip */}
+          <FileUploader
             id="generalReceipt_BankDepositSlip"
             label="General Receipt/Bank Deposit Slip"
-            placeholder="Upload"
-            metaData={{
-              entityName: 'vendor',
-              fieldName: 'generalReceipt_BankDepositSlip',
-              instanceId: requestInfo.data?.id,
-            }}
-            storeId={
-              requestInfo.data?.supportingDocuments
-                .generalReceipt_BankDepositSlip
-            }
-            disabled={!checkAccess('doc')}
+            placeholder="Choose File"
+            onChange={handleGeneralReceiptChange}
+            getImageUrl={generalReceiptImageUrl}
           />
-          <UppyAttachmentDashboard
-            tusServerGetUrl={FILE_SERVER_URL + '/upload/'}
-            tusServerPostUrl={FILE_SERVER_URL + '/upload/'}
+
+          {/* FileUploader for MRA Tax Clearance Certificate */}
+          <FileUploader
             id="mRATaxClearanceCertificate"
             label="MRA Tax Clearance Certificate"
-            placeholder="Upload"
-            metaData={{
-              entityName: 'vendor',
-              fieldName: 'mRATaxClearanceCertificate',
-              instanceId: requestInfo.data?.id,
-            }}
-            storeId={
-              requestInfo.data?.supportingDocuments.mRATaxClearanceCertificate
-            }
-            disabled={!checkAccess('doc')}
+            placeholder="Choose File"
+            onChange={handleMRATaxClearanceChange}
+            getImageUrl={mRATaxClearanceImageUrl}
           />
-          <UppyAttachmentDashboard
-            tusServerGetUrl={FILE_SERVER_URL + '/upload/'}
-            tusServerPostUrl={FILE_SERVER_URL + '/upload/'}
+
+          {/* FileUploader for Previous PPDA Registration Certificate */}
+          <FileUploader
             id="previousPPDARegistrationCertificate"
             label="Previous PPDA Registration Certificate"
-            placeholder="Upload"
-            metaData={{
-              entityName: 'vendor',
-              fieldName: 'previousPPDARegistrationCertificate',
-              instanceId: requestInfo.data?.id,
-            }}
-            storeId={
-              requestInfo.data?.supportingDocuments
-                .previousPPDARegistrationCertificate
-            }
-            disabled={!checkAccess('doc')}
+            placeholder="Choose File"
+            onChange={handlePreviousPPDARegistrationChange}
+            getImageUrl={previousPPDARegistrationImageUrl}
           />
           <Flex justify="end" className="gap-2 mt-4">
-            {checkAccess('doc') && <Button onClick={onSave}>Save</Button>}
+            <Button onClick={onSave}>Save</Button>
           </Flex>
         </>
       )}

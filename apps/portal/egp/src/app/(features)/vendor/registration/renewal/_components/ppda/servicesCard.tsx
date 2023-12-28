@@ -12,7 +12,7 @@ import {
 import { Fragment, useEffect, useState } from 'react';
 import {
   useGetPriceRangeQuery,
-  useLazyGetRenewalInvoiceQuery,
+  useLazyPostRenewalInvoiceQuery,
 } from '../../../_api/query';
 import { IconCheckbox, IconRectangle } from '@tabler/icons-react';
 import { ApprovedVendorServiceSchema } from '@/shared/schema/venderRenewalSchema';
@@ -50,11 +50,16 @@ export default function ServicesCard({
   });
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
 
-  const [request, requestInfo] = useLazyGetRenewalInvoiceQuery();
+  const [request, requestInfo] = useLazyPostRenewalInvoiceQuery();
 
   const handleSubmit = () => {
     if (selectedServices.length > 0) {
-      request(selectedServices);
+      console.log();
+      console.log(servicesData);
+      request({
+        status: servicesData.status,
+        data: servicesData.data.filter((s) => selectedServices.includes(s.id)),
+      });
     }
   };
   const handleProductClick = (productId: string) => {

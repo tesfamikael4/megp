@@ -13,10 +13,12 @@ import React, { useEffect, useState } from 'react';
 import InvoiceTemplate from '../../../_components/dynamicPrintComponent/invoice-sm';
 import {
   useGetInvoiceQuery,
+  useGetRenewalInvoiceQuery,
   useLazyGetPaymentSlipQuery,
   useLazyUploadPaymentSlipQuery,
 } from '../../_api/query';
-
+import PaymentMethod from '../_components/payment/payment-method';
+import { usePrivilege } from '../_context/privilege-context';
 import FileUploader from '../../../_components/file-uploader/upload';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SubmitHandler, useForm } from 'react-hook-form';
@@ -28,86 +30,65 @@ import {
   invoiceArraySchema,
   invoiceDataSchema,
 } from '@/shared/schema/invoiceSchema';
-import {
-  paymentReceiptArraySchema,
-  paymentReceiptItemSchema,
-} from '../../../../../../shared/schema/paymentReceiptItemSchema';
-import { isUrl } from '@/shared/schema/commonSchema';
+import { paymentReceiptItemSchema } from '../../../../../../shared/schema/paymentReceiptItemSchema';
 import { useRouter } from 'next/navigation';
 import { NotificationService } from '../../../_components/notification';
-import PaymentMethod from '../../new/_components/payment/payment-method';
+const VENDOR_URL = process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api';
 
 function Page() {
   const router = useRouter();
   const [invoiceSlipImageUrl, setInvoiceSlipImageUrl] = useState<string | null>(
     null,
   );
-  const [invoiceSlipImageSource, setInvoiceSlipImageSource] = useState<
-    string | null
-  >(null);
-  const invoiceInfo = useGetInvoiceQuery(
-    {},
+
+  const invoiceInfo = useGetRenewalInvoiceQuery(
+    {
+      status: { level: 'payment', status: 'Draft' },
+    },
     { refetchOnMountOrArgChange: true },
   );
   const [uploadFile, uploadFileInfo] = useLazyUploadPaymentSlipQuery();
-  const [getFile, getFileInfo] = useLazyGetPaymentSlipQuery();
+
   const { register, formState, setValue, watch, handleSubmit } =
     useForm<IPaymentSlipUploadSchema>({
       defaultValues: {
-        invoiceId: '47e6c7a0-0365-4bc6-a7fa-0f54344d280e',
-        serviceId: 'bb6934e1-9706-1e1b-c02f-b35c3e6153a4',
-        transactionNumber: '1231231231',
+        invoiceId: '',
+        serviceId: '',
+        transactionNumber: '',
         file: undefined,
       },
       resolver: zodResolver(paymentSlipUploadSchema),
     });
-  console.log(getFileInfo);
 
   const onSubmitHandler: SubmitHandler<IPaymentSlipUploadSchema> = (values) => {
-    console.log('Selected file:', values.file);
     uploadFile(values);
   };
 
   const handleFileChange = (file: File) => {
     setValue('file', file);
   };
+
   useEffect(() => {
-    if (
-      invoiceInfo.data?.paymentReceipt &&
-      invoiceInfo.data?.paymentReceipt.attachment
-    ) {
-    }
+    // if (
+    //   invoiceInfo.data &&
+    //   invoiceInfo.data?.paymentReceipt &&
+    //   invoiceInfo.data?.paymentReceipt.attachment
+    // ) {
+    //   setInvoiceSlipImageUrl(
+    //     `${VENDOR_URL}/upload/get-file/${invoiceInfo.data?.paymentReceipt.attachment}`,
+    //   );
+    // }
 
     return () => {};
   }, [invoiceInfo.data]);
 
   useEffect(() => {
-    if (
-      invoiceArraySchema.safeParse(invoiceInfo.data?.invoice).success &&
-      invoiceDataSchema.safeParse(invoiceInfo.data?.invoice[0]).success
-    ) {
-      setValue('invoiceId', invoiceInfo.data?.invoice[0].id ?? '');
-      setValue('serviceId', invoiceInfo.data?.invoice[0].serviceId ?? '');
+    if (paymentReceiptItemSchema.safeParse(uploadFileInfo.data).success) {
+      NotificationService.successNotification('Payed Successfully!');
+      router.push('/vendor/registration/track-applications');
     }
-
     return () => {};
-  }, [invoiceInfo.data]);
-
-  useEffect(() => {
-    if (getFileInfo.error) {
-      const errorResponse = getFileInfo.error as any;
-      isUrl(errorResponse.data) && setInvoiceSlipImageUrl(errorResponse.data);
-      setInvoiceSlipImageSource(errorResponse.data);
-    }
-
-    if (getFileInfo.data) {
-      console.log(uploadFileInfo.data);
-      const errorResponse = getFileInfo.error as any;
-      isUrl(errorResponse.data) && setInvoiceSlipImageUrl(errorResponse.data);
-    }
-
-    return () => {};
-  }, [getFileInfo.data, getFileInfo.error]);
+  }, [invoiceInfo.data, uploadFileInfo.data]);
 
   if (invoiceInfo.isLoading) {
     return (
@@ -140,9 +121,8 @@ function Page() {
               <input
                 {...register('invoiceId')}
                 value={
-                  invoiceArraySchema.safeParse(invoiceInfo.data?.invoice)
-                    .success
-                    ? invoiceInfo.data?.invoice[0].id
+                  invoiceArraySchema.safeParse(invoiceInfo.data?.items).success
+                    ? invoiceInfo.data?.items[0].id
                     : ''
                 }
                 hidden={true}
@@ -150,9 +130,8 @@ function Page() {
               <input
                 {...register('serviceId')}
                 value={
-                  invoiceArraySchema.safeParse(invoiceInfo.data?.invoice)
-                    .success
-                    ? invoiceInfo.data?.invoice[0].serviceId
+                  invoiceArraySchema.safeParse(invoiceInfo.data?.items).success
+                    ? invoiceInfo.data?.items[0].serviceId
                     : ''
                 }
                 hidden={true}
@@ -169,8 +148,7 @@ function Page() {
                 placeholder="Choose File"
                 error={formState.errors.file && 'Payment slip is required'}
                 onChange={handleFileChange}
-                getImageUrl={invoiceSlipImageSource}
-                onRemove={() => setInvoiceSlipImageUrl(null)}
+                getImageUrl={invoiceSlipImageUrl}
               />
             </Stack>
             <Flex justify="end" className="gap-2 mt-4">
@@ -178,10 +156,9 @@ function Page() {
             </Flex>
           </form>
           <Flex className="min-w-[450px] flex-col border w-full">
-            {invoiceInfo.data?.invoice &&
-              invoiceInfo.data?.invoice?.length > 0 && (
-                <InvoiceTemplate invoiceData={invoiceInfo.data?.invoice} />
-              )}
+            {invoiceInfo.data?.items && invoiceInfo.data?.items?.length > 0 && (
+              <InvoiceTemplate invoiceData={invoiceInfo.data?.items} />
+            )}
           </Flex>
         </Flex>
       </Box>

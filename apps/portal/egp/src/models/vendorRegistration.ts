@@ -1,5 +1,24 @@
 import { ApprovedVendorServiceSchema } from '@/shared/schema/venderRenewalSchema';
 import { InvoiceData } from './vendorInvoice';
+export type VendorStatus =
+  | 'Active'
+  | 'Approved'
+  | 'Adjustment'
+  | 'Submitted'
+  | 'Rejected'
+  | 'new'
+  | 'Draft'
+  | 'Save';
+
+export type VendorLevel =
+  | 'basic'
+  | 'detail'
+  | 'ppda'
+  | 'payment'
+  | 'doc'
+  | 'review'
+  | 'info';
+
 export interface FormData {
   basic: {
     name: string;
@@ -271,3 +290,14 @@ type TaskItem = {
 export type GetActivitiesProgressResponse = TaskItem[];
 
 export type GetForRenewalVendorResponse = ApprovedVendorServiceSchema;
+
+export type PostForRenewalVendorResponse = ApprovedVendorServiceSchema;
+export type PostForRenewalVendorRequest = ApprovedVendorServiceSchema;
+
+export type RenewalInvoiceRenewalVendorResponse = {
+  total: number;
+  items: InvoiceData[];
+};
+export type RenewalInvoiceRenewalVendorRequest = {
+  status: { level: String; status: String };
+};

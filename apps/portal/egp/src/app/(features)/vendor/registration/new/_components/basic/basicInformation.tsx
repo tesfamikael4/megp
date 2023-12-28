@@ -16,18 +16,17 @@ import dayjs from 'dayjs';
 
 import style from './basic.module.scss';
 import { useRouter } from 'next/navigation';
-import {
-  getNationalityValues,
-  nationalityOptions,
-} from '../mockup/nationality';
-import { ChangeHandler, UseFormRegisterReturn, useForm } from 'react-hook-form';
+import { getNationalityValues } from '../mockup/nationality';
+import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormOfBusiness } from '../mockup/form-of-business';
-import { useCreateVendorIdMutation } from '../../../_api/query';
+import {
+  useCreateVendorIdMutation,
+  useGetVendorQuery,
+} from '../../../_api/query';
 import { NotificationService } from '@/app/(features)/vendor/_components/notification';
 import { IconCalendar } from '@tabler/icons-react';
-import { setCookie } from 'cookies-next';
 import { usePrivilege } from '../../_context/privilege-context';
 
 type FormData = {
@@ -60,25 +59,45 @@ const formDataSchema = z.discriminatedUnion('origin', [
     tinIssuedDate: z.string().optional(),
   }),
 ]);
+interface BasicInformationProps {
+  defaultValues: FormData;
+}
+export const BasicInformation = ({ defaultValues }: BasicInformationProps) => {
+  const {
+    handleSubmit,
+    formState,
+    register,
+    setValue,
+    watch,
+    setError,
+    getValues,
+  } = useForm<FormData>({
+    resolver: zodResolver(formDataSchema),
+    defaultValues,
+  });
 
-export const BasicInformation = () => {
-  const { handleSubmit, formState, register, setValue, watch, setError } =
-    useForm<FormData>({
-      resolver: zodResolver(formDataSchema),
-      defaultValues: {
-        name: '',
-        businessType: '',
-        origin: '',
-        tinNumber: '',
-        tinIssuedDate: '',
-      },
-    });
-  const { checkAccess, lockElements } = usePrivilege();
+  const {
+    checkAccess,
+    lockElements,
+    nextRoute,
+    navigateToNextRoute,
+    accessStatus,
+    updateAccess,
+    updateStatus,
+  } = usePrivilege();
+
+  useEffect(() => {
+    updateAccess('basic');
+    updateStatus('Draft');
+
+    return () => {};
+  }, [updateAccess]);
+
   const router = useRouter();
   const [accept, setAccept] = useState<boolean>(false);
   const [create, createValues] = useCreateVendorIdMutation();
+
   const onSubmit = (data: typeof formState.defaultValues) => {
-    console.log(data);
     create({
       name: data?.name ?? '_',
       businessType: data?.businessType ?? '_',
@@ -104,7 +123,13 @@ export const BasicInformation = () => {
     }
 
     return () => {};
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [createValues.data, createValues.isError, createValues.isSuccess, router]);
+  console.log(
+    accessStatus,
+    checkAccess('basic', accessStatus),
+    lockElements('basic'),
+  );
   return (
     <Box className={style.reqFormCard}>
       <LoadingOverlay
@@ -117,6 +142,7 @@ export const BasicInformation = () => {
             className="w-full"
             label="Country of origin"
             searchable
+            value={getValues('origin')}
             data={getNationalityValues()}
             {...register('origin')}
             onChange={async (value) =>
@@ -206,10 +232,14 @@ export const BasicInformation = () => {
         </Flex>
 
         <Flex className="mt-10 justify-end gap-2">
-          {checkAccess('basic') && (
+          {checkAccess('basic') ? (
             <Button type="submit" disabled={!accept}>
               Start Registration
             </Button>
+          ) : (
+            nextRoute && (
+              <Button onClick={() => navigateToNextRoute()}>Next</Button>
+            )
           )}
         </Flex>
       </form>

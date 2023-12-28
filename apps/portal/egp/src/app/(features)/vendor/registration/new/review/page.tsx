@@ -14,11 +14,12 @@ function Page() {
     { refetchOnMountOrArgChange: true },
   );
   const [save, saveValues] = useAddFormMutation();
-  const { checkAccess, updateAccess } = usePrivilege();
+  const { checkAccess, updateAccess, updateStatus } = usePrivilege();
 
   useEffect(() => {
     if (requestInfo.data?.initial.level) {
       updateAccess(requestInfo.data?.initial.level);
+      updateStatus(requestInfo.data?.initial.status);
     }
 
     return () => {};

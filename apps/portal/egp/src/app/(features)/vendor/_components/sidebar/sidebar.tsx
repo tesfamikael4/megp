@@ -50,11 +50,11 @@ export const sidebarLinks: SidebarLinks[] = [
         link: '/vendor/registration/upgrade',
       },
       {
-        label: 'Msme registration',
+        label: 'MSME registration',
         link: '/vendor/registration/msme',
       },
       {
-        label: 'Ibm registration',
+        label: 'IBM registration',
         link: '/vendor/registration/dbm',
       },
       {
