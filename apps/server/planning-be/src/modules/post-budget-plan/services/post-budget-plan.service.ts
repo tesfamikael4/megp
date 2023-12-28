@@ -2,9 +2,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { DataResponseFormat } from 'src/shared/api-data';
-import { ExtraCrudService } from 'src/shared/service';
 import { PostBudgetPlan } from 'src/entities/post-budget-plan.entity';
-import { CollectionQuery, QueryConstructor } from 'src/shared/collection-query';
+import {
+  FilterOperators,
+  QueryConstructor,
+  decodeCollectionQuery,
+} from 'src/shared/collection-query';
+import { ExtraCrudService } from 'src/shared/service';
 
 @Injectable()
 export class PostBudgetPlanService extends ExtraCrudService<PostBudgetPlan> {
@@ -14,7 +18,15 @@ export class PostBudgetPlanService extends ExtraCrudService<PostBudgetPlan> {
   ) {
     super(repositoryPostBudgetPlan);
   }
-  async findPostBudgetPlans(query: CollectionQuery) {
+  async findPostBudgetPlans(organizationId: string, q: string) {
+    const query = decodeCollectionQuery(q);
+    query.where.push([
+      {
+        column: 'organizationId',
+        value: organizationId,
+        operator: FilterOperators.EqualTo,
+      },
+    ]);
     query.includes.push('preBudgetPlan');
     query.includes.push('app');
     const dataQuery = QueryConstructor.constructQuery<PostBudgetPlan>(

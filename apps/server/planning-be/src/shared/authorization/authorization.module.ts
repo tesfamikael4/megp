@@ -20,7 +20,7 @@ import { ApiKeyGuard } from './guards/api-key.guard';
     JwtStrategy,
     JwtRefreshTokenStrategy,
     JwtGuard,
-    // { provide: APP_GUARD, useClass: JwtGuard },
+    { provide: APP_GUARD, useClass: JwtGuard },
     JwtRefreshGuard,
     ApiKeyGuard,
   ],
