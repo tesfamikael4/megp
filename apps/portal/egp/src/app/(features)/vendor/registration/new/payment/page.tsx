@@ -64,7 +64,7 @@ function Page() {
   };
 
   const handleFileChange = (file: File) => {
-    setValue('file', file);
+    setInvoiceSlipImageFile(file);
   };
   const onPreviousFileExists = () => {
     NotificationService.successNotification('Payed Successfully!');
@@ -97,14 +97,13 @@ function Page() {
         'invoiceId',
         invoiceInfo.data?.invoice.map((i) => i.id).join(',') ?? '',
       );
-      setValue(
-        'serviceId',
-        invoiceInfo.data?.paymentReceipt?.attachment ?? 'null',
-      );
+      setValue('serviceId', invoiceInfo.data?.invoice[0].serviceId ?? '');
       if (invoiceInfo.data && invoiceInfo.data?.paymentReceipt) {
         setValue(
           'transactionNumber',
-          invoiceInfo.data?.paymentReceipt.transactionId ?? '',
+          invoiceInfo.data?.paymentReceipt.transactionId === ''
+            ? 'null'
+            : invoiceInfo.data?.paymentReceipt.transactionId,
         );
       }
     }
