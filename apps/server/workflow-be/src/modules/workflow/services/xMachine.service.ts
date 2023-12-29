@@ -6,7 +6,6 @@ import { State } from 'src/entities/state.entity';
 import { Repository } from 'typeorm';
 import { setup } from 'xstate';
 import axios from 'axios';
-import { InstanceService } from './instance.service';
 import { ClientProxy } from '@nestjs/microservices';
 
 interface StateMachineConfig {
