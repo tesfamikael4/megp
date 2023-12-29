@@ -48,10 +48,13 @@ export const vendorRegistrationQuery = vendorRegistrationApi.injectEndpoints({
     getForRenewalVendor: builder.query<GetForRenewalVendorResponse, any>({
       query: () => `/vendor-registrations/get-approved-vendor-service-byUserId`,
     }),
-    PostRenewalVendor: builder.query<GetForRenewalVendorResponse, any>({
-      query: () => `/vendor-registrations/submit-service-renewal`,
+    postRenewalVendor: builder.query<GetForRenewalVendorResponse, string[]>({
+      query: (data) => ({
+        url: `/vendor-registrations/submit-service-renewal`,
+        method: 'POST',
+        body: data,
+      }),
     }),
-
     postRenewalInvoice: builder.query<any, PostForRenewalVendorRequest>({
       query: (data) => ({
         url: `/vendor-registrations/generate-service-invoice-for-renewal`,
@@ -124,7 +127,7 @@ export const vendorRegistrationQuery = vendorRegistrationApi.injectEndpoints({
         const formData = new FormData();
         formData.append('attachmentUrl', data.file);
         return {
-          url: `/upload/upload-payment-receipt/${data.transactionNumber}/${data.serviceId}/${data.invoiceId}`,
+          url: `upload/upload-payment-receipt-new/${data.transactionNumber}/${data.invoiceId}/${data.serviceId}`,
           method: 'POST',
           body: formData,
         };
@@ -205,6 +208,7 @@ export const {
   useGetForRenewalVendorQuery,
   useGetRenewalInvoiceQuery,
   useLazyPostRenewalInvoiceQuery,
+  useLazyPostRenewalVendorQuery,
 } = vendorRegistrationQuery;
 
 export const {

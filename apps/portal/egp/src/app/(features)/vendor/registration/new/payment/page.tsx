@@ -46,7 +46,6 @@ function Page() {
     { refetchOnMountOrArgChange: true },
   );
   const [uploadFile, uploadFileInfo] = useLazyUploadPaymentSlipQuery();
-
   const { register, formState, setValue, watch, handleSubmit } =
     useForm<IPaymentSlipUploadSchema>({
       defaultValues: {
@@ -73,7 +72,7 @@ function Page() {
       invoiceInfo.data?.paymentReceipt.attachment
     ) {
       setInvoiceSlipImageUrl(
-        `${VENDOR_URL}/upload/get-file/${invoiceInfo.data?.paymentReceipt.attachment}`,
+        `${VENDOR_URL}/upload/get-file/paymentReceipt/${invoiceInfo.data?.paymentReceipt.attachment}`,
       );
     }
 
@@ -82,10 +81,16 @@ function Page() {
 
   useEffect(() => {
     if (
-      invoiceArraySchema.safeParse(invoiceInfo.data?.invoice).success &&
-      invoiceDataSchema.safeParse(invoiceInfo.data?.invoice[0]).success
+      invoiceInfo.data &&
+      Array.isArray(invoiceInfo.data?.invoice) &&
+      invoiceInfo.data?.invoice.length > 0
     ) {
-      setValue('invoiceId', invoiceInfo.data?.invoice[0].id ?? '');
+      console.log(invoiceInfo.data?.invoice.map((i) => i.id).join(','));
+
+      setValue(
+        'invoiceId',
+        invoiceInfo.data?.invoice.map((i) => i.id).join(',') ?? '',
+      );
       setValue('serviceId', invoiceInfo.data?.invoice[0].serviceId ?? '');
       if (invoiceInfo.data && invoiceInfo.data?.paymentReceipt) {
         setValue(

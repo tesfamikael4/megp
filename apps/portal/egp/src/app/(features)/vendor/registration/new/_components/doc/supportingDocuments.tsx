@@ -81,21 +81,27 @@ export default function SupportingDocuments() {
 
   useEffect(() => {
     if (docInfo.data && docInfo.data?.supportingDocuments) {
-      setBusinessRegistrationImageUrl(
-        `${VENDOR_URL}/upload/get-file/SupportingDocument/${docInfo.data?.supportingDocuments.businessRegistration_IncorporationCertificate}`,
-      );
-      setMRATPINCertificateImageUrl(
-        `${VENDOR_URL}/upload/get-file/SupportingDocument/${docInfo.data?.supportingDocuments.mRATaxClearanceCertificate}`,
-      );
-      setPreviousPPDARegistrationImageUrl(
-        `${VENDOR_URL}/upload/get-file/SupportingDocument/${docInfo.data?.supportingDocuments.previousPPDARegistrationCertificate}`,
-      );
-      setGeneralReceiptImageUrl(
-        `${VENDOR_URL}/upload/get-file/SupportingDocument/${docInfo.data?.supportingDocuments.generalReceipt_BankDepositSlip}`,
-      );
-      setMRATaxClearanceImageUrl(
-        `${VENDOR_URL}/upload/get-file/SupportingDocument/${docInfo.data?.supportingDocuments.mRATaxClearanceCertificate}`,
-      );
+      docInfo.data?.supportingDocuments
+        .businessRegistration_IncorporationCertificate &&
+        setBusinessRegistrationImageUrl(
+          `${VENDOR_URL}/upload/get-file/SupportingDocument/${docInfo.data?.supportingDocuments.businessRegistration_IncorporationCertificate}`,
+        );
+      docInfo.data?.supportingDocuments.mRATaxClearanceCertificate &&
+        setMRATPINCertificateImageUrl(
+          `${VENDOR_URL}/upload/get-file/SupportingDocument/${docInfo.data?.supportingDocuments.mRATaxClearanceCertificate}`,
+        );
+      docInfo.data?.supportingDocuments.previousPPDARegistrationCertificate &&
+        setPreviousPPDARegistrationImageUrl(
+          `${VENDOR_URL}/upload/get-file/SupportingDocument/${docInfo.data?.supportingDocuments.previousPPDARegistrationCertificate}`,
+        );
+      docInfo.data?.supportingDocuments.generalReceipt_BankDepositSlip &&
+        setGeneralReceiptImageUrl(
+          `${VENDOR_URL}/upload/get-file/SupportingDocument/${docInfo.data?.supportingDocuments.generalReceipt_BankDepositSlip}`,
+        );
+      docInfo.data?.supportingDocuments.mRATaxClearanceCertificate &&
+        setMRATaxClearanceImageUrl(
+          `${VENDOR_URL}/upload/get-file/SupportingDocument/${docInfo.data?.supportingDocuments.mRATaxClearanceCertificate}`,
+        );
     }
 
     return () => {};
