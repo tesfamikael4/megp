@@ -292,7 +292,10 @@ export type GetActivitiesProgressResponse = TaskItem[];
 export type GetForRenewalVendorResponse = ApprovedVendorServiceSchema;
 
 export type PostForRenewalVendorResponse = ApprovedVendorServiceSchema;
-export type PostForRenewalVendorRequest = ApprovedVendorServiceSchema;
+export type PostForRenewalVendorRequest = {
+  status: { level: String; status: String };
+  businessArea: string[];
+};
 
 export type RenewalInvoiceRenewalVendorResponse = {
   total: number;
