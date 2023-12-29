@@ -1244,7 +1244,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
   async getServiceInvoiceForRenewal(userInfo: any, data: any) {
     try {
       if (
-        data?.status.status == VendorStatusEnum.DRAFT ||
+        data?.status.status == VendorStatusEnum.DRAFT &&
         data?.status?.level == VendorStatusEnum.INFO
       ) {
         const businessArea = data?.businessArea;
@@ -1328,8 +1328,13 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
   }
   async getServiceInvoiceForUpgrade(userInfo: any, data: any) {
     try {
+      console.log(
+        'data?.status.status  ',
+        data?.status.status,
+        'fffffffffffffffffffffff',
+      );
       if (
-        data?.status.status == VendorStatusEnum.DRAFT &&
+        data?.status.status == VendorStatusEnum.DRAFT ||
         data?.status.level == VendorStatusEnum.INFO
       ) {
         for (let index = 0; index < data.data?.length; index++) {}
