@@ -57,7 +57,7 @@ export default function ServicesCard({
       console.log();
       console.log(servicesData);
       request({
-        status: { level: 'payment', status: 'Draft' },
+        status: servicesData.status,
         data: servicesData.data.filter((s) => selectedServices.includes(s.id)),
       });
     }

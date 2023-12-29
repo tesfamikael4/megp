@@ -86,8 +86,8 @@ const accessRules: AccessRules = {
   },
   Active: {
     active: true,
-    readWriteLevels: [],
-    readOnlyLevels: [],
+    readWriteLevels: ['detail', 'doc', 'info', 'payment', 'ppda', 'review'],
+    readOnlyLevels: ['basic'],
   },
   Approved: {
     active: true,

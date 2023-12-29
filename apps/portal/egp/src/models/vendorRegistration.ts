@@ -297,6 +297,30 @@ export type PostForRenewalVendorRequest = ApprovedVendorServiceSchema;
 export type RenewalInvoiceRenewalVendorResponse = {
   total: number;
   items: InvoiceData[];
+  businessAreas: {
+    id: string;
+    vendorId: string;
+    priceRangeId: string;
+    serviceId: string;
+    businessAreaState: {
+      level: string;
+      status: string;
+    };
+    instanceId: string;
+    category: string;
+    approvedAt: null | string;
+    applicationNumber: string;
+    certificateUrl: null | string;
+    expireDate: null | string;
+    status: string;
+    remark: null | string;
+  }[];
+  paymentReceipt: {
+    transactionId: string;
+    category: string;
+    invoiceId: string;
+    attachment: string;
+  };
 };
 export type RenewalInvoiceRenewalVendorRequest = {
   status: { level: String; status: String };

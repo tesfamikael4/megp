@@ -2,7 +2,7 @@ import { TypeOf, z } from 'zod';
 
 export const paymentSlipUploadSchema = z.object({
   invoiceId: z.string().min(1, { message: 'ID is required' }),
-  serviceId: z.string().min(1, { message: 'Service ID is required' }),
+  serviceId: z.string().optional(),
   transactionNumber: z
     .string()
     .min(3, { message: 'Transaction number is required' }),

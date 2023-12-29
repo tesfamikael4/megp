@@ -15,7 +15,6 @@ import {
   useGetInvoiceQuery,
   useGetRenewalInvoiceQuery,
   useLazyGetPaymentSlipQuery,
-  useLazyPostRenewalVendorQuery,
   useLazyUploadPaymentSlipQuery,
 } from '../../_api/query';
 import PaymentMethod from '../_components/payment/payment-method';
@@ -48,8 +47,6 @@ function Page() {
     },
     { refetchOnMountOrArgChange: true },
   );
-  const [submitRequest] = useLazyPostRenewalVendorQuery();
-
   const [uploadFile, uploadFileInfo] = useLazyUploadPaymentSlipQuery();
 
   const { register, formState, setValue, watch, handleSubmit } =
@@ -64,14 +61,7 @@ function Page() {
     });
 
   const onSubmitHandler: SubmitHandler<IPaymentSlipUploadSchema> = (values) => {
-    // uploadFile(values);
-    if (
-      invoiceInfo.data?.businessAreas &&
-      Array.isArray(invoiceInfo.data?.businessAreas) &&
-      invoiceInfo.data?.businessAreas.length > 0
-    ) {
-      submitRequest(invoiceInfo.data?.businessAreas.map((i) => i.id));
-    }
+    uploadFile(values);
   };
 
   const handleFileChange = (file: File) => {
@@ -79,34 +69,15 @@ function Page() {
   };
 
   useEffect(() => {
-    if (
-      invoiceInfo.data &&
-      Array.isArray(invoiceInfo.data?.items) &&
-      invoiceInfo.data?.items.length > 0
-    ) {
-      setValue(
-        'invoiceId',
-        invoiceInfo.data?.items.map((i) => i.id).join(',') ?? '',
-      );
-      if (invoiceInfo.data && invoiceInfo.data?.items[0]) {
-        setValue('transactionNumber', invoiceInfo.data?.items[0].id ?? '');
-      }
-    }
-
-    return () => {};
-  }, [invoiceInfo.data]);
-
-  useEffect(() => {
-    if (
-      invoiceInfo.data &&
-      invoiceInfo.data?.items &&
-      invoiceInfo.data?.items.length > 0
-    ) {
-      invoiceInfo.data.items[0]?.attachment &&
-        setInvoiceSlipImageUrl(
-          `${VENDOR_URL}/upload/get-file/paymentReceipt/${invoiceInfo.data.items[0]?.attachment}`,
-        );
-    }
+    // if (
+    //   invoiceInfo.data &&
+    //   invoiceInfo.data?.paymentReceipt &&
+    //   invoiceInfo.data?.paymentReceipt.attachment
+    // ) {
+    //   setInvoiceSlipImageUrl(
+    //     `${VENDOR_URL}/upload/get-file/${invoiceInfo.data?.paymentReceipt.attachment}`,
+    //   );
+    // }
 
     return () => {};
   }, [invoiceInfo.data]);
