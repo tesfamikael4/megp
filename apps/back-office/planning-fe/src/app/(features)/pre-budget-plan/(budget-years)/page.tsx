@@ -58,11 +58,7 @@ export default function PreBudgetPlan() {
           {!list && <Loader />}
           {list?.items?.length == 0 && (
             <>
-              <p className="text-black">
-                Lorem ipsum is placeholder text commonly used in the graphic,
-                print, and publishing industries for previewing layouts and
-                visual mockups.
-              </p>
+              <p className="text-black">Create New Annual Procurement Plan</p>
               <Button onClick={open} variant="outline">
                 Create New APP
               </Button>

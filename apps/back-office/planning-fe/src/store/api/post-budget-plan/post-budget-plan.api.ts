@@ -89,7 +89,7 @@ export const {
   useLazyGetPostBudgetRequisitionerQuery,
   useCreatePostBudgetRequisitionerMutation,
   useCreatePostBudgetDisbursementMutation,
-  useGetPostBudgetDisbursementQuery,
+  useLazyGetPostBudgetDisbursementQuery,
 
   useLazyGetPostBudgetPlansQuery,
   useGetPostBudgetPlansQuery,

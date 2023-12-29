@@ -1,7 +1,8 @@
 'use client';
 
+import { CollectionSelector } from '@/app/(features)/_components/collection-selector';
 import { DetailTable } from '@/app/(features)/_components/detail-table';
-import { useLazyListByAppIdQuery } from '@/app/(features)/budget/_api/budget.api';
+import { useLazyListByIdQuery } from '@/app/(features)/budget/_api/budget.api';
 import { useGetPostBudgetPlanQuery } from '@/store/api/post-budget-plan/post-budget-plan.api';
 import {
   ActionIcon,
@@ -11,24 +12,23 @@ import {
   Modal,
   Radio,
   TextInput,
-  Table as MantineTable,
   Box,
   LoadingOverlay,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { Table, TableConfig } from '@megp/core-fe';
+import { TableConfig, logger } from '@megp/core-fe';
 import { IconChevronRight } from '@tabler/icons-react';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 export const BudgetSelector = () => {
   const [opened, { close, open }] = useDisclosure(false);
-  const [selectedContract, setSelectedContract] = useState('');
+  const [, setSelectedContract] = useState('');
   const [value, setValue] = useState('');
   const [detail, setDetail] = useState(undefined);
   const { budgetYear } = useParams();
   // const { data } = useListByAppIdQuery(budgetYear as string);
-  const [getBudget, { data, isLoading }] = useLazyListByAppIdQuery();
+  const [getBudget, { data, isLoading }] = useLazyListByIdQuery();
   const {
     data: postBudget,
     isLoading: isPostBudgetLoading,
@@ -92,17 +92,6 @@ export const BudgetSelector = () => {
 
   const config: TableConfig<any> = {
     columns: [
-      {
-        id: 'contractNo',
-        header: '',
-        accessorKey: 'contractNo',
-        cell: ({ row: { original } }: any) => (
-          <Radio
-            onChange={() => setSelectedContract(original.budgetCode)}
-            checked={selectedContract === original.budgetCode}
-          />
-        ),
-      },
       {
         id: 'budgetCode',
         header: 'Budget Line',
@@ -168,7 +157,14 @@ export const BudgetSelector = () => {
   };
 
   useEffect(() => {
-    isSuccess && getBudget(postBudget?.appId);
+    isSuccess &&
+      getBudget({
+        id: postBudget?.appId,
+        collectionQuery: {
+          skip: 0,
+          take: 10,
+        },
+      });
   }, [getBudget, isSuccess, postBudget]);
   return (
     <Box pos="relative">
@@ -192,18 +188,20 @@ export const BudgetSelector = () => {
       >
         {!detail && (
           <>
-            <Table data={data?.items ?? []} config={config} />
-
-            <Group justify="end" className="mt-2">
-              <Button
-                onClick={() => {
-                  setValue(selectedContract);
-                  close();
-                }}
-              >
-                Select
-              </Button>
-            </Group>
+            <CollectionSelector
+              data={data?.items ?? []}
+              config={config}
+              total={data?.total ?? 0}
+              onDone={(data) => {
+                setSelectedContract(data.budgetCode);
+                setValue(data.budgetCode);
+                close();
+                setDetail(undefined);
+              }}
+              onRequestChange={(collectionQuery) => {
+                getBudget({ id: postBudget?.appId, collectionQuery });
+              }}
+            />
           </>
         )}
 
@@ -215,8 +213,8 @@ export const BudgetSelector = () => {
               <Button onClick={() => setDetail(undefined)}>Back</Button>
               <Button
                 onClick={() => {
-                  setSelectedContract((detail as any)?.COA);
-                  setValue((detail as any)?.COA);
+                  setSelectedContract((detail as any)?.budgetCode);
+                  setValue((detail as any)?.budgetCode);
                   close();
                   setDetail(undefined);
                 }}
