@@ -58,7 +58,7 @@ export class XMachineService {
 
     const ver =
       details.action == 'reject'
-        ? ++existingData.version
+        ? existingData.version + 1
         : existingData.version;
 
     isWorkGroup = await this.checkGroup(existingData.stepId);
@@ -107,7 +107,6 @@ export class XMachineService {
               metadata: existingData.metadata,
             });
             if (params.status == 'Approved') {
-              // await this.instanceService.approveWorkflow();
               this.workflowRMQClient.emit('workflow-approved', {
                 workflow: 'approved',
                 activityId: activityId,
@@ -128,7 +127,6 @@ export class XMachineService {
                   approver: details.approver,
                   at: String(Date.now()),
                   stepId: params.currentId,
-                  version: ver,
                 },
               ],
             };

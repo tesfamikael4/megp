@@ -18,7 +18,7 @@ export class ItemBudgetLine extends OrgAudit {
   id: string;
 
   @Column()
-  activityCoAtagId: string;
+  activityBudgetLineId: string;
 
   @ManyToOne(
     () => ActivityBudgetLine,

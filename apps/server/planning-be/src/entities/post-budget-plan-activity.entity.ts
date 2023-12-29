@@ -7,6 +7,7 @@ import {
   ManyToOne,
   JoinColumn,
   BeforeInsert,
+  Unique,
 } from 'typeorm';
 
 import { PostBudgetPlan } from './post-budget-plan.entity';
@@ -19,6 +20,7 @@ import { PostBudgetRequisitioner } from './post-budget-plan-requisitioner.entity
 import { PostProcurementMechanism } from './post-procurement-mechanism.entity';
 import { OrgAudit } from 'src/shared/entities';
 
+@Unique(['procurementReference'])
 @Entity({ name: 'post_budget_plan_activities' })
 export class PostBudgetPlanActivity extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
@@ -88,10 +90,10 @@ export class PostBudgetPlanActivity extends OrgAudit {
   @Column()
   description: string;
 
-  @Column()
+  @Column({ default: 0, type: 'bigint' })
   estimatedAmount: number;
 
-  @Column({ default: 0 })
+  @Column({ default: 0, type: 'bigint' })
   calculatedAmount: number;
 
   @Column({ default: 'Draft' })

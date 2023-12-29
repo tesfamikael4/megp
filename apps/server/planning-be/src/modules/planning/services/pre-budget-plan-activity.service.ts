@@ -25,6 +25,8 @@ export class PreBudgetPlanActivityService extends ExtraCrudService<PreBudgetPlan
     const curr = itemData.currency;
     plan.estimatedAmount.curr = itemData.estimatedAmount;
     await this.repositoryPreBudgetPlanActivity.insert(item);
+    await this.repositoryPreBudgetPlan.save(plan);
+
     return item;
   }
 }

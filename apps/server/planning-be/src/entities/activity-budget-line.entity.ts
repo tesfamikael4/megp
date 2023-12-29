@@ -43,4 +43,7 @@ export class ActivityBudgetLine extends OrgAudit {
 
   @Column()
   amount: string;
+
+  @Column()
+  budgetCode: string;
 }
