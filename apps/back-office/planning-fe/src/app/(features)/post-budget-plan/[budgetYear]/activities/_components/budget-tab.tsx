@@ -18,7 +18,7 @@ import { IconPlus } from '@tabler/icons-react';
 import { Table, TableConfig, logger, notify } from '@megp/core-fe';
 import {
   useCreatePostBudgetDisbursementMutation,
-  useGetPostBudgetDisbursementQuery,
+  useLazyGetPostBudgetDisbursementQuery,
   useGetPostBudgetPlansQuery,
 } from '@/store/api/post-budget-plan/post-budget-plan.api';
 
@@ -31,11 +31,14 @@ export const BudgetTab = () => {
     useGetPostBudgetPlansQuery({
       where: [[{ column: 'id', value: budgetYear, operator: '=' }]],
     } as any);
-  const {
-    data: disbursement,
-    isSuccess: isDisbursementSuccess,
-    isLoading: isDisbursementLoading,
-  } = useGetPostBudgetDisbursementQuery(id as string);
+  const [
+    getDisbursement,
+    {
+      data: disbursement,
+      isSuccess: isDisbursementSuccess,
+      isLoading: isDisbursementLoading,
+    },
+  ] = useLazyGetPostBudgetDisbursementQuery();
   const config: TableConfig<any> = {
     columns: [
       // {
@@ -59,28 +62,24 @@ export const BudgetTab = () => {
     Record<string, any>[]
   >([
     {
-      budgetYearId: budgetYearWithApp?.items?.[0].app.budgetYearId,
       budgetYear: budgetYearWithApp?.items?.[0].app.budgetYear,
       amount: 0,
       quarter: '1st Quarter',
       order: 0,
     },
     {
-      budgetYearId: budgetYearWithApp?.items?.[0].app.budgetYearId,
       budgetYear: budgetYearWithApp?.items?.[0].app.budgetYear,
       amount: 0,
       quarter: '2nd Quarter',
       order: 1,
     },
     {
-      budgetYearId: budgetYearWithApp?.items?.[0].app.budgetYearId,
       budgetYear: budgetYearWithApp?.items?.[0].app.budgetYear,
       amount: 0,
       quarter: '3rd Quarter',
       order: 2,
     },
     {
-      budgetYearId: budgetYearWithApp?.items?.[0].app.budgetYearId,
       budgetYear: budgetYearWithApp?.items?.[0].app.budgetYear,
       amount: 0,
       quarter: '4th Quarter',
@@ -165,7 +164,7 @@ export const BudgetTab = () => {
     if (budgetYearWithApp) {
       const temp = budgetYearDisbursement.map((b) => ({
         ...b,
-        budgetYearId: budgetYearWithApp?.items?.[0].app.budgetYearId,
+
         budgetYear: budgetYearWithApp?.items?.[0].app.budgetYear,
       }));
 
@@ -186,6 +185,10 @@ export const BudgetTab = () => {
     logger.log({ temp });
     setCastedDisbursement(temp);
   }, [budgetYearDisbursement]);
+
+  useEffect(() => {
+    getDisbursement(id as string);
+  }, [getDisbursement, id]);
 
   const onSave = async () => {
     logger.log({ budgetYearDisbursement });

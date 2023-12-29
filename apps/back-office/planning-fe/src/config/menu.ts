@@ -28,6 +28,17 @@ export const Menu: MenuItem[] = [
     icon: IconReportAnalytics,
     link: '/report',
   },
+  {
+    label: 'Workflow',
+    icon: IconReportAnalytics,
+    links: [
+      { label: 'Pre Budget Plan Approval', link: '/post-budget-plan-approval' },
+      {
+        label: 'Post Budget Plan Approval',
+        link: '/post-budget-plan-approval',
+      },
+    ],
+  },
 
   {
     label: 'Settings',
