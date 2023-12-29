@@ -10,7 +10,7 @@ interface Props {
 const badgeColor: { [key: string]: string } = {
   Rejected: 'red.6',
   Submitted: 'green.8',
-  Adjust: 'yellow.6',
+  Adjustment: 'yellow.6',
   Completed: 'green.8',
   Pending: 'blue.8',
 };

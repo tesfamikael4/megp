@@ -40,7 +40,9 @@ function Page() {
   const [invoiceSlipImageUrl, setInvoiceSlipImageUrl] = useState<string | null>(
     null,
   );
-
+  const [invoiceSlipImageFile, setInvoiceSlipImageFile] = useState<File | null>(
+    null,
+  );
   const invoiceInfo = useGetInvoiceQuery(
     {},
     { refetchOnMountOrArgChange: true },
@@ -62,7 +64,11 @@ function Page() {
   };
 
   const handleFileChange = (file: File) => {
-    setValue('file', file);
+    setInvoiceSlipImageFile(file);
+  };
+  const onPreviousFileExists = () => {
+    NotificationService.successNotification('Payed Successfully!');
+    router.push('doc');
   };
 
   useEffect(() => {
@@ -175,7 +181,19 @@ function Page() {
               />
             </Stack>
             <Flex justify="end" className="gap-2 mt-4">
-              {checkAccess('payment') && <Button type="submit">Pay</Button>}
+              {checkAccess('payment') ? (
+                invoiceSlipImageUrl ? (
+                  watch().file ? (
+                    <Button type="submit">Pay</Button>
+                  ) : (
+                    <Button onClick={onPreviousFileExists}>Next</Button>
+                  )
+                ) : (
+                  <Button type="submit">Pay</Button>
+                )
+              ) : (
+                ''
+              )}
             </Flex>
           </form>
           <Flex className="min-w-[450px] flex-col border w-full">
