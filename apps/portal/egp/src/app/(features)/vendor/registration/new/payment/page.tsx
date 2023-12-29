@@ -64,7 +64,7 @@ function Page() {
   };
 
   const handleFileChange = (file: File) => {
-    setInvoiceSlipImageFile(file);
+    setValue('file', file);
   };
   const onPreviousFileExists = () => {
     NotificationService.successNotification('Payed Successfully!');
@@ -97,7 +97,10 @@ function Page() {
         'invoiceId',
         invoiceInfo.data?.invoice.map((i) => i.id).join(',') ?? '',
       );
-      setValue('serviceId', invoiceInfo.data?.invoice[0].serviceId ?? '');
+      setValue(
+        'serviceId',
+        invoiceInfo.data?.paymentReceipt?.attachment ?? 'null',
+      );
       if (invoiceInfo.data && invoiceInfo.data?.paymentReceipt) {
         setValue(
           'transactionNumber',

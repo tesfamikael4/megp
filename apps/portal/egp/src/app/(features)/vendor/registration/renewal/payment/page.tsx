@@ -14,12 +14,10 @@ import InvoiceTemplate from '../../../_components/dynamicPrintComponent/invoice-
 import {
   useGetInvoiceQuery,
   useGetRenewalInvoiceQuery,
-  useLazyGetPaymentSlipQuery,
   useLazyPostRenewalVendorQuery,
   useLazyUploadPaymentSlipQuery,
 } from '../../_api/query';
 import PaymentMethod from '../_components/payment/payment-method';
-import { usePrivilege } from '../_context/privilege-context';
 import FileUploader from '../../../_components/file-uploader/upload';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SubmitHandler, useForm } from 'react-hook-form';

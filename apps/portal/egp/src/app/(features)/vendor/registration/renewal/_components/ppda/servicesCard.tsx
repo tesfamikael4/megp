@@ -58,7 +58,9 @@ export default function ServicesCard({
       console.log(servicesData);
       request({
         status: { level: 'Info', status: 'Draft' },
-        data: servicesData.data.filter((s) => selectedServices.includes(s.id)),
+        businessArea: servicesData.data
+          .filter((s) => selectedServices.includes(s.id))
+          .map((s) => s.id),
       });
     }
   };
