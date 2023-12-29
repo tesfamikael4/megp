@@ -124,6 +124,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
               applicationNumber: workflowInstance.applicationNumber,
               instanceNumber: workflowInstance.id,
               vendorId: workflowInstance.requestorId,
+              serviceId: workflowInstance.serviceId,
             });
             businessArea.status = VendorStatusEnum.PENDING;
             const res = await this.businessAreaRepository.save(businessArea);
@@ -1328,8 +1329,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
   async getServiceInvoiceForUpgrade(userInfo: any, data: any) {
     try {
       if (
-        data?.status == VendorStatusEnum.DRAFT ||
-        data?.level == VendorStatusEnum.INFO
+        data?.status.status == VendorStatusEnum.DRAFT &&
+        data?.status.level == VendorStatusEnum.INFO
       ) {
         for (let index = 0; index < data.data?.length; index++) {}
         for (let index = 0; index < data.data.length; index++) {
@@ -1374,6 +1375,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
               renewalRange[0].id,
               oldBusiness,
             );
+            return result;
           } else {
             const result = await this.generateInvoiceForServiceUpgrade(
               userInfo,
