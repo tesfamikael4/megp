@@ -1246,12 +1246,11 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         data?.status.status == VendorStatusEnum.DRAFT ||
         data?.status?.level == VendorStatusEnum.INFO
       ) {
-        for (let index = 0; index < data.data.length; index++) {
-          const areaOfBusinessInterest = data.data[index];
-          const businessAreaId = areaOfBusinessInterest.id;
-
+        const businessArea = data?.businessArea;
+        for (let index = 0; index < businessArea?.length; index++) {
+          console.log('the single business area ', businessArea[index]);
           const businessareaData = await this.businessAreaRepository.findOne({
-            where: { id: businessAreaId },
+            where: { id: businessArea[index] },
             relations: { BpService: true, servicePrice: true },
           });
           // commented for testing purpose
@@ -1265,24 +1264,24 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             businessareaData.BpService.key ===
               ServiceKeyEnum.worksNewRegistration
           ) {
-            const key = await this.mapServiceType(businessAreaId, 'renewal');
+            const key = await this.mapServiceType(
+              businessArea[index],
+              'renewal',
+            );
             const renewalRange =
               await this.pricingService.findserviceByRangeAndKey(
                 key,
                 businessareaData.servicePrice.valueFrom,
                 businessareaData.servicePrice.valueTo,
               );
-
-            const { id, ...other } = data.data[index];
             const business = await this.businessAreaRepository.findOne({
-              where: { id: id },
+              where: { id: businessArea[index] },
             });
             const service = await this.bpService.findBpWithServiceByKey(key);
             business.id = undefined;
             business.serviceId = service.serviceId;
             business.priceRangeId = renewalRange[0].id;
             const resu = await this.businessAreaRepository.save(business);
-
             if (!resu)
               throw new HttpException('business area update failed', 500);
 
@@ -1290,6 +1289,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
               userInfo,
               renewalRange[0].id,
             );
+            console.log('result result result result ', result);
           } else {
             const result = await this.generateInvoiceForServiceRenewal(
               userInfo,
