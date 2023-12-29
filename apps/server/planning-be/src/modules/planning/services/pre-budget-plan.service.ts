@@ -200,6 +200,19 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
   async initiateWorkflow(name, id) {
     const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
 
+    const activities = await this.preBudgetActivityRepository.find({
+      where: { preBudgetPlanId: id },
+      relations: ['preBudgetPlanTimelines'],
+    });
+
+    for (const element of activities) {
+      if (element.preBudgetPlanTimelines.length == 0) {
+        throw new Error(
+          `Timeline not found for ${element.name} ${element.procurementReference}`,
+        );
+      }
+    }
+
     await entityManager.getRepository(PreBudgetPlan).update(id, {
       status: 'Submitted',
     });

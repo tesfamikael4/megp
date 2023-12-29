@@ -2,7 +2,6 @@ import { Body, Controller, Param, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { ExtraCrudController } from 'src/shared/controller';
-import { CreateAPPDto, UpdateAPPDto } from '../dtos/app.dto';
 import { Budget } from 'src/entities/budget.entity';
 import { BudgetService } from '../services/budget.service';
 import { ApiPaginatedResponse } from 'src/shared/api-data';

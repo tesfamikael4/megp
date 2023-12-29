@@ -7,6 +7,7 @@ import {
   ManyToOne,
   JoinColumn,
   BeforeInsert,
+  Unique,
 } from 'typeorm';
 
 import { PreBudgetPlan } from './pre-budget-plan.entity';
@@ -17,6 +18,7 @@ import { PreProcurementMechanism } from './pre-procurement-mechanism.entity';
 import { OrgAudit } from 'src/shared/entities';
 import { PreBudgetActivityDocument } from './pre-budget-activity-document.entity';
 
+@Unique(['procurementReference'])
 @Entity({ name: 'pre_budget_plan_activities' })
 export class PreBudgetPlanActivity extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
@@ -72,10 +74,10 @@ export class PreBudgetPlanActivity extends OrgAudit {
   @Column()
   description: string;
 
-  @Column({ default: 0 })
+  @Column({ default: 0, type: 'bigint' })
   estimatedAmount: number;
 
-  @Column({ default: 0 })
+  @Column({ default: 0, type: 'bigint' })
   calculatedAmount: number;
 
   @Column()
