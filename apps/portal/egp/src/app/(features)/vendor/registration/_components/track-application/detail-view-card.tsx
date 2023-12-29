@@ -47,7 +47,7 @@ const DetailViewCard: React.FC<Props> = ({ data, close }) => {
         <ProgressBar instanceId={data.instanceId} />
       </Box>
       <Box className={styles.cardFooter}>
-        {data.status === 'Adjust' && (
+        {data.status === 'Adjustment' && (
           <Button
             onClick={() => router.push('/vendor/registration/new/detail')}
           >

@@ -18,6 +18,7 @@ export default function Page() {
   if (requestInfo.data?.initial.level) {
     updateAccess(requestInfo.data?.initial.level);
   }
+
   useEffect(() => {
     if (requestInfo.error) {
       NotificationService.requestErrorNotification('Error on fetching data');
@@ -26,7 +27,9 @@ export default function Page() {
     if (requestInfo.data?.initial.status === 'Submitted') {
       router.push(`/vendor/registration/track-applications`);
     }
-    return () => {};
+    return () => {
+      router.refresh();
+    };
   }, [requestInfo.data, requestInfo.error]);
 
   return (

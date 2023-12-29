@@ -127,7 +127,7 @@ export default function SupportingDocuments() {
 
   useEffect(() => {
     if (saveValues.isSuccess) {
-      NotificationService.successNotification('File Uploaded Successfully!');
+      NotificationService.successNotification('Submitted Successfully!');
       router.push(`review`);
     }
     if (saveValues.isError) {
