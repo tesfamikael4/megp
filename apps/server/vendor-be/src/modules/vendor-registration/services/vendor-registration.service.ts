@@ -1067,7 +1067,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       if (!vendorEntity)
         return {
           status: {
-            level: 'info',
+            level: 'Info',
             status: 'Draft',
           },
           data: [],
@@ -1184,6 +1184,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     const isrVendorData = await this.isrVendorsRepository.findOne({
       where: { userId: userInfo.id },
     });
+    if (!isrVendorData) throw new HttpException('Isr vendor not found', 500);
     try {
       isrVendorData.basic['id'] = isrVendorData.id;
       try {
@@ -1242,11 +1243,13 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
   async getServiceInvoiceForRenewal(userInfo: any, data: any) {
     try {
       if (
-        data?.status == VendorStatusEnum.DRAFT ||
-        data?.level == VendorStatusEnum.INFO
+        data?.status.status == VendorStatusEnum.DRAFT ||
+        data?.status?.level == VendorStatusEnum.INFO
       ) {
         for (let index = 0; index < data.data.length; index++) {
-          const businessAreaId = data.data[index].id;
+          const areaOfBusinessInterest = data.data[index];
+          const businessAreaId = areaOfBusinessInterest.id;
+
           const businessareaData = await this.businessAreaRepository.findOne({
             where: { id: businessAreaId },
             relations: { BpService: true, servicePrice: true },
@@ -1271,7 +1274,9 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
               );
 
             const { id, ...other } = data.data[index];
-            const business = await this.businessAreaRepository.findOne(id);
+            const business = await this.businessAreaRepository.findOne({
+              where: { id: id },
+            });
             const service = await this.bpService.findBpWithServiceByKey(key);
             business.id = undefined;
             business.serviceId = service.serviceId;
@@ -1302,8 +1307,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       });
       return {
         ...invoices,
-        paymentReceipt: isrVendor.paymentReceipt,
-        businessAreas: isrVendor.businessAreas,
+        paymentReceipt: isrVendor?.paymentReceipt,
+        businessAreas: isrVendor?.businessAreas,
       };
     } catch (error) {
       console.log(error);
