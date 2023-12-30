@@ -7,7 +7,7 @@ export class HandlingCommonService {
     @InjectRepository(WorkflowInstanceEntity)
     private readonly wfiRepository: Repository<WorkflowInstanceEntity>,
   ) { }
-  async generateRandomString(length, prefix = '') {
+  generateRandomString(length, prefix = '') {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     const charsLength = characters.length;
     let result = '';

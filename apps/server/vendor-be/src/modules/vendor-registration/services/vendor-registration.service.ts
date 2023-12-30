@@ -244,6 +244,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             //  result.basic['id'] = result.id;
             vendor.id = result.id;
             vendor.name = result.basic['name'];
+
             try {
               const invoice = await this.invoiceService.generateInvoice(
                 data.areasOfBusinessInterest[index].priceRange,
