@@ -4,11 +4,13 @@ import {
   JoinColumn,
   ManyToMany,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { IsrVendorsEntity } from './isr-vendors.entity';
 import { BpServiceEntity } from './bp-service.entity';
 import { ServicePrice } from './service-price.entity';
+import { InvoiceEntity } from './invoice.entity';
 
 @Entity({ name: 'business_areas' })
 export class BusinessAreaEntity {
@@ -51,4 +53,7 @@ export class BusinessAreaEntity {
   @ManyToOne(() => ServicePrice, (servicePrice) => servicePrice.businessAreas)
   @JoinColumn({ name: 'priceRangeId' })
   servicePrice: ServicePrice;
+  @OneToOne(() => InvoiceEntity, (invoice) => invoice.businessArea)
+  invoice: InvoiceEntity
+
 }

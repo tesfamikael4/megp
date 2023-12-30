@@ -21,12 +21,16 @@ import {
   FilesEntity,
   InvoiceEntity,
   IsrVendorsEntity,
+  WorkflowInstanceEntity,
 } from 'src/entities';
 import { VendorStatusEnum } from 'src/shared/enums/vendor-status-enums';
 import { PaymentReceiptDto } from '../dto/payment-receipt.dto';
 import { Readable } from 'typeorm/platform/PlatformTools';
 import axios from 'axios';
 import { Response } from 'express';
+import { BusinessAreaService } from './business-area.service';
+import { WorkflowService } from 'src/modules/bpm/services/workflow.service';
+import { CreateWorkflowInstanceDto } from 'src/modules/handling/dto/workflow-instance.dto';
 
 @Injectable()
 export class FileService {
@@ -48,7 +52,9 @@ export class FileService {
     private readonly invoiceRepository: Repository<InvoiceEntity>,
     @InjectRepository(BusinessAreaEntity)
     private readonly businessAreaRepository: Repository<BusinessAreaEntity>,
-  ) {}
+    private readonly busineAreaService: BusinessAreaService,
+    private readonly workflowService: WorkflowService
+  ) { }
   private updateVendorEnums = [
     VendorStatusEnum.ACTIVE,
     VendorStatusEnum.ADJUSTMENT,
@@ -198,6 +204,7 @@ export class FileService {
       fileName: filename,
     };
   }
+
   async uploadPaymentAttachment(
     file: Express.Multer.File,
     userId: string,
@@ -210,6 +217,7 @@ export class FileService {
       if (!result) throw new HttpException('isr vendor not found ', 500);
       const fileUploadName = 'paymentReceipt';
       const paymentReceipts = result.paymentReceipt;
+
       const foundObject = paymentReceipts?.filter(
         (obj) => obj.invoiceId !== paymentReceiptDto.invoiceId,
       );
@@ -264,6 +272,111 @@ export class FileService {
       response.attachmentUrl = file.path;
       response.originalName = file.originalname;
       response.fileType = file.mimetype;
+      return paymentReceipt;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
+
+  /*
+  Upload receipts of upgrade
+  */
+  async uploadPaymentAttachmentUpgrade(
+    file: Express.Multer.File,
+    user: any,
+    paymentReceiptDto: any,
+  ) {
+    const userId = user.id;
+    try {
+      console.log('fffffffffffffffffff : ', paymentReceiptDto);
+      const result = await this.isrVendorsRepository.findOne({
+        where: { userId: userId, status: In(this.updateVendorEnums) },
+      });
+      if (!result) throw new HttpException('isr vendor not found ', 500);
+      const fileUploadName = 'paymentReceipt';
+      const paymentReceipts = result.paymentReceipt;
+      // const foundObject = paymentReceipts?.filter(
+      //   (obj) => obj.invoiceId !== paymentReceiptDto.invoiceId,
+      // );
+      // const alreadyExisting = paymentReceipts?.find(
+      //   (obj) => obj.invoiceId === paymentReceiptDto.invoiceId,
+      // );
+
+      if (paymentReceiptDto?.attachment) {
+        const objectName = `${userId}/${fileUploadName}/${paymentReceiptDto?.attachment}`;
+        await this.minioClient.removeObject('megp', objectName);
+      }
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+      const fileId = `${uniqueSuffix}_${file.originalname}`;
+      const filename = `${userId}/${fileUploadName}/${fileId}`;
+      const metaData = {
+        'Content-Type': file.mimetype,
+        'X-Amz-Meta-Testing': 1234,
+      };
+      const resultData = await this.minioClient.putObject(
+        this.bucketName,
+        filename,
+        file.buffer,
+        metaData,
+      );
+      const paymentReceipt = {
+        transactionNumber: paymentReceiptDto?.transactionNumber,
+        invoiceId: paymentReceiptDto?.invoiceIds,
+        //   serviceId: paymentReceiptDto?.serviceId,
+        attachment: fileId,
+      };
+      result.paymentReceipt = paymentReceipt;
+      result.initial.level = VendorStatusEnum.DOC;
+      result.initial.status = VendorStatusEnum.SAVE;
+      const isrVendor = await this.isrVendorsRepository.save(result);
+
+      //   foundObject.push(paymentReceipt);
+      if (!isrVendor) throw new HttpException(`isrVendor_update _failed`, 500);
+      //  const paymentReceiptsData = result?.paymentReceipt;
+      const ids = JSON.parse(paymentReceiptDto?.invoiceIds);
+      // const oldBAs = await this.busineAreaService.getBusinessAreaByIds(ids);
+      // const newInstanceIds = oldBAs.map((ba) => ba.instanceId)
+      // const newBA = await this.busineAreaService.getBusinessAreaByInstanceIds(newInstanceIds);
+
+      for (let index = 0; index < ids.length; index++) {
+        //const ids = paymentReceiptDto?.invoiceIds;
+        const invoice = await this.invoiceRepository.update(
+          ids[index],
+          {
+            paymentStatus: 'Paid',
+            attachment: fileId,
+          },
+        );
+        if (!invoice) throw new HttpException(`invoice_update _failed`, 500);
+      }
+      const invoices = await this.invoiceRepository.find({
+        where: {
+          id: In(ids),
+          businessArea: {
+            BpService: {
+              businessProcesses: { isActive: true }
+            }
+          }
+        },
+        relations: { businessArea: { BpService: { businessProcesses: true }, isrVendor: true }, }
+      })
+
+      const wfi: CreateWorkflowInstanceDto = new CreateWorkflowInstanceDto();
+      for (let index = 0; index < invoices.length; index++) {
+        const row = invoices[index];
+        const businessArea = invoices[index].businessArea;
+        wfi.bpId = row.businessArea.BpService.businessProcesses[0].id;
+        wfi.serviceId = row.businessArea.serviceId;
+        wfi.requestorId = row.businessArea.vendorId;
+        wfi.data = row.businessArea.isrVendor;
+        const result = await this.workflowService.intiateWorkflowInstance(wfi, user)
+        console.log("result--->", result)
+        businessArea.instanceId = result.instanceId;
+        if (result) {
+          await this.busineAreaService.update(businessArea.id, businessArea);
+        }
+      }
       return paymentReceipt;
     } catch (error) {
       console.log(error);
@@ -479,6 +592,7 @@ export class FileService {
     userId: string,
     businessAreaId: string,
   ) {
+    console.log("user-id", userId);
     try {
       const result = await this.businessAreaRepository.findOne({
         where: { id: businessAreaId },
@@ -500,6 +614,7 @@ export class FileService {
       result.certificateUrl = fileId;
       const data = await this.businessAreaRepository.save(result);
       if (!result) throw new HttpException('business area update failed', 500);
+      console.log("data   --", data);
       return data;
     } catch (error) {
       console.log(error);

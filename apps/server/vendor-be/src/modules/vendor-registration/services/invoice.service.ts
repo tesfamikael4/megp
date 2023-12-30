@@ -5,6 +5,7 @@ import {
   BusinessAreaEntity,
   InvoiceEntity,
   ServicePrice,
+  VendorsEntity,
 } from 'src/entities';
 import { ServiceKeyEnum } from 'src/modules/handling/dto/workflow-instance.enum';
 import { ServicePricingService } from 'src/modules/pricing/services/service-pricing.service';
@@ -30,9 +31,9 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
 
   async generateInvoice2(
     currentPriceRange: string,
+    vendor: VendorsEntity,
+    businessArea: BusinessAreaEntity,
     user: any,
-    vendor: any,
-    businessArea?: BusinessAreaEntity,
   ): Promise<boolean> {
     const curruntPricing =
       await this.pricingService.findPricingWithServiceById(currentPriceRange);
@@ -78,8 +79,8 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
   }
   async generateInvoice(
     currentPriceRange: string,
+    vendor: VendorsEntity,
     user: any,
-    vendor: any,
   ): Promise<boolean> {
     const curruntPricing =
       await this.pricingService.findPricingWithServiceById(currentPriceRange);
@@ -90,8 +91,8 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     const invoice: InvoiceEntity = this.mapInvoice(
       curruntPricing,
       vendor,
-      user,
       service,
+      user,
     );
     invoice.amount = curruntPricing.fee;
     invoice.payerName = vendor.name;
@@ -101,9 +102,9 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
   }
   async generateInvoiceForUpgrade(
     currentPriceRange: string,
-    user: any,
     vendor: any,
     businessArea: BusinessAreaEntity,
+    user: any,
   ): Promise<boolean> {
     const curruntPricing =
       await this.pricingService.findPricingWithServiceById(currentPriceRange);
@@ -111,8 +112,8 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     const invoice: InvoiceEntity = this.mapInvoice(
       curruntPricing,
       vendor,
-      user,
       service,
+      user,
     );
     const baServicePrice = await this.baService.getBusinessAreaWithPrice(
       businessArea.id,
@@ -130,18 +131,19 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     curruntPricing: ServicePrice,
   ) {
     if (ba) {
-      if (ba.servicePrice.fee < curruntPricing.fee) {
+      if (Number(ba.servicePrice.fee) < Number(curruntPricing.fee)) {
         const previousFeeRate = ba.servicePrice.fee / 365;
         const proposedPaymentRate = curruntPricing.fee / 365;
         const datesLeftToExpire = this.commonService.ComputeDateDifference(
           new Date(),
           new Date(ba.expireDate),
         );
+        console.log("expire date", datesLeftToExpire);
         const unUtilizedMoney = Number(datesLeftToExpire) * previousFeeRate;
         const expectedFeeForNewLevel =
           proposedPaymentRate * Number(datesLeftToExpire);
         const netPaymnetForUpgrade = expectedFeeForNewLevel - unUtilizedMoney;
-        return netPaymnetForUpgrade;
+        return Number(netPaymnetForUpgrade.toFixed(2));
       } else {
         return 0;
       }
@@ -191,7 +193,7 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     return null;
   }
   async getMyInvoices(
-    userId: string,
+    userId: string, serviceId: string
   ): Promise<DataResponseFormat<InvoiceResponseDto>> {
     const response = new DataResponseFormat<InvoiceResponseDto>();
     const [result, total] = await this.invoiceRepository.findAndCount({
@@ -202,6 +204,15 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
       InvoiceResponseDto.toResponse(entity),
     );
     return response;
+  }
+  async getInvoicesUserAndService(
+    userId: string
+  ): Promise<InvoiceEntity[]> {
+    const result = await this.invoiceRepository.find({
+      where: { userId: userId, paymentStatus: 'Paid' },
+    });
+
+    return result;
   }
   async getActiveMyInvoices(
     userId: string,
@@ -215,6 +226,7 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
         paymentStatus: 'Pending',
         createdOn: MoreThanOrEqual(oneWeekAgo),
       },
+      relations: { businessArea: true }
     });
     response.total = total;
     response.items = result.map((entity) =>
@@ -222,11 +234,12 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     );
     return response;
   }
+
   mapInvoice(
     curruntPricing: ServicePrice,
-    vendor: any,
-    user: any,
+    vendor: VendorsEntity,
     service: BpServiceEntity,
+    user: any,
   ): InvoiceEntity {
     const invoice = new InvoiceEntity();
     invoice.payToAccName =
@@ -236,14 +249,15 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     invoice.paymentStatus = 'Pending';
     invoice.createdOn = new Date();
     invoice.pricingId = curruntPricing.id;
-    invoice.serviceId = curruntPricing.service.id;
+    invoice.amount = curruntPricing.fee;
+    invoice.serviceId = service.id;
     invoice.payerName = vendor.name;
     invoice.userId = user.id;
     invoice.businessAreaId = null; //result.instanceId;
     invoice.taskName = null; //result.task.name;
     invoice.taskId = null; //result.task.id;
     invoice.serviceName = service.name;
-    invoice.remark = curruntPricing.businessArea + ' ,' + service.description;
+    invoice.remark = service.description;
     return invoice;
   }
 }
