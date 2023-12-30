@@ -257,7 +257,8 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     invoice.taskName = null; //result.task.name;
     invoice.taskId = null; //result.task.id;
     invoice.serviceName = service.name;
-    invoice.remark = service.description;
+    invoice.remark = 'invoice for ' + service.name;
+    // invoice.reference = this.commonService.generateRandomString(8)
     return invoice;
   }
 }

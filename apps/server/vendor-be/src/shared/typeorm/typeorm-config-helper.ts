@@ -28,7 +28,7 @@ export const dataSourceOptions = {
   seeds: [`${pathPrefix}dist/modules/seeders/**.seeder.{ts,js}`],
   migrationsTableName: 'typeorm_migrations',
   logger: 'advanced-console',
-  logging: 'all',
+  // logging: 'all',
   synchronize: false,
   autoLoadEntities: true,
 } as DataSourceOptions & SeederOptions;

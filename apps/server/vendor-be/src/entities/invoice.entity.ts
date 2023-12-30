@@ -35,6 +35,8 @@ export class InvoiceEntity {
   createdOn: Date;
   @Column()
   paymentStatus: string;
+  // @Column({ nullable: true, unique: true })
+  // reference: string
   @Column()
   remark: string;
   @Column({ nullable: true })
