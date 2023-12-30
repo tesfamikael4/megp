@@ -20,4 +20,6 @@ export enum VendorStatusEnum {
   RENEWAL = 'Renewal',
   DOC = 'doc',
   INFO = 'Info',
+  UPDATE = 'Update',
+  BASIC = 'Basic',
 }

@@ -45,6 +45,7 @@ import {
 import { BusinessAreaDetailResponseDto } from '../dto/business-area.dto';
 import { BankAccountDetailResponse } from '../dto/bank-account-detail.dto';
 import { ServicePricingService } from 'src/modules/pricing/services/service-pricing.service';
+import InitialValueSchema from '../dto/add-vendor.dto';
 
 @Injectable()
 export class VendorRegistrationsService extends EntityCrudService<VendorsEntity> {
@@ -282,81 +283,100 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         status: In(this.updateVendorEnums),
       },
     });
-    if (!result) throw new NotFoundException(`isr_Vendor_not_found`);
-    if (vendorStatusDto.status == VendorStatusEnum.APPROVE) {
-      const isrVendorData = result;
-      const basic = isrVendorData.basic;
-      const initial = isrVendorData.initial;
-      const areasOfBusinessInterest = isrVendorData.areasOfBusinessInterest;
-      if (result.status !== VendorStatusEnum.COMPLETED) {
-        if (areasOfBusinessInterest.length == 3) {
-          initial.status = VendorStatusEnum.COMPLETED;
-          initial.level = VendorStatusEnum.COMPLETED;
-          result.status = VendorStatusEnum.APPROVED;
-        } else {
-          initial.status = VendorStatusEnum.DRAFT;
-          initial.level = VendorStatusEnum.PPDA;
-          result.status = VendorStatusEnum.APPROVED;
-        }
-        result.initial = initial;
-        const isrVendorUpdate = await this.isrVendorsRepository.save(result);
-        if (!isrVendorUpdate)
-          throw new HttpException(`isr_vendor_update_failed`, 500);
-        const vendorEntity = new VendorsEntity();
-        vendorEntity.id = result.id;
-        vendorEntity.status = VendorStatusEnum.APPROVED;
-        vendorEntity.level = VendorStatusEnum.COMPLETED;
-        vendorEntity.name = basic.name;
-        vendorEntity.formOfEntity = basic.businessType;
-        vendorEntity.origin = basic.origin;
-        vendorEntity.district = basic.district;
-        vendorEntity.country = basic.country;
-        vendorEntity.tin = basic.tinNumber;
-        vendorEntity.userId = initial.userId;
-        vendorEntity.isrVendorId = result.id;
-        vendorEntity.shareholders = isrVendorData.shareHolders;
-        vendorEntity.vendorAccounts = isrVendorData.bankAccountDetails;
-        vendorEntity.areasOfBusinessInterest =
-          isrVendorData.areasOfBusinessInterest;
-        vendorEntity.beneficialOwnership = isrVendorData.beneficialOwnership;
-        let tempMetadata = null;
-        tempMetadata = {
-          address: isrVendorData.address,
-          contactPersons: isrVendorData.contactPersons,
-          businessSizeAndOwnership: isrVendorData.businessSizeAndOwnership,
-          supportingDocuments: isrVendorData.supportingDocuments,
-          paymentReceipt: isrVendorData.paymentReceipt,
-        };
-        vendorEntity.metaData = tempMetadata;
-        try {
-          const res = await this.vendorRepository.save(vendorEntity);
-          if (!res) throw new HttpException(`vendor_insertion_failed`, 500);
-        } catch (error) {
-          throw error;
-        }
-      }
-      const nextYear = new Date();
-      nextYear.setFullYear(nextYear.getFullYear() + 1);
+    const vendor = await this.vendorRepository.find({
+      where: { isrVendorId: vendorStatusDto.isrVendorId },
+    });
+    if (vendor) {
       const businessArea = await this.businessAreaRepository.findOne({
-        where: {
-          vendorId: vendorStatusDto.isrVendorId,
-          instanceId: vendorStatusDto.instanceId,
-          //expireDate: nextYear,
-        },
+        where: { instanceId: vendorStatusDto.instanceId },
       });
-      if (!businessArea) throw new HttpException(`businessArea_not_found`, 500);
-      businessArea.status = VendorStatusEnum.APPROVED;
-      businessArea.approvedAt = new Date();
-      const expireDate = new Date();
-      expireDate.setFullYear(expireDate.getFullYear() + 1);
-      businessArea.expireDate = expireDate;
-      businessArea.remark = vendorStatusDto.remark;
-      const besinessArea = await this.businessAreaRepository.save(businessArea);
-      if (!besinessArea)
-        throw new HttpException(`business_area_update_failed`, 500);
-      return besinessArea;
-    } else if (vendorStatusDto.status == VendorStatusEnum.REJECT) {
-      return await this.rejectVendor(vendorStatusDto);
+      businessArea.status == 'Approved';
+      const businessUpdate = await this.businessAreaRepository.update(
+        businessArea.id,
+        { status: VendorStatusEnum.APPROVED },
+      );
+      if (!businessUpdate)
+        throw new HttpException('business update failed', 500);
+      return businessUpdate;
+    } else {
+      if (!result) throw new NotFoundException(`isr_Vendor_not_found`);
+      if (vendorStatusDto.status == VendorStatusEnum.APPROVE) {
+        const isrVendorData = result;
+        const basic = isrVendorData.basic;
+        const initial = isrVendorData.initial;
+        const areasOfBusinessInterest = isrVendorData.areasOfBusinessInterest;
+        if (result.status !== VendorStatusEnum.COMPLETED) {
+          if (areasOfBusinessInterest.length == 3) {
+            initial.status = VendorStatusEnum.COMPLETED;
+            initial.level = VendorStatusEnum.COMPLETED;
+            result.status = VendorStatusEnum.APPROVED;
+          } else {
+            initial.status = VendorStatusEnum.DRAFT;
+            initial.level = VendorStatusEnum.PPDA;
+            result.status = VendorStatusEnum.APPROVED;
+          }
+          result.initial = initial;
+          const isrVendorUpdate = await this.isrVendorsRepository.save(result);
+          if (!isrVendorUpdate)
+            throw new HttpException(`isr_vendor_update_failed`, 500);
+          const vendorEntity = new VendorsEntity();
+          vendorEntity.id = result.id;
+          vendorEntity.status = VendorStatusEnum.APPROVED;
+          vendorEntity.level = VendorStatusEnum.COMPLETED;
+          vendorEntity.name = basic.name;
+          vendorEntity.formOfEntity = basic.businessType;
+          vendorEntity.origin = basic.origin;
+          vendorEntity.district = basic.district;
+          vendorEntity.country = basic.country;
+          vendorEntity.tin = basic.tinNumber;
+          vendorEntity.userId = initial.userId;
+          vendorEntity.isrVendorId = result.id;
+          vendorEntity.shareholders = isrVendorData.shareHolders;
+          vendorEntity.vendorAccounts = isrVendorData.bankAccountDetails;
+          vendorEntity.areasOfBusinessInterest =
+            isrVendorData.areasOfBusinessInterest;
+          vendorEntity.beneficialOwnership = isrVendorData.beneficialOwnership;
+          let tempMetadata = null;
+          tempMetadata = {
+            address: isrVendorData.address,
+            contactPersons: isrVendorData.contactPersons,
+            businessSizeAndOwnership: isrVendorData.businessSizeAndOwnership,
+            supportingDocuments: isrVendorData.supportingDocuments,
+            paymentReceipt: isrVendorData.paymentReceipt,
+          };
+          vendorEntity.metaData = tempMetadata;
+          try {
+            const res = await this.vendorRepository.save(vendorEntity);
+            if (!res) throw new HttpException(`vendor_insertion_failed`, 500);
+          } catch (error) {
+            throw error;
+          }
+        }
+        const nextYear = new Date();
+        nextYear.setFullYear(nextYear.getFullYear() + 1);
+        const businessArea = await this.businessAreaRepository.findOne({
+          where: {
+            vendorId: vendorStatusDto.isrVendorId,
+            instanceId: vendorStatusDto.instanceId,
+            //expireDate: nextYear,
+          },
+        });
+        if (!businessArea)
+          throw new HttpException(`businessArea_not_found`, 500);
+        businessArea.status = VendorStatusEnum.APPROVED;
+        businessArea.approvedAt = new Date();
+        const expireDate = new Date();
+        expireDate.setFullYear(expireDate.getFullYear() + 1);
+        businessArea.expireDate = expireDate;
+        businessArea.remark = vendorStatusDto.remark;
+        const besinessArea =
+          await this.businessAreaRepository.save(businessArea);
+        if (!besinessArea)
+          throw new HttpException(`business_area_update_failed`, 500);
+        return besinessArea;
+      } else if (vendorStatusDto.status == VendorStatusEnum.REJECT) {
+        return await this.rejectVendor(vendorStatusDto);
+      }
     }
   }
   async rejectVendor(vendorStatusDto: SetVendorStatus): Promise<any> {
@@ -1106,7 +1126,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       if (!vendorEntity)
         return {
           status: {
-            level: 'info',
+            level: 'Info',
             status: 'Draft',
           },
           data: [],
@@ -1167,7 +1187,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         businessAreaEntity.serviceId = bpservice.service.id;
         businessAreaEntity.applicationNumber =
           workflowInstance.application.applicationNumber;
-        businessAreaEntity.status = VendorStatusEnum.PENDING;
         businessAreaEntity.vendorId = isrVendorData.id;
         businessAreaEntity.priceRangeId = businessAreaData.priceRangeId;
         const res = await this.businessAreaRepository.save(businessAreaEntity);
@@ -1247,16 +1266,12 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         data?.status.status == VendorStatusEnum.DRAFT &&
         data?.status?.level == VendorStatusEnum.INFO
       ) {
-        const businessArea = data?.businessArea;
-        for (let index = 0; index < businessArea?.length; index++) {
-          console.log('the single business area ', businessArea[index]);
+        const businessArea = data.businessArea;
+        for (let index = 0; index < businessArea.length; index++) {
           const businessareaData = await this.businessAreaRepository.findOne({
             where: { id: businessArea[index] },
             relations: { BpService: true, servicePrice: true },
           });
-          // commented for testing purpose
-          // if (this.monthDiff(businessareaData.expireDate, new Date()) > 3)
-          //   throw new HttpException('renewal period not allowed ', 500);
           if (
             businessareaData.BpService.key ===
               ServiceKeyEnum.goodsNewRegistration ||
@@ -1290,12 +1305,15 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
               userInfo,
               renewalRange[0].id,
             );
-            console.log('result result result result ', result);
+            if (!result)
+              throw new HttpException('invoice generation failed', 500);
           } else {
             const result = await this.generateInvoiceForServiceRenewal(
               userInfo,
               businessareaData.priceRangeId,
             );
+            if (!result)
+              throw new HttpException('invoice generation failed', 500);
           }
         }
       }
@@ -1453,6 +1471,52 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     }
 
     return key;
+  }
+  async initiateVendorProfileUpdate(userId: string) {
+    const isrVendor = await this.isrVendorsRepository.findOne({
+      where: { userId: userId, status: VendorStatusEnum.APPROVED },
+    });
+    isrVendor.id = undefined;
+    isrVendor.status = VendorStatusEnum.UPDATE;
+    isrVendor.initial.status = VendorStatusEnum.DRAFT;
+    isrVendor.initial.level = VendorStatusEnum.BASIC;
+    isrVendor.areasOfBusinessInterest =
+      InitialValueSchema.areasOfBusinessInterest;
+    isrVendor.bankAccountDetails = InitialValueSchema.bankAccountDetails;
+    isrVendor.beneficialOwnership = InitialValueSchema.beneficialOwnership;
+    isrVendor.businessSizeAndOwnership =
+      InitialValueSchema.businessSizeAndOwnership;
+    isrVendor.contactPersons = InitialValueSchema.contactPersons;
+    isrVendor.initial = InitialValueSchema.initial;
+    isrVendor.address = InitialValueSchema.address;
+    isrVendor.basic = InitialValueSchema.basic;
+    isrVendor.shareHolders = InitialValueSchema.shareHolders;
+    const result = await this.isrVendorsRepository.save(isrVendor);
+    return result;
+  }
+  async updateVendorProfile(isrVendorId: string, data: any) {
+    const isrVendor = await this.isrVendorsRepository.findOne({
+      where: { id: isrVendorId },
+    });
+    if (
+      data?.initial?.status == VendorStatusEnum.DRAFT ||
+      data.initial.level !== VendorStatusEnum.SUBMIT
+    ) {
+      isrVendor.areasOfBusinessInterest = data?.areasOfBusinessInterest;
+      isrVendor.bankAccountDetails = data?.bankAccountDetails;
+      isrVendor.beneficialOwnership = data?.beneficialOwnership;
+      isrVendor.businessSizeAndOwnership = data?.businessSizeAndOwnership;
+      isrVendor.contactPersons = data?.contactPersons;
+      isrVendor.initial = data?.initial;
+      isrVendor.address = data?.address;
+      isrVendor.basic = data?.basic;
+      isrVendor.shareHolders = data?.shareHolders;
+      return isrVendor;
+    } else if (
+      data?.initial?.status == VendorStatusEnum.SUBMIT &&
+      data.initial.level !== VendorStatusEnum.SUBMIT
+    ) {
+    }
   }
   monthDiff(expireDate: Date, today: Date): number {
     let months;
