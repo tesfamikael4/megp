@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { BusinessAreaEntity } from './business-area.entity';
 
 @Entity({ name: 'invoice' })
 export class InvoiceEntity {
@@ -38,4 +39,7 @@ export class InvoiceEntity {
   remark: string;
   @Column({ nullable: true })
   attachment: string;
+  @OneToOne(() => BusinessAreaEntity, (ba) => ba.invoice)
+  @JoinColumn({ name: 'businessAreaId' })
+  businessArea: BusinessAreaEntity
 }

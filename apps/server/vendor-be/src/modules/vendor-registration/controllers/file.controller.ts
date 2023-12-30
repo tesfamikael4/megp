@@ -12,11 +12,9 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { TusService } from '../services/tus.service';
-import { UserInfo, userInfo } from 'os';
-import { ApiBody, ApiConsumes, ApiResponse, ApiTags } from '@nestjs/swagger';
+
+import { ApiConsumes, ApiResponse, ApiTags } from '@nestjs/swagger';
 import {
-  AllowAnonymous,
   CurrentUser,
   JwtGuard,
 } from 'src/shared/authorization';
@@ -25,50 +23,20 @@ import multer, { diskStorage, memoryStorage } from 'multer';
 import { extname } from 'path';
 import { FileService } from '../services/file.service';
 import { Response } from 'express';
+import { IsNotEmpty } from 'class-validator';
+import { ReceiptDto } from '../dto/receipt.dto';
 import { UploadFileDto } from '../dto/file.dto';
 
 @Controller('upload')
 @ApiTags('File')
 @UseGuards(JwtGuard)
 @ApiResponse({ status: 500, description: 'Internal error' })
+
 export class UploadController {
   constructor(
     // private tusService: TusService,
     private fileService: FileService,
-  ) {}
-  // @Get('get-file/:fileName')
-  // async getFile(
-  //   @Param('fileName') fileName: string,
-  //   @Req() req,
-  //   @Res() res,
-  //   @CurrentUser() userInfo: any,
-  // ) {
-  //   fileName = userInfo.id + '/' + fileName;
-  //   const result = await this.tusService.getFileFromMinio(
-  //     req,
-  //     res,
-  //     userInfo.id,
-  //     fileName,
-  //   );
-  //   return res.send(result);
-  // }
-  // @Get(':fileId')
-  // async fetchFile(@Param('fileName') fileName: string, @Req() req, @Res() res) {
-  //   const userId = 'b23f0b00-0a59-4f6d-9fd9-34d6fa960e0';
-  //   fileName = userId + '/' + fileName;
-  //   return this.tusService.getFile(req, res, userId, fileName);
-  // }
-
-  // @Delete(':fileName')
-  // async deleteFile(
-  //   @Param('fileName') fileName: string,
-  //   @Req() req,
-  //   @Res() res,
-  // ) {
-  //   const userId = 'b23f0b00-0a59-4f6d-9fd9-34d6fa960e0';
-  //   return this.tusService.deleteFileFromMinio(req, res, userId, fileName);
-  // }
-
+  ) { }
   @Post('upload-payment-receipt/:transactionId/:serviceId/:invoiceId')
   @UseInterceptors(FileInterceptor('attachmentUrl'))
   async uploadPaymentRecept(
@@ -93,6 +61,26 @@ export class UploadController {
     );
     return result;
   }
+
+
+
+  @Post('upload-payment-receipt-upgrade')
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('attachmentUrl'))
+  async uploadPaymentReceptUpgrade(
+    @UploadedFile() attachment: Express.Multer.File,
+    @CurrentUser() userInfo: any,
+    @Body() dto: ReceiptDto
+  ) {
+    if (!attachment) {
+      return { error: 'File not received' };
+    }
+    const result = await this.fileService.uploadPaymentAttachmentUpgrade(
+      attachment, userInfo, dto
+    );
+    return result;
+  }
+
   @Post('upload-payment-receipt-new/:transactionId/:invoiceId/:attachment')
   @UseInterceptors(FileInterceptor('attachmentUrl'))
   async uploadPaymentReceptNew(

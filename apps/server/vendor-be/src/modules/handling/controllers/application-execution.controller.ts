@@ -181,7 +181,7 @@ export class ApplicationExcutionController {
   @Get('get-my-invoice')
   @ApiOkResponse({ type: InvoiceResponseDto })
   async getMyInvoice(@CurrentUser() user: any) {
-    return await this.invoiceService.getMyInvoices(user.id);
+    return await this.invoiceService.getActiveMyInvoices(user.id);
   }
 
   @UseGuards(JwtGuard)

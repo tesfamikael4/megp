@@ -1,9 +1,11 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { EntityCrudService } from 'src/shared/service';
 import { BusinessAreaResponseDto } from '../dto/business-area.dto';
 import { BusinessAreaEntity } from 'src/entities';
+import { WorkflowInstanceEnum } from 'src/modules/handling/dto/workflow-instance.enum';
+import { userInfo } from 'os';
 
 @Injectable()
 export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
@@ -30,10 +32,40 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
       relations: { servicePrice: true },
     });
   }
+  async getBusinessAreaWithPendingInvoice(ids: string[], keys: string[], user: any): Promise<BusinessAreaEntity[]> {
+    return this.businessAreaRepository.find({
+      where: {
+        id: In(ids),
+        status: 'Pending', invoice: { paymentStatus: 'Pending', userId: user.id }
+      },
+      relations: { servicePrice: true, invoice: true, BpService: true },
+    });
+  }
   async getBusinessAreaByInstanceId(instanceId: string): Promise<BusinessAreaEntity> {
     return this.businessAreaRepository.findOne({
       where: { instanceId: instanceId }
 
     });
   }
+
+  async getBusinessAreaByIds(businessIds: string[]): Promise<BusinessAreaEntity[]> {
+    return this.businessAreaRepository.find({
+      where: { id: In(businessIds), status: WorkflowInstanceEnum.Approved }
+
+    });
+
+  }
+  async getBusinessAreaByInstanceIds(instanceIds: string[]): Promise<BusinessAreaEntity[]> {
+    return this.businessAreaRepository.find({
+      where: {
+        instanceId: In(instanceIds),
+        status: 'Pending',
+        invoice: { paymentStatus: 'Pending' }
+      },
+      relations: { invoice: true }
+
+    });
+  }
+
+
 }

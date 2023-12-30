@@ -29,13 +29,14 @@ import {
 import { InsertAllDataDto } from '../dto/save-all.dto';
 import { SetVendorStatus } from '../dto/vendor.dto';
 import { CollectionQuery } from 'src/shared/collection-query';
+import { UpgradeInfoDTO, VendorUpgradeDto } from '../dto/vendor-upgrade.dto';
 @ApiBearerAuth()
 @Controller('vendor-registrations')
 @ApiTags('Vendor-registrations')
 @ApiResponse({ status: 500, description: 'Internal error' })
 @ApiExtraModels(DataResponseFormat)
 export class VendorRegistrationsController {
-  constructor(private readonly regService: VendorRegistrationsService) {}
+  constructor(private readonly regService: VendorRegistrationsService) { }
   @UseGuards(JwtGuard)
   @Get('get-isr-vendors')
   async getVendors() {
@@ -142,6 +143,9 @@ export class VendorRegistrationsController {
   async getApprovedVendorServiceByUserId(@CurrentUser() userInfo: any) {
     return await this.regService.getApprovedVendorServiceByUserId(userInfo.id);
   }
+
+
+
   @UseGuards(JwtGuard)
   @Post('generate-service-invoice-for-renewal')
   async generateServiceInvoiceForRenewal(
@@ -168,22 +172,27 @@ export class VendorRegistrationsController {
   @Post('generate-service-invoice-for-upgrade')
   async generateServiceInvoiceForUpgrade(
     @CurrentUser() userInfo: any,
-    @Body() areaOfBusinessInterest: any,
+    @Body() areaOfBusinessInterest: UpgradeInfoDTO,
   ) {
-    return await this.regService.getServiceInvoiceForUpgrade(
+    return await this.regService.getServiceInvoiceForUpgrade2(
       userInfo,
       areaOfBusinessInterest,
     );
   }
+  @UseGuards(JwtGuard)
+  @Post('submit-service-upgrade')
+  async submitServiceUpgrade(
+    @CurrentUser() userInfo: any,
+    @Body() areaOfBusinessInterest: any[],
+  ) {
+    return await this.regService.upgradevendorService(
+      userInfo.id, areaOfBusinessInterest
+    );
+  }
 
   @UseGuards(JwtGuard)
-  @Get('get-service-by-userId')
-  async getServiceByUserId(@CurrentUser() userInfo: any) {
-    return await this.regService.getVendorServiceByUserId(userInfo.id);
-  }
-  @UseGuards(JwtGuard)
-  @Get('get-my-invoices')
-  async getMyInvoices(@CurrentUser() userInfo: any) {
-    return await this.regService.getMyInvoices(userInfo.id);
+  @Get('get-my-approved-services')
+  async getMyApprovedService(@CurrentUser() userInfo: any) {
+    return await this.regService.getMyApprovedService(userInfo);
   }
 }

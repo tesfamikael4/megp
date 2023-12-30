@@ -6,9 +6,7 @@ export class InvoiceResponseDto {
   @ApiProperty()
   id: string;
   @ApiProperty()
-  InstanceId: string;
-  @ApiProperty()
-  userId: string;
+  businessAreaId: string;
   @ApiProperty()
   applicationNo: string;
   @ApiProperty()
@@ -35,12 +33,21 @@ export class InvoiceResponseDto {
   @ApiProperty()
   paymentStatus: string;
   @ApiProperty()
+  pricingId: string;
+  @ApiProperty()
+  serviceId: string;
+  @ApiProperty()
   remark: string;
+  @ApiProperty()
+  category: string;
+  @ApiProperty()
+  userId: string;
   static toResponse(entity: InvoiceEntity): InvoiceResponseDto {
     const response = new InvoiceResponseDto();
     response.id = entity.id;
+    response.businessAreaId = entity.businessAreaId;
     response.userId = entity.userId;
-    response.InstanceId = entity.businessAreaId;
+    response.businessAreaId = entity.businessAreaId;
     response.applicationNo = entity.applicationNo;
     response.taskId = entity.taskId;
     response.taskName = entity.taskName;
@@ -53,7 +60,10 @@ export class InvoiceResponseDto {
     response.serviceName = entity.serviceName;
     response.paymentStatus = entity.paymentStatus;
     response.remark = entity.remark;
-
+    response.amount = entity.amount;
+    response.serviceId = entity?.businessArea?.serviceId;
+    response.pricingId = entity?.businessArea?.priceRangeId;
+    response.category = entity?.businessArea?.category;
     return response;
   }
 }
