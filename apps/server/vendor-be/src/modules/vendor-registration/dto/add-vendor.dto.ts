@@ -1,6 +1,6 @@
 import { IsDate } from 'class-validator';
 
-const initialValueSchema = {
+const InitialValueSchema = {
   initial: {
     id: '',
     userId: 'b23f0b00-0a59-4f6d-9fd9-34d6fa960e0f', //session
@@ -123,4 +123,4 @@ const initialValueSchema = {
     mSMECertificate: '',
   },
 };
-export default initialValueSchema;
+export default InitialValueSchema;
