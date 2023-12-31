@@ -68,6 +68,7 @@ export class CertificateService {
         command.action = 'SUCCESS';
         await this.wfService.gotoNextStep(command, user);
       }
+      console.log("vendorId--", vendorId)
       const vendorInfo =
         await this.vendorService.getVendorByIdForCertificate(vendorId);
       if (!vendorInfo) throw new NotFoundException();
