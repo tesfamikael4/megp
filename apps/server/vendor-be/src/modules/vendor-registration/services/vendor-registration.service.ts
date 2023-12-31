@@ -14,12 +14,10 @@ import {
 } from '../dto/vendor-initiation.dto';
 import { EntityCrudService } from 'src/shared/service';
 import {
-  BpServiceEntity,
   BusinessAreaEntity,
   BusinessProcessEntity,
   InvoiceEntity,
   IsrVendorsEntity,
-  ServicePrice,
   VendorsEntity,
 } from 'src/entities';
 import { BusinessProcessService } from 'src/modules/bpm/services/business-process.service';
@@ -244,7 +242,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             //  result.basic['id'] = result.id;
             vendor.id = result.id;
             vendor.name = result.basic['name'];
-
             try {
               const invoice = await this.invoiceService.generateInvoice(
                 data.areasOfBusinessInterest[index].priceRange,
@@ -311,10 +308,13 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         status: In(this.updateVendorEnums),
       },
     });
+
+    console.log("result---", result);
     const vendor = await this.vendorRepository.find({
       where: { isrVendorId: vendorStatusDto.isrVendorId },
     });
-    if (vendor) {
+    console.log("vendor>>>>>>>>>>>>>", vendor)
+    if (vendor.length > 0) {
       const businessArea = await this.businessAreaRepository.findOne({
         where: { instanceId: vendorStatusDto.instanceId },
       });
@@ -328,6 +328,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       return businessUpdate;
     } else {
       if (!result) throw new NotFoundException(`isr_Vendor_not_found`);
+
+      console.log("yyyyyyyyyyyyy", vendorStatusDto.status)
       if (vendorStatusDto.status == VendorStatusEnum.APPROVE) {
         const isrVendorData = result;
         const basic = isrVendorData.basic;
@@ -1379,7 +1381,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             ServiceKeyEnum.worksNewRegistration
           ) {
             const key = await this.mapServiceType(
-              businessArea[index],
+              businessareaData,
               'renewal',
             );
             const renewalRange =
@@ -1388,6 +1390,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
                 businessareaData.servicePrice.valueFrom,
                 businessareaData.servicePrice.valueTo,
               );
+            console.log("renewalRange", renewalRange);
             const business = await this.businessAreaRepository.findOne({
               where: { id: businessArea[index] },
             });
@@ -1603,7 +1606,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         case BAEnum.goods:
           key = ServiceKeyEnum.goodsRenewal;
           break;
-        case BAEnum.goods:
+        case BAEnum.works:
           key = ServiceKeyEnum.worksRenewal;
           break;
         case BAEnum.services:

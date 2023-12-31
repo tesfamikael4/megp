@@ -398,8 +398,8 @@ export class WorkflowService {
     const commandLower = command.action.toLowerCase();
     const status =
       commandLower == 'approve' ||
-      commandLower == 'yes' ||
-      commandLower == 'success'
+        commandLower == 'yes' ||
+        commandLower == 'success'
         ? 'Approve'
         : 'Reject';
     const payload = {
@@ -411,6 +411,7 @@ export class WorkflowService {
       remark: command.remark,
       category: '',
     };
+    console.log("payload", payload);
     const result = await this.vendorRegService.updateVendor(payload);
 
     if (result) {
