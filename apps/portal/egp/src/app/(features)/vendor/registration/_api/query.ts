@@ -62,14 +62,11 @@ export const vendorRegistrationQuery = vendorRegistrationApi.injectEndpoints({
         body: data,
       }),
     }),
-    getRenewalInvoice: builder.query<
-      RenewalInvoiceRenewalVendorResponse,
-      RenewalInvoiceRenewalVendorRequest
-    >({
-      query: (data) => ({
-        url: `/vendor-registrations/generate-service-invoice-for-renewal`,
-        method: 'POST',
-        body: data,
+    getRenewalInvoice: builder.query<RenewalInvoiceRenewalVendorResponse, any>({
+      query: () => ({
+        url: `/vendor-registrations/get-my-invoice`,
+        method: 'GET',
+        // body: data,
       }),
     }),
     createVendorId: builder.mutation<

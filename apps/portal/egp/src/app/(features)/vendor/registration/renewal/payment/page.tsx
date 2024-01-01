@@ -41,12 +41,10 @@ function Page() {
   );
 
   const invoiceInfo = useGetRenewalInvoiceQuery(
-    {
-      status: { level: 'payment', status: 'Draft' },
-    },
+    {},
     { refetchOnMountOrArgChange: true },
   );
-  const [submitRequest] = useLazyPostRenewalVendorQuery();
+  const [submitRequest, submitRequestInfo] = useLazyPostRenewalVendorQuery();
 
   const [uploadFile, uploadFileInfo] = useLazyUploadPaymentSlipQuery();
 
@@ -110,12 +108,12 @@ function Page() {
   }, [invoiceInfo.data]);
 
   useEffect(() => {
-    if (paymentReceiptItemSchema.safeParse(uploadFileInfo.data).success) {
+    if (submitRequestInfo.data) {
       NotificationService.successNotification('Payed Successfully!');
       router.push('/vendor/registration/track-applications');
     }
     return () => {};
-  }, [invoiceInfo.data, uploadFileInfo.data]);
+  }, [submitRequestInfo.data]);
 
   if (invoiceInfo.isLoading) {
     return (
