@@ -40,8 +40,8 @@ export class Activity extends OrgAudit {
   })
   permissions: Permission;
 
-  @OneToOne(() => Instance, (instance) => instance.activity, {
+  @OneToMany(() => Instance, (instance) => instance.activity, {
     cascade: true,
   })
-  instance: Instance;
+  instance: Instance[];
 }

@@ -19,7 +19,7 @@ export class Instance extends OrgAudit {
   @Column()
   activityId: string;
 
-  @OneToOne(() => Activity, (activity) => activity.instance)
+  @ManyToOne(() => Activity, (activity) => activity.instance)
   @JoinColumn({ name: 'activityId' })
   public activity: Activity;
 
@@ -34,6 +34,9 @@ export class Instance extends OrgAudit {
 
   @Column()
   status: string;
+
+  @Column()
+  itemName: string;
 
   @Column('uuid')
   itemId: string;
