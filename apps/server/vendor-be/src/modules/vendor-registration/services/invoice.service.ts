@@ -11,7 +11,7 @@ import { ServiceKeyEnum } from 'src/modules/handling/dto/workflow-instance.enum'
 import { ServicePricingService } from 'src/modules/pricing/services/service-pricing.service';
 import { DataResponseFormat } from 'src/shared/api-data';
 import { EntityCrudService } from 'src/shared/service';
-import { MoreThanOrEqual, Repository } from 'typeorm';
+import { In, MoreThanOrEqual, Repository } from 'typeorm';
 import { InvoiceResponseDto } from '../dto/invoice.dto';
 import { CollectionQuery, QueryConstructor } from 'src/shared/collection-query';
 import { HandlingCommonService } from 'src/modules/handling/services/handling-common-services';
@@ -235,6 +235,31 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     return response;
   }
 
+
+
+  async getMyActiveInvoices(
+    userId: string, serviceTypes: string[]
+  ): Promise<DataResponseFormat<InvoiceResponseDto>> {
+    const response = new DataResponseFormat<InvoiceResponseDto>();
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(new Date().getDate() - 7);
+    const [result, total] = await this.invoiceRepository.findAndCount({
+      where: {
+        userId: userId,
+        paymentStatus: 'Pending',
+        createdOn: MoreThanOrEqual(oneWeekAgo),
+        businessArea: {
+          BpService: { key: In(serviceTypes) }
+        }
+      },
+      relations: { businessArea: { BpService: true } }
+    });
+    response.total = total;
+    response.items = result.map((entity) =>
+      InvoiceResponseDto.toResponse(entity),
+    );
+    return response;
+  }
   mapInvoice(
     curruntPricing: ServicePrice,
     vendor: VendorsEntity,

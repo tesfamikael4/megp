@@ -36,6 +36,7 @@ import { WorkflowInstanceEntity } from 'src/entities';
 import { VendorRegistrationsService } from 'src/modules/vendor-registration/services/vendor-registration.service';
 import { VendorInitiationResponseDto } from 'src/modules/vendor-registration/dto/vendor-initiation.dto';
 import { decodeCollectionQuery } from 'src/shared/collection-query/query-mapper';
+import { ServiceKeyEnum } from '../dto/workflow-instance.enum';
 @ApiBearerAuth()
 @Controller('application-execution')
 @ApiTags('Application Excution')
@@ -178,10 +179,11 @@ export class ApplicationExcutionController {
     return await this.invoiceService.getInvoice(id);
   }
   @UseGuards(JwtGuard)
-  @Get('get-my-invoice')
+  @Get('get-my-upgrade-invoice')
   @ApiOkResponse({ type: InvoiceResponseDto })
   async getMyInvoice(@CurrentUser() user: any) {
-    return await this.invoiceService.getActiveMyInvoices(user.id);
+    const serviceType = [ServiceKeyEnum.goodsUpgrade, ServiceKeyEnum.servicesUpgrade, ServiceKeyEnum.worksUpgrade]
+    return await this.invoiceService.getMyActiveInvoices(user.id, serviceType);
   }
 
   @UseGuards(JwtGuard)

@@ -41,7 +41,7 @@ export class CreateWorkflowInstanceDto {
     entity.requestorId = dto.requestorId;
     entity.bpId = dto.bpId;
     entity.serviceId = dto.serviceId;
-    entity.status = dto.status;
+    entity.status = dto?.status;
     entity.submittedAt = new Date();
     return entity;
   }

@@ -372,7 +372,8 @@ export class FileService {
         wfi.data = row.businessArea.isrVendor;
         const result = await this.workflowService.intiateWorkflowInstance(wfi, user)
         console.log("result--->", result)
-        businessArea.instanceId = result.instanceId;
+        businessArea.instanceId = result.application?.id;
+        businessArea.applicationNumber = result.application?.applicationNumber;
         if (result) {
           await this.busineAreaService.update(businessArea.id, businessArea);
         }
