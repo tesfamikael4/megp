@@ -321,7 +321,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       const businessArea = await this.businessAreaRepository.findOne({
         where: { instanceId: vendorStatusDto.instanceId },
       });
-      console.log("businessArea 000", businessArea, vendorStatusDto.instanceId)
       businessArea.status = VendorStatusEnum.APPROVED;
       businessArea.approvedAt = new Date();
       const expireDate = new Date();
@@ -1271,6 +1270,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         wfi.serviceId = bpservice.service.id;
         wfi.requestorId = isrVendorData.id;
         wfi.data = isrVendorData;
+
         const workflowInstance =
           await this.workflowService.intiateWorkflowInstance(wfi, userInfo);
         if (!workflowInstance)
@@ -1280,6 +1280,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           instanceNumber: workflowInstance.application.id,
           vendorId: workflowInstance.application.requestorId,
         });
+
         const businessAreaEntity = new BusinessAreaEntity();
         businessAreaEntity.instanceId = workflowInstance.application.id;
         businessAreaEntity.category = businessAreaData.category;
@@ -1401,13 +1402,13 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             if (!business)
               throw new HttpException('business area not found ', 500);
             const service = await this.bpService.findBpWithServiceByKey(key);
+            if (!service) throw new HttpException("can't find key", 500);
             business.id = undefined;
             business.serviceId = service.serviceId;
             business.priceRangeId = renewalRange[0].id;
             const resu = await this.businessAreaRepository.save(business);
             if (!resu)
               throw new HttpException('business area update failed', 500);
-
             const result = await this.generateInvoiceForServiceRenewal(
               userInfo,
               renewalRange[0].id,
@@ -1432,7 +1433,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       });
       if (!isrVendor) throw new HttpException('isrvendor not found ', 500);
       return {
-        ...invoices,
+        invoices: invoices,
         paymentReceipt: isrVendor?.paymentReceipt,
         businessAreas: data.businessArea,
       };
@@ -1441,14 +1442,17 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     }
   }
   async getMyInvoices(userId) {
-    const invoices = await this.invoiceService.getActiveMyInvoices(userId);
+    const invoices = await this.invoiceRepository.find({
+      where: { userId: userId, paymentStatus: 'Pending' },
+    });
 
     const isrVendor = await this.isrVendorsRepository.findOne({
-      where: { businessAreas: { status: 'Pending' }, userId: userId },
+      where: { userId: userId, businessAreas: { status: In(['Pending']) } },
       relations: { businessAreas: true },
     });
+
     return {
-      ...invoices,
+      items: invoices,
       paymentReceipt: isrVendor?.paymentReceipt,
       businessAreas: isrVendor?.businessAreas,
     };
@@ -1715,5 +1719,14 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
 
   async cancelRegistration(user: any) {
     await this.isrVendorsRepository.delete({ userId: user.id });
+  }
+  async getAllBusinessAreasByUserId(userId: string) {
+    const vendorEntity = await this.isrVendorsRepository.findOne({
+      relations: { businessAreas: { BpService: true } },
+      where: {
+        userId: userId,
+      },
+    });
+    return vendorEntity;
   }
 }

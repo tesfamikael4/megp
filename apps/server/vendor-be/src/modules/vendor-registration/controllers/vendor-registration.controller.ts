@@ -209,4 +209,9 @@ export class VendorRegistrationsController {
   async getMyInvoice(@CurrentUser() userInfo: any) {
     return await this.regService.getMyInvoices(userInfo.id);
   }
+  @UseGuards(JwtGuard)
+  @Get('get-all-business-area')
+  async getAllBusinessAreasByUserId(@CurrentUser() userInfo: any) {
+    return await this.regService.getAllBusinessAreasByUserId(userInfo.id);
+  }
 }
