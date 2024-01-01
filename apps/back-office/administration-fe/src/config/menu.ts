@@ -28,6 +28,10 @@ export const Menu: MenuItem[] = [
         label: 'Threshold',
         link: '/procurement-thresholds',
       },
+      {
+        label: 'Workflow',
+        link: '/workflow',
+      },
     ],
   },
 ];

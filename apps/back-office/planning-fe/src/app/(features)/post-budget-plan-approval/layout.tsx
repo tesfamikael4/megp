@@ -1,4 +1,5 @@
 import { Box, Flex } from '@mantine/core';
+import WorkflowHandling from '../planning-approval/page';
 export default function PreBudgetPlanLayout({
   children,
 }: {
@@ -8,7 +9,7 @@ export default function PreBudgetPlanLayout({
     <Flex gap="md">
       <Box className="w-3/5">{children}</Box>
       <Box className="w-2/5">
-        <h1>work flow</h1>
+        <WorkflowHandling />
       </Box>
     </Flex>
   );

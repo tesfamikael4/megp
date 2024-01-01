@@ -127,7 +127,7 @@ function AuthProvider({
   const [user, setUser] = useState<any>();
   const [error, setError] = useState<any>();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const userRole = user?.roles?.[0]?.key;
+  const userRole = user?.roles?.[0]?.name;
   const [role, setRole] = useState(userRole);
   const router = useRouter();
 
@@ -142,7 +142,7 @@ function AuthProvider({
       if (token) {
         const userInfo: Record<string, any> = jwtDecode(token);
         setUser(userInfo);
-        userInfo.roles && setRole(userInfo.roles[0]?.key);
+        userInfo.roles && setRole(userInfo.roles[0]?.name);
       }
     }
   }, [isAuthenticated]);

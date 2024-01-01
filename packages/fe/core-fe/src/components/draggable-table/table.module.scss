@@ -34,7 +34,7 @@
 }
 
 .table .row:nth-child(even) {
-  @apply bg-gray-100;
+  @apply bg-gray-50;
 }
 .table .row:hover .actionBtn {
   visibility: visible;

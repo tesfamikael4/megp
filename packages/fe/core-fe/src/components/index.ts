@@ -8,6 +8,9 @@ export * from './tree/tree';
 export * from './table/table';
 export * from './table/table-config';
 
+export * from './draggable-table/drag-table';
+export * from './draggable-table/drag-table-config';
+
 export * from './layout/page-layout';
 export * from './layout/side-bar';
 export * from './layout/side-bar-shell';
