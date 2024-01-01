@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsUUID } from 'class-validator';
-export class CreateProcurementRequisitionAttachmentDto {
+export class CreateProcurementRequisitionDocumentDto {
   @ApiProperty()
   @IsString()
   fileName: string;
@@ -26,10 +26,10 @@ export class CreateProcurementRequisitionAttachmentDto {
   procurementRequisitionId: string;
 }
 
-export class UpdateProcurementRequisitionAttachmentDto extends CreateProcurementRequisitionAttachmentDto {
+export class UpdateProcurementRequisitionDocumentDto extends CreateProcurementRequisitionDocumentDto {
   @ApiProperty()
   @IsUUID()
   id: string;
 }
 
-export class ProcurementRequisitionAttachmentResponseDto extends UpdateProcurementRequisitionAttachmentDto {}
+export class ProcurementRequisitionDocumentResponseDto extends UpdateProcurementRequisitionDocumentDto {}

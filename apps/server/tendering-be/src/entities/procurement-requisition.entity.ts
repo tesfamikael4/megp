@@ -3,66 +3,156 @@ import {
   Column,
   PrimaryGeneratedColumn,
   OneToMany,
-  JoinColumn,
-  ManyToOne,
   BeforeInsert,
+  OneToOne,
+  Unique,
 } from 'typeorm';
 
 import { Audit } from 'src/shared/entities/audit.entity';
 import { ProcurementRequisitionActivity } from './procurement-requisition-activity.entity';
-import { ProcurementRequisitionAttachment } from './procurement-requisition-attachment.entity';
-import { PostBudgetPlan } from './post-budget-plan.entity';
+import { ProcurementRequisitionDocument } from './procurement-requisition-document.entity';
+import { ProcurementRequisitionTimeline } from './procurement-requisition-timeline.entity';
+import { ProcurementRequisitionOfficerAssignment } from './procurement-requisition-officer-assignment.entity';
+import { ProcurementRequisitionItem } from './procurement-requisition-item.entity';
+import { ProcurementRequisitionMechanism } from './procurement-requisition-mechanism.entity';
+import { ProcurementRequisitionDisbursement } from './procurement-requisition-disbursement.entity';
+import { ProcurementRequisitionBudgetLine } from './procurement-requisition-budget-line.entity';
 @Entity({ name: 'procurement_requisitions' })
+@Unique(['userReferenceNumber', 'requisitionReferenceNumber'])
 export class ProcurementRequisition extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column({ type: 'jsonb' })
+  organization: JSON;
+
   @Column()
   title: string;
 
-  @Column()
+  @Column({ nullable: true })
   description: string;
 
-  @Column()
-  referenceNumber: string;
+  @Column({ unique: true })
+  requisitionReferenceNumber: string;
 
-  @Column({ type: 'double precision' })
+  @Column({ unique: true })
+  userReferenceNumber: string;
+
+  @Column({ type: 'jsonb' })
+  budgetYear: JSON;
+
+  @Column({
+    type: 'double precision',
+    default: 0.0,
+  })
   totalEstimatedAmount: number;
 
-  @Column()
-  status: string;
+  @Column({
+    type: 'double precision',
+    default: 0.0,
+  })
+  calculatedAmount: number;
 
-  @Column({ type: 'uuid' })
-  postBudgetPlanId: string;
+  @Column()
+  currency: string;
+
+  @Column({ default: 'Draft' })
+  status: string;
 
   @OneToMany(
     () => ProcurementRequisitionActivity,
-    (procurementRequisitionActivity) =>
-      procurementRequisitionActivity.procurementRequisition,
+    (procurementRequisitionActivities) =>
+      procurementRequisitionActivities.procurementRequisition,
     {
       cascade: true,
       onDelete: 'CASCADE',
     },
   )
-  procurementRequisitionActivity: ProcurementRequisitionActivity[];
+  procurementRequisitionActivities: ProcurementRequisitionActivity[];
 
   @OneToMany(
-    () => ProcurementRequisitionAttachment,
-    (procurementRequisitionAttachments) =>
-      procurementRequisitionAttachments.procurementRequisition,
+    () => ProcurementRequisitionDocument,
+    (procurementRequisitionDocuments) =>
+      procurementRequisitionDocuments.procurementRequisition,
     {
       cascade: true,
       onDelete: 'CASCADE',
     },
   )
-  procurementRequisitionAttachments: ProcurementRequisitionAttachment[];
+  procurementRequisitionDocuments: ProcurementRequisitionDocument[];
 
-  @ManyToOne(() => PostBudgetPlan, (postBudgetPlan) => postBudgetPlan)
-  @JoinColumn({ name: 'postBudgetPlanId' })
-  public postBudgetPlan: PostBudgetPlan;
+  @OneToMany(
+    () => ProcurementRequisitionItem,
+    (procurementRequisitionItems) =>
+      procurementRequisitionItems.procurementRequisition,
+    {
+      cascade: true,
+      onDelete: 'CASCADE',
+    },
+  )
+  procurementRequisitionItems: ProcurementRequisitionItem[];
+
+  @OneToOne(
+    () => ProcurementRequisitionTimeline,
+    (procurementRequisitionTimelines) =>
+      procurementRequisitionTimelines.procurementRequisition,
+    {
+      cascade: true,
+      onDelete: 'CASCADE',
+    },
+  )
+  procurementRequisitionTimelines: ProcurementRequisitionTimeline[];
+
+  @OneToMany(
+    () => ProcurementRequisitionOfficerAssignment,
+    (procurementRequisitionOfficerAssignments) =>
+      procurementRequisitionOfficerAssignments.procurementRequisition,
+    {
+      cascade: true,
+      onDelete: 'CASCADE',
+    },
+  )
+  procurementRequisitionOfficerAssignments: ProcurementRequisitionOfficerAssignment[];
+
+  @OneToOne(
+    () => ProcurementRequisitionMechanism,
+    (procurementRequisitionMechanisms) =>
+      procurementRequisitionMechanisms.procurementRequisition,
+    {
+      cascade: true,
+      onDelete: 'CASCADE',
+    },
+  )
+  procurementRequisitionMechanisms: ProcurementRequisitionMechanism[];
+
+  @OneToMany(
+    () => ProcurementRequisitionBudgetLine,
+    (procurementRequisitionBudgetLines) =>
+      procurementRequisitionBudgetLines.procurementRequisition,
+    {
+      cascade: true,
+      onDelete: 'CASCADE',
+    },
+  )
+  procurementRequisitionBudgetLines: ProcurementRequisitionBudgetLine[];
+
+  @OneToMany(
+    () => ProcurementRequisitionDisbursement,
+    (procurementRequisitionDisbursements) =>
+      procurementRequisitionDisbursements.procurementRequisition,
+    {
+      cascade: true,
+      onDelete: 'CASCADE',
+    },
+  )
+  procurementRequisitionDisbursements: ProcurementRequisitionDisbursement[];
+
   @BeforeInsert()
-  generateRandomNumber(): void {
-    const randomNum = Math.floor(100000 + Math.random() * 900000);
-    this.referenceNumber = `REF-${randomNum}`;
+  generateRandomNumbers(): void {
+    const randomNumReq = () => Math.floor(100000 + Math.random() * 900000);
+    const randomNumUser = () => Math.floor(100000 + Math.random() * 900000);
+
+    this.requisitionReferenceNumber = `REF-${randomNumReq()}`;
+    this.userReferenceNumber = `REF-${randomNumUser()}`;
   }
 }

@@ -2,28 +2,23 @@ import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
-  ManyToOne,
   JoinColumn,
+  OneToOne,
+  ManyToOne,
 } from 'typeorm';
 
 import { Audit } from 'src/shared/entities/audit.entity';
 import { ProcurementRequisition } from './procurement-requisition.entity';
-@Entity({ name: 'procurement_requisition_attachments' })
-export class ProcurementRequisitionAttachment extends Audit {
+@Entity({ name: 'procurement_requisition_officer_assignments' })
+export class ProcurementRequisitionOfficerAssignment extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
   @Column()
-  fileName: string;
-  @Column()
-  fileType: string;
-  @Column()
-  bucketName: string;
-  @Column()
-  originalName: string;
-  @Column({ nullable: true })
-  attachmentUrl: string;
-  @Column()
-  path: string;
+  name: string;
+
+  @Column({ type: 'uuid' })
+  userId: string;
 
   @Column({ type: 'uuid' })
   procurementRequisitionId: string;
@@ -31,7 +26,7 @@ export class ProcurementRequisitionAttachment extends Audit {
   @ManyToOne(
     () => ProcurementRequisition,
     (procurementRequisition) =>
-      procurementRequisition.procurementRequisitionAttachments,
+      procurementRequisition.procurementRequisitionOfficerAssignments,
   )
   @JoinColumn({ name: 'procurementRequisitionId' })
   public procurementRequisition: ProcurementRequisition;

@@ -1,6 +1,20 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsUUID, IsNumber } from 'class-validator';
+import { IsString, IsUUID, IsNumber, IsJSON } from 'class-validator';
+
+export class BudgetYear {
+  @ApiProperty()
+  @IsUUID()
+  budgetYearId: string;
+
+  @ApiProperty()
+  @IsString()
+  budgetYear: string;
+}
 export class CreateProcurementRequisitionDto {
+  @ApiProperty()
+  @IsJSON()
+  organization: JSON;
+
   @ApiProperty()
   @IsString()
   title: string;
@@ -11,19 +25,31 @@ export class CreateProcurementRequisitionDto {
 
   @ApiProperty()
   @IsString()
-  referenceNumber: string;
+  requisitionReferenceNumber: string;
+
+  @ApiProperty()
+  @IsString()
+  userReferenceNumber: string;
+
+  @ApiProperty()
+  @IsJSON()
+  budgetYear: BudgetYear;
 
   @ApiProperty()
   @IsNumber()
-  totalEstimatedAmount: number;
+  totalEstimatedAmount = 0.0;
+
+  @ApiProperty()
+  @IsNumber()
+  calculatedAmount = 0.0;
+
+  @ApiProperty()
+  @IsString()
+  currency: string;
 
   @ApiProperty()
   @IsString()
   status: string;
-
-  @ApiProperty()
-  @IsUUID()
-  postBudgetPlanId: string;
 }
 
 export class UpdateProcurementRequisitionDto extends CreateProcurementRequisitionDto {
