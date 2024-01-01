@@ -11,12 +11,12 @@ export class CreateAPPDto {
   budgetYear: string;
 
   @ApiProperty()
-  @IsString()
-  description: string;
+  @IsUUID()
+  budgetYearId: string;
 
   @ApiProperty()
   @IsString()
-  status: string;
+  description: string;
 }
 
 export class UpdateAPPDto extends CreateAPPDto {

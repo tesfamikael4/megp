@@ -19,11 +19,19 @@ export class CreatePreBudgetPlanActivityDto {
 
   @ApiProperty()
   @IsString()
+  procurementReference: string;
+
+  @ApiProperty()
+  @IsString()
   description: string;
 
   @ApiProperty()
   @IsNumber()
-  totalEstimatedAmount: number;
+  estimatedAmount: number;
+
+  @ApiProperty()
+  @IsNumber()
+  calculatedAmount: number;
 
   @ApiProperty()
   @IsString()
@@ -31,23 +39,7 @@ export class CreatePreBudgetPlanActivityDto {
 
   @ApiProperty()
   @IsString()
-  fundingSource: string;
-
-  @ApiProperty()
-  @IsString()
-  procurementMethod: string;
-
-  @ApiProperty()
-  @IsString()
-  procurementType: string;
-
-  @ApiProperty()
-  @IsString()
-  procurementStatus: string;
-
-  @ApiProperty()
-  @IsJSON()
-  donor: JSON;
+  status: string;
 
   @ApiProperty()
   @IsBoolean()
@@ -55,20 +47,12 @@ export class CreatePreBudgetPlanActivityDto {
 
   @ApiProperty()
   @IsJSON()
-  multiYearBudget: JSON;
+  @IsOptional()
+  remark: string;
 
   @ApiProperty()
   @IsBoolean()
-  indigenousPreference: boolean;
-
-  @ApiProperty()
-  @IsJSON()
-  preferenceValue: JSON;
-
-  @ApiProperty()
-  @IsJSON()
-  @IsOptional()
-  remark: string;
+  classification: any;
 }
 
 export class UpdatePreBudgetPlanActivityDto extends CreatePreBudgetPlanActivityDto {

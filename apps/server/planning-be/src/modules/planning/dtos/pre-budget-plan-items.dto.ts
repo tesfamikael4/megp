@@ -8,31 +8,19 @@ export class CreatePreBudgetPlanItemsDto {
 
   @ApiProperty()
   @IsString()
-  itemCodeReferenceType: string;
-
-  @ApiProperty()
-  @IsString()
   itemCode: string;
-
-  @ApiProperty()
-  @IsJSON()
-  metaData: JSON;
 
   @ApiProperty()
   @IsString()
   description: string;
 
   @ApiProperty()
-  @IsJSON()
-  specification: JSON;
+  @IsString()
+  currency: string;
 
   @ApiProperty()
   @IsNumber()
   unitPrice: number;
-
-  @ApiProperty()
-  @IsString()
-  currency: string;
 
   @ApiProperty()
   @IsNumber()
@@ -45,6 +33,14 @@ export class CreatePreBudgetPlanItemsDto {
   @ApiProperty()
   @IsString()
   uom: string;
+
+  @ApiProperty()
+  @IsString()
+  uomName: string;
+
+  @ApiProperty()
+  @IsString()
+  classification: string;
 }
 
 export class UpdatePreBudgetPlanItemsDto extends CreatePreBudgetPlanItemsDto {

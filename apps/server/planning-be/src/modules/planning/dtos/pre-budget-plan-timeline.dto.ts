@@ -15,19 +15,15 @@ export class CreatePreBudgetPlanTimelineDto {
 
   @ApiProperty()
   @IsString()
-  activityName: string;
+  timeline: string;
+
+  @ApiProperty()
+  @IsNumber()
+  order: number;
 
   @ApiProperty()
   @IsDate()
-  fromDate: Date;
-
-  @ApiProperty()
-  @IsDate()
-  toDate: Date;
-
-  @ApiProperty()
-  @IsString()
-  operationMethod: string;
+  dueDate: Date;
 
   @ApiProperty()
   @IsNumber()

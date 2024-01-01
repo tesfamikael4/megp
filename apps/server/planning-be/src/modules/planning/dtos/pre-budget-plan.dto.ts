@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsOptional, IsString, IsUUID } from 'class-validator';
+import {
+  IsJSON,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 
 export class CreatePreBudgetPlanDto {
   @ApiProperty()
@@ -7,12 +13,12 @@ export class CreatePreBudgetPlanDto {
   appId: string;
 
   @ApiProperty()
-  @IsNumber()
-  totalEstimatedAmount: number;
+  @IsJSON()
+  estimatedAmount: any;
 
   @ApiProperty()
   @IsString()
-  currency: string;
+  status: string;
 }
 
 export class UpdatePreBudgetPlanDto extends CreatePreBudgetPlanDto {
