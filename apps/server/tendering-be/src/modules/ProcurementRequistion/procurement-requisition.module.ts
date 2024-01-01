@@ -5,30 +5,56 @@ import { ProcurementRequisitionService } from './services/procurement-requisitio
 import {
   ProcurementRequisition,
   ProcurementRequisitionActivity,
-  ProcurementRequisitionAttachment,
+  ProcurementRequisitionBudgetLine,
+  ProcurementRequisitionDocument,
+  ProcurementRequisitionItem,
+  ProcurementRequisitionItemReference,
+  ProcurementRequisitionMechanism,
+  ProcurementRequisitionOfficerAssignment,
+  ProcurementRequisitionTimeline,
 } from 'src/entities';
-import { ProcurementRequisitionActivityController } from './controllers/procurement-requisition-activity';
-import { ProcurementRequisitionAttachmentController } from './controllers/procurement-requisition-attachment';
-import { ProcurementRequisitionActivityService } from './services/procurement-requisition-activity.service copy';
-import { ProcurementRequisitionAttachmentService } from './services/procurement-requisition-attachment.service';
+import { ProcurementRequisitionActivityController } from './controllers/procurement-requisition-activity.controller';
+import { ProcurementRequisitionDocumentController } from './controllers/procurement-requisition-document.controller';
+import { ProcurementRequisitionActivityService } from './services/procurement-requisition-activity.service';
+import { ProcurementRequisitionDocumentService } from './services/procurement-requisition-document.service';
+import { ProcurementRequisitionItemService } from './services/procurement-requisition-item.service';
+import { ProcurementRequisitionItemController } from './controllers/procurement-requisition-item.controller';
+import { ProcurementRequisitionItemReferenceService } from './services/procurement-requisition-item-reference.service';
+import { ProcurementRequisitionOfficerAssignmentService } from './services/procurement-requisition-officer-assignment.service';
+import { ProcurementRequisitionOfficerAssignmentController } from './controllers/procurement-requisition-officer-assignment.controller';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       ProcurementRequisition,
-      ProcurementRequisitionAttachment,
+      ProcurementRequisitionDocument,
       ProcurementRequisitionActivity,
+      ProcurementRequisitionItem,
+      ProcurementRequisitionDocument,
+      ProcurementRequisitionTimeline,
+      ProcurementRequisitionOfficerAssignment,
+      ProcurementRequisitionItemReference,
+      ProcurementRequisitionBudgetLine,
+      ProcurementRequisitionMechanism,
+      ProcurementRequisitionOfficerAssignment,
     ]),
   ],
   providers: [
     ProcurementRequisitionService,
     ProcurementRequisitionActivityService,
-    ProcurementRequisitionAttachmentService,
+    ProcurementRequisitionDocumentService,
+    ProcurementRequisitionItemService,
+    ProcurementRequisitionDocumentService,
+    ProcurementRequisitionItemReferenceService,
+    ProcurementRequisitionOfficerAssignmentService,
   ],
   controllers: [
     ProcurementRequisitionController,
-    ProcurementRequisitionAttachmentController,
+    ProcurementRequisitionDocumentController,
     ProcurementRequisitionActivityController,
+    ProcurementRequisitionItemController,
+    ProcurementRequisitionDocumentController,
+    ProcurementRequisitionOfficerAssignmentController,
   ],
 })
 export class ProcurementRequisitionModule {}

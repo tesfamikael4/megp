@@ -4,31 +4,34 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   JoinColumn,
-  Unique,
 } from 'typeorm';
 
 import { Audit } from 'src/shared/entities/audit.entity';
 import { ProcurementRequisition } from './procurement-requisition.entity';
-
-@Entity({ name: 'procurement_requisition_activities' })
-@Unique(['annualProcurementPlanActivityId'])
-export class ProcurementRequisitionActivity extends Audit {
+@Entity({ name: 'procurement_requisition_documents' })
+export class ProcurementRequisitionDocument extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+  @Column({ unique: true })
+  fileName: string;
+  @Column()
+  fileType: string;
+  @Column()
+  bucketName: string;
+  @Column()
+  originalName: string;
+  @Column({ nullable: true })
+  documentUrl: string;
+  @Column()
+  path: string;
 
   @Column({ type: 'uuid' })
   procurementRequisitionId: string;
 
-  @Column({ type: 'uuid' })
-  annualProcurementPlanActivityId: string;
-
-  @Column({ type: 'jsonb', nullable: true })
-  annualProcurementPlan: JSON;
-
   @ManyToOne(
     () => ProcurementRequisition,
     (procurementRequisition) =>
-      procurementRequisition.procurementRequisitionActivities,
+      procurementRequisition.procurementRequisitionDocuments,
   )
   @JoinColumn({ name: 'procurementRequisitionId' })
   public procurementRequisition: ProcurementRequisition;

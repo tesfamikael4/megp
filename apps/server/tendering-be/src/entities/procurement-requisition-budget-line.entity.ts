@@ -4,15 +4,13 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   JoinColumn,
-  Unique,
 } from 'typeorm';
 
 import { Audit } from 'src/shared/entities/audit.entity';
 import { ProcurementRequisition } from './procurement-requisition.entity';
 
-@Entity({ name: 'procurement_requisition_activities' })
-@Unique(['annualProcurementPlanActivityId'])
-export class ProcurementRequisitionActivity extends Audit {
+@Entity({ name: 'procurement_requisition_budget_lines' })
+export class ProcurementRequisitionBudgetLine extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -20,15 +18,15 @@ export class ProcurementRequisitionActivity extends Audit {
   procurementRequisitionId: string;
 
   @Column({ type: 'uuid' })
-  annualProcurementPlanActivityId: string;
+  annualProcurementPlanBudgetLineId: string;
 
-  @Column({ type: 'jsonb', nullable: true })
-  annualProcurementPlan: JSON;
+  @Column({ type: 'double precision', default: 0.0 })
+  amount: number;
 
   @ManyToOne(
     () => ProcurementRequisition,
     (procurementRequisition) =>
-      procurementRequisition.procurementRequisitionActivities,
+      procurementRequisition.procurementRequisitionBudgetLines,
   )
   @JoinColumn({ name: 'procurementRequisitionId' })
   public procurementRequisition: ProcurementRequisition;

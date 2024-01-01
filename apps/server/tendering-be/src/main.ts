@@ -51,8 +51,8 @@ async function bootstrap() {
 
   SwaggerModule.setup('docs', app, document, customOptions);
 
-  await app.listen(port, () => {
-    console.log('[WEB]', config.get<string>('BASE_URL') + '/docs');
+  await app.listen(port, async () => {
+    console.log('[WEB]', (await app.getUrl()) + '/docs');
   });
 }
 
