@@ -57,6 +57,13 @@ export class PreBudgetPlanController extends ExtraCrudController<PreBudgetPlan>(
     return await this.preBudgetPlanService.copySelectedPreToPost(id);
   }
 
+  @Get(':id/target-group-percentage')
+  async getTargetGroupPercentage(@Param('id') preBudgetPlanId: string) {
+    return await this.preBudgetPlanService.calculateTargetGroupPercentage(
+      preBudgetPlanId,
+    );
+  }
+
   @Get('get-analytics/:id')
   @ApiPaginatedResponse(PreBudgetPlan)
   async getAnalytics(@Param('id') id: string) {

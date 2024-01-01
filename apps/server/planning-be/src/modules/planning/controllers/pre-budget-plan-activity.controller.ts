@@ -8,6 +8,7 @@ import {
   CreatePreBudgetPlanActivityDto,
   UpdatePreBudgetPlanActivityDto,
 } from '../dtos/pre-budget-plan-activity.dto';
+import { OnEvent } from '@nestjs/event-emitter';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'preBudgetPlanId',
@@ -24,5 +25,11 @@ export class PreBudgetPlanActivityController extends ExtraCrudController<PreBudg
     private readonly preBudgetPlanActivityService: PreBudgetPlanActivityService,
   ) {
     super(preBudgetPlanActivityService);
+  }
+  @OnEvent('pre.recalculate')
+  async recalculate(plan) {
+    return await this.preBudgetPlanActivityService.recalculateTotalEstimatedAmount(
+      plan,
+    );
   }
 }

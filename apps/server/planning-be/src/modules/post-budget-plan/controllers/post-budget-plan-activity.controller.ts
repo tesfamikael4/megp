@@ -4,6 +4,7 @@ import { PostBudgetPlanActivity } from 'src/entities';
 import { PostBudgetPlanActivityService } from '../services/post-budget-plan-activity.service';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { ExtraCrudController } from 'src/shared/controller';
+import { OnEvent } from '@nestjs/event-emitter';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'postBudgetPlanId',
@@ -18,5 +19,11 @@ export class PostBudgetPlanActivityController extends ExtraCrudController<PostBu
     private readonly postBudgetPlanActivityService: PostBudgetPlanActivityService,
   ) {
     super(postBudgetPlanActivityService);
+  }
+  @OnEvent('post.recalculate')
+  async recalculate(plan) {
+    return await this.postBudgetPlanActivityService.recalculateTotalEstimatedAmount(
+      plan,
+    );
   }
 }
