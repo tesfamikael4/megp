@@ -43,7 +43,7 @@ export function FormDetail({ mode }: FormDetailProps) {
           message: 'Name must be unique among existing tag names',
         },
       )
-      .refine((value) => /^[A-Za-z ]+$/.test(value), {
+      .refine((value) => /^[A-Za-z() ]+$/.test(value), {
         message: 'Tag name must contain only alphabetic characters',
       }),
   });
@@ -73,13 +73,13 @@ export function FormDetail({ mode }: FormDetailProps) {
         router.push(`/tag/${result?.data?.id}`);
       }
       notifications.show({
-        message: 'tag created successfully',
+        message: 'Tag Created Successfully!',
         title: 'Success',
         color: 'green',
       });
     } catch (err) {
       notifications.show({
-        message: 'errors in deleting tag.',
+        message: 'Errors In Deleting Tag.',
         title: 'Error',
         color: 'red',
       });
@@ -89,13 +89,13 @@ export function FormDetail({ mode }: FormDetailProps) {
     try {
       await update({ ...data, id: id?.toString() });
       notifications.show({
-        message: 'tag updated successfully',
+        message: 'Tag Updated Successfully!',
         title: 'Success',
         color: 'green',
       });
     } catch {
       notifications.show({
-        message: 'errors in updating tag.',
+        message: 'Errors In Updating Tag.',
         title: 'Error',
         color: 'red',
       });
@@ -105,14 +105,14 @@ export function FormDetail({ mode }: FormDetailProps) {
     try {
       await remove(id?.toString()).unwrap();
       notifications.show({
-        message: 'tag deleted successfully',
+        message: 'Tag Deleted Successfully!',
         title: 'Success',
         color: 'green',
       });
       router.push('/tag');
     } catch (err) {
       notifications.show({
-        message: 'errors in deleting tag.',
+        message: 'Errors In Deleting Tag.',
         title: 'Error',
         color: 'red',
       });
