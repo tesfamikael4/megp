@@ -195,4 +195,10 @@ export class VendorRegistrationsController {
   async getMyApprovedService(@CurrentUser() userInfo: any) {
     return await this.regService.getMyApprovedService(userInfo);
   }
+
+  @UseGuards(JwtGuard)
+  @Get('cancel-registration')
+  async cancelRegistration(@CurrentUser() user: any) {
+    return await this.regService.cancelRegistration(user);
+  }
 }
