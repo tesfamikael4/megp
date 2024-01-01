@@ -23,6 +23,7 @@ import {
   IsrVendorsEntity,
   WorkflowInstanceEntity,
 } from 'src/entities';
+
 import { VendorStatusEnum } from 'src/shared/enums/vendor-status-enums';
 import { PaymentReceiptDto } from '../dto/payment-receipt.dto';
 import { Readable } from 'typeorm/platform/PlatformTools';
@@ -53,8 +54,8 @@ export class FileService {
     @InjectRepository(BusinessAreaEntity)
     private readonly businessAreaRepository: Repository<BusinessAreaEntity>,
     private readonly busineAreaService: BusinessAreaService,
-    private readonly workflowService: WorkflowService
-  ) { }
+    private readonly workflowService: WorkflowService,
+  ) {}
   private updateVendorEnums = [
     VendorStatusEnum.ACTIVE,
     VendorStatusEnum.ADJUSTMENT,
@@ -341,13 +342,10 @@ export class FileService {
 
       for (let index = 0; index < ids.length; index++) {
         //const ids = paymentReceiptDto?.invoiceIds;
-        const invoice = await this.invoiceRepository.update(
-          ids[index],
-          {
-            paymentStatus: 'Paid',
-            attachment: fileId,
-          },
-        );
+        const invoice = await this.invoiceRepository.update(ids[index], {
+          paymentStatus: 'Paid',
+          attachment: fileId,
+        });
         if (!invoice) throw new HttpException(`invoice_update _failed`, 500);
       }
       const invoices = await this.invoiceRepository.find({
@@ -355,12 +353,17 @@ export class FileService {
           id: In(ids),
           businessArea: {
             BpService: {
-              businessProcesses: { isActive: true }
-            }
-          }
+              businessProcesses: { isActive: true },
+            },
+          },
         },
-        relations: { businessArea: { BpService: { businessProcesses: true }, isrVendor: true }, }
-      })
+        relations: {
+          businessArea: {
+            BpService: { businessProcesses: true },
+            isrVendor: true,
+          },
+        },
+      });
 
       const wfi: CreateWorkflowInstanceDto = new CreateWorkflowInstanceDto();
       for (let index = 0; index < invoices.length; index++) {
@@ -370,8 +373,11 @@ export class FileService {
         wfi.serviceId = row.businessArea.serviceId;
         wfi.requestorId = row.businessArea.vendorId;
         wfi.data = row.businessArea.isrVendor;
-        const result = await this.workflowService.intiateWorkflowInstance(wfi, user)
-        console.log("result--->", result)
+        const result = await this.workflowService.intiateWorkflowInstance(
+          wfi,
+          user,
+        );
+        console.log('result--->', result);
         businessArea.instanceId = result.application?.id;
         businessArea.applicationNumber = result.application?.applicationNumber;
         if (result) {
@@ -593,7 +599,7 @@ export class FileService {
     userId: string,
     businessAreaId: string,
   ) {
-    console.log("user-id", userId);
+    console.log('user-id', userId);
     try {
       const result = await this.businessAreaRepository.findOne({
         where: { id: businessAreaId },
@@ -615,7 +621,7 @@ export class FileService {
       result.certificateUrl = fileId;
       const data = await this.businessAreaRepository.save(result);
       if (!result) throw new HttpException('business area update failed', 500);
-      console.log("data   --", data);
+      console.log('data   --', data);
       return data;
     } catch (error) {
       console.log(error);
