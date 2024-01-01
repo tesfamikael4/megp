@@ -162,7 +162,7 @@ export class VendorRegistrationsController {
     @Body() areaOfBusinessInterest: any[],
   ) {
     return await this.regService.submitServiceRenewal(
-      userInfo.id,
+      userInfo,
       areaOfBusinessInterest,
     );
   }
