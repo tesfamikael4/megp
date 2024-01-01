@@ -5,6 +5,8 @@ import { tagsApi } from './api/tags/tags.api';
 import { categoriesApi } from './api/categories/categories.api';
 import { classificationApi } from './api/classification/classification.api';
 import { taxonomiesApi } from './api/taxonomies/taxonomies.api';
+import { workflowIamApi } from './api/workflow/workflow-iam.api';
+import { workflowApi } from './api/workflow/workflow.api';
 
 const { reducers, middleware } = entityApi;
 
@@ -16,6 +18,8 @@ export const store = configureStore({
     [tagsApi.reducerPath]: tagsApi.reducer,
     [categoriesApi.reducerPath]: categoriesApi.reducer,
     [taxonomiesApi.reducerPath]: taxonomiesApi.reducer,
+    [workflowIamApi.reducerPath]: workflowIamApi.reducer,
+    [workflowApi.reducerPath]: workflowApi.reducer,
   },
   devTools: process.env.NODE_ENV !== 'production',
   middleware: (getDefaultMiddleware) =>
@@ -26,6 +30,8 @@ export const store = configureStore({
       categoriesApi.middleware,
       classificationApi.middleware,
       taxonomiesApi.middleware,
+      workflowIamApi.middleware,
+      workflowApi.middleware,
     ]),
 });
 

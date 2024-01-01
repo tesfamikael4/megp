@@ -171,12 +171,12 @@ export function Shell({ children }: ShellProps): React.ReactNode {
                   Help
                 </Menu.Item>
 
-                {user?.roles.map((selected) => {
+                {user?.roles?.map((selected) => {
                   return (
                     <Menu.Item
                       key={selected.id}
                       leftSection={<IconUserCircle size={14} />}
-                      onClick={setRole(selected?.key)}
+                      onClick={setRole(selected?.name)}
                     >
                       {selected?.name}
                     </Menu.Item>

@@ -5,6 +5,7 @@ import {
   IconCalendarStats,
   IconCoins,
   IconReportAnalytics,
+  IconGizmo,
 } from '@tabler/icons-react';
 
 export const Menu: MenuItem[] = [

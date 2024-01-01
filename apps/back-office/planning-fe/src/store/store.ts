@@ -3,6 +3,8 @@ import entityApi from './entity/api';
 import { preBudgetPlanApi } from './api/pre-budget-plan/pre-budget-plan.api';
 import { postBudgetPlanApi } from './api/post-budget-plan/post-budget-plan.api';
 import { administrationApi } from './api/administration/administration.api';
+import { planningApprovalApi } from './api/planning-approval/planning-approval';
+import { planningIamApi } from './api/planning-approval/planning-iam';
 import { iamApi } from './api/iam/iam.api';
 import { workflowApi } from './api/workflow/workflow.api';
 
@@ -16,6 +18,8 @@ export const store = configureStore({
     [administrationApi.reducerPath]: administrationApi.reducer,
     [iamApi.reducerPath]: iamApi.reducer,
     [workflowApi.reducerPath]: workflowApi.reducer,
+    [planningApprovalApi.reducerPath]: planningApprovalApi.reducer,
+    [planningIamApi.reducerPath]: planningIamApi.reducer,
   },
   devTools: process.env.NODE_ENV !== 'production',
   middleware: (getDefaultMiddleware) =>
@@ -26,6 +30,8 @@ export const store = configureStore({
       administrationApi.middleware,
       iamApi.middleware,
       workflowApi.middleware,
+      planningApprovalApi.middleware,
+      planningIamApi.middleware,
     ]),
 });
 
