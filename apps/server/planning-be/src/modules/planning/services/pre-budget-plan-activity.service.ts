@@ -1,5 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { PreBudgetPlan, PreBudgetPlanActivity } from 'src/entities';
 import { ExtraCrudService } from 'src/shared/service';
@@ -27,13 +27,11 @@ export class PreBudgetPlanActivityService extends ExtraCrudService<PreBudgetPlan
       relations: ['preBudgetPlanActivities'],
     });
     if (!plan) {
-      throw new Error(
-        `PreBudgetPlan with ID ${itemData.preBudgetPlanId} not found`,
-      );
+      throw new NotFoundException(`PreBudgetPlan not found`);
     }
 
     await this.repositoryPreBudgetPlanActivity.insert(activity);
-    this.eventEmitter.emit('pre.recalculate', {
+    this.eventEmitter.emit('pre.recalculateEstimatedAmount', {
       preBudgetPlanId: itemData.preBudgetPlanId,
     });
 
@@ -47,9 +45,7 @@ export class PreBudgetPlanActivityService extends ExtraCrudService<PreBudgetPlan
       relations: ['preBudgetPlanActivities'],
     });
     if (!preBudgetPlan) {
-      throw new Error(
-        `PreBudgetPlan with ID ${payload.preBudgetPlanId} not found`,
-      );
+      throw new NotFoundException(`PreBudgetPlan not found`);
     }
     const estimatedAmountByCurrency = {};
 

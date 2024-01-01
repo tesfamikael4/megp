@@ -1,5 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { PostBudgetPlan, PostBudgetPlanActivity } from 'src/entities';
 import { ExtraCrudService } from 'src/shared/service';
@@ -26,9 +26,7 @@ export class PostBudgetPlanActivityService extends ExtraCrudService<PostBudgetPl
       relations: ['postBudgetPlanActivities'],
     });
     if (!plan) {
-      throw new Error(
-        `PostBudgetPlan with ID ${itemData.postBudgetPlanId} not found`,
-      );
+      throw new NotFoundException(`PostBudgetPlan not found`);
     }
 
     await this.repositoryPostBudgetPlanActivity.insert(activity);
@@ -46,9 +44,7 @@ export class PostBudgetPlanActivityService extends ExtraCrudService<PostBudgetPl
       relations: ['postBudgetPlanActivities'],
     });
     if (!postBudgetPlan) {
-      throw new Error(
-        `PostBudgetPlan with ID ${payload.postBudgetPlanId} not found`,
-      );
+      throw new NotFoundException(`PostBudgetPlan not found`);
     }
     const estimatedAmountByCurrency = {};
 

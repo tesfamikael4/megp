@@ -1,6 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import {
   PostBudgetPlan,
@@ -99,7 +99,7 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
     });
 
     if (!preBudgetPlan) {
-      throw new Error(`PreBudgetPlan with ID ${preBudgetPlanId} not found`);
+      throw new NotFoundException(`PreBudgetPlan not found`);
     }
     const currencyTotalAmounts: Record<string, number> = {};
     let totalAmount = 0;
@@ -136,7 +136,7 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
     });
 
     if (!preBudgetPlan) {
-      throw new Error(`PreBudgetPlan with ID ${preBudgetPlanId} not found`);
+      throw new NotFoundException(`PreBudgetPlan not found`);
     }
 
     const targetGroupCounts: Record<string, number> = {};
