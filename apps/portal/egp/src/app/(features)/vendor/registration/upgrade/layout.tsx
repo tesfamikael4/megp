@@ -1,7 +1,6 @@
 import { Flex } from '@mantine/core';
 import styles from './layout.module.scss';
 import PageTitle from '../_components/page-title/title';
-import { PrivilegeContextProvider } from '../renewal/_context/privilege-context';
 import StyledStepper from './_components/stepper/stepper';
 
 export default function Layout({ children }: { children: React.ReactNode }) {

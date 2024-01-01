@@ -1,5 +1,6 @@
 /* Core */
 
+import { vendorUpgradeApi } from './api/vendor-upgrade/api';
 import {
   vendorDataGetawayApi,
   vendorRegistrationApi,
@@ -8,6 +9,7 @@ import {
 const middleware = [
   vendorRegistrationApi.middleware,
   vendorDataGetawayApi.middleware,
+  vendorUpgradeApi.middleware,
 ];
 
 export { middleware };

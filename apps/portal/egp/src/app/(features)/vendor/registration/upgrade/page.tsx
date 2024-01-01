@@ -1,7 +1,7 @@
 import React from 'react';
 
-function Page() {
-  return <div>Page</div>;
-}
+const Upgrade = () => {
+  return <div>Upgrade</div>;
+};
 
-export default Page;
+export default Upgrade;

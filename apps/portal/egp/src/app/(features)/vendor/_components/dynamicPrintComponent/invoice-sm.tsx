@@ -90,13 +90,6 @@ export default function InvoiceTemplate({
                 Invoice Details:
               </p>
               <p className=" text-xs ml-2 font-semibold">Date: {invoiceDate}</p>
-
-              <p className=" text-xs ml-2 font-semibold flex gap-2">
-                For:
-                {data.serviceName.map((name, key) => (
-                  <span key={key}>{name.serviceName},</span>
-                ))}
-              </p>
             </div>
           </div>
         </div>

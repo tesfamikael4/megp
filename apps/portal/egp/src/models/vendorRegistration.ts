@@ -130,6 +130,10 @@ export interface ApplicationInfo {
   expireDate: string | null;
   status: string;
   remark: string | null;
+  BpService: BpService;
+}
+export interface BpService {
+  name: string;
 }
 export interface GetVendorInfoResponse {
   name: string;
