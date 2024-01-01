@@ -269,9 +269,9 @@ export class FileService {
       }
 
       const response = new CreateFileDto();
-      response.attachmentUrl = file.path;
-      response.originalName = file.originalname;
-      response.fileType = file.mimetype;
+      response.attachmentUrl = file?.path;
+      response.originalName = file?.originalname;
+      response.fileType = file?.mimetype;
       return paymentReceipt;
     } catch (error) {
       console.log(error);
