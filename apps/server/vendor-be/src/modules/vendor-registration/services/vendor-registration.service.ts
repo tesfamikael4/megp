@@ -103,13 +103,14 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           wfi.requestorId = result.id;
           wfi.data = result;
           let workflowInstance = null;
-          const businessAreaApproved = await this.businessAreaRepository.findOne({
-            where: {
-              serviceId: bp.serviceId,
-              vendorId: wfi.requestorId,
-              status: VendorStatusEnum.APPROVED,
-            },
-          });
+          const businessAreaApproved =
+            await this.businessAreaRepository.findOne({
+              where: {
+                serviceId: bp.serviceId,
+                vendorId: wfi.requestorId,
+                status: VendorStatusEnum.APPROVED,
+              },
+            });
           if (businessAreaApproved) {
             continue;
           }
@@ -175,14 +176,17 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
               businessAreaEntity.status = VendorStatusEnum.PENDING;
               businessAreaEntity.vendorId = result.id;
               businessAreaEntity.priceRangeId = interests[i].priceRange;
-              const invoices = await this.invoiceService.getInvoicesUserAndService(workflowInstance.application.userId)
+              const invoices =
+                await this.invoiceService.getInvoicesUserAndService(
+                  workflowInstance.application.userId,
+                );
               invoices.map((row) => {
                 if (row.pricingId == businessAreaEntity.priceRangeId) {
                   const businessAreaId = businessAreaEntity.id;
                   row.businessAreaId = businessAreaId;
                   this.invoiceService.update(row.id, row);
                 }
-              })
+              });
               const res =
                 await this.businessAreaRepository.save(businessAreaEntity);
               if (!res)
@@ -308,8 +312,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         status: In(this.updateVendorEnums),
       },
     });
-
-    console.log("result---", result);
     const vendor = await this.vendorRepository.find({
       where: { isrVendorId: vendorStatusDto.isrVendorId },
     });
@@ -317,7 +319,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       const businessArea = await this.businessAreaRepository.findOne({
         where: { instanceId: vendorStatusDto.instanceId },
       });
-      console.log("businessArea ", businessArea, vendorStatusDto.instanceId)
+      console.log('businessArea ', businessArea, vendorStatusDto.instanceId);
       businessArea.status = VendorStatusEnum.APPROVED;
       businessArea.approvedAt = new Date();
       const expireDate = new Date();
@@ -333,7 +335,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       return businessUpdate;
     } else {
       if (!result) throw new NotFoundException(`isr_Vendor_not_found`);
-
       if (vendorStatusDto.status == VendorStatusEnum.APPROVE) {
         const isrVendorData = result;
         const basic = isrVendorData.basic;
@@ -386,6 +387,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             throw error;
           }
         }
+
         const nextYear = new Date();
         nextYear.setFullYear(nextYear.getFullYear() + 1);
         const businessArea = await this.businessAreaRepository.findOne({
@@ -397,6 +399,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         });
         if (!businessArea)
           throw new HttpException(`businessArea_not_found`, 500);
+
         businessArea.status = VendorStatusEnum.APPROVED;
         businessArea.approvedAt = new Date();
         const expireDate = new Date();
@@ -571,10 +574,12 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
   async getPendingIsrVendorByUserId(userId: string): Promise<any> {
     const vendorEntity = await this.isrVendorsRepository.findOne({
       select: {
-        id: true, basic: true,
-        initial: true, status: true,
+        id: true,
+        basic: true,
+        initial: true,
+        status: true,
         areasOfBusinessInterest: true,
-        businessAreas: true
+        businessAreas: true,
       },
       relations: { businessAreas: { BpService: true } },
       where: {
@@ -587,8 +592,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             VendorStatusEnum.ADJUSTMENT,
             VendorStatusEnum.APPROVED,
             VendorStatusEnum.SUBMITTED,
-          ])
-        }
+          ]),
+        },
       },
     });
     if (!vendorEntity) return { level: 'basic', status: 'new' };
@@ -1210,33 +1215,34 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         const row = bas[i];
         baInstanceIds.push(row.instanceId);
         baResponse.push({
-          id: row.id, vendorId: row.vendorId, pricingId: row.priceRangeId,
+          id: row.id,
+          vendorId: row.vendorId,
+          pricingId: row.priceRangeId,
           areaOfBusinessInterest: vendorEntity.areasOfBusinessInterest.filter(
             (element) => element.category === row.category,
-          )[0]
-        })
+          )[0],
+        });
       }
-      const onprogressRequests = await this.baService.getBusinessAreaByInstanceIds(baInstanceIds);
+      const onprogressRequests =
+        await this.baService.getBusinessAreaByInstanceIds(baInstanceIds);
       const selectedServices = [];
       onprogressRequests.map((row) => {
-        const oldBaId = bas.filter((item) => item.instanceId == row.instanceId)
-        selectedServices.push({ businessAreaId: row.id, pricingId: row.priceRangeId, invoiceId: row.invoice.id, _businessAreaId: oldBaId[0].id })
-      }
-      );
-
-
-
-
-      console.log("on progress Request", onprogressRequests);
+        const oldBaId = bas.filter((item) => item.instanceId == row.instanceId);
+        selectedServices.push({
+          businessAreaId: row.id,
+          pricingId: row.priceRangeId,
+          invoiceId: row.invoice.id,
+          _businessAreaId: oldBaId[0].id,
+        });
+      });
       return {
         status: {
           level: 'info',
           status: selectedServices.length == 0 ? 'Draft' : 'Payment',
-          selectedPriceRange: selectedServices
+          selectedPriceRange: selectedServices,
         },
         data: baResponse,
       };
-
     } catch (error) {
       console.log(error);
     }
@@ -1297,13 +1303,10 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     });
     if (!isrVendorData) throw new HttpException('Isr vendor not found', 500);
 
-
     try {
-
       const vendor: VendorsEntity = new VendorsEntity();
       vendor.id = isrVendorData.basic['id'];
       vendor.name = isrVendorData.basic['name'];
-
 
       try {
         const invoice = await this.invoiceService.generateInvoice(
@@ -1334,7 +1337,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     });
     try {
       // isrVendorData.basic['id'] = isrVendorData.id;
-
 
       const vendor: VendorsEntity = new VendorsEntity();
       vendor.id = isrVendorData.basic['id'];
@@ -1378,26 +1380,24 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           });
           if (
             businessareaData.BpService.key ===
-            ServiceKeyEnum.goodsNewRegistration ||
+              ServiceKeyEnum.goodsNewRegistration ||
             businessareaData.BpService.key ===
-            ServiceKeyEnum.servicesNewRegistration ||
+              ServiceKeyEnum.servicesNewRegistration ||
             businessareaData.BpService.key ===
-            ServiceKeyEnum.worksNewRegistration
+              ServiceKeyEnum.worksNewRegistration
           ) {
-            const key = await this.mapServiceType(
-              businessareaData,
-              'renewal',
-            );
+            const key = await this.mapServiceType(businessareaData, 'renewal');
             const renewalRange =
               await this.pricingService.findserviceByRangeAndKey(
                 key,
                 businessareaData.servicePrice.valueFrom,
                 businessareaData.servicePrice.valueTo,
               );
-            console.log("renewalRange", renewalRange);
             const business = await this.businessAreaRepository.findOne({
               where: { id: businessArea[index] },
             });
+            if (!business)
+              throw new HttpException('business area not found ', 500);
             const service = await this.bpService.findBpWithServiceByKey(key);
             business.id = undefined;
             business.serviceId = service.serviceId;
@@ -1426,22 +1426,30 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         userInfo.id,
       );
       const isrVendor = await this.isrVendorsRepository.findOne({
-        where: { businessAreas: { status: 'Pending' }, userId: userInfo.id },
-        relations: { businessAreas: true },
+        where: { userId: userInfo.id },
       });
+      if (!isrVendor) throw new HttpException('isrvendor not found ', 500);
       return {
         ...invoices,
         paymentReceipt: isrVendor?.paymentReceipt,
-        businessAreas: isrVendor?.businessAreas,
+        businessAreas: data.businessArea,
       };
     } catch (error) {
       console.log(error);
     }
   }
-
   async getMyInvoices(userId) {
     const invoices = await this.invoiceService.getActiveMyInvoices(userId);
-    return invoices;
+
+    const isrVendor = await this.isrVendorsRepository.findOne({
+      where: { businessAreas: { status: 'Pending' }, userId: userId },
+      relations: { businessAreas: true },
+    });
+    return {
+      ...invoices,
+      paymentReceipt: isrVendor?.paymentReceipt,
+      businessAreas: isrVendor?.businessAreas,
+    };
   }
   async getNewRenewalServices(vendorId) {
     const result = await this.businessAreaRepository.find({
@@ -1451,11 +1459,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
   }
   async getServiceInvoiceForUpgrade(userInfo: any, data: any) {
     try {
-      console.log(
-        'data?.status.status  ',
-        data?.status.status,
-        'fffffffffffffffffffffff',
-      );
       if (
         data?.status.status == VendorStatusEnum.DRAFT ||
         data?.status.level == VendorStatusEnum.INFO
@@ -1469,11 +1472,11 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           });
           if (
             businessareaData.BpService.key ===
-            ServiceKeyEnum.goodsNewRegistration ||
+              ServiceKeyEnum.goodsNewRegistration ||
             businessareaData.BpService.key ===
-            ServiceKeyEnum.servicesNewRegistration ||
+              ServiceKeyEnum.servicesNewRegistration ||
             businessareaData.BpService.key ===
-            ServiceKeyEnum.worksNewRegistration
+              ServiceKeyEnum.worksNewRegistration
           ) {
             const key = await this.mapServiceType(businessAreaId, 'renewal');
             const renewalRange =
@@ -1517,17 +1520,14 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     }
   }
 
-
   async getServiceInvoiceForUpgrade2(user: any, businessArea: UpgradeInfoDTO) {
     try {
       //  for (let index = 0; index < data.data?.length; index++) { }
-      console.log("r", user);
-      const keys = []
-      const newBAIds = []
+      const keys = [];
+      const newBAIds = [];
       for (let index = 0; index < businessArea.upgrades.length; index++) {
         const ba = businessArea.upgrades[index];
         const bAId = ba.id;
-        console.log("bAId", bAId);
         const newPricingId = ba.pricingId;
         const businessareaData = await this.businessAreaRepository.findOne({
           where: { id: bAId, status: WorkflowInstanceEnum.Approved },
@@ -1535,8 +1535,9 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         });
         const businessAreaNew = await this.businessAreaRepository.findOne({
           where: {
-            status: 'Pending', instanceId: businessareaData?.instanceId,
-            invoice: { userId: user.id }
+            status: 'Pending',
+            instanceId: businessareaData?.instanceId,
+            invoice: { userId: user.id },
           },
           relations: { BpService: true, servicePrice: true, invoice: true },
         });
@@ -1552,11 +1553,17 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         }
         const key = await this.mapServiceType(businessareaData, 'upgrade');
         keys.push(key);
-        const CurrentpricingData = await this.pricingService.findPricingWithServiceById(newPricingId);
-        const upgradePayment = this.invoiceService.computingPaymentForUpgrade(businessareaData, CurrentpricingData)
-        console.log("upgradePayment ", upgradePayment);
-        const bp: BusinessProcessEntity = await this.bpService.findBpWithServiceByKey(key);
-        const vendor = await this.vendorRepository.findOne({ where: { id: businessareaData.vendorId } })
+        const CurrentpricingData =
+          await this.pricingService.findPricingWithServiceById(newPricingId);
+        const upgradePayment = this.invoiceService.computingPaymentForUpgrade(
+          businessareaData,
+          CurrentpricingData,
+        );
+        const bp: BusinessProcessEntity =
+          await this.bpService.findBpWithServiceByKey(key);
+        const vendor = await this.vendorRepository.findOne({
+          where: { id: businessareaData.vendorId },
+        });
         const invoice: InvoiceEntity = this.invoiceService.mapInvoice(
           CurrentpricingData,
           vendor,
@@ -1569,7 +1576,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         business.serviceId = bp.serviceId;
         business.priceRangeId = newPricingId;
         business.status = 'Pending';
-        businessArea.BusinessAreaStatus.level = businessArea.BusinessAreaStatus.level = 'Payment'
+        businessArea.BusinessAreaStatus.level =
+          businessArea.BusinessAreaStatus.level = 'Payment';
         business.businessAreaState = businessArea.BusinessAreaStatus;
         business.instanceId = businessareaData.instanceId;
         business.vendorId = businessareaData.vendorId;
@@ -1581,9 +1589,12 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           invoice.businessAreaId = result.id;
           await this.invoiceService.create(invoice);
         }
-
       }
-      const invoices = await this.baService.getBusinessAreaWithPendingInvoice(newBAIds, keys, user);
+      const invoices = await this.baService.getBusinessAreaWithPendingInvoice(
+        newBAIds,
+        keys,
+        user,
+      );
       const response = new DataResponseFormat<InvoiceResponseDto>();
       response.items = invoices.map((entity) => {
         const response = InvoiceResponseDto.toResponse(entity.invoice);
@@ -1591,16 +1602,17 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         response.pricingId = entity?.priceRangeId;
         response.category = entity?.category;
         return response;
-      }
-      );
+      });
       response.total = response.items.length;
-      console.log("invoice response", response.items);
       return response;
     } catch (error) {
       console.log(error);
     }
   }
-  async mapServiceType(businessAreaData: BusinessAreaEntity, operationType: string) {
+  async mapServiceType(
+    businessAreaData: BusinessAreaEntity,
+    operationType: string,
+  ) {
     // const businessAreaData = await this.businessAreaRepository.findOne({
     //   where: { id: businessAreaId },
     //   relations: { servicePrice: true, BpService: true },
@@ -1685,6 +1697,12 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     ) {
     }
   }
+  async getBusinessAreasByUserId(vendorId: string) {
+    const result = await this.businessAreaRepository.find({
+      where: { vendorId: vendorId },
+    });
+    return result;
+  }
   monthDiff(expireDate: Date, today: Date): number {
     let months;
     months = (today.getFullYear() - expireDate.getFullYear()) * 12;
@@ -1694,7 +1712,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
   }
 
   async cancelRegistration(user: any) {
-
     await this.isrVendorsRepository.delete({ userId: user.id });
   }
 }

@@ -36,7 +36,7 @@ import { UpgradeInfoDTO, VendorUpgradeDto } from '../dto/vendor-upgrade.dto';
 @ApiResponse({ status: 500, description: 'Internal error' })
 @ApiExtraModels(DataResponseFormat)
 export class VendorRegistrationsController {
-  constructor(private readonly regService: VendorRegistrationsService) { }
+  constructor(private readonly regService: VendorRegistrationsService) {}
   @UseGuards(JwtGuard)
   @Get('get-isr-vendors')
   async getVendors() {
@@ -144,8 +144,6 @@ export class VendorRegistrationsController {
     return await this.regService.getApprovedVendorServiceByUserId(userInfo.id);
   }
 
-
-
   @UseGuards(JwtGuard)
   @Post('generate-service-invoice-for-renewal')
   async generateServiceInvoiceForRenewal(
@@ -186,7 +184,8 @@ export class VendorRegistrationsController {
     @Body() areaOfBusinessInterest: any[],
   ) {
     return await this.regService.upgradevendorService(
-      userInfo.id, areaOfBusinessInterest
+      userInfo.id,
+      areaOfBusinessInterest,
     );
   }
 
@@ -195,10 +194,19 @@ export class VendorRegistrationsController {
   async getMyApprovedService(@CurrentUser() userInfo: any) {
     return await this.regService.getMyApprovedService(userInfo);
   }
-
   @UseGuards(JwtGuard)
-  @Get('cancel-registration')
-  async cancelRegistration(@CurrentUser() user: any) {
-    return await this.regService.cancelRegistration(user);
+  @Post('initiate-vendor-profile-update')
+  async initiateVendorProfileUpdate(@CurrentUser() userInfo: any) {
+    return await this.regService.initiateVendorProfileUpdate(userInfo.id);
+  }
+  @UseGuards(JwtGuard)
+  @Post('initiate-vendor-profile-update')
+  async updateVendorProfile(@Body() data: InsertAllDataDto) {
+    return await this.regService.updateVendorProfile(data.isrVendorId, data);
+  }
+  @UseGuards(JwtGuard)
+  @Get('get-my-invoice')
+  async getMyInvoice(@CurrentUser() userInfo: any) {
+    return await this.regService.getMyInvoices(userInfo.id);
   }
 }

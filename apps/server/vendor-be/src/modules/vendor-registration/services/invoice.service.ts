@@ -138,7 +138,7 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
           new Date(),
           new Date(ba.expireDate),
         );
-        console.log("expire date", datesLeftToExpire);
+        console.log('expire date', datesLeftToExpire);
         const unUtilizedMoney = Number(datesLeftToExpire) * previousFeeRate;
         const expectedFeeForNewLevel =
           proposedPaymentRate * Number(datesLeftToExpire);
@@ -193,7 +193,8 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     return null;
   }
   async getMyInvoices(
-    userId: string, serviceId: string
+    userId: string,
+    serviceId: string,
   ): Promise<DataResponseFormat<InvoiceResponseDto>> {
     const response = new DataResponseFormat<InvoiceResponseDto>();
     const [result, total] = await this.invoiceRepository.findAndCount({
@@ -205,9 +206,7 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     );
     return response;
   }
-  async getInvoicesUserAndService(
-    userId: string
-  ): Promise<InvoiceEntity[]> {
+  async getInvoicesUserAndService(userId: string): Promise<InvoiceEntity[]> {
     const result = await this.invoiceRepository.find({
       where: { userId: userId, paymentStatus: 'Paid' },
     });
@@ -219,14 +218,14 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
   ): Promise<DataResponseFormat<InvoiceResponseDto>> {
     const response = new DataResponseFormat<InvoiceResponseDto>();
     const oneWeekAgo = new Date();
-    oneWeekAgo.setDate(new Date().getDate() - 7);
+    // oneWeekAgo.setDate(new Date().getDate() - 7);
     const [result, total] = await this.invoiceRepository.findAndCount({
       where: {
         userId: userId,
         paymentStatus: 'Pending',
-        createdOn: MoreThanOrEqual(oneWeekAgo),
+        // createdOn: MoreThanOrEqual(oneWeekAgo),
       },
-      relations: { businessArea: true }
+      relations: { businessArea: true },
     });
     response.total = total;
     response.items = result.map((entity) =>
@@ -235,10 +234,9 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     return response;
   }
 
-
-
   async getMyActiveInvoices(
-    userId: string, serviceTypes: string[]
+    userId: string,
+    serviceTypes: string[],
   ): Promise<DataResponseFormat<InvoiceResponseDto>> {
     const response = new DataResponseFormat<InvoiceResponseDto>();
     const oneWeekAgo = new Date();
@@ -249,10 +247,10 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
         paymentStatus: 'Pending',
         createdOn: MoreThanOrEqual(oneWeekAgo),
         businessArea: {
-          BpService: { key: In(serviceTypes) }
-        }
+          BpService: { key: In(serviceTypes) },
+        },
       },
-      relations: { businessArea: { BpService: true } }
+      relations: { businessArea: { BpService: true } },
     });
     response.total = total;
     response.items = result.map((entity) =>
