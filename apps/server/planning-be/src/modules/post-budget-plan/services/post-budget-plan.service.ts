@@ -1,5 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { DataResponseFormat } from 'src/shared/api-data';
 import { PostBudgetPlan } from 'src/entities/post-budget-plan.entity';
@@ -61,7 +61,7 @@ export class PostBudgetPlanService extends ExtraCrudService<PostBudgetPlan> {
     });
 
     if (!postBudgetPlan) {
-      throw new Error(`PostBudgetPlan with ID ${postBudgetPlanId} not found`);
+      throw new NotFoundException(`PostBudgetPlan not found`);
     }
     const currencyTotalAmounts: Record<string, number> = {};
     let totalAmount = 0;
@@ -98,7 +98,7 @@ export class PostBudgetPlanService extends ExtraCrudService<PostBudgetPlan> {
     });
 
     if (!postBudgetPlan) {
-      throw new Error(`PostBudgetPlan with ID ${postBudgetPlanId} not found`);
+      throw new NotFoundException(`PostBudgetPlan not found`);
     }
 
     const targetGroupCounts: Record<string, number> = {};

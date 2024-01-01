@@ -20,7 +20,7 @@ export class PostBudgetPlanActivityController extends ExtraCrudController<PostBu
   ) {
     super(postBudgetPlanActivityService);
   }
-  @OnEvent('post.recalculate')
+  @OnEvent('post.recalculateEstimatedAmount')
   async recalculate(plan) {
     return await this.postBudgetPlanActivityService.recalculateTotalEstimatedAmount(
       plan,
