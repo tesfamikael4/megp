@@ -4,4 +4,5 @@ export class InsertAllDataDto {
   @ApiProperty()
   @IsNotEmpty()
   data: any;
+  isrVendorId: string;
 }
