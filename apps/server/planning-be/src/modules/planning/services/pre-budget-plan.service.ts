@@ -29,7 +29,7 @@ import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 import { PostBudgetRequisitioner } from 'src/entities/post-budget-plan-requisitioner.entity';
 import { PostProcurementMechanism } from 'src/entities/post-procurement-mechanism.entity';
 import { ExtraCrudService } from 'src/shared/service';
-import { SelectQueryBuilder } from 'typeorm';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
@@ -40,6 +40,8 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
     private readonly preBudgetActivityRepository: Repository<PreBudgetPlanActivity>,
     @InjectRepository(PreBudgetPlanItems)
     private readonly preBudgetItemsRepository: Repository<PreBudgetPlanItems>,
+
+    private eventEmitter: EventEmitter2,
     @Inject('PLANNING_RMQ_SERVICE')
     private readonly planningRMQClient: ClientProxy,
 
@@ -83,30 +85,86 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
     return response;
   }
 
-  async getAnalytics(preBudgetPlanID: string) {
-    const analytics = {};
-    const queryBuilder: SelectQueryBuilder<PreBudgetPlan> =
-      this.repositoryPreBudgetPlan.createQueryBuilder('preBudgetPlan');
-
-    const result = await queryBuilder
-      .leftJoinAndSelect(
-        'preBudgetPlan.preBudgetPlanActivities',
+  async getAnalytics(preBudgetPlanId: string): Promise<{
+    totalActivities: number;
+    currencyTotalAmounts: Record<string, number>;
+    targetGroupPercentages: Record<string, number>;
+  }> {
+    const preBudgetPlan = await this.repositoryPreBudgetPlan.findOne({
+      where: { id: preBudgetPlanId },
+      relations: [
         'preBudgetPlanActivities',
-      )
-      .where('preBudgetPlan.id = :value', { value: preBudgetPlanID })
-      .getOne();
-
-    const activities = await this.preBudgetActivityRepository.find({
-      where: { preBudgetPlanId: preBudgetPlanID },
-      relations: ['preProcurementMechanisms'],
+        'preBudgetPlanActivities.preBudgetPlanItems',
+      ],
     });
 
-    for (const act of activities) {
-      act.preProcurementMechanisms?.map((item) => item.targetGroup);
+    if (!preBudgetPlan) {
+      throw new Error(`PreBudgetPlan with ID ${preBudgetPlanId} not found`);
     }
-    return result.preBudgetPlanActivities;
+    const currencyTotalAmounts: Record<string, number> = {};
+    let totalAmount = 0;
+    const totalActivities = preBudgetPlan.preBudgetPlanActivities.length;
+
+    preBudgetPlan.preBudgetPlanActivities.forEach((activity) => {
+      activity.preBudgetPlanItems.forEach((item) => {
+        const itemTotalAmount = item.quantity * item.unitPrice;
+        totalAmount += itemTotalAmount;
+
+        const currency = item.currency;
+
+        if (currencyTotalAmounts[currency]) {
+          currencyTotalAmounts[currency] += itemTotalAmount;
+        } else {
+          currencyTotalAmounts[currency] = itemTotalAmount;
+        }
+      });
+    });
+    const targetGroupPercentages: Record<string, number> =
+      await this.calculateTargetGroupPercentage(preBudgetPlanId);
+    return { totalActivities, currencyTotalAmounts, targetGroupPercentages };
   }
 
+  async calculateTargetGroupPercentage(
+    preBudgetPlanId: string,
+  ): Promise<Record<string, number>> {
+    const preBudgetPlan = await this.repositoryPreBudgetPlan.findOne({
+      where: { id: preBudgetPlanId },
+      relations: [
+        'preBudgetPlanActivities',
+        'preBudgetPlanActivities.preProcurementMechanisms',
+      ],
+    });
+
+    if (!preBudgetPlan) {
+      throw new Error(`PreBudgetPlan with ID ${preBudgetPlanId} not found`);
+    }
+
+    const targetGroupCounts: Record<string, number> = {};
+
+    preBudgetPlan.preBudgetPlanActivities.forEach((activity) => {
+      activity.preProcurementMechanisms.forEach((mechanism) => {
+        const targetGroups = mechanism.targetGroup || [];
+
+        targetGroups.forEach((group) => {
+          targetGroupCounts[group] = (targetGroupCounts[group] || 0) + 1;
+        });
+      });
+    });
+
+    const totalMechanisms = preBudgetPlan.preBudgetPlanActivities.reduce(
+      (total, activity) => total + activity.preProcurementMechanisms.length,
+      0,
+    );
+
+    const targetGroupPercentages: Record<string, number> = {};
+
+    for (const group in targetGroupCounts) {
+      const percentage = (targetGroupCounts[group] / totalMechanisms) * 100;
+      targetGroupPercentages[group] = percentage;
+    }
+
+    return targetGroupPercentages;
+  }
   async copySelectedPreToPost(data: any): Promise<void> {
     try {
       const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];

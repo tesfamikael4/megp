@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  UseInterceptors,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { PostBudgetPlan } from 'src/entities';
 import { PostBudgetPlanService } from '../services/post-budget-plan.service';
@@ -7,6 +15,8 @@ import { ExtraCrudController } from 'src/shared/controller';
 import { ApiPaginatedResponse } from 'src/shared/api-data';
 import { CollectionQuery } from 'src/shared/collection-query';
 import { CurrentUser } from 'src/shared/authorization';
+import { TransactionInterceptor } from 'src/shared/interceptors';
+import { EventPattern } from '@nestjs/microservices';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'preBudgetPlanActivityId',
@@ -36,5 +46,18 @@ export class PostBudgetPlanController extends ExtraCrudController<PostBudgetPlan
       organizationId,
       q,
     );
+  }
+
+  @Get(':id/target-group-percentage')
+  async getTargetGroupPercentage(@Param('id') preBudgetPlanId: string) {
+    return await this.postBudgetPlanService.calculateTargetGroupPercentage(
+      preBudgetPlanId,
+    );
+  }
+
+  @Get('get-analytics/:id')
+  @ApiPaginatedResponse(PostBudgetPlan)
+  async getAnalytics(@Param('id') id: string) {
+    return await this.postBudgetPlanService.getAnalytics(id);
   }
 }
