@@ -47,7 +47,7 @@ export const sidebarLinks: SidebarLinks[] = [
       },
       {
         label: 'Upgrade registration',
-        link: '/vendor/registration/upgrade/info',
+        link: '/vendor/registration/upgrade/business-areas',
       },
       {
         label: 'MSME registration',

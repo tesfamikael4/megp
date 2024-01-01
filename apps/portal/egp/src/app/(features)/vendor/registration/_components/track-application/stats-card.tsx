@@ -41,6 +41,12 @@ export const StatsListCard: React.FC<Props> = ({ data, view }) => {
             {data.category}
           </Text>
         </Group>
+        <Group justify="space-between" align="start">
+          <Text ta="left" fw={600} fz="xs">
+            <span className=" text-gray-500">Applied for: </span>
+            {data?.BpService?.name}
+          </Text>
+        </Group>
         <Group justify="flex-end" align="start">
           <Flex className="flex-col items-center">
             <Button variant="outline" onClick={() => view(data)}>

@@ -78,6 +78,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
   };
   const handleRemove = () => {
     setCurrent(null);
+    onRemove && onRemove();
   };
 
   return (
