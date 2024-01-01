@@ -255,11 +255,11 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
     }
   }
 
-  async initiateWorkflow(name, id) {
+  async initiateWorkflow(data) {
     const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
 
     const activities = await this.preBudgetActivityRepository.find({
-      where: { preBudgetPlanId: id },
+      where: { preBudgetPlanId: data.id },
       relations: ['preBudgetPlanTimelines'],
     });
 
@@ -271,12 +271,13 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
       }
     }
 
-    await entityManager.getRepository(PreBudgetPlan).update(id, {
+    await entityManager.getRepository(PreBudgetPlan).update(data.id, {
       status: 'Submitted',
     });
     await this.planningRMQClient.emit('initiate-workflow', {
-      name: name,
-      id: id,
+      name: data.name,
+      id: data.id,
+      itemName: data.itemName,
     });
   }
 }
