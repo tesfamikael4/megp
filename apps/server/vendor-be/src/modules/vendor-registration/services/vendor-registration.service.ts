@@ -312,14 +312,16 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         status: In(this.updateVendorEnums),
       },
     });
-    const vendor = await this.vendorRepository.find({
+
+    console.log("result---", result);
+    const vendor = await this.vendorRepository.findOne({
       where: { isrVendorId: vendorStatusDto.isrVendorId },
     });
-    if (vendor.length > 0) {
+    if (vendor) {
       const businessArea = await this.businessAreaRepository.findOne({
         where: { instanceId: vendorStatusDto.instanceId },
       });
-      console.log('businessArea ', businessArea, vendorStatusDto.instanceId);
+      console.log("businessArea 000", businessArea, vendorStatusDto.instanceId)
       businessArea.status = VendorStatusEnum.APPROVED;
       businessArea.approvedAt = new Date();
       const expireDate = new Date();
@@ -328,7 +330,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       businessArea.remark = vendorStatusDto.remark;
       const businessUpdate = await this.businessAreaRepository.update(
         businessArea.id,
-        { status: VendorStatusEnum.APPROVED },
+        businessArea,
       );
       if (!businessUpdate)
         throw new HttpException('business update failed', 500);
@@ -352,6 +354,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           }
           result.initial = initial;
           const isrVendorUpdate = await this.isrVendorsRepository.save(result);
+          console.log("isr-Vendor-Update", isrVendorUpdate);
           if (!isrVendorUpdate)
             throw new HttpException(`isr_vendor_update_failed`, 500);
           const vendorEntity = new VendorsEntity();
@@ -398,8 +401,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           },
         });
         if (!businessArea)
-          throw new HttpException(`businessArea_not_found`, 500);
-
+          throw new HttpException(`businessArea_not_found`, HttpStatus.NOT_FOUND);
         businessArea.status = VendorStatusEnum.APPROVED;
         businessArea.approvedAt = new Date();
         const expireDate = new Date();
@@ -423,7 +425,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         status: In(this.updateVendorEnums),
       },
     });
-    if (!result) throw new HttpException(`isr_Vendor_not_found`, 500);
+    if (!result) throw new Error(`isr_Vendor_not_found`);
     // if vendor have no previously approved service
     const res = await this.businessAreaRepository.findOne({
       where: {
@@ -1380,11 +1382,11 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           });
           if (
             businessareaData.BpService.key ===
-              ServiceKeyEnum.goodsNewRegistration ||
+            ServiceKeyEnum.goodsNewRegistration ||
             businessareaData.BpService.key ===
-              ServiceKeyEnum.servicesNewRegistration ||
+            ServiceKeyEnum.servicesNewRegistration ||
             businessareaData.BpService.key ===
-              ServiceKeyEnum.worksNewRegistration
+            ServiceKeyEnum.worksNewRegistration
           ) {
             const key = await this.mapServiceType(businessareaData, 'renewal');
             const renewalRange =
@@ -1472,11 +1474,11 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           });
           if (
             businessareaData.BpService.key ===
-              ServiceKeyEnum.goodsNewRegistration ||
+            ServiceKeyEnum.goodsNewRegistration ||
             businessareaData.BpService.key ===
-              ServiceKeyEnum.servicesNewRegistration ||
+            ServiceKeyEnum.servicesNewRegistration ||
             businessareaData.BpService.key ===
-              ServiceKeyEnum.worksNewRegistration
+            ServiceKeyEnum.worksNewRegistration
           ) {
             const key = await this.mapServiceType(businessAreaId, 'renewal');
             const renewalRange =
