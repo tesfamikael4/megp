@@ -4,6 +4,7 @@ import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { ExtraCrudController } from 'src/shared/controller';
 import { State } from 'src/entities/state.entity';
 import { StateService } from '../services/state.service';
+import { CurrentUser } from 'src/shared/authorization';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'activityId',
@@ -17,7 +18,10 @@ export class StateController extends ExtraCrudController<State>(options) {
   }
 
   @Post(':activityId')
-  async create(@Param('activityId') activityId: any): Promise<any> {
-    this.stateService.createState(activityId);
+  async create(
+    @Param('activityId') activityId: any,
+    @CurrentUser() user,
+  ): Promise<any> {
+    this.stateService.createState(activityId, user.organization.id);
   }
 }

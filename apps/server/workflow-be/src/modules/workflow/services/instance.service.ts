@@ -32,27 +32,28 @@ export class InstanceService extends EntityCrudService<Instance> {
     workflowRMQClient.connect();
   }
   // Listen
-  async initiate(name, itemId, itemName) {
+  async initiate(data) {
     const act = await this.repositoryActivity.findOne({
       where: {
-        name: name,
+        name: data.name,
       },
     });
     const steps = await this.repositoryStep.find({
       where: { activityId: act.id },
       order: { order: 'ASC' },
     });
-    const data = {
-      itemId,
-      itemName,
+    const createData = {
+      itemId: data.itemId,
+      itemName: data.itemName,
+      organizationId: data.organizationId,
       activityId: act.id,
       status: steps[0].name,
       stepId: steps[0].id,
       metadata: [],
     };
-    await this.stateService.createState(act.id);
+    await this.stateService.createState(act.id, data.organizationId);
 
-    const instance = this.repositoryInstance.create(data);
+    const instance = this.repositoryInstance.create(createData);
     return this.repositoryInstance.save(instance);
   }
 

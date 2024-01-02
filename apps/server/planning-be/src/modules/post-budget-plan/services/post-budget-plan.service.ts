@@ -122,7 +122,7 @@ export class PostBudgetPlanService extends ExtraCrudService<PostBudgetPlan> {
 
     for (const group in targetGroupCounts) {
       const percentage = (targetGroupCounts[group] / totalMechanisms) * 100;
-      targetGroupPercentages[group] = percentage;
+      targetGroupPercentages[group] = parseFloat(percentage.toFixed(2));
     }
 
     return targetGroupPercentages;

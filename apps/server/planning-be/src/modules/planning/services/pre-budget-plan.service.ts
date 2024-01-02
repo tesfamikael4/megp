@@ -1,5 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, Repository } from 'typeorm';
+import { Decimal128, EntityManager, Repository } from 'typeorm';
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import {
@@ -160,7 +160,7 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
 
     for (const group in targetGroupCounts) {
       const percentage = (targetGroupCounts[group] / totalMechanisms) * 100;
-      targetGroupPercentages[group] = percentage;
+      targetGroupPercentages[group] = parseFloat(percentage.toFixed(2));
     }
 
     return targetGroupPercentages;
@@ -278,6 +278,7 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
       name: data.name,
       id: data.id,
       itemName: data.itemName,
+      organizationId: data.organizationId,
     });
   }
 }
