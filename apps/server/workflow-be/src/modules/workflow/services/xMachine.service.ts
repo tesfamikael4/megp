@@ -52,7 +52,7 @@ export class XMachineService {
     };
     let isAllChecked = false;
     const existingData = await this.repositoryInstance.findOne({
-      where: { activityId: activityId },
+      where: { activityId: activityId, organizationId: details.organizationId },
     });
 
     const ver =
@@ -60,7 +60,7 @@ export class XMachineService {
         ? existingData.version + 1
         : existingData.version;
 
-    isWorkGroup = await this.checkGroup(existingData.stepId);
+    isWorkGroup = await this.checkGroup(existingData.stepId, details);
     if (isWorkGroup.value) {
       isAllChecked = await this.canContinue(isWorkGroup, activityId, details);
       if (!isAllChecked) {
@@ -199,9 +199,9 @@ export class XMachineService {
     return stateMachineConfig;
   }
 
-  private async checkGroup(stepId: any): Promise<any> {
+  private async checkGroup(stepId: any, details): Promise<any> {
     const currentStep = await this.repositoryStep.findOne({
-      where: { id: stepId },
+      where: { id: stepId, organizationId: details.organizationId },
     });
     if (currentStep.approvers[0].approverType != 'WorkGroup') {
       return {

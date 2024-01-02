@@ -22,7 +22,10 @@ export class WorkflowService extends EntityCrudService<Workflow> {
   }
 
   async approveWorkflow(workflowType, metaData, activityId) {
-    const state = await this.repositoryState.findOneBy({ activityId });
+    const state = await this.repositoryState.findOneBy({
+      activityId,
+      organizationId: metaData.organizationId,
+    });
 
     if (!state) throw new Error('state not found');
 
