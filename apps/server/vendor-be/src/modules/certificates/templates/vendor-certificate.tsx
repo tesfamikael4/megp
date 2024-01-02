@@ -7,8 +7,8 @@ import ReactPDF, {
   StyleSheet,
 } from '@react-pdf/renderer';
 
-const signatureImage = 'src/modules/certificates/assets/signature.png';
-const headerImage = 'src/modules/certificates/assets/headerImage.png';
+const signatureImage = 'src/assets/signature.png';
+const headerImage = 'src/assets/headerImage.png';
 
 const CertificatePDF = ({ id, data, qrCodeUrl }) => {
   return ReactPDF.renderToStream(

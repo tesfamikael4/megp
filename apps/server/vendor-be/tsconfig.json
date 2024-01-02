@@ -15,7 +15,7 @@
       "@auth": ["./src/accounts/"],
       "@collection-query": ["./src/shared/collection-query/"],
       "@api-data": ["./src/shared/api-data/"]
-    },
+    },   
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": false,
