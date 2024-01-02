@@ -18,7 +18,7 @@ export class BusinessAreaEntity {
   id: string;
   @Column({ type: 'uuid' })
   vendorId: string;
-  @Column({ type: 'uuid' })
+  @Column({ type: 'uuid', nullable: true })
   priceRangeId: string;
   @Column({ type: 'uuid' })
   serviceId: string;
@@ -54,6 +54,5 @@ export class BusinessAreaEntity {
   @JoinColumn({ name: 'priceRangeId' })
   servicePrice: ServicePrice;
   @OneToOne(() => InvoiceEntity, (invoice) => invoice.businessArea)
-  invoice: InvoiceEntity
-
+  invoice: InvoiceEntity;
 }

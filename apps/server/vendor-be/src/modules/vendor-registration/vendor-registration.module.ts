@@ -50,6 +50,7 @@ import { InvoiceService } from './services/invoice.service';
 import { HttpModule } from '@nestjs/axios';
 import { FileService } from './services/file.service';
 import { ServicePricingModule } from '../pricing/pricing.module';
+import { ProfileInfoEntity } from 'src/entities/profile-info.entity';
 
 @Module({
   imports: [
@@ -75,6 +76,7 @@ import { ServicePricingModule } from '../pricing/pricing.module';
       BpServiceEntity,
       BusinessProcessEntity,
       IsrVendorsEntity,
+      ProfileInfoEntity,
     ]),
     AuthorizationModule,
     BpmModule,

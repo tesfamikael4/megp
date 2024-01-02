@@ -15,6 +15,7 @@ import { AreasOfBusinessInterestEntity } from './areas-of-business-interest.enti
 import { Audit } from 'src/shared/entities/audit.entity';
 import { WorkflowInstanceEntity } from './workflow-instance.entity';
 import { IsrVendorsEntity } from './isr-vendors.entity';
+import { ProfileInfoEntity } from './profile-info.entity';
 @Entity({ name: 'vendors' })
 export class VendorsEntity extends Audit {
   @PrimaryGeneratedColumn('uuid')
@@ -78,4 +79,7 @@ export class VendorsEntity extends Audit {
   @OneToOne(() => IsrVendorsEntity)
   @JoinColumn({ name: 'isrVendorId' })
   isrVendor: IsrVendorsEntity;
+
+  @OneToMany(() => ProfileInfoEntity, (profile) => profile.vendor)
+  ProfileInfo: ProfileInfoEntity;
 }

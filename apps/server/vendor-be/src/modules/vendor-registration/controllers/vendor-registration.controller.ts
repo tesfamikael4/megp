@@ -30,6 +30,7 @@ import { InsertAllDataDto } from '../dto/save-all.dto';
 import { SetVendorStatus } from '../dto/vendor.dto';
 import { CollectionQuery } from 'src/shared/collection-query';
 import { UpgradeInfoDTO, VendorUpgradeDto } from '../dto/vendor-upgrade.dto';
+import { MbrsDataDto } from '../dto/mbrsData.dto';
 @ApiBearerAuth()
 @Controller('vendor-registrations')
 @ApiTags('Vendor-registrations')
@@ -213,5 +214,47 @@ export class VendorRegistrationsController {
   @Get('get-all-business-area')
   async getAllBusinessAreasByUserId(@CurrentUser() userInfo: any) {
     return await this.regService.getAllBusinessAreasByUserId(userInfo.id);
+  }
+  @UseGuards(JwtGuard)
+  @Get('get-vendor-information')
+  async getVendorInformation(@CurrentUser() userInfo: any) {
+    return await this.regService.getVendorInformation(userInfo.id);
+  }
+
+  @UseGuards(JwtGuard)
+  @Post('add-vendor-update-information')
+  async addVendorProfileUpdate(
+    @Body() vendorprofileUpdateDara: any,
+    @CurrentUser() userInfo: string,
+  ) {
+    return await this.regService.addVendorProfileUpdate(
+      vendorprofileUpdateDara,
+      userInfo,
+    );
+  }
+  @UseGuards(JwtGuard)
+  @Post('submit-vendor-update-information')
+  async submitVendorProfileUpdate(
+    @Body() vendorprofileUpdateDara: any,
+    @CurrentUser() userInfo: string,
+  ) {
+    return await this.regService.submitVendorProfileUpdate(
+      vendorprofileUpdateDara,
+      userInfo,
+    );
+  }
+
+  @UseGuards(JwtGuard)
+  @Get('get-mbrs-data')
+  async GetMBRSData(@Body() mbrsDataDto: MbrsDataDto) {
+    return await this.regService.GetMBRSData(mbrsDataDto);
+  }
+  @UseGuards(JwtGuard)
+  @Get('get-fppa-data/:tinNumber')
+  async GetFPPAData(
+    @Param('tinNumber') tinNumber: string,
+    @Param('licenseNumber') licenseNumber: string,
+  ) {
+    return await this.regService.GetFPPAData(tinNumber);
   }
 }
