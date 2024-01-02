@@ -22,11 +22,15 @@ export const preBudgetPlanApi = createApi({
     getPreBudgetPlan: builder.query<any, string>({
       query: (id: string) => `pre-budget-plans/${id}`,
     }),
-    approvePreBudget: builder.mutation<any, string>({
-      query: (id: string) => ({
+    getPreBudgetPlanAnalytics: builder.query<any, string>({
+      query: (id: string) => `pre-budget-plans/get-analytics/${id}`,
+      providesTags: ['pre-budget-plan-items', 'pre-budget-plan'],
+    }),
+    approvePreBudget: builder.mutation<any, any>({
+      query: (data: { id: string; itemName: string }) => ({
         url: `pre-budget-plans/initiate-workflow`,
         method: 'POST',
-        body: { name: 'preBudgetApproval', id: id },
+        body: { name: 'preBudgetApproval', ...data },
       }),
       invalidatesTags: ['pre-budget-plan', 'post-budget-plan'],
     }),
@@ -85,4 +89,5 @@ export const {
   useCreateAppMutation,
   useCreatePreActivityTimelineMutation,
   useGetPreBudgetPlanQuery,
+  useLazyGetPreBudgetPlanAnalyticsQuery,
 } = preBudgetPlanApi;

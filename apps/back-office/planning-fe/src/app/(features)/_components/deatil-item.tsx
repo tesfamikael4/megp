@@ -5,7 +5,7 @@ export const DetailItem = ({ data }: any) => {
   const detailData = [
     {
       key: 'Classification',
-      value: `Segment > Famliy > Class > ${data.metaData.commodityName} | ${data.metaData.commodityCode}`,
+      value: `Segment > Famliy > Class > ${data?.metaData?.commodityName} | ${data?.metaData?.commodityCode}`,
     },
     {
       key: 'Item Code',

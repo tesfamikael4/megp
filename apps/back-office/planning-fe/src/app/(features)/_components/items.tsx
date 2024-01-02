@@ -88,7 +88,7 @@ export function Items({
       },
       {
         id: 'unitPrice',
-        header: () => <div className="text-right">Unit Price</div>,
+        header: () => <div className="text-center">Unit Price</div>,
         accessorKey: 'unitPrice',
         cell: ({ getValue, row, column }) => (
           <EstimatedPrice getValue={getValue} row={row} column={column} />
@@ -110,7 +110,7 @@ export function Items({
 
       {
         id: 'totalEstimatedAmount',
-        header: 'Total Amount',
+        header: 'Total',
         accessorKey: 'totalEstimatedAmount',
         cell: ({ row: { original } }: any) => (
           <>
@@ -133,7 +133,7 @@ export function Items({
       },
       {
         id: 'unitPrice',
-        header: () => <div className="text-right">Unit Price</div>,
+        header: () => <div className="text-center">Unit Price</div>,
         accessorKey: 'unitPrice',
         cell: ({ getValue, row, column }) => (
           <EstimatedPrice
@@ -160,7 +160,7 @@ export function Items({
 
       {
         id: 'totalEstimatedAmount',
-        header: () => <div className="text-right">Total Amount</div>,
+        header: () => <div className="text-center">Total</div>,
         accessorKey: 'totalEstimatedAmount',
         cell: ({ row: { original } }: any) => (
           <p className="text-right">
@@ -204,14 +204,14 @@ export function Items({
           await removePre(cell.id).unwrap();
           notifications.show({
             title: 'Success',
-            message: 'Item Deleted Success-fully',
+            message: 'Item Deleted Successfully',
             color: 'green',
           });
         } else {
           await removePost(cell.id).unwrap();
           notifications.show({
             title: 'Success',
-            message: 'Item Deleted Success-fully',
+            message: 'Item Deleted Successfully',
             color: 'green',
           });
         }
@@ -275,14 +275,14 @@ export function Items({
           await updatePre(data).unwrap();
           notifications.show({
             title: 'Success',
-            message: 'Updated Success-fully',
+            message: 'Updated Successfully',
             color: 'green',
           });
         } else {
           await updatePost(data).unwrap();
           notifications.show({
             title: 'Success',
-            message: 'Updated Success-fully',
+            message: 'Updated Successfully',
             color: 'green',
           });
         }
@@ -441,14 +441,14 @@ export function Items({
         await addPreItems({ items: newItems }).unwrap();
         notifications.show({
           title: 'Success',
-          message: 'Items Created Success-fully',
+          message: 'Items Created Successfully',
           color: 'green',
         });
       } else {
         await addPostItems({ items: newItems }).unwrap();
         notifications.show({
           title: 'Success',
-          message: 'Items Created Success-fully',
+          message: 'Items Created Successfully',
           color: 'green',
         });
       }

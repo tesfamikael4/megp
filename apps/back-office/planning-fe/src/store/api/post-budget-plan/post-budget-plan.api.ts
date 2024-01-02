@@ -82,6 +82,10 @@ export const postBudgetPlanApi = createApi({
       }),
       invalidatesTags: ['post-budget-disbursement'],
     }),
+    getPostBudgetPlanAnalytics: builder.query<any, string>({
+      query: (id: string) => `post-budget-plans/get-analytics/${id}`,
+      providesTags: ['post-budget-plan'],
+    }),
   }),
 });
 
@@ -98,4 +102,5 @@ export const {
   useCreatePostActivityTimelineMutation,
   useGetPostBudgetPlanQuery,
   useLazyGetPostBudgetTimelineQuery,
+  useLazyGetPostBudgetPlanAnalyticsQuery,
 } = postBudgetPlanApi;

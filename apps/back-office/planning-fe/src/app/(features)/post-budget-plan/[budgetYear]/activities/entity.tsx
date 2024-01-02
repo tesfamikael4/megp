@@ -75,7 +75,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
 
         {
           id: 'totalEstimatedAmount',
-          header: () => <div className="text-right">Total Amount</div>,
+          header: () => <div className="w-full text-right">Total Amount</div>,
           accessorKey: 'totalEstimatedAmount',
           cell: ({ row: { original } }) => (
             <p className="text-right">
@@ -93,7 +93,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
         },
         {
           id: 'action',
-          header: 'Actions',
+          header: () => <div className="w-full text-end">Actions</div>,
           accessorKey: 'action',
           cell: ({ row: { original } }: any) => <Action cell={original} />,
         },
@@ -135,7 +135,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
         await remove(cell.id).unwrap();
         notifications.show({
           title: 'Success',
-          message: 'Item Deleted Success-fully',
+          message: 'Item Deleted Successfully',
           color: 'green',
         });
       } catch (err) {

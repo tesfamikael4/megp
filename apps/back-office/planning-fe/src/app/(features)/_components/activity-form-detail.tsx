@@ -134,7 +134,7 @@ export const FormDetail = ({
         const res = await createPre(rawData).unwrap();
         notifications.show({
           title: 'Success',
-          message: 'Activity created success-fully',
+          message: 'Activity created Successfully',
           color: 'green',
         });
         router.push(`/pre-budget-plan/${budgetPlanId}/activities/${res.id}`);
@@ -142,7 +142,7 @@ export const FormDetail = ({
         const res = await createPost(rawData).unwrap();
         notifications.show({
           title: 'Success',
-          message: 'Activity created success-fully',
+          message: 'Activity created Successfully',
           color: 'green',
         });
         router.push(`/post-budget-plan/${budgetPlanId}/activities/${res.id}`);
@@ -161,7 +161,7 @@ export const FormDetail = ({
         await removePre(id as string).unwrap();
         notifications.show({
           title: 'Success',
-          message: 'Deleted Success-fully',
+          message: 'Deleted Successfully',
           color: 'green',
         });
         router.push(`/pre-budget-plan/${budgetPlanId}/activities/`);
@@ -169,7 +169,7 @@ export const FormDetail = ({
         await removePost(id as string).unwrap();
         notifications.show({
           title: 'Success',
-          message: 'Deleted Success-fully',
+          message: 'Deleted Successfully',
           color: 'green',
         });
         router.push(`/post-budget-plan/${budgetPlanId}/activities/`);
@@ -205,14 +205,14 @@ export const FormDetail = ({
         await updatePre(rawData);
         notifications.show({
           title: 'Success',
-          message: 'Activity Updated Success-fully',
+          message: 'Activity Updated Successfully',
           color: 'green',
         });
       } else {
         await updatePost(rawData);
         notifications.show({
           title: 'Success',
-          message: 'Activity Updated Success-fully',
+          message: 'Activity Updated Successfully',
           color: 'green',
         });
       }
@@ -249,7 +249,7 @@ export const FormDetail = ({
         setValue('isMultiYear', preActivity?.isMultiYear);
         setValue('procurementReference', preActivity?.procurementReference);
         setValue('remark', preActivity?.remark);
-        setValue('estimatedAmount', preActivity?.estimatedAmount);
+        setValue('estimatedAmount', parseInt(preActivity?.estimatedAmount));
         setTags(preActivity?.classification ?? []);
       }
       if (page == 'post') {
@@ -259,7 +259,7 @@ export const FormDetail = ({
         setValue('isMultiYear', postActivity?.isMultiYear);
         setValue('procurementReference', postActivity?.procurementReference);
         setValue('remark', postActivity?.remark);
-        setValue('estimatedAmount', postActivity?.estimatedAmount);
+        setValue('estimatedAmount', parseInt(postActivity?.estimatedAmount));
         setTags(preActivity?.classification ?? []);
       }
     }

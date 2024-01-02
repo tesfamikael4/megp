@@ -79,11 +79,11 @@ export function Entity({ children }: { children: React.ReactNode }) {
 
         {
           id: 'calculatedAmount',
-          header: () => <div className="text-right">Total Amount</div>,
+          header: () => <div className="w-full text-right">Total Amount</div>,
           accessorKey: 'calculatedAmount',
           cell: ({ row: { original } }) => (
             <p className="text-right">
-              {original.calculatedAmount.toLocaleString('en-US', {
+              {parseInt(original.calculatedAmount).toLocaleString('en-US', {
                 style: 'currency',
                 currency: original.currency,
                 minimumFractionDigits: 2,
@@ -97,7 +97,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
         },
         {
           id: 'action',
-          header: 'Actions',
+          header: () => <div className="w-full text-end">Actions</div>,
           accessorKey: 'action',
           cell: ({ row: { original } }: any) => <Action cell={original} />,
         },
@@ -139,7 +139,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
         await remove(cell.id).unwrap();
         notifications.show({
           title: 'Success',
-          message: 'Item Deleted Success-fully',
+          message: 'Item Deleted Successfully',
           color: 'green',
         });
       } catch (err) {
