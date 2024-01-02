@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect } from 'react';
-import { Box, LoadingOverlay, MultiSelect } from '@mantine/core';
+import { Box, Flex, LoadingOverlay, MultiSelect } from '@mantine/core';
 import { useRouter } from 'next/navigation';
 import { NotificationService } from '../../../_components/notification';
 import {
@@ -9,6 +9,7 @@ import {
 } from '../../_api/query';
 import { validateApprovedVendorServiceSchema } from '@/shared/schema/venderRenewalSchema';
 import ServicesCard from '../_components/ppda/servicesCard';
+import { IconFile } from '@tabler/icons-react';
 
 function Page() {
   const router = useRouter();
@@ -17,7 +18,6 @@ function Page() {
   useEffect(() => {
     if (requestInfo.isError) {
       NotificationService.requestErrorNotification('Error on fetching data');
-      router.push(`basic`);
     }
 
     return () => {};
@@ -34,7 +34,12 @@ function Page() {
     );
   }
   if (requestInfo.isError) {
-    return <></>;
+    return (
+      <Flex className="w-full h-full items-center justify-center flex-col">
+        <IconFile size={30} />
+        No Data Found
+      </Flex>
+    );
   }
 
   if (

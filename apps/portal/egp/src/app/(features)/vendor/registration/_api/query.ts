@@ -39,6 +39,9 @@ export const vendorRegistrationQuery = vendorRegistrationApi.injectEndpoints({
     getVendorInfo: builder.query<GetVendorInfoResponse, any>({
       query: () => `/vendor-registrations/get-isr-vendor-info-by-userId`,
     }),
+    getApproveVendorInfo: builder.query<GetFormResponse, any>({
+      query: () => `/vendor-registrations/get-vendor-information`,
+    }),
     getForm: builder.query<GetFormResponse, any>({
       query: () => `/vendor-registrations/get-vendor-by-vendorId`,
     }),
@@ -206,6 +209,7 @@ export const {
   useGetRenewalInvoiceQuery,
   useLazyPostRenewalInvoiceQuery,
   useLazyPostRenewalVendorQuery,
+  useGetApproveVendorInfoQuery,
 } = vendorRegistrationQuery;
 
 export const {

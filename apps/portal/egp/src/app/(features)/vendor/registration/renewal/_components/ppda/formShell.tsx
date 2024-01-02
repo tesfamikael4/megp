@@ -9,7 +9,6 @@ import { useAddFormMutation } from '../../../_api/query';
 import { NotificationService } from '@/app/(features)/vendor/_components/notification';
 import { FormData } from '@/models/vendorRegistration';
 import AreasOfBusinessInterest from './areasOfBusinessInterest';
-import { usePrivilege } from '../../_context/privilege-context';
 import { ExtendedRegistrationReturnType } from '../../../new/_components/detail/formShell';
 
 export interface PassFormDataProps {
