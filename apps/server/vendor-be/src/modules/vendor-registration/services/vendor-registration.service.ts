@@ -1455,18 +1455,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             if (!renewalRange || renewalRange.length > 1)
               throw new NotFoundException('PriceRangeId wit key not found');
 
-            // const business = await this.businessAreaRepository.findOne({
-            //   where: { id: businessArea[index] },
-            // });
-            // if (!business)
-            //   throw new HttpException('business area not found ', 500);
-            // const service = await this.bpService.findBpWithServiceByKey(key);
-            // if (!service) throw new HttpException("can't find key", 500);
-            // business.id = undefined;
-            // business.serviceId = service.serviceId;
-            // business.priceRangeId = renewalRange[0].id;
-            // const resu = await this.businessAreaRepository.save(business);
-            // if (!resu) throw new HttpException('business area insertion')
             const result = await this.generateInvoiceForServiceRenewal(
               userInfo,
               renewalRange[0].id,
@@ -1485,15 +1473,20 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           }
         }
       }
-      const invoices = await this.getMyInvoices(userInfo.id);
-      if (!invoices) throw new NotFoundException('invoice not generated');
-      return invoices;
+      const invoices = await this.invoiceRepository.find({
+        where: { userId: userInfo.id, paymentStatus: 'Pending' },
+      });
+      if (!invoices) throw new NotFoundException('generated invoice not found');
+      return {
+        items: invoices,
+        businessAreas: data,
+      };
     } catch (error) {
       console.log(error);
       throw error;
     }
   }
-  async getMyInvoices(userId) {
+  async getMyInvoices(userId: string) {
     try {
       const invoices = await this.invoiceRepository.find({
         where: { userId: userId, paymentStatus: 'Pending' },
@@ -1507,11 +1500,20 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         throw new NotFoundException('vendor or business area not found');
       return {
         items: invoices,
-        paymentReceipt: isrVendor?.paymentReceipt,
         businessAreas: isrVendor?.businessAreas,
       };
     } catch (error) {
       console.log(error);
+    }
+  }
+  async getMyAllInvoices(userId: string) {
+    try {
+      const invoices = await this.invoiceRepository.find({
+        where: { userId: userId },
+      });
+      return invoices;
+    } catch (error) {
+      throw error;
     }
   }
   async getNewRenewalServices(vendorId) {
