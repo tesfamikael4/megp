@@ -1448,12 +1448,10 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       const invoices = await this.invoiceRepository.find({
         where: { userId: userId, paymentStatus: 'Pending' },
       });
-
       const isrVendor = await this.isrVendorsRepository.findOne({
-        where: { userId: userId, businessAreas: { status: In(['Pending']) } },
+        where: { userId: userId },
         relations: { businessAreas: true },
       });
-
       return {
         items: invoices,
         paymentReceipt: isrVendor?.paymentReceipt,
