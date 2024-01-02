@@ -16,7 +16,7 @@ export class UnitOfMeasurement extends Audit {
   @Column({ unique: true })
   name: string;
   @Column({ unique: true })
-  shortName: string;
+  abbreviation: string;
   @Column()
   measurementId: string;
   //only temporarly nullable set

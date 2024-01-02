@@ -6,8 +6,12 @@ import { District } from './district.entity';
 export class Region extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column()
+  @Column({ unique: true })
   name: string;
-  @OneToMany(() => District, (dist) => dist.region)
+  @OneToMany(() => District, (dist) => dist.region,
+    {
+      cascade: true,
+      onDelete: 'CASCADE',
+    },)
   districts: District[];
 }

@@ -5,10 +5,10 @@ import { Audit } from 'src/shared/entities';
 export class Currency extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column()
+  @Column({ unique: true })
   name: string;
   @Column()
   description: string;
-  @Column()
+  @Column({ unique: true })
   abbreviation: string;
 }

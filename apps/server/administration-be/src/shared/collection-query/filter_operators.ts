@@ -13,6 +13,7 @@ export const FilterOperators = {
   IsNull: 'IsNull',
   NotEqualTo: '!=',
   Like: 'LIKE',
+  ILike: 'ILIKE',
   All: 'All',
   NotEqual: 'NotEqual',
 };
