@@ -13,6 +13,7 @@ import { Permission } from './permission.entity';
 import { Instance } from './instance.entity';
 import { DefaultStep } from './defaultStep.entity';
 import { OrgAudit } from 'src/shared/entities';
+import { State } from './state.entity';
 
 @Entity({ name: 'activities' })
 export class Activity extends OrgAudit {
@@ -31,6 +32,9 @@ export class Activity extends OrgAudit {
 
   @OneToMany(() => Step, (step) => step.activity)
   steps: Step[];
+
+  @OneToMany(() => State, (state) => state.activity)
+  states: State[];
 
   @OneToMany(() => DefaultStep, (defaultStep) => defaultStep.activity)
   defaultSteps: DefaultStep[];

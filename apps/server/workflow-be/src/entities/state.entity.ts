@@ -1,5 +1,11 @@
-import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { Audit } from 'src/shared/entities/audit.entity';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Activity } from './activity.entity';
 import { OrgAudit } from 'src/shared/entities';
 
@@ -11,7 +17,7 @@ export class State extends OrgAudit {
   @Column()
   activityId: string;
 
-  @OneToOne(() => Activity, (activity) => activity.id)
+  @ManyToOne(() => Activity, (activity) => activity.id)
   activity: Activity;
 
   @Column({ type: 'jsonb' })
