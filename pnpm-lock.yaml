@@ -658,6 +658,9 @@ importers:
       '@emotion/server':
         specifier: ^11.11.0
         version: 11.11.0
+      '@hookform/resolvers':
+        specifier: ^3.3.1
+        version: 3.3.1(react-hook-form@7.46.1)
       '@mantine/carousel':
         specifier: ^7.1.7
         version: 7.1.7(@mantine/core@7.1.7)(@mantine/hooks@7.1.7)(embla-carousel-react@7.1.0)(react@18.2.0)
@@ -742,9 +745,15 @@ importers:
       dayjs:
         specifier: ^1.11.10
         version: 1.11.10
+      jwt-decode:
+        specifier: ^3.1.2
+        version: 3.1.2
       next:
         specifier: 13.5.2
         version: 13.5.2(@babel/core@7.23.0)(react-dom@18.2.0)(react@18.2.0)(sass@1.69.4)
+      papaparse:
+        specifier: ^5.4.1
+        version: 5.4.1
       react:
         specifier: 18.2.0
         version: 18.2.0
@@ -763,6 +772,9 @@ importers:
       typescript:
         specifier: ^5.1.0
         version: 5.2.2
+      zod:
+        specifier: ^3.22.2
+        version: 3.22.2
     devDependencies:
       '@megp/eslint-config-custom':
         specifier: workspace:*
@@ -8274,6 +8286,7 @@ packages:
 
   /@types/node@18.16.12:
     resolution: {integrity: sha512-tIRrjbY9C277MOfP8M3zjMIhtMlUJ6YVqkGgLjz+74jVsdf4/UjC6Hku4+1N0BS0qyC0JAS6tJLUk9H6JUKviQ==}
+    dev: true
 
   /@types/node@20.4.7:
     resolution: {integrity: sha512-bUBrPjEry2QUTsnuEjzjbS7voGWCc30W0qzgMf90GPeDGFRakvrz47ju+oqDAKCXLUCe39u57/ORMl/O/04/9g==}
@@ -20286,7 +20299,6 @@ packages:
       typescript: 4.9.5
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
-    dev: true
 
   /ts-node@10.9.1(@types/node@18.16.12)(typescript@5.2.2):
     resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}
@@ -20317,6 +20329,7 @@ packages:
       typescript: 5.2.2
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
+    dev: true
 
   /ts-node@10.9.1(@types/node@20.4.7)(typescript@5.2.2):
     resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}
@@ -20773,7 +20786,7 @@ packages:
       pg: 8.11.3
       reflect-metadata: 0.1.13
       sha.js: 2.4.11
-      ts-node: 10.9.1(@types/node@18.16.12)(typescript@5.2.2)
+      ts-node: 10.9.1(@types/node@16.18.47)(typescript@4.9.5)
       tslib: 2.6.2
       uuid: 9.0.1
       yargs: 17.7.2
