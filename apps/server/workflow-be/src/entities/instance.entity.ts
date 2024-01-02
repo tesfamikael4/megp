@@ -27,7 +27,7 @@ export class Instance extends OrgAudit {
   @Column()
   stepId: string;
 
-  @OneToMany(() => Step, (step) => step.instance, {
+  @ManyToOne(() => Step, (step) => step.instances, {
     cascade: true,
   })
   @JoinColumn({ name: 'stepId' })
