@@ -5,6 +5,7 @@ import {
   ManyToOne,
   JoinColumn,
   OneToOne,
+  OneToMany,
 } from 'typeorm';
 
 import { Activity } from './activity.entity';
@@ -26,7 +27,7 @@ export class Instance extends OrgAudit {
   @Column()
   stepId: string;
 
-  @OneToOne(() => Step, (step) => step.instance, {
+  @OneToMany(() => Step, (step) => step.instance, {
     cascade: true,
   })
   @JoinColumn({ name: 'stepId' })
