@@ -72,7 +72,8 @@ export class PreBudgetPlanController extends ExtraCrudController<PreBudgetPlan>(
 
   @Post('initiate-workflow')
   @UseInterceptors(TransactionInterceptor)
-  async initiateWorkflow(@Body() data: any) {
+  async initiateWorkflow(@Body() data: any, @CurrentUser() user) {
+    data.organizationId = user.organization.id;
     await this.preBudgetPlanService.initiateWorkflow(data);
   }
 

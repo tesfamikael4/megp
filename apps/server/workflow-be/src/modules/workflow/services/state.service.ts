@@ -19,7 +19,7 @@ export class StateService extends ExtraCrudService<State> {
   }
 
   // Listen
-  async createState(activityId): Promise<any> {
+  async createState(activityId, organizationId): Promise<any> {
     const steps = await this.repositoryStep.find({
       where: { activityId },
       order: { order: 'ASC' },
@@ -36,7 +36,7 @@ export class StateService extends ExtraCrudService<State> {
         steps as any,
       );
       state = stateMachineConfig.states;
-      await this.repositoryState.insert({ state, activityId });
+      await this.repositoryState.insert({ state, activityId, organizationId });
     }
   }
 }
