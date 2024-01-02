@@ -55,7 +55,7 @@ export class FileService {
     private readonly businessAreaRepository: Repository<BusinessAreaEntity>,
     private readonly busineAreaService: BusinessAreaService,
     private readonly workflowService: WorkflowService,
-  ) {}
+  ) { }
   private updateVendorEnums = [
     VendorStatusEnum.ACTIVE,
     VendorStatusEnum.ADJUSTMENT,
@@ -290,20 +290,12 @@ export class FileService {
   ) {
     const userId = user.id;
     try {
-      console.log('fffffffffffffffffff : ', paymentReceiptDto);
       const result = await this.isrVendorsRepository.findOne({
         where: { userId: userId, status: In(this.updateVendorEnums) },
       });
       if (!result) throw new HttpException('isr vendor not found ', 500);
       const fileUploadName = 'paymentReceipt';
       const paymentReceipts = result.paymentReceipt;
-      // const foundObject = paymentReceipts?.filter(
-      //   (obj) => obj.invoiceId !== paymentReceiptDto.invoiceId,
-      // );
-      // const alreadyExisting = paymentReceipts?.find(
-      //   (obj) => obj.invoiceId === paymentReceiptDto.invoiceId,
-      // );
-
       if (paymentReceiptDto?.attachment) {
         const objectName = `${userId}/${fileUploadName}/${paymentReceiptDto?.attachment}`;
         await this.minioClient.removeObject('megp', objectName);
@@ -315,7 +307,7 @@ export class FileService {
         'Content-Type': file.mimetype,
         'X-Amz-Meta-Testing': 1234,
       };
-      const resultData = await this.minioClient.putObject(
+      await this.minioClient.putObject(
         this.bucketName,
         filename,
         file.buffer,
@@ -324,24 +316,15 @@ export class FileService {
       const paymentReceipt = {
         transactionNumber: paymentReceiptDto?.transactionNumber,
         invoiceId: paymentReceiptDto?.invoiceIds,
-        //   serviceId: paymentReceiptDto?.serviceId,
         attachment: fileId,
       };
       result.paymentReceipt = paymentReceipt;
       result.initial.level = VendorStatusEnum.DOC;
       result.initial.status = VendorStatusEnum.SAVE;
       const isrVendor = await this.isrVendorsRepository.save(result);
-
-      //   foundObject.push(paymentReceipt);
       if (!isrVendor) throw new HttpException(`isrVendor_update _failed`, 500);
-      //  const paymentReceiptsData = result?.paymentReceipt;
       const ids = JSON.parse(paymentReceiptDto?.invoiceIds);
-      // const oldBAs = await this.busineAreaService.getBusinessAreaByIds(ids);
-      // const newInstanceIds = oldBAs.map((ba) => ba.instanceId)
-      // const newBA = await this.busineAreaService.getBusinessAreaByInstanceIds(newInstanceIds);
-
       for (let index = 0; index < ids.length; index++) {
-        //const ids = paymentReceiptDto?.invoiceIds;
         const invoice = await this.invoiceRepository.update(ids[index], {
           paymentStatus: 'Paid',
           attachment: fileId,
@@ -377,7 +360,6 @@ export class FileService {
           wfi,
           user,
         );
-        console.log('result--->', result);
         businessArea.instanceId = result.application?.id;
         businessArea.applicationNumber = result.application?.applicationNumber;
         if (result) {

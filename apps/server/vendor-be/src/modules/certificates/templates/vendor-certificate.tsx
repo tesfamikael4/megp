@@ -48,7 +48,7 @@ const CertificatePDF = ({ id, data, qrCodeUrl }) => {
           </View>
         </View>
       </Page>
-    </Document>,
+    </Document>
   );
 };
 
