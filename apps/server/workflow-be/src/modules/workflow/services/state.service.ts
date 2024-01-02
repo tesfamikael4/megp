@@ -28,7 +28,7 @@ export class StateService extends ExtraCrudService<State> {
     if (steps.length == 0) throw new Error('step not found');
 
     let state: any = await this.repositoryState.findOne({
-      where: { activityId },
+      where: { activityId, organizationId },
     });
 
     if (!state) {
