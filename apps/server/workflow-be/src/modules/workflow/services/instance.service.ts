@@ -43,7 +43,7 @@ export class InstanceService extends EntityCrudService<Instance> {
       order: { order: 'ASC' },
     });
     const createData = {
-      itemId: data.itemId,
+      itemId: data.id,
       itemName: data.itemName,
       organizationId: data.organizationId,
       activityId: act.id,
