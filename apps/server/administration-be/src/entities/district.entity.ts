@@ -12,7 +12,7 @@ import { Region } from './region.entity';
 export class District extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column()
+  @Column({ unique: true })
   name: string;
   @Column()
   regionId: string;

@@ -13,8 +13,7 @@ export class CreateMeasurementDto {
   name: string;
 
   @ApiProperty()
-  @IsNotEmpty()
-  shortName: string;
+  description: string;
 
 
   static fromDto(dto: CreateMeasurementDto): Measurement {
@@ -23,7 +22,7 @@ export class CreateMeasurementDto {
       return null;
     }
     entity.name = dto.name;
-    entity.shortName = dto.shortName;
+    entity.description = dto.description;
     return entity;
   }
 
@@ -44,7 +43,7 @@ export class UpdateMeasurementDto extends CreateMeasurementDto {
     }
     entity.id = dto.id;
     entity.name = dto.name;
-    entity.shortName = dto.shortName;
+    entity.description = dto.description;
     entity.createdAt = new Date();
     return entity;
   }
@@ -54,7 +53,7 @@ export class MeasurementResponseDto extends UpdateMeasurementDto {
     const response = new MeasurementResponseDto();
     response.id = entity.id;
     response.name = entity.name;
-    response.shortName = entity.shortName;
+    response.description = entity.description;
     return response;
   }
 }

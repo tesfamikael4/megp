@@ -13,7 +13,7 @@ export class CreateUnitOfMeasurementDto {
   name: string;
   @ApiProperty()
   @IsNotEmpty()
-  shortName: string;
+  abbreviation: string;
   @ApiProperty()
   @IsNotEmpty()
   measurementId: string;
@@ -27,7 +27,7 @@ export class CreateUnitOfMeasurementDto {
       return null;
     }
     entity.name = dto.name;
-    entity.shortName = dto.shortName;
+    entity.abbreviation = dto.abbreviation;
     entity.measurementId = dto.measurementId;
     entity.measurementName = dto.measurementName;
     return entity;
@@ -50,7 +50,7 @@ export class UpdateUnitOfMeasurementDto extends CreateUnitOfMeasurementDto {
     }
     entity.id = dto.id;
     entity.name = dto.name;
-    entity.shortName = dto.shortName;
+    entity.abbreviation = dto.abbreviation;
     entity.measurementId = dto.measurementId;
     entity.measurementName = dto.measurementName;
     entity.createdAt = new Date();
@@ -62,7 +62,7 @@ export class UnitOfMeasurementResponseDto extends UpdateUnitOfMeasurementDto {
     const response = new UnitOfMeasurementResponseDto();
     response.id = entity.id;
     response.name = entity.name;
-    response.shortName = entity.shortName;
+    response.abbreviation = entity.abbreviation;
     response.measurementId = entity.measurementId;
     return response;
   }

@@ -49,7 +49,7 @@ export function decodeCollectionQuery(queryString: string): CollectionQuery {
     return new CollectionQuery();
   }
 
-  const query: CollectionQuery = {};
+  const query: CollectionQuery = new CollectionQuery();
   const queryParams = new URLSearchParams(queryString);
 
   if (queryParams.has('s') && queryParams.get('s')) {
