@@ -14,16 +14,10 @@ import {
   useGetPriceRangeQuery,
   useLazyPostRenewalInvoiceQuery,
 } from '../../../_api/query';
-import { IconCheckbox, IconRectangle } from '@tabler/icons-react';
+import { IconCheckbox } from '@tabler/icons-react';
 import { ApprovedVendorServiceSchema } from '@/shared/schema/venderRenewalSchema';
 import { NotificationService } from '@/app/(features)/vendor/_components/notification';
 import { useRouter } from 'next/navigation';
-
-const statuses = {
-  Paid: 'text-green-700 bg-green-50 ring-green-600/20',
-  Withdraw: 'text-gray-600 bg-gray-50 ring-gray-500/10',
-  Overdue: 'text-red-700 bg-red-50 ring-red-600/10',
-};
 
 const transformCategoryPriceRange = (
   inputData: any,
@@ -54,8 +48,6 @@ export default function ServicesCard({
 
   const handleSubmit = () => {
     if (selectedServices.length > 0) {
-      console.log();
-      console.log(servicesData);
       request({
         status: { level: 'Info', status: 'Draft' },
         businessArea: servicesData.data
@@ -89,7 +81,7 @@ export default function ServicesCard({
   }, [requestInfo.error]);
 
   useEffect(() => {
-    if (requestInfo.data && requestInfo.isSuccess) {
+    if (requestInfo.isSuccess) {
       router.push('payment');
     }
 

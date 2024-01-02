@@ -25,11 +25,7 @@ import {
   IPaymentSlipUploadSchema,
   paymentSlipUploadSchema,
 } from '@/shared/schema/paymentSlipUploadSchema';
-import {
-  invoiceArraySchema,
-  invoiceDataSchema,
-} from '@/shared/schema/invoiceSchema';
-import { paymentReceiptItemSchema } from '../../../../../../shared/schema/paymentReceiptItemSchema';
+import { invoiceArraySchema } from '@/shared/schema/invoiceSchema';
 import { useRouter } from 'next/navigation';
 import { NotificationService } from '../../../_components/notification';
 const VENDOR_URL = process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api';
@@ -60,16 +56,16 @@ function Page() {
     });
 
   const onSubmitHandler: SubmitHandler<IPaymentSlipUploadSchema> = (values) => {
-    // uploadFile(values);
+    uploadFile(values);
     if (
-      invoiceInfo.data?.businessAreas &&
-      Array.isArray(invoiceInfo.data?.businessAreas) &&
-      invoiceInfo.data?.businessAreas.length > 0
+      invoiceInfo.data?.items &&
+      Array.isArray(invoiceInfo.data?.items) &&
+      invoiceInfo.data?.items.length > 0
     ) {
-      submitRequest(invoiceInfo.data?.businessAreas.map((i) => i.id));
+      submitRequest(invoiceInfo.data?.items.map((i) => i.id));
     }
   };
-
+  console.log(formState.errors);
   const handleFileChange = (file: File) => {
     setValue('file', file);
   };
@@ -115,7 +111,7 @@ function Page() {
     return () => {};
   }, [submitRequestInfo.data]);
 
-  if (invoiceInfo.isLoading) {
+  if (invoiceInfo.isLoading || submitRequestInfo.isLoading) {
     return (
       <Box pos="relative" className="w-full h-full">
         <LoadingOverlay
