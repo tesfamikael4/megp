@@ -96,11 +96,11 @@ export const ActivityMechanization = ({
     try {
       if (page == 'pre') {
         await preCreate(castedData).unwrap();
-        notify('Success', 'Procurement mechanization saved successfully');
+        notify('Success', 'Procurement Method Saved Successfully');
       }
       if (page == 'post') {
         await postCreate(castedData).unwrap();
-        notify('Success', 'Procurement mechanization saved successfully');
+        notify('Success', 'Procurement Method Saved Successfully');
       }
     } catch (err) {
       notify('Error', 'Something went wrong');

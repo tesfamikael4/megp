@@ -4,8 +4,8 @@ import {
   IconCalendarEvent,
   IconCalendarStats,
   IconCoins,
-  IconReportAnalytics,
   IconGizmo,
+  IconReportAnalytics,
 } from '@tabler/icons-react';
 
 export const Menu: MenuItem[] = [
@@ -31,9 +31,9 @@ export const Menu: MenuItem[] = [
   },
   {
     label: 'Workflow',
-    icon: IconReportAnalytics,
+    icon: IconGizmo,
     links: [
-      { label: 'Pre Budget Plan Approval', link: '/post-budget-plan-approval' },
+      { label: 'Pre Budget Plan Approval', link: '/pre-budget-plan-approval' },
       {
         label: 'Post Budget Plan Approval',
         link: '/post-budget-plan-approval',

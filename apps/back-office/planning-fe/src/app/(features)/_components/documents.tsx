@@ -68,7 +68,7 @@ export const Documents = ({
         // await remove(cell.id).unwrap();
         notifications.show({
           title: 'Success',
-          message: 'Item Deleted Success-fully',
+          message: 'Item Deleted Successfully',
           color: 'green',
         });
       } catch (err) {
@@ -129,7 +129,7 @@ export const Documents = ({
     setData([name, ...data]);
     notifications.show({
       title: 'Success',
-      message: 'Document Uploaded Success-fully',
+      message: 'Document Uploaded Successfully',
       color: 'green',
     });
     close();

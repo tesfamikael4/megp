@@ -4,7 +4,10 @@ import { Relation, RelationConfig } from '@megp/entity';
 import { useDisclosure } from '@mantine/hooks';
 import { IconBinaryTree, IconColumns } from '@tabler/icons-react';
 import { Tree, logger } from '@megp/core-fe';
-import { useLazyGetClassificationsQuery } from '@/store/api/administration/administration.api';
+import {
+  useGetClassificationsQuery,
+  useLazyGetClassificationsQuery,
+} from '@/store/api/administration/administration.api';
 import { CollectionSelector } from './collection-selector';
 
 interface ClassificationSelectorProps {
@@ -22,6 +25,17 @@ const ClassificationSelector = ({
   const [mode, setMode] = useState<'tree' | 'table'>('table');
   //   const [currentAssigned] = useState([]);
   const [getCommodity, { data: list }] = useLazyGetClassificationsQuery();
+  const { data: classifications } = useGetClassificationsQuery({
+    where: [
+      [
+        {
+          column: 'parentCode',
+          value: 'IsNull',
+          operator: 'IsNull',
+        },
+      ],
+    ],
+  } as any);
   const addConfig: RelationConfig<any> = {
     title: 'Classifications',
     columns: [
@@ -129,7 +143,7 @@ const ClassificationSelector = ({
         ) : (
           <Tree
             fieldNames={{ title: 'title', key: 'code' }}
-            data={list ? list.items : []}
+            data={classifications ? classifications.items : []}
             mode="select"
             disableModal
             disableParentSelect

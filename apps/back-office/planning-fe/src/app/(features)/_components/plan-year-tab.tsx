@@ -3,7 +3,7 @@
 import {
   useApprovePreBudgetMutation,
   useCreateAppMutation,
-  useGetPreBudgetPlansQuery,
+  useLazyGetPreBudgetPlanAnalyticsQuery,
   useLazyGetPreBudgetPlansQuery,
 } from '@/store/api/pre-budget-plan/pre-budget-plan.api';
 import {
@@ -14,6 +14,7 @@ import {
   Collapse,
   Flex,
   Group,
+  LoadingOverlay,
   Modal,
   Text,
 } from '@mantine/core';
@@ -35,13 +36,30 @@ import { logger } from '@megp/core-fe';
 import { notifications } from '@mantine/notifications';
 import { modals } from '@mantine/modals';
 import {
-  useGetPostBudgetPlansQuery,
+  useLazyGetPostBudgetPlanAnalyticsQuery,
   useLazyGetPostBudgetPlansQuery,
 } from '@/store/api/post-budget-plan/post-budget-plan.api';
 
 export const PlanYearTab = ({ page }: { page: 'pre' | 'post' }) => {
   const [getPre, { data: pre }] = useLazyGetPreBudgetPlansQuery();
   const [getPost, { data: post }] = useLazyGetPostBudgetPlansQuery();
+  const [
+    getPreAnalytics,
+    {
+      data: preAnalytics,
+      isLoading: isLoadingPreAnalytics,
+      isSuccess: isPreAnalyticsSucess,
+    },
+  ] = useLazyGetPreBudgetPlanAnalyticsQuery();
+  const [
+    getPostAnalytics,
+    {
+      data: postAnalytics,
+      isLoading: isLoadingPostAnalytics,
+      isSuccess: isPostAnalyticsSucess,
+    },
+  ] = useLazyGetPostBudgetPlanAnalyticsQuery();
+  const [analytics, setAnalytics] = useState<any>({});
   const { budgetYear } = useParams();
   const router = useRouter();
   const [selectedYear, setSelectedYear] = useState({});
@@ -112,7 +130,10 @@ export const PlanYearTab = ({ page }: { page: 'pre' | 'post' }) => {
 
   const handelSubmit = async () => {
     try {
-      await approve((selectedYear as any)?.id).unwrap();
+      await approve({
+        id: (selectedYear as any)?.id,
+        itemName: (selectedYear as any)?.app?.planName,
+      }).unwrap();
       notifications.show({
         title: 'Success',
         message: 'Pre budget plan submitted successfully',
@@ -143,6 +164,30 @@ export const PlanYearTab = ({ page }: { page: 'pre' | 'post' }) => {
       getPost({} as any);
     }
   }, [getPost, getPre, page]);
+
+  useEffect(() => {
+    if (page == 'pre') {
+      getPreAnalytics(budgetYear as string);
+    }
+    if (page == 'post') {
+      getPostAnalytics(budgetYear as string);
+    }
+  }, [budgetYear, getPreAnalytics, page]);
+
+  useEffect(() => {
+    if (page == 'pre' && isPreAnalyticsSucess) {
+      setAnalytics(preAnalytics);
+    }
+    if (page == 'post' && isPostAnalyticsSucess) {
+      setAnalytics(postAnalytics);
+    }
+  }, [
+    isPostAnalyticsSucess,
+    isPreAnalyticsSucess,
+    page,
+    postAnalytics,
+    preAnalytics,
+  ]);
   return (
     <Box className="mb-2">
       <Flex>
@@ -204,43 +249,96 @@ export const PlanYearTab = ({ page }: { page: 'pre' | 'post' }) => {
               : 'Submit'}
           </Button>
         </Flex>
-        <Collapse in={opened}>
-          <Flex justify="space-between" mt={20}>
-            <Group className="w-1/4">
+        <Collapse in={opened} pos="relative">
+          <LoadingOverlay
+            visible={isLoadingPreAnalytics || isLoadingPostAnalytics}
+          />
+          <Flex>
+            <Box className="w-3/4">
+              <Flex justify="space-between" mt={20}>
+                {/* <Group className="w-1/4">
               <IconCoins />
               <Text>MKW, 1,525,520.68</Text>
-            </Group>
-            <Group className="w-1/4">
-              <IconCoins />
-              <Text>USD, 1,525,520.68</Text>
-            </Group>
-            <Group className="w-1/4">
-              <IconChartBar />
-              <Text> 27 Activities</Text>
-            </Group>
-            <Group className="w-1/4">
-              <IconPennantFilled />
-              <Text> {(selectedYear as any)?.status}</Text>
-            </Group>
-          </Flex>
+            </Group> */}
+                <Group className="w-1/3">
+                  <IconPointFilled className="text-yellow-400 " />
+                  <Text>
+                    {analytics?.targetGroupPercentages?.IBM ?? 0}% IBM
+                  </Text>
+                </Group>
 
-          <Flex justify="space-between" mt={20}>
-            <Group className="w-1/4">
-              <IconPointFilled className="text-yellow-400 " />
-              <Text>52% IBM</Text>
-            </Group>
-            <Group className="w-1/4">
-              <IconPointFilled className="text-yellow-400 " />
-              <Text>14% MSME</Text>
-            </Group>
-            <Group className="w-1/4">
-              <IconPointFilled className="text-green-500 " />
-              <Text>20% Marginalized Group</Text>
-            </Group>
-            <Group className="w-1/4">
-              <IconPointFilled className="text-green-500 " />
-              <Text>14% Others</Text>
-            </Group>
+                <Group className="w-1/3">
+                  <IconChartBar />
+                  <Text> {analytics?.totalActivities ?? 0} Activities</Text>
+                </Group>
+                <Group className="w-1/3">
+                  <IconPennantFilled />
+                  <Text> {(selectedYear as any)?.status}</Text>
+                </Group>
+              </Flex>
+
+              <Flex justify="space-between" mt={20}>
+                <Group className="w-1/3">
+                  <IconPointFilled className="text-yellow-400 " />
+                  <Text>
+                    {analytics?.targetGroupPercentages?.MSME ?? 0}% MSME
+                  </Text>
+                </Group>
+                <Group className="w-1/3">
+                  <IconPointFilled className="text-green-500 " />
+                  <Text>
+                    {analytics?.targetGroupPercentages?.[
+                      'Marginalized Group'
+                    ] ?? 0}
+                    % Marginalized Group
+                  </Text>
+                </Group>
+                <Group className="w-1/3">
+                  <IconPointFilled className="text-green-500 " />
+                  <Text>
+                    {analytics?.targetGroupPercentages?.Others ?? 0}% Others
+                  </Text>
+                </Group>
+              </Flex>
+            </Box>
+
+            <Box className="w-1/4 flex" mt={20}>
+              <IconCoins />
+              <Box ml={10} className="text-end">
+                {Object.keys(analytics?.currencyTotalAmounts ?? {}).length ===
+                  0 && <Text>MKW 0.00</Text>}
+                {Object.keys(analytics?.currencyTotalAmounts ?? {}).map(
+                  (currency, index) => {
+                    if (index == 0)
+                      return (
+                        <Text>
+                          {analytics?.currencyTotalAmounts?.[
+                            currency
+                          ].toLocaleString('en-US', {
+                            style: 'currency',
+                            currency: currency,
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          })}
+                        </Text>
+                      );
+
+                    return (
+                      <Text mt={10} key={currency}>
+                        {analytics?.currencyTotalAmounts?.[
+                          currency
+                        ].toLocaleString('en-US', {
+                          style: 'currency',
+                          currency: currency,
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
+                      </Text>
+                    );
+                  },
+                )}
+              </Box>
+            </Box>
           </Flex>
         </Collapse>
         <Group justify="end">

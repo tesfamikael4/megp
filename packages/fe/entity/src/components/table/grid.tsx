@@ -163,28 +163,30 @@ export function Grid<T>({
                           header.column.id === 'action' ? 'right' : 'left',
                       }}
                     >
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
-                      {header.column.id !== 'action' &&
-                      header.column.id !== 'select' &&
-                      options.sortable ? (
-                        <ActionIcon
-                          onClick={header.column.getToggleSortingHandler()}
-                          size="sm"
-                          variant="transparent"
-                        >
-                          <IconArrowsSort
-                            className="mt-1 ml-1"
-                            color="grey"
-                            height={14}
-                            width={14}
-                          />
-                        </ActionIcon>
-                      ) : null}
+                      <Flex>
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext(),
+                            )}
+                        {header.column.id !== 'action' &&
+                        header.column.id !== 'select' &&
+                        options.sortable ? (
+                          <ActionIcon
+                            onClick={header.column.getToggleSortingHandler()}
+                            size="sm"
+                            variant="transparent"
+                          >
+                            <IconArrowsSort
+                              className="mt-1 ml-1"
+                              color="grey"
+                              height={14}
+                              width={14}
+                            />
+                          </ActionIcon>
+                        ) : null}
+                      </Flex>
                     </Table.Th>
                   ))}
                 </Table.Tr>

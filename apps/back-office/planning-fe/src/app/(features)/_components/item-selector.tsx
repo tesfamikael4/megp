@@ -12,6 +12,7 @@ import {
 } from '@mantine/core';
 import {
   IconBinaryTree,
+  IconChevronLeft,
   IconChevronRight,
   IconColumns,
   IconPlus,
@@ -111,7 +112,15 @@ const ItemSelector = ({ onDone, opened, close }: ItemSelectorProps) => {
       <Modal
         title={
           <Flex justify="space-between" className="w-full">
-            <Text className="font-bold">Item Selector</Text>
+            <Group>
+              {selector && (
+                <IconChevronLeft
+                  className="cursor-pointer"
+                  onClick={() => setItemSelector(undefined)}
+                />
+              )}
+              <Text className="font-bold">Item Selector</Text>
+            </Group>
             {selector == 'item-master' ? (
               <Group>
                 <Tooltip label={mode == 'table' ? 'Tree View' : 'Grid View'}>
