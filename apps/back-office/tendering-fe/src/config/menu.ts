@@ -1,17 +1,11 @@
 import { MenuItem } from '@megp/core-fe';
-import {
-  IconAdjustmentsHorizontal,
-  IconCalendarEvent,
-  IconCalendarStats,
-  IconCoins,
-  IconReportAnalytics,
-} from '@tabler/icons-react';
+import { IconCoins, IconReportAnalytics } from '@tabler/icons-react';
 
 export const Menu: MenuItem[] = [
   {
     label: 'Procurement requisition',
     icon: IconCoins,
-    link: '/budget-year',
+    link: '/procurement-requisition',
   },
   {
     label: 'Report',
