@@ -24,7 +24,7 @@ export class Instance extends OrgAudit {
   @JoinColumn({ name: 'activityId' })
   public activity: Activity;
 
-  @Column()
+  @Column({ nullable: true })
   stepId: string;
 
   @ManyToOne(() => Step, (step) => step.instances, {
