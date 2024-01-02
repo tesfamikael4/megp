@@ -194,7 +194,6 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
   }
   async getMyInvoices(
     userId: string,
-    serviceId: string,
   ): Promise<DataResponseFormat<InvoiceResponseDto>> {
     const response = new DataResponseFormat<InvoiceResponseDto>();
     const [result, total] = await this.invoiceRepository.findAndCount({

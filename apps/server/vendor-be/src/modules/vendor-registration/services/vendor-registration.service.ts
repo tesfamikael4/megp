@@ -1237,7 +1237,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
   async getMyApprovedService(user: any): Promise<any> {
     try {
       // user.id = '4408fe5d-2672-4c2f-880d-4928b960e096';
-      console.log('userId userId---', user);
       const vendorEntity = await this.vendorRepository.findOne({
         select: {
           isrVendor: { id: true, tinNumber: true, businessAreas: true },
@@ -1475,6 +1474,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             if (!result)
               throw new HttpException('invoice generation failed', 500);
           } else {
+            if (!businessareaData.priceRangeId)
+              throw new NotFoundException('priceRangeId not found');
             const result = await this.generateInvoiceForServiceRenewal(
               userInfo,
               businessareaData.priceRangeId,
@@ -1484,20 +1485,12 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           }
         }
       }
-      const invoices = await this.invoiceService.getActiveMyInvoices(
-        userInfo.id,
-      );
-      const isrVendor = await this.isrVendorsRepository.findOne({
-        where: { userId: userInfo.id },
-      });
-      if (!isrVendor) throw new HttpException('isrvendor not found ', 500);
-      return {
-        invoices: invoices,
-        paymentReceipt: isrVendor?.paymentReceipt,
-        businessAreas: data.businessArea,
-      };
+      const invoices = await this.getMyInvoices(userInfo.id);
+      if (!invoices) throw new NotFoundException('invoice not generated');
+      return invoices;
     } catch (error) {
       console.log(error);
+      throw error;
     }
   }
   async getMyInvoices(userId) {
@@ -1505,10 +1498,13 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       const invoices = await this.invoiceRepository.find({
         where: { userId: userId, paymentStatus: 'Pending' },
       });
+      if (!invoices) throw new NotFoundException('invoices not found');
       const isrVendor = await this.isrVendorsRepository.findOne({
         where: { userId: userId },
         relations: { businessAreas: true },
       });
+      if (!isrVendor || isrVendor.businessAreas.length == 0)
+        throw new NotFoundException('vendor or business area not found');
       return {
         items: invoices,
         paymentReceipt: isrVendor?.paymentReceipt,
@@ -1802,12 +1798,12 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       const result = await this.vendorRepository
         .createQueryBuilder('vendor')
         .leftJoinAndSelect('vendor.ProfileInfo', 'profileInfo')
-        .where('vendor.userId = :userId OR profileInfo.status = :status', {
+        .where('vendor.userId = :userId AND profileInfo.status = :status', {
           userId,
           status,
         })
         .getOne();
-      if (Object.keys(result.ProfileInfo).length === 0 || !result.ProfileInfo) {
+      if (Object.keys(result.ProfileInfo).length === 0) {
         const vendorEntity = await this.isrVendorsRepository.findOne({
           where: {
             userId: userId,
@@ -1826,11 +1822,13 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       throw error;
     }
   }
-  async addVendorProfileUpdate(profileData: any, userInfo) {
+  async addVendorProfileUpdate(profileData: any, userInfo: any) {
     try {
       const result = await this.vendorRepository.findOne({
         where: { userId: userInfo.id },
       });
+      if (!result) throw new NotFoundException('vendor not found ');
+
       const updateInfo = await this.profileInfoRepository.findOne({
         where: { vendorId: result.id, status: VendorStatusEnum.ACTIVE },
       });
@@ -1843,7 +1841,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         resultData = this.profileInfoRepository.save(profileInfoEntity);
       } else {
         updateInfo.profileData = profileData;
-        resultData = this.profileInfoRepository.save(updateInfo);
+        resultData = await this.profileInfoRepository.save(updateInfo);
+        console.log(resultData);
       }
       return resultData;
     } catch (error) {
@@ -1856,13 +1855,23 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       const result = await this.vendorRepository.findOne({
         where: { userId: userInfo.id },
       });
+      if (!result) throw new NotFoundException('vendor not found');
       const updateInfo = await this.profileInfoRepository.findOne({
         where: { vendorId: result.id, status: VendorStatusEnum.ACTIVE },
       });
-      if (!updateInfo) throw new HttpException('Profile info notfound', 500);
-      updateInfo.profileData = profileData;
-      updateInfo.status = 'Submitted';
-
+      if (!updateInfo) {
+        const profileInfoEntity = new ProfileInfoEntity();
+        profileInfoEntity.vendorId = result?.id;
+        profileInfoEntity.status = 'Submitted';
+        profileInfoEntity.profileData = profileData;
+        const resultData = this.profileInfoRepository.save(profileInfoEntity);
+      } else {
+        updateInfo.profileData = profileData;
+        updateInfo.status = 'Submitted';
+        const resultData = this.profileInfoRepository.save(updateInfo);
+        if (!resultData)
+          throw new HttpException('saving submission failed', 500);
+      }
       const wfi = new CreateWorkflowInstanceDto();
       wfi.user = userInfo;
       const bp_service =
@@ -1877,9 +1886,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         await this.workflowService.intiateWorkflowInstance(wfi, userInfo);
       if (!workflowInstance)
         throw new HttpException('workflow initiation failed', 500);
-      const resultData = this.profileInfoRepository.save(updateInfo);
-      if (!resultData) throw new HttpException('saving submission failed', 500);
-
       const businessAreaEntity = new BusinessAreaEntity();
       businessAreaEntity.instanceId = workflowInstance.application.id;
       businessAreaEntity.category = 'Profile Update';
@@ -1888,9 +1894,10 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         workflowInstance.application.applicationNumber;
       businessAreaEntity.status = VendorStatusEnum.PENDING;
       businessAreaEntity.vendorId = result.id;
-      businessAreaEntity.priceRangeId = workflowInstance.application.id;
+      businessAreaEntity.priceRangeId = '892e1379-a66f-4c0b-8382-5b248840cae7';
       businessAreaEntity.status = 'Pending';
       const res = await this.businessAreaRepository.save(businessAreaEntity);
+      if (!res) throw new HttpException('failed to add business area', 500);
       return {
         applicationNumber: workflowInstance.application.applicationNumber,
         instanceNumber: workflowInstance.application.id,
@@ -1901,7 +1908,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       throw error;
     }
   }
-
   async finalSubmitVendorProfileUpdate(profileData: any, userInfo: any) {
     const vendorEntity = await this.vendorRepository.findOne({
       where: { userId: userInfo.id },
