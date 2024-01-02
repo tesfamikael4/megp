@@ -2,10 +2,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { Repository } from 'typeorm';
-import { Step, Workflow } from 'src/entities';
+import { Step } from 'src/entities';
 import { EntityCrudService } from 'src/shared/service';
-import { XMachineService } from './xMachine.service';
-import { createActor } from 'xstate';
 import { Instance } from 'src/entities/instance.entity';
 import { Activity } from 'src/entities/activity.entity';
 import { StateService } from './state.service';
@@ -81,10 +79,12 @@ export class InstanceService extends EntityCrudService<Instance> {
     }
   }
 
-  async findOne(id: any): Promise<Instance> {
+  async findOne(activityId: any, organizationId): Promise<Instance> {
     return await this.repositoryInstance.findOne({
-      where: { activityId: id },
-      relations: ['step'],
+      where: { activityId: activityId, organizationId: organizationId },
+      relations: {
+        step: true,
+      },
     });
   }
 }

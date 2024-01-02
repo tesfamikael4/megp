@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import {
   Ctx,
   EventPattern,
@@ -14,6 +14,7 @@ import {
   ExtraCrudOptions,
 } from 'src/shared/types/crud-option.type';
 import { StateService } from '../services/state.service';
+import { CurrentUser } from 'src/shared/authorization';
 
 const options: EntityCrudOptions = {};
 
@@ -24,6 +25,12 @@ export class InstanceController extends EntityCrudController<Instance>(
 ) {
   constructor(private readonly instanceService: InstanceService) {
     super(instanceService);
+  }
+
+  @Get(':id')
+  async findOne(@Param('id') id: string, @CurrentUser() user) {
+    const organizationId = user.organization.id;
+    return this.instanceService.findOne(id, organizationId);
   }
 
   @Post('initiate')

@@ -5,6 +5,7 @@ import {
   ManyToOne,
   JoinColumn,
   OneToOne,
+  OneToMany,
 } from 'typeorm';
 
 import { Activity } from './activity.entity';
@@ -33,8 +34,8 @@ export class Step extends OrgAudit {
   @JoinColumn({ name: 'activityId' })
   public activity: Activity;
 
-  @ManyToOne(() => Instance, (instance) => instance.step)
-  instance: Instance;
+  @OneToMany(() => Instance, (instance) => instance.step)
+  instances: Instance[];
 
   @Column({ type: 'jsonb' })
   approvers: approver[];
