@@ -31,13 +31,14 @@ import { SetVendorStatus } from '../dto/vendor.dto';
 import { CollectionQuery } from 'src/shared/collection-query';
 import { UpgradeInfoDTO, VendorUpgradeDto } from '../dto/vendor-upgrade.dto';
 import { MbrsDataDto } from '../dto/mbrsData.dto';
+import { userInfo } from 'os';
 @ApiBearerAuth()
 @Controller('vendor-registrations')
 @ApiTags('Vendor-registrations')
 @ApiResponse({ status: 500, description: 'Internal error' })
 @ApiExtraModels(DataResponseFormat)
 export class VendorRegistrationsController {
-  constructor(private readonly regService: VendorRegistrationsService) { }
+  constructor(private readonly regService: VendorRegistrationsService) {}
   @UseGuards(JwtGuard)
   @Get('get-isr-vendors')
   async getVendors() {
@@ -256,5 +257,13 @@ export class VendorRegistrationsController {
     @Param('licenseNumber') licenseNumber: string,
   ) {
     return await this.regService.GetFPPAData(tinNumber);
+  }
+  @UseGuards(JwtGuard)
+  @Get('get-my-all-invoices')
+  async getMyAllInvoices(
+    @Param('tinNumber') tinNumber: string,
+    @CurrentUser() userInfo: any,
+  ) {
+    return await this.regService.getMyAllInvoices(userInfo.id);
   }
 }
