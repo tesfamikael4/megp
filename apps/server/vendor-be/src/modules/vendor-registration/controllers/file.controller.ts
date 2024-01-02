@@ -172,10 +172,25 @@ export class UploadController {
     @Param('fileUploadName') fileUploadName: string,
     @Param('fileId') fileId: string,
     @CurrentUser() userInfo: any,
+    userId: string,
     @Res() res: Response,
   ) {
     try {
       return this.fileService.getFile(userInfo.id, fileId, fileUploadName, res);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @Get('get-file-bo/:documentType/:fileName/:userId')
+  async getfileBo(
+    @Param('documentType') documentType: string,
+    @Param('fileName') fileName: string,
+    @Param('userId') userId: string,
+    @Res() res: Response,
+  ) {
+    try {
+      return this.fileService.getFile(userId, fileName, documentType, res);
     } catch (error) {
       throw error;
     }
