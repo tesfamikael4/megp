@@ -130,32 +130,28 @@ const RegistrationForm = ({
 
   const onSubmit = (data: FormData) => {
     submitTrigger({
-      data: {
-        ...getValues(),
-        initial: {
-          ...vendorInfo,
-          status: 'Save',
-          level: 'ppda',
-        },
+      ...getValues(),
+      initial: {
+        ...vendorInfo,
+        status: 'Draft',
+        level: 'detail',
       },
     });
   };
   const onSaveAsDraft = () => {
     saveAsDraftTrigger({
-      data: {
-        ...getValues(),
-        initial: {
-          ...vendorInfo,
-          status: 'Draft',
-          level: 'detail',
-        },
+      ...getValues(),
+      initial: {
+        ...vendorInfo,
+        status: 'Draft',
+        level: 'detail',
       },
     });
   };
 
   useEffect(() => {
     if (submitRequestInfo.isSuccess && submitRequestInfo.data) {
-      NotificationService.successNotification('Form Submitted Successfully!');
+      NotificationService.successNotification('Form Updated Successfully!');
     }
     return () => {};
     // eslint-disable-next-line react-hooks/exhaustive-deps
