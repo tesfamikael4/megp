@@ -15,12 +15,14 @@ export default function TaskHandler({
   taskCheckLists,
   setIsPicked,
   requesterID,
+  requestType,
 }: {
   taskType: string | undefined;
   instanceID: string | undefined;
   taskCheckLists: any[];
   requesterID: string | undefined;
   setIsPicked: React.Dispatch<React.SetStateAction<boolean>>;
+  requestType: 'new' | 'renewal' | 'upgrade';
 }) {
   const [mutate] = useGoToNextStateMutation();
   const [loading, setLoading] = useState({});
@@ -118,7 +120,7 @@ export default function TaskHandler({
           <Button
             onClick={() => {
               handleButtonClick('ADJUST');
-              router.push('/new');
+              router.push(`/${requestType}`);
             }}
             className="bg-yellow-500 hover:bg-yellow-600"
             loading={loading['ADJUST']}
@@ -128,7 +130,7 @@ export default function TaskHandler({
           <Button
             onClick={() => {
               handleButtonClick('REJECT');
-              router.push('/new');
+              router.push(`/${requestType}`);
             }}
             className="bg-red-600 hover:bg-red-700"
             loading={loading['REJECT']}
@@ -149,7 +151,7 @@ export default function TaskHandler({
           <Button
             onClick={() => {
               handleButtonClick('NO');
-              router.push('/new');
+              router.push(`/${requestType}`);
             }}
             className="bg-red-600 hover:bg-red-700"
             loading={loading['NO']}

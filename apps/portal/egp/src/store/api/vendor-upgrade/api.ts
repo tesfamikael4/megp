@@ -13,13 +13,13 @@ export const vendorUpgradeApi = createApi({
   endpoints: (builder) => ({
     requestUpgradeInvoice: builder.query<any, any>({
       query: (data) => ({
-        url: `/vendor-registrations/generate-service-invoice-for-upgrade`,
+        url: `/invoices/generate-service-invoice-for-upgrade`,
         method: 'POST',
         body: data,
       }),
     }),
     getMyInvoice: builder.query<any, any>({
-      query: () => `/application-execution/get-my-upgrade-invoice`,
+      query: () => `/invoices/get-my-upgrade-invoice`,
     }),
     getMyApprovedServices: builder.query<any, any>({
       query: () => `/vendor-registrations/get-my-approved-services`,

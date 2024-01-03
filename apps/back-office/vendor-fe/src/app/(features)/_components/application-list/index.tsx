@@ -16,7 +16,7 @@ import {
   IconTag,
   IconClockHour2,
 } from '@tabler/icons-react';
-import { Section } from '@megp/core-fe';
+import { Section, logger } from '@megp/core-fe';
 import {
   useGetAllVendorRequestsQuery,
   useLazyGetAllVendorRequestsQuery,
@@ -49,6 +49,8 @@ export default function ApplicationList({
   const [getVendorRequest, { data }] = useLazyGetAllVendorRequestsQuery();
   const [page, setPage] = useState(1);
   const totalPages = calculateTotalPages(data?.total || 0, perPage);
+  const [where, setWhere] = useState<Where[]>([]);
+  logger.log(where);
 
   useEffect(() => {
     getVendorRequest({
@@ -68,53 +70,68 @@ export default function ApplicationList({
       collectionQuery: {
         skip: from,
         take: perPage,
+        // where: [where],
       },
     });
   }, [page, serviceKey]);
 
   const handleFilter = (filter) => {
+    setWhere([]);
     setPage(1);
-    const where: Where[] = [];
     if (filter.trackingNumber) {
-      where.push({
-        column: 'applicationNumber',
-        operator: '=',
-        value: filter.trackingNumber,
-      });
+      setWhere((prev: Where[]) => [
+        ...prev,
+        {
+          column: 'applicationNumber',
+          operator: '=',
+          value: filter.trackingNumber,
+        },
+      ]);
     }
-    if (filter.customerName) {
-      where.push({
-        column: 'name',
-        operator: 'ILIKE',
-        value: filter.customerName,
-      });
-    }
+    // if (filter.customerName) {
+    //   setWhere((prev: Where[]) => [...prev, {
+    //     column: 'customerName',
+    //     operator: 'ILIKE',
+    //     value: `%${filter.customerName}%`,
+    //   }]);
+    // }
     if (filter.status) {
-      where.push({
-        column: 'status',
-        operator: '=',
-        value: filter.status,
-      });
+      setWhere((prev: Where[]) => [
+        ...prev,
+        {
+          column: 'status',
+          operator: '=',
+          value: filter.status,
+        },
+      ]);
     }
     if (filter.from) {
-      where.push({
-        column: 'submittedAt',
-        operator: '<=',
-        value: filter.from,
-      });
-
+      setWhere((prev: Where[]) => [
+        ...prev,
+        {
+          column: 'submittedAt',
+          operator: '<=',
+          value: new Date(filter.from),
+        },
+      ]);
       if (filter.to) {
-        where.push({
-          column: 'submittedAt',
-          operator: '>=',
-          value: filter.to,
-        });
+        setWhere((prev: Where[]) => [
+          ...prev,
+          {
+            column: 'submittedAt',
+            operator: '>=',
+            value: new Date(filter.to),
+          },
+        ]);
       } else {
-        where.push({
-          column: 'submittedAt',
-          operator: '>=',
-          value: new Date(),
-        });
+        setWhere((prev: Where[]) => [
+          ...prev,
+          {
+            column: 'submittedAt',
+            operator: '>=',
+            value: new Date(),
+          },
+        ]);
       }
     }
 

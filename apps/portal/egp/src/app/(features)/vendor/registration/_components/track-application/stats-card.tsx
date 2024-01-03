@@ -12,8 +12,8 @@ const badgeColor: { [key: string]: string } = {
   Submitted: 'blue.7',
   Adjustment: 'yellow.6',
   Completed: 'green.8',
-  Pending: 'blue.7',
-  Approved: 'green.8',
+  Pending: 'blue.8',
+  Outdated: 'orange.8',
 };
 export const StatsListCard: React.FC<Props> = ({ data, view }) => {
   return (
