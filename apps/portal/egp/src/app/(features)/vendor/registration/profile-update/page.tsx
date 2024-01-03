@@ -46,11 +46,11 @@ export default function Page() {
         />
         {requestInfo.data && requestInfo.isSuccess ? (
           <RegistrationForm
-            vendorInfo={requestInfo.data.data.initial}
+            vendorInfo={requestInfo.data.initial}
             initialValues={{
-              ...requestInfo.data.data,
+              ...requestInfo.data,
               address:
-                requestInfo.data.data.address == null
+                requestInfo.data.address == null
                   ? {
                       postalAddress: '',
                       primaryEmail: '',
@@ -60,13 +60,13 @@ export default function Page() {
                       fax: '',
                       website: '',
                     }
-                  : requestInfo.data.data.address,
+                  : requestInfo.data.address,
               contactPersons:
-                requestInfo.data.data.contactPersons == null
+                requestInfo.data.contactPersons == null
                   ? []
-                  : requestInfo.data.data.contactPersons,
+                  : requestInfo.data.contactPersons,
               businessSizeAndOwnership:
-                requestInfo.data.data.businessSizeAndOwnership == null
+                requestInfo.data.businessSizeAndOwnership == null
                   ? {
                       registeredCapital: {
                         amount: '',
@@ -79,36 +79,38 @@ export default function Page() {
                       numberOfEmployees: '',
                       ownershipType: '',
                     }
-                  : requestInfo.data.data.businessSizeAndOwnership,
+                  : requestInfo.data.businessSizeAndOwnership,
               shareHolders:
-                requestInfo.data.data.shareHolders == null
+                requestInfo.data.shareHolders == null
                   ? []
-                  : requestInfo.data.data.shareHolders,
+                  : requestInfo.data.shareHolders,
               beneficialOwnership:
-                requestInfo.data.data.beneficialOwnership == null
+                requestInfo.data.beneficialOwnership == null
                   ? []
-                  : requestInfo.data.data.beneficialOwnership,
+                  : requestInfo.data.beneficialOwnership,
               bankAccountDetails:
-                requestInfo.data.data.bankAccountDetails == null
+                requestInfo.data.bankAccountDetails == null
                   ? []
-                  : requestInfo.data.data.bankAccountDetails,
+                  : requestInfo.data.bankAccountDetails,
               areasOfBusinessInterest:
-                requestInfo.data.data.areasOfBusinessInterest == null
+                requestInfo.data.areasOfBusinessInterest == null
                   ? []
-                  : requestInfo.data.data.areasOfBusinessInterest,
+                  : requestInfo.data.areasOfBusinessInterest,
               invoice:
-                requestInfo.data.data.invoice == null
+                requestInfo.data.invoice == null
                   ? []
-                  : requestInfo.data.data.invoice,
-              supportingDocuments: {
-                businessRegistration_IncorporationCertificate: '',
-                mRA_TPINCertificate: '',
-                generalReceipt_BankDepositSlip: '',
-                mRATaxClearanceCertificate: '',
-                previousPPDARegistrationCertificate: '',
-                mSMECertificate: '',
-              },
-              paymentReceipt: requestInfo.data.data.paymentReceipt,
+                  : requestInfo.data.invoice,
+              supportingDocuments: requestInfo.data.supportingDocuments
+                ? requestInfo.data.supportingDocuments
+                : {
+                    businessRegistration_IncorporationCertificate: '',
+                    mRA_TPINCertificate: '',
+                    generalReceipt_BankDepositSlip: '',
+                    mRATaxClearanceCertificate: '',
+                    previousPPDARegistrationCertificate: '',
+                    mSMECertificate: '',
+                  },
+              paymentReceipt: requestInfo.data.paymentReceipt,
             }}
           />
         ) : (
