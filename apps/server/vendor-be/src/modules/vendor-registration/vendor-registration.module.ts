@@ -51,6 +51,7 @@ import { HttpModule } from '@nestjs/axios';
 import { FileService } from './services/file.service';
 import { ServicePricingModule } from '../pricing/pricing.module';
 import { ProfileInfoEntity } from 'src/entities/profile-info.entity';
+import { InvoicesController } from './controllers/invoice.controller';
 
 @Module({
   imports: [
@@ -112,6 +113,7 @@ import { ProfileInfoEntity } from 'src/entities/profile-info.entity';
     BeneficialOwnershipController,
     AreasOfBusinessInterestController,
     BusinessAreaController,
+    InvoicesController
   ],
 })
-export class VendorRegistrationModule {}
+export class VendorRegistrationModule { }

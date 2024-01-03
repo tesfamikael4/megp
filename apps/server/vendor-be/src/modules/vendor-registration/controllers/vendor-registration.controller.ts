@@ -29,7 +29,6 @@ import {
 import { InsertAllDataDto } from '../dto/save-all.dto';
 import { SetVendorStatus } from '../dto/vendor.dto';
 import { CollectionQuery } from 'src/shared/collection-query';
-import { UpgradeInfoDTO, VendorUpgradeDto } from '../dto/vendor-upgrade.dto';
 import { MbrsDataDto } from '../dto/mbrsData.dto';
 import { userInfo } from 'os';
 @ApiBearerAuth()
@@ -147,39 +146,6 @@ export class VendorRegistrationsController {
   }
 
   @UseGuards(JwtGuard)
-  @Post('generate-service-invoice-for-renewal')
-  async generateServiceInvoiceForRenewal(
-    @CurrentUser() userInfo: any,
-    @Body() areaOfBusinessInterest: any,
-  ) {
-    return await this.regService.generateServiceInvoiceForRenewal(
-      userInfo,
-      areaOfBusinessInterest,
-    );
-  }
-  @UseGuards(JwtGuard)
-  @Post('submit-service-renewal')
-  async submitServiceRenewal(
-    @CurrentUser() userInfo: any,
-    @Body() areaOfBusinessInterest: any[],
-  ) {
-    return await this.regService.submitServiceRenewal(
-      userInfo,
-      areaOfBusinessInterest,
-    );
-  }
-  @UseGuards(JwtGuard)
-  @Post('generate-service-invoice-for-upgrade')
-  async generateServiceInvoiceForUpgrade(
-    @CurrentUser() userInfo: any,
-    @Body() areaOfBusinessInterest: UpgradeInfoDTO,
-  ) {
-    return await this.regService.getServiceInvoiceForUpgrade2(
-      userInfo,
-      areaOfBusinessInterest,
-    );
-  }
-  @UseGuards(JwtGuard)
   @Post('submit-service-upgrade')
   async submitServiceUpgrade(
     @CurrentUser() userInfo: any,
@@ -206,11 +172,7 @@ export class VendorRegistrationsController {
   async updateVendorProfile(@Body() data: InsertAllDataDto) {
     return await this.regService.updateVendorProfile(data.isrVendorId, data);
   }
-  @UseGuards(JwtGuard)
-  @Get('get-my-invoice')
-  async getMyInvoice(@CurrentUser() userInfo: any) {
-    return await this.regService.getMyInvoices(userInfo.id);
-  }
+
   @UseGuards(JwtGuard)
   @Get('get-all-business-area')
   async getAllBusinessAreasByUserId(@CurrentUser() userInfo: any) {
@@ -244,7 +206,6 @@ export class VendorRegistrationsController {
       userInfo,
     );
   }
-
   @UseGuards(JwtGuard)
   @Get('get-mbrs-data')
   async GetMBRSData(@Body() mbrsDataDto: MbrsDataDto) {
@@ -258,12 +219,5 @@ export class VendorRegistrationsController {
   ) {
     return await this.regService.GetFPPAData(tinNumber);
   }
-  @UseGuards(JwtGuard)
-  @Get('get-my-all-invoices')
-  async getMyAllInvoices(
-    @Param('tinNumber') tinNumber: string,
-    @CurrentUser() userInfo: any,
-  ) {
-    return await this.regService.getMyAllInvoices(userInfo.id);
-  }
 }
+

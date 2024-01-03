@@ -113,7 +113,6 @@ export class WorkflowInstanceResponse extends UpdateWorkflowInstanceDto {
   businessArea: BusinessAreaEntity
   static toResponse(entity: WorkflowInstanceEntity) {
     const response = new WorkflowInstanceResponse();
-    console.log("entit--", response)
     response.id = entity.id;
     response.bpId = entity.bpId;
     response.applicationNumber = entity.applicationNumber;

@@ -1,6 +1,9 @@
 import { InjectRepository } from '@nestjs/typeorm';
+import { BusinessAreaEntity } from 'src/entities';
 import { WorkflowInstanceEntity } from 'src/entities/workflow-instance.entity';
+import { BAEnum } from 'src/modules/vendor-registration/dto/business-area.enum';
 import { MoreThanOrEqual, Repository } from 'typeorm';
+import { ServiceKeyEnum } from '../dto/workflow-instance.enum';
 
 export class HandlingCommonService {
   constructor(
@@ -58,5 +61,44 @@ export class HandlingCommonService {
       const result = (startInTime - endInTime) / oneDay;
       return result.toFixed(0);
     }
+  }
+
+  async mapServiceType(
+    businessAreaData: BusinessAreaEntity,
+    operationType: string,
+  ) {
+    let key = '';
+    if (operationType == 'renewal') {
+      switch (businessAreaData.category) {
+        case BAEnum.goods:
+          key = ServiceKeyEnum.goodsRenewal;
+          break;
+        case BAEnum.works:
+          key = ServiceKeyEnum.worksRenewal;
+          break;
+        case BAEnum.services:
+          key = ServiceKeyEnum.servicesRenewal;
+          break;
+        default:
+          break;
+      }
+    } else if (operationType == 'upgrade') {
+      switch (businessAreaData.category) {
+        case BAEnum.goods:
+          key = ServiceKeyEnum.goodsUpgrade;
+          break;
+        case BAEnum.works:
+          key = ServiceKeyEnum.worksUpgrade;
+          break;
+        case BAEnum.services:
+          key = ServiceKeyEnum.servicesUpgrade;
+          break;
+
+        default:
+          break;
+      }
+    }
+
+    return key;
   }
 }
