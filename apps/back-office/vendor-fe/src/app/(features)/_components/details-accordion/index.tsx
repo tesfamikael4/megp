@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Accordion,
   Flex,
@@ -6,14 +6,18 @@ import {
   Text,
   Box,
   ScrollArea,
-  Paper,
-  Title,
-  Divider,
+  Button,
+  Modal,
 } from '@mantine/core';
 import classes from './accordion.module.scss';
 import tableClasses from './accordion.module.scss';
 import { IconChevronRight } from '@tabler/icons-react';
-import { Section } from '@megp/core-fe';
+import { Section, logger } from '@megp/core-fe';
+import { getCookie } from 'cookies-next';
+import { formatDateTimeFromString } from '../../util';
+import { useDisclosure } from '@mantine/hooks';
+import { renderTable } from '../../util/renderTable';
+import { addSpacesToCamelCase } from '../../util/addSpaceToCamelCase';
 
 const tabs = [
   {
@@ -74,11 +78,13 @@ const tabs = [
   },
 ];
 
-const filterColumns = {
+const formatColumns = {
   vendorAccounts: [
-    { name: 'accountHolderFullName', as: 'fullName' },
+    { name: 'accountHolderFullName', displayName: 'fullName' },
     { name: 'accountNumber' },
     { name: 'bankName' },
+    { name: 'branchName' },
+    { name: 'branchAddress' },
     { name: 'IBAN' },
     { name: 'isDefualt' },
   ],
@@ -88,90 +94,33 @@ const filterColumns = {
     { name: 'email' },
     { name: 'mobileNumber' },
   ],
+  businessAreas: [
+    { name: 'category' },
+    { name: 'priceFrom' },
+    { name: 'priceTo' },
+    { name: 'currency' },
+    { name: 'approvedAt', displayName: 'Approved On' },
+    { name: 'expireDate', displayName: 'Expiry Date' },
+    { name: 'certificateUrl', displayName: 'Certificate URL' },
+  ],
+  bankAccountDetails: [
+    { name: 'accountHolderFullName', displayName: 'fullName' },
+    { name: 'accountNumber' },
+    { name: 'bankName' },
+    { name: 'branchName' },
+    { name: 'branchAddress' },
+    { name: 'IBAN' },
+    { name: 'isDefualt' },
+  ],
 };
 
 const findATabNameByValue = (value) =>
   tabs.find((tab) => tab.tabValue === value);
 
-function renderTable(data, selected) {
-  if (data.length === 0) {
-    return null; // No data to display in the table
-  }
-  function isDate(value: any) {
-    const date = new Date(value);
-
-    if (typeof value !== 'string') return false;
-    return !isNaN(date.getDate());
-  }
-
-  const headers = Object.keys(data[0]);
-
-  return (
-    <Box className="overflow-x-auto">
-      <Table className={`w-max ${tableClasses}`}>
-        <Table.Thead className="w-fit">
-          <Table.Tr>
-            {filterColumns[selected]
-              ? filterColumns[selected].map(
-                  (header) =>
-                    header !== 'id' && (
-                      <Table.Th key={header.name} className="w-fit">
-                        {addSpacesToCamelCase(header.as || header.name)}
-                      </Table.Th>
-                    ),
-                )
-              : headers.map(
-                  (header) =>
-                    header !== 'id' && (
-                      <Table.Th key={header} className="w-fit">
-                        {addSpacesToCamelCase(header)}
-                      </Table.Th>
-                    ),
-                )}
-          </Table.Tr>
-        </Table.Thead>
-        <Table.Tbody>
-          {data.map((item, index) => (
-            <Table.Tr key={index}>
-              {(filterColumns[selected]
-                ? filterColumns[selected]
-                : headers
-              ).map((header) => {
-                if (typeof item[header?.name ?? header] === 'object') {
-                  renderTable(
-                    item[header?.name ?? header] ?? [],
-                    header?.name ?? header,
-                  );
-                  return null;
-                }
-                return (
-                  (header?.name ?? header) !== 'id' && (
-                    <Table.Td key={header?.name ?? header}>
-                      {isDate(item[header?.name ?? header])
-                        ? new Date(
-                            item[header?.name ?? header],
-                          ).toLocaleDateString()
-                        : typeof item[header?.name ?? header] == 'boolean'
-                        ? JSON.stringify(item[header?.name ?? header])
-                        : item[header?.name ?? header]}
-                    </Table.Td>
-                  )
-                );
-              })}
-            </Table.Tr>
-          ))}
-        </Table.Tbody>
-      </Table>
-    </Box>
-  );
-}
-function addSpacesToCamelCase(input: string): string {
-  const spacedString = input.replace(/([a-z])([A-Z])/g, '$1 $2');
-
-  return spacedString.charAt(0).toUpperCase() + spacedString.slice(1);
-}
 function FormPreview({ data }: { data: any }) {
   const [selected, setSelected] = useState<any>();
+  const [opened, { close, open }] = useDisclosure(false);
+  const [url, setUrl] = useState(null);
   return (
     <Flex gap={'lg'} className="overflow-hidden">
       <Section
@@ -209,46 +158,206 @@ function FormPreview({ data }: { data: any }) {
           </Accordion>
         </Box>
       </Section>
-      <ScrollArea className="w-full">
+      <ScrollArea className="w-full " h={700}>
         <Section
           collapsible={false}
           title={findATabNameByValue(selected)?.tabName || 'Company Details'}
-          className="w-full min-h-[500px]"
+          className="w-full min-h-[700px]"
         >
           {!selected ||
             (!data[selected] && (
               <Flex
                 align={'center'}
                 justify={'center'}
-                className="w-full min-h-[500px]"
+                className="w-full min-h-[700px]"
               >
                 <Text fw={700}>No data to display</Text>
               </Flex>
             ))}
+
           {selected &&
             data[selected] &&
-            Object.keys(data[selected]).map((fieldKey) => (
-              <>
-                <Box key={fieldKey}>
-                  {typeof data[selected][fieldKey] === 'string' &&
-                    data[selected][fieldKey] !== 'Id' && (
-                      <Flex className="gap-2 items-center lg:mb-2 text-md lg:text-lg">
-                        <Text fw={700} tt="capitalize">
-                          {addSpacesToCamelCase(fieldKey)}:
-                        </Text>
-                        <Text>{data[selected][fieldKey]}</Text>
-                      </Flex>
-                    )}
-                </Box>
-              </>
-            ))}
-          {selected &&
-            Array.isArray(data[selected]) &&
-            renderTable(data[selected], selected)}
+            (Array.isArray(data[selected])
+              ? renderTable(
+                  data[selected],
+                  formatColumns,
+                  selected,
+                  open,
+                  setUrl,
+                  data.userId,
+                )
+              : Object.keys(data[selected]).map((fieldKey) => {
+                  return selected === 'supportingDocuments' ||
+                    selected === 'certificate' ||
+                    (selected === 'paymentReceipt' &&
+                      fieldKey === 'attachment') ? (
+                    <Accordion
+                      variant="separated"
+                      // classNames={classes}
+                      styles={{}}
+                      key={fieldKey}
+                    >
+                      <Accordion.Item
+                        key={fieldKey ?? addSpacesToCamelCase(selected)}
+                        className={classes.item}
+                        value={
+                          addSpacesToCamelCase(fieldKey) ??
+                          addSpacesToCamelCase(selected)
+                        }
+                      >
+                        <Accordion.Control
+                          styles={{
+                            control: {
+                              border: 'none',
+                              borderBottom: '1px solid #E5E7EB',
+                            },
+                          }}
+                        >
+                          {addSpacesToCamelCase(fieldKey) ??
+                            addSpacesToCamelCase(selected)}
+                        </Accordion.Control>
+                        <Accordion.Panel>
+                          {data[selected][fieldKey] ? (
+                            <ShowFile
+                              url={`${
+                                process.env.NEXT_PUBLIC_VENDOR_API ??
+                                '/vendor/api/'
+                              }upload/get-file-bo/${
+                                selected === 'supportingDocuments'
+                                  ? 'SupportingDocument'
+                                  : selected === 'certificate'
+                                  ? 'Certificate'
+                                  : 'paymentReceipt'
+                              }/${data[selected][fieldKey]}/${data?.userId}`}
+                              filename={data[selected][fieldKey]}
+                            />
+                          ) : (
+                            <Box className="flex items-center h-20 w-full justify-center">
+                              No file uploaded
+                            </Box>
+                          )}
+                        </Accordion.Panel>
+                      </Accordion.Item>
+                    </Accordion>
+                  ) : (
+                    <>
+                      <Box key={fieldKey} className="gap-2 items-center">
+                        {typeof data[selected][fieldKey] === 'string' &&
+                          fieldKey !== 'transactionId' && (
+                            <Flex className="py-2 border-b px-1.5 ">
+                              <Text
+                                size="xs"
+                                fw={500}
+                                tt="capitalize"
+                                className="text-lg w-1/5 "
+                              >
+                                {addSpacesToCamelCase(fieldKey)}:
+                              </Text>
+                              <Text className="ml-2" size="sm" tt="capitalize">
+                                {data[selected][fieldKey]}
+                              </Text>
+                            </Flex>
+                          )}
+                      </Box>
+                    </>
+                  );
+                }))}
         </Section>
       </ScrollArea>
+      <Modal
+        opened={opened}
+        onClose={close}
+        size={'60%'}
+        centered
+        title={'Attachment'}
+      >
+        {url && <ShowFile url={url} filename={data[selected]} />}
+      </Modal>
     </Flex>
   );
 }
 
 export default FormPreview;
+
+export const ShowFile = ({
+  url,
+  filename,
+}: {
+  url: string;
+  filename: string;
+}) => {
+  const [pdfData, setPdfData] = useState<ArrayBuffer | null>(null); // Use null as initial state
+  const [fileContent, setFileContent] = useState<string | null>(null);
+
+  useEffect(() => {
+    const getFile = async () => {
+      try {
+        const token = getCookie('token');
+        const response = await fetch(url, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (!response.ok) {
+          throw new Error('Error fetching file');
+        }
+        const fileBlob = await response.blob();
+        const blobType = fileBlob.type;
+
+        // Check if the blob is an image or a PDF
+        if (blobType.includes('image')) {
+          const fileUrl = URL.createObjectURL(fileBlob);
+          setFileContent(fileUrl);
+        } else if (blobType.includes('octet-stream')) {
+          const arrayBuffer = await new Promise<ArrayBuffer>(
+            (resolve, reject) => {
+              const reader = new FileReader();
+              reader.onload = () => {
+                if (reader.result instanceof ArrayBuffer) {
+                  resolve(reader.result);
+                } else {
+                  reject(new Error('Failed to convert Blob to ArrayBuffer'));
+                }
+              };
+              reader.onerror = () => {
+                reject(new Error('Error reading Blob as ArrayBuffer'));
+              };
+              reader.readAsArrayBuffer(fileBlob);
+            },
+          );
+          setPdfData(arrayBuffer);
+        }
+      } catch (err) {
+        logger.log(err);
+      }
+    };
+
+    getFile();
+  }, [url]);
+
+  return (
+    <div
+      className="w-full h-full flex items-center justify-center"
+      style={{ height: '500px' }}
+    >
+      {pdfData ? (
+        <iframe
+          src={`data:application/pdf;base64,${Buffer.from(pdfData).toString(
+            'base64',
+          )}`}
+          width="100%"
+          height="100%"
+          title={filename}
+        />
+      ) : fileContent ? (
+        <img
+          src={fileContent}
+          alt={filename}
+          style={{ maxWidth: '100%', maxHeight: '100%' }}
+        />
+      ) : (
+        <p>Loading...</p>
+      )}
+    </div>
+  );
+};

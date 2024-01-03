@@ -1,14 +1,9 @@
 import React from 'react';
-import {
-  Accordion,
-  AccordionItem,
-  Flex,
-  Table,
-  Text,
-  Box,
-} from '@mantine/core';
+import { Accordion, Flex, Text, Box } from '@mantine/core';
 import classes from './accordion.module.scss';
-import tableClasses from './accordion.module.scss';
+import { ShowFile } from '@/app/(features)/_components/details-accordion';
+import { renderTable } from '@/app/(features)/util/renderTable';
+import { addSpacesToCamelCase } from '@/app/(features)/util/addSpaceToCamelCase';
 
 const tabs = [
   {
@@ -52,44 +47,39 @@ const tabs = [
     tabName: 'Business Areas',
   },
 ];
+const formatColumns = {
+  contactPersons: [
+    { name: 'firstName' },
+    { name: 'lastName' },
+    { name: 'email' },
+    { name: 'mobileNumber' },
+  ],
+  businessAreas: [
+    { name: 'category' },
+    { name: 'priceFrom' },
+    { name: 'priceTo' },
+    { name: 'currency' },
+    { name: 'approvedAt', displayName: 'Approved On' },
+    { name: 'expireDate', displayName: 'Expiry Date' },
+    { name: 'certificateUrl', displayName: 'Certificate URL' },
+  ],
+  bankAccountDetails: [
+    { name: 'accountHolderFullName', displayName: 'fullName' },
+    { name: 'accountNumber' },
+    { name: 'bankName' },
+    { name: 'branchName' },
+    { name: 'branchAddress' },
+    { name: 'IBAN' },
+    { name: 'isDefualt' },
+  ],
+  shareHolders: [
+    { name: 'firstName' },
+    { name: 'lastName' },
+    { name: 'nationality' },
+    { name: 'share' },
+  ],
+};
 
-function renderTable(data) {
-  if (data.length === 0) {
-    return null; // No data to display in the table
-  }
-
-  const headers = Object.keys(data[0]);
-
-  return (
-    <Box className="overflow-x-auto">
-      <Table className={`w-max ${tableClasses}`}>
-        <Table.Thead className="w-fit">
-          <Table.Tr>
-            {headers.map((header) => (
-              <Table.Th key={header} className="w-fit">
-                {addSpacesToCamelCase(header)}
-              </Table.Th>
-            ))}
-          </Table.Tr>
-        </Table.Thead>
-        <Table.Tbody>
-          {data.map((item, index) => (
-            <Table.Tr key={index}>
-              {headers.map((header) => (
-                <Table.Td key={header}>{item[header]}</Table.Td>
-              ))}
-            </Table.Tr>
-          ))}
-        </Table.Tbody>
-      </Table>
-    </Box>
-  );
-}
-function addSpacesToCamelCase(input: string): string {
-  const spacedString = input.replace(/([a-z])([A-Z])/g, '$1 $2');
-
-  return spacedString.charAt(0).toUpperCase() + spacedString.slice(1);
-}
 function FormPreview({ data }: { data: any }) {
   return (
     <Accordion variant="separated" classNames={classes}>
@@ -103,22 +93,95 @@ function FormPreview({ data }: { data: any }) {
               value={tabValue}
             >
               <Accordion.Control>{tabName}</Accordion.Control>
-              {Object.keys(data[tabValue]).map((fieldKey) => {
-                return (
-                  <Accordion.Panel key={fieldKey}>
-                    {typeof data[tabValue][fieldKey] === 'string' && (
-                      <Flex className="gap-2 items-center">
-                        <Text size="xs" fw={700} tt="capitalize">
-                          {addSpacesToCamelCase(fieldKey)}:
-                        </Text>
-                        <Text size="xs">{data[tabValue][fieldKey]}</Text>
-                      </Flex>
-                    )}
-                    {Array.isArray(data[tabValue]) &&
-                      renderTable(data[tabValue])}
-                  </Accordion.Panel>
-                );
-              })}
+              {Array.isArray(data[tabValue]) ? (
+                <Accordion.Panel key={tabValue} className="gap-2 items-center">
+                  {renderTable(data[tabValue], formatColumns, tabValue)}{' '}
+                </Accordion.Panel>
+              ) : (
+                Object.keys(data[tabValue]).map((fieldKey) => {
+                  return tabValue === 'supportingDocuments' ||
+                    tabValue === 'certificate' ||
+                    (tabValue === 'paymentReceipt' &&
+                      fieldKey === 'attachment') ? (
+                    <Accordion.Panel key={fieldKey} className="p-0">
+                      <Accordion
+                        styles={{
+                          content: {
+                            padding: 0,
+                          },
+                        }}
+                        key={fieldKey}
+                      >
+                        <Accordion.Item
+                          key={fieldKey ?? addSpacesToCamelCase(tabValue)}
+                          styles={{
+                            item: {
+                              borderBottom: '1px solid #E5E7EB',
+                              gap: '0rem',
+                            },
+                          }}
+                          value={
+                            addSpacesToCamelCase(fieldKey) ??
+                            addSpacesToCamelCase(tabValue)
+                          }
+                        >
+                          <Accordion.Control
+                            styles={{
+                              control: {
+                                border: 'none',
+                                borderBottom: '1px solid #E5E7EB',
+                              },
+                            }}
+                          >
+                            {addSpacesToCamelCase(fieldKey) ??
+                              addSpacesToCamelCase(tabValue)}
+                          </Accordion.Control>
+                          <Accordion.Panel>
+                            {data[tabValue][fieldKey] ? (
+                              <ShowFile
+                                url={`${
+                                  process.env.NEXT_PUBLIC_VENDOR_API ??
+                                  '/vendor/api/'
+                                }upload/get-file-bo/${
+                                  tabValue === 'supportingDocuments'
+                                    ? 'SupportingDocument'
+                                    : tabValue === 'certificate'
+                                    ? 'Certificate'
+                                    : 'paymentReceipt'
+                                }/${data[tabValue][fieldKey]}/${data?.userId}`}
+                                filename={data[tabValue][fieldKey]}
+                              />
+                            ) : (
+                              <Box className="flex items-center h-20 w-full justify-center">
+                                No file uploaded
+                              </Box>
+                            )}
+                          </Accordion.Panel>
+                        </Accordion.Item>
+                      </Accordion>
+                    </Accordion.Panel>
+                  ) : (
+                    <Accordion.Panel key={fieldKey} className="items-center">
+                      {typeof data[tabValue][fieldKey] === 'string' &&
+                        fieldKey !== 'transactionId' && (
+                          <Flex>
+                            <Text size="xs" fw={700} tt="capitalize">
+                              {addSpacesToCamelCase(fieldKey)}
+                            </Text>
+                            <Text
+                              className="ml-2"
+                              size="xs"
+                              fw={700}
+                              tt="capitalize"
+                            >
+                              {data[tabValue][fieldKey]}
+                            </Text>
+                          </Flex>
+                        )}
+                    </Accordion.Panel>
+                  );
+                })
+              )}
             </Accordion.Item>
           );
         }

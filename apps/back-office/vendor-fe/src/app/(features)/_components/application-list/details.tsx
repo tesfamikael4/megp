@@ -22,7 +22,11 @@ import { notifications } from '@mantine/notifications';
 import TaskDetails from '@/app/(features)/_components/task-details';
 import { formatDateTimeFromString, processCompanyName } from '../../util';
 
-export default function RequestDetail() {
+export default function RequestDetail({
+  requestType,
+}: {
+  requestType: 'new' | 'upgrade' | 'renewal';
+}) {
   const { instanceId } = useParams();
   const [isPicked, setIsPicked] = useState(false);
   const [taskType, setTaskType] = useState<string>();
@@ -188,6 +192,7 @@ export default function RequestDetail() {
                   taskCheckLists={response.data.task.taskCheckList}
                   setIsPicked={setIsPicked}
                   requesterID={response.data.requestorId}
+                  requestType={requestType}
                 />
               )}
             </Section>

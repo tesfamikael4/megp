@@ -39,7 +39,10 @@ function getUniqueColor(name: string): string {
 }
 
 //Date formatter
-export function formatDateTimeFromString(dateString: string): string | null {
+export function formatDateTimeFromString(
+  dateString: string,
+  withoutTime = false,
+): string | null {
   const date = new Date(dateString);
   if (isNaN(date.getTime())) {
     return null; // Invalid date string
@@ -73,5 +76,6 @@ export function formatDateTimeFromString(dateString: string): string | null {
     .toString()
     .padStart(2, '0')}${period}`;
 
-  return `${formattedDate} ${formattedTime}`;
+  if (!withoutTime) return `${formattedDate} ${formattedTime}`;
+  else return `${formattedDate}`;
 }
