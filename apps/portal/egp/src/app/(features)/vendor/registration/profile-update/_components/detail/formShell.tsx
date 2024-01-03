@@ -130,21 +130,25 @@ const RegistrationForm = ({
 
   const onSubmit = (data: FormData) => {
     submitTrigger({
-      ...getValues(),
-      initial: {
-        ...vendorInfo,
-        status: 'Save',
-        level: 'ppda',
+      data: {
+        ...getValues(),
+        initial: {
+          ...vendorInfo,
+          status: 'Save',
+          level: 'ppda',
+        },
       },
     });
   };
   const onSaveAsDraft = () => {
     saveAsDraftTrigger({
-      ...getValues(),
-      initial: {
-        ...vendorInfo,
-        status: 'Draft',
-        level: 'detail',
+      data: {
+        ...getValues(),
+        initial: {
+          ...vendorInfo,
+          status: 'Draft',
+          level: 'detail',
+        },
       },
     });
   };
