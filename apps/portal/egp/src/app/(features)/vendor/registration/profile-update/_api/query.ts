@@ -11,17 +11,14 @@ export const vendorRegistrationQuery = vendorRegistrationApi.injectEndpoints({
     getApproveVendorInfo: builder.query<GetApproveVendorInfoResponse, any>({
       query: () => `/vendor-registrations/get-vendor-information`,
     }),
-    saveAsDraftApproveVendorInfo: builder.mutation<any, AddFormRequestData>({
+    saveAsDraftApproveVendorInfo: builder.mutation<any, AddFormRequest>({
       query: (data) => ({
         url: '/vendor-registrations/add-vendor-update-information',
         method: 'POST',
         body: data,
       }),
     }),
-    updateSaveAsDraftApproveVendorInfo: builder.mutation<
-      any,
-      AddFormRequestData
-    >({
+    updateSaveAsDraftApproveVendorInfo: builder.mutation<any, AddFormRequest>({
       query: (data) => ({
         url: '/vendor-registrations/submit-vendor-update-information',
         method: 'POST',
