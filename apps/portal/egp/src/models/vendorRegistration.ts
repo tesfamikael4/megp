@@ -147,7 +147,9 @@ export interface GetVendorInfoResponse {
 export interface GetFormRequest {
   vendorId: string;
 }
-
+export interface GetApproveVendorInfoResponse {
+  data: GetFormResponse;
+}
 export interface GetFormResponse extends FormData {
   initial: {
     userId: string; //session

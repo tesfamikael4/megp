@@ -9,19 +9,20 @@ interface Props {
 }
 const badgeColor: { [key: string]: string } = {
   Rejected: 'red.6',
-  Submitted: 'green.8',
+  Submitted: 'blue.7',
   Adjustment: 'yellow.6',
   Completed: 'green.8',
-  Pending: 'blue.8',
+  Pending: 'blue.7',
+  Approved: 'green.8',
 };
 export const StatsListCard: React.FC<Props> = ({ data, view }) => {
   return (
-    <Paper shadow="xs" className={style.card}>
+    <Paper shadow="xs" withBorder className={style.card}>
       <Flex className="flex-col justify-between h-full">
         <Group justify="space-between" align="start">
           <Flex className="flex-col gap-3">
             <Badge size="xs" color={badgeColor[data.status]}>
-              <Text fw={500} fz={11}>
+              <Text fw={500} fz={10}>
                 {data.status}
               </Text>
             </Badge>
@@ -49,7 +50,11 @@ export const StatsListCard: React.FC<Props> = ({ data, view }) => {
         </Group>
         <Group justify="flex-end" align="start">
           <Flex className="flex-col items-center">
-            <Button variant="outline" onClick={() => view(data)}>
+            <Button
+              variant="outline"
+              onClick={() => view(data)}
+              disabled={data.status === 'Approved'}
+            >
               view
             </Button>
           </Flex>

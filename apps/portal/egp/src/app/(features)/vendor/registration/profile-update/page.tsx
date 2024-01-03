@@ -46,11 +46,11 @@ export default function Page() {
         />
         {requestInfo.data && requestInfo.isSuccess ? (
           <RegistrationForm
-            vendorInfo={requestInfo.data.initial}
+            vendorInfo={requestInfo.data.data.initial}
             initialValues={{
-              ...requestInfo.data,
+              ...requestInfo.data.data,
               address:
-                requestInfo.data.address == null
+                requestInfo.data.data.address == null
                   ? {
                       postalAddress: '',
                       primaryEmail: '',
@@ -60,13 +60,13 @@ export default function Page() {
                       fax: '',
                       website: '',
                     }
-                  : requestInfo.data.address,
+                  : requestInfo.data.data.address,
               contactPersons:
-                requestInfo.data.contactPersons == null
+                requestInfo.data.data.contactPersons == null
                   ? []
-                  : requestInfo.data.contactPersons,
+                  : requestInfo.data.data.contactPersons,
               businessSizeAndOwnership:
-                requestInfo.data.businessSizeAndOwnership == null
+                requestInfo.data.data.businessSizeAndOwnership == null
                   ? {
                       registeredCapital: {
                         amount: '',
@@ -79,27 +79,27 @@ export default function Page() {
                       numberOfEmployees: '',
                       ownershipType: '',
                     }
-                  : requestInfo.data.businessSizeAndOwnership,
+                  : requestInfo.data.data.businessSizeAndOwnership,
               shareHolders:
-                requestInfo.data.shareHolders == null
+                requestInfo.data.data.shareHolders == null
                   ? []
-                  : requestInfo.data.shareHolders,
+                  : requestInfo.data.data.shareHolders,
               beneficialOwnership:
-                requestInfo.data.beneficialOwnership == null
+                requestInfo.data.data.beneficialOwnership == null
                   ? []
-                  : requestInfo.data.beneficialOwnership,
+                  : requestInfo.data.data.beneficialOwnership,
               bankAccountDetails:
-                requestInfo.data.bankAccountDetails == null
+                requestInfo.data.data.bankAccountDetails == null
                   ? []
-                  : requestInfo.data.bankAccountDetails,
+                  : requestInfo.data.data.bankAccountDetails,
               areasOfBusinessInterest:
-                requestInfo.data.areasOfBusinessInterest == null
+                requestInfo.data.data.areasOfBusinessInterest == null
                   ? []
-                  : requestInfo.data.areasOfBusinessInterest,
+                  : requestInfo.data.data.areasOfBusinessInterest,
               invoice:
-                requestInfo.data.invoice == null
+                requestInfo.data.data.invoice == null
                   ? []
-                  : requestInfo.data.invoice,
+                  : requestInfo.data.data.invoice,
               supportingDocuments: {
                 businessRegistration_IncorporationCertificate: '',
                 mRA_TPINCertificate: '',
@@ -108,7 +108,7 @@ export default function Page() {
                 previousPPDARegistrationCertificate: '',
                 mSMECertificate: '',
               },
-              paymentReceipt: requestInfo.data.paymentReceipt,
+              paymentReceipt: requestInfo.data.data.paymentReceipt,
             }}
           />
         ) : (

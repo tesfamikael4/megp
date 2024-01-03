@@ -23,7 +23,6 @@ import { NotificationService } from '../../../../_components/notification';
 import classes from './accordion.module.scss';
 
 import { useTabs } from './accordion.data';
-import { useAddFormMutation } from '../../../../registration/_api/query';
 import {
   useSaveAsDraftApproveVendorInfoMutation,
   useUpdateSaveAsDraftApproveVendorInfoMutation,
@@ -131,25 +130,21 @@ const RegistrationForm = ({
 
   const onSubmit = (data: FormData) => {
     submitTrigger({
-      data: {
-        ...getValues(),
-        initial: {
-          ...vendorInfo,
-          status: 'Save',
-          level: 'ppda',
-        },
+      ...getValues(),
+      initial: {
+        ...vendorInfo,
+        status: 'Save',
+        level: 'ppda',
       },
     });
   };
   const onSaveAsDraft = () => {
     saveAsDraftTrigger({
-      data: {
-        ...getValues(),
-        initial: {
-          ...vendorInfo,
-          status: 'Draft',
-          level: 'detail',
-        },
+      ...getValues(),
+      initial: {
+        ...vendorInfo,
+        status: 'Draft',
+        level: 'detail',
       },
     });
   };
