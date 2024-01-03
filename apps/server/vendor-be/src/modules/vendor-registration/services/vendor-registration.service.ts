@@ -1366,24 +1366,17 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       const vendor: VendorsEntity = new VendorsEntity();
       vendor.id = isrVendorData.basic['id'];
       vendor.name = isrVendorData.basic['name'];
-
-      try {
-        const invoice = await this.invoiceService.generateInvoice(
-          priceRangeId,
-          vendor,
-          userInfo,
-        );
-        if (!invoice) throw new HttpException('invoice_creation_failed', 500);
-
-        response.push(invoice);
-      } catch (error) {
-        throw error;
-      }
+      const invoice = await this.invoiceService.generateInvoice(
+        priceRangeId,
+        vendor,
+        userInfo,
+      );
+      if (!invoice) throw new HttpException('invoice_creation_failed', 500);
+      return invoice;
     } catch (error) {
       console.log(error);
       throw error;
     }
-    return response;
   }
   async generateInvoiceForServiceUpgrade(
     userInfo: any,
@@ -1484,6 +1477,45 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     } catch (error) {
       console.log(error);
       throw error;
+    }
+  }
+  async generateServiceInvoiceForRenewal(userInfo: any, data: any) {
+    if (
+      data?.status.status == VendorStatusEnum.DRAFT &&
+      data?.status?.level == VendorStatusEnum.INFO
+    ) {
+      const businessArea = data.businessArea;
+      const response = [];
+      for (let index = 0; index < businessArea.length; index++) {
+        const businessareaData = await this.businessAreaRepository.findOne({
+          where: { id: businessArea[index] },
+          relations: { BpService: true, servicePrice: true },
+        });
+        if (!businessareaData)
+          throw new NotFoundException('businessarea data not found');
+        const key = await this.mapServiceType(businessareaData, 'renewal');
+        const renewalRange = await this.pricingService.findserviceByRangeAndKey(
+          key,
+          businessareaData.servicePrice.valueFrom,
+          businessareaData.servicePrice.valueTo,
+          businessareaData.category,
+        );
+        if (renewalRange.length > 1)
+          throw new NotFoundException('PriceRangeId with key not found');
+        if (!renewalRange[0].id)
+          throw new NotFoundException('PriceRangeId  not found');
+        const result = await this.generateInvoiceForServiceRenewal(
+          userInfo,
+          renewalRange[0].id,
+        );
+        if (!result) throw new NotFoundException('invoice generation failed');
+        response.push(result);
+      }
+      if (response.length == 0)
+        throw new HttpException('something is wrong on response', 500);
+      return response;
+    } else {
+      return 'Already generated';
     }
   }
   async getMyInvoices(userId: string) {
