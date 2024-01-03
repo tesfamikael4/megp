@@ -80,8 +80,17 @@ function Page() {
         'invoiceId',
         invoiceInfo.data?.items.map((i) => i.id).join(',') ?? '',
       );
-      if (invoiceInfo.data && invoiceInfo.data?.items[0]) {
-        setValue('transactionNumber', invoiceInfo.data?.items[0].id ?? '');
+      setValue(
+        'serviceId',
+        invoiceInfo.data?.paymentReceipt?.attachment === ''
+          ? 'null'
+          : invoiceInfo.data?.paymentReceipt?.attachment,
+      );
+      if (invoiceInfo.data && invoiceInfo.data?.paymentReceipt?.transactionId) {
+        setValue(
+          'transactionNumber',
+          invoiceInfo.data?.paymentReceipt.transactionId,
+        );
       }
     }
 
@@ -91,25 +100,24 @@ function Page() {
   useEffect(() => {
     if (
       invoiceInfo.data &&
-      invoiceInfo.data?.items &&
-      invoiceInfo.data?.items.length > 0
+      invoiceInfo.data?.paymentReceipt &&
+      invoiceInfo.data?.paymentReceipt.attachment
     ) {
-      invoiceInfo.data.items[0]?.attachment &&
-        setInvoiceSlipImageUrl(
-          `${VENDOR_URL}/upload/get-file/paymentReceipt/${invoiceInfo.data.items[0]?.attachment}`,
-        );
+      setInvoiceSlipImageUrl(
+        `${VENDOR_URL}/upload/get-file/paymentReceipt/${invoiceInfo.data?.paymentReceipt.attachment}`,
+      );
     }
 
     return () => {};
   }, [invoiceInfo.data]);
 
   useEffect(() => {
-    if (submitRequestInfo.data) {
+    if (submitRequestInfo.isSuccess) {
       NotificationService.successNotification('Payed Successfully!');
       router.push('/vendor/registration/track-applications');
     }
     return () => {};
-  }, [submitRequestInfo.data]);
+  }, [submitRequestInfo.isSuccess]);
 
   if (invoiceInfo.isLoading || submitRequestInfo.isLoading) {
     return (

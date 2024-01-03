@@ -1,19 +1,21 @@
 .root {
   @apply w-full p-6 min-h-screen bg-gray-100;
 }
-
+.cardWrapper {
+  @apply w-full p-6 min-h-screen bg-white;
+}
 .header {
-  @apply flex flex-col  gap-3 w-full;
+  @apply flex flex-col  gap-3 w-full border-b;
 }
 .headerTitle {
-  @apply w-full py-4;
+  @apply w-full py-2;
 }
 
 .main {
   @apply w-full p-2;
 }
 .mainGrid {
-  @apply w-full gap-4 flex;
+  @apply w-full gap-4 flex p-6;
 }
 .cardList {
   @apply w-full  grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3;

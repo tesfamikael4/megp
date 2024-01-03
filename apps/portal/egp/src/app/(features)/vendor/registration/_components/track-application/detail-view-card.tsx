@@ -30,7 +30,7 @@ const badgeColor: { [key: string]: string } = {
 const DetailViewCard: React.FC<Props> = ({ data, close }) => {
   const router = useRouter();
   return (
-    <Paper shadow="xs" className={styles.card}>
+    <Paper shadow="xs" withBorder className={styles.card}>
       <Box className={styles.cardHeader}>
         <Flex gap={'xs'}>
           <ActionIcon variant="transparent" onClick={close}>

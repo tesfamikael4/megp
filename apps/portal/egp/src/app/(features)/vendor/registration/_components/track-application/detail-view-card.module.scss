@@ -2,7 +2,7 @@
   @apply p-10;
 }
 .card {
-  @apply w-full p-0 border;
+  @apply w-full p-0;
   min-height: 450px;
   background-color: var(--mantine-color-body);
 }
