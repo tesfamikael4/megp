@@ -1824,32 +1824,26 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
 
   async getVendorInformation(userId: string) {
     try {
-      // const result = await this.vendorRepository.findOne({
-      //   relations: { ProfileInfo: true },
-      //   where: { userId: userId, ProfileInfo: { status:} }
-      // })
       const status = 'Active';
-      const result = await this.vendorRepository
-        .createQueryBuilder('vendor')
-        .leftJoinAndSelect('vendor.ProfileInfo', 'profileInfo')
-        .where('vendor.userId = :userId AND profileInfo.status = :status', {
-          userId,
-          status,
-        })
-        .getOne();
-      if (Object.keys(result.ProfileInfo).length === 0) {
+      const vednor = await this.vendorRepository.findOne({
+        where: { userId: userId },
+      });
+      if (!vednor) throw new NotFoundException('vendor not found');
+      const result = await this.profileInfoRepository.findOne({
+        where: { vendorId: vednor.id, status: 'Active' },
+      });
+
+      if (result == null) {
         const vendorEntity = await this.isrVendorsRepository.findOne({
           where: {
             userId: userId,
             status: In(['Approved']),
           },
         });
+        if (!vendorEntity) throw new NotFoundException('vendor not found');
         return vendorEntity;
       } else {
-        const vendorInfo = await this.profileInfoRepository.findOne({
-          where: { vendorId: result.id, status: 'Active' },
-        });
-        return vendorInfo.profileData;
+        return result.profileData;
       }
     } catch (error) {
       console.log(error);
@@ -1864,10 +1858,10 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       if (!result) throw new NotFoundException('vendor not found ');
 
       const updateInfo = await this.profileInfoRepository.findOne({
-        where: { vendorId: result.id, status: VendorStatusEnum.ACTIVE },
+        where: { vendorId: result.id, status: 'Active' },
       });
       let resultData = null;
-      if (!updateInfo) {
+      if (updateInfo == null) {
         const profileInfoEntity = new ProfileInfoEntity();
         profileInfoEntity.vendorId = result?.id;
         profileInfoEntity.status = 'Active';
@@ -1876,7 +1870,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       } else {
         updateInfo.profileData = profileData;
         resultData = await this.profileInfoRepository.save(updateInfo);
-        console.log(resultData);
       }
       return resultData;
     } catch (error) {
@@ -1893,7 +1886,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       const updateInfo = await this.profileInfoRepository.findOne({
         where: { vendorId: result.id, status: VendorStatusEnum.ACTIVE },
       });
-      if (!updateInfo) {
+      if (updateInfo == null) {
         const profileInfoEntity = new ProfileInfoEntity();
         profileInfoEntity.vendorId = result?.id;
         profileInfoEntity.status = 'Submitted';
