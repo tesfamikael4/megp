@@ -46,7 +46,6 @@ export class ApplicationExcutionController {
     private readonly executeService: ApplicationExcutionService,
     private readonly workflowService: WorkflowService,
     private readonly bpService: BusinessProcessService,
-    private readonly invoiceService: InvoiceService,
     private readonly vendorService: VendorRegistrationsService,
   ) { }
   @UseGuards(JwtGuard)
@@ -86,7 +85,6 @@ export class ApplicationExcutionController {
     }
     return intances;
   }
-
   @UseGuards(JwtGuard)
   @Post('goto-next-step')
   @ApiOkResponse({ type: WorkflowInstanceResponse })
@@ -160,31 +158,7 @@ export class ApplicationExcutionController {
     const result = await this.workflowService.getActivities(instanceId);
     return result;
   }
-  @UseGuards(JwtGuard)
-  @Get('get-invoices')
-  @ApiQuery({
-    name: 'q',
-    type: String,
-    required: false,
-  })
-  @ApiPaginatedResponse(InvoiceResponseDto)
-  async fetchInvoices(@Query('q') q: string) {
-    const query = decodeCollectionQuery(q);
-    return await this.invoiceService.getInvoices(query);
-  }
-  @UseGuards(JwtGuard)
-  @Get('get-invoice/:id')
-  @ApiOkResponse({ type: InvoiceResponseDto })
-  async getInvoice(@Param('id') id: string) {
-    return await this.invoiceService.getInvoice(id);
-  }
-  @UseGuards(JwtGuard)
-  @Get('get-my-upgrade-invoice')
-  @ApiOkResponse({ type: InvoiceResponseDto })
-  async getMyInvoice(@CurrentUser() user: any) {
-    const serviceType = [ServiceKeyEnum.goodsUpgrade, ServiceKeyEnum.servicesUpgrade, ServiceKeyEnum.worksUpgrade]
-    return await this.invoiceService.getMyActiveInvoices(user.id, serviceType);
-  }
+
 
   @UseGuards(JwtGuard)
   @Get('get-my-business-areas')

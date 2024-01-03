@@ -10,6 +10,7 @@ import {
 import { ServicePrice } from '../../../entities/service-price.entity';
 import { EntityCrudService } from 'src/shared/service';
 import { ServiceKeyEnum } from 'src/modules/handling/dto/workflow-instance.enum';
+import { BusinessAreaEntity } from 'src/entities';
 
 @Injectable()
 export class ServicePricingService extends EntityCrudService<ServicePrice> {
@@ -88,4 +89,19 @@ export class ServicePricingService extends EntityCrudService<ServicePrice> {
       },
     });
   }
+  async getRenewalPrice(businessArea: BusinessAreaEntity, oprationType: string) {
+    return this.pricingRepository.findOne({
+      relations: { service: true },
+      where:
+      {
+        businessArea: ILike(businessArea.category),
+        valueFrom: businessArea.servicePrice.valueFrom,
+        valueTo: businessArea.servicePrice.valueTo,
+        service: { key: oprationType }
+
+      },
+
+    })
+  }
+
 }

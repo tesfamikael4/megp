@@ -1,13 +1,15 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   BpServiceEntity,
   BusinessAreaEntity,
+  BusinessProcessEntity,
   InvoiceEntity,
+  IsrVendorsEntity,
   ServicePrice,
   VendorsEntity,
 } from 'src/entities';
-import { ServiceKeyEnum } from 'src/modules/handling/dto/workflow-instance.enum';
+import { WorkflowInstanceEnum } from 'src/modules/handling/dto/workflow-instance.enum';
 import { ServicePricingService } from 'src/modules/pricing/services/service-pricing.service';
 import { DataResponseFormat } from 'src/shared/api-data';
 import { EntityCrudService } from 'src/shared/service';
@@ -16,67 +18,29 @@ import { InvoiceResponseDto } from '../dto/invoice.dto';
 import { CollectionQuery, QueryConstructor } from 'src/shared/collection-query';
 import { HandlingCommonService } from 'src/modules/handling/services/handling-common-services';
 import { BusinessAreaService } from './business-area.service';
+import { UpgradeInfoDTO } from '../dto/vendor-upgrade.dto';
+import { BusinessProcessService } from 'src/modules/bpm/services/business-process.service';
 
 @Injectable()
 export class InvoiceService extends EntityCrudService<InvoiceEntity> {
   constructor(
     @InjectRepository(InvoiceEntity)
     private readonly invoiceRepository: Repository<InvoiceEntity>,
+    @InjectRepository(IsrVendorsEntity)
+    private readonly isrVendorsRepository: Repository<IsrVendorsEntity>,
+    @InjectRepository(VendorsEntity)
+    private readonly vendorsRepository: Repository<VendorsEntity>,
+    @InjectRepository(BusinessAreaEntity)
+    private readonly businessAreaRepository: Repository<BusinessAreaEntity>,
     private readonly pricingService: ServicePricingService,
     private readonly commonService: HandlingCommonService,
     private readonly baService: BusinessAreaService,
+    private readonly bpService: BusinessProcessService,
+
   ) {
     super(invoiceRepository);
   }
 
-  async generateInvoice2(
-    currentPriceRange: string,
-    vendor: VendorsEntity,
-    businessArea: BusinessAreaEntity,
-    user: any,
-  ): Promise<boolean> {
-    const curruntPricing =
-      await this.pricingService.findPricingWithServiceById(currentPriceRange);
-
-    if (!curruntPricing) {
-      throw new NotFoundException('Not Found, please set the price range');
-    }
-    const invoice = new InvoiceEntity();
-    const service = curruntPricing.service;
-    //if th service is upgrade
-
-    if (service.key == ServiceKeyEnum.upgrade) {
-      const baServicePrice = await this.baService.getBusinessAreaWithPrice(
-        businessArea.id,
-      );
-      invoice.amount = this.computingPaymentForUpgrade(
-        baServicePrice,
-        curruntPricing,
-      );
-    } else {
-      invoice.amount = curruntPricing.fee;
-    }
-    invoice.businessAreaId = null; //result.instanceId;
-    invoice.taskName = null; //result.task.name;
-    invoice.taskId = null; //result.task.id;
-    invoice.payToAccName =
-      'Public Procurement and Disposal of Assets Authority';
-    invoice.payToAccNo = '000 100 562 4416';
-    invoice.payToBank = 'National Bank of Malawi';
-    invoice.pricingId = curruntPricing.id;
-    //invoice.applicationNo = result.workflowInstance.applicationNumber;
-    //  const basicObject: any = JSON.parse(JSON.stringify(vendor.basic));
-    invoice.payerName = vendor.name;
-    invoice.userId = user.id;
-    invoice.serviceId = curruntPricing.service.id;
-    invoice.serviceName = service.name;
-    invoice.remark = curruntPricing.businessArea + ' ,' + service.description;
-    invoice.paymentStatus = 'Pending';
-    invoice.createdOn = new Date();
-    const response = await this.invoiceRepository.save(invoice);
-    if (response) return true;
-    return false;
-  }
   async generateInvoice(
     currentPriceRange: string,
     vendor: VendorsEntity,
@@ -100,6 +64,23 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     if (response) return true;
     return false;
   }
+  async generateInvoiceForRenewal(
+    curruntPricing: ServicePrice,
+    vendor: any,
+    user: any,
+  ): Promise<boolean> {
+
+    const invoice: InvoiceEntity = this.mapInvoice(
+      curruntPricing,
+      vendor,
+      curruntPricing.service,
+      user,
+    );
+    const response = await this.invoiceRepository.save(invoice);
+    if (response) return true;
+    return false;
+  }
+
   async generateInvoiceForUpgrade(
     currentPriceRange: string,
     vendor: any,
@@ -126,6 +107,8 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     if (response) return true;
     return false;
   }
+
+
   computingPaymentForUpgrade(
     ba: BusinessAreaEntity,
     curruntPricing: ServicePrice,
@@ -149,6 +132,9 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
       }
     }
   }
+
+
+
 
   async getInvoices(
     query: CollectionQuery,
@@ -232,7 +218,7 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     );
     return response;
   }
-
+  ////updated invoice
   async getMyActiveInvoices(
     userId: string,
     serviceTypes: string[],
@@ -257,6 +243,168 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     );
     return response;
   }
+
+  async generateRenewalInvoice(businessAreaIds: string[], user: any,) {
+    let isInvoiceExist = false;
+    try {
+      const keys = [];
+      const businessAreas = businessAreaIds;
+      const businessareasData = await this.businessAreaRepository.find({
+        where: { id: In(businessAreas), status: WorkflowInstanceEnum.Approved },
+        relations: { BpService: true, servicePrice: true },
+      });
+      const baInstanceIds: string[] = businessareasData.map((row) => row.instanceId);
+      const busnessAreasNew = await this.businessAreaRepository.find({
+        where: {
+          status: 'Pending',
+          instanceId: In(baInstanceIds),
+          invoice: { userId: user.id },
+        },
+        relations: { BpService: true, servicePrice: true, invoice: true },
+      });
+
+      for (const ba of businessareasData) {
+        const serviceKey: string = await this.commonService.mapServiceType(ba, 'renewal')
+        keys.push(serviceKey);
+        const price = await this.pricingService.getRenewalPrice(ba, serviceKey);
+        if (busnessAreasNew.length > 0) {
+          for (const row of busnessAreasNew) {
+            if (row.instanceId == ba.instanceId) {
+              isInvoiceExist = true;
+              break;
+            }
+          }
+        }
+        if (isInvoiceExist) {
+          continue;
+        }
+        const bp: BusinessProcessEntity =
+          await this.bpService.findBpWithServiceByKey(serviceKey);
+        const vendor = await this.vendorsRepository.findOne({
+          where: { id: ba.vendorId },
+        });
+
+        const invoice: InvoiceEntity = this.mapInvoice(
+          price,
+          vendor,
+          price.service,
+          user,
+        );
+
+        const business: BusinessAreaEntity = new BusinessAreaEntity();
+        business.serviceId = bp.serviceId;
+        business.priceRangeId = price.id;
+        business.status = 'Pending';
+        business.businessAreaState = ba.businessAreaState;
+        business.instanceId = ba.instanceId;
+        business.vendorId = ba.vendorId;
+        business.category = ba.category;
+        const result = await this.baService.create(business);
+        if (result) {
+          invoice.businessAreaId = result.id;
+          await this.invoiceRepository.save(invoice);
+        }
+      }
+      const response = { messaage: 'Invoice Created', state: 'success' };
+      return response;
+    }
+    catch (error) {
+      console.log(error);
+      throw new HttpException(error, 400);
+    }
+  }
+
+
+  async generateUpgradeInvoice(businessArea: UpgradeInfoDTO, user: any,) {
+    try {
+      const keys = [];
+      const newBAIds = [];
+      for (let index = 0; index < businessArea.upgrades.length; index++) {
+        const ba = businessArea.upgrades[index];
+        const bAId = ba.id;
+        const newPricingId = ba.pricingId;
+        const businessareaData = await this.businessAreaRepository.findOne({
+          where: { id: bAId, status: WorkflowInstanceEnum.Approved },
+          relations: { BpService: true, servicePrice: true },
+        });
+        const businessAreaNew = await this.businessAreaRepository.findOne({
+          where: {
+            status: 'Pending',
+            instanceId: businessareaData?.instanceId,
+            invoice: { userId: user.id },
+          },
+          relations: { BpService: true, servicePrice: true, invoice: true },
+        });
+
+        if (businessAreaNew) {
+          if (businessAreaNew.priceRangeId == businessareaData.priceRangeId) {
+            newBAIds.push(businessAreaNew.id);
+            continue;
+          } else {
+            const invoiceId = businessAreaNew.invoice.id;
+            await this.invoiceRepository.delete(invoiceId);
+          }
+        }
+        const key = await this.commonService.mapServiceType(businessareaData, 'upgrade');
+        keys.push(key);
+        const CurrentpricingData =
+          await this.pricingService.findPricingWithServiceById(newPricingId);
+        const upgradePayment = this.computingPaymentForUpgrade(
+          businessareaData,
+          CurrentpricingData,
+        );
+        const bp: BusinessProcessEntity =
+          await this.bpService.findBpWithServiceByKey(key);
+        const vendor = await this.vendorsRepository.findOne({
+          where: { id: businessareaData.vendorId },
+        });
+        const invoice: InvoiceEntity = this.mapInvoice(
+          CurrentpricingData,
+          vendor,
+          bp.service,
+          user,
+        );
+
+        invoice.amount = upgradePayment;
+        invoice.businessAreaId = ba.id;
+        const business: BusinessAreaEntity = new BusinessAreaEntity();
+        business.serviceId = bp.serviceId;
+        business.priceRangeId = newPricingId;
+        business.status = 'Pending';
+        businessArea.BusinessAreaStatus.level =
+          businessArea.BusinessAreaStatus.level = 'Payment';
+        business.businessAreaState = businessArea.BusinessAreaStatus;
+        business.instanceId = businessareaData.instanceId;
+        business.vendorId = businessareaData.vendorId;
+        business.category = businessareaData.category;
+        business.expireDate = businessareaData.expireDate;
+        const result = await this.baService.create(business);
+        if (result) {
+          newBAIds.push(result.id);
+          invoice.businessAreaId = result.id;
+          await this.invoiceRepository.create(invoice);
+        }
+      }
+      const invoices = await this.baService.getBusinessAreaWithPendingInvoice(
+        newBAIds,
+        keys,
+        user
+      );
+      const response = new DataResponseFormat<InvoiceResponseDto>();
+      response.items = invoices.map((entity) => {
+        const response = InvoiceResponseDto.toResponse(entity.invoice);
+        response.serviceId = entity?.serviceId;
+        response.pricingId = entity?.priceRangeId;
+        response.category = entity?.category;
+        return response;
+      });
+      response.total = response.items.length;
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   mapInvoice(
     curruntPricing: ServicePrice,
     vendor: VendorsEntity,
