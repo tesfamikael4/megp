@@ -22,7 +22,7 @@ export default function TaskHandler({
   taskCheckLists: any[];
   requesterID: string | undefined;
   setIsPicked: React.Dispatch<React.SetStateAction<boolean>>;
-  requestType: 'new' | 'renewal' | 'upgrade';
+  requestType: 'new' | 'renewal' | 'upgrade' | 'update';
 }) {
   const [mutate] = useGoToNextStateMutation();
   const [loading, setLoading] = useState({});
@@ -32,7 +32,7 @@ export default function TaskHandler({
   >({});
   const router = useRouter();
 
-  const handleButtonClick = (action) => {
+  const handleButtonClick = async (action) => {
     const selectedItems: Record<string, boolean> = {};
 
     taskCheckLists?.forEach((checkListItem) => {
@@ -49,15 +49,48 @@ export default function TaskHandler({
     };
     setLoadingState(action, true);
 
-    mutate(requestData).then(() => {
+    try {
+      await mutate(requestData)
+        .unwrap()
+        .then((value) => {
+          if (value) {
+            if (value?.status === 'Completed') {
+              notifications.show({
+                title: 'Success',
+                message: 'Task has been completed',
+                color: 'green',
+              });
+              setIsPicked(false);
+              router.push(
+                `/${requestType === 'update' ? 'info-change' : requestType}`,
+              );
+            } else {
+              notifications.show({
+                title: 'Success',
+                message: 'Task has been updated',
+                color: 'green',
+              });
+              router.refresh();
+            }
+            setIsPicked(false);
+          } else {
+            notifications.show({
+              title: 'Success',
+              message: 'Task has been completed',
+              color: 'green',
+            });
+            setIsPicked(false);
+          }
+          setLoadingState(action, false);
+        });
+    } catch (error) {
+      setLoadingState(action, false);
       notifications.show({
-        title: 'Success',
-        message: 'Task has been updated.',
-        color: 'green',
+        title: 'Error',
+        message: 'Something went wrong',
+        color: 'red',
       });
-      setIsPicked(false);
-      router.refresh();
-    });
+    }
   };
 
   const handleCheckboxChange = (itemId) => {
@@ -120,7 +153,9 @@ export default function TaskHandler({
           <Button
             onClick={() => {
               handleButtonClick('ADJUST');
-              router.push(`/${requestType}`);
+              router.push(
+                `/${requestType === 'update' ? 'info-change' : requestType}`,
+              );
             }}
             className="bg-yellow-500 hover:bg-yellow-600"
             loading={loading['ADJUST']}
@@ -130,7 +165,9 @@ export default function TaskHandler({
           <Button
             onClick={() => {
               handleButtonClick('REJECT');
-              router.push(`/${requestType}`);
+              router.push(
+                `/${requestType === 'update' ? 'info-change' : requestType}`,
+              );
             }}
             className="bg-red-600 hover:bg-red-700"
             loading={loading['REJECT']}

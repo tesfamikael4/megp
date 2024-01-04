@@ -14,12 +14,11 @@ import {
 
 export const Menu: MenuItem[] = [
   {
-    label: 'Applications',
+    label: 'Vendors',
     icon: IconBuildingStore,
     links: [
       { label: 'Approved Vendors', link: '/vendors/approved' },
       { label: 'Debarred Vendors', link: '/vendors/debarred' },
-      { label: 'Rejected Application', link: '/vendors/rejected' },
     ],
   },
   {
@@ -32,6 +31,11 @@ export const Menu: MenuItem[] = [
   { label: 'Information Change', icon: IconHomeStar, link: '/info-change' },
   { label: 'Payment', icon: IconReportMoney, link: '/payment' },
   { label: 'Debarment', icon: IconHomeCancel, link: '/debarment' },
+  {
+    label: 'Rejected Application',
+    icon: IconFileSettings,
+    link: '/vendors/rejected',
+  },
   {
     label: 'Preferential Services',
     icon: IconFileSettings,

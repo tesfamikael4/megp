@@ -99,11 +99,15 @@ export default function RequestsSidebar({
         <Button
           onClick={() => handleFilter(filter)}
           disabled={disabled}
-          bg={'blue'}
+          className="bg-primary-900"
         >
           Filter
         </Button>
-        <Button onClick={() => handleReset()} disabled={disabled} bg={'red'}>
+        <Button
+          onClick={() => handleReset()}
+          disabled={disabled}
+          className="bg-red-700"
+        >
           Clear
         </Button>
       </Box>
