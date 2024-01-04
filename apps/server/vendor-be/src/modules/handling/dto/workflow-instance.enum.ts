@@ -11,6 +11,7 @@ export enum ServiceKeyEnum {
   new = 'new',
   upgrade = 'upgrade',
   renewal = 'renewal',
+  update = 'update',
   goodsNewRegistration = 'GoodsNewRegistration',
   servicesNewRegistration = 'ServicesNewRegistration',
   worksNewRegistration = 'WorksNewRegistration',

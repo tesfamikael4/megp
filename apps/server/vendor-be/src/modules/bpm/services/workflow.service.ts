@@ -102,7 +102,6 @@ export class WorkflowService {
     taskHandler.currentState = init;
     taskHandler.instanceId = wfinstance.id;
     taskHandler.taskId = task.id;
-
     taskHandler.data = { ...dto.data };
     try {
       const insertedTaskHandler =
@@ -116,6 +115,7 @@ export class WorkflowService {
       const nextCommand = new GotoNextStateDto();
       nextCommand.instanceId = wfinstance.id;
       nextCommand.action = 'ISR';
+      nextCommand.data = { ...dto?.data }
       await this.gotoNextStep(nextCommand, user);
     }
     return response;
@@ -187,13 +187,12 @@ export class WorkflowService {
           workflowInstance,
           user,
         );
-        console.log('curruntTask', curruntTask);
 
         if (!status) {
           throw new BadRequestException('Something went wrong');
         }
         const lastExecutedTask = await this.getPrviousHandler(
-          workflowInstance.id,
+          workflowInstance.id
         );
         const data = { remark: nextCommand.remark, ...nextCommand.data };
         currentTaskHandler.data = data;
@@ -277,20 +276,7 @@ export class WorkflowService {
     return activities;
   }
 
-  private async saveWorkflowInstance(
-    instanceEntity: WorkflowInstanceEntity,
-  ): Promise<WorkflowInstanceEntity> {
-    let wfinstance = new WorkflowInstanceEntity();
-    try {
-      instanceEntity.applicationNumber =
-        await this.commonService.generateApplicationNumber('PPDA', 'GNR');
-      wfinstance = await this.workflowInstanceRepository.save(instanceEntity);
-    } catch (error) {
-      await this.saveWorkflowInstance(instanceEntity);
-      console.log(error);
-    }
-    return wfinstance;
-  }
+
   private async getPrviousHandler(
     instanceId: string,
   ): Promise<TaskTrackerEntity> {
@@ -344,26 +330,6 @@ export class WorkflowService {
     return true;
   }
 
-  async delete(id: string): Promise<any> {
-    const workflowInstance = await this.workflowInstanceRepository.findOne({
-      where: { id: id },
-    });
-    if (!workflowInstance)
-      throw new NotFoundException('WorkflowInstance not found');
-    return await this.workflowInstanceRepository.delete(id);
-  }
-  async addTaskHandler(
-    dto: CreateTaskHandlerDto,
-  ): Promise<TaskHandlerResponse> {
-    const workflowInstance = await this.workflowInstanceRepository.findOne({
-      where: { id: dto.instanceId },
-    });
-    if (!workflowInstance)
-      throw new NotFoundException('WorkflowInstance not found');
-    const handler = CreateTaskHandlerDto.fromDto(dto);
-    const result = await this.handlerRepository.save(handler);
-    return TaskHandlerResponse.toResponse(result);
-  }
   async addTaskTracker(
     currentTaskHandlerCopy: TaskHandlerEntity,
     nextCommand: GotoNextStateDto,
@@ -412,13 +378,18 @@ export class WorkflowService {
       category: '',
     };
     console.log("payload", payload);
-    const result = await this.vendorRegService.updateVendor(payload);
+    try {
+      const result = await this.vendorRegService.updateVendor(payload);
 
-    if (result) {
-      return true;
-    } else {
-      return false;
+      if (result) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      throw error;
     }
+
     /*
         const vendor_url = process.env.VENDOR_API ?? '/vendors/api/';
         url = vendor_url + '/vendor-registrations/update-vendor-services';

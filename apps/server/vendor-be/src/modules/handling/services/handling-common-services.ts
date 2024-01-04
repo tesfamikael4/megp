@@ -101,4 +101,33 @@ export class HandlingCommonService {
 
     return key;
   }
+  getServiceCatagoryKeys(serviceKey: string): string[] {
+    let keys = [];
+
+    if (serviceKey === ServiceKeyEnum.new) {
+      keys = [
+        ServiceKeyEnum.goodsNewRegistration,
+        ServiceKeyEnum.servicesNewRegistration,
+        ServiceKeyEnum.worksNewRegistration,
+
+      ];
+    } else if (serviceKey == ServiceKeyEnum.upgrade) {
+      keys = [
+        ServiceKeyEnum.goodsUpgrade,
+        ServiceKeyEnum.servicesUpgrade,
+        ServiceKeyEnum.worksUpgrade,
+      ];
+    } else if (serviceKey === ServiceKeyEnum.renewal) {
+      keys = [
+        ServiceKeyEnum.goodsRenewal,
+        ServiceKeyEnum.servicesRenewal,
+        ServiceKeyEnum.worksRenewal,
+      ];
+    } else if (serviceKey == ServiceKeyEnum.update) {
+      keys = [ServiceKeyEnum.profileUpdate];
+    }
+    return keys;
+  }
+
+
 }

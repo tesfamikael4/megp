@@ -311,7 +311,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       },
     });
 
-    console.log('result---', result);
+
     const vendor = await this.vendorRepository.findOne({
       where: { isrVendorId: vendorStatusDto.isrVendorId },
     });
@@ -320,11 +320,11 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         where: { instanceId: vendorStatusDto.instanceId },
         relations: { BpService: true },
       });
-      businessArea.status = VendorStatusEnum.APPROVED;
-      businessArea.approvedAt = new Date();
-      // const expireDate = new Date();
-      // expireDate.setFullYear(expireDate.getFullYear() + 1);
-      // businessArea.expireDate = expireDate;
+      if (businessArea) {
+        businessArea.status = VendorStatusEnum.APPROVED;
+        businessArea.approvedAt = new Date();
+      }
+
       const upgradekeys = [
         ServiceKeyEnum.goodsUpgrade,
         ServiceKeyEnum.servicesUpgrade,
@@ -367,6 +367,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       if (!businessUpdate)
         throw new HttpException('business update failed', 500);
       return businessUpdate;
+
     } else {
       if (!result) throw new NotFoundException(`isr_Vendor_not_found`);
       if (vendorStatusDto.status == VendorStatusEnum.APPROVE) {
@@ -1416,14 +1417,14 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       }
       const wfi = new CreateWorkflowInstanceDto();
       wfi.user = userInfo;
-      const bp_service =
+      const bp =
         await this.bpService.findBpWithServiceByKey('ProfileUpdate');
-      if (!bp_service)
+      if (!this.bpService)
         throw new HttpException('bp service with this key notfound', 500);
-      wfi.bpId = bp_service.id;
-      wfi.serviceId = bp_service.serviceId;
+      wfi.bpId = bp.id;
+      wfi.serviceId = bp.serviceId;
       wfi.requestorId = result.isrVendorId;
-      wfi.data = profileData;
+      wfi.data = { ...profileData };
       const workflowInstance =
         await this.workflowService.intiateWorkflowInstance(wfi, userInfo);
       if (!workflowInstance)
@@ -1431,7 +1432,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       const businessAreaEntity = new BusinessAreaEntity();
       businessAreaEntity.instanceId = workflowInstance.application.id;
       businessAreaEntity.category = 'Profile Update';
-      businessAreaEntity.serviceId = bp_service.serviceId;
+      businessAreaEntity.serviceId = bp.serviceId;
       businessAreaEntity.applicationNumber =
         workflowInstance.application.applicationNumber;
       businessAreaEntity.status = VendorStatusEnum.PENDING;
