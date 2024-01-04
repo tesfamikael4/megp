@@ -73,8 +73,13 @@ function Page() {
       NotificationService.successNotification('Payed Successfully!');
       router.push('/vendor/registration/track-applications');
     }
-    return () => { };
+    return () => {};
   }, [data, uploadFileInfo.data]);
+
+  useEffect(() => {
+    if (data?.items.length === 0)
+      NotificationService.requestErrorNotification('No invoice found');
+  }, [data?.items]);
 
   if (isLoading) {
     return (
@@ -85,6 +90,9 @@ function Page() {
         />
       </Box>
     );
+  }
+  if (data?.total === 0) {
+    return router.push('business-areas');
   }
   return (
     <Flex className="flex-col w-full relative min-h-[70vh] justify-between">
@@ -125,7 +133,7 @@ function Page() {
               </Button>
             </Flex>
           </form>
-          <Flex className="min-w-2/3 flex-col border w-full">
+          <Flex className="min-w-1/2 flex-col border w-1/2">
             {data?.items && data?.items?.length > 0 && (
               <InvoiceTemplate invoiceData={data?.items} />
             )}

@@ -58,16 +58,16 @@ export const vendorRegistrationQuery = vendorRegistrationApi.injectEndpoints({
         body: data,
       }),
     }),
-    postRenewalInvoice: builder.query<any, PostForRenewalVendorRequest>({
+    postRenewalInvoice: builder.mutation<any, string[]>({
       query: (data) => ({
-        url: `/vendor-registrations/generate-service-invoice-for-renewal`,
+        url: `/invoices/generate-renewal-invoice`,
         method: 'POST',
         body: data,
       }),
     }),
     getRenewalInvoice: builder.query<RenewalInvoiceRenewalVendorResponse, any>({
       query: () => ({
-        url: `/vendor-registrations/get-my-invoice`,
+        url: `/invoices/get-my-renewal-invoice`,
         method: 'GET',
         // body: data,
       }),
@@ -207,8 +207,7 @@ export const {
   useLazyGetPaymentSlipQuery,
   useGetForRenewalVendorQuery,
   useGetRenewalInvoiceQuery,
-  useLazyPostRenewalInvoiceQuery,
-  useLazyPostRenewalVendorQuery,
+  usePostRenewalInvoiceMutation,
   useGetApproveVendorInfoQuery,
 } = vendorRegistrationQuery;
 

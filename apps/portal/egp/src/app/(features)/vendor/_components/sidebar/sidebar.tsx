@@ -43,7 +43,7 @@ export const sidebarLinks: SidebarLinks[] = [
       },
       {
         label: 'Renew registration',
-        link: '/vendor/registration/renewal/info',
+        link: '/vendor/registration/renewal/ppda',
       },
       {
         label: 'Upgrade registration',

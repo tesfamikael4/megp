@@ -11,9 +11,9 @@ export const vendorUpgradeApi = createApi({
   refetchOnFocus: true,
   baseQuery: baseQuery(URL),
   endpoints: (builder) => ({
-    requestUpgradeInvoice: builder.query<any, any>({
+    requestUpgradeInvoice: builder.mutation<any, any>({
       query: (data) => ({
-        url: `/invoices/generate-service-invoice-for-upgrade`,
+        url: `/invoices/generate-upgrade-invoice`,
         method: 'POST',
         body: data,
       }),
@@ -41,8 +41,7 @@ export const vendorUpgradeApi = createApi({
 });
 
 export const {
-  useLazyRequestUpgradeInvoiceQuery,
-  useRequestUpgradeInvoiceQuery,
+  useRequestUpgradeInvoiceMutation,
   useGetMyInvoiceQuery,
   useLazyGetMyInvoiceQuery,
   useUploadPaymentReceiptUpgradeMutation,
