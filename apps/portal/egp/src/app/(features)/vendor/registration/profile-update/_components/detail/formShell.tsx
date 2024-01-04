@@ -152,6 +152,7 @@ const RegistrationForm = ({
   useEffect(() => {
     if (submitRequestInfo.isSuccess && submitRequestInfo.data) {
       NotificationService.successNotification('Form Updated Successfully!');
+      router.push(`/vendor/registration/track-applications`);
     }
     return () => {};
     // eslint-disable-next-line react-hooks/exhaustive-deps
