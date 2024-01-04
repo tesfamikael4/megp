@@ -12,10 +12,6 @@ export class InvoiceEntity {
   @Column()
   pricingId: string;
   @Column({ nullable: true })
-  taskName: string;
-  @Column({ type: 'uuid', nullable: true })
-  taskId: string;
-  @Column({ nullable: true })
   serviceId: string;
   @Column()
   serviceName: string;

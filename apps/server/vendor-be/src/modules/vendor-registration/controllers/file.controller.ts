@@ -32,7 +32,7 @@ export class UploadController {
   constructor(
     // private tusService: TusService,
     private fileService: FileService,
-  ) {}
+  ) { }
   @Post('upload-payment-receipt/:transactionId/:serviceId/:invoiceId')
   @UseInterceptors(FileInterceptor('attachmentUrl'))
   async uploadPaymentRecept(
@@ -189,14 +189,12 @@ export class UploadController {
     @Param('userId') userId: string,
     @Res() res: Response,
   ) {
+    console.log("fileName, documentType", fileName, documentType);
     try {
       return this.fileService.getFile(userId, fileName, documentType, res);
     } catch (error) {
       throw error;
     }
   }
-  // @All('*')
-  // async tus(@Req() req, @Res() res, @CurrentUser() userInfo: any) {
-  //   return this.tusService.handleTus(req, res, userInfo);
-  // }
+
 }

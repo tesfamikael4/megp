@@ -1,4 +1,4 @@
-import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   BpServiceEntity,
@@ -161,7 +161,7 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     taskId: string,
   ): Promise<InvoiceResponseDto> {
     const invoice = await this.invoiceRepository.findOne({
-      where: { businessAreaId: instanceId, taskId: taskId },
+      where: { businessAreaId: instanceId },
     });
     if (invoice) {
       const invoicedto = InvoiceResponseDto.toResponse(invoice);
@@ -382,26 +382,13 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
         if (result) {
           newBAIds.push(result.id);
           invoice.businessAreaId = result.id;
-          await this.invoiceRepository.create(invoice);
+          await this.invoiceRepository.save(invoice);
         }
       }
-      const invoices = await this.baService.getBusinessAreaWithPendingInvoice(
-        newBAIds,
-        keys,
-        user
-      );
-      const response = new DataResponseFormat<InvoiceResponseDto>();
-      response.items = invoices.map((entity) => {
-        const response = InvoiceResponseDto.toResponse(entity.invoice);
-        response.serviceId = entity?.serviceId;
-        response.pricingId = entity?.priceRangeId;
-        response.category = entity?.category;
-        return response;
-      });
-      response.total = response.items.length;
+      const response = { messaage: 'Invoice Created', state: 'success' };
       return response;
     } catch (error) {
-      console.log(error);
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -423,9 +410,7 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     invoice.serviceId = service.id;
     invoice.payerName = vendor.name;
     invoice.userId = user.id;
-    invoice.businessAreaId = null; //result.instanceId;
-    invoice.taskName = null; //result.task.name;
-    invoice.taskId = null; //result.task.id;
+    invoice.businessAreaId = null;
     invoice.serviceName = service.name;
     invoice.remark = 'invoice for ' + service.name;
     // invoice.reference = this.commonService.generateRandomString(8)

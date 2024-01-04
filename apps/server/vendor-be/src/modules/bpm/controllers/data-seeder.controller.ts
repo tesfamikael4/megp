@@ -39,7 +39,7 @@ export class DataSeederController {
       {
         id: 'a044b8d0-d653-5dd3-fd34-1f67d19ebf03',
         name: 'Profile update',
-        key: 'profileUpdate',
+        key: 'ProfileUpdate',
         isActive: true,
 
         tenantId: 0,

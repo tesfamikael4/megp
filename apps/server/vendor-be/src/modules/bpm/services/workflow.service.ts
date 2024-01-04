@@ -150,7 +150,7 @@ export class WorkflowService {
       console.log('stateMetaData', stateMetaData);
       if (stateMetaData['type'] == 'end') {
         workflowInstance.status = WorkflowInstanceEnum.Completed;
-        workflowInstance.businessStatus = BusinessStatusEnum.active;
+        // workflowInstance.businessStatus = BusinessStatusEnum.active;
         const wfInstance = new UpdateWorkflowInstanceDto();
         wfInstance.requestorId = workflowInstance.requestorId;
         wfInstance.serviceId = workflowInstance.serviceId;

@@ -112,12 +112,12 @@ export class ApplicationExcutionController {
     return await this.executeService.unpickTask(dto);
   }
   @UseGuards(JwtGuard)
-  @Get('get-currunt-tasks/:serviceKey')
   @ApiQuery({
     name: 'q',
     type: String,
     required: false,
   })
+  @Get('get-currunt-tasks/:serviceKey')
   @ApiPaginatedResponse(WorkflowInstanceResponse)
   async fetchCurruntTasks(
     @Param('serviceKey') serviceKey: string,
@@ -128,7 +128,7 @@ export class ApplicationExcutionController {
     return await this.executeService.getCurruntTaskByServiceKey(
       serviceKey,
       query,
-      user,
+      user
     );
   }
 
@@ -160,12 +160,13 @@ export class ApplicationExcutionController {
   }
 
 
-  @UseGuards(JwtGuard)
-  @Get('get-my-business-areas')
-  @ApiOkResponse({ type: ActiveVendorsResponse })
-  async getMyBusinessAreas(@CurrentUser() user: any) {
-    return await this.executeService.getMyBusinessArea(user.id);
-  }
+  // @UseGuards(JwtGuard)
+  // @Get('get-my-business-areas')
+  // @ApiOkResponse({ type: ActiveVendorsResponse })
+  // async getMyBusinessAreas(@CurrentUser() user: any) {
+  //   return await this.executeService.getMyBusinessArea(user.id);
+  // }
+
   @UseGuards(JwtGuard)
   @Get('get-vendors')
   @ApiQuery({

@@ -18,8 +18,6 @@ export class InvoiceResponseDto {
   @ApiProperty()
   payerName: string;
   @ApiProperty()
-  payerAccountId: string;
-  @ApiProperty()
   payToAccNo: string;
   @ApiProperty()
   payToAccName: string;
@@ -49,12 +47,9 @@ export class InvoiceResponseDto {
     response.userId = entity.userId;
     response.businessAreaId = entity.businessAreaId;
     response.applicationNo = entity.applicationNo;
-    response.taskId = entity.taskId;
-    response.taskName = entity.taskName;
     response.payToAccName = entity.payToAccName;
     response.payToAccNo = entity.payToAccNo;
     response.payToBank = entity.payToBank;
-    response.payerAccountId = entity.userId;
     response.payerName = entity.payerName;
     response.createdOn = entity.createdOn;
     response.serviceName = entity.serviceName;

@@ -1308,7 +1308,24 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
   }
 
   async cancelRegistration(user: any) {
-    await this.isrVendorsRepository.delete({ userId: user.id });
+    const vendor = await this.isrVendorsRepository.findOne({ where: { userId: user.id, status: Not(WorkflowInstanceEnum.Approved) } });
+    try {
+      if (vendor) {
+        await this.isrVendorsRepository.delete({ userId: user.id });
+        await this.businessAreaRepository.delete({ vendorId: vendor.id });
+        await this.isrVendorsRepository.delete({ userId: user.id });
+        return true;
+      }
+    } catch (error) {
+      throw new HttpException("Unable to cancel registration request ", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    return { message: 'Vendor not found', status: 'error' };
+
+
+
+
+
   }
   async getAllBusinessAreasByUserId(userId: string) {
     const vendorEntity = await this.isrVendorsRepository.findOne({
@@ -1400,7 +1417,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       const wfi = new CreateWorkflowInstanceDto();
       wfi.user = userInfo;
       const bp_service =
-        await this.bpService.findBpWithServiceByKey('profileUpdate');
+        await this.bpService.findBpWithServiceByKey('ProfileUpdate');
       if (!bp_service)
         throw new HttpException('bp service with this key notfound', 500);
       wfi.bpId = bp_service.id;

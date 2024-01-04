@@ -118,7 +118,7 @@ export class WorkflowInstanceResponse extends UpdateWorkflowInstanceDto {
     response.applicationNumber = entity.applicationNumber;
     response.requestorId = entity.requestorId;
     response.status = entity.status;
-    response.pricing = entity?.price;
+    //  response.pricing = entity?.price;
     response.submittedAt = entity.submittedAt;
     response.user = entity?.user;
     if (entity?.businessProcess) {

@@ -6,7 +6,6 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { WorkflowInstanceEntity } from 'src/entities/workflow-instance.entity';
 import { BpServiceEntity } from 'src/entities/bp-service.entity';
 import { Audit } from 'src/shared/entities/audit.entity';
 import { BusinessAreaEntity } from './business-area.entity';
@@ -27,8 +26,7 @@ export class ServicePrice extends Audit {
   fee: number;
   @Column({ name: 'currency' })
   currency: string;
-  @OneToMany(() => WorkflowInstanceEntity, (app) => app.price)
-  workflowInstances: WorkflowInstanceEntity[];
+
   @ManyToOne(() => BpServiceEntity, (s) => s.prices)
   @JoinColumn({ name: 'serviceId' })
   service: BpServiceEntity;

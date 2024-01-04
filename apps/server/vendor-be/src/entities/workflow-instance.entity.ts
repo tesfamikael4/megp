@@ -31,8 +31,7 @@ export class WorkflowInstanceEntity {
   bpId: string;
   @Column({ nullable: true, type: 'uuid' })
   serviceId: string;
-  @Column({ nullable: true })
-  businessStatus: string; //active |inactive
+
   @Column({
     type: 'timestamptz',
     default: () => 'CURRENT_TIMESTAMP',
@@ -69,12 +68,12 @@ export class WorkflowInstanceEntity {
   )
   taskTrackers: TaskTrackerEntity[];
 
-  @ManyToOne(() => ServicePrice, (price) => price.workflowInstances, {
-    onUpdate: 'CASCADE',
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn({ name: 'pricingId' })
-  price: ServicePrice;
+  // @ManyToOne(() => ServicePrice, (price) => price.workflowInstances, {
+  //   onUpdate: 'CASCADE',
+  //   onDelete: 'CASCADE',
+  // })
+  // @JoinColumn({ name: 'pricingId' })
+  // price: ServicePrice;
 
   @ManyToOne(() => IsrVendorsEntity, (v) => v.instances)
   @JoinColumn({ name: 'requestorId' })
