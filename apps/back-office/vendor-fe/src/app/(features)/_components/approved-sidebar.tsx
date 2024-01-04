@@ -53,12 +53,14 @@ export default function VendorFilterSidebar({
         <Button
           onClick={() => handleFilter()}
           disabled={!filter.name && !filter.businessType}
+          className="bg-primary-900 text-white"
         >
           Filter
         </Button>
         <Button
           onClick={handleReset}
           disabled={!filter.name && !filter.businessType}
+          className="bg-red-700"
         >
           Clear
         </Button>

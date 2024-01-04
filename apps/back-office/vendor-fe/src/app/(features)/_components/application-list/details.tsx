@@ -25,7 +25,7 @@ import { formatDateTimeFromString, processCompanyName } from '../../util';
 export default function RequestDetail({
   requestType,
 }: {
-  requestType: 'new' | 'upgrade' | 'renewal';
+  requestType: 'new' | 'upgrade' | 'renewal' | 'update';
 }) {
   const { instanceId } = useParams();
   const [isPicked, setIsPicked] = useState(false);
