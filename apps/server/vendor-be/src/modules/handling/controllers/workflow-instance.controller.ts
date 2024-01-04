@@ -76,19 +76,8 @@ export class WorkflowInstanceController {
     );
     return response;
   }
-  @UseGuards(JwtGuard)
-  @Post('upgrade')
-  @ApiOkResponse({ type: WorkflowInstanceResponse })
-  async upgrade(
-    @Body() dto: UpdateWorkflowInstanceDto,
-    @CurrentUser() user: any,
-  ) {
-    const response = await this.workflowInstanceService.upgradeRegistration(
-      dto,
-      this.userInfo,
-    );
-    return response;
-  }
+
+
   @UseGuards(JwtGuard)
   @Post('review-application')
   @ApiOkResponse({ type: WorkflowInstanceResponse })

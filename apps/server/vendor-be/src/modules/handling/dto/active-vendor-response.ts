@@ -31,34 +31,4 @@ export class ActiveVendorsResponse {
   @ApiProperty()
   vendorId: string;
 
-  static toResponse(entity: WorkflowInstanceEntity): ActiveVendorsResponse {
-    const response = new ActiveVendorsResponse();
-    if (entity.price) {
-      response.businessCategory = entity.price.businessArea;
-      if (entity.price.valueTo == -1 || entity.price.valueTo == 0)
-        response.level =
-          'Above' + entity.price.valueFrom + entity.price.currency;
-      else
-        response.level =
-          entity.price.valueFrom +
-          entity.price.currency +
-          '-' +
-          entity.price.valueTo +
-          entity.price.currency;
-    }
-    // response.tin = entity.vendor.tin;
-    // response.userId = entity.vendor.userId;
-    // response.country = entity.vendor.country;
-    // response.name = entity.vendor.name;
-    // response.status = entity.vendor.status;
-    // response.district = entity.vendor.district;
-    // response.name = entity.vendor.name;
-    // response.origin = entity.vendor.origin;
-    response.vendorId = entity.isrVendor.id;
-    response.id = entity.id;
-    response.status = entity.status;
-    response.businessStatus = entity.businessStatus;
-
-    return response;
-  }
 }

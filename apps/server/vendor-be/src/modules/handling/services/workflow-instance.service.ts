@@ -67,7 +67,7 @@ export class WorkflowInstanceService {
     private readonly receiptRepository: Repository<PaymentReceiptEntity>,
     private readonly bpService: BusinessProcessService,
     private readonly commonService: HandlingCommonService,
-  ) {}
+  ) { }
 
   async submitFormBasedTask(
     nextCommand: GotoNextStateDto,
@@ -198,7 +198,7 @@ export class WorkflowInstanceService {
         const stateMetaData = this.getStateMetaData(state.meta);
         if (stateMetaData['type'] == 'end') {
           workflowInstance.status = WorkflowInstanceEnum.Completed;
-          workflowInstance.businessStatus = BusinessStatusEnum.active;
+          //  workflowInstance.businessStatus = BusinessStatusEnum.active;
           //update vendor status approved
           const vendor = await this.vendorRepository.findOne({
             where: { id: workflowInstance.requestorId },
@@ -487,34 +487,34 @@ export class WorkflowInstanceService {
     }
     return null;
   }
-  async upgradeRegistration(
-    dto: UpdateWorkflowInstanceDto,
-    userInfo: any,
-  ): Promise<WorkflowInstanceResponse> {
-    const preveous = await this.workflowInstanceRepository.findOne({
-      relations: {
-        businessProcess: { service: true },
-        price: true,
-      },
-      where: { id: dto.id },
-    });
-    const proposedPrice = await this.pricingRepository.findOne({
-      where: { id: dto.pricingId },
-    });
-    if (preveous.price.valueFrom > proposedPrice.valueFrom) {
-      throw new NotFoundException('Only upgrade is allowed');
-    }
-    const wfmodel = new UpdateWorkflowInstanceDto();
-    //  wfmodel.key = ServiceKeyEnum.upgrade;
-    wfmodel.requestorId = userInfo.userId;
-    // wfmodel.pricingId = dto.pricingId;
-    const response = await this.create(wfmodel, userInfo);
-    const command = new GotoNextStateDto();
-    command.instanceId = response.application.id;
-    command.action = 'ISR';
-    await this.gotoNextStep(command, userInfo);
-    return response;
-  }
+  // async upgradeRegistration(
+  //   dto: UpdateWorkflowInstanceDto,
+  //   userInfo: any,
+  // ): Promise<WorkflowInstanceResponse> {
+  //   const preveous = await this.workflowInstanceRepository.findOne({
+  //     relations: {
+  //       businessProcess: { service: true },
+  //       price: true,
+  //     },
+  //     where: { id: dto.id },
+  //   });
+  //   const proposedPrice = await this.pricingRepository.findOne({
+  //     where: { id: dto.pricingId },
+  //   });
+  //   if (preveous.price.valueFrom > proposedPrice.valueFrom) {
+  //     throw new NotFoundException('Only upgrade is allowed');
+  //   }
+  //   const wfmodel = new UpdateWorkflowInstanceDto();
+  //   //  wfmodel.key = ServiceKeyEnum.upgrade;
+  //   wfmodel.requestorId = userInfo.userId;
+  //   // wfmodel.pricingId = dto.pricingId;
+  //   const response = await this.create(wfmodel, userInfo);
+  //   const command = new GotoNextStateDto();
+  //   command.instanceId = response.application.id;
+  //   command.action = 'ISR';
+  //   await this.gotoNextStep(command, userInfo);
+  //   return response;
+  // }
   async savePayment(
     dto: PaymentReceiptDto,
   ): Promise<PaymentReceiptResponseDto> {

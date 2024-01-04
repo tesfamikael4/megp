@@ -163,6 +163,11 @@ export class VendorRegistrationsController {
     return await this.regService.getMyApprovedService(userInfo);
   }
   @UseGuards(JwtGuard)
+  @Get('cancel-registration')
+  async cancelRegistration(@CurrentUser() user: any) {
+    return await this.regService.cancelRegistration(user);
+  }
+  @UseGuards(JwtGuard)
   @Post('initiate-vendor-profile-update')
   async initiateVendorProfileUpdate(@CurrentUser() userInfo: any) {
     return await this.regService.initiateVendorProfileUpdate(userInfo.id);
@@ -206,6 +211,7 @@ export class VendorRegistrationsController {
       userInfo,
     );
   }
+
   @UseGuards(JwtGuard)
   @Get('get-mbrs-data')
   async GetMBRSData(@Body() mbrsDataDto: MbrsDataDto) {

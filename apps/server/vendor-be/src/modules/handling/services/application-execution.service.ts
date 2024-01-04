@@ -69,20 +69,13 @@ export class ApplicationExcutionService {
     query: CollectionQuery, user: any
   ): Promise<DataResponseFormat<WorkflowInstanceResponse>> {
     let keys = [];
-    // query.includes.push("isrVendor");
-    // const qq: CollectionQuery = {
-    //   ...query, includes: ["isrVendor"], where: [[{
-    //     column: "workflow_instances.isrVendor.name",
-    //     operator: "ILIKE",
-    //     value: "Test"
-    //   }]]
-    // }
 
     if (serviceKey === ServiceKeyEnum.new) {
       keys = [
         ServiceKeyEnum.goodsNewRegistration,
         ServiceKeyEnum.servicesNewRegistration,
         ServiceKeyEnum.worksNewRegistration,
+        ServiceKeyEnum.profileUpdate
       ];
     } else if (serviceKey == ServiceKeyEnum.upgrade) {
       keys = [
@@ -188,22 +181,22 @@ export class ApplicationExcutionService {
 
 
 
-  async getMyBusinessArea(userId: string): Promise<ActiveVendorsResponse[]> {
-    const result = await this.wiRepository.find({
-      relations: {
-        isrVendor: true,
-        price: true,
-      },
-      where: {
-        status: WorkflowInstanceEnum.Completed,
-        isrVendor: { userId: userId, status: 'Approved' },
-      },
-    });
-    const response = result.map((item) =>
-      ActiveVendorsResponse.toResponse(item),
-    );
-    return response;
-  }
+  // async getMyBusinessArea(userId: string): Promise<ActiveVendorsResponse[]> {
+  //   const result = await this.wiRepository.find({
+  //     relations: {
+  //       isrVendor: true,
+  //       price: true,
+  //     },
+  //     where: {
+  //       status: WorkflowInstanceEnum.Completed,
+  //       isrVendor: { userId: userId, status: 'Approved' },
+  //     },
+  //   });
+  //   const response = result.map((item) =>
+  //     ActiveVendorsResponse.toResponse(item),
+  //   );
+  //   return response;
+  // }
 
   async pickTask(
     dto: UpdateTaskHandlerDto,

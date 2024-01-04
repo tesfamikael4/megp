@@ -4,9 +4,7 @@ import { Audit } from 'src/shared/entities/audit.entity';
 import {
   Column,
   Entity,
-  JoinColumn,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { WorkflowInstanceEntity } from './workflow-instance.entity';
@@ -17,8 +15,6 @@ export class BpServiceEntity extends Audit {
   id: string;
   @Column()
   name: string;
-  @Column({ nullable: true })
-  businessAreaId: string;
   @Column({ unique: true })
   key: string;
   @Column({ nullable: true })
@@ -53,6 +49,5 @@ export class BpServiceEntity extends Audit {
       onDelete: 'CASCADE',
     },
   )
-  @JoinColumn({ name: 'businessAreaId' })
   businessAreas: BusinessAreaEntity[];
 }
