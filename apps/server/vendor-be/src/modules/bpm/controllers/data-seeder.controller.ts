@@ -820,7 +820,9 @@ export class DataSeederController {
         handlerType: 'Assignee',
         taskType: 'Approval',
         checkList:
-          [{ "id": "96d95fdb-7852-4ddc-982f-0e94d23d15d3", "description": "The paid amount is equal to the invoive", "isMandatory": "true" }, { "id": "96d95fdb-7852-4ddc-982f-0e94d23d15d4", "description": "The reciept is valid", "isMandatory": "true" }],
+          [{ "id": "96d95fdb-7852-4ddc-982f-0e94d23d15d3", "description": "The  Bank information is valid", "isMandatory": "true" }
+
+          ],
         orderBy: 1,
       },
       {
@@ -856,7 +858,7 @@ export class DataSeederController {
         handlerType: 'Assignee',
         taskType: 'Confirmation',
         checkList:
-          [{ "id": "96d95fdb-7852-4ddc-982f-0e94d23d15d3", "description": "The paid amount is equal to the invoive", "isMandatory": "true" }, { "id": "96d95fdb-7852-4ddc-982f-0e94d23d15d4", "description": "The reciept is valid", "isMandatory": "true" }],
+          [{ "id": "96d95fdb-7852-4ddc-982f-0e94d23d15d3", "description": "The bank Information is valid", "isMandatory": "true" }, { "id": "96d95fdb-7852-4ddc-982f-0e94d23d15d4", "description": "The reciept is valid", "isMandatory": "true" }],
         orderBy: 1,
       },
       {
@@ -868,7 +870,9 @@ export class DataSeederController {
         handlerType: 'Assignee',
         taskType: 'Confirmation',
         checkList:
-          [{ "id": "96d95fdb-7852-4ddc-982f-0e94d23d15d3", "description": "All the required information and related documents fullfilled", "isMandatory": "true" }],
+          [
+            { "id": "96d95fdb-7852-4ddc-982f-0e94d23d15d3", "description": "All the required information and related documents fullfilled", "isMandatory": "true" }
+          ],
         orderBy: 3,
       },
       {
@@ -880,7 +884,9 @@ export class DataSeederController {
         handlerType: 'Requestor',
         taskType: 'ISR',
         checkList:
-          [{ "id": "96d95fdb-7852-4ddc-982f-0e94d23d15d3", "description": "The paid amount is equal to the invoive", "isMandatory": "true" }, { "id": "96d95fdb-7852-4ddc-982f-0e94d23d15d4", "description": "The reciept is valid", "isMandatory": "true" }],
+          [{ "id": "96d95fdb-7852-4ddc-982f-0e94d23d15d3", "description": "The bank account information is valid", "isMandatory": "true" }
+          ],
+
         orderBy: 1,
       },
       {

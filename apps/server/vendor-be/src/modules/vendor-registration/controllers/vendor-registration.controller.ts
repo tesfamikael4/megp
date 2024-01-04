@@ -206,6 +206,7 @@ export class VendorRegistrationsController {
     @Body() vendorprofileUpdateDara: any,
     @CurrentUser() userInfo: string,
   ) {
+    console.log("vendorprofileUpdateDara", vendorprofileUpdateDara);
     return await this.regService.submitVendorProfileUpdate(
       vendorprofileUpdateDara,
       userInfo,

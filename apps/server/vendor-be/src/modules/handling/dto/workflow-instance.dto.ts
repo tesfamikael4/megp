@@ -27,6 +27,8 @@ export class CreateWorkflowInstanceDto {
   @IsOptional()
   pricingId: string;
   createdBy: string;
+  @ApiProperty()
+  @IsOptional()
   data?: any;
   user: any;
   /**

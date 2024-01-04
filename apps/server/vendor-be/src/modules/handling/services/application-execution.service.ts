@@ -1,10 +1,11 @@
 import {
   BadRequestException,
+  HttpException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, In, IsNull, Not, Repository } from 'typeorm';
+import { DataSource, IsNull, Not, Repository } from 'typeorm';
 import { DataResponseFormat } from 'src/shared/api-data';
 import { CollectionQuery, QueryConstructor } from 'src/shared/collection-query';
 import {
@@ -14,7 +15,6 @@ import {
   WorkflowInstanceEnum,
 } from '../dto/workflow-instance.enum';
 import { FileResponseDto } from 'src/modules/vendor-registration/dto/file.dto';
-import { ActiveVendorsResponse } from '../dto/active-vendor-response';
 import { TaskTrackerEntity } from 'src/entities/task-tracker.entity';
 import { WorkflowInstanceEntity } from 'src/entities/workflow-instance.entity';
 import { TaskTrackerResponse } from 'src/modules/bpm/dto/task-tracker.dto';
@@ -23,6 +23,7 @@ import { UpdateTaskHandlerDto } from 'src/modules/bpm/dto/task-handler.dto';
 import { WorkflowInstanceResponse } from '../dto/workflow-instance.dto';
 import { FilesEntity } from 'src/entities';
 import { InvoiceService } from 'src/modules/vendor-registration/services/invoice.service';
+import { HandlingCommonService } from './handling-common-services';
 @Injectable()
 export class ApplicationExcutionService {
   constructor(
@@ -33,6 +34,7 @@ export class ApplicationExcutionService {
     private readonly wiRepository: Repository<WorkflowInstanceEntity>,
     private readonly dataSource: DataSource,
     private readonly invoiceService: InvoiceService,
+    private readonly commonService: HandlingCommonService
   ) { }
   async getCompletedTasks(instanceId: string): Promise<TaskTrackerResponse[]> {
     const ctasks = await this.taskTrackingRepository.find({
@@ -68,28 +70,9 @@ export class ApplicationExcutionService {
   async getCurruntTaskByServiceKey(serviceKey: string,
     query: CollectionQuery, user: any
   ): Promise<DataResponseFormat<WorkflowInstanceResponse>> {
-    let keys = [];
-
-    if (serviceKey === ServiceKeyEnum.new) {
-      keys = [
-        ServiceKeyEnum.goodsNewRegistration,
-        ServiceKeyEnum.servicesNewRegistration,
-        ServiceKeyEnum.worksNewRegistration,
-        ServiceKeyEnum.profileUpdate
-      ];
-    } else if (serviceKey == ServiceKeyEnum.upgrade) {
-      keys = [
-        ServiceKeyEnum.goodsUpgrade,
-        ServiceKeyEnum.servicesUpgrade,
-        ServiceKeyEnum.worksUpgrade,
-      ];
-    } else if (serviceKey === ServiceKeyEnum.renewal) {
-      keys = [
-        ServiceKeyEnum.goodsRenewal,
-        ServiceKeyEnum.servicesRenewal,
-        ServiceKeyEnum.worksRenewal,
-      ];
-    }
+    const keys = this.commonService.getServiceCatagoryKeys(serviceKey);
+    if (keys.length < 0)
+      throw new HttpException('Invalid Request', 400);
     const dataQuery = QueryConstructor.constructQuery<WorkflowInstanceEntity>(
       this.wiRepository,
       query,
@@ -109,9 +92,7 @@ export class ApplicationExcutionService {
     const [result, total] = await dataQuery.getManyAndCount();
     d.items = result.map((entity) => {
       return WorkflowInstanceResponse.toResponse(entity)
-    }
-
-    );
+    });
     d.total = total;
     return d;
   }
@@ -181,22 +162,6 @@ export class ApplicationExcutionService {
 
 
 
-  // async getMyBusinessArea(userId: string): Promise<ActiveVendorsResponse[]> {
-  //   const result = await this.wiRepository.find({
-  //     relations: {
-  //       isrVendor: true,
-  //       price: true,
-  //     },
-  //     where: {
-  //       status: WorkflowInstanceEnum.Completed,
-  //       isrVendor: { userId: userId, status: 'Approved' },
-  //     },
-  //   });
-  //   const response = result.map((item) =>
-  //     ActiveVendorsResponse.toResponse(item),
-  //   );
-  //   return response;
-  // }
 
   async pickTask(
     dto: UpdateTaskHandlerDto,
@@ -233,6 +198,7 @@ export class ApplicationExcutionService {
     wfInstance.taskHandler.pickedAt = null;
     return await this.wiRepository.save(wfInstance);
   }
+
 
 
 }
