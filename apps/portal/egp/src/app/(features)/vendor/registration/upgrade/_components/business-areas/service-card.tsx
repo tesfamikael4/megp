@@ -11,17 +11,14 @@ import {
   Select,
 } from '@mantine/core';
 import { Fragment, useEffect, useState } from 'react';
-import {
-  useGetPriceRangeQuery,
-  useLazyPostRenewalInvoiceQuery,
-} from '../../../_api/query';
+import { useGetPriceRangeQuery } from '../../../_api/query';
 import { IconCheckbox, IconRectangle } from '@tabler/icons-react';
 import { ApprovedVendorServiceSchema } from '@/shared/schema/venderRenewalSchema';
 import { NotificationService } from '@/app/(features)/vendor/_components/notification';
 import { useRouter } from 'next/navigation';
 import {
   useGetMyInvoiceQuery,
-  useLazyRequestUpgradeInvoiceQuery,
+  useRequestUpgradeInvoiceMutation,
 } from '@/store/api/vendor-upgrade/api';
 import { z } from 'zod';
 
@@ -59,28 +56,19 @@ export default function ServicesCard({ servicesData }: { servicesData: any }) {
   });
   const router = useRouter();
 
-  // const { data: invoiceData } = useGetMyInvoiceQuery(
-  //   {},
-  //   { refetchOnMountOrArgChange: true },
-  // );
-
   const [selectedServices, setSelectedServices] = useState<
     { id: string; pricingId: string; category: string }[]
   >([]);
 
-  const [request, requestInfo] = useLazyRequestUpgradeInvoiceQuery();
+  const [request, requestInfo] = useRequestUpgradeInvoiceMutation();
 
   const handleSubmit = async () => {
     if (selectedServices.length > 0) {
       try {
-        const response = await request({
+        await request({
           BusinessAreaStatus: servicesData.status,
           upgrades: selectedServices.filter((service) => service?.pricingId),
         }).unwrap();
-
-        if (response.isSuccess) {
-          router.push('payment');
-        }
       } catch (err) {
         console.error(err);
       }
@@ -159,8 +147,6 @@ export default function ServicesCard({ servicesData }: { servicesData: any }) {
     }
   }, [requestInfo.isSuccess]);
 
-  ///use useeffect to update the set selected services using the invoice data and getPriceRangeValues    // if the category of the service is in the invoice data update the set selected services
-  // with the id from the getPriceRangeValues data and pricing id from the invoice data and category from the invoice data
   useEffect(() => {
     if (
       servicesData?.status?.selectedPriceRange &&
@@ -190,8 +176,6 @@ export default function ServicesCard({ servicesData }: { servicesData: any }) {
       });
     }
   }, [servicesData.data, servicesData?.status?.selectedPriceRange]);
-
-  console.log({ selectedServices });
 
   const priceRangeByCategory = (category: 'Goods' | 'Services' | 'Works') => {
     return getPriceRangeValues.data
@@ -340,7 +324,10 @@ export default function ServicesCard({ servicesData }: { servicesData: any }) {
                             data={priceRangeByCategory(
                               services?.areaOfBusinessInterest?.category as any,
                             )}
-                            defaultValue={newPricingId}
+                            defaultValue={
+                              newPricingId ??
+                              services?.areaOfBusinessInterest?.priceRange
+                            }
                             className="w-full"
                             checkIconPosition="right"
                             placeholder="Select new price range"

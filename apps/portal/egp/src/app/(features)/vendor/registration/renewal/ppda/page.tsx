@@ -10,10 +10,11 @@ import {
 import { validateApprovedVendorServiceSchema } from '@/shared/schema/venderRenewalSchema';
 import ServicesCard from '../_components/ppda/servicesCard';
 import { IconFile } from '@tabler/icons-react';
+import { useGetMyApprovedServicesQuery } from '@/store/api/vendor-upgrade/api';
 
 function Page() {
   const router = useRouter();
-  const requestInfo = useGetForRenewalVendorQuery({});
+  const requestInfo = useGetMyApprovedServicesQuery({});
 
   useEffect(() => {
     if (requestInfo.isError) {

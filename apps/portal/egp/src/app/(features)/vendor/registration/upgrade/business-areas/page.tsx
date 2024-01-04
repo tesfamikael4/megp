@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { NotificationService } from '../../../_components/notification';
 
 import { validateApprovedVendorServiceSchema } from '@/shared/schema/venderRenewalSchema';
-import { useGetForRenewalVendorQuery } from '../../_api/query';
 import ServicesCard from '../_components/business-areas/service-card';
 import { useGetMyApprovedServicesQuery } from '@/store/api/vendor-upgrade/api';
 
@@ -32,10 +31,6 @@ function Page() {
       </Box>
     );
   }
-  if (requestInfo.isError) {
-    return <></>;
-  }
-
   if (
     requestInfo.data &&
     validateApprovedVendorServiceSchema(requestInfo.data).success
@@ -46,8 +41,6 @@ function Page() {
       </section>
     );
   }
-
-  return <></>;
 }
 
 export default Page;

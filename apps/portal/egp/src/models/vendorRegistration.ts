@@ -299,8 +299,7 @@ export type GetForRenewalVendorResponse = ApprovedVendorServiceSchema;
 
 export type PostForRenewalVendorResponse = ApprovedVendorServiceSchema;
 export type PostForRenewalVendorRequest = {
-  status: { level: String; status: String };
-  businessArea: string[];
+  businessAreaIds: string[];
 };
 
 export type RenewalInvoiceRenewalVendorResponse = {

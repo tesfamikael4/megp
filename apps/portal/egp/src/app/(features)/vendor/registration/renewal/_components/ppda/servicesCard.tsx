@@ -12,7 +12,7 @@ import {
 import { Fragment, useEffect, useState } from 'react';
 import {
   useGetPriceRangeQuery,
-  useLazyPostRenewalInvoiceQuery,
+  usePostRenewalInvoiceMutation,
 } from '../../../_api/query';
 import { IconCheckbox } from '@tabler/icons-react';
 import { ApprovedVendorServiceSchema } from '@/shared/schema/venderRenewalSchema';
@@ -44,16 +44,20 @@ export default function ServicesCard({
   });
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
 
-  const [request, requestInfo] = useLazyPostRenewalInvoiceQuery();
+  const [request, { isLoading, isError, error, isSuccess }] =
+    usePostRenewalInvoiceMutation();
 
   const handleSubmit = () => {
     if (selectedServices.length > 0) {
-      request({
-        status: { level: 'Info', status: 'Draft' },
-        businessArea: servicesData.data
+      request(
+        servicesData.data
           .filter((s) => selectedServices.includes(s.id))
           .map((s) => s.id),
-      });
+      )
+        .unwrap()
+        .then(() => {
+          router.push('payment');
+        });
     }
   };
   const handleProductClick = (productId: string) => {
@@ -73,20 +77,11 @@ export default function ServicesCard({
   const router = useRouter();
 
   useEffect(() => {
-    if (requestInfo.isError) {
+    if (isError) {
       NotificationService.requestErrorNotification('Error on request');
     }
-
     return () => {};
-  }, [requestInfo.error]);
-
-  useEffect(() => {
-    if (requestInfo.isSuccess) {
-      router.push('payment');
-    }
-
-    return () => {};
-  }, [requestInfo.data, requestInfo.isSuccess]);
+  }, [isError]);
 
   return (
     <Box className="p-4">
@@ -176,7 +171,6 @@ export default function ServicesCard({
                           services.areaOfBusinessInterest.category,
                           services.areaOfBusinessInterest.priceRange,
                         )}
-                      {/* {services.areaOfBusinessInterest.priceRange} */}
                     </Text>
                   </div>
                   <div className="flex justify-between gap-x-4 py-3">
@@ -203,7 +197,11 @@ export default function ServicesCard({
       </Box>
 
       <Flex className="w-full justify-end p-8">
-        <Button disabled={selectedServices.length <= 0} onClick={handleSubmit}>
+        <Button
+          disabled={selectedServices.length <= 0}
+          onClick={handleSubmit}
+          loading={isLoading}
+        >
           Submit
         </Button>
       </Flex>

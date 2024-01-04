@@ -10,14 +10,12 @@ import {
   Button,
 } from '@mantine/core';
 import { Fragment, useEffect, useState } from 'react';
-import {
-  useGetPriceRangeQuery,
-  useLazyPostRenewalInvoiceQuery,
-} from '../../../_api/query';
+import { useGetPriceRangeQuery } from '../../../_api/query';
 import { IconCheckbox, IconRectangle } from '@tabler/icons-react';
 import { ApprovedVendorServiceSchema } from '@/shared/schema/venderRenewalSchema';
 import { NotificationService } from '@/app/(features)/vendor/_components/notification';
 import { useRouter } from 'next/navigation';
+import { useRequestUpgradeInvoiceMutation } from '@/store/api/vendor-upgrade/api';
 
 const statuses = {
   Paid: 'text-green-700 bg-green-50 ring-green-600/20',
@@ -50,18 +48,17 @@ export default function ServicesCard({
   });
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
 
-  const [request, requestInfo] = useLazyPostRenewalInvoiceQuery();
+  const [request, requestInfo] = useRequestUpgradeInvoiceMutation();
 
   const handleSubmit = () => {
     if (selectedServices.length > 0) {
       console.log();
       console.log(servicesData);
-      request({
-        status: servicesData.status,
-        businessArea: servicesData.data
+      request(
+        servicesData.data
           .filter((s) => selectedServices.includes(s.id))
           .map((s) => s.id),
-      });
+      );
     }
   };
   const handleProductClick = (productId: string) => {

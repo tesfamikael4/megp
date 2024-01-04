@@ -11,23 +11,15 @@ import {
 } from '@mantine/core';
 import React, { useEffect, useState } from 'react';
 import InvoiceTemplate from '../../../_components/dynamicPrintComponent/invoice-sm';
-import {
-  useGetInvoiceQuery,
-  useGetRenewalInvoiceQuery,
-  useLazyPostRenewalVendorQuery,
-  useLazyUploadPaymentSlipQuery,
-} from '../../_api/query';
+import { useGetRenewalInvoiceQuery } from '../../_api/query';
 import PaymentMethod from '../_components/payment/payment-method';
 import FileUploader from '../../../_components/file-uploader/upload';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import {
-  IPaymentSlipUploadSchema,
-  paymentSlipUploadSchema,
-} from '@/shared/schema/paymentSlipUploadSchema';
-import { invoiceArraySchema } from '@/shared/schema/invoiceSchema';
+import { paymentSlipUploadSchema } from '@/shared/schema/paymentSlipUploadSchema';
 import { useRouter } from 'next/navigation';
 import { NotificationService } from '../../../_components/notification';
+import { useUploadPaymentReceiptUpgradeMutation } from '@/store/api/vendor-upgrade/api';
 const VENDOR_URL = process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api';
 
 function Page() {
@@ -36,163 +28,129 @@ function Page() {
     null,
   );
 
-  const invoiceInfo = useGetRenewalInvoiceQuery(
+  const { data, isLoading, isSuccess } = useGetRenewalInvoiceQuery(
     {},
     { refetchOnMountOrArgChange: true },
   );
-  const [submitRequest, submitRequestInfo] = useLazyPostRenewalVendorQuery();
 
-  const [uploadFile, uploadFileInfo] = useLazyUploadPaymentSlipQuery();
+  const [uploadFile, { isLoading: isUploading, isSuccess: isUploadSuccess }] =
+    useUploadPaymentReceiptUpgradeMutation({});
 
-  const { register, formState, setValue, watch, handleSubmit } =
-    useForm<IPaymentSlipUploadSchema>({
-      defaultValues: {
-        invoiceId: '',
-        serviceId: '',
-        transactionNumber: '',
-        file: undefined,
-      },
-      resolver: zodResolver(paymentSlipUploadSchema),
-    });
+  const { register, formState, setValue, watch, handleSubmit } = useForm<any>({
+    defaultValues: {
+      invoiceId: '',
+      transactionNumber: '',
+      file: undefined,
+    },
+    resolver: zodResolver(paymentSlipUploadSchema),
+  });
 
-  const onSubmitHandler: SubmitHandler<IPaymentSlipUploadSchema> = (values) => {
-    uploadFile(values);
-    if (
-      invoiceInfo.data?.items &&
-      Array.isArray(invoiceInfo.data?.items) &&
-      invoiceInfo.data?.items.length > 0
-    ) {
-      submitRequest(invoiceInfo.data?.items.map((i) => i.id));
+  const onSubmitHandler: SubmitHandler<any> = async (values) => {
+    if (data?.items && Array.isArray(data?.items) && data?.items.length > 0) {
+      const paymentData = {
+        file: values.file,
+        transactionNumber: values.transactionNumber,
+        invoiceIds: data?.items?.map((item) => item.id),
+      };
+      // submitRequest(data?.items.map((i) => i.id));
+      uploadFile(paymentData)
+        .unwrap()
+        .then(() => {
+          router.push('/vendor/registration/track-applications');
+        });
     }
   };
-  console.log(formState.errors);
+
   const handleFileChange = (file: File) => {
     setValue('file', file);
   };
 
   useEffect(() => {
-    if (
-      invoiceInfo.data &&
-      Array.isArray(invoiceInfo.data?.items) &&
-      invoiceInfo.data?.items.length > 0
-    ) {
-      setValue(
-        'invoiceId',
-        invoiceInfo.data?.items.map((i) => i.id).join(',') ?? '',
-      );
+    if (data && Array.isArray(data?.items) && data?.items.length > 0) {
+      setValue('invoiceId', data?.items.map((i) => i.id).join(',') ?? '');
       setValue(
         'serviceId',
-        invoiceInfo.data?.paymentReceipt?.attachment === ''
+        data?.paymentReceipt?.attachment === ''
           ? 'null'
-          : invoiceInfo.data?.paymentReceipt?.attachment,
+          : data?.paymentReceipt?.attachment,
       );
-      if (invoiceInfo.data && invoiceInfo.data?.paymentReceipt?.transactionId) {
-        setValue(
-          'transactionNumber',
-          invoiceInfo.data?.paymentReceipt.transactionId,
-        );
+      if (data && data?.paymentReceipt?.transactionId) {
+        setValue('transactionNumber', data?.paymentReceipt.transactionId);
       }
     }
 
     return () => {};
-  }, [invoiceInfo.data]);
+  }, [data]);
 
   useEffect(() => {
-    if (
-      invoiceInfo.data &&
-      invoiceInfo.data?.paymentReceipt &&
-      invoiceInfo.data?.paymentReceipt.attachment
-    ) {
+    if (data && data?.paymentReceipt && data?.paymentReceipt.attachment) {
       setInvoiceSlipImageUrl(
-        `${VENDOR_URL}/upload/get-file/paymentReceipt/${invoiceInfo.data?.paymentReceipt.attachment}`,
+        `${VENDOR_URL}/upload/get-file/paymentReceipt/${data?.paymentReceipt.attachment}`,
       );
     }
 
     return () => {};
-  }, [invoiceInfo.data]);
+  }, [data]);
 
-  useEffect(() => {
-    if (submitRequestInfo.isSuccess) {
-      NotificationService.successNotification('Payed Successfully!');
-      router.push('/vendor/registration/track-applications');
-    }
-    return () => {};
-  }, [submitRequestInfo.isSuccess]);
-
-  if (invoiceInfo.isLoading || submitRequestInfo.isLoading) {
+  if (isLoading) {
     return (
       <Box pos="relative" className="w-full h-full">
         <LoadingOverlay
           visible={true}
-          zIndex={1000}
           overlayProps={{ radius: 'sm', blur: 2 }}
         />
       </Box>
     );
-  }
-  if (invoiceInfo.isError) {
-    return null;
-  }
+  } else if (data && data.total === 0) {
+    router.push('ppda');
+  } else
+    return (
+      <Flex className="flex-col w-full relative min-h-[70vh] justify-between">
+        <Box className=" max-w-full">
+          <Flex className="gap-2 w-full">
+            <form
+              className="flex flex-col border p-4  h-fit max-w-1/2 w-1/2"
+              onSubmit={handleSubmit(onSubmitHandler)}
+            >
+              <Center>
+                <PaymentMethod />
+              </Center>
 
-  return (
-    <Flex className="flex-col w-full relative min-h-[70vh] justify-between">
-      <Box className=" max-w-[850px]">
-        <Flex className="gap-2 w-full">
-          <form
-            className="flex flex-col border p-4  h-fit max-w-[390px] w-full"
-            onSubmit={handleSubmit(onSubmitHandler)}
-          >
-            <Center>
-              <PaymentMethod />
-            </Center>
-
-            <Stack className="mt-10">
-              <input
-                {...register('invoiceId')}
-                value={
-                  invoiceArraySchema.safeParse(invoiceInfo.data?.items).success
-                    ? invoiceInfo.data?.items[0].id
-                    : ''
-                }
-                hidden={true}
-              />
-              <input
-                {...register('serviceId')}
-                value={
-                  invoiceArraySchema.safeParse(invoiceInfo.data?.items).success
-                    ? invoiceInfo.data?.items[0].serviceId
-                    : ''
-                }
-                hidden={true}
-              />
-              <TextInput
-                label="Transaction Number"
-                required
-                {...register('transactionNumber')}
-                error={formState.errors.transactionNumber?.message}
-              />
-              <FileUploader
-                id="your-file-uploader"
-                label="Attach Payment slip"
-                placeholder="Choose File"
-                error={formState.errors.file && 'Payment slip is required'}
-                onChange={handleFileChange}
-                getImageUrl={invoiceSlipImageUrl}
-              />
-            </Stack>
-            <Flex justify="end" className="gap-2 mt-4">
-              <Button type="submit">Pay</Button>
+              <Stack className="mt-10">
+                <TextInput
+                  label="Transaction Number"
+                  required
+                  {...register('transactionNumber')}
+                  error={
+                    formState.errors.transactionNumber && (
+                      <p>formState.errors.transactionNumber?.message</p>
+                    )
+                  }
+                />
+                <FileUploader
+                  id="your-file-uploader"
+                  label="Attach Payment slip"
+                  placeholder="Choose File"
+                  error={formState.errors.file && 'Payment slip is required'}
+                  onChange={handleFileChange}
+                  getImageUrl={invoiceSlipImageUrl}
+                />
+              </Stack>
+              <Flex justify="end" className="gap-2 mt-4">
+                <Button type="submit" loading={isUploading}>
+                  Submit
+                </Button>
+              </Flex>
+            </form>
+            <Flex className="min-w-1/2 flex-col border w-1/2">
+              {data?.items && data?.items?.length > 0 && (
+                <InvoiceTemplate invoiceData={data?.items} />
+              )}
             </Flex>
-          </form>
-          <Flex className="min-w-[450px] flex-col border w-full">
-            {invoiceInfo.data?.items && invoiceInfo.data?.items?.length > 0 && (
-              <InvoiceTemplate invoiceData={invoiceInfo.data?.items} />
-            )}
           </Flex>
-        </Flex>
-      </Box>
-    </Flex>
-  );
+        </Box>
+      </Flex>
+    );
 }
 
 export default Page;
