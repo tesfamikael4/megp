@@ -221,7 +221,7 @@ function FormPreview({ data }: { data: any }) {
                             <ShowFile
                               url={`${
                                 process.env.NEXT_PUBLIC_VENDOR_API ??
-                                '/vendor/api/'
+                                '/vendors/api/'
                               }upload/get-file-bo/${
                                 selected === 'supportingDocuments'
                                   ? 'SupportingDocument'
