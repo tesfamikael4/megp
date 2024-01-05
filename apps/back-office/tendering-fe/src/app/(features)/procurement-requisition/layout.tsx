@@ -9,7 +9,7 @@ export default function EntityLayout({
   return (
     <PageLayout>
       <>
-        <PlanYearTab />
+        <PlanYearTab collapsed={false} />
         <Entity>{children}</Entity>
       </>
     </PageLayout>
