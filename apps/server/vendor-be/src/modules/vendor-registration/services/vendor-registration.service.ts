@@ -35,9 +35,7 @@ import {
 } from 'src/modules/handling/dto/workflow-instance.enum';
 import axios from 'axios';
 import { FppaDataDto, MbrsData, NCICDataDto } from '../dto/mbrsData.dto';
-import {
-  IsrVendorsResponseDto,
-} from '../dto/isrvendor.dto';
+import { IsrVendorsResponseDto } from '../dto/isrvendor.dto';
 import { BusinessAreaDetailResponseDto } from '../dto/business-area.dto';
 import { ServicePricingService } from 'src/modules/pricing/services/service-pricing.service';
 import { BusinessAreaService } from './business-area.service';
@@ -311,7 +309,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       },
     });
 
-
     const vendor = await this.vendorRepository.findOne({
       where: { isrVendorId: vendorStatusDto.isrVendorId },
     });
@@ -367,7 +364,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       if (!businessUpdate)
         throw new HttpException('business update failed', 500);
       return businessUpdate;
-
     } else {
       if (!result) throw new NotFoundException(`isr_Vendor_not_found`);
       if (vendorStatusDto.status == VendorStatusEnum.APPROVE) {
@@ -1044,7 +1040,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     }
   }
 
-
   async getMyApprovedService(user: any): Promise<any> {
     try {
       // user.id = '4408fe5d-2672-4c2f-880d-4928b960e096';
@@ -1197,25 +1192,31 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             throw new NotFoundException('businessarea data not found');
           if (
             businessareaData.BpService.key ===
-            ServiceKeyEnum.goodsNewRegistration ||
+              ServiceKeyEnum.goodsNewRegistration ||
             businessareaData.BpService.key ===
-            ServiceKeyEnum.servicesNewRegistration ||
+              ServiceKeyEnum.servicesNewRegistration ||
             businessareaData.BpService.key ===
-            ServiceKeyEnum.worksNewRegistration
+              ServiceKeyEnum.worksNewRegistration
           ) {
-            const key = await this.commonService.mapServiceType(businessareaData, 'renewal');
+            const key = await this.commonService.mapServiceType(
+              businessareaData,
+              'renewal',
+            );
             const renewalRange =
               await this.pricingService.findserviceByRangeAndKey(
                 key,
                 businessareaData.servicePrice.valueFrom,
                 businessareaData.servicePrice.valueTo,
-                businessareaData.category
+                businessareaData.category,
               );
             const business = await this.businessAreaRepository.findOne({
               where: { id: businessArea[index] },
             });
             if (!business)
-              throw new HttpException('business area not found ', HttpStatus.NOT_FOUND);
+              throw new HttpException(
+                'business area not found ',
+                HttpStatus.NOT_FOUND,
+              );
             const service = await this.bpService.findBpWithServiceByKey(key);
             if (!service) throw new HttpException("can't find key", 404);
             business.id = undefined;
@@ -1275,7 +1276,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     isrVendor.shareHolders = InitialValueSchema.shareHolders;
     const result = await this.isrVendorsRepository.save(isrVendor);
     return result;
-  } async updateVendorProfile(isrVendorId: string, data: any) {
+  }
+  async updateVendorProfile(isrVendorId: string, data: any) {
     const isrVendor = await this.isrVendorsRepository.findOne({
       where: { id: isrVendorId },
     });
@@ -1309,7 +1311,9 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
   }
 
   async cancelRegistration(user: any) {
-    const vendor = await this.isrVendorsRepository.findOne({ where: { userId: user.id, status: Not(WorkflowInstanceEnum.Approved) } });
+    const vendor = await this.isrVendorsRepository.findOne({
+      where: { userId: user.id, status: Not(WorkflowInstanceEnum.Approved) },
+    });
     try {
       if (vendor) {
         await this.isrVendorsRepository.delete({ userId: user.id });
@@ -1318,15 +1322,13 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         return true;
       }
     } catch (error) {
-      throw new HttpException("Unable to cancel registration request ", HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Unable to cancel registration request ',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
 
     return { message: 'Vendor not found', status: 'error' };
-
-
-
-
-
   }
   async getAllBusinessAreasByUserId(userId: string) {
     const vendorEntity = await this.isrVendorsRepository.findOne({
@@ -1372,7 +1374,12 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         where: { userId: userInfo.id },
       });
       if (!result) throw new NotFoundException('vendor not found ');
-
+      const updateInfoNew = await this.profileInfoRepository.findOne({
+        where: { vendorId: result.id, status: VendorStatusEnum.SUBMITTED },
+      });
+      if (updateInfoNew !== null) {
+        return { status: 'profile update is already submitted' };
+      }
       const updateInfo = await this.profileInfoRepository.findOne({
         where: { vendorId: result.id, status: 'Active' },
       });
@@ -1417,8 +1424,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       }
       const wfi = new CreateWorkflowInstanceDto();
       wfi.user = userInfo;
-      const bp =
-        await this.bpService.findBpWithServiceByKey('ProfileUpdate');
+      const bp = await this.bpService.findBpWithServiceByKey('ProfileUpdate');
       if (!this.bpService)
         throw new HttpException('bp service with this key notfound', 500);
       wfi.bpId = bp.id;
@@ -1489,5 +1495,17 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     } catch (error) {
       console.log(error);
     }
+  }
+  async getCertificateInformations(userId: string) {
+    const result = await this.vendorRepository.findOne({
+      where: {
+        userId: userId,
+        status: VendorStatusEnum.APPROVED,
+        isrVendor: { businessAreas: { status: VendorStatusEnum.APPROVED } },
+      },
+      relations: { isrVendor: { businessAreas: true } },
+    });
+    if (result == null) return { status: 'no approved service' };
+    return result.isrVendor.businessAreas;
   }
 }
