@@ -41,10 +41,13 @@ export const approvedRejectedApi = createApi({
         };
       },
       transformResponse: (response: any) => {
-        return response.map((vendor) => ({
-          ...vendor,
-          ...vendor.basic,
-        }));
+        return {
+          items: response?.items.map((vendor) => ({
+            ...vendor,
+            ...vendor.basic,
+          })),
+          total: response.total,
+        };
       },
     }),
     getRejectedApplicationDetail: builder.query<any, { vendorId: string }>({

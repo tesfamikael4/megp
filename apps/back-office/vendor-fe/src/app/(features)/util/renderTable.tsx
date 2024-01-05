@@ -116,7 +116,7 @@ export function renderTable(
                                 setUrl(
                                   `${
                                     process.env.NEXT_PUBLIC_VENDOR_API ??
-                                    '/vendor/api/'
+                                    '/vendors/api/'
                                   }upload/get-file-bo/certificate/${cellValue}/${userId}`,
                                 );
                               }}
