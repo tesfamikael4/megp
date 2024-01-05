@@ -7,6 +7,7 @@ import {
   useCreateMutation,
   useUpdateMutation,
   useReadQuery,
+  useListQuery,
 } from '../_api/budget-category.api';
 import { EntityButton } from '@megp/entity';
 import { useParams, useRouter } from 'next/navigation';
@@ -22,21 +23,41 @@ const defaultValues = {
   name: '',
   description: '',
 };
-const procurementMethodSchema: ZodType<Partial<BudgetCategory>> = z.object({
-  name: z.string().min(1, { message: 'This field is required' }),
-  description: z.string().min(1, { message: 'This field is required' }),
-});
+
 export function FormDetail({ mode }: FormDetailPropType) {
+  const budgetCategorySchema: ZodType<Partial<BudgetCategory>> = z.object({
+    name: z
+      .string()
+      .min(1, { message: 'This field is required' })
+      .refine(
+        (value) => {
+          const budgetGategoryList = list?.items.filter(
+            (item) => item?.id !== id?.toString(),
+          );
+          const isUnique =
+            budgetGategoryList &&
+            budgetGategoryList.every(
+              (budgetCategory) => budgetCategory.name !== value,
+            );
+          return isUnique;
+        },
+        {
+          message: 'Name must be unique among existing budget category names',
+        },
+      ),
+    description: z.string().min(1, { message: 'This field is required' }),
+  });
   const {
     handleSubmit,
     reset,
     formState: { errors },
     register,
   } = useForm({
-    resolver: zodResolver(procurementMethodSchema),
+    resolver: zodResolver(budgetCategorySchema),
   });
   const router = useRouter();
   const { id } = useParams();
+  const { data: list } = useListQuery({});
 
   const [create, { isLoading: isSaving }] = useCreateMutation();
   const [update, { isLoading: isUpdating }] = useUpdateMutation();
@@ -53,9 +74,9 @@ export function FormDetail({ mode }: FormDetailPropType) {
       if ('data' in result) {
         router.push(`/lookup/budget-category/${result?.data?.id}`);
       }
-      notify('Success', 'Budget Catgory created successfully');
+      notify('Success', 'Budget Category created successfully');
     } catch (err) {
-      notify('Error', 'Errors in creating Budget Catgory .');
+      notify('Error', 'Errors in creating Budget Category .');
     }
   };
   const onUpdate = async (data) => {
@@ -64,18 +85,18 @@ export function FormDetail({ mode }: FormDetailPropType) {
         ...data,
         id: id?.toString(),
       });
-      notify('Success', 'Budget Catgory  updated successfully');
+      notify('Success', 'Budget Category  updated successfully');
     } catch {
-      notify('Error', 'Errors in updating Budget Catgory .');
+      notify('Error', 'Errors in updating Budget Category .');
     }
   };
   const onDelete = async () => {
     try {
       await remove(id?.toString()).unwrap();
-      notify('Success', 'Budget Catgory  deleted successfully');
+      notify('Success', 'Budget Category  deleted successfully');
       router.push('/lookup/budget-category');
     } catch (err) {
-      notify('Error', 'Errors in deleting Budget Catgory .');
+      notify('Error', 'Errors in deleting Budget Category .');
     }
   };
 

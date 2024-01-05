@@ -1,28 +1,22 @@
 'use client';
-import { EntityConfig, EntityLayout } from '@megp/entity';
+import { CollectionQuery, EntityConfig, EntityLayout } from '@megp/entity';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
-import { useListByIdQuery } from './_api/budget-category.api';
 import { BudgetCategory } from '@/models/budget-category';
-import { useAuth } from '@megp/auth';
+import { logger } from '@megp/core-fe';
+import { useLazyListQuery } from './_api/budget-category.api';
 
 export function Entity({ children }: { children: React.ReactNode }) {
   const route = useRouter();
-  const { user } = useAuth();
-
+  const [trigger, { data }] = useLazyListQuery();
   const pathname = usePathname();
-
-  const { isLoading } = useListByIdQuery({
-    id: user?.organization?.id,
-    collectionQuery: undefined,
-  });
 
   useEffect;
   const config: EntityConfig<BudgetCategory> = useMemo(() => {
     return {
       basePath: '/lookup/budget-category',
       mode: 'list',
-      entity: 'Budget Category',
+      entity: 'budget-categories',
       primaryKey: 'id',
       title: 'Budget Category',
       onAdd: () => {
@@ -30,6 +24,10 @@ export function Entity({ children }: { children: React.ReactNode }) {
       },
       onDetail: (selected: BudgetCategory) => {
         route.push(`/lookup/budget-category/${selected?.id}`);
+      },
+
+      onSearch: (search) => {
+        logger.log('search', search);
       },
 
       searchable: true,
@@ -56,23 +54,6 @@ export function Entity({ children }: { children: React.ReactNode }) {
       ],
     };
   }, [route]);
-  const data = [
-    {
-      id: '607d37b5-f303-44ea-bf7e-f67fa3d64b4b',
-      name: 'Budget Category 1',
-      description: 'Budget Category 1',
-    },
-    {
-      id: '099454a9-bf8f-45f5-9a4f-6e9034230250',
-      name: 'Budget Category 1',
-      description: 'Procurement Method 1',
-    },
-    {
-      id: '15272d4f-d78f-4c58-8e93-ff436a815219',
-      name: 'Budget Category 1',
-      description: 'Budget Category 1',
-    },
-  ];
 
   const mode =
     pathname === `/lookup/budget-category`
@@ -81,13 +62,18 @@ export function Entity({ children }: { children: React.ReactNode }) {
       ? 'new'
       : 'detail';
 
+  const onRequestChange = (request: CollectionQuery) => {
+    trigger(request);
+  };
+
   return (
     <EntityLayout
       mode={mode}
       config={config}
-      data={data}
+      data={data?.items ?? []}
+      total={data?.total ?? 0}
+      onRequestChange={onRequestChange}
       detail={children}
-      isLoading={isLoading}
     />
   );
 }
