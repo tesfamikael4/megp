@@ -288,6 +288,7 @@ export const ShowFile = ({
 }) => {
   const [pdfData, setPdfData] = useState<ArrayBuffer | null>(null); // Use null as initial state
   const [fileContent, setFileContent] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const getFile = async () => {
@@ -308,6 +309,24 @@ export const ShowFile = ({
         if (blobType.includes('image')) {
           const fileUrl = URL.createObjectURL(fileBlob);
           setFileContent(fileUrl);
+        } else if (blobType.includes('pdf')) {
+          const arrayBuffer = await new Promise<ArrayBuffer>(
+            (resolve, reject) => {
+              const reader = new FileReader();
+              reader.onload = () => {
+                if (reader.result instanceof ArrayBuffer) {
+                  resolve(reader.result);
+                } else {
+                  reject(new Error('Failed to convert Blob to ArrayBuffer'));
+                }
+              };
+              reader.onerror = () => {
+                reject(new Error('Error reading Blob as ArrayBuffer'));
+              };
+              reader.readAsArrayBuffer(fileBlob);
+            },
+          );
+          setPdfData(arrayBuffer);
         } else if (blobType.includes('octet-stream')) {
           const arrayBuffer = await new Promise<ArrayBuffer>(
             (resolve, reject) => {
@@ -327,7 +346,9 @@ export const ShowFile = ({
           );
           setPdfData(arrayBuffer);
         }
+        setError(null);
       } catch (err) {
+        setError(err.message);
         logger.log(err);
       }
     };
@@ -335,6 +356,16 @@ export const ShowFile = ({
     getFile();
   }, [url]);
 
+  if (error) {
+    return (
+      <div>
+        <p className="text-center py-2 ">{`
+    Looks like something went wrong while loading the file.
+    Double-check your connection and try reloading`}</p>
+        ;
+      </div>
+    );
+  }
   return (
     <div
       className="w-full h-full flex items-center justify-center"
