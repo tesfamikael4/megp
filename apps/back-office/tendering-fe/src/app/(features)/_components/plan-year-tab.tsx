@@ -24,10 +24,10 @@ import { useEffect, useState } from 'react';
 import { useLazyReadQuery } from '../procurement-requisition/_api/procurement-requisition.api';
 import { logger } from '@megp/core-fe';
 
-export const PlanYearTab = () => {
+export const PlanYearTab = ({ collapsed }: { collapsed: boolean }) => {
   const [mode, setMode] = useState('plan');
   const [triggerPr, { data: pr }] = useLazyReadQuery();
-  const [opened, { toggle }] = useDisclosure(false);
+  const [opened, { toggle }] = useDisclosure(collapsed);
   const { id } = useParams();
   useEffect(() => {
     id !== undefined && setMode('pr');
