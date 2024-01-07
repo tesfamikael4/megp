@@ -27,30 +27,28 @@ export const DetailActivity = ({ cell }: any) => {
     //   key: 'Funding Source',
     //   value: cell.fundingSource,
     // },
-    {
-      key: 'Currency',
-      value: cell.currency,
-    },
     // {
     //   key: 'Supplier Target Group',
     //   value: cell.preference,
     // },
     {
       key: 'Total Estimated Amount',
-      value: cell.estimatedAmount.toLocaleString('en-US', {
+      value: parseInt(cell.estimatedAmount).toLocaleString('en-US', {
         style: 'currency',
         currency: cell.currency,
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
+        currencyDisplay: 'code',
       }),
     },
     {
       key: 'Total Calculated Amount',
-      value: cell.estimatedAmount.toLocaleString('en-US', {
+      value: parseInt(cell.calculatedAmount).toLocaleString('en-US', {
         style: 'currency',
         currency: cell.currency,
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
+        currencyDisplay: 'code',
       }),
     },
   ];

@@ -16,16 +16,13 @@ export const DetailItem = ({ data }: any) => {
       value: data.description,
     },
     {
-      key: 'Currency',
-      value: data.currency,
-    },
-    {
       key: 'Unit Price',
       value: data.unitPrice.toLocaleString('en-US', {
         style: 'currency',
         currency: data.currency,
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
+        currencyDisplay: 'code',
       }),
     },
     {

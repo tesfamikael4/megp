@@ -28,10 +28,7 @@ export function PlanOverview() {
 
   return (
     <Box pos="relative">
-      <Section
-        title="Annual Procurement Plan 2023 Activities"
-        collapsible={false}
-      >
+      <Section title={workflowInstance?.itemName ?? ''} collapsible={false}>
         <LoadingOverlay
           visible={isWorkflowInstanceLoading || isActivityLoading}
         />

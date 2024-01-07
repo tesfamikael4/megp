@@ -29,25 +29,16 @@ export const Menu: MenuItem[] = [
     icon: IconReportAnalytics,
     link: '/report',
   },
+
   {
-    label: 'Workflow',
-    icon: IconGizmo,
+    label: 'Settings',
+    icon: IconAdjustmentsHorizontal,
     links: [
       { label: 'Pre Budget Plan Approval', link: '/pre-budget-plan-approval' },
       {
         label: 'Post Budget Plan Approval',
         link: '/post-budget-plan-approval',
       },
-    ],
-  },
-
-  {
-    label: 'Settings',
-    icon: IconAdjustmentsHorizontal,
-    links: [
-      // { label: 'Organization Types', link: '/organization-type' },
-      // { label: 'Organization Sector', link: '/organization-sector' },
-      // { label: 'Unit Types', link: '/unit-type' },
     ],
   },
 ];

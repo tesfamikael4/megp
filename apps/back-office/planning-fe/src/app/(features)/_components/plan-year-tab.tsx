@@ -319,6 +319,7 @@ export const PlanYearTab = ({ page }: { page: 'pre' | 'post' }) => {
                             currency: currency,
                             minimumFractionDigits: 2,
                             maximumFractionDigits: 2,
+                            currencyDisplay: 'code',
                           })}
                         </Text>
                       );
@@ -332,6 +333,7 @@ export const PlanYearTab = ({ page }: { page: 'pre' | 'post' }) => {
                           currency: currency,
                           minimumFractionDigits: 2,
                           maximumFractionDigits: 2,
+                          currencyDisplay: 'code',
                         })}
                       </Text>
                     );

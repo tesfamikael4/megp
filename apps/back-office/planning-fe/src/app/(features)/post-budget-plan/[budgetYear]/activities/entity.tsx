@@ -84,6 +84,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
                 currency: original.currency,
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
+                currencyDisplay: 'code',
               })}
             </p>
           ),
