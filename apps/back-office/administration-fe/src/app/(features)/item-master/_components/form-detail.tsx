@@ -77,7 +77,6 @@ export function FormDetail({ mode }: FormDetailProps) {
   const {
     handleSubmit,
     reset,
-    register,
     setValue,
     control,
     formState: { errors },
@@ -247,7 +246,6 @@ export function FormDetail({ mode }: FormDetailProps) {
           autosize
           minRows={2}
           maxRows={10}
-          {...register('description')}
           error={errors?.description?.message as string | undefined}
         />
         <Tree

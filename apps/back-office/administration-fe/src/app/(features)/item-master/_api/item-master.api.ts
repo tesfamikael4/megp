@@ -12,6 +12,7 @@ export const {
   useListQuery,
   useReadQuery,
   useLazyReadQuery,
+  useLazyListQuery,
   useCreateMutation,
   useUpdateMutation,
   useDeleteMutation,
