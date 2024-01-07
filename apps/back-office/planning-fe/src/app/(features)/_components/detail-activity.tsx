@@ -51,6 +51,7 @@ export const DetailActivity = ({ cell }: any) => {
         currencyDisplay: 'code',
       }),
     },
+    { key: 'Remark', value: cell.remark },
   ];
   return (
     <>
