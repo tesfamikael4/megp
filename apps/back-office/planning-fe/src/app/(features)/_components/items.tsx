@@ -78,11 +78,6 @@ export function Items({
   const config: TableConfig<any> = {
     columns: [
       {
-        id: 'itemCode',
-        header: 'Code',
-        accessorKey: 'itemCode',
-      },
-      {
         header: 'Description',
         accessorKey: 'description',
       },
@@ -122,11 +117,6 @@ export function Items({
   };
   const listConfig: TableConfig<any> = {
     columns: [
-      {
-        id: 'itemCode',
-        header: 'Code',
-        accessorKey: 'itemCode',
-      },
       {
         header: 'Description',
         accessorKey: 'description',
@@ -169,6 +159,7 @@ export function Items({
               currency: original?.currency,
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
+              currencyDisplay: 'code',
             })}
           </p>
         ),
@@ -341,6 +332,7 @@ export function Items({
                   currency: original?.currency,
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
+                  currencyDisplay: 'code',
                 })}
               </Text>
             </>
