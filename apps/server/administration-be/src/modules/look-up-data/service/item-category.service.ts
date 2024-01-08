@@ -5,6 +5,7 @@ import { DataResponseFormat } from 'src/shared/api-data';
 import { ItemCategory } from 'src/entities/item-category.entity';
 import { EntityCrudService } from 'src/shared/service';
 import { CollectionQuery, QueryConstructor } from 'src/shared/collection-query';
+import { CreateItemCategoryDto } from '../dto/item-category.dto';
 @Injectable()
 export class ItemCategoryService extends EntityCrudService<ItemCategory> {
   constructor(
@@ -12,6 +13,44 @@ export class ItemCategoryService extends EntityCrudService<ItemCategory> {
     private readonly itemCatRepository: Repository<ItemCategory>,
   ) {
     super(itemCatRepository);
+  }
+  async createUniqueData(
+    itemCatDto: CreateItemCategoryDto,
+  ): Promise<any> {
+    const NameExist = await this.itemCatRepository.findOne({
+      where: {
+        name: itemCatDto.name,
+      },
+      withDeleted: true,
+    });
+    if (NameExist) {
+      // If the existing Currency is soft-deleted, recover it
+      if (NameExist.deletedAt) {
+        await this.itemCatRepository.recover(NameExist);
+        // Update parentId (if needed) and return the recovered Currency
+        NameExist.parentId = itemCatDto.parentId;
+
+        await this.itemCatRepository.save(NameExist);
+        return NameExist;
+      } else {
+        return {
+          name: itemCatDto.name,
+          message: 'Item-category Already Exist.'
+        };
+      }
+    } else {
+      const newICat = new ItemCategory();
+      newICat.name = itemCatDto.name;
+      newICat.parentId = itemCatDto.parentId;
+      try {
+        const result = await this.itemCatRepository.save(newICat);
+        if (result) {
+          return result;
+        }
+      } catch (error) {
+        throw error;
+      }
+    }
   }
   async findItems(query: CollectionQuery) {
     console.log(query);

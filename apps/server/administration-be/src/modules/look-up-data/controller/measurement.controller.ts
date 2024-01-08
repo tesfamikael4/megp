@@ -1,4 +1,4 @@
-import { Controller } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { ApiExtraModels, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { DataResponseFormat } from 'src/shared/api-data';
 import { MeasurementService } from '../service/measurement.service';
@@ -22,5 +22,9 @@ export class MeasurementController extends EntityCrudController<Measurement>(
 ) {
   constructor(private readonly measurementService: MeasurementService) {
     super(measurementService);
+  }
+  @Post()
+  async createUniqueData(@Body() measurementDto: CreateMeasurementDto) {
+    return await this.measurementService.createUniqueData(measurementDto);
   }
 }

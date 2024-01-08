@@ -1,4 +1,4 @@
-import { Controller } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { ApiExtraModels, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { DataResponseFormat } from 'src/shared/api-data';
 import { EntityCrudOptions } from 'src/shared/types/crud-option.type';
@@ -22,5 +22,9 @@ export class TargetGroupController extends EntityCrudController<TargetGroup>(
 ) {
   constructor(private readonly targetGroupService: TargetGroupService) {
     super(targetGroupService);
+  }
+  @Post()
+  async createUniqueData(@Body() tGDto: CreateTargetGroupDto) {
+    return await this.targetGroupService.createUniqueData(tGDto);
   }
 }

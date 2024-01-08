@@ -1,4 +1,4 @@
-import { Controller } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { ApiExtraModels, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { DataResponseFormat } from 'src/shared/api-data';
 import { EntityCrudOptions } from 'src/shared/types/crud-option.type';
@@ -19,5 +19,9 @@ export class CurrencyController extends EntityCrudController<Currency>(
 ) {
   constructor(private readonly currencyService: CurrencyService) {
     super(currencyService);
+  }
+  @Post()
+  async createUniqueData(@Body() UoMDto: CreateCurrencyDto) {
+    return await this.currencyService.createUniqueData(UoMDto);
   }
 }

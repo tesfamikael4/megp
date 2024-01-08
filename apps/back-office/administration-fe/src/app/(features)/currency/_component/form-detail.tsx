@@ -27,9 +27,18 @@ const defaultValues = {
 
 export function FormDetail({ mode }: FormDetailProps) {
   const currencySchema: ZodType<Partial<Currency>> = z.object({
-    name: z.string().min(1, { message: 'This field is required' }),
-    description: z.string().optional(),
-    abbreviation: z.string().min(1),
+    name: z
+      .string()
+      .min(1, { message: 'Name is required' })
+      .transform((str) => str.toLowerCase()),
+    description: z
+      .string()
+      .optional()
+      .transform((str) => (str ? str.toLowerCase() : '')),
+    abbreviation: z
+      .string()
+      .min(1, { message: 'abbreviation is required' })
+      .transform((str) => str.toLowerCase()),
   });
 
   const {
@@ -54,19 +63,39 @@ export function FormDetail({ mode }: FormDetailProps) {
   } = useReadQuery(id?.toString());
 
   const onCreate = async (data) => {
+    const transformedData = {
+      ...data,
+      name: data.name.toLowerCase(),
+      description: data.description?.toLowerCase(),
+      abbreviation: data.abbreviation?.toLowerCase(),
+    };
+
     try {
-      const result = await create(data);
-      if ('data' in result) {
-        router.push(`/currency/${result?.data?.id}`);
+      const result = await create(transformedData).unwrap();
+
+      // Check if the backend response contains a specific error message
+      if (result && result.message === 'Currency already exist.') {
+        // Display the error notification
+        notifications.show({
+          message: result.message,
+          title: 'Error',
+          color: 'red',
+        });
+      } else {
+        // If no specific error message, assume success and display success notification
+        router.push(`/currency/${result?.id}`);
+        notifications.show({
+          message: 'Currency Created Successfully',
+          title: 'Success',
+          color: 'green',
+        });
       }
+    } catch (error) {
+      // Handle any other errors that might occur
+      const errorMessage =
+        error.data?.message || error.message || 'Unknown error occurred';
       notifications.show({
-        message: 'Currency created successfully',
-        title: 'Success',
-        color: 'green',
-      });
-    } catch (err) {
-      notifications.show({
-        message: 'Error in deleting Currency.',
+        message: errorMessage,
         title: 'Error',
         color: 'red',
       });

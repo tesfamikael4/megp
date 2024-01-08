@@ -1,4 +1,4 @@
-import { Get, Controller, Query } from '@nestjs/common';
+import { Get, Controller, Query, Post, Body } from '@nestjs/common';
 import {
   ApiExtraModels,
   ApiQuery,
@@ -32,6 +32,10 @@ export class ItemCategoriesController extends EntityCrudController<ItemCategory>
 ) {
   constructor(private readonly itemCategoryService: ItemCategoryService) {
     super(itemCategoryService);
+  }
+  @Post()
+  async createUniqueData(@Body() itemCatDto: CreateItemCategoryDto) {
+    return await this.itemCategoryService.createUniqueData(itemCatDto);
   }
   @Get()
   @ApiQuery({

@@ -36,9 +36,9 @@ const AddUnit = () => {
         },
       },
       {
-        id: 'shortName',
-        header: 'Abbreviations',
-        accessorKey: 'shortName',
+        id: 'abbreviation',
+        header: 'Abbreviation',
+        accessorKey: 'abbreviation',
         cell: (info) => info.getValue(),
         meta: {
           widget: 'primary',
