@@ -2,13 +2,12 @@
 import { CollectionQuery, EntityConfig, EntityLayout } from '@megp/entity';
 import { usePathname, useRouter } from 'next/navigation';
 import { useMemo } from 'react';
-import { useLazyListQuery, useListQuery } from './_api/measurement.api';
+import { useLazyListQuery } from './_api/measurement.api';
 import { Measurement } from '@/models/measurement';
 import { logger } from '@megp/core-fe';
 
 export function Entity({ children }: { children: React.ReactElement }) {
   const route = useRouter();
-  // const { data: list } = useListQuery({});
   const [trigger, { data }] = useLazyListQuery();
 
   const config: EntityConfig<Measurement> = useMemo(() => {
@@ -35,18 +34,18 @@ export function Entity({ children }: { children: React.ReactElement }) {
 
       columns: [
         {
-          id: 'shortName',
-          header: 'Abbreviations',
-          accessorKey: 'shortName',
+          id: 'name',
+          header: 'Name',
+          accessorKey: 'name',
           cell: (info) => info.getValue(),
           meta: {
             widget: 'primary',
           },
         },
         {
-          id: 'name',
-          header: 'Name',
-          accessorKey: 'name',
+          id: 'description',
+          header: 'Description',
+          accessorKey: 'description',
           cell: (info) => info.getValue(),
           meta: {
             widget: 'multiline',

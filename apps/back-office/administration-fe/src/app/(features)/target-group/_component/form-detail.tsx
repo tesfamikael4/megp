@@ -26,8 +26,14 @@ const defaultValues = {
 
 export function FormDetail({ mode }: FormDetailProps) {
   const targetGroupSchema: ZodType<Partial<TargetGroup>> = z.object({
-    name: z.string().min(1, { message: 'This field is required' }),
-    description: z.string().optional(),
+    name: z
+      .string()
+      .min(1, { message: 'This field is required' })
+      .transform((str) => str.toLowerCase()),
+    description: z
+      .string()
+      .optional()
+      .transform((str) => (str ? str.toLowerCase() : str)),
   });
 
   const {
@@ -50,21 +56,41 @@ export function FormDetail({ mode }: FormDetailProps) {
     isSuccess: selectedSuccess,
     isLoading,
   } = useReadQuery(id?.toString());
-
   const onCreate = async (data) => {
+    const transformedData = {
+      ...data,
+      name: data.name.toLowerCase(),
+      description: data.description?.toLowerCase(),
+    };
+
     try {
-      const result = await create(data);
-      if ('data' in result) {
-        router.push(`/target-group/${result?.data?.id}`);
+      const result = await create(transformedData).unwrap();
+
+      // Check if the result has a message indicating that the target group already exists
+      if (result && result.message === 'Target Group already exist.') {
+        notifications.show({
+          message: result.message,
+          title: 'Error',
+          color: 'red',
+        });
+      } else {
+        notifications.show({
+          message: 'Target Group Created Successfully',
+          title: 'Success',
+          color: 'green',
+        });
+        router.push(`/target-group/${result.id}`);
+      }
+    } catch (error) {
+      // Handle other types of errors
+      let errorMessage = 'Unknown error occurred';
+      if (error?.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error?.message) {
+        errorMessage = error.message;
       }
       notifications.show({
-        message: 'Target Group Created Successfully',
-        title: 'Success',
-        color: 'green',
-      });
-    } catch (err) {
-      notifications.show({
-        message: 'Error in Deleting Target group.',
+        message: errorMessage,
         title: 'Error',
         color: 'red',
       });

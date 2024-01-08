@@ -1,4 +1,4 @@
-import { Controller } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { ApiExtraModels, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { DataResponseFormat } from 'src/shared/api-data';
 import { District } from 'src/entities/district.entity';
@@ -18,5 +18,9 @@ const options: ExtraCrudOptions = {
 export class DistrictController extends ExtraCrudController<District>(options) {
   constructor(private readonly districtService: DistrictService) {
     super(districtService);
+  }
+  @Post()
+  async createUniqueData(@Body() districtDto: CreateDistrictDto) {
+    return await this.districtService.createUniqueData(districtDto);
   }
 }

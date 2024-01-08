@@ -34,18 +34,18 @@ export function Entity({ children }: { children: React.ReactElement }) {
 
       columns: [
         {
-          id: 'description',
-          header: 'description',
-          accessorKey: 'description',
+          id: 'name',
+          header: 'Name',
+          accessorKey: 'name',
           cell: (info) => info.getValue(),
           meta: {
             widget: 'primary',
           },
         },
         {
-          id: 'name',
-          header: 'Name',
-          accessorKey: 'name',
+          id: 'description',
+          header: 'Description',
+          accessorKey: 'description',
           cell: (info) => info.getValue(),
           meta: {
             widget: 'multiline',

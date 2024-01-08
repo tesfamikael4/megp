@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsNotEmpty,
+  IsOptional,
   IsUUID,
 } from 'class-validator';
 import { Measurement } from 'src/entities/measurement.entity';
@@ -13,6 +14,8 @@ export class CreateMeasurementDto {
   name: string;
 
   @ApiProperty()
+  @IsOptional()
+  // @IsNotEmpty()
   description: string;
 
 

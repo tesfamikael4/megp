@@ -10,7 +10,7 @@ export class CreateItemCategoryDto {
   name: string;
 
   @ApiProperty()
-  @IsNotEmpty()
+  // @IsNotEmpty()
   parentId: string;
 
   static fromDto(dto: CreateItemCategoryDto): ItemCategory {

@@ -15,7 +15,6 @@ import {
   useUpdateMutation,
 } from '../_api/item-category';
 import { ItemCategory } from '@/models/item-category';
-
 interface FormDetailProps {
   mode: 'new' | 'detail';
 }
@@ -26,7 +25,10 @@ const defaultValues = {
 };
 export function FormDetail({ mode }: FormDetailProps) {
   const itemCategorySchema: ZodType<Partial<ItemCategory>> = z.object({
-    name: z.string().min(1, { message: 'This field is required' }),
+    name: z
+      .string()
+      .min(1, { message: 'This field is required' })
+      .transform((str) => str.toLowerCase()),
     parentId: z.string().optional(),
   });
   const {
@@ -55,20 +57,45 @@ export function FormDetail({ mode }: FormDetailProps) {
     isSuccess: listSuccess,
     isLoading: listLoading,
   } = useListQuery({});
+
+  const parentOptions = listSuccess
+    ? listData.items
+        .filter((item) => item.id !== id) // Exclude the current item from options
+        .map((item) => ({ value: item.id, label: item.name }))
+    : [];
   const onCreate = async (data) => {
+    const transformedData = {
+      ...data,
+      name: data.name.toLowerCase(),
+    };
     try {
-      const result = await create(data);
-      if ('data' in result) {
-        router.push(`/item-category/${result?.data?.id}`);
+      const result = await create(transformedData).unwrap();
+
+      // Check if the response contains an 'id', indicating successful creation
+      if (result && 'id' in result) {
+        router.push(`/item-category/${result.id}`);
+        notifications.show({
+          message: 'Item-category Created Successfully',
+          title: 'Success',
+          color: 'green',
+        });
+      } else {
+        // If the response doesn't contain 'id', it might be an error message
+        throw new Error(
+          result.message || 'Unexpected response structure from the server',
+        );
+      }
+    } catch (error) {
+      // Error handling for both API call failures and manually thrown errors
+      let errorMessage =
+        error?.data?.message || error?.message || 'Unknown error occurred';
+
+      // Specific check for 'Item-category Already Exist' message
+      if (errorMessage === 'Item-category Already Exist.') {
+        errorMessage = 'Item-Category Already Exist.';
       }
       notifications.show({
-        message: 'Item-Category created successfully',
-        title: 'Success',
-        color: 'green',
-      });
-    } catch (err) {
-      notifications.show({
-        message: 'errors in deleting Item-Category.',
+        message: errorMessage,
         title: 'Error',
         color: 'red',
       });
@@ -97,7 +124,7 @@ export function FormDetail({ mode }: FormDetailProps) {
         message: 'Item-Category Deleted Successfully',
         title: 'Success',
       });
-      router.push('/item-Category');
+      router.push('/item-category');
     } catch (err) {
       notifications.show({
         message: 'Error in Deleting Item-Category.',
@@ -134,14 +161,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       />
       <Select
         label="Parent"
-        data={
-          listSuccess
-            ? listData.items.map((item) => ({
-                value: item.id,
-                label: item.name,
-              }))
-            : []
-        }
+        data={parentOptions}
         {...register('parentId')}
         onChange={async (value) => value && (await setValue('parentId', value))}
         error={errors?.parentId?.message && errors.parentId.message.toString()}

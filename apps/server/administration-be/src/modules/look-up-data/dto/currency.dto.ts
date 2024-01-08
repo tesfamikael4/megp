@@ -11,6 +11,7 @@ export class CreateCurrencyDto {
   @IsNotEmpty()
   description: string;
   @ApiProperty()
+  @IsNotEmpty()
   abbreviation: string;
 
   static fromDto(dto: CreateCurrencyDto): Currency {

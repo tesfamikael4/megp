@@ -8,7 +8,7 @@ export class Measurement extends Audit {
   id: string;
   @Column({ unique: true })
   name: string;
-  @Column()
+  @Column({ nullable: true })
   description: string;
   @OneToMany(() => UnitOfMeasurement, (uom1) => uom1.measurement, {
     cascade: true,

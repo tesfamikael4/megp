@@ -21,7 +21,7 @@ interface FormDetailProps {
 
 const defaultValues = {
   name: '',
-  shortName: '',
+  description: '',
 };
 
 export function FormDetail({ mode }: FormDetailProps) {
@@ -30,10 +30,10 @@ export function FormDetail({ mode }: FormDetailProps) {
       .string()
       .min(1, { message: 'Name is required' })
       .transform((str) => str.toLowerCase()),
-    shortName: z
+    description: z
       .string()
       .optional()
-      .transform((str) => (str ? str.toLowerCase() : '')),
+      .transform((str) => (str ? str.toLowerCase() : null)),
   });
 
   const {
@@ -61,36 +61,36 @@ export function FormDetail({ mode }: FormDetailProps) {
     const transformedData = {
       ...data,
       name: data.name.toLowerCase(),
-      shortName: data.shortName?.toLowerCase(),
+      description: data.description ? data.description.toLowerCase() : null, // Handle optional description
     };
     try {
       const result = await create(transformedData).unwrap();
-      if ('data' in result) {
-        router.push(`/measurement/${result?.data?.id}`);
-      }
-      notifications.show({
-        message: 'Measurement Created Successfully',
-        title: 'Success',
-        color: 'green',
-      });
-    } catch (error) {
-      if (
-        error.data?.statusCode === 400 &&
-        error.data?.message.includes('UQ_ecda7925be57c32d6f988ac50b6')
-      ) {
-        // Display a user-friendly error notification
+
+      // Assuming 'result' contains an 'id' field when creation is successful
+      if (result && 'id' in result) {
+        router.push(`/measurement/${result.id}`);
         notifications.show({
-          message: 'A measurement with this name already exists.',
-          title: 'Error',
-          color: 'red',
+          message: 'Measurement Created Successfully',
+          title: 'Success',
+          color: 'green',
         });
       } else {
-        notifications.show({
-          message: 'Errors in Creating Measurement.',
-          title: 'Error',
-          color: 'red',
-        });
+        // Handle any custom error messages from the backend
+        const errorMessage =
+          result.message || 'Unexpected response structure from the server';
+        throw new Error(errorMessage);
       }
+    } catch (error) {
+      // Extract error message from the caught error
+      const errorMessage =
+        error?.response?.data?.message ||
+        error?.message ||
+        'Unknown error occurred';
+      notifications.show({
+        message: errorMessage,
+        title: 'Error',
+        color: 'red',
+      });
     }
   };
   const onUpdate = async (data) => {
@@ -103,7 +103,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       });
     } catch {
       notifications.show({
-        message: 'Error in Updating Measurement.',
+        message: 'Error In Updating Measurement.',
         title: 'Error',
         color: 'red',
       });
@@ -135,7 +135,7 @@ export function FormDetail({ mode }: FormDetailProps) {
     if (mode == 'detail' && selectedSuccess && selected !== undefined) {
       reset({
         name: selected?.name,
-        shortName: selected?.shortName,
+        description: selected?.description,
       });
     }
   }, [mode, reset, selected, selectedSuccess]);
@@ -152,9 +152,11 @@ export function FormDetail({ mode }: FormDetailProps) {
       />{' '}
       <TextInput
         // withAsterisk
-        label="Abbreviations"
-        {...register('shortName')}
-        error={errors?.shortName ? errors?.shortName?.message?.toString() : ''}
+        label="Description"
+        {...register('description')}
+        error={
+          errors?.description ? errors?.description?.message?.toString() : ''
+        }
         // required
       />{' '}
       <EntityButton

@@ -1,4 +1,4 @@
-import { Controller } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { ApiExtraModels, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { DataResponseFormat } from 'src/shared/api-data';
 import { EntityCrudOptions } from 'src/shared/types/crud-option.type';
@@ -17,5 +17,9 @@ const options: EntityCrudOptions = {
 export class RegionController extends EntityCrudController<Region>(options) {
   constructor(private readonly regionService: RegionService) {
     super(regionService);
+  }
+  @Post()
+  async createUniqueData(@Body() regionDto: CreateRegionDto) {
+    return await this.regionService.createUniqueData(regionDto);
   }
 }
