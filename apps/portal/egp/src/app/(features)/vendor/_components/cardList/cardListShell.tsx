@@ -176,7 +176,6 @@ export const CardListShell: React.FC<CardListProps> = ({
   const handleRemove = (index: number) => {
     remove(index);
   };
-  console.log(disabled);
   return (
     <>
       <SimpleGrid cols={3} p="xs">
