@@ -1,7 +1,6 @@
 import { Box, Button, Table } from '@mantine/core';
 import tableClasses from './table.module.scss';
-import { addSpacesToCamelCase } from './addSpaceToCamelCase';
-import { formatDateTimeFromString } from '../../../../../../../../../../back-office/vendor-fe/src/app/(features)/util/index';
+import { addSpacesToCamelCase, formatDateTimeFromString } from './utils';
 
 export function renderTable(
   data,

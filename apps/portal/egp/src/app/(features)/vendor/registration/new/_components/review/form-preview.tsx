@@ -1,8 +1,8 @@
 import React from 'react';
 import { Accordion, Box, Flex, Table, Text } from '@mantine/core';
 import classes from './accordion.module.scss';
-import tableClasses from './accordion.module.scss';
 import { renderTable } from './renderTable';
+import { addSpacesToCamelCase } from './utils';
 
 const tabs = [
   {
@@ -71,6 +71,11 @@ const formatColumns = {
     { name: 'IBAN' },
     { name: 'isDefualt' },
   ],
+  beneficialOwnership: [
+    { name: 'firstName' },
+    { name: 'lastName' },
+    { name: 'nationality' },
+  ],
   shareHolders: [
     { name: 'firstName' },
     { name: 'lastName' },
@@ -78,13 +83,6 @@ const formatColumns = {
     { name: 'share' },
   ],
 };
-
-function addSpacesToCamelCase(input: string): string {
-  const spacedString = input.replace(/([a-z])([A-Z])/g, '$1 $2');
-
-  return spacedString.charAt(0).toUpperCase() + spacedString.slice(1);
-}
-const fieldOrder = ['Name', 'Mobile Phone', 'Primary Email'];
 
 function FormPreview({ data }) {
   return (
@@ -184,5 +182,4 @@ function FormPreview({ data }) {
     </Accordion>
   );
 }
-
 export default FormPreview;
