@@ -37,7 +37,7 @@ import { userInfo } from 'os';
 @ApiResponse({ status: 500, description: 'Internal error' })
 @ApiExtraModels(DataResponseFormat)
 export class VendorRegistrationsController {
-  constructor(private readonly regService: VendorRegistrationsService) { }
+  constructor(private readonly regService: VendorRegistrationsService) {}
   @UseGuards(JwtGuard)
   @Get('get-isr-vendors')
   async getVendors() {
@@ -206,7 +206,7 @@ export class VendorRegistrationsController {
     @Body() vendorprofileUpdateDara: any,
     @CurrentUser() userInfo: string,
   ) {
-    console.log("vendorprofileUpdateDara", vendorprofileUpdateDara);
+    console.log('vendorprofileUpdateDara', vendorprofileUpdateDara);
     return await this.regService.submitVendorProfileUpdate(
       vendorprofileUpdateDara,
       userInfo,
@@ -226,5 +226,10 @@ export class VendorRegistrationsController {
   ) {
     return await this.regService.GetFPPAData(tinNumber);
   }
-}
 
+  @UseGuards(JwtGuard)
+  @Get('get-ertificate-informations')
+  async getCertificateInformations(@CurrentUser() userInfo: any) {
+    return await this.regService.getCertificateInformations(userInfo.id);
+  }
+}
