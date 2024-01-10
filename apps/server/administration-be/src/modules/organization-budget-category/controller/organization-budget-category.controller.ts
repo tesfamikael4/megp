@@ -1,4 +1,4 @@
-import { Controller } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { ApiExtraModels, ApiTags } from '@nestjs/swagger';
 import { DataResponseFormat } from '@api-data';
 import { EntityCrudController } from '@generic-controllers';
@@ -6,6 +6,7 @@ import { OrganizationBudgetCategoryService } from '../service/organization-budge
 import { OrganizationBudgetCategory } from 'src/entities/organization-budget-category.entity';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import {
+  BulkBudgetDto,
   OrganizationBudgetCategoryCreateDto,
   OrganizationBudgetCategoryUpdateDto,
 } from '../dto/organization-budget-category.dto';
@@ -26,5 +27,10 @@ export class OrganizationBudgetCategoryController extends EntityCrudController<O
     private readonly organizationBudgetCategoryService: OrganizationBudgetCategoryService,
   ) {
     super(organizationBudgetCategoryService);
+  }
+
+  @Post('bulk-create')
+  async bulkCreate(@Body() budgetData: BulkBudgetDto): Promise<BulkBudgetDto> {
+    return this.organizationBudgetCategoryService.bulkCreate(budgetData);
   }
 }

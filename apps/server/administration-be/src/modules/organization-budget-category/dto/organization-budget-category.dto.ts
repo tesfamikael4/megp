@@ -1,10 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsUUID } from 'class-validator';
+import { IsArray, IsString, IsUUID } from 'class-validator';
 
 export class OrganizationBudgetCategoryCreateDto {
   @ApiProperty()
   @IsUUID()
-  organizationId: string;
+  @IsArray()
+  organizationId: string[];
 
   @ApiProperty()
   @IsUUID()
@@ -12,3 +13,12 @@ export class OrganizationBudgetCategoryCreateDto {
 }
 
 export class OrganizationBudgetCategoryUpdateDto extends OrganizationBudgetCategoryCreateDto {}
+
+export class BulkBudgetDto {
+  @ApiProperty({
+    isArray: true,
+    type: () => OrganizationBudgetCategoryCreateDto,
+  })
+  @IsArray()
+  budgetCategoryList: OrganizationBudgetCategoryCreateDto[];
+}
