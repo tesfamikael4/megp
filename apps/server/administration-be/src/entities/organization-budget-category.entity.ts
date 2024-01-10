@@ -6,7 +6,6 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-// import { Organization } from './organization.entity';
 import { BudgetCategory } from './budget-category.entity';
 @Entity({ name: 'organization_budget_category' })
 export class OrganizationBudgetCategory extends Audit {
@@ -15,9 +14,6 @@ export class OrganizationBudgetCategory extends Audit {
 
   @Column()
   organizationId: string;
-
-  @Column()
-  organizationName: string;
 
   @Column()
   budgetCategoryId: string;
@@ -33,16 +29,4 @@ export class OrganizationBudgetCategory extends Audit {
   )
   @JoinColumn()
   public budgetCategory: BudgetCategory;
-
-  // @ManyToOne(
-  //   () => Organization,
-  //   (organization) => organization.organizationBudgetCategory,
-  //   {
-  //     orphanedRowAction: 'delete',
-  //     onUpdate: 'CASCADE',
-  //     onDelete: 'CASCADE',
-  //   },
-  // )
-  // @JoinColumn()
-  // public organization: Organization;
 }
