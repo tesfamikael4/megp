@@ -3,7 +3,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { PreBudgetPlan, PreBudgetPlanActivity } from 'src/entities';
 import { ExtraCrudService } from 'src/shared/service';
-import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class PreBudgetPlanActivityService extends ExtraCrudService<PreBudgetPlanActivity> {
