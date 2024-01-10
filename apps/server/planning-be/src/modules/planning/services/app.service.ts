@@ -1,8 +1,9 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { APP, BudgetYear, PreBudgetPlan } from 'src/entities';
 import { EntityCrudService } from 'src/shared/service';
+import { Http2ServerRequest } from 'http2';
 
 @Injectable()
 export class APPService extends EntityCrudService<APP> {
@@ -44,7 +45,7 @@ export class APPService extends EntityCrudService<APP> {
       },
     });
     if (app) {
-      throw new BadRequestException('app_exist');
+      throw new HttpException('App already exist', 430);
     }
 
     item.planName = 'Annual Procurement Plan ' + budYear;

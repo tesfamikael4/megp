@@ -74,10 +74,10 @@ export class PreBudgetPlanActivity extends OrgAudit {
   @Column()
   description: string;
 
-  @Column({ default: 0, type: 'bigint' })
+  @Column({ default: 0, type: 'decimal', precision: 14, scale: 2 })
   estimatedAmount: number;
 
-  @Column({ default: 0, type: 'bigint' })
+  @Column({ default: 0, type: 'decimal', precision: 14, scale: 2 })
   calculatedAmount: number;
 
   @Column()

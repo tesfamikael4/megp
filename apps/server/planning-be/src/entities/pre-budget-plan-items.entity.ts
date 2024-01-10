@@ -32,7 +32,7 @@ export class PreBudgetPlanItems extends OrgAudit {
   @Column()
   description: string;
 
-  @Column()
+  @Column({ default: 0, type: 'decimal', precision: 14, scale: 2 })
   unitPrice: number;
 
   @Column()
