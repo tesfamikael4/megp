@@ -9,7 +9,7 @@ import {
   Radio,
   Text,
 } from '@mantine/core';
-import { Table, TableConfig, logger } from '@megp/core-fe';
+import { Table, TableConfig, notify } from '@megp/core-fe';
 import { useDisclosure } from '@mantine/hooks';
 import { IconPlus } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
@@ -17,13 +17,12 @@ import {
   useLazyGetActivitiesQuery,
   useLazyGetBudgetYearQuery,
 } from '@/store/api/budget/budget-year.api';
-import { notifications } from '@mantine/notifications';
-
 import { useParams, useRouter } from 'next/navigation';
 import {
   useCreateMutation,
   useLazyListByIdQuery as useLazyListPrActivityQuery,
 } from '../_api/pr-activity.api';
+import GetActivity from './get-activity';
 
 export function Activities() {
   const [opened, { open, close }] = useDisclosure(false);
@@ -209,7 +208,12 @@ export function Activities() {
         id: 'procurementReference',
         header: '#Ref',
         accessorKey: 'procurementReference',
-        cell: (info) => info.getValue(),
+        cell: (info) => (
+          <GetActivity
+            id={info.row.original.annualProcurementPlanActivityId}
+            mode={'reference'}
+          />
+        ),
         meta: {
           widget: 'expand',
         },
@@ -218,7 +222,12 @@ export function Activities() {
         id: 'name',
         header: 'Name',
         accessorKey: 'name',
-        cell: (info) => info.getValue(),
+        cell: (info) => (
+          <GetActivity
+            id={info.row.original.annualProcurementPlanActivityId}
+            mode={'name'}
+          />
+        ),
         meta: {
           widget: 'primary',
         },
@@ -234,25 +243,15 @@ export function Activities() {
       }).unwrap();
 
       added && router.push(`/procurement-requisition/${id}`);
-      notifications.show({
-        title: 'Success',
-        message: 'Activity added successfully',
-        color: 'green',
-      });
+      notify('Success', 'Activity added successfully');
     } catch (err) {
-      logger.log(err);
-      notifications.show({
-        title: 'Error',
-        message: 'Something Went wrong',
-        color: 'red',
-      });
+      notify('Error', 'Something Went wrong');
     }
   };
 
   useEffect(() => {
     if (isSuccess) {
       const mod = prActivity.items.map((item) => {
-        logger.log(item);
         return {
           ...item,
           procurementMethod: item?.methods
@@ -305,7 +304,14 @@ export function Activities() {
 
   const handleDone = () => {
     close();
-    setFinalData(data);
+    const modifyActivity = data.map((activity) => {
+      return {
+        ...activity,
+        annualProcurementPlanActivityId: activity?.id,
+      };
+    });
+
+    setFinalData(modifyActivity);
   };
   return (
     <Box>

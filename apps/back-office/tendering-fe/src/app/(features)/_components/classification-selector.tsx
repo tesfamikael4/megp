@@ -20,7 +20,6 @@ const ClassificationSelector = ({
 }: ClassificationSelectorProps) => {
   const [opened, { open, close }] = useDisclosure(false);
   const [mode, setMode] = useState<'tree' | 'table'>('table');
-  //   const [currentAssigned] = useState([]);
   const [getCommodity, { data: list }] = useLazyGetClassificationsQuery();
   const addConfig: RelationConfig<any> = {
     title: 'Classifications',
@@ -95,12 +94,6 @@ const ClassificationSelector = ({
         size="lg"
       >
         {mode == 'table' ? (
-          //   <Relation
-          //     config={addConfig}
-          //     mode="modal"
-          //     data={list ? list.items : []}
-          //     currentSelected={currentAssigned}
-          //   />
           <CollectionSelector
             config={addConfig}
             data={list ? list.items : []}
@@ -142,7 +135,7 @@ const ClassificationSelector = ({
             selectedKeys={selectedData}
             onDone={(item) => {
               onDone(item);
-              logger.log(item);
+
               close();
             }}
           />

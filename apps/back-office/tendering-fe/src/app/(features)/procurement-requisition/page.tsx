@@ -1,3 +1,12 @@
+import { Entity } from './entity';
+
 export default function ProcurementPage() {
-  return <></>;
+  return (
+    <>
+      {' '}
+      <Entity>
+        <></>
+      </Entity>
+    </>
+  );
 }
