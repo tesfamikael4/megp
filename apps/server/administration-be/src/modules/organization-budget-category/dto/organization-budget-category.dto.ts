@@ -1,15 +1,22 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsUUID } from 'class-validator';
-import { Column, PrimaryGeneratedColumn } from 'typeorm';
+import { IsString, IsUUID } from 'class-validator';
 
 export class OrganizationBudgetCategoryDto {
   @ApiProperty()
-  @PrimaryGeneratedColumn()
-  id: string;
+  @IsString()
+  name: string;
 
   @ApiProperty()
-  @Column()
-  name: string;
+  @IsUUID()
+  organizationId: string;
+
+  @ApiProperty()
+  @IsString()
+  organizationName: string;
+
+  @ApiProperty()
+  @IsUUID()
+  budgetCategoryId: string;
 }
 
 export class OrganizationBudgetCategoryCreateDto {

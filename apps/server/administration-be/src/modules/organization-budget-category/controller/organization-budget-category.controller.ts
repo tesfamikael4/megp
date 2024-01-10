@@ -4,13 +4,14 @@ import { DataResponseFormat } from '@api-data';
 import { EntityCrudController } from '@generic-controllers';
 import { OrganizationBudgetCategoryService } from '../service/organization-budget-category.service';
 import { OrganizationBudgetCategory } from 'src/entities/organization-budget-category.entity';
-import { EntityCrudOptions } from 'src/shared/types/crud-option.type';
+import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import {
   OrganizationBudgetCategoryCreateDto,
   OrganizationBudgetCategoryUpdateDto,
 } from '../dto/organization-budget-category.dto';
 
-const options: EntityCrudOptions = {
+const options: ExtraCrudOptions = {
+  entityIdName: 'budgetCategoryId',
   createDto: OrganizationBudgetCategoryCreateDto,
   updateDto: OrganizationBudgetCategoryUpdateDto,
 };
