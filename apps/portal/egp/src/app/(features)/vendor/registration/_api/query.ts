@@ -16,6 +16,7 @@ import {
   PostForRenewalVendorRequest,
   RenewalInvoiceRenewalVendorResponse,
   RenewalInvoiceRenewalVendorRequest,
+  GetCertificateInformationResponse,
 } from '@/models/vendorRegistration';
 import { PaymentReceiptItem } from '@/shared/schema/paymentReceiptItemSchema';
 import {
@@ -158,6 +159,17 @@ export const vendorRegistrationQuery = vendorRegistrationApi.injectEndpoints({
         };
       },
     }),
+    getCertificateInformation: builder.query<
+      GetCertificateInformationResponse,
+      void
+    >({
+      query() {
+        return {
+          url: `vendor-registrations/get-ertificate-informations`,
+          method: 'GET',
+        };
+      },
+    }),
   }),
 });
 
@@ -209,6 +221,7 @@ export const {
   useGetRenewalInvoiceQuery,
   usePostRenewalInvoiceMutation,
   useGetApproveVendorInfoQuery,
+  useGetCertificateInformationQuery,
 } = vendorRegistrationQuery;
 
 export const {
