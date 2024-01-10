@@ -1,3 +1,9 @@
+import { Entity } from './entity';
+
 export default function PreBudget() {
-  return <></>;
+  return (
+    <Entity>
+      <></>
+    </Entity>
+  );
 }

@@ -26,7 +26,7 @@ export function EntityLayout<T>({
   onRequestChange,
 }: EntityLayoutProps<T>): React.ReactElement {
   return (
-    <div className="flex gap-4 items-start">
+    <div className={`flex items-start ${  mode}` === 'list' ? 'gap-0' : 'gap-4'}>
       <EntityList<T>
         config={config}
         data={data}

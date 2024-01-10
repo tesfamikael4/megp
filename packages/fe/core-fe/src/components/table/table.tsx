@@ -5,25 +5,88 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { type ReactElement } from 'react';
-import { Box, Center, Table as MantineTable, Stack, Text } from '@mantine/core';
-import { IconInboxOff } from '@tabler/icons-react';
+import { useState, type ReactElement, useEffect } from 'react';
+import {
+  Box,
+  Center,
+  Group,
+  Table as MantineTable,
+  Pagination,
+  Stack,
+  Text,
+  TextInput,
+} from '@mantine/core';
+import { IconInboxOff, IconSearch } from '@tabler/icons-react';
+import { useDebouncedState } from '@mantine/hooks';
 import styles from './table.module.scss';
 import type { TableConfig } from './table-config';
 
 interface TableProps<T> {
   data: T[];
   config: TableConfig<T>;
+  onRequestChange?: (collectionQuery: any) => void;
+  total?: number;
 }
 
-export function Table<T>({ data, config }: TableProps<T>): ReactElement {
+const perPage = 10;
+
+function calculateTotalPages(totalItems: number, itemsPerPage: number): number {
+  if (totalItems <= 0 || itemsPerPage <= 0) {
+    return 0;
+  }
+
+  return Math.ceil(totalItems / itemsPerPage);
+}
+
+export function Table<T>({
+  data,
+  config,
+  onRequestChange,
+  total = 0,
+}: TableProps<T>): ReactElement {
   const table = useReactTable({
     data,
     columns: config.columns,
     getCoreRowModel: getCoreRowModel(),
   });
+  const [page, setPage] = useState(1);
+  const totalPages = calculateTotalPages(total, perPage);
+  const [search, setSearch] = useDebouncedState('', 500);
+
+  useEffect(() => {
+    const from = (page - 1) * perPage;
+
+    onRequestChange?.({
+      skip: from,
+      take: perPage,
+      where: search
+        ? [
+            [
+              {
+                column: config.primaryColumn,
+                value: search,
+                operator: 'ILIKE',
+              },
+            ],
+          ]
+        : [],
+    });
+  }, [page, search]);
+
   return (
     <Box className={styles.container}>
+      {config.searchable ? (
+        <TextInput
+          className="mb-2 ml-auto"
+          leftSection={<IconSearch size={16} />}
+          onChange={(event) => {
+            setSearch(event.currentTarget.value);
+          }}
+          placeholder="Search"
+          rightSectionWidth={30}
+          w={300}
+        />
+      ) : null}
       {data.length === 0 ? (
         <Center c="dimmed" className="h-full min-h-[300px]">
           <Stack align="center">
@@ -75,6 +138,18 @@ export function Table<T>({ data, config }: TableProps<T>): ReactElement {
           </tbody>
         </MantineTable>
       )}
+
+      {config.pagination ? (
+        <Group className="mt-2" justify="end">
+          <Pagination
+            onChange={setPage}
+            size="sm"
+            total={totalPages}
+            value={page}
+            withEdges
+          />
+        </Group>
+      ) : null}
     </Box>
   );
 }

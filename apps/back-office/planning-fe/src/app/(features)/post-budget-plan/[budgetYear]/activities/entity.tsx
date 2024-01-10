@@ -21,7 +21,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const { budgetYear } = useParams();
   const [listById, { data: list }] = useLazyListByIdQuery();
-  const [remove] = useDeleteMutation();
+  // const [remove] = useDeleteMutation();
 
   const config: EntityConfig<any> = useMemo(() => {
     return {
@@ -40,7 +40,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
       },
 
       selectable: true,
-      hasDetail: false,
+      hasDetail: true,
       searchable: true,
       pagination: true,
       sortable: true,
@@ -92,12 +92,12 @@ export function Entity({ children }: { children: React.ReactNode }) {
             widget: 'expand',
           },
         },
-        {
-          id: 'action',
-          header: () => <div className="w-full text-end">Actions</div>,
-          accessorKey: 'action',
-          cell: ({ row: { original } }: any) => <Action cell={original} />,
-        },
+        // {
+        //   id: 'action',
+        //   header: () => <div className="w-full text-end">Actions</div>,
+        //   accessorKey: 'action',
+        //   cell: ({ row: { original } }: any) => <Action cell={original} />,
+        // },
       ],
     };
   }, [router]);
@@ -115,80 +115,80 @@ export function Entity({ children }: { children: React.ReactNode }) {
     listById({ id: budgetYear as string, collectionQuery: request });
   };
 
-  const Action = ({ cell }: any) => {
-    const [opened, { open, close }] = useDisclosure(false);
-    const openDeleteModal = () => {
-      modals.openConfirmModal({
-        title: `Delete ${cell.description}`,
-        centered: true,
-        children: (
-          <Text size="sm">
-            {`Are you sure you want to delete this ${cell.description} `}
-          </Text>
-        ),
-        labels: { confirm: 'Yes', cancel: 'No' },
-        confirmProps: { color: 'red' },
-        onConfirm: handleDelete,
-      });
-    };
-    const handleDelete = async () => {
-      try {
-        await remove(cell.id).unwrap();
-        notifications.show({
-          title: 'Success',
-          message: 'Item Deleted Successfully',
-          color: 'green',
-        });
-      } catch (err) {
-        logger.log(err);
-        notifications.show({
-          title: 'Error',
-          message: 'Something went wrong',
-          color: 'red',
-        });
-      }
-    };
-    return (
-      <>
-        <Menu shadow="md">
-          <Menu.Target>
-            <IconDotsVertical className="ml-auto text-gray-500" size={16} />
-          </Menu.Target>
+  // const Action = ({ cell }: any) => {
+  //   const [opened, { open, close }] = useDisclosure(false);
+  //   const openDeleteModal = () => {
+  //     modals.openConfirmModal({
+  //       title: `Delete ${cell.description}`,
+  //       centered: true,
+  //       children: (
+  //         <Text size="sm">
+  //           {`Are you sure you want to delete this ${cell.description} `}
+  //         </Text>
+  //       ),
+  //       labels: { confirm: 'Yes', cancel: 'No' },
+  //       confirmProps: { color: 'red' },
+  //       onConfirm: handleDelete,
+  //     });
+  //   };
+  //   const handleDelete = async () => {
+  //     try {
+  //       await remove(cell.id).unwrap();
+  //       notifications.show({
+  //         title: 'Success',
+  //         message: 'Item Deleted Successfully',
+  //         color: 'green',
+  //       });
+  //     } catch (err) {
+  //       logger.log(err);
+  //       notifications.show({
+  //         title: 'Error',
+  //         message: 'Something went wrong',
+  //         color: 'red',
+  //       });
+  //     }
+  //   };
+  //   return (
+  //     <>
+  //       <Menu shadow="md">
+  //         <Menu.Target>
+  //           <IconDotsVertical className="ml-auto text-gray-500" size={16} />
+  //         </Menu.Target>
 
-          <Menu.Dropdown>
-            <Menu.Item leftSection={<IconEye size={15} />} onClick={open}>
-              Detail
-            </Menu.Item>
-            <Menu.Item
-              leftSection={<IconPencil size={15} />}
-              onClick={() =>
-                router.push(
-                  `/post-budget-plan/${budgetYear}/activities/${cell.id}`,
-                )
-              }
-            >
-              Edit
-            </Menu.Item>
+  //         <Menu.Dropdown>
+  //           <Menu.Item leftSection={<IconEye size={15} />} onClick={open}>
+  //             Detail
+  //           </Menu.Item>
+  //           <Menu.Item
+  //             leftSection={<IconPencil size={15} />}
+  //             onClick={() =>
+  //               router.push(
+  //                 `/post-budget-plan/${budgetYear}/activities/${cell.id}`,
+  //               )
+  //             }
+  //           >
+  //             Edit
+  //           </Menu.Item>
 
-            <Menu.Divider />
-            <Menu.Item
-              color="red"
-              leftSection={<IconTrash size={15} />}
-              onClick={openDeleteModal}
-            >
-              Delete
-            </Menu.Item>
-          </Menu.Dropdown>
-        </Menu>
-        <Modal opened={opened} onClose={close} title={cell.name} size="xl">
-          <DetailActivity cell={cell} />
-          <Group justify="end" className="mt-2">
-            <Button onClick={close}>Close</Button>
-          </Group>
-        </Modal>
-      </>
-    );
-  };
+  //           <Menu.Divider />
+  //           <Menu.Item
+  //             color="red"
+  //             leftSection={<IconTrash size={15} />}
+  //             onClick={openDeleteModal}
+  //           >
+  //             Delete
+  //           </Menu.Item>
+  //         </Menu.Dropdown>
+  //       </Menu>
+  //       <Modal opened={opened} onClose={close} title={cell.name} size="xl">
+  //         <DetailActivity cell={cell} />
+  //         <Group justify="end" className="mt-2">
+  //           <Button onClick={close}>Close</Button>
+  //         </Group>
+  //       </Modal>
+  //     </>
+  //   );
+  // };
 
   return (
     <EntityLayout

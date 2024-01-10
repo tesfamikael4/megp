@@ -14,6 +14,7 @@ export const itemsSliceApi: typeof EntitySliceApi =
 export const {
   useListQuery,
   useListByAppIdQuery,
+  useLazyListByIdQuery,
   useLazyListByAppIdQuery,
   useReadQuery,
   useLazyReadQuery,
