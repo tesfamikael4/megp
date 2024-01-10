@@ -15,6 +15,7 @@ import { CronJobSchedulerModule } from './modules/schedule/cron-job-scheduler.mo
 import { TaxPayerModule } from './modules/tax-payer/tax-payer.module';
 import { TccDocumentValidationModule } from './modules/tcc-document-validation/tcc-document-validation.module';
 import { ProcurementThresholdModule } from './modules/procurement-threshold/procurement-threshold.module';
+import { OrganizationBudgetCategoryModule } from './modules/organization-budget-category/organization-budget-category.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { ProcurementThresholdModule } from './modules/procurement-threshold/proc
     CronJobSchedulerModule,
     BudgetCategoriesModule,
     ProcurementThresholdModule,
+    OrganizationBudgetCategoryModule,
   ],
   controllers: [],
   providers: [],
