@@ -333,3 +333,24 @@ export type RenewalInvoiceRenewalVendorResponse = {
 export type RenewalInvoiceRenewalVendorRequest = {
   status: { level: String; status: String };
 };
+
+export type ApprovalVendorData = {
+  id: string;
+  vendorId: string;
+  applicationNumber: string;
+  approvedAt: string;
+  businessAreaState: {
+    level: string;
+    status: string;
+  };
+  category: string;
+  certificateUrl: string;
+  expireDate: string;
+  instanceId: string;
+  priceRangeId: string;
+  remark: null | string;
+  serviceId: string;
+  status: string;
+};
+
+export type GetCertificateInformationResponse = ApprovalVendorData[];
