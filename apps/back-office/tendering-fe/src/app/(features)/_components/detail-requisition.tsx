@@ -7,8 +7,8 @@ export const DetailPr = ({ cell }: any) => {
       value: cell.requisitionReferenceNumber,
     },
     {
-      key: 'Name',
-      value: cell.name,
+      key: 'Title',
+      value: cell.title,
     },
     {
       key: 'Description',
@@ -24,7 +24,7 @@ export const DetailPr = ({ cell }: any) => {
       key: 'Total Calculated Amount',
       value: cell?.estimatedAmount?.toLocaleString('en-US', {
         style: 'currency',
-        currency: 'USD',
+        currency: cell.currency,
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
       }),

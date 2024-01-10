@@ -1,7 +1,7 @@
 'use client';
 import { ProcurementRequisition } from '@/models/procurement-requsition';
 import { CollectionQuery, EntityConfig, EntityLayout } from '@megp/entity';
-import { usePathname, useRouter } from 'next/navigation';
+import { useParams, usePathname, useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 import {
   useDeleteMutation,
@@ -67,7 +67,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
         },
         {
           id: 'totalEstimatedAmount',
-          header: () => <div className="text-right">Total Amount</div>,
+          header: () => <div className="w-full text-right">Total Amount</div>,
           accessorKey: 'totalEstimatedAmount',
           cell: ({ row: { original } }) => (
             <p className="text-right">
@@ -85,7 +85,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
         },
         {
           id: 'action',
-          header: 'Actions',
+          header: () => <div className="w-full text-end">Actions</div>,
           accessorKey: 'action',
           cell: ({ row: { original } }: any) => <Action cell={original} />,
         },

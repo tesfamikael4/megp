@@ -205,7 +205,7 @@ export function Grid<T>({
             </tbody>
           </Table>
 
-          {data.length > 0 && options.pagination ? (
+          {data.length > 0 && total > perPage && options.pagination ? (
             <Group justify="space-between" mb="lg" mt="lg">
               {total !== 0 && (
                 <Text>Total : {total.toLocaleString()} results</Text>

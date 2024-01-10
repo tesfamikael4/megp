@@ -24,11 +24,7 @@ import {
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-export const Documents = ({
-  disableFields = false,
-}: {
-  disableFields?: boolean;
-}) => {
+export const Documents = () => {
   const [opened, { open, close }] = useDisclosure(false);
   const [data, setData] = useState<any[]>([]);
   const { register, handleSubmit } = useForm();
@@ -108,7 +104,6 @@ export const Documents = ({
               color="red"
               leftSection={<IconTrash size={15} />}
               onClick={openDeleteModal}
-              disabled={disableFields}
             >
               Delete
             </Menu.Item>
@@ -138,11 +133,7 @@ export const Documents = ({
   return (
     <Box className="pt-2">
       <Group justify="end" className="pb-2">
-        <Button
-          leftSection={<IconUpload size={18} />}
-          onClick={open}
-          disabled={disableFields}
-        >
+        <Button leftSection={<IconUpload size={18} />} onClick={open}>
           Upload
         </Button>
       </Group>

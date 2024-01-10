@@ -28,9 +28,6 @@ export function Entity({ children }: { children: React.ReactNode }) {
         route.push(`/organizations/${selected?.id}`);
       },
 
-      onSearch: (search) => {
-        // console.log('search', search);
-      },
       searchable: true,
       pagination: true,
       sortable: true,

@@ -10,7 +10,7 @@ export default function EntityLayout({
     <PageLayout>
       <>
         <PlanYearTab collapsed={false} />
-        <Entity>{children}</Entity>
+        {children}
       </>
     </PageLayout>
   );

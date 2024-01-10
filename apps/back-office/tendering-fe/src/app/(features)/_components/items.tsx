@@ -11,7 +11,7 @@ import {
   Select,
   Text,
 } from '@mantine/core';
-import { Table, TableConfig, logger } from '@megp/core-fe';
+import { Table, TableConfig, logger, notify } from '@megp/core-fe';
 import { useDisclosure } from '@mantine/hooks';
 import {
   IconDeviceFloppy,
@@ -21,7 +21,6 @@ import {
   IconTrash,
 } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
-import { useLazyReadQuery } from '../procurement-requisition/_api/procurement-requisition.api';
 import { useParams } from 'next/navigation';
 import { useLazyGetUnitOfMeasurementsQuery } from '@/store/api/administration/administration.api';
 import { notifications } from '@mantine/notifications';
@@ -35,29 +34,20 @@ import { modals } from '@mantine/modals';
 import { DetailItem } from './deatil-item';
 import ItemSelector from '@/app/(features)/_components/item-selector';
 import DataImport from './data-import';
-import { useLazyListByIdQuery as useLazyListPrActivityQuery } from '../_api/pr-activity.api';
 
 export function Items() {
   const [opened, { open, close }] = useDisclosure(false);
   const [openedImportModal, { close: closeImportModal }] = useDisclosure(false);
   const [data, setData] = useState<any[]>([]);
   const [newItems, setNewItems] = useState<any[]>([]);
-  // const [trigerItem, { data: itemDetail }] = useLazyReadQuery();
-  const [trigerItems, { data: itemsList }] = useLazyListByIdQuery();
+  const [trigerItems, { data: itemsList, isSuccess }] = useLazyListByIdQuery();
 
   const [addItems, { isLoading: isAddingItems }] = useCreateMutation();
-  const [trigger, { data: assignedActivity }] = useLazyListPrActivityQuery();
 
   const [removeItem] = useDeleteMutation();
   const [updateItem] = useUpdateMutation();
   const { id } = useParams();
 
-  useEffect(() => {
-    trigger({
-      id: id.toString(),
-      collectionQuery: undefined,
-    });
-  }, [id, trigger]);
   const config: TableConfig<any> = {
     columns: [
       {
@@ -189,20 +179,13 @@ export function Items() {
     const handleDelete = async () => {
       try {
         await removeItem(cell.id).unwrap();
-        notifications.show({
-          title: 'Success',
-          message: 'Item Deleted Success-fully',
-          color: 'green',
-        });
+        notify('Success', 'Item Deleted Successfully');
       } catch (err) {
         logger.log(err);
-        notifications.show({
-          title: 'Error',
-          message: 'Something went wrong',
-          color: 'red',
-        });
+        notify('Error', 'Something went wrong');
       }
     };
+
     return (
       <>
         <Menu shadow="md">
@@ -214,14 +197,18 @@ export function Items() {
             <Menu.Item leftSection={<IconEye size={15} />} onClick={open}>
               Detail
             </Menu.Item>
-            <Menu.Divider />
-            <Menu.Item
-              color="red"
-              leftSection={<IconTrash size={15} />}
-              onClick={openDeleteModal}
-            >
-              Delete
-            </Menu.Item>
+            {cell.annualProcurementPlanBudgetLineId !== null && (
+              <>
+                <Menu.Divider />
+                <Menu.Item
+                  color="red"
+                  leftSection={<IconTrash size={15} />}
+                  onClick={openDeleteModal}
+                >
+                  Delete
+                </Menu.Item>
+              </>
+            )}
           </Menu.Dropdown>
         </Menu>
 
@@ -250,17 +237,9 @@ export function Items() {
     const updateData = async (data) => {
       try {
         await updateItem(data).unwrap();
-        notifications.show({
-          title: 'Success',
-          message: 'Updated Success-fully',
-          color: 'green',
-        });
+        notify('Success', 'Updated Successfully');
       } catch (err) {
-        notifications.show({
-          title: 'Error',
-          message: 'Something went wrong',
-          color: 'red',
-        });
+        notify('Error', 'Something went wrong');
       }
     };
 
@@ -292,11 +271,11 @@ export function Items() {
             }),
           );
     };
+
     useEffect(() => {
       setValue(initialValue);
     }, [initialValue]);
 
-    logger.log(assignedActivity);
     return (
       <>
         <Flex
@@ -352,6 +331,7 @@ export function Items() {
           return row;
         }),
       );
+      logger.log(newItems);
     };
     useEffect(() => {
       setValue(initialValue);
@@ -359,6 +339,7 @@ export function Items() {
     useEffect(() => {
       isEditorOpened && getUoM(original.measurement);
     }, [isEditorOpened]);
+
     return (
       <>
         {!isEditorOpened && (
@@ -366,7 +347,6 @@ export function Items() {
             <Text onDoubleClick={() => setIsEditorOpened(true)}>
               {original?.quantity}
             </Text>
-            {/* <Text>{original?.uomName}</Text> */}
           </>
         )}
         {isEditorOpened && (
@@ -379,19 +359,17 @@ export function Items() {
   };
 
   const handelAddItem = (items) => {
-    logger.log('items:', items);
     const castedData = items.map((item) => ({
       unitPrice: 0,
-      currency: item?.currency,
+      currency: itemsList?.items[0]?.currency,
       quantity: 0,
-      uom: item.uOMId,
-      uomName: item.uOMName,
-      ['preBudgetPlanActivityId']: id,
+      uoM: item.uOMId,
       description: item.description,
-      metaData: item,
+      procurementRequisitionId: id,
       itemCode: item.itemCode,
       measurement: item.measurementId,
       classification: item.commodityCode,
+      annualProcurementPlanBudgetLineId: '28974b42-9b86-45d6-b301-69496456dac6',
     }));
 
     setNewItems([...castedData, ...newItems]);
@@ -400,18 +378,11 @@ export function Items() {
   const handelOnSave = async () => {
     try {
       await addItems(newItems).unwrap();
-      notifications.show({
-        title: 'Success',
-        message: 'Items Created Success-fully',
-        color: 'green',
-      });
+      notify('Success', 'Items Created Success-fully');
+      setNewItems([]);
     } catch (err) {
       logger.log(err);
-      notifications.show({
-        title: 'Error',
-        message: 'Something Went wrong',
-        color: 'red',
-      });
+      notify('Error', 'Something Went wrong');
     }
   };
 
@@ -422,8 +393,10 @@ export function Items() {
   }, [id, trigerItems]);
 
   useEffect(() => {
-    setData([...(itemsList?.items ?? [])]);
-  }, [itemsList?.items]);
+    if (isSuccess) {
+      setData([...(itemsList?.items ?? [])]);
+    }
+  }, [isSuccess, itemsList?.items]);
 
   return (
     <Box>

@@ -33,9 +33,7 @@ interface ItemSelectorProps {
 
 const ItemSelector = ({ onDone, opened, close }: ItemSelectorProps) => {
   const [mode, setMode] = useState<'tree' | 'table' | 'new'>('table');
-  const [selector, setItemSelector] = useState<
-    'item-master' | 'price-index' | undefined
-  >(undefined);
+
   const [getItemMaster, { data: list }] = useLazyGetItemMasterQuery();
   const { data: classifications } = useGetClassificationsQuery({
     where: [
@@ -50,7 +48,6 @@ const ItemSelector = ({ onDone, opened, close }: ItemSelectorProps) => {
   } as any);
   const [detail, setDetail] = useState(undefined);
   const addConfig: TableConfig<any> = {
-    // title: 'Items',
     columns: [
       {
         id: 'name',
@@ -112,26 +109,25 @@ const ItemSelector = ({ onDone, opened, close }: ItemSelectorProps) => {
         title={
           <Flex justify="space-between" className="w-full">
             <Text className="font-bold">Item Selector</Text>
-            {selector == 'item-master' ? (
-              <Group>
-                <Tooltip label={mode == 'table' ? 'Tree View' : 'Grid View'}>
-                  <Box
-                    className="text-slate-600 cursor-pointer"
-                    onClick={changeMode}
-                  >
-                    {mode == 'table' ? <IconBinaryTree /> : <IconColumns />}
-                  </Box>
-                </Tooltip>
-                <Tooltip label="Add new item">
-                  <Box
-                    className="text-slate-600 cursor-pointer"
-                    onClick={() => setMode('new')}
-                  >
-                    <IconPlus />
-                  </Box>
-                </Tooltip>
-              </Group>
-            ) : null}
+
+            <Group>
+              <Tooltip label={mode == 'table' ? 'Tree View' : 'Grid View'}>
+                <Box
+                  className="text-slate-600 cursor-pointer"
+                  onClick={changeMode}
+                >
+                  {mode == 'table' ? <IconBinaryTree /> : <IconColumns />}
+                </Box>
+              </Tooltip>
+              <Tooltip label="Add new item">
+                <Box
+                  className="text-slate-600 cursor-pointer"
+                  onClick={() => setMode('new')}
+                >
+                  <IconPlus />
+                </Box>
+              </Tooltip>
+            </Group>
           </Flex>
         }
         styles={{
@@ -146,78 +142,77 @@ const ItemSelector = ({ onDone, opened, close }: ItemSelectorProps) => {
         size={mode == 'tree' ? '75%' : 'lg'}
         onClose={close}
       >
-        {selector && (
-          <Box>
-            {mode == 'new' && (
-              <NewItem
-                onDone={(data) => {
-                  onDone([data]);
-                  close();
-                }}
-              />
-            )}
-            {!detail && mode != 'new' && (
-              <>
-                <Flex className="max-h-[40rem] overflow-y-hidden">
-                  {mode === 'tree' && (
-                    <Box className="border-t-2 overflow-y-scroll w-2/5 ">
-                      <Tree
-                        fieldNames={{ title: 'title', key: 'code' }}
-                        data={classifications ? classifications.items : []}
-                        mode="view"
-                        disableModal
-                        disableParentSelect
-                        url={(code) =>
-                          `${
-                            process.env.NEXT_PUBLIC_ADMINISTRATION_API ??
-                            '/administration/api/'
-                          }classifications?q=w%3DparentCode%3A%3D%3A${code}`
-                        }
-                      />
-                    </Box>
-                  )}
-
-                  <Box
-                    className={
-                      mode == 'tree' ? 'border-l-2 pl-2 w-3/5' : 'w-full'
-                    }
-                  >
-                    <CollectionSelector
-                      config={addConfig}
-                      data={list ? list.items : []}
-                      total={list ? list.total : 0}
-                      onDone={(data) => {
-                        onDone(data);
-                        close();
-                      }}
-                      multiSelect
-                      onRequestChange={(collectionQuery) => {
-                        getItemMaster(collectionQuery);
-                      }}
+        <Box>
+          {mode == 'new' && (
+            <NewItem
+              onDone={(data) => {
+                onDone([data]);
+                close();
+              }}
+            />
+          )}
+          {!detail && mode != 'new' && (
+            <>
+              <Flex className="max-h-[40rem] overflow-y-hidden">
+                {mode === 'tree' && (
+                  <Box className="border-t-2 overflow-y-scroll w-2/5 ">
+                    <Tree
+                      fieldNames={{ title: 'title', key: 'code' }}
+                      data={classifications ? classifications.items : []}
+                      mode="view"
+                      disableModal
+                      disableParentSelect
+                      url={(code) =>
+                        `${
+                          process.env.NEXT_PUBLIC_ADMINISTRATION_API ??
+                          '/administration/api/'
+                        }classifications?q=w%3DparentCode%3A%3D%3A${code}`
+                      }
                     />
                   </Box>
-                </Flex>
-              </>
-            )}
+                )}
 
-            {detail && mode != 'new' && (
-              <>
-                <DetailTable data={detailData} />
-
-                <Group justify="end" className="mt-2">
-                  <Button
-                    onClick={() => {
-                      setDetail(undefined);
+                <Box
+                  className={
+                    mode == 'tree' ? 'border-l-2 pl-2 w-3/5' : 'w-full'
+                  }
+                >
+                  <CollectionSelector
+                    config={addConfig}
+                    data={list ? list.items : []}
+                    total={list ? list.total : 0}
+                    onDone={(data) => {
+                      onDone(data);
+                      close();
                     }}
-                  >
-                    Back
-                  </Button>
-                </Group>
-              </>
-            )}
-          </Box>
-        )}
+                    multiSelect
+                    onRequestChange={(collectionQuery) => {
+                      getItemMaster(collectionQuery);
+                    }}
+                  />
+                </Box>
+              </Flex>
+            </>
+          )}
 
+          {detail && mode != 'new' && (
+            <>
+              <DetailTable data={detailData} />
+
+              <Group justify="end" className="mt-2">
+                <Button
+                  onClick={() => {
+                    setDetail(undefined);
+                  }}
+                >
+                  Back
+                </Button>
+              </Group>
+            </>
+          )}
+        </Box>
+
+        {/* 
         {!selector && (
           <Box>
             <Radio.Group name="itemSelector" label="Select  Item Collection">
@@ -234,7 +229,7 @@ const ItemSelector = ({ onDone, opened, close }: ItemSelectorProps) => {
               Next
             </Button>
           </Box>
-        )}
+        )} */}
       </Modal>
     </>
   );

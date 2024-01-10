@@ -1,13 +1,9 @@
-import { Table } from '@mantine/core';
 import { DetailTable } from './detail-table';
-import { logger } from '@megp/core-fe';
 
 export const DetailItem = ({ data }: any) => {
-  logger.log(data);
   const detailData = [
     {
       key: 'Classification',
-      // value: `Segment > Famliy > Class > ${data?.metaData?.commodityName} | ${data?.metaData?.commodityCode}`,
       value: data?.classification,
     },
     {
@@ -24,9 +20,9 @@ export const DetailItem = ({ data }: any) => {
     },
     {
       key: 'Unit Price',
-      value: data?.unitPrice.toLocaleString('en-US', {
+      value: data?.unitPrice?.toLocaleString('en-US', {
         style: 'currency',
-        currency: data.currency,
+        currency: data?.currency,
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
       }),
