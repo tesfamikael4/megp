@@ -4,6 +4,7 @@ import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { ExtraCrudController } from 'src/shared/controller';
 import { Step } from 'src/entities/step.entity';
 import { StepService } from '../services/step.service';
+import { CurrentUser } from 'src/shared/authorization';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'activityId',
@@ -22,7 +23,10 @@ export class StepController extends ExtraCrudController<Step>(options) {
   }
 
   @Get('order-steps/:activityId')
-  async orderStep(@Param('activityId') activityId: string): Promise<any> {
-    return this.stepService.orderStep(activityId);
+  async orderStep(
+    @Param('activityId') activityId: string,
+    @CurrentUser() user,
+  ): Promise<any> {
+    return this.stepService.orderStep(activityId, user.organization.id);
   }
 }
