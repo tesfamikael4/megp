@@ -4,21 +4,21 @@ import { IsArray, IsString, IsUUID } from 'class-validator';
 export class OrganizationBudgetCategoryCreateDto {
   @ApiProperty()
   @IsUUID()
-  @IsArray()
-  organizationId: string[];
+  organizationId: string;
 
   @ApiProperty()
-  @IsUUID()
-  budgetCategoryId: string;
+  @IsArray()
+  @IsUUID(undefined, { each: true })
+  budgetCategoryId: string[];
 }
 
 export class OrganizationBudgetCategoryUpdateDto extends OrganizationBudgetCategoryCreateDto {}
 
-export class BulkBudgetDto {
-  @ApiProperty({
-    isArray: true,
-    type: () => OrganizationBudgetCategoryCreateDto,
-  })
-  @IsArray()
-  budgetCategoryList: OrganizationBudgetCategoryCreateDto[];
-}
+// export class BulkBudgetDto {
+//   @ApiProperty({
+//     isArray: true,
+//     type: () => OrganizationBudgetCategoryCreateDto,
+//   })
+//   @IsArray()
+//   budgetCategoryList: OrganizationBudgetCategoryCreateDto[];
+// }
