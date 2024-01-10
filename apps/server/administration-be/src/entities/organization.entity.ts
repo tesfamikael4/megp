@@ -1,15 +1,13 @@
-import { Audit } from '@audit';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Audit } from 'src/shared/entities';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { OrganizationBudgetCategory } from './organization-budget-category.entity';
-
-@Entity({ name: 'budget_categories' })
-export class BudgetCategory extends Audit {
-  @PrimaryGeneratedColumn('uuid')
+@Entity({ name: 'organization' })
+export class Organization extends Audit {
+  @PrimaryGeneratedColumn()
   id: string;
+
   @Column()
   name: string;
-  @Column()
-  description: string;
 
   @OneToMany(
     () => OrganizationBudgetCategory,
