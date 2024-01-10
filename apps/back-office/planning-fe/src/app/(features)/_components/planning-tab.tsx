@@ -39,6 +39,13 @@ const PlanningTab = ({ page }: { page: 'pre' | 'post' }) => {
   const router = useRouter();
   const btnStyle =
     'w-fit px-3 py-1 bg-white cursor-pointer border-l border-r border-t hover:shadow-lg ';
+  const badgeColor = {
+    Draft: 'yellow',
+    Submitted: 'blue',
+    Approved: 'green',
+    Adjust: 'yellow',
+    Adjusted: 'blue',
+  };
 
   //states
   const [opened, { toggle }] = useDisclosure(true);
@@ -203,7 +210,11 @@ const PlanningTab = ({ page }: { page: 'pre' | 'post' }) => {
             <Text className="font-semibold">
               {(selectedYear as any)?.app?.planName}
             </Text>
-            <Badge color="yellow">{(selectedYear as any)?.status}</Badge>
+            <Badge
+              color={badgeColor[(selectedYear as any)?.status] ?? 'yellow'}
+            >
+              {(selectedYear as any)?.status}
+            </Badge>
           </Group>
           <Group>
             <Button
@@ -226,7 +237,7 @@ const PlanningTab = ({ page }: { page: 'pre' | 'post' }) => {
             )}
           </Group>
         </Flex>
-        <Collapse in={opened}>
+        <Collapse in={opened} pos="relative">
           <LoadingOverlay
             visible={isLoadingPreAnalytics || isLoadingPostAnalytics}
           />
@@ -240,7 +251,7 @@ const PlanningTab = ({ page }: { page: 'pre' | 'post' }) => {
                   type="targetGroup"
                 />
                 <StatisticCard
-                  title="Activties"
+                  title="Activities"
                   value={analytics?.totalActivities ?? 0}
                   type="activity"
                 />

@@ -3,9 +3,9 @@
 import { BudgetPlanActivities } from '@/models/budget-plan-activities';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
+  Box,
   Button,
   Checkbox,
-  Divider,
   Flex,
   Modal,
   MultiSelect,
@@ -75,7 +75,8 @@ export const FormDetail = ({
   } = useForm<BudgetPlanActivities>({
     resolver: zodResolver(activitiesSchema),
   });
-  const [opened, { open, close }] = useDisclosure();
+  // const [opened, { open, close }] = useDisclosure();
+  const [opened, { close }] = useDisclosure();
   const [tags, setTags] = useState<any>([]);
 
   //
@@ -275,97 +276,95 @@ export const FormDetail = ({
 
   return (
     <Stack>
-      <TextInput
-        label="Name"
-        withAsterisk
-        {...register('name')}
-        error={errors.name?.message}
-        disabled={disableFields}
-      />
-
-      <Textarea
-        label="Description"
-        withAsterisk
-        autosize
-        minRows={2}
-        maxRows={10}
-        {...register('description')}
-        error={errors.description?.message}
-        disabled={disableFields}
-      />
-
       <Flex gap="md">
-        <Controller
-          name="currency"
-          control={control}
-          render={({ field: { name, value, onChange } }) => (
-            <Select
-              withCheckIcon={false}
-              name={name}
-              value={value}
-              onChange={onChange}
-              label="Currency"
-              data={['MWK', 'USD', 'EUR', 'KPW']}
-              className="w-full"
-              withAsterisk
-              placeholder="Select Procurement Type"
-              error={errors?.currency?.message}
-              disabled={disableFields}
-            />
-          )}
-        />
-        <Controller
-          name="estimatedAmount"
-          control={control}
-          render={({ field: { name, value, onChange } }) => (
-            <NumberInput
-              label="Estimated Amount"
-              name={name}
-              value={value}
-              onChange={(d) => onChange(parseInt(d as string))}
-              className="w-full"
-              error={errors?.estimatedAmount?.message}
-              withAsterisk
-              disabled={method === 'Purchased Orders' || disableFields}
-            />
-          )}
-        />
+        <Box className="w-1/2">
+          <TextInput
+            label="Name"
+            withAsterisk
+            {...register('name')}
+            error={errors.name?.message}
+            disabled={disableFields}
+          />
+          <Controller
+            name="currency"
+            control={control}
+            render={({ field: { name, value, onChange } }) => (
+              <Select
+                withCheckIcon={false}
+                name={name}
+                value={value}
+                onChange={onChange}
+                label="Currency"
+                data={['MWK', 'USD', 'EUR', 'KPW']}
+                className="w-full"
+                withAsterisk
+                placeholder="Select Procurement Type"
+                error={errors?.currency?.message}
+                disabled={disableFields}
+              />
+            )}
+          />
+          <Checkbox
+            label="is Multi Year"
+            className="w-full mt-4 mb-2"
+            {...register('isMultiYear')}
+            disabled={disableFields}
+          />
+          <Controller
+            name="estimatedAmount"
+            control={control}
+            render={({ field: { name, value, onChange } }) => (
+              <NumberInput
+                label="Estimated Amount"
+                name={name}
+                value={value}
+                onChange={(d) => onChange(parseInt(d as string))}
+                className="w-full"
+                error={errors?.estimatedAmount?.message}
+                withAsterisk
+                disabled={method === 'Purchased Orders' || disableFields}
+              />
+            )}
+          />
+          <MultiSelect
+            label="Tag Classification"
+            value={tags.map((t) => t.code)}
+            data={tags.map((t) => ({
+              label: t.title + ' (' + t.code + ')',
+              value: t.code,
+            }))}
+            className="w-full"
+            onChange={(data) => {
+              setTags(tags.filter((t) => data.includes(t.code)));
+              logger.log({ data });
+            }}
+            disabled={disableFields}
+          />
+          {/* <Button onClick={open} disabled={disableFields}>
+              Select
+            </Button> */}
+        </Box>
+        <Box className="w-1/2">
+          <Textarea
+            label="Description"
+            withAsterisk
+            autosize
+            minRows={5}
+            maxRows={5}
+            {...register('description')}
+            error={errors.description?.message}
+            disabled={disableFields}
+          />
+          <Textarea
+            label="Remark"
+            autosize
+            minRows={4}
+            maxRows={4}
+            {...register('remark')}
+            disabled={disableFields}
+          />
+        </Box>
       </Flex>
-
-      <Checkbox
-        label="is Multi Year"
-        className="w-full"
-        {...register('isMultiYear')}
-        disabled={disableFields}
-      />
-      <Flex gap="md" align="end">
-        <MultiSelect
-          label="Tag Classification"
-          value={tags.map((t) => t.code)}
-          data={tags.map((t) => ({
-            label: t.title + ' (' + t.code + ')',
-            value: t.code,
-          }))}
-          className="w-full"
-          onChange={(data) => {
-            setTags(tags.filter((t) => data.includes(t.code)));
-            logger.log({ data });
-          }}
-          disabled={disableFields}
-        />
-        <Button onClick={open} disabled={disableFields}>
-          Select
-        </Button>
-      </Flex>
-
-      <Textarea
-        label="Remark"
-        autosize
-        minRows={2}
-        maxRows={10}
-        {...register('remark')}
-        disabled={disableFields}
-      />
 
       <EntityButton
         mode={mode}

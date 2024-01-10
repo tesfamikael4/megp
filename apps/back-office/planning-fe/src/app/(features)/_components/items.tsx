@@ -30,18 +30,19 @@ import { useCreateMultipleItemsMutation as usePostCreateMultipleItemsMutation } 
 import { notifications } from '@mantine/notifications';
 import {
   useDeleteMutation,
-  useLazyListByAppIdQuery,
+  useLazyListByIdQuery,
   useUpdateMutation,
 } from '../_api/items.api';
 import {
   useDeleteMutation as useDeletePostMutation,
-  useLazyListByAppIdQuery as useLazyListPostByAppIdQuery,
+  useLazyListByIdQuery as useLazyListPostByIdQuery,
   useUpdateMutation as useUpdatePostMutation,
 } from '../_api/post-items.api';
 import { modals } from '@mantine/modals';
 import { DetailItem } from './deatil-item';
 import ItemSelector from '@/app/(features)/_components/item-selector';
 import DataImport from './data-import';
+import { CollectionQuery } from '@megp/entity';
 
 export function Items({
   page,
@@ -55,20 +56,19 @@ export function Items({
   //   { open: openImportModal, close: closeImportModal },
   // ] = useDisclosure(false);
   const [data, setData] = useState<any[]>([]);
+  const [total, setTotal] = useState<number>(0);
   const [newItems, setNewItems] = useState<any[]>([]);
   const [getPreActivity, { data: preActivity }] = useLazyReadQuery();
   const [getPostActivity, { data: postActivity }] =
     useLazyReadPostActivityQuery();
-  const [addPreItems, { isLoading: isPreAddingItems, isSuccess: isPreAdded }] =
+  const [addPreItems, { isLoading: isPreAddingItems }] =
     useCreateMultipleItemsMutation();
-  const [
-    addPostItems,
-    { isLoading: isPostAddingItems, isSuccess: isPostAdded },
-  ] = usePostCreateMultipleItemsMutation();
+  const [addPostItems, { isLoading: isPostAddingItems }] =
+    usePostCreateMultipleItemsMutation();
   const [listPreById, { data: preList, isSuccess: isPreSuccess }] =
-    useLazyListByAppIdQuery();
+    useLazyListByIdQuery();
   const [listPostById, { data: postList, isSuccess: isPostSuccess }] =
-    useLazyListPostByAppIdQuery();
+    useLazyListPostByIdQuery();
   const [removePre] = useDeleteMutation();
   const [removePost] = useDeletePostMutation();
   const [updatePre] = useUpdateMutation();
@@ -116,6 +116,8 @@ export function Items({
     ],
   };
   const listConfig: TableConfig<any> = {
+    pagination: true,
+    primaryColumn: 'description',
     columns: [
       {
         header: 'Description',
@@ -455,6 +457,12 @@ export function Items({
     }
   };
 
+  const onRequestChange = (request: CollectionQuery) => {
+    page == 'pre'
+      ? listPreById({ id: id as string, collectionQuery: request })
+      : listPostById({ id: id as string, collectionQuery: request });
+  };
+
   //use effect
   useEffect(() => {
     page == 'pre'
@@ -463,12 +471,10 @@ export function Items({
   }, [id, getPreActivity, page, getPostActivity]);
 
   useEffect(() => {
-    page == 'pre' && listPreById(id as string);
-    page == 'post' && listPostById(id as string);
-  }, [id, isPreAdded, isPostAdded]);
-
-  useEffect(() => {
-    page == 'pre' && isPreSuccess && setData([...(preList?.items ?? [])]);
+    if (page == 'pre' && isPreSuccess) {
+      setData([...(preList?.items ?? [])]);
+      setTotal(preList?.total ?? 0);
+    }
     page == 'post' && isPostSuccess && setData([...(postList?.items ?? [])]);
   }, [isPreSuccess, preList, postList, isPostSuccess, page]);
 
@@ -506,7 +512,12 @@ export function Items({
           <Text className="text-lg" fw="500">
             Items List
           </Text>
-          <Table config={listConfig} data={data} />
+          <Table
+            config={listConfig}
+            data={data}
+            total={total}
+            onRequestChange={onRequestChange}
+          />
         </>
       )}
       <ItemSelector onDone={handelAddItem} opened={opened} close={close} />
