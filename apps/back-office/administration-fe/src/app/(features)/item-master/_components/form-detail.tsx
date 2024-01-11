@@ -240,13 +240,22 @@ export function FormDetail({ mode }: FormDetailProps) {
         {mode == 'detail' && (
           <TextInput label="Item Code" value={itemCode} disabled />
         )}
-        <Textarea
-          label="Description"
-          withAsterisk
-          autosize
-          minRows={2}
-          maxRows={10}
-          error={errors?.description?.message as string | undefined}
+        <Controller
+          name="description"
+          control={control}
+          render={({ field: { value, name, onChange } }) => (
+            <Textarea
+              label="Description"
+              name={name}
+              value={value}
+              onChange={onChange}
+              withAsterisk
+              autosize
+              minRows={2}
+              maxRows={10}
+              error={errors?.description?.message as string | undefined}
+            />
+          )}
         />
         <Tree
           fieldNames={{ title: 'name', key: 'id' }}
