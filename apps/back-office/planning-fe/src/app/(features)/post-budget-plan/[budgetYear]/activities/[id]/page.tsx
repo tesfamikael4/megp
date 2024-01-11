@@ -1,5 +1,5 @@
 'use client';
-import { Tabs } from '@mantine/core';
+import { Flex, Tabs, Tooltip } from '@mantine/core';
 import { Section } from '@megp/core-fe';
 import { FormDetail } from '@/app/(features)/_components/activity-form-detail';
 import { Items } from '@/app/(features)/_components/items';
@@ -8,11 +8,30 @@ import { BudgetTab } from '../_components/budget-tab';
 import { Documents } from '@/app/(features)/_components/documents';
 import { ActivityMechanization } from '@/app/(features)/_components/activity-mechanization';
 import { Requisitioner } from '@/app/(features)/_components/requisitioner';
+import { IconChevronLeft } from '@tabler/icons-react';
+import { useParams, useRouter } from 'next/navigation';
 
 export default function NewActivity() {
+  const { budgetYear } = useParams();
+  const router = useRouter();
   return (
     <>
-      <Section title="Activity">
+      <Section
+        title={
+          <Tooltip
+            label="List Activities"
+            className="cursor-pointer"
+            onClick={() =>
+              router.push(`/pre-budget-plan/${budgetYear}/activities`)
+            }
+          >
+            <Flex align="center">
+              <IconChevronLeft />
+              Activities
+            </Flex>
+          </Tooltip>
+        }
+      >
         <Tabs defaultValue="definition">
           <Tabs.List>
             <Tabs.Tab value="definition">Definition</Tabs.Tab>

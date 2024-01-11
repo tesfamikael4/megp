@@ -1,5 +1,5 @@
 'use client';
-import { Tabs } from '@mantine/core';
+import { Flex, Tabs, Tooltip } from '@mantine/core';
 import { Section } from '@megp/core-fe';
 import { FormDetail } from '@/app/(features)/_components/activity-form-detail';
 import { Documents } from '@/app/(features)/_components/documents';
@@ -7,20 +7,37 @@ import TimelineTab from '@/app/(features)/_components/timeline-tab';
 import { Items } from '@/app/(features)/_components/items';
 import { ActivityMechanization } from '@/app/(features)/_components/activity-mechanization';
 import { useGetPreBudgetPlanQuery } from '@/store/api/pre-budget-plan/pre-budget-plan.api';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { Requisitioner } from '@/app/(features)/_components/requisitioner';
+import { IconChevronLeft } from '@tabler/icons-react';
 
 export default function NewActivity() {
   const { budgetYear } = useParams();
   const { data: preBudgetYear } = useGetPreBudgetPlanQuery(
     budgetYear as string,
   );
+  const router = useRouter();
   const disableFields = preBudgetYear
     ? preBudgetYear.status != 'Draft' && preBudgetYear.status != 'Adjust'
     : false;
   return (
     <>
-      <Section title="Activity">
+      <Section
+        title={
+          <Tooltip
+            label="List Activities"
+            className="cursor-pointer"
+            onClick={() =>
+              router.push(`/pre-budget-plan/${budgetYear}/activities`)
+            }
+          >
+            <Flex align="center">
+              <IconChevronLeft />
+              Activities
+            </Flex>
+          </Tooltip>
+        }
+      >
         <Tabs defaultValue="definition">
           <Tabs.List>
             <Tabs.Tab value="definition">Definition</Tabs.Tab>

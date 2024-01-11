@@ -95,7 +95,7 @@ export default function TimelineTab({
         ),
       },
       {
-        id: 'date',
+        id: 'dueDate',
         header: 'Due Date',
         accessorKey: 'dueDate',
         cell: ({ getValue, row, column }) => (
@@ -178,6 +178,23 @@ export default function TimelineTab({
           return row;
         });
       });
+      setData((old) =>
+        old.map((row, i) => {
+          const cumulativeSum = old
+            .slice(0, i + 1)
+            .reduce((sum, item) => sum + item.period, 0);
+          const currentDate = new Date(old[0].dueDate ?? new Date());
+          currentDate.setDate(currentDate.getDate() + cumulativeSum);
+          if (!isNaN(currentDate.getTime())) {
+            return {
+              ...row,
+              dueDate: currentDate,
+            };
+          } else {
+            return row;
+          }
+        }),
+      );
     };
 
     return (
