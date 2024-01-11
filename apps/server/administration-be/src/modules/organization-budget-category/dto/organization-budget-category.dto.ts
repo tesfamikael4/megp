@@ -13,12 +13,3 @@ export class OrganizationBudgetCategoryCreateDto {
 }
 
 export class OrganizationBudgetCategoryUpdateDto extends OrganizationBudgetCategoryCreateDto {}
-
-// export class BulkBudgetDto {
-//   @ApiProperty({
-//     isArray: true,
-//     type: () => OrganizationBudgetCategoryCreateDto,
-//   })
-//   @IsArray()
-//   budgetCategoryList: OrganizationBudgetCategoryCreateDto[];
-// }

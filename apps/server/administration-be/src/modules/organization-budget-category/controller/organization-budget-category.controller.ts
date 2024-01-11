@@ -1,10 +1,15 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpException,
+  HttpStatus,
+  Param,
+  Post,
+} from '@nestjs/common';
 import { ApiExtraModels, ApiTags } from '@nestjs/swagger';
 import { DataResponseFormat } from '@api-data';
-import {
-  EntityCrudController,
-  ExtraCrudController,
-} from '@generic-controllers';
+import { ExtraCrudController } from '@generic-controllers';
 import { OrganizationBudgetCategoryService } from '../service/organization-budget-category.service';
 import { OrganizationBudgetCategory } from 'src/entities/organization-budget-category.entity';
 import {
@@ -35,9 +40,7 @@ export class OrganizationBudgetCategoryController extends ExtraCrudController<Or
   }
 
   @Post('bulk-create')
-  async bulkCreate(
-    @Body() budgetData: OrganizationBudgetCategoryCreateDto,
-  ): Promise<any> {
+  async bulkCreate(@Body() budgetData: OrganizationBudgetCategoryCreateDto) {
     try {
       console.log({ budgetData });
       const createdBudgets =
@@ -47,4 +50,22 @@ export class OrganizationBudgetCategoryController extends ExtraCrudController<Or
       return { success: false, error: error.message };
     }
   }
+
+  // @Get(':organizationId')
+  // async getBudgetCategories(@Param('organizationId') organizationId: string) {
+  //   try {
+  //     return await this.organizationBudgetCategoryService.getBudgetCategories(organizationId);
+  //   } catch (error) {
+  //     throw new HttpException('Failed to get budgets', HttpStatus.INTERNAL_SERVER_ERROR);
+  //   }
+  // }
+
+  // @Get('budget-category/:budgetCategoryId')
+  // async getBudgetCategory(@Param('budgetCategoryId') budgetCategoryId: string) {
+  //   try {
+  //     return await this.organizationBudgetCategoryService.getBudgetCategoriesByBudgetId(budgetCategoryId);
+  //   } catch (error) {
+  //     throw new HttpException('Failed to get budget category', HttpStatus.INTERNAL_SERVER_ERROR);
+  //   }
+  // }
 }
