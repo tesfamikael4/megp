@@ -4,7 +4,8 @@ export const workflowApi = createApi({
   reducerPath: 'planningApi',
   refetchOnFocus: true,
   baseQuery: fetchBaseQuery({
-    baseUrl: 'https://f30xs3hk-5000.euw.devtunnels.ms/api' ?? '/api/',
+    // baseUrl: process.env.NEXT_PUBLIC_WORKFLOW_API ?? '/workflow/api/',
+    baseUrl: '/workflow/api/',
   }),
   endpoints: (builder) => ({
     getActivities: builder.query<any, { workFlowId: string }>({
