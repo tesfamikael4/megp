@@ -13,11 +13,13 @@ interface GeneratePdfProps {
   className?: string;
   mode: 'download' | 'view';
   id: string;
+  setHideUnPick: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export function GeneratePdf({
   id,
   apiUrl,
+  setHideUnPick,
 }: GeneratePdfProps): React.ReactElement {
   const [pdfUrl, setPdfUrl] = useState('');
   const baseUrl = `${apiUrl}certificates/generate-certeficate/${id}`;
@@ -37,6 +39,7 @@ export function GeneratePdf({
       const pdfBlob = await response.blob();
       const url = URL.createObjectURL(pdfBlob);
       setPdfUrl(url);
+      setHideUnPick(true);
     } catch (err) {
       // console.log(err);
     }
