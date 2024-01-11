@@ -20,8 +20,12 @@ export class OrganizationBudgetCategoryService extends ExtraCrudService<Organiza
     budgetData: OrganizationBudgetCategoryCreateDto,
   ): Promise<OrganizationBudgetCategory[]> {
     console.log({ budgetData });
-
     try {
+      // remove existing organization
+      await this.organizationBudgetCategoryRepository.delete({
+        organizationId: budgetData.organizationId,
+      });
+
       const budgetList = budgetData.budgetCategoryId.map((budgetCategoryId) => {
         return {
           budgetCategoryId,
@@ -56,16 +60,18 @@ export class OrganizationBudgetCategoryService extends ExtraCrudService<Organiza
     }
   }
 
-  // async getBudgetCategories(organizationId: string): Promise<OrganizationBudgetCategory[]> {
-  //   try {
-  //     const budgets = await this.organizationBudgetCategoryRepository.find({
-  //       where: { organizationId: organizationId },
-  //     });
-  //     return budgets;
-  //   } catch (error) {
-  //     throw new Error(`Failed to get budgets: ${error.message}`);
-  //   }
-  // }
+  async getBudgetCategories(
+    organizationId: string,
+  ): Promise<OrganizationBudgetCategory[]> {
+    try {
+      const budgets = await this.organizationBudgetCategoryRepository.find({
+        where: { organizationId: organizationId },
+      });
+      return budgets;
+    } catch (error) {
+      throw new Error(`Failed to get budgets: ${error.message}`);
+    }
+  }
 
   // async getBudgetCategoriesByBudgetId(budgetId: string): Promise<OrganizationBudgetCategory[]> {
   //   try {

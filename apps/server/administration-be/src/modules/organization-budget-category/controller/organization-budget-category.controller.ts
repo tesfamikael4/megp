@@ -51,14 +51,19 @@ export class OrganizationBudgetCategoryController extends ExtraCrudController<Or
     }
   }
 
-  // @Get(':organizationId')
-  // async getBudgetCategories(@Param('organizationId') organizationId: string) {
-  //   try {
-  //     return await this.organizationBudgetCategoryService.getBudgetCategories(organizationId);
-  //   } catch (error) {
-  //     throw new HttpException('Failed to get budgets', HttpStatus.INTERNAL_SERVER_ERROR);
-  //   }
-  // }
+  @Get(':organizationId')
+  async getBudgetCategories(@Param('organizationId') organizationId: string) {
+    try {
+      return await this.organizationBudgetCategoryService.getBudgetCategories(
+        organizationId,
+      );
+    } catch (error) {
+      throw new HttpException(
+        'Failed to get budgets',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
 
   // @Get('budget-category/:budgetCategoryId')
   // async getBudgetCategory(@Param('budgetCategoryId') budgetCategoryId: string) {
