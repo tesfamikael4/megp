@@ -1,6 +1,11 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  HttpException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import {
   PostBudgetPlan,
@@ -208,8 +213,9 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
             .insert(item as any);
 
           if (element.preBudgetPlanTimelines.length == 0) {
-            throw new Error(
+            throw new HttpException(
               `Timeline not found for ${element.name} ${element.procurementReference}`,
+              430,
             );
           }
 
@@ -258,8 +264,9 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
 
     for (const element of activities) {
       if (element.preBudgetPlanTimelines.length == 0) {
-        throw new Error(
+        throw new HttpException(
           `Timeline not found for ${element.name} ${element.procurementReference}`,
+          430,
         );
       }
     }
