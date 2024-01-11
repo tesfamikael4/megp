@@ -37,10 +37,10 @@ import { TenantInterceptor, TransactionInterceptor } from '@interceptors';
       provide: APP_INTERCEPTOR,
       useClass: TransactionInterceptor,
     },
-    // {
-    //   provide: APP_INTERCEPTOR,
-    //   useClass: TenantInterceptor,
-    // },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: TenantInterceptor,
+    },
   ],
 })
 export class AppModule {}

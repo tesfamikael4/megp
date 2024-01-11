@@ -18,6 +18,7 @@ import { ApiBearerAuth, ApiBody, ApiQuery } from '@nestjs/swagger';
 import { BaseAPIDto } from './extra-crud.controller';
 import { EntityCrudOptions } from '../types/crud-option.type';
 import { decodeCollectionQuery } from '../collection-query';
+import { TenantInterceptor } from '../interceptors';
 
 export function EntityCrudController<TEntity extends ObjectLiteral>(
   options?: EntityCrudOptions,
