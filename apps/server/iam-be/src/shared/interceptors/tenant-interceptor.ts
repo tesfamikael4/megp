@@ -5,14 +5,21 @@ import {
   CallHandler,
 } from '@nestjs/common';
 import { Request } from 'express';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class TenantInterceptor implements NestInterceptor {
-  intercept(context: ExecutionContext, next: CallHandler): any {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const req = context.switchToHttp().getRequest<Request>();
 
-    const organizationId = req.headers['organization_id'];
-    const tenantId = req.headers['tenant_id'];
+    const user: any = req.user;
+
+    if (!user) {
+      return next.handle();
+    }
+
+    const organizationId = user.organization?.id;
+    const tenantId = user.tenantId + '';
 
     let query = req.query.q as string;
 
