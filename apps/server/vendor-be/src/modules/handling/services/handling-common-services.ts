@@ -129,5 +129,12 @@ export class HandlingCommonService {
     return keys;
   }
 
+  monthDiff(expireDate: Date, today: Date): number {
+    let months;
+    months = (today.getFullYear() - expireDate.getFullYear()) * 12;
+    months -= expireDate.getMonth();
+    months += today.getMonth();
+    return months;
+  }
 
 }

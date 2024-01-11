@@ -42,6 +42,7 @@ import { BusinessAreaService } from './business-area.service';
 import InitialValueSchema from '../dto/add-vendor.dto';
 import { ProfileInfoEntity } from 'src/entities/profile-info.entity';
 import { HandlingCommonService } from 'src/modules/handling/services/handling-common-services';
+import { PaymentEnum } from 'src/shared/enums/payment-status.enum';
 
 @Injectable()
 export class VendorRegistrationsService extends EntityCrudService<VendorsEntity> {
@@ -65,13 +66,18 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
   ) {
     super(vendorRepository);
   }
-  private updateVendorEnums = [
+  private updateVendorEnums: string[] = [
     VendorStatusEnum.ACTIVE,
     VendorStatusEnum.ADJUSTMENT,
     VendorStatusEnum.COMPLETED,
     VendorStatusEnum.SUBMITTED,
     VendorStatusEnum.APPROVED,
   ];
+  private onprogressAppStatuses: string[] = [
+    VendorStatusEnum.ADJUSTMENT,
+    VendorStatusEnum.SUBMITTED,
+    VendorStatusEnum.PENDING,
+  ]
   async submitVendorInformations(data: any, userInfo: any): Promise<any> {
     const resul = await this.isrVendorsRepository.findOne({
       where: { userId: userInfo.id },
@@ -619,6 +625,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       where: {
         userId: userId,
         status: In(this.updateVendorEnums),
+        businessAreas: { status: In(this.onprogressAppStatuses) }
       },
     });
     if (!vendorEntity) return { level: 'basic', status: 'new' };
@@ -1097,6 +1104,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       console.log(error);
     }
   }
+
   /*
     async submitServiceRenewal(userInfo: any, BusinessArea: any) {
       const response = [];
@@ -1151,110 +1159,111 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       }
     }
     */
-  //will be removed
-  async generateInvoiceForServiceRenewal(userInfo: any, priceRangeId: any) {
-    const response = [];
-    const isrVendorData = await this.isrVendorsRepository.findOne({
-      where: { userId: userInfo.id },
-    });
-    if (!isrVendorData)
-      throw new HttpException('Isr vendor not found', HttpStatus.NOT_FOUND);
+  // //will be removed
+  // async generateInvoiceForServiceRenewal(userInfo: any, priceRangeId: any) {
+  //   const response = [];
+  //   const isrVendorData = await this.isrVendorsRepository.findOne({
+  //     where: { userId: userInfo.id },
+  //   });
+  //   if (!isrVendorData)
+  //     throw new HttpException('Isr vendor not found', HttpStatus.NOT_FOUND);
 
-    try {
-      const vendor: VendorsEntity = new VendorsEntity();
-      vendor.id = isrVendorData.basic['id'];
-      vendor.name = isrVendorData.basic['name'];
-      const invoice = await this.invoiceService.generateInvoice(
-        priceRangeId,
-        vendor,
-        userInfo,
-      );
-      if (!invoice) throw new HttpException('invoice_creation_failed', 500);
-      return invoice;
-    } catch (error) {
-      console.log(error);
-      throw error;
-    }
-  }
-  async getServiceInvoiceForRenewal(userInfo: any, data: any) {
-    try {
-      if (
-        data?.status.status == VendorStatusEnum.DRAFT &&
-        data?.status?.level == VendorStatusEnum.INFO
-      ) {
-        const businessArea = data.businessArea;
-        for (let index = 0; index < businessArea.length; index++) {
-          const businessareaData = await this.businessAreaRepository.findOne({
-            where: { id: businessArea[index] },
-            relations: { BpService: true, servicePrice: true },
-          });
-          if (!businessareaData)
-            throw new NotFoundException('businessarea data not found');
-          if (
-            businessareaData.BpService.key ===
-              ServiceKeyEnum.goodsNewRegistration ||
-            businessareaData.BpService.key ===
-              ServiceKeyEnum.servicesNewRegistration ||
-            businessareaData.BpService.key ===
-              ServiceKeyEnum.worksNewRegistration
-          ) {
-            const key = await this.commonService.mapServiceType(
-              businessareaData,
-              'renewal',
-            );
-            const renewalRange =
-              await this.pricingService.findserviceByRangeAndKey(
-                key,
-                businessareaData.servicePrice.valueFrom,
-                businessareaData.servicePrice.valueTo,
-                businessareaData.category,
-              );
-            const business = await this.businessAreaRepository.findOne({
-              where: { id: businessArea[index] },
-            });
-            if (!business)
-              throw new HttpException(
-                'business area not found ',
-                HttpStatus.NOT_FOUND,
-              );
-            const service = await this.bpService.findBpWithServiceByKey(key);
-            if (!service) throw new HttpException("can't find key", 404);
-            business.id = undefined;
-            business.serviceId = service.serviceId;
-            business.priceRangeId = renewalRange[0].id;
-            // const resu = await this.businessAreaRepository.save(business);
-            // if (!resu) throw new HttpException('business area insertion')
-            const result = await this.generateInvoiceForServiceRenewal(
-              userInfo,
-              renewalRange[0].id,
-            );
-            if (!result)
-              throw new HttpException('invoice generation failed', 500);
-          } else {
-            if (!businessareaData.priceRangeId)
-              throw new NotFoundException('priceRangeId not found');
-            const result = await this.generateInvoiceForServiceRenewal(
-              userInfo,
-              businessareaData.priceRangeId,
-            );
-            if (!result)
-              throw new HttpException('invoice generation failed', 500);
-          }
-        }
-      }
-      const invoices = await this.invoiceRepository.find({
-        where: { userId: userInfo.id, paymentStatus: 'Pending' },
-      });
-      if (!invoices) throw new NotFoundException('generated invoice not found');
-      return {
-        items: invoices,
-        businessAreas: data,
-      };
-    } catch (error) {
-      console.log(error);
-      throw error;
-    }
-  }
+  //   try {
+  //     const vendor: VendorsEntity = new VendorsEntity();
+  //     vendor.id = isrVendorData.basic['id'];
+  //     vendor.name = isrVendorData.basic['name'];
+  //     const invoice = await this.invoiceService.generateInvoice(
+  //       priceRangeId,
+  //       vendor,
+  //       userInfo,
+  //     );
+  //     if (!invoice) throw new HttpException('invoice_creation_failed', 500);
+  //     return invoice;
+  //   } catch (error) {
+  //     console.log(error);
+  //     throw error;
+  //   }
+  // }
+  // async getServiceInvoiceForRenewal(userInfo: any, data: any) {
+  //   try {
+  //     if (
+  //       data?.status.status == VendorStatusEnum.DRAFT &&
+  //       data?.status?.level == VendorStatusEnum.INFO
+  //     ) {
+  //       const businessArea = data.businessArea;
+  //       for (let index = 0; index < businessArea.length; index++) {
+  //         const businessareaData = await this.businessAreaRepository.findOne({
+  //           where: { id: businessArea[index] },
+  //           relations: { BpService: true, servicePrice: true },
+  //         });
+  //         if (!businessareaData)
+  //           throw new NotFoundException('businessarea data not found');
+  //         if (
+  //           businessareaData.BpService.key ===
+  //           ServiceKeyEnum.goodsNewRegistration ||
+  //           businessareaData.BpService.key ===
+  //           ServiceKeyEnum.servicesNewRegistration ||
+  //           businessareaData.BpService.key ===
+  //           ServiceKeyEnum.worksNewRegistration
+  //         ) {
+  //           const key = await this.commonService.mapServiceType(
+  //             businessareaData,
+  //             'renewal',
+  //           );
+  //           const renewalRange =
+  //             await this.pricingService.findserviceByRangeAndKey(
+  //               key,
+  //               businessareaData.servicePrice.valueFrom,
+  //               businessareaData.servicePrice.valueTo,
+  //               businessareaData.category,
+  //             );
+  //           const business = await this.businessAreaRepository.findOne({
+  //             where: { id: businessArea[index] },
+  //           });
+  //           if (!business)
+  //             throw new HttpException(
+  //               'business area not found ',
+  //               HttpStatus.NOT_FOUND,
+  //             );
+  //           const service = await this.bpService.findBpWithServiceByKey(key);
+  //           if (!service) throw new HttpException("can't find key", 404);
+  //           business.id = undefined;
+  //           business.serviceId = service.serviceId;
+  //           business.priceRangeId = renewalRange[0].id;
+  //           // const resu = await this.businessAreaRepository.save(business);
+  //           // if (!resu) throw new HttpException('business area insertion')
+  //           const result = await this.generateInvoiceForServiceRenewal(
+  //             userInfo,
+  //             renewalRange[0].id,
+  //           );
+  //           if (!result)
+  //             throw new HttpException('invoice generation failed', 500);
+  //         } else {
+  //           if (!businessareaData.priceRangeId)
+  //             throw new NotFoundException('priceRangeId not found');
+  //           const result = await this.generateInvoiceForServiceRenewal(
+  //             userInfo,
+  //             businessareaData.priceRangeId,
+  //           );
+  //           if (!result)
+  //             throw new HttpException('invoice generation failed', 500);
+  //         }
+  //       }
+  //     }
+  //     const invoices = await this.invoiceRepository.find({
+  //       where: { userId: userInfo.id, paymentStatus: 'Pending' },
+  //     });
+  //     if (!invoices) throw new NotFoundException('generated invoice not found');
+  //     return {
+  //       items: invoices,
+  //       businessAreas: data,
+  //     };
+  //   } catch (error) {
+  //     console.log(error);
+  //     throw error;
+  //   }
+  // }
+
   async initiateVendorProfileUpdate(userId: string) {
     const isrVendor = await this.isrVendorsRepository.findOne({
       where: { userId: userId, status: VendorStatusEnum.APPROVED },
@@ -1302,33 +1311,28 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     }
   }
 
-  monthDiff(expireDate: Date, today: Date): number {
-    let months;
-    months = (today.getFullYear() - expireDate.getFullYear()) * 12;
-    months -= expireDate.getMonth();
-    months += today.getMonth();
-    return months;
-  }
-
   async cancelRegistration(user: any) {
     const vendor = await this.isrVendorsRepository.findOne({
       where: { userId: user.id, status: Not(WorkflowInstanceEnum.Approved) },
     });
     try {
       if (vendor) {
-        await this.isrVendorsRepository.delete({ userId: user.id });
-        await this.businessAreaRepository.delete({ vendorId: vendor.id });
-        await this.isrVendorsRepository.delete({ userId: user.id });
+        await this.invoiceRepository.delete({ userId: user.id, paymentStatus: PaymentEnum.PENDING });
+        await this.businessAreaRepository.delete({ vendorId: vendor.id, status: VendorStatusEnum.PENDING });
+        await this.isrVendorsRepository.delete({ userId: user.id, status: Not(VendorStatusEnum.APPROVED) });
+        return true;
+      } else {
+        await this.invoiceRepository.delete({ userId: user.id, paymentStatus: PaymentEnum.PENDING });
+        await this.businessAreaRepository.delete({ vendorId: vendor.id, status: PaymentEnum.PENDING });
         return true;
       }
     } catch (error) {
       throw new HttpException(
-        'Unable to cancel registration request ',
-        HttpStatus.INTERNAL_SERVER_ERROR,
+        'Unable to cancel registration request ', HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
 
-    return { message: 'Vendor not found', status: 'error' };
+
   }
   async getAllBusinessAreasByUserId(userId: string) {
     const vendorEntity = await this.isrVendorsRepository.findOne({
@@ -1457,45 +1461,47 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       throw error;
     }
   }
-  async finalSubmitVendorProfileUpdate(profileData: any, userInfo: any) {
-    const vendorEntity = await this.vendorRepository.findOne({
-      where: { userId: userInfo.id },
-    });
-    // const vendorEntity = new VendorsEntity();
-    vendorEntity.id = profileData.data.id;
-    vendorEntity.status = VendorStatusEnum.SUBMITTED;
-    vendorEntity.level = VendorStatusEnum.SUBMITTED;
-    vendorEntity.name = profileData.data.basic.name;
-    vendorEntity.formOfEntity = profileData.data.basic.businessType;
-    vendorEntity.origin = profileData.data.basic.origin;
-    vendorEntity.district = profileData.data.basic.district;
-    vendorEntity.country = profileData.data.basic.country;
-    vendorEntity.tin = profileData.data.basic.tinNumber;
-    vendorEntity.userId = profileData.data.initial.userId;
-    // vendorEntity.isrVendorId = vendor.id;
-    vendorEntity.shareholders = profileData.data.shareHolders;
-    vendorEntity.vendorAccounts = profileData.data.bankAccountDetails;
-    vendorEntity.areasOfBusinessInterest =
-      profileData.data.areasOfBusinessInterest;
-    vendorEntity.beneficialOwnership = profileData.data.beneficialOwnership;
-    let tempMetadata = null;
-    tempMetadata = {
-      address: profileData.data.address,
-      contactPersons: profileData.data.contactPersons,
-      businessSizeAndOwnership: profileData.data.businessSizeAndOwnership,
-      supportingDocuments: profileData.data.supportingDocuments,
-      paymentReceipt: profileData.data.paymentReceipt,
-    };
-    vendorEntity.metaData = tempMetadata;
-    try {
-      // const res = await this.profileInfoRepository.update(vendorEntity);
 
-      // const res = await this.vendorRepository.save(vendorEntity);
-      return 'res';
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  // async finalSubmitVendorProfileUpdate(profileData: any, userInfo: any) {
+  //   const vendorEntity = await this.vendorRepository.findOne({
+  //     where: { userId: userInfo.id },
+  //   });
+  //   // const vendorEntity = new VendorsEntity();
+  //   vendorEntity.id = profileData.data.id;
+  //   vendorEntity.status = VendorStatusEnum.SUBMITTED;
+  //   vendorEntity.level = VendorStatusEnum.SUBMITTED;
+  //   vendorEntity.name = profileData.data.basic.name;
+  //   vendorEntity.formOfEntity = profileData.data.basic.businessType;
+  //   vendorEntity.origin = profileData.data.basic.origin;
+  //   vendorEntity.district = profileData.data.basic.district;
+  //   vendorEntity.country = profileData.data.basic.country;
+  //   vendorEntity.tin = profileData.data.basic.tinNumber;
+  //   vendorEntity.userId = profileData.data.initial.userId;
+  //   // vendorEntity.isrVendorId = vendor.id;
+  //   vendorEntity.shareholders = profileData.data.shareHolders;
+  //   vendorEntity.vendorAccounts = profileData.data.bankAccountDetails;
+  //   vendorEntity.areasOfBusinessInterest =
+  //     profileData.data.areasOfBusinessInterest;
+  //   vendorEntity.beneficialOwnership = profileData.data.beneficialOwnership;
+  //   let tempMetadata = null;
+  //   tempMetadata = {
+  //     address: profileData.data.address,
+  //     contactPersons: profileData.data.contactPersons,
+  //     businessSizeAndOwnership: profileData.data.businessSizeAndOwnership,
+  //     supportingDocuments: profileData.data.supportingDocuments,
+  //     paymentReceipt: profileData.data.paymentReceipt,
+  //   };
+  //   vendorEntity.metaData = tempMetadata;
+  //   try {
+  //     // const res = await this.profileInfoRepository.update(vendorEntity);
+
+  //     // const res = await this.vendorRepository.save(vendorEntity);
+  //     return 'res';
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
+
   async getCertificateInformations(userId: string) {
     const result = await this.vendorRepository.findOne({
       where: {
