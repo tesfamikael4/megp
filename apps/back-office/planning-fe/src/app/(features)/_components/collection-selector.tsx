@@ -97,7 +97,7 @@ export const CollectionSelector = ({
           ]
         : [],
     });
-  }, [page]);
+  }, [page, search]);
   return (
     <>
       <TextInput

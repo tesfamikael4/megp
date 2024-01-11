@@ -362,6 +362,7 @@ export const FormDetail = ({
             maxRows={4}
             {...register('remark')}
             disabled={disableFields}
+            className="mt-2"
           />
         </Box>
       </Flex>

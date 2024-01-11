@@ -82,12 +82,9 @@ export function Items({
         accessorKey: 'description',
       },
       {
-        id: 'unitPrice',
-        header: () => <div className="text-center">Unit Price</div>,
-        accessorKey: 'unitPrice',
-        cell: ({ getValue, row, column }) => (
-          <EstimatedPrice getValue={getValue} row={row} column={column} />
-        ),
+        id: 'uomName',
+        header: 'UoM',
+        accessorKey: 'uomName',
       },
       {
         id: 'quantity',
@@ -98,9 +95,12 @@ export function Items({
         ),
       },
       {
-        id: 'uomName',
-        header: 'UoM',
-        accessorKey: 'uomName',
+        id: 'unitPrice',
+        header: () => <div className="text-end">Unit Price</div>,
+        accessorKey: 'unitPrice',
+        cell: ({ getValue, row, column }) => (
+          <EstimatedPrice getValue={getValue} row={row} column={column} />
+        ),
       },
 
       {
@@ -124,17 +124,9 @@ export function Items({
         accessorKey: 'description',
       },
       {
-        id: 'unitPrice',
-        header: () => <div className="text-center">Unit Price</div>,
-        accessorKey: 'unitPrice',
-        cell: ({ getValue, row, column }) => (
-          <EstimatedPrice
-            getValue={getValue}
-            row={row}
-            column={column}
-            mode="update"
-          />
-        ),
+        id: 'uomName',
+        header: 'UoM',
+        accessorKey: 'uomName',
       },
       {
         id: 'quantity',
@@ -145,14 +137,22 @@ export function Items({
         ),
       },
       {
-        id: 'uomName',
-        header: 'UoM',
-        accessorKey: 'uomName',
+        id: 'unitPrice',
+        header: () => <div className="text-end">Unit Price</div>,
+        accessorKey: 'unitPrice',
+        cell: ({ getValue, row, column }) => (
+          <EstimatedPrice
+            getValue={getValue}
+            row={row}
+            column={column}
+            mode="update"
+          />
+        ),
       },
 
       {
         id: 'totalEstimatedAmount',
-        header: () => <div className="text-center">Total</div>,
+        header: () => <div className="text-end">Total</div>,
         accessorKey: 'totalEstimatedAmount',
         cell: ({ row: { original } }: any) => (
           <p className="text-right">
