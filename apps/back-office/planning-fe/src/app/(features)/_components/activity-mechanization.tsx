@@ -228,10 +228,12 @@ export const ActivityMechanization = ({
                 'Request for Quotation (RFQ) ',
                 'National Competitive Bidding (NCB)',
                 'International Competitive Bidding (ICB) ',
-                'Request for Proposal (RFP) ',
+                'Restricted Tender',
                 'Single Source Procurement ',
-                'Framework',
-                'Purchased Orders',
+                'Request for Proposal (RFP) ',
+                'Two Stage Bidding',
+                'Framework Procurement',
+                'Purchased Orders (Call off)',
               ]}
               className="w-full"
               withAsterisk

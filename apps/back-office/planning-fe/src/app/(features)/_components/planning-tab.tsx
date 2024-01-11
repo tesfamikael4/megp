@@ -126,7 +126,11 @@ const PlanningTab = ({ page }: { page: 'pre' | 'post' }) => {
       notify('Success', 'Pre budget plan submitted successfully');
     } catch (err) {
       logger.log(err);
-      notify('Error', 'Something went wrong');
+      if (err.status === 430) {
+        notify('Error', err.data.message);
+      } else {
+        notify('Error', 'Something went wrong');
+      }
     }
   };
 
