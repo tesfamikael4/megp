@@ -14,12 +14,9 @@ import {
   WorkflowInstanceResponse,
 } from '../dto/workflow-instance.dto';
 import { createMachine, interpret } from 'xstate';
-import { ServicePrice } from 'src/entities/service-price.entity';
 import {
   AssignmentEnum,
-  BusinessStatusEnum,
   HandlerTypeEnum,
-  ServiceKeyEnum,
   WorkflowInstanceEnum,
 } from '../dto/workflow-instance.enum';
 import {
@@ -32,7 +29,6 @@ import { HandlingCommonService } from './handling-common-services';
 import { TaskHandlerEntity } from 'src/entities/task-handler.entity';
 import { TaskTrackerEntity } from 'src/entities/task-tracker.entity';
 import { TaskService } from 'src/modules/bpm/services/task.service';
-import { InvoiceEntity } from 'src/entities/invoice.entity';
 import { PaymentReceiptEntity } from 'src/entities/receipt-attachment.entity';
 import { BusinessProcessService } from 'src/modules/bpm/services/business-process.service';
 import {
@@ -44,29 +40,29 @@ import { StateMetaData } from 'src/modules/bpm/dto/state-metadata';
 import { CreateTaskTrackerDto } from 'src/modules/bpm/dto/task-tracker.dto';
 import { WorkflowInstanceEntity } from 'src/entities/workflow-instance.entity';
 import { TaskEntity } from 'src/entities/task.entity';
-import { IsrVendorsEntity, VendorsEntity } from 'src/entities';
+import { VendorsEntity } from 'src/entities';
+import { InvoiceService } from 'src/modules/vendor-registration/services/invoice.service';
+
 @Injectable()
 export class WorkflowInstanceService {
   constructor(
     @InjectRepository(WorkflowInstanceEntity)
     private readonly workflowInstanceRepository: Repository<WorkflowInstanceEntity>,
     private readonly taskService: TaskService,
-    @InjectRepository(ServicePrice)
-    private readonly pricingRepository: Repository<ServicePrice>,
     @InjectRepository(TaskHandlerEntity)
     private readonly handlerRepository: Repository<TaskHandlerEntity>,
-    @InjectRepository(InvoiceEntity)
-    private readonly invoiceRepository: Repository<InvoiceEntity>,
+
     @InjectRepository(TaskTrackerEntity)
     private readonly trackerRepository: Repository<TaskTrackerEntity>,
     @InjectRepository(VendorsEntity)
     private readonly vendorRepository: Repository<VendorsEntity>,
-    @InjectRepository(IsrVendorsEntity)
-    private readonly isrVendorRepository: Repository<IsrVendorsEntity>,
+
     @InjectRepository(PaymentReceiptEntity)
     private readonly receiptRepository: Repository<PaymentReceiptEntity>,
     private readonly bpService: BusinessProcessService,
     private readonly commonService: HandlingCommonService,
+    private readonly invoiceService: InvoiceService,
+
   ) { }
 
   async submitFormBasedTask(
@@ -319,13 +315,13 @@ export class WorkflowInstanceService {
         console.log(TaskTypes.ISR, command);
         break;
       case TaskTypes.PAYMENT:
-        const data = await this.invoiceRepository.find({
-          where: { businessAreaId: command.instanceId },
-        });
-        data.map((row) => {
-          row.paymentStatus = 'Paid';
-          return this.invoiceRepository.update(row.id, row);
-        });
+        // const data = await this.invoiceService.find({
+        //   where: { businessAreaId: command.instanceId },
+        // });
+        // data.map((row) => {
+        //   row.paymentStatus = 'Paid';
+        //   return this.invoiceService.update(row.id, row);
+        // });
 
         break;
     }
@@ -487,34 +483,6 @@ export class WorkflowInstanceService {
     }
     return null;
   }
-  // async upgradeRegistration(
-  //   dto: UpdateWorkflowInstanceDto,
-  //   userInfo: any,
-  // ): Promise<WorkflowInstanceResponse> {
-  //   const preveous = await this.workflowInstanceRepository.findOne({
-  //     relations: {
-  //       businessProcess: { service: true },
-  //       price: true,
-  //     },
-  //     where: { id: dto.id },
-  //   });
-  //   const proposedPrice = await this.pricingRepository.findOne({
-  //     where: { id: dto.pricingId },
-  //   });
-  //   if (preveous.price.valueFrom > proposedPrice.valueFrom) {
-  //     throw new NotFoundException('Only upgrade is allowed');
-  //   }
-  //   const wfmodel = new UpdateWorkflowInstanceDto();
-  //   //  wfmodel.key = ServiceKeyEnum.upgrade;
-  //   wfmodel.requestorId = userInfo.userId;
-  //   // wfmodel.pricingId = dto.pricingId;
-  //   const response = await this.create(wfmodel, userInfo);
-  //   const command = new GotoNextStateDto();
-  //   command.instanceId = response.application.id;
-  //   command.action = 'ISR';
-  //   await this.gotoNextStep(command, userInfo);
-  //   return response;
-  // }
   async savePayment(
     dto: PaymentReceiptDto,
   ): Promise<PaymentReceiptResponseDto> {
@@ -524,7 +492,7 @@ export class WorkflowInstanceService {
     return PaymentReceiptResponseDto.toResponse(newService);
   }
   async getInvoice(invoceId: string): Promise<InvoiceResponseDto> {
-    const invoice = await this.invoiceRepository.findOne({
+    const invoice = await this.invoiceService.findOne({
       where: { id: invoceId },
     });
     if (invoice) {

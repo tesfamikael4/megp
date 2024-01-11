@@ -30,14 +30,13 @@ import { InsertAllDataDto } from '../dto/save-all.dto';
 import { SetVendorStatus } from '../dto/vendor.dto';
 import { CollectionQuery } from 'src/shared/collection-query';
 import { MbrsDataDto } from '../dto/mbrsData.dto';
-import { userInfo } from 'os';
 @ApiBearerAuth()
 @Controller('vendor-registrations')
 @ApiTags('Vendor-registrations')
 @ApiResponse({ status: 500, description: 'Internal error' })
 @ApiExtraModels(DataResponseFormat)
 export class VendorRegistrationsController {
-  constructor(private readonly regService: VendorRegistrationsService) {}
+  constructor(private readonly regService: VendorRegistrationsService) { }
   @UseGuards(JwtGuard)
   @Get('get-isr-vendors')
   async getVendors() {
@@ -167,16 +166,6 @@ export class VendorRegistrationsController {
   async cancelRegistration(@CurrentUser() user: any) {
     return await this.regService.cancelRegistration(user);
   }
-  @UseGuards(JwtGuard)
-  @Post('initiate-vendor-profile-update')
-  async initiateVendorProfileUpdate(@CurrentUser() userInfo: any) {
-    return await this.regService.initiateVendorProfileUpdate(userInfo.id);
-  }
-  @UseGuards(JwtGuard)
-  @Post('initiate-vendor-profile-update')
-  async updateVendorProfile(@Body() data: InsertAllDataDto) {
-    return await this.regService.updateVendorProfile(data.isrVendorId, data);
-  }
 
   @UseGuards(JwtGuard)
   @Get('get-all-business-area')
@@ -206,7 +195,6 @@ export class VendorRegistrationsController {
     @Body() vendorprofileUpdateDara: any,
     @CurrentUser() userInfo: string,
   ) {
-    console.log('vendorprofileUpdateDara', vendorprofileUpdateDara);
     return await this.regService.submitVendorProfileUpdate(
       vendorprofileUpdateDara,
       userInfo,
@@ -228,7 +216,7 @@ export class VendorRegistrationsController {
   }
 
   @UseGuards(JwtGuard)
-  @Get('get-ertificate-informations')
+  @Get('get-certificate-informations')
   async getCertificateInformations(@CurrentUser() userInfo: any) {
     return await this.regService.getCertificateInformations(userInfo.id);
   }

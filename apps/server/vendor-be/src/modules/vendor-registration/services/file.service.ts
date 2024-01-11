@@ -1,15 +1,7 @@
 import * as Minio from 'minio';
-import * as fs from 'fs';
-import { Server } from '@tus/server';
-import { S3Store } from '@tus/s3-store';
-
-// import tus from 'tus-node-server';
-// import tus from 'tus-js-client';
 import {
   HttpException,
-  HttpStatus,
   Injectable,
-  NotFoundException,
   Res,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -21,13 +13,9 @@ import {
   FilesEntity,
   InvoiceEntity,
   IsrVendorsEntity,
-  WorkflowInstanceEntity,
 } from 'src/entities';
 
 import { VendorStatusEnum } from 'src/shared/enums/vendor-status-enums';
-import { PaymentReceiptDto } from '../dto/payment-receipt.dto';
-import { Readable } from 'typeorm/platform/PlatformTools';
-import axios from 'axios';
 import { Response } from 'express';
 import { BusinessAreaService } from './business-area.service';
 import { WorkflowService } from 'src/modules/bpm/services/workflow.service';
@@ -586,7 +574,7 @@ export class FileService {
       const result = await this.businessAreaRepository.findOne({
         where: { id: businessAreaId },
       });
-      if (!result) throw new HttpException('business area not found ', 500);
+      if (!result) throw new HttpException('business area not found', 404);
       const fileUploadName = 'certificate';
       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
       const fileId = `${uniqueSuffix}_${'certeficate.pdf'}`;
@@ -603,7 +591,7 @@ export class FileService {
       result.certificateUrl = fileId;
       const data = await this.businessAreaRepository.save(result);
       if (!result) throw new HttpException('business area update failed', 500);
-      console.log('data   --', data);
+
       return data;
     } catch (error) {
       console.log(error);
@@ -633,7 +621,7 @@ export class FileService {
     }
   }
 
-  async getFile(userId, fielId, fileUploadName, @Res() res: Response) {
+  async getFile(userId: string, fielId: string, fileUploadName: string, @Res() res: Response) {
     try {
       const filename = `${userId}/${fileUploadName}/${fielId}`;
       const fileInfo = await this.minioClient.statObject('megp', filename);

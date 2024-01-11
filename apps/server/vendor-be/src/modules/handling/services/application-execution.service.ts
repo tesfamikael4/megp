@@ -27,46 +27,13 @@ import { HandlingCommonService } from './handling-common-services';
 @Injectable()
 export class ApplicationExcutionService {
   constructor(
-
-    @InjectRepository(TaskTrackerEntity)
-    private readonly taskTrackingRepository: Repository<TaskTrackerEntity>,
     @InjectRepository(WorkflowInstanceEntity)
     private readonly wiRepository: Repository<WorkflowInstanceEntity>,
     private readonly dataSource: DataSource,
     private readonly invoiceService: InvoiceService,
     private readonly commonService: HandlingCommonService
   ) { }
-  async getCompletedTasks(instanceId: string): Promise<TaskTrackerResponse[]> {
-    const ctasks = await this.taskTrackingRepository.find({
-      where: { instanceId: instanceId },
-      relations: ['tasks', 'workflow_instances'],
-    });
-    const result = ctasks.map((entity) =>
-      TaskTrackerResponse.toResponse(entity),
-    );
-    return result;
-  }
 
-  async getCurrunTasks(
-    //    servicekey: string,
-    query: CollectionQuery,
-  ): Promise<DataResponseFormat<WorkflowInstanceResponse>> {
-    const dataQuery = QueryConstructor.constructQuery<WorkflowInstanceEntity>(
-      this.wiRepository,
-      query,
-    );
-    const response = new DataResponseFormat<WorkflowInstanceResponse>();
-    if (query.count) {
-      response.total = await dataQuery.getCount();
-    } else {
-      const [result, total] = await dataQuery.getManyAndCount();
-      response.total = total;
-      response.items = result.map((entity) =>
-        WorkflowInstanceResponse.toResponse(entity),
-      );
-    }
-    return response;
-  }
   async getCurruntTaskByServiceKey(serviceKey: string,
     query: CollectionQuery, user: any
   ): Promise<DataResponseFormat<WorkflowInstanceResponse>> {
@@ -133,6 +100,7 @@ export class ApplicationExcutionService {
     const filesResponse = files.map((item) => {
       return FileResponseDto.toResponseDto(item);
     });
+
     const response = WorkflowInstanceResponse.toResponse(instance);
     response['attachments'] = filesResponse;
     if (
@@ -159,9 +127,6 @@ export class ApplicationExcutionService {
 
     return response;
   }
-
-
-
 
   async pickTask(
     dto: UpdateTaskHandlerDto,
