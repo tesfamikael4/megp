@@ -15,7 +15,7 @@ import {
 } from '@mantine/core';
 import { Section } from '@megp/core-fe';
 import { IconClockHour2, IconTicket, IconProgress } from '@tabler/icons-react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import TaskHandler from '@/app/(features)/_components/task-handler';
 import { notifications } from '@mantine/notifications';
@@ -33,14 +33,16 @@ export default function RequestDetail({
   const [content, setContent] = useState<'details' | 'tasks'>('tasks');
   const [tracker, setTaskTracker] = useState<any>();
   const pickLabel = isPicked ? 'Unpick' : 'Pick';
+  const router = useRouter();
 
   const response = useGetApplicationRequestDetailByIdQuery({
     instanceId: instanceId as string,
   });
   const [pickTask, { isLoading: isPicking }] = usePickTaskMutation();
   const [unPickTask, { isLoading: isUnPicking }] = useUnpickTaskMutation();
+  const [hideUnPick, setHideUnPick] = useState<boolean>(false);
 
-  if (!response || !response.data) {
+  if (!response || response.isLoading) {
     return (
       <Paper className="p-5">
         <Skeleton height={50} circle mb="xl" />
@@ -49,6 +51,13 @@ export default function RequestDetail({
         <Skeleton height={8} mt={10} width="70%" radius="xl" />
       </Paper>
     );
+  } else if (
+    response.error &&
+    'status' in response.error &&
+    response.error.status === 404
+  ) {
+    router.push(`/${requestType === 'update' ? 'info-change' : requestType}`);
+    return null;
   }
 
   const handlePickButton = () => {
@@ -169,21 +178,44 @@ export default function RequestDetail({
               mh={'300px'}
             >
               <Flex className="text-sm bg-gray-100 p-3" justify="space-between">
-                <Box>
-                  <Box className="text-primary-800 font-semibold">
-                    {response.data.task.name}
-                  </Box>
-                  <Box>{response.data.task.description}</Box>
-                </Box>
-                <Button
-                  onClick={() => {
-                    handlePickButton();
-                    setTaskType(response.data.task.taskType);
-                  }}
-                  loading={isPicking || isUnPicking}
-                >
-                  {pickLabel}
-                </Button>
+                {hideUnPick ? (
+                  <>
+                    <Box>
+                      <Box className="text-primary-800 font-semibold">
+                        Task Completed
+                      </Box>
+                    </Box>
+                    <Button
+                      onClick={() => {
+                        return router.push(
+                          requestType === 'update'
+                            ? '/info-change'
+                            : `/${requestType}`,
+                        );
+                      }}
+                    >
+                      Go Back To List
+                    </Button>{' '}
+                  </>
+                ) : (
+                  <>
+                    <Box>
+                      <Box className="text-primary-800 font-semibold">
+                        {response.data.task.name}
+                      </Box>
+                      <Box>{response.data.task.description}</Box>
+                    </Box>
+                    <Button
+                      onClick={() => {
+                        handlePickButton();
+                        setTaskType(response.data.task.taskType);
+                      }}
+                      loading={isPicking || isUnPicking}
+                    >
+                      {pickLabel}
+                    </Button>
+                  </>
+                )}
               </Flex>
               {isPicked && (
                 <TaskHandler
@@ -193,6 +225,7 @@ export default function RequestDetail({
                   setIsPicked={setIsPicked}
                   requesterID={response.data.requestorId}
                   requestType={requestType}
+                  setHideUnPick={setHideUnPick}
                 />
               )}
             </Section>

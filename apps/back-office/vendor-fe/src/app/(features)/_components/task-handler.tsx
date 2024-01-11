@@ -16,12 +16,14 @@ export default function TaskHandler({
   setIsPicked,
   requesterID,
   requestType,
+  setHideUnPick,
 }: {
   taskType: string | undefined;
   instanceID: string | undefined;
   taskCheckLists: any[];
   requesterID: string | undefined;
   setIsPicked: React.Dispatch<React.SetStateAction<boolean>>;
+  setHideUnPick: React.Dispatch<React.SetStateAction<boolean>>;
   requestType: 'new' | 'renewal' | 'upgrade' | 'update';
 }) {
   const [mutate] = useGoToNextStateMutation();
@@ -115,6 +117,7 @@ export default function TaskHandler({
           className=""
           mode="view"
           apiUrl={`${process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api/'}`}
+          setHideUnPick={setHideUnPick}
         />
       </Flex>
     );
