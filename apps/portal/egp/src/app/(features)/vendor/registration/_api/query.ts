@@ -165,7 +165,7 @@ export const vendorRegistrationQuery = vendorRegistrationApi.injectEndpoints({
     >({
       query() {
         return {
-          url: `vendor-registrations/get-ertificate-informations`,
+          url: `vendor-registrations/get-certificate-informations`,
           method: 'GET',
         };
       },
