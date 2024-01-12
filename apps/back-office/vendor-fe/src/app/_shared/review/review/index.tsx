@@ -4,6 +4,8 @@ import classes from './accordion.module.scss';
 import { ShowFile } from '@/app/(features)/_components/details-accordion';
 import { renderTable } from '@/app/(features)/util/renderTable';
 import { addSpacesToCamelCase } from '@/app/(features)/util/addSpaceToCamelCase';
+import { string } from 'zod';
+import { displayFormattedObject } from '@/app/(features)/util/displayFormattedObject';
 
 const tabs = [
   {
@@ -33,6 +35,22 @@ const tabs = [
   {
     tabValue: 'bankAccountDetails',
     tabName: 'Bank Account Details',
+  },
+  {
+    tabValue: 'vendorAccounts',
+    tabName: 'Bank Account Details',
+  },
+  {
+    tabValue: 'areasOfBusinessInterest',
+    tabName: 'Areas of Business Interest',
+  },
+  {
+    tabValue: 'customCats',
+    tabName: 'Custom Categories',
+  },
+  {
+    tabValue: 'businessCats',
+    tabName: 'Business Categories',
   },
   {
     tabValue: 'supportingDocuments',
@@ -100,9 +118,7 @@ function FormPreview({ data }: { data: any }) {
               ) : (
                 Object.keys(data[tabValue]).map((fieldKey) => {
                   return tabValue === 'supportingDocuments' ||
-                    tabValue === 'certificate' ||
-                    (tabValue === 'paymentReceipt' &&
-                      fieldKey === 'attachment') ? (
+                    tabValue === 'certificate' ? (
                     <Accordion.Panel key={fieldKey} className="p-0">
                       <Accordion
                         styles={{
@@ -160,10 +176,43 @@ function FormPreview({ data }: { data: any }) {
                         </Accordion.Item>
                       </Accordion>
                     </Accordion.Panel>
+                  ) : tabValue === 'paymentReceipt' &&
+                    fieldKey === 'attachment' ? (
+                    <Accordion.Panel key={fieldKey} className="items-center">
+                      <Flex direction={'column'}>
+                        <ShowFile
+                          url={`${
+                            process.env.NEXT_PUBLIC_VENDOR_API ??
+                            '/vendors/api/'
+                          }upload/get-file-bo/${'paymentReceipt'}/${
+                            data[tabValue][fieldKey]
+                          }/${data?.userId}`}
+                          filename={data[tabValue][fieldKey]}
+                        />
+                      </Flex>
+                    </Accordion.Panel>
                   ) : (
                     <Accordion.Panel key={fieldKey} className="items-center">
+                      {typeof data[tabValue][fieldKey] === 'object' && (
+                        <Flex>
+                          <Text size="xs" fw={700} tt="capitalize">
+                            {addSpacesToCamelCase(fieldKey)}
+                          </Text>
+                          <Text
+                            className="ml-2"
+                            size="xs"
+                            fw={700}
+                            tt="capitalize"
+                          >
+                            {displayFormattedObject(data[tabValue][fieldKey], {
+                              [fieldKey]: 'amount+currency',
+                            })}
+                          </Text>
+                        </Flex>
+                      )}{' '}
                       {typeof data[tabValue][fieldKey] === 'string' &&
-                        fieldKey !== 'transactionId' && (
+                        fieldKey !== 'transactionId' &&
+                        fieldKey !== 'invoiceId' && (
                           <Flex>
                             <Text size="xs" fw={700} tt="capitalize">
                               {addSpacesToCamelCase(fieldKey)}
