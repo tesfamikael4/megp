@@ -33,24 +33,6 @@ export class OrganizationBudgetCategoryService extends ExtraCrudService<Organiza
         };
       });
 
-      for (const budget of budgetList) {
-        const existingBudget =
-          await this.organizationBudgetCategoryRepository.findOne({
-            where: {
-              organizationId: budget.organizationId,
-              budgetCategoryId: budget.budgetCategoryId,
-            },
-          });
-
-        if (existingBudget) {
-          throw new ConflictException(
-            `Budget category ${budget.budgetCategoryId} already exists for organization ${budget.organizationId}`,
-          );
-        }
-      }
-
-      console.log('Budget List', budgetList);
-
       const budgets =
         this.organizationBudgetCategoryRepository.create(budgetList);
       await this.organizationBudgetCategoryRepository.save(budgets);
