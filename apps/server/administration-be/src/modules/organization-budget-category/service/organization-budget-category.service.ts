@@ -72,15 +72,4 @@ export class OrganizationBudgetCategoryService extends ExtraCrudService<Organiza
       throw new Error(`Failed to get budgets: ${error.message}`);
     }
   }
-
-  // async getBudgetCategoriesByBudgetId(budgetId: string): Promise<OrganizationBudgetCategory[]> {
-  //   try {
-  //     const budgets = await this.organizationBudgetCategoryRepository.find({
-  //       where: { budgetCategoryId: budgetId },
-  //     });
-  //     return budgets;
-  //   } catch (error) {
-  //     throw new Error(`Failed to get budgets: ${error.message}`);
-  //   }
-  // }
 }
