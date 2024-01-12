@@ -27,6 +27,6 @@ export class OrganizationBudgetCategory extends Audit {
       onDelete: 'CASCADE',
     },
   )
-  @JoinColumn()
+  @JoinColumn({ name: 'budgetCategoryId' })
   public budgetCategory: BudgetCategory;
 }
