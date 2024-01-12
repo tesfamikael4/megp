@@ -9,12 +9,10 @@ import {
   CreateBudgetCategoryDto,
   UpdateBudgetCategoryDto,
 } from '../dto/budget-category.dto';
-
 const options: EntityCrudOptions = {
   createDto: CreateBudgetCategoryDto,
   updateDto: UpdateBudgetCategoryDto,
 };
-
 @Controller('budget-categories')
 @ApiTags('budget-categories')
 @ApiResponse({ status: 500, description: 'Internal error' })
