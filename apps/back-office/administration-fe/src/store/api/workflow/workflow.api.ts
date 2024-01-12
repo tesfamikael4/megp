@@ -1,12 +1,13 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { baseQuery } from '@/store/base-query';
+import { createApi } from '@reduxjs/toolkit/query/react';
 
 export const workflowApi = createApi({
   reducerPath: 'planningApi',
   refetchOnFocus: true,
-  baseQuery: fetchBaseQuery({
+  baseQuery: baseQuery(
     // baseUrl: process.env.NEXT_PUBLIC_WORKFLOW_API ?? '/workflow/api/',
-    baseUrl: '/workflow/api/',
-  }),
+    '/workflow/api/',
+  ),
   endpoints: (builder) => ({
     getActivities: builder.query<any, { workFlowId: string }>({
       query: (payload) => `roles/list/${payload.workFlowId}`,
