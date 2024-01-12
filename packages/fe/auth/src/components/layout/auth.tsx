@@ -65,7 +65,7 @@ export function Auth({
           width={100}
         />
         <Box>{render()}</Box>
-        <div className="absolute bottom-0">
+        <div className="bottom-0">
           <p className={styles.footer_text}>
             Copyright &copy; 2023, Procurement and Disposal of Assets Authority.
           </p>
