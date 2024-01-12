@@ -40,18 +40,6 @@ export class OrganizationBudgetCategoryController extends ExtraCrudController<Or
     super(organizationBudgetCategoryService);
   }
 
-  @Get()
-  async getAllBudgetCategories() {
-    try {
-      return await this.organizationBudgetCategoryService.getAllBudgetCategories();
-    } catch (error) {
-      throw new HttpException(
-        'Failed to get budgets',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-  }
-
   @Post('bulk-create')
   async bulkCreate(@Body() budgetData: OrganizationBudgetCategoryCreateDto) {
     try {
@@ -75,22 +63,6 @@ export class OrganizationBudgetCategoryController extends ExtraCrudController<Or
     } catch (error) {
       throw new HttpException(
         'Failed to get budgets',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-  }
-
-  @Delete(':organizationId')
-  async deleteBudgetCategories(
-    @Param('organizationId') organizationId: string,
-  ) {
-    try {
-      return await this.organizationBudgetCategoryService.deleteBudgetCategories(
-        organizationId,
-      );
-    } catch (error) {
-      throw new HttpException(
-        'Failed to delete budgets',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
