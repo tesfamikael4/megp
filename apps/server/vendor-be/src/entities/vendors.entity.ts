@@ -16,6 +16,7 @@ import { Audit } from 'src/shared/entities/audit.entity';
 import { WorkflowInstanceEntity } from './workflow-instance.entity';
 import { IsrVendorsEntity } from './isr-vendors.entity';
 import { ProfileInfoEntity } from './profile-info.entity';
+import { PreferentialTreatmentsEntity } from './preferential-treatment.entity';
 @Entity({ name: 'vendors' })
 export class VendorsEntity extends Audit {
   @PrimaryGeneratedColumn('uuid')
@@ -82,4 +83,6 @@ export class VendorsEntity extends Audit {
 
   @OneToMany(() => ProfileInfoEntity, (profile) => profile.vendor)
   ProfileInfo: ProfileInfoEntity;
+  @OneToMany(() => PreferentialTreatmentsEntity, (pt) => pt.vendor)
+  preferentials: PreferentialTreatmentsEntity[];
 }

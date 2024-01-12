@@ -171,6 +171,7 @@ export class WorkflowService {
           throw new Error('Unable to update vender status');
         }
       } else {
+
         const task = await this.taskService.getTaskByNameAndBP(
           workflowInstance.bpId,
           nextStepState.value.toString(),

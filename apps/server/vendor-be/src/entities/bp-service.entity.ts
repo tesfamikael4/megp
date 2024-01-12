@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { WorkflowInstanceEntity } from './workflow-instance.entity';
 import { BusinessAreaEntity } from './business-area.entity';
+import { PreferentialTreatmentsEntity } from './preferential-treatment.entity';
 @Entity({ name: 'bp_services' })
 export class BpServiceEntity extends Audit {
   @PrimaryGeneratedColumn('uuid')
@@ -50,4 +51,14 @@ export class BpServiceEntity extends Audit {
     },
   )
   businessAreas: BusinessAreaEntity[];
+
+  @OneToMany(
+    () => PreferentialTreatmentsEntity,
+    (pt) => pt.service,
+    {
+      cascade: true,
+      onDelete: 'CASCADE',
+    },
+  )
+  prerentials: PreferentialTreatmentsEntity[];
 }

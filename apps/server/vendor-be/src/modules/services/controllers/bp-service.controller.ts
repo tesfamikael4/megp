@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiExtraModels,
@@ -24,22 +24,28 @@ const options: EntityCrudOptions = {
 @Controller('bp-services')
 @ApiTags('bp-services')
 @ApiExtraModels(DataResponseFormat)
+@UseGuards(JwtGuard)
 export class BpServiceController extends EntityCrudController<BpServiceEntity>(
   options,
 ) {
-  constructor(private readonly bpServiceProvider: BpServiceService) {
-    super(bpServiceProvider);
+  constructor(private readonly bpService: BpServiceService) {
+    super(bpService);
   }
-  @UseGuards(JwtGuard)
+
   @Post()
   @ApiOkResponse({ type: BpServiceResponse })
   async create(@Body() dto: CreateBpServiceDto) {
     return await super.create(dto);
   }
-  @UseGuards(JwtGuard)
+
   @Put('/:id')
   @ApiOkResponse({ type: BpServiceResponse })
   async update(@Param('id') id: string, @Body() dto: UpdateBpServiceDto) {
     return await super.update(id, dto);
   }
+  @Get('get-marginilized-groups')
+  async getPreferentialTreatmentServices() {
+    return await this.bpService.getPreferentialTreatmentServices();
+  }
+
 }
