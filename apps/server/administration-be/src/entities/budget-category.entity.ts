@@ -1,5 +1,6 @@
 import { Audit } from '@audit';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { OrganizationBudgetCategory } from './organization-budget-category.entity';
 
 @Entity({ name: 'budget_categories' })
 export class BudgetCategory extends Audit {
@@ -9,4 +10,14 @@ export class BudgetCategory extends Audit {
   name: string;
   @Column()
   description: string;
+
+  @OneToMany(
+    () => OrganizationBudgetCategory,
+    (organizationBudgetCategory) => organizationBudgetCategory.budgetCategory,
+    {
+      cascade: true,
+      onDelete: 'CASCADE',
+    },
+  )
+  organizationBudgetCategory: OrganizationBudgetCategory[];
 }
