@@ -36,6 +36,16 @@ export class ProcurementRequisitionActivityController extends ExtraCrudControlle
     return this.procurementRequisitionActivityService.annualProcurementPlan(q);
   }
 
+  @Get('fromPlanningTesting')
+  @ApiQuery({
+    name: 'q',
+    type: String,
+    required: false,
+  })
+  async annualsProcurementPlan(@Query('q') q: string): Promise<any> {
+    return this.procurementRequisitionActivityService.postBudgetPlan(q);
+  }
+
   @Get('annualProcurementPlanActivities/:id')
   @ApiQuery({
     name: 'q',

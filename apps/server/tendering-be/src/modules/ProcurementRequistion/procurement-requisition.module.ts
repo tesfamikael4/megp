@@ -6,6 +6,7 @@ import {
   ProcurementRequisition,
   ProcurementRequisitionActivity,
   ProcurementRequisitionBudgetLine,
+  ProcurementRequisitionDisbursement,
   ProcurementRequisitionDocument,
   ProcurementRequisitionItem,
   ProcurementRequisitionItemReference,
@@ -22,6 +23,12 @@ import { ProcurementRequisitionItemController } from './controllers/procurement-
 import { ProcurementRequisitionItemReferenceService } from './services/procurement-requisition-item-reference.service';
 import { ProcurementRequisitionOfficerAssignmentService } from './services/procurement-requisition-officer-assignment.service';
 import { ProcurementRequisitionOfficerAssignmentController } from './controllers/procurement-requisition-officer-assignment.controller';
+import { ProcurementRequisitionMechanismService } from './services/procurement-requisition-mechanism.service';
+import { ProcurementRequisitionMechanismController } from './controllers/procurement-requisition-mechanism.controller';
+import { ProcurementRequisitionDisbursementController } from './controllers/procurement-requisition-disbursement.controller';
+import { ProcurementRequisitionDisbursementService } from './services/procurement-requisition-disbursement.service';
+import { ProcurementRequisitionTimelineService } from './services/procurement-requisition-timeline.service';
+import { ProcurementRequisitionTimelineController } from './controllers/procurement-requisition-timeline.controller';
 
 @Module({
   imports: [
@@ -37,6 +44,7 @@ import { ProcurementRequisitionOfficerAssignmentController } from './controllers
       ProcurementRequisitionBudgetLine,
       ProcurementRequisitionMechanism,
       ProcurementRequisitionOfficerAssignment,
+      ProcurementRequisitionDisbursement,
     ]),
   ],
   providers: [
@@ -44,17 +52,21 @@ import { ProcurementRequisitionOfficerAssignmentController } from './controllers
     ProcurementRequisitionActivityService,
     ProcurementRequisitionDocumentService,
     ProcurementRequisitionItemService,
-    ProcurementRequisitionDocumentService,
     ProcurementRequisitionItemReferenceService,
     ProcurementRequisitionOfficerAssignmentService,
+    ProcurementRequisitionMechanismService,
+    ProcurementRequisitionDisbursementService,
+    ProcurementRequisitionTimelineService,
   ],
   controllers: [
     ProcurementRequisitionController,
     ProcurementRequisitionDocumentController,
     ProcurementRequisitionActivityController,
     ProcurementRequisitionItemController,
-    ProcurementRequisitionDocumentController,
     ProcurementRequisitionOfficerAssignmentController,
+    ProcurementRequisitionMechanismController,
+    ProcurementRequisitionDisbursementController,
+    ProcurementRequisitionTimelineController,
   ],
 })
 export class ProcurementRequisitionModule {}

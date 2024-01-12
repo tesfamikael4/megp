@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDate, IsJSON, IsNumber, IsUUID } from 'class-validator';
+import { IsDate, IsNumber, IsString, IsUUID } from 'class-validator';
 export class CreateProcurementRequisitionTimelineDto {
   @ApiProperty()
-  @IsJSON()
-  timeline: JSON;
+  @IsString()
+  timeline: string;
 
   @ApiProperty()
   @IsNumber()
@@ -11,7 +11,7 @@ export class CreateProcurementRequisitionTimelineDto {
 
   @ApiProperty()
   @IsNumber()
-  noDays: number;
+  noOfDays: number;
 
   @ApiProperty()
   @IsDate()

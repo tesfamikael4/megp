@@ -3,7 +3,6 @@ import {
   Column,
   PrimaryGeneratedColumn,
   JoinColumn,
-  OneToOne,
   ManyToOne,
 } from 'typeorm';
 

@@ -35,7 +35,7 @@ async function bootstrap() {
       persistAuthorization: false,
       docExpansion: 'none',
     },
-    customSiteTitle: 'Registration System API Documentation',
+    customSiteTitle: 'Tendering System API Documentation',
   };
   const document = SwaggerModule.createDocument(
     app,
