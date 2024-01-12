@@ -1,9 +1,9 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class OrganizationBudgetCategory1705054323895
+export class OrganizationBudgetCategory1705059029988
   implements MigrationInterface
 {
-  name = 'OrganizationBudgetCategory1705054323895';
+  name = 'OrganizationBudgetCategory1705059029988';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`ALTER TABLE "task" DROP COLUMN "tenantId"`);
