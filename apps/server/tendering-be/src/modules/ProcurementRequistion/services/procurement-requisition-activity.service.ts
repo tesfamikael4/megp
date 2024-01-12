@@ -32,11 +32,11 @@ export class ProcurementRequisitionActivityService extends ExtraCrudService<Proc
     };
 
     const activities = {
-      items: ({} = []),
-      mechanism: ({} = []),
-      timelines: ({} = []),
+      postBudgetPlanItems: ({} = []),
+      postProcurementMechanisms: ({} = []),
+      postBudgetPlanTimelines: ({} = []),
       disbursements: ({} = []),
-      plans: ({} = []),
+      activityBudgetLines: ({} = []),
     };
 
     const app = await this.annualProcurementPlan(
@@ -61,52 +61,49 @@ export class ProcurementRequisitionActivityService extends ExtraCrudService<Proc
             ...item,
             procurementRequisitionId: activityData.procurementRequisitionId,
             annualProcurementPlanBudgetLineId:
-              'd27a6800-11ae-4a41-8b6b-e2dcb9a24c6e', //it will come from planning
-            uoM: item.uomName,
+              activityData.procurementRequisitionId, // will replace by annualProcurementPlanBudgetLineId
           };
-          activities.items.push(newItem);
+          activities.postBudgetPlanItems.push(newItem);
         });
       }
 
       if (
-        annualProcurementPlanActivity.postProcurementDisbursements &&
-        annualProcurementPlanActivity.postProcurementDisbursements.length > 0
+        annualProcurementPlanActivity.disbursements &&
+        annualProcurementPlanActivity.disbursements.length > 0
       ) {
-        annualProcurementPlanActivity.postProcurementDisbursements.forEach(
-          (disbursement) => {
-            const newDisbursement = {
-              ...disbursement,
-              procurementRequisitionId: activityData.procurementRequisitionId,
-            };
-            activities.disbursements.push(newDisbursement);
-          },
-        );
+        annualProcurementPlanActivity.disbursements.forEach((disbursement) => {
+          const newDisbursement = {
+            ...disbursement,
+            procurementRequisitionId: activityData.procurementRequisitionId,
+          };
+          activities.disbursements.push(newDisbursement);
+        });
       }
 
       if (
-        annualProcurementPlanActivity.postBudgetPlans &&
-        annualProcurementPlanActivity.postBudgetPlans.length > 0
+        annualProcurementPlanActivity.activityBudgetLines &&
+        annualProcurementPlanActivity.activityBudgetLines.length > 0
       ) {
-        annualProcurementPlanActivity.postBudgetPlans.forEach((plan) => {
+        annualProcurementPlanActivity.activityBudgetLines.forEach((plan) => {
           const newPlan = {
             ...plan,
             procurementRequisitionId: activityData.procurementRequisitionId,
           };
-          activities.plans.push(newPlan);
+          activities.activityBudgetLines.push(newPlan);
         });
       }
 
       if (
-        annualProcurementPlanActivity.postProcurementTimelines &&
-        annualProcurementPlanActivity.postProcurementTimelines.length > 0
+        annualProcurementPlanActivity.postBudgetPlanTimelines &&
+        annualProcurementPlanActivity.postBudgetPlanTimelines.length > 0
       ) {
-        annualProcurementPlanActivity.postProcurementTimelines.forEach(
+        annualProcurementPlanActivity.postBudgetPlanTimelines.forEach(
           (timeline) => {
             const newTimeline = {
               ...timeline,
               procurementRequisitionId: activityData.procurementRequisitionId,
             };
-            activities.timelines.push(newTimeline);
+            activities.postBudgetPlanTimelines.push(newTimeline);
           },
         );
       }
@@ -116,7 +113,11 @@ export class ProcurementRequisitionActivityService extends ExtraCrudService<Proc
       ) {
         annualProcurementPlanActivity.postProcurementMechanisms.forEach(
           (method) => {
-            activities.mechanism.push(method);
+            const newTimeline = {
+              ...method,
+              procurementRequisitionId: activityData.procurementRequisitionId,
+            };
+            activities.postProcurementMechanisms.push(newTimeline);
           },
         );
       }
@@ -125,14 +126,20 @@ export class ProcurementRequisitionActivityService extends ExtraCrudService<Proc
     }
 
     // event emitter to assign items to the to PR
-    if (activities.items.length > 0) {
-      this.eventEmitter.emit('create.pr_items', activities.items);
+    if (activities.postBudgetPlanItems.length > 0) {
+      this.eventEmitter.emit('create.pr_items', activities.postBudgetPlanItems);
     }
-    if (activities.mechanism.length > 0) {
-      // this.eventEmitter.emit("create.pr_mechanism", activities.mechanism);
+    if (activities.postProcurementMechanisms.length > 0) {
+      this.eventEmitter.emit(
+        'create.pr_mechanisms',
+        activities.postProcurementMechanisms,
+      );
     }
-    if (activities.timelines.length > 0) {
-      // this.eventEmitter.emit("create.pr_timelines", activities.timelines);
+    if (activities.postBudgetPlanTimelines.length > 0) {
+      this.eventEmitter.emit(
+        'create.pr_timelines',
+        activities.postBudgetPlanTimelines,
+      );
     }
     if (activities.disbursements.length > 0) {
       this.eventEmitter.emit(
@@ -154,7 +161,7 @@ export class ProcurementRequisitionActivityService extends ExtraCrudService<Proc
     id: string,
     itemData: any,
   ): Promise<ProcurementRequisitionActivity> {
-    throw new Error('Cannot update procurement Requisition Activity');
+    throw new Error('Cannot update procurement Requisition Activity for now');
   }
 
   async annualProcurementPlan(q: string) {

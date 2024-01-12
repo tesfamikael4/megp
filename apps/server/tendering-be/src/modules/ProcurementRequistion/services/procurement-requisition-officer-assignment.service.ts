@@ -12,4 +12,20 @@ export class ProcurementRequisitionOfficerAssignmentService extends ExtraCrudSer
   ) {
     super(repositoryProcurementRequisitionOfficerAssignment);
   }
+
+  async create(officers: any): Promise<any> {
+    await this.repositoryProcurementRequisitionOfficerAssignment.delete({
+      procurementRequisitionId: officers[0].procurementRequisitionId,
+    });
+
+    const newOfficers =
+      this.repositoryProcurementRequisitionOfficerAssignment.create(
+        officers as any,
+      );
+    await this.repositoryProcurementRequisitionOfficerAssignment.insert(
+      newOfficers,
+    );
+
+    return officers;
+  }
 }

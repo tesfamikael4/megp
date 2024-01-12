@@ -9,12 +9,12 @@ import {
   BeforeInsert,
 } from 'typeorm';
 
-import { v5 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 import { Audit } from 'src/shared/entities/audit.entity';
 import { ProcurementRequisition } from './procurement-requisition.entity';
 import { ProcurementRequisitionItemReference } from './procurement-requisition-item-reference.entity';
 @Entity({ name: 'procurement_requisition_items' })
-@Unique(['procurementRequisitionId', 'itemCode'])
+@Unique(['procurementRequisitionId', 'itemCode', 'currency', 'measurement'])
 export class ProcurementRequisitionItem extends Audit {
   @PrimaryColumn('uuid')
   id: string;

@@ -92,7 +92,7 @@ export class ProcurementRequisition extends Audit {
   )
   procurementRequisitionItems: ProcurementRequisitionItem[];
 
-  @OneToOne(
+  @OneToMany(
     () => ProcurementRequisitionTimeline,
     (procurementRequisitionTimelines) =>
       procurementRequisitionTimelines.procurementRequisition,

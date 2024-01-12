@@ -38,9 +38,8 @@ export class ProcurementRequisitionDisbursementService extends ExtraCrudService<
     disbursements.forEach((disbursement: any) => {
       const existingDisbursement = mergedDisbursements.find(
         (mergedDisbursement) =>
-          mergedDisbursement.budgetYear === disbursement.budgetYear &&
-          mergedDisbursement.quarter === disbursement.quarter &&
-          mergedDisbursement.amount === disbursement.amount,
+          mergedDisbursement.currency === disbursement.currency &&
+          mergedDisbursement.quarter === disbursement.quarter,
       );
 
       if (existingDisbursement) {

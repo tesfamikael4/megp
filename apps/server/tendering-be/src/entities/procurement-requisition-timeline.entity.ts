@@ -3,7 +3,7 @@ import {
   Column,
   PrimaryGeneratedColumn,
   JoinColumn,
-  OneToOne,
+  ManyToOne,
 } from 'typeorm';
 
 import { Audit } from 'src/shared/entities/audit.entity';
@@ -13,8 +13,8 @@ export class ProcurementRequisitionTimeline extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'jsonb' })
-  timeline: JSON;
+  @Column()
+  timeline: string;
 
   @Column({ type: 'integer', unsigned: true })
   order: number;
@@ -28,7 +28,7 @@ export class ProcurementRequisitionTimeline extends Audit {
   @Column({ type: 'uuid' })
   procurementRequisitionId: string;
 
-  @OneToOne(
+  @ManyToOne(
     () => ProcurementRequisition,
     (procurementRequisition) =>
       procurementRequisition.procurementRequisitionTimelines,
