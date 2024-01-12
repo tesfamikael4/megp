@@ -8,6 +8,7 @@ import {
   ScrollArea,
   Button,
   Modal,
+  Image,
 } from '@mantine/core';
 import classes from './accordion.module.scss';
 import tableClasses from './accordion.module.scss';
@@ -286,6 +287,7 @@ export const ShowFile = ({
   url: string;
   filename: string;
 }) => {
+  const [opened, { close, open }] = useDisclosure(false);
   const [pdfData, setPdfData] = useState<ArrayBuffer | null>(null); // Use null as initial state
   const [fileContent, setFileContent] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -359,36 +361,63 @@ export const ShowFile = ({
   if (error) {
     return (
       <div>
-        <p className="text-center py-2 ">{`
+        <p className="text-center py-2 text-md">{`
     Looks like something went wrong while loading the file.
     Double-check your connection and try reloading`}</p>
-        ;
       </div>
     );
   }
+
   return (
-    <div
-      className="w-full h-full flex items-center justify-center"
-      style={{ height: '500px' }}
+    <>
+      <ImageModal opened={opened} close={close} url={fileContent as string} />
+      <div
+        className="w-full h-full flex items-center justify-center"
+        style={{ height: '500px' }}
+      >
+        {pdfData ? (
+          <iframe
+            src={`data:application/pdf;base64,${Buffer.from(pdfData).toString(
+              'base64',
+            )}`}
+            width="100%"
+            height="100%"
+            title={filename}
+          />
+        ) : fileContent ? (
+          <Image
+            src={fileContent}
+            alt={filename}
+            className="cursor-pointer "
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            onClick={() => open()}
+          />
+        ) : (
+          <p>Loading...</p>
+        )}
+      </div>
+    </>
+  );
+};
+
+const ImageModal = ({
+  opened,
+  close,
+  url,
+}: {
+  opened: boolean;
+  close: () => void;
+  url: string;
+}) => {
+  return (
+    <Modal
+      opened={opened}
+      onClose={close}
+      size={'80%'}
+      centered
+      title={'Attachment'}
     >
-      {pdfData ? (
-        <iframe
-          src={`data:application/pdf;base64,${Buffer.from(pdfData).toString(
-            'base64',
-          )}`}
-          width="100%"
-          height="100%"
-          title={filename}
-        />
-      ) : fileContent ? (
-        <img
-          src={fileContent}
-          alt={filename}
-          style={{ maxWidth: '100%', maxHeight: '100%' }}
-        />
-      ) : (
-        <p>Loading...</p>
-      )}
-    </div>
+      <Image src={url} alt="" />
+    </Modal>
   );
 };
