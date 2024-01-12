@@ -1,7 +1,7 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { OrganizationBudgetCategory } from 'src/entities/organization-budget-category.entity';
-import { EntityCrudService, ExtraCrudService } from 'src/shared/service';
+import { ExtraCrudService } from 'src/shared/service';
 import { Repository } from 'typeorm';
 import { OrganizationBudgetCategoryCreateDto } from '../dto/organization-budget-category.dto';
 
@@ -21,7 +21,7 @@ export class OrganizationBudgetCategoryService extends ExtraCrudService<Organiza
   ): Promise<OrganizationBudgetCategory[]> {
     console.log({ budgetData });
     try {
-      // remove existing organization
+      // remove existing organization budgets
       await this.organizationBudgetCategoryRepository.delete({
         organizationId: budgetData.organizationId,
       });
@@ -60,7 +60,16 @@ export class OrganizationBudgetCategoryService extends ExtraCrudService<Organiza
     }
   }
 
-  async getBudgetCategories(
+  async getAllBudgetCategories(): Promise<OrganizationBudgetCategory[]> {
+    try {
+      const budgets = await this.organizationBudgetCategoryRepository.find();
+      return budgets;
+    } catch (error) {
+      throw new Error(`Failed to get budgets: ${error.message}`);
+    }
+  }
+
+  async getBudgetCategoryByOrganizationId(
     organizationId: string,
   ): Promise<OrganizationBudgetCategory[]> {
     try {
@@ -70,6 +79,20 @@ export class OrganizationBudgetCategoryService extends ExtraCrudService<Organiza
       return budgets;
     } catch (error) {
       throw new Error(`Failed to get budgets: ${error.message}`);
+    }
+  }
+
+  async deleteBudgetCategories(organizationId: string): Promise<any> {
+    try {
+      const budgets = await this.organizationBudgetCategoryRepository.delete({
+        organizationId: organizationId,
+      });
+
+      return {
+        message: `Successfully deleted ${budgets.affected} budgets inside ${organizationId} organization id .`,
+      };
+    } catch (error) {
+      throw new Error(`Failed to delete budgets: ${error.message}`);
     }
   }
 }
