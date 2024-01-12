@@ -9,6 +9,7 @@ export const preBudgetPlanApi = createApi({
     'post-budget-plan',
     'pre-budget-timeline',
     'pre-budget-requisitioner',
+    'pre-budget-activity-files',
   ],
   refetchOnFocus: true,
   baseQuery: baseQuery(
@@ -75,6 +76,27 @@ export const preBudgetPlanApi = createApi({
       }),
       invalidatesTags: ['pre-budget-requisitioner'],
     }),
+    preSignedUrl: builder.mutation<any, any>({
+      query: (data) => ({
+        url: 'pre-budget-activity-documents/pre-signed-put-url',
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['pre-budget-activity-files'],
+    }),
+
+    getFiles: builder.query<any, any>({
+      query: (id: string) => ({
+        url: `pre-budget-activity-documents/list/${id}`,
+      }),
+      providesTags: ['pre-budget-activity-files'],
+    }),
+    downloadFiles: builder.query<any, any>({
+      query: (id: string) => ({
+        url: `pre-budget-activity-documents/download/${id}`,
+      }),
+      providesTags: ['pre-budget-activity-files'],
+    }),
   }),
 });
 
@@ -90,4 +112,7 @@ export const {
   useCreatePreActivityTimelineMutation,
   useGetPreBudgetPlanQuery,
   useLazyGetPreBudgetPlanAnalyticsQuery,
+  usePreSignedUrlMutation,
+  useGetFilesQuery,
+  useLazyDownloadFilesQuery,
 } = preBudgetPlanApi;

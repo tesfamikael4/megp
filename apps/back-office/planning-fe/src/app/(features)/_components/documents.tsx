@@ -13,7 +13,7 @@ import {
 import { useDisclosure } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
-import { Table, TableConfig, logger } from '@megp/core-fe';
+import { Table, TableConfig, logger, notify } from '@megp/core-fe';
 import {
   IconDotsVertical,
   IconDownload,
@@ -23,6 +23,12 @@ import {
 } from '@tabler/icons-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import {
+  useGetFilesQuery,
+  useLazyDownloadFilesQuery,
+  usePreSignedUrlMutation,
+} from '@/store/api/pre-budget-plan/pre-budget-plan.api';
+import { useParams } from 'next/navigation';
 
 export const Documents = ({
   disableFields = false,
@@ -30,14 +36,21 @@ export const Documents = ({
   disableFields?: boolean;
 }) => {
   const [opened, { open, close }] = useDisclosure(false);
-  const [data, setData] = useState<any[]>([]);
+  const { id } = useParams();
+  // const [data, setData] = useState<any[]>([]);
+  const [file, setFile] = useState<File[]>();
   const { register, handleSubmit } = useForm();
+  const [retrieveNewURL] = usePreSignedUrlMutation();
+  const { data } = useGetFilesQuery(id);
+  const [dowloadFile, { isLoading: isDownloading }] =
+    useLazyDownloadFilesQuery();
+  const [isLoading, setIsLoading] = useState(false);
   const config: TableConfig<any> = {
     columns: [
       {
-        id: 'name',
+        id: 'fileName',
         header: 'Name',
-        accessorKey: 'name',
+        accessorKey: 'fileName',
       },
       {
         id: 'action',
@@ -62,6 +75,24 @@ export const Documents = ({
         confirmProps: { color: 'red' },
         onConfirm: handleDelete,
       });
+    };
+    const handleDownload = async () => {
+      try {
+        const res = await dowloadFile(cell.id).unwrap();
+        await fetch(res.presignedUrl)
+          .then((res) => res.blob())
+          .then((blob) => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = cell.fileName;
+            document.body.appendChild(a);
+            a.click();
+          });
+        notify('Success', 'File downloaded successfully');
+      } catch (err) {
+        notify('Error', 'Something went wrong');
+      }
     };
     const handleDelete = async () => {
       try {
@@ -93,13 +124,8 @@ export const Documents = ({
             </Menu.Item>
             <Menu.Item
               leftSection={<IconDownload size={15} />}
-              onClick={() => {
-                notifications.show({
-                  title: 'Success',
-                  message: `${cell.name} downloaded successfully`,
-                  color: 'green',
-                });
-              }}
+              onClick={handleDownload}
+              disabled={isDownloading}
             >
               Download
             </Menu.Item>
@@ -125,14 +151,55 @@ export const Documents = ({
     );
   };
 
-  const onSubmit = (name) => {
-    setData([name, ...data]);
-    notifications.show({
-      title: 'Success',
-      message: 'Document Uploaded Successfully',
-      color: 'green',
-    });
-    close();
+  const onSubmit = async (data) => {
+    try {
+      setIsLoading(true);
+      await upload(file as unknown as FileList, data.name);
+    } catch (error) {
+      setIsLoading(false);
+      logger.log(error);
+    }
+  };
+
+  const upload = async (files: FileList | null, name: string) => {
+    if (!files) {
+      setIsLoading(false);
+      notify('Error', 'No file selected');
+      return;
+    }
+
+    const fileList = Array.from(files); // Convert FileList to Array
+    for (let i = 0; i < fileList.length; i++) {
+      const file = fileList[i];
+      try {
+        const url = await retrieveNewURL({
+          originalname: file.name,
+          contentType: file.type,
+          name: name,
+          preBudgetPlanActivityId: id,
+        }).unwrap();
+        await uploadFile(file, url.presignedUrl);
+      } catch (error) {
+        setIsLoading(false);
+        notify('Error', 'Something went wrong while uploading document');
+      }
+    }
+  };
+
+  const uploadFile = async (file: File, url: string) => {
+    try {
+      await fetch(url, {
+        method: 'PUT',
+        body: file,
+      });
+      notify('Success', 'Document Uploaded Successfully');
+      setIsLoading(false);
+      close();
+    } catch (error) {
+      setIsLoading(false);
+      notify('Error', 'Something went wrong while uploading document');
+      throw error;
+    }
   };
 
   return (
@@ -146,20 +213,28 @@ export const Documents = ({
           Upload
         </Button>
       </Group>
-      <Table data={data} config={config} />
+      <Table data={data?.items ?? []} config={config} />
 
       <Modal title="Upload New Document" opened={opened} onClose={close}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <TextInput label="Name" {...register('name')} required withAsterisk />
+
           <FileInput
+            accept="*/*"
+            // id="selector"
+            multiple
             label="Document"
+            withAsterisk
             className="my-2"
             leftSection={<IconUpload />}
-            withAsterisk
+            onChange={(files) => setFile(files)}
           />
-
           <Group gap="md" justify="end">
-            <Button leftSection={<IconUpload size={18} />} type="submit">
+            <Button
+              leftSection={<IconUpload size={18} />}
+              type="submit"
+              loading={isLoading}
+            >
               Upload
             </Button>
             <Button variant="outline" onClick={close}>
