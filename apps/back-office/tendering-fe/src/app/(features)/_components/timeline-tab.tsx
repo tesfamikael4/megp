@@ -1,58 +1,72 @@
 'use client';
 
 import { Box, Button, Group, NumberInput, TextInput } from '@mantine/core';
-import { Table, TableConfig, logger } from '@megp/core-fe';
+import { Table, TableConfig, notify } from '@megp/core-fe';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DateInput } from '@mantine/dates';
 import { IconDeviceFloppy } from '@tabler/icons-react';
+import { useParams } from 'next/navigation';
+
+import {
+  useCreateMutation,
+  useLazyListByIdQuery,
+} from '@/app/(features)/_api/timeline.api';
 
 const tableData = [
   {
     timeline: 'Procurement Initiation',
-    period: 0,
+    noOfDays: 0,
     dueDate: new Date(),
   },
   {
     timeline: 'Procurement Requisition',
-    period: 10,
+    noOfDays: 10,
     dueDate: new Date(),
   },
   {
     timeline: 'Tender Publication',
-    period: 10,
+    noOfDays: 10,
     dueDate: new Date(),
   },
   {
     timeline: 'Tender Submission',
-    period: 10,
+    noOfDays: 10,
     dueDate: new Date(),
   },
   {
     timeline: ' Evaluation',
-    period: 10,
+    noOfDays: 10,
     dueDate: new Date(),
   },
   {
     timeline: 'Award',
-    period: 10,
+    noOfDays: 10,
     dueDate: new Date(),
   },
   {
     timeline: 'Contract Signing',
-    period: 10,
+    noOfDays: 10,
     dueDate: new Date(),
   },
   {
     timeline: 'Contract Closure',
-    period: 10,
+    noOfDays: 10,
     dueDate: new Date(),
   },
 ];
 
 export default function TimelineTab() {
   const [data, setData] = useState<any[]>(tableData);
+  const { id } = useParams();
 
+  const [createPostTimeline, { isLoading: isPostTimelineCreating }] =
+    useCreateMutation();
+
+  const [
+    getPostTimeline,
+    { data: postTimeline, isSuccess: isPostTimelineSuccess },
+  ] = useLazyListByIdQuery();
   const listConfig: TableConfig<any> = {
     columns: [
       {
@@ -60,15 +74,15 @@ export default function TimelineTab() {
         accessorKey: 'timeline',
       },
       {
-        id: 'period',
-        header: 'Period',
-        accessorKey: 'period',
+        id: 'noOfDays',
+        header: 'noOfDays',
+        accessorKey: 'noOfDays',
         cell: ({ getValue, row, column }) => (
           <Period getValue={getValue} row={row} column={column} />
         ),
       },
       {
-        id: 'date',
+        id: 'dueDate',
         header: 'Due Date',
         accessorKey: 'dueDate',
         cell: ({ getValue, row, column }) => (
@@ -97,7 +111,7 @@ export default function TimelineTab() {
         old.map((row, i) => {
           const cumulativeSum = old
             .slice(0, i + 1)
-            .reduce((sum, item) => sum + item.period, 0);
+            .reduce((sum, item) => sum + item.noOfDays, 0);
           const currentDate = new Date(old[0].dueDate ?? new Date());
           currentDate.setDate(currentDate.getDate() + cumulativeSum);
           if (!isNaN(currentDate.getTime())) {
@@ -150,6 +164,23 @@ export default function TimelineTab() {
           return row;
         });
       });
+      setData((old) =>
+        old.map((row, i) => {
+          const cumulativeSum = old
+            .slice(0, i + 1)
+            .reduce((sum, item) => sum + item.noOfDays, 0);
+          const currentDate = new Date(old[0].dueDate ?? new Date());
+          currentDate.setDate(currentDate.getDate() + cumulativeSum);
+          if (!isNaN(currentDate.getTime())) {
+            return {
+              ...row,
+              dueDate: currentDate,
+            };
+          } else {
+            return row;
+          }
+        }),
+      );
     };
 
     return (
@@ -161,31 +192,52 @@ export default function TimelineTab() {
           placeholder="Pick date"
           onBlur={onBlur}
           minDate={new Date()}
+          disabled={index != 0}
         />
       </>
     );
   };
 
   const handleSave = async () => {
+    const activityId = { procurementRequisitionId: id };
     const castedData = data.map((d, index) => {
       return {
+        ...activityId,
         dueDate: d.dueDate,
-        period: d.period,
+        noOfDays: d.noOfDays,
         timeline: d.timeline,
         order: index,
       };
     });
-    logger.log({ castedData });
+
+    try {
+      await createPostTimeline(castedData).unwrap();
+      notify('Success', 'Timeline saved successfully');
+    } catch (err) {
+      notify('Error', 'Something went wrong');
+    }
   };
+
+  useEffect(() => {
+    getPostTimeline({ id: id.toString(), collectionQuery: undefined });
+  }, [getPostTimeline, id]);
+
+  useEffect(() => {
+    if (isPostTimelineSuccess && postTimeline?.total !== 0) {
+      const castedData = postTimeline?.items?.map((t) => ({
+        ...t,
+        dueDate: new Date(t.dueDate),
+        fromDate: new Date(t.fromDate),
+      }));
+      castedData && setData([...castedData]);
+    }
+  }, [isPostTimelineSuccess, postTimeline?.items, postTimeline?.total]);
 
   return (
     <div className="mt-4">
       {data.length != 0 && <Table config={listConfig} data={data} />}
       <Group className="mt-2" justify="end">
-        <Button
-          onClick={handleSave}
-          // loading={isPreTimelineCreating || isPostTimelineCreating}
-        >
+        <Button onClick={handleSave} loading={isPostTimelineCreating}>
           <IconDeviceFloppy size={16} /> Save
         </Button>
       </Group>

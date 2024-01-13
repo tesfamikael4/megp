@@ -39,7 +39,7 @@ export default function PrDetailPage() {
                 <Tabs.Tab value="method">Method</Tabs.Tab>
                 <Tabs.Tab value="items">Items</Tabs.Tab>
                 <Tabs.Tab value="dispersement">Dispersement</Tabs.Tab>
-                {/* <Tabs.Tab value="timeline">Timeline</Tabs.Tab> */}
+                <Tabs.Tab value="timeline">Timeline</Tabs.Tab>
                 <Tabs.Tab value="documents">Document</Tabs.Tab>
                 <Tabs.Tab value="requisitioner">Requisitioner</Tabs.Tab>
               </Tabs.List>

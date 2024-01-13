@@ -1,6 +1,7 @@
 'use client';
 
 import { Menu } from '@/config/menu';
+import { DatesProvider } from '@mantine/dates';
 import { ShellContext } from '@megp/core-fe';
 import { ReactNode } from 'react';
 
@@ -15,7 +16,7 @@ export function ShellProvider({ children }: ShellProviderProps) {
   };
   return (
     <>
-      <ShellContext.Provider value={value}>{children}</ShellContext.Provider>
+      <ShellContext.Provider value={value}> {children}</ShellContext.Provider>
     </>
   );
 }
