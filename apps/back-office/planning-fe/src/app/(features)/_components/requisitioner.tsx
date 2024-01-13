@@ -1,7 +1,6 @@
 import { useLazyGetUsersQuery } from '@/store/api/iam/iam.api';
 import { Box, Button, Group, Menu, Modal, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { modals } from '@mantine/modals';
 import { Table, TableConfig, logger, notify } from '@megp/core-fe';
 import {
   IconDeviceFloppy,

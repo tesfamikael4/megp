@@ -1,24 +1,36 @@
 'use client';
 import { FormDetail } from '@/app/(features)/procurement-requisition/_components/form-detail';
-import { Box, Container, Divider, Tabs } from '@mantine/core';
+import { Box, Container, Divider, Flex, Tabs, Tooltip } from '@mantine/core';
 import { Activities } from '@/app/(features)/_components/activity';
-import { ActivityMechanization } from '@/app/(features)/_components/activity-mechanization';
+import { ActivityMechanization } from '@/app/(features)/_components/pr-mechanization';
 import { Items } from '@/app/(features)/_components/items';
 import TimelineTab from '@/app/(features)/_components/timeline-tab';
 import { Requisitioner } from '@/app/(features)/_components/requisitioner';
 import Despersment from '@/app/(features)/_components/dispersment';
 import { Documents } from '../../_components/documents';
+import { useRouter } from 'next/navigation';
+import { IconChevronLeft } from '@tabler/icons-react';
 
 export default function PrDetailPage() {
+  const router = useRouter();
   return (
     <>
       <Box className="bg-white rounded shadow-sm">
-        <Box className="p-4">
-          <div className="text-lg font-medium mt-4 pt-2">
-            Procurement requisition details
-          </div>
-
-          <Divider mt={'md'} mb={'md'} />
+        <div className="text-lg font-medium mt-4 pt-4 pb-4">
+          <Tooltip
+            label="List Procurement requisition"
+            className="cursor-pointer"
+            onClick={() => router.push(`/procurement-requisition`)}
+            position="top-start"
+          >
+            <Flex align="center">
+              <IconChevronLeft />
+              Procurement requisition details
+            </Flex>
+          </Tooltip>
+        </div>
+        <Box className="">
+          <Divider mb={'md'} />
           <Container fluid>
             <Tabs defaultValue="definition">
               <Tabs.List className=" flex-nowrap">

@@ -220,7 +220,6 @@ export default function TimelineTab({
     const castedData = data.map((d, index) => {
       return {
         ...activityId,
-        // fromDate: index === 0 ? initialDay.dueDate : data[index - 1].dueDate,
         dueDate: d.dueDate,
         period: d.period,
         timeline: d.timeline,
