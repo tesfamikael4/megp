@@ -254,20 +254,22 @@ export function Activities() {
       const mod = prActivity.items.map((item) => {
         return {
           ...item,
-          procurementMethod: item?.methods
-            ? item?.methods[0]?.procurementMethod
-            : 'National Competitive Bidding (NCB)',
-          procurementType: item?.methods
-            ? item?.methods[0]?.procurementType
-            : 'Works',
-          isOnline: item?.methods
-            ? item?.methods[0]?.isOnline === true
+          procurementMethod:
+            item?.postProcurementMechanisms &&
+            item?.postProcurementMechanisms[0]?.procurementMethod,
+
+          procurementType:
+            item?.postProcurementMechanisms &&
+            item?.postProcurementMechanisms[0]?.procurementType,
+
+          isOnline:
+            item?.postProcurementMechanisms &&
+            item?.postProcurementMechanisms[0]?.isOnline === true
               ? 'Online'
-              : 'Offline'
-            : 'Offline',
-          fundingSource: item?.methods
-            ? item?.methods[0]?.fundingSource
-            : 'Treasury',
+              : 'Offline',
+          fundingSource:
+            item?.postProcurementMechanisms &&
+            item?.postProcurementMechanisms[0]?.fundingSource,
         };
       });
       setModifiedData(mod);

@@ -4,4 +4,5 @@ export interface ProcurementRequisition {
   description: string;
   totalEstimatedAmount: number;
   organizationId: string;
+  calculatedAmount: number;
 }

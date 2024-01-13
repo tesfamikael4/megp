@@ -8,10 +8,9 @@ import {
   TextInput,
 } from '@mantine/core';
 import { Controller, useForm } from 'react-hook-form';
-// import { FrameworkSelector } from './framework-selector';
 import { EntityButton } from '@megp/entity';
 import { ZodType, z } from 'zod';
-import { logger, notify } from '@megp/core-fe';
+import { notify } from '@megp/core-fe';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -21,6 +20,11 @@ import {
   useUpdateMutation,
 } from '../_api/mechanization.api';
 import { FrameworkSelector } from './framework-selector';
+import { useLazyListByIdQuery as useLazyGetAssignedActivitiesQuery } from '../_api/pr-activity.api';
+import {
+  useLazyGetActivitiesQuery,
+  useLazyGetBudgetYearQuery,
+} from '@/store/api/budget/budget-year.api';
 
 const activitiesSchema: ZodType<Partial<any>> = z.object({
   procurementMethod: z.string({
@@ -30,7 +34,7 @@ const activitiesSchema: ZodType<Partial<any>> = z.object({
     required_error: 'Procurement Type is required',
   }),
   fundingSource: z.string({
-    required_error: 'Funding Source  is required',
+    required_error: 'Funding Source is required',
   }),
 
   isOnline: z.boolean({
@@ -52,10 +56,18 @@ export const ActivityMechanization = () => {
   });
   const method = watch('procurementMethod');
   const fundingSource = watch('fundingSource');
+  const [assignedActivities, setAssignedActivities] = useState<any>();
 
   const [create, { isLoading: isCreating }] = useCreateMutation();
 
   const [update, { isLoading: isUpdating }] = useUpdateMutation();
+  const [trigger, { data: assignedActivity }] =
+    useLazyGetAssignedActivitiesQuery();
+
+  const [listById, { data: prActivity }] = useLazyGetActivitiesQuery();
+
+  const [triggerBudjet, { data: budget, isSuccess: budgetFeatched }] =
+    useLazyGetBudgetYearQuery();
 
   const [
     getmechanism,
@@ -93,9 +105,6 @@ export const ActivityMechanization = () => {
       notify('Error', 'Something went wrong');
     }
   };
-  const onError = (err) => {
-    logger.log({ err });
-  };
 
   const onReset = () => {
     setContract({});
@@ -123,6 +132,21 @@ export const ActivityMechanization = () => {
       collectionQuery: undefined,
     });
   }, [getmechanism, id]);
+  useEffect(() => {
+    trigger({
+      id: id.toString(),
+      collectionQuery: undefined,
+    });
+  }, [id, trigger]);
+  useEffect(() => {
+    listById({
+      id: budget?.items?.budgetYearId.toString(),
+      collectionQuery: undefined,
+    });
+  }, [budget, budgetFeatched, listById]);
+  useEffect(() => {
+    triggerBudjet(undefined);
+  }, [triggerBudjet]);
 
   useEffect(() => {
     if (isGetMechanismSuccess && mechanism?.total == 1) {
@@ -136,6 +160,49 @@ export const ActivityMechanization = () => {
       setContract(mechanism.items[0].contract);
     }
   }, [isGetMechanismSuccess, mechanism]);
+
+  useEffect(() => {
+    if (assignedActivities && mechanism?.total == 0) {
+      setMode('new');
+      setValue(
+        'fundingSource',
+        assignedActivities[0]?.postProcurementMechanisms[0]?.fundingSource,
+      );
+      setValue(
+        'isOnline',
+        assignedActivities[0]?.postProcurementMechanisms[0]?.isOnline,
+      );
+      setValue(
+        'procurementMethod',
+        assignedActivities[0]?.postProcurementMechanisms[0]?.procurementMethod,
+      );
+      setValue(
+        'procurementType',
+        assignedActivities[0]?.postProcurementMechanisms[0]?.procurementType,
+      );
+      setValue(
+        'targetGroup',
+        assignedActivities[0]?.postProcurementMechanisms[0]?.targetGroup,
+      );
+      setDonor(assignedActivities[0]?.postProcurementMechanisms[0]?.donor);
+      setContract(
+        assignedActivities[0]?.postProcurementMechanisms[0]?.contract,
+      );
+    }
+  }, [assignedActivities, setValue]);
+
+  useEffect(() => {
+    const filter = prActivity?.items?.filter(
+      (activity) =>
+        assignedActivity &&
+        assignedActivity.items.some(
+          (assigned) =>
+            assigned.annualProcurementPlanActivityId === activity.id,
+        ),
+    );
+    setAssignedActivities(filter);
+  }, [assignedActivity, prActivity]);
+
   return (
     <Stack pos="relative">
       <LoadingOverlay visible={isGetMechanismLoading} />
@@ -153,6 +220,13 @@ export const ActivityMechanization = () => {
               data={[
                 'Request for Quotation (RFQ) ',
                 'National Competitive Bidding (NCB)',
+                'International Competitive Bidding (ICB) ',
+                'Restricted Tender',
+                'Single Source Procurement ',
+                'Request for Proposal (RFP) ',
+                'Two Stage Bidding',
+                'Framework Procurement',
+                'Purchased Orders (Call off)',
               ]}
               className="w-full"
               withAsterisk
@@ -174,8 +248,21 @@ export const ActivityMechanization = () => {
               name={name}
               value={value}
               onChange={onChange}
+              disabled={assignedActivities !== null ? true : false}
               label="Procurement Type"
-              data={['Goods', 'Works']}
+              data={
+                assignedActivities
+                  ? [
+                      `${assignedActivities[0]?.postProcurementMechanisms[0]?.procurementType}`,
+                    ]
+                  : [
+                      'Goods',
+                      'Works',
+                      'Non Consulting Services',
+                      'Consultancy Services',
+                      'Motor Vehicle Repair',
+                    ]
+              }
               className="w-full"
               withAsterisk
               placeholder="Select Procurement Type"
@@ -205,7 +292,7 @@ export const ActivityMechanization = () => {
               value={value}
               onChange={onChange}
               label="Funding Source"
-              data={['Internal Revenue', 'Treasury']}
+              data={['Internal Revenue', 'Treasury', 'Loan', 'Donor']}
               className="w-full"
               withAsterisk
               placeholder="Select Funding Source"
@@ -273,7 +360,7 @@ export const ActivityMechanization = () => {
         mode={mode}
         isSaving={isCreating}
         isUpdating={isUpdating}
-        onCreate={handleSubmit(onCreate, onError)}
+        onCreate={handleSubmit(onCreate)}
         onReset={onReset}
         onUpdate={handleSubmit(onUpdate)}
       />
