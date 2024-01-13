@@ -91,36 +91,12 @@ export function Activities() {
         accessorKey: 'procurementMethod',
         cell: (info) => info.getValue(),
       },
-      {
-        id: 'ProcurementProcess',
-        header: 'Procurement Process',
-        accessorKey: 'isOnline',
-        cell: (info) => info.getValue(),
-      },
+
       {
         id: 'fundingSource',
         header: 'Funding source',
         accessorKey: 'fundingSource',
         cell: (info) => info.getValue(),
-      },
-
-      {
-        id: 'totalEstimatedAmount',
-        header: () => <div className="text-right">Total Amount</div>,
-        accessorKey: 'totalEstimatedAmount',
-        cell: ({ row: { original } }) => (
-          <p className="text-right">
-            {original.estimatedAmount.toLocaleString('en-US', {
-              style: 'currency',
-              currency: original.currency,
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            })}
-          </p>
-        ),
-        meta: {
-          widget: 'expand',
-        },
       },
     ],
   };
@@ -168,36 +144,12 @@ export function Activities() {
         accessorKey: 'procurementMethod',
         cell: (info) => info.getValue(),
       },
-      {
-        id: 'ProcurementProcess',
-        header: 'Procurement Process',
-        accessorKey: 'isOnline',
-        cell: (info) => info.getValue(),
-      },
+
       {
         id: 'fundingSource',
         header: 'Funding source',
         accessorKey: 'fundingSource',
         cell: (info) => info.getValue(),
-      },
-
-      {
-        id: 'totalEstimatedAmount',
-        header: () => <div className="text-right">Total Amount</div>,
-        accessorKey: 'totalEstimatedAmount',
-        cell: ({ row: { original } }) => (
-          <p className="text-right">
-            {original.estimatedAmount.toLocaleString('en-US', {
-              style: 'currency',
-              currency: original.currency,
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            })}
-          </p>
-        ),
-        meta: {
-          widget: 'expand',
-        },
       },
     ],
   };

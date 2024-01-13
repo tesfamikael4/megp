@@ -14,7 +14,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { ZodType, z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
-import { Tree, logger } from '@megp/core-fe';
+import { Tree } from '@megp/core-fe';
 import {
   useGetMeasurementsQuery,
   useGetTagsQuery,
@@ -245,12 +245,7 @@ export function NewItem({ onDone }: any) {
           )}
         />
 
-        <Button
-          className="w-fit"
-          onClick={handleSubmit(onCreate, (err) => {
-            logger.log({ err });
-          })}
-        >
+        <Button className="w-fit" onClick={handleSubmit(onCreate)}>
           Add
         </Button>
       </Stack>
