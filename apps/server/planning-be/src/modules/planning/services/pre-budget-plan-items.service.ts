@@ -2,8 +2,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { PreBudgetPlanActivity, PreBudgetPlanItems } from 'src/entities';
-import { BulkItemsDto } from '../dtos/pre-budget-plan-items.dto';
 import { ExtraCrudService } from 'src/shared/service';
+import { BulkItemsDto } from '../dtos/pre-budget-plan-items.dto';
 
 @Injectable()
 export class PreBudgetPlanItemsService extends ExtraCrudService<PreBudgetPlanItems> {
