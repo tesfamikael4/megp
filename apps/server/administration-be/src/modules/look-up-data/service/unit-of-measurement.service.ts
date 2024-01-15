@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UnitOfMeasurement } from 'src/entities/uom.entity';
 import { ExtraCrudService } from 'src/shared/service';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { CreateUnitOfMeasurementDto } from '../dto/uom.dto';
 @Injectable()
 export class UnitOfMeasurementService extends ExtraCrudService<UnitOfMeasurement> {
@@ -12,11 +12,14 @@ export class UnitOfMeasurementService extends ExtraCrudService<UnitOfMeasurement
   ) {
     super(uomRepository);
   }
-  async createUniqueData(
-    UoMDto: CreateUnitOfMeasurementDto,
-  ): Promise<any> {
+  async createUniqueData(UoMDto: CreateUnitOfMeasurementDto): Promise<any> {
     const NameExist = await this.uomRepository.findOne({
-      where: { name: UoMDto.name },
+      where: [
+        { name: ILike(`%${UoMDto.name}%`) },
+        {
+          abbreviation: ILike(`%${UoMDto.abbreviation}%`),
+        },
+      ],
       withDeleted: true,
     });
 
@@ -31,11 +34,11 @@ export class UnitOfMeasurementService extends ExtraCrudService<UnitOfMeasurement
         // If the Unit of Measurement is not soft-deleted, return a message indicating the name exists
         return {
           name: UoMDto.name,
-          message: 'Unit of Measurement Already Exist.'
+          abbreviation: UoMDto.abbreviation,
+          message: 'Unit of Measurement Already Exist.',
         };
       }
-    }
-    else {
+    } else {
       const newUOfMeasurement = new UnitOfMeasurement();
       newUOfMeasurement.name = UoMDto.name;
       newUOfMeasurement.abbreviation = UoMDto.abbreviation;
@@ -44,5 +47,3 @@ export class UnitOfMeasurementService extends ExtraCrudService<UnitOfMeasurement
     }
   }
 }
-
-

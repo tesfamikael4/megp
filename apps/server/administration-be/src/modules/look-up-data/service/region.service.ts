@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Region } from 'src/entities/region.entity';
 import { EntityCrudService } from 'src/shared/service';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { CreateRegionDto } from '../dto/region.dto';
 
 @Injectable()
@@ -13,13 +13,13 @@ export class RegionService extends EntityCrudService<Region> {
   ) {
     super(regionRepository);
   }
-  async createUniqueData(
-    regionDto: CreateRegionDto,
-  ): Promise<any> {
+  async createUniqueData(regionDto: CreateRegionDto): Promise<any> {
     const NameExist = await this.regionRepository.findOne({
-      where: {
-        name: regionDto.name,
-      },
+      where: [
+        {
+          name: ILike(`%${regionDto.name}%`),
+        },
+      ],
       withDeleted: true,
     });
     if (NameExist) {
@@ -32,7 +32,7 @@ export class RegionService extends EntityCrudService<Region> {
         // If the region is not soft-deleted, return a message indicating the name exists
         return {
           name: regionDto.name,
-          message: 'Region already exist.'
+          message: 'Region already exist.',
         };
       }
     } else {

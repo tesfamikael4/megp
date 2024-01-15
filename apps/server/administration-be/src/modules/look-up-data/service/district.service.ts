@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { District } from 'src/entities/district.entity';
 import { ExtraCrudService } from 'src/shared/service';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { CreateDistrictDto } from '../dto/district.dto';
 
 @Injectable()
@@ -13,13 +13,13 @@ export class DistrictService extends ExtraCrudService<District> {
   ) {
     super(districtRepository);
   }
-  async createUniqueData(
-    districtDto: CreateDistrictDto,
-  ): Promise<any> {
+  async createUniqueData(districtDto: CreateDistrictDto): Promise<any> {
     const NameExist = await this.districtRepository.findOne({
-      where: {
-        name: districtDto.name,
-      },
+      where: [
+        {
+          name: ILike(`%${districtDto.name}`),
+        },
+      ],
       withDeleted: true,
     });
     if (NameExist) {
@@ -32,7 +32,7 @@ export class DistrictService extends ExtraCrudService<District> {
         // If the District is not soft-deleted, return a message indicating the name exists
         return {
           name: districtDto.name,
-          message: 'District already exist.'
+          message: 'District already exist.',
         };
       }
     } else {

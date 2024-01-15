@@ -76,8 +76,8 @@ const AddUnit = () => {
       await remove(id).unwrap();
       notifications.show({
         message: 'Unit of Measurement deleted successfully',
-        title: 'error',
-        color: 'red',
+        title: 'Success',
+        color: 'Green',
       });
     } catch (err) {
       notifications.show({

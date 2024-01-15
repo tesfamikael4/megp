@@ -25,10 +25,8 @@ const defaultValues = {
 };
 export function FormDetail({ mode }: FormDetailProps) {
   const itemCategorySchema: ZodType<Partial<ItemCategory>> = z.object({
-    name: z
-      .string()
-      .min(1, { message: 'This field is required' })
-      .transform((str) => str.toLowerCase()),
+    name: z.string().min(1, { message: 'This field is required' }),
+    // .transform((str) => str.toLowerCase()),
     parentId: z.string().optional(),
   });
   const {
@@ -64,13 +62,8 @@ export function FormDetail({ mode }: FormDetailProps) {
         .map((item) => ({ value: item.id, label: item.name }))
     : [];
   const onCreate = async (data) => {
-    const transformedData = {
-      ...data,
-      name: data.name.toLowerCase(),
-    };
     try {
-      const result = await create(transformedData).unwrap();
-
+      const result = await create(data).unwrap();
       // Check if the response contains an 'id', indicating successful creation
       if (result && 'id' in result) {
         router.push(`/item-category/${result.id}`);
@@ -123,6 +116,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       notifications.show({
         message: 'Item-Category Deleted Successfully',
         title: 'Success',
+        color: 'green',
       });
       router.push('/item-category');
     } catch (err) {

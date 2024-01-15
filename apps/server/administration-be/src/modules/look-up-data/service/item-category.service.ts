@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { DataResponseFormat } from 'src/shared/api-data';
 import { ItemCategory } from 'src/entities/item-category.entity';
 import { EntityCrudService } from 'src/shared/service';
@@ -14,13 +14,9 @@ export class ItemCategoryService extends EntityCrudService<ItemCategory> {
   ) {
     super(itemCatRepository);
   }
-  async createUniqueData(
-    itemCatDto: CreateItemCategoryDto,
-  ): Promise<any> {
+  async createUniqueData(itemCatDto: CreateItemCategoryDto): Promise<any> {
     const NameExist = await this.itemCatRepository.findOne({
-      where: {
-        name: itemCatDto.name,
-      },
+      where: [{ name: ILike(`%${itemCatDto.name}%`) }],
       withDeleted: true,
     });
     if (NameExist) {
@@ -35,7 +31,7 @@ export class ItemCategoryService extends EntityCrudService<ItemCategory> {
       } else {
         return {
           name: itemCatDto.name,
-          message: 'Item-category Already Exist.'
+          message: 'Item Category Already Exist.',
         };
       }
     } else {

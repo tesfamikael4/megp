@@ -27,18 +27,9 @@ const defaultValues = {
 
 export function FormDetail({ mode }: FormDetailProps) {
   const currencySchema: ZodType<Partial<Currency>> = z.object({
-    name: z
-      .string()
-      .min(1, { message: 'Name is required' })
-      .transform((str) => str.toLowerCase()),
-    description: z
-      .string()
-      .optional()
-      .transform((str) => (str ? str.toLowerCase() : '')),
-    abbreviation: z
-      .string()
-      .min(1, { message: 'abbreviation is required' })
-      .transform((str) => str.toLowerCase()),
+    name: z.string().min(1, { message: 'Name is required' }),
+    description: z.string().optional(),
+    abbreviation: z.string().min(1, { message: 'abbreviation is required' }),
   });
 
   const {
@@ -63,16 +54,8 @@ export function FormDetail({ mode }: FormDetailProps) {
   } = useReadQuery(id?.toString());
 
   const onCreate = async (data) => {
-    const transformedData = {
-      ...data,
-      name: data.name.toLowerCase(),
-      description: data.description?.toLowerCase(),
-      abbreviation: data.abbreviation?.toLowerCase(),
-    };
-
     try {
-      const result = await create(transformedData).unwrap();
-
+      const result = await create(data).unwrap();
       // Check if the backend response contains a specific error message
       if (result && result.message === 'Currency already exist.') {
         // Display the error notification
