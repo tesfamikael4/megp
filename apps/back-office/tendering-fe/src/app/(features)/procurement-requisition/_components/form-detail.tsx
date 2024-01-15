@@ -68,7 +68,7 @@ export function FormDetail({ mode }: FormDetailProps) {
         budgetYearId: 'string',
         budgetYear: 'string',
       },
-      currency: 'string',
+      currency: 'USD',
     };
     try {
       const result = await create(sent);
