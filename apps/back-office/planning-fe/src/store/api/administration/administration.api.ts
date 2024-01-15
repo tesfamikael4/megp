@@ -27,6 +27,9 @@ export const administrationApi = createApi({
     getTags: builder.query<any, null>({
       query: () => `tags`,
     }),
+    getCurrencies: builder.query<any, null>({
+      query: () => `currencies`,
+    }),
     getCategories: builder.query<any, any>({
       query: (collectionQuery) => {
         let q = '';
@@ -62,4 +65,5 @@ export const {
   useGetTagsQuery,
   useGetMeasurementsQuery,
   useGetCategoriesQuery,
+  useGetCurrenciesQuery,
 } = administrationApi;

@@ -34,7 +34,10 @@ import {
   useUpdateMutation as useUpdatePostActivityMutation,
 } from '../_api/post-activity.api';
 import { useParams, useRouter } from 'next/navigation';
-import { useGetClassificationsQuery } from '@/store/api/administration/administration.api';
+import {
+  useGetClassificationsQuery,
+  useGetCurrenciesQuery,
+} from '@/store/api/administration/administration.api';
 import { useDisclosure } from '@mantine/hooks';
 
 interface FormDetailProps {
@@ -92,6 +95,7 @@ export const FormDetail = ({
     ],
   } as any);
 
+  const { data: currency } = useGetCurrenciesQuery({} as any);
   // pre rtk query
   const [createPre, { isLoading: isPreCreating }] = useCreateMutation();
   const [getPreActivity, { data: preActivity, isSuccess: isPreSuccess }] =
@@ -295,9 +299,10 @@ export const FormDetail = ({
                 value={value}
                 onChange={onChange}
                 label="Currency"
-                data={['MWK', 'USD', 'EUR', 'KPW']}
+                data={currency?.items?.map((c) => c.abbreviation) ?? []}
                 className="w-full"
                 withAsterisk
+                searchable
                 placeholder="Select Procurement Type"
                 error={errors?.currency?.message}
                 disabled={disableFields}
