@@ -7,6 +7,7 @@ import { classificationApi } from './api/classification/classification.api';
 import { taxonomiesApi } from './api/taxonomies/taxonomies.api';
 import { workflowIamApi } from './api/workflow/workflow-iam.api';
 import { workflowApi } from './api/workflow/workflow.api';
+import { budgeCategoryApi } from './api/budget-category/budge-category.api';
 
 const { reducers, middleware } = entityApi;
 
@@ -20,6 +21,7 @@ export const store = configureStore({
     [taxonomiesApi.reducerPath]: taxonomiesApi.reducer,
     [workflowIamApi.reducerPath]: workflowIamApi.reducer,
     [workflowApi.reducerPath]: workflowApi.reducer,
+    [budgeCategoryApi.reducerPath]: budgeCategoryApi.reducer,
   },
   devTools: process.env.NODE_ENV !== 'production',
   middleware: (getDefaultMiddleware) =>
@@ -32,6 +34,7 @@ export const store = configureStore({
       taxonomiesApi.middleware,
       workflowIamApi.middleware,
       workflowApi.middleware,
+      budgeCategoryApi.middleware,
     ]),
 });
 
