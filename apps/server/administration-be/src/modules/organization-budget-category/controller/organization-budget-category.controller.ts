@@ -42,29 +42,15 @@ export class OrganizationBudgetCategoryController extends ExtraCrudController<Or
 
   @Post('bulk-create')
   async bulkCreate(@Body() budgetData: OrganizationBudgetCategoryCreateDto) {
-    try {
-      console.log({ budgetData });
-      const createdBudgets =
-        await this.organizationBudgetCategoryService.bulkCreate(budgetData);
-      return { success: true, data: createdBudgets };
-    } catch (error) {
-      return { success: false, error: error.message };
-    }
+    return await this.organizationBudgetCategoryService.bulkCreate(budgetData);
   }
 
   @Get(':organizationId')
   async getBudgetCategoriesByOrganizationId(
     @Param('organizationId') organizationId: string,
   ) {
-    try {
-      return await this.organizationBudgetCategoryService.getBudgetCategoryByOrganizationId(
-        organizationId,
-      );
-    } catch (error) {
-      throw new HttpException(
-        'Failed to get budgets',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
+    return await this.organizationBudgetCategoryService.getBudgetCategoryByOrganizationId(
+      organizationId,
+    );
   }
 }
