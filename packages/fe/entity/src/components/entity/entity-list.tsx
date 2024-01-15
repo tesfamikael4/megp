@@ -1,13 +1,6 @@
 'use client';
 
-import {
-  Box,
-  Button,
-  Tooltip,
-  LoadingOverlay,
-  Stack,
-  ActionIcon,
-} from '@mantine/core';
+import { Box, Button, Tooltip, Stack, ActionIcon } from '@mantine/core';
 import { Section } from '@megp/core-fe';
 import { IconHierarchy2, IconPlus } from '@tabler/icons-react';
 import type { ColumnDef } from '@tanstack/react-table';
@@ -172,10 +165,6 @@ export function EntityList<T>({
       }
       w={mode === 'list' ? '100%' : '35%'}
     >
-      <LoadingOverlay
-        overlayProps={{ radius: 'sm', blur: 2 }}
-        visible={isLoading}
-      />
       <Stack>
         <Grid
           data={data}
