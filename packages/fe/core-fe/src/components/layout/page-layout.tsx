@@ -9,7 +9,7 @@ export function PageLayout({
   children: React.ReactElement;
 }): React.ReactElement {
   return (
-    <div className={`${layout === 'full' ? styles.full : styles.center}`}>
+    <div className={layout === 'full' ? styles.full : styles.center}>
       {children}
     </div>
   );
