@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Measurement } from 'src/entities/measurement.entity';
 import { EntityCrudService } from 'src/shared/service';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { CreateMeasurementDto } from '../dto/measurement.dto';
 @Injectable()
 export class MeasurementService extends EntityCrudService<Measurement> {
@@ -12,13 +12,13 @@ export class MeasurementService extends EntityCrudService<Measurement> {
   ) {
     super(measurementRepository);
   }
-  async createUniqueData(
-    measurementDto: CreateMeasurementDto,
-  ): Promise<any> {
+  async createUniqueData(measurementDto: CreateMeasurementDto): Promise<any> {
     const NameExist = await this.measurementRepository.findOne({
-      where: {
-        name: measurementDto.name,
-      },
+      where: [
+        {
+          name: ILike(`%${measurementDto.name}%`),
+        },
+      ],
       withDeleted: true,
     });
     if (NameExist) {
@@ -33,7 +33,7 @@ export class MeasurementService extends EntityCrudService<Measurement> {
         // If the measurement is not soft-deleted, return a message indicating the name exists
         return {
           name: measurementDto.name,
-          message: 'Measurement already exist.'
+          message: 'Measurement already exist.',
         };
       }
     } else {

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TargetGroup } from 'src/entities/target-group.entity';
 import { EntityCrudService } from 'src/shared/service';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { CreateTargetGroupDto } from '../dto/target-group.dto';
 @Injectable()
 export class TargetGroupService extends EntityCrudService<TargetGroup> {
@@ -12,13 +12,13 @@ export class TargetGroupService extends EntityCrudService<TargetGroup> {
   ) {
     super(targetGroupRepository);
   }
-  async createUniqueData(
-    tGDto: CreateTargetGroupDto,
-  ): Promise<any> {
+  async createUniqueData(tGDto: CreateTargetGroupDto): Promise<any> {
     const NameExist = await this.targetGroupRepository.findOne({
-      where: {
-        name: tGDto.name,
-      },
+      where: [
+        {
+          name: ILike(`%${tGDto.name}%`),
+        },
+      ],
       withDeleted: true,
     });
     if (NameExist) {
@@ -30,9 +30,9 @@ export class TargetGroupService extends EntityCrudService<TargetGroup> {
         await this.targetGroupRepository.save(NameExist);
         return NameExist;
       } else {
-                return {
+        return {
           name: tGDto.name,
-          message: 'Target Group already exist.'
+          message: 'Target Group already exist.',
         };
       }
     } else {

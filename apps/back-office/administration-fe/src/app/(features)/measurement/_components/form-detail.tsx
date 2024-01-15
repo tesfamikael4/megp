@@ -26,14 +26,8 @@ const defaultValues = {
 
 export function FormDetail({ mode }: FormDetailProps) {
   const measurementSchema: ZodType<Partial<Measurement>> = z.object({
-    name: z
-      .string()
-      .min(1, { message: 'Name is required' })
-      .transform((str) => str.toLowerCase()),
-    description: z
-      .string()
-      .optional()
-      .transform((str) => (str ? str.toLowerCase() : null)),
+    name: z.string().min(1, { message: 'Name is required' }),
+    description: z.string().optional(),
   });
 
   const {
@@ -58,13 +52,8 @@ export function FormDetail({ mode }: FormDetailProps) {
   } = useReadQuery(id?.toString());
 
   const onCreate = async (data) => {
-    const transformedData = {
-      ...data,
-      name: data.name.toLowerCase(),
-      description: data.description ? data.description.toLowerCase() : null, // Handle optional description
-    };
     try {
-      const result = await create(transformedData).unwrap();
+      const result = await create(data).unwrap();
 
       // Assuming 'result' contains an 'id' field when creation is successful
       if (result && 'id' in result) {

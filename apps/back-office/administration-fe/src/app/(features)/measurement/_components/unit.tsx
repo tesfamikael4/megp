@@ -13,6 +13,7 @@ import { useForm } from 'react-hook-form';
 import { MeasurementUnit } from '@/models/measurement-unit';
 import { useParams } from 'next/navigation';
 import { notify } from '@megp/core-fe';
+import { notifications } from '@mantine/notifications';
 
 interface FormDetailProps {
   mode: 'new' | 'detail';
@@ -30,15 +31,9 @@ export function Unit({
   handleCloseModal,
   measurementId,
 }: FormDetailProps) {
-  const unitSchema = z.object({
-    name: z
-      .string()
-      .min(1, 'Name is required')
-      .transform((str) => str.toLowerCase()),
-    abbreviation: z
-      .string()
-      .optional()
-      .transform((str) => (str ? str.toLowerCase() : str)),
+  const unitSchema: ZodType<Partial<MeasurementUnit>> = z.object({
+    name: z.string().min(1, 'Name is required'),
+    abbreviation: z.string().optional(),
   });
 
   const { id } = useParams();
@@ -58,31 +53,41 @@ export function Unit({
   const [trigger, { data: selected, isSuccess, isLoading }] =
     useLazyReadQuery();
   const onCreate = async (data) => {
-    const transformedData = {
-      ...data,
-      name: data.name.toLowerCase(),
-      abbreviation: data.abbreviation ? data.abbreviation.toLowerCase() : '',
-      measurementId: id?.toString(),
-    };
-
     try {
-      const result = await create(transformedData).unwrap();
+      const result = await create({
+        ...data,
+        measurementId: id?.toString(),
+      }).unwrap();
 
-      // Assuming 'result' contains a 'message' field in case of an error
+      // Check if the unit of measurement already exists
       if (result.message === 'Unit of Measurement Already Exist.') {
-        notify('Error', result.message);
+        notifications.show({
+          message: 'Unit of Measurement Already Exists',
+          title: 'Error',
+          color: 'red',
+        });
       } else {
-        notify('Success', 'Unit of Measurement Created Successfully');
-        handleCloseModal();
+        // Handle success
+        notifications.show({
+          message: 'Unit of Measurement Created Successfully',
+          title: 'Success',
+          color: 'green',
+        });
       }
+      handleCloseModal();
     } catch (error) {
-      let errorMessage = 'Unknown error occurred';
-      if (error?.response?.data?.message) {
-        errorMessage = error.response.data.message;
-      } else if (error?.message) {
-        errorMessage = error.message;
+      let errorMessage = 'Error occurred while creating Unit of Measurement';
+
+      // Handle other specific error messages
+      if (error?.data?.message) {
+        errorMessage = error.data.message;
       }
-      notify('Error', errorMessage);
+
+      notifications.show({
+        message: errorMessage,
+        title: 'Error',
+        color: 'red',
+      });
     }
   };
   const onUpdate = async (data) => {

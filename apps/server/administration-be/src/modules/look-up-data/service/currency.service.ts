@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Currency } from 'src/entities/currency.entity';
 import { EntityCrudService } from 'src/shared/service';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { CreateCurrencyDto } from '../dto/currency.dto';
 @Injectable()
 export class CurrencyService extends EntityCrudService<Currency> {
@@ -12,14 +12,12 @@ export class CurrencyService extends EntityCrudService<Currency> {
   ) {
     super(currencyRepository);
   }
-  async createUniqueData(
-    currencyDto: CreateCurrencyDto,
-  ): Promise<any> {
+  async createUniqueData(currencyDto: CreateCurrencyDto): Promise<any> {
     const NameExist = await this.currencyRepository.findOne({
-      where: {
-        name: currencyDto.name,
-        abbreviation: currencyDto.abbreviation,
-      },
+      where: [
+        { name: ILike(`%${currencyDto.name}%`) },
+        { abbreviation: ILike(`%${currencyDto.abbreviation}%`) },
+      ],
       withDeleted: true,
     });
     if (NameExist) {
@@ -35,7 +33,8 @@ export class CurrencyService extends EntityCrudService<Currency> {
         // If the Currency is not soft-deleted, return a message indicating the name exists
         return {
           name: currencyDto.name,
-          message: 'Currency already exist.'
+          abbreviation: currencyDto.abbreviation,
+          message: 'Currency already exist.',
         };
       }
     } else {

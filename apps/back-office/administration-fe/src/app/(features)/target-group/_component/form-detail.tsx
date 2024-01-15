@@ -26,14 +26,8 @@ const defaultValues = {
 
 export function FormDetail({ mode }: FormDetailProps) {
   const targetGroupSchema: ZodType<Partial<TargetGroup>> = z.object({
-    name: z
-      .string()
-      .min(1, { message: 'This field is required' })
-      .transform((str) => str.toLowerCase()),
-    description: z
-      .string()
-      .optional()
-      .transform((str) => (str ? str.toLowerCase() : str)),
+    name: z.string().min(1, { message: 'This field is required' }),
+    description: z.string().optional(),
   });
 
   const {
@@ -57,14 +51,8 @@ export function FormDetail({ mode }: FormDetailProps) {
     isLoading,
   } = useReadQuery(id?.toString());
   const onCreate = async (data) => {
-    const transformedData = {
-      ...data,
-      name: data.name.toLowerCase(),
-      description: data.description?.toLowerCase(),
-    };
-
     try {
-      const result = await create(transformedData).unwrap();
+      const result = await create(data).unwrap();
 
       // Check if the result has a message indicating that the target group already exists
       if (result && result.message === 'Target Group already exist.') {

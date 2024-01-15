@@ -49,15 +49,6 @@ export function Entity({
             widget: 'primary',
           },
         },
-        // {
-        //   id: 'parentId',
-        //   header: 'parentId',
-        //   accessorKey: 'parentId',
-        //   cell: (info) => info.getValue(),
-        //   meta: {
-        //     widget: 'multiline',
-        //   },
-        // },
       ],
     };
   }, [route]);

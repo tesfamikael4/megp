@@ -16,7 +16,7 @@ export function Entity({ children }: { children: React.ReactElement }) {
       mode: 'list',
       entity: 'Target-groups',
       primaryKey: 'id',
-      title: 'Target-groups',
+      title: 'Target Groups',
       hasAdd: true,
       pagination: true,
       searchable: true,
