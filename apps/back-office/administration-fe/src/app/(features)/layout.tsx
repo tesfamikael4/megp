@@ -2,6 +2,7 @@ import { Shell } from '@megp/core-fe';
 import type { Metadata } from 'next';
 
 import { ShellProvider } from './shell';
+import Protected from './protected';
 
 export const metadata: Metadata = {
   title: 'M-egp | Administration',
@@ -14,8 +15,10 @@ export const metadata: Metadata = {
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <ShellProvider>
-      <Shell> {children}</Shell>
-    </ShellProvider>
+    <Protected>
+      <ShellProvider>
+        <Shell> {children}</Shell>
+      </ShellProvider>
+    </Protected>
   );
 }
