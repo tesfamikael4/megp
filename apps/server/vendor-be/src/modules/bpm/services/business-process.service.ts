@@ -22,6 +22,7 @@ export class BusinessProcessService extends EntityCrudService<BusinessProcessEnt
       },
     });
   }
+
   async findWorkflowByServiceAndBP(
     serviceId: string,
     bpId: string,
@@ -46,6 +47,16 @@ export class BusinessProcessService extends EntityCrudService<BusinessProcessEnt
     });
     return result;
   }
+  async findBpWithServiceByServiceId(serviceId: string): Promise<BusinessProcessEntity> {
+    const result = await this.bpRepository.findOne({
+      relations: { service: true },
+      where: {
+        isActive: true,
+        service: { id: serviceId },
+      },
+    });
+    return result;
+  }
   async saveBulk(bps: any[]) {
     try {
       await this.bpRepository.save(bps);
@@ -54,4 +65,5 @@ export class BusinessProcessService extends EntityCrudService<BusinessProcessEnt
       throw new Error(error);
     }
   }
+
 }

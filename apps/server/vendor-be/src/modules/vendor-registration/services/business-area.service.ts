@@ -5,7 +5,6 @@ import { EntityCrudService } from 'src/shared/service';
 import { BusinessAreaResponseDto } from '../dto/business-area.dto';
 import { BusinessAreaEntity } from 'src/entities';
 import { WorkflowInstanceEnum } from 'src/modules/handling/dto/workflow-instance.enum';
-import { userInfo } from 'os';
 
 @Injectable()
 export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
@@ -66,6 +65,7 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
 
     });
   }
+
 
 
 }

@@ -12,6 +12,7 @@ export enum ServiceKeyEnum {
   upgrade = 'upgrade',
   renewal = 'renewal',
   update = 'update',
+  preferentialTreatment = 'PreferentialTreatment',
   goodsNewRegistration = 'GoodsNewRegistration',
   servicesNewRegistration = 'ServicesNewRegistration',
   worksNewRegistration = 'WorksNewRegistration',
@@ -22,6 +23,10 @@ export enum ServiceKeyEnum {
   servicesUpgrade = 'ServicesUpgrade',
   worksUpgrade = 'WorksUpgrade',
   profileUpdate = 'ProfileUpdate',
+  IBM = 'ibm',
+  MSME = 'msme'
+
+
 }
 
 export enum BusinessStatusEnum {
