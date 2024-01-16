@@ -9,9 +9,4 @@ export class Workflow extends OrgAudit {
 
   @Column()
   name: string;
-
-  @OneToOne(() => Activity, (activity) => activity.workflow, {
-    cascade: true,
-  })
-  activities: Activity;
 }
