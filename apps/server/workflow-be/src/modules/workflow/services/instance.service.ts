@@ -3,11 +3,11 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { Repository } from 'typeorm';
 import { Step } from 'src/entities';
-import { EntityCrudService } from 'src/shared/service';
 import { Instance } from 'src/entities/instance.entity';
 import { Activity } from 'src/entities/activity.entity';
 import { StateService } from './state.service';
 import { State } from 'src/entities/state.entity';
+import { EntityCrudService } from 'src/shared/service';
 
 @Injectable()
 export class InstanceService extends EntityCrudService<Instance> {
