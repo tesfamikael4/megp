@@ -26,6 +26,9 @@ export class DefaultStepService extends ExtraCrudService<DefaultStep> {
     if (preStep.length > 0) {
       await this.repositoryDefaultStep.delete(preStep as any);
     }
+    defaultSteps.forEach((obj) => {
+      obj.organizationId = organizationId;
+    });
     const items = this.repositoryDefaultStep.create(defaultSteps);
     await this.repositoryDefaultStep.save(items);
 
