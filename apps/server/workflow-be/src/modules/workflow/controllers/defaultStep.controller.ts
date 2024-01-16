@@ -4,6 +4,7 @@ import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { ExtraCrudController } from 'src/shared/controller';
 import { DefaultStepService } from '../services/defaultStep.service';
 import { DefaultStep } from 'src/entities/defaultStep.entity';
+import { CurrentUser } from 'src/shared/authorization';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'activityId',
@@ -19,8 +20,12 @@ export class DefaultStepController extends ExtraCrudController<DefaultStep>(
   }
 
   @Post('bulk-create')
-  async bulkCreate(@Body() defaultStep: any): Promise<any> {
-    return this.defaultStepService.bulkCreate(defaultStep);
+  async bulkCreate(
+    @Body() defaultStep: any,
+    @CurrentUser() user: any,
+  ): Promise<any> {
+    const organizationId = user.organization.id;
+    return this.defaultStepService.bulkCreate(defaultStep, organizationId);
   }
 
   @Get('order/:id')

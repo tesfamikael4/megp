@@ -13,9 +13,15 @@ export class DefaultStepService extends ExtraCrudService<DefaultStep> {
     super(repositoryDefaultStep);
   }
 
-  async bulkCreate(defaultSteps: DefaultStep[]): Promise<DefaultStep[]> {
+  async bulkCreate(
+    defaultSteps: DefaultStep[],
+    organizationId: string,
+  ): Promise<DefaultStep[]> {
     const preStep = await this.repositoryDefaultStep.find({
-      where: { activityId: defaultSteps[0].activityId },
+      where: {
+        activityId: defaultSteps[0].activityId,
+        organizationId: organizationId,
+      },
     });
     if (preStep.length > 0) {
       await this.repositoryDefaultStep.delete(preStep as any);
