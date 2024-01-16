@@ -8,15 +8,16 @@ import { AreasOfBusinessInterestForm } from '../_components/ppda/formShell';
 import { usePrivilege } from '../_context/privilege-context';
 
 function Page() {
-  const { updateAccess } = usePrivilege();
+  const { updateAccess, updateStatus } = usePrivilege();
 
   const router = useRouter();
   const requestInfo = useGetVendorQuery(
     {},
     { refetchOnMountOrArgChange: true },
   );
-  if (requestInfo.data?.initial.level) {
+  if (requestInfo.data?.initial) {
     updateAccess(requestInfo.data?.initial.level);
+    updateStatus(requestInfo.data?.initial.status);
   }
   useEffect(() => {
     if (requestInfo.isError) {

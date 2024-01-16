@@ -1,5 +1,6 @@
 /* Core */
 
+import { preferentialTreatmentApi } from './api/preferential-treatment/preferential-treatment.api';
 import { vendorUpgradeApi } from './api/vendor-upgrade/api';
 import {
   vendorDataGetawayApi,
@@ -10,6 +11,7 @@ const middleware = [
   vendorRegistrationApi.middleware,
   vendorDataGetawayApi.middleware,
   vendorUpgradeApi.middleware,
+  preferentialTreatmentApi.middleware,
 ];
 
 export { middleware };

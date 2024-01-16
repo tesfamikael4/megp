@@ -54,13 +54,13 @@ export const sidebarLinks: SidebarLinks[] = [
         link: '/vendor/registration/profile-update',
       },
       {
-        label: 'MSME registration',
-        link: '/vendor/registration/msme',
+        label: 'Preferential Treatment',
+        link: '/vendor/registration/preferential-treatment',
       },
-      {
-        label: 'IBM registration',
-        link: '/vendor/registration/dbm',
-      },
+      // {
+      //   label: 'IBM registration',
+      //   link: '/vendor/registration/dbm',
+      // },
       {
         label: 'Debarment Study',
         link: '/vendor/registration/debarment-study',

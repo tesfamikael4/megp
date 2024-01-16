@@ -9,14 +9,15 @@ import { usePrivilege } from '../_context/privilege-context';
 
 export default function Page() {
   const router = useRouter();
-  const { updateAccess } = usePrivilege();
+  const { updateAccess, updateStatus } = usePrivilege();
 
   const requestInfo = useGetVendorQuery(
     {},
     { refetchOnMountOrArgChange: true },
   );
-  if (requestInfo.data?.initial.level) {
+  if (requestInfo.data?.initial) {
     updateAccess(requestInfo.data?.initial.level);
+    updateStatus(requestInfo.data?.initial.status);
   }
 
   useEffect(() => {
@@ -26,6 +27,9 @@ export default function Page() {
     }
     if (requestInfo.data?.initial.status === 'Submitted') {
       router.push(`/vendor/registration/track-applications`);
+    }
+    if (requestInfo.data?.initial) {
+      router.push((requestInfo.data?.initial.level).toLowerCase());
     }
     return () => {
       router.refresh();
