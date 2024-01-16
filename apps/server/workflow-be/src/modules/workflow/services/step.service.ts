@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
-import { ExtraCrudService } from '../../../shared/service';
+import { ExtraCrudService } from 'src/shared/service';
 import { Step } from '../../../entities';
 import { DefaultStep } from 'src/entities/defaultStep.entity';
 
