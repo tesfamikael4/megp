@@ -32,6 +32,7 @@ export class PreBudgetPlanController extends ExtraCrudController<PreBudgetPlan>(
     super(preBudgetPlanService);
   }
 
+  @Post()
   async create(
     @Body() itemData: PreBudgetPlan,
     @CurrentUser() user,
@@ -82,5 +83,17 @@ export class PreBudgetPlanController extends ExtraCrudController<PreBudgetPlan>(
   @UseInterceptors(TransactionInterceptor)
   async handleApprovedWorkflow(@Body() data: any) {
     return await this.preBudgetPlanService.copySelectedPreToPost(data);
+  }
+
+  @Get('hash/:id')
+  @ApiPaginatedResponse(PreBudgetPlan)
+  async hashData(@Param('id') id: string) {
+    return await this.preBudgetPlanService.hashData(id);
+  }
+
+  @Post('approved')
+  @ApiPaginatedResponse(PreBudgetPlan)
+  async hashMatch(@Body() hash): Promise<boolean> {
+    return await this.preBudgetPlanService.hashMatch(hash.id, hash.hashData);
   }
 }

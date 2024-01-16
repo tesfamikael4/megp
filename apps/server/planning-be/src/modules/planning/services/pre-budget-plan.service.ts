@@ -27,7 +27,8 @@ import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 import { PostBudgetRequisitioner } from 'src/entities/post-budget-plan-requisitioner.entity';
 import { PostProcurementMechanism } from 'src/entities/post-procurement-mechanism.entity';
 import { ExtraCrudService } from 'src/shared/service';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+// import { EventEmitter2 } from '@nestjs/event-emitter';
+import { createHash } from 'crypto';
 
 @Injectable()
 export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
@@ -39,7 +40,7 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
     @InjectRepository(PreBudgetPlanItems)
     private readonly preBudgetItemsRepository: Repository<PreBudgetPlanItems>,
 
-    private eventEmitter: EventEmitter2,
+    // private eventEmitter: EventEmitter2,
     @Inject('PLANNING_RMQ_SERVICE')
     private readonly planningRMQClient: ClientProxy,
 
@@ -49,6 +50,7 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
     super(repositoryPreBudgetPlan);
     planningRMQClient.connect();
   }
+  private readonly CHUNK_SIZE = 4096;
 
   async create(itemData: PreBudgetPlan): Promise<PreBudgetPlan> {
     const item = this.repositoryPreBudgetPlan.create(itemData);
@@ -163,6 +165,7 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
 
     return targetGroupPercentages;
   }
+
   async copySelectedPreToPost(data: any): Promise<void> {
     try {
       const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
@@ -280,5 +283,37 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
       itemName: data.itemName,
       organizationId: data.organizationId,
     });
+  }
+
+  async hashData(id: string) {
+    const data = await this.preBudgetActivityRepository.find({
+      where: { preBudgetPlanId: id },
+      relations: {
+        preBudgetPlanItems: true,
+        preBudgetPlanTimelines: true,
+        preBudgetRequisitioners: true,
+        preProcurementMechanisms: true,
+      },
+    });
+    const hashData = (data) => {
+      return createHash('sha-256').update(data).digest('hex');
+    };
+
+    const hashedData = hashData(JSON.stringify(data));
+
+    return hashedData;
+  }
+
+  private chunkData(data: string): string[] {
+    const chunks = [];
+    for (let i = 0; i < data.length; i += this.CHUNK_SIZE) {
+      chunks.push(data.slice(i, i + this.CHUNK_SIZE));
+    }
+    return chunks;
+  }
+
+  async hashMatch(dataId: string, hash: string): Promise<boolean> {
+    const originalHash = await this.hashData(dataId);
+    return originalHash === hash;
   }
 }
