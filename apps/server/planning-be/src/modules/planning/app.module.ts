@@ -5,6 +5,7 @@ import {
   APP,
   BudgetYear,
   PostBudgetPlan,
+  PreBudgetActivityDocument,
   PreBudgetPlan,
   PreBudgetPlanActivity,
   PreBudgetPlanItems,
@@ -32,6 +33,9 @@ import { PreProcurementMechanismService } from './services/pre-procurement-mecha
 import { PreBudgetRequisitionerService } from './services/pre-budget-requisitioner.service';
 import { PreBudgetRequisitionerController } from './controllers/pre-budget-requisitioner.controller';
 import * as dotenv from 'dotenv';
+import { PreBudgetActivityDocumentController } from './controllers/pre-budget-activity-documents.controller';
+import { PreBudgetActivityDocumentService } from './services/pre-budget-activity-documents.service';
+import { MinioModule } from 'nestjs-minio-client';
 
 dotenv.config({ path: '.env' });
 
@@ -47,6 +51,7 @@ dotenv.config({ path: '.env' });
       PreBudgetPlan,
       PreProcurementMechanism,
       PreBudgetRequisitioner,
+      PreBudgetActivityDocument,
     ]),
     ClientsModule.register([
       {
@@ -62,6 +67,15 @@ dotenv.config({ path: '.env' });
       },
     ]),
     PostModule,
+    MinioModule.register({
+      endPoint: process.env.MINIO_ENDPOINT ?? 'files.megp.peragosystems.com',
+      port: Number(process.env.MINIO_PORT ?? 80),
+      useSSL: Boolean(process.env.MINIO_USESSL ?? false),
+      accessKey: process.env.MINIO_ACCESSKEY ?? 'Szzt6Zo5yEJCfa7ay5sy',
+      secretKey:
+        process.env.MINIO_SECRETKEY ??
+        'dGtjFGcLjKU6pXRYx1tOnqGeycJtxJoavgwqYgDd',
+    }),
   ],
   providers: [
     APPService,
@@ -73,6 +87,7 @@ dotenv.config({ path: '.env' });
     // PostBudgetPlanService,
     PreProcurementMechanismService,
     PreBudgetRequisitionerService,
+    PreBudgetActivityDocumentService,
     // BudgetYearService
   ],
   controllers: [
@@ -84,6 +99,7 @@ dotenv.config({ path: '.env' });
     PreBudgetPlanController,
     PreProcurementMechanismController,
     PreBudgetRequisitionerController,
+    PreBudgetActivityDocumentController,
   ],
 })
 export class APPModule {}

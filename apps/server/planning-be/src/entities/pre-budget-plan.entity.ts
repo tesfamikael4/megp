@@ -4,7 +4,6 @@ import {
   PrimaryGeneratedColumn,
   OneToOne,
   OneToMany,
-  ManyToOne,
   JoinColumn,
 } from 'typeorm';
 

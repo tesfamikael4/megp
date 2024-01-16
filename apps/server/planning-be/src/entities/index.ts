@@ -9,6 +9,7 @@ export * from './pre-procurement-mechanism.entity';
 export * from './post-budget-plan.entity';
 export * from './post-budget-plan-activity.entity';
 export * from './post-budget-plan-items.entity';
+export * from './post-budget-activity-document.entity';
 // export * from './activity-budget-line.entity';
 export * from './item-budget-line.entity';
 export * from './post-budget-plan-timeline.entity';

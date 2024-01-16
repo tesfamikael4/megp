@@ -23,6 +23,7 @@ import { PostProcurementMechanism } from 'src/entities/post-procurement-mechanis
 import { PostBudgetRequisitionerController } from './controllers/post-budget-requisitioner.controller';
 import { PostBudgetRequisitionerService } from './services/post-budget-requisitioner.service';
 import { PostBudgetRequisitioner } from 'src/entities/post-budget-plan-requisitioner.entity';
+import { MinioModule } from 'nestjs-minio-client';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -34,6 +35,15 @@ import { PostBudgetRequisitioner } from 'src/entities/post-budget-plan-requisiti
       PostProcurementMechanism,
       PostBudgetRequisitioner,
     ]),
+    MinioModule.register({
+      endPoint: process.env.MINIO_ENDPOINT ?? 'files.megp.peragosystems.com',
+      port: Number(process.env.MINIO_PORT ?? 80),
+      useSSL: Boolean(process.env.MINIO_USESSL ?? false),
+      accessKey: process.env.MINIO_ACCESSKEY ?? 'Szzt6Zo5yEJCfa7ay5sy',
+      secretKey:
+        process.env.MINIO_SECRETKEY ??
+        'dGtjFGcLjKU6pXRYx1tOnqGeycJtxJoavgwqYgDd',
+    }),
   ],
   providers: [
     PostBudgetPlanDisbursementService,
