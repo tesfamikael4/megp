@@ -187,6 +187,10 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
         ],
       });
 
+      if (activities.length == 0) {
+        throw new HttpException(`Activity not found `, 430);
+      }
+
       const postBudget = {
         ...sourceEntity,
         status: 'Draft',
