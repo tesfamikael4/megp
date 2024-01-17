@@ -19,7 +19,7 @@ export default function SupportingDocuments() {
   const [request, requestInfo] = useLazyGetVendorOnDemandQuery();
   const docInfo = useGetVendorQuery({}, { refetchOnMountOrArgChange: true });
   const [save, saveValues] = useAddFormMutation();
-  const { checkAccess, updateAccess } = usePrivilege();
+  const { updateAccess, updateStatus } = usePrivilege();
 
   const [uploadFile, uploadFileInfo] = useLazyUploadSupportingDocQuery();
 
@@ -108,8 +108,9 @@ export default function SupportingDocuments() {
   }, [docInfo.data]);
 
   useEffect(() => {
-    if (requestInfo.data?.initial.level) {
+    if (requestInfo.data?.initial) {
       updateAccess(requestInfo.data?.initial.level);
+      updateStatus(requestInfo.data?.initial.status);
     }
 
     return () => {};
