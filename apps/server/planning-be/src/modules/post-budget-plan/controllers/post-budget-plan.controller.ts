@@ -69,6 +69,19 @@ export class PostBudgetPlanController extends ExtraCrudController<PostBudgetPlan
   async getAnalytics(@Param('id') id: string) {
     return await this.postBudgetPlanService.getAnalytics(id);
   }
+
+  @AllowAnonymous()
+  @UseGuards(ApiKeyGuard)
+  @Get('get-with-app/pr')
+  @ApiPaginatedResponse(PostBudgetPlan)
+  async getPostBudgetWithAppPr(@Query('q') q: string, @CurrentUser() user) {
+    const organizationId = user.organization.id;
+    return await this.postBudgetPlanService.findPostBudgetPlans(
+      organizationId,
+      q,
+    );
+  }
+
   @AllowAnonymous()
   @UseGuards(ApiKeyGuard)
   @Get('pr/list/:id')
