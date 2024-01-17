@@ -6,6 +6,9 @@ import { AuthorizationModule } from './shared/authorization/authorization.module
 import { APPModule } from './modules/planning/app.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { QRModule } from './modules/qr-generator/qr.module';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { TransactionInterceptor } from './shared/interceptors';
+import { TenantInterceptor } from './shared/interceptors/tenant-interceptor';
 
 @Module({
   imports: [
@@ -36,7 +39,16 @@ import { QRModule } from './modules/qr-generator/qr.module';
       ignoreErrors: false,
     }),
   ],
-  providers: [],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: TransactionInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: TenantInterceptor,
+    },
+  ],
   controllers: [],
 })
 export class AppModule {}
