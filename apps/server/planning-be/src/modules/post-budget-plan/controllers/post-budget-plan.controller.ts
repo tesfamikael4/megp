@@ -5,16 +5,25 @@ import {
   Param,
   Post,
   Query,
+  Req,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiQuery, ApiTags } from '@nestjs/swagger';
 import { PostBudgetPlan } from 'src/entities';
 import { PostBudgetPlanService } from '../services/post-budget-plan.service';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { ExtraCrudController } from 'src/shared/controller';
 import { ApiPaginatedResponse } from 'src/shared/api-data';
-import { CollectionQuery } from 'src/shared/collection-query';
-import { CurrentUser } from 'src/shared/authorization';
+import {
+  CollectionQuery,
+  decodeCollectionQuery,
+} from 'src/shared/collection-query';
+import {
+  AllowAnonymous,
+  ApiKeyGuard,
+  CurrentUser,
+} from 'src/shared/authorization';
 import { TransactionInterceptor } from 'src/shared/interceptors';
 import { EventPattern } from '@nestjs/microservices';
 
@@ -59,5 +68,29 @@ export class PostBudgetPlanController extends ExtraCrudController<PostBudgetPlan
   @ApiPaginatedResponse(PostBudgetPlan)
   async getAnalytics(@Param('id') id: string) {
     return await this.postBudgetPlanService.getAnalytics(id);
+  }
+  @AllowAnonymous()
+  @UseGuards(ApiKeyGuard)
+  @Get('pr/list/:id')
+  @ApiQuery({
+    name: 'q',
+    type: String,
+    description: 'Collection Query Parameter. Optional',
+    required: false,
+  })
+  async prFindAll(
+    @Param('id') id: string,
+    @Query('q') q: string,
+    @Req() req?: any,
+  ): Promise<any> {
+    const query = decodeCollectionQuery(q);
+    return this.postBudgetPlanService.findAll(id, query, options);
+  }
+
+  @AllowAnonymous()
+  @UseGuards(ApiKeyGuard)
+  @Get('pr/:id')
+  async prFindOne(@Param('id') id: string, @Req() req?: any): Promise<any> {
+    return this.postBudgetPlanService.findOne(id);
   }
 }
