@@ -15,7 +15,7 @@ import {
 } from '../dto/workflow-instance.dto';
 import { createMachine, interpret } from 'xstate';
 import {
-  AssignmentEnum,
+
   HandlerTypeEnum,
   WorkflowInstanceEnum,
 } from '../dto/workflow-instance.enum';
@@ -24,7 +24,7 @@ import {
   PaymentReceiptResponseDto,
 } from 'src/modules/vendor-registration/dto/payment-receipt.dto';
 import { InvoiceResponseDto } from 'src/modules/vendor-registration/dto/invoice.dto';
-import { VendorsResponseDto } from 'src/modules/vendor-registration/dto/vendor.dto';
+
 import { HandlingCommonService } from './handling-common-services';
 import { TaskHandlerEntity } from 'src/entities/task-handler.entity';
 import { TaskTrackerEntity } from 'src/entities/task-tracker.entity';
@@ -42,6 +42,7 @@ import { WorkflowInstanceEntity } from 'src/entities/workflow-instance.entity';
 import { TaskEntity } from 'src/entities/task.entity';
 import { VendorsEntity } from 'src/entities';
 import { InvoiceService } from 'src/modules/vendor-registration/services/invoice.service';
+import { AssignmentEnum } from '../enums/assignment.enum';
 
 @Injectable()
 export class WorkflowInstanceService {

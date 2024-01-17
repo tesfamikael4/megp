@@ -21,8 +21,7 @@ import { StateNode, createMachine } from 'xstate';
 import { TaskTypes } from '../dto/task-type.enum';
 import { StateMetaData } from '../dto/state-metadata';
 import {
-  AssignmentEnum,
-  BusinessStatusEnum,
+
   HandlerTypeEnum,
   ReviewStatus,
   WorkflowInstanceEnum,
@@ -48,6 +47,7 @@ import { TaskResponse } from '../dto/task.dto';
 import { TaskTrackerResponse } from '../dto/task-tracker.dto';
 import { VendorRegistrationsService } from 'src/modules/vendor-registration/services/vendor-registration.service';
 import { BusinessAreaService } from 'src/modules/vendor-registration/services/business-area.service';
+import { AssignmentEnum } from 'src/modules/handling/enums/assignment.enum';
 @Injectable()
 export class WorkflowService {
   VENDOR_API_KEY: string;
@@ -84,6 +84,8 @@ export class WorkflowService {
       dto.serviceId,
       dto.bpId,
     );
+
+    console.log("serviceBp", serviceBp);
     if (!serviceBp || !dto.requestorId)
       throw new NotFoundException('Business Process Not Found');
     instanceEntity.applicationNumber =

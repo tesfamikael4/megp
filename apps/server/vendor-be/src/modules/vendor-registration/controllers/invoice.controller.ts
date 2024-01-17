@@ -12,11 +12,12 @@ import {
 import { InvoiceService } from '../services/invoice.service';
 import { ApiOkResponse, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CurrentUser, JwtGuard } from 'src/shared/authorization';
-import { ServiceKeyEnum } from 'src/modules/handling/dto/workflow-instance.enum';
+
 import { UpgradeInfoDTO } from '../dto/vendor-upgrade.dto';
 import { ApiPaginatedResponse } from 'src/shared/api-data';
 import { InvoiceResponseDto } from '../dto/invoice.dto';
 import { decodeCollectionQuery } from 'src/shared/collection-query';
+import { ServiceKeyEnum } from 'src/shared/enums/service-key.enum';
 
 @Controller('invoices')
 @ApiTags('Invoices')

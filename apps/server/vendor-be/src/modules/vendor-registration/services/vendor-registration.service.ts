@@ -30,7 +30,7 @@ import { InvoiceService } from './invoice.service';
 import { CollectionQuery, QueryConstructor } from 'src/shared/collection-query';
 import { DataResponseFormat } from 'src/shared/api-data';
 import {
-  ServiceKeyEnum,
+
   WorkflowInstanceEnum,
 } from 'src/modules/handling/dto/workflow-instance.enum';
 import axios from 'axios';
@@ -43,6 +43,7 @@ import InitialValueSchema from '../dto/add-vendor.dto';
 import { ProfileInfoEntity } from 'src/entities/profile-info.entity';
 import { HandlingCommonService } from 'src/modules/handling/services/handling-common-services';
 import { PaymentEnum } from 'src/shared/enums/payment-status.enum';
+import { ServiceKeyEnum } from 'src/shared/enums/service-key.enum';
 
 @Injectable()
 export class VendorRegistrationsService extends EntityCrudService<VendorsEntity> {
@@ -670,6 +671,18 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         where: {
           id: vendorId,
         },
+      });
+      return vendorEntity;
+    } catch (error) {
+      throw error;
+    }
+  }
+  async getVendor(userId: string): Promise<VendorsEntity> {
+    try {
+      const vendorEntity = await this.vendorRepository.findOne({
+        where: {
+          userId: userId,
+        }
       });
       return vendorEntity;
     } catch (error) {
@@ -1462,45 +1475,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     }
   }
 
-  // async finalSubmitVendorProfileUpdate(profileData: any, userInfo: any) {
-  //   const vendorEntity = await this.vendorRepository.findOne({
-  //     where: { userId: userInfo.id },
-  //   });
-  //   // const vendorEntity = new VendorsEntity();
-  //   vendorEntity.id = profileData.data.id;
-  //   vendorEntity.status = VendorStatusEnum.SUBMITTED;
-  //   vendorEntity.level = VendorStatusEnum.SUBMITTED;
-  //   vendorEntity.name = profileData.data.basic.name;
-  //   vendorEntity.formOfEntity = profileData.data.basic.businessType;
-  //   vendorEntity.origin = profileData.data.basic.origin;
-  //   vendorEntity.district = profileData.data.basic.district;
-  //   vendorEntity.country = profileData.data.basic.country;
-  //   vendorEntity.tin = profileData.data.basic.tinNumber;
-  //   vendorEntity.userId = profileData.data.initial.userId;
-  //   // vendorEntity.isrVendorId = vendor.id;
-  //   vendorEntity.shareholders = profileData.data.shareHolders;
-  //   vendorEntity.vendorAccounts = profileData.data.bankAccountDetails;
-  //   vendorEntity.areasOfBusinessInterest =
-  //     profileData.data.areasOfBusinessInterest;
-  //   vendorEntity.beneficialOwnership = profileData.data.beneficialOwnership;
-  //   let tempMetadata = null;
-  //   tempMetadata = {
-  //     address: profileData.data.address,
-  //     contactPersons: profileData.data.contactPersons,
-  //     businessSizeAndOwnership: profileData.data.businessSizeAndOwnership,
-  //     supportingDocuments: profileData.data.supportingDocuments,
-  //     paymentReceipt: profileData.data.paymentReceipt,
-  //   };
-  //   vendorEntity.metaData = tempMetadata;
-  //   try {
-  //     // const res = await this.profileInfoRepository.update(vendorEntity);
-
-  //     // const res = await this.vendorRepository.save(vendorEntity);
-  //     return 'res';
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }
 
   async getCertificateInformations(userId: string) {
     const result = await this.vendorRepository.findOne({

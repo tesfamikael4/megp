@@ -652,10 +652,40 @@ export class DataSeederController {
       },
       {
         tenantId: 0,
-
         id: '329201c3-3218-4e6c-8478-39bee76a43a6',
         serviceId: '26ff8e51-0f68-9c28-2ea4-a32a5e1f184f',
-        workflow: {},
+        workflow: {
+          "id": "IBM Registration",
+          "states": {
+            "End": {
+              "on": {},
+              "meta": {
+                "type": "end"
+              }
+            },
+            "Submission of indigenous black Malawian(IBM) Registration Request": {
+              "on": {
+                "ISR": "Approval of indigenous black Malawian(IBM) Registration Request"
+              },
+              "meta": {
+                "type": {
+                  "start": true
+                }
+              }
+            },
+            "Approval of indigenous black Malawian(IBM) Registration Request": {
+              "on": {
+                "ADJUST": "Submission of indigenous black Malawian(IBM) Registration Request",
+                "REJECT": "End",
+                "APPROVE": "End"
+              },
+              "meta": {
+                "type": "Approval"
+              }
+            }
+          },
+          "initial": "Submission of indigenous black Malawian(IBM) Registration Request"
+        },
         version: 0,
         isActive: true,
         organizationId: null,
@@ -663,10 +693,40 @@ export class DataSeederController {
       },
       {
         tenantId: 0,
-
         id: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b40',
         serviceId: 'a63fb5b9-9896-8c73-4fd0-882d4e9a6e9a',
-        workflow: {},
+        workflow: {
+          "id": "MSME Registration",
+          "states": {
+            "End": {
+              "on": {},
+              "meta": {
+                "type": "end"
+              }
+            },
+            "Submission of Micro Small and Medium Enterprises(MSME) Registration Request": {
+              "on": {
+                "ISR": "Approval of Micro Small and Medium Enterprises(MSME) Registration Request"
+              },
+              "meta": {
+                "type": {
+                  "start": true
+                }
+              }
+            },
+            "Approval of Micro Small and Medium Enterprises(MSME) Registration Request": {
+              "on": {
+                "ADJUST": "Submission of Micro Small and Medium Enterprises(MSME) Registration Request",
+                "REJECT": "End",
+                "APPROVE": "End"
+              },
+              "meta": {
+                "type": "Approval"
+              }
+            }
+          },
+          "initial": "Submission of Micro Small and Medium Enterprises(MSME) Registration Request"
+        },
         version: 0,
         isActive: true,
         organizationId: null,
@@ -718,16 +778,6 @@ export class DataSeederController {
       },
       {
         tenantId: 0,
-        id: '0b29c2f8-a0e4-4fa2-9a92-0ada7aa0ba49',
-        serviceId: 'a63fb5b9-9896-8c73-4fd0-882d4e9a6e9a',
-        workflow: {},
-        version: 0,
-        isActive: true,
-        organizationId: null,
-        organizationName: null,
-      },
-      {
-        tenantId: 0,
 
         id: '0a353ad3-229a-4329-a697-fac97d94b30c',
         serviceId: '1a885fbb-cde1-4349-a9cf-cddcecb59e8d',
@@ -766,6 +816,55 @@ export class DataSeederController {
   @ApiOkResponse()
   async seedTask() {
     const tasksToSeed = [
+      {
+        id: '96752a13-201f-45eb-8b6f-118ebf0c89c7',
+        name: 'Submission of Micro Small and Medium Enterprises(MSME) Registration Request',
+        label: 'Submitted MSME request',
+        description: 'Submission of Micro Small and Medium Enterprises(MSME) Registration Request',
+        bpId: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b40',
+        handlerType: 'Requestor',
+        taskType: 'ISR',
+        checkList: null,
+        orderBy: 1,
+      },
+      {
+        id: '96752a13-201f-45eb-8b6f-118ebf0c89c9',
+        name: 'Approval of Micro Small and Medium Enterprises(MSME) Registration Request',
+        label: 'Submitted MSME request',
+        description: 'Approval of Micro Small and Medium Enterprises(MSME) Registration Request',
+        bpId: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b40',
+        handlerType: 'Requestor',
+        taskType: 'ISR',
+        checkList: [{ "id": "96d95fdb-7852-4ddc-912f-0e94d23d15d3", "description": "The Attached MSME certeficate and other documents are valid.", "isMandatory": "true" }],
+        orderBy: 1,
+      },
+      ///IBM
+      {
+        id: '96752a13-205f-45eb-8b5f-118ebf0c89c7',
+        name: 'Submission of indigenous black Malawian(IBM) Registration Request',
+        label: 'Submitted IBM request',
+        description: 'Submission of indigenous black Malawian(IBM) Registration Request',
+        bpId: '329201c3-3218-4e6c-8478-39bee76a43a6',
+        handlerType: 'Requestor',
+        taskType: 'ISR',
+        checkList: [{ "id": "96d95fdb-7852-4ddc-912f-0e94d23d15d3", "description": "The Attached IBM certeficate and  other documents are valid.", "isMandatory": "true" }],
+        orderBy: 1,
+      },
+      {
+        id: '96752a13-205f-45eb-8b5f-118ebf0c29c7',
+        name: 'Approval of indigenous black Malawian(IBM) Registration Request',
+        label: 'Approved IBM request',
+        description: 'Approval of indigenous black Malawian(IBM) Registration Request',
+        bpId: '329201c3-3218-4e6c-8478-39bee76a43a6',
+        handlerType: 'Assignee',
+        taskType: 'Approval',
+        checkList: [{ "id": "96d95fdb-7852-4ddc-912f-0e94d23d15d3", "description": "The Attached IBM certeficate and  other documents are valid.", "isMandatory": "true" }],
+        orderBy: 1,
+      },
+
+
+      //////////////////////////////
+
       {
         id: '96752a13-205f-45eb-8b6f-118ebf0c89c7',
         name: 'Generate Vendor Registration Certificate',

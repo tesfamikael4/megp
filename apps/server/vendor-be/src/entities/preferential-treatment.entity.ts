@@ -17,14 +17,20 @@ export class PreferentialTreatmentsEntity {
     vendorId: string;
     @Column({ type: 'uuid' })
     serviceId: string;
+    @Column({ type: 'uuid' })
+    userId: string;
     @Column({ default: 'Submitted' })
     status: string;
     @Column({ nullable: true })
     remark: string;
     @Column({ type: 'jsonb', nullable: true })
     extendedProfile: any;
+    @Column()
+    certificateUrl: string;
+    @Column()
+    certiNumber: string;
     @Column({ type: 'jsonb', nullable: true })
-    attachments: any;
+    otherDocuments: any;
     @ManyToOne(() => VendorsEntity, (vendor) => vendor.preferentials)
     @JoinColumn({ name: 'vendorId' })
     vendor: VendorsEntity;
