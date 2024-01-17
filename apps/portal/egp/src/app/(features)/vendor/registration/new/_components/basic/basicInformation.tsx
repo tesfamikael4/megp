@@ -40,11 +40,20 @@ type FormData = {
 const formDataSchema = z.discriminatedUnion('origin', [
   z.object({
     origin: z.literal('Malawi'),
+    name: z
+      .string()
+      .min(2, { message: 'Name must be at least 2 characters long' })
+      .max(100, { message: 'Name cannot exceed 100 characters' }),
+    businessType: z
+      .string()
+      .min(2, { message: 'Form of business is required' }),
     tinNumber: z
       .string()
-      .min(6, { message: 'TIN Number must have at least 10 characters' })
-      .max(10, { message: 'TIN Number should not exceed 10 characters' }),
-    tinIssuedDate: z.string(),
+      .min(6, { message: 'TIN must have at least 10 characters' })
+      .max(10, { message: 'TIN should not exceed 10 characters' }),
+    tinIssuedDate: z
+      .string()
+      .min(1, { message: 'TIN Issued Date is required' }),
   }),
   z.object({
     origin: z.enum(getNationalityValues('Malawi')),
@@ -152,7 +161,7 @@ export const BasicInformation = ({ defaultValues }: BasicInformationProps) => {
             {...lockElements('basic')}
             required
           />
-          {watch().origin !== 'Malawi' && watch().origin !== '' ? (
+          {
             <>
               <TextInput
                 className="w-full"
@@ -178,42 +187,47 @@ export const BasicInformation = ({ defaultValues }: BasicInformationProps) => {
                 {...lockElements('basic')}
               />
             </>
+          }
+
+          {watch().origin === 'Malawi' ? (
+            <>
+              <TextInput
+                className="w-full"
+                label="TIN"
+                id="tinNumber"
+                {...register(`tinNumber`)}
+                error={
+                  formState.errors.tinNumber &&
+                  formState.errors.tinNumber.message
+                }
+                {...lockElements('basic')}
+              />
+              <DatePickerInput
+                valueFormat="YYYY/MM/DD"
+                label="TIN Issued date"
+                leftSection={<IconCalendar size={'1.2rem'} stroke={1.5} />}
+                maxDate={dayjs(new Date()).toDate()}
+                onChange={async (value: any) =>
+                  // console.log(dayjs(value).format('YYYY/MM/DD'))
+                  value &&
+                  (await setValue(
+                    'tinIssuedDate',
+                    dayjs(value)
+                      .format('YYYY/MM/DD')
+                      .toString()
+                      .replace(/\//g, '-'),
+                  ))
+                }
+                error={
+                  formState.errors.tinIssuedDate &&
+                  formState.errors.tinIssuedDate.message
+                }
+                {...lockElements('basic')}
+              />
+            </>
           ) : (
             ''
           )}
-
-          <TextInput
-            className="w-full"
-            label="Tin Number"
-            id="tinNumber"
-            {...register(`tinNumber`)}
-            error={
-              formState.errors.tinNumber && formState.errors.tinNumber.message
-            }
-            {...lockElements('basic')}
-          />
-          <DatePickerInput
-            valueFormat="YYYY/MM/DD"
-            label="Tin Issued date"
-            leftSection={<IconCalendar size={'1.2rem'} stroke={1.5} />}
-            maxDate={dayjs(new Date()).toDate()}
-            onChange={async (value: any) =>
-              // console.log(dayjs(value).format('YYYY/MM/DD'))
-              value &&
-              (await setValue(
-                'tinIssuedDate',
-                dayjs(value)
-                  .format('YYYY/MM/DD')
-                  .toString()
-                  .replace(/\//g, '-'),
-              ))
-            }
-            error={
-              formState.errors.tinIssuedDate &&
-              formState.errors.tinIssuedDate.message
-            }
-            {...lockElements('basic')}
-          />
         </Flex>
         <Divider size="md" my={20} />
         <Flex className="gap-4">
