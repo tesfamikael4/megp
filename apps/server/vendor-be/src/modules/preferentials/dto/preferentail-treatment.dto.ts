@@ -2,10 +2,6 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
 import { PreferentialTreatmentsEntity } from 'src/entities/preferential-treatment.entity';
 export class CreatePTDto {
-    id: string;
-    @ApiProperty()
-    @IsNotEmpty()
-    vendorId: string;
     @ApiProperty()
     @IsNotEmpty()
     serviceId: string;
@@ -13,15 +9,23 @@ export class CreatePTDto {
     @IsNotEmpty()
     status: string;
     @ApiProperty()
-    @IsOptional()
-    extendedProfile: any;
+    @IsNotEmpty()
+    certiNumber: string;
     @ApiProperty()
     @IsOptional()
-    attachments: any;
+    extendedProfile: any;
+    // @ApiProperty()
+    // @IsOptional()
+    // otherDocumentsMetadata: any;
     @ApiProperty()
     @IsNotEmpty()
     remark: string;
-
+    // @ApiProperty()
+    // @IsNotEmpty()
+    // certificate: Express.Multer.File;
+    // @ApiProperty()
+    // @IsOptional()
+    // otherDocuments: Express.Multer.File[];
     /**
      * Transfer Data from DTO object to Entity object
      *
@@ -31,10 +35,10 @@ export class CreatePTDto {
         if (!dto) {
             return;
         }
-        entity.vendorId = dto.vendorId;
         entity.serviceId = dto.serviceId;
         entity.remark = dto.remark;
         entity.extendedProfile = dto.extendedProfile;
+        entity.certiNumber = dto.certiNumber;
         return entity;
     }
 }
@@ -47,7 +51,7 @@ export class UpdatePTDto extends CreatePTDto {
         if (!dto) {
             return;
         }
-        entity.vendorId = dto.vendorId;
+
         entity.serviceId = dto.serviceId;
         entity.remark = dto.remark;
         entity.extendedProfile = dto.extendedProfile;
@@ -59,15 +63,20 @@ export class PTResponse extends UpdatePTDto {
     @ApiProperty()
     status: string;
     @ApiProperty()
-    attachments: any;
+    otherDocuments: any;
+    @ApiProperty()
+    certificateUrl: string;
+    @ApiProperty()
+    vendorId: string
     static toResponse(entity: PreferentialTreatmentsEntity): PTResponse {
         const response = new PTResponse();
         response.vendorId = entity.vendorId;
         response.serviceId = entity.serviceId;
         response.remark = entity.remark;
         response.extendedProfile = entity.extendedProfile;
-        response.attachments = entity.attachments;
+        response.otherDocuments = entity.otherDocuments;
         response.status = entity.status;
+        response.certificateUrl = entity.certificateUrl;
         return response;
     }
 }

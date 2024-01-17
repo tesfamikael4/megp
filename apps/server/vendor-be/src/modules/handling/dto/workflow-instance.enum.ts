@@ -7,36 +7,13 @@ export enum WorkflowInstanceEnum {
   Approved = 'Approved',
   OutDated = 'Outdated'
 }
-export enum ServiceKeyEnum {
-  new = 'new',
-  upgrade = 'upgrade',
-  renewal = 'renewal',
-  update = 'update',
-  preferentialTreatment = 'PreferentialTreatment',
-  goodsNewRegistration = 'GoodsNewRegistration',
-  servicesNewRegistration = 'ServicesNewRegistration',
-  worksNewRegistration = 'WorksNewRegistration',
-  goodsRenewal = 'GoodsRenewal',
-  servicesRenewal = 'ServicesRenewal',
-  worksRenewal = 'WorksRenewal',
-  goodsUpgrade = 'GoodsUpgrade',
-  servicesUpgrade = 'ServicesUpgrade',
-  worksUpgrade = 'WorksUpgrade',
-  profileUpdate = 'ProfileUpdate',
-  IBM = 'ibm',
-  MSME = 'msme'
 
-
-}
 
 export enum BusinessStatusEnum {
   active = 'Active',
   inactive = 'Inactive',
 }
-export enum AssignmentEnum {
-  Picked = 'Picked',
-  Unpicked = 'Unpicked',
-}
+
 export enum HandlerTypeEnum {
   Assignee = 'Assignee',
   PreviousHandler = 'Previous Handler',
@@ -47,4 +24,10 @@ export enum ReviewStatus {
   Approve = 'Approve',
   Reject = 'Reject',
   Adjust = 'Adjust',
+}
+export enum ApplicationStatus {
+  DRAFT = 'Draft',
+  SUBMIT = 'Submit',
+  Adjust = 'Adjust',
+  SUBMITTED = 'Submitted',
 }

@@ -20,6 +20,7 @@ import { Response } from 'express';
 import { BusinessAreaService } from './business-area.service';
 import { WorkflowService } from 'src/modules/bpm/services/workflow.service';
 import { CreateWorkflowInstanceDto } from 'src/modules/handling/dto/workflow-instance.dto';
+import { PreferentailTreatmentService } from 'src/modules/preferentials/services/preferentail-treatment.service';
 
 @Injectable()
 export class FileService {
@@ -43,6 +44,7 @@ export class FileService {
     private readonly businessAreaRepository: Repository<BusinessAreaEntity>,
     private readonly busineAreaService: BusinessAreaService,
     private readonly workflowService: WorkflowService,
+
   ) { }
   private updateVendorEnums = [
     VendorStatusEnum.ACTIVE,
@@ -598,6 +600,36 @@ export class FileService {
       throw error;
     }
   }
+  /*
+  upload any document in a user directory
+  */
+  async uploadDocuments(
+    file: Express.Multer.File,
+    user: any,
+    subDirectory: string
+  ): Promise<string> {
+    try {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+      const fileId = `${uniqueSuffix}_${'certeficate.pdf'}`;
+      const filename = `${user.id}/${subDirectory}/${fileId}`;
+      const metaData = {
+        'Content-Type': 'application/octet-stream',
+      };
+      await this.minioClient.putObject(
+        this.bucketName,
+        filename,
+        file.buffer,
+        metaData,
+      );
+      return fileId;
+
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
+
+
   async getCertificate(filename: string, userId: string, res: Response) {
     try {
       const fileUploadName = 'certificate';

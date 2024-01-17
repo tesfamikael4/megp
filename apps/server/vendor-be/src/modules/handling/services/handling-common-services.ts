@@ -2,9 +2,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { BusinessAreaEntity } from 'src/entities';
 import { WorkflowInstanceEntity } from 'src/entities/workflow-instance.entity';
 import { BAEnum } from 'src/modules/vendor-registration/dto/business-area.enum';
+import { ServiceKeyEnum } from 'src/shared/enums/service-key.enum';
 import { MoreThanOrEqual, Repository } from 'typeorm';
-import { ServiceKeyEnum } from '../dto/workflow-instance.enum';
-
 export class HandlingCommonService {
   constructor(
     @InjectRepository(WorkflowInstanceEntity)
@@ -125,6 +124,8 @@ export class HandlingCommonService {
       ];
     } else if (serviceKey == ServiceKeyEnum.update) {
       keys = [ServiceKeyEnum.profileUpdate];
+    } else if (serviceKey == ServiceKeyEnum.preferential) {
+      keys = [ServiceKeyEnum.IBM, ServiceKeyEnum.MSME];
     }
     return keys;
   }

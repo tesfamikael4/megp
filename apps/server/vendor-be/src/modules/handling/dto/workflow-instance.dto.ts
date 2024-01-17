@@ -9,7 +9,7 @@ import { TaskHandlerResponse } from 'src/modules/bpm/dto/task-handler.dto';
 import { TaskTrackerResponse } from 'src/modules/bpm/dto/task-tracker.dto';
 import { TaskResponse } from 'src/modules/bpm/dto/task.dto';
 import { BpServiceResponse } from 'src/modules/services/dto/bp-service.dto';
-import { BusinessAreaResponseDto } from 'src/modules/vendor-registration/dto/business-area.dto';
+
 export class CreateWorkflowInstanceDto {
   @ApiProperty()
   @IsNotEmpty()

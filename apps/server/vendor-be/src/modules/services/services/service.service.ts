@@ -3,7 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { BpServiceEntity } from '../../../entities/bp-service.entity';
 import { In, Repository } from 'typeorm';
 import { EntityCrudService } from 'src/shared/service';
-import { ServiceKeyEnum } from 'src/modules/handling/dto/workflow-instance.enum';
+import { ServiceKeyEnum } from 'src/shared/enums/service-key.enum';
+
 @Injectable()
 export class BpServiceService extends EntityCrudService<BpServiceEntity> {
   constructor(

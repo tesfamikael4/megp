@@ -7,7 +7,6 @@ import {
   Post,
   Query,
   Req,
-  Res,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -18,9 +17,8 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { ApiPaginatedResponse, DataResponseFormat } from 'src/shared/api-data';
-import { InvoiceResponseDto } from 'src/modules/vendor-registration/dto/invoice.dto';
 import { ApplicationExcutionService } from '../services/application-execution.service';
-import { ActiveVendorsResponse } from '../dto/active-vendor-response';
+
 import {
   CreateWorkflowInstanceDto,
   GotoNextStateDto,
@@ -31,12 +29,12 @@ import { WorkflowService } from 'src/modules/bpm/services/workflow.service';
 import { BusinessProcessService } from 'src/modules/bpm/services/business-process.service';
 import { UpdateTaskHandlerDto } from 'src/modules/bpm/dto/task-handler.dto';
 import { ActivityResponseDto } from 'src/modules/bpm/dto/activities.dto';
-import { InvoiceService } from 'src/modules/vendor-registration/services/invoice.service';
+
 import { WorkflowInstanceEntity } from 'src/entities';
 import { VendorRegistrationsService } from 'src/modules/vendor-registration/services/vendor-registration.service';
 import { VendorInitiationResponseDto } from 'src/modules/vendor-registration/dto/vendor-initiation.dto';
 import { decodeCollectionQuery } from 'src/shared/collection-query/query-mapper';
-import { ServiceKeyEnum } from '../dto/workflow-instance.enum';
+
 @ApiBearerAuth()
 @Controller('application-execution')
 @ApiTags('Application Excution')

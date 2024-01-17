@@ -9,8 +9,9 @@ import {
 } from 'typeorm';
 import { ServicePrice } from '../../../entities/service-price.entity';
 import { EntityCrudService } from 'src/shared/service';
-import { ServiceKeyEnum } from 'src/modules/handling/dto/workflow-instance.enum';
+
 import { BusinessAreaEntity } from 'src/entities';
+import { ServiceKeyEnum } from 'src/shared/enums/service-key.enum';
 
 @Injectable()
 export class ServicePricingService extends EntityCrudService<ServicePrice> {
