@@ -26,7 +26,7 @@ export class PreBudgetPlanItems extends OrgAudit {
   @JoinColumn({ name: 'preBudgetPlanActivityId' })
   public preBudgetPlanActivity: PreBudgetPlanActivity;
 
-  @Column()
+  @Column({ nullable: true })
   itemCode: string;
 
   @Column()
@@ -38,14 +38,11 @@ export class PreBudgetPlanItems extends OrgAudit {
   @Column()
   currency: string;
 
-  @Column()
+  @Column({ type: 'decimal' })
   quantity: number;
 
   @Column()
   measurement: string;
-
-  @Column()
-  uom: string;
 
   @Column()
   uomName: string;

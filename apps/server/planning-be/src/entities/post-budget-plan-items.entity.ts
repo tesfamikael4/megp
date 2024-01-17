@@ -41,7 +41,7 @@ export class PostBudgetPlanItem extends OrgAudit {
   )
   itemBudgetLines: ItemBudgetLine[];
 
-  @Column()
+  @Column({ nullable: true })
   itemCode: string;
 
   @Column()
@@ -56,7 +56,7 @@ export class PostBudgetPlanItem extends OrgAudit {
   @Column()
   currency: string;
 
-  @Column()
+  @Column({ type: 'decimal' })
   quantity: number;
 
   @Column()
@@ -64,4 +64,7 @@ export class PostBudgetPlanItem extends OrgAudit {
 
   @Column()
   uom: string;
+
+  @Column()
+  classification: string;
 }
