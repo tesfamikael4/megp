@@ -7,6 +7,8 @@ import { Inter, Roboto_Mono } from 'next/font/google';
 import { AuthProvider } from '@megp/auth';
 import '@mantine/dates/styles.css';
 
+import 'mantine-datatable/styles.css';
+
 const inter = Inter({
   subsets: ['latin'],
   display: 'swap',

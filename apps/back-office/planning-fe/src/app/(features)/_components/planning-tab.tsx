@@ -48,7 +48,7 @@ const PlanningTab = ({ page }: { page: 'pre' | 'post' }) => {
   };
 
   //states
-  const [opened, { toggle }] = useDisclosure(true);
+  const [opened, { toggle }] = useDisclosure(false);
   const [selectedYear, setSelectedYear] = useState({});
   const [analytics, setAnalytics] = useState<any>({});
 
@@ -108,8 +108,9 @@ const PlanningTab = ({ page }: { page: 'pre' | 'post' }) => {
       centered: true,
       children: (
         <Text size="sm">
-          {`Are you sure you want to submit  APP ${(selectedYear as any)?.app
-            .budgetYear}?  (Pre-Budget)`}
+          {`Are you sure you want to submit  APP ${
+            (selectedYear as any)?.app.budgetYear
+          }?  (Pre-Budget)`}
         </Text>
       ),
       labels: { confirm: 'Yes', cancel: 'No' },
@@ -289,7 +290,7 @@ const PlanningTab = ({ page }: { page: 'pre' | 'post' }) => {
                 />
               </Flex>
             </Box>
-            <Box className="p-2 border-r border-b w-1/4 cursor-pointer hover:shadow-lg">
+            <Box className="p-2 border-r border-b w-1/4 cursor-pointer">
               <Flex gap="sm">
                 <Avatar radius="xl" color="gray">
                   <IconCoins />
