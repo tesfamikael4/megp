@@ -8,7 +8,6 @@ export default function PreBudgetPlanLayout({
   return (
     <Box>
       <PlanningTab page="pre" />
-      {/* <Entity>{children}</Entity> */}
       {children}
     </Box>
   );

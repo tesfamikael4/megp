@@ -46,7 +46,7 @@ export function PlanOverview() {
                     <Accordion.Item value={'Definition'} className="bg-white">
                       <Accordion.Control>Definition</Accordion.Control>
                       <Accordion.Panel>
-                        <DetailActivity cell={activity} />
+                        <DetailActivity activity={activity} page="pre" />
                       </Accordion.Panel>
                     </Accordion.Item>
 

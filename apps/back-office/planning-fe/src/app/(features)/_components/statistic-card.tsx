@@ -17,7 +17,7 @@ export const StatisticCard = ({
   type: 'targetGroup' | 'activity' | 'status';
 }) => {
   return (
-    <Box className="p-2 border-r border-b w-1/3 cursor-pointer hover:shadow-lg">
+    <Box className="p-2 border-r border-b w-1/3 cursor-pointer">
       <Flex align="center" gap="sm">
         <Avatar radius="xl" color="gray">
           {type === 'targetGroup' && (

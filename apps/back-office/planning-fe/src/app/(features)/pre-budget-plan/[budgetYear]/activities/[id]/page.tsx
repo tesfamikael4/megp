@@ -37,6 +37,7 @@ export default function NewActivity() {
             </Flex>
           </Tooltip>
         }
+        collapsible={false}
       >
         <Tabs defaultValue="definition">
           <Tabs.List>
