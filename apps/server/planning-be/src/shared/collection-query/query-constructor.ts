@@ -19,6 +19,9 @@ const addFilterConditions = (
   } else if (op === FilterOperators.In && Array.isArray(value)) {
     // Handle "in" operator for the main ${aggregate}
     return `${queryCondition} IN (:...${queryParam})`;
+  } else if (op === FilterOperators.NotIn && Array.isArray(value)) {
+    // Handle "in" operator for the main ${aggregate}
+    return `${queryCondition} Not IN (:...${queryParam})`;
   } else if (op === FilterOperators.IsNull) {
     // Handle "isNull" operator for the main ${aggregate}
     return `${queryCondition} IS NULL`;
@@ -64,7 +67,7 @@ const addFilterParams = (op: string, value: any, column: string, acc: any) => {
   } else if (op === FilterOperators.In && Array.isArray(value)) {
     // Handle "in" operator for the main ${aggregate}
     acc[column] = value;
-  } else if (op === FilterOperators.Like) {
+  } else if (op === FilterOperators.Like || op === FilterOperators.ILike) {
     // Handle "in" operator for the main ${aggregate}
     acc[column] = `%${value}%`;
   } else if (op === FilterOperators.All || op === FilterOperators.Any) {
@@ -90,11 +93,12 @@ const applyWhereConditions = <T>(
       const orConditions = conditions.map(({ column, value, operator: op }) => {
         if (column.includes('.')) {
           const [relation, field] = column.split('.'); // Assuming "relation.field" format
+          const fieldValue = `${field}_${++count}`;
           return addFilterConditions(
             op,
             value,
             `${relation}.${field}`,
-            `${relation}_${field}`,
+            `${relation}_${fieldValue}`,
           );
         } else {
           // Handle conditions for the main entity
@@ -134,7 +138,8 @@ const applyWhereConditions = <T>(
         (acc, { column, value, operator: op }) => {
           if (column.includes('.')) {
             const [relation, field] = column.split('.');
-            acc = addFilterParams(op, value, `${relation}_${field}`, acc);
+            const fieldValue = `${field}_${++count}`;
+            acc = addFilterParams(op, value, `${relation}_${fieldValue}`, acc);
           } else if (column.includes('->>')) {
             const [mainColumn, nestedColumn] = column.split('->>');
             if (mainColumn.includes('->')) {
@@ -184,10 +189,15 @@ const applyIncludes = <T>(
   includes: string[],
 ) => {
   includes.forEach((relatedEntity) => {
-    queryBuilder.leftJoinAndSelect(
-      `${aggregate}.${relatedEntity}`,
-      relatedEntity,
-    );
+    if (relatedEntity.includes('.')) {
+      const [parent, child] = relatedEntity.split('.');
+      queryBuilder.leftJoinAndSelect(`${parent}.${child}`, `${child}`);
+    } else {
+      queryBuilder.leftJoinAndSelect(
+        `${aggregate}.${relatedEntity}`,
+        relatedEntity,
+      );
+    }
   });
 };
 
@@ -325,8 +335,29 @@ export class QueryConstructor {
       queryBuilder.withDeleted();
     }
 
+    if (!metaData.propertiesMap['tenantId']) {
+      query = this.removeFilter(query, 'tenantId');
+    }
+
+    if (!metaData.propertiesMap['organizationId']) {
+      query = this.removeFilter(query, 'organizationId');
+    }
+
+    query = this.removeEmtpyFilter(query);
+
     buildQuery(aggregate, queryBuilder, query);
 
     return queryBuilder;
+  }
+  static removeEmtpyFilter(query: CollectionQuery) {
+    query.where = query.where.filter((x) => x.length > 0);
+    return query;
+  }
+
+  static removeFilter(query: CollectionQuery, key: string) {
+    query.where = query.where.map((x) => {
+      return x.filter((y) => y.column != key);
+    });
+    return query;
   }
 }
