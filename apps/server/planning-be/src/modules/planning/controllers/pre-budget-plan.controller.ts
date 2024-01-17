@@ -5,6 +5,7 @@ import {
   Param,
   Post,
   Query,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
@@ -16,7 +17,11 @@ import { PreBudgetPlanService } from '../services/pre-budget-plan.service';
 import { ExtraCrudController } from 'src/shared/controller';
 import { EventPattern } from '@nestjs/microservices';
 import { TransactionInterceptor } from 'src/shared/interceptors';
-import { CurrentUser } from 'src/shared/authorization';
+import {
+  AllowAnonymous,
+  ApiKeyGuard,
+  CurrentUser,
+} from 'src/shared/authorization';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'appid',
@@ -55,6 +60,15 @@ export class PreBudgetPlanController extends ExtraCrudController<PreBudgetPlan>(
   @ApiPaginatedResponse(PreBudgetPlan)
   @UseInterceptors(TransactionInterceptor)
   async approvePreBudget(@Param('id') id: string) {
+    return await this.preBudgetPlanService.copySelectedPreToPost(id);
+  }
+
+  @AllowAnonymous()
+  @UseGuards(ApiKeyGuard)
+  @Post('copy-pre-budget/:id')
+  @ApiPaginatedResponse(PreBudgetPlan)
+  @UseInterceptors(TransactionInterceptor)
+  async CopyPostBudget(@Param('id') id: string) {
     return await this.preBudgetPlanService.copySelectedPreToPost(id);
   }
 
