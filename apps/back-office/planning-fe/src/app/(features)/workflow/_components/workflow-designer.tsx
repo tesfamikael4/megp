@@ -89,10 +89,10 @@ const Method = ({ cell, selected, setSelected }: any) => {
   );
 };
 
-export function Steps() {
+export function Steps({ activityId }: { activityId: string }) {
   const { user } = useAuth();
   const [data, setData] = useState<any>([]);
-  const activityId = '1f344819-d64d-4986-b192-ee06f5bf0e98';
+  // const activityId = '1f344819-d64d-4986-b192-ee06f5bf0e98';
   const [orderedData, setOrderedData] = useState<any>(data);
   const [opened, { open, close }] = useDisclosure(false);
   const { data: steps, isLoading: isFetchingSteps } = useGetDefaultStepsQuery({

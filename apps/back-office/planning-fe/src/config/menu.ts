@@ -1,6 +1,8 @@
 import { MenuItem } from '@megp/core-fe';
 import {
   IconAdjustmentsHorizontal,
+  IconArrowBackUpDouble,
+  IconArrowFork,
   IconCalendarEvent,
   IconCalendarStats,
   IconCoins,
@@ -28,6 +30,11 @@ export const Menu: MenuItem[] = [
     label: 'Report',
     icon: IconReportAnalytics,
     link: '/report',
+  },
+  {
+    label: 'Approval Workflow',
+    icon: IconArrowFork,
+    link: '/workflow',
   },
 
   {

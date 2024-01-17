@@ -53,6 +53,7 @@ import { notifications } from '@mantine/notifications';
 import {
   useCreateDefaultStepsMutation,
   useCreateStepsMutation,
+  useGetDefaultStepsQuery,
 } from '@/store/api/workflow/workflow.api';
 
 const Method = ({ cell, selected, setSelected }: any) => {
@@ -94,6 +95,16 @@ export function Designer() {
   const [createSteps, { isLoading: isCreatingSteps }] =
     useCreateDefaultStepsMutation();
   const [checked, setChecked] = useState(false);
+  const { data: defaultSteps } = useGetDefaultStepsQuery({
+    activityId: id as string,
+  });
+
+  useEffect(() => {
+    if (defaultSteps) {
+      setData([...defaultSteps.items]);
+      setOrderedData([...defaultSteps.items]);
+    }
+  }, [defaultSteps]);
 
   const listConfig: TableConfig<any> = {
     columns: [
@@ -171,52 +182,50 @@ export function Designer() {
     };
 
     return (
-      cell.type !== 'default' && (
-        <>
-          <Menu shadow="md">
-            <Menu.Target>
-              <IconDotsVertical className="ml-auto text-gray-500" size={16} />
-            </Menu.Target>
+      <>
+        <Menu shadow="md">
+          <Menu.Target>
+            <IconDotsVertical className="ml-auto text-gray-500" size={16} />
+          </Menu.Target>
 
-            <Menu.Dropdown>
-              <Menu.Item leftSection={<IconEdit size={15} />} onClick={open}>
-                Edit
-              </Menu.Item>
-              <Menu.Divider />
-              <Menu.Item
-                color="red"
-                leftSection={<IconTrash size={15} />}
-                onClick={openDeleteModal}
-              >
-                Delete
-              </Menu.Item>
-            </Menu.Dropdown>
-          </Menu>
+          <Menu.Dropdown>
+            <Menu.Item leftSection={<IconEdit size={15} />} onClick={open}>
+              Edit
+            </Menu.Item>
+            <Menu.Divider />
+            <Menu.Item
+              color="red"
+              leftSection={<IconTrash size={15} />}
+              onClick={openDeleteModal}
+            >
+              Delete
+            </Menu.Item>
+          </Menu.Dropdown>
+        </Menu>
 
-          <Modal opened={opened} onClose={close} title="Edit Step" size="xl">
-            <Stack>
-              <Table config={addConfig} data={[]} />
-              <Button
-                onClick={() => {
-                  const temp = data.map((item: any) => {
-                    if (item.name === cell.name) {
-                      return {
-                        ...item,
-                        ...selected,
-                      };
-                    }
-                    return item;
-                  });
-                  setData([...temp]);
-                }}
-                className="ml-auto"
-              >
-                Save
-              </Button>
-            </Stack>
-          </Modal>
-        </>
-      )
+        <Modal opened={opened} onClose={close} title="Edit Step" size="xl">
+          <Stack>
+            <Table config={addConfig} data={[]} />
+            <Button
+              onClick={() => {
+                const temp = data.map((item: any) => {
+                  if (item.name === cell.name) {
+                    return {
+                      ...item,
+                      ...selected,
+                    };
+                  }
+                  return item;
+                });
+                setData([...temp]);
+              }}
+              className="ml-auto"
+            >
+              Save
+            </Button>
+          </Stack>
+        </Modal>
+      </>
     );
   };
 
