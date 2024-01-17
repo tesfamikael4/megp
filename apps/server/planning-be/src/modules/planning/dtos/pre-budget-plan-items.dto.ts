@@ -41,6 +41,10 @@ export class CreatePreBudgetPlanItemsDto {
   @ApiProperty()
   @IsString()
   classification: string;
+
+  @ApiProperty()
+  @IsString()
+  organizationId: string;
 }
 
 export class UpdatePreBudgetPlanItemsDto extends CreatePreBudgetPlanItemsDto {

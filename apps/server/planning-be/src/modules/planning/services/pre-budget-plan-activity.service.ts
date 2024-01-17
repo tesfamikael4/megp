@@ -17,7 +17,10 @@ export class PreBudgetPlanActivityService extends ExtraCrudService<PreBudgetPlan
     super(repositoryPreBudgetPlanActivity);
   }
 
-  async create(itemData: any): Promise<any> {
+  async create(itemData: any, req: any): Promise<any> {
+    if (req?.user?.organization) {
+      itemData.organizationId = req.user.organization.id;
+    }
     const activity =
       await this.repositoryPreBudgetPlanActivity.create(itemData);
     const plan = await this.repositoryPreBudgetPlan.findOne({

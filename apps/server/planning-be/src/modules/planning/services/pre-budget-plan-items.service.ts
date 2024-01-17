@@ -16,7 +16,13 @@ export class PreBudgetPlanItemsService extends ExtraCrudService<PreBudgetPlanIte
     super(repositoryPreBudgetPlanItems);
   }
 
-  async create(itemData: PreBudgetPlanItems): Promise<PreBudgetPlanItems> {
+  async create(
+    itemData: PreBudgetPlanItems,
+    req: any,
+  ): Promise<PreBudgetPlanItems> {
+    if (req?.user?.organization) {
+      itemData.organizationId = req.user.organization.id;
+    }
     const item = this.repositoryPreBudgetPlanItems.create(itemData);
     await this.repositoryPreBudgetPlanItems.save(item);
 
@@ -33,7 +39,13 @@ export class PreBudgetPlanItemsService extends ExtraCrudService<PreBudgetPlanIte
     return item;
   }
 
-  async bulkCreate(itemData: BulkItemsDto): Promise<BulkItemsDto> {
+  async bulkCreate(itemData: BulkItemsDto, req: any): Promise<BulkItemsDto> {
+    if (req?.user?.organization) {
+      itemData.items.map((item) => {
+        item.organizationId = req.user.organization.id;
+      });
+    }
+
     const items = this.repositoryPreBudgetPlanItems.create(
       itemData.items as any,
     );
