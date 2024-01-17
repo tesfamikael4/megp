@@ -6,6 +6,7 @@ import {
   UseFormRegisterReturn,
   RegisterOptions,
   ChangeHandler,
+  UseFormWatch,
 } from 'react-hook-form';
 import {
   Text,

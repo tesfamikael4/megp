@@ -55,7 +55,7 @@ export const shareHoldersSchema = z.object({
     .max(50, { message: 'Name cannot exceed 50 characters' }),
   nationality: z.string().min(2, { message: 'Nationality is required' }),
   share: z
-    .string()
+    .number()
     .min(1, { message: 'Share is required ' })
     .refine((value) => !isNaN(Number(value)) && Number(value) > 0, {
       message: 'Number of Share must be greater than 1% ',
@@ -80,7 +80,7 @@ export const formDataSchema = z.object({
   basic: z.object({
     name: z
       .string()
-      .min(2, { message: 'Name must be at l5ast 2 characters long' })
+      .min(2, { message: 'Name must be at least 2 characters long' })
       .max(100, { message: 'Name cannot exceed 100 characters' }),
     businessType: z.string().optional(),
     origin: z.string(),

@@ -46,7 +46,18 @@ export const BasicInfo: React.FC<PassFormDataProps> = ({ register }) => {
           {...register(`basic.origin`, 'select')}
           disabled
         />
-        {register('basic.origin', 'select').value == 'Malawi' && (
+        <Select
+          searchable
+          label="Country"
+          data={getNationalityValues()}
+          {...register(`basic.country`, 'select')}
+        />
+      </Group>
+      <Group
+        grow
+        className={`${register('basic.country', 'select').value !== 'Malawi' ? 'w-1/2' : 'w-full flex gap-x-2'}`}
+      >
+        {register('basic.country', 'select').value === 'Malawi' && (
           <Select
             label="District"
             data={[
@@ -80,17 +91,15 @@ export const BasicInfo: React.FC<PassFormDataProps> = ({ register }) => {
               'Zomba',
             ]}
             {...register(`basic.district`, 'select')}
+            className="w-1/2"
           />
         )}
-      </Group>
-      <Group grow>
-        <Select
-          searchable
-          label="Country"
-          data={getNationalityValues()}
-          {...register(`basic.country`, 'select')}
+        <TextInput
+          label="Tin Number"
+          {...register(`basic.tinNumber`)}
+          disabled
+          className="w-1/2"
         />
-        <TextInput label="Tin Number" {...register(`basic.tinNumber`)} />
       </Group>
     </Stack>
   );

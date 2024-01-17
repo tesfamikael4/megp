@@ -21,13 +21,13 @@ function StyledStepper() {
       NotificationService.requestErrorNotification('Error on fetching data');
       router.push(`basic`);
     }
-    if (data?.initial.status === 'Submitted') {
-      router.push(`/vendor/registration/track-applications`);
-    }
+
     if (data?.initial) {
       updateAccess(data?.initial.level);
       updateStatus(data?.initial.status);
-      return router.push((data?.initial.level).toLowerCase());
+      if (data?.initial.status === 'Submitted') {
+        router.push(`/vendor/registration/track-applications`);
+      } else return router.push((data?.initial.level).toLowerCase());
     }
     return () => {
       router.refresh();
