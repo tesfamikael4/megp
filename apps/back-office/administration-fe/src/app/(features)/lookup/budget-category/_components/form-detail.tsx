@@ -9,12 +9,13 @@ import {
   useReadQuery,
   useListQuery,
 } from '../_api/budget-category.api';
-import { EntityButton } from '@megp/entity';
 import { useParams, useRouter } from 'next/navigation';
 import { z, ZodType } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { BudgetCategory } from '@/models/budget-category';
+import { EntityButton } from '@megp/entity';
+import { notifications } from '@mantine/notifications';
 
 interface FormDetailPropType {
   mode: 'new' | 'detail';
@@ -45,7 +46,7 @@ export function FormDetail({ mode }: FormDetailPropType) {
           message: 'Name must be unique among existing budget category names',
         },
       ),
-    description: z.string().min(1, { message: 'This field is required' }),
+    description: z.string(),
   });
   const {
     handleSubmit,
@@ -68,35 +69,47 @@ export function FormDetail({ mode }: FormDetailPropType) {
 
   const onCreate = async (data) => {
     try {
-      const result = await create({
-        ...data,
-      });
+      const result = await create(data);
       if ('data' in result) {
         router.push(`/lookup/budget-category/${result?.data?.id}`);
       }
-      notify('Success', 'Budget Category created successfully');
+      notifications.show({
+        message: 'Budget Category created successfully',
+        title: 'Success',
+        color: 'green',
+      });
     } catch (err) {
-      notify('Error', 'Errors in creating Budget Category .');
+      notifications.show({
+        color: 'red',
+        message: 'errors in creating Budget Category.',
+        title: 'Error',
+      });
     }
   };
   const onUpdate = async (data) => {
     try {
-      await update({
-        ...data,
-        id: id?.toString(),
-      });
+      await update({ ...data, id: id?.toString() }).unwrap();
       notify('Success', 'Budget Category  updated successfully');
     } catch {
       notify('Error', 'Errors in updating Budget Category .');
     }
   };
+
   const onDelete = async () => {
     try {
-      await remove(id?.toString()).unwrap();
-      notify('Success', 'Budget Category  deleted successfully');
+      await remove(id?.toString());
+      notifications.show({
+        message: 'Budget Category deleted successfully',
+        title: 'Success',
+        color: 'green',
+      });
       router.push('/lookup/budget-category');
     } catch (err) {
-      notify('Error', 'Errors in deleting Budget Category .');
+      notifications.show({
+        message: 'errors in deleting Budget Category.',
+        title: 'Error',
+        color: 'red',
+      });
     }
   };
 
@@ -127,9 +140,6 @@ export function FormDetail({ mode }: FormDetailPropType) {
         autosize
         minRows={2}
         {...register('description')}
-        error={
-          errors?.description ? errors?.description?.message?.toString() : ''
-        }
       />
       <EntityButton
         mode={mode}

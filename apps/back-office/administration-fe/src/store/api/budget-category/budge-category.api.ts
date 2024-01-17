@@ -26,6 +26,11 @@ export const budgeCategoryApi = createApi({
         url: `organization-budget-category/${id}`,
       }),
     }),
+    getOrgType: builder.query<any, { id: string }>({
+      query: ({ id }) => ({
+        url: `organization-type/${id}`,
+      }),
+    }),
   }),
 });
 
@@ -33,4 +38,6 @@ export const {
   useAssignBudgetToOrganizationMutation,
   useGetBudgetCategoriesQuery,
   useLazyGetBudgetCategoriesQuery,
+  useGetOrgTypeQuery,
+  useLazyGetOrgTypeQuery,
 } = budgeCategoryApi;

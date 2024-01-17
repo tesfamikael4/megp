@@ -1,11 +1,17 @@
 import { Table } from '@mantine/core';
 import { useReadQuery } from '../_api/organizations.api';
 import { useParams } from 'next/navigation';
+import { useLazyGetOrgTypeQuery } from '@/store/api/budget-category/org-type.api';
+import { useEffect } from 'react';
 
 export function FormDetail() {
   const { id } = useParams();
 
-  const { data: org } = useReadQuery(id?.toString());
+  const { data: org, isSuccess } = useReadQuery(id?.toString());
+  const [trigger, { data: type }] = useLazyGetOrgTypeQuery();
+  useEffect(() => {
+    isSuccess && trigger({ id: org?.typeId });
+  }, [isSuccess, org?.typeId, trigger]);
 
   const data = [
     {
@@ -22,7 +28,7 @@ export function FormDetail() {
     },
     {
       key: 'Organization Type',
-      value: org?.typeId.name,
+      value: type?.name,
     },
   ];
   return (
