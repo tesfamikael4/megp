@@ -72,10 +72,13 @@ export class PostBudgetPlanController extends ExtraCrudController<PostBudgetPlan
 
   @AllowAnonymous()
   @UseGuards(ApiKeyGuard)
-  @Get('get-with-app/pr')
+  @Get('get-with-app/pr/:organization')
   @ApiPaginatedResponse(PostBudgetPlan)
-  async getPostBudgetWithAppPr(@Query('q') q: string, @CurrentUser() user) {
-    const organizationId = user.organization.id;
+  async getPostBudgetWithAppPr(
+    @Query('q') q: string,
+    @Param('organizationId') organization: string,
+  ) {
+    const organizationId = organization;
     return await this.postBudgetPlanService.findPostBudgetPlans(
       organizationId,
       q,
