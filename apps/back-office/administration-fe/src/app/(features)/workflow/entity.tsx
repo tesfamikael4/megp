@@ -1,5 +1,5 @@
 'use client';
-import { useLazyListByIdQuery } from './_api/activities.api';
+import { useLazyListByIdQuery, useLazyListQuery } from './_api/activities.api';
 import { CollectionQuery, EntityConfig, EntityLayout } from '@megp/entity';
 import { usePathname, useRouter } from 'next/navigation';
 import { useCallback, useMemo, useState, useEffect } from 'react';
@@ -7,22 +7,21 @@ import { useCallback, useMemo, useState, useEffect } from 'react';
 export function Entity({ children }: { children: React.ReactNode }) {
   const route = useRouter();
 
-  // const [onRequest, setOnRequest] = useState<any>();
   // const [workflowId ] = useState(
   //   '9bdffbcb-d7f6-499c-a93c-5e2639991dbe',
   // );
 
   const pathname = usePathname();
 
-  // const [trigger, { data: activities, isFetching }] = useLazyListByIdQuery();
+  const [trigger, { data: activities, isFetching }] = useLazyListQuery();
 
   const config: EntityConfig<any> = useMemo(() => {
     return {
       basePath: '/workflow',
       mode: 'list',
-      entity: 'workflow',
+      entity: 'activity',
       primaryKey: 'name',
-      title: 'Workflows',
+      title: 'Activities',
       onAdd: () => {
         route.push(`/workflow/new`);
       },
@@ -34,9 +33,6 @@ export function Entity({ children }: { children: React.ReactNode }) {
       pagination: true,
       searchable: true,
       sortable: true,
-      // onSearch: (search) => {
-      //   // console.log('search', search);
-      // },
 
       columns: [
         {
@@ -58,16 +54,9 @@ export function Entity({ children }: { children: React.ReactNode }) {
     };
   }, [route]);
 
-  // const onRequestChange = useCallback(
-  //   (request: CollectionQuery) => {
-  //     trigger({ id: workflowId, collectionQuery: request });
-  //   },
-  //   [trigger, workflowId],
-  // );
-
-  // useEffect(() => {
-  //   setOnRequest(onRequestChange);
-  // }, [onRequestChange, onRequest]);
+  const onRequestChange = (request: CollectionQuery) => {
+    trigger(request);
+  };
 
   const mode =
     pathname === `/workflow`
@@ -80,17 +69,11 @@ export function Entity({ children }: { children: React.ReactNode }) {
     <EntityLayout
       mode={mode}
       config={config}
-      data={[
-        {
-          id: '1f344819-d64d-4986-b192-ee06f5bf0e98',
-          name: 'preBudgetApproval',
-          workflowId: 'b769aa67-b135-48b2-9060-72b11336d61f',
-        },
-      ]}
-      total={3}
-      // onRequestChange={onRequestChange}
-      // isLoading={isFetching}
+      data={activities?.items ?? []}
+      total={activities?.total ?? 0}
       detail={children}
+      isLoading={isFetching}
+      onRequestChange={onRequestChange}
     />
   );
 }

@@ -13,7 +13,11 @@ export const workflowApi = createApi({
     getWorkflowInstance: builder.query<any, string>({
       query: (id: string) => `instance/${id}`,
     }),
+    getActivities: builder.query<any, any>({
+      query: () => `activities`,
+    }),
   }),
 });
 
-export const { useGetWorkflowInstanceQuery } = workflowApi;
+export const { useGetWorkflowInstanceQuery, useGetActivitiesQuery } =
+  workflowApi;
