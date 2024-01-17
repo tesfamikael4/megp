@@ -35,9 +35,9 @@ export class DefaultStepService extends ExtraCrudService<DefaultStep> {
     return defaultSteps;
   }
 
-  async order(id): Promise<any> {
+  async order(id, organizationId): Promise<any> {
     const [items, total] = await this.repositoryDefaultStep.findAndCount({
-      where: { activityId: id },
+      where: { activityId: id, organizationId: organizationId },
       order: { order: 'ASC' },
     });
     return { items, total };
