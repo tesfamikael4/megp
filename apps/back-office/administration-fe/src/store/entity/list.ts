@@ -93,11 +93,7 @@ export const ENTITY_LIST: EntityStoreConfig[] = [
     baseUrl:
       process.env.NEXT_PUBLIC_ADMINISTRATION_API ?? '/administration/api/',
   },
-  {
-    entity: 'budget-categories',
-    baseUrl:
-      process.env.NEXT_PUBLIC_ADMINISTRATION_API ?? '/administration/api/',
-  },
+
   {
     entity: 'organizations',
     baseUrl: process.env.NEXT_PUBLIC_IAM_API ?? '/iam/api/',

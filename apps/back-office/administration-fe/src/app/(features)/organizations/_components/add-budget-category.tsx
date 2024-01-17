@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from 'react';
 import { Modal } from '@mantine/core';
 import { CollectionQuery, Relation, RelationConfig } from '@megp/entity';
-import { useLazyListQuery } from '@/app/(features)/organizations/_api/budget-categories.api';
 
 import { useParams } from 'next/navigation';
 import { TableConfig, logger, notify } from '@megp/core-fe';
@@ -14,6 +13,7 @@ import {
   useLazyGetBudgetCategoriesQuery,
 } from '@/store/api/budget-category/budge-category.api';
 import { CollectionSelector } from './collection-selector';
+import { useLazyListQuery } from '../../lookup/budget-category/_api/budget-category.api';
 
 const AddEntityModal = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -68,6 +68,7 @@ const AddEntityModal = () => {
       setIsModalOpen(true);
     },
   };
+  logger.log(organizationBugetCategories);
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
@@ -80,14 +81,14 @@ const AddEntityModal = () => {
   }, [id, isCollapsed, trigger]);
 
   useEffect(() => {
+    logger.log(organizationBugetCategories);
     if (isSuccess) {
-      setCurrentAssigned(
-        organizationBugetCategories
-          ? organizationBugetCategories.map(
-              (budgetCate: any) => budgetCate.budgetCategory,
-            )
-          : [],
-      );
+      const cat = organizationBugetCategories
+        ? organizationBugetCategories.map(
+            (budgetCate: any) => budgetCate.budgetCategory,
+          )
+        : [];
+      setCurrentAssigned(cat.filter((item) => item !== null));
     }
   }, [isSuccess, organizationBugetCategories]);
 
@@ -95,7 +96,7 @@ const AddEntityModal = () => {
     triggerBudgetCategory(undefined);
   }, [isCollapsed, triggerBudgetCategory, user?.organization?.id]);
 
-  logger.log(data);
+  logger.log(currentAssigned);
 
   const onRequestChange = (request: CollectionQuery) => {
     isModalOpen && id;
@@ -110,12 +111,13 @@ const AddEntityModal = () => {
       },
     ],
   };
+  logger.log(currentAssigned);
 
   return (
     <>
       <Relation
         config={relationConfig}
-        data={currentAssigned}
+        data={currentAssigned ?? []}
         setIsCollapsed={setIsCollapsed}
         isSaving={isSaving}
       />
