@@ -35,7 +35,11 @@ export class DefaultStepController extends ExtraCrudController<DefaultStep>(
     description: 'Collection Query Parameter. Optional',
     required: false,
   })
-  async findAll(@Param('id') id: string): Promise<any> {
-    return this.defaultStepService.order(id);
+  async findAll(
+    @Param('id') id: string,
+    @CurrentUser() user: any,
+  ): Promise<any> {
+    const organizationId = user.organization.id;
+    return this.defaultStepService.order(id, organizationId);
   }
 }
