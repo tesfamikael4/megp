@@ -40,7 +40,7 @@ export class StepService extends ExtraCrudService<Step> {
     if (preStep.length > 0) {
       await this.repositoryStep.delete(preStep as any);
     }
-    steps.map((step) => {
+    steps.forEach((step) => {
       step.organizationId = organizationId;
     });
     const items = this.repositoryStep.create(steps);

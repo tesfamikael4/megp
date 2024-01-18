@@ -4,6 +4,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from './shared/typeorm/typeorm.service';
 import { AuthorizationModule } from './shared/authorization/authorization.module';
 import { WorkflowModule } from './modules/workflow/workflow.module';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import {
+  TenantInterceptor,
+  TransactionInterceptor,
+} from './shared/interceptors';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -16,7 +21,16 @@ import { WorkflowModule } from './modules/workflow/workflow.module';
     AuthorizationModule,
     WorkflowModule,
   ],
-  providers: [],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: TransactionInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: TenantInterceptor,
+    },
+  ],
   controllers: [],
 })
 export class AppModule {}
