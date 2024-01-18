@@ -15,13 +15,13 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
-import { notify } from '@megp/core-fe';
+import { logger, notify } from '@megp/core-fe';
 import { IconChevronDown, IconChevronUp, IconCoins } from '@tabler/icons-react';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { StatisticCard } from './statistic-card';
 import { useLazyGetBudgetYearQuery } from '@/store/api/budget/budget-year.api';
-import { useLazyListByIdQuery } from '../_api/pr-activity.api';
+import { useLazyListPrActivityQuery } from '../_api/custom.api';
 
 const PlanYearTab = () => {
   const badgeColor = {
@@ -33,14 +33,15 @@ const PlanYearTab = () => {
   };
 
   //states
-  const [opened, { toggle }] = useDisclosure(true);
+  const [opened, { toggle }] = useDisclosure(false);
   const [mode, setMode] = useState('plan');
 
   const [triggerPr, { data: pr }] = useLazyReadQuery();
   const { id } = useParams();
-  const [trigger, { data: assignedActivity }] = useLazyListByIdQuery();
+  const [trigger, { data: assignedActivity }] = useLazyListPrActivityQuery();
 
   // rtk queries
+  logger.log(assignedActivity);
 
   const [getplan, { data: plan }] = useLazyGetBudgetYearQuery();
 
@@ -52,7 +53,7 @@ const PlanYearTab = () => {
       centered: true,
       children: (
         <Text size="sm">
-          {`Are you sure you want to submit  APP ${pr?.title}?  (Pre-Budget)`}
+          {`Are you sure you want to submit  procurement requisition  ${pr?.title}`}
         </Text>
       ),
       labels: { confirm: 'Yes', cancel: 'No' },

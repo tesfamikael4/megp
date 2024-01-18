@@ -3,6 +3,7 @@ import entityApi from './entity/api';
 import { budgetApi } from './api/budget/budget-year.api';
 import { postBudgetPlanApi } from './api/requsition';
 import { administrationApi } from './api/administration/administration.api';
+import { customApi } from '@/app/(features)/_api/custom.api';
 
 const { reducers, middleware } = entityApi;
 
@@ -12,6 +13,7 @@ export const store = configureStore({
     [budgetApi.reducerPath]: budgetApi.reducer,
     [postBudgetPlanApi.reducerPath]: postBudgetPlanApi.reducer,
     [administrationApi.reducerPath]: administrationApi.reducer,
+    [customApi.reducerPath]: customApi.reducer,
   },
   devTools: process.env.NODE_ENV !== 'production',
   middleware: (getDefaultMiddleware) =>
@@ -20,6 +22,7 @@ export const store = configureStore({
       budgetApi.middleware,
       postBudgetPlanApi.middleware,
       administrationApi.middleware,
+      customApi.middleware,
     ]),
 });
 

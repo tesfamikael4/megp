@@ -10,15 +10,15 @@ import {
 import { Controller, useForm } from 'react-hook-form';
 import { EntityButton } from '@megp/entity';
 import { ZodType, z } from 'zod';
-import { notify } from '@megp/core-fe';
+import { logger, notify } from '@megp/core-fe';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import {
-  useCreateMutation,
-  useLazyListByIdQuery,
-  useUpdateMutation,
-} from '../_api/mechanization.api';
+  useCreateMechanismMutation,
+  useUpdateMechanismMutation,
+  useLazyListMechanismByIdQuery,
+} from '@/app/(features)/_api/custom.api';
 import { FrameworkSelector } from './framework-selector';
 import { useLazyListByIdQuery as useLazyGetAssignedActivitiesQuery } from '../_api/pr-activity.api';
 import {
@@ -58,9 +58,9 @@ export const ActivityMechanization = () => {
   const fundingSource = watch('fundingSource');
   const [assignedActivities, setAssignedActivities] = useState<any>();
 
-  const [create, { isLoading: isCreating }] = useCreateMutation();
+  const [create, { isLoading: isCreating }] = useCreateMechanismMutation();
 
-  const [update, { isLoading: isUpdating }] = useUpdateMutation();
+  const [update, { isLoading: isUpdating }] = useUpdateMechanismMutation();
   const [trigger, { data: assignedActivity }] =
     useLazyGetAssignedActivitiesQuery();
 
@@ -76,7 +76,7 @@ export const ActivityMechanization = () => {
       isLoading: isGetMechanismLoading,
       isSuccess: isGetMechanismSuccess,
     },
-  ] = useLazyListByIdQuery();
+  ] = useLazyListMechanismByIdQuery();
 
   const { id } = useParams();
   const [contract, setContract] = useState({});
@@ -84,7 +84,12 @@ export const ActivityMechanization = () => {
   const [donor, setDonor] = useState<string[]>([]);
   const onCreate = async (data) => {
     try {
-      await create(data).unwrap();
+      await create({
+        ...data,
+        procurementRequisitionId: id?.toString(),
+        donor,
+        contract,
+      }).unwrap();
       notify('Success', 'Procurement mechanization saved successfully');
     } catch (err) {
       notify('Error', 'Something went wrong');
@@ -95,6 +100,7 @@ export const ActivityMechanization = () => {
       ...mechanism?.items[0],
       ...data,
       contract,
+      procurementRequisitionId: id?.toString(),
       donor,
     };
 
@@ -150,14 +156,15 @@ export const ActivityMechanization = () => {
 
   useEffect(() => {
     if (isGetMechanismSuccess && mechanism?.total == 1) {
+      logger.log(mechanism);
       setMode('detail');
-      setValue('fundingSource', mechanism.items[0].fundingSource);
-      setValue('isOnline', mechanism.items[0].isOnline);
-      setValue('procurementMethod', mechanism.items[0].procurementMethod);
-      setValue('procurementType', mechanism.items[0].procurementType);
-      setValue('targetGroup', mechanism.items[0].targetGroup);
-      setDonor(mechanism.items[0].donor);
-      setContract(mechanism.items[0].contract);
+      setValue('fundingSource', mechanism?.items[0]?.fundingSource);
+      setValue('isOnline', mechanism.items[0]?.isOnline);
+      setValue('procurementMethod', mechanism.items[0]?.procurementMethod);
+      setValue('procurementType', mechanism.items[0]?.procurementType);
+      setValue('targetGroup', mechanism.items[0]?.targetGroup);
+      setDonor(mechanism.items[0]?.donor);
+      setContract(mechanism.items[0]?.contract);
     }
   }, [isGetMechanismSuccess, mechanism]);
 
@@ -189,7 +196,7 @@ export const ActivityMechanization = () => {
         assignedActivities[0]?.postProcurementMechanisms[0]?.contract,
       );
     }
-  }, [assignedActivities, setValue]);
+  }, [assignedActivities, mechanism?.total]);
 
   useEffect(() => {
     const filter = prActivity?.items?.filter(
@@ -202,6 +209,7 @@ export const ActivityMechanization = () => {
     );
     setAssignedActivities(filter);
   }, [assignedActivity, prActivity]);
+  logger.log(assignedActivity);
 
   return (
     <Stack pos="relative">
@@ -248,10 +256,10 @@ export const ActivityMechanization = () => {
               name={name}
               value={value}
               onChange={onChange}
-              disabled={assignedActivities !== null ? true : false}
               label="Procurement Type"
+              disabled={mode === 'detail' && true}
               data={
-                assignedActivities
+                assignedActivity?.total !== 0 && assignedActivities
                   ? [
                       `${assignedActivities[0]?.postProcurementMechanisms[0]?.procurementType}`,
                     ]

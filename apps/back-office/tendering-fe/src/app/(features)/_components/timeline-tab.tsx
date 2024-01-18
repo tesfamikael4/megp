@@ -75,7 +75,7 @@ export default function TimelineTab() {
       },
       {
         id: 'noOfDays',
-        header: 'noOfDays',
+        header: 'No of days',
         accessorKey: 'noOfDays',
         cell: ({ getValue, row, column }) => (
           <Period getValue={getValue} row={row} column={column} />
