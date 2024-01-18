@@ -12,13 +12,16 @@ interface Config {
   expandedRowContent?: (record: any) => React.ReactNode;
   isSearchable?: boolean;
   primaryColumn?: string;
+  isSelectable?: boolean;
+  selectedItems?: any[];
+  setSelectedItems?: (items: any[]) => void;
 }
 
 export const ExpandableTable = ({
   config,
   data,
   onRequestChange,
-  total = 0,
+  total,
 }: {
   config: Config;
   data: any[];
@@ -75,7 +78,7 @@ export const ExpandableTable = ({
         }}
         styles={{
           header: {
-            backgroundColor: 'rgb(209 213 219)',
+            backgroundColor: '#D9D9D9',
           },
         }}
         page={page}
@@ -85,6 +88,8 @@ export const ExpandableTable = ({
         defaultColumnRender={(record, _, accessor) => (
           <p className="line-clamp-2">{record[accessor]}</p>
         )}
+        selectedRecords={config.selectedItems}
+        onSelectedRecordsChange={config.setSelectedItems}
       />
     </>
   );
