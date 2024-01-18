@@ -4,7 +4,7 @@ import { Seeder, SeederConstructor, runSeeder } from 'typeorm-extension';
 
 import dataSource from 'src/shared/typeorm/typeorm-config-helper';
 
-import { seedDesigns, seedRules } from './seed-data';
+import { seedDesigns, seedPossibleReasons, seedRules } from './seed-data';
 import { seedRuleHandlerOptions, seedRuleHandlers } from './seed-rule-handlers';
 import {
   Rule,
@@ -12,6 +12,7 @@ import {
   RuleHandler,
   RuleHandlerOptions,
 } from 'src/entities';
+import { PossibleReasons } from 'src/entities/possible-reasons.entity';
 
 @Injectable()
 export class DataSeeder implements Seeder {
@@ -25,6 +26,8 @@ export class DataSeeder implements Seeder {
       dataSource.getRepository(RuleHandler);
     const repositoryRuleHandlerOptions: Repository<RuleHandlerOptions> =
       dataSource.getRepository(RuleHandlerOptions);
+    const repositoryPossibleReasons: Repository<PossibleReasons> =
+      dataSource.getRepository(PossibleReasons);
 
     await repositoryRuleDesigner.upsert(seedDesigns as any, {
       skipUpdateIfNoValuesChanged: true,
@@ -44,6 +47,11 @@ export class DataSeeder implements Seeder {
     await repositoryRuleHandlerOptions.upsert(seedRuleHandlerOptions as any, {
       skipUpdateIfNoValuesChanged: true,
       conflictPaths: ['key'],
+    });
+
+    await repositoryPossibleReasons.upsert(seedPossibleReasons as any, {
+      skipUpdateIfNoValuesChanged: true,
+      conflictPaths: ['reason'],
     });
   }
 }

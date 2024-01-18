@@ -32,10 +32,16 @@ export class RuleDesignerService extends EntityCrudService<RuleDesigner> {
         return await this.takeAction(designer.actions);
       }
     }
+
+    const possibleReasons = [];
+    designer.possibleReasons.forEach((reason) => {
+      possibleReasons.push(reason.reason);
+    });
+
     return {
       validation: false,
       enforcementMethod: designer.enforcementMethod,
-      possibleReasons: designer.possibleReasons,
+      possibleReasons: possibleReasons,
     };
   }
 
