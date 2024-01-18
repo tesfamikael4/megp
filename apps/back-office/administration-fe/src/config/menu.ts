@@ -31,6 +31,7 @@ export const Menu: MenuItem[] = [
       {
         label: 'Workflow',
         link: '/workflow',
+        permission: ['platform_owner'],
       },
     ],
   },
