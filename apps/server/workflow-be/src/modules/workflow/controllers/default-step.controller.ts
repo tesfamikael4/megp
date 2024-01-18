@@ -2,9 +2,10 @@ import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ApiQuery, ApiTags } from '@nestjs/swagger';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { ExtraCrudController } from 'src/shared/controller';
-import { DefaultStepService } from '../services/defaultStep.service';
+import { DefaultStepService } from '../services/default-step.service';
 import { DefaultStep } from 'src/entities/defaultStep.entity';
 import { CurrentUser } from 'src/shared/authorization';
+import { IgnoreTenantInterceptor } from 'src/shared/decorators';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'activityId',
@@ -20,6 +21,7 @@ export class DefaultStepController extends ExtraCrudController<DefaultStep>(
   }
 
   @Post('bulk-create')
+  @IgnoreTenantInterceptor()
   async bulkCreate(
     @Body() defaultStep: any,
     @CurrentUser() user: any,
@@ -35,6 +37,7 @@ export class DefaultStepController extends ExtraCrudController<DefaultStep>(
     description: 'Collection Query Parameter. Optional',
     required: false,
   })
+  @IgnoreTenantInterceptor()
   async findAll(
     @Param('id') id: string,
     @CurrentUser() user: any,
