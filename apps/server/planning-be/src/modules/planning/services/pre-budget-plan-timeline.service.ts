@@ -24,9 +24,18 @@ export class PreBudgetPlanTimelineService extends ExtraCrudService<PreBudgetPlan
     });
   }
 
-  async bulkCreate(timelines: BulkTimelineDto): Promise<BulkTimelineDto> {
+  async bulkCreate(
+    timelines: BulkTimelineDto,
+    req: any,
+  ): Promise<BulkTimelineDto> {
+    const organizationId = req?.user?.organization?.id;
     this.repositoryPreBudgetPlanTimeline.delete({
       preBudgetPlanActivityId: timelines.timeline[0].preBudgetPlanActivityId,
+      organizationId: organizationId,
+    });
+
+    timelines.timeline.forEach((element) => {
+      element.organizationId = organizationId;
     });
 
     const timeline = this.repositoryPreBudgetPlanTimeline.create(

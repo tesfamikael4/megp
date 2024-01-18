@@ -14,9 +14,18 @@ export class PostBudgetPlanTimelineService extends ExtraCrudService<PostBudgetPl
     super(repositoryPostBudgetPlanTimeline);
   }
 
-  async bulkCreate(timelines: BulkTimelineDto): Promise<BulkTimelineDto> {
+  async bulkCreate(
+    timelines: BulkTimelineDto,
+    req: any,
+  ): Promise<BulkTimelineDto> {
+    const organizationId = req?.user?.organization?.id;
     this.repositoryPostBudgetPlanTimeline.delete({
       postBudgetPlanActivityId: timelines.timeline[0].postBudgetPlanActivityId,
+      organizationId: organizationId,
+    });
+
+    timelines.timeline.forEach((element) => {
+      element.organizationId = organizationId;
     });
 
     const timeline = this.repositoryPostBudgetPlanTimeline.create(

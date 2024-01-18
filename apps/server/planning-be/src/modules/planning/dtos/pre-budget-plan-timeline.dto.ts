@@ -32,6 +32,10 @@ export class CreatePreBudgetPlanTimelineDto {
   @ApiProperty()
   @IsString()
   status: string;
+
+  @ApiProperty()
+  @IsString()
+  organizationId: string;
 }
 
 export class UpdatePreBudgetPlanTimelineDto extends CreatePreBudgetPlanTimelineDto {
