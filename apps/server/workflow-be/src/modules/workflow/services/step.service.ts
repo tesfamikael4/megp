@@ -16,7 +16,8 @@ export class StepService extends ExtraCrudService<Step> {
     super(repositoryStep);
   }
 
-  async bulkCreate(steps: Step[]): Promise<Step[]> {
+  async bulkCreate(steps: Step[], req: any): Promise<Step[]> {
+    const organizationId = req?.user?.organization?.id;
     if (steps.some((obj) => obj.type === 'mandatory')) {
       const defaultSteps = await this.repositoryDefaultStep.find({
         where: {
@@ -31,7 +32,10 @@ export class StepService extends ExtraCrudService<Step> {
       }
     }
     const preStep = await this.repositoryStep.find({
-      where: { activityId: steps[0].activityId },
+      where: {
+        activityId: steps[0].activityId,
+        organizationId: organizationId,
+      },
     });
     if (preStep.length > 0) {
       await this.repositoryStep.delete(preStep as any);
