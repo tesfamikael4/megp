@@ -21,6 +21,7 @@ import { useParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import { ProcurementRequisition } from '@/models/procurement-requsition';
 import { notify } from '@megp/core-fe';
+import { useLazyGetBudgetYearQuery } from '@/store/api/budget/budget-year.api';
 
 interface FormDetailProps {
   mode: 'new' | 'detail';
@@ -60,15 +61,16 @@ export function FormDetail({ mode }: FormDetailProps) {
     isLoading,
   } = useReadQuery(id?.toString());
 
+  const [triggerBudjet, { data: budget }] = useLazyGetBudgetYearQuery();
+
   const onCreate = async (data) => {
     const sent = {
       ...data,
       organization: {},
       budgetYear: {
-        budgetYearId: 'string',
-        budgetYear: 'string',
+        budgetYearId: budget?.items?.budgetYearId,
+        budgetYear: budget?.items?.budgetYear,
       },
-      currency: 'USD',
     };
     try {
       const result = await create(sent);
@@ -77,7 +79,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       }
       notify('Success', 'Procurement requisition created successfully');
     } catch (err) {
-      notify('Error', 'Error in creating organization');
+      notify('Error', 'Error in creating Procurement requisition');
     }
   };
 
@@ -112,6 +114,10 @@ export function FormDetail({ mode }: FormDetailProps) {
     }
   }, [mode, reset, selected, selectedSuccess]);
 
+  useEffect(() => {
+    triggerBudjet(undefined);
+  }, [triggerBudjet]);
+
   return (
     <Stack pos="relative">
       {mode == 'detail' && <LoadingOverlay visible={isLoading} />}
@@ -139,7 +145,7 @@ export function FormDetail({ mode }: FormDetailProps) {
         isSaving={isSaving}
         isUpdating={isUpdating}
         isDeleting={isDeleting}
-        entity="organization"
+        entity="Procurement requisition"
       />
     </Stack>
   );

@@ -9,7 +9,7 @@ import {
   Radio,
   Text,
 } from '@mantine/core';
-import { Table, TableConfig, notify } from '@megp/core-fe';
+import { Table, TableConfig, logger, notify } from '@megp/core-fe';
 import { useDisclosure } from '@mantine/hooks';
 import { IconPlus } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
@@ -17,11 +17,9 @@ import {
   useLazyGetActivitiesQuery,
   useLazyGetBudgetYearQuery,
 } from '@/store/api/budget/budget-year.api';
-import { useParams, useRouter } from 'next/navigation';
-import {
-  useCreateMutation,
-  useLazyListByIdQuery as useLazyListPrActivityQuery,
-} from '../_api/pr-activity.api';
+import { useParams } from 'next/navigation';
+import { useLazyListPrActivityQuery } from '../_api/custom.api';
+import { useCreateActivityMutation } from '@/app/(features)/_api/custom.api';
 import GetActivity from './get-activity';
 
 export function Activities() {
@@ -32,7 +30,7 @@ export function Activities() {
   const [modifiedData, setModifiedData] = useState<any[]>([]);
   const [selected, setSelected] = useState<any | any[]>([]);
   const [data, setData] = useState<any[]>([]);
-  const [addActivity, { isLoading, isSuccess: added }] = useCreateMutation();
+  const [addActivity, { isLoading }] = useCreateActivityMutation();
   const [filtered, setFiltered] = useState<any[]>([]);
   const [finalData, setFinalData] = useState<any[]>([]);
   const [trigger, { data: assignedActivity, isSuccess: assigned }] =
@@ -42,8 +40,6 @@ export function Activities() {
   const { id } = useParams();
   const [triggerBudjet, { data: budget, isSuccess: budgetFeatched }] =
     useLazyGetBudgetYearQuery();
-
-  const router = useRouter();
 
   const config: TableConfig<any> = {
     columns: [
@@ -194,7 +190,6 @@ export function Activities() {
         annualProcurementPlanActivity: [`${selected.id}`],
       }).unwrap();
 
-      added && router.push(`/procurement-requisition/${id}`);
       notify('Success', 'Activity added successfully');
     } catch (err) {
       notify('Error', 'Something Went wrong');
@@ -267,6 +262,7 @@ export function Activities() {
 
     setFinalData(modifyActivity);
   };
+
   return (
     <Box>
       <Group justify="end" className="my-2" gap="md">

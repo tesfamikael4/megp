@@ -21,15 +21,18 @@ import {
   IconTrash,
 } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
-import { useLazyGetUnitOfMeasurementsQuery } from '@/store/api/administration/administration.api';
-import { notifications } from '@mantine/notifications';
+import { useParams, useRouter } from 'next/navigation';
+import {
+  useLazyGetItemMasterQuery,
+  useLazyGetUnitOfMeasurementsQuery,
+} from '@/store/api/administration/administration.api';
 import {
   useDeleteMutation,
-  useLazyListByIdQuery,
   useUpdateMutation,
   useCreateMutation,
 } from '../_api/items.api';
+import { useLazyListItemByIdQuery } from '@/app/(features)/_api/custom.api';
+
 import { modals } from '@mantine/modals';
 import { DetailItem } from './deatil-item';
 import ItemSelector from '@/app/(features)/_components/item-selector';
@@ -40,13 +43,15 @@ export function Items() {
   const [openedImportModal, { close: closeImportModal }] = useDisclosure(false);
   const [data, setData] = useState<any[]>([]);
   const [newItems, setNewItems] = useState<any[]>([]);
-  const [trigerItems, { data: itemsList, isSuccess }] = useLazyListByIdQuery();
+  const [trigerItems, { data: itemsList, isSuccess }] =
+    useLazyListItemByIdQuery();
 
   const [addItems, { isLoading: isAddingItems }] = useCreateMutation();
 
-  const [removeItem] = useDeleteMutation();
+  // const [removeItem] = useDeleteMutation();
   const [updateItem] = useUpdateMutation();
   const { id } = useParams();
+  const route = useRouter();
 
   const config: TableConfig<any> = {
     columns: [
@@ -162,29 +167,29 @@ export function Items() {
 
   const Action = ({ cell }: any) => {
     const [opened, { open, close }] = useDisclosure(false);
-    const openDeleteModal = () => {
-      modals.openConfirmModal({
-        title: `Delete ${cell.description}`,
-        centered: true,
-        children: (
-          <Text size="sm">
-            {`Are you sure you want to delete this ${cell.description} `}
-          </Text>
-        ),
-        labels: { confirm: 'Yes', cancel: 'No' },
-        confirmProps: { color: 'red' },
-        onConfirm: handleDelete,
-      });
-    };
-    const handleDelete = async () => {
-      try {
-        await removeItem(cell.id).unwrap();
-        notify('Success', 'Item Deleted Successfully');
-      } catch (err) {
-        logger.log(err);
-        notify('Error', 'Something went wrong');
-      }
-    };
+    // const openDeleteModal = () => {
+    //   modals.openConfirmModal({
+    //     title: `Delete ${cell.description}`,
+    //     centered: true,
+    //     children: (
+    //       <Text size="sm">
+    //         {`Are you sure you want to delete this ${cell.description} `}
+    //       </Text>
+    //     ),
+    //     labels: { confirm: 'Yes', cancel: 'No' },
+    //     confirmProps: { color: 'red' },
+    //     onConfirm: handleDelete,
+    //   });
+    // };
+    // const handleDelete = async () => {
+    //   try {
+    //     await removeItem(cell.id).unwrap();
+    //     notify('Success', 'Item Deleted Successfully');
+    //   } catch (err) {
+    //     logger.log(err);
+    //     notify('Error', 'Something went wrong');
+    //   }
+    // };
 
     return (
       <>
@@ -197,7 +202,7 @@ export function Items() {
             <Menu.Item leftSection={<IconEye size={15} />} onClick={open}>
               Detail
             </Menu.Item>
-            {cell.annualProcurementPlanBudgetLineId !== null && (
+            {/* {cell.annualProcurementPlanBudgetLineId !== null && (
               <>
                 <Menu.Divider />
                 <Menu.Item
@@ -208,7 +213,7 @@ export function Items() {
                   Delete
                 </Menu.Item>
               </>
-            )}
+            )} */}
           </Menu.Dropdown>
         </Menu>
 
@@ -378,6 +383,7 @@ export function Items() {
   const handelOnSave = async () => {
     try {
       await addItems(newItems).unwrap();
+      route.push(`/procurement-requisition/${id}`);
       notify('Success', 'Items Created Success-fully');
       setNewItems([]);
     } catch (err) {
