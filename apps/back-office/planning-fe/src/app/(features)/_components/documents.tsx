@@ -5,6 +5,7 @@ import {
   Button,
   FileInput,
   Group,
+  LoadingOverlay,
   Menu,
   Modal,
   Text,
@@ -21,7 +22,7 @@ import {
   IconTrash,
   IconUpload,
 } from '@tabler/icons-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   useGetFilesQuery,
@@ -29,6 +30,8 @@ import {
   usePreSignedUrlMutation,
 } from '@/store/api/pre-budget-plan/pre-budget-plan.api';
 import { useParams } from 'next/navigation';
+import { ExpandableTable } from './expandable-table';
+import { FileViewer } from './file-viewer';
 
 export const Documents = ({
   disableFields = false,
@@ -45,30 +48,30 @@ export const Documents = ({
   const [dowloadFile, { isLoading: isDownloading }] =
     useLazyDownloadFilesQuery();
   const [isLoading, setIsLoading] = useState(false);
-  const config: TableConfig<any> = {
+  const config = {
     columns: [
       {
-        id: 'fileName',
         header: 'Name',
-        accessorKey: 'fileName',
+        accessor: 'fileName',
       },
       {
-        id: 'action',
+        accessor: 'action',
         header: 'Action',
-        cell: ({ row: { original } }) => <Action cell={original} />,
+        render: (record) => <Action data={record} />,
+        width: 70,
       },
     ],
   };
 
-  const Action = ({ cell }: any) => {
+  const Action = ({ data }: any) => {
     const [opened, { open, close }] = useDisclosure(false);
     const openDeleteModal = () => {
       modals.openConfirmModal({
-        title: `Delete ${cell.name}`,
+        title: `Delete ${data.name}`,
         centered: true,
         children: (
           <Text size="sm">
-            {`Are you sure you want to delete this ${cell.name} `}
+            {`Are you sure you want to delete this ${data.name} `}
           </Text>
         ),
         labels: { confirm: 'Yes', cancel: 'No' },
@@ -78,14 +81,14 @@ export const Documents = ({
     };
     const handleDownload = async () => {
       try {
-        const res = await dowloadFile(cell.id).unwrap();
+        const res = await dowloadFile(data.id).unwrap();
         await fetch(res.presignedUrl)
           .then((res) => res.blob())
           .then((blob) => {
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = cell.fileName;
+            a.download = data.fileName;
             document.body.appendChild(a);
             a.click();
           });
@@ -111,6 +114,7 @@ export const Documents = ({
         });
       }
     };
+
     return (
       <>
         <Menu shadow="md">
@@ -119,7 +123,13 @@ export const Documents = ({
           </Menu.Target>
 
           <Menu.Dropdown>
-            <Menu.Item leftSection={<IconEye size={15} />} onClick={open}>
+            <Menu.Item
+              leftSection={<IconEye size={15} />}
+              onClick={() => {
+                open();
+                // handleViewer();
+              }}
+            >
               View
             </Menu.Item>
             <Menu.Item
@@ -144,9 +154,12 @@ export const Documents = ({
         <Modal
           opened={opened}
           onClose={close}
-          title={cell.name}
+          title={data.fileName}
           size="xl"
-        ></Modal>
+          pos="relative"
+        >
+          <FilePriview data={data} />
+        </Modal>
       </>
     );
   };
@@ -213,7 +226,8 @@ export const Documents = ({
           Upload
         </Button>
       </Group>
-      <Table data={data?.items ?? []} config={config} />
+      {/* <Table data={data?.items ?? []} config={config} /> */}
+      <ExpandableTable data={data?.items ?? []} config={config} />
 
       <Modal title="Upload New Document" opened={opened} onClose={close}>
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -244,5 +258,19 @@ export const Documents = ({
         </form>
       </Modal>
     </Box>
+  );
+};
+
+const FilePriview = ({ data }: { data: any }) => {
+  const [dowloadFile, { data: url, isLoading }] = useLazyDownloadFilesQuery();
+
+  useEffect(() => {
+    dowloadFile(data.id);
+  }, [data]);
+  return (
+    <>
+      <LoadingOverlay visible={isLoading} />
+      <FileViewer url={url?.presignedUrl ?? ''} filename={data.fileName} />
+    </>
   );
 };
