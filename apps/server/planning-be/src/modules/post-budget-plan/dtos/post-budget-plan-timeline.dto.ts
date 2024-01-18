@@ -36,6 +36,10 @@ export class CreatePostBudgetPlanTimelineDto {
   @ApiProperty()
   @IsString()
   status: string;
+
+  @ApiProperty()
+  @IsString()
+  organizationId: string;
 }
 
 export class UpdatePostBudgetPlanTimelineDto extends CreatePostBudgetPlanTimelineDto {

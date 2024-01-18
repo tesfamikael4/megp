@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, Req } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { PostBudgetPlanTimeline } from 'src/entities';
 import { PostBudgetPlanTimelineService } from '../services/post-budget-plan-timeline.service';
@@ -23,7 +23,8 @@ export class PostBudgetPlanTimelineController extends ExtraCrudController<PostBu
   @Post('bulk-create')
   async bulkCreate(
     @Body() timelines: BulkTimelineDto,
+    @Req() req: any,
   ): Promise<BulkTimelineDto> {
-    return this.postBudgetPlanTimelineService.bulkCreate(timelines);
+    return this.postBudgetPlanTimelineService.bulkCreate(timelines, req);
   }
 }
