@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  ActionIcon,
   Box,
   Button,
   Flex,
@@ -39,10 +40,11 @@ import {
   useUpdateMutation as useUpdatePostMutation,
 } from '../_api/post-items.api';
 import { modals } from '@mantine/modals';
-import { DetailItem } from './deatil-item';
 import ItemSelector from '@/app/(features)/_components/item-selector';
 import DataImport from './data-import';
 import { CollectionQuery } from '@megp/entity';
+import { ExpandableTable } from './expandable-table';
+import { ItemDetailForm } from './item-form-detail';
 
 export function Items({
   page,
@@ -52,9 +54,10 @@ export function Items({
   disableFields?: boolean;
 }) {
   const [opened, { open, close }] = useDisclosure(false);
-  const [openedImportModal, { close: closeImportModal }] = useDisclosure(false);
-  //   { open: openImportModal, close: closeImportModal },
-  // ] = useDisclosure(false);
+  const [
+    openedImportModal,
+    { close: closeImportModal, open: openImportModal },
+  ] = useDisclosure(false);
   const [data, setData] = useState<any[]>([]);
   const [total, setTotal] = useState<number>(0);
   const [newItems, setNewItems] = useState<any[]>([]);
@@ -71,94 +74,53 @@ export function Items({
     useLazyListPostByIdQuery();
   const [removePre] = useDeleteMutation();
   const [removePost] = useDeletePostMutation();
-  const [updatePre] = useUpdateMutation();
-  const [updatePost] = useUpdatePostMutation();
+  const [updatePre, { isLoading: isPreUpdating }] = useUpdateMutation();
+  const [updatePost, { isLoading: isPostUpdating }] = useUpdatePostMutation();
   const { id } = useParams();
 
-  const config: TableConfig<any> = {
+  const config = {
+    isExpandable: true,
     columns: [
+      { accessor: 'description', title: 'Description' },
       {
-        header: 'Description',
-        accessorKey: 'description',
+        title: 'UoM',
+        accessor: 'uomName',
+        width: 200,
       },
       {
-        id: 'uomName',
-        header: 'UoM',
-        accessorKey: 'uomName',
+        accessor: 'quantity',
+        width: 100,
       },
       {
-        id: 'quantity',
-        header: 'Quantity',
-        accessorKey: 'quantity',
-        cell: ({ getValue, row, column }) => (
-          <Quantity getValue={getValue} row={row} column={column} />
-        ),
-      },
-      {
-        id: 'unitPrice',
-        header: () => <div className="text-end">Unit Price</div>,
-        accessorKey: 'unitPrice',
-        cell: ({ getValue, row, column }) => (
-          <EstimatedPrice getValue={getValue} row={row} column={column} />
-        ),
+        title: 'Unit Price',
+        textAlign: 'center',
+        accessor: 'unitPrice',
+        width: 100,
+        render: (record) => {
+          return (
+            <p>
+              {parseInt(record.unitPrice).toLocaleString('en-US', {
+                style: 'currency',
+                currency: record?.currency,
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+                currencyDisplay: 'code',
+              })}
+            </p>
+          );
+        },
       },
 
       {
-        id: 'totalEstimatedAmount',
-        header: 'Total',
-        accessorKey: 'totalEstimatedAmount',
-        cell: ({ row: { original } }: any) => (
-          <>
-            {original.currency} {original.unitPrice * original.quantity}
-          </>
-        ),
-      },
-    ],
-  };
-  const listConfig: TableConfig<any> = {
-    pagination: true,
-    primaryColumn: 'description',
-    columns: [
-      {
-        header: 'Description',
-        accessorKey: 'description',
-      },
-      {
-        id: 'uomName',
-        header: 'UoM',
-        accessorKey: 'uomName',
-      },
-      {
-        id: 'quantity',
-        header: 'Quantity',
-        accessorKey: 'quantity',
-        cell: ({ getValue, row, column }) => (
-          <Quantity getValue={getValue} row={row} column={column} />
-        ),
-      },
-      {
-        id: 'unitPrice',
-        header: () => <div className="text-end">Unit Price</div>,
-        accessorKey: 'unitPrice',
-        cell: ({ getValue, row, column }) => (
-          <EstimatedPrice
-            getValue={getValue}
-            row={row}
-            column={column}
-            mode="update"
-          />
-        ),
-      },
-
-      {
-        id: 'totalEstimatedAmount',
-        header: () => <div className="text-end">Total</div>,
-        accessorKey: 'totalEstimatedAmount',
-        cell: ({ row: { original } }: any) => (
+        title: 'Total',
+        accessor: 'total',
+        textAlign: 'right',
+        width: 150,
+        render: (record) => (
           <p className="text-right">
-            {(original.unitPrice * original.quantity).toLocaleString('en-US', {
+            {(record.unitPrice * record.quantity).toLocaleString('en-US', {
               style: 'currency',
-              currency: original?.currency,
+              currency: record?.currency,
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
               currencyDisplay: 'code',
@@ -166,247 +128,109 @@ export function Items({
           </p>
         ),
       },
+    ],
+  };
+
+  const addConfig = {
+    ...config,
+    // expandedRowContent: (record) => <ItemDetailForm item={record} />,
+  };
+  const listConfig = {
+    ...config,
+    expandedRowContent: (record) => (
+      <ItemDetailForm
+        item={record}
+        onSave={handleUpdate}
+        isLoading={isPreUpdating || isPostUpdating}
+      />
+    ),
+    columns: [
+      ...config.columns,
       {
-        id: 'action',
-        header: 'Action',
-        accessorKey: 'totalEstimatedAmount',
-        cell: ({ row: { original } }: any) => <Action cell={original} />,
+        title: '',
+        accessor: 'actions',
+        width: 50,
+        render: (record) => (
+          <>
+            <ActionIcon
+              color="red"
+              size="sm"
+              variant="subtle"
+              onClick={(e) => {
+                e.stopPropagation();
+                modals.openConfirmModal({
+                  title: `Delete ${record.description}`,
+                  centered: true,
+                  children: (
+                    <Text size="sm">
+                      {`Are you sure you want to delete this ${record.description} `}
+                    </Text>
+                  ),
+                  labels: { confirm: 'Yes', cancel: 'No' },
+                  confirmProps: { color: 'red' },
+                  onConfirm: () => handleDelete(record.id),
+                });
+              }}
+            >
+              <IconTrash size={14} />
+            </ActionIcon>
+          </>
+        ),
       },
     ],
   };
 
-  const Action = ({ cell }: any) => {
-    const [opened, { open, close }] = useDisclosure(false);
-    const openDeleteModal = () => {
-      modals.openConfirmModal({
-        title: `Delete ${cell.description}`,
-        centered: true,
-        children: (
-          <Text size="sm">
-            {`Are you sure you want to delete this ${cell.description} `}
-          </Text>
-        ),
-        labels: { confirm: 'Yes', cancel: 'No' },
-        confirmProps: { color: 'red' },
-        onConfirm: handleDelete,
+  const handleDelete = async (id) => {
+    try {
+      if (page == 'pre') {
+        await removePre(id).unwrap();
+        notifications.show({
+          title: 'Success',
+          message: 'Item Deleted Successfully',
+          color: 'green',
+        });
+      } else {
+        await removePost(id).unwrap();
+        notifications.show({
+          title: 'Success',
+          message: 'Item Deleted Successfully',
+          color: 'green',
+        });
+      }
+    } catch (err) {
+      logger.log(err);
+      notifications.show({
+        title: 'Error',
+        message: 'Something went wrong',
+        color: 'red',
       });
-    };
-    const handleDelete = async () => {
-      try {
-        if (page == 'pre') {
-          await removePre(cell.id).unwrap();
-          notifications.show({
-            title: 'Success',
-            message: 'Item Deleted Successfully',
-            color: 'green',
-          });
-        } else {
-          await removePost(cell.id).unwrap();
-          notifications.show({
-            title: 'Success',
-            message: 'Item Deleted Successfully',
-            color: 'green',
-          });
-        }
-      } catch (err) {
-        logger.log(err);
-        notifications.show({
-          title: 'Error',
-          message: 'Something went wrong',
-          color: 'red',
-        });
-      }
-    };
-    return (
-      <>
-        <Menu shadow="md">
-          <Menu.Target>
-            <IconDotsVertical className="ml-auto text-gray-500" size={16} />
-          </Menu.Target>
-
-          <Menu.Dropdown>
-            <Menu.Item leftSection={<IconEye size={15} />} onClick={open}>
-              Detail
-            </Menu.Item>
-            <Menu.Divider />
-            <Menu.Item
-              color="red"
-              leftSection={<IconTrash size={15} />}
-              onClick={openDeleteModal}
-              disabled={disableFields}
-            >
-              Delete
-            </Menu.Item>
-          </Menu.Dropdown>
-        </Menu>
-
-        <Modal
-          opened={opened}
-          onClose={close}
-          title={cell.description}
-          size="xl"
-        >
-          <DetailItem data={cell} />
-        </Modal>
-      </>
-    );
+    }
   };
 
-  const EstimatedPrice = ({
-    getValue,
-    row: { index, original },
-    column: { id },
-    mode = 'new',
-  }: any) => {
-    const [isEditorOpened, setIsEditorOpened] = useState(false);
-    const initialValue = getValue();
-    const [value, setValue] = useState(initialValue);
-
-    const updateData = async (data) => {
-      try {
-        if (page == 'pre') {
-          await updatePre(data).unwrap();
-          notifications.show({
-            title: 'Success',
-            message: 'Updated Successfully',
-            color: 'green',
-          });
-        } else {
-          await updatePost(data).unwrap();
-          notifications.show({
-            title: 'Success',
-            message: 'Updated Successfully',
-            color: 'green',
-          });
-        }
-      } catch (err) {
+  const handleUpdate = async (data, id) => {
+    try {
+      if (page == 'pre') {
+        await updatePre({ ...data, id }).unwrap();
         notifications.show({
-          title: 'Error',
-          message: 'Something went wrong',
-          color: 'red',
+          title: 'Success',
+          message: 'Updated Successfully',
+          color: 'green',
+        });
+      } else {
+        await updatePost({ ...data, id }).unwrap();
+        notifications.show({
+          title: 'Success',
+          message: 'Updated Successfully',
+          color: 'green',
         });
       }
-    };
-
-    const onBlur = () => {
-      setIsEditorOpened(false);
-
-      mode == 'new'
-        ? setNewItems((old) =>
-            old.map((row, i) => {
-              if (i === index) {
-                return {
-                  ...old[index],
-                  [id]: value,
-                };
-              }
-              return row;
-            }),
-          )
-        : setData((old) =>
-            old.map((row, i) => {
-              if (i === index) {
-                updateData({ ...old[index], [id]: value });
-                return {
-                  ...old[index],
-                  [id]: value,
-                };
-              }
-              return row;
-            }),
-          );
-    };
-    useEffect(() => {
-      setValue(initialValue);
-    }, [initialValue]);
-    return (
-      <>
-        <Flex
-          gap="sm"
-          justify="end"
-          onDoubleClick={() => setIsEditorOpened(disableFields ? false : true)}
-        >
-          {!isEditorOpened && (
-            <>
-              <Text>
-                {original?.unitPrice.toLocaleString('en-US', {
-                  style: 'currency',
-                  currency: original?.currency,
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                  currencyDisplay: 'code',
-                })}
-              </Text>
-            </>
-          )}
-          {isEditorOpened && (
-            <NumberInput
-              leftSection={original.currency}
-              value={value}
-              onChange={setValue}
-              onBlur={onBlur}
-            />
-          )}
-        </Flex>
-      </>
-    );
-  };
-  const Quantity = ({
-    getValue,
-    row: { index, original },
-    column: { id },
-  }: any) => {
-    const [isEditorOpened, setIsEditorOpened] = useState(false);
-    const initialValue = getValue();
-    const [value, setValue] = useState(initialValue);
-    const [getUoM] = useLazyGetUnitOfMeasurementsQuery();
-    // const [getUoM, { data: uom }] = useLazyGetUnitOfMeasurementsQuery();
-
-    const onBlur = () => {
-      setIsEditorOpened(false);
-
-      setNewItems((old) =>
-        old.map((row, i) => {
-          if (i === index) {
-            return {
-              ...old[index],
-              [id]: value,
-            };
-          }
-          return row;
-        }),
-      );
-    };
-    useEffect(() => {
-      setValue(initialValue);
-    }, [initialValue]);
-    useEffect(() => {
-      isEditorOpened && getUoM(original.measurement);
-    }, [isEditorOpened]);
-    return (
-      <>
-        {!isEditorOpened && (
-          <Text
-            onDoubleClick={() =>
-              setIsEditorOpened(disableFields ? false : true)
-            }
-          >
-            {original?.quantity}
-          </Text>
-          // <Text>{original?.uomName}</Text>
-        )}
-        {isEditorOpened && (
-          <NumberInput value={value} onChange={setValue} onBlur={onBlur} />
-          // {/* <Select
-          //   value={original.uom}
-          //   data={uom?.items?.map((u) => ({
-          //     value: u.id,
-          //     label: u.name,
-          //   }))}
-          // /> */}
-        )}
-      </>
-    );
+    } catch (err) {
+      notifications.show({
+        title: 'Error',
+        message: 'Something went wrong',
+        color: 'red',
+      });
+    }
   };
 
   const handelAddItem = (items) => {
@@ -481,9 +305,9 @@ export function Items({
   return (
     <Box>
       <Group justify="end" className="my-2" gap="md">
-        {/* <Button onClick={openImportModal}>
+        <Button onClick={openImportModal}>
           <IconFileImport size={18} /> Import
-        </Button> */}
+        </Button>
         <Button onClick={open} disabled={disableFields}>
           <IconPlus size={18} /> Add
         </Button>
@@ -493,7 +317,8 @@ export function Items({
           <Text className="text-lg" fw="500">
             New Items
           </Text>
-          <Table config={config} data={newItems} />
+          <ExpandableTable config={addConfig} data={newItems} />
+          {/* <Table config={config} data={newItems} /> */}
           <Flex justify="end" className="my-2" gap="sm">
             <Button
               onClick={handelOnSave}
@@ -512,7 +337,8 @@ export function Items({
           <Text className="text-lg" fw="500">
             Items List
           </Text>
-          <Table
+
+          <ExpandableTable
             config={listConfig}
             data={data}
             total={total}

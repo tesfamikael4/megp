@@ -17,13 +17,14 @@ export const DetailItem = ({ data }: any) => {
     },
     {
       key: 'Unit Price',
-      value: data.unitPrice.toLocaleString('en-US', {
-        style: 'currency',
-        currency: data.currency,
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-        currencyDisplay: 'code',
-      }),
+      value:
+        data?.unitPrice?.toLocaleString('en-US', {
+          style: 'currency',
+          currency: data.currency,
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+          currencyDisplay: 'code',
+        }) ?? 'N/A',
     },
     {
       key: 'Unit of Measurement',
@@ -31,8 +32,8 @@ export const DetailItem = ({ data }: any) => {
     },
   ];
   return (
-    <>
+    <div className="bg-white p-4">
       <DetailTable data={detailData} />
-    </>
+    </div>
   );
 };
