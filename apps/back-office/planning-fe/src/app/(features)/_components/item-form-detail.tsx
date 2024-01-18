@@ -13,7 +13,6 @@ import {
   TextInput,
   Textarea,
 } from '@mantine/core';
-import { logger } from '@megp/core-fe';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z, ZodType } from 'zod';
