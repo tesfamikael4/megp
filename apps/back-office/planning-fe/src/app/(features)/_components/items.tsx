@@ -6,17 +6,13 @@ import {
   Button,
   Flex,
   Group,
-  Menu,
   Modal,
-  NumberInput,
   Text,
 } from '@mantine/core';
-import { Table, TableConfig, logger } from '@megp/core-fe';
+import { logger } from '@megp/core-fe';
 import { useDisclosure } from '@mantine/hooks';
 import {
   IconDeviceFloppy,
-  IconDotsVertical,
-  IconEye,
   IconFileImport,
   IconPlus,
   IconTrash,
@@ -25,7 +21,6 @@ import { useEffect, useState } from 'react';
 import { useLazyReadQuery } from '../_api/activities.api';
 import { useLazyReadQuery as useLazyReadPostActivityQuery } from '../_api/post-activity.api';
 import { useParams } from 'next/navigation';
-import { useLazyGetUnitOfMeasurementsQuery } from '@/store/api/administration/administration.api';
 import { useCreateMultipleItemsMutation } from '@/store/api/pre-budget-plan/pre-budget-plan.api';
 import { useCreateMultipleItemsMutation as usePostCreateMultipleItemsMutation } from '@/store/api/post-budget-plan/post-budget-plan.api';
 import { notifications } from '@mantine/notifications';
