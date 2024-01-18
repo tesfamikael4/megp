@@ -47,8 +47,10 @@ const refactor = (arrObj, uid) => {
     actions: [],
   };
 
-  arrObj.forEach((obj) => {
+  for (const obj of arrObj) {
+    if (!obj.field) continue;
     if (obj.outerConditionArray) {
+      // start a new array inside the array [and condition]
       rule.conditions[rule.conditions.length] = [
         {
           field: obj.field,
@@ -88,7 +90,7 @@ const refactor = (arrObj, uid) => {
         });
       }
     }
-  });
+  }
   return rule;
 };
 
@@ -104,6 +106,7 @@ function toCamelCase(inputString: string): string {
 
 const seedRules: any = [];
 const seedDesigns: any = [];
+const seedPossibeReasons: any = [];
 
 designFormattedArray.forEach((designs) => {
   const uid = uuidv4();
@@ -116,6 +119,14 @@ designFormattedArray.forEach((designs) => {
     id: uid,
   };
   designs.forEach((rules) => {
+    rules.forEach((rule) => {
+      if (rule.possibleReasons) {
+        seedPossibeReasons.push({
+          ruleDesignerId: uid,
+          reason: rule.possibleReasons,
+        });
+      }
+    });
     const temp = refactor(rules, uid);
     tempDesign.actions = temp.actions;
     tempDesign.enforcementMethod = temp.enforcementMethod;
@@ -131,7 +142,9 @@ fs.writeFileSync(
   join(__dirname, 'seed-data.ts'),
   `export const seedRules = ${JSON.stringify(
     seedRules,
-  )} \nexport const seedDesigns = ${JSON.stringify(seedDesigns)}`,
+  )} \nexport const seedDesigns = ${JSON.stringify(
+    seedDesigns,
+  )}\nexport const seedPossibleReasons = ${JSON.stringify(seedPossibeReasons)}`,
 );
 
 Logger.log('👍 Rule Seed Format Generated');

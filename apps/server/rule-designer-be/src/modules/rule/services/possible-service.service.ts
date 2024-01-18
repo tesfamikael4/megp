@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { RuleHandlerOptions } from 'src/entities';
+import { PossibleReasons, RuleHandlerOptions } from 'src/entities';
 import { EntityCrudService, ExtraCrudService } from 'src/shared/service';
 import { Repository } from 'typeorm';
 
 @Injectable()
-export class RuleHandlerOptionsService extends ExtraCrudService<RuleHandlerOptions> {
+export class PossibleReasonsService extends ExtraCrudService<PossibleReasons> {
   constructor(
-    @InjectRepository(RuleHandlerOptions)
-    private readonly repositoryRuleHandlerOptions: Repository<RuleHandlerOptions>,
+    @InjectRepository(PossibleReasons)
+    private readonly repositoryRuleHandlerOptions: Repository<PossibleReasons>,
   ) {
     super(repositoryRuleHandlerOptions);
   }

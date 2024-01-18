@@ -14,13 +14,17 @@ export class PossibleReasons extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ unique: true })
   reason: string;
 
   @Column()
   ruleDesignerId: string;
 
-  @ManyToOne(() => RuleDesigner, (ruleDesigner) => ruleDesigner.possibleReasons)
+  @ManyToOne(
+    () => RuleDesigner,
+    (ruleDesigner) => ruleDesigner.possibleReasons,
+    { onDelete: 'CASCADE', onUpdate: 'CASCADE' },
+  )
   @JoinColumn({ name: 'ruleDesignerId' })
   ruleDesigner: RuleDesigner;
 }
