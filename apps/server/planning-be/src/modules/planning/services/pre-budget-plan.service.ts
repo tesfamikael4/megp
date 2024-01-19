@@ -169,10 +169,11 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
   async copySelectedPreToPost(data: any): Promise<void> {
     try {
       const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
-      const sourceEntity = await this.repositoryPreBudgetPlan.findOneOrFail({
-        where: { id: data.itemId },
-      });
 
+      const sourceEntity = await this.repositoryPreBudgetPlan.findOneOrFail({
+        where: { id: data },
+      });
+      console.log({ sourceEntity });
       await entityManager.getRepository(PreBudgetPlan).update(sourceEntity.id, {
         status: 'Approved',
       });

@@ -16,7 +16,7 @@ import { PreBudgetPlanService } from '../services/pre-budget-plan.service';
 import { ExtraCrudController } from 'src/shared/controller';
 import { EventPattern } from '@nestjs/microservices';
 import { TransactionInterceptor } from 'src/shared/interceptors';
-import { CurrentUser } from 'src/shared/authorization';
+import { AllowAnonymous, CurrentUser } from 'src/shared/authorization';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'appid',
@@ -54,8 +54,8 @@ export class PreBudgetPlanController extends ExtraCrudController<PreBudgetPlan>(
   @Post('approve-pre-budget/:id')
   @ApiPaginatedResponse(PreBudgetPlan)
   @UseInterceptors(TransactionInterceptor)
-  async approvePreBudget(@Param('id') id: string) {
-    return await this.preBudgetPlanService.copySelectedPreToPost(id);
+  async approvePreBudget(@Param('id') id: string, @Body() data: any) {
+    return await this.preBudgetPlanService.copySelectedPreToPost(data.itemId);
   }
 
   @Get(':id/target-group-percentage')
