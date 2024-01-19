@@ -63,7 +63,7 @@ export class PostBudgetPlanItem extends OrgAudit {
   measurement: string;
 
   @Column()
-  uom: string;
+  uomName: string;
 
   @Column()
   classification: string;
