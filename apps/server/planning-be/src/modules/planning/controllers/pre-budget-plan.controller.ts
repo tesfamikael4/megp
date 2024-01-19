@@ -55,6 +55,7 @@ export class PreBudgetPlanController extends ExtraCrudController<PreBudgetPlan>(
   @ApiPaginatedResponse(PreBudgetPlan)
   @UseInterceptors(TransactionInterceptor)
   async approvePreBudget(@Param('id') id: string, @Body() data: any) {
+    console.log({ data });
     return await this.preBudgetPlanService.copySelectedPreToPost(data.itemId);
   }
 
@@ -82,6 +83,7 @@ export class PreBudgetPlanController extends ExtraCrudController<PreBudgetPlan>(
   @ApiPaginatedResponse(PreBudgetPlan)
   @UseInterceptors(TransactionInterceptor)
   async handleApprovedWorkflow(@Body() data: any) {
+    console.log({ data });
     return await this.preBudgetPlanService.copySelectedPreToPost(data);
   }
 

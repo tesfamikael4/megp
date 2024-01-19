@@ -167,6 +167,7 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
   }
 
   async copySelectedPreToPost(data: any): Promise<void> {
+    console.log({ data });
     try {
       const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
 
