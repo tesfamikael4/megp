@@ -262,7 +262,7 @@ export default function WorkflowHandling() {
                       description={
                         <>
                           <Stack className="">
-                            {step?.order < currentStep?.step.order ? (
+                            {step?.order < currentStep?.step?.order ? (
                               <Accordion
                                 styles={{
                                   control: {
