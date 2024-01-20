@@ -17,6 +17,7 @@ import { ExtraCrudController } from 'src/shared/controller';
 import { EventPattern } from '@nestjs/microservices';
 import { TransactionInterceptor } from 'src/shared/interceptors';
 import { AllowAnonymous, CurrentUser } from 'src/shared/authorization';
+import { EntityManager, getManager } from 'typeorm';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'appid',
@@ -81,7 +82,7 @@ export class PreBudgetPlanController extends ExtraCrudController<PreBudgetPlan>(
 
   @EventPattern('workflow-approved')
   @ApiPaginatedResponse(PreBudgetPlan)
-  //@UseInterceptors(TransactionInterceptor)
+  // @UseInterceptors(TransactionInterceptor)
   async handleApprovedWorkflow(@Body() data: any) {
     console.log(`controler ${data}`);
     return await this.preBudgetPlanService.copySelectedPreToPost(data.itemId);
