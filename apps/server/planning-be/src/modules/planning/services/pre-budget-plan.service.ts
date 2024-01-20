@@ -169,9 +169,7 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
   }
 
   async copySelectedPreToPost(data: any): Promise<void> {
-    console.log({ data });
     const queryRunner = this.dataSource.createQueryRunner();
-
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
@@ -179,7 +177,6 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
         where: { id: data },
       });
       queryRunner.manager.connection.transaction(async (entityManager) => {
-        console.log({ sourceEntity });
         await entityManager
           .getRepository(PreBudgetPlan)
           .update(sourceEntity.id, {
