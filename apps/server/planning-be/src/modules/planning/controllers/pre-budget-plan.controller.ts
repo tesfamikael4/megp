@@ -84,7 +84,7 @@ export class PreBudgetPlanController extends ExtraCrudController<PreBudgetPlan>(
   //@UseInterceptors(TransactionInterceptor)
   async handleApprovedWorkflow(@Body() data: any) {
     console.log(`controler ${data}`);
-    return await this.preBudgetPlanService.copySelectedPreToPost(data);
+    return await this.preBudgetPlanService.copySelectedPreToPost(data.itemId);
   }
 
   @Get('hash/:id')
