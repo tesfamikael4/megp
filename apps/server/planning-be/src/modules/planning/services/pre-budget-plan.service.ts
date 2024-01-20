@@ -179,10 +179,6 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
         where: { id: data },
       });
       queryRunner.manager.connection.transaction(async (entityManager) => {
-        await entityManager
-          .getRepository(PreBudgetPlanActivity)
-          .delete({ preBudgetPlanId: data });
-
         console.log({ sourceEntity });
         await entityManager
           .getRepository(PreBudgetPlan)
