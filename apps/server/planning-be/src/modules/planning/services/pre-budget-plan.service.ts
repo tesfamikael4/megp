@@ -1,5 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, Repository } from 'typeorm';
+import { DataSource, EntityManager, Repository } from 'typeorm';
 import {
   HttpException,
   Inject,
@@ -46,6 +46,8 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
 
     @Inject(REQUEST)
     private readonly request: Request,
+
+    private dataSource: DataSource,
   ) {
     super(repositoryPreBudgetPlan);
     planningRMQClient.connect();
@@ -168,98 +170,113 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
 
   async copySelectedPreToPost(data: any): Promise<void> {
     console.log({ data });
-    try {
-      const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+    const queryRunner = this.dataSource.createQueryRunner();
 
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
       const sourceEntity = await this.repositoryPreBudgetPlan.findOneOrFail({
         where: { id: data },
       });
-      console.log({ sourceEntity });
-      await entityManager.getRepository(PreBudgetPlan).update(sourceEntity.id, {
-        status: 'Approved',
-      });
+      queryRunner.manager.connection.transaction(async (entityManager) => {
+        await entityManager
+          .getRepository(PreBudgetPlanActivity)
+          .delete({ preBudgetPlanId: data });
 
-      const activities = await this.preBudgetActivityRepository.find({
-        where: { preBudgetPlanId: data },
-        relations: [
-          'preBudgetPlanItems',
-          'preBudgetPlanTimelines',
-          'preBudgetRequisitioners',
-          'preProcurementMechanisms',
-        ],
-      });
+        console.log({ sourceEntity });
+        await entityManager
+          .getRepository(PreBudgetPlan)
+          .update(sourceEntity.id, {
+            status: 'Approved',
+          });
 
-      if (activities.length == 0) {
-        throw new HttpException(`Activity not found `, 430);
-      }
+        const activities = await this.preBudgetActivityRepository.find({
+          where: { preBudgetPlanId: data },
+          relations: [
+            'preBudgetPlanItems',
+            'preBudgetPlanTimelines',
+            'preBudgetRequisitioners',
+            'preProcurementMechanisms',
+          ],
+        });
 
-      const postBudget = {
-        ...sourceEntity,
-        status: 'Draft',
-        preBudgetPlanId: data,
-        id: undefined,
-      };
-      await entityManager
-        .getRepository(PostBudgetPlan)
-        .insert(postBudget as any);
-
-      const act: any = activities.map((activity) => ({
-        ...activity,
-        postBudgetPlanId: postBudget.id,
-      }));
-
-      await entityManager.getRepository(PostBudgetPlanActivity).insert(act);
-
-      for (const element of act) {
-        try {
-          const item = element.preBudgetPlanItems.map((item) => ({
-            ...item,
-            postBudgetPlanActivityId: element.id,
-            id: undefined,
-          }));
-          await entityManager
-            .getRepository(PostBudgetPlanItem)
-            .insert(item as any);
-
-          if (element.preBudgetPlanTimelines.length == 0) {
-            throw new HttpException(
-              `Timeline not found for ${element.name} ${element.procurementReference}`,
-              430,
-            );
-          }
-
-          const time = element.preBudgetPlanTimelines.map((item) => ({
-            ...item,
-            postBudgetPlanActivityId: element.id,
-            id: undefined,
-          }));
-          await entityManager
-            .getRepository(PostBudgetPlanTimeline)
-            .insert(time as any);
-
-          const requisitioner = element.preBudgetRequisitioners.map((item) => ({
-            ...item,
-            postBudgetPlanActivityId: element.id,
-            id: undefined,
-          }));
-          await entityManager
-            .getRepository(PostBudgetRequisitioner)
-            .insert(requisitioner as any);
-
-          const mechanism = element.preProcurementMechanisms?.map((item) => ({
-            ...item,
-            postBudgetPlanActivityId: element.id,
-            id: undefined,
-          }));
-          await entityManager
-            .getRepository(PostProcurementMechanism)
-            .insert(mechanism as any);
-        } catch (error) {
-          throw error;
+        if (activities.length == 0) {
+          throw new HttpException(`Activity not found `, 430);
         }
-      }
+
+        const postBudget = {
+          ...sourceEntity,
+          status: 'Draft',
+          preBudgetPlanId: data,
+          id: undefined,
+        };
+        await entityManager
+          .getRepository(PostBudgetPlan)
+          .insert(postBudget as any);
+
+        const act: any = activities.map((activity) => ({
+          ...activity,
+          postBudgetPlanId: postBudget.id,
+        }));
+
+        await entityManager.getRepository(PostBudgetPlanActivity).insert(act);
+
+        for (const element of act) {
+          try {
+            const item = element.preBudgetPlanItems.map((item) => ({
+              ...item,
+              postBudgetPlanActivityId: element.id,
+              id: undefined,
+            }));
+            await entityManager
+              .getRepository(PostBudgetPlanItem)
+              .insert(item as any);
+
+            if (element.preBudgetPlanTimelines.length == 0) {
+              throw new HttpException(
+                `Timeline not found for ${element.name} ${element.procurementReference}`,
+                430,
+              );
+            }
+
+            const time = element.preBudgetPlanTimelines.map((item) => ({
+              ...item,
+              postBudgetPlanActivityId: element.id,
+              id: undefined,
+            }));
+            await entityManager
+              .getRepository(PostBudgetPlanTimeline)
+              .insert(time as any);
+
+            const requisitioner = element.preBudgetRequisitioners.map(
+              (item) => ({
+                ...item,
+                postBudgetPlanActivityId: element.id,
+                id: undefined,
+              }),
+            );
+            await entityManager
+              .getRepository(PostBudgetRequisitioner)
+              .insert(requisitioner as any);
+
+            const mechanism = element.preProcurementMechanisms?.map((item) => ({
+              ...item,
+              postBudgetPlanActivityId: element.id,
+              id: undefined,
+            }));
+            await entityManager
+              .getRepository(PostProcurementMechanism)
+              .insert(mechanism as any);
+          } catch (error) {
+            throw error;
+          }
+        }
+      });
     } catch (error) {
+      await queryRunner.rollbackTransaction();
       throw error;
+    } finally {
+      await queryRunner.release();
     }
   }
 
