@@ -1,6 +1,6 @@
 export enum HandlerTypeEnum {
-    Assignee = 'Assignee',
-    PreviousHandler = 'Previous Handler',
-    Requestor = 'Requestor',
-    System = 'System',
+    ASSIGNEE = 'Assignee',
+    PREVIOUS_HANDLER = 'Previous Handler',
+    REQUESTOR = 'Requestor',
+    SYSTEM = 'System',
 }

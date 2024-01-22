@@ -17,7 +17,13 @@ export class BpServiceService extends EntityCrudService<BpServiceEntity> {
     return await this.serviceRepository.find(
       {
         select: { id: true, name: true },
-        where: { key: In([ServiceKeyEnum.IBM, ServiceKeyEnum.MSME]) }
+        where: {
+          key: In([ServiceKeyEnum.IBM,
+          ServiceKeyEnum.MICRO,
+          ServiceKeyEnum.SMALL,
+          ServiceKeyEnum.MEDIUM,
+          ServiceKeyEnum.MARGINALIZED_GROUP])
+        }
       })
   }
 

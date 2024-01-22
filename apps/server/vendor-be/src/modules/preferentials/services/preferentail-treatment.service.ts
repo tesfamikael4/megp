@@ -9,10 +9,10 @@ import { CreateWorkflowInstanceDto } from 'src/modules/handling/dto/workflow-ins
 import { BusinessProcessService } from 'src/modules/bpm/services/business-process.service';
 import { VendorRegistrationsService } from 'src/modules/vendor-registration/services/vendor-registration.service';
 import { BusinessAreaEntity } from 'src/entities';
-import { ApplicationStatus, WorkflowInstanceEnum } from 'src/modules/handling/dto/workflow-instance.enum';
 import { BusinessAreaService } from 'src/modules/vendor-registration/services/business-area.service';
 import { FileService } from 'src/modules/vendor-registration/services/file.service';
 import { ServiceKeyEnum } from 'src/shared/enums/service-key.enum';
+import { ApplicationStatus } from 'src/modules/handling/enums/application-status.enum';
 @Injectable()
 export class PreferentailTreatmentService extends EntityCrudService<PreferentialTreatmentsEntity> {
     constructor(
@@ -86,7 +86,7 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
                 ba.vendorId = vendor.vendor?.id;
                 ba.category = ServiceKeyEnum.preferentialTreatment;
                 ba.applicationNumber = wfiResult.application.applicationNumber;
-                ba.status = WorkflowInstanceEnum.Submitted;
+                ba.status = ApplicationStatus.PENDING;
                 ba.serviceId = dto.serviceId;
                 await this.baService.create(ba);
                 return wfiResult;

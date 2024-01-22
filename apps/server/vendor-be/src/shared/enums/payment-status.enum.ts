@@ -1,4 +1,4 @@
-export enum PaymentEnum {
+export enum PaymentStatus {
     PENDING = 'Pending',
     PAID = 'Paid',
 }

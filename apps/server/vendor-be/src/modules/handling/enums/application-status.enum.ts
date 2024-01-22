@@ -1,6 +1,12 @@
 export enum ApplicationStatus {
     DRAFT = 'Draft',
     SUBMIT = 'Submit',
-    Adjust = 'Adjust',
+    ADJUST = 'Adjust',
     SUBMITTED = 'Submitted',
+    COMPLETED = 'Completed',
+    INPROGRESS = 'Inprogress',
+    APPROVED = 'Approved',
+    REJECTED = 'Rejected',
+    OUTDATED = 'Outdated',
+    PENDING = "Pending"
 }

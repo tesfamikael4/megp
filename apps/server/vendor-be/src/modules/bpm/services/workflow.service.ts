@@ -20,12 +20,7 @@ import {
 import { StateNode, createMachine } from 'xstate';
 import { TaskTypes } from '../dto/task-type.enum';
 import { StateMetaData } from '../dto/state-metadata';
-import {
 
-  HandlerTypeEnum,
-  ReviewStatus,
-  WorkflowInstanceEnum,
-} from '../../handling/dto/workflow-instance.enum';
 import { HandlingCommonService } from '../../handling/services/handling-common-services';
 import axios from 'axios';
 
@@ -48,6 +43,8 @@ import { TaskTrackerResponse } from '../dto/task-tracker.dto';
 import { VendorRegistrationsService } from 'src/modules/vendor-registration/services/vendor-registration.service';
 import { BusinessAreaService } from 'src/modules/vendor-registration/services/business-area.service';
 import { AssignmentEnum } from 'src/modules/handling/enums/assignment.enum';
+import { HandlerTypeEnum } from 'src/modules/handling/enums/handler-type.enum';
+import { ApplicationStatus } from 'src/modules/handling/enums/application-status.enum';
 @Injectable()
 export class WorkflowService {
   VENDOR_API_KEY: string;
@@ -99,6 +96,8 @@ export class WorkflowService {
     const taskHandler = new TaskHandlerEntity();
     response['application'] = wfinstance;
     const init = machine.initial.toString();
+    console.log("init", init)
+    console.log("serviceBp.id", serviceBp.id)
     const task = await this.taskService.getTaskByNameAndBP(serviceBp.id, init);
     if (!task) throw new NotFoundException('Task Not found');
     taskHandler.currentState = init;
@@ -146,12 +145,12 @@ export class WorkflowService {
     const curruntState = currentTaskHandler.currentState;
     const nextStepState = machine.transition(curruntState, nextCommand.action);
     if (nextStepState.value.toString() !== currentTaskHandler.currentState) {
-      workflowInstance.status = WorkflowInstanceEnum.Inprogress;
+      workflowInstance.status = ApplicationStatus.INPROGRESS;
       currentTaskHandler.currentState = nextStepState.value.toString();
       const stateMetaData = this.getStateMetaData(nextStepState.meta);
       console.log('stateMetaData', stateMetaData);
       if (stateMetaData['type'] == 'end') {
-        workflowInstance.status = WorkflowInstanceEnum.Completed;
+        workflowInstance.status = ApplicationStatus.COMPLETED;
         // workflowInstance.businessStatus = BusinessStatusEnum.active;
         const wfInstance = new UpdateWorkflowInstanceDto();
         wfInstance.requestorId = workflowInstance.requestorId;
@@ -173,7 +172,8 @@ export class WorkflowService {
           throw new Error('Unable to update vender status');
         }
       } else {
-
+        // console.log("workflowInstance.bpId,", workflowInstance.bpId,)
+        // console.log("nextStepState.value.toString(),", nextStepState.value.toString())
         const task = await this.taskService.getTaskByNameAndBP(
           workflowInstance.bpId,
           nextStepState.value.toString(),
@@ -203,7 +203,7 @@ export class WorkflowService {
         currentTaskHandler.previousHandlerId = lastExecutedTask
           ? lastExecutedTask.handlerUserId
           : null;
-        if (task.handlerType != HandlerTypeEnum.PreviousHandler) {
+        if (task.handlerType != HandlerTypeEnum.PREVIOUS_HANDLER) {
           currentTaskHandler.handlerUserId = null;
           currentTaskHandler.handlerUser = null;
           currentTaskHandler.assignmentStatus = AssignmentEnum.Unpicked;
@@ -218,7 +218,7 @@ export class WorkflowService {
     if (taskInfo) {
       const handler = taskInfo.handlerType;
       const type = taskInfo.taskType;
-      if (handler == HandlerTypeEnum.System) {
+      if (handler == HandlerTypeEnum.SYSTEM) {
         const nextTaskdto = new GotoNextStateDto();
         nextTaskdto.action = type;
         nextTaskdto.instanceId = workflowInstance.id;
@@ -301,7 +301,7 @@ export class WorkflowService {
     switch (stateMetadata.type.toLowerCase()) {
       case TaskTypes.APPROVAL:
         if (
-          command.action.toUpperCase() == ReviewStatus.Adjust.toUpperCase()
+          command.action.toUpperCase() == ApplicationStatus.ADJUST.toUpperCase()
           // ||  command.action.toUpperCase() == ReviewStatus.Reject.toUpperCase()
         ) {
           return this.notify(wfi, stateMetadata['apiUrl'], command);

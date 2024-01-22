@@ -150,7 +150,7 @@ export class VendorRegistrationsController {
     @CurrentUser() userInfo: any,
     @Body() areaOfBusinessInterest: any[],
   ) {
-    return await this.regService.upgradevendorService(
+    return await this.regService.upgradeVendorService(
       userInfo.id,
       areaOfBusinessInterest,
     );
