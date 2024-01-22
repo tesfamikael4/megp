@@ -33,11 +33,14 @@ export class RuleDesigner extends Audit {
   })
   enforcementMethod: EnforcementMethodEnum;
 
-  @OneToMany(() => Rule, (rules) => rules.designer)
+  @OneToMany(() => Rule, (rules) => rules.designer, { cascade: true })
   rules: Rule[];
 
   @Column({ type: 'jsonb' })
   actions: Action[];
+
+  @Column({ type: 'jsonb', default: [] })
+  defaultActions: Action[];
 
   @OneToMany(
     () => PossibleReasons,

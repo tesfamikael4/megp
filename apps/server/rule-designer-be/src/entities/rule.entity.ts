@@ -4,10 +4,8 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   JoinColumn,
-  OneToMany,
 } from 'typeorm';
 import { RuleDesigner } from './rule-designer.entity';
-import { PossibleReasons } from './possible-reasons.entity';
 import { Audit } from 'src/shared/entities';
 
 type Condition = {
@@ -17,18 +15,6 @@ type Condition = {
   joinType: string;
   operator: string;
 };
-
-// type Action = {
-//   type: string;
-//   name: string;
-//   value: string | string[];
-// };
-
-// export enum EnforcementMethodEnum {
-//   MANDATORY = 'MANDATORY',
-//   OPTIONAL = 'OPTIONAL',
-//   FLAG = 'FLAG',
-// }
 
 @Entity({ name: 'rules' })
 export class Rule extends Audit {
@@ -51,21 +37,6 @@ export class Rule extends Audit {
   @Column()
   executionOrder: number;
 
-  // @Column({
-  //   type: 'enum',
-  //   enum: EnforcementMethodEnum,
-  //   default: EnforcementMethodEnum.OPTIONAL,
-  // })
-  // enforcementMethod: EnforcementMethodEnum;
-
   @Column({ type: 'jsonb' })
   conditions: Condition[][];
-
-  // @Column({ type: 'jsonb' })
-  // actions: Action[];
-
-  // @OneToMany(() => PossibleReasons, (possibleReasons) => possibleReasons.rule, {
-  //   cascade: true,
-  // })
-  // possibleReasons: PossibleReasons[];
 }

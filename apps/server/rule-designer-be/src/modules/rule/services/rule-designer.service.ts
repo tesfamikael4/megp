@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { RuleDesigner } from 'src/entities';
+import { Rule, RuleDesigner } from 'src/entities';
 import { EntityCrudService } from 'src/shared/service';
 import { Repository } from 'typeorm';
 import { compareCondition } from './check-conditions.js';
+import { CreateRuleDesignerDto } from '../dto/rule-designer.dto.js';
 
 @Injectable()
 export class RuleDesignerService extends EntityCrudService<RuleDesigner> {
@@ -12,6 +13,11 @@ export class RuleDesignerService extends EntityCrudService<RuleDesigner> {
     private readonly repositoryRuleDesigner: Repository<RuleDesigner>,
   ) {
     super(repositoryRuleDesigner);
+  }
+
+  async create(itemData: CreateRuleDesignerDto): Promise<any> {
+    const item = await this.repositoryRuleDesigner.save(itemData);
+    return item;
   }
 
   async validate(designKey, params) {
@@ -29,7 +35,7 @@ export class RuleDesignerService extends EntityCrudService<RuleDesigner> {
     for (const rule of designer.rules) {
       valid = compareCondition(rule.conditions, params);
       if (valid) {
-        return await this.takeAction(designer.actions);
+        return await this.takeAction(designer.actions, valid);
       }
     }
 
@@ -38,24 +44,26 @@ export class RuleDesignerService extends EntityCrudService<RuleDesigner> {
       possibleReasons.push(reason.reason);
     });
 
+    const resp = this.takeAction(designer.defaultActions, false);
+
     return {
-      validation: false,
+      ...resp,
       enforcementMethod: designer.enforcementMethod,
       possibleReasons: possibleReasons,
     };
   }
 
-  private async takeAction(actions) {
+  private takeAction(actions, valid: boolean) {
     const resp = {
-      validation: true,
-      set: {},
-      notify: {},
+      validation: valid,
     };
     for (const action of actions) {
       if (action.type == 'set') {
+        resp['set'] = {};
         resp['set'][action.name] = action.value;
       } else if (action.type == 'notify') {
-        resp['notify'][action.names] = action.value;
+        resp['notify'] = {};
+        resp['notify'][action.name] = action.value;
       }
     }
     return resp;

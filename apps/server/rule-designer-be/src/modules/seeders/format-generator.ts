@@ -44,7 +44,8 @@ const refactor = (arrObj, uid) => {
     executionOrder: arrObj[0]['executionOrder'],
     enforcementMethod: arrObj[0]['enforcementMethod'],
     conditions: [],
-    actions: [],
+    // actions: [],
+    // defaultActions: []
   };
 
   for (const obj of arrObj) {
@@ -60,16 +61,6 @@ const refactor = (arrObj, uid) => {
           joinType: obj.joinType,
         },
       ];
-      if (obj.actionType) {
-        if (obj.actionIsArray) {
-          obj.actionValue = obj.actionValue.split(',');
-        }
-        rule.actions.push({
-          type: obj.actionType,
-          name: obj.actionName,
-          value: obj.actionValue,
-        });
-      }
     } else {
       const ands = {
         field: obj.field,
@@ -79,16 +70,6 @@ const refactor = (arrObj, uid) => {
         joinType: obj.joinType,
       };
       rule.conditions[rule.conditions.length - 1].push(ands);
-      if (obj.actionType) {
-        if (obj.actionIsArray) {
-          obj.actionValue = obj.actionValue.split(',');
-        }
-        rule.actions.push({
-          type: obj.actionType,
-          name: obj.actionName,
-          value: obj.actionValue,
-        });
-      }
     }
   }
   return rule;
@@ -114,6 +95,7 @@ designFormattedArray.forEach((designs) => {
   const tempDesign = {
     enforcementMethod: '',
     actions: [],
+    defaultActions: [],
     name: name,
     key: toCamelCase(name),
     id: uid,
@@ -126,12 +108,22 @@ designFormattedArray.forEach((designs) => {
           reason: rule.possibleReasons,
         });
       }
+      if (rule.actionType)
+        tempDesign.actions.push({
+          type: rule.actionType,
+          name: rule.actionName,
+          value: rule.actionValue,
+        });
+      if (rule.defaultActionType)
+        tempDesign.defaultActions.push({
+          type: rule.defaultActionType,
+          name: rule.defaultActionName,
+          value: rule.defaultActionValue,
+        });
+      if (rule.enforcementMethod)
+        tempDesign.enforcementMethod = rule.enforcementMethod;
     });
     const temp = refactor(rules, uid);
-    tempDesign.actions = temp.actions;
-    tempDesign.enforcementMethod = temp.enforcementMethod;
-    temp.enforcementMethod = undefined;
-    temp.actions = undefined;
     seedRules.push(temp);
   });
   seedDesigns.push(tempDesign);
