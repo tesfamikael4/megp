@@ -174,17 +174,17 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
     await queryRunner.startTransaction();
     try {
       const sourceEntity = await this.repositoryPreBudgetPlan.findOneOrFail({
-        where: { id: data },
+        where: { id: data.itemId },
       });
       queryRunner.manager.connection.transaction(async (entityManager) => {
         await entityManager
           .getRepository(PreBudgetPlan)
           .update(sourceEntity.id, {
-            status: 'Approved',
+            status: data.status,
           });
 
         const activities = await this.preBudgetActivityRepository.find({
-          where: { preBudgetPlanId: data },
+          where: { preBudgetPlanId: data.itemId },
           relations: [
             'preBudgetPlanItems',
             'preBudgetPlanTimelines',
@@ -200,7 +200,7 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
         const postBudget = {
           ...sourceEntity,
           status: 'Draft',
-          preBudgetPlanId: data,
+          preBudgetPlanId: data.itemId,
           id: undefined,
         };
         await entityManager

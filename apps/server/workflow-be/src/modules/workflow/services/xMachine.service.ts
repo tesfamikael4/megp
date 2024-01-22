@@ -105,9 +105,9 @@ export class XMachineService {
               version: ver,
               metadata: existingData.metadata,
             });
-            if (params.status == 'Approved') {
+            if (params.status == 'Approved' || params.status == 'Rejected') {
               this.workflowRMQClient.emit('workflow-approved', {
-                workflow: 'approved',
+                status: params.status,
                 activityId: activityId,
                 itemId: existingData.itemId,
               });
