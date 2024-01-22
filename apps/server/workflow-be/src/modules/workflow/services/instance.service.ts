@@ -37,7 +37,7 @@ export class InstanceService extends EntityCrudService<Instance> {
       },
     });
     const steps = await this.repositoryStep.find({
-      where: { activityId: act.id },
+      where: { activityId: act.id, organizationId: data.organizationId },
       order: { order: 'ASC' },
     });
     const createData = {
@@ -80,11 +80,15 @@ export class InstanceService extends EntityCrudService<Instance> {
   }
 
   async findOne(activityId: any, organizationId): Promise<Instance> {
-    return await this.repositoryInstance.findOne({
+    const instance = await this.repositoryInstance.findOne({
       where: { activityId: activityId, organizationId: organizationId },
       relations: {
         step: true,
       },
     });
+    instance.step = await this.repositoryStep.findOne({
+      where: { id: instance.stepId },
+    });
+    return instance;
   }
 }
