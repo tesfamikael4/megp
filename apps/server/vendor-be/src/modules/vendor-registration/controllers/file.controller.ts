@@ -12,15 +12,11 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-
 import { ApiConsumes, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CurrentUser, JwtGuard } from 'src/shared/authorization';
 import { FileInterceptor } from '@nestjs/platform-express';
-import multer, { diskStorage, memoryStorage } from 'multer';
-import { extname } from 'path';
 import { FileService } from '../services/file.service';
 import { Response } from 'express';
-import { IsNotEmpty } from 'class-validator';
 import { ReceiptDto } from '../dto/receipt.dto';
 import { UploadFileDto } from '../dto/file.dto';
 

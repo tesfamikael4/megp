@@ -8,8 +8,8 @@ import { VendorRegistrationsService } from 'src/modules/vendor-registration/serv
 import { ServicePrice } from 'src/entities';
 import { WorkflowService } from 'src/modules/bpm/services/workflow.service';
 import { GotoNextStateDto } from 'src/modules/handling/dto/workflow-instance.dto';
-import { WorkflowInstanceEnum } from 'src/modules/handling/dto/workflow-instance.enum';
 import { FileService } from 'src/modules/vendor-registration/services/file.service';
+import { ApplicationStatus } from 'src/modules/handling/enums/application-status.enum';
 
 @Injectable()
 export class CertificateService {
@@ -62,7 +62,7 @@ export class CertificateService {
       const app = await this.wfService.getInstance(instanceId);
       console.log("app", app);
       const userId = app?.userId;
-      if (app?.status != WorkflowInstanceEnum.Completed) {
+      if (app?.status != ApplicationStatus.COMPLETED) {
         const command = new GotoNextStateDto();
         command.instanceId = instanceId;
         command.action = 'SUCCESS';

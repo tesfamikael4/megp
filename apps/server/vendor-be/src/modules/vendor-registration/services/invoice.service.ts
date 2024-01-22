@@ -5,11 +5,10 @@ import {
   BusinessAreaEntity,
   BusinessProcessEntity,
   InvoiceEntity,
-  IsrVendorsEntity,
   ServicePrice,
   VendorsEntity,
 } from 'src/entities';
-import { WorkflowInstanceEnum } from 'src/modules/handling/dto/workflow-instance.enum';
+
 import { ServicePricingService } from 'src/modules/pricing/services/service-pricing.service';
 import { DataResponseFormat } from 'src/shared/api-data';
 import { EntityCrudService } from 'src/shared/service';
@@ -20,14 +19,14 @@ import { HandlingCommonService } from 'src/modules/handling/services/handling-co
 import { BusinessAreaService } from './business-area.service';
 import { UpgradeInfoDTO } from '../dto/vendor-upgrade.dto';
 import { BusinessProcessService } from 'src/modules/bpm/services/business-process.service';
+import { ApplicationStatus } from 'src/modules/handling/enums/application-status.enum';
+import { PaymentStatus } from 'src/shared/enums/payment-status.enum';
 
 @Injectable()
 export class InvoiceService extends EntityCrudService<InvoiceEntity> {
   constructor(
     @InjectRepository(InvoiceEntity)
     private readonly invoiceRepository: Repository<InvoiceEntity>,
-    @InjectRepository(IsrVendorsEntity)
-    private readonly isrVendorsRepository: Repository<IsrVendorsEntity>,
     @InjectRepository(VendorsEntity)
     private readonly vendorsRepository: Repository<VendorsEntity>,
     @InjectRepository(BusinessAreaEntity)
@@ -250,13 +249,13 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
       const keys = [];
       const businessAreas = businessAreaIds;
       const businessareasData = await this.businessAreaRepository.find({
-        where: { id: In(businessAreas), status: WorkflowInstanceEnum.Approved },
+        where: { id: In(businessAreas), status: ApplicationStatus.APPROVED },
         relations: { BpService: true, servicePrice: true },
       });
       const baInstanceIds: string[] = businessareasData.map((row) => row.instanceId);
       const busnessAreasNew = await this.businessAreaRepository.find({
         where: {
-          status: 'Pending',
+          status: ApplicationStatus.PENDING,
           instanceId: In(baInstanceIds),
           invoice: { userId: user.id },
         },
@@ -294,7 +293,7 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
         const business: BusinessAreaEntity = new BusinessAreaEntity();
         business.serviceId = bp.serviceId;
         business.priceRangeId = price.id;
-        business.status = 'Pending';
+        business.status = PaymentStatus.PENDING;
         business.businessAreaState = ba.businessAreaState;
         business.instanceId = ba.instanceId;
         business.vendorId = ba.vendorId;
@@ -324,12 +323,12 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
         const bAId = ba.id;
         const newPricingId = ba.pricingId;
         const businessareaData = await this.businessAreaRepository.findOne({
-          where: { id: bAId, status: WorkflowInstanceEnum.Approved },
+          where: { id: bAId, status: ApplicationStatus.APPROVED },
           relations: { BpService: true, servicePrice: true },
         });
         const businessAreaNew = await this.businessAreaRepository.findOne({
           where: {
-            status: 'Pending',
+            status: ApplicationStatus.PENDING,
             instanceId: businessareaData?.instanceId,
             invoice: { userId: user.id },
           },
@@ -362,7 +361,7 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
           CurrentpricingData,
           vendor,
           bp.service,
-          user,
+          user
         );
 
         invoice.amount = upgradePayment;
@@ -370,7 +369,7 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
         const business: BusinessAreaEntity = new BusinessAreaEntity();
         business.serviceId = bp.serviceId;
         business.priceRangeId = newPricingId;
-        business.status = 'Pending';
+        business.status = ApplicationStatus.PENDING;
         businessArea.BusinessAreaStatus.level =
           businessArea.BusinessAreaStatus.level = 'Payment';
         business.businessAreaState = businessArea.BusinessAreaStatus;
@@ -403,7 +402,7 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
       'Public Procurement and Disposal of Assets Authority';
     invoice.payToAccNo = '000 100 562 4416';
     invoice.payToBank = 'National Bank of Malawi';
-    invoice.paymentStatus = 'Pending';
+    invoice.paymentStatus = PaymentStatus.PENDING;
     invoice.createdOn = new Date();
     invoice.pricingId = curruntPricing.id;
     invoice.amount = curruntPricing.fee;

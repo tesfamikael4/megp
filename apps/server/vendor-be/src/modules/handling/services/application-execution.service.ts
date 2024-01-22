@@ -8,12 +8,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, IsNull, Not, Repository } from 'typeorm';
 import { DataResponseFormat } from 'src/shared/api-data';
 import { CollectionQuery, QueryConstructor } from 'src/shared/collection-query';
-import {
-
-  HandlerTypeEnum,
-
-  WorkflowInstanceEnum,
-} from '../dto/workflow-instance.enum';
 import { FileResponseDto } from 'src/modules/vendor-registration/dto/file.dto';
 import { WorkflowInstanceEntity } from 'src/entities/workflow-instance.entity';
 
@@ -24,6 +18,8 @@ import { FilesEntity } from 'src/entities';
 import { InvoiceService } from 'src/modules/vendor-registration/services/invoice.service';
 import { HandlingCommonService } from './handling-common-services';
 import { AssignmentEnum } from '../enums/assignment.enum';
+import { HandlerTypeEnum } from '../enums/handler-type.enum';
+import { ApplicationStatus } from '../enums/application-status.enum';
 @Injectable()
 export class ApplicationExcutionService {
   constructor(
@@ -38,6 +34,7 @@ export class ApplicationExcutionService {
     query: CollectionQuery, user: any
   ): Promise<DataResponseFormat<WorkflowInstanceResponse>> {
     const keys = this.commonService.getServiceCatagoryKeys(serviceKey);
+    console.log(keys)
     if (keys.length < 0)
       throw new HttpException('Invalid Request', 400);
     const dataQuery = QueryConstructor.constructQuery<WorkflowInstanceEntity>(
@@ -52,8 +49,8 @@ export class ApplicationExcutionService {
       .innerJoinAndSelect('workflow_instances.businessProcess', 'bp')
       .leftJoinAndSelect('workflow_instances.taskTrackers', 'taskTracker')
       .andWhere('service.key In(:...keys)', { keys: keys })
-      .andWhere('workflow_instances.status !=:status ', { status: WorkflowInstanceEnum.Completed })
-      .andWhere('task.handlerType !=:handlerType', { handlerType: HandlerTypeEnum.Requestor })
+      .andWhere('workflow_instances.status !=:status ', { status: ApplicationStatus.COMPLETED })
+      .andWhere('task.handlerType !=:handlerType', { handlerType: HandlerTypeEnum.REQUESTOR })
       .orderBy('workflow_instances.submittedAt', 'ASC');
     const d = new DataResponseFormat<WorkflowInstanceResponse>();
     const [result, total] = await dataQuery.getManyAndCount();

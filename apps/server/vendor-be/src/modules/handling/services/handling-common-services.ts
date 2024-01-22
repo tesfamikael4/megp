@@ -125,7 +125,13 @@ export class HandlingCommonService {
     } else if (serviceKey == ServiceKeyEnum.update) {
       keys = [ServiceKeyEnum.profileUpdate];
     } else if (serviceKey == ServiceKeyEnum.preferential) {
-      keys = [ServiceKeyEnum.IBM, ServiceKeyEnum.MSME];
+      keys = [
+        ServiceKeyEnum.IBM,
+        ServiceKeyEnum.MEDIUM,
+        ServiceKeyEnum.SMALL,
+        ServiceKeyEnum.MICRO,
+        ServiceKeyEnum.MARGINALIZED_GROUP
+      ];
     }
     return keys;
   }

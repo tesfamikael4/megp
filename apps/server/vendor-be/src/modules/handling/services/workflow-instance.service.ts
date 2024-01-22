@@ -15,11 +15,6 @@ import {
 } from '../dto/workflow-instance.dto';
 import { createMachine, interpret } from 'xstate';
 import {
-
-  HandlerTypeEnum,
-  WorkflowInstanceEnum,
-} from '../dto/workflow-instance.enum';
-import {
   PaymentReceiptDto,
   PaymentReceiptResponseDto,
 } from 'src/modules/vendor-registration/dto/payment-receipt.dto';
@@ -43,6 +38,8 @@ import { TaskEntity } from 'src/entities/task.entity';
 import { VendorsEntity } from 'src/entities';
 import { InvoiceService } from 'src/modules/vendor-registration/services/invoice.service';
 import { AssignmentEnum } from '../enums/assignment.enum';
+import { ApplicationStatus } from '../enums/application-status.enum';
+import { HandlerTypeEnum } from '../enums/handler-type.enum';
 
 @Injectable()
 export class WorkflowInstanceService {
@@ -190,17 +187,17 @@ export class WorkflowInstanceService {
     });
     const stateMachine = interpret(machine).onTransition(async (state) => {
       if (state.value !== currentTaskHandler.currentState) {
-        workflowInstance.status = WorkflowInstanceEnum.Inprogress;
+        workflowInstance.status = ApplicationStatus.INPROGRESS;
         currentTaskHandler.currentState = state.value.toString();
         const stateMetaData = this.getStateMetaData(state.meta);
         if (stateMetaData['type'] == 'end') {
-          workflowInstance.status = WorkflowInstanceEnum.Completed;
+          workflowInstance.status = ApplicationStatus.COMPLETED;
           //  workflowInstance.businessStatus = BusinessStatusEnum.active;
           //update vendor status approved
           const vendor = await this.vendorRepository.findOne({
             where: { id: workflowInstance.requestorId },
           });
-          vendor.status = WorkflowInstanceEnum.Approved;
+          vendor.status = ApplicationStatus.APPROVED;
           await this.vendorRepository.save(vendor);
           await this.addTaskTracker({
             taskId: currentTaskHandler?.taskId,
@@ -239,7 +236,7 @@ export class WorkflowInstanceService {
           currentTaskHandler.previousHandlerId = lastExecutedTask
             ? lastExecutedTask.handlerUserId
             : null;
-          if (task.handlerType != HandlerTypeEnum.PreviousHandler) {
+          if (task.handlerType != HandlerTypeEnum.PREVIOUS_HANDLER) {
             currentTaskHandler.handlerUserId = null;
             currentTaskHandler.handlerUser = null;
             currentTaskHandler.assignmentStatus = AssignmentEnum.Unpicked;
@@ -342,11 +339,11 @@ export class WorkflowInstanceService {
     handler.handlerUserId = userInfo.userId;
     handler.handlerUser = userInfo;
     if (eventType.toLowerCase() === 'adjust') {
-      instance.status = WorkflowInstanceEnum.Draft;
+      instance.status = ApplicationStatus.DRAFT;
     } else if (eventType.toLowerCase() === 'approve') {
-      instance.status = WorkflowInstanceEnum.Inprogress;
+      instance.status = ApplicationStatus.INPROGRESS;
     } else if (eventType.toLowerCase() === 'reject') {
-      instance.status = WorkflowInstanceEnum.Rejected;
+      instance.status = ApplicationStatus.REJECTED;
     } else {
       throw new BadRequestException('Unknown Command');
     }
@@ -397,7 +394,7 @@ export class WorkflowInstanceService {
     if (!instance) throw new NotFoundException('WorkflowInstance not found');
     const today = new Date();
     instance.taskHandler = userInfo.userId;
-    instance.status = WorkflowInstanceEnum.Completed;
+    instance.status = ApplicationStatus.COMPLETED;
     // instance.approvedAt = today;
     // const exprireYear = today.getFullYear() + 1;
     // instance.expireDate = new Date(
@@ -471,7 +468,7 @@ export class WorkflowInstanceService {
       const wfDto = new CreateWorkflowInstanceDto();
       //  wfDto.pricingId = result.pricingId;
       wfDto.requestorId = dto.requestorId;
-      wfDto.status = WorkflowInstanceEnum.Submitted;
+      wfDto.status = ApplicationStatus.SUBMITTED;
       // wfDto.key = ServiceKeyEnum.renewal;
       const response = await this.create(wfDto, userInfo);
       if (response.application) {

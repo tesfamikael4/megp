@@ -41,7 +41,6 @@ export class DataSeederController {
         name: 'Profile update',
         key: 'ProfileUpdate',
         isActive: true,
-
         tenantId: 0,
         description: null,
       },
@@ -50,28 +49,53 @@ export class DataSeederController {
         name: 'Local',
         key: 'local',
         isActive: true,
-
         tenantId: 0,
         description: null,
       },
       {
         id: '26ff8e51-0f68-9c28-2ea4-a32a5e1f184f',
         name: 'IBM',
-        key: 'ibm',
+        key: 'IBM',
         isActive: true,
-
+        tenantId: 0,
+        description: null,
+      },
+      //MSM registration services
+      {
+        id: 'a63fb5b1-9896-8c73-4fd0-882d4e9a6e9a',
+        name: 'Medium Enterprise',
+        key: 'Medium',
+        isActive: true,
         tenantId: 0,
         description: null,
       },
       {
-        id: 'a63fb5b9-9896-8c73-4fd0-882d4e9a6e9a',
-        name: 'MSME',
-        key: 'msme',
+        id: 'a63fb5b2-9896-8c73-4fd0-882d4e9a6e4a',
+        name: 'Small Enterprise',
+        key: 'Small',
         isActive: true,
-
         tenantId: 0,
         description: null,
       },
+      {
+        id: 'a54fb5b9-9896-8c73-4fd0-882d4e9a6e9a',
+        name: 'Micro Enterprise',
+        key: 'Micro',
+        isActive: true,
+        tenantId: 0,
+        description: null,
+      },
+      {
+        id: 'a16fb5b9-9896-8c73-4fd0-882d4e9a6e9a',
+        name: 'Marginalized  Group',
+        key: 'Marginalized_Group',
+        isActive: true,
+        tenantId: 0,
+        description: null,
+      },
+
+
+      ////end of msme
       {
         id: '1a885fbb-cde1-4349-a9cf-cddcecb59e8d',
         name: 'Debar',
@@ -694,9 +718,9 @@ export class DataSeederController {
       {
         tenantId: 0,
         id: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b40',
-        serviceId: 'a63fb5b9-9896-8c73-4fd0-882d4e9a6e9a',
+        serviceId: 'a63fb5b1-9896-8c73-4fd0-882d4e9a6e9a',
         workflow: {
-          "id": "MSME Registration",
+          "id": "medium Enterprise WF",
           "states": {
             "End": {
               "on": {},
@@ -704,9 +728,9 @@ export class DataSeederController {
                 "type": "end"
               }
             },
-            "Submission of Micro Small and Medium Enterprises(MSME) Registration Request": {
+            "Submission of Medium Enterprise Registration Request": {
               "on": {
-                "ISR": "Approval of Micro Small and Medium Enterprises(MSME) Registration Request"
+                "ISR": "Approval of Medium Enterprises Registration Request"
               },
               "meta": {
                 "type": {
@@ -714,9 +738,9 @@ export class DataSeederController {
                 }
               }
             },
-            "Approval of Micro Small and Medium Enterprises(MSME) Registration Request": {
+            "Approval of Medium Enterprises Registration Request": {
               "on": {
-                "ADJUST": "Submission of Micro Small and Medium Enterprises(MSME) Registration Request",
+                "ADJUST": "Submission of Medium Enterprise Registration Request",
                 "REJECT": "End",
                 "APPROVE": "End"
               },
@@ -725,7 +749,7 @@ export class DataSeederController {
               }
             }
           },
-          "initial": "Submission of Micro Small and Medium Enterprises(MSME) Registration Request"
+          "initial": "Submission of Medium Enterprise Registration Request"
         },
         version: 0,
         isActive: true,
@@ -734,7 +758,129 @@ export class DataSeederController {
       },
       {
         tenantId: 0,
-
+        id: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b51',
+        serviceId: 'a63fb5b2-9896-8c73-4fd0-882d4e9a6e4a',
+        workflow: {
+          "id": "Small Enterprise WF",
+          "states": {
+            "End": {
+              "on": {},
+              "meta": {
+                "type": "end"
+              }
+            },
+            "Submission of Small Enterprises(SE) Registration Request": {
+              "on": {
+                "ISR": "Approval of Small Enterprise Registration Request"
+              },
+              "meta": {
+                "type": {
+                  "start": true
+                }
+              }
+            },
+            "Approval of Small Enterprise Registration Request": {
+              "on": {
+                "ADJUST": "Submission of Small Enterprises(SE) Registration Request",
+                "REJECT": "End",
+                "APPROVE": "End"
+              },
+              "meta": {
+                "type": "Approval"
+              }
+            }
+          },
+          "initial": "Submission of Small Enterprises(SE) Registration Request"
+        },
+        version: 0,
+        isActive: true,
+        organizationId: null,
+        organizationName: null,
+      },
+      {
+        tenantId: 0,
+        id: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b52',
+        serviceId: 'a54fb5b9-9896-8c73-4fd0-882d4e9a6e9a',
+        workflow: {
+          "id": "Micro Enterprise WF",
+          "states": {
+            "End": {
+              "on": {},
+              "meta": {
+                "type": "end"
+              }
+            },
+            "Submission of Micro Enterprises(ME) Registration Request": {
+              "on": {
+                "ISR": "Approval of Micro Enterprise Registration Request"
+              },
+              "meta": {
+                "type": {
+                  "start": true
+                }
+              }
+            },
+            "Approval of Micro Enterprise Registration Request": {
+              "on": {
+                "ADJUST": "Submission of Micro Enterprises(ME) Registration Request",
+                "REJECT": "End",
+                "APPROVE": "End"
+              },
+              "meta": {
+                "type": "Approval"
+              }
+            }
+          },
+          "initial": "Submission of Micro Enterprises(ME) Registration Request"
+        },
+        version: 0,
+        isActive: true,
+        organizationId: null,
+        organizationName: null,
+      },
+      {
+        tenantId: 0,
+        id: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b53',
+        serviceId: 'a16fb5b9-9896-8c73-4fd0-882d4e9a6e9a',
+        workflow: {
+          "id": "marginalized Group WF",
+          "states": {
+            "End": {
+              "on": {},
+              "meta": {
+                "type": "end"
+              }
+            },
+            "Submission of Marginalized Group Registration Request": {
+              "on": {
+                "ISR": "Approval of Marginalized Group Registration Request"
+              },
+              "meta": {
+                "type": {
+                  "start": true
+                }
+              }
+            },
+            "Approval of Marginalized Group Registration Request": {
+              "on": {
+                "ADJUST": "Submission of Marginalized Group Registration Request",
+                "REJECT": "End",
+                "APPROVE": "End"
+              },
+              "meta": {
+                "type": "Approval"
+              }
+            }
+          },
+          "initial": "Submission of Marginalized Group Registration Request"
+        },
+        version: 0,
+        isActive: true,
+        organizationId: null,
+        organizationName: null,
+      },
+      {
+        tenantId: 0,
         id: '7539e439-4e3f-4f9c-9151-b21ca7a808fc',
         serviceId: '1a885fbb-cde1-4349-a9cf-cddcecb59e8d',
         workflow: {},
@@ -816,11 +962,81 @@ export class DataSeederController {
   @ApiOkResponse()
   async seedTask() {
     const tasksToSeed = [
+      ///micro
       {
         id: '96752a13-201f-45eb-8b6f-118ebf0c89c7',
-        name: 'Submission of Micro Small and Medium Enterprises(MSME) Registration Request',
-        label: 'Submitted MSME request',
-        description: 'Submission of Micro Small and Medium Enterprises(MSME) Registration Request',
+        name: 'Submission of Micro Enterprises(ME) Registration Request',
+        label: 'Submitted Micro Enterprise Application Request',
+        description: 'Submission of Micro Enterprises Registration Request',
+        bpId: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b52',
+        handlerType: 'Requestor',
+        taskType: 'ISR',
+        checkList: null,
+        orderBy: 1,
+      },
+      {
+        id: '12752a13-201f-45eb-8b6f-118ebf0c89c9',
+        name: 'Approval of Micro Enterprise Registration Request',
+        label: 'Submitted Micro Enterprise request',
+        description: 'Approval of Micro Enterprises Registration Request',
+        bpId: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b52',
+        handlerType: 'Assignee',
+        taskType: 'Approval',
+        checkList: [{ "id": "96d95fdb-7852-4ddc-912f-0e94d23d15d3", "description": "The Attached ME certeficate and other documents are valid.", "isMandatory": "true" }],
+        orderBy: 1,
+      },
+      //small
+      {
+        id: '95752a14-201f-45eb-8b6f-218ebf0c89c7',
+        name: 'Submission of Small Enterprises(SE) Registration Request',
+        label: 'Submitted SE Request',
+        description: 'Submission of Small Enterprises Registration Request',
+        bpId: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b51',
+        handlerType: 'Requestor',
+        taskType: 'ISR',
+        checkList: null,
+        orderBy: 1,
+      },
+      {
+        id: '26752a13-201f-45eb-8b6f-118ebf0c79c9',
+        name: 'Approval of Small Enterprise Registration Request',
+        label: 'Submitted SE Request',
+        description: 'Approval of Small Enterprises Registration Request',
+        bpId: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b51',
+        handlerType: 'Assignee',
+        taskType: 'Approval',
+        checkList: [{ "id": "96d95fdb-7852-4ddc-912f-0e94d23d15d3", "description": "The Attached MSME certeficate and other documents are valid.", "isMandatory": "true" }],
+        orderBy: 1,
+      },
+      //marginalized
+      {
+        id: '85752a13-201f-45eb-8b6f-118ebf0c89c7',
+        name: 'Submission of Marginalized Group Registration Request',
+        label: 'Submitted MG Request',
+        description: 'Submission of Marginalized Group Registration Request',
+        bpId: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b53',
+        handlerType: 'Requestor',
+        taskType: 'ISR',
+        checkList: null,
+        orderBy: 1,
+      },
+      {
+        id: '71752a13-201f-45eb-8b6f-118ebf0c89c4',
+        name: 'Approval of Marginalized Group Registration Request',
+        label: 'Submitted Marginalized Group Request',
+        description: 'Approval of Marginalized Group Registration Request',
+        bpId: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b53',
+        handlerType: 'Assignee',
+        taskType: 'Approval',
+        checkList: [{ "id": "96d95fdb-7852-4ddc-912f-0e94d23d15d3", "description": "The Attached MSME certeficate and other documents are valid.", "isMandatory": "true" }],
+        orderBy: 1,
+      },
+      //meduim
+      {
+        id: '16752a13-201f-45eb-8b6f-118ebf0c89c4',
+        name: 'Submission of Medium Enterprise Registration Request',
+        label: 'Submitted Medium Enterprise Request',
+        description: 'Submission of  Medium Enterprises Registration Request',
         bpId: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b40',
         handlerType: 'Requestor',
         taskType: 'ISR',
@@ -829,12 +1045,12 @@ export class DataSeederController {
       },
       {
         id: '96752a13-201f-45eb-8b6f-118ebf0c89c9',
-        name: 'Approval of Micro Small and Medium Enterprises(MSME) Registration Request',
-        label: 'Submitted MSME request',
-        description: 'Approval of Micro Small and Medium Enterprises(MSME) Registration Request',
+        name: 'Approval of Medium Enterprises Registration Request',
+        label: 'Submitted Medium Enterprise Request',
+        description: 'Approval of Medium Enterprises Registration Request',
         bpId: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b40',
-        handlerType: 'Requestor',
-        taskType: 'ISR',
+        handlerType: 'Assignee',
+        taskType: 'Approval',
         checkList: [{ "id": "96d95fdb-7852-4ddc-912f-0e94d23d15d3", "description": "The Attached MSME certeficate and other documents are valid.", "isMandatory": "true" }],
         orderBy: 1,
       },
@@ -1412,7 +1628,6 @@ export class DataSeederController {
         valueTo: 10000000,
         fee: 10000,
         currency: 'MK',
-
         tenantId: 0,
       },
       {
@@ -1423,7 +1638,6 @@ export class DataSeederController {
         valueTo: 30000000,
         fee: 20000,
         currency: 'MK',
-
         tenantId: 0,
       },
       {
@@ -1434,7 +1648,6 @@ export class DataSeederController {
         valueTo: 80000000,
         fee: 30000,
         currency: 'MK',
-
         tenantId: 0,
       },
       {
@@ -1445,7 +1658,6 @@ export class DataSeederController {
         valueTo: 100000000,
         fee: 60000,
         currency: 'MK',
-
         tenantId: 0,
       },
       {
@@ -1456,7 +1668,6 @@ export class DataSeederController {
         valueTo: 500000000,
         fee: 100000,
         currency: 'MK',
-
         tenantId: 0,
       },
       {
@@ -1467,7 +1678,6 @@ export class DataSeederController {
         valueTo: -1,
         fee: 500000,
         currency: 'MK',
-
         tenantId: 0,
       },
       {
@@ -1478,7 +1688,6 @@ export class DataSeederController {
         valueTo: 100000,
         fee: 1,
         currency: 'MK',
-
         tenantId: 0,
       },
       ///
@@ -1490,7 +1699,6 @@ export class DataSeederController {
         valueTo: 56666,
         fee: 1000,
         currency: 'MK',
-
         tenantId: 0,
       },
       {
@@ -1501,7 +1709,6 @@ export class DataSeederController {
         valueTo: 12,
         fee: 12,
         currency: 'MK',
-
         tenantId: 0,
       },
       {
@@ -1512,7 +1719,6 @@ export class DataSeederController {
         valueTo: 1000000,
         fee: 4000,
         currency: 'MK',
-
         tenantId: 0,
       },
       {
@@ -1523,10 +1729,8 @@ export class DataSeederController {
         valueTo: 1000000000,
         fee: 200000,
         currency: 'MK',
-
         tenantId: 0,
       },
-
       {
         id: '099bd8ca-1db1-4555-952d-05681acf8746',
         serviceId: '5f764d17-a165-42ab-879d-358bc03fe5d8',
@@ -1535,7 +1739,6 @@ export class DataSeederController {
         valueTo: 10000000,
         fee: 10000,
         currency: 'MK',
-
         tenantId: 0,
       },
       {
@@ -1546,7 +1749,6 @@ export class DataSeederController {
         valueTo: 30000000,
         fee: 20000,
         currency: 'MK',
-
         tenantId: 0,
       },
       {
@@ -1557,7 +1759,6 @@ export class DataSeederController {
         valueTo: 80000000,
         fee: 30000,
         currency: 'MK',
-
         tenantId: 0,
       },
       {
@@ -1568,7 +1769,6 @@ export class DataSeederController {
         valueTo: 100000000,
         fee: 60000,
         currency: 'MK',
-
         tenantId: 0,
       },
       {
@@ -1579,7 +1779,6 @@ export class DataSeederController {
         valueTo: 500000000,
         fee: 100000,
         currency: 'MK',
-
         tenantId: 0,
       },
       {
@@ -1590,7 +1789,6 @@ export class DataSeederController {
         valueTo: 1000000000,
         fee: 200000,
         currency: 'MK',
-
         tenantId: 0,
       },
       {
@@ -1603,8 +1801,6 @@ export class DataSeederController {
         currency: 'MK',
         tenantId: 0,
       },
-
-
       ////////////////////////renewal Service
       {
         id: '799bd8ca-1db1-4555-952d-05681acf8746',
@@ -1614,7 +1810,6 @@ export class DataSeederController {
         valueTo: 10000000,
         fee: 10000,
         currency: 'MK',
-
         tenantId: 0,
       },
       {
@@ -1625,7 +1820,6 @@ export class DataSeederController {
         valueTo: 30000000,
         fee: 20000,
         currency: 'MK',
-
         tenantId: 0,
       },
       {
@@ -1636,7 +1830,6 @@ export class DataSeederController {
         valueTo: 80000000,
         fee: 30000,
         currency: 'MK',
-
         tenantId: 0,
       },
       {
@@ -1647,7 +1840,6 @@ export class DataSeederController {
         valueTo: 100000000,
         fee: 60000,
         currency: 'MK',
-
         tenantId: 0,
       },
       {
@@ -1658,7 +1850,6 @@ export class DataSeederController {
         valueTo: 500000000,
         fee: 100000,
         currency: 'MK',
-
         tenantId: 0,
       },
       {
@@ -1669,7 +1860,6 @@ export class DataSeederController {
         valueTo: 1000000000,
         fee: 200000,
         currency: 'MK',
-
         tenantId: 0,
       },
       {
@@ -1691,7 +1881,6 @@ export class DataSeederController {
         valueTo: 10000000,
         fee: 10000,
         currency: 'MK',
-
         tenantId: 0,
       },
       {
@@ -1702,7 +1891,6 @@ export class DataSeederController {
         valueTo: 30000000,
         fee: 20000,
         currency: 'MK',
-
         tenantId: 0,
       },
       {
@@ -1713,7 +1901,6 @@ export class DataSeederController {
         valueTo: 80000000,
         fee: 30000,
         currency: 'MK',
-
         tenantId: 0,
       },
       {
@@ -1724,7 +1911,6 @@ export class DataSeederController {
         valueTo: 100000000,
         fee: 60000,
         currency: 'MK',
-
         tenantId: 0,
       },
       {
@@ -1735,7 +1921,6 @@ export class DataSeederController {
         valueTo: 500000000,
         fee: 100000,
         currency: 'MK',
-
         tenantId: 0,
       },
       {
@@ -1746,7 +1931,6 @@ export class DataSeederController {
         valueTo: -1,
         fee: 500000,
         currency: 'MK',
-
         tenantId: 0,
       },
       {
@@ -1757,7 +1941,6 @@ export class DataSeederController {
         valueTo: 100000,
         fee: 1,
         currency: 'MK',
-
         tenantId: 0,
       },
       ////renewal works
@@ -1769,7 +1952,6 @@ export class DataSeederController {
         valueTo: 100000,
         fee: 1,
         currency: 'MK',
-
         tenantId: 0,
       },
     ];

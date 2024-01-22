@@ -19,8 +19,9 @@ import { VendorStatusEnum } from 'src/shared/enums/vendor-status-enums';
 import { Response } from 'express';
 import { BusinessAreaService } from './business-area.service';
 import { WorkflowService } from 'src/modules/bpm/services/workflow.service';
-import { CreateWorkflowInstanceDto } from 'src/modules/handling/dto/workflow-instance.dto';
-import { PreferentailTreatmentService } from 'src/modules/preferentials/services/preferentail-treatment.service';
+import { CreateWorkflowInstanceDto, GotoNextStateDto } from 'src/modules/handling/dto/workflow-instance.dto';
+import { ApplicationStatus } from 'src/modules/handling/enums/application-status.enum';
+import { PaymentStatus } from 'src/shared/enums/payment-status.enum';
 
 @Injectable()
 export class FileService {
@@ -285,7 +286,6 @@ export class FileService {
       });
       if (!result) throw new HttpException('isr vendor not found ', 500);
       const fileUploadName = 'paymentReceipt';
-      const paymentReceipts = result.paymentReceipt;
       if (paymentReceiptDto?.attachment) {
         const objectName = `${userId}/${fileUploadName}/${paymentReceiptDto?.attachment}`;
         await this.minioClient.removeObject('megp', objectName);
@@ -316,7 +316,7 @@ export class FileService {
       const ids = JSON.parse(paymentReceiptDto?.invoiceIds);
       for (let index = 0; index < ids.length; index++) {
         const invoice = await this.invoiceRepository.update(ids[index], {
-          paymentStatus: 'Paid',
+          paymentStatus: PaymentStatus.PAID,
           attachment: fileId,
         });
         if (!invoice) throw new HttpException(`invoice_update _failed`, 500);
@@ -342,19 +342,28 @@ export class FileService {
       for (let index = 0; index < invoices.length; index++) {
         const row = invoices[index];
         const businessArea = invoices[index].businessArea;
-        wfi.bpId = row.businessArea.BpService.businessProcesses[0].id;
-        wfi.serviceId = row.businessArea.serviceId;
-        wfi.requestorId = row.businessArea.vendorId;
-        wfi.data = row.businessArea.isrVendor;
-        const result = await this.workflowService.intiateWorkflowInstance(
-          wfi,
-          user,
-        );
-        businessArea.instanceId = result.application?.id;
-        businessArea.applicationNumber = result.application?.applicationNumber;
-        if (result) {
-          await this.busineAreaService.update(businessArea.id, businessArea);
+        const ba = await this.busineAreaService.findOne({ id: businessArea.id });
+        if (ba.status == ApplicationStatus.PENDING) {
+          wfi.bpId = row.businessArea.BpService.businessProcesses[0].id;
+          wfi.serviceId = row.businessArea.serviceId;
+          wfi.requestorId = row.businessArea.vendorId;
+          wfi.data = row.businessArea.isrVendor;
+          const result = await this.workflowService.intiateWorkflowInstance(
+            wfi,
+            user
+          );
+          businessArea.instanceId = result.application?.id;
+          businessArea.applicationNumber = result.application?.applicationNumber;
+          if (result) {
+            await this.busineAreaService.update(businessArea.id, businessArea);
+          }
+        } else {
+          const gotoNextDto = new GotoNextStateDto();
+          gotoNextDto.action = 'ISR';
+          gotoNextDto.instanceId = ba.instanceId;
+          await this.workflowService.gotoNextStep(gotoNextDto, user);
         }
+
       }
       return paymentReceipt;
     } catch (error) {
