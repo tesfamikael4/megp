@@ -145,7 +145,7 @@ export const DetailActivity = ({
       <LoadingOverlay
         visible={isGetPreMechanismLoading || isGetPostMechanismLoading}
       />
-      <Text className="font-semibold mb-2">Definition</Text>
+      <Text className="font-semibold mb-2">Identification</Text>
       <DataTable
         withColumnBorders
         withTableBorder
@@ -155,7 +155,7 @@ export const DetailActivity = ({
       />
       {methods.length !== 0 && (
         <>
-          <Text className="font-semibold my-2">Procurement Method</Text>
+          <Text className="font-semibold my-2">Procurement Methods</Text>
           <DataTable
             withColumnBorders
             withTableBorder
