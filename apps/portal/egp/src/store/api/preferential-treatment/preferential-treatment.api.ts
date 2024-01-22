@@ -16,10 +16,11 @@ export const preferentialTreatmentApi = createApi({
         formData.append('serviceId', body.serviceId);
         formData.append('certiNumber', body.certiNumber);
         formData.append('status', body.status);
-        formData.append(
-          'additionalDocuments',
-          body.additionalDocuments.map((file: any) => file.attachment),
-        );
+        body.additionalDocuments &&
+          formData.append(
+            'additionalDocuments',
+            body.additionalDocuments.map((file: any) => file.attachment),
+          );
 
         return {
           url: `preferentail-treatment/submit-pt-request`,
@@ -37,8 +38,18 @@ export const preferentialTreatmentApi = createApi({
         }));
       },
     }),
+
+    getDraftApplication: builder.query<any, any>({
+      query: (body) => ({
+        url: `preferentail-treatment/get-draft-pt-applications`,
+        method: 'GET',
+      }),
+    }),
   }),
 });
 
-export const { useSubmitRequestMutation, useGetMarginalizedGroupQuery } =
-  preferentialTreatmentApi;
+export const {
+  useSubmitRequestMutation,
+  useGetMarginalizedGroupQuery,
+  useGetDraftApplicationQuery,
+} = preferentialTreatmentApi;

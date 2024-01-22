@@ -17,6 +17,7 @@ export default function TaskHandler({
   requesterID,
   requestType,
   setHideUnPick,
+  link,
 }: {
   taskType: string | undefined;
   instanceID: string | undefined;
@@ -24,7 +25,8 @@ export default function TaskHandler({
   requesterID: string | undefined;
   setIsPicked: React.Dispatch<React.SetStateAction<boolean>>;
   setHideUnPick: React.Dispatch<React.SetStateAction<boolean>>;
-  requestType: 'new' | 'renewal' | 'upgrade' | 'update';
+  requestType: 'new' | 'renewal' | 'upgrade' | 'update' | 'preferential';
+  link?: string;
 }) {
   const [mutate] = useGoToNextStateMutation();
   const [loading, setLoading] = useState({});
@@ -64,7 +66,7 @@ export default function TaskHandler({
               });
               setIsPicked(false);
               router.push(
-                `/${requestType === 'update' ? 'info-change' : requestType}`,
+                `/${requestType === 'update' ? 'info-change' : requestType === 'preferential' && link ? link : requestType}`,
               );
             } else {
               notifications.show({
@@ -157,7 +159,7 @@ export default function TaskHandler({
             onClick={() => {
               handleButtonClick('ADJUST');
               router.push(
-                `/${requestType === 'update' ? 'info-change' : requestType}`,
+                `/${requestType === 'update' ? 'info-change' : requestType === 'preferential' && link ? link : requestType}`,
               );
             }}
             className="bg-yellow-500 hover:bg-yellow-600"
@@ -169,7 +171,7 @@ export default function TaskHandler({
             onClick={() => {
               handleButtonClick('REJECT');
               router.push(
-                `/${requestType === 'update' ? 'info-change' : requestType}`,
+                `/${requestType === 'update' ? 'info-change' : requestType === 'preferential' && link ? link : requestType}`,
               );
             }}
             className="bg-red-600 hover:bg-red-700"

@@ -90,31 +90,39 @@ export const AreasOfBusinessInterest: React.FC<Props> = ({
     // onBlur: () => validateField(fieldName),
     ...lockElements('ppda'),
   });
-  const getLineOfBusinessMultiSelectData = (businessArea: string) => {
+  const getLineOfBusinessMultiSelectData = (
+    businessArea: string,
+  ): { value: string; label: string }[] | string[] | [] => {
     if (businessArea === 'services') {
-      return [
-        'Maintenance of Motor Vehicles',
-        'Maintenance of Office Equipment, Refrigeration & Air-Conditioning',
-        'Cleaning Services',
-        'Plumbing Services',
-        'Transport Services',
-        'Travel Agency',
-        'Consultancy',
-        'Provision of Security Services',
-        'Servicing of Firefighting Equipment',
-      ];
+      return (
+        ((getLineOfBusinessValues.data?.items || [])
+          .map((item) => {
+            if (item.businessArea === 'Services') {
+              return {
+                value: item.id,
+                label: item.description,
+              };
+            } else {
+              return undefined;
+            }
+          })
+          .filter(Boolean) as { value: string; label: string }[]) || []
+      );
     } else if (businessArea === 'goods') {
-      return [
-        'Office Equipment',
-        'Farm Implements',
-        'Plant and Motor Vehicle Spares',
-        'Laboratory & Hospital Equipment',
-        'Tools and Hardware',
-        'Office Consumables',
-        'Plumbing Materials',
-        'Telecommunications Equipment',
-        'Textile Products',
-      ];
+      return (
+        ((getLineOfBusinessValues.data?.items || [])
+          .map((item) => {
+            if (item.businessArea === 'Goods') {
+              return {
+                value: item.id,
+                label: item.description,
+              };
+            } else {
+              return undefined;
+            }
+          })
+          .filter(Boolean) as { value: string; label: string }[]) || []
+      );
     } else if (businessArea === 'works') {
       return [
         'Building',
@@ -125,9 +133,12 @@ export const AreasOfBusinessInterest: React.FC<Props> = ({
         'Temporal Consultant',
       ];
     } else {
+      // Handle unexpected values of businessArea
+      console.error(`Unsupported businessArea: ${businessArea}`);
       return [];
     }
   };
+
   return (
     <Flex className="flex-col gap-6">
       <LoadingOverlay
@@ -177,11 +188,14 @@ export const AreasOfBusinessInterest: React.FC<Props> = ({
                 'select',
               ).value?.map((v: any) => v.id)}
               onChange={(value) => {
-                console.log(value);
                 register(`${name}.${index}.lineOfBusiness`, 'select').onChange(
                   value.map((v) => ({
                     id: v,
-                    name: getLineOfBusinessMultiSelectData(field.category),
+                    name: (
+                      getLineOfBusinessMultiSelectData(field.category)?.find(
+                        (item: any) => item.value == v,
+                      ) as { value: string; label: string }
+                    )?.label,
                   })),
                 );
               }}

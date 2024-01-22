@@ -25,7 +25,7 @@ import { formatDateTimeFromString, processCompanyName } from '../../util';
 export default function RequestDetail({
   requestType,
 }: {
-  requestType: 'new' | 'upgrade' | 'renewal' | 'update';
+  requestType: 'new' | 'upgrade' | 'renewal' | 'update' | 'preferential';
 }) {
   const { instanceId } = useParams();
   const [isPicked, setIsPicked] = useState(false);
@@ -56,7 +56,9 @@ export default function RequestDetail({
     'status' in response.error &&
     response.error.status === 404
   ) {
-    router.push(`/${requestType === 'update' ? 'info-change' : requestType}`);
+    router.push(
+      `/${requestType === 'update' ? 'info-change' : requestType === 'preferential' ? 'service/ibm' : requestType}`,
+    );
     return null;
   }
 
@@ -88,7 +90,7 @@ export default function RequestDetail({
     }
   };
   const { initials, color } = processCompanyName(
-    response.data.isrvendor?.basic.name,
+    response.data?.isrvendor?.basic.name,
   );
 
   return (
@@ -190,7 +192,9 @@ export default function RequestDetail({
                         return router.push(
                           requestType === 'update'
                             ? '/info-change'
-                            : `/${requestType}`,
+                            : requestType === 'preferential'
+                              ? 'preferential-service'
+                              : `/${requestType}`,
                         );
                       }}
                     >
