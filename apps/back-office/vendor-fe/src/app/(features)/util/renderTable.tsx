@@ -24,9 +24,9 @@ export function renderTable(
   const headers = Object.keys(data[0]);
 
   return (
-    <Box className="overflow-x-auto">
-      <Table className={`w-full ${tableClasses}`}>
-        <Table.Thead className="w-fit">
+    <Table.ScrollContainer minWidth={600}>
+      <Table>
+        <Table.Thead>
           <Table.Tr>
             {filterColumns[selected]
               ? filterColumns[selected].map(
@@ -107,24 +107,24 @@ export function renderTable(
                       {isDate(cellValue)
                         ? formatDateTimeFromString(cellValue, true) || 'N/A'
                         : typeof cellValue === 'boolean'
-                        ? JSON.stringify(cellValue)
-                        : (header?.name ?? header) === 'certificateUrl'
-                        ? cellValue && (
-                            <Button
-                              onClick={() => {
-                                open();
-                                setUrl(
-                                  `${
-                                    process.env.NEXT_PUBLIC_VENDOR_API ??
-                                    '/vendors/api/'
-                                  }upload/get-file-bo/certificate/${cellValue}/${userId}`,
-                                );
-                              }}
-                            >
-                              View
-                            </Button>
-                          )
-                        : cellValue}
+                          ? JSON.stringify(cellValue)
+                          : (header?.name ?? header) === 'certificateUrl'
+                            ? cellValue && (
+                                <Button
+                                  onClick={() => {
+                                    open();
+                                    setUrl(
+                                      `${
+                                        process.env.NEXT_PUBLIC_VENDOR_API ??
+                                        '/vendors/api/'
+                                      }upload/get-file-bo/certificate/${cellValue}/${userId}`,
+                                    );
+                                  }}
+                                >
+                                  View
+                                </Button>
+                              )
+                            : cellValue}
                     </Table.Td>
                   );
                 }
@@ -135,6 +135,6 @@ export function renderTable(
           ))}
         </Table.Tbody>
       </Table>
-    </Box>
+    </Table.ScrollContainer>
   );
 }

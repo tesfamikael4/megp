@@ -3,10 +3,31 @@ export const approvedVendorServiceSchema = z.object({
   status: z.object({
     level: z.string(),
     status: z.string(),
+    selectedPriceRange: z.any(),
   }),
   data: z.array(
     z.object({
       id: z
+        .string()
+        .min(36)
+        .refine(
+          (value) =>
+            /^[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12}$/.test(
+              value,
+            ),
+          { message: 'id should be a string representing a valid UID' },
+        ),
+      vendorId: z
+        .string()
+        .min(36)
+        .refine(
+          (value) =>
+            /^[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12}$/.test(
+              value,
+            ),
+          { message: 'id should be a string representing a valid UID' },
+        ),
+      pricingId: z
         .string()
         .min(36)
         .refine(
@@ -31,7 +52,7 @@ export const approvedVendorServiceSchema = z.object({
         lineOfBusiness: z.array(
           z.object({
             id: z.string(),
-            name: z.array(z.any()),
+            name: z.union([z.string(), z.array(z.string())]),
           }),
         ),
         priceRange: z
@@ -72,8 +93,6 @@ export function validateApprovedVendorServiceSchema(data: any) {
     data: validationResult.success
       ? (validationResult.data as ApprovedVendorServiceSchema)
       : undefined,
-    errors: validationResult.success
-      ? undefined
-      : validationResult.error.flatten().fieldErrors,
+    errors: validationResult.success ? undefined : validationResult.error,
   };
 }

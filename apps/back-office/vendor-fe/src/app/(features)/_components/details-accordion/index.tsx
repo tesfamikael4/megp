@@ -159,112 +159,118 @@ function FormPreview({ data }: { data: any }) {
           </Accordion>
         </Box>
       </Section>
-      <ScrollArea className="w-full " h={700}>
-        <Section
-          collapsible={false}
-          title={findATabNameByValue(selected)?.tabName || 'Company Details'}
-          className="w-full min-h-[700px]"
-        >
-          {!selected ||
-            (!data[selected] && (
-              <Flex
-                align={'center'}
-                justify={'center'}
-                className="w-full min-h-[700px]"
-              >
-                <Text fw={700}>No data to display</Text>
-              </Flex>
-            ))}
+      <Section
+        collapsible={false}
+        title={findATabNameByValue(selected)?.tabName || 'Company Details'}
+        className="w-full min-h-[700px]"
+      >
+        {!selected ||
+          (!data[selected] && (
+            <Flex
+              align={'center'}
+              justify={'center'}
+              className="w-full min-h-[700px]"
+            >
+              <Text fw={700}>No data to display</Text>
+            </Flex>
+          ))}
 
-          {selected &&
-            data[selected] &&
-            (Array.isArray(data[selected])
-              ? renderTable(
-                  data[selected],
-                  formatColumns,
-                  selected,
-                  open,
-                  setUrl,
-                  data.userId,
-                )
-              : Object.keys(data[selected]).map((fieldKey) => {
-                  return selected === 'supportingDocuments' ||
-                    selected === 'certificate' ||
-                    (selected === 'paymentReceipt' &&
-                      fieldKey === 'attachment') ? (
-                    <Accordion
-                      variant="separated"
-                      // classNames={classes}
-                      styles={{}}
-                      key={fieldKey}
+        {selected &&
+          data[selected] &&
+          (Array.isArray(data[selected]) ? (
+            <Table.ScrollContainer
+              minWidth={300}
+              style={{
+                minWidth: '100px',
+              }}
+            >
+              {renderTable(
+                data[selected],
+                formatColumns,
+                selected,
+                open,
+                setUrl,
+                data.userId,
+              )}
+            </Table.ScrollContainer>
+          ) : (
+            Object.keys(data[selected]).map((fieldKey) => {
+              return selected === 'supportingDocuments' ||
+                selected === 'certificate' ||
+                (selected === 'paymentReceipt' && fieldKey === 'attachment') ? (
+                <Accordion
+                  variant="separated"
+                  // classNames={classes}
+                  styles={{}}
+                  key={fieldKey}
+                >
+                  <Accordion.Item
+                    key={fieldKey ?? addSpacesToCamelCase(selected)}
+                    className={classes.item}
+                    value={
+                      addSpacesToCamelCase(fieldKey) ??
+                      addSpacesToCamelCase(selected)
+                    }
+                  >
+                    <Accordion.Control
+                      styles={{
+                        control: {
+                          border: 'none',
+                          borderBottom: '1px solid #E5E7EB',
+                        },
+                      }}
                     >
-                      <Accordion.Item
-                        key={fieldKey ?? addSpacesToCamelCase(selected)}
-                        className={classes.item}
-                        value={
-                          addSpacesToCamelCase(fieldKey) ??
-                          addSpacesToCamelCase(selected)
-                        }
-                      >
-                        <Accordion.Control
-                          styles={{
-                            control: {
-                              border: 'none',
-                              borderBottom: '1px solid #E5E7EB',
-                            },
-                          }}
-                        >
-                          {addSpacesToCamelCase(fieldKey) ??
-                            addSpacesToCamelCase(selected)}
-                        </Accordion.Control>
-                        <Accordion.Panel>
-                          {data[selected][fieldKey] ? (
-                            <ShowFile
-                              url={`${
-                                process.env.NEXT_PUBLIC_VENDOR_API ??
-                                '/vendors/api/'
-                              }upload/get-file-bo/${
-                                selected === 'supportingDocuments'
-                                  ? 'SupportingDocument'
-                                  : selected === 'certificate'
-                                  ? 'Certificate'
-                                  : 'paymentReceipt'
-                              }/${data[selected][fieldKey]}/${data?.userId}`}
-                              filename={data[selected][fieldKey]}
-                            />
-                          ) : (
-                            <Box className="flex items-center h-20 w-full justify-center">
-                              No file uploaded
-                            </Box>
-                          )}
-                        </Accordion.Panel>
-                      </Accordion.Item>
-                    </Accordion>
-                  ) : (
-                    <>
-                      <Box key={fieldKey} className="gap-2 items-center">
-                        {typeof data[selected][fieldKey] === 'string' &&
-                          fieldKey !== 'transactionId' && (
-                            <Flex className="py-2 border-b px-1.5 ">
-                              <Text
-                                size="xs"
-                                fw={500}
-                                tt="capitalize"
-                                className="text-lg w-1/5 "
-                              >
-                                {addSpacesToCamelCase(fieldKey)}:
-                              </Text>
-                              <Text className="ml-2" size="sm" tt="capitalize">
-                                {data[selected][fieldKey]}
-                              </Text>
-                            </Flex>
-                          )}
-                      </Box>
-                    </>
-                  );
-                }))}
-        </Section>
-      </ScrollArea>
+                      {addSpacesToCamelCase(fieldKey) ??
+                        addSpacesToCamelCase(selected)}
+                    </Accordion.Control>
+                    <Accordion.Panel>
+                      {data[selected][fieldKey] ? (
+                        <ShowFile
+                          url={`${
+                            process.env.NEXT_PUBLIC_VENDOR_API ??
+                            '/vendors/api/'
+                          }upload/get-file-bo/${
+                            selected === 'supportingDocuments'
+                              ? 'SupportingDocument'
+                              : selected === 'certificate'
+                                ? 'Certificate'
+                                : 'paymentReceipt'
+                          }/${data[selected][fieldKey]}/${data?.userId}`}
+                          filename={data[selected][fieldKey]}
+                        />
+                      ) : (
+                        <Box className="flex items-center h-20 w-full justify-center">
+                          No file uploaded
+                        </Box>
+                      )}
+                    </Accordion.Panel>
+                  </Accordion.Item>
+                </Accordion>
+              ) : (
+                <>
+                  <Box key={fieldKey} className="gap-2 items-center">
+                    {typeof data[selected][fieldKey] === 'string' &&
+                      fieldKey !== 'transactionId' && (
+                        <Flex className="py-2 border-b px-1.5 ">
+                          <Text
+                            size="xs"
+                            fw={500}
+                            tt="capitalize"
+                            className="text-lg w-1/5 "
+                          >
+                            {addSpacesToCamelCase(fieldKey)}:
+                          </Text>
+                          <Text className="ml-2" size="sm" tt="capitalize">
+                            {data[selected][fieldKey]}
+                          </Text>
+                        </Flex>
+                      )}
+                  </Box>
+                </>
+              );
+            })
+          ))}
+      </Section>
       <Modal
         opened={opened}
         onClose={close}

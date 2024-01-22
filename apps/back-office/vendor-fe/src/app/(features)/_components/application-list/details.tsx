@@ -57,7 +57,7 @@ export default function RequestDetail({
     response.error.status === 404
   ) {
     router.push(
-      `/${requestType === 'update' ? 'info-change' : requestType === 'preferential' ? 'service/ibm' : requestType}`,
+      `/${requestType === 'update' ? 'info-change' : requestType === 'preferential' ? 'preferential-services' : requestType}`,
     );
     return null;
   }

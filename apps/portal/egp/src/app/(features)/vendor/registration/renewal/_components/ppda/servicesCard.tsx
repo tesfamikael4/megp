@@ -27,7 +27,7 @@ const transformCategoryPriceRange = (
   inputData
     .filter(
       (item: any) =>
-        item.businessArea.toLowerCase() === businessArea.toLowerCase(),
+        item.businessArea.toLowerCase() === businessArea?.toLowerCase(),
     )
     .filter((item: any) => item.id === id)
     .map(
@@ -139,7 +139,7 @@ export default function ServicesCard({
               >
                 <div className="flex items-center justify-between gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">
                   <Text fw={700} fz={'lg'} color="gray.7">
-                    {services.areaOfBusinessInterest.category.toUpperCase()}
+                    {services.areaOfBusinessInterest?.category?.toUpperCase()}
                   </Text>
 
                   {isServiceSelected(services.id) ? (
@@ -167,9 +167,9 @@ export default function ServicesCard({
                     <Text fw={600} fz={'xs'}>
                       {getPriceRangeValues.data &&
                         transformCategoryPriceRange(
-                          getPriceRangeValues.data,
-                          services.areaOfBusinessInterest.category,
-                          services.areaOfBusinessInterest.priceRange,
+                          getPriceRangeValues?.data,
+                          services.areaOfBusinessInterest?.category,
+                          services.areaOfBusinessInterest?.priceRange,
                         )}
                     </Text>
                   </div>
@@ -179,7 +179,7 @@ export default function ServicesCard({
                     </Text>
                     <Flex className="items-start gap-x-2  justify-end">
                       <div className="flex flex-grow  gap-2 max-w-[16rem]">
-                        {services.areaOfBusinessInterest.lineOfBusiness.map(
+                        {services.areaOfBusinessInterest?.lineOfBusiness.map(
                           (line) => (
                             <Tooltip label={line.id} key={line.id}>
                               <Badge variant="light" color="green" fz={8}>

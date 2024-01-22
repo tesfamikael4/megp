@@ -17,7 +17,6 @@ export default function TaskHandler({
   requesterID,
   requestType,
   setHideUnPick,
-  link,
 }: {
   taskType: string | undefined;
   instanceID: string | undefined;
@@ -26,74 +25,81 @@ export default function TaskHandler({
   setIsPicked: React.Dispatch<React.SetStateAction<boolean>>;
   setHideUnPick: React.Dispatch<React.SetStateAction<boolean>>;
   requestType: 'new' | 'renewal' | 'upgrade' | 'update' | 'preferential';
-  link?: string;
 }) {
   const [mutate] = useGoToNextStateMutation();
   const [loading, setLoading] = useState({});
   const [remark, setRemark] = useState<string>();
+  const [error, setError] = useState<string | null>(null);
   const [selectedChecklistItems, setSelectedChecklistItems] = useState<
     Record<string, boolean>
   >({});
   const router = useRouter();
 
   const handleButtonClick = async (action) => {
-    const selectedItems: Record<string, boolean> = {};
+    if (remark) {
+      const selectedItems: Record<string, boolean> = {};
 
-    taskCheckLists?.forEach((checkListItem) => {
-      const itemId = checkListItem.id;
-      selectedItems[itemId] = !!selectedChecklistItems[itemId];
-    });
+      taskCheckLists?.forEach((checkListItem) => {
+        const itemId = checkListItem.id;
+        selectedItems[itemId] = !!selectedChecklistItems[itemId];
+      });
 
-    const requestData = {
-      instanceId: instanceID,
-      action: action,
-      handlerId: instanceID,
-      selectedItems: selectedItems,
-      remark: remark,
-    };
-    setLoadingState(action, true);
+      const requestData = {
+        instanceId: instanceID,
+        action: action,
+        handlerId: instanceID,
+        selectedItems: selectedItems,
+        remark: remark,
+      };
+      setLoadingState(action, true);
 
-    try {
-      await mutate(requestData)
-        .unwrap()
-        .then((value) => {
-          if (value) {
-            if (value?.status === 'Completed') {
+      try {
+        await mutate(requestData)
+          .unwrap()
+          .then((value) => {
+            if (value) {
+              if (value?.status === 'Completed') {
+                notifications.show({
+                  title: 'Success',
+                  message: 'Task has been completed',
+                  color: 'green',
+                });
+                setIsPicked(false);
+                router.push(
+                  `/${requestType === 'update' ? 'info-change' : requestType === 'preferential' ? 'preferential-services' : requestType}`,
+                );
+              } else {
+                notifications.show({
+                  title: 'Success',
+                  message: 'Task has been updated',
+                  color: 'green',
+                });
+                router.refresh();
+              }
+              setIsPicked(false);
+              // router.push(
+              //   `/${requestType === 'update' ? 'info-change' : requestType === 'preferential' ? "preferential-services" : requestType}`,
+              // );
+            } else {
               notifications.show({
                 title: 'Success',
                 message: 'Task has been completed',
                 color: 'green',
               });
               setIsPicked(false);
-              router.push(
-                `/${requestType === 'update' ? 'info-change' : requestType === 'preferential' && link ? link : requestType}`,
-              );
-            } else {
-              notifications.show({
-                title: 'Success',
-                message: 'Task has been updated',
-                color: 'green',
-              });
-              router.refresh();
             }
-            setIsPicked(false);
-          } else {
-            notifications.show({
-              title: 'Success',
-              message: 'Task has been completed',
-              color: 'green',
-            });
-            setIsPicked(false);
-          }
-          setLoadingState(action, false);
+            setLoadingState(action, false);
+          });
+      } catch (error) {
+        setLoadingState(action, false);
+        notifications.show({
+          title: 'Error',
+          message: 'Something went wrong',
+          color: 'red',
         });
-    } catch (error) {
-      setLoadingState(action, false);
-      notifications.show({
-        title: 'Error',
-        message: 'Something went wrong',
-        color: 'red',
-      });
+      }
+    } else {
+      setError('Remark is required');
     }
   };
 
@@ -141,9 +147,26 @@ export default function TaskHandler({
           label="Remark"
           rows={4}
           required
-          placeholder="Any comments"
-          onChange={(event) => setRemark(event.currentTarget.value)}
+          placeholder="Enter Remark here"
+          onChange={(event) => {
+            if (event.currentTarget.value) {
+              setError(null);
+            } else {
+              setError('Remark is required');
+            }
+
+            setRemark(event.currentTarget.value);
+          }}
           className="mt-3 mb-5"
+          onFocus={() => {
+            if (remark) setError(null);
+          }}
+          onBlur={() => {
+            if (!remark) {
+              setError('Remark is required');
+            }
+          }}
+          error={error && error}
         />
       )}
 
@@ -159,7 +182,7 @@ export default function TaskHandler({
             onClick={() => {
               handleButtonClick('ADJUST');
               router.push(
-                `/${requestType === 'update' ? 'info-change' : requestType === 'preferential' && link ? link : requestType}`,
+                `/${requestType === 'update' ? 'info-change' : requestType === 'preferential' ? 'preferential-services' : requestType}`,
               );
             }}
             className="bg-yellow-500 hover:bg-yellow-600"
@@ -171,7 +194,7 @@ export default function TaskHandler({
             onClick={() => {
               handleButtonClick('REJECT');
               router.push(
-                `/${requestType === 'update' ? 'info-change' : requestType === 'preferential' && link ? link : requestType}`,
+                `/${requestType === 'update' ? 'info-change' : requestType === 'preferential' ? 'preferential-services' : requestType}`,
               );
             }}
             className="bg-red-600 hover:bg-red-700"

@@ -14,6 +14,7 @@ function Page() {
   const router = useRouter();
   const requestInfo = useGetForRenewalVendorQuery({});
 
+  console.log({ requestInfo });
   useEffect(() => {
     if (requestInfo.isError) {
       NotificationService.requestErrorNotification('Error on fetching data');
@@ -37,10 +38,7 @@ function Page() {
     return <></>;
   }
 
-  if (
-    requestInfo.data &&
-    validateApprovedVendorServiceSchema(requestInfo.data).success
-  ) {
+  if (requestInfo.data) {
     return (
       <section className="w-full min-h-screen">
         <ServicesCard servicesData={requestInfo.data} />

@@ -55,7 +55,7 @@ export const shareHoldersSchema = z.object({
     .max(50, { message: 'Name cannot exceed 50 characters' }),
   nationality: z.string().min(2, { message: 'Nationality is required' }),
   share: z
-    .string()
+    .number()
     .min(1, { message: 'Share is required ' })
     .refine((value) => !isNaN(Number(value)) && Number(value) > 0, {
       message: 'Number of Share must be greater than 1% ',
