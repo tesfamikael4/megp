@@ -43,7 +43,7 @@ export class CreateProcurementRequisitionDto {
   @IsNumber()
   calculatedAmount = 0.0;
 
-  @ApiProperty()
+  @ApiProperty({ default: 'USD' })
   @IsString()
   currency: string;
 

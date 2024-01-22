@@ -35,7 +35,7 @@ export class ProcurementRequisitionItemService extends ExtraCrudService<Procurem
       const batch = mergeItems.slice(i, i + batchSize);
       const items = this.repositoryProcurementRequisitionItem.create(batch);
       await this.repositoryProcurementRequisitionItem.save(items);
-      await this.updatePR(items);
+      await this.updatePR(items, 'add');
     }
   }
 
@@ -59,32 +59,49 @@ export class ProcurementRequisitionItemService extends ExtraCrudService<Procurem
       this.repositoryProcurementRequisitionItem.create(mergeItems),
     );
 
-    await this.updatePR(result);
+    await this.updatePR(result, 'add');
 
     return result;
   }
 
-  async updatePR(items: any): Promise<void> {
+  async updatePR(itemData: any, type: 'add' | 'remove'): Promise<void> {
     const procurementRequisitionId =
-      items.length > 1
-        ? items[0].procurementRequisitionId
-        : items.procurementRequisitionId;
+      itemData.length > 1
+        ? itemData[0].procurementRequisitionId
+        : itemData.procurementRequisitionId;
+
     const procurementRequisition =
       await this.repositoryProcurementRequisition.findOneOrFail({
         where: {
           id: procurementRequisitionId,
         },
       });
-    const calculatedAmount = items.reduce((total: any, item: any) => {
-      return total + item.unitPrice * item.quantity;
-    }, procurementRequisition.calculatedAmount);
-
-    procurementRequisition.calculatedAmount = calculatedAmount;
-
+    if (type === 'add') {
+      const calculatedAmount = Array.isArray(itemData)
+        ? itemData.reduce(
+            (total, item) => total + item.unitPrice * item.quantity,
+            0,
+          )
+        : itemData.unitPrice * itemData.quantity;
+      procurementRequisition.calculatedAmount = calculatedAmount;
+    } else if (type === 'remove') {
+      procurementRequisition.calculatedAmount =
+        procurementRequisition.calculatedAmount -
+        itemData.unitPrice * itemData.quantity;
+    }
     await this.repositoryProcurementRequisition.update(
       procurementRequisition.id,
       procurementRequisition,
     );
+  }
+
+  async softDelete(id: string): Promise<void> {
+    const item = await super.findOne(id);
+    const deleted =
+      await this.repositoryProcurementRequisitionItem.softDelete(id);
+    if (deleted.affected > 0) {
+      await this.updatePR(item, 'remove');
+    }
   }
 
   async mergeSimilarItems(items: any[]): Promise<any> {

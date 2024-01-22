@@ -1,7 +1,10 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { ProcurementRequisitionActivity } from 'src/entities';
+import {
+  ProcurementRequisition,
+  ProcurementRequisitionActivity,
+} from 'src/entities';
 import { ExtraCrudService } from 'src/shared/service/extra-crud.service';
 import axios from 'axios';
 import {
@@ -19,6 +22,8 @@ export class ProcurementRequisitionActivityService extends ExtraCrudService<Proc
   constructor(
     @InjectRepository(ProcurementRequisitionActivity)
     private readonly repositoryProcurementRequisitionActivity: Repository<ProcurementRequisitionActivity>,
+    @InjectRepository(ProcurementRequisition)
+    private readonly repositoryProcurementRequisition: Repository<ProcurementRequisition>,
     private readonly eventEmitter: EventEmitter2,
   ) {
     super(repositoryProcurementRequisitionActivity);
@@ -32,22 +37,18 @@ export class ProcurementRequisitionActivityService extends ExtraCrudService<Proc
     };
 
     const activities = {
-      postBudgetPlanItems: ({} = []),
-      postProcurementMechanisms: ({} = []),
-      postBudgetPlanTimelines: ({} = []),
-      disbursements: ({} = []),
-      activityBudgetLines: ({} = []),
+      postBudgetPlanItems: [],
+      postProcurementMechanisms: [],
+      postBudgetPlanTimelines: [],
+      disbursements: [],
+      activityBudgetLines: [],
     };
 
-    const app = await this.annualProcurementPlan(
-      `w=budgetYearId=${activityData.annualProcurementPlanActivity[0]}`,
-    );
     for (const x of activityData.annualProcurementPlanActivity) {
       const annualProcurementPlanActivity = (
         await this.annualProcurementPlanActivity(x)
       ).items;
       const activity: CreateProcurementRequisitionActivityDto = {
-        annualProcurementPlan: app[0],
         annualProcurementPlanActivityId: annualProcurementPlanActivity.id,
         procurementRequisitionId: activityData.procurementRequisitionId,
       };
@@ -165,7 +166,7 @@ export class ProcurementRequisitionActivityService extends ExtraCrudService<Proc
   }
 
   async annualProcurementPlan(q: string) {
-    const url = planning_url + 'apps';
+    const url = planning_url + 'apps/pr';
     const response = await axios.get(url, {
       headers: {
         'X-API-KEY': xApiKey,
@@ -175,20 +176,20 @@ export class ProcurementRequisitionActivityService extends ExtraCrudService<Proc
     return response.data;
   }
 
-  async postBudgetPlan(q: string) {
-    const url = planning_url + 'post-budget-plans/get-with-app';
+  async postBudgetPlan(organizationId: string, q: string) {
+    const url = planning_url + `post-budget-plans/get-with-app/pr`;
     const response = await axios.get(url, {
       headers: {
         'X-API-KEY': xApiKey,
       },
-      params: { q },
+      params: { q, organizationId },
     });
 
     return response.data;
   }
 
   async annualProcurementPlanActivity(id: any) {
-    const url = planning_url + '/post-budget-plan-activities/' + id;
+    const url = planning_url + '/post-budget-plans/pr' + id;
     const response = await axios.get(url, {
       headers: {
         'X-API-KEY': xApiKey,
@@ -200,24 +201,48 @@ export class ProcurementRequisitionActivityService extends ExtraCrudService<Proc
     return response.data;
   }
 
-  async annualProcurementPlanActivities(id: any, q: string) {
+  async annualProcurementPlanActivities(
+    id: any,
+    organizationId: string,
+    q: string,
+  ) {
     const apiResponse = {
       items: [],
       total: 0,
     };
     const postBudgetPlan = await this.postBudgetPlan(
-      `w=app.budgetYearId=${id}`,
+      organizationId,
+      `w=app.budgetYearId:=:${id}`,
     );
-    for (const x of postBudgetPlan.items) {
-      apiResponse.items.push(
-        await this.annualProcurementPlanActivitiesList(x.id, q),
-      );
-    }
+    const activities = await this.annualProcurementPlanActivitiesList(
+      postBudgetPlan.items[0].id,
+      q,
+    );
+    apiResponse.items.push(activities);
+
+    // filter already added activities
+    const added = await this.repositoryProcurementRequisition.find({
+      relations: {
+        procurementRequisitionActivities: true,
+      },
+    });
+
+    // Extract the IDs of the already added procurementRequisitionActivities
+    const addedActivityIds = added.flatMap((item) =>
+      item.procurementRequisitionActivities.map((activity) => activity.id),
+    );
+
+    // Filter out activities with matching IDs from apiResponse.items
+    apiResponse.items = apiResponse.items.map((activities) =>
+      activities.filter((activity) => !addedActivityIds.includes(activity.id)),
+    );
+    apiResponse.total = apiResponse.items.length;
+
     return apiResponse;
   }
 
   async annualProcurementPlanActivitiesList(id: any, q: string) {
-    const url = planning_url + '/post-budget-plan-activities/list/' + id;
+    const url = planning_url + '/post-budget-plans/list/pr' + id;
     const response = await axios.get(url, {
       headers: {
         'X-API-KEY': xApiKey,

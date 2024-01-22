@@ -14,7 +14,13 @@ import { Audit } from 'src/shared/entities/audit.entity';
 import { ProcurementRequisition } from './procurement-requisition.entity';
 import { ProcurementRequisitionItemReference } from './procurement-requisition-item-reference.entity';
 @Entity({ name: 'procurement_requisition_items' })
-@Unique(['procurementRequisitionId', 'itemCode', 'currency', 'measurement'])
+@Unique([
+  'procurementRequisitionId',
+  'itemCode',
+  'currency',
+  'measurement',
+  'deletedAt',
+])
 export class ProcurementRequisitionItem extends Audit {
   @PrimaryColumn('uuid')
   id: string;

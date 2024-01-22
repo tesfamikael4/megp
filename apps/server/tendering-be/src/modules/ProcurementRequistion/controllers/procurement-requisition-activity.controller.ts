@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query, Req } from '@nestjs/common';
+import { Controller, Get, Param, Post, Query, Req } from '@nestjs/common';
 import { ApiQuery, ApiTags } from '@nestjs/swagger';
 import { ProcurementRequisitionActivity } from 'src/entities';
 import { ExtraCrudController } from 'src/shared/controller';
@@ -8,6 +8,9 @@ import {
   AssignAnnualProcurementPlanActivityDto,
   UpdateProcurementRequisitionActivityDto,
 } from '../dto/procurement-requisition-activity.dto';
+import { CurrentUser } from 'src/shared/authorization';
+import { userInfo } from 'os';
+import { DeepPartial } from 'typeorm';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'procurementRequisitionId',
@@ -32,20 +35,15 @@ export class ProcurementRequisitionActivityController extends ExtraCrudControlle
     type: String,
     required: false,
   })
-  async annualProcurementPlan(@Query('q') q: string): Promise<any> {
-    return this.procurementRequisitionActivityService.annualProcurementPlan(q);
+  async annualProcurementPlan(
+    @CurrentUser() user: any,
+    @Query('q') q: string,
+  ): Promise<any> {
+    return this.procurementRequisitionActivityService.postBudgetPlan(
+      user.organizationId,
+      q,
+    );
   }
-
-  @Get('fromPlanningTesting')
-  @ApiQuery({
-    name: 'q',
-    type: String,
-    required: false,
-  })
-  async annualsProcurementPlan(@Query('q') q: string): Promise<any> {
-    return this.procurementRequisitionActivityService.postBudgetPlan(q);
-  }
-
   @Get('annualProcurementPlanActivities/:id')
   @ApiQuery({
     name: 'q',
@@ -54,10 +52,12 @@ export class ProcurementRequisitionActivityController extends ExtraCrudControlle
   })
   async annualProcurementPlanActivities(
     @Param('id') id: string,
+    @CurrentUser() user: any,
     @Query('q') q: string,
   ): Promise<any> {
     return this.procurementRequisitionActivityService.annualProcurementPlanActivities(
       id,
+      user.organizationId,
       q,
     );
   }

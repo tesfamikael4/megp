@@ -29,6 +29,7 @@ import { ProcurementRequisitionDisbursementController } from './controllers/proc
 import { ProcurementRequisitionDisbursementService } from './services/procurement-requisition-disbursement.service';
 import { ProcurementRequisitionTimelineService } from './services/procurement-requisition-timeline.service';
 import { ProcurementRequisitionTimelineController } from './controllers/procurement-requisition-timeline.controller';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
   imports: [
@@ -45,6 +46,19 @@ import { ProcurementRequisitionTimelineController } from './controllers/procurem
       ProcurementRequisitionMechanism,
       ProcurementRequisitionOfficerAssignment,
       ProcurementRequisitionDisbursement,
+    ]),
+    ClientsModule.register([
+      {
+        name: 'TENDERING_RMQ_SERVICE',
+        transport: Transport.RMQ,
+        options: {
+          urls: [process.env.RMQ_URL],
+          queue: 'pr-workflow-initiate',
+          queueOptions: {
+            durable: false,
+          },
+        },
+      },
     ]),
   ],
   providers: [

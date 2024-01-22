@@ -8,10 +8,6 @@ export class CreateProcurementRequisitionActivityDto {
   @ApiProperty()
   @IsUUID()
   annualProcurementPlanActivityId: string;
-
-  @ApiProperty()
-  @IsJSON()
-  annualProcurementPlan: JSON;
 }
 
 export class UpdateProcurementRequisitionActivityDto extends CreateProcurementRequisitionActivityDto {
