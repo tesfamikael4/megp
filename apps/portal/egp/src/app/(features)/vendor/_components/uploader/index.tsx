@@ -67,17 +67,40 @@ const FileUploader: React.FC<FileUploaderProps> = ({
   const handleOnChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (
       e.currentTarget.files &&
-      e.currentTarget.files?.length > 0 &&
+      e.currentTarget.files.length > 0 &&
       e.currentTarget.files[0]
     ) {
       const newSelectedFile = e.currentTarget.files[0];
-      const convertImageUrl = URL.createObjectURL(newSelectedFile);
 
-      setSelectedFile(newSelectedFile);
-      setCurrent(convertImageUrl);
+      if (newSelectedFile.type.startsWith('image/')) {
+        // Handle image preview
+        const convertImageUrl = URL.createObjectURL(newSelectedFile);
 
-      if (onChange) {
-        onChange(newSelectedFile);
+        setSelectedFile(newSelectedFile);
+        setCurrent(convertImageUrl);
+
+        if (onChange) {
+          onChange(newSelectedFile);
+        }
+      } else if (newSelectedFile.type === 'application/pdf') {
+        // Handle PDF preview
+        const reader = new FileReader();
+
+        reader.onload = (event) => {
+          const pdfUrl = event.target?.result as string;
+
+          setSelectedFile(newSelectedFile);
+          setCurrent(pdfUrl);
+
+          if (onChange) {
+            onChange(newSelectedFile);
+          }
+        };
+
+        reader.readAsDataURL(newSelectedFile);
+      } else {
+        // Handle other file types (you can customize this part)
+        console.log('Preview not available for this file type.');
       }
     }
   };
@@ -103,8 +126,8 @@ const FileUploader: React.FC<FileUploaderProps> = ({
           htmlFor={id}
           className={`bg-white text-black text-base 
                     rounded w-60 h-30 py-2 flex flex-col items-center 
-                    justify-center cursor-pointer border-2 border-gray-300 
-                    border-dashed font-[sans-serif] relative`}
+                    justify-center cursor-pointer border-2
+                    border-dashed ${error ? 'border-red-500' : 'border-gray-300'} font-[sans-serif] relative`}
           onMouseEnter={() => setShowPreview(true)}
           onMouseLeave={() => setShowPreview(false)}
         >
@@ -117,7 +140,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
                   alt="image"
                   width={100}
                   height={100}
-                  onLoad={async (p) => {
+                  onLoad={(p) => {
                     p.currentTarget.classList.add(
                       'animate-pulse',
                       'bg-slate-300',
@@ -130,7 +153,16 @@ const FileUploader: React.FC<FileUploaderProps> = ({
                 />
               ) : (
                 <div>
-                  <p>Preview not available for this file type.</p>
+                  {selectedFile && selectedFile.type === 'application/pdf' ? (
+                    <img
+                      src="/perago.png" // Specify the path to your PDF placeholder image
+                      alt="pdf-placeholder"
+                      width={100}
+                      height={100}
+                    />
+                  ) : (
+                    <p>Preview not available for this file type.</p>
+                  )}
                 </div>
               )}
               <ActionIcon
@@ -166,9 +198,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
                 className="hidden"
                 onChange={handleOnChange}
               />
-              <p className="text-xs text-gray-400 mt-2">
-                PNG, JPG SVG, WEBP, and or pdf.
-              </p>
+              <p className="text-xs text-gray-400 mt-2">PNG, JPG or pdf.</p>
             </>
           )}
           {showPreview && selectedFile && (
@@ -180,7 +210,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
           )}
         </label>
         <Text fz={'xs'} color="red">
-          {error}
+          {error && error}
         </Text>
       </Flex>
     </>

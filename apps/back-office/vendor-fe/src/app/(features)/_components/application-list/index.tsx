@@ -37,7 +37,7 @@ function calculateTotalPages(totalItems: number, itemsPerPage: number): number {
 }
 
 type ApplicationListProp = {
-  serviceKey: 'new' | 'renewal' | 'upgrade' | 'update';
+  serviceKey: 'new' | 'renewal' | 'upgrade' | 'update' | 'preferential';
   title: string;
 };
 
@@ -198,7 +198,11 @@ export default function ApplicationList({
               onClick={() =>
                 router.push(
                   `/${
-                    serviceKey === 'update' ? 'info-change' : serviceKey
+                    serviceKey === 'update'
+                      ? 'info-change'
+                      : serviceKey === 'preferential'
+                        ? 'preferential-services'
+                        : serviceKey
                   }/detail/${item.id}`,
                 )
               }

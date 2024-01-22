@@ -2,9 +2,6 @@ import React from 'react';
 import { AlertMessage } from '../_components/basic/alertMessageCard';
 import { Flex } from '@mantine/core';
 import BasicInformationPage from '../_components/basic/basicInformation-page';
-import { useGetVendorQuery } from '../../_api/query';
-import { useRouter } from 'next/navigation';
-import { NotificationService } from '../../../_components/notification';
 
 function Page() {
   return (

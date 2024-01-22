@@ -39,10 +39,7 @@ export const Menu: MenuItem[] = [
   {
     label: 'Preferential Services',
     icon: IconFileSettings,
-    links: [
-      { label: 'IBM', link: '/service/ibm' },
-      { label: 'MSME', link: '/service/msme' },
-    ],
+    link: '/preferential-services',
   },
   { label: 'Report & Analytics', icon: IconChartInfographic, link: '/reports' },
 
