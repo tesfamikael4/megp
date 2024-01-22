@@ -13,6 +13,7 @@ import {
   TextInput,
   Textarea,
 } from '@mantine/core';
+import { logger } from '@megp/core-fe';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z, ZodType } from 'zod';
@@ -31,10 +32,12 @@ export const ItemDetailForm = ({
   item,
   onSave,
   isLoading,
+  onDone,
 }: {
   item: any;
   isLoading?: boolean;
-  onSave: (data: any, id?: string) => void;
+  onSave?: (data: any, id?: string) => void;
+  onDone?: (data: any, id?: string) => void;
 }) => {
   const {
     handleSubmit,
@@ -51,15 +54,20 @@ export const ItemDetailForm = ({
     useLazyGetUnitOfMeasurementsQuery();
 
   const onSubmit = (data) => {
-    onSave(data, item.id);
+    onSave && onSave(data, item.id);
+    onDone && onDone(data, item.id);
+  };
+
+  const onError = (err) => {
+    logger.log(err);
   };
 
   useEffect(() => {
     setValue('description', item?.description);
-    setValue('quantity', item?.quantity);
-    setValue('unitPrice', item?.unitPrice);
+    setValue('quantity', `${item?.quantity}`);
+    setValue('unitPrice', `${item?.unitPrice}`);
     setValue('uomName', item?.uomName);
-    setValue('classification', item?.classification);
+    setValue('classification', `${item?.classification}`);
     setValue('itemCode', item?.itemCode);
     setValue('currency', item?.currency);
 
@@ -120,8 +128,8 @@ export const ItemDetailForm = ({
         </Box>
       </Flex>
       <Group justify="end">
-        <Button onClick={handleSubmit(onSubmit)} loading={isLoading}>
-          Save
+        <Button onClick={handleSubmit(onSubmit, onError)} loading={isLoading}>
+          {onSave ? 'Save' : 'Done'}
         </Button>
       </Group>
     </Stack>

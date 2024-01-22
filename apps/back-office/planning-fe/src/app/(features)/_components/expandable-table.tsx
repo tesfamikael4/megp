@@ -9,7 +9,7 @@ const perPage = 10;
 interface Config {
   columns: any[];
   isExpandable?: boolean;
-  expandedRowContent?: (record: any) => React.ReactNode;
+  expandedRowContent?: (record: any, collapse?: any) => React.ReactNode;
   isSearchable?: boolean;
   primaryColumn?: string;
   isSelectable?: boolean;
@@ -71,9 +71,9 @@ export const ExpandableTable = ({
         records={data}
         rowExpansion={{
           trigger: config.isExpandable ? 'click' : 'never',
-          content: ({ record }: any) =>
+          content: ({ record, collapse }: any) =>
             config.expandedRowContent
-              ? config.expandedRowContent(record)
+              ? config.expandedRowContent(record, collapse)
               : null,
         }}
         styles={{
