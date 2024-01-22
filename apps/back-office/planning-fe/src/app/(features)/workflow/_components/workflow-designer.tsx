@@ -95,16 +95,25 @@ export function Steps({ activityId }: { activityId: string }) {
   // const activityId = '1f344819-d64d-4986-b192-ee06f5bf0e98';
   const [orderedData, setOrderedData] = useState<any>(data);
   const [opened, { open, close }] = useDisclosure(false);
-  const { data: steps, isLoading: isFetchingSteps } = useGetDefaultStepsQuery({
+  const { data: defaultSteps, isLoading: isFetchingDefaultSteps } = useGetDefaultStepsQuery({
     activityId: activityId,
   });
+  const { data: steps, isLoading: isFetchingSteps } = useGetStepsQuery({
+        activityId: activityId,
+          });
   const [createSteps, { isLoading: isCreatingSteps }] =
     useCreateStepsMutation();
 
   useEffect(() => {
-    setData(steps?.items);
-    setOrderedData(steps?.items);
-  }, [steps]);
+    if(steps?.total != 0) {
+      setData(steps?.items)
+      setOrderedData(steps?.items)
+    } else {
+      setData(defaultSteps?.items);
+      setOrderedData(defaultSteps?.items);
+    }
+    
+  }, [defaultSteps, steps]);
 
   const listConfig: TableConfig<any> = {
     columns: [
@@ -774,7 +783,7 @@ export function Steps({ activityId }: { activityId: string }) {
             Order
           </Button>
         </Group>
-        {isFetchingSteps && (
+        {(isFetchingSteps || isFetchingDefaultSteps) && (
           <div className="flex justify-center items-center w-full">
             <Loader />
           </div>
