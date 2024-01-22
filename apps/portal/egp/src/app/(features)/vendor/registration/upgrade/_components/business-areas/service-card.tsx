@@ -43,7 +43,7 @@ const transformCategoryPriceRange = (
   inputData
     .filter(
       (item: any) =>
-        item.businessArea.toLowerCase() === businessArea.toLowerCase(),
+        item.businessArea.toLowerCase() === businessArea?.toLowerCase(),
     )
     .filter((item: any) => item.id === id)
     .map(

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Accordion, Flex, Text, Box } from '@mantine/core';
+import { Accordion, Flex, Text, Box, ScrollArea } from '@mantine/core';
 import classes from './accordion.module.scss';
 import { ShowFile } from '@/app/(features)/_components/details-accordion';
 import { renderTable } from '@/app/(features)/util/renderTable';
@@ -113,7 +113,7 @@ function FormPreview({ data }: { data: any }) {
               <Accordion.Control>{tabName}</Accordion.Control>
               {Array.isArray(data[tabValue]) ? (
                 <Accordion.Panel key={tabValue} className="gap-2 items-center">
-                  {renderTable(data[tabValue], formatColumns, tabValue)}{' '}
+                  {renderTable(data[tabValue], formatColumns, tabValue)}
                 </Accordion.Panel>
               ) : (
                 Object.keys(data[tabValue]).map((fieldKey) => {
@@ -162,8 +162,8 @@ function FormPreview({ data }: { data: any }) {
                                   tabValue === 'supportingDocuments'
                                     ? 'SupportingDocument'
                                     : tabValue === 'certificate'
-                                    ? 'Certificate'
-                                    : 'paymentReceipt'
+                                      ? 'Certificate'
+                                      : 'paymentReceipt'
                                 }/${data[tabValue][fieldKey]}/${data?.userId}`}
                                 filename={data[tabValue][fieldKey]}
                               />

@@ -40,13 +40,6 @@ type FormData = {
 const formDataSchema = z.discriminatedUnion('origin', [
   z.object({
     origin: z.literal('Malawi'),
-    name: z
-      .string()
-      .min(2, { message: 'Name must be at least 2 characters long' })
-      .max(100, { message: 'Name cannot exceed 100 characters' }),
-    businessType: z
-      .string()
-      .min(2, { message: 'Form of business is required' }),
     tinNumber: z
       .string()
       .min(6, { message: 'TIN must have at least 10 characters' })
@@ -161,7 +154,7 @@ export const BasicInformation = ({ defaultValues }: BasicInformationProps) => {
             {...lockElements('basic')}
             required
           />
-          {
+          {watch().origin !== 'Malawi' && (
             <>
               <TextInput
                 className="w-full"
@@ -187,7 +180,7 @@ export const BasicInformation = ({ defaultValues }: BasicInformationProps) => {
                 {...lockElements('basic')}
               />
             </>
-          }
+          )}
 
           {watch().origin === 'Malawi' ? (
             <>
