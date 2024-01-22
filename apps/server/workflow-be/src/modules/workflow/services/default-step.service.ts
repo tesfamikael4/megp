@@ -28,6 +28,7 @@ export class DefaultStepService extends ExtraCrudService<DefaultStep> {
     }
     defaultSteps.forEach((obj) => {
       obj.organizationId = organizationId;
+      obj.name = obj.title.split(' ').join('');
     });
     const items = this.repositoryDefaultStep.create(defaultSteps);
     await this.repositoryDefaultStep.save(items);
