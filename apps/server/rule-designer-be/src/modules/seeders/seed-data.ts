@@ -1,6 +1,6 @@
 export const seedRules = [
   {
-    designerId: '8a9ba87c-df7b-497b-80a4-435a7f995c9c',
+    designerId: '535df5f5-c24f-43f9-b655-874afc2eeee5',
     key: 'ruleOne',
     executionOrder: 1,
     enforcementMethod: 'FLAG',
@@ -14,14 +14,14 @@ export const seedRules = [
           joinType: '&&',
         },
         {
-          field: 'maxValueThreshold',
+          field: 'valueThreshold',
           operator: '<=',
           value: '30000000',
           type: 'integer',
           joinType: '&&',
         },
         {
-          field: 'minValueThreshold',
+          field: 'valueThreshold',
           operator: '>=',
           value: '0',
           type: 'integer',
@@ -31,7 +31,7 @@ export const seedRules = [
     ],
   },
   {
-    designerId: '8a9ba87c-df7b-497b-80a4-435a7f995c9c',
+    designerId: '535df5f5-c24f-43f9-b655-874afc2eeee5',
     key: 'ruleTwo',
     executionOrder: 2,
     conditions: [
@@ -44,14 +44,14 @@ export const seedRules = [
           joinType: '&&',
         },
         {
-          field: 'maxValueThreshold',
+          field: 'valueThreshold',
           operator: '<=',
           value: '50000000',
           type: 'integer',
           joinType: '&&',
         },
         {
-          field: 'minValueThreshold',
+          field: 'valueThreshold',
           operator: '>=',
           value: '0',
           type: 'integer',
@@ -61,7 +61,7 @@ export const seedRules = [
     ],
   },
   {
-    designerId: '8a9ba87c-df7b-497b-80a4-435a7f995c9c',
+    designerId: '535df5f5-c24f-43f9-b655-874afc2eeee5',
     key: 'ruleThree',
     executionOrder: 3,
     conditions: [
@@ -74,14 +74,14 @@ export const seedRules = [
           joinType: '&&',
         },
         {
-          field: 'maxValueThreshold',
+          field: 'valueThreshold',
           operator: '<=',
           value: '30000000',
           type: 'integer',
           joinType: '&&',
         },
         {
-          field: 'minValueThreshold',
+          field: 'valueThreshold',
           operator: '>=',
           value: '0',
           type: 'integer',
@@ -91,7 +91,7 @@ export const seedRules = [
     ],
   },
   {
-    designerId: '482f2dba-24a5-4935-85aa-f8242f45ee76',
+    designerId: '0ad11b9b-d3b8-448d-bd16-8bcad60973b3',
     key: 'ruleFour',
     executionOrder: 1,
     enforcementMethod: 'FLAG',
@@ -105,14 +105,14 @@ export const seedRules = [
           joinType: '&&',
         },
         {
-          field: 'maxValueThreshold',
+          field: 'valueThreshold',
           operator: '<=',
           value: '500000000',
           type: 'integer',
           joinType: '&&',
         },
         {
-          field: 'minValueThreshold',
+          field: 'valueThreshold',
           operator: '>=',
           value: '30000000',
           type: 'integer',
@@ -122,7 +122,7 @@ export const seedRules = [
     ],
   },
   {
-    designerId: '482f2dba-24a5-4935-85aa-f8242f45ee76',
+    designerId: '0ad11b9b-d3b8-448d-bd16-8bcad60973b3',
     key: 'ruleFive',
     executionOrder: 2,
     conditions: [
@@ -135,14 +135,14 @@ export const seedRules = [
           joinType: '&&',
         },
         {
-          field: 'maxValueThreshold',
+          field: 'valueThreshold',
           operator: '<=',
           value: '100000000',
           type: 'integer',
           joinType: '&&',
         },
         {
-          field: 'minValueThreshold',
+          field: 'valueThreshold',
           operator: '>=',
           value: '50000000',
           type: 'integer',
@@ -152,7 +152,7 @@ export const seedRules = [
     ],
   },
   {
-    designerId: '482f2dba-24a5-4935-85aa-f8242f45ee76',
+    designerId: '0ad11b9b-d3b8-448d-bd16-8bcad60973b3',
     key: 'ruleSix',
     executionOrder: 3,
     conditions: [
@@ -165,14 +165,14 @@ export const seedRules = [
           joinType: '&&',
         },
         {
-          field: 'maxValueThreshold',
+          field: 'valueThreshold',
           operator: '<=',
           value: '5000000000',
           type: 'integer',
           joinType: '&&',
         },
         {
-          field: 'minValueThreshold',
+          field: 'valueThreshold',
           operator: '>=',
           value: '100000000',
           type: 'integer',
@@ -182,7 +182,7 @@ export const seedRules = [
     ],
   },
   {
-    designerId: '482f2dba-24a5-4935-85aa-f8242f45ee76',
+    designerId: '0ad11b9b-d3b8-448d-bd16-8bcad60973b3',
     key: 'ruleSeven',
     executionOrder: 4,
     conditions: [
@@ -195,14 +195,14 @@ export const seedRules = [
           joinType: '&&',
         },
         {
-          field: 'maxValueThreshold',
+          field: 'valueThreshold',
           operator: '<=',
           value: '100000000',
           type: 'integer',
           joinType: '&&',
         },
         {
-          field: 'minValueThreshold',
+          field: 'valueThreshold',
           operator: '>=',
           value: '30000000',
           type: 'integer',
@@ -212,7 +212,7 @@ export const seedRules = [
     ],
   },
   {
-    designerId: 'fbf7d46d-c617-49a2-8230-2d4f16566510',
+    designerId: 'ac3adcd7-ae88-4d01-8544-e571cae238e9',
     key: 'ruleEight',
     executionOrder: 1,
     enforcementMethod: 'FLAG',
@@ -226,14 +226,14 @@ export const seedRules = [
           joinType: '&&',
         },
         {
-          field: 'maxValueThreshold',
+          field: 'valueThreshold',
           operator: '<=',
           value: '500000000',
           type: 'integer',
           joinType: '&&',
         },
         {
-          field: 'minValueThreshold',
+          field: 'valueThreshold',
           operator: '>=',
           value: '0',
           type: 'integer',
@@ -243,7 +243,7 @@ export const seedRules = [
     ],
   },
   {
-    designerId: 'fbf7d46d-c617-49a2-8230-2d4f16566510',
+    designerId: 'ac3adcd7-ae88-4d01-8544-e571cae238e9',
     key: 'ruleNine',
     executionOrder: 2,
     conditions: [
@@ -256,14 +256,14 @@ export const seedRules = [
           joinType: '&&',
         },
         {
-          field: 'maxValueThreshold',
+          field: 'valueThreshold',
           operator: '<=',
           value: '500000000',
           type: 'integer',
           joinType: '&&',
         },
         {
-          field: 'minValueThreshold',
+          field: 'valueThreshold',
           operator: '>=',
           value: '0',
           type: 'integer',
@@ -273,7 +273,7 @@ export const seedRules = [
     ],
   },
   {
-    designerId: 'fbf7d46d-c617-49a2-8230-2d4f16566510',
+    designerId: 'ac3adcd7-ae88-4d01-8544-e571cae238e9',
     key: 'ruleTen',
     executionOrder: 3,
     conditions: [
@@ -286,14 +286,14 @@ export const seedRules = [
           joinType: '&&',
         },
         {
-          field: 'maxValueThreshold',
+          field: 'valueThreshold',
           operator: '<=',
           value: '5000000000',
           type: 'integer',
           joinType: '&&',
         },
         {
-          field: 'minValueThreshold',
+          field: 'valueThreshold',
           operator: '>=',
           value: '0',
           type: 'integer',
@@ -303,7 +303,7 @@ export const seedRules = [
     ],
   },
   {
-    designerId: 'd2e63f1c-f999-4348-b43d-974596f321c7',
+    designerId: '6d0ee241-9c8b-46a8-af4f-dc99f99a31c0',
     key: 'ruleEleven',
     executionOrder: 1,
     enforcementMethod: 'FLAG',
@@ -317,14 +317,14 @@ export const seedRules = [
           joinType: '&&',
         },
         {
-          field: 'maxValueThreshold',
+          field: 'valueThreshold',
           operator: '<=',
           value: '20000000',
           type: 'integer',
           joinType: '&&',
         },
         {
-          field: 'minValueThreshold',
+          field: 'valueThreshold',
           operator: '>=',
           value: '0',
           type: 'integer',
@@ -334,7 +334,7 @@ export const seedRules = [
     ],
   },
   {
-    designerId: '219537ed-a7dc-4d5a-900f-b6c08f466add',
+    designerId: '5077df11-c603-4ae0-b9ba-23bcc76b34f2',
     key: 'ruleTwelve',
     executionOrder: 1,
     enforcementMethod: 'FLAG',
@@ -348,14 +348,14 @@ export const seedRules = [
           joinType: '&&',
         },
         {
-          field: 'maxValueThreshold',
+          field: 'valueThreshold',
           operator: '<',
           value: '20000000',
           type: 'integer',
           joinType: '&&',
         },
         {
-          field: 'minValueThreshold',
+          field: 'valueThreshold',
           operator: '>=',
           value: '0',
           type: 'integer',
@@ -365,7 +365,7 @@ export const seedRules = [
     ],
   },
   {
-    designerId: 'a6632650-8f09-490a-9fee-46dde7cee016',
+    designerId: '3307858e-5234-4476-91bc-1144a4430616',
     key: 'ruleThirteen',
     executionOrder: 1,
     enforcementMethod: 'FLAG',
@@ -379,14 +379,14 @@ export const seedRules = [
           joinType: '&&',
         },
         {
-          field: 'maxValueThreshold',
+          field: 'valueThreshold',
           operator: '<',
           value: '100000000',
           type: 'integer',
           joinType: '&&',
         },
         {
-          field: 'minValueThreshold',
+          field: 'valueThreshold',
           operator: '>=',
           value: '20000000',
           type: 'integer',
@@ -396,7 +396,7 @@ export const seedRules = [
     ],
   },
   {
-    designerId: '75784bd4-e3fc-41e6-ad57-6c716c7ef6a4',
+    designerId: 'd268f22b-d540-4abf-a201-e36c5efba2e2',
     key: 'ruleFourteen',
     executionOrder: 1,
     enforcementMethod: 'FLAG',
@@ -410,14 +410,14 @@ export const seedRules = [
           joinType: '&&',
         },
         {
-          field: 'maxValueThreshold',
+          field: 'valueThreshold',
           operator: '<',
           value: '100000000',
           type: 'integer',
           joinType: '&&',
         },
         {
-          field: 'minValueThreshold',
+          field: 'valueThreshold',
           operator: '>=',
           value: '20000000',
           type: 'integer',
@@ -427,7 +427,7 @@ export const seedRules = [
     ],
   },
   {
-    designerId: 'dcf9bfe0-f00e-4dfb-bd3c-363c03da8f20',
+    designerId: '44d8ffef-cde6-4a61-a9a8-ba0854d26396',
     key: 'ruleFifteen',
     executionOrder: 1,
     enforcementMethod: 'FLAG',
@@ -441,14 +441,14 @@ export const seedRules = [
           joinType: '&&',
         },
         {
-          field: 'maxValueThreshold',
+          field: 'valueThreshold',
           operator: '<',
           value: '10000',
           type: 'integer',
           joinType: '&&',
         },
         {
-          field: 'minValueThreshold',
+          field: 'valueThreshold',
           operator: '>=',
           value: '0',
           type: 'integer',
@@ -458,7 +458,7 @@ export const seedRules = [
     ],
   },
   {
-    designerId: '2e905804-3a16-4e02-a804-a934a7175340',
+    designerId: '7ea1834e-711d-4e9a-9c5b-43845c1e1532',
     key: 'ruleSixteen',
     executionOrder: 1,
     enforcementMethod: 'FLAG',
@@ -472,14 +472,14 @@ export const seedRules = [
           joinType: '&&',
         },
         {
-          field: 'maxValueThreshold',
+          field: 'valueThreshold',
           operator: '<=',
           value: '5000000',
           type: 'integer',
           joinType: '&&',
         },
         {
-          field: 'minValueThreshold',
+          field: 'valueThreshold',
           operator: '>=',
           value: '0',
           type: 'integer',
@@ -489,7 +489,7 @@ export const seedRules = [
     ],
   },
   {
-    designerId: '5e28678f-5428-4fb9-acfa-1f046f4e5205',
+    designerId: '9c825356-26a8-445e-8504-db0a04eee017',
     key: 'ruleSeventeen',
     executionOrder: 1,
     enforcementMethod: 'FLAG',
@@ -503,14 +503,14 @@ export const seedRules = [
           joinType: '&&',
         },
         {
-          field: 'maxValueThreshold',
+          field: 'valueThreshold',
           operator: '<=',
           value: '50000000',
           type: 'integer',
           joinType: '&&',
         },
         {
-          field: 'minValueThreshold',
+          field: 'valueThreshold',
           operator: '>=',
           value: '5000000',
           type: 'integer',
@@ -520,7 +520,7 @@ export const seedRules = [
     ],
   },
   {
-    designerId: '5e28678f-5428-4fb9-acfa-1f046f4e5205',
+    designerId: '9c825356-26a8-445e-8504-db0a04eee017',
     key: 'rule18',
     executionOrder: 2,
     conditions: [
@@ -533,14 +533,14 @@ export const seedRules = [
           joinType: '&&',
         },
         {
-          field: 'maxValueThreshold',
+          field: 'valueThreshold',
           operator: '<=',
           value: '5000000',
           type: 'integer',
           joinType: '&&',
         },
         {
-          field: 'minValueThreshold',
+          field: 'valueThreshold',
           operator: '>=',
           value: '0',
           type: 'integer',
@@ -550,7 +550,7 @@ export const seedRules = [
     ],
   },
   {
-    designerId: '9c6cce80-bb69-43a9-b9f5-bac8214c2ad2',
+    designerId: '990570a5-e3f9-4ea6-b930-30518f82a318',
     key: 'rule19',
     executionOrder: 1,
     enforcementMethod: 'FLAG',
@@ -564,14 +564,14 @@ export const seedRules = [
           joinType: '&&',
         },
         {
-          field: 'maxValueThreshold',
+          field: 'valueThreshold',
           operator: '<=',
           value: '100000000',
           type: 'integer',
           joinType: '&&',
         },
         {
-          field: 'minValueThreshold',
+          field: 'valueThreshold',
           operator: '>=',
           value: '50000000',
           type: 'integer',
@@ -581,7 +581,7 @@ export const seedRules = [
     ],
   },
   {
-    designerId: '9c6cce80-bb69-43a9-b9f5-bac8214c2ad2',
+    designerId: '990570a5-e3f9-4ea6-b930-30518f82a318',
     key: 'rule20',
     executionOrder: 2,
     conditions: [
@@ -594,14 +594,14 @@ export const seedRules = [
           joinType: '&&',
         },
         {
-          field: 'maxValueThreshold',
+          field: 'valueThreshold',
           operator: '<=',
           value: '50000000',
           type: 'integer',
           joinType: '&&',
         },
         {
-          field: 'minValueThreshold',
+          field: 'valueThreshold',
           operator: '>=',
           value: '5000000',
           type: 'integer',
@@ -611,7 +611,7 @@ export const seedRules = [
     ],
   },
   {
-    designerId: '9c6cce80-bb69-43a9-b9f5-bac8214c2ad2',
+    designerId: '990570a5-e3f9-4ea6-b930-30518f82a318',
     key: 'rule21',
     executionOrder: 3,
     conditions: [
@@ -624,14 +624,14 @@ export const seedRules = [
           joinType: '&&',
         },
         {
-          field: 'maxValueThreshold',
+          field: 'valueThreshold',
           operator: '<=',
           value: '100000000',
           type: 'integer',
           joinType: '&&',
         },
         {
-          field: 'minValueThreshold',
+          field: 'valueThreshold',
           operator: '>=',
           value: '50000000',
           type: 'integer',
@@ -641,7 +641,7 @@ export const seedRules = [
     ],
   },
   {
-    designerId: '40af4807-037b-4a15-996f-101481b8a6a3',
+    designerId: '7338db29-8d1e-4952-9991-78627e34d73d',
     key: 'rule22',
     executionOrder: 1,
     enforcementMethod: 'FLAG',
@@ -665,7 +665,7 @@ export const seedRules = [
     ],
   },
   {
-    designerId: '2573ba6e-0dea-48ce-a191-3899bc387bd6',
+    designerId: 'a831ac69-55f9-4f8e-b71d-6a07a48709e3',
     key: 'rule23',
     executionOrder: 1,
     enforcementMethod: 'FLAG',
@@ -727,7 +727,7 @@ export const seedDesigns = [
     defaultActions: [{ type: 'set', name: 'default', value: true }],
     name: 'Request for quotation',
     key: 'requestForQuotation',
-    id: '8a9ba87c-df7b-497b-80a4-435a7f995c9c',
+    id: '535df5f5-c24f-43f9-b655-874afc2eeee5',
   },
   {
     enforcementMethod: 'FLAG',
@@ -735,7 +735,7 @@ export const seedDesigns = [
     defaultActions: [{ type: 'set', name: 'default', value: true }],
     name: 'National Competitive Bidding',
     key: 'nationalCompetitiveBidding',
-    id: '482f2dba-24a5-4935-85aa-f8242f45ee76',
+    id: '0ad11b9b-d3b8-448d-bd16-8bcad60973b3',
   },
   {
     enforcementMethod: 'FLAG',
@@ -743,7 +743,7 @@ export const seedDesigns = [
     defaultActions: [{ type: 'set', name: 'default', value: true }],
     name: 'International Competitive Bidding',
     key: 'internationalCompetitiveBidding',
-    id: 'fbf7d46d-c617-49a2-8230-2d4f16566510',
+    id: 'ac3adcd7-ae88-4d01-8544-e571cae238e9',
   },
   {
     enforcementMethod: 'FLAG',
@@ -751,7 +751,7 @@ export const seedDesigns = [
     defaultActions: [{ type: 'set', name: 'default', value: true }],
     name: 'Short listing',
     key: 'shortListing',
-    id: 'd2e63f1c-f999-4348-b43d-974596f321c7',
+    id: '6d0ee241-9c8b-46a8-af4f-dc99f99a31c0',
   },
   {
     enforcementMethod: 'FLAG',
@@ -759,7 +759,7 @@ export const seedDesigns = [
     defaultActions: [{ type: 'set', name: 'default', value: true }],
     name: 'Expression of Interest',
     key: 'expressionOfInterest',
-    id: '219537ed-a7dc-4d5a-900f-b6c08f466add',
+    id: '5077df11-c603-4ae0-b9ba-23bcc76b34f2',
   },
   {
     enforcementMethod: 'FLAG',
@@ -767,7 +767,7 @@ export const seedDesigns = [
     defaultActions: [{ type: 'set', name: 'default', value: true }],
     name: 'NCB Expression of Interest',
     key: 'ncbExpressionOfInterest',
-    id: 'a6632650-8f09-490a-9fee-46dde7cee016',
+    id: '3307858e-5234-4476-91bc-1144a4430616',
   },
   {
     enforcementMethod: 'FLAG',
@@ -775,7 +775,7 @@ export const seedDesigns = [
     defaultActions: [{ type: 'set', name: 'default', value: true }],
     name: 'ICB Expression of Interest',
     key: 'icbExpressionOfInterest',
-    id: '75784bd4-e3fc-41e6-ad57-6c716c7ef6a4',
+    id: 'd268f22b-d540-4abf-a201-e36c5efba2e2',
   },
   {
     enforcementMethod: 'FLAG',
@@ -783,7 +783,7 @@ export const seedDesigns = [
     defaultActions: [{ type: 'set', name: 'default', value: true }],
     name: 'Single source',
     key: 'singleSource',
-    id: 'dcf9bfe0-f00e-4dfb-bd3c-363c03da8f20',
+    id: '44d8ffef-cde6-4a61-a9a8-ba0854d26396',
   },
   {
     enforcementMethod: 'FLAG',
@@ -791,7 +791,7 @@ export const seedDesigns = [
     defaultActions: [{ type: 'set', name: 'default', value: true }],
     name: 'Micro',
     key: 'micro',
-    id: '2e905804-3a16-4e02-a804-a934a7175340',
+    id: '7ea1834e-711d-4e9a-9c5b-43845c1e1532',
   },
   {
     enforcementMethod: 'FLAG',
@@ -799,7 +799,7 @@ export const seedDesigns = [
     defaultActions: [{ type: 'set', name: 'default', value: true }],
     name: 'Small',
     key: 'small',
-    id: '5e28678f-5428-4fb9-acfa-1f046f4e5205',
+    id: '9c825356-26a8-445e-8504-db0a04eee017',
   },
   {
     enforcementMethod: 'FLAG',
@@ -807,7 +807,7 @@ export const seedDesigns = [
     defaultActions: [{ type: 'set', name: 'default', value: true }],
     name: 'Medium',
     key: 'medium',
-    id: '9c6cce80-bb69-43a9-b9f5-bac8214c2ad2',
+    id: '990570a5-e3f9-4ea6-b930-30518f82a318',
   },
   {
     enforcementMethod: 'FLAG',
@@ -818,7 +818,7 @@ export const seedDesigns = [
     defaultActions: [{ type: 'set', name: 'default', value: true }],
     name: 'IBM Restriction Percentage',
     key: 'ibmRestrictionPercentage',
-    id: '40af4807-037b-4a15-996f-101481b8a6a3',
+    id: '7338db29-8d1e-4952-9991-78627e34d73d',
   },
   {
     enforcementMethod: 'FLAG',
@@ -829,36 +829,36 @@ export const seedDesigns = [
     defaultActions: [{ type: 'set', name: 'default', value: true }],
     name: 'RFQ Restriction',
     key: 'rfqRestriction',
-    id: '2573ba6e-0dea-48ce-a191-3899bc387bd6',
+    id: 'a831ac69-55f9-4f8e-b71d-6a07a48709e3',
   },
 ];
 export const seedPossibleReasons = [
   {
-    ruleDesignerId: '8a9ba87c-df7b-497b-80a4-435a7f995c9c',
+    ruleDesignerId: '535df5f5-c24f-43f9-b655-874afc2eeee5',
     reason:
       'Adoption of new cost-effective technologies or materials that impact the quotation process.',
   },
   {
-    ruleDesignerId: '8a9ba87c-df7b-497b-80a4-435a7f995c9c',
+    ruleDesignerId: '535df5f5-c24f-43f9-b655-874afc2eeee5',
     reason: 'Changes in market dynamics affecting supplier pricing strategies.',
   },
   {
-    ruleDesignerId: '8a9ba87c-df7b-497b-80a4-435a7f995c9c',
+    ruleDesignerId: '535df5f5-c24f-43f9-b655-874afc2eeee5',
     reason:
       'Internal initiatives to streamline the procurement process for efficiency.',
   },
   {
-    ruleDesignerId: '8a9ba87c-df7b-497b-80a4-435a7f995c9c',
+    ruleDesignerId: '535df5f5-c24f-43f9-b655-874afc2eeee5',
     reason:
       'Emergence of more cost-effective suppliers after the initial quotation request.',
   },
   {
-    ruleDesignerId: '8a9ba87c-df7b-497b-80a4-435a7f995c9c',
+    ruleDesignerId: '535df5f5-c24f-43f9-b655-874afc2eeee5',
     reason:
       'Changes in project specifications or quantities requiring revised quotations.',
   },
   {
-    ruleDesignerId: '8a9ba87c-df7b-497b-80a4-435a7f995c9c',
+    ruleDesignerId: '535df5f5-c24f-43f9-b655-874afc2eeee5',
     reason: 'Legal challenges or concerns regarding the RFQ process.',
   },
 ];
