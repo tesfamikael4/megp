@@ -24,6 +24,7 @@ import {
   useLazyListByIdQuery as useLazyListPostByIdQuery,
   useUpdateMutation as useUpdatePostMutation,
 } from '../_api/post-mechanism';
+import { useValidateProcurementMethodMutation } from '@/store/api/rule-designer/rule-designer';
 
 const activitiesSchema: ZodType<Partial<any>> = z.object({
   procurementMethod: z.string({
@@ -60,6 +61,7 @@ export const ActivityMechanization = ({
     resolver: zodResolver(activitiesSchema),
   });
   const method = watch('procurementMethod');
+  const type = watch('procurementType');
   const fundingSource = watch('fundingSource');
 
   const [preCreate, { isLoading: isPreCreating }] = useCreateMutation();
@@ -82,6 +84,7 @@ export const ActivityMechanization = ({
       isSuccess: isGetPostMechanismSuccess,
     },
   ] = useLazyListPostByIdQuery();
+  const [validateMethod] = useValidateProcurementMethodMutation();
 
   const { id } = useParams();
   const [contract, setContract] = useState({});
@@ -154,8 +157,17 @@ export const ActivityMechanization = ({
   };
 
   useEffect(() => {
+    //check rule
+    logger.log(method);
+    if (method === 'Request for Quotation (RFQ)') {
+      logger.log('Yeah');
+      validateMethod({
+        data: { procurementCategory: type, valueThreshold: 100 },
+        key: 'requestForQuotation',
+      });
+    }
     setContract({});
-  }, [method]);
+  }, [method, type, validateMethod]);
   useEffect(() => {
     (fundingSource == 'Internal Revenue' || fundingSource == 'Treasury') &&
       setDonor([]);
@@ -207,6 +219,7 @@ export const ActivityMechanization = ({
     page,
     preMechanism,
     postMechanism,
+    setValue,
   ]);
   return (
     <Stack pos="relative">
@@ -254,7 +267,7 @@ export const ActivityMechanization = ({
               onChange={onChange}
               label="Procurement Method"
               data={[
-                'Request for Quotation (RFQ) ',
+                'Request for Quotation (RFQ)',
                 'National Competitive Bidding (NCB)',
                 'International Competitive Bidding (ICB) ',
                 'Restricted Tender',
@@ -277,7 +290,7 @@ export const ActivityMechanization = ({
           )}
         />
       </Flex>
-      {method === 'Purchased Orders' && (
+      {method === 'Purchased Orders (Call off)' && (
         <FrameworkSelector
           contract={contract}
           onSelect={(contract) => setContract(contract)}

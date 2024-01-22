@@ -1,6 +1,6 @@
 'use client';
 import { Flex, TextInput } from '@mantine/core';
-import { IconSearch } from '@tabler/icons-react';
+import { IconInboxOff, IconSearch } from '@tabler/icons-react';
 import { DataTable } from 'mantine-datatable';
 import { useEffect, useState } from 'react';
 
@@ -65,6 +65,7 @@ export const ExpandableTable = ({
         </Flex>
       )}
       <DataTable
+        minHeight={300}
         striped
         highlightOnHover
         columns={config.columns}
@@ -85,6 +86,8 @@ export const ExpandableTable = ({
         totalRecords={total}
         recordsPerPage={perPage}
         onPageChange={setPage}
+        noRecordsIcon={<IconInboxOff size={40} />}
+        noRecordsText="No Data Found"
         defaultColumnRender={(record, _, accessor) => (
           <p className="line-clamp-2">{record[accessor]}</p>
         )}

@@ -270,15 +270,33 @@ export function Items({
 
   const handelOnSave = async () => {
     try {
+      const castedData = newItems.map((item) => {
+        return {
+          unitPrice: item.unitPrice ?? 0,
+          currency:
+            page == 'pre' ? preActivity?.currency : postActivity?.currency,
+          quantity: item.quantity ?? 0,
+          uom: item.uom,
+          uomName: item.uomName,
+          [page == 'pre'
+            ? 'preBudgetPlanActivityId'
+            : 'postBudgetPlanActivityId']: id,
+          description: item.description,
+          metaData: item,
+          itemCode: item.itemCode,
+          measurement: item.measurement,
+          classification: item.classification,
+        };
+      });
       if (page == 'pre') {
-        await addPreItems({ items: newItems }).unwrap();
+        await addPreItems({ items: castedData }).unwrap();
         notifications.show({
           title: 'Success',
           message: 'Items Created Successfully',
           color: 'green',
         });
       } else {
-        await addPostItems({ items: newItems }).unwrap();
+        await addPostItems({ items: castedData }).unwrap();
         notifications.show({
           title: 'Success',
           message: 'Items Created Successfully',
@@ -320,7 +338,7 @@ export function Items({
   return (
     <Box>
       <Group justify="end" className="my-2" gap="md">
-        <Button onClick={openImportModal}>
+        <Button onClick={openImportModal} disabled={disableFields}>
           <IconFileImport size={18} /> Import
         </Button>
         <Button onClick={open} disabled={disableFields}>
