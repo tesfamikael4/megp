@@ -18,7 +18,7 @@ import { ProcurementRequisitionMechanism } from './procurement-requisition-mecha
 import { ProcurementRequisitionDisbursement } from './procurement-requisition-disbursement.entity';
 import { ProcurementRequisitionBudgetLine } from './procurement-requisition-budget-line.entity';
 @Entity({ name: 'procurement_requisitions' })
-@Unique(['userReferenceNumber', 'requisitionReferenceNumber'])
+@Unique(['userReferenceNumber', 'requisitionReferenceNumber', 'deletedAt'])
 export class ProcurementRequisition extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -53,7 +53,7 @@ export class ProcurementRequisition extends Audit {
   })
   calculatedAmount: number;
 
-  @Column()
+  @Column({ default: 'USD' })
   currency: string;
 
   @Column({ default: 'Draft' })

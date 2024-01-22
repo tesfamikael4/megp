@@ -38,33 +38,31 @@ export class ProcurementRequisitionTimelineService extends ExtraCrudService<Proc
     }
   }
 
-  // async create(
-  //   timelineData: any,
-  //   req?: any,
-  // ): Promise<any> {
-  //   const query = decodeCollectionQuery(null);
-  //   const response = await super.findAll(
-  //     timelineData[0].procurementRequisitionId,
-  //     query,
-  //     extraCrudOptions,
-  //     req,
-  //   );
+  async create(timelineData: any, req?: any): Promise<any> {
+    const query = decodeCollectionQuery(null);
+    const response = await super.findAll(
+      timelineData[0].procurementRequisitionId,
+      query,
+      extraCrudOptions,
+      req,
+    );
 
-  //   const timelines = [...response.items, ...timelineData];
-  //   const flattenedArray = timelines.flat();
-  //   const mergeTimelines = await this.mergeSimilarTimelines(flattenedArray);
+    const timelines = [...response.items, ...timelineData];
+    const flattenedArray = timelines.flat();
+    const mergeTimelines = await this.mergeSimilarTimelines(flattenedArray);
 
-  //   const result = await this.repositoryProcurementRequisitionTimeline.save(
-  //     this.repositoryProcurementRequisitionTimeline.create(mergeTimelines),
-  //   );
+    const result = await this.repositoryProcurementRequisitionTimeline.save(
+      this.repositoryProcurementRequisitionTimeline.create(mergeTimelines),
+    );
 
-  //   return result;
-  // }
+    return result;
+  }
 
   async mergeSimilarTimelines(timelines: any[]) {
     const mergedTimelines: any[] = [];
 
-    timelines.sort((a, b) => a.order - b.order);
+    timelines.sort((a, b) => a.dueDate - b.dueDate);
+    const lastTimeline = timelines[timelines.length - 1];
 
     let currentTimeline: any | null = null;
 
@@ -74,6 +72,11 @@ export class ProcurementRequisitionTimelineService extends ExtraCrudService<Proc
         // First timeline, add to mergedTimelines
         currentTimeline = { ...timeline };
         mergedTimelines.push(currentTimeline);
+      } else if (timeline.timeline == lastTimeline.timeline) {
+        // Last timeline, add to mergedTimelines
+        currentTimeline = { ...timeline };
+        mergedTimelines.push(currentTimeline);
+        break;
       } else {
         // Check if the due date is greater than or equal to the previous timeline's due date
         const dueDate = await this.dateCalculator(
@@ -86,12 +89,10 @@ export class ProcurementRequisitionTimelineService extends ExtraCrudService<Proc
           currentTimeline.period,
           'add',
         );
-        const dueDateValid = new Date(dueDate) >= new Date(currentDueDate);
-        const timelineName = timeline.timeline !== currentTimeline.timeline;
+        const dueDateValid = new Date(dueDate) > new Date(currentDueDate);
+        const timelineName = timeline.timeline == currentTimeline.timeline;
 
-        if (dueDateValid && timelineName) {
-          continue;
-        } else {
+        if (!timelineName) {
           // Add a new timeline to mergedTimelines
           currentTimeline = { ...timeline };
           mergedTimelines.push(currentTimeline);

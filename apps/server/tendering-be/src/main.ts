@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
+import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import {
   DocumentBuilder,
   SwaggerCustomOptions,
@@ -13,6 +14,16 @@ import { GlobalExceptionFilter } from './shared/exceptions/global-exception.filt
 async function bootstrap() {
   const app: NestExpressApplication = await NestFactory.create(AppModule, {
     cors: true,
+  });
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.RMQ,
+    options: {
+      urls: [process.env.RMQ_URL],
+      queue: 'pr-workflow-approve',
+      queueOptions: {
+        durable: false,
+      },
+    },
   });
 
   const config: ConfigService = app.get(ConfigService);

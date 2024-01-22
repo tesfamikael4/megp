@@ -11,7 +11,7 @@ import { Audit } from 'src/shared/entities/audit.entity';
 import { ProcurementRequisition } from './procurement-requisition.entity';
 
 @Entity({ name: 'procurement_requisition_activities' })
-@Unique(['annualProcurementPlanActivityId'])
+@Unique(['annualProcurementPlanActivityId', 'deletedAt'])
 export class ProcurementRequisitionActivity extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;

@@ -10,14 +10,12 @@ export class JwtRefreshTokenStrategy extends PassportStrategy(
   Strategy,
   'jwt-refresh',
 ) {
-  @Inject(AuthHelper)
-  private readonly helper: AuthHelper;
-
-  constructor(@Inject(ConfigService) config: ConfigService) {
+  constructor() {
     const strategyOptions: StrategyOptions = {
       jwtFromRequest: (req) => req.body.refresh_token,
       ignoreExpiration: false,
-      secretOrKey: config.get('JWT_REFRESH_TOKEN_SECRET'),
+      secretOrKey:
+        process.env.JWT_REFRESH_TOKEN_SECRET ?? 'OfvWfxHrOjwhXuaTKQee',
     };
 
     super(strategyOptions);
@@ -25,6 +23,5 @@ export class JwtRefreshTokenStrategy extends PassportStrategy(
 
   async validate(payload: any) {
     return payload;
-    // return this.helper.validateUser(payload);
   }
 }
