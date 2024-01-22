@@ -128,6 +128,12 @@ export function Items({
 
   const addConfig = {
     ...config,
+    expandedRowContent: (record, collapse) => (
+      <ItemDetailForm
+        item={record}
+        onDone={(data, id) => handelOnDone(data, id, collapse)}
+      />
+    ),
     // expandedRowContent: (record) => <ItemDetailForm item={record} />,
   };
   const listConfig = {
@@ -230,10 +236,11 @@ export function Items({
 
   const handelAddItem = (items) => {
     logger.log('items:', items);
-    const castedData = items.map((item) => ({
-      unitPrice: 0,
+    const castedData = items.map((item, index) => ({
+      id: index,
+      unitPrice: item.unitPrice ?? 0,
       currency: page == 'pre' ? preActivity?.currency : postActivity?.currency,
-      quantity: 0,
+      quantity: item.quantity ?? 0,
       uom: item.uOMId,
       uomName: item.uOMName,
       [page == 'pre' ? 'preBudgetPlanActivityId' : 'postBudgetPlanActivityId']:
@@ -246,6 +253,19 @@ export function Items({
     }));
 
     setNewItems([...castedData, ...newItems]);
+  };
+
+  const handelOnDone = (data, id, collapse) => {
+    logger.log({ data });
+    const castedData = newItems.map((item) => {
+      if (item.id == id) {
+        return { ...item, ...data };
+      }
+      return item;
+    });
+
+    setNewItems(castedData);
+    collapse();
   };
 
   const handelOnSave = async () => {
