@@ -32,9 +32,9 @@ export default function NewActivity() {
           </Tooltip>
         }
       >
-        <Tabs defaultValue="definition">
+        <Tabs defaultValue="identification">
           <Tabs.List>
-            <Tabs.Tab value="definition">Definition</Tabs.Tab>
+            <Tabs.Tab value="identification">Identification</Tabs.Tab>
             <Tabs.Tab value="method">Procurement Methods</Tabs.Tab>
             <Tabs.Tab value="items">Items</Tabs.Tab>
             <Tabs.Tab value="documents">Documents</Tabs.Tab>
@@ -43,7 +43,7 @@ export default function NewActivity() {
             <Tabs.Tab value="requisitioner">Requisitioner</Tabs.Tab>
           </Tabs.List>
 
-          <Tabs.Panel value="definition" className="pt-2">
+          <Tabs.Panel value="identification" className="pt-2">
             <FormDetail mode="detail" page="post" />
           </Tabs.Panel>
           <Tabs.Panel value="method" className="pt-2">
