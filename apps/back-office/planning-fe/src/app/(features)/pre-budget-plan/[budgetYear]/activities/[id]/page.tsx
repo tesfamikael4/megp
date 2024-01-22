@@ -42,7 +42,7 @@ export default function NewActivity() {
         <Tabs defaultValue="definition">
           <Tabs.List>
             <Tabs.Tab value="definition">Definition</Tabs.Tab>
-            <Tabs.Tab value="method">Method</Tabs.Tab>
+            <Tabs.Tab value="method">Procurement Methods</Tabs.Tab>
             <Tabs.Tab value="items">Items</Tabs.Tab>
             <Tabs.Tab value="documents">Documents</Tabs.Tab>
             <Tabs.Tab value="timeline">Timeline</Tabs.Tab>

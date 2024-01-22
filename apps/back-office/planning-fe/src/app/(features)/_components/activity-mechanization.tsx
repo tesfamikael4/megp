@@ -215,6 +215,35 @@ export const ActivityMechanization = ({
       />
       <Flex gap="md">
         <Controller
+          name="procurementType"
+          control={control}
+          render={({ field: { name, value, onChange } }) => (
+            <Select
+              withCheckIcon={false}
+              name={name}
+              value={value}
+              onChange={onChange}
+              label="Procurement Type"
+              data={[
+                'Goods',
+                'Works',
+                'Non Consulting Services',
+                'Consultancy Services',
+                'Motor Vehicle Repair',
+              ]}
+              className="w-full"
+              withAsterisk
+              placeholder="Select Procurement Type"
+              error={
+                errors?.procurementType
+                  ? errors?.procurementType?.message?.toString()
+                  : ''
+              }
+              disabled={disableFields}
+            />
+          )}
+        />
+        <Controller
           name="procurementMethod"
           control={control}
           render={({ field: { value, name, onChange } }) => (
@@ -241,35 +270,6 @@ export const ActivityMechanization = ({
               error={
                 errors?.procurementMethod
                   ? errors?.procurementMethod?.message?.toString()
-                  : ''
-              }
-              disabled={disableFields}
-            />
-          )}
-        />
-        <Controller
-          name="procurementType"
-          control={control}
-          render={({ field: { name, value, onChange } }) => (
-            <Select
-              withCheckIcon={false}
-              name={name}
-              value={value}
-              onChange={onChange}
-              label="Procurement Type"
-              data={[
-                'Goods',
-                'Works',
-                'Non Consulting Services',
-                'Consultancy Services',
-                'Motor Vehicle Repair',
-              ]}
-              className="w-full"
-              withAsterisk
-              placeholder="Select Procurement Type"
-              error={
-                errors?.procurementType
-                  ? errors?.procurementType?.message?.toString()
                   : ''
               }
               disabled={disableFields}
