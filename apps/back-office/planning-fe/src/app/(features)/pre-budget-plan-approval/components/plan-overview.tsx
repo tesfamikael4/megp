@@ -39,19 +39,27 @@ export function PlanOverview() {
               value={activity.id}
               className="bg-white"
             >
-              <Accordion.Control>{activity.name}</Accordion.Control>
+              <Accordion.Control>
+                <p className="font-semibold">{activity.name}</p>
+              </Accordion.Control>
               <Accordion.Panel>
                 <>
-                  <Accordion variant="contained" defaultValue="Definition">
-                    <Accordion.Item value={'Definition'} className="bg-white">
-                      <Accordion.Control>Definition</Accordion.Control>
+                  <Accordion variant="contained" defaultValue="Identification">
+                    <Accordion.Item
+                      value={'Identification'}
+                      className="bg-white"
+                    >
+                      <Accordion.Control>Identification</Accordion.Control>
                       <Accordion.Panel>
                         <DetailActivity activity={activity} page="pre" />
                       </Accordion.Panel>
                     </Accordion.Item>
 
-                    <Accordion.Item value={'Method'} className="bg-white">
-                      <Accordion.Control>Method</Accordion.Control>
+                    <Accordion.Item
+                      value={'Procurement Methods'}
+                      className="bg-white"
+                    >
+                      <Accordion.Control>Procurement Methods</Accordion.Control>
                       <Accordion.Panel>
                         <ActivityMechanization activityId={activity.id} />
                       </Accordion.Panel>
@@ -78,12 +86,12 @@ export function PlanOverview() {
                       </Accordion.Panel>
                     </Accordion.Item>
 
-                    <Accordion.Item value={'Budget'} className="bg-white">
+                    {/* <Accordion.Item value={'Budget'} className="bg-white">
                       <Accordion.Control>Budget</Accordion.Control>
                       <Accordion.Panel>
                         <ActivityMechanization activityId={activity.id} />
                       </Accordion.Panel>
-                    </Accordion.Item>
+                    </Accordion.Item> */}
 
                     <Accordion.Item
                       value={'Requisitioner'}
