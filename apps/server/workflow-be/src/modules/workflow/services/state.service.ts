@@ -21,7 +21,7 @@ export class StateService extends ExtraCrudService<State> {
   // Listen
   async createState(activityId, organizationId): Promise<any> {
     const steps = await this.repositoryStep.find({
-      where: { activityId },
+      where: { activityId, organizationId },
       order: { order: 'ASC' },
     });
 
