@@ -180,7 +180,7 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
         await entityManager
           .getRepository(PreBudgetPlan)
           .update(sourceEntity.id, {
-            status: data.status,
+            status: data.status == 'Rejected' ? 'Draft' : 'Approved',
           });
 
         if (data.status == 'Approved') {
