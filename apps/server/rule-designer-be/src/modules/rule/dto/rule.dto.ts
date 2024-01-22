@@ -1,5 +1,4 @@
-import { IsString, IsArray, ValidateNested, IsUUID } from 'class-validator';
-import { Type } from 'class-transformer';
+import { IsString, ValidateNested, IsUUID, IsNumber } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 class ConditionDto {
@@ -24,24 +23,14 @@ class ConditionDto {
   operator: string;
 }
 
-class ActionDto {
-  @ApiProperty()
-  @IsString()
-  name: string;
-
-  @ApiProperty()
-  @IsString()
-  value: string | string[];
-
-  @ApiProperty()
-  @IsString()
-  type: string;
-}
-
 export class CreateRuleDto {
   @ApiProperty()
   @IsString()
-  rule: string;
+  key: string;
+
+  @ApiProperty()
+  @IsNumber()
+  executionOrder: number;
 
   @ApiProperty({
     type: () => [ConditionDto],
@@ -50,14 +39,6 @@ export class CreateRuleDto {
   })
   @ValidateNested({ each: true })
   conditions: ConditionDto[][];
-
-  @ApiProperty({
-    type: () => ActionDto,
-    isArray: true,
-    items: { type: 'array', items: { type: 'object' } },
-  })
-  @ValidateNested({ each: true })
-  actions: ActionDto[];
 }
 
 export class UpdateRuleDto extends CreateRuleDto {

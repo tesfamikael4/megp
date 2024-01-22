@@ -1,12 +1,7 @@
 import { Controller } from '@nestjs/common';
-import {
-  EntityCrudController,
-  ExtraCrudController,
-} from 'src/shared/controller';
+import { ExtraCrudController } from 'src/shared/controller';
 import { ApiTags } from '@nestjs/swagger';
-import { PossibleReasons, RuleHandlerOptions } from 'src/entities';
-import { RuleHandlerOptionsService } from '../services/rule-handler-options.service';
-import { ExtraCrudService } from 'src/shared/service';
+import { PossibleReasons } from 'src/entities';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { PossibleReasonsService } from '../services/possible-service.service';
 
