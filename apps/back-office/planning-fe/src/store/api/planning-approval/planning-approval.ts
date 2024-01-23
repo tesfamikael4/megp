@@ -6,7 +6,7 @@ export const planningApprovalApi = createApi({
   tagTypes: ['Steps', 'Approval'],
   refetchOnFocus: true,
   baseQuery: baseQuery(
-    'https://dev-bo.megp.peragosystems.com/workflow/api' ?? '',
+    'https://dev-bo.megp.peragosystems.com/infrastructure/api' ?? '',
   ),
   endpoints: (builder) => ({
     getDefaultSteps: builder.query<any, { activityId: string }>({
