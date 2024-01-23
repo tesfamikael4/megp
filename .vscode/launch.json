@@ -27,6 +27,12 @@
       "name": "Run Vendor Registration ",
       "request": "launch",
       "type": "node-terminal"
+    },
+    {
+      "command": "cd .\\apps\\server\\infrastructure-be\\ && npm run start:dev",
+      "name": "Run Infrastructure ",
+      "request": "launch",
+      "type": "node-terminal"
     }
   ]
 }
