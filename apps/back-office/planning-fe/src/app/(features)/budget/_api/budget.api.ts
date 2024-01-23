@@ -16,7 +16,5 @@ export const {
   useListByAppIdQuery,
   useLazyListByAppIdQuery,
   useLazyListByIdQuery,
-  useCreateMutation,
-  useUpdateMutation,
-  useDeleteMutation,
+  useLazyListQuery,
 } = budgetSliceApi;

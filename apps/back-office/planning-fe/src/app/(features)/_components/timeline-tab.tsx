@@ -114,7 +114,7 @@ export default function TimelineTab({
         if (i === index) {
           return {
             ...item,
-            [id]: value,
+            [id]: value == '' || (value as number) < 0 ? 0 : value,
           };
         }
         return item;
@@ -153,6 +153,7 @@ export default function TimelineTab({
             onBlur={onBlur}
             value={value}
             onChange={setValue}
+            min={0}
             rightSection={
               <Box className=" text-black border-l-2 p-2 mr-2">Days</Box>
             }

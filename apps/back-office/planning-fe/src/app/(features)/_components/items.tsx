@@ -350,7 +350,11 @@ export function Items({
           <Text className="text-lg" fw="500">
             New Items
           </Text>
-          <ExpandableTable config={addConfig} data={newItems} />
+          <ExpandableTable
+            config={addConfig}
+            data={newItems}
+            total={newItems.length}
+          />
           {/* <Table config={config} data={newItems} /> */}
           <Flex justify="end" className="my-2" gap="sm">
             <Button
