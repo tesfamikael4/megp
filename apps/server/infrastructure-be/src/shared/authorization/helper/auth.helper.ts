@@ -6,10 +6,7 @@ import { randomInt } from 'crypto';
 
 @Injectable()
 export class AuthHelper {
-  constructor(
-    private readonly jwt: JwtService,
-    private readonly configService: ConfigService,
-  ) {}
+  constructor(private readonly jwt: JwtService) {}
 
   public async verify(token: string, secret: string) {
     const decoded: any = this.jwt.verify(token, { secret });
@@ -31,8 +28,8 @@ export class AuthHelper {
     return this.jwt.sign(
       { ...payload },
       {
-        secret: this.configService.get<string>('JWT_ACCESS_TOKEN_SECRET'),
-        expiresIn: this.configService.get<string>('JWT_ACCESS_TOKEN_EXPIRES'),
+        secret: process.env.JWT_ACCESS_TOKEN_SECRET,
+        expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRES,
       },
     );
   }
@@ -42,8 +39,7 @@ export class AuthHelper {
     return this.jwt.sign(
       { ...payload },
       {
-        secret: this.configService.get<string>('JWT_REFRESH_TOKEN_SECRET'),
-        expiresIn: this.configService.get<string>('JWT_REFRESH_TOKEN_EXPIRES'),
+        secret: process.env.JWT_REFRESH_TOKEN_SECRET,
       },
     );
   }
@@ -53,17 +49,15 @@ export class AuthHelper {
       this.jwt.signAsync(
         { id: account.id, email: account.email },
         {
-          secret: this.configService.get<string>('JWT_ACCESS_TOKEN_SECRET'),
-          expiresIn: this.configService.get<string>('JWT_ACCESS_TOKEN_EXPIRES'),
+          secret: process.env.JWT_ACCESS_TOKEN_SECRET,
+          expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRES,
         },
       ),
       this.jwt.signAsync(
         { id: account.id },
         {
-          secret: this.configService.get<string>('JWT_REFRESH_TOKEN_SECRET'),
-          expiresIn: this.configService.get<string>(
-            'JWT_REFRESH_TOKEN_EXPIRES',
-          ),
+          secret: process.env.JWT_REFRESH_TOKEN_SECRET,
+          expiresIn: process.env.JWT_REFRESH_TOKEN_EXPIRES,
         },
       ),
     ]);
