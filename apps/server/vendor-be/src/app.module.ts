@@ -13,12 +13,14 @@ import { EmailConfig } from './shared/email/email.config';
 import { CertificateModule } from './modules/certificates/certificate.module';
 import { NotificationModule } from './modules/notifications/notification.module';
 import { PreferentialTreatmentModule } from './modules/preferentials/preferencial-treatment.module';
+import { ScheduleModule } from '@nestjs/schedule';
 @Module({
   imports: [
     ConfigModule.forRoot({
       envFilePath: '.env',
       isGlobal: true,
     }),
+    ScheduleModule.forRoot(),
     TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
     MailerModule.forRootAsync({ useClass: EmailConfig }),
     AuthorizationModule,
@@ -29,9 +31,9 @@ import { PreferentialTreatmentModule } from './modules/preferentials/preferencia
     BpmModule,
     CertificateModule,
     NotificationModule,
-    PreferentialTreatmentModule
+    PreferentialTreatmentModule,
   ],
   controllers: [],
   providers: [],
 })
-export class AppModule { }
+export class AppModule {}
