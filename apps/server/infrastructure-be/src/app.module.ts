@@ -9,19 +9,20 @@ import {
   TenantInterceptor,
   TransactionInterceptor,
 } from './shared/interceptors';
+import { EmailConfig } from './shared/email/email.config';
+import { DataSeeder } from './modules/seeders/data.seeder';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { RuleModule } from './modules/rule/rule.module';
+
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      envFilePath: '.env',
-      isGlobal: true,
-    }),
-    TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
-    AuthorizationModule,
-    ConfigModule.forRoot({ isGlobal: true }),
+    MailerModule.forRootAsync({ useClass: EmailConfig }),
     AuthorizationModule,
     WorkflowModule,
+    RuleModule,
   ],
   providers: [
+    DataSeeder,
     {
       provide: APP_INTERCEPTOR,
       useClass: TransactionInterceptor,

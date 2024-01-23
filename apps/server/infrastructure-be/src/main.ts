@@ -5,9 +5,6 @@ import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { GlobalExceptionFilter } from './shared/exceptions/global-exception.filter';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
-import * as dotenv from 'dotenv';
-
-dotenv.config({ path: '.env' });
 
 async function bootstrap() {
   const app: NestExpressApplication = await NestFactory.create(AppModule, {
@@ -43,8 +40,8 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(
     app,
     new DocumentBuilder()
-      .setTitle('Workflow API')
-      .setDescription('My Workflow API')
+      .setTitle('Infrastructure  API')
+      .setDescription('My Infrastructure API')
       .addBearerAuth()
       .build(),
   );
