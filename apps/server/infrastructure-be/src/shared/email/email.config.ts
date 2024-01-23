@@ -5,24 +5,19 @@ import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class EmailConfig implements MailerOptionsFactory {
-  @Inject(ConfigService)
-  private readonly config: ConfigService;
-
   createMailerOptions(): MailerOptions | Promise<MailerOptions> {
     return {
       transport: {
-        host: this.config.get<string>('EMAIL_SMTP'),
-        port: this.config.get<number>('EMAIL_SMTP_PORT'),
-        // secure: this.config.get<boolean>('EMAIL_SMTP_SECURE'),
+        host: process.env.EMAIL_SMTP,
+        port: Number(process.env.EMAIL_SMTP_PORT),
+        // secure: process.env.EMAIL_SMTP_SECURE,
         auth: {
-          user: this.config.get<string>('EMAIL_SMTP_USERNAME'),
-          pass: this.config.get<string>('EMAIL_SMTP_PASSWORD'),
+          user: process.env.EMAIL_SMTP_USERNAME,
+          pass: process.env.EMAIL_SMTP_PASSWORD,
         },
       },
       defaults: {
-        from: `"${this.config.get<string>(
-          'EMAIL_SMTP_DISPLAY_NAME',
-        )}" <${this.config.get<string>('EMAIL_SMTP_USERNAME')}>`,
+        from: `"${process.env.EMAIL_SMTP_DISPLAY_NAME}" <${process.env.EMAIL_SMTP_USERNAME}>`,
       },
       template: {
         dir: process.cwd() + '/templates/',
