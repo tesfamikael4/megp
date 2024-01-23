@@ -13,6 +13,7 @@ import { BudgetYear } from './budget-year.entity';
 import { ActivityBudgetLine } from './activity-budget-line.entity';
 import { PostBudgetPlanItem } from './post-budget-plan-items.entity';
 import { OrgAudit } from 'src/shared/entities';
+import { PostBudgetPlanActivity } from './post-budget-plan-activity.entity';
 
 @Entity({ name: 'budget' })
 export class Budget extends OrgAudit {
@@ -45,6 +46,12 @@ export class Budget extends OrgAudit {
   )
   postBudgetPlanItems: PostBudgetPlanItem[];
 
+  @OneToMany(
+    () => PostBudgetPlanActivity,
+    (postBudgetPlanActivities) => postBudgetPlanActivities.budget,
+  )
+  postBudgetPlanActivities: PostBudgetPlanActivity[];
+
   @Column({ nullable: true })
   type: string;
 
@@ -66,9 +73,9 @@ export class Budget extends OrgAudit {
   @Column({ type: 'bigint' })
   revisedBudget: number;
 
-  @Column({ type: 'bigint' })
+  @Column({ type: 'bigint', default: 0 })
   obligatedBudget: number;
 
-  @Column({ type: 'bigint' })
+  @Column({ type: 'bigint', default: 0 })
   availableBudget: number;
 }

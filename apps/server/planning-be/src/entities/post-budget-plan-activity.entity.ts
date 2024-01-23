@@ -19,6 +19,7 @@ import { PostBudgetActivityDocument } from './post-budget-activity-document.enti
 import { PostBudgetRequisitioner } from './post-budget-plan-requisitioner.entity';
 import { PostProcurementMechanism } from './post-procurement-mechanism.entity';
 import { OrgAudit } from 'src/shared/entities';
+import { Budget } from './budget.entity';
 
 @Unique(['procurementReference'])
 @Entity({ name: 'post_budget_plan_activities' })
@@ -35,6 +36,13 @@ export class PostBudgetPlanActivity extends OrgAudit {
   )
   @JoinColumn({ name: 'postBudgetPlanId' })
   public postBudgetPlan: PostBudgetPlan;
+
+  @Column()
+  budgetId: string;
+
+  @ManyToOne(() => Budget, (budget) => budget.postBudgetPlanActivities)
+  @JoinColumn({ name: 'budgetId' })
+  public budget: Budget;
 
   @OneToMany(
     () => PostBudgetPlanItem,
