@@ -6,7 +6,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { In, Not, Repository } from 'typeorm';
+import { In, LessThanOrEqual, Not, Repository } from 'typeorm';
 import { SetVendorStatus } from '../dto/vendor.dto';
 import {
   VendorInitiationDto,
@@ -29,7 +29,6 @@ import { WorkflowService } from 'src/modules/bpm/services/workflow.service';
 import { InvoiceService } from './invoice.service';
 import { CollectionQuery, QueryConstructor } from 'src/shared/collection-query';
 import { DataResponseFormat } from 'src/shared/api-data';
-
 import axios from 'axios';
 import { FppaDataDto, MbrsData, NCICDataDto } from '../dto/mbrsData.dto';
 import { IsrVendorsResponseDto } from '../dto/isrvendor.dto';
@@ -76,7 +75,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     VendorStatusEnum.ADJUSTMENT,
     VendorStatusEnum.SUBMITTED,
     VendorStatusEnum.PENDING,
-  ]
+  ];
   async submitVendorInformations(data: any, userInfo: any): Promise<any> {
     const resul = await this.isrVendorsRepository.findOne({
       where: { userId: userInfo.id },
@@ -525,7 +524,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       result.initial = initial;
     }
     const resul = await this.isrVendorsRepository.save(result);
-
     if (!resul) throw new BadRequestException(`unable_to_save_isrVendor`);
     //if there is  previously approved service by the vendorId
     const currentBusinessArea = await this.businessAreaRepository.findOne({
@@ -624,7 +622,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       where: {
         userId: userId,
         status: In(this.updateVendorEnums),
-        businessAreas: { status: In(this.onprogressAppStatuses) }
+        businessAreas: { status: In(this.onprogressAppStatuses) },
       },
     });
     if (!vendorEntity) return { level: 'basic', status: 'new' };
@@ -680,7 +678,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       const vendorEntity = await this.vendorRepository.findOne({
         where: {
           userId: userId,
-        }
+        },
       });
       return vendorEntity;
     } catch (error) {
@@ -1181,11 +1179,10 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       }
     } catch (error) {
       throw new HttpException(
-        'Unable to cancel registration request ', HttpStatus.INTERNAL_SERVER_ERROR,
+        'Unable to cancel registration request ',
+        HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
-
-
   }
   async getAllBusinessAreasByUserId(userId: string) {
     const vendorEntity = await this.isrVendorsRepository.findOne({
@@ -1314,7 +1311,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       throw error;
     }
   }
-
 
   async getCertificateInformations(userId: string) {
     const result = await this.vendorRepository.findOne({

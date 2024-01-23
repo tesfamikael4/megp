@@ -113,7 +113,7 @@ import { InvoicesController } from './controllers/invoice.controller';
     BeneficialOwnershipController,
     AreasOfBusinessInterestController,
     BusinessAreaController,
-    InvoicesController
+    InvoicesController,
   ],
 })
-export class VendorRegistrationModule { }
+export class VendorRegistrationModule {}
