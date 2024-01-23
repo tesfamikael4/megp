@@ -21,6 +21,7 @@ import {
   useLazyGetPostBudgetDisbursementQuery,
   useGetPostBudgetPlansQuery,
 } from '@/store/api/post-budget-plan/post-budget-plan.api';
+import { ExpandableTable } from '@/app/(features)/_components/expandable-table';
 
 export const BudgetTab = () => {
   const [getActivity, { data, isLoading }] = useLazyReadQuery();
@@ -39,20 +40,32 @@ export const BudgetTab = () => {
       isLoading: isDisbursementLoading,
     },
   ] = useLazyGetPostBudgetDisbursementQuery();
-  const config: TableConfig<any> = {
+  const config = {
     columns: [
-      // {
-      //   header: 'Budget Year',
-      //   accessorKey: 'budgetYear',
-      // },
       {
-        header: 'Quarter',
-        accessorKey: 'quarter',
+        title: 'Budget Year',
+        accessor: 'budgetYear',
+      },
+      {
+        title: '1st Quarter',
+        accessor: 'quarter',
+      },
+      {
+        title: '2nd Quarter',
+        accessor: 'quarter',
+      },
+      {
+        title: '3rd Quarter',
+        accessor: 'quarter',
+      },
+      {
+        title: '4th Quarter',
+        accessor: 'quarter',
       },
       {
         id: 'action',
-        header: 'Amount',
-        accessorKey: 'amount',
+        title: 'Amount',
+        accessor: 'amount',
         cell: ({ row: { original } }) => <Amount original={original} />,
       },
     ],
@@ -223,7 +236,8 @@ export const BudgetTab = () => {
           </Flex>
         )}
       </Box>
-      <Accordion variant="contained">
+      <ExpandableTable data={castedDisbursement[2024] ?? []} config={config} />
+      {/* <Accordion variant="contained">
         {Object.keys(castedDisbursement).map((year) => (
           <Accordion.Item value={year} className="bg-white" key={year}>
             <Accordion.Control>{year}</Accordion.Control>
@@ -232,7 +246,7 @@ export const BudgetTab = () => {
             </Accordion.Panel>
           </Accordion.Item>
         ))}
-      </Accordion>
+      </Accordion> */}
 
       <Group justify="end" className="mt-2">
         <Divider h={2} />

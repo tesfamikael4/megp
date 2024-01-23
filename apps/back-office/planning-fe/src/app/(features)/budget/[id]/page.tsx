@@ -1,12 +1,12 @@
 'use client';
-import { Stack, Button, Modal, Group, Box } from '@mantine/core';
-import { Section, Table, TableConfig, logger } from '@megp/core-fe';
+import { Stack, Button, Modal, Box } from '@mantine/core';
+import { Section, logger } from '@megp/core-fe';
 import { useParams } from 'next/navigation';
 import { useDisclosure } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
 import { DetailTable } from '../../_components/detail-table';
 import { useLazyReadQuery } from '../../_api/app.api';
-import { useLazyListByAppIdQuery } from '../_api/budget.api';
+import { useLazyListByIdQuery } from '../_api/budget.api';
 import { notifications } from '@mantine/notifications';
 import { useBulkCreateMutation } from '@/store/api/budget/budget.api';
 import DataImport from '../../_components/data-import';
@@ -34,6 +34,15 @@ const ModalDetail = ({ data }: { data: any }) => {
     {
       key: 'Revised Budget',
       value: parseInt((data as any)?.revisedBudget).toLocaleString('en-US', {
+        style: 'currency',
+        currency: data.currency,
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }),
+    },
+    {
+      key: 'Obligated Budget',
+      value: parseInt((data as any)?.obligatedBudget).toLocaleString('en-US', {
         style: 'currency',
         currency: data.currency,
         minimumFractionDigits: 2,
@@ -77,7 +86,7 @@ const ModalDetail = ({ data }: { data: any }) => {
 export default function DetailPage() {
   const { id } = useParams();
   const [data, setData] = useState<any>([]);
-  const [getBudgets, { data: list }] = useLazyListByAppIdQuery();
+  const [getBudgets, { data: list }] = useLazyListByIdQuery();
   const [create, { isLoading }] = useBulkCreateMutation();
   const [opened, { open, close }] = useDisclosure(false);
   const [getBudgetYear, { data: budgetYear }] = useLazyReadQuery();
@@ -91,18 +100,66 @@ export default function DetailPage() {
       {
         accessor: 'allocatedBudget',
         title: 'Allocated Budget',
+        textAlign: 'right',
+        render: (record) => (
+          <p className="text-end">
+            {parseInt(record.allocatedBudget).toLocaleString('en-US', {
+              style: 'currency',
+              currency: record.currency,
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+              currencyDisplay: 'code',
+            })}
+          </p>
+        ),
       },
       {
         accessor: 'revisedBudget',
         title: 'Revised Budget',
+        textAlign: 'right',
+        render: (record) => (
+          <p className="text-end">
+            {parseInt(record.revisedBudget).toLocaleString('en-US', {
+              style: 'currency',
+              currency: record.currency,
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+              currencyDisplay: 'code',
+            })}
+          </p>
+        ),
       },
       {
         accessor: 'obligatedBudget',
         title: 'Obligated Budget',
+        textAlign: 'right',
+        render: (record) => (
+          <p className="text-end">
+            {parseInt(record.obligatedBudget).toLocaleString('en-US', {
+              style: 'currency',
+              currency: record.currency,
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+              currencyDisplay: 'code',
+            })}
+          </p>
+        ),
       },
       {
         accessor: 'availableBudget',
         title: 'Available Budget',
+        textAlign: 'right',
+        render: (record) => (
+          <p className="text-end">
+            {parseInt(record.availableBudget).toLocaleString('en-US', {
+              style: 'currency',
+              currency: record.currency,
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+              currencyDisplay: 'code',
+            })}
+          </p>
+        ),
       },
     ],
     isExpandable: true,
@@ -115,9 +172,9 @@ export default function DetailPage() {
     getBudgetYear(id as string);
   }, [getBudgetYear, id]);
 
-  useEffect(() => {
-    getBudgets(id as string);
-  }, [getBudgets, id]);
+  const onRequestChange = (request) => {
+    getBudgets({ id: id as string, collectionQuery: request });
+  };
 
   const handelExtractedData = (data) => {
     setData(data);
@@ -163,6 +220,7 @@ export default function DetailPage() {
           data={list?.items ?? []}
           config={config}
           total={(list as any)?.total ?? 0}
+          onRequestChange={onRequestChange}
         />
       </Section>
     </Stack>
