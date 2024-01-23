@@ -31,6 +31,7 @@ export class BudgetService extends ExtraCrudService<Budget> {
         ...budget,
         appId: data.appId,
         budgetYearId: app.budgetYearId,
+        organizationId: app.organizationId,
       }));
       await this.repositoryBudget.create(items);
       return await this.repositoryBudget.save(items);

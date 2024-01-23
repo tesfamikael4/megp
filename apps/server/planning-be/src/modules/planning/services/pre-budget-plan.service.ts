@@ -324,14 +324,6 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
     return hashedData;
   }
 
-  private chunkData(data: string): string[] {
-    const chunks = [];
-    for (let i = 0; i < data.length; i += this.CHUNK_SIZE) {
-      chunks.push(data.slice(i, i + this.CHUNK_SIZE));
-    }
-    return chunks;
-  }
-
   async hashMatch(dataId: string, hash: string): Promise<boolean> {
     const originalHash = await this.hashData(dataId);
     return originalHash === hash;
