@@ -1,5 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { PreBudgetPlanActivity, PreBudgetPlanItems } from 'src/entities';
 import { ExtraCrudService } from 'src/shared/service';
@@ -59,6 +59,13 @@ export class PreBudgetPlanItemsService extends ExtraCrudService<PreBudgetPlanIte
       activity.calculatedAmount += item.unitPrice * item.quantity;
     }
 
+    if (activity.calculatedAmount > activity.estimatedAmount) {
+      throw new HttpException(
+        'calculatedAmount is greater than estimatedAmount',
+        430,
+      );
+    }
+
     await this.repositoryPreBudgetPlanActivity.update(activity.id, activity);
 
     return itemData;
@@ -71,19 +78,23 @@ export class PreBudgetPlanItemsService extends ExtraCrudService<PreBudgetPlanIte
     const item = await this.repositoryPreBudgetPlanItems.findOneOrFail({
       where: { id: id },
     });
-    const activities = await this.repositoryPreBudgetPlanActivity.findOne({
+    const activity = await this.repositoryPreBudgetPlanActivity.findOne({
       where: { id: item.preBudgetPlanActivityId },
     });
 
     const preAmount = item.quantity * item.unitPrice;
     const currentAmount = itemData.quantity * itemData.unitPrice;
 
-    activities.calculatedAmount -= preAmount - currentAmount;
+    activity.calculatedAmount -= preAmount - currentAmount;
 
-    await this.repositoryPreBudgetPlanActivity.update(
-      activities.id,
-      activities,
-    );
+    if (activity.calculatedAmount > activity.estimatedAmount) {
+      throw new HttpException(
+        'calculatedAmount is greater than estimatedAmount',
+        430,
+      );
+    }
+
+    await this.repositoryPreBudgetPlanActivity.update(activity.id, activity);
     await this.repositoryPreBudgetPlanItems.update(id, itemData);
     return this.repositoryPreBudgetPlanItems.findOne({ where: { id: id } });
   }
@@ -92,15 +103,19 @@ export class PreBudgetPlanItemsService extends ExtraCrudService<PreBudgetPlanIte
     const item = await this.repositoryPreBudgetPlanItems.findOneOrFail({
       where: { id: id },
     });
-    const activities = await this.repositoryPreBudgetPlanActivity.findOne({
+    const activity = await this.repositoryPreBudgetPlanActivity.findOne({
       where: { id: item.preBudgetPlanActivityId },
     });
-    activities.calculatedAmount -= item.unitPrice * item.quantity;
+    activity.calculatedAmount -= item.unitPrice * item.quantity;
 
-    await this.repositoryPreBudgetPlanActivity.update(
-      activities.id,
-      activities,
-    );
+    if (activity.calculatedAmount > activity.estimatedAmount) {
+      throw new HttpException(
+        'calculatedAmount is greater than estimatedAmount',
+        430,
+      );
+    }
+
+    await this.repositoryPreBudgetPlanActivity.update(activity.id, activity);
     await this.repositoryPreBudgetPlanItems.delete(id);
   }
 

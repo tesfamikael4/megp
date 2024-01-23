@@ -1,5 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import {
   PostBudgetPlanActivity,
@@ -51,6 +51,13 @@ export class PostBudgetPlanItemService extends ExtraCrudService<PostBudgetPlanIt
       activity.calculatedAmount += item.unitPrice * item.quantity;
     }
 
+    if (activity.calculatedAmount > activity.estimatedAmount) {
+      throw new HttpException(
+        'calculatedAmount is greater than estimatedAmount',
+        430,
+      );
+    }
+
     await this.repositoryPostBudgetPlanActivity.update(activity.id, activity);
 
     return itemData;
@@ -63,19 +70,24 @@ export class PostBudgetPlanItemService extends ExtraCrudService<PostBudgetPlanIt
     const item = await this.repositoryPostBudgetPlanItems.findOneOrFail({
       where: { id: id },
     });
-    const activities = await this.repositoryPostBudgetPlanActivity.findOne({
+    const activity = await this.repositoryPostBudgetPlanActivity.findOne({
       where: { id: item.postBudgetPlanActivityId },
     });
 
     const preAmount = item.quantity * item.unitPrice;
     const currentAmount = itemData.quantity * itemData.unitPrice;
 
-    activities.calculatedAmount -= preAmount - currentAmount;
+    activity.calculatedAmount -= preAmount - currentAmount;
 
-    await this.repositoryPostBudgetPlanActivity.update(
-      activities.id,
-      activities,
-    );
+    await this.repositoryPostBudgetPlanActivity.update(activity.id, activity);
+
+    if (activity.calculatedAmount > activity.estimatedAmount) {
+      throw new HttpException(
+        'calculatedAmount is greater than estimatedAmount',
+        430,
+      );
+    }
+
     await this.repositoryPostBudgetPlanItems.update(id, itemData);
     return this.repositoryPostBudgetPlanItems.findOne({ where: { id: id } });
   }
@@ -84,15 +96,18 @@ export class PostBudgetPlanItemService extends ExtraCrudService<PostBudgetPlanIt
     const item = await this.repositoryPostBudgetPlanItems.findOneOrFail({
       where: { id: id },
     });
-    const activities = await this.repositoryPostBudgetPlanActivity.findOne({
+    const activity = await this.repositoryPostBudgetPlanActivity.findOne({
       where: { id: item.postBudgetPlanActivityId },
     });
-    activities.calculatedAmount -= item.unitPrice * item.quantity;
+    activity.calculatedAmount -= item.unitPrice * item.quantity;
 
-    await this.repositoryPostBudgetPlanActivity.update(
-      activities.id,
-      activities,
-    );
+    if (activity.calculatedAmount > activity.estimatedAmount) {
+      throw new HttpException(
+        'calculatedAmount is greater than estimatedAmount',
+        430,
+      );
+    }
+    await this.repositoryPostBudgetPlanActivity.update(activity.id, activity);
     await this.repositoryPostBudgetPlanItems.delete(id);
   }
 }
