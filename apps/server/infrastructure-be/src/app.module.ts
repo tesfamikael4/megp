@@ -16,6 +16,7 @@ import { RuleModule } from './modules/rule/rule.module';
 
 @Module({
   imports: [
+    TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
     MailerModule.forRootAsync({ useClass: EmailConfig }),
     AuthorizationModule,
     WorkflowModule,
