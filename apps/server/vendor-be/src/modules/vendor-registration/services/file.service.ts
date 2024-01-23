@@ -342,7 +342,7 @@ export class FileService {
       for (let index = 0; index < invoices.length; index++) {
         const row = invoices[index];
         const businessArea = invoices[index].businessArea;
-        const ba = await this.busineAreaService.findOne({ id: businessArea.id });
+        const ba = await this.busineAreaService.findOne(businessArea.id);
         if (ba.status == ApplicationStatus.PENDING) {
           wfi.bpId = row.businessArea.BpService.businessProcesses[0].id;
           wfi.serviceId = row.businessArea.serviceId;
@@ -618,8 +618,9 @@ export class FileService {
     subDirectory: string
   ): Promise<string> {
     try {
+      const filetype = this.getFileExtension(file.originalname);
       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-      const fileId = `${uniqueSuffix}_${'certeficate.pdf'}`;
+      const fileId = `${uniqueSuffix}_${'certeficate.'}` + filetype;
       const filename = `${user.id}/${subDirectory}/${fileId}`;
       const metaData = {
         'Content-Type': 'application/octet-stream',
@@ -637,7 +638,14 @@ export class FileService {
       throw error;
     }
   }
-
+  getFileExtension(fileName: string): string | null {
+    const lastDotIndex = fileName.lastIndexOf('.');
+    if (lastDotIndex === -1) {
+      return null;
+    }
+    const extension = fileName.substring(lastDotIndex + 1);
+    return extension.toLowerCase();
+  }
 
   async getCertificate(filename: string, userId: string, res: Response) {
     try {

@@ -110,9 +110,9 @@ export class BusinessAreaDetailResponseDto {
     response.expireDate = entity?.expireDate;
     response.approvedAt = entity?.approvedAt;
     response.service = entity.BpService.name;
-    response.priceFrom = entity.servicePrice.valueFrom;
-    response.priceTo = entity.servicePrice.valueTo;
-    response.currency = entity.servicePrice.currency;
+    response.priceFrom = entity.servicePrice?.valueFrom;
+    response.priceTo = entity.servicePrice?.valueTo;
+    response.currency = entity.servicePrice?.currency;
     response.certificateUrl = entity?.certificateUrl
     return response;
   }

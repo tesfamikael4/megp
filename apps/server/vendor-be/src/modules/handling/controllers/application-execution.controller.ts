@@ -148,7 +148,8 @@ export class ApplicationExcutionController {
   @Get('get-currunt-task-detail/:instanceId')
   @ApiOkResponse({ type: WorkflowInstanceResponse })
   async fetchCurruntTaskDetail(@Param('instanceId') instanceId: string) {
-    return await this.executeService.getCurruntTaskDetail(instanceId);
+    const result = await this.executeService.getCurruntTaskDetail(instanceId);
+    return result;
   }
   @UseGuards(JwtGuard)
   @Get('get-activities-progress/:instanceId')
@@ -157,14 +158,6 @@ export class ApplicationExcutionController {
     const result = await this.workflowService.getActivities(instanceId);
     return result;
   }
-
-
-  // @UseGuards(JwtGuard)
-  // @Get('get-my-business-areas')
-  // @ApiOkResponse({ type: ActiveVendorsResponse })
-  // async getMyBusinessAreas(@CurrentUser() user: any) {
-  //   return await this.executeService.getMyBusinessArea(user.id);
-  // }
 
   @UseGuards(JwtGuard)
   @Get('get-vendors')

@@ -967,6 +967,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       businessAreas: result.isrVendor.businessAreas.map((ba) =>
         BusinessAreaDetailResponseDto.toResponse(ba),
       ),
+
     };
 
     return vendor;

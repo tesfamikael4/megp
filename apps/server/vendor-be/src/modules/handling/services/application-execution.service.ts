@@ -67,7 +67,7 @@ export class ApplicationExcutionService {
   ): Promise<WorkflowInstanceResponse> {
     const instance = await this.wiRepository.findOne({
       relations: {
-        isrVendor: true,
+        isrVendor: { businessAreas: { servicePrice: true } },
         businessProcess: {
           service: true,
         },

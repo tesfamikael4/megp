@@ -138,8 +138,12 @@ export class WorkflowInstanceResponse extends UpdateWorkflowInstanceDto {
       response.task = response.taskHandler?.task;
       response.taskHandler.task = null;
     }
+
     if (entity?.isrVendor) {
       response.isrvendor = entity?.isrVendor;
+      const ba = entity?.isrVendor.businessAreas;
+      const businessInterest = this.formatBusinessLines(response.isrvendor.areasOfBusinessInterest, ba);
+      response.isrvendor.areasOfBusinessInterest = businessInterest;
     }
 
     if (entity?.taskTrackers) {
@@ -153,4 +157,27 @@ export class WorkflowInstanceResponse extends UpdateWorkflowInstanceDto {
 
     return response;
   }
+
+  static formatBusinessLines(bia: any[], bas: BusinessAreaEntity[]): any[] {
+    const businessInterests = [];
+    if (bia?.length > 0) {
+      for (const bi of bia) {
+        const lobs = bi.lineOfBusiness.map((item: any) => {
+          return item.name
+        })
+        const ba_ = bas?.map((item) => {
+          if (item.category == bi.category && bi.priceRange == item.priceRangeId) {
+            return {
+              priceFrom: item.servicePrice?.valueFrom,
+              priceTo: item.servicePrice?.valueTo
+            }
+          }
+        });
+        businessInterests.push({ category: bi.category, lineOfBusiness: lobs, ...ba_ })
+      }
+      return businessInterests;
+    }
+  }
+
+
 }

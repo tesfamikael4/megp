@@ -62,13 +62,14 @@ export class UploadController {
     @CurrentUser() userInfo: any,
     @Body() dto: ReceiptDto,
   ) {
+    console.log('fto of file ', dto);
     if (!attachment) {
       return { error: 'File not received' };
     }
     const result = await this.fileService.uploadPaymentAttachmentUpgrade(
       attachment,
       userInfo,
-      dto,
+      dto
     );
     return result;
   }
