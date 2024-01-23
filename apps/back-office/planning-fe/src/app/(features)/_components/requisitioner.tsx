@@ -158,14 +158,19 @@ export const Requisitioner = ({
         </Button>
       </Group>
 
-      <Modal opened={opened} onClose={close} title="Add Users" size="lg">
+      <Modal
+        opened={opened}
+        onClose={close}
+        title="Add Requisitioner"
+        size="lg"
+      >
         <ExpandableTable
           config={addConfig}
           data={
             users
               ? users.items.map((user) => ({
                   name: user.fullName,
-                  userId: user.id,
+                  id: user.id,
                 }))
               : []
           }
@@ -179,7 +184,11 @@ export const Requisitioner = ({
         <Group justify="end">
           <Button
             onClick={() => {
-              setRequisitioners(selectedItems);
+              const castedData = selectedItems.map((r: any) => ({
+                name: r.name,
+                userId: r.id,
+              }));
+              setRequisitioners(castedData);
               close();
             }}
           >

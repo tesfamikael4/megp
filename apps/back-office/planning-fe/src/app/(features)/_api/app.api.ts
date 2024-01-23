@@ -12,6 +12,7 @@ export const annualProcurementPlanSliceApi: typeof EntitySliceApi =
   );
 
 export const {
+  useLazyListQuery,
   useListQuery,
   useReadQuery,
   useLazyReadQuery,

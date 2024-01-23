@@ -6,8 +6,8 @@ export const ruleApi = createApi({
   tagTypes: [''],
   refetchOnFocus: true,
   baseQuery: baseQuery(
-    // baseUrl: process.env.NEXT_PUBLIC_PLANNING_API ?? '/planning/api/',
-    'https://dev-bo.megp.peragosystems.com/workflow/api/',
+    process.env.NEXT_PUBLIC_PLANNING_API ?? '/infrastructure/api/',
+    // 'https://f30xs3hk-7000.euw.devtunnels.ms/api/',
   ),
   endpoints: (builder) => ({
     validateProcurementMethod: builder.mutation<any, any>({

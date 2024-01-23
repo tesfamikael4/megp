@@ -1,5 +1,5 @@
 'use client';
-import { Stack, Button, Modal, Group } from '@mantine/core';
+import { Stack, Button, Modal, Group, Box } from '@mantine/core';
 import { Section, Table, TableConfig, logger } from '@megp/core-fe';
 import { useParams } from 'next/navigation';
 import { useDisclosure } from '@mantine/hooks';
@@ -10,10 +10,9 @@ import { useLazyListByAppIdQuery } from '../_api/budget.api';
 import { notifications } from '@mantine/notifications';
 import { useBulkCreateMutation } from '@/store/api/budget/budget.api';
 import DataImport from '../../_components/data-import';
+import { ExpandableTable } from '../../_components/expandable-table';
 
 const ModalDetail = ({ data }: { data: any }) => {
-  const [opened, { open, close }] = useDisclosure(false);
-
   const detailData = [
     {
       key: 'Budget Code',
@@ -69,33 +68,9 @@ const ModalDetail = ({ data }: { data: any }) => {
     },
   ];
   return (
-    <>
-      <Group justify="end">
-        <Button onClick={open} variant="outline">
-          See More
-        </Button>
-      </Group>
-      <Modal
-        opened={opened}
-        onClose={close}
-        title={'Budget Year 2022'}
-        size={'lg'}
-      >
-        <>
-          <DetailTable data={detailData} />
-
-          <Group justify="end" gap="md" className="mt-2">
-            <Button
-              onClick={() => {
-                close();
-              }}
-            >
-              Close
-            </Button>
-          </Group>
-        </>
-      </Modal>
-    </>
+    <Box className="bg-white p-5">
+      <DetailTable data={detailData} />
+    </Box>
   );
 };
 
@@ -106,78 +81,34 @@ export default function DetailPage() {
   const [create, { isLoading }] = useBulkCreateMutation();
   const [opened, { open, close }] = useDisclosure(false);
   const [getBudgetYear, { data: budgetYear }] = useLazyReadQuery();
-  const config: TableConfig<any> = {
-    columns: [
-      { header: 'Budget Code', accessorKey: 'budgetCode' },
-      {
-        id: 'action',
-        header: 'Allocated Budget',
-        accessorKey: 'allocatedBudget',
-        cell: ({ row: { original } }) => (
-          <p className="text-right">
-            {parseInt(original.allocatedBudget).toLocaleString('en-US', {
-              style: 'currency',
-              currency: original.currency,
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            })}
-          </p>
-        ),
-      },
 
+  const config = {
+    columns: [
       {
-        id: 'action',
-        header: 'Revised Budget ',
-        accessorKey: 'revisedBudget',
-        cell: ({ row: { original } }) => (
-          <p className="text-right">
-            {parseInt(original.revisedBudget).toLocaleString('en-US', {
-              style: 'currency',
-              currency: original.currency,
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            })}
-          </p>
-        ),
+        accessor: 'budgetCode',
+        title: 'Budget Code',
       },
       {
-        id: 'action',
-        header: 'Obligated Budget',
-        accessorKey: 'obligatedBudget',
-        cell: ({ row: { original } }) => (
-          <p className="text-right">
-            {parseInt(original.obligatedBudget).toLocaleString('en-US', {
-              style: 'currency',
-              currency: original.currency,
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            })}
-          </p>
-        ),
+        accessor: 'allocatedBudget',
+        title: 'Allocated Budget',
       },
       {
-        id: 'action',
-        header: 'Available Budget',
-        accessorKey: 'availableBudget',
-        cell: ({ row: { original } }) => (
-          <p className="text-right">
-            {parseInt(original.availableBudget).toLocaleString('en-US', {
-              style: 'currency',
-              currency: original.currency,
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            })}
-          </p>
-        ),
+        accessor: 'revisedBudget',
+        title: 'Revised Budget',
       },
-      { header: 'Currency', accessorKey: 'currency' },
       {
-        id: 'action',
-        header: 'See more',
-        accessorKey: 'see more',
-        cell: ({ row: { original } }) => <ModalDetail data={original} />,
+        accessor: 'obligatedBudget',
+        title: 'Obligated Budget',
+      },
+      {
+        accessor: 'availableBudget',
+        title: 'Available Budget',
       },
     ],
+    isExpandable: true,
+    expandedRowContent: (budget) => {
+      return <ModalDetail data={budget} />;
+    },
   };
 
   useEffect(() => {
@@ -228,7 +159,11 @@ export default function DetailPage() {
         collapsible={false}
         action={<Button onClick={open}>Import</Button>}
       >
-        <Table data={list?.items ?? []} config={config} />
+        <ExpandableTable
+          data={list?.items ?? []}
+          config={config}
+          total={(list as any)?.total ?? 0}
+        />
       </Section>
     </Stack>
   );

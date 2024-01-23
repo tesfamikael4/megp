@@ -1,15 +1,20 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
+  Button,
+  FileInput,
   Flex,
+  Group,
   LoadingOverlay,
+  Modal,
   MultiSelect,
   Select,
   Stack,
+  Text,
   TextInput,
+  Textarea,
 } from '@mantine/core';
 import { Controller, useForm } from 'react-hook-form';
 import { FrameworkSelector } from './framework-selector';
-import { EntityButton } from '@megp/entity';
 import { ZodType, z } from 'zod';
 import { logger, notify } from '@megp/core-fe';
 import { useParams } from 'next/navigation';
@@ -25,6 +30,10 @@ import {
   useUpdateMutation as useUpdatePostMutation,
 } from '../_api/post-mechanism';
 import { useValidateProcurementMethodMutation } from '@/store/api/rule-designer/rule-designer';
+import { useLazyReadQuery } from '../_api/activities.api';
+import { useLazyReadQuery as useLazyReadPostActivityQuery } from '../_api/post-activity.api';
+import { IconDeviceFloppy } from '@tabler/icons-react';
+import { useDisclosure } from '@mantine/hooks';
 
 const activitiesSchema: ZodType<Partial<any>> = z.object({
   procurementMethod: z.string({
@@ -52,7 +61,6 @@ export const ActivityMechanization = ({
 }) => {
   const {
     handleSubmit,
-    reset,
     formState: { errors },
     control,
     watch,
@@ -84,12 +92,21 @@ export const ActivityMechanization = ({
       isSuccess: isGetPostMechanismSuccess,
     },
   ] = useLazyListPostByIdQuery();
-  const [validateMethod] = useValidateProcurementMethodMutation();
+  const [
+    validateMethod,
+    { data: validationResult, isSuccess: isValidationSuccess },
+  ] = useValidateProcurementMethodMutation();
+
+  //activity
+  const [getPreActivity, { data: preActivity }] = useLazyReadQuery();
+  const [getPostActivity, { data: postActivity }] =
+    useLazyReadPostActivityQuery();
 
   const { id } = useParams();
   const [contract, setContract] = useState({});
   const [mode, setMode] = useState<'new' | 'detail'>('new');
   const [donor, setDonor] = useState<string[]>([]);
+  const [opened, { open, close }] = useDisclosure(false);
   const onCreate = async (data) => {
     const castedData =
       page == 'pre'
@@ -144,30 +161,58 @@ export const ActivityMechanization = ({
     logger.log({ err });
   };
 
-  const onReset = () => {
-    setContract({});
-    setDonor([]);
-    reset({
-      procurementMethod: undefined,
-      procurementType: undefined,
-      fundingSource: undefined,
-      isOnline: undefined,
-      targetGroup: undefined,
-    });
+  const onSubmit = (data) => {
+    if (mode === 'detail') {
+      onUpdate(data);
+    } else {
+      onCreate(data);
+    }
   };
 
   useEffect(() => {
     //check rule
+    const valueThreshold =
+      page == 'pre'
+        ? preActivity?.estimatedAmount
+        : postActivity?.estimatedAmount ?? 0;
     logger.log(method);
     if (method === 'Request for Quotation (RFQ)') {
       logger.log('Yeah');
       validateMethod({
-        data: { procurementCategory: type, valueThreshold: 100 },
+        data: { procurementCategory: type, valueThreshold: valueThreshold },
         key: 'requestForQuotation',
+      });
+    } else if (method === 'National Competitive Bidding (NCB)') {
+      validateMethod({
+        data: { procurementCategory: type, valueThreshold: valueThreshold },
+        key: 'nationalCompetitiveBidding',
+      });
+    } else if (method === 'International Competitive Bidding (ICB)') {
+      validateMethod({
+        data: { procurementCategory: type, valueThreshold: valueThreshold },
+        key: 'internationalCompetitiveBidding',
+      });
+    } else if (method === 'Restricted Tender') {
+      validateMethod({
+        data: { procurementCategory: type, valueThreshold: valueThreshold },
+        key: 'shortListing',
+      });
+    } else if (method === 'Request for Proposal (RFP)') {
+      validateMethod({
+        data: { procurementCategory: type, valueThreshold: valueThreshold },
+        key: 'expressionOfInterest',
       });
     }
     setContract({});
-  }, [method, type, validateMethod]);
+  }, [method, page, postActivity, preActivity, type, validateMethod]);
+
+  useEffect(() => {
+    if (validationResult && isValidationSuccess) {
+      if (!validationResult.validation) {
+        open();
+      }
+    }
+  }, [isValidationSuccess, open, validationResult]);
   useEffect(() => {
     (fundingSource == 'Internal Revenue' || fundingSource == 'Treasury') &&
       setDonor([]);
@@ -179,14 +224,24 @@ export const ActivityMechanization = ({
         id: id as string,
         collectionQuery: undefined,
       });
+
+      getPreActivity(id as string);
     }
     if (page == 'post') {
       getPostMechanism({
         id: id as string,
         collectionQuery: undefined,
       });
+      getPostActivity(id as string);
     }
-  }, [getPostMechanism, getPreMechanism, id, page]);
+  }, [
+    getPostActivity,
+    getPostMechanism,
+    getPreActivity,
+    getPreMechanism,
+    id,
+    page,
+  ]);
 
   useEffect(() => {
     if (page == 'pre' && isGetPreMechanismSuccess && preMechanism?.total == 1) {
@@ -222,170 +277,187 @@ export const ActivityMechanization = ({
     setValue,
   ]);
   return (
-    <Stack pos="relative">
-      <LoadingOverlay
-        visible={isGetPreMechanismLoading || isGetPostMechanismLoading}
-      />
-      <Flex gap="md">
-        <Controller
-          name="procurementType"
-          control={control}
-          render={({ field: { name, value, onChange } }) => (
-            <Select
-              withCheckIcon={false}
-              name={name}
-              value={value}
-              onChange={onChange}
-              label="Procurement Type"
-              data={[
-                'Goods',
-                'Works',
-                'Non Consulting Services',
-                'Consultancy Services',
-                'Motor Vehicle Repair',
-              ]}
-              className="w-full"
-              withAsterisk
-              placeholder="Select Procurement Type"
-              error={
-                errors?.procurementType
-                  ? errors?.procurementType?.message?.toString()
-                  : ''
-              }
-              disabled={disableFields}
-            />
-          )}
+    <>
+      <Stack pos="relative">
+        <LoadingOverlay
+          visible={isGetPreMechanismLoading || isGetPostMechanismLoading}
         />
-        <Controller
-          name="procurementMethod"
-          control={control}
-          render={({ field: { value, name, onChange } }) => (
-            <Select
-              withCheckIcon={false}
-              name={name}
-              value={value}
-              onChange={onChange}
-              label="Procurement Method"
-              data={[
-                'Request for Quotation (RFQ)',
-                'National Competitive Bidding (NCB)',
-                'International Competitive Bidding (ICB) ',
-                'Restricted Tender',
-                'Single Source Procurement ',
-                'Request for Proposal (RFP) ',
-                'Two Stage Bidding',
-                'Framework Procurement',
-                'Purchased Orders (Call off)',
-              ]}
-              className="w-full"
-              withAsterisk
-              placeholder="Select Procurement Method"
-              error={
-                errors?.procurementMethod
-                  ? errors?.procurementMethod?.message?.toString()
-                  : ''
-              }
-              disabled={disableFields}
-            />
-          )}
-        />
-      </Flex>
-      {method === 'Purchased Orders (Call off)' && (
-        <FrameworkSelector
-          contract={contract}
-          onSelect={(contract) => setContract(contract)}
-        />
-      )}
-      <Flex gap="md" align="center">
-        <Controller
-          name="fundingSource"
-          control={control}
-          render={({ field: { name, value, onChange } }) => (
-            <Select
-              withCheckIcon={false}
-              name={name}
-              value={value}
-              onChange={onChange}
-              label="Funding Source"
-              data={['Internal Revenue', 'Treasury', 'Loan', 'Donor']}
-              className="w-full"
-              withAsterisk
-              placeholder="Select Funding Source"
-              error={
-                errors?.fundingSource
-                  ? errors?.fundingSource?.message?.toString()
-                  : ''
-              }
-              disabled={disableFields}
-            />
-          )}
-        />
-        <Controller
-          name="isOnline"
-          control={control}
-          render={({ field: { name, value, onChange } }) => (
-            <Select
-              name={name}
-              value={`${value}`}
-              onChange={(d) => onChange(d == 'true')}
-              label="Procurement Process"
-              data={[
-                { label: 'Online', value: 'true' },
-                { label: 'Offline', value: 'false' },
-              ]}
-              className="w-full"
-              withCheckIcon={false}
-              error={
-                errors?.isOnline ? errors?.isOnline?.message?.toString() : ''
-              }
-              withAsterisk
-              disabled={disableFields}
-            />
-          )}
-        />
-      </Flex>
-      {(fundingSource == 'Loan' || fundingSource == 'Donor') && (
-        <TextInput
-          label="Donor"
-          withAsterisk
-          value={donor[0] ?? ''}
-          onChange={(e) => setDonor([e.target.value])}
-          disabled={disableFields}
-        />
-      )}
-      <Controller
-        name="targetGroup"
-        control={control}
-        render={({ field: { name, value, onChange } }) => (
-          <MultiSelect
-            name={name}
-            value={value}
-            onChange={onChange}
-            label="Supplier Target Group"
-            data={[
-              // { value: 'Not Applicable', label: 'Not Applicable' },
-              { value: 'IBM', label: 'Indigenous Black Malawian' },
-              { value: 'MSME', label: 'Micro, Small And Medium Enterprises' },
-              { value: 'Marginalized Group', label: 'Marginalized Group' },
-              { value: 'Others', label: 'Others' },
-            ]}
-            className="w-full"
+        <Flex gap="md">
+          <Controller
+            name="procurementType"
+            control={control}
+            render={({ field: { name, value, onChange } }) => (
+              <Select
+                withCheckIcon={false}
+                name={name}
+                value={value}
+                onChange={onChange}
+                label="Procurement Type"
+                data={[
+                  'Goods',
+                  'Works',
+                  'Non Consulting Services',
+                  'Consultancy Services',
+                  'Motor Vehicle Repair',
+                ]}
+                className="w-full"
+                withAsterisk
+                placeholder="Select Procurement Type"
+                error={
+                  errors?.procurementType
+                    ? errors?.procurementType?.message?.toString()
+                    : ''
+                }
+                disabled={disableFields}
+              />
+            )}
+          />
+          <Controller
+            name="procurementMethod"
+            control={control}
+            render={({ field: { value, name, onChange } }) => (
+              <Select
+                // withCheckIcon={false}
+                name={name}
+                value={value}
+                onChange={onChange}
+                label="Procurement Method"
+                data={[
+                  'Request for Quotation (RFQ)',
+                  'National Competitive Bidding (NCB)',
+                  'International Competitive Bidding (ICB)',
+                  'Restricted Tender',
+                  'Single Source Procurement',
+                  'Request for Proposal (RFP)',
+                  'Two Stage Bidding',
+                  'Framework Procurement',
+                  'Purchased Orders (Call off)',
+                ]}
+                className="w-full"
+                withAsterisk
+                placeholder="Select Procurement Method"
+                error={
+                  errors?.procurementMethod
+                    ? errors?.procurementMethod?.message?.toString()
+                    : ''
+                }
+                disabled={disableFields || !type}
+              />
+            )}
+          />
+        </Flex>
+        {method === 'Purchased Orders (Call off)' && (
+          <FrameworkSelector
+            contract={contract}
+            onSelect={(contract) => setContract(contract)}
+          />
+        )}
+        <Flex gap="md" align="center">
+          <Controller
+            name="fundingSource"
+            control={control}
+            render={({ field: { name, value, onChange } }) => (
+              <Select
+                withCheckIcon={false}
+                name={name}
+                value={value}
+                onChange={onChange}
+                label="Funding Source"
+                data={['Internal Revenue', 'Treasury', 'Loan', 'Donor']}
+                className="w-full"
+                withAsterisk
+                placeholder="Select Funding Source"
+                error={
+                  errors?.fundingSource
+                    ? errors?.fundingSource?.message?.toString()
+                    : ''
+                }
+                disabled={disableFields}
+              />
+            )}
+          />
+          <Controller
+            name="isOnline"
+            control={control}
+            render={({ field: { name, value, onChange } }) => (
+              <Select
+                name={name}
+                value={`${value}`}
+                onChange={(d) => onChange(d == 'true')}
+                label="Procurement Process"
+                data={[
+                  { label: 'Online', value: 'true' },
+                  { label: 'Offline', value: 'false' },
+                ]}
+                className="w-full"
+                withCheckIcon={false}
+                error={
+                  errors?.isOnline ? errors?.isOnline?.message?.toString() : ''
+                }
+                withAsterisk
+                disabled={disableFields}
+              />
+            )}
+          />
+        </Flex>
+        {(fundingSource == 'Loan' || fundingSource == 'Donor') && (
+          <TextInput
+            label="Donor"
+            withAsterisk
+            value={donor[0] ?? ''}
+            onChange={(e) => setDonor([e.target.value])}
             disabled={disableFields}
           />
         )}
-      />
+        <Controller
+          name="targetGroup"
+          control={control}
+          render={({ field: { name, value, onChange } }) => (
+            <MultiSelect
+              name={name}
+              value={value}
+              onChange={onChange}
+              label="Supplier Target Group"
+              data={[
+                // { value: 'Not Applicable', label: 'Not Applicable' },
+                { value: 'IBM', label: 'Indigenous Black Malawian' },
+                { value: 'MSME', label: 'Micro, Small And Medium Enterprises' },
+                { value: 'Marginalized Group', label: 'Marginalized Group' },
+                { value: 'Others', label: 'Others' },
+              ]}
+              className="w-full"
+              disabled={disableFields}
+            />
+          )}
+        />
 
-      <EntityButton
-        mode={mode}
-        isSaving={isPreCreating || isPostCreating}
-        isUpdating={isPreUpdating || isPostUpdating}
-        // isDeleting={isPreDeleting || isPostDeleting}
-        onCreate={handleSubmit(onCreate, onError)}
-        onReset={onReset}
-        onUpdate={handleSubmit(onUpdate)}
-        // onDelete={handleSubmit(onDelete)}
-        disabled={disableFields}
-      />
-    </Stack>
+        <Group>
+          <Button
+            loading={
+              isPreCreating || isPostCreating || isPreUpdating || isPostUpdating
+            }
+            onClick={handleSubmit(onSubmit, onError)}
+          >
+            <IconDeviceFloppy size={14} /> Save
+          </Button>
+        </Group>
+      </Stack>
+
+      <Modal opened={opened} onClose={close} size={'lg'} title="Justification">
+        {/* <Text>Tessgjhsdfsh</Text> */}
+        <Stack>
+          <Select
+            label="Possible Reasons"
+            data={validationResult?.possibleReasons ?? ['Other']}
+            withAsterisk
+          />
+          <Textarea label="Remark" withAsterisk />
+          <FileInput label="Attachment" />
+          <Group justify="end">
+            <Button>Submit</Button>
+          </Group>
+        </Stack>
+      </Modal>
+    </>
   );
 };
