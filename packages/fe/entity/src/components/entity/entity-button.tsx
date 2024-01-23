@@ -43,7 +43,7 @@ export function EntityButton({
   isActivating,
 }: EntityButtonProps): React.ReactElement {
   return (
-    <Group className="border-t pt-4">
+    <Group className="border-t pt-4 ">
       {mode === 'new' && (
         <>
           {onCreate ? (

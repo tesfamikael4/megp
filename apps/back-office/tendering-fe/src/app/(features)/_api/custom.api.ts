@@ -76,16 +76,14 @@ export const customApi = createApi({
       }),
       providesTags: ['pr', 'items'],
     }),
-    createItem: builder.query<
-      any,
-      { id: string; collectionQuery: CollectionQuery | undefined }
-    >({
+
+    createItem: builder.mutation<any, any>({
       query: (data) => ({
         url: `procurement-requisition-items`,
         method: 'POST',
-        data: data,
+        body: data,
       }),
-      providesTags: ['items'],
+      invalidatesTags: ['items'],
     }),
   }),
 });
@@ -97,8 +95,8 @@ export const {
   useLazyListMechanismByIdQuery,
   useCreateMechanismMutation,
   useUpdateMechanismMutation,
-  useLazyCreateItemQuery,
+
   useLazyListPrActivityQuery,
-  useCreateItemQuery,
+  useCreateItemMutation,
   useListPrActivityQuery,
 } = customApi;
