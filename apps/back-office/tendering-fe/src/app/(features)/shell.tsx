@@ -1,7 +1,6 @@
 'use client';
 
 import { Menu } from '@/config/menu';
-import { DatesProvider } from '@mantine/dates';
 import { ShellContext } from '@megp/core-fe';
 import { ReactNode } from 'react';
 

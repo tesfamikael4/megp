@@ -141,7 +141,7 @@ export default function TimelineTab() {
             value={value}
             onChange={setValue}
             rightSection={
-              <Box className=" text-black border-l-2 p-2 mr-2">Days</Box>
+              <Box className=" text-black border-l-2 p-2 mr-6 ">Days </Box>
             }
           />
         )}

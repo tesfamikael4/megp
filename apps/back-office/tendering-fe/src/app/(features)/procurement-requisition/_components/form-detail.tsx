@@ -119,7 +119,7 @@ export function FormDetail({ mode }: FormDetailProps) {
   }, [triggerBudjet]);
 
   return (
-    <Stack pos="relative">
+    <Stack pos="relative" pb={'sm'}>
       {mode == 'detail' && <LoadingOverlay visible={isLoading} />}
       <TextInput
         withAsterisk

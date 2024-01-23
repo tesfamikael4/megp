@@ -9,7 +9,7 @@ const perPage = 10;
 interface Config {
   columns: any[];
   isExpandable?: boolean;
-  expandedRowContent?: (record: any) => React.ReactNode;
+  expandedRowContent?: (record: any, collapse?: any) => React.ReactNode;
   isSearchable?: boolean;
   primaryColumn?: string;
   isLoading?: boolean;

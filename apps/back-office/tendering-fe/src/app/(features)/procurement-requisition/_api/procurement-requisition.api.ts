@@ -2,7 +2,6 @@ import { ProcurementRequisition } from '@/models/procurement-requsition';
 import entityApi from '@/store/entity/api';
 import { createEntitySlice, EntitySliceApi } from '@megp/entity';
 
-// get base organization api
 const ProcurementApi = entityApi.entitySliceApi['procurement-requisitions'];
 
 export const procurementSliceApi: typeof EntitySliceApi =
