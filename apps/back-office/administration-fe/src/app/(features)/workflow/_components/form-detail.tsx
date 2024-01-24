@@ -9,7 +9,7 @@ import { useForm } from 'react-hook-form';
 import z from 'zod';
 
 const schema = z.object({
-  name: z.string(),
+  title: z.string(),
   description: z.string(),
 });
 
@@ -48,9 +48,9 @@ export default function FormDetail({ mode }: { mode: 'update' | 'new' }) {
     <form onSubmit={handleSubmit(onSubmit)}>
       <Stack>
         <TextInput
-          label="Name"
-          {...register('name')}
-          error={errors?.name?.message}
+          label="Title"
+          {...register('title')}
+          error={errors?.title?.message}
         />
         <TextInput
           label="Description"

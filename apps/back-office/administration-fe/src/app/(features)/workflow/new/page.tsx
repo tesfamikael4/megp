@@ -4,7 +4,7 @@ import FormDetail from '../_components/form-detail';
 
 export default function GroupPage() {
   return (
-    <Section title="New Item" collapsible={false}>
+    <Section title="New" collapsible={false}>
       <FormDetail mode="new" />
     </Section>
   );

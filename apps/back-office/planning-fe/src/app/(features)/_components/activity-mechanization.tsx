@@ -34,6 +34,7 @@ import { useLazyReadQuery } from '../_api/activities.api';
 import { useLazyReadQuery as useLazyReadPostActivityQuery } from '../_api/post-activity.api';
 import { IconDeviceFloppy } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
+import { Reasons } from './reasons';
 
 const activitiesSchema: ZodType<Partial<any>> = z.object({
   procurementMethod: z.string({
@@ -437,27 +438,18 @@ export const ActivityMechanization = ({
               isPreCreating || isPostCreating || isPreUpdating || isPostUpdating
             }
             onClick={handleSubmit(onSubmit, onError)}
+            disabled={disableFields}
           >
             <IconDeviceFloppy size={14} /> Save
           </Button>
         </Group>
       </Stack>
 
-      <Modal opened={opened} onClose={close} size={'lg'} title="Justification">
-        {/* <Text>Tessgjhsdfsh</Text> */}
-        <Stack>
-          <Select
-            label="Possible Reasons"
-            data={validationResult?.possibleReasons ?? ['Other']}
-            withAsterisk
-          />
-          <Textarea label="Remark" withAsterisk />
-          <FileInput label="Attachment" />
-          <Group justify="end">
-            <Button>Submit</Button>
-          </Group>
-        </Stack>
-      </Modal>
+      <Reasons
+        opened={opened}
+        close={close}
+        validationResult={validationResult}
+      />
     </>
   );
 };

@@ -227,7 +227,11 @@ export const Documents = ({
         </Button>
       </Group>
       {/* <Table data={data?.items ?? []} config={config} /> */}
-      <ExpandableTable data={data?.items ?? []} config={config} />
+      <ExpandableTable
+        data={data?.items ?? []}
+        config={config}
+        total={data?.total ?? 0}
+      />
 
       <Modal title="Upload New Document" opened={opened} onClose={close}>
         <form onSubmit={handleSubmit(onSubmit)}>
