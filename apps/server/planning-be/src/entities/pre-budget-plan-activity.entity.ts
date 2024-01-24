@@ -8,6 +8,7 @@ import {
   JoinColumn,
   BeforeInsert,
   Unique,
+  Check,
 } from 'typeorm';
 
 import { PreBudgetPlan } from './pre-budget-plan.entity';
@@ -20,6 +21,7 @@ import { PreBudgetActivityDocument } from './pre-budget-activity-document.entity
 
 @Unique(['procurementReference'])
 @Entity({ name: 'pre_budget_plan_activities' })
+@Check('"estimatedAmount" >= 0 AND "calculatedAmount" >= 0')
 export class PreBudgetPlanActivity extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string;

@@ -6,6 +6,7 @@ import {
   OneToMany,
   ManyToOne,
   JoinColumn,
+  Check,
 } from 'typeorm';
 
 import { PostBudgetPlanActivity } from './post-budget-plan-activity.entity';
@@ -13,6 +14,7 @@ import { BudgetYear } from './budget-year.entity';
 import { OrgAudit } from 'src/shared/entities';
 
 @Entity({ name: 'post_budget_plan_disbursements' })
+@Check('"amount" >= 0 AND "order" >= 0')
 export class PostBudgetPlanDisbursement extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string;

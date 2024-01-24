@@ -6,6 +6,7 @@ import {
   OneToMany,
   ManyToOne,
   JoinColumn,
+  Check,
 } from 'typeorm';
 
 import { APP } from './app.entity';
@@ -16,6 +17,9 @@ import { OrgAudit } from 'src/shared/entities';
 import { PostBudgetPlanActivity } from './post-budget-plan-activity.entity';
 
 @Entity({ name: 'budget' })
+@Check(
+  '"availableBudget" >= 0 AND "obligatedBudget" >= 0 AND "revisedBudget" >= 0 AND "allocatedBudget" >= 0',
+)
 export class Budget extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
