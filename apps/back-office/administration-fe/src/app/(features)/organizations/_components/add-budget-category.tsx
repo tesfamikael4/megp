@@ -12,8 +12,8 @@ import {
   useAssignBudgetToOrganizationMutation,
   useLazyGetBudgetCategoriesQuery,
 } from '@/store/api/budget-category/budge-category.api';
-import { CollectionSelector } from './collection-selector';
 import { useLazyListQuery } from '../../lookup/budget-category/_api/budget-category.api';
+import { CollectionSelector } from '../../_components/collection-selector';
 
 const AddEntityModal = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);

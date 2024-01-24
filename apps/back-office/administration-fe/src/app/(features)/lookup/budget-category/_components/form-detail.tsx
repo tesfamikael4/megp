@@ -150,6 +150,7 @@ export function FormDetail({ mode }: FormDetailPropType) {
         isSaving={isSaving}
         isUpdating={isUpdating}
         isDeleting={isDeleting}
+        entity="budget category"
       />
     </Stack>
   );
