@@ -43,12 +43,25 @@ export class PostBudgetPlanActivityController extends ExtraCrudController<PostBu
     itemData.organizationId = user.organization.id;
     return this.postBudgetPlanActivityService.create(itemData);
   }
+
   @OnEvent('post.recalculateEstimatedAmount')
   async recalculate(plan) {
     return await this.postBudgetPlanActivityService.recalculateTotalEstimatedAmount(
       plan,
     );
   }
+
+  @Post('add-budget')
+  async addBudget(@Body() payload: any) {
+    return await this.postBudgetPlanActivityService.addBudget(payload);
+  }
+
+  @Post('change-budget')
+  async changeBudget(@Body() payload: any) {
+    return await this.postBudgetPlanActivityService.changeBudget(payload);
+  }
+
+  //API's for purchase-requisition
   @AllowAnonymous()
   @UseGuards(ApiKeyGuard)
   @Get('pr/list/:id')
