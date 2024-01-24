@@ -83,29 +83,4 @@ export class PostBudgetPlanController extends ExtraCrudController<PostBudgetPlan
       q,
     );
   }
-
-  @AllowAnonymous()
-  @UseGuards(ApiKeyGuard)
-  @Get('pr/list/:id')
-  @ApiQuery({
-    name: 'q',
-    type: String,
-    description: 'Collection Query Parameter. Optional',
-    required: false,
-  })
-  async prFindAll(
-    @Param('id') id: string,
-    @Query('q') q: string,
-    @Req() req?: any,
-  ): Promise<any> {
-    const query = decodeCollectionQuery(q);
-    return this.postBudgetPlanService.findAll(id, query, options);
-  }
-
-  @AllowAnonymous()
-  @UseGuards(ApiKeyGuard)
-  @Get('pr/:id')
-  async prFindOne(@Param('id') id: string, @Req() req?: any): Promise<any> {
-    return this.postBudgetPlanService.findOne(id);
-  }
 }
