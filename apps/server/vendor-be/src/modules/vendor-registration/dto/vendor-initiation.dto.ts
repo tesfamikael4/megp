@@ -96,7 +96,7 @@ export class VendorInitiationResponseDto extends VendorInitiationDto {
     const response = new VendorInitiationResponseDto();
     response.id = regDto.id;
     response.userId = regDto.userId;
-    response.status = regDto.name;
+    response.status = regDto.status;
     response.name = regDto.name;
     response.businessType = regDto.formOfEntity;
     response.origin = regDto.origin;
