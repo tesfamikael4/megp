@@ -20,7 +20,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
       basePath: '/workflow',
       mode: 'list',
       entity: 'activity',
-      primaryKey: 'name',
+      primaryKey: 'title',
       title: 'Activities',
       onAdd: () => {
         route.push(`/workflow/new`);
@@ -36,9 +36,9 @@ export function Entity({ children }: { children: React.ReactNode }) {
 
       columns: [
         {
-          id: 'name',
+          id: 'title',
           header: 'Name',
-          accessorKey: 'name',
+          accessorKey: 'title',
           cell: (info) => info.getValue(),
           meta: {
             widget: 'primary',

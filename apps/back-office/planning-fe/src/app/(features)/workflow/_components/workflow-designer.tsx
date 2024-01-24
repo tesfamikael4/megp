@@ -119,7 +119,7 @@ export function Steps({ activityId }: { activityId: string }) {
     columns: [
       {
         header: 'Name',
-        accessorKey: 'name',
+        accessorKey: 'title',
       },
       {
         header: 'Approver',
@@ -155,7 +155,7 @@ export function Steps({ activityId }: { activityId: string }) {
     const [selected, setSelected] = useState<any>(
       Array.from(new Set(cell?.approvers ?? [])),
     );
-    const [name, setName] = useState(cell.name);
+    const [name, setName] = useState(cell.title);
     const [isSelectorOpened, setIsSelectorOpened] = useState(true);
     const [type, setType] = useState<string[]>(
       Array.from(
