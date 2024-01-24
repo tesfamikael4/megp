@@ -5,7 +5,7 @@ import { EntityCrudService } from 'src/shared/service';
 import { PreferentialTreatmentsEntity } from 'src/entities/preferential-treatment.entity';
 import { CreatePTDto } from '../dto/preferentail-treatment.dto';
 import { WorkflowService } from 'src/modules/bpm/services/workflow.service';
-import { CreateWorkflowInstanceDto } from 'src/modules/handling/dto/workflow-instance.dto';
+import { CreateWorkflowInstanceDto, GotoNextStateDto } from 'src/modules/handling/dto/workflow-instance.dto';
 import { BusinessProcessService } from 'src/modules/bpm/services/business-process.service';
 import { VendorRegistrationsService } from 'src/modules/vendor-registration/services/vendor-registration.service';
 import { BusinessAreaEntity } from 'src/entities';
@@ -67,7 +67,6 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
             if (existedRequest?.length > 0) {
                 entity.id = existedRequest[0].id;
             }
-
             const result = await this.ptRepository.save(entity);
             if (dto.status == ApplicationStatus.SUBMIT) {
                 const wfi = new CreateWorkflowInstanceDto();
@@ -78,8 +77,17 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
                 wfi.bpId = bp.id;
                 wfi.requestorId = vendor.vendor?.id;
                 wfi.serviceId = dto.serviceId;
-                wfi.data = { vendor: vendor, extendedProfile: dto.extendedProfile, attachments: fileNames, remark: dto.remark };
+                const { serviceId, vendorId, id, ...preferntial } = entity;
+                wfi.data = { vendor: vendor, preferential: { ...preferntial } };
                 wfi.user = user;
+                const baexisted = await this.baService.getUserInprogressBusinessAreaByServiceId(dto.serviceId, user.id);
+                if (baexisted) {
+                    const nextCommand = new GotoNextStateDto();
+                    nextCommand.instanceId = baexisted.instanceId;
+                    nextCommand.action = 'ISR';
+                    nextCommand.data = wfi.data;
+                    return await this.workflowService.gotoNextStep(nextCommand, user);
+                }
                 const wfiResult = await this.workflowService.intiateWorkflowInstance(wfi, user);
                 const ba = new BusinessAreaEntity();
                 ba.instanceId = wfiResult.application.id;

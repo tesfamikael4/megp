@@ -6,7 +6,6 @@ import {
   Param,
   BadRequestException,
   UseGuards,
-  Req,
   Query,
 } from '@nestjs/common';
 import {
@@ -16,10 +15,8 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { DataResponseFormat } from '@api-data';
-
 import { VendorRegistrationsService } from '../services/vendor-registration.service';
 import { VendorInitiationDto } from '../dto/vendor-initiation.dto';
-
 import {
   AllowAnonymous,
   ApiKeyGuard,

@@ -228,7 +228,7 @@ export class FileService {
       const metaData = {
         'Content-Type': file.mimetype,
       };
-      const resultData = await this.minioClient.putObject(
+      await this.minioClient.putObject(
         this.bucketName,
         filename,
         file.buffer,
@@ -243,23 +243,19 @@ export class FileService {
       result.paymentReceipt = paymentReceipt;
       result.initial.level = VendorStatusEnum.DOC;
       result.initial.status = VendorStatusEnum.SAVE;
-      const isrVendor = await this.isrVendorsRepository.save(result);
-
+      await this.isrVendorsRepository.save(result);
       foundObject.push(paymentReceipt);
-      if (!isrVendor) throw new HttpException(`isrVendor_update _failed`, 500);
       const paymentReceiptsData = result?.paymentReceipt;
-
       for (let index = 0; index < paymentReceiptsData?.length; index++) {
-        const invoice = await this.invoiceRepository.update(
+        await this.invoiceRepository.update(
           paymentReceiptsData[index].invoiceId,
           {
             paymentStatus: 'Paid',
             attachment: fileId,
           },
         );
-        if (!invoice) throw new HttpException(`invoice_update _failed`, 500);
-      }
 
+      }
       const response = new CreateFileDto();
       response.attachmentUrl = file?.path;
       response.originalName = file?.originalname;
@@ -284,7 +280,7 @@ export class FileService {
       const result = await this.isrVendorsRepository.findOne({
         where: { userId: userId, status: In(this.updateVendorEnums) },
       });
-      if (!result) throw new HttpException('isr vendor not found ', 500);
+      if (!result) throw new HttpException('isr vendor not found ', 404);
       const fileUploadName = 'paymentReceipt';
       if (paymentReceiptDto?.attachment) {
         const objectName = `${userId}/${fileUploadName}/${paymentReceiptDto?.attachment}`;
@@ -311,8 +307,7 @@ export class FileService {
       result.paymentReceipt = paymentReceipt;
       result.initial.level = VendorStatusEnum.DOC;
       result.initial.status = VendorStatusEnum.SAVE;
-      const isrVendor = await this.isrVendorsRepository.save(result);
-      if (!isrVendor) throw new HttpException(`isrVendor_update _failed`, 500);
+      await this.isrVendorsRepository.save(result);
       const ids = JSON.parse(paymentReceiptDto?.invoiceIds);
       for (let index = 0; index < ids.length; index++) {
         const invoice = await this.invoiceRepository.update(ids[index], {
@@ -437,7 +432,7 @@ export class FileService {
       const result = await this.isrVendorsRepository.findOne({
         where: { userId: userId, status: In(this.updateVendorEnums) },
       });
-      if (!result) throw new HttpException('isr vendor not found ', 500);
+      if (!result) throw new HttpException('Incoplete Information', 404);
       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
       const fileUploadName = 'SupportingDocument';
       const fileId = `${uniqueSuffix}_${file.originalname}`;
@@ -447,15 +442,13 @@ export class FileService {
         'Content-Type': file.mimetype,
       };
       const fname = paymentReceiptDto.fieldName;
-      const resultData = await this.minioClient.putObject(
+      await this.minioClient.putObject(
         bucket,
         filename,
         file.buffer,
-        metaData,
+        metaData
       );
-      const resultMetadata = JSON.parse(
-        JSON.stringify(result.supportingDocuments),
-      );
+      const resultMetadata = result.supportingDocuments
       switch (paymentReceiptDto.fieldName) {
         case 'businessRegistration_IncorporationCertificate':
           if (resultMetadata[fname] !== '') {
@@ -464,6 +457,7 @@ export class FileService {
           }
           resultMetadata.businessRegistration_IncorporationCertificate = fileId;
           break;
+
         case 'mRA_TPINCertificate':
           if (resultMetadata[fname] !== '') {
             const objectName = `${userId}/${fileUploadName}/${resultMetadata[fname]}`;
