@@ -12,6 +12,10 @@ import { Measurement } from 'src/entities/measurement.entity';
 import { Tag } from 'src/entities/tag.entity';
 import { ItemCodeGeneratorService } from './services/item-code-generator.service';
 import { ItemMaster } from 'src/entities/item-master.entity';
+import { ItemMetaData } from 'src/entities';
+import { ItemMetaDataController } from './controllers/item-metadata.controller';
+import { ItemMetaDataService } from './services/extra-services/item-metadata.service';
+import { ClassificationService } from '../classification/services/classification.service';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -22,9 +26,20 @@ import { ItemMaster } from 'src/entities/item-master.entity';
       ItemCategory,
       Measurement,
       Tag,
+      ItemMetaData,
     ]),
   ],
-  providers: [ItemMasterService, ItemCodeGeneratorService, ExtraItemTagService],
-  controllers: [ItemMasterConroller, ExtraItemTagController],
+  providers: [
+    ItemMasterService,
+    ItemCodeGeneratorService,
+    ExtraItemTagService,
+    ItemMetaDataService,
+    ClassificationService,
+  ],
+  controllers: [
+    ItemMasterConroller,
+    ExtraItemTagController,
+    ItemMetaDataController,
+  ],
 })
 export class ItemMasterModule {}

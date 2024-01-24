@@ -10,5 +10,6 @@ import { Classification } from 'src/entities/classification.entity';
   imports: [TypeOrmModule.forFeature([TaxonomyCodeSet, Classification])],
   providers: [ClassificationService, TaxonomyCodeSetService],
   controllers: [ClassificationController, TaxonomyCodeSetController],
+  exports: [ClassificationService],
 })
 export class ClassificationModule {}
