@@ -37,12 +37,12 @@ export class PostBudgetPlanActivity extends OrgAudit {
   @JoinColumn({ name: 'postBudgetPlanId' })
   public postBudgetPlan: PostBudgetPlan;
 
-  @Column()
+  @Column({ nullable: true })
   budgetId: string;
 
   @ManyToOne(() => Budget, (budget) => budget.postBudgetPlanActivities)
   @JoinColumn({ name: 'budgetId' })
-  public budget: Budget;
+  public budget?: Budget;
 
   @OneToMany(
     () => PostBudgetPlanItem,
