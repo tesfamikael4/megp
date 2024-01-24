@@ -1,17 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Button,
-  FileInput,
   Flex,
   Group,
   LoadingOverlay,
-  Modal,
   MultiSelect,
   Select,
   Stack,
-  Text,
   TextInput,
-  Textarea,
 } from '@mantine/core';
 import { Controller, useForm } from 'react-hook-form';
 import { FrameworkSelector } from './framework-selector';

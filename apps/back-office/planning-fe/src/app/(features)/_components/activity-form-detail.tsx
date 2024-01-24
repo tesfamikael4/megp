@@ -3,8 +3,8 @@
 import { BudgetPlanActivities } from '@/models/budget-plan-activities';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
+  ActionIcon,
   Box,
-  Button,
   Checkbox,
   Flex,
   Modal,
@@ -39,6 +39,7 @@ import {
   useGetCurrenciesQuery,
 } from '@/store/api/administration/administration.api';
 import { useDisclosure } from '@mantine/hooks';
+import { IconPlus } from '@tabler/icons-react';
 
 interface FormDetailProps {
   mode: 'detail' | 'new';
@@ -79,7 +80,7 @@ export const FormDetail = ({
     resolver: zodResolver(activitiesSchema),
   });
   // const [opened, { open, close }] = useDisclosure();
-  const [opened, { close }] = useDisclosure();
+  const [opened, { close, open }] = useDisclosure();
   const [tags, setTags] = useState<any>([]);
 
   //
@@ -344,6 +345,11 @@ export const FormDetail = ({
               logger.log({ data });
             }}
             disabled={disableFields}
+            leftSection={
+              <ActionIcon onClick={open} variant="subtle">
+                <IconPlus />
+              </ActionIcon>
+            }
           />
           {/* <Button onClick={open} disabled={disableFields}>
               Select
