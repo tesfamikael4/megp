@@ -95,24 +95,24 @@ export function Steps({ activityId }: { activityId: string }) {
   // const activityId = '1f344819-d64d-4986-b192-ee06f5bf0e98';
   const [orderedData, setOrderedData] = useState<any>(data);
   const [opened, { open, close }] = useDisclosure(false);
-  const { data: defaultSteps, isLoading: isFetchingDefaultSteps } = useGetDefaultStepsQuery({
+  const { data: defaultSteps, isLoading: isFetchingDefaultSteps } =
+    useGetDefaultStepsQuery({
+      activityId: activityId,
+    });
+  const { data: steps, isLoading: isFetchingSteps } = useGetStepsQuery({
     activityId: activityId,
   });
-  const { data: steps, isLoading: isFetchingSteps } = useGetStepsQuery({
-        activityId: activityId,
-          });
   const [createSteps, { isLoading: isCreatingSteps }] =
     useCreateStepsMutation();
 
   useEffect(() => {
-    if(steps?.total != 0) {
-      setData(steps?.items)
-      setOrderedData(steps?.items)
+    if (steps?.total != 0) {
+      setData(steps?.items);
+      setOrderedData(steps?.items);
     } else {
       setData(defaultSteps?.items);
       setOrderedData(defaultSteps?.items);
     }
-    
   }, [defaultSteps, steps]);
 
   const listConfig: TableConfig<any> = {
@@ -372,10 +372,10 @@ export function Steps({ activityId }: { activityId: string }) {
                               type === 'Role' && roles
                                 ? roles
                                 : type === 'WorkGroup' && groups
-                                ? groups
-                                : type === 'User' && users
-                                ? users
-                                : []
+                                  ? groups
+                                  : type === 'User' && users
+                                    ? users
+                                    : []
                             }
                           />
                         )}
@@ -634,10 +634,10 @@ export function Steps({ activityId }: { activityId: string }) {
                               type === 'Role' && roles
                                 ? roles
                                 : type === 'WorkGroup' && groups
-                                ? groups
-                                : type === 'User' && users
-                                ? users
-                                : []
+                                  ? groups
+                                  : type === 'User' && users
+                                    ? users
+                                    : []
                             }
                           />
                         )}
@@ -723,7 +723,7 @@ export function Steps({ activityId }: { activityId: string }) {
       const reformattedData = data.map((item, index) => {
         return {
           approvers: item.approvers,
-          name: item.name,
+          title: item.name,
           order: index + 1,
           type: item.type,
           activityId: activityId,

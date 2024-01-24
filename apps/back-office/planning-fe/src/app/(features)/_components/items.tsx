@@ -140,6 +140,7 @@ export function Items({
     ...config,
     expandedRowContent: (record) => (
       <ItemDetailForm
+        isDisabled={disableFields}
         item={record}
         onSave={handleUpdate}
         isLoading={isPreUpdating || isPostUpdating}
@@ -172,6 +173,7 @@ export function Items({
                   onConfirm: () => handleDelete(record.id),
                 });
               }}
+              disabled={disableFields}
             >
               <IconTrash size={14} />
             </ActionIcon>

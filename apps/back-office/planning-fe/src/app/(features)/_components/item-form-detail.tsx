@@ -33,7 +33,9 @@ export const ItemDetailForm = ({
   onSave,
   isLoading,
   onDone,
+  isDisabled = false,
 }: {
+  isDisabled?: boolean;
   item: any;
   isLoading?: boolean;
   onSave?: (data: any, id?: string) => void;
@@ -99,6 +101,7 @@ export const ItemDetailForm = ({
             error={
               errors?.quantity ? errors?.quantity?.message?.toString() : ''
             }
+            disabled={isDisabled}
           />
           <TextInput
             type="number"
@@ -108,6 +111,7 @@ export const ItemDetailForm = ({
             error={
               errors?.unitPrice ? errors?.unitPrice?.message?.toString() : ''
             }
+            disabled={isDisabled}
           />
           <Controller
             name="uomName"
@@ -122,13 +126,18 @@ export const ItemDetailForm = ({
                 error={
                   errors?.uomName ? errors?.uomName?.message?.toString() : ''
                 }
+                disabled={isDisabled}
               />
             )}
           />
         </Box>
       </Flex>
       <Group justify="end">
-        <Button onClick={handleSubmit(onSubmit, onError)} loading={isLoading}>
+        <Button
+          onClick={handleSubmit(onSubmit, onError)}
+          loading={isLoading}
+          disabled={isDisabled}
+        >
           {onSave ? 'Save' : 'Done'}
         </Button>
       </Group>

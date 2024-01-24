@@ -376,7 +376,7 @@ export function Designer() {
     try {
       const reformattedData = data.map((item, index) => {
         return {
-          name: item.name,
+          title: item.name,
           order: index + 1,
           type: `${checked ? 'mandatory' : 'default'}`,
           activityId: id,

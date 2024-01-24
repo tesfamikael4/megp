@@ -7,7 +7,7 @@ export const workflowApi = createApi({
   tagTypes: ['Steps', 'activity', 'Activities'],
   baseQuery: baseQuery(
     // baseUrl: process.env.NEXT_PUBLIC_WORKFLOW_API ?? '/workflow/api/',
-    process.env.NEXT_PUBLIC_WORKFLOW_API ?? '/workflow/api/',
+    process.env.NEXT_PUBLIC_WORKFLOW_API ?? '/infrastructure/api/',
   ),
   endpoints: (builder) => ({
     getActivities: builder.query<any, { workFlowId: string }>({
