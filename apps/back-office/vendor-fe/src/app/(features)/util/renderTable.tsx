@@ -1,4 +1,4 @@
-import { Box, Button, Table } from '@mantine/core';
+import { Box, Button, Chip, Table } from '@mantine/core';
 import { formatDateTimeFromString } from '.';
 import tableClasses from '../_components/details-accordion/table.module.scss';
 import { addSpacesToCamelCase } from './addSpaceToCamelCase';
@@ -71,7 +71,7 @@ export function renderTable(
                     <Table.Td key={header?.name ?? header}>
                       <ul>
                         {cellValue.map((value, index) => (
-                          <li key={index}>{JSON.stringify(value)}</li>
+                          <li key={index}>{value ?? JSON.stringify(value)}</li>
                         ))}
                       </ul>
                     </Table.Td>

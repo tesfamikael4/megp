@@ -54,16 +54,17 @@ export default function RequestsSidebar({
         <Text>Application Number</Text>
         <TextInput
           value={filter.trackingNumber}
-          type="number"
+          type="string"
           name="trackingNumber"
+          placeholder="Application Number"
           onChange={(e) => updateFilter(e.target.name, e.target.value)}
         />
       </Box>
       <Box className={styles.formGroup}>
-        <Text>Service Type</Text>
+        <Text>Business Category</Text>
         <Select
           value={filter.status}
-          placeholder="Task status"
+          placeholder="Select Business Category"
           data={['Goods', 'Services', 'Works']}
           name={'status'}
           onChange={(e) => updateFilter('status', e)}
@@ -74,6 +75,7 @@ export default function RequestsSidebar({
         <TextInput
           value={filter.customerName}
           name="customerName"
+          placeholder="Company Name"
           onChange={(e) => updateFilter(e.target.name, e.target.value)}
         />
       </Box>

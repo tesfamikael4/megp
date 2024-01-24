@@ -37,15 +37,15 @@ const ApplicationList = ({
       filters.push({
         column: 'name',
         operator: 'LIKE',
-        value: `%${filter.name}%`,
+        value: `${filter.name}`,
       });
     }
 
     if (filter.businessType) {
       filters.push({
-        column: 'country',
+        column: 'formOfEntity',
         operator: 'LIKE',
-        value: `%${filter.businessType}%`,
+        value: `${filter.businessType}`,
       });
     }
 

@@ -181,9 +181,11 @@ export default function TaskHandler({
           <Button
             onClick={() => {
               handleButtonClick('ADJUST');
-              router.push(
-                `/${requestType === 'update' ? 'info-change' : requestType === 'preferential' ? 'preferential-services' : requestType}`,
-              );
+              if (remark) {
+                router.push(
+                  `/${requestType === 'update' ? 'info-change' : requestType === 'preferential' ? 'preferential-services' : requestType}`,
+                );
+              }
             }}
             className="bg-yellow-500 hover:bg-yellow-600"
             loading={loading['ADJUST']}
@@ -193,9 +195,11 @@ export default function TaskHandler({
           <Button
             onClick={() => {
               handleButtonClick('REJECT');
-              router.push(
-                `/${requestType === 'update' ? 'info-change' : requestType === 'preferential' ? 'preferential-services' : requestType}`,
-              );
+              if (remark) {
+                router.push(
+                  `/${requestType === 'update' ? 'info-change' : requestType === 'preferential' ? 'preferential-services' : requestType}`,
+                );
+              }
             }}
             className="bg-red-600 hover:bg-red-700"
             loading={loading['REJECT']}
@@ -216,7 +220,7 @@ export default function TaskHandler({
           <Button
             onClick={() => {
               handleButtonClick('NO');
-              router.push(`/${requestType}`);
+              if (remark) router.push(`/${requestType}`);
             }}
             className="bg-red-600 hover:bg-red-700"
             loading={loading['NO']}

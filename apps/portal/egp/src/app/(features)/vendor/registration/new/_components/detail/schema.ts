@@ -107,25 +107,35 @@ export const formDataSchema = z.object({
     fax: z.string().optional(),
     website: z.string().optional(),
   }),
-  businessSizeAndOwnership: z.object({
-    registeredCapital: z.object({
-      amount: z.string().min(1, { message: 'Amount is required ' }),
-      currency: z
-        .string()
-        .min(1, { message: 'Registered capital is required ' }),
-    }),
-    paidUpCapital: z.object({
-      amount: z.string().min(1, { message: 'Amount is required ' }),
-      currency: z.string().min(1, { message: 'Paid up capital is required ' }),
-    }),
-    numberOfEmployees: z
-      .string()
-      .min(1, { message: 'Number of employees is required ' })
-      .refine((value) => !isNaN(Number(value)) && Number(value) > 0, {
-        message: 'Number of employees must be greater than 1 ',
+  businessSizeAndOwnership: z
+    .object({
+      registeredCapital: z.object({
+        amount: z.string().min(1, { message: 'Amount is required' }),
+        currency: z.string().min(1, { message: 'Currency is required ' }),
       }),
-    ownershipType: z.string(),
-  }),
+      paidUpCapital: z.object({
+        amount: z.string().min(1, { message: 'Amount is required ' }),
+        currency: z.string().min(1, { message: 'Currency is required' }),
+      }),
+      numberOfEmployees: z
+        .string()
+        .min(1, { message: 'Number of employees is required' })
+        .refine((value) => !isNaN(Number(value)) && Number(value) > 0, {
+          message: 'Number of employees must be greater than 1',
+        }),
+      ownershipType: z.string(),
+    })
+    .refine(
+      (obj) => {
+        const paidUpAmount = parseFloat(obj.paidUpCapital.amount);
+        const registeredAmount = parseFloat(obj.registeredCapital.amount);
+
+        return paidUpAmount > registeredAmount;
+      },
+      {
+        message: 'Paid up amount must not exceed Registered amount',
+      },
+    ),
   contactPersons: z.array(contactPersonSchema).refine((arr) => arr.length > 0, {
     message: 'At least one contact person is required',
   }),

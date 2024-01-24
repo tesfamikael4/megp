@@ -25,11 +25,10 @@ export default function Page() {
       NotificationService.requestErrorNotification('Error on fetching data');
       router.push(`basic`);
     }
-    if (requestInfo.data?.initial.status === 'Submitted') {
-      router.push(`/vendor/registration/track-applications`);
-    }
     if (requestInfo.data?.initial) {
-      router.push((requestInfo.data?.initial.level).toLowerCase());
+      if (requestInfo.data?.initial.status === 'Submitted') {
+        router.push(`/vendor/registration/track-applications`);
+      } else router.push((requestInfo.data?.initial.level).toLowerCase());
     }
     return () => {
       router.refresh();

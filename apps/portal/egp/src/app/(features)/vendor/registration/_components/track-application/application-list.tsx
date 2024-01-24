@@ -25,6 +25,7 @@ const ApplicationList = () => {
     {},
     { refetchOnMountOrArgChange: true },
   );
+
   const handleDetailOpen = (data: ApplicationInfo) => {
     open();
     setSelectData(data);

@@ -134,6 +134,7 @@ export interface ApplicationInfo {
 }
 export interface BpService {
   name: string;
+  key: string;
 }
 export interface GetVendorInfoResponse {
   name: string;
