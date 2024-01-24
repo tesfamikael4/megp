@@ -24,6 +24,9 @@ import { PermissionService } from './services/permission.service';
 import { PermissionController } from './controllers/permission.controller';
 import { AuthHelper } from 'src/shared/authorization';
 import { JwtService } from '@nestjs/jwt';
+import * as dotenv from 'dotenv';
+
+dotenv.config({ path: '.env' });
 
 @Module({
   imports: [
@@ -71,6 +74,9 @@ import { JwtService } from '@nestjs/jwt';
     StateController,
     PermissionController,
   ],
-  exports: [XMachineService],
+  exports: [
+    // StateService,
+    XMachineService,
+  ],
 })
 export class WorkflowModule {}

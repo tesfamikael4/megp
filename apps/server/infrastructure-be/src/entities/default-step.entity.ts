@@ -27,6 +27,9 @@ export class DefaultStep extends OrgAudit {
   name: string;
 
   @Column()
+  title: string;
+
+  @Column()
   activityId: string;
 
   @ManyToOne(() => Activity, (activity) => activity.steps)

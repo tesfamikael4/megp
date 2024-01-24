@@ -42,6 +42,7 @@ export class StepService extends ExtraCrudService<Step> {
     }
     steps.forEach((step) => {
       step.organizationId = organizationId;
+      step.name = step.title.split(' ').join('');
     });
     const items = this.repositoryStep.create(steps);
     await this.repositoryStep.save(items);
