@@ -11,6 +11,8 @@ export const BasicInfo: React.FC<PassFormDataProps> = ({ register }) => {
           label="Name of Business/Company"
           id="name"
           {...register(`basic.name`)}
+          withAsterisk
+          required
         />
         <Select
           label="Form of Business"
@@ -37,6 +39,8 @@ export const BasicInfo: React.FC<PassFormDataProps> = ({ register }) => {
             },
           ]}
           {...register('basic.businessType', 'select')}
+          withAsterisk
+          required
         />
       </Group>
       <Group grow>
@@ -79,6 +83,8 @@ export const BasicInfo: React.FC<PassFormDataProps> = ({ register }) => {
               'Thyolo',
               'Zomba',
             ]}
+            withAsterisk
+            required
             {...register(`basic.district`, 'select')}
           />
         )}
@@ -89,8 +95,14 @@ export const BasicInfo: React.FC<PassFormDataProps> = ({ register }) => {
           label="Country"
           data={getNationalityValues()}
           {...register(`basic.country`, 'select')}
+          withAsterisk
+          required
         />
-        <TextInput label="Tin Number" {...register(`basic.tinNumber`)} />
+        <TextInput
+          label="Tin Number"
+          {...register(`basic.tinNumber`)}
+          disabled
+        />
       </Group>
     </Stack>
   );
