@@ -174,7 +174,10 @@ export default function RequestDetail({
               <TaskDetails
                 tracker={tracker}
                 setContent={setContent}
-                data={response.data?.isrvendor}
+                data={{
+                  ...response.data?.isrvendor,
+                  service: response?.data?.service,
+                }}
               />
             </Box>
           )}

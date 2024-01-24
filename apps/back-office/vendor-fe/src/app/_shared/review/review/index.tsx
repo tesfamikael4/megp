@@ -1,13 +1,28 @@
 import React from 'react';
-import { Accordion, Flex, Text, Box, ScrollArea } from '@mantine/core';
+import { Accordion, Flex, Text, Box } from '@mantine/core';
 import classes from './accordion.module.scss';
 import { ShowFile } from '@/app/(features)/_components/details-accordion';
 import { renderTable } from '@/app/(features)/util/renderTable';
 import { addSpacesToCamelCase } from '@/app/(features)/util/addSpaceToCamelCase';
-import { string } from 'zod';
 import { displayFormattedObject } from '@/app/(features)/util/displayFormattedObject';
 
 const tabs = [
+  {
+    tabValue: 'preferential',
+    tabName: 'Preferential Treatment',
+  },
+  {
+    tabValue: 'upgrade',
+    tabName: 'Upgrade Request',
+  },
+  {
+    tabValue: 'renewal',
+    tabName: 'Renewal Request',
+  },
+  {
+    tabValue: 'update',
+    tabName: 'Profile Update',
+  },
   {
     tabValue: 'basic',
     tabName: 'Basic Registration',
@@ -65,6 +80,7 @@ const tabs = [
     tabName: 'Business Areas',
   },
 ];
+
 const formatColumns = {
   contactPersons: [
     { name: 'firstName' },
@@ -96,6 +112,7 @@ const formatColumns = {
     { name: 'nationality' },
     { name: 'share' },
   ],
+  service: [{ name: 'name', displayName: 'Service Type' }],
 };
 
 function FormPreview({ data }: { data: any }) {
@@ -115,6 +132,38 @@ function FormPreview({ data }: { data: any }) {
                 <Accordion.Panel key={tabValue} className="gap-2 items-center">
                   {renderTable(data[tabValue], formatColumns, tabValue)}
                 </Accordion.Panel>
+              ) : formatColumns[tabValue] ? (
+                formatColumns[tabValue].map((field) => {
+                  return (
+                    <Accordion.Panel
+                      key={field.name}
+                      className="gap-2 items-center"
+                    >
+                      <Flex>
+                        <Text
+                          size="xs"
+                          fw={700}
+                          tt="capitalize"
+                          w={150}
+                          py={4}
+                          px={2}
+                        >
+                          {addSpacesToCamelCase(
+                            field.displayName ?? field.name,
+                          )}
+                        </Text>
+                        <Text
+                          className="ml-2"
+                          size="xs"
+                          fw={500}
+                          tt="capitalize"
+                        >
+                          {data[tabValue][field.name]}
+                        </Text>
+                      </Flex>
+                    </Accordion.Panel>
+                  );
+                })
               ) : (
                 Object.keys(data[tabValue]).map((fieldKey) => {
                   return tabValue === 'supportingDocuments' ||
@@ -195,7 +244,14 @@ function FormPreview({ data }: { data: any }) {
                     <Accordion.Panel key={fieldKey} className="items-center">
                       {typeof data[tabValue][fieldKey] === 'object' && (
                         <Flex>
-                          <Text size="xs" fw={700} tt="capitalize">
+                          <Text
+                            size="xs"
+                            fw={700}
+                            tt="capitalize"
+                            w={150}
+                            py={4}
+                            px={2}
+                          >
                             {addSpacesToCamelCase(fieldKey)}
                           </Text>
                           <Text
@@ -209,12 +265,19 @@ function FormPreview({ data }: { data: any }) {
                             })}
                           </Text>
                         </Flex>
-                      )}{' '}
+                      )}
                       {typeof data[tabValue][fieldKey] === 'string' &&
                         fieldKey !== 'transactionId' &&
                         fieldKey !== 'invoiceId' && (
                           <Flex>
-                            <Text size="xs" fw={700} tt="capitalize">
+                            <Text
+                              size="xs"
+                              fw={700}
+                              tt="capitalize"
+                              w={150}
+                              py={4}
+                              px={2}
+                            >
                               {addSpacesToCamelCase(fieldKey)}
                             </Text>
                             <Text

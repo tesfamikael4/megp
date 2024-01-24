@@ -78,12 +78,13 @@ export default function ApplicationList({
   const handleFilter = (filter) => {
     setWhere([]);
     setPage(1);
+
     if (filter.trackingNumber) {
       setWhere((prev: Where[]) => [
         ...prev,
         {
           column: 'applicationNumber',
-          operator: '=',
+          operator: 'LIKE',
           value: filter.trackingNumber,
         },
       ]);
@@ -99,52 +100,52 @@ export default function ApplicationList({
       setWhere((prev: Where[]) => [
         ...prev,
         {
-          column: 'status',
+          column: 'isrVendor.basic->>formOfEntity',
           operator: '=',
           value: filter.status,
         },
       ]);
     }
+
     if (filter.from) {
       setWhere((prev: Where[]) => [
         ...prev,
         {
-          column: 'submittedAt',
+          column: 'isrVendor.createdAt',
           operator: '<=',
-          value: new Date(filter.from),
+          value: new Date(filter.from).toUTCString(),
         },
       ]);
       if (filter.to) {
         setWhere((prev: Where[]) => [
           ...prev,
           {
-            column: 'submittedAt',
+            column: 'isrVendor.createdAt',
             operator: '>=',
-            value: new Date(filter.to),
+            value: new Date(filter.to).toUTCString(),
           },
         ]);
       } else {
         setWhere((prev: Where[]) => [
           ...prev,
           {
-            column: 'submittedAt',
+            column: 'isrVendor.createdAt',
             operator: '>=',
-            value: new Date(),
+            value: new Date().toUTCString(),
           },
         ]);
       }
     }
 
-    // getVendorRequest({
-    //   serviceKey,
-    //   collectionQuery: {
-    //     take: 15,
-    //     skip: 0,
-    //     where: [
-    //       where
-    //     ]
-    //   }
-    // })
+    return getVendorRequest({
+      serviceKey,
+      collectionQuery: {
+        take: 15,
+        skip: 0,
+        where: [where],
+        includes: ['isrVendor'],
+      },
+    });
   };
 
   if (!data) {

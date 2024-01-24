@@ -19,6 +19,7 @@ import { formatDateTimeFromString } from '../../util';
 import { useDisclosure } from '@mantine/hooks';
 import { renderTable } from '../../util/renderTable';
 import { addSpacesToCamelCase } from '../../util/addSpaceToCamelCase';
+import { displayFormattedObject } from '../../util/displayFormattedObject';
 
 const tabs = [
   {
@@ -112,6 +113,12 @@ const formatColumns = {
     { name: 'branchAddress' },
     { name: 'IBAN' },
     { name: 'isDefualt' },
+  ],
+  service: [
+    {
+      name: 'name',
+      displayName: 'Preferential Treatment Type',
+    },
   ],
 };
 
@@ -265,6 +272,28 @@ function FormPreview({ data }: { data: any }) {
                           </Text>
                         </Flex>
                       )}
+                    {typeof data[selected][fieldKey] === 'object' && (
+                      <Flex className="py-2 border-b px-1.5 ">
+                        <Text
+                          size="xs"
+                          fw={500}
+                          tt="capitalize"
+                          className="text-lg w-1/5 "
+                        >
+                          {addSpacesToCamelCase(fieldKey)}
+                        </Text>
+                        <Text
+                          className="ml-2"
+                          size="xs"
+                          fw={700}
+                          tt="capitalize"
+                        >
+                          {displayFormattedObject(data[selected][fieldKey], {
+                            [fieldKey]: 'amount+currency',
+                          })}
+                        </Text>
+                      </Flex>
+                    )}
                   </Box>
                 </>
               );
