@@ -8,6 +8,7 @@ import {
   JoinColumn,
   BeforeInsert,
   Unique,
+  Check,
 } from 'typeorm';
 
 import { PostBudgetPlan } from './post-budget-plan.entity';
@@ -23,6 +24,7 @@ import { Budget } from './budget.entity';
 
 @Unique(['procurementReference'])
 @Entity({ name: 'post_budget_plan_activities' })
+@Check('"estimatedAmount" >= 0 AND "calculatedAmount" >= 0')
 export class PostBudgetPlanActivity extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string;

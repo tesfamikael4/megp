@@ -6,6 +6,7 @@ import {
   PostBudgetPlanActivity,
   PostBudgetPlanItem,
   PostBudgetPlanTimeline,
+  Budget,
 } from 'src/entities';
 import { PostBudgetPlanDisbursementService } from './services/post-budget-plan-disbursement.service';
 import { PostBudgetPlanActivityService } from './services/post-budget-plan-activity.service';
@@ -27,6 +28,7 @@ import { MinioModule } from 'nestjs-minio-client';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
+      Budget,
       PostBudgetPlanDisbursement,
       PostBudgetPlanActivity,
       PostBudgetPlanItem,

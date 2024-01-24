@@ -6,12 +6,14 @@ import {
   OneToMany,
   ManyToOne,
   JoinColumn,
+  Check,
 } from 'typeorm';
 
 import { PreBudgetPlanActivity } from './pre-budget-plan-activity.entity';
 import { OrgAudit } from 'src/shared/entities';
 
 @Entity({ name: 'pre_budget_plan_timelines' })
+@Check('"order" >= 0 AND "period" >= 0')
 export class PreBudgetPlanTimeline extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
