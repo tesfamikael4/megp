@@ -93,13 +93,22 @@ const applyWhereConditions = <T>(
       const orConditions = conditions.map(({ column, value, operator: op }) => {
         if (column.includes('.')) {
           const [relation, field] = column.split('.'); // Assuming "relation.field" format
-          const fieldValue = `${field}_${++count}`;
-          return addFilterConditions(
-            op,
-            value,
-            `${relation}.${field}`,
-            `${relation}_${fieldValue}`,
-          );
+          if (field.includes('->>')) {
+            const [mainColumn, nestedColumn] = field.split('->>');
+            return addFilterConditions(
+              op,
+              value,
+              `${relation}."${mainColumn}"->>'${nestedColumn}'`,
+              `${mainColumn}_${nestedColumn}`,
+            );
+          } else {
+            return addFilterConditions(
+              op,
+              value,
+              `${relation}.${field}`,
+              `${relation}_${field}`,
+            );
+          }
         } else {
           // Handle conditions for the main entity
           const [mainColumn, nestedColumn] = column.split('->>'); // Handle nested JSON columns like "json_column->>field"
@@ -138,8 +147,17 @@ const applyWhereConditions = <T>(
         (acc, { column, value, operator: op }) => {
           if (column.includes('.')) {
             const [relation, field] = column.split('.');
-            const fieldValue = `${field}_${++count}`;
-            acc = addFilterParams(op, value, `${relation}_${fieldValue}`, acc);
+            if (field.includes('->>')) {
+              const [mainColumn, nestedColumn] = field.split('->>');
+              acc = addFilterParams(
+                op,
+                value,
+                `${mainColumn}_${nestedColumn}`,
+                acc,
+              );
+            } else {
+              acc = addFilterParams(op, value, `${relation}_${field}`, acc);
+            }
           } else if (column.includes('->>')) {
             const [mainColumn, nestedColumn] = column.split('->>');
             if (mainColumn.includes('->')) {
@@ -328,13 +346,6 @@ export class QueryConstructor {
       aggregateColumns[c.databasePath] = c.type;
     });
 
-    const aggregate = metaData.tableName;
-    const queryBuilder = repository.createQueryBuilder(aggregate);
-
-    if (withDelete) {
-      queryBuilder.withDeleted();
-    }
-
     if (!metaData.propertiesMap['tenantId']) {
       query = this.removeFilter(query, 'tenantId');
     }
@@ -343,12 +354,20 @@ export class QueryConstructor {
       query = this.removeFilter(query, 'organizationId');
     }
 
+    const aggregate = metaData.tableName;
+    const queryBuilder = repository.createQueryBuilder(aggregate);
+
+    if (withDelete) {
+      queryBuilder.withDeleted();
+    }
+
     query = this.removeEmtpyFilter(query);
 
     buildQuery(aggregate, queryBuilder, query);
 
     return queryBuilder;
   }
+
   static removeEmtpyFilter(query: CollectionQuery) {
     query.where = query.where.filter((x) => x.length > 0);
     return query;
