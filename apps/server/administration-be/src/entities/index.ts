@@ -13,3 +13,5 @@ export * from './measurement.entity';
 export * from './tag.entity';
 export * from './uom.entity';
 export * from './procurement-threshold.entity';
+
+export * from './item-meta-data.entity';

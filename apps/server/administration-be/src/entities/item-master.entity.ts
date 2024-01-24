@@ -11,6 +11,7 @@ import { Classification } from './classification.entity';
 import { ItemTag } from './item-tag.entity';
 import { UnitOfMeasurement } from './uom.entity';
 import { Audit } from 'src/shared/entities';
+import { ItemMetaData } from './item-meta-data.entity';
 
 @Entity({ name: 'item_masters' })
 export class ItemMaster extends Audit {
@@ -52,4 +53,9 @@ export class ItemMaster extends Audit {
     cascade: ['insert', 'update'],
   })
   itemTags: ItemTag[];
+
+  @OneToMany(() => ItemMetaData, (itemMetaData) => itemMetaData.itemMaster, {
+    cascade: ['insert', 'update'],
+  })
+  itemMetaData: ItemMetaData[];
 }
