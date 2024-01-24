@@ -20,6 +20,8 @@ export const BusinessSizeAndOwnership: React.FC<PassFormDataProps> = ({
         <NumberInput
           label="Registered Capital"
           rightSectionWidth="80px"
+          withAsterisk
+          required
           rightSection={
             <Select
               leftSection={<IconCash size={'1.3rem'} />}
@@ -54,6 +56,8 @@ export const BusinessSizeAndOwnership: React.FC<PassFormDataProps> = ({
         <NumberInput
           label="Paid Up Capital"
           rightSectionWidth="80px"
+          withAsterisk
+          required
           rightSection={
             <Select
               leftSection={<IconCash size={'1.3rem'} />}
@@ -93,6 +97,8 @@ export const BusinessSizeAndOwnership: React.FC<PassFormDataProps> = ({
           id="numberOfEmployees"
           type="number"
           {...register(`businessSizeAndOwnership.numberOfEmployees`)}
+          withAsterisk
+          required
         />
         <Select
           label="Ownership Type"
@@ -101,6 +107,8 @@ export const BusinessSizeAndOwnership: React.FC<PassFormDataProps> = ({
           placeholder="select"
           searchable
           {...register('businessSizeAndOwnership.ownershipType', 'select')}
+          withAsterisk
+          required
         />
       </Group>
     </Stack>
