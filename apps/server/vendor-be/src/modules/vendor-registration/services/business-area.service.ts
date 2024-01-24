@@ -66,6 +66,20 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
 
     });
   }
+  async getUserInprogressBusinessAreaByServiceId(serviceId: string, userId: string): Promise<BusinessAreaEntity> {
+    return this.businessAreaRepository.findOne({
+      select: { id: true, },
+      where: {
+        serviceId: serviceId,
+        status: ApplicationStatus.PENDING,
+        isrVendor: { userId: userId }
+      },
+      relations: {
+        isrVendor: true
+      }
+
+    });
+  }
 
 
 

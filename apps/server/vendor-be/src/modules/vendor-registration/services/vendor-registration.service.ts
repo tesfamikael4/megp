@@ -77,11 +77,11 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     VendorStatusEnum.PENDING,
   ];
   async submitVendorInformations(data: any, userInfo: any): Promise<any> {
-    const resul = await this.isrVendorsRepository.findOne({
+    const tempVendor = await this.isrVendorsRepository.findOne({
       where: { userId: userInfo.id },
     });
-    if (!resul) throw new HttpException('vendor_not_found', 500);
-    if (resul.status.trim() !== VendorStatusEnum.SUBMITTED) {
+    if (!tempVendor) throw new HttpException('vendor_not_found', 404);
+    if (tempVendor.status.trim() !== VendorStatusEnum.SUBMITTED) {
       const isrVendor = await this.fromInitialValue(data);
       const result = await this.isrVendorsRepository.save(isrVendor);
       const wfi = new CreateWorkflowInstanceDto();
@@ -89,7 +89,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       const response = [];
       const interests = data.areasOfBusinessInterest;
       if (interests?.length <= 0)
-        throw new HttpException('areasOfBusinessInterest_notfound', 500);
+        throw new HttpException('areas_of_businessInterest_not_found', 404);
       for (let i = 0; i < interests.length; i++) {
         try {
           const bp = await this.bpService.findBpService(
@@ -135,7 +135,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
               userInfo,
             );
             if (!workflowInstance)
-              throw new HttpException(`workflow_initiation_failed`, 500);
+              throw new HttpException(`workflow_initiation_failed`, 400);
             response.push({
               applicationNumber: workflowInstance.applicationNumber,
               instanceNumber: workflowInstance.id,
@@ -202,17 +202,18 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         }
       }
       if (response.length == 0)
-        throw new HttpException('areasOfBusinessInterest_notfound', 500);
+        throw new HttpException('areasOfBusinessInterest_notfound', 404);
       result.status = VendorStatusEnum.SUBMITTED;
-      const initial = JSON.parse(JSON.stringify(result.initial));
+      const initial = result.initial;
       initial.status = VendorStatusEnum.SUBMITTED;
       initial.level = VendorStatusEnum.SUBMITTED;
       result.initial = initial;
+      data.basic.status = VendorStatusEnum.SUBMITTED;
       const res = await this.isrVendorsRepository.save(result);
-      if (!res) throw new HttpException(`isr_vendor_submission_failed`, 500);
+      if (!res) throw new HttpException(`isr_vendor_submission_failed`, 400);
       return response;
     } else {
-      throw new HttpException('already Submitted ', 500);
+      throw new HttpException('already Submitted ', 400);
     }
   }
   async addVendorInformations(data: any, userInfo: any): Promise<any> {
@@ -232,7 +233,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         }
         const isrVendor = await this.fromInitialValue(data);
         const result = await this.isrVendorsRepository.save(isrVendor);
-        if (!result) throw new HttpException(`adding_isr_failed`, 500);
         if (
           data.initial.level.trim() === VendorStatusEnum.PAYMENT &&
           data.initial.status.trim() === VendorStatusEnum.SAVE
@@ -247,14 +247,12 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             vendor.id = result.id;
             vendor.name = result.basic['name'];
             try {
-              const invoice = await this.invoiceService.generateInvoice(
+              await this.invoiceService.generateInvoice(
                 data.areasOfBusinessInterest[index].priceRange,
                 vendor,
                 userInfo,
               );
 
-              if (!invoice)
-                throw new HttpException('invoice_creation_failed', 500);
             } catch (error) {
               throw error;
             }
@@ -283,16 +281,14 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     if (!vendorsEntity) throw new NotFoundException('vendor_not_found!!');
     const initial = JSON.parse(JSON.stringify(vendorsEntity.initial));
     if (vendorsEntity.status === VendorStatusEnum.SUBMITTED)
-      throw new HttpException('vendor_already_submitted', 500);
+      throw new HttpException('vendor_already_submitted', 400);
     if (vendorsEntity.status === VendorStatusEnum.APPROVED)
-      throw new HttpException('vendor_already_approved', 500);
-
-    // if (initial.status == VendorStatusEnum.SUBMITTED)
-    //   throw new BadRequestException(`already_submitted`);
+      throw new HttpException('vendor_already_approved', 400);
+    //Submitted 
     initial.status =
-      data.initial.status == 'Submit' ? 'Draft' : data.initial.status;
+      data.initial.status == 'Submit' ? VendorStatusEnum.SUBMITTED : data.initial.status;
+
     vendorsEntity.initial = data.initial;
-    // vendorsEntity.initial = data.initial;
     vendorsEntity.basic = data.basic;
     vendorsEntity.address = data.address;
     vendorsEntity.contactPersons = data.contactPersons;
@@ -573,8 +569,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       status: vendorInitiationDto.status,
       level: vendorInitiationDto.level,
     };
-    vendorsEntity.initial = JSON.parse(JSON.stringify(initial));
-    vendorsEntity.basic = JSON.parse(JSON.stringify(vendorInitiationDto));
+    vendorsEntity.initial = initial;
+    vendorsEntity.basic = vendorInitiationDto;
     try {
       const result = await this.isrVendorsRepository.save(vendorsEntity);
       if (result) {
@@ -698,6 +694,33 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       throw error;
     }
   }
+  async getVendorByUserWithPreferntial(userId: string): Promise<VendorsEntity> {
+    try {
+      const vendorEntity = await this.vendorRepository.findOne({
+        select: {
+          id: true,
+          preferentials: { serviceId: true, status: true, remark: true, extendedProfile: true, certificateUrl: true, certiNumber: true },
+          ProfileInfo: { status: true, profileData: true },
+          isrVendor: { id: true, businessAreas: { id: true, instanceId: true, } }
+        },
+        relations: {
+          preferentials: true,
+          ProfileInfo: true,
+          isrVendor: { businessAreas: true }
+        },
+        where: {
+          userId: userId,
+          // preferentials: { status: ApplicationStatus.SUBMITTED },
+          // ProfileInfo: { status: ApplicationStatus.SUBMITTED },
+          // isrVendor: { businessAreas: { status: ApplicationStatus.PENDING } }
+        },
+      });
+      return vendorEntity;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async getInvoices(areaOfBusinessInterest: any[], userId: string) {
     const invoice = [];
     for (let index = 0; index < areaOfBusinessInterest?.length; index++) {

@@ -5,29 +5,29 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, IsNull, Not, Repository } from 'typeorm';
 import { DataResponseFormat } from 'src/shared/api-data';
 import { CollectionQuery, QueryConstructor } from 'src/shared/collection-query';
-import { FileResponseDto } from 'src/modules/vendor-registration/dto/file.dto';
 import { WorkflowInstanceEntity } from 'src/entities/workflow-instance.entity';
-
-import { TaskTypes } from 'src/modules/bpm/dto/task-type.enum';
 import { UpdateTaskHandlerDto } from 'src/modules/bpm/dto/task-handler.dto';
 import { WorkflowInstanceResponse } from '../dto/workflow-instance.dto';
-import { FilesEntity } from 'src/entities';
 import { InvoiceService } from 'src/modules/vendor-registration/services/invoice.service';
 import { HandlingCommonService } from './handling-common-services';
 import { AssignmentEnum } from '../enums/assignment.enum';
 import { HandlerTypeEnum } from '../enums/handler-type.enum';
 import { ApplicationStatus } from '../enums/application-status.enum';
+import { ServicePricingService } from 'src/modules/pricing/services/service-pricing.service';
+import { IsNull, Not, Repository } from 'typeorm';
+import { VendorRegistrationsService } from 'src/modules/vendor-registration/services/vendor-registration.service';
 @Injectable()
 export class ApplicationExcutionService {
   constructor(
     @InjectRepository(WorkflowInstanceEntity)
     private readonly wiRepository: Repository<WorkflowInstanceEntity>,
-    private readonly dataSource: DataSource,
     private readonly invoiceService: InvoiceService,
-    private readonly commonService: HandlingCommonService
+    private readonly commonService: HandlingCommonService,
+    private readonly pricingService: ServicePricingService,
+    private readonly vendorService: VendorRegistrationsService
+
   ) { }
 
   async getCurruntTaskByServiceKey(serviceKey: string,
@@ -67,7 +67,7 @@ export class ApplicationExcutionService {
   ): Promise<WorkflowInstanceResponse> {
     const instance = await this.wiRepository.findOne({
       relations: {
-        isrVendor: { businessAreas: { servicePrice: true } },
+        isrVendor: true,
         businessProcess: {
           service: true,
         },
@@ -79,7 +79,6 @@ export class ApplicationExcutionService {
         },
       },
       where: {
-        //status: In([WorkflowInstanceEnum.Submitted, WorkflowInstanceEnum.Inprogress,]),
         id: instanceId,
         taskHandler: { id: Not(IsNull()) }
       },
@@ -90,38 +89,21 @@ export class ApplicationExcutionService {
     if (!instance) {
       throw new NotFoundException('Not Found');
     }
-
-    const files = await this.dataSource
-      .getRepository(FilesEntity)
-      .find({ where: { vendorId: instance.requestorId } });
-    const filesResponse = files.map((item) => {
-      return FileResponseDto.toResponseDto(item);
-    });
-
     const response = WorkflowInstanceResponse.toResponse(instance);
-    response['attachments'] = filesResponse;
-    if (
-      response.task.taskType.toLowerCase() == TaskTypes.INVOICE.toLowerCase()
-    ) {
-      response.taskHandler['invoice'] =
-        await this.invoiceService.getInvoiceByInstanceId(
-          instanceId,
-          response.taskHandler.taskId,
-        );
-    }
-    for (let i = 0; i < response.taskTrackers.length; i++) {
-      if (
-        response.taskTrackers[i].task.taskType.toLowerCase() ==
-        TaskTypes.INVOICE.toLowerCase()
-      ) {
-        response.taskTrackers[i]['invoice'] =
-          await this.invoiceService.getInvoiceByInstanceId(
-            instanceId,
-            response.taskTrackers[i].taskId,
-          );
-      }
+    const priceRangeIds = instance.isrVendor?.areasOfBusinessInterest.map((item: any) => item.priceRange);
+    if (priceRangeIds.length > 0) {
+      const priceRanges = await this.pricingService.findPriceRangeByIds(priceRangeIds);
+      const businessInterest = WorkflowInstanceResponse.formatBusinessLines(response.isrvendor.areasOfBusinessInterest, priceRanges);
+      response.isrvendor.areasOfBusinessInterest = businessInterest;
     }
 
+    const vendorInfo = await this.vendorService.getVendorByUserWithPreferntial(response.isrvendor.userId);
+    if (vendorInfo?.ProfileInfo) {
+      response.profileUpdate = vendorInfo?.ProfileInfo[0];
+    }
+    if (vendorInfo?.preferentials) {
+      response.preferential = vendorInfo?.preferentials[0];
+    }
     return response;
   }
 

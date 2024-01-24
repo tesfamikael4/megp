@@ -1,6 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
 import { BusinessAreaEntity, IsrVendorsEntity } from 'src/entities';
+import { PreferentialTreatmentsEntity } from 'src/entities/preferential-treatment.entity';
+import { ProfileInfoEntity } from 'src/entities/profile-info.entity';
 import { ServicePrice } from 'src/entities/service-price.entity';
 import { WorkflowInstanceEntity } from 'src/entities/workflow-instance.entity';
 import { BusinessProcessResponse } from 'src/modules/bpm/dto/business-process.dto';
@@ -112,7 +114,11 @@ export class WorkflowInstanceResponse extends UpdateWorkflowInstanceDto {
   @ApiProperty()
   applicationNumber: string;
   @ApiProperty()
-  businessArea: BusinessAreaEntity
+  businessArea: BusinessAreaEntity;
+  profileUpdate: ProfileInfoEntity;
+  upgrade: any;
+  renewal: any;
+  preferential: PreferentialTreatmentsEntity
   static toResponse(entity: WorkflowInstanceEntity) {
     const response = new WorkflowInstanceResponse();
     response.id = entity.id;
@@ -141,9 +147,10 @@ export class WorkflowInstanceResponse extends UpdateWorkflowInstanceDto {
 
     if (entity?.isrVendor) {
       response.isrvendor = entity?.isrVendor;
-      const ba = entity?.isrVendor.businessAreas;
-      const businessInterest = this.formatBusinessLines(response.isrvendor.areasOfBusinessInterest, ba);
-      response.isrvendor.areasOfBusinessInterest = businessInterest;
+      const basic: any = entity?.isrVendor.basic;
+      const { level, ...basicRest } = basic;
+      basicRest.status = entity?.isrVendor.status;
+      response.isrvendor.basic = { ...basicRest };
     }
 
     if (entity?.taskTrackers) {
@@ -158,22 +165,24 @@ export class WorkflowInstanceResponse extends UpdateWorkflowInstanceDto {
     return response;
   }
 
-  static formatBusinessLines(bia: any[], bas: BusinessAreaEntity[]): any[] {
+  static formatBusinessLines(bia: any[], prices: ServicePrice[]): any[] {
     const businessInterests = [];
     if (bia?.length > 0) {
       for (const bi of bia) {
         const lobs = bi.lineOfBusiness.map((item: any) => {
           return item.name
         })
-        const ba_ = bas?.map((item) => {
-          if (item.category == bi.category && bi.priceRange == item.priceRangeId) {
-            return {
-              priceFrom: item.servicePrice?.valueFrom,
-              priceTo: item.servicePrice?.valueTo
+        let range = {};
+        for (const item of prices) {
+          if (bi.priceRange == item.id) {
+            range = {
+              priceFrom: item?.valueFrom,
+              priceTo: item?.valueTo == -1 ? 'infinity' : item?.valueTo
             }
+            break;
           }
-        });
-        businessInterests.push({ category: bi.category, lineOfBusiness: lobs, ...ba_ })
+        }
+        businessInterests.push({ category: bi.category, lineOfBusiness: lobs, ...range })
       }
       return businessInterests;
     }

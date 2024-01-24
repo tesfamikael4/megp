@@ -60,6 +60,20 @@ export class ServicePricingService extends EntityCrudService<ServicePrice> {
       },
     });
   }
+
+  async findPriceRangeByIds(ids: string[]): Promise<ServicePrice[]> {
+    return await this.pricingRepository.find({
+      select: {
+        id: true,
+        valueFrom: true,
+        valueTo: true,
+        currency: true,
+      },
+      where: {
+        id: In(ids),
+      },
+    });
+  }
   async findPricingWithServiceById(id: string) {
     return this.pricingRepository.findOne({
       relations: { service: true },
