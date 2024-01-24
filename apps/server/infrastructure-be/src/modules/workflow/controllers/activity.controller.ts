@@ -43,4 +43,10 @@ export class ActivityController extends EntityCrudController<Activity>(
   async findOne(@Param('id') id: string, @Req() req?: any) {
     return this.activityService.findOne(id);
   }
+
+  @Get('find-by-key/:name')
+  @IgnoreTenantInterceptor()
+  async findOneByKey(@Param('name') name: string, @Req() req?: any) {
+    return this.activityService.findOne(name);
+  }
 }

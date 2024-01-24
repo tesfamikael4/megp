@@ -23,6 +23,9 @@ export class Activity extends OrgAudit {
   @Column()
   name: string;
 
+  @Column()
+  title: string;
+
   @OneToMany(() => Step, (step) => step.activity)
   steps: Step[];
 

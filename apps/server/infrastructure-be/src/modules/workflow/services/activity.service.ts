@@ -2,7 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { Activity } from 'src/entities/activity.entity';
-import { EntityCrudService, ExtraCrudService } from 'src/shared/service';
+import { EntityCrudService } from 'src/shared/service';
 
 @Injectable()
 export class ActivityService extends EntityCrudService<Activity> {
@@ -11,5 +11,14 @@ export class ActivityService extends EntityCrudService<Activity> {
     private readonly repositoryActivity: Repository<Activity>,
   ) {
     super(repositoryActivity);
+  }
+  async create(itemData: any, req?: any): Promise<any> {
+    if (req?.user?.organization) {
+      itemData.organizationId = req.user.organization.id;
+    }
+    itemData.name = itemData.title.split(' ').join('');
+    const item = this.repositoryActivity.create(itemData);
+    await this.repositoryActivity.insert(item);
+    return item;
   }
 }

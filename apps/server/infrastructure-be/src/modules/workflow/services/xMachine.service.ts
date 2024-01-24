@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import { setup } from 'xstate';
 import axios from 'axios';
 import { ClientProxy } from '@nestjs/microservices';
+import { Activity } from 'src/entities/activity.entity';
 
 interface StateMachineConfig {
   states: {
@@ -38,6 +39,8 @@ export class XMachineService {
     private readonly repositoryInstance: Repository<Instance>,
     @InjectRepository(State)
     private readonly repositoryState: Repository<State>,
+    @InjectRepository(Activity)
+    private readonly repositoryActivity: Repository<Activity>,
 
     // private readonly instanceService: InstanceService,
     @Inject('WORKFLOW_RMQ_SERVICE')
@@ -106,7 +109,10 @@ export class XMachineService {
               metadata: existingData.metadata,
             });
             if (params.status == 'Approved' || params.status == 'Rejected') {
-              this.workflowRMQClient.emit('workflow-approved', {
+              const acti = await this.repositoryActivity.findOne({
+                where: { id: activityId },
+              });
+              this.workflowRMQClient.emit(`workflow-approval.${acti.name}`, {
                 status: params.status,
                 activityId: activityId,
                 itemId: existingData.itemId,
