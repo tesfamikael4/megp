@@ -57,7 +57,13 @@ export default function RequestDetail({
     response.error.status === 404
   ) {
     router.push(
-      `/${requestType === 'update' ? 'info-change' : requestType === 'preferential' ? 'preferential-services' : requestType}`,
+      `/${
+        requestType === 'update'
+          ? 'info-change'
+          : requestType === 'preferential'
+          ? 'preferential-services'
+          : requestType
+      }`,
     );
     return null;
   }
@@ -193,8 +199,8 @@ export default function RequestDetail({
                           requestType === 'update'
                             ? '/info-change'
                             : requestType === 'preferential'
-                              ? 'preferential-service'
-                              : `/${requestType}`,
+                            ? 'preferential-service'
+                            : `/${requestType}`,
                         );
                       }}
                     >
@@ -210,6 +216,7 @@ export default function RequestDetail({
                       <Box>{response.data.task.description}</Box>
                     </Box>
                     <Button
+                      className="overflow-visible"
                       onClick={() => {
                         handlePickButton();
                         setTaskType(response.data.task.taskType);
