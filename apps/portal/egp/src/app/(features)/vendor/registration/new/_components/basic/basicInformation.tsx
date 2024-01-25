@@ -187,6 +187,7 @@ export const BasicInformation = ({ defaultValues }: BasicInformationProps) => {
               <TextInput
                 className="w-full"
                 label="TIN"
+                required
                 id="tinNumber"
                 {...register(`tinNumber`)}
                 error={
@@ -197,6 +198,7 @@ export const BasicInformation = ({ defaultValues }: BasicInformationProps) => {
               />
               <DatePickerInput
                 valueFormat="YYYY/MM/DD"
+                required
                 label="TIN Issued date"
                 leftSection={<IconCalendar size={'1.2rem'} stroke={1.5} />}
                 maxDate={dayjs(new Date()).toDate()}

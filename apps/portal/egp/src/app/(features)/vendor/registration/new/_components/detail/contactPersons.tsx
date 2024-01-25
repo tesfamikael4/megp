@@ -59,6 +59,7 @@ export const ContactPersons: React.FC<Props> = ({
               <TextInput
                 label="Phone Number"
                 placeholder="Enter phone number"
+                required
                 {...getInputProps('mobileNumber')}
               />
             </Group>

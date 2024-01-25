@@ -56,6 +56,7 @@ export const BeneficialOwnership: React.FC<Props> = ({
             <Group grow>
               <Select
                 label="Nationality"
+                required
                 searchable
                 data={getNationalityValues()}
                 {...getInputProps('nationality', 'select')}

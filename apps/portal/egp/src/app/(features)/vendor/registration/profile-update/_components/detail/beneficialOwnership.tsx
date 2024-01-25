@@ -51,6 +51,8 @@ export const BeneficialOwnership: React.FC<Props> = ({
               <Select
                 label="Nationality"
                 searchable
+                required
+                withAsterisk
                 data={getNationalityValues()}
                 {...getInputProps('nationality', 'select')}
               />

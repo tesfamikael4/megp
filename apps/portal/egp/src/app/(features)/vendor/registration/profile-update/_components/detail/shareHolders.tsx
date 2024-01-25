@@ -61,12 +61,14 @@ export const ShareHolders: React.FC<Props> = ({
                 <Select
                   label="Nationality"
                   searchable
+                  required
                   data={getNationalityValues()}
                   {...getInputProps('nationality', 'select')}
                 />
 
                 <NumberInput
                   label="Share"
+                  required
                   placeholder="Enter Share"
                   {...getInputProps('share', 'number')}
                   min={1}

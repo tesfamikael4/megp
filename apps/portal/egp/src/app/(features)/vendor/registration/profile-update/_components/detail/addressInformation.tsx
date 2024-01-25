@@ -26,8 +26,6 @@ export const AddressInformation: React.FC<PassFormDataProps> = ({
         <TextInput
           label="Alternate Email"
           {...register(`address.alternateEmail`)}
-          withAsterisk
-          required
         />
         <TextInput
           label="Mobile Phone"
