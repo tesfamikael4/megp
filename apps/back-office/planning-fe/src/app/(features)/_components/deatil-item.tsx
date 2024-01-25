@@ -1,11 +1,17 @@
-import { Table } from '@mantine/core';
+'use client';
+
+import { Box, LoadingOverlay, Table } from '@mantine/core';
 import { DetailTable } from './detail-table';
+import { useLazyGetClassificationPathQuery } from '@/store/api/administration/administration.api';
+import { useEffect } from 'react';
 
 export const DetailItem = ({ data }: any) => {
+  const [getPath, { data: classificationPath, isLoading }] =
+    useLazyGetClassificationPathQuery();
   const detailData = [
     {
       key: 'Classification',
-      value: `Segment > Famliy > Class > ${data?.metaData?.commodityName} | ${data?.metaData?.commodityCode}`,
+      value: `${classificationPath?.[0]?.title} > ${classificationPath?.[1]?.title} > ${classificationPath?.[2]?.title} > ${classificationPath?.[3]?.title} | ${classificationPath?.[3]?.code}`,
     },
     {
       key: 'Item Code',
@@ -28,12 +34,17 @@ export const DetailItem = ({ data }: any) => {
     },
     {
       key: 'Unit of Measurement',
-      value: data.uomName,
+      value: data.uomName ?? data.uOMName,
     },
   ];
+
+  useEffect(() => {
+    getPath(data.commodityCode);
+  }, [data, getPath]);
   return (
-    <div className="bg-white p-4">
+    <Box className="bg-white p-4" pos="relative">
+      <LoadingOverlay visible={isLoading} />
       <DetailTable data={detailData} />
-    </div>
+    </Box>
   );
 };

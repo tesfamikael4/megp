@@ -53,6 +53,9 @@ export const administrationApi = createApi({
         };
       },
     }),
+    getClassificationPath: builder.query<any, any>({
+      query: (code) => `classifications/path/${code}`,
+    }),
   }),
 });
 
@@ -66,4 +69,6 @@ export const {
   useGetMeasurementsQuery,
   useGetCategoriesQuery,
   useGetCurrenciesQuery,
+  useLazyGetClassificationPathQuery,
+  useGetClassificationPathQuery,
 } = administrationApi;

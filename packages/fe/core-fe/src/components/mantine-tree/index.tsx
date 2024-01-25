@@ -101,14 +101,14 @@ export function Root<TData>({
                         className={clsx(classes.icon)}
                         onClick={() => {
                           if (setSelectedIds && selectedIds) {
-                            if (selectedIds.includes(id)) {
+                            if (selectedIds.includes(data)) {
                               setSelectedIds(
                                 selectedIds.filter(
                                   (selectedId) => selectedId !== id,
                                 ),
                               );
                             }
-                            setSelectedIds([...selectedIds, id]);
+                            setSelectedIds([...selectedIds, data]);
                           }
                         }}
                         size="xs"
@@ -127,10 +127,10 @@ export function Root<TData>({
                     setClicked((prev) => (prev === id ? null : id));
 
                     if (!multipleSelect && setSelectedIds) {
-                      if (selectedIds?.includes(id)) {
+                      if (selectedIds?.includes(data)) {
                         setSelectedIds([]);
                       } else {
-                        setSelectedIds([id] as string[]);
+                        setSelectedIds([data]);
                       }
                     }
                     if (config.onClick) {
@@ -196,6 +196,7 @@ function Child<TData>({
           .load(data)
           .then(({ result, loading: _loading }) => {
             setLoading(_loading);
+
             const updatedData = updateChildren(manipulatedData, id, result);
             setManipulatedData(updatedData);
           })
@@ -226,20 +227,22 @@ function Child<TData>({
     });
   };
 
-  const render = ({ record }) => (
-    <Child
-      clicked={clicked}
-      config={config}
-      data={record}
-      expandedRecordIds={expandedRecordIds}
-      id={record[accessor]}
-      level={level + 1}
-      manipulatedData={manipulatedData}
-      onExpandedRecordIdsChange={onExpandedRecordIdsChange}
-      setClicked={setClicked}
-      setManipulatedData={setManipulatedData}
-    />
-  );
+  const render = ({ record }) => {
+    return (
+      <Child
+        clicked={clicked}
+        config={config}
+        data={record}
+        expandedRecordIds={expandedRecordIds}
+        id={record[accessor]}
+        level={level + 1}
+        manipulatedData={manipulatedData}
+        onExpandedRecordIdsChange={onExpandedRecordIdsChange}
+        setClicked={setClicked}
+        setManipulatedData={setManipulatedData}
+      />
+    );
+  };
 
   return (
     <DataTable
@@ -272,7 +275,7 @@ function Child<TData>({
                         ),
                       );
 
-                    if (expandedRecordIds.includes(id)) {
+                    if (expandedRecordIds.includes(unique)) {
                       onExpandedRecordIdsChange(
                         expandedRecordIds.filter(
                           (expandedId) => expandedId !== unique,
@@ -291,14 +294,15 @@ function Child<TData>({
                       <Checkbox
                         onClick={() => {
                           if (setSelectedIds && selectedIds) {
-                            if (selectedIds.includes(id)) {
+                            if (selectedIds.includes(record)) {
                               setSelectedIds(
                                 selectedIds.filter(
-                                  (selectedId) => selectedId !== unique,
+                                  (selectedId) =>
+                                    selectedId[accessor] !== unique,
                                 ),
                               );
                             } else {
-                              setSelectedIds([...selectedIds, id]);
+                              setSelectedIds([...selectedIds, record]);
                             }
                           }
                         }}
@@ -317,10 +321,10 @@ function Child<TData>({
                   onClick={() => {
                     setClicked((prev) => (prev === unique ? null : unique));
                     if (!config.multipleSelect && setSelectedIds) {
-                      if (selectedIds?.includes(unique)) {
+                      if (selectedIds?.includes(record)) {
                         setSelectedIds([]);
                       } else {
-                        setSelectedIds([unique] as string[]);
+                        setSelectedIds([record]);
                       }
                     }
                     if (config.onClick) {
@@ -341,7 +345,9 @@ function Child<TData>({
       ]}
       fetching={loading}
       minHeight={
-        (!data.children || data.children.length === 0) && !config.load ? 0 : 100
+        (!data.children || data.children.length === 0) && !config.load
+          ? 0
+          : 'auto'
       }
       noHeader
       noRecordsIcon

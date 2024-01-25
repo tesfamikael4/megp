@@ -12,8 +12,8 @@ export interface TreeConfig<TData> {
   multipleExpand?: boolean;
   id: keyof TData;
   label: keyof TData;
-  setSelectedIds?: Dispatch<SetStateAction<string[]>>;
-  selectedIds?: string[];
+  setSelectedIds?: Dispatch<SetStateAction<TDataWithChildren<TData>[]>>;
+  selectedIds?: TDataWithChildren<TData>[];
   selectOnlyLeafs?: boolean;
   load?: (
     record?: TDataWithChildren<TData>,
