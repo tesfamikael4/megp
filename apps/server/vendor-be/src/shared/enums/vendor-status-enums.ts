@@ -22,5 +22,5 @@ export enum VendorStatusEnum {
   INFO = 'Info',
   UPDATE = 'Update',
   BASIC = 'Basic',
-  PROFILE_UPDATE_KEY = 'profileUpdate',
+  PROFILE_UPDATE_KEY = 'ProfileUpdate',
 }
