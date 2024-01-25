@@ -11,7 +11,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { FormDetail } from './_components/form-detail';
 
 export default function ProcurementRequisition() {
-  const [trigger, { data, isFetching }] = useLazyListQuery();
+  const [trigger, { data, isLoading }] = useLazyListQuery();
   const router = useRouter();
   const [opened, { open, close }] = useDisclosure(false);
 
@@ -57,7 +57,7 @@ export default function ProcurementRequisition() {
     ],
     isExpandable: true,
     isSearchable: true,
-    isLoading: isFetching,
+    isLoading: isLoading,
     primaryColumn: 'name',
     expandedRowContent: (requisition) => {
       return <DetailRequisition requisition={requisition} />;

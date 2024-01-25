@@ -23,22 +23,23 @@ import {
 } from '@tabler/icons-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { ExpandableTable } from './expandable-table';
 
 export const Documents = () => {
   const [opened, { open, close }] = useDisclosure(false);
   const [data, setData] = useState<any[]>([]);
   const { register, handleSubmit } = useForm();
-  const config: TableConfig<any> = {
+  const config = {
     columns: [
       {
-        id: 'name',
-        header: 'Name',
-        accessorKey: 'name',
+        title: 'Name',
+        accessor: 'name',
       },
       {
-        id: 'action',
-        header: 'Action',
-        cell: ({ row: { original } }) => <Action cell={original} />,
+        title: 'Action',
+        accessor: 'action',
+        width: 100,
+        render: (record) => <Action cell={record} />,
       },
     ],
   };
@@ -61,7 +62,6 @@ export const Documents = () => {
     };
     const handleDelete = async () => {
       try {
-        // await remove(cell.id).unwrap();
         notifications.show({
           title: 'Success',
           message: 'Item Deleted Success-fully',
@@ -80,7 +80,7 @@ export const Documents = () => {
       <>
         <Menu shadow="md">
           <Menu.Target>
-            <IconDotsVertical className="ml-auto text-gray-500" size={16} />
+            <IconDotsVertical className="ml-4 text-gray-500" size={16} />
           </Menu.Target>
 
           <Menu.Dropdown>
@@ -137,7 +137,7 @@ export const Documents = () => {
           Upload
         </Button>
       </Group>
-      <Table data={data} config={config} />
+      <ExpandableTable data={data} config={config} total={data.length} />
 
       <Modal title="Upload New Document" opened={opened} onClose={close}>
         <form onSubmit={handleSubmit(onSubmit)}>

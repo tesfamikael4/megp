@@ -1,6 +1,6 @@
 'use client';
 import { Flex, TextInput } from '@mantine/core';
-import { IconSearch } from '@tabler/icons-react';
+import { IconInboxOff, IconSearch } from '@tabler/icons-react';
 import { DataTable } from 'mantine-datatable';
 import { useEffect, useState } from 'react';
 
@@ -12,14 +12,17 @@ interface Config {
   expandedRowContent?: (record: any, collapse?: any) => React.ReactNode;
   isSearchable?: boolean;
   primaryColumn?: string;
+  isSelectable?: boolean;
+  selectedItems?: any[];
   isLoading?: boolean;
+  setSelectedItems?: (items: any[]) => void;
 }
 
 export const ExpandableTable = ({
   config,
   data,
   onRequestChange,
-  total = 0,
+  total,
 }: {
   config: Config;
   data: any[];
@@ -47,6 +50,7 @@ export const ExpandableTable = ({
         : [],
     });
   }, [page, search]);
+
   return (
     <>
       {config.isSearchable && (
@@ -57,37 +61,41 @@ export const ExpandableTable = ({
             value={search}
             size="xs"
             onChange={(e) => setSearch(e.target.value)}
+            // width={300}
             miw={300}
           />
         </Flex>
       )}
       <DataTable
+        minHeight={300}
         striped
         highlightOnHover
         columns={config.columns}
         records={data}
         rowExpansion={{
           trigger: config.isExpandable ? 'click' : 'never',
-          content: ({ record }: any) =>
+          content: ({ record, collapse }: any) =>
             config.expandedRowContent
-              ? config.expandedRowContent(record)
+              ? config.expandedRowContent(record, collapse)
               : null,
         }}
         styles={{
           header: {
-            backgroundColor: 'rgb(209 213 219)',
+            backgroundColor: '#D9D9D9',
           },
         }}
         page={page}
         totalRecords={total}
         recordsPerPage={perPage}
         onPageChange={setPage}
+        noRecordsIcon={<IconInboxOff size={40} />}
+        noRecordsText="No Data Found"
         defaultColumnRender={(record, _, accessor) => (
           <p className="line-clamp-2">{record[accessor]}</p>
         )}
+        selectedRecords={config.selectedItems}
+        onSelectedRecordsChange={config.setSelectedItems}
         fetching={config.isLoading}
-        minHeight={300}
-        noRecordsText="No data found"
       />
     </>
   );

@@ -20,7 +20,7 @@ import {
 import { useParams } from 'next/navigation';
 import { useLazyListPrActivityQuery } from '../_api/custom.api';
 import { useCreateActivityMutation } from '@/app/(features)/_api/custom.api';
-import GetActivity from './get-activity';
+import { ExpandableTable } from './expandable-table';
 
 export function Activities() {
   const [opened, { open, close }] = useDisclosure(false);
@@ -41,145 +41,102 @@ export function Activities() {
   const [triggerBudjet, { data: budget, isSuccess: budgetFeatched }] =
     useLazyGetBudgetYearQuery();
 
-  const config: TableConfig<any> = {
+  const config = {
     columns: [
       {
-        id: 'select',
-        cell: ({ row }) => (
+        title: '',
+        accessor: 'actions',
+        render: (record) => (
           <Box>
             <Radio
-              checked={selected == row.original}
+              checked={selected == record}
               onChange={() => {
-                const update = row.original;
+                const update = record;
                 setSelected(update);
                 setData((prev) => {
-                  return [row.original];
+                  return [record];
                 });
               }}
             />
           </Box>
         ),
       },
+
       {
-        id: 'procurementReference',
-        header: '#Ref',
-        accessorKey: 'procurementReference',
-        cell: (info) => info.getValue(),
-        meta: {
-          widget: 'expand',
-        },
+        title: '#Ref',
+        accessor: 'procurementReference',
+        width: 100,
       },
       {
-        id: 'name',
-        header: 'Name',
-        accessorKey: 'name',
-        cell: (info) => info.getValue(),
+        title: 'Name',
+        accessor: 'name',
+        width: 100,
       },
       {
-        id: 'procurementType',
-        header: 'Procurement type',
-        accessorKey: 'procurementType',
-        cell: (info) => info.getValue(),
+        title: 'Procurement type',
+        accessor: 'procurementType',
       },
       {
-        id: 'procurementMethod',
-        header: 'Procurement method',
-        accessorKey: 'procurementMethod',
-        cell: (info) => info.getValue(),
+        title: 'Procurement method',
+        accessor: 'procurementMethod',
       },
 
       {
-        id: 'fundingSource',
-        header: 'Funding source',
-        accessorKey: 'fundingSource',
-        cell: (info) => info.getValue(),
+        title: 'Funding source',
+        accessor: 'fundingSource',
       },
     ],
   };
 
-  const filterconfig: TableConfig<any> = {
+  const filterconfig = {
     columns: [
       {
-        id: 'select',
-        cell: ({ row }) => (
+        title: '',
+        accessor: 'actions',
+        render: (record) => (
           <Box>
             <Checkbox
-              checked={data.includes(row.original)}
+              checked={data.includes(record)}
               onChange={(d) => {
-                if (d.target.checked) setData([...data, row.original]);
-                else setData([...data.filter((s) => s.id !== row.original.id)]);
+                if (d.target.checked) setData([...data, record]);
+                else setData([...data.filter((s) => s.id !== record.id)]);
               }}
             />
           </Box>
         ),
       },
       {
-        id: 'procurementReference',
-        header: '#Ref',
-        accessorKey: 'procurementReference',
-        cell: (info) => info.getValue(),
-        meta: {
-          widget: 'expand',
-        },
+        title: '#Ref',
+        accessor: 'procurementReference',
+        width: 100,
       },
       {
-        id: 'name',
-        header: 'Name',
-        accessorKey: 'name',
-        cell: (info) => info.getValue(),
+        title: 'Name',
+        accessor: 'name',
+        width: 100,
       },
       {
-        id: 'procurementType',
-        header: 'Procurement type',
-        accessorKey: 'procurementType',
-        cell: (info) => info.getValue(),
+        title: 'Procurement type',
+        accessor: 'procurementType',
       },
       {
-        id: 'procurementMethod',
-        header: 'Procurement method',
-        accessorKey: 'procurementMethod',
-        cell: (info) => info.getValue(),
+        title: 'Procurement method',
+        accessor: 'procurementMethod',
       },
 
       {
-        id: 'fundingSource',
-        header: 'Funding source',
-        accessorKey: 'fundingSource',
-        cell: (info) => info.getValue(),
+        title: 'Funding source',
+        accessor: 'fundingSource',
       },
     ],
   };
 
-  const listConfig: TableConfig<any> = {
+  const listConfig = {
+    isSearchable: true,
     columns: [
-      {
-        id: 'procurementReference',
-        header: '#Ref',
-        accessorKey: 'procurementReference',
-        cell: (info) => (
-          <GetActivity
-            id={info.row.original.annualProcurementPlanActivityId}
-            mode={'reference'}
-          />
-        ),
-        meta: {
-          widget: 'expand',
-        },
-      },
-      {
-        id: 'name',
-        header: 'Name',
-        accessorKey: 'name',
-        cell: (info) => (
-          <GetActivity
-            id={info.row.original.annualProcurementPlanActivityId}
-            mode={'name'}
-          />
-        ),
-        meta: {
-          widget: 'primary',
-        },
-      },
+      { accessor: 'procurementReference', title: '#Ref' },
+
+      { accessor: 'name', title: 'Name' },
     ],
   };
 
@@ -275,7 +232,11 @@ export function Activities() {
         <Text className="text-lg" fw="500">
           Activity List
         </Text>
-        <Table config={listConfig} data={finalData ?? []} />
+        <ExpandableTable
+          config={listConfig}
+          data={finalData ?? []}
+          total={finalData.length}
+        />
         <Button
           className="mt-4"
           onClick={() => handleSave()}
@@ -291,8 +252,20 @@ export function Activities() {
         title={isFilter ? 'Select related activity' : 'Select leading activity'}
         size={'xl'}
       >
-        {!isFilter && <Table config={config} data={modifiedData ?? []} />}
-        {isFilter && <Table config={filterconfig} data={filtered ?? []} />}
+        {!isFilter && (
+          <ExpandableTable
+            config={config}
+            data={modifiedData ?? []}
+            total={modifiedData.length}
+          />
+        )}
+        {isFilter && (
+          <ExpandableTable
+            config={filterconfig}
+            data={filtered ?? []}
+            total={filtered.length}
+          />
+        )}
         <Group className="flex justify-end mt-4 mr-2">
           <Button
             className=" ml-auto"

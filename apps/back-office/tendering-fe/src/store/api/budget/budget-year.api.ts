@@ -1,12 +1,11 @@
+import { baseQuery } from '@/store/base-query';
 import { CollectionQuery, encodeCollectionQuery } from '@megp/entity';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export const budgetApi = createApi({
   reducerPath: 'budgetYearApi',
   refetchOnFocus: true,
-  baseQuery: fetchBaseQuery({
-    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api/',
-  }),
+  baseQuery: baseQuery(process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api/'),
   endpoints: (builder) => ({
     getBudgetYear: builder.query<any, any>({
       query: (collectionQuery) => {
