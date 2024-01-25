@@ -110,30 +110,44 @@ export const formDataSchema = z.object({
   businessSizeAndOwnership: z
     .object({
       registeredCapital: z.object({
-        amount: z.string().min(1, { message: 'Amount is required' }),
-        currency: z.string().min(1, { message: 'Currency is required ' }),
+        amount: z.string().min(1, { message: 'Amount is required ' }),
+        currency: z
+          .string({
+            required_error: 'Currency is required ',
+            invalid_type_error: 'Currency is required ',
+          })
+          .min(1, { message: 'Currency is required ' }),
       }),
       paidUpCapital: z.object({
         amount: z.string().min(1, { message: 'Amount is required ' }),
-        currency: z.string().min(1, { message: 'Currency is required' }),
+        currency: z
+          .string({
+            required_error: 'Currency is required ',
+            invalid_type_error: 'Currency is required ',
+          })
+          .min(1, { message: 'Currency is required ' }),
       }),
       numberOfEmployees: z
         .string()
-        .min(1, { message: 'Number of employees is required' })
+        .min(1, { message: 'Number of employees is required ' })
         .refine((value) => !isNaN(Number(value)) && Number(value) > 0, {
-          message: 'Number of employees must be greater than 1',
+          message: 'Number of employees must be greater than 1 ',
         }),
       ownershipType: z.string(),
     })
     .refine(
       (obj) => {
-        const paidUpAmount = parseFloat(obj.paidUpCapital.amount);
-        const registeredAmount = parseFloat(obj.registeredCapital.amount);
+        const paidUpAmount = Number(obj.paidUpCapital.amount.replace(/,/g, ''));
+        const registeredAmount = Number(
+          obj.registeredCapital.amount.replace(/,/g, ''),
+        );
 
-        return paidUpAmount > registeredAmount;
+        return registeredAmount > paidUpAmount;
       },
       {
-        message: 'Paid up amount must not exceed Registered amount',
+        path: ['paidUpCapital.amount'],
+        message:
+          'Paid up capital must be less than or equal to registered capital',
       },
     ),
   contactPersons: z.array(contactPersonSchema).refine((arr) => arr.length > 0, {

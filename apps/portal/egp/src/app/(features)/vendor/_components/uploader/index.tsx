@@ -6,11 +6,10 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { ActionIcon, Button, Flex, Modal, Text } from '@mantine/core';
+import { ActionIcon, Button, Flex, Image, Modal, Text } from '@mantine/core';
 import { IconPlus, IconTrash } from '@tabler/icons-react';
 import styles from './upload.module.scss';
 import { getCookie } from 'cookies-next';
-import { Image } from 'next/dist/client/image-component';
 import { useDisclosure } from '@mantine/hooks';
 
 interface FileUploaderProps {
@@ -36,6 +35,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
 }) => {
   const [current, setCurrent] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isPdf, setIsPdf] = useState(false);
 
   useEffect(() => {
     const authToken = getCookie('token');
@@ -85,6 +85,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
       } else if (newSelectedFile.type === 'application/pdf') {
         // Handle PDF preview
         const reader = new FileReader();
+        setIsPdf(true);
 
         reader.onload = (event) => {
           const pdfUrl = event.target?.result as string;
@@ -116,7 +117,14 @@ const FileUploader: React.FC<FileUploaderProps> = ({
 
   return (
     <>
-      {current && <ImageModal opened={opened} close={close} url={current} />}
+      {current && (
+        <FilePreview
+          opened={opened}
+          close={close}
+          url={current}
+          isPdf={isPdf}
+        />
+      )}
       <Flex className={styles.root}>
         <Text fw={600} size="sm">
           {label}
@@ -145,10 +153,6 @@ const FileUploader: React.FC<FileUploaderProps> = ({
                       'animate-pulse',
                       'bg-slate-300',
                     );
-                    URL.revokeObjectURL(current);
-                  }}
-                  onLoadingComplete={(p) => {
-                    p.classList.remove('animate-pulse', 'bg-slate-300');
                   }}
                 />
               ) : (
@@ -219,14 +223,16 @@ const FileUploader: React.FC<FileUploaderProps> = ({
 
 export default FileUploader;
 
-const ImageModal = ({
+const FilePreview = ({
   opened,
   close,
   url,
+  isPdf,
 }: {
   opened: boolean;
   close: () => void;
   url: string;
+  isPdf: boolean;
 }) => {
   return (
     <Modal
@@ -236,13 +242,11 @@ const ImageModal = ({
       centered
       title={'Attachment'}
     >
-      <Image
-        src={url}
-        alt=""
-        width={100}
-        height={100}
-        onLoad={() => URL.revokeObjectURL(url)}
-      />
+      {isPdf ? (
+        <embed src={url} type="application/pdf" width="100%" height="500px" />
+      ) : (
+        <Image src={url} alt="" width={'100%'} height={'100%'} />
+      )}
     </Modal>
   );
 };

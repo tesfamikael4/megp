@@ -9,7 +9,6 @@ export function displayFormattedObject(
   return Object.keys(obj)
     .map((key) => {
       if (typeof obj[key] === 'object' && !Array.isArray(obj[key])) {
-        // If the property is an object, recursively call the function
         return displayFormattedObject(obj[key], format[key]);
       } else {
         // If the property is not an object, format it based on the provided format

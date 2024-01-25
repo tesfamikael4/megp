@@ -2,7 +2,7 @@ export function processCompanyName(name: string): {
   initials: string;
   color: string;
 } {
-  const words: string[] = name.split(' ');
+  const words: string[] = name?.split(' ');
   let initials = '';
 
   if (words.length === 1) {

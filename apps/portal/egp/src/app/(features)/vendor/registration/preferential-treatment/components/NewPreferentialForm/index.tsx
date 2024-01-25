@@ -25,6 +25,7 @@ import { preferentialSchema } from '../../models/form-schema';
 import { NotificationService } from '@/app/(features)/vendor/_components/notification';
 import CardLayout from '../../../profile-update/_components/card-layout/card-layout';
 import FileUploader from '@/app/(features)/vendor/_components/uploader';
+import { useDisclosure } from '@mantine/hooks';
 
 const NewPreferentialForm = ({
   defaultValues,
@@ -51,14 +52,6 @@ const NewPreferentialForm = ({
 
   const { data } = useGetMarginalizedGroupQuery({});
   const router = useRouter();
-  const handleRemove = (id: number) => {
-    setAdditionalDocuments((prev) => prev - 1);
-    const _newAdditionalDocuments = watch('additionalDocuments');
-    const _splicedAdditionalDocuments =
-      _newAdditionalDocuments && _newAdditionalDocuments.splice(id - 1, 1);
-    setValue('additionalDocuments', _splicedAdditionalDocuments);
-    setShowRemove(null);
-  };
 
   const onSubmit = async (e) => {
     try {
@@ -162,10 +155,6 @@ const NewPreferentialForm = ({
               onMouseEnter={() => setShowRemove(index)}
               onMouseLeave={() => setShowRemove(null)}
             >
-              {/* {showRemove === index && <Button
-                                // onClick={() => handleRemove(index)}
-                                className="absolute top-0 right-2 text-white z-50"
-                                variant='outline' bg={"red"}>Remove</Button>} */}
               <Input.Wrapper label="Document Type/Name" c={''}>
                 <Input
                   onChange={(e) =>

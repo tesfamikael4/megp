@@ -12,7 +12,7 @@ export const BasicInfo: React.FC<PassFormDataProps> = ({ register }) => {
           id="name"
           {...register(`basic.name`)}
           withAsterisk
-          required
+          // required
         />
         <Select
           label="Form of Business"

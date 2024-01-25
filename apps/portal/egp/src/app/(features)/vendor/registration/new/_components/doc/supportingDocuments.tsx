@@ -9,9 +9,8 @@ import {
   useLazyUploadSupportingDocQuery,
 } from '../../../_api/query';
 import { NotificationService } from '@/app/(features)/vendor/_components/notification';
-import UppyAttachmentDashboard from '@/app/(features)/vendor/_components/UppyAttachmentDashboard/UppyAttachmentDashboard';
 import { usePrivilege } from '../../_context/privilege-context';
-import FileUploader from '../../../../_components/file-uploader/upload';
+import FileUploader from '@/app/(features)/vendor/_components/uploader';
 const VENDOR_URL = process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api';
 
 export default function SupportingDocuments() {

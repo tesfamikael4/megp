@@ -1,22 +1,10 @@
 'use client';
-import {
-  Badge,
-  Box,
-  Button,
-  Center,
-  Flex,
-  Modal,
-  Paper,
-  Text,
-} from '@mantine/core';
+import { Box, Button, Center, Flex, Paper, Text } from '@mantine/core';
 import {
   IconArrowLeft,
   IconCalendar,
   IconCertificate,
-  IconDownload,
   IconEye,
-  IconFile,
-  IconUserCircle,
 } from '@tabler/icons-react';
 import Link from 'next/link';
 import React, { useState } from 'react';
@@ -94,7 +82,7 @@ function PageComponent() {
                       </Text>
                       <IconCalendar size={14} />
                       <Text fz={'xs'}>
-                        {dayjs(data.approvedAt).format('DD MMM YYYY')}
+                        {dayjs(data.expireDate).format('DD MMM YYYY')}
                       </Text>
                     </Flex>
                   </div>

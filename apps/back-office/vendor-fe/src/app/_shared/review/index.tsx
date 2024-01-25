@@ -3,6 +3,7 @@ import {
   default as classes,
   default as tableClasses,
 } from './accordion.module.scss';
+import { renderTable } from '@/app/(features)/util/renderTable';
 
 const tabs = [
   {
@@ -35,34 +36,34 @@ const tabs = [
   },
 ];
 
-function renderTable(data) {
-  if (data.length === 0) {
-    return null; // No data to display in the table
-  }
+// function renderTable(data) {
+//   if (data.length === 0) {
+//     return null; // No data to display in the table
+//   }
 
-  const headers = Object.keys(data[0]);
+//   const headers = Object.keys(data[0]);
 
-  return (
-    <Table classNames={tableClasses}>
-      <Table.Thead>
-        <Table.Tr>
-          {headers.map((header) => (
-            <Table.Th key={header}>{addSpacesToCamelCase(header)}</Table.Th>
-          ))}
-        </Table.Tr>
-      </Table.Thead>
-      <Table.Tbody>
-        {data.map((item, index) => (
-          <Table.Tr key={index}>
-            {headers.map((header) => (
-              <Table.Td key={header}>{item[header]}</Table.Td>
-            ))}
-          </Table.Tr>
-        ))}
-      </Table.Tbody>
-    </Table>
-  );
-}
+//   return (
+//     <Table classNames={tableClasses}>
+//       <Table.Thead>
+//         <Table.Tr>
+//           {headers.map((header) => (
+//             <Table.Th key={header}>{addSpacesToCamelCase(header)}</Table.Th>
+//           ))}
+//         </Table.Tr>
+//       </Table.Thead>
+//       <Table.Tbody>
+//         {data.map((item, index) => (
+//           <Table.Tr key={index}>
+//             {headers.map((header) => (
+//               <Table.Td key={header}>{item[header]}</Table.Td>
+//             ))}
+//           </Table.Tr>
+//         ))}
+//       </Table.Tbody>
+//     </Table>
+//   );
+// }
 function addSpacesToCamelCase(input: string): string {
   const spacedString = input.replace(/([a-z])([A-Z])/g, '$1 $2');
 
@@ -91,7 +92,7 @@ function FormPreview({ data }: { data: any }) {
                       <Text size="xs">{data[tabValue][fieldKey]}</Text>
                     </Flex>
                   )}
-                  {Array.isArray(data[tabValue]) && renderTable(data[tabValue])}
+                  {/* {Array.isArray(data[tabValue]) && renderTable(data[tabValue], column)} */}
                 </Accordion.Panel>
               ))}
             </Accordion.Item>
