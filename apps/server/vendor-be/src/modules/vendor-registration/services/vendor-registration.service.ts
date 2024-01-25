@@ -41,6 +41,7 @@ import { HandlingCommonService } from 'src/modules/handling/services/handling-co
 import { PaymentStatus } from 'src/shared/enums/payment-status.enum';
 import { ServiceKeyEnum } from 'src/shared/enums/service-key.enum';
 import { ApplicationStatus } from 'src/modules/handling/enums/application-status.enum';
+import { BpServiceService } from 'src/modules/services/services/service.service';
 
 @Injectable()
 export class VendorRegistrationsService extends EntityCrudService<VendorsEntity> {
@@ -57,6 +58,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     private readonly invoiceRepository: Repository<InvoiceEntity>,
     private readonly workflowService: WorkflowService,
     private readonly bpService: BusinessProcessService,
+    private readonly BpServiceService: BpServiceService,
     private readonly invoiceService: InvoiceService,
     private readonly pricingService: ServicePricingService,
     private readonly baService: BusinessAreaService,
@@ -302,13 +304,13 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     return vendorsEntity;
   };
   async updateVendor(vendorStatusDto: SetVendorStatus): Promise<any> {
+    let response: any = null;
     const result = await this.isrVendorsRepository.findOne({
       where: {
         userId: vendorStatusDto.userId,
         status: In(this.updateVendorEnums),
       },
     });
-
     const vendor = await this.vendorRepository.findOne({
       where: { isrVendorId: vendorStatusDto.isrVendorId },
     });
@@ -363,7 +365,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         await this.businessAreaRepository.save(businessArea);
       if (!businessUpdate)
         throw new HttpException('business update failed', 500);
-      return businessUpdate;
+      response = businessUpdate;
     } else {
       if (!result) throw new NotFoundException(`isr_Vendor_not_found`);
       if (vendorStatusDto.status == VendorStatusEnum.APPROVE) {
@@ -385,7 +387,9 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           const isrVendorUpdate = await this.isrVendorsRepository.save(result);
           if (!isrVendorUpdate)
             throw new HttpException(`isr_vendor_update_failed`, 500);
+
           const vendorEntity = new VendorsEntity();
+
           vendorEntity.id = result.id;
           vendorEntity.status = VendorStatusEnum.APPROVED;
           vendorEntity.level = VendorStatusEnum.COMPLETED;
@@ -411,6 +415,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             paymentReceipt: isrVendorData.paymentReceipt,
           };
           vendorEntity.metaData = tempMetadata;
+
           try {
             const res = await this.vendorRepository.save(vendorEntity);
             if (!res) throw new HttpException(`vendor_insertion_failed`, 500);
@@ -447,6 +452,91 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         return besinessArea;
       } else if (vendorStatusDto.status == VendorStatusEnum.REJECT) {
         return await this.rejectVendor(vendorStatusDto);
+      }
+    }
+
+    const profileData = await this.propagateVendorProfileUpdate(
+      vendorStatusDto,
+      vendor.id,
+      vendor.isrVendorId,
+    );
+    if (!profileData)
+      throw new HttpException(`copying profile change failed`, 500);
+
+    // const profileData = await this.profileInfoRepository.findOne({ where: { id: vendor.id, status: VendorStatusEnum.APPROVED } })
+    vendor.name = profileData.profileData?.basic?.name;
+    vendor.formOfEntity = profileData.profileData?.basic?.businessType;
+    vendor.origin = profileData.profileData?.basic?.origin;
+    vendor.district = profileData.profileData?.basic?.district;
+    vendor.country = profileData.profileData?.basic?.country;
+    vendor.shareholders = profileData.profileData?.shareHolders;
+    vendor.vendorAccounts = profileData.profileData?.bankAccountDetails;
+    vendor.areasOfBusinessInterest =
+      profileData.profileData?.areasOfBusinessInterest;
+    vendor.beneficialOwnership = profileData.profileData?.beneficialOwnership;
+    let tempMetadata = null;
+    tempMetadata = {
+      address: profileData.profileData?.address,
+      contactPersons: profileData.profileData?.contactPersons,
+      businessSizeAndOwnership:
+        profileData.profileData?.businessSizeAndOwnership,
+      supportingDocuments: profileData.profileData?.supportingDocuments,
+      paymentReceipt: profileData.profileData?.paymentReceipt,
+      invoice: profileData.profileData?.invoice,
+    };
+    vendor.metaData = profileData.profileData?.tempMetadata;
+    const resl = await this.vendorRepository.save(vendor);
+    if (!resl) throw new HttpException('updating vendor failed', 500);
+    return response;
+  }
+  async propagateVendorProfileUpdate(
+    vendorStatusDto: SetVendorStatus,
+    vendorId: string,
+    isrVendorId: string,
+  ) {
+    const serviceType = await this.BpServiceService.findOne(
+      vendorStatusDto.serviceId,
+    );
+    if (
+      serviceType &&
+      serviceType.key == VendorStatusEnum.PROFILE_UPDATE_KEY &&
+      vendorStatusDto.status == VendorStatusEnum.APPROVE
+    ) {
+      try {
+        const profileData = await this.profileInfoRepository.findOne({
+          where: { vendorId: vendorId, status: VendorStatusEnum.SUBMITTED },
+        });
+        profileData.status = VendorStatusEnum.APPROVED;
+        profileData.profileData.initial.status = VendorStatusEnum.APPROVED;
+        profileData.profileData.initial.level = VendorStatusEnum.APPROVED;
+        await this.profileInfoRepository.save(profileData);
+
+        const isrVendorData = await this.isrVendorsRepository.findOne({
+          where: { id: isrVendorId },
+        });
+        isrVendorData.address = profileData.profileData?.address;
+        isrVendorData.areasOfBusinessInterest =
+          profileData.profileData?.areasOfBusinessInterest;
+        isrVendorData.bankAccountDetails =
+          profileData.profileData?.bankAccountDetails;
+        isrVendorData.basic = profileData.profileData?.basic;
+        isrVendorData.beneficialOwnership =
+          profileData.profileData?.beneficialOwnership;
+        // isrVendorData.businessAreas = profileData.profileData?.beneficialOwnership
+        isrVendorData.businessSizeAndOwnership =
+          profileData.profileData?.businessSizeAndOwnership;
+        isrVendorData.contactPersons = profileData.profileData?.contactPersons;
+        isrVendorData.invoice = profileData.profileData?.invoice;
+        isrVendorData.paymentReceipt = profileData.profileData?.paymentReceipt;
+        isrVendorData.instances = profileData.profileData?.instances;
+        isrVendorData.shareHolders = profileData.profileData?.shareHolders;
+        isrVendorData.supportingDocuments =
+          profileData.profileData?.supportingDocuments;
+        await this.isrVendorsRepository.save(isrVendorData);
+        return profileData;
+      } catch (error) {
+        console.log(error);
+        throw error;
       }
     }
   }
@@ -988,7 +1078,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       businessAreas: result.isrVendor.businessAreas.map((ba) =>
         BusinessAreaDetailResponseDto.toResponse(ba),
       ),
-
     };
 
     return vendor;
@@ -1192,13 +1281,28 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     });
     try {
       if (vendor) {
-        await this.invoiceRepository.delete({ userId: user.id, paymentStatus: PaymentStatus.PENDING });
-        await this.businessAreaRepository.delete({ vendorId: vendor.id, status: VendorStatusEnum.PENDING });
-        await this.isrVendorsRepository.delete({ userId: user.id, status: Not(VendorStatusEnum.APPROVED) });
+        await this.invoiceRepository.delete({
+          userId: user.id,
+          paymentStatus: PaymentStatus.PENDING,
+        });
+        await this.businessAreaRepository.delete({
+          vendorId: vendor.id,
+          status: VendorStatusEnum.PENDING,
+        });
+        await this.isrVendorsRepository.delete({
+          userId: user.id,
+          status: Not(VendorStatusEnum.APPROVED),
+        });
         return true;
       } else {
-        await this.invoiceRepository.delete({ userId: user.id, paymentStatus: PaymentStatus.PENDING });
-        await this.businessAreaRepository.delete({ vendorId: vendor.id, status: PaymentStatus.PENDING });
+        await this.invoiceRepository.delete({
+          userId: user.id,
+          paymentStatus: PaymentStatus.PENDING,
+        });
+        await this.businessAreaRepository.delete({
+          vendorId: vendor.id,
+          status: PaymentStatus.PENDING,
+        });
         return true;
       }
     } catch (error) {
@@ -1251,7 +1355,9 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       const result = await this.vendorRepository.findOne({
         where: { userId: userInfo.id },
       });
+
       if (!result) throw new NotFoundException('vendor not found ');
+
       const updateInfoNew = await this.profileInfoRepository.findOne({
         where: { vendorId: result.id, status: VendorStatusEnum.SUBMITTED },
       });
@@ -1285,24 +1391,42 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       });
       if (!result) throw new NotFoundException('vendor not found');
       const updateInfo = await this.profileInfoRepository.findOne({
-        where: { vendorId: result.id, status: VendorStatusEnum.ACTIVE },
+        where: {
+          vendorId: result.id,
+          status: In([
+            VendorStatusEnum.ACTIVE,
+            VendorStatusEnum.SUBMITTED,
+            VendorStatusEnum.DRAFT,
+          ]),
+        },
       });
-      if (updateInfo == null) {
+      if (updateInfo?.status == 'Submitted')
+        throw new BadRequestException('Already Submitted Profile Update');
+      if (
+        updateInfo == null ||
+        updateInfo.status == VendorStatusEnum.APPROVED
+      ) {
         const profileInfoEntity = new ProfileInfoEntity();
         profileInfoEntity.vendorId = result?.id;
         profileInfoEntity.status = 'Submitted';
         profileInfoEntity.profileData = profileData;
-        this.profileInfoRepository.save(profileInfoEntity);
-      } else {
+        const res = await this.profileInfoRepository.save(profileInfoEntity);
+        if (!res) throw new HttpException('proile update save failed ', 500);
+      } else if (
+        updateInfo.status == VendorStatusEnum.ACTIVE ||
+        updateInfo.status == VendorStatusEnum.DRAFT
+      ) {
         updateInfo.profileData = profileData;
         updateInfo.status = 'Submitted';
-        const resultData = this.profileInfoRepository.save(updateInfo);
+        const resultData = await this.profileInfoRepository.save(updateInfo);
         if (!resultData)
           throw new HttpException('saving submission failed', 500);
       }
       const wfi = new CreateWorkflowInstanceDto();
       wfi.user = userInfo;
-      const bp = await this.bpService.findBpWithServiceByKey('ProfileUpdate');
+      const bp = await this.bpService.findBpWithServiceByKey(
+        VendorStatusEnum.PROFILE_UPDATE_KEY,
+      );
       if (!this.bpService)
         throw new HttpException('bp service with this key notfound', 500);
       wfi.bpId = bp.id;
@@ -1335,7 +1459,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       throw error;
     }
   }
-
   async getCertificateInformations(userId: string) {
     const result = await this.vendorRepository.findOne({
       where: {

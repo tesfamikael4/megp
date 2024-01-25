@@ -52,6 +52,8 @@ import { FileService } from './services/file.service';
 import { ServicePricingModule } from '../pricing/pricing.module';
 import { ProfileInfoEntity } from 'src/entities/profile-info.entity';
 import { InvoicesController } from './controllers/invoice.controller';
+import { BpServiceService } from '../services/services/service.service';
+import { ServiceModule } from '../services/service.module';
 
 @Module({
   imports: [
@@ -84,6 +86,7 @@ import { InvoicesController } from './controllers/invoice.controller';
     CategoriesModule,
     HttpModule,
     ServicePricingModule,
+    ServiceModule,
   ],
   exports: [VendorRegistrationsService, FileService, BusinessAreaService],
   providers: [
@@ -99,7 +102,7 @@ import { InvoicesController } from './controllers/invoice.controller';
     VendorRegistrationsService,
     BusinessAreaService,
     InvoiceService,
-
+    BpServiceService,
     // TusService,
   ],
   controllers: [
