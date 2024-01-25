@@ -1,0 +1,16 @@
+
+.icon {
+  width: 15px;
+  height: auto;
+  vertical-align: -1px;
+  margin-right: 4px;
+  display: inline-block;
+}
+
+.expandIcon {
+  transition: transform 0.2s;
+}
+
+.expandIconRotated {
+  transform: rotate(90deg);
+}
