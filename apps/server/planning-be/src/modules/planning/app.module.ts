@@ -38,6 +38,7 @@ import { PreBudgetActivityDocumentService } from './services/pre-budget-activity
 import { MinioModule } from 'nestjs-minio-client';
 import { ReasonService } from './services/reason.service';
 import { ReasonController } from './controllers/reason.controller';
+import { Reason } from 'src/entities/reason.entity';
 
 dotenv.config({ path: '.env' });
 
@@ -54,6 +55,7 @@ dotenv.config({ path: '.env' });
       PreProcurementMechanism,
       PreBudgetRequisitioner,
       PreBudgetActivityDocument,
+      Reason,
     ]),
     ClientsModule.register([
       {
