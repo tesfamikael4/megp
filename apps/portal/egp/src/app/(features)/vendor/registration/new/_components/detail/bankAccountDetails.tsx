@@ -82,12 +82,14 @@ export const BankAccountDetails: React.FC<Props> = ({
             <Stack>
               <Group grow>
                 <TextInput
+                  required
                   label="Account Holder Full Name"
                   {...getInputProps('accountHolderFullName')}
                 />
 
                 <TextInput
                   label="Account Number"
+                  required
                   type="number"
                   {...getInputProps('accountNumber')}
                 />
@@ -95,6 +97,7 @@ export const BankAccountDetails: React.FC<Props> = ({
               <Group grow>
                 <Select
                   label="Bank Name"
+                  required
                   data={bankList}
                   placeholder="select"
                   searchable
@@ -115,11 +118,13 @@ export const BankAccountDetails: React.FC<Props> = ({
               <Group grow>
                 <Textarea
                   label="Bank Branch Address"
+                  required
                   {...getInputProps('branchAddress')}
                 />
                 <Select
                   label="Currency"
                   data={['USD', 'ETB', 'EUR', 'GBP', 'MKW']}
+                  required
                   placeholder="select"
                   searchable
                   {...getInputProps('currency', 'select')}
@@ -128,10 +133,11 @@ export const BankAccountDetails: React.FC<Props> = ({
               <Group grow>
                 <TextInput
                   label="Bank SWIFT/BIC code"
+                  required
                   {...getInputProps('bankSwift')}
                 />
 
-                <TextInput label="IBAN" {...getInputProps('IBAN')} />
+                <TextInput required label="IBAN" {...getInputProps('IBAN')} />
               </Group>
               <Group grow></Group>
             </Stack>

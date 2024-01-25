@@ -19,6 +19,7 @@ export const BusinessSizeAndOwnership: React.FC<PassFormDataProps> = ({
       <Group grow>
         <NumberInput
           label="Registered Capital"
+          required
           rightSectionWidth="80px"
           rightSection={
             <Select
@@ -54,6 +55,7 @@ export const BusinessSizeAndOwnership: React.FC<PassFormDataProps> = ({
         <NumberInput
           label="Paid Up Capital"
           rightSectionWidth="80px"
+          required
           rightSection={
             <Select
               leftSection={<IconCash size={'1.3rem'} />}
@@ -91,11 +93,13 @@ export const BusinessSizeAndOwnership: React.FC<PassFormDataProps> = ({
         <TextInput
           label="Number of Employees"
           id="numberOfEmployees"
+          required
           type="number"
           {...register(`businessSizeAndOwnership.numberOfEmployees`)}
         />
         <Select
           label="Ownership Type"
+          required
           id="ownershipType"
           data={['Malawian', 'Local', 'Foreign', 'Mixed']}
           placeholder="select"

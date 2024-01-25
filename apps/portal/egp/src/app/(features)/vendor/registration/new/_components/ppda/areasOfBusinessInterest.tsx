@@ -199,6 +199,8 @@ export const AreasOfBusinessInterest: React.FC<Props> = ({
                   })),
                 );
               }}
+              withAsterisk
+              required
             />
             <Select
               label="Price Range"

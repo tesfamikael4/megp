@@ -56,6 +56,8 @@ export const ContactPersons: React.FC<Props> = ({
               <TextInput
                 label="Phone Number"
                 placeholder="Enter phone number"
+                required
+                withAsterisk
                 {...getInputProps('mobileNumber')}
               />
             </Group>

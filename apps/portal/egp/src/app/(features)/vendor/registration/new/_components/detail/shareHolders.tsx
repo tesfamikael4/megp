@@ -67,6 +67,7 @@ export const ShareHolders: React.FC<Props> = ({
               <Group grow>
                 <Select
                   label="Nationality"
+                  required
                   searchable
                   data={getNationalityValues()}
                   {...getInputProps('nationality', 'select')}
@@ -74,6 +75,7 @@ export const ShareHolders: React.FC<Props> = ({
 
                 <NumberInput
                   label="Share"
+                  required
                   placeholder="Enter Share"
                   {...getInputProps('share', 'number')}
                   min={1}
