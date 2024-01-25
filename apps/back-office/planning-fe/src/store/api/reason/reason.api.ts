@@ -11,7 +11,7 @@ export const reasonApi = createApi({
   endpoints: (builder) => ({
     addJustification: builder.mutation<any, any>({
       query: (data) => ({
-        url: `reason`,
+        url: `reasons`,
         method: 'POST',
         body: data,
       }),

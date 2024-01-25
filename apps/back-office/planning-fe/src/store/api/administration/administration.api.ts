@@ -1,4 +1,4 @@
-import { encodeCollectionQuery } from '@megp/entity';
+import { CollectionQuery, encodeCollectionQuery } from '@megp/entity';
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { baseQuery } from '@/store/base-query';
 export const administrationApi = createApi({
@@ -15,7 +15,7 @@ export const administrationApi = createApi({
           const query = encodeCollectionQuery(collectionQuery);
           q = `?q=${query}`;
         }
-        return { url: `item-masters${q}`, method: 'GET' };
+        return { url: `item-metadata/items${q}`, method: 'GET' };
       },
     }),
     getMeasurements: builder.query<any, null>({
@@ -40,8 +40,8 @@ export const administrationApi = createApi({
         return { url: `item-categories${q}`, method: 'GET' };
       },
     }),
-    getClassifications: builder.query<any, null>({
-      query: (collectionQuery) => {
+    getClassifications: builder.query<any, any>({
+      query: (collectionQuery: CollectionQuery) => {
         let q = '';
         if (collectionQuery) {
           const query = encodeCollectionQuery(collectionQuery);
