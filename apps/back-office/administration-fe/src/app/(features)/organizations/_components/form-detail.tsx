@@ -3,6 +3,7 @@ import { useReadQuery } from '../_api/organizations.api';
 import { useParams } from 'next/navigation';
 import { useLazyGetOrgTypeQuery } from '@/store/api/budget-category/org-type.api';
 import { useEffect } from 'react';
+import { logger } from '@megp/core-fe';
 
 export function FormDetail() {
   const { id } = useParams();
@@ -10,8 +11,8 @@ export function FormDetail() {
   const { data: org, isSuccess } = useReadQuery(id?.toString());
   const [trigger, { data: type }] = useLazyGetOrgTypeQuery();
   useEffect(() => {
-    isSuccess && trigger({ id: org?.typeId });
-  }, [isSuccess, org?.typeId, trigger]);
+    isSuccess && org && trigger({ id: org?.typeId });
+  }, [isSuccess, org, org?.typeId, trigger]);
 
   const data = [
     {
