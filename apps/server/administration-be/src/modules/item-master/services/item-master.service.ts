@@ -28,7 +28,7 @@ export class ItemMasterService extends EntityCrudService<ItemMaster> {
 
     const itemMetaData = [];
     hierarchy.forEach((el) => {
-      itemMetaData.push({ code: el.code, title: el.title });
+      itemMetaData.push({ code: el.code, name: el.title });
     });
     itemData.itemMetaData = itemMetaData;
     const itemMaster = this.itemMasterRepository.create(itemData);
