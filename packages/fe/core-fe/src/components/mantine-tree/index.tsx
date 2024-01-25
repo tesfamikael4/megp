@@ -1,7 +1,7 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import '@mantine/core/styles.css';
-import 'mantine-datatable/styles.css';
+import '@mantine/core/styles.layer.css';
+import 'mantine-datatable/styles.layer.css';
 import { DataTable } from 'mantine-datatable';
 import { IconChevronRight } from '@tabler/icons-react';
 import { Box, Checkbox } from '@mantine/core';
@@ -168,7 +168,7 @@ export function Root<TData>({
           backgroundColor: row[accessor] === clicked ? 'lightgray' : '',
         };
       }}
-      scrollAreaProps={{ scrollbars: false }}
+      scrollAreaProps={{ scrollbars: 'y' }}
       selectionTrigger="checkbox"
     />
   );
@@ -369,7 +369,7 @@ function Child<TData>({
   );
 }
 
-function MantineTree<TData>({
+export function MantineTree<TData>({
   data,
   config,
 }: TreeProps<TData>): React.ReactNode {
@@ -384,5 +384,3 @@ function MantineTree<TData>({
     />
   );
 }
-
-export default MantineTree;

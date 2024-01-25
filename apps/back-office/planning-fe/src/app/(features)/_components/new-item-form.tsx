@@ -120,16 +120,6 @@ export function NewItem({ onDone }: any) {
         visible={isMeasurementLoading || isTagLoading || isCategoriesLoading}
       />
       <Stack>
-        <Flex gap="md" align="end">
-          <TextInput
-            label="Item Code"
-            value={'1234-5678'}
-            disabled
-            className="w-full"
-          />
-          <Button>Generate</Button>
-        </Flex>
-
         <Textarea
           label="Description"
           withAsterisk

@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Modal, Tooltip, Flex, Text, Button, Group } from '@mantine/core';
 import { IconBinaryTree, IconColumns, IconPlus } from '@tabler/icons-react';
-import { Tree } from '@megp/core-fe';
 import {
   useGetClassificationsQuery,
+  useLazyGetClassificationsQuery,
   useLazyGetItemMasterQuery,
 } from '@/store/api/administration/administration.api';
 import { NewItem } from './new-item-form';
 import { ExpandableTable } from './expandable-table';
 import { DetailItem } from './deatil-item';
+import { MantineTree, TreeConfig, logger } from '@megp/core-fe';
 
 interface ItemSelectorProps {
   onDone: (item: any) => void;
@@ -20,18 +21,10 @@ const ItemSelector = ({ onDone, opened, close }: ItemSelectorProps) => {
   //states
   const [mode, setMode] = useState<'tree' | 'table' | 'new'>('table');
   const [selectedItems, setSelectedItems] = useState<any[]>([]);
+  const [itemCollectionSelector, setItemCollectionSelector] = useState<any[]>(
+    [],
+  );
 
-  //variables
-  const config = {
-    isSearchable: true,
-    primaryColumn: 'description',
-    columns: [{ accessor: 'description' }],
-    isExpandable: true,
-    expandedRowContent: (record) => <DetailItem data={record} />,
-    selectedItems: selectedItems,
-    setSelectedItems: setSelectedItems,
-    isSelectable: true,
-  };
   //rtk queries
   const [getItemMaster, { data: list }] = useLazyGetItemMasterQuery();
   const { data: classifications } = useGetClassificationsQuery({
@@ -45,7 +38,52 @@ const ItemSelector = ({ onDone, opened, close }: ItemSelectorProps) => {
       ],
     ],
   } as any);
+  const [getChildren, { data: children, isLoading }] =
+    useLazyGetClassificationsQuery();
 
+  //variables
+  const config = {
+    isSearchable: true,
+    primaryColumn: 'itemMaster.description',
+    columns: [{ accessor: 'description' }],
+    isExpandable: true,
+    expandedRowContent: (record) => <DetailItem data={record} />,
+    selectedItems: selectedItems,
+    setSelectedItems: setSelectedItems,
+    isSelectable: true,
+  };
+
+  const treeConfig: TreeConfig<any> = {
+    id: 'id',
+    label: 'title',
+    onClick: async (data) => {
+      logger.log({ data });
+      setItemCollectionSelector([
+        {
+          column: 'code',
+          value: data.code,
+          operator: '=',
+        },
+      ]);
+    },
+    load: async (data) => {
+      getChildren({
+        where: [
+          [
+            {
+              column: 'parentCode',
+              value: data.code,
+              operator: '=',
+            },
+          ],
+        ],
+      });
+      return {
+        result: children?.items ?? [],
+        loading: isLoading,
+      };
+    },
+  };
   const changeMode = () => {
     mode === 'table' ? setMode('tree') : setMode('table');
   };
@@ -53,6 +91,14 @@ const ItemSelector = ({ onDone, opened, close }: ItemSelectorProps) => {
   useEffect(() => {
     setMode('table');
   }, [opened]);
+
+  useEffect(() => {
+    getItemMaster({
+      skip: 0,
+      take: 10,
+      where: [itemCollectionSelector],
+    });
+  }, [getItemMaster, itemCollectionSelector]);
 
   return (
     <>
@@ -106,21 +152,12 @@ const ItemSelector = ({ onDone, opened, close }: ItemSelectorProps) => {
           )}
           {mode != 'new' && (
             <>
-              <Flex className="max-h-[40rem] overflow-y-scroll">
+              <Flex className="max-h-[30rem]">
                 {mode === 'tree' && (
-                  <Box className="border-t-2 overflow-y-scroll w-2/5 ">
-                    <Tree
-                      fieldNames={{ title: 'title', key: 'code' }}
+                  <Box className="border-t-2 w-2/5 ">
+                    <MantineTree
                       data={classifications ? classifications.items : []}
-                      mode="view"
-                      disableModal
-                      disableParentSelect
-                      url={(code) =>
-                        `${
-                          process.env.NEXT_PUBLIC_ADMINISTRATION_API ??
-                          '/administration/api/'
-                        }classifications?q=w%3DparentCode%3A%3D%3A${code}`
-                      }
+                      config={treeConfig}
                     />
                   </Box>
                 )}
@@ -132,15 +169,25 @@ const ItemSelector = ({ onDone, opened, close }: ItemSelectorProps) => {
                 >
                   <ExpandableTable
                     config={config}
-                    data={list ? list.items : []}
+                    data={list ? list?.items : []}
                     total={list ? list.total : 0}
                     onRequestChange={(collectionQuery) => {
+                      logger.log({
+                        collectionQuery: {
+                          collectionQuery,
+                          where: [
+                            ...collectionQuery.where,
+
+                            itemCollectionSelector,
+                          ],
+                        },
+                      });
                       getItemMaster(collectionQuery);
                     }}
                   />
                 </Box>
               </Flex>
-              <Group justify="end">
+              <Group justify="end" mt={40}>
                 <Button
                   onClick={() => {
                     onDone(selectedItems);
