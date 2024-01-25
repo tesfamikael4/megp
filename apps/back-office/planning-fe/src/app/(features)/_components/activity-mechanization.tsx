@@ -100,6 +100,7 @@ export const ActivityMechanization = ({
     useLazyReadPostActivityQuery();
 
   const { id } = useParams();
+  const [procurementMethodId, setProcurementMethodId] = useState('');
   const [contract, setContract] = useState({});
   const [mode, setMode] = useState<'new' | 'detail'>('new');
   const [donor, setDonor] = useState<string[]>([]);
@@ -250,6 +251,7 @@ export const ActivityMechanization = ({
       setValue('targetGroup', preMechanism.items[0].targetGroup);
       setDonor(preMechanism.items[0].donor);
       setContract(preMechanism.items[0].contract);
+      setProcurementMethodId(preMechanism.items[0].id);
     }
     if (
       page == 'post' &&
@@ -264,6 +266,7 @@ export const ActivityMechanization = ({
       setValue('targetGroup', postMechanism.items[0].targetGroup);
       setDonor(postMechanism.items[0].donor);
       setContract(postMechanism.items[0].contract);
+      setProcurementMethodId(postMechanism.items[0].id);
     }
   }, [
     isGetPreMechanismSuccess,
@@ -445,6 +448,9 @@ export const ActivityMechanization = ({
         opened={opened}
         close={close}
         validationResult={validationResult}
+        objectId={procurementMethodId}
+        activityId={id as string}
+        type={'procurementMethod'}
       />
     </>
   );

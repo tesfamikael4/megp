@@ -39,7 +39,7 @@ export default function NewActivity() {
         }
         collapsible={false}
       >
-        <Tabs defaultValue="identification">
+        <Tabs defaultValue="identification" keepMounted={false}>
           <Tabs.List>
             <Tabs.Tab value="identification">Identification</Tabs.Tab>
             <Tabs.Tab value="method">Procurement Methods</Tabs.Tab>
