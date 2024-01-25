@@ -11,11 +11,9 @@ import {
   Image,
 } from '@mantine/core';
 import classes from './accordion.module.scss';
-import tableClasses from './accordion.module.scss';
 import { IconChevronRight } from '@tabler/icons-react';
 import { Section, logger } from '@megp/core-fe';
 import { getCookie } from 'cookies-next';
-import { formatDateTimeFromString } from '../../util';
 import { useDisclosure } from '@mantine/hooks';
 import { renderTable } from '../../util/renderTable';
 import { addSpacesToCamelCase } from '../../util/addSpaceToCamelCase';
@@ -256,23 +254,7 @@ function FormPreview({ data }: { data: any }) {
               ) : (
                 <>
                   <Box key={fieldKey} className="gap-2 items-center">
-                    {typeof data[selected][fieldKey] === 'string' &&
-                      fieldKey !== 'transactionId' && (
-                        <Flex className="py-2 border-b px-1.5 ">
-                          <Text
-                            size="xs"
-                            fw={500}
-                            tt="capitalize"
-                            className="text-lg w-1/5 "
-                          >
-                            {addSpacesToCamelCase(fieldKey)}:
-                          </Text>
-                          <Text className="ml-2" size="sm" tt="capitalize">
-                            {data[selected][fieldKey]}
-                          </Text>
-                        </Flex>
-                      )}
-                    {typeof data[selected][fieldKey] === 'object' && (
+                    {typeof data[selected][fieldKey] === 'string' && (
                       <Flex className="py-2 border-b px-1.5 ">
                         <Text
                           size="xs"
@@ -280,20 +262,42 @@ function FormPreview({ data }: { data: any }) {
                           tt="capitalize"
                           className="text-lg w-1/5 "
                         >
-                          {addSpacesToCamelCase(fieldKey)}
+                          {addSpacesToCamelCase(fieldKey)}:
                         </Text>
-                        <Text
-                          className="ml-2"
-                          size="xs"
-                          fw={700}
-                          tt="capitalize"
-                        >
-                          {displayFormattedObject(data[selected][fieldKey], {
-                            [fieldKey]: 'amount+currency',
-                          })}
+                        <Text className="ml-2" size="sm" tt="capitalize">
+                          {data[selected][fieldKey]}
                         </Text>
                       </Flex>
                     )}
+                    {data[selected][fieldKey] !== null &&
+                      typeof data[selected][fieldKey] === 'object' &&
+                      fieldKey !== 'invoiceIds' && (
+                        <Flex className="py-2 border-b px-1.5 ">
+                          <Text
+                            size="xs"
+                            fw={500}
+                            tt="capitalize"
+                            className="text-lg w-1/5 "
+                          >
+                            {addSpacesToCamelCase(fieldKey)}
+                          </Text>
+                          <Text
+                            className="ml-2"
+                            size="xs"
+                            fw={700}
+                            tt="capitalize"
+                          >
+                            {selected === 'businessSizeAndOwnership'
+                              ? displayFormattedObject(
+                                  data[selected][fieldKey],
+                                  {
+                                    [fieldKey]: 'amount+currency',
+                                  },
+                                )
+                              : data[selected][fieldKey]}
+                          </Text>
+                        </Flex>
+                      )}
                   </Box>
                 </>
               );

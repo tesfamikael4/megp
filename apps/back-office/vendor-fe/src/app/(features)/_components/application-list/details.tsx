@@ -61,8 +61,8 @@ export default function RequestDetail({
         requestType === 'update'
           ? 'info-change'
           : requestType === 'preferential'
-          ? 'preferential-services'
-          : requestType
+            ? 'preferential-services'
+            : requestType
       }`,
     );
     return null;
@@ -176,7 +176,8 @@ export default function RequestDetail({
                 setContent={setContent}
                 data={{
                   ...response.data?.isrvendor,
-                  service: response?.data?.service,
+                  preferential: response.data?.preferential ?? {},
+                  profileUpdate: response.data?.profileUpdate ?? {},
                 }}
               />
             </Box>
@@ -202,8 +203,8 @@ export default function RequestDetail({
                           requestType === 'update'
                             ? '/info-change'
                             : requestType === 'preferential'
-                            ? 'preferential-service'
-                            : `/${requestType}`,
+                              ? 'preferential-service'
+                              : `/${requestType}`,
                         );
                       }}
                     >

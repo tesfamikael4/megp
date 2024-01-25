@@ -47,15 +47,3 @@ const PreferentialTreatment = () => {
 };
 
 export default PreferentialTreatment;
-
-/**
- * 
- * : draft && draft.length > 0 ? draft[0] : {
-            serviceId: '',
-            certificate: undefined,
-            certiNumber: '',
-            additionalDocuments: [
-            ],
-            remark: '',
-        }
- */
