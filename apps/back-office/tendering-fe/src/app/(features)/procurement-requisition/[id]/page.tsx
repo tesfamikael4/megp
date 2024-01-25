@@ -32,7 +32,7 @@ export default function PrDetailPage() {
         <Box className="">
           <Divider mb={'md'} />
           <Container fluid>
-            <Tabs defaultValue="definition">
+            <Tabs defaultValue="definition" keepMounted={false}>
               <Tabs.List className=" flex-nowrap">
                 <Tabs.Tab value="definition">Definition</Tabs.Tab>
                 <Tabs.Tab value="activities">Activities</Tabs.Tab>

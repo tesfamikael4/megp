@@ -1,14 +1,8 @@
 import { useLazyListByIdQuery as useLazyGetUsersQuery } from '@/app/(features)/_api/user.api';
-import { Box, Button, Group, Menu, Modal, Text } from '@mantine/core';
+import { ActionIcon, Box, Button, Group, Modal } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { modals } from '@mantine/modals';
-import { Table, TableConfig, logger, notify } from '@megp/core-fe';
-import {
-  IconDeviceFloppy,
-  IconDotsVertical,
-  IconTrash,
-} from '@tabler/icons-react';
-import { CollectionSelector } from './collection-selector';
+import { logger, notify } from '@megp/core-fe';
+import { IconDeviceFloppy, IconTrash } from '@tabler/icons-react';
 import { useAuth } from '@megp/auth';
 import { useEffect, useState } from 'react';
 
@@ -17,29 +11,51 @@ import {
   useCreateMutation,
   useLazyListByIdQuery,
 } from '@/app/(features)/_api/requisitioner.api';
+import { ExpandableTable } from './expandable-table';
 
 export const Requisitioner = () => {
-  const config: TableConfig<any> = {
+  const config = {
     columns: [
       {
-        id: 'name',
-        header: 'Name',
-        accessorKey: 'name',
+        title: 'Name',
+        accessor: 'name',
       },
       {
-        id: 'action',
-        header: 'Action',
-        accessorKey: 'action',
-        cell: ({ row: { original } }) => <Action cell={original} />,
+        title: 'Action',
+        accessor: 'action',
+        width: 100,
+        render: (record) => {
+          return (
+            <>
+              <ActionIcon
+                size="sm"
+                variant="subtle"
+                color="red"
+                onClick={() => {
+                  const temp = requisitioners.filter(
+                    (r) => r.userId != record.userId,
+                  );
+                  setRequisitioners([...temp]);
+                }}
+              >
+                <IconTrash size={16} />
+              </ActionIcon>
+            </>
+          );
+        },
       },
     ],
   };
-  const addConfig: TableConfig<any> = {
+  const [selectedItems, setSelectedItems] = useState<any[]>([]);
+
+  const addConfig = {
+    isSearchable: true,
+    selectedItems: selectedItems,
+    setSelectedItems: setSelectedItems,
     columns: [
       {
-        id: 'name',
-        header: 'Full Name',
-        accessorKey: 'fullName',
+        title: 'Full Name',
+        accessor: 'fullName',
       },
     ],
   };
@@ -49,41 +65,18 @@ export const Requisitioner = () => {
   const [createRequisitioner, { isLoading: isCreatingLoading }] =
     useCreateMutation();
 
-  const [getRequisitioner, { data: requisitioner }] = useLazyListByIdQuery();
+  const [getRequisitioner, { data: requisitioner, isSuccess }] =
+    useLazyListByIdQuery();
 
   const [requisitioners, setRequisitioners] = useState<any[]>([]);
   const { user } = useAuth();
 
-  const Action = ({ cell }: any) => {
-    const handelRemove = () => {
-      const temp = requisitioners.filter((r) => r.userId != cell.userId);
-      setRequisitioners([...temp]);
-    };
-    return (
-      <>
-        <Menu shadow="md">
-          <Menu.Target>
-            <IconDotsVertical className="ml-auto text-gray-500" size={16} />
-          </Menu.Target>
-
-          <Menu.Dropdown>
-            <Menu.Item
-              color="red"
-              leftSection={<IconTrash size={15} />}
-              onClick={handelRemove}
-            >
-              Remove
-            </Menu.Item>
-          </Menu.Dropdown>
-        </Menu>
-      </>
-    );
-  };
-
   const onCreate = async () => {
+    logger.log(requisitioners);
     const castedData = requisitioners.map((r: any) => ({
       ...r,
       procurementRequisitionId: id,
+      name: r.name,
     }));
 
     try {
@@ -94,21 +87,27 @@ export const Requisitioner = () => {
       notify('Error', 'Something went wrong');
     }
   };
+  logger.log(requisitioner);
+  logger.log(requisitioners);
 
   useEffect(() => {
     getRequisitioner({ id: id.toString(), collectionQuery: undefined });
   }, [getRequisitioner, id]);
 
   useEffect(() => {
-    requisitioner && setRequisitioners([...requisitioner.items]);
-  }, [requisitioner]);
+    isSuccess && requisitioner && setRequisitioners([...requisitioner.items]);
+  }, [isSuccess, requisitioner]);
   return (
     <Box>
       <Group justify="end" className="my-2">
         <Button onClick={open}>Add</Button>
       </Group>
 
-      <Table data={requisitioners} config={config} />
+      <ExpandableTable
+        data={requisitioners}
+        config={config}
+        total={requisitioners.length}
+      />
       {requisitioners.length !== 0 && (
         <Group justify="end" className="my-2">
           <Button onClick={onCreate} loading={isCreatingLoading}>
@@ -117,26 +116,37 @@ export const Requisitioner = () => {
           </Button>
         </Group>
       )}
-      <Modal opened={opened} onClose={close} title="Add Users" size="lg">
-        <CollectionSelector
+      <Modal
+        opened={opened}
+        onClose={close}
+        title="Add Requisitioner"
+        size="lg"
+      >
+        <ExpandableTable
           config={addConfig}
-          data={users ? users.items : []}
+          data={users?.items ?? []}
           total={users ? users.total : 0}
-          onDone={(data) => {
-            const castedData = data.map((d) => ({
-              name: d.fullName,
-              userId: d.id,
-            }));
-            setRequisitioners(castedData);
-            logger.log({ data });
-            close();
-          }}
-          multiSelect
           onRequestChange={(collectionQuery) => {
             const id = user?.organization?.id ?? '';
             getUsers({ id, collectionQuery });
           }}
         />
+
+        <Group justify="end">
+          <Button
+            onClick={() => {
+              logger.log(selectedItems);
+              const castedData = selectedItems.map((r: any) => ({
+                name: r.fullName,
+                userId: r.id,
+              }));
+              setRequisitioners(castedData);
+              close();
+            }}
+          >
+            Done
+          </Button>
+        </Group>
       </Modal>
     </Box>
   );
