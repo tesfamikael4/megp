@@ -38,8 +38,7 @@ const ItemSelector = ({ onDone, opened, close }: ItemSelectorProps) => {
       ],
     ],
   } as any);
-  const [getChildren, { data: children, isLoading }] =
-    useLazyGetClassificationsQuery();
+  const [getChildren, { isLoading }] = useLazyGetClassificationsQuery();
 
   //variables
   const config = {
@@ -67,7 +66,7 @@ const ItemSelector = ({ onDone, opened, close }: ItemSelectorProps) => {
       ]);
     },
     load: async (data) => {
-      getChildren({
+      const res = await getChildren({
         where: [
           [
             {
@@ -77,9 +76,9 @@ const ItemSelector = ({ onDone, opened, close }: ItemSelectorProps) => {
             },
           ],
         ],
-      });
+      }).unwrap();
       return {
-        result: children?.items ?? [],
+        result: res?.items ?? [],
         loading: isLoading,
       };
     },
@@ -113,7 +112,10 @@ const ItemSelector = ({ onDone, opened, close }: ItemSelectorProps) => {
               <Tooltip label={mode == 'table' ? 'Tree View' : 'Grid View'}>
                 <Box
                   className="text-slate-600 cursor-pointer"
-                  onClick={changeMode}
+                  onClick={() => {
+                    changeMode();
+                    setItemCollectionSelector([]);
+                  }}
                 >
                   {mode == 'table' ? <IconBinaryTree /> : <IconColumns />}
                 </Box>
