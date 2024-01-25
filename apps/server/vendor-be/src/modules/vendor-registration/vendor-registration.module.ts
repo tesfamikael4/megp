@@ -52,8 +52,8 @@ import { FileService } from './services/file.service';
 import { ServicePricingModule } from '../pricing/pricing.module';
 import { ProfileInfoEntity } from 'src/entities/profile-info.entity';
 import { InvoicesController } from './controllers/invoice.controller';
-import { BpServiceService } from '../services/services/service.service';
 import { ServiceModule } from '../services/service.module';
+import { BpServiceService } from '../services/services/service.service';
 
 @Module({
   imports: [
@@ -119,4 +119,4 @@ import { ServiceModule } from '../services/service.module';
     InvoicesController,
   ],
 })
-export class VendorRegistrationModule {}
+export class VendorRegistrationModule { }
