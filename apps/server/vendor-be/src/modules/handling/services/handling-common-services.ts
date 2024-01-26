@@ -4,6 +4,7 @@ import { WorkflowInstanceEntity } from 'src/entities/workflow-instance.entity';
 import { BAEnum } from 'src/modules/vendor-registration/dto/business-area.enum';
 import { ServiceKeyEnum } from 'src/shared/enums/service-key.enum';
 import { MoreThanOrEqual, Repository } from 'typeorm';
+import { BusinessCategories } from '../enums/business-category.enum';
 export class HandlingCommonService {
   constructor(
     @InjectRepository(WorkflowInstanceEntity)
@@ -136,6 +137,26 @@ export class HandlingCommonService {
     return keys;
   }
 
+  getPreferencialServices() {
+    return [
+      ServiceKeyEnum.IBM,
+      ServiceKeyEnum.MEDIUM,
+      ServiceKeyEnum.SMALL,
+      ServiceKeyEnum.MICRO,
+      ServiceKeyEnum.MARGINALIZED_GROUP
+    ];
+  }
+  getUpgradeType(catogory: string) {
+    if (BusinessCategories.GOODS.toLowerCase() == catogory) {
+      return ServiceKeyEnum.goodsUpgrade;
+    } else if (BusinessCategories.SERVICES.toLowerCase() == catogory) {
+      return ServiceKeyEnum.servicesUpgrade;
+    }
+    else if (BusinessCategories.WORKS.toLowerCase() == catogory) {
+      return ServiceKeyEnum.worksUpgrade;
+    }
+    return null;
+  }
   monthDiff(expireDate: Date, today: Date): number {
     let months;
     months = (today.getFullYear() - expireDate.getFullYear()) * 12;

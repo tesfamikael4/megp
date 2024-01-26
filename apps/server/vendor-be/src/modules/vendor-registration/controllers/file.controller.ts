@@ -1,12 +1,9 @@
 import {
-  All,
   Body,
   Controller,
-  Delete,
   Get,
   Param,
   Post,
-  Req,
   Res,
   UploadedFile,
   UseGuards,

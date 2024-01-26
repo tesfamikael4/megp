@@ -23,6 +23,7 @@ import { BusinessProcessService } from 'src/modules/bpm/services/business-proces
 import {
   CreateWorkflowInstanceDto,
   GotoNextStateDto,
+  WorkflowInstanceResponse,
 } from 'src/modules/handling/dto/workflow-instance.dto';
 import { VendorStatusEnum } from 'src/shared/enums/vendor-status-enums';
 import { WorkflowService } from 'src/modules/bpm/services/workflow.service';
@@ -37,11 +38,13 @@ import { ServicePricingService } from 'src/modules/pricing/services/service-pric
 import { BusinessAreaService } from './business-area.service';
 import InitialValueSchema from '../dto/add-vendor.dto';
 import { ProfileInfoEntity } from 'src/entities/profile-info.entity';
-import { HandlingCommonService } from 'src/modules/handling/services/handling-common-services';
 import { PaymentStatus } from 'src/shared/enums/payment-status.enum';
 import { ServiceKeyEnum } from 'src/shared/enums/service-key.enum';
 import { ApplicationStatus } from 'src/modules/handling/enums/application-status.enum';
 import { BpServiceService } from 'src/modules/services/services/service.service';
+
+import { ReceiptDto } from '../dto/receipt.dto';
+import { FileService } from './file.service';
 
 @Injectable()
 export class VendorRegistrationsService extends EntityCrudService<VendorsEntity> {
@@ -62,7 +65,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     private readonly invoiceService: InvoiceService,
     private readonly pricingService: ServicePricingService,
     private readonly baService: BusinessAreaService,
-    private readonly commonService: HandlingCommonService,
+    private readonly fileService: FileService
+
   ) {
     super(vendorRepository);
   }
@@ -784,25 +788,44 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       throw error;
     }
   }
-  async getVendorByUserWithPreferntial(userId: string): Promise<VendorsEntity> {
+  async getVendorByUserWithPreferntial(userId: string, serviceId: string): Promise<VendorsEntity> {
     try {
       const vendorEntity = await this.vendorRepository.findOne({
         select: {
           id: true,
           preferentials: { serviceId: true, status: true, remark: true, extendedProfile: true, certificateUrl: true, certiNumber: true },
-          ProfileInfo: { status: true, profileData: true },
           isrVendor: { id: true, businessAreas: { id: true, instanceId: true, } }
         },
         relations: {
           preferentials: true,
+          isrVendor: { businessAreas: true }
+        },
+        where: {
+          userId: userId,
+          preferentials: { status: ApplicationStatus.SUBMITTED, serviceId: serviceId },
+        },
+      });
+      return vendorEntity;
+    } catch (error) {
+      throw error;
+    }
+  }
+  async getVendorByUserWithProfile(userId: string, serviceId: string): Promise<VendorsEntity> {
+    try {
+      const vendorEntity = await this.vendorRepository.findOne({
+        select: {
+          id: true,
+          ProfileInfo: { status: true, profileData: true },
+          isrVendor: { id: true, businessAreas: { id: true, instanceId: true, } }
+        },
+        relations: {
           ProfileInfo: true,
           isrVendor: { businessAreas: true }
         },
         where: {
           userId: userId,
-          // preferentials: { status: ApplicationStatus.SUBMITTED },
-          // ProfileInfo: { status: ApplicationStatus.SUBMITTED },
-          // isrVendor: { businessAreas: { status: ApplicationStatus.PENDING } }
+          ProfileInfo: { status: ApplicationStatus.SUBMITTED },
+          isrVendor: { businessAreas: { status: ApplicationStatus.PENDING } }
         },
       });
       return vendorEntity;
@@ -964,66 +987,80 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     return res;
   }
 
-  async upgradeVendorService(userInfo: any, areaOfBusinessInterest: any) {
+  async submitServiceUpgrade(
+    file: Express.Multer.File,
+    user: any,
+    paymentReceiptDto: ReceiptDto,
+  ) {
+    const userId = user.id;
     try {
       const result = await this.isrVendorsRepository.findOne({
-        where: { userId: userInfo.id },
+        where: { userId: userId, status: In(this.updateVendorEnums) },
       });
-      if (!result) throw new HttpException('vendor_not_found', 500);
-      if (result.status.trim() !== VendorStatusEnum.SUBMITTED) {
-        const wfi = new CreateWorkflowInstanceDto();
-        wfi.user = userInfo;
-        const interests = areaOfBusinessInterest;
-        if (interests)
-          throw new HttpException('areasOfBusinessInterest_notfound', 500);
-
-        const bp = await this.bpService.findBpService(interests.priceRange);
-        if (!bp) {
-          throw new NotFoundException('Business_Process_Not_Found');
-        }
-        wfi.bpId = bp.id;
-        wfi.serviceId = bp.serviceId;
-        wfi.requestorId = result.id;
-        wfi.data = result;
-        let workflowInstance = null;
-        workflowInstance = await this.workflowService.intiateWorkflowInstance(
-          wfi,
-          userInfo,
-        );
-        if (!workflowInstance)
-          throw new HttpException(`workflow_initiation_failed`, 500);
-        const response = {
-          applicationNumber: workflowInstance.application.applicationNumber,
-          instanceNumber: workflowInstance.application.id,
-          vendorId: workflowInstance.application.requestorId,
-        };
-
-        const businessAreaEntity = new BusinessAreaEntity();
-        businessAreaEntity.instanceId = workflowInstance.application.id;
-        businessAreaEntity.category = interests.category;
-        businessAreaEntity.serviceId = bp.serviceId;
-        businessAreaEntity.applicationNumber =
-          workflowInstance.application.applicationNumber;
-        businessAreaEntity.status = VendorStatusEnum.PENDING;
-        businessAreaEntity.vendorId = result.id;
-        businessAreaEntity.priceRangeId = interests.priceRange;
-        const res = await this.businessAreaRepository.save(businessAreaEntity);
-        if (!res) throw new HttpException(`adding_business_area_failed`, 500);
-
-        if (!workflowInstance)
-          throw new HttpException(`workflowInstanceService_failed`, 500);
-
-        if (!response)
-          throw new HttpException('workflow_initiation_failed', 500);
-        result.status = VendorStatusEnum.SUBMITTED;
-        result.initial.status = VendorStatusEnum.SUBMITTED;
-        result.initial.level = VendorStatusEnum.SUBMITTED;
-        // const data = await this.isrVendorsRepository.save(result);
-        // if (!data) throw new HttpException(`isr_vendor_submission_failed`, 500);
-        return response;
-      } else {
-        throw new HttpException('already Submitted ', 500);
+      if (!result) throw new HttpException('vendor not found ', 404);
+      const subDirectory = 'paymentReceipt';
+      const uploadedFileName = await this.fileService.uploadDocuments(file, user, subDirectory);
+      const paymentReceipt = {
+        transactionNumber: paymentReceiptDto?.transactionNumber,
+        invoiceId: paymentReceiptDto?.invoiceIds,
+        attachment: uploadedFileName,
+      };
+      result.paymentReceipt = paymentReceipt;
+      result.initial.level = VendorStatusEnum.DOC;
+      result.initial.status = VendorStatusEnum.SAVE;
+      await this.isrVendorsRepository.save(result);
+      const ids = JSON.parse(paymentReceiptDto?.invoiceIds);
+      for (let index = 0; index < ids.length; index++) {
+        await this.invoiceRepository.update(ids[index], {
+          paymentStatus: PaymentStatus.PAID,
+          attachment: uploadedFileName,
+        });
       }
+      const invoices = await this.invoiceRepository.find({
+        where: {
+          id: In(ids),
+          businessArea: {
+            BpService: {
+              businessProcesses: { isActive: true },
+            },
+          },
+        },
+        relations: {
+          businessArea: {
+            BpService: { businessProcesses: true },
+            isrVendor: true,
+          },
+        },
+      });
+
+      const wfi: CreateWorkflowInstanceDto = new CreateWorkflowInstanceDto();
+      for (const row of invoices) {
+        const businessArea = row.businessArea;
+        const ba = await this.baService.findOne(businessArea.id);
+        if (ba.status == ApplicationStatus.PENDING || ba.status == ApplicationStatus.ADJUST || ba.status == ApplicationStatus.ADJUSTMENT) {
+          wfi.bpId = row.businessArea.BpService.businessProcesses[0].id;
+          wfi.serviceId = row.businessArea.serviceId;
+          wfi.requestorId = row.businessArea.vendorId;
+          wfi.data = row.businessArea.isrVendor;
+          const result = await this.workflowService.intiateWorkflowInstance(
+            wfi,
+            user
+          );
+          businessArea.instanceId = result.application?.id;
+          businessArea.applicationNumber = result.application?.applicationNumber;
+          await this.baService.update(businessArea.id, businessArea);
+          return result;
+
+        } else {
+          const gotoNextDto = new GotoNextStateDto();
+          gotoNextDto.action = 'ISR';
+          gotoNextDto.instanceId = ba.instanceId;
+          const result = await this.workflowService.gotoNextStep(gotoNextDto, user);
+          return result;
+        }
+
+      }
+      return paymentReceipt;
     } catch (error) {
       console.log(error);
       throw error;
@@ -1031,7 +1068,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
   }
 
   async getApprovedVendorById(VendorId: string) {
-    const result = await this.vendorRepository.findOne({
+    const vendorData = await this.vendorRepository.findOne({
       where: { id: VendorId },
       select: {
         id: true,
@@ -1071,11 +1108,16 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         isrVendor: { businessAreas: { servicePrice: true, BpService: true } },
       },
     });
-
-    const { isrVendor, ...rest } = result;
+    const { isrVendor, ...rest } = vendorData;
+    const priceRangeIds = vendorData?.areasOfBusinessInterest.map((item: any) => item.priceRange);
+    if (priceRangeIds.length > 0) {
+      const priceRanges = await this.pricingService.findPriceRangeByIds(priceRangeIds);
+      const businessInterest = WorkflowInstanceResponse.formatBusinessLines(vendorData.areasOfBusinessInterest, priceRanges);
+      rest.areasOfBusinessInterest = businessInterest;
+    }
     const vendor = {
       ...rest,
-      businessAreas: result.isrVendor.businessAreas.map((ba) =>
+      businessAreas: vendorData.isrVendor.businessAreas.map((ba) =>
         BusinessAreaDetailResponseDto.toResponse(ba),
       ),
     };

@@ -18,6 +18,10 @@ import { ApplicationStatus } from '../enums/application-status.enum';
 import { ServicePricingService } from 'src/modules/pricing/services/service-pricing.service';
 import { IsNull, Not, Repository } from 'typeorm';
 import { VendorRegistrationsService } from 'src/modules/vendor-registration/services/vendor-registration.service';
+import { ServiceKeyEnum } from 'src/shared/enums/service-key.enum';
+import { BusinessAreaEntity } from 'src/entities';
+import { BusinessAreaService } from 'src/modules/vendor-registration/services/business-area.service';
+import { BpServiceService } from 'src/modules/services/services/service.service';
 @Injectable()
 export class ApplicationExcutionService {
   constructor(
@@ -26,7 +30,9 @@ export class ApplicationExcutionService {
     private readonly invoiceService: InvoiceService,
     private readonly commonService: HandlingCommonService,
     private readonly pricingService: ServicePricingService,
-    private readonly vendorService: VendorRegistrationsService
+    private readonly vendorService: VendorRegistrationsService,
+    private readonly baService: BusinessAreaService,
+
 
   ) { }
 
@@ -63,11 +69,15 @@ export class ApplicationExcutionService {
 
 
   async getCurruntTaskDetail(
-    instanceId: string,
+    instanceId: string
   ): Promise<WorkflowInstanceResponse> {
+    const serviceData = await this.wiRepository.findOne({
+      relations: { service: true },
+      where: { id: instanceId }
+    });
     const instance = await this.wiRepository.findOne({
       relations: {
-        isrVendor: true,
+        isrVendor: { businessAreas: { servicePrice: true } },
         businessProcess: {
           service: true,
         },
@@ -77,10 +87,12 @@ export class ApplicationExcutionService {
         taskTrackers: {
           task: true,
         },
+        service: true
       },
       where: {
         id: instanceId,
-        taskHandler: { id: Not(IsNull()) }
+        taskHandler: { id: Not(IsNull()) },
+        isrVendor: { businessAreas: { status: ApplicationStatus.PENDING, instanceId: serviceData.id } }
       },
       order: {
         taskTrackers: { executedAt: 'DESC' },
@@ -91,19 +103,59 @@ export class ApplicationExcutionService {
     }
     const response = WorkflowInstanceResponse.toResponse(instance);
     const priceRangeIds = instance.isrVendor?.areasOfBusinessInterest.map((item: any) => item.priceRange);
+    let priceRanges = [];
     if (priceRangeIds.length > 0) {
-      const priceRanges = await this.pricingService.findPriceRangeByIds(priceRangeIds);
+      priceRanges = await this.pricingService.findPriceRangeByIds(priceRangeIds);
       const businessInterest = WorkflowInstanceResponse.formatBusinessLines(response.isrvendor.areasOfBusinessInterest, priceRanges);
       response.isrvendor.areasOfBusinessInterest = businessInterest;
     }
+    const preferentialkeys = this.commonService.getPreferencialServices();
+    if (serviceData.service.key == ServiceKeyEnum.profileUpdate) {
+      const vendorInfo = await this.vendorService.getVendorByUserWithProfile(response.isrvendor.userId, serviceData.serviceId);
+      if (vendorInfo?.ProfileInfo) {
+        response.profileUpdate = vendorInfo?.ProfileInfo[0];
+      }
+      response.isrvendor.businessAreas = null;
+      return response;
+    } else if (preferentialkeys.filter((item) => serviceData.service.key == item).length > 0) {
+      const vendorInfo = await this.vendorService.getVendorByUserWithPreferntial(response.isrvendor.userId, serviceData.serviceId);
+      if (vendorInfo?.preferentials) {
+        response.preferential = vendorInfo?.preferentials[0];
+        response.isrvendor.businessAreas = null;
+        return response;
+      }
+    }
+    const serviceKey = serviceData.service.key;
+    const renewalServices = [ServiceKeyEnum.goodsRenewal, ServiceKeyEnum.servicesRenewal, ServiceKeyEnum.worksRenewal];
+    const upgradeServices = [ServiceKeyEnum.goodsUpgrade, ServiceKeyEnum.servicesUpgrade, ServiceKeyEnum.worksUpgrade];
+    const renewalServiceTypes = renewalServices.filter((item) => item == serviceKey);
+    const upgradeServicesTypes = upgradeServices.filter((item) => item == serviceKey);
+    if (renewalServiceTypes.length > 0) {
+      const business: BusinessAreaEntity = instance.isrVendor.businessAreas[0];
+      response.renewal = { category: business.category, approvedAt: business.approvedAt, expireDate: business.expireDate };
+      response.isrvendor.businessAreas = null;
+      return response;
+    } else if (upgradeServicesTypes.length > 0) {
+      const business: BusinessAreaEntity = instance.isrVendor.businessAreas[0];
+      const previousBusinessClass = await this.baService.getPreviousUpgradeService(instance.requestorId, business.category);
+      const proposedBusinessclass = await this.baService.getProposedUpgradeService(instance.requestorId, business.category, instance.serviceId);
+      response.upgrade = {
+        previousBusinessClass: {
+          category: previousBusinessClass.category,
+          approvedAt: previousBusinessClass.approvedAt,
+          expireDate: previousBusinessClass.expireDate,
+          valueFrom: previousBusinessClass.servicePrice.valueFrom,
+          valueTo: previousBusinessClass.servicePrice.valueTo != -1 ? previousBusinessClass.servicePrice.valueTo : 'infinity',
+        },
+        proposedBusinessClass: {
+          category: proposedBusinessclass.category,
+          valueFrom: proposedBusinessclass.servicePrice.valueFrom,
+          valueTo: proposedBusinessclass.servicePrice.valueTo != -1 ? proposedBusinessclass.servicePrice.valueTo : 'infinity',
+        }
+      }
+    }
+    response.isrvendor.businessAreas = null;
 
-    const vendorInfo = await this.vendorService.getVendorByUserWithPreferntial(response.isrvendor.userId);
-    if (vendorInfo?.ProfileInfo) {
-      response.profileUpdate = vendorInfo?.ProfileInfo[0];
-    }
-    if (vendorInfo?.preferentials) {
-      response.preferential = vendorInfo?.preferentials[0];
-    }
     return response;
   }
 
