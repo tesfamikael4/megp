@@ -14,6 +14,8 @@ import { CertificateModule } from './modules/certificates/certificate.module';
 import { NotificationModule } from './modules/notifications/notification.module';
 import { PreferentialTreatmentModule } from './modules/preferentials/preferencial-treatment.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { TransactionInterceptor } from './shared/interceptors';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -34,6 +36,11 @@ import { ScheduleModule } from '@nestjs/schedule';
     PreferentialTreatmentModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: TransactionInterceptor,
+    },
+  ],
 })
 export class AppModule {}
