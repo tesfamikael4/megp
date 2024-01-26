@@ -6,12 +6,21 @@ import { ItemMaster } from 'src/entities/item-master.entity';
 import { Classification } from 'src/entities/classification.entity';
 import { EntityCrudService } from 'src/shared/service';
 import { ClassificationService } from 'src/modules/classification/services/classification.service';
+import { ItemMetaData } from 'src/entities';
+import { DataResponseFormat } from 'src/shared/api-data';
+import {
+  CollectionQuery,
+  FilterOperators,
+  QueryConstructor,
+} from 'src/shared/collection-query';
 export class ItemMasterService extends EntityCrudService<ItemMaster> {
   constructor(
     @InjectRepository(Classification)
     private readonly classificationRepository: Repository<Classification>,
     @InjectRepository(ItemMaster)
     private readonly itemMasterRepository: Repository<ItemMaster>,
+    @InjectRepository(ItemMetaData)
+    private readonly itemMetaDataRepository: Repository<ItemMetaData>,
     @Inject(ItemCodeGeneratorService)
     private readonly itemCodeGenerateService: ItemCodeGeneratorService,
     private readonly classificationService: ClassificationService,
@@ -31,12 +40,29 @@ export class ItemMasterService extends EntityCrudService<ItemMaster> {
       itemMetaData.push({ code: el.code, name: el.title });
     });
     itemData.itemMetaData = itemMetaData;
-    const itemMaster = this.itemMasterRepository.create(itemData);
-    return await this.itemMasterRepository.save(itemMaster);
+    const instance = this.itemMasterRepository.create(itemData);
+    return await this.itemMasterRepository.save(instance);
   }
-  async updateWithTags(id: string, itemData: ItemMaster): Promise<ItemMaster> {
-    await this.findOne(id);
-    const instance = this.itemMasterRepository.create({ ...itemData, id: id });
+
+  async updateWithChildren(id: string, itemData: any): Promise<ItemMaster> {
+    if (itemData.commodityCode) {
+      const commodityCode = itemData.commodityCode;
+      const hierarchy: any[] =
+        await this.classificationService.findClassificationHistory(
+          commodityCode,
+        );
+
+      const itemMetaData = [];
+      hierarchy.forEach((el) => {
+        itemMetaData.push({ code: el.code, name: el.title });
+      });
+      itemData.itemMetaData = itemMetaData;
+    }
+
+    const instance: any = this.itemMasterRepository.create({
+      ...itemData,
+      id: id,
+    });
     return await this.itemMasterRepository.save(instance);
   }
 
