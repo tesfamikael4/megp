@@ -6,24 +6,13 @@ import { renderTable } from '@/app/(features)/util/renderTable';
 import { addSpacesToCamelCase } from '@/app/(features)/util/addSpaceToCamelCase';
 import { displayFormattedObject } from '@/app/(features)/util/displayFormattedObject';
 import { useDisclosure } from '@mantine/hooks';
+import {
+  RequiredFieldsOnly,
+  formatDateTimeFromString,
+  isDate,
+} from '@/app/(features)/util';
 
-const tabs = [
-  {
-    tabValue: 'preferential',
-    tabName: 'Preferential Treatment',
-  },
-  {
-    tabValue: 'upgrade',
-    tabName: 'Upgrade Request',
-  },
-  {
-    tabValue: 'renewal',
-    tabName: 'Renewal Request',
-  },
-  {
-    tabValue: 'profileUpdate',
-    tabName: 'Profile Update',
-  },
+const tab = [
   {
     tabValue: 'basic',
     tabName: 'Basic Registration',
@@ -116,7 +105,15 @@ const formatColumns = {
   service: [{ name: 'name', displayName: 'Service Type' }],
 };
 
-function FormPreview({ data }: { data: any }) {
+function FormPreview({
+  data,
+  uniqueTabs = [],
+}: {
+  data: any;
+  uniqueTabs?: { tabValue: string; tabName: string }[];
+}) {
+  const tabs = [...uniqueTabs, ...tab];
+
   const [url, setUrl] = useState('');
   const [opened, { close, open }] = useDisclosure(false);
   return (
@@ -132,6 +129,7 @@ function FormPreview({ data }: { data: any }) {
                 size={'60%'}
                 centered
                 title={'Attachment'}
+                bg={'transparent'}
               >
                 {url && <ShowFile url={url} filename={data[tabValue]} />}
               </Modal>
@@ -149,187 +147,14 @@ function FormPreview({ data }: { data: any }) {
                     {renderTable(data[tabValue], formatColumns, tabValue)}
                   </Accordion.Panel>
                 ) : formatColumns[tabValue] ? (
-                  formatColumns[tabValue].map((field) => {
-                    return (
-                      <Accordion.Panel
-                        key={field.name}
-                        className="gap-2 items-center"
-                      >
-                        <Flex>
-                          <Text
-                            size="xs"
-                            fw={700}
-                            tt="capitalize"
-                            w={150}
-                            py={4}
-                            px={2}
-                          >
-                            {addSpacesToCamelCase(
-                              field.displayName ?? field.name,
-                            )}
-                          </Text>
-                          <Text
-                            className="ml-2"
-                            size="xs"
-                            fw={500}
-                            tt="capitalize"
-                          >
-                            {data[tabValue][field.name]}
-                          </Text>
-                        </Flex>
-                      </Accordion.Panel>
-                    );
-                  })
+                  <FormattedPanel data={data} tabValue={tabValue} />
                 ) : (
-                  Object.keys(data[tabValue]).map((fieldKey) => {
-                    return tabValue === 'supportingDocuments' ||
-                      tabValue === 'certificate' ? (
-                      <Accordion.Panel key={fieldKey} className="p-0">
-                        <Accordion
-                          styles={{
-                            content: {
-                              padding: 0,
-                            },
-                          }}
-                          key={fieldKey}
-                        >
-                          <Accordion.Item
-                            key={fieldKey ?? addSpacesToCamelCase(tabValue)}
-                            styles={{
-                              item: {
-                                borderBottom: '1px solid #E5E7EB',
-                                gap: '0rem',
-                              },
-                            }}
-                            value={
-                              addSpacesToCamelCase(fieldKey) ??
-                              addSpacesToCamelCase(tabValue)
-                            }
-                          >
-                            <Accordion.Control
-                              styles={{
-                                control: {
-                                  border: 'none',
-                                  borderBottom: '1px solid #E5E7EB',
-                                },
-                              }}
-                            >
-                              {addSpacesToCamelCase(fieldKey) ??
-                                addSpacesToCamelCase(tabValue)}
-                            </Accordion.Control>
-                            <Accordion.Panel>
-                              {data[tabValue][fieldKey] ? (
-                                <ShowFile
-                                  url={`${
-                                    process.env.NEXT_PUBLIC_VENDOR_API ??
-                                    '/vendors/api/'
-                                  }upload/get-file-bo/${
-                                    tabValue === 'supportingDocuments'
-                                      ? 'SupportingDocument'
-                                      : tabValue === 'certificate'
-                                        ? 'Certificate'
-                                        : 'paymentReceipt'
-                                  }/${data[tabValue][fieldKey]}/${data?.userId}`}
-                                  filename={data[tabValue][fieldKey]}
-                                />
-                              ) : (
-                                <Box className="flex items-center h-20 w-full justify-center">
-                                  No file uploaded
-                                </Box>
-                              )}
-                            </Accordion.Panel>
-                          </Accordion.Item>
-                        </Accordion>
-                      </Accordion.Panel>
-                    ) : tabValue === 'paymentReceipt' &&
-                      fieldKey === 'attachment' ? (
-                      <Accordion.Panel key={fieldKey} className="items-center">
-                        <Flex direction={'column'}>
-                          <ShowFile
-                            url={`${
-                              process.env.NEXT_PUBLIC_VENDOR_API ??
-                              '/vendors/api/'
-                            }upload/get-file-bo/${'paymentReceipt'}/${
-                              data[tabValue][fieldKey]
-                            }/${data?.userId}`}
-                            filename={data[tabValue][fieldKey]}
-                          />
-                        </Flex>
-                      </Accordion.Panel>
-                    ) : (
-                      <Accordion.Panel key={fieldKey} className="items-center">
-                        {data[tabValue][fieldKey] !== null &&
-                          typeof data[tabValue][fieldKey] === 'object' &&
-                          fieldKey !== 'invoiceIds' && (
-                            <Flex className=" border-b px-1.5 ">
-                              <Text
-                                size="xs"
-                                fw={700}
-                                tt="capitalize"
-                                className="text-lg w-1/5 "
-                              >
-                                {addSpacesToCamelCase(fieldKey)}
-                              </Text>
-                              <Text
-                                className="ml-2"
-                                size="xs"
-                                fw={500}
-                                tt="capitalize"
-                              >
-                                {tabValue === 'businessSizeAndOwnership'
-                                  ? displayFormattedObject(
-                                      data[tabValue][fieldKey],
-                                      {
-                                        [fieldKey]: 'amount+currency',
-                                      },
-                                    )
-                                  : data[tabValue][fieldKey]}
-                              </Text>
-                            </Flex>
-                          )}
-                        {typeof data[tabValue][fieldKey] === 'string' &&
-                          fieldKey !== 'transactionId' &&
-                          fieldKey !== 'invoiceIds' &&
-                          fieldKey !== 'serviceId' && (
-                            <Flex>
-                              <Text
-                                size="xs"
-                                fw={700}
-                                tt="capitalize"
-                                w={150}
-                                px={2}
-                              >
-                                {addSpacesToCamelCase(fieldKey)}
-                              </Text>
-                              {data[tabValue][fieldKey].endsWith('.pdf') ? (
-                                <Button
-                                  onClick={() => {
-                                    open();
-                                    setUrl(
-                                      `${
-                                        process.env.NEXT_PUBLIC_VENDOR_API ??
-                                        '/vendors/api/'
-                                      }upload/get-file-bo/preferential-documents/${data[tabValue][fieldKey]}/${data.userId}`,
-                                    );
-                                  }}
-                                >
-                                  View
-                                </Button>
-                              ) : (
-                                <Text
-                                  className="ml-2"
-                                  size="xs"
-                                  fw={700}
-                                  tt="capitalize"
-                                >
-                                  {data[tabValue][fieldKey]}
-                                </Text>
-                              )}
-                            </Flex>
-                          )}
-                      </Accordion.Panel>
-                    );
-                  })
+                  <RenderObject
+                    data={data}
+                    tabValue={tabValue}
+                    setUrl={setUrl}
+                    open={open}
+                  />
                 )}
               </Accordion.Item>
             </>
@@ -342,3 +167,234 @@ function FormPreview({ data }: { data: any }) {
 }
 
 export default FormPreview;
+
+interface PanelProps {
+  data: any;
+  tabValue: string;
+  fieldKey?: string;
+  setUrl?: React.Dispatch<React.SetStateAction<string>>;
+  open?: () => void;
+  userId?: string;
+}
+
+const RenderObject = ({
+  data,
+  tabValue,
+  setUrl,
+  open,
+}: {
+  data: any;
+  tabValue: string;
+  setUrl: React.Dispatch<React.SetStateAction<string>>;
+  open: () => void;
+}): React.ReactNode => {
+  return (
+    <>
+      {Object.keys(data[tabValue]).map((fieldKey) => {
+        return tabValue === 'supportingDocuments' ||
+          tabValue === 'certificate' ? (
+          <DocumentPanel data={data} tabValue={tabValue} fieldKey={fieldKey} />
+        ) : tabValue === 'paymentReceipt' && fieldKey === 'attachment' ? (
+          <PaymentReceiptPanel
+            data={data}
+            tabValue={tabValue}
+            fieldKey={fieldKey}
+          />
+        ) : (
+          <MiscellaneousPanel
+            data={data[tabValue]?.[fieldKey]}
+            fieldKey={fieldKey}
+            tabValue={tabValue}
+            setUrl={setUrl}
+            open={open}
+            userId={data?.userId}
+          />
+        );
+      })}
+    </>
+  );
+};
+
+const FormattedPanel = ({ data, tabValue }: RequiredFieldsOnly<PanelProps>) => {
+  return (
+    <>
+      {formatColumns[tabValue].map((field) => {
+        return (
+          <Accordion.Panel key={field.name} className="gap-2 items-center">
+            <Flex>
+              <Text size="xs" fw={700} tt="capitalize" w={150} py={4} px={2}>
+                {addSpacesToCamelCase(field.displayName ?? field.name)}
+              </Text>
+              <Text className="ml-2" size="xs" fw={500} tt="capitalize">
+                {data[tabValue][field.name]}
+              </Text>
+            </Flex>
+          </Accordion.Panel>
+        );
+      })}
+    </>
+  );
+};
+
+const DocumentPanel = ({
+  data,
+  tabValue,
+  fieldKey,
+}: {
+  data: any;
+  tabValue: string;
+  fieldKey: string;
+}) => {
+  return (
+    <Accordion.Panel key={fieldKey} className="p-0">
+      <Accordion
+        styles={{
+          content: {
+            padding: 0,
+          },
+        }}
+        key={fieldKey}
+      >
+        <Accordion.Item
+          key={fieldKey ?? addSpacesToCamelCase(tabValue)}
+          styles={{
+            item: {
+              borderBottom: '1px solid #E5E7EB',
+              gap: '0rem',
+            },
+          }}
+          value={
+            addSpacesToCamelCase(fieldKey) ?? addSpacesToCamelCase(tabValue)
+          }
+        >
+          <Accordion.Control
+            styles={{
+              control: {
+                border: 'none',
+                borderBottom: '1px solid #E5E7EB',
+              },
+            }}
+          >
+            {addSpacesToCamelCase(fieldKey) ?? addSpacesToCamelCase(tabValue)}
+          </Accordion.Control>
+          <Accordion.Panel>
+            {data[tabValue]?.[fieldKey] ? (
+              <ShowFile
+                url={`${
+                  process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api/'
+                }upload/get-file-bo/${
+                  tabValue === 'supportingDocuments'
+                    ? 'SupportingDocument'
+                    : tabValue === 'certificate'
+                      ? 'Certificate'
+                      : 'paymentReceipt'
+                }/${data[tabValue]?.[fieldKey]}/${data?.userId}`}
+                filename={data[tabValue][fieldKey]}
+              />
+            ) : (
+              <Box className="flex items-center h-20 w-full justify-center">
+                No file uploaded
+              </Box>
+            )}
+          </Accordion.Panel>
+        </Accordion.Item>
+      </Accordion>
+    </Accordion.Panel>
+  );
+};
+
+const PaymentReceiptPanel = ({
+  data,
+  tabValue,
+  fieldKey,
+}: {
+  data: any;
+  tabValue: string;
+  fieldKey: string;
+}) => {
+  return (
+    <Accordion.Panel key={fieldKey} className="items-center">
+      <Flex direction={'column'}>
+        <ShowFile
+          url={`${
+            process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api/'
+          }upload/get-file-bo/${'paymentReceipt'}/${
+            data[tabValue]?.[fieldKey]
+          }/${data?.userId}`}
+          filename={data[tabValue]?.[fieldKey]}
+        />
+      </Flex>
+    </Accordion.Panel>
+  );
+};
+
+const MiscellaneousPanel = ({
+  data,
+  fieldKey,
+  tabValue,
+  setUrl,
+  open,
+  userId,
+}: Required<PanelProps>) => {
+  return (
+    <Accordion.Panel key={fieldKey} className="items-center">
+      {data !== null &&
+        typeof data === 'object' &&
+        fieldKey !== 'invoiceIds' && (
+          <Flex className=" border-b px-1.5 ">
+            <Text size="xs" fw={700} tt="capitalize" className="w-1/5 ">
+              {addSpacesToCamelCase(fieldKey)}
+            </Text>
+            <Text className="ml-2" size="xs" fw={500} tt="capitalize">
+              {tabValue === 'businessSizeAndOwnership'
+                ? displayFormattedObject(data, {
+                    [fieldKey]: 'amount+currency',
+                  })
+                : Object.keys(data).map((key) => {
+                    return (
+                      <MiscellaneousPanel
+                        key={key}
+                        data={data[key]}
+                        fieldKey={key}
+                        tabValue={tabValue}
+                        setUrl={setUrl}
+                        open={open}
+                        userId={userId}
+                      />
+                    );
+                  })}
+            </Text>
+          </Flex>
+        )}
+      {typeof data === 'string' &&
+        fieldKey !== 'transactionId' &&
+        fieldKey !== 'invoiceIds' &&
+        fieldKey !== 'invoiceId' &&
+        fieldKey !== 'serviceId' && (
+          <Flex>
+            <Text size="xs" fw={700} tt="capitalize" w={150} px={2}>
+              {addSpacesToCamelCase(fieldKey)}
+            </Text>
+            {data.endsWith('.pdf') ? (
+              <Button
+                onClick={() => {
+                  open();
+                  setUrl(
+                    `${
+                      process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api/'
+                    }upload/get-file-bo/preferential-documents/${data}/${userId}`,
+                  );
+                }}
+              >
+                View
+              </Button>
+            ) : (
+              <Text className="ml-2" size="xs" fw={500} tt="capitalize">
+                {isDate(data) ? formatDateTimeFromString(data) : data}
+              </Text>
+            )}
+          </Flex>
+        )}
+    </Accordion.Panel>
+  );
+};

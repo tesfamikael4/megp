@@ -1,5 +1,5 @@
 import { Box, Button, Chip, Table } from '@mantine/core';
-import { formatDateTimeFromString } from '.';
+import { formatDateTimeFromString, isDate } from '.';
 import tableClasses from '../_components/details-accordion/table.module.scss';
 import { addSpacesToCamelCase } from './addSpaceToCamelCase';
 
@@ -13,12 +13,6 @@ export function renderTable(
 ) {
   if (data.length === 0) {
     return null; // No data to display in the table
-  }
-  function isDate(value: any) {
-    const date = new Date(value);
-
-    if (!value || typeof value !== 'string' || Number(value)) return false;
-    return !isNaN(date.getDate());
   }
 
   const headers = Object.keys(data[0]);
