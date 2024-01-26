@@ -7,9 +7,12 @@ import {
   BadRequestException,
   UseGuards,
   Query,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
+  ApiConsumes,
   ApiExtraModels,
   ApiResponse,
   ApiTags,
@@ -27,6 +30,8 @@ import { InsertAllDataDto } from '../dto/save-all.dto';
 import { SetVendorStatus } from '../dto/vendor.dto';
 import { CollectionQuery } from 'src/shared/collection-query';
 import { MbrsDataDto } from '../dto/mbrsData.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ReceiptDto } from '../dto/receipt.dto';
 @ApiBearerAuth()
 @Controller('vendor-registrations')
 @ApiTags('Vendor-registrations')
@@ -142,14 +147,33 @@ export class VendorRegistrationsController {
   }
 
   @UseGuards(JwtGuard)
-  @Post('submit-service-upgrade')
-  async submitServiceUpgrade(
-    @CurrentUser() userInfo: any,
-    @Body() areaOfBusinessInterest: any[],
+  @Post('upgrade-service')
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('attachmentUrl'))
+  async upgradeService(
+    @UploadedFile() attachment: Express.Multer.File,
+    @CurrentUser() user: any,
+    @Body() dto: ReceiptDto,
   ) {
-    return await this.regService.upgradeVendorService(
-      userInfo.id,
-      areaOfBusinessInterest,
+    return await this.regService.submitServiceUpgrade(
+      attachment,
+      user,
+      dto
+    );
+  }
+  @UseGuards(JwtGuard)
+  @Post('renew-service')
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('attachmentUrl'))
+  async renewService(
+    @UploadedFile() attachment: Express.Multer.File,
+    @CurrentUser() user: any,
+    @Body() dto: ReceiptDto,
+  ) {
+    return await this.regService.submitServiceUpgrade(
+      attachment,
+      user,
+      dto,
     );
   }
 

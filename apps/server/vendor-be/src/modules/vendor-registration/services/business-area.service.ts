@@ -6,12 +6,14 @@ import { BusinessAreaResponseDto } from '../dto/business-area.dto';
 import { BusinessAreaEntity } from 'src/entities';
 import { ApplicationStatus } from 'src/modules/handling/enums/application-status.enum';
 import { PaymentStatus } from 'src/shared/enums/payment-status.enum';
+import { HandlingCommonService } from 'src/modules/handling/services/handling-common-services';
 
 @Injectable()
 export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
   constructor(
     @InjectRepository(BusinessAreaEntity)
     private readonly businessAreaRepository: Repository<BusinessAreaEntity>,
+    private readonly commonService: HandlingCommonService,
   ) {
     super(businessAreaRepository);
   }
@@ -44,6 +46,20 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
   async getBusinessAreaByInstanceId(instanceId: string): Promise<BusinessAreaEntity> {
     return this.businessAreaRepository.findOne({
       where: { instanceId: instanceId }
+
+    });
+  }
+  async getPreviousUpgradeService(vendorId: string, category: string): Promise<BusinessAreaEntity> {
+    return this.businessAreaRepository.findOne({
+      relations: { BpService: true, servicePrice: true },
+      where: { category: category, status: ApplicationStatus.APPROVED, vendorId: vendorId }
+
+    });
+  }
+  async getProposedUpgradeService(vendorId: string, category: string, serviceId: string): Promise<BusinessAreaEntity> {
+    return this.businessAreaRepository.findOne({
+      relations: { BpService: true, servicePrice: true },
+      where: { category: category, status: ApplicationStatus.PENDING, vendorId: vendorId, serviceId: serviceId }
 
     });
   }

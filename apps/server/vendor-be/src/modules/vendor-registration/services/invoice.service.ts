@@ -287,9 +287,8 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
           price,
           vendor,
           price.service,
-          user,
+          user
         );
-
         const business: BusinessAreaEntity = new BusinessAreaEntity();
         business.serviceId = bp.serviceId;
         business.priceRangeId = price.id;

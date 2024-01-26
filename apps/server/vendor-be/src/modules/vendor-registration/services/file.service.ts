@@ -7,7 +7,6 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { CreateFileDto, DeleteFileDto, UploadFileDto } from '../dto/file.dto';
-import { VendorRegistrationsService } from './vendor-registration.service';
 import {
   BusinessAreaEntity,
   FilesEntity,
@@ -38,7 +37,7 @@ export class FileService {
     private readonly fileRepository: Repository<FilesEntity>,
     @InjectRepository(IsrVendorsEntity)
     private readonly isrVendorsRepository: Repository<IsrVendorsEntity>,
-    private readonly vendorRegistrationsService: VendorRegistrationsService,
+
     @InjectRepository(InvoiceEntity)
     private readonly invoiceRepository: Repository<InvoiceEntity>,
     @InjectRepository(BusinessAreaEntity)
