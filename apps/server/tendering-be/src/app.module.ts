@@ -1,3 +1,4 @@
+import { DocxModule } from './shared/docx/docx.module';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -9,6 +10,7 @@ import { SpdModule } from './modules/spd/spd.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 @Module({
   imports: [
+    DocxModule,
     EventEmitterModule.forRoot(),
     ConfigModule.forRoot({
       envFilePath: '.env',
