@@ -18,7 +18,6 @@ import {
 } from '../../_api/query';
 import PaymentMethod from '../_components/payment/payment-method';
 import { usePrivilege } from '../_context/privilege-context';
-import FileUploader from '../../../_components/file-uploader/upload';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import {
@@ -32,6 +31,7 @@ import {
 import { paymentReceiptItemSchema } from '../../../../../../shared/schema/paymentReceiptItemSchema';
 import { useRouter } from 'next/navigation';
 import { NotificationService } from '../../../_components/notification';
+import FileUploader from '../../../_components/uploader';
 const VENDOR_URL = process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api';
 
 function Page() {

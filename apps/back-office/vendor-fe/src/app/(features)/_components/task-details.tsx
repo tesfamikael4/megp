@@ -8,10 +8,12 @@ export default function TaskDetails({
   tracker,
   setContent,
   data,
+  uniqueTabs,
 }: {
   tracker: any;
   setContent: React.Dispatch<React.SetStateAction<'details' | 'tasks'>>;
   data: any;
+  uniqueTabs: { tabValue: string; tabName: string }[];
 }) {
   if (tracker.task.taskType === 'ISR') {
     return (
@@ -26,7 +28,7 @@ export default function TaskDetails({
             Back
           </Button>
         </Flex>
-        <FormPreview data={data} />
+        <FormPreview data={data} uniqueTabs={uniqueTabs} />
       </Section>
     );
   }

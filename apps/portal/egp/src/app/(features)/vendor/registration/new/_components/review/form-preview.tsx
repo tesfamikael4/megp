@@ -248,7 +248,7 @@ function FormPreview({ data }: { data: any }) {
                                 size="xs"
                                 fw={700}
                                 tt="capitalize"
-                                className="text-lg w-1/5 "
+                                className="w-1/5 "
                               >
                                 {addSpacesToCamelCase(fieldKey)}
                               </Text>

@@ -178,7 +178,33 @@ export default function RequestDetail({
                   ...response.data?.isrvendor,
                   preferential: response.data?.preferential ?? {},
                   profileUpdate: response.data?.profileUpdate ?? {},
+                  upgrade: response.data?.upgrade ?? {},
+                  renewal: response.data?.renewal ?? {},
                 }}
+                uniqueTabs={
+                  requestType === 'preferential'
+                    ? [
+                        {
+                          tabValue: 'preferential',
+                          tabName: 'Preferential Treatment',
+                        },
+                      ]
+                    : requestType === 'upgrade'
+                      ? [
+                          {
+                            tabValue: 'upgrade',
+                            tabName: 'Upgrade Request',
+                          },
+                        ]
+                      : requestType === 'renewal'
+                        ? [
+                            {
+                              tabValue: 'renewal',
+                              tabName: 'Renewal Request',
+                            },
+                          ]
+                        : []
+                }
               />
             </Box>
           )}

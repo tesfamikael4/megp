@@ -13,13 +13,13 @@ import React, { useEffect, useState } from 'react';
 import InvoiceTemplate from '../../../_components/dynamicPrintComponent/invoice-sm';
 import { useGetRenewalInvoiceQuery } from '../../_api/query';
 import PaymentMethod from '../_components/payment/payment-method';
-import FileUploader from '../../../_components/file-uploader/upload';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { paymentSlipUploadSchema } from '@/shared/schema/paymentSlipUploadSchema';
 import { useRouter } from 'next/navigation';
 import { NotificationService } from '../../../_components/notification';
 import { useUploadPaymentReceiptUpgradeMutation } from '@/store/api/vendor-upgrade/api';
+import FileUploader from '../../../_components/uploader';
 const VENDOR_URL = process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api';
 
 function Page() {
