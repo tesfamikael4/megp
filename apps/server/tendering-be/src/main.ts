@@ -26,11 +26,9 @@ async function bootstrap() {
     },
   });
 
-  const config: ConfigService = app.get(ConfigService);
-
   app.enableCors();
 
-  const port: number = config.get<number>('PORT') || 3000;
+  const port = Number(process.env.PORT || 3000);
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
@@ -63,7 +61,7 @@ async function bootstrap() {
   SwaggerModule.setup('docs', app, document, customOptions);
 
   await app.listen(port, async () => {
-    console.log('[WEB]', (await app.getUrl()) + '/docs');
+    console.log('[WEB]', process.env.BASE_URL + '/docs');
   });
 }
 

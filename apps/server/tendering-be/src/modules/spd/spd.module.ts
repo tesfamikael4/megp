@@ -19,6 +19,8 @@ import { SpdSetting } from 'src/entities/spd-setting.entity';
 import { SpdPreferenceMarginService } from './service/spd-preference-margin.service';
 import { SpdRequiredDocumentaryEvidenceService } from './service/spd-required-documentary-evidence.service';
 import { SpdSettingService } from './service/spd-setting.service';
+import { DocxModule } from 'src/shared/docx/docx.module';
+import { MinIOModule } from 'src/shared/min-io/min-io.module';
 
 @Module({
   imports: [
@@ -31,6 +33,8 @@ import { SpdSettingService } from './service/spd-setting.service';
       SpdRequiredDocumentaryEvidence,
       SpdSetting,
     ]),
+    DocxModule,
+    MinIOModule,
   ],
   providers: [
     SpdService,
