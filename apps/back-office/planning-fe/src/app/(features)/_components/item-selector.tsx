@@ -43,7 +43,7 @@ const ItemSelector = ({ onDone, opened, close }: ItemSelectorProps) => {
   //variables
   const config = {
     isSearchable: true,
-    primaryColumn: 'itemMaster.description',
+    primaryColumn: 'description',
     columns: [{ accessor: 'description' }],
     isExpandable: true,
     expandedRowContent: (record) => <DetailItem data={record} />,
@@ -59,7 +59,7 @@ const ItemSelector = ({ onDone, opened, close }: ItemSelectorProps) => {
       logger.log({ data });
       setItemCollectionSelector([
         {
-          column: 'code',
+          column: 'itemMetaData.code',
           value: data.code,
           operator: '=',
         },
@@ -96,6 +96,7 @@ const ItemSelector = ({ onDone, opened, close }: ItemSelectorProps) => {
       skip: 0,
       take: 10,
       where: [itemCollectionSelector],
+      includes: ['itemMetaData'],
     });
   }, [getItemMaster, itemCollectionSelector]);
 
@@ -182,6 +183,7 @@ const ItemSelector = ({ onDone, opened, close }: ItemSelectorProps) => {
 
                             itemCollectionSelector,
                           ],
+                          includes: ['itemMetaData'],
                         },
                       });
                       getItemMaster(collectionQuery);
