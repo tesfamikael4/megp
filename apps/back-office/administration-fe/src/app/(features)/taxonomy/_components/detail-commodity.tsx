@@ -62,6 +62,12 @@ export const DetailCommodity = ({
   parents,
   setParents,
 }: DetailCommodityProps) => {
+  const [showMore, setShowMore] = useState(false);
+
+  const toggleShowMore = () => {
+    setShowMore(!showMore);
+  };
+
   const { data: children } = useListQuery({
     where: [
       [
@@ -138,20 +144,23 @@ export const DetailCommodity = ({
 
             <Table.Tr className="border-dashed border-2 ">
               <Table.Th className="bg-[#f1f1ff] w-36">Description</Table.Th>
-              <Table.Td>
-                <ScrollArea
-                  h={50}
-                  className={`${
-                    selectedData.definition &&
-                    'border-2 border-blue-400 rounded-md'
-                  }`}
-                >
-                  {selectedData.definition && (
-                    <Text size="sm" className=" p-2  ">
-                      {selectedData.definition}
-                    </Text>
-                  )}
-                </ScrollArea>
+              <Table.Td onClick={toggleShowMore} className="cursor-pointer">
+                {selectedData.definition && (
+                  <>
+                    {selectedData.definition.length <= 100 ? (
+                      selectedData.definition
+                    ) : (
+                      <>
+                        {showMore
+                          ? selectedData.definition
+                          : selectedData.definition.slice(0, 200) + '...'}
+                        <span className="text-xs ml-3 text-blue-500">
+                          {showMore ? 'See Less' : 'See More'}
+                        </span>
+                      </>
+                    )}
+                  </>
+                )}
               </Table.Td>
             </Table.Tr>
             <Table.Tr className="border-dashed border-2 ">
