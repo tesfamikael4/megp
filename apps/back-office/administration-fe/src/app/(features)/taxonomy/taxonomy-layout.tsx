@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { Section, Tree } from '@megp/core-fe';
+import { MantineTree, Section, Tree, TreeConfig } from '@megp/core-fe';
 import { useState } from 'react';
 import { useDebouncedState, useDisclosure } from '@mantine/hooks';
 import {
@@ -22,12 +22,14 @@ import { useGetLatestTaxonomiesQuery } from '@/store/api/taxonomies/taxonomies.a
 import { IconSearch } from '@tabler/icons-react';
 import { CollectionQuery, RelationConfig } from '@megp/entity';
 import { TaxonomyList } from './_components/TaxonomyList';
+import { useLazyGetClassificationsQuery } from './_api/classification.api';
 
 const TaxonomyLayout = () => {
   const [opened, { open, close }] = useDisclosure(false);
   const [parents, setParents] = useState<any>();
   const [selectedData, setSelectedData] = useState<any>({});
   const [search, setSearch] = useDebouncedState('', 500);
+  const [getChildren] = useLazyGetClassificationsQuery();
 
   const addConfig: RelationConfig<any> = {
     columns: [
@@ -70,6 +72,30 @@ const TaxonomyLayout = () => {
         },
       ],
     ],
+  };
+  const treeConfig: TreeConfig<any> = {
+    id: 'id',
+    label: 'title',
+    onClick: async (data) => {
+      setSelectedData(data);
+    },
+    load: async (data) => {
+      const res = await getChildren({
+        where: [
+          [
+            {
+              column: 'parentCode',
+              value: data.code,
+              operator: '=',
+            },
+          ],
+        ],
+      }).unwrap();
+      return {
+        result: res?.items ?? [],
+        loading: isLoading,
+      };
+    },
   };
 
   const { data, refetch } = useListQuery(queryOptions);
@@ -139,22 +165,7 @@ const TaxonomyLayout = () => {
                 isLoading={isLoading}
               />
             ) : (
-              <Tree
-                fieldNames={{ title: 'title', key: 'code' }}
-                mode="view"
-                url={(code) =>
-                  `${
-                    process.env.NEXT_PUBLIC_ADMINISTRATION_API ??
-                    '/administration/api/'
-                  }classifications?q=w%3DparentCode%3A%3D%3A${code}`
-                }
-                data={data ? data.items : []}
-                selectedKeys={[selectedData.key]}
-                onClick={(node, parents) => {
-                  setSelectedData(node);
-                  setParents(parents);
-                }}
-              />
+              <MantineTree data={data ? data.items : []} config={treeConfig} />
             )}
 
             {Object.keys(data ? data?.items : []).length === 0 && (
