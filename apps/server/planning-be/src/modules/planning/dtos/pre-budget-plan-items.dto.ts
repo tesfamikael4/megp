@@ -24,7 +24,7 @@ export class CreatePreBudgetPlanItemsDto {
 
   @ApiProperty()
   @IsNumber()
-  quantity: string;
+  quantity: number;
 
   @ApiProperty()
   @IsString()
