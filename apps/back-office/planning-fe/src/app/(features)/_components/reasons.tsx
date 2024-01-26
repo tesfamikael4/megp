@@ -1,8 +1,8 @@
 import { useAddJustificationMutation } from '@/store/api/reason/reason.api';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
+  Alert,
   Button,
-  FileInput,
   Group,
   Modal,
   Select,
@@ -10,6 +10,7 @@ import {
   Textarea,
 } from '@mantine/core';
 import { logger, notify } from '@megp/core-fe';
+import { IconInfoCircle } from '@tabler/icons-react';
 import { Controller, useForm } from 'react-hook-form';
 import { ZodType, z } from 'zod';
 
@@ -25,6 +26,7 @@ export const Reasons = ({
   objectId,
   activityId,
   type,
+  description,
 }: {
   opened: boolean;
   close: () => void;
@@ -32,6 +34,7 @@ export const Reasons = ({
   objectId: string;
   activityId: string;
   type: string;
+  description?: string;
 }) => {
   const [addJustification, { isLoading }] = useAddJustificationMutation();
 
@@ -59,8 +62,23 @@ export const Reasons = ({
   };
 
   return (
-    <Modal opened={opened} onClose={close} size={'lg'} title="Justification">
-      {/* <Text>Tessgjhsdfsh</Text> */}
+    <Modal
+      opened={opened}
+      onClose={close}
+      size={'lg'}
+      title={<p className="font-semibold">Justification</p>}
+    >
+      {description && (
+        <Alert
+          variant="light"
+          color="red"
+          title="Warning"
+          icon={<IconInfoCircle />}
+          className="mb-2"
+        >
+          {description}
+        </Alert>
+      )}
       <Stack>
         <Controller
           name="reason"

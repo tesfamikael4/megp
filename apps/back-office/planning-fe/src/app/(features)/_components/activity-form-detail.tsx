@@ -15,12 +15,11 @@ import {
   TextInput,
   Textarea,
 } from '@mantine/core';
-import { Tree, logger } from '@megp/core-fe';
+import { MantineTree, Tree, TreeConfig, logger, notify } from '@megp/core-fe';
 import { EntityButton } from '@megp/entity';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z, ZodType } from 'zod';
-import { notifications } from '@mantine/notifications';
 import {
   useCreateMutation,
   useDeleteMutation,
@@ -37,6 +36,7 @@ import { useParams, useRouter } from 'next/navigation';
 import {
   useGetClassificationsQuery,
   useGetCurrenciesQuery,
+  useLazyGetClassificationsQuery,
 } from '@/store/api/administration/administration.api';
 import { useDisclosure } from '@mantine/hooks';
 import { IconPlus } from '@tabler/icons-react';
@@ -79,7 +79,6 @@ export const FormDetail = ({
   } = useForm<BudgetPlanActivities>({
     resolver: zodResolver(activitiesSchema),
   });
-  // const [opened, { open, close }] = useDisclosure();
   const [opened, { close, open }] = useDisclosure();
   const [tags, setTags] = useState<any>([]);
 
@@ -97,6 +96,7 @@ export const FormDetail = ({
   } as any);
 
   const { data: currency } = useGetCurrenciesQuery({} as any);
+  const [getChildren, { isLoading }] = useLazyGetClassificationsQuery();
   // pre rtk query
   const [createPre, { isLoading: isPreCreating }] = useCreateMutation();
   const [getPreActivity, { data: preActivity, isSuccess: isPreSuccess }] =
@@ -114,6 +114,30 @@ export const FormDetail = ({
     useDeletePostActivityMutation();
 
   const method = watch('procurementMethod');
+
+  //configs
+  const treeConfig: TreeConfig<any> = {
+    id: 'code',
+    label: 'title',
+    load: async (data) => {
+      // logger.log({ data });
+      const res = await getChildren({
+        where: [
+          [
+            {
+              column: 'parentCode',
+              value: data.code,
+              operator: '=',
+            },
+          ],
+        ],
+      }).unwrap();
+      return {
+        result: res?.items ?? [],
+        loading: isLoading,
+      };
+    },
+  };
 
   //event handler
   const onCreate = async (data) => {
@@ -138,54 +162,30 @@ export const FormDetail = ({
     try {
       if (page == 'pre') {
         const res = await createPre(rawData).unwrap();
-        notifications.show({
-          title: 'Success',
-          message: 'Activity created Successfully',
-          color: 'green',
-        });
+        notify('Success', 'Activity created Successfully');
         router.push(`/pre-budget-plan/${budgetPlanId}/activities/${res.id}`);
       } else {
         const res = await createPost(rawData).unwrap();
-        notifications.show({
-          title: 'Success',
-          message: 'Activity created Successfully',
-          color: 'green',
-        });
+        notify('Success', 'Activity created Successfully');
         router.push(`/post-budget-plan/${budgetPlanId}/activities/${res.id}`);
       }
     } catch (err) {
-      notifications.show({
-        title: 'Error',
-        message: 'Something went wrong',
-        color: 'red',
-      });
+      notify('Error', 'Something went wrong');
     }
   };
   const onDelete = async () => {
     try {
       if (page == 'pre') {
         await removePre(id as string).unwrap();
-        notifications.show({
-          title: 'Success',
-          message: 'Deleted Successfully',
-          color: 'green',
-        });
+        notify('Success', 'Deleted Successfully');
         router.push(`/pre-budget-plan/${budgetPlanId}/activities/`);
       } else {
         await removePost(id as string).unwrap();
-        notifications.show({
-          title: 'Success',
-          message: 'Deleted Successfully',
-          color: 'green',
-        });
+        notify('Success', 'Deleted Successfully');
         router.push(`/post-budget-plan/${budgetPlanId}/activities/`);
       }
     } catch (err) {
-      notifications.show({
-        title: 'Error',
-        message: 'Something went wrong',
-        color: 'red',
-      });
+      notify('Error', 'Something went wrong');
     }
   };
 
@@ -209,26 +209,14 @@ export const FormDetail = ({
     try {
       if (page == 'pre') {
         await updatePre(rawData);
-        notifications.show({
-          title: 'Success',
-          message: 'Activity Updated Successfully',
-          color: 'green',
-        });
+        notify('Success', 'Activity Updated Successfully');
       } else {
         await updatePost(rawData);
-        notifications.show({
-          title: 'Success',
-          message: 'Activity Updated Successfully',
-          color: 'green',
-        });
+        notify('Success', 'Activity Updated Successfully');
       }
     } catch (err) {
       logger.log(err);
-      notifications.show({
-        title: 'Error',
-        message: 'Something went wrong',
-        color: 'red',
-      });
+      notify('Error', 'Something went wrong');
     }
   };
 
@@ -346,7 +334,11 @@ export const FormDetail = ({
             }}
             disabled={disableFields}
             leftSection={
-              <ActionIcon onClick={open} variant="subtle">
+              <ActionIcon
+                onClick={open}
+                variant="subtle"
+                disabled={disableFields}
+              >
                 <IconPlus />
               </ActionIcon>
             }
@@ -396,7 +388,12 @@ export const FormDetail = ({
         title="Select Classifications"
         size="lg"
       >
-        <Tree
+        <Box></Box>
+        <MantineTree
+          config={treeConfig}
+          data={classifications ? classifications.items : []}
+        />
+        {/* <Tree
           fieldNames={{ title: 'title', key: 'code' }}
           data={classifications ? classifications.items : []}
           mode="select"
@@ -418,7 +415,7 @@ export const FormDetail = ({
             setTags(castedData);
             close();
           }}
-        />
+        /> */}
       </Modal>
     </Stack>
   );

@@ -451,6 +451,7 @@ export const ActivityMechanization = ({
         objectId={procurementMethodId}
         activityId={id as string}
         type={'procurementMethod'}
+        description="The procurement method used for this activity violates the rule. Please select possible reason why you want this activity by this procurement method"
       />
     </>
   );

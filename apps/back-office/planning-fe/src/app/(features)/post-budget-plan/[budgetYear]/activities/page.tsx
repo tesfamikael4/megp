@@ -7,11 +7,11 @@ import { useParams, useRouter } from 'next/navigation';
 import { ActionIcon, Button } from '@mantine/core';
 import { IconChevronRight, IconPlus } from '@tabler/icons-react';
 import { DetailActivity } from '@/app/(features)/_components/detail-activity';
-import { useGetPreBudgetPlanQuery } from '@/store/api/pre-budget-plan/pre-budget-plan.api';
+import { useGetPostBudgetPlanQuery } from '@/store/api/post-budget-plan/post-budget-plan.api';
 
 export default function PostBudget() {
   const { budgetYear } = useParams();
-  const { data: preBudgetYear } = useGetPreBudgetPlanQuery(
+  const { data: postBudgetYear } = useGetPostBudgetPlanQuery(
     budgetYear as string,
   );
   const [listById, { data: list }] = useLazyListByIdQuery();
@@ -74,7 +74,7 @@ export default function PostBudget() {
       title="Activities"
       collapsible={false}
       action={
-        preBudgetYear?.status == 'Draft' && (
+        postBudgetYear?.status == 'Draft' && (
           <Button
             onClick={() =>
               router.push(`/post-budget-plan/${budgetYear}/activities/new`)

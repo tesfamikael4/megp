@@ -9,7 +9,7 @@ import {
   Modal,
   Text,
 } from '@mantine/core';
-import { logger } from '@megp/core-fe';
+import { logger, notify } from '@megp/core-fe';
 import { useDisclosure } from '@mantine/hooks';
 import {
   IconDeviceFloppy,
@@ -134,7 +134,31 @@ export function Items({
         onDone={(data, id) => handelOnDone(data, id, collapse)}
       />
     ),
-    // expandedRowContent: (record) => <ItemDetailForm item={record} />,
+    columns: [
+      ...config.columns,
+      {
+        title: '',
+        accessor: 'actions',
+        width: 50,
+        render: (record) => (
+          <>
+            <ActionIcon
+              color="red"
+              size="sm"
+              variant="subtle"
+              onClick={(e) => {
+                e.stopPropagation();
+                const temp = newItems.filter((i) => i.id != record.id);
+                setNewItems(temp);
+              }}
+              disabled={disableFields}
+            >
+              <IconTrash size={14} />
+            </ActionIcon>
+          </>
+        ),
+      },
+    ],
   };
   const listConfig = {
     ...config,
@@ -271,48 +295,53 @@ export function Items({
   };
 
   const handelOnSave = async () => {
-    try {
-      const castedData = newItems.map((item) => {
-        return {
-          unitPrice: item.unitPrice ?? 0,
-          currency:
-            page == 'pre' ? preActivity?.currency : postActivity?.currency,
-          quantity: item.quantity ?? 0,
-          uom: item.uom,
-          uomName: item.uomName,
-          [page == 'pre'
-            ? 'preBudgetPlanActivityId'
-            : 'postBudgetPlanActivityId']: id,
-          description: item.description,
-          metaData: item,
-          itemCode: item.itemCode,
-          measurement: item.measurement,
-          classification: item.classification,
-        };
-      });
-      if (page == 'pre') {
-        await addPreItems({ items: castedData }).unwrap();
-        notifications.show({
-          title: 'Success',
-          message: 'Items Created Successfully',
-          color: 'green',
+    const temp = newItems.filter((i) => i.quantity * i.unitPrice > 0);
+    if (temp.length !== newItems.length) {
+      notify('Error', 'Quantity and Unit Price cannot be 0');
+    } else {
+      try {
+        const castedData = newItems.map((item) => {
+          return {
+            unitPrice: item.unitPrice ?? 0,
+            currency:
+              page == 'pre' ? preActivity?.currency : postActivity?.currency,
+            quantity: item.quantity ?? 0,
+            uom: item.uom,
+            uomName: item.uomName,
+            [page == 'pre'
+              ? 'preBudgetPlanActivityId'
+              : 'postBudgetPlanActivityId']: id,
+            description: item.description,
+            metaData: item,
+            itemCode: item.itemCode,
+            measurement: item.measurement,
+            classification: item.classification,
+          };
         });
-      } else {
-        await addPostItems({ items: castedData }).unwrap();
-        notifications.show({
-          title: 'Success',
-          message: 'Items Created Successfully',
-          color: 'green',
-        });
+        if (page == 'pre') {
+          await addPreItems({ items: castedData }).unwrap();
+          notifications.show({
+            title: 'Success',
+            message: 'Items Created Successfully',
+            color: 'green',
+          });
+        } else {
+          await addPostItems({ items: castedData }).unwrap();
+          notifications.show({
+            title: 'Success',
+            message: 'Items Created Successfully',
+            color: 'green',
+          });
+        }
+        setNewItems([]);
+      } catch (err) {
+        logger.log(err);
+        if (err.status === 430) {
+          notify('Error', err.data.message);
+        } else {
+          notify('Error', 'Something went wrong12');
+        }
       }
-      setNewItems([]);
-    } catch (err) {
-      logger.log(err);
-      notifications.show({
-        title: 'Error',
-        message: 'Something Went wrong',
-        color: 'red',
-      });
     }
   };
 

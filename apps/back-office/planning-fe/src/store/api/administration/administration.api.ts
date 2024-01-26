@@ -15,7 +15,8 @@ export const administrationApi = createApi({
           const query = encodeCollectionQuery(collectionQuery);
           q = `?q=${query}`;
         }
-        return { url: `item-metadata/items${q}`, method: 'GET' };
+        // return { url: `item-metadata/items${q}`, method: 'GET' };
+        return { url: `item-masters${q}`, method: 'GET' };
       },
     }),
     getMeasurements: builder.query<any, null>({

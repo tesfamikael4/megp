@@ -22,7 +22,7 @@ export default function NewActivity() {
             label="List Activities"
             className="cursor-pointer"
             onClick={() =>
-              router.push(`/pre-budget-plan/${budgetYear}/activities`)
+              router.push(`/post-budget-plan/${budgetYear}/activities`)
             }
           >
             <Flex align="center">

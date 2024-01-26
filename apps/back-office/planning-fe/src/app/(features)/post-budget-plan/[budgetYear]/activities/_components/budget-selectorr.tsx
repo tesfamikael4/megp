@@ -1,31 +1,27 @@
 'use client';
 
-import { CollectionSelector } from '@/app/(features)/_components/collection-selector';
 import { DetailTable } from '@/app/(features)/_components/detail-table';
+import { ExpandableTable } from '@/app/(features)/_components/expandable-table';
 import { useLazyListByIdQuery } from '@/app/(features)/budget/_api/budget.api';
 import { useGetPostBudgetPlanQuery } from '@/store/api/post-budget-plan/post-budget-plan.api';
 import {
-  ActionIcon,
   Button,
   Flex,
   Group,
   Modal,
-  Radio,
   TextInput,
   Box,
   LoadingOverlay,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { TableConfig, logger } from '@megp/core-fe';
-import { IconChevronRight } from '@tabler/icons-react';
+import { logger } from '@megp/core-fe';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 export const BudgetSelector = () => {
   const [opened, { close, open }] = useDisclosure(false);
-  const [, setSelectedContract] = useState('');
+  const [selectedContract, setSelectedContract] = useState<any[]>([]);
   const [value, setValue] = useState('');
-  const [detail, setDetail] = useState(undefined);
   const { budgetYear } = useParams();
   // const { data } = useListByAppIdQuery(budgetYear as string);
   const [getBudget, { data, isLoading }] = useLazyListByIdQuery();
@@ -34,94 +30,84 @@ export const BudgetSelector = () => {
     isLoading: isPostBudgetLoading,
     isSuccess,
   } = useGetPostBudgetPlanQuery(budgetYear as string);
-  const detailInfo = [
-    {
-      key: 'Budget Code',
-      value: (detail as any)?.budgetCode,
-    },
-    {
-      key: 'Description',
-      value: (detail as any)?.description,
-    },
-    {
-      key: 'Allocated Budget',
-      value: parseInt((detail as any)?.allocatedBudget).toLocaleString(
-        'en-US',
-        {
-          style: 'currency',
-          currency: (detail as any)?.currency ?? 'MKW',
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        },
-      ),
-    },
-    {
-      key: 'Revised Budget',
-      value: parseInt((detail as any)?.revisedBudget).toLocaleString('en-US', {
-        style: 'currency',
-        currency: (detail as any)?.currency ?? 'MKW',
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      }),
-    },
-    {
-      key: 'Available Budget',
-      value: parseInt((detail as any)?.availableBudget).toLocaleString(
-        'en-US',
-        {
-          style: 'currency',
-          currency: (detail as any)?.currency ?? 'MKW',
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        },
-      ),
-    },
-    {
-      key: 'Funding Source',
-      value: (detail as any)?.fundingSource,
-    },
-    {
-      key: 'Currency',
-      value: (detail as any)?.currency,
-    },
-    {
-      key: 'Type',
-      value: (detail as any)?.type,
-    },
-  ];
 
-  const config: TableConfig<any> = {
+  const config = {
+    selectedItems: selectedContract,
+    setSelectedItems: (data) => {
+      const temp = data.filter((d) => !selectedContract.includes(d));
+      setSelectedContract(temp);
+    },
+    isExpandable: true,
+    expandedRowContent: (budget) => {
+      const castedBudget = [
+        {
+          key: 'Budget Code',
+          value: budget?.budgetCode,
+        },
+        {
+          key: 'Description',
+          value: budget?.description,
+        },
+        {
+          key: 'Allocated Budget',
+          value: parseInt(budget?.allocatedBudget).toLocaleString('en-US', {
+            style: 'currency',
+            currency: budget?.currency ?? 'MKW',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          }),
+        },
+        {
+          key: 'Revised Budget',
+          value: parseInt(budget?.revisedBudget).toLocaleString('en-US', {
+            style: 'currency',
+            currency: budget?.currency ?? 'MKW',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          }),
+        },
+        {
+          key: 'Available Budget',
+          value: parseInt(budget?.availableBudget).toLocaleString('en-US', {
+            style: 'currency',
+            currency: budget?.currency ?? 'MKW',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          }),
+        },
+        {
+          key: 'Funding Source',
+          value: budget?.fundingSource,
+        },
+        {
+          key: 'Currency',
+          value: budget?.currency,
+        },
+        {
+          key: 'Type',
+          value: budget?.type,
+        },
+      ];
+      return (
+        <Box className="bg-white p-3">
+          <DetailTable data={castedBudget} />
+        </Box>
+      );
+    },
     columns: [
       {
-        id: 'budgetCode',
-        header: 'Budget Line',
-        accessorKey: 'budgetCode',
+        title: 'Budget Line',
+        accessor: 'budgetCode',
       },
       {
-        id: 'action',
-        header: 'Allocated Budget',
-        accessorKey: 'allocatedBudget',
-        cell: ({ row: { original } }) => (
+        title: 'Allocated Budget',
+        accessor: 'allocatedBudget',
+        textAlign: 'right',
+        render: (record) => (
           <p className="text-right">
-            {parseInt(original.allocatedBudget).toLocaleString('en-US', {
+            {parseInt(record.allocatedBudget).toLocaleString('en-US', {
               style: 'currency',
-              currency: original.currency,
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            })}
-          </p>
-        ),
-      },
-
-      {
-        id: 'action',
-        header: 'Revised Budget',
-        accessorKey: 'revisedBudget',
-        cell: ({ row: { original } }) => (
-          <p className="text-right">
-            {parseInt(original.revisedBudget).toLocaleString('en-US', {
-              style: 'currency',
-              currency: original.currency,
+              currency: record.currency,
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
             })}
@@ -129,14 +115,14 @@ export const BudgetSelector = () => {
         ),
       },
       {
-        id: 'action',
-        header: 'Available Budget',
-        accessorKey: 'availableBudget',
-        cell: ({ row: { original } }) => (
+        title: 'Revised Budget',
+        accessor: 'revisedBudget',
+        textAlign: 'right',
+        render: (record) => (
           <p className="text-right">
-            {parseInt(original.availableBudget).toLocaleString('en-US', {
+            {parseInt(record.revisedBudget).toLocaleString('en-US', {
               style: 'currency',
-              currency: original.currency,
+              currency: record.currency,
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
             })}
@@ -144,13 +130,18 @@ export const BudgetSelector = () => {
         ),
       },
       {
-        id: 'action',
-        header: '',
-        accessorKey: 'action',
-        cell: ({ row: { original } }: any) => (
-          <ActionIcon variant="transparent" onClick={() => setDetail(original)}>
-            <IconChevronRight className="text-black" />
-          </ActionIcon>
+        title: 'Available Budget',
+        accessor: 'availableBudget',
+        textAlign: 'right',
+        render: (record) => (
+          <p className="text-right">
+            {parseInt(record.availableBudget).toLocaleString('en-US', {
+              style: 'currency',
+              currency: record.currency,
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
+          </p>
         ),
       },
     ],
@@ -186,44 +177,35 @@ export const BudgetSelector = () => {
         size="55rem"
         // centered
       >
-        {!detail && (
-          <>
-            <CollectionSelector
-              data={data?.items ?? []}
-              config={config}
-              total={data?.total ?? 0}
+        <>
+          {/* 
               onDone={(data) => {
                 setSelectedContract(data.budgetCode);
                 setValue(data.budgetCode);
                 close();
-                setDetail(undefined);
               }}
-              onRequestChange={(collectionQuery) => {
-                getBudget({ id: postBudget?.appId, collectionQuery });
+            /> */}
+          <ExpandableTable
+            data={data?.items ?? []}
+            config={config}
+            total={data?.total ?? 0}
+            onRequestChange={(collectionQuery) => {
+              getBudget({ id: postBudget?.appId, collectionQuery });
+            }}
+          />
+
+          <Group justify="end">
+            <Button
+              onClick={() => {
+                // setSelectedContract(data.budgetCode);
+                setValue(selectedContract[0].budgetCode);
+                close();
               }}
-            />
-          </>
-        )}
-
-        {detail && (
-          <>
-            <DetailTable data={detailInfo} />
-
-            <Group justify="end" gap="md" className="mt-2">
-              <Button onClick={() => setDetail(undefined)}>Back</Button>
-              <Button
-                onClick={() => {
-                  setSelectedContract((detail as any)?.budgetCode);
-                  setValue((detail as any)?.budgetCode);
-                  close();
-                  setDetail(undefined);
-                }}
-              >
-                Select
-              </Button>
-            </Group>
-          </>
-        )}
+            >
+              Done
+            </Button>
+          </Group>
+        </>
       </Modal>
     </Box>
   );
