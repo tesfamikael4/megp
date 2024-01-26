@@ -21,6 +21,7 @@ export const dataSourceOptions = {
   username: TypeOrmConfigHelper.DATABASE_USER,
   password: TypeOrmConfigHelper.DATABASE_PASSWORD,
   entities: [`${pathPrefix}dist/**/*.entity.{ts,js}`],
+  subscribers: [`${pathPrefix}dist/**/subscribers/*.subscribers.{ts,js}`],
   migrations: [`${pathPrefix}dist/migrations/*.{ts,js}`],
   migrationsRun: true,
   migrationsTableName: 'typeorm_migrations',

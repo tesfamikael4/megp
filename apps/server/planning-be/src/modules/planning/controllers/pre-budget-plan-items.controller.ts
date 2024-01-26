@@ -5,6 +5,7 @@ import { PreBudgetPlanItemsService } from '../services/pre-budget-plan-items.ser
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { BulkItemsDto } from '../dtos/pre-budget-plan-items.dto';
 import { ExtraCrudController } from 'src/shared/controller';
+import { OnEvent } from '@nestjs/event-emitter';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'preBudgetPlanActivityId',
@@ -32,5 +33,12 @@ export class PreBudgetPlanItemsController extends ExtraCrudController<PreBudgetP
   @Get('code-generate')
   async codeGenerate(): Promise<string> {
     return this.preBudgetPlanItemsService.codeGenerate();
+  }
+
+  @OnEvent('pre.recalculateCalculatedAmountActivity')
+  async recalculate(payload) {
+    return await this.preBudgetPlanItemsService.recalculateCalculatedAmounty(
+      payload.preBudgetPlanActivityId,
+    );
   }
 }
