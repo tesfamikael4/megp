@@ -14,28 +14,4 @@ export class ItemMetaDataService extends ExtraCrudService<ItemMetaData> {
   ) {
     super(metaDataRepository);
   }
-
-  async getItems(query: CollectionQuery) {
-    query.includes.push('itemMaster');
-
-    const dataQuery = QueryConstructor.constructQuery<ItemMetaData>(
-      this.metaDataRepository,
-      query,
-    );
-    const response = new DataResponseFormat<ItemMetaData>();
-    if (query.count) {
-      response.total = await dataQuery.getCount();
-    } else {
-      const [result, total] = await dataQuery.getManyAndCount();
-      response.total = total;
-      response.items = result;
-    }
-
-    const itemMasters: any = [];
-    response.items.forEach((item) => {
-      itemMasters.push(item.itemMaster);
-    });
-    response.items = itemMasters;
-    return response;
-  }
 }

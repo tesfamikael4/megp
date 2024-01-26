@@ -24,6 +24,7 @@ export class ItemMetaData extends Audit {
 
   @ManyToOne(() => ItemMaster, (itemMaster) => itemMaster.itemMetaData, {
     onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
   })
   @JoinColumn()
   itemMaster: ItemMaster;

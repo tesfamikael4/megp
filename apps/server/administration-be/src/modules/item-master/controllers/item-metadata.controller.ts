@@ -23,16 +23,4 @@ export class ItemMetaDataController extends ExtraCrudController<ItemMetaData>(
   constructor(private readonly itemMetaDataService: ItemMetaDataService) {
     super(itemMetaDataService);
   }
-
-  @Get('/items')
-  @ApiQuery({
-    name: 'q',
-    type: String,
-    description: 'Collection Query Parameter. Optional',
-    required: false,
-  })
-  async getItems(@Query('q') q: string) {
-    const query = decodeCollectionQuery(q);
-    return await this.itemMetaDataService.getItems(query);
-  }
 }

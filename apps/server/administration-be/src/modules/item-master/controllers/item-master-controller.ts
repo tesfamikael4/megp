@@ -33,9 +33,9 @@ export class ItemMasterConroller extends EntityCrudController<ItemMaster>(
   @Put(':id')
   async update(
     @Param('id') id: string,
-    @Body() itemData: ItemMaster,
+    @Body() itemData: any,
   ): Promise<ItemMaster> {
-    return this.itemMasterService.updateWithTags(id, itemData);
+    return this.itemMasterService.updateWithChildren(id, itemData);
   }
 
   @Get('getByParentClassification/:parentId')

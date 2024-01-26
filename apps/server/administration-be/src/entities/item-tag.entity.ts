@@ -19,6 +19,7 @@ export class ItemTag {
   @ManyToOne(() => ItemMaster, (e) => e.itemTags, {
     cascade: ['insert', 'update'],
     onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
   })
   @JoinColumn({ name: 'itemMasterId' })
   itemMaster: ItemMaster;
