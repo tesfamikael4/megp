@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryColumn, OneToMany } from 'typeorm';
 
 import { Audit } from 'src/shared/entities/audit.entity';
 
@@ -6,8 +6,8 @@ import { Permission } from './permission.entity';
 
 @Entity({ name: 'applications' })
 export class Application extends Audit {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryColumn()
+  id: number;
 
   @Column()
   name: string;
@@ -15,7 +15,7 @@ export class Application extends Audit {
   @Column()
   description: string;
 
-  @Column({ nullable: true, unique: true })
+  @Column({ unique: true })
   key: string;
 
   @OneToMany(() => Permission, (permissions) => permissions.application, {
@@ -24,5 +24,3 @@ export class Application extends Audit {
   })
   permissions: Permission[];
 }
-
-

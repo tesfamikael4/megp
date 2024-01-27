@@ -52,6 +52,21 @@ export class UserController extends ExtraCrudController<User>(options) {
     return this.userService.getOrganizationAdmins(id, query);
   }
 
+  @Get('list/:id')
+  @ApiQuery({
+    name: 'q',
+    type: String,
+    description: 'Collection Query Parameter. Optional',
+    required: false,
+  })
+  async findAll(
+    @Param('id') id: string,
+    @Query('q') q: string,
+  ): Promise<DataResponseFormat<User>> {
+    const query = decodeCollectionQuery(q);
+    return this.userService.findAll(id, query);
+  }
+
   @Get('list/:organizationId/permission/:permission')
   @ApiQuery({
     name: 'q',

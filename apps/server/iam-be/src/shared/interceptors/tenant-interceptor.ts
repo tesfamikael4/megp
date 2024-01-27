@@ -6,11 +6,25 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { Observable } from 'rxjs';
+import { Reflector } from '@nestjs/core';
+import { IGNORE_TENANT_INTERCEPTOR_KEY } from '@decorators';
 
 @Injectable()
 export class TenantInterceptor implements NestInterceptor {
+  constructor(private readonly reflector: Reflector) {}
+
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const req = context.switchToHttp().getRequest<Request>();
+
+    const isTenantInterceptorIgnored =
+      this.reflector?.getAllAndOverride<boolean>(
+        IGNORE_TENANT_INTERCEPTOR_KEY,
+        [context.getHandler(), context.getClass()],
+      );
+
+    if (isTenantInterceptorIgnored) {
+      return next.handle();
+    }
 
     const user: any = req.user;
 

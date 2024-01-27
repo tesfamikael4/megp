@@ -17,10 +17,10 @@ export class MandatePermission extends Audit {
   id: string;
 
   @Column()
-  mandateId: string;
+  mandateId: number;
 
   @Column()
-  permissionId: string;
+  permissionId: number;
 
   @ManyToOne(() => Mandate, (mandate) => mandate.mandatePermissions, {
     orphanedRowAction: 'delete',

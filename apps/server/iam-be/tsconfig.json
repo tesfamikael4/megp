@@ -19,7 +19,8 @@
       "@generic-services": ["./src/shared/service/"],
       "@generic-controllers": ["./src/shared/controller/"],
       "@auth": ["./src/shared/authorization/"],
-      "@interceptors": ["./src/shared/interceptors/"]
+      "@interceptors": ["./src/shared/interceptors/"],
+      "@decorators": ["./src/shared/decorators/"]
     },
     "incremental": true,
     "skipLibCheck": true,

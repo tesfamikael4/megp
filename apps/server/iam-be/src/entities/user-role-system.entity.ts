@@ -17,7 +17,7 @@ export class UserRoleSystem extends Audit {
   id: string;
 
   @Column()
-  roleSystemId: string;
+  roleSystemId: number;
 
   @Column()
   userId: string;

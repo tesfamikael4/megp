@@ -142,8 +142,6 @@ export class AuthHelper {
       <main>
         <div
           style="
-            margin: 0;
-            margin-top: 70px;
             padding: 92px 30px 115px;
             background: #ffffff;
             border-radius: 30px;
@@ -151,20 +149,10 @@ export class AuthHelper {
           "
         >
           <div style="width: 100%; max-width: 489px; margin: 0 auto;">
-            <h1
-              style="
-                margin: 0;
-                font-size: 24px;
-                font-weight: 500;
-                color: #1f1f1f;
-              "
-            >
-              Your OTP
-            </h1>
             <p
               style="
                 margin: 0;
-                margin-top: 17px;
+                margin-top: 5px;
                 font-size: 16px;
                 font-weight: 500;
               "
@@ -188,7 +176,36 @@ export class AuthHelper {
             <p
               style="
                 margin: 0;
-                margin-top: 60px;
+                margin-top: 24px;
+                font-size: 16px;
+                font-weight: 500;
+              "
+            >
+              Your Username
+            </p>
+            <p
+              style="
+                 margin: 0;
+                margin-top: 17px;
+                font-size: 28px;
+                font-weight: 600;
+              "
+            >
+              ${username}
+            </p>
+            <p
+              style="
+                margin: 0;
+                margin-top: 17px;
+                font-size: 24px;
+                font-weight: 500;
+                color: #1f1f1f;
+              "
+            >
+              Your OTP
+            </p>
+            <p
+              style="
                 font-size: 40px;
                 font-weight: 600;
                 letter-spacing: 25px;

@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUUID,
+  IsNumber,
+} from 'class-validator';
 import { RolePermission } from '@entities';
 
 export class CreateRolePermissionDto {
@@ -8,9 +14,9 @@ export class CreateRolePermissionDto {
   @IsUUID()
   roleId: string;
   @ApiProperty()
-  @IsUUID()
+  @IsNumber()
   @IsNotEmpty()
-  permissionId: string;
+  permissionId: number;
   static fromDto(rolePermissionDto: CreateRolePermissionDto): RolePermission {
     const rolePermission: RolePermission = new RolePermission();
     rolePermission.id = rolePermissionDto.id;

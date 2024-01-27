@@ -1,7 +1,7 @@
 import {
   Entity,
   Column,
-  PrimaryGeneratedColumn,
+  PrimaryColumn,
   OneToMany,
   ManyToOne,
   JoinColumn,
@@ -15,8 +15,8 @@ import { RolePermission } from '@entities';
 
 @Entity({ name: 'permissions' })
 export class Permission extends Audit {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryColumn()
+  id: number;
 
   @Column()
   name: string;
@@ -28,7 +28,7 @@ export class Permission extends Audit {
   key: string;
 
   @Column()
-  applicationId: string;
+  applicationId: number;
 
   @ManyToOne(() => Application, (application) => application.permissions)
   @JoinColumn({ name: 'applicationId' })

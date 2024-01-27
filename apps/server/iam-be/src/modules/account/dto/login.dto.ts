@@ -54,6 +54,20 @@ export class ResetPasswordDto {
   public isOtp: boolean;
 }
 
+export class AcceptAccountDto {
+  @ApiProperty()
+  @IsNotEmpty()
+  public verificationId: string;
+
+  @ApiProperty()
+  @IsString()
+  public otp: string;
+
+  @ApiProperty()
+  @IsBoolean()
+  public isOtp: boolean;
+}
+
 export class ChangePasswordDto {
   public accountId: string;
 

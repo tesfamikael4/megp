@@ -5,9 +5,10 @@ import { UserProfile } from 'src/entities';
 export class CreateUserProfileDto {
   @ApiProperty()
   @IsUUID()
-  userId: string;
+  accountId: string;
+
   @ApiProperty()
-  extendedProfile: JSON;
+  extendedProfile: any;
 }
 
 export class UpdateUserProfileDto extends CreateUserProfileDto {
@@ -21,7 +22,9 @@ export class UserProfileResponseDto extends UpdateUserProfileDto {
     const userProfileDto: UserProfileResponseDto = new UserProfileResponseDto();
 
     userProfileDto.id = userProfile.id;
-    userProfileDto.userId = userProfile.userId;
+
+    userProfileDto.accountId = userProfile.accountId;
+
     userProfileDto.extendedProfile = userProfile.extendedProfile;
 
     return userProfileDto;

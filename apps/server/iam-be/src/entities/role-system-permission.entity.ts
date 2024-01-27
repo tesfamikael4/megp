@@ -18,10 +18,10 @@ export class RoleSystemPermission extends Audit {
   id: string;
 
   @Column()
-  roleSystemId: string;
+  roleSystemId: number;
 
   @Column()
-  permissionId: string;
+  permissionId: number;
 
   @ManyToOne(
     () => RoleSystem,

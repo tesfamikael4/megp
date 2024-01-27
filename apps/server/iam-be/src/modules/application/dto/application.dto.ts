@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsUUID } from 'class-validator';
+import { IsString, IsUUID, IsNumber } from 'class-validator';
 import { Application } from '@entities';
 
 export class CreateApplicationDto {
@@ -10,6 +10,7 @@ export class CreateApplicationDto {
   @ApiProperty()
   @IsString()
   description: string;
+
   @ApiProperty()
   @IsString()
   key: string;
@@ -37,8 +38,8 @@ export class CreateApplicationDto {
 
 export class UpdateApplicationDto extends CreateApplicationDto {
   @ApiProperty()
-  @IsUUID()
-  id: string;
+  @IsNumber()
+  id: number;
 
   static fromDto(applicationDto: UpdateApplicationDto): Application {
     const application: Application = new Application();

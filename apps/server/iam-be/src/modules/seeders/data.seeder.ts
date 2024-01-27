@@ -23,7 +23,7 @@ import {
   organization,
   user,
   unit,
-  mandate,
+  mandates,
 } from './seed-data';
 import * as bcrypt from 'bcrypt';
 
@@ -99,10 +99,7 @@ export class DataSeeder implements Seeder {
       await userRepository.save(user);
     }
 
-    const mandateExists = await mandateRepository.findOneBy({ id: mandate.id });
-    if (!mandateExists) {
-      await mandateRepository.save(mandate);
-    }
+    await mandateRepository.save(mandates);
   }
 }
 

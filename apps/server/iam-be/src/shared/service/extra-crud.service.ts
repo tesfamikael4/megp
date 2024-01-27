@@ -110,7 +110,7 @@ export class ExtraCrudService<T extends ObjectLiteral> {
     return response;
   }
 
-  private async findOneOrFail(id: any): Promise<T> {
+  public async findOneOrFail(id: any): Promise<T> {
     const item = await this.findOne(id);
     if (!item) {
       throw new NotFoundException(`not_found`);

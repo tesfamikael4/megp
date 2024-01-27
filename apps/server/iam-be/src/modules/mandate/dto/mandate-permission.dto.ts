@@ -1,14 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsUUID } from 'class-validator';
+import { IsNumber, IsString, IsUUID } from 'class-validator';
 import { MandatePermission } from '@entities';
 
 export class CreateMandatePermissionDto {
   @ApiProperty()
-  @IsUUID()
-  mandateId: string;
+  @IsNumber()
+  mandateId: number;
   @ApiProperty()
-  @IsUUID()
-  permissionId: string;
+  @IsNumber()
+  permissionId: number;
 
   static fromDto(
     mandatePermissionDto: CreateMandatePermissionDto,

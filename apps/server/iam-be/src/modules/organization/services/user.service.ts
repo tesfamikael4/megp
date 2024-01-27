@@ -1,9 +1,14 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { User, UserRoleSystem, UserUnit } from '@entities';
 import { ExtraCrudService } from 'src/shared/service/extra-crud.service';
-import { CreateUserDto, InviteUserDto } from '../dto/user.dto';
+import { CreateUserDto, InviteUserDto, UserResponseDto } from '../dto/user.dto';
 import { AccountsService } from 'src/modules/account/services/account.service';
 import { UnitService } from './unit.service';
 import { RoleSystemService } from 'src/modules/role-system/services/role-system.service';
@@ -31,17 +36,32 @@ export class UserService extends ExtraCrudService<User> {
       itemData.email = itemData.email.toLowerCase();
     }
 
+    const userExists = await this.repositoryUser.findOne({
+      where: {
+        organizationId: itemData.organizationId,
+        account: {
+          email: itemData.email,
+        },
+      },
+    });
+
+    if (userExists) {
+      throw new BadRequestException('Conflict');
+    }
+
     const account =
       await this.accountsService.createBackOfficeAccount(itemData);
 
     itemData.accountId = account.id;
-    itemData.username = account.username;
     const item = this.repositoryUser.create(itemData);
     await this.repositoryUser.insert(item);
     return item;
   }
 
-  async getOrganizationAdmins(organizationId: string, query: CollectionQuery) {
+  async getOrganizationAdmins(
+    organizationId: string,
+    query: CollectionQuery,
+  ): Promise<any> {
     query.where.push([
       {
         column: 'organizationId',
@@ -49,6 +69,8 @@ export class UserService extends ExtraCrudService<User> {
         operator: FilterOperators.EqualTo,
       },
     ]);
+
+    query.includes.push('account');
 
     const ORGANIZATION_ADMINISTRATOR_ROLE_KEY =
       process.env.ORGANIZATION_ADMINISTRATOR_ROLE_KEY ??
@@ -64,13 +86,40 @@ export class UserService extends ExtraCrudService<User> {
         ORGANIZATION_ADMINISTRATOR_ROLE_KEY,
       });
 
-    const response = new DataResponseFormat<User>();
+    const response = new DataResponseFormat<UserResponseDto>();
     if (query.count) {
       response.total = await dataQuery.getCount();
     } else {
       const [result, total] = await dataQuery.getManyAndCount();
       response.total = total;
-      response.items = result;
+      response.items = UserResponseDto.toDtos(result);
+    }
+    return response;
+  }
+
+  async findAll(organizationId: string, query: CollectionQuery): Promise<any> {
+    query.where.push([
+      {
+        column: 'organizationId',
+        value: organizationId,
+        operator: FilterOperators.EqualTo,
+      },
+    ]);
+
+    query.includes.push('account');
+
+    const dataQuery = QueryConstructor.constructQuery<User>(
+      this.repositoryUser,
+      query,
+    );
+
+    const response = new DataResponseFormat<UserResponseDto>();
+    if (query.count) {
+      response.total = await dataQuery.getCount();
+    } else {
+      const [result, total] = await dataQuery.getManyAndCount();
+      response.total = total;
+      response.items = UserResponseDto.toDtos(result);
     }
     return response;
   }
@@ -79,7 +128,7 @@ export class UserService extends ExtraCrudService<User> {
     organizationId: string,
     permission: string,
     query: CollectionQuery,
-  ) {
+  ): Promise<any> {
     query.where.push([
       {
         column: 'organizationId',
@@ -87,6 +136,8 @@ export class UserService extends ExtraCrudService<User> {
         operator: FilterOperators.EqualTo,
       },
     ]);
+
+    query.includes.push('account');
 
     const dataQuery = QueryConstructor.constructQuery<User>(
       this.repositoryUser,
@@ -131,14 +182,14 @@ export class UserService extends ExtraCrudService<User> {
         },
       );
 
-    const response = new DataResponseFormat<User>();
+    const response = new DataResponseFormat<UserResponseDto>();
 
     if (query.count) {
       response.total = await dataQuery.getCount();
     } else {
       const [result, total] = await dataQuery.getManyAndCount();
       response.total = total;
-      response.items = result;
+      response.items = UserResponseDto.toDtos(result);
     }
 
     return response;
@@ -149,11 +200,23 @@ export class UserService extends ExtraCrudService<User> {
       itemData.email = itemData.email.toLowerCase();
     }
 
+    const userExists = await this.repositoryUser.findOne({
+      where: {
+        organizationId: itemData.organizationId,
+        account: {
+          email: itemData.email,
+        },
+      },
+    });
+
+    if (userExists) {
+      throw new BadRequestException('Conflict');
+    }
+
     const account =
       await this.accountsService.createBackOfficeAccount(itemData);
 
     itemData.accountId = account.id;
-    itemData.username = account.username;
     const item = this.repositoryUser.create(itemData);
 
     const unit = await this.unitService.findRootUnit(item.organizationId);
@@ -202,7 +265,10 @@ export class UserService extends ExtraCrudService<User> {
         );
       }
 
-      return await this.accountsService.inviteBackOfficeAccount(user.accountId);
+      return await this.accountsService.inviteBackOfficeAccount(
+        user.accountId,
+        user.id,
+      );
     } catch (error) {
       throw error;
     }
@@ -215,7 +281,18 @@ export class UserService extends ExtraCrudService<User> {
         throw new HttpException('user_not_found', HttpStatus.NOT_FOUND);
       }
 
-      return await this.accountsService.getInvitation(user.accountId);
+      const invite = await this.accountsService.getInvitation(user.accountId);
+
+      const result = {
+        id: invite.id,
+        otp: invite.otp,
+        status: invite.status,
+        firstName: invite.account.firstName,
+        lastName: invite.account.lastName,
+        setPassword: !invite.account.password,
+      };
+
+      return result;
     } catch (error) {
       throw error;
     }
@@ -228,5 +305,13 @@ export class UserService extends ExtraCrudService<User> {
     user.accountId = id;
 
     await this.repositoryUser.insert(user);
+  }
+
+  async findOne(id: any, req?: any): Promise<any> {
+    const result = await this.repositoryUser.findOne({
+      where: { id },
+      relations: { account: true },
+    });
+    return UserResponseDto.toDto(result);
   }
 }
