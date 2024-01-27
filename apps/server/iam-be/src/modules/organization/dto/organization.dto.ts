@@ -35,17 +35,7 @@ export class CreateOrganizationDto {
   @ApiProperty()
   @IsString()
   @IsOptional()
-  order: string;
-
-  @ApiProperty()
-  @IsString()
-  @IsOptional()
   type: string;
-
-  @ApiProperty()
-  @IsString()
-  @IsOptional()
-  budgetType: string;
 
   @ApiProperty()
   @IsString()
@@ -53,44 +43,9 @@ export class CreateOrganizationDto {
   status: string;
 
   @ApiProperty()
-  @IsString()
-  @IsOptional()
-  version: string;
-
-  @ApiProperty()
-  @IsOptional()
-  @IsBoolean()
-  isActive: boolean;
-
-  @ApiProperty()
-  @IsOptional()
-  @IsBoolean()
-  isLocked: boolean;
-
-  @ApiProperty()
   @IsOptional()
   @IsString()
   code: string;
-
-  @ApiProperty()
-  @IsOptional()
-  @IsString()
-  deactivateRemark: string;
-
-  @ApiProperty()
-  @IsOptional()
-  @IsString()
-  deleteRemark: string;
-
-  @ApiProperty()
-  @IsOptional()
-  @IsString()
-  taxIdentificationNumber: string;
-
-  @ApiProperty()
-  @IsOptional()
-  @IsString()
-  externalOrganizationCode: string;
 
   static fromDto(organizationDto: CreateOrganizationDto): Organization {
     const organization: Organization = new Organization();
@@ -98,35 +53,13 @@ export class CreateOrganizationDto {
 
     organization.code = organizationDto.code;
 
-    organization.order = organizationDto.order;
-
     organization.status = organizationDto.status;
 
     organization.shortName = organizationDto.shortName;
 
     organization.description = organizationDto.description;
 
-    organization.isActive = organizationDto.isActive;
-
     organization.type = organizationDto.type;
-
-    organization.budgetType = organizationDto.budgetType;
-
-    organization.isLocked = organizationDto.isLocked;
-
-    organization.version = organizationDto.version;
-
-    organization.isLocked = organizationDto.isLocked;
-
-    organization.deactivateRemark = organizationDto.deactivateRemark;
-
-    organization.deleteRemark = organizationDto.deleteRemark;
-
-    organization.taxIdentificationNumber =
-      organizationDto.taxIdentificationNumber;
-
-    organization.externalOrganizationCode =
-      organizationDto.externalOrganizationCode;
 
     return organization;
   }
@@ -155,33 +88,13 @@ export class UpdateOrganizationDto extends CreateOrganizationDto {
 
     organization.code = organizationDto.code;
 
-    organization.order = organizationDto.order;
-
     organization.status = organizationDto.status;
 
     organization.shortName = organizationDto.shortName;
 
     organization.description = organizationDto.description;
 
-    organization.isActive = organizationDto.isActive;
-
     organization.type = organizationDto.type;
-
-    organization.budgetType = organizationDto.budgetType;
-
-    organization.version = organizationDto.version;
-
-    organization.isLocked = organizationDto.isLocked;
-
-    organization.deactivateRemark = organizationDto.deactivateRemark;
-
-    organization.deleteRemark = organizationDto.deleteRemark;
-
-    organization.taxIdentificationNumber =
-      organizationDto.taxIdentificationNumber;
-
-    organization.externalOrganizationCode =
-      organizationDto.externalOrganizationCode;
 
     if (organizationDto.logo) {
       organization.logo = organizationDto.logo;
@@ -253,35 +166,13 @@ export class OrganizationResponseDto extends UpdateOrganizationDto {
 
     organizationDto.code = organization.code;
 
-    organizationDto.order = organization.order;
-
     organizationDto.status = organization.status;
 
     organizationDto.shortName = organization.shortName;
 
     organizationDto.description = organization.description;
 
-    organizationDto.isActive = organization.isActive;
-
     organizationDto.type = organization.type;
-
-    organizationDto.budgetType = organization.budgetType;
-
-    organizationDto.isLocked = organization.isLocked;
-
-    organizationDto.version = organization.version;
-
-    organizationDto.isLocked = organization.isLocked;
-
-    organizationDto.deactivateRemark = organization.deactivateRemark;
-
-    organizationDto.deleteRemark = organization.deleteRemark;
-
-    organizationDto.taxIdentificationNumber =
-      organization.taxIdentificationNumber;
-
-    organizationDto.externalOrganizationCode =
-      organization.externalOrganizationCode;
 
     if (organization.logo) {
       organizationDto.logo = organization.logo;

@@ -343,13 +343,11 @@ export class QueryConstructor {
       query = this.removeFilter(query, 'organizationId');
     }
 
-    query = this.removeEmtpyFilter(query);
-
     buildQuery(aggregate, queryBuilder, query);
 
     return queryBuilder;
   }
-  static removeEmtpyFilter(query: CollectionQuery) {
+  static removeEmptyFilter(query: CollectionQuery) {
     query.where = query.where.filter((x) => x.length > 0);
     return query;
   }

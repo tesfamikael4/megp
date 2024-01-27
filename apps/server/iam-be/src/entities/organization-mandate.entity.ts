@@ -31,7 +31,7 @@ export class OrganizationMandate extends Audit {
   organization: Organization;
 
   @Column()
-  mandateId: string;
+  mandateId: number;
 
   @ManyToOne(() => Mandate, (man) => man.organizationMandates, {
     orphanedRowAction: 'delete',

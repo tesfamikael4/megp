@@ -10,9 +10,19 @@ export class CreateUnitDto {
   name: string;
 
   @ApiProperty()
-  @IsOptional()
   @IsString()
+  @IsOptional()
+  shortName: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
   description: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  status: string;
 
   @ApiProperty()
   @IsOptional()
@@ -38,13 +48,19 @@ export class CreateUnitDto {
 
     unit.name = unitDto.name;
 
-    unit.parentId = unitDto.parentId;
+    unit.name = unitDto.name;
 
     unit.code = unitDto.code;
 
-    unit.typeId = unitDto.typeId;
+    unit.status = unitDto.status;
+
+    unit.shortName = unitDto.shortName;
 
     unit.description = unitDto.description;
+
+    unit.parentId = unitDto.parentId;
+
+    unit.typeId = unitDto.typeId;
 
     unit.organizationId = unitDto.organizationId;
 
@@ -68,15 +84,19 @@ export class UpdateUnitDto extends CreateUnitDto {
 
     unit.name = unitDto.name;
 
-    unit.parentId = unitDto.parentId;
+    unit.name = unitDto.name;
 
     unit.code = unitDto.code;
 
-    unit.isActive = unitDto.isActive;
+    unit.status = unitDto.status;
 
-    unit.typeId = unitDto.typeId;
+    unit.shortName = unitDto.shortName;
 
     unit.description = unitDto.description;
+
+    unit.parentId = unitDto.parentId;
+
+    unit.typeId = unitDto.typeId;
 
     unit.organizationId = unitDto.organizationId;
 
@@ -94,17 +114,18 @@ export class UnitResponseDto extends UpdateUnitDto {
 
     unitDto.name = unit.name;
 
-    unitDto.parentId = unit.parentId;
+    unitDto.name = unit.name;
 
     unitDto.code = unit.code;
 
-    unitDto.isActive = unit.isActive;
+    unitDto.status = unit.status;
 
-    unitDto.typeId = unit.typeId;
+    unitDto.shortName = unit.shortName;
 
     unitDto.description = unit.description;
 
     unitDto.organizationId = unit.organizationId;
+
     if (unit.unitType) {
       unitDto.unitType = UnitTypeResponseDto.toDto(unit.unitType);
     }

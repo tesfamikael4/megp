@@ -1,0 +1,30 @@
+role,permission,key,duplication
+Pre Budget Plan creator,Manage Annual Pre Budget Plan,managePrePlan,
+Pre Budget Plan creator,Manage Activities,managePrePlanActivity,
+Pre Budget Plan creator,Manage Items,managePrePlanItem,
+Pre Budget Plan creator,Submit Pre Budget Plan,submitPrePlan,
+Post Budget Plan Creator,Manage Annual Post Budget Plan,managePostPlan,
+Post Budget Plan Creator,Manage post budget plan Activity,managePostPlanActivity,
+Post Budget Plan Creator,Manage post budget plan Item,managePostPlanItem,
+Post Budget Plan Creator,Submit Post Budget Plan,submitPostPlan,
+Internal Procurement and Disposal Committee,Review Post Budget Plan,reviewPostPlan,
+Internal Procurement and Disposal Committee,Approve Post Budget Plan,approvePostPlan,
+HPDU,Review Pre Budget Plan,reviewPrePlan,
+HPDU,Review Post Budget Plan,reviewPostPlan,Dup
+HPDU,Approve Pre Budget Plan,approvePrePlan,
+HPDU,Edit Pre Budget Plan,editPrePlan,
+HPDU,Approve Post Budget Plan,approvePostPlan,Dup
+HPDU,updateApproved post budget plan,updatePostPlan,
+HPDU,Manage Activities,manageApprovedActivity,
+HPDU,Manage Items,manageApprovedItem,
+HPDU,Approve budget,approveBudget,
+PPDA Plan Approver,View Revised Post Budget Plan,viewRevisePostPlan,
+PPDA Plan Approver,Approve Pre Budget Plan,approvePrePlan,Dup
+PPDA Plan Approver,Approve Post Budget Plan,approvePostPlan,Dup
+PPDA Plan Approver,View Post budget plan,viewPostPlan,
+PPDA Plan Approver,Activate budget validation,budgetVerification,
+Public Users,View Post budget plan,viewPostPlan,Dup
+Public Users,"Download Post budget plan (Excel, Pdf)",downloadPostPlan,
+Public Users,View old version Post budget Plan,viewUpdatedPostPlan,
+Public Users,Download old version Post budget Plan,downloadOldVersionPostPlan,
+Budget Officer,Manage Budget,manageBudget,

@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryColumn, OneToMany } from 'typeorm';
 
 import { Audit } from 'src/shared/entities/audit.entity';
 
@@ -7,8 +7,8 @@ import { MandatePermission } from './mandate-permission.entity';
 
 @Entity({ name: 'mandates' })
 export class Mandate extends Audit {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryColumn()
+  id: number;
 
   @Column()
   name: string;

@@ -21,7 +21,7 @@ export class RolePermission extends Audit {
   roleId: string;
 
   @Column()
-  permissionId: string;
+  permissionId: number;
 
   @ManyToOne(() => Role, (role) => role.rolePermissions, {
     orphanedRowAction: 'delete',

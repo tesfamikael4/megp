@@ -22,7 +22,7 @@ export class CreateRoleSystemDto {
 }
 
 export class UpdateRoleSystemDto extends CreateRoleSystemDto {
-  id: string;
+  id: number;
 }
 
 export class RoleSystemResponseDto extends UpdateRoleSystemDto {}

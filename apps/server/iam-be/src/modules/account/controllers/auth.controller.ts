@@ -16,6 +16,7 @@ import {
   VerifyAccountDto,
 } from '../dto/account.dto';
 import {
+  AcceptAccountDto,
   ChangePasswordDto,
   ForgetPasswordDto,
   LoginDto,
@@ -42,6 +43,7 @@ import {
 } from '../dto/security-question.dto';
 import { EmailService } from 'src/shared/email/email.service';
 import axios from 'axios';
+import { IgnoreTenantInterceptor } from '@decorators';
 
 @ApiBearerAuth()
 @ApiTags('auth')
@@ -59,8 +61,9 @@ export class AuthController {
   }
 
   @Post('login')
-  @AllowAnonymous()
   @HttpCode(200)
+  @AllowAnonymous()
+  @IgnoreTenantInterceptor()
   @ApiResponse({ type: LoginResponseDto, isArray: false, status: 200 })
   login(@Body() loginDto: LoginDto) {
     return this.accountsService.login(loginDto);
@@ -100,6 +103,12 @@ export class AuthController {
   @AllowAnonymous()
   setPassword(@Body() resetPassword: ResetPasswordDto) {
     return this.accountsService.setPassword(resetPassword);
+  }
+
+  @Post('accept-invitation')
+  @AllowAnonymous()
+  acceptInvitation(@Body() resetPassword: AcceptAccountDto) {
+    return this.accountsService.acceptInvitation(resetPassword);
   }
 
   @Post('change-password')

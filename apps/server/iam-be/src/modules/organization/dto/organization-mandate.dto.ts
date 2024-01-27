@@ -1,12 +1,18 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsOptional, IsString, IsUUID } from 'class-validator';
+import {
+  IsBoolean,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 import { OrganizationMandate } from '@entities';
 import { MandateResponseDto } from '../../mandate/dto/mandate.dto';
 
 export class CreateOrganizationMandateDto {
   @ApiProperty()
-  @IsUUID()
-  mandateId: string;
+  @IsNumber()
+  mandateId: number;
   @ApiProperty()
   @IsUUID()
   organizationId: string;

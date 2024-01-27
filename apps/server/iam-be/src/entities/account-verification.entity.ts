@@ -40,4 +40,7 @@ export class AccountVerification extends Audit {
   @ManyToOne(() => Account, (account) => account.accountVerifications)
   @JoinColumn({ name: 'accountId' })
   public account: Account;
+
+  @Column({ type: 'text', nullable: true })
+  public userId: string;
 }

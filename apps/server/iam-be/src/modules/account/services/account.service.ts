@@ -6,8 +6,13 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IsNull, Not, Repository } from 'typeorm';
-import { Account, AccountVerification, SecurityQuestion } from '@entities';
+import { EntityManager, Repository } from 'typeorm';
+import {
+  Account,
+  AccountVerification,
+  SecurityQuestion,
+  User,
+} from '@entities';
 import {
   CreateAccountDto,
   ResendOtpDto,
@@ -20,6 +25,7 @@ import {
 } from '@enums';
 import { AuthHelper } from '@auth';
 import {
+  AcceptAccountDto,
   ChangePasswordDto,
   LoginDto,
   LoginResponseDto,
@@ -30,7 +36,8 @@ import {
   SetSecurityQuestionDto,
 } from '../dto/security-question.dto';
 import { EmailService } from 'src/shared/email/email.service';
-import { organization } from '../../seeders/seed-data';
+import { REQUEST } from '@nestjs/core';
+import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 
 @Injectable()
 export class AccountsService {
@@ -43,6 +50,7 @@ export class AccountsService {
     private readonly securityQuestionRepository: Repository<SecurityQuestion>,
     private readonly helper: AuthHelper,
     private readonly emailService: EmailService,
+    @Inject(REQUEST) private readonly request: Request,
   ) {}
 
   public async createAccount(
@@ -134,24 +142,50 @@ export class AccountsService {
     const { verificationId, otp, password, isOtp }: ResetPasswordDto =
       resetPassword;
 
-    const verifyOTP = await this.verifyOTP(verificationId, otp, isOtp);
+    const accountVerification = await this.verifyOTPBackOffice(
+      verificationId,
+      otp,
+      isOtp,
+    );
 
-    const account = await this.repository.findOneBy({
-      id: verifyOTP.id,
+    const entityManager = this.request[ENTITY_MANAGER_KEY];
+
+    await entityManager
+      .getRepository(Account)
+      .update(accountVerification.accountId, {
+        password: this.helper.encodePassword(password),
+        status: AccountStatusEnum.ACTIVE,
+      });
+
+    await entityManager.getRepository(User).update(accountVerification.userId, {
+      status: AccountStatusEnum.ACTIVE,
     });
 
-    if (!account) {
-      throw new HttpException('user_not_found', HttpStatus.BAD_REQUEST);
-    } else if (account.status != AccountStatusEnum.INVITED) {
-      throw new HttpException('user_already_active', HttpStatus.BAD_REQUEST);
-    }
+    return accountVerification;
+  }
 
-    account.password = this.helper.encodePassword(password);
-    account.status = AccountStatusEnum.ACTIVE;
+  public async acceptInvitation(resetPassword: AcceptAccountDto) {
+    const { verificationId, otp, isOtp }: AcceptAccountDto = resetPassword;
 
-    await this.repository.update(account.id, account);
+    const accountVerification = await this.verifyOTPBackOffice(
+      verificationId,
+      otp,
+      isOtp,
+    );
 
-    return account;
+    const entityManager = this.request[ENTITY_MANAGER_KEY];
+
+    await entityManager
+      .getRepository(Account)
+      .update(accountVerification.accountId, {
+        status: AccountStatusEnum.ACTIVE,
+      });
+
+    await entityManager.getRepository(User).update(accountVerification.userId, {
+      status: AccountStatusEnum.ACTIVE,
+    });
+
+    return accountVerification;
   }
 
   public async changePassword(changePassword: ChangePasswordDto) {
@@ -280,24 +314,18 @@ export class AccountsService {
   async getUserInfo(id: string) {
     const newAccount = await this.repository
       .createQueryBuilder('accounts')
-      // .select([
-      //   'accounts.tenantId',
-      //   'accounts.id',
-      //   'accounts.firstName',
-      //   'accounts.lastName',
-      //   'accounts.username',
-      //   'accounts.email',
-      // ])
-      .leftJoinAndSelect('accounts.user', 'user')
-      .leftJoinAndSelect('user.organization', 'organization')
+      .leftJoinAndSelect('accounts.users', 'users', `users.status =:status`, {
+        status: AccountStatusEnum.ACTIVE,
+      })
+      .leftJoinAndSelect('users.organization', 'organization')
       .leftJoin(
         'organization.organizationMandates',
         'organizationMandates',
-        'organizationMandates.organizationId = user.organizationId OR organizationMandates.organizationId IS NULL',
+        'organizationMandates.organizationId = users.organizationId OR organizationMandates.organizationId IS NULL',
       )
       .leftJoin('organizationMandates.mandate', 'mandate')
       .leftJoin('mandate.mandatePermissions', 'mandatePermissions')
-      .leftJoinAndSelect('user.userRoles', 'userRoles')
+      .leftJoinAndSelect('users.userRoles', 'userRoles')
       .leftJoinAndSelect('userRoles.role', 'role')
       .leftJoinAndSelect(
         'role.rolePermissions',
@@ -306,7 +334,7 @@ export class AccountsService {
       )
       .leftJoinAndSelect('rolePermissions.permission', 'permissionRole')
       .leftJoinAndSelect('permissionRole.application', 'applicationRole')
-      .leftJoinAndSelect('user.userRoleSystems', 'userRoleSystems')
+      .leftJoinAndSelect('users.userRoleSystems', 'userRoleSystems')
       .leftJoinAndSelect('userRoleSystems.roleSystem', 'roleSystem')
       .leftJoinAndSelect(
         'roleSystem.roleSystemPermissions',
@@ -321,7 +349,7 @@ export class AccountsService {
         'permissionRoleSystem.application',
         'applicationRoleSystem',
       )
-      .andWhere('accounts.id = :id', { id })
+      .andWhere('accounts.id =:id', { id })
       .getOne();
 
     return newAccount;
@@ -330,80 +358,109 @@ export class AccountsService {
   async getAccessTokenPayload(account: Account) {
     const userInfo = await this.getUserInfo(account.id);
 
-    const permissions = [];
-    const roles = [];
-    const roleSystems = [];
-    userInfo.user?.userRoles?.forEach((userRole) => {
-      const role = {
-        id: userRole.role.id,
-        name: userRole.role.name,
-      };
+    const organizations = [];
 
-      roles.push(role);
+    for (const user of userInfo.users) {
+      const permissions = [];
+      const roles = [];
+      const roleSystems = [];
+      const applications = [];
+      user?.userRoles?.forEach((userRole) => {
+        const role = {
+          id: userRole.role.id,
+          name: userRole.role.name,
+        };
 
-      userRole?.role?.rolePermissions?.forEach((rolePermission) => {
-        if (rolePermission?.permission) {
-          permissions.push({
-            id: rolePermission.permission.id,
-            name: rolePermission.permission.name,
-            key: rolePermission.permission.key,
-            applicationId: rolePermission.permission.applicationId,
-            application: {
-              id: rolePermission.permission.application.id,
-              key: rolePermission.permission.application.key,
-            },
-          });
-        }
+        roles.push(role);
+
+        userRole?.role?.rolePermissions?.forEach((rolePermission) => {
+          if (rolePermission?.permission) {
+            permissions.push({
+              id: rolePermission.permission.id,
+              name: rolePermission.permission.name,
+              key: rolePermission.permission.key,
+              applicationId: rolePermission.permission.applicationId,
+            });
+
+            if (
+              !applications.find(
+                (x) => x.id === rolePermission.permission.applicationId,
+              )
+            ) {
+              applications.push({
+                id: rolePermission.permission.application.id,
+                key: rolePermission.permission.application.key,
+                name: rolePermission.permission.application.name,
+              });
+            }
+          }
+        });
       });
-    });
 
-    userInfo.user?.userRoleSystems?.forEach((userRole) => {
-      const roleSystem = {
-        id: userRole.roleSystem.id,
-        key: userRole.roleSystem.key,
-        name: userRole.roleSystem.name,
-      };
+      user?.userRoleSystems?.forEach((userRole) => {
+        const roleSystem = {
+          id: userRole.roleSystem.id,
+          key: userRole.roleSystem.key,
+          name: userRole.roleSystem.name,
+        };
 
-      roleSystems.push(roleSystem);
+        roleSystems.push(roleSystem);
 
-      userRole?.roleSystem?.roleSystemPermissions?.forEach((rolePermission) => {
-        if (rolePermission?.permission) {
-          permissions.push({
-            id: rolePermission.permission.id,
-            name: rolePermission.permission.name,
-            key: rolePermission.permission.key,
-            applicationId: rolePermission.permission.applicationId,
-            application: {
-              id: rolePermission.permission.application.id,
-              key: rolePermission.permission.application.key,
-            },
-          });
-        }
+        userRole?.roleSystem?.roleSystemPermissions?.forEach(
+          (rolePermission) => {
+            if (rolePermission?.permission) {
+              permissions.push({
+                id: rolePermission.permission.id,
+                name: rolePermission.permission.name,
+                key: rolePermission.permission.key,
+                applicationId: rolePermission.permission.applicationId,
+              });
+
+              if (
+                !applications.find(
+                  (x) => x.id === rolePermission.permission.applicationId,
+                )
+              ) {
+                applications.push({
+                  id: rolePermission.permission.application.id,
+                  key: rolePermission.permission.application.key,
+                  name: rolePermission.permission.application.name,
+                });
+              }
+            }
+          },
+        );
       });
-    });
 
-    let organization = {};
-    if (userInfo.user?.organization) {
-      const org = userInfo.user?.organization;
-      organization = {
-        id: org.id,
-        name: org.name,
-        shortName: org.shortName,
-        code: org.code,
-      };
+      let organization: any;
+      if (user?.organization) {
+        const org = user?.organization;
+        organization = {
+          id: org.id,
+          name: org.name,
+          shortName: org.shortName,
+          code: org.code,
+        };
+      }
+
+      organizations.push({
+        userId: user?.id,
+        organization,
+        permissions,
+        roles,
+        roleSystems,
+        applications,
+      });
     }
+
     const tokenPayload = {
-      tenantId: userInfo.tenantId,
-      id: userInfo.id,
-      userId: userInfo.user?.id,
+      tenantId: account.tenantId,
+      id: account.id,
       username: account.username,
       firstName: account.firstName,
       lastName: account.lastName,
       email: account.email,
-      organization: organization,
-      permissions,
-      roles,
-      roleSystems,
+      organizations,
     };
 
     return tokenPayload;
@@ -518,11 +575,10 @@ export class AccountsService {
       where: { email: input.email },
     });
 
-    if (account) {
-      throw new HttpException('account_exists', HttpStatus.NOT_FOUND);
+    if (!account) {
+      account = await this.createNewAccount(input, AccountStatusEnum.PENDING);
     }
 
-    account = await this.createNewAccount(input, AccountStatusEnum.PENDING);
     return account;
   }
 
@@ -546,7 +602,7 @@ export class AccountsService {
     return account;
   }
 
-  async inviteBackOfficeAccount(accountId: string) {
+  async inviteBackOfficeAccount(accountId: string, userId: string) {
     const account: Account = await this.repository.findOne({
       where: { id: accountId },
     });
@@ -561,6 +617,7 @@ export class AccountsService {
       where: {
         accountId,
         otpType: AccountVerificationTypeEnum.INVITATION,
+        userId,
       },
       relations: {
         account: true,
@@ -580,12 +637,20 @@ export class AccountsService {
       }
     }
 
-    account.status = AccountStatusEnum.INVITED;
+    const verification = await this.createAndSendInvitationVerificationOTP(
+      account,
+      userId,
+    );
 
-    const verification =
-      await this.createAndSendInvitationVerificationOTP(account);
+    const entityManager = this.request[ENTITY_MANAGER_KEY];
 
-    await this.repository.update(account.id, account);
+    await entityManager.getRepository(Account).update(account.id, {
+      status: AccountStatusEnum.INVITED,
+    });
+
+    await entityManager.getRepository(User).update(userId, {
+      status: AccountStatusEnum.INVITED,
+    });
 
     return verification;
   }
@@ -704,6 +769,72 @@ export class AccountsService {
     return account;
   }
 
+  private async verifyOTPBackOffice(
+    verificationId: string,
+    otp: string,
+    isOtp: boolean,
+    invalidateOtp = true,
+  ) {
+    const OTP_LIFE_TIME = Number(process.env.OTP_LIFE_TIME ?? 10);
+
+    const entityManager = this.request[ENTITY_MANAGER_KEY];
+
+    const accountVerification =
+      await this.accountVerificationRepository.findOne({
+        where: {
+          id: verificationId,
+          status: AccountVerificationStatusEnum.NEW,
+        },
+        relations: {
+          account: true,
+        },
+      });
+
+    if (!accountVerification) {
+      throw new HttpException(
+        'verification_token_not_found',
+        HttpStatus.NOT_FOUND,
+      );
+    } else if (
+      isOtp &&
+      !this.helper.compareHashedValue(otp, accountVerification.otp)
+    ) {
+      throw new HttpException(
+        'invalid_verification_token',
+        HttpStatus.BAD_REQUEST,
+      );
+    } else if (!isOtp && accountVerification.otp != otp) {
+      throw new HttpException(
+        'invalid_verification_token',
+        HttpStatus.BAD_REQUEST,
+      );
+    } else if (
+      accountVerification.createdAt.getMinutes() + OTP_LIFE_TIME <
+      new Date().getMinutes()
+    ) {
+      await entityManager
+        .getRepository(AccountVerification)
+        .update(accountVerification.id, {
+          status: AccountVerificationStatusEnum.EXPIRED,
+        });
+
+      throw new HttpException(
+        'verification_token_expired',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    if (invalidateOtp) {
+      await entityManager
+        .getRepository(AccountVerification)
+        .update(accountVerification.id, {
+          status: AccountVerificationStatusEnum.USED,
+        });
+    }
+
+    return accountVerification;
+  }
+
   private async createNewAccount(
     accountDto: CreateAccountDto,
     status: AccountStatusEnum,
@@ -774,10 +905,14 @@ export class AccountsService {
     return accountVerification.id;
   }
 
-  private async createAndSendInvitationVerificationOTP(account: Account) {
+  private async createAndSendInvitationVerificationOTP(
+    account: Account,
+    userId: string,
+  ) {
     const { accountVerification, otp } = await this.createOTP(
       account,
       AccountVerificationTypeEnum.INVITATION,
+      userId,
     );
 
     const fullName = `${account.firstName} ${account.lastName}`;
@@ -824,6 +959,7 @@ export class AccountsService {
   private async createOTP(
     account: Account,
     otpType: AccountVerificationTypeEnum,
+    userId?: string,
   ) {
     const verificationExists =
       await this.accountVerificationRepository.findOneBy({
@@ -845,15 +981,27 @@ export class AccountsService {
     accountVerification.account = account;
     accountVerification.otp = this.helper.encodePassword(otp);
     accountVerification.otpType = otpType;
+    accountVerification.userId = userId;
+
     await this.accountVerificationRepository.save(accountVerification);
     return { accountVerification, otp };
   }
 
   private generateUsername() {
-    const result = `me-${Math.floor(Date.now() / 1000)}-${Math.floor(
-      Math.random() * 1000000000,
-    ).toString()}`;
-    return result;
+    let result = '';
+    const characters = 'abcdefghijklmnopqrstuvwxyz';
+    const charactersLength = characters.length;
+    for (let i = 0; i < 4; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+
+    const numbers = '0123456789';
+    const numbersLength = numbers.length;
+    for (let i = 0; i < 4; i++) {
+      result += numbers.charAt(Math.floor(Math.random() * numbersLength));
+    }
+
+    return 'mu-' + result;
   }
 
   private getRandomNumber(min = 5, max = 10) {

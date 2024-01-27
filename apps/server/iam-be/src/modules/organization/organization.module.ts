@@ -3,10 +3,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { OrganizationController } from './controllers/organization.controller';
 import {
   Organization,
-  Office,
   User,
   OrganizationMandate,
-  OrganizationSector,
   OrganizationType,
   UnitType,
   Unit,
@@ -15,12 +13,10 @@ import {
   UserRole,
 } from '@entities';
 import { OrganizationService } from './services/organization.service';
-import { OrganizationSectorController } from './controllers/organization-sector.controller';
 import { OrganizationTypeController } from './controllers/organization-type.controller';
 import { UnitTypeController } from './controllers/unit-type.controller';
 import { UnitController } from './controllers/unit.controller';
 import { UserController } from './controllers/user.controller';
-import { OrganizationSectorService } from './services/organization-sector.service';
 import { OrganizationTypeService } from './services/organization-type.service';
 import { UnitTypeService } from './services/unit-type.service';
 import { UserService } from './services/user.service';
@@ -43,8 +39,6 @@ import { RoleSystemModule } from '../role-system/role-system.module';
       Unit,
       OrganizationType,
       UnitType,
-      OrganizationSector,
-      Office,
       UserUnit,
       UserProfile,
       UserRole,
@@ -58,7 +52,6 @@ import { RoleSystemModule } from '../role-system/role-system.module';
     UnitService,
     OrganizationTypeService,
     UnitTypeService,
-    OrganizationSectorService,
     UserUnitService,
     UserProfileService,
     UserRoleService,
@@ -69,7 +62,6 @@ import { RoleSystemModule } from '../role-system/role-system.module';
     UnitController,
     OrganizationTypeController,
     UnitTypeController,
-    OrganizationSectorController,
     UserUnitController,
     UserProfileController,
     UserRoleController,

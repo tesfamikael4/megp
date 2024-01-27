@@ -49,12 +49,6 @@ export class UserUnitResponseDto extends UpdateUserUnitDto {
     userUnitDto.userId = userUnit.userId;
     userUnitDto.unitId = userUnit.unitId;
 
-    if (userUnit.user) {
-      userUnitDto.user = UserResponseDto.toDto(userUnit.user);
-    }
-    if (userUnit.unit) {
-      userUnitDto.unit = UnitResponseDto.fromDto(userUnit.unit);
-    }
     return userUnitDto;
   }
 

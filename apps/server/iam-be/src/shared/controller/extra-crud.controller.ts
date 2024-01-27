@@ -53,7 +53,7 @@ export function ExtraCrudController<TEntity extends ObjectLiteral>(
       @Req() req?: any,
     ): Promise<DataResponseFormat<TEntity>> {
       const query = decodeCollectionQuery(q);
-      return this.service.findAll(id, query, options);
+      return this.service.findAll(id, query, options, req);
     }
 
     @Get(':id')
@@ -61,7 +61,7 @@ export function ExtraCrudController<TEntity extends ObjectLiteral>(
       @Param('id') id: string,
       @Req() req?: any,
     ): Promise<TEntity | undefined> {
-      return this.service.findOne(id);
+      return this.service.findOne(id, req);
     }
 
     @Put(':id')
@@ -81,7 +81,7 @@ export function ExtraCrudController<TEntity extends ObjectLiteral>(
 
     @Patch('restore/:id')
     async restore(@Param('id') id: string, @Req() req?: any): Promise<void> {
-      return this.service.restore(id);
+      return this.service.restore(id, req);
     }
 
     @Get('list/archived/items/:id')
@@ -97,7 +97,7 @@ export function ExtraCrudController<TEntity extends ObjectLiteral>(
       @Req() req?: any,
     ): Promise<DataResponseFormat<TEntity>> {
       const query = decodeCollectionQuery(q);
-      return this.service.findAllArchived(id, query, options);
+      return this.service.findAllArchived(id, query, options, req);
     }
   }
 

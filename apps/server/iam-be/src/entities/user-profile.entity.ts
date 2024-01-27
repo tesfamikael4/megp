@@ -8,19 +8,22 @@ import {
 
 import { Audit } from 'src/shared/entities/audit.entity';
 
-import { User } from './user.entity';
+import { Account } from './account.entity';
 
 @Entity({ name: 'user_profiles' })
 export class UserProfile extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
   @Column({ type: 'jsonb' })
-  extendedProfile: JSON;
+  extendedProfile: any;
+
   @Column()
-  userId: string;
-  @OneToOne(() => User, (emp) => emp.userProfile, {
+  accountId: string;
+
+  @OneToOne(() => Account, (emp) => emp.userProfile, {
     orphanedRowAction: 'delete',
   })
-  @JoinColumn({ name: 'userId' })
-  user: User;
+  @JoinColumn({ name: 'accountId' })
+  account: Account;
 }

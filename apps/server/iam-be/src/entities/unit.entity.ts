@@ -20,16 +20,25 @@ export class Unit extends Audit {
   name: string;
 
   @Column({ nullable: true })
+  code: string;
+
+  @Column({ nullable: true })
+  shortName: string;
+
+  @Column({ nullable: true })
   description: string;
+
+  @Column({ default: 'DRAFT' })
+  status: string;
+
+  @Column({ nullable: true, type: 'jsonb' })
+  logo: any;
+
+  @Column({ nullable: true, type: 'jsonb' })
+  address: any;
 
   @Column({ nullable: true })
   typeId: string;
-
-  @Column({ unique: true, nullable: true })
-  code: string;
-
-  @Column({ default: true })
-  isActive: boolean;
 
   @Column({ nullable: true })
   parentId: string;

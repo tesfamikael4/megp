@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { IsNumber, IsString } from 'class-validator';
 import { OrganizationMandate } from '@entities';
 
 export class CreateOrganizationMandateDto {
@@ -8,8 +8,8 @@ export class CreateOrganizationMandateDto {
   organizationId: string;
 
   @ApiProperty()
-  @IsString()
-  mandateId: string;
+  @IsNumber()
+  mandateId: number;
 
   static fromDto(
     organizationMandateDto: CreateOrganizationMandateDto,

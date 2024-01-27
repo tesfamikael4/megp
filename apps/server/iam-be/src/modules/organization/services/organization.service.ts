@@ -46,7 +46,6 @@ export class OrganizationService extends EntityCrudService<Organization> {
     const organization = this.repositoryOrganization.create(organizationDto);
     organization.code = this.generateOrganizationCode();
     organization.type = 'BACK-OFFICE';
-    organization.budgetType = 'DEFAULT';
 
     const unit = new Unit();
     unit.name = organization.name;
@@ -65,8 +64,9 @@ export class OrganizationService extends EntityCrudService<Organization> {
   async activate(id: string): Promise<OrganizationResponseDto | null> {
     const organization = await this.find(id);
 
-    organization.isActive = true;
-    await this.repositoryOrganization.update(id, organization);
+    await this.repositoryOrganization.update(id, {
+      status: 'ACTIVE',
+    });
 
     return OrganizationResponseDto.toDto(organization);
   }
