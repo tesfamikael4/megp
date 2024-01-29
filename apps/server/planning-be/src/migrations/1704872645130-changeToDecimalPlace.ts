@@ -5,9 +5,6 @@ export class ChangeToDecimalPlace1704872645130 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "pre_budget_plans" DROP COLUMN "calculatedAmount"`,
-    );
-    await queryRunner.query(
       `ALTER TABLE "post_budget_plan_items" DROP COLUMN "unitPrice"`,
     );
     await queryRunner.query(
