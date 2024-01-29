@@ -13,6 +13,7 @@ import { EmailConfig } from './shared/email/email.config';
 import { DataSeeder } from './modules/seeders/data.seeder';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { RuleModule } from './modules/rule/rule.module';
+import { NotificationModule } from './modules/notification/notification.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { RuleModule } from './modules/rule/rule.module';
     AuthorizationModule,
     WorkflowModule,
     RuleModule,
+    NotificationModule,
   ],
   providers: [
     DataSeeder,
