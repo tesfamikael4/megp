@@ -45,7 +45,6 @@ const schema = z.object({
 type FormSchema = z.infer<typeof schema>;
 
 export function SignUp(): JSX.Element {
-  //react-hook-form
   const {
     register,
     handleSubmit,
