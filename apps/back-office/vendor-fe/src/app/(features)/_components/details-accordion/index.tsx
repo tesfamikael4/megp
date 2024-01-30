@@ -5,10 +5,9 @@ import {
   Table,
   Text,
   Box,
-  ScrollArea,
-  Button,
   Modal,
   Image,
+  Divider,
 } from '@mantine/core';
 import classes from './accordion.module.scss';
 import { IconChevronRight } from '@tabler/icons-react';
@@ -132,7 +131,7 @@ function FormPreview({ data }: { data: any }) {
       <Section
         collapsible={false}
         title={'Company Details'}
-        className="w-1/3 max-w-md"
+        className="min:w-1/3 max-w-md"
       >
         <Box>
           <Accordion
@@ -167,7 +166,8 @@ function FormPreview({ data }: { data: any }) {
       <Section
         collapsible={false}
         title={findATabNameByValue(selected)?.tabName || 'Company Details'}
-        className="w-full min-h-[700px]"
+        className="w-2/3 min-h-[700px]"
+        w="66.666667%"
       >
         {!selected ||
           (!data[selected] && (
@@ -203,12 +203,7 @@ function FormPreview({ data }: { data: any }) {
               return selected === 'supportingDocuments' ||
                 selected === 'certificate' ||
                 (selected === 'paymentReceipt' && fieldKey === 'attachment') ? (
-                <Accordion
-                  variant="separated"
-                  // classNames={classes}
-                  styles={{}}
-                  key={fieldKey}
-                >
+                <Accordion variant="separated" styles={{}} key={fieldKey}>
                   <Accordion.Item
                     key={fieldKey ?? addSpacesToCamelCase(selected)}
                     className={classes.item}
@@ -253,38 +248,40 @@ function FormPreview({ data }: { data: any }) {
                 </Accordion>
               ) : (
                 <>
-                  <Box key={fieldKey} className="gap-2 items-center">
+                  <Divider />
+                  <Box key={fieldKey} className="gap-2 items-center ">
                     {typeof data[selected][fieldKey] === 'string' && (
-                      <Flex className="py-2 border-b px-1.5 ">
-                        <Text
-                          size="xs"
-                          fw={500}
-                          tt="capitalize"
-                          className="text-lg w-1/5 "
-                        >
-                          {addSpacesToCamelCase(fieldKey)}:
-                        </Text>
-                        <Text className="ml-2" size="sm" tt="capitalize">
-                          {data[selected][fieldKey]}
-                        </Text>
-                      </Flex>
-                    )}
-                    {data[selected][fieldKey] !== null &&
-                      typeof data[selected][fieldKey] === 'object' &&
-                      fieldKey !== 'invoiceIds' && (
-                        <Flex className="py-2 border-b px-1.5 ">
+                      <>
+                        <Flex className="" align="center" gap={'lg'}>
                           <Text
                             size="xs"
                             fw={500}
                             tt="capitalize"
-                            className="text-lg w-1/5 "
+                            className="text-md max:w-1/5 w-1/5 bg-[#DCE8F2] p-3 "
+                          >
+                            {addSpacesToCamelCase(fieldKey)}:
+                          </Text>
+                          <Text size="sm" tt="capitalize">
+                            {data[selected][fieldKey]}
+                          </Text>
+                        </Flex>
+                      </>
+                    )}
+                    {data[selected][fieldKey] !== null &&
+                      typeof data[selected][fieldKey] === 'object' &&
+                      fieldKey !== 'invoiceIds' && (
+                        <Flex className="" align={'center'} gap={'lg'}>
+                          <Text
+                            size="xs"
+                            fw={500}
+                            tt="capitalize"
+                            className="text-md max:w-1/5 w-1/5 bg-[#DCE8F2] p-3 "
                           >
                             {addSpacesToCamelCase(fieldKey)}
                           </Text>
                           <Text
-                            className="ml-2"
-                            size="xs"
-                            fw={700}
+                            className="text-center"
+                            size="sm"
                             tt="capitalize"
                           >
                             {selected === 'businessSizeAndOwnership'
@@ -299,6 +296,7 @@ function FormPreview({ data }: { data: any }) {
                         </Flex>
                       )}
                   </Box>
+                  <Divider />
                 </>
               );
             })
