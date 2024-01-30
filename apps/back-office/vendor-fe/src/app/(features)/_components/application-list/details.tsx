@@ -4,15 +4,7 @@ import {
   usePickTaskMutation,
   useUnpickTaskMutation,
 } from '@/store/api/vendor_request_handler/new-registration-api';
-import {
-  Avatar,
-  Box,
-  Flex,
-  Text,
-  Paper,
-  Button,
-  Skeleton,
-} from '@mantine/core';
+import { Avatar, Box, Flex, Paper, Button, Skeleton } from '@mantine/core';
 import { Section } from '@megp/core-fe';
 import { IconClockHour2, IconTicket, IconProgress } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
