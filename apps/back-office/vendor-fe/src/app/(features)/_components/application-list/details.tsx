@@ -99,6 +99,14 @@ export default function RequestDetail({
     response.data?.isrvendor?.basic.name,
   );
 
+  const vendorInfo =
+    requestType !== 'update'
+      ? response.data?.isrvendor
+      : {
+          ...response.data?.profileUpdate?.profileData,
+          ...response.data?.profileUpdate?.profileData?.basic,
+        };
+
   return (
     <>
       <Paper className="p-3">
@@ -175,9 +183,8 @@ export default function RequestDetail({
                 tracker={tracker}
                 setContent={setContent}
                 data={{
-                  ...response.data?.isrvendor,
+                  ...vendorInfo,
                   preferential: response.data?.preferential ?? {},
-                  profileUpdate: response.data?.profileUpdate ?? {},
                   upgrade: response.data?.upgrade ?? {},
                   renewal: response.data?.renewal ?? {},
                 }}

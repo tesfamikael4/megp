@@ -88,7 +88,7 @@ export interface FormData {
     generalReceipt_BankDepositSlip: string;
     mRATaxClearanceCertificate: string;
     previousPPDARegistrationCertificate: string;
-    mSMECertificate: string;
+    mSMECertificate?: string;
   };
   paymentReceipt: {
     transactionId: string;
@@ -152,6 +152,7 @@ export interface GetApproveVendorInfoResponse {
   data: GetFormResponse;
 }
 export interface GetFormResponse extends FormData {
+  status: string;
   initial: {
     userId: string; //session
     status: string;

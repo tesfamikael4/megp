@@ -108,7 +108,6 @@ export default function Page() {
                     generalReceipt_BankDepositSlip: '',
                     mRATaxClearanceCertificate: '',
                     previousPPDARegistrationCertificate: '',
-                    mSMECertificate: '',
                   },
               paymentReceipt: requestInfo.data.paymentReceipt,
             }}

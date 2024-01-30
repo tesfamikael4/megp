@@ -103,7 +103,7 @@ export const BasicInfo: React.FC<PassFormDataProps> = ({ register }) => {
           />
         )}
         <TextInput
-          label="Tin Number"
+          label="TIN"
           {...register(`basic.tinNumber`)}
           disabled
           className="w-1/2"

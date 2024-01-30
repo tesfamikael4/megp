@@ -1,10 +1,10 @@
 'use client';
 import { Stepper } from '@mantine/core';
 import styles from './stepper.module.scss';
-import { useRouter, usePathname } from 'next/navigation'; // Updated import
+import { useRouter, usePathname, useSearchParams } from 'next/navigation'; // Updated import
 import { usePrivilege } from '../../_context/privilege-context';
 import { useGetVendorQuery } from '../../../_api/query';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { NotificationService } from '@/app/(features)/vendor/_components/notification';
 
 function StyledStepper() {
@@ -25,7 +25,10 @@ function StyledStepper() {
     if (data?.initial) {
       updateAccess(data?.initial.level);
       updateStatus(data?.initial.status);
-      if (data?.initial.status === 'Submitted') {
+      if (
+        data?.initial.status === 'Submitted' ||
+        data?.initial.status === 'Approved'
+      ) {
         router.push(`/vendor/registration/track-applications`);
       } else return router.push((data?.initial.level).toLowerCase());
     }
@@ -46,6 +49,17 @@ function StyledStepper() {
   const activeStep = routes.indexOf(
     data?.initial.level?.toLowerCase() ?? path.split('/')[4],
   );
+  // const searchParams = useSearchParams();
+
+  // const createQueryString = useCallback(
+  //   (name: string, value: string) => {
+  //     const params = new URLSearchParams(searchParams.toString())
+  //     params.set(name, value)
+
+  //     return params.toString()
+  //   },
+  //   [searchParams]
+  // )
 
   const handleStepClick = (stepIndex) => {
     (canAccessRoute(routes[stepIndex]) || accessLevel == routes[stepIndex]) &&

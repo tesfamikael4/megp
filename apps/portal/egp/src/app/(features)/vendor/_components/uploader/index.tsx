@@ -44,7 +44,10 @@ const FileUploader: React.FC<FileUploaderProps> = ({
       const headers = new Headers();
       headers.set('Authorization', `Bearer ${authToken}`);
       return fetch(url, { headers })
-        .then((response) => response.blob())
+        .then((response) => {
+          setSelectedFile(response as any);
+          return response.blob();
+        })
         .then((blob) => URL.createObjectURL(blob))
         .then((objectUrl) => setCurrent(objectUrl));
     }
@@ -115,6 +118,10 @@ const FileUploader: React.FC<FileUploaderProps> = ({
   const [showPreview, setShowPreview] = useState(false);
   const [opened, { close, open }] = useDisclosure(false);
 
+  useEffect(() => {
+    if ((selectedFile as any)?.url?.endsWith('.pdf')) setIsPdf(true);
+  }, [(selectedFile as any)?.url]);
+
   return (
     <>
       {current && (
@@ -141,7 +148,9 @@ const FileUploader: React.FC<FileUploaderProps> = ({
         >
           {current ? (
             <Flex className={styles.cardImage}>
-              {selectedFile && selectedFile.type.startsWith('image/') ? (
+              {selectedFile &&
+              (selectedFile.type.startsWith('image/') ||
+                !(selectedFile as any)?.url?.endsWith('.pdf')) ? (
                 <Image
                   id={id}
                   src={current}
@@ -157,7 +166,9 @@ const FileUploader: React.FC<FileUploaderProps> = ({
                 />
               ) : (
                 <div>
-                  {selectedFile && selectedFile.type === 'application/pdf' ? (
+                  {selectedFile &&
+                  (selectedFile.type === 'application/pdf' ||
+                    (selectedFile as any)?.url?.endsWith('.pdf')) ? (
                     <img
                       src="/perago.png" // Specify the path to your PDF placeholder image
                       alt="pdf-placeholder"

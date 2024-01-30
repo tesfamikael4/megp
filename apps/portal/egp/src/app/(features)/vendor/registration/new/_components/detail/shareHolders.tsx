@@ -8,18 +8,12 @@ import {
   TextInput,
 } from '@mantine/core';
 import { Select } from '@mantine/core';
-
-import { IconMenu, IconPencil, IconTrash } from '@tabler/icons-react';
 import { PassFormDataProps } from './formShell';
 import {
   CardListShell,
   SingleCardWrapper,
 } from '../../../../_components/cardList/cardListShell';
-import ActionMenu from '../../../../_components/actionMenu';
-import {
-  nationalityOptions,
-  getNationalityValues,
-} from '../mockup/nationality';
+import { getNationalityValues } from '../mockup/nationality';
 import { usePrivilege } from '../../_context/privilege-context';
 
 interface Props extends Partial<PassFormDataProps> {
@@ -78,6 +72,18 @@ export const ShareHolders: React.FC<Props> = ({
                   required
                   placeholder="Enter Share"
                   {...getInputProps('share', 'number')}
+                  onChange={(value) => {
+                    console.log({ value });
+                    getInputProps('share', 'number').onChange(Number(value));
+                    const previousShareholderShare =
+                      control?._formValues?.shareHolders.reduce(
+                        (acc, shareholder) => (acc += shareholder.share),
+                        0,
+                      );
+                    // if (previousShareholderShare > 100) {
+
+                    // }
+                  }}
                   min={1}
                   max={100}
                   suffix="%"
