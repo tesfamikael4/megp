@@ -4,10 +4,11 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmConfigService } from './shared/typeorm/typeorm.service';
 import { AuthorizationModule } from './shared/authorization/authorization.module';
-import { ProcurementRequisitionModule } from './modules/ProcurementRequistion/procurement-requisition.module';
 import { PostBudgetPlanModule } from './modules/post-budget-plan/post-budget-planmodule';
 import { SpdModule } from './modules/spd/spd.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { AnnualProcurementPlanModule } from './modules/annual-procurement-plan/annual-procurement-plan.module';
+import { ProcurementRequisitionModule } from './modules/procurement-requistion/procurement-requisition.module';
 @Module({
   imports: [
     DocxModule,
@@ -22,6 +23,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
     ProcurementRequisitionModule,
     PostBudgetPlanModule,
     SpdModule,
+    AnnualProcurementPlanModule,
   ],
   providers: [EventEmitterModule],
   controllers: [],
