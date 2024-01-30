@@ -65,11 +65,10 @@ export function Shell({ children }: ShellProps): React.ReactNode {
 
   useEffect(() => {
     const filtered = shellContext.menuItems.filter((menuItem) => {
-      return menuItem.permission?.some(
-        (menuPermission) =>
-          user?.permissions.some(
-            (userPermission) => userPermission.key === menuPermission,
-          ),
+      return menuItem.permission?.some((menuPermission) =>
+        user?.organizations[0]?.permissions.some(
+          (userPermission) => userPermission.key === menuPermission,
+        ),
       );
     });
 
@@ -79,11 +78,10 @@ export function Shell({ children }: ShellProps): React.ReactNode {
         return {
           ...menuItems,
           links: menuItems.links.filter((menuItem: any) => {
-            return menuItem.permission?.some(
-              (menuPermission) =>
-                user?.permissions.some((userPermission) => {
-                  return userPermission.key === menuPermission;
-                }),
+            return menuItem.permission?.some((menuPermission) =>
+              user?.organizations[0]?.permissions.some((userPermission) => {
+                return userPermission.key === menuPermission;
+              }),
             );
           }),
         };

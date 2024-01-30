@@ -18,7 +18,7 @@ const AddUserModal = () => {
 
   const [currentAssigned, setCurrentAssigned] = useState<User[]>([]);
   const { id } = useParams();
-  const { user } = useAuth();
+  const { organizationId } = useAuth();
 
   const [assignUser, { isLoading: isSaving }] = useReverseRelationMutation();
   const [trigger, { data: users, isSuccess: userSucceed, isLoading }] =
@@ -100,7 +100,7 @@ const AddUserModal = () => {
   }, [users, userSucceed]);
 
   const onRequestChange = (request: CollectionQuery) => {
-    triggerData({ id: user?.organization?.id, collectionQuery: request });
+    triggerData({ id: organizationId, collectionQuery: request });
   };
 
   useEffect(() => {

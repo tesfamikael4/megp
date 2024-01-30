@@ -23,7 +23,7 @@ const AddOa = () => {
       {
         id: 'name',
         header: 'Name',
-        accessorKey: 'fullName',
+        accessorKey: 'firstName ',
         cell: (info) => info.getValue(),
         meta: {
           widget: 'primary',

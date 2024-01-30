@@ -64,14 +64,14 @@ export default function Invitation({ user }: invitationProps) {
   useEffect(() => {
     if (isSuccess) {
       const obj = {
-        firstName: userInvited?.account?.firstName,
-        lastName: userInvited?.account?.lastName,
+        firstName: userInvited?.firstName,
+        lastName: userInvited?.lastName,
         id: userInvited?.id,
         otp: userInvited?.otp,
       };
       const queryParams = Object.entries(obj).map(
         ([key, value]) =>
-          `${encodeURIComponent(key)}=${encodeURIComponent(value)}`,
+          `${decodeURIComponent(key)}=${decodeURIComponent(value)}`,
       );
       const finalURL = `${baseUrl}/iam/users/register/?&${queryParams.join(
         '&',

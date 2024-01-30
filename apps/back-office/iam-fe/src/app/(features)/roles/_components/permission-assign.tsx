@@ -24,7 +24,7 @@ const MandatePermission = ({
   const [selectedRow, setSelectedRow] = useState<any>();
   const [selectedPermission, setSelectedPermission] = useState<any>([]);
   const [filteredPermission, setFilteredPermission] = useState<any>([]);
-  const { user } = useAuth();
+  const { organizationId } = useAuth();
 
   const [trigger, { data: permissionList }] = useLazyListByAppIdQuery();
   const [triggerPermission, { data: permissionListUnderOrganization }] =
@@ -38,12 +38,12 @@ const MandatePermission = ({
   }, [selectedRow, trigger]);
 
   useEffect(() => {
-    triggerPermission(user?.organization.id);
-  }, [user, triggerPermission]);
+    triggerPermission(organizationId);
+  }, [organizationId, triggerPermission]);
 
   useEffect(() => {
-    triggerApp({ id: user?.organization.id, collectionQuery: undefined });
-  }, [triggerApp, user]);
+    triggerApp({ id: organizationId, collectionQuery: undefined });
+  }, [triggerApp, organizationId]);
 
   useEffect(() => {
     setSelectedPermission(permission);

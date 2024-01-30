@@ -17,12 +17,13 @@ import {
   useListByIdQuery,
 } from '../_api/unit.api';
 import { useListByIdQuery as useUnitTypeListQuery } from '../../unit-type/_api/unit-type.api';
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Unit } from '@/models/unit';
 import { ParentModal } from './parentModal';
-import { logger, notify } from '@megp/core-fe';
+import { notify } from '@megp/core-fe';
 import { useAuth } from '@megp/auth';
+import React from 'react';
 
 interface FormDetailProps {
   mode: 'new' | 'detail';
@@ -30,6 +31,7 @@ interface FormDetailProps {
 
 const defaultValues = {
   name: '',
+  shortName: '',
   typeId: null,
   parentId: null,
   description: '',
@@ -38,6 +40,8 @@ const defaultValues = {
 export function FormDetail({ mode }: FormDetailProps) {
   const unitSchema: ZodType<Partial<Unit>> = z.object({
     name: z.string().min(1, { message: 'This field is required' }),
+    shortName: z.string().min(1, { message: 'This field is required' }),
+
     typeId: z.string({
       required_error: 'This field is required',
       invalid_type_error: 'This field is required to be a string',
@@ -89,7 +93,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       setParent(list?.items?.filter((unit) => unit.parentId === null));
     }
   }, [isSuccess, list?.items]);
-  logger.log(parent);
+
   useEffect(() => {
     if (isSuccess && mode === 'detail') {
       const posibleParent = list?.items?.filter((u: Unit) => {
@@ -161,10 +165,41 @@ export function FormDetail({ mode }: FormDetailProps) {
     reset({ ...defaultValues });
   };
 
+  type SelectDropdownProps = {
+    name: string;
+    label: string;
+    value: string;
+    error: string | undefined;
+    onChange: (value: string) => void;
+    data: any[];
+  };
+
+  const SelectDropdown = memo(function SelectDropdown({
+    name,
+    label,
+    value,
+    error,
+    onChange,
+    data,
+  }: SelectDropdownProps) {
+    return (
+      <Select
+        name={name}
+        label={label}
+        value={value}
+        withAsterisk
+        error={error}
+        onChange={onChange}
+        data={data}
+      />
+    );
+  });
+
   useEffect(() => {
     if (mode == 'detail' && selectedSuccess && selected !== undefined) {
       reset({
         name: selected?.name,
+        shortName: selected?.shortName,
         parentId: selected?.parentId,
         typeId: selected?.typeId,
         description: selected?.description,
@@ -177,6 +212,7 @@ export function FormDetail({ mode }: FormDetailProps) {
     reset({
       parentId: parentUnitId,
       name: selected?.name,
+      shortName: selected?.shortName,
       typeId: selected?.typeId,
       description: selected?.description,
     });
@@ -196,6 +232,12 @@ export function FormDetail({ mode }: FormDetailProps) {
         {...register('name')}
       />
 
+      <TextInput
+        withAsterisk
+        label="Short name"
+        error={errors?.shortName ? errors?.shortName?.message?.toString() : ''}
+        {...register('shortName')}
+      />
       <Textarea
         label="Description"
         autosize
@@ -207,11 +249,10 @@ export function FormDetail({ mode }: FormDetailProps) {
         name="typeId"
         control={control}
         render={({ field: { onChange, value } }) => (
-          <Select
+          <SelectDropdown
             name="name"
             label="Unit Type"
             value={value}
-            withAsterisk
             error={errors?.typeId ? errors?.typeId?.message?.toString() : ''}
             onChange={onChange}
             data={

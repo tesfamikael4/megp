@@ -16,7 +16,7 @@ const AddEntityModal = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentAssigned, setCurrentAssigned] = useState<Unit[]>([]);
   const { id } = useParams();
-  const { user } = useAuth();
+  const { organizationId } = useAuth();
   const [isCollapsed, setIsCollapsed] = useState<boolean>(true);
 
   const [assign, { isLoading: isSaving }] = useRelationMutation();
@@ -101,9 +101,9 @@ const AddEntityModal = () => {
   }, [units, isSuccess]);
 
   const onRequestChange = (request: CollectionQuery) => {
-    user?.organization?.id !== undefined &&
+    organizationId !== undefined &&
       isModalOpen &&
-      triggerData({ id: user?.organization?.id, collectionQuery: request });
+      triggerData({ id: organizationId, collectionQuery: request });
   };
 
   return (

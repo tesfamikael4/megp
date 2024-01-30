@@ -1,28 +1,20 @@
-import React, { useState } from 'react';
-import { Modal } from '@mantine/core';
-import { Text } from '@mantine/core';
+import React from 'react';
+
 import { Relation, RelationConfig } from '@megp/entity';
-import { useListByAppIdQuery, useDeleteMutation } from '../_api/permission.api';
+import { useListByAppIdQuery } from '../_api/permission.api';
 import { useParams } from 'next/navigation';
 import { Permission } from '@/models/permission';
-import { PermissionForm } from './permission-form';
-import { modals } from '@mantine/modals';
-import { notifications } from '@mantine/notifications';
 
 const AddPermisionModal = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [mode, setMode] = useState<'new' | 'detail'>('new');
-  const [unitId, setUnitId] = useState('');
   const { id } = useParams();
 
   const { data: applicationPermission, isSuccess } = useListByAppIdQuery(
     id?.toString(),
   );
 
-  const [remove] = useDeleteMutation();
-
   const relationConfig: RelationConfig<Permission> = {
     title: 'Application Permission',
+    hasAdd: false,
     columns: [
       {
         id: 'name',
@@ -35,53 +27,6 @@ const AddPermisionModal = () => {
       },
     ],
     pagination: true,
-
-    onAdd: () => {
-      setMode('new');
-      setIsModalOpen(true);
-    },
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
-
-  const openDeleteModal = (id) => {
-    modals.openConfirmModal({
-      title: `Delete `,
-      centered: true,
-      children: (
-        <Text size="sm">{`Are you sure you want to delete this permission `}</Text>
-      ),
-      labels: { confirm: 'Yes', cancel: 'No' },
-      confirmProps: { color: 'red' },
-      onConfirm: () => {
-        onDelete(id);
-      },
-    });
-  };
-
-  const onDelete = async (id) => {
-    try {
-      await remove(id).unwrap();
-      notifications.show({
-        message: 'Permission deleted successfully',
-        title: 'Success',
-        color: 'green',
-      });
-    } catch (err) {
-      notifications.show({
-        message: 'Errors in deleting Permission.',
-        title: 'Error',
-        color: 'red',
-      });
-    }
-  };
-
-  const openEditModal = (id) => {
-    setIsModalOpen(true);
-    setUnitId(id);
-    setMode('detail');
   };
 
   return (
@@ -89,24 +34,10 @@ const AddPermisionModal = () => {
       <Relation
         config={relationConfig}
         data={isSuccess ? applicationPermission.items : []}
-        showPopUp={true}
-        openDeleteModal={openDeleteModal}
-        openEditModal={openEditModal}
-        collapsed={false}
         total={applicationPermission?.items.length}
+        readOnly={true}
+        collapsed={false}
       />
-      <Modal
-        title={mode === 'new' ? 'New permission' : 'Update permission'}
-        opened={isModalOpen}
-        onClose={handleCloseModal}
-        size={'lg'}
-      >
-        <PermissionForm
-          mode={mode}
-          handleCloseModal={handleCloseModal}
-          unitId={unitId}
-        />
-      </Modal>
     </>
   );
 };

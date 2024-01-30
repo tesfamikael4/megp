@@ -8,7 +8,7 @@ import { useAuth } from '@megp/auth';
 
 export function Entity({ children }: { children: React.ReactNode }) {
   const route = useRouter();
-  const { user } = useAuth();
+  const { organizationId } = useAuth();
   const [request, setRequest] = useState<any>();
 
   const pathname = usePathname();
@@ -63,18 +63,18 @@ export function Entity({ children }: { children: React.ReactNode }) {
     pathname === `/my-mandate`
       ? 'list'
       : pathname === `/my-mandate/new`
-      ? 'new'
-      : 'detail';
+        ? 'new'
+        : 'detail';
   useEffect(() => {
     const onRequestChange = (request: CollectionQuery) => {
-      user &&
+      organizationId &&
         trigger({
-          id: user.organization.id,
+          id: organizationId,
           collectionQuery: request,
         });
     };
     setRequest(onRequestChange);
-  }, [trigger, user]);
+  }, [trigger, organizationId]);
 
   return (
     <EntityLayout

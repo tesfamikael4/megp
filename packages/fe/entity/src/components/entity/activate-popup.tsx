@@ -22,14 +22,14 @@ export function ActivateButton({
 
   const openActivateModal = () => {
     modals.openConfirmModal({
-      title: `${data?.isActive ? 'Deactivate' : 'Activate'} ${
+      title: `${data?.status === 'ACTIVATE' ? 'Deactivate' : 'Activate'} ${
         entity ? entity : entityName
       }`,
       centered: true,
       children: (
         <Text size="sm">
           {`Are you sure you want to ${
-            data?.isActive ? 'deactivate' : 'activate'
+            data?.status === 'ACTIVATE' ? 'deactivate' : 'activate'
           } this ${entity ? entity : entityName} `}
         </Text>
       ),
@@ -43,7 +43,7 @@ export function ActivateButton({
 
   return (
     <Button
-      color={data?.isActive ? 'red' : ''}
+      color={data?.status === 'ACTIVATE' ? 'red' : ''}
       leftSection={
         data?.isActive ? (
           <IconToggleLeft size={14} stroke={1.6} />
@@ -55,7 +55,7 @@ export function ActivateButton({
       onClick={openActivateModal}
       type="submit"
     >
-      {data?.isActive ? 'Deactivate' : 'Activate'}
+      {data?.status === 'ACTIVATE' ? 'Deactivate' : 'Activate'}
     </Button>
   );
 }

@@ -41,7 +41,7 @@ export function FormDetail({ mode }: FormDetailProps) {
   });
   const router = useRouter();
   const { id } = useParams();
-  const { user } = useAuth();
+  const { organizationId } = useAuth();
 
   const [create, { isLoading: isSaving }] = useCreateMutation();
   const [update, { isLoading: isUpdating }] = useUpdateMutation();
@@ -56,7 +56,7 @@ export function FormDetail({ mode }: FormDetailProps) {
     try {
       const result = await create({
         ...data,
-        organizationId: `${user?.organization?.id}`,
+        organizationId: `${organizationId}`,
         isSystemRole: false,
       });
       if ('data' in result) {
@@ -73,7 +73,7 @@ export function FormDetail({ mode }: FormDetailProps) {
         ...data,
         id: id?.toString(),
         isSystemRole: false,
-        organizationId: `${user?.organization?.id}`,
+        organizationId: `${organizationId}`,
       });
       notify('Success', 'Role updated successfully');
     } catch {

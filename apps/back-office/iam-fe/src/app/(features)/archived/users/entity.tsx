@@ -6,11 +6,12 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLazyListArchivedByIdQuery } from '../../../users/_api/user.api';
 import { Restore } from './_components/restore';
 import { useAuth } from '@megp/auth';
+import { logger } from '@megp/core-fe';
 
 export function Entity({ children }: { children: React.ReactNode }) {
   const [onRequest, setOnRequest] = useState<any>();
 
-  const { user } = useAuth();
+  const { organizationId } = useAuth();
 
   const pathname = usePathname();
 
@@ -71,9 +72,10 @@ export function Entity({ children }: { children: React.ReactNode }) {
 
   const onRequestChange = useCallback(
     (request: CollectionQuery) => {
-      trigger({ id: user?.organization?.id, collectionQuery: request });
+      organizationId !== undefined &&
+        trigger({ id: organizationId, collectionQuery: request });
     },
-    [trigger, user?.organization?.id],
+    [trigger, organizationId],
   );
 
   useEffect(() => {

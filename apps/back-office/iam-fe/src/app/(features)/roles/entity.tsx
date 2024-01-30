@@ -10,7 +10,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
   const [onRequest, setOnRequest] = useState<any>();
 
   const route = useRouter();
-  const { user } = useAuth();
+  const { organizationId } = useAuth();
 
   const pathname = usePathname();
 
@@ -28,10 +28,6 @@ export function Entity({ children }: { children: React.ReactNode }) {
       },
       onDetail: (selected: Role) => {
         route.push(`/roles/${selected?.id}`);
-      },
-
-      onSearch: (search) => {
-        // console.log('search', search);
       },
       searchable: true,
       pagination: true,
@@ -62,15 +58,15 @@ export function Entity({ children }: { children: React.ReactNode }) {
     pathname === `/roles`
       ? 'list'
       : pathname === `/roles/new`
-      ? 'new'
-      : 'detail';
+        ? 'new'
+        : 'detail';
 
   const onRequestChange = useCallback(
     (request: CollectionQuery) => {
-      user !== undefined &&
-        trigger({ id: user?.organization?.id, collectionQuery: request });
+      organizationId !== undefined &&
+        trigger({ id: organizationId, collectionQuery: request });
     },
-    [trigger, user],
+    [trigger, organizationId],
   );
 
   useEffect(() => {

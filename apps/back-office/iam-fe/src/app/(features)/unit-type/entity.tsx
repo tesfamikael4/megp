@@ -11,7 +11,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
   const [onRequest, setOnRequest] = useState<any>();
 
   const pathname = usePathname();
-  const { user } = useAuth();
+  const { organizationId } = useAuth();
 
   const [trigger, { data, isFetching }] = useLazyListByIdQuery();
 
@@ -32,10 +32,6 @@ export function Entity({ children }: { children: React.ReactNode }) {
       pagination: true,
       searchable: true,
       sortable: true,
-
-      onSearch: (search) => {
-        // console.log('search', search);
-      },
 
       columns: [
         {
@@ -62,14 +58,14 @@ export function Entity({ children }: { children: React.ReactNode }) {
     pathname === `/unit-type`
       ? 'list'
       : pathname === `/unit-type/new`
-      ? 'new'
-      : 'detail';
+        ? 'new'
+        : 'detail';
 
   const onRequestChange = useCallback(
     (request: CollectionQuery) => {
-      trigger({ id: user?.organization?.id, collectionQuery: request });
+      trigger({ id: organizationId, collectionQuery: request });
     },
-    [trigger, user?.organization?.id],
+    [trigger, organizationId],
   );
 
   useEffect(() => {
