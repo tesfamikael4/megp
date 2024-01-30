@@ -85,9 +85,9 @@ export default function SupportingDocuments() {
         setBusinessRegistrationImageUrl(
           `${VENDOR_URL}/upload/get-file/SupportingDocument/${docInfo.data?.supportingDocuments.businessRegistration_IncorporationCertificate}`,
         );
-      docInfo.data?.supportingDocuments.mRATaxClearanceCertificate &&
+      docInfo.data?.supportingDocuments.mRA_TPINCertificate &&
         setMRATPINCertificateImageUrl(
-          `${VENDOR_URL}/upload/get-file/SupportingDocument/${docInfo.data?.supportingDocuments.mRATaxClearanceCertificate}`,
+          `${VENDOR_URL}/upload/get-file/SupportingDocument/${docInfo.data?.supportingDocuments.mRA_TPINCertificate}`,
         );
       docInfo.data?.supportingDocuments.previousPPDARegistrationCertificate &&
         setPreviousPPDARegistrationImageUrl(

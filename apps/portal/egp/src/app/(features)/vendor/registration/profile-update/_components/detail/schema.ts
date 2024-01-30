@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { getNationalityValues } from '../../../new/_components/mockup/nationality';
 
 export const contactPersonSchema = z.object({
   firstName: z
@@ -54,7 +55,7 @@ export const shareHoldersSchema = z.object({
     .min(2, { message: 'Name must be at least 2 characters long' })
     .max(50, { message: 'Name cannot exceed 50 characters' }),
   nationality: z.string().min(2, { message: 'Nationality is required' }),
-  share: z
+  share: z.coerce
     .number()
     .min(1, { message: 'Share is required ' })
     .refine((value) => !isNaN(Number(value)) && Number(value) > 0, {
@@ -77,17 +78,33 @@ export const beneficialOwnershipSchema = z.object({
 });
 
 export const formDataSchema = z.object({
-  basic: z.object({
-    name: z
-      .string()
-      .min(2, { message: 'Name must be at l5ast 2 characters long' })
-      .max(100, { message: 'Name cannot exceed 100 characters' }),
-    businessType: z.string().optional(),
-    origin: z.string(),
-    district: z.string().optional(),
-    country: z.string(),
-    tinNumber: z.string(),
-  }),
+  basic: z.discriminatedUnion('country', [
+    z.object({
+      name: z
+        .string()
+        .min(2, { message: 'Name must be at l5ast 2 characters long' })
+        .max(100, { message: 'Name cannot exceed 100 characters' }),
+      origin: z.string(),
+      tinNumber: z
+        .string()
+        .min(6, { message: 'TIN must have at least 10 characters' })
+        .max(10, { message: 'TIN should not exceed 10 characters' }),
+      country: z.literal('Malawi'),
+      district: z.string(),
+    }),
+    z.object({
+      name: z
+        .string()
+        .min(2, { message: 'Name must be at least 2 characters long' })
+        .max(100, { message: 'Name cannot exceed 100 characters' }),
+      origin: z.string(),
+      businessType: z
+        .string()
+        .min(2, { message: 'Form of business is required' }),
+      country: z.enum(getNationalityValues('Malawi')),
+      tinNumber: z.string().optional(),
+    }),
+  ]),
   address: z.object({
     postalAddress: z.string().optional(),
     primaryEmail: z

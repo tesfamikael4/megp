@@ -210,7 +210,7 @@ const NewPreferentialForm = ({
           <Button variant="outline" onClick={() => handleSaveDraft()}>
             Draft
           </Button>
-          <Button type="submit">Save</Button>
+          <Button type="submit">Submit</Button>
         </Flex>
       </form>
     </CardLayout>

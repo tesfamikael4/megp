@@ -1,6 +1,7 @@
 import { GetFormResponse } from '@/models/vendorRegistration';
 
 export const formData: GetFormResponse = {
+  status: '',
   initial: {
     level: '',
     status: '',
@@ -46,7 +47,6 @@ export const formData: GetFormResponse = {
     generalReceipt_BankDepositSlip: '',
     mRATaxClearanceCertificate: '',
     previousPPDARegistrationCertificate: '',
-    mSMECertificate: '',
   },
   paymentReceipt: null,
 };

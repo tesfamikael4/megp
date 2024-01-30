@@ -125,7 +125,6 @@ export const vendorInformationData = {
     generalReceipt_BankDepositSlip: 'Receipt789',
     mRATaxClearanceCertificate: 'TaxClearance123',
     previousPPDARegistrationCertificate: 'PPDA456',
-    mSMECertificate: 'SME789',
   },
 };
 export const AutoFillButton: React.FC<{

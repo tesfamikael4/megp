@@ -100,7 +100,7 @@ export default function ApplicationList({
       setWhere((prev: Where[]) => [
         ...prev,
         {
-          column: 'isrVendor.basic->>formOfEntity',
+          column: 'isrVendor.areasOfBusinessInterest->>category',
           operator: '=',
           value: filter.status,
         },

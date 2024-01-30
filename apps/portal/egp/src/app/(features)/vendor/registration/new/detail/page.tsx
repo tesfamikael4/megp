@@ -26,7 +26,10 @@ export default function Page() {
       router.push(`basic`);
     }
     if (requestInfo.data?.initial) {
-      if (requestInfo.data?.initial.status === 'Submitted') {
+      if (
+        requestInfo.data?.initial.status === 'Submitted' ||
+        requestInfo.data?.status! === 'Approved'
+      ) {
         router.push(`/vendor/registration/track-applications`);
       } else router.push((requestInfo.data?.initial.level).toLowerCase());
     }
@@ -95,13 +98,12 @@ export default function Page() {
                 : requestInfo.data.areasOfBusinessInterest,
             invoice:
               requestInfo.data.invoice == null ? [] : requestInfo.data.invoice,
-            supportingDocuments: {
+            supportingDocuments: requestInfo.data.supportingDocuments ?? {
               businessRegistration_IncorporationCertificate: '',
               mRA_TPINCertificate: '',
               generalReceipt_BankDepositSlip: '',
               mRATaxClearanceCertificate: '',
               previousPPDARegistrationCertificate: '',
-              mSMECertificate: '',
             },
             paymentReceipt: requestInfo.data.paymentReceipt,
           }}
