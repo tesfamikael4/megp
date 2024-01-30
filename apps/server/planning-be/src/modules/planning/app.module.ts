@@ -36,8 +36,8 @@ import * as dotenv from 'dotenv';
 import { PreBudgetActivityDocumentController } from './controllers/pre-budget-activity-documents.controller';
 import { PreBudgetActivityDocumentService } from './services/pre-budget-activity-documents.service';
 import { MinioModule } from 'nestjs-minio-client';
-import { ReasonService } from './services/reason.service';
-import { ReasonController } from './controllers/reason.controller';
+import { ReasonService } from '../utility/services/reason.service';
+import { ReasonController } from '../utility/controllers/reason.controller';
 import { Reason } from 'src/entities/reason.entity';
 
 dotenv.config({ path: '.env' });

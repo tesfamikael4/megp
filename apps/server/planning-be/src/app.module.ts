@@ -5,10 +5,10 @@ import { TypeOrmConfigService } from './shared/typeorm/typeorm.service';
 import { AuthorizationModule } from './shared/authorization/authorization.module';
 import { APPModule } from './modules/planning/app.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
-import { QRModule } from './modules/qr-generator/qr.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TransactionInterceptor } from './shared/interceptors';
 import { TenantInterceptor } from './shared/interceptors/tenant-interceptor';
+import { UtilityModule } from './modules/utility/utility.module';
 
 @Module({
   imports: [
@@ -21,7 +21,7 @@ import { TenantInterceptor } from './shared/interceptors/tenant-interceptor';
     ConfigModule.forRoot({ isGlobal: true }),
     AuthorizationModule,
     APPModule,
-    QRModule,
+    UtilityModule,
     EventEmitterModule.forRoot({
       // set this to `true` to use wildcards
       wildcard: false,

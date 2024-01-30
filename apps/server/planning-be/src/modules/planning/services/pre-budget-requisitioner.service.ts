@@ -13,7 +13,12 @@ export class PreBudgetRequisitionerService extends ExtraCrudService<PreBudgetReq
     super(repositoryPreBudgetRequisitioner);
   }
 
-  async bulkCreate(requisitioner: any): Promise<any> {
+  async bulkCreate(requisitioner: any, req: any): Promise<any> {
+    if (req?.user?.organization) {
+      requisitioner.requisitioner.map((item) => {
+        item.organizationId = req.user.organization.id;
+      });
+    }
     await this.repositoryPreBudgetRequisitioner.delete({
       preBudgetPlanActivityId:
         requisitioner?.requisitioner[0].preBudgetPlanActivityId,

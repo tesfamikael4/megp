@@ -83,4 +83,11 @@ export class PostBudgetPlanController extends ExtraCrudController<PostBudgetPlan
       q,
     );
   }
+
+  @Post('initiate-workflow')
+  @UseInterceptors(TransactionInterceptor)
+  async initiateWorkflow(@Body() data: any, @CurrentUser() user) {
+    data.organizationId = user.organization.id;
+    await this.postBudgetPlanService.initiateWorkflow(data);
+  }
 }

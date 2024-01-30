@@ -34,10 +34,16 @@ export class PostBudgetPlanDisbursement extends OrgAudit {
   budgetYear: string;
 
   @Column()
-  quarter: string;
+  quarter1: string;
 
   @Column()
-  order: number;
+  quarter2: string;
+
+  @Column()
+  quarter3: string;
+
+  @Column()
+  quarter4: string;
 
   @Column()
   amount: number;
