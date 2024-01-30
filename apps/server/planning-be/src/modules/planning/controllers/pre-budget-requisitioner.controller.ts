@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, Req } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { ExtraCrudController } from 'src/shared/controller';
@@ -21,7 +21,7 @@ export class PreBudgetRequisitionerController extends ExtraCrudController<PreBud
   }
 
   @Post('bulk-create')
-  async bulkCreate(@Body() requisitioner: any): Promise<any> {
-    return this.preBudgetRequisitionerService.bulkCreate(requisitioner);
+  async bulkCreate(@Body() requisitioner: any, @Req() req?: any): Promise<any> {
+    return this.preBudgetRequisitionerService.bulkCreate(requisitioner, req);
   }
 }

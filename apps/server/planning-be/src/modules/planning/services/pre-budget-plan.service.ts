@@ -29,6 +29,7 @@ import { PostProcurementMechanism } from 'src/entities/post-procurement-mechanis
 import { ExtraCrudService } from 'src/shared/service';
 // import { EventEmitter2 } from '@nestjs/event-emitter';
 import { createHash } from 'crypto';
+import { classToPlain, instanceToPlain } from 'class-transformer';
 
 @Injectable()
 export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
@@ -315,6 +316,10 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
         preProcurementMechanisms: true,
       },
     });
+    const transformedData = this.instanceToPlainExclude(data, {
+      exclude: ['createdAt', 'deletedAt'],
+    });
+
     const hashData = (data) => {
       return createHash('sha-256').update(data).digest('hex');
     };
@@ -327,5 +332,21 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
   async hashMatch(dataId: string, hash: string): Promise<boolean> {
     const originalHash = await this.hashData(dataId);
     return originalHash === hash;
+  }
+
+  instanceToPlainExclude(
+    obj: Record<string, any>,
+    options: { exclude?: string[] } = {},
+  ): Record<string, any> {
+    const plain: Record<string, any> = {};
+    for (const key in obj) {
+      if (obj.hasOwnProperty(key) && !options.exclude.includes(key)) {
+        plain[key] =
+          typeof obj[key] === 'object' && obj[key] !== null
+            ? this.instanceToPlainExclude(obj[key], options) // Recursively convert nested objects
+            : obj[key];
+      }
+    }
+    return plain;
   }
 }
