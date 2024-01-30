@@ -56,6 +56,9 @@ export const Requisitioner = () => {
       {
         title: 'Full Name',
         accessor: 'fullName',
+        render: (record) => {
+          return <>{record.firstName + ' ' + record.lastName}</>;
+        },
       },
     ],
   };
@@ -69,10 +72,9 @@ export const Requisitioner = () => {
     useLazyListByIdQuery();
 
   const [requisitioners, setRequisitioners] = useState<any[]>([]);
-  const { user } = useAuth();
+  const { organizationId } = useAuth();
 
   const onCreate = async () => {
-    logger.log(requisitioners);
     const castedData = requisitioners.map((r: any) => ({
       ...r,
       procurementRequisitionId: id,
@@ -83,12 +85,9 @@ export const Requisitioner = () => {
       await createRequisitioner(castedData).unwrap();
       notify('Success', 'Requisitioner Added successfully');
     } catch (err) {
-      logger.log({ err });
       notify('Error', 'Something went wrong');
     }
   };
-  logger.log(requisitioner);
-  logger.log(requisitioners);
 
   useEffect(() => {
     getRequisitioner({ id: id.toString(), collectionQuery: undefined });
@@ -97,6 +96,7 @@ export const Requisitioner = () => {
   useEffect(() => {
     isSuccess && requisitioner && setRequisitioners([...requisitioner.items]);
   }, [isSuccess, requisitioner]);
+  logger.log(requisitioners);
   return (
     <Box>
       <Group justify="end" className="my-2">
@@ -110,7 +110,7 @@ export const Requisitioner = () => {
       />
       {requisitioners.length !== 0 && (
         <Group justify="end" className="my-2">
-          <Button onClick={onCreate} loading={isCreatingLoading}>
+          <Button onClick={onCreate} loading={isCreatingLoading} mb={'sm'}>
             <IconDeviceFloppy size={14} />
             Save
           </Button>
@@ -127,7 +127,7 @@ export const Requisitioner = () => {
           data={users?.items ?? []}
           total={users ? users.total : 0}
           onRequestChange={(collectionQuery) => {
-            const id = user?.organization?.id ?? '';
+            const id = organizationId ?? '';
             getUsers({ id, collectionQuery });
           }}
         />
@@ -135,11 +135,11 @@ export const Requisitioner = () => {
         <Group justify="end">
           <Button
             onClick={() => {
-              logger.log(selectedItems);
               const castedData = selectedItems.map((r: any) => ({
-                name: r.fullName,
+                name: r.firstName + ' ' + r.lastName,
                 userId: r.id,
               }));
+              logger.log(castedData);
               setRequisitioners(castedData);
               close();
             }}

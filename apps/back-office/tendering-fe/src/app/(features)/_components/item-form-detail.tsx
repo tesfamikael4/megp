@@ -25,7 +25,7 @@ const ItemSchema: ZodType<any> = z.object({
   quantity: z.string().min(1, { message: 'Quantity is required' }),
   unitPrice: z.string().min(1, { message: 'Unit Price is required' }),
   itemCode: z.string().min(1, { message: 'Item Code is required' }),
-  uomName: z.string().min(1, { message: 'Unit of measurement is required' }),
+  uoM: z.string().min(1, { message: 'Unit of measurement is required' }),
 });
 
 export const ItemDetailForm = ({
@@ -67,7 +67,7 @@ export const ItemDetailForm = ({
     setValue('description', item?.description);
     setValue('quantity', `${item?.quantity}`);
     setValue('unitPrice', `${item?.unitPrice}`);
-    setValue('uomName', item?.uomName);
+    setValue('uoM', item?.uoM);
     setValue('classification', `${item?.classification}`);
     setValue('itemCode', item?.itemCode);
     setValue('currency', item?.currency);
@@ -113,7 +113,7 @@ export const ItemDetailForm = ({
             disabled={disable}
           />
           <Controller
-            name="uomName"
+            name="uoM"
             control={control}
             render={({ field: { name, value, onChange } }) => (
               <Select
@@ -123,9 +123,7 @@ export const ItemDetailForm = ({
                 value={value}
                 onChange={onChange}
                 data={uom?.items.map((u) => u.abbreviation) ?? []}
-                error={
-                  errors?.uomName ? errors?.uomName?.message?.toString() : ''
-                }
+                error={errors?.uoM ? errors?.uoM?.message?.toString() : ''}
               />
             )}
           />

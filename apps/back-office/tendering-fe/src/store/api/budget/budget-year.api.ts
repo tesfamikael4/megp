@@ -15,7 +15,7 @@ export const budgetApi = createApi({
           q = `?q=${query}`;
         }
         return {
-          url: `procurement-requisition-activities/annualProcurementPlan${q}`,
+          url: `annual-procurement-plans${q}`,
           method: 'GET',
         };
       },
@@ -31,7 +31,7 @@ export const budgetApi = createApi({
           q = `?q=${query}`;
         }
         return {
-          url: `procurement-requisition-activities/annualProcurementPlanActivities/${id}${q}`,
+          url: `annual-procurement-plan-activities/list/${id}${q}`,
           method: 'GET',
         };
       },

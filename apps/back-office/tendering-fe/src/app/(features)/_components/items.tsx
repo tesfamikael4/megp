@@ -21,9 +21,9 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useDeleteMutation, useUpdateMutation } from '../_api/items.api';
 import {
-  useLazyListItemByIdQuery,
-  useCreateItemMutation,
-} from '@/app/(features)/_api/custom.api';
+  useLazyListByIdQuery,
+  useCreateMutation,
+} from '@/app/(features)/_api/items.api';
 import { modals } from '@mantine/modals';
 import ItemSelector from '@/app/(features)/_components/item-selector';
 import DataImport from './data-import';
@@ -41,13 +41,13 @@ export function Items() {
   const [total, setTotal] = useState<number>(0);
   const [newItems, setNewItems] = useState<any[]>([]);
 
-  const [addItems, { isLoading: isAddingItems }] = useCreateItemMutation();
+  const [addItems, { isLoading: isAddingItems }] = useCreateMutation();
 
   const [updateItem, { isLoading: isUpdating }] = useUpdateMutation();
 
   const route = useRouter();
 
-  const [listById, { data: itemsList, isSuccess }] = useLazyListItemByIdQuery();
+  const [listById, { data: itemsList, isSuccess }] = useLazyListByIdQuery();
 
   const [remove] = useDeleteMutation();
 

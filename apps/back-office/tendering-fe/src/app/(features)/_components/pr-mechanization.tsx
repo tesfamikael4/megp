@@ -15,10 +15,10 @@ import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import {
-  useCreateMechanismMutation,
-  useUpdateMechanismMutation,
-  useLazyListMechanismByIdQuery,
-} from '@/app/(features)/_api/custom.api';
+  useCreateMutation,
+  useUpdateMutation,
+  useLazyListByIdQuery,
+} from '@/app/(features)/_api/mechanization.api';
 import { FrameworkSelector } from './framework-selector';
 import { useLazyListByIdQuery as useLazyGetAssignedActivitiesQuery } from '../_api/pr-activity.api';
 import {
@@ -58,9 +58,9 @@ export const ActivityMechanization = () => {
   const fundingSource = watch('fundingSource');
   const [assignedActivities, setAssignedActivities] = useState<any>();
 
-  const [create, { isLoading: isCreating }] = useCreateMechanismMutation();
+  const [create, { isLoading: isCreating }] = useCreateMutation();
 
-  const [update, { isLoading: isUpdating }] = useUpdateMechanismMutation();
+  const [update, { isLoading: isUpdating }] = useUpdateMutation();
   const [trigger, { data: assignedActivity }] =
     useLazyGetAssignedActivitiesQuery();
 
@@ -76,7 +76,7 @@ export const ActivityMechanization = () => {
       isLoading: isGetMechanismLoading,
       isSuccess: isGetMechanismSuccess,
     },
-  ] = useLazyListMechanismByIdQuery();
+  ] = useLazyListByIdQuery();
 
   const { id } = useParams();
   const [contract, setContract] = useState({});
@@ -146,7 +146,7 @@ export const ActivityMechanization = () => {
   }, [id, trigger]);
   useEffect(() => {
     listById({
-      id: budget?.items?.budgetYearId.toString(),
+      id: budget?.items[0]?.id?.toString(),
       collectionQuery: undefined,
     });
   }, [budget, budgetFeatched, listById]);
@@ -212,7 +212,7 @@ export const ActivityMechanization = () => {
   logger.log(assignedActivity);
 
   return (
-    <Stack pos="relative">
+    <Stack pos="relative" pb={'sm'}>
       <LoadingOverlay visible={isGetMechanismLoading} />
       <Flex gap="md">
         <Controller
