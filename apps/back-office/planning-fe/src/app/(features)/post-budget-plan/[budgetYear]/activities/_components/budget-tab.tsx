@@ -48,22 +48,21 @@ export const BudgetTab = () => {
       },
       {
         title: '1st Quarter',
-        accessor: 'quarter',
+        accessor: 'quarter1',
       },
       {
         title: '2nd Quarter',
-        accessor: 'quarter',
+        accessor: 'quarter2',
       },
       {
         title: '3rd Quarter',
-        accessor: 'quarter',
+        accessor: 'quarter3',
       },
       {
         title: '4th Quarter',
-        accessor: 'quarter',
+        accessor: 'quarter4',
       },
       {
-        id: 'action',
         title: 'Amount',
         accessor: 'amount',
         cell: ({ row: { original } }) => <Amount original={original} />,
@@ -77,30 +76,12 @@ export const BudgetTab = () => {
     {
       budgetYear: budgetYearWithApp?.items?.[0].app.budgetYear,
       amount: 0,
-      quarter: '1st Quarter',
-      order: 0,
-    },
-    {
-      budgetYear: budgetYearWithApp?.items?.[0].app.budgetYear,
-      amount: 0,
-      quarter: '2nd Quarter',
-      order: 1,
-    },
-    {
-      budgetYear: budgetYearWithApp?.items?.[0].app.budgetYear,
-      amount: 0,
-      quarter: '3rd Quarter',
-      order: 2,
-    },
-    {
-      budgetYear: budgetYearWithApp?.items?.[0].app.budgetYear,
-      amount: 0,
-      quarter: '4th Quarter',
-      order: 3,
+      quarter1: '212',
+      quarter2: '321',
+      quarter3: '1123',
+      quarter4: '3212',
     },
   ]);
-
-  const [castedDisbursement, setCastedDisbursement] = useState<any>({});
 
   const handleAdd = () => {
     const lastYear = budgetYearDisbursement[budgetYearDisbursement.length - 1];
@@ -186,20 +167,6 @@ export const BudgetTab = () => {
   }, [budgetYearWithApp]);
 
   useEffect(() => {
-    const temp = {};
-    budgetYearDisbursement.map((b) => {
-      if (!temp[b.budgetYear]) {
-        const quarter = budgetYearDisbursement.filter(
-          (k) => k.budgetYear === b.budgetYear,
-        );
-        temp[b.budgetYear] = quarter;
-      }
-    });
-    logger.log({ temp });
-    setCastedDisbursement(temp);
-  }, [budgetYearDisbursement]);
-
-  useEffect(() => {
     getDisbursement(id as string);
   }, [getDisbursement, id]);
 
@@ -236,17 +203,7 @@ export const BudgetTab = () => {
           </Flex>
         )}
       </Box>
-      <ExpandableTable data={castedDisbursement[2024] ?? []} config={config} />
-      {/* <Accordion variant="contained">
-        {Object.keys(castedDisbursement).map((year) => (
-          <Accordion.Item value={year} className="bg-white" key={year}>
-            <Accordion.Control>{year}</Accordion.Control>
-            <Accordion.Panel>
-              <Table config={config} data={castedDisbursement[year]} />
-            </Accordion.Panel>
-          </Accordion.Item>
-        ))}
-      </Accordion> */}
+      <ExpandableTable data={budgetYearDisbursement ?? []} config={config} />
 
       <Group justify="end" className="mt-2">
         <Divider h={2} />

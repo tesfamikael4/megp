@@ -14,12 +14,22 @@ const phoneUtil = PhoneNumberUtil.getInstance();
 
 interface PhoneInputProps {
   label: string;
+  error?: string;
+  name?: string;
   placeholder: string;
   value: string;
   onChange: any;
   className?: string;
   disableValidation?: boolean;
 }
+
+export const isPhoneValid = (phoneNum: string): boolean => {
+  try {
+    return phoneUtil.isValidNumber(phoneUtil.parseAndKeepRawInput(phoneNum));
+  } catch (error) {
+    return false;
+  }
+};
 
 export function Phone(props: PhoneInputProps): React.ReactElement {
   const { phone, handlePhoneValueChange, inputRef, country, setCountry } =
@@ -32,14 +42,6 @@ export function Phone(props: PhoneInputProps): React.ReactElement {
       },
     });
 
-  const isPhoneValid = (phoneNum: string): boolean => {
-    try {
-      if (props.disableValidation) return true;
-      return phoneUtil.isValidNumber(phoneUtil.parseAndKeepRawInput(phoneNum));
-    } catch (error) {
-      return false;
-    }
-  };
   const isValid = isPhoneValid(phone);
 
   return (
@@ -95,7 +97,12 @@ export function Phone(props: PhoneInputProps): React.ReactElement {
 
         <TextInput
           className={props.className ? props.className : 'w-full'}
-          error={!isValid && 'Invalid Phone Number'}
+          error={
+            props.error
+              ? props.error
+              : !props.disableValidation && !isValid && 'Invalid Phone Number'
+          }
+          name={props.name}
           onChange={handlePhoneValueChange}
           placeholder={props.placeholder}
           ref={inputRef}
