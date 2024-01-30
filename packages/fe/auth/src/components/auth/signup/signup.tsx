@@ -11,18 +11,23 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useState } from 'react';
 import type { SubmitHandler } from 'react-hook-form';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import z from 'zod';
 import { notifications } from '@mantine/notifications';
 import { useAuth } from '../../../context';
-import { Phone } from '../../phone-input/phone-input';
+import { Phone, isPhoneValid } from '../../phone-input/phone-input';
 import styles from './signup.module.scss';
 
 const schema = z.object({
   firstName: z.string().min(1, { message: 'This field is required.' }),
   lastName: z.string().min(1, { message: 'This field is required.' }),
-  phone: z.string().min(1, { message: 'This field is required.' }),
+  phone: z
+    .string()
+    .min(1, { message: 'This field is required.' })
+    .refine((data) => isPhoneValid(data), {
+      message: 'Invalid Phone Number',
+    }),
   email: z
     .string()
     .min(1, { message: 'This field is required.' })
@@ -45,13 +50,12 @@ export function SignUp(): JSX.Element {
     register,
     handleSubmit,
     formState: { errors },
-    setValue,
+    control,
   } = useForm<FormSchema>({ resolver: zodResolver(schema) });
 
   // State
   const router = useRouter();
   const [isSigningUp, setIsSigningUp] = useState(false);
-  const [phone, setPhone] = useState<string>('');
   const { signUp } = useAuth();
 
   // Functions
@@ -99,14 +103,20 @@ export function SignUp(): JSX.Element {
           />
         </Flex>
         <Flex direction="column">
-          <Phone
-            label="Mobile Phone"
-            onChange={(phoneValue: string) => {
-              setPhone(phone);
-              setValue('phone', phoneValue);
-            }}
-            placeholder="Your phone"
-            value={phone}
+          <Controller
+            control={control}
+            name="phone"
+            render={({ field: { name, value, onChange } }) => (
+              <Phone
+                disableValidation
+                error={errors.phone?.message}
+                label="Mobile Phone"
+                name={name}
+                onChange={onChange}
+                placeholder="Your phone"
+                value={value}
+              />
+            )}
           />
           <TextInput
             error={errors.email?.message}
