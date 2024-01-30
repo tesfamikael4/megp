@@ -18,6 +18,7 @@ import type {
 
 interface AuthContextValue {
   user: Record<string, any> | undefined;
+  organizationId: string;
   isAuthenticated: boolean;
   error: any;
   isUser: () => boolean | undefined;
@@ -90,6 +91,7 @@ interface AuthContextValue {
         phone?: string;
         message?: string;
         user?: Record<string, any> | null;
+        organizationId?: string;
       }
     | undefined
   >;
@@ -125,6 +127,7 @@ function AuthProvider({
   children: React.ReactNode;
 }): JSX.Element {
   const [user, setUser] = useState<any>();
+  const [organizationId, setOrganizationId] = useState<any>();
   const [error, setError] = useState<any>();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const userRole = user?.roles?.[0]?.name;
@@ -142,6 +145,9 @@ function AuthProvider({
       if (token) {
         const userInfo: Record<string, any> = jwtDecode(token);
         setUser(userInfo);
+
+        setOrganizationId(userInfo.organizations[0]?.organization?.id);
+
         userInfo.roles && setRole(userInfo.roles[0]?.name);
       }
     }
@@ -389,6 +395,7 @@ function AuthProvider({
         message: z.string().optional(),
         phone: z.string().optional(),
         user: z.object({ userRoles: z.any() }).optional().nullable(),
+        organizationId: z.string().optional(),
       }),
     );
     return response;
@@ -418,6 +425,7 @@ function AuthProvider({
     getUserInfo,
     setRole,
     role,
+    organizationId,
   };
 
   return (

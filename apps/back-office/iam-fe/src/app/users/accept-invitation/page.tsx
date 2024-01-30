@@ -3,7 +3,7 @@ import SetPassWord from '../(user)/_components/set-password';
 export default function Form() {
   return (
     <>
-      <SetPassWord />
+      <SetPassWord mode="invite" />
     </>
   );
 }

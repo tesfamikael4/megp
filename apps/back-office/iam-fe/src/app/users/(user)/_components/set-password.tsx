@@ -19,14 +19,16 @@ import Image from 'next/image';
 import ppda from './ppda.png';
 import perago from './perago.png';
 import styles from './auth.module.scss';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 interface Password {
   password: string;
 }
+interface Mode {
+  mode: 'invite' | 'setPassword';
+}
 
-export default function SetPassWord() {
+export default function SetPassWord({ mode }: Mode) {
   const Schema: ZodType<Password> = z.object({
     password: z
       .string()
@@ -101,7 +103,7 @@ export default function SetPassWord() {
               fontWeight: 750,
             })}
           >
-            Register
+            {mode === 'invite' ? 'Accept invitation' : 'Set password'}
           </Title>
 
           <TextInput
@@ -116,15 +118,17 @@ export default function SetPassWord() {
             value={lastName ? lastName : ''}
           />
 
-          <PasswordInput
-            error={
-              errors?.password ? errors?.password?.message?.toString() : ''
-            }
-            label="Password"
-            placeholder="Your password"
-            {...register('password')}
-            mt="md"
-          />
+          {mode === 'setPassword' && (
+            <PasswordInput
+              error={
+                errors?.password ? errors?.password?.message?.toString() : ''
+              }
+              label="Password"
+              placeholder="Your password"
+              {...register('password')}
+              mt="md"
+            />
+          )}
 
           <Button
             className="mt-4"
@@ -133,14 +137,8 @@ export default function SetPassWord() {
             type="submit"
             loading={isSetting}
           >
-            Sign up
+            {mode === 'setPassword' ? 'Set password' : 'Accept invitation'}
           </Button>
-          <Text c="dimmed" className={styles.account_que}>
-            Already have an account?{' '}
-            <Link className={styles.signup_link} href="/auth/login">
-              Sign In
-            </Link>
-          </Text>
         </form>
 
         <div className="mt-6">

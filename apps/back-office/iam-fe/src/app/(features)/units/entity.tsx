@@ -1,7 +1,7 @@
 'use client';
 import { CollectionQuery, EntityConfig, EntityLayout } from '@megp/entity';
 import { usePathname, useRouter } from 'next/navigation';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import { useLazyListByIdQuery } from './_api/unit.api';
 import { Unit } from '@/models/unit';
 import { useAuth } from '@megp/auth';
@@ -55,7 +55,11 @@ export function Entity({ children }: { children: React.ReactNode }) {
           id: 'isActive',
           header: 'Active',
           accessorKey: 'isActive',
-          cell: (info) => info.getValue(),
+          cell: (info) => (
+            <div className="flex justify-end">
+              {info.getValue() as ReactNode}
+            </div>
+          ),
           meta: {
             widget: 'expand',
           },
@@ -68,8 +72,8 @@ export function Entity({ children }: { children: React.ReactNode }) {
     pathname === `/units`
       ? 'list'
       : pathname === `/units/new`
-      ? 'new'
-      : 'detail';
+        ? 'new'
+        : 'detail';
 
   const onRequestChange = useCallback(
     (request: CollectionQuery) => {

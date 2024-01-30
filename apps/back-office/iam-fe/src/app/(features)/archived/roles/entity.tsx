@@ -10,7 +10,7 @@ import { useAuth } from '@megp/auth';
 export function Entity({ children }: { children: React.ReactNode }) {
   const [onRequest, setOnRequest] = useState<any>();
 
-  const { user } = useAuth();
+  const { organizationId } = useAuth();
 
   const pathname = usePathname();
 
@@ -62,9 +62,9 @@ export function Entity({ children }: { children: React.ReactNode }) {
 
   const onRequestChange = useCallback(
     (request: CollectionQuery) => {
-      trigger({ id: user?.organization?.id, collectionQuery: request });
+      trigger({ id: organizationId, collectionQuery: request });
     },
-    [trigger, user?.organization?.id],
+    [trigger, organizationId],
   );
 
   useEffect(() => {

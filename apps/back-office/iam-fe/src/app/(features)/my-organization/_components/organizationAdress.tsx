@@ -344,7 +344,13 @@ const OrganizationAdressForm = () => {
             />
           )}
         />
-        <TextInput className="mb-2 grow" {...register('telephone.number')} />
+        <TextInput
+          className="mb-2 grow"
+          {...register('telephone.number')}
+          error={
+            errors?.telephone?.number ? errors.telephone?.number.message : ''
+          }
+        />
       </Flex>
       <Text fw={500}>Fax number</Text>
 

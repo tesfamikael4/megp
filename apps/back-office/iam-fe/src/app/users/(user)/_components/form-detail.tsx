@@ -46,7 +46,7 @@ export function FormDetail({ mode }: FormDetailProps) {
   });
   const router = useRouter();
   const { id } = useParams();
-  const { user } = useAuth();
+  const { organizationId } = useAuth();
 
   const [create, { isLoading: isSaving, isSuccess: saved }] =
     useCreateMutation();
@@ -64,7 +64,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       const result: any = await create({
         ...data,
         fullName: `${data.firstName} ${data.lastName}`,
-        organizationId: user?.organization?.id,
+        organizationId: organizationId,
       });
       if ('data' in result) {
         router.push(`/users/${result.data.id}`);
@@ -79,10 +79,9 @@ export function FormDetail({ mode }: FormDetailProps) {
   const onUpdate = async (data) => {
     try {
       await update({
-        ...data,
+        firstName: data.firstName,
+        lastName: data.lastName,
         id: id?.toString(),
-        fullName: `${data.firstName} ${data.lastName}`,
-        organizationId: user?.organization?.id,
       });
       notify('Success', 'User updated successfully');
     } catch {
@@ -100,19 +99,22 @@ export function FormDetail({ mode }: FormDetailProps) {
   };
   const onActivate = async () => {
     const dataSent = {
-      ...selected,
-      isActive: !selected?.isActive,
+      status: selected?.status === 'ACTIVATE' ? 'DEACTIVATE' : 'ACTIVATE',
     };
     try {
       await activation({ ...dataSent, id: id?.toString() });
       notify(
         'Success',
-        `User ${selected?.isActive ? 'Deactivated' : 'Activated'} successfully`,
+        `User ${
+          selected?.status === 'ACTIVATE' ? 'Deactivated' : 'Activated'
+        } successfully`,
       );
     } catch {
       notify(
         'Error',
-        `error in ${selected?.isActive ? 'Deactivating' : 'Activating'}  User`,
+        `error in ${
+          selected?.status === 'ACTIVATE' ? 'Deactivating' : 'Activating'
+        }  User`,
       );
     }
   };
@@ -148,6 +150,7 @@ export function FormDetail({ mode }: FormDetailProps) {
 
       <TextInput
         label="Email"
+        disabled={mode === 'detail' && true}
         error={errors?.email ? errors?.email?.message?.toString() : ''}
         {...register('email')}
       />

@@ -1,6 +1,5 @@
 'use client';
 import { Organization } from '@/models/organization';
-import { logger } from '@megp/core-fe';
 import { CollectionQuery, EntityConfig, EntityLayout } from '@megp/entity';
 import { usePathname, useRouter } from 'next/navigation';
 import { useMemo } from 'react';
@@ -74,8 +73,8 @@ export function Entity({ children }: { children: React.ReactNode }) {
     pathname === `/organizations`
       ? 'list'
       : pathname === `/organizations/new`
-      ? 'new'
-      : 'detail';
+        ? 'new'
+        : 'detail';
 
   const onRequestChange = (request: CollectionQuery) => {
     request?.where?.push([

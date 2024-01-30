@@ -1,7 +1,7 @@
 'use client';
 import { EntityConfig, EntityLayout } from '@megp/entity';
 import { usePathname, useRouter } from 'next/navigation';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useListQuery } from './_api/organization-sector.api';
 import { OrganizationSector } from '@/models/organization-sector';
 
@@ -12,7 +12,6 @@ export function Entity({ children }: { children: React.ReactNode }) {
 
   const { data: list } = useListQuery({});
 
-  useEffect;
   const config: EntityConfig<OrganizationSector> = useMemo(() => {
     return {
       basePath: '/organization-sector',
@@ -58,8 +57,8 @@ export function Entity({ children }: { children: React.ReactNode }) {
     pathname === `/organization-sector`
       ? 'list'
       : pathname === `/organization-sector/new`
-      ? 'new'
-      : 'detail';
+        ? 'new'
+        : 'detail';
 
   return (
     <EntityLayout

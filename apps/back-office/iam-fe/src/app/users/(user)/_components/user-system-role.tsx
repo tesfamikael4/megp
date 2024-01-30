@@ -17,7 +17,7 @@ const AddSystemRole = () => {
   const [currentAssigned, setCurrentAssigned] = useState<Role[]>([]);
   const [isCollapsed, setIsCollapsed] = useState<boolean>(true);
   const { id } = useParams();
-  const { user } = useAuth();
+  const { organizationId } = useAuth();
 
   const [assign, { isLoading: isSaving }] = useRelationMutation();
 
@@ -110,8 +110,8 @@ const AddSystemRole = () => {
   }, [isSuccess, systemRoles]);
 
   const onRequestChange = (request: CollectionQuery) => {
-    user?.organization?.id !== undefined &&
-      triggerData({ id: user?.organization?.id, collectionQuery: request });
+    organizationId !== undefined &&
+      triggerData({ id: organizationId, collectionQuery: request });
   };
 
   return (

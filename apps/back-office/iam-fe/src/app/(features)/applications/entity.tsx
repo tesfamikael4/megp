@@ -26,10 +26,6 @@ export function Entity({ children }: { children: React.ReactElement }) {
         route.push(`/applications/${selected.id}`);
       },
 
-      onSearch: (search) => {
-        logger.log('search', search);
-      },
-
       columns: [
         {
           id: 'name',
@@ -56,8 +52,8 @@ export function Entity({ children }: { children: React.ReactElement }) {
     pathname === `/applications`
       ? 'list'
       : pathname === `/applications/new`
-      ? 'new'
-      : 'detail';
+        ? 'new'
+        : 'detail';
 
   const onRequestChange = (request: CollectionQuery) => {
     trigger(request);

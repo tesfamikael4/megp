@@ -9,7 +9,7 @@ import { logger } from '@megp/core-fe';
 
 export function Entity({ children }: { children: React.ReactNode }) {
   const route = useRouter();
-  const { user } = useAuth();
+  const { organizationId } = useAuth();
   const [onRequest, setOnRequest] = useState<any>();
   const pathname = usePathname();
 
@@ -57,16 +57,16 @@ export function Entity({ children }: { children: React.ReactNode }) {
     pathname === `/system-role`
       ? 'list'
       : pathname === `/system-role/new`
-      ? 'new'
-      : 'detail';
+        ? 'new'
+        : 'detail';
 
   useEffect(() => {
     const onRequestChange = (request: CollectionQuery) => {
-      user !== undefined &&
-        trigger({ id: user?.organization?.id, collectionQuery: request });
+      organizationId !== undefined &&
+        trigger({ id: organizationId, collectionQuery: request });
     };
     setOnRequest(onRequestChange);
-  }, [trigger, user]);
+  }, [trigger, organizationId]);
 
   return (
     <EntityLayout

@@ -28,10 +28,6 @@ export function Entity({ children }: { children: React.ReactNode }) {
       pagination: true,
       searchable: true,
       sortable: true,
-      onSearch: (search) => {
-        // console.log('search', search);
-      },
-
       columns: [
         {
           id: 'name',
@@ -57,8 +53,8 @@ export function Entity({ children }: { children: React.ReactNode }) {
     pathname === `/organization-type`
       ? 'list'
       : pathname === `/organization-type/new`
-      ? 'new'
-      : 'detail';
+        ? 'new'
+        : 'detail';
   const onRequestChange = (request: CollectionQuery) => {
     trigger(request);
   };

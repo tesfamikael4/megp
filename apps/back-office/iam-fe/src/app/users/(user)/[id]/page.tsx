@@ -18,9 +18,9 @@ export default function UserDetailPage() {
         <AddEntityModal />
         <AddRole />
         <AddSystemRole />
-        <Section title="Extended Profile" defaultCollapsed>
+        {/* <Section title="Extended Profile" defaultCollapsed>
           <UserProfileForm />
-        </Section>
+        </Section> */}
         <EmployeeInvitation />
       </Stack>
     </>
