@@ -1,4 +1,4 @@
-import { Table } from '@mantine/core';
+import { Group, Table } from '@mantine/core';
 import { useParams } from 'next/navigation';
 
 const elements = [
@@ -25,18 +25,26 @@ function Despersment() {
   ));
 
   return (
-    <Table withColumnBorders mt={'lg'} horizontalSpacing={'lg'} striped>
-      <Table.Thead>
-        <Table.Tr>
-          <Table.Th>Budget year</Table.Th>
-          <Table.Th>1st quarter</Table.Th>
-          <Table.Th>2nd quarter</Table.Th>
-          <Table.Th>3rd quarter</Table.Th>
-          <Table.Th>4th quarter</Table.Th>
-        </Table.Tr>
-      </Table.Thead>
-      <Table.Tbody>{rows}</Table.Tbody>
-    </Table>
+    <Group mih={300} align="start">
+      <Table
+        withTableBorder
+        withColumnBorders
+        mt={'lg'}
+        horizontalSpacing={'lg'}
+        striped
+      >
+        <Table.Thead>
+          <Table.Tr bg={'#D9D9D9'}>
+            <Table.Th>Budget year</Table.Th>
+            <Table.Th>1st quarter</Table.Th>
+            <Table.Th>2nd quarter</Table.Th>
+            <Table.Th>3rd quarter</Table.Th>
+            <Table.Th>4th quarter</Table.Th>
+          </Table.Tr>
+        </Table.Thead>
+        <Table.Tbody>{rows}</Table.Tbody>
+      </Table>
+    </Group>
   );
 }
 export default Despersment;

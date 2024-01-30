@@ -2,16 +2,12 @@ import { useEffect, useState } from 'react';
 import { useLazyListByIdQuery } from '@/app/(features)/_api/mechanization.api';
 import { DetailTable } from '../../_components/detail-table';
 
-export const ActivityMechanization = ({
-  activityId,
-}: {
-  activityId: string;
-}) => {
+export const ActivityMechanization = ({ prId }: { prId: string }) => {
   const [getMechanism, { data: list, isSuccess }] = useLazyListByIdQuery();
   const [mechanism, setMechanism] = useState<any>([]);
 
   useEffect(() => {
-    getMechanism({ id: activityId, collectionQuery: undefined });
+    getMechanism({ id: prId, collectionQuery: undefined });
   }, []);
 
   useEffect(() => {

@@ -21,7 +21,7 @@ import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { StatisticCard } from './statistic-card';
 import { useLazyGetBudgetYearQuery } from '@/store/api/budget/budget-year.api';
-import { useLazyListPrActivityQuery } from '../_api/custom.api';
+import { useLazyListByIdQuery } from '../_api/pr-activity.api';
 
 const PlanYearTab = () => {
   const badgeColor = {
@@ -38,10 +38,9 @@ const PlanYearTab = () => {
 
   const [triggerPr, { data: pr }] = useLazyReadQuery();
   const { id } = useParams();
-  const [trigger, { data: assignedActivity }] = useLazyListPrActivityQuery();
+  const [trigger, { data: assignedActivity }] = useLazyListByIdQuery();
 
   // rtk queries
-  logger.log(assignedActivity);
 
   const [getplan, { data: plan }] = useLazyGetBudgetYearQuery();
 

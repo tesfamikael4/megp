@@ -13,13 +13,13 @@ import { Table, TableConfig, logger, notify } from '@megp/core-fe';
 import { useDisclosure } from '@mantine/hooks';
 import { IconPlus } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
-import {
-  useLazyGetActivitiesQuery,
-  useLazyGetBudgetYearQuery,
-} from '@/store/api/budget/budget-year.api';
+import { useLazyGetBudgetYearQuery } from '@/store/api/budget/budget-year.api';
+import { useLazyListByIdQuery as useLazyGetActivitiesQuery } from '../_api/activity.api';
 import { useParams } from 'next/navigation';
-import { useLazyListPrActivityQuery } from '../_api/custom.api';
-import { useCreateActivityMutation } from '@/app/(features)/_api/custom.api';
+import {
+  useCreateMutation,
+  useLazyListByIdQuery,
+} from '@/app/(features)/_api/pr-activity.api';
 import { ExpandableTable } from './expandable-table';
 
 export function Activities() {
@@ -30,11 +30,11 @@ export function Activities() {
   const [modifiedData, setModifiedData] = useState<any[]>([]);
   const [selected, setSelected] = useState<any | any[]>([]);
   const [data, setData] = useState<any[]>([]);
-  const [addActivity, { isLoading }] = useCreateActivityMutation();
+  const [addActivity, { isLoading }] = useCreateMutation();
   const [filtered, setFiltered] = useState<any[]>([]);
   const [finalData, setFinalData] = useState<any[]>([]);
   const [trigger, { data: assignedActivity, isSuccess: assigned }] =
-    useLazyListPrActivityQuery();
+    useLazyListByIdQuery();
   const [isFilter, setIsFilter] = useState<boolean>(false);
 
   const { id } = useParams();
@@ -155,7 +155,7 @@ export function Activities() {
 
   useEffect(() => {
     if (isSuccess) {
-      const mod = prActivity.items.map((item) => {
+      const mod = prActivity?.items.map((item) => {
         return {
           ...item,
           procurementMethod:
@@ -176,7 +176,9 @@ export function Activities() {
             item?.postProcurementMechanisms[0]?.fundingSource,
         };
       });
-      setModifiedData(mod);
+      if (mod) {
+        setModifiedData(mod);
+      }
     }
   }, [isSuccess, prActivity]);
 
@@ -187,9 +189,9 @@ export function Activities() {
   }, [opened, triggerBudjet]);
 
   useEffect(() => {
-    if (opened) {
+    if (opened && budgetFeatched) {
       listById({
-        id: budget?.items?.budgetYearId.toString(),
+        id: budget?.items[0]?.id?.toString(),
         collectionQuery: undefined,
       });
     }
@@ -238,7 +240,7 @@ export function Activities() {
           total={finalData.length}
         />
         <Button
-          className="mt-4"
+          className="mt-4 mb-4"
           onClick={() => handleSave()}
           loading={isLoading}
         >
@@ -256,14 +258,14 @@ export function Activities() {
           <ExpandableTable
             config={config}
             data={modifiedData ?? []}
-            total={modifiedData.length}
+            total={modifiedData?.length}
           />
         )}
         {isFilter && (
           <ExpandableTable
             config={filterconfig}
             data={filtered ?? []}
-            total={filtered.length}
+            total={filtered?.length}
           />
         )}
         <Group className="flex justify-end mt-4 mr-2">

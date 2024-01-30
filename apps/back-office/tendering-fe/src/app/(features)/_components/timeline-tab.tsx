@@ -237,7 +237,7 @@ export default function TimelineTab() {
     <div className="mt-4">
       {data.length != 0 && <Table config={listConfig} data={data} />}
       <Group className="mt-2" justify="end">
-        <Button onClick={handleSave} loading={isPostTimelineCreating}>
+        <Button onClick={handleSave} loading={isPostTimelineCreating} mb={'sm'}>
           <IconDeviceFloppy size={16} /> Save
         </Button>
       </Group>
