@@ -118,7 +118,7 @@ export class WorkflowInstanceResponse extends UpdateWorkflowInstanceDto {
   profileUpdate: ProfileInfoEntity;
   upgrade: any;
   renewal: any;
-  preferential: PreferentialTreatmentsEntity
+  preferential: PreferentialTreatmentsEntity;
   static toResponse(entity: WorkflowInstanceEntity) {
     const response = new WorkflowInstanceResponse();
     response.id = entity.id;
@@ -164,29 +164,30 @@ export class WorkflowInstanceResponse extends UpdateWorkflowInstanceDto {
 
     return response;
   }
-
   static formatBusinessLines(bia: any[], prices: ServicePrice[]): any[] {
     const businessInterests = [];
     if (bia?.length > 0) {
       for (const bi of bia) {
         const lobs = bi.lineOfBusiness.map((item: any) => {
-          return item.name
-        })
+          return item.name;
+        });
         let range = {};
         for (const item of prices) {
           if (bi.priceRange == item.id) {
             range = {
               priceFrom: item?.valueFrom,
-              priceTo: item?.valueTo == -1 ? 'infinity' : item?.valueTo
-            }
+              priceTo: item?.valueTo == -1 ? 'infinity' : item?.valueTo,
+            };
             break;
           }
         }
-        businessInterests.push({ category: bi.category, lineOfBusiness: lobs, ...range })
+        businessInterests.push({
+          category: bi.category,
+          lineOfBusiness: lobs,
+          ...range,
+        });
       }
       return businessInterests;
     }
   }
-
-
 }

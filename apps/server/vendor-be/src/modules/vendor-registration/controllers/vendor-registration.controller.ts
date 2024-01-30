@@ -38,7 +38,7 @@ import { ReceiptDto } from '../dto/receipt.dto';
 @ApiResponse({ status: 500, description: 'Internal error' })
 @ApiExtraModels(DataResponseFormat)
 export class VendorRegistrationsController {
-  constructor(private readonly regService: VendorRegistrationsService) { }
+  constructor(private readonly regService: VendorRegistrationsService) {}
   @UseGuards(JwtGuard)
   @Get('get-isr-vendors')
   async getVendors() {
@@ -117,7 +117,7 @@ export class VendorRegistrationsController {
     return await this.regService.updateVendor(vendorStatusDto);
   }
 
-  @UseGuards(ApiKeyGuard)
+  // @UseGuards(ApiKeyGuard)
   @Post('adjust-vendor-services')
   async adjustVednorServices(@Body() vendorStatusDto: SetVendorStatus) {
     return await this.regService.adjustVendor(vendorStatusDto);
@@ -155,11 +155,7 @@ export class VendorRegistrationsController {
     @CurrentUser() user: any,
     @Body() dto: ReceiptDto,
   ) {
-    return await this.regService.submitServiceUpgrade(
-      attachment,
-      user,
-      dto
-    );
+    return await this.regService.submitServiceUpgrade(attachment, user, dto);
   }
   @UseGuards(JwtGuard)
   @Post('renew-service')
@@ -170,11 +166,7 @@ export class VendorRegistrationsController {
     @CurrentUser() user: any,
     @Body() dto: ReceiptDto,
   ) {
-    return await this.regService.submitServiceUpgrade(
-      attachment,
-      user,
-      dto,
-    );
+    return await this.regService.submitServiceUpgrade(attachment, user, dto);
   }
 
   @UseGuards(JwtGuard)
