@@ -25,6 +25,8 @@ import { PostBudgetRequisitionerController } from './controllers/post-budget-req
 import { PostBudgetRequisitionerService } from './services/post-budget-requisitioner.service';
 import { PostBudgetRequisitioner } from 'src/entities/post-budget-plan-requisitioner.entity';
 import { MinioModule } from 'nestjs-minio-client';
+import { ClientsModule, Transport } from '@nestjs/microservices';
+
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -36,6 +38,19 @@ import { MinioModule } from 'nestjs-minio-client';
       PostBudgetPlan,
       PostProcurementMechanism,
       PostBudgetRequisitioner,
+    ]),
+    ClientsModule.register([
+      {
+        name: 'PLANNING_RMQ_SERVICE',
+        transport: Transport.RMQ,
+        options: {
+          urls: [process.env.RMQ_URL],
+          queue: 'work-plan-initiate',
+          queueOptions: {
+            durable: false,
+          },
+        },
+      },
     ]),
     MinioModule.register({
       endPoint: process.env.MINIO_ENDPOINT ?? 'files.megp.peragosystems.com',
