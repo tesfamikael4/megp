@@ -1,4 +1,4 @@
-import { NestFactory, Reflector } from '@nestjs/core';
+import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { ConfigService } from '@nestjs/config';
@@ -19,6 +19,16 @@ async function bootstrap() {
     transport: Transport.RMQ,
     options: {
       urls: [process.env.RMQ_URL],
+      queue: 'app-create',
+      queueOptions: {
+        durable: false,
+      },
+    },
+  });
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.RMQ,
+    options: {
+      urls: [process.env.RMQ_URL],
       queue: 'pr-workflow-approve',
       queueOptions: {
         durable: false,
@@ -33,9 +43,6 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
   app.useGlobalFilters(new GlobalExceptionFilter());
-
-  // const reflector = app.get(Reflector);
-  // app.useGlobalGuards(new Aut  app.useGlobalGuards(new AuthGuard(reflector));
 
   app.setGlobalPrefix('api');
 

@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProcurementRequisitionController } from './controllers/procurement-requisition.controller';
 import { ProcurementRequisitionService } from './services/procurement-requisition.service';
 import {
+  AnnualProcurementPlanActivity,
   ProcurementRequisition,
   ProcurementRequisitionActivity,
   ProcurementRequisitionBudgetLine,
@@ -46,6 +47,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
       ProcurementRequisitionMechanism,
       ProcurementRequisitionOfficerAssignment,
       ProcurementRequisitionDisbursement,
+      AnnualProcurementPlanActivity,
     ]),
     ClientsModule.register([
       {
