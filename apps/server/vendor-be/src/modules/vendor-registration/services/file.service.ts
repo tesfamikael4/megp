@@ -544,7 +544,7 @@ export class FileService {
       const result = await this.businessAreaRepository.findOne({
         where: { id: businessAreaId },
       });
-      if (!result) throw new HttpException('business area not found ', 500);
+      if (!result) throw new HttpException('business area not found ', 404);
       const fileUploadName = 'certificate';
       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
       const fileId = `${uniqueSuffix}_${file.originalname}`;
@@ -552,7 +552,7 @@ export class FileService {
       const metaData = {
         'Content-Type': 'application/octet-stream',
       };
-      const resultData = await this.minioClient.putObject(
+      await this.minioClient.putObject(
         this.bucketName,
         filename,
         file.buffer,
@@ -560,7 +560,6 @@ export class FileService {
       );
       result.certificateUrl = fileId;
       const data = await this.businessAreaRepository.save(result);
-      if (!result) throw new HttpException('business area update failed', 500);
       return data;
     } catch (error) {
       console.log(error);
@@ -571,12 +570,12 @@ export class FileService {
   async uploadCertificate2(
     file: Buffer,
     userId: string,
-    businessAreaId: string,
+    instanceId: string,
   ) {
     console.log('user-id', userId);
     try {
       const result = await this.businessAreaRepository.findOne({
-        where: { id: businessAreaId },
+        where: { instanceId: instanceId },
       });
       if (!result) throw new HttpException('business area not found', 404);
       const fileUploadName = 'certificate';
@@ -586,16 +585,14 @@ export class FileService {
       const metaData = {
         'Content-Type': 'application/octet-stream',
       };
-      const resultData = await this.minioClient.putObject(
+      await this.minioClient.putObject(
         this.bucketName,
         filename,
         file,
-        metaData,
+        metaData
       );
       result.certificateUrl = fileId;
       const data = await this.businessAreaRepository.save(result);
-      if (!result) throw new HttpException('business area update failed', 500);
-
       return data;
     } catch (error) {
       console.log(error);

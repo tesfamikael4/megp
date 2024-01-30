@@ -92,7 +92,7 @@ export class ApplicationExcutionService {
       where: {
         id: instanceId,
         taskHandler: { id: Not(IsNull()) },
-        isrVendor: { businessAreas: { status: ApplicationStatus.PENDING, instanceId: serviceData.id } }
+        isrVendor: { businessAreas: { instanceId: serviceData.id } }
       },
       order: {
         taskTrackers: { executedAt: 'DESC' },

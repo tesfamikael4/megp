@@ -11,8 +11,8 @@ const pathPrefix =
 const signatureImage = pathPrefix+'/assets/signature.png';
 const headerImage = pathPrefix+'/assets/headerImage.png';
 
-const CertificatePDF = ({ id, data, qrCodeUrl }) => {
-  return ReactPDF.renderToStream(
+const CertificatePDF =async ({ id, data, qrCodeUrl }) => {
+  return await ReactPDF.renderToStream(
     <Document>
       <Page size="A4" style={styles.page}>
         <View style={styles.container}>
