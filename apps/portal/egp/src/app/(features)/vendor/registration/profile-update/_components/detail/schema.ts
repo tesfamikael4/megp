@@ -140,7 +140,7 @@ export const formDataSchema = z.object({
         currency: z
           .string({
             required_error: 'Currency is required ',
-            invalid_type_error: 'Currency is required ',
+            invalid_type_error: '',
           })
           .min(1, { message: 'Currency is required ' }),
       }),
