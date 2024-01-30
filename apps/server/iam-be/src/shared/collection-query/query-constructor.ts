@@ -343,6 +343,8 @@ export class QueryConstructor {
       query = this.removeFilter(query, 'organizationId');
     }
 
+    query = this.removeEmptyFilter(query);
+
     buildQuery(aggregate, queryBuilder, query);
 
     return queryBuilder;
