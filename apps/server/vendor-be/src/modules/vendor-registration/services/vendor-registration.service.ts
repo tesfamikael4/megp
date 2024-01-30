@@ -48,6 +48,7 @@ import { ReceiptDto } from '../dto/receipt.dto';
 import { FileService } from './file.service';
 import { REQUEST } from '@nestjs/core';
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
+import { BusinessCategories } from 'src/modules/handling/enums/business-category.enum';
 
 @Injectable()
 export class VendorRegistrationsService extends EntityCrudService<VendorsEntity> {
@@ -334,14 +335,15 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       });
       if (businessArea) {
         if (vendorStatusDto.status == VendorStatusEnum.APPROVE) {
-          businessArea.status = VendorStatusEnum.APPROVE;
+          businessArea.status = VendorStatusEnum.APPROVED;
+
         } else if (vendorStatusDto.status == VendorStatusEnum.REJECT) {
           businessArea.status = VendorStatusEnum.REJECTED;
           const serviceType = await this.BpServiceService.findOne(
             vendorStatusDto.serviceId,
           );
           if (!serviceType)
-            throw new HttpException('Bp service not found', 500);
+            throw new HttpException('Bp service not found', 404);
           if (
             serviceType &&
             serviceType.key == VendorStatusEnum.PROFILE_UPDATE_KEY &&
@@ -354,12 +356,10 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
               },
             });
             if (!profileData)
-              throw new HttpException(` profile not found`, 500);
+              throw new HttpException(` profile not found`, 404);
             profileData.status = VendorStatusEnum.REJECTED;
-            const profilechange =
-              await this.profileInfoRepository.save(profileData);
-            if (!profilechange)
-              throw new HttpException(` profile  change failed`, 500);
+            await this.profileInfoRepository.save(profileData);
+
           }
         }
         businessArea.approvedAt = new Date();
@@ -459,8 +459,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           vendorEntity.metaData = tempMetadata;
 
           try {
-            const res = await this.vendorRepository.save(vendorEntity);
-            if (!res) throw new HttpException(`vendor_insertion_failed`, 500);
+            await this.vendorRepository.save(vendorEntity);
+
           } catch (error) {
             throw error;
           }
@@ -489,8 +489,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         businessArea.expireDate = expireDate;
         const besinessArea =
           await this.businessAreaRepository.save(businessArea);
-        if (!besinessArea)
-          throw new HttpException(`business_area_update_failed`, 500);
         return besinessArea;
       } else if (vendorStatusDto.status == VendorStatusEnum.REJECT) {
         return await this.rejectVendor(vendorStatusDto);
@@ -499,7 +497,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     const serviceType = await this.BpServiceService.findOne(
       vendorStatusDto.serviceId,
     );
-    if (!serviceType) throw new HttpException('Bp service not found', 500);
+    if (!serviceType) throw new HttpException('Bp service not found', 404);
     if (
       serviceType &&
       serviceType.key == VendorStatusEnum.PROFILE_UPDATE_KEY &&
@@ -509,11 +507,9 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         where: { vendorId: vendor.id, status: VendorStatusEnum.SUBMITTED },
       });
       profileData.status = VendorStatusEnum.APPROVED;
-      const profile = await this.profileInfoRepository.save(profileData);
-      if (!profile) throw new HttpException('profile update  failed', 500);
+      await this.profileInfoRepository.save(profileData);
+      await this.mapVendor(vendor, profileData);
 
-      const mapedvendor = await this.mapVendor(vendor, profileData);
-      if (!mapedvendor) throw new HttpException('vendor mapping failed', 500);
     }
     return response;
   }
@@ -1174,7 +1170,10 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
 
   async getApprovedVendorById(VendorId: string) {
     const vendorData = await this.vendorRepository.findOne({
-      where: { id: VendorId },
+      where: [
+        { id: VendorId, isrVendor: { businessAreas: { status: ApplicationStatus.APPROVED, category: In(['goods', 'services', 'works']) } } },
+        { id: VendorId, preferentials: { status: ApplicationStatus.APPROVED } }
+      ],
       select: {
         id: true,
         name: true,
@@ -1211,6 +1210,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         beneficialOwnership: true,
         vendorAccounts: true,
         isrVendor: { businessAreas: { servicePrice: true, BpService: true } },
+        preferentials: true
       },
     });
     const { isrVendor, ...rest } = vendorData;
@@ -1231,6 +1231,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       businessAreas: vendorData.isrVendor.businessAreas.map((ba) =>
         BusinessAreaDetailResponseDto.toResponse(ba),
       ),
+
     };
 
     return vendor;

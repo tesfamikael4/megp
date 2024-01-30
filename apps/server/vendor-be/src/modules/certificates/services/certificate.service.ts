@@ -54,7 +54,7 @@ export class CertificateService {
   ): Promise<Readable> {
     try {
       let buffer: Buffer;
-
+      const chunks = [];
       const qrUrl =
         (await toDataURL('https://dev.megp.peragosystems.com/', {
           margin: 0,
@@ -74,15 +74,14 @@ export class CertificateService {
       if (!vendorInfo) throw new NotFoundException();
       const address = vendorInfo.metaData; // JSON.parse(JSON.stringify();
       let goodsCategory = '',
-        serviceCategory = '';
-      let goodsExpiry = '',
+        serviceCategory = '',
+        goodsExpiry = '',
         serviceExpiry = '',
         expireDate = '';
-      let businessAreaId = '';
+
       const bas = vendorInfo.isrVendor.businessAreas;
       bas.map((bArea) => {
         const range = bArea.servicePrice;
-        businessAreaId = bArea.id;
         const formatedCategory = this.formatNumber(range);
         if (bArea.category.toLowerCase() == 'goods') {
           goodsCategory = formatedCategory;
@@ -109,14 +108,17 @@ export class CertificateService {
         qrCodeUrl: qrUrl,
       });
 
-      const chunks = [];
+
       result.on('data', (chunk) => {
         chunks.push(chunk);
       });
 
       result.on('end', () => {
         buffer = Buffer.concat(chunks);
-        this.fileService.uploadCertificate2(buffer, userId, businessAreaId);
+        this.fileService.uploadCertificate2(buffer, userId, instanceId);
+      });
+      result.on('error', (error) => {
+        console.error('Error during rendering:', error);
       });
 
       if (!(result instanceof Readable)) {
@@ -124,7 +126,6 @@ export class CertificateService {
           'Certificate function did not return a Readable stream',
         );
       }
-
       return result;
     } catch (err) {
       console.error('Error:', err);
