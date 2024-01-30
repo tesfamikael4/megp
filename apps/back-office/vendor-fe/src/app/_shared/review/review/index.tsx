@@ -1,5 +1,13 @@
 import React, { useState } from 'react';
-import { Accordion, Flex, Text, Box, Button, Modal } from '@mantine/core';
+import {
+  Accordion,
+  Flex,
+  Text,
+  Box,
+  Button,
+  Modal,
+  Divider,
+} from '@mantine/core';
 import classes from './accordion.module.scss';
 import { ShowFile } from '@/app/(features)/_components/details-accordion';
 import { renderTable } from '@/app/(features)/util/renderTable';
@@ -142,7 +150,15 @@ function FormPreview({
                 {Array.isArray(data[tabValue]) ? (
                   <Accordion.Panel
                     key={tabValue}
-                    className="gap-2 items-center"
+                    className="items-center"
+                    styles={{
+                      panel: {
+                        padding: 0,
+                      },
+                      content: {
+                        padding: 0,
+                      },
+                    }}
                   >
                     {renderTable(data[tabValue], formatColumns, tabValue)}
                   </Accordion.Panel>
@@ -220,9 +236,15 @@ const FormattedPanel = ({ data, tabValue }: RequiredFieldsOnly<PanelProps>) => {
     <>
       {formatColumns[tabValue].map((field) => {
         return (
-          <Accordion.Panel key={field.name} className="gap-2 items-center">
+          <Accordion.Panel key={field.name} className="gap-x-2 items-center">
             <Flex>
-              <Text size="xs" fw={700} tt="capitalize" w={150} py={4} px={2}>
+              <Text
+                size="xs"
+                fw={700}
+                tt="capitalize"
+                w={150}
+                className="text-md max:w-1/5 w-1/5 bg-[#DCE8F2] p-3 "
+              >
                 {addSpacesToCamelCase(field.displayName ?? field.name)}
               </Text>
               <Text className="ml-2" size="xs" fw={500} tt="capitalize">
@@ -337,15 +359,30 @@ const MiscellaneousPanel = ({
   userId,
 }: Required<PanelProps>) => {
   return (
-    <Accordion.Panel key={fieldKey} className="items-center">
+    <Accordion.Panel
+      key={fieldKey}
+      styles={{
+        panel: {
+          padding: 0,
+        },
+        content: {
+          padding: 0,
+        },
+      }}
+    >
       {data !== null &&
         typeof data === 'object' &&
         fieldKey !== 'invoiceIds' && (
-          <Flex className=" border-b px-1.5 ">
-            <Text size="xs" fw={700} tt="capitalize" className="w-1/5 ">
+          <Flex align="center" gap={'md'}>
+            <Text
+              size="xs"
+              fw={700}
+              tt="capitalize"
+              className="text-md max:w-1/5 w-1/5 bg-[#DCE8F2] p-3"
+            >
               {addSpacesToCamelCase(fieldKey)}
             </Text>
-            <Text className="ml-2" size="xs" fw={500} tt="capitalize">
+            <Text size="xs" fw={500} tt="capitalize">
               {tabValue === 'businessSizeAndOwnership'
                 ? displayFormattedObject(data, {
                     [fieldKey]: 'amount+currency',
@@ -371,8 +408,13 @@ const MiscellaneousPanel = ({
         fieldKey !== 'invoiceIds' &&
         fieldKey !== 'invoiceId' &&
         fieldKey !== 'serviceId' && (
-          <Flex>
-            <Text size="xs" fw={700} tt="capitalize" w={150} px={2}>
+          <Flex align="center" gap="md">
+            <Text
+              size="xs"
+              fw={700}
+              tt="capitalize"
+              className="text-md max:w-1/5 w-1/5 bg-[#DCE8F2] p-3 "
+            >
               {addSpacesToCamelCase(fieldKey)}
             </Text>
             {data.endsWith('.pdf') ? (
@@ -389,12 +431,13 @@ const MiscellaneousPanel = ({
                 View
               </Button>
             ) : (
-              <Text className="ml-2" size="xs" fw={500} tt="capitalize">
+              <Text size="xs" fw={500} tt="capitalize">
                 {isDate(data) ? formatDateTimeFromString(data) : data}
               </Text>
             )}
           </Flex>
         )}
+      <Divider />
     </Accordion.Panel>
   );
 };

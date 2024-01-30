@@ -1,7 +1,7 @@
-import { Box, Button, Chip, Table } from '@mantine/core';
+import { Box, Button, List, Table, Text, ThemeIcon, rem } from '@mantine/core';
 import { formatDateTimeFromString, isDate } from '.';
-import tableClasses from '../_components/details-accordion/table.module.scss';
 import { addSpacesToCamelCase } from './addSpaceToCamelCase';
+import { IconCircleCheck } from '@tabler/icons-react';
 
 export function renderTable(
   data,
@@ -10,6 +10,7 @@ export function renderTable(
   open?: any,
   setUrl?: any,
   userId?: any,
+  minWidth?: number,
 ) {
   if (data.length === 0) {
     return null; // No data to display in the table
@@ -18,26 +19,38 @@ export function renderTable(
   const headers = Object.keys(data[0]);
 
   return (
-    <Table.ScrollContainer minWidth={600}>
-      <Table>
+    <Table.ScrollContainer minWidth={minWidth ?? 400}>
+      <Table striped highlightOnHover>
         <Table.Thead>
           <Table.Tr>
             {filterColumns[selected]
               ? filterColumns[selected].map(
                   (header) =>
                     header !== 'id' && (
-                      <Table.Th key={header.name} className="w-fit">
-                        {addSpacesToCamelCase(
+                      <Table.Th
+                        key={header.name}
+                        title={addSpacesToCamelCase(
                           header.displayName || header.name,
                         )}
+                      >
+                        <Text truncate w={150}>
+                          {addSpacesToCamelCase(
+                            header.displayName || header.name,
+                          )}
+                        </Text>
                       </Table.Th>
                     ),
                 )
               : headers.map(
                   (header) =>
                     header !== 'id' && (
-                      <Table.Th key={header} className="w-fit">
-                        {addSpacesToCamelCase(header)}
+                      <Table.Th
+                        key={header}
+                        title={addSpacesToCamelCase(header)}
+                      >
+                        <Text truncate w={150}>
+                          {addSpacesToCamelCase(header)}
+                        </Text>
                       </Table.Th>
                     ),
                 )}
@@ -63,11 +76,19 @@ export function renderTable(
                 if (Array.isArray(cellValue)) {
                   return (
                     <Table.Td key={header?.name ?? header}>
-                      <ul>
+                      <List spacing="xs" size="sm" center>
                         {cellValue.map((value, index) => (
-                          <li key={index}>{value ?? JSON.stringify(value)}</li>
+                          <List.Item key={index}>
+                            <Text
+                              truncate
+                              w={200}
+                              title={value ?? JSON.stringify(value)}
+                            >
+                              {value ?? JSON.stringify(value)}
+                            </Text>
+                          </List.Item>
                         ))}
-                      </ul>
+                      </List>
                     </Table.Td>
                   );
                 }
