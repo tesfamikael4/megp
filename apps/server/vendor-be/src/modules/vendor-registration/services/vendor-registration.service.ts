@@ -141,116 +141,114 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             const response = [];
             const interests = data.areasOfBusinessInterest;
             if (interests?.length <= 0)
-              throw new HttpException('areas_of_businessInterest_not_found', 404);
+              throw new HttpException(
+                'areas_of_businessInterest_not_found',
+                404,
+              );
             for (let i = 0; i < interests.length; i++) {
-              try {
-                const bp = await this.bpService.findBpService(
-                  interests[i].priceRange,
-                );
-                if (!bp) {
-                  throw new NotFoundException('Business_Process_Not_Found');
-                }
-                wfi.bpId = bp.id;
-                wfi.serviceId = bp.serviceId;
-                wfi.requestorId = result.id;
-                wfi.data = result;
-                let workflowInstance = null;
-                const businessAreaApproved =
-                  await this.businessAreaRepository.findOne({
-                    where: {
-                      serviceId: bp.serviceId,
-                      vendorId: wfi.requestorId,
-                      status: VendorStatusEnum.APPROVED,
-                    },
-                  });
-                if (businessAreaApproved) {
-                  continue;
-                }
-
-                const businessArea = await this.businessAreaRepository.findOne({
+              const bp = await this.bpService.findBpService(
+                interests[i].priceRange,
+              );
+              if (!bp) {
+                throw new NotFoundException('Business_Process_Not_Found');
+              }
+              wfi.bpId = bp.id;
+              wfi.serviceId = bp.serviceId;
+              wfi.requestorId = result.id;
+              wfi.data = result;
+              let workflowInstance = null;
+              const businessAreaApproved =
+                await this.businessAreaRepository.findOne({
                   where: {
                     serviceId: bp.serviceId,
                     vendorId: wfi.requestorId,
-                    status: In([
-                      VendorStatusEnum.PENDING,
-                      VendorStatusEnum.ADJUSTMENT,
-                    ]),
+                    status: VendorStatusEnum.APPROVED,
                   },
                 });
-                if (businessArea) {
-                  const dto = new GotoNextStateDto();
-                  dto.action = 'ISR';
-                  dto.data = result;
-                  dto.instanceId = businessArea.instanceId;
-                  workflowInstance = await this.workflowService.gotoNextStep(
-                    dto,
-                    userInfo,
-                  );
-                  if (!workflowInstance)
-                    throw new HttpException(`workflow_initiation_failed`, 400);
-                  response.push({
-                    applicationNumber: workflowInstance.applicationNumber,
-                    instanceNumber: workflowInstance.id,
-                    vendorId: workflowInstance.requestorId,
-                    serviceId: workflowInstance.serviceId,
-                  });
-                  businessArea.status = VendorStatusEnum.PENDING;
-                  await this.businessAreaRepository.save(businessArea);
-                } else {
-                  const res = await this.businessAreaRepository.find({
-                    where: {
-                      serviceId: bp.serviceId,
-                      vendorId: wfi.requestorId,
-                      status: In([VendorStatusEnum.REJECTED]),
-                    },
-                  });
-                  if (res.length == 0) {
-                    workflowInstance =
-                      await this.workflowService.intiateWorkflowInstance(
-                        wfi,
-                        userInfo,
-                      );
-                    if (!workflowInstance)
-                      throw new HttpException(`workflow_initiation_failed`, 500);
-                    response.push({
-                      applicationNumber:
-                        workflowInstance.application.applicationNumber,
-                      instanceNumber: workflowInstance.application.id,
-                      vendorId: workflowInstance.application.requestorId,
-                    });
+              if (businessAreaApproved) {
+                continue;
+              }
 
-                    const businessAreaEntity = new BusinessAreaEntity();
-                    businessAreaEntity.instanceId = workflowInstance.application.id;
-                    businessAreaEntity.category = interests[i].category;
-                    businessAreaEntity.serviceId = bp.serviceId;
-                    businessAreaEntity.applicationNumber =
-                      workflowInstance.application.applicationNumber;
-                    businessAreaEntity.status = VendorStatusEnum.PENDING;
-                    businessAreaEntity.vendorId = result.id;
-                    businessAreaEntity.priceRangeId = interests[i].priceRange;
-                    const invoices =
-                      await this.invoiceService.getInvoicesUserAndService(
-                        workflowInstance.application.userId,
-                      );
-                    invoices.map((row) => {
-                      if (row.pricingId == businessAreaEntity.priceRangeId) {
-                        const businessAreaId = businessAreaEntity.id;
-                        row.businessAreaId = businessAreaId;
-                        this.invoiceService.update(row.id, row);
-                      }
-                    });
-                    const res =
-                      await this.businessAreaRepository.save(businessAreaEntity);
-                    if (!res)
-                      throw new HttpException(`adding_business_area_failed`, 500);
-                  } else {
-                    continue;
-                  }
-                }
+              const businessArea = await this.businessAreaRepository.findOne({
+                where: {
+                  serviceId: bp.serviceId,
+                  vendorId: wfi.requestorId,
+                  status: In([
+                    VendorStatusEnum.PENDING,
+                    VendorStatusEnum.ADJUSTMENT,
+                  ]),
+                },
+              });
+              if (businessArea) {
+                const dto = new GotoNextStateDto();
+                dto.action = 'ISR';
+                dto.data = result;
+                dto.instanceId = businessArea.instanceId;
+                workflowInstance = await this.workflowService.gotoNextStep(
+                  dto,
+                  userInfo,
+                );
                 if (!workflowInstance)
-                  throw new HttpException(`workflowInstanceService_failed`, 500);
-              } catch (error) {
-                throw error;
+                  throw new HttpException(`workflow_initiation_failed`, 400);
+                response.push({
+                  applicationNumber: workflowInstance.applicationNumber,
+                  instanceNumber: workflowInstance.id,
+                  vendorId: workflowInstance.requestorId,
+                  serviceId: workflowInstance.serviceId,
+                });
+                businessArea.status = VendorStatusEnum.PENDING;
+                await this.businessAreaRepository.save(businessArea);
+              } else {
+                const res = await this.businessAreaRepository.find({
+                  where: {
+                    serviceId: bp.serviceId,
+                    vendorId: wfi.requestorId,
+                    status: In([VendorStatusEnum.REJECTED]),
+                  },
+                });
+                if (res.length == 0) {
+                  workflowInstance =
+                    await this.workflowService.intiateWorkflowInstance(
+                      wfi,
+                      userInfo,
+                    );
+                  if (!workflowInstance)
+                    throw new HttpException(`workflow_initiation_failed`, 500);
+                  response.push({
+                    applicationNumber:
+                      workflowInstance.application.applicationNumber,
+                    instanceNumber: workflowInstance.application.id,
+                    vendorId: workflowInstance.application.requestorId,
+                  });
+
+                  const businessAreaEntity = new BusinessAreaEntity();
+                  businessAreaEntity.instanceId =
+                    workflowInstance.application.id;
+                  businessAreaEntity.category = interests[i].category;
+                  businessAreaEntity.serviceId = bp.serviceId;
+                  businessAreaEntity.applicationNumber =
+                    workflowInstance.application.applicationNumber;
+                  businessAreaEntity.status = VendorStatusEnum.PENDING;
+                  businessAreaEntity.vendorId = result.id;
+                  businessAreaEntity.priceRangeId = interests[i].priceRange;
+                  const invoices =
+                    await this.invoiceService.getInvoicesUserAndService(
+                      workflowInstance.application.userId,
+                    );
+                  invoices.map((row) => {
+                    if (row.pricingId == businessAreaEntity.priceRangeId) {
+                      const businessAreaId = businessAreaEntity.id;
+                      row.businessAreaId = businessAreaId;
+                      this.invoiceService.update(row.id, row);
+                    }
+                  });
+                  const res =
+                    await this.businessAreaRepository.save(businessAreaEntity);
+                  if (!res)
+                    throw new HttpException(`adding_business_area_failed`, 500);
+                } else {
+                  continue;
+                }
               }
               if (!workflowInstance)
                 throw new HttpException(`workflowInstanceService_failed`, 500);
@@ -266,7 +264,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
 
             const res = await this.isrVendorsRepository.save(result);
             console.log('rrrrrrrrrrrrrrrrrrrrrrrrrr', res);
-            if (!res) throw new HttpException(`isr_vendor_submission_failed`, 400);
+            if (!res)
+              throw new HttpException(`isr_vendor_submission_failed`, 400);
             return response;
           } else {
             throw new HttpException('already Submitted ', 500);
@@ -382,7 +381,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       if (businessArea) {
         if (vendorStatusDto.status == VendorStatusEnum.APPROVE) {
           businessArea.status = VendorStatusEnum.APPROVED;
-
         } else if (vendorStatusDto.status == VendorStatusEnum.REJECT) {
           businessArea.status = VendorStatusEnum.REJECTED;
           const serviceType = await this.BpServiceService.findOne(
@@ -405,7 +403,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
               throw new HttpException(` profile not found`, 404);
             profileData.status = VendorStatusEnum.REJECTED;
             await this.profileInfoRepository.save(profileData);
-
           }
         }
         businessArea.approvedAt = new Date();
@@ -506,7 +503,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
 
           try {
             await this.vendorRepository.save(vendorEntity);
-
           } catch (error) {
             throw error;
           }
@@ -1258,8 +1254,16 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
   async getApprovedVendorById(VendorId: string) {
     const vendorData = await this.vendorRepository.findOne({
       where: [
-        { id: VendorId, isrVendor: { businessAreas: { status: ApplicationStatus.APPROVED, category: In(['goods', 'services', 'works']) } } },
-        { id: VendorId, preferentials: { status: ApplicationStatus.APPROVED } }
+        {
+          id: VendorId,
+          isrVendor: {
+            businessAreas: {
+              status: ApplicationStatus.APPROVED,
+              category: In(['goods', 'services', 'works']),
+            },
+          },
+        },
+        { id: VendorId, preferentials: { status: ApplicationStatus.APPROVED } },
       ],
       select: {
         id: true,
@@ -1297,7 +1301,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         beneficialOwnership: true,
         vendorAccounts: true,
         isrVendor: { businessAreas: { servicePrice: true, BpService: true } },
-        preferentials: true
+        preferentials: true,
       },
     });
     const { isrVendor, ...rest } = vendorData;
@@ -1318,7 +1322,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       businessAreas: vendorData.isrVendor.businessAreas.map((ba) =>
         BusinessAreaDetailResponseDto.toResponse(ba),
       ),
-
     };
 
     return vendor;
@@ -1600,11 +1603,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           vendorAccounts: true,
         },
       });
-      const abi = vendor.areasOfBusinessInterest;
-      console.log('abi abi abi ', abi);
-      const res = [];
-
-      console.log(res);
       if (!vendor) throw new NotFoundException('vendor not found');
       const result = await this.profileInfoRepository.findOne({
         where: {
