@@ -8,7 +8,7 @@ import { useAuth } from '@megp/auth';
 
 export function Entity({ children }: { children: React.ReactNode }) {
   const route = useRouter();
-  const { user } = useAuth();
+  const { organizationId } = useAuth();
 
   const pathname = usePathname();
   const [onRequest, setOnRequest] = useState<any>();
@@ -77,10 +77,13 @@ export function Entity({ children }: { children: React.ReactNode }) {
 
   const onRequestChange = useCallback(
     (request: CollectionQuery) => {
-      user !== undefined &&
-        trigger({ id: user?.organization?.id, collectionQuery: request });
+      organizationId !== undefined &&
+        trigger({
+          id: organizationId,
+          collectionQuery: request,
+        });
     },
-    [trigger, user],
+    [trigger, organizationId],
   );
 
   useEffect(() => {

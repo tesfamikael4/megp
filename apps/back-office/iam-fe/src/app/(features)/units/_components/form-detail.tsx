@@ -62,7 +62,7 @@ export function FormDetail({ mode }: FormDetailProps) {
   });
   const router = useRouter();
   const { id } = useParams();
-  const { user } = useAuth();
+  const { organizationId } = useAuth();
 
   const [parents, setParents] = useState<Unit[]>([]);
   const [parent, setParent] = useState<Unit[]>([]);
@@ -73,7 +73,7 @@ export function FormDetail({ mode }: FormDetailProps) {
   const [remove, { isLoading: isDeleting }] = useDeleteMutation();
   const [activation, { isLoading: isActivating }] = useUpdateMutation();
   const { data: list, isSuccess } = useListByIdQuery({
-    id: user?.organization?.id,
+    id: organizationId,
     collectionQuery: undefined,
   });
 
@@ -84,7 +84,7 @@ export function FormDetail({ mode }: FormDetailProps) {
   } = useReadQuery(id?.toString());
 
   const { data: unitType } = useUnitTypeListQuery({
-    id: user?.organization?.id,
+    id: organizationId,
     collectionQuery: undefined,
   });
 
@@ -110,7 +110,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       const result = await create({
         ...data,
         parentId: data?.parentId ? data?.parentId : parent[0].id,
-        organizationId: user?.organization?.id,
+        organizationId: organizationId,
       });
       if ('data' in result) {
         router.push(`/units/${result.data.id}`);
@@ -125,7 +125,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       await update({
         ...data,
         id: id?.toString(),
-        organizationId: user?.organization?.id,
+        organizationId: organizationId,
       });
       notify('Success', 'Unit updated successfully');
     } catch {

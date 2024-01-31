@@ -18,7 +18,7 @@ const AddUserModal = () => {
   const [isCollapsed, setIsCollapsed] = useState<boolean>(true);
 
   const { id } = useParams();
-  const { user } = useAuth();
+  const { organizationId } = useAuth();
 
   const [assign, { isLoading: isSaving }] = useReverseRelationMutation();
   const [trigger, { data: users, isSuccess, isLoading }] =
@@ -32,8 +32,12 @@ const AddUserModal = () => {
       {
         id: 'name',
         header: 'Name',
-        accessorKey: 'fullName',
-        cell: (info) => info.getValue(),
+        accessorKey: 'firstName',
+        cell: (info) => (
+          <div>
+            {info.row.original.firstName + ' ' + info.row.original.lastName}
+          </div>
+        ),
         meta: {
           widget: 'primary',
         },
@@ -63,8 +67,12 @@ const AddUserModal = () => {
       {
         id: 'name',
         header: 'Name',
-        accessorKey: 'fullName',
-        cell: (info) => info.getValue(),
+        accessorKey: 'firstName',
+        cell: (info) => (
+          <div>
+            {info.row.original.firstName + ' ' + info.row.original.lastName}
+          </div>
+        ),
         meta: {
           widget: 'primary',
         },
@@ -108,7 +116,7 @@ const AddUserModal = () => {
   }, [users, isSuccess]);
 
   const onRequestChange = (request: CollectionQuery) => {
-    triggerData({ id: user?.organization?.id, collectionQuery: request });
+    triggerData({ id: organizationId, collectionQuery: request });
   };
 
   return (

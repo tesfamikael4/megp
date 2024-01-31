@@ -36,8 +36,12 @@ export function Entity({ children }: { children: React.ReactNode }) {
         {
           id: 'name',
           header: 'Name',
-          accessorKey: 'fullName',
-          cell: (info) => info.getValue(),
+          accessorKey: 'firstName',
+          cell: (info) => (
+            <div>
+              {info.row.original.firstName + ' ' + info.row.original.lastName}
+            </div>
+          ),
           meta: {
             widget: 'primary',
           },
