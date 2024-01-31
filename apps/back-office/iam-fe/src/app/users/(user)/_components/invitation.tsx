@@ -126,7 +126,7 @@ const UserInvitation = () => {
                 variant="outline"
                 onClick={OnInviteUser}
                 loading={isInvitingUser}
-                disabled={userInvited !== null}
+                disabled={userInvited}
                 className="mt-2 w-full"
               >
                 Invite User
