@@ -304,9 +304,9 @@ export default function ServicesCard({ servicesData }: { servicesData: any }) {
                         <div className="flex flex-grow  gap-2 max-w-[16rem]">
                           {services?.areaOfBusinessInterest?.lineOfBusiness.map(
                             (line) => (
-                              <Tooltip label={line.id} key={line.id}>
+                              <Tooltip label={line.name} key={line.id}>
                                 <Badge variant="light" color="green" fz={8}>
-                                  {line.id}
+                                  {line.name}
                                 </Badge>
                               </Tooltip>
                             ),

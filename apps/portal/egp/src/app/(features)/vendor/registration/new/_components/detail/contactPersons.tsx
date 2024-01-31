@@ -38,13 +38,13 @@ export const ContactPersons: React.FC<Props> = ({
               <TextInput
                 label="First Name"
                 placeholder="Enter first name"
-                required
+                withAsterisk
                 {...getInputProps('firstName')}
               />
               <TextInput
                 label="Last Name"
                 placeholder="Enter last name"
-                required
+                withAsterisk
                 {...getInputProps('lastName')}
               />
             </Group>
@@ -52,14 +52,14 @@ export const ContactPersons: React.FC<Props> = ({
               <TextInput
                 label="Email"
                 placeholder="Enter email"
-                required
+                withAsterisk
                 {...getInputProps('email')}
               />
 
               <TextInput
                 label="Phone Number"
                 placeholder="Enter phone number"
-                required
+                withAsterisk
                 {...getInputProps('mobileNumber')}
               />
             </Group>

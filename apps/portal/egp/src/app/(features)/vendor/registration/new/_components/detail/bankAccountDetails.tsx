@@ -82,14 +82,14 @@ export const BankAccountDetails: React.FC<Props> = ({
             <Stack>
               <Group grow>
                 <TextInput
-                  required
+                  withAsterisk
                   label="Account Holder Full Name"
                   {...getInputProps('accountHolderFullName')}
                 />
 
                 <TextInput
                   label="Account Number"
-                  required
+                  withAsterisk
                   type="number"
                   {...getInputProps('accountNumber')}
                 />
@@ -97,7 +97,7 @@ export const BankAccountDetails: React.FC<Props> = ({
               <Group grow>
                 <Select
                   label="Bank Name"
-                  required
+                  withAsterisk
                   data={bankList}
                   placeholder="select"
                   searchable
@@ -118,13 +118,12 @@ export const BankAccountDetails: React.FC<Props> = ({
               <Group grow>
                 <Textarea
                   label="Bank Branch Address"
-                  required
                   {...getInputProps('branchAddress')}
                 />
                 <Select
                   label="Currency"
                   data={['USD', 'ETB', 'EUR', 'GBP', 'MKW']}
-                  required
+                  withAsterisk
                   placeholder="select"
                   searchable
                   {...getInputProps('currency', 'select')}
@@ -133,11 +132,15 @@ export const BankAccountDetails: React.FC<Props> = ({
               <Group grow>
                 <TextInput
                   label="Bank SWIFT/BIC code"
-                  required
+                  withAsterisk
                   {...getInputProps('bankSwift')}
                 />
 
-                <TextInput required label="IBAN" {...getInputProps('IBAN')} />
+                <TextInput
+                  withAsterisk
+                  label="IBAN"
+                  {...getInputProps('IBAN')}
+                />
               </Group>
               <Group grow></Group>
             </Stack>
