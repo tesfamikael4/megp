@@ -51,15 +51,15 @@ export class PostBudgetPlanActivityController extends ExtraCrudController<PostBu
     );
   }
 
-  // @Post('add-budget')
-  // async addBudget(@Body() payload: any) {
-  //   return await this.postBudgetPlanActivityService.addBudget(payload);
-  // }
+  @Post('add-budget')
+  async addBudget(@Body() payload: any) {
+    return await this.postBudgetPlanActivityService.addBudget(payload);
+  }
 
-  // @Post('change-budget')
-  // async changeBudget(@Body() payload: any) {
-  //   return await this.postBudgetPlanActivityService.changeBudget(payload);
-  // }
+  @Post('change-budget')
+  async changeBudget(@Body() payload: any) {
+    return await this.postBudgetPlanActivityService.changeBudget(payload);
+  }
 
   //API's for purchase-requisition
   @AllowAnonymous()
