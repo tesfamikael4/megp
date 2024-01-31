@@ -188,33 +188,36 @@ const RegistrationForm = ({
       />
       <form onSubmit={handleSubmit(onSubmit)} className="w-full">
         <Accordion variant="separated" classNames={classes}>
-          {useTabs(extendedRegister, control).map((tab) => (
-            <Accordion.Item
-              key={tab.tabValue}
-              className={classes.item}
-              value={tab.tabValue}
-            >
-              <Accordion.Control
-                icon={
-                  getFieldsHolderError(formState.errors, tab.tabValue) && (
-                    <Text color="red">*</Text>
-                  )
-                }
+          {useTabs(extendedRegister, control).map((tab) => {
+            getFieldsHolderError(formState.errors, tab.tabValue);
+            return (
+              <Accordion.Item
+                key={tab.tabValue}
+                className={classes.item}
+                value={tab.tabValue}
               >
-                {tab.tabName}
-              </Accordion.Control>
-              <Accordion.Panel>
-                <Stack>
-                  {tab.tabPanelComponent}
-                  <Flex justify="end">
-                    {checkAccess('detail') && (
-                      <Button onClick={onSaveAsDraft}>Save as draft</Button>
-                    )}
-                  </Flex>
-                </Stack>
-              </Accordion.Panel>
-            </Accordion.Item>
-          ))}
+                <Accordion.Control
+                  icon={
+                    getFieldsHolderError(formState.errors, tab.tabValue) && (
+                      <Text color="red">*</Text>
+                    )
+                  }
+                >
+                  {tab.tabName}
+                </Accordion.Control>
+                <Accordion.Panel>
+                  <Stack>
+                    {tab.tabPanelComponent}
+                    <Flex justify="end">
+                      {checkAccess('detail') && (
+                        <Button onClick={onSaveAsDraft}>Save as draft</Button>
+                      )}
+                    </Flex>
+                  </Stack>
+                </Accordion.Panel>
+              </Accordion.Item>
+            );
+          })}
         </Accordion>
 
         <Flex justify="end" className="gap-2 mt-4">

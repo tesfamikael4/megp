@@ -19,7 +19,7 @@ export const BusinessSizeAndOwnership: React.FC<PassFormDataProps> = ({
       <Group grow>
         <NumberInput
           label="Registered Capital"
-          required
+          withAsterisk
           rightSectionWidth="80px"
           rightSection={
             <Select
@@ -33,6 +33,16 @@ export const BusinessSizeAndOwnership: React.FC<PassFormDataProps> = ({
               rightSection={<></>}
               rightSectionWidth={0}
               error={false}
+              onChange={(value) => {
+                register(
+                  'businessSizeAndOwnership.paidUpCapital.currency',
+                  'select',
+                ).onChange(value);
+                register(
+                  'businessSizeAndOwnership.registeredCapital.currency',
+                  'select',
+                ).onChange(value);
+              }}
             />
           }
           {...register(
@@ -55,19 +65,20 @@ export const BusinessSizeAndOwnership: React.FC<PassFormDataProps> = ({
         <NumberInput
           label="Paid Up Capital"
           rightSectionWidth="80px"
-          required
+          withAsterisk
           rightSection={
             <Select
               leftSection={<IconCash size={'1.3rem'} />}
               data={['USD', 'ETB', 'EUR', 'GBP', 'KW']}
               placeholder="select"
               {...register(
-                'businessSizeAndOwnership.paidUpCapital.currency',
+                'businessSizeAndOwnership.registeredCapital.currency',
                 'select',
               )}
               rightSection={<></>}
               rightSectionWidth={0}
               error={false}
+              disabled
             />
           }
           {...register(
@@ -93,13 +104,13 @@ export const BusinessSizeAndOwnership: React.FC<PassFormDataProps> = ({
         <TextInput
           label="Number of Employees"
           id="numberOfEmployees"
-          required
+          withAsterisk
           type="number"
           {...register(`businessSizeAndOwnership.numberOfEmployees`)}
         />
         <Select
           label="Ownership Type"
-          required
+          withAsterisk
           id="ownershipType"
           data={['Malawian', 'Local', 'Foreign', 'Mixed']}
           placeholder="select"

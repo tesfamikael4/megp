@@ -140,10 +140,10 @@ function Page() {
 
   return (
     <Flex className="flex-col w-full relative min-h-[70vh] justify-between">
-      <Box className=" max-w-[850px]">
+      <Box className=" min-w-full">
         <Flex className="gap-2 w-full">
           <form
-            className="flex flex-col border p-4  h-fit max-w-[390px] w-full"
+            className="flex flex-col border p-4  h-fit  w-1/2"
             onSubmit={handleSubmit(onSubmitHandler)}
           >
             <Center>
@@ -202,7 +202,7 @@ function Page() {
               )}
             </Flex>
           </form>
-          <Flex className="min-w-[450px] flex-col border w-full">
+          <Flex className="min-w-[450px] flex-col border w-1/2">
             {invoiceInfo.data?.invoice &&
               invoiceInfo.data?.invoice?.length > 0 && (
                 <InvoiceTemplate invoiceData={invoiceInfo.data?.invoice} />

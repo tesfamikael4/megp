@@ -9,13 +9,13 @@ export const BasicInfo: React.FC<PassFormDataProps> = ({ register }) => {
       <Group grow>
         <TextInput
           label="Name of Business/Company"
-          required
+          withAsterisk
           id="name"
           {...register(`basic.name`)}
         />
         <Select
           label="Form of Business"
-          required
+          withAsterisk
           data={[
             {
               label: 'Sole Proprietorship',
@@ -51,7 +51,7 @@ export const BasicInfo: React.FC<PassFormDataProps> = ({ register }) => {
         <Select
           searchable
           label="Country"
-          required
+          withAsterisk
           data={getNationalityValues()}
           {...register(`basic.country`, 'select')}
         />
@@ -67,7 +67,7 @@ export const BasicInfo: React.FC<PassFormDataProps> = ({ register }) => {
         {register('basic.country', 'select').value === 'Malawi' && (
           <Select
             label="District"
-            required
+            withAsterisk
             data={[
               'Balaka',
               'Blantyre',

@@ -42,21 +42,21 @@ export const BeneficialOwnership: React.FC<Props> = ({
               <TextInput
                 label="First Name"
                 placeholder="Enter first name"
-                required
+                withAsterisk
                 {...getInputProps('firstName')}
               />
 
               <TextInput
                 label="Last Name"
                 placeholder="Enter last name"
-                required
+                withAsterisk
                 {...getInputProps('lastName')}
               />
             </Group>
             <Group grow>
               <Select
                 label="Nationality"
-                required
+                withAsterisk
                 searchable
                 data={getNationalityValues()}
                 {...getInputProps('nationality', 'select')}
