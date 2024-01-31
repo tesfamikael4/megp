@@ -23,11 +23,19 @@ const AddOa = () => {
       {
         id: 'name',
         header: 'Name',
-        accessorKey: 'firstName ',
-        cell: (info) => info.getValue(),
+        accessorKey: 'firstName',
+        cell: ({ row }) => (
+          <div>{row.original.firstName + ' ' + row.original.lastName}</div>
+        ),
         meta: {
           widget: 'primary',
         },
+      },
+      {
+        id: 'userName',
+        header: 'User name',
+        accessorKey: 'username',
+        cell: (info) => info.getValue(),
       },
       {
         id: 'email',
@@ -37,7 +45,7 @@ const AddOa = () => {
       },
       {
         id: 'action',
-        header: 'Actions',
+        header: 'Action',
         accessorKey: 'action',
         cell: ({ row }) => <Invitation user={row?.original} />,
         meta: {

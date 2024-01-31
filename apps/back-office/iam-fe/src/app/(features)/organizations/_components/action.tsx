@@ -73,7 +73,7 @@ export default function Invitation({ user }: invitationProps) {
         ([key, value]) =>
           `${decodeURIComponent(key)}=${decodeURIComponent(value)}`,
       );
-      const finalURL = `${baseUrl}/iam/users/register/?&${queryParams.join(
+      const finalURL = `${baseUrl}/iam/users/${userInvited.setPassword ? 'set-password' : 'accept-invitation'}/?&${queryParams.join(
         '&',
       )}`;
       setInvitationLink(finalURL);

@@ -101,6 +101,7 @@ export default function SetPassWord({ mode }: Mode) {
             style={(theme) => ({
               fontFamily: `Greycliff CF, ${theme.fontFamily}`,
               fontWeight: 750,
+              fontSize: '1.5rem',
             })}
           >
             {mode === 'invite' ? 'Accept invitation' : 'Set password'}
