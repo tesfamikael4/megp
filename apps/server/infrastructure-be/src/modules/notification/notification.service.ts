@@ -1,8 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Notifications, StatusEnum } from 'src/entities/notifications.entity';
+import { Notifications } from 'src/entities/notifications.entity';
 import { EmailService } from 'src/shared/email/email.service';
 import { Repository } from 'typeorm';
+import {
+  SendNotificationEvent,
+  NotificationStatusEnum,
+  NotificationTypeEnum,
+} from '../../shared/types/notification.type';
 
 @Injectable()
 export class NotificationService {
@@ -12,29 +17,49 @@ export class NotificationService {
     private readonly emailService: EmailService,
   ) {}
 
-  async sendEmail(data: Notifications) {
+  async sendNotificaiton(data: SendNotificationEvent) {
+    switch (data.type) {
+      case NotificationTypeEnum.EMAIL:
+        this.sendEmail(data);
+        break;
+      case NotificationTypeEnum.MESSAGE:
+        this.sendMessage(data);
+        break;
+      case NotificationTypeEnum.INBOX:
+        this.sendInbox(data);
+        break;
+    }
+  }
+
+  async getMyNotifications(userId: string) {
+    return await this.repositoryNotification.find({
+      where: {
+        receiver: userId,
+      },
+    });
+  }
+
+  private async sendEmail(data: SendNotificationEvent) {
     const instance = this.repositoryNotification.create(data);
-    instance.status = StatusEnum.SUCCEED;
+    instance.status = NotificationStatusEnum.SUCCEED;
 
     await this.emailService
       .sendEmail(data.receiver, data.subject, data.detailContent)
       .catch((err) => {
-        instance.status = StatusEnum.FAILED;
+        instance.status = NotificationStatusEnum.FAILED;
         instance.errorMessage = err.message || null;
       });
 
     await this.repositoryNotification.insert(instance);
   }
 
-  async sendMessage(data: Notifications) {
+  private async sendMessage(data: SendNotificationEvent) {
     const instace = this.repositoryNotification.create(data);
-
     await this.repositoryNotification.save(instace);
   }
 
-  async sendInbox(data: Notifications) {
+  private async sendInbox(data: SendNotificationEvent) {
     const instace = this.repositoryNotification.create(data);
-
     await this.repositoryNotification.save(instace);
   }
 }

@@ -1,15 +1,9 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { OrgAudit } from 'src/shared/entities';
-
-enum NotificationEnum {
-  EMAIL = 'EMAIL',
-  MESSAGE = 'MESSAGE',
-  INBOX = 'INBOX',
-}
-export enum StatusEnum {
-  SUCCEED = 'SUCCEED',
-  FAILED = 'FAILED',
-}
+import {
+  NotificationTypeEnum,
+  NotificationStatusEnum,
+} from 'src/shared/types/notification.type';
 
 @Entity({ name: 'notifications' })
 export class Notifications extends OrgAudit {
@@ -18,9 +12,9 @@ export class Notifications extends OrgAudit {
 
   @Column({
     type: 'enum',
-    enum: NotificationEnum,
+    enum: NotificationTypeEnum,
   })
-  type: NotificationEnum;
+  type: NotificationTypeEnum;
 
   @Column()
   application: string;
@@ -48,9 +42,9 @@ export class Notifications extends OrgAudit {
 
   @Column({
     type: 'enum',
-    enum: StatusEnum,
+    enum: NotificationStatusEnum,
   })
-  status: StatusEnum;
+  status: NotificationStatusEnum;
 
   @Column({ nullable: true })
   errorMessage: string;
