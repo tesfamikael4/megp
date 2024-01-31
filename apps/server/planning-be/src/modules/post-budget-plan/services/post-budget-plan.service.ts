@@ -172,7 +172,7 @@ export class PostBudgetPlanService extends ExtraCrudService<PostBudgetPlan> {
     });
   }
 
-  async copySelectedPreToPost(data: any): Promise<void> {
+  async sendEventFromPostToPR(data: any): Promise<void> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -202,10 +202,9 @@ export class PostBudgetPlanService extends ExtraCrudService<PostBudgetPlan> {
             },
           });
 
-          //TODO: do I need to exclude Audits?
-
-          //TODO: why not just send the id of the postBudgetPlan on the event
-          //TODO: get the entity needed for the preBudgetPlan with API call
+          await this.planningRMQClient.emit('postBudget-Approved', {
+            activities: activities,
+          });
         }
       });
     } catch (error) {

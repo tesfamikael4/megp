@@ -90,4 +90,11 @@ export class PostBudgetPlanController extends ExtraCrudController<PostBudgetPlan
     data.organizationId = user.organization.id;
     await this.postBudgetPlanService.initiateWorkflow(data);
   }
+
+  @EventPattern('workflow-approval.preBudgetApproval')
+  @ApiPaginatedResponse(PostBudgetPlan)
+  // @UseInterceptors(TransactionInterceptor)
+  async handleApprovedWorkflow(@Body() data: any) {
+    return await this.postBudgetPlanService.sendEventFromPostToPR(data);
+  }
 }
