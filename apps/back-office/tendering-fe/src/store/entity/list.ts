@@ -35,7 +35,7 @@ export const ENTITY_LIST: EntityStoreConfig[] = [
   },
   {
     entity: 'annual-procurement-plan-activities',
-    baseUrl: process.env.NEXT_PUBLIC_PLANNING_API ?? '/planning/api',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
   },
   {
     entity: 'procurement-requisition-timelines',
