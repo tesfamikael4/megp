@@ -85,7 +85,8 @@ export const ENTITY_LIST: EntityStoreConfig[] = [
   },
   {
     entity: 'activities',
-    baseUrl: process.env.NEXT_PUBLIC_WORKFLOW_API ?? '/infrastructure/api/',
+    baseUrl:
+      process.env.NEXT_PUBLIC_INFRASTRUCTURE_API ?? '/infrastructure/api/',
   },
   {
     entity: 'organization-budget-category',

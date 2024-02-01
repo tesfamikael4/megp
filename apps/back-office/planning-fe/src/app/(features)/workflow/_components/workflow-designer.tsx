@@ -180,15 +180,21 @@ export function Steps({ activityId }: { activityId: string }) {
       try {
         {
           type.includes('Role') &&
-            (await getRoles({ id: user?.organization.id }).unwrap());
+            (await getRoles({
+              id: user?.organizations?.[0].organization.id,
+            }).unwrap());
         }
         {
           type.includes('WorkGroup') &&
-            (await getGroups({ id: user?.organization.id }).unwrap());
+            (await getGroups({
+              id: user?.organizations?.[0].organization.id,
+            }).unwrap());
         }
         {
           type.includes('User') &&
-            (await getUsers({ id: user?.organization.id }).unwrap());
+            (await getUsers({
+              id: user?.organizations?.[0].organization.id,
+            }).unwrap());
         }
       } catch (err) {
         notifications.show({
