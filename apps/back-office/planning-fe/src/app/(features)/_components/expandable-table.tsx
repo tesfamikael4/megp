@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 const perPage = 10;
 
 interface Config {
+  idAccessor?: string;
   columns: any[];
   isExpandable?: boolean;
   expandedRowContent?: (record: any, collapse?: any) => React.ReactNode;
@@ -93,6 +94,7 @@ export const ExpandableTable = ({
         )}
         selectedRecords={config.selectedItems}
         onSelectedRecordsChange={config.setSelectedItems}
+        idAccessor={config.idAccessor ?? 'id'}
       />
     </>
   );

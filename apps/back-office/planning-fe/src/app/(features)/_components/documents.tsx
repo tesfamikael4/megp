@@ -14,7 +14,7 @@ import {
 import { useDisclosure } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
-import { Table, TableConfig, logger, notify } from '@megp/core-fe';
+import { logger, notify } from '@megp/core-fe';
 import {
   IconDotsVertical,
   IconDownload,
@@ -40,7 +40,6 @@ export const Documents = ({
 }) => {
   const [opened, { open, close }] = useDisclosure(false);
   const { id } = useParams();
-  // const [data, setData] = useState<any[]>([]);
   const [file, setFile] = useState<File[]>();
   const { register, handleSubmit } = useForm();
   const [retrieveNewURL] = usePreSignedUrlMutation();
@@ -226,7 +225,6 @@ export const Documents = ({
           Upload
         </Button>
       </Group>
-      {/* <Table data={data?.items ?? []} config={config} /> */}
       <ExpandableTable
         data={data?.items ?? []}
         config={config}
@@ -238,8 +236,7 @@ export const Documents = ({
           <TextInput label="Name" {...register('name')} required withAsterisk />
 
           <FileInput
-            accept="*/*"
-            // id="selector"
+            accept=".pdf"
             multiple
             label="Document"
             withAsterisk

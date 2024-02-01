@@ -1,27 +1,25 @@
 import {
-  Accordion,
   Box,
   Button,
   Divider,
   Flex,
   Group,
   LoadingOverlay,
-  NumberInput,
   Text,
-  TextInput,
 } from '@mantine/core';
 import { BudgetSelector } from './budget-selectorr';
-import { useLazyReadQuery, useUpdateMutation } from '../_api/activities.api';
+import { useLazyReadQuery } from '../_api/activities.api';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { IconPlus } from '@tabler/icons-react';
-import { Table, TableConfig, logger, notify } from '@megp/core-fe';
+import { logger, notify } from '@megp/core-fe';
 import {
   useCreatePostBudgetDisbursementMutation,
   useLazyGetPostBudgetDisbursementQuery,
   useGetPostBudgetPlansQuery,
 } from '@/store/api/post-budget-plan/post-budget-plan.api';
 import { ExpandableTable } from '@/app/(features)/_components/expandable-table';
+import { BudgetForm } from './budget-form';
 
 export const BudgetTab = () => {
   const [getActivity, { data, isLoading }] = useLazyReadQuery();
@@ -40,7 +38,50 @@ export const BudgetTab = () => {
       isLoading: isDisbursementLoading,
     },
   ] = useLazyGetPostBudgetDisbursementQuery();
+
+  const [budgetYearDisbursement, setBudgetYearDisbursement] = useState<any[]>([
+    {
+      budgetYear: budgetYearWithApp?.items?.[0].app.budgetYear,
+      amount: 0,
+      quarter1: '0',
+      quarter2: '0',
+      quarter3: '0',
+      quarter4: '0',
+    },
+  ]);
   const config = {
+    idAccessor: 'budgetYear',
+    isExpandable: true,
+    expandedRowContent: (record) => {
+      return (
+        <BudgetForm
+          data={record}
+          onDone={(data) => {
+            const amount =
+              data.quarter1 + data.quarter2 + data.quarter3 + data.quarter4;
+            const temp = budgetYearDisbursement.map((d) => {
+              if (d.budgetYear === record.budgetYear) {
+                return { ...d, ...data, amount };
+              }
+              return d;
+            });
+
+            logger.log({ temp });
+
+            setBudgetYearDisbursement(temp);
+          }}
+          disableRemove={
+            budgetYearWithApp?.items?.[0].app.budgetYear === record.budgetYear
+          }
+          onRemove={() => {
+            const temp = budgetYearDisbursement.filter(
+              (d) => d.budgetYear !== record.budgetYear,
+            );
+            setBudgetYearDisbursement(temp);
+          }}
+        />
+      );
+    },
     columns: [
       {
         title: 'Budget Year',
@@ -49,99 +90,101 @@ export const BudgetTab = () => {
       {
         title: '1st Quarter',
         accessor: 'quarter1',
-      },
-      {
-        title: '2nd Quarter',
-        accessor: 'quarter2',
-      },
-      {
-        title: '3rd Quarter',
-        accessor: 'quarter3',
-      },
-      {
-        title: '4th Quarter',
-        accessor: 'quarter4',
-      },
-      {
-        title: 'Amount',
-        accessor: 'amount',
-        cell: ({ row: { original } }) => <Amount original={original} />,
-      },
-    ],
-  };
-
-  const [budgetYearDisbursement, setBudgetYearDisbursement] = useState<
-    Record<string, any>[]
-  >([
-    {
-      budgetYear: budgetYearWithApp?.items?.[0].app.budgetYear,
-      amount: 0,
-      quarter1: '212',
-      quarter2: '321',
-      quarter3: '1123',
-      quarter4: '3212',
-    },
-  ]);
-
-  const handleAdd = () => {
-    const lastYear = budgetYearDisbursement[budgetYearDisbursement.length - 1];
-    const temp: any[] = [];
-    ['1st', '2nd', '3rd', '4th'].map((quarter, index) => {
-      logger.log({ quarter });
-      temp.push({
-        budgetYear: parseInt(lastYear.budgetYear) + 1,
-        amount: 0,
-        quarter: `${quarter} Quarter`,
-        order: index,
-      });
-    });
-    setBudgetYearDisbursement([...budgetYearDisbursement, ...temp]);
-  };
-
-  const Amount = ({ original }: any) => {
-    const [isEditorOpened, setIsEditorOpened] = useState(false);
-    const [amount, setAmount] = useState(original.amount);
-    const onBlur = () => {
-      setIsEditorOpened(false);
-      const temp = budgetYearDisbursement.map((b) => {
-        if (
-          b.quarter === original.quarter &&
-          b.budgetYearId === original.budgetYearId
-        ) {
-          return { ...b, amount: parseInt(amount) };
-        }
-        return b;
-      });
-
-      setBudgetYearDisbursement([...temp]);
-    };
-    return (
-      <>
-        {!isEditorOpened && (
-          <Text onClick={() => setIsEditorOpened(true)} className="text-end">
-            {original.amount.toLocaleString('en-US', {
+        textAlign: 'right',
+        render: (record) => (
+          <p>
+            {parseInt(record.quarter1).toLocaleString('en-US', {
               style: 'currency',
               currency: data?.currency ?? 'MKW',
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
+              currencyDisplay: 'code',
             })}
-          </Text>
-        )}
-        {isEditorOpened && (
-          <>
-            <TextInput
-              value={amount}
-              type="number"
-              onChange={(e) => {
-                setAmount(e.target.value);
-              }}
-              onBlur={onBlur}
-              rightSection={data?.currency ?? 'MKW'}
-            />
-          </>
-        )}
-      </>
-    );
+          </p>
+        ),
+      },
+      {
+        title: '2nd Quarter',
+        accessor: 'quarter2',
+        textAlign: 'right',
+        render: (record) => (
+          <p>
+            {parseInt(record.quarter2).toLocaleString('en-US', {
+              style: 'currency',
+              currency: data?.currency ?? 'MKW',
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+              currencyDisplay: 'code',
+            })}
+          </p>
+        ),
+      },
+      {
+        title: '3rd Quarter',
+        accessor: 'quarter3',
+        textAlign: 'right',
+        render: (record) => (
+          <p>
+            {parseInt(record.quarter3).toLocaleString('en-US', {
+              style: 'currency',
+              currency: data?.currency ?? 'MKW',
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+              currencyDisplay: 'code',
+            })}
+          </p>
+        ),
+      },
+      {
+        title: '4th Quarter',
+        accessor: 'quarter4',
+        textAlign: 'right',
+        render: (record) => (
+          <p>
+            {parseInt(record.quarter4).toLocaleString('en-US', {
+              style: 'currency',
+              currency: data?.currency ?? 'MKW',
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+              currencyDisplay: 'code',
+            })}
+          </p>
+        ),
+      },
+      {
+        title: 'Total Amount',
+        accessor: 'amount',
+        textAlign: 'right',
+        render: (record) => (
+          <p>
+            {parseInt(record.amount).toLocaleString('en-US', {
+              style: 'currency',
+              currency: data?.currency ?? 'MKW',
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+              currencyDisplay: 'code',
+            })}
+          </p>
+        ),
+      },
+    ],
+  };
+
+  const handleAdd = () => {
+    const lastYear = budgetYearDisbursement[budgetYearDisbursement.length - 1];
+    const budgetYear = parseInt(lastYear.budgetYear) + 1;
+
+    const temp = {
+      budgetYear: budgetYear.toString(),
+      amount: 0,
+      quarter1: '0',
+      quarter2: '0',
+      quarter3: '0',
+      quarter4: '0',
+    };
+
+    logger.log({ temp });
+    setBudgetYearDisbursement([...budgetYearDisbursement, temp]);
   };
 
   useEffect(() => {
@@ -159,12 +202,13 @@ export const BudgetTab = () => {
       const temp = budgetYearDisbursement.map((b) => ({
         ...b,
 
-        budgetYear: budgetYearWithApp?.items?.[0].app.budgetYear,
+        budgetYear:
+          b.budgetYear ?? budgetYearWithApp?.items?.[0].app.budgetYear,
       }));
 
       setBudgetYearDisbursement(temp);
     }
-  }, [budgetYearWithApp]);
+  }, [budgetYearDisbursement, budgetYearWithApp]);
 
   useEffect(() => {
     getDisbursement(id as string);
@@ -174,12 +218,14 @@ export const BudgetTab = () => {
     logger.log({ budgetYearDisbursement });
     const castedData = budgetYearDisbursement.map((b) => ({
       ...b,
-      postBudgetPlanActivityId: id,
       currency: data?.currency,
     }));
     logger.log({ castedData });
     try {
-      await createDisbursement(castedData);
+      await createDisbursement({
+        data: castedData,
+        postBudgetPlanActivityId: id,
+      });
       notify('Success', 'Saved Successfully');
     } catch (err) {
       notify('Error', 'Something went wrong');
@@ -193,7 +239,7 @@ export const BudgetTab = () => {
       <BudgetSelector />
 
       <Box className="mt-5">
-        <Divider label="Disbursement" />
+        <Divider label="Disbursement" my="lg" />
         {data?.isMultiYear && (
           <Flex justify="end" align="center" className="mt-2 text-slate-500 ">
             <IconPlus size="16" />
