@@ -184,7 +184,7 @@ export class ProcurementRequisitionActivityService extends ExtraCrudService<Proc
         'annualProcurementPlanTimelines',
         'annualProcurementPlanDisbursements',
         'procurementMechanisms',
-        // 'requisitionerAssignments',
+        'requisitionerAssignments',
       ],
     });
   }
