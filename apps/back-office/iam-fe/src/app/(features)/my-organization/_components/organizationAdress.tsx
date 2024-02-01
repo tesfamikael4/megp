@@ -112,7 +112,7 @@ const OrganizationAdressForm = () => {
     });
 
   const [mode, setMode] = useState<ModeType>('new');
-  const { user } = useAuth();
+  const { organizationId } = useAuth();
 
   const [selectedDistrict, setSelectedDistrict] = useState<any>();
 
@@ -125,7 +125,7 @@ const OrganizationAdressForm = () => {
     data: selected,
     isSuccess: selectedSuccess,
     isLoading,
-  } = useReadQuery(user?.organization?.id);
+  } = useReadQuery(organizationId);
 
   const {
     register,
@@ -186,7 +186,7 @@ const OrganizationAdressForm = () => {
 
   const onCreate = async (data) => {
     const dataSent = {
-      id: user?.organization?.id,
+      id: organizationId,
       address: {
         ...data,
       },
@@ -202,7 +202,7 @@ const OrganizationAdressForm = () => {
 
   const onUpdate = async (data) => {
     const dataSent = {
-      id: user?.organization?.id,
+      id: organizationId,
       address: {
         ...data,
       },

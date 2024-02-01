@@ -111,7 +111,7 @@ const AddPermissionModal = () => {
         title="Permission assignment"
         opened={isModalOpen}
         onClose={handleCloseModal}
-        size={'lg'}
+        size={'xl'}
       >
         <MandatePermission
           permission={permission}

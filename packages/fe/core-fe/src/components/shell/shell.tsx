@@ -132,7 +132,7 @@ export function Shell({ children }: ShellProps): React.ReactNode {
               />
 
               <Title c="primary" fz={16}>
-                {user?.organization?.name}
+                {user?.organizations[0]?.organization?.name}
               </Title>
             </Group>
 
@@ -169,7 +169,7 @@ export function Shell({ children }: ShellProps): React.ReactNode {
                   Help
                 </Menu.Item>
 
-                {user?.roles?.map((selected) => {
+                {user?.organizations[0]?.roles?.map((selected) => {
                   return (
                     <Menu.Item
                       key={selected.id}

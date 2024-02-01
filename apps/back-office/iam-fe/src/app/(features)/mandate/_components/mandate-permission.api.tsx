@@ -109,7 +109,7 @@ const AddPermission = () => {
         title="Permission assignment"
         opened={isModalOpen}
         onClose={handleCloseModal}
-        size={'lg'}
+        size={'xl'}
         lockScroll={false}
       >
         <MandatePermission
