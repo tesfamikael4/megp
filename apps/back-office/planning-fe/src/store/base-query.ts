@@ -44,6 +44,10 @@ export const baseQuery = (baseUrl = '/') => {
               'authorization',
               `Bearer ${refreshedToken.access_token}`,
             );
+            headers.set(
+              'x-organization',
+              decoded?.organizations?.[0]?.organization.id,
+            );
             setCookie('token', refreshedToken.access_token);
           } else {
             // Clear the cookie and log out the user

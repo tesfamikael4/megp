@@ -7,7 +7,7 @@ export const workflowApi = createApi({
   tagTypes: ['Steps', 'activity', 'Activities'],
   baseQuery: baseQuery(
     // baseUrl: process.env.NEXT_PUBLIC_WORKFLOW_API ?? '/workflow/api/',
-    process.env.NEXT_PUBLIC_WORKFLOW_API ?? '/infrastructure/api/',
+    process.env.NEXT_PUBLIC_INFRASTRUCTURE_API ?? '/infrastructure/api/',
   ),
   endpoints: (builder) => ({
     getActivities: builder.query<any, { workFlowId: string }>({
@@ -37,7 +37,7 @@ export const workflowApi = createApi({
       invalidatesTags: ['Steps'],
     }),
     getDefaultSteps: builder.query<any, { activityId: string }>({
-      query: (payload) => `default-steps/order/${payload.activityId}`,
+      query: (payload) => `default-steps/order-admin/${payload.activityId}`,
       providesTags: ['Steps'],
     }),
     getSteps: builder.query<any, { activityId: string }>({
