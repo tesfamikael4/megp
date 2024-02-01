@@ -5,8 +5,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import {
   ActionIcon,
   Box,
+  Button,
   Checkbox,
+  Divider,
   Flex,
+  Group,
   Modal,
   MultiSelect,
   NumberInput,
@@ -15,7 +18,7 @@ import {
   TextInput,
   Textarea,
 } from '@mantine/core';
-import { MantineTree, Tree, TreeConfig, logger, notify } from '@megp/core-fe';
+import { MantineTree, TreeConfig, logger, notify } from '@megp/core-fe';
 import { EntityButton } from '@megp/entity';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -119,6 +122,10 @@ export const FormDetail = ({
   const treeConfig: TreeConfig<any> = {
     id: 'code',
     label: 'title',
+    selectable: true,
+    multipleSelect: true,
+    selectedIds: tags,
+    setSelectedIds: setTags,
     load: async (data) => {
       // logger.log({ data });
       const res = await getChildren({
@@ -133,7 +140,11 @@ export const FormDetail = ({
         ],
       }).unwrap();
       return {
-        result: res?.items ?? [],
+        result:
+          res?.items?.map((c) => ({
+            code: c.code,
+            title: c.title,
+          })) ?? [],
         loading: isLoading,
       };
     },
@@ -145,15 +156,11 @@ export const FormDetail = ({
       page == 'pre'
         ? {
             ...data,
-            // multiYearBudget: [],
-            // donor: {},
             classification: tags,
             preBudgetPlanId: budgetPlanId,
           }
         : {
             ...data,
-            // multiYearBudget: [],
-            // donor: {},
             classification: tags,
             postBudgetPlanId: budgetPlanId,
           };
@@ -343,9 +350,6 @@ export const FormDetail = ({
               </ActionIcon>
             }
           />
-          {/* <Button onClick={open} disabled={disableFields}>
-              Select
-            </Button> */}
         </Box>
         <Box className="w-1/2">
           <Textarea
@@ -388,34 +392,23 @@ export const FormDetail = ({
         title="Select Classifications"
         size="lg"
       >
-        <Box></Box>
-        <MantineTree
-          config={treeConfig}
-          data={classifications ? classifications.items : []}
-        />
-        {/* <Tree
-          fieldNames={{ title: 'title', key: 'code' }}
-          data={classifications ? classifications.items : []}
-          mode="select"
-          disableModal
-          selectedKeys={tags}
-          multiSelect
-          url={(code) =>
-            `${
-              process.env.NEXT_PUBLIC_ADMINISTRATION_API ??
-              '/administration/api/'
-            }classifications?q=w%3DparentCode%3A%3D%3A${code}`
-          }
-          onDone={(data) => {
-            logger.log({ data });
-            const castedData = (data as any[]).map((d) => ({
-              title: d.title,
-              code: d.code,
-            }));
-            setTags(castedData);
-            close();
-          }}
-        /> */}
+        <Box className="overflow-y-auto h-[35rem]">
+          <MantineTree
+            config={treeConfig}
+            data={
+              classifications
+                ? classifications.items.map((c) => ({
+                    code: c.code,
+                    title: c.title,
+                  }))
+                : []
+            }
+          />
+        </Box>
+        <Divider h={5} />
+        <Group justify="end">
+          <Button onClick={close}>Done</Button>
+        </Group>
       </Modal>
     </Stack>
   );

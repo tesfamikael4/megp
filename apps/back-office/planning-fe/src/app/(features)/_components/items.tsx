@@ -80,7 +80,7 @@ export function Items({
       {
         title: 'UoM',
         accessor: 'uomName',
-        width: 200,
+        width: 150,
       },
       {
         accessor: 'quantity',
@@ -90,7 +90,7 @@ export function Items({
         title: 'Unit Price',
         textAlign: 'center',
         accessor: 'unitPrice',
-        width: 100,
+        width: 200,
         render: (record) => {
           return (
             <p>
@@ -110,7 +110,7 @@ export function Items({
         title: 'Total',
         accessor: 'total',
         textAlign: 'right',
-        width: 150,
+        width: 200,
         render: (record) => (
           <p className="text-right">
             {(record.unitPrice * record.quantity).toLocaleString('en-US', {
@@ -297,7 +297,10 @@ export function Items({
   const handelOnSave = async () => {
     const temp = newItems.filter((i) => i.quantity * i.unitPrice > 0);
     if (temp.length !== newItems.length) {
-      notify('Error', 'Quantity and Unit Price cannot be 0');
+      notify(
+        'Error',
+        'Please ensure that both Unit Price and Quantity are non-zero.',
+      );
     } else {
       try {
         const castedData = newItems.map((item) => {
@@ -339,7 +342,7 @@ export function Items({
         if (err.status === 430) {
           notify('Error', err.data.message);
         } else {
-          notify('Error', 'Something went wrong12');
+          notify('Error', 'Something went wrong');
         }
       }
     }

@@ -86,6 +86,14 @@ export const postBudgetPlanApi = createApi({
       query: (id: string) => `post-budget-plans/get-analytics/${id}`,
       providesTags: ['post-budget-plan'],
     }),
+
+    addBudget: builder.mutation<any, any>({
+      query: (data) => ({
+        url: 'post-budget-plan-activities/add-budget',
+        method: 'POST',
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -103,4 +111,5 @@ export const {
   useGetPostBudgetPlanQuery,
   useLazyGetPostBudgetTimelineQuery,
   useLazyGetPostBudgetPlanAnalyticsQuery,
+  useAddBudgetMutation,
 } = postBudgetPlanApi;

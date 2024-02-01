@@ -3,7 +3,10 @@
 import { DetailTable } from '@/app/(features)/_components/detail-table';
 import { ExpandableTable } from '@/app/(features)/_components/expandable-table';
 import { useLazyListByIdQuery } from '@/app/(features)/budget/_api/budget.api';
-import { useGetPostBudgetPlanQuery } from '@/store/api/post-budget-plan/post-budget-plan.api';
+import {
+  useAddBudgetMutation,
+  useGetPostBudgetPlanQuery,
+} from '@/store/api/post-budget-plan/post-budget-plan.api';
 import {
   Button,
   Flex,
@@ -14,7 +17,7 @@ import {
   LoadingOverlay,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { logger } from '@megp/core-fe';
+import { logger, notify } from '@megp/core-fe';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -22,9 +25,10 @@ export const BudgetSelector = () => {
   const [opened, { close, open }] = useDisclosure(false);
   const [selectedContract, setSelectedContract] = useState<any[]>([]);
   const [value, setValue] = useState('');
-  const { budgetYear } = useParams();
+  const { budgetYear, id } = useParams();
   // const { data } = useListByAppIdQuery(budgetYear as string);
   const [getBudget, { data, isLoading }] = useLazyListByIdQuery();
+  const [addBudget] = useAddBudgetMutation();
   const {
     data: postBudget,
     isLoading: isPostBudgetLoading,
@@ -147,6 +151,22 @@ export const BudgetSelector = () => {
     ],
   };
 
+  const onSubmit = async () => {
+    if (selectedContract.length !== 0) {
+      try {
+        await addBudget({
+          postBudgetPlanActivityId: id,
+          budgetId: selectedContract[0].id,
+        }).unwrap();
+        notify('Success', 'Saved Successfully');
+      } catch (err) {
+        logger.log({ err });
+        notify('Error', 'Something went wrong');
+      }
+      close();
+    }
+  };
+
   useEffect(() => {
     isSuccess &&
       getBudget({
@@ -166,8 +186,8 @@ export const BudgetSelector = () => {
           className="w-full"
           readOnly
           value={value}
+          onClick={open}
         />
-        <Button onClick={open}>Select</Button>
       </Flex>
 
       <Modal
@@ -178,13 +198,6 @@ export const BudgetSelector = () => {
         // centered
       >
         <>
-          {/* 
-              onDone={(data) => {
-                setSelectedContract(data.budgetCode);
-                setValue(data.budgetCode);
-                close();
-              }}
-            /> */}
           <ExpandableTable
             data={data?.items ?? []}
             config={config}
@@ -197,7 +210,6 @@ export const BudgetSelector = () => {
           <Group justify="end">
             <Button
               onClick={() => {
-                // setSelectedContract(data.budgetCode);
                 setValue(selectedContract[0].budgetCode);
                 close();
               }}
@@ -207,6 +219,10 @@ export const BudgetSelector = () => {
           </Group>
         </>
       </Modal>
+
+      <Group justify="end" className="mt-2">
+        <Button onClick={onSubmit}>Save</Button>
+      </Group>
     </Box>
   );
 };
