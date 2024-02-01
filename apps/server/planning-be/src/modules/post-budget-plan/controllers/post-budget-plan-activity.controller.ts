@@ -50,7 +50,7 @@ export class PostBudgetPlanActivityController extends ExtraCrudController<PostBu
       plan,
     );
   }
-
+  @AllowAnonymous()
   @Post('add-budget')
   async addBudget(@Body() payload: any) {
     return await this.postBudgetPlanActivityService.addBudget(payload);

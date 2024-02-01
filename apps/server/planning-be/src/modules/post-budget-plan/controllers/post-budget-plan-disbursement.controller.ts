@@ -4,6 +4,7 @@ import { PostBudgetPlanDisbursement } from 'src/entities';
 import { PostBudgetPlanDisbursementService } from '../services/post-budget-plan-disbursement.service';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { ExtraCrudController } from 'src/shared/controller';
+import { CurrentUser } from 'src/shared/authorization';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'postBudgetPlanActivityId',
@@ -21,7 +22,8 @@ export class PostBudgePlantDisbursementController extends ExtraCrudController<Po
   }
 
   @Post('bulk-create')
-  async bulkCreate(@Body() itemData: any): Promise<any> {
+  async bulkCreate(@Body() itemData: any, @CurrentUser() user): Promise<any> {
+    itemData.organizationId = user.organization.id;
     return this.postBudgetPlanDisbursementService.bulkCreate(itemData);
   }
 }
