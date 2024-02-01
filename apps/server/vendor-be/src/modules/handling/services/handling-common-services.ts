@@ -124,7 +124,7 @@ export class HandlingCommonService {
         ServiceKeyEnum.worksRenewal,
       ];
     } else if (serviceKey == ServiceKeyEnum.update) {
-      keys = [ServiceKeyEnum.profileUpdate];
+      keys = [ServiceKeyEnum.PROFILE_UPDATE];
     } else if (serviceKey == ServiceKeyEnum.preferential) {
       keys = [
         ServiceKeyEnum.IBM,
