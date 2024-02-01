@@ -23,7 +23,10 @@ export class PostBudgetPlanDisbursementService extends ExtraCrudService<PostBudg
     try {
       const disbursement = await this.repositoryPostBudgetPlanDisbursement.find(
         {
-          where: { postBudgetPlanActivityId: data[0].postBudgetPlanActivityId },
+          where: {
+            postBudgetPlanActivityId: data.postBudgetPlanActivityId,
+            organizationId: data.organizationId,
+          },
         },
       );
       if (disbursement.length > 0) {
@@ -31,13 +34,10 @@ export class PostBudgetPlanDisbursementService extends ExtraCrudService<PostBudg
           disbursement as any,
         );
       }
-      // const item = {
-      //   ...data,
-      //   postBudgetPlanActivityId: data.postBudgetPlanActivityId
-      // }
-      // const plan = this.repositoryPostBudgetPlan.findPostBudgetPlans()
+
       const act = await this.repositoryPostBudgetPlanActivity.findOneBy({
-        id: data[0].postBudgetPlanActivityId,
+        id: data.postBudgetPlanActivityId,
+        organizationId: data.organizationId,
       });
       const totalAmount = data.reduce((acc, item) => acc + item.amount, 0);
 
@@ -47,6 +47,11 @@ export class PostBudgetPlanDisbursementService extends ExtraCrudService<PostBudg
           400,
         );
       }
+
+      data.items.forEach((item) => {
+        item.postBudgetPlanActivityId = data.postBudgetPlanActivityId;
+        item.organizationId = data.organizationId;
+      });
 
       await this.repositoryPostBudgetPlanDisbursement.create(data);
       return await this.repositoryPostBudgetPlanDisbursement.save(data);

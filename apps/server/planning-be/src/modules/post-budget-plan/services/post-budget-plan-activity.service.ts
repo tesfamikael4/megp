@@ -13,8 +13,9 @@ export class PostBudgetPlanActivityService extends ExtraCrudService<PostBudgetPl
     private readonly repositoryPostBudgetPlanActivity: Repository<PostBudgetPlanActivity>,
     @InjectRepository(PostBudgetPlan)
     private readonly repositoryPostBudgetPlan: Repository<PostBudgetPlan>,
+    // private readonly budgetService: BudgetService,
     @InjectRepository(Budget)
-    private readonly budgetService: BudgetService,
+    private readonly repositoryBudget: Repository<Budget>,
     private eventEmitter: EventEmitter2,
   ) {
     super(repositoryPostBudgetPlanActivity);
@@ -64,8 +65,8 @@ export class PostBudgetPlanActivityService extends ExtraCrudService<PostBudgetPl
   }
 
   async addBudget(payload): Promise<void> {
-    const budget = await this.budgetService.findOne({
-      id: payload.budgetId,
+    const budget = await this.repositoryBudget.findOne({
+      where: { id: payload.budgetId },
     });
     if (!budget) {
       throw new NotFoundException(`Budget not found`);
@@ -74,7 +75,7 @@ export class PostBudgetPlanActivityService extends ExtraCrudService<PostBudgetPl
       id: payload.postBudgetPlanActivityId,
     });
     if (activity.budgetId == null) {
-      if (budget.availableBudget < activity.estimatedAmount) {
+      if (+budget.availableBudget < +activity.estimatedAmount) {
         throw new HttpException(
           `Available budget is less than estimated Amount`,
           430,
@@ -88,7 +89,7 @@ export class PostBudgetPlanActivityService extends ExtraCrudService<PostBudgetPl
       );
       if (budget.revisedBudget == 0) {
       }
-      await this.budgetService.update(payload.budgetId, {
+      await this.repositoryBudget.update(payload.budgetId, {
         revisedBudget: 0,
         obligatedBudget: budget.obligatedBudget + activity.estimatedAmount,
         availableBudget:
@@ -102,8 +103,10 @@ export class PostBudgetPlanActivityService extends ExtraCrudService<PostBudgetPl
   }
 
   async changeBudget(payload): Promise<void> {
-    const budget = await this.budgetService.findOne({
-      id: payload.budgetId,
+    const budget = await this.repositoryBudget.findOne({
+      where: {
+        id: payload.budgetId,
+      },
     });
     if (!budget) {
       throw new NotFoundException(`Budget not found`);
@@ -118,7 +121,7 @@ export class PostBudgetPlanActivityService extends ExtraCrudService<PostBudgetPl
       );
     }
     //release the previous budget amount
-    await this.budgetService.update(activity.budgetId, {
+    await this.repositoryBudget.update(activity.budgetId, {
       revisedBudget: 0,
       obligatedBudget: budget.obligatedBudget - activity.estimatedAmount,
       availableBudget:
@@ -128,7 +131,7 @@ export class PostBudgetPlanActivityService extends ExtraCrudService<PostBudgetPl
     });
 
     //update the new budget amount
-    await this.budgetService.update(payload.budgetId, {
+    await this.repositoryBudget.update(payload.budgetId, {
       revisedBudget: 0,
       obligatedBudget: budget.obligatedBudget + activity.estimatedAmount,
       availableBudget:
