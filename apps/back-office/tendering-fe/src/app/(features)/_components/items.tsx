@@ -47,7 +47,8 @@ export function Items() {
 
   const route = useRouter();
 
-  const [listById, { data: itemsList, isSuccess }] = useLazyListByIdQuery();
+  const [listById, { data: itemsList, isSuccess, isLoading }] =
+    useLazyListByIdQuery();
 
   const [remove] = useDeleteMutation();
 
@@ -118,6 +119,8 @@ export function Items() {
   };
   const listConfig = {
     ...config,
+    isLoading: isLoading,
+
     expandedRowContent: (record) => (
       <ItemDetailForm
         item={record}

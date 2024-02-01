@@ -1,7 +1,7 @@
 import { useLazyListByIdQuery as useLazyGetUsersQuery } from '@/app/(features)/_api/user.api';
 import { ActionIcon, Box, Button, Group, Modal } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { logger, notify } from '@megp/core-fe';
+import { notify } from '@megp/core-fe';
 import { IconDeviceFloppy, IconTrash } from '@tabler/icons-react';
 import { useAuth } from '@megp/auth';
 import { useEffect, useState } from 'react';
@@ -14,6 +14,7 @@ import {
 import { ExpandableTable } from './expandable-table';
 
 export const Requisitioner = () => {
+  const { organizationId } = useAuth();
   const config = {
     columns: [
       {
@@ -72,7 +73,6 @@ export const Requisitioner = () => {
     useLazyListByIdQuery();
 
   const [requisitioners, setRequisitioners] = useState<any[]>([]);
-  const { organizationId } = useAuth();
 
   const onCreate = async () => {
     const castedData = requisitioners.map((r: any) => ({
@@ -96,7 +96,13 @@ export const Requisitioner = () => {
   useEffect(() => {
     isSuccess && requisitioner && setRequisitioners([...requisitioner.items]);
   }, [isSuccess, requisitioner]);
-  logger.log(requisitioners);
+  const onRequestChange = (collectionQuery) => {
+    getUsers({
+      id: organizationId,
+      collectionQuery: collectionQuery,
+    });
+  };
+
   return (
     <Box>
       <Group justify="end" className="my-2">
@@ -126,10 +132,7 @@ export const Requisitioner = () => {
           config={addConfig}
           data={users?.items ?? []}
           total={users ? users.total : 0}
-          onRequestChange={(collectionQuery) => {
-            const id = organizationId ?? '';
-            getUsers({ id, collectionQuery });
-          }}
+          onRequestChange={onRequestChange}
         />
 
         <Group justify="end">
@@ -139,7 +142,7 @@ export const Requisitioner = () => {
                 name: r.firstName + ' ' + r.lastName,
                 userId: r.id,
               }));
-              logger.log(castedData);
+
               setRequisitioners(castedData);
               close();
             }}

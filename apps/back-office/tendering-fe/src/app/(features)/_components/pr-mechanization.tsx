@@ -10,7 +10,7 @@ import {
 import { Controller, useForm } from 'react-hook-form';
 import { EntityButton } from '@megp/entity';
 import { ZodType, z } from 'zod';
-import { logger, notify } from '@megp/core-fe';
+import { notify } from '@megp/core-fe';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -147,7 +147,7 @@ export const ActivityMechanization = () => {
   useEffect(() => {
     listById({
       id: budget?.items[0]?.id?.toString(),
-      collectionQuery: undefined,
+      collectionQuery: { includes: ['procurementMechanisms'] },
     });
   }, [budget, budgetFeatched, listById]);
   useEffect(() => {
@@ -156,7 +156,6 @@ export const ActivityMechanization = () => {
 
   useEffect(() => {
     if (isGetMechanismSuccess && mechanism?.total == 1) {
-      logger.log(mechanism);
       setMode('detail');
       setValue('fundingSource', mechanism?.items[0]?.fundingSource);
       setValue('isOnline', mechanism.items[0]?.isOnline);
@@ -209,7 +208,6 @@ export const ActivityMechanization = () => {
     );
     setAssignedActivities(filter);
   }, [assignedActivity, prActivity]);
-  logger.log(assignedActivity);
 
   return (
     <Stack pos="relative" pb={'sm'}>
@@ -261,7 +259,7 @@ export const ActivityMechanization = () => {
               data={
                 assignedActivity?.total !== 0 && assignedActivities
                   ? [
-                      `${assignedActivities[0]?.postProcurementMechanisms[0]?.procurementType}`,
+                      `${assignedActivities[0]?.procurementMechanisms?.procurementType}`,
                     ]
                   : [
                       'Goods',

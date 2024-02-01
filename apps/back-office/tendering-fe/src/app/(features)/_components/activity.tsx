@@ -64,26 +64,35 @@ export function Activities() {
 
       {
         title: '#Ref',
-        accessor: 'procurementReference',
+        accessor: 'procurementReferenceNumber',
         width: 100,
       },
       {
         title: 'Name',
-        accessor: 'name',
+        accessor: 'activityName',
         width: 100,
       },
       {
         title: 'Procurement type',
-        accessor: 'procurementType',
+        accessor: 'procurementMechanisms.procurementType',
+        render: (record) => (
+          <Box>{record.procurementMechanisms.procurementType}</Box>
+        ),
       },
       {
         title: 'Procurement method',
-        accessor: 'procurementMethod',
+        accessor: 'procurementMechanisms.procurementMethod',
+        render: (record) => (
+          <Box>{record.procurementMechanisms.procurementMethod}</Box>
+        ),
       },
 
       {
         title: 'Funding source',
-        accessor: 'fundingSource',
+        accessor: 'procurementMechanisms.fundingSource',
+        render: (record) => (
+          <Box>{record.procurementMechanisms.fundingSource}</Box>
+        ),
       },
     ],
   };
@@ -107,26 +116,35 @@ export function Activities() {
       },
       {
         title: '#Ref',
-        accessor: 'procurementReference',
+        accessor: 'procurementReferenceNumber',
         width: 100,
       },
       {
         title: 'Name',
-        accessor: 'name',
+        accessor: 'activityName',
         width: 100,
       },
       {
         title: 'Procurement type',
-        accessor: 'procurementType',
+        accessor: 'procurementMechanisms.procurementType',
+        render: (record) => (
+          <Box>{record.procurementMechanisms.procurementType}</Box>
+        ),
       },
       {
         title: 'Procurement method',
-        accessor: 'procurementMethod',
+        accessor: 'procurementMechanisms.procurementMethod',
+        render: (record) => (
+          <Box>{record.procurementMechanisms.procurementMethod}</Box>
+        ),
       },
 
       {
         title: 'Funding source',
-        accessor: 'fundingSource',
+        accessor: 'procurementMechanisms.fundingSource',
+        render: (record) => (
+          <Box>{record.procurementMechanisms.fundingSource}</Box>
+        ),
       },
     ],
   };
@@ -134,9 +152,9 @@ export function Activities() {
   const listConfig = {
     isSearchable: true,
     columns: [
-      { accessor: 'procurementReference', title: '#Ref' },
+      { accessor: 'procurementReferenceNumber', title: '#Ref' },
 
-      { accessor: 'name', title: 'Name' },
+      { accessor: 'activityName', title: 'Name' },
     ],
   };
 
@@ -192,7 +210,7 @@ export function Activities() {
     if (opened && budgetFeatched) {
       listById({
         id: budget?.items[0]?.id?.toString(),
-        collectionQuery: undefined,
+        collectionQuery: { includes: ['procurementMechanisms'] },
       });
     }
   }, [budget, budgetFeatched, listById, opened]);
