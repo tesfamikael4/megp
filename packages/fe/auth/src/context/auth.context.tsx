@@ -148,7 +148,7 @@ function AuthProvider({
 
         setOrganizationId(userInfo.organizations[0]?.organization?.id);
 
-        userInfo.roles && setRole(userInfo.roles[0]?.name);
+        userInfo.roles && setRole(userInfo.organizations[0]?.roles[0]?.name);
       }
     }
   }, [isAuthenticated]);

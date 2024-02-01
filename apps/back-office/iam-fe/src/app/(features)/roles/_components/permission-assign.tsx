@@ -3,7 +3,16 @@ import React, { useEffect, useState } from 'react';
 import { useLazyListByAppIdQuery } from '../../applications/_api/permission.api';
 import { useLazyGetPermissionByOrganizationIdQuery } from '../../roles/_api/others.api';
 import { useLazyApplicationUnderOrganizationQuery } from '../_api/others.api';
-import { Box, Button, Checkbox, Divider, Flex, Table } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Checkbox,
+  Divider,
+  Flex,
+  ScrollArea,
+  LoadingOverlay,
+  Table,
+} from '@mantine/core';
 import styles from '../../../page.module.scss';
 import { Permission } from '@/models/permission';
 
@@ -26,7 +35,8 @@ const MandatePermission = ({
   const [filteredPermission, setFilteredPermission] = useState<any>([]);
   const { organizationId } = useAuth();
 
-  const [trigger, { data: permissionList }] = useLazyListByAppIdQuery();
+  const [trigger, { data: permissionList, isLoading }] =
+    useLazyListByAppIdQuery();
   const [triggerPermission, { data: permissionListUnderOrganization }] =
     useLazyGetPermissionByOrganizationIdQuery();
 
@@ -57,13 +67,16 @@ const MandatePermission = ({
 
   return (
     <>
-      <Box h={400}>
+      <Flex>
         <Divider mb={20} />
-        <Flex justify="center" align="flex-start" direction="row" gap={'sm'}>
+        <Box className="border-t-2 w-2/5  ">
           <Table className={styles.table} striped withColumnBorders>
             <Table.Thead>
               <Table.Tr className={styles.row}>
-                <Table.Th>Application</Table.Th>
+                <Table.Th className="font-bold text-lg flex">
+                  {' '}
+                  Application
+                </Table.Th>
               </Table.Tr>
             </Table.Thead>
             <Table.Tbody>
@@ -76,60 +89,70 @@ const MandatePermission = ({
               ))}
             </Table.Tbody>
           </Table>
+        </Box>
 
+        <Box className={'border-l-2 pl-2 w-3/5'}>
           {
             <Table className={styles.table} striped>
               {selectedRow === undefined && (
-                <Table.Th> Select application</Table.Th>
+                <Table.Th className="font-bold text-lg flex">
+                  {' '}
+                  Select application
+                </Table.Th>
               )}
               <Table.Thead>
                 <Table.Tr>
                   {selectedRow !== undefined ? (
-                    <Table.Th>Permission</Table.Th>
+                    <Table.Th className="font-bold text-lg flex">
+                      Permission
+                    </Table.Th>
                   ) : (
                     ''
                   )}
                 </Table.Tr>
               </Table.Thead>
-              <Table.Tbody>
-                {filteredPermission?.map((element) => (
-                  <Table.Tr key={element.id}>
-                    <Table.Td>
-                      <Flex>
-                        <Checkbox
-                          className="mr-2 "
-                          size="xs"
-                          checked={selectedPermission.some(
-                            (permItem) => permItem.id === element.id,
-                          )}
-                          onChange={() => {
-                            setSelectedPermission((prev: Permission[]) => {
-                              if (
-                                prev.some(
-                                  (permItem) => permItem.id === element.id,
-                                )
-                              ) {
-                                return prev.filter(
-                                  (permItem) => permItem.id !== element.id,
-                                );
-                              } else {
-                                return [...prev, element];
-                              }
-                            });
-                          }}
-                        />
+              <ScrollArea h={350} scrollbars="y">
+                <Table.Tbody>
+                  <LoadingOverlay visible={isLoading} />
+                  {filteredPermission?.map((element) => (
+                    <Table.Tr key={element.id}>
+                      <Table.Td>
+                        <Flex>
+                          <Checkbox
+                            className="mr-2 "
+                            size="xs"
+                            checked={selectedPermission.some(
+                              (permItem) => permItem.id === element.id,
+                            )}
+                            onChange={() => {
+                              setSelectedPermission((prev: Permission[]) => {
+                                if (
+                                  prev.some(
+                                    (permItem) => permItem.id === element.id,
+                                  )
+                                ) {
+                                  return prev.filter(
+                                    (permItem) => permItem.id !== element.id,
+                                  );
+                                } else {
+                                  return [...prev, element];
+                                }
+                              });
+                            }}
+                          />
 
-                        {element.name}
-                      </Flex>
-                    </Table.Td>
-                  </Table.Tr>
-                ))}
-              </Table.Tbody>
+                          {element.name}
+                        </Flex>
+                      </Table.Td>
+                    </Table.Tr>
+                  ))}
+                </Table.Tbody>
+              </ScrollArea>
             </Table>
           }
-        </Flex>
-      </Box>
-      <Box className="flex justify-end mt-2 mb-4">
+        </Box>
+      </Flex>
+      <Box className="flex justify-end mt-2 mb-2">
         <Button
           onClick={() => (
             setPermission(selectedPermission), handleCloseModal()

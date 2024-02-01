@@ -12,12 +12,12 @@ import { Controller, useForm } from 'react-hook-form';
 import { useAuth } from '@megp/auth';
 export function FormDetail() {
   const { reset, control, register } = useForm();
-  const { user } = useAuth();
+  const { organizationId } = useAuth();
   const {
     data: selected,
     isSuccess: selectedSuccess,
     isLoading,
-  } = useReadQuery(user?.organization?.id);
+  } = useReadQuery(organizationId);
 
   const { data: orgType } = useListTypeQuery({});
 
