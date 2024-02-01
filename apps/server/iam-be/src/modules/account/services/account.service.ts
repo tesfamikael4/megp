@@ -570,6 +570,18 @@ export class AccountsService {
     };
   }
 
+  async getAccountByEmail(email: string) {
+    const account: Account = await this.repository.findOne({
+      where: { email },
+    });
+
+    if (!account) {
+      throw new HttpException('account_does_not_exists', HttpStatus.NOT_FOUND);
+    }
+
+    return account;
+  }
+
   async createBackOfficeAccount(input: any) {
     let account: Account = await this.repository.findOne({
       where: { email: input.email },

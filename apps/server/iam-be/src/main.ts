@@ -9,12 +9,28 @@ import {
   SwaggerModule,
 } from '@nestjs/swagger';
 import { GlobalExceptionFilter } from './shared/exceptions/global-exception.filter';
+import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 
 async function bootstrap() {
   const app: NestExpressApplication = await NestFactory.create(AppModule, {
     cors: true,
   });
 
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.RMQ,
+    options: {
+      // noAck: false,
+      urls: [
+        process.env.RMQ_URL ?? 'amqp://guest:guest@196.189.118.110:32700/',
+      ],
+      queue: 'iam',
+      queueOptions: {
+        durable: false,
+      },
+    },
+  });
+
+  await app.startAllMicroservices();
   app.enableCors();
 
   const port = Number(process.env.PORT ?? 3000);
