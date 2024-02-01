@@ -1,4 +1,4 @@
-import { Controller } from '@nestjs/common';
+import { Body, Controller, Post, UseInterceptors } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ProcurementRequisitionService } from '../services/procurement-requisition.service';
 import {
@@ -8,6 +8,10 @@ import {
 import { ProcurementRequisition } from 'src/entities';
 import { EntityCrudOptions } from 'src/shared/types/crud-option.type';
 import { EntityCrudController } from 'src/shared/controller';
+import { CurrentUser } from 'src/shared/authorization';
+import { TransactionInterceptor } from 'src/shared/interceptors';
+import { EventPattern } from '@nestjs/microservices';
+import { ApiPaginatedResponse } from 'src/shared/api-data';
 
 const options: EntityCrudOptions = {
   createDto: CreateProcurementRequisitionDto,
@@ -23,5 +27,16 @@ export class ProcurementRequisitionController extends EntityCrudController<Procu
     private readonly procurementRequisitionService: ProcurementRequisitionService,
   ) {
     super(procurementRequisitionService);
+  }
+  @Post('initiate-workflow')
+  @UseInterceptors(TransactionInterceptor)
+  async initiateWorkflow(@Body() data: any, @CurrentUser() user: any) {
+    data.organizationId = user.organization.id;
+    await this.procurementRequisitionService.initiateWorkflow(data);
+  }
+  @EventPattern('workflow-approval.prApproval')
+  @ApiPaginatedResponse(ProcurementRequisition)
+  async handleApprovedWorkflow(@Body() data: any) {
+    return await this.procurementRequisitionService.prApprovalDecision(data);
   }
 }

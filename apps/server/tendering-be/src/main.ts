@@ -1,7 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import {
@@ -15,16 +14,7 @@ async function bootstrap() {
   const app: NestExpressApplication = await NestFactory.create(AppModule, {
     cors: true,
   });
-  app.connectMicroservice<MicroserviceOptions>({
-    transport: Transport.RMQ,
-    options: {
-      urls: [process.env.RMQ_URL],
-      queue: 'app-create',
-      queueOptions: {
-        durable: false,
-      },
-    },
-  });
+
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.RMQ,
     options: {
