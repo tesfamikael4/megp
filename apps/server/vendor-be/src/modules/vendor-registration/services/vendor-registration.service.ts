@@ -934,7 +934,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         },
       });
       const abis = [];
-      if (vendorEntity?.areasOfBusinessInterest) {
+      if (vendorEntity?.businessAreas && vendorEntity?.areasOfBusinessInterest) {
         for (const abi of vendorEntity?.areasOfBusinessInterest) {
           for (const ba of vendorEntity?.businessAreas) {
             if (ba.category == abi.category && ba.priceRangeId == abi.priceRange) {
@@ -943,9 +943,11 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             }
           }
         }
-
-        vendorEntity.areasOfBusinessInterest = abis;
+        if (abis.length > 0)
+          vendorEntity.areasOfBusinessInterest = abis;
       }
+      if (vendorEntity)
+        vendorEntity.businessAreas = null;
 
       return vendorEntity;
     } catch (error) {
