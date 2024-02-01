@@ -158,7 +158,9 @@ export class ApplicationExcutionController {
     const result = await this.workflowService.getActivities(instanceId);
     return result;
   }
-
+/*
+fetch approved vendors
+*/
   @UseGuards(JwtGuard)
   @Get('get-vendors')
   @ApiQuery({

@@ -96,11 +96,12 @@ export class BusinessAreaDetailResponseDto {
   @ApiProperty()
   priceFrom: number;
   @ApiProperty()
-  priceTo: number;
+  priceTo: any;
   @ApiProperty()
   currency: string;
   @ApiProperty()
-  certificateUrl: string
+  certificateUrl: string;
+  lineOfBusiness: string[]
 
   static toResponse(entity: BusinessAreaEntity): BusinessAreaDetailResponseDto {
     const response = new BusinessAreaDetailResponseDto();
@@ -111,7 +112,7 @@ export class BusinessAreaDetailResponseDto {
     response.approvedAt = entity?.approvedAt;
     response.service = entity.BpService.name;
     response.priceFrom = entity.servicePrice?.valueFrom;
-    response.priceTo = entity.servicePrice?.valueTo;
+    response.priceTo = entity.servicePrice?.valueTo == -1 ? 'infinite' : entity.servicePrice?.valueTo;
     response.currency = entity.servicePrice?.currency;
     response.certificateUrl = entity?.certificateUrl
     return response;

@@ -66,8 +66,6 @@ export class ApplicationExcutionService {
     d.total = total;
     return d;
   }
-
-
   async getCurruntTaskDetail(
     instanceId: string
   ): Promise<WorkflowInstanceResponse> {
@@ -110,7 +108,7 @@ export class ApplicationExcutionService {
       response.isrvendor.areasOfBusinessInterest = businessInterest;
     }
     const preferentialkeys = this.commonService.getPreferencialServices();
-    if (serviceData.service.key == ServiceKeyEnum.profileUpdate) {
+    if (serviceData.service.key == ServiceKeyEnum.PROFILE_UPDATE) {
       const vendorInfo = await this.vendorService.getVendorByUserWithProfile(response.isrvendor.userId, serviceData.serviceId);
       if (vendorInfo?.ProfileInfo) {
         response.profileUpdate = vendorInfo?.ProfileInfo[0];

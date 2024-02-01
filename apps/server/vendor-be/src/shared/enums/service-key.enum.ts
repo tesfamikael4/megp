@@ -14,7 +14,7 @@ export enum ServiceKeyEnum {
     goodsUpgrade = 'GoodsUpgrade',
     servicesUpgrade = 'ServicesUpgrade',
     worksUpgrade = 'WorksUpgrade',
-    profileUpdate = 'ProfileUpdate',
+    PROFILE_UPDATE = 'ProfileUpdate',
     IBM = 'IBM',
     MEDIUM = 'Medium',
     SMALL = 'Small',

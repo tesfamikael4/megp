@@ -38,7 +38,7 @@ import { ReceiptDto } from '../dto/receipt.dto';
 @ApiResponse({ status: 500, description: 'Internal error' })
 @ApiExtraModels(DataResponseFormat)
 export class VendorRegistrationsController {
-  constructor(private readonly regService: VendorRegistrationsService) {}
+  constructor(private readonly regService: VendorRegistrationsService) { }
   @UseGuards(JwtGuard)
   @Get('get-isr-vendors')
   async getVendors() {
@@ -51,7 +51,7 @@ export class VendorRegistrationsController {
     // return await this.regService.getVendorByUserId(userInfo.id);
     return await this.regService.getVendorByUserId(userInfo.id);
   }
-
+  //bug will be fixed
   @UseGuards(JwtGuard)
   @Get('get-isr-vendor-by-userId')
   async getIsrVendorByuserId(@CurrentUser() userInfo: any) {
@@ -231,6 +231,11 @@ export class VendorRegistrationsController {
   @UseGuards(JwtGuard)
   @Get('get-certificate-informations')
   async getCertificateInformations(@CurrentUser() userInfo: any) {
+    return await this.regService.getCertificateInformations(userInfo.id);
+  }
+  @UseGuards(JwtGuard)
+  @Get('get-preferential-certificate')
+  async getpreferentialCertificates(@CurrentUser() userInfo: any) {
     return await this.regService.getCertificateInformations(userInfo.id);
   }
 }
