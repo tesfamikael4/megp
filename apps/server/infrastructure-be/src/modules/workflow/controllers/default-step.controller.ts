@@ -30,6 +30,21 @@ export class DefaultStepController extends ExtraCrudController<DefaultStep>(
     return this.defaultStepService.bulkCreate(defaultStep, organizationId);
   }
 
+  @Get('orderAdmin/:id')
+  @ApiQuery({
+    name: 'q',
+    type: String,
+    description: 'Collection Query Parameter. Optional',
+    required: false,
+  })
+  @IgnoreTenantInterceptor()
+  async findAllAdmin(
+    @Param('id') id: string,
+    @CurrentUser() user: any,
+  ): Promise<any> {
+    const organizationId = user.organization.id;
+    return this.defaultStepService.order(id, organizationId);
+  }
   @Get('order/:id')
   @ApiQuery({
     name: 'q',
