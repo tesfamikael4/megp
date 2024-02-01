@@ -924,34 +924,37 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       throw error;
     }
   }
-  ///bug will be fixed
   async getIsrVendorByUserId(userId: string): Promise<any> {
     try {
       const vendorEntity = await this.isrVendorsRepository.findOne({
         relations: { businessAreas: true },
         where: {
           userId: userId,
-          status: In(this.updateVendorEnums),
-          businessAreas: { status: Not(ApplicationStatus.APPROVED) }
+          status: In(this.updateVendorEnums)
         },
       });
       const abis = [];
-      for (const abi of vendorEntity?.areasOfBusinessInterest) {
-        for (const ba of vendorEntity?.businessAreas) {
-          if (ba.category == abi.category && ba.priceRangeId == abi.priceRange) {
-            abis.push({ ...abi, status: ba.status });
-            break;
+      if (vendorEntity?.areasOfBusinessInterest) {
+        for (const abi of vendorEntity?.areasOfBusinessInterest) {
+          for (const ba of vendorEntity?.businessAreas) {
+            if (ba.category == abi.category && ba.priceRangeId == abi.priceRange) {
+              abis.push({ ...abi, status: ba.status });
+              break;
+            }
           }
         }
-      }
-      vendorEntity.areasOfBusinessInterest = abis;
 
+        vendorEntity.areasOfBusinessInterest = abis;
+      }
 
       return vendorEntity;
     } catch (error) {
       throw error;
     }
   }
+
+
+
   async getVendorByUserWithPreferntial(
     userId: string,
     serviceId: string,
