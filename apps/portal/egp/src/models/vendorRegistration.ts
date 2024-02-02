@@ -184,6 +184,7 @@ export interface BankNamesResponse {
 export interface LineOfBusinessResponse {
   total: number;
   items: {
+    valueFrom: string;
     id: string;
     code: string;
     description: string;
