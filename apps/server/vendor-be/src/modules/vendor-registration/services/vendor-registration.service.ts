@@ -16,6 +16,7 @@ import {
 import { EntityCrudService } from 'src/shared/service';
 import {
   BusinessAreaEntity,
+  Category,
   InvoiceEntity,
   IsrVendorsEntity,
   ServicePrice,
@@ -1057,7 +1058,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     const result = await this.vendorRepository.findOne({
       where: {
         isrVendorId: isrvendorId,
-        isrVendor: { businessAreas: { status: In(['Approved', 'APPROVED']) } },
+        isrVendor: { businessAreas: { status: In(['Approved', 'APPROVED']), category: In(['goods', 'services']) } },
       },
       relations: {
         isrVendor: { businessAreas: { BpService: true, servicePrice: true } },
