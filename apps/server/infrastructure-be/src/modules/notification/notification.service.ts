@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Notifications } from 'src/entities/notifications.entity';
 import { EmailService } from 'src/shared/email/email.service';
@@ -8,6 +8,7 @@ import {
   NotificationStatusEnum,
   NotificationTypeEnum,
 } from '../../shared/types/notification.type';
+import { ClientProxy } from '@nestjs/microservices';
 
 @Injectable()
 export class NotificationService {
@@ -15,8 +16,13 @@ export class NotificationService {
     @InjectRepository(Notifications)
     private readonly repositoryNotification: Repository<Notifications>,
     private readonly emailService: EmailService,
+    @Inject('NOTIFICATION_SERVICE')
+    private readonly notificationClient: ClientProxy,
   ) {}
 
+  async demoNotification(data: SendNotificationEvent) {
+    this.notificationClient.emit('send-notification', data);
+  }
   async sendNotificaiton(data: SendNotificationEvent) {
     switch (data.type) {
       case NotificationTypeEnum.EMAIL:

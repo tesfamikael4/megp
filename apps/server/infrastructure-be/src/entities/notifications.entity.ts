@@ -37,7 +37,7 @@ export class Notifications extends OrgAudit {
   @Column()
   phoneNumber: string;
 
-  @Column({ type: 'simple-array' })
+  @Column({ type: 'simple-array', nullable: true })
   cc: string[];
 
   @Column({
