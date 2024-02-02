@@ -94,7 +94,7 @@ export function Items({
         render: (record) => {
           return (
             <p>
-              {parseInt(record.unitPrice).toLocaleString('en-US', {
+              {parseFloat(record.unitPrice).toLocaleString('en-US', {
                 style: 'currency',
                 currency: record?.currency,
                 minimumFractionDigits: 2,
@@ -185,11 +185,11 @@ export function Items({
               onClick={(e) => {
                 e.stopPropagation();
                 modals.openConfirmModal({
-                  title: `Delete ${record.description}`,
+                  title: `Delete Item`,
                   centered: true,
                   children: (
                     <Text size="sm">
-                      {`Are you sure you want to delete this ${record.description} `}
+                      {`Are you sure you want to delete this Item `}
                     </Text>
                   ),
                   labels: { confirm: 'Yes', cancel: 'No' },
@@ -252,11 +252,19 @@ export function Items({
         });
       }
     } catch (err) {
-      notifications.show({
-        title: 'Error',
-        message: 'Something went wrong',
-        color: 'red',
-      });
+      if (err.status === 430) {
+        notifications.show({
+          title: 'Error',
+          message: err.data.message,
+          color: 'red',
+        });
+      } else {
+        notifications.show({
+          title: 'Error',
+          message: 'Something went wrong',
+          color: 'red',
+        });
+      }
     }
   };
 

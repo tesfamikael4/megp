@@ -10,9 +10,12 @@ import { ActivityMechanization } from '@/app/(features)/_components/activity-mec
 import { Requisitioner } from '@/app/(features)/_components/requisitioner';
 import { IconChevronLeft } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
+import { useReadQuery } from '../_api/activities.api';
 
 export default function NewActivity() {
-  const { budgetYear } = useParams();
+  const { budgetYear, id } = useParams();
+  const { data: activity } = useReadQuery(id as string);
+
   const router = useRouter();
   return (
     <>
@@ -27,7 +30,7 @@ export default function NewActivity() {
           >
             <Flex align="center">
               <IconChevronLeft />
-              Activities
+              {activity?.name ?? ''}
             </Flex>
           </Tooltip>
         }

@@ -10,12 +10,14 @@ import { useGetPreBudgetPlanQuery } from '@/store/api/pre-budget-plan/pre-budget
 import { useParams, useRouter } from 'next/navigation';
 import { Requisitioner } from '@/app/(features)/_components/requisitioner';
 import { IconChevronLeft } from '@tabler/icons-react';
+import { useReadQuery } from '../_api/activities.api';
 
 export default function NewActivity() {
-  const { budgetYear } = useParams();
+  const { budgetYear, id } = useParams();
   const { data: preBudgetYear } = useGetPreBudgetPlanQuery(
     budgetYear as string,
   );
+  const { data: activity } = useReadQuery(id as string);
   const router = useRouter();
   const disableFields = preBudgetYear
     ? preBudgetYear.status != 'Draft' && preBudgetYear.status != 'Adjust'
@@ -33,7 +35,7 @@ export default function NewActivity() {
           >
             <Flex align="center">
               <IconChevronLeft />
-              Activities
+              {activity?.name ?? ''}
             </Flex>
           </Tooltip>
         }

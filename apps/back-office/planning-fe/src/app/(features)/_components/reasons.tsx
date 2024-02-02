@@ -4,13 +4,14 @@ import {
   Alert,
   Button,
   Group,
-  Modal,
   Select,
   Stack,
+  Tabs,
   Textarea,
 } from '@mantine/core';
 import { logger, notify } from '@megp/core-fe';
 import { IconInfoCircle } from '@tabler/icons-react';
+import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { ZodType, z } from 'zod';
 
@@ -19,23 +20,8 @@ const reasonsSchema: ZodType<any> = z.object({
   remark: z.string().min(1, { message: 'Remark is required' }),
 });
 
-export const Reasons = ({
-  opened,
-  close,
-  validationResult,
-  objectId,
-  activityId,
-  type,
-  description,
-}: {
-  opened: boolean;
-  close: () => void;
-  validationResult?: any;
-  objectId: string;
-  activityId: string;
-  type: string;
-  description?: string;
-}) => {
+export const Reasons = ({ justification }: { justification: any }) => {
+  const [currentKey, setCurrentKey] = useState('');
   const [addJustification, { isLoading }] = useAddJustificationMutation();
 
   const {
@@ -49,7 +35,12 @@ export const Reasons = ({
 
   const onSubmit = async (data) => {
     try {
-      await addJustification({ ...data, objectId, activityId, type }).unwrap();
+      await addJustification({
+        ...data,
+        objectId: justification[currentKey].objectId,
+        activityId: justification[currentKey].activityId,
+        type: currentKey,
+      }).unwrap();
       notify('Success', 'Justification added successfully');
       close();
     } catch (err) {
@@ -62,58 +53,77 @@ export const Reasons = ({
   };
 
   return (
-    <Modal
-      opened={opened}
-      onClose={close}
-      size={'lg'}
-      title={<p className="font-semibold">Justification</p>}
-    >
-      {description && (
-        <Alert
-          variant="light"
-          color="red"
-          title="Warning"
-          icon={<IconInfoCircle />}
-          className="mb-2"
-        >
-          {description}
-        </Alert>
-      )}
-      <Stack>
-        <Controller
-          name="reason"
-          control={control}
-          render={({ field }) => (
-            <Select
-              withCheckIcon={false}
-              {...field}
-              data={validationResult?.possibleReasons ?? ['Other']}
-              label="Possible Reasons"
-              withAsterisk
-              error={errors.reason?.message?.toString()}
-            />
-          )}
-        />
-        <Controller
-          control={control}
-          name="remark"
-          render={({ field }) => (
-            <Textarea
-              {...field}
-              label="Remark"
-              withAsterisk
-              error={errors.remark?.message?.toString()}
-            />
-          )}
-        />
+    <div className="w-2/5 border-l-2 p-5">
+      <h1 className="text-xl mb-2 text-center font-semibold">Justification</h1>
 
-        {/* <FileInput label="Attachment" /> */}
-        <Group justify="end">
-          <Button onClick={handleSubmit(onSubmit, onError)} loading={isLoading}>
-            Submit
-          </Button>
-        </Group>
-      </Stack>
-    </Modal>
+      <>
+        <Tabs defaultValue="procurementMethod">
+          <Tabs.List>
+            {Object.entries(justification).map(([key]: any) => (
+              <Tabs.Tab value={key} key={key}>
+                {justification[key].title}
+              </Tabs.Tab>
+            ))}
+          </Tabs.List>
+          {Object.entries(justification).map(([key, value]: any) => (
+            <>
+              <Tabs.Panel value={key} className="p-2">
+                <Alert
+                  variant="light"
+                  color="red"
+                  title="Warning"
+                  icon={<IconInfoCircle />}
+                  className="mb-2"
+                >
+                  {justification[key].message}
+                </Alert>
+
+                <Stack>
+                  <Controller
+                    name="reason"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        withCheckIcon={false}
+                        {...field}
+                        data={justification[key]?.possibleReasons ?? ['Other']}
+                        label="Possible Reasons"
+                        withAsterisk
+                        error={errors.reason?.message?.toString()}
+                      />
+                    )}
+                  />
+                  <Controller
+                    control={control}
+                    name="remark"
+                    render={({ field }) => (
+                      <Textarea
+                        {...field}
+                        label="Remark"
+                        withAsterisk
+                        error={errors.remark?.message?.toString()}
+                      />
+                    )}
+                  />
+
+                  {/* <FileInput label="Attachment" /> */}
+                  <Group justify="end">
+                    <Button
+                      onClick={() => {
+                        setCurrentKey(key);
+                        handleSubmit(onSubmit, onError)();
+                      }}
+                      loading={isLoading}
+                    >
+                      Submit
+                    </Button>
+                  </Group>
+                </Stack>
+              </Tabs.Panel>
+            </>
+          ))}
+        </Tabs>
+      </>
+    </div>
   );
 };
