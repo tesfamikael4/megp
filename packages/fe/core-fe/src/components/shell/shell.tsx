@@ -64,33 +64,41 @@ export function Shell({ children }: ShellProps): React.ReactNode {
   ));
 
   useEffect(() => {
-    const filtered = shellContext.menuItems.filter((menuItem) => {
-      return menuItem.permission?.some((menuPermission) =>
-        user?.organizations[0]?.permissions.some(
-          (userPermission) => userPermission.key === menuPermission,
-        ),
-      );
-    });
+    const permissionArray = user?.organizations[0]?.permissions.map(
+      (permission) => {
+        return permission.key && permission.key;
+      },
+    );
 
-    const filterNested = shellContext.menuItems
-      .filter((menuItems: any) => menuItems.links)
-      .map((menuItems: any) => {
-        return {
-          ...menuItems,
-          links: menuItems.links.filter((menuItem: any) => {
-            return menuItem.permission?.some((menuPermission) =>
-              user?.organizations[0]?.permissions.some((userPermission) => {
-                return userPermission.key === menuPermission;
-              }),
-            );
-          }),
-        };
-      });
+    function filterMenuAndSubmenu(permissions: string[], menus: any[]) {
+      return menus
+        .map((men: any) => {
+          if (!men.permission || men.permission.length === 0) {
+            if (men.links && men.links.length > 0) {
+              return {
+                ...men,
+                links: filterMenuAndSubmenu(permissions, men.links as any[]),
+              };
+            }
+            return men;
+          }
+          return men.permission.some((perm: string) =>
+            permissions.includes(perm),
+          )
+            ? men
+            : undefined;
+        })
+        .filter(Boolean);
+    }
 
-    currentApplication === 'Identity & Access'
-      ? setFilterdMenu([...filtered, ...filterNested])
-      : setFilterdMenu(shellContext.menuItems);
-  }, [user, shellContext.menuItems, currentApplication]);
+    const filtered: any =
+      user &&
+      filterMenuAndSubmenu(permissionArray as string[], shellContext.menuItems);
+
+    filtered !== undefined
+      ? setFilterdMenu(filtered as any[])
+      : setFilterdMenu([]);
+  }, [shellContext.menuItems, currentApplication, user]);
 
   const links = filterdMenu.map((item) => (
     <LinksGroup {...item} key={item.label} />
