@@ -42,7 +42,6 @@ export class PreBudgetPlanTimelineService extends ExtraCrudService<PreBudgetPlan
       timelines.timeline as any,
     );
     await this.repositoryPreBudgetPlanTimeline.insert(timeline);
-
     return timelines;
   }
 }
