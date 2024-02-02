@@ -104,7 +104,7 @@ export const ActivityMechanization = ({
   const [contract, setContract] = useState({});
   const [mode, setMode] = useState<'new' | 'detail'>('new');
   const [donor, setDonor] = useState<string[]>([]);
-  const [opened, { open, close }] = useDisclosure(false);
+  const [justifications, setJustifications] = useState<Record<string, any>>({});
   const onCreate = async (data) => {
     const castedData =
       page == 'pre'
@@ -174,30 +174,33 @@ export const ActivityMechanization = ({
         ? preActivity?.estimatedAmount
         : postActivity?.estimatedAmount ?? 0;
     logger.log(method);
+    const data = {
+      procurementCategory: type?.toLowerCase(),
+      valueThreshold: valueThreshold,
+    };
     if (method === 'Request for Quotation (RFQ)') {
-      logger.log('Yeah');
       validateMethod({
-        data: { procurementCategory: type, valueThreshold: valueThreshold },
+        data,
         key: 'requestForQuotation',
       });
     } else if (method === 'National Competitive Bidding (NCB)') {
       validateMethod({
-        data: { procurementCategory: type, valueThreshold: valueThreshold },
+        data,
         key: 'nationalCompetitiveBidding',
       });
     } else if (method === 'International Competitive Bidding (ICB)') {
       validateMethod({
-        data: { procurementCategory: type, valueThreshold: valueThreshold },
+        data,
         key: 'internationalCompetitiveBidding',
       });
     } else if (method === 'Restricted Tender') {
       validateMethod({
-        data: { procurementCategory: type, valueThreshold: valueThreshold },
+        data,
         key: 'shortListing',
       });
     } else if (method === 'Request for Proposal (RFP)') {
       validateMethod({
-        data: { procurementCategory: type, valueThreshold: valueThreshold },
+        data,
         key: 'expressionOfInterest',
       });
     }
@@ -207,10 +210,22 @@ export const ActivityMechanization = ({
   useEffect(() => {
     if (validationResult && isValidationSuccess) {
       if (!validationResult.validation) {
-        open();
+        setJustifications({
+          ...justifications,
+          procurementMethod: {
+            title: 'Procurement Method',
+            message:
+              'The procurement method used for this activity violates the rule. Please select possible reason why you want this activity by this procurement method',
+            possibleReasons: validationResult.possibleReasons,
+            objectId: procurementMethodId,
+            activityId: id as string,
+          },
+        });
+      } else {
+        setJustifications({});
       }
     }
-  }, [isValidationSuccess, open, validationResult]);
+  }, [isValidationSuccess, justifications, validationResult]);
   useEffect(() => {
     (fundingSource == 'Internal Revenue' || fundingSource == 'Treasury') &&
       setDonor([]);
@@ -277,8 +292,13 @@ export const ActivityMechanization = ({
     setValue,
   ]);
   return (
-    <>
-      <Stack pos="relative">
+    <div className="flex gap-4">
+      <Stack
+        pos="relative"
+        className={
+          Object.keys(justifications).length === 0 ? 'w-full' : 'w-3/5'
+        }
+      >
         <LoadingOverlay
           visible={isGetPreMechanismLoading || isGetPostMechanismLoading}
         />
@@ -444,15 +464,9 @@ export const ActivityMechanization = ({
         </Group>
       </Stack>
 
-      <Reasons
-        opened={opened}
-        close={close}
-        validationResult={validationResult}
-        objectId={procurementMethodId}
-        activityId={id as string}
-        type={'procurementMethod'}
-        description="The procurement method used for this activity violates the rule. Please select possible reason why you want this activity by this procurement method"
-      />
-    </>
+      {Object.keys(justifications).length !== 0 && (
+        <Reasons justification={justifications} />
+      )}
+    </div>
   );
 };
