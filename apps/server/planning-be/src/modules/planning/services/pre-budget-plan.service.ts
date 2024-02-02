@@ -317,7 +317,7 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
       },
     });
     const transformedData = this.instanceToPlainExclude(data, {
-      exclude: ['createdAt', 'deletedAt'],
+      exclude: ['createdAt', 'deletedAt', 'updatedAt'],
     });
 
     const hashData = (data) => {
