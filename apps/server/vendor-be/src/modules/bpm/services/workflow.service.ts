@@ -14,7 +14,6 @@ import {
   WorkflowInstanceResponse,
 } from '../../handling/dto/workflow-instance.dto';
 import {
-  CreateTaskHandlerDto,
   TaskHandlerResponse,
 } from '../dto/task-handler.dto';
 import { StateNode, createMachine } from 'xstate';

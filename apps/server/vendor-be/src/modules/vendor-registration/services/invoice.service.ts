@@ -155,19 +155,7 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     return response;
   }
 
-  async getInvoiceByInstanceId(
-    instanceId: string,
-    taskId: string,
-  ): Promise<InvoiceResponseDto> {
-    const invoice = await this.invoiceRepository.findOne({
-      where: { businessAreaId: instanceId },
-    });
-    if (invoice) {
-      const invoicedto = InvoiceResponseDto.toResponse(invoice);
-      return invoicedto;
-    }
-    return null;
-  }
+
   async getInvoice(invoceId: string): Promise<InvoiceResponseDto> {
     const invoice = await this.invoiceRepository.findOne({
       where: { id: invoceId },
@@ -177,19 +165,8 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     }
     return null;
   }
-  async getMyInvoices(
-    userId: string,
-  ): Promise<DataResponseFormat<InvoiceResponseDto>> {
-    const response = new DataResponseFormat<InvoiceResponseDto>();
-    const [result, total] = await this.invoiceRepository.findAndCount({
-      where: { userId: userId, paymentStatus: 'Pending' },
-    });
-    response.total = total;
-    response.items = result.map((entity) =>
-      InvoiceResponseDto.toResponse(entity),
-    );
-    return response;
-  }
+
+
   async getInvoicesUserAndService(userId: string): Promise<InvoiceEntity[]> {
     const result = await this.invoiceRepository.find({
       where: { userId: userId, paymentStatus: 'Paid' },
@@ -197,26 +174,7 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
 
     return result;
   }
-  async getActiveMyInvoices(
-    userId: string,
-  ): Promise<DataResponseFormat<InvoiceResponseDto>> {
-    const response = new DataResponseFormat<InvoiceResponseDto>();
-    const oneWeekAgo = new Date();
-    // oneWeekAgo.setDate(new Date().getDate() - 7);
-    const [result, total] = await this.invoiceRepository.findAndCount({
-      where: {
-        userId: userId,
-        paymentStatus: 'Pending',
-        // createdOn: MoreThanOrEqual(oneWeekAgo),
-      },
-      relations: { businessArea: true },
-    });
-    response.total = total;
-    response.items = result.map((entity) =>
-      InvoiceResponseDto.toResponse(entity),
-    );
-    return response;
-  }
+
   ////updated invoice
   async getMyActiveInvoices(
     userId: string,
@@ -228,7 +186,7 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     const [result, total] = await this.invoiceRepository.findAndCount({
       where: {
         userId: userId,
-        paymentStatus: 'Pending',
+        //paymentStatus: 'Pending',
         createdOn: MoreThanOrEqual(oneWeekAgo),
         businessArea: {
           BpService: { key: In(serviceTypes) },
