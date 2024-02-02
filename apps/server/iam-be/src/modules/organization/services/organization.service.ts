@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Inject, Injectable, NotFoundException, Scope } from '@nestjs/common';
 import { EntityManager, Repository } from 'typeorm';
-import { Organization, Role, Unit } from '@entities';
+import { Organization, Role, Unit, User } from '@entities';
 import {
   CreateOrganizationDto,
   OrganizationResponseDto,
@@ -12,12 +12,15 @@ import { EntityCrudService } from 'src/shared/service';
 import { REQUEST } from '@nestjs/core';
 import { ENTITY_MANAGER_KEY } from '@interceptors';
 import { defaultOrganizationRoles } from 'src/modules/seeders/seed-data';
+import { EventPattern, Payload } from '@nestjs/microservices';
+import { AccountsService } from 'src/modules/account/services/account.service';
 
 @Injectable()
 export class OrganizationService extends EntityCrudService<Organization> {
   constructor(
     @InjectRepository(Organization)
     private readonly repositoryOrganization: Repository<Organization>,
+    private readonly accountService: AccountsService,
     @Inject(REQUEST) private request: Request,
   ) {
     super(repositoryOrganization);
@@ -108,5 +111,33 @@ export class OrganizationService extends EntityCrudService<Organization> {
       throw new NotFoundException(`not_found`);
     }
     return item;
+  }
+
+  async vendorRegistrationCompleted(payload: { email: string; name: string }) {
+    const account = await this.accountService.getAccountByEmail(payload.email);
+
+    const organizationDto = {
+      name: payload.name,
+      shortName: payload.name,
+      code: this.generateOrganizationCode(),
+      type: 'PORTAL',
+      status: 'ACTIVE',
+    };
+    const organization = this.repositoryOrganization.create(organizationDto);
+
+    const unit = new Unit();
+    unit.name = organization.name;
+    unit.description = organization.description;
+    unit.code = organization.code;
+
+    organization.units = [unit];
+
+    const user = new User();
+    user.accountId = account.id;
+    user.status = 'ACTIVE';
+
+    organization.users = [user];
+
+    await this.repositoryOrganization.save(organization);
   }
 }

@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   HttpStatus,
+  Inject,
   Param,
   ParseUUIDPipe,
   Patch,
@@ -18,6 +19,7 @@ import {
   UpdateOrganizationDto,
 } from '../dto/organization.dto';
 import { EntityCrudOptions } from 'src/shared/types/crud-option.type';
+import { EventPattern, Payload } from '@nestjs/microservices';
 
 const options: EntityCrudOptions = {
   createDto: CreateOrganizationDto,
@@ -32,6 +34,13 @@ export class OrganizationController extends EntityCrudController<Organization>(
 ) {
   constructor(private readonly organizationService: OrganizationService) {
     super(organizationService);
+  }
+
+  @EventPattern('vendor-registration-completed')
+  async vendorRegistrationCompleted(
+    @Payload() payload: { email: string; name: string },
+  ): Promise<any> {
+    return this.organizationService.vendorRegistrationCompleted(payload);
   }
 
   @Post('transaction-test')
