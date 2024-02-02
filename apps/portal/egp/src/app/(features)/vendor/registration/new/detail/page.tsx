@@ -15,6 +15,8 @@ export default function Page() {
     {},
     { refetchOnMountOrArgChange: true },
   );
+  console.log(requestInfo);
+
   if (requestInfo.data?.initial) {
     updateAccess(requestInfo.data?.initial.level);
     updateStatus(requestInfo.data?.initial.status);
@@ -27,7 +29,7 @@ export default function Page() {
     }
     if (requestInfo.data?.initial) {
       if (
-        requestInfo.data?.initial.status === 'Submitted' ||
+        requestInfo.data?.initial.status === 'Submit' ||
         requestInfo.data?.status! === 'Approved'
       ) {
         router.push(`/vendor/registration/track-applications`);

@@ -5,10 +5,8 @@ import {
   Badge,
   Box,
   Button,
-  Card,
   Flex,
   Paper,
-  Progress,
   Text,
 } from '@mantine/core';
 import { IconArrowLeft } from '@tabler/icons-react';
@@ -17,14 +15,15 @@ import { useRouter } from 'next/navigation';
 import { ApplicationInfo } from '@/models/vendorRegistration';
 
 const callbackURL = (key: string) => {
+  console.log(key);
   if (key == 'GoodsNewRegistration' || key == 'ServicesNewRegistration') {
     return 'new/detail';
   }
   if (key == 'GoodsRenewal' || key == 'ServicesRenewal') {
-    return 'renewal/ppda';
+    return 'renewal/payment';
   }
-  if (key == 'GoodsUpgrade' || key == 'ServiceUpgrade') {
-    return 'upgrade/business-areas';
+  if (key == 'GoodsUpgrade' || key == 'ServicesUpgrade') {
+    return 'upgrade/payment';
   }
   if (key == 'GoodsInfoChange' || key == 'ServiceInfoChange') {
     return 'info-change';
@@ -46,7 +45,6 @@ const badgeColor: { [key: string]: string } = {
   Pending: 'blue.8',
 };
 const DetailViewCard: React.FC<Props> = ({ data, close }) => {
-  console.log({ data });
   const router = useRouter();
   return (
     <Paper shadow="xs" withBorder className={styles.card}>
