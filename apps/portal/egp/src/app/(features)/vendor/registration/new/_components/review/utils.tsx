@@ -110,3 +110,22 @@ export function displayFormattedObject(
     })
     .join(' ');
 }
+
+export function isDate(value: any) {
+  const date = new Date(value);
+
+  if (!value || typeof value !== 'string' || Number(value)) return false;
+  return !isNaN(date.getDate());
+}
+
+export type RequiredFieldsOnly<T> = {
+  [K in keyof T as T[K] extends Required<T[K]> ? K : never]: T[K];
+};
+
+export type ExcludeSomeOptionals<T, U> = {
+  [K in keyof T as T[K] extends U ? never : K]: T[K];
+};
+
+export type RequiredSomeOptionalProps<T, U> = {
+  [K in keyof T]: K extends keyof U ? T[K] | U[K] : T[K];
+};

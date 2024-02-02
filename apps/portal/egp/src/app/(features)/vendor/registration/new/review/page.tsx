@@ -13,6 +13,8 @@ function Page() {
     {},
     { refetchOnMountOrArgChange: true },
   );
+
+  console.log({ requestInfo });
   const [save, saveValues] = useAddFormMutation();
   const { checkAccess, updateAccess, updateStatus } = usePrivilege();
 
@@ -20,6 +22,10 @@ function Page() {
     if (requestInfo.data?.initial.level) {
       updateAccess(requestInfo.data?.initial.level);
       updateStatus(requestInfo.data?.initial.status);
+    }
+
+    if (requestInfo.data?.initial.status === 'Submitted') {
+      router.push(`/vendor/registration/track-applications`);
     }
 
     return () => {};
