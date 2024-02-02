@@ -10,6 +10,7 @@ import {
   useGetPriceRangeQuery,
 } from '../../../_api/query';
 import { usePrivilege } from '../../_context/privilege-context';
+import { useSearchParams } from 'next/navigation';
 
 export const transformCategoryPriceRange = (
   inputData: any,
@@ -41,16 +42,21 @@ const getLabelByValue = (
 };
 interface Props extends PassFormDataProps {
   name: any;
+  adjust?: boolean;
 }
 export const AreasOfBusinessInterest: React.FC<Props> = ({
   control,
   name,
   register,
+  adjust,
 }) => {
+  const searchParams = useSearchParams();
+
   const getLineOfBusinessValues = useGetLineOfBusinessQuery({});
   const getPriceRangeValues = useGetPriceRangeQuery({
     type: 'new',
   });
+  console.log(searchParams.get('flag'));
   const { lockElements } = usePrivilege();
 
   const { fields, append, remove } = useFieldArray({
@@ -89,13 +95,15 @@ export const AreasOfBusinessInterest: React.FC<Props> = ({
     // onFocus: () => clearValidationError(fieldName),
     // onBlur: () => validateField(fieldName),
     ...lockElements('ppda'),
+    disabled: fields.map((field) => field.category),
   });
   const getLineOfBusinessMultiSelectData = (
     businessArea: string,
   ): { value: string; label: string }[] | string[] | [] => {
     if (businessArea === 'services') {
       return (
-        ((getLineOfBusinessValues.data?.items || [])
+        ([...(getLineOfBusinessValues.data?.items || [])]
+
           .map((item) => {
             if (item.businessArea === 'Services') {
               return {
@@ -147,25 +155,27 @@ export const AreasOfBusinessInterest: React.FC<Props> = ({
         }
         overlayProps={{ radius: 'sm', blur: 2 }}
       />
-      <MultiCheckBox
-        label="Category"
-        id="category"
-        data={[
-          {
-            value: 'goods',
-            label: 'Goods',
-          },
-          {
-            value: 'services',
-            label: 'Services',
-          },
-          {
-            value: 'works',
-            label: 'Works',
-          },
-        ]}
-        {...getCategoryProps()}
-      />
+      {searchParams.get('flag') !== 'adjust' && (
+        <MultiCheckBox
+          label="Category"
+          id="category"
+          data={[
+            {
+              value: 'goods',
+              label: 'Goods',
+            },
+            {
+              value: 'services',
+              label: 'Services',
+            },
+            {
+              value: 'works',
+              label: 'Works',
+            },
+          ]}
+          {...getCategoryProps()}
+        />
+      )}
 
       {fields.map((field, index) => (
         <Fieldset
@@ -209,7 +219,10 @@ export const AreasOfBusinessInterest: React.FC<Props> = ({
                 getPriceRangeValues.isSuccess &&
                   getPriceRangeValues.data &&
                   getPriceRangeValues.data.length
-                  ? getPriceRangeValues.data
+                  ? ([...getPriceRangeValues.data] ?? []).sort(
+                      ({ valueFrom: valueFromA }, { valueFrom: valueFromB }) =>
+                        Number(valueFromA) - Number(valueFromB),
+                    )
                   : [],
                 field.category,
               )}

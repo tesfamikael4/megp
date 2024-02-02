@@ -58,7 +58,7 @@ const tab = [
     tabName: 'Bank Account Details',
   },
   {
-    tabValue: 'areasOfBusinessInterest',
+    tabValue: 'areasOfBusinessInterestView',
     tabName: 'Areas of Business Interest',
   },
   {
@@ -402,7 +402,6 @@ const MiscellaneousPanel = ({
           </Flex>
         )}
       {typeof data === 'string' &&
-        fieldKey !== 'transactionId' &&
         fieldKey !== 'invoiceIds' &&
         fieldKey !== 'invoiceId' &&
         fieldKey !== 'serviceId' && (

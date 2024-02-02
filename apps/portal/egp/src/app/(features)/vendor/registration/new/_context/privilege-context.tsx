@@ -54,7 +54,7 @@ export function hasAccess(level: VendorLevel, status: VendorStatus): boolean {
   if (status in accessRules && accessRules[status].active) {
     const { readWriteLevels, readOnlyLevels } = accessRules[status];
     if (readWriteLevels.includes(level)) {
-      console.log(level, status);
+      // console.log(level, status);
 
       return readWriteLevels.includes(level);
     } else if (readOnlyLevels.includes(level)) {
@@ -185,7 +185,7 @@ const PrivilegeContextProvider: React.FC<PropsWithChildren> = ({
   const navigateToPrevRoute = (params?: string) => {
     prevRoutePath && router.push(`/vendor/registration/new/${prevRoutePath}`);
   };
-  console.log(accessLevel, accessStatus);
+  // console.log(accessLevel, accessStatus);
   // Use useMemo to memoize the context value
   const contextValue = useMemo(() => {
     return {

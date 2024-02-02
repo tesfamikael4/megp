@@ -1,7 +1,7 @@
 'use client';
 import React, { useEffect } from 'react';
 import { LoadingOverlay } from '@mantine/core';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { NotificationService } from '../../../_components/notification';
 import { useGetVendorQuery } from '../../_api/query';
 import RegistrationForm from '../_components/detail/formShell';
@@ -10,12 +10,12 @@ import { usePrivilege } from '../_context/privilege-context';
 export default function Page() {
   const router = useRouter();
   const { updateAccess, updateStatus } = usePrivilege();
+  const searchParams = useSearchParams();
 
   const requestInfo = useGetVendorQuery(
     {},
     { refetchOnMountOrArgChange: true },
   );
-  console.log(requestInfo);
 
   if (requestInfo.data?.initial) {
     updateAccess(requestInfo.data?.initial.level);
@@ -33,7 +33,10 @@ export default function Page() {
         requestInfo.data?.status! === 'Approved'
       ) {
         router.push(`/vendor/registration/track-applications`);
-      } else router.push((requestInfo.data?.initial.level).toLowerCase());
+      } else
+        router.push(
+          (requestInfo.data?.initial.level).toLowerCase() + '?' + searchParams,
+        );
     }
     return () => {
       router.refresh();
