@@ -146,9 +146,9 @@ function AuthProvider({
         const userInfo: Record<string, any> = jwtDecode(token);
         setUser(userInfo);
 
-        setOrganizationId(userInfo.organizations[0]?.organization?.id);
+        setOrganizationId(userInfo.organizations?.[0]?.organization?.id);
 
-        userInfo.roles && setRole(userInfo.organizations[0]?.roles[0]?.name);
+        userInfo.roles && setRole(userInfo.organizations?.[0]?.roles[0]?.name);
       }
     }
   }, [isAuthenticated]);

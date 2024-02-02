@@ -67,7 +67,7 @@ export default function WorkflowHandling() {
 
   useEffect(() => {
     if (user) {
-      getGroup({ userId: user?.userId });
+      getGroup({ userId: user?.organizations?.[0].userId });
     }
   }, [user]);
 
@@ -300,12 +300,12 @@ export default function WorkflowHandling() {
                               currentStep.status != 'Approved' &&
                               !checkIdStepIdExist(
                                 currentStep,
-                                user?.userId,
+                                user?.organizations?.[0].userId,
                                 step.id,
                               ) &&
                               (role ===
                                 currentStep?.step.approvers[0].approver ||
-                                user?.userId ===
+                                user?.organizations?.[0].userId ===
                                   currentStep?.step.approvers[0].id ||
                                 checkUserGroup()) && (
                                 <>
