@@ -30,7 +30,17 @@ export class JwtGuard implements CanActivate {
       const { organizations, ...rest } = user;
       let parsedUser: any = rest;
       if (organizations && organizations.length > 0) {
-        const organization = organizations[0];
+        let organization: any;
+
+        if (request.headers && request.headers['x-organization-id']) {
+          organization = organizations.find(
+            (x: any) =>
+              x.organization.id == request.headers['x-organization-id'],
+          );
+        } else {
+          organization = organizations[0];
+        }
+
         parsedUser = {
           ...parsedUser,
           ...organization,
