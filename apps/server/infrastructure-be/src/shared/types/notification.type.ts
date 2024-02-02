@@ -18,6 +18,6 @@ export type SendNotificationEvent = {
   receiver: string;
   phoneNumber: string;
   cc: string[];
-  status: NotificationStatusEnum;
-  errorMessage: string;
+  // status: NotificationStatusEnum;
+  // errorMessage: string;
 };

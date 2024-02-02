@@ -22,6 +22,17 @@ async function bootstrap() {
       },
     },
   });
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.RMQ,
+    options: {
+      // noAck: false,
+      urls: [process.env.RMQ_URL],
+      queue: 'send-notification',
+      queueOptions: {
+        durable: false,
+      },
+    },
+  });
 
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.RMQ,
