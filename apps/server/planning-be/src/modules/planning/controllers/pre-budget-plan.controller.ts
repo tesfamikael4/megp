@@ -93,7 +93,7 @@ export class PreBudgetPlanController extends ExtraCrudController<PreBudgetPlan>(
     return await this.preBudgetPlanService.hashData(id);
   }
 
-  @Post('approved')
+  @Post('approve-hash')
   @ApiPaginatedResponse(PreBudgetPlan)
   async hashMatch(@Body() hash): Promise<boolean> {
     return await this.preBudgetPlanService.hashMatch(hash.id, hash.hashData);

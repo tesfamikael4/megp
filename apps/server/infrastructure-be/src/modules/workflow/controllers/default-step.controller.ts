@@ -45,6 +45,7 @@ export class DefaultStepController extends ExtraCrudController<DefaultStep>(
     const organizationId = user.organization.id;
     return this.defaultStepService.order(id, organizationId);
   }
+
   @Get('order/:id')
   @ApiQuery({
     name: 'q',
