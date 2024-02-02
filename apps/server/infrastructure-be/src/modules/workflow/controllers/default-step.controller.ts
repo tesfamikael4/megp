@@ -30,7 +30,7 @@ export class DefaultStepController extends ExtraCrudController<DefaultStep>(
     return this.defaultStepService.bulkCreate(defaultStep, organizationId);
   }
 
-  @Get('orderAdmin/:id')
+  @Get('order-admin/:id')
   @ApiQuery({
     name: 'q',
     type: String,
