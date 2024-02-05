@@ -28,20 +28,24 @@ export class PreBudgetPlanTimelineService extends ExtraCrudService<PreBudgetPlan
     timelines: BulkTimelineDto,
     req: any,
   ): Promise<BulkTimelineDto> {
-    const organizationId = req?.user?.organization?.id;
-    await this.repositoryPreBudgetPlanTimeline.delete({
-      preBudgetPlanActivityId: timelines.timeline[0].preBudgetPlanActivityId,
-      organizationId: organizationId,
-    });
+    try {
+      const organizationId = req?.user?.organization?.id;
+      await this.repositoryPreBudgetPlanTimeline.delete({
+        preBudgetPlanActivityId: timelines.timeline[0].preBudgetPlanActivityId,
+        organizationId: organizationId,
+      });
 
-    timelines.timeline.forEach((element) => {
-      element.organizationId = organizationId;
-    });
+      timelines.timeline.forEach((element) => {
+        element.organizationId = organizationId;
+      });
 
-    const timeline = await this.repositoryPreBudgetPlanTimeline.create(
-      timelines.timeline as any,
-    );
-    await this.repositoryPreBudgetPlanTimeline.insert(timeline);
-    return timelines;
+      const timeline = this.repositoryPreBudgetPlanTimeline.create(
+        timelines.timeline as any,
+      );
+      await this.repositoryPreBudgetPlanTimeline.insert(timeline);
+      return timelines;
+    } catch (error) {
+      throw error;
+    }
   }
 }

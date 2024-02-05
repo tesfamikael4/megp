@@ -18,6 +18,7 @@ import { PostBudgetPlanActivity } from 'src/entities';
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 import { REQUEST } from '@nestjs/core';
 import { ClientProxy } from '@nestjs/microservices';
+import { AllowAnonymous } from 'src/shared/authorization';
 
 @Injectable()
 export class PostBudgetPlanService extends ExtraCrudService<PostBudgetPlan> {
@@ -30,6 +31,9 @@ export class PostBudgetPlanService extends ExtraCrudService<PostBudgetPlan> {
 
     @Inject('PLANNING_RMQ_SERVICE')
     private readonly planningRMQClient: ClientProxy,
+
+    @Inject('TO_PR')
+    private readonly toPRRMQClient: ClientProxy,
 
     @Inject(REQUEST)
     private readonly request: Request,
@@ -199,10 +203,13 @@ export class PostBudgetPlanService extends ExtraCrudService<PostBudgetPlan> {
               postBudgetRequisitioners: true,
               postProcurementMechanisms: true,
               postBudgePlantDisbursements: true,
+              postBudgetPlan: {
+                app: true,
+              },
             },
           });
 
-          await this.planningRMQClient.emit('postBudget-Approved', {
+          await this.planningRMQClient.emit('to-pr', {
             activities: activities,
           });
         }
@@ -213,5 +220,27 @@ export class PostBudgetPlanService extends ExtraCrudService<PostBudgetPlan> {
     } finally {
       await queryRunner.release();
     }
+  }
+
+  async sendTest() {
+    const postBudgetPlan = await this.repositoryPostBudgetPlan.find({
+      where: { id: '3aad5996-82ff-4210-a80c-68418a3e5f05' },
+      relations: {
+        postBudgetPlanActivities: {
+          postBudgetPlanItems: true,
+          postBudgetPlanTimelines: true,
+          postBudgetRequisitioners: true,
+          postProcurementMechanisms: true,
+          postBudgePlantDisbursements: true,
+        },
+        app: {
+          budgetYears: true,
+          budgets: true,
+        },
+      },
+    });
+    this.toPRRMQClient.emit('to-pr', {
+      postBudgetPlan,
+    });
   }
 }

@@ -30,6 +30,7 @@ import { ExtraCrudService } from 'src/shared/service';
 // import { EventEmitter2 } from '@nestjs/event-emitter';
 import { createHash } from 'crypto';
 import { classToPlain, instanceToPlain } from 'class-transformer';
+import { Hash } from 'src/entities/hash.entity';
 
 @Injectable()
 export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
@@ -40,6 +41,8 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
     private readonly preBudgetActivityRepository: Repository<PreBudgetPlanActivity>,
     @InjectRepository(PreBudgetPlanItems)
     private readonly preBudgetItemsRepository: Repository<PreBudgetPlanItems>,
+    @InjectRepository(Hash)
+    private readonly hashRepository: Repository<Hash>,
 
     // private eventEmitter: EventEmitter2,
     @Inject('PLANNING_RMQ_SERVICE')
@@ -306,7 +309,7 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
     });
   }
 
-  async hashData(id: string) {
+  async hashData(id: string, userId: any) {
     const data = await this.preBudgetActivityRepository.find({
       where: { preBudgetPlanId: id },
       relations: {
@@ -320,18 +323,45 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
       exclude: ['createdAt', 'deletedAt', 'updatedAt'],
     });
 
-    const hashData = (data) => {
-      return createHash('sha-256').update(data).digest('hex');
-    };
-
-    const hashedData = hashData(JSON.stringify(data));
-
+    const hashedData = this.createHashData(JSON.stringify(transformedData));
+    const item = this.hashRepository.create({
+      hash: hashedData,
+      objectId: id,
+      objectType: 'preBudgetPlan',
+      createdBy: userId,
+    });
+    await this.hashRepository.save(item);
     return hashedData;
   }
 
+  createHashData(transformedData) {
+    const hash = createHash('sha-256')
+      .update(transformedData)
+      .digest('hex')
+      .toString();
+    return hash;
+  }
+
   async hashMatch(dataId: string, hash: string): Promise<boolean> {
-    const originalHash = await this.hashData(dataId);
-    return originalHash === hash;
+    const data = await this.preBudgetActivityRepository.find({
+      where: { preBudgetPlanId: dataId },
+      relations: {
+        preBudgetPlanItems: true,
+        preBudgetPlanTimelines: true,
+        preBudgetRequisitioners: true,
+        preProcurementMechanisms: true,
+      },
+    });
+    const transformedData = this.instanceToPlainExclude(data, {
+      exclude: ['createdAt', 'deletedAt', 'updatedAt'],
+    });
+    const originalHash = JSON.stringify(this.createHashData(transformedData));
+    const prevHash = await this.hashRepository.findOne({
+      where: {
+        objectId: dataId,
+      },
+    });
+    return originalHash === hash && hash === prevHash.hash;
   }
 
   instanceToPlainExclude(

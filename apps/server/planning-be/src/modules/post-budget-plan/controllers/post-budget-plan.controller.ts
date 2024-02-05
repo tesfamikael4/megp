@@ -97,4 +97,18 @@ export class PostBudgetPlanController extends ExtraCrudController<PostBudgetPlan
   async handleApprovedWorkflow(@Body() data: any) {
     return await this.postBudgetPlanService.sendEventFromPostToPR(data);
   }
+
+  // @EventPattern('to-pr')
+  // @ApiPaginatedResponse(PostBudgetPlan)
+  // // @UseInterceptors(TransactionInterceptor)
+  // async testApprovedWorkflow(@Body() data: any) {
+  //   console.log({ data })
+  //   // return await this.postBudgetPlanService.sendEventFromPostToPR(data);
+  // }
+
+  @AllowAnonymous()
+  @Post('test-pr')
+  async testPr(@Body() data: any) {
+    return await this.postBudgetPlanService.sendTest();
+  }
 }

@@ -43,7 +43,7 @@ export class DefaultStepController extends ExtraCrudController<DefaultStep>(
     @CurrentUser() user: any,
   ): Promise<any> {
     const organizationId = user.organization.id;
-    return this.defaultStepService.order(id, organizationId);
+    return this.defaultStepService.orderAdmin(id, organizationId);
   }
 
   @Get('order/:id')
