@@ -1,27 +1,24 @@
-import { Table, TableConfig } from '@megp/core-fe';
 import { useLazyListByAppIdQuery } from '../../_api/items.api';
 import { useEffect } from 'react';
+import { ExpandableTable } from '../../_components/expandable-table';
+import { DetailItem } from '../../_components/deatil-item';
 
-const tableConfig: TableConfig<any> = {
+const config = {
+  isExpandable: true,
+  expandedRowContent: (record) => <DetailItem data={record} />,
   columns: [
     {
-      id: 'itemCode',
-      header: 'Code',
-      accessorKey: 'itemCode',
+      accessor: 'description',
     },
     {
-      header: 'Description',
-      accessorKey: 'description',
-    },
-    {
-      id: 'unitPrice',
-      header: () => <div className="text-right">Unit Price</div>,
-      accessorKey: 'unitPrice',
-      cell: ({ row: { original } }: any) => (
+      accessor: 'unitPrice',
+      textAlign: 'right',
+      width: 150,
+      render: (record) => (
         <p className="text-right">
-          {original.unitPrice.toLocaleString('en-US', {
+          {parseFloat(record.unitPrice).toLocaleString('en-US', {
             style: 'currency',
-            currency: original?.currency,
+            currency: record?.currency,
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
           })}
@@ -29,25 +26,25 @@ const tableConfig: TableConfig<any> = {
       ),
     },
     {
-      id: 'quantity',
-      header: 'Quantity',
-      accessorKey: 'quantity',
+      accessor: 'quantity',
+      width: 100,
     },
-    {
-      id: 'uomName',
-      header: 'UoM',
-      accessorKey: 'uomName',
-    },
+    // {
+    //   title: 'UoM',
+    //   accessor: 'uomName',
+    // },
 
     {
-      id: 'totalEstimatedAmount',
-      header: () => <div className="text-right">Total Amount</div>,
-      accessorKey: 'totalEstimatedAmount',
-      cell: ({ row: { original } }: any) => (
+      title: 'Total Amount',
+      accessor: 'totalEstimatedAmount',
+      textAlign: 'right',
+      render: (record) => (
         <p className="text-right">
-          {(original.unitPrice * original.quantity).toLocaleString('en-US', {
+          {(
+            parseFloat(record.unitPrice) * parseFloat(record.quantity)
+          ).toLocaleString('en-US', {
             style: 'currency',
-            currency: original?.currency,
+            currency: record?.currency,
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
           })}
@@ -63,5 +60,11 @@ export const Items = ({ activityId }: { activityId: string }) => {
   useEffect(() => {
     listItems(activityId);
   }, []);
-  return <Table config={tableConfig} data={data?.items ?? []} />;
+  return (
+    <ExpandableTable
+      config={config}
+      data={data?.items ?? []}
+      total={(data as any)?.total ?? 0}
+    />
+  );
 };

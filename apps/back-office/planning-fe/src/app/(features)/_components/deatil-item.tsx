@@ -1,13 +1,15 @@
 'use client';
 
-import { Box, LoadingOverlay, Table } from '@mantine/core';
-import { DetailTable } from './detail-table';
+import { Box, LoadingOverlay } from '@mantine/core';
 import { useLazyGetClassificationPathQuery } from '@/store/api/administration/administration.api';
 import { useEffect } from 'react';
+import { DataTable } from 'mantine-datatable';
+import { logger } from '@megp/core-fe';
 
 export const DetailItem = ({ data }: any) => {
   const [getPath, { data: classificationPath, isLoading }] =
     useLazyGetClassificationPathQuery();
+
   const detailData = [
     {
       key: 'Classification',
@@ -39,12 +41,19 @@ export const DetailItem = ({ data }: any) => {
   ];
 
   useEffect(() => {
-    getPath(data.commodityCode);
+    logger.log(data);
+    getPath(data.classification);
   }, [data, getPath]);
   return (
     <Box className="bg-white p-4" pos="relative">
       <LoadingOverlay visible={isLoading} />
-      <DetailTable data={detailData} />
+      <DataTable
+        records={detailData ?? []}
+        columns={[{ accessor: 'key', width: 200 }, { accessor: 'value' }]}
+        withColumnBorders
+        withTableBorder
+        noHeader
+      />
     </Box>
   );
 };
