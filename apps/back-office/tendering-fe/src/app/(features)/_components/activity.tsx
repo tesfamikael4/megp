@@ -9,7 +9,7 @@ import {
   Radio,
   Text,
 } from '@mantine/core';
-import { Table, TableConfig, logger, notify } from '@megp/core-fe';
+import { logger, notify } from '@megp/core-fe';
 import { useDisclosure } from '@mantine/hooks';
 import { IconPlus } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
@@ -43,6 +43,8 @@ export function Activities() {
   const { id } = useParams();
   const [triggerBudjet, { data: budget, isSuccess: budgetFeatched }] =
     useLazyGetBudgetYearQuery();
+
+  logger.log(modifiedData);
 
   const config = {
     columns: [
@@ -101,6 +103,7 @@ export function Activities() {
   };
 
   const ReadActivity = ({ record, entity }: { record: any; entity: any }) => {
+    logger.log(record, entity);
     const { data: activity } = useReadQuery(
       record.annualProcurementPlanActivityId.toString(),
     );

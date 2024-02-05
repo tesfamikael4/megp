@@ -5,6 +5,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 export const budgetApi = createApi({
   reducerPath: 'budgetYearApi',
   refetchOnFocus: true,
+  tagTypes: ['pr-files'],
   baseQuery: baseQuery(process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api/'),
   endpoints: (builder) => ({
     getBudgetYear: builder.query<any, any>({
@@ -43,6 +44,28 @@ export const budgetApi = createApi({
         body: data,
       }),
     }),
+
+    preSignedUrl: builder.mutation<any, any>({
+      query: (data) => ({
+        url: 'procurement-requisition-documents/pre-signed-put-url',
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['pr-files'],
+    }),
+
+    getFiles: builder.query<any, any>({
+      query: (id: string) => ({
+        url: `procurement-requisition-documents/list/${id}`,
+      }),
+      providesTags: ['pr-files'],
+    }),
+    downloadFiles: builder.query<any, any>({
+      query: (id: string) => ({
+        url: `procurement-requisition-documents/download/${id}`,
+      }),
+      providesTags: ['pr-files'],
+    }),
   }),
 });
 
@@ -52,4 +75,7 @@ export const {
   useLazyGetActivitiesQuery,
   useGetActivitiesQuery,
   useUploadMutation,
+  useGetFilesQuery,
+  useLazyDownloadFilesQuery,
+  usePreSignedUrlMutation,
 } = budgetApi;

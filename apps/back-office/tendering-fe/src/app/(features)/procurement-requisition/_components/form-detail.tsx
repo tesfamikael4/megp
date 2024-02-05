@@ -9,7 +9,7 @@ import {
 import { EntityButton } from '@megp/entity';
 import { z, ZodType } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import {
   useReadQuery,
   useDeleteMutation,
@@ -30,6 +30,7 @@ interface FormDetailProps {
 const defaultValues = {
   title: '',
   description: '',
+  procurementType: null,
 };
 
 export function FormDetail({ mode }: FormDetailProps) {
@@ -37,6 +38,10 @@ export function FormDetail({ mode }: FormDetailProps) {
     {
       title: z.string().min(1, { message: 'This field is required' }),
       description: z.string().optional(),
+      procurementType: z.string({
+        required_error: 'This field is required',
+        invalid_type_error: 'This field is required to be a string',
+      }),
     },
   );
 
@@ -45,6 +50,7 @@ export function FormDetail({ mode }: FormDetailProps) {
     reset,
     formState: { errors },
     register,
+    control,
   } = useForm({
     resolver: zodResolver(organizationSchema),
   });
@@ -110,6 +116,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       reset({
         title: selected?.title,
         description: selected?.description,
+        procurementType: selected?.procurementType,
       });
     }
   }, [mode, reset, selected, selectedSuccess]);
@@ -135,6 +142,38 @@ export function FormDetail({ mode }: FormDetailProps) {
         {...register('description')}
       />
 
+      <Controller
+        name="procurementType"
+        control={control}
+        render={({ field: { onChange, value } }) => (
+          <Select
+            name="name"
+            label="Procurement Type"
+            value={value}
+            withAsterisk
+            error={
+              errors?.procurementType
+                ? errors?.procurementType?.message?.toString()
+                : ''
+            }
+            onChange={onChange}
+            data={[
+              {
+                value: 'Tendering',
+                label: 'Tendering',
+              },
+              {
+                value: 'purchasing',
+                label: 'purchasing',
+              },
+              {
+                value: 'Auctioning',
+                label: 'Auctioning',
+              },
+            ]}
+          />
+        )}
+      />
       <EntityButton
         mode={mode}
         data={selected}
