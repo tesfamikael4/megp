@@ -22,7 +22,7 @@ import { DefaultStepController } from './controllers/default-step.controller';
 import { Permission } from 'src/entities/permission.entity';
 import { PermissionService } from './services/permission.service';
 import { PermissionController } from './controllers/permission.controller';
-import { AuthHelper } from 'src/shared/authorization';
+import { AuthHelper } from '@megp/shared-be';
 import { JwtService } from '@nestjs/jwt';
 import * as dotenv from 'dotenv';
 

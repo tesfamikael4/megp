@@ -3,12 +3,13 @@ import { NotificationService } from './notification.service';
 import { NotificationController } from './notification.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Notifications } from 'src/entities/notifications.entity';
-import { EmailService } from 'src/shared/email/email.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { EmailModule } from '@megp/shared-be';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Notifications]),
+    EmailModule,
     ClientsModule.register([
       {
         name: 'NOTIFICATION_SERVICE',
@@ -23,7 +24,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
       },
     ]),
   ],
-  providers: [NotificationService, EmailService],
+  providers: [NotificationService],
   controllers: [NotificationController],
 })
 export class NotificationModule {}

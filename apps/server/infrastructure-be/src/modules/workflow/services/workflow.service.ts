@@ -2,7 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Workflow } from 'src/entities';
-import { EntityCrudService } from 'src/shared/service';
+import { EntityCrudService } from '@megp/shared-be';
 import { XMachineService } from './xMachine.service';
 import { createActor } from 'xstate';
 import { State } from 'src/entities/state.entity';

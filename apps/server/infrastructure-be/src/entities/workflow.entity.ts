@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToOne } from 'typeorm';
 import { Activity } from './activity.entity';
-import { OrgAudit } from 'src/shared/entities';
+import { OrgAudit } from '@megp/shared-be';
 
 @Entity({ name: 'workflows' })
 export class Workflow extends OrgAudit {

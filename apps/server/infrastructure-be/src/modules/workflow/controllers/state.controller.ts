@@ -1,10 +1,12 @@
 import { Post, Body, Controller, Param } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
-import { ExtraCrudController } from 'src/shared/controller';
 import { State } from 'src/entities/state.entity';
 import { StateService } from '../services/state.service';
-import { CurrentUser } from 'src/shared/authorization';
+import {
+  ExtraCrudOptions,
+  ExtraCrudController,
+  CurrentUser,
+} from '@megp/shared-be';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'activityId',
