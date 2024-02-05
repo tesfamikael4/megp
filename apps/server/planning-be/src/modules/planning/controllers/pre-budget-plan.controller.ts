@@ -87,15 +87,17 @@ export class PreBudgetPlanController extends ExtraCrudController<PreBudgetPlan>(
     return await this.preBudgetPlanService.copySelectedPreToPost(data);
   }
 
+  @AllowAnonymous()
   @Get('hash/:id')
   @ApiPaginatedResponse(PreBudgetPlan)
-  async hashData(@Param('id') id: string) {
-    return await this.preBudgetPlanService.hashData(id);
+  async hashData(@Param('id') id: string, @CurrentUser() user) {
+    const userId = 'user.userId';
+    return await this.preBudgetPlanService.hashData(id, userId);
   }
 
   @Post('approve-hash')
   @ApiPaginatedResponse(PreBudgetPlan)
-  async hashMatch(@Body() hash): Promise<boolean> {
+  async hashMatch(@Body() hash, @CurrentUser() user): Promise<boolean> {
     return await this.preBudgetPlanService.hashMatch(hash.id, hash.hashData);
   }
 }

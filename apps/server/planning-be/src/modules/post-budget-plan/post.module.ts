@@ -51,6 +51,17 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
           },
         },
       },
+      {
+        name: 'TO_PR',
+        transport: Transport.RMQ,
+        options: {
+          urls: [process.env.RMQ_URL],
+          queue: 'to-pr',
+          queueOptions: {
+            durable: false,
+          },
+        },
+      },
     ]),
     MinioModule.register({
       endPoint: process.env.MINIO_ENDPOINT ?? 'files.megp.peragosystems.com',
