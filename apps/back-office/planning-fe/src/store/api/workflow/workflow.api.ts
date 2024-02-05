@@ -6,8 +6,8 @@ export const workflowApi = createApi({
   tagTypes: [''],
   refetchOnFocus: true,
   baseQuery: baseQuery(
-    process.env.NEXT_PUBLIC_INFRASTRUCTURE_API ?? '/infrastructure/api/',
-    // 'https://dev-bo.megp.peragosystems.com/workflow/api/',
+    // process.env.NEXT_PUBLIC_INFRASTRUCTURE_API ?? '/infrastructure/api/',
+    'https://dev-bo.megp.peragosystems.com/infrastructure/api/',
   ),
   endpoints: (builder) => ({
     getWorkflowInstance: builder.query<any, string>({

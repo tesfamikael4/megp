@@ -4,7 +4,6 @@ import { Section } from '@megp/core-fe';
 import { useEffect } from 'react';
 import { DetailActivity } from '../../_components/detail-activity';
 import { Accordion, Box, LoadingOverlay } from '@mantine/core';
-import { ActivityMechanization } from './activity-mechanization';
 import { Items } from './items';
 import { Requisitioner } from './requisitioner';
 import { Timeline } from './timeline';
@@ -51,7 +50,11 @@ export function PlanOverview() {
                     >
                       <Accordion.Control>Identification</Accordion.Control>
                       <Accordion.Panel>
-                        <DetailActivity activity={activity} page="pre" />
+                        <DetailActivity
+                          activity={activity}
+                          page="pre"
+                          hideMethods
+                        />
                       </Accordion.Panel>
                     </Accordion.Item>
 
@@ -61,7 +64,11 @@ export function PlanOverview() {
                     >
                       <Accordion.Control>Procurement Methods</Accordion.Control>
                       <Accordion.Panel>
-                        <ActivityMechanization activityId={activity.id} />
+                        <DetailActivity
+                          activity={activity}
+                          page="pre"
+                          hideActivity
+                        />
                       </Accordion.Panel>
                     </Accordion.Item>
 
@@ -75,7 +82,7 @@ export function PlanOverview() {
                     <Accordion.Item value={'Documents'} className="bg-white">
                       <Accordion.Control>Documents</Accordion.Control>
                       <Accordion.Panel>
-                        <Document />
+                        <Document activityId={activity.id} />
                       </Accordion.Panel>
                     </Accordion.Item>
 

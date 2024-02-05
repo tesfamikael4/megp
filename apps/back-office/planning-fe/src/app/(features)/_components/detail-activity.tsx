@@ -5,11 +5,15 @@ import { useEffect, useState } from 'react';
 import { useLazyListByIdQuery as useLazyListPostByIdQuery } from '../_api/post-mechanism';
 
 export const DetailActivity = ({
+  hideActivity = false,
+  hideMethods = false,
   activity,
   page,
 }: {
   activity: any;
   page: 'pre' | 'post';
+  hideActivity?: boolean;
+  hideMethods?: boolean;
 }) => {
   const activityId = activity.id;
   const [methods, setMethods] = useState<any[]>([]);
@@ -145,15 +149,19 @@ export const DetailActivity = ({
       <LoadingOverlay
         visible={isGetPreMechanismLoading || isGetPostMechanismLoading}
       />
-      <Text className="font-semibold mb-2">Identification</Text>
-      <DataTable
-        withColumnBorders
-        withTableBorder
-        records={data}
-        columns={[{ accessor: 'key', width: 200 }, { accessor: 'value' }]}
-        noHeader
-      />
-      {methods.length !== 0 && (
+      {!hideActivity && (
+        <>
+          <Text className="font-semibold mb-2">Identification</Text>
+          <DataTable
+            withColumnBorders
+            withTableBorder
+            records={data}
+            columns={[{ accessor: 'key', width: 200 }, { accessor: 'value' }]}
+            noHeader
+          />
+        </>
+      )}
+      {methods.length !== 0 && !hideMethods && (
         <>
           <Text className="font-semibold my-2">Procurement Methods</Text>
           <DataTable
