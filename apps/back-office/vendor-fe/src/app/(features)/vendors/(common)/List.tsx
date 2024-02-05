@@ -22,6 +22,7 @@ const ApplicationList = ({
   const [filter, setFilter] = useState({
     businessType: '',
     name: '',
+    country: '',
   });
 
   // this will handle fetch when all the filter fields are empty
@@ -32,24 +33,37 @@ const ApplicationList = ({
   }, [filter.name, filter.businessType]);
 
   const handleFilter = (filterInfo: any = { where: [[]] }) => {
-    const filters: Where[] = [];
+    const filters: Where[][] = [];
     if (filter.name) {
-      filters.push({
-        column: 'name',
-        operator: 'LIKE',
-        value: `${filter.name}`,
-      });
+      filters.push([
+        {
+          column: 'name',
+          operator: 'ILIKE',
+          value: `${filter.name}`,
+        },
+      ]);
     }
 
     if (filter.businessType) {
-      filters.push({
-        column: 'formOfEntity',
-        operator: 'LIKE',
-        value: `${filter.businessType}`,
-      });
+      filters.push([
+        {
+          column: 'formOfEntity',
+          operator: 'LIKE',
+          value: `${filter.businessType}`,
+        },
+      ]);
+    }
+    if (filter.country) {
+      filters.push([
+        {
+          column: 'origin',
+          operator: 'LIKE',
+          value: `${filter.country}`,
+        },
+      ]);
     }
 
-    const query = { ...filterInfo, where: [filters] };
+    const query = { ...filterInfo, where: [...filters], take: 15, skip: 0 };
 
     getFilteredList(query);
   };
