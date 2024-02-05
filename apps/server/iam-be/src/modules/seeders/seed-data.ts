@@ -268,6 +268,13 @@ export const permissions = [
     key: 'planning:manageBudget',
     applicationId: 3,
   },
+  {
+    id: 37,
+    name: 'Platform Owner',
+    description: 'Platform Owner',
+    key: 'administration:platformOwner',
+    applicationId: 1,
+  },
 ];
 export const roleSystems = [
   {
@@ -425,6 +432,16 @@ export const mandates = [
     isActive: true,
     isSingleAssignment: false,
     versionNo: '0.1',
+  },
+  {
+    id: 4,
+    name: 'Platform Owner',
+    description: 'Platform Owner',
+    key: 'PLATFORM_OWNER',
+    isActive: true,
+    isSingleAssignment: true,
+    versionNo: '0.1',
+    mandatePermissions: [{ permissionId: 37 }],
   },
 ];
 export const defaultOrganizationRoles = [
