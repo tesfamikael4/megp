@@ -15,6 +15,7 @@ import {
   useCreatePostActivityTimelineMutation,
   useLazyGetPostBudgetTimelineQuery,
 } from '@/store/api/post-budget-plan/post-budget-plan.api';
+import { ExpandableTable } from './expandable-table';
 
 const tableData = [
   {
@@ -80,41 +81,36 @@ export default function TimelineTab({
     getPostTimeline,
     { data: postTimeline, isSuccess: isPostTimelineSuccess },
   ] = useLazyGetPostBudgetTimelineQuery();
-  const listConfig: TableConfig<any> = {
+  const listConfig = {
     columns: [
       {
-        header: 'Name',
-        accessorKey: 'timeline',
+        title: 'Name',
+        accessor: 'timeline',
       },
       {
-        id: 'period',
-        header: 'Period',
-        accessorKey: 'period',
-        cell: ({ getValue, row, column }) => (
-          <Period getValue={getValue} row={row} column={column} />
-        ),
+        title: 'Period',
+        accessor: 'period',
+        render: (record) => <Period record={record} />,
       },
       {
-        id: 'dueDate',
-        header: 'Due Date',
-        accessorKey: 'dueDate',
-        cell: ({ getValue, row, column }) => (
-          <DueDate getValue={getValue} row={row} column={column} />
-        ),
+        title: 'Due Date',
+        accessor: 'dueDate',
+        render: (record) => <DueDate record={record} />,
       },
     ],
   };
 
-  const Period = ({ getValue, row: { index }, column: { id } }: any) => {
-    const initialValue = getValue();
+  const Period = ({ record }: any) => {
+    const initialValue = record.period;
     const [value, setValue] = useState<string | number>(initialValue);
+    const index = data.indexOf(record);
 
     const onBlur = () => {
       const formattedData = data.map((item, i) => {
         if (i === index) {
           return {
             ...item,
-            [id]: value == '' || (value as number) < 0 ? 0 : value,
+            period: value == '' || (value as number) < 0 ? 0 : value,
           };
         }
         return item;
@@ -163,9 +159,10 @@ export default function TimelineTab({
       </>
     );
   };
-  const DueDate = ({ getValue, row: { index }, column: { id } }: any) => {
-    const initialValue = getValue();
+  const DueDate = ({ record }: any) => {
+    const initialValue = record.dueDate;
     const [value, setValue] = useState<Date | null>(initialValue);
+    const index = data.indexOf(record);
 
     const onBlur = () => {
       setData((old) => {
@@ -173,7 +170,7 @@ export default function TimelineTab({
           if (i === index) {
             return {
               ...old[index],
-              [id]: value,
+              dueDate: value,
             };
           }
           return row;
@@ -281,7 +278,8 @@ export default function TimelineTab({
 
   return (
     <div className="mt-4">
-      {data.length != 0 && <Table config={listConfig} data={data} />}
+      {/* {data.length != 0 && <Table config={listConfig} data={data} />} */}
+      <ExpandableTable data={data} config={listConfig} />
       <Group className="mt-2" justify="end">
         <Button
           onClick={handleSave}

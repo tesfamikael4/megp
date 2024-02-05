@@ -83,7 +83,7 @@ export const ExpandableTable = ({
             backgroundColor: '#D9D9D9',
           },
         }}
-        page={page}
+        page={total ? page : 0}
         totalRecords={total}
         recordsPerPage={perPage}
         onPageChange={setPage}
