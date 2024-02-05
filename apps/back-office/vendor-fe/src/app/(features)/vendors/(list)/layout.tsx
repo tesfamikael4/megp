@@ -1,10 +1,9 @@
 'use client';
 
 import { Box, Flex, Tabs } from '@mantine/core';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import Entity from './Entity';
 import {
-  useGetVendorsQuery,
   useLazyGetRejectedVendorListQuery,
   useLazyGetVendorsQuery,
 } from '@/store/api/vendor_request_handler/approved-rejected-api';
@@ -15,6 +14,7 @@ const Vendors = ({ children }: { children: React.ReactElement }) => {
   const [filter, setFilter] = useState({
     businessType: '',
     name: '',
+    country: '',
   });
   const [query, setQuery] = useState<CollectionQuery>({});
   const [activeTab, setActiveTab] = useState<'approved' | 'rejected'>(
@@ -27,7 +27,7 @@ const Vendors = ({ children }: { children: React.ReactElement }) => {
 
   const handleTabChange = (tab: 'approved' | 'rejected') => {
     setActiveTab(tab);
-    setFilter({ name: '', businessType: '' });
+    setFilter({ name: '', businessType: '', country: '' });
 
     // console.log(query)
     if (tab === 'approved') {
@@ -46,24 +46,38 @@ const Vendors = ({ children }: { children: React.ReactElement }) => {
     filterInfo: any = { where: [[]] },
     status: 'approved' | 'rejected' = activeTab,
   ) => {
-    const filters: Where[] = [];
+    const filters: Where[][] = [];
     if (filter.name) {
-      filters.push({
-        column: 'name',
-        operator: 'LIKE',
-        value: `%${filter.name}%`,
-      });
+      filters.push([
+        {
+          column: 'name',
+          operator: 'LIKE',
+          value: `%${filter.name}%`,
+        },
+      ]);
     }
 
     if (filter.businessType) {
-      filters.push({
-        column: 'country',
-        operator: 'LIKE',
-        value: `%${filter.businessType}%`,
-      });
+      filters.push([
+        {
+          column: 'country',
+          operator: 'LIKE',
+          value: `%${filter.businessType}%`,
+        },
+      ]);
     }
 
-    const query = { ...filterInfo, where: [filters] };
+    if (filter.country) {
+      filters.push([
+        {
+          column: 'origin',
+          operator: 'LIKE',
+          value: `${filter.country}`,
+        },
+      ]);
+    }
+
+    const query = { ...filterInfo, where: [...filters] };
 
     if (status === 'approved') {
       getFilteredList(query);

@@ -5,6 +5,7 @@ import { useMemo } from 'react';
 import { logger } from '@megp/core-fe';
 import { Box } from '@mantine/core';
 import { Vendor } from '@/store/api/vendor_request_handler/type';
+import { addSpacesToCamelCase } from '../../util/addSpaceToCamelCase';
 
 export default function Entity({
   children,
@@ -29,16 +30,16 @@ export default function Entity({
         title == 'approved'
           ? 'Approved Vendors'
           : title == 'rejected'
-          ? 'Rejected Applications'
-          : 'Debarred Vendors',
+            ? 'Rejected Applications'
+            : 'Debarred Vendors',
       primaryKey: 'id',
       primaryContent: 'description',
       title:
         title == 'approved'
           ? 'Approved Vendors'
           : title == 'rejected'
-          ? 'Rejected Applications'
-          : 'Debarred Vendors',
+            ? 'Rejected Applications'
+            : 'Debarred Vendors',
       hasAdd: false,
       onDetail: (selected: Vendor) => {
         const param = new URLSearchParams();
@@ -63,6 +64,7 @@ export default function Entity({
           meta: {
             widget: 'expand',
           },
+          cell: (info) => addSpacesToCamelCase(info.getValue() as string),
         },
 
         {
@@ -73,14 +75,6 @@ export default function Entity({
             widget: 'expand',
           },
           cell: (info) => info.getValue(),
-        },
-        {
-          id: 'district',
-          header: 'District',
-          accessorKey: 'district',
-          meta: {
-            widget: 'expand',
-          },
         },
       ],
       sortable: true,
