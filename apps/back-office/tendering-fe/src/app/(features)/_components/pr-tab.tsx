@@ -64,7 +64,7 @@ const PlanYearTab = () => {
     try {
       await approve({
         id: pr?.id,
-        itemName: pr.planName,
+        status: 'Draft',
       }).unwrap();
       notify('Success', 'Procurement requisition submitted successfully');
     } catch (err) {

@@ -19,8 +19,8 @@ export default function ProcurementRequisition() {
     columns: [
       { accessor: 'requisitionReferenceNumber', title: '#Ref', width: 150 },
       { accessor: 'title', title: 'Title', width: 200 },
-      { accessor: 'description', title: 'Description', width: 300 },
-      { accessor: 'status', title: 'Status', width: 150 },
+      { accessor: 'description', title: 'Description', width: 250 },
+      { accessor: 'status', title: 'Status', width: 100 },
       {
         accessor: 'calculatedAmount',
         title: 'Total Amount',

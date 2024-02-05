@@ -36,6 +36,13 @@ export const budgetApi = createApi({
         };
       },
     }),
+    upload: builder.mutation<any, any>({
+      query: (data) => ({
+        url: 'procurement-requisition-documents/upload',
+        method: 'POST',
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -44,4 +51,5 @@ export const {
   useLazyGetBudgetYearQuery,
   useLazyGetActivitiesQuery,
   useGetActivitiesQuery,
+  useUploadMutation,
 } = budgetApi;

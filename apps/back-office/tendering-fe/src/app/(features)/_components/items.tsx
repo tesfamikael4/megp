@@ -30,6 +30,7 @@ import DataImport from './data-import';
 import { ExpandableTable } from './expandable-table';
 import { ItemDetailForm } from './item-form-detail';
 import { CollectionQuery } from '@megp/entity';
+import { useReadUnitOfMeasurementsQuery } from '@/store/api/administration/administration.api';
 
 export function Items() {
   const [opened, { open, close }] = useDisclosure(false);
@@ -54,14 +55,23 @@ export function Items() {
 
   const { id } = useParams();
 
+  const UomRead = ({ record }: { record: any }) => {
+    const { data: uom } = useReadUnitOfMeasurementsQuery(
+      record?.uoM?.toString(),
+    );
+
+    return <Text>{uom?.name}</Text>;
+  };
+
   const config = {
     isExpandable: true,
     columns: [
       { accessor: 'description', title: 'Description' },
       {
         title: 'UoM',
-        accessor: 'uomName',
+        accessor: 'uom',
         width: 200,
+        render: (record) => <UomRead record={record} />,
       },
       {
         accessor: 'quantity',
@@ -75,9 +85,9 @@ export function Items() {
         render: (record) => {
           return (
             <p>
-              {parseInt(record.unitPrice).toLocaleString('en-US', {
+              {parseInt(record?.unitPrice)?.toLocaleString('en-US', {
                 style: 'currency',
-                currency: record?.currency,
+                currency: record?.currency ? record?.currency : 'USD',
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
                 currencyDisplay: 'code',
@@ -96,7 +106,7 @@ export function Items() {
           <p className="text-right">
             {(record.unitPrice * record.quantity).toLocaleString('en-US', {
               style: 'currency',
-              currency: record?.currency,
+              currency: record?.currency ? record?.currency : 'USD',
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
               currencyDisplay: 'code',
@@ -113,9 +123,34 @@ export function Items() {
       <ItemDetailForm
         item={record}
         onDone={(data, id) => handelOnDone(data, id, collapse)}
-        disable={record.annualProcurementPlanBudgetLineId !== null}
+        disable={record.annualProcurementPlanBudgetLineId === null}
       />
     ),
+    columns: [
+      ...config.columns,
+      {
+        title: '',
+        accessor: 'actions',
+        width: 50,
+        render: (record) => (
+          <>
+            <ActionIcon
+              color="red"
+              size="sm"
+              variant="subtle"
+              onClick={(e) => {
+                e.stopPropagation();
+                const temp = newItems.filter((i) => i.id != record.id);
+                setNewItems(temp);
+              }}
+              disabled={record.annualProcurementPlanBudgetLineId === null}
+            >
+              <IconTrash size={14} />
+            </ActionIcon>
+          </>
+        ),
+      },
+    ],
   };
   const listConfig = {
     ...config,
@@ -185,7 +220,6 @@ export function Items() {
   };
 
   const handelAddItem = (items) => {
-    logger.log('items:', items);
     const castedData = items.map((item) => ({
       unitPrice: 0,
       currency: itemsList?.items[0]?.currency,
@@ -215,14 +249,22 @@ export function Items() {
   };
 
   const handelOnSave = async () => {
-    try {
-      await addItems(newItems).unwrap();
-      route.push(`/procurement-requisition/${id}`);
-      notify('Success', 'Items Created Success-fully');
-      setNewItems([]);
-    } catch (err) {
-      logger.log(err);
-      notify('Error', 'Something Went wrong');
+    const temp = newItems.filter((i) => i.quantity * i.unitPrice > 0);
+    if (temp.length !== newItems.length) {
+      notify(
+        'Error',
+        'Please ensure that both Unit Price and Quantity are non-zero.',
+      );
+    } else {
+      try {
+        await addItems(newItems).unwrap();
+        route.push(`/procurement-requisition/${id}`);
+        notify('Success', 'Items Created Success-fully');
+        setNewItems([]);
+      } catch (err) {
+        logger.log(err);
+        notify('Error', 'Something Went wrong');
+      }
     }
   };
 
