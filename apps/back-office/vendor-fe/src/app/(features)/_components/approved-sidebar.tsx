@@ -3,6 +3,7 @@ import { Box, TextInput, Text, Select } from '@mantine/core';
 import { Button } from '@mantine/core';
 import { Section } from '@megp/core-fe';
 import { getNationalityValues } from './utils';
+import { CollectionQuery } from '@megp/entity';
 export default function VendorFilterSidebar({
   filter,
   setFilter,
@@ -14,7 +15,7 @@ export default function VendorFilterSidebar({
     country: string;
   };
   setFilter: any;
-  handleFilter: () => void;
+  handleFilter: (query: CollectionQuery) => void;
 }) {
   const handleUpdateFilter = (name, value) => {
     setFilter({
@@ -89,7 +90,7 @@ export default function VendorFilterSidebar({
       </Box>
       <Box className={styles.sidebarButtons}>
         <Button
-          onClick={() => handleFilter()}
+          onClick={() => handleFilter({ take: 15, skip: 0 })}
           disabled={!filter.name && !filter.businessType && !filter.country}
           className="bg-primary-900 text-white"
         >
