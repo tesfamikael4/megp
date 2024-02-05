@@ -12,7 +12,6 @@ import { EntityCrudService } from 'src/shared/service';
 import { REQUEST } from '@nestjs/core';
 import { ENTITY_MANAGER_KEY } from '@interceptors';
 import { defaultOrganizationRoles } from 'src/modules/seeders/seed-data';
-import { EventPattern, Payload } from '@nestjs/microservices';
 import { AccountsService } from 'src/modules/account/services/account.service';
 
 @Injectable()
