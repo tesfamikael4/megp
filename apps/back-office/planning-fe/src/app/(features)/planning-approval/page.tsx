@@ -47,10 +47,14 @@ const accordionData = [
   },
 ];
 
-export default function WorkflowHandling() {
+export default function WorkflowHandling({
+  activityId,
+}: {
+  activityId: string;
+}) {
   const { role, user } = useAuth();
   const [active, setActive] = useState(0);
-  const activityId = '1f344819-d64d-4986-b192-ee06f5bf0e98';
+  // const activityId = ;
   const [steps, setSteps] = useState<Record<string, any>[]>([]);
   const [currentStep, setCurrentStep] = useState<Record<string, any>>({});
   const [group, setGroup] = useState<any>();
