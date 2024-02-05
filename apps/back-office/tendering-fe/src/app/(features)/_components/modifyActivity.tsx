@@ -20,8 +20,10 @@ import { ExpandableTable } from './expandable-table';
 export function Activities() {
   const [opened, { open, close }] = useDisclosure(false);
 
-  const [listById, { data: prActivity, isSuccess }] =
-    useLazyGetActivitiesQuery();
+  const [
+    listById,
+    { data: prActivity, isSuccess, isLoading: loadingActivity },
+  ] = useLazyGetActivitiesQuery();
   const [modifiedData, setModifiedData] = useState<any[]>([]);
   const [selected, setSelected] = useState<any | any[]>([]);
   const [data, setData] = useState<any[]>([]);
@@ -116,6 +118,7 @@ export function Activities() {
 
   const listConfig = {
     isSearchable: true,
+    isLoading: loadingActivity,
     columns: [
       {
         accessor: 'procurementReferenceNumber',
@@ -198,7 +201,7 @@ export function Activities() {
             [
               {
                 column: 'status',
-                value: 'approved',
+                value: 'Approved',
                 operator: '=',
               },
             ],

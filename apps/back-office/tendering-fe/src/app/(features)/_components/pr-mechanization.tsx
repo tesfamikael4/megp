@@ -172,27 +172,28 @@ export const ActivityMechanization = () => {
       setMode('new');
       setValue(
         'fundingSource',
-        assignedActivities[0]?.postProcurementMechanisms[0]?.fundingSource,
+        assignedActivities[0]?.postProcurementMechanisms?.[0]?.fundingSource,
       );
       setValue(
         'isOnline',
-        assignedActivities[0]?.postProcurementMechanisms[0]?.isOnline,
+        assignedActivities[0]?.postProcurementMechanisms?.[0]?.isOnline,
       );
       setValue(
         'procurementMethod',
-        assignedActivities[0]?.postProcurementMechanisms[0]?.procurementMethod,
+        assignedActivities[0]?.postProcurementMechanisms?.[0]
+          ?.procurementMethod,
       );
       setValue(
         'procurementType',
-        assignedActivities[0]?.postProcurementMechanisms[0]?.procurementType,
+        assignedActivities[0]?.postProcurementMechanisms?.[0]?.procurementType,
       );
       setValue(
         'targetGroup',
-        assignedActivities[0]?.postProcurementMechanisms[0]?.targetGroup,
+        assignedActivities[0]?.postProcurementMechanisms?.[0]?.targetGroup,
       );
-      setDonor(assignedActivities[0]?.postProcurementMechanisms[0]?.donor);
+      setDonor(assignedActivities[0]?.postProcurementMechanisms?.[0]?.donor);
       setContract(
-        assignedActivities[0]?.postProcurementMechanisms[0]?.contract,
+        assignedActivities[0]?.postProcurementMechanisms?.[0]?.contract,
       );
     }
   }, [assignedActivities, mechanism?.total]);

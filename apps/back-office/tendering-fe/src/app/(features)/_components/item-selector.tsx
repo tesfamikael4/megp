@@ -105,7 +105,9 @@ const ItemSelector = ({ onDone, opened, close }: ItemSelectorProps) => {
         title={
           <Flex justify="space-between" className="w-full">
             <Group>
-              <Text className="font-bold">Item Selector</Text>
+              <Text className="font-bold">
+                Item Selector / Sub Activity Selector
+              </Text>
             </Group>
 
             <Group>
