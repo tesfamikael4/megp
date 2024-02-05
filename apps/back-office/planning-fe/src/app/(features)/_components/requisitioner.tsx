@@ -15,6 +15,7 @@ import {
   useLazyGetPostBudgetRequisitionerQuery,
 } from '@/store/api/post-budget-plan/post-budget-plan.api';
 import { ExpandableTable } from './expandable-table';
+import { CollectionQuery } from '@megp/entity';
 
 export const Requisitioner = ({
   page,
@@ -41,6 +42,7 @@ export const Requisitioner = ({
                 size="sm"
                 variant="subtle"
                 color="red"
+                disabled={disableFields}
                 onClick={() => {
                   const temp = requisitioners.filter(
                     (r) => r.userId != record.userId,
@@ -60,6 +62,7 @@ export const Requisitioner = ({
     isSearchable: true,
     selectedItems: selectedItems,
     setSelectedItems: setSelectedItems,
+    primaryColumn: 'account.firstName',
     columns: [
       {
         title: 'Full Name',
@@ -177,7 +180,11 @@ export const Requisitioner = ({
           total={users ? users.total : 0}
           onRequestChange={(collectionQuery) => {
             const id = organizationId ?? '';
-            getUsers({ id, collectionQuery });
+            const castedCollectionQuery: CollectionQuery = {
+              ...collectionQuery,
+              include: 'account',
+            };
+            getUsers({ id, collectionQuery: castedCollectionQuery });
           }}
         />
 
