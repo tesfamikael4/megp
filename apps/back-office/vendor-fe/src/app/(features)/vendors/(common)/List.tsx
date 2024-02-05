@@ -63,7 +63,7 @@ const ApplicationList = ({
       ]);
     }
 
-    const query = { ...filterInfo, where: [...filters], take: 15, skip: 0 };
+    const query = { ...filterInfo, where: [...filters] };
 
     getFilteredList(query);
   };
