@@ -1,6 +1,6 @@
 'use client';
 import { useLazyListQuery } from '@/app/(features)/procurement-requisition/_api/procurement-requisition.api';
-import { Section } from '@megp/core-fe';
+import { Section, logger } from '@megp/core-fe';
 import { useEffect } from 'react';
 import { DetailPr } from '../../_components/detail-requisition';
 import { Accordion, Box, LoadingOverlay } from '@mantine/core';
@@ -40,7 +40,7 @@ export function PlanOverview() {
                     <Accordion.Item value={'Definition'} className="bg-white">
                       <Accordion.Control>Definition</Accordion.Control>
                       <Accordion.Panel>
-                        <DetailPr pr={pr} page="pre" />
+                        <DetailPr cell={pr} />
                       </Accordion.Panel>
                     </Accordion.Item>
 

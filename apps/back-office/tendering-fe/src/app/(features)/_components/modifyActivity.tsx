@@ -1,15 +1,7 @@
 'use client';
 
-import {
-  Box,
-  Button,
-  Checkbox,
-  Group,
-  Modal,
-  Radio,
-  Text,
-} from '@mantine/core';
-import { Table, TableConfig, logger, notify } from '@megp/core-fe';
+import { Box, Button, Group, Modal, Radio, Text } from '@mantine/core';
+import { notify } from '@megp/core-fe';
 import { useDisclosure } from '@mantine/hooks';
 import { IconPlus } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
@@ -34,7 +26,7 @@ export function Activities() {
   const [selected, setSelected] = useState<any | any[]>([]);
   const [data, setData] = useState<any[]>([]);
   const [addActivity, { isLoading }] = useCreateMutation();
-  const [filtered, setFiltered] = useState<any[]>([]);
+
   const [finalData, setFinalData] = useState<any[]>([]);
   const [trigger, { data: assignedActivity, isSuccess: assigned }] =
     useLazyListByIdQuery();
@@ -79,14 +71,14 @@ export function Activities() {
         title: 'Procurement type',
         accessor: 'procurementMechanisms.procurementType',
         render: (record) => (
-          <Box>{record.procurementMechanisms.procurementType}</Box>
+          <Box>{record?.procurementMechanisms?.procurementType}</Box>
         ),
       },
       {
         title: 'Procurement method',
         accessor: 'procurementMechanisms.procurementMethod',
         render: (record) => (
-          <Box>{record.procurementMechanisms.procurementMethod}</Box>
+          <Box>{record?.procurementMechanisms?.procurementMethod}</Box>
         ),
       },
 
@@ -94,7 +86,7 @@ export function Activities() {
         title: 'Funding source',
         accessor: 'procurementMechanisms.fundingSource',
         render: (record) => (
-          <Box>{record.procurementMechanisms.fundingSource}</Box>
+          <Box>{record?.procurementMechanisms?.fundingSource}</Box>
         ),
       },
     ],
@@ -111,61 +103,15 @@ export function Activities() {
           ? activity?.procurementReferenceNumber
           : entity === 'activityName'
             ? activity?.activityName
-            : ''}
+            : entity === 'procurementType'
+              ? activity?.procurementMechanisms.procurementType
+              : entity === 'procurementMethod'
+                ? activity?.procurementMechanisms.procurementMethod
+                : entity === 'fundingSource'
+                  ? activity?.procurementMechanisms.fundingSource
+                  : ''}
       </>
     );
-  };
-
-  const filterconfig = {
-    columns: [
-      {
-        title: '',
-        accessor: 'actions',
-        render: (record) => (
-          <Box>
-            <Checkbox
-              checked={data.includes(record)}
-              onChange={(d) => {
-                if (d.target.checked) setData([...data, record]);
-                else setData([...data.filter((s) => s.id !== record.id)]);
-              }}
-            />
-          </Box>
-        ),
-      },
-      {
-        title: '#Ref',
-        accessor: 'procurementReferenceNumber',
-        width: 100,
-      },
-      {
-        title: 'Name',
-        accessor: 'activityName',
-        width: 100,
-      },
-      {
-        title: 'Procurement type',
-        accessor: 'procurementMechanisms.procurementType',
-        render: (record) => (
-          <Box>{record.procurementMechanisms.procurementType}</Box>
-        ),
-      },
-      {
-        title: 'Procurement method',
-        accessor: 'procurementMechanisms.procurementMethod',
-        render: (record) => (
-          <Box>{record.procurementMechanisms.procurementMethod}</Box>
-        ),
-      },
-
-      {
-        title: 'Funding source',
-        accessor: 'procurementMechanisms.fundingSource',
-        render: (record) => (
-          <Box>{record.procurementMechanisms.fundingSource}</Box>
-        ),
-      },
-    ],
   };
 
   const listConfig = {
@@ -246,7 +192,18 @@ export function Activities() {
     if (opened && budgetFeatched) {
       listById({
         id: budget?.items[0]?.id?.toString(),
-        collectionQuery: { includes: ['procurementMechanisms'] },
+        collectionQuery: {
+          includes: ['procurementMechanisms'],
+          where: [
+            [
+              {
+                column: 'status',
+                value: 'approved',
+                operator: '=',
+              },
+            ],
+          ],
+        },
       });
     }
   }, [budget, budgetFeatched, listById, opened]);
@@ -305,44 +262,17 @@ export function Activities() {
       <Modal
         opened={opened}
         onClose={close}
-        title={isFilter ? 'Select related activity' : 'Select leading activity'}
+        title={<Group className="font-bold"> Select activity</Group>}
         size={'xl'}
       >
-        {!isFilter && (
-          <ExpandableTable
-            config={config}
-            data={modifiedData ?? []}
-            total={modifiedData?.length}
-          />
-        )}
-        {isFilter && (
-          <ExpandableTable
-            config={filterconfig}
-            data={filtered ?? []}
-            total={filtered?.length}
-          />
-        )}
-        <Group className="flex justify-end mt-4 mr-2">
-          <Button
-            className=" ml-auto"
-            onClick={
-              isFilter
-                ? handleDone
-                : () => {
-                    selected &&
-                      setFiltered(() => {
-                        const filteredObjects = modifiedData.filter(
-                          (obj) =>
-                            obj.procurementMethod ===
-                            selected.procurementMethod,
-                        );
+        <ExpandableTable
+          config={config}
+          data={modifiedData ?? []}
+          total={modifiedData?.length}
+        />
 
-                        return filteredObjects;
-                      });
-                    setIsFilter(true);
-                  }
-            }
-          >
+        <Group className="flex justify-end mt-4 mr-2">
+          <Button className=" ml-auto" onClick={handleDone}>
             Done
           </Button>
           {isFilter && (

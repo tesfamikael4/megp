@@ -22,7 +22,7 @@ export const DetailPr = ({ cell }: any) => {
 
     {
       key: 'Total Calculated Amount',
-      value: cell?.estimatedAmount?.toLocaleString('en-US', {
+      value: cell?.calculatedAmount?.toLocaleString('en-US', {
         style: 'currency',
         currency: cell.currency,
         minimumFractionDigits: 2,

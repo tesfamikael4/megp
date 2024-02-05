@@ -11,7 +11,7 @@ export const preBudgetPlanApi = createApi({
       query: (data: { id: string; itemName: string }) => ({
         url: `procurement-requisition/initiate-workflow`,
         method: 'POST',
-        body: { name: 'procurementApproval', ...data },
+        body: data,
       }),
       invalidatesTags: ['pr'],
     }),

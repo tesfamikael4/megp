@@ -1,7 +1,7 @@
 'use client';
 import { FormDetail } from '@/app/(features)/procurement-requisition/_components/form-detail';
 import { Box, Container, Divider, Flex, Tabs, Tooltip } from '@mantine/core';
-import { Activities } from '@/app/(features)/_components/activity';
+import { Activities } from '@/app/(features)/_components/modifyActivity';
 import { ActivityMechanization } from '@/app/(features)/_components/pr-mechanization';
 import { Items } from '@/app/(features)/_components/items';
 import TimelineTab from '@/app/(features)/_components/timeline-tab';

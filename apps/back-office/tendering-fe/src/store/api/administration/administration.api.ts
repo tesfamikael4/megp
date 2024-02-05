@@ -25,6 +25,9 @@ export const administrationApi = createApi({
     getUnitOfMeasurements: builder.query<any, string>({
       query: (id: string) => `extra-unit-of-measurements/list/${id}`,
     }),
+    readUnitOfMeasurements: builder.query<any, string>({
+      query: (id: string) => `extra-unit-of-measurements/${id}`,
+    }),
     getTags: builder.query<any, null>({
       query: () => `tags`,
     }),
@@ -38,7 +41,7 @@ export const administrationApi = createApi({
         return { url: `item-categories${q}`, method: 'GET' };
       },
     }),
-    getClassifications: builder.query<any, null>({
+    getClassifications: builder.query<any, any>({
       query: (collectionQuery) => {
         let q = '';
         if (collectionQuery) {
@@ -58,6 +61,8 @@ export const {
   useGetItemMasterQuery,
   useLazyGetItemMasterQuery,
   useLazyGetUnitOfMeasurementsQuery,
+  useReadUnitOfMeasurementsQuery,
+  useGetUnitOfMeasurementsQuery,
   useGetClassificationsQuery,
   useLazyGetClassificationsQuery,
   useGetTagsQuery,

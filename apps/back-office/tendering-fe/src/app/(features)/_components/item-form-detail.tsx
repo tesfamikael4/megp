@@ -21,7 +21,7 @@ import { z, ZodType } from 'zod';
 const ItemSchema: ZodType<any> = z.object({
   classification: z.string().min(1, { message: 'Classification is required' }),
   description: z.string().min(1, { message: 'Description is required' }),
-  currency: z.string().min(1, { message: 'Currency is required' }),
+  currency: z.string(),
   quantity: z.string().min(1, { message: 'Quantity is required' }),
   unitPrice: z.string().min(1, { message: 'Unit Price is required' }),
   itemCode: z.string().min(1, { message: 'Item Code is required' }),
@@ -53,7 +53,7 @@ export const ItemDetailForm = ({
 
   const [getUom, { data: uom, isLoading: isUomLoading }] =
     useLazyGetUnitOfMeasurementsQuery();
-  logger.log(disable);
+
   const onSubmit = (data) => {
     onSave && onSave(data, item.id);
     onDone && onDone(data, item.id);
@@ -70,7 +70,7 @@ export const ItemDetailForm = ({
     setValue('uoM', item?.uoM);
     setValue('classification', `${item?.classification}`);
     setValue('itemCode', item?.itemCode);
-    setValue('currency', item?.currency);
+    setValue('currency', item?.currency ? item?.currency : 'USD');
 
     //get Unit of measurement
     getUom(item?.measurement);
@@ -104,7 +104,7 @@ export const ItemDetailForm = ({
           />
           <TextInput
             type="number"
-            leftSection={item.currency}
+            leftSection={item.currency !== undefined ? item.currency : 'USD'}
             label="Unit Price"
             {...register('unitPrice')}
             error={
