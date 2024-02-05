@@ -13,7 +13,9 @@ export default function Page() {
   const searchParams = useSearchParams();
 
   const requestInfo = useGetVendorQuery(
-    {},
+    {
+      flag: 'Adjustment',
+    },
     { refetchOnMountOrArgChange: true },
   );
 

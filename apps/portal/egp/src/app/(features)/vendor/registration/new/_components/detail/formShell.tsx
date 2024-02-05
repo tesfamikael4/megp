@@ -21,7 +21,7 @@ import { formDataSchema } from './schema';
 import { FormData } from '@/models/vendorRegistration';
 import { setCookie } from 'cookies-next';
 
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { NotificationService } from '../../../../_components/notification';
 import classes from './accordion.module.scss';
 import {
@@ -96,6 +96,7 @@ const RegistrationForm = ({
   const [submitTrigger, submitRequestInfo] = useAddFormMutation();
   const [saveAsDraftTrigger, saveAsDraftRequestInfo] = useAddFormMutation();
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     updateAccess(vendorInfo.level);
@@ -165,7 +166,7 @@ const RegistrationForm = ({
   useEffect(() => {
     if (submitRequestInfo.isSuccess && submitRequestInfo.data) {
       NotificationService.successNotification('Form Submitted Successfully!');
-      router.push(`ppda`);
+      router.push(`ppda${searchParams ? '?' + searchParams.toString() : ''}`);
     }
     return () => {};
     // eslint-disable-next-line react-hooks/exhaustive-deps
