@@ -56,7 +56,7 @@ export const AreasOfBusinessInterest: React.FC<Props> = ({
   const getPriceRangeValues = useGetPriceRangeQuery({
     type: 'new',
   });
-  console.log(searchParams.get('flag'));
+
   const { lockElements } = usePrivilege();
 
   const { fields, append, remove } = useFieldArray({

@@ -31,8 +31,13 @@ import {
 
 export const vendorRegistrationQuery = vendorRegistrationApi.injectEndpoints({
   endpoints: (builder) => ({
-    getVendor: builder.query<GetFormResponse, any>({
-      query: () => `/vendor-registrations/get-isr-vendor-by-userId`,
+    getVendor: builder.query<GetFormResponse, { flag?: string }>({
+      query: ({ flag }) => {
+        return {
+          url: `/vendor-registrations/get-isr-vendor-by-userId`,
+          params: { flag },
+        };
+      },
     }),
     getVendorOnDemand: builder.query<GetFormResponse, any>({
       query: () => `/vendor-registrations/get-isr-vendor-by-userId`,
