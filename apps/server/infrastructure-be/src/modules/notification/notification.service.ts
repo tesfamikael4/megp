@@ -1,14 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Notifications } from 'src/entities/notifications.entity';
-import { EmailService } from 'src/shared/email/email.service';
 import { Repository } from 'typeorm';
-import {
-  SendNotificationEvent,
-  NotificationStatusEnum,
-  NotificationTypeEnum,
-} from '../../shared/types/notification.type';
 import { ClientProxy } from '@nestjs/microservices';
+import {
+  EmailService,
+  SendNotificationEvent,
+  NotificationTypeEnum,
+  NotificationStatusEnum,
+} from '@megp/shared-be';
 
 @Injectable()
 export class NotificationService {
@@ -60,12 +60,12 @@ export class NotificationService {
   }
 
   private async sendMessage(data: SendNotificationEvent) {
-    const instace = this.repositoryNotification.create(data);
-    await this.repositoryNotification.save(instace);
+    const instance = this.repositoryNotification.create(data);
+    await this.repositoryNotification.save(instance);
   }
 
   private async sendInbox(data: SendNotificationEvent) {
-    const instace = this.repositoryNotification.create(data);
-    await this.repositoryNotification.save(instace);
+    const instance = this.repositoryNotification.create(data);
+    await this.repositoryNotification.save(instance);
   }
 }

@@ -1,9 +1,8 @@
 import { Controller } from '@nestjs/common';
-import { ExtraCrudController } from 'src/shared/controller';
 import { ApiTags } from '@nestjs/swagger';
 import { PossibleReasons } from 'src/entities';
-import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { PossibleReasonsService } from '../services/possible-service.service';
+import { ExtraCrudOptions, ExtraCrudController } from '@megp/shared-be';
 
 const option: ExtraCrudOptions = {
   entityIdName: 'ruleDesignerId',

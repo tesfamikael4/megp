@@ -1,5 +1,4 @@
 import { Body, Controller, Param, Post } from '@nestjs/common';
-import { EntityCrudController } from 'src/shared/controller';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { RuleDesigner } from 'src/entities/rule-designer.entity';
 import {
@@ -7,8 +6,7 @@ import {
   UpdateRuleDesignerDto,
 } from '../dto/rule-designer.dto';
 import { RuleDesignerService } from '../services/rule-designer.service';
-import { ValidateRuleDto } from '../dto/validate-rule.dto';
-// import { ValidateRuleDto } from '../dto/validate-rule.dto';
+import { EntityCrudController } from '@megp/shared-be';
 
 @Controller('rule-designer')
 @ApiTags('rule-designer')

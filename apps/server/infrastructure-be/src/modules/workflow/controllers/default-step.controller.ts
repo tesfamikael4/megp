@@ -1,11 +1,13 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ApiQuery, ApiTags } from '@nestjs/swagger';
-import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
-import { ExtraCrudController } from 'src/shared/controller';
 import { DefaultStepService } from '../services/default-step.service';
 import { DefaultStep } from 'src/entities/default-step.entity';
-import { CurrentUser } from 'src/shared/authorization';
-import { IgnoreTenantInterceptor } from 'src/shared/decorators';
+import {
+  ExtraCrudOptions,
+  ExtraCrudController,
+  IgnoreTenantInterceptor,
+  CurrentUser,
+} from '@megp/shared-be';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'activityId',

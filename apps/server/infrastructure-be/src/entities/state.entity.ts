@@ -1,13 +1,6 @@
-import {
-  Column,
-  Entity,
-  ManyToOne,
-  OneToMany,
-  OneToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Activity } from './activity.entity';
-import { OrgAudit } from 'src/shared/entities';
+import { OrgAudit } from '@megp/shared-be';
 
 @Entity({ name: 'states' })
 export class State extends OrgAudit {
