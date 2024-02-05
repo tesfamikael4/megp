@@ -83,7 +83,7 @@ export const Requisitioner = ({
     { data: postRequisitioner, isSuccess: isPostRequisitionerSuccess },
   ] = useLazyGetPostBudgetRequisitionerQuery();
   const [requisitioners, setRequisitioners] = useState<any[]>([]);
-  const { user } = useAuth();
+  const { organizationId } = useAuth();
 
   const onCreate = async () => {
     const castedData = requisitioners.map((r: any) => ({
@@ -169,14 +169,14 @@ export const Requisitioner = ({
           data={
             users
               ? users.items.map((user) => ({
-                  name: user.fullName,
+                  name: user.firstName + ' ' + user.lastName,
                   id: user.id,
                 }))
               : []
           }
           total={users ? users.total : 0}
           onRequestChange={(collectionQuery) => {
-            const id = user?.organization?.id ?? '';
+            const id = organizationId ?? '';
             getUsers({ id, collectionQuery });
           }}
         />
