@@ -52,5 +52,13 @@ RUN adduser --system --uid 1001 nestjs
 USER nestjs
 COPY --from=installer /app .
 
+# ENV DATABASE_HOST=196.189.44.47
+# ENV DATABASE_NAME=infrastructure
+# ENV DATABASE_USER=postgres
+# ENV DATABASE_PASSWORD=P@ssw0rd@P
+# ENV DATABASE_PORT=5432
+# ENV NODE_ENV=production
+# ENV APP_NAME=infrastructure-be
+
 CMD node apps/server/infrastructure-be/dist/main.js
 
