@@ -67,6 +67,7 @@ export class ProcurementRequisitionTimelineService extends ExtraCrudService<Proc
     let currentTimeline: any | null = null;
 
     for (const timeline of timelines) {
+      timeline.noOfDays = timeline.period;
       if (!currentTimeline) {
         // First timeline, add to mergedTimelines
         currentTimeline = { ...timeline };
@@ -80,12 +81,12 @@ export class ProcurementRequisitionTimelineService extends ExtraCrudService<Proc
         // Check if the due date is greater than or equal to the previous timeline's due date
         const dueDate = await this.dateCalculator(
           new Date(timeline.dueDate),
-          timeline.noOfDays,
+          timeline.period,
           'add',
         );
         const currentDueDate = await this.dateCalculator(
           new Date(currentTimeline.dueDate),
-          currentTimeline.noOfDays,
+          currentTimeline.period,
           'add',
         );
         const dueDateValid = new Date(dueDate) > new Date(currentDueDate);

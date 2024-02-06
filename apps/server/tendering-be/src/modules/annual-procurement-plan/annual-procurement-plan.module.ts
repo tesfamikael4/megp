@@ -38,19 +38,6 @@ import { RequisitionerAssignmentController } from './controllers/requisitioner-a
       ProcurementMechanism,
       AnnualProcurementPlanDisbursement,
     ]),
-    ClientsModule.register([
-      {
-        name: 'TENDERING_RMQ_SERVICE',
-        transport: Transport.RMQ,
-        options: {
-          urls: [process.env.RMQ_URL],
-          queue: 'pr-workflow-initiate',
-          queueOptions: {
-            durable: false,
-          },
-        },
-      },
-    ]),
   ],
   providers: [
     AnnualProcurementPlanService,

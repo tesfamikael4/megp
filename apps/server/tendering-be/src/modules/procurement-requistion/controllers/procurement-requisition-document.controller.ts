@@ -9,12 +9,13 @@ import {
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ExtraCrudController } from 'src/shared/controller/extra-crud.controller';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { ProcurementRequisitionDocument } from 'src/entities';
 import {
   CreateProcurementRequisitionDocumentDto,
+  ProcurementRequisitionDocumentResponseDto,
   UpdateProcurementRequisitionDocumentDto,
 } from '../dto/procurement-requisition-document.dto';
 import { ProcurementRequisitionDocumentService } from '../services/procurement-requisition-document.service';
@@ -38,24 +39,8 @@ export class ProcurementRequisitionDocumentController extends ExtraCrudControlle
     super(procurementRequisitionDocumentService);
   }
 
-  @Get('bucket-list')
-  async initiateWorkflow() {
-    await this.procurementRequisitionDocumentService.listAllBuckets();
-  }
-
-  @Post('upload')
-  @UseInterceptors(FileInterceptor('file'))
-  async upload(@UploadedFile() file: Express.Multer.File) {
-    return await this.procurementRequisitionDocumentService.upload(file);
-  }
-
   @Post('pre-signed-put-url')
-  async preSignedPutUrl(
-    @Body() fileInfo,
-    @Res() res?: any,
-    @CurrentUser() user?: any,
-  ) {
-    fileInfo.organizationId = user.organization.id;
+  async preSignedPutUrl(@Body() fileInfo, @Res() res?: any) {
     const presignedUrl =
       await this.procurementRequisitionDocumentService.generatePresignedPutUrl(
         fileInfo,

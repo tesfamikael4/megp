@@ -38,6 +38,12 @@ export class ProcurementRequisition extends Audit {
   @Column({ unique: true })
   userReferenceNumber: string;
 
+  @Column({ nullable: true })
+  procurementType: string;
+
+  @Column({ nullable: true, type: 'timestamp' })
+  deliveryDate: Date;
+
   @Column({ type: 'jsonb' })
   budgetYear: JSON;
 

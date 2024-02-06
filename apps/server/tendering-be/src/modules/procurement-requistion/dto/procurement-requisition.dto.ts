@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsUUID, IsNumber, IsJSON } from 'class-validator';
+import { IsString, IsUUID, IsNumber, IsJSON, IsDate } from 'class-validator';
 
 export class BudgetYear {
   @ApiProperty()
@@ -46,6 +46,14 @@ export class CreateProcurementRequisitionDto {
   @ApiProperty({ default: 'USD' })
   @IsString()
   currency: string;
+
+  @ApiProperty()
+  @IsString()
+  procurementType: string;
+
+  @ApiProperty()
+  @IsDate()
+  deliveryDate: Date;
 
   @ApiProperty()
   @IsString()
