@@ -472,16 +472,22 @@ export function Steps({ activityId }: { activityId: string }) {
     const handleAssignment = async ({ type }) => {
       try {
         {
-          type === 'Role' &&
-            (await getRoles({ id: user?.organization.id }).unwrap());
+          type.includes('Role') &&
+            (await getRoles({
+              id: user?.organizations?.[0].organization.id,
+            }).unwrap());
         }
         {
-          type === 'WorkGroup' &&
-            (await getGroups({ id: user?.organization.id }).unwrap());
+          type.includes('WorkGroup') &&
+            (await getGroups({
+              id: user?.organizations?.[0].organization.id,
+            }).unwrap());
         }
         {
-          type === 'User' &&
-            (await getUsers({ id: user?.organization.id }).unwrap());
+          type.includes('User') &&
+            (await getUsers({
+              id: user?.organizations?.[0].organization.id,
+            }).unwrap());
         }
       } catch (err) {
         notifications.show({
