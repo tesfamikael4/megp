@@ -10,6 +10,9 @@ RUN apk update
 # Set working directory
 WORKDIR /app
 RUN yarn global add turbo pnpm
+RUN yarn global add @nestjs/cli
+
+CMD [ "nest build", "packages/be/shared" ]
 
 COPY . .
 RUN turbo prune --scope=infrastructure-be --docker
@@ -22,9 +25,6 @@ WORKDIR /app
 
 # Install pnpm
 RUN yarn global add pnpm
-RUN yarn global add @nestjs/cli
-
-CMD [ "nest build", "packages/be/shared" ]
 
 # First install the dependencies (as they change less often)
 COPY .gitignore .gitignore
@@ -59,6 +59,7 @@ COPY --from=installer /app .
 # ENV DATABASE_PORT=5432
 # ENV NODE_ENV=production
 # ENV APP_NAME=infrastructure-be
+# ENV RMQ_URL=amqp://guest:guest@196.189.118.110:32700/
 
 CMD node apps/server/infrastructure-be/dist/main.js
 
