@@ -1,13 +1,19 @@
 import { Controller, Get, Param, Query, Req } from '@nestjs/common';
 import { ApiQuery, ApiTags } from '@nestjs/swagger';
-import { Activity } from 'src/entities/activity.entity';
-import { ActivityService } from '../services/activity.service';
 import {
   EntityCrudOptions,
+  ExtraCrudOptions,
+} from 'src/shared/types/crud-option.type';
+import {
   EntityCrudController,
-  IgnoreTenantInterceptor,
-  decodeCollectionQuery,
-} from '@megp/shared-be';
+  ExtraCrudController,
+} from 'src/shared/controller';
+import { Step } from 'src/entities/step.entity';
+import { StepService } from '../services/step.service';
+import { Activity } from 'src/entities/activity.entity';
+import { ActivityService } from '../services/activity.service';
+import { decodeCollectionQuery } from 'src/shared/collection-query';
+import { IgnoreTenantInterceptor } from 'src/shared/decorators';
 
 const options: EntityCrudOptions = {};
 

@@ -5,8 +5,9 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
+import { Rule } from './rule.entity';
+import { Audit } from 'src/shared/entities/audit.entity';
 import { RuleDesigner } from './rule-designer.entity';
-import { Audit } from '@megp/shared-be';
 
 @Entity({ name: 'possible_reasons' })
 export class PossibleReasons extends Audit {

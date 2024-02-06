@@ -2,12 +2,10 @@ import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Workflow } from 'src/entities';
 import { WorkflowService } from '../services/workflow.service';
-import {
-  EntityCrudOptions,
-  EntityCrudController,
-  JwtGuard,
-  CurrentUser,
-} from '@megp/shared-be';
+import { EntityCrudOptions } from 'src/shared/types/crud-option.type';
+import { EntityCrudController } from 'src/shared/controller';
+import { XMachineService } from '../services/xMachine.service';
+import { CurrentUser, JwtGuard } from 'src/shared/authorization';
 
 const options: EntityCrudOptions = {};
 

@@ -4,10 +4,12 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   JoinColumn,
+  OneToOne,
 } from 'typeorm';
 
 import { Activity } from './activity.entity';
-import { OrgAudit } from '@megp/shared-be';
+import { Instance } from './instance.entity';
+import { OrgAudit } from 'src/shared/entities';
 
 type approver = {
   id: string;
