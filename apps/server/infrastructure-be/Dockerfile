@@ -25,8 +25,12 @@ WORKDIR /app
 RUN yarn global add pnpm
 RUN yarn global add @nestjs/cli
 
-# CMD [ "rimraf", "packages/be/shared/dist" ]
-CMD [ "nest build", "packages/be/shared" ]
+# Remove existing build artifacts
+RUN rimraf packages/be/shared/dist
+
+# Build the NestJS application
+RUN nest build packages/be/shared
+
 # RUN cd ./packages/be/shared && pnpm run build
 
 # First install the dependencies (as they change less often)
