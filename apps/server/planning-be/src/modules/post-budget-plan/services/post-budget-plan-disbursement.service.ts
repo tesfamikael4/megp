@@ -39,22 +39,22 @@ export class PostBudgetPlanDisbursementService extends ExtraCrudService<PostBudg
         id: data.postBudgetPlanActivityId,
         organizationId: data.organizationId,
       });
-      const totalAmount = data.reduce((acc, item) => acc + item.amount, 0);
+      const totalAmount = data.data.reduce((acc, item) => acc + item.amount, 0);
 
-      if (act.estimatedAmount < totalAmount) {
+      if (+act.estimatedAmount < totalAmount) {
         throw new HttpException(
           'Disbursement amount is greater than budget amount',
           400,
         );
       }
 
-      data.items.forEach((item) => {
+      data.data.forEach((item) => {
         item.postBudgetPlanActivityId = data.postBudgetPlanActivityId;
         item.organizationId = data.organizationId;
       });
 
-      await this.repositoryPostBudgetPlanDisbursement.create(data);
-      return await this.repositoryPostBudgetPlanDisbursement.save(data);
+      await this.repositoryPostBudgetPlanDisbursement.create(data.data);
+      return await this.repositoryPostBudgetPlanDisbursement.save(data.data);
     } catch (err) {
       console.log(err);
     }
