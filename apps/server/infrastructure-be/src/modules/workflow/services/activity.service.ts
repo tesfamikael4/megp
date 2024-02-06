@@ -2,7 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { Activity } from 'src/entities/activity.entity';
-import { EntityCrudService } from '@megp/shared-be';
+import { EntityCrudService } from 'src/shared/service';
 
 @Injectable()
 export class ActivityService extends EntityCrudService<Activity> {

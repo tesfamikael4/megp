@@ -6,7 +6,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { RuleDesigner } from './rule-designer.entity';
-import { Audit } from '@megp/shared-be';
+import { Audit } from 'src/shared/entities';
 
 type Condition = {
   type: string;

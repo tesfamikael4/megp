@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { Rule } from './rule.entity';
+import { Audit } from 'src/shared/entities';
 import { PossibleReasons } from './possible-reasons.entity';
-import { Audit } from '@megp/shared-be';
 
 type Action = {
   type: string;

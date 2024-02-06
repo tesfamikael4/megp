@@ -7,7 +7,7 @@ import { Instance } from 'src/entities/instance.entity';
 import { Activity } from 'src/entities/activity.entity';
 import { StateService } from './state.service';
 import { State } from 'src/entities/state.entity';
-import { EntityCrudService } from '@megp/shared-be';
+import { EntityCrudService } from 'src/shared/service';
 
 @Injectable()
 export class InstanceService extends EntityCrudService<Instance> {

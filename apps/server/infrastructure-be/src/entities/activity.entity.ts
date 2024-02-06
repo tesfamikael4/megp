@@ -3,14 +3,17 @@ import {
   Column,
   PrimaryGeneratedColumn,
   OneToMany,
+  ManyToOne,
+  JoinColumn,
   OneToOne,
 } from 'typeorm';
 import { Step } from './step.entity';
+import { Workflow } from './workflow.entity';
 import { Permission } from './permission.entity';
 import { Instance } from './instance.entity';
 import { DefaultStep } from './default-step.entity';
+import { OrgAudit } from 'src/shared/entities';
 import { State } from './state.entity';
-import { OrgAudit } from '@megp/shared-be';
 
 @Entity({ name: 'activities' })
 export class Activity extends OrgAudit {
