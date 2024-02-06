@@ -279,7 +279,6 @@ export default function WorkflowHandling({
                                     label="Remark"
                                     value={remark}
                                     onChange={(e) => setRemark(e.target.value)}
-                                    className="w-[350px]"
                                   />
                                   <Group>
                                     <Button
