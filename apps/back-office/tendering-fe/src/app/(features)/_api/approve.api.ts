@@ -9,7 +9,7 @@ export const preBudgetPlanApi = createApi({
   endpoints: (builder) => ({
     approvePr: builder.mutation<any, any>({
       query: (data: { id: string; itemName: string }) => ({
-        url: `procurement-requisition/initiate-workflow`,
+        url: `procurement-requisitions/initiate-workflow`,
         method: 'POST',
         body: data,
       }),
