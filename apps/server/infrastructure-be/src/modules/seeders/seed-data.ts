@@ -1,6 +1,6 @@
 export const seedRules = [
   {
-    designerId: '535df5f5-c24f-43f9-b655-874afc2eeee5',
+    designerId: 'cc2843d7-c20b-4bcb-b619-c978b30ceed6',
     key: 'ruleOne',
     executionOrder: 1,
     enforcementMethod: 'FLAG',
@@ -31,7 +31,7 @@ export const seedRules = [
     ],
   },
   {
-    designerId: '535df5f5-c24f-43f9-b655-874afc2eeee5',
+    designerId: 'cc2843d7-c20b-4bcb-b619-c978b30ceed6',
     key: 'ruleTwo',
     executionOrder: 2,
     conditions: [
@@ -61,7 +61,7 @@ export const seedRules = [
     ],
   },
   {
-    designerId: '535df5f5-c24f-43f9-b655-874afc2eeee5',
+    designerId: 'cc2843d7-c20b-4bcb-b619-c978b30ceed6',
     key: 'ruleThree',
     executionOrder: 3,
     conditions: [
@@ -91,7 +91,7 @@ export const seedRules = [
     ],
   },
   {
-    designerId: '0ad11b9b-d3b8-448d-bd16-8bcad60973b3',
+    designerId: '6c265e97-4498-4d89-9ccd-c2bbb3c56509',
     key: 'ruleFour',
     executionOrder: 1,
     enforcementMethod: 'FLAG',
@@ -122,7 +122,7 @@ export const seedRules = [
     ],
   },
   {
-    designerId: '0ad11b9b-d3b8-448d-bd16-8bcad60973b3',
+    designerId: '6c265e97-4498-4d89-9ccd-c2bbb3c56509',
     key: 'ruleFive',
     executionOrder: 2,
     conditions: [
@@ -152,7 +152,7 @@ export const seedRules = [
     ],
   },
   {
-    designerId: '0ad11b9b-d3b8-448d-bd16-8bcad60973b3',
+    designerId: '6c265e97-4498-4d89-9ccd-c2bbb3c56509',
     key: 'ruleSix',
     executionOrder: 3,
     conditions: [
@@ -182,7 +182,7 @@ export const seedRules = [
     ],
   },
   {
-    designerId: '0ad11b9b-d3b8-448d-bd16-8bcad60973b3',
+    designerId: '6c265e97-4498-4d89-9ccd-c2bbb3c56509',
     key: 'ruleSeven',
     executionOrder: 4,
     conditions: [
@@ -212,7 +212,7 @@ export const seedRules = [
     ],
   },
   {
-    designerId: 'ac3adcd7-ae88-4d01-8544-e571cae238e9',
+    designerId: 'bbe7f803-cb78-4f80-9e4f-0f6a4ff01d51',
     key: 'ruleEight',
     executionOrder: 1,
     enforcementMethod: 'FLAG',
@@ -243,7 +243,7 @@ export const seedRules = [
     ],
   },
   {
-    designerId: 'ac3adcd7-ae88-4d01-8544-e571cae238e9',
+    designerId: 'bbe7f803-cb78-4f80-9e4f-0f6a4ff01d51',
     key: 'ruleNine',
     executionOrder: 2,
     conditions: [
@@ -273,7 +273,7 @@ export const seedRules = [
     ],
   },
   {
-    designerId: 'ac3adcd7-ae88-4d01-8544-e571cae238e9',
+    designerId: 'bbe7f803-cb78-4f80-9e4f-0f6a4ff01d51',
     key: 'ruleTen',
     executionOrder: 3,
     conditions: [
@@ -303,7 +303,7 @@ export const seedRules = [
     ],
   },
   {
-    designerId: '6d0ee241-9c8b-46a8-af4f-dc99f99a31c0',
+    designerId: '99a4e21f-b91d-484b-a291-e637366526ee',
     key: 'ruleEleven',
     executionOrder: 1,
     enforcementMethod: 'FLAG',
@@ -334,7 +334,7 @@ export const seedRules = [
     ],
   },
   {
-    designerId: '5077df11-c603-4ae0-b9ba-23bcc76b34f2',
+    designerId: '303bf39a-070e-4185-8439-a211efa1cbe2',
     key: 'ruleTwelve',
     executionOrder: 1,
     enforcementMethod: 'FLAG',
@@ -365,7 +365,7 @@ export const seedRules = [
     ],
   },
   {
-    designerId: '3307858e-5234-4476-91bc-1144a4430616',
+    designerId: 'b43d5aee-540d-4a54-a10f-0cf773e3388d',
     key: 'ruleThirteen',
     executionOrder: 1,
     enforcementMethod: 'FLAG',
@@ -396,7 +396,7 @@ export const seedRules = [
     ],
   },
   {
-    designerId: 'd268f22b-d540-4abf-a201-e36c5efba2e2',
+    designerId: 'ba4f1f53-8590-4ae9-a9b9-74878e083ef9',
     key: 'ruleFourteen',
     executionOrder: 1,
     enforcementMethod: 'FLAG',
@@ -427,7 +427,7 @@ export const seedRules = [
     ],
   },
   {
-    designerId: '44d8ffef-cde6-4a61-a9a8-ba0854d26396',
+    designerId: 'f0437508-dcaf-42bd-8df9-27aedeb53162',
     key: 'ruleFifteen',
     executionOrder: 1,
     enforcementMethod: 'FLAG',
@@ -458,7 +458,7 @@ export const seedRules = [
     ],
   },
   {
-    designerId: '7ea1834e-711d-4e9a-9c5b-43845c1e1532',
+    designerId: '4f5f19cc-e91a-47e9-a2a3-1d3db37effa4',
     key: 'ruleSixteen',
     executionOrder: 1,
     enforcementMethod: 'FLAG',
@@ -489,7 +489,7 @@ export const seedRules = [
     ],
   },
   {
-    designerId: '9c825356-26a8-445e-8504-db0a04eee017',
+    designerId: 'bdbcc63e-9140-4ec8-81fc-1f511d00717f',
     key: 'ruleSeventeen',
     executionOrder: 1,
     enforcementMethod: 'FLAG',
@@ -520,8 +520,8 @@ export const seedRules = [
     ],
   },
   {
-    designerId: '9c825356-26a8-445e-8504-db0a04eee017',
-    key: 'rule18',
+    designerId: 'bdbcc63e-9140-4ec8-81fc-1f511d00717f',
+    key: 'ruleEighteen',
     executionOrder: 2,
     conditions: [
       [
@@ -550,8 +550,8 @@ export const seedRules = [
     ],
   },
   {
-    designerId: '990570a5-e3f9-4ea6-b930-30518f82a318',
-    key: 'rule19',
+    designerId: '8531bdf2-f40f-4e06-805a-d835f93b36b4',
+    key: 'ruleNineteen',
     executionOrder: 1,
     enforcementMethod: 'FLAG',
     conditions: [
@@ -581,8 +581,8 @@ export const seedRules = [
     ],
   },
   {
-    designerId: '990570a5-e3f9-4ea6-b930-30518f82a318',
-    key: 'rule20',
+    designerId: '8531bdf2-f40f-4e06-805a-d835f93b36b4',
+    key: 'ruleTwenty',
     executionOrder: 2,
     conditions: [
       [
@@ -611,8 +611,8 @@ export const seedRules = [
     ],
   },
   {
-    designerId: '990570a5-e3f9-4ea6-b930-30518f82a318',
-    key: 'rule21',
+    designerId: '8531bdf2-f40f-4e06-805a-d835f93b36b4',
+    key: 'ruleTwentyone',
     executionOrder: 3,
     conditions: [
       [
@@ -641,8 +641,8 @@ export const seedRules = [
     ],
   },
   {
-    designerId: '7338db29-8d1e-4952-9991-78627e34d73d',
-    key: 'rule22',
+    designerId: '2c66c5f0-4e23-4936-a24c-32b47e9c956e',
+    key: 'ruleTwentytwo',
     executionOrder: 1,
     enforcementMethod: 'FLAG',
     conditions: [
@@ -665,8 +665,8 @@ export const seedRules = [
     ],
   },
   {
-    designerId: 'a831ac69-55f9-4f8e-b71d-6a07a48709e3',
-    key: 'rule23',
+    designerId: '87bfcff1-4528-4963-a620-83c94e5ef0ef',
+    key: 'ruleTwentythree',
     executionOrder: 1,
     enforcementMethod: 'FLAG',
     conditions: [
@@ -727,7 +727,7 @@ export const seedDesigns = [
     defaultActions: [{ type: 'set', name: 'default', value: true }],
     name: 'Request for quotation',
     key: 'requestForQuotation',
-    id: '535df5f5-c24f-43f9-b655-874afc2eeee5',
+    id: 'cc2843d7-c20b-4bcb-b619-c978b30ceed6',
   },
   {
     enforcementMethod: 'FLAG',
@@ -735,7 +735,7 @@ export const seedDesigns = [
     defaultActions: [{ type: 'set', name: 'default', value: true }],
     name: 'National Competitive Bidding',
     key: 'nationalCompetitiveBidding',
-    id: '0ad11b9b-d3b8-448d-bd16-8bcad60973b3',
+    id: '6c265e97-4498-4d89-9ccd-c2bbb3c56509',
   },
   {
     enforcementMethod: 'FLAG',
@@ -743,7 +743,7 @@ export const seedDesigns = [
     defaultActions: [{ type: 'set', name: 'default', value: true }],
     name: 'International Competitive Bidding',
     key: 'internationalCompetitiveBidding',
-    id: 'ac3adcd7-ae88-4d01-8544-e571cae238e9',
+    id: 'bbe7f803-cb78-4f80-9e4f-0f6a4ff01d51',
   },
   {
     enforcementMethod: 'FLAG',
@@ -751,7 +751,7 @@ export const seedDesigns = [
     defaultActions: [{ type: 'set', name: 'default', value: true }],
     name: 'Short listing',
     key: 'shortListing',
-    id: '6d0ee241-9c8b-46a8-af4f-dc99f99a31c0',
+    id: '99a4e21f-b91d-484b-a291-e637366526ee',
   },
   {
     enforcementMethod: 'FLAG',
@@ -759,7 +759,7 @@ export const seedDesigns = [
     defaultActions: [{ type: 'set', name: 'default', value: true }],
     name: 'Expression of Interest',
     key: 'expressionOfInterest',
-    id: '5077df11-c603-4ae0-b9ba-23bcc76b34f2',
+    id: '303bf39a-070e-4185-8439-a211efa1cbe2',
   },
   {
     enforcementMethod: 'FLAG',
@@ -767,7 +767,7 @@ export const seedDesigns = [
     defaultActions: [{ type: 'set', name: 'default', value: true }],
     name: 'NCB Expression of Interest',
     key: 'ncbExpressionOfInterest',
-    id: '3307858e-5234-4476-91bc-1144a4430616',
+    id: 'b43d5aee-540d-4a54-a10f-0cf773e3388d',
   },
   {
     enforcementMethod: 'FLAG',
@@ -775,7 +775,7 @@ export const seedDesigns = [
     defaultActions: [{ type: 'set', name: 'default', value: true }],
     name: 'ICB Expression of Interest',
     key: 'icbExpressionOfInterest',
-    id: 'd268f22b-d540-4abf-a201-e36c5efba2e2',
+    id: 'ba4f1f53-8590-4ae9-a9b9-74878e083ef9',
   },
   {
     enforcementMethod: 'FLAG',
@@ -783,7 +783,7 @@ export const seedDesigns = [
     defaultActions: [{ type: 'set', name: 'default', value: true }],
     name: 'Single source',
     key: 'singleSource',
-    id: '44d8ffef-cde6-4a61-a9a8-ba0854d26396',
+    id: 'f0437508-dcaf-42bd-8df9-27aedeb53162',
   },
   {
     enforcementMethod: 'FLAG',
@@ -791,7 +791,7 @@ export const seedDesigns = [
     defaultActions: [{ type: 'set', name: 'default', value: true }],
     name: 'Micro',
     key: 'micro',
-    id: '7ea1834e-711d-4e9a-9c5b-43845c1e1532',
+    id: '4f5f19cc-e91a-47e9-a2a3-1d3db37effa4',
   },
   {
     enforcementMethod: 'FLAG',
@@ -799,7 +799,7 @@ export const seedDesigns = [
     defaultActions: [{ type: 'set', name: 'default', value: true }],
     name: 'Small',
     key: 'small',
-    id: '9c825356-26a8-445e-8504-db0a04eee017',
+    id: 'bdbcc63e-9140-4ec8-81fc-1f511d00717f',
   },
   {
     enforcementMethod: 'FLAG',
@@ -807,7 +807,7 @@ export const seedDesigns = [
     defaultActions: [{ type: 'set', name: 'default', value: true }],
     name: 'Medium',
     key: 'medium',
-    id: '990570a5-e3f9-4ea6-b930-30518f82a318',
+    id: '8531bdf2-f40f-4e06-805a-d835f93b36b4',
   },
   {
     enforcementMethod: 'FLAG',
@@ -818,7 +818,7 @@ export const seedDesigns = [
     defaultActions: [{ type: 'set', name: 'default', value: true }],
     name: 'IBM Restriction Percentage',
     key: 'ibmRestrictionPercentage',
-    id: '7338db29-8d1e-4952-9991-78627e34d73d',
+    id: '2c66c5f0-4e23-4936-a24c-32b47e9c956e',
   },
   {
     enforcementMethod: 'FLAG',
@@ -829,36 +829,152 @@ export const seedDesigns = [
     defaultActions: [{ type: 'set', name: 'default', value: true }],
     name: 'RFQ Restriction',
     key: 'rfqRestriction',
-    id: 'a831ac69-55f9-4f8e-b71d-6a07a48709e3',
+    id: '87bfcff1-4528-4963-a620-83c94e5ef0ef',
   },
 ];
 export const seedPossibleReasons = [
   {
-    ruleDesignerId: '535df5f5-c24f-43f9-b655-874afc2eeee5',
+    ruleDesignerId: 'cc2843d7-c20b-4bcb-b619-c978b30ceed6',
     reason:
       'Adoption of new cost-effective technologies or materials that impact the quotation process.',
   },
   {
-    ruleDesignerId: '535df5f5-c24f-43f9-b655-874afc2eeee5',
+    ruleDesignerId: 'cc2843d7-c20b-4bcb-b619-c978b30ceed6',
     reason: 'Changes in market dynamics affecting supplier pricing strategies.',
   },
   {
-    ruleDesignerId: '535df5f5-c24f-43f9-b655-874afc2eeee5',
+    ruleDesignerId: 'cc2843d7-c20b-4bcb-b619-c978b30ceed6',
     reason:
       'Internal initiatives to streamline the procurement process for efficiency.',
   },
   {
-    ruleDesignerId: '535df5f5-c24f-43f9-b655-874afc2eeee5',
+    ruleDesignerId: 'cc2843d7-c20b-4bcb-b619-c978b30ceed6',
     reason:
       'Emergence of more cost-effective suppliers after the initial quotation request.',
   },
   {
-    ruleDesignerId: '535df5f5-c24f-43f9-b655-874afc2eeee5',
+    ruleDesignerId: 'cc2843d7-c20b-4bcb-b619-c978b30ceed6',
     reason:
       'Changes in project specifications or quantities requiring revised quotations.',
   },
   {
-    ruleDesignerId: '535df5f5-c24f-43f9-b655-874afc2eeee5',
+    ruleDesignerId: 'cc2843d7-c20b-4bcb-b619-c978b30ceed6',
     reason: 'Legal challenges or concerns regarding the RFQ process.',
+  },
+  {
+    ruleDesignerId: '6c265e97-4498-4d89-9ccd-c2bbb3c56509',
+    reason:
+      'Change in supplier availability due to unforeseen events (e.g., natural disasters, economic crises).',
+  },
+  {
+    ruleDesignerId: '6c265e97-4498-4d89-9ccd-c2bbb3c56509',
+    reason:
+      'Changes in project financing necessitating a reevaluation of procurement strategies.',
+  },
+  {
+    ruleDesignerId: '6c265e97-4498-4d89-9ccd-c2bbb3c56509',
+    reason:
+      'Legal challenges or concerns regarding the open tendering process.',
+  },
+  {
+    ruleDesignerId: '6c265e97-4498-4d89-9ccd-c2bbb3c56509',
+    reason: 'Change in market conditions, leading to a lack of competition.',
+  },
+  {
+    ruleDesignerId: '6c265e97-4498-4d89-9ccd-c2bbb3c56509',
+    reason:
+      'Emergence of new, more qualified suppliers after the initial tender announcement.',
+  },
+  {
+    ruleDesignerId: '6c265e97-4498-4d89-9ccd-c2bbb3c56509',
+    reason: 'Unexpected changes in project scope or specifications.',
+  },
+  {
+    ruleDesignerId: '99a4e21f-b91d-484b-a291-e637366526ee',
+    reason:
+      'Introduction of new technology or methodologies that require expertise from a broader range of suppliers.',
+  },
+  {
+    ruleDesignerId: '99a4e21f-b91d-484b-a291-e637366526ee',
+    reason:
+      'Changes in government policies or regulations affecting supplier selection criteria.',
+  },
+  {
+    ruleDesignerId: '99a4e21f-b91d-484b-a291-e637366526ee',
+    reason:
+      'Internal organizational changes impacting the composition of the supplier pool.',
+  },
+  {
+    ruleDesignerId: '99a4e21f-b91d-484b-a291-e637366526ee',
+    reason:
+      'Identification of additional qualified suppliers after the initial selection.',
+  },
+  {
+    ruleDesignerId: '99a4e21f-b91d-484b-a291-e637366526ee',
+    reason:
+      'Changes in project requirements necessitating a broader pool of suppliers.',
+  },
+  {
+    ruleDesignerId: '99a4e21f-b91d-484b-a291-e637366526ee',
+    reason: 'Legal challenges or concerns regarding the selectivity criteria.',
+  },
+  {
+    ruleDesignerId: '303bf39a-070e-4185-8439-a211efa1cbe2',
+    reason:
+      'Emergence of innovative solutions or technologies that prompt a reassessment of proposal requirements.',
+  },
+  {
+    ruleDesignerId: '303bf39a-070e-4185-8439-a211efa1cbe2',
+    reason:
+      'Changes in project stakeholders or decision-makers necessitating a reevaluation of criteria.',
+  },
+  {
+    ruleDesignerId: '303bf39a-070e-4185-8439-a211efa1cbe2',
+    reason:
+      'Internal capacity-building initiatives requiring a more detailed proposal review.',
+  },
+  {
+    ruleDesignerId: '303bf39a-070e-4185-8439-a211efa1cbe2',
+    reason:
+      'Need for a more detailed proposal evaluation due to project complexity.',
+  },
+  {
+    ruleDesignerId: '303bf39a-070e-4185-8439-a211efa1cbe2',
+    reason:
+      'Changes in project scope or requirements that necessitate a new proposal.',
+  },
+  {
+    ruleDesignerId: '303bf39a-070e-4185-8439-a211efa1cbe2',
+    reason: 'Legal challenges or concerns regarding the RFP process.',
+  },
+  {
+    ruleDesignerId: 'f0437508-dcaf-42bd-8df9-27aedeb53162',
+    reason:
+      'Changes in supplier capacity or reliability affecting the single-source decision.',
+  },
+  {
+    ruleDesignerId: 'f0437508-dcaf-42bd-8df9-27aedeb53162',
+    reason:
+      "Shift in the organization's risk tolerance or risk management approach.",
+  },
+  {
+    ruleDesignerId: 'f0437508-dcaf-42bd-8df9-27aedeb53162',
+    reason:
+      'External pressures or legal challenges prompting a reevaluation of the direct procurement method.',
+  },
+  {
+    ruleDesignerId: 'f0437508-dcaf-42bd-8df9-27aedeb53162',
+    reason:
+      'Identification of additional qualified suppliers after the initial decision.',
+  },
+  {
+    ruleDesignerId: 'f0437508-dcaf-42bd-8df9-27aedeb53162',
+    reason:
+      'Changes in project scope or specifications requiring a new procurement approach.',
+  },
+  {
+    ruleDesignerId: 'f0437508-dcaf-42bd-8df9-27aedeb53162',
+    reason:
+      'Legal challenges or concerns regarding the direct procurement decision.',
   },
 ];
