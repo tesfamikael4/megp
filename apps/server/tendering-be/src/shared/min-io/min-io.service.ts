@@ -32,9 +32,9 @@ export class MinIOService {
 
   async generatePresignedUploadUrl(fileInfo: {
     bucketName: string;
-    filepath: string;
+    originalname: string;
     contentType?: string;
-  }): Promise<string> {
+  }): Promise<{ presignedUrl: string; file: any }> {
     fileInfo.bucketName ??= 'megp';
     const duration = Number(process.env.DURATION_OF_PRE_SIGNED_DOCUMENT ?? 120);
     const name = String(Date.now());
@@ -44,7 +44,14 @@ export class MinIOService {
       duration,
     );
 
-    return presignedUrl;
+    const file = {
+      filepath: name,
+      bucketName: fileInfo.bucketName,
+      contentType: fileInfo.contentType,
+      originalname: fileInfo.originalname,
+    };
+
+    return { presignedUrl, file };
   }
 
   async download(
