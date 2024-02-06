@@ -56,8 +56,9 @@ export function Items() {
   const { id } = useParams();
 
   const UomRead = ({ record }: { record: any }) => {
+    logger.log(record);
     const { data: uom } = useReadUnitOfMeasurementsQuery(
-      record?.uoM?.toString(),
+      record?.measurement?.toString(),
     );
 
     return <Text>{uom?.name}</Text>;
@@ -69,7 +70,7 @@ export function Items() {
       { accessor: 'description', title: 'Description' },
       {
         title: 'UoM',
-        accessor: 'uom',
+        accessor: 'uoM',
         width: 200,
         render: (record) => <UomRead record={record} />,
       },
@@ -220,7 +221,8 @@ export function Items() {
   };
 
   const handelAddItem = (items) => {
-    const castedData = items.map((item) => ({
+    const castedData = items.map((item, index) => ({
+      id: index,
       unitPrice: 0,
       currency: itemsList?.items[0]?.currency,
       quantity: 0,
@@ -257,7 +259,22 @@ export function Items() {
       );
     } else {
       try {
-        await addItems(newItems).unwrap();
+        const castedData = newItems.map((item) => {
+          return {
+            unitPrice: item.unitPrice ?? 0,
+            currency: item.currency,
+            quantity: item.quantity ?? 0,
+            uom: item.uom,
+            uomName: item.uomName,
+            procurementRequisitionId: id,
+            description: item.description,
+            metaData: item,
+            itemCode: item.itemCode,
+            measurement: item.measurement,
+            classification: item.classification,
+          };
+        });
+        await addItems(castedData).unwrap();
         route.push(`/procurement-requisition/${id}`);
         notify('Success', 'Items Created Success-fully');
         setNewItems([]);

@@ -16,6 +16,7 @@ interface Config {
   selectedItems?: any[];
   isLoading?: boolean;
   setSelectedItems?: (items: any[]) => void;
+  idAccessor?: string;
 }
 
 export const ExpandableTable = ({
@@ -96,6 +97,7 @@ export const ExpandableTable = ({
         selectedRecords={config.selectedItems}
         onSelectedRecordsChange={config.setSelectedItems}
         fetching={config.isLoading}
+        idAccessor={config.idAccessor ?? 'id'}
       />
     </>
   );

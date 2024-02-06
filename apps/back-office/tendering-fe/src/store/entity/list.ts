@@ -19,7 +19,7 @@ export const ENTITY_LIST: EntityStoreConfig[] = [
   },
   {
     entity: 'procurement-requisition-items',
-    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/planning/api',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
   },
   {
     entity: 'user',

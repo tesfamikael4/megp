@@ -1,6 +1,14 @@
 'use client';
 
-import { Box, Button, Group, Modal, Radio, Text } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Group,
+  LoadingOverlay,
+  Modal,
+  Radio,
+  Text,
+} from '@mantine/core';
 import { notify } from '@megp/core-fe';
 import { useDisclosure } from '@mantine/hooks';
 import { IconPlus } from '@tabler/icons-react';
@@ -93,23 +101,26 @@ export function Activities() {
   };
 
   const ReadActivity = ({ record, entity }: { record: any; entity: any }) => {
-    const { data: activity } = useReadQuery(
+    const { data: activity, isLoading } = useReadQuery(
       record.annualProcurementPlanActivityId?.toString(),
     );
 
     return (
       <>
-        {entity === 'procurementReferenceNumber'
-          ? activity?.procurementReferenceNumber
-          : entity === 'activityName'
-            ? activity?.activityName
-            : entity === 'procurementType'
-              ? activity?.procurementMechanisms.procurementType
-              : entity === 'procurementMethod'
-                ? activity?.procurementMechanisms.procurementMethod
-                : entity === 'fundingSource'
-                  ? activity?.procurementMechanisms.fundingSource
-                  : ''}
+        <Group pos={'relative'}>
+          <LoadingOverlay visible={isLoading} />
+          {entity === 'procurementReferenceNumber'
+            ? activity?.procurementReferenceNumber
+            : entity === 'activityName'
+              ? activity?.activityName
+              : entity === 'procurementType'
+                ? activity?.procurementMechanisms.procurementType
+                : entity === 'procurementMethod'
+                  ? activity?.procurementMechanisms.procurementMethod
+                  : entity === 'fundingSource'
+                    ? activity?.procurementMechanisms.fundingSource
+                    : ''}
+        </Group>
       </>
     );
   };
@@ -191,29 +202,31 @@ export function Activities() {
 
   useEffect(() => {
     if (opened && budgetFeatched) {
-      listById({
-        id: budget?.items[0]?.id?.toString(),
-        collectionQuery: {
-          includes: ['procurementMechanisms'],
-          where: [
-            [
-              {
-                column: 'status',
-                value: 'Assigned',
-                operator: '!=',
-              },
+      budget?.items[0]?.id !== undefined &&
+        listById({
+          id: budget?.items?.[1]?.id?.toString(),
+          collectionQuery: {
+            includes: ['procurementMechanisms'],
+            where: [
+              [
+                {
+                  column: 'status',
+                  value: 'Assigned',
+                  operator: '!=',
+                },
+              ],
             ],
-          ],
-        },
-      });
+          },
+        });
     }
   }, [budget, budgetFeatched, listById, opened]);
 
   useEffect(() => {
-    trigger({
-      id: id.toString(),
-      collectionQuery: undefined,
-    });
+    id !== undefined &&
+      trigger({
+        id: id.toString(),
+        collectionQuery: undefined,
+      });
   }, [id, trigger]);
 
   useEffect(() => {
