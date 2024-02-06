@@ -57,7 +57,7 @@ const activitiesSchema: ZodType<Partial<BudgetPlanActivities>> = z.object({
   currency: z.string({
     required_error: 'Currency is required',
   }),
-  estimatedAmount: z.number({
+  estimatedAmount: z.string({
     required_error: 'Estimated Amount is required',
   }),
   remark: z.string().default(''),
@@ -215,10 +215,10 @@ export const FormDetail = ({
           };
     try {
       if (page == 'pre') {
-        await updatePre(rawData);
+        await updatePre(rawData).unwrap();
         notify('Success', 'Activity Updated Successfully');
       } else {
-        await updatePost(rawData);
+        await updatePost(rawData).unwrap();
         notify('Success', 'Activity Updated Successfully');
       }
     } catch (err) {
@@ -250,7 +250,7 @@ export const FormDetail = ({
         setValue('isMultiYear', preActivity?.isMultiYear);
         setValue('procurementReference', preActivity?.procurementReference);
         setValue('remark', preActivity?.remark);
-        setValue('estimatedAmount', parseInt(preActivity?.estimatedAmount));
+        setValue('estimatedAmount', preActivity?.estimatedAmount);
         setTags(preActivity?.classification ?? []);
       }
       if (page == 'post') {
@@ -260,7 +260,7 @@ export const FormDetail = ({
         setValue('isMultiYear', postActivity?.isMultiYear);
         setValue('procurementReference', postActivity?.procurementReference);
         setValue('remark', postActivity?.remark);
-        setValue('estimatedAmount', parseInt(postActivity?.estimatedAmount));
+        setValue('estimatedAmount', postActivity?.estimatedAmount);
         setTags(preActivity?.classification ?? []);
       }
     }
@@ -311,21 +311,13 @@ export const FormDetail = ({
             {...register('isMultiYear')}
             disabled={disableFields}
           />
-          <Controller
-            name="estimatedAmount"
-            control={control}
-            render={({ field: { name, value, onChange } }) => (
-              <NumberInput
-                label="Estimated Amount"
-                name={name}
-                value={value}
-                onChange={(d) => onChange(parseInt(d as string))}
-                className="w-full"
-                error={errors?.estimatedAmount?.message}
-                withAsterisk
-                disabled={method === 'Purchased Orders' || disableFields}
-              />
-            )}
+          <TextInput
+            label="Estimated Amount"
+            className="w-full"
+            {...register('estimatedAmount')}
+            error={errors?.estimatedAmount?.message}
+            withAsterisk
+            disabled={method === 'Purchased Orders' || disableFields}
           />
           <MultiSelect
             label="Tag Classification"

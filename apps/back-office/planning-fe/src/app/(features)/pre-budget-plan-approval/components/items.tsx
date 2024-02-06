@@ -21,6 +21,7 @@ const config = {
             currency: record?.currency,
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
+            currencyDisplay: 'code',
           })}
         </p>
       ),
@@ -47,6 +48,7 @@ const config = {
             currency: record?.currency,
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
+            currencyDisplay: 'code',
           })}
         </p>
       ),

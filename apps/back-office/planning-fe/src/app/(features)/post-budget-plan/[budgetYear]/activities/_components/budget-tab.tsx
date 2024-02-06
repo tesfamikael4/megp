@@ -236,7 +236,7 @@ export const BudgetTab = () => {
       <LoadingOverlay
         visible={isLoading || isDisbursementLoading || isGetWithAppLoading}
       />
-      <BudgetSelector />
+      <BudgetSelector activity={data} />
 
       <Box className="mt-5">
         <Divider label="Disbursement" my="lg" />

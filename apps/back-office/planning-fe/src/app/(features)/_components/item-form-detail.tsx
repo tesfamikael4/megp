@@ -102,6 +102,7 @@ export const ItemDetailForm = ({
               errors?.quantity ? errors?.quantity?.message?.toString() : ''
             }
             disabled={isDisabled}
+            withAsterisk
           />
           <TextInput
             type="number"
@@ -112,6 +113,8 @@ export const ItemDetailForm = ({
               errors?.unitPrice ? errors?.unitPrice?.message?.toString() : ''
             }
             disabled={isDisabled}
+            withAsterisk
+            className="mt-2"
           />
           <Controller
             name="uomName"
@@ -127,6 +130,8 @@ export const ItemDetailForm = ({
                   errors?.uomName ? errors?.uomName?.message?.toString() : ''
                 }
                 disabled={isDisabled}
+                withAsterisk
+                className="mt-2"
               />
             )}
           />

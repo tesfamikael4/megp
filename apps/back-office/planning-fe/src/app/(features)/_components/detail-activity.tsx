@@ -113,6 +113,10 @@ export const DetailActivity = ({
           key: 'Supplier Target Group',
           value: temp.targetGroup.join(', '),
         },
+        {
+          key: 'Donor',
+          value: temp.donor[0],
+        },
       ]);
     } else if (
       page == 'post' &&
@@ -141,9 +145,20 @@ export const DetailActivity = ({
           key: 'Supplier Target Group',
           value: temp.targetGroup.join(', '),
         },
+        {
+          key: 'Donor',
+          value: temp.donor[0],
+        },
       ]);
     }
-  }, [isGetPreMechanismSuccess, preMechanism]);
+  }, [
+    isGetPostMechanismSuccess,
+    isGetPreMechanismSuccess,
+    page,
+    postMechanism?.items,
+    postMechanism?.total,
+    preMechanism,
+  ]);
   return (
     <Box className="bg-white p-5" pos="relative">
       <LoadingOverlay

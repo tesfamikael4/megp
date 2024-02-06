@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Modal, TextInput, Tooltip, Flex, Text } from '@mantine/core';
-import { Relation, RelationConfig } from '@megp/entity';
+import { RelationConfig } from '@megp/entity';
 import { useDisclosure } from '@mantine/hooks';
 import { IconBinaryTree, IconColumns } from '@tabler/icons-react';
 import { Tree, logger } from '@megp/core-fe';
@@ -23,7 +23,6 @@ const ClassificationSelector = ({
 }: ClassificationSelectorProps) => {
   const [opened, { open, close }] = useDisclosure(false);
   const [mode, setMode] = useState<'tree' | 'table'>('table');
-  //   const [currentAssigned] = useState([]);
   const [getCommodity, { data: list }] = useLazyGetClassificationsQuery();
   const { data: classifications } = useGetClassificationsQuery({
     where: [
@@ -109,12 +108,6 @@ const ClassificationSelector = ({
         size="lg"
       >
         {mode == 'table' ? (
-          //   <Relation
-          //     config={addConfig}
-          //     mode="modal"
-          //     data={list ? list.items : []}
-          //     currentSelected={currentAssigned}
-          //   />
           <CollectionSelector
             config={addConfig}
             data={list ? list.items : []}
