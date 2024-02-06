@@ -113,7 +113,8 @@ export class ProcurementRequisitionItemService extends ExtraCrudService<Procurem
       item.classification = item.classification
         ? item.classification
         : 'not defined';
-      item.uoM = item.uoM ? item.uoM : 'not defined';
+      item.uoM = item.uomName ? item.uomName : 'not defined';
+      item.currency = item.currency ? item.currency : 'USD';
       const itemReference: CreateProcurementRequisitionItemReferenceDto = {
         annualProcurementPlanItemId: null,
         procurementRequisitionItemId: null,

@@ -20,8 +20,11 @@ export class AnnualProcurementPlanTimeline extends Audit {
   @Column({ type: 'integer', unsigned: true })
   order: number;
 
-  @Column({ type: 'double precision', unsigned: true })
+  @Column({ type: 'double precision', unsigned: true, nullable: true })
   noOfDays: number;
+
+  @Column({ type: 'double precision', unsigned: true, nullable: true })
+  period: number;
 
   @Column({ type: 'timestamp' })
   dueDate: Date;

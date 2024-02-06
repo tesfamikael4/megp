@@ -28,11 +28,11 @@ export class AnnualProcurementPlanItem extends Audit {
   @Column({ nullable: true })
   classification: string;
 
-  @Column()
+  @Column({ nullable: true })
   measurement: string;
 
-  @Column()
-  uoM: string;
+  @Column({ nullable: true })
+  uomName: string;
 
   @Column({ type: 'uuid' })
   annualProcurementPlanActivityId: string;

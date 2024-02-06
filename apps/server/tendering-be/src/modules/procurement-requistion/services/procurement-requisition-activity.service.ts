@@ -53,7 +53,7 @@ export class ProcurementRequisitionActivityService extends ExtraCrudService<Proc
       };
 
       if (
-        annualProcurementPlanActivity.annualProcurementItems &&
+        annualProcurementPlanActivity.annualProcurementPlanItems &&
         annualProcurementPlanActivity.annualProcurementPlanItems.length > 0
       ) {
         annualProcurementPlanActivity.annualProcurementPlanItems.forEach(
@@ -132,7 +132,7 @@ export class ProcurementRequisitionActivityService extends ExtraCrudService<Proc
       );
     }
 
-    // event emitter to assign items to the to PR
+    // events emitter to assign items to the to PR
     if (activities.annualProcurementPlanItems.length > 0) {
       this.eventEmitter.emit(
         'create.pr_items',
@@ -177,7 +177,7 @@ export class ProcurementRequisitionActivityService extends ExtraCrudService<Proc
     return this.repositoryAnnualProcurementPlanActivity.find({
       where: {
         id: In(ids),
-        status: 'Approved',
+        status: In(['Approved', 'Draft']),
       },
       relations: [
         'annualProcurementPlanItems',
@@ -190,7 +190,7 @@ export class ProcurementRequisitionActivityService extends ExtraCrudService<Proc
   }
   async updateAnnualProcurementPlanActivity(ids: any): Promise<any> {
     await this.repositoryAnnualProcurementPlanActivity.update(
-      { id: In(ids), status: 'Approved' },
+      { id: In(ids), status: In(['Approved', 'Draft']) },
       { status: 'Assigned' },
     );
   }

@@ -26,7 +26,7 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
     return super.create(itemData, req);
   }
 
-  async initiateWorkflow(data: any) {
+  async initiateWorkflow(data: any): Promise<boolean> {
     const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
 
     const prs = await this.repositoryProcurementRequisition.find({
@@ -46,13 +46,16 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
     await entityManager.getRepository(ProcurementRequisition).update(data.id, {
       status: 'Submitted',
     });
-    this.prRMQClient.emit('initiate-workflow', {
+    const result = this.prRMQClient.emit('initiate-pr-workflow', {
       name: data.name,
       id: data.id,
       itemName: data.itemName,
       organizationId: data.organizationId,
     });
+    result?.subscribe();
+    return !!result;
   }
+
   async prApprovalDecision(data: any): Promise<void> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();

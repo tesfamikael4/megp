@@ -31,10 +31,13 @@ import { ProcurementRequisitionDisbursementService } from './services/procuremen
 import { ProcurementRequisitionTimelineService } from './services/procurement-requisition-timeline.service';
 import { ProcurementRequisitionTimelineController } from './controllers/procurement-requisition-timeline.controller';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { MinIOService } from 'src/shared/min-io/min-io.service';
+import { MinIOModule } from 'src/shared/min-io/min-io.module';
 import { MinioModule } from 'nestjs-minio-client';
 
 @Module({
   imports: [
+    MinIOModule,
     TypeOrmModule.forFeature([
       ProcurementRequisition,
       ProcurementRequisitionDocument,
@@ -49,7 +52,17 @@ import { MinioModule } from 'nestjs-minio-client';
       ProcurementRequisitionOfficerAssignment,
       ProcurementRequisitionDisbursement,
       AnnualProcurementPlanActivity,
+      MinIOService,
     ]),
+    MinioModule.register({
+      endPoint: process.env.MINIO_ENDPOINT ?? 'files.megp.peragosystems.com',
+      port: Number(process.env.MINIO_PORT ?? 80),
+      useSSL: Boolean(process.env.MINIO_USESSL ?? false),
+      accessKey: process.env.MINIO_ACCESSKEY ?? 'Szzt6Zo5yEJCfa7ay5sy',
+      secretKey:
+        process.env.MINIO_SECRETKEY ??
+        'dGtjFGcLjKU6pXRYx1tOnqGeycJtxJoavgwqYgDd',
+    }),
     ClientsModule.register([
       {
         name: 'PR_RMQ_SERVICE',
@@ -63,16 +76,6 @@ import { MinioModule } from 'nestjs-minio-client';
         },
       },
     ]),
-
-    MinioModule.register({
-      endPoint: process.env.MINIO_ENDPOINT ?? 'files.megp.peragosystems.com',
-      port: Number(process.env.MINIO_PORT ?? 80),
-      useSSL: Boolean(process.env.MINIO_USESSL ?? false),
-      accessKey: process.env.MINIO_ACCESSKEY ?? 'Szzt6Zo5yEJCfa7ay5sy',
-      secretKey:
-        process.env.MINIO_SECRETKEY ??
-        'dGtjFGcLjKU6pXRYx1tOnqGeycJtxJoavgwqYgDd',
-    }),
   ],
   providers: [
     ProcurementRequisitionService,
