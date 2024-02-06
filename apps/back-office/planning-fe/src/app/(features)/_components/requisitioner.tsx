@@ -98,11 +98,11 @@ export const Requisitioner = ({
     try {
       if (page == 'pre') {
         await createPreRequisitioner({ requisitioner: castedData }).unwrap();
-        notify('Success', 'Requisitioner Added successfully');
+        notify('Success', 'Requisitioner Assigned Successfully');
       }
       if (page == 'post') {
         await createPostRequisitioner({ requisitioner: castedData }).unwrap();
-        notify('Success', 'Requisitioner Added successfully');
+        notify('Success', 'Requisitioner Assigned Successfully');
       }
     } catch (err) {
       logger.log({ err });

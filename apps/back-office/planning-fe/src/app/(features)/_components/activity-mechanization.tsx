@@ -29,7 +29,6 @@ import { useValidateProcurementMethodMutation } from '@/store/api/rule-designer/
 import { useLazyReadQuery } from '../_api/activities.api';
 import { useLazyReadQuery as useLazyReadPostActivityQuery } from '../_api/post-activity.api';
 import { IconDeviceFloppy } from '@tabler/icons-react';
-import { useDisclosure } from '@mantine/hooks';
 import { Reasons } from './reasons';
 
 const activitiesSchema: ZodType<Partial<any>> = z.object({
@@ -145,11 +144,11 @@ export const ActivityMechanization = ({
     try {
       if (page == 'pre') {
         await preUpdate(castedData).unwrap();
-        notify('Success', 'Procurement mechanization updated successfully');
+        notify('Success', 'Procurement Method updated successfully');
       }
       if (page == 'post') {
         await postUpdate(castedData).unwrap();
-        notify('Success', 'Procurement mechanization updated successfully');
+        notify('Success', 'Procurement Method updated successfully');
       }
     } catch (err) {
       notify('Error', 'Something went wrong');
@@ -441,7 +440,18 @@ export const ActivityMechanization = ({
               data={[
                 // { value: 'Not Applicable', label: 'Not Applicable' },
                 { value: 'IBM', label: 'Indigenous Black Malawian' },
-                { value: 'MSME', label: 'Micro, Small And Medium Enterprises' },
+                {
+                  value: 'Micro Enterprises',
+                  label: 'Micro Enterprises',
+                },
+                {
+                  value: 'Small Enterprises',
+                  label: 'Small Enterprises',
+                },
+                {
+                  value: 'Medium Enterprises',
+                  label: 'Medium Enterprises',
+                },
                 { value: 'Marginalized Group', label: 'Marginalized Group' },
                 { value: 'Others', label: 'Others' },
               ]}

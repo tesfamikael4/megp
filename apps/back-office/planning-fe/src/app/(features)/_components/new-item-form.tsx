@@ -2,7 +2,9 @@ import {
   Box,
   Button,
   Flex,
+  Group,
   LoadingOverlay,
+  Modal,
   MultiSelect,
   Select,
   Stack,
@@ -13,8 +15,8 @@ import {
 import { Controller, useForm } from 'react-hook-form';
 import { ZodType, z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect } from 'react';
-import { Tree, logger } from '@megp/core-fe';
+import { useEffect, useState } from 'react';
+import { MantineTree, TreeConfig, logger } from '@megp/core-fe';
 import {
   useGetMeasurementsQuery,
   useGetTagsQuery,
@@ -22,6 +24,7 @@ import {
   useGetCategoriesQuery,
 } from '@/store/api/administration/administration.api';
 import ClassificationSelector from './classification-selector';
+import { useDisclosure } from '@mantine/hooks';
 
 const itemSchema: ZodType<Partial<any>> = z.object({
   commodityCode: z.string({
@@ -58,7 +61,6 @@ const itemSchema: ZodType<Partial<any>> = z.object({
 export function NewItem({ onDone }: any) {
   const {
     handleSubmit,
-    register,
     setValue,
     control,
     formState: { errors },
@@ -66,6 +68,45 @@ export function NewItem({ onDone }: any) {
   } = useForm<Partial<any>>({
     resolver: zodResolver(itemSchema),
   });
+  const [opened, { open, close }] = useDisclosure(false);
+  const [selectedCategories, setSelectedCategories] = useState<any[]>([]);
+  const treeConfig: TreeConfig<any> = {
+    id: 'itemSubcategoryId',
+    label: 'itemSubcategoryName',
+    selectable: true,
+    multipleSelect: true,
+    selectedIds: selectedCategories,
+    setSelectedIds: (data) => {
+      logger.log({ data });
+      setSelectedCategories(data);
+    },
+    load: async (data) => {
+      // logger.log({ data });
+      // const res = await getChildren({
+      //   where: [
+      //     [
+      //       {
+      //         column: 'parentCode',
+      //         value: data.code,
+      //         operator: '=',
+      //       },
+      //     ],
+      //   ],
+      // }).unwrap();
+      // return {
+      //   result:
+      //     res?.items?.map((c) => ({
+      //       code: c.code,
+      //       title: c.title,
+      //     })) ?? [],
+      //   loading: isLoading,
+      // };
+      return {
+        result: [],
+        loading: false,
+      };
+    },
+  };
 
   const { data: measurements, isLoading: isMeasurementLoading } =
     useGetMeasurementsQuery({} as any);
@@ -108,6 +149,15 @@ export function NewItem({ onDone }: any) {
   };
 
   useEffect(() => {
+    if (selectedCategories.length > 0) {
+      const temp = selectedCategories[selectedCategories.length - 1];
+      logger.log({ temp });
+      setValue('itemSubcategoryName', temp.itemSubcategoryName);
+      setValue('itemSubcategoryId', temp.itemSubcategoryId);
+    }
+  }, [selectedCategories, setValue]);
+
+  useEffect(() => {
     const id: string | undefined = watch('measurementId');
     if (id) {
       getUnitOfMeasurements(id);
@@ -120,37 +170,28 @@ export function NewItem({ onDone }: any) {
         visible={isMeasurementLoading || isTagLoading || isCategoriesLoading}
       />
       <Stack>
-        <Textarea
-          label="Description"
-          withAsterisk
-          autosize
-          minRows={2}
-          maxRows={10}
-          {...register('description')}
-          error={errors?.description?.message as string | undefined}
+        <Controller
+          control={control}
+          name="description"
+          render={({ field }) => (
+            <Textarea
+              label="Description"
+              withAsterisk
+              {...field}
+              autosize
+              minRows={2}
+              maxRows={10}
+              error={errors?.description?.message as string}
+            />
+          )}
         />
-        <Tree
-          fieldNames={{ title: 'name', key: 'id' }}
-          mode="select"
+        <TextInput
           label="Item Category"
-          data={categories?.items ?? []}
-          url={(id) =>
-            `${
-              process.env.NEXT_PUBLIC_ADMINISTRATION_API ??
-              '/administration/api/'
-            }item-categories?q=w%3DparentId%3A%3D%3A${id}`
-          }
-          onDone={(item: any) => {
-            setValue('itemSubcategoryName', item?.name);
-            setValue('itemSubcategoryId', item?.id);
-          }}
-          placeholder="Select category"
-          selectedKeys={{
-            id: watch('itemSubcategoryId'),
-            name: watch('itemSubcategoryName'),
-          }}
-          error={errors.itemSubcategoryName?.message as string | null}
-          required
+          withAsterisk
+          readOnly
+          value={watch('itemSubcategoryName')}
+          error={errors.itemSubcategoryName?.message as string}
+          onClick={open}
         />
         <Flex gap="md">
           <Controller
@@ -244,6 +285,23 @@ export function NewItem({ onDone }: any) {
           Add
         </Button>
       </Stack>
+
+      <Modal title="Item Category" opened={opened} onClose={close} size="lg">
+        <Box className="max-h-[30rem] overflow-auto">
+          <MantineTree
+            config={treeConfig}
+            data={
+              categories?.items?.map((c) => ({
+                itemSubcategoryName: c.name,
+                itemSubcategoryId: c.id,
+              })) ?? []
+            }
+          />
+        </Box>
+        <Group justify="end" className="mt-2">
+          <Button onClick={close}>Done</Button>
+        </Group>
+      </Modal>
     </Box>
   );
 }

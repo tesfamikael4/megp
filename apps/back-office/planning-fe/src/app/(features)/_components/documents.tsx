@@ -66,11 +66,11 @@ export const Documents = ({
     const [opened, { open, close }] = useDisclosure(false);
     const openDeleteModal = () => {
       modals.openConfirmModal({
-        title: `Delete ${data.name}`,
+        title: `Delete Document`,
         centered: true,
         children: (
           <Text size="sm">
-            {`Are you sure you want to delete this ${data.name} `}
+            {`Are you sure you want to delete this Document `}
           </Text>
         ),
         labels: { confirm: 'Yes', cancel: 'No' },
@@ -101,7 +101,7 @@ export const Documents = ({
         // await remove(cell.id).unwrap();
         notifications.show({
           title: 'Success',
-          message: 'Item Deleted Successfully',
+          message: 'Document Deleted Successfully',
           color: 'green',
         });
       } catch (err) {

@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  useApprovePostBudgetMutation,
   useLazyGetPostBudgetPlanAnalyticsQuery,
   useLazyGetPostBudgetPlansQuery,
 } from '@/store/api/post-budget-plan/post-budget-plan.api';
@@ -73,6 +74,8 @@ const PlanningTab = ({ page }: { page: 'pre' | 'post' }) => {
     },
   ] = useLazyGetPostBudgetPlanAnalyticsQuery();
   const [approve, { isLoading }] = useApprovePreBudgetMutation();
+  const [approvePost, { isLoading: isPostApproveLoading }] =
+    useApprovePostBudgetMutation();
 
   // helper functions
   const createApp = () => {
@@ -120,10 +123,17 @@ const PlanningTab = ({ page }: { page: 'pre' | 'post' }) => {
 
   const handelSubmit = async () => {
     try {
-      await approve({
-        id: (selectedYear as any)?.id,
-        itemName: (selectedYear as any)?.app?.planName,
-      }).unwrap();
+      if (page == 'pre') {
+        await approve({
+          id: (selectedYear as any)?.id,
+          itemName: (selectedYear as any)?.app?.planName,
+        }).unwrap();
+      } else {
+        await approvePost({
+          id: (selectedYear as any)?.id,
+          itemName: (selectedYear as any)?.app?.planName,
+        }).unwrap();
+      }
       notify('Success', 'Pre budget plan submitted successfully');
     } catch (err) {
       logger.log(err);
@@ -224,7 +234,7 @@ const PlanningTab = ({ page }: { page: 'pre' | 'post' }) => {
           <Group>
             <Button
               onClick={submitPlan}
-              loading={isLoading}
+              loading={isLoading || isPostApproveLoading}
               disabled={
                 (selectedYear as any)?.status != 'Draft' &&
                 (selectedYear as any)?.status != 'Adjust'

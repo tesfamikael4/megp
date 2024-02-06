@@ -150,6 +150,7 @@ export function Root<TData>({
         },
       ]}
       highlightOnHover
+      idAccessor={accessor}
       noHeader
       noRecordsIcon
       noRecordsText=""
@@ -344,6 +345,7 @@ function Child<TData>({
         },
       ]}
       fetching={loading}
+      idAccessor={accessor}
       minHeight={
         (!data.children || data.children.length === 0) && !config.load
           ? 0

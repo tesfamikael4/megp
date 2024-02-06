@@ -26,7 +26,7 @@ export const DetailItem = ({ data }: any) => {
     {
       key: 'Unit Price',
       value:
-        data?.unitPrice?.toLocaleString('en-US', {
+        parseFloat(data?.unitPrice)?.toLocaleString('en-US', {
           style: 'currency',
           currency: data.currency,
           minimumFractionDigits: 2,

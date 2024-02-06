@@ -17,6 +17,11 @@ import {
 } from '@/store/api/post-budget-plan/post-budget-plan.api';
 import { ExpandableTable } from './expandable-table';
 
+const getNewDate = (period: number) => {
+  const newDate = new Date().setDate(new Date().getDate() + period);
+  return new Date(newDate);
+};
+
 const tableData = [
   {
     timeline: 'Procurement Initiation',
@@ -26,37 +31,37 @@ const tableData = [
   {
     timeline: 'Procurement Requisition',
     period: 10,
-    dueDate: new Date(),
+    dueDate: getNewDate(10),
   },
   {
     timeline: 'Tender Publication',
     period: 10,
-    dueDate: new Date(),
+    dueDate: getNewDate(20),
   },
   {
     timeline: 'Tender Submission',
     period: 10,
-    dueDate: new Date(),
+    dueDate: getNewDate(30),
   },
   {
     timeline: ' Evaluation',
     period: 10,
-    dueDate: new Date(),
+    dueDate: getNewDate(40),
   },
   {
     timeline: 'Award',
     period: 10,
-    dueDate: new Date(),
+    dueDate: getNewDate(50),
   },
   {
     timeline: 'Contract Signing',
     period: 10,
-    dueDate: new Date(),
+    dueDate: getNewDate(60),
   },
   {
     timeline: 'Contract Closure',
     period: 10,
-    dueDate: new Date(),
+    dueDate: getNewDate(70),
   },
 ];
 

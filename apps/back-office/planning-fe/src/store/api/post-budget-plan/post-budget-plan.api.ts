@@ -29,10 +29,11 @@ export const postBudgetPlanApi = createApi({
     getPostBudgetPlan: builder.query<any, string>({
       query: (id: string) => `post-budget-plans/${id}`,
     }),
-    approvePostBudget: builder.mutation<any, string>({
-      query: (id: string) => ({
-        url: `post-budget-plans/approve-post-budget/${id}`,
+    approvePostBudget: builder.mutation<any, any>({
+      query: (data: { id: string; itemName: string }) => ({
+        url: `post-budget-plans/initiate-workflow`,
         method: 'POST',
+        body: { name: 'postBudgetApproval', ...data },
       }),
       invalidatesTags: ['post-budget-plan'],
     }),

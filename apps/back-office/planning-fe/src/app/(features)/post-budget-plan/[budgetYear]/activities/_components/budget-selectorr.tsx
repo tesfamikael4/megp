@@ -21,19 +21,20 @@ import { logger, notify } from '@megp/core-fe';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-export const BudgetSelector = () => {
+export const BudgetSelector = ({ activity }: any) => {
   const [opened, { close, open }] = useDisclosure(false);
   const [selectedContract, setSelectedContract] = useState<any[]>([]);
   const [value, setValue] = useState('');
   const { budgetYear, id } = useParams();
   // const { data } = useListByAppIdQuery(budgetYear as string);
   const [getBudget, { data, isLoading }] = useLazyListByIdQuery();
+  const [
+    getSelectedData,
+    { data: selectedData, isSuccess: isSelectedDataSuccess },
+  ] = useLazyListByIdQuery();
   const [addBudget] = useAddBudgetMutation();
-  const {
-    data: postBudget,
-    isLoading: isPostBudgetLoading,
-    isSuccess,
-  } = useGetPostBudgetPlanQuery(budgetYear as string);
+  const { data: postBudget, isLoading: isPostBudgetLoading } =
+    useGetPostBudgetPlanQuery(budgetYear as string);
 
   const config = {
     selectedItems: selectedContract,
@@ -168,15 +169,21 @@ export const BudgetSelector = () => {
   };
 
   useEffect(() => {
-    isSuccess &&
-      getBudget({
+    if (activity) {
+      getSelectedData({
         id: postBudget?.appId,
         collectionQuery: {
-          skip: 0,
-          take: 10,
+          where: [[{ column: 'id', operator: '=', value: activity.budgetId }]],
         },
       });
-  }, [getBudget, isSuccess, postBudget]);
+    }
+  }, [activity, getSelectedData, postBudget]);
+
+  useEffect(() => {
+    if (isSelectedDataSuccess && selectedData) {
+      setValue(selectedData.items[0].budgetCode);
+    }
+  }, [isSelectedDataSuccess, selectedData]);
   return (
     <Box pos="relative">
       <LoadingOverlay visible={isLoading || isPostBudgetLoading} />
