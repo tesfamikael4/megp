@@ -6,7 +6,7 @@ import { ActivityMechanization } from '@/app/(features)/_components/pr-mechaniza
 import { Items } from '@/app/(features)/_components/items';
 import TimelineTab from '@/app/(features)/_components/timeline-tab';
 import { Requisitioner } from '@/app/(features)/_components/requisitioner';
-import Despersment from '@/app/(features)/_components/dispersment';
+import { Disbursement } from '@/app/(features)/_components/disbursement';
 import { Documents } from '../../_components/documents';
 import { useRouter } from 'next/navigation';
 import { IconChevronLeft } from '@tabler/icons-react';
@@ -39,7 +39,7 @@ export default function PrDetailPage() {
                 <Tabs.Tab value="method">Method</Tabs.Tab>
                 <Tabs.Tab value="items">Items</Tabs.Tab>
                 <Tabs.Tab value="dispersement">Dispersement</Tabs.Tab>
-                <Tabs.Tab value="timeline">Timeline</Tabs.Tab>
+                {/* <Tabs.Tab value="timeline">Timeline</Tabs.Tab> */}
                 <Tabs.Tab value="documents">Document</Tabs.Tab>
                 <Tabs.Tab value="requisitioner">Requisitioner</Tabs.Tab>
               </Tabs.List>
@@ -65,7 +65,7 @@ export default function PrDetailPage() {
               </Tabs.Panel>
 
               <Tabs.Panel value="dispersement">
-                <Despersment />
+                <Disbursement />
               </Tabs.Panel>
 
               <Tabs.Panel value="timeline">

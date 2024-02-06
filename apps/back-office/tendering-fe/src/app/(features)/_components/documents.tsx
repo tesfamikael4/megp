@@ -188,7 +188,7 @@ export const Documents = ({
           originalname: file.name,
           contentType: file.type,
           name: name,
-          preBudgetPlanActivityId: id,
+          procurementRequisitionId: id,
         }).unwrap();
         await uploadFile(file, url.presignedUrl);
       } catch (error) {
