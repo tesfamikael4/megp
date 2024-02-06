@@ -13,7 +13,6 @@ RUN yarn global add turbo pnpm
 
 COPY . .
 RUN turbo prune --scope=infrastructure-be --docker
-RUN turbo prune --scope=@megp/shared-be --docker
 
 # Add lockfile and package.json's of isolated subworkspace
 FROM base AS installer
@@ -25,13 +24,7 @@ WORKDIR /app
 RUN yarn global add pnpm
 RUN yarn global add @nestjs/cli
 
-# Remove existing build artifacts
-RUN rimraf packages/be/shared/dist
-
-# Build the NestJS application
-RUN nest build packages/be/shared
-
-# RUN cd ./packages/be/shared && pnpm run build
+CMD [ "nest build", "packages/be/shared" ]
 
 # First install the dependencies (as they change less often)
 COPY .gitignore .gitignore
@@ -50,7 +43,7 @@ COPY turbo.json turbo.json
 # ENV TURBO_TOKEN=$TURBO_TOKEN
 
 RUN yarn turbo run build --filter=infrastructure-be...
-RUN yarn turbo run build --filter=@megp/shared-be...
+
 FROM base AS runner
 WORKDIR /app
 # Don't run production as root
