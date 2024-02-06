@@ -31,6 +31,7 @@ const defaultValues = {
   title: '',
   description: '',
   procurementType: null,
+  budgetYear: null,
 };
 
 export function FormDetail({ mode }: FormDetailProps) {
@@ -73,10 +74,9 @@ export function FormDetail({ mode }: FormDetailProps) {
     const sent = {
       ...data,
       organization: {},
-      budgetYear: {
-        budgetYearId: budget?.items?.budgetYearId,
-        budgetYear: budget?.items?.budgetYear,
-      },
+      budgetYear:
+        budget?.items?.[1]?.budgetYear !== undefined &&
+        budget?.items?.[1]?.budgetYear,
     };
     try {
       const result = await create(sent);
@@ -174,6 +174,29 @@ export function FormDetail({ mode }: FormDetailProps) {
           />
         )}
       />
+      {/* <Controller
+        name="budgetYear"
+        control={control}
+        render={({ field: { onChange, value } }) => (
+          <Select
+            name="name"
+            label="Budget Year"
+            value={value}
+            withAsterisk
+            error={
+              errors?.budgetYear ? errors?.budgetYear?.message?.toString() : ''
+            }
+            onChange={onChange}
+            data={budget?.items?.map((item) => {
+              logger.log(item);
+              return {
+                value: item?.budgetYear?.budgetYearId,
+                label: item?.budgetYear?.budgetYear,
+              };
+            })}
+          />
+        )}
+      /> */}
       <EntityButton
         mode={mode}
         data={selected}

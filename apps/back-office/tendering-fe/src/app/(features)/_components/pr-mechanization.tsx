@@ -133,22 +133,25 @@ export const ActivityMechanization = () => {
   }, [fundingSource]);
 
   useEffect(() => {
-    getmechanism({
-      id: id as string,
-      collectionQuery: undefined,
-    });
+    id !== undefined &&
+      getmechanism({
+        id: id as string,
+        collectionQuery: undefined,
+      });
   }, [getmechanism, id]);
   useEffect(() => {
-    trigger({
-      id: id.toString(),
-      collectionQuery: undefined,
-    });
+    id !== undefined &&
+      trigger({
+        id: id.toString(),
+        collectionQuery: undefined,
+      });
   }, [id, trigger]);
   useEffect(() => {
-    listById({
-      id: budget?.items[0]?.id?.toString(),
-      collectionQuery: { includes: ['procurementMechanisms'] },
-    });
+    budget?.[1]?.id !== undefined &&
+      listById({
+        id: budget?.items?.[0]?.id?.toString(),
+        collectionQuery: { includes: ['procurementMechanisms'] },
+      });
   }, [budget, budgetFeatched, listById]);
   useEffect(() => {
     triggerBudjet(undefined);
@@ -255,7 +258,7 @@ export const ActivityMechanization = () => {
               name={name}
               value={value}
               onChange={onChange}
-              label="Procurement Type"
+              label="Procurement Category"
               disabled={mode === 'detail' && true}
               data={
                 assignedActivity?.total !== 0 && assignedActivities
@@ -272,7 +275,7 @@ export const ActivityMechanization = () => {
               }
               className="w-full"
               withAsterisk
-              placeholder="Select Procurement Type"
+              placeholder="Select Procurement Category"
               error={
                 errors?.procurementType
                   ? errors?.procurementType?.message?.toString()

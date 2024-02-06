@@ -248,7 +248,7 @@ export function Activities() {
   useEffect(() => {
     if (opened && budgetFeatched) {
       listById({
-        id: budget?.items[0]?.id?.toString(),
+        id: budget?.items?.[1]?.id?.toString(),
         collectionQuery: { includes: ['procurementMechanisms'] },
       });
     }
