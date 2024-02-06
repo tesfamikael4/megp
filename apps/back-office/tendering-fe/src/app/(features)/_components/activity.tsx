@@ -348,14 +348,6 @@ export function Activities() {
           >
             Done
           </Button>
-          {isFilter && (
-            <Button
-              className='className="mr-2'
-              onClick={() => setIsFilter(false)}
-            >
-              Back
-            </Button>
-          )}
         </Group>
       </Modal>
     </Box>

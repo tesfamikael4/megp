@@ -29,10 +29,8 @@ export function Activities() {
   const [data, setData] = useState<any[]>([]);
   const [addActivity, { isLoading }] = useCreateMutation();
 
-  const [finalData, setFinalData] = useState<any[]>([]);
   const [trigger, { data: assignedActivity, isSuccess: assigned }] =
     useLazyListByIdQuery();
-  const [isFilter, setIsFilter] = useState<boolean>(false);
 
   const { id } = useParams();
   const [triggerBudjet, { data: budget, isSuccess: budgetFeatched }] =
@@ -96,7 +94,7 @@ export function Activities() {
 
   const ReadActivity = ({ record, entity }: { record: any; entity: any }) => {
     const { data: activity } = useReadQuery(
-      record.annualProcurementPlanActivityId.toString(),
+      record.annualProcurementPlanActivityId?.toString(),
     );
 
     return (
@@ -201,8 +199,8 @@ export function Activities() {
             [
               {
                 column: 'status',
-                value: 'Approved',
-                operator: '=',
+                value: 'Assigned',
+                operator: '!=',
               },
             ],
           ],
@@ -220,7 +218,7 @@ export function Activities() {
 
   useEffect(() => {
     if (assigned && assignedActivity) {
-      setFinalData(assignedActivity.items);
+      setModifiedData(assignedActivity.items);
     }
   }, [assigned, assignedActivity]);
 
@@ -233,7 +231,7 @@ export function Activities() {
       };
     });
 
-    setFinalData(modifyActivity);
+    setModifiedData(modifyActivity);
   };
 
   return (
@@ -250,8 +248,8 @@ export function Activities() {
         </Text>
         <ExpandableTable
           config={listConfig}
-          data={finalData ?? []}
-          total={finalData.length}
+          data={modifiedData ?? []}
+          total={modifiedData.length}
         />
         <Button
           className="mt-4 mb-4"
@@ -265,27 +263,19 @@ export function Activities() {
       <Modal
         opened={opened}
         onClose={close}
-        title={<Group className="font-bold"> Select activity</Group>}
+        title={<Group className="font-bold"> Select Activity</Group>}
         size={'xl'}
       >
         <ExpandableTable
           config={config}
-          data={modifiedData ?? []}
-          total={modifiedData?.length}
+          data={prActivity?.items ?? []}
+          total={prActivity?.total ?? 0}
         />
 
         <Group className="flex justify-end mt-4 mr-2">
           <Button className=" ml-auto" onClick={handleDone}>
             Done
           </Button>
-          {isFilter && (
-            <Button
-              className='className="mr-2'
-              onClick={() => setIsFilter(false)}
-            >
-              Back
-            </Button>
-          )}
         </Group>
       </Modal>
     </Box>

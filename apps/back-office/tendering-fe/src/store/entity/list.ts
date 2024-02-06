@@ -41,4 +41,8 @@ export const ENTITY_LIST: EntityStoreConfig[] = [
     entity: 'procurement-requisition-timelines',
     baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
   },
+  {
+    entity: 'procurement-requisition-disbursements',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
+  },
 ];
