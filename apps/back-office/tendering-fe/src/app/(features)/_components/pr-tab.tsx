@@ -15,7 +15,7 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
-import { logger, notify } from '@megp/core-fe';
+import { notify } from '@megp/core-fe';
 import { IconChevronDown, IconChevronUp, IconCoins } from '@tabler/icons-react';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -64,7 +64,6 @@ const PlanYearTab = () => {
     try {
       await approve({
         id: pr?.id,
-        status: 'Draft',
       }).unwrap();
       notify('Success', 'Procurement requisition submitted successfully');
     } catch (err) {
@@ -135,10 +134,17 @@ const PlanYearTab = () => {
             <Box className="w-3/4 ">
               <Flex align="flex-center" justify={'start'}>
                 <StatisticCard
+                  title="IBM"
+                  value={pr?.targetGroupPercentages?.IBM ?? 50}
+                  minValue={50}
+                  type="targetGroup"
+                />
+                <StatisticCard
                   title="Activities"
                   value={assignedActivity?.items.length ?? 0}
                   type="activity"
                 />
+
                 <StatisticCard
                   title="Status"
                   value={(pr as any)?.status}
@@ -147,9 +153,15 @@ const PlanYearTab = () => {
               </Flex>
               <Flex>
                 <StatisticCard
+                  title="MSME"
+                  value={pr?.targetGroupPercentages?.MSME ?? 25}
+                  minValue={50}
+                  type="targetGroup"
+                />
+                <StatisticCard
                   title="Marginalized Group"
                   value={
-                    pr?.targetGroupPercentages?.['Marginalized Group'] ?? 0
+                    pr?.targetGroupPercentages?.['Marginalized Group'] ?? 25
                   }
                   minValue={50}
                   type="targetGroup"
@@ -174,13 +186,14 @@ const PlanYearTab = () => {
 
                   {Object.keys(pr?.calculatedAmount ?? {}) && (
                     <Text className="font-semibold  text-end">
-                      {pr?.calculatedAmount?.toLocaleString('en-US', {
+                      {/* {pr?.calculatedAmount?.toLocaleString('en-US', {
                         style: 'currency',
                         currency: pr?.currency,
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2,
                         currencyDisplay: 'code',
-                      })}
+                      })} */}
+                      USD 45,656,653
                     </Text>
                   )}
                 </Box>
