@@ -667,7 +667,7 @@ export function Steps({ activityId }: { activityId: string }) {
                       ...data,
                       {
                         approvers: [...approvers],
-                        name,
+                        title: name,
                         id: data.length + 1,
                         type: 'custom',
                       },
