@@ -228,7 +228,7 @@ export const ActivityMechanization = () => {
               onChange={onChange}
               label="Procurement Method"
               data={[
-                'Request for Quotation (RFQ) ',
+                'Request for Quotation (RFQ)',
                 'National Competitive Bidding (NCB)',
                 'International Competitive Bidding (ICB) ',
                 'Restricted Tender',

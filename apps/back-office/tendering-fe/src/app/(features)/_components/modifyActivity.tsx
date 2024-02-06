@@ -23,6 +23,7 @@ import {
   useCreateMutation,
   useLazyListByIdQuery,
 } from '@/app/(features)/_api/pr-activity.api';
+import { useCreateMutation as useCreateMethodMutation } from '@/app/(features)/_api/mechanization.api';
 import { ExpandableTable } from './expandable-table';
 
 export function Activities() {
@@ -40,6 +41,7 @@ export function Activities() {
   const [trigger, { data: assignedActivity, isSuccess: assigned }] =
     useLazyListByIdQuery();
 
+  const [createMethod] = useCreateMethodMutation();
   const { id } = useParams();
   const [triggerBudjet, { data: budget, isSuccess: budgetFeatched }] =
     useLazyGetBudgetYearQuery();
@@ -153,11 +155,22 @@ export function Activities() {
   };
 
   const handleSave = async () => {
+    const method = {
+      procurementMethod: selected?.procurementMechanisms?.procurementMethod,
+      procurementType: selected?.procurementMechanisms?.procurementType,
+      fundingSource: selected?.procurementMechanisms?.fundingSource,
+      isOnline: selected?.procurementMechanisms?.isOnline,
+      targetGroup: selected?.procurementMechanisms?.targetGroup,
+      procurementRequisitionId: id,
+      donor: selected?.procurementMechanisms?.donor,
+      contract: selected?.procurementMechanisms?.contract,
+    };
     try {
       await addActivity({
         procurementRequisitionId: id?.toString(),
         annualProcurementPlanActivity: [`${selected.id}`],
       }).unwrap();
+      await createMethod(method).unwrap();
 
       notify('Success', 'Activity added successfully');
     } catch (err) {
