@@ -136,7 +136,7 @@ export default function WorkflowHandling({
 
       notifications.show({
         title: 'Success',
-        message: 'Approved successfully.',
+        message: 'Submitted for adjustment successfully.',
       });
     } catch (error) {
       notifications.show({
@@ -145,25 +145,6 @@ export default function WorkflowHandling({
       });
     }
   };
-
-  // const handleInitiate = async () => {
-  //   try {
-  //     await initiateWorkflow({
-  //       name: activityName,
-  //       activityId: activityId,
-  //       id: itemId,
-  //     }).unwrap();
-  //     notifications.show({
-  //       title: 'Success',
-  //       message: 'Workflow started succcesfully.',
-  //     });
-  //   } catch (error) {
-  //     notifications.show({
-  //       title: 'Error',
-  //       message: 'Error while initiating workflow.',
-  //     });
-  //   }
-  // };
 
   const handleGoTo = async (stepId, stepName) => {
     try {
@@ -216,26 +197,6 @@ export default function WorkflowHandling({
 
   return (
     <Flex gap="md">
-      {/* <Box className="w-1/2">
-        <Section title="Planning document" collapsible={false}>
-          <Accordion classNames={classes} className="pb-6">
-            {accordionData.map((item, index) => (
-              <Accordion.Item key={index} value={item.label}>
-                <Accordion.Control>{item.label}</Accordion.Control>
-                <Accordion.Panel>{item.content}</Accordion.Panel>
-              </Accordion.Item>
-            ))}
-          </Accordion>
-          <Button
-            onClick={async () => {
-              await handleInitiate();
-            }}
-            loading={isInitiating}
-          >
-            Initiate Workflow
-          </Button>
-        </Section>
-      </Box> */}
       <Box className="w-full">
         <Section title="Approval Workflow" collapsible={false}>
           <Flex gap="md">
