@@ -85,6 +85,9 @@ export class InstanceService extends EntityCrudService<Instance> {
       relations: {
         step: true,
       },
+      order: {
+        createdAt: 'DESC',
+      },
     });
     if (instance?.stepId) {
       instance.step = await this.repositoryStep.findOne({
