@@ -100,6 +100,7 @@ export class ApplicationExcutionService {
       throw new NotFoundException('Not Found');
     }
     const response = WorkflowInstanceResponse.toResponse(instance);
+    delete response.businessProcess;
     const priceRangeIds = instance.isrVendor?.areasOfBusinessInterest.map((item: any) => item.priceRange);
     let priceRanges = [];
     if (priceRangeIds.length > 0) {
@@ -111,7 +112,15 @@ export class ApplicationExcutionService {
     if (serviceData.service.key == ServiceKeyEnum.PROFILE_UPDATE) {
       const vendorInfo = await this.vendorService.getVendorByUserWithProfile(response.isrvendor.userId, serviceData.serviceId);
       if (vendorInfo?.ProfileInfo) {
-        response.profileUpdate = vendorInfo?.ProfileInfo[0];
+        const profileUpdate = vendorInfo?.ProfileInfo[0];
+        const shareholders = profileUpdate.profileData.shareHolders.map((item) => this.reduceAttributes(item));
+        profileUpdate.profileData.shareholders = shareholders;
+        const beneficialOwnership = profileUpdate.profileData.beneficialOwnership.map((item) => this.reduceAttributes(item));
+        profileUpdate.profileData.beneficialOwnership = beneficialOwnership;
+        const bankAccountDetails = profileUpdate.profileData.bankAccountDetails.map((item) => this.reduceAttributes(item));
+        profileUpdate.profileData.bankAccountDetails = bankAccountDetails;
+        response.profileUpdate = profileUpdate;
+
       }
       response.isrvendor.businessAreas = null;
       return response;
@@ -138,23 +147,27 @@ export class ApplicationExcutionService {
       const previousBusinessClass = await this.baService.getPreviousUpgradeService(instance.requestorId, business.category);
       const proposedBusinessclass = await this.baService.getProposedUpgradeService(instance.requestorId, business.category, instance.serviceId);
       response.upgrade = {
-        previousBusinessClass: {
-          category: previousBusinessClass.category,
-          approvedAt: previousBusinessClass.approvedAt,
-          expireDate: previousBusinessClass.expireDate,
-          valueFrom: previousBusinessClass.servicePrice.valueFrom,
-          valueTo: previousBusinessClass.servicePrice.valueTo != -1 ? previousBusinessClass.servicePrice.valueTo : 'infinity',
-        },
-        proposedBusinessClass: {
-          category: proposedBusinessclass.category,
-          valueFrom: proposedBusinessclass.servicePrice.valueFrom,
-          valueTo: proposedBusinessclass.servicePrice.valueTo != -1 ? proposedBusinessclass.servicePrice.valueTo : 'infinity',
-        }
+        category: previousBusinessClass.category,
+        approvedAt: previousBusinessClass.approvedAt,
+        expireDate: previousBusinessClass.expireDate,
+        valueFrom: previousBusinessClass.servicePrice.valueFrom,
+        valueTo: previousBusinessClass.servicePrice.valueTo != -1 ? previousBusinessClass.servicePrice.valueTo : 'infinity',
+        newCategory: proposedBusinessclass.category,
+        newValueFrom: proposedBusinessclass.servicePrice.valueFrom,
+        newValueTo: proposedBusinessclass.servicePrice.valueTo != -1 ? proposedBusinessclass.servicePrice.valueTo : 'infinity',
+
+        // proposedBusinessClass: {
+
+        // }
       }
     }
     response.isrvendor.businessAreas = null;
 
     return response;
+  }
+  reduceAttributes(object: any) {
+    const { key, tenantId, createdAt, deletedAt, updatedAt, vendorId, ...rest } = object;
+    return rest;
   }
 
   async pickTask(

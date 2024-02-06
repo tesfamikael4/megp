@@ -54,8 +54,8 @@ export class VendorRegistrationsController {
   //bug will be fixed
   @UseGuards(JwtGuard)
   @Get('get-isr-vendor-by-userId')
-  async getIsrVendorByuserId(@CurrentUser() userInfo: any) {
-    return await this.regService.getIsrVendorByUserId(userInfo.id);
+  async getIsrVendorByuserId(@CurrentUser() userInfo: any, @Query('flag') flag: string) {
+    return await this.regService.getIsrVendorByUserId(userInfo.id, flag);
   }
   @UseGuards(JwtGuard)
   @Get('get-isr-vendor-info-by-userId')

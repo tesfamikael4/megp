@@ -183,8 +183,8 @@ export class WorkflowInstanceResponse extends UpdateWorkflowInstanceDto {
         }
         businessInterests.push({
           category: bi.category,
-          lineOfBusiness: lobs,
           ...range,
+          lineOfBusiness: lobs,
         });
       }
       return businessInterests;
