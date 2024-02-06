@@ -113,7 +113,7 @@ const PlanningTab = ({ page }: { page: 'pre' | 'post' }) => {
         <Text size="sm">
           {`Are you sure you want to submit  APP ${
             (selectedYear as any)?.app.budgetYear
-          }?  (Pre-Budget)`}
+          }?  (${page == 'pre' ? 'Pre-Budget' : 'Post-Budget'})`}
         </Text>
       ),
       labels: { confirm: 'Yes', cancel: 'No' },
