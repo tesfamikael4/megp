@@ -20,7 +20,13 @@ export class PostBudgetPlanItemService extends ExtraCrudService<PostBudgetPlanIt
     super(repositoryPostBudgetPlanItems);
   }
 
-  async create(itemData: PostBudgetPlanItem): Promise<PostBudgetPlanItem> {
+  async create(
+    itemData: PostBudgetPlanItem,
+    req: any,
+  ): Promise<PostBudgetPlanItem> {
+    if (req?.user?.organization) {
+      itemData.organizationId = req.user.organization.id;
+    }
     const item = this.repositoryPostBudgetPlanItems.create(itemData);
     await this.repositoryPostBudgetPlanItems.save(item);
 
@@ -37,7 +43,13 @@ export class PostBudgetPlanItemService extends ExtraCrudService<PostBudgetPlanIt
     return item;
   }
 
-  async bulkCreate(itemData: BulkItemsDto): Promise<BulkItemsDto> {
+  async bulkCreate(
+    itemData: BulkItemsDto,
+    organizationId,
+  ): Promise<BulkItemsDto> {
+    itemData.items.forEach((item) => {
+      item.organizationId = organizationId;
+    });
     const items = this.repositoryPostBudgetPlanItems.create(
       itemData.items as any,
     );
@@ -53,7 +65,7 @@ export class PostBudgetPlanItemService extends ExtraCrudService<PostBudgetPlanIt
 
     if (activity.calculatedAmount > activity.estimatedAmount) {
       throw new HttpException(
-        'calculatedAmount is greater than estimatedAmount',
+        'calculated  amount is greater than estimated amount',
         430,
       );
     }
@@ -83,7 +95,7 @@ export class PostBudgetPlanItemService extends ExtraCrudService<PostBudgetPlanIt
 
     if (activity.calculatedAmount > activity.estimatedAmount) {
       throw new HttpException(
-        'calculatedAmount is greater than estimatedAmount',
+        'calculated amount is greater than estimated amount',
         430,
       );
     }
@@ -103,7 +115,7 @@ export class PostBudgetPlanItemService extends ExtraCrudService<PostBudgetPlanIt
 
     if (activity.calculatedAmount > activity.estimatedAmount) {
       throw new HttpException(
-        'calculatedAmount is greater than estimatedAmount',
+        'calculated amount is greater than estimated amount',
         430,
       );
     }

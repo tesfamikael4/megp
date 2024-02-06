@@ -5,6 +5,7 @@ import { PostBudgetPlanItemService } from '../services/post-budget-plan-items.se
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { ExtraCrudController } from 'src/shared/controller';
 import { BulkItemsDto } from 'src/modules/planning/dtos/pre-budget-plan-items.dto';
+import { CurrentUser } from 'src/shared/authorization';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'postBudgetPlanActivityId',
@@ -22,7 +23,13 @@ export class PostBudgetPlanItemController extends ExtraCrudController<PostBudget
   }
 
   @Post('bulk-create')
-  async bulkCreate(@Body() itemData: BulkItemsDto): Promise<BulkItemsDto> {
-    return this.postBudgetPlanItemService.bulkCreate(itemData);
+  async bulkCreate(
+    @Body() itemData: BulkItemsDto,
+    @CurrentUser() user: any,
+  ): Promise<BulkItemsDto> {
+    return this.postBudgetPlanItemService.bulkCreate(
+      itemData,
+      user.organization.id,
+    );
   }
 }
