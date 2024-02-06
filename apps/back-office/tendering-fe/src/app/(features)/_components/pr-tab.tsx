@@ -67,11 +67,7 @@ const PlanYearTab = () => {
       }).unwrap();
       notify('Success', 'Procurement requisition submitted successfully');
     } catch (err) {
-      if (err.status === 430) {
-        notify('Error', err.data.message);
-      } else {
-        notify('Error', 'Something went wrong');
-      }
+      notify('Error', 'Something went wrong');
     }
   };
 

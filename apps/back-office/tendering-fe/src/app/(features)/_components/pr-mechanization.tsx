@@ -232,7 +232,7 @@ export const ActivityMechanization = () => {
                 'National Competitive Bidding (NCB)',
                 'International Competitive Bidding (ICB) ',
                 'Restricted Tender',
-                'Single Source Procurement ',
+                'Single Source Procurement',
                 'Request for Proposal (RFP) ',
                 'Two Stage Bidding',
                 'Framework Procurement',
