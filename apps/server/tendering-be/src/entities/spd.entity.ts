@@ -6,6 +6,8 @@ import { Audit } from 'src/shared/entities';
 import { SpdPreferenceMargin } from './spd-preference-margin.entity';
 import { SpdRequiredDocumentaryEvidence } from './spd-required-documentary-evidence.entity';
 import { SpdSetting } from './spd-setting.entity';
+import { SpdQualification } from './spd-qualification.entity';
+import { SpdAdministrativeCompliance } from './spd-administrative-compliance.entity';
 
 @Entity({ name: 'spd' })
 export class Spd extends Audit {
@@ -53,6 +55,22 @@ export class Spd extends Audit {
     onDelete: 'CASCADE',
   })
   bds: SpdBds[];
+
+  @OneToMany(() => SpdQualification, (qualification) => qualification.spd, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  qualifications: SpdQualification[];
+
+  @OneToMany(
+    () => SpdAdministrativeCompliance,
+    (administrative) => administrative.spd,
+    {
+      cascade: true,
+      onDelete: 'CASCADE',
+    },
+  )
+  spdAdministrativeCompliances: SpdAdministrativeCompliance[];
 
   @OneToMany(() => SpdTechnicalScoring, (scoring) => scoring.spd, {
     cascade: true,

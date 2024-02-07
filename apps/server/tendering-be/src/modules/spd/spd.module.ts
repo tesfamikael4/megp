@@ -7,9 +7,19 @@ import { SpdTechnicalScoringService } from './service/spd-technical-scoring.serv
 import { SpdBdsService } from './service/spd-bds.service';
 import { SpdBdsController } from './controller/spd-bds.controller';
 import { SpdSccController } from './controller/spd-scc.controller';
-
+import { SpdQualificationService } from './service/spd-qualification.service';
+import { SpdQualificationController } from './controller/spd-qualification.controller';
+import { SpdAdministrativeComplianceService } from './service/spd-administrative-compliance.service';
+import { SpdAdministrativeComplianceController } from './controller/spd-administrative-compliance.controller';
 import { SpdTechnicalScoringController } from './controller/spd-technical-scoring.controller';
-import { SpdBds, SpdScc, SpdTechnicalScoring, Spd } from 'src/entities';
+import {
+  SpdBds,
+  SpdScc,
+  SpdTechnicalScoring,
+  Spd,
+  SpdQualification,
+  SpdAdministrativeCompliance,
+} from 'src/entities';
 import { SpdPreferenceMarginController } from './controller/spd-preference-margin.controller';
 import { SpdRequiredDocumentaryEvidencesController } from './controller/spd-required-documentary-evidence.controller';
 import { SpdSettingsController } from './controller/spd-setting.controller';
@@ -28,6 +38,8 @@ import { MinIOModule } from 'src/shared/min-io/min-io.module';
       Spd,
       SpdBds,
       SpdScc,
+      SpdQualification,
+      SpdAdministrativeCompliance,
       SpdTechnicalScoring,
       SpdPreferenceMargin,
       SpdRequiredDocumentaryEvidence,
@@ -40,6 +52,8 @@ import { MinIOModule } from 'src/shared/min-io/min-io.module';
     SpdService,
     SpdSccService,
     SpdBdsService,
+    SpdQualificationService,
+    SpdAdministrativeComplianceService,
     SpdTechnicalScoringService,
     SpdPreferenceMarginService,
     SpdRequiredDocumentaryEvidenceService,
@@ -49,6 +63,8 @@ import { MinIOModule } from 'src/shared/min-io/min-io.module';
     SpdController,
     SpdBdsController,
     SpdSccController,
+    SpdQualificationController,
+    SpdAdministrativeComplianceController,
     SpdTechnicalScoringController,
     SpdPreferenceMarginController,
     SpdRequiredDocumentaryEvidencesController,
