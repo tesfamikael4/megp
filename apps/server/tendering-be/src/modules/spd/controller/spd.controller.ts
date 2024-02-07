@@ -1,13 +1,15 @@
 import {
   Body,
   Controller,
+  Get,
+  Param,
   Post,
   Req,
   Res,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { EntityCrudController } from 'src/shared/controller';
 import { EntityCrudOptions } from 'src/shared/types/crud-option.type';
 import { SpdService } from '../service/spd.service';
@@ -30,17 +32,23 @@ export class SpdController extends EntityCrudController<Spd>(options) {
     super(spdService);
   }
 
-  @Post('/upload-spd')
+  @Post('/upload-spd/:id')
   @AllowAnonymous()
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileInterceptor('file'))
-  async uploadSPDDocument(@UploadedFile() file: Express.Multer.File) {
-    return this.spdService.uploadSPDDocument(file);
+  async uploadSPDDocument(
+    @Param('id') id: string,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    return this.spdService.uploadSPDDocument(id, file);
   }
 
-  @Post('/download-spd')
+  @Get('/download-spd/:id')
   @AllowAnonymous()
-  async downloadSPDDocument(@Body() file: any, @Res() response: Response) {
-    return this.spdService.downloadSPDDocument(file, response);
+  async downloadSPDDocument(
+    @Param('id') id: string,
+    @Res() response: Response,
+  ) {
+    return this.spdService.downloadSPDDocument(id, response);
   }
 }

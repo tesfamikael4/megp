@@ -18,23 +18,39 @@ export class SpdService extends EntityCrudService<Spd> {
     super(spdRepository);
   }
 
-  async uploadSPDDocument(file: Express.Multer.File) {
+  async uploadSPDDocument(id: string, file: Express.Multer.File) {
     try {
+      const spd = await this.findOne(id);
+      if (!spd) {
+        throw new Error('SPD not found');
+      }
+
       const result = await this.docxService.validateDocument(file.buffer, [
         'procuringEntity',
       ]);
       if (result.length != 0) {
         return result;
       }
-      return await this.minIOService.upload(file);
+      const document = await this.minIOService.upload(file);
+
+      await this.spdRepository.update(spd.id, { document });
+
+      return document;
     } catch (error) {
       throw error;
     }
   }
 
-  async downloadSPDDocument(fileInfo: any, response: Response) {
+  async downloadSPDDocument(id: string, response: Response) {
     try {
-      return await this.minIOService.download(fileInfo, response);
+      const spd = await this.findOne(id);
+      if (!spd) {
+        throw new Error('SPD not found');
+      }
+      if (!spd.document) {
+        throw new Error('SPD Document not found');
+      }
+      return await this.minIOService.download(spd.document, response);
     } catch (error) {
       throw error;
     }
