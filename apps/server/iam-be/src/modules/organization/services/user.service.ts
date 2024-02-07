@@ -36,21 +36,7 @@ export class UserService extends ExtraCrudService<User> {
       itemData.email = itemData.email.toLowerCase();
     }
 
-    const userExists = await this.repositoryUser.findOne({
-      where: {
-        organizationId: itemData.organizationId,
-        account: {
-          email: itemData.email,
-        },
-      },
-    });
-
-    if (userExists) {
-      throw new BadRequestException('Conflict');
-    }
-
-    const account =
-      await this.accountsService.createBackOfficeAccount(itemData);
+    const account = await this.getOrCreateAccount(itemData);
 
     itemData.accountId = account.id;
     const item = this.repositoryUser.create(itemData);
@@ -200,21 +186,7 @@ export class UserService extends ExtraCrudService<User> {
       itemData.email = itemData.email.toLowerCase();
     }
 
-    const userExists = await this.repositoryUser.findOne({
-      where: {
-        organizationId: itemData.organizationId,
-        account: {
-          email: itemData.email,
-        },
-      },
-    });
-
-    if (userExists) {
-      throw new BadRequestException('Conflict');
-    }
-
-    const account =
-      await this.accountsService.createBackOfficeAccount(itemData);
+    const account = await this.getOrCreateAccount(itemData);
 
     itemData.accountId = account.id;
     const item = this.repositoryUser.create(itemData);
@@ -239,6 +211,35 @@ export class UserService extends ExtraCrudService<User> {
     }
 
     return await this.repositoryUser.save(item);
+  }
+
+  private async getOrCreateAccount(itemData: CreateUserDto) {
+    let userExists = await this.repositoryUser.findOne({
+      where: {
+        organizationId: itemData.organizationId,
+        account: {
+          email: itemData.email,
+        },
+      },
+    });
+
+    if (process.env.PROJECT_NAME == 'm-egp') {
+      userExists = await this.repositoryUser.findOne({
+        where: {
+          account: {
+            email: itemData.email,
+          },
+        },
+      });
+    }
+
+    if (userExists && !!itemData.email) {
+      throw new BadRequestException('Conflict');
+    }
+
+    const account =
+      await this.accountsService.createBackOfficeAccount(itemData);
+    return account;
   }
 
   async sendInvitation(input: InviteUserDto): Promise<any> {
