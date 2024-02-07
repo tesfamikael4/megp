@@ -22,6 +22,7 @@ export const preBudgetPlanApi = createApi({
     }),
     getPreBudgetPlan: builder.query<any, string>({
       query: (id: string) => `pre-budget-plans/${id}`,
+      providesTags: ['pre-budget-plan'],
     }),
     getPreBudgetPlanAnalytics: builder.query<any, string>({
       query: (id: string) => `pre-budget-plans/get-analytics/${id}`,
