@@ -44,6 +44,9 @@ export class Spd extends Audit {
   @Column()
   isActive: boolean;
 
+  @Column({ type: 'jsonb', nullable: true })
+  document: any;
+
   @OneToMany(() => SpdScc, (scc) => scc.spd, {
     cascade: true,
     onDelete: 'CASCADE',
