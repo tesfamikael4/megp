@@ -28,6 +28,7 @@ export const postBudgetPlanApi = createApi({
     }),
     getPostBudgetPlan: builder.query<any, string>({
       query: (id: string) => `post-budget-plans/${id}`,
+      providesTags: ['post-budget-plan'],
     }),
     approvePostBudget: builder.mutation<any, any>({
       query: (data: { id: string; itemName: string }) => ({
