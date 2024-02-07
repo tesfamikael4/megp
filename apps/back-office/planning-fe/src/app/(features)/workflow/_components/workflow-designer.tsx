@@ -735,7 +735,7 @@ export function Steps({ activityId }: { activityId: string }) {
       const reformattedData = data.map((item, index) => {
         return {
           approvers: item.approvers,
-          title: item.name,
+          title: item.title,
           order: index + 1,
           type: item.type,
           activityId: activityId,
