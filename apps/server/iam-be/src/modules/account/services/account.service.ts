@@ -592,8 +592,10 @@ export class AccountsService {
       return await this.createNewAccount(input, AccountStatusEnum.PENDING);
     }
 
-    let account: Account = await this.repository.findOneByOrFail({
-      email: input.email,
+    let account: Account = await this.repository.findOne({
+      where: {
+        email: input.email,
+      },
     });
 
     if (!account) {
