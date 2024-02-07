@@ -10,6 +10,7 @@ import {
 import { WorkflowInstanceEntity } from './workflow-instance.entity';
 import { BusinessAreaEntity } from './business-area.entity';
 import { PreferentialTreatmentsEntity } from './preferential-treatment.entity';
+import { InvoiceEntity } from './invoice.entity';
 @Entity({ name: 'bp_services' })
 export class BpServiceEntity extends Audit {
   @PrimaryGeneratedColumn('uuid')
@@ -26,6 +27,11 @@ export class BpServiceEntity extends Audit {
     cascade: true,
     onDelete: 'CASCADE',
   })
+  @OneToMany(() => InvoiceEntity, (inv) => inv.service, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  invoices: InvoiceEntity[]
   instances: WorkflowInstanceEntity[];
   @OneToMany(
     () => BusinessProcessEntity,

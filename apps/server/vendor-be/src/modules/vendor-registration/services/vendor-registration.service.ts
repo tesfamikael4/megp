@@ -970,9 +970,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       throw error;
     }
   }
-
-
-
   async getVendorByUserWithPreferntial(
     userId: string,
     serviceId: string,

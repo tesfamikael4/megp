@@ -69,12 +69,7 @@ export class WorkflowInstanceEntity extends Audit {
   )
   taskTrackers: TaskTrackerEntity[];
 
-  // @ManyToOne(() => ServicePrice, (price) => price.workflowInstances, {
-  //   onUpdate: 'CASCADE',
-  //   onDelete: 'CASCADE',
-  // })
-  // @JoinColumn({ name: 'pricingId' })
-  // price: ServicePrice;
+
 
   @ManyToOne(() => IsrVendorsEntity, (v) => v.instances)
   @JoinColumn({ name: 'requestorId' })

@@ -16,6 +16,7 @@ import { PreferentialTreatmentModule } from './modules/preferentials/preferencia
 import { ScheduleModule } from '@nestjs/schedule';
 import { TransactionInterceptor } from './shared/interceptors';
 import { APP_INTERCEPTOR } from '@nestjs/core';
+import { ReportModule } from './modules/report/report.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -34,6 +35,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
     CertificateModule,
     NotificationModule,
     PreferentialTreatmentModule,
+    ReportModule
   ],
   controllers: [],
   providers: [
@@ -43,4 +45,4 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
     },
   ],
 })
-export class AppModule {}
+export class AppModule { }

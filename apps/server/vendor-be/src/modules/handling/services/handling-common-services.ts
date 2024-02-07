@@ -164,5 +164,33 @@ export class HandlingCommonService {
     months += today.getMonth();
     return months;
   }
+  formatPriceRange(priceRange: any) {
+    let valueTo = '';
+    let valueFrom = '';
+    const curruncy = priceRange.currency ? priceRange.currency : 'MK'; //currency
+    if (priceRange.valueFrom >= 1000000000) {
+      valueFrom = (priceRange.valueFrom / 1000000000).toFixed(0);
+      if (priceRange.valueTo >= 1000000000) {
+        valueTo = (priceRange.valueTo / 1000000000).toFixed(0);
+        valueTo = ' - ' + curruncy + valueTo + ' billion';
+      }
+      return 'Above ' + curruncy + valueFrom + ' billion ' + valueTo;
+    } else if (priceRange.valueFrom >= 1000000) {
+      if (priceRange.valueTo >= 1000000000) {
+        valueTo = (priceRange.valueTo / 1000000000).toFixed(0);
+        valueTo = ' - ' + curruncy + valueTo + ' billion';
+      } else if (priceRange.valueTo >= 1000000) {
+        valueTo = (priceRange.valueTo / 1000000).toFixed(0);
+        valueTo = ' - ' + curruncy + valueTo + ' million';
+      }
+      const valueFrom = (priceRange.valueFrom / 1000000).toFixed(0);
+      return 'Above ' + curruncy + valueFrom + ' million ' + valueTo;
+    } else if (priceRange.valueFrom >= 1) {
+      valueTo = (priceRange.valueTo / 1000000).toFixed(0);
+      valueTo = curruncy + valueTo + ' million';
+      return 'Up to ' + curruncy + valueTo;
+    }
+    return priceRange.valueFrom.toString();
+  }
 
 }
