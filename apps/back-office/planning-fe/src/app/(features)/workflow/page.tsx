@@ -18,7 +18,7 @@ export default function WorkflowPage() {
   return (
     <Stack>
       {activites?.items.map((e, index) => (
-        <Section key={index} title={e.name} subTitle="Steps" defaultCollapsed>
+        <Section key={index} title={e.title} subTitle="Steps" defaultCollapsed>
           <Steps activityId={e.id} />
         </Section>
       ))}
