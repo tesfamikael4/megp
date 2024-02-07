@@ -1,8 +1,10 @@
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { BusinessAreaEntity } from './business-area.entity';
+import { BpServiceEntity } from './bp-service.entity';
+import { Audit } from 'src/shared/entities';
 
 @Entity({ name: 'invoice' })
-export class InvoiceEntity {
+export class InvoiceEntity extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
   @Column({ type: 'uuid', nullable: true })
@@ -31,8 +33,6 @@ export class InvoiceEntity {
   createdOn: Date;
   @Column()
   paymentStatus: string;
-  // @Column({ nullable: true, unique: true })
-  // reference: string
   @Column()
   remark: string;
   @Column({ nullable: true })
@@ -40,4 +40,6 @@ export class InvoiceEntity {
   @OneToOne(() => BusinessAreaEntity, (ba) => ba.invoice)
   @JoinColumn({ name: 'businessAreaId' })
   businessArea: BusinessAreaEntity
+  @ManyToOne(() => BpServiceEntity, (service) => service.invoices)
+  service: BpServiceEntity
 }
