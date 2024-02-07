@@ -20,7 +20,13 @@ const budgetSchema: ZodType<Partial<any>> = z.object({
     required_error: '4th Quarter is required',
   }),
 });
-export const BudgetForm = ({ data, onDone, onRemove, disableRemove }: any) => {
+export const BudgetForm = ({
+  data,
+  onDone,
+  onRemove,
+  disableRemove,
+  disableFields,
+}: any) => {
   const {
     handleSubmit,
     formState: { errors },
@@ -57,6 +63,7 @@ export const BudgetForm = ({ data, onDone, onRemove, disableRemove }: any) => {
                 className="w-full"
                 // type="number"
                 error={errors?.quarter1?.message?.toString() ?? ''}
+                disabled={disableFields}
               />
             )}
           />
@@ -73,6 +80,7 @@ export const BudgetForm = ({ data, onDone, onRemove, disableRemove }: any) => {
                 className="w-full"
                 // type="number"
                 error={errors?.quarter2?.message?.toString() ?? ''}
+                disabled={disableFields}
               />
             )}
           />
@@ -91,6 +99,7 @@ export const BudgetForm = ({ data, onDone, onRemove, disableRemove }: any) => {
                 className="w-full"
                 // type="number"
                 error={errors?.quarter3?.message?.toString() ?? ''}
+                disabled={disableFields}
               />
             )}
           />
@@ -107,16 +116,23 @@ export const BudgetForm = ({ data, onDone, onRemove, disableRemove }: any) => {
                 className="w-full"
                 // type="number"
                 error={errors?.quarter4?.message?.toString() ?? ''}
+                disabled={disableFields}
               />
             )}
           />
         </Flex>
 
         <Group justify="end">
-          <Button color="red" onClick={onRemove} disabled={disableRemove}>
+          <Button
+            color="red"
+            onClick={onRemove}
+            disabled={disableRemove || disableFields}
+          >
             Remove
           </Button>
-          <Button onClick={handleSubmit(onDone)}>Done</Button>
+          <Button onClick={handleSubmit(onDone)} disabled={disableFields}>
+            Done
+          </Button>
         </Group>
       </Stack>
     </div>

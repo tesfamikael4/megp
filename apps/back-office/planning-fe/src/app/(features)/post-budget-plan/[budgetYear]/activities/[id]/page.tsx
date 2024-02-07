@@ -11,10 +11,16 @@ import { Requisitioner } from '@/app/(features)/_components/requisitioner';
 import { IconChevronLeft } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useReadQuery } from '../_api/activities.api';
+import { useGetPostBudgetPlanQuery } from '@/store/api/post-budget-plan/post-budget-plan.api';
 
 export default function NewActivity() {
   const { budgetYear, id } = useParams();
+  const { data: postBudget } = useGetPostBudgetPlanQuery(budgetYear as string);
   const { data: activity } = useReadQuery(id as string);
+
+  const disableFields = postBudget
+    ? postBudget.status != 'Draft' && postBudget.status != 'Adjust'
+    : false;
 
   const router = useRouter();
   return (
@@ -47,29 +53,33 @@ export default function NewActivity() {
           </Tabs.List>
 
           <Tabs.Panel value="identification" className="pt-2">
-            <FormDetail mode="detail" page="post" />
+            <FormDetail
+              mode="detail"
+              page="post"
+              disableFields={disableFields}
+            />
           </Tabs.Panel>
           <Tabs.Panel value="method" className="pt-2">
-            <ActivityMechanization page="post" />
+            <ActivityMechanization page="post" disableFields={disableFields} />
           </Tabs.Panel>
 
           <Tabs.Panel value="items">
-            <Items page="post" />
+            <Items page="post" disableFields={disableFields} />
           </Tabs.Panel>
 
           <Tabs.Panel value="documents">
-            <Documents />
+            <Documents disableFields={disableFields} />
           </Tabs.Panel>
 
           <Tabs.Panel value="timeline">
-            <TimelineTab page="post" />
+            <TimelineTab page="post" disableFields={disableFields} />
           </Tabs.Panel>
 
           <Tabs.Panel value="budget">
-            <BudgetTab />
+            <BudgetTab disableFields={disableFields} />
           </Tabs.Panel>
           <Tabs.Panel value="requisitioner">
-            <Requisitioner page="post" />
+            <Requisitioner page="post" disableFields={disableFields} />
           </Tabs.Panel>
         </Tabs>
       </Section>

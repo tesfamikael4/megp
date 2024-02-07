@@ -189,6 +189,7 @@ export default function DetailPage() {
         color: 'green',
       });
       close();
+      onRequestChange({ skip: 0, take: 10 });
     } catch (err) {
       logger.log(err);
       notifications.show({
