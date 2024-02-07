@@ -9,6 +9,7 @@ import { Requisitioner } from './requisitioner';
 import { Timeline } from './timeline';
 import { Document } from './document';
 import { useGetWorkflowInstanceQuery } from '@/store/api/workflow/workflow.api';
+import { Budget } from './budget';
 
 export function PlanOverview() {
   // const budgetYear = '0f241dbd-3aa9-40b9-9e27-8f8b644d8174';
@@ -96,7 +97,10 @@ export function PlanOverview() {
                     <Accordion.Item value={'Budget'} className="bg-white">
                       <Accordion.Control>Budget</Accordion.Control>
                       <Accordion.Panel>
-                        {/* <ActivityMechanization activityId={activity.id} /> */}
+                        <Budget
+                          activity={activity}
+                          postBudgetId={workflowInstance.itemId}
+                        />
                       </Accordion.Panel>
                     </Accordion.Item>
 

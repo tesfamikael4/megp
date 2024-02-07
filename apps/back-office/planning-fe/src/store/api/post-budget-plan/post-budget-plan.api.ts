@@ -15,7 +15,7 @@ export const postBudgetPlanApi = createApi({
     process.env.NEXT_PUBLIC_PLANNING_API ?? '/planning/api/',
   ),
   endpoints: (builder) => ({
-    getPostBudgetPlans: builder.query<any, null>({
+    getPostBudgetPlans: builder.query<any, any>({
       query: (collectionQuery) => {
         let q = '';
         if (collectionQuery) {
