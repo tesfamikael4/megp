@@ -21,7 +21,7 @@ import { logger, notify } from '@megp/core-fe';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-export const BudgetSelector = ({ activity }: any) => {
+export const BudgetSelector = ({ activity, disableFields }: any) => {
   const [opened, { close, open }] = useDisclosure(false);
   const [selectedContract, setSelectedContract] = useState<any[]>([]);
   const [value, setValue] = useState('');
@@ -162,7 +162,11 @@ export const BudgetSelector = ({ activity }: any) => {
         notify('Success', 'Saved Successfully');
       } catch (err) {
         logger.log({ err });
-        notify('Error', 'Something went wrong');
+        if (err.status === 430) {
+          notify('Error', err.data.message);
+        } else {
+          notify('Error', 'Something went wrong');
+        }
       }
       close();
     }
@@ -194,6 +198,7 @@ export const BudgetSelector = ({ activity }: any) => {
           readOnly
           value={value}
           onClick={open}
+          disabled={disableFields}
         />
       </Flex>
 
@@ -228,7 +233,9 @@ export const BudgetSelector = ({ activity }: any) => {
       </Modal>
 
       <Group justify="end" className="mt-2">
-        <Button onClick={onSubmit}>Save</Button>
+        <Button onClick={onSubmit} disabled={disableFields}>
+          Save
+        </Button>
       </Group>
     </Box>
   );

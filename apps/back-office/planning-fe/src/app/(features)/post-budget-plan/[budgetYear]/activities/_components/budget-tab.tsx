@@ -21,7 +21,7 @@ import {
 import { ExpandableTable } from '@/app/(features)/_components/expandable-table';
 import { BudgetForm } from './budget-form';
 
-export const BudgetTab = () => {
+export const BudgetTab = ({ disableFields }: { disableFields?: boolean }) => {
   const [getActivity, { data, isLoading }] = useLazyReadQuery();
   const [createDisbursement, { isLoading: isDisbursementCreating }] =
     useCreatePostBudgetDisbursementMutation();
@@ -55,6 +55,7 @@ export const BudgetTab = () => {
     expandedRowContent: (record) => {
       return (
         <BudgetForm
+          disableFields={disableFields}
           data={record}
           onDone={(data) => {
             const amount =
@@ -236,7 +237,7 @@ export const BudgetTab = () => {
       <LoadingOverlay
         visible={isLoading || isDisbursementLoading || isGetWithAppLoading}
       />
-      <BudgetSelector activity={data} />
+      <BudgetSelector activity={data} disableFields={disableFields} />
 
       <Box className="mt-5">
         <Divider label="Disbursement" my="lg" />
