@@ -36,7 +36,7 @@ const Period = ({ getValue, row: { index } }: any) => {
       {index == 0 ? (
         <TextInput rightSection="Days" disabled value="NA" />
       ) : (
-        <NumberInput value={initialValue} rightSection="Days" disabled />
+        <TextInput value={initialValue} rightSection="Days" disabled />
       )}
     </>
   );
