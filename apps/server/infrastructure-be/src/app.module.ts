@@ -14,6 +14,7 @@ import { DataSeeder } from './modules/seeders/data.seeder';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { RuleModule } from './modules/rule/rule.module';
 import { NotificationModule } from './modules/notification/notification.module';
+import { NotesModule } from './modules/notes-be/notes.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { NotificationModule } from './modules/notification/notification.module';
     WorkflowModule,
     RuleModule,
     NotificationModule,
+    NotesModule,
   ],
   providers: [
     DataSeeder,
