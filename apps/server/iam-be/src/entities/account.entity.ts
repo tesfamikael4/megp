@@ -23,7 +23,7 @@ export class Account extends Audit {
   @Column({ type: 'text', nullable: true })
   password: string;
 
-  @Column({ type: 'text', unique: true })
+  @Column({ type: 'text', nullable: true, unique: true })
   email: string;
 
   @Column({ type: 'text' })

@@ -17,6 +17,7 @@ import { ExtraCrudController } from 'src/shared/controller/extra-crud.controller
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { decodeCollectionQuery } from 'src/shared/collection-query/query-mapper';
 import { DataResponseFormat } from 'src/shared/api-data';
+import { AllowAnonymous } from 'src/shared/authorization';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'organizationId',
@@ -90,6 +91,7 @@ export class UserController extends ExtraCrudController<User>(options) {
 
   @Post('create-organization-admin')
   @ApiBody({ type: CreateUserDto })
+  @AllowAnonymous()
   async createOrganizationAdmin(@Body() itemData: CreateUserDto): Promise<any> {
     return this.userService.createOrganizationAdmin(itemData);
   }

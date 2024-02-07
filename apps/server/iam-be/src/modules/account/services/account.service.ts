@@ -223,6 +223,11 @@ export class AccountsService {
 
   public async login(body: LoginDto): Promise<LoginResponseDto | never> {
     let { username }: LoginDto = body;
+
+    if (!username) {
+      throw new HttpException('something_went_wrong', HttpStatus.BAD_REQUEST);
+    }
+
     username = username.toLocaleLowerCase();
 
     const password = body.password;
@@ -583,8 +588,12 @@ export class AccountsService {
   }
 
   async createBackOfficeAccount(input: any) {
-    let account: Account = await this.repository.findOne({
-      where: { email: input.email },
+    if (!input.email) {
+      return await this.createNewAccount(input, AccountStatusEnum.PENDING);
+    }
+
+    let account: Account = await this.repository.findOneByOrFail({
+      email: input.email,
     });
 
     if (!account) {

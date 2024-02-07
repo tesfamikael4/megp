@@ -28,10 +28,6 @@ export class CreateUserDto {
 
   @ApiProperty()
   @IsString()
-  fullName: string;
-
-  @ApiProperty()
-  @IsString()
   @IsOptional()
   email: string;
 
