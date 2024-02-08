@@ -1,5 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { EntityCrudService } from 'src/shared/service';
 import { Spd } from 'src/entities/spd.entity';
@@ -26,10 +26,11 @@ export class SpdService extends EntityCrudService<Spd> {
       }
 
       const result = await this.docxService.validateDocument(file.buffer, [
-        'procuringEntity',
+        'public_body',
       ]);
+
       if (result.length != 0) {
-        return result;
+        throw new HttpException(result, HttpStatus.BAD_REQUEST);
       }
       const document = await this.minIOService.upload(file);
 
