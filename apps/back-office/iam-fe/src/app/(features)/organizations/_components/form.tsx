@@ -6,7 +6,7 @@ import { useReadQuery, useInviteOaMutation } from '../_api/custom.api';
 import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { User } from '@/models/user/user';
-import { notify } from '@megp/core-fe';
+import { logger, notify } from '@megp/core-fe';
 import { EntityButton } from '@megp/entity';
 
 interface FormDetailProps {
@@ -28,6 +28,7 @@ const userSchema: ZodType<Partial<User>> = z.object({
     .string()
     .email({ message: 'Must be a valid email' })
     .optional()
+    .nullable()
     .or(z.literal('')),
 });
 
@@ -55,6 +56,7 @@ export function FormDetail({ mode, handleCloseModal }: FormDetailProps) {
     try {
       const result: any = await create({
         ...data,
+        email: data.email === '' ? null : data.email,
         fullName: `${data.firstName} ${data.lastName}`,
         organizationId: id?.toString(),
       });

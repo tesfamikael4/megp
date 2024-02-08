@@ -60,7 +60,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
         },
         {
           id: 'action',
-          header: 'Action',
+          header: () => <p className="ml-auto">Action</p>,
           accessorKey: 'isActive',
           cell: (info) => <Restore original={info.row.original} />,
         },

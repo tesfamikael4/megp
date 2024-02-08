@@ -28,7 +28,7 @@ const AddPermissionModal = () => {
 
   const relationConfig: RelationConfig<any> = {
     title: `${
-      selected?.isSystemRole ? 'Permissions' : 'Permission assignment'
+      selected?.isSystemRole ? 'Permissions' : 'Permission Assignment'
     } `,
     columns: [
       {
@@ -108,7 +108,7 @@ const AddPermissionModal = () => {
         setIsCollapsed={setIsCollapsed}
       />
       <Modal
-        title="Permission assignment"
+        title="Permission Assignment"
         opened={isModalOpen}
         onClose={handleCloseModal}
         size={'xl'}

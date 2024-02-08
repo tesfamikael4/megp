@@ -1,5 +1,4 @@
 'use client';
-
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Divider,
@@ -13,7 +12,7 @@ import {
 import { Controller, useForm } from 'react-hook-form';
 import { z, ZodType } from 'zod';
 import { Select } from '@mantine/core';
-import { useSetAddressMutation } from '../_api/adress.api';
+import { useSetAddressMutation } from '@/app/(features)/my-organization/_api/adress.api';
 import { OrganizationProfile } from '@/models/organization-profile';
 import { EntityButton } from '@megp/entity';
 import countryCodes from './country-codes.json';
@@ -85,10 +84,7 @@ const OrganizationAdressForm = () => {
         ),
       }),
       postalCode: z.string(),
-      email: z
-        .string()
-        .min(1, { message: 'This field required.' })
-        .email('This is not a valid email.'),
+      email: z.string().email('This is not a valid email.'),
 
       mobileNumber: z.object({
         countryCode: z.string().default('MW'),
@@ -295,7 +291,7 @@ const OrganizationAdressForm = () => {
         />
       </Group>
 
-      <Text fw={500}>Mobile number</Text>
+      <Text fw={500}>Mobile Number</Text>
 
       <Flex>
         <Controller
@@ -325,7 +321,7 @@ const OrganizationAdressForm = () => {
           {...register('mobileNumber.number')}
         />
       </Flex>
-      <Text fw={500}>Telephone number</Text>
+      <Text fw={500}>Telephone Number</Text>
 
       <Flex>
         <Controller
@@ -352,7 +348,7 @@ const OrganizationAdressForm = () => {
           }
         />
       </Flex>
-      <Text fw={500}>Fax number</Text>
+      <Text fw={500}>Fax Number</Text>
 
       <Flex>
         <Controller

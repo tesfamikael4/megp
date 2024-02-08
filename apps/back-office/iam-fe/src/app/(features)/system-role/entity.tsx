@@ -21,7 +21,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
       mode: 'list',
       entity: 'system-roles',
       primaryKey: 'id',
-      title: 'System roles',
+      title: 'System Roles',
 
       onDetail: (selected: Role) => {
         route.push(`/system-role/${selected?.id}`);

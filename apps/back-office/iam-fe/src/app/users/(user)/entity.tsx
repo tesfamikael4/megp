@@ -43,7 +43,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
         },
         {
           id: 'username',
-          header: 'User name',
+          header: 'User Name',
           accessorKey: 'username',
           cell: (info) => info.getValue(),
           meta: {

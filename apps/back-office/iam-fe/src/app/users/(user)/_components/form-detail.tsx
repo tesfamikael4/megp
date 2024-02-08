@@ -48,8 +48,7 @@ export function FormDetail({ mode }: FormDetailProps) {
   const { id } = useParams();
   const { organizationId } = useAuth();
 
-  const [create, { isLoading: isSaving, isSuccess: saved }] =
-    useCreateMutation();
+  const [create, { isLoading: isSaving }] = useCreateMutation();
   const [update, { isLoading: isUpdating }] = useUpdateMutation();
   const [activation, { isLoading: isActivating }] = useUpdateMutation();
   const [remove, { isLoading: isDeleting }] = useDeleteMutation();
@@ -63,13 +62,14 @@ export function FormDetail({ mode }: FormDetailProps) {
     try {
       const result: any = await create({
         ...data,
+        email: data.email === '' ? null : data.email,
         fullName: `${data.firstName} ${data.lastName}`,
         organizationId: organizationId,
       });
       if ('data' in result) {
         router.push(`/users/${result.data.id}`);
       }
-      saved && notify('Success', 'User created successfully');
+      notify('Success', 'User created successfully');
       result?.error?.data?.message === 'account_exists' &&
         notify('Error', 'Account already exist');
     } catch (err) {

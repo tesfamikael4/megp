@@ -5,8 +5,8 @@ import {
   TextInput,
   Textarea,
 } from '@mantine/core';
-import { useReadQuery } from '../../organizations/_api/organization.api';
-import { useListQuery as useListTypeQuery } from '../../organization-type/_api/organization-type.api';
+import { useReadQuery } from '@/app/(features)/organizations/_api/organization.api';
+import { useListQuery as useListTypeQuery } from '@/app/(features)/organization-type/_api/organization-type.api';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useAuth } from '@megp/auth';

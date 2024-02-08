@@ -7,7 +7,7 @@ import { SystemRole } from '../_components/system-role';
 export default function RoleDetailPage() {
   return (
     <Stack>
-      <Section title="System role detail">
+      <Section title="System Role Detail">
         <SystemRole mode="detail" />
       </Section>
       <ViewPermissionModal />

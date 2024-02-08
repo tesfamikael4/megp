@@ -7,12 +7,12 @@ import OrganizationAdressForm from './_components/organizationAdress';
 export default function MyOrganizationPage() {
   return (
     <PageLayout>
-      <Section title="Basic profile">
+      <Section title="Basic Profile">
         <FormDetail />
 
         <Accordion>
           <Accordion.Item value="customization">
-            <Accordion.Control>Organization address</Accordion.Control>
+            <Accordion.Control>Organization Address</Accordion.Control>
             <Accordion.Panel>
               <OrganizationAdressForm />
             </Accordion.Panel>
