@@ -1,14 +1,23 @@
-import React, { useEffect, useState } from 'react';
-import { Box, Modal, TextInput, Tooltip, Flex, Text } from '@mantine/core';
-import { RelationConfig } from '@megp/entity';
-import { useDisclosure } from '@mantine/hooks';
-import { IconBinaryTree, IconColumns } from '@tabler/icons-react';
-import { Tree, logger } from '@megp/core-fe';
 import {
   useGetClassificationsQuery,
   useLazyGetClassificationsQuery,
 } from '@/store/api/administration/administration.api';
-import { CollectionSelector } from './collection-selector';
+import {
+  Box,
+  Button,
+  Divider,
+  Flex,
+  Group,
+  Modal,
+  Text,
+  TextInput,
+  Tooltip,
+} from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import { MantineTree, TreeConfig } from '@megp/core-fe';
+import { IconBinaryTree, IconColumns } from '@tabler/icons-react';
+import { useEffect, useState } from 'react';
+import { ExpandableTable } from './expandable-table';
 
 interface ClassificationSelectorProps {
   selectedData: any;
@@ -23,7 +32,8 @@ const ClassificationSelector = ({
 }: ClassificationSelectorProps) => {
   const [opened, { open, close }] = useDisclosure(false);
   const [mode, setMode] = useState<'tree' | 'table'>('table');
-  const [getCommodity, { data: list }] = useLazyGetClassificationsQuery();
+  const [getCommodity, { data: list, isLoading: isGetCommodityLoading }] =
+    useLazyGetClassificationsQuery();
   const { data: classifications } = useGetClassificationsQuery({
     where: [
       [
@@ -35,32 +45,61 @@ const ClassificationSelector = ({
       ],
     ],
   } as any);
-  const addConfig: RelationConfig<any> = {
-    title: 'Classifications',
+
+  const [selectedClassification, setSelectedClassification] = useState<any>([]);
+
+  const treeConfig: TreeConfig<any> = {
+    id: 'code',
+    label: 'title',
+    selectable: true,
+    multipleSelect: true,
+    selectOnlyLeafs: true,
+    selectedIds: selectedClassification,
+    setSelectedIds: setSelectedClassification,
+    load: async (data) => {
+      // logger.log({ data });
+      const res = await getCommodity({
+        where: [
+          [
+            {
+              column: 'parentCode',
+              value: data.code,
+              operator: '=',
+            },
+          ],
+        ],
+      }).unwrap();
+      return {
+        result:
+          res?.items?.map((c) => ({
+            code: c.code,
+            title: c.title,
+          })) ?? [],
+        loading: isGetCommodityLoading,
+      };
+    },
+  };
+
+  const tableConfig = {
+    isSearchable: true,
+    primaryColumn: 'title',
     columns: [
       {
-        id: 'name',
-        header: 'Classifications',
-        accessorKey: 'title',
-        meta: {
-          widget: 'expand',
-        },
-        cell: ({ row: { original } }: any) => (
+        accessor: 'title',
+        title: 'Classifications',
+        render: (record) => (
           <>
-            {original.title} ({original.code})
+            {record.title} ({record.code})
           </>
         ),
       },
     ],
-    onSave: (selected) => {
-      logger.log(selected[0]);
-      onDone(selected[0]);
-      close();
+    selectedItems: selectedClassification,
+    setSelectedItems: (data) => {
+      const temp = data.filter((d) => !selectedClassification.includes(d));
+      setSelectedClassification(temp);
     },
-    searchable: true,
-    disableMultiSelect: true,
-    selectable: true,
-    pagination: true,
+    isSelectable: true,
   };
 
   const changeMode = () => {
@@ -108,52 +147,56 @@ const ClassificationSelector = ({
         size="lg"
       >
         {mode == 'table' ? (
-          <CollectionSelector
-            config={addConfig}
-            data={list ? list.items : []}
-            total={list ? list.total : 0}
-            onDone={(data) => {
-              onDone(data);
-              logger.log(data);
-              close();
-            }}
-            onRequestChange={(collectionQuery) => {
-              const req = {
-                ...collectionQuery,
-                where: [
-                  [
-                    {
-                      column: 'type',
-                      value: 'COMMODITY',
-                      operator: '=',
-                    },
+          <>
+            <ExpandableTable
+              config={tableConfig}
+              data={list ? list.items : []}
+              total={list ? list.total : 0}
+              onRequestChange={(collectionQuery) => {
+                const req = {
+                  ...collectionQuery,
+                  where: [
+                    [
+                      {
+                        column: 'type',
+                        value: 'COMMODITY',
+                        operator: '=',
+                      },
+                    ],
                   ],
-                ],
-              };
-              getCommodity(req);
-            }}
-          />
+                };
+                getCommodity(req);
+              }}
+            />
+          </>
         ) : (
-          <Tree
-            fieldNames={{ title: 'title', key: 'code' }}
-            data={classifications ? classifications.items : []}
-            mode="select"
-            disableModal
-            disableParentSelect
-            url={(code) =>
-              `${
-                process.env.NEXT_PUBLIC_ADMINISTRATION_API ??
-                '/administration/api/'
-              }classifications?q=w%3DparentCode%3A%3D%3A${code}`
-            }
-            selectedKeys={selectedData}
-            onDone={(item) => {
-              onDone(item);
-              logger.log(item);
+          <>
+            <Box className="overflow-y-auto h-[30rem]">
+              <MantineTree
+                config={treeConfig}
+                data={
+                  classifications
+                    ? classifications.items.map((c) => ({
+                        code: c.code,
+                        title: c.title,
+                      }))
+                    : []
+                }
+              />
+            </Box>
+          </>
+        )}
+        <Divider h={5} />
+        <Group justify="end">
+          <Button
+            onClick={() => {
+              onDone(selectedClassification[selectedClassification.length - 1]);
               close();
             }}
-          />
-        )}
+          >
+            Done
+          </Button>
+        </Group>
       </Modal>
     </>
   );

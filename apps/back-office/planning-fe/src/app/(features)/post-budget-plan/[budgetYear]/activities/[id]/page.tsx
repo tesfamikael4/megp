@@ -30,9 +30,7 @@ export default function NewActivity() {
           <Tooltip
             label="List Activities"
             className="cursor-pointer"
-            onClick={() =>
-              router.push(`/post-budget-plan/${budgetYear}/activities`)
-            }
+            onClick={() => router.back()}
           >
             <Flex align="center">
               <IconChevronLeft />

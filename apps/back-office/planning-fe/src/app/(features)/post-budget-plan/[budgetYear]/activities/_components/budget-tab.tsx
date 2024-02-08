@@ -254,7 +254,11 @@ export const BudgetTab = ({ disableFields }: { disableFields?: boolean }) => {
 
       <Group justify="end" className="mt-2">
         <Divider h={2} />
-        <Button loading={isDisbursementCreating} onClick={onSave}>
+        <Button
+          loading={isDisbursementCreating}
+          onClick={onSave}
+          disabled={disableFields}
+        >
           Save
         </Button>
       </Group>
