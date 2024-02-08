@@ -108,7 +108,7 @@ const MandatePermission = ({
                   )}
                 </Table.Tr>
               </Table.Thead>
-              <ScrollArea w={400} h={400} scrollbars="y">
+              <ScrollArea w={500} h={400} scrollbars="y">
                 <Table.Tbody>
                   <LoadingOverlay visible={isLoading} />
 

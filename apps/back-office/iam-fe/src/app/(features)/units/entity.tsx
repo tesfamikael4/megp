@@ -53,7 +53,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
         },
         {
           id: 'isActive',
-          header: 'Active',
+          header: () => <p className="ml-auto">Active</p>,
           accessorKey: 'isActive',
           cell: (info) => (
             <div className="flex justify-end">

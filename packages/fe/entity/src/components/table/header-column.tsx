@@ -124,7 +124,7 @@ export const remove = (openEditModal, showPopUp) => {
     id: 'action',
     accessorKey: '',
     size: 40,
-    header: 'Action',
+    header: <p className="ml-auto">Action</p>,
     meta: {
       widget: 'action',
     },

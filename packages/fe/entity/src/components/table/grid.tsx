@@ -131,8 +131,13 @@ export function Grid<T>({
         <Center c="dimmed" className="h-full min-h-[300px]">
           <Stack align="center">
             <IconInboxOff size={40} />
-            <Text>No {options.entity} Found</Text>
-            {options.hasAdd ? (
+
+            {options.entity ? (
+              <Text>No {options.entity} Found</Text>
+            ) : (
+              <Text>No Data Found</Text>
+            )}
+            {options.hasAdd && mode !== 'modal' ? (
               <Button
                 leftSection={<IconPlus size={16} stroke={2.2} />}
                 onClick={options.onAdd}

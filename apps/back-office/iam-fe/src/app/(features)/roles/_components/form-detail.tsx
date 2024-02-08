@@ -28,7 +28,7 @@ const defaultValues = {
 export function FormDetail({ mode }: FormDetailProps) {
   const roleSchema: ZodType<Partial<Role>> = z.object({
     name: z.string().min(1, { message: 'This field is required' }),
-    description: z.string().min(1, { message: 'This field is required' }),
+    description: z.string(),
   });
 
   const {

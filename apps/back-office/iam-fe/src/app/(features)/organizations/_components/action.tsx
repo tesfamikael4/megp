@@ -96,7 +96,7 @@ export default function Invitation({ user }: invitationProps) {
               Invite User
             </Menu.Item>
           )}
-          {userInvited !== null && (
+          {userInvited !== null && userInvited !== undefined && (
             <Menu.Item
               leftSection={<IconEye size={15} />}
               onClick={() => setViewLink(true)}

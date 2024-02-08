@@ -32,8 +32,10 @@ const AddUserModal = () => {
       {
         id: 'name',
         header: 'Name',
-        accessorKey: 'fullName',
-        cell: (info) => info.getValue(),
+        accessorKey: 'firstName',
+        cell: ({ row }) => (
+          <p> {row.original.firstName + ' ' + row.original.lastName}</p>
+        ),
         meta: {
           widget: 'primary',
         },
@@ -63,10 +65,12 @@ const AddUserModal = () => {
       {
         id: 'name',
         header: 'Name',
-        accessorKey: 'fullName',
-        cell: (info) => info.getValue(),
+        accessorKey: 'firstName',
+        cell: ({ row }) => (
+          <p> {row.original.firstName + ' ' + row.original.lastName}</p>
+        ),
         meta: {
-          widget: 'primary',
+          widget: 'expand',
         },
       },
       {
