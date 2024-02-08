@@ -69,6 +69,7 @@ export const {
   useGetTagsQuery,
   useGetMeasurementsQuery,
   useGetCategoriesQuery,
+  useLazyGetCategoriesQuery,
   useGetCurrenciesQuery,
   useLazyGetClassificationPathQuery,
   useGetClassificationPathQuery,

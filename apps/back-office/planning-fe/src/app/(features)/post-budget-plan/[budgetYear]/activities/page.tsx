@@ -19,13 +19,19 @@ export default function PostBudget() {
 
   const config = {
     columns: [
-      { accessor: 'procurementReference', title: 'Reference', width: 150 },
-      { accessor: 'name', title: 'Name', width: 300 },
-      { accessor: 'description', title: 'Description' },
+      {
+        accessor: 'procurementReference',
+        title: 'Reference',
+        width: 150,
+        sortable: true,
+      },
+      { accessor: 'name', title: 'Name', width: 300, sortable: true },
+      { accessor: 'description', title: 'Description', sortable: true },
       {
         accessor: 'estimatedAmount',
         title: 'Total Amount',
         textAlign: 'right',
+        sortable: true,
         render: (activity) => (
           <>
             {parseInt(activity.estimatedAmount).toLocaleString('en-US', {

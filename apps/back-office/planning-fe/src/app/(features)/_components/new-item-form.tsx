@@ -21,7 +21,7 @@ import {
   useGetMeasurementsQuery,
   useGetTagsQuery,
   useLazyGetUnitOfMeasurementsQuery,
-  useGetCategoriesQuery,
+  useLazyGetCategoriesQuery,
 } from '@/store/api/administration/administration.api';
 import ClassificationSelector from './classification-selector';
 import { useDisclosure } from '@mantine/hooks';
@@ -81,29 +81,25 @@ export function NewItem({ onDone }: any) {
       setSelectedCategories(data);
     },
     load: async (data) => {
-      // logger.log({ data });
-      // const res = await getChildren({
-      //   where: [
-      //     [
-      //       {
-      //         column: 'parentCode',
-      //         value: data.code,
-      //         operator: '=',
-      //       },
-      //     ],
-      //   ],
-      // }).unwrap();
-      // return {
-      //   result:
-      //     res?.items?.map((c) => ({
-      //       code: c.code,
-      //       title: c.title,
-      //     })) ?? [],
-      //   loading: isLoading,
-      // };
+      logger.log({ data });
+      const res = await getCategories({
+        where: [
+          [
+            {
+              column: 'parentId',
+              value: data.itemSubcategoryId,
+              operator: 'ILIKE',
+            },
+          ],
+        ],
+      }).unwrap();
       return {
-        result: [],
-        loading: false,
+        result:
+          res?.items?.map((c) => ({
+            itemSubcategoryName: c.name,
+            itemSubcategoryId: c.id,
+          })) ?? [],
+        loading: isCategoriesLoading,
       };
     },
   };
@@ -111,23 +107,8 @@ export function NewItem({ onDone }: any) {
   const { data: measurements, isLoading: isMeasurementLoading } =
     useGetMeasurementsQuery({} as any);
 
-  const { data: categories, isLoading: isCategoriesLoading } =
-    useGetCategoriesQuery({
-      where: [
-        [
-          {
-            column: 'parentId',
-            value: '',
-            operator: '=',
-          },
-          {
-            column: 'parentId',
-            value: 'IsNull',
-            operator: 'IsNull',
-          },
-        ],
-      ],
-    });
+  const [getCategories, { data: categories, isLoading: isCategoriesLoading }] =
+    useLazyGetCategoriesQuery();
   const { data: tags, isLoading: isTagLoading } = useGetTagsQuery({} as any);
   const [
     getUnitOfMeasurements,
@@ -163,6 +144,27 @@ export function NewItem({ onDone }: any) {
       getUnitOfMeasurements(id);
     }
   }, [getUnitOfMeasurements, watch('measurementId')]);
+
+  useEffect(() => {
+    if (opened) {
+      getCategories({
+        where: [
+          [
+            {
+              column: 'parentId',
+              value: 'IsNull',
+              operator: 'IsNull',
+            },
+            {
+              column: 'parentId',
+              value: '',
+              operator: '=',
+            },
+          ],
+        ],
+      });
+    }
+  }, [getCategories, opened]);
 
   return (
     <Box pos="relative">

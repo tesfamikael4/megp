@@ -19,9 +19,14 @@ export default function PreBudget() {
 
   const config = {
     columns: [
-      { accessor: 'procurementReference', title: 'Reference', width: 150 },
-      { accessor: 'name', title: 'Name', width: 300 },
-      { accessor: 'description', title: 'Description' },
+      {
+        accessor: 'procurementReference',
+        title: 'Reference',
+        width: 150,
+        sortable: true,
+      },
+      { accessor: 'name', title: 'Name', width: 300, sortable: true },
+      { accessor: 'description', title: 'Description', sortable: true },
       {
         accessor: 'estimatedAmount',
         title: 'Total Amount',
@@ -38,6 +43,7 @@ export default function PreBudget() {
           </>
         ),
         width: 200,
+        sortable: true,
       },
       {
         accessor: 'id',
