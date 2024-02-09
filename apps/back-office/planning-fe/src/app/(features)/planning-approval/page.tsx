@@ -105,6 +105,7 @@ export default function WorkflowHandling({
           remark: remark,
           approver: `${user?.firstName} ${user?.lastName}`,
           userId: user?.id,
+          itemId: currentStep?.step.itemId,
         },
         activityId: activityId,
       }).unwrap();
@@ -130,6 +131,7 @@ export default function WorkflowHandling({
           remark: remark,
           approver: `${user?.firstName} ${user?.lastName}`,
           userId: user?.id,
+          itemId: currentStep?.step.itemId,
         },
         activityId: activityId,
       }).unwrap();
@@ -156,6 +158,7 @@ export default function WorkflowHandling({
           remark: remark,
           approver: `${user?.firstName} ${user?.lastName}`,
           userId: user?.id,
+          itemId: currentStep?.step.itemId,
         },
         activityId: activityId,
         goto: { id: stepId, status: stepName },
@@ -237,18 +240,19 @@ export default function WorkflowHandling({
                                 }}
                               >
                                 <Accordion.Item
-                                  value={`Approval by ${step.approvers[0].approver}`}
+                                  value={`Approved by ${step.approvers[0].approver}`}
                                 >
                                   <Accordion.Control>
-                                    <Text c="#868e96">{`Approval by ${step.approvers[0].approver}`}</Text>
+                                    <Text c="#868e96">{`Approved by ${step.approvers[0].approver}`}</Text>
                                   </Accordion.Control>
-                                  {/* <Accordion.Panel>
-                                  {
-                                    currentStep?.metadata.find(
-                                      (e) => e.stepId === step.id,
-                                    ).remark
-                                  }
-                                </Accordion.Panel> */}
+                                  <Accordion.Panel>
+                                    Remark:{' '}
+                                    {
+                                      currentStep?.metadata.find(
+                                        (e) => e.stepId === step.id,
+                                      ).remark
+                                    }
+                                  </Accordion.Panel>
                                   <Accordion.Panel>
                                     {getMetaData(
                                       currentStep?.metaData,
