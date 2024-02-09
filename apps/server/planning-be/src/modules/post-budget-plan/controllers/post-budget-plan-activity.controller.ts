@@ -58,7 +58,7 @@ export class PostBudgetPlanActivityController extends ExtraCrudController<PostBu
 
   @Post('change-budget')
   async changeBudget(@Body() payload: any) {
-    return await this.postBudgetPlanActivityService.changeBudget(payload);
+    // return await this.postBudgetPlanActivityService.changeBudget(payload);
   }
 
   //API's for purchase-requisition

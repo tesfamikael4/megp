@@ -97,13 +97,10 @@ export class PostBudgetPlanActivityService extends ExtraCrudService<PostBudgetPl
         }
         await this.repositoryBudget.update(payload.budgetId, {
           obligatedBudget: +budget.obligatedBudget + +activity.estimatedAmount,
-          availableBudget:
-            budget.revisedBudget == 0
-              ? +budget.allocatedBudget - +activity.estimatedAmount
-              : +budget.revisedBudget - +activity.estimatedAmount,
+          availableBudget: +budget.revisedBudget - +activity.estimatedAmount,
         });
       } else {
-        this.changeBudget(payload);
+        await this.changeBudget(payload);
       }
     } catch (error) {
       await queryRunner.rollbackTransaction();
@@ -129,7 +126,12 @@ export class PostBudgetPlanActivityService extends ExtraCrudService<PostBudgetPl
       const activity = await this.repositoryPostBudgetPlanActivity.findOneBy({
         id: payload.postBudgetPlanActivityId,
       });
-      if (budget.availableBudget < activity.estimatedAmount) {
+      const prevBudget = await this.repositoryBudget.findOne({
+        where: {
+          id: activity.budgetId,
+        },
+      });
+      if (+budget.availableBudget < +activity.estimatedAmount) {
         throw new HttpException(
           `Available budget is less than estimated Amount`,
           430,
@@ -137,20 +139,16 @@ export class PostBudgetPlanActivityService extends ExtraCrudService<PostBudgetPl
       }
       //release the previous budget amount
       await this.repositoryBudget.update(activity.budgetId, {
-        obligatedBudget: +budget.obligatedBudget - +activity.estimatedAmount,
+        obligatedBudget:
+          +prevBudget.obligatedBudget - +activity.estimatedAmount,
         availableBudget:
-          budget.revisedBudget == 0
-            ? +budget.allocatedBudget + +activity.estimatedAmount
-            : +budget.revisedBudget + +activity.estimatedAmount,
+          +prevBudget.availableBudget + +activity.estimatedAmount,
       });
 
       //update the new budget amount
       await this.repositoryBudget.update(payload.budgetId, {
         obligatedBudget: +budget.obligatedBudget + +activity.estimatedAmount,
-        availableBudget:
-          budget.revisedBudget == 0
-            ? +budget.allocatedBudget - +activity.estimatedAmount
-            : +budget.revisedBudget - +activity.estimatedAmount,
+        availableBudget: +budget.revisedBudget - +activity.estimatedAmount,
       });
       await this.repositoryPostBudgetPlanActivity.update(
         payload.postBudgetPlanActivityId,
