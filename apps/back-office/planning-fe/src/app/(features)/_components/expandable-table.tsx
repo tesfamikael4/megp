@@ -15,6 +15,7 @@ interface Config {
   isSearchable?: boolean;
   primaryColumn?: string;
   isSelectable?: boolean;
+  disableMultiSelect?: boolean;
   selectedItems?: any[];
   setSelectedItems?: (items: any[]) => void;
 }
@@ -33,10 +34,6 @@ export const ExpandableTable = ({
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const [sortStatus, setSortStatus] = useState<any>({});
-
-  useEffect(() => {
-    logger.log({ sortStatus });
-  }, [sortStatus]);
 
   useEffect(() => {
     const from = (page - 1) * perPage;
@@ -109,7 +106,21 @@ export const ExpandableTable = ({
           <p className="line-clamp-2">{record[accessor]}</p>
         )}
         selectedRecords={config.selectedItems}
-        onSelectedRecordsChange={config.setSelectedItems}
+        onSelectedRecordsChange={(records) => {
+          logger.log({ records });
+          if (config.disableMultiSelect) {
+            const temp = records.filter(
+              (r) => !config.selectedItems?.includes(r),
+            );
+            config.setSelectedItems && config.setSelectedItems(temp);
+          } else config.setSelectedItems && config.setSelectedItems(records);
+        }}
+        allRecordsSelectionCheckboxProps={{
+          display: config.disableMultiSelect ? 'none' : 'block',
+        }}
+        selectionCheckboxProps={{
+          radius: config.disableMultiSelect ? 'xl' : 'sm',
+        }}
         idAccessor={config.idAccessor ?? 'id'}
       />
     </>

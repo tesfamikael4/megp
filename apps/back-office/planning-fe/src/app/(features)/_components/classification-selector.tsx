@@ -95,10 +95,8 @@ const ClassificationSelector = ({
       },
     ],
     selectedItems: selectedClassification,
-    setSelectedItems: (data) => {
-      const temp = data.filter((d) => !selectedClassification.includes(d));
-      setSelectedClassification(temp);
-    },
+    disableMultiSelect: true,
+    setSelectedItems: setSelectedClassification,
     isSelectable: true,
   };
 
