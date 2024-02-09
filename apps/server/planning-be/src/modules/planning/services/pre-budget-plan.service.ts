@@ -289,6 +289,10 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
       relations: ['preBudgetPlanTimelines'],
     });
 
+    if (activities.length == 0) {
+      throw new HttpException(`Activity not found `, 430);
+    }
+
     for (const element of activities) {
       if (element.preBudgetPlanTimelines.length == 0) {
         throw new HttpException(

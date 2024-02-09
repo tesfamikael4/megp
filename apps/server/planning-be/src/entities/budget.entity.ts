@@ -18,7 +18,7 @@ import { PostBudgetPlanActivity } from './post-budget-plan-activity.entity';
 
 @Entity({ name: 'budget' })
 @Check(
-  '"availableBudget" >= 0 AND "obligatedBudget" >= 0 AND "revisedBudget" >= 0 AND "allocatedBudget" >= 0',
+  '"availableBudget" >= 0 AND "obligatedBudget" >= 0 AND "revisedBudget" >= 0 AND "allocatedBudget" >= 0 AND "availableBudget" <= "revisedBudget" AND "obligatedBudget" <= "revisedBudget" ',
 )
 export class Budget extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
