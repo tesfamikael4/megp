@@ -69,7 +69,7 @@ export class ApplicationExcutionService {
   async getCurruntTaskDetail(
     instanceId: string
   ): Promise<WorkflowInstanceResponse> {
-    const serviceData = await this.wiRepository.findOne({
+    const appData = await this.wiRepository.findOne({
       relations: { service: true },
       where: { id: instanceId }
     });
@@ -90,7 +90,7 @@ export class ApplicationExcutionService {
       where: {
         id: instanceId,
         taskHandler: { id: Not(IsNull()) },
-        isrVendor: { businessAreas: { instanceId: serviceData.id } }
+        isrVendor: { businessAreas: { instanceId: appData.id, status: ApplicationStatus.PENDING } }
       },
       order: {
         taskTrackers: { executedAt: 'DESC' },
@@ -109,8 +109,8 @@ export class ApplicationExcutionService {
       response.isrvendor.areasOfBusinessInterest = businessInterest;
     }
     const preferentialkeys = this.commonService.getPreferencialServices();
-    if (serviceData.service.key == ServiceKeyEnum.PROFILE_UPDATE) {
-      const vendorInfo = await this.vendorService.getVendorByUserWithProfile(response.isrvendor.userId, serviceData.serviceId);
+    if (appData.service.key == ServiceKeyEnum.PROFILE_UPDATE) {
+      const vendorInfo = await this.vendorService.getVendorByUserWithProfile(response.isrvendor.userId, appData.serviceId);
       if (vendorInfo?.ProfileInfo) {
         const profileUpdate = vendorInfo?.ProfileInfo[0];
         const shareholders = profileUpdate.profileData.shareHolders.map((item) => this.reduceAttributes(item));
@@ -124,15 +124,15 @@ export class ApplicationExcutionService {
       }
       response.isrvendor.businessAreas = null;
       return response;
-    } else if (preferentialkeys.filter((item) => serviceData.service.key == item).length > 0) {
-      const vendorInfo = await this.vendorService.getVendorByUserWithPreferntial(response.isrvendor.userId, serviceData.serviceId);
+    } else if (preferentialkeys.filter((item) => appData.service.key == item).length > 0) {
+      const vendorInfo = await this.vendorService.getVendorByUserWithPreferntial(response.isrvendor.userId, appData.serviceId);
       if (vendorInfo?.preferentials) {
         response.preferential = vendorInfo?.preferentials[0];
         response.isrvendor.businessAreas = null;
         return response;
       }
     }
-    const serviceKey = serviceData.service.key;
+    const serviceKey = appData.service.key;
     const renewalServices = [ServiceKeyEnum.goodsRenewal, ServiceKeyEnum.servicesRenewal, ServiceKeyEnum.worksRenewal];
     const upgradeServices = [ServiceKeyEnum.goodsUpgrade, ServiceKeyEnum.servicesUpgrade, ServiceKeyEnum.worksUpgrade];
     const renewalServiceTypes = renewalServices.filter((item) => item == serviceKey);

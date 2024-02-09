@@ -44,14 +44,14 @@ export class VendorRegistrationsController {
   async getVendors() {
     return await this.regService.getIsrVendors();
   }
-  // @UseGuards(JwtGuard)
+ 
   @AllowAnonymous()
   @Get('get-vendor-by-userId/:userId')
   async getVendorByuserId(@CurrentUser() userInfo: any) {
     // return await this.regService.getVendorByUserId(userInfo.id);
     return await this.regService.getVendorByUserId(userInfo.id);
   }
-  //bug will be fixed
+
   @UseGuards(JwtGuard)
   @Get('get-isr-vendor-by-userId')
   async getIsrVendorByuserId(@CurrentUser() userInfo: any, @Query('flag') flag: string) {
@@ -122,13 +122,13 @@ export class VendorRegistrationsController {
   async adjustVednorServices(@Body() vendorStatusDto: SetVendorStatus) {
     return await this.regService.adjustVendor(vendorStatusDto);
   }
-  // @UseGuards(JwtGuard)
+
   @AllowAnonymous()
   @Get('get-vendor-byId-for-certificate/:isrvendorId')
   async getVendorByIdForCertificate(@Param('isrvendorId') isrvendorId: string) {
     return await this.regService.getVendorByIdForCertificate(isrvendorId);
   }
-  // @UseGuards(JwtGuard)
+
   @AllowAnonymous()
   @Get('get-approved-vendor-byId/:vendorId')
   async getApprovedVendorById(@Param('vendorId') vendorId: string) {

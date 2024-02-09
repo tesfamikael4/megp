@@ -45,7 +45,7 @@ export class ApplicationExcutionController {
     private readonly workflowService: WorkflowService,
     private readonly bpService: BusinessProcessService,
     private readonly vendorService: VendorRegistrationsService,
-  ) { }
+  ) {}
   @UseGuards(JwtGuard)
   @Get('email')
   async email(@Req() request: Request, @CurrentUser() user: any) {
@@ -122,12 +122,12 @@ export class ApplicationExcutionController {
     @Query('q') q: string,
     @CurrentUser() user: any,
   ) {
-    console.log("serviceKey", serviceKey);
+    console.log('serviceKey', serviceKey);
     const query = decodeCollectionQuery(q);
     return await this.executeService.getCurruntTaskByServiceKey(
       serviceKey,
       query,
-      user
+      user,
     );
   }
 
@@ -158,9 +158,9 @@ export class ApplicationExcutionController {
     const result = await this.workflowService.getActivities(instanceId);
     return result;
   }
-/*
-fetch approved vendors
-*/
+  /*
+  fetch approved vendors
+  */
   @UseGuards(JwtGuard)
   @Get('get-vendors')
   @ApiQuery({
@@ -186,7 +186,7 @@ fetch approved vendors
     type: String,
     required: false,
   })
-  async getRejectedVendors(@CurrentUser() user, @Query('q') q: string) {
+  async getRejectedVendors(@CurrentUser() user: any, @Query('q') q: string) {
     const query = decodeCollectionQuery(q);
     return await this.vendorService.getRejectedVendors(user, query);
   }

@@ -49,6 +49,7 @@ import { BpServiceService } from 'src/modules/services/services/service.service'
 import { ReceiptDto } from '../dto/receipt.dto';
 import { FileService } from './file.service';
 import { REQUEST } from '@nestjs/core';
+import { HandlingCommonService } from 'src/modules/handling/services/handling-common-services';
 @Injectable()
 export class VendorRegistrationsService extends EntityCrudService<VendorsEntity> {
   constructor(
@@ -70,6 +71,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     private readonly pricingService: ServicePricingService,
     private readonly baService: BusinessAreaService,
     private readonly fileService: FileService,
+    private readonly commonService: HandlingCommonService,
   ) {
     super(vendorRepository);
   }
@@ -393,8 +395,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
                 status: VendorStatusEnum.SUBMITTED,
               },
             });
-            if (!profileData)
-              throw new HttpException(`profile not found`, 404);
+            if (!profileData) throw new HttpException(`profile not found`, 404);
             profileData.status = VendorStatusEnum.REJECTED;
             await this.profileInfoRepository.save(profileData);
           }
@@ -416,7 +417,10 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       const upgradeServices = upgradekeys.filter(
         (item) => item == businessArea.BpService?.key,
       );
-      if (upgradeServices.length == 0 && businessArea.BpService?.key != ServiceKeyEnum.PROFILE_UPDATE) {
+      if (
+        upgradeServices.length == 0 &&
+        businessArea.BpService?.key != ServiceKeyEnum.PROFILE_UPDATE
+      ) {
         const expireDate = new Date();
         expireDate.setFullYear(expireDate.getFullYear() + 1);
         businessArea.expireDate = expireDate;
@@ -547,8 +551,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         await this.profileInfoRepository.save(profileData);
         await this.mapVendor(vendor, profileData);
       }
-
-
     }
     return response;
   }
@@ -922,48 +924,62 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       throw error;
     }
   }
-  async getIsrVendorByUserId(userId: string, flag: string = null): Promise<any> {
+  async getIsrVendorByUserId(
+    userId: string,
+    flag: string = null,
+  ): Promise<any> {
     try {
       const vendorEntity: any = await this.isrVendorsRepository.findOne({
         relations: { businessAreas: true },
         where: {
           userId: userId,
-          status: In(this.updateVendorEnums)
+          status: In(this.updateVendorEnums),
         },
       });
 
       if (flag == ApplicationStatus.ADJUSTMENT) {
         const abis = [];
-        if (vendorEntity?.businessAreas && vendorEntity?.areasOfBusinessInterest) {
+        if (
+          vendorEntity?.businessAreas &&
+          vendorEntity?.areasOfBusinessInterest
+        ) {
           for (const abi of vendorEntity?.areasOfBusinessInterest) {
             for (const ba of vendorEntity?.businessAreas) {
-              if (ba.category == abi.category && ba.status == ApplicationStatus.ADJUSTMENT) {
+              if (
+                ba.category == abi.category &&
+                ba.status == ApplicationStatus.ADJUSTMENT
+              ) {
                 abis.push({ ...abi, status: ba.status });
+                vendorEntity.initial.level = 'detail';
+                vendorEntity.initial.status = 'Adjustment';
+                vendorEntity.status = ApplicationStatus.ADJUSTMENT;
                 break;
               }
             }
           }
-          if (abis.length > 0)
-            vendorEntity.areasOfBusinessInterest = abis;
+          if (abis.length > 0) vendorEntity.areasOfBusinessInterest = abis;
         }
-        if (vendorEntity)
-          vendorEntity.businessAreas = null;
+        if (vendorEntity) vendorEntity.businessAreas = null;
       }
       if (vendorEntity?.areasOfBusinessInterest) {
-        const formattedAreaOfBi = []
-        const pricesIds = vendorEntity?.areasOfBusinessInterest.map((item: any) => item.priceRange);
-        const priceRanges = await this.pricingService.findPriceRangeByIds(pricesIds);
+        const formattedAreaOfBi = [];
+        const pricesIds = vendorEntity?.areasOfBusinessInterest.map(
+          (item: any) => item.priceRange,
+        );
+        const priceRanges =
+          await this.pricingService.findPriceRangeByIds(pricesIds);
         for (const price of priceRanges) {
+
           for (const bi of vendorEntity?.areasOfBusinessInterest) {
             if (bi.priceRange == price.id) {
+              const priceRange = this.commonService.formatPriceRange(price);
               const lob = bi.lineOfBusiness.map((item: any) => item.name);
-              formattedAreaOfBi.push({ ...bi, lineOfBusiness: lob })
+              formattedAreaOfBi.push({ category: this.commonService.capitalizeFirstLetter(bi.category), priceRange: priceRange, lineOfBusiness: lob });
             }
           }
         }
         vendorEntity.areasOfBusinessInterestView = formattedAreaOfBi;
       }
-
 
       return vendorEntity;
     } catch (error) {
@@ -1070,7 +1086,12 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     const result = await this.vendorRepository.findOne({
       where: {
         isrVendorId: isrvendorId,
-        isrVendor: { businessAreas: { status: In(['Approved', 'APPROVED']), category: In(['goods', 'services']) } },
+        isrVendor: {
+          businessAreas: {
+            status: In(['Approved', 'APPROVED']),
+            category: In(['goods', 'services']),
+          },
+        },
       },
       relations: {
         isrVendor: { businessAreas: { BpService: true, servicePrice: true } },
@@ -1323,8 +1344,12 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           nationality: true,
           share: true,
         },
-        beneficialOwnership: { firstName: true, lastName: true, key: true },
-        areasOfBusinessInterest: { id: true, category: true, lineOfBusiness: true },
+        beneficialOwnership: { firstName: true, lastName: true, nationality: true },
+        areasOfBusinessInterest: {
+          id: true,
+          category: true,
+          lineOfBusiness: true,
+        },
         isrVendor: { id: true, businessAreas: true },
       },
       relations: {
@@ -1341,9 +1366,16 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     for (const ba of vendorData.isrVendor?.businessAreas) {
       const business = BusinessAreaDetailResponseDto.toResponse(ba);
       delete business.status;
+      const priceRange = this.commonService.formatPriceRange(business);
       for (const lob of vendorData.areasOfBusinessInterest) {
         if (lob.category == business.category) {
-          business.lineOfBusiness = lob.lineOfBusiness.map((item: any) => item.name);
+          business.lineOfBusiness = lob.lineOfBusiness.map(
+            (item: any) => item.name,
+          );
+          business.priceRange = priceRange;
+          delete business.valueFrom;
+          delete business.valueTo;
+          delete business.service;
           break;
         }
       }
@@ -1351,17 +1383,18 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     }
     rest.areasOfBusinessInterest = bussinessAreas;
     const vendor = {
-      ...rest
+      ...rest,
     };
 
     return vendor;
   }
   async getRejectedVendors(user: any, query: CollectionQuery) {
     const dataQuery = QueryConstructor.constructQuery<IsrVendorsEntity>(
-      this.isrVendorsRepository, query
+      this.isrVendorsRepository,
+      query,
     )
       .andWhere('isr_vendors.status =:status', {
-        status: ApplicationStatus.REJECTED
+        status: ApplicationStatus.REJECTED,
       })
       .orderBy('isr_vendors.updatedAt', 'ASC');
 
@@ -1452,7 +1485,12 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         where: {
           userId: user.id,
           status: VendorStatusEnum.APPROVED,
-          isrVendor: { businessAreas: { status: VendorStatusEnum.APPROVED, category: In(['goods', 'services', 'works']) } },
+          isrVendor: {
+            businessAreas: {
+              status: VendorStatusEnum.APPROVED,
+              category: In(['goods', 'services', 'works']),
+            },
+          },
         },
         relations: {
           isrVendor: { businessAreas: { servicePrice: true } },
@@ -1460,7 +1498,9 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         },
       });
 
-      const bas = vendorEntity?.isrVendor?.businessAreas;
+      let bas = vendorEntity?.isrVendor?.businessAreas;
+      if (!bas)
+        bas = [];
       const baInstanceIds = [];
       const baResponse = [];
       for (const row of bas) {
@@ -1485,7 +1525,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           pricingId: row.priceRangeId,
           invoiceId: row.invoice.id,
           _businessAreaId: oldBaId[0].id,
-          invoice: row.invoice
+          invoice: row.invoice,
         });
       });
 
@@ -1496,7 +1536,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           selectedPriceRange: selectedServices,
         },
         data: baResponse,
-
       };
     } catch (error) {
       console.log(error);
@@ -1869,11 +1908,12 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       where: {
         userId: userId,
         status: VendorStatusEnum.APPROVED,
-        preferentials: { status: ApplicationStatus.APPROVED }
+        preferentials: { status: ApplicationStatus.APPROVED },
       },
       relations: { preferentials: true },
     });
-    if (result == null) return { status: 'No approved Preferential treatment certeficates' };
+    if (result == null)
+      return { status: 'No approved Preferential treatment certeficates' };
     return result.preferentials;
   }
 }
