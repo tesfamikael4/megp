@@ -30,7 +30,7 @@ export class APP extends OrgAudit {
 
   @ManyToOne(() => BudgetYear, (budgetYear) => budgetYear.budget)
   @JoinColumn({ name: 'budgetYearId' })
-  public budgetYears: BudgetYear[];
+  public budgetYears: BudgetYear;
 
   @Column({ nullable: true })
   description: string;

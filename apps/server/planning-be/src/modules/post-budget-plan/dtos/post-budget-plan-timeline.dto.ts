@@ -26,8 +26,12 @@ export class CreatePostBudgetPlanTimelineDto {
   toDate: Date;
 
   @ApiProperty()
-  @IsString()
-  operationMethod: string;
+  @IsNumber()
+  order: number;
+
+  @ApiProperty()
+  @IsDate()
+  dueDate: Date;
 
   @ApiProperty()
   @IsNumber()
