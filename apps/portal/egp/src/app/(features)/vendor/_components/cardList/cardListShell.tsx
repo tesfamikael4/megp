@@ -9,6 +9,8 @@ import {
   Card,
   ActionIcon,
   Center,
+  Avatar,
+  Box,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { ChangeHandler, useFieldArray } from 'react-hook-form';
@@ -182,14 +184,31 @@ export const CardListShell: React.FC<CardListProps> = ({
         {card(handleEdit, handleRemove)}
         <Card withBorder>
           <Center h={'100%'} mih="100px">
-            <ActionIcon
-              onClick={open}
-              variant="outline"
-              radius={'100%'}
-              disabled={disabled}
-            >
-              <IconPlus size={33} stroke={1.2} />
-            </ActionIcon>
+            <Flex align={'center'} gap={10} onClick={open}>
+              <Button
+                className="text-md"
+                variant="subtle"
+                leftSection={
+                  <Flex
+                    bg={'green'}
+                    w={20}
+                    h={20}
+                    align={'center'}
+                    justify={'center'}
+                    className="rounded-full"
+                  >
+                    <IconPlus
+                      size={14}
+                      stroke={1.5}
+                      color="white"
+                      enableBackground={'green'}
+                    />
+                  </Flex>
+                }
+              >
+                Add {title}
+              </Button>
+            </Flex>
           </Center>
           {fieldState?.error?.message && (
             <span className="text-[var(--mantine-color-error)] text-xs">
@@ -199,9 +218,14 @@ export const CardListShell: React.FC<CardListProps> = ({
         </Card>
       </SimpleGrid>
 
-      <Modal opened={opened} onClose={handleClose} size={'lg'} title={title}>
+      <Modal
+        opened={opened}
+        onClose={handleClose}
+        centered
+        size={'xl'}
+        title={title}
+      >
         {modalBody(getInputProps)}
-
         <Flex className="mt-6 justify-end gap-4">
           <Button onClick={handleAddItem}>Save</Button>
           <Button variant="outline" onClick={handleClose}>

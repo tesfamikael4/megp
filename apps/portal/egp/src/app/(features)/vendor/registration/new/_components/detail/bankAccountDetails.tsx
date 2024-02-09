@@ -15,6 +15,15 @@ import {
 } from '../../../../_components/cardList/cardListShell';
 import { useGetBankListQuery } from '../../../_api/query';
 import { usePrivilege } from '../../_context/privilege-context';
+import { CardItem } from './contactPersons';
+import {
+  Icon123,
+  IconBuildingBank,
+  IconCashBanknote,
+  IconLocation,
+  IconMapPin,
+  IconUser,
+} from '@tabler/icons-react';
 
 interface Props extends Partial<PassFormDataProps> {
   itemSchema: any;
@@ -56,7 +65,7 @@ export const BankAccountDetails: React.FC<Props> = ({
       <CardListShell
         name={name}
         control={control}
-        title="Bank Account Information List"
+        title="Bank Account Information"
         initialValues={{
           accountHolderFullName: '',
           accountNumber: '',
@@ -157,7 +166,7 @@ export const BankAccountDetails: React.FC<Props> = ({
                   disabled={!checkAccess('detail')}
                 >
                   <Stack gap={0}>
-                    <Text fw={600} truncate>
+                    {/* <Text fw={600} truncate>
                       {getLabelByValue(bankList, value.bankId as string)}
                     </Text>
                     <Text fz="xs" truncate>
@@ -168,7 +177,32 @@ export const BankAccountDetails: React.FC<Props> = ({
                     </Text>
                     <Text fz="xs" truncate>
                       Bank Branch Address: {value.branchAddress}
-                    </Text>
+                    </Text> */}
+                    <CardItem
+                      label={getLabelByValue(bankList, value.bankId as string)}
+                      icon={
+                        <IconBuildingBank
+                          size={25}
+                          stroke={1.5}
+                          color={'green'}
+                        />
+                      }
+                      bold
+                    />
+                    <CardItem
+                      label={value.accountHolderFullName}
+                      icon={<IconUser size={25} stroke={1.5} color={'green'} />}
+                    />
+                    <CardItem
+                      label={value.accountNumber}
+                      icon={<Icon123 size={25} stroke={1.5} color={'green'} />}
+                    />
+                    <CardItem
+                      label={value.branchAddress}
+                      icon={
+                        <IconMapPin size={25} stroke={1.5} color={'green'} />
+                      }
+                    />
                   </Stack>
                 </SingleCardWrapper>
               ),

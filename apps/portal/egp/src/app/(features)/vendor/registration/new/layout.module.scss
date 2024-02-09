@@ -1,7 +1,7 @@
 .nav {
-  @apply border;
+  @apply border w-3/5 xl:w-2/5 md:min-w-[200px] lg:min-w-[350px];
   background-color: var(--mantine-color-gray-1);
 }
 .main {
-  @apply w-full p-4 h-full;
+  @apply w-full p-4 min-h-[90%];
 }

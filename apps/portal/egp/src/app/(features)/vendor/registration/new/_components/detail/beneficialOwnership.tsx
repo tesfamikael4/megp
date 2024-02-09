@@ -11,6 +11,8 @@ import {
   nationalityOptions,
 } from '../mockup/nationality';
 import { usePrivilege } from '../../_context/privilege-context';
+import { CardItem } from './contactPersons';
+import { IconFlag, IconUser } from '@tabler/icons-react';
 
 interface Props extends Partial<PassFormDataProps> {
   itemSchema: any;
@@ -33,7 +35,7 @@ export const BeneficialOwnership: React.FC<Props> = ({
           lastName: '',
           nationality: '',
         }}
-        title="Beneficial Ownership List"
+        title="Beneficial Ownership"
         itemSchema={itemSchema}
         disabled={!checkAccess('detail')}
         modalBody={(getInputProps) => (
@@ -75,12 +77,16 @@ export const BeneficialOwnership: React.FC<Props> = ({
                   disabled={!checkAccess('detail')}
                 >
                   <Stack gap={0}>
-                    <Text fw={600} truncate>
-                      {value.firstName} {value.lastName}
-                    </Text>
-                    <Text fz="xs" truncate>
-                      Nationality: {value.nationality}
-                    </Text>
+                    <CardItem
+                      label={value.firstName + ' ' + value.lastName}
+                      icon={<IconUser size={25} stroke={1.5} color={'green'} />}
+                      bold
+                    />
+
+                    <CardItem
+                      label={value.nationality}
+                      icon={<IconFlag size={25} stroke={1.5} color={'green'} />}
+                    />
                   </Stack>
                 </SingleCardWrapper>
               ),

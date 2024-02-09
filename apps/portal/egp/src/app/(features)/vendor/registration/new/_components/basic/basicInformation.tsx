@@ -142,7 +142,7 @@ export const BasicInformation = ({ defaultValues }: BasicInformationProps) => {
         <Flex className="flex-col gap-2 w-full">
           <Select
             className="w-full"
-            label="Country of origin"
+            label="Country of Registration"
             searchable
             value={getValues('origin')}
             data={getNationalityValues()}

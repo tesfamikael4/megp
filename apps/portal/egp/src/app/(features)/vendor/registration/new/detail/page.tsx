@@ -29,10 +29,13 @@ export default function Page() {
       NotificationService.requestErrorNotification('Error on fetching data');
       router.push(`basic`);
     }
+
     if (requestInfo.data?.initial) {
       if (
-        requestInfo.data?.initial.status === 'Submit' ||
-        requestInfo.data?.status! === 'Approved'
+        (requestInfo.data?.initial.status === 'Submit' ||
+          requestInfo.data?.initial.status === 'Submitted' ||
+          requestInfo.data?.status! === 'Approved') &&
+        searchParams.get('flag') !== 'adjustment'
       ) {
         router.push(`/vendor/registration/track-applications`);
       } else

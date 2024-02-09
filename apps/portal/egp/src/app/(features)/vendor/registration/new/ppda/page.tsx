@@ -9,12 +9,15 @@ import { usePrivilege } from '../_context/privilege-context';
 
 function Page() {
   const { updateAccess, updateStatus } = usePrivilege();
+  const searchParams = useSearchParams();
 
   const router = useRouter();
   const requestInfo = useGetVendorQuery(
-    {
-      flag: 'Adjustment',
-    },
+    searchParams.get('flag') === 'adjustment'
+      ? {
+          flag: 'Adjustment',
+        }
+      : {},
     { refetchOnMountOrArgChange: true },
   );
   if (requestInfo.data?.initial) {

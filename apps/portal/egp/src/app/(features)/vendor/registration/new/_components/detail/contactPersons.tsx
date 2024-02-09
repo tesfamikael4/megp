@@ -1,11 +1,12 @@
 import React from 'react';
-import { TextInput, Stack, Group, Text } from '@mantine/core';
+import { TextInput, Stack, Group, Text, Flex } from '@mantine/core';
 import {
   CardListShell,
   SingleCardWrapper,
 } from '../../../../_components/cardList/cardListShell';
 import { PassFormDataProps } from './formShell';
 import { usePrivilege } from '../../_context/privilege-context';
+import { IconMail, IconPhone, IconUser } from '@tabler/icons-react';
 
 interface Props extends Partial<PassFormDataProps> {
   itemSchema: any;
@@ -76,15 +77,21 @@ export const ContactPersons: React.FC<Props> = ({
                   disabled={!checkAccess('detail')}
                 >
                   <Stack gap={0}>
-                    <Text fw={600} truncate>
-                      {value.firstName} {value.lastName}
-                    </Text>
-                    <Text fz="xs" truncate>
-                      Email: {value.email}
-                    </Text>
-                    <Text fz="xs" truncate>
-                      Phone: {value.mobileNumber}
-                    </Text>
+                    <CardItem
+                      label={value.firstName + ' ' + value.lastName}
+                      icon={<IconUser size={25} stroke={1.5} color={'green'} />}
+                      bold
+                    />
+                    <CardItem
+                      label={value.email}
+                      icon={<IconMail size={25} stroke={1.5} color={'green'} />}
+                    />
+                    <CardItem
+                      label={value.mobileNumber}
+                      icon={
+                        <IconPhone size={25} stroke={1.5} color={'green'} />
+                      }
+                    />
                   </Stack>
                 </SingleCardWrapper>
               ),
@@ -93,5 +100,16 @@ export const ContactPersons: React.FC<Props> = ({
         )}
       />
     </>
+  );
+};
+
+export const CardItem = ({ label, icon, bold }: any) => {
+  return (
+    <Flex align={'center'} gap={'sm'} className="mb-1 ">
+      {icon}
+      <Text size={'sm'} fw={bold ? 500 : 400}>
+        {label}
+      </Text>
+    </Flex>
   );
 };

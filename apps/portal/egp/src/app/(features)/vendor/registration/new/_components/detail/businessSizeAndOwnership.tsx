@@ -7,7 +7,7 @@ import {
   TextInput,
 } from '@mantine/core';
 import React from 'react';
-import { IconCash } from '@tabler/icons-react';
+import { IconCash, IconChevronDown } from '@tabler/icons-react';
 import { Select } from '@mantine/core';
 import { PassFormDataProps } from './formShell';
 
@@ -30,7 +30,7 @@ export const BusinessSizeAndOwnership: React.FC<PassFormDataProps> = ({
                 'businessSizeAndOwnership.registeredCapital.currency',
                 'select',
               )}
-              rightSection={<></>}
+              // rightSection={<><IconChevronDown size={'1.3rem'} /></>}
               rightSectionWidth={0}
               error={false}
               onChange={(value) => {

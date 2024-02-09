@@ -221,8 +221,12 @@ const RegistrationForm = ({
           })}
         </Accordion>
 
-        <Flex justify="end" className="gap-2 mt-4">
-          {checkAccess('detail') && <Button type="submit">Save</Button>}
+        <Flex justify="end" className="gap-2 m-4">
+          {checkAccess('detail') && (
+            <>
+              <Button type="submit">Save & Continue</Button>
+            </>
+          )}
         </Flex>
       </form>
     </Flex>
