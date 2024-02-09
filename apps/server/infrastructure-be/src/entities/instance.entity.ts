@@ -11,6 +11,7 @@ import {
 import { Activity } from './activity.entity';
 import { Step } from './step.entity';
 import { OrgAudit } from 'src/shared/entities';
+import { State } from './state.entity';
 
 @Entity({ name: 'instances' })
 export class Instance extends OrgAudit {
@@ -32,6 +33,12 @@ export class Instance extends OrgAudit {
   })
   @JoinColumn({ name: 'stepId' })
   public step: Step;
+
+  @Column()
+  stateId: string;
+
+  @OneToOne(() => State, (state) => state.instance)
+  state: State;
 
   @Column()
   status: string;

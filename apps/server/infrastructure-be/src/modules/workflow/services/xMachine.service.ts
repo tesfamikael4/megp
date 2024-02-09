@@ -31,14 +31,10 @@ interface StateMachineConfig {
 @Injectable()
 export class XMachineService {
   constructor(
-    @InjectRepository(Workflow)
-    private readonly repositoryWorkflow: Repository<Workflow>,
     @InjectRepository(Step)
     private readonly repositoryStep: Repository<Step>,
     @InjectRepository(Instance)
     private readonly repositoryInstance: Repository<Instance>,
-    @InjectRepository(State)
-    private readonly repositoryState: Repository<State>,
     @InjectRepository(Activity)
     private readonly repositoryActivity: Repository<Activity>,
 

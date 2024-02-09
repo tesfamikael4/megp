@@ -5,23 +5,30 @@ import { ExtraCrudService } from 'src/shared/service';
 import { State } from 'src/entities/state.entity';
 import { XMachineService } from './xMachine.service';
 import { Step } from 'src/entities';
+import { InstanceStep } from 'src/entities/instance-step.entity';
 
 @Injectable()
 export class StateService extends ExtraCrudService<State> {
   constructor(
     @InjectRepository(State)
     private readonly repositoryState: Repository<State>,
-    @InjectRepository(Step)
-    private readonly repositoryStep: Repository<Step>,
+    // @InjectRepository(Step)
+    // private readonly repositoryStep: Repository<Step>,
     private readonly xMachineState: XMachineService,
+    @InjectRepository(InstanceStep)
+    private readonly repositoryInstanceStep: Repository<InstanceStep>,
   ) {
     super(repositoryState);
   }
 
   // Listen
-  async createState(activityId, organizationId): Promise<any> {
-    const steps = await this.repositoryStep.find({
-      where: { activityId, organizationId },
+  async createState(
+    activityId: string,
+    organizationId: string,
+    itemId: string,
+  ): Promise<any> {
+    const steps = await this.repositoryInstanceStep.find({
+      where: { activityId, organizationId, itemId },
       order: { order: 'ASC' },
     });
 
