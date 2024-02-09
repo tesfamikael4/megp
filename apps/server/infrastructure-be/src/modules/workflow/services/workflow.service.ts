@@ -6,25 +6,34 @@ import { EntityCrudService } from 'src/shared/service';
 import { XMachineService } from './xMachine.service';
 import { createActor } from 'xstate';
 import { State } from 'src/entities/state.entity';
+import { Instance } from 'src/entities/instance.entity';
 
 @Injectable()
 export class WorkflowService extends EntityCrudService<Workflow> {
   constructor(
     @InjectRepository(Workflow)
     private readonly repositoryWorkflow: Repository<Workflow>,
+    @InjectRepository(Instance)
+    private readonly repositoryInstance: Repository<Instance>,
 
-    @InjectRepository(State)
-    private readonly repositoryState: Repository<State>,
+    // @InjectRepository(State)
+    // private readonly repositoryState: Repository<State>,
 
     private readonly xMachineService: XMachineService,
   ) {
     super(repositoryWorkflow);
   }
 
-  async approveWorkflow(workflowType, metaData, activityId) {
-    const state = await this.repositoryState.findOneBy({
-      activityId,
-      organizationId: metaData.organizationId,
+  async approveWorkflow(metaData: any, activityId: string, itemId: string) {
+    const state = await this.repositoryInstance.findOne({
+      where: {
+        activityId,
+        organizationId: metaData.organizationId,
+        itemId: itemId,
+      },
+      relations: {
+        state: true,
+      },
     });
 
     if (!state) throw new Error('state not found');

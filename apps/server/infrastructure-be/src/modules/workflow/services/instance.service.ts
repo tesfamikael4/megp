@@ -1,13 +1,14 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { Repository } from 'typeorm';
+import { In, Not, Repository } from 'typeorm';
 import { Step } from 'src/entities';
 import { Instance } from 'src/entities/instance.entity';
 import { Activity } from 'src/entities/activity.entity';
 import { StateService } from './state.service';
 import { State } from 'src/entities/state.entity';
 import { EntityCrudService } from 'src/shared/service';
+import { InstanceStep } from 'src/entities/instance-step.entity';
 
 @Injectable()
 export class InstanceService extends EntityCrudService<Instance> {
@@ -20,6 +21,8 @@ export class InstanceService extends EntityCrudService<Instance> {
     private readonly repositoryActivity: Repository<Activity>,
     @InjectRepository(State)
     private readonly repositoryState: Repository<State>,
+    @InjectRepository(InstanceStep)
+    private readonly repositoryInstanceStep: Repository<InstanceStep>,
 
     private readonly stateService: StateService,
 
@@ -40,6 +43,13 @@ export class InstanceService extends EntityCrudService<Instance> {
       where: { activityId: act.id, organizationId: data.organizationId },
       order: { order: 'ASC' },
     });
+
+    await this.repositoryInstanceStep.create({ ...steps, itemId: data.itemId });
+    const instanceState = await this.stateService.createState(
+      act.id,
+      data.organizationId,
+      data.id,
+    );
     const createData = {
       itemId: data.id,
       itemName: data.itemName,
@@ -48,17 +58,20 @@ export class InstanceService extends EntityCrudService<Instance> {
       status: steps[0].name,
       stepId: steps[0].id,
       metadata: [],
+      stateId: instanceState.id,
     };
-    await this.stateService.createState(act.id, data.organizationId);
-
     const instance = this.repositoryInstance.create(createData);
     return this.repositoryInstance.save(instance);
   }
 
-  async goto(activityId, details, goto) {
-    const existingData = await this.repositoryInstance.findOne({
-      where: { activityId: activityId },
-    });
+  async goto(data, organizationId: string) {
+    const details = data.details;
+    const goto = data.goto;
+    const existingData = await this.findCurrentInstance(
+      data.activityId,
+      data.itemId,
+      organizationId,
+    );
     if (existingData) {
       existingData.metadata.push({
         userId: details.userId,
@@ -79,9 +92,9 @@ export class InstanceService extends EntityCrudService<Instance> {
     }
   }
 
-  async findOne(activityId: any, organizationId): Promise<Instance> {
+  async findOne(activityId: string, organizationId: string): Promise<Instance> {
     const instance = await this.repositoryInstance.findOne({
-      where: { activityId: activityId, organizationId: organizationId },
+      where: { activityId, organizationId },
       relations: {
         step: true,
       },
@@ -89,11 +102,48 @@ export class InstanceService extends EntityCrudService<Instance> {
         createdAt: 'DESC',
       },
     });
-    if (instance?.stepId) {
-      instance.step = await this.repositoryStep.findOne({
-        where: { id: instance.stepId },
-      });
-    }
+    return instance;
+  }
+
+  async findCurrentInstance(
+    activityId: string,
+    organizationId: string,
+    itemId: string,
+  ): Promise<Instance> {
+    const instance = await this.repositoryInstance.findOne({
+      where: { activityId, organizationId, itemId },
+      relations: {
+        step: true,
+      },
+      order: {
+        createdAt: 'DESC',
+      },
+    });
+    return instance;
+  }
+
+  async isActive(
+    name: string,
+    organizationId: string,
+    itemId: string,
+  ): Promise<Instance> {
+    const activity = await this.repositoryActivity.findOne({
+      where: {
+        name,
+      },
+    });
+    const instance = await this.repositoryInstance.findOne({
+      where: {
+        activityId: activity.id,
+        organizationId,
+        itemId,
+        status: Not(In(['Rejected', 'Approved'])),
+      },
+      relations: {
+        step: true,
+      },
+    });
+
     return instance;
   }
 }

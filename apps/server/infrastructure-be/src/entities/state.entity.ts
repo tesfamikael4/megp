@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { Activity } from './activity.entity';
 import { OrgAudit } from 'src/shared/entities';
+import { Instance } from './instance.entity';
 
 @Entity({ name: 'states' })
 export class State extends OrgAudit {
@@ -22,4 +23,7 @@ export class State extends OrgAudit {
 
   @Column({ type: 'jsonb' })
   state: any[];
+
+  @OneToOne(() => Instance, (instance) => instance.state)
+  instance: Instance;
 }

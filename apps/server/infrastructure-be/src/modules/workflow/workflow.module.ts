@@ -25,6 +25,8 @@ import { PermissionController } from './controllers/permission.controller';
 import { AuthHelper } from 'src/shared/authorization';
 import { JwtService } from '@nestjs/jwt';
 import * as dotenv from 'dotenv';
+import { InstanceStepService } from './services/instance-step.service';
+import { InstanceStepController } from './controllers/instance-step.controller';
 
 dotenv.config({ path: '.env' });
 
@@ -60,6 +62,7 @@ dotenv.config({ path: '.env' });
     DefaultStepService,
     StateService,
     InstanceService,
+    InstanceStepService,
     ActivityService,
     PermissionService,
     AuthHelper,
@@ -71,6 +74,7 @@ dotenv.config({ path: '.env' });
     DefaultStepController,
     ActivityController,
     InstanceController,
+    InstanceStepController,
     StateController,
     PermissionController,
   ],

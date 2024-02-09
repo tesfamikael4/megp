@@ -33,6 +33,26 @@ export class InstanceController extends EntityCrudController<Instance>(
     return this.instanceService.findOne(id, organizationId);
   }
 
+  @Get('findCurrentInstance/:id')
+  async findCurrentInstance(
+    @Param('id') id: string,
+    @Param('itemId') itemId: string,
+    @CurrentUser() user,
+  ) {
+    const organizationId = user.organization.id;
+    return this.instanceService.findCurrentInstance(id, organizationId, itemId);
+  }
+
+  @Get('isActive/:key/:itemId')
+  async isActive(
+    @Param('key') key: string,
+    @Param('itemId') itemId: string,
+    @CurrentUser() user,
+  ) {
+    const organizationId = user.organization.id;
+    return this.instanceService.isActive(key, organizationId, itemId);
+  }
+
   @Post('initiate')
   @EventPattern('initiate-workflow')
   async initiate(@Body() data: any, @Ctx() context: RmqContext) {
@@ -40,7 +60,8 @@ export class InstanceController extends EntityCrudController<Instance>(
   }
 
   @Post('goto')
-  async goto(@Body() data: any) {
-    return this.instanceService.goto(data.activityId, data.details, data.goto);
+  async goto(@Body() data: any, @CurrentUser() user) {
+    const organizationId = user.organization.id;
+    return this.instanceService.goto(data, organizationId);
   }
 }
