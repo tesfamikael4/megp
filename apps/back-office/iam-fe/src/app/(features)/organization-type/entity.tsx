@@ -18,7 +18,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
       mode: 'list',
       entity: 'organization-type',
       primaryKey: 'id',
-      title: 'Organization type',
+      title: 'Organization Type',
       onAdd: () => {
         route.push(`/organization-type/new`);
       },
