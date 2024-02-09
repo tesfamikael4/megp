@@ -149,6 +149,6 @@ function decodeOrderItem(encoded: string): Order {
   const parts = encoded.split(':');
   return {
     column: parts[0],
-    direction: parts[1] as 'asc' | 'desc',
+    direction: parts[1] as 'ASC' | 'DESC',
   };
 }

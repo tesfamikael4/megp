@@ -34,7 +34,7 @@ export interface CollectionQuery {
 
 export interface Order {
   column: string;
-  direction?: 'asc' | 'desc';
+  direction?: 'ASC' | 'DESC';
   nulls?: 'nullsFirst' | 'nullsLast';
 }
 
