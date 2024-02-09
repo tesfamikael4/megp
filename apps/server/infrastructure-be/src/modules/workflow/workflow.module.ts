@@ -27,6 +27,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as dotenv from 'dotenv';
 import { InstanceStepService } from './services/instance-step.service';
 import { InstanceStepController } from './controllers/instance-step.controller';
+import { InstanceStep } from 'src/entities/instance-step.entity';
 
 dotenv.config({ path: '.env' });
 
@@ -40,6 +41,7 @@ dotenv.config({ path: '.env' });
       State,
       DefaultStep,
       Permission,
+      InstanceStep,
     ]),
     ClientsModule.register([
       {
