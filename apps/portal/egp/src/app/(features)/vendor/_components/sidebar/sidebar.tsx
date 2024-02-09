@@ -36,48 +36,7 @@ export const sidebarLinks: SidebarLinks[] = [
   {
     label: 'Vendor Service',
     icon: IconUserCog,
-    links: [
-      {
-        label: 'Get registration',
-        link: '/vendor/registration/new/basic',
-      },
-      {
-        label: 'Renew registration',
-        link: '/vendor/registration/renewal/ppda',
-      },
-      {
-        label: 'Upgrade registration',
-        link: '/vendor/registration/upgrade/business-areas',
-      },
-      {
-        label: 'Profile update',
-        link: '/vendor/registration/profile-update',
-      },
-      {
-        label: 'Preferential Treatment',
-        link: '/vendor/registration/preferential-treatment',
-      },
-      // {
-      //   label: 'IBM registration',
-      //   link: '/vendor/registration/dbm',
-      // },
-      {
-        label: 'Debarment Study',
-        link: '/vendor/registration/debarment-study',
-      },
-      {
-        label: 'Cancel registration',
-        link: '/vendor/registration/cancel',
-      },
-      {
-        label: 'Track Application',
-        link: '/vendor/registration/track-applications',
-      },
-      {
-        label: 'My Briefcase',
-        link: '/vendor/registration/my-briefcase',
-      },
-    ],
+    link: '/vendor/service',
   },
 ];
 function createNavLinks(

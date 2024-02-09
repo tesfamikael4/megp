@@ -1,8 +1,7 @@
-.sidebarMain{
-
-  @apply w-full h-full bg-gray-50 p-2;
+.sidebarMain {
+  @apply w-full h-full bg-white p-2;
 }
-.sidebarChildren{
+.sidebarChildren {
   @apply border-l-2;
   border-left: 2px solid var(--mantine-color-primary-outline);
 }

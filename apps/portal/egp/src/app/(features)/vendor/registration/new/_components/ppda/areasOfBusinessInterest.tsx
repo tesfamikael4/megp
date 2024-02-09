@@ -42,16 +42,14 @@ const getLabelByValue = (
 };
 interface Props extends PassFormDataProps {
   name: any;
-  adjust?: boolean;
+  adjustment?: boolean;
 }
 export const AreasOfBusinessInterest: React.FC<Props> = ({
   control,
   name,
   register,
-  adjust,
+  adjustment,
 }) => {
-  const searchParams = useSearchParams();
-
   const getLineOfBusinessValues = useGetLineOfBusinessQuery({});
   const getPriceRangeValues = useGetPriceRangeQuery({
     type: 'new',
@@ -65,38 +63,41 @@ export const AreasOfBusinessInterest: React.FC<Props> = ({
   });
   const fieldState = control.getFieldState(name, control._formState);
 
-  const getCategoryProps = () => ({
-    value: fields.map((item) => item.category),
-    onChange: (categorys: string[]) => {
-      const fieldsCategorys = fields.map((item) => item.category);
-      const difference = fieldsCategorys.filter(
-        (category) => !categorys.includes(category),
-      );
-      difference.map((category) => {
-        const notExistingIndex = fields.findIndex(
-          (field) => field.category === category,
+  const getCategoryProps = () => {
+    return {
+      value: fields.map((item) => item.category),
+      onChange: (categorys: string[]) => {
+        // console.log(fields.)
+        const fieldsCategorys = fields.map((item) => item.category);
+        const difference = fieldsCategorys.filter(
+          (category) => !categorys.includes(category),
         );
-        remove(notExistingIndex);
-      });
-      categorys.map((category) => {
-        const existingIndex = fields.findIndex(
-          (field) => field.category === category,
-        );
-        if (existingIndex === -1) {
-          append({
-            category,
-            lineOfBusiness: [], // Start with an empty array
-            priceRange: '',
-          });
-        }
-      });
-    },
-    error: fieldState?.error?.message,
-    // onFocus: () => clearValidationError(fieldName),
-    // onBlur: () => validateField(fieldName),
-    ...lockElements('ppda'),
-    disabled: fields.map((field) => field.category),
-  });
+        difference.map((category) => {
+          const notExistingIndex = fields.findIndex(
+            (field) => field.category === category,
+          );
+          remove(notExistingIndex);
+        });
+        categorys.map((category) => {
+          const existingIndex = fields.findIndex(
+            (field) => field.category === category,
+          );
+          if (existingIndex === -1) {
+            append({
+              category,
+              lineOfBusiness: [], // Start with an empty array
+              priceRange: '',
+            });
+          }
+        });
+      },
+      error: fieldState?.error?.message,
+
+      // onFocus: () => clearValidationError(fieldName),
+      // onBlur: () => validateField(fieldName),
+      ...lockElements('ppda'),
+    };
+  };
   const getLineOfBusinessMultiSelectData = (
     businessArea: string,
   ): { value: string; label: string }[] | string[] | [] => {
@@ -155,7 +156,7 @@ export const AreasOfBusinessInterest: React.FC<Props> = ({
         }
         overlayProps={{ radius: 'sm', blur: 2 }}
       />
-      {searchParams.get('flag') !== 'adjust' && (
+      {adjustment && (
         <MultiCheckBox
           label="Category"
           id="category"

@@ -70,7 +70,7 @@ export function renderTable(
                     <Table.Td key={header?.name ?? header}>
                       <ul>
                         {cellValue.map((value, index) => (
-                          <li key={index}>{JSON.stringify(value)}</li>
+                          <li key={index}>{value}</li>
                         ))}
                       </ul>
                     </Table.Td>
@@ -106,24 +106,24 @@ export function renderTable(
                       {isDate(cellValue)
                         ? formatDateTimeFromString(cellValue, true) || 'N/A'
                         : typeof cellValue === 'boolean'
-                        ? JSON.stringify(cellValue)
-                        : (header?.name ?? header) === 'certificateUrl'
-                        ? cellValue && (
-                            <Button
-                              onClick={() => {
-                                open();
-                                setUrl(
-                                  `${
-                                    process.env.NEXT_PUBLIC_VENDOR_API ??
-                                    '/vendors/api/'
-                                  }upload/get-file-bo/certificate/${cellValue}/${userId}`,
-                                );
-                              }}
-                            >
-                              View
-                            </Button>
-                          )
-                        : cellValue}
+                          ? JSON.stringify(cellValue)
+                          : (header?.name ?? header) === 'certificateUrl'
+                            ? cellValue && (
+                                <Button
+                                  onClick={() => {
+                                    open();
+                                    setUrl(
+                                      `${
+                                        process.env.NEXT_PUBLIC_VENDOR_API ??
+                                        '/vendors/api/'
+                                      }upload/get-file-bo/certificate/${cellValue}/${userId}`,
+                                    );
+                                  }}
+                                >
+                                  View
+                                </Button>
+                              )
+                            : cellValue}
                     </Table.Td>
                   );
                 }

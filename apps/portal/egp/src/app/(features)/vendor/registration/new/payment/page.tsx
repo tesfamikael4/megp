@@ -202,7 +202,7 @@ function Page() {
               )}
             </Flex>
           </form>
-          <Flex className="min-w-[450px] flex-col border w-1/2">
+          <Flex className="flex-col border w-1/2">
             {invoiceInfo.data?.invoice &&
               invoiceInfo.data?.invoice?.length > 0 && (
                 <InvoiceTemplate invoiceData={invoiceInfo.data?.invoice} />

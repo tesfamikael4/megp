@@ -150,6 +150,7 @@ export const AreasOfBusinessInterestForm = ({
             name="areasOfBusinessInterest"
             control={control}
             register={extendedRegister}
+            adjustment={vendorInfo.status === 'Adjustment' ? false : true}
           />
         </Flex>
         <Flex className="mt-10 justify-end gap-2">

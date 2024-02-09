@@ -7,12 +7,12 @@
   min-width: 250px;
 }
 .stepLabel {
-  @apply text-xs font-semibold;
-  color: var(--mantine-color-gray-6);
+  @apply text-sm font-semibold;
+  color: var(--mantine-color-black);
 }
 .stepIcon {
-  @apply text-xs font-semibold;
-  color: var(--mantine-color-gray-6);
+  @apply text-xs font-semibold mr-2;
+  /* color: var(--mantine-color-green-6); */
 }
 .stepBody {
   [data-icon-position='left'] {
@@ -21,8 +21,8 @@
 }
 [data-mantine-color-scheme] .stepIcon {
   &[data-completed] {
-    --_step-icon-color: var(--_step-color);
-    --_step-icon-bg: var(--mantine-color-white);
+    --_step-icon-bg: var(--_step-color);
+    --_step-icon-color: white;
     --_step-icon-border-color: var(--_step-color);
   }
   --_step-icon-bg: var(--mantine-color-white);
@@ -30,7 +30,7 @@
   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
 }
 .stepCompletedIcon {
-  color: var(--_step-color);
+  color: white;
   padding: 0.4rem;
 }
 

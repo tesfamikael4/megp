@@ -6,6 +6,7 @@ import { usePrivilege } from '../../_context/privilege-context';
 import { useGetVendorQuery } from '../../../_api/query';
 import { useCallback, useEffect } from 'react';
 import { NotificationService } from '@/app/(features)/vendor/_components/notification';
+import { Section } from '@megp/core-fe';
 
 function StyledStepper() {
   const { accessLevel, updateStatus, updateAccess } = usePrivilege();
@@ -14,7 +15,10 @@ function StyledStepper() {
   const path = usePathname();
   const routes = ['basic', 'detail', 'ppda', 'payment', 'doc', 'review'];
 
-  const { data, error } = useGetVendorQuery({});
+  const { data, error } = useGetVendorQuery(
+    {},
+    { refetchOnMountOrArgChange: true },
+  );
 
   useEffect(() => {
     if (error) {
@@ -49,37 +53,52 @@ function StyledStepper() {
   const activeStep = routes.indexOf(
     data?.initial.level?.toLowerCase() ?? path.split('/')[4],
   );
-  // const searchParams = useSearchParams();
-
-  // const createQueryString = useCallback(
-  //   (name: string, value: string) => {
-  //     const params = new URLSearchParams(searchParams.toString())
-  //     params.set(name, value)
-
-  //     return params.toString()
-  //   },
-  //   [searchParams]
-  // )
-
   const handleStepClick = (stepIndex) => {
     (canAccessRoute(routes[stepIndex]) || accessLevel == routes[stepIndex]) &&
       router.push(routes[stepIndex]);
   };
 
   return (
-    <Stepper
-      classNames={styles}
-      active={activeStep}
-      onStepClick={handleStepClick}
-      orientation="vertical"
-    >
-      <Stepper.Step label="Basic Information" />
-      <Stepper.Step label="Profile Information" />
-      <Stepper.Step label="Purpose of Registration" />
-      <Stepper.Step label="Payment" />
-      <Stepper.Step label="Document Attachment" />
-      <Stepper.Step label="Review & Submit" />
-    </Stepper>
+    <Section title="Steps to becoming a registered Vendor" collapsible={false}>
+      <Stepper
+        classNames={styles}
+        active={activeStep}
+        onStepClick={handleStepClick}
+        orientation="vertical"
+        color="teal"
+      >
+        <Stepper.Step
+          completedIcon={1}
+          label="Basic Information"
+          description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore "
+        />
+        <Stepper.Step
+          completedIcon={2}
+          label="Profile Information"
+          description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore "
+        />
+        <Stepper.Step
+          completedIcon={3}
+          label="Purpose of Registration"
+          description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore "
+        />
+        <Stepper.Step
+          completedIcon={4}
+          label="Payment"
+          description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore "
+        />
+        <Stepper.Step
+          completedIcon={5}
+          label="Document Attachment"
+          description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore "
+        />
+        <Stepper.Step
+          completedIcon={6}
+          label="Review & Submit"
+          description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore "
+        />
+      </Stepper>
+    </Section>
   );
 }
 export default StyledStepper;

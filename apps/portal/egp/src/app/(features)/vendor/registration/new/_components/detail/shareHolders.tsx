@@ -15,6 +15,8 @@ import {
 } from '../../../../_components/cardList/cardListShell';
 import { getNationalityValues } from '../mockup/nationality';
 import { usePrivilege } from '../../_context/privilege-context';
+import { CardItem } from './contactPersons';
+import { IconFlag, IconPercentage, IconUser } from '@tabler/icons-react';
 
 interface Props extends Partial<PassFormDataProps> {
   itemSchema: any;
@@ -38,7 +40,7 @@ export const ShareHolders: React.FC<Props> = ({
           nationality: '',
           share: '',
         }}
-        title="Share Holders List"
+        title="Share Holders"
         itemSchema={itemSchema}
         disabled={!checkAccess('detail')}
         modalBody={(getInputProps) => (
@@ -73,7 +75,6 @@ export const ShareHolders: React.FC<Props> = ({
                   placeholder="Enter Share"
                   {...getInputProps('share', 'number')}
                   onChange={(value) => {
-                    console.log({ value });
                     getInputProps('share', 'number').onChange(Number(value));
                     const previousShareholderShare =
                       control?._formValues?.shareHolders.reduce(
@@ -103,15 +104,27 @@ export const ShareHolders: React.FC<Props> = ({
                   disabled={!checkAccess('detail')}
                 >
                   <Stack gap={0}>
-                    <Text fw={600} truncate>
-                      {value.firstName} {value.lastName}
-                    </Text>
-                    <Text fz="xs" truncate>
-                      Nationality: {value.nationality}
-                    </Text>
-                    <Text fz="xs" truncate>
-                      Share: {value.share}%
-                    </Text>
+                    <CardItem
+                      label={value.firstName + ' ' + value.lastName}
+                      icon={<IconUser size={25} stroke={1.5} color={'green'} />}
+                      bold
+                    />
+
+                    <CardItem
+                      label={value.nationality}
+                      icon={<IconFlag size={25} stroke={1.5} color={'green'} />}
+                    />
+
+                    <CardItem
+                      label={value.share + `%`}
+                      icon={
+                        <IconPercentage
+                          size={25}
+                          stroke={1.5}
+                          color={'green'}
+                        />
+                      }
+                    />
                   </Stack>
                 </SingleCardWrapper>
               ),

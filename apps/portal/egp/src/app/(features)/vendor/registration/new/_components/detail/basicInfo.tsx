@@ -13,6 +13,14 @@ export const BasicInfo: React.FC<PassFormDataProps> = ({ register }) => {
           id="name"
           {...register(`basic.name`)}
         />
+        <TextInput
+          label="Tax Identification Number (TIN)"
+          {...register(`basic.tinNumber`)}
+          disabled
+          className="w-1/2"
+        />
+      </Group>
+      <Group grow>
         <Select
           label="Form of Business"
           withAsterisk
@@ -40,14 +48,14 @@ export const BasicInfo: React.FC<PassFormDataProps> = ({ register }) => {
           ]}
           {...register('basic.businessType', 'select')}
         />
-      </Group>
-      <Group grow>
         <Select
-          label="Business/Company Origin"
+          label="Country of Registration"
           data={getNationalityValues()}
           {...register(`basic.origin`, 'select')}
           disabled
         />
+      </Group>
+      <Group grow>
         <Select
           searchable
           label="Country"
@@ -55,16 +63,7 @@ export const BasicInfo: React.FC<PassFormDataProps> = ({ register }) => {
           data={getNationalityValues()}
           {...register(`basic.country`, 'select')}
         />
-      </Group>
-      <Group
-        grow
-        className={`${
-          register('basic.country', 'select').value !== 'Malawi'
-            ? 'w-1/2'
-            : 'w-full flex gap-x-2'
-        }`}
-      >
-        {register('basic.country', 'select').value === 'Malawi' && (
+        {register('basic.country', 'select').value === 'Malawi' ? (
           <Select
             label="District"
             withAsterisk
@@ -101,13 +100,9 @@ export const BasicInfo: React.FC<PassFormDataProps> = ({ register }) => {
             {...register(`basic.district`, 'select')}
             className="w-1/2"
           />
+        ) : (
+          <TextInput label="District/State/Region" />
         )}
-        <TextInput
-          label="TIN"
-          {...register(`basic.tinNumber`)}
-          disabled
-          className="w-1/2"
-        />
       </Group>
     </Stack>
   );
