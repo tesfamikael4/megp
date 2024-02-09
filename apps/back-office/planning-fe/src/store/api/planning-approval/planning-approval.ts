@@ -37,7 +37,7 @@ export const planningApprovalApi = createApi({
       }),
     }),
     getCurrentStep: builder.query<any, { activityId: string }>({
-      query: (payload) => `instance/${payload.activityId}`,
+      query: (payload) => `findCurrentInstance/${payload.activityId}`,
       providesTags: ['Approval'],
     }),
     approve: builder.mutation<any, any>({
