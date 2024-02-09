@@ -337,6 +337,7 @@ export class FileService {
         const row = invoices[index];
         const businessArea = invoices[index].businessArea;
         const ba = await this.busineAreaService.findOne(businessArea.id);
+
         if (ba.status == ApplicationStatus.PENDING) {
           wfi.bpId = row.businessArea.BpService.businessProcesses[0].id;
           wfi.serviceId = row.businessArea.serviceId;

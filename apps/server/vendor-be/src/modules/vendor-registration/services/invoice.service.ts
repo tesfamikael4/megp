@@ -12,7 +12,7 @@ import {
 import { ServicePricingService } from 'src/modules/pricing/services/service-pricing.service';
 import { DataResponseFormat } from 'src/shared/api-data';
 import { EntityCrudService } from 'src/shared/service';
-import { In, MoreThanOrEqual, Repository } from 'typeorm';
+import { In, MoreThanOrEqual, Not, Repository } from 'typeorm';
 import { InvoiceResponseDto } from '../dto/invoice.dto';
 import { CollectionQuery, QueryConstructor } from 'src/shared/collection-query';
 import { HandlingCommonService } from 'src/modules/handling/services/handling-common-services';
@@ -189,15 +189,22 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
         //paymentStatus: 'Pending',
         createdOn: MoreThanOrEqual(oneWeekAgo),
         businessArea: {
+          status: Not(ApplicationStatus.APPROVED),
           BpService: { key: In(serviceTypes) },
         },
       },
       relations: { businessArea: { BpService: true } },
     });
     response.total = total;
-    response.items = result.map((entity) =>
-      InvoiceResponseDto.toResponse(entity),
-    );
+    const invoices = [];
+    for (const row of result) {
+      if (row.businessArea.status != ApplicationStatus.APPROVED) {
+        const invoice = InvoiceResponseDto.toResponse(row);
+        invoices.push(invoice)
+
+      }
+    }
+    response.items = [...invoices];
     return response;
   }
 
@@ -279,21 +286,21 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
         const ba = businessArea.upgrades[index];
         const bAId = ba.id;
         const newPricingId = ba.pricingId;
-        const businessareaData = await this.businessAreaRepository.findOne({
+        const businessAreaData = await this.businessAreaRepository.findOne({
           where: { id: bAId, status: ApplicationStatus.APPROVED },
           relations: { BpService: true, servicePrice: true },
         });
         const businessAreaNew = await this.businessAreaRepository.findOne({
           where: {
             status: ApplicationStatus.PENDING,
-            instanceId: businessareaData?.instanceId,
+            instanceId: businessAreaData?.instanceId,
             invoice: { userId: user.id },
           },
           relations: { BpService: true, servicePrice: true, invoice: true },
         });
 
         if (businessAreaNew) {
-          if (businessAreaNew.priceRangeId == businessareaData.priceRangeId) {
+          if (businessAreaNew.priceRangeId == businessAreaData.priceRangeId) {
             newBAIds.push(businessAreaNew.id);
             continue;
           } else {
@@ -301,18 +308,18 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
             await this.invoiceRepository.delete(invoiceId);
           }
         }
-        const key = await this.commonService.mapServiceType(businessareaData, 'upgrade');
+        const key = await this.commonService.mapServiceType(businessAreaData, 'upgrade');
         keys.push(key);
         const CurrentpricingData =
           await this.pricingService.findPricingWithServiceById(newPricingId);
         const upgradePayment = this.computingPaymentForUpgrade(
-          businessareaData,
+          businessAreaData,
           CurrentpricingData,
         );
         const bp: BusinessProcessEntity =
           await this.bpService.findBpWithServiceByKey(key);
         const vendor = await this.vendorsRepository.findOne({
-          where: { id: businessareaData.vendorId },
+          where: { id: businessAreaData.vendorId },
         });
         const invoice: InvoiceEntity = this.mapInvoice(
           CurrentpricingData,
@@ -330,10 +337,10 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
         businessArea.BusinessAreaStatus.level =
           businessArea.BusinessAreaStatus.level = 'Payment';
         business.businessAreaState = businessArea.BusinessAreaStatus;
-        business.instanceId = businessareaData.instanceId;
-        business.vendorId = businessareaData.vendorId;
-        business.category = businessareaData.category;
-        business.expireDate = businessareaData.expireDate;
+        business.instanceId = businessAreaData.instanceId;
+        business.vendorId = businessAreaData.vendorId;
+        business.category = businessAreaData.category;
+        business.expireDate = businessAreaData.expireDate;
         const result = await this.baService.create(business);
         if (result) {
           newBAIds.push(result.id);

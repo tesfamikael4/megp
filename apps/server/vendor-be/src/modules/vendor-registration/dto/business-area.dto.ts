@@ -61,7 +61,7 @@ export class BusinessAreaResponseDto extends CreateBusinessAreaDto {
   id: string;
   @ApiProperty()
   @IsOptional()
-  certificateUrl: string
+  certificateUrl: string;
   static toResponse(entity: BusinessAreaEntity): BusinessAreaResponseDto {
     const response = new BusinessAreaResponseDto();
     response.id = entity.id;
@@ -71,7 +71,7 @@ export class BusinessAreaResponseDto extends CreateBusinessAreaDto {
     response.status = entity.status;
     response.expireDate = entity.expireDate;
     response.approvedAt = entity.approvedAt;
-    response.certificateUrl = entity?.certificateUrl
+    response.certificateUrl = entity?.certificateUrl;
     return response;
   }
   static toResponses(entity: BusinessAreaEntity[]): BusinessAreaResponseDto[] {
@@ -94,27 +94,28 @@ export class BusinessAreaDetailResponseDto {
   @ApiProperty()
   service: string;
   @ApiProperty()
-  priceFrom: number;
+  valueFrom: number;
   @ApiProperty()
-  priceTo: any;
+  valueTo: any;
   @ApiProperty()
   currency: string;
   @ApiProperty()
   certificateUrl: string;
-  lineOfBusiness: string[]
-
+  lineOfBusiness: string[];
+  priceRange: string;
   static toResponse(entity: BusinessAreaEntity): BusinessAreaDetailResponseDto {
     const response = new BusinessAreaDetailResponseDto();
     response.id = entity.id;
     response.category = entity.category;
+    response.priceRange = '';
+    // response.service = entity.BpService.name;
     response.status = entity.status;
-    response.expireDate = entity?.expireDate;
     response.approvedAt = entity?.approvedAt;
-    response.service = entity.BpService.name;
-    response.priceFrom = entity.servicePrice?.valueFrom;
-    response.priceTo = entity.servicePrice?.valueTo == -1 ? 'infinite' : entity.servicePrice?.valueTo;
+    response.expireDate = entity?.expireDate;
+    response.valueFrom = entity.servicePrice?.valueFrom;
+    response.valueTo = entity.servicePrice?.valueTo;
     response.currency = entity.servicePrice?.currency;
-    response.certificateUrl = entity?.certificateUrl
+    response.certificateUrl = entity?.certificateUrl;
     return response;
   }
 }

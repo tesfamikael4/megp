@@ -9,7 +9,7 @@ export class HandlingCommonService {
   constructor(
     @InjectRepository(WorkflowInstanceEntity)
     private readonly wfiRepository: Repository<WorkflowInstanceEntity>,
-  ) { }
+  ) {}
   generateRandomString(length, prefix = '') {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     const charsLength = characters.length;
@@ -109,7 +109,6 @@ export class HandlingCommonService {
         ServiceKeyEnum.goodsNewRegistration,
         ServiceKeyEnum.servicesNewRegistration,
         ServiceKeyEnum.worksNewRegistration,
-
       ];
     } else if (serviceKey == ServiceKeyEnum.upgrade) {
       keys = [
@@ -131,7 +130,7 @@ export class HandlingCommonService {
         ServiceKeyEnum.MEDIUM,
         ServiceKeyEnum.SMALL,
         ServiceKeyEnum.MICRO,
-        ServiceKeyEnum.MARGINALIZED_GROUP
+        ServiceKeyEnum.MARGINALIZED_GROUP,
       ];
     }
     return keys;
@@ -143,7 +142,7 @@ export class HandlingCommonService {
       ServiceKeyEnum.MEDIUM,
       ServiceKeyEnum.SMALL,
       ServiceKeyEnum.MICRO,
-      ServiceKeyEnum.MARGINALIZED_GROUP
+      ServiceKeyEnum.MARGINALIZED_GROUP,
     ];
   }
   getUpgradeType(catogory: string) {
@@ -151,8 +150,7 @@ export class HandlingCommonService {
       return ServiceKeyEnum.goodsUpgrade;
     } else if (BusinessCategories.SERVICES.toLowerCase() == catogory) {
       return ServiceKeyEnum.servicesUpgrade;
-    }
-    else if (BusinessCategories.WORKS.toLowerCase() == catogory) {
+    } else if (BusinessCategories.WORKS.toLowerCase() == catogory) {
       return ServiceKeyEnum.worksUpgrade;
     }
     return null;
@@ -190,7 +188,11 @@ export class HandlingCommonService {
       valueTo = curruncy + valueTo + ' million';
       return 'Up to ' + curruncy + valueTo;
     }
-    return priceRange.valueFrom.toString();
+    if (priceRange.valueFrom) return priceRange.valueFrom.toString();
+    return '';
   }
 
+  capitalizeFirstLetter(str: string): string {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
 }

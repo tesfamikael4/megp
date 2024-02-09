@@ -43,7 +43,7 @@ export class ServicePricingService extends EntityCrudService<ServicePrice> {
         ServiceKeyEnum.worksRenewal,
       ];
     }
-    return await this.pricingRepository.find({
+    const result = await this.pricingRepository.find({
       select: {
         id: true,
         serviceId: true,
@@ -59,6 +59,7 @@ export class ServicePricingService extends EntityCrudService<ServicePrice> {
         service: { businessProcesses: { isActive: true }, key: In(keys) },
       },
     });
+    return result;
   }
 
   async findPriceRangeByIds(ids: string[]): Promise<ServicePrice[]> {
