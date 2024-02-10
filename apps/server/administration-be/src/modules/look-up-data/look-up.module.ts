@@ -59,4 +59,4 @@ import { RegionController } from './controller/region.controller';
     TagController,
   ],
 })
-export class lookUpDataModule { }
+export class lookUpDataModule {}

@@ -47,7 +47,7 @@ import { VendorRegistrationModule } from '../vendor-registration/vendor-registra
     ServiceModule,
     ServicePricingModule,
     CategoriesModule,
-    forwardRef(() => VendorRegistrationModule)
+    forwardRef(() => VendorRegistrationModule),
   ],
   exports: [TaskService, BusinessProcessService, WorkflowService],
   providers: [
@@ -66,4 +66,4 @@ import { VendorRegistrationModule } from '../vendor-registration/vendor-registra
     DataSeederController,
   ],
 })
-export class BpmModule { }
+export class BpmModule {}

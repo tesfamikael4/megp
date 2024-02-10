@@ -1,9 +1,5 @@
 import * as Minio from 'minio';
-import {
-  HttpException,
-  Injectable,
-  Res,
-} from '@nestjs/common';
+import { HttpException, Injectable, Res } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { CreateFileDto, DeleteFileDto, UploadFileDto } from '../dto/file.dto';
@@ -18,7 +14,10 @@ import { VendorStatusEnum } from 'src/shared/enums/vendor-status-enums';
 import { Response } from 'express';
 import { BusinessAreaService } from './business-area.service';
 import { WorkflowService } from 'src/modules/bpm/services/workflow.service';
-import { CreateWorkflowInstanceDto, GotoNextStateDto } from 'src/modules/handling/dto/workflow-instance.dto';
+import {
+  CreateWorkflowInstanceDto,
+  GotoNextStateDto,
+} from 'src/modules/handling/dto/workflow-instance.dto';
 import { ApplicationStatus } from 'src/modules/handling/enums/application-status.enum';
 import { PaymentStatus } from 'src/shared/enums/payment-status.enum';
 
@@ -44,8 +43,7 @@ export class FileService {
     private readonly businessAreaRepository: Repository<BusinessAreaEntity>,
     private readonly busineAreaService: BusinessAreaService,
     private readonly workflowService: WorkflowService,
-
-  ) { }
+  ) {}
   private updateVendorEnums = [
     VendorStatusEnum.ACTIVE,
     VendorStatusEnum.ADJUSTMENT,
@@ -253,7 +251,6 @@ export class FileService {
             attachment: fileId,
           },
         );
-
       }
       const response = new CreateFileDto();
       response.attachmentUrl = file?.path;
@@ -345,10 +342,11 @@ export class FileService {
           wfi.data = row.businessArea.isrVendor;
           const result = await this.workflowService.intiateWorkflowInstance(
             wfi,
-            user
+            user,
           );
           businessArea.instanceId = result.application?.id;
-          businessArea.applicationNumber = result.application?.applicationNumber;
+          businessArea.applicationNumber =
+            result.application?.applicationNumber;
           if (result) {
             await this.busineAreaService.update(businessArea.id, businessArea);
           }
@@ -358,7 +356,6 @@ export class FileService {
           gotoNextDto.instanceId = ba.instanceId;
           await this.workflowService.gotoNextStep(gotoNextDto, user);
         }
-
       }
       return paymentReceipt;
     } catch (error) {
@@ -442,13 +439,8 @@ export class FileService {
         'Content-Type': file.mimetype,
       };
       const fname = paymentReceiptDto.fieldName;
-      await this.minioClient.putObject(
-        bucket,
-        filename,
-        file.buffer,
-        metaData
-      );
-      const resultMetadata = result.supportingDocuments
+      await this.minioClient.putObject(bucket, filename, file.buffer, metaData);
+      const resultMetadata = result.supportingDocuments;
       switch (paymentReceiptDto.fieldName) {
         case 'businessRegistration_IncorporationCertificate':
           if (resultMetadata[fname] !== '') {
@@ -568,11 +560,7 @@ export class FileService {
     }
   }
 
-  async uploadCertificate2(
-    file: Buffer,
-    userId: string,
-    instanceId: string,
-  ) {
+  async uploadCertificate2(file: Buffer, userId: string, instanceId: string) {
     console.log('user-id', userId);
     try {
       const result = await this.businessAreaRepository.findOne({
@@ -590,7 +578,7 @@ export class FileService {
         this.bucketName,
         filename,
         file,
-        metaData
+        metaData,
       );
       result.certificateUrl = fileId;
       const data = await this.businessAreaRepository.save(result);
@@ -606,7 +594,7 @@ export class FileService {
   async uploadDocuments(
     file: Express.Multer.File,
     user: any,
-    subDirectory: string
+    subDirectory: string,
   ): Promise<string> {
     try {
       const filetype = this.getFileExtension(file.originalname);
@@ -623,7 +611,6 @@ export class FileService {
         metaData,
       );
       return fileId;
-
     } catch (error) {
       console.log(error);
       throw error;
@@ -661,7 +648,12 @@ export class FileService {
     }
   }
 
-  async getFile(userId: string, fielId: string, fileUploadName: string, @Res() res: Response) {
+  async getFile(
+    userId: string,
+    fielId: string,
+    fileUploadName: string,
+    @Res() res: Response,
+  ) {
     try {
       const filename = `${userId}/${fileUploadName}/${fielId}`;
       const fileInfo = await this.minioClient.statObject('megp', filename);

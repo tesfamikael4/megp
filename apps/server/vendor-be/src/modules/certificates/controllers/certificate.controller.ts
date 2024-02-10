@@ -13,7 +13,7 @@ export class CertificateController {
   constructor(
     private readonly certificateService: CertificateService,
     private readonly fileService: FileService,
-  ) { }
+  ) {}
   @UseGuards(JwtGuard)
   @Get('generate-certeficate/:vendorId/:instanceId')
   async generateCertificate(
@@ -36,7 +36,6 @@ export class CertificateController {
         `attachment; filename=${vendorId}_certificate.pdf`,
       );
       pdfStream.pipe(res);
-
     } catch (err) {
       console.error('Error:', err);
       res.status(500).send('Internal Server Error');
@@ -47,7 +46,7 @@ export class CertificateController {
     @Param('fileId') fileId: string,
     @Param('vendorId') vendorId: string,
     @CurrentUser() userInfo: any,
-    @Res() resp: Response
+    @Res() resp: Response,
   ) {
     console.log('fileId', userInfo);
     return await this.fileService.getCertificate(fileId, vendorId, resp);

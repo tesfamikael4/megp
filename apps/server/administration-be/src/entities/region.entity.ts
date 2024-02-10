@@ -8,10 +8,9 @@ export class Region extends Audit {
   id: string;
   @Column({ unique: true })
   name: string;
-  @OneToMany(() => District, (dist) => dist.region,
-    {
-      cascade: true,
-      onDelete: 'CASCADE',
-    },)
+  @OneToMany(() => District, (dist) => dist.region, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   districts: District[];
 }

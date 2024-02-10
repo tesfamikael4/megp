@@ -60,8 +60,7 @@ export class WorkflowInstanceService {
     private readonly bpService: BusinessProcessService,
     private readonly commonService: HandlingCommonService,
     private readonly invoiceService: InvoiceService,
-
-  ) { }
+  ) {}
 
   async submitFormBasedTask(
     nextCommand: GotoNextStateDto,

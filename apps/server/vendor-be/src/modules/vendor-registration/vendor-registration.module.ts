@@ -119,4 +119,4 @@ import { BpServiceService } from '../services/services/service.service';
     InvoicesController,
   ],
 })
-export class VendorRegistrationModule { }
+export class VendorRegistrationModule {}

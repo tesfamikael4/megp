@@ -13,9 +13,7 @@ import {
   UpdateWorkflowInstanceDto,
   WorkflowInstanceResponse,
 } from '../../handling/dto/workflow-instance.dto';
-import {
-  TaskHandlerResponse,
-} from '../dto/task-handler.dto';
+import { TaskHandlerResponse } from '../dto/task-handler.dto';
 import { StateNode, createMachine } from 'xstate';
 import { TaskTypes } from '../dto/task-type.enum';
 import { StateMetaData } from '../dto/state-metadata';
@@ -81,7 +79,7 @@ export class WorkflowService {
       dto.bpId,
     );
 
-    console.log("serviceBp", serviceBp);
+    console.log('serviceBp', serviceBp);
     if (!serviceBp || !dto.requestorId)
       throw new NotFoundException('Business Process Not Found');
     instanceEntity.applicationNumber =
@@ -95,8 +93,8 @@ export class WorkflowService {
     const taskHandler = new TaskHandlerEntity();
     response['application'] = wfinstance;
     const init = machine.initial.toString();
-    console.log("init", init)
-    console.log("serviceBp.id", serviceBp.id)
+    console.log('init', init);
+    console.log('serviceBp.id', serviceBp.id);
     const task = await this.taskService.getTaskByNameAndBP(serviceBp.id, init);
     if (!task) throw new NotFoundException('Task Not found');
     taskHandler.currentState = init;
@@ -115,7 +113,7 @@ export class WorkflowService {
       const nextCommand = new GotoNextStateDto();
       nextCommand.instanceId = wfinstance.id;
       nextCommand.action = 'ISR';
-      nextCommand.data = { ...dto?.data }
+      nextCommand.data = { ...dto?.data };
       await this.gotoNextStep(nextCommand, user);
     }
     return response;
@@ -194,7 +192,7 @@ export class WorkflowService {
           throw new BadRequestException('Something went wrong');
         }
         const lastExecutedTask = await this.getPrviousHandler(
-          workflowInstance.id
+          workflowInstance.id,
         );
         const data = { remark: nextCommand.remark, ...nextCommand.data };
         currentTaskHandler.data = data;
@@ -277,7 +275,6 @@ export class WorkflowService {
     console.log('activities', activities);
     return activities;
   }
-
 
   private async getPrviousHandler(
     instanceId: string,
@@ -366,8 +363,8 @@ export class WorkflowService {
     const commandLower = command.action.toLowerCase();
     const status =
       commandLower == 'approve' ||
-        commandLower == 'yes' ||
-        commandLower == 'success'
+      commandLower == 'yes' ||
+      commandLower == 'success'
         ? 'Approve'
         : 'Reject';
     const payload = {
@@ -379,7 +376,7 @@ export class WorkflowService {
       remark: command.remark,
       category: '',
     };
-    console.log("payload", payload);
+    console.log('payload', payload);
     try {
       const result = await this.vendorRegService.updateVendor(payload);
 

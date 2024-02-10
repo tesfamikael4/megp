@@ -68,10 +68,9 @@ export class IsrVendorsResponseDto {
     const accounts = rest.bankAccountDetails.map((b) => {
       const { bankId, ...bank } = b;
       return bank;
-    })
+    });
 
     rest.bankAccountDetails = accounts;
-
 
     return rest;
   }

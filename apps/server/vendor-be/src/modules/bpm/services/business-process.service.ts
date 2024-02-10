@@ -47,7 +47,9 @@ export class BusinessProcessService extends EntityCrudService<BusinessProcessEnt
     });
     return result;
   }
-  async findBpWithServiceByServiceId(serviceId: string): Promise<BusinessProcessEntity> {
+  async findBpWithServiceByServiceId(
+    serviceId: string,
+  ): Promise<BusinessProcessEntity> {
     const result = await this.bpRepository.findOne({
       relations: { service: true },
       where: {
@@ -65,5 +67,4 @@ export class BusinessProcessService extends EntityCrudService<BusinessProcessEnt
       throw new Error(error);
     }
   }
-
 }

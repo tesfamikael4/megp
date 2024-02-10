@@ -10,14 +10,15 @@ import { VendorRegistrationModule } from '../vendor-registration/vendor-registra
 import { ServiceModule } from '../services/service.module';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([PreferentialTreatmentsEntity]), AuthorizationModule,
-        BpmModule,
-        VendorRegistrationModule,
-        ServiceModule
-
-    ],
-    exports: [PreferentailTreatmentService],
-    providers: [PreferentailTreatmentService],
-    controllers: [PreferentailTreatmentsController],
+  imports: [
+    TypeOrmModule.forFeature([PreferentialTreatmentsEntity]),
+    AuthorizationModule,
+    BpmModule,
+    VendorRegistrationModule,
+    ServiceModule,
+  ],
+  exports: [PreferentailTreatmentService],
+  providers: [PreferentailTreatmentService],
+  controllers: [PreferentailTreatmentsController],
 })
-export class PreferentialTreatmentModule { }
+export class PreferentialTreatmentModule {}

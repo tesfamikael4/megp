@@ -1,5 +1,5 @@
 export enum BAEnum {
-    works = 'works',
-    goods = 'goods',
-    services = 'services',
+  works = 'works',
+  goods = 'goods',
+  services = 'services',
 }

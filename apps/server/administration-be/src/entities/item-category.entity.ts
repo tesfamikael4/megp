@@ -21,7 +21,7 @@ export class ItemCategory extends Audit {
   @OneToMany(() => ItemCategory, (icategory) => icategory.parentICategory, {
     cascade: true,
     onDelete: 'CASCADE',
-  },)
+  })
   childCategories: ItemCategory[];
   @OneToMany(() => ItemMaster, (entity) => entity.itemSubcategory)
   itemMasters: ItemMaster[];

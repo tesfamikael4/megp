@@ -969,12 +969,15 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         const priceRanges =
           await this.pricingService.findPriceRangeByIds(pricesIds);
         for (const price of priceRanges) {
-
           for (const bi of vendorEntity?.areasOfBusinessInterest) {
             if (bi.priceRange == price.id) {
               const priceRange = this.commonService.formatPriceRange(price);
               const lob = bi.lineOfBusiness.map((item: any) => item.name);
-              formattedAreaOfBi.push({ category: this.commonService.capitalizeFirstLetter(bi.category), priceRange: priceRange, lineOfBusiness: lob });
+              formattedAreaOfBi.push({
+                category: this.commonService.capitalizeFirstLetter(bi.category),
+                priceRange: priceRange,
+                lineOfBusiness: lob,
+              });
             }
           }
         }
@@ -1344,7 +1347,11 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           nationality: true,
           share: true,
         },
-        beneficialOwnership: { firstName: true, lastName: true, nationality: true },
+        beneficialOwnership: {
+          firstName: true,
+          lastName: true,
+          nationality: true,
+        },
         areasOfBusinessInterest: {
           id: true,
           category: true,
@@ -1499,8 +1506,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       });
 
       let bas = vendorEntity?.isrVendor?.businessAreas;
-      if (!bas)
-        bas = [];
+      if (!bas) bas = [];
       const baInstanceIds = [];
       const baResponse = [];
       for (const row of bas) {

@@ -30,5 +30,4 @@ export class ActiveVendorsResponse {
   businessStatus: string;
   @ApiProperty()
   vendorId: string;
-
 }

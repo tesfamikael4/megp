@@ -17,7 +17,7 @@ export class CertificateService {
     private readonly vendorService: VendorRegistrationsService,
     private readonly wfService: WorkflowService,
     private readonly fileService: FileService,
-  ) { }
+  ) {}
   formatNumber(priceRange: ServicePrice) {
     let valueTo = '';
     let valueFrom = '';
@@ -60,7 +60,7 @@ export class CertificateService {
           margin: 0,
         })) ?? '';
       const app = await this.wfService.getInstance(instanceId);
-      console.log("app", app);
+      console.log('app', app);
       const userId = app?.userId;
       if (app?.status != ApplicationStatus.COMPLETED) {
         const command = new GotoNextStateDto();
@@ -68,7 +68,7 @@ export class CertificateService {
         command.action = 'SUCCESS';
         await this.wfService.gotoNextStep(command, user);
       }
-      console.log("vendorId--", vendorId)
+      console.log('vendorId--', vendorId);
       const vendorInfo =
         await this.vendorService.getVendorByIdForCertificate(vendorId);
       if (!vendorInfo) throw new NotFoundException();
@@ -107,7 +107,6 @@ export class CertificateService {
         ],
         qrCodeUrl: qrUrl,
       });
-
 
       result.on('data', (chunk) => {
         chunks.push(chunk);

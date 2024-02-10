@@ -14,4 +14,4 @@ import { WorkflowInstanceController } from './controllers/workflow-instance.cont
   providers: [],
   controllers: [ApplicationExcutionController, WorkflowInstanceController],
 })
-export class HandlingModule { }
+export class HandlingModule {}

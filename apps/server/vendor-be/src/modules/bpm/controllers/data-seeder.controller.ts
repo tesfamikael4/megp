@@ -30,7 +30,7 @@ export class DataSeederController {
     @InjectRepository(TaskAssignmentEntity)
     private readonly assignmentRepository: Repository<TaskAssignmentEntity>,
     private readonly categoryService: CategoryService,
-  ) { }
+  ) {}
   @UseGuards(JwtGuard)
   @Post('seed-services')
   @ApiOkResponse()
@@ -225,12 +225,12 @@ export class DataSeederController {
               meta: { type: { start: true } },
             },
             'Approval of Vendor Profile Update Request By Director General (Head of PDE)':
-            {
-              on: {
-                NO: 'Submission of Vendor Profile Update Request',
-                YES: 'End',
+              {
+                on: {
+                  NO: 'Submission of Vendor Profile Update Request',
+                  YES: 'End',
+                },
               },
-            },
           },
           initial: 'Submission of Vendor Profile Update Request',
         },
@@ -317,12 +317,12 @@ export class DataSeederController {
               meta: { type: { start: true } },
             },
             'Approval of Vendor Profile Update Request By Director General (Head of PDE)':
-            {
-              on: {
-                NO: 'Submission of Vendor Profile Update Request',
-                YES: 'End',
+              {
+                on: {
+                  NO: 'Submission of Vendor Profile Update Request',
+                  YES: 'End',
+                },
               },
-            },
           },
           initial: 'Submission of Vendor Profile Update Request',
         },
@@ -832,16 +832,16 @@ export class DataSeederController {
               },
             },
             'Submission of indigenous black Malawian(IBM) Registration Request':
-            {
-              on: {
-                ISR: 'Approval of indigenous black Malawian(IBM) Registration Request',
-              },
-              meta: {
-                type: {
-                  start: true,
+              {
+                on: {
+                  ISR: 'Approval of indigenous black Malawian(IBM) Registration Request',
+                },
+                meta: {
+                  type: {
+                    start: true,
+                  },
                 },
               },
-            },
             'Approval of indigenous black Malawian(IBM) Registration Request': {
               on: {
                 ADJUST:

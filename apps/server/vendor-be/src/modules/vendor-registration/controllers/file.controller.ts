@@ -25,7 +25,7 @@ export class UploadController {
   constructor(
     // private tusService: TusService,
     private fileService: FileService,
-  ) { }
+  ) {}
   @Post('upload-payment-receipt/:transactionId/:serviceId/:invoiceId')
   @UseInterceptors(FileInterceptor('attachmentUrl'))
   async uploadPaymentRecept(
@@ -66,7 +66,7 @@ export class UploadController {
     const result = await this.fileService.uploadPaymentAttachmentUpgrade(
       attachment,
       userInfo,
-      dto
+      dto,
     );
     return result;
   }
@@ -183,12 +183,11 @@ export class UploadController {
     @Param('userId') userId: string,
     @Res() res: Response,
   ) {
-    console.log("fileName, documentType", fileName, documentType);
+    console.log('fileName, documentType', fileName, documentType);
     try {
       return this.fileService.getFile(userId, fileName, documentType, res);
     } catch (error) {
       throw error;
     }
   }
-
 }

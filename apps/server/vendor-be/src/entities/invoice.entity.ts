@@ -1,4 +1,11 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { BusinessAreaEntity } from './business-area.entity';
 import { BpServiceEntity } from './bp-service.entity';
 import { Audit } from 'src/shared/entities';
@@ -39,7 +46,7 @@ export class InvoiceEntity extends Audit {
   attachment: string;
   @OneToOne(() => BusinessAreaEntity, (ba) => ba.invoice)
   @JoinColumn({ name: 'businessAreaId' })
-  businessArea: BusinessAreaEntity
+  businessArea: BusinessAreaEntity;
   @ManyToOne(() => BpServiceEntity, (service) => service.invoices)
-  service: BpServiceEntity
+  service: BpServiceEntity;
 }

@@ -13,6 +13,6 @@ export class Measurement extends Audit {
   @OneToMany(() => UnitOfMeasurement, (uom1) => uom1.measurement, {
     cascade: true,
     onDelete: 'CASCADE',
-  },)
+  })
   uoms: UnitOfMeasurement[];
 }

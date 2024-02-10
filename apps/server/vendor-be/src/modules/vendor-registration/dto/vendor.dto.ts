@@ -92,13 +92,13 @@ export class CreateVendorsDto {
     entity.metaData = dto.metaData;
     entity.businessCats = dto.commonCategories
       ? dto.commonCategories.map((item) =>
-        CreateBusinessCategoryDto.fromDto(item),
-      )
+          CreateBusinessCategoryDto.fromDto(item),
+        )
       : null;
     entity.customCats = dto.customCategories
       ? dto.customCategories.map((item) =>
-        CreateCustomCategoryDto.fromDto(item),
-      )
+          CreateCustomCategoryDto.fromDto(item),
+        )
       : null;
 
     entity.instances = dto.appliactions
@@ -110,8 +110,8 @@ export class CreateVendorsDto {
       : null;
     entity.areasOfBusinessInterest = dto.areasOfBusinessInterest
       ? dto.areasOfBusinessInterest.map((item) =>
-        CreateAreasOfBusinessInterest.fromDto(item),
-      )
+          CreateAreasOfBusinessInterest.fromDto(item),
+        )
       : null;
     return entity;
   }

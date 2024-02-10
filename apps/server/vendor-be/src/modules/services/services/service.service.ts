@@ -14,19 +14,19 @@ export class BpServiceService extends EntityCrudService<BpServiceEntity> {
     super(serviceRepository);
   }
   async getPreferentialTreatmentServices(): Promise<BpServiceEntity[]> {
-    return await this.serviceRepository.find(
-      {
-        select: { id: true, name: true },
-        where: {
-          key: In([ServiceKeyEnum.IBM,
+    return await this.serviceRepository.find({
+      select: { id: true, name: true },
+      where: {
+        key: In([
+          ServiceKeyEnum.IBM,
           ServiceKeyEnum.MICRO,
           ServiceKeyEnum.SMALL,
           ServiceKeyEnum.MEDIUM,
-          ServiceKeyEnum.MARGINALIZED_GROUP])
-        }
-      })
+          ServiceKeyEnum.MARGINALIZED_GROUP,
+        ]),
+      },
+    });
   }
-
 
   async saveBulk(services: any[]) {
     try {

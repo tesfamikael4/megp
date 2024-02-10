@@ -36,7 +36,7 @@ export class WorkflowInstanceController {
     private readonly workflowInstanceService: WorkflowInstanceService,
     private readonly bpService: BusinessProcessService,
     private readonly taskService: TaskService,
-  ) { }
+  ) {}
   @UseGuards(JwtGuard)
   @Post('submit-application')
   @ApiOkResponse({ type: WorkflowInstanceResponse })
@@ -77,7 +77,6 @@ export class WorkflowInstanceController {
     return response;
   }
 
-
   @UseGuards(JwtGuard)
   @Post('review-application')
   @ApiOkResponse({ type: WorkflowInstanceResponse })
@@ -85,7 +84,6 @@ export class WorkflowInstanceController {
     @Body() dto: GotoNextStateDto,
     @CurrentUser() user: any,
   ) {
-
     const response = await this.workflowInstanceService.reviewApplication(
       dto,
       user,
@@ -133,5 +131,4 @@ export class WorkflowInstanceController {
     }
     return response;
   }
-
 }

@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiExtraModels,
@@ -47,5 +55,4 @@ export class BpServiceController extends EntityCrudController<BpServiceEntity>(
   async getPreferentialTreatmentServices() {
     return await this.bpService.getPreferentialTreatmentServices();
   }
-
 }

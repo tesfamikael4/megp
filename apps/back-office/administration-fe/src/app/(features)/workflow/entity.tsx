@@ -62,8 +62,8 @@ export function Entity({ children }: { children: React.ReactNode }) {
     pathname === `/workflow`
       ? 'list'
       : pathname === `/workflow/new`
-        ? 'new'
-        : 'detail';
+      ? 'new'
+      : 'detail';
 
   return (
     <EntityLayout

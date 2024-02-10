@@ -1,4 +1,4 @@
 export enum AssignmentEnum {
-    Picked = 'Picked',
-    Unpicked = 'Unpicked',
+  Picked = 'Picked',
+  Unpicked = 'Unpicked',
 }

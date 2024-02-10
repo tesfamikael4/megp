@@ -43,24 +43,39 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
   //     relations: { servicePrice: true, invoice: true, BpService: true },
   //   });
   // }
-  async getBusinessAreaByInstanceId(instanceId: string): Promise<BusinessAreaEntity> {
+  async getBusinessAreaByInstanceId(
+    instanceId: string,
+  ): Promise<BusinessAreaEntity> {
     return this.businessAreaRepository.findOne({
-      where: { instanceId: instanceId }
-
+      where: { instanceId: instanceId },
     });
   }
-  async getPreviousUpgradeService(vendorId: string, category: string): Promise<BusinessAreaEntity> {
+  async getPreviousUpgradeService(
+    vendorId: string,
+    category: string,
+  ): Promise<BusinessAreaEntity> {
     return this.businessAreaRepository.findOne({
       relations: { BpService: true, servicePrice: true },
-      where: { category: category, status: ApplicationStatus.APPROVED, vendorId: vendorId }
-
+      where: {
+        category: category,
+        status: ApplicationStatus.APPROVED,
+        vendorId: vendorId,
+      },
     });
   }
-  async getProposedUpgradeService(vendorId: string, category: string, serviceId: string): Promise<BusinessAreaEntity> {
+  async getProposedUpgradeService(
+    vendorId: string,
+    category: string,
+    serviceId: string,
+  ): Promise<BusinessAreaEntity> {
     return this.businessAreaRepository.findOne({
       relations: { BpService: true, servicePrice: true },
-      where: { category: category, status: ApplicationStatus.PENDING, vendorId: vendorId, serviceId: serviceId }
-
+      where: {
+        category: category,
+        status: ApplicationStatus.PENDING,
+        vendorId: vendorId,
+        serviceId: serviceId,
+      },
     });
   }
 
@@ -71,32 +86,32 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
   //   });
 
   // }
-  async getBusinessAreaByInstanceIds(instanceIds: string[]): Promise<BusinessAreaEntity[]> {
+  async getBusinessAreaByInstanceIds(
+    instanceIds: string[],
+  ): Promise<BusinessAreaEntity[]> {
     return this.businessAreaRepository.find({
       where: {
         instanceId: In(instanceIds),
         status: ApplicationStatus.PENDING,
-        invoice: { paymentStatus: PaymentStatus.PENDING }
+        invoice: { paymentStatus: PaymentStatus.PENDING },
       },
-      relations: { invoice: true }
-
+      relations: { invoice: true },
     });
   }
-  async getUserInprogressBusinessAreaByServiceId(serviceId: string, userId: string): Promise<BusinessAreaEntity> {
+  async getUserInprogressBusinessAreaByServiceId(
+    serviceId: string,
+    userId: string,
+  ): Promise<BusinessAreaEntity> {
     return this.businessAreaRepository.findOne({
-      select: { id: true, },
+      select: { id: true },
       where: {
         serviceId: serviceId,
         status: ApplicationStatus.PENDING,
-        isrVendor: { userId: userId }
+        isrVendor: { userId: userId },
       },
       relations: {
-        isrVendor: true
-      }
-
+        isrVendor: true,
+      },
     });
   }
-
-
-
 }

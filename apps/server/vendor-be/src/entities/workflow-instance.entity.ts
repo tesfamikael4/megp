@@ -69,8 +69,6 @@ export class WorkflowInstanceEntity extends Audit {
   )
   taskTrackers: TaskTrackerEntity[];
 
-
-
   @ManyToOne(() => IsrVendorsEntity, (v) => v.instances)
   @JoinColumn({ name: 'requestorId' })
   isrVendor: IsrVendorsEntity;

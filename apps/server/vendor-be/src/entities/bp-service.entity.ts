@@ -1,12 +1,7 @@
 import { BusinessProcessEntity } from 'src/entities/business-process.entity';
 import { ServicePrice } from 'src/entities/service-price.entity';
 import { Audit } from 'src/shared/entities/audit.entity';
-import {
-  Column,
-  Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { WorkflowInstanceEntity } from './workflow-instance.entity';
 import { BusinessAreaEntity } from './business-area.entity';
 import { PreferentialTreatmentsEntity } from './preferential-treatment.entity';
@@ -31,7 +26,7 @@ export class BpServiceEntity extends Audit {
     cascade: true,
     onDelete: 'CASCADE',
   })
-  invoices: InvoiceEntity[]
+  invoices: InvoiceEntity[];
   instances: WorkflowInstanceEntity[];
   @OneToMany(
     () => BusinessProcessEntity,
@@ -58,13 +53,9 @@ export class BpServiceEntity extends Audit {
   )
   businessAreas: BusinessAreaEntity[];
 
-  @OneToMany(
-    () => PreferentialTreatmentsEntity,
-    (pt) => pt.service,
-    {
-      cascade: true,
-      onDelete: 'CASCADE',
-    },
-  )
+  @OneToMany(() => PreferentialTreatmentsEntity, (pt) => pt.service, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   prerentials: PreferentialTreatmentsEntity[];
 }

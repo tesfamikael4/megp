@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   BpServiceEntity,
@@ -35,7 +40,6 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     private readonly commonService: HandlingCommonService,
     private readonly baService: BusinessAreaService,
     private readonly bpService: BusinessProcessService,
-
   ) {
     super(invoiceRepository);
   }
@@ -68,7 +72,6 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     vendor: any,
     user: any,
   ): Promise<boolean> {
-
     const invoice: InvoiceEntity = this.mapInvoice(
       curruntPricing,
       vendor,
@@ -107,7 +110,6 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     return false;
   }
 
-
   computingPaymentForUpgrade(
     ba: BusinessAreaEntity,
     curruntPricing: ServicePrice,
@@ -132,9 +134,6 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     }
   }
 
-
-
-
   async getInvoices(
     query: CollectionQuery,
   ): Promise<DataResponseFormat<InvoiceResponseDto>> {
@@ -155,7 +154,6 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     return response;
   }
 
-
   async getInvoice(invoceId: string): Promise<InvoiceResponseDto> {
     const invoice = await this.invoiceRepository.findOne({
       where: { id: invoceId },
@@ -165,7 +163,6 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     }
     return null;
   }
-
 
   async getInvoicesUserAndService(userId: string): Promise<InvoiceEntity[]> {
     const result = await this.invoiceRepository.find({
@@ -200,15 +197,14 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     for (const row of result) {
       if (row.businessArea.status != ApplicationStatus.APPROVED) {
         const invoice = InvoiceResponseDto.toResponse(row);
-        invoices.push(invoice)
-
+        invoices.push(invoice);
       }
     }
     response.items = [...invoices];
     return response;
   }
 
-  async generateRenewalInvoice(businessAreaIds: string[], user: any,) {
+  async generateRenewalInvoice(businessAreaIds: string[], user: any) {
     let isInvoiceExist = false;
     try {
       const keys = [];
@@ -217,7 +213,9 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
         where: { id: In(businessAreas), status: ApplicationStatus.APPROVED },
         relations: { BpService: true, servicePrice: true },
       });
-      const baInstanceIds: string[] = businessareasData.map((row) => row.instanceId);
+      const baInstanceIds: string[] = businessareasData.map(
+        (row) => row.instanceId,
+      );
       const busnessAreasNew = await this.businessAreaRepository.find({
         where: {
           status: ApplicationStatus.PENDING,
@@ -228,7 +226,10 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
       });
 
       for (const ba of businessareasData) {
-        const serviceKey: string = await this.commonService.mapServiceType(ba, 'renewal')
+        const serviceKey: string = await this.commonService.mapServiceType(
+          ba,
+          'renewal',
+        );
         keys.push(serviceKey);
         const price = await this.pricingService.getRenewalPrice(ba, serviceKey);
         if (busnessAreasNew.length > 0) {
@@ -252,7 +253,7 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
           price,
           vendor,
           price.service,
-          user
+          user,
         );
         const business: BusinessAreaEntity = new BusinessAreaEntity();
         business.serviceId = bp.serviceId;
@@ -270,15 +271,13 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
       }
       const response = { messaage: 'Invoice Created', state: 'success' };
       return response;
-    }
-    catch (error) {
+    } catch (error) {
       console.log(error);
       throw new HttpException(error, 400);
     }
   }
 
-
-  async generateUpgradeInvoice(businessArea: UpgradeInfoDTO, user: any,) {
+  async generateUpgradeInvoice(businessArea: UpgradeInfoDTO, user: any) {
     try {
       const keys = [];
       const newBAIds = [];
@@ -308,7 +307,10 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
             await this.invoiceRepository.delete(invoiceId);
           }
         }
-        const key = await this.commonService.mapServiceType(businessAreaData, 'upgrade');
+        const key = await this.commonService.mapServiceType(
+          businessAreaData,
+          'upgrade',
+        );
         keys.push(key);
         const CurrentpricingData =
           await this.pricingService.findPricingWithServiceById(newPricingId);
@@ -325,7 +327,7 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
           CurrentpricingData,
           vendor,
           bp.service,
-          user
+          user,
         );
 
         invoice.amount = upgradePayment;

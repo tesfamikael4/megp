@@ -192,9 +192,8 @@ export class WorkflowInstanceResponse extends UpdateWorkflowInstanceDto {
   }
   static formatBusinessLine(bia: any): any {
     const lobs = bia.lineOfBusiness.map((item: any) => {
-      return item.name
-    })
+      return item.name;
+    });
     return lobs;
   }
-
 }

@@ -8,8 +8,13 @@ import { AuthorizationModule } from 'src/shared/authorization';
 import { HandlingModule } from '../handling/handling.module';
 
 @Module({
-  imports: [VendorRegistrationModule, BpmModule, AuthorizationModule, ServicePricingModule],
+  imports: [
+    VendorRegistrationModule,
+    BpmModule,
+    AuthorizationModule,
+    ServicePricingModule,
+  ],
   controllers: [CertificateController],
   providers: [CertificateService],
 })
-export class CertificateModule { }
+export class CertificateModule {}

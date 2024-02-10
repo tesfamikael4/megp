@@ -1,6 +1,5 @@
 export enum BusinessCategories {
-    GOODS = 'Goods',
-    SERVICES = 'Services',
-    WORKS = 'Works'
-
+  GOODS = 'Goods',
+  SERVICES = 'Services',
+  WORKS = 'Works',
 }

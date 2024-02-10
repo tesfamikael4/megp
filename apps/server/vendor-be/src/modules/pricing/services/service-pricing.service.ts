@@ -105,19 +105,18 @@ export class ServicePricingService extends EntityCrudService<ServicePrice> {
       },
     });
   }
-  async getRenewalPrice(businessArea: BusinessAreaEntity, oprationType: string) {
+  async getRenewalPrice(
+    businessArea: BusinessAreaEntity,
+    oprationType: string,
+  ) {
     return this.pricingRepository.findOne({
       relations: { service: true },
-      where:
-      {
+      where: {
         businessArea: ILike(businessArea.category),
         valueFrom: businessArea.servicePrice.valueFrom,
         valueTo: businessArea.servicePrice.valueTo,
-        service: { key: oprationType }
-
+        service: { key: oprationType },
       },
-
-    })
+    });
   }
-
 }

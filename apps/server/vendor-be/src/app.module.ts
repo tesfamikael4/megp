@@ -35,7 +35,7 @@ import { ReportModule } from './modules/report/report.module';
     CertificateModule,
     NotificationModule,
     PreferentialTreatmentModule,
-    ReportModule
+    ReportModule,
   ],
   controllers: [],
   providers: [
@@ -45,4 +45,4 @@ import { ReportModule } from './modules/report/report.module';
     },
   ],
 })
-export class AppModule { }
+export class AppModule {}
