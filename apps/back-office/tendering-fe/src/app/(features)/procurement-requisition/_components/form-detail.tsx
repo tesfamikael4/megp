@@ -1,10 +1,11 @@
 import {
-  Container,
   LoadingOverlay,
   Select,
   Stack,
   TextInput,
   Textarea,
+  Flex,
+  Box,
 } from '@mantine/core';
 import { EntityButton } from '@megp/entity';
 import { z, ZodType } from 'zod';
@@ -14,14 +15,13 @@ import {
   useReadQuery,
   useDeleteMutation,
   useUpdateMutation,
-  useCreateMutation,
 } from '@/app/(features)/procurement-requisition/_api/procurement-requisition.api';
 import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import { ProcurementRequisition } from '@/models/procurement-requsition';
 import { notify } from '@megp/core-fe';
-import { useLazyGetBudgetYearQuery } from '@/store/api/budget/budget-year.api';
+import { DateInput } from '@mantine/dates';
 
 interface FormDetailProps {
   mode: 'new' | 'detail';
@@ -31,18 +31,20 @@ const defaultValues = {
   title: '',
   description: '',
   procurementType: null,
-  budgetYear: null,
+  deliveryDate: null,
 };
 
 export function FormDetail({ mode }: FormDetailProps) {
   const organizationSchema: ZodType<Partial<ProcurementRequisition>> = z.object(
     {
       title: z.string().min(1, { message: 'This field is required' }),
+      requisitionReferenceNumber: z.string(),
       description: z.string().optional(),
       procurementType: z.string({
         required_error: 'This field is required',
         invalid_type_error: 'This field is required to be a string',
       }),
+      deliveryDate: z.date(),
     },
   );
 
@@ -58,7 +60,6 @@ export function FormDetail({ mode }: FormDetailProps) {
   const router = useRouter();
   const { id } = useParams();
 
-  const [create, { isLoading: isSaving }] = useCreateMutation();
   const [update, { isLoading: isUpdating }] = useUpdateMutation();
   const [remove, { isLoading: isDeleting }] = useDeleteMutation();
 
@@ -68,30 +69,12 @@ export function FormDetail({ mode }: FormDetailProps) {
     isLoading,
   } = useReadQuery(id?.toString());
 
-  const [triggerBudjet, { data: budget }] = useLazyGetBudgetYearQuery();
-
-  const onCreate = async (data) => {
-    const sent = {
-      ...data,
-      organization: {},
-      budgetYear:
-        budget?.items?.[1]?.budgetYear !== undefined &&
-        budget?.items?.[1]?.budgetYear,
-    };
-    try {
-      const result = await create(sent);
-      if ('data' in result) {
-        router.push(`/procurement-requisition/${result.data.id}`);
-      }
-      notify('Success', 'Procurement requisition created successfully');
-    } catch (err) {
-      notify('Error', 'Error in creating Procurement requisition');
-    }
-  };
-
   const onUpdate = async (data) => {
     try {
-      await update({ ...data, id: id?.toString() });
+      await update({
+        ...data,
+        id: id?.toString(),
+      });
       notify('Success', 'Procurement Requisition updated successfully');
     } catch {
       notify('Error', 'Error in updating Procurement Requisition');
@@ -117,94 +100,97 @@ export function FormDetail({ mode }: FormDetailProps) {
         title: selected?.title,
         description: selected?.description,
         procurementType: selected?.procurementType,
+        requisitionReferenceNumber: selected?.requisitionReferenceNumber,
+        deliveryDate: new Date(selected?.deliveryDate),
       });
     }
   }, [mode, reset, selected, selectedSuccess]);
 
-  useEffect(() => {
-    triggerBudjet(undefined);
-  }, [triggerBudjet]);
-
   return (
     <Stack pos="relative" pb={'sm'}>
-      {mode == 'detail' && <LoadingOverlay visible={isLoading} />}
-      <TextInput
-        withAsterisk
-        label="Title"
-        error={errors?.title ? errors?.title?.message?.toString() : ''}
-        {...register('title')}
-      />
-
-      <Textarea
-        label="Description"
-        autosize
-        minRows={2}
-        {...register('description')}
-      />
-
-      <Controller
-        name="procurementType"
-        control={control}
-        render={({ field: { onChange, value } }) => (
-          <Select
-            name="name"
-            label="Procurement Type"
-            value={value}
+      <Flex gap="md">
+        <Box className="w-1/2">
+          {mode == 'detail' && <LoadingOverlay visible={isLoading} />}
+          <TextInput
             withAsterisk
-            error={
-              errors?.procurementType
-                ? errors?.procurementType?.message?.toString()
-                : ''
-            }
-            onChange={onChange}
-            data={[
-              {
-                value: 'Tendering',
-                label: 'Tendering',
-              },
-              {
-                value: 'purchasing',
-                label: 'purchasing',
-              },
-              {
-                value: 'Auctioning',
-                label: 'Auctioning',
-              },
-            ]}
+            disabled
+            label="Reference Number"
+            {...register('requisitionReferenceNumber')}
           />
-        )}
-      />
-      {/* <Controller
-        name="budgetYear"
-        control={control}
-        render={({ field: { onChange, value } }) => (
-          <Select
-            name="name"
-            label="Budget Year"
-            value={value}
+
+          <TextInput
             withAsterisk
-            error={
-              errors?.budgetYear ? errors?.budgetYear?.message?.toString() : ''
-            }
-            onChange={onChange}
-            data={budget?.items?.map((item) => {
-              logger.log(item);
-              return {
-                value: item?.budgetYear?.budgetYearId,
-                label: item?.budgetYear?.budgetYear,
-              };
-            })}
+            label="Name"
+            error={errors?.title ? errors?.title?.message?.toString() : ''}
+            {...register('title')}
           />
-        )}
-      /> */}
+          <Controller
+            name="deliveryDate"
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <DateInput
+                name="name"
+                valueFormat="DD-MMM-YYYY"
+                withAsterisk
+                label="Delivery Date"
+                onChange={onChange}
+                value={value}
+                placeholder="Pick date"
+                defaultValue={new Date()}
+              />
+            )}
+          />
+
+          <Controller
+            name="procurementType"
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <Select
+                name="name"
+                label="Procured By"
+                value={value}
+                withAsterisk
+                error={
+                  errors?.procurementType
+                    ? errors?.procurementType?.message?.toString()
+                    : ''
+                }
+                onChange={onChange}
+                data={[
+                  {
+                    value: 'Tendering',
+                    label: 'Tendering',
+                  },
+                  {
+                    value: 'purchasing',
+                    label: 'purchasing',
+                  },
+                  {
+                    value: 'Auctioning',
+                    label: 'Auctioning',
+                  },
+                ]}
+              />
+            )}
+          />
+        </Box>
+        <Box className="w-1/2">
+          <Textarea
+            label="Description"
+            autosize
+            minRows={6}
+            maxRows={6}
+            {...register('description')}
+          />
+        </Box>
+      </Flex>
+
       <EntityButton
         mode={mode}
         data={selected}
-        onCreate={handleSubmit(onCreate)}
         onUpdate={handleSubmit(onUpdate)}
         onDelete={handleSubmit(onDelete)}
         onReset={onReset}
-        isSaving={isSaving}
         isUpdating={isUpdating}
         isDeleting={isDeleting}
         entity="Procurement requisition"

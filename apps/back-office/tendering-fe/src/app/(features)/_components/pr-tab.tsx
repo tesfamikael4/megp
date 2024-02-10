@@ -21,7 +21,6 @@ import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { StatisticCard } from './statistic-card';
 import { useLazyGetBudgetYearQuery } from '@/store/api/budget/budget-year.api';
-import { useLazyListByIdQuery } from '../_api/pr-activity.api';
 
 const PlanYearTab = () => {
   const badgeColor = {
@@ -38,7 +37,6 @@ const PlanYearTab = () => {
 
   const [triggerPr, { data: pr }] = useLazyReadQuery();
   const { id } = useParams();
-  const [trigger, { data: assignedActivity }] = useLazyListByIdQuery();
 
   // rtk queries
 
@@ -85,13 +83,6 @@ const PlanYearTab = () => {
     getplan(undefined);
   }, [getplan]);
 
-  useEffect(() => {
-    trigger({
-      id: id.toString(),
-      collectionQuery: undefined,
-    });
-  }, [id, trigger]);
-
   return (
     <Box>
       <Box className="bg-white mb-2 rounded-r-md rounded-b-md">
@@ -131,15 +122,11 @@ const PlanYearTab = () => {
               <Flex align="flex-center" justify={'start'}>
                 <StatisticCard
                   title="IBM"
-                  value={pr?.targetGroupPercentages?.IBM ?? 50}
+                  value={pr?.targetGroupPercentages?.IBM ?? 0}
                   minValue={50}
                   type="targetGroup"
                 />
-                <StatisticCard
-                  title="Activities"
-                  value={assignedActivity?.items.length ?? 0}
-                  type="activity"
-                />
+                <StatisticCard title="Activities" value={1} type="activity" />
 
                 <StatisticCard
                   title="Status"
@@ -150,14 +137,14 @@ const PlanYearTab = () => {
               <Flex>
                 <StatisticCard
                   title="MSME"
-                  value={pr?.targetGroupPercentages?.MSME ?? 25}
+                  value={pr?.targetGroupPercentages?.MSME ?? 0}
                   minValue={50}
                   type="targetGroup"
                 />
                 <StatisticCard
                   title="Marginalized Group"
                   value={
-                    pr?.targetGroupPercentages?.['Marginalized Group'] ?? 25
+                    pr?.targetGroupPercentages?.['Marginalized Group'] ?? 0
                   }
                   minValue={50}
                   type="targetGroup"
@@ -182,14 +169,13 @@ const PlanYearTab = () => {
 
                   {Object.keys(pr?.calculatedAmount ?? {}) && (
                     <Text className="font-semibold  text-end">
-                      {/* {pr?.calculatedAmount?.toLocaleString('en-US', {
+                      {pr?.calculatedAmount?.toLocaleString('en-US', {
                         style: 'currency',
                         currency: pr?.currency,
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2,
                         currencyDisplay: 'code',
-                      })} */}
-                      USD 45,656,653
+                      })}
                     </Text>
                   )}
                 </Box>

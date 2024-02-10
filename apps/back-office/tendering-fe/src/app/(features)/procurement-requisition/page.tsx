@@ -3,12 +3,12 @@
 import { ExpandableTable } from '@/app/(features)/_components/expandable-table';
 import { Section } from '@megp/core-fe';
 import { useRouter } from 'next/navigation';
-import { ActionIcon, Box, Button, Divider, Group, Modal } from '@mantine/core';
+import { ActionIcon, Button, Group, Modal } from '@mantine/core';
 import { IconChevronRight, IconPlus } from '@tabler/icons-react';
 import { DetailRequisition } from '@/app/(features)/_components/detail-requisition-list';
 import { useLazyListQuery } from './_api/procurement-requisition.api';
 import { useDisclosure } from '@mantine/hooks';
-import { FormDetail } from './_components/form-detail';
+import { ActivitySelector } from './_components/activity-selector';
 
 export default function ProcurementRequisition() {
   const [trigger, { data, isLoading }] = useLazyListQuery();
@@ -17,14 +17,25 @@ export default function ProcurementRequisition() {
 
   const config = {
     columns: [
-      { accessor: 'requisitionReferenceNumber', title: '#Ref', width: 150 },
-      { accessor: 'title', title: 'Title', width: 200 },
-      { accessor: 'description', title: 'Description', width: 250 },
-      { accessor: 'status', title: 'Status', width: 100 },
+      {
+        accessor: 'requisitionReferenceNumber',
+        title: '#Ref',
+        width: 150,
+        sortable: true,
+      },
+      { accessor: 'title', title: 'Title', width: 200, sortable: true },
+      {
+        accessor: 'description',
+        title: 'Description',
+        width: 250,
+        sortable: true,
+      },
+      { accessor: 'status', title: 'Status', width: 100, sortable: true },
       {
         accessor: 'calculatedAmount',
         title: 'Total Amount',
         textAlign: 'right',
+        sortable: true,
         render: (activity) => (
           <>
             {parseInt(activity.calculatedAmount).toLocaleString('en-US', {
@@ -87,18 +98,14 @@ export default function ProcurementRequisition() {
       <Modal
         opened={opened}
         onClose={close}
-        size={'lg'}
+        size={'80%'}
         title={
           <Group className=" text-lg font-medium ">
             New Procurement Requisition
           </Group>
         }
       >
-        <div className="border">
-          <div className="m-4">
-            <FormDetail mode="new" />
-          </div>
-        </div>
+        <ActivitySelector />
       </Modal>
     </Section>
   );

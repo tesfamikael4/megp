@@ -5,13 +5,14 @@ import { useLazyListByIdQuery } from '@/app/(features)/_api/disbersment.api';
 import { ExpandableTable } from '@/app/(features)/_components/expandable-table';
 import { useLazyListByIdQuery as useLazyGetActivityQuery } from '@/app/(features)/_api/pr-activity.api';
 
-export const Disbursement = () => {
+export const Disbursement = ({ activityId }: { activityId?: string }) => {
   const { id } = useParams();
 
   const [trigger, { data: assignedActivity }] = useLazyGetActivityQuery();
 
   useEffect(() => {
-    trigger({ id: id?.toString(), collectionQuery: undefined });
+    id !== undefined &&
+      trigger({ id: id?.toString(), collectionQuery: undefined });
   }, [id, trigger]);
 
   const [
@@ -24,8 +25,11 @@ export const Disbursement = () => {
   ] = useLazyListByIdQuery();
 
   useEffect(() => {
-    getDisbursement({ id: id?.toString(), collectionQuery: undefined });
-  }, [getDisbursement, id]);
+    getDisbursement({
+      id: activityId ?? id.toString(),
+      collectionQuery: undefined,
+    });
+  }, [activityId, getDisbursement, id]);
 
   const config = {
     idAccessor: 'budgetYear',

@@ -1,5 +1,6 @@
 'use client';
 import { Flex, TextInput } from '@mantine/core';
+import { logger } from '@megp/core-fe';
 import { IconInboxOff, IconSearch } from '@tabler/icons-react';
 import { DataTable } from 'mantine-datatable';
 import { useEffect, useState } from 'react';
@@ -7,16 +8,16 @@ import { useEffect, useState } from 'react';
 const perPage = 10;
 
 interface Config {
+  idAccessor?: string;
   columns: any[];
   isExpandable?: boolean;
   expandedRowContent?: (record: any, collapse?: any) => React.ReactNode;
   isSearchable?: boolean;
   primaryColumn?: string;
   isSelectable?: boolean;
+  disableMultiSelect?: boolean;
   selectedItems?: any[];
-  isLoading?: boolean;
   setSelectedItems?: (items: any[]) => void;
-  idAccessor?: string;
 }
 
 export const ExpandableTable = ({
@@ -32,6 +33,7 @@ export const ExpandableTable = ({
 }) => {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
+  const [sortStatus, setSortStatus] = useState<any>({});
 
   useEffect(() => {
     const from = (page - 1) * perPage;
@@ -49,9 +51,16 @@ export const ExpandableTable = ({
             ],
           ]
         : [],
+      orderBy: sortStatus?.columnAccessor
+        ? [
+            {
+              column: sortStatus?.columnAccessor,
+              direction: sortStatus?.direction?.toUpperCase(),
+            },
+          ]
+        : [],
     });
-  }, [page, search]);
-
+  }, [page, search, sortStatus]);
   return (
     <>
       {config.isSearchable && (
@@ -68,6 +77,8 @@ export const ExpandableTable = ({
         </Flex>
       )}
       <DataTable
+        sortStatus={sortStatus}
+        onSortStatusChange={setSortStatus}
         minHeight={300}
         striped
         highlightOnHover
@@ -85,7 +96,7 @@ export const ExpandableTable = ({
             backgroundColor: '#D9D9D9',
           },
         }}
-        page={page}
+        page={total ? page : 0}
         totalRecords={total}
         recordsPerPage={perPage}
         onPageChange={setPage}
@@ -95,8 +106,21 @@ export const ExpandableTable = ({
           <p className="line-clamp-2">{record[accessor]}</p>
         )}
         selectedRecords={config.selectedItems}
-        onSelectedRecordsChange={config.setSelectedItems}
-        fetching={config.isLoading}
+        onSelectedRecordsChange={(records) => {
+          logger.log({ records });
+          if (config.disableMultiSelect) {
+            const temp = records.filter(
+              (r) => !config.selectedItems?.includes(r),
+            );
+            config.setSelectedItems && config.setSelectedItems(temp);
+          } else config.setSelectedItems && config.setSelectedItems(records);
+        }}
+        allRecordsSelectionCheckboxProps={{
+          display: config.disableMultiSelect ? 'none' : 'block',
+        }}
+        selectionCheckboxProps={{
+          radius: config.disableMultiSelect ? 'xl' : 'sm',
+        }}
         idAccessor={config.idAccessor ?? 'id'}
       />
     </>
