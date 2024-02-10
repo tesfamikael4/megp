@@ -1,7 +1,6 @@
 'use client';
 import { FormDetail } from '@/app/(features)/procurement-requisition/_components/form-detail';
 import { Box, Container, Divider, Flex, Tabs, Tooltip } from '@mantine/core';
-import { Activities } from '@/app/(features)/_components/modifyActivity';
 import { ActivityMechanization } from '@/app/(features)/_components/pr-mechanization';
 import { Items } from '@/app/(features)/_components/items';
 import TimelineTab from '@/app/(features)/_components/timeline-tab';
@@ -34,22 +33,18 @@ export default function PrDetailPage() {
           <Container fluid>
             <Tabs defaultValue="definition" keepMounted={false}>
               <Tabs.List className=" flex-nowrap">
-                <Tabs.Tab value="definition">Definition</Tabs.Tab>
-                <Tabs.Tab value="activities">Activities</Tabs.Tab>
-                <Tabs.Tab value="method">Method</Tabs.Tab>
+                <Tabs.Tab value="definition">
+                  Procurement Identification
+                </Tabs.Tab>
+                <Tabs.Tab value="method">Procurement Methods</Tabs.Tab>
                 <Tabs.Tab value="items">Items</Tabs.Tab>
-                <Tabs.Tab value="dispersement">Dispersement</Tabs.Tab>
-                {/* <Tabs.Tab value="timeline">Timeline</Tabs.Tab> */}
                 <Tabs.Tab value="documents">Document</Tabs.Tab>
-                <Tabs.Tab value="requisitioner">Requisitioner</Tabs.Tab>
+                <Tabs.Tab value="timeline">Timeline</Tabs.Tab>
+                <Tabs.Tab value="dispersement">Budget</Tabs.Tab>
               </Tabs.List>
 
               <Tabs.Panel value="definition" className="pt-2">
                 <FormDetail mode="detail" />
-              </Tabs.Panel>
-
-              <Tabs.Panel value="activities">
-                <Activities />
               </Tabs.Panel>
 
               <Tabs.Panel value="method" className="pt-2">

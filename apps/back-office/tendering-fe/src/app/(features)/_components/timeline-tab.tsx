@@ -56,17 +56,15 @@ const tableData = [
   },
 ];
 
-export default function TimelineTab() {
+export default function TimelineTab({ activityId }: { activityId?: string }) {
   const [data, setData] = useState<any[]>(tableData);
   const { id } = useParams();
 
-  const [createPostTimeline, { isLoading: isPostTimelineCreating }] =
+  const [createTimeline, { isLoading: isTimelineCreating }] =
     useCreateMutation();
 
-  const [
-    getPostTimeline,
-    { data: postTimeline, isSuccess: isPostTimelineSuccess },
-  ] = useLazyListByIdQuery();
+  const [getTimeline, { data: timeline, isSuccess: isTimelineSuccess }] =
+    useLazyListByIdQuery();
   const listConfig: TableConfig<any> = {
     columns: [
       {
@@ -143,6 +141,7 @@ export default function TimelineTab() {
             rightSection={
               <Box className=" text-black border-l-2 p-2 mr-6 ">Days </Box>
             }
+            disabled={activityId ? true : false}
           />
         )}
       </>
@@ -192,7 +191,7 @@ export default function TimelineTab() {
           placeholder="Pick date"
           onBlur={onBlur}
           minDate={new Date()}
-          disabled={index != 0}
+          disabled={index != 0 || activityId ? true : false}
         />
       </>
     );
@@ -211,7 +210,7 @@ export default function TimelineTab() {
     });
 
     try {
-      await createPostTimeline(castedData).unwrap();
+      await createTimeline(castedData).unwrap();
       notify('Success', 'Timeline saved successfully');
     } catch (err) {
       notify('Error', 'Something went wrong');
@@ -219,28 +218,33 @@ export default function TimelineTab() {
   };
 
   useEffect(() => {
-    getPostTimeline({ id: id.toString(), collectionQuery: undefined });
-  }, [getPostTimeline, id]);
+    getTimeline({
+      id: activityId ?? id.toString(),
+      collectionQuery: undefined,
+    });
+  }, [activityId, getTimeline, id]);
 
   useEffect(() => {
-    if (isPostTimelineSuccess && postTimeline?.total !== 0) {
-      const castedData = postTimeline?.items?.map((t) => ({
+    if (isTimelineSuccess && timeline?.total !== 0) {
+      const castedData = timeline?.items?.map((t) => ({
         ...t,
         dueDate: new Date(t.dueDate),
         fromDate: new Date(t.fromDate),
       }));
       castedData && setData([...castedData]);
     }
-  }, [isPostTimelineSuccess, postTimeline?.items, postTimeline?.total]);
+  }, [isTimelineSuccess, timeline?.items, timeline?.total]);
 
   return (
     <div className="mt-4">
       {data.length != 0 && <Table config={listConfig} data={data} />}
-      <Group className="mt-2" justify="end">
-        <Button onClick={handleSave} loading={isPostTimelineCreating} mb={'sm'}>
-          <IconDeviceFloppy size={16} /> Save
-        </Button>
-      </Group>
+      {!activityId && (
+        <Group className="mt-2" justify="end">
+          <Button onClick={handleSave} loading={isTimelineCreating} mb={'sm'}>
+            <IconDeviceFloppy size={16} /> Save
+          </Button>
+        </Group>
+      )}
     </div>
   );
 }

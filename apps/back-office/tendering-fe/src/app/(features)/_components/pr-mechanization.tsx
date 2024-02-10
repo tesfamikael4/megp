@@ -8,23 +8,12 @@ import {
   TextInput,
 } from '@mantine/core';
 import { Controller, useForm } from 'react-hook-form';
-import { EntityButton } from '@megp/entity';
 import { ZodType, z } from 'zod';
-import { notify } from '@megp/core-fe';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-import {
-  useCreateMutation,
-  useUpdateMutation,
-  useLazyListByIdQuery,
-} from '@/app/(features)/_api/mechanization.api';
+import { useLazyListByIdQuery } from '@/app/(features)/_api/mechanization.api';
 import { FrameworkSelector } from './framework-selector';
-import { useLazyListByIdQuery as useLazyGetAssignedActivitiesQuery } from '../_api/pr-activity.api';
-import {
-  useLazyGetActivitiesQuery,
-  useLazyGetBudgetYearQuery,
-} from '@/store/api/budget/budget-year.api';
 
 const activitiesSchema: ZodType<Partial<any>> = z.object({
   procurementMethod: z.string({
@@ -45,8 +34,6 @@ const activitiesSchema: ZodType<Partial<any>> = z.object({
 
 export const ActivityMechanization = () => {
   const {
-    handleSubmit,
-    reset,
     formState: { errors },
     control,
     watch,
@@ -56,18 +43,6 @@ export const ActivityMechanization = () => {
   });
   const method = watch('procurementMethod');
   const fundingSource = watch('fundingSource');
-  const [assignedActivities, setAssignedActivities] = useState<any>();
-
-  const [create, { isLoading: isCreating }] = useCreateMutation();
-
-  const [update, { isLoading: isUpdating }] = useUpdateMutation();
-  const [trigger, { data: assignedActivity }] =
-    useLazyGetAssignedActivitiesQuery();
-
-  const [listById, { data: prActivity }] = useLazyGetActivitiesQuery();
-
-  const [triggerBudjet, { data: budget, isSuccess: budgetFeatched }] =
-    useLazyGetBudgetYearQuery();
 
   const [
     getmechanism,
@@ -82,47 +57,6 @@ export const ActivityMechanization = () => {
   const [contract, setContract] = useState({});
   const [mode, setMode] = useState<'new' | 'detail'>('new');
   const [donor, setDonor] = useState<string[]>([]);
-  const onCreate = async (data) => {
-    try {
-      await create({
-        ...data,
-        procurementRequisitionId: id?.toString(),
-        donor,
-        contract,
-      }).unwrap();
-      notify('Success', 'Procurement mechanization saved successfully');
-    } catch (err) {
-      notify('Error', 'Something went wrong');
-    }
-  };
-  const onUpdate = async (data) => {
-    const castedData = {
-      ...mechanism?.items[0],
-      ...data,
-      contract,
-      procurementRequisitionId: id?.toString(),
-      donor,
-    };
-
-    try {
-      await update(castedData).unwrap();
-      notify('Success', 'Procurement mechanization updated successfully');
-    } catch (err) {
-      notify('Error', 'Something went wrong');
-    }
-  };
-
-  const onReset = () => {
-    setContract({});
-    setDonor([]);
-    reset({
-      procurementMethod: undefined,
-      procurementType: undefined,
-      fundingSource: undefined,
-      isOnline: undefined,
-      targetGroup: undefined,
-    });
-  };
 
   useEffect(() => {
     setContract({});
@@ -139,23 +73,6 @@ export const ActivityMechanization = () => {
         collectionQuery: undefined,
       });
   }, [getmechanism, id]);
-  useEffect(() => {
-    id !== undefined &&
-      trigger({
-        id: id.toString(),
-        collectionQuery: undefined,
-      });
-  }, [id, trigger]);
-  useEffect(() => {
-    budget?.[1]?.id !== undefined &&
-      listById({
-        id: budget?.items?.[0]?.id?.toString(),
-        collectionQuery: { includes: ['procurementMechanisms'] },
-      });
-  }, [budget, budgetFeatched, listById]);
-  useEffect(() => {
-    triggerBudjet(undefined);
-  }, [triggerBudjet]);
 
   useEffect(() => {
     if (isGetMechanismSuccess && mechanism?.total == 1) {
@@ -168,61 +85,48 @@ export const ActivityMechanization = () => {
       setDonor(mechanism.items[0]?.donor);
       setContract(mechanism.items[0]?.contract);
     }
-  }, [isGetMechanismSuccess, mechanism]);
-
-  useEffect(() => {
-    if (assignedActivities && mechanism?.total == 0) {
-      setMode('new');
-      setValue(
-        'fundingSource',
-        assignedActivities[0]?.postProcurementMechanisms?.[0]?.fundingSource,
-      );
-      setValue(
-        'isOnline',
-        assignedActivities[0]?.postProcurementMechanisms?.[0]?.isOnline,
-      );
-      setValue(
-        'procurementMethod',
-        assignedActivities[0]?.postProcurementMechanisms?.[0]
-          ?.procurementMethod,
-      );
-      setValue(
-        'procurementType',
-        assignedActivities[0]?.postProcurementMechanisms?.[0]?.procurementType,
-      );
-      setValue(
-        'targetGroup',
-        assignedActivities[0]?.postProcurementMechanisms?.[0]?.targetGroup,
-      );
-      setDonor(assignedActivities[0]?.postProcurementMechanisms?.[0]?.donor);
-      setContract(
-        assignedActivities[0]?.postProcurementMechanisms?.[0]?.contract,
-      );
-    }
-  }, [assignedActivities, mechanism?.total]);
-
-  useEffect(() => {
-    const filter = prActivity?.items?.filter(
-      (activity) =>
-        assignedActivity &&
-        assignedActivity.items.some(
-          (assigned) =>
-            assigned.annualProcurementPlanActivityId === activity.id,
-        ),
-    );
-    setAssignedActivities(filter);
-  }, [assignedActivity, prActivity]);
+  }, [isGetMechanismSuccess, mechanism, setValue]);
 
   return (
     <Stack pos="relative" pb={'sm'}>
       <LoadingOverlay visible={isGetMechanismLoading} />
       <Flex gap="md">
         <Controller
+          name="procurementType"
+          control={control}
+          render={({ field: { name, value, onChange } }) => (
+            <Select
+              withCheckIcon={false}
+              name={name}
+              value={value}
+              onChange={onChange}
+              label="Procurement Type"
+              disabled={mode === 'detail' && true}
+              data={[
+                'Goods',
+                'Works',
+                'Non Consulting Services',
+                'Consultancy Services',
+                'Motor Vehicle Repair',
+              ]}
+              className="w-full"
+              withAsterisk
+              placeholder="Select Procurement Category"
+              error={
+                errors?.procurementType
+                  ? errors?.procurementType?.message?.toString()
+                  : ''
+              }
+            />
+          )}
+        />
+        <Controller
           name="procurementMethod"
           control={control}
           render={({ field: { value, name, onChange } }) => (
             <Select
               withCheckIcon={false}
+              disabled={true}
               name={name}
               value={value}
               onChange={onChange}
@@ -249,41 +153,6 @@ export const ActivityMechanization = () => {
             />
           )}
         />
-        <Controller
-          name="procurementType"
-          control={control}
-          render={({ field: { name, value, onChange } }) => (
-            <Select
-              withCheckIcon={false}
-              name={name}
-              value={value}
-              onChange={onChange}
-              label="Procurement Category"
-              disabled={mode === 'detail' && true}
-              data={
-                assignedActivity?.total !== 0 && assignedActivities
-                  ? [
-                      `${assignedActivities[0]?.procurementMechanisms?.procurementType}`,
-                    ]
-                  : [
-                      'Goods',
-                      'Works',
-                      'Non Consulting Services',
-                      'Consultancy Services',
-                      'Motor Vehicle Repair',
-                    ]
-              }
-              className="w-full"
-              withAsterisk
-              placeholder="Select Procurement Category"
-              error={
-                errors?.procurementType
-                  ? errors?.procurementType?.message?.toString()
-                  : ''
-              }
-            />
-          )}
-        />
       </Flex>
       {method === 'Purchased Orders' && (
         <FrameworkSelector
@@ -304,6 +173,7 @@ export const ActivityMechanization = () => {
               label="Funding Source"
               data={['Internal Revenue', 'Treasury', 'Loan', 'Donor']}
               className="w-full"
+              disabled={true}
               withAsterisk
               placeholder="Select Funding Source"
               error={
@@ -321,6 +191,7 @@ export const ActivityMechanization = () => {
             <Select
               name={name}
               value={`${value}`}
+              disabled={true}
               onChange={(d) => onChange(d == 'true')}
               label="Procurement Process"
               data={[
@@ -352,6 +223,7 @@ export const ActivityMechanization = () => {
           <MultiSelect
             name={name}
             value={value}
+            disabled={true}
             onChange={onChange}
             label="Supplier Target Group"
             data={[
@@ -364,15 +236,6 @@ export const ActivityMechanization = () => {
             className="w-full"
           />
         )}
-      />
-
-      <EntityButton
-        mode={mode}
-        isSaving={isCreating}
-        isUpdating={isUpdating}
-        onCreate={handleSubmit(onCreate)}
-        onReset={onReset}
-        onUpdate={handleSubmit(onUpdate)}
       />
     </Stack>
   );

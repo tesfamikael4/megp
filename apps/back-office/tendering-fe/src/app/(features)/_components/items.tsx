@@ -6,10 +6,11 @@ import {
   Button,
   Flex,
   Group,
+  LoadingOverlay,
   Modal,
   Text,
 } from '@mantine/core';
-import { logger, notify } from '@megp/core-fe';
+import { notify } from '@megp/core-fe';
 import { useDisclosure } from '@mantine/hooks';
 import {
   IconDeviceFloppy,
@@ -30,15 +31,15 @@ import DataImport from './data-import';
 import { ExpandableTable } from './expandable-table';
 import { ItemDetailForm } from './item-form-detail';
 import { CollectionQuery } from '@megp/entity';
-import { useReadUnitOfMeasurementsQuery } from '@/store/api/administration/administration.api';
 
-export function Items() {
+export function Items({ activityId }: { activityId?: string }) {
   const [opened, { open, close }] = useDisclosure(false);
   const [
     openedImportModal,
     { close: closeImportModal, open: openImportModal },
   ] = useDisclosure(false);
   const [data, setData] = useState<any[]>([]);
+  const [itemLoading, setItemLoading] = useState<boolean>(true);
   const [total, setTotal] = useState<number>(0);
   const [newItems, setNewItems] = useState<any[]>([]);
 
@@ -55,15 +56,6 @@ export function Items() {
 
   const { id } = useParams();
 
-  const UomRead = ({ record }: { record: any }) => {
-    logger.log(record);
-    const { data: uom } = useReadUnitOfMeasurementsQuery(
-      record?.measurement?.toString(),
-    );
-
-    return <Text>{uom?.name}</Text>;
-  };
-
   const config = {
     isExpandable: true,
     columns: [
@@ -72,7 +64,6 @@ export function Items() {
         title: 'UoM',
         accessor: 'uoM',
         width: 200,
-        render: (record) => <UomRead record={record} />,
       },
       {
         accessor: 'quantity',
@@ -238,7 +229,6 @@ export function Items() {
   };
 
   const handelOnDone = (data, id, collapse) => {
-    logger.log({ data });
     const castedData = newItems.map((item) => {
       if (item.id == id) {
         return { ...item, ...data };
@@ -279,33 +269,35 @@ export function Items() {
         notify('Success', 'Items Created Success-fully');
         setNewItems([]);
       } catch (err) {
-        logger.log(err);
         notify('Error', 'Something Went wrong');
       }
     }
   };
 
   const onRequestChange = (request: CollectionQuery) => {
-    listById({ id: id as string, collectionQuery: request });
+    listById({ id: activityId ?? (id as string), collectionQuery: request });
   };
 
   useEffect(() => {
     if (isSuccess) {
       setData([...(itemsList?.items ?? [])]);
       setTotal(itemsList?.total ?? 0);
+      setItemLoading(false);
     }
   }, [isSuccess, itemsList?.items, itemsList?.total]);
 
   return (
-    <Box>
-      <Group justify="end" className="my-2" gap="md">
-        <Button onClick={openImportModal}>
-          <IconFileImport size={18} /> Import
-        </Button>
-        <Button onClick={open}>
-          <IconPlus size={18} /> Add
-        </Button>
-      </Group>
+    <Box className="mt-2">
+      {!activityId && (
+        <Group justify="end" className="my-2" gap="md">
+          <Button onClick={openImportModal}>
+            <IconFileImport size={18} /> Import
+          </Button>
+          <Button onClick={open}>
+            <IconPlus size={18} /> Add
+          </Button>
+        </Group>
+      )}
       {newItems.length !== 0 && (
         <>
           <Text className="text-lg" fw="500">
@@ -324,10 +316,13 @@ export function Items() {
         </>
       )}
       {(data.length != 0 || newItems.length === 0) && (
-        <>
-          <Text className="text-lg" fw="500">
-            Items List
-          </Text>
+        <Box pos={'relative'}>
+          <LoadingOverlay visible={itemLoading} />
+          {!activityId && (
+            <Text className="text-lg" fw="500">
+              Items List
+            </Text>
+          )}
 
           <ExpandableTable
             config={listConfig}
@@ -335,7 +330,7 @@ export function Items() {
             total={total}
             onRequestChange={onRequestChange}
           />
-        </>
+        </Box>
       )}
       <ItemSelector onDone={handelAddItem} opened={opened} close={close} />
       <Modal
