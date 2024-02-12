@@ -53,8 +53,6 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
   app.useGlobalFilters(new GlobalExceptionFilter());
-  // const reflector = app.get(Reflector);
-  // app.useGlobalGuards(new JwtAuthGuard(reflector));
 
   app.setGlobalPrefix('api');
 
