@@ -4,7 +4,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { GlobalExceptionFilter } from './shared/exceptions/global-exception.filter';
+import { GlobalExceptionFilter } from 'megp-shared-be';
 
 async function bootstrap() {
   const app: NestExpressApplication = await NestFactory.create(AppModule, {

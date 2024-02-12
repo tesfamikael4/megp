@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Rule, RuleDesigner } from 'src/entities';
-import { EntityCrudService } from 'src/shared/service';
+import { EntityCrudService } from 'megp-shared-be';
 import { Repository } from 'typeorm';
 import { compareCondition } from './check-conditions.js';
 import { CreateRuleDesignerDto } from '../dto/rule-designer.dto.js';

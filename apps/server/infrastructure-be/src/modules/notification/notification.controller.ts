@@ -2,8 +2,8 @@ import { Body, Controller, Get, Post } from '@nestjs/common';
 import { EventPattern, Payload } from '@nestjs/microservices';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { NotificationService } from './notification.service';
-import { SendNotificationEvent } from '../../shared/types/notification.type';
-import { CurrentUser } from 'src/shared/authorization';
+import { SendNotificationEvent } from 'megp-shared-be';
+import { CurrentUser } from 'megp-shared-be';
 
 @Controller('notification')
 @ApiTags('notifications')

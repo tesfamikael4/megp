@@ -1,8 +1,8 @@
 import { Controller } from '@nestjs/common';
-import { ExtraCrudController } from 'src/shared/controller';
+import { ExtraCrudController } from 'megp-shared-be';
 import { ApiTags } from '@nestjs/swagger';
 import { PossibleReasons } from 'src/entities';
-import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
+import { ExtraCrudOptions } from 'megp-shared-be';
 import { PossibleReasonsService } from '../services/possible-service.service';
 
 const option: ExtraCrudOptions = {

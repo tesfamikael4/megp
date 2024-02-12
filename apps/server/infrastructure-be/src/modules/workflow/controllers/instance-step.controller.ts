@@ -1,8 +1,8 @@
 import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
-import { ExtraCrudController } from 'src/shared/controller';
-import { CurrentUser } from 'src/shared/authorization';
+import { ExtraCrudOptions } from 'megp-shared-be';
+import { ExtraCrudController } from 'megp-shared-be';
+import { CurrentUser } from 'megp-shared-be';
 import { InstanceStep } from 'src/entities/instance-step.entity';
 import { InstanceStepService } from '../services/instance-step.service';
 

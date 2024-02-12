@@ -6,7 +6,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { RuleHandler } from './rule-handler.entity';
-import { Audit } from 'src/shared/entities';
+import { Audit } from 'megp-shared-be';
 
 @Entity({ name: 'rule_handler_options' })
 export class RuleHandlerOptions extends Audit {

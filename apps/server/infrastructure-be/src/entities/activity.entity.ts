@@ -12,7 +12,7 @@ import { Workflow } from './workflow.entity';
 import { Permission } from './permission.entity';
 import { Instance } from './instance.entity';
 import { DefaultStep } from './default-step.entity';
-import { OrgAudit } from 'src/shared/entities';
+import { OrgAudit } from 'megp-shared-be';
 import { State } from './state.entity';
 
 @Entity({ name: 'activities' })

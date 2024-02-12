@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { RuleHandlerOptions } from './rule-handler-options.entity';
-import { Audit } from 'src/shared/entities';
+import { Audit } from 'megp-shared-be';
 
 enum HandlerTypesEnum {
   CONDITION = 'CONDITION',

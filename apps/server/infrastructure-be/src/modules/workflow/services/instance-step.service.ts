@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
-import { ExtraCrudService } from 'src/shared/service';
+import { ExtraCrudService } from 'megp-shared-be';
 import { Step } from '../../../entities';
 import { DefaultStep } from 'src/entities/default-step.entity';
 import { Instance } from 'src/entities/instance.entity';

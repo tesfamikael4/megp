@@ -1,9 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { OrgAudit } from 'src/shared/entities';
-import {
-  NotificationTypeEnum,
-  NotificationStatusEnum,
-} from 'src/shared/types/notification.type';
+import { OrgAudit } from 'megp-shared-be';
+import { NotificationTypeEnum, NotificationStatusEnum } from 'megp-shared-be';
 
 @Entity({ name: 'notifications' })
 export class Notifications extends OrgAudit {

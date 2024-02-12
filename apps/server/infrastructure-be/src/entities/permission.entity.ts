@@ -9,7 +9,7 @@ import {
 import { Step } from './step.entity';
 import { Workflow } from './workflow.entity';
 import { Activity } from './activity.entity';
-import { OrgAudit } from 'src/shared/entities';
+import { OrgAudit } from 'megp-shared-be';
 
 @Entity({ name: 'permissions' })
 export class Permission extends OrgAudit {

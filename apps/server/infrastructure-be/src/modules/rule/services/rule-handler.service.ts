@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RuleHandler } from 'src/entities';
-import { EntityCrudService } from 'src/shared/service';
+import { EntityCrudService } from 'megp-shared-be';
 import { Repository } from 'typeorm';
 
 @Injectable()

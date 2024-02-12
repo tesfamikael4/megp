@@ -6,7 +6,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { Rule } from './rule.entity';
-import { Audit } from 'src/shared/entities/audit.entity';
+import { Audit } from 'megp-shared-be';
 import { RuleDesigner } from './rule-designer.entity';
 
 @Entity({ name: 'possible_reasons' })

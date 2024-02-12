@@ -3,9 +3,9 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CreateTodoDto, UpdateTodoDto } from '../dto/todo.dto';
 import { TodoService } from '../services/todo.service';
 import { Todo } from '../../../entities/todo.entity';
-import { EntityCrudController } from 'src/shared/controller';
-import { EntityCrudOptions } from 'src/shared/types/crud-option.type';
-import { ApiKeyGuard } from 'src/shared/authorization';
+import { EntityCrudController } from 'megp-shared-be';
+import { EntityCrudOptions } from 'megp-shared-be';
+import { ApiKeyGuard } from 'megp-shared-be';
 
 const options: EntityCrudOptions = {
   createDto: CreateTodoDto,

@@ -1,13 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Notifications } from 'src/entities/notifications.entity';
-import { EmailService } from 'src/shared/email/email.service';
+import { EmailService } from 'megp-shared-be';
 import { Repository } from 'typeorm';
 import {
   SendNotificationEvent,
   NotificationStatusEnum,
   NotificationTypeEnum,
-} from '../../shared/types/notification.type';
+} from 'megp-shared-be';
 import { ClientProxy } from '@nestjs/microservices';
 
 @Injectable()

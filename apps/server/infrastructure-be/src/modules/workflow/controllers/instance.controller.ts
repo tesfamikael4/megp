@@ -7,14 +7,11 @@ import {
 } from '@nestjs/microservices';
 import { InstanceService } from '../services/instance.service';
 import { Instance } from '../../../entities/instance.entity';
-import { EntityCrudController } from 'src/shared/controller';
+import { EntityCrudController } from 'megp-shared-be';
 import { ApiTags } from '@nestjs/swagger';
-import {
-  EntityCrudOptions,
-  ExtraCrudOptions,
-} from 'src/shared/types/crud-option.type';
+import { EntityCrudOptions, ExtraCrudOptions } from 'megp-shared-be';
 import { StateService } from '../services/state.service';
-import { CurrentUser } from 'src/shared/authorization';
+import { CurrentUser } from 'megp-shared-be';
 
 const options: EntityCrudOptions = {};
 
