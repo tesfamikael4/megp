@@ -57,6 +57,16 @@ export const theme: Partial<MantineThemeOverride> = {
         size: 'sm',
       },
     },
+    Checkbox: {
+      defaultProps: {
+        labelPosition: 'right',
+      },
+    },
+    Radio: {
+      defaultProps: {
+        labelPosition: 'right',
+      },
+    },
     TextInput: {
       defaultProps: {
         size: 'sm',

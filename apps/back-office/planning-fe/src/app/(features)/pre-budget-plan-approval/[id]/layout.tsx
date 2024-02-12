@@ -1,5 +1,5 @@
 import { Box, Flex } from '@mantine/core';
-import WorkflowHandling from '../planning-approval/page';
+import WorkflowHandling from '../../planning-approval/page';
 export default function PreBudgetPlanLayout({
   children,
 }: {
