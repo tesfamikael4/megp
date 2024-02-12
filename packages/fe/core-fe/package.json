@@ -9,6 +9,7 @@
     "lint": "eslint ./src --ext .ts,.tsx"
   },
   "devDependencies": {
+    "@megp/eslint-config-custom": "workspace:*",
     "@megp/tsconfig": "workspace:*",
     "@turbo/gen": "^1.10.12",
     "@types/node": "^20.5.2",
@@ -40,7 +41,6 @@
     "@mantine/spotlight": "^7.1.7",
     "@mantine/tiptap": "^7.1.7",
     "@megp/auth": "workspace:*",
-    "@megp/eslint-config-custom": "workspace:*",
     "@megp/theme": "workspace:*",
     "@reduxjs/toolkit": "^1.9.5",
     "@svgr/webpack": "^8.1.0",
@@ -53,6 +53,7 @@
     "clsx": "^2.1.0",
     "cookies-next": "^3.0.0",
     "dayjs": "^1.11.10",
+    "eslint": "^8.56.0",
     "google-libphonenumber": "^3.2.33",
     "immutability-helper": "^3.1.1",
     "jwt-decode": "^3.1.2",

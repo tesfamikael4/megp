@@ -6,6 +6,5 @@ module.exports = {
       'error',
       { checksVoidReturn: false },
     ],
-    '@typescript-eslint/no-extraneous-class': 'off',
   },
 };
