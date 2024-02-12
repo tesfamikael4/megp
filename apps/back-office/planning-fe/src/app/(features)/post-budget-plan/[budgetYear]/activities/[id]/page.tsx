@@ -41,7 +41,7 @@ export default function NewActivity() {
       >
         <Tabs defaultValue="identification" keepMounted={false}>
           <Tabs.List>
-            <Tabs.Tab value="identification">Identification</Tabs.Tab>
+            <Tabs.Tab value="identification">Activity Identification</Tabs.Tab>
             <Tabs.Tab value="method">Procurement Methods</Tabs.Tab>
             <Tabs.Tab value="items">Items</Tabs.Tab>
             <Tabs.Tab value="documents">Documents</Tabs.Tab>

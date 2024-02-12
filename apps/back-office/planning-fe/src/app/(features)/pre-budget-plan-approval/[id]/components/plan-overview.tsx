@@ -1,8 +1,8 @@
 'use client';
-import { useLazyListByIdQuery } from '../../pre-budget-plan/[budgetYear]/activities/_api/activities.api';
+import { useLazyListByIdQuery } from '../../../pre-budget-plan/[budgetYear]/activities/_api/activities.api';
 import { Section } from '@megp/core-fe';
 import { useEffect } from 'react';
-import { DetailActivity } from '../../_components/detail-activity';
+import { DetailActivity } from '../../../_components/detail-activity';
 import { Accordion, Box, LoadingOverlay } from '@mantine/core';
 import { Items } from './items';
 import { Requisitioner } from './requisitioner';

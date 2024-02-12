@@ -31,20 +31,25 @@ export const Menu: MenuItem[] = [
     icon: IconReportAnalytics,
     link: '/report',
   },
-  {
-    label: 'Approval Workflow',
-    icon: IconArrowFork,
-    link: '/workflow',
-  },
 
+  {
+    label: 'Pre Budget Plan Approval',
+    link: '/pre-budget-plan-approval',
+    icon: IconArrowFork,
+  },
+  {
+    label: 'Post Budget Plan Approval',
+    link: '/post-budget-plan-approval',
+    icon: IconArrowFork,
+  },
   {
     label: 'Settings',
     icon: IconAdjustmentsHorizontal,
     links: [
-      { label: 'Pre Budget Plan Approval', link: '/pre-budget-plan-approval' },
       {
-        label: 'Post Budget Plan Approval',
-        link: '/post-budget-plan-approval',
+        label: 'Approval Workflow',
+
+        link: '/workflow',
       },
     ],
   },

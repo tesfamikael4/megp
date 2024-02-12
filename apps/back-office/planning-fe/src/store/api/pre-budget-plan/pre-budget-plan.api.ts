@@ -1,4 +1,5 @@
 import { baseQuery } from '@/store/base-query';
+import { encodeCollectionQuery } from '@megp/entity';
 import { createApi } from '@reduxjs/toolkit/query/react';
 
 export const preBudgetPlanApi = createApi({
@@ -16,8 +17,15 @@ export const preBudgetPlanApi = createApi({
     process.env.NEXT_PUBLIC_PLANNING_API ?? '/planning/api/',
   ),
   endpoints: (builder) => ({
-    getPreBudgetPlans: builder.query<any, null>({
-      query: () => 'pre-budget-plans/get-with-app',
+    getPreBudgetPlans: builder.query<any, any>({
+      query: (collectionQuery) => {
+        let q = '';
+        if (collectionQuery) {
+          const query = encodeCollectionQuery(collectionQuery);
+          q = `?q=${query}`;
+        }
+        return { url: `pre-budget-plans/get-with-app${q}`, method: 'GET' };
+      },
       providesTags: ['pre-budget-plan'],
     }),
     getPreBudgetPlan: builder.query<any, string>({
