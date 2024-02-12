@@ -30,43 +30,28 @@ const services: { title: string; link: string; description: string }[] = [
     link: '/vendor/registration/preferential-treatment',
     description: 'Preferential Treatment for existing business',
   },
-  {
-    title: 'Cancel registration',
-    link: '/vendor/registration/cancel',
-    description: 'Cancel registration for existing business',
-  },
-  {
-    title: 'Track Application',
-    link: '/vendor/registration/track-applications',
-    description: 'Track application for existing business',
-  },
-  {
-    title: 'My Briefcase',
-    link: '/vendor/registration/my-briefcase',
-    description: 'My Briefcase for existing business',
-  },
 ];
 
 const ServiceLayout = () => {
   return (
-    <Box mih={'80%'} m={24}>
-      <Section
-        title="Vendor Services"
-        collapsible={false}
-        className="w-full h-full"
-      >
+    <Flex justify="center" className="w-full h-full p-6">
+      <Flex className="w-full flex-col border border-l-0 bg-white">
+        <Flex className="w-full border-b p-3 flex justify-between">
+          Page Title
+        </Flex>
         <SimpleGrid
           cols={{ base: 1, xs: 2, md: 3, lg: 2, xl: 3 }}
           spacing={{ base: 10, sm: 'xl' }}
           verticalSpacing={{ base: 'md', xl: 'xl' }}
-        // className="p-10"
+          className="p-6"
+          mah={'60%'}
         >
           {services.map((service, index) => {
             return <ServiceCard key={index} {...service} />;
           })}
         </SimpleGrid>
-      </Section>
-    </Box>
+      </Flex>
+    </Flex>
   );
 };
 
