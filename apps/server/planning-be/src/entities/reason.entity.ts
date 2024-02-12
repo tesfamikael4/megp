@@ -5,6 +5,7 @@ import {
   OneToOne,
   OneToMany,
   JoinColumn,
+  ManyToOne,
 } from 'typeorm';
 
 import { APP } from './app.entity';
@@ -17,11 +18,18 @@ export class Reason extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'uuid' })
-  objectId: string;
+  @Column({ nullable: true })
+  preBudgetPlanActivityId: string;
+
+  @ManyToOne(
+    () => PreBudgetPlanActivity,
+    (preBudgetPlanActivity) => preBudgetPlanActivity.reasons,
+  )
+  @JoinColumn({ name: 'preBudgetPlanActivityId' })
+  public preBudgetPlanActivity: PreBudgetPlanActivity;
 
   @Column({ type: 'uuid' })
-  activityId: string;
+  objectId: string;
 
   @Column()
   type: string;

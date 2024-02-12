@@ -18,6 +18,7 @@ import { PreBudgetRequisitioner } from './pre-budget-plan-requisitioner.entity';
 import { PreProcurementMechanism } from './pre-procurement-mechanism.entity';
 import { OrgAudit } from 'src/shared/entities';
 import { PreBudgetActivityDocument } from './pre-budget-activity-document.entity';
+import { Reason } from './reason.entity';
 
 @Unique(['procurementReference'])
 @Entity({ name: 'pre_budget_plan_activities' })
@@ -66,6 +67,9 @@ export class PreBudgetPlanActivity extends OrgAudit {
       preBudgetActivityDocument.preBudgetPlanActivity,
   )
   preBudgetActivityDocuments: PreBudgetActivityDocument[];
+
+  @OneToMany(() => Reason, (reasons) => reasons.preBudgetPlanActivity)
+  reasons: Reason[];
 
   @Column()
   name: string;
