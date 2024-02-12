@@ -110,6 +110,24 @@ const formatColumns = {
     { name: 'nationality' },
     { name: 'share' },
   ],
+  address: [
+    { name: 'mobilePhone' },
+    { name: 'primaryEmail' },
+    { name: 'postalAddress' },
+    { name: 'alternateEmail' },
+    { name: 'telephone' },
+  ],
+  businessSizeAndOwnership: [
+    { name: 'registeredCapital' },
+    { name: 'paidUpCapital' },
+    { name: 'numberOfEmployees' },
+    { name: 'ownershipType' },
+  ],
+  beneficialOwnership: [
+    { name: 'firstName' },
+    { name: 'lastName' },
+    { name: 'nationality' },
+  ],
   service: [{ name: 'name', displayName: 'Service Type' }],
 };
 
@@ -236,22 +254,45 @@ const FormattedPanel = ({ data, tabValue }: RequiredFieldsOnly<PanelProps>) => {
     <>
       {formatColumns[tabValue].map((field) => {
         return (
-          <Accordion.Panel key={field.name} className="gap-x-2 items-center">
-            <Flex>
-              <Text
-                size="xs"
-                fw={700}
-                tt="capitalize"
-                w={150}
-                className="text-md max:w-1/5 w-1/5 bg-[#DCE8F2] p-3 "
-              >
-                {addSpacesToCamelCase(field.displayName ?? field.name)}
-              </Text>
-              <Text className="ml-2" size="xs" fw={500} tt="capitalize">
-                {data[tabValue][field.name]}
-              </Text>
-            </Flex>
-          </Accordion.Panel>
+          <>
+            <Accordion.Panel
+              key={field.name}
+              className="gap-x-2 items-center"
+              styles={{
+                panel: {
+                  padding: 0,
+                },
+                content: {
+                  padding: 0,
+                },
+              }}
+            >
+              <Flex>
+                <Text
+                  size="xs"
+                  fw={700}
+                  tt="capitalize"
+                  w={150}
+                  className="text-md max:w-1/5 w-1/5 bg-[#DCE8F2] p-3 "
+                >
+                  {addSpacesToCamelCase(field.displayName ?? field.name)}
+                </Text>
+                <Text
+                  className="ml-2 my-auto"
+                  size="xs"
+                  fw={500}
+                  tt="capitalize"
+                >
+                  {typeof data[tabValue][field.name] === 'object'
+                    ? displayFormattedObject(data[tabValue][field.name], {
+                        [field.name]: 'amount+currency',
+                      })
+                    : data[tabValue][field.name]}
+                </Text>
+              </Flex>
+              <Divider />
+            </Accordion.Panel>
+          </>
         );
       })}
     </>
