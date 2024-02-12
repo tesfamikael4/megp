@@ -4,7 +4,7 @@ import styles from './stepper.module.scss';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'; // Updated import
 import { usePrivilege } from '../../_context/privilege-context';
 import { useGetVendorQuery } from '../../../_api/query';
-import { useCallback, useEffect } from 'react';
+import { Suspense, useCallback, useEffect } from 'react';
 import { NotificationService } from '@/app/(features)/vendor/_components/notification';
 import { Section } from '@megp/core-fe';
 
@@ -59,46 +59,51 @@ function StyledStepper() {
   };
 
   return (
-    <Section title="Steps to becoming a registered Vendor" collapsible={false}>
-      <Stepper
-        classNames={styles}
-        active={activeStep}
-        onStepClick={handleStepClick}
-        orientation="vertical"
-        color="teal"
+    <Suspense>
+      <Section
+        title="Steps to becoming a registered Vendor"
+        collapsible={false}
       >
-        <Stepper.Step
-          completedIcon={1}
-          label="Basic Information"
-          description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore "
-        />
-        <Stepper.Step
-          completedIcon={2}
-          label="Profile Information"
-          description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore "
-        />
-        <Stepper.Step
-          completedIcon={3}
-          label="Purpose of Registration"
-          description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore "
-        />
-        <Stepper.Step
-          completedIcon={4}
-          label="Payment"
-          description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore "
-        />
-        <Stepper.Step
-          completedIcon={5}
-          label="Document Attachment"
-          description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore "
-        />
-        <Stepper.Step
-          completedIcon={6}
-          label="Review & Submit"
-          description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore "
-        />
-      </Stepper>
-    </Section>
+        <Stepper
+          classNames={styles}
+          active={activeStep}
+          onStepClick={handleStepClick}
+          orientation="vertical"
+          color="teal"
+        >
+          <Stepper.Step
+            completedIcon={1}
+            label="Basic Information"
+            description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore "
+          />
+          <Stepper.Step
+            completedIcon={2}
+            label="Profile Information"
+            description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore "
+          />
+          <Stepper.Step
+            completedIcon={3}
+            label="Purpose of Registration"
+            description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore "
+          />
+          <Stepper.Step
+            completedIcon={4}
+            label="Payment"
+            description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore "
+          />
+          <Stepper.Step
+            completedIcon={5}
+            label="Document Attachment"
+            description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore "
+          />
+          <Stepper.Step
+            completedIcon={6}
+            label="Review & Submit"
+            description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore "
+          />
+        </Stepper>
+      </Section>
+    </Suspense>
   );
 }
 export default StyledStepper;

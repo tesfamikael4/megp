@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import { LoadingOverlay } from '@mantine/core';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { NotificationService } from '../../../_components/notification';
@@ -36,22 +36,24 @@ function Page() {
   }, [requestInfo, router]);
 
   return (
-    <section className="w-full relative">
-      <LoadingOverlay
-        visible={requestInfo.isLoading}
-        overlayProps={{ radius: 'sm', blur: 2 }}
-      />
-      {requestInfo.data && requestInfo.isSuccess ? (
-        <AreasOfBusinessInterestForm
-          vendorInfo={requestInfo.data.initial}
-          initialValues={{
-            ...requestInfo.data,
-          }}
+    <Suspense>
+      <section className="w-full relative">
+        <LoadingOverlay
+          visible={requestInfo.isLoading}
+          overlayProps={{ radius: 'sm', blur: 2 }}
         />
-      ) : (
-        <></>
-      )}
-    </section>
+        {requestInfo.data && requestInfo.isSuccess ? (
+          <AreasOfBusinessInterestForm
+            vendorInfo={requestInfo.data.initial}
+            initialValues={{
+              ...requestInfo.data,
+            }}
+          />
+        ) : (
+          <></>
+        )}
+      </section>
+    </Suspense>
   );
 }
 

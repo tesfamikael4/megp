@@ -15,7 +15,7 @@ import {
   useLazyGetVendorDetailQuery,
 } from '@/store/api/vendor_request_handler/approved-rejected-api';
 import VendorDetail from '../../_components/vendor-details';
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 
 export default function VendorsDetail() {
   const { vendorId } = useParams();
@@ -51,7 +51,7 @@ export default function VendorsDetail() {
   }
 
   return (
-    <>
+    <Suspense>
       <Paper className="p-3 w-full">
         <Flex direction="row" className="items-center">
           <Flex direction="row" className="w-8/12">
@@ -93,6 +93,6 @@ export default function VendorsDetail() {
           <VendorDetail data={response} />
         </Box>
       </Box>
-    </>
+    </Suspense>
   );
 }

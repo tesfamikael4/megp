@@ -20,6 +20,7 @@ import ppda from './ppda.png';
 import perago from './perago.png';
 import styles from './auth.module.scss';
 import { useRouter } from 'next/navigation';
+import { Suspense } from 'react';
 
 interface Password {
   password: string;
@@ -76,88 +77,91 @@ export default function SetPassWord({ mode }: Mode) {
   };
 
   return (
-    <div className="flex flex-row justify-center">
-      <Paper
-        radius="md"
-        p="xl"
-        withBorder
-        mih={'100vh'}
-        w={500}
-        className="flex  flex-col  align-middle"
-      >
-        <Image
-          alt="Malawi Republic"
-          className={styles.logo}
-          height={100}
-          src={ppda.src}
-          width={100}
-        />
-
-        <Divider my="lg" />
-
-        <form onSubmit={handleSubmit(onCreate)}>
-          <Title
-            className="text-center"
-            style={(theme) => ({
-              fontFamily: `Greycliff CF, ${theme.fontFamily}`,
-              fontWeight: 750,
-              fontSize: '1.5rem',
-            })}
-          >
-            {mode === 'invite' ? 'Accept invitation' : 'Set password'}
-          </Title>
-
-          <TextInput
-            label="First Name"
-            value={firstName ? firstName : ''}
-            disabled
+    <Suspense>
+      <div className="flex flex-row justify-center">
+        <Paper
+          radius="md"
+          p="xl"
+          withBorder
+          mih={'100vh'}
+          w={500}
+          className="flex  flex-col  align-middle"
+        >
+          <Image
+            alt="Malawi Republic"
+            className={styles.logo}
+            height={100}
+            src={ppda.src}
+            width={100}
           />
 
-          <TextInput
-            label="Last Name"
-            disabled
-            value={lastName ? lastName : ''}
-          />
+          <Divider my="lg" />
 
-          {mode === 'setPassword' && (
-            <PasswordInput
-              error={
-                errors?.password ? errors?.password?.message?.toString() : ''
-              }
-              label="Password"
-              placeholder="Your password"
-              {...register('password')}
-              mt="md"
+          <form onSubmit={handleSubmit(onCreate)}>
+            <Title
+              className="text-center"
+              style={(theme) => ({
+                fontFamily: `Greycliff CF, ${theme.fontFamily}`,
+                fontWeight: 750,
+                fontSize: '1.5rem',
+              })}
+            >
+              {mode === 'invite' ? 'Accept invitation' : 'Set password'}
+            </Title>
+
+            <TextInput
+              label="First Name"
+              value={firstName ? firstName : ''}
+              disabled
             />
-          )}
 
-          <Button
-            className="mt-4"
-            fullWidth
-            mt="xl"
-            type="submit"
-            loading={isSetting}
-          >
-            {mode === 'setPassword' ? 'Set password' : 'Accept invitation'}
-          </Button>
-        </form>
-
-        <div className="mt-6">
-          <p className={styles.footer_text}>
-            Copyright &copy; 2023, Procurement and Disposal of Assets Authority.
-          </p>
-          <Flex className={styles.footer_text}>
-            <p className="mt-2">Powered by </p>
-            <Image
-              alt="logo"
-              className="mt-2 ml-1"
-              height={30}
-              src={perago.src}
-              width={80}
+            <TextInput
+              label="Last Name"
+              disabled
+              value={lastName ? lastName : ''}
             />
-          </Flex>
-        </div>
-      </Paper>
-    </div>
+
+            {mode === 'setPassword' && (
+              <PasswordInput
+                error={
+                  errors?.password ? errors?.password?.message?.toString() : ''
+                }
+                label="Password"
+                placeholder="Your password"
+                {...register('password')}
+                mt="md"
+              />
+            )}
+
+            <Button
+              className="mt-4"
+              fullWidth
+              mt="xl"
+              type="submit"
+              loading={isSetting}
+            >
+              {mode === 'setPassword' ? 'Set password' : 'Accept invitation'}
+            </Button>
+          </form>
+
+          <div className="mt-6">
+            <p className={styles.footer_text}>
+              Copyright &copy; 2023, Procurement and Disposal of Assets
+              Authority.
+            </p>
+            <Flex className={styles.footer_text}>
+              <p className="mt-2">Powered by </p>
+              <Image
+                alt="logo"
+                className="mt-2 ml-1"
+                height={30}
+                src={perago.src}
+                width={80}
+              />
+            </Flex>
+          </div>
+        </Paper>
+      </div>
+    </Suspense>
   );
 }

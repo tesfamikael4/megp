@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import { useFieldArray } from 'react-hook-form';
 import { Fieldset, Flex, Group, LoadingOverlay, Select } from '@mantine/core';
 import { MultiSelect } from '@mantine/core';
@@ -149,90 +149,97 @@ export const AreasOfBusinessInterest: React.FC<Props> = ({
   };
 
   return (
-    <Flex className="flex-col gap-6">
-      <LoadingOverlay
-        visible={
-          getLineOfBusinessValues.isLoading || getPriceRangeValues.isLoading
-        }
-        overlayProps={{ radius: 'sm', blur: 2 }}
-      />
-      {adjustment && (
-        <MultiCheckBox
-          label="Category"
-          id="category"
-          data={[
-            {
-              value: 'goods',
-              label: 'Goods',
-            },
-            {
-              value: 'services',
-              label: 'Services',
-            },
-            {
-              value: 'works',
-              label: 'Works',
-            },
-          ]}
-          {...getCategoryProps()}
+    <Suspense>
+      <Flex className="flex-col gap-6">
+        <LoadingOverlay
+          visible={
+            getLineOfBusinessValues.isLoading || getPriceRangeValues.isLoading
+          }
+          overlayProps={{ radius: 'sm', blur: 2 }}
         />
-      )}
-
-      {fields.map((field, index) => (
-        <Fieldset
-          tt="uppercase"
-          fw={500}
-          legend={`${field.category}`}
-          key={field.id}
-        >
-          <Group grow>
-            <MultiSelect
-              label="Line Of Business"
-              data={getLineOfBusinessMultiSelectData(field.category)}
-              placeholder="Select"
-              {...register(`${name}.${index}.lineOfBusiness`, 'select')}
-              value={
-                register(`${name}.${index}.lineOfBusiness`, 'select').value?.id
-              }
-              defaultValue={register(
-                `${name}.${index}.lineOfBusiness`,
-                'select',
-              ).value?.map((v: any) => v.id)}
-              onChange={(value) => {
-                register(`${name}.${index}.lineOfBusiness`, 'select').onChange(
-                  value.map((v) => ({
-                    id: v,
-                    name: (
-                      getLineOfBusinessMultiSelectData(field.category)?.find(
-                        (item: any) => item.value == v,
-                      ) as { value: string; label: string }
-                    )?.label,
-                  })),
-                );
-              }}
-              withAsterisk
-              required
-            />
-            <Select
-              label="Price Range"
-              placeholder="Select"
-              data={transformCategoryPriceRange(
-                getPriceRangeValues.isSuccess &&
-                  getPriceRangeValues.data &&
-                  getPriceRangeValues.data.length
-                  ? ([...getPriceRangeValues.data] ?? []).sort(
-                      ({ valueFrom: valueFromA }, { valueFrom: valueFromB }) =>
-                        Number(valueFromA) - Number(valueFromB),
-                    )
-                  : [],
-                field.category,
-              )}
-              {...register(`${name}.${index}.priceRange`, 'select')}
-            />
-          </Group>
-        </Fieldset>
-      ))}
-    </Flex>
+        {adjustment && (
+          <MultiCheckBox
+            label="Category"
+            id="category"
+            data={[
+              {
+                value: 'goods',
+                label: 'Goods',
+              },
+              {
+                value: 'services',
+                label: 'Services',
+              },
+              {
+                value: 'works',
+                label: 'Works',
+              },
+            ]}
+            {...getCategoryProps()}
+          />
+        )}
+        {fields.map((field, index) => (
+          <Fieldset
+            tt="uppercase"
+            fw={500}
+            legend={`${field.category}`}
+            key={field.id}
+          >
+            <Group grow>
+              <MultiSelect
+                label="Line Of Business"
+                data={getLineOfBusinessMultiSelectData(field.category)}
+                placeholder="Select"
+                {...register(`${name}.${index}.lineOfBusiness`, 'select')}
+                value={
+                  register(`${name}.${index}.lineOfBusiness`, 'select').value
+                    ?.id
+                }
+                defaultValue={register(
+                  `${name}.${index}.lineOfBusiness`,
+                  'select',
+                ).value?.map((v: any) => v.id)}
+                onChange={(value) => {
+                  register(
+                    `${name}.${index}.lineOfBusiness`,
+                    'select',
+                  ).onChange(
+                    value.map((v) => ({
+                      id: v,
+                      name: (
+                        getLineOfBusinessMultiSelectData(field.category)?.find(
+                          (item: any) => item.value == v,
+                        ) as { value: string; label: string }
+                      )?.label,
+                    })),
+                  );
+                }}
+                withAsterisk
+                required
+              />
+              <Select
+                label="Price Range"
+                placeholder="Select"
+                data={transformCategoryPriceRange(
+                  getPriceRangeValues.isSuccess &&
+                    getPriceRangeValues.data &&
+                    getPriceRangeValues.data.length
+                    ? ([...getPriceRangeValues.data] ?? []).sort(
+                        (
+                          { valueFrom: valueFromA },
+                          { valueFrom: valueFromB },
+                        ) => Number(valueFromA) - Number(valueFromB),
+                      )
+                    : [],
+                  field.category,
+                )}
+                {...register(`${name}.${index}.priceRange`, 'select')}
+              />
+            </Group>
+          </Fieldset>
+        ))}
+      </Flex>
+    </Suspense>
   );
 };
 
