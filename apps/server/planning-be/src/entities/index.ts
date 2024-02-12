@@ -18,3 +18,5 @@ export * from './pre-budget-activity-document.entity';
 export * from './pre-budget-plan-requisitioner.entity';
 export * from './budget-year.entity';
 export * from './budget.entity';
+
+export * from './reason.entity';
