@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { Rule } from './rule.entity';
-import { Audit } from 'src/shared/entities';
+import { Audit } from 'megp-shared-be';
 import { PossibleReasons } from './possible-reasons.entity';
 
 type Action = {

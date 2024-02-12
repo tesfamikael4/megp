@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { RuleHandler } from 'src/entities';
-import { EntityCrudController } from 'src/shared/controller';
+import { EntityCrudController } from 'megp-shared-be';
 import { ApiTags } from '@nestjs/swagger';
 import { RuleHandlerService } from '../services/rule-handler.service';
 

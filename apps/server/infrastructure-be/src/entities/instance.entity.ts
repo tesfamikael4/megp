@@ -10,7 +10,7 @@ import {
 
 import { Activity } from './activity.entity';
 import { Step } from './step.entity';
-import { OrgAudit } from 'src/shared/entities';
+import { OrgAudit } from 'megp-shared-be';
 import { State } from './state.entity';
 
 @Entity({ name: 'instances' })

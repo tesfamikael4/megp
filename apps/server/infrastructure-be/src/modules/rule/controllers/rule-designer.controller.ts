@@ -1,5 +1,5 @@
 import { Body, Controller, Param, Post } from '@nestjs/common';
-import { EntityCrudController } from 'src/shared/controller';
+import { EntityCrudController } from 'megp-shared-be';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { RuleDesigner } from 'src/entities/rule-designer.entity';
 import {

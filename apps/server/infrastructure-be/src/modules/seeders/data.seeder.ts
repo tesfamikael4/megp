@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import { Seeder, SeederConstructor, runSeeder } from 'typeorm-extension';
 
-import dataSource from 'src/shared/typeorm/typeorm-config-helper';
+import { dataSourceOptions } from 'megp-shared-be';
 
 import { seedDesigns, seedPossibleReasons, seedRules } from './seed-data';
 import { seedRuleHandlerOptions, seedRuleHandlers } from './seed-rule-handlers';
@@ -53,9 +53,12 @@ export class DataSeeder implements Seeder {
       skipUpdateIfNoValuesChanged: true,
       conflictPaths: ['reason'],
     });
+
+    dataSource.destroy();
   }
 }
 
+const dataSource = new DataSource(dataSourceOptions);
 const applicationSeederConstructor: SeederConstructor = DataSeeder;
 (async () => {
   await runSeeder(dataSource, applicationSeederConstructor);

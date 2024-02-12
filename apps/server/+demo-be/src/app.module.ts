@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { TypeOrmConfigService } from './shared/typeorm/typeorm.service';
+import { TypeOrmConfigService } from 'megp-shared-be';
 import { TodoModule } from './modules/todo/todo.module';
-import { AuthorizationModule } from './shared/authorization';
+import { AuthorizationModule } from 'megp-shared-be';
 
 @Module({
   imports: [

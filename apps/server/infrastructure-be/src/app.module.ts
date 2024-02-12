@@ -1,15 +1,12 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { TypeOrmConfigService } from './shared/typeorm/typeorm.service';
-import { AuthorizationModule } from './shared/authorization/authorization.module';
+import { TypeOrmConfigService } from 'megp-shared-be';
+import { AuthorizationModule } from 'megp-shared-be';
 import { WorkflowModule } from './modules/workflow/workflow.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
-import {
-  TenantInterceptor,
-  TransactionInterceptor,
-} from './shared/interceptors';
-import { EmailConfig } from './shared/email/email.config';
+import { TenantInterceptor, TransactionInterceptor } from 'megp-shared-be';
+import { EmailConfig } from 'megp-shared-be';
 import { DataSeeder } from './modules/seeders/data.seeder';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { RuleModule } from './modules/rule/rule.module';

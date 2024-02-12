@@ -3,7 +3,7 @@ import { NotificationService } from './notification.service';
 import { NotificationController } from './notification.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Notifications } from 'src/entities/notifications.entity';
-import { EmailService } from 'src/shared/email/email.service';
+import { EmailService } from 'megp-shared-be';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({

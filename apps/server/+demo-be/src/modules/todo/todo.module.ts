@@ -5,7 +5,7 @@ import { Todo } from '../../entities/todo.entity';
 import { TodoService } from './services/todo.service';
 import { JwtModule } from '@nestjs/jwt';
 import { APP_INTERCEPTOR } from '@nestjs/core';
-import { TenantInterceptor } from 'src/shared/interceptors/tenant-interceptor';
+import { TenantInterceptor } from 'megp-shared-be';
 import { Item } from 'src/entities/item.entity';
 
 @Module({

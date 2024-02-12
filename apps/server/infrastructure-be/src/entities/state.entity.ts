@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Activity } from './activity.entity';
-import { OrgAudit } from 'src/shared/entities';
+import { OrgAudit } from 'megp-shared-be';
 import { Instance } from './instance.entity';
 
 @Entity({ name: 'states' })

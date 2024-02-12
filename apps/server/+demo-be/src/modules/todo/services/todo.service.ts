@@ -3,13 +3,13 @@ import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Todo } from 'src/entities/todo.entity';
 
-import { EntityCrudService } from 'src/shared/service';
+import { EntityCrudService } from 'megp-shared-be';
 import {
   CollectionQuery,
   FilterOperators,
   QueryConstructor,
-} from 'src/shared/collection-query';
-import { DataResponseFormat } from 'src/shared/api-data';
+} from 'megp-shared-be';
+import { DataResponseFormat } from 'megp-shared-be';
 
 @Injectable()
 export class TodoService extends EntityCrudService<Todo> {

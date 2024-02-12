@@ -1,4 +1,4 @@
-import { Audit } from 'src/shared/entities';
+import { Audit } from 'megp-shared-be';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { Item } from './item.entity';
 
