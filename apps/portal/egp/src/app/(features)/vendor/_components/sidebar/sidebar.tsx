@@ -38,7 +38,18 @@ export const sidebarLinks: SidebarLinks[] = [
     icon: IconUserCog,
     link: '/vendor/service',
   },
+  {
+    label: 'Track Applications',
+    icon: IconUserCog,
+    link: '/vendor/registration/track-applications',
+  },
+  {
+    label: 'My Briefcase',
+    icon: IconUserCog,
+    link: '/vendor/registration/my-briefcase',
+  },
 ];
+
 function createNavLinks(
   links: SidebarLinks[] | undefined,
   currentPath: string,

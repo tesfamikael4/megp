@@ -10,7 +10,7 @@
   @apply font-semibold mt-5 text-center text-slate-500 text-sm md:text-base;
 }
 .featureCard {
-  @apply cursor-pointer shadow-sm hover:shadow-md hover:bg-[#E7F4F7] w-1/2 lg:w-[31%] xl:w-[450];
+  @apply cursor-pointer shadow-sm hover:shadow-md hover:bg-[#E7F4F7] relative;
 }
 
 .featuresList {
