@@ -1,5 +1,6 @@
 import { Box, Button, Group, Text } from '@mantine/core';
 import { DataTable } from 'mantine-datatable';
+import { useState } from 'react';
 
 export const DetailActivity = ({
   activity,
@@ -12,6 +13,7 @@ export const DetailActivity = ({
   activity: any;
   onDetail?: (record) => void;
 }) => {
+  const [showMore, setShowMore] = useState(false);
   const activityIdentification = [
     {
       key: 'Reference',
@@ -81,7 +83,21 @@ export const DetailActivity = ({
             withColumnBorders
             withTableBorder
             records={activityIdentification}
-            columns={[{ accessor: 'key', width: 200 }, { accessor: 'value' }]}
+            columns={[
+              {
+                accessor: 'key',
+                width: 200,
+                cellsStyle: () => ({
+                  background: '#DCE8F2',
+                }),
+              },
+              {
+                accessor: 'value',
+                cellsStyle: () => ({
+                  background: 'white',
+                }),
+              },
+            ]}
             noHeader
           />
         </>
@@ -96,22 +112,105 @@ export const DetailActivity = ({
             withColumnBorders
             withTableBorder
             records={procurementMethod}
-            columns={[{ accessor: 'key', width: 200 }, { accessor: 'value' }]}
+            columns={[
+              {
+                accessor: 'key',
+                width: 200,
+                cellsStyle: () => ({
+                  background: '#DCE8F2',
+                }),
+              },
+              {
+                accessor: 'value',
+                cellsStyle: () => ({
+                  background: 'white',
+                }),
+              },
+            ]}
             noHeader
           />
         </>
       )}
-      {onDetail && (
-        <Group justify="end" className="mt-2">
-          <Button
-            className="text-slate-600 cursor-pointer"
-            onClick={() => onDetail(activity)}
-            variant="subtle"
-          >
-            More
-          </Button>
-        </Group>
+      {showMore && (
+        <>
+          <Text className="font-semibold my-2">Items</Text>
+
+          <DataTable
+            withColumnBorders
+            withTableBorder
+            records={activity.annualProcurementPlanItems}
+            columns={[
+              {
+                accessor: 'itemCode',
+                title: 'Item Code',
+                // width: 100,
+              },
+              { accessor: 'description', title: 'Description' },
+              {
+                title: 'UoM',
+                accessor: 'uoM',
+              },
+              {
+                accessor: 'quantity',
+                // width: 100,
+              },
+              {
+                title: 'Unit Price',
+                textAlign: 'center',
+                accessor: 'unitPrice',
+                width: 100,
+                render: (record) => {
+                  return (
+                    <p>
+                      {parseInt(record?.unitPrice)?.toLocaleString('en-US', {
+                        style: 'currency',
+                        currency: record?.currency ? record?.currency : 'USD',
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                        currencyDisplay: 'code',
+                      })}
+                    </p>
+                  );
+                },
+              },
+
+              {
+                title: 'Total',
+                accessor: 'total',
+                textAlign: 'right',
+                width: 150,
+                render: (record: any) => (
+                  <p className="text-right">
+                    {(record.unitPrice * record.quantity).toLocaleString(
+                      'en-US',
+                      {
+                        style: 'currency',
+                        currency: record?.currency ? record?.currency : 'USD',
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                        currencyDisplay: 'code',
+                      },
+                    )}
+                  </p>
+                ),
+              },
+            ]}
+            defaultColumnProps={{
+              titleStyle: () => ({ background: '#DCE8F2' }),
+            }}
+          />
+        </>
       )}
+
+      <Group justify="end" className="mt-2">
+        <Button
+          className="text-slate-600 cursor-pointer"
+          onClick={() => setShowMore((prev) => !prev)}
+          variant="subtle"
+        >
+          {showMore ? 'Show Less' : 'Show More'}
+        </Button>
+      </Group>
     </Box>
   );
 };
