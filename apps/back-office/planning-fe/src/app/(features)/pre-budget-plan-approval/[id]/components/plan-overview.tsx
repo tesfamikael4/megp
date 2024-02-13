@@ -3,27 +3,29 @@ import { useLazyListByIdQuery } from '../../../pre-budget-plan/[budgetYear]/acti
 import { Section } from '@megp/core-fe';
 import { useEffect } from 'react';
 import { DetailActivity } from '../../../_components/detail-activity';
-import { Accordion, Box, LoadingOverlay } from '@mantine/core';
+import { Accordion, Alert, Box, Flex, LoadingOverlay } from '@mantine/core';
 import { Items } from './items';
 import { Requisitioner } from './requisitioner';
 import { Timeline } from './timeline';
 import { Document } from './document';
 import { useGetWorkflowInstanceQuery } from '@/store/api/workflow/workflow.api';
+import { useParams } from 'next/navigation';
+import { ProcurementMethod } from './procurement-method';
 
 export function PlanOverview() {
   // const budgetYear = '0f241dbd-3aa9-40b9-9e27-8f8b644d8174';
+  const { id } = useParams();
   const [listById, { data: list, isLoading: isActivityLoading }] =
     useLazyListByIdQuery();
   const {
     data: workflowInstance,
     isLoading: isWorkflowInstanceLoading,
-    isSuccess: isWorkflowInstanceSuccess,
+    // isSuccess: isWorkflowInstanceSuccess,
   } = useGetWorkflowInstanceQuery('1f344819-d64d-4986-b192-ee06f5bf0e98');
 
   useEffect(() => {
-    if (isWorkflowInstanceSuccess && workflowInstance)
-      listById({ id: workflowInstance.itemId, collectionQuery: {} });
-  }, [isWorkflowInstanceSuccess, listById, workflowInstance]);
+    listById({ id: id as string, collectionQuery: { includes: ['reasons'] } });
+  }, [id, listById]);
 
   return (
     <Box pos="relative">
@@ -48,7 +50,9 @@ export function PlanOverview() {
                       value={'Identification'}
                       className="bg-white"
                     >
-                      <Accordion.Control>Identification</Accordion.Control>
+                      <Accordion.Control>
+                        Activity Identification
+                      </Accordion.Control>
                       <Accordion.Panel>
                         <DetailActivity
                           activity={activity}
@@ -64,11 +68,7 @@ export function PlanOverview() {
                     >
                       <Accordion.Control>Procurement Methods</Accordion.Control>
                       <Accordion.Panel>
-                        <DetailActivity
-                          activity={activity}
-                          page="pre"
-                          hideActivity
-                        />
+                        <ProcurementMethod activity={activity} />
                       </Accordion.Panel>
                     </Accordion.Item>
 

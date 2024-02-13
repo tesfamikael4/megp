@@ -1,8 +1,8 @@
-import { Box, LoadingOverlay, Table, Text } from '@mantine/core';
-import { DataTable } from 'mantine-datatable';
+import { Box, LoadingOverlay, Text } from '@mantine/core';
 import { useLazyListByIdQuery } from '../_api/pre-mechanism';
 import { useEffect, useState } from 'react';
 import { useLazyListByIdQuery as useLazyListPostByIdQuery } from '../_api/post-mechanism';
+import { DetailTable } from './detail-table';
 
 export const DetailActivity = ({
   hideActivity = false,
@@ -32,9 +32,9 @@ export const DetailActivity = ({
     },
     {
       key: 'Estimated Amount',
-      value: parseInt(activity.estimatedAmount).toLocaleString('en-US', {
+      value: parseFloat(activity.estimatedAmount).toLocaleString('en-US', {
         style: 'currency',
-        currency: activity.currency,
+        currency: activity.currency ?? 'MKW',
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
         currencyDisplay: 'code',
@@ -42,9 +42,9 @@ export const DetailActivity = ({
     },
     {
       key: 'Calculated Amount',
-      value: parseInt(activity.calculatedAmount).toLocaleString('en-US', {
+      value: parseFloat(activity.calculatedAmount).toLocaleString('en-US', {
         style: 'currency',
-        currency: activity.currency,
+        currency: activity.currency ?? 'MKW',
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
         currencyDisplay: 'code',
@@ -166,26 +166,14 @@ export const DetailActivity = ({
       />
       {!hideActivity && (
         <>
-          <Text className="font-semibold mb-2">Identification</Text>
-          <DataTable
-            withColumnBorders
-            withTableBorder
-            records={data}
-            columns={[{ accessor: 'key', width: 200 }, { accessor: 'value' }]}
-            noHeader
-          />
+          <Text className="font-semibold mb-2">Activity Identification</Text>
+          <DetailTable data={data} />
         </>
       )}
       {methods.length !== 0 && !hideMethods && (
         <>
           <Text className="font-semibold my-2">Procurement Methods</Text>
-          <DataTable
-            withColumnBorders
-            withTableBorder
-            records={methods}
-            columns={[{ accessor: 'key', width: 200 }, { accessor: 'value' }]}
-            noHeader
-          />
+          <DetailTable data={methods} />
         </>
       )}
     </Box>
