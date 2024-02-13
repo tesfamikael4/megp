@@ -38,7 +38,7 @@ export class PreBudgetPlanItemsService extends ExtraCrudService<PreBudgetPlanIte
         preBudgetPlanActivityId: itemData.preBudgetPlanActivityId,
       });
       throw new HttpException(
-        'calculatedAmount is greater than estimatedAmount',
+        'calculated amount is greater than estimated amount',
         430,
       );
     }
@@ -78,7 +78,7 @@ export class PreBudgetPlanItemsService extends ExtraCrudService<PreBudgetPlanIte
         preBudgetPlanActivityId: itemData.items[0].preBudgetPlanActivityId,
       });
       throw new HttpException(
-        'calculatedAmount is greater than estimatedAmount',
+        'calculated amount is greater than estimated amount',
         430,
       );
     }
@@ -116,7 +116,7 @@ export class PreBudgetPlanItemsService extends ExtraCrudService<PreBudgetPlanIte
         preBudgetPlanActivityId: itemData.preBudgetPlanActivityId,
       });
       throw new HttpException(
-        'calculatedAmount is greater than estimatedAmount',
+        'calculated amount is greater than estimated amount',
         430,
       );
     }
