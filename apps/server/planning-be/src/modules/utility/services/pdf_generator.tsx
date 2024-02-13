@@ -1,158 +1,172 @@
-// import ReactPDF, {
-//   Document,
-//   Page,
-//   Text,
-//   View,
-//   Image,
-//   StyleSheet,
-// } from '@react-pdf/renderer';
-// const pathPrefix =
-//   process.env.NODE_ENV === 'production' ? 'apps/server/vendor-be/dist' : 'src';
-// const signatureImage = pathPrefix + '/assets/signature.png';
-// const headerImage = pathPrefix + '/assets/headerImage.png';
+import ReactPDF, {
+  Document,
+  Page,
+  Text,
+  View,
+  // Image,
+  StyleSheet,
+  renderToFile,
+  renderToBuffer,
+} from '@react-pdf/renderer';
+const pathPrefix =
+  process.env.NODE_ENV === 'production' ? 'apps/server/vendor-be/dist' : 'src';
+const signatureImage = pathPrefix + '/assets/signature.png';
+const headerImage = pathPrefix + '/assets/headerImage.png';
 
-// const CertificatePDF = ({ id, data, qrCodeUrl }) => {
-//     const pdfFile = `
-//     <html>
+const CertificatePDF = async ({ data }) => {
+  const buffer = await renderToBuffer(
+    <Document>
+      <Page size="A4" style={styles.page}>
+        {/* <Image src={myImg} /> */}
+        <Text style={styles.title}>
+          Annual Procurement Plan 2024 - Pre Budget Plan
+        </Text>
 
-//     </html>`;
+        {data.map((item, index) => (
+          <View style={styles.activities}>
+            <View
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                backgroundColor: '#f0f0f0',
+                padding: 5,
+                fontSize: 12.5,
+              }}
+            >
+              <Text style={{ marginTop: 5 }}>{item.title}</Text>
+              <View>
+                {Object.keys(item.estimatedAmount).map((currency) => (
+                  <Text key={currency}>
+                    {currency}: {item.estimatedAmount[currency]}
+                  </Text>
+                ))}
+              </View>
+            </View>
+            {/* End Title */}
 
-//     const data = data.map((d) => ({
-//       `<body>
-//       ${data.activityName}
-//       </body>;
-// `;
+            <View style={styles.activity}>
+              <Text>Identification</Text>
+            </View>
+            <View style={styles.activityDetail}>
+              <ReactPdfTable data={item.identification} config={{}} />
+            </View>
 
-//     }))
+            <View style={styles.activity}>
+              <Text>Procurement Methods</Text>
+            </View>
+            <View style={styles.activityDetail}>
+              <ReactPdfTable data={item.procurementMethods} config={{}} />
+            </View>
+            <View style={styles.footer}>
+              <Text style={styles.web}>
+                {new Date().toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'short',
+                  day: 'numeric',
+                })}
+              </Text>
+              {/* <Text style={styles.ppda}>Page {index + 1}</Text> */}
+            </View>
+          </View>
+        ))}
+      </Page>
+    </Document>,
+  );
 
-//   return ReactPDF.renderToStream(
-//     <Document>
-//       <Page size="A4" style={styles.page}>
-//         <View style={styles.container}>
-//           <Image style={styles.header} src={headerImage} />
-//           <View style={styles.content}>
-//             <Text style={styles.title}>Certificate of Registration</Text>
-//             <Text style={styles.subtitle}>
-//               This is to Certify that the following entity has been registered
-//               with the Public Procurement and Disposal of Assets Authority. The
-//               details are as follows:
-//             </Text>
-//             <View style={styles.listTable}>
-//               {data.map((d) => (
-//                 <View key={d.label} style={styles.listRow}>
-//                   <Text style={styles.label}>{d.label}</Text>
-//                   <Text style={styles.separator}>:-</Text>
-//                   <Text style={styles.value}>{d.value}</Text>
-//                 </View>
-//               ))}
-//             </View>
-//             <Image style={styles.signature} src={signatureImage} />
-//             <Text style={styles.author}>Dr. Edington Chilapondwa</Text>
-//             <Text style={styles.scan}>
-//               Validate this certificate by scanning the following QR code.
-//             </Text>
-//             <Image style={styles.qrCode} src={qrCodeUrl} />
-//             <View style={styles.footer}>
-//               <Text style={styles.web}>www.ppda.mw</Text>
-//               <Text style={styles.ppda}>
-//                 Promoting Accountability, Transparency, and Integrity in Public
-//                 Procurement in Malawi
-//               </Text>
-//             </View>
-//           </View>
-//         </View>
-//       </Page>
-//     </Document>,
-//   );
-// };
+  return buffer;
+};
 
-// const styles = StyleSheet.create({
-//   page: {
-//     padding: 25,
-//     flexDirection: 'row',
-//     backgroundColor: '#fff',
-//   },
-//   container: {
-//     borderWidth: 0.5,
-//     borderColor: '#374151',
-//   },
-//   header: {
-//     padding: 10,
-//     width: '100%',
-//   },
-//   content: {
-//     padding: 20,
-//   },
-//   title: {
-//     marginLeft: 140,
-//     fontSize: 20,
-//     fontWeight: 700,
-//     textAlign: 'center',
-//   },
-//   subtitle: {
-//     textAlign: 'center',
-//     fontSize: 14,
-//     marginTop: 13,
-//     marginBottom: 50,
-//   },
-//   listTable: {
-//     width: '100%',
-//     marginTop: 8,
-//     fontSize: 14,
-//     fontWeight: 'bold',
-//   },
-//   listRow: {
-//     flexDirection: 'row',
-//     marginBottom: 2,
-//   },
-//   label: {
-//     width: '35%',
-//     textAlign: 'right',
-//   },
-//   separator: {
-//     width: '10%',
-//     textAlign: 'center',
-//   },
-//   value: {
-//     width: '55%',
-//   },
-//   signature: {
-//     padding: 10,
-//     marginTop: 20,
-//     width: '35%',
-//     height: 'auto',
-//     alignSelf: 'center',
-//   },
-//   author: {
-//     marginLeft: 170,
-//     fontSize: 12,
-//     fontWeight: 'bold',
-//     textAlign: 'center',
-//   },
-//   scan: {
-//     fontSize: 10,
-//     marginLeft: 110,
-//     marginTop: 10,
-//     textAlign: 'center',
-//   },
-//   qrCode: {
-//     width: 120,
-//     height: 'auto',
-//     alignSelf: 'center',
-//     marginTop: 10,
-//   },
-//   footer: {
-//     marginTop: 20,
-//     flexDirection: 'row',
-//     fontSize: 10,
-//   },
-//   web: {
-//     width: '40%',
-//   },
-//   ppda: {
-//     width: '60%',
-//     textAlign: 'right',
-//   },
-// });
+const styles = StyleSheet.create({
+  page: {
+    backgroundColor: '#ffffff',
+    maxWidth: '100%',
+    height: '100vh',
+  },
+  title: {
+    fontSize: 16,
+    textAlign: 'center',
+    marginTop: 20,
+    marginBottom: 15,
+  },
+  activities: {
+    padding: 10,
+    fontSize: 10,
+  },
+  // title
+  activity: {
+    marginTop: 25,
+    marginBottom: 10,
+    fontSize: 14,
+    marginLeft: 20,
+  },
+  activityDetail: {
+    paddingHorizontal: 20,
+    paddingVertical: 5,
+    fontWeight: 'normal',
+    fontSize: 8,
+  },
+  footer: {
+    padding: 30,
+    flexDirection: 'row',
+    fontSize: 10,
+    bottom: 0,
+  },
+  web: {
+    width: '40%',
+    fontSize: 9,
+    color: 'gray',
+    bottom: 0,
+  },
+  ppda: {
+    width: '60%',
+    textAlign: 'right',
+    color: 'gray',
+    bottom: 0,
+  },
+});
 
-// export default CertificatePDF;
+const ReactPdfTable = ({ data, config }: any) => {
+  return (
+    <View style={style.table}>
+      {data.map((row: any, i: number) => (
+        <View key={i} style={style.row}>
+          <Text style={style.row1}>
+            <Text style={style.bold}>{row.key}</Text>
+          </Text>
+          <Text style={style.row2}>{row.value}</Text>
+        </View>
+      ))}
+    </View>
+  );
+};
+
+const style = StyleSheet.create({
+  table: {
+    width: '100%',
+    backgroundColor: '#d9d9d9d9',
+    padding: 8,
+  },
+  row: {
+    display: 'flex',
+    flexDirection: 'row',
+    borderTop: '1px solid #EEE',
+    paddingTop: 5,
+    paddingBottom: 5,
+  },
+  header: {
+    borderTop: 'none',
+  },
+  bold: {
+    fontWeight: 'bold',
+  },
+  // So Declarative and unDRY 👌
+  row1: {
+    width: '30%',
+  },
+  row2: {
+    width: '70%',
+  },
+});
+
+export default CertificatePDF;

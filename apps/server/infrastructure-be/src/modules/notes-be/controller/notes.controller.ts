@@ -5,7 +5,6 @@ import { NotesService } from '../service/notes.service';
 import { EntityCrudOptions } from 'megp-shared-be';
 import { CreateNotesDto, UpdateNotesDto } from '../dto/notes.dto';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
-import { ObjectId } from 'typeorm';
 import { CurrentUser } from 'megp-shared-be';
 
 const options: EntityCrudOptions = {

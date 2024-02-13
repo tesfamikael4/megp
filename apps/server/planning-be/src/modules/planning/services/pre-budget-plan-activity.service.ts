@@ -44,6 +44,7 @@ export class PreBudgetPlanActivityService extends ExtraCrudService<PreBudgetPlan
     const preBudgetPlan = await this.repositoryPreBudgetPlan.findOne({
       where: {
         id: payload.preBudgetPlanId,
+        status: 'Draft',
       },
       relations: ['preBudgetPlanActivities'],
     });

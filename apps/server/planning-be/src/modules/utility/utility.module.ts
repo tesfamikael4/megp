@@ -10,6 +10,6 @@ import { Reason } from 'src/entities/reason.entity';
   imports: [TypeOrmModule.forFeature([Reason])],
   providers: [QrCodeService, ReasonService],
   controllers: [QrCodeController, ReasonController],
-  exports: [],
+  exports: [ReasonService],
 })
 export class UtilityModule {}
