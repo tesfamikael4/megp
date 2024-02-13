@@ -2,7 +2,7 @@
 
 import { Box, TextInput } from '@mantine/core';
 import { useEffect } from 'react';
-import { useLazyListByIdQuery } from '../../budget/_api/budget.api';
+import { useLazyListByIdQuery } from '../../../budget/_api/budget.api';
 import { useLazyGetPostBudgetPlansQuery } from '@/store/api/post-budget-plan/post-budget-plan.api';
 
 export const Budget = ({ activity, postBudgetId }: any) => {

@@ -2,7 +2,7 @@
 
 import { Box, Button, Group, Textarea } from '@mantine/core';
 import { useEffect, useRef, useState } from 'react';
-import { useCreateMutation } from '../_api/note.api';
+import { useCreateMutation, useLazyListQuery } from '../_api/note.api';
 import { logger, notify } from '@megp/core-fe';
 import { useParams } from 'next/navigation';
 
@@ -10,6 +10,8 @@ export const Note = ({ height }: { height?: string }) => {
   const [value, setValue] = useState<string>('');
   const noteRef = useRef(null);
   const [create, { isLoading: isCreating }] = useCreateMutation();
+
+  const [getNotes, { data }] = useLazyListQuery();
   const { id } = useParams();
 
   const createNote = async () => {
@@ -29,6 +31,17 @@ export const Note = ({ height }: { height?: string }) => {
   };
 
   useEffect(() => {
+    // getNotes({ id, collectionQuery: {} });
+    getNotes({
+      includes: ['parent'],
+      where: [[{ column: 'objectId', value: id, operator: '=' }]],
+      orderBy: [
+        {
+          column: 'createdAt',
+          direction: 'DESC',
+        },
+      ],
+    });
     if (noteRef.current) {
       (noteRef.current as any).scrollIntoView({
         behavior: 'smooth',
@@ -44,27 +57,23 @@ export const Note = ({ height }: { height?: string }) => {
       <h1 className="p-2 border-b-2 sticky  top-0 bg-white">Note</h1>
       <Box ref={noteRef}>
         <Box className="p-2 bg-slate-100">
-          {[1, 2, 3, 4, 5, 6].map((m) => (
-            <>
-              <Box className="p-2 bg-white w-fit rounded mb-2 max-w-[80%] cursor-pointer">
-                <p className="font-semibold border-l-4 border-primary-700 pl-2">
-                  Test User
-                </p>
-                <p className="mt-2">
-                  Test Message 3121 Test Message Test Message Test Message Test
-                  Message Test Message Test Message
-                </p>
-                <p className="text-xs mt-1 text-slate-500">Today 12:09 pm</p>
-              </Box>
-              <Box className="p-2 bg-white w-fit rounded mb-2 max-w-[80%] cursor-pointer">
-                <p className="font-semibold text-primary-800">Test User</p>
-                <p className="mt-2">
-                  Test Message 3121 Test Message Test Message Test Message Test
-                  Message Test Message Test Message
-                </p>
-                <p className="text-xs mt-1 text-slate-500">Today 12:09 pm</p>
-              </Box>
-            </>
+          {data?.items.map((note) => (
+            <Box
+              className="p-2 bg-white w-fit rounded mb-2 max-w-[80%] cursor-pointer"
+              key={note.id}
+            >
+              <p className="font-semibold border-l-4 border-primary-700 pl-2">
+                {note.metaData?.fullName ?? 'Test User'}
+              </p>
+              <p className="mt-2">{note.content}</p>
+              <p className="text-xs mt-1 text-slate-500">
+                {new Date(note.createdAt).toLocaleTimeString('en-US', {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  hour12: true,
+                })}
+              </p>
+            </Box>
           ))}
         </Box>
         <Box className="p-2 bg-white">

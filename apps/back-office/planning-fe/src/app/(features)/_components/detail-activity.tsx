@@ -113,7 +113,7 @@ export const DetailActivity = ({
           key: 'Supplier Target Group',
           value: temp.targetGroup.join(', '),
         },
-        {
+        (temp.fundingSource == 'Donor' || temp.fundingSource == 'Loan') && {
           key: 'Donor',
           value: temp.donor[0],
         },
@@ -145,7 +145,7 @@ export const DetailActivity = ({
           key: 'Supplier Target Group',
           value: temp.targetGroup.join(', '),
         },
-        {
+        (temp.fundingSource == 'Donor' || temp.fundingSource == 'Loan') && {
           key: 'Donor',
           value: temp.donor[0],
         },
