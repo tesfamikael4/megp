@@ -5,6 +5,7 @@ import {
   Param,
   Post,
   Query,
+  Res,
   UseInterceptors,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
@@ -91,13 +92,25 @@ export class PreBudgetPlanController extends ExtraCrudController<PreBudgetPlan>(
   @Get('hash/:id')
   @ApiPaginatedResponse(PreBudgetPlan)
   async hashData(@Param('id') id: string, @CurrentUser() user) {
-    const userId = 'user.userId';
-    return await this.preBudgetPlanService.hashData(id, userId);
+    // const userId = 'user.userId';
+    return await this.preBudgetPlanService.hashData(id);
   }
 
   @Post('approve-hash')
   @ApiPaginatedResponse(PreBudgetPlan)
   async hashMatch(@Body() hash, @CurrentUser() user): Promise<boolean> {
     return await this.preBudgetPlanService.hashMatch(hash.id, hash.hashData);
+  }
+
+  @AllowAnonymous()
+  @Post('pdf-generate/:id')
+  async pdfGenerate(@Param('id') id: string, @Res() response) {
+    const buffer = await this.preBudgetPlanService.pdfGenerator(id);
+    response.setHeader('Content-Type', 'application/pdf');
+    response.setHeader(
+      'Content-Disposition',
+      'attachment; filename="example.pdf"',
+    );
+    response.send(buffer);
   }
 }

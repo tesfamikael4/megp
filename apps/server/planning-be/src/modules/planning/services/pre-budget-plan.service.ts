@@ -30,7 +30,7 @@ import { ExtraCrudService } from 'src/shared/service';
 // import { EventEmitter2 } from '@nestjs/event-emitter';
 import { createHash } from 'crypto';
 import { classToPlain, instanceToPlain } from 'class-transformer';
-import { Hash } from 'src/entities/hash.entity';
+import { ReasonService } from 'src/modules/utility/services/reason.service';
 
 @Injectable()
 export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
@@ -41,9 +41,8 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
     private readonly preBudgetActivityRepository: Repository<PreBudgetPlanActivity>,
     @InjectRepository(PreBudgetPlanItems)
     private readonly preBudgetItemsRepository: Repository<PreBudgetPlanItems>,
-    @InjectRepository(Hash)
-    private readonly hashRepository: Repository<Hash>,
 
+    private readonly reasonService: ReasonService,
     // private eventEmitter: EventEmitter2,
     @Inject('PLANNING_RMQ_SERVICE')
     private readonly planningRMQClient: ClientProxy,
@@ -313,7 +312,7 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
     });
   }
 
-  async hashData(id: string, userId: any) {
+  async hashData(id: string) {
     const data = await this.preBudgetActivityRepository.find({
       where: { preBudgetPlanId: id },
       relations: {
@@ -324,50 +323,81 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
       },
     });
     const transformedData = this.instanceToPlainExclude(data, {
-      exclude: ['createdAt', 'deletedAt', 'updatedAt'],
+      exclude: ['createdAt', 'deletedAt'],
     });
 
-    const hashedData = this.createHashData(JSON.stringify(transformedData));
-    const item = this.hashRepository.create({
-      hash: hashedData,
-      objectId: id,
-      objectType: 'preBudgetPlan',
-      createdBy: userId,
-    });
-    await this.hashRepository.save(item);
+    const hashData = (data) => {
+      return createHash('sha-256').update(data).digest('hex');
+    };
+
+    const hashedData = hashData(JSON.stringify(data));
+
     return hashedData;
   }
 
-  createHashData(transformedData) {
-    const hash = createHash('sha-256')
-      .update(transformedData)
-      .digest('hex')
-      .toString();
-    return hash;
-  }
-
   async hashMatch(dataId: string, hash: string): Promise<boolean> {
+    const originalHash = await this.hashData(dataId);
+    return originalHash === hash;
+  }
+  async pdfGenerator(id: string) {
     const data = await this.preBudgetActivityRepository.find({
-      where: { preBudgetPlanId: dataId },
+      where: { preBudgetPlanId: id },
       relations: {
         preBudgetPlanItems: true,
         preBudgetPlanTimelines: true,
         preBudgetRequisitioners: true,
         preProcurementMechanisms: true,
+        preBudgetPlan: {
+          app: true,
+        },
       },
     });
-    const transformedData = this.instanceToPlainExclude(data, {
-      exclude: ['createdAt', 'deletedAt', 'updatedAt'],
-    });
-    const originalHash = JSON.stringify(this.createHashData(transformedData));
-    const prevHash = await this.hashRepository.findOne({
-      where: {
-        objectId: dataId,
-      },
-    });
-    return originalHash === hash && hash === prevHash.hash;
-  }
+    const mappedData = data.map((d) => ({
+      title: d.preBudgetPlan.app.planName,
+      estimatedAmount: d.preBudgetPlan.estimatedAmount,
+      identification: [
+        {
+          key: 'Reference',
+          value: d.procurementReference,
+        },
+        {
+          key: 'Name',
+          value: d.name,
+        },
+        {
+          key: 'description',
+          value: d.description,
+        },
+        { key: 'Estimated Amount', value: d.estimatedAmount },
+        { key: 'Calculated Amount', value: d.calculatedAmount },
+        {
+          key: 'Remark',
+          value: d.remark,
+        },
+      ],
+      procurementMethods: [
+        {
+          key: 'Procurement Type',
+          value: d.preProcurementMechanisms[0].procurementType,
+        },
+        {
+          key: 'Procurement Method',
+          value: d.preProcurementMechanisms[0].procurementMethod,
+        },
+        {
+          key: 'Funding Source',
+          value: d.preProcurementMechanisms[0].fundingSource,
+        },
+        {
+          key: 'Supplier Target Group',
+          value: d.preProcurementMechanisms[0].targetGroup,
+        },
+      ],
+    }));
 
+    const buffer = await this.reasonService.pdfGenerator(mappedData);
+    return buffer;
+  }
   instanceToPlainExclude(
     obj: Record<string, any>,
     options: { exclude?: string[] } = {},

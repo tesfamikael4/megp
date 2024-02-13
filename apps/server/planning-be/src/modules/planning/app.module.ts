@@ -36,7 +36,7 @@ import * as dotenv from 'dotenv';
 import { PreBudgetActivityDocumentController } from './controllers/pre-budget-activity-documents.controller';
 import { PreBudgetActivityDocumentService } from './services/pre-budget-activity-documents.service';
 import { MinioModule } from 'nestjs-minio-client';
-import { Hash } from 'src/entities/hash.entity';
+import { UtilityModule } from '../utility/utility.module';
 
 dotenv.config({ path: '.env' });
 
@@ -53,7 +53,6 @@ dotenv.config({ path: '.env' });
       PreProcurementMechanism,
       PreBudgetRequisitioner,
       PreBudgetActivityDocument,
-      Hash,
     ]),
     ClientsModule.register([
       {
@@ -69,6 +68,7 @@ dotenv.config({ path: '.env' });
       },
     ]),
     PostModule,
+    UtilityModule,
     MinioModule.register({
       endPoint: process.env.MINIO_ENDPOINT ?? 'files.megp.peragosystems.com',
       port: Number(process.env.MINIO_PORT ?? 80),
