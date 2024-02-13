@@ -115,7 +115,7 @@ export const ActivitySelector = () => {
         id: selectedBudgetYear,
         collectionQuery: {
           ...collectionQuery,
-          includes: ['procurementMechanisms'],
+          includes: ['procurementMechanisms', 'annualProcurementPlanItems'],
           where: [
             ...(collectionQuery?.where ?? []),
             [

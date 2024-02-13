@@ -1,4 +1,4 @@
-import { Box, LoadingOverlay, Text } from '@mantine/core';
+import { Box, LoadingOverlay, Text, rgba } from '@mantine/core';
 import { DataTable } from 'mantine-datatable';
 
 import { useEffect, useState } from 'react';
@@ -11,6 +11,7 @@ export const DetailRequisition = ({ requisition }: { requisition: any }) => {
     {
       key: 'Reference',
       value: requisition.requisitionReferenceNumber,
+      titleStyle: (theme) => ({ color: theme.colors.green[6] }),
     },
     {
       key: 'Title',
@@ -88,7 +89,22 @@ export const DetailRequisition = ({ requisition }: { requisition: any }) => {
         withColumnBorders
         withTableBorder
         records={data}
-        columns={[{ accessor: 'key', width: 200 }, { accessor: 'value' }]}
+        striped={false}
+        columns={[
+          {
+            accessor: 'key',
+            width: 200,
+            cellsStyle: () => ({
+              background: '#DCE8F2',
+            }),
+          },
+          {
+            accessor: 'value',
+            cellsStyle: () => ({
+              background: 'white',
+            }),
+          },
+        ]}
         noHeader
       />
       {methods.length !== 0 && (
@@ -98,7 +114,21 @@ export const DetailRequisition = ({ requisition }: { requisition: any }) => {
             withColumnBorders
             withTableBorder
             records={methods}
-            columns={[{ accessor: 'key', width: 200 }, { accessor: 'value' }]}
+            columns={[
+              {
+                accessor: 'key',
+                width: 200,
+                cellsStyle: () => ({
+                  background: '#DCE8F2',
+                }),
+              },
+              {
+                accessor: 'value',
+                cellsStyle: () => ({
+                  background: 'white',
+                }),
+              },
+            ]}
             noHeader
           />
         </>
