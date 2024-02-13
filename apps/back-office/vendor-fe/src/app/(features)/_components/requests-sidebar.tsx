@@ -51,12 +51,12 @@ export default function RequestsSidebar({
       className={styles.sidebarwrapper}
     >
       <Box className={styles.formGroup}>
-        <Text>Application Number</Text>
+        <Text>Tracking Number</Text>
         <TextInput
           value={filter.trackingNumber}
           type="string"
           name="trackingNumber"
-          placeholder="Application Number"
+          placeholder="Tracking Number"
           onChange={(e) => updateFilter(e.target.name, e.target.value)}
         />
       </Box>

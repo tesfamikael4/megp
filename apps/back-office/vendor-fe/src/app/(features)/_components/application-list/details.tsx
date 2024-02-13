@@ -162,8 +162,7 @@ export default function RequestDetail({
                         setContent('details');
                       }}
                     >
-                      {response.data.taskTrackers.length - index} -{' '}
-                      {tracker.task.label}
+                      {index + 1} - {tracker.task.label}
                     </Box>
                   ))}
               </Section>

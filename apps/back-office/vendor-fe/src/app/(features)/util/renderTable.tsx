@@ -1,7 +1,6 @@
-import { Box, Button, List, Table, Text, ThemeIcon, rem } from '@mantine/core';
+import { Button, List, Table, Text } from '@mantine/core';
 import { formatDateTimeFromString, isDate } from '.';
 import { addSpacesToCamelCase } from './addSpaceToCamelCase';
-import { IconCircleCheck } from '@tabler/icons-react';
 
 export function renderTable(
   data,

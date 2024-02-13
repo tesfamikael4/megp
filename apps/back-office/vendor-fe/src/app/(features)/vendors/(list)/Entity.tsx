@@ -1,10 +1,9 @@
 'use client';
+import { Vendor } from '@/store/api/vendor_request_handler/type';
+import { Box } from '@mantine/core';
 import { CollectionQuery, EntityConfig, EntityList } from '@megp/entity';
 import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
-import { logger } from '@megp/core-fe';
-import { Box } from '@mantine/core';
-import { Vendor } from '@/store/api/vendor_request_handler/type';
 
 export default function Entity({
   children,
