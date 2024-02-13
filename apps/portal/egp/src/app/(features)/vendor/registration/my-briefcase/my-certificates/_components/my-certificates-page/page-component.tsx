@@ -71,10 +71,10 @@ function PageComponent() {
                       w={180}
                       className="mt-4 break-words"
                     >
-                      Registration for{' '}
+                      Certificate for{' '}
                       {data.category.charAt(0).toUpperCase() +
                         data.category.slice(1)}{' '}
-                      Certificate
+                      Registration
                     </Text>
                     <Flex gap={5}>
                       <Text fz={'xs'} fw={800} color="gray.5">

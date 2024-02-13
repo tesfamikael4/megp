@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import NewPreferentialForm from './components/NewPreferentialForm';
+import NewPreferentialForm from '../components/NewPreferentialForm';
 import { useGetDraftApplicationQuery } from '@/store/api/preferential-treatment/preferential-treatment.api';
 import { LoadingOverlay } from '@mantine/core';
 const VENDOR_URL = process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api';

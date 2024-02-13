@@ -180,9 +180,15 @@ export const CardListShell: React.FC<CardListProps> = ({
   };
   return (
     <>
-      <SimpleGrid cols={3} p="xs">
+      <SimpleGrid
+        cols={{
+          sm: 2,
+          xl: 3,
+        }}
+        p="xs"
+      >
         {card(handleEdit, handleRemove)}
-        <Card withBorder>
+        <Card withBorder shadow="md" bg={'#f7f7f7'}>
           <Center h={'100%'} mih="100px">
             <Flex align={'center'} gap={10} onClick={open}>
               <Button
@@ -250,7 +256,7 @@ export const SingleCardWrapper: React.FC<SingleCardWrapperProps> = ({
   disabled,
 }) => {
   return (
-    <Card withBorder>
+    <Card withBorder shadow="md" bg={'#f7f7f7'}>
       <Card.Section>
         <Flex className="justify-end">
           <ActionIcon onClick={edit} variant="subtle" disabled={disabled}>
