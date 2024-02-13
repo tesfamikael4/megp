@@ -8,31 +8,6 @@ import { useRouter } from 'next/navigation';
 import { Section } from '@megp/core-fe';
 // import { useLazyListQuery } from '../_api/budget.api';
 export default function BudgetPage() {
-  // const config = {
-  //   columns: [
-  //     {
-  //       accessor: 'budgetCode',
-  //       title: 'Budget Code',
-  //     },
-  //     {
-  //       accessor: 'allocatedBudget',
-  //       title: 'Allocated Budget',
-  //     },
-  //     {
-  //       accessor: 'revisedBudget',
-  //       title: 'Revised Budget',
-  //     },
-  //     {
-  //       accessor: 'obligatedBudget',
-  //       title: 'Obligated Budget',
-  //     },
-  //     {
-  //       accessor: 'availableBudget',
-  //       title: 'Available Budget',
-  //     },
-  //   ],
-  // };
-
   const router = useRouter();
   const config = {
     columns: [
@@ -43,12 +18,31 @@ export default function BudgetPage() {
       {
         accessor: 'startDate',
         title: 'Start Date',
-        render: (record) => <p>Jan 1, {record.budgetYear}</p>,
+        render: (record) => (
+          <p>
+            {new Date(record.budgetYears.startDate).toLocaleDateString(
+              'en-US',
+              {
+                month: 'short',
+                day: '2-digit',
+                year: 'numeric',
+              },
+            )}
+          </p>
+        ),
       },
       {
         accessor: 'endDate',
         title: 'End Date',
-        render: (record) => <p>Dec 30, {record.budgetYear}</p>,
+        render: (record) => (
+          <p>
+            {new Date(record.budgetYears.endDate).toLocaleDateString('en-US', {
+              month: 'short',
+              day: '2-digit',
+              year: 'numeric',
+            })}
+          </p>
+        ),
       },
       {
         accessor: 'action',
@@ -74,7 +68,8 @@ export default function BudgetPage() {
   const [getBudgetYears, { data: list }] = useLazyListQuery({} as any);
 
   //helpers
-  const onRequestChange = (collectionQuery) => getBudgetYears(collectionQuery);
+  const onRequestChange = (collectionQuery) =>
+    getBudgetYears({ ...collectionQuery, includes: ['budgetYears'] });
   return (
     <>
       <Section title="Budget" collapsible={false}>

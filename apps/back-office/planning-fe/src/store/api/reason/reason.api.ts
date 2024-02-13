@@ -16,7 +16,11 @@ export const reasonApi = createApi({
         body: data,
       }),
     }),
+    getJustification: builder.query<any, string>({
+      query: (id) => `reasons/${id}`,
+    }),
   }),
 });
 
-export const { useAddJustificationMutation } = reasonApi;
+export const { useAddJustificationMutation, useLazyGetJustificationQuery } =
+  reasonApi;

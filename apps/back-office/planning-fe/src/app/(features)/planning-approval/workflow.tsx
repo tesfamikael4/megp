@@ -47,11 +47,7 @@ const accordionData = [
   },
 ];
 
-export default function WorkflowHandling({
-  activityId,
-}: {
-  activityId: string;
-}) {
+export function WorkflowHandling({ activityId }: { activityId: string }) {
   const { role, user } = useAuth();
   const [active, setActive] = useState(0);
   // const activityId = ;

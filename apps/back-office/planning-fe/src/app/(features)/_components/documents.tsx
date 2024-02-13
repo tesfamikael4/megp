@@ -25,6 +25,7 @@ import {
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
+  useDeleteDocumentMutation,
   useGetFilesQuery,
   useLazyDownloadFilesQuery,
   usePreSignedUrlMutation,
@@ -43,6 +44,7 @@ export const Documents = ({
   const [file, setFile] = useState<File[]>();
   const { register, handleSubmit } = useForm();
   const [retrieveNewURL] = usePreSignedUrlMutation();
+  const [deleteFile, { isLoading: isDeleting }] = useDeleteDocumentMutation();
   const { data } = useGetFilesQuery(id);
   const [dowloadFile, { isLoading: isDownloading }] =
     useLazyDownloadFilesQuery();
@@ -75,7 +77,7 @@ export const Documents = ({
         ),
         labels: { confirm: 'Yes', cancel: 'No' },
         confirmProps: { color: 'red' },
-        onConfirm: handleDelete,
+        onConfirm: () => handleDelete(data.id),
       });
     };
     const handleDownload = async () => {
@@ -96,9 +98,9 @@ export const Documents = ({
         notify('Error', 'Something went wrong');
       }
     };
-    const handleDelete = async () => {
+    const handleDelete = async (id) => {
       try {
-        // await remove(cell.id).unwrap();
+        await deleteFile(id).unwrap();
         notifications.show({
           title: 'Success',
           message: 'Document Deleted Successfully',
@@ -143,7 +145,7 @@ export const Documents = ({
               color="red"
               leftSection={<IconTrash size={15} />}
               onClick={openDeleteModal}
-              disabled={disableFields}
+              disabled={disableFields || isDeleting}
             >
               Delete
             </Menu.Item>

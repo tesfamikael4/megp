@@ -93,6 +93,13 @@ export const preBudgetPlanApi = createApi({
       }),
       invalidatesTags: ['pre-budget-activity-files'],
     }),
+    deleteDocument: builder.mutation<any, string>({
+      query: (id: string) => ({
+        url: `pre-budget-activity-documents/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['pre-budget-activity-files'],
+    }),
 
     getFiles: builder.query<any, any>({
       query: (id: string) => ({
@@ -122,6 +129,7 @@ export const {
   useGetPreBudgetPlanQuery,
   useLazyGetPreBudgetPlanAnalyticsQuery,
   usePreSignedUrlMutation,
+  useDeleteDocumentMutation,
   useGetFilesQuery,
   useLazyDownloadFilesQuery,
 } = preBudgetPlanApi;
