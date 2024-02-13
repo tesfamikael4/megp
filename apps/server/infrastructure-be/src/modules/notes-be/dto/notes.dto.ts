@@ -1,7 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsJSON, IsNotEmpty, IsUUID } from 'class-validator';
+import {
+  IsJSON,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 
-export class NotesDto {
+export class CreateNotesDto {
   @ApiProperty()
   @IsUUID()
   objectId: string;
@@ -11,8 +17,8 @@ export class NotesDto {
   objectType: string;
 
   @ApiProperty()
-  @IsUUID()
-  parentId?: string;
+  @IsOptional()
+  parentId: string;
 
   @ApiProperty()
   @IsNotEmpty()
@@ -20,13 +26,17 @@ export class NotesDto {
 
   @ApiProperty()
   @IsJSON()
+  @IsOptional()
   metaData: any;
+
+  @ApiProperty()
+  @IsUUID()
+  @IsOptional()
+  organizationId: string;
 }
 
-export class CreateNotesDto extends NotesDto {
+export class UpdateNotesDto extends CreateNotesDto {
   @ApiProperty()
   @IsUUID()
   id: string;
 }
-
-export class UpdateNotesDto extends CreateNotesDto {}
