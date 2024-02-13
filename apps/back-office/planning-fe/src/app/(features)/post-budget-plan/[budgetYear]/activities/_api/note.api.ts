@@ -13,6 +13,7 @@ export const {
   useLazyListByIdQuery,
   useReadQuery,
   useLazyReadQuery,
+  useLazyListQuery,
   useCreateMutation,
   useUpdateMutation,
   useDeleteMutation,

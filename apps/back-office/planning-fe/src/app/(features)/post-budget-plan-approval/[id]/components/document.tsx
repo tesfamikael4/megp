@@ -7,10 +7,10 @@ import {
 import { LoadingOverlay, Menu, Modal } from '@mantine/core';
 import { IconDotsVertical, IconDownload, IconEye } from '@tabler/icons-react';
 import { useEffect } from 'react';
-import { FileViewer } from '../../_components/file-viewer';
+import { FileViewer } from '../../../_components/file-viewer';
 import { useDisclosure } from '@mantine/hooks';
 import { notify } from '@megp/core-fe';
-import { ExpandableTable } from '../../_components/expandable-table';
+import { ExpandableTable } from '../../../_components/expandable-table';
 
 export const Document = ({ activityId }: any) => {
   const [dowloadFile, { isLoading: isDownloading }] =

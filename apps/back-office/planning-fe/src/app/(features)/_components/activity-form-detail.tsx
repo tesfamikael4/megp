@@ -12,7 +12,6 @@ import {
   Group,
   Modal,
   MultiSelect,
-  NumberInput,
   Select,
   Stack,
   TextInput,
