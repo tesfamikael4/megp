@@ -32,7 +32,7 @@ export class ApplicationExcutionService {
     private readonly pricingService: ServicePricingService,
     private readonly vendorService: VendorRegistrationsService,
     private readonly baService: BusinessAreaService,
-  ) {}
+  ) { }
 
   async getCurruntTaskByServiceKey(
     serviceKey: string,
@@ -46,11 +46,13 @@ export class ApplicationExcutionService {
       this.wiRepository,
       query,
     );
+
     dataQuery
       .innerJoinAndSelect('workflow_instances.taskHandler', 'handler')
       .innerJoinAndSelect('handler.task', 'task')
       .leftJoinAndSelect('workflow_instances.service', 'service')
-      .leftJoinAndSelect('workflow_instances.isrVendor', 'vendor')
+      // .leftJoinAndSelect('workflow_instances.isrVendor', 'isrVendor')
+      // .leftJoinAndSelect('workflow_instances.isrVendor.businessAreas', 'businessAreas')
       .innerJoinAndSelect('workflow_instances.businessProcess', 'bp')
       .leftJoinAndSelect('workflow_instances.taskTrackers', 'taskTracker')
       .andWhere('service.key In(:...keys)', { keys: keys })

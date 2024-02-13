@@ -111,3 +111,13 @@ export class IsrVendorDetailResponseDto {
   @ApiProperty()
   businessAreas: BusinessAreaDetailResponseDto[];
 }
+export class NotifyIam {
+  @ApiProperty()
+  email: string;
+  @ApiProperty()
+  name: string;
+  @ApiProperty()
+  queueName: string;
+  @ApiProperty()
+  eventName: string;
+}

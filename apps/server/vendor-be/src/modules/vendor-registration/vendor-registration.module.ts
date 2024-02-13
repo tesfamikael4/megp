@@ -10,7 +10,6 @@ import { BeneficialOwnershipController } from './controllers/beneficial-ownershi
 import { BeneficialOwnershipService } from './services/beneficial-ownership.service';
 import { AreasOfBusinessInterestController } from './controllers/areas-of-business-interest.controller';
 import { AreasOfBusinessInterestService } from './services/areas-of-business-interest.service';
-import { TusService } from './services/tus.service';
 import { UploadController } from './controllers/file.controller';
 import { BusinessAreaController } from './controllers/business-area.controller';
 import { BusinessAreaService } from './services/business-area.service';
@@ -54,6 +53,7 @@ import { ProfileInfoEntity } from 'src/entities/profile-info.entity';
 import { InvoicesController } from './controllers/invoice.controller';
 import { ServiceModule } from '../services/service.module';
 import { BpServiceService } from '../services/services/service.service';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
   imports: [
@@ -81,6 +81,7 @@ import { BpServiceService } from '../services/services/service.service';
       IsrVendorsEntity,
       ProfileInfoEntity,
     ]),
+    EventEmitterModule.forRoot(),
     AuthorizationModule,
     BpmModule,
     CategoriesModule,

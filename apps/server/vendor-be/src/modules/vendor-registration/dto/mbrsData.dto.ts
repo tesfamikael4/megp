@@ -4,9 +4,13 @@ import { InvoiceEntity } from 'src/entities';
 
 export class MbrsData {
   @ApiProperty()
-  tin: string;
+  id: string;
   @ApiProperty()
-  businessLicenseNumber: string;
+  tin: number;
+  @ApiProperty()
+  tenantId: string;
+  @ApiProperty()
+  businessLicenseNumber: number;
   @ApiProperty()
   nationality: string;
   @ApiProperty()
@@ -23,6 +27,12 @@ export class MbrsData {
   middleName: string;
   @ApiProperty()
   lastName: string;
+  @ApiProperty()
+  createdAt: string;
+  @ApiProperty()
+  deletedAt: string;
+  @ApiProperty()
+  updatedAt: string;
   // static toResponse(entity: InvoiceEntity): MbrsDataResponse {
   //     const response = new InvoiceResponseDto();
   //     response.id = entity.id;
@@ -49,18 +59,20 @@ export class MbrsDataDto {
   tin: string;
   @ApiProperty()
   @IsOptional()
-  issuedDate: string;
+  issuedDate?: string;
   @ApiProperty()
   @IsOptional()
-  licenseNumber: string;
+  licenseNumber?: number;
 }
 export class FppaDataDto {
   @ApiProperty()
   @IsNotEmpty()
   id: string;
   @ApiProperty()
+  tenantId: string;
+  @ApiProperty()
   @IsNotEmpty()
-  tin: string;
+  tin: number;
   @ApiProperty()
   @IsOptional()
   supplierCode: string;
@@ -79,30 +91,45 @@ export class FppaDataDto {
   @ApiProperty()
   @IsOptional()
   mobileNumber: string;
+  @ApiProperty()
+  createdAt: string;
+  @ApiProperty()
+  deletedAt: string;
+  @ApiProperty()
+  updatedAt: string;
 }
 export class NCICDataDto {
   @ApiProperty()
   @IsNotEmpty()
   id: string;
   @ApiProperty()
-  @IsNotEmpty()
-  tin: string;
+  tenantId: string;
   @ApiProperty()
-  @IsOptional()
-  supplierCode: string;
+  tin: number;
   @ApiProperty()
-  @IsOptional()
-  supplierName: string;
+  nameOfFirm: string;
   @ApiProperty()
-  @IsOptional()
-  businessType: string;
+  postalAddress: string;
   @ApiProperty()
-  @IsOptional()
-  accountNo: string;
+  telephoneNumber: string;
   @ApiProperty()
-  @IsOptional()
-  accountName: string;
+  email: string;
   @ApiProperty()
-  @IsOptional()
-  mobileNumber: string;
+  nationalOfFirm: string;
+  @ApiProperty()
+  typeOfRegistration: string;
+  @ApiProperty()
+  branch: string;
+  @ApiProperty()
+  category: string;
+  @ApiProperty()
+  district: string;
+  @ApiProperty()
+  region: string;
+  @ApiProperty()
+  createdAt: string;
+  @ApiProperty()
+  deletedAt: string;
+  @ApiProperty()
+  updatedAt: string;
 }

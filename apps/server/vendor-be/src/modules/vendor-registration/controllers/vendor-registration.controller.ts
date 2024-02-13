@@ -9,6 +9,7 @@ import {
   Query,
   UseInterceptors,
   UploadedFile,
+  Req,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -28,17 +29,21 @@ import {
 } from 'src/shared/authorization';
 import { InsertAllDataDto } from '../dto/save-all.dto';
 import { SetVendorStatus } from '../dto/vendor.dto';
-import { CollectionQuery } from 'src/shared/collection-query';
+import {
+  CollectionQuery,
+  decodeCollectionQuery,
+} from 'src/shared/collection-query';
 import { MbrsDataDto } from '../dto/mbrsData.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ReceiptDto } from '../dto/receipt.dto';
+import { Request } from 'express';
 @ApiBearerAuth()
 @Controller('vendor-registrations')
 @ApiTags('Vendor-registrations')
 @ApiResponse({ status: 500, description: 'Internal error' })
 @ApiExtraModels(DataResponseFormat)
 export class VendorRegistrationsController {
-  constructor(private readonly regService: VendorRegistrationsService) {}
+  constructor(private readonly regService: VendorRegistrationsService) { }
   @UseGuards(JwtGuard)
   @Get('get-isr-vendors')
   async getVendors() {
@@ -70,6 +75,7 @@ export class VendorRegistrationsController {
   async getVendorByVendorId(@Param('vendorId') vendorId: string) {
     return await this.regService.getIsrVendorByVendorId(vendorId);
   }
+
   @UseGuards(JwtGuard)
   @Get('get-isr-vendor-invoice-by-userId')
   async getIsrVendorInvoiceByuserId(@CurrentUser() userInfo: any) {
@@ -216,19 +222,20 @@ export class VendorRegistrationsController {
       userInfo,
     );
   }
-
   @UseGuards(JwtGuard)
   @Get('get-mbrs-data')
   async GetMBRSData(@Body() mbrsDataDto: MbrsDataDto) {
     return await this.regService.GetMBRSData(mbrsDataDto);
   }
   @UseGuards(JwtGuard)
-  @Get('get-fppa-data/:tinNumber')
-  async GetFPPAData(
-    @Param('tinNumber') tinNumber: string,
-    @Param('licenseNumber') licenseNumber: string,
-  ) {
-    return await this.regService.GetFPPAData(tinNumber);
+  @Get('get-ncic-data/:licenseNumber')
+  async GetNCICData(@Param('licenseNumber') licenseNumber: string) {
+    return await this.regService.GetNCICData(licenseNumber);
+  }
+  @UseGuards(JwtGuard)
+  @Get('get-fppa-data/:licenseNumber')
+  async GetFPPAData(@Param('licenseNumber') licenseNumber: string) {
+    return await this.regService.GetFPPAData(licenseNumber);
   }
 
   @UseGuards(JwtGuard)

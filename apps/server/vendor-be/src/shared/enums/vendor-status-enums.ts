@@ -24,4 +24,5 @@ export enum VendorStatusEnum {
   BASIC = 'Basic',
   PROFILE_UPDATE_KEY = 'ProfileUpdate',
   DEBARD = 'Debared',
+  MALI = 'MW',
 }

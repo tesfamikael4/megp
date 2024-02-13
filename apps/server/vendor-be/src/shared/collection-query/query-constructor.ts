@@ -93,6 +93,7 @@ const applyWhereConditions = <T>(
       const orConditions = conditions.map(({ column, value, operator: op }) => {
         if (column.includes('.')) {
           const [relation, field] = column.split('.'); // Assuming "relation.field" format
+
           if (field.includes('->>')) {
             const [mainColumn, nestedColumn] = field.split('->>');
             return addFilterConditions(
@@ -147,17 +148,8 @@ const applyWhereConditions = <T>(
         (acc, { column, value, operator: op }) => {
           if (column.includes('.')) {
             const [relation, field] = column.split('.');
-            if (field.includes('->>')) {
-              const [mainColumn, nestedColumn] = field.split('->>');
-              acc = addFilterParams(
-                op,
-                value,
-                `${mainColumn}_${nestedColumn}`,
-                acc,
-              );
-            } else {
-              acc = addFilterParams(op, value, `${relation}_${field}`, acc);
-            }
+            const fieldValue = `${field}_${++count}`;
+            acc = addFilterParams(op, value, `${relation}_${fieldValue}`, acc);
           } else if (column.includes('->>')) {
             const [mainColumn, nestedColumn] = column.split('->>');
             if (mainColumn.includes('->')) {
@@ -346,6 +338,13 @@ export class QueryConstructor {
       aggregateColumns[c.databasePath] = c.type;
     });
 
+    const aggregate = metaData.tableName;
+    const queryBuilder = repository.createQueryBuilder(aggregate);
+
+    if (withDelete) {
+      queryBuilder.withDeleted();
+    }
+
     if (!metaData.propertiesMap['tenantId']) {
       query = this.removeFilter(query, 'tenantId');
     }
@@ -354,21 +353,13 @@ export class QueryConstructor {
       query = this.removeFilter(query, 'organizationId');
     }
 
-    const aggregate = metaData.tableName;
-    const queryBuilder = repository.createQueryBuilder(aggregate);
-
-    if (withDelete) {
-      queryBuilder.withDeleted();
-    }
-
-    query = this.removeEmtpyFilter(query);
+    query = this.removeEmptyFilter(query);
 
     buildQuery(aggregate, queryBuilder, query);
 
     return queryBuilder;
   }
-
-  static removeEmtpyFilter(query: CollectionQuery) {
+  static removeEmptyFilter(query: CollectionQuery) {
     query.where = query.where.filter((x) => x.length > 0);
     return query;
   }
