@@ -6,8 +6,12 @@ import {
   OneToMany,
   JoinColumn,
   ManyToOne,
+  Tree,
+  TreeParent,
+  TreeChildren,
 } from 'typeorm';
 
+@Tree('closure-table')
 @Entity({ name: 'notes' })
 export class Notes extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
@@ -19,7 +23,7 @@ export class Notes extends OrgAudit {
   @Column()
   objectType: string;
 
-  @Column('uuid')
+  @Column({ type: 'uuid', nullable: true })
   parentId: string;
 
   @Column('text')
@@ -28,10 +32,9 @@ export class Notes extends OrgAudit {
   @Column('jsonb')
   metaData: any;
 
-  @ManyToOne(() => Notes, (note) => note.children)
-  @JoinColumn({ name: 'parentId' })
-  parent: Notes[];
+  @TreeParent()
+  parent: Notes;
 
-  @OneToMany((type) => Notes, (note) => note.parent)
+  @TreeChildren()
   children: Notes[];
 }
