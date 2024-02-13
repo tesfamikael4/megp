@@ -57,37 +57,38 @@ export class TaxPayerService extends EntityCrudService<TaxPayer> {
       const response = await axios.post(url, body, { headers });
       if (response.status === 200) {
         const result = plainToClass(TaxpayerData, response.data);
-        const [year, month, day] = issuedDateStr.split('-').map(Number);
-        const parsedIssuedDate = new Date(year, month - 1, day);
-        if (result && parsedIssuedDate) {
-          const issuedDate = new Date(parsedIssuedDate);
-          if (!isNaN(issuedDate.getTime())) {
-            const registrationDate = new Date(result.registrationDate);
-            const issuedDateWithoutTime = new Date(
-              issuedDate.getFullYear(),
-              issuedDate.getMonth(),
-              issuedDate.getDate(),
-            );
-            const registrationDateWithoutTime = new Date(
-              registrationDate.getFullYear(),
-              registrationDate.getMonth(),
-              registrationDate.getDate(),
-            );
+        // const [year, month, day] = issuedDateStr.split('-').map(Number);
+        // const parsedIssuedDate = new Date(year, month - 1, day);
+        // if (result && parsedIssuedDate) {
+        //   const issuedDate = new Date(parsedIssuedDate);
+        //   if (!isNaN(issuedDate.getTime())) {
+        //     const registrationDate = issuedDate;
+        //     const issuedDateWithoutTime = new Date(
+        //       issuedDate.getFullYear(),
+        //       issuedDate.getMonth(),
+        //       issuedDate.getDate(),
+        //     );
+        //     const registrationDateWithoutTime = new Date(
+        //       registrationDate.getFullYear(),
+        //       registrationDate.getMonth(),
+        //       registrationDate.getDate(),
+        //     );
 
-            if (
-              issuedDateWithoutTime.getTime() ===
-              registrationDateWithoutTime.getTime()
-            ) {
-              return result;
-            } else {
-              return 'IssuedDate or TIN is not equal ';
-            }
-          } else {
-            return 'Invalid IssuedDate';
-          }
-        } else {
-          return null;
-        }
+        //     if (
+        //       issuedDateWithoutTime.getTime() ===
+        //       registrationDateWithoutTime.getTime()
+        //     ) {
+        //       return result;
+        //     } else {
+        //       return 'IssuedDate or TIN is not equal ';
+        //     }
+        //   } else {
+        //     return 'Invalid IssuedDate';
+        //   }
+        // } else {
+        //   return null;
+        // }
+        return result;
       } else {
         // Handle non-200 status codes here
         const errorMessage = `api_failed: ${response.status} : ${response.statusText}`;
@@ -97,9 +98,8 @@ export class TaxPayerService extends EntityCrudService<TaxPayer> {
       // Handle network errors, timeouts.
       if (axios.isAxiosError(error)) {
         const axiosError = error as AxiosError;
-        const errorMessage = `api_failed: ${
-          axiosError.response?.status || 'unknown'
-        } : ${axiosError.message}`;
+        const errorMessage = `api_failed: ${axiosError.response?.status || 'unknown'
+          } : ${axiosError.message}`;
         throw new Error(errorMessage);
       } else {
         throw error;

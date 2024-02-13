@@ -29,6 +29,9 @@ export class VendorInitiationDto {
   @ApiProperty()
   @IsOptional()
   tinNumber?: string;
+  @ApiProperty()
+  @IsOptional()
+  tinIssuedDate?: string;
 
   /**
    * Transfer Data from DTO object to Entity object

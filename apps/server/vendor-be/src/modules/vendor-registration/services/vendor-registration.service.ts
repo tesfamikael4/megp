@@ -125,10 +125,9 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           if (businessAreaApproved) {
             continue;
           }
-
-          const tempVendor = await this.isrVendorsRepository.findOne({
-            where: { userId: userInfo.id },
-          });
+          // const tempVendor = await this.isrVendorsRepository.findOne({
+          //   where: { userId: userInfo.id },
+          // });
           if (!tempVendor) throw new HttpException('vendor_not_found', 404);
           if (tempVendor.status.trim() !== VendorStatusEnum.SUBMITTED) {
             const isrVendor = await this.fromInitialValue(data);
@@ -203,6 +202,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
                     status: In([VendorStatusEnum.REJECTED]),
                   },
                 });
+
                 if (res.length == 0) {
                   workflowInstance =
                     await this.workflowService.intiateWorkflowInstance(
@@ -713,7 +713,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           status: In(this.updateVendorEnums),
         },
       });
-
       if (!result) throw new NotFoundException(`isr_Vendor_not_found`);
       const initial = result?.initial; //JSON.parse(JSON.stringify(result?.initial));
       //if there is no previously approved service by the isr vendorId
@@ -1073,10 +1072,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       const expired = element.createdOn < fourteenDaysAgo;
       invoice.push({ ...element, expired: expired });
     }
-
     return invoice;
   }
-
   async getIsrVendors(): Promise<any[]> {
     try {
       const vendorEntity = await this.isrVendorsRepository.find();
@@ -1120,7 +1117,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     response.items = items.map((item) =>
       VendorInitiationResponseDto.toResponse(item),
     );
-
     response.total = total;
     return response;
   }
@@ -1160,16 +1156,16 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       const response = await axios.get(url);
       return response.data;
       if (!response) throw new HttpException('not found in ncic', 500);
-      nCICDataDto.accountName = response?.data?.nCICDataDto;
-      nCICDataDto.accountNo = response?.data?.accountNo;
-      nCICDataDto.businessType = response?.data?.businessType;
-      nCICDataDto.id = response?.data?.id;
-      nCICDataDto.mobileNumber = response?.data?.mobileNumber;
-      nCICDataDto.supplierCode = response?.data?.supplierCode;
-      nCICDataDto.supplierName = response?.data?.supplierName;
-      nCICDataDto.tin = response?.data?.tin;
+      // nCICDataDto.accountName = response?.data?.nCICDataDto;
+      // nCICDataDto.accountNo = response?.data?.accountNo;
+      // nCICDataDto.businessType = response?.data?.businessType;
+      // nCICDataDto.id = response?.data?.id;
+      // nCICDataDto.mobileNumber = response?.data?.mobileNumber;
+      // nCICDataDto.supplierCode = response?.data?.supplierCode;
+      // nCICDataDto.supplierName = response?.data?.supplierName;
+      // nCICDataDto.tin = response?.data?.tin;
 
-      return nCICDataDto;
+      // return nCICDataDto;
     } catch (error) {
       console.log(error);
       throw error;
