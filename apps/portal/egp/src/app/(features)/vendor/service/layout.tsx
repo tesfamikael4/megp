@@ -26,9 +26,14 @@ const services: { title: string; link: string; description: string }[] = [
     description: 'Profile update for existing business',
   },
   {
-    title: 'Preferential Treatment',
-    link: '/vendor/registration/preferential-treatment',
-    description: 'Preferential Treatment for existing business',
+    title: 'IBM',
+    link: '/vendor/registration/preferential-treatment/ibm',
+    description: 'IBM registration for existing business',
+  },
+  {
+    title: 'MSME',
+    link: '/vendor/registration/preferential-treatment/msme',
+    description: 'MSME registration for existing business',
   },
 ];
 

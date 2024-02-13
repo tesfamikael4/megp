@@ -58,6 +58,7 @@ export const BusinessSizeAndOwnership: React.FC<PassFormDataProps> = ({
             ).error
           }
           thousandSeparator
+          decimalScale={2}
           min={1}
           max={100000000000000000}
         />
@@ -94,6 +95,7 @@ export const BusinessSizeAndOwnership: React.FC<PassFormDataProps> = ({
             ).error
           }
           thousandSeparator
+          decimalScale={2}
           min={1}
           max={
             register('businessSizeAndOwnership.registeredCapital.amount').value

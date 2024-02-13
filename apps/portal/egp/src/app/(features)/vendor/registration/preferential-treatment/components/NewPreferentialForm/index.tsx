@@ -30,9 +30,11 @@ import { useDisclosure } from '@mantine/hooks';
 const NewPreferentialForm = ({
   defaultValues,
   certificateUrl,
+  isIbm,
 }: {
   defaultValues: z.infer<typeof preferentialSchema>;
   certificateUrl?: string;
+  isIbm?: boolean;
 }) => {
   const [showRemove, setShowRemove] = useState<number | null>(null);
   const [submitPrefrential, { isLoading, isSuccess }] =
@@ -99,7 +101,11 @@ const NewPreferentialForm = ({
             render={({ field: { name, value, onChange } }) => (
               <Select
                 name={name}
-                data={data ?? []}
+                data={
+                  isIbm
+                    ? data.filter((pref) => pref.label === 'IBM')
+                    : data.filter((pref) => pref.label !== 'IBM') ?? []
+                }
                 label="Preferential Treatment"
                 placeholder="Select a preferential treatment"
                 className="w-1/2"
