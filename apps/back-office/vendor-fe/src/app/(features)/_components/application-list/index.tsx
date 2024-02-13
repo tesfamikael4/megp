@@ -67,6 +67,7 @@ export default function ApplicationList({
         skip: from,
         take: perPage,
         // where: [where],
+        includes: ['isrVendor'],
       },
     });
   }, [page, serviceKey]);
