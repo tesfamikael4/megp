@@ -17,6 +17,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { renderTable } from '../../util/renderTable';
 import { addSpacesToCamelCase } from '../../util/addSpaceToCamelCase';
 import { displayFormattedObject } from '../../util/displayFormattedObject';
+import Link from 'next/link';
 
 const tabs = [
   {
@@ -200,6 +201,8 @@ function FormPreview({ data }: { data: any }) {
             </Table.ScrollContainer>
           ) : (
             Object.keys(data[selected]).map((fieldKey) => {
+              logger.log(selected);
+
               return selected === 'supportingDocuments' ||
                 selected === 'certificate' ||
                 (selected === 'paymentReceipt' && fieldKey === 'attachment') ? (
@@ -250,23 +253,50 @@ function FormPreview({ data }: { data: any }) {
                 <>
                   <Divider />
                   <Box key={fieldKey} className="gap-2 items-center ">
-                    {typeof data[selected][fieldKey] === 'string' && (
-                      <>
-                        <Flex className="" align="center" gap={'lg'}>
-                          <Text
-                            size="xs"
-                            fw={500}
-                            tt="capitalize"
-                            className="text-md max:w-1/5 w-1/5 bg-[#DCE8F2] p-3 "
-                          >
-                            {addSpacesToCamelCase(fieldKey)}:
-                          </Text>
-                          <Text size="sm" tt="capitalize">
-                            {data[selected][fieldKey]}
-                          </Text>
-                        </Flex>
-                      </>
+                    {selected === 'address' && fieldKey === 'website' && (
+                      <Flex className="" align="center" gap={'lg'}>
+                        <Text
+                          size="xs"
+                          fw={500}
+                          tt="capitalize"
+                          className="text-md max:w-1/5 w-1/5 bg-[#DCE8F2] p-3 "
+                        >
+                          Website:
+                        </Text>
+                        <Text size="sm" tt="capitalize">
+                          {data[selected][fieldKey] ? (
+                            <Link
+                              href={data[selected][fieldKey]}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              {data[selected][fieldKey]}
+                            </Link>
+                          ) : (
+                            'No website provided'
+                          )}
+                        </Text>
+                      </Flex>
                     )}
+
+                    {typeof data[selected][fieldKey] === 'string' &&
+                      fieldKey !== 'website' && (
+                        <>
+                          <Flex className="" align="center" gap={'lg'}>
+                            <Text
+                              size="xs"
+                              fw={500}
+                              tt="capitalize"
+                              className="text-md max:w-1/5 w-1/5 bg-[#DCE8F2] p-3 "
+                            >
+                              {addSpacesToCamelCase(fieldKey)}:
+                            </Text>
+                            <Text size="sm" tt="capitalize">
+                              {data[selected][fieldKey]}
+                            </Text>
+                          </Flex>
+                        </>
+                      )}
                     {data[selected][fieldKey] !== null &&
                       typeof data[selected][fieldKey] === 'object' &&
                       fieldKey !== 'invoiceIds' && (
@@ -296,6 +326,7 @@ function FormPreview({ data }: { data: any }) {
                         </Flex>
                       )}
                   </Box>
+
                   <Divider />
                 </>
               );

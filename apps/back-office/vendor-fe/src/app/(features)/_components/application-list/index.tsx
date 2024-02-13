@@ -1,30 +1,26 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import { useLazyGetAllVendorRequestsQuery } from '@/store/api/vendor_request_handler/new-registration-api';
 import {
-  Box,
-  Text,
-  Flex,
-  Skeleton,
   Avatar,
-  Tooltip,
+  Box,
+  Flex,
   Group,
   Pagination,
+  Skeleton,
+  Text,
+  Tooltip,
 } from '@mantine/core';
-import {
-  IconTicket,
-  IconFileInvoice,
-  IconTag,
-  IconClockHour2,
-} from '@tabler/icons-react';
 import { Section, logger } from '@megp/core-fe';
-import {
-  useGetAllVendorRequestsQuery,
-  useLazyGetAllVendorRequestsQuery,
-} from '@/store/api/vendor_request_handler/new-registration-api';
-import { useRouter } from 'next/navigation';
-import RequestsSidebar from '../requests-sidebar';
-import { formatDateTimeFromString, processCompanyName } from '../../util';
 import { Where } from '@megp/entity';
+import {
+  IconClockHour2,
+  IconFileInvoice,
+  IconTicket,
+} from '@tabler/icons-react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { formatDateTimeFromString, processCompanyName } from '../../util';
+import RequestsSidebar from '../requests-sidebar';
 
 const perPage = 15;
 

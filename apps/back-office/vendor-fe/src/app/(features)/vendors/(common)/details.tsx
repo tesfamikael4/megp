@@ -1,21 +1,13 @@
 'use client';
 import {
-  Avatar,
-  Box,
-  Flex,
-  Paper,
-  ScrollArea,
-  Skeleton,
-  Text,
-} from '@mantine/core';
-import { IconClockHour2, IconTicket, IconProgress } from '@tabler/icons-react';
-import { useParams, useSearchParams } from 'next/navigation';
-import {
   useLazyGetRejectedApplicationDetailQuery,
   useLazyGetVendorDetailQuery,
 } from '@/store/api/vendor_request_handler/approved-rejected-api';
-import VendorDetail from '../../_components/vendor-details';
+import { Avatar, Box, Flex, Paper, Skeleton } from '@mantine/core';
+import { IconClockHour2, IconProgress, IconTicket } from '@tabler/icons-react';
+import { useParams, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
+import VendorDetail from '../../_components/vendor-details';
 
 export default function VendorsDetail() {
   const { vendorId } = useParams();

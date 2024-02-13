@@ -1,9 +1,5 @@
-import { Accordion, Flex, Table, Text } from '@mantine/core';
-import {
-  default as classes,
-  default as tableClasses,
-} from './accordion.module.scss';
-import { renderTable } from '@/app/(features)/util/renderTable';
+import { Accordion, Flex, Text } from '@mantine/core';
+import { default as classes } from './accordion.module.scss';
 
 const tabs = [
   {

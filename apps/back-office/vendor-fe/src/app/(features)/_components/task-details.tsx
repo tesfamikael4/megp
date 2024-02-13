@@ -1,8 +1,7 @@
-import { useGetVendorQuery } from '@/store/api/vendor_request_handler/new-registration-api';
-import { GeneratePdf, Section } from '@megp/core-fe';
-import { Button, Paper, Skeleton, Box, Flex, Grid, Text } from '@mantine/core';
-import React, { useEffect, useState } from 'react';
 import FormPreview from '@/shared/review/review';
+import { Box, Button, Flex, Grid, Text } from '@mantine/core';
+import { GeneratePdf, Section } from '@megp/core-fe';
+import React from 'react';
 
 export default function TaskDetails({
   tracker,
@@ -87,7 +86,9 @@ export default function TaskDetails({
           </Grid>
           <Grid className="mb-4">
             <Grid.Col span={6}>Executed by</Grid.Col>
-            <Grid.Col span={6}>{tracker.handlerName}</Grid.Col>
+            <Grid.Col span={6}>
+              {tracker.handlerUser.firstName} {tracker.handlerUser.lastName}
+            </Grid.Col>
           </Grid>
           <Grid className="mb-4">
             <Grid.Col span={6}>Executed time</Grid.Col>

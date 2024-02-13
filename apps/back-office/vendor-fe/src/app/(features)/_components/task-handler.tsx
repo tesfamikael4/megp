@@ -1,9 +1,6 @@
 'use ';
-import {
-  useGenerateCertificateMutation,
-  useGoToNextStateMutation,
-} from '@/store/api/vendor_request_handler/new-registration-api';
-import { Box, Checkbox, Textarea, Button, Flex } from '@mantine/core';
+import { useGoToNextStateMutation } from '@/store/api/vendor_request_handler/new-registration-api';
+import { Box, Button, Checkbox, Flex, Textarea } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
