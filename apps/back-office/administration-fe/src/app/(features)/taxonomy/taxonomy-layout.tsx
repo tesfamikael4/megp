@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { MantineTree, Section, Tree, TreeConfig } from '@megp/core-fe';
+import { MantineTree, Section, TreeConfig } from '@megp/core-fe';
 import { useState } from 'react';
 import { useDebouncedState, useDisclosure } from '@mantine/hooks';
 import {
@@ -8,7 +8,6 @@ import {
   Button,
   Card,
   Flex,
-  List,
   Modal,
   ScrollArea,
   Text,
@@ -63,6 +62,12 @@ const TaxonomyLayout = () => {
   };
 
   const queryOptions: CollectionQuery = {
+    orderBy: [
+      {
+        column: 'code',
+        direction: 'ASC',
+      },
+    ],
     where: [
       [
         {
@@ -144,7 +149,7 @@ const TaxonomyLayout = () => {
           <Flex justify="flex-end" mb="md" mt="md">
             <TextInput
               className={'w-full'}
-              leftSection={<IconSearch size="sm" stroke={1.5} />}
+              leftSection={<IconSearch size={15} stroke={1.5} />}
               miw={300}
               onChange={(event) => {
                 setSearch(event.currentTarget.value);

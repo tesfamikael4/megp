@@ -85,6 +85,11 @@ export function List<T>({
                   value: search,
                   operator: 'LIKE',
                 },
+                {
+                  column: `code`,
+                  value: search,
+                  operator: 'LIKE',
+                },
               ],
             ]
           : [],

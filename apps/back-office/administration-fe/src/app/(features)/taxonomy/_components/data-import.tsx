@@ -11,7 +11,7 @@ const DataImport = ({
   error: string | undefined;
 }) => {
   const [, setFileName] = useState('');
-  const [, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const convertCSVToJSON = (csvContent) => {
     Papa.parse(csvContent, {
@@ -53,6 +53,7 @@ const DataImport = ({
         withAsterisk
         error={error ? error : null}
       />
+      {isLoading && <p>Uploading...</p>}
     </Box>
   );
 };
