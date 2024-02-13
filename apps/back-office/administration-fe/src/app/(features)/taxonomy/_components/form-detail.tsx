@@ -29,6 +29,7 @@ export function FormDetail({ mode, refetch, close }: FormDetailProps) {
   const taxonomySchema: ZodType<Partial<Taxonomy>> = z.object({
     name: z.string().min(1, { message: 'This field is required' }),
     version: z.string().min(1, { message: 'This field is required' }),
+
     upload: z
       .any()
       .refine((val) => val !== '' || val.length > 0, 'The Field is required'),
@@ -71,13 +72,17 @@ export function FormDetail({ mode, refetch, close }: FormDetailProps) {
           close();
         });
     } catch (err) {
-      notifications.show({
-        message:
-          err?.status === 500
-            ? 'Something went wrong when saving Taxonomy'
-            : err?.status === 413
+      const errorMessage =
+        err?.status === 500
+          ? 'Something went wrong when saving Taxonomy'
+          : err?.status === 413
             ? "The file you're trying to upload is too large."
-            : err?.data?.message,
+            : err?.status === 409
+              ? 'Version already exists'
+              : err?.data?.message || 'An unknown error occurred';
+
+      notifications.show({
+        message: errorMessage,
         title: 'Error',
         color: 'red',
       });
