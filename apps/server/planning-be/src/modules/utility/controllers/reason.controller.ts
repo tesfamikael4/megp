@@ -5,7 +5,7 @@ import { EntityCrudController } from 'src/shared/controller';
 import { Reason } from 'src/entities/reason.entity';
 import { ReasonService } from '../services/reason.service';
 import { ApiPaginatedResponse } from 'src/shared/api-data';
-import { AllowAnonymous } from 'src/shared/authorization';
+import { AllowAnonymous, CurrentUser } from 'src/shared/authorization';
 
 const options: EntityCrudOptions = {};
 
@@ -16,14 +16,12 @@ export class ReasonController extends EntityCrudController<Reason>(options) {
     super(reasonService);
   }
 
-  // @AllowAnonymous()
-  // @Post('pdf-generate')
-  // async pdfGenerate(@Body() hash, @Res() response) {
-  //   const buffer = await this.reasonService.pdfGenerator();
-  //   response.setHeader('Content-Type', 'application/pdf');
-  //   response.setHeader('Content-Disposition', 'attachment; filename="example.pdf"');
-
-  //   // Send buffer as response
-  //   response.send(buffer);
-  // }
+  @Post('isValid')
+  async isValid(@Body() data, @CurrentUser() user) {
+    await this.reasonService.isValid(
+      data.objectId,
+      data.type,
+      user.organization.id,
+    );
+  }
 }

@@ -173,13 +173,16 @@ export class InstanceService extends EntityCrudService<Instance> {
     const activity = await this.repositoryActivity.findOne({
       where: {
         name: key,
-        organizationId,
-      },
-      relations: {
-        steps: true,
       },
     });
-    if (activity.steps) {
+
+    const stepsCount = await this.repositoryStep.count({
+      where: {
+        activityId: activity.id,
+        organizationId,
+      },
+    });
+    if (stepsCount > 0) {
       return true;
     }
     return false;

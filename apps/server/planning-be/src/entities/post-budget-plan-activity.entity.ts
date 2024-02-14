@@ -21,6 +21,7 @@ import { PostBudgetRequisitioner } from './post-budget-plan-requisitioner.entity
 import { PostProcurementMechanism } from './post-procurement-mechanism.entity';
 import { OrgAudit } from 'src/shared/entities';
 import { Budget } from './budget.entity';
+import { Reason } from './reason.entity';
 
 @Unique(['procurementReference'])
 @Entity({ name: 'post_budget_plan_activities' })
@@ -90,6 +91,9 @@ export class PostBudgetPlanActivity extends OrgAudit {
     (activityBudgetLine) => activityBudgetLine.postBudgetPlanActivity,
   )
   activityBudgetLines: ActivityBudgetLine[];
+
+  @OneToMany(() => Reason, (reasons) => reasons.preBudgetPlanActivity)
+  reasons: Reason[];
 
   @Column()
   name: string;

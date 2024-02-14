@@ -14,6 +14,34 @@ export class ReasonService extends EntityCrudService<Reason> {
     super(repositoryReason);
   }
 
+  async create(itemData: any, req?: any): Promise<any> {
+    if (req?.user?.organization) {
+      itemData.organizationId = req.user.organization.id;
+    }
+
+    const reason = await this.repositoryReason.find({
+      where: {
+        objectId: itemData.objectId,
+        type: itemData.type,
+      },
+    });
+    await this.repositoryReason.delete(reason as any);
+    const item = this.repositoryReason.create(itemData);
+    await this.repositoryReason.insert(item);
+    return item;
+  }
+
+  async isValid(objectId: string, type: string, organizationId: string) {
+    const reason = await this.repositoryReason.find({
+      where: {
+        objectId,
+        type,
+        organizationId,
+      },
+    });
+    await this.repositoryReason.delete(reason as any);
+  }
+
   async pdfGenerator(data) {
     const result = await CertificatePDF({ data });
     return result;
