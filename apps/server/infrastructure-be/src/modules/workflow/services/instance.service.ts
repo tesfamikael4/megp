@@ -105,6 +105,28 @@ export class InstanceService extends EntityCrudService<Instance> {
     return instance;
   }
 
+  async findCurrentInstanceByItemId(
+    data: any,
+    organizationId: string,
+  ): Promise<Instance> {
+    const activity = await this.repositoryActivity.findOne({
+      where: {
+        name: data.key,
+        organizationId,
+      },
+    });
+    const instance = await this.repositoryInstance.findOne({
+      where: { activityId: activity.id, organizationId, itemId: data.itemId },
+      relations: {
+        step: true,
+      },
+      order: {
+        createdAt: 'DESC',
+      },
+    });
+    return instance;
+  }
+
   async findCurrentInstance(
     activityId: string,
     organizationId: string,
@@ -145,5 +167,21 @@ export class InstanceService extends EntityCrudService<Instance> {
     });
 
     return instance;
+  }
+
+  async canSubmit(key: string, organizationId: string) {
+    const activity = await this.repositoryActivity.findOne({
+      where: {
+        name: key,
+        organizationId,
+      },
+      relations: {
+        steps: true,
+      },
+    });
+    if (activity.steps) {
+      return true;
+    }
+    return false;
   }
 }
