@@ -1,10 +1,11 @@
-import { Body, Controller, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { ExtraCrudController } from 'src/shared/controller';
 import { Budget } from 'src/entities/budget.entity';
 import { BudgetService } from '../services/budget.service';
 import { ApiPaginatedResponse } from 'src/shared/api-data';
+import { CurrentUser } from 'src/shared/authorization';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'appId',
@@ -21,5 +22,16 @@ export class BudgetController extends ExtraCrudController<Budget>(options) {
   @ApiPaginatedResponse(Budget)
   async bulkCreate(@Body() budgets: any) {
     return await this.budgetService.bulkCreate(budgets);
+  }
+
+  @Get('/summation/:budgetYear')
+  async getSummation(
+    @CurrentUser() user: any,
+    @Param('budgetYear') budgetYear: string,
+  ) {
+    return await this.budgetService.getSummation(
+      user.organization.id,
+      budgetYear,
+    );
   }
 }
