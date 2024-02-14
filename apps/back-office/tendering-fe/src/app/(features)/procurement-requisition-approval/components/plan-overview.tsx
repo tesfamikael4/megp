@@ -21,7 +21,17 @@ export function PlanOverview() {
   } = useGetWorkflowInstanceQuery('0c659098-8a2c-4919-8be8-60cce7ee8f19');
 
   useEffect(() => {
-    if (isWorkflowInstanceSuccess && workflowInstance) listById(undefined);
+    listById({
+      where: [
+        [
+          {
+            column: 'status',
+            value: 'Submitted',
+            operator: '=',
+          },
+        ],
+      ],
+    });
   }, [isWorkflowInstanceSuccess, listById, workflowInstance]);
 
   return (
