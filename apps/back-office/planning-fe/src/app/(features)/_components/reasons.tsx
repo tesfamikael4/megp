@@ -38,7 +38,7 @@ export const Reasons = ({ justification }: { justification: any }) => {
       await addJustification({
         ...data,
         objectId: justification[currentKey].objectId,
-        activityId: justification[currentKey].activityId,
+        preBudgetPlanActivityId: justification[currentKey].activityId,
         type: currentKey,
       }).unwrap();
       notify('Success', 'Justification added successfully');
@@ -66,61 +66,59 @@ export const Reasons = ({ justification }: { justification: any }) => {
             ))}
           </Tabs.List>
           {Object.entries(justification).map(([key, value]: any) => (
-            <>
-              <Tabs.Panel value={key} className="p-2">
-                <Alert
-                  variant="light"
-                  color="red"
-                  title="Warning"
-                  icon={<IconInfoCircle />}
-                  className="mb-2"
-                >
-                  {justification[key].message}
-                </Alert>
+            <Tabs.Panel value={key} className="p-2" key={key}>
+              <Alert
+                variant="light"
+                color="red"
+                title="Warning"
+                icon={<IconInfoCircle />}
+                className="mb-2"
+              >
+                {justification[key].message}
+              </Alert>
 
-                <Stack>
-                  <Controller
-                    name="reason"
-                    control={control}
-                    render={({ field }) => (
-                      <Select
-                        withCheckIcon={false}
-                        {...field}
-                        data={justification[key]?.possibleReasons ?? ['Other']}
-                        label="Possible Reasons"
-                        withAsterisk
-                        error={errors.reason?.message?.toString()}
-                      />
-                    )}
-                  />
-                  <Controller
-                    control={control}
-                    name="remark"
-                    render={({ field }) => (
-                      <Textarea
-                        {...field}
-                        label="Remark"
-                        withAsterisk
-                        error={errors.remark?.message?.toString()}
-                      />
-                    )}
-                  />
+              <Stack>
+                <Controller
+                  name="reason"
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      withCheckIcon={false}
+                      {...field}
+                      data={justification[key]?.possibleReasons ?? ['Other']}
+                      label="Possible Reasons"
+                      withAsterisk
+                      error={errors.reason?.message?.toString()}
+                    />
+                  )}
+                />
+                <Controller
+                  control={control}
+                  name="remark"
+                  render={({ field }) => (
+                    <Textarea
+                      {...field}
+                      label="Remark"
+                      withAsterisk
+                      error={errors.remark?.message?.toString()}
+                    />
+                  )}
+                />
 
-                  {/* <FileInput label="Attachment" /> */}
-                  <Group justify="end">
-                    <Button
-                      onClick={() => {
-                        setCurrentKey(key);
-                        handleSubmit(onSubmit, onError)();
-                      }}
-                      loading={isLoading}
-                    >
-                      Submit
-                    </Button>
-                  </Group>
-                </Stack>
-              </Tabs.Panel>
-            </>
+                {/* <FileInput label="Attachment" /> */}
+                <Group justify="end">
+                  <Button
+                    onClick={() => {
+                      setCurrentKey(key);
+                      handleSubmit(onSubmit, onError)();
+                    }}
+                    loading={isLoading}
+                  >
+                    Submit
+                  </Button>
+                </Group>
+              </Stack>
+            </Tabs.Panel>
           ))}
         </Tabs>
       </>

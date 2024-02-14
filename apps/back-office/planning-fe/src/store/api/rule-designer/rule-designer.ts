@@ -18,7 +18,17 @@ export const ruleApi = createApi({
         body: data.data,
       }),
     }),
+    validateTargetGroup: builder.mutation<any, any>({
+      query: (data) => ({
+        url: `rule-designer/bulk-validate`,
+        method: 'POST',
+        body: data,
+      }),
+    }),
   }),
 });
 
-export const { useValidateProcurementMethodMutation } = ruleApi;
+export const {
+  useValidateProcurementMethodMutation,
+  useValidateTargetGroupMutation,
+} = ruleApi;
