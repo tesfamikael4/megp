@@ -41,9 +41,4 @@ export class ReasonService extends EntityCrudService<Reason> {
     });
     await this.repositoryReason.delete(reason as any);
   }
-
-  async pdfGenerator(data) {
-    const result = await CertificatePDF({ data });
-    return result;
-  }
 }

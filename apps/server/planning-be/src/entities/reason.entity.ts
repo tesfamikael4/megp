@@ -36,7 +36,7 @@ export class Reason extends OrgAudit {
     () => PostBudgetPlanActivity,
     (postBudgetPlanActivity) => postBudgetPlanActivity.reasons,
   )
-  @JoinColumn({ name: 'preBudgetPlanActivityId' })
+  @JoinColumn({ name: 'postBudgetPlanActivityId' })
   public postBudgetPlanActivity: PostBudgetPlanActivity;
 
   @Column({ type: 'uuid' })
