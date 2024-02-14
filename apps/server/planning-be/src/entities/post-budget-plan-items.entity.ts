@@ -49,9 +49,6 @@ export class PostBudgetPlanItem extends OrgAudit {
   @Column()
   description: string;
 
-  @Column({ type: 'json', nullable: true })
-  specification: JSON;
-
   @Column({ default: 0, type: 'decimal', precision: 14, scale: 2 })
   unitPrice: number;
 
