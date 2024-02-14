@@ -16,6 +16,7 @@ import {
   rem,
   Flex,
   Loader,
+  Text,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import {
@@ -29,9 +30,9 @@ import { useRouter } from 'next/navigation';
 const links = [
   { link: '/', label: 'Home' },
 
-  { link: '/vendor/tender', label: 'Tender' },
-  { link: '/vendor/dashboard', label: 'Vendor' },
-
+  { link: '/vendor/tender', label: 'Procurement Notice' },
+  { link: '/vendor/dashboard', label: 'Plans' },
+  { link: '/vendor/dashboard', label: 'Contracts' },
   {
     link: '#more',
     label: 'More',
@@ -115,7 +116,7 @@ function Header() {
 
   return (
     <header className={styles.header}>
-      <div className="container mx-auto">
+      <div className="w-[80%] mx-auto">
         <div className={styles.inner}>
           <Burger
             opened={drawerOpened}
@@ -124,9 +125,18 @@ function Header() {
             hiddenFrom="sm"
             mr="lg"
           />
-          <Image src="/ppda.png" alt="logo" width="50" height="15" />
           <Flex justify="space-between" w="100%" ml="xl">
-            <Group gap={5} visibleFrom="sm">
+            <Flex align={'center'} gap={'xs'}>
+              <Image
+                src="/ppda-svg.svg"
+                alt="logo"
+                height="32"
+                width="32"
+                className="object-contain"
+              />
+              <Text className="text-xl font-bold">PPDA</Text>
+            </Flex>
+            <Group gap="xl" visibleFrom="sm">
               {items}
             </Group>
             {user && (
@@ -161,11 +171,11 @@ function Header() {
             )}
             {!user && (
               <Group visibleFrom="sm">
-                <Button component={Link} href="/auth/login">
-                  Sign in
+                <Button component={Link} variant="outline" href="/auth/login">
+                  Login
                 </Button>
-                <Button component={Link} variant="outline" href="/auth/signup">
-                  Create Account
+                <Button component={Link} href="/auth/signup">
+                  Sign Up
                 </Button>
               </Group>
             )}

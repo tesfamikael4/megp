@@ -9,7 +9,7 @@ interface Props {
 }
 
 export default function VendorLayout({ children }: Props) {
-  const [isSidebarOpen, setCollapse] = useState(false);
+  const [isSidebarOpen] = useState(false);
 
   return (
     <Protected>

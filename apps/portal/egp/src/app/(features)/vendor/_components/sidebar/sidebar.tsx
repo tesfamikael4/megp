@@ -1,11 +1,12 @@
 'use client';
 import React from 'react';
-import { Box, NavLink } from '@mantine/core';
+import { Box, NavLink, UnstyledButton } from '@mantine/core';
 import { usePathname, useRouter } from 'next/navigation'; // Updated import
 import {
   IconBriefcase,
   IconDashboard,
   IconHeartHandshake,
+  IconListDetails,
   IconNotification,
   IconUserCog,
 } from '@tabler/icons-react';
@@ -24,12 +25,12 @@ export const sidebarLinks: SidebarLinks[] = [
     link: '/vendor/dashboard',
   },
   {
-    label: 'Tender ',
+    label: 'Procurement Notice ',
     icon: IconNotification,
     link: '/vendor/tender',
   },
   {
-    label: 'Contract',
+    label: 'Plans',
     icon: IconHeartHandshake,
     link: '/vendor/contract',
   },
@@ -40,12 +41,12 @@ export const sidebarLinks: SidebarLinks[] = [
   },
   {
     label: 'Track Applications',
-    icon: IconUserCog,
+    icon: IconListDetails,
     link: '/vendor/registration/track-applications',
   },
   {
     label: 'My Briefcase',
-    icon: IconUserCog,
+    icon: IconBriefcase,
     link: '/vendor/registration/my-briefcase',
   },
 ];
@@ -56,16 +57,20 @@ function createNavLinks(
   router: any,
 ) {
   return links?.map((link) => (
-    <NavLink
-      label={link.label}
-      leftSection={link.icon && <link.icon size="1.2rem" stroke={1.5} />}
+    <UnstyledButton
       key={link.label}
-      active={currentPath === link.link}
+      className={`${styles.mainLink} ${currentPath === link.link && styles.activeLink}`}
       onClick={() => link.link && router.push(link.link)}
-      className={!link.icon ? styles.sidebarChildren : ''}
     >
-      {createNavLinks(link.links, currentPath, router)}
-    </NavLink>
+      <NavLink
+        label={link.label}
+        leftSection={link.icon && <link.icon size="1.2rem" stroke={1.5} />}
+        key={link.label}
+        className={!link.icon ? styles.sidebarChildren : ''}
+      >
+        {createNavLinks(link.links, currentPath, router)}
+      </NavLink>
+    </UnstyledButton>
   ));
 }
 function Sidebar() {
@@ -74,7 +79,9 @@ function Sidebar() {
 
   return (
     <Box className={styles.sidebarMain}>
-      {createNavLinks(sidebarLinks, path, router)}
+      <div className={styles.mainLinks}>
+        {createNavLinks(sidebarLinks, path, router)}
+      </div>
     </Box>
   );
 }

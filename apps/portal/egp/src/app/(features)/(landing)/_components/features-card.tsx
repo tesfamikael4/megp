@@ -1,8 +1,18 @@
 'use client';
 
-import { Card, Divider, Group, Text } from '@mantine/core';
-import { ReactElement } from 'react';
+import {
+  Box,
+  Card,
+  Divider,
+  Flex,
+  Group,
+  Text,
+  ThemeIcon,
+  rem,
+} from '@mantine/core';
+import { ReactElement, useState } from 'react';
 import styles from './landing.module.scss';
+import { IconArrowRight } from '@tabler/icons-react';
 
 type FeaturesCardProps = {
   color: string;
@@ -12,18 +22,33 @@ type FeaturesCardProps = {
 };
 
 export const FeaturesCard = (props: FeaturesCardProps) => {
+  const [showArrow, setShowArrow] = useState(false);
   return (
-    <Card withBorder w={300} p={0} h="100%" className={styles.featureCard}>
-      <Card.Section>
-        <Group p={30}>
+    <Box
+      style={{ position: 'relative' }}
+      className="cursor-pointer w-full"
+      onMouseEnter={() => setShowArrow(true)}
+      onMouseLeave={() => setShowArrow(false)}
+      bg={'#F5FBFE'}
+      px={rem(20)}
+      py={rem(20)}
+    >
+      <Flex columnGap={rem(10)} align="center" className={styles.card}>
+        <ThemeIcon color={props.color} variant="light" radius="md" size="lg">
           {props.icon}
-          <Text fw="bold">{props.title}</Text>
-        </Group>
-      </Card.Section>
-      <Divider size="xl" color={props.color} />
-      <Card.Section p={30}>
-        <Text size="sm">{props.description}</Text>
-      </Card.Section>
-    </Card>
+        </ThemeIcon>
+        <Text className={styles.title}>{props.title}</Text>
+      </Flex>
+      <Divider size={'md'} className="my-4" color={props.color} />
+      <Text size="sm">{props.description}</Text>
+
+      {showArrow && (
+        <IconArrowRight
+          size={30}
+          color={props.color}
+          className="absolute bottom-1 right-2"
+        />
+      )}
+    </Box>
   );
 };
