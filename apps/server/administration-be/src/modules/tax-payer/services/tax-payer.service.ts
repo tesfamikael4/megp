@@ -98,8 +98,9 @@ export class TaxPayerService extends EntityCrudService<TaxPayer> {
       // Handle network errors, timeouts.
       if (axios.isAxiosError(error)) {
         const axiosError = error as AxiosError;
-        const errorMessage = `api_failed: ${axiosError.response?.status || 'unknown'
-          } : ${axiosError.message}`;
+        const errorMessage = `api_failed: ${
+          axiosError.response?.status || 'unknown'
+        } : ${axiosError.message}`;
         throw new Error(errorMessage);
       } else {
         throw error;

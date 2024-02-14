@@ -1,14 +1,16 @@
 {
   "extends": "@megp/tsconfig/nextjs.json",
   "compilerOptions": {
-    "plugins": [{ "name": "next" }],
+    "baseUrl": "src/",
     "paths": {
-      "@/store/*": ["./src/store/*"],
-      "@/models/*": ["./src/models/*"],
-      "@/shared/*": ["./src/app/_shared/*"],
-      "@/*": ["./src/*"]
-    }
+      "@/app/*": ["app/*"],
+      "@/config/*": ["config/*"],
+      "@/models/*": ["models/*"],
+      "@/contexts/*": ["contexts/*"],
+      "@/store/*": ["store/*"],
+      "@/shared/*": ["shared/*"],
+    },
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
 }

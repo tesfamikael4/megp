@@ -5,7 +5,7 @@ import { ShellProvider } from './shell';
 import Protected from './protected';
 
 export const metadata: Metadata = {
-  title: 'Tendering',
+  title: 'M-egp | Tendering',
   description: 'Tendering',
   icons: {
     icon: '/tendering/favicon/android-chrome-512x512.png',
