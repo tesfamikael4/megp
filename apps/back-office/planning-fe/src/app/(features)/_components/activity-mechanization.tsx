@@ -224,7 +224,13 @@ export const ActivityMechanization = ({
         setJustifications({});
       }
     }
-  }, [isValidationSuccess, justifications, validationResult]);
+  }, [
+    id,
+    isValidationSuccess,
+    justifications,
+    procurementMethodId,
+    validationResult,
+  ]);
   useEffect(() => {
     (fundingSource == 'Internal Revenue' || fundingSource == 'Treasury') &&
       setDonor([]);

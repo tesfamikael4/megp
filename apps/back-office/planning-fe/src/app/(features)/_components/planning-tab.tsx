@@ -34,6 +34,7 @@ import {
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { StatisticCard } from './statistic-card';
+import { useCanSubmitQuery } from '@/store/api/workflow/workflow.api';
 
 const PlanningTab = ({ page }: { page: 'pre' | 'post' }) => {
   const { budgetYear } = useParams();
@@ -76,6 +77,10 @@ const PlanningTab = ({ page }: { page: 'pre' | 'post' }) => {
   const [approve, { isLoading }] = useApprovePreBudgetMutation();
   const [approvePost, { isLoading: isPostApproveLoading }] =
     useApprovePostBudgetMutation();
+
+  const { data: canSubmit } = useCanSubmitQuery(
+    page == 'pre' ? 'preBudgetApproval' : 'postBudgetApproval',
+  );
 
   // helper functions
   const createApp = () => {
@@ -148,10 +153,18 @@ const PlanningTab = ({ page }: { page: 'pre' | 'post' }) => {
   //use Effect
   useEffect(() => {
     if (page == 'pre') {
-      getPre({} as any);
+      getPre({
+        orderBy: [{ column: 'createdAt', direction: 'ASC' }],
+        skip: 0,
+        take: 2,
+      });
     }
     if (page == 'post') {
-      getPost({} as any);
+      getPost({
+        orderBy: [{ column: 'createdAt', direction: 'ASC' }],
+        skip: 0,
+        take: 2,
+      });
     }
   }, [getPost, getPre, page]);
 
@@ -236,8 +249,9 @@ const PlanningTab = ({ page }: { page: 'pre' | 'post' }) => {
               onClick={submitPlan}
               loading={isLoading || isPostApproveLoading}
               disabled={
-                (selectedYear as any)?.status != 'Draft' &&
-                (selectedYear as any)?.status != 'Adjust'
+                ((selectedYear as any)?.status != 'Draft' &&
+                  (selectedYear as any)?.status != 'Adjust') ||
+                canSubmit == false
               }
             >
               {(selectedYear as any)?.status != 'Draft' &&

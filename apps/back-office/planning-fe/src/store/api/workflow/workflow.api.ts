@@ -13,11 +13,27 @@ export const workflowApi = createApi({
     getWorkflowInstance: builder.query<any, string>({
       query: (id: string) => `instance/${id}`,
     }),
+    getCurrentWorkflowInstance: builder.query<any, any>({
+      query: (data) => ({
+        url: `instance/findCurrentInstanceByItemId`,
+        method: 'GET',
+        body: data,
+      }),
+    }),
     getActivities: builder.query<any, any>({
       query: () => `activities`,
+    }),
+    canSubmit: builder.query<any, string>({
+      query: (key: string) => `instance/canSubmit/${key}`,
     }),
   }),
 });
 
-export const { useGetWorkflowInstanceQuery, useGetActivitiesQuery } =
-  workflowApi;
+export const {
+  useGetWorkflowInstanceQuery,
+  useGetActivitiesQuery,
+  useLazyGetCurrentWorkflowInstanceQuery,
+  useGetCurrentWorkflowInstanceQuery,
+  useCanSubmitQuery,
+  useLazyCanSubmitQuery,
+} = workflowApi;

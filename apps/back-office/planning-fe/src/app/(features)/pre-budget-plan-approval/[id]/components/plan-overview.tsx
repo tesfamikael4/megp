@@ -8,7 +8,10 @@ import { Items } from './items';
 import { Requisitioner } from './requisitioner';
 import { Timeline } from './timeline';
 import { Document } from './document';
-import { useGetWorkflowInstanceQuery } from '@/store/api/workflow/workflow.api';
+import {
+  useGetCurrentWorkflowInstanceQuery,
+  useGetWorkflowInstanceQuery,
+} from '@/store/api/workflow/workflow.api';
 import { useParams } from 'next/navigation';
 import { ProcurementMethod } from './procurement-method';
 
@@ -21,7 +24,11 @@ export function PlanOverview() {
     data: workflowInstance,
     isLoading: isWorkflowInstanceLoading,
     // isSuccess: isWorkflowInstanceSuccess,
-  } = useGetWorkflowInstanceQuery('1f344819-d64d-4986-b192-ee06f5bf0e98');
+    // } = useGetWorkflowInstanceQuery('1f344819-d64d-4986-b192-ee06f5bf0e98');
+  } = useGetCurrentWorkflowInstanceQuery({
+    itemId: id,
+    key: 'preBudgetApproval',
+  });
 
   useEffect(() => {
     listById({ id: id as string, collectionQuery: { includes: ['reasons'] } });

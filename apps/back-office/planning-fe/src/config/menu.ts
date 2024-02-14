@@ -1,34 +1,37 @@
 import { MenuItem } from '@megp/core-fe';
 import {
   IconAdjustmentsHorizontal,
-  IconArrowBackUpDouble,
   IconArrowFork,
-  IconCalendarEvent,
   IconCalendarStats,
   IconCoins,
-  IconGizmo,
   IconReportAnalytics,
 } from '@tabler/icons-react';
 
 export const Menu: MenuItem[] = [
   {
-    label: 'Pre Budget Plan',
+    label: 'APP',
     icon: IconCalendarStats,
-    link: '/pre-budget-plan',
-    permission: [
-      'planning:managePrePlan',
-      'planning:managePrePlanActivity',
-      'planning:managePrePlanItem',
-    ],
-  },
-  {
-    label: 'Post Budget Plan',
-    icon: IconCalendarEvent,
-    link: '/post-budget-plan',
-    permission: [
-      'planning:managePostPlan',
-      'planning:managePostPlanActivity',
-      'planning:managePostPlanItem',
+    links: [
+      {
+        label: 'Pre Budget Plan',
+        // icon: IconCalendarStats,
+        link: '/pre-budget-plan',
+        permission: [
+          'planning:managePrePlan',
+          'planning:managePrePlanActivity',
+          'planning:managePrePlanItem',
+        ],
+      },
+      {
+        label: 'Post Budget Plan',
+        // icon: IconCalendarEvent,
+        link: '/post-budget-plan',
+        permission: [
+          'planning:managePostPlan',
+          'planning:managePostPlanActivity',
+          'planning:managePostPlanItem',
+        ],
+      },
     ],
   },
   {
@@ -42,18 +45,21 @@ export const Menu: MenuItem[] = [
     icon: IconReportAnalytics,
     link: '/report',
   },
-
   {
-    label: 'Pre Budget Plan Approval',
-    link: '/pre-budget-plan-approval',
+    label: 'Approval',
     icon: IconArrowFork,
-    permission: ['planning:approvePrePlan'],
-  },
-  {
-    label: 'Post Budget Plan Approval',
-    link: '/post-budget-plan-approval',
-    icon: IconArrowFork,
-    permission: ['planning:approvePostPlan'],
+    links: [
+      {
+        label: 'Pre Budget Plan Approval',
+        link: '/pre-budget-plan-approval',
+        permission: ['planning:approvePrePlan'],
+      },
+      {
+        label: 'Post Budget Plan Approval',
+        link: '/post-budget-plan-approval',
+        permission: ['planning:approvePostPlan'],
+      },
+    ],
   },
   {
     label: 'Settings',

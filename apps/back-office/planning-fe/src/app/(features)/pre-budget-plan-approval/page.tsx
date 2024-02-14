@@ -3,13 +3,14 @@
 import { ExpandableTable } from '@/app/(features)/_components/expandable-table';
 import { Section, logger } from '@megp/core-fe';
 import { useRouter } from 'next/navigation';
-import { ActionIcon } from '@mantine/core';
+import { ActionIcon, Box, Loader, LoadingOverlay } from '@mantine/core';
 import { IconChevronRight } from '@tabler/icons-react';
 import { useLazyGetPreBudgetPlansQuery } from '@/store/api/pre-budget-plan/pre-budget-plan.api';
 import { useEffect } from 'react';
 
 export default function PreBudgetPlanApproval() {
-  const [getPlan, { data }] = useLazyGetPreBudgetPlansQuery();
+  const [getPlan, { data, isSuccess, isLoading }] =
+    useLazyGetPreBudgetPlansQuery();
   const router = useRouter();
 
   useEffect(() => {
@@ -26,57 +27,16 @@ export default function PreBudgetPlanApproval() {
     });
   }, []);
 
-  const config = {
-    columns: [
-      {
-        accessor: 'planName',
-        title: 'Plan Name',
-        sortable: true,
-        render: (record) => <p>{record.app.planName}</p>,
-      },
-      {
-        accessor: 'budgetYear',
-        title: 'Budget Year',
-        width: 300,
-        sortable: true,
-        render: (record) => <p>{record.app.budgetYear}</p>,
-      },
-      {
-        accessor: 'id',
-        title: '',
-        render: (record) => (
-          <ActionIcon
-            variant="outline"
-            onClick={(e) => {
-              e.stopPropagation();
-              router.push(`/pre-budget-plan-approval/${record.id}`);
-            }}
-          >
-            <IconChevronRight />
-          </ActionIcon>
-        ),
-        width: 50,
-      },
-    ],
-    isSearchable: true,
-    primaryColumn: 'name',
-  };
+  useEffect(() => {
+    if (isSuccess && data.total > 0) {
+      router.push(`/pre-budget-plan-approval/${data.items[0].id}`);
+    }
+  }, [isSuccess, data, router]);
 
-  const onRequestChange = (request: any) => {
-    logger.log({ request });
-  };
   return (
-    <Section
-      title="Pre Budget Plans"
-      subTitle="Pre Budget Plans to be approved"
-      collapsible={false}
-    >
-      <ExpandableTable
-        config={config}
-        data={data?.items ?? []}
-        total={data?.total ?? 0}
-        onRequestChange={onRequestChange}
-      />
-    </Section>
+    <div className=" flex justify-center items-center h-[80vh] w-full">
+      {isLoading && <Loader />}
+      {data?.total == 0 && <p>No Submitted Pre Budget Plan Found</p>}
+    </div>
   );
 }
