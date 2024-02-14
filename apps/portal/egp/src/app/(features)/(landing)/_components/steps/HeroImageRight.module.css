@@ -1,16 +1,9 @@
 .root {
-  /* background-color: #fff;
-  background-size: cover;
-  background-position: center;
-  background-image: url('/supplier.png');
-  padding-bottom: calc(var(--mantine-spacing-xl) * 4);
-  background-size: 100%, auto;
-  background-repeat: no-repeat;
-  overflow: unset; */
   position: relative;
   background-image: url('/supplier.png');
   background-size: cover;
   background-position: center;
+  background-color: brown;
 }
 
 .stepTitle {
@@ -21,8 +14,6 @@
   }
 }
 .inner {
-  display: flex;
-
   @media (max-width: --mantine-breakpoint-sm) {
     flex-direction: column;
   }
@@ -37,7 +28,7 @@
 .content {
   padding-top: calc(var(--mantine-spacing-xl) * 2);
   padding-bottom: calc(var(--mantine-spacing-xl) * 2);
-  margin-right: calc(var(--mantine-spacing-xl) * 3);
+  /* margin-right: calc(var(--mantine-spacing-xl) * 3); */
 
   @media (max-width: --mantine-breakpoint-sm) {
     margin-right: 0;

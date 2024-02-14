@@ -55,23 +55,22 @@ export default function Home() {
               direction={'column'}
               justify={'center'}
               my={40}
-              className="px-10 xl:px-5 w-full xl:w-[80%] mx-auto"
+              // className="px-10 xl:px-5 w-full xl:w-[80%] mx-auto"
             >
-              <p className={styles.featureTitle}>
-                Access Business Opportunities{' '}
-              </p>
-              <p className={styles.featureSubtitle}>
-                The eGP platform avails various online services and solutions to
-                help you participate in government procurement.
-              </p>
-              <Center>
+              <Container size={'xl'}>
+                <p className={styles.featureTitle}>
+                  Access Business Opportunities{' '}
+                </p>
+                <p className={styles.featureSubtitle}>
+                  The eGP platform avails various online services and solutions
+                  to help you participate in government procurement.
+                </p>
                 <SimpleGrid
                   mt={60}
                   cols={{ base: 1, sm: 2, md: 3 }}
                   spacing={{ base: 'xl', md: 60 }}
                   verticalSpacing={{ base: 'xl', md: 50 }}
-                  className=" px-10 mb-3"
-                  mx={'auto'}
+                  className="mb-3"
                 >
                   <FeaturesCard
                     icon={<IconUserPlus />}
@@ -111,29 +110,31 @@ export default function Home() {
                     description=" Access various electronic resources related public procurement legislation, standard bidding documents, eGP materials and the like.   "
                   />
                 </SimpleGrid>
-              </Center>
+              </Container>
             </Flex>
           </Box>
-          <StepsSection />
         </>
       )}
+      <StepsSection />
       {/* Latest tenders */}
       <Box bg={'#F5FBFE'} pt={60}>
-        <CardWrapper title="Latest Tenders">
-          {Array.from({ length: 4 }).map((_, index) => (
-            <TenderCard key={index} color={'orange'} />
-          ))}
-        </CardWrapper>
-        <CardWrapper title="Last Offers">
-          {Array.from({ length: 4 }).map((_, index) => (
-            <TenderCard key={index} color={'#F0FFF3'} textColor={'black'} />
-          ))}
-        </CardWrapper>
-        <CardWrapper title="Least Biders">
-          {Array.from({ length: 4 }).map((_, index) => (
-            <TenderCard key={index} color={'red'} register />
-          ))}
-        </CardWrapper>
+        <Container size={'xl'}>
+          <CardWrapper title="Latest Tenders">
+            {Array.from({ length: 4 }).map((_, index) => (
+              <TenderCard key={index} color={'orange'} />
+            ))}
+          </CardWrapper>
+          <CardWrapper title="Last Offers">
+            {Array.from({ length: 4 }).map((_, index) => (
+              <TenderCard key={index} color={'#F0FFF3'} textColor={'black'} />
+            ))}
+          </CardWrapper>
+          <CardWrapper title="Least Biders">
+            {Array.from({ length: 4 }).map((_, index) => (
+              <TenderCard key={index} color={'red'} register />
+            ))}
+          </CardWrapper>
+        </Container>
       </Box>
     </Box>
   );
@@ -147,10 +148,10 @@ const CardWrapper = ({
   children: React.ReactNode;
 }) => {
   return (
-    <Container size={'xl'}>
-      <Flex direction={'column'} justify={'center'} my={40}>
+    <>
+      <Flex direction={'column'} justify={'center'} py={20}>
         <Text
-          className="mx-10 xl:pl-3 border-l-4 border-green-300 flex items-center font-semibold text-xl leading-6 tracking-tight "
+          className=" pl-3 border-l-4 border-green-300 flex items-center font-semibold text-xl leading-6 tracking-tight "
           h={40}
         >
           {title}
@@ -163,15 +164,15 @@ const CardWrapper = ({
         >
           {children}
         </SimpleGrid>
-      </Flex>
-      <Flex align={'center'} justify={'flex-end'}>
+
         <Button
           variant="subtle"
           rightSection={<IconArrowRight size={18} color="green" stroke={1.6} />}
+          className="self-end mt-5"
         >
           View All
         </Button>
       </Flex>
-    </Container>
+    </>
   );
 };

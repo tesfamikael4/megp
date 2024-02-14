@@ -17,6 +17,7 @@ import {
   Flex,
   Loader,
   Text,
+  Container,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import {
@@ -116,16 +117,9 @@ function Header() {
 
   return (
     <header className={styles.header}>
-      <div className="w-[80%] mx-auto">
+      <Container size={'xl'}>
         <div className={styles.inner}>
-          <Burger
-            opened={drawerOpened}
-            onClick={toggleDrawer}
-            size="sm"
-            hiddenFrom="sm"
-            mr="lg"
-          />
-          <Flex justify="space-between" w="100%" ml="xl">
+          <Flex justify="space-between" w="100%">
             <Flex align={'center'} gap={'xs'}>
               <Image
                 src="/ppda-svg.svg"
@@ -136,11 +130,11 @@ function Header() {
               />
               <Text className="text-xl font-bold">PPDA</Text>
             </Flex>
-            <Group gap="xl" visibleFrom="sm">
+            <Group gap="xl" visibleFrom="md">
               {items}
             </Group>
             {user && (
-              <Group visibleFrom="sm">
+              <Group visibleFrom="md">
                 <Menu shadow="md" width={200}>
                   <Menu.Target>
                     <div className="flex cursor-pointer">
@@ -170,7 +164,7 @@ function Header() {
               </Group>
             )}
             {!user && (
-              <Group visibleFrom="sm">
+              <Group visibleFrom="md">
                 <Button component={Link} variant="outline" href="/auth/login">
                   Login
                 </Button>
@@ -180,8 +174,14 @@ function Header() {
               </Group>
             )}
           </Flex>
+          <Burger
+            opened={drawerOpened}
+            onClick={toggleDrawer}
+            size="sm"
+            hiddenFrom="md"
+          />
         </div>
-      </div>
+      </Container>
       <Drawer
         opened={drawerOpened}
         onClose={closeDrawer}

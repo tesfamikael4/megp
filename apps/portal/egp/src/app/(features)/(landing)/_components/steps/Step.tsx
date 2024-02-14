@@ -35,7 +35,6 @@ const Step = (props: StepProps) => {
         className="flex-col md:flex-row"
         rowGap={rem(10)}
         color="white"
-        w={rem(300)}
         p={rem(24)}
       >
         <Flex
