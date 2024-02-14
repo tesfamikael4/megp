@@ -30,14 +30,13 @@ export class InstanceController extends EntityCrudController<Instance>(
     return this.instanceService.findOne(id, organizationId);
   }
 
-  @Get('findCurrentInstance/:id')
-  async findCurrentInstance(
-    @Param('id') id: string,
-    @Param('itemId') itemId: string,
-    @CurrentUser() user,
-  ) {
+  @Get('findCurrentInstanceByItemId')
+  async findCurrentInstanceByItemId(@Body() data: string, @CurrentUser() user) {
     const organizationId = user.organization.id;
-    return this.instanceService.findCurrentInstance(id, organizationId, itemId);
+    return this.instanceService.findCurrentInstanceByItemId(
+      data,
+      organizationId,
+    );
   }
 
   @Get('isActive/:key/:itemId')
@@ -60,5 +59,10 @@ export class InstanceController extends EntityCrudController<Instance>(
   async goto(@Body() data: any, @CurrentUser() user) {
     const organizationId = user.organization.id;
     return this.instanceService.goto(data, organizationId);
+  }
+
+  @Get('canSubmit/:key')
+  async canSubmit(@Param('key') key: string, @CurrentUser() user) {
+    return this.instanceService.canSubmit(key, user.organization.id);
   }
 }
