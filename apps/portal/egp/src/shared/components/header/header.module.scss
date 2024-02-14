@@ -1,12 +1,12 @@
 .header {
-  height: 56px;
+  height: 60px;
 
   background-color: var(--mantine-color-body);
   border-bottom: 1px solid var(--mantine-color-gray-3);
 }
 
 .inner {
-  height: 56px;
+  height: 60px;
   display: flex;
 
   align-items: center;
@@ -14,18 +14,23 @@
 
 .link {
   display: block;
-  line-height: 1;
+  line-height: 1.5;
+  line-height: 1.5;
   padding: 8px 12px;
 
   text-decoration: none;
 
-  font-size: 14px;
-  font-weight: 500;
-  @apply text-gray-700 rounded;
+  font-size: 16px;
+  font-weight: 400;
+  @apply text-gray-700;
+  font-size: 16px;
+  font-weight: 400;
+  @apply text-gray-700;
 }
 
 .link:hover {
-  @apply bg-gray-200;
+  @apply border-b-2 border-green-600;
+  @apply border-b-2 border-green-600;
 }
 .linkLabel {
   margin-right: 5px;
