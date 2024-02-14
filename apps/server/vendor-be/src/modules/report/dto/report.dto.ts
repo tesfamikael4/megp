@@ -1,7 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsOptional } from 'class-validator';
 
 export class DateRange {
+  @ApiProperty()
+  @IsOptional()
   fromDate: Date;
+  @ApiProperty()
+  @IsOptional()
   toDate: Date;
 }
 export class VendorListDto {

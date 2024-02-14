@@ -9,7 +9,7 @@ export class HandlingCommonService {
   constructor(
     @InjectRepository(WorkflowInstanceEntity)
     private readonly wfiRepository: Repository<WorkflowInstanceEntity>,
-  ) {}
+  ) { }
   generateRandomString(length, prefix = '') {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     const charsLength = characters.length;
@@ -194,5 +194,16 @@ export class HandlingCommonService {
 
   capitalizeFirstLetter(str: string): string {
     return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+  convertMinutesToDaysHoursMinutes(minutes: number): { days: number, hours: number, minutes: number } {
+    const days = Math.floor(minutes / (60 * 24));
+    const hours = Math.floor((minutes % (60 * 24)) / 60);
+    const remainingMinutes = minutes % 60;
+
+    return {
+      days: days,
+      hours: hours,
+      minutes: remainingMinutes
+    };
   }
 }

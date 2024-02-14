@@ -34,7 +34,7 @@ export class ReportService {
     @InjectRepository(BusinessAreaEntity)
     private readonly baRepository: Repository<BusinessAreaEntity>,
     private readonly commonService: HandlingCommonService,
-  ) {}
+  ) { }
   ///Not ompleted yet
   async getApplicationsByStatus(dateRange: DateRange): Promise<any[]> {
     const formattedResult = [];
@@ -234,8 +234,24 @@ export class ReportService {
     return 0;
   }
 
-  async getAvarageTime(range: DateRange) {
-    this.wfiRepository.createQueryBuilder('wfi');
+  async getAvarageTime(dateRange: DateRange) {
+    const totalApps = await this.wfiRepository.count({ where: { status: ApplicationStatus.COMPLETED, submittedAt: MoreThanOrEqual(dateRange.fromDate), updatedAt: LessThanOrEqual(dateRange.toDate) } })
+    const result = await this.wfiRepository.createQueryBuilder('wfi')
+      .select(['SUM(EXTRACT(MINUTE FROM (wfi."updatedAt"::timestamp - wfi."submittedAt"::timestamp))) AS hour_difference',
+      ])
+      .where('wfi.status =:status', { status: ApplicationStatus.COMPLETED })
+      .andWhere('wfi.submittedAt >=:submittedAt', { submittedAt: dateRange.fromDate })
+      .andWhere('wfi.updatedAt <=:updatedAt', { updatedAt: dateRange.toDate })
+      .groupBy('wfi.status')
+      .getRawMany()
+    if (result.length > 0) {
+      const avarageMinutes = Number(result[0].hour_difference) / Number(totalApps);
+      const { days, hours, minutes: remainingMinutes } = this.commonService.convertMinutesToDaysHoursMinutes(avarageMinutes);
+      return `${days} days, ${hours} hours, and ${remainingMinutes} minutes`;
+    }
+
+    return `${0} days, ${0} hours, and ${0} minutes`;
+
   }
   async getRevenue(range: DateRange) {
     const result = await this.invoiceRepositoy
@@ -252,7 +268,20 @@ export class ReportService {
   }
 
   async getVendorDiversityByBusinessForm() {
-    return;
+    const result = await this.vendorRepositoty.createQueryBuilder('v')
+      .select(['v.formOfEntity formOfEntity', 'COUNT(v.formOfEntity) count'])
+      .groupBy('v.formOfEntity')
+      .getRawMany();
+    let totalVendors = 0;
+    for (const row of result) {
+      totalVendors = Number(totalVendors) + Number(row.count);
+    }
+    const resultWithPercent = result.map((item) => {
+      return { ...item, percentage: (item.count / totalVendors) * 100 };
+    })
+
+    return resultWithPercent;
+
   }
   async getVendorsByCategory() {
     const categories = ['services', 'goods', 'works'];
@@ -265,4 +294,5 @@ export class ReportService {
       .getRawMany();
     return result;
   }
+
 }
