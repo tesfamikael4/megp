@@ -24,7 +24,7 @@ export const ExpandableTable = ({
   config,
   data,
   onRequestChange,
-  total,
+  total = 0,
 }: {
   config: Config;
   data: any[];
@@ -71,15 +71,14 @@ export const ExpandableTable = ({
             value={search}
             size="xs"
             onChange={(e) => setSearch(e.target.value)}
-            // width={300}
             miw={300}
           />
         </Flex>
       )}
       <DataTable
+        minHeight={total === 0 ? 300 : 'inherit'}
         sortStatus={sortStatus}
         onSortStatusChange={setSortStatus}
-        minHeight={300}
         striped
         highlightOnHover
         columns={config.columns}
@@ -93,15 +92,13 @@ export const ExpandableTable = ({
         }}
         styles={{
           header: {
-            backgroundColor: '#D9D9D9',
+            backgroundColor: 'rgb(237,239,243)',
           },
         }}
         page={total ? page : 0}
         totalRecords={total}
         recordsPerPage={perPage}
         onPageChange={setPage}
-        noRecordsIcon={<IconInboxOff size={40} />}
-        noRecordsText="No Data Found"
         defaultColumnRender={(record, _, accessor) => (
           <p className="line-clamp-2">{record[accessor]}</p>
         )}

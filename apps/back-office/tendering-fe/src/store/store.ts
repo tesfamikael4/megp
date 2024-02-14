@@ -7,7 +7,10 @@ import { customApi } from '@/app/(features)/_api/custom.api';
 import { workflowApi } from './api/workflow/workflow.api';
 import { prApprovalApi } from './api/planning-approval/planning-approval';
 import { prIamApi } from './api/planning-approval/planning-iam';
-
+import { approveSpdApi } from '@/app/(features)/spd/_api/approve-spd.api';
+import { templateSpdApi } from '@/app/(features)/spd/_api/template-spd.api';
+import { technicalScoringTreeApi } from '@/app/(features)/spd/_api/technical-scoring-tree.api';
+import { approveTenderApi } from '@/app/(features)/preparation/_api/approve-tender.api';
 const { reducers, middleware } = entityApi;
 
 export const store = configureStore({
@@ -20,6 +23,10 @@ export const store = configureStore({
     [workflowApi.reducerPath]: workflowApi.reducer,
     [prApprovalApi.reducerPath]: prApprovalApi.reducer,
     [prIamApi.reducerPath]: prIamApi.reducer,
+    [approveSpdApi.reducerPath]: approveSpdApi.reducer,
+    [technicalScoringTreeApi.reducerPath]: technicalScoringTreeApi.reducer,
+    [templateSpdApi.reducerPath]: templateSpdApi.reducer,
+    [approveTenderApi.reducerPath]: approveTenderApi.reducer,
   },
   devTools: process.env.NODE_ENV !== 'production',
   middleware: (getDefaultMiddleware) =>
@@ -32,6 +39,10 @@ export const store = configureStore({
       workflowApi.middleware,
       prApprovalApi.middleware,
       prIamApi.middleware,
+      approveSpdApi.middleware,
+      technicalScoringTreeApi.middleware,
+      templateSpdApi.middleware,
+      approveTenderApi.middleware,
     ]),
 });
 

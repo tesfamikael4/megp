@@ -32,7 +32,7 @@ export class ApplicationExcutionService {
     private readonly pricingService: ServicePricingService,
     private readonly vendorService: VendorRegistrationsService,
     private readonly baService: BusinessAreaService,
-  ) { }
+  ) {}
 
   async getCurruntTaskByServiceKey(
     serviceKey: string,

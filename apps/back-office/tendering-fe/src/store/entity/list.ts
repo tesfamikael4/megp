@@ -2,6 +2,34 @@ import { EntityStoreConfig } from '@megp/entity';
 
 export const ENTITY_LIST: EntityStoreConfig[] = [
   {
+    entity: 'spd',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/api/tendering',
+  },
+  {
+    entity: 'administrative-compliance',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/api/tendering',
+  },
+  {
+    entity: 'tender',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/api/tendering',
+  },
+  {
+    entity: 'preference-margins',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/api/tendering',
+  },
+  {
+    entity: 'documentary-evidence',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/api/tendering',
+  },
+  {
+    entity: 'qualification',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/api/tendering',
+  },
+  {
+    entity: 'technical-scoring',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/api/tendering',
+  },
+  {
     entity: 'procurement-requisitions',
     baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
   },
