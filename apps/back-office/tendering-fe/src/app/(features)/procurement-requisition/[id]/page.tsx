@@ -36,7 +36,7 @@ export default function PrDetailPage() {
                 <Tabs.Tab value="definition">
                   Procurement Identification
                 </Tabs.Tab>
-                <Tabs.Tab value="method">Procurement Methods</Tabs.Tab>
+                <Tabs.Tab value="method">Procurement Mechanism</Tabs.Tab>
                 <Tabs.Tab value="items">Items</Tabs.Tab>
                 <Tabs.Tab value="documents">Document</Tabs.Tab>
                 <Tabs.Tab value="timeline">Timeline</Tabs.Tab>

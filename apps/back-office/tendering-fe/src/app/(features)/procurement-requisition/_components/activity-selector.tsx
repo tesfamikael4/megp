@@ -15,7 +15,6 @@ import {
 import { DetailActivity } from './detail-activity';
 import { notify } from '@megp/core-fe';
 import { useRouter } from 'next/navigation';
-// import ActivityItemDetail from './activity-item-detail';
 
 export const ActivitySelector = () => {
   const [selected, setSelected] = useState<any | any[]>([]);
@@ -105,12 +104,14 @@ export const ActivitySelector = () => {
   }, [budget?.items, budgetFetched]);
 
   useEffect(() => {
-    if (budgetFetched) {
-      onRequestChange({ skip: 0, take: 10 });
-    }
+    onRequestChange({ skip: 0, take: 10 });
   }, [budget, budgetFetched, selectedBudgetYear]);
   const onRequestChange = (collectionQuery) => {
-    if (budgetFetched && selectedBudgetYear !== undefined)
+    if (
+      budgetFetched &&
+      selectedBudgetYear !== undefined &&
+      selectedBudgetYear !== null
+    ) {
       listById({
         id: selectedBudgetYear,
         collectionQuery: {
@@ -128,6 +129,7 @@ export const ActivitySelector = () => {
           ],
         },
       });
+    }
   };
 
   return (
@@ -137,10 +139,10 @@ export const ActivitySelector = () => {
         <>
           <Group w={300}>
             <Select
+              className="w-full"
+              size="sm"
               value={selectedBudgetYear}
-              onChange={(e: any) => {
-                setSelectedBudgetYear(e?.id);
-              }}
+              onChange={(e: any) => setSelectedBudgetYear(e)}
               data={budget?.items.map((b) => {
                 return {
                   value: b.id,

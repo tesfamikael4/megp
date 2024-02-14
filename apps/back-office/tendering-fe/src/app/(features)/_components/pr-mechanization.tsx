@@ -55,7 +55,6 @@ export const ActivityMechanization = () => {
 
   const { id } = useParams();
   const [contract, setContract] = useState({});
-  const [mode, setMode] = useState<'new' | 'detail'>('new');
   const [donor, setDonor] = useState<string[]>([]);
 
   useEffect(() => {
@@ -76,7 +75,6 @@ export const ActivityMechanization = () => {
 
   useEffect(() => {
     if (isGetMechanismSuccess && mechanism?.total == 1) {
-      setMode('detail');
       setValue('fundingSource', mechanism?.items[0]?.fundingSource);
       setValue('isOnline', mechanism.items[0]?.isOnline);
       setValue('procurementMethod', mechanism.items[0]?.procurementMethod);
@@ -101,7 +99,7 @@ export const ActivityMechanization = () => {
               value={value}
               onChange={onChange}
               label="Procurement Type"
-              disabled={mode === 'detail' && true}
+              disabled={true}
               data={[
                 'Goods',
                 'Works',
