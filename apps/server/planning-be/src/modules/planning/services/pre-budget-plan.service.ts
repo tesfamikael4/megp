@@ -31,6 +31,7 @@ import { ExtraCrudService } from 'src/shared/service';
 import { createHash } from 'crypto';
 import { classToPlain, instanceToPlain } from 'class-transformer';
 import { ReasonService } from 'src/modules/utility/services/reason.service';
+import { PdfGeneratorService } from 'src/modules/utility/services/pdf-generator.service';
 
 @Injectable()
 export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
@@ -42,7 +43,7 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
     @InjectRepository(PreBudgetPlanItems)
     private readonly preBudgetItemsRepository: Repository<PreBudgetPlanItems>,
 
-    private readonly reasonService: ReasonService,
+    private readonly pdfGeneratorService: PdfGeneratorService,
     // private eventEmitter: EventEmitter2,
     @Inject('PLANNING_RMQ_SERVICE')
     private readonly planningRMQClient: ClientProxy,
@@ -395,7 +396,7 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
       ],
     }));
 
-    const buffer = await this.reasonService.pdfGenerator(mappedData);
+    const buffer = await this.pdfGeneratorService.pdfGenerator(mappedData);
     return buffer;
   }
   instanceToPlainExclude(

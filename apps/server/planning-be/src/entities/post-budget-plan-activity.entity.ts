@@ -92,7 +92,7 @@ export class PostBudgetPlanActivity extends OrgAudit {
   )
   activityBudgetLines: ActivityBudgetLine[];
 
-  @OneToMany(() => Reason, (reasons) => reasons.preBudgetPlanActivity)
+  @OneToMany(() => Reason, (reasons) => reasons.postBudgetPlanActivity)
   reasons: Reason[];
 
   @Column()
