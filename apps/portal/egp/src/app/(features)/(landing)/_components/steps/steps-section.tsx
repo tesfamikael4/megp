@@ -40,29 +40,22 @@ const steps: StepProps[] = [
     icon: <IconCheck size={40} color="white" />,
     title: 'Get Approved',
     description:
-      'Great! you are approved, Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dr',
+      'Great! you are approved, Lorem ipsum dolor Lorem ipsum dolor Lorem ',
   },
 ];
 
 export function StepsSection() {
   return (
     <Flex className={classes.root}>
-      <Container size="xl">
+      <Container size="xl" className="">
         <Flex
           direction={'column'}
-          align="center"
-          className="items-center justify-center lg:h-96"
+          className="items-center justify-between lg:h-96 w-full"
         >
-          {' '}
-          {/* made some adjustment here*/}
           <Text className={classes.stepTitle} fw="bold" size="xl" mt={rem(20)}>
             Steps To Be A Supplier
           </Text>
-          <Flex
-            justify={'center'}
-            className="flex-col md:flex-row"
-            columnGap={rem(30)}
-          >
+          <Flex className="flex-col md:flex-row w-full">
             {steps.map((step, index) => (
               <Step key={index} {...step} />
             ))}

@@ -30,17 +30,19 @@ export const FeaturesCard = (props: FeaturesCardProps) => {
       onMouseEnter={() => setShowArrow(true)}
       onMouseLeave={() => setShowArrow(false)}
       bg={'#F5FBFE'}
-      px={rem(20)}
+      px={rem(24)}
       py={rem(20)}
     >
       <Flex columnGap={rem(10)} align="center" className={styles.card}>
         <ThemeIcon color={props.color} variant="light" radius="md" size="lg">
           {props.icon}
         </ThemeIcon>
-        <Text className={styles.title}>{props.title}</Text>
+        <Text className={`line-clamp-1 md:line-clamp-none`}>{props.title}</Text>
       </Flex>
       <Divider size={'md'} className="my-4" color={props.color} />
-      <Text size="sm">{props.description}</Text>
+      <Text size="sm" className="line-clamp-2">
+        {props.description}
+      </Text>
 
       {showArrow && (
         <IconArrowRight

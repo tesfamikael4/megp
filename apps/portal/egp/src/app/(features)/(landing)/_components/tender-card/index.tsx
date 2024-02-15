@@ -73,7 +73,7 @@ const TenderCard = ({ color, register, textColor }: TenderCardProps) => {
       <Flex direction={'column'} className={classes.inner}>
         <Flex align={'center'} gap={'lg'}>
           <Text className="text-center text-sm">
-            <Avatar w={48} h={48} bg={theme.colors.green[1]}>
+            <Avatar w={48} h={48} bg={theme.colors.green[1]} mb={10}>
               <IconHammer color="white" size={30} />
             </Avatar>
             Services
@@ -104,7 +104,9 @@ const TenderCard = ({ color, register, textColor }: TenderCardProps) => {
             </Flex>
             <Flex className={classes.ring} columnGap={'md'} mt={'sm'}>
               {/* {register && <Button>Register</Button>} */}
-              <Button variant="light">View More</Button>
+              <Button variant="outline" className="bg-green-50">
+                View More
+              </Button>
             </Flex>
           </Flex>
         </Flex>
