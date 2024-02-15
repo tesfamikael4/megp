@@ -31,6 +31,7 @@ export class ReasonService extends EntityCrudService<Reason> {
     return item;
   }
 
+  // remove previous justification reason when they became valid
   async isValid(objectId: string, type: string, organizationId: string) {
     const reason = await this.repositoryReason.find({
       where: {
@@ -39,6 +40,8 @@ export class ReasonService extends EntityCrudService<Reason> {
         organizationId,
       },
     });
-    await this.repositoryReason.delete(reason as any);
+    if (reason) {
+      await this.repositoryReason.delete(reason as any);
+    }
   }
 }
