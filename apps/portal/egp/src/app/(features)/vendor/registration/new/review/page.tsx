@@ -70,7 +70,12 @@ function Page() {
         overlayProps={{ radius: 'sm', blur: 2 }}
       />
       {requestInfo.data && <FormPreview data={requestInfo.data} />}
-      <Flex className="justify-end">
+      <Flex className="justify-end" gap={'md'} p={'md'}>
+        {checkAccess('review') && (
+          <Button onClick={() => router.back()} variant="outline">
+            Back
+          </Button>
+        )}
         {checkAccess('review') && <Button onClick={onSubmit}>Submit</Button>}
       </Flex>
     </Stack>

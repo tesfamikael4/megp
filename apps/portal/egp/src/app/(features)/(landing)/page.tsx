@@ -115,7 +115,7 @@ export default function Home() {
           </Box>
         </>
       )}
-      <StepsSection />
+      {!user && <StepsSection />}
       {/* Latest tenders */}
       <Box bg={'#F5FBFE'} pt={60}>
         <Container size={'xl'}>
