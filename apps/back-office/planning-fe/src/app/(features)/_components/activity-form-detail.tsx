@@ -283,6 +283,7 @@ export const FormDetail = ({
             {...register('name')}
             error={errors.name?.message}
             disabled={disableFields}
+            placeholder="Activity Name"
           />
           <Controller
             name="currency"
@@ -317,6 +318,7 @@ export const FormDetail = ({
             error={errors?.estimatedAmount?.message}
             withAsterisk
             disabled={method === 'Purchased Orders' || disableFields}
+            placeholder="Estimated Amount"
           />
           <MultiSelect
             label="Tag Classification"
@@ -340,6 +342,7 @@ export const FormDetail = ({
                 <IconPlus />
               </ActionIcon>
             }
+            placeholder="Tag Classification"
           />
         </Box>
         <Box className="w-1/2">
@@ -352,6 +355,7 @@ export const FormDetail = ({
             {...register('description')}
             error={errors.description?.message}
             disabled={disableFields}
+            placeholder="Activity Description"
           />
           <Textarea
             label="Remark"
@@ -361,6 +365,7 @@ export const FormDetail = ({
             {...register('remark')}
             disabled={disableFields}
             className="mt-2"
+            placeholder="Activity Remark"
           />
         </Box>
       </Flex>

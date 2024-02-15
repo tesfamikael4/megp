@@ -41,11 +41,6 @@ export const Menu: MenuItem[] = [
     permission: ['planning:manageBudget'],
   },
   {
-    label: 'Report and Analytics',
-    icon: IconReportAnalytics,
-    link: '/report',
-  },
-  {
     label: 'Approval',
     icon: IconArrowFork,
     links: [
@@ -61,6 +56,12 @@ export const Menu: MenuItem[] = [
       },
     ],
   },
+  {
+    label: 'Report and Analytics',
+    icon: IconReportAnalytics,
+    link: '/report',
+  },
+
   {
     label: 'Settings',
     icon: IconAdjustmentsHorizontal,

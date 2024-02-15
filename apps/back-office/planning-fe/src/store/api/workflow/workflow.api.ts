@@ -15,9 +15,8 @@ export const workflowApi = createApi({
     }),
     getCurrentWorkflowInstance: builder.query<any, any>({
       query: (data) => ({
-        url: `instance/findCurrentInstanceByItemId`,
+        url: `instance/findCurrentInstanceByItemId/${data.key}/${data.itemId}`,
         method: 'GET',
-        body: data,
       }),
     }),
     getActivities: builder.query<any, any>({

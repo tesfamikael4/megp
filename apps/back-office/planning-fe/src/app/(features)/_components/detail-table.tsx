@@ -1,4 +1,4 @@
-import { Table } from '@mantine/core';
+import { Box, Flex } from '@mantine/core';
 
 interface DetailTableItem {
   data: Record<string, string>[];
@@ -7,20 +7,28 @@ interface DetailTableItem {
 export const DetailTable = ({ data }: DetailTableItem) => {
   return (
     <>
-      <Table highlightOnHover withTableBorder withColumnBorders>
-        <Table.Tbody>
-          {data.map((d) => (
-            <>
-              <Table.Tr>
-                <Table.Td className="bg-slate-200 font-semibold w-1/4">
+      <Box className="w-full">
+        <Flex
+          direction="column"
+          className="border-t border-l border-r border-gray-400"
+        >
+          {data.map((d) =>
+            d.key ? (
+              <Flex
+                key={d.key}
+                className="border-b border-gray-400 cursor-pointer group"
+              >
+                <Box className="bg-slate-200 font-semibold w-1/4 p-2 ">
                   {d.key}
-                </Table.Td>
-                <Table.Td>{d.value}</Table.Td>
-              </Table.Tr>
-            </>
-          ))}
-        </Table.Tbody>
-      </Table>
+                </Box>
+                <Box className="w-3/4 p-2 group-hover:bg-slate-50">
+                  {d.value}
+                </Box>
+              </Flex>
+            ) : null,
+          )}
+        </Flex>
+      </Box>
     </>
   );
 };

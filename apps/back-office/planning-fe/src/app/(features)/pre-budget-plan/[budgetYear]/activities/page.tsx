@@ -4,7 +4,7 @@ import { ExpandableTable } from '@/app/(features)/_components/expandable-table';
 import { Section } from '@megp/core-fe';
 import { useLazyListByIdQuery } from './_api/activities.api';
 import { useParams, useRouter } from 'next/navigation';
-import { ActionIcon, Button } from '@mantine/core';
+import { ActionIcon, Badge, Button } from '@mantine/core';
 import { IconChevronRight, IconPlus } from '@tabler/icons-react';
 import { DetailActivity } from '@/app/(features)/_components/detail-activity';
 import { useGetPreBudgetPlanQuery } from '@/store/api/pre-budget-plan/pre-budget-plan.api';
@@ -46,6 +46,17 @@ export default function PreBudget() {
         sortable: true,
       },
       {
+        accessor: '',
+        title: '',
+        render: (record) =>
+          record.reasons.length == 0 ? (
+            <p className="text-green-500 text-3xl">•</p>
+          ) : (
+            <p className="text-red-500 text-3xl">•</p>
+          ),
+        width: 50,
+      },
+      {
         accessor: 'id',
         title: '',
         render: (activity) => (
@@ -73,7 +84,10 @@ export default function PreBudget() {
   };
 
   const onRequestChange = (request: any) => {
-    listById({ id: budgetYear as string, collectionQuery: request });
+    listById({
+      id: budgetYear as string,
+      collectionQuery: { ...request, includes: ['reasons'] },
+    });
   };
   return (
     <Section

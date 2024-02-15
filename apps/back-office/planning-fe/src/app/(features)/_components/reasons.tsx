@@ -37,8 +37,8 @@ export const Reasons = ({ justification }: { justification: any }) => {
     try {
       await addJustification({
         ...data,
-        objectId: justification[currentKey].objectId,
-        preBudgetPlanActivityId: justification[currentKey].activityId,
+        objectId: justification?.[currentKey]?.objectId,
+        preBudgetPlanActivityId: justification?.[currentKey]?.activityId,
         type: currentKey,
       }).unwrap();
       notify('Success', 'Justification added successfully');
@@ -59,13 +59,13 @@ export const Reasons = ({ justification }: { justification: any }) => {
       <>
         <Tabs defaultValue="procurementMethod">
           <Tabs.List>
-            {Object.entries(justification).map(([key]: any) => (
+            {Object.entries(justification ?? {}).map(([key]: any) => (
               <Tabs.Tab value={key} key={key}>
-                {justification[key].title}
+                {justification?.[key]?.title}
               </Tabs.Tab>
             ))}
           </Tabs.List>
-          {Object.entries(justification).map(([key, value]: any) => (
+          {Object.entries(justification ?? {}).map(([key, value]: any) => (
             <Tabs.Panel value={key} className="p-2" key={key}>
               <Alert
                 variant="light"
@@ -74,7 +74,7 @@ export const Reasons = ({ justification }: { justification: any }) => {
                 icon={<IconInfoCircle />}
                 className="mb-2"
               >
-                {justification[key].message}
+                {justification?.[key]?.message}
               </Alert>
 
               <Stack>
@@ -85,7 +85,7 @@ export const Reasons = ({ justification }: { justification: any }) => {
                     <Select
                       withCheckIcon={false}
                       {...field}
-                      data={justification[key]?.possibleReasons ?? ['Other']}
+                      data={justification?.[key]?.possibleReasons ?? ['Other']}
                       label="Possible Reasons"
                       withAsterisk
                       error={errors.reason?.message?.toString()}
