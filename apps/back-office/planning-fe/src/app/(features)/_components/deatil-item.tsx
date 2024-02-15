@@ -23,7 +23,7 @@ export const DetailItem = ({ data }: any) => {
       key: 'Description',
       value: data.description,
     },
-    {
+    data?.unitPrice && {
       key: 'Unit Price',
       value:
         parseFloat(data?.unitPrice)?.toLocaleString('en-US', {

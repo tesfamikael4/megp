@@ -3,15 +3,12 @@ import { useLazyListByIdQuery } from '../../../pre-budget-plan/[budgetYear]/acti
 import { Section } from '@megp/core-fe';
 import { useEffect } from 'react';
 import { DetailActivity } from '../../../_components/detail-activity';
-import { Accordion, Alert, Box, Flex, LoadingOverlay } from '@mantine/core';
+import { Accordion, Box, LoadingOverlay } from '@mantine/core';
 import { Items } from './items';
 import { Requisitioner } from './requisitioner';
 import { Timeline } from './timeline';
 import { Document } from './document';
-import {
-  useGetCurrentWorkflowInstanceQuery,
-  useGetWorkflowInstanceQuery,
-} from '@/store/api/workflow/workflow.api';
+import { useGetCurrentWorkflowInstanceQuery } from '@/store/api/workflow/workflow.api';
 import { useParams } from 'next/navigation';
 import { ProcurementMethod } from './procurement-method';
 

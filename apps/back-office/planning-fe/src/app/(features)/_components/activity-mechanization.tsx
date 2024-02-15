@@ -421,6 +421,7 @@ export const ActivityMechanization = ({
                 }
                 withAsterisk
                 disabled={disableFields}
+                placeholder="Select Procurement Process"
               />
             )}
           />
@@ -463,6 +464,7 @@ export const ActivityMechanization = ({
               ]}
               className="w-full"
               disabled={disableFields}
+              placeholder="Select Supplier Target Group"
             />
           )}
         />
