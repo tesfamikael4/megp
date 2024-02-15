@@ -50,7 +50,7 @@ export function StepsSection() {
       <Container size="xl" className="">
         <Flex
           direction={'column'}
-          className="items-center justify-between lg:h-96 w-full"
+          className="items-center justify-between lg:h-96 w-full py-6"
         >
           <Text className={classes.stepTitle} fw="bold" size="xl" mt={rem(20)}>
             Steps To Be A Supplier

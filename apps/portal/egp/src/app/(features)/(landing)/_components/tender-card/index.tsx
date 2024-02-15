@@ -103,42 +103,16 @@ const TenderCard = ({ color, register, textColor }: TenderCardProps) => {
               </Text>
             </Flex>
             <Flex className={classes.ring} columnGap={'md'} mt={'sm'}>
-              {/* {register && <Button>Register</Button>} */}
+              {register && <Button>Register</Button>}
               <Button variant="outline" className="bg-green-50">
                 View More
               </Button>
             </Flex>
           </Flex>
         </Flex>
-        {/* 
-        <Flex className={classes.ring} mt={'md'} columnGap={'md'}>
-          {register && <Button>Register</Button>}
-          <Button variant="light">View More</Button>
-        </Flex> */}
       </Flex>
     </Card>
   );
 };
 
 export default TenderCard;
-
-/**
- * 
- *  
- * <RingProgress
-                        roundCaps
-                        thickness={6}
-                        size={150}
-                        sections={[{ value: (completed / total) * 100, color: theme.primaryColor }]}
-                        label={
-                            <div>
-                                <Text ta="center" fz="lg" className={classes.label}>
-                                    {((completed / total) * 100).toFixed(0)}%
-                                </Text>
-                                <Text ta="center" fz="xs" c="dimmed">
-                                    Completed
-                                </Text>
-                            </div>
-                        }
-                    />
- */
