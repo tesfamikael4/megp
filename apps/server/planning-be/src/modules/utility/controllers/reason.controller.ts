@@ -1,11 +1,10 @@
-import { Body, Controller, Post, Res } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { EntityCrudOptions } from 'src/shared/types/crud-option.type';
 import { EntityCrudController } from 'src/shared/controller';
 import { Reason } from 'src/entities/reason.entity';
 import { ReasonService } from '../services/reason.service';
-import { ApiPaginatedResponse } from 'src/shared/api-data';
-import { AllowAnonymous, CurrentUser } from 'src/shared/authorization';
+import { CurrentUser } from 'src/shared/authorization';
 
 const options: EntityCrudOptions = {};
 
