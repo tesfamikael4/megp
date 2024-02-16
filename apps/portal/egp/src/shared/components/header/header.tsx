@@ -18,9 +18,11 @@ import {
   Loader,
   Text,
   Container,
+  Avatar,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import {
+  IconBellRinging,
   IconChevronDown,
   IconLogout,
   IconUserCircle,
@@ -137,9 +139,15 @@ function Header() {
               <Group visibleFrom="md">
                 <Menu shadow="md" width={200}>
                   <Menu.Target>
-                    <div className="flex cursor-pointer">
+                    <div className="flex gap-x-3 items-center justify-between cursor-pointer">
+                      <Avatar
+                        // we can set src={user.avatar} when we have it from the backend / user profile on registration
+                        src="https://img.freepik.com/free-psd/3d-illustration-person-with-sunglasses-green-hair_23-2149436201.jpg"
+                        alt="it's me"
+                      />
                       Hi, {user.firstName + ' ' + user.lastName}
-                      <IconChevronDown />
+                      <IconChevronDown size={16} stroke={1.6} />
+                      <IconBellRinging size={16} stroke={1.6} />
                     </div>
                   </Menu.Target>
 
