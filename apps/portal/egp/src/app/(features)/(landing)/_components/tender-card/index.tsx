@@ -2,15 +2,10 @@ import React from 'react';
 import {
   Text,
   Card,
-  RingProgress,
-  Group,
   useMantineTheme,
   Flex,
   Button,
   Avatar,
-  Box,
-  MantineThemeColors,
-  MantineColorsTuple,
 } from '@mantine/core';
 import classes from './StatsRingCard.module.css';
 import { IconBookmark, IconHammer } from '@tabler/icons-react';
@@ -40,7 +35,7 @@ const TenderCard = ({ color, register, textColor }: TenderCardProps) => {
         style={{
           position: 'absolute',
           top: 0,
-          left: theme.spacing.xl,
+          left: theme.spacing.md,
           background: color,
           padding: '4px 12px',
           borderBottomLeftRadius: theme.radius.md,
@@ -57,7 +52,7 @@ const TenderCard = ({ color, register, textColor }: TenderCardProps) => {
         style={{
           position: 'absolute',
           top: 0,
-          right: theme.spacing.xl,
+          right: theme.spacing.md,
           background: '#F0FFF3',
           padding: '4px 12px',
           borderBottomLeftRadius: theme.radius.md,
@@ -73,40 +68,47 @@ const TenderCard = ({ color, register, textColor }: TenderCardProps) => {
       <Flex direction={'column'} className={classes.inner}>
         <Flex align={'center'} gap={'lg'}>
           <Text className="text-center text-sm">
-            <Avatar w={48} h={48} bg={theme.colors.green[1]} mb={10}>
+            <Avatar w={80} h={80} bg={theme.colors.green[1]} mb={10}>
               <IconHammer color="white" size={30} />
             </Avatar>
-            Services
+            <Text fw={500} fz={'xs'} lh={'12px'}>
+              Services
+            </Text>
           </Text>
           <Flex direction={'column'} rowGap={'xs'}>
-            <Text className={classes.lead} mt={30}>
+            <Text className={classes.lead} mt={30} fz={'md'} lh={'24px'}>
               Computer services and devices, Lorem Ipsum Computer services and
               devices.
             </Text>
-            <Text fz="xs" c="dimmed">
+            <Text c="dimmed" fz={'sm'} lh={'20px'}>
               Lorem ipsum dolor sit amet, consectetur lorem adipiscing elit. Nam
               hendrerit nisi sed sollicitud
             </Text>
-            <Flex className="xs:flex-col md:flex-row flex-col justify-between ">
-              <Flex direction={'column'}>
-                <Text fz="xs" className="font-extrabold">
-                  Minister of Education
-                </Text>
-                <Text fz="xs" className="font-bold">
-                  Published
-                  <span className="text-gray-400">: 14-Jan-2024</span>
-                </Text>
+            <Flex
+              className="xs:flex-col md:flex-row flex-col justify-between "
+              direction={'column'}
+            >
+              <Text className="font-extrabold">Minister of Education</Text>
+              <Flex align={'center'} justify={'space-between'}>
+                <Flex align={'center'} columnGap={'sm'} fz={'md'} lh={'20px'}>
+                  <Text fw={500}>Published:</Text>
+                  <Text className="text-gray-400" fw={400}>
+                    {' '}
+                    14-Jan-2024
+                  </Text>
+                </Flex>
+                <Flex align={'center'} fz={'md'} lh={'20px'} columnGap={'sm'}>
+                  <Text fw={500}>Closing:</Text>
+                  <Text className="text-gray-400" fw={400}>
+                    {' '}
+                    14-Jan-2024 3:00 PMT
+                  </Text>
+                </Flex>
               </Flex>
-              <Text fz="xs" className="mt-auto font-bold">
-                Closing
-                <span className="text-gray-400">: 14-Jan-2024 3:00 PM</span>
-              </Text>
             </Flex>
             <Flex className={classes.ring} columnGap={'md'} mt={'sm'}>
               {register && <Button>Register</Button>}
-              <Button variant="outline" className="bg-green-50">
-                View More
-              </Button>
+              <Button variant="outline">View More</Button>
             </Flex>
           </Flex>
         </Flex>

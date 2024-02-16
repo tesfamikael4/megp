@@ -52,7 +52,7 @@ export function StepsSection() {
           direction={'column'}
           className="items-center justify-between lg:h-96 w-full py-6"
         >
-          <Text className={classes.stepTitle} fw="bold" size="xl" mt={rem(20)}>
+          <Text className={'text-white text-3xl'} fw={700} mt={rem(20)}>
             Steps To Be A Supplier
           </Text>
           <Flex className="flex-col md:flex-row w-full">

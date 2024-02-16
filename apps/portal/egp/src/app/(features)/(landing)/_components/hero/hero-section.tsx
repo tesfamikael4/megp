@@ -1,6 +1,14 @@
 'use client';
 
-import { Container, Title, Text, Button, Flex, Input } from '@mantine/core';
+import {
+  Container,
+  Title,
+  Text,
+  Button,
+  Flex,
+  Input,
+  Group,
+} from '@mantine/core';
 import classes from './HeroImageRight.module.css';
 import { IconSearch } from '@tabler/icons-react';
 import { useAuth } from '@megp/auth';
@@ -21,30 +29,29 @@ export function HeroSection() {
               Empower Your Business Through Electronic Public Procurement
             </Text>
 
-            <Flex direction={'column'} rowGap={32} mt={80}>
-              <Flex>
-                <Input
-                  placeholder="Search Tenders Here"
-                  leftSection={<IconSearch />}
-                  className="w-1/2 flex-end"
-                  rightSectionWidth={100}
-                  rightSectionPointerEvents="all"
-                  rightSection={
-                    <Button
-                      className={'-mr-6 rounded-none rounded-r cursor-pointer'}
-                      bg={'green'}
-                      size="sm"
-                    >
-                      Search
-                    </Button>
-                  }
-                />
-              </Flex>
-              <Flex columnGap={16}>
+            <Flex direction={'column'} rowGap={32} mt={80} className="w-1/2">
+              <Input
+                size="lg"
+                placeholder="Search Tenders Here"
+                leftSection={<IconSearch />}
+                className="w-full flex-end"
+                rightSectionWidth={100}
+                rightSectionPointerEvents="all"
+                rightSection={
+                  <Button
+                    className={'-mr-6 rounded-none rounded-r cursor-pointer'}
+                    bg={'green'}
+                    size="lg"
+                  >
+                    Search
+                  </Button>
+                }
+              />
+              <Flex className="w-full" columnGap={'xl'}>
                 <Button
                   bg={'green'}
                   size="sm"
-                  w={'208px'}
+                  className="w-1/2"
                   onClick={() => {
                     user
                       ? router.push('/vendor/registration/new/basic')
@@ -59,7 +66,7 @@ export function HeroSection() {
                     variant="outline"
                     size="sm"
                     color="white"
-                    w={'208px'}
+                    className="w-1/2"
                     onClick={() => router.push('/auth/login')}
                   >
                     Login

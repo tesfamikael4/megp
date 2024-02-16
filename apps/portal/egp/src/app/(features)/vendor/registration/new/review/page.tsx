@@ -72,7 +72,7 @@ function Page() {
       {requestInfo.data && <FormPreview data={requestInfo.data} />}
       <Flex className="justify-end" gap={'md'} p={'md'}>
         {checkAccess('review') && (
-          <Button onClick={() => router.back()} variant="outline">
+          <Button onClick={() => router.push('/doc')} variant="outline">
             Back
           </Button>
         )}
