@@ -43,6 +43,7 @@ function Page() {
     if (saveValues.isSuccess) {
       NotificationService.successNotification('Submitted Successfully!');
       router.push(`/vendor/registration/track-applications`);
+      localStorage.removeItem('category');
     }
     if (saveValues.isError) {
       NotificationService.requestErrorNotification('Error on Request');

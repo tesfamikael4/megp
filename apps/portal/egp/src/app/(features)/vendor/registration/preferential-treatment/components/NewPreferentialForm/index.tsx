@@ -103,8 +103,8 @@ const NewPreferentialForm = ({
                 name={name}
                 data={
                   isIbm
-                    ? data.filter((pref) => pref.label === 'IBM')
-                    : data.filter((pref) => pref.label !== 'IBM') ?? []
+                    ? data?.filter((pref) => pref.label === 'IBM')
+                    : data?.filter((pref) => pref.label !== 'IBM') ?? []
                 }
                 label="Preferential Treatment"
                 placeholder="Select a preferential treatment"

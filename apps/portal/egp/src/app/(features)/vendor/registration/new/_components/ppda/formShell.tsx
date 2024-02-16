@@ -155,11 +155,13 @@ export const AreasOfBusinessInterestForm = ({
         </Flex>
         <Flex className="mt-10 justify-end gap-2">
           {checkAccess('ppda') && (
-            <Button onClick={() => router.push('/ppda')} variant="outline">
+            <Button onClick={() => router.push('detail')} variant="outline">
               Back
             </Button>
           )}
-          {checkAccess('ppda') && <Button type="submit">Submit</Button>}
+          {checkAccess('ppda') && (
+            <Button type="submit">Save & Continue</Button>
+          )}
         </Flex>
       </form>
     </Box>
