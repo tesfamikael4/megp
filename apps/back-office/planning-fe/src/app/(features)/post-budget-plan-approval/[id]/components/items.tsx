@@ -1,7 +1,7 @@
 import { useLazyListByAppIdQuery } from '../../../_api/items.api';
 import { useEffect } from 'react';
 import { ExpandableTable } from '../../../_components/expandable-table';
-import { DetailItem } from '../../../_components/deatil-item';
+import { DetailItem } from '../../../(app)/_components/deatil-item';
 
 const config = {
   isExpandable: true,
@@ -21,6 +21,7 @@ const config = {
             currency: record?.currency,
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
+            currencyDisplay: 'code',
           })}
         </p>
       ),
@@ -47,6 +48,7 @@ const config = {
             currency: record?.currency,
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
+            currencyDisplay: 'code',
           })}
         </p>
       ),

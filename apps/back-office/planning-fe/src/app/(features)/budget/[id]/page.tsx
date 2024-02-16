@@ -1,13 +1,12 @@
 'use client';
-import { Stack, Button, Modal, Box } from '@mantine/core';
-import { Section, logger } from '@megp/core-fe';
+import { Stack, Button, Modal, Box, Group } from '@mantine/core';
+import { Section, logger, notify } from '@megp/core-fe';
 import { useParams } from 'next/navigation';
 import { useDisclosure } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
 import { DetailTable } from '../../_components/detail-table';
 import { useLazyReadQuery } from '../../_api/app.api';
 import { useLazyListByIdQuery } from '../_api/budget.api';
-import { notifications } from '@mantine/notifications';
 import { useBulkCreateMutation } from '@/store/api/budget/budget.api';
 import DataImport from '../../_components/data-import';
 import { ExpandableTable } from '../../_components/expandable-table';
@@ -183,33 +182,27 @@ export default function DetailPage() {
   const handelOnDone = async () => {
     try {
       await create({ appId: id, budgets: data }).unwrap();
-      notifications.show({
-        title: 'Success',
-        message: 'Budget Year Uploaded Successfully',
-        color: 'green',
-      });
+      notify('Success', 'Budget Year Uploaded Successfully');
       close();
-      onRequestChange({ skip: 0, take: 10 });
     } catch (err) {
       logger.log(err);
-      notifications.show({
-        title: 'Error',
-        message: 'Something went wrong',
-        color: 'red',
-      });
+      notify('Error', 'Something went wrong');
     }
   };
   return (
     <Stack>
       <Modal opened={opened} onClose={close} title="Import File" centered>
         <DataImport onDone={handelExtractedData} />
-        <Button
-          className="mt-4 ml-auto"
-          onClick={handelOnDone}
-          loading={isLoading}
-        >
-          Done
-        </Button>
+        <Group justify="end">
+          <Button
+            className="mt-4 ml-auto"
+            onClick={handelOnDone}
+            loading={isLoading}
+            disabled={data.length === 0}
+          >
+            Done
+          </Button>
+        </Group>
       </Modal>
       <Section
         title={`Budget Year ${budgetYear?.budgetYear ?? ''}`}

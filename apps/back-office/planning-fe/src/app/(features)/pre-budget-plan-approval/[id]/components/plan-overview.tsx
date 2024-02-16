@@ -1,31 +1,26 @@
 'use client';
-import { useLazyListByIdQuery } from '../../../pre-budget-plan/[budgetYear]/activities/_api/activities.api';
+import { useLazyListByIdQuery } from '../../../(app)/pre-budget-plan/[budgetYear]/activities/_api/activities.api';
 import { Section } from '@megp/core-fe';
 import { useEffect } from 'react';
-import { DetailActivity } from '../../../_components/detail-activity';
+import { DetailActivity } from '../../../(app)/_components/detail-activity';
 import { Accordion, Box, LoadingOverlay } from '@mantine/core';
 import { Items } from './items';
 import { Requisitioner } from './requisitioner';
 import { Timeline } from './timeline';
 import { Document } from './document';
-import { useGetCurrentWorkflowInstanceQuery } from '@/store/api/workflow/workflow.api';
 import { useParams } from 'next/navigation';
 import { ProcurementMethod } from './procurement-method';
+import { useGetPreBudgetPlansQuery } from '@/store/api/pre-budget-plan/pre-budget-plan.api';
 
 export function PlanOverview() {
   // const budgetYear = '0f241dbd-3aa9-40b9-9e27-8f8b644d8174';
   const { id } = useParams();
   const [listById, { data: list, isLoading: isActivityLoading }] =
     useLazyListByIdQuery();
-  const {
-    data: workflowInstance,
-    isLoading: isWorkflowInstanceLoading,
-    // isSuccess: isWorkflowInstanceSuccess,
-    // } = useGetWorkflowInstanceQuery('1f344819-d64d-4986-b192-ee06f5bf0e98');
-  } = useGetCurrentWorkflowInstanceQuery({
-    itemId: id,
-    key: 'preBudgetApproval',
-  });
+  const { data: preBudgetPlan, isLoading: isPreBudgetPlanLoading } =
+    useGetPreBudgetPlansQuery({
+      where: [[{ column: 'id', value: id, operator: '=' }]],
+    });
 
   useEffect(() => {
     listById({ id: id as string, collectionQuery: { includes: ['reasons'] } });
@@ -33,10 +28,11 @@ export function PlanOverview() {
 
   return (
     <Box pos="relative">
-      <Section title={workflowInstance?.itemName ?? ''} collapsible={false}>
-        <LoadingOverlay
-          visible={isWorkflowInstanceLoading || isActivityLoading}
-        />
+      <Section
+        title={preBudgetPlan?.items?.[0].app.planName ?? ''}
+        collapsible={false}
+      >
+        <LoadingOverlay visible={isPreBudgetPlanLoading || isActivityLoading} />
         <Accordion variant="contained">
           {list?.items?.map((activity) => (
             <Accordion.Item

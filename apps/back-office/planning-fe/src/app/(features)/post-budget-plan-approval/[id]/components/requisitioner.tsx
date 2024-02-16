@@ -1,4 +1,4 @@
-import { useLazyGetPostBudgetRequisitionerQuery } from '@/store/api/post-budget-plan/post-budget-plan.api';
+import { useLazyGetPreBudgetRequisitionerQuery } from '@/store/api/pre-budget-plan/pre-budget-plan.api';
 import { Table, TableConfig } from '@megp/core-fe';
 import { useEffect } from 'react';
 
@@ -13,7 +13,7 @@ const config: TableConfig<any> = {
 };
 
 export const Requisitioner = ({ activityId }: { activityId: string }) => {
-  const [getRequisitioner, { data }] = useLazyGetPostBudgetRequisitionerQuery();
+  const [getRequisitioner, { data }] = useLazyGetPreBudgetRequisitionerQuery();
 
   useEffect(() => {
     getRequisitioner(activityId);

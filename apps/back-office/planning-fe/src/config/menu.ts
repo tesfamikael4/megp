@@ -9,7 +9,7 @@ import {
 
 export const Menu: MenuItem[] = [
   {
-    label: 'APP',
+    label: 'Procurement Plan',
     icon: IconCalendarStats,
     links: [
       {
