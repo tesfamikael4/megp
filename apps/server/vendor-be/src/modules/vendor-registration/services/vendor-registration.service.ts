@@ -34,7 +34,12 @@ import { InvoiceService } from './invoice.service';
 import { CollectionQuery, QueryConstructor } from 'src/shared/collection-query';
 import { DataResponseFormat } from 'src/shared/api-data';
 import axios from 'axios';
-import { FppaDataDto, MbrsData, NCICDataDto } from '../dto/mbrsData.dto';
+import {
+  FppaDataDto,
+  MbrsData,
+  MbrsDataDto,
+  NCICDataDto,
+} from '../dto/mbrsData.dto';
 import { IsrVendorsResponseDto } from '../dto/isrvendor.dto';
 import { BusinessAreaDetailResponseDto } from '../dto/business-area.dto';
 import { ServicePricingService } from 'src/modules/pricing/services/service-pricing.service';
@@ -87,6 +92,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     VendorStatusEnum.SUBMITTED,
     VendorStatusEnum.PENDING,
   ];
+
   async submitVendorInformations(data: any, userInfo: any): Promise<any> {
     try {
       // const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
@@ -295,16 +301,46 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           data.initial.level.trim() === VendorStatusEnum.PAYMENT &&
           data.initial.status.trim() === VendorStatusEnum.SAVE
         ) {
-          for (
-            let index = 0;
-            index < data.areasOfBusinessInterest.length;
-            index++
-          ) {
+          let ncicData = null;
+          let fppaData = null;
+          const length = data.areasOfBusinessInterest.length;
+          for (let index = 0; index < length; index++) {
+            if (
+              data.areasOfBusinessInterest[index] === 'work' &&
+              ncicData == null
+            ) {
+              ncicData = await this.GetNCICData(isrVendor.tinNumber);
+              if (ncicData == null) {
+                isrVendor.initial.status = VendorStatusEnum.SAVE;
+                isrVendor.initial.level = VendorStatusEnum.PPDA;
+                await this.isrVendorsRepository.save(isrVendor);
+              } else {
+                isrVendor.basic.district = ncicData?.district;
+
+                isrVendor.address.mobilePhone = ncicData?.telephoneNumber;
+                isrVendor.address.postalAddress = ncicData?.postalAddress;
+                isrVendor.address.primaryEmail = ncicData?.email;
+                // isrVendor.basic.businessType = ncicData?.typeOfRegistration
+                await this.isrVendorsRepository.save(isrVendor);
+              }
+            } else if (fppaData == null) {
+              fppaData = await this.GetFPPAData(isrVendor.tinNumber);
+              if (fppaData !== null) {
+                isrVendor.basic.businessType = fppaData.businessType;
+                isrVendor.contactPersons.mobileNumber = fppaData.mobileNumber;
+                await this.isrVendorsRepository.save(isrVendor);
+                continue;
+              }
+            } else if (fppaData !== null) {
+              continue;
+            }
             const vendor: VendorsEntity = new VendorsEntity();
             //  result.basic['id'] = result.id;
             vendor.id = result.id;
             vendor.name = result.basic['name'];
-
+            if (data.areasOfBusinessInterest[index] !== 'works') {
+              continue;
+            }
             await this.invoiceService.generateInvoice(
               data.areasOfBusinessInterest[index].priceRange,
               vendor,
@@ -346,6 +382,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         : data.initial.status;
 
     vendorsEntity.initial = data.initial;
+    vendorsEntity.tinNumber = data.basic.tinNumber;
     vendorsEntity.basic = data.basic;
     vendorsEntity.address = data.address;
     vendorsEntity.contactPersons = data.contactPersons;
@@ -782,12 +819,19 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     vendorInitiationDto: VendorInitiationDto,
     userInfo: any,
   ): Promise<any> {
+    const mbrsDataDto = new MbrsDataDto();
+    mbrsDataDto.tin = vendorInitiationDto.tinNumber;
+    mbrsDataDto.issuedDate = vendorInitiationDto.tinIssuedDate;
+    const result = await this.GetMBRSData(mbrsDataDto);
+    if (result == null) throw new HttpException('something went wrong', 500);
+    if (!result) throw new HttpException('something went wrong', 400);
     const vendor = await this.isrVendorsRepository.findOne({
       where: {
         userId: userInfo.id,
         status: In(this.updateVendorEnums),
       },
     });
+
     if (vendor) return { id: vendor.id, message: 'vendor exist' };
     if (vendorInitiationDto.tinNumber) {
       const vendorByTinExists = await this.isrVendorsRepository.findOne({
@@ -810,6 +854,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       userId: userInfo.id,
       status: vendorInitiationDto.status,
       level: vendorInitiationDto.level,
+      issueDate: vendorInitiationDto.tinIssuedDate,
     };
     vendorsEntity.initial = initial;
     vendorsEntity.basic = vendorInitiationDto;
@@ -1122,29 +1167,30 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
   }
   async GetMBRSData(mbrsDataDto) {
     try {
-      const url = `https://dev-bo.megp.peragosystems.com/api/tax-payers/${mbrsDataDto.tinNumber}/${mbrsDataDto.issuedDate}`;
-      await axios.get(url);
-      // if (!response) throw new HttpException(`not found in mbra`, 500);
-      const tin = '20202020';
-      const licenseNumber = '12345';
-      const mbrsurl = `https://dev-bo.megp.peragosystems.com/administration/api/customer-bussines-infos/${mbrsDataDto.tinNumber}/${mbrsDataDto.licenseNumber}`;
-      const mbrsResponse = await axios.get(mbrsurl);
-      if (!mbrsResponse) throw new HttpException(`not found in mbrs`, 500);
-      const mbrsData: MbrsData = new MbrsData();
-      mbrsData.businessLicenseNumber =
-        mbrsResponse?.data?.businessLicenseNumber;
-      mbrsData.businessName = mbrsResponse?.data?.businessName;
-      mbrsData.dateRegistered = mbrsResponse?.data?.dateRegistered;
-      mbrsData.firstName = mbrsResponse?.data?.firstName;
-      mbrsData.lastName = mbrsResponse?.data?.lastName;
-      mbrsData.legalStatus = mbrsResponse?.data?.legalStatus;
-      mbrsData.middleName = mbrsResponse?.data?.middleName;
-      mbrsData.nationality = mbrsResponse?.data?.nationality;
-      mbrsData.organizationName = mbrsResponse?.data?.organizationName;
-      mbrsData.tin = mbrsResponse?.data?.tin;
-      return mbrsData;
+      const url = `https://dev-bo.megp.peragosystems.com/administration/api/tax-payers/${mbrsDataDto.tin}/${mbrsDataDto.issuedDate}`;
+      console.log(url);
+      const result = await axios.get(url);
+      if (!result) return null;
+      return result;
+      // commented because mbrs api is not working
+      // const mbrsurl = `https://dev-bo.megp.peragosystems.com/administration/api/customer-bussines-infos/${mbrsDataDto.tinNumber}/${mbrsDataDto.licenseNumber}`;
+      // const mbrsResponse = await axios.get(mbrsurl);
+      // if (!mbrsResponse) throw new HttpException(`not found in mbrs`, 500);
+      // const mbrsData: MbrsData = new MbrsData();
+      // mbrsData.businessLicenseNumber =
+      //   mbrsResponse?.data?.businessLicenseNumber;
+      // mbrsData.businessName = mbrsResponse?.data?.businessName;
+      // mbrsData.dateRegistered = mbrsResponse?.data?.dateRegistered;
+      // mbrsData.firstName = mbrsResponse?.data?.firstName;
+      // mbrsData.lastName = mbrsResponse?.data?.lastName;
+      // mbrsData.legalStatus = mbrsResponse?.data?.legalStatus;
+      // mbrsData.middleName = mbrsResponse?.data?.middleName;
+      // mbrsData.nationality = mbrsResponse?.data?.nationality;
+      // mbrsData.organizationName = mbrsResponse?.data?.organizationName;
+      // mbrsData.tin = mbrsResponse?.data?.tin;
+      // return mbrsData;
     } catch (error) {
-      // console.log(error);
+      console.log(error);
       throw error;
     }
   }
@@ -1152,20 +1198,14 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
   async GetNCICData(tinNumber: string) {
     try {
       const nCICDataDto: NCICDataDto = new NCICDataDto();
-      const url = `https://dev-bo.megp.peragosystems.com/api/ncic-vendors/${tinNumber}`;
+      const url = `https://dev-bo.megp.peragosystems.com/administration/api/ncic-vendors/${tinNumber}`;
       const response = await axios.get(url);
+      if (
+        response?.data == null ||
+        response?.data?.tin !== tinNumber.toString().trim()
+      )
+        return null;
       return response.data;
-      if (!response) throw new HttpException('not found in ncic', 500);
-      // nCICDataDto.accountName = response?.data?.nCICDataDto;
-      // nCICDataDto.accountNo = response?.data?.accountNo;
-      // nCICDataDto.businessType = response?.data?.businessType;
-      // nCICDataDto.id = response?.data?.id;
-      // nCICDataDto.mobileNumber = response?.data?.mobileNumber;
-      // nCICDataDto.supplierCode = response?.data?.supplierCode;
-      // nCICDataDto.supplierName = response?.data?.supplierName;
-      // nCICDataDto.tin = response?.data?.tin;
-
-      // return nCICDataDto;
     } catch (error) {
       console.log(error);
       throw error;
@@ -1185,7 +1225,9 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       fppaDataDto.mobileNumber = response?.data?.mobileNumber;
       fppaDataDto.supplierCode = response?.data?.supplierCode;
       fppaDataDto.supplierName = response?.data?.supplierName;
-      return fppaDataDto;
+      // return fppaDataDto;
+      if (!response.data || response.data == null) return null;
+      return response.data;
     } catch (error) {
       console.log(error);
       throw error;
