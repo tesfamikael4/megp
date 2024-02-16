@@ -1,10 +1,7 @@
 'use client';
 
-import { ExpandableTable } from '@/app/(features)/_components/expandable-table';
-import { Section, logger } from '@megp/core-fe';
 import { useRouter } from 'next/navigation';
-import { ActionIcon, Box, Loader, LoadingOverlay } from '@mantine/core';
-import { IconChevronRight } from '@tabler/icons-react';
+import { Loader } from '@mantine/core';
 import { useLazyGetPreBudgetPlansQuery } from '@/store/api/pre-budget-plan/pre-budget-plan.api';
 import { useEffect } from 'react';
 

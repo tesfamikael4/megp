@@ -1,6 +1,5 @@
 'use client';
 import { Flex, TextInput } from '@mantine/core';
-import { logger } from '@megp/core-fe';
 import { IconInboxOff, IconSearch } from '@tabler/icons-react';
 import { DataTable } from 'mantine-datatable';
 import { useEffect, useState } from 'react';
@@ -107,7 +106,6 @@ export const ExpandableTable = ({
         )}
         selectedRecords={config.selectedItems}
         onSelectedRecordsChange={(records) => {
-          logger.log({ records });
           if (config.disableMultiSelect) {
             const temp = records.filter(
               (r) => !config.selectedItems?.includes(r),

@@ -6,6 +6,7 @@ import { Documents } from '@/app/(features)/(app)/_components/documents';
 import TimelineTab from '@/app/(features)/(app)/_components/timeline-tab';
 import { Items } from '@/app/(features)/(app)/_components/items';
 import { ActivityMechanization } from '@/app/(features)/(app)/_components/activity-mechanization';
+import { useGetPreBudgetPlanQuery } from '@/store/api/pre-budget-plan/pre-budget-plan.api';
 import { useParams, useRouter } from 'next/navigation';
 import { Requisitioner } from '@/app/(features)/(app)/_components/requisitioner';
 import { IconChevronLeft } from '@tabler/icons-react';
@@ -13,8 +14,14 @@ import { useReadQuery } from '../_api/activities.api';
 
 export default function NewActivity() {
   const { budgetYear, id } = useParams();
+  const { data: preBudgetYear } = useGetPreBudgetPlanQuery(
+    budgetYear as string,
+  );
   const { data: activity } = useReadQuery(id as string);
   const router = useRouter();
+  const disableFields = preBudgetYear
+    ? preBudgetYear.status != 'Draft' && preBudgetYear.status != 'Adjust'
+    : false;
   return (
     <>
       <Section
@@ -22,7 +29,7 @@ export default function NewActivity() {
           <Tooltip
             label="List Activities"
             className="cursor-pointer"
-            onClick={() => router.push(`/report/${budgetYear}/activities`)}
+            onClick={() => router.back()}
           >
             <Flex align="center">
               <IconChevronLeft />
@@ -34,7 +41,7 @@ export default function NewActivity() {
       >
         <Tabs defaultValue="identification" keepMounted={false}>
           <Tabs.List>
-            <Tabs.Tab value="identification">Identification</Tabs.Tab>
+            <Tabs.Tab value="identification">Activity Identification</Tabs.Tab>
             <Tabs.Tab value="method">Procurement Methods</Tabs.Tab>
             <Tabs.Tab value="items">Items</Tabs.Tab>
             <Tabs.Tab value="documents">Documents</Tabs.Tab>
@@ -43,26 +50,30 @@ export default function NewActivity() {
           </Tabs.List>
 
           <Tabs.Panel value="identification" className="pt-2">
-            <FormDetail mode="detail" page="pre" disableFields={true} />
+            <FormDetail
+              mode="detail"
+              page="pre"
+              disableFields={disableFields}
+            />
           </Tabs.Panel>
           <Tabs.Panel value="method" className="pt-2">
-            <ActivityMechanization page="pre" disableFields={true} />
+            <ActivityMechanization page="pre" disableFields={disableFields} />
           </Tabs.Panel>
 
           <Tabs.Panel value="items">
-            <Items page="pre" disableFields={true} />
+            <Items page="pre" disableFields={disableFields} />
           </Tabs.Panel>
 
           <Tabs.Panel value="documents">
-            <Documents disableFields={true} />
+            <Documents disableFields={disableFields} />
           </Tabs.Panel>
 
           <Tabs.Panel value="timeline">
-            <TimelineTab page="pre" disableFields={true} />
+            <TimelineTab page="pre" disableFields={disableFields} />
           </Tabs.Panel>
 
           <Tabs.Panel value="requisitioner">
-            <Requisitioner page="pre" disableFields={true} />
+            <Requisitioner page="pre" disableFields={disableFields} />
           </Tabs.Panel>
         </Tabs>
       </Section>

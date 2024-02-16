@@ -18,7 +18,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { IconChevronDown, IconChevronUp, IconCoins } from '@tabler/icons-react';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { StatisticCard } from '@/app/(features)/_components/statistic-card';
+import { StatisticCard } from '@/app/(features)/(app)/_components/statistic-card';
 
 const ReportTab = () => {
   const { budgetYear } = useParams();

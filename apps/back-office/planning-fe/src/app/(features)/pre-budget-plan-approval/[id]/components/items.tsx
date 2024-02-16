@@ -1,7 +1,7 @@
 import { useLazyListByAppIdQuery } from '../../../_api/items.api';
 import { useEffect } from 'react';
 import { ExpandableTable } from '../../../_components/expandable-table';
-import { DetailItem } from '../../../_components/deatil-item';
+import { DetailItem } from '../../../(app)/_components/deatil-item';
 
 const config = {
   isExpandable: true,

@@ -1,27 +1,26 @@
 'use client';
-import { useLazyListByIdQuery } from '../../../post-budget-plan/[budgetYear]/activities/_api/activities.api';
+import { useLazyListByIdQuery } from '../../../(app)/post-budget-plan/[budgetYear]/activities/_api/activities.api';
 import { Section } from '@megp/core-fe';
 import { useEffect } from 'react';
-import { DetailActivity } from '../../../_components/detail-activity';
+import { DetailActivity } from '../../../(app)/_components/detail-activity';
 import { Accordion, Box, LoadingOverlay } from '@mantine/core';
 import { Items } from './items';
 import { Requisitioner } from './requisitioner';
 import { Timeline } from './timeline';
 import { Document } from './document';
-import { useGetWorkflowInstanceQuery } from '@/store/api/workflow/workflow.api';
 import { Budget } from './budget';
 import { useParams } from 'next/navigation';
+import { useGetPostBudgetPlansQuery } from '@/store/api/post-budget-plan/post-budget-plan.api';
 
 export function PlanOverview() {
   // const budgetYear = '0f241dbd-3aa9-40b9-9e27-8f8b644d8174';
   const { id } = useParams();
   const [listById, { data: list, isLoading: isActivityLoading }] =
     useLazyListByIdQuery();
-  const {
-    data: workflowInstance,
-    isLoading: isWorkflowInstanceLoading,
-    // isSuccess: isWorkflowInstanceSuccess,
-  } = useGetWorkflowInstanceQuery('c076d2a2-22f8-47c0-9cd0-5b00154e8479');
+  const { data: postBudgetPlan, isLoading: isPostBudgetPlanLoading } =
+    useGetPostBudgetPlansQuery({
+      where: [[{ column: 'id', value: id, operator: '=' }]],
+    });
 
   useEffect(() => {
     listById({ id: id as string, collectionQuery: {} });
@@ -29,9 +28,12 @@ export function PlanOverview() {
 
   return (
     <Box pos="relative">
-      <Section title={workflowInstance?.itemName ?? ''} collapsible={false}>
+      <Section
+        title={postBudgetPlan?.items?.[0].app.planName ?? ''}
+        collapsible={false}
+      >
         <LoadingOverlay
-          visible={isWorkflowInstanceLoading || isActivityLoading}
+          visible={isPostBudgetPlanLoading || isActivityLoading}
         />
         <Accordion variant="contained">
           {list?.items?.map((activity) => (
@@ -68,7 +70,7 @@ export function PlanOverview() {
                       <Accordion.Panel>
                         <DetailActivity
                           activity={activity}
-                          page="pre"
+                          page="post"
                           hideActivity
                         />
                       </Accordion.Panel>

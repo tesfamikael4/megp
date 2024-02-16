@@ -5,9 +5,9 @@ import Papa from 'papaparse';
 import { IconFile } from '@tabler/icons-react';
 
 const DataImport = ({ onDone }: { onDone: any }) => {
-  const [, setJsonData] = useState([]);
-  const [, setFileName] = useState('');
-  const [, setIsLoading] = useState(false);
+  // const [, setJsonData] = useState([]);
+  // const [, setFileName] = useState('');
+  // const [, setIsLoading] = useState(false);
 
   const convertCSVToJSON = (csvContent) => {
     Papa.parse(csvContent, {
@@ -16,10 +16,10 @@ const DataImport = ({ onDone }: { onDone: any }) => {
       skipEmptyLines: true,
       complete: (results) => {
         if (results.data && results.data.length > 0) {
-          setJsonData(results.data);
+          // setJsonData(results.data);
           onDone(results.data);
         }
-        setIsLoading(false);
+        // setIsLoading(false);
       },
     });
   };
@@ -27,8 +27,8 @@ const DataImport = ({ onDone }: { onDone: any }) => {
   const handleConvertButtonClick = (value) => {
     if (value) {
       const file = value;
-      setFileName(file.name);
-      setIsLoading(true);
+      // setFileName(file.name);
+      // setIsLoading(true);
       const reader = new FileReader();
 
       reader.onload = (e) => {

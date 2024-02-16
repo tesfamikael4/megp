@@ -4,24 +4,34 @@ import { ExpandableTable } from '@/app/(features)/_components/expandable-table';
 import { Section } from '@megp/core-fe';
 import { useLazyListByIdQuery } from './_api/activities.api';
 import { useParams, useRouter } from 'next/navigation';
-import { ActionIcon, Flex, Tooltip } from '@mantine/core';
-import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
+import { ActionIcon, Button } from '@mantine/core';
+import { IconChevronRight, IconPlus } from '@tabler/icons-react';
 import { DetailActivity } from '@/app/(features)/(app)/_components/detail-activity';
+import { useGetPostBudgetPlanQuery } from '@/store/api/post-budget-plan/post-budget-plan.api';
 
-export default function PreBudget() {
+export default function PostBudget() {
   const { budgetYear } = useParams();
+  const { data: postBudgetYear } = useGetPostBudgetPlanQuery(
+    budgetYear as string,
+  );
   const [listById, { data: list }] = useLazyListByIdQuery();
   const router = useRouter();
 
   const config = {
     columns: [
-      { accessor: 'procurementReference', title: 'Reference', width: 150 },
-      { accessor: 'name', title: 'Name', width: 300 },
-      { accessor: 'description', title: 'Description' },
+      {
+        accessor: 'procurementReference',
+        title: 'Reference',
+        width: 150,
+        sortable: true,
+      },
+      { accessor: 'name', title: 'Name', width: 300, sortable: true },
+      { accessor: 'description', title: 'Description', sortable: true },
       {
         accessor: 'estimatedAmount',
         title: 'Total Amount',
         textAlign: 'right',
+        sortable: true,
         render: (activity) => (
           <>
             {parseInt(activity.estimatedAmount).toLocaleString('en-US', {
@@ -43,7 +53,9 @@ export default function PreBudget() {
             variant="outline"
             onClick={(e) => {
               e.stopPropagation();
-              router.push(`/report/${budgetYear}/activities/${activity.id}`);
+              router.push(
+                `/post-budget-plan/${budgetYear}/activities/${activity.id}`,
+              );
             }}
           >
             <IconChevronRight />
@@ -56,7 +68,7 @@ export default function PreBudget() {
     isSearchable: true,
     primaryColumn: 'name',
     expandedRowContent: (activity) => {
-      return <DetailActivity activity={activity} page="pre" />;
+      return <DetailActivity activity={activity} page="post" />;
     },
   };
 
@@ -65,19 +77,19 @@ export default function PreBudget() {
   };
   return (
     <Section
-      title={
-        <Tooltip
-          label="List Budget Years"
-          className="cursor-pointer"
-          onClick={() => router.push(`/report/`)}
-        >
-          <Flex align="center">
-            <IconChevronLeft />
-            Activities
-          </Flex>
-        </Tooltip>
-      }
+      title="Activities"
       collapsible={false}
+      action={
+        postBudgetYear?.status == 'Draft' && (
+          <Button
+            onClick={() =>
+              router.push(`/post-budget-plan/${budgetYear}/activities/new`)
+            }
+          >
+            <IconPlus size={14} /> Add
+          </Button>
+        )
+      }
     >
       <ExpandableTable
         config={config}
