@@ -103,7 +103,7 @@ export const BasicInfo: React.FC<PassFormDataProps> = ({ register }) => {
         ) : (
           <TextInput
             label="District/State/Region"
-            {...register(`basic.district`, 'select')}
+            {...register(`basic.district`)}
           />
         )}
       </Group>

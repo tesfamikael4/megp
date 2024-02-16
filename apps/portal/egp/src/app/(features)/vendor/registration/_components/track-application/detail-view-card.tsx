@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useCallback } from 'react';
 import styles from './detail-view-card.module.scss';
 import {
@@ -13,6 +15,7 @@ import { IconArrowLeft } from '@tabler/icons-react';
 import ProgressBar from './progressBar';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { ApplicationInfo } from '@/models/vendorRegistration';
+import { locale } from 'dayjs';
 
 const callbackURL = (key: string) => {
   if (key == 'GoodsNewRegistration' || key == 'ServicesNewRegistration') {
@@ -78,14 +81,15 @@ const DetailViewCard: React.FC<Props> = ({ data, close }) => {
       <Box className={styles.cardFooter}>
         {data.status === 'Adjustment' && (
           <Button
-            onClick={() =>
+            onClick={() => {
+              localStorage.setItem('category', data.category);
               router.push(
                 `/vendor/registration/${callbackURL(data.BpService.key)}?${createQueryString(
                   'flag',
                   'adjustment',
                 )}`,
-              )
-            }
+              );
+            }}
           >
             Adjust
           </Button>
