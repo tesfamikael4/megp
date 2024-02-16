@@ -322,11 +322,15 @@ export class AccountsService {
       .leftJoinAndSelect('accounts.users', 'users', `users.status =:status`, {
         status: AccountStatusEnum.ACTIVE,
       })
-      .leftJoinAndSelect('users.organization', 'organization')
+      .leftJoinAndSelect(
+        'users.organization',
+        'organization',
+        `organization.status = 'ACTIVE'`,
+      )
       .leftJoin(
         'organization.organizationMandates',
         'organizationMandates',
-        'organizationMandates.organizationId = users.organizationId OR organizationMandates.organizationId IS NULL',
+        'organizationMandates.organizationId = users.organizationId',
       )
       .leftJoin('organizationMandates.mandate', 'mandate')
       .leftJoin('mandate.mandatePermissions', 'mandatePermissions')
@@ -365,7 +369,9 @@ export class AccountsService {
 
     const organizations = [];
 
-    for (const user of userInfo.users) {
+    const users = userInfo?.users?.filter((x) => x.organization != null);
+
+    for (const user of users) {
       const permissions = [];
       const roles = [];
       const roleSystems = [];
@@ -938,22 +944,24 @@ export class AccountsService {
       userId,
     );
 
-    const fullName = `${account.firstName} ${account.lastName}`;
+    if (account.email) {
+      const fullName = `${account.firstName} ${account.lastName}`;
 
-    const OTP_LIFE_TIME = Number(process.env.OTP_LIFE_TIME ?? 60);
+      const OTP_LIFE_TIME = Number(process.env.OTP_LIFE_TIME ?? 60);
 
-    const body = this.helper.verifyEmailTemplateForOtp(
-      fullName,
-      account.username,
-      otp,
-      OTP_LIFE_TIME,
-    );
+      const body = this.helper.verifyEmailTemplateForOtp(
+        fullName,
+        account.username,
+        otp,
+        OTP_LIFE_TIME,
+      );
 
-    await this.emailService.sendEmail(
-      account.email,
-      'Email Verification',
-      body,
-    );
+      await this.emailService.sendEmail(
+        account.email,
+        'Email Verification',
+        body,
+      );
+    }
 
     return accountVerification;
   }
