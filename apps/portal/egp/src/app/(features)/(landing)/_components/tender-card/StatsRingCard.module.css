@@ -1,6 +1,7 @@
 .card {
   background-color: var(--mantine-color-body);
   position: relative;
+  padding: 24px;
 }
 
 .label {

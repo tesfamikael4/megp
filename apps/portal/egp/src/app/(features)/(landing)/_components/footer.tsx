@@ -37,7 +37,7 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-[#002D0D] py-7 text-[#8C94A3] items-center">
+    <footer className="bg-[#002D0D] md:py-14 text-[#8C94A3] items-center">
       {/* <Avatar className="object-left" bg="white" onClick={navigateToTop}>
         <IconArrowNarrowUp />
       </Avatar> */}
@@ -55,7 +55,7 @@ export default function Footer() {
                 />
               </Link>
 
-              <Text size="xs" className="text-gray-500 mb-4">
+              <Text size="xs" className="text-[#8F9FA3] mb-4">
                 Lorem ipsum dolor sit amet, consectetur lorem adipiscing elit.
                 Nam hendrerit nisi sed sollicitudLorem ipsum dolor sit amet,
                 consectetur lorem adipiscing elit. Nam hendrerit nisi sed
@@ -101,39 +101,46 @@ export default function Footer() {
             </Group>
           </Flex>
 
-          <Grid px="md">
+          <Flex direction={'column'} gap={'lg'} px="md">
             {/* contact us */}
-            <h1 className="text-white mb-2">CONTACT US</h1>
-            <Flex>
-              <Flex direction="column">
-                <Text size="xs" className="text-gray-500 mb-2">
-                  +1 (999) 888-77-66
-                </Text>
-                <Text size="xs" className="text-gray-500 mb-2">
-                  hello@logoipsum.com
-                </Text>
-              </Flex>
-              <Flex direction="column" ml="auto">
-                <Text size="xs" className="text-gray-500 mb-2">
-                  Fax:+251111248612 / +251111540120
-                </Text>
-                <Text size="xs" className="text-gray-500 mb-2">
-                  P.O.Box: 6217376, Addis Ababa, Ethiopia
-                </Text>
+            <Flex direction={'column'} className="w-full">
+              <Text className="text-white mb-2">CONTACT US</Text>
+              <Flex
+                align={'center'}
+                justify={'space-between'}
+                className="w-full"
+                columnGap={'xl'}
+              >
+                <Flex direction={'column'}>
+                  <Text size="xs" className="text-[#8F9FA3] mb-2">
+                    +1 (999) 888-77-66
+                  </Text>
+                  <Text size="xs" className="text-[#8F9FA3] mb-2">
+                    hello@logoipsum.com
+                  </Text>
+                </Flex>
+                <Flex direction="column" ml="auto">
+                  <Text size="xs" className="text-[#8F9FA3] mb-2">
+                    Fax:+251111248612 / +251111540120
+                  </Text>
+                  <Text size="xs" className="text-[#8F9FA3] mb-2">
+                    P.O.Box: 6217376, Addis Ababa, Ethiopia
+                  </Text>
+                </Flex>
               </Flex>
             </Flex>
             {/* Location */}
-            <div>
-              <h1 className="text-white mb-2">LOCATION</h1>
-              <Text size="xs" className="text-gray-500 mb-2">
+            <Box>
+              <Text className="text-white mb-2">LOCATION</Text>
+              <Text size="xs" className="text-[#8F9FA3] mb-2">
                 FDRE Public Procurement and Property Authority 6 killo In front
                 of Yekatit 12 Referral Hospital
               </Text>
-            </div>
+            </Box>
             {/* Important Links */}
-            <div>
+            <Box>
               <Flex direction="column" gap="2" className="mb-4 sm:text-xs">
-                <h1 className="text-white">IMPORTANT LINKS</h1>
+                <Text className="text-white">IMPORTANT LINKS</Text>
                 <Link href="#">https://www.figma.com/file/</Link>
                 <Link href="#">https://www.figma.com/file/</Link>
                 <Link href="#">https://www.figma.com/file/</Link>
@@ -141,8 +148,8 @@ export default function Footer() {
                 <Link href="#">https://www.figma.com/file/</Link>
                 <Link href="#">https://www.figma.com/file/</Link>
               </Flex>
-            </div>
-          </Grid>
+            </Box>
+          </Flex>
         </SimpleGrid>
 
         <Flex className="items-center justify-center mx-auto mt-3 text-[#8e96a1]">

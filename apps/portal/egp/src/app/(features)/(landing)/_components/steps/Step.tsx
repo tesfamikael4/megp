@@ -55,7 +55,12 @@ const Step = (props: StepProps) => {
 
         {props.arrow && (
           <>
-            <Image src="/rightarrow.svg" alt="" visibleFrom="sm" />
+            <Image
+              src="/rightarrow.svg"
+              alt=""
+              visibleFrom="sm"
+              className="place-self-start md:mt-[40px]"
+            />
             <ActionIcon
               variant="light"
               bg="transparent"
