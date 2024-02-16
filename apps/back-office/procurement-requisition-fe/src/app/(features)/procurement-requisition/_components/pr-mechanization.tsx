@@ -12,7 +12,7 @@ import { ZodType, z } from 'zod';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-import { useLazyListByIdQuery } from '@/app/(features)/_api/mechanization.api';
+import { useLazyListByIdQuery } from '@/app/(features)/procurement-requisition/_api/mechanization.api';
 import { FrameworkSelector } from './framework-selector';
 
 const activitiesSchema: ZodType<Partial<any>> = z.object({

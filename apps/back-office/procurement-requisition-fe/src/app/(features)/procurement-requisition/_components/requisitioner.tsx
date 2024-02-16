@@ -1,4 +1,4 @@
-import { useLazyListByIdQuery as useLazyGetUsersQuery } from '@/app/(features)/_api/user.api';
+import { useLazyListByIdQuery as useLazyGetUsersQuery } from '@/app/(features)/procurement-requisition/_api/user.api';
 import { ActionIcon, Box, Button, Group, Modal } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { notify } from '@megp/core-fe';
@@ -10,7 +10,7 @@ import { useParams } from 'next/navigation';
 import {
   useCreateMutation,
   useLazyListByIdQuery,
-} from '@/app/(features)/_api/requisitioner.api';
+} from '@/app/(features)/procurement-requisition/_api/requisitioner.api';
 import { ExpandableTable } from './expandable-table';
 
 export const Requisitioner = () => {

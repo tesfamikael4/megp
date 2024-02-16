@@ -1,9 +1,9 @@
 import { Box } from '@mantine/core';
 import { useParams } from 'next/navigation';
 import { useEffect } from 'react';
-import { useLazyListByIdQuery } from '@/app/(features)/_api/disbersment.api';
-import { ExpandableTable } from '@/app/(features)/_components/expandable-table';
-import { useLazyListByIdQuery as useLazyGetActivityQuery } from '@/app/(features)/_api/pr-activity.api';
+import { useLazyListByIdQuery } from '@/app/(features)/procurement-requisition/_api/disbersment.api';
+import { ExpandableTable } from '@/app/(features)/procurement-requisition/_components/expandable-table';
+import { useLazyListByIdQuery as useLazyGetActivityQuery } from '@/app/(features)/procurement-requisition/_api/pr-activity.api';
 
 export const Disbursement = ({ activityId }: { activityId?: string }) => {
   const { id } = useParams();

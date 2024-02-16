@@ -1,19 +1,29 @@
 'use client';
 
-import { ExpandableTable } from '@/app/(features)/_components/expandable-table';
+import { ExpandableTable } from '@/app/(features)/procurement-requisition/_components/expandable-table';
 import { Section } from '@megp/core-fe';
 import { useRouter } from 'next/navigation';
-import { ActionIcon, Button, Group, Modal } from '@mantine/core';
+import {
+  ActionIcon,
+  Button,
+  Divider,
+  Group,
+  Modal,
+  Radio,
+} from '@mantine/core';
 import { IconChevronRight, IconPlus } from '@tabler/icons-react';
-import { DetailRequisition } from '@/app/(features)/_components/detail-requisition-list';
+import { DetailRequisition } from '@/app/(features)/procurement-requisition/_components/detail-requisition-list';
 import { useLazyListQuery } from './_api/procurement-requisition.api';
 import { useDisclosure } from '@mantine/hooks';
 import { ActivitySelector } from './_components/activity-selector';
+import { useState } from 'react';
 
 export default function ProcurementRequisition() {
   const [trigger, { data, isLoading }] = useLazyListQuery();
   const router = useRouter();
   const [opened, { open, close }] = useDisclosure(false);
+  const [type, setType] = useState<string>('');
+  const [mode, setMode] = useState<string>('');
 
   const config = {
     columns: [
@@ -84,8 +94,13 @@ export default function ProcurementRequisition() {
       title="Procurement Requisition"
       collapsible={false}
       action={
-        <Button onClick={open}>
-          <IconPlus size={14} /> Add
+        <Button
+          onClick={() => {
+            setMode('');
+            open();
+          }}
+        >
+          <IconPlus size={14} /> Create
         </Button>
       }
     >
@@ -98,15 +113,50 @@ export default function ProcurementRequisition() {
       <Modal
         opened={opened}
         onClose={close}
-        size={'80%'}
-        title={
-          <Group className=" text-lg font-medium ">
-            New Procurement Requisition
-          </Group>
-        }
+        title="Create Procurement Requisition"
       >
-        <ActivitySelector />
+        <Divider />
+        <p className=" mb-4 mt-2">Select procurement requisition type</p>
+
+        <Group gap="md">
+          <Radio
+            label="From Planned Activities"
+            checked={type === 'planned'}
+            onChange={() => setType('planned')}
+          />
+          <Radio
+            label="Manual Procurement Requisition"
+            checked={type === 'custom'}
+            onChange={() => setType('custom')}
+          />
+        </Group>
+        <Button
+          loading={isLoading}
+          className="mt-5"
+          onClick={
+            type == 'planned'
+              ? () => setMode(type)
+              : () => router.push(`/procurement-requisition/new`)
+          }
+        >
+          Next
+        </Button>
       </Modal>
+
+      {mode === 'planned' && (
+        <Modal
+          opened={opened}
+          onClose={close}
+          size={'80%'}
+          title={
+            <Group className=" text-lg font-medium ">
+              Select Procurement Activity
+            </Group>
+          }
+        >
+          <ActivitySelector />
+        </Modal>
+      )}
     </Section>
   );
 }

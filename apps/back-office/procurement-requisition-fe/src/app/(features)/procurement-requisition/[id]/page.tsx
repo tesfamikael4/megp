@@ -1,12 +1,12 @@
 'use client';
-import { FormDetail } from '@/app/(features)/procurement-requisition/_components/form-detail';
+import { FormDetail } from '@/app/(features)/procurement-requisition/_components/mannual-pr';
 import { Box, Container, Divider, Flex, Tabs, Tooltip } from '@mantine/core';
-import { ActivityMechanization } from '@/app/(features)/_components/pr-mechanization';
-import { Items } from '@/app/(features)/_components/items';
-import TimelineTab from '@/app/(features)/_components/timeline-tab';
-import { Requisitioner } from '@/app/(features)/_components/requisitioner';
-import { Disbursement } from '@/app/(features)/_components/disbursement';
-import { Documents } from '../../_components/documents';
+import { ActivityMechanization } from '@/app/(features)/procurement-requisition/_components/pr-mechanization';
+import { Items } from '@/app/(features)/procurement-requisition/_components/items';
+import TimelineTab from '@/app/(features)/procurement-requisition/_components/timeline-tab';
+import { Requisitioner } from '@/app/(features)/procurement-requisition/_components/requisitioner';
+import { Disbursement } from '@/app/(features)/procurement-requisition/_components/disbursement';
+import { Documents } from '../_components/documents';
 import { useRouter } from 'next/navigation';
 import { IconChevronLeft } from '@tabler/icons-react';
 

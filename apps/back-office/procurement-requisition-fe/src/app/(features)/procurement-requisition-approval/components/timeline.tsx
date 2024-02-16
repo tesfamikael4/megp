@@ -1,4 +1,4 @@
-import { useLazyListByIdQuery } from '@/app/(features)/_api/timeline.api';
+import { useLazyListByIdQuery } from '@/app/(features)/procurement-requisition/_api/timeline.api';
 import { Box, NumberInput, TextInput } from '@mantine/core';
 import { DateInput } from '@mantine/dates';
 import { Table, TableConfig } from '@megp/core-fe';

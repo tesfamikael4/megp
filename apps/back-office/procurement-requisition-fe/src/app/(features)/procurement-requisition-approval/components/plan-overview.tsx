@@ -2,7 +2,7 @@
 import { useLazyListQuery } from '@/app/(features)/procurement-requisition/_api/procurement-requisition.api';
 import { Section, logger } from '@megp/core-fe';
 import { useEffect } from 'react';
-import { DetailPr } from '../../_components/detail-requisition';
+import { DetailPr } from '../../procurement-requisition/_components/detail-requisition';
 import { Accordion, Box, LoadingOverlay } from '@mantine/core';
 import { ActivityMechanization } from './activity-mechanization';
 import { Items } from './items';

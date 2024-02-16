@@ -6,8 +6,7 @@ export const administrationApi = createApi({
   reducerPath: 'administrationApi',
   refetchOnFocus: true,
   baseQuery: baseQuery(
-    process.env.NEXT_PUBLIC_PROCUREMENT_REQUISITION_API ??
-      '/procurement-requisition/api/',
+    process.env.NEXT_PUBLIC_ADMINISTRATION_API ?? '/administration/api/',
   ),
 
   endpoints: (builder) => ({
@@ -32,6 +31,9 @@ export const administrationApi = createApi({
     }),
     getTags: builder.query<any, null>({
       query: () => `tags`,
+    }),
+    getCurrencies: builder.query<any, null>({
+      query: () => `currencies`,
     }),
     getCategories: builder.query<any, any>({
       query: (collectionQuery) => {
@@ -69,5 +71,6 @@ export const {
   useLazyGetClassificationsQuery,
   useGetTagsQuery,
   useGetMeasurementsQuery,
+  useGetCurrenciesQuery,
   useGetCategoriesQuery,
 } = administrationApi;

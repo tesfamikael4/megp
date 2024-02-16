@@ -1,5 +1,5 @@
 import { Table, TableConfig } from '@megp/core-fe';
-import { useLazyListByAppIdQuery } from '../../_api/items.api';
+import { useLazyListByAppIdQuery } from '../../procurement-requisition/_api/items.api';
 import { useEffect } from 'react';
 
 const tableConfig: TableConfig<any> = {

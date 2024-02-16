@@ -1,19 +1,39 @@
 'use client';
-import { FormDetail } from '../_components/form-detail';
-import { Box, Divider } from '@mantine/core';
+import { Section } from '@megp/core-fe';
+import { FormDetail } from '../_components/mannual-pr';
+import { Flex, Tabs, Tooltip } from '@mantine/core';
+import { IconChevronLeft } from '@tabler/icons-react';
+import { useRouter } from 'next/navigation';
 
 export default function NewPrPage() {
+  const router = useRouter();
   return (
     <>
-      <Box className="bg-white rounded shadow-sm ">
-        <Box className="p-4 ">
-          <div className=" text-lg font-medium   ">
-            New Procurement requisition
-          </div>
-          <Divider mt={'md'} mb={'md'} />
-          <FormDetail mode="new" />
-        </Box>
-      </Box>
+      <Section
+        title={
+          <Tooltip
+            label="List Procurement Requisition"
+            className="cursor-pointer"
+            onClick={() => router.back()}
+          >
+            <Flex align="center">
+              <IconChevronLeft />
+              New
+            </Flex>
+          </Tooltip>
+        }
+      >
+        <Tabs defaultValue="definition">
+          <Tabs.List>
+            <Tabs.Tab value="definition">
+              Procurement Requisition Identification
+            </Tabs.Tab>
+          </Tabs.List>
+          <Tabs.Panel value="definition" className="pt-2">
+            <FormDetail mode="new" />
+          </Tabs.Panel>
+        </Tabs>
+      </Section>
     </>
   );
 }

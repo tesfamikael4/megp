@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { useLazyListByIdQuery } from '@/app/(features)/_api/mechanization.api';
-import { DetailTable } from '../../_components/detail-table';
+import { useLazyListByIdQuery } from '@/app/(features)/procurement-requisition/_api/mechanization.api';
+import { DetailTable } from '../../procurement-requisition/_components/detail-table';
 
 export const ActivityMechanization = ({ prId }: { prId: string }) => {
   const [getMechanism, { data: list, isSuccess }] = useLazyListByIdQuery();
