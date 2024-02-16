@@ -17,12 +17,12 @@ import { useLazyGetBudgetYearQuery } from '@/store/api/budget/budget-year.api';
 import {
   useLazyListByIdQuery as useLazyGetActivitiesQuery,
   useReadQuery,
-} from '../_api/activity.api';
+} from '@/app/(features)/procurement-requisition/_api/activity.api';
 import { useParams } from 'next/navigation';
 import {
   useCreateMutation,
   useLazyListByIdQuery,
-} from '@/app/(features)/_api/pr-activity.api';
+} from '@/app/(features)/procurement-requisition/_api/pr-activity.api';
 import { ExpandableTable } from './expandable-table';
 
 export function Activities() {

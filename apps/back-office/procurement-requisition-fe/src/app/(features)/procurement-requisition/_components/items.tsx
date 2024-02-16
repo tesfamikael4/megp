@@ -24,9 +24,9 @@ import { useDeleteMutation, useUpdateMutation } from '../_api/items.api';
 import {
   useLazyListByIdQuery,
   useCreateMutation,
-} from '@/app/(features)/_api/items.api';
+} from '@/app/(features)/procurement-requisition/_api/items.api';
 import { modals } from '@mantine/modals';
-import ItemSelector from '@/app/(features)/_components/item-selector';
+import ItemSelector from '@/app/(features)/procurement-requisition/_components/item-selector';
 import DataImport from './data-import';
 import { ExpandableTable } from './expandable-table';
 import { ItemDetailForm } from './item-form-detail';

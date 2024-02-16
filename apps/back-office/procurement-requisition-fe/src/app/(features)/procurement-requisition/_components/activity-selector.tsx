@@ -1,9 +1,9 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { useLazyListByIdQuery as useLazyGetActivitiesQuery } from '../../_api/activity.api';
+import { useLazyListByIdQuery as useLazyGetActivitiesQuery } from '../_api/activity.api';
 import { useCreateMutation } from '@/app/(features)/procurement-requisition/_api/procurement-requisition.api';
 import { useGetBudgetYearQuery } from '@/store/api/budget/budget-year.api';
-import { ExpandableTable } from '../../_components/expandable-table';
+import { ExpandableTable } from './expandable-table';
 import {
   Box,
   Button,

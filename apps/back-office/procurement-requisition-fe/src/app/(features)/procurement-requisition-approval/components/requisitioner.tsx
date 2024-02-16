@@ -1,4 +1,4 @@
-import { useLazyListByIdQuery } from '@/app/(features)/_api/requisitioner.api';
+import { useLazyListByIdQuery } from '@/app/(features)/procurement-requisition/_api/requisitioner.api';
 import { Table, TableConfig } from '@megp/core-fe';
 import { useParams } from 'next/navigation';
 import { useEffect } from 'react';

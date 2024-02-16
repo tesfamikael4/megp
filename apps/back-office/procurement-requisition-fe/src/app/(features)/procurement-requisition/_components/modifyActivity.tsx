@@ -22,8 +22,8 @@ import { useParams } from 'next/navigation';
 import {
   useCreateMutation,
   useLazyListByIdQuery,
-} from '@/app/(features)/_api/pr-activity.api';
-import { useCreateMutation as useCreateMethodMutation } from '@/app/(features)/_api/mechanization.api';
+} from '@/app/(features)/procurement-requisition/_api/pr-activity.api';
+import { useCreateMutation as useCreateMethodMutation } from '@/app/(features)/procurement-requisition/_api/mechanization.api';
 import { ExpandableTable } from './expandable-table';
 
 export function Activities() {

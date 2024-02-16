@@ -1,7 +1,7 @@
 'use client';
 
 import { useLazyReadQuery } from '@/app/(features)/procurement-requisition/_api/procurement-requisition.api';
-import { useApprovePrMutation } from '@/app/(features)/_api/approve.api';
+import { useApprovePrMutation } from '@/app/(features)/procurement-requisition/_api/approve.api';
 import {
   Avatar,
   Badge,

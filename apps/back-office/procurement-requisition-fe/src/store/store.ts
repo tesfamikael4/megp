@@ -2,7 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import entityApi from './entity/api';
 import { budgetApi } from './api/budget/budget-year.api';
 import { administrationApi } from './api/administration/administration.api';
-import { customApi } from '@/app/(features)/_api/custom.api';
+import { customApi } from '@/app/(features)/procurement-requisition/_api/custom.api';
 import { workflowApi } from './api/workflow/workflow.api';
 import { prApprovalApi } from './api/planning-approval/planning-approval';
 import { prIamApi } from './api/planning-approval/planning-iam';
