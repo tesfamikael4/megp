@@ -4,6 +4,7 @@ import {
   IconBasketCog,
   IconBuildingStore,
   IconCalendarEvent,
+  IconShoppingBag,
   IconUsersGroup,
 } from '@tabler/icons-react';
 
@@ -17,6 +18,7 @@ export const Applications = [
   { key: 'vendors', name: 'Vendor Management', icon: IconBuildingStore },
   { key: 'planning', name: 'Planning', icon: IconCalendarEvent },
   { key: 'tendering', name: 'Tendering', icon: IconBasketCog },
+  { key: 'procurement-requisition', name: 'PR', icon: IconShoppingBag },
   // { key: 'contract', name: 'Contract', icon: IconFileSpreadsheet },
   { key: 'administration', name: 'Administration', icon: IconAdjustmentsCog },
   { key: 'iam', name: 'Identity & Access', icon: IconUsersGroup },
