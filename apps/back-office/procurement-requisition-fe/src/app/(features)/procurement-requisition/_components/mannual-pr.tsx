@@ -38,6 +38,7 @@ import {
 import { useDisclosure } from '@mantine/hooks';
 import { IconPlus } from '@tabler/icons-react';
 import { ProcurementRequisition } from '@/models/procurement-requsition';
+import { DateInput } from '@mantine/dates';
 
 interface FormDetailProps {
   mode: 'detail' | 'new';
@@ -52,11 +53,20 @@ const prSchema: ZodType<Partial<ProcurementRequisition>> = z.object({
   currency: z.string({
     required_error: 'Currency is required',
   }),
-  totalEstimatedAmount: z.string({
+  totalEstimatedAmount: z.coerce.number({
     required_error: 'Estimated Amount is required',
   }),
   remark: z.string().default(''),
   isMultiYear: z.boolean().default(false),
+  procurementApplication: z.string({
+    required_error: 'This field is required',
+    invalid_type_error: 'This field is required to be a string',
+  }),
+  budgetCode: z.object({
+    name: z.string(),
+    startDate: z.date(),
+    endDate: z.date(),
+  }),
 });
 
 export const FormDetail = ({
@@ -64,7 +74,7 @@ export const FormDetail = ({
   disableFields = false,
 }: FormDetailProps) => {
   const router = useRouter();
-  const { budgetYear: budgetPlanId, id } = useParams();
+  const { id } = useParams();
   const {
     handleSubmit,
     reset,
@@ -75,24 +85,24 @@ export const FormDetail = ({
   } = useForm<ProcurementRequisition>({
     resolver: zodResolver(prSchema),
   });
-  const [opened, { close, open }] = useDisclosure();
-  const [tags, setTags] = useState<any>([]);
+  // const [opened, { close, open }] = useDisclosure();
+  // const [tags, setTags] = useState<any>([]);
 
   //
-  const { data: classifications } = useGetClassificationsQuery({
-    where: [
-      [
-        {
-          column: 'parentCode',
-          value: 'IsNull',
-          operator: 'IsNull',
-        },
-      ],
-    ],
-  } as any);
+  // const { data: classifications } = useGetClassificationsQuery({
+  //   where: [
+  //     [
+  //       {
+  //         column: 'parentCode',
+  //         value: 'IsNull',
+  //         operator: 'IsNull',
+  //       },
+  //     ],
+  //   ],
+  // } as any);
 
   const { data: currency } = useGetCurrenciesQuery({} as any);
-  const [getChildren, { isLoading }] = useLazyGetClassificationsQuery();
+  // const [getChildren, { isLoading }] = useLazyGetClassificationsQuery();
   // pr rtk query
   const [create, { isLoading: isCreating }] = useCreateMutation();
   const [
@@ -107,49 +117,50 @@ export const FormDetail = ({
   const [removePr, { isLoading: isPrDeleting }] = useDeleteMutation();
 
   //configs
-  const treeConfig: TreeConfig<any> = {
-    id: 'code',
-    label: 'title',
-    selectable: true,
-    multipleSelect: true,
-    selectedIds: tags,
-    setSelectedIds: setTags,
-    load: async (data) => {
-      const res = await getChildren({
-        where: [
-          [
-            {
-              column: 'parentCode',
-              value: data.code,
-              operator: '=',
-            },
-          ],
-        ],
-      }).unwrap();
-      return {
-        result:
-          res?.items?.map((c) => ({
-            code: c.code,
-            title: c.title,
-          })) ?? [],
-        loading: isLoading,
-      };
-    },
-  };
+  // const treeConfig: TreeConfig<any> = {
+  //   id: 'code',
+  //   label: 'title',
+  //   selectable: true,
+  //   multipleSelect: true,
+  //   selectedIds: tags,
+  //   setSelectedIds: setTags,
+  //   load: async (data) => {
+  //     const res = await getChildren({
+  //       where: [
+  //         [
+  //           {
+  //             column: 'parentCode',
+  //             value: data.code,
+  //             operator: '=',
+  //           },
+  //         ],
+  //       ],
+  //     }).unwrap();
+  //     return {
+  //       result:
+  //         res?.items?.map((c) => ({
+  //           code: c.code,
+  //           title: c.title,
+  //         })) ?? [],
+  //       loading: isLoading,
+  //     };
+  //   },
+  // };
 
   //event handler
   const onCreate = async (data) => {
     const rawData = {
       ...data,
-      classification: tags,
-      preBudgetPlanId: budgetPlanId,
+      status: 'Draft',
+      // classification: tags,
+      // preBudgetPlanId: budgetPlanId,
     };
 
     logger.log(rawData);
 
     try {
       const res = await create(rawData).unwrap();
-      notify('Success', 'Activity created Successfully');
+      notify('Success', 'Procurement Requisition created Successfully');
       router.push(`/procurement-requisition/${res.id}`);
     } catch (err) {
       notify('Error', 'Something went wrong');
@@ -170,13 +181,13 @@ export const FormDetail = ({
       id,
 
       ...newData,
-      classification: tags,
+      // classification: tags,
       // preBudgetPlanId: budgetPlanId,
     };
 
     try {
       await updatePr(rawData).unwrap();
-      notify('Success', 'Activity Updated Successfully');
+      notify('Success', 'Procurement Requisition Updated Successfully');
     } catch (err) {
       logger.log(err);
       notify('Error', 'Something went wrong');
@@ -198,20 +209,34 @@ export const FormDetail = ({
 
   useEffect(() => {
     if (mode === 'detail' && isPrSuccess) {
-      setValue('name', procurementRequisition?.title);
+      setValue('name', procurementRequisition?.name);
       setValue('currency', procurementRequisition?.currency);
       setValue('description', procurementRequisition?.description);
       setValue('isMultiYear', procurementRequisition?.isMultiYear);
       setValue(
         'requisitionReferenceNumber',
-        procurementRequisition?.requisitionReferenceNumber,
+        procurementRequisition?.procurementReference,
       );
       setValue('remark', procurementRequisition?.remark);
       setValue(
         'totalEstimatedAmount',
         procurementRequisition?.totalEstimatedAmount,
       );
-      setTags(procurementRequisition?.classification ?? []);
+      setValue('budgetCode.name', procurementRequisition?.budgetCode?.name);
+      setValue(
+        'budgetCode.startDate',
+        new Date(procurementRequisition?.budgetCode?.startDate),
+      );
+      setValue(
+        'budgetCode.endDate',
+        new Date(procurementRequisition?.budgetCode?.endDate),
+      );
+      setValue(
+        'procurementApplication',
+        procurementRequisition?.procurementApplication,
+      );
+
+      // setTags(procurementRequisition?.classification ?? []);
     }
   }, [mode, isPrSuccess, setValue, procurementRequisition]);
   const onError = (error) => {
@@ -219,10 +244,10 @@ export const FormDetail = ({
   };
   return (
     <Stack>
-      <Flex gap="md">
+      <Flex gap="md" pos={'relative'}>
         <Box className="w-1/2">
           {mode == 'detail' && <LoadingOverlay visible={isPrLoading} />}
-          {mode == 'detail' && (
+          {mode === 'detail' && (
             <TextInput
               withAsterisk
               disabled
@@ -230,14 +255,14 @@ export const FormDetail = ({
               {...register('requisitionReferenceNumber')}
             />
           )}
-          {mode == 'new' && (
+          {/* {mode == 'new' && (
             <TextInput
               withAsterisk
               disabled
               label="Reference Number"
               {...register('requisitionReferenceNumber')}
             />
-          )}
+          )} */}
           <TextInput
             label="Name"
             withAsterisk
@@ -277,9 +302,10 @@ export const FormDetail = ({
             {...register('totalEstimatedAmount')}
             error={errors?.totalEstimatedAmount?.message}
             withAsterisk
+            type="number"
             disabled={disableFields}
           />
-          <MultiSelect
+          {/* <MultiSelect
             label="Tag Classification"
             value={tags.map((t) => t.code)}
             data={tags.map((t) => ({
@@ -301,6 +327,45 @@ export const FormDetail = ({
                 <IconPlus />
               </ActionIcon>
             }
+          /> */}
+          <TextInput
+            label="Budget Year Name"
+            withAsterisk
+            {...register('budgetCode.name')}
+            error={errors.budgetCode?.name?.message}
+            disabled={disableFields}
+          />
+          <Controller
+            name="budgetCode.startDate"
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <DateInput
+                name="name"
+                valueFormat="DD-MMM-YYYY"
+                withAsterisk
+                label="Budget Year Start Date"
+                onChange={onChange}
+                value={value}
+                placeholder="Pick date"
+                defaultValue={new Date()}
+              />
+            )}
+          />
+          <Controller
+            name="budgetCode.endDate"
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <DateInput
+                name="name"
+                valueFormat="DD-MMM-YYYY"
+                withAsterisk
+                label="Budget Year End Date"
+                onChange={onChange}
+                value={value}
+                placeholder="Pick date"
+                defaultValue={new Date()}
+              />
+            )}
           />
         </Box>
         <Box className="w-1/2">
@@ -323,6 +388,38 @@ export const FormDetail = ({
             disabled={disableFields}
             className="mt-2"
           />
+          <Controller
+            name="procurementApplication"
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <Select
+                name="name"
+                label="Procured By"
+                value={value}
+                withAsterisk
+                error={
+                  errors?.procurementApplication
+                    ? errors?.procurementApplication?.message?.toString()
+                    : ''
+                }
+                onChange={onChange}
+                data={[
+                  {
+                    value: 'tendering',
+                    label: 'Tendering',
+                  },
+                  {
+                    value: 'purchasing',
+                    label: 'Purchasing',
+                  },
+                  {
+                    value: 'auctioning',
+                    label: 'Auctioning',
+                  },
+                ]}
+              />
+            )}
+          />
         </Box>
       </Flex>
 
@@ -338,7 +435,7 @@ export const FormDetail = ({
         disabled={disableFields}
       />
 
-      <Modal
+      {/* <Modal
         opened={opened}
         onClose={close}
         title="Select Classifications"
@@ -361,7 +458,7 @@ export const FormDetail = ({
         <Group justify="end">
           <Button onClick={close}>Done</Button>
         </Group>
-      </Modal>
+      </Modal> */}
     </Stack>
   );
 };

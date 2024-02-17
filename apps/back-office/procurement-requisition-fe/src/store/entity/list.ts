@@ -32,7 +32,7 @@ export const ENTITY_LIST: EntityStoreConfig[] = [
     baseUrl: process.env.NEXT_PUBLIC_IAM_API ?? '/iam/api',
   },
   {
-    entity: 'procurement-requisition-mechanisms',
+    entity: 'procurement-mechanisms',
     baseUrl:
       process.env.NEXT_PUBLIC_PROCUREMENT_REQUISITION_API ??
       '/procurement-requisition/api',

@@ -1,17 +1,20 @@
 'use client';
 import { FormDetail } from '@/app/(features)/procurement-requisition/_components/mannual-pr';
 import { Box, Container, Divider, Flex, Tabs, Tooltip } from '@mantine/core';
-import { ActivityMechanization } from '@/app/(features)/procurement-requisition/_components/pr-mechanization';
+import { PrMechanization } from '@/app/(features)/procurement-requisition/_components/pr-mechanization';
 import { Items } from '@/app/(features)/procurement-requisition/_components/items';
 import TimelineTab from '@/app/(features)/procurement-requisition/_components/timeline-tab';
 import { Requisitioner } from '@/app/(features)/procurement-requisition/_components/requisitioner';
 import { Disbursement } from '@/app/(features)/procurement-requisition/_components/disbursement';
 import { Documents } from '../_components/documents';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
+import { useReadQuery } from '../_api/procurement-requisition.api';
 import { IconChevronLeft } from '@tabler/icons-react';
 
 export default function PrDetailPage() {
   const router = useRouter();
+  const { id } = useParams();
+  const { data } = useReadQuery(id?.toString());
   return (
     <>
       <Box className="bg-white rounded shadow-sm">
@@ -48,7 +51,7 @@ export default function PrDetailPage() {
               </Tabs.Panel>
 
               <Tabs.Panel value="method" className="pt-2">
-                <ActivityMechanization />
+                <PrMechanization disableFields={!data?.isCustom} />
               </Tabs.Panel>
 
               <Tabs.Panel value="items">
