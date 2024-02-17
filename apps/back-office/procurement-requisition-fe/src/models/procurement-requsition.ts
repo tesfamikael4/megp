@@ -6,12 +6,17 @@ export interface ProcurementRequisition {
   requisitionReferenceNumber: string;
   userReferncceNumber: string;
   budgetYear: any;
-  totalEstimatedAmount: string;
+  budgetCode: {
+    name: string;
+    endDate: Date;
+    startDate: Date;
+  };
+  totalEstimatedAmount: number;
   calculatedAmount: number;
   currency: string;
   status: string;
-  procurementType: any;
-  budgetCode: any;
+  procurementApplication: any;
+
   isPlanned: boolean;
   isMultiYear: boolean;
   remark: string;
