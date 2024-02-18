@@ -6,6 +6,7 @@ import { Step } from '../../../entities';
 import { DefaultStep } from 'src/entities/default-step.entity';
 import { Instance } from 'src/entities/instance.entity';
 import { InstanceStep } from 'src/entities/instance-step.entity';
+import { Activity } from 'src/entities/activity.entity';
 
 @Injectable()
 export class InstanceStepService extends ExtraCrudService<InstanceStep> {
@@ -14,6 +15,8 @@ export class InstanceStepService extends ExtraCrudService<InstanceStep> {
     private readonly repositoryInstanceStep: Repository<InstanceStep>,
     @InjectRepository(DefaultStep)
     private readonly repositoryDefaultStep: Repository<DefaultStep>,
+    @InjectRepository(Activity)
+    private readonly repositoryActivity: Repository<Activity>,
   ) {
     super(repositoryInstanceStep);
   }
@@ -76,9 +79,18 @@ export class InstanceStepService extends ExtraCrudService<InstanceStep> {
     return true;
   }
 
-  async orderStep(activityId: string, organizationId: string): Promise<any> {
+  async orderStep(
+    itemId: string,
+    key: string,
+    organizationId: string,
+  ): Promise<any> {
+    const activity = await this.repositoryActivity.findOne({
+      where: {
+        name: key,
+      },
+    });
     const [items, total] = await this.repositoryInstanceStep.findAndCount({
-      where: { activityId: activityId, organizationId: organizationId },
+      where: { itemId, organizationId, activityId: activity.id },
       order: { order: 'ASC' },
     });
     return { items, total };

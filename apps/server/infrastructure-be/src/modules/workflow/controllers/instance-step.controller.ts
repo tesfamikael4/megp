@@ -27,11 +27,16 @@ export class InstanceStepController extends ExtraCrudController<InstanceStep>(
     return this.instanceStepService.bulkCreate(steps, req);
   }
 
-  @Get('order-steps/:activityId')
+  @Get('order-steps/:key/:itemId')
   async orderStep(
-    @Param('activityId') activityId: string,
+    @Param('itemId') itemId: string,
+    @Param('key') key: string,
     @CurrentUser() user,
   ): Promise<any> {
-    return this.instanceStepService.orderStep(activityId, user.organization.id);
+    return this.instanceStepService.orderStep(
+      itemId,
+      key,
+      user.organization.id,
+    );
   }
 }
