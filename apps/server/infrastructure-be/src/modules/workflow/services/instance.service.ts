@@ -44,7 +44,11 @@ export class InstanceService extends EntityCrudService<Instance> {
       order: { order: 'ASC' },
     });
 
-    await this.repositoryInstanceStep.create({ ...steps, itemId: data.itemId });
+    const instanceSteps = steps.map((step) => {
+      return { ...step, itemId: data.id };
+    });
+    const InstanceSteps = this.repositoryInstanceStep.create(instanceSteps);
+    await this.repositoryInstanceStep.save(InstanceSteps);
     const instanceState = await this.stateService.createState(
       act.id,
       data.organizationId,
@@ -58,7 +62,7 @@ export class InstanceService extends EntityCrudService<Instance> {
       status: steps[0].name,
       stepId: steps[0].id,
       metadata: [],
-      stateId: instanceState.id,
+      stateId: instanceState.identifiers[0].id,
     };
     const instance = this.repositoryInstance.create(createData);
     return this.repositoryInstance.save(instance);
@@ -106,25 +110,29 @@ export class InstanceService extends EntityCrudService<Instance> {
   }
 
   async findCurrentInstanceByItemId(
-    data: any,
+    key: string,
+    itemId: string,
     organizationId: string,
   ): Promise<Instance> {
-    const activity = await this.repositoryActivity.findOne({
-      where: {
-        name: data.key,
-        organizationId,
-      },
-    });
-    const instance = await this.repositoryInstance.findOne({
-      where: { activityId: activity.id, organizationId, itemId: data.itemId },
-      relations: {
-        step: true,
-      },
-      order: {
-        createdAt: 'DESC',
-      },
-    });
-    return instance;
+    try {
+      const activity = await this.repositoryActivity.findOne({
+        where: {
+          name: key,
+        },
+      });
+      const instance = await this.repositoryInstance.findOne({
+        where: { activityId: activity.id, organizationId, itemId: itemId },
+        relations: {
+          step: true,
+        },
+        order: {
+          createdAt: 'DESC',
+        },
+      });
+      return instance;
+    } catch (e) {
+      throw e;
+    }
   }
 
   async findCurrentInstance(

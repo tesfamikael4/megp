@@ -43,7 +43,11 @@ export class StateService extends ExtraCrudService<State> {
         steps as any,
       );
       state = stateMachineConfig.states;
-      await this.repositoryState.insert({ state, activityId, organizationId });
+      return await this.repositoryState.insert({
+        state,
+        activityId,
+        organizationId,
+      });
     }
   }
 }

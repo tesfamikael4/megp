@@ -30,11 +30,16 @@ export class InstanceController extends EntityCrudController<Instance>(
     return this.instanceService.findOne(id, organizationId);
   }
 
-  @Get('findCurrentInstanceByItemId')
-  async findCurrentInstanceByItemId(@Body() data: string, @CurrentUser() user) {
+  @Get('findCurrentInstanceByItemId/:key/:itemId')
+  async findCurrentInstanceByItemId(
+    @Param('key') key: string,
+    @Param('itemId') itemId: string,
+    @CurrentUser() user,
+  ) {
     const organizationId = user.organization.id;
     return this.instanceService.findCurrentInstanceByItemId(
-      data,
+      key,
+      itemId,
       organizationId,
     );
   }
