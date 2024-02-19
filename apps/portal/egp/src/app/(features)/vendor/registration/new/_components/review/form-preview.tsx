@@ -86,6 +86,7 @@ const formatColumns = {
     { name: 'email' },
     { name: 'mobileNumber' },
   ],
+
   businessAreas: [
     { name: 'category' },
     { name: 'priceFrom' },
@@ -110,6 +111,7 @@ const formatColumns = {
     { name: 'nationality' },
     { name: 'share' },
   ],
+
   service: [{ name: 'name', displayName: 'Service Type' }],
 };
 

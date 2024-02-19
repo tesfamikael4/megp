@@ -1,35 +1,30 @@
 'use client';
-import React, { Suspense, useEffect } from 'react';
+import { FormData } from '@/models/vendorRegistration';
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
-  useForm,
-  Control,
-  UseFormRegisterReturn,
-  RegisterOptions,
-  ChangeHandler,
-  UseFormWatch,
-} from 'react-hook-form';
-import {
-  Text,
+  Accordion,
   Button,
   Flex,
   LoadingOverlay,
-  Accordion,
   Stack,
+  Text,
 } from '@mantine/core';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { Suspense, useEffect } from 'react';
+import {
+  ChangeHandler,
+  Control,
+  RegisterOptions,
+  UseFormRegisterReturn,
+  useForm,
+} from 'react-hook-form';
 import { formDataSchema } from './schema';
-import { FormData } from '@/models/vendorRegistration';
-import { setCookie } from 'cookies-next';
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import { NotificationService } from '../../../../_components/notification';
-import classes from './accordion.module.scss';
-import {
-  useAddFormMutation,
-  useLazyGetMBRSDataQuery,
-} from '../../../_api/query';
-import { useTabs } from './accordion.data';
+import { useAddFormMutation } from '../../../_api/query';
 import { usePrivilege } from '../../_context/privilege-context';
+import { useTabs } from './accordion.data';
+import classes from './accordion.module.scss';
 
 export interface ExtendedRegistrationReturnType
   extends UseFormRegisterReturn<any> {
