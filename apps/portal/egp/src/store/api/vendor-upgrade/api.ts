@@ -31,7 +31,7 @@ export const vendorUpgradeApi = createApi({
         formData.append('transactionNumber', data.transactionNumber);
         formData.append('invoiceIds', JSON.stringify(data.invoiceIds));
         return {
-          url: `/upload/upload-payment-receipt-upgrade`,
+          url: `vendor-registrations/upgrade-service`,
           method: 'POST',
           body: formData,
         };
