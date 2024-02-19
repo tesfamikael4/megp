@@ -60,11 +60,11 @@ export const planningApprovalApi = createApi({
 });
 
 export const {
-  useGetStepsQuery,
   useCreateStepsMutation,
   useInitiateWorkflowMutation,
   useApproveMutation,
   useGetCurrentStepQuery,
   useGetDefaultStepsQuery,
   useGoToMutation,
+  useGetStepsQuery,
 } = planningApprovalApi;

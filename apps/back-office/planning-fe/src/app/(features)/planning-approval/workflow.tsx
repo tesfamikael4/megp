@@ -20,49 +20,40 @@ import { IconArrowBackUp } from '@tabler/icons-react';
 import {
   useApproveMutation,
   useGetCurrentStepQuery,
-  useGetStepsQuery,
   useGoToMutation,
   useInitiateWorkflowMutation,
 } from '@/store/api/planning-approval/planning-approval';
 import { notifications } from '@mantine/notifications';
 import { useAuth } from '@megp/auth';
 import { useLazyGetGroupQuery } from '@/store/api/planning-approval/planning-iam';
+import { useGetCurrentWorkflowInstanceQuery } from '@/store/api/workflow/workflow.api';
+import { useGetStepsQuery } from '@/store/api/workflow/workflow.api';
 
-const accordionData = [
-  {
-    label: 'Activites',
-    content: 'Activites content',
-  },
-  {
-    label: 'Items',
-    content: 'Items content',
-  },
-  {
-    label: 'Documents',
-    content: 'Documents content',
-  },
-  {
-    label: 'Timeline',
-    content: 'Timeline content',
-  },
-];
-
-export function WorkflowHandling({ activityId }: { activityId: string }) {
+export function WorkflowHandling({
+  itemId,
+  itemKey,
+}: {
+  itemId: string;
+  itemKey: string;
+}) {
   const { role, user } = useAuth();
   const [active, setActive] = useState(0);
-  // const activityId = ;
   const [steps, setSteps] = useState<Record<string, any>[]>([]);
   const [currentStep, setCurrentStep] = useState<Record<string, any>>({});
   const [group, setGroup] = useState<any>();
   const [remark, setRemark] = useState('');
-  const { data: stepsList } = useGetStepsQuery({
-    activityId: activityId,
-  });
+
   const [getGroup, { data: groupData }] = useLazyGetGroupQuery();
   const [approve, { isLoading: isApproving }] = useApproveMutation();
   const [goToStep, { isLoading: isGoing }] = useGoToMutation();
-  const { data: currentStepData } = useGetCurrentStepQuery({
-    activityId: activityId,
+
+  const { data: currentStepData } = useGetCurrentWorkflowInstanceQuery({
+    itemId: itemId,
+    key: itemKey,
+  });
+  const { data: stepsList } = useGetStepsQuery({
+    itemId: itemId,
+    key: itemKey,
   });
 
   useEffect(() => {
@@ -103,7 +94,7 @@ export function WorkflowHandling({ activityId }: { activityId: string }) {
           userId: user?.id,
           itemId: currentStep?.step.itemId,
         },
-        activityId: activityId,
+        activityId: currentStep?.step.activityId,
       }).unwrap();
       notifications.show({
         title: 'Success',
@@ -129,7 +120,7 @@ export function WorkflowHandling({ activityId }: { activityId: string }) {
           userId: user?.id,
           itemId: currentStep?.step.itemId,
         },
-        activityId: activityId,
+        activityId: currentStep?.step.activityId,
       }).unwrap();
 
       notifications.show({
@@ -156,7 +147,7 @@ export function WorkflowHandling({ activityId }: { activityId: string }) {
           userId: user?.id,
           itemId: currentStep?.step.itemId,
         },
-        activityId: activityId,
+        activityId: currentStep?.step.activityId,
         goto: { id: stepId, status: stepName },
       }).unwrap();
       notifications.show({
