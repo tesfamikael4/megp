@@ -2,45 +2,33 @@ import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
+  ManyToOne,
   JoinColumn,
-  OneToOne,
 } from 'typeorm';
 
 import { OrgAudit } from 'src/shared/entities/audit.entity';
 import { ProcurementRequisition } from './procurement-requisition.entity';
-
-@Entity({ name: 'procurement_mechanisms' })
-export class ProcurementMechanism extends OrgAudit {
+@Entity({ name: 'documents' })
+export class Document extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
+  @Column({ unique: true })
+  filename: string;
   @Column()
-  fundingSource: string;
-
+  contentType: string;
   @Column()
-  procurementMethod: string;
-
+  bucketName: string;
   @Column()
-  procurementType: string;
-
-  @Column({ type: 'jsonb' })
-  donor: string[];
-
-  @Column({ type: 'jsonb' })
-  targetGroup: string[];
-
-  @Column({ default: true })
-  isOnline: boolean;
-
-  @Column({ type: 'json' })
-  contract: JSON;
+  originalname: string;
+  @Column()
+  filepath: string;
 
   @Column({ type: 'uuid' })
   procurementRequisitionId: string;
 
-  @OneToOne(
+  @ManyToOne(
     () => ProcurementRequisition,
-    (procurementRequisition) => procurementRequisition.procurementMechanisms,
+    (procurementRequisition) => procurementRequisition.documents,
   )
   @JoinColumn({ name: 'procurementRequisitionId' })
   public procurementRequisition: ProcurementRequisition;
