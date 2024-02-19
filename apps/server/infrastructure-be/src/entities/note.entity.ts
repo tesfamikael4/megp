@@ -37,4 +37,7 @@ export class Notes extends OrgAudit {
 
   @TreeChildren()
   children: Notes[];
+
+  @Column()
+  key: string;
 }

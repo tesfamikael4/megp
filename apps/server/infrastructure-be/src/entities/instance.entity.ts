@@ -38,6 +38,7 @@ export class Instance extends OrgAudit {
   stateId: string;
 
   @OneToOne(() => State, (state) => state.instance)
+  @JoinColumn()
   state: State;
 
   @Column()
