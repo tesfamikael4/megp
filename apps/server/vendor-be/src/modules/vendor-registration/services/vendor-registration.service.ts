@@ -107,9 +107,10 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         const wfi = new CreateWorkflowInstanceDto();
         wfi.user = userInfo;
         const interests = data.areasOfBusinessInterest;
-        if (interests?.length <= 0)
+        const length = interests?.length;
+        if (length <= 0)
           throw new HttpException('areas_of_businessInterest_not_found', 404);
-        for (let i = 0; i < interests.length; i++) {
+        for (let i = 0; i < length; i++) {
           const bp = await this.bpService.findBpService(
             interests[i].priceRange,
           );
@@ -142,12 +143,14 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             wfi.user = userInfo;
             const response = [];
             const interests = data.areasOfBusinessInterest;
+
             if (interests?.length <= 0)
               throw new HttpException(
                 'areas_of_businessInterest_not_found',
                 404,
               );
-            for (let i = 0; i < interests.length; i++) {
+            const interestsLength = interests.length;
+            for (let i = 0; i < interestsLength; i++) {
               const bp = await this.bpService.findBpService(
                 interests[i].priceRange,
               );
@@ -337,9 +340,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             //  result.basic['id'] = result.id;
             vendor.id = result.id;
             vendor.name = result.basic['name'];
-            if (data.areasOfBusinessInterest[index] !== 'works') {
-              continue;
-            }
             await this.invoiceService.generateInvoice(
               data.areasOfBusinessInterest[index].priceRange,
               vendor,
@@ -1169,13 +1169,13 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
   }
   async GetMBRSData(mbrsDataDto) {
     try {
-      const url = `https://dev-bo.megp.peragosystems.com/administration/api/tax-payers/${mbrsDataDto.tin}/${mbrsDataDto.issuedDate}`;
+      const url = `${process.env.MBRA_URL}/${mbrsDataDto.tin}/${mbrsDataDto.issuedDate}`;
       console.log(url);
       const result = await axios.get(url);
       if (!result) return null;
       return result;
       // commented because mbrs api is not working
-      // const mbrsurl = `https://dev-bo.megp.peragosystems.com/administration/api/customer-bussines-infos/${mbrsDataDto.tinNumber}/${mbrsDataDto.licenseNumber}`;
+      // const mbrsurl = `{process.env.MBRS_URL}/${mbrsDataDto.tinNumber}/${mbrsDataDto.licenseNumber}`;
       // const mbrsResponse = await axios.get(mbrsurl);
       // if (!mbrsResponse) throw new HttpException(`not found in mbrs`, 500);
       // const mbrsData: MbrsData = new MbrsData();
@@ -1200,7 +1200,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
   async GetNCICData(tinNumber: string) {
     try {
       const nCICDataDto: NCICDataDto = new NCICDataDto();
-      const url = `https://dev-bo.megp.peragosystems.com/administration/api/ncic-vendors/${tinNumber}`;
+      const url = `${process.env.NCIC_URL}/${tinNumber}`;
       const response = await axios.get(url);
       if (
         response?.data == null ||
@@ -1215,7 +1215,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
   }
   async GetFPPAData(tinNumber: string) {
     try {
-      const url = `https://dev-bo.megp.peragosystems.com/administration/api/fppa-vendors/${tinNumber}`;
+      const url = `${process.env.FPPA_URL}/${tinNumber}`;
       const response = await axios.get(url);
 
       const fppaDataDto: FppaDataDto = new FppaDataDto();
@@ -1510,9 +1510,9 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         status: areaOfBusinessInterest[0].businessAreaState,
         data: areaOfBusinessInterest.map((value, index) => ({
           id: value.id,
-          areaOfBusinessInterest: vendorEntity.areasOfBusinessInterest.filter(
+          areaOfBusinessInterest: vendorEntity.areasOfBusinessInterest.find(
             (element) => element.category === value.category,
-          )[0],
+          ),
         })),
       };
     } catch (error) {
@@ -1553,9 +1553,9 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           id: row.id,
           vendorId: row.vendorId,
           pricingId: row.priceRangeId,
-          areaOfBusinessInterest: vendorEntity.areasOfBusinessInterest.filter(
+          areaOfBusinessInterest: vendorEntity.areasOfBusinessInterest.find(
             (element) => element.category === row.category,
-          )[0],
+          ),
         });
       }
 
@@ -1563,12 +1563,12 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         await this.baService.getBusinessAreaByInstanceIds(baInstanceIds);
       const selectedServices = [];
       onProgressRequests.map((row) => {
-        const oldBaId = bas.filter((item) => item.instanceId == row.instanceId);
+        const oldBaId = bas.find((item) => item.instanceId == row.instanceId);
         selectedServices.push({
           businessAreaId: row.id,
           pricingId: row.priceRangeId,
           invoiceId: row.invoice.id,
-          _businessAreaId: oldBaId[0].id,
+          _businessAreaId: oldBaId.id,
           invoice: row.invoice,
         });
       });
@@ -1608,7 +1608,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     const result = await this.isrVendorsRepository.save(isrVendor);
     return result;
   }
-
   async updateVendorProfile(isrVendorId: string, data: any) {
     const isrVendor = await this.isrVendorsRepository.findOne({
       where: { id: isrVendorId },
