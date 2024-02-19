@@ -87,7 +87,7 @@ export const DetailActivity = ({
         collectionQuery: undefined,
       });
     }
-  }, []);
+  }, [activityId, getPostMechanism, getPreMechanism, page]);
 
   useEffect(() => {
     if (page == 'pre' && isGetPreMechanismSuccess && preMechanism?.total != 0) {
