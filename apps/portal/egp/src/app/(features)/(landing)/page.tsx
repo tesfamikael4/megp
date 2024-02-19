@@ -5,10 +5,10 @@ import { Box, Container, Flex, SimpleGrid } from '@mantine/core';
 import styles from './page.module.scss';
 import { HeroSection } from './_components/hero/hero-section';
 import { StepsSection } from './_components/steps/steps-section';
-import TenderCard from './_components/tender-card';
 import { useAuth } from '@megp/auth';
-import { CardWrapper } from './_components/tender-card/card-wrapper';
 import { featuredContent } from './_constants';
+import TenderCard from '../_components/tender-card';
+import { CardWrapper } from '../_components/tender-card/card-wrapper';
 
 export default function Home() {
   const { isAuthenticated } = useAuth();
@@ -47,7 +47,7 @@ export default function Home() {
         </Flex>
       )}
       {!isAuthenticated && <StepsSection />}
-      <Box pt={60} className="container mx-auto">
+      <Container size={'xl'} pt={60} px={'xs'}>
         <CardWrapper title="Latest Tenders">
           {Array.from({ length: 4 }).map((_, index) => (
             <TenderCard key={index} color={'orange'} />
@@ -63,7 +63,7 @@ export default function Home() {
             <TenderCard key={index} color={'red'} register />
           ))}
         </CardWrapper>
-      </Box>
+      </Container>
     </Box>
   );
 }

@@ -1,5 +1,4 @@
 'use client';
-import React from 'react';
 import styles from './header.module.scss';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -15,10 +14,10 @@ import {
   ScrollArea,
   rem,
   Flex,
-  Loader,
   Text,
   Container,
   Avatar,
+  ActionIcon,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import {
@@ -28,24 +27,9 @@ import {
   IconUserCircle,
 } from '@tabler/icons-react';
 import { useAuth } from '@megp/auth';
-import { theme } from '@/utilities/theme';
 import { useRouter } from 'next/navigation';
-const links = [
-  { link: '/', label: 'Home' },
+import { IconSearch } from '@tabler/icons-react';
 
-  { link: '/vendor/tender', label: 'Procurement Notice' },
-  { link: '/vendor/dashboard', label: 'Plans' },
-  { link: '/vendor/dashboard', label: 'Contracts' },
-  {
-    link: '#more',
-    label: 'More',
-    links: [
-      { link: '/faq', label: 'FAQ' },
-      { link: '/resources', label: 'Resources' },
-      { link: '/about-us', label: 'About E-gp' },
-    ],
-  },
-];
 function Header() {
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] =
     useDisclosure(false);
@@ -54,6 +38,32 @@ function Header() {
   const [userInfoLoading, setIsUserInfoLoading] = useState(false);
   const { getUserInfo, isAuthenticated, logOut, user } = useAuth();
   const router = useRouter();
+
+  const workspace = isAuthenticated
+    ? [{ link: '/vendor/dashboard', label: 'Workspace' }]
+    : [];
+
+  const links: {
+    link: string;
+    label: string;
+    links?: { link: string; label: string }[];
+  }[] = [
+    { link: '/', label: 'Home' },
+
+    { link: '/vendor/tender', label: 'Procurement Notice' },
+    { link: '/vendor/dashboard', label: 'Plans' },
+    { link: '/vendor/dashboard', label: 'Contracts' },
+    ...workspace,
+    {
+      link: '#more',
+      label: 'More',
+      links: [
+        { link: '/faq', label: 'FAQ' },
+        { link: '/resources', label: 'Resources' },
+        { link: '/about-us', label: 'About E-gp' },
+      ],
+    },
+  ];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -182,6 +192,29 @@ function Header() {
               </Group>
             )}
           </Flex>
+          {/* <Flex align="center" gap={"md"}>
+            <Input
+              size="xs"
+              placeholder="Search Tenders Here"
+              leftSection={<IconSearch />}
+              className="w-full flex-end"
+              rightSectionWidth={60}
+              rightSectionPointerEvents="all"
+              hiddenFrom='sm'
+              rightSection={
+                <Button
+                  className={'-mr-6 rounded-none rounded-r cursor-pointer'}
+                  bg={'green'}
+                  size="xs"
+                >
+                  Search
+                </Button>
+              }
+            />
+          </Flex> */}
+          <ActionIcon hiddenFrom="md" bg={'transparent'} c={'green'}>
+            <IconSearch />
+          </ActionIcon>
           <Burger
             opened={drawerOpened}
             onClick={toggleDrawer}
@@ -190,6 +223,7 @@ function Header() {
           />
         </div>
       </Container>
+
       <Drawer
         opened={drawerOpened}
         onClose={closeDrawer}

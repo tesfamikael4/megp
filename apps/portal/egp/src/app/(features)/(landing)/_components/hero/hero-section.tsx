@@ -29,7 +29,12 @@ export function HeroSection() {
               Empower Your Business Through Electronic Public Procurement
             </Text>
 
-            <Flex direction={'column'} rowGap={32} mt={80} className="w-1/2">
+            <Flex
+              direction={'column'}
+              rowGap={32}
+              mt={80}
+              className="w-full md:w-1/2"
+            >
               <Input
                 size="lg"
                 placeholder="Search Tenders Here"
@@ -37,6 +42,7 @@ export function HeroSection() {
                 className="w-full flex-end"
                 rightSectionWidth={100}
                 rightSectionPointerEvents="all"
+                visibleFrom="md"
                 rightSection={
                   <Button
                     className={'-mr-6 rounded-none rounded-r cursor-pointer'}
@@ -51,7 +57,7 @@ export function HeroSection() {
                 <Button
                   bg={'green'}
                   size="sm"
-                  className="w-1/2"
+                  className="sm:w-full md:w-1/2"
                   onClick={() => {
                     user
                       ? router.push('/vendor/registration/new/basic')
@@ -66,7 +72,7 @@ export function HeroSection() {
                     variant="outline"
                     size="sm"
                     color="white"
-                    className="w-1/2"
+                    className="sm:w-full md:w-1/2"
                     onClick={() => router.push('/auth/login')}
                   >
                     Login

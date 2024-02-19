@@ -1,4 +1,3 @@
-import { preferentialSchema } from '@/app/(features)/vendor/registration/preferential-treatment/models/form-schema';
 import { baseQuery } from '@/store/base-query';
 import { createApi } from '@reduxjs/toolkit/query/react';
 const URL = process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api';

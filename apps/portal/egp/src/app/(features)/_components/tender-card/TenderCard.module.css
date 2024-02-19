@@ -1,0 +1,22 @@
+.featureTitle {
+  color: light-dark(var(--mantine-color-black), var(--mantine-color-white));
+}
+
+.featureIcon {
+  color: var(--mantine-color-white);
+  border-radius: var(--mantine-radius-md);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: rem(50px);
+  height: rem(50px);
+  background-image: var(--docs-home-page-gradient);
+}
+
+.heroSvg {
+  color: light-dark(var(--mantine-color-black), var(--mantine-color-white));
+}
+
+.dateInfo {
+  @apply sm:flex-col  lg:flex-row md:items-center md:justify-between;
+}
