@@ -33,6 +33,9 @@ export class CreateNotesDto {
   @IsUUID()
   @IsOptional()
   organizationId: string;
+  @ApiProperty()
+  @IsString()
+  key: string;
 }
 
 export class UpdateNotesDto extends CreateNotesDto {
