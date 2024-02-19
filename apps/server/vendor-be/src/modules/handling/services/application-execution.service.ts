@@ -16,7 +16,7 @@ import { AssignmentEnum } from '../enums/assignment.enum';
 import { HandlerTypeEnum } from '../enums/handler-type.enum';
 import { ApplicationStatus } from '../enums/application-status.enum';
 import { ServicePricingService } from 'src/modules/pricing/services/service-pricing.service';
-import { IsNull, Not, Repository } from 'typeorm';
+import { In, IsNull, Not, Repository } from 'typeorm';
 import { VendorRegistrationsService } from 'src/modules/vendor-registration/services/vendor-registration.service';
 import { ServiceKeyEnum } from 'src/shared/enums/service-key.enum';
 import { BusinessAreaEntity } from 'src/entities';
@@ -27,12 +27,11 @@ export class ApplicationExcutionService {
   constructor(
     @InjectRepository(WorkflowInstanceEntity)
     private readonly wiRepository: Repository<WorkflowInstanceEntity>,
-    private readonly invoiceService: InvoiceService,
     private readonly commonService: HandlingCommonService,
     private readonly pricingService: ServicePricingService,
     private readonly vendorService: VendorRegistrationsService,
     private readonly baService: BusinessAreaService,
-  ) {}
+  ) { }
 
   async getCurruntTaskByServiceKey(
     serviceKey: string,
@@ -46,7 +45,6 @@ export class ApplicationExcutionService {
       this.wiRepository,
       query,
     );
-
     dataQuery
       .innerJoinAndSelect('workflow_instances.taskHandler', 'handler')
       .innerJoinAndSelect('handler.task', 'task')
@@ -98,7 +96,7 @@ export class ApplicationExcutionService {
         isrVendor: {
           businessAreas: {
             instanceId: appData.id,
-            status: ApplicationStatus.PENDING,
+            status: In([ApplicationStatus.PENDING, ApplicationStatus.ADJUSTMENT]),
           },
         },
       },
@@ -165,16 +163,18 @@ export class ApplicationExcutionService {
       }
     }
     const serviceKey = appData.service.key;
-    const renewalServices = [
-      ServiceKeyEnum.goodsRenewal,
-      ServiceKeyEnum.servicesRenewal,
-      ServiceKeyEnum.worksRenewal,
-    ];
-    const upgradeServices = [
-      ServiceKeyEnum.goodsUpgrade,
-      ServiceKeyEnum.servicesUpgrade,
-      ServiceKeyEnum.worksUpgrade,
-    ];
+    const renewalServices = this.commonService.getServiceCatagoryKeys(ServiceKeyEnum.renewal)
+    // [
+    //   ServiceKeyEnum.goodsRenewal,
+    //   ServiceKeyEnum.servicesRenewal,
+    //   ServiceKeyEnum.worksRenewal,
+    // ];
+    const upgradeServices = this.commonService.getServiceCatagoryKeys(ServiceKeyEnum.upgrade)
+    //  [
+    //   ServiceKeyEnum.goodsUpgrade,
+    //   ServiceKeyEnum.servicesUpgrade,
+    //   ServiceKeyEnum.worksUpgrade,
+    // ];
     const renewalServiceTypes = renewalServices.filter(
       (item) => item == serviceKey,
     );

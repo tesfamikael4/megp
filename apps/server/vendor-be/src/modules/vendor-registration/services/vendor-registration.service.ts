@@ -981,30 +981,31 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         },
       });
 
-      if (flag == ApplicationStatus.ADJUSTMENT) {
-        const abis = [];
-        if (
-          vendorEntity?.businessAreas &&
-          vendorEntity?.areasOfBusinessInterest
-        ) {
-          for (const abi of vendorEntity?.areasOfBusinessInterest) {
-            for (const ba of vendorEntity?.businessAreas) {
-              if (
-                ba.category == abi.category &&
-                ba.status == ApplicationStatus.ADJUSTMENT
-              ) {
-                abis.push({ ...abi, status: ba.status });
-                vendorEntity.initial.level = 'detail';
-                vendorEntity.initial.status = 'Adjustment';
-                vendorEntity.status = ApplicationStatus.ADJUSTMENT;
-                break;
-              }
-            }
-          }
-          if (abis.length > 0) vendorEntity.areasOfBusinessInterest = abis;
-        }
-        if (vendorEntity) vendorEntity.businessAreas = null;
-      }
+      // if (flag == ApplicationStatus.ADJUSTMENT) {
+      //   const abis = [];
+      //   if (
+      //     vendorEntity?.businessAreas &&
+      //     vendorEntity?.areasOfBusinessInterest
+      //   ) {
+      //     for (const abi of vendorEntity?.areasOfBusinessInterest) {
+      //       for (const ba of vendorEntity?.businessAreas) {
+      //         if (
+      //           ba.category == abi.category &&
+      //           ba.status == ApplicationStatus.ADJUSTMENT
+      //         ) {
+      //           abis.push({ ...abi, status: ba.status });
+      //           vendorEntity.initial.level = 'detail';
+      //           vendorEntity.initial.status = 'Adjustment';
+      //           // vendorEntity.status = ApplicationStatus.ADJUSTMENT;
+
+      //         }
+      //       }
+      //     }
+      //     if (abis.length > 0) vendorEntity.areasOfBusinessInterest = abis;
+      //   }
+      //   if (vendorEntity) vendorEntity.businessAreas = null;
+      // }
+
       if (vendorEntity?.areasOfBusinessInterest) {
         const formattedAreaOfBi = [];
         const pricesIds = vendorEntity?.areasOfBusinessInterest.map(

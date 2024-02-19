@@ -20,6 +20,7 @@ import { ServicePrice } from '../../../entities/service-price.entity';
 import { JwtGuard } from 'src/shared/authorization/guards/jwt.guard';
 import { CurrentUser } from 'src/shared/authorization';
 import { EntityCrudOptions } from 'src/shared/types/crud-option.type';
+import { HandlingCommonService } from 'src/modules/handling/services/handling-common-services';
 const options: EntityCrudOptions = {
   createDto: CreateServicePriceDto,
   updateDto: UpdateServicePriceDto,
@@ -30,7 +31,8 @@ const options: EntityCrudOptions = {
 export class ServicePricingController extends EntityCrudController<ServicePrice>(
   options,
 ) {
-  constructor(private readonly pricingService: ServicePricingService) {
+  constructor(private readonly pricingService: ServicePricingService,
+    private readonly commonService: HandlingCommonService,) {
     super(pricingService);
   }
 
@@ -58,5 +60,17 @@ export class ServicePricingController extends EntityCrudController<ServicePrice>
   @Get('get-service-price-by-service-type/:key')
   async findServicePriceByServiceType(@Param('key') key: string) {
     return await this.pricingService.findServicePriceByServiceType(key);
+  }
+  @UseGuards(JwtGuard)
+  @Get('get-formatted-business-classes/:key')
+  async findBusinessClass(@Param('key') key: string) {
+    const result = await this.pricingService.findServicePriceByServiceType(key);
+    const classes = [];
+    for (const item of result) {
+      const bc = this.commonService.formatPriceRange(item)
+      classes.push({ id: item.id, serviceId: item.serviceId, businessArea: item.businessArea, businessClass: bc });
+    }
+    return classes;
+
   }
 }
