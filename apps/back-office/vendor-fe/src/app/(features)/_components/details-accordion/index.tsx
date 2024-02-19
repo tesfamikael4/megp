@@ -79,6 +79,15 @@ const tabs = [
 ];
 
 const formatColumns = {
+  address: [
+    { name: 'mobilePhone', displayName: 'Telephone 1 ' },
+    { name: 'primaryEmail' },
+    { name: 'postalAddress' },
+    { name: 'alternateEmail' },
+    { name: 'telephone', displayName: 'Telephone 2 ' },
+    { name: 'website' },
+    { name: 'fax' },
+  ],
   vendorAccounts: [
     { name: 'accountHolderFullName', displayName: 'fullName' },
     { name: 'accountNumber' },
@@ -112,6 +121,7 @@ const formatColumns = {
     { name: 'IBAN' },
     { name: 'isDefualt' },
   ],
+
   service: [
     {
       name: 'name',
