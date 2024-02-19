@@ -3,8 +3,6 @@ import { Injectable } from '@nestjs/common';
 import {
   ILike,
   In,
-  LessThanOrEqual,
-  MoreThanOrEqual,
   Repository,
 } from 'typeorm';
 import { ServicePrice } from '../../../entities/service-price.entity';
@@ -12,37 +10,39 @@ import { EntityCrudService } from 'src/shared/service';
 
 import { BusinessAreaEntity } from 'src/entities';
 import { ServiceKeyEnum } from 'src/shared/enums/service-key.enum';
+import { HandlingCommonService } from 'src/modules/handling/services/handling-common-services';
 
 @Injectable()
 export class ServicePricingService extends EntityCrudService<ServicePrice> {
   constructor(
     @InjectRepository(ServicePrice)
     private readonly pricingRepository: Repository<ServicePrice>,
+    private readonly commonService: HandlingCommonService,
   ) {
     super(pricingRepository);
   }
 
   async findServicePriceByServiceType(serviceKey: string) {
-    let keys = [];
-    if (serviceKey === ServiceKeyEnum.new) {
-      keys = [
-        ServiceKeyEnum.goodsNewRegistration,
-        ServiceKeyEnum.servicesNewRegistration,
-        ServiceKeyEnum.worksNewRegistration,
-      ];
-    } else if (serviceKey == ServiceKeyEnum.upgrade) {
-      keys = [
-        ServiceKeyEnum.goodsUpgrade,
-        ServiceKeyEnum.servicesUpgrade,
-        ServiceKeyEnum.worksUpgrade,
-      ];
-    } else if (serviceKey === ServiceKeyEnum.renewal) {
-      keys = [
-        ServiceKeyEnum.goodsRenewal,
-        ServiceKeyEnum.servicesRenewal,
-        ServiceKeyEnum.worksRenewal,
-      ];
-    }
+    const keys = this.commonService.getServiceCatagoryKeys(serviceKey);
+    // if (serviceKey === ServiceKeyEnum.new) {
+    //   keys = [
+    //     ServiceKeyEnum.goodsNewRegistration,
+    //     ServiceKeyEnum.servicesNewRegistration,
+    //     ServiceKeyEnum.worksNewRegistration,
+    //   ];
+    // } else if (serviceKey == ServiceKeyEnum.upgrade) {
+    //   keys = [
+    //     ServiceKeyEnum.goodsUpgrade,
+    //     ServiceKeyEnum.servicesUpgrade,
+    //     ServiceKeyEnum.worksUpgrade,
+    //   ];
+    // } else if (serviceKey === ServiceKeyEnum.renewal) {
+    //   keys = [
+    //     ServiceKeyEnum.goodsRenewal,
+    //     ServiceKeyEnum.servicesRenewal,
+    //     ServiceKeyEnum.worksRenewal,
+    //   ];
+    // }
     const result = await this.pricingRepository.find({
       select: {
         id: true,

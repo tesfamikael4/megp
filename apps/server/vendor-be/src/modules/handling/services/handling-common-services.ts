@@ -199,7 +199,6 @@ export class HandlingCommonService {
     const days = Math.floor(minutes / (60 * 24));
     const hours = Math.floor((minutes % (60 * 24)) / 60);
     const remainingMinutes = minutes % 60;
-
     return {
       days: days,
       hours: hours,
