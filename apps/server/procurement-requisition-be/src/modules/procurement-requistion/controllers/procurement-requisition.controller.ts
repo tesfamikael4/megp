@@ -28,6 +28,16 @@ export class ProcurementRequisitionController extends EntityCrudController<Procu
   ) {
     super(procurementRequisitionService);
   }
+  @Post()
+  async create(
+    @Body() data: CreateProcurementRequisitionDto,
+    @CurrentUser() user: any,
+  ) {
+    data.organization = user.organizations[0].organization;
+    data.budgetYear = user.organizations[0].organization;
+    return await this.procurementRequisitionService.create(data);
+  }
+
   @Post('initiate-workflow')
   @UseInterceptors(TransactionInterceptor)
   async initiateWorkflow(@Body() data: any, @CurrentUser() user: any) {
@@ -38,5 +48,10 @@ export class ProcurementRequisitionController extends EntityCrudController<Procu
   @ApiPaginatedResponse(ProcurementRequisition)
   async handleApprovedWorkflow(@Body() data: any) {
     return await this.procurementRequisitionService.prApprovalDecision(data);
+  }
+
+  @Post('import-from-app')
+  async importFromAPP(@Body() id: any) {
+    return await this.procurementRequisitionService.importFromAPP(id);
   }
 }

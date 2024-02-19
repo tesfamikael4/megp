@@ -1,5 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { HttpException, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { DataSource, EntityManager, Repository } from 'typeorm';
 import { ProcurementRequisition } from 'src/entities';
 import { EntityCrudService } from 'src/shared/service';
@@ -22,26 +22,16 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
     super(repositoryProcurementRequisition);
   }
 
-  async create(itemData: any, req?: any): Promise<ProcurementRequisition> {
-    return super.create(itemData, req);
+  async importFromAPP(id: any, req?: any): Promise<ProcurementRequisition> {
+    return super.create(id, req);
+  }
+
+  async getApp(id: any): Promise<any> {
+    return id;
   }
 
   async initiateWorkflow(data: any) {
     const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
-
-    const prs = await this.repositoryProcurementRequisition.find({
-      where: { id: data.id, status: 'Draft' },
-      relations: ['procurementRequisitionActivities'],
-    });
-
-    for (const element of prs) {
-      if (element.procurementRequisitionActivities.length == 0) {
-        throw new HttpException(
-          `Activity is not found for ${element.title} ${element.requisitionReferenceNumber}`,
-          430,
-        );
-      }
-    }
 
     await entityManager.getRepository(ProcurementRequisition).update(data.id, {
       status: 'Submitted',

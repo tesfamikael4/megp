@@ -3,52 +3,36 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProcurementRequisitionController } from './controllers/procurement-requisition.controller';
 import { ProcurementRequisitionService } from './services/procurement-requisition.service';
 import {
-  AnnualProcurementPlanActivity,
+  Document,
+  Item,
+  ProcurementMechanism,
   ProcurementRequisition,
-  ProcurementRequisitionActivity,
-  ProcurementRequisitionBudgetLine,
-  ProcurementRequisitionDisbursement,
-  ProcurementRequisitionDocument,
-  ProcurementRequisitionItem,
-  ProcurementRequisitionItemReference,
-  ProcurementRequisitionMechanism,
-  ProcurementRequisitionOfficerAssignment,
-  ProcurementRequisitionTimeline,
+  TechnicalTeam,
+  Timeline,
 } from 'src/entities';
-import { ProcurementRequisitionActivityController } from './controllers/procurement-requisition-activity.controller';
-import { ProcurementRequisitionDocumentController } from './controllers/procurement-requisition-document.controller';
-import { ProcurementRequisitionActivityService } from './services/procurement-requisition-activity.service';
-import { ProcurementRequisitionDocumentService } from './services/procurement-requisition-document.service';
-import { ProcurementRequisitionItemService } from './services/procurement-requisition-item.service';
-import { ProcurementRequisitionItemController } from './controllers/procurement-requisition-item.controller';
-import { ProcurementRequisitionItemReferenceService } from './services/procurement-requisition-item-reference.service';
-import { ProcurementRequisitionOfficerAssignmentService } from './services/procurement-requisition-officer-assignment.service';
-import { ProcurementRequisitionOfficerAssignmentController } from './controllers/procurement-requisition-officer-assignment.controller';
-import { ProcurementRequisitionMechanismService } from './services/procurement-requisition-mechanism.service';
-import { ProcurementRequisitionMechanismController } from './controllers/procurement-requisition-mechanism.controller';
-import { ProcurementRequisitionDisbursementController } from './controllers/procurement-requisition-disbursement.controller';
-import { ProcurementRequisitionDisbursementService } from './services/procurement-requisition-disbursement.service';
-import { ProcurementRequisitionTimelineService } from './services/procurement-requisition-timeline.service';
-import { ProcurementRequisitionTimelineController } from './controllers/procurement-requisition-timeline.controller';
+import { TechnicalTeamService } from './services/technical-team.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { MinioModule } from 'nestjs-minio-client';
+import { DocumentController } from './controllers/document.controller';
+import { ItemController } from './controllers/item.controller';
+import { ProcurementMechanismController } from './controllers/procurement-mechanism.controller';
+import { TechnicalTeamController } from './controllers/tchnica-team.controller';
+import { TimelineController } from './controllers/timeline.controller';
+import { DocumentService } from './services/document.service';
+import { ItemService } from './services/item.service';
+import { ProcurementMechanismService } from './services/procurement-mechanism.service';
+import { TimelineService } from './services/timeline.service';
+import { MinIOModule } from 'src/shared/min-io/min-io.module';
 
 @Module({
   imports: [
+    MinIOModule,
     TypeOrmModule.forFeature([
       ProcurementRequisition,
-      ProcurementRequisitionDocument,
-      ProcurementRequisitionActivity,
-      ProcurementRequisitionItem,
-      ProcurementRequisitionDocument,
-      ProcurementRequisitionTimeline,
-      ProcurementRequisitionOfficerAssignment,
-      ProcurementRequisitionItemReference,
-      ProcurementRequisitionBudgetLine,
-      ProcurementRequisitionMechanism,
-      ProcurementRequisitionOfficerAssignment,
-      ProcurementRequisitionDisbursement,
-      AnnualProcurementPlanActivity,
+      Document,
+      Item,
+      Timeline,
+      TechnicalTeam,
+      ProcurementMechanism,
     ]),
     ClientsModule.register([
       {
@@ -63,37 +47,22 @@ import { MinioModule } from 'nestjs-minio-client';
         },
       },
     ]),
-
-    MinioModule.register({
-      endPoint: process.env.MINIO_ENDPOINT ?? 'files.megp.peragosystems.com',
-      port: Number(process.env.MINIO_PORT ?? 80),
-      useSSL: Boolean(process.env.MINIO_USESSL ?? false),
-      accessKey: process.env.MINIO_ACCESSKEY ?? 'Szzt6Zo5yEJCfa7ay5sy',
-      secretKey:
-        process.env.MINIO_SECRETKEY ??
-        'dGtjFGcLjKU6pXRYx1tOnqGeycJtxJoavgwqYgDd',
-    }),
   ],
   providers: [
     ProcurementRequisitionService,
-    ProcurementRequisitionActivityService,
-    ProcurementRequisitionDocumentService,
-    ProcurementRequisitionItemService,
-    ProcurementRequisitionItemReferenceService,
-    ProcurementRequisitionOfficerAssignmentService,
-    ProcurementRequisitionMechanismService,
-    ProcurementRequisitionDisbursementService,
-    ProcurementRequisitionTimelineService,
+    DocumentService,
+    ItemService,
+    TechnicalTeamService,
+    ProcurementMechanismService,
+    TimelineService,
   ],
   controllers: [
     ProcurementRequisitionController,
-    ProcurementRequisitionDocumentController,
-    ProcurementRequisitionActivityController,
-    ProcurementRequisitionItemController,
-    ProcurementRequisitionOfficerAssignmentController,
-    ProcurementRequisitionMechanismController,
-    ProcurementRequisitionDisbursementController,
-    ProcurementRequisitionTimelineController,
+    DocumentController,
+    TechnicalTeamController,
+    ItemController,
+    ProcurementMechanismController,
+    TimelineController,
   ],
 })
 export class ProcurementRequisitionModule {}
