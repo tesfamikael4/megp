@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useCreateMutation, useLazyListQuery } from '../_api/note.api';
 import { logger, notify } from '@megp/core-fe';
 import { useParams } from 'next/navigation';
+import { IconPaperclip } from '@tabler/icons-react';
 
 export const Note = ({ height }: { height?: string }) => {
   const [value, setValue] = useState<string>('');
@@ -19,6 +20,7 @@ export const Note = ({ height }: { height?: string }) => {
       objectId: id,
       objectType: 'activity',
       content: value,
+      key: 'note',
     };
     try {
       const res = await create(rawData).unwrap();
@@ -34,7 +36,10 @@ export const Note = ({ height }: { height?: string }) => {
     // getNotes({ id, collectionQuery: {} });
     getNotes({
       includes: ['parent'],
-      where: [[{ column: 'objectId', value: id, operator: '=' }]],
+      where: [
+        [{ column: 'objectId', value: id, operator: '=' }],
+        [{ column: 'key', value: 'note', operator: '=' }],
+      ],
       orderBy: [
         {
           column: 'createdAt',
@@ -55,8 +60,8 @@ export const Note = ({ height }: { height?: string }) => {
       h={height ?? '400px'}
     >
       <h1 className="p-2 border-b-2 sticky  top-0 bg-white">Note</h1>
-      <Box ref={noteRef}>
-        <Box className="p-2 bg-slate-100">
+      <Box ref={noteRef} className="bg-slate-100">
+        <Box className="p-2 ">
           {data?.items.map((note) => (
             <Box
               className="p-2 bg-white w-fit rounded mb-2 max-w-[80%] cursor-pointer"
@@ -76,15 +81,19 @@ export const Note = ({ height }: { height?: string }) => {
             </Box>
           ))}
         </Box>
-        <Box className="p-2 bg-white">
+
+        <Box className="p-2 bg-white h-26 mx-2 rounded">
           <Textarea
-            placeholder="Insert you note here"
+            placeholder="Type here . . ."
             onChange={(e) => setValue(e.target.value)}
             value={value}
             disabled={isCreating}
           />
           <Group justify="space-between" className="mt-2">
-            <Button variant="outline">Add File</Button>
+            <Group className="gap-2 cursor-pointer text-xs text-slate-500">
+              {' '}
+              <IconPaperclip size={14} /> Attach File
+            </Group>
             <Button
               disabled={value == ''}
               loading={isCreating}

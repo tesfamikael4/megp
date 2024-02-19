@@ -12,7 +12,7 @@ import { IconChevronLeft, IconMessage2 } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useReadQuery } from '../_api/activities.api';
 import { useGetPostBudgetPlanQuery } from '@/store/api/post-budget-plan/post-budget-plan.api';
-import { Note } from '../_components/note';
+import { Note } from '../../../../_components/note';
 import { useDisclosure } from '@mantine/hooks';
 
 export default function NewActivity() {
