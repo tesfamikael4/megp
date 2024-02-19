@@ -80,6 +80,16 @@ const tab = [
 ];
 
 const formatColumns = {
+  basic: [
+    { name: 'name', displayName: 'Name of Business/Company ' },
+    { name: 'origin', displayName: 'Country of Registration ' },
+    { name: 'status' },
+    { name: 'country' },
+    { name: 'district' },
+    { name: 'tinNumber', displayName: 'Tax Identification Number (TIN) ' },
+    { name: 'businessType ' },
+    { name: 'tinIssuedDate ', displayName: 'TIN Issued date' },
+  ],
   contactPersons: [
     { name: 'firstName' },
     { name: 'lastName' },
@@ -111,11 +121,13 @@ const formatColumns = {
     { name: 'share' },
   ],
   address: [
-    { name: 'mobilePhone' },
+    { name: 'mobilePhone', displayName: 'Telephone 1 ' },
     { name: 'primaryEmail' },
     { name: 'postalAddress' },
     { name: 'alternateEmail' },
-    { name: 'telephone' },
+    { name: 'telephone', displayName: 'Telephone 2 ' },
+    { name: 'website' },
+    { name: 'fax' },
   ],
   businessSizeAndOwnership: [
     { name: 'registeredCapital' },
