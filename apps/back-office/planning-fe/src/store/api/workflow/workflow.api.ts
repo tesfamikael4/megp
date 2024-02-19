@@ -4,7 +4,7 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 
 export const workflowApi = createApi({
   reducerPath: 'workflowApi',
-  tagTypes: ['Steps'],
+  tagTypes: ['Approval'],
   refetchOnFocus: true,
   baseQuery: baseQuery(
     process.env.NEXT_PUBLIC_INFRASTRUCTURE_API ?? '/infrastructure/api/',
@@ -12,6 +12,22 @@ export const workflowApi = createApi({
   endpoints: (builder) => ({
     getWorkflowInstance: builder.query<any, string>({
       query: (id: string) => `instance/${id}`,
+    }),
+    approve: builder.mutation<any, any>({
+      query: (data) => ({
+        url: `workflow/approve-workflow`,
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['Approval'],
+    }),
+    goTo: builder.mutation<any, any>({
+      query: (data) => ({
+        url: `instance/goto`,
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['Approval'],
     }),
     getCurrentWorkflowInstance: builder.query<
       any,
@@ -21,12 +37,14 @@ export const workflowApi = createApi({
         url: `instance/findCurrentInstanceByItemId/${data.key}/${data.itemId}`,
         method: 'GET',
       }),
+      providesTags: ['Approval'],
     }),
     getSteps: builder.query<any, { key: string; itemId: string }>({
       query: (data) => ({
         url: `instance-steps/order-steps/${data.key}/${data.itemId}`,
         method: 'GET',
       }),
+      providesTags: ['Approval'],
     }),
 
     getActivities: builder.query<any, any>({
@@ -47,4 +65,6 @@ export const {
   useLazyCanSubmitQuery,
   useGetStepsQuery,
   useLazyGetStepsQuery,
+  useApproveMutation,
+  useGoToMutation,
 } = workflowApi;

@@ -40,31 +40,13 @@ export const planningApprovalApi = createApi({
       query: (payload) => `findCurrentInstance/${payload.activityId}`,
       providesTags: ['Approval'],
     }),
-    approve: builder.mutation<any, any>({
-      query: (data) => ({
-        url: `workflow/approve-workflow`,
-        method: 'POST',
-        body: data,
-      }),
-      invalidatesTags: ['Approval'],
-    }),
-    goTo: builder.mutation<any, any>({
-      query: (data) => ({
-        url: `instance/goto`,
-        method: 'POST',
-        body: data,
-      }),
-      invalidatesTags: ['Approval'],
-    }),
   }),
 });
 
 export const {
   useCreateStepsMutation,
   useInitiateWorkflowMutation,
-  useApproveMutation,
   useGetCurrentStepQuery,
   useGetDefaultStepsQuery,
-  useGoToMutation,
   useGetStepsQuery,
 } = planningApprovalApi;

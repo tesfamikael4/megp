@@ -14,20 +14,17 @@ import {
   Avatar,
 } from '@mantine/core';
 import { Section } from '@megp/core-fe';
-import classes from './accordion.module.css';
 import { useEffect, useState } from 'react';
 import { IconArrowBackUp } from '@tabler/icons-react';
-import {
-  useApproveMutation,
-  useGetCurrentStepQuery,
-  useGoToMutation,
-  useInitiateWorkflowMutation,
-} from '@/store/api/planning-approval/planning-approval';
 import { notifications } from '@mantine/notifications';
 import { useAuth } from '@megp/auth';
 import { useLazyGetGroupQuery } from '@/store/api/planning-approval/planning-iam';
 import { useGetCurrentWorkflowInstanceQuery } from '@/store/api/workflow/workflow.api';
-import { useGetStepsQuery } from '@/store/api/workflow/workflow.api';
+import {
+  useGetStepsQuery,
+  useGoToMutation,
+  useApproveMutation,
+} from '@/store/api/workflow/workflow.api';
 
 export function WorkflowHandling({
   itemId,
