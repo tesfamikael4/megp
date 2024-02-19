@@ -19,7 +19,6 @@ export class WorkflowController extends EntityCrudController<Workflow>(
   }
 
   @Post('approve-workflow')
-  @UseGuards(JwtGuard)
   async approveWorkflow(@Body() data: any, @CurrentUser() user) {
     data.metaData.userId = user.userId;
     data.metaData.organizationId = user.organization.id;

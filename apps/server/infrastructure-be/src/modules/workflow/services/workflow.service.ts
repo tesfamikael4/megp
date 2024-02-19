@@ -25,7 +25,7 @@ export class WorkflowService extends EntityCrudService<Workflow> {
   }
 
   async approveWorkflow(metaData: any, activityId: string, itemId: string) {
-    const state = await this.repositoryInstance.findOne({
+    const instance = await this.repositoryInstance.findOne({
       where: {
         activityId,
         organizationId: metaData.organizationId,
@@ -36,15 +36,14 @@ export class WorkflowService extends EntityCrudService<Workflow> {
       },
     });
 
-    if (!state) throw new Error('state not found');
+    if (!instance) throw new Error('state not found');
 
     try {
       const workflowMachine = await this.xMachineService.createMachineConfig(
         activityId,
         metaData,
-        state.state,
+        instance.state.state,
       );
-
       const actor = createActor(workflowMachine);
       let currentState = '';
       actor.subscribe((states) => {

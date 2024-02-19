@@ -8,6 +8,7 @@ import { setup } from 'xstate';
 import axios from 'axios';
 import { ClientProxy } from '@nestjs/microservices';
 import { Activity } from 'src/entities/activity.entity';
+import e from 'express';
 
 interface StateMachineConfig {
   states: {
@@ -44,49 +45,29 @@ export class XMachineService {
   ) {}
 
   async createMachineConfig(activityId, details, state): Promise<any> {
-    const adjust = '';
-    let isWorkGroup = {
-      value: false,
-      method: '',
-    };
-    let isAllChecked = false;
-    const existingData = await this.repositoryInstance.findOne({
-      where: { activityId: activityId, organizationId: details.organizationId },
-    });
+    try {
+      const adjust = '';
+      let isWorkGroup = {
+        value: false,
+        method: '',
+      };
+      let isAllChecked = false;
+      const existingData = await this.repositoryInstance.findOne({
+        where: {
+          activityId: activityId,
+          organizationId: details.organizationId,
+        },
+      });
 
-    const ver =
-      details.action == 'reject'
-        ? existingData.version + 1
-        : existingData.version;
+      const ver =
+        details.action == 'reject'
+          ? existingData.version + 1
+          : existingData.version;
 
-    isWorkGroup = await this.checkGroup(existingData.stepId, details);
-    if (isWorkGroup.value) {
-      isAllChecked = await this.canContinue(isWorkGroup, activityId, details);
-      if (!isAllChecked) {
-        if (existingData) {
-          existingData.metadata.push({
-            userId: details.userId,
-            actions: details.action,
-            remark: details.remark,
-            approver: details.approver,
-            at: String(Date.now()),
-            stepId: existingData.stepId,
-            version: existingData.version,
-          });
-
-          await this.repositoryInstance.update(existingData.id, {
-            metadata: existingData.metadata,
-          });
-        }
-      }
-    }
-    const machine = setup({
-      actions: {
-        recordAction: async ({ context, event }, params: any) => {
-          console.log({ event });
-          if (context.adj != '') {
-            params.status = context.adj;
-          }
+      isWorkGroup = await this.checkGroup(existingData.stepId, details);
+      if (isWorkGroup.value) {
+        isAllChecked = await this.canContinue(isWorkGroup, activityId, details);
+        if (!isAllChecked) {
           if (existingData) {
             existingData.metadata.push({
               userId: details.userId,
@@ -94,64 +75,91 @@ export class XMachineService {
               remark: details.remark,
               approver: details.approver,
               at: String(Date.now()),
-              stepId: params.currentId,
+              stepId: existingData.stepId,
               version: existingData.version,
             });
 
             await this.repositoryInstance.update(existingData.id, {
-              status: params.status,
-              stepId: params.id,
-              version: ver,
               metadata: existingData.metadata,
             });
-            if (params.status == 'Approved' || params.status == 'Rejected') {
-              const acti = await this.repositoryActivity.findOne({
-                where: { id: activityId },
+          }
+        }
+      }
+      const machine = setup({
+        actions: {
+          recordAction: async ({ context, event }, params: any) => {
+            console.log({ event });
+            if (context.adj != '') {
+              params.status = context.adj;
+            }
+            if (existingData) {
+              existingData.metadata.push({
+                userId: details.userId,
+                actions: details.action,
+                remark: details.remark,
+                approver: details.approver,
+                at: String(Date.now()),
+                stepId: params.currentId,
+                version: existingData.version,
               });
-              this.workflowRMQClient.emit(`workflow-approval.${acti.name}`, {
+
+              await this.repositoryInstance.update(existingData?.id, {
+                status: params.status,
+                stepId: params?.id,
+                version: ver,
+                metadata: existingData.metadata,
+              });
+              if (params.status == 'Approved' || params.status == 'Rejected') {
+                const acti = await this.repositoryActivity.findOne({
+                  where: { id: activityId },
+                });
+                this.workflowRMQClient.emit(`workflow-approval.${acti.name}`, {
+                  status: params.status,
+                  activityId: activityId,
+                  itemId: existingData.itemId,
+                });
+              }
+            } else {
+              const data = {
                 status: params.status,
                 activityId: activityId,
-                itemId: existingData.itemId,
-              });
-            }
-          } else {
-            const data = {
-              status: params.status,
-              activityId: activityId,
-              stepId: params.id,
-              organizationId: details.organizationId,
-              metadata: [
-                {
-                  userId: details.userId,
-                  actions: details.action,
-                  remark: details.remark,
-                  approver: details.approver,
-                  at: String(Date.now()),
-                  stepId: params.currentId,
-                },
-              ],
-            };
+                stepId: params?.id,
+                organizationId: details.organizationId,
+                metadata: [
+                  {
+                    userId: details.userId,
+                    actions: details.action,
+                    remark: details.remark,
+                    approver: details.approver,
+                    at: String(Date.now()),
+                    stepId: params.currentId,
+                  },
+                ],
+              };
 
-            await this.repositoryInstance.create(data);
-          }
+              await this.repositoryInstance.create(data);
+            }
+          },
         },
-      },
-      guards: {
-        isApproved: ({ context }, params) => {
-          console.log({ context });
-          console.log({ params });
-          return isWorkGroup.value ? isAllChecked : true;
+        guards: {
+          isApproved: ({ context }, params) => {
+            console.log({ context });
+            console.log({ params });
+            return isWorkGroup.value ? isAllChecked : true;
+          },
         },
-      },
-    }).createMachine({
-      id: 'workflow',
-      initial: `${details.name}`,
-      context: {
-        adj: adjust,
-      },
-      states: state,
-    });
-    return machine;
+      })?.createMachine({
+        id: 'workflow',
+        initial: details.name,
+        context: {
+          adj: adjust,
+        },
+        states: state,
+      });
+      return machine;
+    } catch (error) {
+      throw error;
+    }
   }
 
   createStateMachineConfig(steps: any[]): StateMachineConfig {
