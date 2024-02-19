@@ -12,6 +12,7 @@ import {
   Text,
   Menu,
   Avatar,
+  Paper,
 } from '@mantine/core';
 import { Section } from '@megp/core-fe';
 import { useEffect, useState } from 'react';
@@ -19,7 +20,10 @@ import { IconArrowBackUp } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { useAuth } from '@megp/auth';
 import { useLazyGetGroupQuery } from '@/store/api/planning-approval/planning-iam';
-import { useGetCurrentWorkflowInstanceQuery } from '@/store/api/workflow/workflow.api';
+import {
+  useGetCurrentWorkflowInstanceQuery,
+  useLazyGetNotesQuery,
+} from '@/store/api/workflow/workflow.api';
 import {
   useGetStepsQuery,
   useGoToMutation,
@@ -43,6 +47,23 @@ export function WorkflowHandling({
   const [getGroup, { data: groupData }] = useLazyGetGroupQuery();
   const [approve, { isLoading: isApproving }] = useApproveMutation();
   const [goToStep, { isLoading: isGoing }] = useGoToMutation();
+
+  const [getNotes, { data: notes }] = useLazyGetNotesQuery();
+
+  useEffect(() => {
+    getNotes({
+      where: [
+        [{ column: 'objectId', value: itemId, operator: '=' }],
+        [{ column: 'key', value: 'comment', operator: '=' }],
+      ],
+      orderBy: [
+        {
+          column: 'createdAt',
+          direction: 'DESC',
+        },
+      ],
+    });
+  }, [itemId, getNotes]);
 
   const { data: currentStepData } = useGetCurrentWorkflowInstanceQuery({
     itemId: itemId,
@@ -89,7 +110,7 @@ export function WorkflowHandling({
           remark: remark,
           approver: `${user?.firstName} ${user?.lastName}`,
           userId: user?.id,
-          itemId: currentStep?.step.itemId,
+          itemId: itemId,
         },
         activityId: currentStep?.step.activityId,
       }).unwrap();
@@ -115,7 +136,7 @@ export function WorkflowHandling({
           remark: remark,
           approver: `${user?.firstName} ${user?.lastName}`,
           userId: user?.id,
-          itemId: currentStep?.step.itemId,
+          itemId: itemId,
         },
         activityId: currentStep?.step.activityId,
       }).unwrap();
@@ -142,7 +163,7 @@ export function WorkflowHandling({
           remark: remark,
           approver: `${user?.firstName} ${user?.lastName}`,
           userId: user?.id,
-          itemId: currentStep?.step.itemId,
+          itemId: itemId,
         },
         activityId: currentStep?.step.activityId,
         goto: { id: stepId, status: stepName },
@@ -184,16 +205,21 @@ export function WorkflowHandling({
 
   return (
     <Flex gap="md">
-      <Box className="w-full">
+      <Box className="min-w-full">
         <Section title="Approval Workflow" collapsible={false}>
           <Flex gap="md">
             <Stepper
               active={active}
               orientation="vertical"
               iconSize={30}
-              className="w-full"
+              className="min-w-full"
               allowNextStepsSelect={false}
               color="green"
+              styles={{
+                stepBody: {
+                  minWidth: '90%',
+                },
+              }}
             >
               {!steps && (
                 <>
@@ -210,12 +236,13 @@ export function WorkflowHandling({
                       key={index}
                       label={step.name}
                       allowStepSelect={false}
-                      className="w-[400px]"
+                      className="w-full"
                       description={
                         <>
-                          <Stack className="">
+                          <Stack className="min-w-full">
                             {step?.order < currentStep?.step?.order ? (
                               <Accordion
+                                className="min-w-full"
                                 styles={{
                                   control: {
                                     outline: '1px solid white',
@@ -229,13 +256,32 @@ export function WorkflowHandling({
                                   <Accordion.Control>
                                     <Text c="#868e96">{`Approved by ${step.approvers[0].approver}`}</Text>
                                   </Accordion.Control>
-                                  <Accordion.Panel>
-                                    Remark:{' '}
-                                    {
-                                      currentStep?.metadata.find(
-                                        (e) => e.stepId === step.id,
-                                      ).remark
-                                    }
+                                  <Accordion.Panel className="w-full">
+                                    <Stack
+                                      className="bg-neutral-100 p-4 overflow-y-scroll min-w-[100%]"
+                                      mah={400}
+                                    >
+                                      {notes?.items?.map((note, index) => (
+                                        <Paper
+                                          withBorder
+                                          className="p-4 scroll"
+                                          key={index}
+                                        >
+                                          <Text fz="md" fw="bolder">
+                                            {note?.metaData?.fullName}
+                                          </Text>
+                                          <Text fz="sm">{note?.content}</Text>
+                                        </Paper>
+                                      ))}
+                                    </Stack>
+                                    <Paper className="mt-4 py-4" withBorder>
+                                      Remark:{' '}
+                                      {
+                                        currentStep?.metadata.find(
+                                          (e) => e.stepId === step.id,
+                                        )?.remark
+                                      }
+                                    </Paper>
                                   </Accordion.Panel>
                                   <Accordion.Panel>
                                     {getMetaData(
@@ -263,10 +309,13 @@ export function WorkflowHandling({
                                 checkUserGroup()) && (
                                 <>
                                   <Textarea
-                                    minRows={6}
+                                    minRows={3}
+                                    autosize
                                     label="Remark"
+                                    placeholder="Please enter your remarks"
                                     value={remark}
                                     onChange={(e) => setRemark(e.target.value)}
+                                    className="max-w-[80%]"
                                   />
                                   <Group>
                                     <Button

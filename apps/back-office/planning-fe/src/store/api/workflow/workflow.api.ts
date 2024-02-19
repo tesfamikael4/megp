@@ -13,6 +13,17 @@ export const workflowApi = createApi({
     getWorkflowInstance: builder.query<any, string>({
       query: (id: string) => `instance/${id}`,
     }),
+    getNotes: builder.query<any, any>({
+      query: (collectionQuery) => {
+        let q = '';
+        if (collectionQuery) {
+          const query = encodeCollectionQuery(collectionQuery);
+          q = `?q=${query}`;
+        }
+        return { url: `notes/${q}`, method: 'GET' };
+      },
+      providesTags: ['Approval'],
+    }),
     approve: builder.mutation<any, any>({
       query: (data) => ({
         url: `workflow/approve-workflow`,
@@ -67,4 +78,6 @@ export const {
   useLazyGetStepsQuery,
   useApproveMutation,
   useGoToMutation,
+  useLazyGetNotesQuery,
+  useGetNotesQuery,
 } = workflowApi;
