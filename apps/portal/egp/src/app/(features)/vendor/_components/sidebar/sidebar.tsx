@@ -4,6 +4,7 @@ import { Box, NavLink, UnstyledButton } from '@mantine/core';
 import { usePathname, useRouter } from 'next/navigation'; // Updated import
 import {
   IconBriefcase,
+  IconCoins,
   IconDashboard,
   IconHeartHandshake,
   IconListDetails,
@@ -48,6 +49,11 @@ export const sidebarLinks: SidebarLinks[] = [
     label: 'My Briefcase',
     icon: IconBriefcase,
     link: '/vendor/registration/my-briefcase',
+  },
+  {
+    label: 'My Payments',
+    icon: IconCoins,
+    link: '/vendor/registration/my-payments',
   },
 ];
 
