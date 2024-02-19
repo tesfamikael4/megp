@@ -316,7 +316,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
                 await this.isrVendorsRepository.save(isrVendor);
               } else {
                 isrVendor.basic.district = ncicData?.district;
-
                 isrVendor.address.mobilePhone = ncicData?.telephoneNumber;
                 isrVendor.address.postalAddress = ncicData?.postalAddress;
                 isrVendor.address.primaryEmail = ncicData?.email;
@@ -819,12 +818,14 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     vendorInitiationDto: VendorInitiationDto,
     userInfo: any,
   ): Promise<any> {
-    const mbrsDataDto = new MbrsDataDto();
-    mbrsDataDto.tin = vendorInitiationDto.tinNumber;
-    mbrsDataDto.issuedDate = vendorInitiationDto.tinIssuedDate;
-    const result = await this.GetMBRSData(mbrsDataDto);
-    if (result == null) throw new HttpException('something went wrong', 500);
-    if (!result) throw new HttpException('something went wrong', 400);
+    if (vendorInitiationDto.country == 'MW') {
+      const mbrsDataDto = new MbrsDataDto();
+      mbrsDataDto.tin = vendorInitiationDto.tinNumber;
+      mbrsDataDto.issuedDate = vendorInitiationDto.tinIssuedDate;
+      const result = await this.GetMBRSData(mbrsDataDto);
+      if (result == null) throw new HttpException('something went wrong', 500);
+      if (!result) throw new HttpException('something went wrong', 400);
+    }
     const vendor = await this.isrVendorsRepository.findOne({
       where: {
         userId: userInfo.id,
@@ -1430,7 +1431,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     const vendor = {
       ...rest,
     };
-
     return vendor;
   }
   async getRejectedVendors(user: any, query: CollectionQuery) {
@@ -1519,7 +1519,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       throw error;
     }
   }
-
   async getMyApprovedService(user: any): Promise<any> {
     try {
       // user.id = '4408fe5d-2672-4c2f-880d-4928b960e096';
