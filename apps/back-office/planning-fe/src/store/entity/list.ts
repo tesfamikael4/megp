@@ -44,6 +44,6 @@ export const ENTITY_LIST: EntityStoreConfig[] = [
   {
     entity: 'notes',
     baseUrl:
-      process.env.NEXT_PUBLIC_INFRASTRUCTURE_API ?? '/infrastructure/notes',
+      process.env.NEXT_PUBLIC_INFRASTRUCTURE_API ?? '/infrastructure/api',
   },
 ];
