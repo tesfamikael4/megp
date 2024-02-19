@@ -110,8 +110,8 @@ export function WorkflowHandling({
           remark: remark,
           approver: `${user?.firstName} ${user?.lastName}`,
           userId: user?.id,
-          itemId: itemId,
         },
+        itemId: itemId,
         activityId: currentStep?.step.activityId,
       }).unwrap();
       notifications.show({
@@ -136,8 +136,8 @@ export function WorkflowHandling({
           remark: remark,
           approver: `${user?.firstName} ${user?.lastName}`,
           userId: user?.id,
-          itemId: itemId,
         },
+        itemId: itemId,
         activityId: currentStep?.step.activityId,
       }).unwrap();
 
@@ -163,8 +163,8 @@ export function WorkflowHandling({
           remark: remark,
           approver: `${user?.firstName} ${user?.lastName}`,
           userId: user?.id,
-          itemId: itemId,
         },
+        itemId: itemId,
         activityId: currentStep?.step.activityId,
         goto: { id: stepId, status: stepName },
       }).unwrap();
