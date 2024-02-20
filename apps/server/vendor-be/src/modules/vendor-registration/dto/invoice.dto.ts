@@ -40,6 +40,7 @@ export class InvoiceResponseDto {
   category: string;
   @ApiProperty()
   userId: string;
+  attachmentUrl: string
   static toResponse(entity: InvoiceEntity): InvoiceResponseDto {
     const response = new InvoiceResponseDto();
     response.id = entity.id;
@@ -59,6 +60,7 @@ export class InvoiceResponseDto {
     response.serviceId = entity?.businessArea?.serviceId;
     response.pricingId = entity?.businessArea?.priceRangeId;
     response.category = entity?.businessArea?.category;
+    response.attachmentUrl = entity.attachment;
     return response;
   }
 }

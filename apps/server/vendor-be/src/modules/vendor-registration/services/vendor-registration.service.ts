@@ -1411,22 +1411,28 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     const { isrVendor, ...rest } = vendorData;
     const bussinessAreas = [];
     for (const ba of vendorData.isrVendor?.businessAreas) {
-      const business = BusinessAreaDetailResponseDto.toResponse(ba);
-      delete business.status;
-      const priceRange = this.commonService.formatPriceRange(business);
+      //   const business = BusinessAreaDetailResponseDto.toResponse(ba);
+      let businessarea = {}
+      let bl = [];
+      const priceRange = this.commonService.formatPriceRange(ba.servicePrice);
       for (const lob of vendorData.areasOfBusinessInterest) {
-        if (lob.category == business.category) {
-          business.lineOfBusiness = lob.lineOfBusiness.map(
+
+        if (lob.category == ba.category) {
+          bl = lob.lineOfBusiness.map(
             (item: any) => item.name,
           );
-          business.priceRange = priceRange;
-          delete business.valueFrom;
-          delete business.valueTo;
-          delete business.service;
+          businessarea = {
+            category: this.commonService.capitalizeFirstLetter(ba.category),
+            ValueRange: priceRange,
+            lineOfBusiness: bl,
+            approvedAt: ba.approvedAt,
+            expireDate: ba.expireDate,
+            certificateUrl: ba.certificateUrl
+          }
           break;
         }
       }
-      bussinessAreas.push(business);
+      bussinessAreas.push(businessarea);
     }
     rest.areasOfBusinessInterest = bussinessAreas;
     const vendor = {

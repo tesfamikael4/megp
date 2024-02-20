@@ -112,10 +112,11 @@ export class BusinessAreaDetailResponseDto {
     response.status = entity.status;
     response.approvedAt = entity?.approvedAt;
     response.expireDate = entity?.expireDate;
+    response.certificateUrl = entity?.certificateUrl;
     response.valueFrom = entity.servicePrice?.valueFrom;
     response.valueTo = entity.servicePrice?.valueTo;
-    response.currency = entity.servicePrice?.currency;
-    response.certificateUrl = entity?.certificateUrl;
+    // response.currency = entity.servicePrice?.currency;
+
     return response;
   }
 }
