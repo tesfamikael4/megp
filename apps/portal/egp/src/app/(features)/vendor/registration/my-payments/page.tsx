@@ -17,9 +17,9 @@ function MyPayments() {
             My Payments
           </Text>
           <Text c={'dimmed'} size={'14px'} mt={2}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut
-            faucibus, enim ac dictum rutrum, velit quam pharetra mi, aliquet
-            interdum velit libero nec risus. Aliquam non libero dolor.
+            {/* Here, The contents have to be changed */}
+            Welcome to My Payments! Here you can manage your payment information
+            and view your transaction history.
           </Text>
           <Flex justify="flex-end">
             <TextInput
