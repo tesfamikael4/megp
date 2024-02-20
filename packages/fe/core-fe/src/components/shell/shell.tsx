@@ -1,5 +1,4 @@
 'use client';
-
 import {
   AppShell,
   Avatar,
@@ -40,7 +39,7 @@ interface ShellProps {
 
 export function Shell({ children }: ShellProps): React.ReactNode {
   const shellContext = useContext(ShellContext);
-  const { logOut, user, setRole, role } = useAuth();
+  const { logOut, user } = useAuth();
 
   const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
@@ -93,11 +92,10 @@ export function Shell({ children }: ShellProps): React.ReactNode {
 
     const filtered: any =
       user &&
+      permissionArray !== undefined &&
       filterMenuAndSubmenu(permissionArray as string[], shellContext.menuItems);
 
-    filtered !== undefined
-      ? setFilterdMenu(filtered as any[])
-      : setFilterdMenu([]);
+    filtered ? setFilterdMenu(filtered as any[]) : setFilterdMenu([]);
   }, [shellContext.menuItems, currentApplication, user]);
 
   const links = filterdMenu.map((item) => (
@@ -155,7 +153,6 @@ export function Shell({ children }: ShellProps): React.ReactNode {
                         <Text
                           lh={1}
                         >{`${user.firstName} ${user.lastName}`}</Text>
-                        {role}
                       </Flex>
                     ) : null}
                   </Box>
@@ -176,18 +173,6 @@ export function Shell({ children }: ShellProps): React.ReactNode {
                 <Menu.Item leftSection={<IconHelpCircle size={14} />}>
                   Help
                 </Menu.Item>
-
-                {user?.organizations[0]?.roles?.map((selected) => {
-                  return (
-                    <Menu.Item
-                      key={selected.id}
-                      leftSection={<IconUserCircle size={14} />}
-                      onClick={setRole(selected?.name)}
-                    >
-                      {selected?.name}
-                    </Menu.Item>
-                  );
-                })}
 
                 <Menu.Divider />
 

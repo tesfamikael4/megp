@@ -12,7 +12,7 @@ import {
 import { useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { User } from '@/models/user/user';
-import { notify } from '@megp/core-fe';
+import { logger, notify } from '@megp/core-fe';
 import { useAuth } from '@megp/auth';
 
 interface FormDetailProps {
@@ -32,7 +32,8 @@ const userSchema: ZodType<Partial<User>> = z.object({
     .string()
     .email({ message: 'Must be a valid email' })
     .optional()
-    .or(z.literal('')),
+    .nullable(),
+  // .or(z.literal('')),
 });
 
 export function FormDetail({ mode }: FormDetailProps) {
@@ -59,6 +60,7 @@ export function FormDetail({ mode }: FormDetailProps) {
   } = useReadQuery(id?.toString());
 
   const onCreate = async (data) => {
+    logger.log(data.email);
     try {
       const result: any = await create({
         ...data,
@@ -81,6 +83,8 @@ export function FormDetail({ mode }: FormDetailProps) {
       await update({
         firstName: data.firstName,
         lastName: data.lastName,
+        email: data.email === '' ? null : data.email,
+
         id: id?.toString(),
       });
       notify('Success', 'User updated successfully');
@@ -99,21 +103,21 @@ export function FormDetail({ mode }: FormDetailProps) {
   };
   const onActivate = async () => {
     const dataSent = {
-      status: selected?.status === 'ACTIVATE' ? 'DEACTIVATE' : 'ACTIVATE',
+      status: selected?.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE',
     };
     try {
       await activation({ ...dataSent, id: id?.toString() });
       notify(
         'Success',
         `User ${
-          selected?.status === 'ACTIVATE' ? 'Deactivated' : 'Activated'
+          selected?.status === 'ACTIVE' ? 'Deactivated' : 'Activated'
         } successfully`,
       );
     } catch {
       notify(
         'Error',
         `error in ${
-          selected?.status === 'ACTIVATE' ? 'Deactivating' : 'Activating'
+          selected?.status === 'ACTIVE' ? 'Deactivating' : 'Activating'
         }  User`,
       );
     }

@@ -37,7 +37,7 @@ const AddUserModal = () => {
           <p> {row.original.firstName + ' ' + row.original.lastName}</p>
         ),
         meta: {
-          widget: 'primary',
+          widget: 'expand',
         },
       },
     ],
@@ -109,8 +109,8 @@ const AddUserModal = () => {
 
   useEffect(() => {
     const onRequestChangeList = (request: CollectionQuery) => {
-      !isCollapsed &&
-        trigger({ id: id?.toString(), collectionQuery: undefined });
+      request?.includes?.push('user');
+      !isCollapsed && trigger({ id: id?.toString(), collectionQuery: request });
     };
     setOnRequest(onRequestChangeList);
   }, [id, isCollapsed, trigger]);

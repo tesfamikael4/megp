@@ -58,9 +58,9 @@ export function Entity({ children }: { children: React.ReactNode }) {
         },
 
         {
-          id: 'isActive',
-          header: 'Active',
-          accessorKey: 'isActive',
+          id: 'status',
+          header: 'Status',
+          accessorKey: 'status',
           cell: (info) => info.getValue(),
         },
       ],
@@ -93,7 +93,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
         data?.items?.map((item: User) => {
           return {
             ...item,
-            isActive: item.isActive ? 'Active' : 'Inactive ',
+            isActive: item.status === 'ACTIVE' ? 'Active' : 'Inactive ',
           };
         }) ?? []
       }
