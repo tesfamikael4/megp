@@ -117,6 +117,8 @@ export class WorkflowInstanceResponse extends UpdateWorkflowInstanceDto {
   businessArea: BusinessAreaEntity;
   profileUpdate: ProfileInfoEntity;
   upgrade: any;
+  upgradePaymentReceipt: any;
+  renewalPaymentReceipt: any;
   renewal: any;
   preferential: PreferentialTreatmentsEntity;
   static toResponse(entity: WorkflowInstanceEntity) {

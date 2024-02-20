@@ -31,6 +31,7 @@ export class ApplicationExcutionService {
     private readonly pricingService: ServicePricingService,
     private readonly vendorService: VendorRegistrationsService,
     private readonly baService: BusinessAreaService,
+    private readonly invoiceService: InvoiceService
   ) { }
 
   async getCurruntTaskByServiceKey(
@@ -49,8 +50,8 @@ export class ApplicationExcutionService {
       .innerJoinAndSelect('workflow_instances.taskHandler', 'handler')
       .innerJoinAndSelect('handler.task', 'task')
       .leftJoinAndSelect('workflow_instances.service', 'service')
-      // .leftJoinAndSelect('workflow_instances.isrVendor', 'isrVendor')
-      // .leftJoinAndSelect('workflow_instances.isrVendor.businessAreas', 'businessAreas')
+      // .innerJoin('workflow_instances.isrVendor', 'v')
+      // .innerJoinAndSelect(BusinessAreaEntity, 'ba', 'ba.vendorId=v.id')   
       .innerJoinAndSelect('workflow_instances.businessProcess', 'bp')
       .leftJoinAndSelect('workflow_instances.taskTrackers', 'taskTracker')
       .andWhere('service.key In(:...keys)', { keys: keys })
@@ -61,6 +62,7 @@ export class ApplicationExcutionService {
         handlerType: HandlerTypeEnum.REQUESTOR,
       })
       .orderBy('workflow_instances.submittedAt', 'ASC');
+
     const d = new DataResponseFormat<WorkflowInstanceResponse>();
     const [result, total] = await dataQuery.getManyAndCount();
     d.items = result.map((entity) => {
@@ -116,10 +118,16 @@ export class ApplicationExcutionService {
     if (priceRangeIds.length > 0) {
       priceRanges =
         await this.pricingService.findPriceRangeByIds(priceRangeIds);
-      const businessInterest = WorkflowInstanceResponse.formatBusinessLines(
-        response.isrvendor.areasOfBusinessInterest,
-        priceRanges,
-      );
+      const businessInterest = [];
+      for (const range of priceRanges) {
+        const formattedBC = this.commonService.formatPriceRange(range);
+        const bia = instance.isrVendor?.areasOfBusinessInterest.find((item: any) => item.priceRange == range.id);
+        const lobs = bia.lineOfBusiness.map((item: any) => {
+          return item.name;
+        });
+        const category = this.commonService.capitalizeFirstLetter(bia.category);
+        businessInterest.push({ category: category, priceRange: formattedBC, lineOfBusiness: lobs, })
+      }
       response.isrvendor.areasOfBusinessInterest = businessInterest;
     }
     const preferentialkeys = this.commonService.getPreferencialServices();
@@ -164,17 +172,7 @@ export class ApplicationExcutionService {
     }
     const serviceKey = appData.service.key;
     const renewalServices = this.commonService.getServiceCatagoryKeys(ServiceKeyEnum.renewal)
-    // [
-    //   ServiceKeyEnum.goodsRenewal,
-    //   ServiceKeyEnum.servicesRenewal,
-    //   ServiceKeyEnum.worksRenewal,
-    // ];
     const upgradeServices = this.commonService.getServiceCatagoryKeys(ServiceKeyEnum.upgrade)
-    //  [
-    //   ServiceKeyEnum.goodsUpgrade,
-    //   ServiceKeyEnum.servicesUpgrade,
-    //   ServiceKeyEnum.worksUpgrade,
-    // ];
     const renewalServiceTypes = renewalServices.filter(
       (item) => item == serviceKey,
     );
@@ -183,12 +181,16 @@ export class ApplicationExcutionService {
     );
     if (renewalServiceTypes.length > 0) {
       const business: BusinessAreaEntity = instance.isrVendor.businessAreas[0];
+      const formattedBusinessclass = this.commonService.formatPriceRange(business.servicePrice);
       response.renewal = {
         category: business.category,
+        priceRange: formattedBusinessclass,
         approvedAt: business.approvedAt,
         expireDate: business.expireDate,
       };
       response.isrvendor.businessAreas = null;
+      const reciept = await this.invoiceService.getServiceReceipt(instance.userId, instance.serviceId);
+      response.renewalPaymentReceipt = reciept.attachmentUrl;
       return response;
     } else if (upgradeServicesTypes.length > 0) {
       const business: BusinessAreaEntity = instance.isrVendor.businessAreas[0];
@@ -197,32 +199,27 @@ export class ApplicationExcutionService {
           instance.requestorId,
           business.category,
         );
+      const formattedPreviousClass = this.commonService.formatPriceRange(previousBusinessClass.servicePrice);
+
       const proposedBusinessclass =
         await this.baService.getProposedUpgradeService(
           instance.requestorId,
           business.category,
           instance.serviceId,
         );
+      const formattedproposedClass = this.commonService.formatPriceRange(proposedBusinessclass.servicePrice);
+      const reciept = await this.invoiceService.getServiceReceipt(instance.userId, instance.serviceId);
       response.upgrade = {
         category: previousBusinessClass.category,
         approvedAt: previousBusinessClass.approvedAt,
         expireDate: previousBusinessClass.expireDate,
-        valueFrom: previousBusinessClass.servicePrice.valueFrom,
-        valueTo:
-          previousBusinessClass.servicePrice.valueTo != -1
-            ? previousBusinessClass.servicePrice.valueTo
-            : 'infinity',
-        newCategory: proposedBusinessclass.category,
-        newValueFrom: proposedBusinessclass.servicePrice.valueFrom,
-        newValueTo:
-          proposedBusinessclass.servicePrice.valueTo != -1
-            ? proposedBusinessclass.servicePrice.valueTo
-            : 'infinity',
-
-        // proposedBusinessClass: {
-
-        // }
+        PreviousePriceRange: formattedPreviousClass,
+        //newCategory: proposedBusinessclass.category,
+        ProposedPriceRange: formattedproposedClass,
       };
+      response.upgradePaymentReceipt = reciept.attachmentUrl;
+      // response.invoice = [];
+
     }
     response.isrvendor.businessAreas = null;
 

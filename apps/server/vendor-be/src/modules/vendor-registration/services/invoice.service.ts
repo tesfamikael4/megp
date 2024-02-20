@@ -203,6 +203,21 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     response.items = [...invoices];
     return response;
   }
+  async getServiceReceipt(
+    userId: string,
+    serviceId: string,
+  ): Promise<InvoiceResponseDto> {
+    const result = await this.invoiceRepository.findOne({
+      where: {
+        userId: userId,
+        serviceId: serviceId,
+        businessArea: { status: Not(ApplicationStatus.APPROVED) }
+      },
+      relations: { businessArea: { BpService: true } },
+    });
+    const invoice = InvoiceResponseDto.toResponse(result);
+    return invoice;
+  }
 
   async generateRenewalInvoice(businessAreaIds: string[], user: any) {
     let isInvoiceExist = false;
