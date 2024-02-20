@@ -20,7 +20,6 @@ import {
 import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { logger, notify } from '@megp/core-fe';
-import { RequirementCondition } from '@/models/spd/qualification.model';
 
 interface FormDetailProps {
   mode: 'new' | 'detail';
@@ -130,19 +129,11 @@ export function SpdTechnicalScoringFormDetail({
   return (
     <Stack pos="relative">
       <LoadingOverlay visible={isLoading || isUpdating || isSaving} />
-      <div className="flex space-x-4">
-        <Checkbox
-          label="Cannot be modified by procuring entity"
-          labelPosition="right"
-          className="w-1/2"
-          {...register('isRequired')}
-        />
-        <Checkbox
-          label="Is Rating Based Criteria"
-          className="w-1/2"
-          {...register('isRangeBasedCriteria')}
-        />
-      </div>
+
+      <Checkbox
+        label="Is Rating Based Criteria"
+        {...register('isRangeBasedCriteria')}
+      />
       <Textarea
         label="Criteria"
         withAsterisk
@@ -160,23 +151,14 @@ export function SpdTechnicalScoringFormDetail({
         error={errors?.point ? errors?.point?.message?.toString() : ''}
         {...register('point')}
       />
-      <div className="flex space-x-4">
-        <NativeSelect
-          placeholder="Requirement condition"
-          withAsterisk
-          className="w-1/2"
-          label="Requirement condition"
-          data={Object.values(RequirementCondition)}
-          {...register('requirementCondition')}
-        />
-        <TextInput
-          label="Bid Form Link"
-          withAsterisk
-          className="w-1/2"
-          error={errors?.formLink ? errors?.formLink?.message?.toString() : ''}
-          {...register('formLink')}
-        />
-      </div>
+
+      <TextInput
+        label="Bid Form Link"
+        withAsterisk
+        className="w-1/2"
+        error={errors?.formLink ? errors?.formLink?.message?.toString() : ''}
+        {...register('formLink')}
+      />
       <div className="flex space-x-4">
         <Controller
           name="validation.min"
@@ -218,31 +200,6 @@ export function SpdTechnicalScoringFormDetail({
           )}
         />
       </div>
-      <Textarea
-        label="Specification"
-        withAsterisk
-        autosize
-        minRows={2}
-        error={
-          errors?.specification
-            ? errors?.specification?.message?.toString()
-            : ''
-        }
-        {...register('specification')}
-      />
-
-      <Textarea
-        label="Additional requirements"
-        withAsterisk
-        autosize
-        minRows={2}
-        error={
-          errors?.additionalRequirements
-            ? errors?.additionalRequirements?.message?.toString()
-            : ''
-        }
-        {...register('additionalRequirements')}
-      />
       <Checkbox
         label="Is Professional"
         className="w-1/2"

@@ -1,16 +1,12 @@
-export interface EvaluationMechanism {
-  evaluationMethod: string;
-  selectionMethod: string;
-  technicalWeight: string;
-  financialWeight: string;
-  passingMark: string;
-  scoringBasis: string;
-  comparisonPrice: string;
-  packageType: string;
-  envelopType: string;
-  packageId: string;
+export interface ProcurementMechanism extends PRMechanisms {
   id: string;
+  tenderId: string;
+  invitationType: 'direct' | 'limited' | 'open';
+  stageType: 'single' | 'multiple';
+  marketApproach: 'local' | 'national' | 'international';
+  stage: number;
 }
-export interface EvaluationMechanismProperty {
-  name: string;
+// ::todo add pr mechanisem model from pr
+export interface PRMechanisms {
+  id: string;
 }

@@ -8,7 +8,7 @@ import {
 import { EntityButton } from '@megp/entity';
 import { z, ZodType } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import {
   useReadQuery,
   useDeleteMutation,
@@ -26,16 +26,17 @@ interface FormDetailProps {
 }
 
 export function SpdPreferenceMarginFormDetail({ mode, pmId }: FormDetailProps) {
-  const spdSchema: ZodType<Partial<any>> = z.object({
+  const spdSchema: ZodType<Partial<SpdPreferenceMargin>> = z.object({
     name: z.string().min(1, { message: 'This field is required' }),
     condition: z.string().min(1, { message: 'This field is required' }),
-    margin: z.string(),
+    margin: z.number(),
   });
 
   const {
     handleSubmit,
     reset,
     formState: { errors },
+    control,
     register,
   } = useForm({
     resolver: zodResolver(spdSchema),
@@ -106,13 +107,24 @@ export function SpdPreferenceMarginFormDetail({ mode, pmId }: FormDetailProps) {
         error={errors?.condition ? errors?.condition?.message?.toString() : ''}
         {...register('condition')}
       />
-
-      <TextInput
-        label="Margin"
-        placeholder="Margin"
-        error={errors?.margin ? errors?.margin?.message?.toString() : ''}
-        {...register('margin')}
+      <Controller
+        name="margin"
+        control={control}
+        render={({ field: { name, value, onChange } }) => (
+          <NumberInput
+            label="Margin"
+            name={name}
+            value={value}
+            className="w-1/2"
+            onChange={(d) => onChange(parseInt(d as string))}
+            error={
+              errors['margin'] ? errors['margin']?.message?.toString() : ''
+            }
+            withAsterisk
+          />
+        )}
       />
+
       <EntityButton
         mode={mode}
         data={selected}
