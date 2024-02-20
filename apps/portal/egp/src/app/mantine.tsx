@@ -14,7 +14,7 @@ export default function RootStyleRegistry({
   return (
     <MantineProvider theme={theme}>
       <Notifications />
-      <ModalsProvider>{children}</ModalsProvider>
+      {children}
     </MantineProvider>
   );
 }
