@@ -104,8 +104,7 @@ export class FileService {
       fileDto.path = result.path;
       fileDto.ownerId = result.ownerId;
       fileDto.originalName = result.originalname;
-      const fileEntity = CreateFileDto.fromDto(fileDto);
-      return await this.fileRepository.save(fileEntity);
+      return await this.fileRepository.save(fileDto);
     } catch (error) {
       console.log(error);
       return error;
@@ -243,7 +242,8 @@ export class FileService {
       await this.isrVendorsRepository.save(result);
       foundObject.push(paymentReceipt);
       const paymentReceiptsData = result?.paymentReceipt;
-      for (let index = 0; index < paymentReceiptsData?.length; index++) {
+      const length = paymentReceiptsData?.length;
+      for (let index = 0; index < length; index++) {
         await this.invoiceRepository.update(
           paymentReceiptsData[index].invoiceId,
           {
@@ -376,8 +376,6 @@ export class FileService {
       const fileUploadName = 'paymentReceipt';
       if (uploadFileDto.attachment !== null) {
         const objectName = `${userId}/${fileUploadName}/${uploadFileDto.attachment}`;
-        // const fileAlreadyUploaded = await this.minioClient.statObject(this.bucketName, objectName)
-        // if (fileAlreadyUploaded) return "file already uploaded"
         if (uploadFileDto.attachment || uploadFileDto.attachment !== '') {
           await this.minioClient.removeObject(this.bucketName, objectName);
         }
@@ -429,65 +427,40 @@ export class FileService {
       const result = await this.isrVendorsRepository.findOne({
         where: { userId: userId, status: In(this.updateVendorEnums) },
       });
-      if (!result) throw new HttpException('Incoplete Information', 404);
+      if (!result) throw new HttpException('Incomplete Information', 404);
       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
       const fileUploadName = 'SupportingDocument';
       const fileId = `${uniqueSuffix}_${file.originalname}`;
       const filename = `${userId}/${fileUploadName}/${fileId}`;
-      const bucket = 'megp';
       const metaData = {
         'Content-Type': file.mimetype,
       };
       const fname = paymentReceiptDto.fieldName;
-      await this.minioClient.putObject(bucket, filename, file.buffer, metaData);
+      await this.minioClient.putObject(
+        this.bucketName,
+        filename,
+        file.buffer,
+        metaData,
+      );
       const resultMetadata = result.supportingDocuments;
-      switch (paymentReceiptDto.fieldName) {
-        case 'businessRegistration_IncorporationCertificate':
-          if (resultMetadata[fname] !== '') {
-            const objectName = `${userId}/${fileUploadName}/${resultMetadata[fname]}`;
-            await this.minioClient.removeObject('megp', objectName);
-          }
-          resultMetadata.businessRegistration_IncorporationCertificate = fileId;
-          break;
-
-        case 'mRA_TPINCertificate':
-          if (resultMetadata[fname] !== '') {
-            const objectName = `${userId}/${fileUploadName}/${resultMetadata[fname]}`;
-            await this.minioClient.removeObject('megp', objectName);
-          }
-          resultMetadata.mRA_TPINCertificate = fileId;
-          break;
-        case 'generalReceipt_BankDepositSlip':
-          if (resultMetadata[fname] !== '') {
-            const objectName = `${userId}/${fileUploadName}/${resultMetadata[fname]}`;
-            await this.minioClient.removeObject('megp', objectName);
-          }
-          resultMetadata.generalReceipt_BankDepositSlip = fileId;
-          break;
-        case 'mRATaxClearanceCertificate':
-          if (resultMetadata[fname] !== '') {
-            const objectName = `${userId}/${fileUploadName}/${resultMetadata[fname]}`;
-            await this.minioClient.removeObject('megp', objectName);
-          }
-          resultMetadata.mRATaxClearanceCertificate = fileId;
-          break;
-        case 'previousPPDARegistrationCertificate':
-          if (resultMetadata[fname] !== '') {
-            const objectName = `${userId}/${fileUploadName}/${resultMetadata[fname]}`;
-            await this.minioClient.removeObject('megp', objectName);
-          }
-          resultMetadata.previousPPDARegistrationCertificate = fileId;
-          break;
-        case 'mSMECertificate':
-          if (resultMetadata[fname] !== '') {
-            const objectName = `${userId}/${fileUploadName}/${resultMetadata[fname]}`;
-            await this.minioClient.removeObject('megp', objectName);
-          }
-          resultMetadata.mSMECertificate = fileId;
-          break;
-        default:
-          break;
+      const fieldMapping = {
+        businessRegistration_IncorporationCertificate:
+          'businessRegistration_IncorporationCertificate',
+        mRA_TPINCertificate: 'mRA_TPINCertificate',
+        generalReceipt_BankDepositSlip: 'generalReceipt_BankDepositSlip',
+        mRATaxClearanceCertificate: 'mRATaxClearanceCertificate',
+        previousPPDARegistrationCertificate:
+          'previousPPDARegistrationCertificate',
+        mSMECertificate: 'mSMECertificate',
+      };
+      if (resultMetadata[fname] !== '') {
+        const objectName = `${userId}/${fileUploadName}/${resultMetadata[fname]}`;
+        await this.minioClient.removeObject(this.bucketName, objectName);
       }
+      if (fieldMapping[paymentReceiptDto.fieldName]) {
+        resultMetadata[fieldMapping[paymentReceiptDto.fieldName]] = fileId;
+      }
+
       result.supportingDocuments = resultMetadata;
       const isrVendor = await this.isrVendorsRepository.save(result);
       if (!isrVendor) throw new HttpException(`isrVendor_update _failed`, 500);

@@ -115,6 +115,7 @@ export class UploadController {
     if (!file) {
       return { error: 'File not received' };
     }
+
     const paymentReceiptDto = {
       fieldName: fieldName,
     };

@@ -19,7 +19,7 @@ export class BeneficialOwnershipService {
   async fetch(): Promise<BeneficialOwnershipResponse[]> {
     try {
       const result = await this.beneficialOwnershipRepository.find();
-      if (!result) {
+      if (result.length <= 0) {
         throw new NotFoundException(`Vendor Not found`);
       }
       return result.map((element) =>
@@ -43,7 +43,7 @@ export class BeneficialOwnershipService {
       const result = await this.beneficialOwnershipRepository.find({
         where: { vendorId: vendorId },
       });
-      if (!result) {
+      if (result.length <= 0) {
         throw new NotFoundException(
           `BeneficialOwnership for vendor ${vendorId}  is Not found`,
         );

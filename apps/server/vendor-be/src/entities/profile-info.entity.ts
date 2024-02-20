@@ -8,9 +8,10 @@ import {
 } from 'typeorm';
 import { BusinessAreaEntity } from './business-area.entity';
 import { VendorsEntity } from './vendors.entity';
+import { Audit } from 'src/shared/entities';
 
 @Entity({ name: 'profile_info' })
-export class ProfileInfoEntity {
+export class ProfileInfoEntity extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
   @Column({ type: 'jsonb' })

@@ -308,33 +308,39 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           let fppaData = null;
           const length = data.areasOfBusinessInterest.length;
           for (let index = 0; index < length; index++) {
-            if (
-              data.areasOfBusinessInterest[index] === 'work' &&
-              ncicData == null
-            ) {
-              ncicData = await this.GetNCICData(isrVendor.tinNumber);
-              if (ncicData == null) {
-                isrVendor.initial.status = VendorStatusEnum.SAVE;
-                isrVendor.initial.level = VendorStatusEnum.PPDA;
-                await this.isrVendorsRepository.save(isrVendor);
-              } else {
-                isrVendor.basic.district = ncicData?.district;
-                isrVendor.address.mobilePhone = ncicData?.telephoneNumber;
-                isrVendor.address.postalAddress = ncicData?.postalAddress;
-                isrVendor.address.primaryEmail = ncicData?.email;
-                // isrVendor.basic.businessType = ncicData?.typeOfRegistration
-                await this.isrVendorsRepository.save(isrVendor);
-              }
-            } else if (fppaData == null) {
-              fppaData = await this.GetFPPAData(isrVendor.tinNumber);
-              if (fppaData !== null) {
-                isrVendor.basic.businessType = fppaData.businessType;
-                isrVendor.contactPersons.mobileNumber = fppaData.mobileNumber;
-                await this.isrVendorsRepository.save(isrVendor);
+            if (data.basic.country == 'MW') {
+              if (
+                data.areasOfBusinessInterest[index] === 'work' &&
+                ncicData == null
+              ) {
+                ncicData = await this.GetNCICData(isrVendor.tinNumber);
+                if (ncicData == null) {
+                  isrVendor.initial.status = VendorStatusEnum.SAVE;
+                  isrVendor.initial.level = VendorStatusEnum.PPDA;
+                  await this.isrVendorsRepository.save(isrVendor);
+                } else {
+                  isrVendor.basic.district = ncicData?.district;
+                  isrVendor.address.mobilePhone = ncicData?.telephoneNumber;
+                  isrVendor.address.postalAddress = ncicData?.postalAddress;
+                  isrVendor.address.primaryEmail = ncicData?.email;
+                  // isrVendor.basic.businessType = ncicData?.typeOfRegistration
+                  await this.isrVendorsRepository.save(isrVendor);
+                }
+              } else if (fppaData == null) {
+                fppaData = await this.GetFPPAData(isrVendor.tinNumber);
+                if (fppaData !== null) {
+                  isrVendor.basic.businessType = fppaData.businessType;
+                  isrVendor.contactPersons.mobileNumber = fppaData.mobileNumber;
+                  await this.isrVendorsRepository.save(isrVendor);
+                  continue;
+                }
+              } else if (fppaData !== null) {
                 continue;
               }
-            } else if (fppaData !== null) {
-              continue;
+            } else {
+              isrVendor.initial.status = VendorStatusEnum.SAVE;
+              isrVendor.initial.level = VendorStatusEnum.PPDA;
+              await this.isrVendorsRepository.save(isrVendor);
             }
             const vendor: VendorsEntity = new VendorsEntity();
             //  result.basic['id'] = result.id;
@@ -375,23 +381,26 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     if (vendorsEntity.status === VendorStatusEnum.APPROVED)
       throw new HttpException('vendor_already_approved', 400);
     //Submitted
+
+    vendorsEntity = { ...data };
     initial.status =
       data.initial.status == 'Submit'
         ? VendorStatusEnum.SUBMITTED
         : data.initial.status;
 
     vendorsEntity.initial = data.initial;
+
     vendorsEntity.tinNumber = data.basic.tinNumber;
-    vendorsEntity.basic = data.basic;
-    vendorsEntity.address = data.address;
-    vendorsEntity.contactPersons = data.contactPersons;
-    vendorsEntity.businessSizeAndOwnership = data.businessSizeAndOwnership;
-    vendorsEntity.shareHolders = data.shareHolders;
-    vendorsEntity.beneficialOwnership = data.beneficialOwnership;
-    vendorsEntity.bankAccountDetails = data.bankAccountDetails;
-    vendorsEntity.areasOfBusinessInterest = data.areasOfBusinessInterest;
-    vendorsEntity.supportingDocuments = data.supportingDocuments;
-    vendorsEntity.paymentReceipt = data?.paymentReceipt;
+    // vendorsEntity.basic = data.basic;
+    // vendorsEntity.address = data.address;
+    // vendorsEntity.contactPersons = data.contactPersons;
+    // vendorsEntity.businessSizeAndOwnership = data.businessSizeAndOwnership;
+    // vendorsEntity.shareHolders = data.shareHolders;
+    // vendorsEntity.beneficialOwnership = data.beneficialOwnership;
+    // vendorsEntity.bankAccountDetails = data.bankAccountDetails;
+    // vendorsEntity.areasOfBusinessInterest = data.areasOfBusinessInterest;
+    // vendorsEntity.supportingDocuments = data.supportingDocuments;
+    // vendorsEntity.paymentReceipt = data?.paymentReceipt;
     return vendorsEntity;
   };
   async updateVendor(vendorStatusDto: SetVendorStatus): Promise<any> {

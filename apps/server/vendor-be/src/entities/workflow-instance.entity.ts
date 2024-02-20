@@ -8,7 +8,6 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-
 import { TaskHandlerEntity } from 'src/entities/task-handler.entity';
 import { TaskTrackerEntity } from 'src/entities/task-tracker.entity';
 import { IsrVendorsEntity } from './isr-vendors.entity';
