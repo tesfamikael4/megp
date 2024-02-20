@@ -6,8 +6,9 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { InvoiceEntity } from './invoice.entity';
+import { Audit } from 'src/shared/entities';
 @Entity({ name: 'receipts' })
-export class PaymentReceiptEntity {
+export class PaymentReceiptEntity extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
   @Column()

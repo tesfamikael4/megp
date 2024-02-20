@@ -7,9 +7,10 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { VendorsEntity } from './vendors.entity';
+import { Audit } from 'src/shared/entities';
 
 @Entity({ name: 'business_interest_area' })
-export class AreasOfBusinessInterestEntity {
+export class AreasOfBusinessInterestEntity extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
   @Column()

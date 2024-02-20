@@ -21,7 +21,7 @@ export class AreasOfBusinessInterestService extends EntityCrudService<AreasOfBus
   async fetch(): Promise<any> {
     try {
       const result = await this.areasOfBusinessInteresteRepository.find();
-      if (!result) {
+      if (result.length <= 0) {
         throw new NotFoundException(
           `getting AreasOfBusinessIntereste failed  `,
         );

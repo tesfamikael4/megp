@@ -7,8 +7,9 @@ import {
 } from 'typeorm';
 import { VendorsEntity } from './vendors.entity';
 import { Category } from './category.entity';
+import { Audit } from 'src/shared/entities';
 @Entity({ name: 'business_categories' })
-export class BusinessCategoryEntity {
+export class BusinessCategoryEntity extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
   @Column({ type: 'uuid' })

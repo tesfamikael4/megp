@@ -10,8 +10,9 @@ import { TaskAssignmentEntity } from './task-assignment.entity';
 import { TaskHandlerEntity } from 'src/entities/task-handler.entity';
 import { CreateTaskCheckListDto } from 'src/modules/bpm/dto/task-check-list.dto';
 import { BusinessProcessEntity } from './business-process.entity';
+import { Audit } from 'src/shared/entities';
 @Entity({ name: 'tasks' })
-export class TaskEntity {
+export class TaskEntity extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
   @Column()
