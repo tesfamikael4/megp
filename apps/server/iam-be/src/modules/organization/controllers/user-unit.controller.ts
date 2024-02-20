@@ -3,7 +3,6 @@ import { ApiTags } from '@nestjs/swagger';
 import { UserUnit } from '@entities';
 import { UserUnitService } from '../services/user-unit.service';
 import { RelationCrudController } from 'src/shared/controller/relation-crud.controller';
-import { RelationCrudDecorator } from 'src/shared/decorators/crud-options.decorator';
 import { RelationCrudOptions } from 'src/shared/types/crud-option.type';
 
 const options: RelationCrudOptions = {

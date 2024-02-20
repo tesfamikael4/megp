@@ -5,6 +5,7 @@ import { UserRoleSystemService } from '../services/user-role-system.service';
 import { RelationCrudController } from 'src/shared/controller/relation-crud.controller';
 import { RelationCrudOptions } from 'src/shared/types/crud-option.type';
 import { UserRoleSystem } from 'src/entities/user-role-system.entity';
+import { AllowAnonymous } from 'src/shared/authorization';
 
 const options: RelationCrudOptions = {
   firstEntityIdName: 'roleSystemId',
@@ -17,6 +18,7 @@ const options: RelationCrudOptions = {
 
 @Controller('user-role-systems')
 @ApiTags('user-role-systems')
+@AllowAnonymous()
 export class UserRoleSystemController extends RelationCrudController<UserRoleSystem>(
   options,
 ) {

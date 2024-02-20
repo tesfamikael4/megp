@@ -14,12 +14,38 @@ export class CreateUserRoleSystemDto {
 
 export class UpdateUserRoleSystemDto extends CreateUserRoleSystemDto {
   @ApiProperty()
-  @IsNumber()
+  @IsString()
   @IsOptional()
-  id: number;
+  id: string;
 }
 
 export class UserRoleSystemResponseDto extends UpdateUserRoleSystemDto {
   roleSystem: RoleSystemResponseDto;
-  user: UserResponseDto;
+  user: any;
+
+  static toDto(permission: UserRoleSystem): UserRoleSystemResponseDto {
+    const permissionDto: UserRoleSystemResponseDto =
+      new UserRoleSystemResponseDto();
+
+    permissionDto.id = permission.id;
+
+    permissionDto.roleSystemId = permission.roleSystemId;
+
+    permissionDto.userId = permission.userId;
+
+    permissionDto.user = {
+      id: permission.user.id,
+      firstName: permission.user.account.firstName,
+      lastName: permission.user.account.lastName,
+      email: permission.user.account.email,
+    };
+
+    return permissionDto;
+  }
+
+  static toDtos(permissions: UserRoleSystem[]) {
+    return permissions?.map((permission) =>
+      UserRoleSystemResponseDto.toDto(permission),
+    );
+  }
 }
