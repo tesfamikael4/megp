@@ -57,7 +57,7 @@ export class PreBudgetPlanTimelineService extends ExtraCrudService<PreBudgetPlan
               id: true,
               app: {
                 id: true,
-                budgetYears: { endDate: true },
+                budgetYears: { endDate: true, startDate: true },
               },
             },
           },
@@ -65,11 +65,22 @@ export class PreBudgetPlanTimelineService extends ExtraCrudService<PreBudgetPlan
       const budgetPlanEndDate =
         postBudgetPlanActivity.preBudgetPlan.app.budgetYears.endDate;
 
+      const budgetPlanStartDate =
+        postBudgetPlanActivity.preBudgetPlan.app.budgetYears.startDate;
+
       timelines.timeline.forEach((element) => {
         element.organizationId = organizationId;
       });
 
       const ordered = timelines.timeline.sort((a, b) => a.order - b.order);
+
+      if (
+        new Date(ordered[0].dueDate).getTime() < budgetPlanStartDate.getTime()
+      )
+        throw new HttpException(
+          'Start date must be greater than budget plan end date',
+          430,
+        );
 
       if (
         new Date(ordered[ordered.length - 1].dueDate).getTime() >
