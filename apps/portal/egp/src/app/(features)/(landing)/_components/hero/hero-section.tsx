@@ -57,7 +57,7 @@ export function HeroSection() {
                 <Button
                   bg={'green'}
                   size="sm"
-                  className="sm:w-full md:w-1/2"
+                  className="md:w-1/2"
                   onClick={() => {
                     user
                       ? router.push('/vendor/registration/new/basic')

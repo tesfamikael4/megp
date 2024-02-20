@@ -62,29 +62,63 @@ const TenderCard = ({ color, register, textColor }: TenderCardProps) => {
         <IconBookmark size={30} stroke={1.5} />
       </div>
       <Box className="flex flex-col">
-        <Flex align={'center'} gap={'lg'}>
-          <Text className="text-center text-sm" visibleFrom="sm">
-            <Avatar w={80} h={80} bg={theme.colors.green[1]} mb={10}>
+        <Flex align={'center'} gap={'sm'}>
+          <Text className="text-center text-sm">
+            <Avatar
+              w={{
+                xs: 50,
+                sm: 50,
+                md: 80,
+              }}
+              h={{ xs: 50, sm: 50, md: 80 }}
+              bg={theme.colors.green[1]}
+              mb={10}
+            >
               <IconHammer color="white" size={30} />
             </Avatar>
             <Text fw={500} fz={'xs'} lh={'12px'}>
               Services
             </Text>
           </Text>
-          <Flex direction={'column'} rowGap={'xs'} w={'100%'}>
-            <Text mt={30} fz={'md'} lh={'24px'}>
+          <Flex direction={'column'} w={'100%'}>
+            <Text
+              mt={30}
+              fz={'sm'}
+              lh={{
+                xs: 'xs',
+                sm: 'xs',
+                md: '24px',
+              }}
+              className="font-semibold"
+            >
               Computer services and devices, Lorem Ipsum Computer services and
               devices.
             </Text>
-            <Text c="dimmed" fz={'xs'} lh={'20px'}>
+
+            <Text
+              c="dimmed"
+              fz={'xs'}
+              lh={{
+                xs: '12px',
+                sm: '12px',
+                md: '20px',
+              }}
+            >
               Lorem ipsum dolor sit amet, consectetur lorem adipiscing elit. Nam
               hendrerit nisi sed sollicitud
             </Text>
-            <Flex direction={'column'}>
-              <Text className="sm:text-sm lg:text-md font-extrabold">
+            <Flex
+              direction={'column'}
+              mt={{
+                xs: '4px',
+                sm: '4px',
+                md: 'sm',
+              }}
+            >
+              <Text className="sm:text-sm lg:text-md" fw={500}>
                 Minister of Education
               </Text>
-              <Flex className="sm:flex-col  md:flex-row items-center justify-between">
+              <Box className="flex flex-col  sm:flex-row sm:items-center sm:justify-between">
                 <Flex
                   align={'center'}
                   columnGap={'sm'}
@@ -106,10 +140,10 @@ const TenderCard = ({ color, register, textColor }: TenderCardProps) => {
                 >
                   <Text fw={500}>Closing:</Text>
                   <Text className="text-gray-400" fw={400}>
-                    14-Jan-2024 3:00 PMT
+                    14-Jan-2024
                   </Text>
                 </Flex>
-              </Flex>
+              </Box>
             </Flex>
             <Flex columnGap={'md'} mt={'sm'} justify={'flex-end'}>
               {register && <Button>Register</Button>}

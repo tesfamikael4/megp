@@ -42,8 +42,8 @@ export default function Footer() {
         <IconArrowNarrowUp />
       </Avatar> */}
       <Container size={'xl'} className="relative">
-        <SimpleGrid cols={{ base: 1, sm: 2 }}>
-          <Flex direction="column" px="md">
+        <SimpleGrid cols={{ base: 1, sm: 2, md: 2, lg: 2 }}>
+          <Flex direction="column" align={'center'} gap={'md'} px="md">
             <Group>
               <Link href="http://peragosystems.com/home">
                 <Image
@@ -56,49 +56,44 @@ export default function Footer() {
               </Link>
 
               <Text size="xs" className="text-[#8F9FA3] mb-4">
-                Lorem ipsum dolor sit amet, consectetur lorem adipiscing elit.
-                Nam hendrerit nisi sed sollicitudLorem ipsum dolor sit amet,
-                consectetur lorem adipiscing elit. Nam hendrerit nisi sed
-                sollicitudLorem ipsum dolor sit amet, consectetur lorem
-                adipiscing elit. Nam hendrerit nisi sed sollicitudLorem ipsum
-                dolor sit amet, consectetur lorem adipiscing elit. Nam hendrerit
-                nisi sed sollicitudLorem ipsum dolor sit amet, consectetur lorem
-                adipiscing elit. Nam hendrerit nisi sed sollicitudLorem ipsum
-                dolor sit amet, consectetur lorem adipiscing elit. Nam hendrerit
-                nisi sed sollicitudLorem ipsum dolor sit amet, consectetur lorem
-                adipiscing elit. Nam hendrerit nisi sed sollicitud
+                Electronic Government Procurement (eGP) refers to the use of
+                digital technologies to enable a more efficient and transparent
+                exchange of information, and interactions and transactions
+                between government and the business community in the procurement
+                of goods, services, and works. E-GP automates and streamlines
+                the end-to-end public procurement process from the preparation
+                and publication of annual procurement plans, managing the
+                various tendering activities, and administration of contracts.
               </Text>
-              <Link href="#">
-                <Text size="xs" className="flex items-center text-white">
-                  More about us <IconPointFilled />
-                </Text>
-              </Link>
-
-              <Divider
-                className="border-white"
-                style={{
-                  width: '100%',
-                }}
-              />
-
-              <Group>
-                <ActionIcon variant="subtle" c={'white'} size="lg">
-                  <IconBrandFacebookFilled size={18} strokeWidth={2.5} />
-                </ActionIcon>
-                <ActionIcon variant="subtle" c={'white'} size="lg">
-                  <IconBrandInstagram size={18} strokeWidth={2.5} />
-                </ActionIcon>
-                <ActionIcon variant="subtle" c={'white'} size="lg">
-                  <IconBrandLinkedin size={18} strokeWidth={2.5} />
-                </ActionIcon>
-                <ActionIcon variant="subtle" c={'white'} size="lg">
-                  <IconBrandTwitterFilled size={18} strokeWidth={2.5} />
-                </ActionIcon>
-                <ActionIcon variant="subtle" c={'white'} size="lg">
-                  <IconBrandYoutubeFilled size={18} strokeWidth={2.5} />
-                </ActionIcon>
-              </Group>
+              <Box>
+                <Link href="#">
+                  <Text
+                    size="xs"
+                    className="flex items-center justify-center text-white"
+                  >
+                    More about us <IconPointFilled />
+                  </Text>
+                </Link>
+              </Box>
             </Group>
+            <Group>
+              <ActionIcon variant="subtle" radius={'lg'} bg={'white'} size="lg">
+                <IconBrandFacebookFilled size={18} strokeWidth={2.5} />
+              </ActionIcon>
+              <ActionIcon variant="subtle" radius={'lg'} bg={'white'} size="lg">
+                <IconBrandInstagram size={18} strokeWidth={2.5} />
+              </ActionIcon>
+              <ActionIcon variant="subtle" radius={'lg'} bg={'white'} size="lg">
+                <IconBrandLinkedin size={18} strokeWidth={2.5} />
+              </ActionIcon>
+              <ActionIcon variant="subtle" radius={'lg'} bg={'white'} size="lg">
+                <IconBrandTwitterFilled size={18} strokeWidth={2.5} />
+              </ActionIcon>
+              <ActionIcon variant="subtle" radius={'lg'} bg={'white'} size="lg">
+                <IconBrandYoutubeFilled size={18} strokeWidth={2.5} />
+              </ActionIcon>
+            </Group>
+            <Divider my={'xs'} />
           </Flex>
 
           <Flex direction={'column'} gap={'lg'} px="md">
@@ -130,29 +125,56 @@ export default function Footer() {
               </Flex>
             </Flex>
             {/* Location */}
-            <Box>
-              <Text className="text-white mb-2">LOCATION</Text>
-              <Text size="xs" className="text-[#8F9FA3] mb-2">
-                FDRE Public Procurement and Property Authority 6 killo In front
-                of Yekatit 12 Referral Hospital
-              </Text>
-            </Box>
-            {/* Important Links */}
-            <Box>
-              <Flex direction="column" gap="2" className="mb-4 sm:text-xs">
+            <Flex
+              rowGap={{ xs: 'md', sm: 'md' }}
+              className="w-full flex-col justify-center gap-4 md:flex-row md:items-center md:justify-between"
+              columnGap={'xl'}
+            >
+              <Box>
+                <Text className="text-white mb-2">LOCATION</Text>
+                <address className="text-sm">
+                  Public Procurement and Disposal of Assets Authority,
+                  <br />
+                  The Jireh Bible House,
+                  <br />
+                  Area 3,Off Colby Road,
+                  <br />
+                  Private Bag 383,
+                  <br />
+                  Capital City,Lilongwe 3, Malawi
+                  <br />
+                  Phone: (256)0 887 083 261
+                  <br />
+                  Email: <a href="mailto:dg@ppda.mw">dg@ppda.mw</a>
+                  <br />
+                  Website: <a href="http://www.ppda.mw/">www.ppda.mw</a>
+                </address>
+              </Box>
+              <Box>
                 <Text className="text-white">IMPORTANT LINKS</Text>
-                <Link href="#">https://www.figma.com/file/</Link>
-                <Link href="#">https://www.figma.com/file/</Link>
-                <Link href="#">https://www.figma.com/file/</Link>
-                <Link href="#">https://www.figma.com/file/</Link>
-                <Link href="#">https://www.figma.com/file/</Link>
-                <Link href="#">https://www.figma.com/file/</Link>
-              </Flex>
-            </Box>
+                <Box>
+                  <SimpleGrid
+                    cols={{
+                      base: 2,
+                      sm: 2,
+                      md: 1,
+                    }}
+                    className="sm:text-xs"
+                  >
+                    <Link href="#">https://www.figma.com/file/</Link>
+                    <Link href="#">https://www.figma.com/file/</Link>
+                    <Link href="#">https://www.figma.com/file/</Link>
+                    <Link href="#">https://www.figma.com/file/</Link>
+                    <Link href="#">https://www.figma.com/file/</Link>
+                    <Link href="#">https://www.figma.com/file/</Link>
+                  </SimpleGrid>
+                </Box>
+              </Box>
+            </Flex>
           </Flex>
         </SimpleGrid>
 
-        <Flex className="items-center justify-center mx-auto mt-3 text-[#8e96a1]">
+        <Flex className="items-center justify-center mx-auto mt-6 text-[#8e96a1]">
           <Text size="xs">
             Copyright &copy; {currentYear} All rights reserved. Powered by
             Perago Inc.
