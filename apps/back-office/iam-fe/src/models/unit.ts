@@ -4,6 +4,7 @@ export interface Unit {
   name: string;
   shortName: string;
   code?: string | null;
+  status: string;
   description: string;
   typeId: string;
   parentId: string;

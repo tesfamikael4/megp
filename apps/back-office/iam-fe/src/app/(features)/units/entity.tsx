@@ -52,9 +52,9 @@ export function Entity({ children }: { children: React.ReactNode }) {
           },
         },
         {
-          id: 'isActive',
-          header: () => <p className="ml-auto">Active</p>,
-          accessorKey: 'isActive',
+          id: 'status',
+          header: () => <p className="ml-auto">Status</p>,
+          accessorKey: 'status',
           cell: (info) => (
             <div className="flex justify-end">
               {info.getValue() as ReactNode}
@@ -98,7 +98,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
         data?.items?.map((item: Unit) => {
           return {
             ...item,
-            isActive: item.isActive ? 'Active' : 'Inactive ',
+            isActive: item.status === 'ACTIVE' ? 'Active' : 'Inactive ',
           };
         }) ?? []
       }
