@@ -148,6 +148,102 @@ export class PostBudgetPlanService extends ExtraCrudService<PostBudgetPlan> {
     return targetGroupPercentages;
   }
 
+  async getReport(postBudgetPlanId: string) {
+    const activities = await this.postBudgetActivityRepository.find({
+      where: {
+        postBudgetPlanId,
+      },
+      relations: {
+        postProcurementMechanisms: true,
+      },
+    });
+
+    const procurementType = {
+      Goods: 0,
+      Works: 0,
+      'Non Consulting Services': 0,
+      'Consultancy Services': 0,
+      'Motor Vehicle Repair': 0,
+    };
+
+    const procurementMethods = {
+      'Request for Quotation (RFQ)': 0,
+      'National Competitive Bidding (NCB)': 0,
+      'International Competitive Bidding (ICB)': 0,
+      'Restricted Tender': 0,
+      'Single Source Procurement': 0,
+      'Request for Proposal (RFP)': 0,
+      'Two Stage Bidding': 0,
+      'Framework Procurement': 0,
+      'Purchased Orders (Call off)': 0,
+    };
+
+    const fundingSources = {
+      'Internal Revenue': 0,
+      Treasury: 0,
+      Loan: 0,
+      Donor: 0,
+    };
+    const isOnline = {
+      true: 0,
+      false: 0,
+    };
+
+    const targetGroups = {
+      IBM: 0,
+      'MSM Enterprises': 0,
+      'Marginalized Group': 0,
+      Others: 0,
+    };
+    activities.forEach((activity) => {
+      activity.postProcurementMechanisms.forEach((mechanism) => {
+        procurementType[mechanism.procurementType]++;
+        procurementMethods[mechanism.procurementMethod]++;
+        fundingSources[mechanism.procurementMethod]++;
+        const online = mechanism.isOnline ? 'true' : 'false';
+        isOnline[online]++;
+        const target =
+          mechanism.targetGroup == 'Small Enterprises' ||
+          'Micro Enterprises' ||
+          'Medium Enterprises'
+            ? 'MSM Enterprises'
+            : mechanism.targetGroup;
+        targetGroups[target]++;
+      });
+    });
+
+    const result = {
+      procurementType: this.calculatePercentage(procurementType),
+      procurementMethods: this.calculatePercentage(procurementMethods),
+      fundingSources: this.calculatePercentage(fundingSources),
+      isOnline: this.calculatePercentage(isOnline),
+      targetGroups: this.calculatePercentage(targetGroups),
+    };
+    return result;
+  }
+
+  calculatePercentage(percentageGroup) {
+    const total: number = Object.values(percentageGroup).reduce(
+      (acc: number, val: number) => acc + val,
+      0,
+    ) as number;
+    const percentages: Record<string, { count: number; percentage: number }> =
+      {};
+
+    for (const group in percentageGroup) {
+      if (percentageGroup.hasOwnProperty(group)) {
+        const count = percentageGroup[group];
+        const percentage = (count / total) * 100;
+        percentages[group] = { count, percentage };
+      }
+    }
+
+    return {
+      percentages,
+      total: total,
+    };
+  }
+
   async initiateWorkflow(data) {
     const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
 

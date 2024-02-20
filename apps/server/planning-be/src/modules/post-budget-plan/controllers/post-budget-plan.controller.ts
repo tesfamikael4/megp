@@ -71,6 +71,13 @@ export class PostBudgetPlanController extends ExtraCrudController<PostBudgetPlan
   }
 
   @AllowAnonymous()
+  @Get('get-report/:id')
+  @ApiPaginatedResponse(PostBudgetPlan)
+  async getReport(@Param('id') id: string) {
+    return await this.postBudgetPlanService.getReport(id);
+  }
+
+  @AllowAnonymous()
   @UseGuards(ApiKeyGuard)
   @Get('get-with-app/pr')
   @ApiPaginatedResponse(PostBudgetPlan)
