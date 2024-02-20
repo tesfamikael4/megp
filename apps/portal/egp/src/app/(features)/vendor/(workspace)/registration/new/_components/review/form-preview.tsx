@@ -80,6 +80,12 @@ const tab = [
 ];
 
 const formatColumns = {
+  businessSizeAndOwnership: [
+    { name: 'registeredCapital' },
+    { name: 'paidUpCapital' },
+    { name: 'numberOfEmployees' },
+    { name: 'ownershipType' },
+  ],
   contactPersons: [
     { name: 'firstName' },
     { name: 'lastName' },
@@ -236,7 +242,15 @@ const FormattedPanel = ({ data, tabValue }: any) => {
     <>
       {formatColumns[tabValue].map((field) => {
         return (
-          <Accordion.Panel key={field.name} className="gap-x-2 items-center">
+          <Accordion.Panel
+            key={field.name}
+            styles={{
+              content: {
+                padding: 0,
+              },
+            }}
+            className="gap-x-2 flex items-center border-b"
+          >
             <Flex>
               <Text
                 size="xs"
@@ -247,8 +261,12 @@ const FormattedPanel = ({ data, tabValue }: any) => {
               >
                 {addSpacesToCamelCase(field.displayName ?? field.name)}
               </Text>
-              <Text className="ml-2" size="xs" fw={500} tt="capitalize">
-                {data[tabValue][field.name]}
+              <Text className="ml-2 p-3" size="xs" fw={500} tt="capitalize">
+                {typeof data[tabValue][field.name] === 'object'
+                  ? displayFormattedObject(data[tabValue][field.name], {
+                      [field.name]: 'amount+currency',
+                    })
+                  : data[tabValue][field.name]}
               </Text>
             </Flex>
           </Accordion.Panel>
