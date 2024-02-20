@@ -101,12 +101,12 @@ export function FormDetail({ mode }: FormDetailProps) {
     }
   };
   const onActivate = async () => {
-    const dataSent = {
-      ...selected,
-      isActive: !selected?.isActive,
-    };
     try {
-      await activation({ ...dataSent, id: id?.toString() });
+      await activation({
+        status: selected?.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE',
+        id: id?.toString(),
+      });
+
       notify(
         'Success',
         `organization ${

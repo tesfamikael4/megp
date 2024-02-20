@@ -69,7 +69,7 @@ export function Relation<T>({
         : []),
       ...options.columns.map((column) => ({
         ...column,
-        meta: { widget: 'primary' },
+        // meta: { widget: 'primary' },
       })),
 
       ...(mode !== 'modal' && !readOnly

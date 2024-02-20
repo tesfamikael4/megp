@@ -49,12 +49,6 @@ export function Entity({ children }: { children: React.ReactNode }) {
           accessorKey: 'mandate.description',
           cell: (info) => info.getValue(),
         },
-        {
-          id: 'isSingleAssignment',
-          header: 'Single Assignment ',
-          accessorKey: 'isSingleAssignment',
-          cell: (info) => info.getValue(),
-        },
       ],
     };
   }, [route]);

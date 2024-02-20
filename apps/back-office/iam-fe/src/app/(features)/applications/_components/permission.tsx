@@ -1,16 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
-import { Relation, RelationConfig } from '@megp/entity';
-import { useListByAppIdQuery } from '../_api/permission.api';
+import { CollectionQuery, Relation, RelationConfig } from '@megp/entity';
+import { useLazyListByIdQuery } from '../_api/permission.api';
 import { useParams } from 'next/navigation';
 import { Permission } from '@/models/permission';
 
 const AddPermisionModal = () => {
   const { id } = useParams();
 
-  const { data: applicationPermission, isSuccess } = useListByAppIdQuery(
-    id?.toString(),
-  );
+  const [trigger, { data: applicationPermission }] = useLazyListByIdQuery();
 
   const relationConfig: RelationConfig<Permission> = {
     title: 'Application Permission',
@@ -29,13 +27,25 @@ const AddPermisionModal = () => {
     pagination: true,
   };
 
+  useEffect(() => {
+    onRequestChange({ skip: 0, take: 15 });
+  }, []);
+
+  const onRequestChange = (request: CollectionQuery) => {
+    trigger({
+      id: id?.toString(),
+      collectionQuery: request,
+    });
+  };
+
   return (
     <>
       <Relation
         config={relationConfig}
-        data={isSuccess ? applicationPermission.items : []}
+        data={applicationPermission?.items ?? []}
         total={applicationPermission?.items.length}
         readOnly={true}
+        onRequestChange={onRequestChange}
         collapsed={false}
       />
     </>

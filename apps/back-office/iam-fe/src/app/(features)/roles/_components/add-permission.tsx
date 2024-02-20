@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Modal } from '@mantine/core';
-import { Relation, RelationConfig } from '@megp/entity';
+import { CollectionQuery, Relation, RelationConfig } from '@megp/entity';
 import {
   useLazySecondRelationQuery,
   useRelationMutation,
@@ -62,20 +62,12 @@ const AddPermissionModal = () => {
       setIsModalOpen(true);
     },
     hasAdd: selected?.isSystemRole ? false : true,
+    pagination: true,
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
-
-  useEffect(() => {
-    if (!isCollapsed) {
-      trigger({
-        id: id?.toString(),
-        collectionQuery: undefined,
-      });
-    }
-  }, [id, isCollapsed, trigger]);
 
   useEffect(() => {
     if (isSuccess) {
@@ -93,8 +85,20 @@ const AddPermissionModal = () => {
   }, [rolePermision, isSuccess]);
 
   useEffect(() => {
+    !isCollapsed && onRequestChange({ skip: 0, take: 15 });
+  }, [isCollapsed]);
+
+  useEffect(() => {
     setCurrentAssigned(permission);
   }, [permission]);
+
+  const onRequestChange = (request: CollectionQuery) => {
+    !isCollapsed &&
+      trigger({
+        id: id?.toString(),
+        collectionQuery: request,
+      });
+  };
 
   return (
     <>
@@ -103,6 +107,8 @@ const AddPermissionModal = () => {
         data={currentAssigned ? currentAssigned : []}
         isSaving={isSaving}
         isLoading={isLoading}
+        total={rolePermision?.total ?? 0}
+        onRequestChange={onRequestChange}
         readOnly={selected?.isSystemRole ? true : false}
         collapsed={selected?.isSystemRole ? false : true}
         setIsCollapsed={setIsCollapsed}
