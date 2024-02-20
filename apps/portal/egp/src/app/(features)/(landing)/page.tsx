@@ -14,10 +14,10 @@ export default function Home() {
   const { isAuthenticated } = useAuth();
 
   return (
-    <Box bg={'#F5FBFE'}>
+    <Box bg={'#F5FBFE'} className="h-full bg-red-500">
       <HeroSection />
       {!isAuthenticated && (
-        <Flex direction={'column'} justify={'center'} my={40}>
+        <Flex direction={'column'} justify={'center'} my={'md'}>
           <Container size={'xl'}>
             <p className={styles.featureTitle}>
               Access Business Opportunities{' '}
@@ -26,13 +26,7 @@ export default function Home() {
               The eGP platform avails various online services and solutions to
               help you participate in government procurement.
             </p>
-            <SimpleGrid
-              mt={60}
-              cols={{ base: 1, sm: 2, md: 3 }}
-              spacing={{ base: 'xl', md: 60 }}
-              verticalSpacing={{ base: 'xl', md: 50 }}
-              className="mb-3"
-            >
+            <SimpleGrid mt={60} cols={{ base: 1, sm: 2, md: 3 }} mb={'md'}>
               {featuredContent.map((item, index) => (
                 <FeaturesCard
                   key={index}

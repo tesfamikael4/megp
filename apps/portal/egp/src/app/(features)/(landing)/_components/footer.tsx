@@ -37,7 +37,7 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-[#002D0D] md:py-14 text-[#8C94A3] items-center">
+    <footer className="bg-[#002D0D] md:py-20 text-[#8C94A3] items-center">
       {/* <Avatar className="object-left" bg="white" onClick={navigateToTop}>
         <IconArrowNarrowUp />
       </Avatar> */}

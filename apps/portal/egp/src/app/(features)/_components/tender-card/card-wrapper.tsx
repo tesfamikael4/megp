@@ -10,7 +10,7 @@ export const CardWrapper = ({
 }) => {
   return (
     <>
-      <Flex direction={'column'} justify={'center'} py={20} px={0}>
+      <Flex direction={'column'} justify={'center'} pb={'md'} px={0}>
         <Flex align="center" justify={'space-between'}>
           <Text
             className=" pl-3 border-l-4 border-green-300 flex items-center font-semibold text-xl leading-6 tracking-tight "
@@ -28,12 +28,7 @@ export const CardWrapper = ({
             View All
           </Button>
         </Flex>
-        <SimpleGrid
-          mt={20}
-          cols={{ base: 1, sm: 2, md: 2, lg: 2 }}
-          spacing={{ base: 'xl', sm: 60, md: 30 }}
-          verticalSpacing={{ base: 'xl', md: 50 }}
-        >
+        <SimpleGrid mt={'md'} cols={{ base: 1, sm: 2, md: 2, lg: 2 }}>
           {children}
         </SimpleGrid>
       </Flex>

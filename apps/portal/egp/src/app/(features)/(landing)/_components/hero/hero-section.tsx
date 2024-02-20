@@ -25,13 +25,13 @@ export function HeroSection() {
             <Title className={classes.title}>
               Transform public procurement through digitalization
             </Title>
-            <Text className={classes.description} mt={16}>
+            <Text className={classes.description} mt={'md'}>
               Empower Your Business Through Electronic Public Procurement
             </Text>
 
             <Flex
               direction={'column'}
-              rowGap={32}
+              rowGap={'md'}
               mt={80}
               className="w-full md:w-1/2"
             >
@@ -45,7 +45,7 @@ export function HeroSection() {
                 visibleFrom="md"
                 rightSection={
                   <Button
-                    className={'-mr-6 rounded-none rounded-r cursor-pointer'}
+                    className={'rounded-none rounded-r cursor-pointer'}
                     bg={'green'}
                     size="lg"
                   >
@@ -53,7 +53,7 @@ export function HeroSection() {
                   </Button>
                 }
               />
-              <Flex className="w-full" columnGap={'xl'}>
+              <Flex className="w-full" columnGap={'md'}>
                 <Button
                   bg={'green'}
                   size="sm"
