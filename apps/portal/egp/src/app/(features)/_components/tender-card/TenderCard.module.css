@@ -16,7 +16,3 @@
 .heroSvg {
   color: light-dark(var(--mantine-color-black), var(--mantine-color-white));
 }
-
-.dateInfo {
-  @apply sm:flex-col  lg:flex-row md:items-center md:justify-between;
-}
