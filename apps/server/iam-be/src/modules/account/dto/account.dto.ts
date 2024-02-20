@@ -50,3 +50,13 @@ export class ResendOtpDto {
   @IsString()
   public verificationId: string;
 }
+
+export class UpdateAccountDto {
+  @ApiProperty()
+  @IsString()
+  public firstName: string;
+
+  @ApiProperty()
+  @IsString()
+  public lastName: string;
+}

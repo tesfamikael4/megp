@@ -21,5 +21,30 @@ export class UpdateUserRoleDto extends CreateUserRoleDto {
 
 export class UserRoleResponseDto extends UpdateUserRoleDto {
   role: RoleResponseDto;
-  user: UserResponseDto;
+  user: any;
+
+  static toDto(permission: UserRole): UserRoleResponseDto {
+    const permissionDto: UserRoleResponseDto = new UserRoleResponseDto();
+
+    permissionDto.id = permission.id;
+
+    permissionDto.roleId = permission.roleId;
+
+    permissionDto.userId = permission.userId;
+
+    permissionDto.user = {
+      id: permission.user.id,
+      firstName: permission.user.account.firstName,
+      lastName: permission.user.account.lastName,
+      email: permission.user.account.email,
+    };
+
+    return permissionDto;
+  }
+
+  static toDtos(permissions: UserRole[]) {
+    return permissions?.map((permission) =>
+      UserRoleResponseDto.toDto(permission),
+    );
+  }
 }

@@ -40,7 +40,7 @@ export class UpdateUserUnitDto extends CreateUserUnitDto {
 }
 
 export class UserUnitResponseDto extends UpdateUserUnitDto {
-  user: UserResponseDto;
+  user: any;
   unit: UnitResponseDto;
   static toDto(userUnit: UserUnit): UserUnitResponseDto {
     const userUnitDto: UserUnitResponseDto = new UserUnitResponseDto();
@@ -48,6 +48,13 @@ export class UserUnitResponseDto extends UpdateUserUnitDto {
     userUnitDto.id = userUnit.id;
     userUnitDto.userId = userUnit.userId;
     userUnitDto.unitId = userUnit.unitId;
+
+    userUnitDto.user = {
+      id: userUnit.user.id,
+      firstName: userUnit.user.account.firstName,
+      lastName: userUnit.user.account.lastName,
+      email: userUnit.user.account.email,
+    };
 
     return userUnitDto;
   }

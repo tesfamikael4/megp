@@ -52,6 +52,8 @@ export class UpdateUserGroupDto extends CreateUserGroupDto {
 }
 
 export class UserGroupResponseDto extends UpdateUserGroupDto {
+  user: any;
+
   static toDto(permission: UserGroup): UserGroupResponseDto {
     const permissionDto: UserGroupResponseDto = new UserGroupResponseDto();
 
@@ -59,7 +61,14 @@ export class UserGroupResponseDto extends UpdateUserGroupDto {
 
     permissionDto.groupId = permission.groupId;
 
-    permission.userId = permissionDto.userId;
+    permissionDto.userId = permission.userId;
+
+    permissionDto.user = {
+      id: permission.user.id,
+      firstName: permission.user.account.firstName,
+      lastName: permission.user.account.lastName,
+      email: permission.user.account.email,
+    };
 
     return permissionDto;
   }

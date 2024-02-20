@@ -8,11 +8,13 @@ import {
   Get,
   HttpCode,
   Param,
+  Patch,
 } from '@nestjs/common';
 import { AccountsService } from '../services/account.service';
 import {
   CreateAccountDto,
   ResendOtpDto,
+  UpdateAccountDto,
   VerifyAccountDto,
 } from '../dto/account.dto';
 import {
@@ -150,6 +152,15 @@ export class AuthController {
   @AllowAnonymous()
   async resendInvitation(@Body() payload: ResendOtpDto): Promise<any> {
     return await this.accountsService.resendOtp(payload);
+  }
+
+  @Patch('update-account/:id')
+  @AllowAnonymous()
+  async updateAccount(
+    @Param('id') id: string,
+    @Body() payload: UpdateAccountDto,
+  ): Promise<any> {
+    return await this.accountsService.updateAccount(id, payload);
   }
 
   @Get('send-email/:email')

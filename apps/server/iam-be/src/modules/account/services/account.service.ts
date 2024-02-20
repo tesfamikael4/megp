@@ -16,6 +16,7 @@ import {
 import {
   CreateAccountDto,
   ResendOtpDto,
+  UpdateAccountDto,
   VerifyAccountDto,
 } from '../dto/account.dto';
 import {
@@ -734,6 +735,25 @@ export class AccountsService {
     );
 
     return { verificationId };
+  }
+
+  async updateAccount(id: string, payload: UpdateAccountDto) {
+    const account = await this.repository.findOneBy({ id });
+    if (!account) {
+      throw new HttpException('account_not_found', HttpStatus.NOT_FOUND);
+    }
+
+    await this.repository.update(id, {
+      firstName: payload.firstName,
+      lastName: payload.lastName,
+    });
+
+    return {
+      id,
+      firstName: payload.firstName,
+      lastName: payload.lastName,
+      email: account.email,
+    };
   }
 
   private async verifyOTP(
