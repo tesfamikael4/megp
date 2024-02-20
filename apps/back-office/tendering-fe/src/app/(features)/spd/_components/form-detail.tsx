@@ -18,14 +18,7 @@ import {
 import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
-import {
-  ContractingTypes,
-  GoverningRule,
-  MarketType,
-  ProcurementCategory,
-  ProcurementTool,
-  Spd,
-} from '@/models/spd/spd.model';
+import { Spd } from '@/models/spd/spd.model';
 import { logger, notify } from '@megp/core-fe';
 
 interface FormDetailProps {
@@ -37,11 +30,13 @@ export function FormDetail({ mode }: FormDetailProps) {
     name: z.string().min(1, { message: 'This field is required' }),
     description: z.string().optional(),
     language: z.string().min(1, { message: 'This field is required' }),
-    procurementCategory: z.enum(Object(ProcurementCategory)),
-    marketType: z.string().min(1, { message: 'This field is required' }),
-    procurementTool: z.string().min(1, { message: 'This field is required' }),
-    contractingMethod: z.string().min(1, { message: 'This field is required' }),
-    governingRule: z.string().min(1, { message: 'This field is required' }),
+    procurementCategory: z.enum([
+      'goods',
+      'consultancy',
+      'non-consultancy',
+      'works',
+    ]),
+    marketType: z.enum(['national', 'international']),
   });
 
   const {
@@ -128,63 +123,22 @@ export function FormDetail({ mode }: FormDetailProps) {
       />
       <div className="flex space-x-4">
         <NativeSelect
-          placeholder="Language"
-          withAsterisk
-          className="w-1/2"
-          label="Language"
-          data={['English', 'Amharic']}
-          {...register('language')}
-        />
-
-        <NativeSelect
           placeholder="Procurement Category"
           withAsterisk
           className="w-1/2"
           label="Procurement Category"
-          data={Object.values(ProcurementCategory)}
+          data={['goods', 'consultancy', 'non-consultancy', 'works']}
           {...register('procurementCategory')}
         />
-      </div>
-
-      <div className="flex space-x-4">
         <NativeSelect
           placeholder="Market Type"
           withAsterisk
           className="w-1/2"
           label="Market Type"
-          data={Object.values(MarketType)}
+          data={['national', 'international']}
           {...register('marketType')}
         />
-
-        <NativeSelect
-          placeholder="Procurement Tool"
-          withAsterisk
-          className="w-1/2"
-          label="Procurement Tool"
-          data={Object.values(ProcurementTool)}
-          {...register('procurementTool')}
-        />
       </div>
-      <div className="flex space-x-4">
-        <NativeSelect
-          placeholder="Contracting Method"
-          withAsterisk
-          className="w-1/2"
-          label="Contracting Method"
-          data={Object.values(ContractingTypes)}
-          {...register('contractingMethod')}
-        />
-
-        <NativeSelect
-          placeholder="Governing Rule"
-          withAsterisk
-          className="w-1/2"
-          label="Governing Rule"
-          data={Object.values(GoverningRule)}
-          {...register('governingRule')}
-        />
-      </div>
-
       <EntityButton
         mode={mode}
         data={selected}

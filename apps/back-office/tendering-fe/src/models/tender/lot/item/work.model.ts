@@ -1,20 +1,23 @@
 import { Boq } from './bill-of-quantity.model';
 import { DayWork } from './day-work';
 import { Item } from '../item';
-import { ServiceCost } from './service-cost.model';
 import { TechnicalRequirement } from './technical-requirement.model';
+import { Document } from './document.model';
+import { ServiceCost } from './service-cost.model';
 
-export interface INonConsultancy extends Item {
+export interface Works extends Item {
   scheduleOfRequirement: Requirement[];
-  scheduleOfPrice: ScheduleOfPrice;
+  scheduleOfPrice: ScheduleOfPrice[];
+  document: Document[];
 }
 
 export interface Requirement extends TechnicalRequirement {
   sorType: 'specification' | 'personal' | 'incidental requirement';
 }
 export interface ScheduleOfPrice {
-  billOfMaterial: Boq[];
+  billOfQuantity: Boq[];
   labor: DayWork[];
+  material: DayWork[];
   equipment: DayWork[];
   incidentalCosts: ServiceCost[];
 }

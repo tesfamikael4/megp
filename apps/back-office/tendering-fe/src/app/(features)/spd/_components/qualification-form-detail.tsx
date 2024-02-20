@@ -20,11 +20,7 @@ import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import { logger, notify } from '@megp/core-fe';
-import {
-  Attributes,
-  RequirementCondition,
-  SpdQualification,
-} from '@/models/spd/qualification.model';
+import { SpdQualification } from '@/models/spd/qualification.model';
 
 interface FormDetailProps {
   mode: 'new' | 'detail';
@@ -41,28 +37,9 @@ export function SpdQualificationFormDetail({
     category: z.string().optional(),
     factor: z.string().min(1, { message: 'This field is required' }),
     requirement: z.string().optional(),
-    attribute: z.string().optional(),
-    singleEntityCondition: z.object({
-      value: z.enum(['Must meet', 'Has to meet', 'Not applicable']),
-      additionalRequirements: z.string().optional(),
-    }),
-    jvCominedCondition: z.object({
-      value: z.enum(['Must meet', 'Has to meet', 'Not applicable']),
-      additionalRequirements: z.string().optional(),
-    }),
-    jvEachPartherCondition: z.object({
-      value: z.enum(['Must meet', 'Has to meet', 'Not applicable']),
-      additionalRequirements: z.string().optional(),
-    }),
-    jvAtleastOnePartnerCondition: z.object({
-      value: z.enum(['Must meet', 'Has to meet', 'Not applicable']),
-      additionalRequirements: z.string().optional(),
-    }),
     formLink: z.string().min(1, { message: 'This field is required' }),
-    isRequired: z.boolean(),
     itbDescription: z.string().min(1, { message: 'This field is required' }),
-    reference: z.string().min(1, { message: 'This field is required' }),
-    mandate: z.string().optional(),
+    itbReference: z.string().min(1, { message: 'This field is required' }),
   });
 
   const {
@@ -155,10 +132,6 @@ export function SpdQualificationFormDetail({
   return (
     <Stack pos="relative">
       <LoadingOverlay visible={isLoading} />
-      <Checkbox
-        label="The Criterion to be created shall not be modified by a Procuring Entity"
-        {...register('isRequired')}
-      />
       <TextInput
         label="Factor"
         withAsterisk
@@ -176,19 +149,12 @@ export function SpdQualificationFormDetail({
         }
         {...register('requirement')}
       />
-      <NativeSelect
-        placeholder="Data Field from ITB"
-        withAsterisk
-        label="Data Field from ITB"
-        data={Attributes[type]}
-        {...register('attribute')}
-      />
 
       <TextInput
         label="ITB Reference"
         withAsterisk
         error={errors?.reference ? errors?.reference?.message?.toString() : ''}
-        {...register('reference')}
+        {...register('itbReference')}
       />
 
       <Textarea
@@ -203,102 +169,6 @@ export function SpdQualificationFormDetail({
         }
         {...register('itbDescription')}
       />
-      <div className="flex space-x-4">
-        <NativeSelect
-          placeholder="Requirement for a Single Bidder"
-          withAsterisk
-          className="w-1/2"
-          label="Requirement for a Single Bidder"
-          data={Object.values(RequirementCondition)}
-          {...register('singleEntityCondition.value')}
-        />
-
-        <Textarea
-          label="Additional Requirement"
-          withAsterisk
-          autosize
-          minRows={2}
-          className="w-1/2"
-          error={
-            errors?.singleEntityCondition
-              ? errors?.singleEntityCondition?.message?.toString()
-              : ''
-          }
-          {...register('singleEntityCondition.additionalRequirements')}
-        />
-      </div>
-      <div className="flex space-x-4">
-        <NativeSelect
-          placeholder="Jv combined condition"
-          withAsterisk
-          className="w-1/2"
-          label="Jv combined condition"
-          data={Object.values(RequirementCondition)}
-          {...register('jvCominedCondition.value')}
-        />
-
-        <Textarea
-          label="Additional Requirement"
-          withAsterisk
-          autosize
-          minRows={2}
-          className="w-1/2"
-          error={
-            errors?.jvCominedCondition
-              ? errors?.jvCominedCondition?.message?.toString()
-              : ''
-          }
-          {...register('jvCominedCondition.additionalRequirements')}
-        />
-      </div>
-      <div className="flex space-x-4">
-        <NativeSelect
-          placeholder="Jv each partner condition"
-          withAsterisk
-          className="w-1/2"
-          label="Jv each partner condition"
-          data={Object.values(RequirementCondition)}
-          {...register('jvEachPartherCondition.value')}
-        />
-
-        <Textarea
-          label="Additional Requirement"
-          withAsterisk
-          autosize
-          className="w-1/2"
-          minRows={2}
-          error={
-            errors?.jvEachPartherCondition
-              ? errors?.jvEachPartherCondition?.message?.toString()
-              : ''
-          }
-          {...register('jvEachPartherCondition.additionalRequirements')}
-        />
-      </div>
-      <div className="flex space-x-4">
-        <NativeSelect
-          placeholder="Jv at least one partner condition"
-          withAsterisk
-          className="w-1/2"
-          label="Jv At least One Partner Condition"
-          data={Object.values(RequirementCondition)}
-          {...register('jvAtleastOnePartnerCondition.value')}
-        />
-
-        <Textarea
-          label="Additional Requirement"
-          withAsterisk
-          autosize
-          className="w-1/2"
-          minRows={2}
-          error={
-            errors?.jvAtleastOnePartnerCondition
-              ? errors?.jvAtleastOnePartnerCondition?.message?.toString()
-              : ''
-          }
-          {...register('jvAtleastOnePartnerCondition.additionalRequirements')}
-        />
-      </div>
 
       <TextInput
         placeholder="Bid Form Link"

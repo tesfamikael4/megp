@@ -1,9 +1,23 @@
 import { Boq } from './bill-of-quantity.model';
-import { Item, NonTechnicalRequirement, TechnicalRequirement } from './item';
+import { Item } from '../item';
+import { ServiceCost } from './service-cost.model';
+import { TechnicalRequirement } from './technical-requirement.model';
 
-export interface GoodsItem extends Item {
-  expectedPeriod: any;
-  technicalRequirement: TechnicalRequirement[];
-  nonTechnicalRequirement: NonTechnicalRequirement[];
+export interface GoodsItemSor extends Item {
+  scheduleOfRequirement: Requirement[];
+  scheduleOfPrice?: ScheduleOfPrice;
+  document: any;
+}
+
+export interface Requirement extends TechnicalRequirement {
+  sorType:
+    | 'specification'
+    | 'delivery'
+    | 'packaging and labeling'
+    | 'warranty and support'
+    | 'incidental requirement';
+}
+export interface ScheduleOfPrice {
   billOfMaterial: Boq[];
+  incidentalCosts: ServiceCost[];
 }

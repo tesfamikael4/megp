@@ -1,4 +1,4 @@
-import { Qualification } from '@/models/tender/lot/qualification';
+import { SpdQualification } from '@/models/spd/qualification.model';
 import entityApi from '@/store/entity/api';
 import { createEntitySlice, EntitySliceApi } from '@megp/entity';
 
@@ -6,7 +6,7 @@ import { createEntitySlice, EntitySliceApi } from '@megp/entity';
 const qualificationApi = entityApi.entitySliceApi['qualification'];
 
 export const qualificationSliceApi: typeof EntitySliceApi =
-  createEntitySlice<Qualification>(qualificationApi, 'spd-qualifications');
+  createEntitySlice<SpdQualification>(qualificationApi, 'spd-qualifications');
 
 export const {
   useListQuery,

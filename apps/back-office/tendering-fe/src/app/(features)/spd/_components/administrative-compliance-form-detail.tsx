@@ -17,9 +17,8 @@ import {
 } from '../_api/administrative-compliance.api';
 import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { useRouter } from 'next/navigation';
 import { logger, notify } from '@megp/core-fe';
-import { SpdAdministrativeCompliance } from '@/models/spd/administrative-compliance.model';
+import { SpdPreliminaryExamination } from '@/models/spd/preliminary-examination.model';
 
 interface FormDetailProps {
   mode: 'new' | 'detail';
@@ -32,16 +31,12 @@ export function SpdAdministrativeComplianceFormDetail({
   adId,
   type,
 }: FormDetailProps) {
-  const spdSchema: ZodType<Partial<SpdAdministrativeCompliance>> = z.object({
+  const spdSchema: ZodType<Partial<SpdPreliminaryExamination>> = z.object({
     criteria: z.string().min(1, { message: 'This field is required' }),
-    attribute: z.string().min(1, { message: 'This field is required' }),
-    value: z.string().optional(),
-    type: z.string().optional(),
-    reference: z.string().min(1, { message: 'This field is required' }),
-    formLink: z.string().min(1, { message: 'This field is required' }),
-    isRequired: z.boolean(),
+    type: z.enum(['technical', 'financial']).optional(),
     itbDescription: z.string().min(1, { message: 'This field is required' }),
-    mandate: z.string().optional(),
+    itbReference: z.string().min(1, { message: 'This field is required' }),
+    formLink: z.string().min(1, { message: 'This field is required' }),
   });
 
   const {
