@@ -7,9 +7,10 @@ import {
   Button,
   Avatar,
   Box,
+  Group,
 } from '@mantine/core';
 import classes from './TenderCard.module.css';
-import { IconBookmark, IconHammer } from '@tabler/icons-react';
+import { IconBookmark, IconHammer, IconTools } from '@tabler/icons-react';
 
 interface TenderCardProps {
   color: string;
@@ -27,7 +28,7 @@ const TenderCard = ({ color, register, textColor }: TenderCardProps) => {
   const theme = useMantineTheme();
 
   return (
-    <Card withBorder radius="md">
+    <Card withBorder radius="md" c={'black'}>
       <div
         style={{
           position: 'absolute',
@@ -53,17 +54,21 @@ const TenderCard = ({ color, register, textColor }: TenderCardProps) => {
           padding: '4px 12px',
           borderBottomLeftRadius: theme.radius.md,
           borderBottomRightRadius: theme.radius.md,
-          color: 'gray',
+          color: 'black',
           fontWeight: 700,
           fontSize: theme.fontSizes.xs,
           cursor: 'pointer',
         }}
       >
-        <IconBookmark size={30} stroke={1.5} />
+        <IconBookmark size={30} stroke={1} />
       </div>
       <Box className="flex flex-col">
         <Flex align={'center'} gap={'sm'}>
-          <Text className="text-center text-sm">
+          <Flex
+            direction={'column'}
+            className="text-center text-sm"
+            visibleFrom="sm"
+          >
             <Avatar
               w={{
                 xs: 50,
@@ -71,29 +76,57 @@ const TenderCard = ({ color, register, textColor }: TenderCardProps) => {
                 md: 80,
               }}
               h={{ xs: 50, sm: 50, md: 80 }}
-              bg={theme.colors.green[1]}
+              bg={'#F0FFF3'}
               mb={10}
+              style={{
+                border: '1px solid #A5D2B2',
+              }}
             >
-              <IconHammer color="white" size={30} />
+              <IconTools color="black" size={30} stroke={1} />
             </Avatar>
-            <Text fw={500} fz={'xs'} lh={'12px'}>
+            <Text fw={500} fz={'12px'} lh={'12px'}>
               Services
             </Text>
-          </Text>
+          </Flex>
           <Flex direction={'column'} w={'100%'}>
-            <Text
-              mt={30}
-              fz={'sm'}
-              lh={{
-                xs: 'xs',
-                sm: 'xs',
-                md: '24px',
-              }}
-              className="font-semibold"
-            >
-              Computer services and devices, Lorem Ipsum Computer services and
-              devices.
-            </Text>
+            <Flex align={'center'} mt={30}>
+              <Flex
+                direction={'column'}
+                className="text-center text-sm"
+                hiddenFrom="sm"
+              >
+                <Avatar
+                  w={{
+                    xs: 50,
+                    sm: 50,
+                    md: 80,
+                  }}
+                  h={{ xs: 50, sm: 50, md: 80 }}
+                  bg={theme.colors.green[1]}
+                  mb={4}
+                  style={{
+                    border: '1px solid #A5D2B2',
+                  }}
+                >
+                  <IconTools color="black" size={30} strokeWidth={1} />
+                </Avatar>
+                <Text fw={500} fz={'xs'} lh={'12px'}>
+                  Services
+                </Text>
+              </Flex>
+              <Text
+                fz={'sm'}
+                lh={{
+                  xs: 'xs',
+                  sm: 'xs',
+                  md: '24px',
+                }}
+                className="font-semibold"
+              >
+                Computer services and devices, Lorem Ipsum Computer services and
+                devices.
+              </Text>
+            </Flex>
 
             <Text
               c="dimmed"
@@ -112,42 +145,56 @@ const TenderCard = ({ color, register, textColor }: TenderCardProps) => {
               mt={{
                 xs: '4px',
                 sm: '4px',
-                md: 'sm',
+                md: '8px',
               }}
             >
-              <Text className="sm:text-sm lg:text-md" fw={500}>
+              <Text
+                className="sm:text-sm lg:text-md"
+                fw={500}
+                fz={'sm'}
+                lh={'md'}
+                mb={8}
+              >
                 Minister of Education
               </Text>
-              <Box className="flex flex-col  sm:flex-row sm:items-center sm:justify-between">
+              <Box className="flex flex-col gap-0">
                 <Flex
                   align={'center'}
                   columnGap={'sm'}
-                  fz={'md'}
-                  lh={'20px'}
                   className={classes.dateInfo}
                 >
-                  <Text fw={500}>Published:</Text>
-                  <Text className="text-gray-400" fw={400}>
+                  <Text fw={500} fz={'sm'} lh={'sm'} mr={'4px'}>
+                    Published:
+                  </Text>
+                  <Text className="text-gray-400" fw={400} fz={'sm'} lh={'sm'}>
                     14-Jan-2024
                   </Text>
                 </Flex>
                 <Flex
                   align={'center'}
-                  fz={'md'}
-                  lh={'20px'}
                   columnGap={'sm'}
                   className={classes.dateInfo}
                 >
-                  <Text fw={500}>Closing:</Text>
-                  <Text className="text-gray-400" fw={400}>
-                    14-Jan-2024
+                  <Text fw={500} fz={'sm'} lh={'sm'} mr={'4px'}>
+                    Closing:
+                  </Text>
+                  <Text className="text-gray-400" fw={400} fz={'sm'} lh={'sm'}>
+                    14-Jan-2024 3:00 PM
                   </Text>
                 </Flex>
               </Box>
             </Flex>
             <Flex columnGap={'md'} mt={'sm'} justify={'flex-end'}>
               {register && <Button>Register</Button>}
-              <Button variant="outline">View More</Button>
+              <Button
+                variant="outline"
+                c={'#1D8E3F'}
+                fz={'xs'}
+                lh={'sm'}
+                className="hover:bg-[#F0FFF3]"
+              >
+                View More
+              </Button>
             </Flex>
           </Flex>
         </Flex>

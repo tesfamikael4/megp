@@ -22,10 +22,31 @@ export function HeroSection() {
       <Container size="xl">
         <div className={classes.inner}>
           <div className={classes.content}>
-            <Title className={classes.title}>
+            <Title
+              className={classes.title}
+              ta={{
+                base: 'center',
+                md: 'left',
+              }}
+              fz={{
+                base: 24,
+                md: 48,
+              }}
+              w={{
+                base: '100%',
+                md: '75%',
+              }}
+            >
               Transform public procurement through digitalization
             </Title>
-            <Text className={classes.description} mt={'md'}>
+            <Text
+              className={classes.description}
+              mt={'md'}
+              ta={{
+                base: 'center',
+                md: 'left',
+              }}
+            >
               Empower Your Business Through Electronic Public Procurement
             </Text>
 
@@ -40,7 +61,7 @@ export function HeroSection() {
                 placeholder="Search Tenders Here"
                 leftSection={<IconSearch />}
                 className="w-full flex-end"
-                rightSectionWidth={100}
+                rightSectionWidth={108}
                 rightSectionPointerEvents="all"
                 visibleFrom="md"
                 rightSection={
@@ -63,6 +84,10 @@ export function HeroSection() {
                       ? router.push('/vendor/registration/new/basic')
                       : router.push('/auth/login');
                   }}
+                  mx={{
+                    base: 'auto',
+                    md: 'unset',
+                  }}
                 >
                   Get Started
                 </Button>
@@ -74,6 +99,10 @@ export function HeroSection() {
                     color="white"
                     className="sm:w-full md:w-1/2"
                     onClick={() => router.push('/auth/login')}
+                    mx={{
+                      base: 'auto',
+                      md: 'unset',
+                    }}
                   >
                     Login
                   </Button>
