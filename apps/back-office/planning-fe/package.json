@@ -34,6 +34,7 @@
     "@megp/core-fe": "workspace:*",
     "@megp/entity": "workspace:*",
     "@megp/theme": "workspace:*",
+    "@react-pdf/renderer": "^3.3.8",
     "@reduxjs/toolkit": "^1.9.5",
     "@svgr/webpack": "^8.1.0",
     "@tabler/icons-react": "^2.34.0",

@@ -8,7 +8,6 @@ import {
   IconPrinter,
 } from '@tabler/icons-react';
 import { DataTable } from 'mantine-datatable';
-import './style.css';
 
 export const ReportCard = ({ reports }: any) => {
   // const {data:plan}

@@ -1,32 +1,24 @@
 'use client';
 
 import {
-  ActionIcon,
   Box,
   Button,
   Checkbox,
-  Divider,
   Flex,
   Group,
   LoadingOverlay,
   Menu,
   Modal,
-  Popover,
   Text,
 } from '@mantine/core';
 import { useLazyListByIdQuery } from '../../(app)/post-budget-plan/[budgetYear]/activities/_api/activities.api';
 import { useEffect, useState } from 'react';
 import { ExpandableTable } from '../../_components/expandable-table';
-import {
-  IconChevronRight,
-  IconFileExport,
-  IconFilter,
-  IconPrinter,
-  IconReportAnalytics,
-} from '@tabler/icons-react';
+import { IconChevronRight, IconReportAnalytics } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
-import { ReportCard } from './report';
+// import { ReportCard } from './report';
 import { Filter } from './filter';
+import { PdfReport } from './pdf-tamplate';
 
 export const CustomReport = ({
   planYearId,
@@ -88,10 +80,6 @@ export const CustomReport = ({
             >
               Generate Report
             </Menu.Item>
-            <Menu.Item leftSection={<IconFileExport size={14} />}>
-              Export
-            </Menu.Item>
-            <Menu.Item leftSection={<IconPrinter size={14} />}>Print</Menu.Item>
           </Menu.Dropdown>
         </Menu>
         <Filter />
@@ -125,7 +113,8 @@ export const CustomReport = ({
     <Box className="bg-white p-5" mih={300} pos="relative">
       <LoadingOverlay visible={isActivitiesLoading || isReportLoading} />
       {reports?.items ? (
-        <ReportCard reports={reports?.items} />
+        // <ReportCard reports={reports?.items} />
+        <PdfReport activities={reports?.items} />
       ) : (
         <ExpandableTable config={config} data={activities?.items ?? []} />
       )}
