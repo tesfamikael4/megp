@@ -50,9 +50,9 @@ export function StepsSection() {
       <Container size="xl" className="">
         <Flex
           direction={'column'}
-          className="items-center justify-between lg:h-96 w-full py-6"
+          className="items-center justify-between  w-full py-4 gap-y-4"
         >
-          <Text className={'text-white text-3xl'} fw={700} mt={rem(20)}>
+          <Text className={'text-white text-3xl'} fw={700} my={rem(20)}>
             Steps To Be A Supplier
           </Text>
           <Flex className="flex-col md:flex-row w-full">
