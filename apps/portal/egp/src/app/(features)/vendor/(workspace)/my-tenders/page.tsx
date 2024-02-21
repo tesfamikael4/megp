@@ -10,16 +10,17 @@ const MyTendersLayout = () => {
 
   return (
     <Box className="flex">
-      <main className="main bg-white m-4 w-full">
-        <Box px={{ base: 'xs', sm: 'lg' }} py={4} className="mb-1">
+      <main className="main bg-white m-4 w-full p-4">
+        <Box className="mb-1">
           <Flex
             align={'center'}
             justify={'space-between'}
-            my={{ base: 'md', sm: 'lg' }}
             gap={4}
             direction={{ base: 'column', sm: 'row' }}
           >
-            <Text>All Tenders</Text>
+            <Text fw={700} fz={'lg'} lh={'xl'}>
+              My Tenders
+            </Text>
             <Flex
               align={'center'}
               className="w-auto"
@@ -47,8 +48,6 @@ const MyTendersLayout = () => {
           <SimpleGrid
             mt={{ base: 10, sm: 20 }}
             cols={{ base: 1, sm: 2, md: 2, lg: 2 }}
-            spacing={{ base: 'xl', sm: 60, md: 30 }}
-            verticalSpacing={{ base: 'xl', md: 50 }}
           >
             {Array.from({ length: 8 }).map((_, index) => (
               <TenderCard key={index} color={'orange'} />

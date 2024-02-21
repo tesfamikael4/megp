@@ -29,9 +29,13 @@
 }
 
 .link:hover {
-  @apply border-b-2 border-green-600;
-  @apply border-b-2 border-green-600;
+  background-color: var(--mantine-color-blue-light);
 }
 .linkLabel {
   margin-right: 5px;
+}
+
+.activeLink {
+  background-color: var(--mantine-color-blue-light);
+  color: var(--mantine-color-blue-light-color);
 }
