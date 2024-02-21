@@ -164,18 +164,26 @@ export const BasicInformation = ({ defaultValues }: BasicInformationProps) => {
                 error={formState.errors.name && formState.errors.name.message}
                 {...lockElements('basic')}
               />
-              <Select
+
+              <TextInput
                 className="w-full"
-                label="Form of Business"
-                searchable
-                data={FormOfBusiness}
-                {...register('businessType')}
-                onChange={async (value) =>
-                  value && (await setValue('businessType', value))
-                }
+                label="TIN"
+                id="tinNumber"
+                {...register(`tinNumber`)}
                 error={
-                  formState.errors.businessType &&
-                  formState.errors.businessType.message
+                  formState.errors.tinNumber &&
+                  formState.errors.tinNumber.message
+                }
+                {...lockElements('basic')}
+              />
+              <TextInput
+                className="w-full"
+                label="TIN"
+                id="tinNumber"
+                {...register(`tinNumber`)}
+                error={
+                  formState.errors.tinNumber &&
+                  formState.errors.tinNumber.message
                 }
                 {...lockElements('basic')}
               />
