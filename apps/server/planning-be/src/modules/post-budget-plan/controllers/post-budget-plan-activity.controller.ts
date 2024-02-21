@@ -35,9 +35,10 @@ export class PostBudgetPlanActivityController extends ExtraCrudController<PostBu
   ) {
     super(postBudgetPlanActivityService);
   }
+
   @Post()
   async create(
-    @Body() itemData: PostBudgetPlanActivity,
+    @Body() itemData: any,
     @CurrentUser() user,
   ): Promise<PostBudgetPlanActivity> {
     itemData.organizationId = user.organization.id;
