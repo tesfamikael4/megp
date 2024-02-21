@@ -23,6 +23,7 @@ import {
 import { useDisclosure } from '@mantine/hooks';
 import { getCookie } from 'cookies-next';
 import { logger } from '@megp/core-fe';
+import Link from 'next/link';
 
 const tab = [
   {
@@ -449,7 +450,15 @@ const MiscellaneousPanel = ({
               </Button>
             ) : (
               <Text size="xs" fw={500} tt="capitalize">
-                {isDate(data) ? formatDateTimeFromString(data) : data}
+                {isDate(data) ? (
+                  formatDateTimeFromString(data)
+                ) : fieldKey === 'website' ? (
+                  <Link href={data} target="_blank">
+                    {data}
+                  </Link>
+                ) : (
+                  data
+                )}
               </Text>
             )}
           </Flex>
