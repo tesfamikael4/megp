@@ -1337,16 +1337,16 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           businessArea.applicationNumber =
             result.application?.applicationNumber;
           await this.baService.update(businessArea.id, businessArea);
-          return result;
+          // return result;
         } else {
           const gotoNextDto = new GotoNextStateDto();
           gotoNextDto.action = 'ISR';
           gotoNextDto.instanceId = ba.instanceId;
-          const result = await this.workflowService.gotoNextStep(
+          await this.workflowService.gotoNextStep(
             gotoNextDto,
             user,
           );
-          return result;
+          // return result;
         }
       }
       return paymentReceipt;

@@ -1601,7 +1601,7 @@ export class DataSeederController {
       },
       {
         id: '31fac537-e71b-479c-1c4a-7f344820518f',
-        name: 'Review of Vendor Upgrade Request by Registration Officer',
+        name: 'Review Upgrade Registration Request of Vendor by Registration Officer',
         label: 'Approved Uppgrade Application',
         description: 'Approval of  Vendor Upgrade Registration Request for Services',
         bpId: '11a07c2b-2b12-44bc-894e-a1aede0194c4',
