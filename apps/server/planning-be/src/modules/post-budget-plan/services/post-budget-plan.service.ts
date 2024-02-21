@@ -199,7 +199,7 @@ export class PostBudgetPlanService extends ExtraCrudService<PostBudgetPlan> {
       activity.postProcurementMechanisms.forEach((mechanism) => {
         procurementType[mechanism.procurementType]++;
         procurementMethods[mechanism.procurementMethod]++;
-        fundingSources[mechanism.procurementMethod]++;
+        fundingSources[mechanism.fundingSource]++;
         const online = mechanism.isOnline ? 'true' : 'false';
         isOnline[online]++;
         const target =
