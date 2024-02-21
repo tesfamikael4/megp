@@ -31,6 +31,9 @@ import { SpdRequiredDocumentaryEvidenceService } from './service/spd-required-do
 import { SpdSettingService } from './service/spd-setting.service';
 import { DocxModule } from 'src/shared/docx/docx.module';
 import { MinIOModule } from 'src/shared/min-io/min-io.module';
+import { SpdTemplate } from 'src/entities/spd-template.entity';
+import { SpdTemplateService } from './service/spd-template.service';
+import { SpdTemplateController } from './controller/spd-template.controller';
 
 @Module({
   imports: [
@@ -44,6 +47,7 @@ import { MinIOModule } from 'src/shared/min-io/min-io.module';
       SpdPreferenceMargin,
       SpdRequiredDocumentaryEvidence,
       SpdSetting,
+      SpdTemplate,
     ]),
     DocxModule,
     MinIOModule,
@@ -58,6 +62,7 @@ import { MinIOModule } from 'src/shared/min-io/min-io.module';
     SpdPreferenceMarginService,
     SpdRequiredDocumentaryEvidenceService,
     SpdSettingService,
+    SpdTemplateService,
   ],
   controllers: [
     SpdController,
@@ -69,6 +74,7 @@ import { MinIOModule } from 'src/shared/min-io/min-io.module';
     SpdPreferenceMarginController,
     SpdRequiredDocumentaryEvidencesController,
     SpdSettingsController,
+    SpdTemplateController,
   ],
 })
 export class SpdModule {}
