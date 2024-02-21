@@ -17,7 +17,10 @@ export class SpdTemplate extends Audit {
   type: string;
 
   @Column({ type: 'jsonb', nullable: true })
-  document: any;
+  documentDocx: any;
+
+  @Column({ type: 'jsonb', nullable: true })
+  documentPdf: any;
 
   @Column()
   spdId: string;
