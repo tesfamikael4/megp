@@ -369,7 +369,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     let vendorsEntity = new IsrVendorsEntity();
     vendorsEntity = await this.isrVendorsRepository.findOne({
       where: {
-        userId: data.initial.userId,
+        userId: data.userId,
       },
     });
     if (!vendorsEntity) throw new NotFoundException('vendor_not_found!!');
@@ -385,8 +385,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         : data.initial.status;
     vendorsEntity.initial = data.initial;
     vendorsEntity.businessAreas =
-      vendorsEntity.businessAreas.length > 0
-        ? vendorsEntity.businessAreas
+      vendorsEntity?.businessAreas?.length > 0
+        ? vendorsEntity?.businessAreas
         : undefined;
     vendorsEntity.tinNumber = data.basic.tinNumber;
     return vendorsEntity;
@@ -487,9 +487,16 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         const isrVendorData = result;
         const basic = isrVendorData.basic;
         const initial = isrVendorData.initial;
-        const areasOfBusinessInterest = isrVendorData.areasOfBusinessInterest;
         if (result.status !== VendorStatusEnum.COMPLETED) {
-          if (areasOfBusinessInterest.length == 3) {
+          const Categories = ['services', 'goods', 'works'];
+          const appliedServices = await this.businessAreaRepository.find({
+            where: {
+              vendorId: vendorStatusDto.isrVendorId,
+              status: VendorStatusEnum.APPROVED,
+              category: In(Categories),
+            },
+          });
+          if (appliedServices?.length >= 3) {
             initial.status = VendorStatusEnum.COMPLETED;
             initial.level = VendorStatusEnum.COMPLETED;
             result.status = VendorStatusEnum.APPROVED;
@@ -750,7 +757,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       const initial = result?.initial; //JSON.parse(JSON.stringify(result?.initial));
       //if there is no previously approved service by the isr vendorId
       if (result.status !== VendorStatusEnum.COMPLETED) {
-        initial.level = VendorStatusEnum.DETAIL;
+        initial.level = VendorStatusEnum.PPDA;
         initial.status = VendorStatusEnum.DRAFT;
         result.status = VendorStatusEnum.ADJUSTMENT;
         result.initial = initial;
@@ -1330,10 +1337,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           const gotoNextDto = new GotoNextStateDto();
           gotoNextDto.action = 'ISR';
           gotoNextDto.instanceId = ba.instanceId;
-          await this.workflowService.gotoNextStep(
-            gotoNextDto,
-            user,
-          );
+          await this.workflowService.gotoNextStep(gotoNextDto, user);
           // return result;
         }
       }

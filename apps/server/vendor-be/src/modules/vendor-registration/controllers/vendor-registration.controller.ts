@@ -101,7 +101,7 @@ export class VendorRegistrationsController {
     @Body() data: InsertAllDataDto,
     @CurrentUser() userInfo: any,
   ) {
-    data.data.initial.userId = userInfo.id;
+    data.data.userId = userInfo.id;
     const result = await this.regService.submitVendorInformations(
       data.data,
       userInfo,
