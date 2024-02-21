@@ -33,8 +33,8 @@ export class APPService extends EntityCrudService<APP> {
 
     const budgetYear = await this.repositoryBudgetYear.findOne({
       where: {
-        startDate: MoreThanOrEqual(year),
-        endDate: LessThanOrEqual(year),
+        startDate: LessThanOrEqual(year),
+        endDate: MoreThanOrEqual(year),
       },
     });
 

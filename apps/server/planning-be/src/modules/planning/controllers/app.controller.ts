@@ -20,7 +20,6 @@ export class APPController extends EntityCrudController<APP>(options) {
   }
 
   @Post('auto-create')
-  @ApiTags('apps')
   async autoCreate(@Body() create: any, @CurrentUser() user): Promise<APP> {
     create.organizationId = user.organization.id;
 
