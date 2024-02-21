@@ -54,6 +54,32 @@ export class MinIOService {
     return { presignedUrl, file };
   }
 
+  async uploadBuffer(
+    buffer: any,
+    originalname: string,
+    mimetype: string,
+    bucketName = 'megp',
+    metaData = {},
+  ): Promise<any> {
+    try {
+      const name = String(Date.now());
+      await this.minioService.client.putObject(
+        bucketName,
+        name,
+        buffer,
+        metaData,
+      );
+      return {
+        filepath: name,
+        bucketName,
+        contentType: mimetype,
+        originalname: originalname,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async download(
     fileInfo: { bucketName: string; filepath: string; contentType?: string },
     response: Response,

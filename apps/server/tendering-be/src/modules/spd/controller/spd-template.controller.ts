@@ -4,19 +4,13 @@ import {
   Get,
   Param,
   Post,
-  Req,
   Res,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { ExtraCrudController } from 'src/shared/controller';
-import {
-  EntityCrudOptions,
-  ExtraCrudOptions,
-} from 'src/shared/types/crud-option.type';
-import { SpdService } from '../service/spd.service';
-import { CreateSpdDto, UpdateSpdDto } from '../dto/spd.dto';
+import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { AllowAnonymous } from 'src/shared/authorization';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
@@ -30,6 +24,7 @@ const options: ExtraCrudOptions = {
 @ApiBearerAuth()
 @Controller('spd-templates')
 @ApiTags('Spd Template Controller')
+@AllowAnonymous()
 export class SpdTemplateController extends ExtraCrudController<SpdTemplate>(
   options,
 ) {
@@ -37,24 +32,35 @@ export class SpdTemplateController extends ExtraCrudController<SpdTemplate>(
     super(spdService);
   }
 
-  @Post('/upload-spd')
+  @Post('/upload-spd/:spdId/:type')
   @AllowAnonymous()
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileInterceptor('file'))
   async uploadSPDDocument(
-    @Body() payload: any,
+    @Param('spdId') spdId: string,
+    @Param('type') type: string,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    return this.spdService.uploadSPDDocument(payload, file);
+    return this.spdService.uploadSPDDocument(spdId, type, file);
   }
 
-  @Get('/download-spd/:id/:type')
+  @Get('/download-spd-docx/:spdId/:type')
   @AllowAnonymous()
-  async downloadSPDDocument(
-    @Param('id') id: string,
+  async downloadSPDDocumentDocx(
+    @Param('spdId') spdId: string,
     @Param('type') type: string,
     @Res() response: Response,
   ) {
-    return this.spdService.downloadSPDDocument(id, type, response);
+    return this.spdService.downloadSPDDocumentDocx(spdId, type, response);
+  }
+
+  @Get('/download-spd-pdf/:spdId/:type')
+  @AllowAnonymous()
+  async downloadSPDDocumentPdf(
+    @Param('spdId') spdId: string,
+    @Param('type') type: string,
+    @Res() response: Response,
+  ) {
+    return this.spdService.downloadSPDDocumentPdf(spdId, type, response);
   }
 }
