@@ -1,7 +1,4 @@
-import { Box, LoadingOverlay, Text } from '@mantine/core';
-import { useLazyListByIdQuery } from '../_api/pre-mechanism';
-import { useEffect, useState } from 'react';
-import { useLazyListByIdQuery as useLazyListPostByIdQuery } from '../_api/post-mechanism';
+import { Box, Text } from '@mantine/core';
 import { DetailTable } from '../../_components/detail-table';
 
 export const DetailActivity = ({
@@ -15,8 +12,43 @@ export const DetailActivity = ({
   hideActivity?: boolean;
   hideMethods?: boolean;
 }) => {
-  const activityId = activity.id;
-  const [methods, setMethods] = useState<any[]>([]);
+  const tempMethod =
+    page === 'pre'
+      ? activity.preProcurementMechanisms?.length > 0
+        ? activity.preProcurementMechanisms?.[0]
+        : undefined
+      : activity.postProcurementMechanisms?.length > 0
+        ? activity.postProcurementMechanisms?.[0]
+        : undefined;
+  const methods = tempMethod
+    ? [
+        {
+          key: 'Procurement Type',
+          value: tempMethod.procurementType,
+        },
+        {
+          key: 'Procurement Method',
+          value: tempMethod.procurementMethod,
+        },
+        {
+          key: 'Funding Source',
+          value: tempMethod.fundingSource,
+        },
+        {
+          key: 'Procurement Process',
+          value: tempMethod.isOnline ? 'Online' : 'Offline',
+        },
+        {
+          key: 'Supplier Target Group',
+          value: tempMethod.targetGroup.join(', '),
+        },
+        {
+          key: 'Donor',
+          value: tempMethod.donor[0] ?? '',
+        },
+      ]
+    : [];
+
   const data = [
     {
       key: 'Reference',
@@ -53,117 +85,8 @@ export const DetailActivity = ({
     { key: 'Remark', value: activity.remark },
   ];
 
-  // const isMounted = useIsMounted();
-
-  //rtk
-  const [
-    getPreMechanism,
-    {
-      data: preMechanism,
-      isLoading: isGetPreMechanismLoading,
-      isSuccess: isGetPreMechanismSuccess,
-    },
-  ] = useLazyListByIdQuery();
-
-  const [
-    getPostMechanism,
-    {
-      data: postMechanism,
-      isLoading: isGetPostMechanismLoading,
-      isSuccess: isGetPostMechanismSuccess,
-    },
-  ] = useLazyListPostByIdQuery();
-
-  //use effect
-  useEffect(() => {
-    if (page == 'pre') {
-      getPreMechanism({
-        id: activityId,
-        collectionQuery: undefined,
-      });
-    } else if (page == 'post') {
-      getPostMechanism({
-        id: activityId,
-        collectionQuery: undefined,
-      });
-    }
-  }, [activityId, getPostMechanism, getPreMechanism, page]);
-
-  useEffect(() => {
-    if (page == 'pre' && isGetPreMechanismSuccess && preMechanism?.total != 0) {
-      const temp = preMechanism?.items[0];
-      setMethods([
-        {
-          key: 'Procurement Type',
-          value: temp.procurementType,
-        },
-        {
-          key: 'Procurement Method',
-          value: temp.procurementMethod,
-        },
-        {
-          key: 'Funding Source',
-          value: temp.fundingSource,
-        },
-        {
-          key: 'Procurement Process',
-          value: temp.isOnline ? 'Online' : 'Offline',
-        },
-        {
-          key: 'Supplier Target Group',
-          value: temp.targetGroup.join(', '),
-        },
-        (temp.fundingSource == 'Donor' || temp.fundingSource == 'Loan') && {
-          key: 'Donor',
-          value: temp.donor[0],
-        },
-      ]);
-    } else if (
-      page == 'post' &&
-      isGetPostMechanismSuccess &&
-      postMechanism?.total != 0
-    ) {
-      const temp = postMechanism?.items[0];
-      setMethods([
-        {
-          key: 'Procurement Type',
-          value: temp.procurementType,
-        },
-        {
-          key: 'Procurement Method',
-          value: temp.procurementMethod,
-        },
-        {
-          key: 'Funding Source',
-          value: temp.fundingSource,
-        },
-        {
-          key: 'Procurement Process',
-          value: temp.isOnline ? 'Online' : 'Offline',
-        },
-        {
-          key: 'Supplier Target Group',
-          value: temp.targetGroup.join(', '),
-        },
-        (temp.fundingSource == 'Donor' || temp.fundingSource == 'Loan') && {
-          key: 'Donor',
-          value: temp.donor[0],
-        },
-      ]);
-    }
-  }, [
-    isGetPostMechanismSuccess,
-    isGetPreMechanismSuccess,
-    page,
-    postMechanism?.items,
-    postMechanism?.total,
-    preMechanism,
-  ]);
   return (
     <Box className="bg-white p-5" pos="relative">
-      <LoadingOverlay
-        visible={isGetPreMechanismLoading || isGetPostMechanismLoading}
-      />
       {!hideActivity && (
         <>
           <Text className="font-semibold mb-2">Activity Identification</Text>

@@ -73,7 +73,10 @@ export default function PostBudget() {
   };
 
   const onRequestChange = (request: any) => {
-    listById({ id: budgetYear as string, collectionQuery: request });
+    listById({
+      id: budgetYear as string,
+      collectionQuery: { ...request, includes: ['postProcurementMechanisms'] },
+    });
   };
   return (
     <Section
