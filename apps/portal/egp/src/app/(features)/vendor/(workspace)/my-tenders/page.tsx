@@ -1,45 +1,35 @@
 'use client';
-
-import {
-  Box,
-  Button,
-  Container,
-  Flex,
-  Group,
-  Input,
-  Select,
-  SimpleGrid,
-  Text,
-} from '@mantine/core';
 import React from 'react';
-import { Categories } from './categories-list';
-import { useDisclosure } from '@mantine/hooks';
-import styles from './layout.module.scss';
-import { CardWrapper } from '../../_components/tender-card/card-wrapper';
-import TenderCard from '../../_components/tender-card';
+import { Box, Flex, Input, Select, SimpleGrid, Text } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
+import TenderCard from '../../../_components/tender-card';
 import { IconChevronDown, IconSearch } from '@tabler/icons-react';
 
-const TenderLayout = () => {
-  const [isSidebarOpen] = useDisclosure(false);
+const MyTendersLayout = () => {
+  const isMobile = useMediaQuery('(max-width: 768px)');
+
   return (
     <Box className="flex">
-      <nav
-        data-open={isSidebarOpen}
-        className={styles.nav}
-        style={{ backgroundColor: '#f5fbfe' }}
-      >
-        <Categories />
-      </nav>
-      <main className={styles.main}>
-        <Box px={'xs'}>
-          <Flex align={'center'} justify={'space-between'} my={'md'}>
+      <main className="main bg-white m-4 w-full">
+        <Box px={{ base: 'xs', sm: 'lg' }} py={4} className="mb-1">
+          <Flex
+            align={'center'}
+            justify={'space-between'}
+            my={{ base: 'md', sm: 'lg' }}
+            gap={4}
+            direction={{ base: 'column', sm: 'row' }}
+          >
             <Text>All Tenders</Text>
-            <Flex align={'center'} className="w-1/3">
+            <Flex
+              align={'center'}
+              className="w-auto"
+              justify={{ base: 'center', sm: 'flex-end' }}
+            >
               <Input
                 size="xs"
                 placeholder="Search Tenders Here"
                 leftSection={<IconSearch />}
-                className="w-2/3 flex-end bg-[#f5fbfe]"
+                className="flex-grow bg-[#f5fbfe]"
               />
               <Flex ml={'sm'} className="w-fit border-b" align={'center'}>
                 <Text className="w-full">Sort By:</Text>
@@ -55,7 +45,7 @@ const TenderLayout = () => {
             </Flex>
           </Flex>
           <SimpleGrid
-            mt={20}
+            mt={{ base: 10, sm: 20 }}
             cols={{ base: 1, sm: 2, md: 2, lg: 2 }}
             spacing={{ base: 'xl', sm: 60, md: 30 }}
             verticalSpacing={{ base: 'xl', md: 50 }}
@@ -70,4 +60,4 @@ const TenderLayout = () => {
   );
 };
 
-export default TenderLayout;
+export default MyTendersLayout;
