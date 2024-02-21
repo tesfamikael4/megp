@@ -8,6 +8,7 @@ import { SpdRequiredDocumentaryEvidence } from './spd-required-documentary-evide
 import { SpdSetting } from './spd-setting.entity';
 import { SpdQualification } from './spd-qualification.entity';
 import { SpdAdministrativeCompliance } from './spd-administrative-compliance.entity';
+import { SpdTemplate } from './spd-template.entity';
 
 @Entity({ name: 'spd' })
 export class Spd extends Audit {
@@ -24,28 +25,13 @@ export class Spd extends Audit {
   description: string;
 
   @Column()
-  language: string;
+  marketType: string;
 
   @Column()
   procurementCategory: string;
 
   @Column()
-  marketType: string;
-
-  @Column()
-  procurementTool: string;
-
-  @Column()
-  contractingMethod: string;
-
-  @Column({ type: 'jsonb', nullable: true })
-  specializationType: any;
-
-  @Column()
   isActive: boolean;
-
-  @Column({ type: 'jsonb', nullable: true })
-  document: any;
 
   @OneToMany(() => SpdScc, (scc) => scc.spd, {
     cascade: true,
@@ -102,4 +88,10 @@ export class Spd extends Audit {
     onDelete: 'CASCADE',
   })
   spdSettings: SpdSetting[];
+
+  @OneToMany(() => SpdTemplate, (spdTemplates) => spdTemplates.spd, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  spdTemplates: SpdTemplate[];
 }
