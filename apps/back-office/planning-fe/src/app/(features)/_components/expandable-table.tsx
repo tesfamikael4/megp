@@ -2,7 +2,7 @@
 import { Flex, TextInput } from '@mantine/core';
 import { IconInboxOff, IconSearch } from '@tabler/icons-react';
 import { DataTable } from 'mantine-datatable';
-import { useEffect, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 
 const perPage = 10;
 
@@ -17,6 +17,7 @@ interface Config {
   disableMultiSelect?: boolean;
   selectedItems?: any[];
   setSelectedItems?: (items: any[]) => void;
+  action?: ReactNode;
 }
 
 export const ExpandableTable = ({
@@ -63,7 +64,8 @@ export const ExpandableTable = ({
   return (
     <>
       {config.isSearchable && (
-        <Flex justify="end" className="my-2">
+        <Flex justify="space-between" className="my-2">
+          {config.action ? config.action : <div></div>}
           <TextInput
             leftSection={<IconSearch size={14} />}
             placeholder="Search"

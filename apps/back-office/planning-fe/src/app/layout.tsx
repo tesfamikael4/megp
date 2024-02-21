@@ -8,6 +8,7 @@ import { AuthProvider } from '@megp/auth';
 import '@mantine/dates/styles.css';
 
 import 'mantine-datatable/styles.css';
+import '@mantine/charts/styles.css';
 
 const inter = Inter({
   subsets: ['latin'],

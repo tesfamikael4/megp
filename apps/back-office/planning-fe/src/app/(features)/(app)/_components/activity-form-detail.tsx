@@ -302,7 +302,7 @@ export const FormDetail = ({
                 className="w-full"
                 withAsterisk
                 searchable
-                placeholder="Select Procurement Type"
+                placeholder="Select Currency"
                 error={errors?.currency?.message}
                 disabled={disableFields}
               />
