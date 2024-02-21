@@ -1,35 +1,7 @@
 import { useLazyGetPreBudgetTimelineQuery } from '@/store/api/pre-budget-plan/pre-budget-plan.api';
 
-import { Table, TableConfig } from '@megp/core-fe';
+import { DataTable } from 'mantine-datatable';
 import { useEffect } from 'react';
-
-const listConfig: TableConfig<any> = {
-  columns: [
-    {
-      header: 'Name',
-      accessorKey: 'timeline',
-    },
-    {
-      id: 'period',
-      header: 'Period',
-      accessorKey: 'period',
-    },
-    {
-      id: 'date',
-      header: 'Due Date',
-      accessorKey: 'dueDate',
-      cell: ({ row: { original } }) => (
-        <p>
-          {new Date(original.dueDate).toLocaleDateString('en-US', {
-            day: 'numeric',
-            month: 'short',
-            year: 'numeric',
-          })}
-        </p>
-      ),
-    },
-  ],
-};
 
 export const Timeline = ({ activityId }: { activityId: string }) => {
   const [getTimeline, { data }] = useLazyGetPreBudgetTimelineQuery();
@@ -37,5 +9,31 @@ export const Timeline = ({ activityId }: { activityId: string }) => {
   useEffect(() => {
     getTimeline(activityId);
   }, []);
-  return <Table config={listConfig} data={data?.items ?? []} />;
+  return (
+    <DataTable
+      records={data?.items ?? []}
+      columns={[
+        { accessor: 'timeline', title: 'Name' },
+        { accessor: 'period', width: 200 },
+        {
+          accessor: 'dueDate',
+          render: (record) => (
+            <p>
+              {new Date(record.dueDate).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+              })}
+            </p>
+          ),
+        },
+      ]}
+      withTableBorder
+      withColumnBorders
+      striped
+      noRecordsText="No Found"
+      highlightOnHover
+      minHeight={200}
+    />
+  );
 };

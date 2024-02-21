@@ -2,6 +2,7 @@ import { MenuItem } from '@megp/core-fe';
 import {
   IconAdjustmentsHorizontal,
   IconArrowFork,
+  IconCalendarEvent,
   IconCalendarStats,
   IconCoins,
   IconReportAnalytics,
@@ -9,36 +10,36 @@ import {
 
 export const Menu: MenuItem[] = [
   {
-    label: 'Procurement Plan',
+    label: 'Pre Budget Plan',
     icon: IconCalendarStats,
-    links: [
-      {
-        label: 'Pre Budget Plan',
-        // icon: IconCalendarStats,
-        link: '/pre-budget-plan',
-        permission: [
-          'planning:managePrePlan',
-          'planning:managePrePlanActivity',
-          'planning:managePrePlanItem',
-        ],
-      },
-      {
-        label: 'Post Budget Plan',
-        // icon: IconCalendarEvent,
-        link: '/post-budget-plan',
-        permission: [
-          'planning:managePostPlan',
-          'planning:managePostPlanActivity',
-          'planning:managePostPlanItem',
-        ],
-      },
+    link: '/pre-budget-plan',
+    permission: [
+      'planning:managePrePlan',
+      'planning:managePrePlanActivity',
+      'planning:managePrePlanItem',
     ],
   },
+  {
+    label: 'Post Budget Plan',
+    icon: IconCalendarEvent,
+    link: '/post-budget-plan',
+    permission: [
+      'planning:managePostPlan',
+      'planning:managePostPlanActivity',
+      'planning:managePostPlanItem',
+    ],
+  },
+
   {
     label: 'Budget',
     icon: IconCoins,
     link: '/budget',
     permission: ['planning:manageBudget'],
+  },
+  {
+    label: 'Report and Analytics',
+    icon: IconReportAnalytics,
+    link: '/report',
   },
   {
     label: 'Approval',
@@ -56,11 +57,6 @@ export const Menu: MenuItem[] = [
       },
     ],
   },
-  {
-    label: 'Report and Analytics',
-    icon: IconReportAnalytics,
-    link: '/report',
-  },
 
   {
     label: 'Settings',
@@ -68,7 +64,6 @@ export const Menu: MenuItem[] = [
     links: [
       {
         label: 'Approval Workflow',
-
         link: '/workflow',
       },
     ],
