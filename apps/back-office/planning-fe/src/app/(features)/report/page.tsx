@@ -6,6 +6,7 @@ import { Analytics } from './_components/analytics';
 import { useEffect, useState } from 'react';
 import { CustomReport } from './_components/custom-report';
 import { useGetPostBudgetPlansQuery } from '@/store/api/post-budget-plan/post-budget-plan.api';
+import { ActivityReport } from './_components/activity-report';
 
 export default function ReportPage() {
   const [reportType, setReportType] = useState<string | null>('analytics');
@@ -42,12 +43,25 @@ export default function ReportPage() {
           />
           <Select
             placeholder="Report Type"
-            className="w-1/4 mb-3"
+            className="w-2/5 mb-3"
             label="Report Type"
             value={reportType}
             onChange={setReportType}
             data={[
               { label: 'Analytics', value: 'analytics' },
+              { label: 'Activities Report', value: 'activityReport' },
+              {
+                label: 'Activities With Items Report',
+                value: 'activityWithItemReport',
+              },
+              {
+                label: 'Activities With Timeline Report',
+                value: 'activityWithTimelineReport',
+              },
+              {
+                label: 'Activities With Requisitioner Report',
+                value: 'activityWithRequisitionerReport',
+              },
               { label: 'Custom Report', value: 'customReport' },
               { label: 'Budget Report', value: 'budgetReport' },
             ]}
@@ -60,6 +74,20 @@ export default function ReportPage() {
         {isPostBudgetPlanSuccess && reportType === 'customReport' && (
           <CustomReport planYearId={selectedBudgetYear} />
         )}
+        {isPostBudgetPlanSuccess && reportType === 'activityReport' && (
+          <ActivityReport planYearId={selectedBudgetYear} />
+        )}
+        {isPostBudgetPlanSuccess && reportType === 'activityWithItemReport' && (
+          <ActivityReport planYearId={selectedBudgetYear} withItems />
+        )}
+        {isPostBudgetPlanSuccess &&
+          reportType === 'activityWithTimelineReport' && (
+            <ActivityReport planYearId={selectedBudgetYear} withTimeline />
+          )}
+        {isPostBudgetPlanSuccess &&
+          reportType === 'activityWithRequisitionerReport' && (
+            <ActivityReport planYearId={selectedBudgetYear} withRequisitioner />
+          )}
       </Box>
     </Section>
   );
