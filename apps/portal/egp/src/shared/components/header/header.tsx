@@ -27,7 +27,7 @@ import {
   IconUserCircle,
 } from '@tabler/icons-react';
 import { useAuth } from '@megp/auth';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { IconSearch } from '@tabler/icons-react';
 
 function Header() {
@@ -38,6 +38,7 @@ function Header() {
   const [userInfoLoading, setIsUserInfoLoading] = useState(false);
   const { getUserInfo, isAuthenticated, logOut, user } = useAuth();
   const router = useRouter();
+  const currentPath = usePathname();
 
   const workspace = isAuthenticated
     ? [{ link: '/vendor/dashboard', label: 'Workspace' }]
@@ -51,8 +52,8 @@ function Header() {
     { link: '/', label: 'Home' },
 
     { link: '/vendor/tender', label: 'Procurement Notice' },
-    { link: '/vendor/dashboard', label: 'Plans' },
-    { link: '/vendor/dashboard', label: 'Contracts' },
+    { link: '/vendor/plans', label: 'Plans' },
+    { link: '/vendor/contracts', label: 'Contracts' },
     ...workspace,
     {
       link: '#more',
@@ -86,6 +87,7 @@ function Header() {
   }, [isAuthenticated]);
 
   const items = links.map((link) => {
+    console.log(currentPath === link.link);
     const menuItems = link.links?.map((item) => (
       <Menu.Item key={item.link}>{item.label}</Menu.Item>
     ));
@@ -99,11 +101,7 @@ function Header() {
           withinPortal
         >
           <Menu.Target>
-            <a
-              href={link.link}
-              className={styles.link}
-              onClick={(event) => event.preventDefault()}
-            >
+            <a href={link.link} onClick={(event) => event.preventDefault()}>
               <Center>
                 <span className={styles.linkLabel}>{link.label}</span>
                 <IconChevronDown size="0.9rem" stroke={1.5} />
@@ -119,7 +117,7 @@ function Header() {
       <a
         key={link.label}
         href={link.link}
-        className={styles.link}
+        className={`${styles.link} ${currentPath === link.link && styles.activeLink}`}
         onClick={() => link.link && router.push(link.link)}
       >
         {link.label}
