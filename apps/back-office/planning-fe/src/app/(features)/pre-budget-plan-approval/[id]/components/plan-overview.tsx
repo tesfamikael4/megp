@@ -3,18 +3,16 @@ import { useLazyListByIdQuery } from '../../../(app)/pre-budget-plan/[budgetYear
 import { Section } from '@megp/core-fe';
 import { useEffect } from 'react';
 import { DetailActivity } from '../../../(app)/_components/detail-activity';
-import { Accordion, Box, LoadingOverlay } from '@mantine/core';
+import { Accordion, Alert, Box, Flex, LoadingOverlay } from '@mantine/core';
 import { Items } from './items';
 import { Requisitioner } from './requisitioner';
 import { Timeline } from './timeline';
 import { Document } from './document';
 import { useParams } from 'next/navigation';
-import { ProcurementMethod } from './procurement-method';
 import { useGetPreBudgetPlansQuery } from '@/store/api/pre-budget-plan/pre-budget-plan.api';
 import { ActivityDetailWrapper } from './activity-detail-wrapper';
 
 export function PlanOverview() {
-  // const budgetYear = '0f241dbd-3aa9-40b9-9e27-8f8b644d8174';
   const { id } = useParams();
   const [listById, { data: list, isLoading: isActivityLoading }] =
     useLazyListByIdQuery();
@@ -24,7 +22,10 @@ export function PlanOverview() {
     });
 
   useEffect(() => {
-    listById({ id: id as string, collectionQuery: { includes: ['reasons'] } });
+    listById({
+      id: id as string,
+      collectionQuery: { includes: ['reasons', 'preProcurementMechanisms'] },
+    });
   }, [id, listById]);
 
   return (
@@ -71,11 +72,30 @@ export function PlanOverview() {
                     >
                       <Accordion.Control>Procurement Methods</Accordion.Control>
                       <Accordion.Panel>
-                        <ActivityDetailWrapper
-                          type="activityMethods"
-                          className="pt-6"
-                        >
-                          <ProcurementMethod activity={activity} />
+                        <ActivityDetailWrapper type="activityMethods">
+                          {activity.reasons?.map((reason) => (
+                            <Alert
+                              title="Justification for Procurement Method"
+                              color="red"
+                              key={reason.id}
+                            >
+                              <Flex gap={2}>
+                                <p className="font-semibold w-1/4">
+                                  Possible Reason :
+                                </p>
+                                <p className="w-4/5">{reason.possibleReason}</p>
+                              </Flex>
+                              <Flex gap={2} mt={5}>
+                                <p className="font-semibold w-1/4">Remark :</p>
+                                <p className="w-4/5">{reason.remark}</p>
+                              </Flex>
+                            </Alert>
+                          ))}
+                          <DetailActivity
+                            activity={activity}
+                            page="pre"
+                            hideActivity
+                          />
                         </ActivityDetailWrapper>
                       </Accordion.Panel>
                     </Accordion.Item>

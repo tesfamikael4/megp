@@ -86,7 +86,10 @@ export default function PreBudget() {
   const onRequestChange = (request: any) => {
     listById({
       id: budgetYear as string,
-      collectionQuery: { ...request, includes: ['reasons'] },
+      collectionQuery: {
+        ...request,
+        includes: ['reasons', 'preProcurementMechanisms'],
+      },
     });
   };
   return (

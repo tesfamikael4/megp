@@ -5,11 +5,13 @@ import {
   Box,
   Button,
   Checkbox,
+  Divider,
   Flex,
   Group,
   LoadingOverlay,
   Menu,
   Modal,
+  Popover,
   Text,
 } from '@mantine/core';
 import { useLazyListByIdQuery } from '../../(app)/post-budget-plan/[budgetYear]/activities/_api/activities.api';
@@ -24,6 +26,7 @@ import {
 } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
 import { ReportCard } from './report';
+import { Filter } from './filter';
 
 export const CustomReport = ({
   planYearId,
@@ -91,9 +94,7 @@ export const CustomReport = ({
             <Menu.Item leftSection={<IconPrinter size={14} />}>Print</Menu.Item>
           </Menu.Dropdown>
         </Menu>
-        <ActionIcon variant="outline">
-          <IconFilter size={14} />
-        </ActionIcon>
+        <Filter />
       </Flex>
     ),
   };
