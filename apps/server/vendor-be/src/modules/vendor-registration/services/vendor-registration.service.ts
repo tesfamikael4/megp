@@ -102,7 +102,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       if (!tempVendor) throw new HttpException('vendor_not_found', 404);
       if (tempVendor.status.trim() !== VendorStatusEnum.SUBMITTED) {
         const isrVendor = await this.fromInitialValue(data);
-
         const result = await this.isrVendorsRepository.save(isrVendor);
         const wfi = new CreateWorkflowInstanceDto();
         wfi.user = userInfo;
@@ -371,7 +370,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     vendorsEntity = await this.isrVendorsRepository.findOne({
       where: {
         userId: data.initial.userId,
-        ///status: In([VendorStatusEnum.ACTIVE, VendorStatusEnum.ADJUSTMENT]),
       },
     });
     if (!vendorsEntity) throw new NotFoundException('vendor_not_found!!');
@@ -380,27 +378,17 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       throw new HttpException('vendor_already_submitted', 400);
     if (vendorsEntity.status === VendorStatusEnum.APPROVED)
       throw new HttpException('vendor_already_approved', 400);
-    //Submitted
-
     vendorsEntity = { ...data };
     initial.status =
       data.initial.status == 'Submit'
         ? VendorStatusEnum.SUBMITTED
         : data.initial.status;
-
     vendorsEntity.initial = data.initial;
-
+    vendorsEntity.businessAreas =
+      vendorsEntity.businessAreas.length > 0
+        ? vendorsEntity.businessAreas
+        : undefined;
     vendorsEntity.tinNumber = data.basic.tinNumber;
-    // vendorsEntity.basic = data.basic;
-    // vendorsEntity.address = data.address;
-    // vendorsEntity.contactPersons = data.contactPersons;
-    // vendorsEntity.businessSizeAndOwnership = data.businessSizeAndOwnership;
-    // vendorsEntity.shareHolders = data.shareHolders;
-    // vendorsEntity.beneficialOwnership = data.beneficialOwnership;
-    // vendorsEntity.bankAccountDetails = data.bankAccountDetails;
-    // vendorsEntity.areasOfBusinessInterest = data.areasOfBusinessInterest;
-    // vendorsEntity.supportingDocuments = data.supportingDocuments;
-    // vendorsEntity.paymentReceipt = data?.paymentReceipt;
     return vendorsEntity;
   };
   async updateVendor(vendorStatusDto: SetVendorStatus): Promise<any> {
@@ -1421,23 +1409,20 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     const bussinessAreas = [];
     for (const ba of vendorData.isrVendor?.businessAreas) {
       //   const business = BusinessAreaDetailResponseDto.toResponse(ba);
-      let businessarea = {}
+      let businessarea = {};
       let bl = [];
       const priceRange = this.commonService.formatPriceRange(ba.servicePrice);
       for (const lob of vendorData.areasOfBusinessInterest) {
-
         if (lob.category == ba.category) {
-          bl = lob.lineOfBusiness.map(
-            (item: any) => item.name,
-          );
+          bl = lob.lineOfBusiness.map((item: any) => item.name);
           businessarea = {
             category: this.commonService.capitalizeFirstLetter(ba.category),
             ValueRange: priceRange,
             lineOfBusiness: bl,
             approvedAt: ba.approvedAt,
             expireDate: ba.expireDate,
-            certificateUrl: ba.certificateUrl
-          }
+            certificateUrl: ba.certificateUrl,
+          };
           break;
         }
       }
