@@ -33,16 +33,12 @@ export default function Footer() {
   const navigateToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
-
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-[#002D0D] md:py-20 text-[#8C94A3] items-center">
-      {/* <Avatar className="object-left" bg="white" onClick={navigateToTop}>
-        <IconArrowNarrowUp />
-      </Avatar> */}
+    <footer className="bg-[#002D0D] md:py-20 text-[#8C94A3] items-center justify-center">
       <Container size={'xl'} className="relative">
-        <SimpleGrid cols={{ base: 1, sm: 2, md: 2, lg: 2 }}>
+        <SimpleGrid cols={{ base: 1, sm: 2, md: 2, lg: 2 }} className="ml-auto">
           <Flex direction="column" align={'center'} gap={'md'} px="md">
             <Group>
               <Link href="http://peragosystems.com/home">
@@ -55,7 +51,7 @@ export default function Footer() {
                 />
               </Link>
 
-              <Text size="xs" className="text-[#8F9FA3] mb-4">
+              <Text size="xs" className="text-[#8F9FA3]">
                 Electronic Government Procurement (eGP) refers to the use of
                 digital technologies to enable a more efficient and transparent
                 exchange of information, and interactions and transactions
@@ -98,13 +94,25 @@ export default function Footer() {
 
           <Flex direction={'column'} gap={'lg'} px="md">
             {/* contact us */}
-            <Flex direction={'column'} className="w-full">
+            <Flex
+              direction={'column'}
+              ta={{
+                base: 'center',
+                sm: 'center',
+                md: 'left',
+                lg: 'left',
+              }}
+              mx={{
+                base: 'auto',
+                sm: 'auto',
+                md: '0',
+                lg: '0',
+              }}
+            >
               <Text className="text-white mb-2">CONTACT US</Text>
               <Flex
-                align={'center'}
-                justify={'space-between'}
-                className="w-full"
                 columnGap={'xl'}
+                className="w-full flex-col gap-4 lg:flex-row lg:items-center lg:justify-between"
               >
                 <Flex direction={'column'}>
                   <Text size="xs" className="text-[#8F9FA3] mb-2">
@@ -114,7 +122,7 @@ export default function Footer() {
                     hello@logoipsum.com
                   </Text>
                 </Flex>
-                <Flex direction="column" ml="auto">
+                <Flex direction="column">
                   <Text size="xs" className="text-[#8F9FA3] mb-2">
                     Fax:+251111248612 / +251111540120
                   </Text>
@@ -127,11 +135,24 @@ export default function Footer() {
             {/* Location */}
             <Flex
               rowGap={{ xs: 'md', sm: 'md' }}
-              className="w-full flex-col justify-center gap-4 md:flex-row md:items-center md:justify-between"
+              className="w-full flex-col justify-center gap-4 lg:flex-row lg:items-center lg:justify-between "
               columnGap={'xl'}
             >
-              <Box>
-                <Text className="text-white mb-2">LOCATION</Text>
+              <Box
+                mx={{
+                  base: 'auto',
+                  sm: 'auto',
+                  md: '0',
+                  lg: '0',
+                }}
+                ta={{
+                  base: 'center',
+                  sm: 'center',
+                  md: 'left',
+                  lg: 'left',
+                }}
+              >
+                <Text className="text-white mb-2 ">LOCATION</Text>
                 <address className="text-sm">
                   Public Procurement and Disposal of Assets Authority,
                   <br />
@@ -150,17 +171,23 @@ export default function Footer() {
                   Website: <a href="http://www.ppda.mw/">www.ppda.mw</a>
                 </address>
               </Box>
-              <Box>
-                <Text className="text-white">IMPORTANT LINKS</Text>
+              <Box
+                mx={{
+                  base: 'auto',
+                  sm: 'auto',
+                  md: '0',
+                  lg: '0',
+                }}
+                ta={{
+                  base: 'center',
+                  sm: 'center',
+                  md: 'left',
+                  lg: 'left',
+                }}
+              >
+                <Text className="text-white ">IMPORTANT LINKS</Text>
                 <Box>
-                  <SimpleGrid
-                    cols={{
-                      base: 2,
-                      sm: 2,
-                      md: 1,
-                    }}
-                    className="sm:text-xs"
-                  >
+                  <SimpleGrid cols={1} className="sm:text-xs">
                     <Link href="#">https://www.figma.com/file/</Link>
                     <Link href="#">https://www.figma.com/file/</Link>
                     <Link href="#">https://www.figma.com/file/</Link>
@@ -184,7 +211,7 @@ export default function Footer() {
         <Avatar
           bg="white"
           onClick={navigateToTop}
-          className="absolute top-0 right-2 cursor-pointer"
+          className="absolute -top-3 right-8 cursor-pointer"
         >
           <IconArrowUp />
         </Avatar>

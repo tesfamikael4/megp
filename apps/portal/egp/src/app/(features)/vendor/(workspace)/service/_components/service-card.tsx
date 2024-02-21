@@ -35,20 +35,29 @@ export const ServiceCard = (props: FeaturesCardProps) => {
       onMouseLeave={() => close()}
     >
       <Flex className="gap-4">
-        <span className="w-4 h-4">
+        <span className="w-4 h-4 ">
           <IconPencil size={20} stroke={1.5} color="green" />
         </span>
-        <Flex direction={'column'} gap={16}>
-          <Text
-            className="text-lg font-[500]"
-            style={{
-              fontSize: '20px',
-              lineHeight: '14px',
-            }}
+        <Flex direction={'column'} gap={16} className="w-full h-full">
+          <Flex
+            align={'center'}
+            justify={'space-between'}
+            className="w-full h-5"
           >
-            {props.title}
-          </Text>
+            <Text
+              className="text-lg font-[500]"
+              style={{
+                fontSize: '20px',
+                lineHeight: '14px',
+              }}
+            >
+              {props.title}
+            </Text>
 
+            {showArrow && (
+              <IconArrowRight size={20} stroke={1.5} color="green" />
+            )}
+          </Flex>
           <Text
             size="md"
             lineClamp={3}
@@ -61,13 +70,6 @@ export const ServiceCard = (props: FeaturesCardProps) => {
           </Text>
         </Flex>
       </Flex>
-      {showArrow && (
-        <IconArrowRight
-          className="absolute bottom-1 right-2"
-          size={25}
-          stroke={1.5}
-        />
-      )}
     </Card>
   );
 };
