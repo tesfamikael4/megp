@@ -10,6 +10,7 @@ import {
   IconListDetails,
   IconNotification,
   IconUserCog,
+  IconGavel,
 } from '@tabler/icons-react';
 import styles from './sidebar.module.scss';
 export interface SidebarLinks {
@@ -34,6 +35,11 @@ export const sidebarLinks: SidebarLinks[] = [
     label: 'Plans',
     icon: IconHeartHandshake,
     link: '/vendor/contract',
+  },
+  {
+    label: 'My Tenders',
+    icon: IconGavel,
+    link: '/vendor/my-tenders',
   },
   {
     label: 'Vendor Service',
