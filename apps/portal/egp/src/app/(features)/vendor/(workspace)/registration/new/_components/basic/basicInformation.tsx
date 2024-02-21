@@ -176,17 +176,6 @@ export const BasicInformation = ({ defaultValues }: BasicInformationProps) => {
                 }
                 {...lockElements('basic')}
               />
-              <TextInput
-                className="w-full"
-                label="TIN"
-                id="tinNumber"
-                {...register(`tinNumber`)}
-                error={
-                  formState.errors.tinNumber &&
-                  formState.errors.tinNumber.message
-                }
-                {...lockElements('basic')}
-              />
             </>
           )}
 
