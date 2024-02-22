@@ -7,6 +7,7 @@ import * as path from 'path';
 import { EntityCrudService } from '@generic-services';
 import { TraderDataValidation } from '../dto/trader-data-validation';
 import { CreateCustomerBussinesInfoDto } from '../dto/customer-business-info.dto';
+import axios, { AxiosError } from 'axios';
 @Injectable()
 export class CustomerBussinesInfoService extends EntityCrudService<CustomerBussinesInfo> {
   constructor(
@@ -71,6 +72,40 @@ export class CustomerBussinesInfoService extends EntityCrudService<CustomerBussi
       });
     } catch (error) {
       throw error;
+    }
+  }
+  async getSupplierInfoFromMBRS(registrationNumber: string): Promise<any> {
+    const url = process.env.MBRS_BASE_URL + process.env.MBRS_API;
+    const userName = process.env.MBRS_Username;
+    const password = process.env.MBRS_Password;
+    if (!url || !userName || !password) {
+      throw new Error('URL, Username and password are required');
+    }
+    const credentials = `${userName}:${password}`;
+    const basicAuth = `Basic ${Buffer.from(credentials).toString('base64')}`;
+    try {
+      const response = await axios.get(url, {
+        params: { registration_number: registrationNumber },
+        headers: {
+          Authorization: basicAuth,
+        },
+      });
+      if (response.status === 200) {
+        return response.data;
+      } else {
+        const errorMessage = `api_failed: ${response.status} : ${response.statusText}`;
+        throw new Error(errorMessage);
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const axiosError = error as AxiosError;
+        const errorMessage = `api_failed: ${
+          axiosError.response?.status || 'unknown'
+        } : ${axiosError.message}`;
+        throw new Error(errorMessage);
+      } else {
+        throw error;
+      }
     }
   }
 }

@@ -53,4 +53,26 @@ export class CustomerBussinesInfosController extends EntityCrudController<Custom
       params.licenseNumber,
     );
   }
+  @Get(':registration_number')
+  @ApiParam({ name: 'registration_number', type: 'string', required: true })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully return the Supplier Information from MBRS',
+  })
+  async getSupplierInfoFromMBRS(
+    @Param('registration_number') registrationNumber: string,
+  ) {
+    if (!registrationNumber) {
+      throw new Error('Registration number is mandatory');
+    }
+    try {
+      const businesses =
+        await this.customerBussinesInfoService.getSupplierInfoFromMBRS(
+          registrationNumber,
+        );
+      return businesses;
+    } catch (error) {
+      return { error: error.message };
+    }
+  }
 }
