@@ -9,6 +9,7 @@ import {
   Tooltip,
   Button,
   Select,
+  SimpleGrid,
 } from '@mantine/core';
 import { Fragment, useEffect, useState } from 'react';
 import { useGetPriceRangeQuery } from '../../../_api/query';
@@ -203,7 +204,12 @@ export default function ServicesCard({ servicesData }: { servicesData: any }) {
         </Text>
       </Flex>
 
-      <Box className="mt-6 grid grid-cols-1 gap-x-4 gap-y-4 lg:grid-cols-2 xl:gap-x-4">
+      <SimpleGrid
+        cols={{
+          base: 1,
+          xl: 2,
+        }}
+      >
         {getPriceRangeValues.isLoading
           ? Array.from({ length: 3 }, (_, index) => (
               <Box
@@ -346,7 +352,7 @@ export default function ServicesCard({ servicesData }: { servicesData: any }) {
                 </Box>
               );
             })}
-      </Box>
+      </SimpleGrid>
 
       <Flex className="w-full justify-end p-8">
         <Button
