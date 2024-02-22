@@ -44,14 +44,14 @@ FROM base AS runner
 WORKDIR /
 
 # Don't run production as root
-RUN addgroup --system --gid 1001 nestjs
-RUN adduser --system --uid 1001 nestjs
-RUN chown nestjs:nestjs /apps/server/tendering-be/dist
-RUN chmod 755 /apps/server/tendering-be/dist
-RUN chmod 644 /apps/server/tendering-be/dist/temp.pdf
+# RUN addgroup --system --gid 1001 nestjs
+# RUN adduser --system --uid 1001 nestjs
 
-USER nestjs
+# USER nestjs
 COPY --from=installer /app .
+
+# RUN chmod -R 777 /apps/server/tendering-be/dist
+# RUN chmod 644 /apps/server/tendering-be/dist/temp.pdf
 
 ARG VERSION_ARG
 ENV VERSION=$VERSION_ARG

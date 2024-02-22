@@ -121,6 +121,7 @@ export class SpdTemplateService extends ExtraCrudService<SpdTemplate> {
           HttpStatus.EXPECTATION_FAILED,
         );
     });
+
     const buffer = await PDFEngine.convert({
       files: [file.buffer, outputPath],
     });
