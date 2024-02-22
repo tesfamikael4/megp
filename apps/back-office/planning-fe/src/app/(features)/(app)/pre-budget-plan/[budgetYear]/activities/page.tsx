@@ -4,7 +4,7 @@ import { ExpandableTable } from '@/app/(features)/_components/expandable-table';
 import { Section } from '@megp/core-fe';
 import { useLazyListByIdQuery } from './_api/activities.api';
 import { useParams, useRouter } from 'next/navigation';
-import { ActionIcon, Button } from '@mantine/core';
+import { ActionIcon, Button, Tooltip } from '@mantine/core';
 import { IconChevronRight, IconPlus } from '@tabler/icons-react';
 import { DetailActivity } from '@/app/(features)/(app)/_components/detail-activity';
 import { useGetPreBudgetPlanQuery } from '@/store/api/pre-budget-plan/pre-budget-plan.api';
@@ -50,9 +50,13 @@ export default function PreBudget() {
         title: '',
         render: (record) =>
           record.reasons.length == 0 ? (
-            <p className="text-green-500 text-3xl">•</p>
+            <Tooltip label={'Aligns perfectly with the rule'}>
+              <p className="text-green-500 text-3xl">•</p>
+            </Tooltip>
           ) : (
-            <p className="text-red-500 text-3xl">•</p>
+            <Tooltip label={'Violated the rule'}>
+              <p className="text-red-500 text-3xl">•</p>
+            </Tooltip>
           ),
         width: 50,
       },
