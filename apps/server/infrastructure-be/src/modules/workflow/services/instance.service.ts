@@ -62,7 +62,7 @@ export class InstanceService extends EntityCrudService<Instance> {
       status: steps[0].name,
       stepId: steps[0].id,
       metadata: [],
-      stateId: instanceState.identifiers[0].id,
+      stateId: instanceState.id,
     };
     const instance = this.repositoryInstance.create(createData);
     return this.repositoryInstance.save(instance);

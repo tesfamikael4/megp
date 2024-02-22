@@ -43,11 +43,13 @@ export class StateService extends ExtraCrudService<State> {
         steps as any,
       );
       state = stateMachineConfig.states;
-      return await this.repositoryState.insert({
+      const stateEntity = this.repositoryState.create({
         state,
         activityId,
         organizationId,
       });
+      await this.repositoryState.insert(stateEntity);
+      return stateEntity;
     }
   }
 }
