@@ -129,8 +129,8 @@ function Header() {
     <header className={styles.header}>
       <Container size={'xl'}>
         <div className={styles.inner}>
-          <Flex justify="space-between" w="100%">
-            <Flex align={'center'} gap={'xs'}>
+          <Flex justify="space-between" w="100%" h={'100%'}>
+            <Flex align={'center'} gap={'xs'} h={'100%'}>
               <Image
                 src="/ppda-svg.svg"
                 alt="logo"
@@ -140,7 +140,7 @@ function Header() {
               />
               <Text className="text-xl font-bold">PPDA</Text>
             </Flex>
-            <Group gap="xl" visibleFrom="md">
+            <Group gap="xl" visibleFrom="md" h={'100%'}>
               {items}
             </Group>
             {user && (
@@ -190,26 +190,6 @@ function Header() {
               </Group>
             )}
           </Flex>
-          {/* <Flex align="center" gap={"md"}>
-            <Input
-              size="xs"
-              placeholder="Search Tenders Here"
-              leftSection={<IconSearch />}
-              className="w-full flex-end"
-              rightSectionWidth={60}
-              rightSectionPointerEvents="all"
-              hiddenFrom='sm'
-              rightSection={
-                <Button
-                  className={'-mr-6 rounded-none rounded-r cursor-pointer'}
-                  bg={'green'}
-                  size="xs"
-                >
-                  Search
-                </Button>
-              }
-            />
-          </Flex> */}
           <ActionIcon hiddenFrom="md" bg={'transparent'} c={'green'}>
             <IconSearch />
           </ActionIcon>

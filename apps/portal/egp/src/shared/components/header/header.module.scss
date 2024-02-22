@@ -2,18 +2,20 @@
   height: 60px;
 
   background-color: var(--mantine-color-body);
-  border-bottom: 1px solid var(--mantine-color-gray-3);
+  /* border-bottom: 1px solid var(--mantine-color-gray-3); */
 }
 
 .inner {
   height: 60px;
   display: flex;
+  padding: 0;
 
   align-items: center;
 }
 
 .link {
   display: block;
+  height: 100%;
   line-height: 1.5;
   line-height: 1.5;
   padding: 8px 12px;
@@ -22,20 +24,18 @@
 
   font-size: 16px;
   font-weight: 400;
-  @apply text-gray-700;
-  font-size: 16px;
-  font-weight: 400;
-  @apply text-gray-700;
+  @apply text-gray-700 flex items-center;
+
+  border-bottom: 2px solid transparent;
 }
 
 .link:hover {
-  background-color: var(--mantine-color-blue-light);
+  border-bottom: 2px solid #40c057;
 }
 .linkLabel {
   margin-right: 5px;
 }
 
 .activeLink {
-  background-color: var(--mantine-color-blue-light);
-  color: var(--mantine-color-blue-light-color);
+  border-bottom: 2px solid #40c057;
 }

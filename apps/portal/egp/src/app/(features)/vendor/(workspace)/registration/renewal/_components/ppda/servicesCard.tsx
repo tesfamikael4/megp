@@ -8,6 +8,7 @@ import {
   Text,
   Tooltip,
   Button,
+  SimpleGrid,
 } from '@mantine/core';
 import { Fragment, useEffect, useState } from 'react';
 import {
@@ -85,7 +86,7 @@ export default function ServicesCard({
 
   return (
     <Box className="p-4">
-      <Flex className="w-full justify-between">
+      <Flex className="w-full justify-between mb-2">
         <Text fz={'xl'} fw={600} color="gray.7">
           Register for
         </Text>
@@ -95,7 +96,12 @@ export default function ServicesCard({
         </Text>
       </Flex>
 
-      <Box className="mt-6 grid grid-cols-1 gap-x-4 gap-y-4 lg:grid-cols-2 xl:gap-x-4">
+      <SimpleGrid
+        cols={{
+          base: 1,
+          xl: 2,
+        }}
+      >
         {getPriceRangeValues.isLoading
           ? Array.from({ length: 3 }, (_, index) => (
               <Box
@@ -194,7 +200,7 @@ export default function ServicesCard({
                 </dl>
               </Box>
             ))}
-      </Box>
+      </SimpleGrid>
 
       <Flex className="w-full justify-end p-8">
         <Button
