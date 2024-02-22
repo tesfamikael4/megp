@@ -1,70 +1,13 @@
 'use client';
 import React from 'react';
-import { Box, NavLink, UnstyledButton } from '@mantine/core';
-import { usePathname, useRouter } from 'next/navigation'; // Updated import
-import {
-  IconBriefcase,
-  IconCoins,
-  IconDashboard,
-  IconHeartHandshake,
-  IconListDetails,
-  IconNotification,
-  IconUserCog,
-  IconGavel,
-} from '@tabler/icons-react';
+import { Box, NavLink, Text, UnstyledButton } from '@mantine/core';
+import { usePathname, useRouter } from 'next/navigation';
 import styles from './sidebar.module.scss';
-export interface SidebarLinks {
-  label: string;
-  icon?: any;
-  link?: string;
-  links?: SidebarLinks[];
-}
-
-export const sidebarLinks: SidebarLinks[] = [
-  {
-    label: 'Dashboard',
-    icon: IconDashboard,
-    link: '/vendor/dashboard',
-  },
-  {
-    label: 'Procurement Notice ',
-    icon: IconNotification,
-    link: '/vendor/tender',
-  },
-  {
-    label: 'Plans',
-    icon: IconHeartHandshake,
-    link: '/vendor/contract',
-  },
-  {
-    label: 'My Tenders',
-    icon: IconGavel,
-    link: '/vendor/my-tenders',
-  },
-  {
-    label: 'Vendor Service',
-    icon: IconUserCog,
-    link: '/vendor/service',
-  },
-  {
-    label: 'Track Applications',
-    icon: IconListDetails,
-    link: '/vendor/registration/track-applications',
-  },
-  {
-    label: 'My Briefcase',
-    icon: IconBriefcase,
-    link: '/vendor/registration/my-briefcase',
-  },
-  {
-    label: 'My Payments',
-    icon: IconCoins,
-    link: '/vendor/registration/my-payments',
-  },
-];
+import { menus } from './_constants';
+import { MenuLinks } from './models';
 
 function createNavLinks(
-  links: SidebarLinks[] | undefined,
+  links: MenuLinks.SidebarLinks[] | undefined,
   currentPath: string,
   router: any,
 ) {
@@ -91,9 +34,14 @@ function Sidebar() {
 
   return (
     <Box className={styles.sidebarMain}>
-      <div className={styles.mainLinks}>
-        {createNavLinks(sidebarLinks, path, router)}
-      </div>
+      <Box className={styles.mainLinks}>
+        <Text className={styles.groupTitle}>Information</Text>
+        {createNavLinks(menus.informationLinks, path, router)}
+      </Box>
+      <Box className={styles.mainLinks}>
+        <Text className={styles.groupTitle}>Management</Text>
+        {createNavLinks(menus.managementLinks, path, router)}
+      </Box>
     </Box>
   );
 }

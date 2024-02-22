@@ -3,9 +3,9 @@ import { Box, Flex, Input, Select, SimpleGrid, Text } from '@mantine/core';
 import React from 'react';
 import { Categories } from './categories-list';
 import { useMediaQuery } from '@mantine/hooks';
-import { CardWrapper } from '../../_components/tender-card/card-wrapper';
 import TenderCard from '../../_components/tender-card';
 import { IconChevronDown, IconSearch } from '@tabler/icons-react';
+import styles from './layout.module.scss';
 
 const TenderLayout = () => {
   const isMobile = useMediaQuery('(max-width: 768px)');
@@ -13,7 +13,7 @@ const TenderLayout = () => {
   return (
     <Box className="flex">
       <nav
-        className="sidebar"
+        className={styles.nav}
         style={{
           backgroundColor: '#f5fbfe',
           display: isMobile ? 'none' : 'block',
@@ -21,12 +21,11 @@ const TenderLayout = () => {
       >
         <Categories />
       </nav>
-      <main className="main bg-white m-4 w-full">
-        <Box px={{ base: 'xs', sm: 'lg' }} className="mb-4">
+      <main className={styles.main}>
+        <Box px={{ base: 'xs', sm: 'lg' }}>
           <Flex
             align={'center'}
             justify={'space-between'}
-            my={{ base: 'md', sm: 'lg' }}
             gap={4}
             direction={{ base: 'column', sm: 'row' }}
           >
@@ -58,8 +57,6 @@ const TenderLayout = () => {
           <SimpleGrid
             mt={{ base: 10, sm: 20 }}
             cols={{ base: 1, sm: 2, md: 2, lg: 2 }}
-            spacing={{ base: 'xl', sm: 60, md: 30 }}
-            verticalSpacing={{ base: 'xl', md: 50 }}
           >
             {Array.from({ length: 8 }).map((_, index) => (
               <TenderCard key={index} color={'orange'} />
