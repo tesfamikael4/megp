@@ -88,7 +88,6 @@ export const useTabs = (extendedRegister, control): Tabs[] => [
         name="bankAccountDetails"
         control={control}
         itemSchema={bankAccountSchema}
-        register={extendedRegister}
       />
     ),
   },
