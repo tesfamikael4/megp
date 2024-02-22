@@ -46,6 +46,10 @@ WORKDIR /
 # Don't run production as root
 RUN addgroup --system --gid 1001 nestjs
 RUN adduser --system --uid 1001 nestjs
+RUN chown nestjs:nestjs /apps/server/tendering-be/dist
+RUN chmod 755 /apps/server/tendering-be/dist
+RUN chmod 644 /apps/server/tendering-be/dist/temp.pdf
+
 USER nestjs
 COPY --from=installer /app .
 

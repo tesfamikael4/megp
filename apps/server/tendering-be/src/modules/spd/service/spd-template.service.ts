@@ -101,14 +101,7 @@ export class SpdTemplateService extends ExtraCrudService<SpdTemplate> {
   }
 
   private async convertAndUpload(file: Express.Multer.File) {
-    let outputPath = join(
-      process.cwd(),
-      'src',
-      'modules',
-      'spd',
-      'service',
-      'temp.pdf',
-    );
+    let outputPath = join(process.cwd(), 'src', 'temp.pdf');
 
     if (process.env.NODE_ENV === 'production') {
       outputPath = join(
@@ -117,9 +110,6 @@ export class SpdTemplateService extends ExtraCrudService<SpdTemplate> {
         'server',
         'tendering-be',
         'dist',
-        'modules',
-        'spd',
-        'service',
         'temp.pdf',
       );
     }
