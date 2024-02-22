@@ -97,8 +97,8 @@ export default function ApplicationList({
       setWhere((prev: Where[]) => [
         ...prev,
         {
-          column: 'isrVendor.areasOfBusinessInterest->>category',
-          operator: '=',
+          column: 'businessAreas.category',
+          operator: 'LIKE',
           value: filter.status,
         },
       ]);
@@ -140,7 +140,7 @@ export default function ApplicationList({
         take: 15,
         skip: 0,
         where: [where],
-        includes: ['isrVendor'],
+        includes: ['isrVendor', 'isrVendor.businessAreas'],
       },
     });
   };
