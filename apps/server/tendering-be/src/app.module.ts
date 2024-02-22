@@ -6,6 +6,8 @@ import { AuthorizationModule } from './shared/authorization/authorization.module
 import { SpdModule } from './modules/spd/spd.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { TenderModule } from './modules/tenders/tender.module';
+import { EqcModule } from './modules/eqc/eqc.module';
+import { BdsModule } from './modules/bds/bds.module';
 
 @Module({
   imports: [
@@ -14,6 +16,8 @@ import { TenderModule } from './modules/tenders/tender.module';
     AuthorizationModule,
     SpdModule,
     TenderModule,
+    EqcModule,
+    BdsModule,
   ],
   providers: [EventEmitterModule],
   controllers: [],

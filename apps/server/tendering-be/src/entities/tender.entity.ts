@@ -9,11 +9,11 @@ import {
 import { ProcurementTechnicalTeam } from './procurement-technical-team.entity';
 import { ProcurementMechanism } from './procurement-mechanism.entity';
 import { Lot } from './lot.entity';
-import { General } from './general.entity';
-import { Preparation } from './preparation.entity';
-import { Submission } from './submission.entity';
-import { Evaluation } from './evaluation.entity';
-import { Award } from './award.entity';
+import { BdsGeneral } from './bds-general.entity';
+import { BdsSubmission } from './bds-submission.entity';
+import { BdsEvaluation } from './bds-evaluation.entity';
+import { BdsPreparation } from './bds-preparation.entity';
+import { BdsAward } from './bds-award.entity';
 
 @Entity({ name: 'tenders' })
 export class Tender extends Audit {
@@ -62,20 +62,20 @@ export class Tender extends Audit {
   @OneToMany(() => Lot, (lot) => lot.tender)
   lots: Lot[];
 
-  @OneToOne(() => General, (general) => general.tender)
-  general: General;
+  @OneToOne(() => BdsGeneral, (general) => general.tender)
+  bdsGeneral: BdsGeneral;
 
-  @OneToOne(() => Preparation, (preparation) => preparation.tender)
-  preparation: Preparation;
+  @OneToOne(() => BdsPreparation, (preparation) => preparation.tender)
+  bdsPreparation: BdsPreparation;
 
-  @OneToOne(() => Submission, (submissions) => submissions.tender)
-  submission: Submission;
+  @OneToOne(() => BdsSubmission, (submissions) => submissions.tender)
+  bdsSubmission: BdsSubmission;
 
-  @OneToOne(() => Evaluation, (evaluations) => evaluations.tender)
-  evaluation: Evaluation;
+  @OneToOne(() => BdsEvaluation, (evaluations) => evaluations.tender)
+  bdsEvaluation: BdsEvaluation;
 
-  @OneToOne(() => Award, (awards) => awards.tender)
-  award: Award;
+  @OneToOne(() => BdsAward, (awards) => awards.tender)
+  bdsAward: BdsAward;
 
   @OneToOne(
     () => ProcurementMechanism,
