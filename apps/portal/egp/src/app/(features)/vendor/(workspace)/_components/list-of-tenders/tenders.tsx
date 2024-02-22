@@ -3,7 +3,7 @@
 import TenderCard from '@/app/(features)/_components/tender-card';
 import { Box, Flex, Input, Select, SimpleGrid, Text } from '@mantine/core';
 import { IconChevronDown, IconSearch } from '@tabler/icons-react';
-import styles from '../../_styles/mytenders.module.scss';
+import styles from './mytenders.module.scss';
 
 type TendersProps = {
   title: string;

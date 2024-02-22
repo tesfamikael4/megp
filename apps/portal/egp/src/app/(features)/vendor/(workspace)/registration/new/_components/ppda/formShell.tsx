@@ -153,16 +153,18 @@ export const AreasOfBusinessInterestForm = ({
             adjustment={vendorInfo.status === 'Adjustment' ? false : true}
           />
         </Flex>
-        <Flex className="mt-10 justify-end gap-2">
-          {checkAccess('ppda') && (
-            <Button onClick={() => router.push('detail')} variant="outline">
-              Back
-            </Button>
-          )}
-          {checkAccess('ppda') && (
-            <Button type="submit">Save & Continue</Button>
-          )}
-        </Flex>
+        {watch('areasOfBusinessInterest').length > 0 && (
+          <Flex className="mt-10 justify-end gap-2">
+            {checkAccess('ppda') && (
+              <Button onClick={() => router.push('detail')} variant="outline">
+                Back
+              </Button>
+            )}
+            {checkAccess('ppda') && (
+              <Button type="submit">Save & Continue</Button>
+            )}
+          </Flex>
+        )}
       </form>
     </Box>
   );

@@ -163,18 +163,6 @@ export const BankAccountDetails: React.FC<Props> = ({
                   disabled={!checkAccess('detail')}
                 >
                   <Stack gap={0}>
-                    {/* <Text fw={600} truncate>
-                      {getLabelByValue(bankList, value.bankId as string)}
-                    </Text>
-                    <Text fz="xs" truncate>
-                      Account Holders FullName: {value.accountHolderFullName}
-                    </Text>
-                    <Text fz="xs" truncate>
-                      AccountNumber: {value.accountNumber}
-                    </Text>
-                    <Text fz="xs" truncate>
-                      Bank Branch Address: {value.branchAddress}
-                    </Text> */}
                     <CardItem
                       label={getLabelByValue(bankList, value.bankId as string)}
                       icon={

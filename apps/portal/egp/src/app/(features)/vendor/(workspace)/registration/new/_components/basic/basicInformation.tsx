@@ -54,9 +54,6 @@ const formDataSchema = z.discriminatedUnion('origin', [
       .string()
       .min(2, { message: 'Name must be at least 2 characters long' })
       .max(100, { message: 'Name cannot exceed 100 characters' }),
-    businessType: z
-      .string()
-      .min(2, { message: 'Form of business is required' }),
     tinNumber: z.string().optional(),
     tinIssuedDate: z.string().optional(),
   }),
@@ -77,6 +74,8 @@ export const BasicInformation = ({ defaultValues }: BasicInformationProps) => {
     resolver: zodResolver(formDataSchema),
     defaultValues,
   });
+
+  console.log({ errors: formState.errors });
 
   const {
     checkAccess,

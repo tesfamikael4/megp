@@ -188,32 +188,19 @@ export const CardListShell: React.FC<CardListProps> = ({
         p="xs"
       >
         {card(handleEdit, handleRemove)}
-        <Card withBorder shadow="md" bg={'#f7f7f7'}>
+        <Card
+          withBorder
+          shadow="md"
+          bg={'#f7f7f7'}
+          onClick={open}
+          className="cursor-pointer"
+        >
           <Center h={'100%'} mih="100px">
-            <Flex align={'center'} gap={10} onClick={open}>
-              <Button
-                className="text-md"
-                variant="subtle"
-                leftSection={
-                  <Flex
-                    bg={'green'}
-                    w={20}
-                    h={20}
-                    align={'center'}
-                    justify={'center'}
-                    className="rounded-full"
-                  >
-                    <IconPlus
-                      size={14}
-                      stroke={1.5}
-                      color="white"
-                      enableBackground={'green'}
-                    />
-                  </Flex>
-                }
-              >
-                Add {title}
-              </Button>
+            <Flex align={'center'} gap={10}>
+              <Avatar size={'sm'} bg={'#1D8E3F'}>
+                <IconPlus size={18} stroke={1} color="white" />
+              </Avatar>
+              <Text className="text-sm">Add {title}</Text>
             </Flex>
           </Center>
           {fieldState?.error?.message && (
