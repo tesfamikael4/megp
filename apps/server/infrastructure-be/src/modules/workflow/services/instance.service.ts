@@ -39,8 +39,6 @@ export class InstanceService extends EntityCrudService<Instance> {
   }
   // Listen
   async initiate(data) {
-    const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
-
     const act = await this.repositoryActivity.findOne({
       where: {
         name: data.name,
@@ -72,7 +70,7 @@ export class InstanceService extends EntityCrudService<Instance> {
       stateId: instanceState.id,
     };
     const instance = this.repositoryInstance.create(createData);
-    return entityManager.getRepository(Instance).insert(instance);
+    return this.repositoryInstance.insert(instance);
   }
 
   async goto(data, organizationId: string) {
