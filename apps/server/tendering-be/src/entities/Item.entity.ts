@@ -51,13 +51,13 @@ export class Item extends Audit {
   unitOfMeasure: string;
 
   @Column()
-  estimatedPrice: string;
+  estimatedPrice: number;
 
   @Column()
   estimatedPriceCurrency: string;
 
   @Column()
-  marketPrice: string;
+  marketPrice: number;
 
   @Column()
   marketPriceCurrency: string;

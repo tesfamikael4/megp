@@ -4,8 +4,11 @@ import { Tender } from 'src/entities';
 import { EntityCrudController } from 'src/shared/controller';
 import { EntityCrudOptions } from 'src/shared/types/crud-option.type';
 import { TenderService } from '../service/tender.service';
+import { CreateTenderDto } from '../dto/tender.dto';
 
-const options: EntityCrudOptions = {};
+const options: EntityCrudOptions = {
+  createDto: CreateTenderDto,
+};
 
 @ApiBearerAuth()
 @Controller('tenders')
