@@ -101,7 +101,7 @@ export class SpdTemplateService extends ExtraCrudService<SpdTemplate> {
   }
 
   private async convertAndUpload(file: Express.Multer.File) {
-    const outputPath = join(
+    let outputPath = join(
       process.cwd(),
       'src',
       'modules',
@@ -109,10 +109,25 @@ export class SpdTemplateService extends ExtraCrudService<SpdTemplate> {
       'service',
       'temp.pdf',
     );
+
+    if (process.env.NODE_ENV === 'production') {
+      outputPath = join(
+        process.cwd(),
+        'apps',
+        'server',
+        'tendering-be',
+        'dist',
+        'modules',
+        'spd',
+        'service',
+        'temp.pdf',
+      );
+    }
+
     await writeFile(outputPath, '', (err) => {
       if (err)
         throw new HttpException(
-          `Could not create temporary pdf file: ${outputPath}`,
+          `Could not create temporary pdf file: ${outputPath}: ${err}`,
           HttpStatus.EXPECTATION_FAILED,
         );
     });
