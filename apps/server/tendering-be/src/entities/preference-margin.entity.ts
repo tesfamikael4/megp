@@ -4,19 +4,20 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Lot } from '.';
 
-@Entity({ name: 'eqc_preference_margins' })
-export class EqcPreferenceMargin extends Audit {
+@Entity({ name: 'preference_margins' })
+export class PreferenceMargin extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
   lotId: string;
 
-  @ManyToOne(() => Lot, (Lot) => Lot.eqcPreferenceMargins)
+  @ManyToOne(() => Lot, (Lot) => Lot.preferenceMargins)
   @JoinColumn()
   lot: Lot;
 
