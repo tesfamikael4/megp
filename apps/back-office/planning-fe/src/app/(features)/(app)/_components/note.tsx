@@ -53,15 +53,18 @@ export const Note = ({ height }: { height?: string }) => {
         block: 'end',
       });
     }
-  }, []);
+  }, [data?.items]);
   return (
     <Box
       className="border rounded overflow-scroll relative"
       h={height ?? '400px'}
     >
       <h1 className="p-2 border-b-2 sticky  top-0 bg-white">Note</h1>
-      <Box ref={noteRef} className="bg-slate-100">
-        <Box className="p-2 ">
+      <Box ref={noteRef} className="bg-slate-100 min-h-full">
+        <Box
+          className="p-2 flex flex-col-reverse"
+          style={{ height: height ?? '300px' }}
+        >
           {data?.items.map((note) => (
             <Box
               className="p-2 bg-white w-fit rounded mb-2 max-w-[80%] cursor-pointer"
@@ -82,7 +85,7 @@ export const Note = ({ height }: { height?: string }) => {
           ))}
         </Box>
 
-        <Box className="p-2 bg-white h-26 mx-2 rounded">
+        <Box className="p-2 bg-white h-26 mx-2 rounded sticky bottom-0">
           <Textarea
             placeholder="Type here . . ."
             onChange={(e) => setValue(e.target.value)}

@@ -44,7 +44,7 @@ export default function NewActivity() {
         action={
           <Tooltip label="Note">
             <ActionIcon variant="subtle" onClick={toggle}>
-              <IconMessage2 />
+              <IconMessage2 size={18} color="gray" />
             </ActionIcon>
           </Tooltip>
         }
