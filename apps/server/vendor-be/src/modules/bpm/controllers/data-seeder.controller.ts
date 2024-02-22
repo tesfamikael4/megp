@@ -174,7 +174,6 @@ export class DataSeederController {
         name: 'New Registration for  Works',
         key: 'WorksNewRegistration',
         isActive: true,
-
         tenantId: 0,
         description: null,
       },
@@ -225,11 +224,11 @@ export class DataSeederController {
             'Review New Vendor Registration Request by Registration Officer': {
               on: {
                 ADJUST: "Submit New Vendor Registration Request for Goods",
-                REJECT: "End",
+                CANCEL: "End",
                 APPROVE: "Approval of New Vendor Registration Request by Senior or chief registration officer or RRM/DRRM"
               },
               meta: {
-                type: "Approval"
+                type: "InitialReview"
               }
             },
             'Approval of New Vendor Registration Request by Senior or chief registration officer or RRM/DRRM': {
@@ -298,11 +297,11 @@ export class DataSeederController {
             'Review New Vendor Registration Request by Registration Officer': {
               on: {
                 ADJUST: "Submit New Vendor Registration Request for Services",
-                REJECT: "End",
+                CANCEL: "End",
                 APPROVE: "Approval of New Vendor Registration Request by Senior or chief registration officer or RRM/DRRM"
               },
               meta: {
-                type: "Approval"
+                type: "InitialReview"
               }
             },
 
@@ -369,11 +368,11 @@ export class DataSeederController {
             'Review New Vendor Registration Request by Registration Officer': {
               on: {
                 ADJUST: "Submit New Vendor Registration Request for Works",
-                REJECT: "End",
+                CANCEL: "End",
                 APPROVE: "Approval of New Vendor Registration Request by Senior or chief registration officer or RRM/DRRM"
               },
               meta: {
-                type: "Approval"
+                type: "InitialReview"
               }
             },
 
@@ -443,11 +442,11 @@ export class DataSeederController {
             'Review Vendor Renewal Registration Request by Registration Officer(RO)': {
               on: {
                 ADJUST: "Submit Renewal Registration Request for Goods",
-                REJECT: "End",
+                CANCEL: "End",
                 APPROVE: "Approval of Renewal Registration Request by Senior or chief registration officer or RRM/DRRM"
               },
               meta: {
-                type: "Approval"
+                type: "InitialReview"
               }
             },
             'Approval of Renewal Registration Request by Senior or chief registration officer or RRM/DRRM': {
@@ -515,11 +514,11 @@ export class DataSeederController {
             'Review Vendor Renewal Registration Request by Registration Officer(RO)': {
               on: {
                 ADJUST: "Submit Renewal Registration Request for Services",
-                REJECT: "End",
+                CANCEL: "End",
                 APPROVE: "Approval of Renewal Registration Request by Senior or chief registration officer or RRM/DRRM"
               },
               meta: {
-                type: "Approval"
+                type: "InitialReview"
               }
             },
 
@@ -586,11 +585,11 @@ export class DataSeederController {
             'Review Vendor Renewal Registration Request by Registration Officer(RO)': {
               on: {
                 ADJUST: "Submit Renewal Registration Request for Works",
-                REJECT: "End",
+                CANCEL: "End",
                 APPROVE: "Approval of Renewal Registration Request by Senior or chief registration officer or RRM/DRRM"
               },
               meta: {
-                type: "Approval"
+                type: "InitialReview"
               }
             },
 
@@ -659,11 +658,11 @@ export class DataSeederController {
             'Review Upgrade Registration Request of Vendor by Registration Officer': {
               on: {
                 ADJUST: "Submit Vendor Upgrade Registration Request",
-                REJECT: "End",
+                CANCEL: "End",
                 APPROVE: "Approval of Upgrade Registration Request of Vendor by Senior or chief registration officer or RRM/ DRRM"
               },
               meta: {
-                type: "Approval"
+                type: "InitialReview"
               }
             },
             'Approval of Upgrade Registration Request of Vendor by Senior or chief registration officer or RRM/ DRRM': {
@@ -729,11 +728,11 @@ export class DataSeederController {
             'Review Upgrade Registration Request of Vendor by Registration Officer': {
               on: {
                 ADJUST: "Submit Vendor Upgrade Registration Request",
-                REJECT: "End",
+                CANCEL: "End",
                 APPROVE: "Approval of Upgrade Registration Request of Vendor by Senior or chief registration officer or RRM/ DRRM"
               },
               meta: {
-                type: "Approval"
+                type: "InitialReview"
               }
             },
             'Approval of Upgrade Registration Request of Vendor by Senior or chief registration officer or RRM/ DRRM': {
@@ -799,11 +798,11 @@ export class DataSeederController {
             'Review Upgrade Registration Request of Vendor by Registration Officer': {
               on: {
                 ADJUST: "Submit Vendor Upgrade Registration Request",
-                REJECT: "End",
+                CANCEL: "End",
                 APPROVE: "Approval of Upgrade Registration Request by Senior or chief registration officer or RRM/DRRM"
               },
               meta: {
-                type: "Approval"
+                type: "InitialReview"
               }
             },
             'Approval of Upgrade Registration Request by Senior or chief registration officer or RRM/DRRM': {
@@ -1281,7 +1280,7 @@ export class DataSeederController {
         description: 'Reviewing New Vendor Applications for Goods',
         bpId: 'd822c2d4-1023-4328-a172-adfcd78a30d4',
         handlerType: 'Assignee',
-        taskType: 'Approval',
+        taskType: 'InitialReview',
         checkList: [
           {
             id: '96d95fdb-7852-4ddc-982f-0e94d23d14d3',
@@ -1333,7 +1332,7 @@ export class DataSeederController {
         id: '96752a13-205f-45eb-8b6f-118ebf0c89c7',
         name: 'Generate New Vendor Registration Certificate',
         label: 'Generated Certeficates',
-        description: "creating a formal certificate to officially recognize and document the registration of a new vendor within the organization's procurement system.This certificate serves as proof of the vendor's successful registration and compliance with the organization's requirements",
+        description: "Creating a formal certificate to officially recognize and document the registration of a new vendor within the organization's procurement system.This certificate serves as proof of the vendor's successful registration and compliance with the organization's requirements",
         bpId: 'd822c2d4-1023-4328-a172-adfcd78a30d4',
         handlerType: 'Assignee',
         taskType: 'Certificate',
@@ -1359,7 +1358,7 @@ export class DataSeederController {
         description: 'Reviewing New Vendor Applications for Services',
         bpId: '96d95fdb-7852-4ddc-982f-0e94d23d15d3',
         handlerType: 'Assignee',
-        taskType: 'Approval',
+        taskType: 'InitialReview',
         checkList: [
           {
             id: '94d95fdb-7852-4ddc-982f-0e94d23d15d3',
@@ -1436,7 +1435,7 @@ export class DataSeederController {
         description: 'Reviewing New Vendor Applications for Works',
         bpId: '745c9643-1f1d-464f-860c-3087bfc1a7c1',
         handlerType: 'Assignee',
-        taskType: 'Review',
+        taskType: 'InitialReview',
         checkList: [
           {
             id: '94d95fdb-7852-4ddc-982f-0e94d23d15d3',
@@ -1517,7 +1516,7 @@ export class DataSeederController {
         description: 'Approval of Vendor Upgrade Registration Request for Goods',
         bpId: 'abe4ba2c-a260-4bbb-bc8d-f101c33b6dc1',
         handlerType: 'Assignee',
-        taskType: 'Approval',
+        taskType: 'InitialReview',
         checkList: [
           {
             id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
@@ -1606,7 +1605,7 @@ export class DataSeederController {
         description: 'Approval of  Vendor Upgrade Registration Request for Services',
         bpId: '11a07c2b-2b12-44bc-894e-a1aede0194c4',
         handlerType: 'Assignee',
-        taskType: 'Approval',
+        taskType: 'InitialReview',
         checkList: [
           {
             id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
@@ -1696,7 +1695,7 @@ export class DataSeederController {
         description: 'Approval of  Vendor Upgrade Registration Request for Works',
         bpId: '950e28cf-ad82-4159-8b2c-f147bbe3685f',
         handlerType: 'Assignee',
-        taskType: 'Approval',
+        taskType: 'InitialReview',
         checkList: [
           {
             id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
@@ -1785,7 +1784,7 @@ export class DataSeederController {
         description: 'Approval of Renewal Registration Request of vendor for Goods',
         bpId: 'cd17ba61-a510-4fed-9e50-a3f10b6570d3',
         handlerType: 'Assignee',
-        taskType: 'Approval',
+        taskType: 'InitialReview',
         checkList: [
           {
             id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
@@ -1875,7 +1874,7 @@ export class DataSeederController {
         description: 'Approval of Renewal Registration Request of vendor for Service',
         bpId: 'b97fb7aa-2442-4e5d-8b42-42bd6ef41138',
         handlerType: 'Assignee',
-        taskType: 'Approval',
+        taskType: 'InitialReview',
         checkList: [
           {
             id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
@@ -1963,7 +1962,7 @@ export class DataSeederController {
         description: 'Approval of Renewal Registration Request of vendor for Works',
         bpId: '543d59c0-3b13-401f-bb78-058de7f65a11',
         handlerType: 'Assignee',
-        taskType: 'Approval',
+        taskType: 'InitialReview',
         checkList: [
           {
             id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
@@ -2046,23 +2045,7 @@ export class DataSeederController {
         ],
         orderBy: 1,
       },
-      // {
-      //   id: '74557983-18a8-4291-9e76-7d6b46cfad4c',
-      //   name: 'Review New Vendor Registration Request by Registration Officer',
-      //   label: 'Reviewed Vendor Registration Request',
-      //   description: 'Reviewing New Vendor Applications for Services',
-      //   bpId: '0f7d46b9-ffd6-4b4c-91f8-9e290d675053',
-      //   handlerType: 'Assignee',
-      //   taskType: 'Review',
-      //   checkList: [
-      //     {
-      //       id: '16d95fdb-7852-4ddc-982f-0e94d23d15d3',
-      //       description: 'The  Bank information is valid',
-      //       isMandatory: 'true',
-      //     },
-      //   ],
-      //   orderBy: 2,
-      // },
+
       {
         id: '277e4d2f-f996-4546-9320-3d5103e22c63',
         name: 'Approval of Vendor Profile Update Request By Director General (Head of PDE)',

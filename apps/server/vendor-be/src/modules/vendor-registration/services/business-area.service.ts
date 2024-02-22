@@ -50,6 +50,17 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
       where: { instanceId: instanceId },
     });
   }
+  async cancelServiceApplication(instanceId: string) {
+    const ba = await this.getBusinessAreaByInstanceId(instanceId);
+    if (ba.status == ApplicationStatus.PENDING) {
+      ba.status = ApplicationStatus.CANCELED;
+      await this.update(ba.id, ba);
+      return true;
+    }
+    return false;
+  }
+
+
   async getPreviousUpgradeService(
     vendorId: string,
     category: string,

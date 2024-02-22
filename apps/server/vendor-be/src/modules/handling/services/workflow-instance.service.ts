@@ -30,7 +30,7 @@ import {
   CreateTaskHandlerDto,
   TaskHandlerResponse,
 } from 'src/modules/bpm/dto/task-handler.dto';
-import { TaskTypes } from 'src/modules/bpm/dto/task-type.enum';
+import { TaskTypes } from 'src/modules/bpm/enums/task-type.enum';
 import { StateMetaData } from 'src/modules/bpm/dto/state-metadata';
 import { CreateTaskTrackerDto } from 'src/modules/bpm/dto/task-tracker.dto';
 import { WorkflowInstanceEntity } from 'src/entities/workflow-instance.entity';
@@ -60,7 +60,7 @@ export class WorkflowInstanceService {
     private readonly bpService: BusinessProcessService,
     private readonly commonService: HandlingCommonService,
     private readonly invoiceService: InvoiceService,
-  ) {}
+  ) { }
 
   async submitFormBasedTask(
     nextCommand: GotoNextStateDto,
@@ -305,8 +305,8 @@ export class WorkflowInstanceService {
       case TaskTypes.NOTIFICATION:
         console.log(TaskTypes.NOTIFICATION, command);
         break;
-      case TaskTypes.PaymentConfirmation:
-        console.log(TaskTypes.PaymentConfirmation, command);
+      case TaskTypes.PAYMENTCONFIRMATION:
+        console.log(TaskTypes.PAYMENTCONFIRMATION, command);
         break;
       case TaskTypes.ISR:
         console.log(TaskTypes.ISR, command);

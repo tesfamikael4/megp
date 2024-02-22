@@ -21,11 +21,13 @@ import {
   IsrVendorsEntity,
   ServicePrice,
   VendorsEntity,
+  WorkflowInstanceEntity,
 } from 'src/entities';
 import { BusinessProcessService } from 'src/modules/bpm/services/business-process.service';
 import {
   CreateWorkflowInstanceDto,
   GotoNextStateDto,
+  UpdateWorkflowInstanceDto,
   WorkflowInstanceResponse,
 } from 'src/modules/handling/dto/workflow-instance.dto';
 import { VendorStatusEnum } from 'src/shared/enums/vendor-status-enums';
@@ -1962,5 +1964,20 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     if (result == null)
       return { status: 'No approved Preferential treatment certeficates' };
     return result.preferentials;
+  }
+
+
+  async cancelApplication(wfi: UpdateWorkflowInstanceDto) {
+    const vendor = this.vendorRepository.findOne({ where: { id: wfi.requestorId } });
+    if (vendor) {
+      return await this.baService.cancelServiceApplication(wfi.id);
+    }
+    else {
+      await this.baService.cancelServiceApplication(wfi.id);
+      const tempVendor = await this.isrVendorsRepository.findOne({ where: { id: wfi.requestorId } });
+      tempVendor.status = ApplicationStatus.REJECTED;
+      await this.isrVendorsRepository.update(wfi.requestorId, tempVendor);
+      return true;
+    }
   }
 }
