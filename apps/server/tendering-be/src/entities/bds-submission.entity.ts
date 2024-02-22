@@ -8,15 +8,15 @@ import {
 } from 'typeorm';
 import { Tender } from './tender.entity';
 
-@Entity({ name: 'submissions' })
-export class Submission extends Audit {
+@Entity({ name: 'bds_submissions' })
+export class BdsSubmission extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
   tenderId: string;
 
-  @OneToOne(() => Tender, (tender) => tender.submission)
+  @OneToOne(() => Tender, (tender) => tender.bdsSubmission)
   @JoinColumn()
   tender: Tender;
 

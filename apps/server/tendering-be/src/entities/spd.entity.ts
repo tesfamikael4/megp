@@ -15,7 +15,7 @@ import { SpdSetting } from './spd-setting.entity';
 import { SpdQualification } from './spd-qualification.entity';
 import { SpdAdministrativeCompliance } from './spd-administrative-compliance.entity';
 import { SpdTemplate } from './spd-template.entity';
-import { General } from './general.entity';
+import { BdsGeneral } from './bds-general.entity';
 
 @Entity({ name: 'spd' })
 export class Spd extends Audit {
@@ -102,6 +102,6 @@ export class Spd extends Audit {
   })
   spdTemplates: SpdTemplate[];
 
-  @OneToOne(() => General, (general) => general.spd)
-  general: General;
+  @OneToOne(() => BdsGeneral, (general) => general.spd)
+  bdsGeneral: BdsGeneral;
 }
