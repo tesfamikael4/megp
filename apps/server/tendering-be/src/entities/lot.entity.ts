@@ -9,11 +9,11 @@ import {
 } from 'typeorm';
 import { Tender } from './tender.entity';
 import { Item } from './Item.entity';
-import { PreliminaryExamination } from './preliminary-examination.entity';
-import { Qualification } from './qualification.entity';
-import { TechnicalScoring } from './technical-scoring.entity';
-import { PreferenceMargin } from './preference-margin.entity';
-import { DueDiligence } from './due-diligence.entity';
+import { EqcPreliminaryExamination } from './eqc-preliminary-examination.entity';
+import { EqcQualification } from './eqc-qualification.entity';
+import { EqcTechnicalScoring } from './eqc-technical-scoring.entity';
+import { EqcPreferenceMargin } from './eqc-preference-margin.entity';
+import { EqcDueDiligence } from './eqc-due-diligence.entity';
 
 @Entity({ name: 'lots' })
 export class Lot extends Audit {
@@ -43,20 +43,26 @@ export class Lot extends Audit {
   items: Item[];
 
   @OneToMany(
-    () => PreliminaryExamination,
-    (preliminaryExamination) => preliminaryExamination.lot,
+    () => EqcPreliminaryExamination,
+    (EqcPreliminaryExamination) => EqcPreliminaryExamination.lot,
   )
-  preliminaryExaminations: PreliminaryExamination[];
+  eqcPreliminaryExaminations: EqcPreliminaryExamination[];
 
-  @OneToMany(() => Qualification, (qualification) => qualification.lot)
-  qualifications: Qualification[];
+  @OneToMany(() => EqcQualification, (eqcQualification) => eqcQualification.lot)
+  eqcQualifications: EqcQualification[];
 
-  @OneToMany(() => TechnicalScoring, (technicalScoring) => technicalScoring.lot)
-  technicalScorings: TechnicalScoring[];
+  @OneToMany(
+    () => EqcTechnicalScoring,
+    (eqcTechnicalScoring) => eqcTechnicalScoring.lot,
+  )
+  eqcTechnicalScorings: EqcTechnicalScoring[];
 
-  @OneToMany(() => PreferenceMargin, (preferenceMargin) => preferenceMargin.lot)
-  preferenceMargins: PreferenceMargin[];
+  @OneToMany(
+    () => EqcPreferenceMargin,
+    (eqcQreferenceMargin) => eqcQreferenceMargin.lot,
+  )
+  eqcPreferenceMargins: EqcPreferenceMargin[];
 
-  @OneToMany(() => DueDiligence, (dueDelegence) => dueDelegence.lot)
-  dueDelegences: DueDiligence[];
+  @OneToMany(() => EqcDueDiligence, (eqcDueDelegence) => eqcDueDelegence.lot)
+  eqcDueDiligences: EqcDueDiligence[];
 }
