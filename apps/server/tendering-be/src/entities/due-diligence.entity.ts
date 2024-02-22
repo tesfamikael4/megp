@@ -8,15 +8,15 @@ import {
 } from 'typeorm';
 import { Lot } from '.';
 
-@Entity({ name: 'eqc_due_dilegence' })
-export class EqcDueDiligence extends Audit {
+@Entity({ name: 'due_diligence' })
+export class DueDiligence extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
   lotId: string;
 
-  @ManyToOne(() => Lot, (Lot) => Lot.eqcDueDiligences)
+  @ManyToOne(() => Lot, (Lot) => Lot.dueDelegences)
   @JoinColumn()
   lot: Lot;
 

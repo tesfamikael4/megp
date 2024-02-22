@@ -9,15 +9,15 @@ import {
 import { Tender } from './tender.entity';
 import { Spd } from './spd.entity';
 
-@Entity({ name: 'bds_generals' })
-export class BdsGeneral extends Audit {
+@Entity({ name: 'generals' })
+export class General extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
   tenderId: string;
 
-  @OneToOne(() => Tender, (tender) => tender.bdsGeneral)
+  @OneToOne(() => Tender, (tender) => tender.general)
   @JoinColumn()
   tender: Tender;
 
@@ -45,7 +45,7 @@ export class BdsGeneral extends Audit {
   @Column()
   spdId: string;
 
-  @OneToOne(() => Spd, (spd) => spd.bdsGeneral)
+  @OneToOne(() => Spd, (spd) => spd.general)
   @JoinColumn()
   spd: Spd;
 
