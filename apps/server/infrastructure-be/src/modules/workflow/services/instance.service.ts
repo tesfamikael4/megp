@@ -1,14 +1,15 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { In, Not, Repository } from 'typeorm';
+import { EntityManager, In, Not, Repository } from 'typeorm';
 import { Step } from 'src/entities';
 import { Instance } from 'src/entities/instance.entity';
 import { Activity } from 'src/entities/activity.entity';
 import { StateService } from './state.service';
 import { State } from 'src/entities/state.entity';
-import { EntityCrudService } from 'megp-shared-be';
+import { ENTITY_MANAGER_KEY, EntityCrudService } from 'megp-shared-be';
 import { InstanceStep } from 'src/entities/instance-step.entity';
+import { REQUEST } from '@nestjs/core';
 
 @Injectable()
 export class InstanceService extends EntityCrudService<Instance> {
@@ -28,12 +29,17 @@ export class InstanceService extends EntityCrudService<Instance> {
 
     @Inject('WORKFLOW_RMQ_SERVICE')
     private readonly workflowRMQClient: ClientProxy,
+
+    @Inject(REQUEST)
+    private readonly request: Request,
   ) {
     super(repositoryInstance);
     workflowRMQClient.connect();
   }
   // Listen
   async initiate(data) {
+    const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
     const act = await this.repositoryActivity.findOne({
       where: {
         name: data.name,
@@ -48,7 +54,7 @@ export class InstanceService extends EntityCrudService<Instance> {
       return { ...step, itemId: data.id };
     });
     const InstanceSteps = this.repositoryInstanceStep.create(instanceSteps);
-    await this.repositoryInstanceStep.save(InstanceSteps);
+    await this.repositoryInstanceStep.insert(InstanceSteps);
     const instanceState = await this.stateService.createState(
       act.id,
       data.organizationId,
@@ -65,7 +71,7 @@ export class InstanceService extends EntityCrudService<Instance> {
       stateId: instanceState.id,
     };
     const instance = this.repositoryInstance.create(createData);
-    return this.repositoryInstance.save(instance);
+    return entityManager.getRepository(Instance).insert(instance);
   }
 
   async goto(data, organizationId: string) {
@@ -120,6 +126,7 @@ export class InstanceService extends EntityCrudService<Instance> {
           name: key,
         },
       });
+
       const instance = await this.repositoryInstance.findOne({
         where: { activityId: activity.id, organizationId, itemId: itemId },
         relations: {
@@ -131,7 +138,7 @@ export class InstanceService extends EntityCrudService<Instance> {
       });
       return instance;
     } catch (e) {
-      throw e;
+      throw new Error(e);
     }
   }
 
