@@ -7,7 +7,7 @@ import {
 } from '@mantine/core';
 import React from 'react';
 import { Select } from '@mantine/core';
-import { PassFormDataProps } from './formShell';
+import { ExtendedRegistrationReturnType, PassFormDataProps } from './formShell';
 import {
   CardListShell,
   SingleCardWrapper,
@@ -21,8 +21,9 @@ import {
   IconMapPin,
   IconUser,
 } from '@tabler/icons-react';
+import { RegisterOptions } from 'react-hook-form';
 
-interface Props extends Partial<PassFormDataProps> {
+interface Props extends PassFormDataProps {
   itemSchema: any;
   name: string;
 }
@@ -31,6 +32,7 @@ export const BankAccountDetails: React.FC<Props> = ({
   control,
   itemSchema,
   name,
+  register,
 }) => {
   const { checkAccess } = usePrivilege();
 
@@ -101,21 +103,28 @@ export const BankAccountDetails: React.FC<Props> = ({
                 />
               </Group>
               <Group grow>
-                <Select
-                  label="Bank Name"
-                  withAsterisk
-                  data={bankList}
-                  placeholder="select"
-                  searchable
-                  {...getInputProps('bankId', 'select')}
-                  onChange={(value) => {
-                    getInputProps('bankId', 'select').onChange(value);
-                    getInputProps('bankName', 'select').onChange(
-                      getLabelByValue(bankList, value as string),
-                    );
-                  }}
-                />
-
+                {register('basic.origin', 'select').value === 'Malawi' ? (
+                  <Select
+                    label="Bank Name"
+                    withAsterisk
+                    data={bankList}
+                    placeholder="select"
+                    searchable
+                    {...getInputProps('bankId', 'select')}
+                    onChange={(value) => {
+                      getInputProps('bankId', 'select').onChange(value);
+                      getInputProps('bankName', 'select').onChange(
+                        getLabelByValue(bankList, value as string),
+                      );
+                    }}
+                  />
+                ) : (
+                  <TextInput
+                    label="Bank Name"
+                    withAsterisk
+                    {...getInputProps('bankName')}
+                  />
+                )}
                 <TextInput
                   label="Branch Name"
                   {...getInputProps('branchName')}

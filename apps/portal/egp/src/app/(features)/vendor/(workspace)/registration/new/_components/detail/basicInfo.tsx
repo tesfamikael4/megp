@@ -59,9 +59,9 @@ export const BasicInfo: React.FC<PassFormDataProps> = ({ register }) => {
           label="Country"
           withAsterisk
           data={getNationalityValues()}
-          {...register(`basic.country`, 'select')}
+          {...register(`basic.origin`, 'select')}
         />
-        {register('basic.country', 'select').value === 'Malawi' ? (
+        {register('basic.origin', 'select').value === 'Malawi' ? (
           <Select
             label="District"
             withAsterisk
