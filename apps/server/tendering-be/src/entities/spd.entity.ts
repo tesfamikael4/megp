@@ -1,4 +1,10 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { SpdScc } from './spd-scc.entity';
 import { SpdBds } from './spd-bds.entity';
 import { SpdTechnicalScoring } from './spd-technical-scoring.entity';
@@ -9,6 +15,7 @@ import { SpdSetting } from './spd-setting.entity';
 import { SpdQualification } from './spd-qualification.entity';
 import { SpdAdministrativeCompliance } from './spd-administrative-compliance.entity';
 import { SpdTemplate } from './spd-template.entity';
+import { General } from './general.entity';
 
 @Entity({ name: 'spd' })
 export class Spd extends Audit {
@@ -94,4 +101,7 @@ export class Spd extends Audit {
     onDelete: 'CASCADE',
   })
   spdTemplates: SpdTemplate[];
+
+  @OneToOne(() => General, (general) => general.spd)
+  general: General;
 }
