@@ -23,7 +23,6 @@ import { VendorRegistrationsService } from '../services/vendor-registration.serv
 import { VendorInitiationDto } from '../dto/vendor-initiation.dto';
 import {
   AllowAnonymous,
-  ApiKeyGuard,
   CurrentUser,
   JwtGuard,
 } from 'src/shared/authorization';
@@ -43,7 +42,7 @@ import { Request } from 'express';
 @ApiResponse({ status: 500, description: 'Internal error' })
 @ApiExtraModels(DataResponseFormat)
 export class VendorRegistrationsController {
-  constructor(private readonly regService: VendorRegistrationsService) {}
+  constructor(private readonly regService: VendorRegistrationsService) { }
   @UseGuards(JwtGuard)
   @Get('get-isr-vendors')
   async getVendors() {

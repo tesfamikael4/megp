@@ -10,4 +10,6 @@ export enum ApplicationStatus {
   OUTDATED = 'Outdated',
   PENDING = 'Pending',
   ADJUSTMENT = 'Adjustment',
+  CANCEL = 'Cancel',
+  CANCELED = 'Canceled',
 }

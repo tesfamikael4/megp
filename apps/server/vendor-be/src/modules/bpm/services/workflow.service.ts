@@ -15,7 +15,7 @@ import {
 } from '../../handling/dto/workflow-instance.dto';
 import { TaskHandlerResponse } from '../dto/task-handler.dto';
 import { StateNode, createMachine } from 'xstate';
-import { TaskTypes } from '../dto/task-type.enum';
+import { TaskTypes } from '../enums/task-type.enum';
 import { StateMetaData } from '../dto/state-metadata';
 
 import { HandlingCommonService } from '../../handling/services/handling-common-services';
@@ -156,11 +156,19 @@ export class WorkflowService {
         wfInstance.id = workflowInstance.id;
         const apiUrl = stateMetaData['apiEndPoint'];
         wfInstance.user = workflowInstance.user;
-        const response = await this.notifyCompletion(
-          wfInstance,
-          apiUrl,
-          nextCommand,
-        );
+        let response = false;
+        if (curruntTask.taskType == TaskTypes.INITIAL_REVIEW &&
+          nextCommand.action.toUpperCase() == ApplicationStatus.CANCEL.toUpperCase()) {
+          response = await this.vendorRegService.cancelApplication(wfInstance)
+        } else {
+          response = await this.notifyCompletion(
+            wfInstance,
+            apiUrl,
+            nextCommand,
+          );
+        }
+
+
         if (response) {
           await this.addTaskTracker(currentTaskHandler, nextCommand, user);
           await this.handlerRepository.delete(currentTaskHandler.id);
@@ -169,8 +177,6 @@ export class WorkflowService {
           throw new Error('Unable to update vender status');
         }
       } else {
-        // console.log("workflowInstance.bpId,", workflowInstance.bpId,)
-        // console.log("nextStepState.value.toString(),", nextStepState.value.toString())
         const task = await this.taskService.getTaskByNameAndBP(
           workflowInstance.bpId,
           nextStepState.value.toString(),
@@ -312,10 +318,18 @@ export class WorkflowService {
       case TaskTypes.CERTIFICATION:
         console.log(TaskTypes.CERTIFICATION, command);
         break;
+      // case TaskTypes.INITIAL_REVIEW:
+      //   if (
+      //     command.action.toUpperCase() == ApplicationStatus.CANCEL.toUpperCase()
+      //     // ||  command.action.toUpperCase() == ReviewStatus.Reject.toUpperCase()
+      //   ) {
+      //     return this.vendorRegService.cancelApplication(wfi);
+      //   }
+      //   break;
       case TaskTypes.NOTIFICATION:
         console.log(TaskTypes.NOTIFICATION, command);
-      case TaskTypes.PaymentConfirmation:
-        console.log(TaskTypes.PaymentConfirmation, command);
+      case TaskTypes.PAYMENTCONFIRMATION:
+        console.log(TaskTypes.PAYMENTCONFIRMATION, command);
         break;
       case TaskTypes.PAYMENT:
         const data = await this.invoiceRepository.find({
@@ -363,8 +377,8 @@ export class WorkflowService {
     const commandLower = command.action.toLowerCase();
     const status =
       commandLower == 'approve' ||
-      commandLower == 'yes' ||
-      commandLower == 'success'
+        commandLower == 'yes' ||
+        commandLower == 'success'
         ? 'Approve'
         : 'Reject';
     const payload = {
@@ -542,4 +556,5 @@ export class WorkflowService {
       return acc;
     }, {});
   }
+
 }
