@@ -39,17 +39,18 @@ export class StateService extends ExtraCrudService<State> {
     });
 
     if (!state) {
-      const stateMachineConfig = this.xMachineState.createStateMachineConfig(
-        steps as any,
-      );
-      state = stateMachineConfig.states;
-      const stateEntity = this.repositoryState.create({
-        state,
-        activityId,
-        organizationId,
-      });
-      await this.repositoryState.insert(stateEntity);
-      return stateEntity;
+      await this.repositoryState.delete({ activityId, organizationId });
     }
+    const stateMachineConfig = this.xMachineState.createStateMachineConfig(
+      steps as any,
+    );
+    state = stateMachineConfig.states;
+    const stateEntity = this.repositoryState.create({
+      state,
+      activityId,
+      organizationId,
+    });
+    await this.repositoryState.insert(stateEntity);
+    return stateEntity;
   }
 }

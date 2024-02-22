@@ -10,6 +10,7 @@ import { State } from 'src/entities/state.entity';
 import { ENTITY_MANAGER_KEY, EntityCrudService } from 'megp-shared-be';
 import { InstanceStep } from 'src/entities/instance-step.entity';
 import { REQUEST } from '@nestjs/core';
+import { InstanceStepService } from './instance-step.service';
 
 @Injectable()
 export class InstanceService extends EntityCrudService<Instance> {
@@ -22,8 +23,8 @@ export class InstanceService extends EntityCrudService<Instance> {
     private readonly repositoryActivity: Repository<Activity>,
     @InjectRepository(State)
     private readonly repositoryState: Repository<State>,
-    @InjectRepository(InstanceStep)
-    private readonly repositoryInstanceStep: Repository<InstanceStep>,
+
+    private readonly repositoryInstanceStepService: InstanceStepService,
 
     private readonly stateService: StateService,
 
@@ -53,8 +54,8 @@ export class InstanceService extends EntityCrudService<Instance> {
     const instanceSteps = steps.map((step) => {
       return { ...step, itemId: data.id };
     });
-    const InstanceSteps = this.repositoryInstanceStep.create(instanceSteps);
-    await this.repositoryInstanceStep.insert(InstanceSteps);
+    await this.repositoryInstanceStepService.bulkCreate(instanceSteps);
+
     const instanceState = await this.stateService.createState(
       act.id,
       data.organizationId,
