@@ -82,7 +82,6 @@ const DetailViewCard: React.FC<Props> = ({ data, close }) => {
         {data.status === 'Adjustment' && (
           <Button
             onClick={() => {
-              localStorage.setItem('category', data.category);
               router.push(
                 `/vendor/registration/${callbackURL(data.BpService.key)}?${createQueryString(
                   'flag',

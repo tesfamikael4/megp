@@ -164,34 +164,20 @@ export const AreasOfBusinessInterest: React.FC<Props> = ({
               {
                 value: 'goods',
                 label: 'Goods',
-                disabled: localStorage.getItem('category')
-                  ? localStorage.getItem('category') !== 'goods'
-                  : false,
               },
               {
                 value: 'services',
                 label: 'Services',
-                disabled: localStorage.getItem('category')
-                  ? localStorage.getItem('category') !== 'services'
-                  : false,
               },
               {
                 value: 'works',
                 label: 'Works',
-                disabled: localStorage.getItem('category')
-                  ? localStorage.getItem('category') !== 'works'
-                  : false,
               },
             ]}
             {...getCategoryProps()}
           />
         )}
-        {(localStorage.getItem('category')
-          ? fields.filter(
-              (field) => field.category === localStorage.getItem('category'),
-            )
-          : fields
-        ).map((field, index) => (
+        {fields.map((field, index) => (
           <Fieldset
             tt="uppercase"
             fw={500}
