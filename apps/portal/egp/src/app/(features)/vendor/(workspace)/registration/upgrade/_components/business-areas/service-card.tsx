@@ -203,7 +203,7 @@ export default function ServicesCard({ servicesData }: { servicesData: any }) {
         </Text>
       </Flex>
 
-      <Box className="mt-6 grid grid-cols-1 gap-x-4 gap-y-4 lg:grid-cols-2 xl:gap-x-4">
+      <Box className="mt-6 grid grid-cols-1 gap-x-4 gap-y-4 lg:grid-rows-2 xl:gap-x-4">
         {getPriceRangeValues.isLoading
           ? Array.from({ length: 3 }, (_, index) => (
               <Box
@@ -348,7 +348,7 @@ export default function ServicesCard({ servicesData }: { servicesData: any }) {
             })}
       </Box>
 
-      <Flex className="w-full justify-end p-8">
+      <Flex className="w-full justify-end p-8 mt-[-150px]">
         <Button
           disabled={selectedServices.length <= 0}
           onClick={handleSubmit}
