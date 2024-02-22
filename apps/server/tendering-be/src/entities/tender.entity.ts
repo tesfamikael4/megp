@@ -47,7 +47,7 @@ export class Tender extends Audit {
   @Column()
   status: string;
 
-  @Column({ type: 'jsonb' })
+  @Column({ type: 'jsonb', nullable: true })
   metadata: any;
 
   @Column()

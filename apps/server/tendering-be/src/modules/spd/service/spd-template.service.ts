@@ -112,7 +112,7 @@ export class SpdTemplateService extends ExtraCrudService<SpdTemplate> {
     await writeFile(outputPath, '', (err) => {
       if (err)
         throw new HttpException(
-          'Could not create temporary pdf file',
+          `Could not create temporary pdf file: ${outputPath}`,
           HttpStatus.EXPECTATION_FAILED,
         );
     });
