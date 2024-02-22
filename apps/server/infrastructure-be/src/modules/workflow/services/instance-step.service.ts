@@ -21,21 +21,8 @@ export class InstanceStepService extends ExtraCrudService<InstanceStep> {
     super(repositoryInstanceStep);
   }
 
-  async bulkCreate(steps: InstanceStep[], req: any): Promise<InstanceStep[]> {
-    const organizationId = req?.user?.organization?.id;
-    if (steps.some((obj) => obj.type === 'mandatory')) {
-      const defaultSteps = await this.repositoryDefaultStep.find({
-        where: {
-          activityId: steps[0].activityId,
-        },
-        order: { order: 'ASC' },
-      });
-
-      const isCorrect = this.checkOrder(defaultSteps, steps);
-      if (!isCorrect) {
-        throw new Error('DefaultOrderIsMandatory');
-      }
-    }
+  async bulkCreate(steps: InstanceStep[]): Promise<InstanceStep[]> {
+    const organizationId = steps[0].organizationId;
     const preStep = await this.repositoryInstanceStep.find({
       where: {
         activityId: steps[0].activityId,
@@ -45,14 +32,11 @@ export class InstanceStepService extends ExtraCrudService<InstanceStep> {
     if (preStep.length > 0) {
       await this.repositoryInstanceStep.delete(preStep as any);
     }
-    steps.forEach((step) => {
-      step.organizationId = organizationId;
-      step.name = step.title.split(' ').join('');
-    });
-    const items = this.repositoryInstanceStep.create(steps);
-    await this.repositoryInstanceStep.save(items);
 
-    return steps;
+    const items = this.repositoryInstanceStep.create(steps);
+    await this.repositoryInstanceStep.insert(items);
+
+    return items;
   }
 
   private checkOrder(defaultStep: any, steps: any): boolean {

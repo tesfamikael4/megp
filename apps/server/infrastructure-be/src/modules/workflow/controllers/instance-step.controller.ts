@@ -24,7 +24,7 @@ export class InstanceStepController extends ExtraCrudController<InstanceStep>(
     @Body() steps: InstanceStep[],
     @Req() req: any,
   ): Promise<InstanceStep[]> {
-    return this.instanceStepService.bulkCreate(steps, req);
+    return this.instanceStepService.bulkCreate(steps);
   }
 
   @Get('order-steps/:key/:itemId')
