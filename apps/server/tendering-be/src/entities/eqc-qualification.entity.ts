@@ -4,21 +4,19 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Tender } from './tender.entity';
 import { Lot } from '.';
 
-@Entity({ name: 'qualifications' })
-export class Qualification extends Audit {
+@Entity({ name: 'eqc_qualifications' })
+export class EqcQualification extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
   lotId: string;
 
-  @ManyToOne(() => Lot, (Lot) => Lot.qualifications)
+  @ManyToOne(() => Lot, (Lot) => Lot.eqcQualifications)
   @JoinColumn()
   lot: Lot;
 

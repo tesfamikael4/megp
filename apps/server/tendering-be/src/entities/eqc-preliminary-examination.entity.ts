@@ -8,15 +8,15 @@ import {
 } from 'typeorm';
 import { Lot } from '.';
 
-@Entity({ name: 'preliminary_examinations' })
-export class PreliminaryExamination extends Audit {
+@Entity({ name: 'eqc_preliminary_examinations' })
+export class EqcPreliminaryExamination extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
   lotId: string;
 
-  @ManyToOne(() => Lot, (Lot) => Lot.preliminaryExaminations)
+  @ManyToOne(() => Lot, (Lot) => Lot.eqcPreliminaryExaminations)
   @JoinColumn()
   lot: Lot;
 
@@ -46,5 +46,5 @@ export class PreliminaryExamination extends Audit {
 
   // relation?
   @Column()
-  spdPreliminaryExaminationId: string;
+  spdEqcPreliminaryExaminationId: string;
 }

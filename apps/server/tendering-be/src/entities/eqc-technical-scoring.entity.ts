@@ -9,15 +9,15 @@ import {
 } from 'typeorm';
 import { Lot } from '.';
 
-@Entity({ name: 'technical_scorings' })
-export class TechnicalScoring extends Audit {
+@Entity({ name: 'eqc_technical_scorings' })
+export class EqcTechnicalScoring extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
   lotId: string;
 
-  @ManyToOne(() => Lot, (Lot) => Lot.technicalScorings)
+  @ManyToOne(() => Lot, (Lot) => Lot.eqcTechnicalScorings)
   @JoinColumn()
   lot: Lot;
 
@@ -25,17 +25,17 @@ export class TechnicalScoring extends Audit {
   parentId: string;
 
   @OneToOne(
-    () => TechnicalScoring,
+    () => EqcTechnicalScoring,
     (technicalScoring) => technicalScoring.child,
   )
   @JoinColumn()
-  parent: TechnicalScoring;
+  parent: EqcTechnicalScoring;
 
   @OneToOne(
-    () => TechnicalScoring,
-    (technicalScoring) => technicalScoring.child,
+    () => EqcTechnicalScoring,
+    (technicalScoring) => technicalScoring.parent,
   )
-  child: TechnicalScoring;
+  child: EqcTechnicalScoring;
 
   @Column()
   requirement: string;
