@@ -139,7 +139,9 @@ export default function TaskHandler({
           required
         />
       ))}
-      {(taskType === 'Confirmation' || taskType === 'Approval') && (
+      {(taskType === 'Confirmation' ||
+        taskType === 'Approval' ||
+        'InitialReview') && (
         <Textarea
           label="Remark"
           rows={4}
@@ -167,6 +169,44 @@ export default function TaskHandler({
         />
       )}
 
+      {taskType === 'InitialReview' && (
+        <Flex direction="row" className="gap-2 mt-4 ml-auto">
+          <Button
+            onClick={() => handleButtonClick('APPROVE')}
+            loading={loading['APPROVE']}
+          >
+            Approve
+          </Button>
+          <Button
+            onClick={() => {
+              handleButtonClick('ADJUST');
+              if (remark) {
+                router.push(
+                  `/${requestType === 'update' ? 'info-change' : requestType === 'preferential' ? 'preferential-services' : requestType}`,
+                );
+              }
+            }}
+            className="bg-yellow-500 hover:bg-yellow-600"
+            loading={loading['ADJUST']}
+          >
+            Adjust
+          </Button>
+          <Button
+            onClick={() => {
+              handleButtonClick('Cancel');
+              if (remark) {
+                router.push(
+                  `/${requestType === 'update' ? 'info-change' : requestType === 'preferential' ? 'preferential-services' : requestType}`,
+                );
+              }
+            }}
+            className="bg-red-600 hover:bg-red-700"
+            loading={loading['Cancel']}
+          >
+            Cancel
+          </Button>
+        </Flex>
+      )}
       {taskType === 'Approval' && (
         <Flex direction="row" className="gap-2 mt-4 ml-auto">
           <Button
