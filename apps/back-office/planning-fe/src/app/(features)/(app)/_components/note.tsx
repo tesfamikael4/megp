@@ -33,7 +33,6 @@ export const Note = ({ height }: { height?: string }) => {
   };
 
   useEffect(() => {
-    // getNotes({ id, collectionQuery: {} });
     getNotes({
       includes: ['parent'],
       where: [
