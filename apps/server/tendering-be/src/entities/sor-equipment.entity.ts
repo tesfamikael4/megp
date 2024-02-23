@@ -8,7 +8,6 @@ import {
 } from 'typeorm';
 import { Item } from './tender-item.entity';
 
-// same with labor
 @Entity({ name: 'sor_equipments' })
 export class SorEquipment extends Audit {
   @PrimaryGeneratedColumn('uuid')
