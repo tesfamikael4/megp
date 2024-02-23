@@ -93,23 +93,13 @@ const applyWhereConditions = <T>(
       const orConditions = conditions.map(({ column, value, operator: op }) => {
         if (column.includes('.')) {
           const [relation, field] = column.split('.'); // Assuming "relation.field" format
-
-          if (field.includes('->>')) {
-            const [mainColumn, nestedColumn] = field.split('->>');
-            return addFilterConditions(
-              op,
-              value,
-              `${relation}."${mainColumn}"->>'${nestedColumn}'`,
-              `${mainColumn}_${nestedColumn}`,
-            );
-          } else {
-            return addFilterConditions(
-              op,
-              value,
-              `${relation}.${field}`,
-              `${relation}_${field}`,
-            );
-          }
+          const fieldValue = `${field}_${++count}`;
+          return addFilterConditions(
+            op,
+            value,
+            `${relation}.${field}`,
+            `${relation}_${fieldValue}`,
+          );
         } else {
           // Handle conditions for the main entity
           const [mainColumn, nestedColumn] = column.split('->>'); // Handle nested JSON columns like "json_column->>field"
