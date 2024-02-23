@@ -6,7 +6,7 @@ import {
   JoinColumn,
   ManyToOne,
 } from 'typeorm';
-// import { Item } from './item.entity';
+import { Item } from './tender-item.entity';
 
 // same with labor
 @Entity({ name: 'sor_equipments' })
@@ -17,9 +17,9 @@ export class SorEquipment extends Audit {
   @Column({ type: 'uuid' })
   itemId: string;
 
-  // @ManyToOne(() => Item, (item) => item.equipments)
-  // @JoinColumn({ name: 'itemId' })
-  // item: Item;
+  @ManyToOne(() => Item, (item) => item.equipments)
+  @JoinColumn({ name: 'itemId' })
+  item: Item;
 
   @Column()
   itemNumber: string;

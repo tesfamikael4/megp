@@ -6,7 +6,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-// import { Item } from './item.entity';
+import { Item } from './tender-item.entity';
 
 @Entity({ name: 'sor_reimburseable_expenses' })
 export class SorReimburseableExpense extends Audit {
@@ -16,9 +16,9 @@ export class SorReimburseableExpense extends Audit {
   @Column()
   itemId: string;
 
-  // @ManyToOne(() => Item, (item) => item.reimburseableExpense)
-  // @JoinColumn({ name: 'itemId' })
-  // item: Item;
+  @ManyToOne(() => Item, (item) => item.reimburseableExpense)
+  @JoinColumn({ name: 'itemId' })
+  item: Item;
 
   @Column()
   itemNumber: string;

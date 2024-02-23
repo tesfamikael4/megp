@@ -6,7 +6,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-// import { Item } from './item.entity';
+import { Item } from './tender-item.entity';
 
 @Entity({ name: 'sor_labors' })
 export class SorLabor extends Audit {
@@ -16,9 +16,9 @@ export class SorLabor extends Audit {
   @Column()
   itemId: string;
 
-  // @ManyToOne(() => Item, (item) => item.labors)
-  // @JoinColumn()
-  // item: Item;
+  @ManyToOne(() => Item, (item) => item.labors)
+  @JoinColumn()
+  item: Item;
 
   @Column()
   itemNumber: string;
