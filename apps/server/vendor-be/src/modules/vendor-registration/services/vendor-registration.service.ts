@@ -758,8 +758,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       if (!result) throw new NotFoundException(`isr_Vendor_not_found`);
       const initial = result?.initial; //JSON.parse(JSON.stringify(result?.initial));
       //if there is no previously approved service by the isr vendorId
-      if (result.status !== VendorStatusEnum.COMPLETED) {
-        initial.level = VendorStatusEnum.PPDA;
+      if (result.status !== VendorStatusEnum.APPROVED) {
+        initial.level = VendorStatusEnum.DETAIL;
         initial.status = VendorStatusEnum.DRAFT;
         result.status = VendorStatusEnum.ADJUSTMENT;
         result.initial = initial;
