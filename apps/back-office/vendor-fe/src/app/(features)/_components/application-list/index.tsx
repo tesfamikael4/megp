@@ -45,8 +45,6 @@ export default function ApplicationList({
   const [getVendorRequest, { data }] = useLazyGetAllVendorRequestsQuery();
   const [page, setPage] = useState(1);
   const totalPages = calculateTotalPages(data?.total || 0, perPage);
-  const [where, setWhere] = useState<Where[]>([]);
-  logger.log(where);
 
   useEffect(() => {
     getVendorRequest({
@@ -73,12 +71,10 @@ export default function ApplicationList({
   }, [page, serviceKey]);
 
   const handleFilter = (filter) => {
-    setWhere([]);
-    setPage(1);
+    const newWhere: Where[][] = [];
 
     if (filter.trackingNumber) {
-      setWhere((prev: Where[]) => [
-        ...prev,
+      newWhere.push([
         {
           column: 'applicationNumber',
           operator: 'LIKE',
@@ -86,27 +82,26 @@ export default function ApplicationList({
         },
       ]);
     }
-    // if (filter.customerName) {
-    //   setWhere((prev: Where[]) => [...prev, {
-    //     column: 'customerName',
-    //     operator: 'ILIKE',
-    //     value: `%${filter.customerName}%`,
-    //   }]);
-    // }
-    if (filter.status) {
-      setWhere((prev: Where[]) => [
-        ...prev,
+    if (filter.customerName) {
+      newWhere.push([
         {
-          column: 'businessAreas.category',
+          column: 'isrVendor.basic->>name',
+          operator: 'ILIKE',
+          value: `${filter.customerName}`,
+        },
+      ]);
+    }
+    if (filter.status) {
+      newWhere.push([
+        {
+          column: 'service.key',
           operator: 'LIKE',
           value: filter.status,
         },
       ]);
     }
-
     if (filter.from) {
-      setWhere((prev: Where[]) => [
-        ...prev,
+      newWhere.push([
         {
           column: 'isrVendor.createdAt',
           operator: '<=',
@@ -114,8 +109,7 @@ export default function ApplicationList({
         },
       ]);
       if (filter.to) {
-        setWhere((prev: Where[]) => [
-          ...prev,
+        newWhere.push([
           {
             column: 'isrVendor.createdAt',
             operator: '>=',
@@ -123,8 +117,7 @@ export default function ApplicationList({
           },
         ]);
       } else {
-        setWhere((prev: Where[]) => [
-          ...prev,
+        newWhere.push([
           {
             column: 'isrVendor.createdAt',
             operator: '>=',
@@ -139,8 +132,8 @@ export default function ApplicationList({
       collectionQuery: {
         take: 15,
         skip: 0,
-        where: [where],
-        includes: ['isrVendor', 'isrVendor.businessAreas'],
+        where: newWhere,
+        includes: ['isrVendor', 'isrVendor.basic'],
       },
     });
   };
