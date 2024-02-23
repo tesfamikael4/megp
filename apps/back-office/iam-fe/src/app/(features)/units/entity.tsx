@@ -98,7 +98,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
         data?.items?.map((item: Unit) => {
           return {
             ...item,
-            isActive: item.status === 'ACTIVE' ? 'Active' : 'Inactive ',
+            status: item.status === 'ACTIVE' ? 'Active' : 'Inactive ',
           };
         }) ?? []
       }
