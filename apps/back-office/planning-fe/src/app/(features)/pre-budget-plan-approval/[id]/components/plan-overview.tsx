@@ -150,7 +150,7 @@ export function PlanOverview() {
                       <Accordion.Control>Requisitioner</Accordion.Control>
                       <Accordion.Panel>
                         <ActivityDetailWrapper
-                          type="activityIdentification"
+                          type="activityRequisitioner"
                           className="pt-6"
                         >
                           <Requisitioner activityId={activity.id} />
