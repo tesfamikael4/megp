@@ -6,19 +6,19 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Item } from '.';
+// import { Item } from './item.entity';
 
-@Entity({ name: 'fees' })
-export class Fee extends Audit {
+@Entity({ name: 'sor_fees' })
+export class SorFee extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ type: 'uuid' })
   itemId: string;
 
-  @ManyToOne(() => Item, (item) => item.fees)
-  @JoinColumn()
-  item: Item;
+  // @ManyToOne(() => Item, (item) => item.fees)
+  // @JoinColumn({ name: 'itemId' })
+  // item: Item;
 
   @Column()
   category: string;

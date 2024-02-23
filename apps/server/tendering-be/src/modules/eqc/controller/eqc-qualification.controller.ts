@@ -3,7 +3,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { EqcQualification } from 'src/entities';
 import { ExtraCrudController } from 'src/shared/controller';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
-import { EqcQualificationService } from '../service/qualification.service';
+import { EqcQualificationService } from '../service/eqc-qualification.service';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'lotId',

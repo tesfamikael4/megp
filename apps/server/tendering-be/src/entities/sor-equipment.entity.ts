@@ -1,24 +1,25 @@
 import { Audit } from 'src/shared/entities';
 import {
+  PrimaryGeneratedColumn,
   Column,
   Entity,
   JoinColumn,
   ManyToOne,
-  PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Item } from '.';
+// import { Item } from './item.entity';
 
-@Entity({ name: 'reimburseable_expense' })
-export class ReimburseableExpense extends Audit {
+// same with labor
+@Entity({ name: 'sor_equipments' })
+export class SorEquipment extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ type: 'uuid' })
   itemId: string;
 
-  @ManyToOne(() => Item, (item) => item.reimburseableExpense)
-  @JoinColumn()
-  item: Item;
+  // @ManyToOne(() => Item, (item) => item.equipments)
+  // @JoinColumn({ name: 'itemId' })
+  // item: Item;
 
   @Column()
   itemNumber: string;
@@ -33,8 +34,8 @@ export class ReimburseableExpense extends Audit {
   quantity: number;
 
   @Column()
-  unitCost: number;
+  rate: number;
 
   @Column()
-  cost: number;
+  amount: number;
 }

@@ -1,100 +1,100 @@
-import { Audit } from 'src/shared/entities';
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
-import { Lot } from './lot.entity';
-import { TechnicalRequirement } from './technical-requirement.entity';
-import { ReimburseableExpense } from './reimburseable-expense.entity';
-import { BillOfMaterial } from './bill-of-material.entity';
-import { Equipment } from './equipments.entity';
-import { Fee } from './fee.entity';
-import { IncidentalCost } from './incidental-costs.entity';
-import { Labor } from './labor.entity';
-import { Document } from './document.entity';
+// import { Audit } from 'src/shared/entities';
+// import {
+//   Column,
+//   Entity,
+//   JoinColumn,
+//   ManyToOne,
+//   OneToMany,
+//   PrimaryGeneratedColumn,
+// } from 'typeorm';
+// import { Lot } from './lot.entity';
+// import { SorTechnicalRequirement } from './sor-technical-requirement.entity';
+// import { SorReimburseableExpense } from './sor-reimburseable-expense.entity';
+// import { SorBillOfMaterial } from './sor-bill-of-material.entity';
+// import { SorEquipment } from './sor-equipment.entity';
+// import { SorFee } from './sor-fee.entity';
+// import { SorIncidentalCost } from './sor-incidental-cost.entity';
+// import { SorLabor } from './sor-labor.entity';
+// import { SorDocument } from './sor-document.entity';
 
-@Entity({ name: 'items' })
-export class Item extends Audit {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+// @Entity({ name: 'items' })
+// export class Item extends Audit {
+//   @PrimaryGeneratedColumn('uuid')
+//   id: string;
 
-  @Column()
-  lotId: string;
+//   @Column()
+//   lotId: string;
 
-  @ManyToOne(() => Lot, (lot) => lot.items)
-  @JoinColumn()
-  lot: Lot;
+//   @ManyToOne(() => Lot, (lot) => lot.items)
+//   @JoinColumn()
+//   lot: Lot;
 
-  @Column()
-  itemCode: string;
+//   @Column()
+//   itemCode: string;
 
-  @Column()
-  itemType: string;
+//   @Column()
+//   itemType: string;
 
-  @Column()
-  procurementCategory: string;
+//   @Column()
+//   procurementCategory: string;
 
-  @Column()
-  name: string;
+//   @Column()
+//   name: string;
 
-  @Column()
-  description: string;
+//   @Column()
+//   description: string;
 
-  @Column()
-  quantity: number;
+//   @Column()
+//   quantity: number;
 
-  @Column()
-  unitOfMeasure: string;
+//   @Column()
+//   unitOfMeasure: string;
 
-  @Column()
-  estimatedPrice: number;
+//   @Column()
+//   estimatedPrice: number;
 
-  @Column()
-  estimatedPriceCurrency: string;
+//   @Column()
+//   estimatedPriceCurrency: string;
 
-  @Column()
-  marketPrice: number;
+//   @Column()
+//   marketPrice: number;
 
-  @Column()
-  marketPriceCurrency: string;
+//   @Column()
+//   marketPriceCurrency: string;
 
-  @Column()
-  hasBom: boolean;
+//   @Column()
+//   hasBom: boolean;
 
-  @Column({ type: 'jsonb' })
-  metaData: any;
+//   @Column({ type: 'jsonb' })
+//   metaData: any;
 
-  @OneToMany(
-    () => TechnicalRequirement,
-    (technicalRequirement) => technicalRequirement.item,
-  )
-  technicalRequirements: TechnicalRequirement[];
+//   @OneToMany(
+//     () => SorTechnicalRequirement,
+//     (technicalRequirement) => technicalRequirement.item,
+//   )
+//   technicalRequirements: SorTechnicalRequirement[];
 
-  @OneToMany(
-    () => ReimburseableExpense,
-    (reimburseableExpense) => reimburseableExpense.item,
-  )
-  reimburseableExpense: ReimburseableExpense[];
+//   @OneToMany(
+//     () => SorReimburseableExpense,
+//     (reimburseableExpense) => reimburseableExpense.item,
+//   )
+//   reimburseableExpense: SorReimburseableExpense[];
 
-  @OneToMany(() => BillOfMaterial, (billOfMaterial) => billOfMaterial.item)
-  billOfMaterials: BillOfMaterial[];
+//   @OneToMany(() => SorBillOfMaterial, (billOfMaterial) => billOfMaterial.item)
+//   billOfMaterials: SorBillOfMaterial[];
 
-  @OneToMany(() => Equipment, (equipment) => equipment.item)
-  equipments: Equipment[];
+//   @OneToMany(() => SorEquipment, (equipment) => equipment.item)
+//   equipments: SorEquipment[];
 
-  @OneToMany(() => Fee, (fee) => fee.item)
-  fees: Fee[];
+//   @OneToMany(() => SorFee, (fee) => fee.item)
+//   fees: SorFee[];
 
-  @OneToMany(() => IncidentalCost, (incidentalCost) => incidentalCost.item)
-  incidentalCosts: IncidentalCost[];
+//   @OneToMany(() => SorIncidentalCost, (incidentalCost) => incidentalCost.item)
+//   incidentalCosts: SorIncidentalCost[];
 
-  @OneToMany(() => Labor, (labor) => labor.item)
-  labors: Labor[];
+//   @OneToMany(() => SorLabor, (labor) => labor.item)
+//   labors: SorLabor[];
 
-  @OneToMany(() => Document, (documents) => documents.item)
-  documents: Document[];
-}
+//   @OneToMany(() => SorDocument, (documents) => documents.item)
+//   documents: SorDocument[];
+// }

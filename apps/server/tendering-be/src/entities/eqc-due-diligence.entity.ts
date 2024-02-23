@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 import { Lot } from '.';
 
-@Entity({ name: 'eqc_due_dilegence' })
+@Entity({ name: 'eqc_due_diligences' })
 export class EqcDueDiligence extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;

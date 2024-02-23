@@ -6,19 +6,19 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Item } from './Item.entity';
+// import { Item } from './item.entity';
 
-@Entity({ name: 'technical_requirements' })
-export class TechnicalRequirement extends Audit {
+@Entity({ name: 'sor_technical_requirements' })
+export class SorTechnicalRequirement extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
   itemId: string;
 
-  @ManyToOne(() => Item, (item) => item.technicalRequirements)
-  @JoinColumn()
-  item: Item;
+  // @ManyToOne(() => Item, (item) => item.technicalRequirements)
+  // @JoinColumn({ name: 'itemId' })
+  // item: Item;
 
   @Column()
   sorType: string;

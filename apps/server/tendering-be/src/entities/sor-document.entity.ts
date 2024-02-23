@@ -6,23 +6,23 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Item } from '.';
+// import { Item } from './item.entity';
 
-@Entity({ name: 'documents' })
-export class Document extends Audit {
+@Entity({ name: 'sor_documents' })
+export class SorDocument extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ type: 'uuid' })
   itemId: string;
 
-  @ManyToOne(() => Item, (item) => item.documents)
-  @JoinColumn()
-  item: Item;
-
   @Column()
   description: string;
 
   @Column({ type: 'jsonb' })
   attachment: any;
+
+  // @ManyToOne(() => Item, (item) => item.documents)
+  // @JoinColumn({ name: 'itemId' })
+  // item: Item;
 }

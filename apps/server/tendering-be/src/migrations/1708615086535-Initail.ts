@@ -1,26 +1,14 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class Initail1708604737475 implements MigrationInterface {
-  name = 'Initail1708604737475';
+export class Initail1708615086535 implements MigrationInterface {
+  name = 'Initail1708615086535';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      `CREATE TABLE "procurement_technical_teams" ("tenantId" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "tenderId" uuid NOT NULL, "userId" character varying NOT NULL, "isTeamLead" boolean NOT NULL, CONSTRAINT "PK_580667c2adc45b5f32acc7b4c77" PRIMARY KEY ("id"))`,
-    );
-    await queryRunner.query(
-      `CREATE TABLE "procurement_mechanisms" ("tenantId" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "tenderId" uuid NOT NULL, "PRProcurementMechanisms" json NOT NULL, "invitationType" character varying NOT NULL, "marketApproach" character varying NOT NULL, "stageType" character varying NOT NULL, "stage" integer NOT NULL, CONSTRAINT "REL_3182144677e584be4c8019c9f7" UNIQUE ("tenderId"), CONSTRAINT "PK_8685ab6b89ae9fe4d5319ab84ad" PRIMARY KEY ("id"))`,
-    );
-    await queryRunner.query(
-      `CREATE TABLE "technical_requirements" ("tenantId" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "itemId" uuid NOT NULL, "sorType" character varying NOT NULL, "category" character varying NOT NULL, "requirement" character varying NOT NULL, "requirementCondition" character varying NOT NULL, "requirementType" character varying NOT NULL, "formLink" character varying NOT NULL, CONSTRAINT "PK_c109904784304952a6fb43a221a" PRIMARY KEY ("id"))`,
-    );
     await queryRunner.query(
       `CREATE TABLE "spd_scc" ("tenantId" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "spdId" uuid NOT NULL, "category" character varying NOT NULL, "itbReference" character varying NOT NULL, "attribute" character varying NOT NULL, "value" jsonb, "mandate" character varying NOT NULL, "inputType" character varying NOT NULL, "order" integer NOT NULL, "description" character varying NOT NULL, "dependency" jsonb NOT NULL, "readOnly" boolean NOT NULL, "isRequired" boolean NOT NULL, "prefix" character varying NOT NULL, CONSTRAINT "PK_54564d892d97c81916f96c6c371" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `CREATE TABLE "spd_bds" ("tenantId" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "spdId" uuid NOT NULL, "category" character varying NOT NULL, "prefix" character varying NOT NULL, "itbReference" character varying NOT NULL, "attribute" character varying NOT NULL, "value" jsonb NOT NULL, "mandate" character varying NOT NULL, "inputType" character varying NOT NULL, "order" integer NOT NULL, "description" character varying NOT NULL, "dependency" jsonb NOT NULL, "readOnly" boolean NOT NULL, "isRequired" boolean NOT NULL, "isInternalUse" boolean NOT NULL, CONSTRAINT "PK_a49f3d87d5d448c15ab7cdfdf94" PRIMARY KEY ("id"))`,
-    );
-    await queryRunner.query(
-      `CREATE TABLE "spd_technical_scoring" ("tenantId" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "spdId" uuid NOT NULL, "orderNo" numeric NOT NULL, "parentId" uuid NOT NULL, "requirement" character varying NOT NULL, "specification" character varying NOT NULL, "requirementCondition" character varying NOT NULL, "point" numeric NOT NULL, "formLink" character varying NOT NULL, "additionalRequirements" character varying NOT NULL, "validation" jsonb NOT NULL, "isRequired" boolean NOT NULL, "isProfessional" boolean NOT NULL, "isRangeBasedCriteria" boolean NOT NULL, CONSTRAINT "PK_94c7ee37dd96288ad502ea3e8cd" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `CREATE TABLE "spd_preference_margins" ("tenantId" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "spdId" uuid NOT NULL, "condition" character varying NOT NULL, "name" character varying NOT NULL, "preferenceType" character varying NOT NULL, "margin" numeric NOT NULL, CONSTRAINT "PK_b1cea0ea1235afb0b77cb29aaa7" PRIMARY KEY ("id"))`,
@@ -41,10 +29,13 @@ export class Initail1708604737475 implements MigrationInterface {
       `CREATE TABLE "spd_templates" ("tenantId" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "type" character varying NOT NULL, "documentDocx" jsonb, "documentPdf" jsonb, "spdId" uuid NOT NULL, CONSTRAINT "PK_e2d7118c5872d3f54f78ab3609a" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
-      `CREATE TABLE "bds_generals" ("tenantId" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "tenderId" uuid NOT NULL, "jointVentureAllowed" boolean NOT NULL, "maximumNumberOfMembers" integer NOT NULL, "subContractAllowed" boolean NOT NULL, "maximumPercentageContractingAllowed" date NOT NULL, "clarificationDeadline" date NOT NULL, "preBidConferenceRequired" boolean NOT NULL, "preBidConferenceDate" date NOT NULL, "spdId" uuid NOT NULL, "siteVisitAllowed" boolean NOT NULL, CONSTRAINT "REL_a9b475d7e1baf128ac85bd5990" UNIQUE ("tenderId"), CONSTRAINT "REL_bc11ee765c17805cac6e3b2a95" UNIQUE ("spdId"), CONSTRAINT "PK_d6e0368edc816d219b1e649b4af" PRIMARY KEY ("id"))`,
+      `CREATE TABLE "procurement_technical_teams" ("tenantId" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "tenderId" uuid NOT NULL, "userId" character varying NOT NULL, "isTeamLead" boolean NOT NULL, CONSTRAINT "PK_580667c2adc45b5f32acc7b4c77" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
-      `CREATE TABLE "spd" ("tenantId" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "governingRule" jsonb, "name" character varying NOT NULL, "description" character varying NOT NULL, "marketType" character varying NOT NULL, "procurementCategory" character varying NOT NULL, "isActive" boolean NOT NULL, CONSTRAINT "PK_c048f166470e0a788481a2a744c" PRIMARY KEY ("id"))`,
+      `CREATE TABLE "procurement_mechanisms" ("tenantId" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "tenderId" uuid NOT NULL, "PRProcurementMechanisms" json NOT NULL, "invitationType" character varying NOT NULL, "marketApproach" character varying NOT NULL, "stageType" character varying NOT NULL, "stage" integer NOT NULL, CONSTRAINT "REL_3182144677e584be4c8019c9f7" UNIQUE ("tenderId"), CONSTRAINT "PK_8685ab6b89ae9fe4d5319ab84ad" PRIMARY KEY ("id"))`,
+    );
+    await queryRunner.query(
+      `CREATE TABLE "sor_technical_requirements" ("tenantId" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "itemId" uuid NOT NULL, "sorType" character varying NOT NULL, "category" character varying NOT NULL, "requirement" character varying NOT NULL, "requirementCondition" character varying NOT NULL, "requirementType" character varying NOT NULL, "formLink" character varying NOT NULL, CONSTRAINT "PK_498fa212fe8dc80a6107e96f546" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `CREATE TABLE "bds_submissions" ("tenantId" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "tenderId" uuid NOT NULL, "submissionDeadline" date NOT NULL, "openingDate" date NOT NULL, "invitationDate" date NOT NULL, "envelopType" character varying NOT NULL, CONSTRAINT "REL_f4643c48139c99ed56b357ed5e" UNIQUE ("tenderId"), CONSTRAINT "PK_b5b417bdfc6f5fa01996a6c4c09" PRIMARY KEY ("id"))`,
@@ -74,25 +65,25 @@ export class Initail1708604737475 implements MigrationInterface {
       `CREATE TABLE "bds_preparations" ("tenantId" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "tenderId" uuid NOT NULL, "currencyOfTheBidForNationalBidders" jsonb NOT NULL, "currencyOfTheBidForInternationalBidders" jsonb NOT NULL, "incotermsEdition" character varying NOT NULL, "incotermType" character varying NOT NULL, "bidValidityPeriod" integer NOT NULL, CONSTRAINT "REL_19798e60cc425f76fd8c92ef7b" UNIQUE ("tenderId"), CONSTRAINT "PK_065f63f73ee399a52aa77aae961" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
-      `CREATE TABLE "reimburseable_expense" ("tenantId" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "itemId" uuid NOT NULL, "itemNumber" character varying NOT NULL, "description" character varying NOT NULL, "unit" character varying NOT NULL, "quantity" integer NOT NULL, "unitCost" integer NOT NULL, "cost" integer NOT NULL, CONSTRAINT "PK_25eaad8792b2d15ff7f861155b2" PRIMARY KEY ("id"))`,
+      `CREATE TABLE "sor_bill_of_materials" ("tenantId" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "itemId" uuid NOT NULL, "parentId" uuid, "payItem" character varying NOT NULL, "description" character varying NOT NULL, "unit" character varying NOT NULL, "quantity" integer NOT NULL, "rate" integer NOT NULL, "amount" integer NOT NULL, CONSTRAINT "REL_8fac7c9c13bd7e421bd0638e40" UNIQUE ("parentId"), CONSTRAINT "PK_b872c04b57d2922919011de135c" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
-      `CREATE TABLE "bill_of_materials" ("tenantId" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "itemId" uuid NOT NULL, "parentId" uuid, "payItem" character varying NOT NULL, "description" character varying NOT NULL, "unit" character varying NOT NULL, "quantity" integer NOT NULL, "rate" integer NOT NULL, "amount" integer NOT NULL, CONSTRAINT "REL_7697a8953a861fc062428e31e9" UNIQUE ("parentId"), CONSTRAINT "PK_e81379203e4149d01c634d7e083" PRIMARY KEY ("id"))`,
+      `CREATE TABLE "sor_documents" ("tenantId" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "itemId" uuid NOT NULL, "description" character varying NOT NULL, "attachment" jsonb NOT NULL, CONSTRAINT "PK_75b13abd98099f9a05a2c2063a6" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
-      `CREATE TABLE "equipments" ("tenantId" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "itemId" uuid NOT NULL, "itemNumber" character varying NOT NULL, "description" character varying NOT NULL, "unit" character varying NOT NULL, "quantity" integer NOT NULL, "rate" integer NOT NULL, "amount" integer NOT NULL, CONSTRAINT "PK_250348d5d9ae4946bcd634f3e61" PRIMARY KEY ("id"))`,
+      `CREATE TABLE "sor_equipments" ("tenantId" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "itemId" uuid NOT NULL, "itemNumber" character varying NOT NULL, "description" character varying NOT NULL, "unit" character varying NOT NULL, "quantity" integer NOT NULL, "rate" integer NOT NULL, "amount" integer NOT NULL, CONSTRAINT "PK_5889e95b0ac6069f9d5c7f5262f" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
-      `CREATE TABLE "fees" ("tenantId" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "itemId" uuid NOT NULL, "category" character varying NOT NULL, "position" character varying NOT NULL, "nameOfStaff" character varying NOT NULL, "staffMonthRate" integer NOT NULL, "inputStaffMonth" integer NOT NULL, "rate" integer NOT NULL, CONSTRAINT "PK_97f3a1b1b8ee5674fd4da93f461" PRIMARY KEY ("id"))`,
+      `CREATE TABLE "sor_fees" ("tenantId" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "itemId" uuid NOT NULL, "category" character varying NOT NULL, "position" character varying NOT NULL, "nameOfStaff" character varying NOT NULL, "staffMonthRate" integer NOT NULL, "inputStaffMonth" integer NOT NULL, "rate" integer NOT NULL, CONSTRAINT "PK_6b9d5be14d3e030748fad6a07f4" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
-      `CREATE TABLE "incidental_costs" ("tenantId" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "itemId" uuid NOT NULL, "itemNumber" character varying NOT NULL, "description" character varying NOT NULL, "country" character varying NOT NULL, "quantity" integer NOT NULL, "rate" integer NOT NULL, "amount" integer NOT NULL, "currency" character varying NOT NULL, CONSTRAINT "PK_a756dc593491d1b739d516ce5c4" PRIMARY KEY ("id"))`,
+      `CREATE TABLE "sor_incidental_costs" ("tenantId" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "itemId" uuid NOT NULL, "itemNumber" character varying NOT NULL, "description" character varying NOT NULL, "country" character varying NOT NULL, "quantity" integer NOT NULL, "rate" integer NOT NULL, "amount" integer NOT NULL, "currency" character varying NOT NULL, CONSTRAINT "PK_96e7cf682c0cd2b1612aef4eb7f" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
-      `CREATE TABLE "labors" ("tenantId" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "itemId" uuid NOT NULL, "itemNumber" character varying NOT NULL, "description" character varying NOT NULL, "unit" character varying NOT NULL, "quantity" integer NOT NULL, "rate" integer NOT NULL, "amount" integer NOT NULL, CONSTRAINT "PK_4bbbba0a14ea1f433f71363634a" PRIMARY KEY ("id"))`,
+      `CREATE TABLE "sor_labors" ("tenantId" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "itemId" uuid NOT NULL, "itemNumber" character varying NOT NULL, "description" character varying NOT NULL, "unit" character varying NOT NULL, "quantity" integer NOT NULL, "rate" integer NOT NULL, "amount" integer NOT NULL, CONSTRAINT "PK_90dbcc809c576b65ef2ac80a37d" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
-      `CREATE TABLE "documents" ("tenantId" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "itemId" uuid NOT NULL, "description" character varying NOT NULL, "attachment" jsonb NOT NULL, CONSTRAINT "PK_ac51aa5181ee2036f5ca482857c" PRIMARY KEY ("id"))`,
+      `CREATE TABLE "sor_reimburseable_expenses" ("tenantId" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "itemId" uuid NOT NULL, "itemNumber" character varying NOT NULL, "description" character varying NOT NULL, "unit" character varying NOT NULL, "quantity" integer NOT NULL, "unitCost" integer NOT NULL, "cost" integer NOT NULL, CONSTRAINT "PK_86094dcad0a193cb9c804595397" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `CREATE TABLE "items" ("tenantId" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "lotId" uuid NOT NULL, "itemCode" character varying NOT NULL, "itemType" character varying NOT NULL, "procurementCategory" character varying NOT NULL, "name" character varying NOT NULL, "description" character varying NOT NULL, "quantity" integer NOT NULL, "unitOfMeasure" character varying NOT NULL, "estimatedPrice" integer NOT NULL, "estimatedPriceCurrency" character varying NOT NULL, "marketPrice" integer NOT NULL, "marketPriceCurrency" character varying NOT NULL, "hasBom" boolean NOT NULL, "metaData" jsonb NOT NULL, CONSTRAINT "PK_ba5885359424c15ca6b9e79bcf6" PRIMARY KEY ("id"))`,
@@ -104,22 +95,19 @@ export class Initail1708604737475 implements MigrationInterface {
       `CREATE TABLE "tenders" ("tenantId" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "procurementReferenceNumber" character varying, "budgetAmount" integer NOT NULL, "budgetAmountCurrency" character varying NOT NULL, "budgetCode" character varying NOT NULL, "prId" character varying NOT NULL, "marketEstimate" integer NOT NULL, "marketEstimateCurrency" character varying NOT NULL, "status" character varying NOT NULL, "metadata" jsonb, "organizationId" character varying NOT NULL, CONSTRAINT "PK_13fdd4229818a97b5102199463b" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
-      `ALTER TABLE "procurement_technical_teams" ADD CONSTRAINT "FK_16ed8516699dfbc7bad19f13768" FOREIGN KEY ("tenderId") REFERENCES "tenders"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+      `CREATE TABLE "bds_generals" ("tenantId" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "tenderId" uuid NOT NULL, "jointVentureAllowed" boolean NOT NULL, "maximumNumberOfMembers" integer NOT NULL, "subContractAllowed" boolean NOT NULL, "maximumPercentageContractingAllowed" date NOT NULL, "clarificationDeadline" date NOT NULL, "preBidConferenceRequired" boolean NOT NULL, "preBidConferenceDate" date NOT NULL, "spdId" uuid NOT NULL, "siteVisitAllowed" boolean NOT NULL, CONSTRAINT "REL_a9b475d7e1baf128ac85bd5990" UNIQUE ("tenderId"), CONSTRAINT "REL_bc11ee765c17805cac6e3b2a95" UNIQUE ("spdId"), CONSTRAINT "PK_d6e0368edc816d219b1e649b4af" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
-      `ALTER TABLE "procurement_mechanisms" ADD CONSTRAINT "FK_3182144677e584be4c8019c9f71" FOREIGN KEY ("tenderId") REFERENCES "tenders"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+      `CREATE TABLE "spd" ("tenantId" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "governingRule" jsonb, "name" character varying NOT NULL, "description" character varying NOT NULL, "marketType" character varying NOT NULL, "procurementCategory" character varying NOT NULL, "isActive" boolean NOT NULL, CONSTRAINT "PK_c048f166470e0a788481a2a744c" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
-      `ALTER TABLE "technical_requirements" ADD CONSTRAINT "FK_902a2c5330611a0cee79b52af1f" FOREIGN KEY ("itemId") REFERENCES "items"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+      `CREATE TABLE "spd_technical_scoring" ("tenantId" integer NOT NULL DEFAULT '0', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP, "id" uuid NOT NULL DEFAULT uuid_generate_v4(), "spdId" uuid NOT NULL, "orderNo" numeric NOT NULL, "parentId" uuid NOT NULL, "requirement" character varying NOT NULL, "specification" character varying NOT NULL, "requirementCondition" character varying NOT NULL, "point" numeric NOT NULL, "formLink" character varying NOT NULL, "additionalRequirements" character varying NOT NULL, "validation" jsonb NOT NULL, "isRequired" boolean NOT NULL, "isProfessional" boolean NOT NULL, "isRangeBasedCriteria" boolean NOT NULL, CONSTRAINT "PK_94c7ee37dd96288ad502ea3e8cd" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `ALTER TABLE "spd_scc" ADD CONSTRAINT "FK_4293a67e19773fc97dd6a8fd5ba" FOREIGN KEY ("spdId") REFERENCES "spd"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
       `ALTER TABLE "spd_bds" ADD CONSTRAINT "FK_3fa5a61144d7b5eea5f3673968e" FOREIGN KEY ("spdId") REFERENCES "spd"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "spd_technical_scoring" ADD CONSTRAINT "FK_7f257d2363c8da5a70aef384760" FOREIGN KEY ("spdId") REFERENCES "spd"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
       `ALTER TABLE "spd_preference_margins" ADD CONSTRAINT "FK_79cfc4d67926a83086fa669d3d1" FOREIGN KEY ("spdId") REFERENCES "spd"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
@@ -140,10 +128,13 @@ export class Initail1708604737475 implements MigrationInterface {
       `ALTER TABLE "spd_templates" ADD CONSTRAINT "FK_58b133159821f269d4a9e102981" FOREIGN KEY ("spdId") REFERENCES "spd"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
-      `ALTER TABLE "bds_generals" ADD CONSTRAINT "FK_a9b475d7e1baf128ac85bd5990a" FOREIGN KEY ("tenderId") REFERENCES "tenders"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+      `ALTER TABLE "procurement_technical_teams" ADD CONSTRAINT "FK_16ed8516699dfbc7bad19f13768" FOREIGN KEY ("tenderId") REFERENCES "tenders"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
-      `ALTER TABLE "bds_generals" ADD CONSTRAINT "FK_bc11ee765c17805cac6e3b2a952" FOREIGN KEY ("spdId") REFERENCES "spd"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+      `ALTER TABLE "procurement_mechanisms" ADD CONSTRAINT "FK_3182144677e584be4c8019c9f71" FOREIGN KEY ("tenderId") REFERENCES "tenders"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "sor_technical_requirements" ADD CONSTRAINT "FK_3b9d41f1264232adabc1a493fbd" FOREIGN KEY ("itemId") REFERENCES "items"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
       `ALTER TABLE "bds_submissions" ADD CONSTRAINT "FK_f4643c48139c99ed56b357ed5ec" FOREIGN KEY ("tenderId") REFERENCES "tenders"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
@@ -176,28 +167,28 @@ export class Initail1708604737475 implements MigrationInterface {
       `ALTER TABLE "bds_preparations" ADD CONSTRAINT "FK_19798e60cc425f76fd8c92ef7bd" FOREIGN KEY ("tenderId") REFERENCES "tenders"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
-      `ALTER TABLE "reimburseable_expense" ADD CONSTRAINT "FK_609d307517208fde54a18aec516" FOREIGN KEY ("itemId") REFERENCES "items"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+      `ALTER TABLE "sor_bill_of_materials" ADD CONSTRAINT "FK_86846ef638b3d96853dfd0e8bca" FOREIGN KEY ("itemId") REFERENCES "items"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
-      `ALTER TABLE "bill_of_materials" ADD CONSTRAINT "FK_11a5247abf43025796ac11f2ee7" FOREIGN KEY ("itemId") REFERENCES "items"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+      `ALTER TABLE "sor_bill_of_materials" ADD CONSTRAINT "FK_8fac7c9c13bd7e421bd0638e40f" FOREIGN KEY ("parentId") REFERENCES "sor_bill_of_materials"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
-      `ALTER TABLE "bill_of_materials" ADD CONSTRAINT "FK_7697a8953a861fc062428e31e9e" FOREIGN KEY ("parentId") REFERENCES "bill_of_materials"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+      `ALTER TABLE "sor_documents" ADD CONSTRAINT "FK_8f7ae34384e73ab537b8863114d" FOREIGN KEY ("itemId") REFERENCES "items"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
-      `ALTER TABLE "equipments" ADD CONSTRAINT "FK_e245ed82cd5ed326f0d42984965" FOREIGN KEY ("itemId") REFERENCES "items"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+      `ALTER TABLE "sor_equipments" ADD CONSTRAINT "FK_a61e9c1b02f826a197432ccac5d" FOREIGN KEY ("itemId") REFERENCES "items"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
-      `ALTER TABLE "fees" ADD CONSTRAINT "FK_6adcbc508358358c99e87cb7a4a" FOREIGN KEY ("itemId") REFERENCES "items"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+      `ALTER TABLE "sor_fees" ADD CONSTRAINT "FK_01c97aac7ad3d5a8b8a319eed50" FOREIGN KEY ("itemId") REFERENCES "items"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
-      `ALTER TABLE "incidental_costs" ADD CONSTRAINT "FK_26bcd2a7360021fef6f63dffbd8" FOREIGN KEY ("itemId") REFERENCES "items"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+      `ALTER TABLE "sor_incidental_costs" ADD CONSTRAINT "FK_d6027efe05b712e68fb6fc5cf59" FOREIGN KEY ("itemId") REFERENCES "items"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
-      `ALTER TABLE "labors" ADD CONSTRAINT "FK_12c041171998b70edce5e6d8bcc" FOREIGN KEY ("itemId") REFERENCES "items"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+      `ALTER TABLE "sor_labors" ADD CONSTRAINT "FK_0acf3073e003f8808e52eff7819" FOREIGN KEY ("itemId") REFERENCES "items"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
-      `ALTER TABLE "documents" ADD CONSTRAINT "FK_50e7938af082a1997f8764d5567" FOREIGN KEY ("itemId") REFERENCES "items"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+      `ALTER TABLE "sor_reimburseable_expenses" ADD CONSTRAINT "FK_13cc9a2fe8b38b3e292700bd99a" FOREIGN KEY ("itemId") REFERENCES "items"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
       `ALTER TABLE "items" ADD CONSTRAINT "FK_1941a6957ec883c261b003a92f7" FOREIGN KEY ("lotId") REFERENCES "lots"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
@@ -205,9 +196,27 @@ export class Initail1708604737475 implements MigrationInterface {
     await queryRunner.query(
       `ALTER TABLE "lots" ADD CONSTRAINT "FK_ff305ca55fdc2a8ee2e143d2c61" FOREIGN KEY ("tenderId") REFERENCES "tenders"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
     );
+    await queryRunner.query(
+      `ALTER TABLE "bds_generals" ADD CONSTRAINT "FK_a9b475d7e1baf128ac85bd5990a" FOREIGN KEY ("tenderId") REFERENCES "tenders"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "bds_generals" ADD CONSTRAINT "FK_bc11ee765c17805cac6e3b2a952" FOREIGN KEY ("spdId") REFERENCES "spd"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "spd_technical_scoring" ADD CONSTRAINT "FK_7f257d2363c8da5a70aef384760" FOREIGN KEY ("spdId") REFERENCES "spd"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      `ALTER TABLE "spd_technical_scoring" DROP CONSTRAINT "FK_7f257d2363c8da5a70aef384760"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "bds_generals" DROP CONSTRAINT "FK_bc11ee765c17805cac6e3b2a952"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "bds_generals" DROP CONSTRAINT "FK_a9b475d7e1baf128ac85bd5990a"`,
+    );
     await queryRunner.query(
       `ALTER TABLE "lots" DROP CONSTRAINT "FK_ff305ca55fdc2a8ee2e143d2c61"`,
     );
@@ -215,28 +224,28 @@ export class Initail1708604737475 implements MigrationInterface {
       `ALTER TABLE "items" DROP CONSTRAINT "FK_1941a6957ec883c261b003a92f7"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "documents" DROP CONSTRAINT "FK_50e7938af082a1997f8764d5567"`,
+      `ALTER TABLE "sor_reimburseable_expenses" DROP CONSTRAINT "FK_13cc9a2fe8b38b3e292700bd99a"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "labors" DROP CONSTRAINT "FK_12c041171998b70edce5e6d8bcc"`,
+      `ALTER TABLE "sor_labors" DROP CONSTRAINT "FK_0acf3073e003f8808e52eff7819"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "incidental_costs" DROP CONSTRAINT "FK_26bcd2a7360021fef6f63dffbd8"`,
+      `ALTER TABLE "sor_incidental_costs" DROP CONSTRAINT "FK_d6027efe05b712e68fb6fc5cf59"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "fees" DROP CONSTRAINT "FK_6adcbc508358358c99e87cb7a4a"`,
+      `ALTER TABLE "sor_fees" DROP CONSTRAINT "FK_01c97aac7ad3d5a8b8a319eed50"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "equipments" DROP CONSTRAINT "FK_e245ed82cd5ed326f0d42984965"`,
+      `ALTER TABLE "sor_equipments" DROP CONSTRAINT "FK_a61e9c1b02f826a197432ccac5d"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "bill_of_materials" DROP CONSTRAINT "FK_7697a8953a861fc062428e31e9e"`,
+      `ALTER TABLE "sor_documents" DROP CONSTRAINT "FK_8f7ae34384e73ab537b8863114d"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "bill_of_materials" DROP CONSTRAINT "FK_11a5247abf43025796ac11f2ee7"`,
+      `ALTER TABLE "sor_bill_of_materials" DROP CONSTRAINT "FK_8fac7c9c13bd7e421bd0638e40f"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "reimburseable_expense" DROP CONSTRAINT "FK_609d307517208fde54a18aec516"`,
+      `ALTER TABLE "sor_bill_of_materials" DROP CONSTRAINT "FK_86846ef638b3d96853dfd0e8bca"`,
     );
     await queryRunner.query(
       `ALTER TABLE "bds_preparations" DROP CONSTRAINT "FK_19798e60cc425f76fd8c92ef7bd"`,
@@ -269,10 +278,13 @@ export class Initail1708604737475 implements MigrationInterface {
       `ALTER TABLE "bds_submissions" DROP CONSTRAINT "FK_f4643c48139c99ed56b357ed5ec"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "bds_generals" DROP CONSTRAINT "FK_bc11ee765c17805cac6e3b2a952"`,
+      `ALTER TABLE "sor_technical_requirements" DROP CONSTRAINT "FK_3b9d41f1264232adabc1a493fbd"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "bds_generals" DROP CONSTRAINT "FK_a9b475d7e1baf128ac85bd5990a"`,
+      `ALTER TABLE "procurement_mechanisms" DROP CONSTRAINT "FK_3182144677e584be4c8019c9f71"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "procurement_technical_teams" DROP CONSTRAINT "FK_16ed8516699dfbc7bad19f13768"`,
     );
     await queryRunner.query(
       `ALTER TABLE "spd_templates" DROP CONSTRAINT "FK_58b133159821f269d4a9e102981"`,
@@ -293,33 +305,24 @@ export class Initail1708604737475 implements MigrationInterface {
       `ALTER TABLE "spd_preference_margins" DROP CONSTRAINT "FK_79cfc4d67926a83086fa669d3d1"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "spd_technical_scoring" DROP CONSTRAINT "FK_7f257d2363c8da5a70aef384760"`,
-    );
-    await queryRunner.query(
       `ALTER TABLE "spd_bds" DROP CONSTRAINT "FK_3fa5a61144d7b5eea5f3673968e"`,
     );
     await queryRunner.query(
       `ALTER TABLE "spd_scc" DROP CONSTRAINT "FK_4293a67e19773fc97dd6a8fd5ba"`,
     );
-    await queryRunner.query(
-      `ALTER TABLE "technical_requirements" DROP CONSTRAINT "FK_902a2c5330611a0cee79b52af1f"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "procurement_mechanisms" DROP CONSTRAINT "FK_3182144677e584be4c8019c9f71"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "procurement_technical_teams" DROP CONSTRAINT "FK_16ed8516699dfbc7bad19f13768"`,
-    );
+    await queryRunner.query(`DROP TABLE "spd_technical_scoring"`);
+    await queryRunner.query(`DROP TABLE "spd"`);
+    await queryRunner.query(`DROP TABLE "bds_generals"`);
     await queryRunner.query(`DROP TABLE "tenders"`);
     await queryRunner.query(`DROP TABLE "lots"`);
     await queryRunner.query(`DROP TABLE "items"`);
-    await queryRunner.query(`DROP TABLE "documents"`);
-    await queryRunner.query(`DROP TABLE "labors"`);
-    await queryRunner.query(`DROP TABLE "incidental_costs"`);
-    await queryRunner.query(`DROP TABLE "fees"`);
-    await queryRunner.query(`DROP TABLE "equipments"`);
-    await queryRunner.query(`DROP TABLE "bill_of_materials"`);
-    await queryRunner.query(`DROP TABLE "reimburseable_expense"`);
+    await queryRunner.query(`DROP TABLE "sor_reimburseable_expenses"`);
+    await queryRunner.query(`DROP TABLE "sor_labors"`);
+    await queryRunner.query(`DROP TABLE "sor_incidental_costs"`);
+    await queryRunner.query(`DROP TABLE "sor_fees"`);
+    await queryRunner.query(`DROP TABLE "sor_equipments"`);
+    await queryRunner.query(`DROP TABLE "sor_documents"`);
+    await queryRunner.query(`DROP TABLE "sor_bill_of_materials"`);
     await queryRunner.query(`DROP TABLE "bds_preparations"`);
     await queryRunner.query(`DROP TABLE "bds_evaluations"`);
     await queryRunner.query(`DROP TABLE "bds_awards"`);
@@ -329,19 +332,16 @@ export class Initail1708604737475 implements MigrationInterface {
     await queryRunner.query(`DROP TABLE "eqc_preference_margins"`);
     await queryRunner.query(`DROP TABLE "eqc_due_dilegence"`);
     await queryRunner.query(`DROP TABLE "bds_submissions"`);
-    await queryRunner.query(`DROP TABLE "spd"`);
-    await queryRunner.query(`DROP TABLE "bds_generals"`);
+    await queryRunner.query(`DROP TABLE "sor_technical_requirements"`);
+    await queryRunner.query(`DROP TABLE "procurement_mechanisms"`);
+    await queryRunner.query(`DROP TABLE "procurement_technical_teams"`);
     await queryRunner.query(`DROP TABLE "spd_templates"`);
     await queryRunner.query(`DROP TABLE "spd_administrative_compliances"`);
     await queryRunner.query(`DROP TABLE "spd_qualifications"`);
     await queryRunner.query(`DROP TABLE "spd_settings"`);
     await queryRunner.query(`DROP TABLE "spd_required_documentary_evidences"`);
     await queryRunner.query(`DROP TABLE "spd_preference_margins"`);
-    await queryRunner.query(`DROP TABLE "spd_technical_scoring"`);
     await queryRunner.query(`DROP TABLE "spd_bds"`);
     await queryRunner.query(`DROP TABLE "spd_scc"`);
-    await queryRunner.query(`DROP TABLE "technical_requirements"`);
-    await queryRunner.query(`DROP TABLE "procurement_mechanisms"`);
-    await queryRunner.query(`DROP TABLE "procurement_technical_teams"`);
   }
 }

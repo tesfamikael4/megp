@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Tender } from './tender.entity';
-import { Item } from './Item.entity';
+// import { Item } from './item.entity';
 import { EqcPreliminaryExamination } from './eqc-preliminary-examination.entity';
 import { EqcQualification } from './eqc-qualification.entity';
 import { EqcTechnicalScoring } from './eqc-technical-scoring.entity';
@@ -36,11 +36,11 @@ export class Lot extends Audit {
   @Column()
   status: string;
 
-  @Column({ type: 'jsonb' })
+  @Column({ type: 'jsonb', nullable: true })
   metadata: any;
 
-  @OneToMany(() => Item, (item) => item.lot)
-  items: Item[];
+  // @OneToMany(() => Item, (item) => item.lot)
+  // items: Item[];
 
   @OneToMany(
     () => EqcPreliminaryExamination,
