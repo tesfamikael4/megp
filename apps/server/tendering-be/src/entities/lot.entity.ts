@@ -8,12 +8,12 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Tender } from './tender.entity';
-// import { Item } from './item.entity';
 import { EqcPreliminaryExamination } from './eqc-preliminary-examination.entity';
 import { EqcQualification } from './eqc-qualification.entity';
 import { EqcTechnicalScoring } from './eqc-technical-scoring.entity';
 import { EqcPreferenceMargin } from './eqc-preference-margin.entity';
 import { EqcDueDiligence } from './eqc-due-diligence.entity';
+import { Item } from './tender-item.entity';
 
 @Entity({ name: 'lots' })
 export class Lot extends Audit {
@@ -39,8 +39,8 @@ export class Lot extends Audit {
   @Column({ type: 'jsonb', nullable: true })
   metadata: any;
 
-  // @OneToMany(() => Item, (item) => item.lot)
-  // items: Item[];
+  @OneToMany(() => Item, (item) => item.lot)
+  items: Item[];
 
   @OneToMany(
     () => EqcPreliminaryExamination,
