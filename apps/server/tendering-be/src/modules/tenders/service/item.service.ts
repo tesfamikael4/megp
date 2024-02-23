@@ -1,15 +1,15 @@
-// import { Injectable } from '@nestjs/common';
-// import { InjectRepository } from '@nestjs/typeorm';
-// import { Item } from 'src/entities/item.entity';
-// import { ExtraCrudService } from 'src/shared/service';
-// import { Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Item } from 'src/entities/tender-item.entity';
+import { ExtraCrudService } from 'src/shared/service';
+import { Repository } from 'typeorm';
 
-// @Injectable()
-// export class ItemService extends ExtraCrudService<Item> {
-//   constructor(
-//     @InjectRepository(Item)
-//     private readonly ItemRepository: Repository<Item>,
-//   ) {
-//     super(ItemRepository);
-//   }
-// }
+@Injectable()
+export class ItemService extends ExtraCrudService<Item> {
+  constructor(
+    @InjectRepository(Item)
+    private readonly ItemRepository: Repository<Item>,
+  ) {
+    super(ItemRepository);
+  }
+}

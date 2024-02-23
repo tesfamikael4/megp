@@ -9,12 +9,12 @@ import {
   ProcurementTechnicalTeam,
   Tender,
 } from 'src/entities';
-// import { Item } from 'src/entities/item.entity';
-// import { ItemController } from './controller/item.controller';
+import { Item } from 'src/entities/tender-item.entity';
+import { ItemController } from './controller/item.controller';
 import { LotController } from './controller/lot.controller';
 import { ProcurementMechanismController } from './controller/procurement-mechanism.controller';
 import { ProcurementTechnicalTeamController } from './controller/procurement-technincal-team.controller';
-// import { ItemService } from './service/item.service';
+import { ItemService } from './service/item.service';
 import { LotService } from './service/lot.service';
 import { ProcurementMechanismService } from './service/procurement-mechanism.service';
 import { ProcurementTechnicalTeamService } from './service/procurement-technical-team.service';
@@ -24,21 +24,21 @@ import { ProcurementTechnicalTeamService } from './service/procurement-technical
     TypeOrmModule.forFeature([
       Tender,
       Lot,
-      // Item,
+      Item,
       ProcurementMechanism,
       ProcurementTechnicalTeam,
     ]),
   ],
   controllers: [
     TenderController,
-    // ItemController,
+    ItemController,
     LotController,
     ProcurementMechanismController,
     ProcurementTechnicalTeamController,
   ],
   providers: [
     TenderService,
-    // ItemService,
+    ItemService,
     LotService,
     ProcurementMechanismService,
     ProcurementTechnicalTeamService,
