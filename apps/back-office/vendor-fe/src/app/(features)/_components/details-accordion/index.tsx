@@ -336,7 +336,6 @@ function FormPreview({ data }: { data: any }) {
                         </Flex>
                       )}
                   </Box>
-
                   <Divider />
                 </>
               );

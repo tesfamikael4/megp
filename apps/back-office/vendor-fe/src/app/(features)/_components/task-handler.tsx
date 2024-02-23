@@ -177,22 +177,25 @@ export default function TaskHandler({
           >
             Approve
           </Button>
+          {requestType !== 'renewal' && requestType !== 'upgrade' && (
+            <Button
+              onClick={() => {
+                handleButtonClick('ADJUST');
+                if (remark) {
+                  router.push(
+                    `/${requestType === 'update' ? 'info-change' : requestType === 'preferential' ? 'preferential-services' : requestType}`,
+                  );
+                }
+              }}
+              className="bg-yellow-500 hover:bg-yellow-600"
+              loading={loading['ADJUST']}
+            >
+              Adjust
+            </Button>
+          )}
           <Button
             onClick={() => {
-              handleButtonClick('ADJUST');
-              if (remark) {
-                router.push(
-                  `/${requestType === 'update' ? 'info-change' : requestType === 'preferential' ? 'preferential-services' : requestType}`,
-                );
-              }
-            }}
-            className="bg-yellow-500 hover:bg-yellow-600"
-            loading={loading['ADJUST']}
-          >
-            Adjust
-          </Button>
-          <Button
-            onClick={() => {
+              ``;
               handleButtonClick('Cancel');
               if (remark) {
                 router.push(
@@ -215,20 +218,22 @@ export default function TaskHandler({
           >
             Approve
           </Button>
-          <Button
-            onClick={() => {
-              handleButtonClick('ADJUST');
-              if (remark) {
-                router.push(
-                  `/${requestType === 'update' ? 'info-change' : requestType === 'preferential' ? 'preferential-services' : requestType}`,
-                );
-              }
-            }}
-            className="bg-yellow-500 hover:bg-yellow-600"
-            loading={loading['ADJUST']}
-          >
-            Adjust
-          </Button>
+          {requestType !== 'renewal' && requestType !== 'upgrade' && (
+            <Button
+              onClick={() => {
+                handleButtonClick('ADJUST');
+                if (remark) {
+                  router.push(
+                    `/${requestType === 'update' ? 'info-change' : requestType === 'preferential' ? 'preferential-services' : requestType}`,
+                  );
+                }
+              }}
+              className="bg-yellow-500 hover:bg-yellow-600"
+              loading={loading['ADJUST']}
+            >
+              Adjust
+            </Button>
+          )}
           <Button
             onClick={() => {
               handleButtonClick('REJECT');
