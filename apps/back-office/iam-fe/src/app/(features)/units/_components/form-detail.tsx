@@ -142,11 +142,13 @@ export function FormDetail({ mode }: FormDetailProps) {
       notify('Error', 'Error in deleting unit');
     }
   };
-  const onActivate = async () => {
+  const onActivate = async (data) => {
     const dataSent = {
-      ...selected,
-      isActive: !selected?.isActive,
+      ...data,
+      status: selected?.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE',
+      organizationId: organizationId,
     };
+
     try {
       await activation({ ...dataSent, id: id?.toString() });
       notify(
