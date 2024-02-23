@@ -2,6 +2,7 @@ import { MenuItem } from '@megp/core-fe';
 import {
   IconAdjustmentsHorizontal,
   IconArrowFork,
+  IconBadge,
   IconCalendarEvent,
   IconCalendarStats,
   IconCoins,
@@ -35,6 +36,11 @@ export const Menu: MenuItem[] = [
     icon: IconCoins,
     link: '/budget',
     permission: ['planning:manageBudget'],
+  },
+  {
+    label: 'Procurement Requisition',
+    icon: IconBadge,
+    link: '/procurement-requisition',
   },
   {
     label: 'Report and Analytics',
