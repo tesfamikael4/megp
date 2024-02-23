@@ -4,22 +4,21 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Item } from './Item.entity';
+// import { Item } from './item.entity';
 
-@Entity({ name: 'labors' })
-export class Labor extends Audit {
+@Entity({ name: 'sor_reimburseable_expenses' })
+export class SorReimburseableExpense extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
   itemId: string;
 
-  @ManyToOne(() => Item, (item) => item.labors)
-  @JoinColumn()
-  item: Item;
+  // @ManyToOne(() => Item, (item) => item.reimburseableExpense)
+  // @JoinColumn({ name: 'itemId' })
+  // item: Item;
 
   @Column()
   itemNumber: string;
@@ -34,8 +33,8 @@ export class Labor extends Audit {
   quantity: number;
 
   @Column()
-  rate: number;
+  unitCost: number;
 
   @Column()
-  amount: number;
+  cost: number;
 }

@@ -8,6 +8,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { TenderModule } from './modules/tenders/tender.module';
 import { EqcModule } from './modules/eqc/eqc.module';
 import { BdsModule } from './modules/bds/bds.module';
+import { SorModule } from './modules/sor/sor.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { BdsModule } from './modules/bds/bds.module';
     TenderModule,
     EqcModule,
     BdsModule,
+    SorModule,
   ],
   providers: [EventEmitterModule],
   controllers: [],

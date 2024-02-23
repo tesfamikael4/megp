@@ -7,29 +7,29 @@ import {
   ManyToOne,
   OneToOne,
 } from 'typeorm';
-import { Item } from '.';
+// import { Item } from './item.entity';
 
-@Entity({ name: 'bill_of_materials' })
-export class BillOfMaterial extends Audit {
+@Entity({ name: 'sor_bill_of_materials' })
+export class SorBillOfMaterial extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ type: 'uuid' })
   itemId: string;
 
-  @ManyToOne(() => Item, (item) => item.billOfMaterials)
-  @JoinColumn()
-  item: Item;
+  // @ManyToOne(() => Item, (item) => item.billOfMaterials)
+  // @JoinColumn({ name: 'itemId' })
+  // item: Item;
 
   @Column({ type: 'uuid', nullable: true })
   parentId: string;
 
-  @OneToOne(() => BillOfMaterial, (billOfMaterial) => billOfMaterial.child)
-  @JoinColumn()
-  parent: BillOfMaterial;
+  @OneToOne(() => SorBillOfMaterial, (billOfMaterial) => billOfMaterial.child)
+  @JoinColumn({ name: 'parentId' })
+  parent: SorBillOfMaterial;
 
-  @OneToOne(() => BillOfMaterial, (billOfMaterial) => billOfMaterial.child)
-  child: BillOfMaterial;
+  @OneToOne(() => SorBillOfMaterial, (billOfMaterial) => billOfMaterial.child)
+  child: SorBillOfMaterial;
 
   @Column()
   payItem: string;

@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
-  Item,
   Lot,
   ProcurementMechanism,
   ProcurementTechnicalTeam,
   Tender,
 } from 'src/entities';
+// import { Item } from 'src/entities/item.entity';
 import { EntityCrudService } from 'src/shared/service';
 import { Repository } from 'typeorm';
 
@@ -56,21 +56,21 @@ export class TenderService extends EntityCrudService<Tender> {
     lot.name = `lot_${time}`;
     lot.status = `lot_${time}`;
 
-    const item = new Item();
-    item.itemCode = `code_${time}`;
-    item.itemType = `type_${time}`;
-    item.procurementCategory = `procurementCategory_${time}`;
-    item.name = `item_${time}`;
-    item.description = `item_${time}`;
-    item.quantity = 1;
-    item.unitOfMeasure = `item_${time}`;
-    item.estimatedPrice = 1;
-    item.estimatedPriceCurrency = `item_${time}`;
-    item.marketPrice = 1;
-    item.marketPriceCurrency = `item_${time}`;
-    item.hasBom = false;
+    // const item = new Item();
+    // item.itemCode = `code_${time}`;
+    // item.itemType = `type_${time}`;
+    // item.procurementCategory = `procurementCategory_${time}`;
+    // item.name = `item_${time}`;
+    // item.description = `item_${time}`;
+    // item.quantity = 1;
+    // item.unitOfMeasure = `item_${time}`;
+    // item.estimatedPrice = 1;
+    // item.estimatedPriceCurrency = `item_${time}`;
+    // item.marketPrice = 1;
+    // item.marketPriceCurrency = `item_${time}`;
+    // item.hasBom = false;
 
-    lot.items = [item];
+    // lot.items = [item];
 
     tender.lots = [lot];
 

@@ -6,19 +6,19 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Item } from '.';
+// import { Item } from './item.entity';
 
-@Entity({ name: 'incidental_costs' })
-export class IncidentalCost extends Audit {
+@Entity({ name: 'sor_incidental_costs' })
+export class SorIncidentalCost extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ type: 'uuid' })
   itemId: string;
 
-  @ManyToOne(() => Item, (item) => item.incidentalCosts)
-  @JoinColumn()
-  item: Item;
+  // @ManyToOne(() => Item, (item) => item.incidentalCosts)
+  // @JoinColumn({ name: 'itemId' })
+  // item: Item;
 
   @Column()
   itemNumber: string;

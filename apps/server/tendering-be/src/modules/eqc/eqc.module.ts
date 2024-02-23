@@ -7,16 +7,16 @@ import {
   EqcQualification,
   EqcTechnicalScoring,
 } from 'src/entities';
-import { EqcDueDiligenceController } from './controller/due-diligence.controller';
-import { EqcPreferenceMarginController } from './controller/preference-margin.controller';
-import { EqcPreliminaryExaminationController } from './controller/preliminary-examination.controller';
-import { EqcQualificationController } from './controller/qualification.controller';
-import { EqcTechnicalScoringController } from './controller/technical-scoring.controller';
-import { EqcPreferenceMarginService } from './service/preference-margin.service';
-import { EqcPreliminaryExaminationService } from './service/preliminary-examination.service';
-import { EqcQualificationService } from './service/qualification.service';
-import { EqcTechnicalScoringService } from './service/technical-scoring.service';
-import { EqcDueDiligenceService } from './service/due-diligence.service';
+import { EqcDueDiligenceController } from './controller/eqc-due-diligence.controller';
+import { EqcPreferenceMarginController } from './controller/eqc-preference-margin.controller';
+import { EqcPreliminaryExaminationController } from './controller/eqc-preliminary-examination.controller';
+import { EqcQualificationController } from './controller/eqc-qualification.controller';
+import { EqcTechnicalScoringController } from './controller/eqc-technical-scoring.controller';
+import { EqcPreferenceMarginService } from './service/eqc-preference-margin.service';
+import { EqcPreliminaryExaminationService } from './service/eqc-preliminary-examination.service';
+import { EqcQualificationService } from './service/eqc-qualification.service';
+import { EqcTechnicalScoringService } from './service/eqc-technical-scoring.service';
+import { EqcDueDiligenceService } from './service/eqc-due-diligence.service';
 
 @Module({
   imports: [

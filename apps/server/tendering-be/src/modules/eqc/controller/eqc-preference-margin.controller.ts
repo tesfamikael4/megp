@@ -3,7 +3,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { EqcPreferenceMargin } from 'src/entities';
 import { ExtraCrudController } from 'src/shared/controller';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
-import { EqcPreferenceMarginService } from '../service/preference-margin.service';
+import { EqcPreferenceMarginService } from '../service/eqc-preference-margin.service';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'lotId',

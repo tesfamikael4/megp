@@ -1,25 +1,24 @@
 import { Audit } from 'src/shared/entities';
 import {
-  PrimaryGeneratedColumn,
   Column,
   Entity,
   JoinColumn,
   ManyToOne,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Item } from '.';
+// import { Item } from './item.entity';
 
-// same with labor
-@Entity({ name: 'equipments' })
-export class Equipment extends Audit {
+@Entity({ name: 'sor_labors' })
+export class SorLabor extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'uuid' })
+  @Column()
   itemId: string;
 
-  @ManyToOne(() => Item, (item) => item.equipments)
-  @JoinColumn()
-  item: Item;
+  // @ManyToOne(() => Item, (item) => item.labors)
+  // @JoinColumn()
+  // item: Item;
 
   @Column()
   itemNumber: string;
