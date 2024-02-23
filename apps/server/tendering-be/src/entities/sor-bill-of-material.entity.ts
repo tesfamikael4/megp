@@ -7,7 +7,7 @@ import {
   ManyToOne,
   OneToOne,
 } from 'typeorm';
-// import { Item } from './item.entity';
+import { Item } from './tender-item.entity';
 
 @Entity({ name: 'sor_bill_of_materials' })
 export class SorBillOfMaterial extends Audit {
@@ -17,9 +17,9 @@ export class SorBillOfMaterial extends Audit {
   @Column({ type: 'uuid' })
   itemId: string;
 
-  // @ManyToOne(() => Item, (item) => item.billOfMaterials)
-  // @JoinColumn({ name: 'itemId' })
-  // item: Item;
+  @ManyToOne(() => Item, (item) => item.billOfMaterials)
+  @JoinColumn({ name: 'itemId' })
+  item: Item;
 
   @Column({ type: 'uuid', nullable: true })
   parentId: string;

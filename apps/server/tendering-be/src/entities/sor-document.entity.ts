@@ -6,7 +6,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-// import { Item } from './item.entity';
+import { Item } from './tender-item.entity';
 
 @Entity({ name: 'sor_documents' })
 export class SorDocument extends Audit {
@@ -22,7 +22,7 @@ export class SorDocument extends Audit {
   @Column({ type: 'jsonb' })
   attachment: any;
 
-  // @ManyToOne(() => Item, (item) => item.documents)
-  // @JoinColumn({ name: 'itemId' })
-  // item: Item;
+  @ManyToOne(() => Item, (item) => item.documents)
+  @JoinColumn({ name: 'itemId' })
+  item: Item;
 }

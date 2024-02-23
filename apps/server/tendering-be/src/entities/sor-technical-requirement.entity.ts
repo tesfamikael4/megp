@@ -6,7 +6,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-// import { Item } from './item.entity';
+import { Item } from './tender-item.entity';
 
 @Entity({ name: 'sor_technical_requirements' })
 export class SorTechnicalRequirement extends Audit {
@@ -16,9 +16,9 @@ export class SorTechnicalRequirement extends Audit {
   @Column()
   itemId: string;
 
-  // @ManyToOne(() => Item, (item) => item.technicalRequirements)
-  // @JoinColumn({ name: 'itemId' })
-  // item: Item;
+  @ManyToOne(() => Item, (item) => item.technicalRequirements)
+  @JoinColumn({ name: 'itemId' })
+  item: Item;
 
   @Column()
   sorType: string;
