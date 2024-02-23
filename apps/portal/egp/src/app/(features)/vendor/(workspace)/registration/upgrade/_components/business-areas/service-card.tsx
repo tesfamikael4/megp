@@ -204,12 +204,7 @@ export default function ServicesCard({ servicesData }: { servicesData: any }) {
         </Text>
       </Flex>
 
-      <SimpleGrid
-        cols={{
-          base: 1,
-          xl: 2,
-        }}
-      >
+      <SimpleGrid cols={{ base: 1, xl: 2 }}>
         {getPriceRangeValues.isLoading
           ? Array.from({ length: 3 }, (_, index) => (
               <Box

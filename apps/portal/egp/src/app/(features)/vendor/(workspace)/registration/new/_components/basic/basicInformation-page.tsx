@@ -37,7 +37,6 @@ export default function BasicInformationPage() {
         <BasicInformation
           defaultValues={{
             name: requestInfo.data.basic.name ?? '',
-            businessType: requestInfo.data.basic.businessType ?? '',
             origin: requestInfo.data.basic.origin ?? '',
             tinNumber: requestInfo.data.basic.tinNumber ?? '',
             tinIssuedDate: requestInfo.data.basic.tinIssuedDate ?? '',
@@ -47,7 +46,6 @@ export default function BasicInformationPage() {
         <BasicInformation
           defaultValues={{
             name: '',
-            businessType: '',
             origin: '',
             tinNumber: '',
             tinIssuedDate: '',
