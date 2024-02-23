@@ -3,7 +3,7 @@ import { useLazyListByIdQuery } from '../../../(app)/post-budget-plan/[budgetYea
 import { Section } from '@megp/core-fe';
 import { useEffect } from 'react';
 import { DetailActivity } from '../../../(app)/_components/detail-activity';
-import { Accordion, Box, LoadingOverlay } from '@mantine/core';
+import { Accordion, Alert, Box, Flex, LoadingOverlay } from '@mantine/core';
 import { Items } from './items';
 import { Requisitioner } from './requisitioner';
 import { Timeline } from './timeline';
@@ -11,6 +11,7 @@ import { Document } from './document';
 import { Budget } from './budget';
 import { useParams } from 'next/navigation';
 import { useGetPostBudgetPlansQuery } from '@/store/api/post-budget-plan/post-budget-plan.api';
+import { ActivityDetailWrapper } from '@/app/(features)/pre-budget-plan-approval/[id]/components/activity-detail-wrapper';
 
 export function PlanOverview() {
   // const budgetYear = '0f241dbd-3aa9-40b9-9e27-8f8b644d8174';
@@ -54,11 +55,13 @@ export function PlanOverview() {
                     >
                       <Accordion.Control>Identification</Accordion.Control>
                       <Accordion.Panel>
-                        <DetailActivity
-                          activity={activity}
-                          page="pre"
-                          hideMethods
-                        />
+                        <ActivityDetailWrapper type="activityIdentification">
+                          <DetailActivity
+                            activity={activity}
+                            page="pre"
+                            hideMethods
+                          />
+                        </ActivityDetailWrapper>
                       </Accordion.Panel>
                     </Accordion.Item>
 
@@ -68,39 +71,79 @@ export function PlanOverview() {
                     >
                       <Accordion.Control>Procurement Methods</Accordion.Control>
                       <Accordion.Panel>
-                        <DetailActivity
-                          activity={activity}
-                          page="post"
-                          hideActivity
-                        />
+                        <ActivityDetailWrapper type="activityMethods">
+                          {activity.reasons?.map((reason) => (
+                            <Alert
+                              title="Justification for Procurement Method"
+                              color="red"
+                              key={reason.id}
+                            >
+                              <Flex gap={2}>
+                                <p className="font-semibold w-1/4">
+                                  Possible Reason :
+                                </p>
+                                <p className="w-4/5">{reason.possibleReason}</p>
+                              </Flex>
+                              <Flex gap={2} mt={5}>
+                                <p className="font-semibold w-1/4">Remark :</p>
+                                <p className="w-4/5">{reason.remark}</p>
+                              </Flex>
+                            </Alert>
+                          ))}
+                          <DetailActivity
+                            activity={activity}
+                            page="post"
+                            hideActivity
+                          />
+                        </ActivityDetailWrapper>
                       </Accordion.Panel>
                     </Accordion.Item>
 
                     <Accordion.Item value={'Items'} className="bg-white">
                       <Accordion.Control>Items</Accordion.Control>
                       <Accordion.Panel>
-                        <Items activityId={activity.id} />
+                        <ActivityDetailWrapper
+                          type="activityItems"
+                          className="pt-6"
+                        >
+                          <Items activityId={activity.id} />
+                        </ActivityDetailWrapper>
                       </Accordion.Panel>
                     </Accordion.Item>
 
                     <Accordion.Item value={'Documents'} className="bg-white">
                       <Accordion.Control>Documents</Accordion.Control>
                       <Accordion.Panel>
-                        <Document activityId={activity.id} />
+                        <ActivityDetailWrapper
+                          type="activityDocuments"
+                          className="pt-6"
+                        >
+                          <Document activityId={activity.id} />
+                        </ActivityDetailWrapper>
                       </Accordion.Panel>
                     </Accordion.Item>
 
                     <Accordion.Item value={'Timeline'} className="bg-white">
                       <Accordion.Control>Timeline</Accordion.Control>
                       <Accordion.Panel>
-                        <Timeline activityId={activity.id} />
+                        <ActivityDetailWrapper
+                          type="activityTimeline"
+                          className="pt-6"
+                        >
+                          <Timeline activityId={activity.id} />
+                        </ActivityDetailWrapper>
                       </Accordion.Panel>
                     </Accordion.Item>
 
                     <Accordion.Item value={'Budget'} className="bg-white">
                       <Accordion.Control>Budget</Accordion.Control>
                       <Accordion.Panel>
-                        <Budget activity={activity} postBudgetId={id} />
+                        <ActivityDetailWrapper
+                          type="activityBudget"
+                          className="pt-6"
+                        >
+                          <Budget activity={activity} postBudgetId={id} />
+                        </ActivityDetailWrapper>
                       </Accordion.Panel>
                     </Accordion.Item>
 
@@ -110,7 +153,12 @@ export function PlanOverview() {
                     >
                       <Accordion.Control>Requisitioner</Accordion.Control>
                       <Accordion.Panel>
-                        <Requisitioner activityId={activity.id} />
+                        <ActivityDetailWrapper
+                          type="activityRequisitioner"
+                          className="pt-6"
+                        >
+                          <Requisitioner activityId={activity.id} />
+                        </ActivityDetailWrapper>
                       </Accordion.Panel>
                     </Accordion.Item>
                   </Accordion>

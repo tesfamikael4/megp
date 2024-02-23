@@ -209,7 +209,7 @@ export const BudgetTab = ({ disableFields }: { disableFields?: boolean }) => {
 
       setBudgetYearDisbursement(temp);
     }
-  }, [budgetYearDisbursement, budgetYearWithApp]);
+  }, [budgetYearWithApp]);
 
   useEffect(() => {
     getDisbursement(id as string);
