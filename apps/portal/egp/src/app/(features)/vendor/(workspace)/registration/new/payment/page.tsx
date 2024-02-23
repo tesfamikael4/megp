@@ -131,6 +131,9 @@ function Page() {
   if (invoiceInfo.isError) {
     return null;
   }
+  if (!invoiceInfo.data?.invoice || invoiceInfo.data?.invoice?.length === 0) {
+    return router.push('doc');
+  }
 
   return (
     <Flex className="flex-col w-full relative min-h-[70vh] justify-between">
