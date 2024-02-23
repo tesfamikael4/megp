@@ -21,12 +21,6 @@ const callbackURL = (key: string) => {
   if (key == 'GoodsNewRegistration' || key == 'ServicesNewRegistration') {
     return 'new/detail';
   }
-  if (key == 'GoodsRenewal' || key == 'ServicesRenewal') {
-    return 'renewal/payment';
-  }
-  if (key == 'GoodsUpgrade' || key == 'ServicesUpgrade') {
-    return 'upgrade/payment';
-  }
   if (key == 'ProfileUpdate') {
     return 'profile-update';
   }
@@ -39,12 +33,21 @@ interface Props {
   data: ApplicationInfo;
   close: () => void;
 }
-const badgeColor: { [key: string]: string } = {
-  Rejected: 'red.6',
-  Submitted: 'green.8',
-  Adjustment: 'yellow.6',
-  Completed: 'green.8',
-  Pending: 'blue.8',
+const badgeBGColor: { [key: string]: string } = {
+  Rejected: `red.0`,
+  Submitted: `blue.0`,
+  Adjustment: `yellow.0`,
+  Completed: `green.0`,
+  Pending: `blue.0`,
+  Outdated: `orange.0`,
+};
+const badgeTextColor: { [key: string]: string } = {
+  Rejected: `red.6`,
+  Submitted: `blue.6`,
+  Adjustment: `yellow.6`,
+  Completed: `green.6`,
+  Pending: `blue.6`,
+  Outdated: `orange.6`,
 };
 const DetailViewCard: React.FC<Props> = ({ data, close }) => {
   const router = useRouter();
@@ -70,9 +73,12 @@ const DetailViewCard: React.FC<Props> = ({ data, close }) => {
           </ActionIcon>
           <Text fz={'sm'}>{data.applicationNumber}</Text>
         </Flex>
-
-        <Badge size="sm" color={badgeColor[data.status]}>
-          {data.status}
+        <Badge
+          size="sm"
+          color={badgeBGColor[data.status]}
+          className={'rounded-none flex items-center p-1.5'}
+        >
+          <Box c={badgeTextColor[data.status]}>{data.status}</Box>
         </Badge>
       </Box>
       <Box className={styles.cardBody}>

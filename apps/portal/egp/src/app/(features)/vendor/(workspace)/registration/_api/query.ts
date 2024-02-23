@@ -226,6 +226,7 @@ export const {
   useGetRenewalInvoiceQuery,
   usePostRenewalInvoiceMutation,
   useGetApproveVendorInfoQuery,
+  useLazyGetApproveVendorInfoQuery,
   useGetCertificateInformationQuery,
 } = vendorRegistrationQuery;
 
