@@ -1,37 +1,32 @@
 'use client';
-import React, { useEffect, useState } from 'react';
 import {
-  Select,
-  Flex,
-  Text,
-  Divider,
-  TextInput,
   Box,
   Button,
   Checkbox,
+  Divider,
+  Flex,
   LoadingOverlay,
+  Select,
+  Text,
+  TextInput,
 } from '@mantine/core';
-import { DateInput, DatePickerInput } from '@mantine/dates';
+import { DatePickerInput } from '@mantine/dates';
 import dayjs from 'dayjs';
+import { useEffect, useState } from 'react';
 
-import style from './basic.module.scss';
+import { NotificationService } from '@/app/(features)/vendor/_components/notification';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { IconCalendar } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { getNationalityValues } from '../mockup/nationality';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { FormOfBusiness } from '../mockup/form-of-business';
-import {
-  useCreateVendorIdMutation,
-  useGetVendorQuery,
-} from '../../../_api/query';
-import { NotificationService } from '@/app/(features)/vendor/_components/notification';
-import { IconCalendar } from '@tabler/icons-react';
+import { useCreateVendorIdMutation } from '../../../_api/query';
 import { usePrivilege } from '../../_context/privilege-context';
+import { getNationalityValues } from '../mockup/nationality';
+import style from './basic.module.scss';
 
 type FormData = {
   name: string;
-  businessType: string;
   origin: string;
   tinNumber: string;
   tinIssuedDate: string;
@@ -101,7 +96,6 @@ export const BasicInformation = ({ defaultValues }: BasicInformationProps) => {
   const onSubmit = (data: typeof formState.defaultValues) => {
     create({
       name: data?.name ?? '_',
-      businessType: data?.businessType ?? '_',
       origin: data?.origin ?? '',
       tinNumber: data?.tinNumber ?? '',
       tinIssuedDate: data?.tinIssuedDate ?? '',

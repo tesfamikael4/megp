@@ -22,7 +22,7 @@ import {
   IconUser,
 } from '@tabler/icons-react';
 
-interface Props extends Partial<PassFormDataProps> {
+interface Props extends PassFormDataProps {
   itemSchema: any;
   name: string;
 }
@@ -31,6 +31,7 @@ export const BankAccountDetails: React.FC<Props> = ({
   control,
   itemSchema,
   name,
+  register,
 }) => {
   const { checkAccess } = usePrivilege();
 
@@ -100,21 +101,26 @@ export const BankAccountDetails: React.FC<Props> = ({
                   {...getInputProps('accountNumber')}
                 />
               </Group>
+
               <Group grow>
-                <Select
-                  label="Bank Name"
-                  withAsterisk
-                  data={bankList}
-                  placeholder="select"
-                  searchable
-                  {...getInputProps('bankId', 'select')}
-                  onChange={(value) => {
-                    getInputProps('bankId', 'select').onChange(value);
-                    getInputProps('bankName', 'select').onChange(
-                      getLabelByValue(bankList, value as string),
-                    );
-                  }}
-                />
+                {register('basic.origin', 'select').value === 'Malawi' ? (
+                  <Select
+                    label="Bank Name"
+                    withAsterisk
+                    data={bankList}
+                    placeholder="select"
+                    searchable
+                    {...getInputProps('bankId', 'select')}
+                    onChange={(value) => {
+                      getInputProps('bankId', 'select').onChange(value);
+                      getInputProps('bankName', 'select').onChange(
+                        getLabelByValue(bankList, value as string),
+                      );
+                    }}
+                  />
+                ) : (
+                  <TextInput label="Bank Name" {...getInputProps('bankName')} />
+                )}
 
                 <TextInput
                   label="Branch Name"

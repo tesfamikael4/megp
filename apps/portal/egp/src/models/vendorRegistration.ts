@@ -163,7 +163,6 @@ export interface GetFormResponse extends FormData {
 
 export interface CreateVendorIdRequest {
   name: string;
-  businessType: string;
   origin: string;
   tinNumber: string;
   tinIssuedDate: string;
