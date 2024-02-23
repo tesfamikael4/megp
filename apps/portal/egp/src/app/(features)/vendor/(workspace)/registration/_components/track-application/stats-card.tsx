@@ -1,4 +1,4 @@
-import { Text, Group, Badge, Paper, Flex, Button } from '@mantine/core';
+import { Text, Group, Badge, Paper, Flex, Button, Box } from '@mantine/core';
 import style from './stats-card.module.scss';
 import { ApplicationInfo } from '@/models/vendorRegistration';
 import { IconEye } from '@tabler/icons-react';
@@ -7,13 +7,21 @@ interface Props {
   data: ApplicationInfo;
   view: (data: any) => void;
 }
-const badgeColor: { [key: string]: string } = {
-  Rejected: 'red.6',
-  Submitted: 'blue.7',
-  Adjustment: 'yellow.6',
-  Completed: 'green.8',
-  Pending: 'blue.8',
-  Outdated: 'orange.8',
+const badgeBGColor: { [key: string]: string } = {
+  Rejected: `red.0`,
+  Submitted: `blue.0`,
+  Adjustment: `yellow.0`,
+  Completed: `green.0`,
+  Pending: `blue.0`,
+  Outdated: `orange.0`,
+};
+const badgeTextColor: { [key: string]: string } = {
+  Rejected: `red.6`,
+  Submitted: `blue.6`,
+  Adjustment: `yellow.6`,
+  Completed: `green.6`,
+  Pending: `blue.6`,
+  Outdated: `orange.6`,
 };
 export const StatsListCard: React.FC<Props> = ({ data, view }) => {
   return (
@@ -21,43 +29,49 @@ export const StatsListCard: React.FC<Props> = ({ data, view }) => {
       <Flex className="flex-col justify-between h-full">
         <Group justify="space-between" align="start">
           <Flex className="flex-col gap-3">
-            <Badge size="xs" color={badgeColor[data.status]}>
-              <Text fw={500} fz={10}>
-                {data.status}
-              </Text>
+            <Badge
+              size="xs"
+              color={badgeBGColor[data.status]}
+              className={'rounded-none flex items-center p-1.5'}
+            >
+              <Box c={badgeTextColor[data.status]}>{data.status}</Box>
             </Badge>
-            <Text ta="left" fw={600} fz="sm">
-              <span className=" text-gray-500">Tracking Number: </span>
-              {data.applicationNumber}
+            <Text ta="left" fz="sm">
+              <span className=" text-black font-semibold">
+                Tracking Number:{' '}
+              </span>
+              <span className="text-[rgba(0, 0, 0, 0.6)]">
+                {data.applicationNumber}
+              </span>
             </Text>
           </Flex>
 
           <Text c="dimmed" ta="left" fz="xs">
-            {data.approvedAt}
+            <span className="text-[rgba(0, 0, 0, 0.6)]">{data.approvedAt}</span>
           </Text>
         </Group>
         <Group justify="space-between" align="start">
-          <Text ta="left" fw={600} fz="xs">
-            <span className=" text-gray-500">Category: </span>
-            {data.category}
+          <Text ta="left" fz="xs">
+            <span className=" text-black font-semibold">Category: </span>
+            <span className="text-[rgba(0, 0, 0, 0.6)]">{data.category}</span>
           </Text>
         </Group>
         <Group justify="space-between" align="start">
-          <Text ta="left" fw={600} fz="xs">
-            <span className=" text-gray-500">Applied for: </span>
-            {data?.BpService?.name}
+          <Text ta="left" fz="xs">
+            <span className=" text-black font-semibold">Applied for: </span>
+            <span className="text-[rgba(0, 0, 0, 0.6)]">
+              {data?.BpService?.name}
+            </span>
           </Text>
         </Group>
         <Group justify="flex-end" align="start">
-          <Flex className="flex-col items-center">
-            <Button
-              variant="outline"
-              onClick={() => view(data)}
-              disabled={data.status === 'Approved'}
-            >
-              view
-            </Button>
-          </Flex>
+          <Button
+            variant="outline"
+            onClick={() => view(data)}
+            disabled={data.status === 'Approved'}
+          >
+            View Detail
+          </Button>
         </Group>
       </Flex>
     </Paper>

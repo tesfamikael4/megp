@@ -7,21 +7,30 @@ import {
   Button,
   Flex,
   Input,
-  Group,
+  Box,
 } from '@mantine/core';
 import classes from './HeroImageRight.module.css';
 import { IconSearch } from '@tabler/icons-react';
 import { useAuth } from '@megp/auth';
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+import { useLazyGetApproveVendorInfoQuery } from '@/app/(features)/vendor/(workspace)/registration/_api/query';
 
 export function HeroSection() {
-  const { user } = useAuth();
+  const { isAuthenticated } = useAuth();
   const router = useRouter();
+
+  const [getVendorInfo, { data }] = useLazyGetApproveVendorInfoQuery();
+
+  // if (isAuthenticated) {
+  //   getVendorInfo({});
+  // }
+
   return (
-    <div className={classes.root}>
+    <Box className={classes.root}>
       <Container size="xl">
-        <div className={classes.inner}>
-          <div className={classes.content}>
+        <Box className={classes.inner}>
+          <Box className={classes.content}>
             <Title
               className={classes.title}
               ta={{
@@ -80,7 +89,7 @@ export function HeroSection() {
                   size="sm"
                   className="md:w-1/2"
                   onClick={() => {
-                    user
+                    isAuthenticated
                       ? router.push('/vendor/registration/new/basic')
                       : router.push('/auth/login');
                   }}
@@ -91,7 +100,7 @@ export function HeroSection() {
                 >
                   Get Started
                 </Button>
-                {!user && (
+                {!isAuthenticated && (
                   <Button
                     bg={'transparent'}
                     variant="outline"
@@ -109,9 +118,9 @@ export function HeroSection() {
                 )}
               </Flex>
             </Flex>
-          </div>
-        </div>
+          </Box>
+        </Box>
       </Container>
-    </div>
+    </Box>
   );
 }
