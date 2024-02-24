@@ -118,7 +118,7 @@ export class WorkflowInstanceResponse extends UpdateWorkflowInstanceDto {
   profileUpdate: ProfileInfoEntity;
   upgrade: any;
   upgradePaymentReceipt: any;
-  renewalPaymentReceipt: any;
+  invoice: any;
   renewal: any;
   preferential: PreferentialTreatmentsEntity;
   static toResponse(entity: WorkflowInstanceEntity) {
@@ -149,8 +149,17 @@ export class WorkflowInstanceResponse extends UpdateWorkflowInstanceDto {
 
     if (entity?.isrVendor) {
       response.isrvendor = entity?.isrVendor;
+      const bainfo = response.isrvendor.bankAccountDetails.map((item) => {
+        if (item.isDefualt) {
+          item.isDefualt = "Yes";
+        } else {
+          item.isDefualt = "No";
+        }
+        return item;
+      });
+      response.isrvendor.bankAccountDetails = [...bainfo];
       const basic: any = entity?.isrVendor.basic;
-      const { level, ...basicRest } = basic;
+      const { level, status, ...basicRest } = basic;
       basicRest.status = entity?.isrVendor.status;
       response.isrvendor.basic = { ...basicRest };
     }

@@ -55,6 +55,7 @@ export class ServicePricingService extends EntityCrudService<ServicePrice> {
         service: { businessProcesses: { id: true }, id: true, key: true },
       },
       relations: { service: { businessProcesses: true } },
+      order: { valueFrom: 'ASC' },
       where: {
         service: { businessProcesses: { isActive: true }, key: In(keys) },
       },

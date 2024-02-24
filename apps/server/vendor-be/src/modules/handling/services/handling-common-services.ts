@@ -116,7 +116,7 @@ export class HandlingCommonService {
         ServiceKeyEnum.servicesUpgrade,
         ServiceKeyEnum.worksUpgrade,
       ];
-    } else if (serviceKey === ServiceKeyEnum.renewal) {
+    } else if (serviceKey === ServiceKeyEnum.RENEWAL) {
       keys = [
         ServiceKeyEnum.goodsRenewal,
         ServiceKeyEnum.servicesRenewal,
@@ -124,9 +124,16 @@ export class HandlingCommonService {
       ];
     } else if (serviceKey == ServiceKeyEnum.update) {
       keys = [ServiceKeyEnum.PROFILE_UPDATE];
-    } else if (serviceKey == ServiceKeyEnum.preferential) {
+    } else if (serviceKey == ServiceKeyEnum.PREFERENCTIAL) {
       keys = [
         ServiceKeyEnum.IBM,
+        ServiceKeyEnum.MEDIUM,
+        ServiceKeyEnum.SMALL,
+        ServiceKeyEnum.MICRO,
+        ServiceKeyEnum.MARGINALIZED_GROUP,
+      ];
+    } else if (serviceKey == ServiceKeyEnum.MSME) {
+      keys = [
         ServiceKeyEnum.MEDIUM,
         ServiceKeyEnum.SMALL,
         ServiceKeyEnum.MICRO,

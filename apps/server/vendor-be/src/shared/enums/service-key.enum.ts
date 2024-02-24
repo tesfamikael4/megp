@@ -1,9 +1,11 @@
 export enum ServiceKeyEnum {
   new = 'new',
   upgrade = 'upgrade',
-  renewal = 'renewal',
+  UPGRADE = 'upgrade',
+  RENEWAL = 'renewal',
   update = 'update',
-  preferential = 'preferential',
+
+  PREFERENCTIAL = 'preferential',
   preferentialTreatment = 'PreferentialTreatment',
   goodsNewRegistration = 'GoodsNewRegistration',
   servicesNewRegistration = 'ServicesNewRegistration',
@@ -20,4 +22,5 @@ export enum ServiceKeyEnum {
   SMALL = 'Small',
   MICRO = 'Micro',
   MARGINALIZED_GROUP = 'Marginalized_Group',
+  MSME = 'MSME'
 }

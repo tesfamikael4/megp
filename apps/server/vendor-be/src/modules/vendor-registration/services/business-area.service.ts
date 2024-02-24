@@ -125,4 +125,17 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
       },
     });
   }
+  async getPTByServiceId(
+    serviceId: string,
+    userId: string
+  ): Promise<BusinessAreaEntity> {
+    return this.businessAreaRepository.findOne({
+      where: {
+        serviceId: serviceId,
+        status: ApplicationStatus.APPROVED,
+        isrVendor: { userId: userId },
+      },
+
+    });
+  }
 }

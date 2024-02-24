@@ -211,6 +211,7 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
       where: {
         userId: userId,
         serviceId: serviceId,
+        paymentStatus: PaymentStatus.PAID,
         businessArea: { status: Not(ApplicationStatus.APPROVED) }
       },
       relations: { businessArea: { BpService: true } },

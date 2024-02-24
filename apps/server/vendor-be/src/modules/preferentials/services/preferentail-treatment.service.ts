@@ -50,7 +50,7 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
     const vendor = await this.vendorService.getVendor(user.id);
     if (vendor) entity.vendorId = vendor.id;
     else throw new HttpException('First, Register as a vendor', 400);
-    if (attachments.certificate) {
+    if (attachments.certificate.length > 0) {
       const certificateUrl = await this.uploaderService.uploadDocuments(
         attachments.certificate[0],
         user,
@@ -60,8 +60,8 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
     } else {
       throw new HttpException('Please upload the ceriteficate', 400);
     }
-    if (attachments.otherDocuments?.length > 0) {
-      for (const doc of attachments.otherDocuments) {
+    if (attachments.additionalDocuments?.length > 0) {
+      for (const doc of attachments.additionalDocuments) {
         const filename = await this.uploaderService.uploadDocuments(
           doc,
           user,
@@ -141,7 +141,13 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
     });
     return result;
   }
-
+  async getPreferntialByService(serviceId: string, userId: string) {
+    const result = await this.ptRepository.findOne({
+      relations: { service: true, vendor: true },
+      where: { userId: userId, serviceId: serviceId, status: ApplicationStatus.SUBMIT },
+    });
+    return result;
+  }
   async delete(id: string, user: any) {
     return await this.ptRepository.delete({ id: id, userId: user.id });
   }

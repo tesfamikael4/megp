@@ -57,20 +57,17 @@ export class PreferentailTreatmentsController extends EntityCrudController<Prefe
   @UseInterceptors(
     FileFieldsInterceptor([
       { name: 'certificate', maxCount: 1 },
-      { name: 'otherDocuments', maxCount: 3 },
+      { name: 'additionalDocuments', maxCount: 3 },
     ]),
   )
   @ApiOkResponse({ type: PTResponse })
   async submitApplication(
-    @UploadedFiles()
-    files: {
-      certificate: Express.Multer.File[];
-      otherDocuments: Express.Multer.File[];
-    },
+    @UploadedFiles() files,
     @CurrentUser() user: any,
     @Body() createdto: CreatePTDto,
   ) {
-    console.log('bb', createdto, files);
+
+    console.log('bb', createdto,);
     return await this.ptService.submitPreferential(files, createdto, user);
   }
 

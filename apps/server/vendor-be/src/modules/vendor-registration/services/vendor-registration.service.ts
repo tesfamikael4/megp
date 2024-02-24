@@ -57,6 +57,7 @@ import { ReceiptDto } from '../dto/receipt.dto';
 import { FileService } from './file.service';
 import { REQUEST } from '@nestjs/core';
 import { HandlingCommonService } from 'src/modules/handling/services/handling-common-services';
+import { PreferentialTreatmentsEntity } from 'src/entities/preferential-treatment.entity';
 @Injectable()
 export class VendorRegistrationsService extends EntityCrudService<VendorsEntity> {
   constructor(
@@ -69,6 +70,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     private readonly isrVendorsRepository: Repository<IsrVendorsEntity>,
     @InjectRepository(ProfileInfoEntity)
     private readonly profileInfoRepository: Repository<ProfileInfoEntity>,
+    @InjectRepository(PreferentialTreatmentsEntity)
+    private readonly ptRepository: Repository<PreferentialTreatmentsEntity>,
     @InjectRepository(InvoiceEntity)
     private readonly invoiceRepository: Repository<InvoiceEntity>,
     private readonly workflowService: WorkflowService,
@@ -79,6 +82,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     private readonly baService: BusinessAreaService,
     private readonly fileService: FileService,
     private readonly commonService: HandlingCommonService,
+
   ) {
     super(vendorRepository);
   }
@@ -407,7 +411,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     if (vendor) {
       const businessArea = await this.businessAreaRepository.findOne({
         where: { instanceId: vendorStatusDto.instanceId },
-        relations: { BpService: true },
+        relations: { BpService: true, isrVendor: true },
       });
       if (businessArea) {
         if (vendorStatusDto.status == VendorStatusEnum.APPROVE) {
@@ -436,18 +440,32 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           }
         }
         businessArea.approvedAt = new Date();
+        const preferentials = this.commonService.getServiceCatagoryKeys(ServiceKeyEnum.PREFERENCTIAL);
+        if (preferentials.find((item) => item == businessArea.BpService.key)) {
+          // const preferncialEnty = await this.preferentialService.getPreferntialByService(businessArea.serviceId, businessArea.isrVendor.userId);
+          const preferncialEnty = await this.ptRepository.findOne({
+            relations: { service: true, vendor: true },
+            where: { userId: businessArea.isrVendor.userId, serviceId: businessArea.serviceId, status: ApplicationStatus.SUBMIT },
+          });
+          if (preferncialEnty) {
+            preferncialEnty.status = ApplicationStatus.APPROVED;
+            this.ptRepository.update(preferncialEnty.id, preferncialEnty);
+          }
+        }
       }
+      const renewalKeys = this.commonService.getServiceCatagoryKeys(ServiceKeyEnum.RENEWAL);
+      const upgradekeys = this.commonService.getServiceCatagoryKeys(ServiceKeyEnum.UPGRADE);
 
-      const upgradekeys = [
-        ServiceKeyEnum.goodsUpgrade,
-        ServiceKeyEnum.servicesUpgrade,
-        ServiceKeyEnum.worksUpgrade,
-      ];
-      const renewalKeys = [
-        ServiceKeyEnum.goodsRenewal,
-        ServiceKeyEnum.servicesRenewal,
-        ServiceKeyEnum.worksRenewal,
-      ];
+      // const upgradekeys = [
+      //   ServiceKeyEnum.goodsUpgrade,
+      //   ServiceKeyEnum.servicesUpgrade,
+      //   ServiceKeyEnum.worksUpgrade,
+      // ];
+      // const renewalKeys = [
+      //   ServiceKeyEnum.goodsRenewal,
+      //   ServiceKeyEnum.servicesRenewal,
+      //   ServiceKeyEnum.worksRenewal,
+      // ];
 
       const upgradeServices = upgradekeys.filter(
         (item) => item == businessArea.BpService?.key,
@@ -463,6 +481,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       const renwalServiceKeys = renewalKeys.filter(
         (item) => item == businessArea.BpService.key,
       );
+      //void previous approved service
       if (renwalServiceKeys.length > 0 || upgradeServices.length > 0) {
         const previousBA = await this.businessAreaRepository.findOne({
           where: {
@@ -1294,6 +1313,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         await this.invoiceRepository.update(ids[index], {
           paymentStatus: PaymentStatus.PAID,
           attachment: uploadedFileName,
+          remark: paymentReceiptDto?.transactionNumber
         });
       }
       const invoices = await this.invoiceRepository.find({
@@ -1351,7 +1371,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
   }
 
   async getApprovedVendorById(VendorId: string) {
-    const vendorData = await this.vendorRepository.findOne({
+    const vendorData: any = await this.vendorRepository.findOne({
       where: [
         {
           id: VendorId,
@@ -1400,6 +1420,13 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           category: true,
           lineOfBusiness: true,
         },
+        preferentials: {
+          service: { name: true, key: true },
+          certiNumber: true,
+          certificateUrl: true,
+          remark: true,
+          status: true,
+        },
         isrVendor: { id: true, businessAreas: true },
       },
       relations: {
@@ -1408,10 +1435,18 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         beneficialOwnership: true,
         vendorAccounts: true,
         isrVendor: { businessAreas: { servicePrice: true, BpService: true } },
-        preferentials: true,
+        preferentials: { service: true },
       },
     });
     const { isrVendor, ...rest } = vendorData;
+    const accounts = vendorData.vendorAccounts.map((item) => {
+      const primary = item.isDefualt ? 'Yes' : 'No';
+      const fitem = { ...item, isDefualt: primary };
+      return fitem;
+
+    })
+    rest.vendorAccounts = [...accounts];
+
     const bussinessAreas = [];
     for (const ba of vendorData.isrVendor?.businessAreas) {
       //   const business = BusinessAreaDetailResponseDto.toResponse(ba);
@@ -1435,8 +1470,24 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       bussinessAreas.push(businessarea);
     }
     rest.areasOfBusinessInterest = bussinessAreas;
+    let ibm = null;
+    let pt = null;
+    if (vendorData?.preferentials?.length > 0) {
+      for (const item of vendorData?.preferentials) {
+        const preferencialInfo = await this.baService.getPTByServiceId(item.serviceId, item.userId);
+
+        if (item.service.key == ServiceKeyEnum.IBM) {
+          ibm = { name: item.service.name, ...item, approvedAt: preferencialInfo?.approvedAt };
+          delete ibm.service;
+        } else {
+          pt = { name: item.service.name, ...item, approvedAt: preferencialInfo?.approvedAt };
+          delete pt.service;
+        }
+      }
+      delete rest.preferentials;
+    }
     const vendor = {
-      ...rest,
+      ...rest, ibm: ibm, preferencialTreatment: pt
     };
     return vendor;
   }

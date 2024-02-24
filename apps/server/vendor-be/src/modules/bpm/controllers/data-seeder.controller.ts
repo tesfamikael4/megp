@@ -1587,7 +1587,7 @@ export class DataSeederController {
         label: 'Submitted Applications',
         description: 'Submission of Vendor Upgrade Registration Request for Services',
         bpId: '11a07c2b-2b12-44bc-894e-a1aede0194c4',
-        handlerType: 'Assignee',
+        handlerType: 'Requestor',
         taskType: 'ISR',
         checkList: [
           {
@@ -1677,7 +1677,7 @@ export class DataSeederController {
         label: 'Submitted Applications',
         description: 'Submission of Vendor Upgrade Registration Request for Works',
         bpId: '950e28cf-ad82-4159-8b2c-f147bbe3685f',
-        handlerType: 'Assignee',
+        handlerType: 'Requestor',
         taskType: 'ISR',
         checkList: [
           {
