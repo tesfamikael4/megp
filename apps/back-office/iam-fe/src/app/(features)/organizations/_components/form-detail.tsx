@@ -15,12 +15,17 @@ import {
   useUpdateMutation,
   useCreateMutation,
 } from '../_api/organization.api';
+import {
+  useActivateOrganizationMutation,
+  useLazyListByIdQuery,
+} from '../_api/custom.api';
 import { useListQuery as useListTypeQuery } from '../../organization-type/_api/organization-type.api';
 import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import { Organization } from '@/models/organization';
 import { notify } from '@megp/core-fe';
+import { useLazySecondRelationQuery } from '../_api/organization-mandate.api';
 
 interface FormDetailProps {
   mode: 'new' | 'detail';
@@ -55,13 +60,18 @@ export function FormDetail({ mode }: FormDetailProps) {
   } = useForm({
     resolver: zodResolver(organizationSchema),
   });
+
+  const [trigger, { data: mandateList }] = useLazySecondRelationQuery();
+  const [triggerOa, { data: oaList }] = useLazyListByIdQuery();
+
   const router = useRouter();
   const { id } = useParams();
 
   const [create, { isLoading: isSaving }] = useCreateMutation();
   const [update, { isLoading: isUpdating }] = useUpdateMutation();
   const [remove, { isLoading: isDeleting }] = useDeleteMutation();
-  const [activation, { isLoading: isActivating }] = useUpdateMutation();
+  const [activation, { isLoading: isActivating }] =
+    useActivateOrganizationMutation();
 
   const {
     data: selected,
@@ -102,22 +112,21 @@ export function FormDetail({ mode }: FormDetailProps) {
   };
   const onActivate = async () => {
     try {
-      await activation({
-        status: selected?.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE',
-        id: id?.toString(),
-      });
+      selected?.status === 'INACTIVE'
+        ? await activation(id?.toString())
+        : await update({ status: 'INACTIVE', id: id?.toString() });
 
       notify(
         'Success',
-        `organization ${
-          selected?.isActive ? 'Deactivated' : 'Activated'
+        `Organization ${
+          selected?.status === 'ACTIVE' ? 'Deactivated' : 'Activated'
         } successfully`,
       );
     } catch {
       notify(
         'Error',
-        `error in ${
-          selected?.isActive ? 'Deactivating' : 'Activating'
+        `Error in ${
+          selected?.status === 'ACTIVE' ? 'Deactivating' : 'Activating'
         }  organization`,
       );
     }
@@ -138,6 +147,21 @@ export function FormDetail({ mode }: FormDetailProps) {
       });
     }
   }, [mode, reset, selected, selectedSuccess]);
+
+  useEffect(() => {
+    if (id) {
+      trigger({
+        id: id?.toString(),
+        collectionQuery: undefined,
+      });
+    }
+  }, [id, trigger]);
+
+  useEffect(() => {
+    if (id) {
+      triggerOa(id?.toString());
+    }
+  }, [id, triggerOa]);
 
   return (
     <Stack pos="relative">
@@ -187,7 +211,11 @@ export function FormDetail({ mode }: FormDetailProps) {
       <EntityButton
         mode={mode}
         data={selected}
-        onActivate={handleSubmit(onActivate)}
+        onActivate={
+          mandateList?.total !== 0 && oaList?.total !== 0
+            ? handleSubmit(onActivate)
+            : undefined
+        }
         onCreate={handleSubmit(onCreate)}
         onUpdate={handleSubmit(onUpdate)}
         onDelete={handleSubmit(onDelete)}

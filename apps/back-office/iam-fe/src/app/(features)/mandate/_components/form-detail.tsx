@@ -41,6 +41,14 @@ export function FormDetail() {
             </Table.Td>
             <Table.Td>{selected?.description}</Table.Td>
           </Table.Tr>
+          {selected?.organization?.name && (
+            <Table.Tr>
+              <Table.Td className="bg-slate-200 font-semibold w-1/3">
+                Organization
+              </Table.Td>
+              <Table.Td>{selected?.organization?.name}</Table.Td>
+            </Table.Tr>
+          )}
         </Table.Tbody>
       </Table>
     </Stack>

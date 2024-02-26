@@ -50,7 +50,7 @@ const AddPermission = () => {
         await assignPermission(data).unwrap();
         notify(
           'Success',
-          'Permission  has been assigned to mandate successfully.',
+          'Permission has been assigned to mandate successfully.',
         );
       } catch (err) {
         notify(

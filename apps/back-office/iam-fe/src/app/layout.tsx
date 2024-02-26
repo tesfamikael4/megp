@@ -5,6 +5,7 @@ import RootStyleRegistry from './mantine';
 
 import { Inter, Roboto_Mono } from 'next/font/google';
 import { AuthProvider } from '@megp/auth';
+import { Notifications } from '@mantine/notifications';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -37,6 +38,7 @@ export default function RootLayout({
       <body suppressHydrationWarning={true}>
         <Providers>
           <RootStyleRegistry>
+            <Notifications />
             <AuthProvider>{children}</AuthProvider>
           </RootStyleRegistry>
         </Providers>
