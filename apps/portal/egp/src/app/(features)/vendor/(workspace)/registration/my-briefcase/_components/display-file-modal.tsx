@@ -1,5 +1,5 @@
 import { DisplayFile } from '@/app/(features)/vendor/_components/display-file/display-file';
-import { Box, Modal, ModalProps, TextInput, Button, Flex } from '@mantine/core';
+import { Modal, ModalProps } from '@mantine/core';
 interface ShareModalProps extends ModalProps {
   fileName: string;
 }
