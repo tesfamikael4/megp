@@ -87,7 +87,6 @@ export const DisplayFile = ({
         <p className="text-center py-2 ">{`
     Looks like something went wrong while loading the file.
     Double-check your connection and try reloading`}</p>
-        ;
       </div>
     );
   }
