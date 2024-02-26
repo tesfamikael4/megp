@@ -28,12 +28,10 @@ const defaultValues = {
 const userSchema: ZodType<Partial<User>> = z.object({
   firstName: z.string().min(1, { message: 'First Name is required' }),
   lastName: z.string().min(1, { message: 'Last Name is required' }),
-  email: z
-    .string()
-    .email({ message: 'Must be a valid email' })
-    .optional()
-    .nullable(),
-  // .or(z.literal('')),
+  email: z.union([
+    z.literal(''),
+    z.string().email({ message: 'Email must be a valid email.' }),
+  ]),
 });
 
 export function FormDetail({ mode }: FormDetailProps) {

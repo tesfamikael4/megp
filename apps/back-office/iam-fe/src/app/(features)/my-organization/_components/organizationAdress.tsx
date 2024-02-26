@@ -291,36 +291,6 @@ const OrganizationAdressForm = () => {
         />
       </Group>
 
-      <Text fw={500}>Mobile Number</Text>
-
-      <Flex>
-        <Controller
-          name="mobileNumber.countyCode"
-          control={control}
-          render={({ field: { onChange, value } }) => (
-            <Select
-              defaultValue={'MW'}
-              value={value}
-              onChange={onChange}
-              data={countryCodes.map((item) => ({
-                label: `${item.name} (${item.dial_code})`,
-                value: item.code,
-              }))}
-              maxDropdownHeight={400}
-            />
-          )}
-        />
-
-        <TextInput
-          className="mb-2 grow"
-          error={
-            errors?.mobileNumber?.number
-              ? errors.mobileNumber?.number.message
-              : ''
-          }
-          {...register('mobileNumber.number')}
-        />
-      </Flex>
       <Text fw={500}>Telephone Number</Text>
 
       <Flex>

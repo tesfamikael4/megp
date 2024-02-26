@@ -43,14 +43,43 @@ const organizationProfileApi = adressApi.injectEndpoints({
         };
       },
     }),
+    activateOrganization: builder.mutation<any, any>({
+      query: (id) => {
+        return {
+          url: `/organizations/activate/${id}`,
+          method: 'PATCH',
+        };
+      },
+      invalidatesTags: ['user'],
+    }),
+
+    readOrganization: builder.query<
+      any,
+      { id: string; collectionQuery: CollectionQuery }
+    >({
+      query: ({ id, collectionQuery }) => {
+        let q = '';
+        if (collectionQuery) {
+          const query = encodeCollectionQuery(collectionQuery);
+          q = `?q=${query}`;
+        }
+        return {
+          url: `organizations/${id}${q}`,
+          method: 'GET',
+        };
+      },
+    }),
   }),
 });
 
 export const {
   useInviteOaMutation,
+  useReadOrganizationQuery,
+  useLazyReadOrganizationQuery,
   useReadQuery,
   useListByIdQuery,
   useLazyListByIdQuery,
   useLazyMandateToAssignQuery,
   useMandateToAssignQuery,
+  useActivateOrganizationMutation,
 } = organizationProfileApi;
