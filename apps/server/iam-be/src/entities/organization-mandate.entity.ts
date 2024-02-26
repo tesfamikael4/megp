@@ -18,10 +18,6 @@ export class OrganizationMandate extends Audit {
   @Column()
   organizationId: string;
 
-  @ManyToOne(
-    () => Organization,
-    (organization) => organization.organizationMandates,
-  )
   @ManyToOne(() => Organization, (org) => org.organizationMandates, {
     orphanedRowAction: 'delete',
     onUpdate: 'RESTRICT',

@@ -93,7 +93,21 @@ export class UserController extends ExtraCrudController<User>(options) {
   @ApiBody({ type: CreateUserDto })
   @AllowAnonymous()
   async createOrganizationAdmin(@Body() itemData: CreateUserDto): Promise<any> {
-    return this.userService.createOrganizationAdmin(itemData);
+    return this.userService.createAdmin(
+      itemData,
+      process.env.ORGANIZATION_ADMINISTRATOR_KEY ??
+        'ORGANIZATION_ADMINISTRATOR',
+    );
+  }
+
+  @Post('create-super-admin')
+  @ApiBody({ type: CreateUserDto })
+  @AllowAnonymous()
+  async createSuperAdmin(@Body() itemData: CreateUserDto): Promise<any> {
+    return this.userService.createAdmin(
+      itemData,
+      process.env.SUPER_ADMINISTRATOR_KEY ?? 'SUPER_ADMINISTRATOR',
+    );
   }
 
   @Post('invite')

@@ -1,6 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   ForbiddenException,
+  HttpException,
   Inject,
   Injectable,
   NotFoundException,
@@ -51,25 +52,33 @@ export class OrganizationService extends EntityCrudService<Organization> {
   async create(
     organizationDto: CreateOrganizationDto,
   ): Promise<Organization | null> {
-    const organization = this.repositoryOrganization.create(organizationDto);
-    organization.code = this.generateOrganizationCode();
-    organization.type = 'BACK-OFFICE';
+    try {
+      const organization = this.repositoryOrganization.create(organizationDto);
+      organization.code = this.generateOrganizationCode();
+      organization.type = 'BACK-OFFICE';
 
-    const unit = new Unit();
-    unit.name = organization.name;
-    unit.description = organization.description;
-    unit.code = organization.code;
+      const unit = new Unit();
+      unit.name = organization.name;
+      unit.description = organization.description;
+      unit.code = organization.code;
 
-    organization.units = [unit];
+      organization.units = [unit];
 
-    organization.roles = defaultOrganizationRoles as Role[];
+      organization.roles = defaultOrganizationRoles as Role[];
 
-    const result = await this.repositoryOrganization.save(organization);
+      const result = await this.repositoryOrganization.save(organization);
 
-    return result;
+      return result;
+    } catch (error) {
+      if (error.code == '23505') {
+        throw new HttpException('organization already exists', 409);
+      }
+
+      throw error;
+    }
   }
 
-  async activate(id: string): Promise<OrganizationResponseDto | null> {
+  async activate(id: string): Promise<Organization | null> {
     const organization = await this.repositoryOrganization.findOne({
       where: { id },
       relations: ['organizationMandates'],
@@ -84,7 +93,7 @@ export class OrganizationService extends EntityCrudService<Organization> {
       status: 'ACTIVE',
     });
 
-    return OrganizationResponseDto.toDto(organization);
+    return organization;
   }
 
   private generateOrganizationCode() {

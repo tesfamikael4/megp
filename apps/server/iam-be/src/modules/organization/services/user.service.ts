@@ -7,7 +7,13 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { User, UserRoleSystem, UserUnit } from '@entities';
+import {
+  Mandate,
+  OrganizationMandate,
+  User,
+  UserRoleSystem,
+  UserUnit,
+} from '@entities';
 import { ExtraCrudService } from 'src/shared/service/extra-crud.service';
 import { CreateUserDto, InviteUserDto, UserResponseDto } from '../dto/user.dto';
 import { AccountsService } from 'src/modules/account/services/account.service';
@@ -26,10 +32,11 @@ export class UserService extends ExtraCrudService<User> {
   constructor(
     @InjectRepository(User)
     private readonly repositoryUser: Repository<User>,
+    @InjectRepository(OrganizationMandate)
+    private readonly repositoryOrganizationMandate: Repository<OrganizationMandate>,
     private readonly accountsService: AccountsService,
     private readonly unitService: UnitService,
     private readonly roleSystemService: RoleSystemService,
-    private readonly mandateService: MandateService,
   ) {
     super(repositoryUser);
   }
@@ -184,15 +191,23 @@ export class UserService extends ExtraCrudService<User> {
     return response;
   }
 
-  async createOrganizationAdmin(itemData: CreateUserDto): Promise<any> {
+  async createAdmin(itemData: CreateUserDto, role: string): Promise<any> {
     if (itemData.email) {
       itemData.email = itemData.email.toLowerCase();
     }
 
-    const mandates = await this.mandateService.findOne(itemData.organizationId);
+    if (
+      role ==
+      (process.env.ORGANIZATION_ADMINISTRATOR_KEY ??
+        'ORGANIZATION_ADMINISTRATOR')
+    ) {
+      const mandates = await this.repositoryOrganizationMandate.findOne({
+        where: { organizationId: itemData.organizationId },
+      });
 
-    if (!mandates) {
-      throw new ForbiddenException(`mandate_not_found`);
+      if (!mandates) {
+        throw new ForbiddenException(`mandate_not_found`);
+      }
     }
 
     const account = await this.getOrCreateAccount(itemData);
@@ -208,8 +223,7 @@ export class UserService extends ExtraCrudService<User> {
       item.userUnits = [userUnit];
     }
 
-    const roleSystem =
-      await this.roleSystemService.getOrganizationAdministratorRole();
+    const roleSystem = await this.roleSystemService.getAdminRole(role);
 
     if (roleSystem) {
       const userRoleSystem = new UserRoleSystem();
