@@ -70,7 +70,7 @@ export function UserProfileForm() {
       await create({
         userId: id.toString(),
         extendedProfile: data,
-      });
+      }).unwrap();
       notify('Success', 'User profile updated successfully');
       setMode('detail');
     } catch (err) {
@@ -83,7 +83,7 @@ export function UserProfileForm() {
         id: id.toString(),
         userId: id.toString(),
         extendedProfile: data,
-      });
+      }).unwrap();
       notify('Success', 'User profile updated successfully');
     } catch {
       notify('Error', 'Errors in updating user profile.');

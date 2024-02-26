@@ -95,7 +95,7 @@ export function FormDetail({ mode }: FormDetailProps) {
 
   const onUpdate = async (data) => {
     try {
-      await update({ ...data, id: id?.toString() });
+      await update({ ...data, id: id?.toString() }).unwrap();
       notify('Success', 'Organization updated successfully');
     } catch {
       notify('Error', 'Error in updating organization');
@@ -103,7 +103,7 @@ export function FormDetail({ mode }: FormDetailProps) {
   };
   const onDelete = async () => {
     try {
-      await remove(id?.toString());
+      await remove(id?.toString()).unwrap();
       notify('Success', 'Organization  deleted successfully');
       router.push('/organizations');
     } catch {

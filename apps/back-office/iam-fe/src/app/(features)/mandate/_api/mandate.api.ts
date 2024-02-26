@@ -11,6 +11,7 @@ export const myMandateSliceApi: typeof EntitySliceApi =
 export const {
   useListQuery,
   useReadQuery,
+  useLazyReadQuery,
   useCreateMutation,
   useUpdateMutation,
   useDeleteMutation,

@@ -55,7 +55,7 @@ export function FormDetail({ mode }: FormDetailProps) {
 
   const onCreate = async (data) => {
     try {
-      const result = await create(data);
+      const result = await create(data).unwrap();
       if ('data' in result) {
         router.push(`/organization-type/${result?.data?.id}`);
       }
@@ -66,7 +66,7 @@ export function FormDetail({ mode }: FormDetailProps) {
   };
   const onUpdate = async (data) => {
     try {
-      await update({ ...data, id: id?.toString() });
+      await update({ ...data, id: id?.toString() }).unwrap();
       notify('Success', 'Organization Type updated successfully');
     } catch {
       notify('Error', 'Errors in updating organization Type.');

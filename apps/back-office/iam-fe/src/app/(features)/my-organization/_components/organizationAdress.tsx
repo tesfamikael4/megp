@@ -189,7 +189,7 @@ const OrganizationAdressForm = () => {
     };
 
     try {
-      await create(dataSent);
+      await create(dataSent).unwrap();
       notify('Success', 'Organization address created successfully');
     } catch (err) {
       notify('Error', 'Errors in creating organization address');
@@ -205,7 +205,7 @@ const OrganizationAdressForm = () => {
     };
 
     try {
-      await update(dataSent);
+      await update(dataSent).unwrap();
       notify('Success', 'Organization address updated successfully');
     } catch (err) {
       notify('Error', 'Errors in creating organization address');

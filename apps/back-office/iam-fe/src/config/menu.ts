@@ -1,5 +1,5 @@
 import { MenuItem } from '@megp/core-fe';
-import { IconDeviceAnalytics, IconLoadBalancer } from '@tabler/icons-react';
+import { IconDeviceAnalytics } from '@tabler/icons-react';
 import {
   IconAdjustmentsHorizontal,
   IconApps,
@@ -71,7 +71,7 @@ export const Menu: MenuItem[] = [
   {
     label: 'Report & Analytics',
     icon: IconChartInfographic,
-    link: '/reports',
+    link: '/dashboard',
   },
   {
     label: 'Archive',

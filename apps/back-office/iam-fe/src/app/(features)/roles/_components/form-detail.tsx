@@ -74,7 +74,7 @@ export function FormDetail({ mode }: FormDetailProps) {
         id: id?.toString(),
         isSystemRole: false,
         organizationId: `${organizationId}`,
-      });
+      }).unwrap();
       notify('Success', 'Role updated successfully');
     } catch {
       notify('Error', 'Errors in updating Role.');

@@ -65,7 +65,7 @@ export function FormDetail({ mode }: FormDetailProps) {
   };
   const onUpdate = async (data) => {
     try {
-      await update({ ...data, id: id?.toString() });
+      await update({ ...data, id: id?.toString() }).unwrap();
       notify('Success', 'Organization Sector updated successfully');
     } catch {
       notify('Error', 'Errors in updating organization Sector.');
