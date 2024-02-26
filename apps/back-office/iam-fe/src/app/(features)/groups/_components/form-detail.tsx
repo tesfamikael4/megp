@@ -75,7 +75,7 @@ export function FormDetail({ mode }: FormDetailProps) {
         ...data,
         id: id?.toString(),
         organizationId: organizationId,
-      });
+      }).unwrap();
       notify('Success', 'Group updated successfully');
     } catch {
       notify('Error', 'Errors in updating group.');

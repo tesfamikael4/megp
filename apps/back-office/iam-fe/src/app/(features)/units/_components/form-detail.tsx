@@ -15,6 +15,7 @@ import {
   useUpdateMutation,
   useCreateMutation,
   useListByIdQuery,
+  useLazyListByIdQuery,
 } from '../_api/unit.api';
 import { useListByIdQuery as useUnitTypeListQuery } from '../../unit-type/_api/unit-type.api';
 import { memo, useEffect, useState } from 'react';
@@ -72,10 +73,7 @@ export function FormDetail({ mode }: FormDetailProps) {
   const [update, { isLoading: isUpdating }] = useUpdateMutation();
   const [remove, { isLoading: isDeleting }] = useDeleteMutation();
   const [activation, { isLoading: isActivating }] = useUpdateMutation();
-  const { data: list, isSuccess } = useListByIdQuery({
-    id: organizationId,
-    collectionQuery: undefined,
-  });
+  const [getListById, { data: list, isSuccess }] = useLazyListByIdQuery();
 
   const {
     data: selected,
@@ -89,8 +87,15 @@ export function FormDetail({ mode }: FormDetailProps) {
   });
 
   useEffect(() => {
+    getListById({
+      id: organizationId,
+      collectionQuery: undefined,
+    });
+  }, [organizationId]);
+
+  useEffect(() => {
     if (isSuccess) {
-      setParent(list?.items?.filter((unit) => unit.parentId === null));
+      setParent(list?.items?.filter((unit) => unit.parentId === null) ?? []);
     }
   }, [isSuccess, list?.items]);
 
@@ -99,9 +104,9 @@ export function FormDetail({ mode }: FormDetailProps) {
       const posibleParent = list?.items?.filter((u: Unit) => {
         return u.id !== id && selected?.parentId !== id;
       });
-      setParents(posibleParent);
+      setParents(posibleParent ?? []);
     } else if (isSuccess) {
-      setParents(list.items);
+      setParents(list?.items ?? []);
     }
   }, [id, isSuccess, list?.items, mode, selected?.parentId, selectedSuccess]);
 
@@ -126,7 +131,7 @@ export function FormDetail({ mode }: FormDetailProps) {
         ...data,
         id: id?.toString(),
         organizationId: organizationId,
-      });
+      }).unwrap();
       notify('Success', 'Unit updated successfully');
     } catch {
       notify('Error', 'Error in updating unit');
@@ -134,7 +139,7 @@ export function FormDetail({ mode }: FormDetailProps) {
   };
   const onDelete = async () => {
     try {
-      await remove(id?.toString());
+      await remove(id?.toString()).unwrap();
       notify('Success', 'Unit deleted successfully');
 
       router.push('/units');
@@ -150,15 +155,15 @@ export function FormDetail({ mode }: FormDetailProps) {
     };
 
     try {
-      await activation({ ...dataSent, id: id?.toString() });
+      await activation({ ...dataSent, id: id?.toString() }).unwrap();
       notify(
         'Success',
-        `Unit ${selected?.isActive ? 'Deactivated' : 'Activated'} successfully`,
+        `Unit ${selected?.status ? 'Deactivated' : 'Activated'} successfully`,
       );
     } catch {
       notify(
         'Error',
-        `Error in ${selected?.isActive ? 'Deactivating' : 'Activating'}  Unit`,
+        `Error in ${selected?.status ? 'Deactivating' : 'Activating'}  Unit`,
       );
     }
   };
@@ -294,7 +299,7 @@ export function FormDetail({ mode }: FormDetailProps) {
 
         <div className="flex-shrink-0 mt-6 ">
           <ParentModal
-            data={list ? list.items : []}
+            data={[]}
             parentUnitId={parentUnitId}
             setParentUnitId={setParentUnitId}
           />

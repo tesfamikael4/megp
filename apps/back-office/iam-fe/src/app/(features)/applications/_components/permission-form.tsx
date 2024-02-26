@@ -75,7 +75,7 @@ export function PermissionForm({
         applicationId: id?.toString(),
         applicationName: selectedApp?.name,
         applicationKey: selectedApp?.key,
-      });
+      }).unwrap();
 
       notify('Success', 'Permission created successfully');
       handleCloseModal();
@@ -89,7 +89,7 @@ export function PermissionForm({
       await update({
         ...data,
         id: unitId,
-      });
+      }).unwrap();
 
       notify('Success', 'Permission updated successfully');
       handleCloseModal();

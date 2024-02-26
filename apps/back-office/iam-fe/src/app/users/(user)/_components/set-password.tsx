@@ -67,7 +67,7 @@ export default function SetPassWord({ mode }: Mode) {
         isOtp: false,
         verificationId: id,
         otp: otp,
-      });
+      }).unwrap();
 
       notify('Success', 'Password set successfully');
       router.push(`/auth/login`);

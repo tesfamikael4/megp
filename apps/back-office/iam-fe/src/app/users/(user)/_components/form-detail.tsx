@@ -28,10 +28,12 @@ const defaultValues = {
 const userSchema: ZodType<Partial<User>> = z.object({
   firstName: z.string().min(1, { message: 'First Name is required' }),
   lastName: z.string().min(1, { message: 'Last Name is required' }),
-  email: z.union([
-    z.literal(''),
-    z.string().email({ message: 'Email must be a valid email.' }),
-  ]),
+  email: z
+    .string()
+    .email({ message: 'Must be a valid email' })
+    .optional()
+    .nullable()
+    .or(z.literal('')),
 });
 
 export function FormDetail({ mode }: FormDetailProps) {
@@ -84,7 +86,7 @@ export function FormDetail({ mode }: FormDetailProps) {
         email: data.email === '' ? null : data.email,
 
         id: id?.toString(),
-      });
+      }).unwrap();
       notify('Success', 'User updated successfully');
     } catch {
       notify('Error', 'Error in updating user');
@@ -92,7 +94,7 @@ export function FormDetail({ mode }: FormDetailProps) {
   };
   const onDelete = async () => {
     try {
-      await remove(id?.toString());
+      await remove(id?.toString()).unwrap();
       notify('Success', 'User deleted successfully');
       router.push('/users');
     } catch {
@@ -104,7 +106,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       status: selected?.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE',
     };
     try {
-      await activation({ ...dataSent, id: id?.toString() });
+      await activation({ ...dataSent, id: id?.toString() }).unwrap();
       notify(
         'Success',
         `User ${
@@ -138,6 +140,7 @@ export function FormDetail({ mode }: FormDetailProps) {
     <Stack pos="relative">
       <LoadingOverlay visible={isLoading} />
       <TextInput
+        withAsterisk
         label="First Name"
         error={errors?.firstName ? errors?.firstName?.message?.toString() : ''}
         {...register('firstName')}

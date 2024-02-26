@@ -63,10 +63,14 @@ export function Entity({ children }: { children: React.ReactNode }) {
     pathname === `/mandate`
       ? 'list'
       : pathname === `/mandate/new`
-      ? 'new'
-      : 'detail';
+        ? 'new'
+        : 'detail';
 
   const onRequestChange = (request: CollectionQuery) => {
+    request.includes = [
+      'organizationMandates',
+      'organizationMandates.organization',
+    ];
     trigger(request);
   };
 
