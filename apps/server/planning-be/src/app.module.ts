@@ -9,6 +9,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TransactionInterceptor } from './shared/interceptors';
 import { TenantInterceptor } from './shared/interceptors/tenant-interceptor';
 import { UtilityModule } from './modules/utility/utility.module';
+import { MinIOModule } from './shared/min-io/min-io.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { UtilityModule } from './modules/utility/utility.module';
     ConfigModule.forRoot({ isGlobal: true }),
     AuthorizationModule,
     APPModule,
+    MinIOModule,
     UtilityModule,
     EventEmitterModule.forRoot({
       // set this to `true` to use wildcards

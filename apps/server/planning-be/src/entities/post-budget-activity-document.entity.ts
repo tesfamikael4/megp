@@ -26,17 +26,8 @@ export class PostBudgetActivityDocument extends OrgAudit {
   public postBudgetPlanActivity: PostBudgetPlanActivity;
 
   @Column()
-  fileName: string;
+  title: string;
 
-  @Column()
-  fileType: string;
-
-  @Column()
-  bucketName: string;
-
-  @Column()
-  originalName: string;
-
-  @Column()
-  path: string;
+  @Column({ type: 'jsonb' })
+  fileInfo: any;
 }

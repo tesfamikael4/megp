@@ -78,7 +78,7 @@ export class PreBudgetPlanTimelineService extends ExtraCrudService<PreBudgetPlan
         new Date(ordered[0].dueDate).getTime() < budgetPlanStartDate.getTime()
       )
         throw new HttpException(
-          'Start date must be greater than budget plan end date',
+          'Start date must be greater than budget plan start date',
           430,
         );
 
