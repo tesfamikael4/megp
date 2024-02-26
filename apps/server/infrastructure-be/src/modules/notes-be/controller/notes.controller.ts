@@ -27,6 +27,7 @@ export class NotesController extends EntityCrudController<Notes>(options) {
     itemData.metaData = {
       userId: user.id,
       fullName: `${user.firstName} ${user.lastName}`,
+      ...itemData.metaData,
     };
     return this.notesService.create(itemData);
   }
