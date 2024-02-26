@@ -1,7 +1,13 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { Inject, Injectable, NotFoundException, Scope } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Inject,
+  Injectable,
+  NotFoundException,
+  Scope,
+} from '@nestjs/common';
 import { EntityManager, Repository } from 'typeorm';
-import { Organization, Role, Unit, User } from '@entities';
+import { Mandate, Organization, Role, Unit, User } from '@entities';
 import {
   CreateOrganizationDto,
   OrganizationResponseDto,
@@ -64,7 +70,15 @@ export class OrganizationService extends EntityCrudService<Organization> {
   }
 
   async activate(id: string): Promise<OrganizationResponseDto | null> {
-    const organization = await this.find(id);
+    const organization = await this.repositoryOrganization.findOne({
+      where: { id },
+      relations: ['organizationMandates'],
+      select: ['id'],
+    });
+
+    if (organization.organizationMandates.length === 0) {
+      throw new ForbiddenException(`no_mandate_found`);
+    }
 
     await this.repositoryOrganization.update(id, {
       status: 'ACTIVE',

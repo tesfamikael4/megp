@@ -21,7 +21,7 @@ export class Organization extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ unique: true })
   name: string;
 
   @Column({ unique: true })
@@ -62,8 +62,6 @@ export class Organization extends Audit {
 
   @ManyToOne(() => OrganizationType, (type) => type.organizations, {
     orphanedRowAction: 'delete',
-    onUpdate: 'CASCADE',
-    onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'typeId' })
   public organizationType: OrganizationType;

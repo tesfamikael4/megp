@@ -62,4 +62,9 @@ export class OrganizationController extends EntityCrudController<Organization>(
     console.log(updateDto);
     return await this.organizationService.setAddress(id, updateDto);
   }
+
+  @Patch('activate/:id')
+  async activate(@Param('id') id: string) {
+    return await this.organizationService.activate(id);
+  }
 }

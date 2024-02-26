@@ -22,5 +22,6 @@ import { MandatePermissionService } from './services/mandate-permission.service'
     OrganizationMandateController,
     MandatePermissionController,
   ],
+  exports: [MandateService],
 })
 export class MandateModule {}
