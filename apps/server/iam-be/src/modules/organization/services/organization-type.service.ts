@@ -1,7 +1,11 @@
 import { EntityCrudService } from 'src/shared/service/entity-crud.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { DataResponseFormat } from 'src/shared/api-data';
 import { OrganizationType } from '@entities';
 import { QueryConstructor, CollectionQuery } from 'src/shared/collection-query';
@@ -35,5 +39,20 @@ export class OrganizationTypeService extends EntityCrudService<OrganizationType>
         error,
       );
     }
+  }
+
+  async softDelete(id: string, req?: any): Promise<void> {
+    const organizationType = await this.groupRepository.findOne({
+      where: { id },
+      relations: {
+        organizations: true,
+      },
+    });
+    if (!organizationType) throw new NotFoundException(`not_found`);
+
+    if (organizationType.organizations.length > 0)
+      throw new ForbiddenException(`cant_delete`);
+
+    await this.groupRepository.softDelete(id);
   }
 }

@@ -8,14 +8,18 @@ export class OrganizationType extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ unique: true })
   name: string;
 
   @Column({ nullable: true })
   description: string;
 
-  @OneToMany(() => Organization, (organization) => organization.type, {
-    cascade: true,
-  })
+  @OneToMany(
+    () => Organization,
+    (organization) => organization.organizationType,
+    {
+      cascade: true,
+    },
+  )
   organizations: Organization[];
 }

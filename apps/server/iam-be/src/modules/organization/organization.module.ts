@@ -11,6 +11,7 @@ import {
   UserUnit,
   UserProfile,
   UserRole,
+  Mandate,
 } from '@entities';
 import { OrganizationService } from './services/organization.service';
 import { OrganizationTypeController } from './controllers/organization-type.controller';
@@ -29,6 +30,7 @@ import { UserProfileController } from './controllers/user-profile.controller';
 import { UserRoleController } from '../role/controllers/user-role.controller';
 import { AccountModule } from '../account/account.module';
 import { RoleSystemModule } from '../role-system/role-system.module';
+import { MandateService } from '../mandate/services/mandate.service';
 
 @Module({
   imports: [
@@ -42,6 +44,7 @@ import { RoleSystemModule } from '../role-system/role-system.module';
       UserUnit,
       UserProfile,
       UserRole,
+      Mandate,
     ]),
     AccountModule,
     RoleSystemModule,
@@ -55,6 +58,7 @@ import { RoleSystemModule } from '../role-system/role-system.module';
     UserUnitService,
     UserProfileService,
     UserRoleService,
+    MandateService,
   ],
   controllers: [
     OrganizationController,

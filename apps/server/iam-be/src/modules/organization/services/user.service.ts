@@ -1,6 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   BadRequestException,
+  ForbiddenException,
   HttpException,
   HttpStatus,
   Injectable,
@@ -18,6 +19,7 @@ import {
   QueryConstructor,
 } from 'src/shared/collection-query';
 import { DataResponseFormat } from 'src/shared/api-data';
+import { MandateService } from 'src/modules/mandate/services/mandate.service';
 
 @Injectable()
 export class UserService extends ExtraCrudService<User> {
@@ -27,6 +29,7 @@ export class UserService extends ExtraCrudService<User> {
     private readonly accountsService: AccountsService,
     private readonly unitService: UnitService,
     private readonly roleSystemService: RoleSystemService,
+    private readonly mandateService: MandateService,
   ) {
     super(repositoryUser);
   }
@@ -184,6 +187,12 @@ export class UserService extends ExtraCrudService<User> {
   async createOrganizationAdmin(itemData: CreateUserDto): Promise<any> {
     if (itemData.email) {
       itemData.email = itemData.email.toLowerCase();
+    }
+
+    const mandates = await this.mandateService.findOne(itemData.organizationId);
+
+    if (!mandates) {
+      throw new ForbiddenException(`mandate_not_found`);
     }
 
     const account = await this.getOrCreateAccount(itemData);
