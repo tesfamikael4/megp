@@ -25,7 +25,7 @@ export class CreatePTDto {
   // certificate: Express.Multer.File;
   // @ApiProperty()
   // @IsOptional()
-  // otherDocuments: Express.Multer.File[];
+  // additionalDocuments: any[];
   /**
    * Transfer Data from DTO object to Entity object
    *

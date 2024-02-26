@@ -149,10 +149,10 @@ export class ReportService {
       ServiceKeyEnum.upgrade,
     );
     dashboard.renewals = await this.countUpgradesOrRenewals(
-      ServiceKeyEnum.renewal,
+      ServiceKeyEnum.RENEWAL,
     );
     const preferentials = await this.countPreferentials(
-      ServiceKeyEnum.preferential,
+      ServiceKeyEnum.PREFERENCTIAL,
     );
     const dashbordwhole = {
       ...dashboard,

@@ -111,22 +111,21 @@ export class ApplicationExcutionService {
     }
     const response = WorkflowInstanceResponse.toResponse(instance);
     delete response.businessProcess;
-    const priceRangeIds = instance.isrVendor?.areasOfBusinessInterest.map(
-      (item: any) => item.priceRange,
-    );
-    let priceRanges = [];
-    if (priceRangeIds.length > 0) {
-      priceRanges =
-        await this.pricingService.findPriceRangeByIds(priceRangeIds);
+    const bas = instance.isrVendor?.businessAreas;
+    if (bas.length > 0) {
       const businessInterest = [];
-      for (const range of priceRanges) {
-        const formattedBC = this.commonService.formatPriceRange(range);
-        const bia = instance.isrVendor?.areasOfBusinessInterest.find((item: any) => item.priceRange == range.id);
-        const lobs = bia.lineOfBusiness.map((item: any) => {
-          return item.name;
-        });
-        const category = this.commonService.capitalizeFirstLetter(bia.category);
-        businessInterest.push({ category: category, priceRange: formattedBC, lineOfBusiness: lobs, })
+      for (const range of bas) {
+        const price = range?.servicePrice;
+        if (price) {
+          const formattedBC = this.commonService.formatPriceRange(price);
+          const bia = instance.isrVendor?.areasOfBusinessInterest.find((item: any) => item.category == range.category);
+          const lobs = bia.lineOfBusiness.map((item: any) => {
+            return item.name;
+          });
+          const category = this.commonService.capitalizeFirstLetter(bia.category);
+          businessInterest.push({ category: category, priceRange: formattedBC, lineOfBusiness: lobs, })
+          response.isrvendor.basic.status = range.status == ApplicationStatus.PENDING ? ApplicationStatus.INPROGRESS : range.status;
+        }
       }
       response.isrvendor.areasOfBusinessInterest = businessInterest;
     }
@@ -171,7 +170,7 @@ export class ApplicationExcutionService {
       }
     }
     const serviceKey = appData.service.key;
-    const renewalServices = this.commonService.getServiceCatagoryKeys(ServiceKeyEnum.renewal)
+    const renewalServices = this.commonService.getServiceCatagoryKeys(ServiceKeyEnum.RENEWAL)
     const upgradeServices = this.commonService.getServiceCatagoryKeys(ServiceKeyEnum.upgrade)
     const renewalServiceTypes = renewalServices.filter(
       (item) => item == serviceKey,
@@ -189,8 +188,9 @@ export class ApplicationExcutionService {
         expireDate: business.expireDate,
       };
       response.isrvendor.businessAreas = null;
-      const reciept = await this.invoiceService.getServiceReceipt(instance.userId, instance.serviceId);
-      response.renewalPaymentReceipt = reciept.attachmentUrl;
+      const invoice = await this.invoiceService.getServiceReceipt(instance.userId, instance.serviceId);
+      response.invoice = { ...invoice };
+      response.isrvendor.paymentReceipt = { attachment: invoice.attachmentUrl, transactionNumber: invoice?.remark }
       return response;
     } else if (upgradeServicesTypes.length > 0) {
       const business: BusinessAreaEntity = instance.isrVendor.businessAreas[0];
@@ -208,17 +208,16 @@ export class ApplicationExcutionService {
           instance.serviceId,
         );
       const formattedproposedClass = this.commonService.formatPriceRange(proposedBusinessclass.servicePrice);
-      const reciept = await this.invoiceService.getServiceReceipt(instance.userId, instance.serviceId);
+      const invoice = await this.invoiceService.getServiceReceipt(instance.userId, instance.serviceId);
       response.upgrade = {
         category: previousBusinessClass.category,
         approvedAt: previousBusinessClass.approvedAt,
         expireDate: previousBusinessClass.expireDate,
         PreviousePriceRange: formattedPreviousClass,
-        //newCategory: proposedBusinessclass.category,
         ProposedPriceRange: formattedproposedClass,
       };
-      response.upgradePaymentReceipt = reciept.attachmentUrl;
-      // response.invoice = [];
+      response.invoice = { ...invoice };
+      response.isrvendor.paymentReceipt = { attachment: invoice.attachmentUrl, transactionNumber: invoice?.remark }
 
     }
     response.isrvendor.businessAreas = null;

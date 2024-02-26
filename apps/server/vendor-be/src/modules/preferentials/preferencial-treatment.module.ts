@@ -21,4 +21,4 @@ import { ServiceModule } from '../services/service.module';
   providers: [PreferentailTreatmentService],
   controllers: [PreferentailTreatmentsController],
 })
-export class PreferentialTreatmentModule {}
+export class PreferentialTreatmentModule { }
