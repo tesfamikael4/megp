@@ -44,7 +44,7 @@ import { MandateService } from '../mandate/services/mandate.service';
       UserUnit,
       UserProfile,
       UserRole,
-      Mandate,
+      OrganizationMandate,
     ]),
     AccountModule,
     RoleSystemModule,
@@ -58,7 +58,6 @@ import { MandateService } from '../mandate/services/mandate.service';
     UserUnitService,
     UserProfileService,
     UserRoleService,
-    MandateService,
   ],
   controllers: [
     OrganizationController,

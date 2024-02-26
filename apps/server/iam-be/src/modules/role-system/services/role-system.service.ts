@@ -40,17 +40,11 @@ export class RoleSystemService extends EntityCrudService<RoleSystem> {
     return response;
   }
 
-  async getOrganizationAdministratorRole() {
-    const ORGANIZATION_ADMINISTRATOR_KEY =
-      process.env.ORGANIZATION_ADMINISTRATOR_KEY ??
-      'ORGANIZATION_ADMINISTRATOR';
-
-    const result = await this.repositoryRole.findOne({
+  async getAdminRole(adminKey: string) {
+    return await this.repositoryRole.findOne({
       where: {
-        key: ORGANIZATION_ADMINISTRATOR_KEY,
+        key: adminKey,
       },
     });
-
-    return result;
   }
 }
