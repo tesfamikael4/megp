@@ -37,6 +37,7 @@ import { PreBudgetActivityDocumentController } from './controllers/pre-budget-ac
 import { PreBudgetActivityDocumentService } from './services/pre-budget-activity-documents.service';
 import { MinioModule } from 'nestjs-minio-client';
 import { UtilityModule } from '../utility/utility.module';
+import { MinIOModule } from 'src/shared/min-io/min-io.module';
 
 dotenv.config({ path: '.env' });
 
@@ -68,6 +69,7 @@ dotenv.config({ path: '.env' });
       },
     ]),
     PostModule,
+    MinIOModule,
     UtilityModule,
     MinioModule.register({
       endPoint: process.env.MINIO_ENDPOINT ?? 'files.megp.peragosystems.com',

@@ -53,13 +53,12 @@ export class PostBudgetActivityDocumentController extends ExtraCrudController<Po
 
   @Get('preview/:id')
   async preview(@Param('id') id: string, @Res() res) {
-    const fileInfo = await this.postBudgetActivityDocumentService.findOne(id);
-    const result =
-      await this.postBudgetActivityDocumentService.download(fileInfo);
-    res.setHeader('Content-Type', fileInfo.fileType);
+    const file = await this.postBudgetActivityDocumentService.findOne(id);
+    const result = await this.postBudgetActivityDocumentService.download(file);
+    res.setHeader('Content-Type', file.fileInfo.fileType);
     res.setHeader(
       'Content-Disposition',
-      `attachment; filename=${fileInfo.path}`,
+      `attachment; filename=${file.fileInfo.path}`,
     );
     result.pipe(res);
 

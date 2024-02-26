@@ -2,8 +2,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { ExtraCrudService } from 'src/shared/service';
-import { MinioService } from 'nestjs-minio-client';
 import { PostBudgetActivityDocument } from 'src/entities/post-budget-activity-document.entity';
+import { MinIOService } from 'src/shared/min-io/min-io.service';
+import { MinioService } from 'nestjs-minio-client';
 
 @Injectable()
 export class PostBudgetActivityDocumentService extends ExtraCrudService<PostBudgetActivityDocument> {
@@ -11,22 +12,28 @@ export class PostBudgetActivityDocumentService extends ExtraCrudService<PostBudg
     @InjectRepository(PostBudgetActivityDocument)
     private readonly repositoryPostBudgetActivityDocument: Repository<PostBudgetActivityDocument>,
 
-    private readonly minioService: MinioService,
+    private readonly minioService: MinIOService,
+    private readonly minioClientService: MinioService,
   ) {
     super(repositoryPostBudgetActivityDocument);
   }
 
   async listAllBuckets(): Promise<any> {
-    const buckets = await this.minioService.client.listBuckets();
+    const buckets = await this.minioClientService.client.listBuckets();
     return buckets;
   }
 
   async upload(file): Promise<any> {
     const bucketName = 'megp';
     const name = String(Date.now());
-    await this.minioService.client.putObject(bucketName, name, file.buffer, {
-      test: 'test',
-    });
+    await this.minioClientService.client.putObject(
+      bucketName,
+      name,
+      file.buffer,
+      {
+        test: 'test',
+      },
+    );
     return {
       filepath: name,
       bucketName,
@@ -36,39 +43,35 @@ export class PostBudgetActivityDocumentService extends ExtraCrudService<PostBudg
   }
 
   async download(fileInfo) {
-    return this.minioService.client.getObject(
+    return this.minioClientService.client.getObject(
       fileInfo.bucketName,
       fileInfo.path,
     );
   }
 
   async generatePresignedGetUrl(fileInfo): Promise<string> {
-    const postsignedUrl = await this.minioService.client.presignedGetObject(
-      fileInfo.bucketName,
-      fileInfo.path,
-      120,
-    );
-    return postsignedUrl;
+    const presignedUrl = await this.minioService.generatePresignedDownloadUrl({
+      bucketName: fileInfo.bucketName,
+      filepath: fileInfo.name,
+    });
+    return presignedUrl;
   }
 
   async generatePresignedPutUrl(fileInfo): Promise<string> {
-    fileInfo.bucketName = 'megp';
-    const name = String(Date.now());
-    const presignedUrl = await this.minioService.client.presignedPutObject(
-      fileInfo.bucketName,
-      name,
-      120,
-    );
-    const doc = await this.repositoryPostBudgetActivityDocument.create({
+    const presignedUrl = await this.minioService.generatePresignedUploadUrl({
       bucketName: fileInfo.bucketName,
-      fileName: fileInfo.name,
-      path: name,
-      originalName: fileInfo.originalname,
-      fileType: fileInfo.contentType,
+      contentType: fileInfo.contentType,
+      originalname: fileInfo.originalname,
+    });
+
+    const doc = await this.repositoryPostBudgetActivityDocument.create({
+      title: fileInfo.name,
       postBudgetPlanActivityId: fileInfo.postBudgetPlanActivityId,
       organizationId: fileInfo.organizationId,
+      fileInfo: presignedUrl.file,
     });
+
     await this.repositoryPostBudgetActivityDocument.insert(doc);
-    return presignedUrl;
+    return presignedUrl.presignedUrl;
   }
 }
