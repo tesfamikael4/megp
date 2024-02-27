@@ -20,6 +20,6 @@ export interface OrganizationProfile {
     countyCode?: string;
     number?: string;
   };
-  email?: string;
+  email?: string | null;
   postalCode?: string;
 }

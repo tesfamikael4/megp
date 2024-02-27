@@ -3,12 +3,12 @@ import { EntityButton } from '@megp/entity';
 import { z, ZodType } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import { useReadQuery, useUpdateMutation } from '../../../users/_api/user.api';
 import {
-  useReadQuery,
-  useDeleteMutation,
-  useUpdateMutation,
-  useCreateMutation,
-} from '../../_api/user.api';
+  useCreateSuperUserMutation,
+  useUpdateSuperUserMutation,
+  useDeleteSuperUserMutation,
+} from '../../_api/custom.api';
 import { useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { User } from '@/models/user/user';
@@ -49,10 +49,10 @@ export function FormDetail({ mode }: FormDetailProps) {
   const { id } = useParams();
   const { organizationId } = useAuth();
 
-  const [create, { isLoading: isSaving }] = useCreateMutation();
-  const [update, { isLoading: isUpdating }] = useUpdateMutation();
+  const [create, { isLoading: isSaving }] = useCreateSuperUserMutation();
+  const [update, { isLoading: isUpdating }] = useUpdateSuperUserMutation();
   const [activation, { isLoading: isActivating }] = useUpdateMutation();
-  const [remove, { isLoading: isDeleting }] = useDeleteMutation();
+  const [remove, { isLoading: isDeleting }] = useDeleteSuperUserMutation();
   const {
     data: selected,
     isSuccess: selectedSuccess,
@@ -67,9 +67,9 @@ export function FormDetail({ mode }: FormDetailProps) {
         email: data.email === '' ? null : data.email,
         fullName: `${data.firstName} ${data.lastName}`,
         organizationId: organizationId,
-      });
+      }).unwrap();
       if ('data' in result) {
-        router.push(`/users/${result.data.id}`);
+        router.push(`/super-user/${result.data.id}`);
       }
       notify('Success', 'User created successfully');
       result?.error?.data?.message === 'account_exists' &&
@@ -95,7 +95,7 @@ export function FormDetail({ mode }: FormDetailProps) {
     try {
       await remove(id?.toString()).unwrap();
       notify('Success', 'User deleted successfully');
-      router.push('/users');
+      router.push('/super-user');
     } catch {
       notify('Error', 'Error in deleting user');
     }

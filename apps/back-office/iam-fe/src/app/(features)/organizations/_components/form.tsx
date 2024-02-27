@@ -57,13 +57,14 @@ export function FormDetail({ mode, handleCloseModal }: FormDetailProps) {
         email: data.email === '' ? null : data.email,
         fullName: `${data.firstName} ${data.lastName}`,
         organizationId: id?.toString(),
-      });
+      }).unwrap();
 
       notify('Success', 'User created successfully');
       result?.error?.data?.message === 'account_exists' &&
         notify('Error', 'Account already exist');
       handleCloseModal ? handleCloseModal() : null;
     } catch (err) {
+      logger.log(err);
       notify('Error', 'Error in creating user');
     }
   };

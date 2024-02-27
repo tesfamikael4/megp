@@ -3,7 +3,7 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 
 export const invitationApi = createApi({
   reducerPath: 'invitation',
-  tagTypes: ['invitation'],
+  tagTypes: ['invitation', 'users'],
   baseQuery: baseQuery(process.env.NEXT_PUBLIC_IAM_API ?? '/'),
   endpoints: () => ({}),
 });

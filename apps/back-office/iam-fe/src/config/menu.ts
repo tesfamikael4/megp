@@ -45,6 +45,13 @@ export const Menu: MenuItem[] = [
   },
   { label: 'Users', icon: IconUsers, link: '/users', permission: ['iam:user'] },
   {
+    label: 'Users',
+    icon: IconUsers,
+    link: '/super-user',
+    permission: ['iam:organization'],
+  },
+
+  {
     label: 'Groups',
     icon: IconUsersGroup,
     link: '/groups',
@@ -57,7 +64,7 @@ export const Menu: MenuItem[] = [
     permission: ['iam:unit'],
   },
   {
-    label: 'Roles',
+    label: 'Custom Roles',
     icon: IconLockSquareRounded,
     link: '/roles',
     permission: ['iam:role'],
@@ -82,7 +89,11 @@ export const Menu: MenuItem[] = [
         link: '/archived/organization',
         permission: ['iam:organization'],
       },
-      { label: 'Users', link: '/archived/users', permission: ['iam:user'] },
+      {
+        label: 'Users',
+        link: '/archived/users',
+        permission: ['iam:user', 'iam:organization'],
+      },
       { label: 'Unit', link: '/archived/units', permission: ['iam:unit'] },
       { label: 'Group', link: '/archived/group', permission: ['iam:group'] },
       { label: 'Role', link: '/archived/roles', permission: ['iam:role'] },
