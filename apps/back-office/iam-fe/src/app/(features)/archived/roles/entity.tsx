@@ -50,7 +50,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
 
         {
           id: 'action',
-          header: 'Action',
+          header: () => <p className="ml-auto">Action</p>,
           accessorKey: 'action',
           cell: (info) => <Restore original={info.row.original} />,
         },

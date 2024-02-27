@@ -7,6 +7,7 @@ export interface User {
   status: string;
   isActive: boolean | string;
   organizationId: string;
+  account: any;
 
   fullName: string;
 }

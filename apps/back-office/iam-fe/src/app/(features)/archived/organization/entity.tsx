@@ -54,7 +54,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
         },
         {
           id: 'isActive',
-          header: 'Active',
+          header: () => <p className="ml-auto">Action</p>,
           accessorKey: 'isActive',
           cell: (info) => info.getValue(),
         },
