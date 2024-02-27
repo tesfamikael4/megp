@@ -15,7 +15,6 @@ import { IconArrowLeft } from '@tabler/icons-react';
 import ProgressBar from './progressBar';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { ApplicationInfo } from '@/models/vendorRegistration';
-import { locale } from 'dayjs';
 
 const callbackURL = (key: string) => {
   if (key == 'GoodsNewRegistration' || key == 'ServicesNewRegistration') {
@@ -25,7 +24,10 @@ const callbackURL = (key: string) => {
     return 'profile-update';
   }
   if (key == 'Medium' || key == 'Small' || key == ' MIrc') {
-    return 'preferential-treatment';
+    return 'msme';
+  }
+  if (key == 'ibm') {
+    return 'ibm';
   }
 };
 
