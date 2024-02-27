@@ -40,8 +40,9 @@ export class SpdTemplateController extends ExtraCrudController<SpdTemplate>(
     @Param('spdId') spdId: string,
     @Param('type') type: string,
     @UploadedFile() file: Express.Multer.File,
+    @Res() response: Response,
   ) {
-    return this.spdService.uploadSPDDocument(spdId, type, file);
+    return this.spdService.uploadSPDDocument(spdId, type, file, response);
   }
 
   @Get('/download-spd-docx/:spdId/:type')
