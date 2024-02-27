@@ -29,6 +29,13 @@ import {
   SpdTechnicalScoringController,
   SpdTemplateController,
 } from './controller';
+import { FileHelperService } from './service/file-helper.service';
+import { SpdBidFormService } from './service/spd-bid-form.service';
+import { SpdBidForm } from 'src/entities/spd-bid-form.entity';
+import { SpdBidFormController } from './controller/spd-bid-form.controller';
+import { SpdContractForm } from 'src/entities/spd-contract-form.entity';
+import { SpdContractFormService } from './service/spd-contract-form.service';
+import { SpdContractFormController } from './controller/spd-contract-form.controller';
 
 @Module({
   imports: [
@@ -40,6 +47,8 @@ import {
       SpdQualification,
       SpdTechnicalScoring,
       SpdTemplate,
+      SpdBidForm,
+      SpdContractForm,
     ]),
     DocxModule,
     MinIOModule,
@@ -52,6 +61,9 @@ import {
     SpdQualificationService,
     SpdTechnicalScoringService,
     SpdTemplateService,
+    FileHelperService,
+    SpdBidFormService,
+    SpdContractFormService,
   ],
   controllers: [
     SpdController,
@@ -61,6 +73,8 @@ import {
     SpdQualificationController,
     SpdTechnicalScoringController,
     SpdTemplateController,
+    SpdBidFormController,
+    SpdContractFormController,
   ],
 })
 export class SpdModule {}

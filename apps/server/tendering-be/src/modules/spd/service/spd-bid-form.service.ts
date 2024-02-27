@@ -1,59 +1,64 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { ExtraCrudService } from 'src/shared/service';
 import { DocxService } from 'src/shared/docx/docx.service';
 import { MinIOService } from 'src/shared/min-io/min-io.service';
 import { Response } from 'express';
-import { SpdTemplate } from 'src/entities/spd-template.entity';
+import { SpdBidForm } from 'src/entities/spd-bid-form.entity';
 import { Readable } from 'stream';
 import { FileHelperService } from './file-helper.service';
 
 @Injectable()
-export class SpdTemplateService extends ExtraCrudService<SpdTemplate> {
+export class SpdBidFormService extends ExtraCrudService<SpdBidForm> {
   constructor(
-    @InjectRepository(SpdTemplate)
-    private readonly spdTemplateRepository: Repository<SpdTemplate>,
+    @InjectRepository(SpdBidForm)
+    private readonly spdBidFormRepository: Repository<SpdBidForm>,
     private readonly docxService: DocxService,
     private readonly minIOService: MinIOService,
     private readonly fileHelperService: FileHelperService,
   ) {
-    super(spdTemplateRepository);
+    super(spdBidFormRepository);
   }
 
   async uploadSPDDocument(
-    spdId: string,
-    type: string,
+    payload: any,
     file: Express.Multer.File,
     response: Response,
   ) {
     try {
-      const result = await this.docxService.validateDocument(file.buffer, [
-        'public_body',
-      ]);
+      // const result = await this.docxService.validateDocument(file.buffer, [
+      //   'public_body',
+      // ]);
 
-      if (result.length != 0) {
-        throw new HttpException(result, HttpStatus.BAD_REQUEST);
-      }
+      // if (result.length != 0) {
+      //   throw new HttpException(result, HttpStatus.BAD_REQUEST);
+      // }
+
       const documentDocx = await this.minIOService.upload(file);
 
       const documentPdf = await this.fileHelperService.convertAndUpload(file);
 
-      const spdTemplate = await this.spdTemplateRepository.findOneBy({
-        type,
-        spdId,
+      const spdBidForm = await this.spdBidFormRepository.findOneBy({
+        type: payload.type,
+        spdId: payload.spdId,
       });
-      if (spdTemplate) {
-        await this.spdTemplateRepository.update(spdTemplate.id, {
+      if (spdBidForm) {
+        await this.spdBidFormRepository.update(spdBidForm.id, {
           documentDocx,
           documentPdf: documentPdf.fileInfo,
+          type: payload.type,
+          code: payload.code,
+          title: payload.title,
         });
       } else {
-        await this.spdTemplateRepository.insert({
-          type,
+        await this.spdBidFormRepository.insert({
+          spdId: payload.spdId,
+          type: payload.type,
+          code: payload.code,
+          title: payload.title,
           documentDocx,
           documentPdf: documentPdf.fileInfo,
-          spdId,
         });
       }
 
@@ -76,7 +81,7 @@ export class SpdTemplateService extends ExtraCrudService<SpdTemplate> {
     response: Response,
   ) {
     try {
-      const spd = await this.spdTemplateRepository.findOneBy({ spdId, type });
+      const spd = await this.spdBidFormRepository.findOneBy({ spdId, type });
       if (!spd) {
         throw new Error('SPD not found');
       }
@@ -95,7 +100,7 @@ export class SpdTemplateService extends ExtraCrudService<SpdTemplate> {
     response: Response,
   ) {
     try {
-      const spd = await this.spdTemplateRepository.findOneBy({ spdId, type });
+      const spd = await this.spdBidFormRepository.findOneBy({ spdId, type });
       if (!spd) {
         throw new Error('SPD not found');
       }
