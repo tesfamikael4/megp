@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
 
-export class CreateSpdPreferenceMarginDto {
+export class CreateSpdPreliminaryEvaluationDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
@@ -10,17 +10,17 @@ export class CreateSpdPreferenceMarginDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  condition: string;
+  criteria: string;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  description: string;
+  type: string;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  margin: string;
+  formLink: string;
 
   @ApiProperty()
   @IsString()
@@ -29,14 +29,14 @@ export class CreateSpdPreferenceMarginDto {
 
   @ApiProperty()
   @IsString()
-  @IsString()
+  @IsOptional()
   itbDescription?: string;
 }
 
-export class UpdateSpdPreferenceMarginDto {
+export class UpdateSpdPreliminaryEvaluationDto {
   @ApiProperty()
   @IsUUID()
   id: string;
 }
 
-export class SpdPreferenceMarginResponseDto extends UpdateSpdPreferenceMarginDto {}
+export class SpdPreliminaryEvaluationResponseDto extends UpdateSpdPreliminaryEvaluationDto {}

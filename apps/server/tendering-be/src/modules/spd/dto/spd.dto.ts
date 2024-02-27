@@ -1,17 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsBoolean,
-  IsNotEmpty,
-  IsString,
-  IsUUID,
-  IsObject,
-} from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsString, IsUUID } from 'class-validator';
 
 export class CreateSpdDto {
-  @ApiProperty()
-  @IsObject()
-  governingRule: any;
-
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
@@ -25,7 +15,7 @@ export class CreateSpdDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  language: string;
+  marketType: string;
 
   @ApiProperty()
   @IsString()
@@ -33,26 +23,8 @@ export class CreateSpdDto {
   procurementCategory: string;
 
   @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  marketType: string;
-
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  procurementTool: string;
-
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  contractingMethod: string;
-
-  @ApiProperty()
-  @IsObject()
-  specializationType: any;
-
-  @ApiProperty()
   @IsBoolean()
+  @IsNotEmpty()
   isActive: boolean;
 }
 

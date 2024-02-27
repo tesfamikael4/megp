@@ -3,26 +3,27 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { EntityCrudController } from 'src/shared/controller';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { SpdTechnicalScoring } from 'src/entities';
-import { SpdTechnicalScoringService } from '../service/spd-technical-scoring.service';
 import {
   CreateSpdTechnicalScoringDto,
   UpdateSpdTechnicalScoringDto,
-} from '../dto/spd-technical-scoring.dto';
+} from '../dto';
+import { SpdTechnicalScoringService } from '../service';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'spdId',
   createDto: CreateSpdTechnicalScoringDto,
   updateDto: UpdateSpdTechnicalScoringDto,
 };
+
 @ApiBearerAuth()
 @Controller('spd-technical-scoring')
-@ApiTags('Spd-Technical-Scoring Controller')
+@ApiTags('Spd Technical Scoring')
 export class SpdTechnicalScoringController extends EntityCrudController<SpdTechnicalScoring>(
   options,
 ) {
   constructor(
-    private readonly spdTechnicalScoringServiceBdsService: SpdTechnicalScoringService,
+    private readonly spdTechnicalScoringService: SpdTechnicalScoringService,
   ) {
-    super(spdTechnicalScoringServiceBdsService);
+    super(spdTechnicalScoringService);
   }
 }
