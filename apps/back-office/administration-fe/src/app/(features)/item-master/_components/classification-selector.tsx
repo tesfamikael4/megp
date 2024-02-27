@@ -1,11 +1,24 @@
-import React, { useEffect, useState } from 'react';
-import { Box, Modal, TextInput, Tooltip, Flex, Text } from '@mantine/core';
-import { Relation, RelationConfig } from '@megp/entity';
+import {
+  useListQuery,
+  useLazyListQuery,
+} from '../../taxonomy/_api/taxonomy.api';
+
+import {
+  Box,
+  Button,
+  Divider,
+  Flex,
+  Group,
+  Modal,
+  Text,
+  TextInput,
+  Tooltip,
+} from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { ExpandableTable, MantineTree, TreeConfig } from '@megp/core-fe';
 import { IconBinaryTree, IconColumns } from '@tabler/icons-react';
-import { Tree, logger } from '@megp/core-fe';
-import { useGetClassificationsQuery } from '@/store/api/classification/classification.api';
-import { useListQuery } from '../../taxonomy/_api/taxonomy.api';
+import { useEffect, useState } from 'react';
+// import { ExpandableTable } from '../../_components/expandable-table';
 
 interface ClassificationSelectorProps {
   selectedData: any;
@@ -20,8 +33,9 @@ const ClassificationSelector = ({
 }: ClassificationSelectorProps) => {
   const [opened, { open, close }] = useDisclosure(false);
   const [mode, setMode] = useState<'tree' | 'table'>('table');
-  const [currentAssigned] = useState([]);
-  const { data: list } = useListQuery({
+  const [getCommodity, { data: list, isLoading: isGetCommodityLoading }] =
+    useLazyListQuery();
+  const { data: classifications } = useListQuery({
     where: [
       [
         {
@@ -31,33 +45,60 @@ const ClassificationSelector = ({
         },
       ],
     ],
-  });
-  const addConfig: RelationConfig<any> = {
-    title: 'Classifications',
+  } as any);
+
+  const [selectedClassification, setSelectedClassification] = useState<any>([]);
+
+  const treeConfig: TreeConfig<any> = {
+    id: 'code',
+    label: 'title',
+    selectable: true,
+    multipleSelect: true,
+    selectOnlyLeafs: true,
+    selectedIds: selectedClassification,
+    setSelectedIds: setSelectedClassification,
+    load: async (data) => {
+      // logger.log({ data });
+      const res = await getCommodity({
+        where: [
+          [
+            {
+              column: 'parentCode',
+              value: data.code,
+              operator: '=',
+            },
+          ],
+        ],
+      }).unwrap();
+      return {
+        result:
+          res?.items?.map((c) => ({
+            code: c.code,
+            title: c.title,
+          })) ?? [],
+        loading: isGetCommodityLoading,
+      };
+    },
+  };
+
+  const tableConfig = {
+    isSearchable: true,
+    primaryColumn: 'title',
     columns: [
       {
-        id: 'name',
-        header: 'Classifications',
-        accessorKey: 'title',
-        meta: {
-          widget: 'expand',
-        },
-        cell: ({ row: { original } }: any) => (
+        accessor: 'title',
+        title: 'Classifications',
+        render: (record) => (
           <>
-            {original.title} ({original.code})
+            {record.title} ({record.code})
           </>
         ),
       },
     ],
-    onSave: (selected) => {
-      logger.log(selected[0]);
-      onDone(selected[0]);
-      close();
-    },
-    searchable: true,
+    selectedItems: selectedClassification,
     disableMultiSelect: true,
-    selectable: true,
-    pagination: true,
+    setSelectedItems: setSelectedClassification,
+    isSelectable: true,
   };
 
   const changeMode = () => {
@@ -105,33 +146,56 @@ const ClassificationSelector = ({
         size="lg"
       >
         {mode == 'table' ? (
-          <Relation
-            config={addConfig}
-            mode="modal"
-            data={list ? list.items : []}
-            currentSelected={currentAssigned}
-          />
+          <>
+            <ExpandableTable
+              config={tableConfig}
+              data={list ? list.items : []}
+              total={list ? list.total : 0}
+              onRequestChange={(collectionQuery) => {
+                const req = {
+                  ...collectionQuery,
+                  where: [
+                    [
+                      {
+                        column: 'type',
+                        value: 'COMMODITY',
+                        operator: '=',
+                      },
+                    ],
+                  ],
+                };
+                getCommodity(req);
+              }}
+            />
+          </>
         ) : (
-          <Tree
-            fieldNames={{ title: 'title', key: 'code' }}
-            data={list ? list.items : []}
-            mode="select"
-            disableModal
-            disableParentSelect
-            url={(code) =>
-              `${
-                process.env.NEXT_PUBLIC_ADMINISTRATION_API ??
-                '/administration/api/'
-              }classifications?q=w%3DparentCode%3A%3D%3A${code}`
-            }
-            selectedKeys={selectedData}
-            onDone={(item) => {
-              onDone(item);
-              logger.log(item);
+          <>
+            <Box className="overflow-y-auto h-[30rem]">
+              <MantineTree
+                config={treeConfig}
+                data={
+                  classifications
+                    ? classifications.items.map((c) => ({
+                        code: c.code,
+                        title: c.title,
+                      }))
+                    : []
+                }
+              />
+            </Box>
+          </>
+        )}
+        <Divider h={5} />
+        <Group justify="end">
+          <Button
+            onClick={() => {
+              onDone(selectedClassification[selectedClassification.length - 1]);
               close();
             }}
-          />
-        )}
+          >
+            Done
+          </Button>
+        </Group>
       </Modal>
     </>
   );

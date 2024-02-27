@@ -17,3 +17,6 @@ export * from './layout/side-bar-shell';
 export * from './notification/notification';
 export * from './mantine-tree';
 export * from './mantine-tree/models';
+
+export * from './expandable-table';
+export * from './expandable-table/models';
