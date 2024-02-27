@@ -1,7 +1,10 @@
 import {
   Box,
+  Button,
   Flex,
+  Group,
   LoadingOverlay,
+  Modal,
   MultiSelect,
   Select,
   Stack,
@@ -17,13 +20,12 @@ import {
   useCreateMutation,
   useLazyReadQuery,
 } from '../_api/item-master.api';
-import { logger } from '@megp/core-fe';
+import { MantineTree, TreeConfig, logger } from '@megp/core-fe';
 import { ZodType, z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { notifications } from '@mantine/notifications';
-import { Tree } from '@megp/core-fe';
 import { ItemMaster } from '@/models/item-master';
 import {
   useGetMeasurementsQuery,
@@ -33,9 +35,9 @@ import {
   useGetTagsQuery,
   useLazyGetTagsByItemMasterQuery,
 } from '@/store/api/tags/tags.api';
-import { useGetCategoriesQuery } from '@/store/api/categories/categories.api';
 import ClassificationSelector from './classification-selector';
-import { useListQuery } from '../../item-category/_api/item-category';
+import { useLazyListQuery } from '../../item-category/_api/item-category';
+import { useDisclosure } from '@mantine/hooks';
 
 interface FormDetailProps {
   mode: 'new' | 'detail';
@@ -90,24 +92,8 @@ export function FormDetail({ mode }: FormDetailProps) {
 
   const { data: measurements, isLoading: isMeasurementLoading } =
     useGetMeasurementsQuery({} as any);
-  // const { data: categories, isLoading: isCategoriesLoading } =
-  //   useGetCategoriesQuery({} as any);
-  const { data: categories, isLoading: isCategoriesLoading } = useListQuery({
-    where: [
-      [
-        {
-          column: 'parentId',
-          value: '',
-          operator: '=',
-        },
-        {
-          column: 'parentId',
-          value: 'IsNull',
-          operator: 'IsNull',
-        },
-      ],
-    ],
-  });
+  const [getCategories, { data: categories, isLoading: isCategoriesLoading }] =
+    useLazyListQuery();
   const { data: tags, isLoading: isTagLoading } = useGetTagsQuery({} as any);
   const [
     getUnitOfMeasurements,
@@ -124,6 +110,41 @@ export function FormDetail({ mode }: FormDetailProps) {
   const [update, { isLoading: isUpdating }] = useUpdateMutation();
   const [remove, { isLoading: isDeleting }] = useDeleteMutation();
 
+  const [selectedCategories, setSelectedCategories] = useState<any[]>([]);
+  const [opened, { open, close }] = useDisclosure(false);
+  const treeConfig: TreeConfig<any> = {
+    id: 'itemSubcategoryId',
+    label: 'itemSubcategoryName',
+    selectable: true,
+    multipleSelect: true,
+    selectedIds: selectedCategories,
+    setSelectedIds: (data) => {
+      logger.log({ data });
+      setSelectedCategories(data);
+    },
+    load: async (data) => {
+      logger.log({ data });
+      const res = await getCategories({
+        where: [
+          [
+            {
+              column: 'parentId',
+              value: data.itemSubcategoryId,
+              operator: 'ILIKE',
+            },
+          ],
+        ],
+      }).unwrap();
+      return {
+        result:
+          res?.items?.map((c) => ({
+            itemSubcategoryName: c.name,
+            itemSubcategoryId: c.id,
+          })) ?? [],
+        loading: isCategoriesLoading,
+      };
+    },
+  };
   const onCreate = async (data) => {
     const rawData = {
       ...data,
@@ -231,6 +252,33 @@ export function FormDetail({ mode }: FormDetailProps) {
     }
   }, [getUnitOfMeasurements, watch('measurementId')]);
 
+  useEffect(() => {
+    getCategories({
+      where: [
+        [
+          {
+            column: 'parentId',
+            value: '',
+            operator: '=',
+          },
+          {
+            column: 'parentId',
+            value: 'IsNull',
+            operator: 'IsNull',
+          },
+        ],
+      ],
+    });
+  }, []);
+  useEffect(() => {
+    if (selectedCategories.length > 0) {
+      const temp = selectedCategories[selectedCategories.length - 1];
+      logger.log({ temp });
+      setValue('itemSubcategoryName', temp.itemSubcategoryName);
+      setValue('itemSubcategoryId', temp.itemSubcategoryId);
+    }
+  }, [selectedCategories, setValue]);
+
   return (
     <Box pos="relative">
       <LoadingOverlay
@@ -257,28 +305,13 @@ export function FormDetail({ mode }: FormDetailProps) {
             />
           )}
         />
-        <Tree
-          fieldNames={{ title: 'name', key: 'id' }}
-          mode="select"
+        <TextInput
           label="Item Category"
-          data={categories?.items ?? []}
-          url={(id) =>
-            `${
-              process.env.NEXT_PUBLIC_ADMINISTRATION_API ??
-              '/administration/api/'
-            }item-categories?q=w%3DparentId%3A%3D%3A${id}`
-          }
-          onDone={(item: any) => {
-            setValue('itemSubcategoryName', item?.name);
-            setValue('itemSubcategoryId', item?.id);
-          }}
-          placeholder="Select category"
-          selectedKeys={{
-            id: watch('itemSubcategoryId'),
-            name: watch('itemSubcategoryName'),
-          }}
-          error={errors.itemSubcategoryName?.message as string | null}
-          required
+          withAsterisk
+          readOnly
+          value={watch('itemSubcategoryName')}
+          error={errors.itemSubcategoryName?.message as string}
+          onClick={open}
         />
         <Flex gap="md">
           <Controller
@@ -374,6 +407,23 @@ export function FormDetail({ mode }: FormDetailProps) {
           isDeleting={isDeleting}
         />
       </Stack>
+
+      <Modal title="Item Category" opened={opened} onClose={close} size="lg">
+        <Box className="max-h-[30rem] overflow-auto">
+          <MantineTree
+            config={treeConfig}
+            data={
+              categories?.items?.map((c) => ({
+                itemSubcategoryName: c.name,
+                itemSubcategoryId: c.id,
+              })) ?? []
+            }
+          />
+        </Box>
+        <Group justify="end" className="mt-2">
+          <Button onClick={close}>Done</Button>
+        </Group>
+      </Modal>
     </Box>
   );
 }
