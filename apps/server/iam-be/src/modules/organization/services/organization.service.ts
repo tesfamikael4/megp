@@ -82,7 +82,6 @@ export class OrganizationService extends EntityCrudService<Organization> {
     const organization = await this.repositoryOrganization.findOne({
       where: { id },
       relations: ['organizationMandates'],
-      select: ['id'],
     });
 
     if (organization.organizationMandates.length === 0) {
