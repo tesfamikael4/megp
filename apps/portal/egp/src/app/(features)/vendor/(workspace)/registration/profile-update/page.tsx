@@ -29,7 +29,7 @@ export default function Page() {
     <section className="w-full relative flex flex-col p-6">
       <CardLayout
         withBorder
-        className="w-2/3"
+        className="w-full"
         header={
           <Flex className="w-full items-center justify-center">
             <IconUserCircle size={28} stroke={1.6} />

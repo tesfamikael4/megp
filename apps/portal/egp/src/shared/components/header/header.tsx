@@ -147,16 +147,17 @@ function Header() {
               <Group visibleFrom="md">
                 <Menu shadow="md" width={200}>
                   <Menu.Target>
-                    <div className="flex gap-x-3 items-center justify-between cursor-pointer">
-                      <Avatar
-                        // we can set src={user.avatar} when we have it from the backend / user profile on registration
-                        src="https://img.freepik.com/free-psd/3d-illustration-person-with-sunglasses-green-hair_23-2149436201.jpg"
-                        alt="it's me"
-                      />
+                    <Flex
+                      align={'center'}
+                      justify={'center'}
+                      columnGap={'xs'}
+                      className="cursor-pointer"
+                    >
+                      <Avatar size={'sm'} radius="xl" />
                       Hi, {user.firstName + ' ' + user.lastName}
                       <IconChevronDown size={16} stroke={1.6} />
                       <IconBellRinging size={16} stroke={1.6} />
-                    </div>
+                    </Flex>
                   </Menu.Target>
 
                   <Menu.Dropdown>

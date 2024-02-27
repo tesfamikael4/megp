@@ -7,7 +7,6 @@ import { BasicInformation } from './basicInformation';
 import { useRouter } from 'next/navigation';
 
 export default function BasicInformationPage() {
-  const router = useRouter();
   const requestInfo = useGetVendorQuery(
     {},
     { refetchOnMountOrArgChange: true },
@@ -19,11 +18,6 @@ export default function BasicInformationPage() {
     if (requestInfo.error) {
       NotificationService.requestErrorNotification('Error on fetching data');
     }
-
-    if (requestInfo.data?.initial.status === 'Submit') {
-      router.push('/vendor/registration/track-applications');
-    }
-
     return () => {};
   }, [requestInfo.data, requestInfo.error]);
 

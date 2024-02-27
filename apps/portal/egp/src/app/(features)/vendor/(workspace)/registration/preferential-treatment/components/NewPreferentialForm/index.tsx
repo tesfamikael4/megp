@@ -81,17 +81,17 @@ const NewPreferentialForm = ({
   return (
     <CardLayout
       withBorder
-      className="w-full sm:w-2/3 mx-auto"
+      className="m-4"
       header={
         <Flex className="w-full items-center justify-center">
           <Text fw={700} fz="xl">
-            Application For Preferential Treatment
+            Application For {isIbm ? `IBM` : 'MSME'}
           </Text>
         </Flex>
       }
     >
       <form
-        className="p-6 flex flex-col gap-y-3"
+        className="p-6 flex flex-col gap-y-3 w-full sm:w-2/3 mx-auto"
         onSubmit={handleSubmit(onSubmit)}
       >
         <Flex className="w-full" gap={'md'}>

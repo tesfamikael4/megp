@@ -70,8 +70,6 @@ export const BasicInformation = ({ defaultValues }: BasicInformationProps) => {
     defaultValues,
   });
 
-  console.log({ errors: formState.errors });
-
   const {
     checkAccess,
     lockElements,
@@ -120,11 +118,7 @@ export const BasicInformation = ({ defaultValues }: BasicInformationProps) => {
     return () => {};
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [createValues.data, createValues.isError, createValues.isSuccess, router]);
-  console.log(
-    accessStatus,
-    checkAccess('basic', accessStatus),
-    lockElements('basic'),
-  );
+
   return (
     <Box className={style.reqFormCard}>
       <LoadingOverlay

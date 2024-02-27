@@ -1,6 +1,6 @@
 'use client';
 
-import { Box, Center, Container, Flex, Text } from '@mantine/core';
+import { Box, Button, Center, Container, Flex, Text } from '@mantine/core';
 import Image from 'next/image';
 import { StepsCard } from './steps-card';
 import {
@@ -10,11 +10,13 @@ import {
   IconWorldWww,
 } from '@tabler/icons-react';
 import styles from './page.module.scss';
+import { useRouter } from 'next/navigation';
 
 export default function GettingStarted() {
+  const router = useRouter();
   return (
     <Container className={styles.container}>
-      <Box className={styles.about_card}>
+      {/* <Box className={styles.about_card}>
         <p className={styles.about_title}>About eGP</p>
         <Text mb="md">
           eGP is a national electronic government procurement portal that uses
@@ -32,7 +34,7 @@ export default function GettingStarted() {
         <Center>
           <Image src="/ppda.png" width={50} height={50} alt="logo " />
         </Center>
-      </Box>
+      </Box> */}
 
       <p className={styles.get_started_title}>Get Started</p>
       <p className={styles.get_started_description}>
@@ -97,6 +99,11 @@ export default function GettingStarted() {
           'Manage your contracts using the tools available to submit various documents related to inspections, clearing, delivery, receiving, and invoicing as appropriate. You can also track contractual issues, performance, and activities.',
         ]}
       />
+      <Flex justify={'flex-end'} w={'100%'}>
+        <Button onClick={() => router.push('/vendor/registration/new/detail')}>
+          Continue
+        </Button>
+      </Flex>
     </Container>
   );
 }

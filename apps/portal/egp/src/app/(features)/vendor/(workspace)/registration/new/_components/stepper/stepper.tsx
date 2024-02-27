@@ -25,16 +25,13 @@ function StyledStepper() {
       NotificationService.requestErrorNotification('Error on fetching data');
       router.push(`basic`);
     }
+    if (data?.status === 'Approved' || data?.status === 'Completed') {
+      return router.push('/vendor/service');
+    }
 
     if (data?.initial) {
       updateAccess(data?.initial.level);
       updateStatus(data?.initial.status);
-      if (
-        data?.initial.status === 'Submitted' ||
-        data?.initial.status === 'Approved'
-      ) {
-        router.push(`/vendor/registration/track-applications`);
-      } else return router.push((data?.initial.level).toLowerCase());
     }
     return () => {
       router.refresh();
