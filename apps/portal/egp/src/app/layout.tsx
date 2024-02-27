@@ -5,10 +5,8 @@ import { ConfigProvider } from '@/contexts/config';
 import { Providers } from '@/store/provider';
 import RootStyleRegistry from './mantine';
 import { AuthProvider } from '@megp/auth/src/context/auth.context';
-import { Nunito } from 'next/font/google';
-export const nunito = Nunito({
-  subsets: ['latin'],
-});
+import { Inter, Nunito } from 'next/font/google';
+const inter = Inter({ subsets: ['latin'] });
 export const metadata: Metadata = {
   title: 'EGP',
   description: 'Malawi electronic government procurements',
@@ -25,7 +23,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body suppressHydrationWarning={true} className={nunito.className}>
+      <body
+        suppressHydrationWarning={true}
+        className={`${inter.className} bg-[##f5fbfe]`}
+      >
         <ConfigProvider config={config}>
           <Providers>
             <RootStyleRegistry>

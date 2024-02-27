@@ -90,7 +90,7 @@ export function HeroSection() {
                   className="md:w-1/2"
                   onClick={() => {
                     isAuthenticated
-                      ? router.push('/vendor/registration/new/basic')
+                      ? router.push('getting-started')
                       : router.push('/auth/login');
                   }}
                   mx={{

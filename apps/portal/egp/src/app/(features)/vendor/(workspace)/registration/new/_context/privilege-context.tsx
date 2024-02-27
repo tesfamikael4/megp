@@ -54,8 +54,6 @@ export function hasAccess(level: VendorLevel, status: VendorStatus): boolean {
   if (status in accessRules && accessRules[status].active) {
     const { readWriteLevels, readOnlyLevels } = accessRules[status];
     if (readWriteLevels.includes(level)) {
-      // console.log(level, status);
-
       return readWriteLevels.includes(level);
     } else if (readOnlyLevels.includes(level)) {
       return false;
@@ -102,7 +100,15 @@ const accessRules: AccessRules = {
   Submitted: {
     active: true,
     readWriteLevels: [],
-    readOnlyLevels: [],
+    readOnlyLevels: [
+      'basic',
+      'detail',
+      'doc',
+      'info',
+      'payment',
+      'ppda',
+      'review',
+    ],
   },
   Rejected: {
     active: true,
@@ -141,12 +147,18 @@ const PrivilegeContextProvider: React.FC<PropsWithChildren> = ({
     if (requestInfo.isSuccess && requestInfo.data) {
       setAccessLevel(requestInfo.data.level as VendorLevel);
       setAccessStatus(requestInfo.data.Status as VendorStatus);
-      if (requestInfo.data.level === 'Completed') {
+      if (
+        requestInfo.data.level === 'Completed' ||
+        requestInfo.data.level === 'Completed'
+      ) {
         router.push('/vendor/registration/track-applications');
-      } else if (requestInfo.data.level === 'Submit') {
-        router.push('/vendor/registration/track-applications');
-      } else if (validRoutes.includes(requestInfo.data.level as VendorLevel)) {
-        router.push(`/vendor/registration/new/${requestInfo.data.level}`);
+      }
+      //  else if (requestInfo.data.level === 'Submit') {
+      //   router.push('/vendor/registration/track-applications');
+      // }
+      if (validRoutes.includes(requestInfo.data.level as VendorLevel)) {
+        // router.push(`/vendor/registration/new/${requestInfo.data.level}`);
+        console.log('Hello world');
       }
     }
     return () => {};

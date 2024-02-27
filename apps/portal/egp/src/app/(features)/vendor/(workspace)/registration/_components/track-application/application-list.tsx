@@ -1,12 +1,9 @@
 'use client';
 import {
+  Badge,
   Box,
   Flex,
-  Grid,
-  Group,
   LoadingOverlay,
-  Paper,
-  SimpleGrid,
   Text,
   TextInput,
 } from '@mantine/core';
@@ -19,6 +16,29 @@ import { useDisclosure } from '@mantine/hooks';
 import { ApplicationInfo } from '@/models/vendorRegistration';
 import { IconFile, IconTrack } from '@tabler/icons-react';
 import { IconSearch } from '@tabler/icons-react';
+import { ExpandableTable } from './table';
+import 'mantine-datatable/styles.layer.css';
+
+const badgeBGColor: { [key: string]: string } = {
+  Rejected: `red.0`,
+  Submitted: `blue.0`,
+  Adjustment: `yellow.0`,
+  Completed: `green.0`,
+  Pending: `blue.0`,
+  Outdated: `orange.0`,
+};
+const badgeTextColor: { [key: string]: string } = {
+  Rejected: `red.6`,
+  Submitted: `blue.6`,
+  Adjustment: `yellow.6`,
+  Completed: `green.6`,
+  Pending: `blue.6`,
+  Outdated: `orange.6`,
+};
+
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
 
 const ApplicationList = () => {
   const [selectData, setSelectData] = useState<ApplicationInfo | null>(null);
@@ -28,13 +48,42 @@ const ApplicationList = () => {
     { refetchOnMountOrArgChange: true },
   );
 
-  const handleDetailOpen = (data: ApplicationInfo) => {
-    open();
-    setSelectData(data);
-  };
   const handleDetailClose = () => {
     close();
     setSelectData(null);
+  };
+
+  const config = {
+    columns: [
+      {
+        accessor: 'name',
+        title: 'Service Name',
+        render: (application) => application.BpService.name,
+      },
+      {
+        accessor: 'category',
+        title: 'Category',
+        render: (val) => {
+          return capitalizeFirstLetter(val.category);
+        },
+      },
+      { accessor: 'applicationNumber', title: 'Application No.' },
+      {
+        accessor: 'status',
+        title: 'Status',
+        render: (val) => {
+          return (
+            <Badge
+              size="xs"
+              color={badgeBGColor[val.status]}
+              className={'rounded-none flex items-center p-1.5'}
+            >
+              <Box c={badgeTextColor[val.status]}>{val.status}</Box>
+            </Badge>
+          );
+        },
+      },
+    ],
   };
 
   if (requestInfo.isLoading) {
@@ -75,14 +124,12 @@ const ApplicationList = () => {
         </Flex>
         {requestInfo.data?.services && requestInfo.data?.services.length > 0 ? (
           <Box className={styles.mainGrid}>
-            <Box className={opened ? styles.cardListWrap : styles.cardList}>
-              {requestInfo.data?.services.map((data, index) => (
-                <StatsListCard
-                  key={index}
-                  data={data}
-                  view={handleDetailOpen}
-                />
-              ))}
+            <Box className={`w-full`}>
+              <ExpandableTable
+                config={config}
+                data={requestInfo.data?.services ?? []}
+                total={requestInfo.data?.services.length ?? 0}
+              />
             </Box>
             {opened && selectData && (
               <Box className={styles.detail}>

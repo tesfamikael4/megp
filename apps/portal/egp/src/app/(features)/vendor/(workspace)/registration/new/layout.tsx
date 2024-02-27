@@ -8,10 +8,20 @@ import PageTitle from '../_components/page-title/title';
 import { useLazyCancelRegistrationQuery } from '@/store/api/vendor_registration/api';
 import { useRouter } from 'next/navigation';
 import { NotificationService } from '../../../_components/notification';
+import { useGetVendorQuery } from '../_api/query';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [cancelRegistration] = useLazyCancelRegistrationQuery();
   const router = useRouter();
+
+  const { data, error } = useGetVendorQuery(
+    {},
+    { refetchOnMountOrArgChange: true },
+  );
+
+  if (data?.status === 'Approved' || data?.status === 'Completed') {
+    return router.push('/vendor/service');
+  }
   return (
     <PrivilegeContextProvider>
       <Flex className={styles.main} gap={24}>

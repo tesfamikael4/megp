@@ -96,7 +96,7 @@ const RegistrationForm = ({
   useEffect(() => {
     updateAccess(vendorInfo.level);
 
-    return () => { };
+    return () => {};
   }, [updateAccess, vendorInfo.level]);
 
   const extendedRegister = (
@@ -161,9 +161,9 @@ const RegistrationForm = ({
   useEffect(() => {
     if (submitRequestInfo.isSuccess && submitRequestInfo.data) {
       NotificationService.successNotification('Form Submitted Successfully!');
-      router.push(`ppda${searchParams ? '?' + searchParams.toString() : ''}`);
+      router.push(`ppda`);
     }
-    return () => { };
+    return () => {};
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [submitRequestInfo.data, submitRequestInfo.isSuccess]);
 
@@ -171,7 +171,7 @@ const RegistrationForm = ({
     if (saveAsDraftRequestInfo.isSuccess && saveAsDraftRequestInfo.data) {
       NotificationService.successNotification('Save as draft Successfully!');
     }
-    return () => { };
+    return () => {};
   }, [saveAsDraftRequestInfo.data, saveAsDraftRequestInfo.isSuccess]);
 
   return (

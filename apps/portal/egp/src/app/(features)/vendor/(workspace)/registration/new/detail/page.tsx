@@ -12,26 +12,29 @@ export default function Page() {
   const { updateAccess, updateStatus } = usePrivilege();
 
   const requestInfo = useGetVendorQuery(
-    {
-      flag: 'Adjustment',
-    },
+    {},
     { refetchOnMountOrArgChange: true },
   );
 
-  if (requestInfo.data?.initial) {
-    updateAccess(requestInfo.data?.initial.level);
-    updateStatus(requestInfo.data?.initial.status);
-  }
+  // if (requestInfo.data?.initial) {
+  //   updateAccess(requestInfo.data?.initial.level);
+  //   updateStatus(requestInfo.data?.initial.status);
+  // }
 
   useEffect(() => {
     if (requestInfo.error) {
       NotificationService.requestErrorNotification('Error on fetching data');
       router.push(`basic`);
     }
-    return () => {
-      router.refresh();
-    };
+    return () => {};
   }, [requestInfo.data, requestInfo.error]);
+
+  if (
+    requestInfo?.data?.status === 'Approved' ||
+    requestInfo?.data?.status === 'Completed'
+  ) {
+    return router.push('/vendor/service');
+  }
 
   return (
     <Suspense>

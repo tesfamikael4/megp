@@ -14,8 +14,7 @@ export default function WorkspaceLayout({ children }: Props) {
     <Protected>
       <Flex>
         <nav data-open={isSidebarOpen} className={styles.nav}>
-          {' '}
-          <Sidebar />{' '}
+          <Sidebar />
         </nav>
         <main className={styles.main}>{children}</main>
       </Flex>
