@@ -13,11 +13,8 @@ export class SpdTechnicalScoring extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ type: 'uuid' })
   spdId: string;
-
-  @Column({ type: 'numeric' })
-  orderNo: number;
 
   @Column({ type: 'uuid' })
   parentId: string;
@@ -26,33 +23,15 @@ export class SpdTechnicalScoring extends Audit {
   requirement: string;
 
   @Column()
-  specification: string;
-
-  @Column()
-  requirementCondition: string;
-
-  @Column({ type: 'numeric' })
-  point: number;
-
-  @Column()
   formLink: string;
-
-  @Column()
-  additionalRequirements: string;
-
-  @Column({ type: 'jsonb' })
-  validation: any;
-
-  @Column()
-  isRequired: boolean;
 
   @Column()
   isProfessional: boolean;
 
-  @Column()
-  isRangeBasedCriteria: boolean;
+  @Column({ type: 'jsonb' })
+  validation: any;
 
-  @ManyToOne(() => Spd, (spd) => spd.technicalScorings)
+  @ManyToOne(() => Spd, (spd) => spd.spdTechnicalScores)
   @JoinColumn({ name: 'spdId' })
   spd: Spd;
 }

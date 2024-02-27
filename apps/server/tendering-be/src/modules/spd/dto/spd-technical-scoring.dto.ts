@@ -1,60 +1,42 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsBoolean,
-  IsNumber,
   IsString,
   IsUUID,
   IsObject,
+  IsNotEmpty,
 } from 'class-validator';
 
 export class CreateSpdTechnicalScoringDto {
   @ApiProperty()
-  @IsNumber()
-  orderNo: number;
+  @IsUUID()
+  @IsNotEmpty()
+  spdId: string;
 
   @ApiProperty()
-  @IsString()
+  @IsUUID()
+  @IsNotEmpty()
   parentId: string;
 
   @ApiProperty()
   @IsString()
+  @IsNotEmpty()
   requirement: string;
 
   @ApiProperty()
   @IsString()
-  specification: string;
-
-  @ApiProperty()
-  @IsString()
-  requirementCondition: string;
-
-  @ApiProperty()
-  @IsNumber()
-  point: number;
-
-  @ApiProperty()
-  @IsString()
+  @IsNotEmpty()
   formLink: string;
 
   @ApiProperty()
-  @IsString()
-  additionalRequirements: string;
-
-  @ApiProperty()
-  @IsObject()
-  validation: any;
-
-  @ApiProperty()
   @IsBoolean()
-  isRequired: boolean;
-
-  @ApiProperty()
-  @IsBoolean()
+  @IsNotEmpty()
   isProfessional: boolean;
 
   @ApiProperty()
-  @IsBoolean()
-  isRangeBasedCriteria: boolean;
+  @IsObject()
+  @IsNotEmpty()
+  validation: any;
 }
 
 export class UpdateSpdTechnicalScoringDto extends CreateSpdTechnicalScoringDto {

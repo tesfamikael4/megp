@@ -5,15 +5,12 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { SpdScc } from './spd-scc.entity';
-import { SpdBds } from './spd-bds.entity';
 import { SpdTechnicalScoring } from './spd-technical-scoring.entity';
 import { Audit } from 'src/shared/entities';
 import { SpdPreferenceMargin } from './spd-preference-margin.entity';
-import { SpdRequiredDocumentaryEvidence } from './spd-required-documentary-evidence.entity';
-import { SpdSetting } from './spd-setting.entity';
+import { SpdPreliminaryEvaluation } from './spd-preliminary-evaluation.entity';
+import { SpdProfessionalSetting } from './spd-professional-setting.entity';
 import { SpdQualification } from './spd-qualification.entity';
-import { SpdAdministrativeCompliance } from './spd-administrative-compliance.entity';
 import { SpdTemplate } from './spd-template.entity';
 import { BdsGeneral } from './bds-general.entity';
 
@@ -40,61 +37,55 @@ export class Spd extends Audit {
   @Column()
   isActive: boolean;
 
-  @OneToMany(() => SpdScc, (scc) => scc.spd, {
-    cascade: true,
-    onDelete: 'CASCADE',
-  })
-  sccs: SpdScc[];
-
-  @OneToMany(() => SpdBds, (bds) => bds.spd, {
-    cascade: true,
-    onDelete: 'CASCADE',
-  })
-  bds: SpdBds[];
-
-  @OneToMany(() => SpdQualification, (qualification) => qualification.spd, {
-    cascade: true,
-    onDelete: 'CASCADE',
-  })
-  qualifications: SpdQualification[];
-
   @OneToMany(
-    () => SpdAdministrativeCompliance,
-    (administrative) => administrative.spd,
+    () => SpdPreferenceMargin,
+    (spdPreferenceMargin) => spdPreferenceMargin.spd,
     {
       cascade: true,
       onDelete: 'CASCADE',
     },
   )
-  spdAdministrativeCompliances: SpdAdministrativeCompliance[];
-
-  @OneToMany(() => SpdTechnicalScoring, (scoring) => scoring.spd, {
-    cascade: true,
-    onDelete: 'CASCADE',
-  })
-  technicalScorings: SpdTechnicalScoring[];
-
-  @OneToMany(() => SpdPreferenceMargin, (preference) => preference.spd, {
-    cascade: true,
-    onDelete: 'CASCADE',
-  })
   spdPreferenceMargins: SpdPreferenceMargin[];
 
   @OneToMany(
-    () => SpdRequiredDocumentaryEvidence,
-    (documentary) => documentary.spd,
+    () => SpdPreliminaryEvaluation,
+    (spdPreliminaryEvaluation) => spdPreliminaryEvaluation.spd,
     {
       cascade: true,
       onDelete: 'CASCADE',
     },
   )
-  spdRequiredDocumentaryEvidences: SpdRequiredDocumentaryEvidence[];
+  spdPreliminaryEvaluations: SpdPreliminaryEvaluation[];
 
-  @OneToMany(() => SpdSetting, (settings) => settings.spd, {
-    cascade: true,
-    onDelete: 'CASCADE',
-  })
-  spdSettings: SpdSetting[];
+  @OneToMany(
+    () => SpdProfessionalSetting,
+    (spdProfessionalSetting) => spdProfessionalSetting.spd,
+    {
+      cascade: true,
+      onDelete: 'CASCADE',
+    },
+  )
+  spdProfessionalSettings: SpdProfessionalSetting[];
+
+  @OneToMany(
+    () => SpdQualification,
+    (spdQualification) => spdQualification.spd,
+    {
+      cascade: true,
+      onDelete: 'CASCADE',
+    },
+  )
+  spdQualifications: SpdQualification[];
+
+  @OneToMany(
+    () => SpdTechnicalScoring,
+    (spdTechnicalScore) => spdTechnicalScore.spd,
+    {
+      cascade: true,
+      onDelete: 'CASCADE',
+    },
+  )
+  spdTechnicalScores: SpdTechnicalScoring[];
 
   @OneToMany(() => SpdTemplate, (spdTemplates) => spdTemplates.spd, {
     cascade: true,

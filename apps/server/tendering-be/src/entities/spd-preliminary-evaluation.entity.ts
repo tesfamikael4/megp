@@ -8,8 +8,8 @@ import {
 import { Audit } from 'src/shared/entities';
 import { Spd } from './spd.entity';
 
-@Entity({ name: 'spd_preference_margins' })
-export class SpdPreferenceMargin extends Audit {
+@Entity({ name: 'spd_preliminary_evaluations' })
+export class SpdPreliminaryEvaluation extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -17,13 +17,13 @@ export class SpdPreferenceMargin extends Audit {
   spdId: string;
 
   @Column()
-  condition: string;
+  criteria: string;
 
   @Column()
-  description: string;
+  type: string;
 
   @Column()
-  margin: string;
+  formLink: string;
 
   @Column()
   itbReference: string;
@@ -31,7 +31,7 @@ export class SpdPreferenceMargin extends Audit {
   @Column({ type: 'text', nullable: true })
   itbDescription: string;
 
-  @ManyToOne(() => Spd, (spd) => spd.spdPreferenceMargins)
+  @ManyToOne(() => Spd, (spd) => spd.spdPreliminaryEvaluations)
   @JoinColumn({ name: 'spdId' })
   spd: Spd;
 }

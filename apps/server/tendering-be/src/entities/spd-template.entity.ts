@@ -25,7 +25,7 @@ export class SpdTemplate extends Audit {
   @Column()
   spdId: string;
 
-  @ManyToOne(() => Spd, (spd) => spd.spdSettings)
+  @ManyToOne(() => Spd, (spd) => spd.spdTemplates)
   @JoinColumn({ name: 'spdId' })
   spd: Spd;
 }

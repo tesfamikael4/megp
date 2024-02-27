@@ -2,27 +2,28 @@ import { Controller } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { EntityCrudController } from 'src/shared/controller';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
-import { SpdPreferenceMargin } from 'src/entities/spd-preference-margin.entity';
-import { SpdPreferenceMarginService } from '../service/spd-preference-margin.service';
+import { SpdPreferenceMargin } from 'src/entities';
 import {
-  CreateSpdPreferenceMarginsDto,
-  UpdateSpdPreferenceMarginsDto,
-} from '../dto/spd-preference-margin.dto';
+  CreateSpdPreferenceMarginDto,
+  UpdateSpdPreferenceMarginDto,
+} from '../dto';
+import { SpdPreferenceMarginService } from '../service';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'spdId',
-  createDto: CreateSpdPreferenceMarginsDto,
-  updateDto: UpdateSpdPreferenceMarginsDto,
+  createDto: CreateSpdPreferenceMarginDto,
+  updateDto: UpdateSpdPreferenceMarginDto,
 };
+
 @ApiBearerAuth()
 @Controller('spd-preference-margins')
-@ApiTags('Spd-Preference-Margins')
+@ApiTags('Spd Preference Margins')
 export class SpdPreferenceMarginController extends EntityCrudController<SpdPreferenceMargin>(
   options,
 ) {
   constructor(
-    private readonly spdPreferenceMarginsService: SpdPreferenceMarginService,
+    private readonly spdPreferenceMarginService: SpdPreferenceMarginService,
   ) {
-    super(spdPreferenceMarginsService);
+    super(spdPreferenceMarginService);
   }
 }

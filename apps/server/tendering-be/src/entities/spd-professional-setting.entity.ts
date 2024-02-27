@@ -8,8 +8,8 @@ import {
 import { Spd } from './spd.entity';
 import { Audit } from 'src/shared/entities';
 
-@Entity({ name: 'spd_qualifications' })
-export class SpdQualification extends Audit {
+@Entity({ name: 'spd_professional_settings' })
+export class SpdProfessionalSetting extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -17,24 +17,15 @@ export class SpdQualification extends Audit {
   spdId: string;
 
   @Column()
-  category: string;
-
-  @Column()
-  factor: string;
-
-  @Column()
   requirement: string;
 
   @Column()
   formLink: string;
 
-  @Column()
-  itbReference: string;
+  @Column({ type: 'jsonb' })
+  validation: JSON;
 
-  @Column({ type: 'text', nullable: true })
-  itbDescription: string;
-
-  @ManyToOne(() => Spd, (spd) => spd.spdQualifications)
+  @ManyToOne(() => Spd, (spd) => spd.spdProfessionalSettings)
   @JoinColumn({ name: 'spdId' })
   spd: Spd;
 }

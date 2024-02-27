@@ -1,21 +1,27 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, IsObject, IsUUID } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsObject,
+  IsUUID,
+  IsOptional,
+} from 'class-validator';
 
-export class CreateSpdQualificationsDto {
+export class CreateSpdQualificationDto {
   @ApiProperty()
   @IsUUID()
   @IsNotEmpty()
   spdId: string;
 
   @ApiProperty()
-  @IsString()
+  @IsObject()
   @IsNotEmpty()
-  category: string;
+  factor: any;
 
   @ApiProperty()
-  @IsString()
+  @IsObject()
   @IsNotEmpty()
-  factor: string;
+  category: any;
 
   @ApiProperty()
   @IsString()
@@ -25,58 +31,23 @@ export class CreateSpdQualificationsDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  attribute: string;
-
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  value: string;
-
-  @ApiProperty()
-  @IsObject()
-  @IsNotEmpty()
-  singleEntityCondition: any;
-
-  @ApiProperty()
-  @IsObject()
-  @IsNotEmpty()
-  jvCominedCondition: any;
-
-  @ApiProperty()
-  @IsObject()
-  @IsNotEmpty()
-  jvEachPartherCondition: any;
-
-  @ApiProperty()
-  @IsObject()
-  @IsNotEmpty()
-  jvAtleastOnePartnerCondition: any;
-
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  order: string;
-
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
   formLink: string;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  mandate: string;
+  itbReference: string;
 
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   itbDescription: string;
 }
 
-export class UpdateSpdQualificationsDto {
+export class UpdateSpdQualificationDto {
   @ApiProperty()
   @IsUUID()
   id: string;
 }
 
-export class SpdQualificationsResponseDto extends UpdateSpdQualificationsDto {}
+export class SpdQualificationResponseDto extends UpdateSpdQualificationDto {}
