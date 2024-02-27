@@ -71,4 +71,4 @@ import { MandateService } from '../mandate/services/mandate.service';
   ],
   exports: [OrganizationService],
 })
-export class OrganizationModule {}
+export class OrganizationModule { }
