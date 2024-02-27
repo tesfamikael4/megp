@@ -17,7 +17,7 @@ import {
   useListByIdQuery,
   useLazyListByIdQuery,
 } from '../_api/unit.api';
-import { useListByIdQuery as useUnitTypeListQuery } from '../../unit-type/_api/unit-type.api';
+import { useLazyListByIdQuery as useLazyUnitTypeListQuery } from '../../unit-type/_api/unit-type.api';
 import { memo, useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Unit } from '@/models/unit';
@@ -81,10 +81,7 @@ export function FormDetail({ mode }: FormDetailProps) {
     isLoading,
   } = useReadQuery(id?.toString());
 
-  const { data: unitType } = useUnitTypeListQuery({
-    id: organizationId,
-    collectionQuery: undefined,
-  });
+  const [triggerType, { data: unitType }] = useLazyUnitTypeListQuery();
 
   useEffect(() => {
     getListById({
@@ -92,6 +89,15 @@ export function FormDetail({ mode }: FormDetailProps) {
       collectionQuery: undefined,
     });
   }, [organizationId]);
+
+  useEffect(() => {
+    if (organizationId) {
+      triggerType({
+        id: organizationId,
+        collectionQuery: undefined,
+      });
+    }
+  }, [organizationId, triggerType]);
 
   useEffect(() => {
     if (isSuccess) {
@@ -158,12 +164,12 @@ export function FormDetail({ mode }: FormDetailProps) {
       await activation({ ...dataSent, id: id?.toString() }).unwrap();
       notify(
         'Success',
-        `Unit ${selected?.status ? 'Deactivated' : 'Activated'} successfully`,
+        `Unit ${selected?.status === 'ACTIVE' ? 'Deactivated' : 'Activated'} successfully`,
       );
     } catch {
       notify(
         'Error',
-        `Error in ${selected?.status ? 'Deactivating' : 'Activating'}  Unit`,
+        `Error in ${selected?.status === 'ACTIVE' ? 'Deactivating' : 'Activating'}  Unit`,
       );
     }
   };
@@ -299,7 +305,7 @@ export function FormDetail({ mode }: FormDetailProps) {
 
         <div className="flex-shrink-0 mt-6 ">
           <ParentModal
-            data={[]}
+            data={parents}
             parentUnitId={parentUnitId}
             setParentUnitId={setParentUnitId}
           />

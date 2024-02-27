@@ -1,23 +1,21 @@
 'use client';
-import { Organization } from '@/models/organization';
 import { CollectionQuery, EntityConfig, EntityLayout } from '@megp/entity';
 import { usePathname } from 'next/navigation';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useLazyListArchivedByIdQuery } from '../../../users/_api/user.api';
 import { Restore } from './_components/restore';
 import { useAuth } from '@megp/auth';
-import { logger } from '@megp/core-fe';
+
+import { User } from '@/models/user/user';
 
 export function Entity({ children }: { children: React.ReactNode }) {
-  const [onRequest, setOnRequest] = useState<any>();
-
   const { organizationId } = useAuth();
 
   const pathname = usePathname();
 
   const [trigger, { data, isFetching }] = useLazyListArchivedByIdQuery();
 
-  const config: EntityConfig<Organization> = useMemo(() => {
+  const config: EntityConfig<User> = useMemo(() => {
     return {
       basePath: '/archived/users',
       mode: 'list',
@@ -33,8 +31,14 @@ export function Entity({ children }: { children: React.ReactNode }) {
         {
           id: 'name',
           header: 'Name',
-          accessorKey: 'fullName',
-          cell: (info) => info.getValue(),
+          accessorKey: 'account.firstName',
+          cell: ({ row }) => (
+            <div>
+              {row.original.account.firstName +
+                ' ' +
+                row.original.account.lastName}
+            </div>
+          ),
           meta: {
             widget: 'primary',
           },
@@ -42,7 +46,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
         {
           id: 'username',
           header: 'User name',
-          accessorKey: 'username',
+          accessorKey: 'account.username',
           cell: (info) => info.getValue(),
           meta: {
             widget: 'expand',
@@ -51,7 +55,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
         {
           id: 'email',
           header: 'Email',
-          accessorKey: 'email',
+          accessorKey: 'account.email',
           cell: (info) => info.getValue(),
           meta: {
             widget: 'expand',
@@ -60,7 +64,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
 
         {
           id: 'action',
-          header: 'Action',
+          header: () => <p className="ml-auto">Action</p>,
           accessorKey: 'action',
           cell: (info) => <Restore original={info.row.original} />,
         },
@@ -70,24 +74,19 @@ export function Entity({ children }: { children: React.ReactNode }) {
 
   const mode = pathname === `/archived/users` ? 'list' : 'detail';
 
-  const onRequestChange = useCallback(
-    (request: CollectionQuery) => {
-      organizationId !== undefined &&
-        trigger({ id: organizationId, collectionQuery: request });
-    },
-    [trigger, organizationId],
-  );
+  const onRequestChange = (request: CollectionQuery) => {
+    const newRequest = { ...request, includes: ['account'] };
 
-  useEffect(() => {
-    setOnRequest(onRequestChange);
-  }, [onRequestChange, onRequest]);
+    organizationId !== undefined &&
+      trigger({ id: organizationId, collectionQuery: newRequest });
+  };
 
   return (
     <EntityLayout
       mode={mode}
       config={config}
       data={
-        data?.items?.map((item: Organization) => {
+        data?.items?.map((item: User) => {
           return {
             ...item,
             isActive: item.isActive ? 'Active' : 'Inactive ',

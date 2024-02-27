@@ -8,6 +8,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { useEffect, useMemo, useState } from 'react';
+import { useParams } from 'next/navigation';
 import { defaultEntityConfig, type EntityConfig } from '../../models/entity';
 import { visibleColumn } from '../../utilities/table';
 import { Grid } from '../table/grid';
@@ -39,18 +40,19 @@ export function TreeList<T>({
     return { ...defaultEntityConfig, ...config };
   }, [config]);
 
+  const { id } = useParams();
   const [expanded, setExpanded] = useState({});
 
   const [data, setData] = useState([]);
 
   // construct header columns with the select column and action column
   const tableColumns = useMemo<ColumnDef<T>[]>(
-    () => [...[Expand(parentUnitId, setParentUnitId)]],
+    () => [...[Expand(parentUnitId, setParentUnitId, id)]],
     [parentUnitId, setParentUnitId],
   );
 
   useEffect(() => {
-    function transformData(originalData: T[]) {
+    function transformData(originalData: T[]): any {
       const transformedData = [];
 
       const map = new Map();
@@ -102,26 +104,6 @@ export function TreeList<T>({
       enableHiding: false,
     },
   });
-
-  // useEffect(() => {
-  //   function generateExpandedObject(items, parentKey = '') {
-  //     let expandedObject = {};
-
-  //     items.forEach((item, index) => {
-  //       const newKey = parentKey ? `${parentKey}.${index}` : `${index}`;
-  //       expandedObject[newKey] = true;
-
-  //       if (item.subRows && item.subRows.length > 0) {
-  //         const childObject = generateExpandedObject(item.subRows, newKey);
-  //         expandedObject = { ...expandedObject, ...childObject };
-  //       }
-  //     });
-
-  //     return expandedObject;
-  //   }
-
-  //   setExpanded(generateExpandedObject(data));
-  // }, [data]);
 
   return (
     <>

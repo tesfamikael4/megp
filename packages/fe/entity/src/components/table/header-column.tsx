@@ -1,7 +1,6 @@
 import type { ReactElement } from 'react';
 import React, { useEffect, useRef } from 'react';
 import { ActionIcon, Checkbox, Menu, Radio, Text } from '@mantine/core';
-import { useParams } from 'next/navigation';
 import {
   IconArrowRight,
   IconDotsVertical,
@@ -191,8 +190,8 @@ export const actionColumn = (options) => {
   };
 };
 
-export const Expand = (parentUnitId, setParentUnitId) => {
-  const { id } = useParams();
+export const Expand = (parentUnitId, setParentUnitId, id) => {
+  // const { id } = useParams();
   return {
     id: 'select',
     meta: {
