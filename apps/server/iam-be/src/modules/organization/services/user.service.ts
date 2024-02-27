@@ -7,13 +7,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import {
-  Mandate,
-  OrganizationMandate,
-  User,
-  UserRoleSystem,
-  UserUnit,
-} from '@entities';
+import { OrganizationMandate, User, UserRoleSystem, UserUnit } from '@entities';
 import { ExtraCrudService } from 'src/shared/service/extra-crud.service';
 import { CreateUserDto, InviteUserDto, UserResponseDto } from '../dto/user.dto';
 import { AccountsService } from 'src/modules/account/services/account.service';
@@ -191,23 +185,32 @@ export class UserService extends ExtraCrudService<User> {
     return response;
   }
 
+  async createOrganizationAdmin(itemData: CreateUserDto): Promise<any> {
+    const mandates = await this.repositoryOrganizationMandate.findOne({
+      where: { organizationId: itemData.organizationId },
+    });
+
+    if (!mandates) {
+      throw new ForbiddenException(`mandate_not_found`);
+    }
+    return this.createAdmin(
+      itemData,
+      process.env.ORGANIZATION_ADMINISTRATOR_KEY ??
+      'ORGANIZATION_ADMINISTRATOR',
+    );
+  }
+
+
+  async createSuperAdmin(itemData: CreateUserDto): Promise<any> {
+    return await this.createAdmin(
+      itemData,
+      process.env.SUPER_ADMINISTRATOR_KEY ?? 'SUPER_ADMINISTRATOR',
+    );
+  }
+
   async createAdmin(itemData: CreateUserDto, role: string): Promise<any> {
     if (itemData.email) {
       itemData.email = itemData.email.toLowerCase();
-    }
-
-    if (
-      role ==
-      (process.env.ORGANIZATION_ADMINISTRATOR_KEY ??
-        'ORGANIZATION_ADMINISTRATOR')
-    ) {
-      const mandates = await this.repositoryOrganizationMandate.findOne({
-        where: { organizationId: itemData.organizationId },
-      });
-
-      if (!mandates) {
-        throw new ForbiddenException(`mandate_not_found`);
-      }
     }
 
     const account = await this.getOrCreateAccount(itemData);
