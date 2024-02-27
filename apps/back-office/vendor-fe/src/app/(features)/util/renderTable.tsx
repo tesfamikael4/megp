@@ -138,7 +138,9 @@ export function renderTable(
                                   View
                                 </Button>
                               )
-                            : cellValue}
+                            : (header?.name ?? header) === 'share'
+                              ? `${cellValue} %`
+                              : cellValue}
                     </Table.Td>
                   );
                 }
