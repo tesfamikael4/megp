@@ -275,6 +275,13 @@ export const permissions = [
     key: 'administration:platformOwner',
     applicationId: 1,
   },
+  {
+    id: 38,
+    name: 'Report Viewer',
+    description: 'Report Viewer',
+    key: 'iam:reportViewer',
+    applicationId: 2,
+  },
 ];
 export const roleSystems = [
   {
@@ -326,6 +333,12 @@ export const roleSystems = [
     description: 'Budget Officer',
     key: 'BUDGET_OFFICER',
   },
+  {
+    id: 10,
+    name: 'Manager',
+    description: 'Manager',
+    key: 'MANAGER',
+  },
 ];
 export const roleSystemPermissions = [
   { roleSystemId: 1, permissionId: 1 },
@@ -360,6 +373,7 @@ export const roleSystemPermissions = [
   { roleSystemId: 8, permissionId: 34 },
   { roleSystemId: 8, permissionId: 35 },
   { roleSystemId: 9, permissionId: 36 },
+  { roleSystemId: 10, permissionId: 38 },
 ];
 export const account = {
   id: '97766b0e-9d8d-46fc-a3de-65c394e73d86',
