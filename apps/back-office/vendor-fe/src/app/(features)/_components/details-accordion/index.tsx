@@ -121,6 +121,12 @@ const formatColumns = {
     { name: 'IBAN' },
     { name: 'isDefualt' },
   ],
+  businessSizeAndOwnership: [
+    { name: 'registeredCapital' },
+    { name: 'paidUpCapital' },
+    { name: 'numberOfEmployees' },
+    { name: 'ownershipType' },
+  ],
 
   service: [
     {
@@ -332,6 +338,14 @@ function FormPreview({ data }: { data: any }) {
                                   },
                                 )
                               : data[selected][fieldKey]}
+                          </Text>
+                          <Text
+                            className="text-center"
+                            size="sm"
+                            tt="capitalize"
+                          >
+                            {selected === 'shareHolders' &&
+                              data[selected][fieldKey]}
                           </Text>
                         </Flex>
                       )}

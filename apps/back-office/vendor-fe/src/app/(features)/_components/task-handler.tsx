@@ -257,7 +257,7 @@ export default function TaskHandler({
             onClick={() => handleButtonClick('YES')}
             loading={loading['YES']}
           >
-            Yes
+            Approve
           </Button>
           <Button
             onClick={() => {
@@ -267,7 +267,7 @@ export default function TaskHandler({
             className="bg-red-600 hover:bg-red-700"
             loading={loading['NO']}
           >
-            No
+            Adjust
           </Button>
         </Flex>
       )}

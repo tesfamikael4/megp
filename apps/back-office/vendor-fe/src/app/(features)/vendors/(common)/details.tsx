@@ -4,7 +4,7 @@ import {
   useLazyGetVendorDetailQuery,
 } from '@/store/api/vendor_request_handler/approved-rejected-api';
 import { Avatar, Box, Flex, Paper, Skeleton } from '@mantine/core';
-import { IconClockHour2, IconProgress, IconTicket } from '@tabler/icons-react';
+import { IconBriefcase, IconProgress, IconTicket } from '@tabler/icons-react';
 import { useParams, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
 import VendorDetail from '../../_components/vendor-details';
@@ -68,7 +68,7 @@ export default function VendorsDetail() {
               <Box>{response?.tin}</Box>
             </Flex>
             <Flex direction="row" className="items-center gap-1 text-sm">
-              <IconClockHour2 size={18} />
+              <IconBriefcase size={18} />
               <Box>{response?.formOfEntity}</Box>
             </Flex>
             <Flex direction="row" className="items-center gap-1 text-sm">

@@ -19,6 +19,7 @@ import {
   formatDateTimeFromString,
   isDate,
 } from '@/app/(features)/util';
+import Link from 'next/link';
 
 const tab = [
   {
@@ -295,11 +296,17 @@ const FormattedPanel = ({ data, tabValue }: RequiredFieldsOnly<PanelProps>) => {
                   fw={500}
                   tt="capitalize"
                 >
-                  {typeof data[tabValue][field.name] === 'object'
-                    ? displayFormattedObject(data[tabValue][field.name], {
-                        [field.name]: 'amount+currency',
-                      })
-                    : data[tabValue][field.name]}
+                  {typeof data[tabValue][field.name] === 'object' ? (
+                    displayFormattedObject(data[tabValue][field.name], {
+                      [field.name]: 'amount+currency',
+                    })
+                  ) : field.name === 'website' ? (
+                    <Link target="_blank" href={data[tabValue][field.name]}>
+                      {data[tabValue][field.name]}
+                    </Link>
+                  ) : (
+                    data[tabValue][field.name]
+                  )}
                 </Text>
               </Flex>
               <Divider />
