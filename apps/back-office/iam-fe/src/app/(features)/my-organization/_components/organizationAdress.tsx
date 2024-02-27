@@ -84,7 +84,12 @@ const OrganizationAdressForm = () => {
         ),
       }),
       postalCode: z.string(),
-      email: z.string().email('This is not a valid email.'),
+      email: z
+        .string()
+        .email({ message: 'Must be a valid email' })
+        .optional()
+        .nullable()
+        .or(z.literal('')),
 
       mobileNumber: z.object({
         countryCode: z.string().default('MW'),
