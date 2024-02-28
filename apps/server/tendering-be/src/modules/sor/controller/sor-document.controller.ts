@@ -8,6 +8,7 @@ import {
   CreateSorDocumentDto,
   UpdateSorDocumentDto,
 } from '../dto/sor-document.dto';
+import { AllowAnonymous } from 'src/shared/authorization';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'itemId',
@@ -18,6 +19,7 @@ const options: ExtraCrudOptions = {
 @ApiBearerAuth()
 @Controller('sor-documents')
 @ApiTags('Sor Document Controller')
+@AllowAnonymous()
 export class SorDocumentController extends ExtraCrudController<SorDocument>(
   options,
 ) {

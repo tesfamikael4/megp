@@ -24,6 +24,7 @@ import { SorReimburseableExpenseController } from './controller/sor-reimburseabl
 import { SorDocumentController } from './controller/sor-document.controller';
 import { SorTechnicalRequirementController } from './controller/sor-technical-requirement.controller';
 import { SorLaborController } from './controller/sor-labors.controller';
+import { MinIOModule } from 'src/shared/min-io/min-io.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { SorLaborController } from './controller/sor-labors.controller';
       SorTechnicalRequirement,
       SorLabor,
     ]),
+    MinIOModule,
   ],
   providers: [
     SorBillOfMaterialService,
