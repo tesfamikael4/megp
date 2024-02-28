@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
-  IsJSON,
   IsNotEmpty,
+  IsObject,
   IsOptional,
   IsString,
   IsUUID,
@@ -25,14 +25,15 @@ export class CreateNotesDto {
   content: string;
 
   @ApiProperty()
-  @IsJSON()
   @IsOptional()
+  @IsObject()
   metaData: any;
 
   @ApiProperty()
   @IsUUID()
   @IsOptional()
   organizationId: string;
+
   @ApiProperty()
   @IsString()
   key: string;
