@@ -82,7 +82,7 @@ export const selectColumn = {
   ),
 };
 export const relationSelectColumn = (selected, setSelected) => {
-  const id = selected.map((sel) => sel.id);
+  const id = selected?.map((sel) => sel.id);
 
   return {
     id: 'select',
@@ -91,11 +91,19 @@ export const relationSelectColumn = (selected, setSelected) => {
     },
     size: 40,
     header: ({ table }) => {
+      const toggleSelectAllRows = (event) => {
+        if (event.target.checked) {
+          const selectedModified = table?.options.data?.map((row) => row);
+          setSelected(selectedModified);
+        } else {
+          setSelected([]);
+        }
+      };
       return (
         <IndeterminateCheckbox
           checked={table.getIsAllRowsSelected()}
           indeterminate={table.getIsSomeRowsSelected()}
-          onChange={table.getToggleAllRowsSelectedHandler()}
+          onChange={toggleSelectAllRows}
         />
       );
     },
@@ -103,7 +111,7 @@ export const relationSelectColumn = (selected, setSelected) => {
       return (
         <div>
           <Checkbox
-            checked={id.includes(row.original.id)}
+            checked={id?.includes(row.original.id)}
             onChange={(data) => {
               if (data.target.checked) setSelected([...selected, row.original]);
               else
@@ -191,7 +199,6 @@ export const actionColumn = (options) => {
 };
 
 export const Expand = (parentUnitId, setParentUnitId, id) => {
-  // const { id } = useParams();
   return {
     id: 'select',
     meta: {

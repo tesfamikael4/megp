@@ -83,13 +83,16 @@ export function FormDetail({ mode }: FormDetailProps) {
 
   const onCreate = async (data) => {
     try {
-      const result = await create(data);
+      const result = await create(data).unwrap();
       if ('data' in result) {
         router.push(`/organizations/${result.data.id}`);
       }
       notify('Success', 'Organization created successfully');
     } catch (err) {
-      notify('Error', 'Error in creating organization');
+      notify(
+        'Error',
+        `${err.data.message === 'organization already exists' ? 'organization already exists' : 'Error in creating organization'}`,
+      );
     }
   };
 

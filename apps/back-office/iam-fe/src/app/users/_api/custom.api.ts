@@ -51,11 +51,32 @@ const organizationProfileApi = invitationApi.injectEndpoints({
         };
       },
     }),
+    updateSuperUser: builder.mutation<any, any>({
+      query: ({ id, ...data }) => {
+        return {
+          url: `/auth/update-account/${id}`,
+          method: 'POST',
+          body: data,
+        };
+      },
+      invalidatesTags: ['users'],
+    }),
+    resetPassword: builder.mutation<any, any>({
+      query: (data) => {
+        return {
+          url: `/auth/reset-account-password`,
+          method: 'POST',
+          body: data,
+        };
+      },
+    }),
   }),
 });
 
 export const {
   useInviteUserMutation,
+  useResetPasswordMutation,
+  useUpdateSuperUserMutation,
   useLazyGetUserInvitationLinkQuery,
   useSetPasswordMutation,
   useLazyRoleToAssignQuery,
