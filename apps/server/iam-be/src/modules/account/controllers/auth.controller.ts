@@ -23,6 +23,7 @@ import {
   ForgetPasswordDto,
   LoginDto,
   LoginResponseDto,
+  ResetAccountPasswordDto,
   ResetPasswordDto,
 } from '../dto/login.dto';
 import {
@@ -121,6 +122,15 @@ export class AuthController {
   ) {
     changePassword.accountId = user.id;
     return this.accountsService.changePassword(changePassword);
+  }
+
+  @Post('reset-account-password')
+  @UseGuards(JwtGuard, PermissionsGuard('iam:organization'))
+  resetAccountPassword(
+    @Body() changePassword: ResetAccountPasswordDto,
+    @CurrentUser() user: any,
+  ) {
+    return this.accountsService.resetAccountPassword(changePassword, user);
   }
 
   @Post('refresh-token')

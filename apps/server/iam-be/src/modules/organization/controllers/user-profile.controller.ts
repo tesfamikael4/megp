@@ -10,7 +10,7 @@ import { ExtraCrudController } from 'src/shared/controller/extra-crud.controller
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 
 const options: ExtraCrudOptions = {
-  entityIdName: 'userId',
+  entityIdName: 'accountId',
   createDto: CreateUserProfileDto,
   updateDto: UpdateUserProfileDto,
 };
