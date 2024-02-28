@@ -38,6 +38,6 @@ export class SorIncidentalCost extends Audit {
   @Column({ nullable: true })
   amount: number;
 
-  @Column()
+  @Column({ nullable: true })
   currency: string;
 }
