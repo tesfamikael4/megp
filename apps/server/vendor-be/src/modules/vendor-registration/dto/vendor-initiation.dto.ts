@@ -50,7 +50,6 @@ export class VendorInitiationDto {
     entity.formOfEntity = dto.businessType;
     entity.origin = dto.origin;
     entity.district = dto.district;
-    entity.country = dto.country;
     entity.origin = dto?.origin;
     return entity;
   }
@@ -85,7 +84,6 @@ export class UpdateVendorInitiationDto extends VendorInitiationDto {
     entity.formOfEntity = dto.businessType;
     entity.origin = dto.origin;
     entity.district = dto.district;
-    entity.country = dto.country;
     entity.origin = dto.origin;
     console.log(entity);
     return entity;
@@ -104,7 +102,6 @@ export class VendorInitiationResponseDto extends VendorInitiationDto {
     response.businessType = regDto.formOfEntity;
     response.origin = regDto.origin;
     response.district = regDto.district;
-    response.country = regDto.country;
     response.origin = regDto.origin;
     return response;
   }

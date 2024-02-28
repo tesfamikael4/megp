@@ -19,7 +19,6 @@ import { UploadFileDto } from '../dto/file.dto';
 
 @Controller('upload')
 @ApiTags('File')
-@UseGuards(JwtGuard)
 @ApiResponse({ status: 500, description: 'Internal error' })
 export class UploadController {
   constructor(

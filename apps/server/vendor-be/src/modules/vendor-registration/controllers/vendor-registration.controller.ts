@@ -36,27 +36,25 @@ import { MbrsDataDto } from '../dto/mbrsData.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ReceiptDto } from '../dto/receipt.dto';
 import { Request } from 'express';
+import { CreateAreasOfBusinessInterest } from '../dto/areas-of-business-interest';
 @ApiBearerAuth()
 @Controller('vendor-registrations')
 @ApiTags('Vendor-registrations')
 @ApiResponse({ status: 500, description: 'Internal error' })
 @ApiExtraModels(DataResponseFormat)
 export class VendorRegistrationsController {
-  constructor(private readonly regService: VendorRegistrationsService) { }
-  @UseGuards(JwtGuard)
+  constructor(private readonly regService: VendorRegistrationsService) {}
   @Get('get-isr-vendors')
   async getVendors() {
     return await this.regService.getIsrVendors();
   }
 
-  @AllowAnonymous()
-  @Get('get-vendor-by-userId/:userId')
+  @Get('get-vendor-by-userId')
   async getVendorByuserId(@CurrentUser() userInfo: any) {
     // return await this.regService.getVendorByUserId(userInfo.id);
     return await this.regService.getVendorByUserId(userInfo.id);
   }
 
-  @UseGuards(JwtGuard)
   @Get('get-isr-vendor-by-userId')
   async getIsrVendorByuserId(
     @CurrentUser() userInfo: any,
@@ -64,23 +62,22 @@ export class VendorRegistrationsController {
   ) {
     return await this.regService.getIsrVendorByUserId(userInfo.id, flag);
   }
-  @UseGuards(JwtGuard)
+
   @Get('get-isr-vendor-info-by-userId')
   async getPendingIsrVendorByuserId(@CurrentUser() userInfo: any) {
     return await this.regService.getPendingIsrVendorByUserId(userInfo.id);
   }
-  @UseGuards(JwtGuard)
+
   @Get('get-isr-vendor-by-id/:vendorId')
   async getVendorByVendorId(@Param('vendorId') vendorId: string) {
     return await this.regService.getIsrVendorByVendorId(vendorId);
   }
 
-  @UseGuards(JwtGuard)
   @Get('get-isr-vendor-invoice-by-userId')
   async getIsrVendorInvoiceByuserId(@CurrentUser() userInfo: any) {
     return await this.regService.getIsrVendorInvoiceByUserId(userInfo.id);
   }
-  @UseGuards(JwtGuard)
+
   @Post('add-vendor-information')
   async addVendorInformation(
     @Body() data: InsertAllDataDto,
@@ -94,7 +91,7 @@ export class VendorRegistrationsController {
     if (!result) throw new BadRequestException(`vendor registration failed`);
     return result;
   }
-  @UseGuards(JwtGuard)
+
   @Post('submit-vendor-information')
   async submitVendorInformations(
     @Body() data: InsertAllDataDto,
@@ -108,7 +105,7 @@ export class VendorRegistrationsController {
     if (!result) throw new BadRequestException(`vendor_submission_failed`);
     return result;
   }
-  @UseGuards(JwtGuard)
+
   @Post('vendor-initiation')
   async VendorInitiation(
     @Body() vendorInitiationDto: VendorInitiationDto,
@@ -142,19 +139,18 @@ export class VendorRegistrationsController {
   async getApprovedVendorById(@Param('vendorId') vendorId: string) {
     return await this.regService.getApprovedVendorById(vendorId);
   }
-  @UseGuards(JwtGuard)
+
   @AllowAnonymous()
   @Get('get-renewal-isr-vendor')
   async getRenewalIsrVendor(@CurrentUser() userInfo: any) {
     return await this.regService.getRenewalIsrVendor(userInfo);
   }
-  @UseGuards(JwtGuard)
+
   @Get('get-approved-vendor-service-byUserId')
   async getApprovedVendorServiceByUserId(@CurrentUser() userInfo: any) {
     return await this.regService.getApprovedVendorServiceByUserId(userInfo.id);
   }
 
-  @UseGuards(JwtGuard)
   @Post('upgrade-service')
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileInterceptor('attachmentUrl'))
@@ -165,7 +161,15 @@ export class VendorRegistrationsController {
   ) {
     return await this.regService.submitServiceUpgrade(attachment, user, dto);
   }
-  @UseGuards(JwtGuard)
+
+  @Post('add-service')
+  async addService(
+    @CurrentUser() userInfo: any,
+    @Body() command: CreateAreasOfBusinessInterest[],
+  ) {
+    return await this.regService.addService(command, userInfo);
+  }
+
   @Post('renew-service')
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileInterceptor('attachmentUrl'))
@@ -177,29 +181,26 @@ export class VendorRegistrationsController {
     return await this.regService.submitServiceUpgrade(attachment, user, dto);
   }
 
-  @UseGuards(JwtGuard)
   @Get('get-my-approved-services')
   async getMyApprovedService(@CurrentUser() userInfo: any) {
     return await this.regService.getMyApprovedService(userInfo);
   }
-  @UseGuards(JwtGuard)
+
   @Get('cancel-registration')
   async cancelRegistration(@CurrentUser() user: any) {
     return await this.regService.cancelRegistration(user);
   }
 
-  @UseGuards(JwtGuard)
   @Get('get-all-business-area')
   async getAllBusinessAreasByUserId(@CurrentUser() userInfo: any) {
     return await this.regService.getAllBusinessAreasByUserId(userInfo.id);
   }
-  @UseGuards(JwtGuard)
+
   @Get('get-vendor-information')
   async getVendorInformation(@CurrentUser() userInfo: any) {
     return await this.regService.getVendorInformation(userInfo.id);
   }
 
-  @UseGuards(JwtGuard)
   @Post('add-vendor-update-information')
   async addVendorProfileUpdate(
     @Body() vendorprofileUpdateDara: any,
@@ -210,7 +211,7 @@ export class VendorRegistrationsController {
       userInfo,
     );
   }
-  @UseGuards(JwtGuard)
+
   @Post('submit-vendor-update-information')
   async submitVendorProfileUpdate(
     @Body() vendorprofileUpdateDara: any,
@@ -221,28 +222,27 @@ export class VendorRegistrationsController {
       userInfo,
     );
   }
-  @UseGuards(JwtGuard)
+
   @Get('get-mbrs-data')
   async GetMBRSData(@Body() mbrsDataDto: MbrsDataDto) {
     return await this.regService.GetMBRSData(mbrsDataDto);
   }
-  @UseGuards(JwtGuard)
+
   @Get('get-ncic-data/:licenseNumber')
   async GetNCICData(@Param('licenseNumber') licenseNumber: string) {
     return await this.regService.GetNCICData(licenseNumber);
   }
-  @UseGuards(JwtGuard)
+
   @Get('get-fppa-data/:licenseNumber')
   async GetFPPAData(@Param('licenseNumber') licenseNumber: string) {
     return await this.regService.GetFPPAData(licenseNumber);
   }
 
-  @UseGuards(JwtGuard)
   @Get('get-certificate-informations')
   async getCertificateInformations(@CurrentUser() userInfo: any) {
     return await this.regService.getCertificateInformations(userInfo.id);
   }
-  @UseGuards(JwtGuard)
+
   @Get('get-preferential-certificate')
   async getpreferentialCertificates(@CurrentUser() userInfo: any) {
     return await this.regService.getCertificateInformations(userInfo.id);

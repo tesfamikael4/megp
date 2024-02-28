@@ -4,6 +4,7 @@ import { WorkflowInstanceEntity } from 'src/entities/workflow-instance.entity';
 import { AuthorizationModule } from 'src/shared/authorization';
 import { ApplicationExcutionController } from './controllers/application-execution.controller';
 import { WorkflowInstanceController } from './controllers/workflow-instance.controller';
+import { HandlingCommonService } from './services/handling-common-services';
 
 @Module({
   imports: [

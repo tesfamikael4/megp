@@ -42,6 +42,7 @@ export class ApplicationExcutionService {
     const keys = this.commonService.getServiceCatagoryKeys(serviceKey);
     console.log(keys);
     if (keys.length < 0) throw new HttpException('Invalid Request', 400);
+
     const dataQuery = QueryConstructor.constructQuery<WorkflowInstanceEntity>(
       this.wiRepository,
       query,
@@ -62,7 +63,7 @@ export class ApplicationExcutionService {
         handlerType: HandlerTypeEnum.REQUESTOR,
       })
       .orderBy('workflow_instances.submittedAt', 'ASC');
-
+    // console.log(dataQuery.getSql())
     const d = new DataResponseFormat<WorkflowInstanceResponse>();
     const [result, total] = await dataQuery.getManyAndCount();
     d.items = result.map((entity) => {

@@ -55,6 +55,7 @@ import { ServiceModule } from '../services/service.module';
 import { BpServiceService } from '../services/services/service.service';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { PreferentialTreatmentsEntity } from 'src/entities/preferential-treatment.entity';
+import { HandlingModule } from '../handling/handling.module';
 
 @Module({
   imports: [
@@ -81,7 +82,7 @@ import { PreferentialTreatmentsEntity } from 'src/entities/preferential-treatmen
       BusinessProcessEntity,
       IsrVendorsEntity,
       ProfileInfoEntity,
-      PreferentialTreatmentsEntity
+      PreferentialTreatmentsEntity,
     ]),
     EventEmitterModule.forRoot(),
     AuthorizationModule,
@@ -122,4 +123,4 @@ import { PreferentialTreatmentsEntity } from 'src/entities/preferential-treatmen
     InvoicesController,
   ],
 })
-export class VendorRegistrationModule { }
+export class VendorRegistrationModule {}

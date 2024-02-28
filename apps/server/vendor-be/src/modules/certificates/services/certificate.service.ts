@@ -100,7 +100,7 @@ export class CertificateService {
           { label: 'Postal Address', value: address.address.postalAddress },
           { label: 'Supplier Location', value: vendorInfo.district },
           { label: 'Website', value: address.address.website },
-          { label: 'Country of Establishment', value: vendorInfo.country },
+          { label: 'Country of Establishment', value: vendorInfo.origin },
           { label: 'Goods Category', value: goodsCategory },
           { label: 'Services Category', value: serviceCategory },
           { label: 'Expire Date', value: expireDate },

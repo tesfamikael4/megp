@@ -638,4 +638,26 @@ export class FileService {
       throw error;
     }
   }
+  async uploadBrifecase(file: Express.Multer.File, user: any): Promise<string> {
+    try {
+      const filetype = this.getFileExtension(file.originalname);
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+      const fileId = `${uniqueSuffix}_${'brifecase.'}` + filetype;
+      const filename = `${user.id}/brifecase/${fileId}`;
+      const metaData = {
+        'Content-Type': 'application/octet-stream',
+      };
+      await this.minioClient.putObject(
+        this.bucketName,
+        filename,
+        file.buffer,
+        metaData,
+      );
+
+      return fileId;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
 }

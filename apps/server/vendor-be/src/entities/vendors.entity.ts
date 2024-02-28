@@ -23,6 +23,8 @@ export class VendorsEntity extends Audit {
   id: string;
   @Column({ name: 'tin', nullable: true })
   tin: string;
+  @Column({ nullable: true, unique: true })
+  registrationNumber: string;
   @Column()
   userId: string;
   @Column({ name: 'isrVendorId', nullable: true })
@@ -32,11 +34,10 @@ export class VendorsEntity extends Audit {
   //legal form of entity
   @Column({ nullable: true })
   formOfEntity: string;
-  @Column({ name: 'country', default: 'Malian' })
-  country: string;
-
   @Column({ type: 'json', nullable: true })
   metaData: any;
+  @Column({ default: true })
+  canRequest: boolean;
   @Column({ nullable: true })
   name: string;
   @Column({ nullable: true })
