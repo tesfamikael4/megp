@@ -44,7 +44,7 @@ export class CreateSorIncidentalCostDto extends Audit {
   @ApiProperty()
   amount: number;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @ApiProperty()
   currency: string;
