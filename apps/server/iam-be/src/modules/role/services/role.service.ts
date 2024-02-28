@@ -1,5 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Role, RolePermission } from '@entities';
 import { CollectionQuery, QueryConstructor } from 'src/shared/collection-query';
@@ -83,5 +83,23 @@ export class RoleService extends ExtraCrudService<Role> {
     }
 
     return response;
+  }
+
+  async softDelete(id: string, req?: any): Promise<void> {
+    const item = await this.repositoryRole.findOne({
+      where: {
+        id,
+      },
+      relations: {
+        userRoles: true,
+      },
+      select: {
+        id: true,
+      },
+    });
+    if (item.userRoles.length > 0) {
+      throw new BadRequestException(`cant_delete_role_with_users`);
+    }
+    await this.repositoryRole.softRemove(item);
   }
 }

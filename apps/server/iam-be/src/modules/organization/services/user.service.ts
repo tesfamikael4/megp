@@ -1,7 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   BadRequestException,
-  ForbiddenException,
   HttpException,
   HttpStatus,
   Injectable,
@@ -191,15 +190,14 @@ export class UserService extends ExtraCrudService<User> {
     });
 
     if (!mandates) {
-      throw new ForbiddenException(`mandate_not_found`);
+      throw new BadRequestException(`mandate_not_found`);
     }
     return this.createAdmin(
       itemData,
       process.env.ORGANIZATION_ADMINISTRATOR_KEY ??
-      'ORGANIZATION_ADMINISTRATOR',
+        'ORGANIZATION_ADMINISTRATOR',
     );
   }
-
 
   async createSuperAdmin(itemData: CreateUserDto): Promise<any> {
     return await this.createAdmin(
