@@ -30,6 +30,7 @@ import {
   ChangePasswordDto,
   LoginDto,
   LoginResponseDto,
+  ResetAccountPasswordDto,
   ResetPasswordDto,
 } from '../dto/login.dto';
 import {
@@ -216,6 +217,41 @@ export class AccountsService {
     }
 
     account.password = this.helper.encodePassword(changePassword.newPassword);
+
+    await this.repository.update(account.id, account);
+
+    return account;
+  }
+
+  public async resetAccountPassword(
+    changePassword: ResetAccountPasswordDto,
+    user: any,
+  ) {
+    if (!user.organization?.id) {
+      throw new HttpException('something_went_wrong', HttpStatus.BAD_REQUEST);
+    }
+
+    const entityManager = this.request[ENTITY_MANAGER_KEY];
+
+    const isSameOrganization = await entityManager.getRepository(User).findOne({
+      where: {
+        accountId: changePassword.accountId,
+        organizationId: user.organization.id,
+      },
+    });
+    if (!isSameOrganization) {
+      throw new HttpException('something_went_wrong', HttpStatus.BAD_REQUEST);
+    }
+
+    const account = await this.repository.findOneBy({
+      id: changePassword.accountId,
+    });
+
+    if (!account) {
+      throw new HttpException('something_went_wrong', HttpStatus.BAD_REQUEST);
+    }
+
+    account.password = this.helper.encodePassword(changePassword.password);
 
     await this.repository.update(account.id, account);
 

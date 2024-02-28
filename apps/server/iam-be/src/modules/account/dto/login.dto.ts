@@ -79,3 +79,13 @@ export class ChangePasswordDto {
   @IsNotEmpty()
   public newPassword: string;
 }
+
+export class ResetAccountPasswordDto {
+  @ApiProperty()
+  @IsNotEmpty()
+  public accountId: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  public password: string;
+}

@@ -427,6 +427,7 @@ export const mandates = [
       { permissionId: 2 },
       { permissionId: 3 },
       { permissionId: 4 },
+      { permissionId: 38 },
     ],
   },
   {
