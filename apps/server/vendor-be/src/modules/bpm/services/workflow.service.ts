@@ -139,6 +139,7 @@ export class WorkflowService {
       predictableActionArguments: true,
       ...bpWorkflow,
     });
+
     const curruntState = currentTaskHandler.currentState;
     const nextStepState = machine.transition(curruntState, nextCommand.action);
     if (nextStepState.value.toString() !== currentTaskHandler.currentState) {

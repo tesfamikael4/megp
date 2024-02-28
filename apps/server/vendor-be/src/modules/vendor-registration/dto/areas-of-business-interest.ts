@@ -3,7 +3,7 @@ import { IsNotEmpty, IsUUID } from 'class-validator';
 import { AreasOfBusinessInterestEntity } from 'src/entities';
 
 export class CreateAreasOfBusinessInterest {
-  id: string;
+  id?: string;
   @ApiProperty()
   @IsUUID()
   @IsNotEmpty()
@@ -11,17 +11,16 @@ export class CreateAreasOfBusinessInterest {
   @ApiProperty()
   @IsUUID()
   @IsNotEmpty()
-  lineOfBusiness: string[];
+  lineOfBusiness: any[];
   @ApiProperty()
   @IsUUID()
   @IsNotEmpty()
   priceRange: string;
-  @ApiProperty()
-  @IsUUID()
-  @IsNotEmpty()
-  vendorId: string;
+  // @ApiProperty()
+  vendorId?: string;
 
   userId: string;
+
   static fromDto(
     dto: CreateAreasOfBusinessInterest,
   ): AreasOfBusinessInterestEntity {

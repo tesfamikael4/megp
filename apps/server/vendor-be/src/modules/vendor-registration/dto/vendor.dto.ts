@@ -53,7 +53,8 @@ export class CreateVendorsDto {
   @ApiProperty()
   @IsNotEmpty()
   origin: string;
-
+  @ApiProperty()
+  canRequest: true;
   @ApiProperty()
   commonCategories: CreateBusinessCategoryDto[];
   @ApiProperty()
@@ -80,7 +81,6 @@ export class CreateVendorsDto {
     }
     entity.id = dto?.id;
     entity.tin = dto.tin;
-    entity.country = dto.country;
     entity.formOfEntity = dto.formOfEntity;
     entity.status = dto.status;
     entity.userId = dto.userId;
@@ -128,7 +128,6 @@ export class UpdateVendorsDto extends CreateVendorsDto {
     entity.id = dto.id;
     entity.tin = dto.tin;
     entity.userId = dto.userId;
-    entity.country = dto.country;
     entity.formOfEntity = dto.status;
     entity.metaData = dto.metaData;
     entity.district = dto.district;
@@ -144,7 +143,6 @@ export class VendorsResponseDto extends UpdateVendorsDto {
     response.id = entity.id;
     response.tin = entity.tin;
     response.userId = entity.userId;
-    response.country = entity.country;
     response.name = entity.name;
     response.status = entity.status;
     response.metaData = entity.metaData;

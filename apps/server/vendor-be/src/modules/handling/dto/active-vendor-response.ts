@@ -9,6 +9,8 @@ export class ActiveVendorsResponse {
   @ApiProperty()
   status: string;
   @ApiProperty()
+  canRequest: boolean;
+  @ApiProperty()
   formOfEntity: string;
   @ApiProperty()
   country: string;
