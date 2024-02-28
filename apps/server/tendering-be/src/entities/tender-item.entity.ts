@@ -65,7 +65,7 @@ export class Item extends Audit {
   @Column()
   hasBom: boolean;
 
-  @Column({ type: 'jsonb' })
+  @Column({ type: 'jsonb', nullable: true })
   metaData: any;
 
   @OneToMany(

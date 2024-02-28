@@ -9,6 +9,8 @@ import { TenderModule } from './modules/tenders/tender.module';
 import { EqcModule } from './modules/eqc/eqc.module';
 import { BdsModule } from './modules/bds/bds.module';
 import { SorModule } from './modules/sor/sor.module';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { TransactionInterceptor } from './shared/interceptors';
 
 @Module({
   imports: [
@@ -21,7 +23,17 @@ import { SorModule } from './modules/sor/sor.module';
     BdsModule,
     SorModule,
   ],
-  providers: [EventEmitterModule],
+  providers: [
+    EventEmitterModule,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: TransactionInterceptor,
+    },
+    // {
+    //   provide: APP_INTERCEPTOR,
+    //   useClass: TenantInterceptor,
+    // },
+  ],
   controllers: [],
 })
 export class AppModule {}
