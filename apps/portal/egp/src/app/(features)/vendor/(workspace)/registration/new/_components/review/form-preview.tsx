@@ -286,6 +286,7 @@ const DocumentPanel = ({
   tabValue: string;
   fieldKey: string;
 }) => {
+  if (!data[tabValue]?.[fieldKey]) return null;
   return (
     <Accordion.Panel key={fieldKey} className="p-0">
       <Accordion

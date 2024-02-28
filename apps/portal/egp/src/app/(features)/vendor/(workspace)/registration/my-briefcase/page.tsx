@@ -28,9 +28,6 @@ function Page() {
             <TextInput
               className="mb-2 w-80 h-8"
               leftSection={<IconSearch />}
-              // onChange={(event) => {
-              //   setSearch(event.currentTarget.value);
-              // }}
               placeholder="Search files by lorem, lorem"
               rightSectionWidth={30}
             />

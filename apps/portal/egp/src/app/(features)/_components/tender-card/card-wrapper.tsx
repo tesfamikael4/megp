@@ -18,15 +18,15 @@ export const CardWrapper = ({
           >
             {title}
           </Text>
-          <Button
-            variant="subtle"
-            rightSection={
-              <IconArrowRight size={18} color="green" stroke={1.6} />
-            }
-            className="self-end"
+          <Flex
+            align="center"
+            className="self-end px-0.5 cursor-pointer font-semibold"
+            gap={4}
+            c="green"
           >
-            View All
-          </Button>
+            <Text className="w-fit text-xs">View All</Text>
+            <IconArrowRight size={18} color="green" stroke={1} />
+          </Flex>
         </Flex>
         <SimpleGrid mt={'md'} cols={{ base: 1, sm: 2, md: 2, lg: 2 }}>
           {children}

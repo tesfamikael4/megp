@@ -94,6 +94,13 @@ const TenderCard = ({ color, register, textColor }: TenderCardProps) => {
                 direction={'column'}
                 className="text-center text-sm"
                 hiddenFrom="sm"
+                mb={{
+                  base: 'xs',
+                }}
+                mr={{
+                  base: 'xs',
+                  md: 'unset',
+                }}
               >
                 <Avatar
                   w={{
@@ -153,7 +160,10 @@ const TenderCard = ({ color, register, textColor }: TenderCardProps) => {
                 fw={500}
                 fz={'sm'}
                 lh={'md'}
-                mb={8}
+                mb={{
+                  base: 4,
+                  md: 8,
+                }}
               >
                 Minister of Education
               </Text>

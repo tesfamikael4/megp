@@ -15,6 +15,7 @@ import { useAuth } from '@megp/auth';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { useLazyGetApproveVendorInfoQuery } from '@/app/(features)/vendor/(workspace)/registration/_api/query';
+import InputWithButton from './input-with-button';
 
 export function HeroSection() {
   const { isAuthenticated } = useAuth();
@@ -65,29 +66,12 @@ export function HeroSection() {
               mt={80}
               className="w-full md:w-1/2"
             >
-              <Input
-                size="lg"
-                placeholder="Search Tenders Here"
-                leftSection={<IconSearch />}
-                className="w-full flex-end"
-                rightSectionWidth={108}
-                rightSectionPointerEvents="all"
-                visibleFrom="md"
-                rightSection={
-                  <Button
-                    className={'rounded-none rounded-r cursor-pointer'}
-                    bg={'green'}
-                    size="lg"
-                  >
-                    Search
-                  </Button>
-                }
-              />
+              <InputWithButton />
               <Flex className="w-full" columnGap={'md'}>
                 <Button
                   bg={'green'}
                   size="sm"
-                  className="md:w-1/2"
+                  className="w-1/2 h-12 rounded-md"
                   onClick={() => {
                     isAuthenticated
                       ? router.push('getting-started')
@@ -106,7 +90,7 @@ export function HeroSection() {
                     variant="outline"
                     size="sm"
                     color="white"
-                    className="sm:w-full md:w-1/2"
+                    className="w-1/2 rounded-md h-12"
                     onClick={() => router.push('/auth/login')}
                     mx={{
                       base: 'auto',

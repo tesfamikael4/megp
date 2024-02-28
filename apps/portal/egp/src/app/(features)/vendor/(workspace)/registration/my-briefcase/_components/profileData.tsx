@@ -4,16 +4,16 @@ import { useGetVendorQuery } from '../../_api/query';
 import DocumentCard from './document-card';
 
 function ProfileData() {
-  const requestInfo = useGetVendorQuery(
-    {},
-    { refetchOnMountOrArgChange: true },
-  );
+  const { data } = useGetVendorQuery({}, { refetchOnMountOrArgChange: true });
 
   const fileNames: { [key: string]: string } = {
     businessRegistration_IncorporationCertificate:
       'Business Registration Incorporation Certificate',
     mRA_TPINCertificate: 'MRA TPIN Certificate',
     mRATaxClearanceCertificate: 'MRA Tax Clearance Certificate',
+    generalReceipt_BankDepositSlip: 'General Receipt Bank Deposit Slip',
+    previousPPDARegistrationCertificate:
+      'Previous PPDA Registration Certificate',
   };
 
   return (
@@ -21,21 +21,32 @@ function ProfileData() {
       <Box className=" w-full mb-4 bg-white">
         <Flex className="w-full py-2 gap-1 items-center">
           <Text fw={700} fz="md">
-            Profile Data
+            Supporting Documents
           </Text>
         </Flex>
         <Box className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
-          {requestInfo.data &&
-            requestInfo.data.supportingDocuments &&
-            Object.entries(fileNames)
+          {data &&
+            data.supportingDocuments &&
+            (Object.entries(fileNames)
               .map(([key, value]) => ({
-                label: fileNames[key], // replace underscores with spaces for labels
-                value: requestInfo?.data?.supportingDocuments[key],
+                label: fileNames[key].replace(/_/g, ' '),
+                value: data?.supportingDocuments[key],
                 key,
               }))
-              .map((data, index) => (
-                <DocumentCard key={index} data={data} canDelete={true} />
-              ))}
+              .filter((data) => data.value !== '').length > 0 ? (
+              Object.entries(fileNames)
+                .map(([key, value]) => ({
+                  label: fileNames[key].replace(/_/g, ' '),
+                  value: data?.supportingDocuments[key],
+                  key,
+                }))
+                .filter((data) => data.value !== '')
+                .map((data, index) => (
+                  <DocumentCard key={index} data={data} canDelete={true} />
+                ))
+            ) : (
+              <p>No Supporting Documents</p>
+            ))}
         </Box>
       </Box>
     </Box>

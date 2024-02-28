@@ -7,7 +7,7 @@ import React, {
   useMemo,
   useState,
 } from 'react';
-import { useGetVendorInfoQuery } from '../../_api/query';
+import { useGetVendorInfoQuery, useGetVendorQuery } from '../../_api/query';
 import { usePathname, useRouter } from 'next/navigation';
 import { NotificationService } from '../../../../_components/notification';
 import { Box, LoadingOverlay } from '@mantine/core';
@@ -127,7 +127,7 @@ const PrivilegeContextProvider: React.FC<PropsWithChildren> = ({
   const router = useRouter();
   const path = usePathname();
 
-  const requestInfo = useGetVendorInfoQuery(
+  const { data, isSuccess, isLoading, isError, isFetching } = useGetVendorQuery(
     {},
     { refetchOnMountOrArgChange: true },
   );
@@ -144,29 +144,18 @@ const PrivilegeContextProvider: React.FC<PropsWithChildren> = ({
   const [accessStatus, setAccessStatus] = useState<VendorStatus>('new');
 
   useEffect(() => {
-    if (requestInfo.isSuccess && requestInfo.data) {
-      setAccessLevel(requestInfo.data.level as VendorLevel);
-      setAccessStatus(requestInfo.data.Status as VendorStatus);
-      if (
-        requestInfo.data.level === 'Completed' ||
-        requestInfo.data.level === 'Completed'
-      ) {
+    if (isSuccess && data) {
+      setAccessStatus(data.status as VendorStatus);
+      if (data.status === 'Completed' || data.status === 'Completed') {
         router.push('/vendor/registration/track-applications');
-      }
-      //  else if (requestInfo.data.level === 'Submit') {
-      //   router.push('/vendor/registration/track-applications');
-      // }
-      if (validRoutes.includes(requestInfo.data.level as VendorLevel)) {
-        // router.push(`/vendor/registration/new/${requestInfo.data.level}`);
-        console.log('Hello world');
       }
     }
     return () => {};
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [requestInfo.isSuccess, requestInfo.data]);
+  }, [isSuccess, data]);
 
   useEffect(() => {
-    if (requestInfo.isError) {
+    if (isError) {
       NotificationService.requestErrorNotification(
         'Error on fetching vendor information',
       );
@@ -174,7 +163,7 @@ const PrivilegeContextProvider: React.FC<PropsWithChildren> = ({
     }
     return () => {};
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [requestInfo.isError]);
+  }, [isError]);
 
   const [currentIndex, setCurrentIndex] = useState<number>(
     validRoutes.indexOf(path.split('/')[4] as VendorLevel),
@@ -220,7 +209,7 @@ const PrivilegeContextProvider: React.FC<PropsWithChildren> = ({
 
   return (
     <PrivilegeContext.Provider value={contextValue}>
-      {requestInfo.isLoading ? (
+      {isLoading ? (
         <Box pos="relative" className="w-full h-full">
           <LoadingOverlay
             visible={true}
