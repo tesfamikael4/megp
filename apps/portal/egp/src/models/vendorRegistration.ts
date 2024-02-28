@@ -96,6 +96,7 @@ export interface FormData {
     invoiceId: string;
     attachment: string;
   } | null;
+  businessAreas: {}[];
 }
 
 export interface AreasOfBusinessInterestType {

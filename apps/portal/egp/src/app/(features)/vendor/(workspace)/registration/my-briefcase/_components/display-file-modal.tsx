@@ -11,6 +11,7 @@ export const DisplayFileModal = ({ ...others }: ShareModalProps) => {
       opened={others.opened}
       onClose={others.onClose}
       size={'xl'}
+      centered
     >
       {others.children}
       <DisplayFile url={others.fileName} filename={others.fileName} />

@@ -13,9 +13,6 @@ import {
   Paper,
   ScrollArea,
   Select,
-  SimpleGrid,
-  Text,
-  TextInput,
 } from '@mantine/core';
 import { useGetVendorQuery } from '../registration/_api/query';
 import FormPreview from '../registration/new/_components/review/form-preview';
@@ -71,11 +68,11 @@ const ServiceLayout = () => {
   const router = useRouter();
 
   if (isLoading) return <LoadingOverlay visible={isLoading} />;
-  if (isSuccess && data && data.status === 'Approved')
+  if (data && data.status === 'Approved')
     return <ApprovedPageData data={data} />;
   if (isSuccess && data && data.status === 'Active')
     return router.push('/vendor/registration/new/detail');
-  if (isSuccess && data && data.status === 'Submitted')
+  if (data && data.status === 'Submitted')
     return <ApprovedPageData data={data} />;
   return (
     <Box className="p-4">
