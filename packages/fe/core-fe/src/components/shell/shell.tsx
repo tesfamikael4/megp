@@ -20,6 +20,7 @@ import {
   IconLogout,
   IconMenu2,
   IconMessages,
+  IconPasswordUser,
   IconSettings,
   IconUserCircle,
 } from '@tabler/icons-react';
@@ -160,9 +161,21 @@ export function Shell({ children }: ShellProps): React.ReactNode {
               </Menu.Target>
 
               <Menu.Dropdown>
-                <Menu.Item leftSection={<IconUserCircle size={14} />}>
-                  Account
+                <Menu.Item
+                  component="a"
+                  href={`user-profile/${user?.id}`}
+                  leftSection={<IconUserCircle size={14} />}
+                >
+                  Profile
                 </Menu.Item>
+                <Menu.Item
+                  component="a"
+                  href="/iam/change-password"
+                  leftSection={<IconPasswordUser size={14} />}
+                >
+                  Change Password
+                </Menu.Item>
+
                 <Menu.Item leftSection={<IconSettings size={14} />}>
                   Settings
                 </Menu.Item>

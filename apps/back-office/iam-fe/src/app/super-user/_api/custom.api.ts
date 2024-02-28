@@ -64,7 +64,7 @@ const organizationProfileApi = invitationApi.injectEndpoints({
       query: ({ id, ...data }) => {
         return {
           url: `/auth/update-account/${id}`,
-          method: 'POST',
+          method: 'PATCH',
           body: data,
         };
       },

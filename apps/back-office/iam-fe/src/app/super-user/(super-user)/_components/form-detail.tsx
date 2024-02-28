@@ -47,7 +47,7 @@ export function FormDetail({ mode }: FormDetailProps) {
   });
   const router = useRouter();
   const { id } = useParams();
-  const { organizationId } = useAuth();
+  const { organizationId, user } = useAuth();
 
   const [create, { isLoading: isSaving }] = useCreateSuperUserMutation();
   const [update, { isLoading: isUpdating }] = useUpdateSuperUserMutation();
@@ -84,7 +84,7 @@ export function FormDetail({ mode }: FormDetailProps) {
         firstName: data.firstName,
         lastName: data.lastName,
 
-        id: id?.toString(),
+        id: user?.id,
       }).unwrap();
       notify('Success', 'User updated successfully');
     } catch {

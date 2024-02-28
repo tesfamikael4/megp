@@ -69,7 +69,6 @@ export function Relation<T>({
         : []),
       ...options.columns.map((column) => ({
         ...column,
-        // meta: { widget: 'primary' },
       })),
 
       ...(mode !== 'modal' && !readOnly
@@ -89,7 +88,6 @@ export function Relation<T>({
   useEffect(() => {
     let columnCount = tableColumns.length;
     columnCount = options.selectable ? columnCount - 1 : columnCount;
-
     const w = mode !== 'list' ? 100 : (1 / columnCount) * 100;
     setWidth(w);
   }, [mode]);

@@ -9,6 +9,7 @@ import {
   useUpdateMutation,
   useCreateMutation,
 } from '../../_api/user.api';
+import { useUpdateSuperUserMutation } from '../../_api/custom.api';
 import { useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { User } from '@/models/user/user';
@@ -50,7 +51,7 @@ export function FormDetail({ mode }: FormDetailProps) {
   const { organizationId } = useAuth();
 
   const [create, { isLoading: isSaving }] = useCreateMutation();
-  const [update, { isLoading: isUpdating }] = useUpdateMutation();
+  const [update, { isLoading: isUpdating }] = useUpdateSuperUserMutation();
   const [activation, { isLoading: isActivating }] = useUpdateMutation();
   const [remove, { isLoading: isDeleting }] = useDeleteMutation();
   const {
@@ -83,7 +84,6 @@ export function FormDetail({ mode }: FormDetailProps) {
       await update({
         firstName: data.firstName,
         lastName: data.lastName,
-
         id: id?.toString(),
       }).unwrap();
       notify('Success', 'User updated successfully');

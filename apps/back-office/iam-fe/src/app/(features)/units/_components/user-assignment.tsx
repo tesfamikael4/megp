@@ -106,14 +106,14 @@ const AddUserModal = () => {
   }, [id, isCollapsed, trigger]);
 
   useEffect(() => {
-    if (isSuccess) {
+    if (isSuccess && !isCollapsed) {
       setCurrentAssigned(
         users
           ? users.items.map((user: any) => user.user !== null && user.user)
           : [],
       );
     }
-  }, [users, isSuccess]);
+  }, [users, isSuccess, isCollapsed]);
 
   const onRequestChange = (request: CollectionQuery) => {
     triggerData({ id: organizationId, collectionQuery: request });

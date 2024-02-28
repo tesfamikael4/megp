@@ -3,4 +3,5 @@ export interface UserProfile {
 
   gender: string;
   position?: string;
+  email?: string | null;
 }

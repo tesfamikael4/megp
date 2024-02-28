@@ -70,7 +70,7 @@ export const Menu: MenuItem[] = [
     permission: ['iam:role'],
   },
   {
-    label: 'System role',
+    label: 'System Role',
     icon: IconDeviceAnalytics,
     link: '/system-role',
     permission: ['iam:role'],
