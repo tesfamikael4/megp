@@ -16,8 +16,9 @@ import { useDisclosure } from '@mantine/hooks';
 import { ApplicationInfo } from '@/models/vendorRegistration';
 import { IconFile, IconTrack } from '@tabler/icons-react';
 import { IconSearch } from '@tabler/icons-react';
-import { ExpandableTable } from './table';
+// import { ExpandableTable } from './table';
 import 'mantine-datatable/styles.layer.css';
+import { ExpandableTable } from '@megp/core-fe';
 
 const badgeBGColor: { [key: string]: string } = {
   Rejected: `red.0`,
@@ -84,6 +85,15 @@ const ApplicationList = () => {
         },
       },
     ],
+    isExpandable: true,
+    expandedRowContent: (record, collapse) => (
+      <DetailViewCard
+        data={record}
+        close={() => {
+          handleDetailClose();
+        }}
+      />
+    ),
   };
 
   if (requestInfo.isLoading) {
