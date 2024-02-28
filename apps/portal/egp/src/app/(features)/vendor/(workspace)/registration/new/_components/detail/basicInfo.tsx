@@ -17,6 +17,7 @@ export const BasicInfo: React.FC<PassFormDataProps> = ({ register }) => {
         <TextInput
           label="Tax Identification Number (TIN)"
           {...register(`basic.tinNumber`)}
+          disabled
         />
       </Group>
       <Group grow>

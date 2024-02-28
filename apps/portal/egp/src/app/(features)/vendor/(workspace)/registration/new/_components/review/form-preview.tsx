@@ -93,6 +93,11 @@ const formatColumns = {
     { name: 'email' },
     { name: 'mobileNumber' },
   ],
+  beneficialOwnership: [
+    { name: 'firstName' },
+    { name: 'lastName' },
+    { name: 'nationality' },
+  ],
 
   businessAreas: [
     { name: 'category' },
@@ -458,7 +463,7 @@ const MiscellaneousPanel = ({
                     {data}
                   </Link>
                 ) : (
-                  data
+                  addSpacesToCamelCase(data)
                 )}
               </Text>
             )}
