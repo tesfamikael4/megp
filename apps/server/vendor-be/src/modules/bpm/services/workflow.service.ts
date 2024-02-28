@@ -157,9 +157,12 @@ export class WorkflowService {
         const apiUrl = stateMetaData['apiEndPoint'];
         wfInstance.user = workflowInstance.user;
         let response = false;
-        if (curruntTask.taskType == TaskTypes.INITIAL_REVIEW &&
-          nextCommand.action.toUpperCase() == ApplicationStatus.CANCEL.toUpperCase()) {
-          response = await this.vendorRegService.cancelApplication(wfInstance)
+        if (
+          curruntTask.taskType == TaskTypes.INITIAL_REVIEW &&
+          nextCommand.action.toUpperCase() ==
+            ApplicationStatus.CANCEL.toUpperCase()
+        ) {
+          response = await this.vendorRegService.cancelApplication(wfInstance);
         } else {
           response = await this.notifyCompletion(
             wfInstance,
@@ -167,7 +170,6 @@ export class WorkflowService {
             nextCommand,
           );
         }
-
 
         if (response) {
           await this.addTaskTracker(currentTaskHandler, nextCommand, user);
@@ -309,6 +311,13 @@ export class WorkflowService {
           return this.notify(wfi, stateMetadata['apiUrl'], command);
         }
         break;
+      case TaskTypes.INITIAL_REVIEW.toLowerCase():
+        if (
+          command.action.toUpperCase() == ApplicationStatus.ADJUST.toUpperCase()
+        ) {
+          return this.notify(wfi, stateMetadata['apiUrl'], command);
+        }
+        break;
       case TaskTypes.EMAIl:
         return this.sendEmail(wfi);
       case TaskTypes.SMS:
@@ -318,14 +327,6 @@ export class WorkflowService {
       case TaskTypes.CERTIFICATION:
         console.log(TaskTypes.CERTIFICATION, command);
         break;
-      // case TaskTypes.INITIAL_REVIEW:
-      //   if (
-      //     command.action.toUpperCase() == ApplicationStatus.CANCEL.toUpperCase()
-      //     // ||  command.action.toUpperCase() == ReviewStatus.Reject.toUpperCase()
-      //   ) {
-      //     return this.vendorRegService.cancelApplication(wfi);
-      //   }
-      //   break;
       case TaskTypes.NOTIFICATION:
         console.log(TaskTypes.NOTIFICATION, command);
       case TaskTypes.PAYMENTCONFIRMATION:
@@ -377,8 +378,8 @@ export class WorkflowService {
     const commandLower = command.action.toLowerCase();
     const status =
       commandLower == 'approve' ||
-        commandLower == 'yes' ||
-        commandLower == 'success'
+      commandLower == 'yes' ||
+      commandLower == 'success'
         ? 'Approve'
         : 'Reject';
     const payload = {
@@ -556,5 +557,4 @@ export class WorkflowService {
       return acc;
     }, {});
   }
-
 }

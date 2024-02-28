@@ -31,8 +31,8 @@ export class ApplicationExcutionService {
     private readonly pricingService: ServicePricingService,
     private readonly vendorService: VendorRegistrationsService,
     private readonly baService: BusinessAreaService,
-    private readonly invoiceService: InvoiceService
-  ) { }
+    private readonly invoiceService: InvoiceService,
+  ) {}
 
   async getCurruntTaskByServiceKey(
     serviceKey: string,
@@ -51,7 +51,7 @@ export class ApplicationExcutionService {
       .innerJoinAndSelect('handler.task', 'task')
       .leftJoinAndSelect('workflow_instances.service', 'service')
       // .innerJoin('workflow_instances.isrVendor', 'v')
-      // .innerJoinAndSelect(BusinessAreaEntity, 'ba', 'ba.vendorId=v.id')   
+      // .innerJoinAndSelect(BusinessAreaEntity, 'ba', 'ba.vendorId=v.id')
       .innerJoinAndSelect('workflow_instances.businessProcess', 'bp')
       .leftJoinAndSelect('workflow_instances.taskTrackers', 'taskTracker')
       .andWhere('service.key In(:...keys)', { keys: keys })
@@ -98,7 +98,10 @@ export class ApplicationExcutionService {
         isrVendor: {
           businessAreas: {
             instanceId: appData.id,
-            status: In([ApplicationStatus.PENDING, ApplicationStatus.ADJUSTMENT]),
+            status: In([
+              ApplicationStatus.PENDING,
+              ApplicationStatus.ADJUSTMENT,
+            ]),
           },
         },
       },
@@ -112,19 +115,30 @@ export class ApplicationExcutionService {
     const response = WorkflowInstanceResponse.toResponse(instance);
     delete response.businessProcess;
     const bas = instance.isrVendor?.businessAreas;
+    const businessInterest = [];
     if (bas.length > 0) {
-      const businessInterest = [];
       for (const range of bas) {
         const price = range?.servicePrice;
         if (price) {
           const formattedBC = this.commonService.formatPriceRange(price);
-          const bia = instance.isrVendor?.areasOfBusinessInterest.find((item: any) => item.category == range.category);
+          const bia = instance.isrVendor?.areasOfBusinessInterest.find(
+            (item: any) => item.category == range.category,
+          );
           const lobs = bia.lineOfBusiness.map((item: any) => {
             return item.name;
           });
-          const category = this.commonService.capitalizeFirstLetter(bia.category);
-          businessInterest.push({ category: category, priceRange: formattedBC, lineOfBusiness: lobs, })
-          response.isrvendor.basic.status = range.status == ApplicationStatus.PENDING ? ApplicationStatus.INPROGRESS : range.status;
+          const category = this.commonService.capitalizeFirstLetter(
+            bia.category,
+          );
+          businessInterest.push({
+            category: category,
+            priceRange: formattedBC,
+            lineOfBusiness: lobs,
+          });
+          response.isrvendor.basic.status =
+            range.status == ApplicationStatus.PENDING
+              ? ApplicationStatus.INPROGRESS
+              : range.status;
         }
       }
       response.isrvendor.areasOfBusinessInterest = businessInterest;
@@ -137,19 +151,47 @@ export class ApplicationExcutionService {
       );
       if (vendorInfo?.ProfileInfo) {
         const profileUpdate = vendorInfo?.ProfileInfo[0];
+        for (const price of profileUpdate.profileData.areasOfBusinessInterest) {
+          const tempvalue = {
+            valueFrom: price.priceFrom,
+            valueTo: price.priceTo,
+          };
+          const formattedBC = this.commonService.formatPriceRange(tempvalue);
+          const bls = price.lineOfBusiness; //.map((item) => item.name);
+          businessInterest.push({
+            category: this.commonService.capitalizeFirstLetter(price.category),
+            priceRange: formattedBC,
+            lineOfBusiness: bls,
+          });
+        }
+        profileUpdate.profileData.areasOfBusinessInterest = [
+          ...businessInterest,
+        ];
+        const bainfo = profileUpdate.profileData.bankAccountDetails.map(
+          (item: any) => {
+            if (item.isDefualt) {
+              item.isDefualt = 'Yes';
+            } else {
+              item.isDefualt = 'No';
+            }
+            return item;
+          },
+        );
+        profileUpdate.profileData.bankAccountDetails = [...bainfo];
         const shareholders = profileUpdate.profileData.shareHolders.map(
           (item) => this.reduceAttributes(item),
         );
         profileUpdate.profileData.shareholders = shareholders;
         const beneficialOwnership =
-          profileUpdate.profileData.beneficialOwnership.map((item) =>
+          profileUpdate.profileData.beneficialOwnership.map((item: any) =>
             this.reduceAttributes(item),
           );
         profileUpdate.profileData.beneficialOwnership = beneficialOwnership;
         const bankAccountDetails =
-          profileUpdate.profileData.bankAccountDetails.map((item) =>
+          profileUpdate.profileData.bankAccountDetails.map((item: any) =>
             this.reduceAttributes(item),
           );
+        profileUpdate.profileData.basic.status = profileUpdate.status;
         profileUpdate.profileData.bankAccountDetails = bankAccountDetails;
         response.profileUpdate = profileUpdate;
       }
@@ -170,8 +212,12 @@ export class ApplicationExcutionService {
       }
     }
     const serviceKey = appData.service.key;
-    const renewalServices = this.commonService.getServiceCatagoryKeys(ServiceKeyEnum.RENEWAL)
-    const upgradeServices = this.commonService.getServiceCatagoryKeys(ServiceKeyEnum.upgrade)
+    const renewalServices = this.commonService.getServiceCatagoryKeys(
+      ServiceKeyEnum.RENEWAL,
+    );
+    const upgradeServices = this.commonService.getServiceCatagoryKeys(
+      ServiceKeyEnum.upgrade,
+    );
     const renewalServiceTypes = renewalServices.filter(
       (item) => item == serviceKey,
     );
@@ -180,7 +226,9 @@ export class ApplicationExcutionService {
     );
     if (renewalServiceTypes.length > 0) {
       const business: BusinessAreaEntity = instance.isrVendor.businessAreas[0];
-      const formattedBusinessclass = this.commonService.formatPriceRange(business.servicePrice);
+      const formattedBusinessclass = this.commonService.formatPriceRange(
+        business.servicePrice,
+      );
       response.renewal = {
         category: business.category,
         priceRange: formattedBusinessclass,
@@ -188,9 +236,15 @@ export class ApplicationExcutionService {
         expireDate: business.expireDate,
       };
       response.isrvendor.businessAreas = null;
-      const invoice = await this.invoiceService.getServiceReceipt(instance.userId, instance.serviceId);
+      const invoice = await this.invoiceService.getServiceReceipt(
+        instance.userId,
+        instance.serviceId,
+      );
       response.invoice = { ...invoice };
-      response.isrvendor.paymentReceipt = { attachment: invoice.attachmentUrl, transactionNumber: invoice?.remark }
+      response.isrvendor.paymentReceipt = {
+        attachment: invoice.attachmentUrl,
+        transactionNumber: invoice?.remark,
+      };
       return response;
     } else if (upgradeServicesTypes.length > 0) {
       const business: BusinessAreaEntity = instance.isrVendor.businessAreas[0];
@@ -199,7 +253,9 @@ export class ApplicationExcutionService {
           instance.requestorId,
           business.category,
         );
-      const formattedPreviousClass = this.commonService.formatPriceRange(previousBusinessClass.servicePrice);
+      const formattedPreviousClass = this.commonService.formatPriceRange(
+        previousBusinessClass.servicePrice,
+      );
 
       const proposedBusinessclass =
         await this.baService.getProposedUpgradeService(
@@ -207,8 +263,13 @@ export class ApplicationExcutionService {
           business.category,
           instance.serviceId,
         );
-      const formattedproposedClass = this.commonService.formatPriceRange(proposedBusinessclass.servicePrice);
-      const invoice = await this.invoiceService.getServiceReceipt(instance.userId, instance.serviceId);
+      const formattedproposedClass = this.commonService.formatPriceRange(
+        proposedBusinessclass.servicePrice,
+      );
+      const invoice = await this.invoiceService.getServiceReceipt(
+        instance.userId,
+        instance.serviceId,
+      );
       response.upgrade = {
         category: previousBusinessClass.category,
         approvedAt: previousBusinessClass.approvedAt,
@@ -217,8 +278,10 @@ export class ApplicationExcutionService {
         ProposedPriceRange: formattedproposedClass,
       };
       response.invoice = { ...invoice };
-      response.isrvendor.paymentReceipt = { attachment: invoice.attachmentUrl, transactionNumber: invoice?.remark }
-
+      response.isrvendor.paymentReceipt = {
+        attachment: invoice.attachmentUrl,
+        transactionNumber: invoice?.remark,
+      };
     }
     response.isrvendor.businessAreas = null;
 

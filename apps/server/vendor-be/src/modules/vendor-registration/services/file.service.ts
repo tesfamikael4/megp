@@ -393,7 +393,7 @@ export class FileService {
         metaData,
       );
       const paymentReceipt = {
-        transactionId: uploadFileDto?.transactionId,
+        transactionId: uploadFileDto?.transactionNumber,
         invoiceIds: uploadFileDto?.invoiceIds,
         attachment: fileId,
       };

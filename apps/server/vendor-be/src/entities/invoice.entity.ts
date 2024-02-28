@@ -18,6 +18,8 @@ export class InvoiceEntity extends Audit {
   businessAreaId: string;
   @Column({ nullable: true })
   applicationNo: string;
+  @Column({ nullable: true })
+  refNumber: string;
   @Column()
   pricingId: string;
   @Column({ nullable: true })

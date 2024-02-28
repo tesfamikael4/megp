@@ -82,7 +82,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     private readonly baService: BusinessAreaService,
     private readonly fileService: FileService,
     private readonly commonService: HandlingCommonService,
-
   ) {
     super(vendorRepository);
   }
@@ -440,12 +439,18 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           }
         }
         businessArea.approvedAt = new Date();
-        const preferentials = this.commonService.getServiceCatagoryKeys(ServiceKeyEnum.PREFERENCTIAL);
+        const preferentials = this.commonService.getServiceCatagoryKeys(
+          ServiceKeyEnum.PREFERENCTIAL,
+        );
         if (preferentials.find((item) => item == businessArea.BpService.key)) {
           // const preferncialEnty = await this.preferentialService.getPreferntialByService(businessArea.serviceId, businessArea.isrVendor.userId);
           const preferncialEnty = await this.ptRepository.findOne({
             relations: { service: true, vendor: true },
-            where: { userId: businessArea.isrVendor.userId, serviceId: businessArea.serviceId, status: ApplicationStatus.SUBMIT },
+            where: {
+              userId: businessArea.isrVendor.userId,
+              serviceId: businessArea.serviceId,
+              status: ApplicationStatus.SUBMIT,
+            },
           });
           if (preferncialEnty) {
             preferncialEnty.status = ApplicationStatus.APPROVED;
@@ -453,8 +458,12 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           }
         }
       }
-      const renewalKeys = this.commonService.getServiceCatagoryKeys(ServiceKeyEnum.RENEWAL);
-      const upgradekeys = this.commonService.getServiceCatagoryKeys(ServiceKeyEnum.UPGRADE);
+      const renewalKeys = this.commonService.getServiceCatagoryKeys(
+        ServiceKeyEnum.RENEWAL,
+      );
+      const upgradekeys = this.commonService.getServiceCatagoryKeys(
+        ServiceKeyEnum.UPGRADE,
+      );
 
       // const upgradekeys = [
       //   ServiceKeyEnum.goodsUpgrade,
@@ -1313,7 +1322,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         await this.invoiceRepository.update(ids[index], {
           paymentStatus: PaymentStatus.PAID,
           attachment: uploadedFileName,
-          remark: paymentReceiptDto?.transactionNumber
+          remark: paymentReceiptDto?.transactionNumber,
         });
       }
       const invoices = await this.invoiceRepository.find({
@@ -1370,11 +1379,11 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     }
   }
 
-  async getApprovedVendorById(VendorId: string) {
+  async getApprovedVendorById(vendorId: string) {
     const vendorData: any = await this.vendorRepository.findOne({
       where: [
         {
-          id: VendorId,
+          id: vendorId,
           isrVendor: {
             businessAreas: {
               status: ApplicationStatus.APPROVED,
@@ -1382,7 +1391,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             },
           },
         },
-        { id: VendorId, preferentials: { status: ApplicationStatus.APPROVED } },
+        { id: vendorId, preferentials: { status: ApplicationStatus.APPROVED } },
       ],
       select: {
         id: true,
@@ -1438,13 +1447,16 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         preferentials: { service: true },
       },
     });
+    if (!vendorData)
+      throw new NotFoundException(
+        'Not a vendor or No properly approved Services',
+      );
     const { isrVendor, ...rest } = vendorData;
     const accounts = vendorData.vendorAccounts.map((item) => {
       const primary = item.isDefualt ? 'Yes' : 'No';
       const fitem = { ...item, isDefualt: primary };
       return fitem;
-
-    })
+    });
     rest.vendorAccounts = [...accounts];
 
     const bussinessAreas = [];
@@ -1458,8 +1470,9 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           bl = lob.lineOfBusiness.map((item: any) => item.name);
           businessarea = {
             category: this.commonService.capitalizeFirstLetter(ba.category),
-            ValueRange: priceRange,
+            priceRange: priceRange,
             lineOfBusiness: bl,
+            serviceName: ba.BpService.name,
             approvedAt: ba.approvedAt,
             expireDate: ba.expireDate,
             certificateUrl: ba.certificateUrl,
@@ -1474,20 +1487,32 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     let pt = null;
     if (vendorData?.preferentials?.length > 0) {
       for (const item of vendorData?.preferentials) {
-        const preferencialInfo = await this.baService.getPTByServiceId(item.serviceId, item.userId);
-
+        const preferencialInfo = await this.baService.getPTByServiceId(
+          item.serviceId,
+          item.userId,
+        );
         if (item.service.key == ServiceKeyEnum.IBM) {
-          ibm = { name: item.service.name, ...item, approvedAt: preferencialInfo?.approvedAt };
+          ibm = {
+            name: item.service.name,
+            ...item,
+            approvedAt: preferencialInfo?.approvedAt,
+          };
           delete ibm.service;
         } else {
-          pt = { name: item.service.name, ...item, approvedAt: preferencialInfo?.approvedAt };
+          pt = {
+            name: item.service.name,
+            ...item,
+            approvedAt: preferencialInfo?.approvedAt,
+          };
           delete pt.service;
         }
       }
       delete rest.preferentials;
     }
     const vendor = {
-      ...rest, ibm: ibm, preferencialTreatment: pt
+      ...rest,
+      ibm: ibm,
+      preferencialTreatment: pt,
     };
     return vendor;
   }
@@ -1496,8 +1521,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       this.isrVendorsRepository,
       query,
     )
-      .andWhere('isr_vendors.status =:status', {
-        status: ApplicationStatus.REJECTED,
+      .andWhere('isr_vendors.status In(:...statuses)', {
+        statuses: [ApplicationStatus.CANCELED, ApplicationStatus.REJECTED],
       })
       .orderBy('isr_vendors.updatedAt', 'ASC');
 
@@ -2017,15 +2042,17 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     return result.preferentials;
   }
 
-
   async cancelApplication(wfi: UpdateWorkflowInstanceDto) {
-    const vendor = this.vendorRepository.findOne({ where: { id: wfi.requestorId } });
+    const vendor = this.vendorRepository.findOne({
+      where: { id: wfi.requestorId },
+    });
     if (vendor) {
       return await this.baService.cancelServiceApplication(wfi.id);
-    }
-    else {
+    } else {
       await this.baService.cancelServiceApplication(wfi.id);
-      const tempVendor = await this.isrVendorsRepository.findOne({ where: { id: wfi.requestorId } });
+      const tempVendor = await this.isrVendorsRepository.findOne({
+        where: { id: wfi.requestorId },
+      });
       tempVendor.status = ApplicationStatus.REJECTED;
       await this.isrVendorsRepository.update(wfi.requestorId, tempVendor);
       return true;
