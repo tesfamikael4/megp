@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsUUID, IsString, IsNumber } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsUUID,
+  IsString,
+  IsNumber,
+  IsOptional,
+} from 'class-validator';
 
 export class CreateSorFeesDto {
   @IsNotEmpty()
@@ -22,7 +28,7 @@ export class CreateSorFeesDto {
   @ApiProperty()
   nameOfStaff: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsNumber()
   @ApiProperty()
   staffMonthRate: number;
@@ -32,7 +38,7 @@ export class CreateSorFeesDto {
   @ApiProperty()
   inputStaffMonth: number;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsNumber()
   @ApiProperty()
   rate: number;

@@ -5,6 +5,7 @@ import {
   IsNumber,
   IsUUID,
   IsOptional,
+  IsArray,
 } from 'class-validator';
 
 export class CreateSorBillOfMaterialDto {
@@ -12,12 +13,6 @@ export class CreateSorBillOfMaterialDto {
   @IsUUID()
   @ApiProperty()
   itemId: string;
-
-  @IsNotEmpty()
-  @IsUUID()
-  @ApiProperty()
-  @IsOptional()
-  parentId?: string;
 
   @IsNotEmpty()
   @IsString()
@@ -30,7 +25,7 @@ export class CreateSorBillOfMaterialDto {
   description: string;
 
   @IsNotEmpty()
-  @IsNumber()
+  @IsString()
   @ApiProperty()
   unit: string;
 
@@ -48,6 +43,16 @@ export class CreateSorBillOfMaterialDto {
   @IsNumber()
   @ApiProperty()
   amount: number;
+
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  code: string;
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  parentCode: string;
 }
 
 export class UpdateSorBillOfMaterialDto extends CreateSorBillOfMaterialDto {
@@ -58,3 +63,9 @@ export class UpdateSorBillOfMaterialDto extends CreateSorBillOfMaterialDto {
 }
 
 export class SorBillOfMaterialResponseDto extends UpdateSorBillOfMaterialDto {}
+
+export class BulkCreateBillOfMaterialDto {
+  @ApiProperty({ isArray: true, type: () => CreateSorBillOfMaterialDto })
+  @IsArray()
+  boqs: CreateSorBillOfMaterialDto[];
+}

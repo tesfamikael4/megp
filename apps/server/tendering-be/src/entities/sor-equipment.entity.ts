@@ -32,9 +32,9 @@ export class SorEquipment extends Audit {
   @Column()
   quantity: number;
 
-  @Column()
+  @Column({ nullable: true })
   rate: number;
 
-  @Column()
+  @Column({ nullable: true })
   amount: number;
 }

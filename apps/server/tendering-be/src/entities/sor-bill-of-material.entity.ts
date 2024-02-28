@@ -21,16 +21,6 @@ export class SorBillOfMaterial extends Audit {
   @JoinColumn({ name: 'itemId' })
   item: Item;
 
-  @Column({ type: 'uuid', nullable: true })
-  parentId: string;
-
-  @OneToOne(() => SorBillOfMaterial, (billOfMaterial) => billOfMaterial.child)
-  @JoinColumn({ name: 'parentId' })
-  parent: SorBillOfMaterial;
-
-  @OneToOne(() => SorBillOfMaterial, (billOfMaterial) => billOfMaterial.child)
-  child: SorBillOfMaterial;
-
   @Column()
   payItem: string;
 
@@ -43,9 +33,15 @@ export class SorBillOfMaterial extends Audit {
   @Column()
   quantity: number;
 
-  @Column()
+  @Column({ nullable: true })
   rate: number;
 
-  @Column()
+  @Column({ nullable: true })
   amount: number;
+
+  @Column()
+  code: string;
+
+  @Column({ nullable: true })
+  parentCode: string;
 }
