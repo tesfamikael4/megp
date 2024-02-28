@@ -85,7 +85,6 @@ export const formDataSchema = z.object({
     businessType: z.string().optional(),
     origin: z.string(),
     district: z.string().optional(),
-    country: z.string(),
     tinNumber: z.string(),
   }),
   address: z.object({

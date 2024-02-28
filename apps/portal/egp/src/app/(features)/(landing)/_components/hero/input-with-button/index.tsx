@@ -1,24 +1,11 @@
+import { IconSearch } from '@tabler/icons-react';
 import React from 'react';
 
 const InputWithButton = () => {
   return (
     <div className="relative w-full h-12 rounded-md border border-green-600">
       <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-        <svg
-          className="w-4 h-4 text-gray-500 dark:text-gray-400"
-          aria-hidden="true"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 20 20"
-        >
-          <path
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-          />
-        </svg>
+        <IconSearch size={20} stroke={1} />
       </div>
       <input
         type="search"

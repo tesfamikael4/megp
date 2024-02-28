@@ -156,13 +156,15 @@ export const AreasOfBusinessInterestForm = ({
         {watch('areasOfBusinessInterest') &&
           watch('areasOfBusinessInterest').length > 0 && (
             <Flex className="mt-10 justify-end gap-2">
-              {checkAccess('ppda') && (
+              {
                 <Button onClick={() => router.push('detail')} variant="outline">
                   Back
                 </Button>
-              )}
-              {checkAccess('ppda') && (
+              }
+              {checkAccess('ppda') ? (
                 <Button type="submit">Save & Continue</Button>
+              ) : (
+                <Button onClick={() => router.push('payment')}>Continue</Button>
               )}
             </Flex>
           )}
