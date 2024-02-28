@@ -4,29 +4,24 @@ export class FileResponseDto {
   @ApiProperty()
   filename: string;
   @ApiProperty()
-  filepath: string;
+  path: string;
   @ApiProperty()
   originalname: string;
   @ApiProperty()
-  contentType: string;
-  @ApiProperty()
-  bucketName: string;
-  @ApiProperty()
-  size?: number;
+  mimetype: string;
+  size: number;
 
   constructor(
     filename: string,
-    filepath: string,
+    path: string,
     originalname: string,
-    bucketName: string,
-    contentType: string,
+    mimetype: string,
     size: number,
   ) {
     this.filename = filename;
-    this.filepath = filepath;
+    this.path = path;
     this.originalname = originalname;
-    this.bucketName = bucketName;
-    this.contentType = contentType;
+    this.mimetype = mimetype;
     this.size = size;
   }
 }

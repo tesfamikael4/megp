@@ -17,12 +17,6 @@
       "type": "node-terminal"
     },
     {
-      "command": "cd .\\apps\\server\\planning-be\\ && pnpm run start:dev",
-      "name": "Run Planning",
-      "request": "launch",
-      "type": "node-terminal"
-    },
-    {
       "command": "cd .\\apps\\server\\procurement-requisition-be\\ && pnpm run start:dev",
       "name": "Run PR",
       "request": "launch",

@@ -20,11 +20,3 @@ export * from './budget-year.entity';
 export * from './budget.entity';
 
 export * from './reason.entity';
-//pr
-
-export * from './procurement-requisition.entity';
-export * from './procurement-requisition-document.entity';
-export * from './procurement-requisition-item.entity';
-export * from './procurement-requisition-technical-team.entity';
-export * from './procurement-requisition-timeline.entity';
-export * from './procurement-mechanism.entity';
