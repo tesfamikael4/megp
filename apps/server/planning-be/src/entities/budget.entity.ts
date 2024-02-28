@@ -15,6 +15,8 @@ import { ActivityBudgetLine } from './activity-budget-line.entity';
 import { PostBudgetPlanItem } from './post-budget-plan-items.entity';
 import { OrgAudit } from 'src/shared/entities';
 import { PostBudgetPlanActivity } from './post-budget-plan-activity.entity';
+import { ProcurementRequisition } from './procurement-requisition.entity';
+import { ProcurementRequisitionItem } from './procurement-requisition-item.entity';
 
 @Entity({ name: 'budget' })
 @Check(
@@ -55,6 +57,18 @@ export class Budget extends OrgAudit {
     (postBudgetPlanActivities) => postBudgetPlanActivities.budget,
   )
   postBudgetPlanActivities: PostBudgetPlanActivity[];
+
+  @OneToMany(
+    () => ProcurementRequisition,
+    (procurementRequisitions) => procurementRequisitions.budget,
+  )
+  procurementRequisitions: ProcurementRequisition[];
+
+  @OneToMany(
+    () => ProcurementRequisitionItem,
+    (procurementRequisitionItems) => procurementRequisitionItems.budget,
+  )
+  procurementRequisitionItems: ProcurementRequisitionItem[];
 
   @Column({ nullable: true })
   type: string;

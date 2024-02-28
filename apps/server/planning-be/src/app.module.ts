@@ -10,6 +10,7 @@ import { TransactionInterceptor } from './shared/interceptors';
 import { TenantInterceptor } from './shared/interceptors/tenant-interceptor';
 import { UtilityModule } from './modules/utility/utility.module';
 import { MinIOModule } from './shared/min-io/min-io.module';
+import { ProcurementRequisitionModule } from './modules/procurement-requistion/procurement-requisition.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { MinIOModule } from './shared/min-io/min-io.module';
     APPModule,
     MinIOModule,
     UtilityModule,
+    ProcurementRequisitionModule,
     EventEmitterModule.forRoot({
       // set this to `true` to use wildcards
       wildcard: false,
