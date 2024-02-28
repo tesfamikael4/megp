@@ -90,7 +90,7 @@ export class FileResponseDto {
 export class UploadFileDto {
   @ApiProperty()
   @IsNotEmpty()
-  transactionId: string;
+  transactionNumber: string;
   @ApiProperty()
   @IsNotEmpty()
   // @IsUUID()

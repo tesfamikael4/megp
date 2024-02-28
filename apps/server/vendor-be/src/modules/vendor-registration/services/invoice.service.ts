@@ -63,6 +63,7 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     );
     invoice.amount = curruntPricing.fee;
     invoice.payerName = vendor.name;
+    invoice.refNumber = this.commonService.generateRandomString(7);
     const response = await this.invoiceRepository.save(invoice);
     if (response) return true;
     return false;
@@ -78,6 +79,7 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
       curruntPricing.service,
       user,
     );
+    invoice.refNumber = this.commonService.generateRandomString(7);
     const response = await this.invoiceRepository.save(invoice);
     if (response) return true;
     return false;
@@ -105,6 +107,7 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
       baServicePrice,
       curruntPricing,
     );
+    invoice.refNumber = this.commonService.generateRandomString(7);
     const response = await this.invoiceRepository.save(invoice);
     if (response) return true;
     return false;
@@ -212,7 +215,7 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
         userId: userId,
         serviceId: serviceId,
         paymentStatus: PaymentStatus.PAID,
-        businessArea: { status: Not(ApplicationStatus.APPROVED) }
+        businessArea: { status: Not(ApplicationStatus.APPROVED) },
       },
       relations: { businessArea: { BpService: true } },
     });

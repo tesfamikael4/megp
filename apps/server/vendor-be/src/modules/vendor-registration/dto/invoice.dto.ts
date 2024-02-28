@@ -40,11 +40,12 @@ export class InvoiceResponseDto {
   category: string;
   @ApiProperty()
   userId: string;
-  attachmentUrl: string
+  attachmentUrl: string;
+  @ApiProperty()
+  refNumber: string;
   static toResponse(entity: InvoiceEntity): InvoiceResponseDto {
     const response = new InvoiceResponseDto();
     response.id = entity.id;
-    response.businessAreaId = entity.businessAreaId;
     response.userId = entity.userId;
     response.businessAreaId = entity.businessAreaId;
     response.applicationNo = entity.applicationNo;
@@ -61,6 +62,7 @@ export class InvoiceResponseDto {
     response.pricingId = entity?.businessArea?.priceRangeId;
     response.category = entity?.businessArea?.category;
     response.attachmentUrl = entity.attachment;
+    response.refNumber = entity.refNumber;
     return response;
   }
 }

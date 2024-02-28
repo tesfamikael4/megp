@@ -30,7 +30,7 @@ export class DataSeederController {
     @InjectRepository(TaskAssignmentEntity)
     private readonly assignmentRepository: Repository<TaskAssignmentEntity>,
     private readonly categoryService: CategoryService,
-  ) { }
+  ) {}
   @UseGuards(JwtGuard)
   @Post('seed-services')
   @ApiOkResponse()
@@ -200,69 +200,69 @@ export class DataSeederController {
         id: 'd822c2d4-1023-4328-a172-adfcd78a30d4',
         serviceId: 'bb6934e1-9706-1e1b-c02f-b35c3e6153a4',
         workflow: {
-          id: "Goods Registration",
+          id: 'Goods Registration',
           states: {
             End: {
               on: {},
               meta: {
-                type: "end",
-                apiUrl: "",
-
-              }
+                type: 'end',
+                apiUrl: '',
+              },
             },
             'Submit New Vendor Registration Request for Goods': {
               on: {
-                ISR: "Review New Vendor Registration Request by Registration Officer"
+                ISR: 'Review New Vendor Registration Request by Registration Officer',
               },
               meta: {
                 type: {
                   start: true,
-                }
-              }
+                },
+              },
             },
 
             'Review New Vendor Registration Request by Registration Officer': {
               on: {
-                ADJUST: "Submit New Vendor Registration Request for Goods",
-                CANCEL: "End",
-                APPROVE: "Approval of New Vendor Registration Request by Senior or chief registration officer or RRM/DRRM"
+                ADJUST: 'Submit New Vendor Registration Request for Goods',
+                CANCEL: 'End',
+                APPROVE:
+                  'Approval of New Vendor Registration Request by Senior or chief registration officer or RRM/DRRM',
               },
               meta: {
-                type: "InitialReview"
-              }
-            },
-            'Approval of New Vendor Registration Request by Senior or chief registration officer or RRM/DRRM': {
-              on: {
-                NO: "Review New Vendor Registration Request by Registration Officer",
-                YES: "Approval of New Vendor Registration Request by Director General (DG)"
+                type: 'InitialReview',
               },
-              meta: {
-                type: "Confirmation"
-              }
             },
-            'Approval of New Vendor Registration Request by Director General (DG)': {
-              on: {
-                ADJUST: "Submit New Vendor Registration Request for Goods",
-                APPROVE: "Generate New Vendor Registration Certificate",
-                REJECT: "End",
-
+            'Approval of New Vendor Registration Request by Senior or chief registration officer or RRM/DRRM':
+              {
+                on: {
+                  NO: 'Review New Vendor Registration Request by Registration Officer',
+                  YES: 'Approval of New Vendor Registration Request by Director General (DG)',
+                },
+                meta: {
+                  type: 'Confirmation',
+                },
               },
-              meta: {
-                type: "Confirmation"
-              }
-            },
+            'Approval of New Vendor Registration Request by Director General (DG)':
+              {
+                on: {
+                  ADJUST: 'Submit New Vendor Registration Request for Goods',
+                  APPROVE: 'Generate New Vendor Registration Certificate',
+                  REJECT: 'End',
+                },
+                meta: {
+                  type: 'Confirmation',
+                },
+              },
             'Generate New Vendor Registration Certificate': {
               on: {
-                FAIL: "Generate New Vendor Registration Certificate",
-                SUCCESS: "End"
+                FAIL: 'Generate New Vendor Registration Certificate',
+                SUCCESS: 'End',
               },
               meta: {
-                type: "Certificate"
-              }
+                type: 'Certificate',
+              },
             },
-
           },
-          initial: "Submit New Vendor Registration Request for Goods"
+          initial: 'Submit New Vendor Registration Request for Goods',
         },
         version: 0,
         isActive: true,
@@ -274,68 +274,69 @@ export class DataSeederController {
         id: '96d95fdb-7852-4ddc-982f-0e94d23d15d3',
         serviceId: '5f764d17-a165-42ab-879d-358bc03fe5d8',
         workflow: {
-          id: "Services Registration",
+          id: 'Services Registration',
           states: {
             End: {
               on: {},
               meta: {
-                type: "end",
-                apiUrl: "",
-
-              }
+                type: 'end',
+                apiUrl: '',
+              },
             },
             'Submit New Vendor Registration Request for Services': {
               on: {
-                ISR: "Review New Vendor Registration Request by Registration Officer"
+                ISR: 'Review New Vendor Registration Request by Registration Officer',
               },
               meta: {
                 type: {
                   start: true,
-                }
-              }
+                },
+              },
             },
             'Review New Vendor Registration Request by Registration Officer': {
               on: {
-                ADJUST: "Submit New Vendor Registration Request for Services",
-                CANCEL: "End",
-                APPROVE: "Approval of New Vendor Registration Request by Senior or chief registration officer or RRM/DRRM"
+                ADJUST: 'Submit New Vendor Registration Request for Services',
+                CANCEL: 'End',
+                APPROVE:
+                  'Approval of New Vendor Registration Request by Senior or chief registration officer or RRM/DRRM',
               },
               meta: {
-                type: "InitialReview"
-              }
+                type: 'InitialReview',
+              },
             },
 
-            'Approval of New Vendor Registration Request by Senior or chief registration officer or RRM/DRRM': {
-              on: {
-                NO: "Review New Vendor Registration Request by Registration Officer",
-                YES: "Approval of New Vendor Registration Request by Director General (DG)"
+            'Approval of New Vendor Registration Request by Senior or chief registration officer or RRM/DRRM':
+              {
+                on: {
+                  NO: 'Review New Vendor Registration Request by Registration Officer',
+                  YES: 'Approval of New Vendor Registration Request by Director General (DG)',
+                },
+                meta: {
+                  type: 'Confirmation',
+                },
               },
-              meta: {
-                type: "Confirmation"
-              }
-            },
-            'Approval of New Vendor Registration Request by Director General (DG)': {
-              on: {
-                APPROVE: "Generate New Vendor Registration Certificate",
-                ADJUST: "Submit New Vendor Registration Request for Services",
-                REJECT: "End",
+            'Approval of New Vendor Registration Request by Director General (DG)':
+              {
+                on: {
+                  APPROVE: 'Generate New Vendor Registration Certificate',
+                  ADJUST: 'Submit New Vendor Registration Request for Services',
+                  REJECT: 'End',
+                },
+                meta: {
+                  type: 'Confirmation',
+                },
               },
-              meta: {
-                type: "Confirmation"
-              }
-            }
-            ,
             'Generate New Vendor Registration Certificate': {
               on: {
-                FAIL: "Generate New Vendor Registration Certificate",
-                SUCCESS: "End"
+                FAIL: 'Generate New Vendor Registration Certificate',
+                SUCCESS: 'End',
               },
               meta: {
-                type: "Certificate"
-              }
+                type: 'Certificate',
+              },
             },
           },
-          initial: "Submit New Vendor Registration Request for Services"
+          initial: 'Submit New Vendor Registration Request for Services',
         },
         version: 1,
         isActive: true,
@@ -347,65 +348,68 @@ export class DataSeederController {
         id: '745c9643-1f1d-464f-860c-3087bfc1a7c1',
         serviceId: '3f78dced-838d-4757-ade0-4fd0444c142a',
         workflow: {
-          id: "Works Registration",
+          id: 'Works Registration',
           states: {
             End: {
               on: {},
               meta: {
-                type: "end"
-              }
+                type: 'end',
+              },
             },
             'Submit New Vendor Registration Request for Works': {
               on: {
-                ISR: "Review New Vendor Registration Request by Registration Officer"
+                ISR: 'Review New Vendor Registration Request by Registration Officer',
               },
               meta: {
                 type: {
                   start: true,
-                }
-              }
+                },
+              },
             },
             'Review New Vendor Registration Request by Registration Officer': {
               on: {
-                ADJUST: "Submit New Vendor Registration Request for Works",
-                CANCEL: "End",
-                APPROVE: "Approval of New Vendor Registration Request by Senior or chief registration officer or RRM/DRRM"
+                ADJUST: 'Submit New Vendor Registration Request for Works',
+                CANCEL: 'End',
+                APPROVE:
+                  'Approval of New Vendor Registration Request by Senior or chief registration officer or RRM/DRRM',
               },
               meta: {
-                type: "InitialReview"
-              }
+                type: 'InitialReview',
+              },
             },
 
-            'Approval of New Vendor Registration Request by Senior or chief registration officer or RRM/DRRM': {
-              on: {
-                NO: "Review New Vendor Registration Request by Registration Officer",
-                YES: "Approval of New Vendor Registration Request by Director General (DG)"
+            'Approval of New Vendor Registration Request by Senior or chief registration officer or RRM/DRRM':
+              {
+                on: {
+                  NO: 'Review New Vendor Registration Request by Registration Officer',
+                  YES: 'Approval of New Vendor Registration Request by Director General (DG)',
+                },
+                meta: {
+                  type: 'Confirmation',
+                },
               },
-              meta: {
-                type: "Confirmation"
-              }
-            },
-            'Approval of New Vendor Registration Request by Director General (DG)': {
-              on: {
-                APPROVE: "Generate Vendor Registration Certificate",
-                ADJUST: "Submit New Vendor Registration Request for Works",
-                REJECT: "End",
+            'Approval of New Vendor Registration Request by Director General (DG)':
+              {
+                on: {
+                  APPROVE: 'Generate Vendor Registration Certificate',
+                  ADJUST: 'Submit New Vendor Registration Request for Works',
+                  REJECT: 'End',
+                },
+                meta: {
+                  type: 'Approval',
+                },
               },
-              meta: {
-                type: "Approval"
-              }
-            },
             'Generate Vendor Registration Certificate': {
               on: {
-                FAIL: "Generate Vendor Registration Certificate",
-                SUCCESS: "End"
+                FAIL: 'Generate Vendor Registration Certificate',
+                SUCCESS: 'End',
               },
               meta: {
-                type: "Certificate"
-              }
-            }
+                type: 'Certificate',
+              },
+            },
           },
-          initial: "Submit New Vendor Registration Request for Works"
+          initial: 'Submit New Vendor Registration Request for Works',
         },
         version: 1,
         isActive: true,
@@ -419,67 +423,69 @@ export class DataSeederController {
         id: 'cd17ba61-a510-4fed-9e50-a3f10b6570d3',
         serviceId: '62e96410-e869-4231-b693-f7e22d498b65',
         workflow: {
-          id: "Renewal of Goods",
+          id: 'Renewal of Goods',
           states: {
             End: {
               on: {},
               meta: {
-                type: "end",
-                apiUrl: "",
-
-              }
+                type: 'end',
+                apiUrl: '',
+              },
             },
             'Submit Renewal Registration Request for Goods': {
               on: {
-                ISR: "Review Vendor Renewal Registration Request by Registration Officer(RO)"
+                ISR: 'Review Vendor Renewal Registration Request by Registration Officer(RO)',
               },
               meta: {
                 type: {
                   start: true,
-                }
-              }
-            },
-            'Review Vendor Renewal Registration Request by Registration Officer(RO)': {
-              on: {
-                ADJUST: "Submit Renewal Registration Request for Goods",
-                CANCEL: "End",
-                APPROVE: "Approval of Renewal Registration Request by Senior or chief registration officer or RRM/DRRM"
+                },
               },
-              meta: {
-                type: "InitialReview"
-              }
             },
-            'Approval of Renewal Registration Request by Senior or chief registration officer or RRM/DRRM': {
-              on: {
-                NO: "Review Vendor Renewal Registration Request by Registration Officer(RO)",
-                YES: "Approval of Upgrade Registration Request of vendor by Director General (DG)"
+            'Review Vendor Renewal Registration Request by Registration Officer(RO)':
+              {
+                on: {
+                  ADJUST: 'Submit Renewal Registration Request for Goods',
+                  CANCEL: 'End',
+                  APPROVE:
+                    'Approval of Renewal Registration Request by Senior or chief registration officer or RRM/DRRM',
+                },
+                meta: {
+                  type: 'InitialReview',
+                },
               },
-              meta: {
-                type: "Confirmation"
-              }
-            },
-            'Approval of Upgrade Registration Request of vendor by Director General (DG)': {
-              on: {
-                APPROVE: "Generate Vendor Registration Certificate",
-                ADJUST: "Submit Renewal Registration Request for Goods",
-                REJECT: "End",
+            'Approval of Renewal Registration Request by Senior or chief registration officer or RRM/DRRM':
+              {
+                on: {
+                  NO: 'Review Vendor Renewal Registration Request by Registration Officer(RO)',
+                  YES: 'Approval of Upgrade Registration Request of vendor by Director General (DG)',
+                },
+                meta: {
+                  type: 'Confirmation',
+                },
               },
-              meta: {
-                type: "Confirmation"
-              }
-            },
+            'Approval of Upgrade Registration Request of vendor by Director General (DG)':
+              {
+                on: {
+                  APPROVE: 'Generate Vendor Registration Certificate',
+                  ADJUST: 'Submit Renewal Registration Request for Goods',
+                  REJECT: 'End',
+                },
+                meta: {
+                  type: 'Confirmation',
+                },
+              },
             'Generate Vendor Registration Certificate': {
               on: {
-                FAIL: "Generate Vendor Registration Certificate",
-                SUCCESS: "End"
+                FAIL: 'Generate Vendor Registration Certificate',
+                SUCCESS: 'End',
               },
               meta: {
-                type: "Certificate"
-              }
+                type: 'Certificate',
+              },
             },
-
           },
-          initial: "Submit Renewal Registration Request for Goods"
+          initial: 'Submit Renewal Registration Request for Goods',
         },
         version: 0,
         isActive: true,
@@ -491,68 +497,70 @@ export class DataSeederController {
         id: 'b97fb7aa-2442-4e5d-8b42-42bd6ef41138',
         serviceId: '76be510e-033e-415b-9e3e-8f9795c01756',
         workflow: {
-          id: "Renwal Services",
+          id: 'Renwal Services',
           states: {
             End: {
               on: {},
               meta: {
-                type: "end",
-                apiUrl: "",
-
-              }
+                type: 'end',
+                apiUrl: '',
+              },
             },
             'Submit Renewal Registration Request for Services': {
               on: {
-                ISR: "Review Vendor Renewal Registration Request by Registration Officer(RO)"
+                ISR: 'Review Vendor Renewal Registration Request by Registration Officer(RO)',
               },
               meta: {
                 type: {
                   start: true,
-                }
-              }
-            },
-            'Review Vendor Renewal Registration Request by Registration Officer(RO)': {
-              on: {
-                ADJUST: "Submit Renewal Registration Request for Services",
-                CANCEL: "End",
-                APPROVE: "Approval of Renewal Registration Request by Senior or chief registration officer or RRM/DRRM"
+                },
               },
-              meta: {
-                type: "InitialReview"
-              }
             },
+            'Review Vendor Renewal Registration Request by Registration Officer(RO)':
+              {
+                on: {
+                  ADJUST: 'Submit Renewal Registration Request for Services',
+                  CANCEL: 'End',
+                  APPROVE:
+                    'Approval of Renewal Registration Request by Senior or chief registration officer or RRM/DRRM',
+                },
+                meta: {
+                  type: 'InitialReview',
+                },
+              },
 
-            'Approval of Renewal Registration Request by Senior or chief registration officer or RRM/DRRM': {
-              on: {
-                NO: "Review Vendor Renewal Registration Request by Registration Officer(RO)",
-                YES: "Approval of Renewal Registration Request of vendor by Director General (DG)"
+            'Approval of Renewal Registration Request by Senior or chief registration officer or RRM/DRRM':
+              {
+                on: {
+                  NO: 'Review Vendor Renewal Registration Request by Registration Officer(RO)',
+                  YES: 'Approval of Renewal Registration Request of vendor by Director General (DG)',
+                },
+                meta: {
+                  type: 'Confirmation',
+                },
               },
-              meta: {
-                type: "Confirmation"
-              }
-            },
-            'Approval of Renewal Registration Request of vendor by Director General (DG)': {
-              on: {
-                APPROVE: "Generate Vendor Registration Certificate",
-                ADJUST: "Submit Renewal Registration Request for Services",
-                REJECT: "End",
+            'Approval of Renewal Registration Request of vendor by Director General (DG)':
+              {
+                on: {
+                  APPROVE: 'Generate Vendor Registration Certificate',
+                  ADJUST: 'Submit Renewal Registration Request for Services',
+                  REJECT: 'End',
+                },
+                meta: {
+                  type: 'Confirmation',
+                },
               },
-              meta: {
-                type: "Confirmation"
-              }
-            }
-            ,
             'Generate Vendor Registration Certificate': {
               on: {
-                FAIL: "Generate Vendor Registration Certificate",
-                SUCCESS: "End"
+                FAIL: 'Generate Vendor Registration Certificate',
+                SUCCESS: 'End',
               },
               meta: {
-                type: "Certificate"
-              }
+                type: 'Certificate',
+              },
             },
           },
-          initial: "Submit Renewal Registration Request for Services"
+          initial: 'Submit Renewal Registration Request for Services',
         },
         version: 0,
         isActive: true,
@@ -564,65 +572,69 @@ export class DataSeederController {
         id: '543d59c0-3b13-401f-bb78-058de7f65a11',
         serviceId: '7fcb88b0-86e3-4f11-950a-f24f09323d0d',
         workflow: {
-          id: "Renewal Works",
+          id: 'Renewal Works',
           states: {
             End: {
               on: {},
               meta: {
-                type: "end"
-              }
+                type: 'end',
+              },
             },
             'Submit Renewal Registration Request for Works': {
               on: {
-                ISR: "Review Vendor Renewal Registration Request by Registration Officer(RO)"
+                ISR: 'Review Vendor Renewal Registration Request by Registration Officer(RO)',
               },
               meta: {
                 type: {
                   start: true,
-                }
-              }
-            },
-            'Review Vendor Renewal Registration Request by Registration Officer(RO)': {
-              on: {
-                ADJUST: "Submit Renewal Registration Request for Works",
-                CANCEL: "End",
-                APPROVE: "Approval of Renewal Registration Request by Senior or chief registration officer or RRM/DRRM"
+                },
               },
-              meta: {
-                type: "InitialReview"
-              }
             },
+            'Review Vendor Renewal Registration Request by Registration Officer(RO)':
+              {
+                on: {
+                  ADJUST: 'Submit Renewal Registration Request for Works',
+                  CANCEL: 'End',
+                  APPROVE:
+                    'Approval of Renewal Registration Request by Senior or chief registration officer or RRM/DRRM',
+                },
+                meta: {
+                  type: 'InitialReview',
+                },
+              },
 
-            'Approval of Renewal Registration Request by Senior or chief registration officer or RRM/DRRM': {
-              on: {
-                NO: "Review Vendor Renewal Registration Request by Registration Officer(RO)",
-                YES: "Approval of Renewal Registration Request of vendor by Director General (DG)"
+            'Approval of Renewal Registration Request by Senior or chief registration officer or RRM/DRRM':
+              {
+                on: {
+                  NO: 'Review Vendor Renewal Registration Request by Registration Officer(RO)',
+                  YES: 'Approval of Renewal Registration Request of vendor by Director General (DG)',
+                },
+                meta: {
+                  type: 'Confirmation',
+                },
               },
-              meta: {
-                type: "Confirmation"
-              }
-            },
-            'Approval of Renewal Registration Request of vendor by Director General (DG)': {
-              on: {
-                APPROVE: "Generate Vendor Registration Certificate",
-                ADJUST: "Submit Renewal Registration Request for Works",
-                REJECT: "End",
+            'Approval of Renewal Registration Request of vendor by Director General (DG)':
+              {
+                on: {
+                  APPROVE: 'Generate Vendor Registration Certificate',
+                  ADJUST: 'Submit Renewal Registration Request for Works',
+                  REJECT: 'End',
+                },
+                meta: {
+                  type: 'Approval',
+                },
               },
-              meta: {
-                type: "Approval"
-              }
-            },
             'Generate Vendor Registration Certificate': {
               on: {
-                FAIL: "Generate Vendor Registration Certificate",
-                SUCCESS: "End"
+                FAIL: 'Generate Vendor Registration Certificate',
+                SUCCESS: 'End',
               },
               meta: {
-                type: "Certificate"
-              }
-            }
+                type: 'Certificate',
+              },
+            },
           },
-          initial: "Submit Renewal Registration Request for Works"
+          initial: 'Submit Renewal Registration Request for Works',
         },
         version: 0,
         isActive: true,
@@ -637,64 +649,68 @@ export class DataSeederController {
         id: 'abe4ba2c-a260-4bbb-bc8d-f101c33b6dc1',
         serviceId: '897e5182-927b-4f1d-bd25-10fb99a13d37',
         workflow: {
-          id: "Upgrade Goods",
+          id: 'Upgrade Goods',
           states: {
             End: {
               on: {},
               meta: {
-                type: "end"
-              }
+                type: 'end',
+              },
             },
             'Submit Vendor Upgrade Registration Request': {
               on: {
-                ISR: "Review Upgrade Registration Request of Vendor by Registration Officer"
+                ISR: 'Review Upgrade Registration Request of Vendor by Registration Officer',
               },
               meta: {
                 type: {
                   start: true,
-                }
-              }
-            },
-            'Review Upgrade Registration Request of Vendor by Registration Officer': {
-              on: {
-                ADJUST: "Submit Vendor Upgrade Registration Request",
-                CANCEL: "End",
-                APPROVE: "Approval of Upgrade Registration Request of Vendor by Senior or chief registration officer or RRM/ DRRM"
+                },
               },
-              meta: {
-                type: "InitialReview"
-              }
             },
-            'Approval of Upgrade Registration Request of Vendor by Senior or chief registration officer or RRM/ DRRM': {
-              on: {
-                NO: "Review Upgrade Registration Request of Vendor by Registration Officer",
-                YES: "Approval of Upgrade Registration Request of vendor by Director General (DG)"
+            'Review Upgrade Registration Request of Vendor by Registration Officer':
+              {
+                on: {
+                  ADJUST: 'Submit Vendor Upgrade Registration Request',
+                  CANCEL: 'End',
+                  APPROVE:
+                    'Approval of Upgrade Registration Request of Vendor by Senior or chief registration officer or RRM/ DRRM',
+                },
+                meta: {
+                  type: 'InitialReview',
+                },
               },
-              meta: {
-                type: "Confirmation"
-              }
-            },
-            'Approval of Upgrade Registration Request of vendor by Director General (DG)': {
-              on: {
-                APPROVE: "Generate Vendor Registration Certificate",
-                ADJUST: "Submit Vendor Upgrade Registration Request",
-                REJECT: "End",
+            'Approval of Upgrade Registration Request of Vendor by Senior or chief registration officer or RRM/ DRRM':
+              {
+                on: {
+                  NO: 'Review Upgrade Registration Request of Vendor by Registration Officer',
+                  YES: 'Approval of Upgrade Registration Request of vendor by Director General (DG)',
+                },
+                meta: {
+                  type: 'Confirmation',
+                },
               },
-              meta: {
-                type: "Confirmation"
-              }
-            },
+            'Approval of Upgrade Registration Request of vendor by Director General (DG)':
+              {
+                on: {
+                  APPROVE: 'Generate Vendor Registration Certificate',
+                  ADJUST: 'Submit Vendor Upgrade Registration Request',
+                  REJECT: 'End',
+                },
+                meta: {
+                  type: 'Confirmation',
+                },
+              },
             'Generate Vendor Registration Certificate': {
               on: {
-                FAIL: "Generate Vendor Registration Certificate",
-                SUCCESS: "End"
+                FAIL: 'Generate Vendor Registration Certificate',
+                SUCCESS: 'End',
               },
               meta: {
-                type: "Certificate"
-              }
+                type: 'Certificate',
+              },
             },
           },
-          initial: "Submit Vendor Upgrade Registration Request"
+          initial: 'Submit Vendor Upgrade Registration Request',
         },
         version: 0,
         isActive: true,
@@ -707,64 +723,68 @@ export class DataSeederController {
         id: '11a07c2b-2b12-44bc-894e-a1aede0194c4',
         serviceId: '29bbe5d9-8d44-4ffa-aa2f-4d12f4d7018b',
         workflow: {
-          id: "Upgrade Service",
+          id: 'Upgrade Service',
           states: {
             End: {
               on: {},
               meta: {
-                type: "end"
-              }
+                type: 'end',
+              },
             },
             'Submit Vendor Upgrade Registration Request': {
               on: {
-                ISR: "Review Upgrade Registration Request of Vendor by Registration Officer"
+                ISR: 'Review Upgrade Registration Request of Vendor by Registration Officer',
               },
               meta: {
                 type: {
                   start: true,
-                }
-              }
-            },
-            'Review Upgrade Registration Request of Vendor by Registration Officer': {
-              on: {
-                ADJUST: "Submit Vendor Upgrade Registration Request",
-                CANCEL: "End",
-                APPROVE: "Approval of Upgrade Registration Request of Vendor by Senior or chief registration officer or RRM/ DRRM"
+                },
               },
-              meta: {
-                type: "InitialReview"
-              }
             },
-            'Approval of Upgrade Registration Request of Vendor by Senior or chief registration officer or RRM/ DRRM': {
-              on: {
-                NO: "Review Upgrade Registration Request of Vendor by Registration Officer",
-                YES: "Approval of Upgrade Registration Request of vendor by Director General (DG)"
+            'Review Upgrade Registration Request of Vendor by Registration Officer':
+              {
+                on: {
+                  ADJUST: 'Submit Vendor Upgrade Registration Request',
+                  CANCEL: 'End',
+                  APPROVE:
+                    'Approval of Upgrade Registration Request of Vendor by Senior or chief registration officer or RRM/ DRRM',
+                },
+                meta: {
+                  type: 'InitialReview',
+                },
               },
-              meta: {
-                type: "Confirmation"
-              }
-            },
-            'Approval of Upgrade Registration Request of vendor by Director General (DG)': {
-              on: {
-                APPROVE: "Generate Vendor Registration Certificate",
-                ADJUST: "Submit Vendor Upgrade Registration Request",
-                REJECT: "End",
+            'Approval of Upgrade Registration Request of Vendor by Senior or chief registration officer or RRM/ DRRM':
+              {
+                on: {
+                  NO: 'Review Upgrade Registration Request of Vendor by Registration Officer',
+                  YES: 'Approval of Upgrade Registration Request of vendor by Director General (DG)',
+                },
+                meta: {
+                  type: 'Confirmation',
+                },
               },
-              meta: {
-                type: "Confirmation"
-              }
-            },
+            'Approval of Upgrade Registration Request of vendor by Director General (DG)':
+              {
+                on: {
+                  APPROVE: 'Generate Vendor Registration Certificate',
+                  ADJUST: 'Submit Vendor Upgrade Registration Request',
+                  REJECT: 'End',
+                },
+                meta: {
+                  type: 'Confirmation',
+                },
+              },
             'Generate Vendor Registration Certificate': {
               on: {
-                FAIL: "Generate Vendor Registration Certificate",
-                SUCCESS: "End"
+                FAIL: 'Generate Vendor Registration Certificate',
+                SUCCESS: 'End',
               },
               meta: {
-                type: "Certificate"
-              }
+                type: 'Certificate',
+              },
             },
           },
-          initial: "Submit Vendor Upgrade Registration Request"
+          initial: 'Submit Vendor Upgrade Registration Request',
         },
         version: 0,
         isActive: true,
@@ -777,56 +797,59 @@ export class DataSeederController {
         id: '950e28cf-ad82-4159-8b2c-f147bbe3685f',
         serviceId: 'cf7ef60f-01dc-4228-b203-89e5d3a3c9aa',
         workflow: {
-          id: "Upgrade Work",
+          id: 'Upgrade Work',
           states: {
             End: {
               on: {},
               meta: {
-                type: "end"
-              }
+                type: 'end',
+              },
             },
             'Submit Vendor Upgrade Registration Request': {
               on: {
-                ISR: "Review Upgrade Registration Request of Vendor by Registration Officer"
+                ISR: 'Review Upgrade Registration Request of Vendor by Registration Officer',
               },
               meta: {
                 type: {
                   start: true,
-                }
-              }
-            },
-            'Review Upgrade Registration Request of Vendor by Registration Officer': {
-              on: {
-                ADJUST: "Submit Vendor Upgrade Registration Request",
-                CANCEL: "End",
-                APPROVE: "Approval of Upgrade Registration Request by Senior or chief registration officer or RRM/DRRM"
+                },
               },
-              meta: {
-                type: "InitialReview"
-              }
             },
-            'Approval of Upgrade Registration Request by Senior or chief registration officer or RRM/DRRM': {
-              on: {
-                NO: "Review Upgrade Registration Request of Vendor by Registration Officer",
-                YES: "Approval of Upgrade Registration Request of vendor by Director General (DG)"
+            'Review Upgrade Registration Request of Vendor by Registration Officer':
+              {
+                on: {
+                  ADJUST: 'Submit Vendor Upgrade Registration Request',
+                  CANCEL: 'End',
+                  APPROVE:
+                    'Approval of Upgrade Registration Request by Senior or chief registration officer or RRM/DRRM',
+                },
+                meta: {
+                  type: 'InitialReview',
+                },
               },
-              meta: {
-                type: "Confirmation"
-              }
-            },
-            'Approval of Upgrade Registration Request of vendor by Director General (DG)': {
-              on: {
-                APPROVE: "End",
-                ADJUST: "Submit Vendor Upgrade Registration Request",
-                REJECT: "End",
+            'Approval of Upgrade Registration Request by Senior or chief registration officer or RRM/DRRM':
+              {
+                on: {
+                  NO: 'Review Upgrade Registration Request of Vendor by Registration Officer',
+                  YES: 'Approval of Upgrade Registration Request of vendor by Director General (DG)',
+                },
+                meta: {
+                  type: 'Confirmation',
+                },
               },
-              meta: {
-                type: "Confirmation"
-              }
-            }
-
+            'Approval of Upgrade Registration Request of vendor by Director General (DG)':
+              {
+                on: {
+                  APPROVE: 'End',
+                  ADJUST: 'Submit Vendor Upgrade Registration Request',
+                  REJECT: 'End',
+                },
+                meta: {
+                  type: 'Confirmation',
+                },
+              },
           },
-          initial: "Submit Vendor Upgrade Registration Request"
+          initial: 'Submit Vendor Upgrade Registration Request',
         },
         version: 0,
         isActive: true,
@@ -848,16 +871,16 @@ export class DataSeederController {
               },
             },
             'Submission of indigenous black Malawian(IBM) Registration Request':
-            {
-              on: {
-                ISR: 'Approval of indigenous black Malawian(IBM) Registration Request',
-              },
-              meta: {
-                type: {
-                  start: true,
+              {
+                on: {
+                  ISR: 'Approval of indigenous black Malawian(IBM) Registration Request',
+                },
+                meta: {
+                  type: {
+                    start: true,
+                  },
                 },
               },
-            },
             'Approval of indigenous black Malawian(IBM) Registration Request': {
               on: {
                 ADJUST:
@@ -1054,27 +1077,41 @@ export class DataSeederController {
         workflow: {
           id: 'Profile update Workflow',
           states: {
-            End: { on: {}, meta: { type: 'end' } },
+            End: {
+              on: {},
+              meta: {
+                type: 'end',
+              },
+            },
+            'Submission of Vendor Profile Update Request': {
+              on: {
+                ISR: 'Approval of Vendor Profile Update Request',
+              },
+              meta: {
+                type: {
+                  start: true,
+                },
+              },
+            },
             'Approval of Vendor Profile Update Request': {
               on: {
                 ADJUST: 'Submission of Vendor Profile Update Request',
-                REJECT: 'End',
+                CANCEL: 'End',
                 APPROVE:
                   'Approval of Vendor Profile Update Request By Director General (Head of PDE)',
               },
-              meta: { type: 'Approval' },
-            },
-            'Submission of Vendor Profile Update Request': {
-              on: { ISR: 'Approval of Vendor Profile Update Request' },
-              meta: { type: { start: true } },
-            },
-            'Approval of Vendor Profile Update Request By Director General (Head of PDE)':
-            {
-              on: {
-                NO: 'Submission of Vendor Profile Update Request',
-                YES: 'End',
+              meta: {
+                type: 'Approval',
               },
             },
+            'Approval of Vendor Profile Update Request By Director General (Head of PDE)':
+              {
+                on: {
+                  ADJUST: 'Submission of Vendor Profile Update Request',
+                  APPROVE: 'End',
+                  REJECT: 'End',
+                },
+              },
           },
           initial: 'Submission of Vendor Profile Update Request',
         },
@@ -1082,7 +1119,7 @@ export class DataSeederController {
         isActive: true,
         organizationId: null,
         organizationName: null,
-      }
+      },
     ];
     await this.bpService.saveBulk(bpsToSeed);
   }
@@ -1295,7 +1332,8 @@ export class DataSeederController {
         id: '31fac537-e71b-479b-9c4a-7f344720598f',
         name: 'Approval of New Vendor Registration Request by Senior or chief registration officer or RRM/DRRM',
         label: 'Reviewed by RO',
-        description: 'aprove new  registration request for Goods by senior or chief registration officer',
+        description:
+          'aprove new  registration request for Goods by senior or chief registration officer',
         bpId: 'd822c2d4-1023-4328-a172-adfcd78a30d4',
         handlerType: 'Assignee',
         taskType: 'Confirmation',
@@ -1313,7 +1351,8 @@ export class DataSeederController {
         id: 'd8f268ac-f85f-4973-94c3-134f753cd25e',
         name: 'Approval of New Vendor Registration Request by Director General (DG)',
         label: 'Approved by DG',
-        description: 'Ensuring that vendors meet the necessary criteria and standards set forth by the organization',
+        description:
+          'Ensuring that vendors meet the necessary criteria and standards set forth by the organization',
         bpId: 'd822c2d4-1023-4328-a172-adfcd78a30d4',
         handlerType: 'Assignee',
         taskType: 'Approval',
@@ -1326,13 +1365,13 @@ export class DataSeederController {
           },
         ],
         orderBy: 4,
-      }
-      ,
+      },
       {
         id: '96752a13-205f-45eb-8b6f-118ebf0c89c7',
         name: 'Generate New Vendor Registration Certificate',
         label: 'Generated Certeficates',
-        description: "Creating a formal certificate to officially recognize and document the registration of a new vendor within the organization's procurement system.This certificate serves as proof of the vendor's successful registration and compliance with the organization's requirements",
+        description:
+          "Creating a formal certificate to officially recognize and document the registration of a new vendor within the organization's procurement system.This certificate serves as proof of the vendor's successful registration and compliance with the organization's requirements",
         bpId: 'd822c2d4-1023-4328-a172-adfcd78a30d4',
         handlerType: 'Assignee',
         taskType: 'Certificate',
@@ -1362,7 +1401,8 @@ export class DataSeederController {
         checkList: [
           {
             id: '94d95fdb-7852-4ddc-982f-0e94d23d15d3',
-            description: 'All the required information and related documents fullfilled',
+            description:
+              'All the required information and related documents fullfilled',
             isMandatory: 'true',
           },
         ],
@@ -1372,7 +1412,8 @@ export class DataSeederController {
         id: '17ff23e0-11d9-46fc-9357-55604cb2c4cb',
         name: 'Approval of New Vendor Registration Request by Senior or chief registration officer or RRM/DRRM',
         label: 'Reviewed by RO',
-        description: 'aprove new  registration request for Services by senior or chief registration officer',
+        description:
+          'aprove new  registration request for Services by senior or chief registration officer',
         bpId: '96d95fdb-7852-4ddc-982f-0e94d23d15d3',
         handlerType: 'Assignee',
         taskType: 'Confirmation',
@@ -1390,7 +1431,8 @@ export class DataSeederController {
         id: '6428a5a6-1d66-45fe-b0c0-1f34aecb676c',
         name: 'Approval of New Vendor Registration Request by Director General (DG)',
         label: 'Approved by DG',
-        description: 'Ensuring that vendors meet the necessary criteria and standards set forth by the organization',
+        description:
+          'Ensuring that vendors meet the necessary criteria and standards set forth by the organization',
         bpId: '96d95fdb-7852-4ddc-982f-0e94d23d15d3',
         handlerType: 'Assignee',
         taskType: 'Approval',
@@ -1408,7 +1450,8 @@ export class DataSeederController {
         id: '062b9571-b2cf-44c8-a8ad-bd79fdecc2fe',
         name: 'Generate New Vendor Registration Certificate',
         label: 'Generated Certeficates',
-        description: "creating a formal certificate to officially recognize and document the registration of a new vendor within the organization's procurement system.This certificate serves as proof of the vendor's successful registration and compliance with the organization's requirements",
+        description:
+          "creating a formal certificate to officially recognize and document the registration of a new vendor within the organization's procurement system.This certificate serves as proof of the vendor's successful registration and compliance with the organization's requirements",
         bpId: '96d95fdb-7852-4ddc-982f-0e94d23d15d3',
         handlerType: 'Assignee',
         taskType: 'Certificate',
@@ -1439,7 +1482,8 @@ export class DataSeederController {
         checkList: [
           {
             id: '94d95fdb-7852-4ddc-982f-0e94d23d15d3',
-            description: 'All the required information and related documents fullfilled',
+            description:
+              'All the required information and related documents fullfilled',
             isMandatory: 'true',
           },
         ],
@@ -1449,14 +1493,16 @@ export class DataSeederController {
         id: '11ff23e0-11d9-46fc-9357-55604cb2c4cb',
         name: 'Approval of New Vendor Registration Request by Senior or chief registration officer or RRM/DRRM',
         label: 'Reviewed by RO',
-        description: 'aprove new  registration request for Services by senior or chief registration officer',
+        description:
+          'aprove new  registration request for Services by senior or chief registration officer',
         bpId: '745c9643-1f1d-464f-860c-3087bfc1a7c1',
         handlerType: 'Assignee',
         taskType: 'Confirmation',
         checkList: [
           {
             id: '96d97fdb-7852-4ddc-982f-0e94d23d15d3',
-            description: 'All the required information and related documents fullfilled',
+            description:
+              'All the required information and related documents fullfilled',
             isMandatory: 'true',
           },
         ],
@@ -1466,14 +1512,16 @@ export class DataSeederController {
         id: '1128a5a6-1d66-45fe-b0c0-1f34aecb676c',
         name: 'Approval of New Vendor Registration Request by Director General (DG)',
         label: 'Approved by DG',
-        description: 'Ensuring that vendors meet the necessary criteria and standards set forth by the organization',
+        description:
+          'Ensuring that vendors meet the necessary criteria and standards set forth by the organization',
         bpId: '745c9643-1f1d-464f-860c-3087bfc1a7c1',
         handlerType: 'Assignee',
         taskType: 'Approval',
         checkList: [
           {
             id: '96d95fdb-7852-4ddc-982f-0e94d23d15d1',
-            description: 'All the required information and related documents fullfilled',
+            description:
+              'All the required information and related documents fullfilled',
             isMandatory: 'true',
           },
         ],
@@ -1496,14 +1544,16 @@ export class DataSeederController {
         id: '31fac537-e71b-479c-9c4a-7b344724518f',
         name: 'Submit Vendor Upgrade Registration Request',
         label: 'Submitted Applications',
-        description: 'Submission of Vendor Upgrade Registration Request for Goods',
+        description:
+          'Submission of Vendor Upgrade Registration Request for Goods',
         bpId: 'abe4ba2c-a260-4bbb-bc8d-f101c33b6dc1',
         handlerType: 'Requestor',
         taskType: 'ISR',
         checkList: [
           {
             id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
-            description: 'All the required information and related documents fullfilled',
+            description:
+              'All the required information and related documents fullfilled',
             isMandatory: 'true',
           },
         ],
@@ -1513,14 +1563,16 @@ export class DataSeederController {
         id: '31fac517-e71b-419c-9c4a-7f344820518f',
         name: 'Review Upgrade Registration Request of Vendor by Registration Officer',
         label: 'Approved Uppgrade Application',
-        description: 'Approval of Vendor Upgrade Registration Request for Goods',
+        description:
+          'Approval of Vendor Upgrade Registration Request for Goods',
         bpId: 'abe4ba2c-a260-4bbb-bc8d-f101c33b6dc1',
         handlerType: 'Assignee',
         taskType: 'InitialReview',
         checkList: [
           {
             id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
-            description: 'All the required information and related documents fullfilled',
+            description:
+              'All the required information and related documents fullfilled',
             isMandatory: 'true',
           },
         ],
@@ -1530,7 +1582,8 @@ export class DataSeederController {
         id: '34fac737-e51b-479c-9c4a-7f344820518f',
         name: 'Approval of Upgrade Registration Request of Vendor by Senior or chief registration officer or RRM/ DRRM',
         label: 'Approved Uppgrade Request by CRO/RRM/DRRM',
-        description: 'Aprove upgrade registration request for Goods by senior or chief registration officer',
+        description:
+          'Aprove upgrade registration request for Goods by senior or chief registration officer',
         bpId: 'abe4ba2c-a260-4bbb-bc8d-f101c33b6dc1',
         handlerType: 'Assignee',
         taskType: 'Confirmation',
@@ -1555,7 +1608,8 @@ export class DataSeederController {
         checkList: [
           {
             id: '96d95fdb-1852-4ddc-982f-0e94d23d11d3',
-            description: 'All the required information and related documents fullfilled',
+            description:
+              'All the required information and related documents fullfilled',
             isMandatory: 'true',
           },
         ],
@@ -1565,14 +1619,16 @@ export class DataSeederController {
         id: '41fac737-e76b-471c-9c4a-7f344820518f',
         name: 'Generate Vendor Registration Certificate',
         label: 'Generated Certeficate',
-        description: "Creating a formal certificate to officially recognize and document the upgrade registration of a vendor within the organization's procurement system.This certificate serves as proof of the vendor's successful registration and compliance with the organization's requirements",
+        description:
+          "Creating a formal certificate to officially recognize and document the upgrade registration of a vendor within the organization's procurement system.This certificate serves as proof of the vendor's successful registration and compliance with the organization's requirements",
         bpId: 'abe4ba2c-a260-4bbb-bc8d-f101c33b6dc1',
         handlerType: 'Assignee',
         taskType: 'Certificate',
         checkList: [
           {
             id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
-            description: 'All the required information and related documents fullfilled',
+            description:
+              'All the required information and related documents fullfilled',
             isMandatory: 'true',
           },
         ],
@@ -1585,14 +1641,16 @@ export class DataSeederController {
         id: '31fac537-e71b-669c-9c4a-7f344720518f',
         name: 'Submit Vendor Upgrade Registration Request',
         label: 'Submitted Applications',
-        description: 'Submission of Vendor Upgrade Registration Request for Services',
+        description:
+          'Submission of Vendor Upgrade Registration Request for Services',
         bpId: '11a07c2b-2b12-44bc-894e-a1aede0194c4',
         handlerType: 'Requestor',
         taskType: 'ISR',
         checkList: [
           {
             id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
-            description: 'All the required information and related documents fullfilled',
+            description:
+              'All the required information and related documents fullfilled',
             isMandatory: 'true',
           },
         ],
@@ -1602,14 +1660,16 @@ export class DataSeederController {
         id: '31fac537-e71b-479c-1c4a-7f344820518f',
         name: 'Review Upgrade Registration Request of Vendor by Registration Officer',
         label: 'Approved Uppgrade Application',
-        description: 'Approval of  Vendor Upgrade Registration Request for Services',
+        description:
+          'Approval of  Vendor Upgrade Registration Request for Services',
         bpId: '11a07c2b-2b12-44bc-894e-a1aede0194c4',
         handlerType: 'Assignee',
         taskType: 'InitialReview',
         checkList: [
           {
             id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
-            description: 'All the required information and related documents fullfilled',
+            description:
+              'All the required information and related documents fullfilled',
             isMandatory: 'true',
           },
         ],
@@ -1619,14 +1679,16 @@ export class DataSeederController {
         id: '31fac737-e71b-471c-9c4a-7f344820518f',
         name: 'Approval of Upgrade Registration Request of Vendor by Senior or chief registration officer or RRM/ DRRM',
         label: 'Approved Uppgrade Request by CRO',
-        description: 'Aprove upgrade registration request for Goods by senior or chief registration officer',
+        description:
+          'Aprove upgrade registration request for Goods by senior or chief registration officer',
         bpId: '11a07c2b-2b12-44bc-894e-a1aede0194c4',
         handlerType: 'Assignee',
         taskType: 'Confirmation',
         checkList: [
           {
             id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
-            description: 'All the required information and related documents fullfilled',
+            description:
+              'All the required information and related documents fullfilled',
             isMandatory: 'true',
           },
         ],
@@ -1643,7 +1705,8 @@ export class DataSeederController {
         checkList: [
           {
             id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
-            description: 'All the required information and related documents fullfilled',
+            description:
+              'All the required information and related documents fullfilled',
             isMandatory: 'true',
           },
         ],
@@ -1653,7 +1716,8 @@ export class DataSeederController {
         id: '41fac737-231b-471c-9c4a-7f344820518f',
         name: 'Generate Vendor Registration Certificate',
         label: 'Generated Certeficate',
-        description: "Creating a formal certificate to officially recognize and document the upgrade registration of vendor within the organization's procurement system.This certificate serves as proof of the vendor's successful registration and compliance with the organization's requirements",
+        description:
+          "Creating a formal certificate to officially recognize and document the upgrade registration of vendor within the organization's procurement system.This certificate serves as proof of the vendor's successful registration and compliance with the organization's requirements",
         bpId: '11a07c2b-2b12-44bc-894e-a1aede0194c4',
         handlerType: 'Assignee',
         taskType: 'Certificate',
@@ -1669,20 +1733,21 @@ export class DataSeederController {
       },
       //--------------------------------end of services
 
-
       //----------------------------Works upgrade
       {
         id: '31fac547-e71b-479c-9c4a-7f344720518f',
         name: 'Submit Vendor Upgrade Registration Request',
         label: 'Submitted Applications',
-        description: 'Submission of Vendor Upgrade Registration Request for Works',
+        description:
+          'Submission of Vendor Upgrade Registration Request for Works',
         bpId: '950e28cf-ad82-4159-8b2c-f147bbe3685f',
         handlerType: 'Requestor',
         taskType: 'ISR',
         checkList: [
           {
             id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
-            description: 'All the required information and related documents fullfilled',
+            description:
+              'All the required information and related documents fullfilled',
             isMandatory: 'true',
           },
         ],
@@ -1692,14 +1757,16 @@ export class DataSeederController {
         id: '31bac537-e71b-479c-9c4a-7f344820518f',
         name: 'Review Upgrade Registration Request of Vendor by Registration Officer',
         label: 'Approved Uppgrade Application',
-        description: 'Approval of  Vendor Upgrade Registration Request for Works',
+        description:
+          'Approval of  Vendor Upgrade Registration Request for Works',
         bpId: '950e28cf-ad82-4159-8b2c-f147bbe3685f',
         handlerType: 'Assignee',
         taskType: 'InitialReview',
         checkList: [
           {
             id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
-            description: 'All the required information and related documents fullfilled',
+            description:
+              'All the required information and related documents fullfilled',
             isMandatory: 'true',
           },
         ],
@@ -1709,7 +1776,8 @@ export class DataSeederController {
         id: '31fbc737-e21b-479c-9c4a-7f344820518f',
         name: 'Approval of Upgrade Registration Request by Senior or chief registration officer or RRM/DRRM',
         label: 'Reviewed by CRO/RRM/DRRM',
-        description: 'aprove upgrade  registration request for Services by senior or chief registration officer',
+        description:
+          'aprove upgrade  registration request for Services by senior or chief registration officer',
 
         bpId: '950e28cf-ad82-4159-8b2c-f147bbe3685f',
         handlerType: 'Assignee',
@@ -1717,7 +1785,8 @@ export class DataSeederController {
         checkList: [
           {
             id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
-            description: 'All the required information and related documents fullfilled',
+            description:
+              'All the required information and related documents fullfilled',
             isMandatory: 'true',
           },
         ],
@@ -1727,14 +1796,16 @@ export class DataSeederController {
         id: '61fac737-c71b-471c-9c4a-7f344820518f',
         name: 'Approval of Upgrade Registration Request of vendor by Director General (DG)',
         label: 'Approved Uppgrade Request by DG',
-        description: 'Final Approval of Vendor Upgrade application by Director General',
+        description:
+          'Final Approval of Vendor Upgrade application by Director General',
         bpId: '950e28cf-ad82-4159-8b2c-f147bbe3685f',
         handlerType: 'Assignee',
         taskType: 'Approval',
         checkList: [
           {
             id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
-            description: 'All the required information and related documents fullfilled',
+            description:
+              'All the required information and related documents fullfilled',
             isMandatory: 'true',
           },
         ],
@@ -1744,14 +1815,16 @@ export class DataSeederController {
         id: '41fbc737-e71b-471c-9c4a-7f345820518f',
         name: 'Generate Vendor Registration Certificate',
         label: 'Generated Certeficate',
-        description: "Creating a formal certificate to officially recognize and document the upgrade of a vendor within the organization's procurement system.This certificate serves as proof of the vendor's successful registration and compliance with the organization's requirements",
+        description:
+          "Creating a formal certificate to officially recognize and document the upgrade of a vendor within the organization's procurement system.This certificate serves as proof of the vendor's successful registration and compliance with the organization's requirements",
         bpId: '950e28cf-ad82-4159-8b2c-f147bbe3685f',
         handlerType: 'Assignee',
         taskType: 'Certificate',
         checkList: [
           {
             id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
-            description: 'All the required information and related documents fullfilled',
+            description:
+              'All the required information and related documents fullfilled',
             isMandatory: 'true',
           },
         ],
@@ -1764,14 +1837,16 @@ export class DataSeederController {
         id: '31fac247-e71b-479c-9c4a-7f344720548f',
         name: 'Submit Renewal Registration Request for Goods',
         label: 'Submitted Applications ',
-        description: 'Submission of Vendor Upgrade Registration Request for Goods',
+        description:
+          'Submission of Vendor Upgrade Registration Request for Goods',
         bpId: 'cd17ba61-a510-4fed-9e50-a3f10b6570d3',
         handlerType: 'Requestor',
         taskType: 'ISR',
         checkList: [
           {
             id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
-            description: 'All the required information and related documents fullfilled',
+            description:
+              'All the required information and related documents fullfilled',
             isMandatory: 'true',
           },
         ],
@@ -1781,14 +1856,16 @@ export class DataSeederController {
         id: '31aac537-e71b-421c-9c4a-7f344820518f',
         name: 'Review Vendor Renewal Registration Request by Registration Officer(RO)',
         label: 'Approved Renewal Application',
-        description: 'Approval of Renewal Registration Request of vendor for Goods',
+        description:
+          'Approval of Renewal Registration Request of vendor for Goods',
         bpId: 'cd17ba61-a510-4fed-9e50-a3f10b6570d3',
         handlerType: 'Assignee',
         taskType: 'InitialReview',
         checkList: [
           {
             id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
-            description: 'All the required information and related documents fullfilled',
+            description:
+              'All the required information and related documents fullfilled',
             isMandatory: 'true',
           },
         ],
@@ -1799,14 +1876,16 @@ export class DataSeederController {
         id: '61fac7e7-971b-471c-2c5a-7f344820518f',
         name: 'Approval of Renewal Registration Request by Senior or chief registration officer or RRM/DRRM',
         label: 'Reviewed by RO/RRM/DRRM',
-        description: 'Aprove renewal  registration request for Works by senior or chief registration officer',
+        description:
+          'Aprove renewal  registration request for Works by senior or chief registration officer',
         bpId: 'cd17ba61-a510-4fed-9e50-a3f10b6570d3',
         handlerType: 'Assignee',
         taskType: 'Confirmation',
         checkList: [
           {
             id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
-            description: 'All the required information and related documents fullfilled',
+            description:
+              'All the required information and related documents fullfilled',
             isMandatory: 'true',
           },
         ],
@@ -1823,26 +1902,28 @@ export class DataSeederController {
         checkList: [
           {
             id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
-            description: 'All the required information and related documents fullfilled',
+            description:
+              'All the required information and related documents fullfilled',
             isMandatory: 'true',
           },
         ],
         orderBy: 4,
       },
 
-
       {
         id: '41fbc737-e712-471c-9c4b-7f345820538f',
         name: 'Generate Vendor Registration Certificate',
         label: 'Generated Certeficate',
-        description: "Creating a formal certificate to officially recognize and document the upgrade of  vendor within the organization's procurement system.This certificate serves as proof of the vendor's successful registration and compliance with the organization's requirements",
+        description:
+          "Creating a formal certificate to officially recognize and document the upgrade of  vendor within the organization's procurement system.This certificate serves as proof of the vendor's successful registration and compliance with the organization's requirements",
         bpId: 'cd17ba61-a510-4fed-9e50-a3f10b6570d3',
         handlerType: 'Assignee',
         taskType: 'Certificate',
         checkList: [
           {
             id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
-            description: 'All the required information and related documents fullfilled',
+            description:
+              'All the required information and related documents fullfilled',
             isMandatory: 'true',
           },
         ],
@@ -1854,14 +1935,16 @@ export class DataSeederController {
         id: '31fac2b7-e71b-479c-9c4a-7f344720548f',
         name: 'Submit Renewal Registration Request for Services',
         label: 'Submitted Applications ',
-        description: 'Submission of Vendor Upgrade Registration Request for Services',
+        description:
+          'Submission of Vendor Upgrade Registration Request for Services',
         bpId: 'b97fb7aa-2442-4e5d-8b42-42bd6ef41138',
         handlerType: 'Requestor',
         taskType: 'ISR',
         checkList: [
           {
             id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
-            description: 'All the required information and related documents fullfilled',
+            description:
+              'All the required information and related documents fullfilled',
             isMandatory: 'true',
           },
         ],
@@ -1871,14 +1954,16 @@ export class DataSeederController {
         id: '313ac537-e71b-471c-9c4a-7f344820518f',
         name: 'Review Vendor Renewal Registration Request by Registration Officer(RO)',
         label: 'Approved Renewal Request',
-        description: 'Approval of Renewal Registration Request of vendor for Service',
+        description:
+          'Approval of Renewal Registration Request of vendor for Service',
         bpId: 'b97fb7aa-2442-4e5d-8b42-42bd6ef41138',
         handlerType: 'Assignee',
         taskType: 'InitialReview',
         checkList: [
           {
             id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
-            description: 'All the required information and related documents fullfilled',
+            description:
+              'All the required information and related documents fullfilled',
             isMandatory: 'true',
           },
         ],
@@ -1888,14 +1973,16 @@ export class DataSeederController {
         id: '31fbc738-e21b-479c-9c4a-7f344820518f',
         name: 'Approval of Renewal Registration Request by Senior or chief registration officer or RRM/DRRM',
         label: 'Reviewed by RO/RRM/DRRM',
-        description: 'Aprove renewal  registration request for Goods by senior or chief registration officer',
+        description:
+          'Aprove renewal  registration request for Goods by senior or chief registration officer',
         bpId: 'b97fb7aa-2442-4e5d-8b42-42bd6ef41138',
         handlerType: 'Assignee',
         taskType: 'Confirmation',
         checkList: [
           {
             id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
-            description: 'All the required information and related documents fullfilled',
+            description:
+              'All the required information and related documents fullfilled',
             isMandatory: 'true',
           },
         ],
@@ -1912,7 +1999,8 @@ export class DataSeederController {
         checkList: [
           {
             id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
-            description: 'All the required information and related documents fullfilled',
+            description:
+              'All the required information and related documents fullfilled',
             isMandatory: 'true',
           },
         ],
@@ -1923,14 +2011,16 @@ export class DataSeederController {
         id: '41fbc737-e71b-471c-9c4a-7f345820588f',
         name: 'Generate Vendor Registration Certificate',
         label: 'Generated Certeficate',
-        description: "Creating a formal certificate to officially recognize and document the renewal of  vendor within the organization's procurement system.This certificate serves as proof of the vendor's successful registration and compliance with the organization's requirements",
+        description:
+          "Creating a formal certificate to officially recognize and document the renewal of  vendor within the organization's procurement system.This certificate serves as proof of the vendor's successful registration and compliance with the organization's requirements",
         bpId: 'b97fb7aa-2442-4e5d-8b42-42bd6ef41138',
         handlerType: 'Assignee',
         taskType: 'Certificate',
         checkList: [
           {
             id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
-            description: 'All the required information and related documents fullfilled',
+            description:
+              'All the required information and related documents fullfilled',
             isMandatory: 'true',
           },
         ],
@@ -1942,14 +2032,16 @@ export class DataSeederController {
         id: '31fac247-e71b-379c-9c4a-7fb44721548f',
         name: 'Submit Renewal Registration Request for Works',
         label: 'Submitted Applications ',
-        description: 'Submission of Vendor Upgrade Registration Request for Works',
+        description:
+          'Submission of Vendor Upgrade Registration Request for Works',
         bpId: '543d59c0-3b13-401f-bb78-058de7f65a11',
         handlerType: 'Requestor',
         taskType: 'ISR',
         checkList: [
           {
             id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
-            description: 'All the required information and related documents fullfilled',
+            description:
+              'All the required information and related documents fullfilled',
             isMandatory: 'true',
           },
         ],
@@ -1959,14 +2051,16 @@ export class DataSeederController {
         id: '31bac537-e71b-421c-9c4a-7f324820518f',
         name: 'Review Vendor Renewal Registration Request by Registration Officer(RO)',
         label: 'Approved Renewal Request',
-        description: 'Approval of Renewal Registration Request of vendor for Works',
+        description:
+          'Approval of Renewal Registration Request of vendor for Works',
         bpId: '543d59c0-3b13-401f-bb78-058de7f65a11',
         handlerType: 'Assignee',
         taskType: 'InitialReview',
         checkList: [
           {
             id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
-            description: 'All the required information and related documents fullfilled',
+            description:
+              'All the required information and related documents fullfilled',
             isMandatory: 'true',
           },
         ],
@@ -1977,7 +2071,8 @@ export class DataSeederController {
         id: '61fac7e7-471b-471c-9c5a-7f344820518f',
         name: 'Approval of Renewal Registration Request by Senior or chief registration officer or RRM/DRRM',
         label: 'Reviewed by RO/RRM/DRRM',
-        description: 'Aprove renewal  registration request for Works by senior or chief registration officer',
+        description:
+          'Aprove renewal  registration request for Works by senior or chief registration officer',
         bpId: '543d59c0-3b13-401f-bb78-058de7f65a11',
         handlerType: 'Assignee',
         taskType: 'Confirmation',
@@ -2002,30 +2097,13 @@ export class DataSeederController {
         checkList: [
           {
             id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
-            description: 'All the required information and related documents fullfilled',
+            description:
+              'All the required information and related documents fullfilled',
             isMandatory: 'true',
           },
         ],
         orderBy: 4,
       },
-
-      // {
-      //   id: '41fbc737-e71a-471c-9c4a-7f345820588f',
-      //   name: 'Generate Vendor Registration Certificate',
-      //   label: 'Generated Certeficate',
-      //   description: "Creating a formal certificate to officially recognize and document the upgrade of  vendor within the organization's procurement system.This certificate serves as proof of the vendor's successful registration and compliance with the organization's requirements",
-      //   bpId: '543d59c0-3b13-401f-bb78-058de7f65a11',
-      //   handlerType: 'Assignee',
-      //   taskType: 'Certificate',
-      //   checkList: [
-      //     {
-      //       id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
-      //       description: 'All the required information and related documents fullfilled',
-      //       isMandatory: 'true',
-      //     },
-      //   ],
-      //   orderBy: 5,
-      // },
 
       ////Profile update Workflow tasks
       {
@@ -2045,7 +2123,26 @@ export class DataSeederController {
         ],
         orderBy: 1,
       },
+      //Approval of Vendor Profile Update Request
 
+      {
+        id: '41fbc737-e71a-471c-9c4a-7f345820598f',
+        name: 'Approval of Vendor Profile Update Request',
+        label: 'Approved by RO',
+        description: 'Approval of Vendor Profile Update Request',
+        bpId: '0f7d46b9-ffd6-4b4c-91f8-9e290d675053',
+        handlerType: 'Assignee',
+        taskType: 'InitialReview',
+        checkList: [
+          {
+            id: '96d95fdb-7852-4ddc-982f-0e94d23d21d3',
+            description:
+              'All the required information and related documents fullfilled',
+            isMandatory: 'true',
+          },
+        ],
+        orderBy: 2,
+      },
       {
         id: '277e4d2f-f996-4546-9320-3d5103e22c63',
         name: 'Approval of Vendor Profile Update Request By Director General (Head of PDE)',
@@ -2053,22 +2150,16 @@ export class DataSeederController {
         description: 'Vendor Profile Update Request Review by Director General',
         bpId: '0f7d46b9-ffd6-4b4c-91f8-9e290d675053',
         handlerType: 'Assignee',
-        taskType: 'Confirmation',
+        taskType: 'Approval',
         checkList: [
           {
             id: '93d95fdb-7852-4ddc-982f-0e94d23d15d3',
             description: 'The bank Information is valid',
             isMandatory: 'true',
           },
-          {
-            id: '96d95fdb-7852-4ddc-982f-0e94d23d15d4',
-            description: 'The reciept is valid',
-            isMandatory: 'true',
-          },
         ],
         orderBy: 1,
       },
-
     ];
     await this.taskService.saveBulk(tasksToSeed);
   }
@@ -2137,7 +2228,6 @@ export class DataSeederController {
         currency: 'MK',
         tenantId: 0,
       },
-
 
       {
         id: '81380591-c320-4ed2-a5a0-82b1e4714dd1',

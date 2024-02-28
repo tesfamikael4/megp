@@ -85,7 +85,7 @@ export class UploadController {
     }
     const invoiceIds = invoiceId.split(',');
     const uploadFileDto: UploadFileDto = {
-      transactionId: transactionId,
+      transactionNumber: transactionId,
       invoiceIds: invoiceIds,
       userInfo: userInfo,
       attachment: attachment == 'null' ? null : attachment,
