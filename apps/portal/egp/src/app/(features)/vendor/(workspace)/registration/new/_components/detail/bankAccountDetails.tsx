@@ -104,28 +104,42 @@ export const BankAccountDetails: React.FC<Props> = ({
 
               <Group grow>
                 {register('basic.origin', 'select').value === 'Malawi' ? (
-                  <Select
-                    label="Bank Name"
-                    withAsterisk
-                    data={bankList}
-                    placeholder="select"
-                    searchable
-                    {...getInputProps('bankId', 'select')}
-                    onChange={(value) => {
-                      getInputProps('bankId', 'select').onChange(value);
-                      getInputProps('bankName', 'select').onChange(
-                        getLabelByValue(bankList, value as string),
-                      );
-                    }}
-                  />
+                  <>
+                    {' '}
+                    <Select
+                      label="Bank Name"
+                      withAsterisk
+                      data={bankList}
+                      placeholder="select"
+                      searchable
+                      {...getInputProps('bankId', 'select')}
+                      onChange={(value) => {
+                        getInputProps('bankId', 'select').onChange(value);
+                        getInputProps('bankName', 'select').onChange(
+                          getLabelByValue(bankList, value as string),
+                        );
+                      }}
+                    />
+                    <TextInput
+                      label="Branch Name"
+                      withAsterisk
+                      required
+                      {...getInputProps('branchName')}
+                    />
+                  </>
                 ) : (
-                  <TextInput label="Bank Name" {...getInputProps('bankName')} />
+                  <>
+                    {' '}
+                    <TextInput
+                      label="Bank Name"
+                      {...getInputProps('bankName')}
+                    />
+                    <TextInput
+                      label="Branch Name"
+                      {...getInputProps('branchName')}
+                    />
+                  </>
                 )}
-
-                <TextInput
-                  label="Branch Name"
-                  {...getInputProps('branchName')}
-                />
               </Group>
               <Group grow>
                 <Textarea
