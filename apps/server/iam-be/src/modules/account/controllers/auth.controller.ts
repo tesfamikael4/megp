@@ -125,7 +125,7 @@ export class AuthController {
   }
 
   @Post('reset-account-password')
-  @UseGuards(JwtGuard, PermissionsGuard('iam:organization'))
+  @UseGuards(JwtGuard, PermissionsGuard('iam:user'))
   resetAccountPassword(
     @Body() changePassword: ResetAccountPasswordDto,
     @CurrentUser() user: any,

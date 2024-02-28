@@ -345,6 +345,7 @@ export const roleSystemPermissions = [
   { roleSystemId: 1, permissionId: 2 },
   { roleSystemId: 1, permissionId: 3 },
   { roleSystemId: 1, permissionId: 4 },
+  { roleSystemId: 1, permissionId: 6 },
   { roleSystemId: 2, permissionId: 5 },
   { roleSystemId: 2, permissionId: 7 },
   { roleSystemId: 2, permissionId: 6 },
