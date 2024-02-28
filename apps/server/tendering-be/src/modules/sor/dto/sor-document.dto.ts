@@ -1,5 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNotEmpty, IsUUID } from 'class-validator';
+import { IsString, IsNotEmpty, IsUUID, IsObject } from 'class-validator';
+
+class SorFileDto {
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  originalname: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  contentType: string;
+}
 
 export class CreateSorDocumentDto {
   @IsString()
@@ -12,10 +24,9 @@ export class CreateSorDocumentDto {
   @ApiProperty()
   description: string;
 
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty()
-  attachment: any;
+  @IsObject()
+  @ApiProperty({ isArray: false, type: () => SorFileDto })
+  file: SorFileDto;
 }
 
 export class UpdateSorDocumentDto extends CreateSorDocumentDto {
