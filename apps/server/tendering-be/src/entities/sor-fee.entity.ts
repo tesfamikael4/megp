@@ -29,12 +29,12 @@ export class SorFee extends Audit {
   @Column()
   nameOfStaff: string;
 
-  @Column()
+  @Column({ nullable: true })
   staffMonthRate: number;
 
   @Column()
   inputStaffMonth: number;
 
-  @Column()
+  @Column({ nullable: true })
   rate: number;
 }
