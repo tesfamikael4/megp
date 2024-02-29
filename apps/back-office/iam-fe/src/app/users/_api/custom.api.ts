@@ -70,6 +70,53 @@ const organizationProfileApi = invitationApi.injectEndpoints({
         };
       },
     }),
+
+    createUser: builder.mutation<any, any>({
+      query: (data) => {
+        return {
+          url: `user/create-super-admin`,
+          method: 'POST',
+          body: data,
+        };
+      },
+      invalidatesTags: ['users'],
+    }),
+    updateUser: builder.mutation<any, any>({
+      query: ({ id, ...data }) => {
+        return {
+          url: `/auth/update-account/${id}`,
+          method: 'PATCH',
+          body: data,
+        };
+      },
+      invalidatesTags: ['users'],
+    }),
+    listUser: builder.query<
+      any,
+      { id: string; collectionQuery: CollectionQuery | undefined }
+    >({
+      query: ({ id, collectionQuery }) => {
+        let q = '';
+        if (collectionQuery) {
+          const query = encodeCollectionQuery(collectionQuery);
+          q = `?q=${query}`;
+        }
+        return {
+          url: `user/list/${id}${q}`,
+          method: 'GET',
+        };
+      },
+      providesTags: ['users'],
+    }),
+    deleteUser: builder.mutation<any, string>({
+      query: (id) => {
+        return {
+          url: `/user/${id}`,
+          method: 'DELETE',
+        };
+      },
+      invalidatesTags: ['users'],
+    }),
   }),
 });
 
@@ -81,4 +128,10 @@ export const {
   useSetPasswordMutation,
   useLazyRoleToAssignQuery,
   useRoleToAssignQuery,
+
+  useCreateUserMutation,
+  useUpdateUserMutation,
+  useLazyListUserQuery,
+  useListUserQuery,
+  useDeleteUserMutation,
 } = organizationProfileApi;

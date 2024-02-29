@@ -1,19 +1,18 @@
 'use client';
 import { CollectionQuery, EntityConfig, EntityLayout } from '@megp/entity';
 import { usePathname, useRouter } from 'next/navigation';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useLazyListByIdQuery } from '../_api/user.api';
+import { useMemo } from 'react';
+import { useLazyListUserQuery } from '../_api/custom.api';
 import { User } from '@/models/user/user';
 import { useAuth } from '@megp/auth';
 
 export function Entity({ children }: { children: React.ReactNode }) {
   const route = useRouter();
-  const [onRequest, setOnRequest] = useState<any>();
 
   const pathname = usePathname();
   const { organizationId } = useAuth();
 
-  const [trigger, { data, isFetching }] = useLazyListByIdQuery();
+  const [trigger, { data, isFetching }] = useLazyListUserQuery();
 
   const config: EntityConfig<User> = useMemo(() => {
     return {
@@ -36,7 +35,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
         {
           id: 'name',
           header: 'Name',
-          accessorKey: 'firstName',
+          accessorKey: 'account.firstName',
           cell: ({ row }) => (
             <div>{row.original.firstName + ' ' + row.original.lastName}</div>
           ),
@@ -74,16 +73,9 @@ export function Entity({ children }: { children: React.ReactNode }) {
         ? 'new'
         : 'detail';
 
-  const onRequestChange = useCallback(
-    (request: CollectionQuery) => {
-      trigger({ id: organizationId, collectionQuery: request });
-    },
-    [trigger, organizationId],
-  );
-
-  useEffect(() => {
-    setOnRequest(onRequestChange);
-  }, [onRequestChange, onRequest]);
+  const onRequestChange = (request: CollectionQuery) => {
+    organizationId && trigger({ id: organizationId, collectionQuery: request });
+  };
 
   return (
     <EntityLayout

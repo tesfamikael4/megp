@@ -21,7 +21,6 @@ import {
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { notify } from '@megp/core-fe';
-
 import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import styles from '../auth.module.scss';

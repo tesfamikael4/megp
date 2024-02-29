@@ -3,13 +3,13 @@ import { EntityButton } from '@megp/entity';
 import { z, ZodType } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import { useReadQuery, useUpdateMutation } from '../../_api/user.api';
+
 import {
-  useReadQuery,
-  useDeleteMutation,
-  useUpdateMutation,
-  useCreateMutation,
-} from '../../_api/user.api';
-import { useUpdateSuperUserMutation } from '../../_api/custom.api';
+  useCreateUserMutation,
+  useUpdateUserMutation,
+  useDeleteUserMutation,
+} from '../../_api/custom.api';
 import { useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { User } from '@/models/user/user';
@@ -50,10 +50,10 @@ export function FormDetail({ mode }: FormDetailProps) {
   const { id } = useParams();
   const { organizationId } = useAuth();
 
-  const [create, { isLoading: isSaving }] = useCreateMutation();
-  const [update, { isLoading: isUpdating }] = useUpdateSuperUserMutation();
+  const [create, { isLoading: isSaving }] = useCreateUserMutation();
+  const [update, { isLoading: isUpdating }] = useUpdateUserMutation();
   const [activation, { isLoading: isActivating }] = useUpdateMutation();
-  const [remove, { isLoading: isDeleting }] = useDeleteMutation();
+  const [remove, { isLoading: isDeleting }] = useDeleteUserMutation();
   const {
     data: selected,
     isSuccess: selectedSuccess,
@@ -84,7 +84,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       await update({
         firstName: data.firstName,
         lastName: data.lastName,
-        id: id?.toString(),
+        id: selected?.accountId,
       }).unwrap();
       notify('Success', 'User updated successfully');
     } catch {
