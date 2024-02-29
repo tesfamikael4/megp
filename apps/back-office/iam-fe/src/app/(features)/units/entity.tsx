@@ -94,14 +94,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
       mode={mode}
       hasTree
       config={config}
-      data={
-        data?.items?.map((item: Unit) => {
-          return {
-            ...item,
-            status: item.status === 'ACTIVE' ? 'Active' : 'Inactive ',
-          };
-        }) ?? []
-      }
+      data={data?.items ?? []}
       total={data?.total ?? 0}
       detail={children}
       isLoading={isFetching}

@@ -89,14 +89,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
     <EntityLayout
       mode={mode}
       config={config}
-      data={
-        data?.items?.map((item: User) => {
-          return {
-            ...item,
-            status: item.status === 'ACTIVE' ? 'Active' : 'Inactive ',
-          };
-        }) ?? []
-      }
+      data={data?.items ?? []}
       total={data?.total ?? 0}
       detail={children}
       isLoading={isFetching}
