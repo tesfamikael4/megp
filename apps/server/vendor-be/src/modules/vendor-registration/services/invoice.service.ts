@@ -45,82 +45,73 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
   }
 
   async generateInvoice(
-    currentPriceRangeIds: string[],
+    currentPriceRange: string,
     vendor: VendorsEntity,
     user: any,
   ): Promise<boolean> {
-    const curruntPricings =
-      await this.pricingService.findPricingWithServiceByIds(currentPriceRangeIds);
-    if (curruntPricings.length == 0) {
+    const curruntPricing =
+      await this.pricingService.findPricingWithServiceById(currentPriceRange);
+    if (!curruntPricing) {
       throw new NotFoundException('Not Found, please set the price range');
     }
-    let totalFee = 0;
-    const paymentDetail: any = [];
-    for (const item of curruntPricings) {
-      totalFee = totalFee + item.fee;
-      const formatedBC = this.commonService.formatPriceRange(item);
-      paymentDetail.push({ name: item.service.name, category: item.businessArea, bc: formatedBC, fee: item.fee, });
-    }
-
-    // const service = curruntPricings.service;
+    const service = curruntPricing.service;
     const invoice: InvoiceEntity = this.mapInvoice(
-      curruntPricings[0],
+      curruntPricing,
       vendor,
-      curruntPricings[0].service,
+      service,
       user,
     );
-    invoice.amount = totalFee;
+    invoice.amount = curruntPricing.fee;
     invoice.payerName = vendor.name;
     invoice.refNumber = this.commonService.generateRandomString(7);
-    invoice.paymentDetail = [...paymentDetail];
     const response = await this.invoiceRepository.save(invoice);
     if (response) return true;
     return false;
   }
-  // async generateInvoiceForRenewal(
-  //   curruntPricing: ServicePrice,
-  //   vendor: any,
-  //   user: any,
-  // ): Promise<boolean> {
-  //   const invoice: InvoiceEntity = this.mapInvoice(
-  //     curruntPricing,
-  //     vendor,
-  //     curruntPricing.service,
-  //     user,
-  //   );
-  //   invoice.refNumber = this.commonService.generateRandomString(7);
-  //   const response = await this.invoiceRepository.save(invoice);
-  //   if (response) return true;
-  //   return false;
-  // }
+  async generateInvoiceForRenewal(
+    curruntPricing: ServicePrice,
+    vendor: any,
+    user: any,
+  ): Promise<boolean> {
+    const invoice: InvoiceEntity = this.mapInvoice(
+      curruntPricing,
+      vendor,
+      curruntPricing.service,
+      user,
+    );
+    invoice.refNumber = this.commonService.generateRandomString(7);
+    const response = await this.invoiceRepository.save(invoice);
+    if (response) return true;
+    return false;
+  }
 
-  // async generateInvoiceForUpgrade(
-  //   currentPriceRange: string,
-  //   vendor: any,
-  //   businessArea: BusinessAreaEntity,
-  //   user: any,
-  // ): Promise<boolean> {
-  //   const curruntPricing =
-  //     await this.pricingService.findPricingWithServiceById(currentPriceRange);
-  //   const service = curruntPricing.service;
-  //   const invoice: InvoiceEntity = this.mapInvoice(
-  //     curruntPricing,
-  //     vendor,
-  //     service,
-  //     user,
-  //   );
-  //   const baServicePrice = await this.baService.getBusinessAreaWithPrice(
-  //     businessArea.id,
-  //   );
-  //   invoice.amount = this.computingPaymentForUpgrade(
-  //     baServicePrice,
-  //     curruntPricing,
-  //   );
-  //   invoice.refNumber = this.commonService.generateRandomString(7);
-  //   const response = await this.invoiceRepository.save(invoice);
-  //   if (response) return true;
-  //   return false;
-  // }
+  async generateInvoiceForUpgrade(
+    currentPriceRange: string,
+    vendor: any,
+    businessArea: BusinessAreaEntity,
+    user: any,
+  ): Promise<boolean> {
+    const curruntPricing =
+      await this.pricingService.findPricingWithServiceById(currentPriceRange);
+    const service = curruntPricing.service;
+    const invoice: InvoiceEntity = this.mapInvoice(
+      curruntPricing,
+      vendor,
+      service,
+      user,
+    );
+    const baServicePrice = await this.baService.getBusinessAreaWithPrice(
+      businessArea.id,
+    );
+    invoice.amount = this.computingPaymentForUpgrade(
+      baServicePrice,
+      curruntPricing,
+    );
+    invoice.refNumber = this.commonService.generateRandomString(7);
+    const response = await this.invoiceRepository.save(invoice);
+    if (response) return true;
+    return false;
+  }
 
   computingPaymentForUpgrade(
     ba: BusinessAreaEntity,
@@ -404,7 +395,7 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     invoice.payerName = vendor.name;
     invoice.userId = user.id;
     invoice.businessAreaId = null;
-    // invoice.serviceName = service.name;
+    invoice.serviceName = service.name;
     invoice.remark = 'invoice for ' + service.name;
     // invoice.reference = this.commonService.generateRandomString(8)
     return invoice;
