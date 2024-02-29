@@ -23,23 +23,23 @@ export default function Tenders({ title }: TendersProps) {
           <Text fw={700}>{title}</Text>
           <Flex
             align={'center'}
-            className="w-auto"
+            className="w-1/2"
             justify={{ base: 'center', sm: 'flex-end' }}
           >
             <Input
               size="xs"
               placeholder="Search Tenders Here"
-              leftSection={<IconSearch />}
+              leftSection={<IconSearch width={16} height={16} />}
               className="flex-grow bg-[#f5fbfe]"
             />
-            <Flex ml={'sm'} className="w-fit border-b" align={'center'}>
+            <Flex ml={'sm'} className="w-1/4 border-b" align={'center'}>
               <Text className="w-full">Sort By:</Text>
               <Select
                 size="xs"
                 placeholder="All"
                 variant="unstyled"
                 className="w-fit"
-                rightSection={<IconChevronDown />}
+                rightSection={<IconChevronDown width={16} height={16} />}
                 data={['All', 'latest']}
               />
             </Flex>
