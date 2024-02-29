@@ -74,7 +74,7 @@ const organizationProfileApi = invitationApi.injectEndpoints({
     createUser: builder.mutation<any, any>({
       query: (data) => {
         return {
-          url: `user/create-super-admin`,
+          url: `/user`,
           method: 'POST',
           body: data,
         };

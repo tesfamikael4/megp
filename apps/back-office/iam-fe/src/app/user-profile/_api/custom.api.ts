@@ -40,7 +40,30 @@ const organizationProfileApi = invitationApi.injectEndpoints({
         };
       },
     }),
+
+    getUserProfile: builder.query<any, any>({
+      query: () => {
+        return {
+          url: `auth/account-profile`,
+          method: 'GET',
+        };
+      },
+    }),
+    updateProfile: builder.mutation<any, any>({
+      query: (data) => {
+        return {
+          url: `/auth/update-account-profile`,
+          method: 'POST',
+          body: data,
+        };
+      },
+    }),
   }),
 });
 
-export const { useChangePasswordMutation } = organizationProfileApi;
+export const {
+  useChangePasswordMutation,
+  useGetUserProfileQuery,
+  useLazyGetUserProfileQuery,
+  useUpdateProfileMutation,
+} = organizationProfileApi;
