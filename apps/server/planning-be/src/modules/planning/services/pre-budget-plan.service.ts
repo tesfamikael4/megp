@@ -286,7 +286,10 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
 
     const activities = await this.preBudgetActivityRepository.find({
       where: { preBudgetPlanId: data.id },
-      relations: ['preBudgetPlanTimelines'],
+      relations: {
+        preBudgetPlanTimelines: true,
+        preProcurementMechanisms: true,
+      },
     });
 
     if (activities.length == 0) {
@@ -297,6 +300,12 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
       if (element.preBudgetPlanTimelines.length == 0) {
         throw new HttpException(
           `Timeline not found for ${element.name} ${element.procurementReference}`,
+          430,
+        );
+      }
+      if (element.preProcurementMechanisms.length == 0) {
+        throw new HttpException(
+          `Procurement Method not found for ${element.name} ${element.procurementReference}`,
           430,
         );
       }

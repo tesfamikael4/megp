@@ -1,6 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PreBudgetActivityDocument } from 'src/entities';
 import { ExtraCrudService } from 'src/shared/service';
 import { MinIOService } from 'src/shared/min-io/min-io.service';
@@ -50,15 +50,25 @@ export class PreBudgetActivityDocumentService extends ExtraCrudService<PreBudget
     );
   }
 
-  async generatePresignedGetUrl(fileInfo): Promise<string> {
-    const presignedUrl = await this.minioService.generatePresignedDownloadUrl({
-      bucketName: fileInfo.bucketName,
-      filepath: fileInfo.name,
+  async generatePresignedGetUrl(id: string): Promise<any> {
+    const fileInfo = await this.repositoryPreBudgetActivityDocument.findOne({
+      where: { id },
+      select: { fileInfo: true },
     });
-    return presignedUrl;
+    if (!fileInfo) {
+      throw new NotFoundException();
+    }
+    const presignedUrl = await this.minioService.generatePresignedDownloadUrl({
+      bucketName: fileInfo.fileInfo.bucketName,
+      filepath: fileInfo.fileInfo.filepath,
+      contentType: fileInfo.fileInfo.contentType,
+    });
+    return { presignedUrl };
   }
 
-  async generatePresignedPutUrl(fileInfo): Promise<string> {
+  async generatePresignedPutUrl(
+    fileInfo,
+  ): Promise<{ presignedUrl: string; id: string }> {
     const presignedUrl = await this.minioService.generatePresignedUploadUrl({
       bucketName: fileInfo.bucketName,
       contentType: fileInfo.contentType,
@@ -73,6 +83,13 @@ export class PreBudgetActivityDocumentService extends ExtraCrudService<PreBudget
     });
 
     await this.repositoryPreBudgetActivityDocument.insert(doc);
-    return presignedUrl.presignedUrl;
+    return { presignedUrl: presignedUrl.presignedUrl, id: doc.id };
+  }
+
+  async uploadFailed(id: string): Promise<boolean> {
+    await this.repositoryPreBudgetActivityDocument.delete({
+      id,
+    });
+    return true;
   }
 }
