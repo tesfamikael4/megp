@@ -54,7 +54,6 @@ export class InvoiceResponseDto {
     response.payToBank = entity.payToBank;
     response.payerName = entity.payerName;
     response.createdOn = entity.createdOn;
-    response.serviceName = entity.serviceName;
     response.paymentStatus = entity.paymentStatus;
     response.remark = entity.remark;
     response.amount = entity.amount;
