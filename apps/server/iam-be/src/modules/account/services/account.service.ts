@@ -12,11 +12,13 @@ import {
   AccountVerification,
   SecurityQuestion,
   User,
+  AccountProfile,
 } from '@entities';
 import {
   CreateAccountDto,
   ResendOtpDto,
   UpdateAccountDto,
+  UpdateAccountProfileDto,
   VerifyAccountDto,
 } from '../dto/account.dto';
 import {
@@ -681,6 +683,33 @@ export class AccountsService {
       lastName: payload.lastName,
       email: account.email,
     };
+  }
+
+  async updateAccountProfile(
+    payload: UpdateAccountProfileDto,
+    accountId: string,
+  ) {
+    const account = await this.repository.findOneBy({ id: accountId });
+    if (!account) {
+      throw new HttpException('account_not_found', HttpStatus.NOT_FOUND);
+    }
+    const entityManager = this.request[ENTITY_MANAGER_KEY];
+    const parsedPayload = {
+      accountId,
+      extendedProfile: payload.extendedProfile,
+    };
+    await entityManager
+      .getRepository(AccountProfile)
+      .upsert(parsedPayload, ['accountId']);
+    return parsedPayload;
+  }
+
+  async getAccountProfile(accountId: string) {
+    const entityManager = this.request[ENTITY_MANAGER_KEY];
+
+    return await entityManager
+      .getRepository(AccountProfile)
+      .findOneBy({ accountId });
   }
 
   private async verifyOTP(

@@ -3,6 +3,7 @@ import {
   IsBoolean,
   IsEmail,
   IsNotEmpty,
+  IsObject,
   IsString,
   MinLength,
 } from 'class-validator';
@@ -59,4 +60,10 @@ export class UpdateAccountDto {
   @ApiProperty()
   @IsString()
   public lastName: string;
+}
+
+export class UpdateAccountProfileDto {
+  @ApiProperty()
+  @IsObject()
+  public extendedProfile: any;
 }

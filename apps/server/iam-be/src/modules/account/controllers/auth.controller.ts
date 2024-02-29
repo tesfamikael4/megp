@@ -15,6 +15,7 @@ import {
   CreateAccountDto,
   ResendOtpDto,
   UpdateAccountDto,
+  UpdateAccountProfileDto,
   VerifyAccountDto,
 } from '../dto/account.dto';
 import {
@@ -171,6 +172,19 @@ export class AuthController {
     @Body() payload: UpdateAccountDto,
   ): Promise<any> {
     return await this.accountsService.updateAccount(id, payload);
+  }
+
+  @Post('update-account-profile')
+  async updateAccountProfile(
+    @Body() payload: UpdateAccountProfileDto,
+    @CurrentUser() user: any,
+  ): Promise<any> {
+    return await this.accountsService.updateAccountProfile(payload, user.id);
+  }
+
+  @Get('account-profile')
+  async getAccountProfile(@CurrentUser() user: any): Promise<any> {
+    return await this.accountsService.getAccountProfile(user.id);
   }
 
   @Get('send-email/:email')

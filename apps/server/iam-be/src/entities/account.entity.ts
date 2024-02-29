@@ -10,7 +10,7 @@ import { AccountStatusEnum } from '@enums';
 import { AccountVerification } from './account-verification.entity';
 import { SecurityQuestion } from './security-question.entity';
 import { User } from './user.entity';
-import { UserProfile } from './user-profile.entity';
+import { AccountProfile } from './account-profile.entity';
 
 @Entity('accounts')
 export class Account extends Audit {
@@ -73,8 +73,8 @@ export class Account extends Audit {
   })
   users: User[];
 
-  @OneToOne(() => UserProfile, (empProf) => empProf.account, {
+  @OneToOne(() => AccountProfile, (accountProfile) => accountProfile.account, {
     cascade: true,
   })
-  userProfile: UserProfile;
+  userProfile: AccountProfile;
 }

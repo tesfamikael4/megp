@@ -11,7 +11,7 @@ import { Audit } from 'src/shared/entities/audit.entity';
 import { Account } from './account.entity';
 
 @Entity({ name: 'user_profiles' })
-export class UserProfile extends Audit {
+export class AccountProfile extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

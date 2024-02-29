@@ -1,10 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsOptional, IsBoolean, IsUUID } from 'class-validator';
 import { ContactNumber } from 'src/shared/entities/contact-number';
-import { UserProfileResponseDto } from './user-profile.dto';
 import { CreateUserRoleDto } from '../../role/dto/user-role.dto';
 import { CreateUserUnitDto } from './user-unit.dto';
-import { account } from '../../seeders/seed-data';
 import { User } from 'src/entities';
 
 export class CreateUserDto {
@@ -62,7 +60,7 @@ export class UpdateUserDto extends CreateUserDto {
 }
 
 export class UserResponseDto extends UpdateUserDto {
-  userProfile: UserProfileResponseDto;
+  userProfile: any;
 
   userUnits: CreateUserUnitDto[];
 
