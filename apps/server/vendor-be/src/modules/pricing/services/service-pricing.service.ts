@@ -24,25 +24,6 @@ export class ServicePricingService extends EntityCrudService<ServicePrice> {
 
   async findServicePriceByServiceType(serviceKey: string) {
     const keys = this.commonService.getServiceCatagoryKeys(serviceKey);
-    // if (serviceKey === ServiceKeyEnum.new) {
-    //   keys = [
-    //     ServiceKeyEnum.goodsNewRegistration,
-    //     ServiceKeyEnum.servicesNewRegistration,
-    //     ServiceKeyEnum.worksNewRegistration,
-    //   ];
-    // } else if (serviceKey == ServiceKeyEnum.upgrade) {
-    //   keys = [
-    //     ServiceKeyEnum.goodsUpgrade,
-    //     ServiceKeyEnum.servicesUpgrade,
-    //     ServiceKeyEnum.worksUpgrade,
-    //   ];
-    // } else if (serviceKey === ServiceKeyEnum.renewal) {
-    //   keys = [
-    //     ServiceKeyEnum.goodsRenewal,
-    //     ServiceKeyEnum.servicesRenewal,
-    //     ServiceKeyEnum.worksRenewal,
-    //   ];
-    // }
     const result = await this.pricingRepository.find({
       select: {
         id: true,
@@ -82,6 +63,12 @@ export class ServicePricingService extends EntityCrudService<ServicePrice> {
       where: { id: id },
     });
   }
+  async findPricingWithServiceByIds(ids: string[]) {
+    return this.pricingRepository.find({
+      relations: { service: true },
+      where: { id: In(ids) },
+    });
+  }
   async saveBulk(prices: any[]) {
     try {
       await this.pricingRepository.save(prices);
@@ -90,22 +77,22 @@ export class ServicePricingService extends EntityCrudService<ServicePrice> {
       throw new Error(error);
     }
   }
-  async findserviceByRangeAndKey(
-    key: string,
-    rangeFrom: number,
-    rangeTo: number,
-    businessArea: string,
-  ) {
-    return this.pricingRepository.find({
-      relations: { service: true },
-      where: {
-        service: { key: key },
-        businessArea: ILike(businessArea),
-        valueFrom: rangeFrom,
-        valueTo: rangeTo,
-      },
-    });
-  }
+  // async findserviceByRangeAndKey(
+  //   key: string,
+  //   rangeFrom: number,
+  //   rangeTo: number,
+  //   businessArea: string,
+  // ) {
+  //   return this.pricingRepository.find({
+  //     relations: { service: true },
+  //     where: {
+  //       service: { key: key },
+  //       businessArea: ILike(businessArea),
+  //       valueFrom: rangeFrom,
+  //       valueTo: rangeTo,
+  //     },
+  //   });
+  // }
   async getRenewalPrice(
     businessArea: BusinessAreaEntity,
     oprationType: string,

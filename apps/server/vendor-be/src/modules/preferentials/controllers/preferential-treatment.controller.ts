@@ -66,7 +66,6 @@ export class PreferentailTreatmentsController extends EntityCrudController<Prefe
     @CurrentUser() user: any,
     @Body() createdto: CreatePTDto,
   ) {
-
     console.log('bb', createdto,);
     return await this.ptService.submitPreferential(files, createdto, user);
   }

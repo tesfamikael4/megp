@@ -107,9 +107,9 @@ export class HandlingCommonService {
 
     if (serviceKey === ServiceKeyEnum.new) {
       keys = [
-        ServiceKeyEnum.goodsNewRegistration,
-        ServiceKeyEnum.servicesNewRegistration,
-        ServiceKeyEnum.worksNewRegistration,
+        ServiceKeyEnum.NEW_REGISTRATION_SERVICE,
+        // ServiceKeyEnum.servicesNewRegistration,
+        // ServiceKeyEnum.worksNewRegistration,
       ];
     } else if (serviceKey == ServiceKeyEnum.upgrade) {
       keys = [
@@ -138,8 +138,9 @@ export class HandlingCommonService {
         ServiceKeyEnum.MEDIUM,
         ServiceKeyEnum.SMALL,
         ServiceKeyEnum.MICRO,
-        ServiceKeyEnum.MARGINALIZED_GROUP,
       ];
+    } else if (serviceKey == ServiceKeyEnum.MG) {
+      keys = [ServiceKeyEnum.MARGINALIZED_GROUP];
     }
     return keys;
   }

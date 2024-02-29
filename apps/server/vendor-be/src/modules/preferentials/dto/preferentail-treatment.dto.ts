@@ -11,15 +11,13 @@ export class CreatePTDto {
   @ApiProperty()
   @IsNotEmpty()
   certiNumber: string;
-  @ApiProperty()
-  @IsOptional()
-  extendedProfile: any;
+
   // @ApiProperty()
   // @IsOptional()
   // otherDocumentsMetadata: any;
-  @ApiProperty()
-  @IsNotEmpty()
-  remark: string;
+  // @ApiProperty()
+  // @IsNotEmpty()
+  // remark: string;
   // @ApiProperty()
   // @IsNotEmpty()
   // certificate: Express.Multer.File;
@@ -36,8 +34,6 @@ export class CreatePTDto {
       return;
     }
     entity.serviceId = dto.serviceId;
-    entity.remark = dto.remark;
-    entity.extendedProfile = dto.extendedProfile;
     entity.certiNumber = dto.certiNumber;
     return entity;
   }
@@ -53,8 +49,6 @@ export class UpdatePTDto extends CreatePTDto {
     }
 
     entity.serviceId = dto.serviceId;
-    entity.remark = dto.remark;
-    entity.extendedProfile = dto.extendedProfile;
     return entity;
   }
 }
@@ -63,8 +57,6 @@ export class PTResponse extends UpdatePTDto {
   @ApiProperty()
   status: string;
   @ApiProperty()
-  otherDocuments: any;
-  @ApiProperty()
   certificateUrl: string;
   @ApiProperty()
   vendorId: string;
@@ -72,9 +64,6 @@ export class PTResponse extends UpdatePTDto {
     const response = new PTResponse();
     response.vendorId = entity.vendorId;
     response.serviceId = entity.serviceId;
-    response.remark = entity.remark;
-    response.extendedProfile = entity.extendedProfile;
-    response.otherDocuments = entity.otherDocuments;
     response.status = entity.status;
     response.certificateUrl = entity.certificateUrl;
     return response;
