@@ -14,7 +14,7 @@ export * from './security-question.entity';
 export * from './unit-type.entity';
 export * from './unit.entity';
 export * from './user-group.entity';
-export * from './user-profile.entity';
+export * from './account-profile.entity';
 export * from './user-role.entity';
 export * from './user-unit.entity';
 export * from './user.entity';

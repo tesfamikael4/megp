@@ -9,9 +9,7 @@ import {
   UnitType,
   Unit,
   UserUnit,
-  UserProfile,
   UserRole,
-  Mandate,
 } from '@entities';
 import { OrganizationService } from './services/organization.service';
 import { OrganizationTypeController } from './controllers/organization-type.controller';
@@ -23,14 +21,11 @@ import { UnitTypeService } from './services/unit-type.service';
 import { UserService } from './services/user.service';
 import { UnitService } from './services/unit.service';
 import { UserUnitService } from './services/user-unit.service';
-import { UserProfileService } from './services/user-profile.service';
 import { UserRoleService } from '../role/services/user-role.service';
 import { UserUnitController } from './controllers/user-unit.controller';
-import { UserProfileController } from './controllers/user-profile.controller';
 import { UserRoleController } from '../role/controllers/user-role.controller';
 import { AccountModule } from '../account/account.module';
 import { RoleSystemModule } from '../role-system/role-system.module';
-import { MandateService } from '../mandate/services/mandate.service';
 
 @Module({
   imports: [
@@ -42,7 +37,6 @@ import { MandateService } from '../mandate/services/mandate.service';
       OrganizationType,
       UnitType,
       UserUnit,
-      UserProfile,
       UserRole,
       OrganizationMandate,
     ]),
@@ -56,7 +50,6 @@ import { MandateService } from '../mandate/services/mandate.service';
     OrganizationTypeService,
     UnitTypeService,
     UserUnitService,
-    UserProfileService,
     UserRoleService,
   ],
   controllers: [
@@ -66,9 +59,8 @@ import { MandateService } from '../mandate/services/mandate.service';
     OrganizationTypeController,
     UnitTypeController,
     UserUnitController,
-    UserProfileController,
     UserRoleController,
   ],
   exports: [OrganizationService],
 })
-export class OrganizationModule { }
+export class OrganizationModule {}
