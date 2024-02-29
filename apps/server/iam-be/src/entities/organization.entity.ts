@@ -16,9 +16,9 @@ import { UnitType } from './unit-type.entity';
 import { User } from './user.entity';
 import { Role } from './role.entity';
 
-enum OrganizationStatus {
-  INACTIVE = 'Inactive',
-  ACTIVE = 'Active',
+export enum OrganizationStatus {
+  INACTIVE = 'INACTIVE',
+  ACTIVE = 'ACTIVE',
 }
 
 @Entity({ name: 'organizations' })

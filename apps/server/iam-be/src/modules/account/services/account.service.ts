@@ -42,6 +42,7 @@ import {
 import { EmailService } from 'src/shared/email/email.service';
 import { REQUEST } from '@nestjs/core';
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
+import { OrganizationStatus } from 'src/entities/organization.entity';
 
 @Injectable()
 export class AccountsService {
@@ -55,7 +56,7 @@ export class AccountsService {
     private readonly helper: AuthHelper,
     private readonly emailService: EmailService,
     @Inject(REQUEST) private readonly request: Request,
-  ) {}
+  ) { }
 
   public async createAccount(
     createAccountDto: CreateAccountDto,
@@ -364,7 +365,9 @@ export class AccountsService {
       .leftJoinAndSelect(
         'users.organization',
         'organization',
-        `organization.status = 'ACTIVE'`,
+        `organization.status =:status`, {
+        status: OrganizationStatus.ACTIVE
+      }
       )
       .leftJoin(
         'organization.organizationMandates',
