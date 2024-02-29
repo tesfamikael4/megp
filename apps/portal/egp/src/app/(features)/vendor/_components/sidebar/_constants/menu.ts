@@ -1,15 +1,15 @@
 import {
+  IconAward,
   IconBookmark,
   IconBriefcase,
   IconCoins,
   IconDashboard,
   IconGavel,
-  IconHeartHandshake,
   IconListDetails,
-  IconNotification,
   IconUserCog,
 } from '@tabler/icons-react';
 import { MenuLinks } from '../models';
+import { IconShoppingCart } from '@tabler/icons-react';
 
 export const informationLinks: MenuLinks.SidebarLinks[] = [
   {
@@ -49,5 +49,10 @@ export const managementLinks: MenuLinks.SidebarLinks[] = [
     label: 'My Payments',
     icon: IconCoins,
     link: '/vendor/registration/my-payments',
+  },
+  {
+    label: 'Purchase Orders',
+    icon: IconShoppingCart,
+    link: '/vendor/registration/purchase-orders',
   },
 ];

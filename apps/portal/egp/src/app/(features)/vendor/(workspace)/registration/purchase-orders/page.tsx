@@ -2,9 +2,10 @@
 import { Box, Flex, Text, TextInput } from '@mantine/core';
 import 'mantine-datatable/styles.layer.css';
 import '@mantine/core/styles.layer.css';
-import PaymentListTable from './_components/table';
+
 import { IconSearch } from '@tabler/icons-react';
 import { useDebouncedState } from '@mantine/hooks';
+import Table from './_components/table';
 
 function MyPayments() {
   const [search, setSearch] = useDebouncedState('', 500);
@@ -12,14 +13,14 @@ function MyPayments() {
   return (
     <Box className="p-6 bg-[#e7f4f7]">
       <Box className=" w-full p-6 min-h-screen bg-white">
-        <Flex direction={'column'} className="w-full py-2 mb-3 border-b-2">
+        <Flex direction={'column'} className="w-full py-2 mb-4 border-b-2">
           <Text fw={700} fz="xl" c={'#1D8E3F'}>
-            My Payments
+            Purchase Orders
           </Text>
           <Text c={'dimmed'} size={'14px'} mt={2}>
-            {/* Here, The contents have to be changed */}
-            Welcome to My Payments! Here you can manage your payment information
-            and view your transaction history.
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut
+            faucibus, enim ac dictum rutrum, velit quam pharetra mi, aliquet
+            interdum velit libero nec risus. Aliquam non libero dolor.
           </Text>
           <Flex justify="flex-end">
             <TextInput
@@ -33,7 +34,7 @@ function MyPayments() {
             />
           </Flex>
         </Flex>
-        <PaymentListTable />
+        <Table />
       </Box>
     </Box>
   );
