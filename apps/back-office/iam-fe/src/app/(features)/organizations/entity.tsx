@@ -3,7 +3,7 @@ import { Organization } from '@/models/organization';
 import { CollectionQuery, EntityConfig, EntityLayout } from '@megp/entity';
 import { usePathname, useRouter } from 'next/navigation';
 import { useMemo } from 'react';
-import { useLazyListQuery } from './_api/organization.api';
+import { useLazyListQuery } from '@/store/api/organization/organizatin-custom';
 import { Type } from './_components/organization-type';
 
 export function Entity({ children }: { children: React.ReactNode }) {
@@ -87,7 +87,16 @@ export function Entity({ children }: { children: React.ReactNode }) {
     <EntityLayout
       mode={mode}
       config={config}
-      data={data?.items ?? []}
+      data={
+        data?.items?.map((item: Organization) => {
+          return {
+            ...item,
+            status:
+              item.status.charAt(0).toUpperCase() +
+              item.status.slice(1).toLowerCase(),
+          };
+        }) ?? []
+      }
       total={data?.total ?? 0}
       detail={children}
       isLoading={isFetching}

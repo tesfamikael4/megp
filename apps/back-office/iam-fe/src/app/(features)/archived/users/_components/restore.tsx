@@ -9,11 +9,11 @@ export function Restore({ original }: any) {
 
   const openDeleteModal = () => {
     modals.openConfirmModal({
-      title: `Restore ${original?.firstName} ${original?.lastName}`,
+      title: `Restore ${original?.account?.firstName} ${original?.account?.lastName}`,
       centered: true,
       children: (
         <Text size="sm">
-          {`Are you sure you want to restore  ${original?.firstName} ${original?.lastName} `}
+          {`Are you sure you want to restore  ${original?.account?.firstName} ${original?.account?.lastName} `}
         </Text>
       ),
       labels: { confirm: 'Yes', cancel: 'No' },
@@ -29,6 +29,7 @@ export function Restore({ original }: any) {
       notify('Error', 'Something went wrong');
     }
   };
+
   return (
     <>
       <Menu shadow="md">

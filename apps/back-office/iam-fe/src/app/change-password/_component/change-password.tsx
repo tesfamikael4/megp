@@ -76,7 +76,6 @@ export default function UserpasswordForm() {
     resolver: zodResolver(profileSchema),
   });
 
-  const { user } = useAuth();
   const route = useRouter();
 
   const [create, { isLoading: isSaving }] = useSetPasswordMutation();
@@ -84,8 +83,8 @@ export default function UserpasswordForm() {
   const onCreate = async (data) => {
     try {
       await create({
-        accountId: user?.organizations?.[0]?.userId,
-        ...data,
+        oldPassword: data.oldPassword,
+        newPassword: data.newPassword,
       }).unwrap();
 
       notify('Success', 'Password changed successfully');

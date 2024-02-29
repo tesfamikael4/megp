@@ -156,7 +156,7 @@ export function FormDetail({ mode }: FormDetailProps) {
   const onActivate = async (data) => {
     const dataSent = {
       ...data,
-      status: selected?.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE',
+      status: selected?.status === 'Active' ? 'Inactive' : 'Active',
       organizationId: organizationId,
     };
 
@@ -164,12 +164,12 @@ export function FormDetail({ mode }: FormDetailProps) {
       await activation({ ...dataSent, id: id?.toString() }).unwrap();
       notify(
         'Success',
-        `Unit ${selected?.status === 'ACTIVE' ? 'Deactivated' : 'Activated'} successfully`,
+        `Unit ${selected?.status === 'Active' ? 'Deactivated' : 'Activated'} successfully`,
       );
     } catch {
       notify(
         'Error',
-        `Error in ${selected?.status === 'ACTIVE' ? 'Deactivating' : 'Activating'}  Unit`,
+        `Error in ${selected?.status === 'Active' ? 'Deactivating' : 'Activating'}  Unit`,
       );
     }
   };
