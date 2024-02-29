@@ -63,10 +63,10 @@ export default function ResetPassword() {
         ...data,
       }).unwrap();
 
-      notify('Success', 'Password changed successfully');
+      notify('Success', 'Password reset successfully');
     } catch (err) {
       logger.log(err);
-      notify('Error', 'Errors in changing password.');
+      notify('Error', 'Errors in resetting password.');
     }
   };
 

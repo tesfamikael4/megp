@@ -37,7 +37,7 @@ export default function UserDetailPage() {
         <AddSystemRole />
 
         {permissions?.length !== 0 && (
-          <Section title="Reset Password">
+          <Section title="Reset Password" defaultCollapsed>
             <ResetPassword />
           </Section>
         )}

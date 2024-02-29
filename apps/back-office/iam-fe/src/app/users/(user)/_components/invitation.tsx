@@ -40,7 +40,7 @@ const UserInvitation = () => {
     } catch (err) {
       notify(
         'Error',
-        'Error encountered while sending invitation link to the user.',
+        `${err.data.message === 'user_role_and_unit_not_assigned' ? 'Assign unit and role before invitation' : 'Error encountered while sending invitation link to the user'}`,
       );
     }
   };
