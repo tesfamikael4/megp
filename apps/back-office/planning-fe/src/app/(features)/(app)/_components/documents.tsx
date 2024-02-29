@@ -53,7 +53,7 @@ export const Documents = ({
     columns: [
       {
         header: 'Name',
-        accessor: 'fileName',
+        accessor: 'title',
       },
       {
         accessor: 'action',
