@@ -22,5 +22,7 @@ export enum ServiceKeyEnum {
   SMALL = 'Small',
   MICRO = 'Micro',
   MARGINALIZED_GROUP = 'Marginalized_Group',
-  MSME = 'MSME'
+  MSME = 'MSME',
+  MG = 'MG',
+  NEW_REGISTRATION = "NewRegistration"
 }

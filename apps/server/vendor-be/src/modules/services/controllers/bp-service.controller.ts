@@ -51,7 +51,7 @@ export class BpServiceController extends EntityCrudController<BpServiceEntity>(
   async update(@Param('id') id: string, @Body() dto: UpdateBpServiceDto) {
     return await super.update(id, dto);
   }
-  @Get('get-marginilized-groups')
+  @Get('get-preferencials')
   async getPreferentialTreatmentServices() {
     return await this.bpService.getPreferentialTreatmentServices();
   }
