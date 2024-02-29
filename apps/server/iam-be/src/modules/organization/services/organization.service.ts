@@ -92,6 +92,8 @@ export class OrganizationService extends EntityCrudService<Organization> {
       status: 'ACTIVE',
     });
 
+    organization.status = 'ACTIVE';
+
     return organization;
   }
 
