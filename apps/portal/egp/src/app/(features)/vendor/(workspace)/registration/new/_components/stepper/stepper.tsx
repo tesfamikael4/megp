@@ -71,32 +71,32 @@ function StyledStepper() {
           <Stepper.Step
             completedIcon={1}
             label="Basic Information"
-            description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore "
+            description="The TIN is the primary identifier and verification for user identity on the platform."
           />
           <Stepper.Step
             completedIcon={2}
             label="Profile Information"
-            description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore "
+            description="The e_GP vendor candidate profile integrates vital details, ensuring transparency and secure bank account management for efficient government procurement"
           />
           <Stepper.Step
             completedIcon={3}
             label="Purpose of Registration"
-            description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore "
+            description="The registration process entails selecting categories (service, goods, and works), specifying a line of business, and establishing price ranges."
           />
           <Stepper.Step
             completedIcon={4}
             label="Payment"
-            description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore "
+            description="Successful payment allows to be vendor to proceed; otherwise, progression is hindered until payment is confirmed, ensuring a systematic and accountable procurement process"
           />
           <Stepper.Step
             completedIcon={5}
             label="Document Attachment"
-            description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore "
+            description="In e_GP, candidate vendors submit essential documents fostering a transparent and compliant verification process crucial for government procurement."
           />
           <Stepper.Step
             completedIcon={6}
             label="Review & Submit"
-            description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore "
+            description="Following a meticulous review, the user ensures information accuracy and compliance before successfully submitting the details"
           />
         </Stepper>
       </Section>

@@ -125,7 +125,7 @@ export const AreasOfBusinessInterestForm = ({
       ...lockElements('ppda'),
     };
   };
-  // console.log(initialValues);
+
   const onSubmit = (data: typeof formState.defaultValues) => {
     save({
       data: {
@@ -150,7 +150,7 @@ export const AreasOfBusinessInterestForm = ({
             name="areasOfBusinessInterest"
             control={control}
             register={extendedRegister}
-            adjustment={vendorInfo.status === 'Adjustment' ? false : true}
+            adjustment={checkAccess('ppda')}
           />
         </Flex>
         {watch('areasOfBusinessInterest') &&

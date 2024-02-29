@@ -72,6 +72,8 @@ const ServiceLayout = () => {
     return <ApprovedPageData data={data} />;
   if (isSuccess && data && data.status === 'Active')
     return router.push('/vendor/registration/new/detail');
+  if (isSuccess && data && data.status === 'Adjustment')
+    return router.push('/vendor/registration/track-application');
   if (data && data.status === 'Submitted')
     return <ApprovedPageData data={data} />;
   return (
@@ -131,7 +133,7 @@ const ApprovedPageData = ({ data }: any) => {
           >
             <Flex direction="row">
               <Box className="p-3">
-                <Avatar color={color} radius="xl" size="lg" bg={'red'}>
+                <Avatar color={'white'} radius="xl" size="lg" bg={color}>
                   {initials}
                 </Avatar>
               </Box>
