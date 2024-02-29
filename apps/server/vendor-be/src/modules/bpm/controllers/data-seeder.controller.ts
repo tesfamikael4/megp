@@ -30,7 +30,7 @@ export class DataSeederController {
     @InjectRepository(TaskAssignmentEntity)
     private readonly assignmentRepository: Repository<TaskAssignmentEntity>,
     private readonly categoryService: CategoryService,
-  ) { }
+  ) {}
   @UseGuards(JwtGuard)
   @Post('seed-services')
   @ApiOkResponse()
@@ -156,6 +156,7 @@ export class DataSeederController {
         name: 'Renewal Registration for Goods',
         key: 'GoodsRenewal',
         isActive: true,
+
         tenantId: 0,
         description: null,
       },
@@ -184,16 +185,6 @@ export class DataSeederController {
         tenantId: 0,
         description: null,
       },
-      {
-        id: 'cc6934e1-9706-1e1b-c03f-b35c3e6153a1',
-        name: 'New Registration',
-        key: 'NewRegistration',
-        isActive: true,
-        tenantId: 0,
-        description: null,
-      },
-
-
     ];
     await this.serviceService.saveBulk(serviceToSeed);
     // await dataSource.createEntityManager().save<BpServiceEntity>(services);
@@ -204,81 +195,6 @@ export class DataSeederController {
   async seedBP() {
     const bpsToSeed = [
       //new registration  WF
-      {
-        tenantId: 0,
-        id: 'c811c2d4-1023-4327-a172-adfcd78a30d5',
-        serviceId: 'cc6934e1-9706-1e1b-c03f-b35c3e6153a1',
-        workflow: {
-          id: 'New Registration',
-          states: {
-            End: {
-              on: {},
-              meta: {
-                type: 'end',
-                apiUrl: '',
-              },
-            },
-            'Submit New Vendor Registration Request': {
-              on: {
-                ISR: 'Review New Vendor Registration Request by Registration Officer',
-              },
-              meta: {
-                type: {
-                  start: true,
-                },
-              },
-            },
-
-            'Review New Vendor Registration Request by Registration Officer': {
-              on: {
-                ADJUST: 'Submit New Vendor Registration Request',
-                CANCEL: 'End',
-                APPROVE: 'Approval of New Vendor Registration Request by Senior or chief registration officer or RRM/DRRM',
-              },
-              meta: {
-                type: 'InitialReview',
-              },
-            },
-            'Approval of New Vendor Registration Request by Senior or chief registration officer or RRM/DRRM':
-            {
-              on: {
-                NO: 'Review New Vendor Registration Request by Registration Officer',
-                YES: 'Approval of New Vendor Registration Request by Director General (DG)',
-              },
-              meta: {
-                type: 'Confirmation',
-              },
-            },
-            'Approval of New Vendor Registration Request by Director General (DG)':
-            {
-              on: {
-                ADJUST: 'Submit New Vendor Registration Request',
-                APPROVE: 'Generate Vendor Registration Certificate',
-                REJECT: 'End',
-              },
-              meta: {
-                type: 'Confirmation',
-              },
-            },
-            'Generate Vendor Registration Certificate': {
-              on: {
-                FAIL: 'Generate Vendor Registration Certificate',
-                SUCCESS: 'End',
-              },
-              meta: {
-                type: 'Certificate',
-              },
-            },
-          },
-          initial: 'Submit New Vendor Registration Request',
-        },
-        version: 0,
-        isActive: true,
-        organizationId: null,
-        organizationName: null,
-      },
-
-
       {
         tenantId: 0,
         id: 'd822c2d4-1023-4328-a172-adfcd78a30d4',
@@ -316,26 +232,26 @@ export class DataSeederController {
               },
             },
             'Approval of New Vendor Registration Request by Senior or chief registration officer or RRM/DRRM':
-            {
-              on: {
-                NO: 'Review New Vendor Registration Request by Registration Officer',
-                YES: 'Approval of New Vendor Registration Request by Director General (DG)',
+              {
+                on: {
+                  NO: 'Review New Vendor Registration Request by Registration Officer',
+                  YES: 'Approval of New Vendor Registration Request by Director General (DG)',
+                },
+                meta: {
+                  type: 'Confirmation',
+                },
               },
-              meta: {
-                type: 'Confirmation',
-              },
-            },
             'Approval of New Vendor Registration Request by Director General (DG)':
-            {
-              on: {
-                ADJUST: 'Submit New Vendor Registration Request for Goods',
-                APPROVE: 'Generate New Vendor Registration Certificate',
-                REJECT: 'End',
+              {
+                on: {
+                  ADJUST: 'Submit New Vendor Registration Request for Goods',
+                  APPROVE: 'Generate New Vendor Registration Certificate',
+                  REJECT: 'End',
+                },
+                meta: {
+                  type: 'Confirmation',
+                },
               },
-              meta: {
-                type: 'Confirmation',
-              },
-            },
             'Generate New Vendor Registration Certificate': {
               on: {
                 FAIL: 'Generate New Vendor Registration Certificate',
@@ -390,26 +306,26 @@ export class DataSeederController {
             },
 
             'Approval of New Vendor Registration Request by Senior or chief registration officer or RRM/DRRM':
-            {
-              on: {
-                NO: 'Review New Vendor Registration Request by Registration Officer',
-                YES: 'Approval of New Vendor Registration Request by Director General (DG)',
+              {
+                on: {
+                  NO: 'Review New Vendor Registration Request by Registration Officer',
+                  YES: 'Approval of New Vendor Registration Request by Director General (DG)',
+                },
+                meta: {
+                  type: 'Confirmation',
+                },
               },
-              meta: {
-                type: 'Confirmation',
-              },
-            },
             'Approval of New Vendor Registration Request by Director General (DG)':
-            {
-              on: {
-                APPROVE: 'Generate New Vendor Registration Certificate',
-                ADJUST: 'Submit New Vendor Registration Request for Services',
-                REJECT: 'End',
+              {
+                on: {
+                  APPROVE: 'Generate New Vendor Registration Certificate',
+                  ADJUST: 'Submit New Vendor Registration Request for Services',
+                  REJECT: 'End',
+                },
+                meta: {
+                  type: 'Confirmation',
+                },
               },
-              meta: {
-                type: 'Confirmation',
-              },
-            },
             'Generate New Vendor Registration Certificate': {
               on: {
                 FAIL: 'Generate New Vendor Registration Certificate',
@@ -463,26 +379,26 @@ export class DataSeederController {
             },
 
             'Approval of New Vendor Registration Request by Senior or chief registration officer or RRM/DRRM':
-            {
-              on: {
-                NO: 'Review New Vendor Registration Request by Registration Officer',
-                YES: 'Approval of New Vendor Registration Request by Director General (DG)',
+              {
+                on: {
+                  NO: 'Review New Vendor Registration Request by Registration Officer',
+                  YES: 'Approval of New Vendor Registration Request by Director General (DG)',
+                },
+                meta: {
+                  type: 'Confirmation',
+                },
               },
-              meta: {
-                type: 'Confirmation',
-              },
-            },
             'Approval of New Vendor Registration Request by Director General (DG)':
-            {
-              on: {
-                APPROVE: 'Generate Vendor Registration Certificate',
-                ADJUST: 'Submit New Vendor Registration Request for Works',
-                REJECT: 'End',
+              {
+                on: {
+                  APPROVE: 'Generate Vendor Registration Certificate',
+                  ADJUST: 'Submit New Vendor Registration Request for Works',
+                  REJECT: 'End',
+                },
+                meta: {
+                  type: 'Approval',
+                },
               },
-              meta: {
-                type: 'Approval',
-              },
-            },
             'Generate Vendor Registration Certificate': {
               on: {
                 FAIL: 'Generate Vendor Registration Certificate',
@@ -527,38 +443,38 @@ export class DataSeederController {
               },
             },
             'Review Vendor Renewal Registration Request by Registration Officer(RO)':
-            {
-              on: {
-                ADJUST: 'Submit Renewal Registration Request for Goods',
-                CANCEL: 'End',
-                APPROVE:
-                  'Approval of Renewal Registration Request by Senior or chief registration officer or RRM/DRRM',
+              {
+                on: {
+                  ADJUST: 'Submit Renewal Registration Request for Goods',
+                  CANCEL: 'End',
+                  APPROVE:
+                    'Approval of Renewal Registration Request by Senior or chief registration officer or RRM/DRRM',
+                },
+                meta: {
+                  type: 'InitialReview',
+                },
               },
-              meta: {
-                type: 'InitialReview',
-              },
-            },
             'Approval of Renewal Registration Request by Senior or chief registration officer or RRM/DRRM':
-            {
-              on: {
-                NO: 'Review Vendor Renewal Registration Request by Registration Officer(RO)',
-                YES: 'Approval of Upgrade Registration Request of vendor by Director General (DG)',
+              {
+                on: {
+                  NO: 'Review Vendor Renewal Registration Request by Registration Officer(RO)',
+                  YES: 'Approval of Upgrade Registration Request of vendor by Director General (DG)',
+                },
+                meta: {
+                  type: 'Confirmation',
+                },
               },
-              meta: {
-                type: 'Confirmation',
-              },
-            },
             'Approval of Upgrade Registration Request of vendor by Director General (DG)':
-            {
-              on: {
-                APPROVE: 'Generate Vendor Registration Certificate',
-                ADJUST: 'Submit Renewal Registration Request for Goods',
-                REJECT: 'End',
+              {
+                on: {
+                  APPROVE: 'Generate Vendor Registration Certificate',
+                  ADJUST: 'Submit Renewal Registration Request for Goods',
+                  REJECT: 'End',
+                },
+                meta: {
+                  type: 'Confirmation',
+                },
               },
-              meta: {
-                type: 'Confirmation',
-              },
-            },
             'Generate Vendor Registration Certificate': {
               on: {
                 FAIL: 'Generate Vendor Registration Certificate',
@@ -601,39 +517,39 @@ export class DataSeederController {
               },
             },
             'Review Vendor Renewal Registration Request by Registration Officer(RO)':
-            {
-              on: {
-                ADJUST: 'Submit Renewal Registration Request for Services',
-                CANCEL: 'End',
-                APPROVE:
-                  'Approval of Renewal Registration Request by Senior or chief registration officer or RRM/DRRM',
+              {
+                on: {
+                  ADJUST: 'Submit Renewal Registration Request for Services',
+                  CANCEL: 'End',
+                  APPROVE:
+                    'Approval of Renewal Registration Request by Senior or chief registration officer or RRM/DRRM',
+                },
+                meta: {
+                  type: 'InitialReview',
+                },
               },
-              meta: {
-                type: 'InitialReview',
-              },
-            },
 
             'Approval of Renewal Registration Request by Senior or chief registration officer or RRM/DRRM':
-            {
-              on: {
-                NO: 'Review Vendor Renewal Registration Request by Registration Officer(RO)',
-                YES: 'Approval of Renewal Registration Request of vendor by Director General (DG)',
+              {
+                on: {
+                  NO: 'Review Vendor Renewal Registration Request by Registration Officer(RO)',
+                  YES: 'Approval of Renewal Registration Request of vendor by Director General (DG)',
+                },
+                meta: {
+                  type: 'Confirmation',
+                },
               },
-              meta: {
-                type: 'Confirmation',
-              },
-            },
             'Approval of Renewal Registration Request of vendor by Director General (DG)':
-            {
-              on: {
-                APPROVE: 'Generate Vendor Registration Certificate',
-                ADJUST: 'Submit Renewal Registration Request for Services',
-                REJECT: 'End',
+              {
+                on: {
+                  APPROVE: 'Generate Vendor Registration Certificate',
+                  ADJUST: 'Submit Renewal Registration Request for Services',
+                  REJECT: 'End',
+                },
+                meta: {
+                  type: 'Confirmation',
+                },
               },
-              meta: {
-                type: 'Confirmation',
-              },
-            },
             'Generate Vendor Registration Certificate': {
               on: {
                 FAIL: 'Generate Vendor Registration Certificate',
@@ -675,39 +591,39 @@ export class DataSeederController {
               },
             },
             'Review Vendor Renewal Registration Request by Registration Officer(RO)':
-            {
-              on: {
-                ADJUST: 'Submit Renewal Registration Request for Works',
-                CANCEL: 'End',
-                APPROVE:
-                  'Approval of Renewal Registration Request by Senior or chief registration officer or RRM/DRRM',
+              {
+                on: {
+                  ADJUST: 'Submit Renewal Registration Request for Works',
+                  CANCEL: 'End',
+                  APPROVE:
+                    'Approval of Renewal Registration Request by Senior or chief registration officer or RRM/DRRM',
+                },
+                meta: {
+                  type: 'InitialReview',
+                },
               },
-              meta: {
-                type: 'InitialReview',
-              },
-            },
 
             'Approval of Renewal Registration Request by Senior or chief registration officer or RRM/DRRM':
-            {
-              on: {
-                NO: 'Review Vendor Renewal Registration Request by Registration Officer(RO)',
-                YES: 'Approval of Renewal Registration Request of vendor by Director General (DG)',
+              {
+                on: {
+                  NO: 'Review Vendor Renewal Registration Request by Registration Officer(RO)',
+                  YES: 'Approval of Renewal Registration Request of vendor by Director General (DG)',
+                },
+                meta: {
+                  type: 'Confirmation',
+                },
               },
-              meta: {
-                type: 'Confirmation',
-              },
-            },
             'Approval of Renewal Registration Request of vendor by Director General (DG)':
-            {
-              on: {
-                APPROVE: 'Generate Vendor Registration Certificate',
-                ADJUST: 'Submit Renewal Registration Request for Works',
-                REJECT: 'End',
+              {
+                on: {
+                  APPROVE: 'Generate Vendor Registration Certificate',
+                  ADJUST: 'Submit Renewal Registration Request for Works',
+                  REJECT: 'End',
+                },
+                meta: {
+                  type: 'Approval',
+                },
               },
-              meta: {
-                type: 'Approval',
-              },
-            },
             'Generate Vendor Registration Certificate': {
               on: {
                 FAIL: 'Generate Vendor Registration Certificate',
@@ -752,38 +668,38 @@ export class DataSeederController {
               },
             },
             'Review Upgrade Registration Request of Vendor by Registration Officer':
-            {
-              on: {
-                ADJUST: 'Submit Vendor Upgrade Registration Request',
-                CANCEL: 'End',
-                APPROVE:
-                  'Approval of Upgrade Registration Request of Vendor by Senior or chief registration officer or RRM/ DRRM',
+              {
+                on: {
+                  ADJUST: 'Submit Vendor Upgrade Registration Request',
+                  CANCEL: 'End',
+                  APPROVE:
+                    'Approval of Upgrade Registration Request of Vendor by Senior or chief registration officer or RRM/ DRRM',
+                },
+                meta: {
+                  type: 'InitialReview',
+                },
               },
-              meta: {
-                type: 'InitialReview',
-              },
-            },
             'Approval of Upgrade Registration Request of Vendor by Senior or chief registration officer or RRM/ DRRM':
-            {
-              on: {
-                NO: 'Review Upgrade Registration Request of Vendor by Registration Officer',
-                YES: 'Approval of Upgrade Registration Request of vendor by Director General (DG)',
+              {
+                on: {
+                  NO: 'Review Upgrade Registration Request of Vendor by Registration Officer',
+                  YES: 'Approval of Upgrade Registration Request of vendor by Director General (DG)',
+                },
+                meta: {
+                  type: 'Confirmation',
+                },
               },
-              meta: {
-                type: 'Confirmation',
-              },
-            },
             'Approval of Upgrade Registration Request of vendor by Director General (DG)':
-            {
-              on: {
-                APPROVE: 'Generate Vendor Registration Certificate',
-                ADJUST: 'Submit Vendor Upgrade Registration Request',
-                REJECT: 'End',
+              {
+                on: {
+                  APPROVE: 'Generate Vendor Registration Certificate',
+                  ADJUST: 'Submit Vendor Upgrade Registration Request',
+                  REJECT: 'End',
+                },
+                meta: {
+                  type: 'Confirmation',
+                },
               },
-              meta: {
-                type: 'Confirmation',
-              },
-            },
             'Generate Vendor Registration Certificate': {
               on: {
                 FAIL: 'Generate Vendor Registration Certificate',
@@ -826,38 +742,38 @@ export class DataSeederController {
               },
             },
             'Review Upgrade Registration Request of Vendor by Registration Officer':
-            {
-              on: {
-                ADJUST: 'Submit Vendor Upgrade Registration Request',
-                CANCEL: 'End',
-                APPROVE:
-                  'Approval of Upgrade Registration Request of Vendor by Senior or chief registration officer or RRM/ DRRM',
+              {
+                on: {
+                  ADJUST: 'Submit Vendor Upgrade Registration Request',
+                  CANCEL: 'End',
+                  APPROVE:
+                    'Approval of Upgrade Registration Request of Vendor by Senior or chief registration officer or RRM/ DRRM',
+                },
+                meta: {
+                  type: 'InitialReview',
+                },
               },
-              meta: {
-                type: 'InitialReview',
-              },
-            },
             'Approval of Upgrade Registration Request of Vendor by Senior or chief registration officer or RRM/ DRRM':
-            {
-              on: {
-                NO: 'Review Upgrade Registration Request of Vendor by Registration Officer',
-                YES: 'Approval of Upgrade Registration Request of vendor by Director General (DG)',
+              {
+                on: {
+                  NO: 'Review Upgrade Registration Request of Vendor by Registration Officer',
+                  YES: 'Approval of Upgrade Registration Request of vendor by Director General (DG)',
+                },
+                meta: {
+                  type: 'Confirmation',
+                },
               },
-              meta: {
-                type: 'Confirmation',
-              },
-            },
             'Approval of Upgrade Registration Request of vendor by Director General (DG)':
-            {
-              on: {
-                APPROVE: 'Generate Vendor Registration Certificate',
-                ADJUST: 'Submit Vendor Upgrade Registration Request',
-                REJECT: 'End',
+              {
+                on: {
+                  APPROVE: 'Generate Vendor Registration Certificate',
+                  ADJUST: 'Submit Vendor Upgrade Registration Request',
+                  REJECT: 'End',
+                },
+                meta: {
+                  type: 'Confirmation',
+                },
               },
-              meta: {
-                type: 'Confirmation',
-              },
-            },
             'Generate Vendor Registration Certificate': {
               on: {
                 FAIL: 'Generate Vendor Registration Certificate',
@@ -900,38 +816,38 @@ export class DataSeederController {
               },
             },
             'Review Upgrade Registration Request of Vendor by Registration Officer':
-            {
-              on: {
-                ADJUST: 'Submit Vendor Upgrade Registration Request',
-                CANCEL: 'End',
-                APPROVE:
-                  'Approval of Upgrade Registration Request by Senior or chief registration officer or RRM/DRRM',
+              {
+                on: {
+                  ADJUST: 'Submit Vendor Upgrade Registration Request',
+                  CANCEL: 'End',
+                  APPROVE:
+                    'Approval of Upgrade Registration Request by Senior or chief registration officer or RRM/DRRM',
+                },
+                meta: {
+                  type: 'InitialReview',
+                },
               },
-              meta: {
-                type: 'InitialReview',
-              },
-            },
             'Approval of Upgrade Registration Request by Senior or chief registration officer or RRM/DRRM':
-            {
-              on: {
-                NO: 'Review Upgrade Registration Request of Vendor by Registration Officer',
-                YES: 'Approval of Upgrade Registration Request of vendor by Director General (DG)',
+              {
+                on: {
+                  NO: 'Review Upgrade Registration Request of Vendor by Registration Officer',
+                  YES: 'Approval of Upgrade Registration Request of vendor by Director General (DG)',
+                },
+                meta: {
+                  type: 'Confirmation',
+                },
               },
-              meta: {
-                type: 'Confirmation',
-              },
-            },
             'Approval of Upgrade Registration Request of vendor by Director General (DG)':
-            {
-              on: {
-                APPROVE: 'End',
-                ADJUST: 'Submit Vendor Upgrade Registration Request',
-                REJECT: 'End',
+              {
+                on: {
+                  APPROVE: 'End',
+                  ADJUST: 'Submit Vendor Upgrade Registration Request',
+                  REJECT: 'End',
+                },
+                meta: {
+                  type: 'Confirmation',
+                },
               },
-              meta: {
-                type: 'Confirmation',
-              },
-            },
           },
           initial: 'Submit Vendor Upgrade Registration Request',
         },
@@ -955,16 +871,16 @@ export class DataSeederController {
               },
             },
             'Submission of indigenous black Malawian(IBM) Registration Request':
-            {
-              on: {
-                ISR: 'Approval of indigenous black Malawian(IBM) Registration Request',
-              },
-              meta: {
-                type: {
-                  start: true,
+              {
+                on: {
+                  ISR: 'Approval of indigenous black Malawian(IBM) Registration Request',
+                },
+                meta: {
+                  type: {
+                    start: true,
+                  },
                 },
               },
-            },
             'Approval of indigenous black Malawian(IBM) Registration Request': {
               on: {
                 ADJUST:
@@ -1189,13 +1105,13 @@ export class DataSeederController {
               },
             },
             'Approval of Vendor Profile Update Request By Director General (Head of PDE)':
-            {
-              on: {
-                ADJUST: 'Submission of Vendor Profile Update Request',
-                APPROVE: 'End',
-                REJECT: 'End',
+              {
+                on: {
+                  ADJUST: 'Submission of Vendor Profile Update Request',
+                  APPROVE: 'End',
+                  REJECT: 'End',
+                },
               },
-            },
           },
           initial: 'Submission of Vendor Profile Update Request',
         },
@@ -1223,88 +1139,6 @@ export class DataSeederController {
   @ApiOkResponse()
   async seedTask() {
     const tasksToSeed = [
-      ///new registration workflow for all services Goods works and services
-      {
-        id: '1a20640c-5e65-4325-a471-cf20aa19da4c',
-        name: 'Submit New Vendor Registration Request',
-        label: 'Submitted New Registration Request',
-        description: 'Submission of New Registration application',
-        bpId: 'c811c2d4-1023-4327-a172-adfcd78a30d5',
-        handlerType: 'Requestor',
-        taskType: 'ISR',
-        checkList: null,
-        orderBy: 1,
-      },
-      {
-        id: '4066d458-d4aa-483c-a466-b5483ccbd286',
-        name: 'Review New Vendor Registration Request by Registration Officer',
-        label: 'Reviewed Vendor Registration Request',
-        description: 'Reviewing New Vendor Applications',
-        bpId: 'c811c2d4-1023-4327-a172-adfcd78a30d5',
-        handlerType: 'Assignee',
-        taskType: 'InitialReview',
-        checkList: [
-          {
-            id: '96d95fdb-7852-4ddc-982f-0e94d23d14d3',
-            description:
-              'All the required information and related documents fullfilled',
-            isMandatory: 'true',
-          },
-        ],
-        orderBy: 2,
-      },
-      {
-        id: '31fac537-e71b-479b-9c4a-7f344720598f',
-        name: 'Approval of New Vendor Registration Request by Senior or chief registration officer or RRM/DRRM',
-        label: 'Reviewed by RO',
-        description:
-          'aprove new  registration request for Goods by senior or chief registration officer',
-        bpId: 'c811c2d4-1023-4327-a172-adfcd78a30d5',
-        handlerType: 'Assignee',
-        taskType: 'Confirmation',
-        checkList: [
-          {
-            id: '96d95fdb-7852-4ddc-982f-0e96d23d15d3',
-            description:
-              'All the required information and related documents fullfilled',
-            isMandatory: 'true',
-          },
-        ],
-        orderBy: 3,
-      },
-      {
-        id: 'd8f268ac-f85f-4973-94c3-134f753cd25e',
-        name: 'Approval of New Vendor Registration Request by Director General (DG)',
-        label: 'Approved by DG',
-        description:
-          'Ensuring that vendors meet the necessary criteria and standards set forth by the organization',
-        bpId: 'c811c2d4-1023-4327-a172-adfcd78a30d5',
-        handlerType: 'Assignee',
-        taskType: 'Approval',
-        checkList: [
-          {
-            id: '96d95fdb-7852-4ddc-982f-0e92d23d15d3',
-            description:
-              'All the required information and related documents fullfilled',
-            isMandatory: 'true',
-          },
-        ],
-        orderBy: 4,
-      },
-      {
-        id: '96752a13-205f-45eb-8b6f-118ebf0c89c7',
-        name: 'Generate Vendor Registration Certificate',
-        label: 'Generated Certeficates',
-        description:
-          "Creating a formal certificate to officially recognize and document the registration of a new vendor within the organization's procurement system.This certificate serves as proof of the vendor's successful registration and compliance with the organization's requirements",
-        bpId: 'c811c2d4-1023-4327-a172-adfcd78a30d5',
-        handlerType: 'Assignee',
-        taskType: 'Certificate',
-        checkList: null,
-        orderBy: 5,
-      },
-
-
       ///micro
       {
         id: '96752a13-201f-45eb-8b6f-118ebf0c89c7',
@@ -2334,11 +2168,9 @@ export class DataSeederController {
   @ApiOkResponse()
   async seedPricing() {
     const pricesToSeed = [
-      //cc6934e1-9706-1e1b-c03f-b35c3e6153a1
-      //new registration for goods
       {
         id: '47ec877c-d340-4d89-81f3-3d7d29e968d4',
-        serviceId: 'cc6934e1-9706-1e1b-c03f-b35c3e6153a1',
+        serviceId: 'bb6934e1-9706-1e1b-c02f-b35c3e6153a4',
         businessArea: 'Goods',
         valueFrom: 1,
         valueTo: 10000000,
@@ -2348,7 +2180,7 @@ export class DataSeederController {
       },
       {
         id: 'aa4da85e-39fb-42c1-8808-2a06767f3ae9',
-        serviceId: 'cc6934e1-9706-1e1b-c03f-b35c3e6153a1',
+        serviceId: 'bb6934e1-9706-1e1b-c02f-b35c3e6153a4',
         businessArea: 'Goods',
         valueFrom: 10000000,
         valueTo: 30000000,
@@ -2358,7 +2190,7 @@ export class DataSeederController {
       },
       {
         id: 'a8534c9e-2dc2-4116-a174-d90e8d1023f4',
-        serviceId: 'cc6934e1-9706-1e1b-c03f-b35c3e6153a1',
+        serviceId: 'bb6934e1-9706-1e1b-c02f-b35c3e6153a4',
         businessArea: 'Goods',
         valueFrom: 30000000,
         valueTo: 80000000,
@@ -2368,7 +2200,7 @@ export class DataSeederController {
       },
       {
         id: '2a9b4cde-4184-485d-9452-e433379f6d89',
-        serviceId: 'cc6934e1-9706-1e1b-c03f-b35c3e6153a1',
+        serviceId: 'bb6934e1-9706-1e1b-c02f-b35c3e6153a4',
         businessArea: 'Goods',
         valueFrom: 80000000,
         valueTo: 100000000,
@@ -2378,7 +2210,7 @@ export class DataSeederController {
       },
       {
         id: '8723cd80-873d-48c7-95ad-394b16af133d',
-        serviceId: 'cc6934e1-9706-1e1b-c03f-b35c3e6153a1',
+        serviceId: 'bb6934e1-9706-1e1b-c02f-b35c3e6153a4',
         businessArea: 'Goods',
         valueFrom: 100000000,
         valueTo: 500000000,
@@ -2388,7 +2220,7 @@ export class DataSeederController {
       },
       {
         id: '892e1379-a66f-4c0b-8382-5b248840cae7',
-        serviceId: 'cc6934e1-9706-1e1b-c03f-b35c3e6153a1',
+        serviceId: 'bb6934e1-9706-1e1b-c02f-b35c3e6153a4',
         businessArea: 'Goods',
         valueFrom: 1000000000,
         valueTo: -1,
@@ -2397,23 +2229,49 @@ export class DataSeederController {
         tenantId: 0,
       },
 
-
-      ///end of registration feee for Goods
-
-      // {
-      //   id: '81380591-c320-4ed2-a5a0-82b1e4714dd1',
-      //   serviceId: 'f40139f8-2861-4c95-a491-08033b13daf4',
-      //   businessArea: 'Service',
-      //   valueFrom: 20000,
-      //   valueTo: 56666,
-      //   fee: 1000,
-      //   currency: 'MK',
-      //   tenantId: 0,
-      // },
-      //registration fee for service
+      {
+        id: '81380591-c320-4ed2-a5a0-82b1e4714dd1',
+        serviceId: 'f40139f8-2861-4c95-a491-08033b13daf4',
+        businessArea: 'Service',
+        valueFrom: 20000,
+        valueTo: 56666,
+        fee: 1000,
+        currency: 'MK',
+        tenantId: 0,
+      },
+      {
+        id: '1042cb02-0dbf-43b7-a552-6d56cf9fb99a',
+        serviceId: 'bb6934e1-9706-1e1b-c02f-b35c3e6153a4',
+        businessArea: 'Work',
+        valueFrom: 12,
+        valueTo: 12,
+        fee: 12,
+        currency: 'MK',
+        tenantId: 0,
+      },
+      {
+        id: '71a9bc4b-3291-4ae7-986c-0bbf704c4336',
+        serviceId: '62e96410-e869-4231-b693-f7e22d498b65',
+        businessArea: 'Goods',
+        valueFrom: 1,
+        valueTo: 1000000,
+        fee: 4000,
+        currency: 'MK',
+        tenantId: 0,
+      },
+      {
+        id: 'e29650a8-889a-4009-9a43-a2e8e5da8cb2',
+        serviceId: '62e96410-e869-4231-b693-f7e22d498b65',
+        businessArea: 'Goods',
+        valueFrom: 500000000,
+        valueTo: 1000000000,
+        fee: 200000,
+        currency: 'MK',
+        tenantId: 0,
+      },
       {
         id: '099bd8ca-1db1-4555-952d-05681acf8746',
-        serviceId: 'cc6934e1-9706-1e1b-c03f-b35c3e6153a1',
+        serviceId: '5f764d17-a165-42ab-879d-358bc03fe5d8',
         businessArea: 'Services',
         valueFrom: 1,
         valueTo: 10000000,
@@ -2423,7 +2281,7 @@ export class DataSeederController {
       },
       {
         id: 'be612ffa-7ab0-433d-beeb-cc52ce198e24',
-        serviceId: 'cc6934e1-9706-1e1b-c03f-b35c3e6153a1',
+        serviceId: '5f764d17-a165-42ab-879d-358bc03fe5d8',
         businessArea: 'Services',
         valueFrom: 10000000,
         valueTo: 30000000,
@@ -2433,7 +2291,7 @@ export class DataSeederController {
       },
       {
         id: '79d4a0e2-ddbd-451a-91b1-1244751b1377',
-        serviceId: 'cc6934e1-9706-1e1b-c03f-b35c3e6153a1',
+        serviceId: '5f764d17-a165-42ab-879d-358bc03fe5d8',
         businessArea: 'Services',
         valueFrom: 30000000,
         valueTo: 80000000,
@@ -2443,7 +2301,7 @@ export class DataSeederController {
       },
       {
         id: '267c5cb2-5df1-4783-97fa-e3205c5da6be',
-        serviceId: 'cc6934e1-9706-1e1b-c03f-b35c3e6153a1',
+        serviceId: '5f764d17-a165-42ab-879d-358bc03fe5d8',
         businessArea: 'Services',
         valueFrom: 80000000,
         valueTo: 100000000,
@@ -2453,7 +2311,7 @@ export class DataSeederController {
       },
       {
         id: 'bd7a5794-e950-448f-8590-54dfd869bdf5',
-        serviceId: 'cc6934e1-9706-1e1b-c03f-b35c3e6153a1',
+        serviceId: '5f764d17-a165-42ab-879d-358bc03fe5d8',
         businessArea: 'Services',
         valueFrom: 100000000,
         valueTo: 500000000,
@@ -2463,7 +2321,7 @@ export class DataSeederController {
       },
       {
         id: '107fcd4f-6c54-4889-972f-cc029eedeeda',
-        serviceId: 'cc6934e1-9706-1e1b-c03f-b35c3e6153a1',
+        serviceId: '5f764d17-a165-42ab-879d-358bc03fe5d8',
         businessArea: 'Services',
         valueFrom: 500000000,
         valueTo: 1000000000,
@@ -2473,7 +2331,7 @@ export class DataSeederController {
       },
       {
         id: 'b3e6b1f3-7d5c-40d2-8fe9-618bf656e656',
-        serviceId: 'cc6934e1-9706-1e1b-c03f-b35c3e6153a1',
+        serviceId: '5f764d17-a165-42ab-879d-358bc03fe5d8',
         businessArea: 'Services',
         valueFrom: 1000000000,
         valueTo: -1,
@@ -2481,79 +2339,6 @@ export class DataSeederController {
         currency: 'MK',
         tenantId: 0,
       },
-      ///registration fee for works
-      {
-        id: '099bd8ca-2db1-4555-952d-05681acf8746',
-        serviceId: 'cc6934e1-9706-1e1b-c03f-b35c3e6153a1',
-        businessArea: 'Works',
-        valueFrom: 1,
-        valueTo: 10000000,
-        fee: 10000,
-        currency: 'MK',
-        tenantId: 0,
-      },
-      {
-        id: 'be612ffa-7ab0-433d-beeb-cc52ce198e34',
-        serviceId: 'cc6934e1-9706-1e1b-c03f-b35c3e6153a1',
-        businessArea: 'Works',
-        valueFrom: 10000000,
-        valueTo: 30000000,
-        fee: 20000,
-        currency: 'MK',
-        tenantId: 0,
-      },
-      {
-        id: '79d4a0e2-ddbd-451a-91b1-1244751b1387',
-        serviceId: 'cc6934e1-9706-1e1b-c03f-b35c3e6153a1',
-        businessArea: 'Works',
-        valueFrom: 30000000,
-        valueTo: 80000000,
-        fee: 30000,
-        currency: 'MK',
-        tenantId: 0,
-      },
-      {
-        id: '267c5cb2-5df1-4783-97fa-e3205c5da5be',
-        serviceId: 'cc6934e1-9706-1e1b-c03f-b35c3e6153a1',
-        businessArea: 'Works',
-        valueFrom: 80000000,
-        valueTo: 100000000,
-        fee: 60000,
-        currency: 'MK',
-        tenantId: 0,
-      },
-      {
-        id: 'bd9a5794-e950-448f-8590-54dfd869bdf1',
-        serviceId: 'cc6934e1-9706-1e1b-c03f-b35c3e6153a1',
-        businessArea: 'Works',
-        valueFrom: 100000000,
-        valueTo: 500000000,
-        fee: 100000,
-        currency: 'MK',
-        tenantId: 0,
-      },
-      {
-        id: '107fcd4f-6c54-4389-872f-cc029eedeeda',
-        serviceId: 'cc6934e1-9706-1e1b-c03f-b35c3e6153a1',
-        businessArea: 'Works',
-        valueFrom: 500000000,
-        valueTo: 1000000000,
-        fee: 200000,
-        currency: 'MK',
-        tenantId: 0,
-      },
-      {
-        id: 'b3e6b1f3-7d5c-40d2-8fe9-118bf656e656',
-        serviceId: 'cc6934e1-9706-1e1b-c03f-b35c3e6153a1',
-        businessArea: 'Works',
-        valueFrom: 1000000000,
-        valueTo: -1,
-        fee: 100000000500000,
-        currency: 'MK',
-        tenantId: 0,
-      },
-
-
       ////////////////////////renewal Service
       {
         id: '799bd8ca-1db1-4555-952d-05681acf8746',
@@ -2696,27 +2481,6 @@ export class DataSeederController {
         currency: 'MK',
         tenantId: 0,
       },
-      {
-        id: '71a9bc4b-3291-4ae7-986c-0bbf704c4336',
-        serviceId: '62e96410-e869-4231-b693-f7e22d498b65',
-        businessArea: 'Goods',
-        valueFrom: 1,
-        valueTo: 1000000,
-        fee: 4000,
-        currency: 'MK',
-        tenantId: 0,
-      },
-      {
-        id: 'e29650a8-889a-4009-9a43-a2e8e5da8cb2',
-        serviceId: '62e96410-e869-4231-b693-f7e22d498b65',
-        businessArea: 'Goods',
-        valueFrom: 500000000,
-        valueTo: 1000000000,
-        fee: 200000,
-        currency: 'MK',
-        tenantId: 0,
-      },
-
       ////renewal works
       {
         id: 'fad2c120-4a02-4ce6-975a-91b5c0ed828a',
@@ -2861,7 +2625,8 @@ export class DataSeederController {
       {
         id: 'dc049688-1838-7c78-4b2c-0e9f08b9b3ff',
         code: 'qDYCtRlbYi',
-        description: 'Plant and motor vehicle spares',
+        description:
+          'Plant and motor vehicle spares\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n',
         businessArea: 'Goods',
         parentId: null,
       },
@@ -2895,96 +2660,23 @@ export class DataSeederController {
       },
       {
         id: '3efe9c57-0a67-964c-9255-112f3b1a64c3',
-        code: 'BgBQWpq2RYC',
+        code: 'BgBWpq2RYC',
         description: 'Consultancy',
         businessArea: 'Services',
         parentId: null,
       },
       {
         id: '393c57f0-9356-a2a2-307d-013968517df8',
-        code: 'z0M5bgrUmWu',
+        code: 'z0MbgrUmWu',
         description: 'Provision of security services',
         businessArea: 'Services',
         parentId: null,
       },
       {
         id: 'abed4f3c-a0d4-ed2b-d8ec-7148b7c8d7f6',
-        code: 'W7khtX5VV25',
+        code: 'W7khtXVV25',
         description: 'Servicing of firefighting equipment',
         businessArea: 'Services',
-        parentId: null,
-      },
-      ////works category
-
-      {
-        id: 'f8d4125d-b875-5dcb-81ab-0726b44a54ea',
-        code: 'bvqwN2nq9oWW',
-        description: 'Construction material supplier',
-        businessArea: 'Works',
-        parentId: null,
-      },
-      {
-        id: 'cff36da2-5fe7-1ce8-23a3-879a41c3e0c8',
-        code: 'hz4MuwBROA8',
-        description: 'Construction material manufacturer',
-        businessArea: 'Works',
-        parentId: null,
-      },
-      {
-        id: '4efe9c57-0a67-964c-9255-112f3b1a64c3',
-        code: 'BgBWpq2RYCS',
-        description: 'Drilling',
-        businessArea: 'Works',
-        parentId: null,
-      },
-      {
-        id: '493c57f0-9356-a2a2-307d-013968517df9',
-        code: 'z0MbgrUmWuI',
-        description: 'Partition and Ceilings',
-        businessArea: 'Works',
-        parentId: null,
-      },
-      {
-        id: 'abed4f3c-a0d4-ed2b-d8ec-7148b7c8d7f1',
-        code: 'W7khtXuVV25L',
-        description: 'Architectural Consultants',
-        businessArea: 'Works',
-        parentId: null,
-      },
-      {
-        id: 'abed4f3c-a0d4-ed2b-d8ec-7148b7c8d7f2',
-        code: 'W2khtXuVV25Z',
-        description: 'Land Surveying Consultants',
-        businessArea: 'Works',
-        parentId: null,
-      },
-      {
-        id: 'abed4f3c-a0d4-ed2b-d8ec-7148b7c8d7f3',
-        code: 'W7khtXuVV25M',
-        description: 'Project Management and Specialist Areas ',
-        businessArea: 'Works',
-        parentId: null,
-      },
-
-      {
-        id: 'abed4f3c-a0d4-ed2b-d8ec-7148b7c8d7f4',
-        code: 'W7khtXQuVV25',
-        description: 'Surveying Consultants',
-        businessArea: 'Works',
-        parentId: null,
-      },
-      {
-        id: 'abed4f3c-a0d4-ed2b-d8ec-7148b7c8d7f5',
-        code: 'W7khtXEuVV25',
-        description: 'Environmental Consultants',
-        businessArea: 'Works',
-        parentId: null,
-      },
-      {
-        id: 'abed7f3c-a0d4-ed2b-d8ec-7148b7c8d7f6',
-        code: 'W7khtXuVVO25',
-        description: 'Engineering Consultants',
-        businessArea: 'Works',
         parentId: null,
       },
     ];

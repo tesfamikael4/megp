@@ -43,7 +43,7 @@ import { CreateAreasOfBusinessInterest } from '../dto/areas-of-business-interest
 @ApiResponse({ status: 500, description: 'Internal error' })
 @ApiExtraModels(DataResponseFormat)
 export class VendorRegistrationsController {
-  constructor(private readonly regService: VendorRegistrationsService) { }
+  constructor(private readonly regService: VendorRegistrationsService) {}
   @Get('get-isr-vendors')
   async getVendors() {
     return await this.regService.getIsrVendors();
@@ -91,19 +91,16 @@ export class VendorRegistrationsController {
     if (!result) throw new BadRequestException(`vendor registration failed`);
     return result;
   }
-  /*
-  submit application of vendor 
-  */
-  @UseGuards(JwtGuard)
+
   @Post('submit-vendor-information')
-  async submitNewRegistratinRequest(
+  async submitVendorInformations(
     @Body() data: InsertAllDataDto,
     @CurrentUser() userInfo: any,
   ) {
     data.data.userId = userInfo.id;
     const result = await this.regService.submitVendorInformations(
       data.data,
-      userInfo
+      userInfo,
     );
     if (!result) throw new BadRequestException(`vendor_submission_failed`);
     return result;

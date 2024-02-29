@@ -446,13 +446,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           let ncicData = null;
           let fppaData = null;
           const length = data.areasOfBusinessInterest.length;
-          //to get al/ the registration fee for each service
-          let priceRangeIds = []
-          if (data?.areasOfBusinessInterest.length > 0) {
-            priceRangeIds = data.areasOfBusinessInterest.map((item: any) => item.priceRange);
-
-          }
-
           for (let index = 0; index < length; index++) {
             if (data.basic.origin == 'MW' || data.basic.origin == 'Malawi') {
               if (
@@ -493,7 +486,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             vendor.id = result.id;
             vendor.name = result.basic['name'];
             await this.invoiceService.generateInvoice(
-              priceRangeIds,
+              data.areasOfBusinessInterest[index].priceRange,
               vendor,
               userInfo,
             );
