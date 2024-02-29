@@ -15,11 +15,7 @@ import { OrganizationType } from './organization-type.entity';
 import { UnitType } from './unit-type.entity';
 import { User } from './user.entity';
 import { Role } from './role.entity';
-
-export enum OrganizationStatus {
-  INACTIVE = 'INACTIVE',
-  ACTIVE = 'ACTIVE',
-}
+import { OrganizationStatus } from 'src/shared/enums';
 
 @Entity({ name: 'organizations' })
 export class Organization extends Audit {

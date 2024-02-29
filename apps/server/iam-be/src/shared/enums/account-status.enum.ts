@@ -5,3 +5,22 @@ export enum AccountStatusEnum {
   DISABLED = 'DISABLED',
   INVITED = 'INVITED',
 }
+
+export enum UserStatus {
+  DRAFT = 'DRAFT',
+  PENDING = 'PENDING',
+  INACTIVE = 'INACTIVE',
+  ACTIVE = 'ACTIVE',
+}
+
+export enum OrganizationStatus {
+  DRAFT = 'DRAFT',
+  INACTIVE = 'INACTIVE',
+  ACTIVE = 'ACTIVE',
+}
+
+export enum UnitStatus {
+  DRAFT = 'DRAFT',
+  INACTIVE = 'INACTIVE',
+  ACTIVE = 'ACTIVE',
+}

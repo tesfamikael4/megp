@@ -10,11 +10,8 @@ import {
 import { UserUnit } from './user-unit.entity';
 import { Organization } from './organization.entity';
 import { UnitType } from './unit-type.entity';
+import { UnitStatus } from 'src/shared/enums';
 
-enum UnitStatus {
-  INACTIVE = 'Inactive',
-  ACTIVE = 'Active',
-}
 @Entity({ name: 'units' })
 export class Unit extends Audit {
   @PrimaryGeneratedColumn('uuid')

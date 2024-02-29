@@ -25,6 +25,8 @@ import {
   AccountStatusEnum,
   AccountVerificationStatusEnum,
   AccountVerificationTypeEnum,
+  OrganizationStatus,
+  UserStatus,
 } from '@enums';
 import { AuthHelper } from '@auth';
 import {
@@ -42,7 +44,6 @@ import {
 import { EmailService } from 'src/shared/email/email.service';
 import { REQUEST } from '@nestjs/core';
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
-import { OrganizationStatus } from 'src/entities/organization.entity';
 
 @Injectable()
 export class AccountsService {
@@ -56,7 +57,7 @@ export class AccountsService {
     private readonly helper: AuthHelper,
     private readonly emailService: EmailService,
     @Inject(REQUEST) private readonly request: Request,
-  ) { }
+  ) {}
 
   public async createAccount(
     createAccountDto: CreateAccountDto,
@@ -360,14 +361,15 @@ export class AccountsService {
     const newAccount = await this.repository
       .createQueryBuilder('accounts')
       .leftJoinAndSelect('accounts.users', 'users', `users.status =:status`, {
-        status: AccountStatusEnum.ACTIVE,
+        status: UserStatus.ACTIVE,
       })
       .leftJoinAndSelect(
         'users.organization',
         'organization',
-        `organization.status =:status`, {
-        status: OrganizationStatus.ACTIVE
-      }
+        `organization.status =:orgStatus`,
+        {
+          orgStatus: OrganizationStatus.ACTIVE,
+        },
       )
       .leftJoin(
         'organization.organizationMandates',
