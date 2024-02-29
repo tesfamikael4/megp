@@ -59,8 +59,8 @@ export default function ResetPassword() {
   const onCreate = async (data) => {
     try {
       await create({
-        accountId: user?.organizations?.[0]?.userId,
-        ...data,
+        accountId: user?.id,
+        password: data.newPassword,
       }).unwrap();
 
       notify('Success', 'Password reset successfully');

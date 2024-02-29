@@ -18,7 +18,7 @@ import { EntityButton } from '@megp/entity';
 import countryCodes from './country-codes.json';
 import { useEffect, useState } from 'react';
 import { useReadQuery } from '../_api/adress.api';
-import { notify } from '@megp/core-fe';
+import { logger, notify } from '@megp/core-fe';
 import { useAuth } from '@megp/auth';
 
 type ModeType = 'new' | 'detail';
@@ -37,11 +37,6 @@ const defaultValues = {
   },
   postalCode: '',
   email: '',
-
-  mobileNumber: {
-    countryCode: '',
-    number: '',
-  },
 };
 /* Component definition */
 const OrganizationAdressForm = () => {
@@ -90,26 +85,6 @@ const OrganizationAdressForm = () => {
         .optional()
         .nullable()
         .or(z.literal('')),
-
-      mobileNumber: z.object({
-        countryCode: z.string().default('MW'),
-        number: z
-          .string()
-          .default('')
-          .refine(
-            (value) => {
-              if (value === '') {
-                return true;
-              }
-
-              return /^\d{9,12}$/.test(value);
-            },
-            {
-              message: 'Please enter a valid mobile number',
-            },
-          )
-          .optional(),
-      }),
     });
 
   const [mode, setMode] = useState<ModeType>('new');
@@ -217,6 +192,10 @@ const OrganizationAdressForm = () => {
     }
   };
 
+  const onErr = (err) => {
+    logger.log(err);
+  };
+
   const onReset = async () => {
     reset({ ...defaultValues });
   };
@@ -232,7 +211,7 @@ const OrganizationAdressForm = () => {
         postalCode: selected?.address?.postalCode,
         email: selected?.address?.email,
         houseNumber: selected?.address?.houseNumber,
-        mobileNumber: selected?.address?.mobileNumber,
+
         district: selected?.address?.district,
       });
     }
@@ -257,6 +236,7 @@ const OrganizationAdressForm = () => {
               label={'Region'}
               value={value}
               onChange={onChange}
+              error={errors?.region ? errors.region?.message : ''}
               data={
                 regionOption?.map((item) => ({
                   label: item,
@@ -277,6 +257,7 @@ const OrganizationAdressForm = () => {
               value={value}
               onChange={onChange}
               data={selectedDistrict}
+              error={errors?.district ? errors.district?.message : ''}
               maxDropdownHeight={400}
             />
           )}
@@ -350,7 +331,7 @@ const OrganizationAdressForm = () => {
 
       <EntityButton
         mode={mode}
-        onCreate={handleSubmit(onCreate)}
+        onCreate={handleSubmit(onCreate, onErr)}
         onUpdate={handleSubmit(onUpdate)}
         onReset={onReset}
         isSaving={isSaving}

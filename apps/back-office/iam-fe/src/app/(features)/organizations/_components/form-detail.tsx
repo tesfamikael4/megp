@@ -14,17 +14,16 @@ import {
   useDeleteMutation,
   useUpdateMutation,
   useCreateMutation,
-} from '../_api/organization.api';
-import {
   useActivateOrganizationMutation,
-  useLazyListByIdQuery,
-} from '../_api/custom.api';
+} from '@/store/api/organization/organizatin-custom';
+
+import { useLazyListByIdQuery } from '../_api/custom.api';
 import { useListQuery as useListTypeQuery } from '../../organization-type/_api/organization-type.api';
 import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import { Organization } from '@/models/organization';
-import { notify } from '@megp/core-fe';
+import { logger, notify } from '@megp/core-fe';
 import { useLazySecondRelationQuery } from '../_api/organization-mandate.api';
 
 interface FormDetailProps {
@@ -69,6 +68,8 @@ export function FormDetail({ mode }: FormDetailProps) {
 
   const [create, { isLoading: isSaving }] = useCreateMutation();
   const [update, { isLoading: isUpdating }] = useUpdateMutation();
+  const [updateActivate, { isLoading: isActivatingUpdate }] =
+    useUpdateMutation();
   const [remove, { isLoading: isDeleting }] = useDeleteMutation();
   const [activation, { isLoading: isActivating }] =
     useActivateOrganizationMutation();
@@ -84,9 +85,10 @@ export function FormDetail({ mode }: FormDetailProps) {
   const onCreate = async (data) => {
     try {
       const result = await create(data).unwrap();
-      if ('data' in result) {
-        router.push(`/organizations/${result.data.id}`);
-      }
+      logger.log(result);
+
+      router.push(`/organizations/${result.id}`);
+
       notify('Success', 'Organization created successfully');
     } catch (err) {
       notify(
@@ -115,21 +117,21 @@ export function FormDetail({ mode }: FormDetailProps) {
   };
   const onActivate = async () => {
     try {
-      selected?.status === 'INACTIVE'
+      selected?.status === 'Inactive' || selected?.status === 'Draft'
         ? await activation(id?.toString())
-        : await update({ status: 'INACTIVE', id: id?.toString() });
+        : await updateActivate({ status: 'Inactive', id: id?.toString() });
 
       notify(
         'Success',
         `Organization ${
-          selected?.status === 'ACTIVE' ? 'Deactivated' : 'Activated'
+          selected?.status === 'Active' ? 'Deactivated' : 'Activated'
         } successfully`,
       );
     } catch {
       notify(
         'Error',
         `Error in ${
-          selected?.status === 'ACTIVE' ? 'Deactivating' : 'Activating'
+          selected?.status === 'Active' ? 'Deactivating' : 'Activating'
         }  organization`,
       );
     }
@@ -226,7 +228,7 @@ export function FormDetail({ mode }: FormDetailProps) {
         isSaving={isSaving}
         isUpdating={isUpdating}
         isDeleting={isDeleting}
-        isActivating={isActivating}
+        isActivating={isActivating || isActivatingUpdate}
         entity="organization"
       />
     </Stack>

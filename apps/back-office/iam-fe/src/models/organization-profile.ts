@@ -8,10 +8,7 @@ export interface OrganizationProfile {
   city?: string;
   street?: string;
   houseNumber?: string;
-  mobileNumber?: {
-    countyCode?: string;
-    number?: string;
-  };
+
   telephone?: {
     countyCode?: string;
     number?: string;
