@@ -100,7 +100,7 @@ export default function GettingStarted() {
         ]}
       />
       <Flex justify={'flex-end'} w={'100%'}>
-        <Button onClick={() => router.push('/vendor/registration/new/detail')}>
+        <Button onClick={() => router.push('/vendor/registration/new/basic')}>
           Continue
         </Button>
       </Flex>

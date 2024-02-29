@@ -9,7 +9,6 @@ import { usePrivilege } from '../_context/privilege-context';
 
 export default function Page() {
   const router = useRouter();
-  const { updateAccess, updateStatus } = usePrivilege();
 
   const requestInfo = useGetVendorQuery(
     {},
