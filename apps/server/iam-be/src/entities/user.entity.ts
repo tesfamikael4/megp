@@ -14,12 +14,21 @@ import { UserRole } from '@entities';
 import { UserUnit } from '@entities';
 import { UserGroup } from '@entities';
 
+enum UserStatus {
+  PENDING = 'Pending',
+  INACTIVE = 'Inactive',
+  ACTIVE = 'Active',
+}
 @Entity({ name: 'users' })
 export class User extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ default: 'DRAFT' })
+  @Column({
+    type: 'enum',
+    enum: UserStatus,
+    default: UserStatus.INACTIVE,
+  })
   status: string;
 
   @Column()

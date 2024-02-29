@@ -16,6 +16,11 @@ import { UnitType } from './unit-type.entity';
 import { User } from './user.entity';
 import { Role } from './role.entity';
 
+enum OrganizationStatus {
+  INACTIVE = 'Inactive',
+  ACTIVE = 'Active',
+}
+
 @Entity({ name: 'organizations' })
 export class Organization extends Audit {
   @PrimaryGeneratedColumn('uuid')
@@ -36,7 +41,11 @@ export class Organization extends Audit {
   @Column({ nullable: true })
   type: string;
 
-  @Column({ default: 'DRAFT' })
+  @Column({
+    type: 'enum',
+    enum: OrganizationStatus,
+    default: OrganizationStatus.INACTIVE,
+  })
   status: string;
 
   @Column({ nullable: true, type: 'jsonb' })

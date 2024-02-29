@@ -89,10 +89,10 @@ export class OrganizationService extends EntityCrudService<Organization> {
     }
 
     await this.repositoryOrganization.update(id, {
-      status: 'ACTIVE',
+      status: 'Active',
     });
 
-    organization.status = 'ACTIVE';
+    organization.status = 'Active';
 
     return organization;
   }
@@ -144,7 +144,7 @@ export class OrganizationService extends EntityCrudService<Organization> {
       shortName: payload.name,
       code: this.generateOrganizationCode(),
       type: 'PORTAL',
-      status: 'ACTIVE',
+      status: 'Active',
     };
     const organization = this.repositoryOrganization.create(organizationDto);
 
@@ -157,7 +157,7 @@ export class OrganizationService extends EntityCrudService<Organization> {
 
     const user = new User();
     user.accountId = account.id;
-    user.status = 'ACTIVE';
+    user.status = 'Active';
 
     organization.users = [user];
 

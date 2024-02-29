@@ -389,14 +389,14 @@ export const organization = {
   name: 'Default Organization',
   code: '123456',
   shortName: 'default',
-  status: 'ACTIVE',
+  status: 'Active',
 };
 export const unit = {
   id: 'bcf2e233-3572-45b3-b104-14023c76173a',
   name: 'Default Organization',
   code: '123456',
   shortName: 'default',
-  status: 'ACTIVE',
+  status: 'Active',
   organizationId: 'c7865a67-d289-4671-b264-bc899ef870cb',
 };
 export const user = {
@@ -405,7 +405,7 @@ export const user = {
   firstName: 'Super',
   lastName: 'Admin',
   email: 'super_admin@megp.com',
-  status: 'ACTIVE',
+  status: 'Active',
   accountId: '97766b0e-9d8d-46fc-a3de-65c394e73d86',
   organizationId: 'c7865a67-d289-4671-b264-bc899ef870cb',
   userRoleSystems: [{ roleSystemId: 1 }],
