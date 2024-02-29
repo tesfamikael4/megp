@@ -83,6 +83,9 @@ export class SpdTemplateService extends ExtraCrudService<SpdTemplate> {
       if (!spd.documentDocx) {
         throw new Error('SPD Document not found');
       }
+
+      // const presignedDownload = await this.minIOService.generatePresignedDownloadUrl(spd.documentPdf);
+
       return await this.minIOService.download(spd.documentDocx, response);
     } catch (error) {
       throw error;
@@ -102,6 +105,9 @@ export class SpdTemplateService extends ExtraCrudService<SpdTemplate> {
       if (!spd.documentPdf) {
         throw new Error('SPD Document not found');
       }
+
+      // const presignedDownload = await this.minIOService.generatePresignedDownloadUrl(spd.documentPdf);
+
       return await this.minIOService.download(spd.documentPdf, response);
     } catch (error) {
       throw error;

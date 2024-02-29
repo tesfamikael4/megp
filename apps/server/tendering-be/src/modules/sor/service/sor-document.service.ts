@@ -27,4 +27,24 @@ export class SorDocumentService extends ExtraCrudService<SorDocument> {
     await this.sorDocumentRepository.insert(item);
     return { ...item, presignedUrl: file.presignedUrl };
   }
+
+  async downloadDocument(id: string) {
+    try {
+      const document = await this.sorDocumentRepository.findOneBy({ id });
+      if (!document) {
+        throw new Error('Document not found');
+      }
+      if (!document.attachment) {
+        throw new Error('Document attachment not found');
+      }
+
+      const presignedDownload =
+        await this.minIOService.generatePresignedDownloadUrl(
+          document.attachment,
+        );
+      return { presignedDownload };
+    } catch (error) {
+      throw error;
+    }
+  }
 }

@@ -1,4 +1,4 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { ExtraCrudController } from 'src/shared/controller';
@@ -25,5 +25,10 @@ export class SorDocumentController extends ExtraCrudController<SorDocument>(
 ) {
   constructor(private readonly sorDocumentService: SorDocumentService) {
     super(sorDocumentService);
+  }
+
+  @Get('download/:id')
+  async downloadDocument(@Param('id') id: string) {
+    return this.sorDocumentService.downloadDocument(id);
   }
 }
