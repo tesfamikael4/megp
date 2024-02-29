@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class StatusCases1709209094577 implements MigrationInterface {
-  name = 'StatusCases1709209094577';
+export class EnumUpdated1709237167293 implements MigrationInterface {
+  name = 'EnumUpdated1709237167293';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
@@ -18,24 +18,24 @@ export class StatusCases1709209094577 implements MigrationInterface {
     );
     await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "status"`);
     await queryRunner.query(
-      `CREATE TYPE "public"."users_status_enum" AS ENUM('Pending', 'Inactive', 'Active')`,
+      `CREATE TYPE "public"."users_status_enum" AS ENUM('DRAFT', 'PENDING', 'INACTIVE', 'ACTIVE')`,
     );
     await queryRunner.query(
-      `ALTER TABLE "users" ADD "status" "public"."users_status_enum" NOT NULL DEFAULT 'Inactive'`,
+      `ALTER TABLE "users" ADD "status" "public"."users_status_enum" NOT NULL DEFAULT 'INACTIVE'`,
     );
     await queryRunner.query(`ALTER TABLE "organizations" DROP COLUMN "status"`);
     await queryRunner.query(
-      `CREATE TYPE "public"."organizations_status_enum" AS ENUM('Inactive', 'Active')`,
+      `CREATE TYPE "public"."organizations_status_enum" AS ENUM('DRAFT', 'INACTIVE', 'ACTIVE')`,
     );
     await queryRunner.query(
-      `ALTER TABLE "organizations" ADD "status" "public"."organizations_status_enum" NOT NULL DEFAULT 'Inactive'`,
+      `ALTER TABLE "organizations" ADD "status" "public"."organizations_status_enum" NOT NULL DEFAULT 'INACTIVE'`,
     );
     await queryRunner.query(`ALTER TABLE "units" DROP COLUMN "status"`);
     await queryRunner.query(
-      `CREATE TYPE "public"."units_status_enum" AS ENUM('Inactive', 'Active')`,
+      `CREATE TYPE "public"."units_status_enum" AS ENUM('DRAFT', 'INACTIVE', 'ACTIVE')`,
     );
     await queryRunner.query(
-      `ALTER TABLE "units" ADD "status" "public"."units_status_enum" NOT NULL DEFAULT 'Inactive'`,
+      `ALTER TABLE "units" ADD "status" "public"."units_status_enum" NOT NULL DEFAULT 'INACTIVE'`,
     );
     await queryRunner.query(
       `ALTER TABLE "user_roles" ADD CONSTRAINT "FK_86033897c009fcca8b6505d6be2" FOREIGN KEY ("roleId") REFERENCES "roles"("id") ON DELETE CASCADE ON UPDATE CASCADE`,
