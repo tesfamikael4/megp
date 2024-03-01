@@ -72,12 +72,9 @@ export class PreBudgetActivityDocumentController extends ExtraCrudController<Pre
   }
 
   @Get('download/:id')
-  async download(@Param('id') id: string, @Res() res) {
-    const fileInfo = await this.preBudgetActivityDocumentService.findOne(id);
+  async download(@Param('id') id: string) {
     const presignedUrl =
-      await this.preBudgetActivityDocumentService.generatePresignedGetUrl(
-        fileInfo,
-      );
-    return res.status(HttpStatus.OK).json({ presignedUrl });
+      await this.preBudgetActivityDocumentService.generatePresignedGetUrl(id);
+    return presignedUrl;
   }
 }

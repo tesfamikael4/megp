@@ -249,13 +249,22 @@ export class PostBudgetPlanService extends ExtraCrudService<PostBudgetPlan> {
 
     const activities = await this.postBudgetActivityRepository.find({
       where: { postBudgetPlanId: data.id },
-      relations: ['postBudgetPlanTimelines'],
+      relations: {
+        postBudgetPlanTimelines: true,
+        postProcurementMechanisms: true,
+      },
     });
 
     for (const element of activities) {
       if (element.postBudgetPlanTimelines.length == 0) {
         throw new HttpException(
           `Timeline not found for ${element.name} ${element.procurementReference}`,
+          430,
+        );
+      }
+      if (element.postProcurementMechanisms.length == 0) {
+        throw new HttpException(
+          `Procurement Method not found for ${element.name} ${element.procurementReference}`,
           430,
         );
       }
