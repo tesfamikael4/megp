@@ -613,7 +613,7 @@ export class AccountsService {
     });
 
     await entityManager.getRepository(User).update(userId, {
-      status: AccountStatusEnum.INVITED,
+      status: UserStatus.INVITED,
     });
 
     return verification;
