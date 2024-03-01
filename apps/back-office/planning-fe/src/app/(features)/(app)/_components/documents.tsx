@@ -192,7 +192,7 @@ export const Documents = ({
           name: name,
           preBudgetPlanActivityId: id,
         }).unwrap();
-        await uploadFile(file, url.presignedUrl);
+        await uploadFile(file, url.presignedUrl.presignedUrl);
       } catch (error) {
         setIsLoading(false);
         notify('Error', 'Something went wrong while uploading document');

@@ -82,6 +82,7 @@ export function ExpandableTable({
         noRecordsIcon={<IconInboxOff size={40} />}
         noRecordsText="No Data Found"
         onPageChange={setPage}
+        onRowClick={config.onClick ?? undefined}
         onSelectedRecordsChange={(records) => {
           if (config.disableMultiSelect) {
             const temp = records.filter(
