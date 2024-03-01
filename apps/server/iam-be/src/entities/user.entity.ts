@@ -6,7 +6,6 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-
 import { Audit } from 'src/shared/entities/audit.entity';
 
 import { Account, Organization, UserRoleSystem } from '@entities';
@@ -23,7 +22,7 @@ export class User extends Audit {
   @Column({
     type: 'enum',
     enum: UserStatus,
-    default: UserStatus.INACTIVE,
+    default: UserStatus.DRAFT,
   })
   status: string;
 

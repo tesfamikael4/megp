@@ -9,6 +9,7 @@ export enum AccountStatusEnum {
 export enum UserStatus {
   DRAFT = 'DRAFT',
   PENDING = 'PENDING',
+  INVITED = 'INVITED',
   INACTIVE = 'INACTIVE',
   ACTIVE = 'ACTIVE',
 }
