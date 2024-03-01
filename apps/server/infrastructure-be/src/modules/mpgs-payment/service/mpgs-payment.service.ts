@@ -48,7 +48,11 @@ export class MpgsPaymentService {
 
       const data = await result.data;
 
-      return data;
+      return {
+        ...data,
+        paymentLink:
+          process.env.MPGS_PAYMENT_CHECKOUT_BASE_API + data.session.id,
+      };
     } catch (error) {
       throw error;
     }
