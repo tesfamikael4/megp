@@ -117,21 +117,21 @@ export function FormDetail({ mode }: FormDetailProps) {
   };
   const onActivate = async () => {
     try {
-      selected?.status === 'Inactive' || selected?.status === 'Draft'
+      selected?.status === 'INACTIVE' || selected?.status === 'Draft'
         ? await activation(id?.toString())
-        : await updateActivate({ status: 'Inactive', id: id?.toString() });
+        : await updateActivate({ status: 'INACTIVE', id: id?.toString() });
 
       notify(
         'Success',
         `Organization ${
-          selected?.status === 'Active' ? 'Deactivated' : 'Activated'
+          selected?.status === 'ACTIVE' ? 'Deactivated' : 'Activated'
         } successfully`,
       );
     } catch {
       notify(
         'Error',
         `Error in ${
-          selected?.status === 'Active' ? 'Deactivating' : 'Activating'
+          selected?.status === 'ACTIVE' ? 'Deactivating' : 'Activating'
         }  organization`,
       );
     }

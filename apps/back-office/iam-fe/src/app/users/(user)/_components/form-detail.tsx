@@ -102,21 +102,21 @@ export function FormDetail({ mode }: FormDetailProps) {
   };
   const onActivate = async () => {
     const dataSent = {
-      status: selected?.status === 'Active' ? 'Inactive' : 'Active',
+      status: selected?.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE',
     };
     try {
       await activation({ ...dataSent, id: id?.toString() }).unwrap();
       notify(
         'Success',
         `User ${
-          selected?.status === 'Active' ? 'Deactivated' : 'Activated'
+          selected?.status === 'ACTIVE' ? 'Deactivated' : 'Activated'
         } successfully`,
       );
     } catch {
       notify(
         'Error',
         `error in ${
-          selected?.status === 'Active' ? 'Deactivating' : 'Activating'
+          selected?.status === 'ACTIVE' ? 'Deactivating' : 'Activating'
         }  User`,
       );
     }
