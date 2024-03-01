@@ -282,6 +282,48 @@ export const permissions = [
     key: 'iam:reportViewer',
     applicationId: 2,
   },
+  {
+    id: 39,
+    name: 'Pic Application',
+    description: 'Pic Application',
+    key: 'vendor:picApplication',
+    applicationId: 3,
+  },
+  {
+    id: 40,
+    name: 'review Application',
+    description: 'review Application',
+    key: 'vendor:reviewApplication',
+    applicationId: 3,
+  },
+  {
+    id: 41,
+    name: 'cancel Application',
+    description: 'cancel Application',
+    key: 'vendor:cancelApplication',
+    applicationId: 3,
+  },
+  {
+    id: 42,
+    name: 'approve Application',
+    description: 'approve Application',
+    key: 'vendor:approveApplication',
+    applicationId: 3,
+  },
+  {
+    id: 43,
+    name: 'send back application for adjustment',
+    description: 'send back application for adjustment',
+    key: 'vendor:adjustApplication',
+    applicationId: 3,
+  },
+  {
+    id: 44,
+    name: 'reject Application',
+    description: 'reject Application',
+    key: 'vendor:rejectApplication',
+    applicationId: 3,
+  },
 ];
 export const roleSystems = [
   {
@@ -333,11 +375,42 @@ export const roleSystems = [
     description: 'Budget Officer',
     key: 'BUDGET_OFFICER',
   },
+  { id: 10, name: 'Manager', description: 'Manager', key: 'MANAGER' },
   {
-    id: 10,
-    name: 'Manager',
-    description: 'Manager',
-    key: 'MANAGER',
+    id: 11,
+    name: 'Regulatory Officer',
+    description: 'Regulatory Officer',
+    key: 'REGULATORY_OFFICER',
+  },
+  {
+    id: 12,
+    name: 'Senior Regulatory Officer',
+    description: 'Senior Regulatory Officer',
+    key: 'SENIOR_REGULATORY_OFFICER',
+  },
+  {
+    id: 13,
+    name: 'Chief Regulatory Officer',
+    description: 'Chief Regulatory Officer',
+    key: 'CHIEF_REGULATORY_OFFICER',
+  },
+  {
+    id: 14,
+    name: 'Regulatory and Review Manager',
+    description: 'Regulatory and Review Manager',
+    key: 'REGULATORY_AND_REVIEW_MANAGER',
+  },
+  {
+    id: 15,
+    name: 'Director of Regulatory Review and Monitoring',
+    description: 'Director of Regulatory Review and Monitoring',
+    key: 'DIRECTOR_OF_REGULATORY_REVIEW_AND_MONITORING',
+  },
+  {
+    id: 16,
+    name: 'Director General',
+    description: 'Director General',
+    key: 'DIRECTOR_GENERAL',
   },
 ];
 export const roleSystemPermissions = [
@@ -375,6 +448,12 @@ export const roleSystemPermissions = [
   { roleSystemId: 8, permissionId: 35 },
   { roleSystemId: 9, permissionId: 36 },
   { roleSystemId: 10, permissionId: 38 },
+  { roleSystemId: 11, permissionId: 39 },
+  { roleSystemId: 11, permissionId: 40 },
+  { roleSystemId: 11, permissionId: 41 },
+  { roleSystemId: 11, permissionId: 42 },
+  { roleSystemId: 11, permissionId: 43 },
+  { roleSystemId: 16, permissionId: 44 },
 ];
 export const account = {
   id: '97766b0e-9d8d-46fc-a3de-65c394e73d86',
