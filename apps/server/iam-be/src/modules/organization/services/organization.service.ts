@@ -20,6 +20,7 @@ import { REQUEST } from '@nestjs/core';
 import { ENTITY_MANAGER_KEY } from '@interceptors';
 import { defaultOrganizationRoles } from 'src/modules/seeders/seed-data';
 import { AccountsService } from 'src/modules/account/services/account.service';
+import { OrganizationStatus, UserStatus } from 'src/shared/enums';
 
 @Injectable()
 export class OrganizationService extends EntityCrudService<Organization> {
@@ -89,10 +90,10 @@ export class OrganizationService extends EntityCrudService<Organization> {
     }
 
     await this.repositoryOrganization.update(id, {
-      status: 'Active',
+      status: OrganizationStatus.ACTIVE,
     });
 
-    organization.status = 'Active';
+    organization.status = OrganizationStatus.ACTIVE;
 
     return organization;
   }
@@ -144,7 +145,7 @@ export class OrganizationService extends EntityCrudService<Organization> {
       shortName: payload.name,
       code: this.generateOrganizationCode(),
       type: 'PORTAL',
-      status: 'Active',
+      status: OrganizationStatus.ACTIVE,
     };
     const organization = this.repositoryOrganization.create(organizationDto);
 
@@ -157,7 +158,7 @@ export class OrganizationService extends EntityCrudService<Organization> {
 
     const user = new User();
     user.accountId = account.id;
-    user.status = 'Active';
+    user.status = UserStatus.ACTIVE;
 
     organization.users = [user];
 
