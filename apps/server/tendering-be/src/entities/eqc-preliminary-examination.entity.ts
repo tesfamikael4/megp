@@ -45,6 +45,6 @@ export class EqcPreliminaryExamination extends Audit {
   formLink: string;
 
   // relation?
-  @Column()
+  @Column({ type: 'uuid', nullable: true })
   spdEqcPreliminaryExaminationId: string;
 }

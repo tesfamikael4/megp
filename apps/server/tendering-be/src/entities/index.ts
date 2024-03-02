@@ -1,5 +1,7 @@
 export * from './lot.entity';
+export * from './tender-item.entity';
 export * from './tender.entity';
+export * from './tender-spd.entity';
 export * from './bds-submission.entity';
 export * from './procurement-mechanism.entity';
 export * from './procurement-technical-team.entity';
@@ -28,3 +30,4 @@ export * from './spd-professional-setting.entity';
 export * from './spd-qualification.entity';
 export * from './spd-technical-scoring.entity';
 export * from './spd-template.entity';
+export * from './bid-security.entity';

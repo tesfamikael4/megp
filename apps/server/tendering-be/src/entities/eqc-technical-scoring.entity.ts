@@ -50,11 +50,11 @@ export class EqcTechnicalScoring extends Audit {
   formLink: string;
 
   // Relation?
-  @Column({ nullable: true })
+  @Column({ type: 'uuid', nullable: true })
   spdTechnicalScoringId: string;
 
   // Relation?
-  @Column({ nullable: true })
+  @Column({ type: 'uuid', nullable: true })
   spdTechnicalScoringParentId: string;
 
   @Column()

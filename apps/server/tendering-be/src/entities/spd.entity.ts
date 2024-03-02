@@ -12,9 +12,9 @@ import { SpdPreliminaryEvaluation } from './spd-preliminary-evaluation.entity';
 import { SpdProfessionalSetting } from './spd-professional-setting.entity';
 import { SpdQualification } from './spd-qualification.entity';
 import { SpdTemplate } from './spd-template.entity';
-import { BdsGeneral } from './bds-general.entity';
 import { SpdBidForm } from './spd-bid-form.entity';
 import { SpdContractForm } from './spd-contract-form.entity';
+import { TenderSpd } from './tender-spd.entity';
 
 @Entity({ name: 'spd' })
 export class Spd extends Audit {
@@ -107,6 +107,6 @@ export class Spd extends Audit {
   })
   spdContractForm: SpdContractForm[];
 
-  @OneToOne(() => BdsGeneral, (general) => general.spd)
-  bdsGeneral: BdsGeneral;
+  @OneToOne(() => TenderSpd, (tender) => tender.spd)
+  tender: TenderSpd;
 }

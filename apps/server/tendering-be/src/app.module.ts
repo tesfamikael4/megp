@@ -9,6 +9,7 @@ import { TenderModule } from './modules/tenders/tender.module';
 import { EqcModule } from './modules/eqc/eqc.module';
 import { BdsModule } from './modules/bds/bds.module';
 import { SorModule } from './modules/sor/sor.module';
+import { BidModule } from './modules/bid/bid.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TransactionInterceptor } from './shared/interceptors';
 
@@ -22,6 +23,7 @@ import { TransactionInterceptor } from './shared/interceptors';
     EqcModule,
     BdsModule,
     SorModule,
+    BidModule,
   ],
   providers: [
     EventEmitterModule,

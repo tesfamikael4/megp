@@ -14,6 +14,7 @@ import { BdsSubmission } from './bds-submission.entity';
 import { BdsEvaluation } from './bds-evaluation.entity';
 import { BdsPreparation } from './bds-preparation.entity';
 import { BdsAward } from './bds-award.entity';
+import { TenderSpd } from './tender-spd.entity';
 
 @Entity({ name: 'tenders' })
 export class Tender extends Audit {
@@ -61,6 +62,9 @@ export class Tender extends Audit {
 
   @OneToMany(() => Lot, (lot) => lot.tender)
   lots: Lot[];
+
+  @OneToOne(() => TenderSpd, (spd) => spd.tender)
+  spd: TenderSpd;
 
   @OneToOne(() => BdsGeneral, (general) => general.tender)
   bdsGeneral: BdsGeneral;
