@@ -12,4 +12,11 @@ export class BdsEvaluationService extends ExtraCrudService<BdsEvaluation> {
   ) {
     super(bdsEvaluationRepository);
   }
+
+  async findOne(
+    tenderId: string,
+    req?: any,
+  ): Promise<BdsEvaluation | undefined> {
+    return await this.bdsEvaluationRepository.findOneBy({ tenderId });
+  }
 }

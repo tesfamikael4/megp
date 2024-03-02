@@ -12,4 +12,8 @@ export class BdsGeneralService extends ExtraCrudService<BdsGeneral> {
   ) {
     super(bdsGeneralRepository);
   }
+
+  async findOne(tenderId: string, req?: any): Promise<BdsGeneral | undefined> {
+    return await this.bdsGeneralRepository.findOneBy({ tenderId });
+  }
 }

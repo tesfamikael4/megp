@@ -16,8 +16,8 @@ export class ProcurementMechanismController extends ExtraCrudController<Procurem
   options,
 ) {
   constructor(
-    private readonly ProcurementMechanismService: ProcurementMechanismService,
+    private readonly procurementMechanismService: ProcurementMechanismService,
   ) {
-    super(ProcurementMechanismService);
+    super(procurementMechanismService);
   }
 }
