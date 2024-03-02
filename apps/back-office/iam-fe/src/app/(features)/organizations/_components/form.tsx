@@ -46,7 +46,7 @@ export function FormDetail({ mode, handleCloseModal }: FormDetailProps) {
 
   const onCreate = async (data) => {
     try {
-      const result: any = await create({
+      await create({
         ...data,
         email: data.email === '' ? null : data.email,
         fullName: `${data.firstName} ${data.lastName}`,
@@ -54,12 +54,13 @@ export function FormDetail({ mode, handleCloseModal }: FormDetailProps) {
       }).unwrap();
 
       notify('Success', 'User created successfully');
-      result?.error?.data?.message === 'account_exists' &&
-        notify('Error', 'Account already exist');
+
       handleCloseModal ? handleCloseModal() : null;
     } catch (err) {
-      logger.log(err);
-      notify('Error', 'Error in creating user');
+      notify(
+        'Error',
+        `${err.data.message === 'Conflict' ? 'Email already exist' : 'Error in creating user'}`,
+      );
     }
   };
 
