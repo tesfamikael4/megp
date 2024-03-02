@@ -1,28 +1,35 @@
-import { TenderService } from './service/tender.service';
-import { TenderController } from './controller/tender.controller';
-
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {
   Lot,
+  Item,
   ProcurementMechanism,
   ProcurementTechnicalTeam,
+  TenderSpd,
   Tender,
 } from 'src/entities';
-import { Item } from 'src/entities/tender-item.entity';
-import { ItemController } from './controller/item.controller';
-import { LotController } from './controller/lot.controller';
-import { ProcurementMechanismController } from './controller/procurement-mechanism.controller';
-import { ProcurementTechnicalTeamController } from './controller/procurement-technincal-team.controller';
-import { ItemService } from './service/item.service';
-import { LotService } from './service/lot.service';
-import { ProcurementMechanismService } from './service/procurement-mechanism.service';
-import { ProcurementTechnicalTeamService } from './service/procurement-technical-team.service';
+import {
+  ItemController,
+  LotController,
+  ProcurementMechanismController,
+  ProcurementTechnicalTeamController,
+  TenderSpdController,
+  TenderController,
+} from './controller';
+import {
+  ItemService,
+  LotService,
+  ProcurementMechanismService,
+  ProcurementTechnicalTeamService,
+  TenderSpdService,
+  TenderService,
+} from './service';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       Tender,
+      TenderSpd,
       Lot,
       Item,
       ProcurementMechanism,
@@ -31,12 +38,14 @@ import { ProcurementTechnicalTeamService } from './service/procurement-technical
   ],
   controllers: [
     TenderController,
+    TenderSpdController,
     ItemController,
     LotController,
     ProcurementMechanismController,
     ProcurementTechnicalTeamController,
   ],
   providers: [
+    TenderSpdService,
     TenderService,
     ItemService,
     LotService,

@@ -26,6 +26,9 @@ export class EqcQualification extends Audit {
   @Column()
   requirement: string;
 
+  @Column()
+  category: string;
+
   @Column({ type: 'jsonb' })
   singleEntityCondition: any;
 
@@ -54,6 +57,6 @@ export class EqcQualification extends Audit {
   isRequired: boolean;
 
   // Relation?
-  @Column()
+  @Column({ type: 'uuid', nullable: true })
   spdQualificationId: string;
 }

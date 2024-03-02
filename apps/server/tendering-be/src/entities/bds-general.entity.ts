@@ -7,7 +7,6 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Tender } from './tender.entity';
-import { Spd } from './spd.entity';
 
 @Entity({ name: 'bds_generals' })
 export class BdsGeneral extends Audit {
@@ -30,8 +29,8 @@ export class BdsGeneral extends Audit {
   @Column()
   subContractAllowed: boolean;
 
-  @Column({ type: 'date' })
-  maximumPercentageContractingAllowed: Date;
+  @Column()
+  maximumPercentageContractingAllowed: boolean;
 
   @Column({ type: 'date' })
   clarificationDeadline: Date;
@@ -41,13 +40,6 @@ export class BdsGeneral extends Audit {
 
   @Column({ type: 'date' })
   preBidConferenceDate: Date;
-
-  @Column()
-  spdId: string;
-
-  @OneToOne(() => Spd, (spd) => spd.bdsGeneral)
-  @JoinColumn()
-  spd: Spd;
 
   @Column()
   siteVisitAllowed: boolean;
