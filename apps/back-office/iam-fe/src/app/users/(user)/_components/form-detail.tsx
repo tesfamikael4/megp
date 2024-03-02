@@ -61,22 +61,22 @@ export function FormDetail({ mode }: FormDetailProps) {
   } = useReadQuery(id?.toString());
 
   const onCreate = async (data) => {
-    logger.log(data.email);
     try {
       const result: any = await create({
         ...data,
         email: data.email === '' ? null : data.email,
         fullName: `${data.firstName} ${data.lastName}`,
         organizationId: organizationId,
-      });
-      if ('data' in result) {
-        router.push(`/users/${result.data.id}`);
-      }
+      }).unwrap();
+
+      router.push(`/users/${result?.id}`);
+
       notify('Success', 'User created successfully');
-      result?.error?.data?.message === 'account_exists' &&
-        notify('Error', 'Account already exist');
     } catch (err) {
-      notify('Error', 'Error in creating user');
+      notify(
+        'Error',
+        `${err.data.message === 'Conflict' ? 'Email already exists' : 'Error in creating user'}`,
+      );
     }
   };
   const onUpdate = async (data) => {

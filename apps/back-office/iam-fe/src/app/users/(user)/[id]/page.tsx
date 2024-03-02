@@ -10,6 +10,7 @@ import ResetPassword from '../_components/reset-password';
 import { useAuth } from '@megp/auth';
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
+import { useLazyGetUserInvitationLinkQuery } from '../../_api/custom.api';
 
 export default function UserDetailPage() {
   const { user } = useAuth();
@@ -26,6 +27,15 @@ export default function UserDetailPage() {
     setPermissions(permission);
   }, [user, id]);
 
+  const [trigger, { data: userInvited, isSuccess }] =
+    useLazyGetUserInvitationLinkQuery();
+
+  useEffect(() => {
+    if (id) {
+      trigger(id.toString());
+    }
+  }, [id, trigger]);
+
   return (
     <>
       <Stack>
@@ -36,11 +46,13 @@ export default function UserDetailPage() {
         <AddRole />
         <AddSystemRole />
 
-        {permissions?.length !== 0 && (
-          <Section title="Reset Password" defaultCollapsed>
-            <ResetPassword />
-          </Section>
-        )}
+        {permissions?.length !== 0 &&
+          isSuccess &&
+          userInvited?.status === 'USED' && (
+            <Section title="Reset Password" defaultCollapsed>
+              <ResetPassword />
+            </Section>
+          )}
 
         <EmployeeInvitation />
       </Stack>

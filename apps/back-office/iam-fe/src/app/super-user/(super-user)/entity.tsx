@@ -2,7 +2,7 @@
 import { CollectionQuery, EntityConfig, EntityLayout } from '@megp/entity';
 import { usePathname, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useLazyListSuperUserQuery } from '../_api/custom.api';
+import { useLazyListSuperUserQuery } from '@/store/api/super-user/custom.api';
 import { User } from '@/models/user/user';
 import { useAuth } from '@megp/auth';
 
@@ -36,7 +36,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
         {
           id: 'name',
           header: 'Name',
-          accessorKey: 'firstName',
+          accessorKey: 'account.firstName',
           cell: ({ row }) => (
             <div>{row.original.firstName + ' ' + row.original.lastName}</div>
           ),

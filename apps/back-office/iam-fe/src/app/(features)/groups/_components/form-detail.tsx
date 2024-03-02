@@ -61,6 +61,7 @@ export function FormDetail({ mode }: FormDetailProps) {
         ...data,
         organizationId: organizationId,
       });
+
       if ('data' in result) {
         router.push(`/groups/${result?.data?.id}`);
       }
@@ -88,7 +89,10 @@ export function FormDetail({ mode }: FormDetailProps) {
 
       router.push('/groups');
     } catch (err) {
-      notify('Error', 'Errors in deleting group.');
+      notify(
+        'Error',
+        `${err.data.message === 'cant_delete_user_group_with_users' ? 'This group contains assigned user and cannot be deleted. ' : 'Errors in deleting group.'}`,
+      );
     }
   };
   const onReset = async () => {

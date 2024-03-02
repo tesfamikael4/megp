@@ -1,6 +1,6 @@
 'use client';
 
-import { Stack, TextInput, PasswordInput } from '@mantine/core';
+import { Stack, PasswordInput } from '@mantine/core';
 import { EntityButton } from '@megp/entity';
 import { z, ZodType } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -8,6 +8,8 @@ import { useResetPasswordMutation } from '../../_api/custom.api';
 import { useForm } from 'react-hook-form';
 import { notify, logger } from '@megp/core-fe';
 import { useAuth } from '@megp/auth';
+import { useReadQuery } from '../../_api/user.api';
+import { useParams } from 'next/navigation';
 
 const defaultValues = {
   oldPassword: '',
@@ -52,14 +54,16 @@ export default function ResetPassword() {
     resolver: zodResolver(profileSchema),
   });
 
-  const { user } = useAuth();
+  const { id } = useParams();
 
   const [create, { isLoading: isSaving }] = useResetPasswordMutation();
+
+  const { data: selected } = useReadQuery(id?.toString());
 
   const onCreate = async (data) => {
     try {
       await create({
-        accountId: user?.id,
+        accountId: selected.accountId,
         password: data.newPassword,
       }).unwrap();
 

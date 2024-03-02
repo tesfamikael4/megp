@@ -3,16 +3,17 @@ import { EntityButton } from '@megp/entity';
 import { z, ZodType } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { useReadQuery, useUpdateMutation } from '../../../users/_api/user.api';
 import {
   useCreateSuperUserMutation,
   useUpdateSuperUserMutation,
   useDeleteSuperUserMutation,
-} from '../../_api/custom.api';
+  useReadSuperUserQuery,
+  useUpdateStatusMutation,
+} from '@/store/api/super-user/custom.api';
 import { useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { User } from '@/models/user/user';
-import { logger, notify } from '@megp/core-fe';
+import { notify } from '@megp/core-fe';
 import { useAuth } from '@megp/auth';
 
 interface FormDetailProps {
@@ -51,16 +52,15 @@ export function FormDetail({ mode }: FormDetailProps) {
 
   const [create, { isLoading: isSaving }] = useCreateSuperUserMutation();
   const [update, { isLoading: isUpdating }] = useUpdateSuperUserMutation();
-  const [activation, { isLoading: isActivating }] = useUpdateMutation();
+  const [activation, { isLoading: isActivating }] = useUpdateStatusMutation();
   const [remove, { isLoading: isDeleting }] = useDeleteSuperUserMutation();
   const {
     data: selected,
     isSuccess: selectedSuccess,
     isLoading,
-  } = useReadQuery(id?.toString());
+  } = useReadSuperUserQuery(id?.toString());
 
   const onCreate = async (data) => {
-    logger.log(data.email);
     try {
       const result: any = await create({
         ...data,
@@ -68,14 +68,15 @@ export function FormDetail({ mode }: FormDetailProps) {
         fullName: `${data.firstName} ${data.lastName}`,
         organizationId: organizationId,
       }).unwrap();
-      if ('data' in result) {
-        router.push(`/super-user/${result.data.id}`);
-      }
+
+      router.push(`/super-user/${result.id}`);
+
       notify('Success', 'User created successfully');
-      result?.error?.data?.message === 'account_exists' &&
-        notify('Error', 'Account already exist');
     } catch (err) {
-      notify('Error', 'Error in creating user');
+      notify(
+        'Error',
+        `${err.data?.message === 'Conflict' ? 'Email already exist' : 'Error in creating user'}`,
+      );
     }
   };
   const onUpdate = async (data) => {
@@ -83,7 +84,6 @@ export function FormDetail({ mode }: FormDetailProps) {
       await update({
         firstName: data.firstName,
         lastName: data.lastName,
-
         id: selected?.accountId,
       }).unwrap();
       notify('Success', 'User updated successfully');
@@ -102,10 +102,11 @@ export function FormDetail({ mode }: FormDetailProps) {
   };
   const onActivate = async () => {
     const dataSent = {
+      id: id?.toString(),
       status: selected?.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE',
     };
     try {
-      await activation({ ...dataSent, id: id?.toString() }).unwrap();
+      await activation(dataSent).unwrap();
       notify(
         'Success',
         `User ${
