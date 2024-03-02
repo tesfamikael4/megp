@@ -149,8 +149,11 @@ export function FormDetail({ mode }: FormDetailProps) {
       notify('Success', 'Unit deleted successfully');
 
       router.push('/units');
-    } catch {
-      notify('Error', 'Error in deleting unit');
+    } catch (err) {
+      notify(
+        'Error',
+        `${err?.data?.message === 'cant_delete_unit_with_users' ? 'Remove assigned user before deleting' : 'Error in deleting user'}`,
+      );
     }
   };
   const onActivate = async (data) => {

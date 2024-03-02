@@ -84,7 +84,10 @@ export function FormDetail({ mode }: FormDetailProps) {
       notify('Success', 'Unit Type deleted successfully');
       router.push('/unit-type');
     } catch (err) {
-      notify('Error', 'Errors in deleting unit Type.');
+      notify(
+        'Error',
+        `${err.data.message === 'cant_delete_unit_type_with_units' ? ' This unit type contains related data and cannot be deleted.' : 'Errors in deleting unit Type.'}`,
+      );
     }
   };
 

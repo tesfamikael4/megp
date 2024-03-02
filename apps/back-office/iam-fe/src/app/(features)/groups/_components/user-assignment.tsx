@@ -65,7 +65,7 @@ const AddUserModal = () => {
       {
         id: 'name',
         header: 'Name',
-        accessorKey: 'firstName',
+        accessorKey: 'account.firstName',
         cell: ({ row }) => (
           <p> {row.original.firstName + ' ' + row.original.lastName}</p>
         ),

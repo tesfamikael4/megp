@@ -1,16 +1,16 @@
-import { Group, LoadingOverlay, Stack, TextInput } from '@mantine/core';
+import { Group, Stack, TextInput } from '@mantine/core';
 import { z, ZodType } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { useReadQuery, useInviteOaMutation } from '../_api/custom.api';
-import { useEffect } from 'react';
+import { useInviteOaMutation } from '../_api/custom.api';
+
 import { useParams } from 'next/navigation';
 import { User } from '@/models/user/user';
 import { logger, notify } from '@megp/core-fe';
 import { EntityButton } from '@megp/entity';
 
 interface FormDetailProps {
-  mode: 'new' | 'detail';
+  mode: 'new';
   handleCloseModal?: () => void;
 }
 
@@ -44,12 +44,6 @@ export function FormDetail({ mode, handleCloseModal }: FormDetailProps) {
 
   const [create, { isLoading: isSaving }] = useInviteOaMutation();
 
-  const {
-    data: selected,
-    isSuccess: selectedSuccess,
-    isLoading,
-  } = useReadQuery(id?.toString());
-
   const onCreate = async (data) => {
     try {
       const result: any = await create({
@@ -73,19 +67,8 @@ export function FormDetail({ mode, handleCloseModal }: FormDetailProps) {
     reset({ ...defaultValues });
   };
 
-  useEffect(() => {
-    if (mode == 'detail' && selectedSuccess && selected !== undefined) {
-      reset({
-        firstName: selected?.firstName,
-        lastName: selected?.lastName,
-        email: selected?.email,
-      });
-    }
-  }, [mode, reset, selected, selectedSuccess]);
-
   return (
     <Stack pos="relative">
-      <LoadingOverlay visible={isLoading} />
       <TextInput
         label="First Name"
         withAsterisk

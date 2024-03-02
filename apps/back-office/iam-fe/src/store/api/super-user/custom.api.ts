@@ -23,6 +23,7 @@ const organizationProfileApi = invitationApi.injectEndpoints({
       },
       providesTags: ['invitation'],
     }),
+
     setPassword: builder.mutation<any, any>({
       query: (data) => {
         return {
@@ -87,6 +88,15 @@ const organizationProfileApi = invitationApi.injectEndpoints({
       },
       providesTags: ['users'],
     }),
+    readSuperUser: builder.query<any, string>({
+      query: (id) => {
+        return {
+          url: `/user/${id}`,
+          method: 'GET',
+        };
+      },
+      providesTags: ['users'],
+    }),
     deleteSuperUser: builder.mutation<any, string>({
       query: (id) => {
         return {
@@ -96,15 +106,28 @@ const organizationProfileApi = invitationApi.injectEndpoints({
       },
       invalidatesTags: ['users'],
     }),
+    updateStatus: builder.mutation<any, any>({
+      query: ({ id, ...data }) => {
+        return {
+          url: `/user/${id}`,
+          method: 'PUT',
+          body: data,
+        };
+      },
+      invalidatesTags: ['users'],
+    }),
   }),
+  overrideExisting: true,
 });
 
 export const {
   useInviteUserMutation,
+  useUpdateStatusMutation,
   useUpdateSuperUserMutation,
   useDeleteSuperUserMutation,
   useListSuperUserQuery,
   useLazyListSuperUserQuery,
+  useReadSuperUserQuery,
   useCreateSuperUserMutation,
   useLazyGetUserInvitationLinkQuery,
   useSetPasswordMutation,

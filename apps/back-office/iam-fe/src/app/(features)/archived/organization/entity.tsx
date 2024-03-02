@@ -40,12 +40,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
           accessorKey: 'shortName',
           cell: (info) => info.getValue(),
         },
-        {
-          id: 'code',
-          header: 'Code',
-          accessorKey: 'code',
-          cell: (info) => info.getValue(),
-        },
+
         {
           id: 'typeId',
           header: 'Organization type',

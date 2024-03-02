@@ -79,7 +79,10 @@ export function FormDetail({ mode }: FormDetailProps) {
 
       router.push('/organization-type');
     } catch (err) {
-      notify('Error', 'Errors in deleting organization Type.');
+      notify(
+        'Error',
+        `${err.data.message === 'cant_delete' ? "This organization type contains related data and can't be deleted." : 'Errors in deleting organization Type.'}`,
+      );
     }
   };
 

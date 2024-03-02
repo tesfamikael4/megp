@@ -67,14 +67,14 @@ const AddUserModal = () => {
       {
         id: 'name',
         header: 'Name',
-        accessorKey: 'firstName',
+        accessorKey: 'account.firstName',
         cell: (info) => (
           <div>
             {info.row.original.firstName + ' ' + info.row.original.lastName}
           </div>
         ),
         meta: {
-          widget: 'primary',
+          widget: 'expand',
         },
       },
       {

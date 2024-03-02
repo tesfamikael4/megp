@@ -94,9 +94,6 @@ export const Menu: MenuItem[] = [
         link: '/archived/users',
         permission: ['iam:user', 'iam:organization'],
       },
-      { label: 'Unit', link: '/archived/units', permission: ['iam:unit'] },
-      { label: 'Group', link: '/archived/group', permission: ['iam:group'] },
-      { label: 'Role', link: '/archived/roles', permission: ['iam:role'] },
     ],
   },
   {

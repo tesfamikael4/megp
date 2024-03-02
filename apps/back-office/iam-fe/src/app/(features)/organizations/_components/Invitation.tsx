@@ -4,7 +4,7 @@ import { RelationConfig } from '@megp/entity';
 import { useLazyListByIdQuery } from '../_api/custom.api';
 import { useParams } from 'next/navigation';
 import { FormDetail } from './form';
-import { Section, Table, logger } from '@megp/core-fe';
+import { Section, Table } from '@megp/core-fe';
 import { IconPlus } from '@tabler/icons-react';
 import Invitation from './action';
 import { User } from '@/models/user/user';

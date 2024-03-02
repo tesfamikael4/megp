@@ -98,15 +98,19 @@ export function Login({
         {...register('password')}
         mt="md"
       />
+
       <Group className={styles.group} justify="space-between">
         <Checkbox label="Remember me" style={{ lineHeight: 1 }} />
-        <Link
-          className="text-green-700 hover:text-green-800"
-          href="/auth/forgot-password"
-        >
-          Forgot password?
-        </Link>
+        {app !== 'bo' && (
+          <Link
+            className="text-green-700 hover:text-green-800"
+            href="/auth/forgot-password"
+          >
+            Forgot password?
+          </Link>
+        )}
       </Group>
+
       <Button
         className="mt-4"
         fullWidth
