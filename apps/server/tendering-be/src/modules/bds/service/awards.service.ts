@@ -12,4 +12,8 @@ export class BdsAwardService extends ExtraCrudService<BdsAward> {
   ) {
     super(bdsAwardRepository);
   }
+
+  async findOne(tenderId: string, req?: any): Promise<BdsAward | undefined> {
+    return await this.bdsAwardRepository.findOneBy({ tenderId });
+  }
 }

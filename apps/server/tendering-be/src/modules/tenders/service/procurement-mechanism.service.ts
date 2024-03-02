@@ -12,4 +12,11 @@ export class ProcurementMechanismService extends ExtraCrudService<ProcurementMec
   ) {
     super(procurementMechanismRepository);
   }
+
+  async findOne(
+    tenderId: string,
+    req?: any,
+  ): Promise<ProcurementMechanism | undefined> {
+    return await this.procurementMechanismRepository.findOneBy({ tenderId });
+  }
 }
