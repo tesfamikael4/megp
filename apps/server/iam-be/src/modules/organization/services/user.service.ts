@@ -19,6 +19,8 @@ import {
 } from 'src/shared/collection-query';
 import { DataResponseFormat } from 'src/shared/api-data';
 import { MandateService } from 'src/modules/mandate/services/mandate.service';
+import { OrganizationService } from './organization.service';
+import { OrganizationStatus } from 'src/shared/enums';
 
 @Injectable()
 export class UserService extends ExtraCrudService<User> {
@@ -27,6 +29,7 @@ export class UserService extends ExtraCrudService<User> {
     private readonly repositoryUser: Repository<User>,
     @InjectRepository(OrganizationMandate)
     private readonly repositoryOrganizationMandate: Repository<OrganizationMandate>,
+    private readonly organizationService: OrganizationService,
     private readonly accountsService: AccountsService,
     private readonly unitService: UnitService,
     private readonly roleSystemService: RoleSystemService,
@@ -287,6 +290,16 @@ export class UserService extends ExtraCrudService<User> {
         throw new HttpException(
           'user_role_and_unit_not_assigned',
           HttpStatus.NOT_FOUND,
+        );
+      }
+
+      const organization = await this.organizationService.findOne(
+        user.organizationId,
+      );
+      if (organization.status !== OrganizationStatus.ACTIVE) {
+        throw new HttpException(
+          'organization_is_not_active',
+          HttpStatus.BAD_REQUEST,
         );
       }
 
