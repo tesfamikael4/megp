@@ -4,7 +4,6 @@ import { PreferentialTreatmentsEntity } from 'src/entities/preferential-treatmen
 import { AuthorizationModule } from 'src/shared/authorization';
 import { PreferentailTreatmentService } from './services/preferentail-treatment.service';
 import { PreferentailTreatmentsController } from './controllers/preferential-treatment.controller';
-import { WorkflowService } from '../bpm/services/workflow.service';
 import { BpmModule } from '../bpm/bpm.module';
 import { VendorRegistrationModule } from '../vendor-registration/vendor-registration.module';
 import { ServiceModule } from '../services/service.module';
@@ -21,4 +20,4 @@ import { ServiceModule } from '../services/service.module';
   providers: [PreferentailTreatmentService],
   controllers: [PreferentailTreatmentsController],
 })
-export class PreferentialTreatmentModule { }
+export class PreferentialTreatmentModule {}

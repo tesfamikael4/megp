@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { EntityCrudService } from 'src/shared/service';
 import { BusinessProcessEntity } from 'src/entities/business-process.entity';
 
@@ -55,6 +55,18 @@ export class BusinessProcessService extends EntityCrudService<BusinessProcessEnt
       where: {
         isActive: true,
         service: { id: serviceId },
+      },
+    });
+    return result;
+  }
+  async findBpWithServiceByServiceIds(
+    serviceIds: string[],
+  ): Promise<BusinessProcessEntity[]> {
+    const result = await this.bpRepository.find({
+      relations: { service: true },
+      where: {
+        isActive: true,
+        service: { id: In(serviceIds) },
       },
     });
     return result;

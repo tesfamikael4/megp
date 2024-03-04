@@ -126,7 +126,7 @@ export class DataSeederController {
       },
       {
         id: '897e5182-927b-4f1d-bd25-10fb99a13d37',
-        name: 'Upgrade Registration for Goods ',
+        name: 'Upgrade Registration for Goods',
         key: 'GoodsUpgrade',
         isActive: true,
 
@@ -192,8 +192,6 @@ export class DataSeederController {
         tenantId: 0,
         description: null,
       },
-
-
     ];
     await this.serviceService.saveBulk(serviceToSeed);
     // await dataSource.createEntityManager().save<BpServiceEntity>(services);
@@ -233,7 +231,8 @@ export class DataSeederController {
               on: {
                 ADJUST: 'Submit New Vendor Registration Request',
                 CANCEL: 'End',
-                APPROVE: 'Approval of New Vendor Registration Request by Senior or chief registration officer or RRM/DRRM',
+                APPROVE:
+                  'Approval of New Vendor Registration Request by Senior or chief registration officer or RRM/DRRM',
               },
               meta: {
                 type: 'InitialReview',
@@ -277,7 +276,6 @@ export class DataSeederController {
         organizationId: null,
         organizationName: null,
       },
-
 
       {
         tenantId: 0,
@@ -1304,7 +1302,6 @@ export class DataSeederController {
         orderBy: 5,
       },
 
-
       ///micro
       {
         id: '96752a13-201f-45eb-8b6f-118ebf0c89c7',
@@ -1624,88 +1621,7 @@ export class DataSeederController {
         checkList: null,
         orderBy: 5,
       },
-
-      //registration for Works tasks
-      {
-        id: '1159af13-b86d-4b79-b1b9-2cb2dda76386',
-        name: 'Submit New Vendor Registration Request for Works',
-        label: 'Submitted New Registration Request',
-        description: 'Submission of New Registration application for Works',
-        bpId: '745c9643-1f1d-464f-860c-3087bfc1a7c1',
-        handlerType: 'Requestor',
-        taskType: 'ISR',
-        checkList: null,
-        orderBy: 1,
-      },
-      {
-        id: '11ebef7d-75ee-4acc-ac51-0597ffb06d8b',
-        name: 'Review New Vendor Registration Request by Registration Officer',
-        label: 'Reviewed Vendor Registration Application',
-        description: 'Reviewing New Vendor Applications for Works',
-        bpId: '745c9643-1f1d-464f-860c-3087bfc1a7c1',
-        handlerType: 'Assignee',
-        taskType: 'InitialReview',
-        checkList: [
-          {
-            id: '94d95fdb-7852-4ddc-982f-0e94d23d15d3',
-            description:
-              'All the required information and related documents fullfilled',
-            isMandatory: 'true',
-          },
-        ],
-        orderBy: 2,
-      },
-      {
-        id: '11ff23e0-11d9-46fc-9357-55604cb2c4cb',
-        name: 'Approval of New Vendor Registration Request by Senior or chief registration officer or RRM/DRRM',
-        label: 'Reviewed by RO',
-        description:
-          'aprove new  registration request for Services by senior or chief registration officer',
-        bpId: '745c9643-1f1d-464f-860c-3087bfc1a7c1',
-        handlerType: 'Assignee',
-        taskType: 'Confirmation',
-        checkList: [
-          {
-            id: '96d97fdb-7852-4ddc-982f-0e94d23d15d3',
-            description:
-              'All the required information and related documents fullfilled',
-            isMandatory: 'true',
-          },
-        ],
-        orderBy: 3,
-      },
-      {
-        id: '1128a5a6-1d66-45fe-b0c0-1f34aecb676c',
-        name: 'Approval of New Vendor Registration Request by Director General (DG)',
-        label: 'Approved by DG',
-        description:
-          'Ensuring that vendors meet the necessary criteria and standards set forth by the organization',
-        bpId: '745c9643-1f1d-464f-860c-3087bfc1a7c1',
-        handlerType: 'Assignee',
-        taskType: 'Approval',
-        checkList: [
-          {
-            id: '96d95fdb-7852-4ddc-982f-0e94d23d15d1',
-            description:
-              'All the required information and related documents fullfilled',
-            isMandatory: 'true',
-          },
-        ],
-        orderBy: 4,
-      },
-      // {
-      //   id: '112b9571-b2cf-44c8-a8ad-bd79fdecc2fe',
-      //   name: 'Generate New Vendor Registration Certificate',
-      //   label: 'Generated Certeficates',
-      //   description: "creating a formal certificate to officially recognize and document the registration of a new vendor within the organization's procurement system.This certificate serves as proof of the vendor's successful registration and compliance with the organization's requirements",
-      //   bpId: '745c9643-1f1d-464f-860c-3087bfc1a7c1',
-      //   handlerType: 'Assignee',
-      //   taskType: 'Certificate',
-      //   checkList: null,
-      //   orderBy: 5,
-      // },
-
-      //----------------------------Goods upgrade
+      //Upgrade Registration Request for Goods
       {
         id: '31fac537-e71b-479c-9c4a-7b344724518f',
         name: 'Submit Vendor Upgrade Registration Request',
@@ -2397,7 +2313,6 @@ export class DataSeederController {
         tenantId: 0,
       },
 
-
       ///end of registration feee for Goods
 
       // {
@@ -2481,6 +2396,7 @@ export class DataSeederController {
         currency: 'MK',
         tenantId: 0,
       },
+
       ///registration fee for works
       {
         id: '099bd8ca-2db1-4555-952d-05681acf8746',
@@ -2552,7 +2468,6 @@ export class DataSeederController {
         currency: 'MK',
         tenantId: 0,
       },
-
 
       ////////////////////////renewal Service
       {
