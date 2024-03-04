@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import entityApi from './entity/api';
 import { orgPermissionApi } from './api/other/org-permission.api';
+import { administrationApi } from './api/administration/administration.api';
 
 import { adressApi } from './api/other/adress.api';
 import { invitationApi } from './api/other/invitation.api';
@@ -11,6 +12,7 @@ export const store = configureStore({
   reducer: {
     ...reducers,
     [orgPermissionApi.reducerPath]: orgPermissionApi.reducer,
+    [administrationApi.reducerPath]: administrationApi.reducer,
 
     [adressApi.reducerPath]: adressApi.reducer,
     [invitationApi.reducerPath]: invitationApi.reducer,
@@ -20,6 +22,7 @@ export const store = configureStore({
     getDefaultMiddleware().concat(
       ...middleware,
       orgPermissionApi.middleware,
+      administrationApi.middleware,
       adressApi.middleware,
       invitationApi.middleware,
     ),

@@ -10,6 +10,7 @@ import { useListQuery as useListTypeQuery } from '@/app/(features)/organization-
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useAuth } from '@megp/auth';
+
 export function FormDetail() {
   const { reset, control, register } = useForm();
   const { organizationId } = useAuth();
