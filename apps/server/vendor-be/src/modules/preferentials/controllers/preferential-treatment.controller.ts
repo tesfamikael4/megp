@@ -54,20 +54,27 @@ export class PreferentailTreatmentsController extends EntityCrudController<Prefe
   }
 
   @Post('submit-pt-request')
+  @ApiOkResponse({ type: PTResponse })
+  async submitApplication(
+    @CurrentUser() user: any,
+    @Body() createdto: CreatePTDto[],
+  ) {
+    return await this.ptService.submitPreferential(createdto, user);
+  }
+  @Post('upload-preferential-attachments')
   @UseInterceptors(
     FileFieldsInterceptor([
-      { name: 'certificate', maxCount: 1 },
-      { name: 'additionalDocuments', maxCount: 3 },
+      { name: 'ibmCerti', maxCount: 1 },
+      { name: 'msmeCerti', maxCount: 1 },
+      { name: 'marginalizedCerti', maxCount: 1 },
     ]),
   )
   @ApiOkResponse({ type: PTResponse })
-  async submitApplication(
+  async uploadPreferentialAttachments(
     @UploadedFiles() files,
     @CurrentUser() user: any,
-    @Body() createdto: CreatePTDto,
   ) {
-
-    return await this.ptService.submitPreferential(files, createdto, user);
+    return await this.ptService.uploadPreferentialAttachments(files, user);
   }
 
   @Get('get-draft-pt-applications')

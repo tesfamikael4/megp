@@ -49,7 +49,12 @@ import { VendorRegistrationModule } from '../vendor-registration/vendor-registra
     CategoriesModule,
     forwardRef(() => VendorRegistrationModule),
   ],
-  exports: [TaskService, BusinessProcessService, WorkflowService],
+  exports: [
+    TaskService,
+    BusinessProcessService,
+    WorkflowService,
+    HandlingCommonService,
+  ],
   providers: [
     WorkflowService,
     TaskService,

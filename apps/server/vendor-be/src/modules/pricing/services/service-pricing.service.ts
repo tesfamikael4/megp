@@ -1,15 +1,9 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
-import {
-  ILike,
-  In,
-  Repository,
-} from 'typeorm';
+import { ILike, In, Repository } from 'typeorm';
 import { ServicePrice } from '../../../entities/service-price.entity';
 import { EntityCrudService } from 'src/shared/service';
-
 import { BusinessAreaEntity } from 'src/entities';
-import { ServiceKeyEnum } from 'src/shared/enums/service-key.enum';
 import { HandlingCommonService } from 'src/modules/handling/services/handling-common-services';
 
 @Injectable()
@@ -77,22 +71,7 @@ export class ServicePricingService extends EntityCrudService<ServicePrice> {
       throw new Error(error);
     }
   }
-  // async findserviceByRangeAndKey(
-  //   key: string,
-  //   rangeFrom: number,
-  //   rangeTo: number,
-  //   businessArea: string,
-  // ) {
-  //   return this.pricingRepository.find({
-  //     relations: { service: true },
-  //     where: {
-  //       service: { key: key },
-  //       businessArea: ILike(businessArea),
-  //       valueFrom: rangeFrom,
-  //       valueTo: rangeTo,
-  //     },
-  //   });
-  // }
+
   async getRenewalPrice(
     businessArea: BusinessAreaEntity,
     oprationType: string,
