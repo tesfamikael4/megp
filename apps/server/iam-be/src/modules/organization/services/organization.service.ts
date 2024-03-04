@@ -1,5 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import {
+  BadRequestException,
   ForbiddenException,
   HttpException,
   Inject,
@@ -21,13 +22,17 @@ import { ENTITY_MANAGER_KEY } from '@interceptors';
 import { defaultOrganizationRoles } from 'src/modules/seeders/seed-data';
 import { AccountsService } from 'src/modules/account/services/account.service';
 import { OrganizationStatus, UserStatus } from 'src/shared/enums';
+import { RoleSystemService } from 'src/modules/role-system/services/role-system.service';
 
 @Injectable()
 export class OrganizationService extends EntityCrudService<Organization> {
   constructor(
     @InjectRepository(Organization)
     private readonly repositoryOrganization: Repository<Organization>,
+    @InjectRepository(User)
+    private readonly repositoryUser: Repository<User>,
     private readonly accountService: AccountsService,
+    private readonly roleSystemService: RoleSystemService,
     @Inject(REQUEST) private request: Request,
   ) {
     super(repositoryOrganization);
@@ -86,8 +91,27 @@ export class OrganizationService extends EntityCrudService<Organization> {
     });
 
     if (organization.organizationMandates.length === 0) {
-      throw new ForbiddenException(`no_mandate_found`);
+      throw new BadRequestException(`no_mandate_found`);
     }
+
+    const roleSystem = await this.roleSystemService.getAdminRole(
+      process.env.ORGANIZATION_ADMINISTRATOR_KEY ??
+        'ORGANIZATION_ADMINISTRATOR',
+    );
+
+    const orgAdmin = await this.repositoryUser.findOne({
+      where: {
+        organizationId: id,
+        userRoleSystems: {
+          roleSystemId: roleSystem.id,
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!orgAdmin) throw new NotFoundException('organization_admin_not_found');
 
     await this.repositoryOrganization.update(id, {
       status: OrganizationStatus.ACTIVE,
