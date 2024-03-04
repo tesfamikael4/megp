@@ -263,7 +263,7 @@ export const FormDetail = ({
           remark: postActivity?.remark,
           estimatedAmount: postActivity?.estimatedAmount,
         });
-        setTags(preActivity?.classification ?? []);
+        setTags(postActivity?.classification ?? []);
       }
     }
   }, [
