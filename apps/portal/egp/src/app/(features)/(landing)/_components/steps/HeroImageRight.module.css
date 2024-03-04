@@ -2,6 +2,10 @@
   position: relative;
   background-image: url('/supplier.png');
   background-size: cover;
-  background-position: center;
-  background-color: brown;
+  background-repeat: no-repeat;
+  background-position: 50%;
+  @apply min-[780px]:items-center;
+  @media (min-width: 780px) {
+    height: 500px;
+  }
 }

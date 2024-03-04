@@ -23,10 +23,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body
-        suppressHydrationWarning={true}
-        className={`${inter.className} bg-[##f5fbfe]`}
-      >
+      <body suppressHydrationWarning={true} className={`${inter.className}`}>
         <ConfigProvider config={config}>
           <Providers>
             <RootStyleRegistry>
