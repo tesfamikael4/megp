@@ -1,5 +1,5 @@
 export interface MarginOfPreference {
-  id?: string;
+  id: string;
   lotId: string;
   name: string;
   condition: string;

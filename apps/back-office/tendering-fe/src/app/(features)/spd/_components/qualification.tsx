@@ -1,7 +1,6 @@
 'use client';
 import { ExpandableTable } from '@/app/(features)/_components/expandable-table';
 import { Section, logger } from '@megp/core-fe';
-import { useRouter } from 'next/navigation';
 import { Box, Button, Divider, Menu, Modal, Text } from '@mantine/core';
 import {
   IconPlus,
@@ -13,10 +12,10 @@ import {
 import { useDeleteMutation, useLazyListQuery } from '../_api/qualification.api';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { SpdQualificationFormDetail } from './qualification-form-detail';
 import { useDisclosure } from '@mantine/hooks';
-import { DetailQualification } from '../../_components/detail-qualification';
+import { DetailQualification } from './qualification-detail';
 
 export default function SpdQualification({
   type = 'legal',

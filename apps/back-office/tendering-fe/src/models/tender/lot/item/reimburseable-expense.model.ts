@@ -1,8 +1,8 @@
 export interface ReimburseableExpense {
-  id?: string;
+  id: string;
   itemId: string;
   category?: string;
-  no: number;
+  no: string;
   description: string;
   unitCost: number;
   unit?: string;

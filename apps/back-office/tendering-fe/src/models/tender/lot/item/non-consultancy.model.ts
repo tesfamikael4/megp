@@ -1,4 +1,4 @@
-import { Boq } from './bill-of-quantity.model';
+import { BillOfMaterial } from './bill-of-material.model';
 import { DayWork } from './day-work';
 import { Item } from '../item';
 import { ServiceCost } from './service-cost.model';
@@ -13,7 +13,7 @@ export interface Requirement extends TechnicalRequirement {
   sorType: 'specification' | 'personal' | 'incidental requirement';
 }
 export interface ScheduleOfPrice {
-  billOfMaterial: Boq[];
+  billOfMaterial: BillOfMaterial[];
   labor: DayWork[];
   equipment: DayWork[];
   incidentalCosts: ServiceCost[];
