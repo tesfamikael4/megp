@@ -1,0 +1,29 @@
+.root {
+  @apply w-full items-center justify-center p-4 flex-col bg-white;
+  /* background-color: #f5fbfe; */
+}
+.titleContainer {
+  @apply items-center justify-center flex-col gap-2 p-4;
+}
+
+.cardContainer {
+  @apply items-center justify-center gap-2 p-6;
+}
+
+.card {
+  @apply p-4 pb-0;
+  background-color: #f5fbfe;
+  max-width: 361px;
+  transition: opacity 0.5s ease-in-out;
+}
+.arrow {
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+}
+.card:hover {
+  box-shadow: var(--mantine-shadow-xs);
+  transform: scale(1.03);
+}
+.card:hover .arrow {
+  opacity: 1;
+}

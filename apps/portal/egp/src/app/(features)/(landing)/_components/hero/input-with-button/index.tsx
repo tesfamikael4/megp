@@ -4,8 +4,14 @@ import React from 'react';
 const InputWithButton = () => {
   return (
     <div className="relative w-full h-12 rounded-md border border-green-600">
-      <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-        <IconSearch size={20} stroke={1} />
+      <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none text-gray-500">
+        <IconSearch
+          size={20}
+          stroke={1.8}
+          style={{
+            color: 'var(--mantine-color-placeholder)',
+          }}
+        />
       </div>
       <input
         type="search"
@@ -20,7 +26,7 @@ const InputWithButton = () => {
       />
       <button
         type="submit"
-        className="absolute top-0 end-0 p-2.5 h-full text-sm font-medium w-1/5 bg-green-600 text-white rounded-r-sm"
+        className="absolute top-0 end-0 p-2.5 h-full min-w-fit text-sm font-medium w-1/5 bg-green-600 text-white rounded-r-sm"
       >
         Search
       </button>

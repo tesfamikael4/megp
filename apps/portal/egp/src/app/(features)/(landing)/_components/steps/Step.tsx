@@ -1,4 +1,3 @@
-'use client';
 import React, { ReactElement } from 'react';
 import {
   Box,
@@ -12,7 +11,7 @@ import {
   Container,
   ActionIcon,
 } from '@mantine/core';
-import { IconArrowDown } from '@tabler/icons-react';
+import { IconArrowDown, IconArrowRight } from '@tabler/icons-react';
 
 export interface StepProps {
   color: string;
@@ -23,44 +22,64 @@ export interface StepProps {
 }
 
 const Step = (props: StepProps) => {
-  const theme = useMantineTheme();
-  theme.breakpoints.lg;
-
   return (
     <>
       <Flex
-        columnGap={rem(10)}
-        align="center"
-        justify={'center'}
-        className="flex-col md:flex-row"
-        rowGap={rem(10)}
+        className="items-center justify-center flex-col md:flex-row md:gap-10"
         color="white"
-        p={rem(24)}
       >
-        <Flex
-          direction="column"
-          className=" lg:pt-0 text-center"
-          align="center"
-        >
-          <Avatar bg={props.color} variant="light" size="lg" w={82} h={82}>
+        <Flex className="flex-col items-center">
+          <Avatar
+            bg={props.color}
+            variant="light"
+            size="lg"
+            w={62}
+            h={62}
+            mb={16}
+            hiddenFrom="md"
+          >
             {props.icon}
           </Avatar>
-          <Text size="lg" fw="bold" c="white">
+          <Avatar
+            bg={props.color}
+            variant="light"
+            size="lg"
+            w={82}
+            h={82}
+            mb={16}
+            visibleFrom="md"
+          >
+            {props.icon}
+          </Avatar>
+          <Text
+            fz={{
+              sm: 16,
+              md: 18,
+              lg: 22,
+              xl: 22,
+            }}
+            fw="bold"
+            c="white"
+            ta="center"
+          >
             {props.title}
           </Text>
-          <Text size="xs" c="white">
+          <Text size="xs" c="white" ta="center" maw={350}>
             {props.description}
           </Text>
         </Flex>
 
         {props.arrow && (
-          <>
-            <Image
-              src="/rightarrow.svg"
-              alt=""
+          <React.Fragment>
+            <ActionIcon
+              variant="light"
+              bg="transparent"
+              c="white"
               visibleFrom="sm"
-              className="place-self-start md:mt-[40px]"
-            />
+              size={60}
+            >
+              <IconArrowRight size={46} color="white" />
+            </ActionIcon>
             <ActionIcon
               variant="light"
               bg="transparent"
@@ -69,7 +88,7 @@ const Step = (props: StepProps) => {
             >
               <IconArrowDown size={40} />
             </ActionIcon>
-          </>
+          </React.Fragment>
         )}
       </Flex>
     </>

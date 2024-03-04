@@ -1,17 +1,14 @@
 .root {
-  /* background-color: transparent;
-  background-size: cover;
-  background-position: center;
   background-image: url('/hero.png');
-  padding-top: calc(var(--mantine-spacing-xl) * 4); */
-  /* padding-bottom: calc(var(--mantine-spacing-xl) * 4); */
-  /* padding-bottom: calc(var(--mantine-spacing-xl));
-  background-size: 100%, auto;
-  background-repeat: no-repeat; */
-  position: relative;
-  background-image: url('/hero.png');
-  background-size: cover;
+  background-size: 100% 100% !important;
+  background-repeat: no-repeat;
   background-position: center;
+  height: 500px;
+
+  @media (max-width: 700px) {
+    background-size: 100% 100% !important;
+    height: 400px;
+  }
 }
 
 .inner {
@@ -29,28 +26,26 @@
 }
 
 .content {
-  padding-top: calc(var(--mantine-spacing-xl) * 2);
-  padding-bottom: calc(var(--mantine-spacing-xl) * 2);
+  padding: 79px 60px;
   margin-right: calc(var(--mantine-spacing-xl) * 3);
   width: 100%;
 
-  @media (max-width: --mantine-breakpoint-md) {
+  @media (max-width: 700px) {
+    padding: 14px 14px;
     margin-right: 0;
   }
 }
 
 .title {
   color: var(--mantine-color-white);
-  font-family:
-    Greycliff CF,
-    var(--mantine-font-family);
-  font-weight: 900;
-  line-height: 1.05;
-  max-width: rem(500px);
+  font-weight: 800;
+  font-size: 50px;
+  line-height: 70px;
+  max-width: 900px;
   /* font-size: 48px; */
   @media (max-width: 768px) {
     max-width: 100%;
-    font-size: 25px;
+    font-size: 30px;
     line-height: 1.15;
   }
 }
@@ -77,4 +72,17 @@
   @media (max-width: --mantine-breakpoint-md) {
     width: 100%;
   }
+}
+
+.btn {
+  max-width: 180px;
+  height: 45px;
+  width: 100%;
+  padding: 14px;
+  border-radius: 8px;
+  transition: 250ms ease-in-out;
+  will-change: transform;
+}
+.btn:hover {
+  transform: scale(1.05);
 }

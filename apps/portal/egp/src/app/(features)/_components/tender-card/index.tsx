@@ -1,16 +1,7 @@
 import React from 'react';
-import {
-  Text,
-  Card,
-  useMantineTheme,
-  Flex,
-  Button,
-  Avatar,
-  Box,
-  Group,
-} from '@mantine/core';
+import { Text, Card, Flex, Button, Avatar, Box, rgba } from '@mantine/core';
 import classes from './TenderCard.module.css';
-import { IconBookmark, IconHammer, IconTools } from '@tabler/icons-react';
+import { IconBookmark, IconTools } from '@tabler/icons-react';
 
 interface TenderCardProps {
   color: string;
@@ -25,44 +16,26 @@ interface TenderCardProps {
 }
 
 const TenderCard = ({ color, register, textColor }: TenderCardProps) => {
-  const theme = useMantineTheme();
-
   return (
-    <Card withBorder radius="md" c={'black'}>
-      <div
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: theme.spacing.md,
-          background: color,
-          padding: '4px 12px',
-          borderBottomLeftRadius: theme.radius.md,
-          borderBottomRightRadius: theme.radius.md,
-          color: textColor ?? theme.white,
-          fontWeight: 700,
-          fontSize: theme.fontSizes.xs,
-        }}
+    <Card withBorder radius="md" shadow="xs">
+      <Box
+        className=" absolute top-0 left-5 rounded-b-lg p-2 py-1"
+        c={textColor}
+        bg={color}
+        fw={700}
+        fz={'xs'}
       >
         12 | Days Left
-      </div>
-      <div
-        style={{
-          position: 'absolute',
-          top: 0,
-          right: theme.spacing.md,
-          background: '#F0FFF3',
-          padding: '4px 12px',
-          borderBottomLeftRadius: theme.radius.md,
-          borderBottomRightRadius: theme.radius.md,
-          color: 'black',
-          fontWeight: 700,
-          fontSize: theme.fontSizes.xs,
-          cursor: 'pointer',
-        }}
+      </Box>
+      <Box
+        className=" absolute top-0 right-4 rounded-b-lg p-2 py-1 cursor-pointer"
+        fz={'xs'}
+        c="gray.7"
+        bg={rgba('var(--mantine-primary-color-5)', 0.1)}
       >
-        <IconBookmark size={30} stroke={1} />
-      </div>
-      <Box className="flex flex-col">
+        <IconBookmark size={28} stroke={1.6} />
+      </Box>
+      <Box className="flex flex-col" c={'black'}>
         <Flex align={'center'} gap={'sm'}>
           <Flex
             direction={'column'}
@@ -70,19 +43,20 @@ const TenderCard = ({ color, register, textColor }: TenderCardProps) => {
             visibleFrom="sm"
           >
             <Avatar
+              variant="transparent"
               w={{
                 xs: 50,
                 sm: 50,
                 md: 80,
               }}
               h={{ xs: 50, sm: 50, md: 80 }}
-              bg={'#F0FFF3'}
               mb={10}
               style={{
                 border: '1px solid #A5D2B2',
               }}
+              bg={rgba('var(--mantine-primary-color-3)', 0.1)}
             >
-              <IconTools color="black" size={30} stroke={1} />
+              <IconTools color="black" size={25} stroke={1} />
             </Avatar>
             <Text fw={500} fz={'12px'} lh={'12px'}>
               Services
@@ -103,19 +77,20 @@ const TenderCard = ({ color, register, textColor }: TenderCardProps) => {
                 }}
               >
                 <Avatar
+                  variant="transparent"
                   w={{
                     xs: 50,
                     sm: 50,
                     md: 80,
                   }}
                   h={{ xs: 50, sm: 50, md: 80 }}
-                  bg={theme.colors.green[1]}
+                  bg={rgba('var(--mantine-primary-color-3)', 0.1)}
                   mb={4}
                   style={{
                     border: '1px solid #A5D2B2',
                   }}
                 >
-                  <IconTools color="black" size={30} strokeWidth={1} />
+                  <IconTools color="black" size={18} strokeWidth={1} />
                 </Avatar>
                 <Text fw={500} fz={'xs'} lh={'12px'}>
                   Services
@@ -198,10 +173,9 @@ const TenderCard = ({ color, register, textColor }: TenderCardProps) => {
               {register && <Button>Register</Button>}
               <Button
                 variant="outline"
-                c={'#1D8E3F'}
                 fz={'xs'}
                 lh={'sm'}
-                className="hover:bg-[#F0FFF3]"
+                className="hover:bg-[var(--button-hover)]"
               >
                 View More
               </Button>
