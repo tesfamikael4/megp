@@ -90,7 +90,16 @@ export default function UserpasswordForm() {
       notify('Success', 'Password changed successfully');
       route.push('/');
     } catch (err) {
-      notify('Error', 'Errors in changing password.');
+      notify(
+        'Error',
+        `${
+          err.data.message === 'incorrect_old_password'
+            ? 'Old password is incorrect'
+            : err.data.message === 'old_password_same_with_new'
+              ? 'New password is the same as old password'
+              : 'Errors in changing password.'
+        }`,
+      );
     }
   };
 
@@ -123,7 +132,7 @@ export default function UserpasswordForm() {
         <Divider my="lg" />
         <Stack pos={'relative'}>
           <PasswordInput
-            label="Previous password"
+            label="Old password"
             required
             {...register('oldPassword')}
             error={

@@ -3,7 +3,7 @@
   "extends": ["//"],
   "pipeline": {
     "build": {
-      "env": ["ENV_IAM_API"]
+      "env": ["ENV_IAM_API", "NEXT_PUBLIC_ADMINISTRATION_API"]
     }
   }
 }

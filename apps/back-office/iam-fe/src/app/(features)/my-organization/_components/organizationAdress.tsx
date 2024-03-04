@@ -20,12 +20,16 @@ import { useEffect, useState } from 'react';
 import { useReadQuery } from '../_api/adress.api';
 import { logger, notify } from '@megp/core-fe';
 import { useAuth } from '@megp/auth';
+import {
+  useGetRegionsQuery,
+  useLazyGetDistrictsQuery,
+} from '@/store/api/administration/administration.api';
 
 type ModeType = 'new' | 'detail';
 
 const defaultValues = {
   region: '',
-
+  selectedRegion: '',
   district: '',
   telephone: {
     countryCode: '',
@@ -42,9 +46,10 @@ const defaultValues = {
 const OrganizationAdressForm = () => {
   const organizationAddressSchema: ZodType<Partial<OrganizationProfile>> =
     z.object({
-      region: z.string().min(1, { message: 'Please select region.' }),
-      district: z.string().min(1, { message: 'Please select district' }),
-
+      district: z.string({
+        required_error: 'This field is required',
+        invalid_type_error: 'This field is required',
+      }),
       telephone: z.object({
         countryCode: z.string().default('MW').optional(),
         number: z
@@ -90,12 +95,10 @@ const OrganizationAdressForm = () => {
   const [mode, setMode] = useState<ModeType>('new');
   const { organizationId } = useAuth();
 
-  const [selectedDistrict, setSelectedDistrict] = useState<any>();
+  const [selectedRegion, setSelectedRegion] = useState<any>();
 
   const [create, { isLoading: isSaving }] = useSetAddressMutation();
   const [update, { isLoading: isUpdating }] = useSetAddressMutation();
-
-  const regionOption = ['Southern', 'Northern', 'Central'];
 
   const {
     data: selected,
@@ -108,63 +111,24 @@ const OrganizationAdressForm = () => {
     handleSubmit,
     formState: { errors },
     control,
-    watch,
     reset,
   } = useForm<OrganizationProfile>({
     resolver: zodResolver(organizationAddressSchema),
   });
-  const selectedRegion = watch('region');
+
+  const { data: regions } = useGetRegionsQuery(undefined);
+  const [triggerDistrict, { data: districts }] = useLazyGetDistrictsQuery();
 
   useEffect(() => {
-    const districtOptions = {
-      Southern: [
-        'Balaka',
-        'Blantyre',
-        'Chikwawa',
-        'Chiradzulu',
-        'Machinga',
-        'Mangochi',
-        'Mulanje',
-        'Mwanza',
-        'Neno',
-        'Nsanje',
-        'Phalombe',
-        'Thyolo',
-        'Zomba',
-      ],
-      Northern: [
-        'Chitipa ',
-        'Karonga',
-        'Likoma',
-        'Mzimba',
-        'Nkhata Bay',
-        'Rumphi',
-      ],
-      Central: [
-        'Dedza',
-        'Dowa',
-        'Kasungu',
-        'Lilongwe',
-        'Mchinji',
-        'Nkhotakota',
-        'Ntcheu',
-        'Ntchisi',
-        'Salima',
-      ],
-    };
-    const updatedOptions =
-      districtOptions[selectedRegion]?.map((item) => ({
-        label: item,
-        value: item,
-      })) || [];
-    setSelectedDistrict(updatedOptions);
-  }, [selectedRegion]);
+    selectedRegion !== undefined && triggerDistrict(selectedRegion);
+  }, [selectedRegion, triggerDistrict]);
 
   const onCreate = async (data) => {
     const dataSent = {
       id: organizationId,
       address: {
         ...data,
+        region: selectedRegion,
       },
     };
 
@@ -181,6 +145,7 @@ const OrganizationAdressForm = () => {
       id: organizationId,
       address: {
         ...data,
+        region: selectedRegion,
       },
     };
 
@@ -203,7 +168,6 @@ const OrganizationAdressForm = () => {
   useEffect(() => {
     if (mode === 'detail' && selectedSuccess && selected !== undefined) {
       reset({
-        region: selected?.address?.region,
         zoneOrSubCity: selected?.address?.zoneOrSubCity,
         city: selected?.address?.city,
         telephone: selected?.address?.telephone,
@@ -211,9 +175,9 @@ const OrganizationAdressForm = () => {
         postalCode: selected?.address?.postalCode,
         email: selected?.address?.email,
         houseNumber: selected?.address?.houseNumber,
-
         district: selected?.address?.district,
       });
+      setSelectedRegion(selected?.address?.region);
     }
   }, [mode, reset, selected, selectedSuccess]);
 
@@ -230,17 +194,18 @@ const OrganizationAdressForm = () => {
         <Controller
           name="region"
           control={control}
-          render={({ field: { onChange, value } }) => (
+          render={() => (
             <Select
               defaultValue="MW"
+              required
               label={'Region'}
-              value={value}
-              onChange={onChange}
-              error={errors?.region ? errors.region?.message : ''}
+              value={selectedRegion}
+              onChange={(value) => setSelectedRegion(value)}
+              error={selectedRegion === null && 'Please select region'}
               data={
-                regionOption?.map((item) => ({
-                  label: item,
-                  value: item,
+                regions?.items?.map((item) => ({
+                  label: item.name,
+                  value: item.id,
                 })) || []
               }
               maxDropdownHeight={400}
@@ -253,10 +218,16 @@ const OrganizationAdressForm = () => {
           render={({ field: { onChange, value } }) => (
             <Select
               defaultValue="MW"
+              required
               label={'District'}
               value={value}
               onChange={onChange}
-              data={selectedDistrict}
+              data={
+                districts?.items?.map((item) => ({
+                  label: item.name,
+                  value: item.id,
+                })) || []
+              }
               error={errors?.district ? errors.district?.message : ''}
               maxDropdownHeight={400}
             />

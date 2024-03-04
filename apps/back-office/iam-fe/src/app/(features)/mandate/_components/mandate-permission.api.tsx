@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Modal } from '@mantine/core';
-import { Relation, RelationConfig } from '@megp/entity';
+import { CollectionQuery, Relation, RelationConfig } from '@megp/entity';
 import {
   useLazySecondRelationQuery,
   useRelationMutation,
@@ -62,6 +62,7 @@ const AddPermission = () => {
     onAdd: () => {
       setIsModalOpen(true);
     },
+    pagination: true,
   };
 
   const handleCloseModal = () => {
@@ -69,9 +70,9 @@ const AddPermission = () => {
     setCurrentAssigned(permission);
   };
 
-  useEffect(() => {
-    trigger({ id: id?.toString(), collectionQuery: undefined });
-  }, [id, trigger]);
+  const onRequestChange = (request: CollectionQuery) => {
+    trigger({ id: id?.toString(), collectionQuery: request });
+  };
 
   useEffect(() => {
     if (isSuccess) {
@@ -101,8 +102,10 @@ const AddPermission = () => {
       <Relation
         config={relationConfig}
         data={currentAssigned ? currentAssigned : []}
+        onRequestChange={onRequestChange}
         isSaving={isSaving}
         isLoading={isLoading}
+        total={mandatePermission?.total ?? 0}
         collapsed={false}
       />
       <Modal

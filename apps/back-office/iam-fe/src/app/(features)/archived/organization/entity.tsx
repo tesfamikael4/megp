@@ -6,11 +6,16 @@ import { useMemo } from 'react';
 import { useLazyListArchivedQuery } from '../../organizations/_api/organization.api';
 import { Type } from './_components/organization-type';
 import { Restore } from './_components/restore';
+import { Box } from '@mantine/core';
 
 export function Entity({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   const [trigger, { data, isFetching }] = useLazyListArchivedQuery();
+
+  const Status = ({ original }: any) => {
+    return <Box className="ml-auto p pr-6">{original.status}</Box>;
+  };
 
   const config: EntityConfig<Organization> = useMemo(() => {
     return {
@@ -43,20 +48,19 @@ export function Entity({ children }: { children: React.ReactNode }) {
 
         {
           id: 'typeId',
-          header: 'Organization type',
+          header: 'Organization Type',
           accessorKey: 'typeId',
           cell: (info) => <Type id={info.row.original.typeId} />,
         },
         {
-          id: 'isActive',
-          header: () => <p className="ml-auto">Action</p>,
-          accessorKey: 'isActive',
-          cell: (info) => info.getValue(),
+          id: 'status',
+          header: () => <p className="ml-auto">Status</p>,
+          accessorKey: 'status',
+          cell: (info) => <Status original={info.row.original} />,
         },
         {
           id: 'action',
           header: () => <p className="ml-auto">Action</p>,
-          accessorKey: 'isActive',
           cell: (info) => <Restore original={info.row.original} />,
         },
       ],
@@ -85,7 +89,9 @@ export function Entity({ children }: { children: React.ReactNode }) {
         data?.items?.map((item: Organization) => {
           return {
             ...item,
-            isActive: item.isActive ? 'Active' : 'Inactive ',
+            status:
+              item.status.charAt(0).toUpperCase() +
+              item.status.slice(1).toLowerCase(),
           };
         }) ?? []
       }
