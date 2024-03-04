@@ -1,11 +1,10 @@
 export interface DayWork {
-  id?: string;
-  lotId: string;
+  id: string;
   itemId: string;
   itemNumber: string;
   description: string;
   unit: string;
-  quantity: string;
+  quantity: number;
   rate?: string;
   amount?: string;
 }

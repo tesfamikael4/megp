@@ -1,11 +1,11 @@
 export interface Fee {
-  id?: string;
+  id: string;
   itemId: string;
   category: string;
   nameOfStaff?: string;
   position?: string;
   staffMonthRate?: string;
-  inputStaffMonth?: string;
+  inputStaffMonth?: number;
   rate?: string;
   order: number;
 }

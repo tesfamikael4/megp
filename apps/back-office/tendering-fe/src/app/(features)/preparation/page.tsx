@@ -1,25 +1,12 @@
 'use client';
 
-import { ActionIcon, Box, Button, Container, Tabs } from '@mantine/core';
+import { ActionIcon, Box, Button } from '@mantine/core';
 import { Section } from '@megp/core-fe';
 import { IconChevronRight, IconPlus } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 import { ExpandableTable } from '../_components/expandable-table';
-import { useLazyListQuery } from './_api/tender.api';
-
-const tenderList = [
-  {
-    title: 'Office Furniture',
-    pr: 'Annual Procurement requisition',
-    budget: 345,
-    id: 'ec361463-c979-44ae-8faf-c506e7f51540',
-    opening_date: '02/05/2024',
-    closing_date: '02/05/2024',
-    description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam',
-  },
-];
+import { useLazyListQuery } from './_api/tender/tender.api';
 
 export default function Preparation() {
   const [trigger, { data, isFetching }] = useLazyListQuery();
@@ -27,12 +14,15 @@ export default function Preparation() {
 
   const config = {
     columns: [
-      { accessor: 'title', title: 'Name', width: 200 },
-      { accessor: 'pr', title: 'Procurement Requisition', width: 200 },
-      { accessor: 'budget', title: 'Budget' },
-      { accessor: 'opening_date', title: 'Opening Date' },
-      { accessor: 'closing_date', title: 'Closing Date' },
-      { accessor: 'isFetching', title: 'Description' },
+      { accessor: 'name', title: 'Name', width: 200 },
+      {
+        accessor: 'procurementReferenceNumber',
+        title: 'Procurement Reference Number',
+        width: 200,
+      },
+      { accessor: 'budgetAmount', title: 'Budget Amount' },
+      { accessor: 'budgetCode', title: 'Budget Code' },
+      { accessor: 'status', title: 'Status' },
       {
         accessor: 'id',
         title: '',
@@ -58,16 +48,25 @@ export default function Preparation() {
       return <div>hello</div>;
     },
   };
+
   const onRequestChange = (request: any) => {
     trigger(request);
   };
   return (
-    <Section title="Tenders" collapsible={false}>
+    <Section
+      title="Tenders"
+      collapsible={false}
+      action={
+        <Button onClick={() => router.push(`preparation/new`)}>
+          <IconPlus size={14} /> New
+        </Button>
+      }
+    >
       <Box className="">
         <ExpandableTable
           config={config}
-          data={data?.items ?? tenderList}
-          total={data?.total ?? 1}
+          data={data?.items ?? []}
+          total={data?.total ?? 0}
           onRequestChange={onRequestChange}
         />
       </Box>

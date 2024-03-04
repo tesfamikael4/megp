@@ -24,7 +24,6 @@ export const Menu: MenuItem[] = [
     icon: IconReportAnalytics,
     link: '/report',
   },
-  { label: 'Initiation', icon: IconLockSquareRounded, link: '/initiation' },
   { label: 'Preparation', icon: IconLockSquareRounded, link: '/preparation' },
   { label: 'Solicitation', icon: IconLockSquareRounded, link: '/solicitation' },
 ];

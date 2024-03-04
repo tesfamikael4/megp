@@ -16,3 +16,7 @@ export interface Currency {
     | 'Local currency Only'
     | 'Freely convertible foreign currency allowed';
 }
+export enum TenderCurrency {
+  LOCAL = 'Local currency Only',
+  FREE = 'Freely convertible foreign currency allowed',
+}

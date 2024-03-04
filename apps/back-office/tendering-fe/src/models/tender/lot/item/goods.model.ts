@@ -1,4 +1,4 @@
-import { Boq } from './bill-of-quantity.model';
+import { BillOfMaterial } from './bill-of-material.model';
 import { Item } from '../item';
 import { ServiceCost } from './service-cost.model';
 import { TechnicalRequirement } from './technical-requirement.model';
@@ -18,6 +18,6 @@ export interface Requirement extends TechnicalRequirement {
     | 'incidental requirement';
 }
 export interface ScheduleOfPrice {
-  billOfMaterial: Boq[];
+  billOfMaterial: BillOfMaterial[];
   incidentalCosts: ServiceCost[];
 }

@@ -1,5 +1,5 @@
 export interface TechnicalScoring {
-  id?: string;
+  id: string;
   lotId: string;
   order: number;
   parentId?: string;
@@ -17,4 +17,8 @@ export interface TechnicalScoring {
   };
   isRequired: boolean;
 }
-export const RequirementCondition = ['MustMeet', 'HasToMeet', 'Not Applicable'];
+export const RequirementCondition = [
+  'Must meet',
+  'Has to meet',
+  'Not applicable',
+];

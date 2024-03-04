@@ -10,7 +10,9 @@ import { prIamApi } from './api/planning-approval/planning-iam';
 import { approveSpdApi } from '@/app/(features)/spd/_api/approve-spd.api';
 import { templateSpdApi } from '@/app/(features)/spd/_api/template-spd.api';
 import { technicalScoringTreeApi } from '@/app/(features)/spd/_api/technical-scoring-tree.api';
-import { approveTenderApi } from '@/app/(features)/preparation/_api/approve-tender.api';
+import { sorBillOfMaterialTreeApi } from '@/app/(features)/preparation/_api/item/bill-of-material-tree.api';
+import { approveTenderApi } from '@/app/(features)/preparation/_api/tender/approve-tender.api';
+import { sorDocumentApi } from '@/app/(features)/preparation/_api/item/sor-document.api';
 const { reducers, middleware } = entityApi;
 
 export const store = configureStore({
@@ -25,8 +27,10 @@ export const store = configureStore({
     [prIamApi.reducerPath]: prIamApi.reducer,
     [approveSpdApi.reducerPath]: approveSpdApi.reducer,
     [technicalScoringTreeApi.reducerPath]: technicalScoringTreeApi.reducer,
+    [sorBillOfMaterialTreeApi.reducerPath]: sorBillOfMaterialTreeApi.reducer,
     [templateSpdApi.reducerPath]: templateSpdApi.reducer,
     [approveTenderApi.reducerPath]: approveTenderApi.reducer,
+    [sorDocumentApi.reducerPath]: sorDocumentApi.reducer,
   },
   devTools: process.env.NODE_ENV !== 'production',
   middleware: (getDefaultMiddleware) =>
@@ -41,8 +45,10 @@ export const store = configureStore({
       prIamApi.middleware,
       approveSpdApi.middleware,
       technicalScoringTreeApi.middleware,
+      sorBillOfMaterialTreeApi.middleware,
       templateSpdApi.middleware,
       approveTenderApi.middleware,
+      sorDocumentApi.middleware,
     ]),
 });
 

@@ -10,7 +10,35 @@ export const ENTITY_LIST: EntityStoreConfig[] = [
     baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
   },
   {
-    entity: 'tender',
+    entity: 'eqc-preliminary-examinations',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
+  },
+  {
+    entity: 'eqc-qualifications',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
+  },
+  {
+    entity: 'eqc-technical-scorings',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
+  },
+  {
+    entity: 'eqc-preference-margins',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
+  },
+  {
+    entity: 'tenders',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
+  },
+  {
+    entity: 'lots',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
+  },
+  {
+    entity: 'items',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
+  },
+  {
+    entity: 'sor-technical-requirements',
     baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
   },
   {
@@ -19,6 +47,38 @@ export const ENTITY_LIST: EntityStoreConfig[] = [
   },
   {
     entity: 'documentary-evidence',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
+  },
+  {
+    entity: 'sor-bill-of-materials',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
+  },
+  {
+    entity: 'sor-labors',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
+  },
+  {
+    entity: 'sor-materials',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
+  },
+  {
+    entity: 'sor-equipments',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
+  },
+  {
+    entity: 'sor-fees',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
+  },
+  {
+    entity: 'bid-securities',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
+  },
+  {
+    entity: 'sor-documents',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
+  },
+  {
+    entity: 'sor-reimburseable-expenses',
     baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
   },
   {
@@ -71,6 +131,38 @@ export const ENTITY_LIST: EntityStoreConfig[] = [
   },
   {
     entity: 'procurement-requisition-disbursements',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
+  },
+  {
+    entity: 'procurement-technical-teams',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
+  },
+  {
+    entity: 'procurement-mechanisms',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
+  },
+  {
+    entity: 'bds-awards',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
+  },
+  {
+    entity: 'bds-evaluations',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
+  },
+  {
+    entity: 'bds-preparations',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
+  },
+  {
+    entity: 'bds-submissions',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
+  },
+  {
+    entity: 'bds-generals',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
+  },
+  {
+    entity: 'tender-spd',
     baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
   },
 ];
