@@ -118,13 +118,6 @@ export class WorkflowService {
     }
     return response;
   }
-  async changeWorkflowInstanceStatus(status: string, instanceId: string) {
-    const result = await this.workflowInstanceRepository.update(
-      { id: instanceId },
-      { status: status },
-    );
-    return result.affected;
-  }
   async gotoNextStep(nextCommand: GotoNextStateDto, user: any) {
     nextCommand.action = nextCommand.action.toUpperCase();
     const taskInfo = new TaskEntity();

@@ -24,6 +24,8 @@ export class InvoiceEntity extends Audit {
   pricingId: string;
   @Column({ nullable: true })
   serviceId: string;
+  // @Column()
+  // serviceName: string;
   @Column({ type: 'jsonb', nullable: true })
   paymentDetail: any
   @Column()
