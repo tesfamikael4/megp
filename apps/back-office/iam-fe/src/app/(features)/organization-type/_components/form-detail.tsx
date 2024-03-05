@@ -8,14 +8,13 @@ import {
   useDeleteMutation,
   useUpdateMutation,
   useCreateMutation,
-  useListQuery,
 } from '../_api/organization-type.api';
 import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 
 import { useForm } from 'react-hook-form';
-import { notify } from '@megp/core-fe';
+import { logger, notify } from '@megp/core-fe';
 
 interface FormDetailProps {
   mode: 'new' | 'detail';
@@ -56,22 +55,36 @@ export function FormDetail({ mode }: FormDetailProps) {
   const onCreate = async (data) => {
     try {
       const result = await create(data).unwrap();
-      if ('data' in result) {
-        router.push(`/organization-type/${result?.data?.id}`);
-      }
+      router.push(`/organization-type/${result?.id}`);
+
       notify('Success', 'Organization Type created successfully');
     } catch (err) {
-      notify('Error', 'Errors in creating organization Type.');
+      notify(
+        'Error',
+        `${
+          err.data.message.toLowerCase().startsWith('duplicate')
+            ? 'Organization type already exists'
+            : 'Errors in creating organization Type'
+        }`,
+      );
     }
   };
   const onUpdate = async (data) => {
     try {
       await update({ ...data, id: id?.toString() }).unwrap();
       notify('Success', 'Organization Type updated successfully');
-    } catch {
-      notify('Error', 'Errors in updating organization Type.');
+    } catch (err) {
+      notify(
+        'Error',
+        `${
+          err.data.message.toLowerCase().startsWith('duplicate')
+            ? 'Organization type already exists'
+            : 'Errors in updating organization Type'
+        }`,
+      );
     }
   };
+
   const onDelete = async () => {
     try {
       await remove(id?.toString()).unwrap();
@@ -81,7 +94,11 @@ export function FormDetail({ mode }: FormDetailProps) {
     } catch (err) {
       notify(
         'Error',
-        `${err.data.message === 'cant_delete' ? "This organization type contains related data and can't be deleted." : 'Errors in deleting organization Type.'}`,
+        `${
+          err.data.message === 'cant_delete'
+            ? "This organization type contains related data and can't be deleted."
+            : 'Errors in deleting organization Type.'
+        }`,
       );
     }
   };
