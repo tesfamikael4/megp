@@ -39,28 +39,14 @@ export class SpdBidFormService extends ExtraCrudService<SpdBidForm> {
 
       const documentPdf = await this.fileHelperService.convertAndUpload(file);
 
-      const spdBidForm = await this.spdBidFormRepository.findOneBy({
-        type: payload.type,
+      await this.spdBidFormRepository.insert({
         spdId: payload.spdId,
+        type: payload.type,
+        code: payload.code,
+        title: payload.title,
+        documentDocx,
+        documentPdf: documentPdf.fileInfo,
       });
-      if (spdBidForm) {
-        await this.spdBidFormRepository.update(spdBidForm.id, {
-          documentDocx,
-          documentPdf: documentPdf.fileInfo,
-          type: payload.type,
-          code: payload.code,
-          title: payload.title,
-        });
-      } else {
-        await this.spdBidFormRepository.insert({
-          spdId: payload.spdId,
-          type: payload.type,
-          code: payload.code,
-          title: payload.title,
-          documentDocx,
-          documentPdf: documentPdf.fileInfo,
-        });
-      }
 
       response.setHeader('Content-Type', documentPdf.fileInfo.contentType);
       response.setHeader(
@@ -75,13 +61,9 @@ export class SpdBidFormService extends ExtraCrudService<SpdBidForm> {
     }
   }
 
-  async downloadSPDDocumentDocx(
-    spdId: string,
-    type: string,
-    response: Response,
-  ) {
+  async downloadSPDDocumentDocx(id: string, response: Response) {
     try {
-      const spd = await this.spdBidFormRepository.findOneBy({ spdId, type });
+      const spd = await this.spdBidFormRepository.findOneBy({ id });
       if (!spd) {
         throw new Error('SPD not found');
       }
@@ -94,13 +76,9 @@ export class SpdBidFormService extends ExtraCrudService<SpdBidForm> {
     }
   }
 
-  async downloadSPDDocumentPdf(
-    spdId: string,
-    type: string,
-    response: Response,
-  ) {
+  async downloadSPDDocumentPdf(id: string, response: Response) {
     try {
-      const spd = await this.spdBidFormRepository.findOneBy({ spdId, type });
+      const spd = await this.spdBidFormRepository.findOneBy({ id });
       if (!spd) {
         throw new Error('SPD not found');
       }

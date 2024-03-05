@@ -39,28 +39,14 @@ export class SpdContractFormService extends ExtraCrudService<SpdContractForm> {
 
       const documentPdf = await this.fileHelperService.convertAndUpload(file);
 
-      const spdContractForm = await this.spdContractFormRepository.findOneBy({
-        type: payload.type,
+      await this.spdContractFormRepository.insert({
         spdId: payload.spdId,
+        type: payload.type,
+        code: payload.code,
+        title: payload.title,
+        documentDocx,
+        documentPdf: documentPdf.fileInfo,
       });
-      if (spdContractForm) {
-        await this.spdContractFormRepository.update(spdContractForm.id, {
-          documentDocx,
-          documentPdf: documentPdf.fileInfo,
-          type: payload.type,
-          code: payload.code,
-          title: payload.title,
-        });
-      } else {
-        await this.spdContractFormRepository.insert({
-          spdId: payload.spdId,
-          type: payload.type,
-          code: payload.code,
-          title: payload.title,
-          documentDocx,
-          documentPdf: documentPdf.fileInfo,
-        });
-      }
 
       response.setHeader('Content-Type', documentPdf.fileInfo.contentType);
       response.setHeader(
@@ -75,15 +61,10 @@ export class SpdContractFormService extends ExtraCrudService<SpdContractForm> {
     }
   }
 
-  async downloadSPDDocumentDocx(
-    spdId: string,
-    type: string,
-    response: Response,
-  ) {
+  async downloadSPDDocumentDocx(id: string, response: Response) {
     try {
       const spd = await this.spdContractFormRepository.findOneBy({
-        spdId,
-        type,
+        id,
       });
       if (!spd) {
         throw new Error('SPD not found');
@@ -97,15 +78,10 @@ export class SpdContractFormService extends ExtraCrudService<SpdContractForm> {
     }
   }
 
-  async downloadSPDDocumentPdf(
-    spdId: string,
-    type: string,
-    response: Response,
-  ) {
+  async downloadSPDDocumentPdf(id: string, response: Response) {
     try {
       const spd = await this.spdContractFormRepository.findOneBy({
-        spdId,
-        type,
+        id,
       });
       if (!spd) {
         throw new Error('SPD not found');
