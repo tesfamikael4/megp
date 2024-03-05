@@ -7,7 +7,6 @@ import {
 } from '../_api/role-permission.api';
 import { useParams } from 'next/navigation';
 import { notify } from '@megp/core-fe';
-import { useReadQuery } from '../_api/role.api';
 import MandatePermission from './permission-assign';
 import { Permission } from '@/models/permission';
 
@@ -24,12 +23,8 @@ const AddPermissionModal = () => {
   const [trigger, { data: rolePermision, isSuccess, isLoading }] =
     useLazySecondRelationQuery();
 
-  const { data: selected } = useReadQuery(id?.toString());
-
   const relationConfig: RelationConfig<any> = {
-    title: `${
-      selected?.isSystemRole ? 'Permissions' : 'Permission Assignment'
-    } `,
+    title: 'Permission Assignment',
     columns: [
       {
         id: 'name',
@@ -61,7 +56,7 @@ const AddPermissionModal = () => {
     onAdd: () => {
       setIsModalOpen(true);
     },
-    hasAdd: selected?.isSystemRole ? false : true,
+    hasAdd: true,
     pagination: true,
   };
 
@@ -109,8 +104,8 @@ const AddPermissionModal = () => {
         isLoading={isLoading}
         total={rolePermision?.total ?? 0}
         onRequestChange={onRequestChange}
-        readOnly={selected?.isSystemRole ? true : false}
-        collapsed={selected?.isSystemRole ? false : true}
+        readOnly={false}
+        collapsed={true}
         setIsCollapsed={setIsCollapsed}
       />
       <Modal

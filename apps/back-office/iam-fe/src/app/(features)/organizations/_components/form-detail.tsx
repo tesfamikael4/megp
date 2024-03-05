@@ -179,7 +179,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       />
       <TextInput
         withAsterisk
-        label="Short name"
+        label="Short Name"
         error={errors?.shortName ? errors?.shortName?.message?.toString() : ''}
         required
         {...register('shortName')}

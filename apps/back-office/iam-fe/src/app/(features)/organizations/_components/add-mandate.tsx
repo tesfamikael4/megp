@@ -120,7 +120,7 @@ const AddEntityModal = () => {
         isSaving={isSaving}
       />
       <Modal
-        title="Mandate assignment"
+        title="Mandate Assignment"
         opened={isModalOpen}
         onClose={handleCloseModal}
         size={'lg'}

@@ -3,6 +3,7 @@ import React, { useEffect, useRef } from 'react';
 import { ActionIcon, Checkbox, Menu, Radio, Text } from '@mantine/core';
 import {
   IconArrowRight,
+  IconCircleMinus,
   IconDotsVertical,
   IconMinus,
   IconPencil,
@@ -126,6 +127,31 @@ export const relationSelectColumn = (selected, setSelected) => {
   };
 };
 
+export const removeSingleRow = () => {
+  return {
+    id: 'action',
+    accessorKey: '',
+    size: 40,
+    header: <p className="ml-auto">Action</p>,
+    meta: {
+      widget: 'action',
+    },
+
+    cell: ({ row, table }) => {
+      const meta = table.options.meta;
+
+      const removeRow = () => {
+        meta?.removeSelectedRows(row.original);
+      };
+
+      return (
+        <ActionIcon color="primary" onClick={removeRow} variant="subtle">
+          <IconCircleMinus color="red" />
+        </ActionIcon>
+      );
+    },
+  };
+};
 export const remove = (openEditModal, showPopUp) => {
   return {
     id: 'action',
@@ -149,7 +175,7 @@ export const remove = (openEditModal, showPopUp) => {
       };
 
       return (
-        <ActionIcon color="primary" variant="subtle">
+        <ActionIcon color="primary" onClick={removeRow} variant="subtle">
           <Menu shadow="md" width={200}>
             <Menu.Target>
               <IconDotsVertical size={18} />

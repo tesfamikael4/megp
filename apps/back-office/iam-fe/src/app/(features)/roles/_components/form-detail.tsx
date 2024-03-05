@@ -86,7 +86,14 @@ export function FormDetail({ mode }: FormDetailProps) {
       notify('Success', 'Role deleted successfully');
       router.push('/roles');
     } catch (err) {
-      notify('Error', 'Errors in deleting Role.');
+      notify(
+        'Error',
+        `${
+          err.data.message === 'cant_delete_role_with_users'
+            ? " Role has related data and can't be deleted "
+            : 'Error in deleting role'
+        }`,
+      );
     }
   };
 
