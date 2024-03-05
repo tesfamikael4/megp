@@ -17,7 +17,7 @@ import { defaultRelationConfig } from '../../models';
 import type { CollectionQuery, RelationConfig } from '../../models';
 import { visibleColumn } from '../../utilities/table';
 import { Grid } from '../table/grid';
-import { relationSelectColumn, remove } from '../table/header-column';
+import { relationSelectColumn, removeSingleRow } from '../table/header-column';
 
 interface RelationProps<T> {
   mode?: 'list' | 'detail' | 'modal';
@@ -71,12 +71,10 @@ export function Relation<T>({
         ...column,
       })),
 
-      ...(mode !== 'modal' && !readOnly
-        ? [remove(openEditModal, showPopUp)]
-        : []),
+      ...(mode !== 'modal' && !readOnly ? [removeSingleRow()] : []),
     ],
 
-    [options, mode, selected, readOnly, openEditModal, showPopUp],
+    [options, mode, selected, readOnly],
   );
 
   const [width, setWidth] = useState(100);

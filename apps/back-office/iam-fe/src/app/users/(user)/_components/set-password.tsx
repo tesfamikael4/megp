@@ -140,7 +140,7 @@ export default function SetPassWord({ mode }: Mode) {
               type="submit"
               loading={isSetting}
             >
-              {mode === 'setPassword' ? 'Set password' : 'Accept invitation'}
+              {mode === 'setPassword' ? 'Set Password' : 'Accept Invitation'}
             </Button>
           </form>
 

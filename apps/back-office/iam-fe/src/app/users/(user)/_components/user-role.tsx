@@ -56,7 +56,7 @@ const AddEntityModal = () => {
     },
   };
   const addConfig: RelationConfig<Role> = {
-    title: 'Roles assignment',
+    title: 'Roles Assignment',
     columns: [
       {
         id: 'name',

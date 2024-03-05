@@ -63,7 +63,7 @@ const AddSystemRole = () => {
     },
   };
   const addConfig: RelationConfig<Role> = {
-    title: 'System roles assignment',
+    title: 'System Roles Assignment',
     columns: [
       {
         id: 'name',
@@ -124,7 +124,7 @@ const AddSystemRole = () => {
         setIsCollapsed={setIsCollapsed}
       />
       <Modal
-        title="System role assignment"
+        title="System Role Assignment"
         opened={isModalOpen}
         onClose={handleCloseModal}
         size={'lg'}

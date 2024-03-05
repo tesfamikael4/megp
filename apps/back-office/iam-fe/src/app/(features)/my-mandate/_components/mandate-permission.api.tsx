@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Relation, RelationConfig } from '@megp/entity';
+import { Relation, RelationConfig, CollectionQuery } from '@megp/entity';
 import {
   useLazySecondRelationQuery,
   useRelationMutation,
@@ -35,6 +35,7 @@ const AddPermission = () => {
       },
     ],
     hasAdd: false,
+    pagination: true,
     onSave: async (selected) => {
       const permissions = selected.map((item) => `${item.id}`);
       const data = {
@@ -57,9 +58,9 @@ const AddPermission = () => {
     },
   };
 
-  useEffect(() => {
-    trigger({ id: id?.toString(), collectionQuery: undefined });
-  }, [id, trigger]);
+  const onRequestChange = (request: CollectionQuery) => {
+    trigger({ id: id?.toString(), collectionQuery: request });
+  };
 
   useEffect(() => {
     if (isSuccess) {
@@ -90,6 +91,8 @@ const AddPermission = () => {
         config={relationConfig}
         data={currentAssigned ? currentAssigned : []}
         isSaving={isSaving}
+        onRequestChange={onRequestChange}
+        total={mandatePermission?.total ?? 0}
         isLoading={isLoading}
         readOnly={true}
         collapsed={false}

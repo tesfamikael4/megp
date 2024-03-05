@@ -3,6 +3,7 @@ import {
   Modal,
   rem,
   ActionIcon,
+  Button,
   Tooltip,
   CopyButton,
   Box,
@@ -22,6 +23,7 @@ import {
   IconDotsVertical,
   IconEye,
   IconInfoCircle,
+  IconMailForward,
 } from '@tabler/icons-react';
 import { User } from '@/models/user/user';
 
@@ -48,7 +50,11 @@ export default function Invitation({ user }: invitationProps) {
     } catch (err) {
       notify(
         'Error',
-        'Error encountered while sending invitation link to the user.',
+        `${
+          err.data.message === 'organization_is_not_active'
+            ? 'Organization is not active '
+            : 'Error encountered while sending invitation link to the user.'
+        }`,
       );
     }
   };
@@ -82,30 +88,24 @@ export default function Invitation({ user }: invitationProps) {
 
   return (
     <Group justify="end">
-      <Menu shadow="md">
-        <Menu.Target>
-          <IconDotsVertical className="ml-auto text-gray-500" size={16} />
-        </Menu.Target>
-
-        <Menu.Dropdown>
-          {userInvited == null && (
-            <Menu.Item
-              leftSection={<IconEye size={15} />}
-              onClick={OnInviteUser}
-            >
-              Invite User
-            </Menu.Item>
-          )}
-          {userInvited !== null && userInvited !== undefined && (
-            <Menu.Item
-              leftSection={<IconEye size={15} />}
-              onClick={() => setViewLink(true)}
-            >
-              View link
-            </Menu.Item>
-          )}
-        </Menu.Dropdown>
-      </Menu>
+      {userInvited == null && (
+        <Button
+          leftSection={<IconMailForward size={15} />}
+          onClick={OnInviteUser}
+        >
+          Invite User
+        </Button>
+      )}
+      {userInvited !== null && userInvited !== undefined && (
+        <Button
+          leftSection={<IconEye size={15} />}
+          onClick={() => setViewLink(true)}
+          ml={5}
+          mr={5}
+        >
+          View Link
+        </Button>
+      )}
 
       <Modal
         title={'View link'}
@@ -113,10 +113,10 @@ export default function Invitation({ user }: invitationProps) {
         onClose={() => setViewLink(false)}
         size={'lg'}
       >
-        <Group className="bg-white p-4 mt-1">
+        <Box className="bg-white p-4 mt-1">
           <Box pos={'relative'}>
             <LoadingOverlay visible={isLoading} />
-            <div className="flex border border-[#91d5ff] bg-[#e6f7ff] p-4">
+            <div className="flex border w-{w-full} border-[#91d5ff] bg-[#e6f7ff] p-4">
               <span>
                 <IconInfoCircle className="flex" size={28} color="#2986cc" />
               </span>
@@ -124,36 +124,40 @@ export default function Invitation({ user }: invitationProps) {
                 <h3 className="text-base">User Invitation</h3>
                 {userInvited && (
                   <>
-                    <p className="max-w-[600px] break-all p-4 text-sm">
-                      {invitationLink}
-                      <CopyButton value={invitationLink} timeout={2000}>
-                        {({ copied, copy }) => (
-                          <Tooltip
-                            label={copied ? 'Copied' : 'Copy'}
-                            withArrow
-                            position="right"
-                          >
-                            <ActionIcon
-                              color={copied ? 'teal' : 'gray'}
-                              variant="subtle"
-                              onClick={copy}
+                    {userInvited.status === 'USED' ? (
+                      <h3>User already accepted invitation</h3>
+                    ) : (
+                      <p className="max-w-[600px] break-all p-4 text-sm">
+                        {invitationLink}
+                        <CopyButton value={invitationLink} timeout={2000}>
+                          {({ copied, copy }) => (
+                            <Tooltip
+                              label={copied ? 'Copied' : 'Copy'}
+                              withArrow
+                              position="right"
                             >
-                              {copied ? (
-                                <IconCheck style={{ width: rem(16) }} />
-                              ) : (
-                                <IconCopy style={{ width: rem(16) }} />
-                              )}
-                            </ActionIcon>
-                          </Tooltip>
-                        )}
-                      </CopyButton>
-                    </p>
+                              <ActionIcon
+                                color={copied ? 'teal' : 'gray'}
+                                variant="subtle"
+                                onClick={copy}
+                              >
+                                {copied ? (
+                                  <IconCheck style={{ width: rem(16) }} />
+                                ) : (
+                                  <IconCopy style={{ width: rem(16) }} />
+                                )}
+                              </ActionIcon>
+                            </Tooltip>
+                          )}
+                        </CopyButton>
+                      </p>
+                    )}
                   </>
                 )}
               </div>
             </div>
           </Box>
-        </Group>
+        </Box>
       </Modal>
     </Group>
   );

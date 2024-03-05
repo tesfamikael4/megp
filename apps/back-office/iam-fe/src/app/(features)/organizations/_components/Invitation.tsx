@@ -33,7 +33,7 @@ const AddOa = () => {
       },
       {
         id: 'userName',
-        header: 'User name',
+        header: 'Username',
         accessorKey: 'username',
         cell: (info) => info.getValue(),
       },
@@ -71,7 +71,7 @@ const AddOa = () => {
   return (
     <>
       <Section
-        title={'Manage organization administrator'}
+        title={'Manage Organization Administrator'}
         defaultCollapsed={true}
         setIsCollapsed={setIsCollapsed}
         action={

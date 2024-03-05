@@ -6,7 +6,7 @@ import { useInviteOaMutation } from '../_api/custom.api';
 
 import { useParams } from 'next/navigation';
 import { User } from '@/models/user/user';
-import { logger, notify } from '@megp/core-fe';
+import { notify } from '@megp/core-fe';
 import { EntityButton } from '@megp/entity';
 
 interface FormDetailProps {
