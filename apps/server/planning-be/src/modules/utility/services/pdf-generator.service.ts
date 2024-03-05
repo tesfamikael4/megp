@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { postReportPdf } from './report-pre-budget';
-import { preReportPdf } from './report-post-budget';
+import { preReportPdf } from './report-pre-budget';
+import { postReportPdf } from './report-post-budget';
 
 @Injectable()
 export class PdfGeneratorService {

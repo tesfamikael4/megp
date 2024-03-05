@@ -3,7 +3,7 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { EntityCrudService } from 'src/shared/service';
 import { MinIOService } from 'src/shared/min-io/min-io.service';
-import { Document } from 'src/entities';
+import { Document } from 'src/entities/document.entity';
 
 @Injectable()
 export class DocumentService extends EntityCrudService<Document> {

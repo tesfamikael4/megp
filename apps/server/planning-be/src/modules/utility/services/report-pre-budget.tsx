@@ -9,7 +9,7 @@ import {
   renderToBuffer,
 } from '@react-pdf/renderer';
 
-export const postReportPdf = async ({ activities }: any) => {
+export const preReportPdf = async ({ activities }: any) => {
   const buffer = await renderToBuffer(
     <Document title={activities[0].preBudgetPlan.app.planName}>
       <Page size="A4" style={styles.page}>
