@@ -44,23 +44,21 @@ export class SpdBidFormController extends ExtraCrudController<SpdBidForm>(
     return this.spdService.uploadSPDDocument(payload, file, response);
   }
 
-  @Get('/download-spd-docx/:spdId/:type')
+  @Get('/download/:id')
   @AllowAnonymous()
   async downloadSPDDocumentDocx(
-    @Param('spdId') spdId: string,
-    @Param('type') type: string,
+    @Param('id') id: string,
     @Res() response: Response,
   ) {
-    return this.spdService.downloadSPDDocumentDocx(spdId, type, response);
+    return this.spdService.downloadSPDDocumentDocx(id, response);
   }
 
-  @Get('/download-spd-pdf/:spdId/:type')
+  @Get('/download/:id')
   @AllowAnonymous()
   async downloadSPDDocumentPdf(
-    @Param('spdId') spdId: string,
-    @Param('type') type: string,
+    @Param('id') id: string,
     @Res() response: Response,
   ) {
-    return this.spdService.downloadSPDDocumentPdf(spdId, type, response);
+    return this.spdService.downloadSPDDocumentPdf(id, response);
   }
 }
