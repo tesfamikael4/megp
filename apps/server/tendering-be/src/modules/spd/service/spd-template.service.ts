@@ -45,22 +45,20 @@ export class SpdTemplateService extends ExtraCrudService<SpdTemplate> {
       if (spdTemplate) {
         await this.spdTemplateRepository.update(spdTemplate.id, {
           documentDocx,
-          documentPdf: documentPdf,
+          documentPdf: documentPdf as any,
         });
       } else {
         await this.spdTemplateRepository.insert({
           type,
           documentDocx,
-          documentPdf: documentPdf,
+          documentPdf: documentPdf as any,
           spdId,
         });
       }
 
       const presignedDownload =
-        await this.minIOService.generatePresignedDownloadUrl(
-          documentPdf.fileInfo,
-        );
-      return { presignedDownload };
+        await this.minIOService.generatePresignedDownloadUrl(documentPdf);
+      return { ...spdTemplate, presignedDownload };
     } catch (error) {
       throw error;
     }

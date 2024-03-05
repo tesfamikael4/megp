@@ -39,9 +39,8 @@ export class SpdContractFormController extends ExtraCrudController<SpdContractFo
   async uploadSPDDocument(
     @Body() payload: any,
     @UploadedFile() file: Express.Multer.File,
-    @Res() response: Response,
   ) {
-    return this.spdService.uploadSPDDocument(payload, file, response);
+    return this.spdService.uploadSPDDocument(payload, file);
   }
 
   @Get('/download-docx/:id')

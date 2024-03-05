@@ -21,11 +21,7 @@ export class SpdBidFormService extends ExtraCrudService<SpdBidForm> {
     super(spdBidFormRepository);
   }
 
-  async uploadSPDDocument(
-    payload: any,
-    file: Express.Multer.File,
-    response: Response,
-  ) {
+  async uploadSPDDocument(payload: any, file: Express.Multer.File) {
     try {
       // const result = await this.docxService.validateDocument(file.buffer, [
       //   'public_body',
@@ -39,23 +35,20 @@ export class SpdBidFormService extends ExtraCrudService<SpdBidForm> {
 
       const documentPdf = await this.fileHelperService.convertAndUpload(file);
 
-      await this.spdBidFormRepository.insert({
+      const data = this.spdBidFormRepository.create({
         spdId: payload.spdId,
         type: payload.type,
         code: payload.code,
         title: payload.title,
         documentDocx,
-        documentPdf: documentPdf.fileInfo,
+        documentPdf: documentPdf as any,
       });
 
-      response.setHeader('Content-Type', documentPdf.fileInfo.contentType);
-      response.setHeader(
-        'Content-Disposition',
-        `attachment; filename=${documentPdf.fileInfo.filepath}`,
-      );
-      const download = Readable.from(documentPdf.buffer).pipe(response);
+      await this.spdBidFormRepository.insert(data);
 
-      return download;
+      const presignedDownload =
+        await this.minIOService.generatePresignedDownloadUrl(documentPdf);
+      return { ...data, presignedDownload };
     } catch (error) {
       throw error;
     }
