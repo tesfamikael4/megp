@@ -39,7 +39,7 @@ export class DocumentService extends EntityCrudService<Document> {
     return item;
   }
 
-  async getDocumentByItemId(id: string): Promise<string> {
+  async generatePresignedGetUrl(id: string): Promise<string> {
     const document = await this.repositoryDocument.findOne({
       where: {
         id,
@@ -55,7 +55,7 @@ export class DocumentService extends EntityCrudService<Document> {
     return presignedUrl;
   }
 
-  async generatePresignedGetUrl(id: string): Promise<any> {
+  async getDocumentByItemId(id: string): Promise<any> {
     const document = await this.repositoryDocument.findOne({
       where: {
         itemId: id,

@@ -1,13 +1,9 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import {
-  PostBudgetPlanActivity,
-  PostBudgetPlanItem,
-  PreBudgetPlanItems,
-} from 'src/entities';
+import { PostBudgetPlanActivity, PostBudgetPlanItem } from 'src/entities';
 import { ExtraCrudService } from 'src/shared/service';
-import { BulkItemsDto } from 'src/modules/planning/dtos/pre-budget-plan-items.dto';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class PostBudgetPlanItemService extends ExtraCrudService<PostBudgetPlanItem> {
@@ -16,6 +12,7 @@ export class PostBudgetPlanItemService extends ExtraCrudService<PostBudgetPlanIt
     private readonly repositoryPostBudgetPlanItems: Repository<PostBudgetPlanItem>,
     @InjectRepository(PostBudgetPlanActivity)
     private readonly repositoryPostBudgetPlanActivity: Repository<PostBudgetPlanActivity>,
+    private eventEmitter: EventEmitter2,
   ) {
     super(repositoryPostBudgetPlanItems);
   }
@@ -27,51 +24,72 @@ export class PostBudgetPlanItemService extends ExtraCrudService<PostBudgetPlanIt
     if (req?.user?.organization) {
       itemData.organizationId = req.user.organization.id;
     }
+    const activity = await this.repositoryPostBudgetPlanActivity.findOne({
+      where: { id: itemData.postBudgetPlanActivityId },
+    });
+
+    const psedoCalculated =
+      Number(activity.calculatedAmount) +
+      itemData.unitPrice * itemData.quantity;
+
+    if (Number(activity.estimatedAmount) < Number(psedoCalculated)) {
+      this.eventEmitter.emit('post.recalculateCalculatedAmountActivity', {
+        postBudgetPlanActivityId: itemData.postBudgetPlanActivityId,
+      });
+      throw new HttpException(
+        'calculated amount is greater than estimated amount',
+        430,
+      );
+    }
     const item = this.repositoryPostBudgetPlanItems.create(itemData);
     await this.repositoryPostBudgetPlanItems.save(item);
 
-    const activities = await this.repositoryPostBudgetPlanActivity.findOne({
-      where: { id: item.postBudgetPlanActivityId },
+    this.eventEmitter.emit('post.recalculateCalculatedAmountActivity', {
+      postBudgetPlanActivityId: itemData.postBudgetPlanActivityId,
     });
-    activities.calculatedAmount += item.unitPrice * item.quantity;
-
-    await this.repositoryPostBudgetPlanActivity.update(
-      activities.id,
-      activities,
-    );
 
     return item;
   }
 
-  async bulkCreate(
-    itemData: BulkItemsDto,
-    organizationId,
-  ): Promise<BulkItemsDto> {
-    itemData.items.forEach((item) => {
-      item.organizationId = organizationId;
+  async bulkCreate(itemData: any, req: any): Promise<any> {
+    if (req?.user?.organization) {
+      itemData.items.map((item) => {
+        item.organizationId = req.user.organization.id;
+      });
+    }
+
+    const activity = await this.repositoryPostBudgetPlanActivity.findOne({
+      where: {
+        id: itemData.items[0].postBudgetPlanActivityId,
+      },
     });
+
+    const bulkCalculated = itemData.items.reduce(
+      (acc, curr) => acc + curr.quantity * curr.unitPrice,
+      0,
+    );
+
+    const psedoCalculated =
+      Number(bulkCalculated) + Number(activity.calculatedAmount);
+
+    if (Number(activity.estimatedAmount) < psedoCalculated) {
+      this.eventEmitter.emit('post.recalculateCalculatedAmountActivity', {
+        postBudgetPlanActivityId: itemData.items[0].postBudgetPlanActivityId,
+      });
+      throw new HttpException(
+        'calculated amount is greater than estimated amount',
+        430,
+      );
+    }
+
     const items = this.repositoryPostBudgetPlanItems.create(
       itemData.items as any,
     );
     await this.repositoryPostBudgetPlanItems.save(items);
 
-    const activity = await this.repositoryPostBudgetPlanActivity.findOne({
-      where: { id: itemData.items[0].preBudgetPlanActivityId },
+    this.eventEmitter.emit('post.recalculateCalculatedAmountActivity', {
+      postBudgetPlanActivityId: itemData.items[0].postBudgetPlanActivityId,
     });
-
-    for (const item of items) {
-      activity.calculatedAmount += item.unitPrice * item.quantity;
-    }
-
-    if (activity.calculatedAmount > activity.estimatedAmount) {
-      throw new HttpException(
-        'calculated  amount is greater than estimated amount',
-        430,
-      );
-    }
-
-    await this.repositoryPostBudgetPlanActivity.update(activity.id, activity);
-
     return itemData;
   }
 
@@ -82,18 +100,20 @@ export class PostBudgetPlanItemService extends ExtraCrudService<PostBudgetPlanIt
     const item = await this.repositoryPostBudgetPlanItems.findOneOrFail({
       where: { id: id },
     });
+
     const activity = await this.repositoryPostBudgetPlanActivity.findOne({
-      where: { id: item.postBudgetPlanActivityId },
+      where: { id: itemData.postBudgetPlanActivityId },
     });
 
-    const preAmount = item.quantity * item.unitPrice;
-    const currentAmount = itemData.quantity * itemData.unitPrice;
+    const itemNewCalculated = itemData.quantity * itemData.unitPrice;
+    const itemOldCalculated = item.quantity * item.unitPrice;
+    const psedoCalculated =
+      Number(activity.calculatedAmount) + itemNewCalculated - itemOldCalculated;
 
-    activity.calculatedAmount -= preAmount - currentAmount;
-
-    await this.repositoryPostBudgetPlanActivity.update(activity.id, activity);
-
-    if (activity.calculatedAmount > activity.estimatedAmount) {
+    if (Number(activity.estimatedAmount) < Number(psedoCalculated)) {
+      this.eventEmitter.emit('post.recalculateCalculatedAmountActivity', {
+        postBudgetPlanActivityId: itemData.postBudgetPlanActivityId,
+      });
       throw new HttpException(
         'calculated amount is greater than estimated amount',
         430,
@@ -101,25 +121,48 @@ export class PostBudgetPlanItemService extends ExtraCrudService<PostBudgetPlanIt
     }
 
     await this.repositoryPostBudgetPlanItems.update(id, itemData);
+
+    this.eventEmitter.emit('post.recalculateCalculatedAmountActivity', {
+      postBudgetPlanActivityId: item.postBudgetPlanActivityId,
+    });
+
     return this.repositoryPostBudgetPlanItems.findOne({ where: { id: id } });
   }
 
-  async remove(id: string): Promise<void> {
+  async softDelete(id: string): Promise<void> {
     const item = await this.repositoryPostBudgetPlanItems.findOneOrFail({
       where: { id: id },
     });
-    const activity = await this.repositoryPostBudgetPlanActivity.findOne({
-      where: { id: item.postBudgetPlanActivityId },
-    });
-    activity.calculatedAmount -= item.unitPrice * item.quantity;
+    await this.repositoryPostBudgetPlanItems.softRemove(item);
 
-    if (activity.calculatedAmount > activity.estimatedAmount) {
-      throw new HttpException(
-        'calculated amount is greater than estimated amount',
-        430,
-      );
-    }
-    await this.repositoryPostBudgetPlanActivity.update(activity.id, activity);
-    await this.repositoryPostBudgetPlanItems.delete(id);
+    this.eventEmitter.emit('post.recalculateCalculatedAmountActivity', {
+      postBudgetPlanActivityId: item.postBudgetPlanActivityId,
+    });
+  }
+
+  async recalculateCalculatedAmount(postBudgetPlanActivityId) {
+    const activity = await this.repositoryPostBudgetPlanActivity.findOne({
+      where: {
+        id: postBudgetPlanActivityId,
+      },
+      relations: ['postBudgetPlanItems'],
+    });
+
+    if (!activity)
+      throw new NotFoundException(`PostBudgetPlanActivity not found`);
+
+    const totalCalculatedAmount = activity.postBudgetPlanItems.reduce(
+      (acc, cur) => acc + cur.quantity * cur.unitPrice,
+      0,
+    );
+
+    await this.repositoryPostBudgetPlanActivity.update(activity.id, {
+      calculatedAmount: totalCalculatedAmount,
+    });
+  }
+
+  codeGenerate() {
+    const randomNum = Math.floor(1000000 + Math.random() * 9000000); // Generates a random 5-digit number
+    return 'REF-' + randomNum.toString();
   }
 }
