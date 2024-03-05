@@ -54,9 +54,9 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
   ) {
     const response = [];
     const subdirectory = 'preferential-documents';
-    const vendor = await this.vendorService.getVendor(user.id);
+    const vendor = await this.vendorService.getIsrVendorByUserId(user.id);
     if (!vendor)
-      throw new HttpException('First, Register as a vendor', 404);
+      throw new HttpException('First, Apply as a vendor', 404);
     const serviceIds = dtos.map((item) => item.serviceId);
     const bps = await this.bpService.findBpWithServiceByServiceIds(serviceIds);
     for (const dto of dtos) {
