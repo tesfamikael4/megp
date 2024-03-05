@@ -9,6 +9,7 @@ import { PdfGeneratorService } from './services/pdf-generator.service';
 import { DocumentService } from './services/document.service';
 import { Document } from 'src/entities/document.entity';
 import { MinIOModule } from 'src/shared/min-io/min-io.module';
+import { DocumentController } from './controllers/document.controller';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Reason, Document]), MinIOModule],
@@ -18,7 +19,7 @@ import { MinIOModule } from 'src/shared/min-io/min-io.module';
     PdfGeneratorService,
     DocumentService,
   ],
-  controllers: [QrCodeController, ReasonController],
+  controllers: [QrCodeController, ReasonController, DocumentController],
   exports: [ReasonService, PdfGeneratorService, DocumentService],
 })
 export class UtilityModule {}

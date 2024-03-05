@@ -29,8 +29,6 @@ import { PostProcurementMechanism } from 'src/entities/post-procurement-mechanis
 import { ExtraCrudService } from 'src/shared/service';
 // import { EventEmitter2 } from '@nestjs/event-emitter';
 import { createHash } from 'crypto';
-import { classToPlain, instanceToPlain } from 'class-transformer';
-import { ReasonService } from 'src/modules/utility/services/reason.service';
 import { PdfGeneratorService } from 'src/modules/utility/services/pdf-generator.service';
 import { MinIOService } from 'src/shared/min-io/min-io.service';
 import { DocumentService } from 'src/modules/utility/services/document.service';
@@ -48,7 +46,7 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
     private readonly pdfGeneratorService: PdfGeneratorService,
     private readonly documentService: DocumentService,
 
-    private readonly minioService: MinIOService,
+    private readonly minIoService: MinIOService,
 
     // private eventEmitter: EventEmitter2,
     @Inject('PLANNING_RMQ_SERVICE')
@@ -371,9 +369,10 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
         },
       },
     });
+
     const buffer = await this.pdfGeneratorService.pdfGenerator(data, 'pre');
 
-    const fileInfo = await this.minioService.uploadBuffer(
+    const fileInfo = await this.minIoService.uploadBuffer(
       buffer,
       'preBudgetPlanReport.pdf',
       'application/pdf',
@@ -387,6 +386,7 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
       version: 1,
       key: 'onApprovalSubmit',
     });
+
     return buffer;
   }
 

@@ -21,18 +21,28 @@ export class DocumentService extends EntityCrudService<Document> {
       itemData.organizationId = req.user.organization.id;
     }
 
+    const doc = await this.repositoryDocument.findOne({
+      where: {
+        itemId: itemData.itemId,
+      },
+      order: {
+        version: 'DESC',
+      },
+    });
+
+    if (doc) {
+      itemData.version = doc.version + 1;
+    }
+
     const item = this.repositoryDocument.create(itemData);
     await this.repositoryDocument.insert(itemData);
     return item;
   }
 
-  async generatePresignedGetUrl(id: string): Promise<string> {
+  async getDocumentByItemId(id: string): Promise<string> {
     const document = await this.repositoryDocument.findOne({
       where: {
-        id: id,
-      },
-      select: {
-        fileInfo: true,
+        id,
       },
     });
     if (!document) {
@@ -43,5 +53,24 @@ export class DocumentService extends EntityCrudService<Document> {
       filepath: document.fileInfo.name,
     });
     return presignedUrl;
+  }
+
+  async generatePresignedGetUrl(id: string): Promise<any> {
+    const document = await this.repositoryDocument.findOne({
+      where: {
+        itemId: id,
+      },
+      order: {
+        createdAt: 'DESC',
+      },
+    });
+    if (!document) {
+      throw new HttpException('file not found', 404);
+    }
+    const presignedUrl = await this.minIoService.generatePresignedDownloadUrl({
+      bucketName: document.fileInfo.bucketName,
+      filepath: document.fileInfo.name,
+    });
+    return { presignedUrl, document };
   }
 }
