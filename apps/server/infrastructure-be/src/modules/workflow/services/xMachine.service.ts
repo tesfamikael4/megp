@@ -44,7 +44,7 @@ export class XMachineService {
     private readonly workflowRMQClient: ClientProxy,
   ) {}
 
-  async createMachineConfig(activityId, details, state): Promise<any> {
+  async createMachineConfig(activityId, details, state, itemId): Promise<any> {
     try {
       const adjust = '';
       let isWorkGroup = {
@@ -56,6 +56,7 @@ export class XMachineService {
         where: {
           activityId: activityId,
           organizationId: details.organizationId,
+          itemId,
         },
       });
 

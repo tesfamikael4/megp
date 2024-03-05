@@ -32,6 +32,8 @@ import { createHash } from 'crypto';
 import { classToPlain, instanceToPlain } from 'class-transformer';
 import { ReasonService } from 'src/modules/utility/services/reason.service';
 import { PdfGeneratorService } from 'src/modules/utility/services/pdf-generator.service';
+import { MinIOService } from 'src/shared/min-io/min-io.service';
+import { DocumentService } from 'src/modules/utility/services/document.service';
 
 @Injectable()
 export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
@@ -44,6 +46,10 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
     private readonly preBudgetItemsRepository: Repository<PreBudgetPlanItems>,
 
     private readonly pdfGeneratorService: PdfGeneratorService,
+    private readonly documentService: DocumentService,
+
+    private readonly minioService: MinIOService,
+
     // private eventEmitter: EventEmitter2,
     @Inject('PLANNING_RMQ_SERVICE')
     private readonly planningRMQClient: ClientProxy,
@@ -349,6 +355,7 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
     const originalHash = await this.hashData(dataId);
     return originalHash === hash;
   }
+
   async pdfGenerator(id: string) {
     const data = await this.preBudgetActivityRepository.find({
       where: { preBudgetPlanId: id },
@@ -362,52 +369,25 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
         },
       },
     });
-    const mappedData = data.map((d) => ({
-      title: d.preBudgetPlan.app.planName,
-      estimatedAmount: d.preBudgetPlan.estimatedAmount,
-      identification: [
-        {
-          key: 'Reference',
-          value: d.procurementReference,
-        },
-        {
-          key: 'Name',
-          value: d.name,
-        },
-        {
-          key: 'description',
-          value: d.description,
-        },
-        { key: 'Estimated Amount', value: d.estimatedAmount },
-        { key: 'Calculated Amount', value: d.calculatedAmount },
-        {
-          key: 'Remark',
-          value: d.remark,
-        },
-      ],
-      procurementMethods: [
-        {
-          key: 'Procurement Type',
-          value: d.preProcurementMechanisms[0].procurementType,
-        },
-        {
-          key: 'Procurement Method',
-          value: d.preProcurementMechanisms[0].procurementMethod,
-        },
-        {
-          key: 'Funding Source',
-          value: d.preProcurementMechanisms[0].fundingSource,
-        },
-        {
-          key: 'Supplier Target Group',
-          value: d.preProcurementMechanisms[0].targetGroup,
-        },
-      ],
-    }));
+    const buffer = await this.pdfGeneratorService.pdfGenerator(data, 'pre');
 
-    const buffer = await this.pdfGeneratorService.pdfGenerator(mappedData);
+    const fileInfo = await this.minioService.uploadBuffer(
+      buffer,
+      'preBudgetPlanReport.pdf',
+      'application/pdf',
+    );
+
+    await this.documentService.create({
+      fileInfo,
+      title: 'preBudgetPlanReport',
+      itemId: id,
+      type: 'preBudgetPlan',
+      version: 1,
+      key: 'onApprovalSubmit',
+    });
     return buffer;
   }
+
   instanceToPlainExclude(
     obj: Record<string, any>,
     options: { exclude?: string[] } = {},

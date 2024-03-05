@@ -18,7 +18,7 @@ import { PostBudgetPlanActivity } from 'src/entities';
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 import { REQUEST } from '@nestjs/core';
 import { ClientProxy } from '@nestjs/microservices';
-import { AllowAnonymous } from 'src/shared/authorization';
+import { PdfGeneratorService } from 'src/modules/utility/services/pdf-generator.service';
 
 @Injectable()
 export class PostBudgetPlanService extends ExtraCrudService<PostBudgetPlan> {
@@ -28,6 +28,8 @@ export class PostBudgetPlanService extends ExtraCrudService<PostBudgetPlan> {
 
     @InjectRepository(PostBudgetPlanActivity)
     private readonly postBudgetActivityRepository: Repository<PostBudgetPlanActivity>,
+
+    private readonly pdfGeneratorService: PdfGeneratorService,
 
     @Inject('PLANNING_RMQ_SERVICE')
     private readonly planningRMQClient: ClientProxy,
@@ -347,5 +349,22 @@ export class PostBudgetPlanService extends ExtraCrudService<PostBudgetPlan> {
     this.toPRRMQClient.emit('to-pr', {
       postBudgetPlan,
     });
+  }
+
+  async pdfGenerator(id: string) {
+    const data = await this.postBudgetActivityRepository.find({
+      where: { postBudgetPlanId: id },
+      relations: {
+        postBudgetPlanItems: true,
+        postBudgetPlanTimelines: true,
+        postBudgetRequisitioners: true,
+        postProcurementMechanisms: true,
+        postBudgetPlan: {
+          app: true,
+        },
+      },
+    });
+    const buffer = await this.pdfGeneratorService.pdfGenerator(data, 'post');
+    return buffer;
   }
 }

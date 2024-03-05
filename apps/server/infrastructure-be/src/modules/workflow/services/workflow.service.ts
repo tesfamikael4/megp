@@ -43,6 +43,7 @@ export class WorkflowService extends EntityCrudService<Workflow> {
         activityId,
         metaData,
         instance.state.state,
+        itemId,
       );
       const actor = createActor(workflowMachine);
       let currentState = '';

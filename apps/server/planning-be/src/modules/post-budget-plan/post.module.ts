@@ -26,6 +26,7 @@ import { PostBudgetRequisitionerService } from './services/post-budget-requisiti
 import { PostBudgetRequisitioner } from 'src/entities/post-budget-plan-requisitioner.entity';
 import { MinioModule } from 'nestjs-minio-client';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { UtilityModule } from '../utility/utility.module';
 
 @Module({
   imports: [
@@ -72,6 +73,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
         process.env.MINIO_SECRETKEY ??
         'dGtjFGcLjKU6pXRYx1tOnqGeycJtxJoavgwqYgDd',
     }),
+    UtilityModule,
   ],
   providers: [
     PostBudgetPlanDisbursementService,
