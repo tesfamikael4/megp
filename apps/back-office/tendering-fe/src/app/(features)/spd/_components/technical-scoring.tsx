@@ -1,17 +1,23 @@
 'use client';
 import { Section } from '@megp/core-fe';
-import { Box, Button, Divider, Modal } from '@mantine/core';
+import { Box, Button, Divider, LoadingOverlay, Modal } from '@mantine/core';
 import { IconX, IconPlus } from '@tabler/icons-react';
-import { useGetTechnicalScoringQuery } from '../_api/technical-scoring-tree.api';
+import { useLazyGetTechnicalScoringQuery } from '../_api/technical-scoring-tree.api';
 import { useDisclosure } from '@mantine/hooks';
 import { SpdTechnicalScoringFormDetail } from './technical-scoring-form-detail';
 import { ScoringTable } from '../../_components/scoring-table';
 
 export default function SpdTechnicalScoring() {
-  const { data: technicalScoring } = useGetTechnicalScoringQuery({
+  const [trigger, { data, isFetching }] = useLazyGetTechnicalScoringQuery({
     where: [],
   } as any);
   const [opened, { open, close }] = useDisclosure(false);
+  const onRequestChange = (request: any) => {
+    trigger({
+      ...request,
+      where: [],
+    });
+  };
   return (
     <Section
       title="Technical Scoring"
@@ -23,7 +29,11 @@ export default function SpdTechnicalScoring() {
         </Button>
       }
     >
-      <ScoringTable scoring={technicalScoring ? technicalScoring.items : []} />
+      <LoadingOverlay visible={isFetching} />
+      <ScoringTable
+        scoring={data ? data.items : []}
+        onRequestChange={onRequestChange}
+      />
       <Modal
         opened={opened}
         size={'xl'}

@@ -27,8 +27,10 @@ interface FormDetailProps {
 
 export function SpdPreferenceMarginFormDetail({ mode, pmId }: FormDetailProps) {
   const spdSchema: ZodType<Partial<SpdPreferenceMargin>> = z.object({
-    name: z.string().min(1, { message: 'This field is required' }),
     condition: z.string().min(1, { message: 'This field is required' }),
+    description: z.string().min(1, { message: 'This field is required' }),
+    itbReference: z.string().min(1, { message: 'This field is required' }),
+    itbDescription: z.string().min(1, { message: 'This field is required' }),
     margin: z.number(),
   });
 
@@ -83,8 +85,10 @@ export function SpdPreferenceMarginFormDetail({ mode, pmId }: FormDetailProps) {
   useEffect(() => {
     if (mode == 'detail' && selectedSuccess && selected !== undefined) {
       reset({
-        name: selected?.name,
         condition: selected?.condition,
+        description: selected?.description,
+        itbReference: selected?.itbReference,
+        itbDescription: selected?.itbDescription,
         margin: selected?.margin,
       });
     }
@@ -93,12 +97,6 @@ export function SpdPreferenceMarginFormDetail({ mode, pmId }: FormDetailProps) {
   return (
     <Stack pos="relative">
       <LoadingOverlay visible={isLoading} />
-      <TextInput
-        label="Name"
-        withAsterisk
-        error={errors?.criteria ? errors?.name?.message?.toString() : ''}
-        {...register('name')}
-      />
       <Textarea
         label="Condition"
         withAsterisk
@@ -106,6 +104,36 @@ export function SpdPreferenceMarginFormDetail({ mode, pmId }: FormDetailProps) {
         minRows={2}
         error={errors?.condition ? errors?.condition?.message?.toString() : ''}
         {...register('condition')}
+      />
+      <Textarea
+        label="Description"
+        withAsterisk
+        autosize
+        minRows={2}
+        error={
+          errors?.description ? errors?.description?.message?.toString() : ''
+        }
+        {...register('description')}
+      />
+      <TextInput
+        label="Itb Reference"
+        withAsterisk
+        error={
+          errors?.itbReference ? errors?.itbReference?.message?.toString() : ''
+        }
+        {...register('itbReference')}
+      />
+      <Textarea
+        label="Itb Description"
+        withAsterisk
+        autosize
+        minRows={2}
+        error={
+          errors?.itbDescription
+            ? errors?.itbDescription?.message?.toString()
+            : ''
+        }
+        {...register('itbDescription')}
       />
       <Controller
         name="margin"

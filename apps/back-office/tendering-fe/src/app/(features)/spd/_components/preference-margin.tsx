@@ -35,8 +35,8 @@ export default function SpdPreferenceMargin() {
   const [remove, { isLoading: isDeleting }] = useDeleteMutation();
   const config = {
     columns: [
-      { accessor: 'name', title: 'Name', width: 300 },
-      { accessor: 'requirement', title: 'Requirement', width: 150 },
+      { accessor: 'condition', title: 'Condition', width: 150 },
+      { accessor: 'description', title: 'Description', width: 150 },
       { accessor: 'margin', title: 'Margin', width: 150 },
       {
         accessor: 'action',

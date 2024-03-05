@@ -1,4 +1,4 @@
-export interface IBidForms {
+export interface BidForm {
   id: string;
   spdId: string;
   title: string;

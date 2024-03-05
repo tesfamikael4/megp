@@ -13,6 +13,7 @@ import { technicalScoringTreeApi } from '@/app/(features)/spd/_api/technical-sco
 import { sorBillOfMaterialTreeApi } from '@/app/(features)/preparation/_api/item/bill-of-material-tree.api';
 import { approveTenderApi } from '@/app/(features)/preparation/_api/tender/approve-tender.api';
 import { sorDocumentApi } from '@/app/(features)/preparation/_api/item/sor-document.api';
+import { contractFormSpdApi } from '@/app/(features)/spd/_api/contract-form-upload.api';
 const { reducers, middleware } = entityApi;
 
 export const store = configureStore({

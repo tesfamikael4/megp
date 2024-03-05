@@ -1,7 +1,5 @@
 import {
-  Checkbox,
   LoadingOverlay,
-  NativeSelect,
   NumberInput,
   Stack,
   TextInput,
@@ -16,25 +14,22 @@ import {
   useDeleteMutation,
   useUpdateMutation,
   useCreateMutation,
-} from '../_api/technical-scoring.api';
+} from '../_api/professional-setting.api';
 import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { logger, notify } from '@megp/core-fe';
-import { TechnicalScoring } from '@/models/tender/lot/technical-scoring.model';
+import { SpdProfessionalSetting } from '@/models/spd/professional-setting.model';
 
 interface FormDetailProps {
   mode: 'new' | 'detail';
-  parentId?: string;
 }
 
-export function SpdTechnicalScoringFormDetail({
+export function SpdProfessionalSettingFormDetail({
   mode,
-  parentId,
 }: Readonly<FormDetailProps>) {
-  const spdSchema: ZodType<Partial<TechnicalScoring>> = z.object({
+  const spdSchema: ZodType<Partial<SpdProfessionalSetting>> = z.object({
     requirement: z.string().min(1, { message: 'This field is required' }),
     formLink: z.string().min(1, { message: 'This field is required' }),
-    isProfessional: z.boolean(),
     validation: z.object({
       min: z
         .number()
@@ -78,7 +73,6 @@ export function SpdTechnicalScoringFormDetail({
       await create({
         ...data,
         spdId: id,
-        parentId: parentId ?? '00000000-0000-0000-0000-000000000000',
         orderNo: 1,
       });
       notify('Success', 'technical scoring created successfully');
@@ -109,7 +103,6 @@ export function SpdTechnicalScoringFormDetail({
       reset({
         requirement: selected?.requirement,
         formLink: selected?.formLink,
-        isProfessional: selected?.isProfessional,
         validation: selected?.validation,
       });
     }
@@ -177,11 +170,6 @@ export function SpdTechnicalScoringFormDetail({
           className="w-1/2"
           error={errors?.formLink ? errors?.formLink?.message?.toString() : ''}
           {...register('formLink')}
-        />
-        <Checkbox
-          label="Is Professional"
-          className="w-1/2 my-auto"
-          {...register('isProfessional')}
         />
       </div>
       <EntityButton

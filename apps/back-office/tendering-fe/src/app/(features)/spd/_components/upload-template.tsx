@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Button,
   FileButton,
@@ -8,22 +8,28 @@ import {
   Modal,
 } from '@mantine/core';
 import { logger } from '@megp/core-fe';
-import { useUploadSpdMutation } from '../_api/template-spd.api';
+import {
+  useLazyGetFilesQuery,
+  useUploadSpdMutation,
+} from '../_api/template-spd.api';
 import { FileViewer } from '../../_components/file-viewer';
 import { useParams } from 'next/navigation';
 import { useDisclosure } from '@mantine/hooks';
 const UploadTemplate = () => {
   const { id } = useParams();
-  const [file, setFile] = useState<File | null>(null);
   const [opened, { open, close }] = useDisclosure(false);
-  const [bdsFile, setBdsFiles] = useState<File | null>(null);
-  const [sccFile, setSccFiles] = useState<File | null>(null);
+  const [file, setFile] = useState<{ [key: string]: File | null }>({});
+  const [currentView, setCurrentView] = useState<string>('main-document');
   const [uploadFile, { isLoading: isUploading }] = useUploadSpdMutation();
-  async function onUpload() {
+  async function onUpload(type: string) {
     logger.log(file);
     const formData = new FormData();
-    formData.append('file', file ?? '');
-    uploadFile({ id: id, file: formData });
+    formData.append('file', file?.[type] ?? '');
+    uploadFile({ id: id, type: type, file: formData });
+  }
+  function onFileChange(file: File | null, key: string) {
+    const value = { [key]: file };
+    setFile(value);
   }
   return (
     <>
@@ -37,7 +43,12 @@ const UploadTemplate = () => {
             <Table.Td>
               <div className="flex space-x-4">
                 <div className="my-auto">
-                  <FileButton onChange={setFile} accept=".docx">
+                  <FileButton
+                    onChange={(event) => {
+                      onFileChange(event, 'main-document');
+                    }}
+                    accept=".docx"
+                  >
                     {(props) => (
                       <Button {...props} variant="subtle">
                         Select
@@ -46,14 +57,27 @@ const UploadTemplate = () => {
                   </FileButton>
                 </div>
                 <div>
-                  <List>{file && <List.Item>template</List.Item>}</List>
-                  {file && (
-                    <Button variant="filled" onClick={onUpload}>
+                  <List>
+                    {file['main-document'] && <List.Item>template</List.Item>}
+                  </List>
+                  {file['main-document'] && (
+                    <Button
+                      variant="filled"
+                      onClick={() => {
+                        onUpload('main-document');
+                      }}
+                    >
                       Upload
                     </Button>
                   )}
                   {
-                    <Button variant="subtle" onClick={open}>
+                    <Button
+                      variant="subtle"
+                      onClick={() => {
+                        open();
+                        setCurrentView('main-document');
+                      }}
+                    >
                       Preview
                     </Button>
                   }
@@ -68,7 +92,12 @@ const UploadTemplate = () => {
             <Table.Td>
               <div className="flex space-x-4">
                 <div className="my-auto">
-                  <FileButton onChange={setBdsFiles} accept=".docx">
+                  <FileButton
+                    onChange={(event) => {
+                      onFileChange(event, 'bds');
+                    }}
+                    accept=".docx"
+                  >
                     {(props) => (
                       <Button variant="subtle" {...props}>
                         Select
@@ -78,18 +107,29 @@ const UploadTemplate = () => {
                 </div>
                 <div>
                   <List>
-                    {bdsFile && <List.Item>{bdsFile.name}</List.Item>}
+                    {file['bds'] && <List.Item>{file['bds'].name}</List.Item>}
                   </List>
-                  {bdsFile && (
-                    <Button variant="filled" onClick={onUpload}>
+                  {file['bds'] && (
+                    <Button
+                      variant="filled"
+                      onClick={() => {
+                        onUpload('bds');
+                      }}
+                    >
                       Upload
                     </Button>
                   )}
-                  {bdsFile && (
-                    <Button variant="subtle" onClick={open}>
+                  {
+                    <Button
+                      variant="subtle"
+                      onClick={() => {
+                        open();
+                        setCurrentView('bds');
+                      }}
+                    >
                       Preview
                     </Button>
-                  )}
+                  }
                 </div>
               </div>
             </Table.Td>
@@ -101,7 +141,12 @@ const UploadTemplate = () => {
             <Table.Td>
               <div className="flex space-x-4">
                 <div className="my-auto">
-                  <FileButton onChange={setSccFiles} accept=".docx">
+                  <FileButton
+                    onChange={(event) => {
+                      onFileChange(event, 'scc');
+                    }}
+                    accept=".docx"
+                  >
                     {(props) => (
                       <Button variant="subtle" {...props}>
                         Select
@@ -111,18 +156,386 @@ const UploadTemplate = () => {
                 </div>
                 <div>
                   <List>
-                    {sccFile && <List.Item>{sccFile.name}</List.Item>}
+                    {file['scc'] && <List.Item>{file['scc']?.name}</List.Item>}
                   </List>
-                  {sccFile && (
-                    <Button variant="filled" onClick={onUpload}>
+                  {file['scc'] && (
+                    <Button
+                      variant="filled"
+                      onClick={() => {
+                        onUpload('scc');
+                      }}
+                    >
                       Upload
                     </Button>
                   )}
-                  {sccFile && (
-                    <Button variant="subtle" onClick={open}>
+                  {
+                    <Button
+                      variant="subtle"
+                      onClick={() => {
+                        open();
+                        setCurrentView('scc');
+                      }}
+                    >
                       Preview
                     </Button>
+                  }
+                </div>
+              </div>
+            </Table.Td>
+          </Table.Tr>
+          <Table.Tr>
+            <Table.Td className="bg-slate-200 font-semibold w-2/6">
+              Invitation
+            </Table.Td>
+            <Table.Td>
+              <div className="flex space-x-4">
+                <div className="my-auto">
+                  <FileButton
+                    onChange={(event) => {
+                      onFileChange(event, 'invitation');
+                    }}
+                    accept=".docx"
+                  >
+                    {(props) => (
+                      <Button variant="subtle" {...props}>
+                        Select
+                      </Button>
+                    )}
+                  </FileButton>
+                </div>
+                <div>
+                  <List>
+                    {file['invitation'] && (
+                      <List.Item>{file['invitation']?.name}</List.Item>
+                    )}
+                  </List>
+                  {file['invitation'] && (
+                    <Button
+                      variant="filled"
+                      onClick={() => {
+                        onUpload('scc');
+                      }}
+                    >
+                      Upload
+                    </Button>
                   )}
+                  {
+                    <Button
+                      variant="subtle"
+                      onClick={() => {
+                        open();
+                        setCurrentView('invitation');
+                      }}
+                    >
+                      Preview
+                    </Button>
+                  }
+                </div>
+              </div>
+            </Table.Td>
+          </Table.Tr>
+          <Table.Tr>
+            <Table.Td className="bg-slate-200 font-semibold w-2/6">
+              Opening Minutes
+            </Table.Td>
+            <Table.Td>
+              <div className="flex space-x-4">
+                <div className="my-auto">
+                  <FileButton
+                    onChange={(event) => {
+                      onFileChange(event, 'opening-minutes');
+                    }}
+                    accept=".docx"
+                  >
+                    {(props) => (
+                      <Button variant="subtle" {...props}>
+                        Select
+                      </Button>
+                    )}
+                  </FileButton>
+                </div>
+                <div>
+                  <List>
+                    {file['opening-minutes'] && (
+                      <List.Item>{file['opening-minutes']?.name}</List.Item>
+                    )}
+                  </List>
+                  {file['opening-minutes'] && (
+                    <Button
+                      variant="filled"
+                      onClick={() => {
+                        onUpload('opening-minute');
+                      }}
+                    >
+                      Upload
+                    </Button>
+                  )}
+                  {
+                    <Button
+                      variant="subtle"
+                      onClick={() => {
+                        open();
+                        setCurrentView('opening-minute');
+                      }}
+                    >
+                      Preview
+                    </Button>
+                  }
+                </div>
+              </div>
+            </Table.Td>
+          </Table.Tr>
+          <Table.Tr>
+            <Table.Td className="bg-slate-200 font-semibold w-2/6">
+              Evaluation Result
+            </Table.Td>
+            <Table.Td>
+              <div className="flex space-x-4">
+                <div className="my-auto">
+                  <FileButton
+                    onChange={(event) => {
+                      onFileChange(event, 'evaluation-result');
+                    }}
+                    accept=".docx"
+                  >
+                    {(props) => (
+                      <Button variant="subtle" {...props}>
+                        Select
+                      </Button>
+                    )}
+                  </FileButton>
+                </div>
+                <div>
+                  <List>
+                    {file['evaluation-result'] && (
+                      <List.Item>{file['evaluation-result']?.name}</List.Item>
+                    )}
+                  </List>
+                  {file['evaluation-result'] && (
+                    <Button
+                      variant="filled"
+                      onClick={() => {
+                        onUpload('evaluation-result');
+                      }}
+                    >
+                      Upload
+                    </Button>
+                  )}
+                  {
+                    <Button
+                      variant="subtle"
+                      onClick={() => {
+                        open();
+                        setCurrentView('evaluation-result');
+                      }}
+                    >
+                      Preview
+                    </Button>
+                  }
+                </div>
+              </div>
+            </Table.Td>
+          </Table.Tr>
+          <Table.Tr>
+            <Table.Td className="bg-slate-200 font-semibold w-2/6">
+              Evaluation Report
+            </Table.Td>
+            <Table.Td>
+              <div className="flex space-x-4">
+                <div className="my-auto">
+                  <FileButton
+                    onChange={(event) => {
+                      onFileChange(event, 'evaluation-report');
+                    }}
+                    accept=".docx"
+                  >
+                    {(props) => (
+                      <Button variant="subtle" {...props}>
+                        Select
+                      </Button>
+                    )}
+                  </FileButton>
+                </div>
+                <div>
+                  <List>
+                    {file['evaluation-report'] && (
+                      <List.Item>{file['evaluation-report']?.name}</List.Item>
+                    )}
+                  </List>
+                  {file['evaluation-report'] && (
+                    <Button
+                      variant="filled"
+                      onClick={() => {
+                        onUpload('evaluation-report');
+                      }}
+                    >
+                      Upload
+                    </Button>
+                  )}
+                  {
+                    <Button
+                      variant="subtle"
+                      onClick={() => {
+                        open();
+                        setCurrentView('evaluation-report');
+                      }}
+                    >
+                      Preview
+                    </Button>
+                  }
+                </div>
+              </div>
+            </Table.Td>
+          </Table.Tr>
+          <Table.Tr>
+            <Table.Td className="bg-slate-200 font-semibold w-2/6">
+              Award Notice
+            </Table.Td>
+            <Table.Td>
+              <div className="flex space-x-4">
+                <div className="my-auto">
+                  <FileButton
+                    onChange={(event) => {
+                      onFileChange(event, 'award-notice');
+                    }}
+                    accept=".docx"
+                  >
+                    {(props) => (
+                      <Button variant="subtle" {...props}>
+                        Select
+                      </Button>
+                    )}
+                  </FileButton>
+                </div>
+                <div>
+                  <List>
+                    {file['award-notice'] && (
+                      <List.Item>{file['award-notice']?.name}</List.Item>
+                    )}
+                  </List>
+                  {file['award-notice'] && (
+                    <Button
+                      variant="filled"
+                      onClick={() => {
+                        onUpload('award-notice');
+                      }}
+                    >
+                      Upload
+                    </Button>
+                  )}
+                  {
+                    <Button
+                      variant="subtle"
+                      onClick={() => {
+                        open();
+                        setCurrentView('award-notice');
+                      }}
+                    >
+                      Preview
+                    </Button>
+                  }
+                </div>
+              </div>
+            </Table.Td>
+          </Table.Tr>
+          <Table.Tr>
+            <Table.Td className="bg-slate-200 font-semibold w-2/6">
+              Contract Notice
+            </Table.Td>
+            <Table.Td>
+              <div className="flex space-x-4">
+                <div className="my-auto">
+                  <FileButton
+                    onChange={(event) => {
+                      onFileChange(event, 'contract-notice');
+                    }}
+                    accept=".docx"
+                  >
+                    {(props) => (
+                      <Button variant="subtle" {...props}>
+                        Select
+                      </Button>
+                    )}
+                  </FileButton>
+                </div>
+                <div>
+                  <List>
+                    {file['contract-notice'] && (
+                      <List.Item>{file['contract-notice']?.name}</List.Item>
+                    )}
+                  </List>
+                  {file['contract-notice'] && (
+                    <Button
+                      variant="filled"
+                      onClick={() => {
+                        onUpload('contract-notice');
+                      }}
+                    >
+                      Upload
+                    </Button>
+                  )}
+                  {
+                    <Button
+                      variant="subtle"
+                      onClick={() => {
+                        open();
+                        setCurrentView('contract-notice');
+                      }}
+                    >
+                      Preview
+                    </Button>
+                  }
+                </div>
+              </div>
+            </Table.Td>
+          </Table.Tr>
+          <Table.Tr>
+            <Table.Td className="bg-slate-200 font-semibold w-2/6">
+              Cancelation Notice
+            </Table.Td>
+            <Table.Td>
+              <div className="flex space-x-4">
+                <div className="my-auto">
+                  <FileButton
+                    onChange={(event) => {
+                      onFileChange(event, 'cancelation-notice');
+                    }}
+                    accept=".docx"
+                  >
+                    {(props) => (
+                      <Button variant="subtle" {...props}>
+                        Select
+                      </Button>
+                    )}
+                  </FileButton>
+                </div>
+                <div>
+                  <List>
+                    {file['cancelation-notice'] && (
+                      <List.Item>{file['cancelation-notice']?.name}</List.Item>
+                    )}
+                  </List>
+                  {file['cancelation-notice'] && (
+                    <Button
+                      variant="filled"
+                      onClick={() => {
+                        onUpload('cancelation-notice');
+                      }}
+                    >
+                      Upload
+                    </Button>
+                  )}
+                  {
+                    <Button
+                      variant="subtle"
+                      onClick={() => {
+                        open();
+                        setCurrentView('cancelation-notice');
+                      }}
+                    >
+                      Preview
+                    </Button>
+                  }
                 </div>
               </div>
             </Table.Td>
@@ -130,23 +543,22 @@ const UploadTemplate = () => {
         </Table.Tbody>
       </Table>
       <Modal title="View Document" opened={opened} onClose={close}>
-        <FilePreview id={id as any} />
+        <FilePreview id={id as any} type={currentView} />
       </Modal>
     </>
   );
 };
 
-const FilePreview = ({ id }: { id: string }) => {
+const FilePreview = ({ id, type }: { id: string; type: string }) => {
+  const [dowloadFile, { data: url, isLoading }] = useLazyGetFilesQuery();
+
+  useEffect(() => {
+    dowloadFile({ id: id, type: type });
+  }, [id, type]);
   return (
     <>
-      <FileViewer
-        url={
-          `${
-            process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api/'
-          }/spd/download-spd/${id}` ?? ''
-        }
-        filename="Standard procurement document template"
-      />
+      <LoadingOverlay visible={isLoading} />
+      <FileViewer url={url?.presignedDownload ?? ''} filename={type} />
     </>
   );
 };
