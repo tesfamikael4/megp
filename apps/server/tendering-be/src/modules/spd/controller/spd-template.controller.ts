@@ -40,9 +40,8 @@ export class SpdTemplateController extends ExtraCrudController<SpdTemplate>(
     @Param('spdId') spdId: string,
     @Param('type') type: string,
     @UploadedFile() file: Express.Multer.File,
-    @Res() response: Response,
   ) {
-    return this.spdService.uploadSPDDocument(spdId, type, file, response);
+    return this.spdService.uploadSPDDocument(spdId, type, file);
   }
 
   @Get('/download-spd-docx/:spdId/:type')
@@ -50,9 +49,8 @@ export class SpdTemplateController extends ExtraCrudController<SpdTemplate>(
   async downloadSPDDocumentDocx(
     @Param('spdId') spdId: string,
     @Param('type') type: string,
-    @Res() response: Response,
   ) {
-    return this.spdService.downloadSPDDocumentDocx(spdId, type, response);
+    return this.spdService.downloadSPDDocumentDocx(spdId, type);
   }
 
   @Get('/download-spd-pdf/:spdId/:type')
@@ -60,8 +58,7 @@ export class SpdTemplateController extends ExtraCrudController<SpdTemplate>(
   async downloadSPDDocumentPdf(
     @Param('spdId') spdId: string,
     @Param('type') type: string,
-    @Res() response: Response,
   ) {
-    return this.spdService.downloadSPDDocumentPdf(spdId, type, response);
+    return this.spdService.downloadSPDDocumentPdf(spdId, type);
   }
 }

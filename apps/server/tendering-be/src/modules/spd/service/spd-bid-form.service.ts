@@ -61,7 +61,7 @@ export class SpdBidFormService extends ExtraCrudService<SpdBidForm> {
     }
   }
 
-  async downloadSPDDocumentDocx(id: string, response: Response) {
+  async downloadSPDDocumentDocx(id: string) {
     try {
       const spd = await this.spdBidFormRepository.findOneBy({ id });
       if (!spd) {
@@ -70,13 +70,15 @@ export class SpdBidFormService extends ExtraCrudService<SpdBidForm> {
       if (!spd.documentDocx) {
         throw new Error('SPD Document not found');
       }
-      return await this.minIOService.download(spd.documentDocx, response);
+      const presignedDownload =
+        await this.minIOService.generatePresignedDownloadUrl(spd.documentDocx);
+      return { presignedDownload };
     } catch (error) {
       throw error;
     }
   }
 
-  async downloadSPDDocumentPdf(id: string, response: Response) {
+  async downloadSPDDocumentPdf(id: string) {
     try {
       const spd = await this.spdBidFormRepository.findOneBy({ id });
       if (!spd) {
@@ -85,7 +87,9 @@ export class SpdBidFormService extends ExtraCrudService<SpdBidForm> {
       if (!spd.documentPdf) {
         throw new Error('SPD Document not found');
       }
-      return await this.minIOService.download(spd.documentPdf, response);
+      const presignedDownload =
+        await this.minIOService.generatePresignedDownloadUrl(spd.documentPdf);
+      return { presignedDownload };
     } catch (error) {
       throw error;
     }
