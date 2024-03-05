@@ -100,14 +100,10 @@ export function SpdAdministrativeComplianceFormDetail({
     if (mode == 'detail' && selectedSuccess && selected !== undefined) {
       reset({
         criteria: selected?.criteria,
-        attribute: selected?.attribute,
-        value: selected?.value,
         type: selected?.type,
-        reference: selected?.reference,
+        itbReference: selected?.itbReference,
         formLink: selected?.formLink,
-        isRequired: selected?.isRequired,
         itbDescription: selected?.itbDescription,
-        mandate: selected?.mandate,
       });
     }
   }, [mode, reset, selected, selectedSuccess]);
@@ -115,10 +111,6 @@ export function SpdAdministrativeComplianceFormDetail({
   return (
     <Stack pos="relative">
       <LoadingOverlay visible={isLoading} />
-      <Checkbox
-        label="Cannot be modified by procuring entity"
-        {...register('isRequired')}
-      />
       <Textarea
         label="Criteria"
         withAsterisk
@@ -127,18 +119,14 @@ export function SpdAdministrativeComplianceFormDetail({
         error={errors?.criteria ? errors?.criteria?.message?.toString() : ''}
         {...register('criteria')}
       />
-      <TextInput
-        label="Data Field from ITB"
-        withAsterisk
-        error={errors?.attribute ? errors?.attribute?.message?.toString() : ''}
-        {...register('attribute')}
-      />
 
       <TextInput
         label="ITB Reference"
         withAsterisk
-        error={errors?.reference ? errors?.reference?.message?.toString() : ''}
-        {...register('reference')}
+        error={
+          errors?.itbReference ? errors?.itbReference?.message?.toString() : ''
+        }
+        {...register('itbReference')}
       />
 
       <Textarea

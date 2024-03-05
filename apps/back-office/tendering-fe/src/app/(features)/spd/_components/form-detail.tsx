@@ -29,7 +29,6 @@ export function FormDetail({ mode }: FormDetailProps) {
   const spdSchema: ZodType<Partial<Spd>> = z.object({
     name: z.string().min(1, { message: 'This field is required' }),
     description: z.string().optional(),
-    language: z.string().min(1, { message: 'This field is required' }),
     procurementCategory: z.enum([
       'goods',
       'consultancy',

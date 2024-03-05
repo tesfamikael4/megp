@@ -1,4 +1,4 @@
-export interface IContractForms {
+export interface ContractForm {
   id: string;
   spdId: string;
   title: string;

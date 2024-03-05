@@ -42,7 +42,15 @@ export const ENTITY_LIST: EntityStoreConfig[] = [
     baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
   },
   {
+    entity: 'spd-contract-forms',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
+  },
+  {
     entity: 'preference-margins',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
+  },
+  {
+    entity: 'spd-professional-settings',
     baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
   },
   {
@@ -90,8 +98,12 @@ export const ENTITY_LIST: EntityStoreConfig[] = [
     baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
   },
   {
-    entity: 'procurement-requisitions',
+    entity: 'spd-bid-form',
     baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
+  },
+  {
+    entity: 'procurement-requisitions',
+    baseUrl: process.env.NEXT_PUBLIC_PR_API ?? '/tendering/api',
   },
   {
     entity: 'post-budget-plan-activities',

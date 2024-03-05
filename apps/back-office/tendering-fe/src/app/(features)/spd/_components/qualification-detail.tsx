@@ -32,46 +32,6 @@ export const DetailQualification = ({ cell }: any) => {
       value: cell.formLink,
     },
   ];
-  const singleBidder = [
-    {
-      key: 'Requirement for a Single Bidder',
-      value: cell.singleEntityCondition.value,
-    },
-    {
-      key: 'Additional Requirement',
-      value: cell.singleEntityCondition.additionalRequirements,
-    },
-  ];
-  const jvCominedCondition = [
-    {
-      key: 'Jv combined condition',
-      value: cell.jvCominedCondition.value,
-    },
-    {
-      key: 'Additional Requirement',
-      value: cell.jvCominedCondition.additionalRequirements,
-    },
-  ];
-  const jvEachPartherCondition = [
-    {
-      key: 'Jv each partner condition',
-      value: cell.jvCominedCondition.value,
-    },
-    {
-      key: 'Additional Requirement',
-      value: cell.jvCominedCondition.additionalRequirements,
-    },
-  ];
-  const jvAtleastOnePartnerCondition = [
-    {
-      key: 'Jv at least one partner condition',
-      value: cell.jvCominedCondition.value,
-    },
-    {
-      key: 'Additional Requirement',
-      value: cell.jvCominedCondition.additionalRequirements,
-    },
-  ];
   return (
     <>
       <Box className="bg-white p-5" pos="relative">
@@ -80,43 +40,6 @@ export const DetailQualification = ({ cell }: any) => {
           withColumnBorders
           withTableBorder
           records={data}
-          columns={[{ accessor: 'key', width: 400 }, { accessor: 'value' }]}
-          noHeader
-        />
-
-        <Text className="font-semibold my-4">
-          Requirement for a Single Bidder
-        </Text>
-        <DataTable
-          withColumnBorders
-          withTableBorder
-          records={singleBidder}
-          columns={[{ accessor: 'key', width: 400 }, { accessor: 'value' }]}
-          noHeader
-        />
-        <Text className="font-semibold my-4">Jv combined condition</Text>
-        <DataTable
-          withColumnBorders
-          withTableBorder
-          records={jvCominedCondition}
-          columns={[{ accessor: 'key', width: 400 }, { accessor: 'value' }]}
-          noHeader
-        />
-        <Text className="font-semibold my-4">Jv each partner condition</Text>
-        <DataTable
-          withColumnBorders
-          withTableBorder
-          records={jvEachPartherCondition}
-          columns={[{ accessor: 'key', width: 400 }, { accessor: 'value' }]}
-          noHeader
-        />
-        <Text className="font-semibold my-4">
-          Jv at least one partner condition
-        </Text>
-        <DataTable
-          withColumnBorders
-          withTableBorder
-          records={jvAtleastOnePartnerCondition}
           columns={[{ accessor: 'key', width: 400 }, { accessor: 'value' }]}
           noHeader
         />

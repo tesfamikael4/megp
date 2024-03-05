@@ -1,7 +1,15 @@
 'use client';
 import { ExpandableTable } from '@/app/(features)/_components/expandable-table';
 import { Section, logger } from '@megp/core-fe';
-import { Box, Button, Divider, Menu, Modal, Text } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Divider,
+  Menu,
+  Modal,
+  Text,
+  LoadingOverlay,
+} from '@mantine/core';
 import {
   IconDotsVertical,
   IconEye,
@@ -12,32 +20,37 @@ import {
 import {
   useDeleteMutation,
   useLazyListQuery,
-} from '../_api/documentary-evidence.api';
-import { SpdDocumentaryEvidenceFormDetail } from './documentary-evidence-form-detail';
+} from '../_api/professional-setting.api';
 import { useDisclosure } from '@mantine/hooks';
+import { SpdProfessionalSettingFormDetail } from './professional-setting-form-detail';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import { useState } from 'react';
+import { SpdProfessionalSetting } from '@/models/spd/professional-setting.model';
 
-export default function DocumentaryEvidence() {
+export default function SpdProfessionalSetting() {
   const [trigger, { data, isFetching }] = useLazyListQuery();
   const [opened, { open, close }] = useDisclosure(false);
-  const [deId, setId] = useState('');
   const [mode, setMode] = useState<'new' | 'detail'>('new');
   const [remove, { isLoading: isDeleting }] = useDeleteMutation();
   const config = {
     columns: [
+      { accessor: 'requirement', title: 'Requirement', width: 150 },
+      { accessor: 'formLink', title: 'Form link', width: 150 },
       {
-        accessor: 'evidenceTitle',
-        title: 'Evidence Title',
-        width: 300,
-      },
-      {
-        accessor: 'evidenceType',
-        title: 'Evidence Type',
+        accessor: 'validation',
+        title: 'Validation',
         width: 150,
+        render: (record: SpdProfessionalSetting) => {
+          return (
+            <Box>
+              <Text>
+                {record.validation.min} - {record.validation.max}
+              </Text>
+            </Box>
+          );
+        },
       },
-      { accessor: 'requiredTo', title: 'Required To', width: 150 },
       {
         accessor: 'action',
         header: 'Action',
@@ -47,17 +60,18 @@ export default function DocumentaryEvidence() {
     ],
     isExpandable: false,
     isSearchable: true,
-    isLoading: isFetching || isDeleting,
+    isLoading: isFetching,
     primaryColumn: 'name',
   };
+
   const Action = ({ data }: any) => {
     const openDeleteModal = () => {
       modals.openConfirmModal({
-        title: `Delete documentary evidence`,
+        title: `Delete Document`,
         centered: true,
         children: (
           <Text size="sm">
-            {`Are you sure you want to delete this documentary evidence `}
+            {`Are you sure you want to delete this Document `}
           </Text>
         ),
         labels: { confirm: 'Yes', cancel: 'No' },
@@ -70,7 +84,7 @@ export default function DocumentaryEvidence() {
         await remove(data.id).unwrap();
         notifications.show({
           title: 'Success',
-          message: 'documentary evidence Deleted Successfully',
+          message: 'Document Deleted Successfully',
           color: 'green',
         });
       } catch (err) {
@@ -94,7 +108,6 @@ export default function DocumentaryEvidence() {
             <Menu.Item
               leftSection={<IconEye size={15} />}
               onClick={() => {
-                setId(data.id);
                 setMode('detail');
                 open();
                 // handleViewer();
@@ -122,7 +135,7 @@ export default function DocumentaryEvidence() {
 
   return (
     <Section
-      title="Documentary Evidence"
+      title="Professional Settings"
       collapsible={true}
       defaultCollapsed={true}
       action={
@@ -131,6 +144,11 @@ export default function DocumentaryEvidence() {
         </Button>
       }
     >
+      <LoadingOverlay
+        visible={isDeleting}
+        zIndex={1000}
+        overlayProps={{ radius: 'sm', blur: 2 }}
+      />
       <ExpandableTable
         config={config}
         data={data?.items ?? []}
@@ -145,13 +163,13 @@ export default function DocumentaryEvidence() {
       >
         <div className="flex justify-between">
           <h2 className="font-medium text-lg capitalize">
-            Documentary Evidence
+            Professional Setting
           </h2>
           <IconX onClick={close} />
         </div>
         <Divider mt={'md'} mb={'md'} />
         <Box className="bg-white rounded shadow-sm ">
-          <SpdDocumentaryEvidenceFormDetail mode={mode} deId={deId} />
+          <SpdProfessionalSettingFormDetail mode={mode} />
         </Box>
       </Modal>
     </Section>

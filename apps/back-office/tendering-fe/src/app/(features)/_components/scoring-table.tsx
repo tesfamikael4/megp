@@ -9,7 +9,7 @@ import {
   IconX,
 } from '@tabler/icons-react';
 import { DataTable } from 'mantine-datatable';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { SpdTechnicalScoring } from '@/models/spd/technical-scoring';
 import { logger } from '@megp/core-fe';
 import { modals } from '@mantine/modals';
@@ -20,8 +20,10 @@ import { useDisclosure } from '@mantine/hooks';
 
 export function ScoringTable({
   scoring,
+  onRequestChange,
 }: {
   scoring: SpdTechnicalScoring[];
+  onRequestChange?: (request) => void;
 }): React.ReactNode {
   const [expandedIds, setExpandedIds] = useState<string[]>([]);
   const [adId, setId] = useState('');
@@ -35,6 +37,9 @@ export function ScoringTable({
       padding={0}
     />
   );
+  useEffect(() => {
+    onRequestChange?.({});
+  }, [expandedIds]);
   const Action = ({ data }: any) => {
     const openDeleteModal = () => {
       modals.openConfirmModal({

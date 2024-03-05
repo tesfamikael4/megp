@@ -9,7 +9,7 @@ const administrativeComplianceApi =
 export const administrativeComplianceSliceApi: typeof EntitySliceApi =
   createEntitySlice<SpdPreliminaryExamination>(
     administrativeComplianceApi,
-    'spd-administrative-compliances',
+    'spd-preliminary-evaluations',
   );
 
 export const {
