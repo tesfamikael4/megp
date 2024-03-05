@@ -2,6 +2,7 @@ import type { TablerIconsProps } from '@tabler/icons-react';
 import {
   IconAdjustmentsCog,
   IconBasketCog,
+  IconBuildingBank,
   IconBuildingStore,
   IconCalendarEvent,
   IconShoppingBag,
@@ -22,6 +23,7 @@ export const Applications = [
   // { key: 'contract', name: 'Contract', icon: IconFileSpreadsheet },
   { key: 'administration', name: 'Administration', icon: IconAdjustmentsCog },
   { key: 'iam', name: 'Identity & Access', icon: IconUsersGroup },
+  { key: 'banks', name: 'Banks', icon: IconBuildingBank },
 ];
 
 export const CurrentApplication = (key = 'iam'): ApplicationType => {
