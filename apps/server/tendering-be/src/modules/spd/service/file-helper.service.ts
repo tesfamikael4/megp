@@ -52,6 +52,7 @@ export class FileHelperService {
       'application/pdf',
     );
 
-    return { fileInfo, buffer };
+    // return { fileInfo, buffer };
+    return fileInfo;
   }
 }

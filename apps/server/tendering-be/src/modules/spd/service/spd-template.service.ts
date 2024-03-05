@@ -25,7 +25,6 @@ export class SpdTemplateService extends ExtraCrudService<SpdTemplate> {
     spdId: string,
     type: string,
     file: Express.Multer.File,
-    response: Response,
   ) {
     try {
       const result = await this.docxService.validateDocument(file.buffer, [
@@ -46,35 +45,28 @@ export class SpdTemplateService extends ExtraCrudService<SpdTemplate> {
       if (spdTemplate) {
         await this.spdTemplateRepository.update(spdTemplate.id, {
           documentDocx,
-          documentPdf: documentPdf.fileInfo,
+          documentPdf: documentPdf,
         });
       } else {
         await this.spdTemplateRepository.insert({
           type,
           documentDocx,
-          documentPdf: documentPdf.fileInfo,
+          documentPdf: documentPdf,
           spdId,
         });
       }
 
-      response.setHeader('Content-Type', documentPdf.fileInfo.contentType);
-      response.setHeader(
-        'Content-Disposition',
-        `attachment; filename=${documentPdf.fileInfo.filepath}`,
-      );
-      const download = Readable.from(documentPdf.buffer).pipe(response);
-
-      return download;
+      const presignedDownload =
+        await this.minIOService.generatePresignedDownloadUrl(
+          documentPdf.fileInfo,
+        );
+      return { presignedDownload };
     } catch (error) {
       throw error;
     }
   }
 
-  async downloadSPDDocumentDocx(
-    spdId: string,
-    type: string,
-    response: Response,
-  ) {
+  async downloadSPDDocumentDocx(spdId: string, type: string) {
     try {
       const spd = await this.spdTemplateRepository.findOneBy({ spdId, type });
       if (!spd) {
@@ -86,17 +78,15 @@ export class SpdTemplateService extends ExtraCrudService<SpdTemplate> {
 
       // const presignedDownload = await this.minIOService.generatePresignedDownloadUrl(spd.documentPdf);
 
-      return await this.minIOService.download(spd.documentDocx, response);
+      const presignedDownload =
+        await this.minIOService.generatePresignedDownloadUrl(spd.documentDocx);
+      return { presignedDownload };
     } catch (error) {
       throw error;
     }
   }
 
-  async downloadSPDDocumentPdf(
-    spdId: string,
-    type: string,
-    response: Response,
-  ) {
+  async downloadSPDDocumentPdf(spdId: string, type: string) {
     try {
       const spd = await this.spdTemplateRepository.findOneBy({ spdId, type });
       if (!spd) {
@@ -108,7 +98,9 @@ export class SpdTemplateService extends ExtraCrudService<SpdTemplate> {
 
       // const presignedDownload = await this.minIOService.generatePresignedDownloadUrl(spd.documentPdf);
 
-      return await this.minIOService.download(spd.documentPdf, response);
+      const presignedDownload =
+        await this.minIOService.generatePresignedDownloadUrl(spd.documentPdf);
+      return { presignedDownload };
     } catch (error) {
       throw error;
     }

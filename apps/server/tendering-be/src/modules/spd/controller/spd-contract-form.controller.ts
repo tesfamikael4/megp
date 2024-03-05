@@ -46,19 +46,13 @@ export class SpdContractFormController extends ExtraCrudController<SpdContractFo
 
   @Get('/download-docx/:id')
   @AllowAnonymous()
-  async downloadSPDDocumentDocx(
-    @Param('id') id: string,
-    @Res() response: Response,
-  ) {
-    return this.spdService.downloadSPDDocumentDocx(id, response);
+  async downloadSPDDocumentDocx(@Param('id') id: string) {
+    return this.spdService.downloadSPDDocumentDocx(id);
   }
 
   @Get('/download-pdf/:id')
   @AllowAnonymous()
-  async downloadSPDDocumentPdf(
-    @Param('id') id: string,
-    @Res() response: Response,
-  ) {
-    return this.spdService.downloadSPDDocumentPdf(id, response);
+  async downloadSPDDocumentPdf(@Param('id') id: string) {
+    return this.spdService.downloadSPDDocumentPdf(id);
   }
 }
