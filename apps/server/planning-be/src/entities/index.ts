@@ -20,6 +20,7 @@ export * from './budget-year.entity';
 export * from './budget.entity';
 
 export * from './reason.entity';
+export * from './document.entity';
 //pr
 
 export * from './procurement-requisition.entity';

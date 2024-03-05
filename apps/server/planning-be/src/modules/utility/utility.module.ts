@@ -6,11 +6,17 @@ import { ReasonService } from './services/reason.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Reason } from 'src/entities/reason.entity';
 import { PdfGeneratorService } from './services/pdf-generator.service';
+import { DocumentService } from './services/document.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Reason])],
-  providers: [QrCodeService, ReasonService, PdfGeneratorService],
+  imports: [TypeOrmModule.forFeature([Reason, Document])],
+  providers: [
+    QrCodeService,
+    ReasonService,
+    PdfGeneratorService,
+    DocumentService,
+  ],
   controllers: [QrCodeController, ReasonController],
-  exports: [ReasonService, PdfGeneratorService],
+  exports: [ReasonService, PdfGeneratorService, DocumentService],
 })
 export class UtilityModule {}
