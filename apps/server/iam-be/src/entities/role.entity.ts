@@ -14,6 +14,7 @@ import { UserRole } from './user-role.entity';
 import { Organization } from './organization.entity';
 
 @Entity({ name: 'roles' })
+@Unique(['name', 'organizationId'])
 export class Role extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
