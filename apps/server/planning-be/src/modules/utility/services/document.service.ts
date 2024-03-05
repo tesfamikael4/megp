@@ -1,5 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { EntityCrudService } from 'src/shared/service';
 import { MinIOService } from 'src/shared/min-io/min-io.service';
@@ -46,11 +46,12 @@ export class DocumentService extends EntityCrudService<Document> {
       },
     });
     if (!document) {
-      throw new HttpException('file not found', 404);
+      throw new NotFoundException();
     }
     const presignedUrl = await this.minIoService.generatePresignedDownloadUrl({
       bucketName: document.fileInfo.bucketName,
-      filepath: document.fileInfo.name,
+      filepath: document.fileInfo.filepath,
+      contentType: document.fileInfo.contentType,
     });
     return presignedUrl;
   }
@@ -65,11 +66,12 @@ export class DocumentService extends EntityCrudService<Document> {
       },
     });
     if (!document) {
-      throw new HttpException('file not found', 404);
+      throw new NotFoundException();
     }
     const presignedUrl = await this.minIoService.generatePresignedDownloadUrl({
       bucketName: document.fileInfo.bucketName,
-      filepath: document.fileInfo.name,
+      filepath: document.fileInfo.filepath,
+      contentType: document.fileInfo.contentType,
     });
     return { presignedUrl, document };
   }
