@@ -10,7 +10,7 @@ export class IsrVendorsEntity extends Audit {
   userId: string;
   @Column({ nullable: true })
   tinNumber: string;
-  @Column({ default: 'Draft' })
+  @Column({ default: 'Active' })
   status: string;
   @Column({ type: 'jsonb' })
   initial: any;

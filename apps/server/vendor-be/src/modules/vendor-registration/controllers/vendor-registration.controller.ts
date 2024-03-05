@@ -28,7 +28,10 @@ import {
 } from 'src/shared/authorization';
 import { InsertAllDataDto } from '../dto/save-all.dto';
 import { SetVendorStatus } from '../dto/vendor.dto';
-import { CollectionQuery } from 'src/shared/collection-query';
+import {
+  CollectionQuery,
+  decodeCollectionQuery,
+} from 'src/shared/collection-query';
 import { MbrsDataDto } from '../dto/mbrsData.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ReceiptDto } from '../dto/receipt.dto';
@@ -51,11 +54,7 @@ export class VendorRegistrationsController {
     // return await this.regService.getVendorByUserId(userInfo.id);
     return await this.regService.getVendorByUserId(userInfo.id);
   }
-  @Get('get-application-status-by-userId')
-  async getApplicationStatus(@CurrentUser() userInfo: any) {
-    // return await this.regService.getVendorByUserId(userInfo.id);
-    return await this.regService.getApplicationStatus(userInfo.id);
-  }
+
   @Get('get-isr-vendor-by-userId')
   async getIsrVendorByuserId(
     @CurrentUser() userInfo: any,
@@ -63,39 +62,12 @@ export class VendorRegistrationsController {
   ) {
     return await this.regService.getIsrVendorByUserId(userInfo.id, flag);
   }
-  @Get('get-isr-vendor-by-userId/:status')
-  async getApplicationsByUserIdAndStatus(
-    @CurrentUser() userInfo: any,
-    @Param('status') status: string,
-  ) {
-    return await this.regService.getApplicationsByUserIdAndStatus(
-      userInfo.id,
-      status,
-    );
-  }
+
   @Get('get-isr-vendor-info-by-userId')
-  async getApprovedIsrVendorByUserId(@CurrentUser() userInfo: any) {
+  async getPendingIsrVendorByuserId(@CurrentUser() userInfo: any) {
     return await this.regService.getPendingIsrVendorByUserId(userInfo.id);
   }
-  @Get('get-invoice-by-userId')
-  async getInvoiceByUserId(@CurrentUser() userInfo: any) {
-    return await this.regService.getInvoiceByUserId(userInfo.id);
-  }
 
-  @Get('get-approved-isr-vendor-info-by-userId/:status')
-  async getPendingIsrVendorByuserId(
-    @CurrentUser() userInfo: any,
-    @Param('status') status: string,
-  ) {
-    return await this.regService.getIsrVendorByStatusBUserId(
-      userInfo.id,
-      status,
-    );
-  }
-  @Get('get-pending-services')
-  async getPendingServices(@CurrentUser() userInfo: any) {
-    return await this.regService.getPendingServices(userInfo.id);
-  }
   @Get('get-isr-vendor-by-id/:vendorId')
   async getVendorByVendorId(@Param('vendorId') vendorId: string) {
     return await this.regService.getIsrVendorByVendorId(vendorId);
@@ -119,26 +91,14 @@ export class VendorRegistrationsController {
     if (!result) throw new BadRequestException(`vendor registration failed`);
     return result;
   }
-  @Post('draft-vendor-information')
-  async addDraftVendorInformation(
-    @Body() data: InsertAllDataDto,
-    @CurrentUser() userInfo: any,
-  ) {
-    data.data.userId = userInfo.id;
-    const result = await this.regService.addDraftVendorInformation(
-      data.data,
-      userInfo,
-    );
-    if (!result) throw new BadRequestException(`vendor registration failed`);
-    return result;
-  }
+
   @Post('submit-vendor-information')
-  async submitNewRegistratinRequest(
+  async submitVendorInformations(
     @Body() data: InsertAllDataDto,
     @CurrentUser() userInfo: any,
   ) {
     data.data.userId = userInfo.id;
-    const result = await this.regService.submitVendorInformation(
+    const result = await this.regService.submitVendorInformations(
       data.data,
       userInfo,
     );
@@ -262,10 +222,12 @@ export class VendorRegistrationsController {
       userInfo,
     );
   }
+
   @Get('get-mbrs-data')
   async GetMBRSData(@Body() mbrsDataDto: MbrsDataDto) {
     return await this.regService.GetMBRSData(mbrsDataDto);
   }
+
   @Get('get-ncic-data/:licenseNumber')
   async GetNCICData(@Param('licenseNumber') licenseNumber: string) {
     return await this.regService.GetNCICData(licenseNumber);

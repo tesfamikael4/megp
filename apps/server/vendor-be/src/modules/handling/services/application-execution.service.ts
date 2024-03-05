@@ -32,7 +32,7 @@ export class ApplicationExcutionService {
     private readonly vendorService: VendorRegistrationsService,
     private readonly baService: BusinessAreaService,
     private readonly invoiceService: InvoiceService,
-  ) { }
+  ) {}
 
   async getCurruntTaskByServiceKey(
     serviceKey: string,
@@ -42,6 +42,7 @@ export class ApplicationExcutionService {
     const keys = this.commonService.getServiceCatagoryKeys(serviceKey);
     console.log(keys);
     if (keys.length < 0) throw new HttpException('Invalid Request', 400);
+
     const dataQuery = QueryConstructor.constructQuery<WorkflowInstanceEntity>(
       this.wiRepository,
       query,
