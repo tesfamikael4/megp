@@ -70,7 +70,13 @@ export class OrganizationService extends EntityCrudService<Organization> {
 
       organization.units = [unit];
 
-      organization.roles = defaultOrganizationRoles as Role[];
+      const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
+      const defaultRoles = manager
+        .getRepository(Role)
+        .create(defaultOrganizationRoles);
+
+      organization.roles = defaultRoles;
 
       const result = await this.repositoryOrganization.save(organization);
 
