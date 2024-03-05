@@ -60,7 +60,12 @@ export class MinIOService {
     mimetype: string,
     bucketName = 'megp',
     metaData = {},
-  ): Promise<any> {
+  ): Promise<{
+    filepath: string;
+    bucketName: string;
+    contentType: string;
+    originalname: string;
+  }> {
     try {
       const name = String(Date.now());
       await this.minioService.client.putObject(
