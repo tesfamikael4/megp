@@ -320,6 +320,8 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
     await entityManager.getRepository(PreBudgetPlan).update(data.id, {
       status: 'Submitted',
     });
+
+    await this.pdfGenerator(data.id);
     await this.planningRMQClient.emit('initiate-workflow', {
       name: data.name,
       id: data.id,
