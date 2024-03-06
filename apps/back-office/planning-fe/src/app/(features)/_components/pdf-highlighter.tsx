@@ -2,7 +2,7 @@
 
 import type { ReactElement } from 'react';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import type { NewHighlight, IHighlight } from 'react-pdf-highlighter';
+import type { IHighlight } from 'react-pdf-highlighter';
 import {
   PdfLoader,
   PdfHighlighter,
@@ -28,9 +28,8 @@ import {
   IconPrinter,
 } from '@tabler/icons-react';
 import { Sidebar } from './pdf-highlighter-sidebar';
-import { notify } from '@megp/core-fe';
-// import './style.css';
-
+import { logger, notify } from '@megp/core-fe';
+import { useCreateMutation, useListQuery } from '../(app)/_api/note.api';
 const getNextId = (): string => String(Math.random()).slice(2);
 
 const parseIdFromHash = (): string => {
@@ -56,19 +55,30 @@ function HighlightPopup({
 export function PDFHighlighter({
   pdfUrl,
   objectId,
+  title,
 }: {
   pdfUrl: string;
   objectId: string;
+  title: string;
 }): ReactElement {
-  const [highlights, setHighlights] = useState<IHighlight[]>([]);
+  const [create] = useCreateMutation();
+  const { data } = useListQuery({
+    where: [
+      [{ column: 'objectId', value: objectId, operator: '=' }],
+      [{ column: 'key', value: 'comment', operator: '=' }],
+    ],
+  });
   const scrollToRef = useRef<((highlight: IHighlight) => void) | undefined>(
     undefined,
   );
   const getHighlightById = (id: string): IHighlight | undefined => {
+    const highlights =
+      data?.items.map((highlight) => ({
+        ...highlight.metaData.highlight,
+        id: highlight.id,
+      })) ?? [];
     return highlights.find((highlight) => highlight.id === id);
   };
-  //   const { token } = useAuth();
-  // Scroll to highlight based on hash in the URL
   const scrollToHighlightFromHash = useCallback(() => {
     const highlight = getHighlightById(parseIdFromHash());
 
@@ -85,36 +95,6 @@ export function PDFHighlighter({
         window.removeEventListener('hashchange', scrollToHighlightFromHash);
     };
   }, [scrollToHighlightFromHash]);
-
-  const addHighlight = (highlight: NewHighlight): void => {
-    setHighlights([{ ...highlight, id: getNextId() }, ...highlights]);
-  };
-
-  const updateHighlight = (
-    highlightId: string,
-    position: any,
-    content: any,
-  ) => {
-    // console.log('Updating highlight', highlightId, position, content);
-    setHighlights(
-      highlights.map((h) => {
-        const {
-          id,
-          position: originalPosition,
-          content: originalContent,
-          ...rest
-        } = h;
-        return id === highlightId
-          ? {
-              id,
-              position: { ...originalPosition, ...position },
-              content: { ...originalContent, ...content },
-              ...rest,
-            }
-          : h;
-      }),
-    );
-  };
 
   const highlightTransform = (
     highlight,
@@ -137,11 +117,7 @@ export function PDFHighlighter({
         highlight={highlight}
         isScrolledTo={isScrolledTo}
         onChange={(boundingRect) => {
-          updateHighlight(
-            highlight.id as string,
-            { boundingRect: viewportToScaled(boundingRect) },
-            { image: screenshot(boundingRect) },
-          );
+          logger.log({ boundingRect });
         }}
       />
     );
@@ -166,14 +142,14 @@ export function PDFHighlighter({
     <CustomTip
       onConfirm={(comment) => {
         saveComment({ content, position, comment });
-        addHighlight({ content, position, comment });
+        // addHighlight({ content, position, comment });
         hideTipAndSelection();
       }}
       onOpen={transformSelection}
     />
   );
 
-  const saveComment = (highlight) => {
+  const saveComment = async (highlight) => {
     const postData = {
       objectId,
       objectType: 'document',
@@ -181,32 +157,18 @@ export function PDFHighlighter({
       key: 'comment',
       metaData: { highlight },
     };
-    fetch('https://dev-bo.megp.peragosystems.com/infrastructure/api/notes', {
-      method: 'POST',
-      body: JSON.stringify(postData),
-      headers: {
-        // Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-    })
-      .then((res) => {
-        if (res.ok) {
-          notify('Success', 'Comment saved');
-        } else {
-          notify('Error', 'Something went wrong');
-        }
-      })
-      .catch(() => {
-        notify('Error', 'Something went wrong');
-      });
+    try {
+      await create(postData).unwrap();
+      notify('Success', 'Comment saved successfully');
+    } catch (err) {
+      notify('Error', 'Something went wrong');
+    }
   };
 
   return (
     <div className="border-2 border-slate-800 rounded">
       <Flex className="bg-slate-800 p-2" justify="space-between">
-        <h2 className="text-white font-semibold">
-          Annual Procurement Plan 2023
-        </h2>
+        <h2 className="text-white font-semibold">{title}</h2>
 
         <Group gap={2}>
           <ActionIcon variant="subtle">
@@ -239,7 +201,11 @@ export function PDFHighlighter({
               <PdfHighlighter
                 enableAreaSelection={(event) => event.altKey}
                 highlightTransform={highlightTransform}
-                highlights={highlights}
+                highlights={
+                  data?.items?.map(
+                    (highlight) => highlight.metaData?.highlight,
+                  ) ?? []
+                }
                 onScrollChange={resetHash}
                 onSelectionFinished={onSelectionFinished}
                 pdfDocument={pdfDocument}
@@ -250,7 +216,17 @@ export function PDFHighlighter({
             )}
           </PdfLoader>
         </div>
-        <Sidebar highlights={highlights} />
+        <Sidebar
+          highlights={
+            data?.items?.map((highlight) => ({
+              user: highlight.metaData.fullName,
+              highlight: {
+                ...highlight.metaData?.highlight,
+                id: highlight.id,
+              },
+            })) ?? []
+          }
+        />
       </div>
     </div>
   );

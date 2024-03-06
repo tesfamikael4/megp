@@ -11,7 +11,7 @@ const updateHash = (highlight: IHighlight) => {
 export function Sidebar({
   highlights,
 }: {
-  highlights: IHighlight[];
+  highlights: { highlight: IHighlight; user: string }[];
 }): ReactElement {
   return (
     <div className="p-5 border-r" style={{ width: '25vw' }}>
@@ -25,12 +25,12 @@ export function Sidebar({
             className="mb-2"
             key={index}
             onClick={() => {
-              updateHash(highlight);
+              updateHash(highlight.highlight);
             }}
           >
             <div className="border rounded p-2 mr-5 mb-2 cursor-pointer bg-white">
               <p className="border-l-4 px-2 border-[rgb(77,74,184)] font-semibold text-sm flex justify-between">
-                Dagem Tsehay
+                {highlight?.user}
                 <Menu>
                   <Menu.Target>
                     <ActionIcon variant="subtle">
@@ -47,20 +47,22 @@ export function Sidebar({
                   </Menu.Dropdown>
                 </Menu>
               </p>
-              {highlight.content.text ? (
+              {highlight?.highlight?.content?.text ? (
                 <Alert className=" ml-2 mt-2 border-l-4 border-[rgb(77,74,184)]">
                   <p className="text-xs line-clamp-3">
-                    {highlight.content.text}
+                    {highlight?.highlight.content.text}
                   </p>
 
                   <p className="text-xs mt-2">
-                    Page {highlight.position.boundingRect.pageNumber}
+                    Page {highlight?.highlight.position.boundingRect.pageNumber}
                   </p>
                 </Alert>
               ) : null}
-              <p className="mt-2 text-xs">{highlight.comment.text}</p>
+              <p className="mt-2 text-xs">
+                {highlight?.highlight?.comment?.text}
+              </p>
               {/* Highlight image */}
-              {highlight.content.image ? (
+              {highlight?.highlight?.content?.image ? (
                 <div
                   className="border rounded p-2"
                   style={{ marginTop: '0.5rem' }}
@@ -68,10 +70,11 @@ export function Sidebar({
                   <img
                     alt="Screenshot"
                     className="highlight__image"
-                    src={highlight.content.image}
+                    src={highlight?.highlight?.content.image}
                   />
                   <p className="text-xs mt-2">
-                    Page {highlight.position.boundingRect.pageNumber}
+                    Page{' '}
+                    {highlight?.highlight?.position.boundingRect.pageNumber}
                   </p>
                 </div>
               ) : null}
