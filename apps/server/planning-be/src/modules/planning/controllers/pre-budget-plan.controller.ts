@@ -102,9 +102,13 @@ export class PreBudgetPlanController extends ExtraCrudController<PreBudgetPlan>(
     return await this.preBudgetPlanService.hashMatch(hash.id, hash.hashData);
   }
 
-  @Post('pdf-generate/:id')
-  async pdfGenerate(@Param('id') id: string, @Res() response) {
-    const buffer = await this.preBudgetPlanService.pdfGenerator(id);
+  @Post('pdf-generate/:id/:itemName')
+  async pdfGenerate(
+    @Param('id') id: string,
+    @Param('itemName') itemName: string,
+    @Res() response,
+  ) {
+    const buffer = await this.preBudgetPlanService.pdfGenerator(id, itemName);
     response.setHeader('Content-Type', 'application/pdf');
     response.setHeader(
       'Content-Disposition',

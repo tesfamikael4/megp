@@ -319,7 +319,7 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
       status: 'Submitted',
     });
 
-    await this.pdfGenerator(data.id);
+    await this.pdfGenerator(data.id, data.itemName);
     await this.planningRMQClient.emit('initiate-workflow', {
       name: data.name,
       id: data.id,
@@ -356,7 +356,7 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
     return originalHash === hash;
   }
 
-  async pdfGenerator(id: string) {
+  async pdfGenerator(id: string, itemName: string) {
     const data = await this.preBudgetActivityRepository.find({
       where: { preBudgetPlanId: id },
       relations: {
@@ -380,7 +380,7 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
 
     await this.documentService.create({
       fileInfo,
-      title: 'Pre Budget Plan Report',
+      title: itemName,
       itemId: id,
       type: 'preBudgetPlan',
       version: 1,
