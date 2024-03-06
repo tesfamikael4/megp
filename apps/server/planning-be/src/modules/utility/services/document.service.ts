@@ -24,6 +24,7 @@ export class DocumentService extends EntityCrudService<Document> {
     const doc = await this.repositoryDocument.findOne({
       where: {
         itemId: itemData.itemId,
+        key: itemData.key,
       },
       order: {
         version: 'DESC',

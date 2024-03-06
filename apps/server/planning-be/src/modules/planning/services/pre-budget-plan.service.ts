@@ -380,7 +380,7 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
 
     await this.documentService.create({
       fileInfo,
-      title: 'preBudgetPlanReport',
+      title: 'Pre Budget Plan Report',
       itemId: id,
       type: 'preBudgetPlan',
       version: 1,

@@ -75,7 +75,11 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
         organizationId: data.organizationId,
         status: 'Draft',
       },
-      select: ['id', 'name', 'organizationId'],
+      select: {
+        id: true,
+        name: true,
+        organizationId: true,
+      },
     });
     await this.repositoryProcurementRequisition.update(pr.id, {
       status: 'Submitted',

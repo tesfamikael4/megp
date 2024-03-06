@@ -24,9 +24,10 @@ export class ReasonService extends EntityCrudService<Reason> {
         type: itemData.type,
       },
     });
-    if (reason) {
+    if (reason.length > 0) {
       await this.repositoryReason.delete(reason as any);
     }
+
     const item = this.repositoryReason.create(itemData);
     await this.repositoryReason.insert(item);
     return item;
