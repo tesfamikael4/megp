@@ -5,6 +5,7 @@ import {
   OneToMany,
   JoinColumn,
   ManyToOne,
+  Unique,
 } from 'typeorm';
 
 import { Audit } from 'src/shared/entities/audit.entity';
@@ -12,6 +13,7 @@ import { Unit } from './unit.entity';
 import { Organization } from './organization.entity';
 
 @Entity({ name: 'unit_types' })
+@Unique(['name', 'organizationId'])
 export class UnitType extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
