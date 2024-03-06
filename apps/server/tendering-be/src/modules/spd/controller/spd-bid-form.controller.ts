@@ -45,13 +45,13 @@ export class SpdBidFormController extends ExtraCrudController<SpdBidForm>(
 
   @Get('/download/:id')
   @AllowAnonymous()
-  async downloadSPDDocumentDocx(@Param('id') id: string) {
-    return this.spdService.downloadSPDDocumentDocx(id);
-  }
-
-  @Get('/download/:id')
-  @AllowAnonymous()
   async downloadSPDDocumentPdf(@Param('id') id: string) {
     return this.spdService.downloadSPDDocumentPdf(id);
+  }
+
+  @Get('/download-docx/:id')
+  @AllowAnonymous()
+  async downloadSPDDocumentDocx(@Param('id') id: string) {
+    return this.spdService.downloadSPDDocumentDocx(id);
   }
 }
