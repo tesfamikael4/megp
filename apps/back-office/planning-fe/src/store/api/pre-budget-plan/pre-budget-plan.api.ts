@@ -113,10 +113,15 @@ export const preBudgetPlanApi = createApi({
       }),
       providesTags: ['pre-budget-activity-files'],
     }),
+    getSubmittedPlans: builder.query<any, any>({
+      query: (itemId: string) => `documents/getDocumentByItemId/${itemId}`,
+    }),
   }),
 });
 
 export const {
+  useGetSubmittedPlansQuery,
+  useLazyGetSubmittedPlansQuery,
   useLazyGetPreBudgetTimelineQuery,
   useCreatePreBudgetRequisitionerMutation,
   useLazyGetPreBudgetRequisitionerQuery,
