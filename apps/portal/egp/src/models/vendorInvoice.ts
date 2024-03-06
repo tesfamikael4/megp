@@ -18,4 +18,12 @@ export interface InvoiceData {
   taskId: null;
   taskName: null;
   userId: string;
+  paymentDetail: [
+    {
+      bc: string;
+      name: string;
+      fee: string;
+      category: string;
+    },
+  ];
 }

@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect } from 'react';
-import FormPreview from '../_components/review/form-preview';
+import FormPreview from '../../_components/review/form-preview';
 import { useAddFormMutation, useGetVendorQuery } from '../../_api/query';
 import { Button, Flex, LoadingOverlay, Stack } from '@mantine/core';
 import { NotificationService } from '../../../../_components/notification';
@@ -14,9 +14,9 @@ function Page() {
     { refetchOnMountOrArgChange: true },
   );
 
-  console.log({ requestInfo });
   const [save, saveValues] = useAddFormMutation();
   const { checkAccess, updateAccess, updateStatus } = usePrivilege();
+  console.log(saveValues);
 
   useEffect(() => {
     if (requestInfo.data?.initial.level) {
@@ -24,8 +24,8 @@ function Page() {
       updateStatus(requestInfo.data?.initial.status);
     }
 
-    if (requestInfo.data?.initial.status === 'Submitted') {
-      router.push(`/vendor/registration/track-applications`);
+    if (!requestInfo.data) {
+      router.push(`/vendor/services`);
     }
 
     return () => {};
@@ -37,7 +37,7 @@ function Page() {
     }
 
     return () => {};
-  }, [requestInfo, router]);
+  }, [requestInfo]);
 
   useEffect(() => {
     if (saveValues.isSuccess) {
@@ -48,7 +48,7 @@ function Page() {
       NotificationService.requestErrorNotification('Error on Request');
     }
     return () => {};
-  }, [saveValues.isSuccess, saveValues.isError, router]);
+  }, [saveValues.isSuccess, saveValues.isError]);
   const onSubmit = () => {
     if (requestInfo.data) {
       save({
@@ -59,6 +59,7 @@ function Page() {
             level: 'Submit',
             status: 'Submit',
           },
+          status: 'Submit',
         },
       });
     }
@@ -72,7 +73,7 @@ function Page() {
       {requestInfo.data && <FormPreview data={requestInfo.data} />}
       <Flex className="justify-end" gap={'md'} p={'md'}>
         {checkAccess('review') && (
-          <Button onClick={() => router.push('/doc')} variant="outline">
+          <Button onClick={() => router.push('doc')} variant="outline">
             Back
           </Button>
         )}

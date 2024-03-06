@@ -78,6 +78,10 @@ const tab = [
     tabValue: 'paymentReceipt',
     tabName: 'Payment Receipts',
   },
+  {
+    tabValue: 'preferential',
+    tabName: 'Eligibility for Preferential Services',
+  },
 ];
 
 const formatColumns = {

@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { NotificationService } from '../../../../_components/notification';
 import { useGetVendorQuery } from '../../_api/query';
 import RegistrationForm from '../_components/detail/formShell';
-import { usePrivilege } from '../_context/privilege-context';
 
 export default function Page() {
   const router = useRouter();
@@ -25,6 +24,7 @@ export default function Page() {
       NotificationService.requestErrorNotification('Error on fetching data');
       router.push(`basic`);
     }
+
     return () => {};
   }, [requestInfo.data, requestInfo.error]);
 

@@ -12,6 +12,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { NotificationService } from '../../../../_components/notification';
 import { Box, LoadingOverlay } from '@mantine/core';
 import { VendorLevel, VendorStatus } from '@/models/vendorRegistration';
+import { boolean } from 'zod';
 
 type AccessRules = {
   [status in VendorStatus]: {
@@ -74,17 +75,41 @@ const accessRules: AccessRules = {
   },
   Draft: {
     active: true,
-    readWriteLevels: ['detail', 'doc', 'info', 'payment', 'ppda', 'review'],
+    readWriteLevels: [
+      'detail',
+      'doc',
+      'info',
+      'payment',
+      'ppda',
+      'preferential',
+      'review',
+    ],
     readOnlyLevels: ['basic'],
   },
   Save: {
     active: true,
-    readWriteLevels: ['detail', 'doc', 'info', 'payment', 'ppda', 'review'],
+    readWriteLevels: [
+      'detail',
+      'doc',
+      'info',
+      'payment',
+      'ppda',
+      'preferential',
+      'review',
+    ],
     readOnlyLevels: ['basic'],
   },
   Active: {
     active: true,
-    readWriteLevels: ['detail', 'doc', 'info', 'payment', 'ppda', 'review'],
+    readWriteLevels: [
+      'detail',
+      'doc',
+      'info',
+      'payment',
+      'ppda',
+      'preferential',
+      'review',
+    ],
     readOnlyLevels: ['basic'],
   },
   Approved: {
@@ -94,7 +119,14 @@ const accessRules: AccessRules = {
   },
   Adjustment: {
     active: true,
-    readWriteLevels: ['detail', 'doc', 'info', 'payment', 'review'],
+    readWriteLevels: [
+      'detail',
+      'doc',
+      'info',
+      'payment',
+      'preferential',
+      'review',
+    ],
     readOnlyLevels: ['basic', 'ppda'],
   },
   Submitted: {
@@ -106,6 +138,7 @@ const accessRules: AccessRules = {
       'doc',
       'info',
       'payment',
+      'preferential',
       'ppda',
       'review',
     ],
@@ -120,50 +153,40 @@ const accessRules: AccessRules = {
 const PrivilegeContext = createContext<PrivilegeContextType | undefined>(
   undefined,
 );
+interface PrivilegeContextProviderProps {
+  data: any;
+  isSuccess: boolean;
+  isLoading: boolean;
+  isError: boolean;
+  isFetching: boolean;
+}
 
-const PrivilegeContextProvider: React.FC<PropsWithChildren> = ({
-  children,
-}) => {
+export const validRoutes: VendorLevel[] = [
+  'basic',
+  'detail',
+  'ppda',
+  'payment',
+  'preferential',
+  'doc',
+  'review',
+];
+const PrivilegeContextProvider: React.FC<
+  PropsWithChildren<PrivilegeContextProviderProps>
+> = ({ children, ...props }) => {
   const router = useRouter();
   const path = usePathname();
 
-  const { data, isSuccess, isLoading, isError, isFetching } = useGetVendorQuery(
-    {},
-    { refetchOnMountOrArgChange: true },
-  );
-  const validRoutes: VendorLevel[] = [
-    'basic',
-    'detail',
-    'ppda',
-    'payment',
-    'doc',
-    'review',
-  ];
+  const { data, isSuccess } = props;
 
   const [accessLevel, setAccessLevel] = useState<VendorLevel>('basic');
   const [accessStatus, setAccessStatus] = useState<VendorStatus>('new');
 
   useEffect(() => {
-    if (isSuccess && data) {
-      setAccessStatus(data.status as VendorStatus);
-      if (data.status === 'Completed' || data.status === 'Completed') {
-        router.push('/vendor/registration/track-applications');
-      }
+    if (isSuccess && data?.status) {
+      setAccessStatus(data?.status as VendorStatus);
     }
     return () => {};
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSuccess, data]);
-
-  useEffect(() => {
-    if (isError) {
-      NotificationService.requestErrorNotification(
-        'Error on fetching vendor information',
-      );
-      router.prefetch('/vendor/dashboard');
-    }
-    return () => {};
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isError]);
 
   const [currentIndex, setCurrentIndex] = useState<number>(
     validRoutes.indexOf(path.split('/')[4] as VendorLevel),
@@ -209,17 +232,7 @@ const PrivilegeContextProvider: React.FC<PropsWithChildren> = ({
 
   return (
     <PrivilegeContext.Provider value={contextValue}>
-      {isLoading ? (
-        <Box pos="relative" className="w-full h-full">
-          <LoadingOverlay
-            visible={true}
-            zIndex={1000}
-            overlayProps={{ radius: 'sm', blur: 2 }}
-          />
-        </Box>
-      ) : (
-        children
-      )}
+      {children}
     </PrivilegeContext.Provider>
   );
 };

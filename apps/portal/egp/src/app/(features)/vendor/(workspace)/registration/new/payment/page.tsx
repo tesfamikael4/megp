@@ -40,7 +40,6 @@ function Page() {
     { refetchOnMountOrArgChange: true },
   );
 
-  console.log({ invoiceInfo });
   const [uploadFile, uploadFileInfo] = useLazyUploadPaymentSlipQuery();
   const { register, formState, setValue, watch, handleSubmit } =
     useForm<IPaymentSlipUploadSchema>({
@@ -62,7 +61,7 @@ function Page() {
   };
   const onPreviousFileExists = () => {
     NotificationService.successNotification('Payed Successfully!');
-    router.push('doc');
+    router.push('preferential');
   };
 
   useEffect(() => {
@@ -85,8 +84,6 @@ function Page() {
       Array.isArray(invoiceInfo.data?.invoice) &&
       invoiceInfo.data?.invoice.length > 0
     ) {
-      console.log(invoiceInfo.data?.invoice.map((i) => i.id).join(','));
-
       setValue(
         'invoiceId',
         invoiceInfo.data?.invoice.map((i) => i.id).join(',') ?? '',
@@ -112,7 +109,7 @@ function Page() {
   useEffect(() => {
     if (paymentReceiptItemSchema.safeParse(uploadFileInfo.data).success) {
       NotificationService.successNotification('Payed Successfully!');
-      router.push('doc');
+      router.push('preferential');
     }
     return () => {};
   }, [invoiceInfo.data, uploadFileInfo.data]);
@@ -132,7 +129,7 @@ function Page() {
     return null;
   }
   if (!invoiceInfo.data?.invoice || invoiceInfo.data?.invoice?.length === 0) {
-    return router.push('doc');
+    return router.push('preferential');
   }
 
   return (

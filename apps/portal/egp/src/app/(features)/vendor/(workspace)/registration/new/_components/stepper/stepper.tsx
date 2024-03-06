@@ -13,7 +13,15 @@ function StyledStepper() {
 
   const router = useRouter();
   const path = usePathname();
-  const routes = ['basic', 'detail', 'ppda', 'payment', 'doc', 'review'];
+  const routes = [
+    'basic',
+    'detail',
+    'ppda',
+    'payment',
+    'preferential',
+    'doc',
+    'review',
+  ];
 
   const { data, error } = useGetVendorQuery(
     {},
@@ -36,7 +44,7 @@ function StyledStepper() {
     return () => {
       router.refresh();
     };
-  }, [data, error]);
+  }, [data?.status, data?.initial?.level, data?.initial?.status, error]);
 
   const canAccessRoute = (route) => {
     return routes
@@ -73,6 +81,7 @@ function StyledStepper() {
             label="Basic Information"
             description="The TIN is the primary identifier and verification for user identity on the platform."
           />
+
           <Stepper.Step
             completedIcon={2}
             label="Profile Information"
@@ -90,11 +99,16 @@ function StyledStepper() {
           />
           <Stepper.Step
             completedIcon={5}
+            label="Eligibility to Preferential Treatment"
+            description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore "
+          />
+          <Stepper.Step
+            completedIcon={6}
             label="Document Attachment"
             description="In e_GP, candidate vendors submit essential documents fostering a transparent and compliant verification process crucial for government procurement."
           />
           <Stepper.Step
-            completedIcon={6}
+            completedIcon={7}
             label="Review & Submit"
             description="Following a meticulous review, the user ensures information accuracy and compliance before successfully submitting the details"
           />

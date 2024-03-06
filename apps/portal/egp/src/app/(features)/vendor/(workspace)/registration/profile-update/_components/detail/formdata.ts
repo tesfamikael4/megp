@@ -41,6 +41,7 @@ export const formData: GetFormResponse = {
   bankAccountDetails: [],
   areasOfBusinessInterest: [],
   invoice: [],
+  preferential: [],
   supportingDocuments: {
     businessRegistration_IncorporationCertificate: '',
     mRA_TPINCertificate: '',

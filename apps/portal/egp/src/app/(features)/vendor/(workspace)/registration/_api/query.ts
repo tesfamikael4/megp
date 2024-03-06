@@ -39,11 +39,16 @@ export const vendorRegistrationQuery = vendorRegistrationApi.injectEndpoints({
         };
       },
     }),
+
     getVendorOnDemand: builder.query<GetFormResponse, any>({
       query: () => `/vendor-registrations/get-isr-vendor-by-userId`,
     }),
     getVendorInfo: builder.query<GetVendorInfoResponse, any>({
       query: () => `/vendor-registrations/get-isr-vendor-info-by-userId`,
+    }),
+    getApprovedVendorInfo: builder.query<GetVendorInfoResponse, any>({
+      query: () =>
+        `/vendor-registrations/get-approved-isr-vendor-info-by-userId`,
     }),
     getApproveVendorInfo: builder.query<GetFormResponse, any>({
       query: () => `/vendor-registrations/get-vendor-information`,
@@ -76,6 +81,22 @@ export const vendorRegistrationQuery = vendorRegistrationApi.injectEndpoints({
         url: `/invoices/get-my-renewal-invoice`,
         method: 'GET',
         // body: data,
+      }),
+    }),
+    getVendorStatus: builder.query<
+      {
+        status: 'Submitted' | 'Draft' | 'Initial' | 'Completed' | 'Approved';
+        initial: { status: string; level: string };
+      },
+      any
+    >({
+      query: () => ({
+        url: `/vendor-registrations/get-application-status-by-userId`,
+      }),
+    }),
+    getPendingApplications: builder.query<any, any>({
+      query: () => ({
+        url: `/vendor-registrations/get-pending-vendor-applications`,
       }),
     }),
     createVendorId: builder.mutation<
@@ -228,6 +249,8 @@ export const {
   useGetApproveVendorInfoQuery,
   useLazyGetApproveVendorInfoQuery,
   useGetCertificateInformationQuery,
+  useGetVendorStatusQuery,
+  useGetApprovedVendorInfoQuery,
 } = vendorRegistrationQuery;
 
 export const {
