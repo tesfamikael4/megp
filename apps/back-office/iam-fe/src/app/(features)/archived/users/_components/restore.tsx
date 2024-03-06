@@ -32,21 +32,12 @@ export function Restore({ original }: any) {
 
   return (
     <>
-      <Menu shadow="md">
-        <Menu.Target>
-          <IconDotsVertical className="ml-auto text-gray-500" size={16} />
-        </Menu.Target>
-
-        <Menu.Dropdown>
-          <Menu.Divider />
-          <Menu.Item
-            leftSection={<IconRestore size={15} />}
-            onClick={openDeleteModal}
-          >
-            Restore
-          </Menu.Item>
-        </Menu.Dropdown>
-      </Menu>
+      <IconRestore
+        size="15"
+        className="ml-auto"
+        onClick={openDeleteModal}
+        color="#222261"
+      />
     </>
   );
 }

@@ -42,18 +42,12 @@ export function Entity({ children }: { children: React.ReactNode }) {
         },
         {
           id: 'username',
-          header: 'User Name',
+          header: 'Username',
           accessorKey: 'username',
           cell: (info) => info.getValue(),
           meta: {
             widget: 'primary',
           },
-        },
-        {
-          id: 'email',
-          header: 'Email',
-          accessorKey: 'email',
-          cell: (info) => info.getValue(),
         },
 
         {

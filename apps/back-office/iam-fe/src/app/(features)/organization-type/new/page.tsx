@@ -4,7 +4,7 @@ import { FormDetail } from '../_components/form-detail';
 
 export default function OrgTypePage() {
   return (
-    <Section title="New Organization type" collapsible={false}>
+    <Section title="New Organization Type" collapsible={false}>
       <FormDetail mode="new" />
     </Section>
   );

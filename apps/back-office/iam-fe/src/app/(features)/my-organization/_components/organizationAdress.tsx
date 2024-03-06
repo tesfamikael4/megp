@@ -242,63 +242,72 @@ const OrganizationAdressForm = () => {
           {...register('email')}
         />
         <TextInput
-          label="Postal code"
+          label="Postal Code"
           error={errors?.postalCode ? errors.postalCode?.message : ''}
           {...register('postalCode')}
         />
       </Group>
+      <Group grow>
+        <Flex direction={'column'}>
+          <Text fw={500}>Telephone Number</Text>
 
-      <Text fw={500}>Telephone Number</Text>
-
-      <Flex>
-        <Controller
-          name="telephone.countyCode"
-          control={control}
-          render={({ field: { onChange, value } }) => (
-            <Select
-              defaultValue="MW"
-              value={value}
-              onChange={onChange}
-              data={countryCodes.map((item) => ({
-                label: `${item.name} (${item.dial_code})`,
-                value: item.code,
-              }))}
-              maxDropdownHeight={400}
+          <Flex>
+            <Controller
+              name="telephone.countyCode"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <Select
+                  className="w-1/3"
+                  defaultValue="MW"
+                  value={value}
+                  onChange={onChange}
+                  data={countryCodes.map((item) => ({
+                    label: `${item.name} (${item.dial_code})`,
+                    value: item.code,
+                  }))}
+                  maxDropdownHeight={400}
+                />
+              )}
             />
-          )}
-        />
-        <TextInput
-          className="mb-2 grow"
-          {...register('telephone.number')}
-          error={
-            errors?.telephone?.number ? errors.telephone?.number.message : ''
-          }
-        />
-      </Flex>
-      <Text fw={500}>Fax Number</Text>
-
-      <Flex>
-        <Controller
-          name="fax.countyCode"
-          control={control}
-          render={({ field }) => (
-            <Select
-              {...field}
-              defaultValue="MW"
-              data={countryCodes.map((item) => ({
-                label: `${item.name} (${item.dial_code})`,
-                value: item.code,
-              }))}
-              maxDropdownHeight={400}
+            <TextInput
+              className="mb-2 grow"
+              {...register('telephone.number')}
+              error={
+                errors?.telephone?.number
+                  ? errors.telephone?.number.message
+                  : ''
+              }
             />
-          )}
-        />
-        <TextInput
-          className="mb-2 grow"
-          error={errors?.fax?.number ? errors.fax?.number.message : ''}
-          {...register('fax.number')}
-        />
-      </Flex>
+          </Flex>
+        </Flex>
+        <Flex direction={'column'}>
+          <Text fw={500}>Fax Number</Text>
+
+          <Flex>
+            <Controller
+              name="fax.countyCode"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  className="w-1/3"
+                  {...field}
+                  defaultValue="MW"
+                  data={countryCodes.map((item) => ({
+                    label: `${item.name} (${item.dial_code})`,
+                    value: item.code,
+                  }))}
+                  maxDropdownHeight={400}
+                />
+              )}
+            />
+            <TextInput
+              className="mb-2 grow"
+              error={errors?.fax?.number ? errors.fax?.number.message : ''}
+              {...register('fax.number')}
+            />
+          </Flex>
+        </Flex>
+      </Group>
 
       <EntityButton
         mode={mode}

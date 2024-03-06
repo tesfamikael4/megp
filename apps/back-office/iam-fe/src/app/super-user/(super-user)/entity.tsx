@@ -51,13 +51,6 @@ export function Entity({ children }: { children: React.ReactNode }) {
           },
         },
         {
-          id: 'email',
-          header: 'Email',
-          accessorKey: 'email',
-          cell: (info) => info.getValue(),
-        },
-
-        {
           id: 'status',
           header: 'Status',
           accessorKey: 'status',

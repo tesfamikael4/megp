@@ -102,8 +102,11 @@ export function FormDetail({ mode }: FormDetailProps) {
     try {
       await update({ ...data, id: id?.toString() }).unwrap();
       notify('Success', 'Organization updated successfully');
-    } catch {
-      notify('Error', 'Error in updating organization');
+    } catch (err) {
+      notify(
+        'Error',
+        `${err.data.message.toLowerCase().startsWith('duplicate') ? 'Organization name already exists' : 'Error in updating organization'}`,
+      );
     }
   };
   const onDelete = async () => {

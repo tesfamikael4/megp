@@ -35,13 +35,13 @@ export const Menu: MenuItem[] = [
     label: 'My Organization',
     icon: IconBuildingBank,
     link: '/my-organization',
-    permission: ['iam:user'],
+    permission: ['iam:use'],
   },
   {
     label: 'My Mandates',
     icon: IconLockSquareRounded,
     link: '/my-mandate',
-    permission: ['iam:user'],
+    permission: ['iam:mandateViewer'],
   },
   { label: 'Users', icon: IconUsers, link: '/users', permission: ['iam:user'] },
   {

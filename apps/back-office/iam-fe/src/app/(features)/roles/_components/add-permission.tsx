@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Modal } from '@mantine/core';
+import { Modal, Text } from '@mantine/core';
 import { CollectionQuery, Relation, RelationConfig } from '@megp/entity';
 import {
   useLazySecondRelationQuery,
@@ -109,7 +109,7 @@ const AddPermissionModal = () => {
         setIsCollapsed={setIsCollapsed}
       />
       <Modal
-        title="Permission Assignment"
+        title={<Text fw={'bold'}>Permission Assignment</Text>}
         opened={isModalOpen}
         onClose={handleCloseModal}
         size={'xl'}
