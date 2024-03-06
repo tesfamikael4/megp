@@ -559,7 +559,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     const ba = await this.businessAreaRepository.find({
       where: { vendorId: data.id },
     });
-    if (status === null || !status)
+    const status = 'status';
+    if (ba.length === 0) {
       return {
         status: 'Initial',
         initial: {
@@ -567,7 +568,35 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           status: 'Initial',
         },
       };
-    return status;
+    }
+
+    const statusMap = {
+      [VendorStatusEnum.PENDING]: 'Pending',
+      [VendorStatusEnum.ADJUSTMENT]: 'Adjustment',
+      [VendorStatusEnum.SUBMITTED]: 'Submitted',
+      [VendorStatusEnum.DRAFT]: 'Draft',
+      [VendorStatusEnum.APPROVED]: 'Approved',
+    };
+
+    for (const statusValue in statusMap) {
+      if (ba.some((obj) => obj[status] === statusValue)) {
+        const statusText = statusMap[statusValue];
+        return {
+          status: statusText,
+          initial: {
+            level: statusText,
+            status: statusText,
+          },
+        };
+      }
+    }
+    return {
+      status: 'Initial',
+      initial: {
+        level: 'Initial',
+        status: 'Initial',
+      },
+    };
   }
   fromInitialValue = async (data: any) => {
     let vendorsEntity = new IsrVendorsEntity();
