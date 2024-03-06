@@ -97,6 +97,7 @@ interface AuthContextValue {
   >;
   setRole: any;
   role: any;
+  roles: any;
 }
 
 interface BuildFetchAPI {
@@ -132,6 +133,7 @@ function AuthProvider({
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const userRole = user?.roles?.[0]?.name;
   const [role, setRole] = useState(userRole);
+  const [roles, setRoles] = useState(user?.organizations?.[0]?.roles);
   const router = useRouter();
 
   useEffect(() => {
@@ -149,6 +151,7 @@ function AuthProvider({
         setOrganizationId(userInfo.organizations?.[0]?.organization?.id);
 
         userInfo.roles && setRole(userInfo.organizations?.[0]?.roles[0]?.name);
+        setRoles(userInfo.organizations?.[0]?.roles);
       }
     }
   }, [isAuthenticated]);
@@ -426,6 +429,7 @@ function AuthProvider({
     setRole,
     role,
     organizationId,
+    roles,
   };
 
   return (

@@ -37,7 +37,7 @@ export function WorkflowHandling({
   itemId: string;
   itemKey: string;
 }) {
-  const { role, user } = useAuth();
+  const { roles, user } = useAuth();
   const [active, setActive] = useState(0);
   const [steps, setSteps] = useState<Record<string, any>[]>([]);
   const [currentStep, setCurrentStep] = useState<Record<string, any>>({});
@@ -47,23 +47,6 @@ export function WorkflowHandling({
   const [getGroup, { data: groupData }] = useLazyGetGroupQuery();
   const [approve, { isLoading: isApproving }] = useApproveMutation();
   const [goToStep, { isLoading: isGoing }] = useGoToMutation();
-
-  const [getNotes, { data: notes }] = useLazyGetNotesQuery();
-
-  useEffect(() => {
-    getNotes({
-      where: [
-        [{ column: 'objectId', value: itemId, operator: '=' }],
-        [{ column: 'key', value: 'comment', operator: '=' }],
-      ],
-      orderBy: [
-        {
-          column: 'createdAt',
-          direction: 'DESC',
-        },
-      ],
-    });
-  }, [itemId, getNotes]);
 
   const { data: currentStepData } = useGetCurrentWorkflowInstanceQuery({
     itemId: itemId,
@@ -257,23 +240,6 @@ export function WorkflowHandling({
                                     <Text c="#868e96">{`Approved by ${step.approvers[0].approver}`}</Text>
                                   </Accordion.Control>
                                   <Accordion.Panel className="w-full">
-                                    <Stack
-                                      className="bg-neutral-100 p-4 overflow-y-scroll min-w-[100%]"
-                                      mah={400}
-                                    >
-                                      {notes?.items?.map((note, index) => (
-                                        <Paper
-                                          withBorder
-                                          className="p-4 scroll"
-                                          key={index}
-                                        >
-                                          <Text fz="md" fw="bolder">
-                                            {note?.metaData?.fullName}
-                                          </Text>
-                                          <Text fz="sm">{note?.content}</Text>
-                                        </Paper>
-                                      ))}
-                                    </Stack>
                                     <Paper className="mt-4 py-4" withBorder>
                                       Remark:{' '}
                                       {
@@ -302,8 +268,11 @@ export function WorkflowHandling({
                                 user?.organizations?.[0].userId,
                                 step.id,
                               ) &&
-                              (role ===
-                                currentStep?.step.approvers[0].approver ||
+                              (roles.some(
+                                (role) =>
+                                  role?.id ==
+                                  currentStep?.step.approvers?.[0]?.id,
+                              ) ||
                                 user?.organizations?.[0].userId ===
                                   currentStep?.step.approvers[0].id ||
                                 checkUserGroup()) && (
