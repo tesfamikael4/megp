@@ -22,7 +22,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
       mode: 'list',
       entity: 'unit-type',
       primaryKey: 'id',
-      title: 'Unit type',
+      title: 'Unit Type',
       onAdd: () => {
         route.push(`/unit-type/new`);
       },

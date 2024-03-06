@@ -7,7 +7,7 @@ import { Stack } from '@mantine/core';
 export default function MyMandatePage() {
   return (
     <Stack>
-      <Section title="Mandate detail">
+      <Section title="Mandate Detail">
         <FormDetail />
       </Section>
       <AddPermission />

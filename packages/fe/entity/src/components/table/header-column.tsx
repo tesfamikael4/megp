@@ -146,7 +146,7 @@ export const removeSingleRow = () => {
 
       return (
         <ActionIcon color="primary" onClick={removeRow} variant="subtle">
-          <IconCircleMinus color="red" />
+          <IconCircleMinus color="red" size={15} />
         </ActionIcon>
       );
     },

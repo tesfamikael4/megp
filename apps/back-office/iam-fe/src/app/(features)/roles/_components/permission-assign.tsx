@@ -1,4 +1,3 @@
-// TableComponent.jsx
 import React, { useEffect, useState } from 'react';
 import { useLazyListByAppIdQuery } from '../../applications/_api/permission.api';
 import { useLazyGetPermissionByOrganizationIdQuery } from '../../roles/_api/others.api';
@@ -97,7 +96,7 @@ const MandatePermission = ({
               {selectedRow === undefined && (
                 <Table.Th className="font-bold text-lg flex">
                   {' '}
-                  Select application
+                  Select Application
                 </Table.Th>
               )}
               <Table.Thead>

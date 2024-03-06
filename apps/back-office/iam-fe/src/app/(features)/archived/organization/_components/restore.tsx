@@ -1,6 +1,6 @@
-import { Menu, Text } from '@mantine/core';
+import { Text, Box } from '@mantine/core';
 import { modals } from '@mantine/modals';
-import { IconDotsVertical, IconRestore } from '@tabler/icons-react';
+import { IconRestore } from '@tabler/icons-react';
 import { useRestoreMutation } from '../../../organizations/_api/organization.api';
 import { notify } from '@megp/core-fe';
 
@@ -24,28 +24,16 @@ export function Restore({ original }: any) {
   const handleDelete = async () => {
     try {
       await restore(original?.id).unwrap();
-      notify('Success', 'Restored Success-fully');
+      notify('Success', 'Restored Successfully');
     } catch (err) {
       notify('Error', 'Something went wrong');
     }
   };
   return (
     <>
-      <Menu shadow="md">
-        <Menu.Target>
-          <IconDotsVertical className="ml-auto text-gray-500" size={16} />
-        </Menu.Target>
-
-        <Menu.Dropdown>
-          <Menu.Divider />
-          <Menu.Item
-            leftSection={<IconRestore size={15} />}
-            onClick={openDeleteModal}
-          >
-            Restore
-          </Menu.Item>
-        </Menu.Dropdown>
-      </Menu>
+      <Box className="ml-auto ">
+        <IconRestore size={15} onClick={openDeleteModal} color="#222261" />
+      </Box>
     </>
   );
 }

@@ -26,7 +26,7 @@ const AddPermission = () => {
     columns: [
       {
         id: 'name',
-        header: 'name',
+        header: 'Name',
         accessorKey: 'name',
         cell: (info) => info.getValue(),
         meta: {

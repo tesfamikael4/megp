@@ -6,23 +6,18 @@ import { useMemo } from 'react';
 import { useLazyListArchivedQuery } from '../../organizations/_api/organization.api';
 import { Type } from './_components/organization-type';
 import { Restore } from './_components/restore';
-import { Box } from '@mantine/core';
 
 export function Entity({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   const [trigger, { data, isFetching }] = useLazyListArchivedQuery();
 
-  const Status = ({ original }: any) => {
-    return <Box className="ml-auto p pr-6">{original.status}</Box>;
-  };
-
   const config: EntityConfig<Organization> = useMemo(() => {
     return {
       basePath: '/archived/organization',
       mode: 'list',
       entity: 'organizations',
-      title: 'Archived organizations',
+      title: 'Archived Organizations',
       searchable: true,
       pagination: true,
       sortable: true,
@@ -52,12 +47,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
           accessorKey: 'typeId',
           cell: (info) => <Type id={info.row.original.typeId} />,
         },
-        {
-          id: 'status',
-          header: () => <p className="ml-auto">Status</p>,
-          accessorKey: 'status',
-          cell: (info) => <Status original={info.row.original} />,
-        },
+
         {
           id: 'action',
           header: () => <p className="ml-auto">Action</p>,

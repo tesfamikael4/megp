@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, Button } from '@mantine/core';
+import { Modal, Button, Text } from '@mantine/core';
 import { RelationConfig } from '@megp/entity';
 import { useLazyListByIdQuery } from '../_api/custom.api';
 import { useParams } from 'next/navigation';
@@ -18,7 +18,7 @@ const AddOa = () => {
   const [trigger, { data }] = useLazyListByIdQuery();
 
   const relationConfig: RelationConfig<User> = {
-    title: 'organization administrator',
+    title: 'Organization Administrator',
     columns: [
       {
         id: 'name',
@@ -85,7 +85,7 @@ const AddOa = () => {
       >
         <Table config={relationConfig} data={data?.items ?? []}></Table>
         <Modal
-          title={'Add user'}
+          title={<Text fw={'bold'}>Add user</Text>}
           opened={isModalOpen}
           onClose={handleCloseModal}
           size={'lg'}

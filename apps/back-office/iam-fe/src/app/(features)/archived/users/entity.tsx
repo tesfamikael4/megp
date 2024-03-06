@@ -20,7 +20,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
       basePath: '/archived/users',
       mode: 'list',
       entity: 'user',
-      title: 'Archived users',
+      title: 'Archived Users',
       searchable: true,
       pagination: true,
       sortable: true,
@@ -45,17 +45,8 @@ export function Entity({ children }: { children: React.ReactNode }) {
         },
         {
           id: 'username',
-          header: 'User name',
+          header: 'User Name',
           accessorKey: 'account.username',
-          cell: (info) => info.getValue(),
-          meta: {
-            widget: 'expand',
-          },
-        },
-        {
-          id: 'email',
-          header: 'Email',
-          accessorKey: 'account.email',
           cell: (info) => info.getValue(),
           meta: {
             widget: 'expand',

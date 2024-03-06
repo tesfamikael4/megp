@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Modal } from '@mantine/core';
+import { Modal, Text } from '@mantine/core';
 import { CollectionQuery, Relation, RelationConfig } from '@megp/entity';
 import { useParams } from 'next/navigation';
 import { useLazyListByIdQuery } from '../../../users/_api/user.api';
@@ -126,7 +126,7 @@ const AddUserModal = () => {
         setIsCollapsed={setIsCollapsed}
       />
       <Modal
-        title="User assignment"
+        title={<Text fw={'bold'}>User Assignment</Text>}
         opened={isModalOpen}
         onClose={handleCloseModal}
         size={'lg'}

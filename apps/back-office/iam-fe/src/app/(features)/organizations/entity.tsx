@@ -50,7 +50,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
 
         {
           id: 'typeId',
-          header: 'Organization type',
+          header: 'Organization Type',
           accessorKey: 'typeId',
           cell: (info) => <Type id={info.row.original.typeId} />,
         },

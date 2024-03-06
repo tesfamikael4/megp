@@ -1,4 +1,4 @@
-import { Button, Modal } from '@mantine/core';
+import { Button, Modal, Text } from '@mantine/core';
 import { EntityConfig } from '@megp/entity';
 import { TreeList } from '@megp/entity/src/components/entity/modal-tree';
 import { IconSelect } from '@tabler/icons-react';
@@ -48,7 +48,7 @@ export function ParentModal({
         opened={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         size={'lg'}
-        title={'Unit Selection'}
+        title={<Text fw={'bold'}>Unit Selection</Text>}
       >
         <TreeList
           data={data}

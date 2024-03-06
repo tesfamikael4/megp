@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Modal } from '@mantine/core';
+import { Modal, Text } from '@mantine/core';
 import { CollectionQuery, Relation, RelationConfig } from '@megp/entity';
 import { Mandate } from '@/models/mandate';
 import { useLazyMandateToAssignQuery } from '../_api/custom.api';
@@ -120,7 +120,7 @@ const AddEntityModal = () => {
         isSaving={isSaving}
       />
       <Modal
-        title="Mandate Assignment"
+        title={<Text fw={'bold'}>Mandate Assignment</Text>}
         opened={isModalOpen}
         onClose={handleCloseModal}
         size={'lg'}

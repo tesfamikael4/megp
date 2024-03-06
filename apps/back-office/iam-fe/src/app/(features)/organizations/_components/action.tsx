@@ -9,7 +9,7 @@ import {
   Box,
   LoadingOverlay,
   Group,
-  Menu,
+  Text,
 } from '@mantine/core';
 import {
   useInviteUserMutation,
@@ -108,7 +108,7 @@ export default function Invitation({ user }: invitationProps) {
       )}
 
       <Modal
-        title={'View link'}
+        title={<Text fw={'bold'}>View Link</Text>}
         opened={viewLink}
         onClose={() => setViewLink(false)}
         size={'lg'}

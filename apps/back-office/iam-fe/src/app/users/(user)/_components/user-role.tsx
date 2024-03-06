@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Modal } from '@mantine/core';
+import { Modal, Text } from '@mantine/core';
 import { CollectionQuery, Relation, RelationConfig } from '@megp/entity';
 import {
   useRelationMutation,
@@ -115,7 +115,7 @@ const AddEntityModal = () => {
         setIsCollapsed={setIsCollapsed}
       />
       <Modal
-        title="Role assignment"
+        title={<Text fw={'bold'}>Role Assignment</Text>}
         opened={isModalOpen}
         onClose={handleCloseModal}
         size={'lg'}

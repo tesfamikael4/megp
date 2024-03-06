@@ -14,7 +14,7 @@ export default function RoleDetailPage() {
 
   return (
     <Stack>
-      <Section title="Role detail">
+      <Section title="Role Detail">
         {selected?.isSystemRole ? (
           <SystemRole mode="detail" />
         ) : (
