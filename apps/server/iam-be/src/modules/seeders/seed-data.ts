@@ -324,6 +324,20 @@ export const permissions = [
     key: 'vendor:rejectApplication',
     applicationId: 3,
   },
+  {
+    id: 45,
+    name: 'Mandate Viewer',
+    description: 'Mandate Viewer',
+    key: 'iam:mandateViewer',
+    applicationId: 2,
+  },
+  {
+    id: 46,
+    name: 'Manage Organization',
+    description: 'Manage Organization',
+    key: 'iam:manageOrganization',
+    applicationId: 2,
+  },
 ];
 export const roleSystems = [
   {
@@ -493,9 +507,9 @@ export const user = {
 export const mandates = [
   {
     id: 1,
-    name: 'Super Admin',
-    description: 'Super Admin',
-    key: 'SUPER_ADMIN',
+    name: 'Platform Owner',
+    description: 'Platform Owner',
+    key: 'PLATFORM_OWNER',
     isActive: true,
     isSingleAssignment: true,
     versionNo: '0.1',
@@ -508,6 +522,7 @@ export const mandates = [
       { permissionId: 3 },
       { permissionId: 4 },
       { permissionId: 38 },
+      { permissionId: 37 },
     ],
   },
   {
@@ -527,16 +542,6 @@ export const mandates = [
     isActive: true,
     isSingleAssignment: false,
     versionNo: '0.1',
-  },
-  {
-    id: 4,
-    name: 'Platform Owner',
-    description: 'Platform Owner',
-    key: 'PLATFORM_OWNER',
-    isActive: true,
-    isSingleAssignment: true,
-    versionNo: '0.1',
-    mandatePermissions: [{ permissionId: 37 }],
   },
 ];
 export const defaultOrganizationRoles = [
