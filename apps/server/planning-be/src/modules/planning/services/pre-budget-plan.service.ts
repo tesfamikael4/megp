@@ -397,8 +397,6 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
       version: 1,
       key: 'onApprovalSubmit',
     });
-
-    return buffer;
   }
 
   instanceToPlainExclude(
