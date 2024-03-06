@@ -263,7 +263,10 @@ export default function SupportingDocuments() {
             getImageUrl={previousPPDARegistrationImageUrl}
           />
           <Flex justify="end" className="gap-2 mt-4">
-            <Button onClick={() => router.push('/payment')} variant="outline">
+            <Button
+              onClick={() => router.push('preferential')}
+              variant="outline"
+            >
               Back
             </Button>
             <Button onClick={onSave}>Save</Button>

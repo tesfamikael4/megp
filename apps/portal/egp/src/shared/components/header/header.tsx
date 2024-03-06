@@ -54,7 +54,6 @@ function Header() {
     { link: '/vendor/tender', label: 'Procurement Notice' },
     { link: '/vendor/plans', label: 'Plans' },
     { link: '/vendor/contracts', label: 'Contracts' },
-    ...workspace,
     {
       link: '#more',
       label: 'More',
@@ -64,6 +63,7 @@ function Header() {
         { link: '/about-us', label: 'About E-gp' },
       ],
     },
+    ...workspace,
   ];
 
   useEffect(() => {

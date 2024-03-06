@@ -56,26 +56,26 @@ const NewPreferentialForm = ({
   const router = useRouter();
 
   const onSubmit = async (e) => {
-    try {
-      await submitPrefrential({ ...watch(), status: 'Submit' }).unwrap();
-      router.push(`/vendor/registration/track-applications`);
-      NotificationService.successNotification(
-        'Preferential Treatment Submitted Successfully',
-      );
-    } catch (error) {
-      NotificationService.requestErrorNotification('Failed to save ');
-    }
+    // try {
+    //   await submitPrefrential({ ...watch() }).unwrap();
+    //   router.push(`/vendor/registration/track-applications`);
+    //   NotificationService.successNotification(
+    //     'Preferential Treatment Submitted Successfully',
+    //   );
+    // } catch (error) {
+    //   NotificationService.requestErrorNotification('Failed to save ');
+    // }
   };
 
   const handleSaveDraft = async () => {
-    try {
-      await submitPrefrential({ ...watch(), status: 'Draft' }).unwrap();
-      NotificationService.successNotification(
-        'Preferential Treatment Saved as a draft',
-      );
-    } catch (error) {
-      NotificationService.requestErrorNotification('Failed to save ');
-    }
+    // try {
+    //   await submitPrefrential({ ...watch(), status: 'Draft' }).unwrap();
+    //   NotificationService.successNotification(
+    //     'Preferential Treatment Saved as a draft',
+    //   );
+    // } catch (error) {
+    //   NotificationService.requestErrorNotification('Failed to save ');
+    // }
   };
 
   return (

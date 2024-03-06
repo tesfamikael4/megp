@@ -1,3 +1,4 @@
+import { PreferentialTreatment } from '@/models/vendorRegistration';
 import { baseQuery } from '@/store/base-query';
 import { createApi } from '@reduxjs/toolkit/query/react';
 const URL = process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api';
@@ -7,26 +8,41 @@ export const preferentialTreatmentApi = createApi({
   refetchOnFocus: true,
   baseQuery: baseQuery(URL),
   endpoints: (builder) => ({
-    submitRequest: builder.mutation<any, any>({
+    submitRequest: builder.mutation<
+      any,
+      { certiNumber: string; serviceId: string; status: string }[]
+    >({
       query: (body) => {
-        const formData: any = new FormData();
-        formData.append('certificate', body.certificate);
-        formData.append('remark', body.remark);
-        formData.append('serviceId', body.serviceId);
-        formData.append('certiNumber', body.certiNumber);
-        formData.append('status', body.status);
-        body.additionalDocuments &&
-          formData.append(
-            'additionalDocuments',
-            body.additionalDocuments.map((file: any) => file.attachment),
-          );
-
         return {
           url: `preferentail-treatment/submit-pt-request`,
           method: 'POST',
-          body: formData,
+          body: body,
         };
       },
+    }),
+    uploadPreferentialAttachments: builder.mutation<any, any>({
+      query: (body) => {
+        const formData: any = new FormData();
+        const createPTDto: { serviceId: string; certiNumber: string }[] = [];
+
+        body.map((preferential) => {
+          formData.append(
+            `${preferential.category}Certi`,
+            preferential.attachment,
+          );
+          const { attachment, category, type, ...rest } = preferential;
+          createPTDto.push(rest);
+        });
+
+        return {
+          url: `preferentail-treatment/upload-preferential-attachments`,
+          method: 'POST',
+          body,
+        };
+      },
+    }),
+    getPreferential: builder.query<any, any>({
+      query: () => `bp-services/get-preferencials`,
     }),
     getMarginalizedGroup: builder.query<any, any>({
       query: () => `bp-services/get-marginilized-groups`,
@@ -48,7 +64,9 @@ export const preferentialTreatmentApi = createApi({
 });
 
 export const {
+  useGetPreferentialQuery,
   useSubmitRequestMutation,
   useGetMarginalizedGroupQuery,
   useGetDraftApplicationQuery,
+  useUploadPreferentialAttachmentsMutation,
 } = preferentialTreatmentApi;

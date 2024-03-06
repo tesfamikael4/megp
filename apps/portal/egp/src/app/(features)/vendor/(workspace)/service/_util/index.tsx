@@ -9,10 +9,10 @@ export function processCompanyName(name: string): {
     initials = name.substring(0, 2).toUpperCase();
   } else {
     initials = words
-      .slice(0, 2)
-      .map((word) => word[0])
-      .join('')
-      .toUpperCase();
+      ?.slice(0, 2)
+      ?.map((word) => word[0])
+      ?.join('')
+      ?.toUpperCase();
   }
 
   const color: string = getUniqueColor(name);
@@ -23,11 +23,11 @@ function getUniqueColor(name: string): string {
   // For example, using a simple hashing method:
   const hashCode = (str: string): number => {
     let hash = 0;
-    if (str.length === 0) {
+    if (str?.length === 0) {
       return hash;
     }
-    for (let i = 0; i < str.length; i++) {
-      const char = str.charCodeAt(i);
+    for (let i = 0; i < str?.length; i++) {
+      const char = str?.charCodeAt(i);
       hash = (hash << 5) - hash + char;
       hash = hash & hash; // Convert to 32bit integer
     }

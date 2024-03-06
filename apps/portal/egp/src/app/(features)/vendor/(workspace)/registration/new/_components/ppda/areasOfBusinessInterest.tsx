@@ -50,9 +50,12 @@ export const AreasOfBusinessInterest: React.FC<Props> = ({
   adjustment,
 }) => {
   const getLineOfBusinessValues = useGetLineOfBusinessQuery({});
-  const getPriceRangeValues = useGetPriceRangeQuery({
-    type: 'new',
-  });
+  const getPriceRangeValues = useGetPriceRangeQuery(
+    {
+      type: 'new',
+    },
+    { refetchOnMountOrArgChange: true },
+  );
 
   const { lockElements } = usePrivilege();
 
@@ -100,7 +103,7 @@ export const AreasOfBusinessInterest: React.FC<Props> = ({
   const getLineOfBusinessMultiSelectData = (
     businessArea: string,
   ): { value: string; label: string }[] | string[] | [] => {
-    if (businessArea === 'services') {
+    if (businessArea === 'Services') {
       return (
         ([...(getLineOfBusinessValues.data?.items || [])]
 
@@ -116,7 +119,7 @@ export const AreasOfBusinessInterest: React.FC<Props> = ({
           })
           .filter(Boolean) as { value: string; label: string }[]) || []
       );
-    } else if (businessArea === 'goods') {
+    } else if (businessArea === 'Goods') {
       return (
         ((getLineOfBusinessValues.data?.items || [])
           .map((item) => {
@@ -131,7 +134,7 @@ export const AreasOfBusinessInterest: React.FC<Props> = ({
           })
           .filter(Boolean) as { value: string; label: string }[]) || []
       );
-    } else if (businessArea === 'works') {
+    } else if (businessArea === 'Works') {
       return [
         'Building',
         'Civil',
@@ -149,7 +152,7 @@ export const AreasOfBusinessInterest: React.FC<Props> = ({
 
   return (
     <Suspense>
-      <Flex className="flex-col gap-6">
+      <Flex className="flex-col gap-6 w-full" justify={'flex-start'}>
         <LoadingOverlay
           visible={
             getLineOfBusinessValues.isLoading || getPriceRangeValues.isLoading
@@ -162,15 +165,15 @@ export const AreasOfBusinessInterest: React.FC<Props> = ({
             id="category"
             data={[
               {
-                value: 'goods',
+                value: 'Goods',
                 label: 'Goods',
               },
               {
-                value: 'services',
+                value: 'Services',
                 label: 'Services',
               },
               {
-                value: 'works',
+                value: 'Works',
                 label: 'Works',
               },
             ]}

@@ -16,6 +16,7 @@ export type VendorLevel =
   | 'ppda'
   | 'payment'
   | 'doc'
+  | 'preferential'
   | 'review'
   | 'info';
 
@@ -81,6 +82,7 @@ export interface FormData {
     nationality: string;
   }[];
   areasOfBusinessInterest: AreasOfBusinessInterestType[] | [];
+  preferential: PreferentialTreatment[] | [];
   invoice: InvoiceData[] | [];
   supportingDocuments: {
     businessRegistration_IncorporationCertificate: string;
@@ -106,6 +108,14 @@ export interface AreasOfBusinessInterestType {
     name: string;
   }[];
   priceRange: string;
+}
+
+export interface PreferentialTreatment {
+  category: string;
+  type: string;
+  attachment: any;
+  serviceId: string;
+  certiNumber: string;
 }
 
 export interface AddFormRequestData extends FormData {

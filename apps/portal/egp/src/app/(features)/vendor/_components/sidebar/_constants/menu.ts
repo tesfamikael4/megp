@@ -10,6 +10,7 @@ import {
 } from '@tabler/icons-react';
 import { MenuLinks } from '../models';
 import { IconShoppingCart } from '@tabler/icons-react';
+import { IconAddressBook } from '@tabler/icons-react';
 
 export const informationLinks: MenuLinks.SidebarLinks[] = [
   {
@@ -54,5 +55,10 @@ export const managementLinks: MenuLinks.SidebarLinks[] = [
     label: 'Purchase Orders',
     icon: IconShoppingCart,
     link: '/vendor/registration/purchase-orders',
+  },
+  {
+    label: 'My Profile',
+    icon: IconAddressBook,
+    link: '/vendor/registration/my-profile',
   },
 ];

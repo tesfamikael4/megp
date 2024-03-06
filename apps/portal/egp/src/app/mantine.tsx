@@ -13,8 +13,10 @@ export default function RootStyleRegistry({
 
   return (
     <MantineProvider theme={theme}>
-      <Notifications />
-      {children}
+      <ModalsProvider>
+        <Notifications />
+        {children}
+      </ModalsProvider>
     </MantineProvider>
   );
 }

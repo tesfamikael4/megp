@@ -89,6 +89,8 @@ const RegistrationForm = ({
     resolver: zodResolver(formDataSchema),
     defaultValues: initialValues,
   });
+  console.log(formState.errors);
+
   const [submitTrigger, submitRequestInfo] =
     useUpdateSaveAsDraftApproveVendorInfoMutation();
   const [saveAsDraftTrigger, saveAsDraftRequestInfo] =

@@ -124,18 +124,18 @@ export default function InvoiceTemplate({
                   </tr>
                 </thead>
                 <tbody>
-                  {invoiceData.map((item, index) => (
+                  {invoiceData?.[0]?.paymentDetail?.map((item, index) => (
                     <tr key={index}>
                       <td className="border p-2 text-center">{index + 1}</td>
                       <td className="border p-2 items-center">
-                        {item.serviceName}
+                        {item.category}
                       </td>
-                      <td className="border p-2 text-center">${item.amount}</td>
+                      <td className="border p-2 text-center">${item.fee}</td>
                     </tr>
                   ))}
                   <tr className="w-full">
                     <td></td>
-                    <td></td>
+                    <td className="p-2 items-center">Total</td>
                     <td className="p-2 border text-center">
                       $
                       {invoiceData.reduce(
