@@ -36,6 +36,7 @@ import { PreBudgetActivityDocumentService } from './services/pre-budget-activity
 import { MinioModule } from 'nestjs-minio-client';
 import { UtilityModule } from '../utility/utility.module';
 import { MinIOModule } from 'src/shared/min-io/min-io.module';
+import { hashService } from '../utility/services/hash.service';
 
 dotenv.config({ path: '.env' });
 
@@ -90,7 +91,7 @@ dotenv.config({ path: '.env' });
     PreProcurementMechanismService,
     PreBudgetRequisitionerService,
     PreBudgetActivityDocumentService,
-    // BudgetYearService
+    hashService,
   ],
   controllers: [
     APPController,

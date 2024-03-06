@@ -20,87 +20,94 @@ export class PostBudgetPlanTimelineService extends ExtraCrudService<PostBudgetPl
     timelines: BulkTimelineDto,
     req: any,
   ): Promise<BulkTimelineDto> {
-    const organizationId = req?.user?.organization?.id;
-    this.repositoryPostBudgetPlanTimeline.delete({
-      postBudgetPlanActivityId: timelines.timeline[0].postBudgetPlanActivityId,
-      organizationId: organizationId,
-    });
-
-    timelines.timeline.forEach((element) => {
-      element.organizationId = organizationId;
-    });
-
-    const postBudgetPlanActivity =
-      await this.repositoryPostBudgetPlanActivity.findOne({
-        where: {
-          id: timelines.timeline[0].postBudgetPlanActivityId,
-        },
-        relations: {
-          postBudgetPlan: {
-            app: { budgetYears: true },
-          },
-        },
-        select: {
-          id: true,
-          postBudgetPlan: {
-            id: true,
-            app: {
-              id: true,
-              budgetYears: { endDate: true },
-            },
-          },
-        },
+    try {
+      const organizationId = req?.user?.organization?.id;
+      await this.repositoryPostBudgetPlanTimeline.delete({
+        postBudgetPlanActivityId:
+          timelines.timeline[0].postBudgetPlanActivityId,
+        organizationId: organizationId,
       });
 
-    const ordered = timelines.timeline.sort((a, b) => a.order - b.order);
+      const postBudgetPlanActivity =
+        await this.repositoryPostBudgetPlanActivity.findOne({
+          where: {
+            id: timelines.timeline[0].postBudgetPlanActivityId,
+          },
+          relations: {
+            postBudgetPlan: {
+              app: { budgetYears: true },
+            },
+          },
+          select: {
+            id: true,
+            postBudgetPlan: {
+              id: true,
+              app: {
+                id: true,
+                budgetYears: { endDate: true, startDate: true },
+              },
+            },
+          },
+        });
+      const budgetPlanEndDate =
+        postBudgetPlanActivity.postBudgetPlan.app.budgetYears.endDate;
 
-    const budgetPlanEndDate =
-      postBudgetPlanActivity.postBudgetPlan.app.budgetYears.endDate;
+      const budgetPlanStartDate =
+        postBudgetPlanActivity.postBudgetPlan.app.budgetYears.startDate;
 
-    if (
-      new Date(ordered[ordered.length - 1].dueDate).getTime() >
-      budgetPlanEndDate.getTime()
-    )
-      throw new HttpException(
-        'End date must be less than budget plan end date',
-        430,
-      );
+      timelines.timeline.forEach((element) => {
+        element.organizationId = organizationId;
+      });
 
-    ordered.forEach((tl, index) => {
-      const dueDate = new Date(tl.dueDate);
+      const ordered = timelines.timeline.sort((a, b) => a.order - b.order);
 
-      if (index < ordered.length - 1) {
-        if (index !== tl.order)
-          throw new HttpException('Timeline order must be sequential', 430);
-
-        const nextDueDate = new Date(ordered[index + 1].dueDate);
-
-        // Assumed next due date is the current due date plus the next activity's period in days
-        const assumedNextDueDate = dueDate;
-        assumedNextDueDate.setDate(
-          assumedNextDueDate.getDate() + Number(ordered[index + 1].period),
+      if (
+        new Date(ordered[0].dueDate).getTime() <= budgetPlanStartDate.getTime()
+      )
+        throw new HttpException(
+          'Start date must be greater than budget plan start date',
+          430,
         );
 
-        if (assumedNextDueDate.getTime() !== nextDueDate.getTime())
-          throw new HttpException(
-            'Timeline validation error. Due dates must be sequential',
-            430,
+      if (
+        new Date(ordered[ordered.length - 1].dueDate).getTime() >=
+        budgetPlanEndDate.getTime()
+      )
+        throw new HttpException(
+          'End date must be less than budget plan end date',
+          430,
+        );
+
+      ordered.forEach((tl, index) => {
+        const dueDate = new Date(tl.dueDate);
+
+        if (index < ordered.length - 1) {
+          if (index !== tl.order)
+            throw new HttpException('Timeline order must be sequential', 430);
+
+          const nextDueDate = new Date(ordered[index + 1].dueDate);
+
+          // Assumed next due date is the current due date plus the next activity's period in days
+          const assumedNextDueDate = dueDate;
+          assumedNextDueDate.setDate(
+            assumedNextDueDate.getDate() + Number(ordered[index + 1].period),
           );
-      } else if (index == ordered.length - 1) {
-        if (dueDate.getTime() > budgetPlanEndDate.getTime()) {
-          throw new HttpException(
-            'Due date cannot be greater than budget plan end date',
-            430,
-          );
+
+          if (assumedNextDueDate.getTime() !== nextDueDate.getTime())
+            throw new HttpException(
+              'Timeline validation error. Due dates must be sequential with correct period difference',
+              430,
+            );
         }
-      }
-    });
+      });
 
-    const timeline = this.repositoryPostBudgetPlanTimeline.create(
-      timelines.timeline as any,
-    );
-    await this.repositoryPostBudgetPlanTimeline.insert(timeline);
-
-    return timelines;
+      const timeline = this.repositoryPostBudgetPlanTimeline.create(
+        timelines.timeline as any,
+      );
+      await this.repositoryPostBudgetPlanTimeline.insert(timeline);
+      return timelines;
+    } catch (error) {
+      throw error;
+    }
   }
 }

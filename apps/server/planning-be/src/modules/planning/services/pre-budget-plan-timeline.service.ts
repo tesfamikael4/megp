@@ -75,7 +75,7 @@ export class PreBudgetPlanTimelineService extends ExtraCrudService<PreBudgetPlan
       const ordered = timelines.timeline.sort((a, b) => a.order - b.order);
 
       if (
-        new Date(ordered[0].dueDate).getTime() < budgetPlanStartDate.getTime()
+        new Date(ordered[0].dueDate).getTime() <= budgetPlanStartDate.getTime()
       )
         throw new HttpException(
           'Start date must be greater than budget plan start date',
@@ -83,7 +83,7 @@ export class PreBudgetPlanTimelineService extends ExtraCrudService<PreBudgetPlan
         );
 
       if (
-        new Date(ordered[ordered.length - 1].dueDate).getTime() >
+        new Date(ordered[ordered.length - 1].dueDate).getTime() >=
         budgetPlanEndDate.getTime()
       )
         throw new HttpException(
