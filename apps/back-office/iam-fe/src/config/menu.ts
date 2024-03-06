@@ -35,7 +35,7 @@ export const Menu: MenuItem[] = [
     label: 'My Organization',
     icon: IconBuildingBank,
     link: '/my-organization',
-    permission: ['iam:use'],
+    permission: ['iam:manageOrganization'],
   },
   {
     label: 'My Mandates',
@@ -48,7 +48,7 @@ export const Menu: MenuItem[] = [
     label: 'Users',
     icon: IconUsers,
     link: '/super-user',
-    permission: ['iam:organization'],
+    permission: ['iam:manageSuperAdmin'],
   },
 
   {
@@ -92,7 +92,7 @@ export const Menu: MenuItem[] = [
       {
         label: 'Users',
         link: '/archived/users',
-        permission: ['iam:user', 'iam:organization'],
+        permission: ['iam:user', 'iam:organization', 'iam:manageSuperAdmin'],
       },
     ],
   },
