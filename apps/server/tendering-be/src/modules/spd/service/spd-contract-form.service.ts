@@ -2,11 +2,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { ExtraCrudService } from 'src/shared/service';
-import { DocxService } from 'src/shared/docx/docx.service';
 import { MinIOService } from 'src/shared/min-io/min-io.service';
-import { Response } from 'express';
 import { SpdContractForm } from 'src/entities/spd-contract-form.entity';
-import { Readable } from 'stream';
 import { FileHelperService } from './file-helper.service';
 
 @Injectable()
@@ -14,7 +11,6 @@ export class SpdContractFormService extends ExtraCrudService<SpdContractForm> {
   constructor(
     @InjectRepository(SpdContractForm)
     private readonly spdContractFormRepository: Repository<SpdContractForm>,
-    private readonly docxService: DocxService,
     private readonly minIOService: MinIOService,
     private readonly fileHelperService: FileHelperService,
   ) {
@@ -23,14 +19,6 @@ export class SpdContractFormService extends ExtraCrudService<SpdContractForm> {
 
   async uploadSPDDocument(payload: any, file: Express.Multer.File) {
     try {
-      // const result = await this.docxService.validateDocument(file.buffer, [
-      //   'public_body',
-      // ]);
-
-      // if (result.length != 0) {
-      //   throw new HttpException(result, HttpStatus.BAD_REQUEST);
-      // }
-
       const documentDocx = await this.minIOService.upload(file);
 
       const documentPdf = await this.fileHelperService.convertAndUpload(file);
