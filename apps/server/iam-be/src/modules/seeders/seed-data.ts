@@ -338,6 +338,13 @@ export const permissions = [
     key: 'iam:manageOrganization',
     applicationId: 2,
   },
+  {
+    id: 47,
+    name: 'Manage Super Admin',
+    description: 'Manage Super Admin',
+    key: 'iam:manageSuperAdmin',
+    applicationId: 2,
+  },
 ];
 export const roleSystems = [
   {
@@ -427,12 +434,14 @@ export const roleSystems = [
     key: 'DIRECTOR_GENERAL',
   },
 ];
+
 export const roleSystemPermissions = [
   { roleSystemId: 1, permissionId: 1 },
   { roleSystemId: 1, permissionId: 2 },
   { roleSystemId: 1, permissionId: 3 },
   { roleSystemId: 1, permissionId: 4 },
   { roleSystemId: 1, permissionId: 6 },
+  { roleSystemId: 1, permissionId: 47 },
   { roleSystemId: 2, permissionId: 5 },
   { roleSystemId: 2, permissionId: 7 },
   { roleSystemId: 2, permissionId: 6 },
@@ -469,6 +478,7 @@ export const roleSystemPermissions = [
   { roleSystemId: 11, permissionId: 43 },
   { roleSystemId: 16, permissionId: 44 },
 ];
+
 export const account = {
   id: '97766b0e-9d8d-46fc-a3de-65c394e73d86',
   username: 'super_admin',
@@ -523,6 +533,7 @@ export const mandates = [
       { permissionId: 4 },
       { permissionId: 38 },
       { permissionId: 37 },
+      { permissionId: 47 },
     ],
   },
   {
