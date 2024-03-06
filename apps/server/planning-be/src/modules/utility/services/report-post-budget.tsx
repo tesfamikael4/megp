@@ -11,9 +11,11 @@ import {
 
 export const postReportPdf = async ({ activities }: any) => {
   const buffer = await renderToBuffer(
-    <Document title={activities.postBudgetPlan.app.name}>
+    <Document title={activities[0].postBudgetPlan.app.planName}>
       <Page size="A4" style={styles.page}>
-        <Text style={styles.title}>{activities.postBudgetPlan.app.name}</Text>
+        <Text style={styles.title}>
+          {activities[0].postBudgetPlan.app.planName}
+        </Text>
         {activities.map((item, index) => (
           <View style={styles.activities} key={index}>
             <View

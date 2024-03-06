@@ -112,23 +112,19 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
       throw new NotFoundException(`PreBudgetPlan not found`);
     }
     const currencyTotalAmounts: Record<string, number> = {};
-    let totalAmount = 0;
+
     const totalActivities = preBudgetPlan.preBudgetPlanActivities.length;
 
     preBudgetPlan.preBudgetPlanActivities.forEach((activity) => {
-      activity.preBudgetPlanItems.forEach((item) => {
-        const itemTotalAmount = item.quantity * item.unitPrice;
-        totalAmount += itemTotalAmount;
+      const currency = activity.currency;
 
-        const currency = item.currency;
-
-        if (currencyTotalAmounts[currency]) {
-          currencyTotalAmounts[currency] += itemTotalAmount;
-        } else {
-          currencyTotalAmounts[currency] = itemTotalAmount;
-        }
-      });
+      if (currencyTotalAmounts[currency]) {
+        currencyTotalAmounts[currency] += activity.estimatedAmount;
+      } else {
+        currencyTotalAmounts[currency] = activity.estimatedAmount;
+      }
     });
+
     const targetGroupPercentages: Record<string, number> =
       await this.calculateTargetGroupPercentage(preBudgetPlanId);
     return { totalActivities, currencyTotalAmounts, targetGroupPercentages };
@@ -154,15 +150,30 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
     preBudgetPlan.preBudgetPlanActivities.forEach((activity) => {
       activity.preProcurementMechanisms.forEach((mechanism) => {
         const targetGroups = mechanism.targetGroup || [];
+        let msme = false;
 
         targetGroups.forEach((group) => {
-          targetGroupCounts[group] = (targetGroupCounts[group] || 0) + 1;
+          const validGroups = [
+            'Small Enterprises',
+            'Micro Enterprises',
+            'Medium Enterprises',
+          ];
+          const target = validGroups.includes(group);
+          if (target && !msme) {
+            targetGroupCounts['MSM Enterprises'] =
+              (targetGroupCounts['MSM Enterprises'] || 0) +
+              +activity.estimatedAmount;
+            msme = true;
+          } else if (!target) {
+            targetGroupCounts[group] =
+              (targetGroupCounts[group] || 0) + +activity.estimatedAmount;
+          }
         });
       });
     });
 
     const totalMechanisms = preBudgetPlan.preBudgetPlanActivities.reduce(
-      (total, activity) => total + activity.preProcurementMechanisms.length,
+      (total, activity) => total + +activity.estimatedAmount,
       0,
     );
 

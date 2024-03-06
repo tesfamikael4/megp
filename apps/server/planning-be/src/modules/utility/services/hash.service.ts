@@ -1,21 +1,14 @@
-// import { Injectable } from '@nestjs/common';
-// import * as qrcode from 'qrcode';
+import { Injectable } from '@nestjs/common';
+import { createHash } from 'crypto';
 
-// @Injectable()
-// export class QrCodeService {
-//   async generateQrCode(data: any): Promise<string> {
-//     try {
-//       const filename =
-//         data.personnelId + '_' + data.applicationName + '_' + '.png';
-//       await qrcode.toFile(filename, JSON.stringify(data), {
-//         color: {
-//           dark: '#000', // black dots
-//           light: '#fff', // Transparent background
-//         },
-//       });
-//       return filename;
-//     } catch (error) {
-//       throw new Error('Failed to generate QR code.');
-//     }
-//   }
-// }
+@Injectable()
+export class hashService {
+  hashData(data: any) {
+    return createHash('sha-256').update(JSON.stringify(data)).digest('hex');
+  }
+
+  hashMatch(data: any, hash: string): boolean {
+    const originalHash = this.hashData(data);
+    return originalHash === hash;
+  }
+}
