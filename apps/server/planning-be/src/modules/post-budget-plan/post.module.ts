@@ -27,6 +27,7 @@ import { PostBudgetRequisitioner } from 'src/entities/post-budget-plan-requisiti
 import { MinioModule } from 'nestjs-minio-client';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { UtilityModule } from '../utility/utility.module';
+import { MinIOModule } from 'src/shared/min-io/min-io.module';
 
 @Module({
   imports: [
@@ -52,17 +53,6 @@ import { UtilityModule } from '../utility/utility.module';
           },
         },
       },
-      {
-        name: 'TO_PR',
-        transport: Transport.RMQ,
-        options: {
-          urls: [process.env.RMQ_URL],
-          queue: 'to-pr',
-          queueOptions: {
-            durable: false,
-          },
-        },
-      },
     ]),
     MinioModule.register({
       endPoint: process.env.MINIO_ENDPOINT ?? 'files.megp.peragosystems.com',
@@ -73,6 +63,7 @@ import { UtilityModule } from '../utility/utility.module';
         process.env.MINIO_SECRETKEY ??
         'dGtjFGcLjKU6pXRYx1tOnqGeycJtxJoavgwqYgDd',
     }),
+    MinIOModule,
     UtilityModule,
   ],
   providers: [

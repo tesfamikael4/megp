@@ -19,6 +19,8 @@ import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 import { REQUEST } from '@nestjs/core';
 import { ClientProxy } from '@nestjs/microservices';
 import { PdfGeneratorService } from 'src/modules/utility/services/pdf-generator.service';
+import { DocumentService } from 'src/modules/utility/services/document.service';
+import { MinIOService } from 'src/shared/min-io/min-io.service';
 
 @Injectable()
 export class PostBudgetPlanService extends ExtraCrudService<PostBudgetPlan> {
@@ -30,12 +32,12 @@ export class PostBudgetPlanService extends ExtraCrudService<PostBudgetPlan> {
     private readonly postBudgetActivityRepository: Repository<PostBudgetPlanActivity>,
 
     private readonly pdfGeneratorService: PdfGeneratorService,
+    private readonly documentService: DocumentService,
+
+    private readonly minIoService: MinIOService,
 
     @Inject('PLANNING_RMQ_SERVICE')
     private readonly planningRMQClient: ClientProxy,
-
-    @Inject('TO_PR')
-    private readonly toPRRMQClient: ClientProxy,
 
     @Inject(REQUEST)
     private readonly request: Request,
@@ -275,6 +277,7 @@ export class PostBudgetPlanService extends ExtraCrudService<PostBudgetPlan> {
     await entityManager.getRepository(PostBudgetPlan).update(data.id, {
       status: 'Submitted',
     });
+    await this.pdfGenerator(data.id, data.itemName);
     await this.planningRMQClient.emit('initiate-workflow', {
       name: data.name,
       id: data.id,
@@ -283,7 +286,7 @@ export class PostBudgetPlanService extends ExtraCrudService<PostBudgetPlan> {
     });
   }
 
-  async sendEventFromPostToPR(data: any): Promise<void> {
+  async approvePostBudget(data: any): Promise<void> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -299,27 +302,6 @@ export class PostBudgetPlanService extends ExtraCrudService<PostBudgetPlan> {
           .update(sourceEntity.id, {
             status: data.status == 'Rejected' ? 'Draft' : 'Approved',
           });
-
-        //If the status is Approved send event to PR
-        if (data.status == 'Approved') {
-          const activities = await this.postBudgetActivityRepository.find({
-            where: { postBudgetPlanId: data.itemId },
-            relations: {
-              postBudgetPlanItems: true,
-              postBudgetPlanTimelines: true,
-              postBudgetRequisitioners: true,
-              postProcurementMechanisms: true,
-              postBudgePlantDisbursements: true,
-              postBudgetPlan: {
-                app: true,
-              },
-            },
-          });
-
-          await this.planningRMQClient.emit('to-pr', {
-            activities: activities,
-          });
-        }
       });
     } catch (error) {
       await queryRunner.rollbackTransaction();
@@ -329,29 +311,7 @@ export class PostBudgetPlanService extends ExtraCrudService<PostBudgetPlan> {
     }
   }
 
-  async sendTest() {
-    const postBudgetPlan = await this.repositoryPostBudgetPlan.find({
-      where: { id: '3aad5996-82ff-4210-a80c-68418a3e5f05' },
-      relations: {
-        postBudgetPlanActivities: {
-          postBudgetPlanItems: true,
-          postBudgetPlanTimelines: true,
-          postBudgetRequisitioners: true,
-          postProcurementMechanisms: true,
-          postBudgePlantDisbursements: true,
-        },
-        app: {
-          budgetYears: true,
-          budgets: true,
-        },
-      },
-    });
-    this.toPRRMQClient.emit('to-pr', {
-      postBudgetPlan,
-    });
-  }
-
-  async pdfGenerator(id: string) {
+  async pdfGenerator(id: string, itemName: string) {
     const data = await this.postBudgetActivityRepository.find({
       where: { postBudgetPlanId: id },
       relations: {
@@ -365,6 +325,21 @@ export class PostBudgetPlanService extends ExtraCrudService<PostBudgetPlan> {
       },
     });
     const buffer = await this.pdfGeneratorService.pdfGenerator(data, 'post');
+
+    const fileInfo = await this.minIoService.uploadBuffer(
+      buffer,
+      'preBudgetPlanReport.pdf',
+      'application/pdf',
+    );
+
+    await this.documentService.create({
+      fileInfo,
+      title: itemName,
+      itemId: id,
+      type: 'preBudgetPlan',
+      version: 1,
+      key: 'onApprovalSubmit',
+    });
     return buffer;
   }
 }
