@@ -30,8 +30,7 @@ export const ServiceLists = ({ isCompleted }: { isCompleted?: boolean }) => {
               List of Vendor Services
             </Text>
             <Text c={'dimmed'} size={'14px'} mt={2}>
-              Welcome to My Payments! Here you can manage your payment
-              information and view your transaction history.
+              List of services. You are eligible for
             </Text>
           </Flex>
           <Divider />

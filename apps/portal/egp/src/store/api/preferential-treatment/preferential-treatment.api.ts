@@ -37,7 +37,7 @@ export const preferentialTreatmentApi = createApi({
         return {
           url: `preferentail-treatment/upload-preferential-attachments`,
           method: 'POST',
-          body,
+          body: formData,
         };
       },
     }),
