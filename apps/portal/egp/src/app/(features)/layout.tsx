@@ -1,5 +1,5 @@
 'use client';
-import Footer from '@/shared/components/footer/footer';
+import Footer from './(landing)/_components/footer';
 import Header from '@/shared/components/header/header';
 
 export default function Layout({ children }: { children: React.ReactNode }) {

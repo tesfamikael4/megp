@@ -31,10 +31,10 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-[#002D0D] md:py-20 text-[#8C94A3] items-center justify-center">
+    <footer className="bg-[#002D0D] md:py-16 xs:pt-16  text-[#8C94A3] items-center justify-center">
       <Container size={'xl'} className="relative">
         <SimpleGrid cols={{ base: 1, sm: 2, md: 2, lg: 2 }} className="ml-auto">
-          <Flex direction="column" align={'center'} gap={'md'} px="md">
+          <Flex direction="column" gap={'md'} px="sm">
             <Group>
               <Link href="http://peragosystems.com/home">
                 <Image
@@ -46,7 +46,7 @@ export default function Footer() {
                 />
               </Link>
 
-              <Text size="xs" className="text-[#8F9FA3]">
+              <Text size="xs" className="text-[#8F9FA3] text-justify">
                 Electronic Government Procurement (eGP) refers to the use of
                 digital technologies to enable a more efficient and transparent
                 exchange of information, and interactions and transactions
@@ -67,43 +67,60 @@ export default function Footer() {
                 </Link>
               </Box>
             </Group>
-            <Group>
-              <ActionIcon variant="subtle" radius={'lg'} bg={'white'} size="lg">
+            <Divider my={'xs'} />
+
+            <Group className="items-start">
+              <ActionIcon
+                variant="subtle"
+                color="black"
+                radius={'lg'}
+                bg={'white'}
+                size="lg"
+              >
                 <IconBrandFacebookFilled size={18} strokeWidth={2.5} />
               </ActionIcon>
-              <ActionIcon variant="subtle" radius={'lg'} bg={'white'} size="lg">
+              <ActionIcon
+                variant="subtle"
+                color="black"
+                radius={'lg'}
+                bg={'white'}
+                size="lg"
+              >
                 <IconBrandInstagram size={18} strokeWidth={2.5} />
               </ActionIcon>
-              <ActionIcon variant="subtle" radius={'lg'} bg={'white'} size="lg">
+              <ActionIcon
+                variant="subtle"
+                color="black"
+                radius={'lg'}
+                bg={'white'}
+                size="lg"
+              >
                 <IconBrandLinkedin size={18} strokeWidth={2.5} />
               </ActionIcon>
-              <ActionIcon variant="subtle" radius={'lg'} bg={'white'} size="lg">
+              <ActionIcon
+                variant="subtle"
+                color="black"
+                radius={'lg'}
+                bg={'white'}
+                size="lg"
+              >
                 <IconBrandTwitterFilled size={18} strokeWidth={2.5} />
               </ActionIcon>
-              <ActionIcon variant="subtle" radius={'lg'} bg={'white'} size="lg">
+              <ActionIcon
+                variant="subtle"
+                color="black"
+                radius={'lg'}
+                bg={'white'}
+                size="lg"
+              >
                 <IconBrandYoutubeFilled size={18} strokeWidth={2.5} />
               </ActionIcon>
             </Group>
-            <Divider my={'xs'} />
           </Flex>
 
           <Flex direction={'column'} gap={'lg'} px="md">
             {/* contact us */}
-            <Flex
-              direction={'column'}
-              ta={{
-                base: 'center',
-                sm: 'center',
-                md: 'left',
-                lg: 'left',
-              }}
-              mx={{
-                base: 'auto',
-                sm: 'auto',
-                md: '0',
-                lg: '0',
-              }}
-            >
+            <Flex direction={'column'} mt={18}>
               <Text className="text-white mb-2">CONTACT US</Text>
               <Flex
                 columnGap={'xl'}
@@ -117,11 +134,11 @@ export default function Footer() {
                     hello@logoipsum.com
                   </Text>
                 </Flex>
-                <Flex direction="column">
+                <Flex direction="column" ml={3}>
                   <Text size="xs" className="text-[#8F9FA3] mb-2">
                     Fax:+251111248612 / +251111540120
                   </Text>
-                  <Text size="xs" className="text-[#8F9FA3] mb-2">
+                  <Text size="xs" className="text-[#8F9FA3]">
                     P.O.Box: 6217376, Addis Ababa, Ethiopia
                   </Text>
                 </Flex>
@@ -129,26 +146,12 @@ export default function Footer() {
             </Flex>
             {/* Location */}
             <Flex
-              rowGap={{ xs: 'md', sm: 'md' }}
-              className="w-full flex-col justify-center gap-4 lg:flex-row lg:items-center lg:justify-between "
+              className="w-full  flex-col justify-center gap-4 lg:flex-row lg:items-center lg:justify-between "
               columnGap={'xl'}
             >
-              <Box
-                mx={{
-                  base: 'auto',
-                  sm: 'auto',
-                  md: '0',
-                  lg: '0',
-                }}
-                ta={{
-                  base: 'center',
-                  sm: 'center',
-                  md: 'left',
-                  lg: 'left',
-                }}
-              >
+              <Box>
                 <Text className="text-white mb-2 ">LOCATION</Text>
-                <address className="text-sm">
+                <Text className="text-sm">
                   Public Procurement and Disposal of Assets Authority,
                   <br />
                   The Jireh Bible House,
@@ -158,28 +161,9 @@ export default function Footer() {
                   Private Bag 383,
                   <br />
                   Capital City,Lilongwe 3, Malawi
-                  <br />
-                  Phone: (256)0 887 083 261
-                  <br />
-                  Email: <a href="mailto:dg@ppda.mw">dg@ppda.mw</a>
-                  <br />
-                  Website: <a href="http://www.ppda.mw/">www.ppda.mw</a>
-                </address>
+                </Text>
               </Box>
-              <Box
-                mx={{
-                  base: 'auto',
-                  sm: 'auto',
-                  md: '0',
-                  lg: '0',
-                }}
-                ta={{
-                  base: 'center',
-                  sm: 'center',
-                  md: 'left',
-                  lg: 'left',
-                }}
-              >
+              <Flex direction={'column'} className="flex-auto">
                 <Text className="text-white ">IMPORTANT LINKS</Text>
                 <Box>
                   <SimpleGrid cols={1} className="sm:text-xs">
@@ -191,12 +175,12 @@ export default function Footer() {
                     <Link href="#">https://www.figma.com/file/</Link>
                   </SimpleGrid>
                 </Box>
-              </Box>
+              </Flex>
             </Flex>
           </Flex>
         </SimpleGrid>
 
-        <Flex className="items-center justify-center mx-auto mt-6 text-[#8e96a1]">
+        <Flex className="items-center justify-center mx-auto mt-12 text-[#8e96a1]">
           <Text size="xs">
             Copyright &copy; {currentYear} All rights reserved. Powered by
             Perago Inc.
@@ -206,7 +190,7 @@ export default function Footer() {
         <Avatar
           bg="white"
           onClick={navigateToTop}
-          className="absolute -top-3 right-8 cursor-pointer"
+          className="absolute -top-0 right-0 cursor-pointer"
         >
           <IconArrowUp />
         </Avatar>
