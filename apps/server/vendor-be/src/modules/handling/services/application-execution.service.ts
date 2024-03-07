@@ -23,6 +23,8 @@ import { BusinessAreaEntity } from 'src/entities';
 import { BusinessAreaService } from 'src/modules/vendor-registration/services/business-area.service';
 import { BpServiceService } from 'src/modules/services/services/service.service';
 import { ProfileInfoEntity } from 'src/entities/profile-info.entity';
+import { PreferentailTreatmentService } from 'src/modules/vendor-registration/services/preferentail-treatment.service';
+import { userInfo } from 'os';
 @Injectable()
 export class ApplicationExcutionService {
   constructor(
@@ -33,6 +35,7 @@ export class ApplicationExcutionService {
     private readonly vendorService: VendorRegistrationsService,
     private readonly baService: BusinessAreaService,
     private readonly invoiceService: InvoiceService,
+    private readonly ptService: PreferentailTreatmentService
   ) { }
 
   async getCurruntTaskByServiceKey(
@@ -148,14 +151,14 @@ export class ApplicationExcutionService {
     const preferentialkeys = this.commonService.getPreferencialServices();
     if (preferentialkeys.filter((item) => appData.service.key == item).length > 0
     ) {
-      const vendorInfo =
-        await this.vendorService.getVendorByUserWithPreferntial(
-          response.isrvendor.userId,
-          appData.serviceId
-        );
-      if (vendorInfo?.preferentials) {
-        response.preferential = vendorInfo?.preferentials[0];
-        response.isrvendor.businessAreas = null;
+      const preferential = await this.ptService.getPreferetialTreatmentsByUserId(appData.serviceId, userInfo)
+      delete preferential.userId;
+      const serviceName = preferential.service.name;
+      delete preferential.service;
+      const pt = { serviceName: serviceName, ...this.commonService.reduceAttributes(preferential) };
+
+      if (preferential) {
+        response.preferential = pt;
         return response;
       }
     }

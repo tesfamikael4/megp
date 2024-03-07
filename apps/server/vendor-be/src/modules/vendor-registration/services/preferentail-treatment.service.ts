@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { In, Not, Repository } from 'typeorm';
 import { EntityCrudService } from 'src/shared/service';
 import { PreferentialTreatmentsEntity } from 'src/entities/preferential-treatment.entity';
 import { CreatePTDto } from '../dto/preferentail-treatment.dto';
@@ -39,8 +39,15 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
   }
   async getPreferetialTreatments(keys: string[], user: any) {
     const result = await this.ptRepository.find({
-      relations: { service: true, vendor: true },
+      relations: { service: true },
       where: { service: { key: In(keys) }, userId: user.id },
+    });
+    return result;
+  }
+  async getPreferetialTreatmentsByUserId(serviceId: string, user: any) {
+    const result = await this.ptRepository.findOne({
+      relations: { service: true },
+      where: { userId: user.id, status: Not(ApplicationStatus.APPROVED), serviceId: serviceId },
     });
     return result;
   }
@@ -53,7 +60,6 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
     user: any
   ) {
     const response = [];
-    const subdirectory = 'preferential-documents';
     const vendor = await this.vendorService.getIsrVendorByUserId(user.id);
     if (!vendor)
       throw new HttpException('First, Register as a vendor', 404);
@@ -62,7 +68,6 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
     for (const dto of dtos) {
       const entity = CreatePTDto.fromDto(dto);
       entity.userId = user.id;
-      entity.vendorId = vendor.id;
       const wf = bps.find((item: any) => item.serviceId == dto.serviceId)
       if (!wf)
         throw new HttpException("Business procees not defined", 404);
@@ -89,7 +94,7 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
           wfi.bpId = bpId;
           wfi.requestorId = vendor.id;
           wfi.serviceId = dto.serviceId;
-          const { serviceId, vendorId, id, ...preferntial } = entity;
+          const { serviceId, id, ...preferntial } = entity;
           wfi.data = { vendor: vendor, preferential: { ...preferntial } };
           wfi.user = user;
           const baexisted =
@@ -121,15 +126,19 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
         });
         for (const row of pts) {
           if ((row.service.key == ServiceKeyEnum.IBM)) {
+            const formatted = this.commonService.reduceAttributes(row);
+            delete formatted.service;
             response.push({
-              ...row,
+              ...formatted,
               category: row.service.key,
               type: row.service.key,
             });
           }
-          if ((row.service.key = ServiceKeyEnum.MARGINALIZED_GROUP)) {
+          if ((row.service.key == ServiceKeyEnum.MARGINALIZED_GROUP)) {
+            const formatted = this.commonService.reduceAttributes(row);
+            delete formatted.service;
             response.push({
-              ...row,
+              ...formatted,
               category: row.service.key,
               type: row.service.key,
             });
@@ -137,9 +146,11 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
           const keys = this.commonService.getServiceCatagoryKeys(
             ServiceKeyEnum.MSME,
           );
-          if (keys.filter((item: any) => row.service.key == item.service.key).length > 0) {
+          if (keys.filter((item: any) => row.service.key == item).length > 0) {
+            const formatted = this.commonService.reduceAttributes(row);
+            delete formatted.service;
             response.push({
-              ...row,
+              ...formatted,
               category: ServiceKeyEnum.MSME,
               type: row.service.key,
             });
@@ -156,9 +167,9 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
     const subdirectory = 'preferential-documents';
     const response = {};
     try {
-      if (attachments.msmeCerti) {
+      if (attachments?.msmeCerti?.length) {
         const certificateUrl = await this.uploaderService.uploadDocuments(
-          attachments.msmeCerti,
+          attachments.msmeCerti[0],
           user,
           subdirectory,
         );
@@ -170,47 +181,62 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
             service: {
               key: In(keys),
             },
-            status: ApplicationStatus.SUBMITTED,
+            status: In([ApplicationStatus.SUBMITTED, ApplicationStatus.DRAFT]),
             userId: user.id,
           },
         });
-        pt.certificateUrl = certificateUrl;
-        await this.ptRepository.save(pt);
-        response['msmeCerti'] = certificateUrl;
+        if (pt) {
+          pt.certificateUrl = certificateUrl;
+          await this.ptRepository.save(pt);
+          response['msmeCerti'] = certificateUrl;
+        } else {
+          throw new HttpException("MSME data Not found", 404);
+        }
+
       }
-      if (attachments.ibmCerti) {
+      if (attachments?.ibmCerti?.length) {
         const certificateUrl = await this.uploaderService.uploadDocuments(
-          attachments.ibmCerti,
+          attachments.ibmCerti[0],
           user,
           subdirectory,
         );
         const pt = await this.ptRepository.findOne({
           where: {
             service: { key: ServiceKeyEnum.IBM },
-            status: ApplicationStatus.SUBMITTED,
+            status: In([ApplicationStatus.SUBMITTED, ApplicationStatus.DRAFT]),
             userId: user.id,
           },
         });
-        pt.certificateUrl = certificateUrl;
-        await this.ptRepository.save(pt);
-        response['ibmCerti'] = certificateUrl;
+        if (pt) {
+          pt.certificateUrl = certificateUrl;
+          await this.ptRepository.save(pt);
+          response['ibmCerti'] = certificateUrl;
+        } else {
+          throw new HttpException("IBM data Not found", 404);
+        }
+
       }
-      if (attachments.marginalizedCerti) {
+      if (attachments?.marginalizedCerti?.length) {
         const certificateUrl = await this.uploaderService.uploadDocuments(
-          attachments.marginalizedCerti,
+          attachments.marginalizedCerti[0],
           user,
           subdirectory,
         );
         const pt = await this.ptRepository.findOne({
           where: {
             service: { key: ServiceKeyEnum.MARGINALIZED_GROUP },
-            status: ApplicationStatus.SUBMITTED,
+            status: In([ApplicationStatus.SUBMITTED, ApplicationStatus.DRAFT]),
             userId: user.id,
           },
         });
-        pt.certificateUrl = certificateUrl;
-        await this.ptRepository.save(pt);
-        response['marginalizedCerti'] = certificateUrl;
+        if (pt) {
+          pt.certificateUrl = certificateUrl;
+          await this.ptRepository.save(pt);
+          response['marginalizedCerti'] = certificateUrl;
+        } else {
+          throw new HttpException("marginalized Data Not found", 404);
+        }
+
       }
       return response;
     } catch (error) {
@@ -220,7 +246,7 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
   async getDraftPreferentialApplications(user: any) {
     const response = []
     const result = await this.ptRepository.find({
-      relations: { service: true, vendor: true },
+      relations: { service: true },
       where: { userId: user.id, status: ApplicationStatus.DRAFT },
     });
     const keys = this.commonService.getServiceCatagoryKeys(
@@ -253,7 +279,7 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
   }
   async getPreferntialByService(serviceId: string, userId: string) {
     const result = await this.ptRepository.findOne({
-      relations: { service: true, vendor: true },
+      relations: { service: true },
       where: {
         userId: userId,
         serviceId: serviceId,

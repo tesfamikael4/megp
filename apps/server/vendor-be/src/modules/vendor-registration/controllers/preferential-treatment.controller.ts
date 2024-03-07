@@ -19,7 +19,7 @@ import { EntityCrudOptions } from 'src/shared/types/crud-option.type';
 import {
   CreateBusinessAreaDto,
   UpdateBusinessAreaDto,
-} from '../../vendor-registration/dto/business-area.dto';
+} from '../dto/business-area.dto';
 import { PreferentailTreatmentService } from '../services/preferentail-treatment.service';
 import {
   CreatePTDto,
@@ -54,7 +54,7 @@ export class PreferentailTreatmentsController extends EntityCrudController<Prefe
   }
 
   @Post('submit-pt-request')
-  @ApiBody({ type: [CreatePTDto] })
+  // @ApiBody({ type: [CreatePTDto] })
   @ApiOkResponse({ type: PTResponse })
   async submitApplication(
     @CurrentUser() user: any,

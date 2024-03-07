@@ -62,7 +62,6 @@ export class PTResponse extends UpdatePTDto {
   vendorId: string;
   static toResponse(entity: PreferentialTreatmentsEntity): PTResponse {
     const response = new PTResponse();
-    response.vendorId = entity.vendorId;
     response.serviceId = entity.serviceId;
     response.status = entity.status;
     response.certificateUrl = entity.certificateUrl;
