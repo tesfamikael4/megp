@@ -113,15 +113,15 @@ export class HandlingCommonService {
       ];
     } else if (serviceKey == ServiceKeyEnum.upgrade) {
       keys = [
-        ServiceKeyEnum.goodsUpgrade,
-        ServiceKeyEnum.servicesUpgrade,
-        ServiceKeyEnum.worksUpgrade,
+        ServiceKeyEnum.REGISTRATION_UPGRADE,
+        // ServiceKeyEnum.servicesUpgrade,
+        // ServiceKeyEnum.worksUpgrade,
       ];
     } else if (serviceKey === ServiceKeyEnum.RENEWAL) {
       keys = [
-        ServiceKeyEnum.goodsRenewal,
-        ServiceKeyEnum.servicesRenewal,
-        ServiceKeyEnum.worksRenewal,
+        ServiceKeyEnum.REGISTRATION_RENEWAL,
+        // ServiceKeyEnum.servicesRenewal,
+        // ServiceKeyEnum.worksRenewal,
       ];
     } else if (serviceKey == ServiceKeyEnum.update) {
       keys = [ServiceKeyEnum.PROFILE_UPDATE];

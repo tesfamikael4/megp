@@ -43,13 +43,14 @@ export class FileService {
     private readonly businessAreaRepository: Repository<BusinessAreaEntity>,
     private readonly busineAreaService: BusinessAreaService,
     private readonly workflowService: WorkflowService,
-  ) {}
+  ) { }
   private updateVendorEnums = [
     VendorStatusEnum.ACTIVE,
     VendorStatusEnum.ADJUSTMENT,
     VendorStatusEnum.COMPLETED,
     VendorStatusEnum.SUBMITTED,
     VendorStatusEnum.APPROVED,
+    VendorStatusEnum.DRAFT
   ];
   async getFileNameByVendorId(vendorId: string) {
     try {
@@ -202,7 +203,7 @@ export class FileService {
       const result = await this.isrVendorsRepository.findOne({
         where: { userId: userId, status: In(this.updateVendorEnums) },
       });
-      if (!result) throw new HttpException('isr vendor not found ', 500);
+      if (!result) throw new HttpException('isr vendor not found ', 404);
       const fileUploadName = 'paymentReceipt';
       const paymentReceipts = result.paymentReceipt;
 
@@ -315,31 +316,29 @@ export class FileService {
       const invoices = await this.invoiceRepository.find({
         where: {
           id: In(ids),
-          businessArea: {
-            BpService: {
-              businessProcesses: { isActive: true },
-            },
+          service: {
+            businessProcesses: { isActive: true },
+
           },
         },
         relations: {
-          businessArea: {
-            BpService: { businessProcesses: true },
-            isrVendor: true,
+          service: {
+            businessAreas: { isrVendor: true },
+            businessProcesses: true
           },
         },
       });
 
       const wfi: CreateWorkflowInstanceDto = new CreateWorkflowInstanceDto();
-      for (let index = 0; index < invoices.length; index++) {
-        const row = invoices[index];
-        const businessArea = invoices[index].businessArea;
-        const ba = await this.busineAreaService.findOne(businessArea.id);
+      for (const row of invoices) {
 
+        const businessArea = row.service.businessAreas[0];
+        const ba = await this.busineAreaService.findOne(businessArea.id);
         if (ba.status == ApplicationStatus.PENDING) {
-          wfi.bpId = row.businessArea.BpService.businessProcesses[0].id;
-          wfi.serviceId = row.businessArea.serviceId;
-          wfi.requestorId = row.businessArea.vendorId;
-          wfi.data = row.businessArea.isrVendor;
+          wfi.bpId = row.service.businessProcesses[0].id;
+          wfi.serviceId = row.serviceId;
+          wfi.requestorId = businessArea.vendorId;
+          //wfi.data = row.businessArea.isrVendor;
           const result = await this.workflowService.intiateWorkflowInstance(
             wfi,
             user,

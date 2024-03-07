@@ -22,6 +22,7 @@ import { ServiceKeyEnum } from 'src/shared/enums/service-key.enum';
 import { BusinessAreaEntity } from 'src/entities';
 import { BusinessAreaService } from 'src/modules/vendor-registration/services/business-area.service';
 import { BpServiceService } from 'src/modules/services/services/service.service';
+import { ProfileInfoEntity } from 'src/entities/profile-info.entity';
 @Injectable()
 export class ApplicationExcutionService {
   constructor(
@@ -112,7 +113,8 @@ export class ApplicationExcutionService {
     if (!instance) {
       throw new NotFoundException('Not Found');
     }
-    const response = WorkflowInstanceResponse.toResponse(instance);
+    const serviceKey = appData.service.key;
+    let response = WorkflowInstanceResponse.toResponse(instance);
     delete response.businessProcess;
     const bas = instance.isrVendor?.businessAreas;
     const businessInterest = [];
@@ -144,66 +146,12 @@ export class ApplicationExcutionService {
       response.isrvendor.areasOfBusinessInterest = businessInterest;
     }
     const preferentialkeys = this.commonService.getPreferencialServices();
-    if (appData.service.key == ServiceKeyEnum.PROFILE_UPDATE) {
-      const vendorInfo = await this.vendorService.getVendorByUserWithProfile(
-        response.isrvendor.userId,
-        appData.serviceId,
-      );
-      if (vendorInfo?.ProfileInfo) {
-        const profileUpdate = vendorInfo?.ProfileInfo[0];
-        for (const price of profileUpdate.profileData.areasOfBusinessInterest) {
-          const tempvalue = {
-            valueFrom: price.priceFrom,
-            valueTo: price.priceTo,
-          };
-          const formattedBC = this.commonService.formatPriceRange(tempvalue);
-          const bls = price.lineOfBusiness; //.map((item) => item.name);
-          businessInterest.push({
-            category: this.commonService.capitalizeFirstLetter(price.category),
-            priceRange: formattedBC,
-            lineOfBusiness: bls,
-          });
-        }
-        profileUpdate.profileData.areasOfBusinessInterest = [
-          ...businessInterest,
-        ];
-        const bainfo = profileUpdate.profileData.bankAccountDetails.map(
-          (item: any) => {
-            if (item.isDefualt) {
-              item.isDefualt = 'Yes';
-            } else {
-              item.isDefualt = 'No';
-            }
-            return item;
-          },
-        );
-        profileUpdate.profileData.bankAccountDetails = [...bainfo];
-        const shareholders = profileUpdate.profileData.shareHolders.map(
-          (item) => this.reduceAttributes(item),
-        );
-        profileUpdate.profileData.shareholders = shareholders;
-        const beneficialOwnership =
-          profileUpdate.profileData.beneficialOwnership.map((item: any) =>
-            this.reduceAttributes(item),
-          );
-        profileUpdate.profileData.beneficialOwnership = beneficialOwnership;
-        const bankAccountDetails =
-          profileUpdate.profileData.bankAccountDetails.map((item: any) =>
-            this.reduceAttributes(item),
-          );
-        profileUpdate.profileData.basic.status = profileUpdate.status;
-        profileUpdate.profileData.bankAccountDetails = bankAccountDetails;
-        response.profileUpdate = profileUpdate;
-      }
-      response.isrvendor.businessAreas = null;
-      return response;
-    } else if (
-      preferentialkeys.filter((item) => appData.service.key == item).length > 0
+    if (preferentialkeys.filter((item) => appData.service.key == item).length > 0
     ) {
       const vendorInfo =
         await this.vendorService.getVendorByUserWithPreferntial(
           response.isrvendor.userId,
-          appData.serviceId,
+          appData.serviceId
         );
       if (vendorInfo?.preferentials) {
         response.preferential = vendorInfo?.preferentials[0];
@@ -211,82 +159,148 @@ export class ApplicationExcutionService {
         return response;
       }
     }
-    const serviceKey = appData.service.key;
-    const renewalServices = this.commonService.getServiceCatagoryKeys(
-      ServiceKeyEnum.RENEWAL,
-    );
-    const upgradeServices = this.commonService.getServiceCatagoryKeys(
-      ServiceKeyEnum.upgrade,
-    );
-    const renewalServiceTypes = renewalServices.filter(
-      (item) => item == serviceKey,
-    );
-    const upgradeServicesTypes = upgradeServices.filter(
-      (item) => item == serviceKey,
-    );
-    if (renewalServiceTypes.length > 0) {
+    else if (ServiceKeyEnum.REGISTRATION_RENEWAL == serviceKey) {
       const business: BusinessAreaEntity = instance.isrVendor.businessAreas[0];
-      const formattedBusinessclass = this.commonService.formatPriceRange(
-        business.servicePrice,
-      );
-      response.renewal = {
-        category: business.category,
-        priceRange: formattedBusinessclass,
-        approvedAt: business.approvedAt,
-        expireDate: business.expireDate,
-      };
-      response.isrvendor.businessAreas = null;
-      const invoice = await this.invoiceService.getServiceReceipt(
-        instance.userId,
-        instance.serviceId,
-      );
-      response.invoice = { ...invoice };
-      response.isrvendor.paymentReceipt = {
-        attachment: invoice.attachmentUrl,
-        transactionNumber: invoice?.remark,
-      };
+      const result = await this.appendRenewalData(business, instance, response);
+      response = { ...result };
       return response;
-    } else if (upgradeServicesTypes.length > 0) {
+    } else if (ServiceKeyEnum.REGISTRATION_UPGRADE == serviceKey) {
       const business: BusinessAreaEntity = instance.isrVendor.businessAreas[0];
-      const previousBusinessClass =
-        await this.baService.getPreviousUpgradeService(
-          instance.requestorId,
-          business.category,
-        );
-      const formattedPreviousClass = this.commonService.formatPriceRange(
-        previousBusinessClass.servicePrice,
+      const result = await this.appendUpgradeData(business, instance, response);
+      response = { ...result };
+    } else if (appData.service.key == ServiceKeyEnum.PROFILE_UPDATE) {
+      const vendorInfo = await this.vendorService.getVendorByUserWithProfile(
+        response.isrvendor.userId,
+        appData.serviceId,
       );
-
-      const proposedBusinessclass =
-        await this.baService.getProposedUpgradeService(
-          instance.requestorId,
-          business.category,
-          instance.serviceId,
-        );
-      const formattedproposedClass = this.commonService.formatPriceRange(
-        proposedBusinessclass.servicePrice,
-      );
-      const invoice = await this.invoiceService.getServiceReceipt(
-        instance.userId,
-        instance.serviceId,
-      );
-      response.upgrade = {
-        category: previousBusinessClass.category,
-        approvedAt: previousBusinessClass.approvedAt,
-        expireDate: previousBusinessClass.expireDate,
-        PreviousePriceRange: formattedPreviousClass,
-        ProposedPriceRange: formattedproposedClass,
-      };
-      response.invoice = { ...invoice };
-      response.isrvendor.paymentReceipt = {
-        attachment: invoice.attachmentUrl,
-        transactionNumber: invoice?.remark,
-      };
+      const result = await this.appendProfileData(vendorInfo, response, businessInterest);
+      response.isrvendor.businessAreas = null;
+      return result;
     }
+
     response.isrvendor.businessAreas = null;
 
     return response;
   }
+  /*
+  Append renewal information in to response object
+  */
+  async appendRenewalData(business: BusinessAreaEntity, instance: any, response: any) {
+
+    const formattedBusinessclass = this.commonService.formatPriceRange(
+      business.servicePrice,
+    );
+    response.renewal = {
+      category: business.category,
+      priceRange: formattedBusinessclass,
+      approvedAt: business.approvedAt,
+      expireDate: business.expireDate,
+    };
+    response.isrvendor.businessAreas = null;
+    const invoice = await this.invoiceService.getServiceReceipt(
+      instance.userId,
+      business.serviceId,
+    );
+    response.invoice = { ...invoice };
+    response.isrvendor.paymentReceipt = {
+      attachment: invoice.attachmentUrl,
+      transactionNumber: invoice?.remark,
+    };
+    return response;
+  }
+  /*
+ Append upgrade information in to response object
+ */
+  async appendUpgradeData(business: BusinessAreaEntity, instance: WorkflowInstanceEntity, response: any) {
+    const previousBusinessClass =
+      await this.baService.getPreviousUpgradeService(
+        instance.requestorId,
+        business.category,
+      );
+    const formattedPreviousClass = this.commonService.formatPriceRange(
+      previousBusinessClass.servicePrice,
+    );
+
+    const proposedBusinessclass =
+      await this.baService.getProposedUpgradeService(
+        instance.requestorId,
+        business.category,
+        instance.serviceId,
+      );
+    const formattedproposedClass = this.commonService.formatPriceRange(
+      proposedBusinessclass.servicePrice,
+    );
+    const invoice = await this.invoiceService.getServiceReceipt(
+      instance.userId,
+      instance.serviceId,
+    );
+    response.upgrade = {
+      category: previousBusinessClass.category,
+      approvedAt: previousBusinessClass.approvedAt,
+      expireDate: previousBusinessClass.expireDate,
+      PreviousePriceRange: formattedPreviousClass,
+      ProposedPriceRange: formattedproposedClass,
+    };
+    response.invoice = { ...invoice };
+    response.isrvendor.paymentReceipt = {
+      attachment: invoice.attachmentUrl,
+      transactionNumber: invoice?.remark,
+    };
+    return response;
+  }
+  /*
+ Append profile information in to response object
+ */
+  async appendProfileData(vendorInfo: any, response: any, businessInterest: any) {
+    if (vendorInfo?.ProfileInfo) {
+      const profileUpdate = vendorInfo?.ProfileInfo[0];
+      for (const price of profileUpdate.profileData.areasOfBusinessInterest) {
+        const tempvalue = {
+          valueFrom: price.priceFrom,
+          valueTo: price.priceTo,
+        };
+        const formattedBC = this.commonService.formatPriceRange(tempvalue);
+        const bls = price.lineOfBusiness; //.map((item) => item.name);
+        businessInterest.push({
+          category: this.commonService.capitalizeFirstLetter(price.category),
+          priceRange: formattedBC,
+          lineOfBusiness: bls,
+        });
+      }
+      profileUpdate.profileData.areasOfBusinessInterest = [
+        ...businessInterest,
+      ];
+      const bainfo = profileUpdate.profileData.bankAccountDetails.map(
+        (item: any) => {
+          if (item.isDefualt) {
+            item.isDefualt = 'Yes';
+          } else {
+            item.isDefualt = 'No';
+          }
+          return item;
+        },
+      );
+      profileUpdate.profileData.bankAccountDetails = [...bainfo];
+      const shareholders = profileUpdate.profileData.shareHolders.map(
+        (item) => this.reduceAttributes(item),
+      );
+      profileUpdate.profileData.shareholders = shareholders;
+      const beneficialOwnership =
+        profileUpdate.profileData.beneficialOwnership.map((item: any) =>
+          this.reduceAttributes(item),
+        );
+      profileUpdate.profileData.beneficialOwnership = beneficialOwnership;
+      const bankAccountDetails =
+        profileUpdate.profileData.bankAccountDetails.map((item: any) =>
+          this.reduceAttributes(item),
+        );
+      profileUpdate.profileData.basic.status = profileUpdate.status;
+      profileUpdate.profileData.bankAccountDetails = bankAccountDetails;
+      response.profileUpdate = profileUpdate;
+      return response;
+    }
+  }
+
   reduceAttributes(object: any) {
     const {
       key,

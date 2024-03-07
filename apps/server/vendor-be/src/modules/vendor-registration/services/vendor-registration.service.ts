@@ -392,8 +392,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           ba?.map((item) => {
             if (
               (item?.category == BusinessCategories.WORKS,
-              BusinessCategories.SERVICES,
-              BusinessCategories.GOODS)
+                BusinessCategories.SERVICES,
+                BusinessCategories.GOODS)
             ) {
               count++;
             }
@@ -435,13 +435,13 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           const invoices = await this.invoiceService.getInvoicesUserAndService(
             workflowInstance.application.userId,
           );
-          invoices.map((row) => {
-            if (row.pricingId == businessAreaEntity.priceRangeId) {
-              const businessAreaId = businessAreaEntity.id;
-              row.businessAreaId = businessAreaId;
-              this.invoiceService.update(row.id, row);
-            }
-          });
+          // invoices.map((row) => {
+          //   if (row.pricingId == businessAreaEntity.priceRangeId) {
+          //     const businessAreaId = businessAreaEntity.id;
+          //     row.businessAreaId = businessAreaId;
+          //     this.invoiceService.update(row.id, row);
+          //   }
+          // });
         }
         if (!workflowInstance)
           throw new NotFoundException(`workflowInstanceService_failed`);
@@ -483,7 +483,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         ) {
           let ncicData = null;
           let fppaData = null;
-          const length = data.areasOfBusinessInterest.length;
+          const numberOfService = data.areasOfBusinessInterest.length;
           //to get al/ the registration fee for each service
           let priceRangeIds = [];
           if (data?.areasOfBusinessInterest.length > 0) {
@@ -491,8 +491,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
               (item: any) => item.priceRange,
             );
           }
-
-          for (let index = 0; index < length; index++) {
+          for (let index = 0; index < numberOfService; index++) {
             if (data.basic.origin == 'MW' || data.basic.origin == 'Malawi') {
               if (
                 data.areasOfBusinessInterest[index] === 'work' &&
@@ -527,14 +526,28 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
               isrVendor.initial.level = VendorStatusEnum.PPDA;
               await this.isrVendorsRepository.save(isrVendor);
             }
-            const vendor: VendorsEntity = new VendorsEntity();
-            //  result.basic['id'] = result.id;
-            vendor.id = result.id;
-            vendor.name = result.basic['name'];
+          }
+
+          ///check previosly created invoice
+          const vendor: VendorsEntity = new VendorsEntity();
+          vendor.id = result.id;
+          vendor.name = result.basic['name'];
+          const previoseinvoice = await this.invoiceService.getMyInvoice(userInfo.id, ServiceKeyEnum.NEW_REGISTRATION);
+          if (previoseinvoice) {
+            if (previoseinvoice.paymentDetail.length != numberOfService) {
+              await this.invoiceService.remove(previoseinvoice.id);
+              await this.invoiceService.generateInvoice(
+                priceRangeIds,
+                vendor,
+                userInfo,
+              );
+            }
+
+          } else {
             await this.invoiceService.generateInvoice(
               priceRangeIds,
               vendor,
-              userInfo,
+              userInfo
             );
           }
         } else if (
@@ -1278,8 +1291,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           preferentials: {
             serviceId: true,
             status: true,
-            remark: true,
-            extendedProfile: true,
             certificateUrl: true,
             certiNumber: true,
           },
@@ -1342,7 +1353,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         where: {
           userId: userId,
           paymentStatus: In(['Pending']),
-          pricingId: areaOfBusinessInterest[index].priceRange,
+          //  pricingId: areaOfBusinessInterest[index].priceRange,
         },
       });
       if (!element) return null;
@@ -1502,7 +1513,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         where: { userId: userId, status: In(this.updateVendorEnums) },
       });
       if (!result) throw new NotFoundException('vendor not found ');
-
       const vendor = await this.vendorRepository.findOne({
         where: { userId: userId },
         select: { canRequest: true },
@@ -1534,33 +1544,39 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       const invoices = await this.invoiceRepository.find({
         where: {
           id: In(ids),
-          businessArea: {
-            BpService: {
-              businessProcesses: { isActive: true },
-            },
-          },
+          service: { businessProcesses: { isActive: true } },
+
         },
         relations: {
-          businessArea: {
-            BpService: { businessProcesses: true },
-            isrVendor: true,
+          service: {
+            businessAreas: {
+              isrVendor: true,
+            },
+            businessProcesses: true,
           },
         },
       });
 
       const wfi: CreateWorkflowInstanceDto = new CreateWorkflowInstanceDto();
       for (const row of invoices) {
-        const businessArea = row.businessArea;
+        const serviceBA = row.service.businessAreas;
+        const businessArea = serviceBA.find((item) => item.serviceId == row.serviceId);
         const ba = await this.baService.findOne(businessArea.id);
         if (
-          ba.status == ApplicationStatus.PENDING ||
-          ba.status == ApplicationStatus.ADJUST ||
-          ba.status == ApplicationStatus.ADJUSTMENT
+          businessArea.status == ApplicationStatus.PENDING ||
+          businessArea.status == ApplicationStatus.ADJUST ||
+          businessArea.status == ApplicationStatus.ADJUSTMENT
         ) {
-          wfi.bpId = row.businessArea.BpService.businessProcesses[0].id;
-          wfi.serviceId = row.businessArea.serviceId;
-          wfi.requestorId = row.businessArea.vendorId;
-          wfi.data = row.businessArea.isrVendor;
+          const gotoNextDto = new GotoNextStateDto();
+          gotoNextDto.action = 'ISR';
+          gotoNextDto.instanceId = businessArea.instanceId;
+          await this.workflowService.gotoNextStep(gotoNextDto, user);
+          // return result;
+        } else {
+          wfi.bpId = row.service.businessProcesses.find((item) => item.isActive == true).id;
+          wfi.serviceId = businessArea.serviceId;
+          wfi.requestorId = businessArea.vendorId;
+          wfi.data = businessArea.isrVendor;
           const result = await this.workflowService.intiateWorkflowInstance(
             wfi,
             user,
@@ -1569,13 +1585,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           businessArea.applicationNumber =
             result.application?.applicationNumber;
           await this.baService.update(businessArea.id, businessArea);
-          // return result;
-        } else {
-          const gotoNextDto = new GotoNextStateDto();
-          gotoNextDto.action = 'ISR';
-          gotoNextDto.instanceId = ba.instanceId;
-          await this.workflowService.gotoNextStep(gotoNextDto, user);
-          // return result;
+
         }
       }
       return paymentReceipt;
@@ -1792,7 +1802,72 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       });
 
       let bas = vendorEntity?.isrVendor?.businessAreas;
-      if (!bas) bas = [];
+      if (bas.length == 0) bas = [];
+      const baInstanceIds = [];
+      const baResponse = [];
+      for (const row of bas) {
+        baInstanceIds.push(row.instanceId);
+        baResponse.push({
+          id: row.id,
+          vendorId: row.vendorId,
+          pricingId: row.priceRangeId,
+          areaOfBusinessInterest: vendorEntity.areasOfBusinessInterest.find(
+            (element) => element.category === row.category,
+          ),
+        });
+      }
+      // const onProgressRequests =
+      //   await this.baService.getBusinessAreaByInstanceIds(baInstanceIds);
+      // const selectedServices = [];
+      // onProgressRequests.map((row) => {
+      //   const oldBaId = bas.find((item) => item.instanceId == row.instanceId);
+      //   selectedServices.push({
+      //     businessAreaId: row.id,
+      //     pricingId: row.priceRangeId,
+      //     //  invoiceId: row.invoice.id,
+      //     _businessAreaId: oldBaId.id,
+      //     //  invoice: row.invoice,
+      //   });
+      // });
+
+      return {
+        status: {
+          level: 'info',
+          // status: selectedServices.length == 0 ? 'Draft' : 'Payment',
+          // selectedPriceRange: selectedServices,
+        },
+        data: baResponse,
+      };
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  //new servicefor onprogress services
+  async getMyOnProgressService(user: any): Promise<any> {
+    try {
+      // user.id = '4408fe5d-2672-4c2f-880d-4928b960e096';
+      const vendorEntity = await this.vendorRepository.findOne({
+        select: {
+          isrVendor: { id: true, tinNumber: true, businessAreas: true },
+        },
+        where: {
+          userId: user.id,
+          status: VendorStatusEnum.APPROVED,
+          isrVendor: {
+            businessAreas: {
+              status: VendorStatusEnum.PENDING,
+              category: In(['Goods', 'Services', 'Works']),
+            },
+          },
+        },
+        relations: {
+          isrVendor: { businessAreas: { servicePrice: true } },
+          areasOfBusinessInterest: true,
+        },
+      });
+
+      let bas = vendorEntity?.isrVendor?.businessAreas;
+      if (bas.length == 0) bas = [];
       const baInstanceIds = [];
       const baResponse = [];
       for (const row of bas) {
@@ -1807,25 +1882,12 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         });
       }
 
-      const onProgressRequests =
-        await this.baService.getBusinessAreaByInstanceIds(baInstanceIds);
-      const selectedServices = [];
-      onProgressRequests.map((row) => {
-        const oldBaId = bas.find((item) => item.instanceId == row.instanceId);
-        selectedServices.push({
-          businessAreaId: row.id,
-          pricingId: row.priceRangeId,
-          invoiceId: row.invoice.id,
-          _businessAreaId: oldBaId.id,
-          invoice: row.invoice,
-        });
-      });
 
       return {
         status: {
           level: 'info',
-          status: selectedServices.length == 0 ? 'Draft' : 'Payment',
-          selectedPriceRange: selectedServices,
+          // status: selectedServices.length == 0 ? 'Draft' : 'Payment',
+          // selectedPriceRange: selectedServices,
         },
         data: baResponse,
       };

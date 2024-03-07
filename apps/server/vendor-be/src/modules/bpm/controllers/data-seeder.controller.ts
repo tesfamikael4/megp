@@ -106,15 +106,26 @@ export class DataSeederController {
         tenantId: 0,
         description: null,
       },
+      ///Renewal service for Goods, Works and  Services
       {
-        id: '76be510e-033e-415b-9e3e-8f9795c01756',
-        name: 'Renewal of Registration for Services',
-        key: 'ServicesRenewal',
+        id: '34be510e-033e-415b-9e3e-8f9795c01765',
+        name: 'Registration Renewal',
+        key: 'RegistrationRenewal',
         isActive: true,
-
         tenantId: 0,
-        description: null,
+        description: "Renew Registration of Works , Goods and Services",
       },
+      ///Upgrade service for Goods, Works and  Services
+      {
+        id: '22be510e-033e-415b-9e3e-8f9795c01711',
+        name: 'Registration Upgrade',
+        key: 'RegistrationUpgrade',
+        isActive: true,
+        tenantId: 0,
+        description: "Upgrade Registration of Works , Goods and Services",
+      },
+
+
       {
         id: '7fcb88b0-86e3-4f11-950a-f24f09323d0d',
         name: 'Renewal of Registration for Works',
@@ -499,13 +510,13 @@ export class DataSeederController {
         organizationName: null,
       },
 
-      ///renewal WF
+      ///renewal WF  Goods, services, and works
       {
         tenantId: 0,
-        id: 'cd17ba61-a510-4fed-9e50-a3f10b6570d3',
-        serviceId: '62e96410-e869-4231-b693-f7e22d498b65',
+        id: 'cd17ba61-a510-4fed-9e50-a3f10b6520d3',
+        serviceId: '34be510e-033e-415b-9e3e-8f9795c01765',
         workflow: {
-          id: 'Renewal of Goods',
+          id: 'Renewal of Goods, services, and works',
           states: {
             End: {
               on: {},
@@ -514,7 +525,7 @@ export class DataSeederController {
                 apiUrl: '',
               },
             },
-            'Submit Renewal Registration Request for Goods': {
+            'Submit Renewal Registration Request': {
               on: {
                 ISR: 'Review Vendor Renewal Registration Request by Registration Officer(RO)',
               },
@@ -527,7 +538,7 @@ export class DataSeederController {
             'Review Vendor Renewal Registration Request by Registration Officer(RO)':
             {
               on: {
-                ADJUST: 'Submit Renewal Registration Request for Goods',
+                ADJUST: 'Submit Renewal Registration Request',
                 CANCEL: 'End',
                 APPROVE:
                   'Approval of Renewal Registration Request by Senior or chief registration officer or RRM/DRRM',
@@ -540,17 +551,17 @@ export class DataSeederController {
             {
               on: {
                 NO: 'Review Vendor Renewal Registration Request by Registration Officer(RO)',
-                YES: 'Approval of Upgrade Registration Request of vendor by Director General (DG)',
+                YES: 'Approval of Renewal Registration Request of vendor by Director General (DG)',
               },
               meta: {
                 type: 'Confirmation',
               },
             },
-            'Approval of Upgrade Registration Request of vendor by Director General (DG)':
+            'Approval of Renewal Registration Request of vendor by Director General (DG)':
             {
               on: {
                 APPROVE: 'Generate Vendor Registration Certificate',
-                ADJUST: 'Submit Renewal Registration Request for Goods',
+                ADJUST: 'Submit Renewal Registration Request',
                 REJECT: 'End',
               },
               meta: {
@@ -567,13 +578,15 @@ export class DataSeederController {
               },
             },
           },
-          initial: 'Submit Renewal Registration Request for Goods',
+          initial: 'Submit Renewal Registration Request',
         },
         version: 0,
         isActive: true,
         organizationId: null,
         organizationName: null,
       },
+
+      //new service workflow end
       {
         tenantId: 0,
         id: 'b97fb7aa-2442-4e5d-8b42-42bd6ef41138',
@@ -723,15 +736,13 @@ export class DataSeederController {
         organizationId: null,
         organizationName: null,
       },
-
-      //upgrade WF
+      //upgrade WF Goods, Works, Services
       {
         tenantId: 0,
-
-        id: 'abe4ba2c-a260-4bbb-bc8d-f101c33b6dc1',
-        serviceId: '897e5182-927b-4f1d-bd25-10fb99a13d37',
+        id: 'abe4ba2c-a260-4bbb-bc8d-f101c33b6dc6',
+        serviceId: '22be510e-033e-415b-9e3e-8f9795c01711',
         workflow: {
-          id: 'Upgrade Goods',
+          id: 'Upgrade of Goods,Services, Works',
           states: {
             End: {
               on: {},
@@ -754,8 +765,7 @@ export class DataSeederController {
               on: {
                 ADJUST: 'Submit Vendor Upgrade Registration Request',
                 CANCEL: 'End',
-                APPROVE:
-                  'Approval of Upgrade Registration Request of Vendor by Senior or chief registration officer or RRM/ DRRM',
+                APPROVE: 'Approval of Upgrade Registration Request of Vendor by Senior or chief registration officer or RRM/ DRRM',
               },
               meta: {
                 type: 'InitialReview',
@@ -1302,6 +1312,202 @@ export class DataSeederController {
         orderBy: 5,
       },
 
+
+      //renewal Goods, services and Works
+      {
+        id: '31fac247-e71b-479c-9c4a-7f344720548f',
+        name: 'Submit Renewal Registration Request',
+        label: 'Submitted Applications ',
+        description: 'Submission of Vendor Upgrade Registration Request',
+        bpId: 'cd17ba61-a510-4fed-9e50-a3f10b6520d3',
+        handlerType: 'Requestor',
+        taskType: 'ISR',
+        checkList: [
+          {
+            id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
+            description:
+              'All the required information and related documents fullfilled',
+            isMandatory: 'true',
+          },
+        ],
+        orderBy: 1,
+      },
+      {
+        id: '31aac537-e71b-421c-9c4a-7f344820518f',
+        name: 'Review Vendor Renewal Registration Request by Registration Officer(RO)',
+        label: 'Approved Renewal Application',
+        description:
+          'Approval of Renewal Registration Request of vendor',
+        bpId: 'cd17ba61-a510-4fed-9e50-a3f10b6520d3',
+        handlerType: 'Assignee',
+        taskType: 'InitialReview',
+        checkList: [
+          {
+            id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
+            description:
+              'All the required information and related documents fullfilled',
+            isMandatory: 'true',
+          },
+        ],
+        orderBy: 2,
+      },
+
+      {
+        id: '61fac7e7-971b-471c-2c5a-7f344820518f',
+        name: 'Approval of Renewal Registration Request by Senior or chief registration officer or RRM/DRRM',
+        label: 'Reviewed by RO/RRM/DRRM',
+        description:
+          'Aprove renewal  registration request for Works by senior or chief registration officer',
+        bpId: 'cd17ba61-a510-4fed-9e50-a3f10b6520d3',
+        handlerType: 'Assignee',
+        taskType: 'Confirmation',
+        checkList: [
+          {
+            id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
+            description:
+              'All the required information and related documents fullfilled',
+            isMandatory: 'true',
+          },
+        ],
+        orderBy: 3,
+      },
+      {
+        id: '31fbc734-e21b-479c-9c4a-7f384820518f',
+        name: 'Approval of Renewal Registration Request of vendor by Director General (DG)',
+        label: 'Approved Renewal Request by DG',
+        description: 'Final Approval of Vendor registration Renewal by DG',
+        bpId: 'cd17ba61-a510-4fed-9e50-a3f10b6520d3',
+        handlerType: 'Assignee',
+        taskType: 'Approval',
+        checkList: [
+          {
+            id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
+            description:
+              'All the required information and related documents fullfilled',
+            isMandatory: 'true',
+          },
+        ],
+        orderBy: 4,
+      },
+
+      {
+        id: '41fbc737-e712-471c-9c4b-7f345820538f',
+        name: 'Generate Vendor Registration Certificate',
+        label: 'Generated Certeficate',
+        description:
+          "Creating a formal certificate to officially recognize and document the upgrade of  vendor within the organization's procurement system.This certificate serves as proof of the vendor's successful registration and compliance with the organization's requirements",
+        bpId: 'cd17ba61-a510-4fed-9e50-a3f10b6520d3',
+        handlerType: 'Assignee',
+        taskType: 'Certificate',
+        checkList: [
+          {
+            id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
+            description:
+              'All the required information and related documents fullfilled',
+            isMandatory: 'true',
+          },
+        ],
+        orderBy: 5,
+      },
+
+      //////////////////renewal Services
+      {
+        id: '31fac2b7-e71b-479c-9c4a-7f344720548f',
+        name: 'Submit Renewal Registration Request for Services',
+        label: 'Submitted Applications ',
+        description:
+          'Submission of Vendor Upgrade Registration Request for Services',
+        bpId: 'b97fb7aa-2442-4e5d-8b42-42bd6ef41138',
+        handlerType: 'Requestor',
+        taskType: 'ISR',
+        checkList: [
+          {
+            id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
+            description:
+              'All the required information and related documents fullfilled',
+            isMandatory: 'true',
+          },
+        ],
+        orderBy: 1,
+      },
+      {
+        id: '313ac537-e71b-471c-9c4a-7f344820518f',
+        name: 'Review Vendor Renewal Registration Request by Registration Officer(RO)',
+        label: 'Approved Renewal Request',
+        description:
+          'Approval of Renewal Registration Request of vendor for Service',
+        bpId: 'b97fb7aa-2442-4e5d-8b42-42bd6ef41138',
+        handlerType: 'Assignee',
+        taskType: 'InitialReview',
+        checkList: [
+          {
+            id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
+            description:
+              'All the required information and related documents fullfilled',
+            isMandatory: 'true',
+          },
+        ],
+        orderBy: 2,
+      },
+      {
+        id: '31fbc738-e21b-479c-9c4a-7f344820518f',
+        name: 'Approval of Renewal Registration Request by Senior or chief registration officer or RRM/DRRM',
+        label: 'Reviewed by RO/RRM/DRRM',
+        description:
+          'Aprove renewal  registration request for Goods by senior or chief registration officer',
+        bpId: 'b97fb7aa-2442-4e5d-8b42-42bd6ef41138',
+        handlerType: 'Assignee',
+        taskType: 'Confirmation',
+        checkList: [
+          {
+            id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
+            description:
+              'All the required information and related documents fullfilled',
+            isMandatory: 'true',
+          },
+        ],
+        orderBy: 3,
+      },
+      {
+        id: '61fac7e7-b71b-471c-9c4a-7f344820518f',
+        name: 'Approval of Renewal Registration Request of vendor by Director General (DG)',
+        label: 'Approved Renewal Request by DG',
+        description: 'Final Approval of Vendor renewal request by DG',
+        bpId: 'b97fb7aa-2442-4e5d-8b42-42bd6ef41138',
+        handlerType: 'Assignee',
+        taskType: 'Approval',
+        checkList: [
+          {
+            id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
+            description:
+              'All the required information and related documents fullfilled',
+            isMandatory: 'true',
+          },
+        ],
+        orderBy: 4,
+      },
+
+      {
+        id: '41fbc737-e71b-471c-9c4a-7f345820588f',
+        name: 'Generate Vendor Registration Certificate',
+        label: 'Generated Certeficate',
+        description:
+          "Creating a formal certificate to officially recognize and document the renewal of  vendor within the organization's procurement system.This certificate serves as proof of the vendor's successful registration and compliance with the organization's requirements",
+        bpId: 'b97fb7aa-2442-4e5d-8b42-42bd6ef41138',
+        handlerType: 'Assignee',
+        taskType: 'Certificate',
+        checkList: [
+          {
+            id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
+            description:
+              'All the required information and related documents fullfilled',
+            isMandatory: 'true',
+          },
+        ],
+        orderBy: 5,
+      },
+      ///new registration
+
       ///micro
       {
         id: '96752a13-201f-45eb-8b6f-118ebf0c89c7',
@@ -1621,14 +1827,15 @@ export class DataSeederController {
         checkList: null,
         orderBy: 5,
       },
-      //Upgrade Registration Request for Goods
+
+      //Upgrade Registration Request for Goods, services and Works
       {
         id: '31fac537-e71b-479c-9c4a-7b344724518f',
         name: 'Submit Vendor Upgrade Registration Request',
         label: 'Submitted Applications',
         description:
-          'Submission of Vendor Upgrade Registration Request for Goods',
-        bpId: 'abe4ba2c-a260-4bbb-bc8d-f101c33b6dc1',
+          'Submission of Vendor Upgrade Registration Request',
+        bpId: 'abe4ba2c-a260-4bbb-bc8d-f101c33b6dc6',
         handlerType: 'Requestor',
         taskType: 'ISR',
         checkList: [
@@ -1646,8 +1853,8 @@ export class DataSeederController {
         name: 'Review Upgrade Registration Request of Vendor by Registration Officer',
         label: 'Approved Uppgrade Application',
         description:
-          'Approval of Vendor Upgrade Registration Request for Goods',
-        bpId: 'abe4ba2c-a260-4bbb-bc8d-f101c33b6dc1',
+          'Approval of Vendor Upgrade Registration Request',
+        bpId: 'abe4ba2c-a260-4bbb-bc8d-f101c33b6dc6',
         handlerType: 'Assignee',
         taskType: 'InitialReview',
         checkList: [
@@ -1665,8 +1872,8 @@ export class DataSeederController {
         name: 'Approval of Upgrade Registration Request of Vendor by Senior or chief registration officer or RRM/ DRRM',
         label: 'Approved Uppgrade Request by CRO/RRM/DRRM',
         description:
-          'Aprove upgrade registration request for Goods by senior or chief registration officer',
-        bpId: 'abe4ba2c-a260-4bbb-bc8d-f101c33b6dc1',
+          'Aprove upgrade registration request by senior or chief registration officer',
+        bpId: 'abe4ba2c-a260-4bbb-bc8d-f101c33b6dc6',
         handlerType: 'Assignee',
         taskType: 'Confirmation',
         checkList: [
@@ -1684,7 +1891,7 @@ export class DataSeederController {
         name: 'Approval of Upgrade Registration Request of vendor by Director General (DG)',
         label: 'Approved Uppgrade Request by DG',
         description: 'Final Approval of Vendor Upgrade by DG',
-        bpId: 'abe4ba2c-a260-4bbb-bc8d-f101c33b6dc1',
+        bpId: 'abe4ba2c-a260-4bbb-bc8d-f101c33b6dc6',
         handlerType: 'Assignee',
         taskType: 'Approval',
         checkList: [
@@ -1703,7 +1910,7 @@ export class DataSeederController {
         label: 'Generated Certeficate',
         description:
           "Creating a formal certificate to officially recognize and document the upgrade registration of a vendor within the organization's procurement system.This certificate serves as proof of the vendor's successful registration and compliance with the organization's requirements",
-        bpId: 'abe4ba2c-a260-4bbb-bc8d-f101c33b6dc1',
+        bpId: 'abe4ba2c-a260-4bbb-bc8d-f101c33b6dc6',
         handlerType: 'Assignee',
         taskType: 'Certificate',
         checkList: [
@@ -1716,7 +1923,7 @@ export class DataSeederController {
         ],
         orderBy: 5,
       },
-      //--------------------------------end of goods
+      //--------------------------------end of goods, works and Services
 
       //----------------------------service upgrade
       {
@@ -1913,201 +2120,6 @@ export class DataSeederController {
         orderBy: 6,
       },
       //--------------------------------end of works
-
-      //renewal Goods
-      {
-        id: '31fac247-e71b-479c-9c4a-7f344720548f',
-        name: 'Submit Renewal Registration Request for Goods',
-        label: 'Submitted Applications ',
-        description:
-          'Submission of Vendor Upgrade Registration Request for Goods',
-        bpId: 'cd17ba61-a510-4fed-9e50-a3f10b6570d3',
-        handlerType: 'Requestor',
-        taskType: 'ISR',
-        checkList: [
-          {
-            id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
-            description:
-              'All the required information and related documents fullfilled',
-            isMandatory: 'true',
-          },
-        ],
-        orderBy: 1,
-      },
-      {
-        id: '31aac537-e71b-421c-9c4a-7f344820518f',
-        name: 'Review Vendor Renewal Registration Request by Registration Officer(RO)',
-        label: 'Approved Renewal Application',
-        description:
-          'Approval of Renewal Registration Request of vendor for Goods',
-        bpId: 'cd17ba61-a510-4fed-9e50-a3f10b6570d3',
-        handlerType: 'Assignee',
-        taskType: 'InitialReview',
-        checkList: [
-          {
-            id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
-            description:
-              'All the required information and related documents fullfilled',
-            isMandatory: 'true',
-          },
-        ],
-        orderBy: 2,
-      },
-
-      {
-        id: '61fac7e7-971b-471c-2c5a-7f344820518f',
-        name: 'Approval of Renewal Registration Request by Senior or chief registration officer or RRM/DRRM',
-        label: 'Reviewed by RO/RRM/DRRM',
-        description:
-          'Aprove renewal  registration request for Works by senior or chief registration officer',
-        bpId: 'cd17ba61-a510-4fed-9e50-a3f10b6570d3',
-        handlerType: 'Assignee',
-        taskType: 'Confirmation',
-        checkList: [
-          {
-            id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
-            description:
-              'All the required information and related documents fullfilled',
-            isMandatory: 'true',
-          },
-        ],
-        orderBy: 3,
-      },
-      {
-        id: '31fbc734-e21b-479c-9c4a-7f384820518f',
-        name: 'Approval of Upgrade Registration Request of vendor by Director General (DG)',
-        label: 'Approved Uppgrade Request by DG',
-        description: 'Final Approval of Vendor Upgrade by DG',
-        bpId: 'cd17ba61-a510-4fed-9e50-a3f10b6570d3',
-        handlerType: 'Assignee',
-        taskType: 'Approval',
-        checkList: [
-          {
-            id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
-            description:
-              'All the required information and related documents fullfilled',
-            isMandatory: 'true',
-          },
-        ],
-        orderBy: 4,
-      },
-
-      {
-        id: '41fbc737-e712-471c-9c4b-7f345820538f',
-        name: 'Generate Vendor Registration Certificate',
-        label: 'Generated Certeficate',
-        description:
-          "Creating a formal certificate to officially recognize and document the upgrade of  vendor within the organization's procurement system.This certificate serves as proof of the vendor's successful registration and compliance with the organization's requirements",
-        bpId: 'cd17ba61-a510-4fed-9e50-a3f10b6570d3',
-        handlerType: 'Assignee',
-        taskType: 'Certificate',
-        checkList: [
-          {
-            id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
-            description:
-              'All the required information and related documents fullfilled',
-            isMandatory: 'true',
-          },
-        ],
-        orderBy: 5,
-      },
-
-      //////////////////renewal Services
-      {
-        id: '31fac2b7-e71b-479c-9c4a-7f344720548f',
-        name: 'Submit Renewal Registration Request for Services',
-        label: 'Submitted Applications ',
-        description:
-          'Submission of Vendor Upgrade Registration Request for Services',
-        bpId: 'b97fb7aa-2442-4e5d-8b42-42bd6ef41138',
-        handlerType: 'Requestor',
-        taskType: 'ISR',
-        checkList: [
-          {
-            id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
-            description:
-              'All the required information and related documents fullfilled',
-            isMandatory: 'true',
-          },
-        ],
-        orderBy: 1,
-      },
-      {
-        id: '313ac537-e71b-471c-9c4a-7f344820518f',
-        name: 'Review Vendor Renewal Registration Request by Registration Officer(RO)',
-        label: 'Approved Renewal Request',
-        description:
-          'Approval of Renewal Registration Request of vendor for Service',
-        bpId: 'b97fb7aa-2442-4e5d-8b42-42bd6ef41138',
-        handlerType: 'Assignee',
-        taskType: 'InitialReview',
-        checkList: [
-          {
-            id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
-            description:
-              'All the required information and related documents fullfilled',
-            isMandatory: 'true',
-          },
-        ],
-        orderBy: 2,
-      },
-      {
-        id: '31fbc738-e21b-479c-9c4a-7f344820518f',
-        name: 'Approval of Renewal Registration Request by Senior or chief registration officer or RRM/DRRM',
-        label: 'Reviewed by RO/RRM/DRRM',
-        description:
-          'Aprove renewal  registration request for Goods by senior or chief registration officer',
-        bpId: 'b97fb7aa-2442-4e5d-8b42-42bd6ef41138',
-        handlerType: 'Assignee',
-        taskType: 'Confirmation',
-        checkList: [
-          {
-            id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
-            description:
-              'All the required information and related documents fullfilled',
-            isMandatory: 'true',
-          },
-        ],
-        orderBy: 3,
-      },
-      {
-        id: '61fac7e7-b71b-471c-9c4a-7f344820518f',
-        name: 'Approval of Renewal Registration Request of vendor by Director General (DG)',
-        label: 'Approved Renewal Request by DG',
-        description: 'Final Approval of Vendor renewal request by DG',
-        bpId: 'b97fb7aa-2442-4e5d-8b42-42bd6ef41138',
-        handlerType: 'Assignee',
-        taskType: 'Approval',
-        checkList: [
-          {
-            id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
-            description:
-              'All the required information and related documents fullfilled',
-            isMandatory: 'true',
-          },
-        ],
-        orderBy: 4,
-      },
-
-      {
-        id: '41fbc737-e71b-471c-9c4a-7f345820588f',
-        name: 'Generate Vendor Registration Certificate',
-        label: 'Generated Certeficate',
-        description:
-          "Creating a formal certificate to officially recognize and document the renewal of  vendor within the organization's procurement system.This certificate serves as proof of the vendor's successful registration and compliance with the organization's requirements",
-        bpId: 'b97fb7aa-2442-4e5d-8b42-42bd6ef41138',
-        handlerType: 'Assignee',
-        taskType: 'Certificate',
-        checkList: [
-          {
-            id: '96d95fdb-7852-4ddc-982f-0e94d23d11d3',
-            description:
-              'All the required information and related documents fullfilled',
-            isMandatory: 'true',
-          },
-        ],
-        orderBy: 5,
-      },
 
       //////renewal Works
       {
@@ -2469,10 +2481,11 @@ export class DataSeederController {
         tenantId: 0,
       },
 
+
       ////////////////////////renewal Service
       {
         id: '799bd8ca-1db1-4555-952d-05681acf8746',
-        serviceId: '76be510e-033e-415b-9e3e-8f9795c01756',
+        serviceId: '34be510e-033e-415b-9e3e-8f9795c01765',
         businessArea: 'Services',
         valueFrom: 1,
         valueTo: 10000000,
@@ -2482,7 +2495,7 @@ export class DataSeederController {
       },
       {
         id: '9e612ffa-7ab0-433d-beeb-cc52ce198e24',
-        serviceId: '76be510e-033e-415b-9e3e-8f9795c01756',
+        serviceId: '34be510e-033e-415b-9e3e-8f9795c01765',
         businessArea: 'Services',
         valueFrom: 10000000,
         valueTo: 30000000,
@@ -2492,7 +2505,7 @@ export class DataSeederController {
       },
       {
         id: '89d4a0e2-ddbd-451a-91b1-1244751b1377',
-        serviceId: '76be510e-033e-415b-9e3e-8f9795c01756',
+        serviceId: '34be510e-033e-415b-9e3e-8f9795c01765',
         businessArea: 'Services',
         valueFrom: 30000000,
         valueTo: 80000000,
@@ -2502,7 +2515,7 @@ export class DataSeederController {
       },
       {
         id: '767c5cb2-5df1-4783-97fa-e3205c5da6be',
-        serviceId: '76be510e-033e-415b-9e3e-8f9795c01756',
+        serviceId: '34be510e-033e-415b-9e3e-8f9795c01765',
         businessArea: 'Services',
         valueFrom: 80000000,
         valueTo: 100000000,
@@ -2512,7 +2525,7 @@ export class DataSeederController {
       },
       {
         id: '3d7a5794-e950-448f-8590-54dfd869bdf5',
-        serviceId: '76be510e-033e-415b-9e3e-8f9795c01756',
+        serviceId: '34be510e-033e-415b-9e3e-8f9795c01765',
         businessArea: 'Services',
         valueFrom: 100000000,
         valueTo: 500000000,
@@ -2522,7 +2535,7 @@ export class DataSeederController {
       },
       {
         id: '207fcd4f-6c54-4889-972f-cc029eed45da',
-        serviceId: '76be510e-033e-415b-9e3e-8f9795c01756',
+        serviceId: '34be510e-033e-415b-9e3e-8f9795c01765',
         businessArea: 'Services',
         valueFrom: 500000000,
         valueTo: 1000000000,
@@ -2532,7 +2545,7 @@ export class DataSeederController {
       },
       {
         id: '63e6b1f3-7d5c-40d2-8fe9-618bf656e656',
-        serviceId: '76be510e-033e-415b-9e3e-8f9795c01756',
+        serviceId: '34be510e-033e-415b-9e3e-8f9795c01765',
         businessArea: 'Services',
         valueFrom: 1000000000,
         valueTo: -1,
@@ -2543,7 +2556,7 @@ export class DataSeederController {
       /////Goods Renewal
       {
         id: '47ec877c-d340-4d99-81f3-3d7d29e968d4',
-        serviceId: '62e96410-e869-4231-b693-f7e22d498b65',
+        serviceId: '34be510e-033e-415b-9e3e-8f9795c01765',
         businessArea: 'Goods',
         valueFrom: 1,
         valueTo: 10000000,
@@ -2553,7 +2566,7 @@ export class DataSeederController {
       },
       {
         id: 'aa4da88e-39fb-42c1-8808-2a06767f3ae9',
-        serviceId: '62e96410-e869-4231-b693-f7e22d498b65',
+        serviceId: '34be510e-033e-415b-9e3e-8f9795c01765',
         businessArea: 'Goods',
         valueFrom: 10000000,
         valueTo: 30000000,
@@ -2563,7 +2576,7 @@ export class DataSeederController {
       },
       {
         id: 'a8534c9e-2dc6-4116-a174-d90a8d1023f4',
-        serviceId: '62e96410-e869-4231-b693-f7e22d498b65',
+        serviceId: '34be510e-033e-415b-9e3e-8f9795c01765',
         businessArea: 'Goods',
         valueFrom: 30000000,
         valueTo: 80000000,
@@ -2573,7 +2586,7 @@ export class DataSeederController {
       },
       {
         id: '2a9b3cde-4184-485d-9452-e433379f6d89',
-        serviceId: '62e96410-e869-4231-b693-f7e22d498b65',
+        serviceId: '34be510e-033e-415b-9e3e-8f9795c01765',
         businessArea: 'Goods',
         valueFrom: 80000000,
         valueTo: 100000000,
@@ -2583,7 +2596,7 @@ export class DataSeederController {
       },
       {
         id: '8723cd80-973d-48c7-95ad-394b16af133d',
-        serviceId: '62e96410-e869-4231-b693-f7e22d498b65',
+        serviceId: '34be510e-033e-415b-9e3e-8f9795c01765',
         businessArea: 'Goods',
         valueFrom: 100000000,
         valueTo: 500000000,
@@ -2593,7 +2606,7 @@ export class DataSeederController {
       },
       {
         id: '892e1379-a66f-4c0b-8882-5b248840cae7',
-        serviceId: '62e96410-e869-4231-b693-f7e22d498b65',
+        serviceId: '34be510e-033e-415b-9e3e-8f9795c01765',
         businessArea: 'Goods',
         valueFrom: 1000000000,
         valueTo: -1,
@@ -2603,7 +2616,7 @@ export class DataSeederController {
       },
       {
         id: 'fad2c120-4d02-4ce6-975a-91b5c0ed828c',
-        serviceId: '62e96410-e869-4231-b693-f7e22d498b65',
+        serviceId: '34be510e-033e-415b-9e3e-8f9795c01765',
         businessArea: 'Goods',
         valueFrom: 100,
         valueTo: 100000,
@@ -2613,7 +2626,7 @@ export class DataSeederController {
       },
       {
         id: '71a9bc4b-3291-4ae7-986c-0bbf704c4336',
-        serviceId: '62e96410-e869-4231-b693-f7e22d498b65',
+        serviceId: '34be510e-033e-415b-9e3e-8f9795c01765',
         businessArea: 'Goods',
         valueFrom: 1,
         valueTo: 1000000,
@@ -2623,7 +2636,7 @@ export class DataSeederController {
       },
       {
         id: 'e29650a8-889a-4009-9a43-a2e8e5da8cb2',
-        serviceId: '62e96410-e869-4231-b693-f7e22d498b65',
+        serviceId: '34be510e-033e-415b-9e3e-8f9795c01765',
         businessArea: 'Goods',
         valueFrom: 500000000,
         valueTo: 1000000000,
@@ -2632,17 +2645,79 @@ export class DataSeederController {
         tenantId: 0,
       },
 
-      ////renewal works
+      ////renewal price for works mock data for test/not real data
       {
-        id: 'fad2c120-4a02-4ce6-975a-91b5c0ed828a',
-        serviceId: '7fcb88b0-86e3-4f11-950a-f24f09323d0d',
+        id: '099bd8ca-2db1-4555-952d-05681acf8746',
+        serviceId: '34be510e-033e-415b-9e3e-8f9795c01765',
         businessArea: 'Works',
-        valueFrom: 100,
-        valueTo: 100000,
-        fee: 1,
+        valueFrom: 1,
+        valueTo: 10000000,
+        fee: 10000,
         currency: 'MK',
         tenantId: 0,
       },
+      {
+        id: 'be612ffa-7ab0-433d-beeb-cc52ce198e34',
+        serviceId: '34be510e-033e-415b-9e3e-8f9795c01765',
+        businessArea: 'Works',
+        valueFrom: 10000000,
+        valueTo: 30000000,
+        fee: 20000,
+        currency: 'MK',
+        tenantId: 0,
+      },
+      {
+        id: '79d4a0e2-ddbd-451a-91b1-1244751b1387',
+        serviceId: '34be510e-033e-415b-9e3e-8f9795c01765',
+        businessArea: 'Works',
+        valueFrom: 30000000,
+        valueTo: 80000000,
+        fee: 30000,
+        currency: 'MK',
+        tenantId: 0,
+      },
+      {
+        id: '267c5cb2-5df1-4783-97fa-e3205c5da5be',
+        serviceId: '34be510e-033e-415b-9e3e-8f9795c01765',
+        businessArea: 'Works',
+        valueFrom: 80000000,
+        valueTo: 100000000,
+        fee: 60000,
+        currency: 'MK',
+        tenantId: 0,
+      },
+      {
+        id: 'bd9a5794-e950-448f-8590-54dfd869bdf1',
+        serviceId: '34be510e-033e-415b-9e3e-8f9795c01765',
+        businessArea: 'Works',
+        valueFrom: 100000000,
+        valueTo: 500000000,
+        fee: 100000,
+        currency: 'MK',
+        tenantId: 0,
+      },
+      {
+        id: '107fcd4f-6c54-4389-872f-cc029eedeeda',
+        serviceId: '34be510e-033e-415b-9e3e-8f9795c01765',
+        businessArea: 'Works',
+        valueFrom: 500000000,
+        valueTo: 1000000000,
+        fee: 200000,
+        currency: 'MK',
+        tenantId: 0,
+      },
+      {
+        id: 'b3e6b1f3-7d5c-40d2-8fe9-118bf656e656',
+        serviceId: '34be510e-033e-415b-9e3e-8f9795c01765',
+        businessArea: 'Works',
+        valueFrom: 1000000000,
+        valueTo: -1,
+        fee: 100000000500000,
+        currency: 'MK',
+        tenantId: 0,
+      }
+
+
     ];
 
     await this.pricingService.saveBulk(pricesToSeed);

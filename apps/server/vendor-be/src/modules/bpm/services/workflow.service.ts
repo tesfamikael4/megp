@@ -168,7 +168,7 @@ export class WorkflowService {
         if (
           curruntTask.taskType == TaskTypes.INITIAL_REVIEW &&
           nextCommand.action.toUpperCase() ==
-            ApplicationStatus.CANCEL.toUpperCase()
+          ApplicationStatus.CANCEL.toUpperCase()
         ) {
           response = await this.vendorRegService.cancelApplication(wfInstance);
         } else {
@@ -341,13 +341,15 @@ export class WorkflowService {
         console.log(TaskTypes.PAYMENTCONFIRMATION, command);
         break;
       case TaskTypes.PAYMENT:
-        const data = await this.invoiceRepository.find({
-          where: { businessAreaId: command.instanceId },
-        });
-        data.map((row) => {
-          row.paymentStatus = 'Paid';
-          return this.invoiceRepository.update(row.id, row);
-        });
+
+        // const data = await this.invoiceRepository.find({
+        //   where: { businessAreaId: command.instanceId },
+        // });
+        // data.map((row) => {
+        //   row.paymentStatus = 'Paid';
+        //   return this.invoiceRepository.update(row.id, row);
+        // });
+        break;
     }
     return true;
   }
@@ -386,8 +388,8 @@ export class WorkflowService {
     const commandLower = command.action.toLowerCase();
     const status =
       commandLower == 'approve' ||
-      commandLower == 'yes' ||
-      commandLower == 'success'
+        commandLower == 'yes' ||
+        commandLower == 'success'
         ? 'Approve'
         : 'Reject';
     const payload = {

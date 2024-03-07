@@ -23,18 +23,14 @@ import { ServiceKeyEnum } from 'src/shared/enums/service-key.enum';
 @UseGuards(JwtGuard)
 @ApiResponse({ status: 500, description: 'Internal error' })
 export class InvoicesController {
-  constructor(private invoiceService: InvoiceService) {}
+  constructor(private invoiceService: InvoiceService) { }
 
   @Get('get-my-upgrade-invoice')
   async getMyInvoice(@CurrentUser() userInfo: any) {
-    const serviceKeys = [
-      ServiceKeyEnum.servicesUpgrade,
-      ServiceKeyEnum.goodsUpgrade,
-      ServiceKeyEnum.worksUpgrade,
-    ];
-    return await this.invoiceService.getMyActiveInvoices(
+
+    return await this.invoiceService.getMyInvoice(
       userInfo.id,
-      serviceKeys,
+      ServiceKeyEnum.REGISTRATION_UPGRADE,
     );
   }
 
@@ -55,11 +51,7 @@ export class InvoicesController {
 
   @Get('get-my-renewal-invoice')
   async getMyRenewalInvoice(@CurrentUser() userInfo: any) {
-    const serviceKeys = [
-      ServiceKeyEnum.servicesRenewal,
-      ServiceKeyEnum.goodsRenewal,
-      ServiceKeyEnum.worksRenewal,
-    ];
+    const serviceKeys = [ServiceKeyEnum.REGISTRATION_RENEWAL];
     return await this.invoiceService.getMyActiveInvoices(
       userInfo.id,
       serviceKeys,
