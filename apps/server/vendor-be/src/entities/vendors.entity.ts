@@ -84,6 +84,5 @@ export class VendorsEntity extends Audit {
 
   @OneToMany(() => ProfileInfoEntity, (profile) => profile.vendor)
   ProfileInfo: ProfileInfoEntity;
-  @OneToMany(() => PreferentialTreatmentsEntity, (pt) => pt.vendor)
-  preferentials: PreferentialTreatmentsEntity[];
+
 }

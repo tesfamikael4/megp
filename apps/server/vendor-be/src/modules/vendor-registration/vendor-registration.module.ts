@@ -55,8 +55,8 @@ import { ServiceModule } from '../services/service.module';
 import { BpServiceService } from '../services/services/service.service';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { PreferentialTreatmentsEntity } from 'src/entities/preferential-treatment.entity';
-import { HandlingModule } from '../handling/handling.module';
-
+import { PreferentailTreatmentService } from './services/preferentail-treatment.service';
+import { PreferentailTreatmentsController } from './controllers/preferential-treatment.controller';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -91,6 +91,7 @@ import { HandlingModule } from '../handling/handling.module';
     HttpModule,
     ServicePricingModule,
     ServiceModule,
+
   ],
   exports: [VendorRegistrationsService, FileService, BusinessAreaService],
   providers: [
@@ -107,6 +108,7 @@ import { HandlingModule } from '../handling/handling.module';
     BusinessAreaService,
     InvoiceService,
     BpServiceService,
+    PreferentailTreatmentService
     // TusService,
   ],
   controllers: [
@@ -121,6 +123,7 @@ import { HandlingModule } from '../handling/handling.module';
     AreasOfBusinessInterestController,
     BusinessAreaController,
     InvoicesController,
+    PreferentailTreatmentsController
   ],
 })
-export class VendorRegistrationModule {}
+export class VendorRegistrationModule { }

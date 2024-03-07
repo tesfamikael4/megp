@@ -218,4 +218,17 @@ export class HandlingCommonService {
       minutes: remainingMinutes,
     };
   }
+  reduceAttributes(object: any) {
+    const {
+      id,
+      key,
+      tenantId,
+      createdAt,
+      deletedAt,
+      updatedAt,
+      vendorId,
+      ...rest
+    } = object;
+    return rest;
+  }
 }

@@ -368,9 +368,6 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
-
-
-
   mapInvoice(
     //curruntPricing: ServicePrice,
     vendor: VendorsEntity,

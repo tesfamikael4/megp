@@ -12,7 +12,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { EmailConfig } from './shared/email/email.config';
 import { CertificateModule } from './modules/certificates/certificate.module';
 import { NotificationModule } from './modules/notifications/notification.module';
-import { PreferentialTreatmentModule } from './modules/preferentials/preferencial-treatment.module';
+
 import { ScheduleModule } from '@nestjs/schedule';
 import { TransactionInterceptor } from './shared/interceptors';
 import { APP_INTERCEPTOR } from '@nestjs/core';
@@ -34,7 +34,6 @@ import { ReportModule } from './modules/report/report.module';
     BpmModule,
     CertificateModule,
     NotificationModule,
-    PreferentialTreatmentModule,
     ReportModule,
   ],
   controllers: [],
@@ -45,4 +44,4 @@ import { ReportModule } from './modules/report/report.module';
     },
   ],
 })
-export class AppModule {}
+export class AppModule { }

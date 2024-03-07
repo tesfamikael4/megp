@@ -120,7 +120,7 @@ export class WorkflowInstanceResponse extends UpdateWorkflowInstanceDto {
   upgradePaymentReceipt: any;
   invoice: any;
   renewal: any;
-  preferential: PreferentialTreatmentsEntity;
+  preferential: any;
   static toResponse(entity: WorkflowInstanceEntity) {
     const response = new WorkflowInstanceResponse();
     response.id = entity.id;
