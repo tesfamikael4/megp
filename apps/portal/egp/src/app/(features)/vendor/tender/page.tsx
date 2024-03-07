@@ -6,8 +6,7 @@ import { useMediaQuery } from '@mantine/hooks';
 import TenderCard from '../../_components/tender-card';
 import { IconChevronDown, IconSearch } from '@tabler/icons-react';
 import styles from './layout.module.scss';
-import Footer from '@/shared/components/footer/footer';
-
+import Footer from '../../(landing)/_components/footer';
 const TenderLayout = () => {
   const isMobile = useMediaQuery('(max-width: 768px)');
 
