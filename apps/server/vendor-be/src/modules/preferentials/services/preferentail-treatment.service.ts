@@ -54,7 +54,7 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
   ) {
     const response = [];
     const subdirectory = 'preferential-documents';
-    const vendor = await this.vendorService.getVendor(user.id);
+    const vendor = await this.vendorService.getIsrVendorByUserId(user.id);
     if (!vendor)
       throw new HttpException('First, Register as a vendor', 404);
     const serviceIds = dtos.map((item) => item.serviceId);
@@ -156,9 +156,9 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
     const subdirectory = 'preferential-documents';
     const response = {};
     try {
-      if (attachments.msmeCerti.length > 0) {
+      if (attachments.msmeCerti) {
         const certificateUrl = await this.uploaderService.uploadDocuments(
-          attachments.msmeCerti[0],
+          attachments.msmeCerti,
           user,
           subdirectory,
         );
@@ -178,9 +178,9 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
         await this.ptRepository.save(pt);
         response['msmeCerti'] = certificateUrl;
       }
-      if (attachments.ibmCerti.length > 0) {
+      if (attachments.ibmCerti) {
         const certificateUrl = await this.uploaderService.uploadDocuments(
-          attachments.ibmCerti[0],
+          attachments.ibmCerti,
           user,
           subdirectory,
         );
@@ -195,9 +195,9 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
         await this.ptRepository.save(pt);
         response['ibmCerti'] = certificateUrl;
       }
-      if (attachments.marginalizedCerti.length > 0) {
+      if (attachments.marginalizedCerti) {
         const certificateUrl = await this.uploaderService.uploadDocuments(
-          attachments.marginalizedCerti[0],
+          attachments.marginalizedCerti,
           user,
           subdirectory,
         );

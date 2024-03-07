@@ -14,14 +14,8 @@ import { Audit } from 'src/shared/entities';
 export class InvoiceEntity extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column({ type: 'uuid', nullable: true })
-  businessAreaId: string;
-  @Column({ nullable: true })
-  applicationNo: string;
   @Column({ nullable: true })
   refNumber: string;
-  @Column()
-  pricingId: string;
   @Column({ nullable: true })
   serviceId: string;
   @Column({ type: 'jsonb', nullable: true })
@@ -46,9 +40,6 @@ export class InvoiceEntity extends Audit {
   remark: string;
   @Column({ nullable: true })
   attachment: string;
-  @OneToOne(() => BusinessAreaEntity, (ba) => ba.invoice)
-  @JoinColumn({ name: 'businessAreaId' })
-  businessArea: BusinessAreaEntity;
   @ManyToOne(() => BpServiceEntity, (service) => service.invoices)
   service: BpServiceEntity;
 }

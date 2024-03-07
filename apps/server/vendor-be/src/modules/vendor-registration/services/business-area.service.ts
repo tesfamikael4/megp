@@ -104,9 +104,9 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
       where: {
         instanceId: In(instanceIds),
         status: ApplicationStatus.PENDING,
-        invoice: { paymentStatus: PaymentStatus.PENDING },
+        //  invoice: { paymentStatus: PaymentStatus.PENDING },
       },
-      relations: { invoice: true },
+      //relations: { invoice: true },
     });
   }
   async getUserInprogressBusinessAreaByServiceId(

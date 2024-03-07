@@ -22,16 +22,16 @@ export class PreferentialTreatmentsEntity extends Audit {
   userId: string;
   @Column({ default: 'Submitted' })
   status: string;
+  // @Column({ nullable: true })
+  // remark: string;
+  // @Column({ type: 'jsonb', nullable: true })
+  // extendedProfile: any;
   @Column({ nullable: true })
-  remark: string;
-  @Column({ type: 'jsonb', nullable: true })
-  extendedProfile: any;
-  @Column()
   certificateUrl: string;
   @Column()
   certiNumber: string;
-  @Column({ type: 'jsonb', nullable: true })
-  otherDocuments: any;
+  // @Column({ type: 'jsonb', nullable: true })
+  // otherDocuments: any;
   @ManyToOne(() => VendorsEntity, (vendor) => vendor.preferentials)
   @JoinColumn({ name: 'vendorId' })
   vendor: VendorsEntity;

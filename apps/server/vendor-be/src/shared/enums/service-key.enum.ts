@@ -24,5 +24,7 @@ export enum ServiceKeyEnum {
   MARGINALIZED_GROUP = 'Marginalized_Group',
   MSME = 'MSME',
   MG = 'MG',
-  NEW_REGISTRATION = "NewRegistration"
+  NEW_REGISTRATION = "NewRegistration",
+  REGISTRATION_RENEWAL = 'RegistrationRenewal',
+  REGISTRATION_UPGRADE = 'RegistrationUpgrade'
 }

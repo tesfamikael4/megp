@@ -11,7 +11,7 @@ import {
   Delete,
   UploadedFiles,
 } from '@nestjs/common';
-import { ApiTags, ApiResponse, ApiOkResponse } from '@nestjs/swagger';
+import { ApiTags, ApiResponse, ApiOkResponse, ApiBody } from '@nestjs/swagger';
 import { JwtGuard, CurrentUser } from 'src/shared/authorization';
 import { PreferentialTreatmentsEntity } from 'src/entities/preferential-treatment.entity';
 import { EntityCrudController } from 'src/shared/controller';
@@ -54,6 +54,7 @@ export class PreferentailTreatmentsController extends EntityCrudController<Prefe
   }
 
   @Post('submit-pt-request')
+  @ApiBody({ type: [CreatePTDto] })
   @ApiOkResponse({ type: PTResponse })
   async submitApplication(
     @CurrentUser() user: any,

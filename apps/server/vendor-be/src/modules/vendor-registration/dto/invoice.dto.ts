@@ -47,8 +47,6 @@ export class InvoiceResponseDto {
     const response = new InvoiceResponseDto();
     response.id = entity.id;
     response.userId = entity.userId;
-    response.businessAreaId = entity.businessAreaId;
-    response.applicationNo = entity.applicationNo;
     response.payToAccName = entity.payToAccName;
     response.payToAccNo = entity.payToAccNo;
     response.payToBank = entity.payToBank;
@@ -58,9 +56,8 @@ export class InvoiceResponseDto {
     response.paymentStatus = entity.paymentStatus;
     response.remark = entity.remark;
     response.amount = entity.amount;
-    response.serviceId = entity?.businessArea?.serviceId;
-    response.pricingId = entity?.businessArea?.priceRangeId;
-    response.category = entity?.businessArea?.category;
+    response.serviceId = entity?.serviceId;
+    response.paymentDetail = entity?.paymentDetail;
     response.attachmentUrl = entity.attachment;
     response.refNumber = entity.refNumber;
     return response;
