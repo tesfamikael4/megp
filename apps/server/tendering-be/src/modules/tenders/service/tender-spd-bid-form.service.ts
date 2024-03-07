@@ -3,14 +3,14 @@ import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { ExtraCrudService } from 'src/shared/service';
 import { MinIOService } from 'src/shared/min-io/min-io.service';
-import { SpdBidForm } from 'src/entities/spd-bid-form.entity';
-import { FileHelperService } from '../../../shared/min-io/file-helper.service';
+import { TenderSpdBidForm } from 'src/entities/tender-spd-bid-form.entity';
+import { FileHelperService } from 'src/shared/min-io/file-helper.service';
 
 @Injectable()
-export class SpdBidFormService extends ExtraCrudService<SpdBidForm> {
+export class TenderSpdBidFormService extends ExtraCrudService<TenderSpdBidForm> {
   constructor(
-    @InjectRepository(SpdBidForm)
-    private readonly spdBidFormRepository: Repository<SpdBidForm>,
+    @InjectRepository(TenderSpdBidForm)
+    private readonly spdBidFormRepository: Repository<TenderSpdBidForm>,
     private readonly minIOService: MinIOService,
     private readonly fileHelperService: FileHelperService,
   ) {
@@ -24,7 +24,7 @@ export class SpdBidFormService extends ExtraCrudService<SpdBidForm> {
       const documentPdf = await this.fileHelperService.convertAndUpload(file);
 
       const data = this.spdBidFormRepository.create({
-        spdId: payload.spdId,
+        tenderId: payload.tenderId,
         type: payload.type,
         code: payload.code,
         title: payload.title,

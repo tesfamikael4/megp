@@ -29,7 +29,7 @@ import {
   SpdTechnicalScoringController,
   SpdTemplateController,
 } from './controller';
-import { FileHelperService } from './service/file-helper.service';
+import { FileHelperService } from '../../shared/min-io/file-helper.service';
 import { SpdBidFormService } from './service/spd-bid-form.service';
 import { SpdBidForm } from 'src/entities/spd-bid-form.entity';
 import { SpdBidFormController } from './controller/spd-bid-form.controller';

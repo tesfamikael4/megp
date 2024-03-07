@@ -3,18 +3,18 @@ import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { ExtraCrudService } from 'src/shared/service';
 import { MinIOService } from 'src/shared/min-io/min-io.service';
-import { SpdBidForm } from 'src/entities/spd-bid-form.entity';
-import { FileHelperService } from '../../../shared/min-io/file-helper.service';
+import { TenderSpdContractForm } from 'src/entities/tender-spd-contract-form.entity';
+import { FileHelperService } from 'src/shared/min-io/file-helper.service';
 
 @Injectable()
-export class SpdBidFormService extends ExtraCrudService<SpdBidForm> {
+export class TenderSpdContractFormService extends ExtraCrudService<TenderSpdContractForm> {
   constructor(
-    @InjectRepository(SpdBidForm)
-    private readonly spdBidFormRepository: Repository<SpdBidForm>,
+    @InjectRepository(TenderSpdContractForm)
+    private readonly spdContractFormRepository: Repository<TenderSpdContractForm>,
     private readonly minIOService: MinIOService,
     private readonly fileHelperService: FileHelperService,
   ) {
-    super(spdBidFormRepository);
+    super(spdContractFormRepository);
   }
 
   async uploadSPDDocument(payload: any, file: Express.Multer.File) {
@@ -23,8 +23,8 @@ export class SpdBidFormService extends ExtraCrudService<SpdBidForm> {
 
       const documentPdf = await this.fileHelperService.convertAndUpload(file);
 
-      const data = this.spdBidFormRepository.create({
-        spdId: payload.spdId,
+      const data = this.spdContractFormRepository.create({
+        tenderId: payload.tenderId,
         type: payload.type,
         code: payload.code,
         title: payload.title,
@@ -32,7 +32,7 @@ export class SpdBidFormService extends ExtraCrudService<SpdBidForm> {
         documentPdf: documentPdf as any,
       });
 
-      await this.spdBidFormRepository.insert(data);
+      await this.spdContractFormRepository.insert(data);
 
       const presignedDownload =
         await this.minIOService.generatePresignedDownloadUrl(documentPdf);
@@ -44,7 +44,9 @@ export class SpdBidFormService extends ExtraCrudService<SpdBidForm> {
 
   async downloadSPDDocumentDocx(id: string) {
     try {
-      const spd = await this.spdBidFormRepository.findOneBy({ id });
+      const spd = await this.spdContractFormRepository.findOneBy({
+        id,
+      });
       if (!spd) {
         throw new Error('SPD not found');
       }
@@ -61,7 +63,9 @@ export class SpdBidFormService extends ExtraCrudService<SpdBidForm> {
 
   async downloadSPDDocumentPdf(id: string) {
     try {
-      const spd = await this.spdBidFormRepository.findOneBy({ id });
+      const spd = await this.spdContractFormRepository.findOneBy({
+        id,
+      });
       if (!spd) {
         throw new Error('SPD not found');
       }

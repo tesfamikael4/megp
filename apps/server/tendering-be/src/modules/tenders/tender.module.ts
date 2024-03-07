@@ -24,6 +24,14 @@ import {
   TenderSpdService,
   TenderService,
 } from './service';
+import { FileHelperService } from '../../shared/min-io/file-helper.service';
+import { TenderSpdBidForm } from 'src/entities/tender-spd-bid-form.entity';
+import { TenderSpdContractForm } from 'src/entities/tender-spd-contract-form.entity';
+import { TenderSpdContractFormService } from './service/tender-spd-contract-form.service';
+import { TenderSpdBidFormController } from './controller/tender-spd-bid-form.controller';
+import { TenderSpdBidFormService } from './service/tender-spd-bid-form.service';
+import { MinIOModule } from 'src/shared/min-io/min-io.module';
+import { TenderSpdContractFormController } from './controller/tender-spd-contract-form.controller';
 
 @Module({
   imports: [
@@ -34,7 +42,10 @@ import {
       Item,
       ProcurementMechanism,
       ProcurementTechnicalTeam,
+      TenderSpdBidForm,
+      TenderSpdContractForm,
     ]),
+    MinIOModule,
   ],
   controllers: [
     TenderController,
@@ -43,6 +54,8 @@ import {
     LotController,
     ProcurementMechanismController,
     ProcurementTechnicalTeamController,
+    TenderSpdBidFormController,
+    TenderSpdContractFormController,
   ],
   providers: [
     TenderSpdService,
@@ -51,6 +64,9 @@ import {
     LotService,
     ProcurementMechanismService,
     ProcurementTechnicalTeamService,
+    FileHelperService,
+    TenderSpdContractFormService,
+    TenderSpdBidFormService,
   ],
 })
 export class TenderModule {}
