@@ -79,6 +79,7 @@ export const Menu: MenuItem[] = [
     label: 'Report & Analytics',
     icon: IconChartInfographic,
     link: '/dashboard',
+    permission: ['iam: reportViewer'],
   },
   {
     label: 'Archive',

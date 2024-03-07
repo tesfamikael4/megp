@@ -66,11 +66,7 @@ export function Shell({ children }: ShellProps): React.ReactNode {
   ));
 
   useEffect(() => {
-    const permissionArray = user?.organizations[0]?.permissions.map(
-      (permission) => {
-        return permission.key && permission.key;
-      },
-    );
+    const permissionArray = user?.organizations[0]?.permissions;
 
     function filterMenuAndSubmenu(permissions: string[], menus: any[]) {
       return menus
