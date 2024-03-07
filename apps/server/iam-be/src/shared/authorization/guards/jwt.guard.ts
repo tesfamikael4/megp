@@ -3,6 +3,7 @@ import { Request } from 'express';
 import { Reflector } from '@nestjs/core';
 import { ALLOW_ANONYMOUS_META_KEY } from '../decorators/allow-anonymous.decorator';
 import { AuthHelper } from '../helper/auth.helper';
+import { AccountDto } from '../models/auth.model';
 
 @Injectable()
 export class JwtGuard implements CanActivate {
@@ -26,7 +27,7 @@ export class JwtGuard implements CanActivate {
       const secret =
         process.env.JWT_ACCESS_TOKEN_SECRET ?? 'MAXWS4Fw5v6Dqvomjz7s';
 
-      const user = await this.authHelper.verify(token, secret);
+      const user: AccountDto = await this.authHelper.verify(token, secret);
       const { organizations, ...rest } = user;
       let parsedUser: any = rest;
       if (organizations && organizations.length > 0) {

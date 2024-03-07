@@ -194,7 +194,7 @@ export class AuthController {
   }
 
   @Get('test-permission')
-  @UseGuards(JwtGuard, PermissionsGuard('organization|role'))
+  @UseGuards(JwtGuard, PermissionsGuard('iam:organization|iam:role'))
   async testPermission(@CurrentUser() user: any) {
     return user;
   }

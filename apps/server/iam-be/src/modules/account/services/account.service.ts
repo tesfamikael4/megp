@@ -1007,71 +1007,47 @@ export class AccountsService {
     const users = userInfo?.users?.filter((x) => x.organization != null);
 
     for (const user of users) {
-      const permissions = [];
-      const roles = [];
-      const roleSystems = [];
-      const applications = [];
+      const permissions: string[] = [];
+      // const roles = [];
+      const roleSystems: string[] = [];
+      const applications: string[] = [];
       user?.userRoles?.forEach((userRole) => {
-        const role = {
-          id: userRole.role.id,
-          name: userRole.role.name,
-        };
+        // const role = {
+        //   id: userRole.role.id,
+        //   name: userRole.role.name,
+        // };
 
-        roles.push(role);
+        // roles.push(role);
 
         userRole?.role?.rolePermissions?.forEach((rolePermission) => {
           if (rolePermission?.permission) {
-            permissions.push({
-              id: rolePermission.permission.id,
-              name: rolePermission.permission.name,
-              key: rolePermission.permission.key,
-              applicationId: rolePermission.permission.applicationId,
-            });
+            permissions.push(rolePermission.permission.key);
 
             if (
               !applications.find(
-                (x) => x.id === rolePermission.permission.applicationId,
+                (x) => x === rolePermission.permission.application.key,
               )
             ) {
-              applications.push({
-                id: rolePermission.permission.application.id,
-                key: rolePermission.permission.application.key,
-                name: rolePermission.permission.application.name,
-              });
+              applications.push(rolePermission.permission.application.key);
             }
           }
         });
       });
 
       user?.userRoleSystems?.forEach((userRole) => {
-        const roleSystem = {
-          id: userRole.roleSystem.id,
-          key: userRole.roleSystem.key,
-          name: userRole.roleSystem.name,
-        };
-
-        roleSystems.push(roleSystem);
+        roleSystems.push(userRole.roleSystem.key);
 
         userRole?.roleSystem?.roleSystemPermissions?.forEach(
           (rolePermission) => {
             if (rolePermission?.permission) {
-              permissions.push({
-                id: rolePermission.permission.id,
-                name: rolePermission.permission.name,
-                key: rolePermission.permission.key,
-                applicationId: rolePermission.permission.applicationId,
-              });
+              permissions.push(rolePermission.permission.key);
 
               if (
                 !applications.find(
-                  (x) => x.id === rolePermission.permission.applicationId,
+                  (x) => x === rolePermission.permission.application.key,
                 )
               ) {
-                applications.push({
-                  id: rolePermission.permission.application.id,
-                  key: rolePermission.permission.application.key,
-                  name: rolePermission.permission.application.name,
-                });
+                applications.push(rolePermission.permission.application.key);
               }
             }
           },
@@ -1093,7 +1069,7 @@ export class AccountsService {
         userId: user?.id,
         organization,
         permissions,
-        roles,
+        // roles,
         roleSystems,
         applications,
       });
