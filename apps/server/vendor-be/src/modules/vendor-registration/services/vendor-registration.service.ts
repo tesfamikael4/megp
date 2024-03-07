@@ -435,13 +435,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           const invoices = await this.invoiceService.getInvoicesUserAndService(
             workflowInstance.application.userId,
           );
-          // invoices.map((row) => {
-          //   if (row.pricingId == businessAreaEntity.priceRangeId) {
-          //     const businessAreaId = businessAreaEntity.id;
-          //     row.businessAreaId = businessAreaId;
-          //     this.invoiceService.update(row.id, row);
-          //   }
-          // });
+
         }
         if (!workflowInstance)
           throw new NotFoundException(`workflowInstanceService_failed`);
@@ -482,7 +476,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           data.initial.status.trim() === VendorStatusEnum.SAVE
         ) {
           let ncicData = null;
-          let fppaData = null;
+          const fppaData = null;
           const numberOfService = data.areasOfBusinessInterest.length;
           //to get al/ the registration fee for each service
           let priceRangeIds = [];
@@ -511,7 +505,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
                   await this.isrVendorsRepository.save(isrVendor);
                 }
               } else if (fppaData == null) {
-                fppaData = await this.GetFPPAData(isrVendor.tinNumber);
+                //fppaData= await this.GetFPPAData(isrVendor.tinNumber);
+                //temporary commented
                 if (fppaData !== null) {
                   isrVendor.basic.businessType = fppaData.businessType;
                   isrVendor.contactPersons.mobileNumber = fppaData.mobileNumber;
@@ -1288,27 +1283,23 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       const vendorEntity = await this.vendorRepository.findOne({
         select: {
           id: true,
-          preferentials: {
-            serviceId: true,
-            status: true,
-            certificateUrl: true,
-            certiNumber: true,
-          },
+          // preferentials: {
+          //   serviceId: true,
+          //   status: true,
+          //   certificateUrl: true,
+          //   certiNumber: true,
+          // },
           isrVendor: {
             id: true,
             businessAreas: { id: true, instanceId: true },
           },
         },
         relations: {
-          preferentials: true,
           isrVendor: { businessAreas: true },
         },
         where: {
           userId: userId,
-          preferentials: {
-            status: ApplicationStatus.SUBMITTED,
-            serviceId: serviceId,
-          },
+
         },
       });
       return vendorEntity;
@@ -1610,7 +1601,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             },
           },
         },
-        { id: VendorId, preferentials: { status: ApplicationStatus.APPROVED } },
+        { id: VendorId },
       ],
       select: {
         id: true,
@@ -1656,7 +1647,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         beneficialOwnership: true,
         vendorAccounts: true,
         isrVendor: { businessAreas: { servicePrice: true, BpService: true } },
-        preferentials: true,
+        // preferentials: true,
       },
     });
     const { isrVendor, ...rest } = vendorData;
@@ -2253,19 +2244,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     if (result == null) return { status: 'no approved service' };
     return result.isrVendor.businessAreas;
   }
-  async getPreferenctialCerteficates(userId: string) {
-    const result = await this.vendorRepository.findOne({
-      where: {
-        userId: userId,
-        status: VendorStatusEnum.APPROVED,
-        preferentials: { status: ApplicationStatus.APPROVED },
-      },
-      relations: { preferentials: true },
-    });
-    if (result == null)
-      return { status: 'No approved Preferential treatment certeficates' };
-    return result.preferentials;
-  }
+
 
   async cancelApplication(wfi: UpdateWorkflowInstanceDto) {
     const vendor = this.vendorRepository.findOne({
