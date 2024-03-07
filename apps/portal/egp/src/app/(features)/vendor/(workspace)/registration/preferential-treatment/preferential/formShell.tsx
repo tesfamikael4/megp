@@ -11,7 +11,7 @@ import {
   useSubmitRequestMutation,
   useUploadPreferentialAttachmentsMutation,
 } from '@/store/api/preferential-treatment/preferential-treatment.api';
-import { ExtendedRegistrationReturnType } from '../../../new/_components/detail/formShell';
+import { ExtendedRegistrationReturnType } from '../../new/_components/detail/formShell';
 
 export interface PassFormDataProps {
   register: (
@@ -110,25 +110,23 @@ export const PreferentialTreatmentForm = ({
   };
 
   const onSubmit = async (data: typeof formState.defaultValues) => {
-    if (data && data.preferential) {
-      const preferential = getValues().preferential.map(
-        ({ certiNumber, serviceId }) => {
-          return {
-            certiNumber,
-            serviceId,
-            status: 'Draft',
-          };
-        },
-      );
-      try {
-        await saveAttachment(getValues().preferential)
-          .unwrap()
-          .then(() => {
-            save(preferential);
-          });
-      } catch (error) {
-        NotificationService.requestErrorNotification(error.message);
-      }
+    const preferential = getValues().preferential.map(
+      ({ certiNumber, serviceId }) => {
+        return {
+          certiNumber,
+          serviceId,
+          status: 'Draft',
+        };
+      },
+    );
+    try {
+      await save(preferential)
+        .unwrap()
+        .then(() => {
+          saveAttachment(getValues().preferential);
+        });
+    } catch (error) {
+      NotificationService.requestErrorNotification(error.message);
     }
   };
   return (
@@ -148,20 +146,15 @@ export const PreferentialTreatmentForm = ({
         </Flex>
 
         <Flex className="mt-10 justify-end gap-2">
-          {Boolean(getValues('preferential')) &&
-            Boolean(getValues('preferential')?.values) &&
-            (getValues('preferential')?.values).length > 0 && (
-              <>
-                <Button
-                  onClick={() => router.push('payment')}
-                  variant="outline"
-                >
-                  Back
-                </Button>
+          {watch('preferential') && watch('preferential').length > 0 && (
+            <>
+              <Button onClick={() => router.push('payment')} variant="outline">
+                Back
+              </Button>
 
-                <Button type="submit">Save & Continue</Button>
-              </>
-            )}
+              <Button type="submit">Save & Continue</Button>
+            </>
+          )}
         </Flex>
       </form>
     </Box>

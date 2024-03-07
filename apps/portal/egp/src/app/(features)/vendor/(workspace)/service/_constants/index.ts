@@ -19,11 +19,11 @@ export const services: { title; description; link }[] = [
   {
     title: 'Eligibility for Preferential Treatment',
     description: 'Renew registration',
-    link: '/vendor/registration/preferential-treatment/ibm',
+    link: '/vendor/registration/preferential-treatment',
   },
   {
     title: 'Add Additional Services',
     description: 'Renew registration',
-    link: '/vendor/registration/',
+    link: '/vendor/registration/add-service',
   },
 ];

@@ -2,8 +2,8 @@
 import React, { Suspense, useEffect } from 'react';
 import { Box, Divider, Flex, LoadingOverlay, Text } from '@mantine/core';
 import { useRouter } from 'next/navigation';
-import { NotificationService } from '../../../../_components/notification';
-import { useGetVendorQuery } from '../../_api/query';
+import { NotificationService } from '../../../_components/notification';
+import { useGetVendorQuery } from '../_api/query';
 import { PreferentialTreatmentForm } from './preferential/formShell';
 
 function Page() {

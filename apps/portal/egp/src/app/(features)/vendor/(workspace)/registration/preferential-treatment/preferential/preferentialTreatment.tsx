@@ -8,7 +8,7 @@ import {
   LoadingOverlay,
   Select,
 } from '@mantine/core';
-import MultiCheckBox from '../../../../../_components/multiCheckBox';
+import MultiCheckBox from '../../../../_components/multiCheckBox';
 import { PassFormDataProps } from './formShell';
 
 import FileUploader from '@/app/(features)/vendor/_components/uploader';
