@@ -21,6 +21,10 @@ function Page() {
     return () => {};
   }, [requestInfo, router]);
 
+  console.log(
+    validateApprovedVendorServiceSchema(requestInfo.data).errors,
+    requestInfo.data,
+  );
   if (requestInfo.isLoading) {
     return (
       <Box pos="relative" className="w-full min-h-screen">

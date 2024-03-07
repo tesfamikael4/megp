@@ -17,7 +17,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { ApplicationInfo } from '@/models/vendorRegistration';
 
 const callbackURL = (key: string) => {
-  if (key == 'GoodsNewRegistration' || key == 'ServicesNewRegistration') {
+  console.log(key);
+  if (key == 'NewRegistration') {
     return 'new/detail';
   }
   if (key == 'ProfileUpdate') {
@@ -53,19 +54,7 @@ const badgeTextColor: { [key: string]: string } = {
 };
 const DetailViewCard: React.FC<Props> = ({ data, close }) => {
   const router = useRouter();
-  const searchParams = useSearchParams();
 
-  // Get a new searchParams string by merging the current
-  // searchParams with a provided key/value pair
-  const createQueryString = useCallback(
-    (name: string, value: string) => {
-      const params = new URLSearchParams(searchParams.toString());
-      params.set(name, value);
-
-      return params.toString();
-    },
-    [searchParams],
-  );
   return (
     <Paper shadow="xs" withBorder className={styles.card}>
       <Box className={styles.cardHeader}>
@@ -91,10 +80,7 @@ const DetailViewCard: React.FC<Props> = ({ data, close }) => {
           <Button
             onClick={() => {
               router.push(
-                `/vendor/registration/${callbackURL(data.BpService.key)}?${createQueryString(
-                  'flag',
-                  'adjustment',
-                )}`,
+                `/vendor/registration/${callbackURL(data.BpService.key)}`,
               );
             }}
           >

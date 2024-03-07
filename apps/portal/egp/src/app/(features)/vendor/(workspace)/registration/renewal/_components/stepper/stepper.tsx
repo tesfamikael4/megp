@@ -2,7 +2,6 @@
 import { Stepper } from '@mantine/core';
 import styles from './stepper.module.scss';
 import { useRouter, usePathname } from 'next/navigation'; // Updated import
-import { usePrivilege } from '../../../renewal/_context/privilege-context';
 import { Section } from '@megp/core-fe';
 
 function StyledStepper() {
