@@ -7,7 +7,7 @@ import { MinIOService } from 'src/shared/min-io/min-io.service';
 import { Response } from 'express';
 import { SpdTemplate } from 'src/entities/spd-template.entity';
 import { Readable } from 'stream';
-import { FileHelperService } from './file-helper.service';
+import { FileHelperService } from '../../../shared/min-io/file-helper.service';
 
 @Injectable()
 export class SpdTemplateService extends ExtraCrudService<SpdTemplate> {

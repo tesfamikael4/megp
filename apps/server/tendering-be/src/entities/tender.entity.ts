@@ -15,6 +15,8 @@ import { BdsEvaluation } from './bds-evaluation.entity';
 import { BdsPreparation } from './bds-preparation.entity';
 import { BdsAward } from './bds-award.entity';
 import { TenderSpd } from './tender-spd.entity';
+import { TenderSpdBidForm } from './tender-spd-bid-form.entity';
+import { TenderSpdContractForm } from './tender-spd-contract-form.entity';
 
 @Entity({ name: 'tenders' })
 export class Tender extends Audit {
@@ -86,4 +88,16 @@ export class Tender extends Audit {
     (procurementMechanism) => procurementMechanism.tender,
   )
   procurementMechanism: ProcurementMechanism;
+
+  @OneToMany(() => TenderSpdBidForm, (spdBidForm) => spdBidForm.tender, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  tenderSpdBidForm: TenderSpdBidForm[];
+
+  @OneToMany(() => TenderSpdContractForm, (spdBidForm) => spdBidForm.tender, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  tenderSpdContractForm: TenderSpdContractForm[];
 }
