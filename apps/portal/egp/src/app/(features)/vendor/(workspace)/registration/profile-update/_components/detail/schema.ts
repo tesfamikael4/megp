@@ -78,18 +78,17 @@ export const beneficialOwnershipSchema = z.object({
 });
 
 export const formDataSchema = z.object({
-  basic: z.discriminatedUnion('country', [
+  basic: z.discriminatedUnion('origin', [
     z.object({
       name: z
         .string()
         .min(2, { message: 'Name must be at l5ast 2 characters long' })
         .max(100, { message: 'Name cannot exceed 100 characters' }),
-      origin: z.string(),
+      origin: z.literal('Malawi'),
       tinNumber: z
         .string()
         .min(6, { message: 'TIN must have at least 10 characters' })
         .max(10, { message: 'TIN should not exceed 10 characters' }),
-      country: z.literal('Malawi'),
       district: z.string(),
     }),
     z.object({
@@ -97,11 +96,10 @@ export const formDataSchema = z.object({
         .string()
         .min(2, { message: 'Name must be at least 2 characters long' })
         .max(100, { message: 'Name cannot exceed 100 characters' }),
-      origin: z.string(),
+      origin: z.enum(getNationalityValues('Malawi')),
       businessType: z
         .string()
         .min(2, { message: 'Form of business is required' }),
-      country: z.enum(getNationalityValues('Malawi')),
       tinNumber: z.string().optional(),
     }),
   ]),
@@ -110,10 +108,12 @@ export const formDataSchema = z.object({
     primaryEmail: z
       .string()
       .email({ message: 'Primary Email must be a valid email address' }),
-    alternateEmail: z
-      .string()
-      .email({ message: 'Alternate Email must be a valid email address' })
-      .optional(),
+    alternateEmail: z.union([
+      z.literal(''),
+      z
+        .string()
+        .email({ message: 'Alternate Email must be a valid email address' }),
+    ]),
     mobilePhone: z
       .string()
       .min(10, {

@@ -84,15 +84,15 @@ export const PreferentialTreatmentForm = ({
     };
   }, [updateAccess, vendorInfo.level]);
   useEffect(() => {
-    if (saveValues.isSuccess) {
+    if (saveAttachmentValues.isSuccess) {
       NotificationService.successNotification('Submitted Successfully!');
       router.push(`doc`);
     }
-    if (saveValues.isError) {
+    if (saveAttachmentValues.isError) {
       NotificationService.requestErrorNotification('Error on Request');
     }
     return () => {};
-  }, [saveValues.isSuccess, saveValues.isError]);
+  }, [saveAttachmentValues.isSuccess, saveAttachmentValues.isError]);
 
   const extendedRegister = (
     name: any,
@@ -127,7 +127,6 @@ export const PreferentialTreatmentForm = ({
   };
 
   const onSubmit = async (data: typeof formState.defaultValues) => {
-    logger.log(data);
     const preferential = getValues().preferential.map(
       ({ certiNumber, serviceId }) => {
         return {
@@ -138,10 +137,10 @@ export const PreferentialTreatmentForm = ({
       },
     );
     try {
-      await saveAttachment(getValues().preferential)
+      await save(preferential)
         .unwrap()
         .then(() => {
-          save(preferential);
+          saveAttachment(getValues().preferential);
         });
     } catch (error) {
       NotificationService.requestErrorNotification(error.message);

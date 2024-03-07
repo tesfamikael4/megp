@@ -9,17 +9,14 @@ export const AddressInformation: React.FC<PassFormDataProps> = ({
     <Stack>
       <Group grow>
         <TextInput
-          label="Postal Address"
-          {...register(`address.postalAddress`)}
-          withAsterisk
-          required
-        />
-
-        <TextInput
           label="Primary Email"
-          {...register(`address.primaryEmail`)}
           withAsterisk
-          required
+          {...register(`address.primaryEmail`)}
+        />
+        <TextInput
+          withAsterisk
+          label="Telephone 1"
+          {...register(`address.mobilePhone`)}
         />
       </Group>
       <Group grow>
@@ -27,16 +24,13 @@ export const AddressInformation: React.FC<PassFormDataProps> = ({
           label="Alternate Email"
           {...register(`address.alternateEmail`)}
         />
-        <TextInput
-          label="Mobile Phone"
-          {...register(`address.mobilePhone`)}
-          withAsterisk
-          required
-        />
+        <TextInput label="Telephone 2" {...register(`address.telephone`)} />
       </Group>
       <Group grow>
-        <TextInput label="Telephone" {...register(`address.telephone`)} />
-
+        <TextInput
+          label="Postal Address/Zip code"
+          {...register(`address.postalAddress`)}
+        />
         <TextInput label="Fax" {...register(`address.fax`)} />
       </Group>
       <Group grow>

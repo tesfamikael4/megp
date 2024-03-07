@@ -41,12 +41,12 @@ export const SubmittedApplication = () => {
             <Flex align={'center'} gap={'sm'} className="mb-1 mt-2">
               <Badge
                 size="md"
-                color={badgeBGColor[data.status]}
+                color={badgeBGColor['Submitted']}
                 className={
                   'rounded-none flex items-center p-1.5 absolute top-0 right-0'
                 }
               >
-                <Box c={badgeTextColor[data.status]}>{data.status}</Box>
+                <Box c={badgeTextColor['Submitted']}>{'Submitted'}</Box>
               </Badge>
             </Flex>
           </Flex>

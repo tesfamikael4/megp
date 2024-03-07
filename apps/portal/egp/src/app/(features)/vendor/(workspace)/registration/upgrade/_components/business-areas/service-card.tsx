@@ -80,7 +80,7 @@ export default function ServicesCard({ servicesData }: { servicesData: any }) {
     category: string,
     productId: string,
   ) {
-    const item = servicesData?.status?.selectedPriceRange.find(
+    const item = servicesData?.status?.selectedPriceRange?.find(
       (item) => item._businessAreaId === productId,
     );
     // If not selected, add it to the array
@@ -122,7 +122,7 @@ export default function ServicesCard({ servicesData }: { servicesData: any }) {
   const isServiceDrafted = (
     businessAreaId: string,
   ): { hasInvoice: boolean; newPricingId: string } => {
-    const hasInvoice = servicesData?.status?.selectedPriceRange.find(
+    const hasInvoice = servicesData?.status?.selectedPriceRange?.find(
       (item: any) => {
         return item._businessAreaId == businessAreaId;
       },

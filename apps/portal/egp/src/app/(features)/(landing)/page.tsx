@@ -1,15 +1,13 @@
 'use client';
 
-import { FeaturesCard } from './_components/features-cards/card';
 import { Box, Container, Flex, SimpleGrid } from '@mantine/core';
-import styles from './page.module.scss';
 import { HeroSection } from './_components/hero/hero-section';
 import { StepsSection } from './_components/steps/steps-section';
 import { useAuth } from '@megp/auth';
-import { featuredContent } from './_constants';
 import TenderCard from '../_components/tender-card';
 import { CardWrapper } from '../_components/tender-card/card-wrapper';
 import InfoCards from './_components/features-cards';
+import Footer from './_components/footer';
 
 export default function Home() {
   const { isAuthenticated } = useAuth();
@@ -43,6 +41,7 @@ export default function Home() {
           </CardWrapper>
         </Flex>
       </Container>
+      <Footer />
     </Container>
   );
 }

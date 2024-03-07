@@ -1,8 +1,8 @@
 import { z } from 'zod';
 export const approvedVendorServiceSchema = z.object({
   status: z.object({
-    level: z.string(),
-    status: z.string(),
+    level: z.string().optional(),
+    status: z.string().optional(),
     selectedPriceRange: z.any(),
   }),
   data: z.array(
