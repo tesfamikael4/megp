@@ -22,6 +22,8 @@ const AddPermissionModal = () => {
 
   const [trigger, { data: rolePermision, isSuccess, isLoading }] =
     useLazySecondRelationQuery();
+  const [triggerSet, { data: setRolePermision, isSuccess: isSetSuceed }] =
+    useLazySecondRelationQuery();
 
   const relationConfig: RelationConfig<any> = {
     title: 'Permission Assignment',
@@ -63,6 +65,10 @@ const AddPermissionModal = () => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
+  useEffect(() => {
+    !isCollapsed &&
+      triggerSet({ id: id.toString(), collectionQuery: undefined });
+  }, [id, isCollapsed, triggerSet]);
 
   useEffect(() => {
     if (isSuccess) {
@@ -78,6 +84,17 @@ const AddPermissionModal = () => {
       );
     }
   }, [rolePermision, isSuccess]);
+  useEffect(() => {
+    if (isSetSuceed) {
+      setPermission(
+        setRolePermision
+          ? setRolePermision.items.map(
+              (permission: any) => permission.permission,
+            )
+          : [],
+      );
+    }
+  }, [isSetSuceed, setRolePermision]);
 
   useEffect(() => {
     !isCollapsed && onRequestChange({ skip: 0, take: 15 });
@@ -102,7 +119,7 @@ const AddPermissionModal = () => {
         data={currentAssigned ? currentAssigned : []}
         isSaving={isSaving}
         isLoading={isLoading}
-        total={rolePermision?.total ?? 0}
+        total={currentAssigned.length ?? 0}
         onRequestChange={onRequestChange}
         readOnly={false}
         collapsed={true}
