@@ -23,6 +23,8 @@ const AddPermission = () => {
 
   const [trigger, { data: mandatePermission, isSuccess, isLoading }] =
     useLazySecondRelationQuery();
+  const [triggerToSet, { data: setmandatePermission, isSuccess: isSetSuceed }] =
+    useLazySecondRelationQuery();
 
   const [permission, setPermission] = useState<Permission[]>([]);
 
@@ -75,6 +77,12 @@ const AddPermission = () => {
   };
 
   useEffect(() => {
+    if (id) {
+      triggerToSet({ id: id?.toString(), collectionQuery: undefined });
+    }
+  }, [id, triggerToSet]);
+
+  useEffect(() => {
     if (isSuccess) {
       setCurrentAssigned(
         mandatePermission
@@ -83,15 +91,19 @@ const AddPermission = () => {
             )
           : [],
       );
+    }
+  }, [mandatePermission, isSuccess]);
+  useEffect(() => {
+    if (isSetSuceed) {
       setPermission(
-        mandatePermission
-          ? mandatePermission.items.map(
+        setmandatePermission
+          ? setmandatePermission.items.map(
               (permission: any) => permission.permission,
             )
           : [],
       );
     }
-  }, [mandatePermission, isSuccess]);
+  }, [isSetSuceed, setmandatePermission]);
 
   useEffect(() => {
     setCurrentAssigned(permission);
@@ -105,7 +117,7 @@ const AddPermission = () => {
         onRequestChange={onRequestChange}
         isSaving={isSaving}
         isLoading={isLoading}
-        total={mandatePermission?.total ?? 0}
+        total={currentAssigned.length ?? 0}
         collapsed={false}
       />
       <Modal
