@@ -32,7 +32,6 @@ import { CollectionQuery } from 'src/shared/collection-query';
 import { MbrsDataDto } from '../dto/mbrsData.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ReceiptDto } from '../dto/receipt.dto';
-import { Request } from 'express';
 import { CreateAreasOfBusinessInterest } from '../dto/areas-of-business-interest';
 @ApiBearerAuth()
 @Controller('vendor-registrations')
@@ -40,7 +39,7 @@ import { CreateAreasOfBusinessInterest } from '../dto/areas-of-business-interest
 @ApiResponse({ status: 500, description: 'Internal error' })
 @ApiExtraModels(DataResponseFormat)
 export class VendorRegistrationsController {
-  constructor(private readonly regService: VendorRegistrationsService) {}
+  constructor(private readonly regService: VendorRegistrationsService) { }
   @Get('get-isr-vendors')
   async getVendors() {
     return await this.regService.getIsrVendors();
@@ -56,6 +55,12 @@ export class VendorRegistrationsController {
     // return await this.regService.getVendorByUserId(userInfo.id);
     return await this.regService.getApplicationStatus(userInfo.id);
   }
+  @Get('track-application')
+  async trackApplication(
+    @CurrentUser() user: any
+  ) {
+    return await this.regService.trackApplication(user);
+  }
   @Get('get-isr-vendor-by-userId')
   async getIsrVendorByuserId(
     @CurrentUser() userInfo: any,
@@ -63,6 +68,7 @@ export class VendorRegistrationsController {
   ) {
     return await this.regService.getIsrVendorByUserId(userInfo.id, flag);
   }
+
   @Get('get-isr-vendor-by-userId/:status')
   async getApplicationsByUserIdAndStatus(
     @CurrentUser() userInfo: any,
@@ -100,6 +106,9 @@ export class VendorRegistrationsController {
   async getVendorByVendorId(@Param('vendorId') vendorId: string) {
     return await this.regService.getIsrVendorByVendorId(vendorId);
   }
+  /*
+  featch new registration invoices of a venodr
+  */
 
   @Get('get-isr-vendor-invoice-by-userId')
   async getIsrVendorInvoiceByuserId(@CurrentUser() userInfo: any) {
@@ -285,4 +294,5 @@ export class VendorRegistrationsController {
   async getpreferentialCertificates(@CurrentUser() userInfo: any) {
     return await this.regService.getCertificateInformations(userInfo.id);
   }
+
 }

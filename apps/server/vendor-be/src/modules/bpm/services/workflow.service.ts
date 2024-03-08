@@ -6,7 +6,7 @@ import {
   forwardRef,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import {
   CreateWorkflowInstanceDto,
   GotoNextStateDto,
@@ -566,5 +566,16 @@ export class WorkflowService {
       Object.assign(acc, value);
       return acc;
     }, {});
+  }
+
+  async getMyApplications(user: any) {
+
+    const result = await this.workflowInstanceRepository.find({
+      relations: { service: true },
+      where: { userId: user.id, status: In([ApplicationStatus.INPROGRESS, ApplicationStatus.ADJUSTMENT]) }
+    });
+
+    return result;
+
   }
 }

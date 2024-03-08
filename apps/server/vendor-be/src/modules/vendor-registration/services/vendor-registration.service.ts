@@ -1,15 +1,13 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   BadRequestException,
-  ForbiddenException,
   HttpException,
   HttpStatus,
   Inject,
   Injectable,
   NotFoundException,
-  PreconditionFailedException,
 } from '@nestjs/common';
-import { EntityManager, In, LessThanOrEqual, Not, Repository } from 'typeorm';
+import { In, Not, Repository } from 'typeorm';
 import { SetVendorStatus } from '../dto/vendor.dto';
 import {
   VendorInitiationDto,
@@ -18,12 +16,10 @@ import {
 import { EntityCrudService } from 'src/shared/service';
 import {
   BusinessAreaEntity,
-  Category,
   InvoiceEntity,
   IsrVendorsEntity,
   ServicePrice,
   VendorsEntity,
-  WorkflowInstanceEntity,
 } from 'src/entities';
 import { BusinessProcessService } from 'src/modules/bpm/services/business-process.service';
 import {
@@ -40,7 +36,6 @@ import { DataResponseFormat } from 'src/shared/api-data';
 import axios from 'axios';
 import {
   FppaDataDto,
-  MbrsData,
   MbrsDataDto,
   NCICDataDto,
 } from '../dto/mbrsData.dto';
@@ -60,12 +55,16 @@ import { REQUEST } from '@nestjs/core';
 import { HandlingCommonService } from 'src/modules/handling/services/handling-common-services';
 import { CreateAreasOfBusinessInterest } from '../dto/areas-of-business-interest';
 import { BusinessCategories } from 'src/modules/handling/enums/business-category.enum';
+import { PreferentailTreatmentService } from './preferentail-treatment.service';
+import { PreferentialTreatmentsEntity } from 'src/entities/preferential-treatment.entity';
 @Injectable()
 export class VendorRegistrationsService extends EntityCrudService<VendorsEntity> {
   constructor(
     @Inject(REQUEST) private request: Request,
     @InjectRepository(VendorsEntity)
     private readonly vendorRepository: Repository<VendorsEntity>,
+    @InjectRepository(PreferentialTreatmentsEntity)
+    private readonly ptRepository: Repository<PreferentialTreatmentsEntity>,
     @InjectRepository(BusinessAreaEntity)
     private readonly businessAreaRepository: Repository<BusinessAreaEntity>,
     @InjectRepository(IsrVendorsEntity)
@@ -76,12 +75,14 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     private readonly invoiceRepository: Repository<InvoiceEntity>,
     private readonly workflowService: WorkflowService,
     private readonly bpService: BusinessProcessService,
-    private readonly BpServiceService: BpServiceService,
+    private readonly serviceService: BpServiceService,
     private readonly invoiceService: InvoiceService,
     private readonly pricingService: ServicePricingService,
     private readonly baService: BusinessAreaService,
     private readonly fileService: FileService,
     private readonly commonService: HandlingCommonService,
+    private readonly ptService: PreferentailTreatmentService
+
   ) {
     super(vendorRepository);
   }
@@ -633,6 +634,11 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     return vendorsEntity;
   };
   async updateVendor(vendorStatusDto: SetVendorStatus): Promise<any> {
+    const service = await this.serviceService.findOne(
+      vendorStatusDto.serviceId,
+    );
+    if (!service) throw new HttpException('Bp service not found', 404);
+
     try {
       let response: any = null;
       const result = await this.isrVendorsRepository.findOne({
@@ -656,14 +662,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             businessArea.status = VendorStatusEnum.APPROVED;
           } else if (vendorStatusDto.status == VendorStatusEnum.REJECT) {
             businessArea.status = VendorStatusEnum.REJECTED;
-            const serviceType = await this.BpServiceService.findOne(
-              vendorStatusDto.serviceId,
-            );
-            if (!serviceType)
-              throw new HttpException('Bp service not found', 404);
             if (
-              serviceType &&
-              serviceType.key == VendorStatusEnum.PROFILE_UPDATE_KEY &&
+              service.key == VendorStatusEnum.PROFILE_UPDATE_KEY &&
               vendorStatusDto.status == VendorStatusEnum.REJECT
             ) {
               const profileData = await this.profileInfoRepository.findOne({
@@ -680,33 +680,13 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           }
           businessArea.approvedAt = new Date();
         }
-
-        const upgradekeys = [
-          ServiceKeyEnum.goodsUpgrade,
-          ServiceKeyEnum.servicesUpgrade,
-          ServiceKeyEnum.worksUpgrade,
-        ];
-        const renewalKeys = [
-          ServiceKeyEnum.goodsRenewal,
-          ServiceKeyEnum.servicesRenewal,
-          ServiceKeyEnum.worksRenewal,
-        ];
-
-        const upgradeServices = upgradekeys.filter(
-          (item) => item == businessArea.BpService?.key,
-        );
-        if (
-          upgradeServices.length == 0 &&
-          businessArea.BpService?.key != ServiceKeyEnum.PROFILE_UPDATE
-        ) {
+        if (service.key != ServiceKeyEnum.PROFILE_UPDATE) {
           const expireDate = new Date();
           expireDate.setFullYear(expireDate.getFullYear() + 1);
           businessArea.expireDate = expireDate;
         }
-        const renwalServiceKeys = renewalKeys.filter(
-          (item) => item == businessArea.BpService.key,
-        );
-        if (renwalServiceKeys.length > 0 || upgradeServices.length > 0) {
+        if (ServiceKeyEnum.REGISTRATION_RENEWAL == service.key || ServiceKeyEnum.REGISTRATION_UPGRADE == service.key) {
+
           const previousBA = await this.businessAreaRepository.findOne({
             where: {
               status: ApplicationStatus.APPROVED,
@@ -724,22 +704,23 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         const businessUpdate =
           await this.businessAreaRepository.save(businessArea);
         response = businessUpdate;
-      } else {
+      }
+      else {
         if (vendorStatusDto.status == VendorStatusEnum.APPROVE) {
           const isrVendorData = result;
           const basic = isrVendorData.basic;
           const initial = isrVendorData.initial;
           if (result.status !== VendorStatusEnum.APPROVED) {
-            const Categories = [
-              BusinessCategories.SERVICES,
-              BusinessCategories.GOODS,
-              BusinessCategories.WORKS,
-            ];
+
             const appliedServices = await this.businessAreaRepository.find({
               where: {
                 vendorId: vendorStatusDto.isrVendorId,
                 status: VendorStatusEnum.APPROVED,
-                category: In(Categories),
+                category: In([
+                  BusinessCategories.SERVICES,
+                  BusinessCategories.GOODS,
+                  BusinessCategories.WORKS,
+                ]),
               },
             });
 
@@ -799,16 +780,15 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
               `businessArea_not_found`,
               HttpStatus.NOT_FOUND,
             );
-          const length = businessArea.length;
           const businessAreas = [];
-          for (let index = 0; index < length; index++) {
-            businessArea[index].status = VendorStatusEnum.APPROVED;
-            businessArea[index].approvedAt = new Date();
-            businessArea[index].remark = vendorStatusDto.remark;
+          for (const ba of businessArea) {
+            ba.status = VendorStatusEnum.APPROVED;
+            ba.approvedAt = new Date();
+            ba.remark = vendorStatusDto.remark;
             const expireDate = new Date();
             expireDate.setFullYear(expireDate.getFullYear() + 1);
-            businessArea[index].expireDate = expireDate;
-            businessAreas.push(businessArea[index]);
+            ba.expireDate = expireDate;
+            businessAreas.push(ba);
           }
           const bsinessArea =
             await this.businessAreaRepository.save(businessAreas);
@@ -817,13 +797,11 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           return await this.rejectVendor(vendorStatusDto);
         }
       }
-      const serviceType = await this.BpServiceService.findOne(
-        vendorStatusDto.serviceId,
-      );
-      if (!serviceType) throw new HttpException('Bp service not found', 404);
+
+
+      ////refactor required
       if (
-        serviceType &&
-        serviceType.key == VendorStatusEnum.PROFILE_UPDATE_KEY &&
+        service.key == VendorStatusEnum.PROFILE_UPDATE_KEY &&
         vendorStatusDto.status == VendorStatusEnum.APPROVE
       ) {
         const profileData = await this.profileInfoRepository.findOne({
@@ -879,7 +857,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
   }
   async rejectVendor(vendorStatusDto: SetVendorStatus): Promise<any> {
     try {
-      const serviceType = await this.BpServiceService.findOne(
+      const serviceType = await this.serviceService.findOne(
         vendorStatusDto.serviceId,
       );
       if (!serviceType) throw new NotFoundException('Bp service not found');
@@ -921,7 +899,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
   }
   async adjustVendor(vendorStatusDto: SetVendorStatus): Promise<any> {
     try {
-      const serviceType = await this.BpServiceService.findOne(
+      const serviceType = await this.serviceService.findOne(
         vendorStatusDto.serviceId,
       );
       if (!serviceType) throw new NotFoundException('Bp service not found');
@@ -1063,14 +1041,9 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       if (!vendorEntity) {
         throw new HttpException('isr_vendor_not_found', HttpStatus.BAD_REQUEST);
       }
-      const areaOfBusinessInterest = vendorEntity.areasOfBusinessInterest;
-      const invoices = await this.getInvoices(areaOfBusinessInterest, userId);
-      let totalAmount = 0;
-      invoices?.map((element) => {
-        totalAmount = Number(totalAmount) + Number(element.amount);
-      });
+      const invoice = await this.invoiceService.getMyInvoice(userId, ServiceKeyEnum.NEW_REGISTRATION);
 
-      return { ...vendorEntity, invoice: invoices, totalAmount: totalAmount };
+      return { ...vendorEntity, invoice: { ...invoice } };
     } catch (error) {
       console.log(error);
       throw error;
@@ -1093,7 +1066,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         businessAreas: { status: status },
       },
     });
-    if (!vendorEntity) throw new NotFoundException('vendor Notfound');
+    if (!vendorEntity) throw new NotFoundException('vendor Not found');
 
     return {
       name: vendorEntity?.basic.name,
@@ -1270,43 +1243,29 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         vendorEntity.areasOfBusinessInterestView = formattedAreaOfBi;
       }
 
-      return vendorEntity;
-    } catch (error) {
-      throw error;
-    }
-  }
-  async getVendorByUserWithPreferntial(
-    userId: string,
-    serviceId: string,
-  ): Promise<VendorsEntity> {
-    try {
-      const vendorEntity = await this.vendorRepository.findOne({
-        select: {
-          id: true,
-          // preferentials: {
-          //   serviceId: true,
-          //   status: true,
-          //   certificateUrl: true,
-          //   certiNumber: true,
-          // },
-          isrVendor: {
-            id: true,
-            businessAreas: { id: true, instanceId: true },
-          },
-        },
-        relations: {
-          isrVendor: { businessAreas: true },
-        },
-        where: {
-          userId: userId,
+      // getting the preferential treatments  if any
+      const keys = this.commonService.getPreferencialServices();
+      const ptResult = await this.ptService.getPreferetialTreatments(keys, userId);
+      if (ptResult.length) {
+        vendorEntity.preferentials = ptResult;
+      }
 
-        },
-      });
       return vendorEntity;
     } catch (error) {
       throw error;
     }
   }
+  async trackApplication(
+    user: any
+  ): Promise<any> {
+    const apps = [];
+    const result = await this.workflowService.getMyApplications(user)
+    for (const row of result) {
+      apps.push({ service: row.service.name, ApplicationNumber: row.applicationNumber, submittedAt: row.submittedAt, status: row.status })
+    }
+    return apps;
+  }
+
   async getVendorByUserWithProfile(
     userId: string,
     serviceId: string,
@@ -2262,4 +2221,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       return true;
     }
   }
+
+
 }

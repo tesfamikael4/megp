@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BpServiceEntity } from '../../../entities/bp-service.entity';
-import { In, Repository } from 'typeorm';
+import { In, Not, Repository } from 'typeorm';
 import { EntityCrudService } from 'src/shared/service';
 import { ServiceKeyEnum } from 'src/shared/enums/service-key.enum';
 
@@ -24,6 +24,14 @@ export class BpServiceService extends EntityCrudService<BpServiceEntity> {
           ServiceKeyEnum.MEDIUM,
           ServiceKeyEnum.MARGINALIZED_GROUP,
         ]),
+      },
+    });
+  }
+  async getPreferentialTreatmentByKeys(keys: string[]): Promise<BpServiceEntity[]> {
+    return await this.serviceRepository.find({
+      select: { id: true, name: true },
+      where: {
+        id: Not(In(keys)),
       },
     });
   }

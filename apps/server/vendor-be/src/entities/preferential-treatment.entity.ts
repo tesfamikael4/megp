@@ -7,7 +7,6 @@ import {
 } from 'typeorm';
 
 import { BpServiceEntity } from './bp-service.entity';
-import { VendorsEntity } from './vendors.entity';
 import { Audit } from 'src/shared/entities';
 
 @Entity({ name: 'preferential_treatments' })
@@ -20,6 +19,7 @@ export class PreferentialTreatmentsEntity extends Audit {
   userId: string;
   @Column({ default: 'Submitted' })
   status: string;
+
 
   @Column({ nullable: true })
   certificateUrl: string;
