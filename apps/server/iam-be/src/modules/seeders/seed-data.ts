@@ -490,14 +490,14 @@ export const account = {
 };
 export const organization = {
   id: 'c7865a67-d289-4671-b264-bc899ef870cb',
-  name: 'Default Organization',
+  name: 'Public Procurement And Disposal Of Assets Authority',
   code: '123456',
   shortName: 'default',
   status: 'ACTIVE',
 };
 export const unit = {
   id: 'bcf2e233-3572-45b3-b104-14023c76173a',
-  name: 'Default Organization',
+  name: 'Public Procurement And Disposal Of Assets Authority',
   code: '123456',
   shortName: 'default',
   status: 'ACTIVE',
