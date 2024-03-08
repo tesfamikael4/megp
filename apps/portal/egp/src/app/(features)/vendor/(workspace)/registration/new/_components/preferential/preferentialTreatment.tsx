@@ -78,10 +78,9 @@ export const PreferentialTreatment: React.FC<Props> = ({
 
       // onFocus: () => clearValidationError(fieldName),
       // onBlur: () => validateField(fieldName),
-      ...lockElements('ppda'),
+      // ...lockElements('preferential'),
     };
   };
-  logger.log(control.getFieldState('preferential', control._formState));
 
   if (isLoading) <LoadingOverlay />;
   return (
