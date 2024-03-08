@@ -95,9 +95,9 @@ export class PostBudgetPlanService extends ExtraCrudService<PostBudgetPlan> {
       const currency = activity.currency;
 
       if (currencyTotalAmounts[currency]) {
-        currencyTotalAmounts[currency] += activity.estimatedAmount;
+        currencyTotalAmounts[currency] += +activity.estimatedAmount;
       } else {
-        currencyTotalAmounts[currency] = activity.estimatedAmount;
+        currencyTotalAmounts[currency] = +activity.estimatedAmount;
       }
     });
 
@@ -270,6 +270,7 @@ export class PostBudgetPlanService extends ExtraCrudService<PostBudgetPlan> {
       relations: {
         postBudgetPlanTimelines: true,
         postProcurementMechanisms: true,
+        budget: true,
       },
     });
 
@@ -283,6 +284,12 @@ export class PostBudgetPlanService extends ExtraCrudService<PostBudgetPlan> {
       if (element.postProcurementMechanisms.length == 0) {
         throw new HttpException(
           `Procurement Method not found for ${element.name} ${element.procurementReference}`,
+          430,
+        );
+      }
+      if (element.budgetId == null) {
+        throw new HttpException(
+          `Budget is not linked for ${element.name} ${element.procurementReference}`,
           430,
         );
       }

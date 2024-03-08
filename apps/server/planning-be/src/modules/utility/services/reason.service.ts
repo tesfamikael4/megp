@@ -1,5 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { EntityCrudService } from 'src/shared/service';
 import { Reason } from 'src/entities/reason.entity';
@@ -34,16 +34,22 @@ export class ReasonService extends EntityCrudService<Reason> {
   }
 
   // remove previous justification reason when they became valid
-  async isValid(objectId: string, type: string, organizationId: string) {
-    const reason = await this.repositoryReason.find({
-      where: {
-        objectId,
-        type,
-        organizationId,
-      },
-    });
-    if (reason) {
-      await this.repositoryReason.delete(reason as any);
+  async isValid(preBudgetPlanActivityId: string, key: string, status: string) {
+    if (status == 'fail') {
+      const count = await this.repositoryReason.count({
+        where: {
+          objectId: preBudgetPlanActivityId,
+          type: key,
+        },
+      });
+      if (count == 0) {
+        throw new HttpException(`Please enter justification for ${key}`, 430);
+      }
+    } else {
+      await this.repositoryReason.softDelete({
+        objectId: preBudgetPlanActivityId,
+        type: key,
+      });
     }
   }
 }

@@ -119,9 +119,9 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
       const currency = activity.currency;
 
       if (currencyTotalAmounts[currency]) {
-        currencyTotalAmounts[currency] += activity.estimatedAmount;
+        currencyTotalAmounts[currency] += +activity.estimatedAmount;
       } else {
-        currencyTotalAmounts[currency] = activity.estimatedAmount;
+        currencyTotalAmounts[currency] = +activity.estimatedAmount;
       }
     });
 
