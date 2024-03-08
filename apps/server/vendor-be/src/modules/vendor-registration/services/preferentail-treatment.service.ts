@@ -8,7 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { In, Not, Repository } from 'typeorm';
 import { EntityCrudService } from 'src/shared/service';
 import { PreferentialTreatmentsEntity } from 'src/entities/preferential-treatment.entity';
-import { CreatePTDto } from '../dto/preferentail-treatment.dto';
+import { CreatePTDto } from '../../preferentials/dto/preferentail-treatment.dto';
 import { WorkflowService } from 'src/modules/bpm/services/workflow.service';
 import {
   CreateWorkflowInstanceDto,
@@ -16,12 +16,14 @@ import {
 } from 'src/modules/handling/dto/workflow-instance.dto';
 import { BusinessProcessService } from 'src/modules/bpm/services/business-process.service';
 import { VendorRegistrationsService } from 'src/modules/vendor-registration/services/vendor-registration.service';
-import { BusinessAreaEntity } from 'src/entities';
+import { BusinessAreaEntity, IsrVendorsEntity } from 'src/entities';
 import { BusinessAreaService } from 'src/modules/vendor-registration/services/business-area.service';
 import { FileService } from 'src/modules/vendor-registration/services/file.service';
 import { ServiceKeyEnum } from 'src/shared/enums/service-key.enum';
 import { ApplicationStatus } from 'src/modules/handling/enums/application-status.enum';
 import { HandlingCommonService } from 'src/modules/handling/services/handling-common-services';
+import { BpServiceService } from 'src/modules/services/services/service.service';
+
 @Injectable()
 export class PreferentailTreatmentService extends EntityCrudService<PreferentialTreatmentsEntity> {
   constructor(
@@ -29,18 +31,19 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
     private readonly ptRepository: Repository<PreferentialTreatmentsEntity>,
     private readonly workflowService: WorkflowService,
     private readonly bpService: BusinessProcessService,
-    private readonly vendorService: VendorRegistrationsService,
+    @InjectRepository(IsrVendorsEntity)
+    private readonly srRepository: Repository<IsrVendorsEntity>,
     private readonly baService: BusinessAreaService,
     private readonly uploaderService: FileService,
     private readonly commonService: HandlingCommonService,
-    // private readonly serviceService: BpServiceService
+    private readonly serviceService: BpServiceService
   ) {
     super(ptRepository);
   }
-  async getPreferetialTreatments(keys: string[], user: any) {
+  async getPreferetialTreatments(keys: string[], userId: string) {
     const result = await this.ptRepository.find({
       relations: { service: true },
-      where: { service: { key: In(keys) }, userId: user.id },
+      where: { service: { key: In(keys) }, userId: userId },
     });
     return result;
   }
@@ -60,7 +63,7 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
     user: any
   ) {
     const response = [];
-    const vendor = await this.vendorService.getIsrVendorByUserId(user.id);
+    const vendor = await this.srRepository.findOne({ where: { userId: user.id } });
     if (!vendor)
       throw new HttpException('First, Register as a vendor', 404);
     const serviceIds = dtos.map((item) => item.serviceId);
@@ -167,9 +170,9 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
     const subdirectory = 'preferential-documents';
     const response = {};
     try {
-      if (attachments?.msmeCerti?.length) {
+      if (attachments.msmeCerti) {
         const certificateUrl = await this.uploaderService.uploadDocuments(
-          attachments.msmeCerti[0],
+          attachments.msmeCerti,
           user,
           subdirectory,
         );
@@ -194,9 +197,9 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
         }
 
       }
-      if (attachments?.ibmCerti?.length) {
+      if (attachments.ibmCerti) {
         const certificateUrl = await this.uploaderService.uploadDocuments(
-          attachments.ibmCerti[0],
+          attachments.ibmCerti,
           user,
           subdirectory,
         );
@@ -216,9 +219,9 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
         }
 
       }
-      if (attachments?.marginalizedCerti?.length) {
+      if (attachments.marginalizedCerti) {
         const certificateUrl = await this.uploaderService.uploadDocuments(
-          attachments.marginalizedCerti[0],
+          attachments.marginalizedCerti,
           user,
           subdirectory,
         );
@@ -290,5 +293,19 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
   }
   async delete(id: string, user: any) {
     return await this.ptRepository.delete({ id: id, userId: user.id });
+  }
+  async getUnregisteredPreferentials(user: any) {
+    const result = await this.ptRepository.find({ relations: { service: true, }, where: { userId: user.id } });
+    let keys = [];
+    for (const item of result) {
+      if (item.service.key == ServiceKeyEnum.MEDIUM
+        || item.service.key == ServiceKeyEnum.MICRO ||
+        item.service.key == ServiceKeyEnum.SMALL) {
+        keys = [...this.commonService.getServiceCatagoryKeys(ServiceKeyEnum.MSME)];
+      }
+      keys.push(item.service.key);
+    }
+    const services = await this.serviceService.getPreferentialTreatmentByKeys(keys);
+    return services;
   }
 }

@@ -25,7 +25,7 @@ import {
   CreatePTDto,
   PTResponse,
   UpdatePTDto,
-} from '../dto/preferentail-treatment.dto';
+} from '../../preferentials/dto/preferentail-treatment.dto';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 const options: EntityCrudOptions = {
   createDto: CreateBusinessAreaDto,
@@ -88,5 +88,10 @@ export class PreferentailTreatmentsController extends EntityCrudController<Prefe
     @CurrentUser() user: any,
   ) {
     return await this.ptService.delete(id, user);
+  }
+
+  @Get('get-unregistered-preferential-services')
+  async getUnregisteredPreferentials(@CurrentUser() user: any) {
+    return await this.ptService.getUnregisteredPreferentials(user);
   }
 }
