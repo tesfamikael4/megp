@@ -17,6 +17,7 @@ import {
   RenewalInvoiceRenewalVendorResponse,
   RenewalInvoiceRenewalVendorRequest,
   GetCertificateInformationResponse,
+  AreasOfBusinessInterestType,
 } from '@/models/vendorRegistration';
 import { PaymentReceiptItem } from '@/shared/schema/paymentReceiptItemSchema';
 import {
@@ -83,6 +84,15 @@ export const vendorRegistrationQuery = vendorRegistrationApi.injectEndpoints({
         // body: data,
       }),
     }),
+    getInvoiceByUserId: builder.query<RenewalInvoiceRenewalVendorResponse, any>(
+      {
+        query: () => ({
+          url: `/vendor-registrations/get-invoice-by-userId`,
+          method: 'GET',
+          // body: data,
+        }),
+      },
+    ),
     getVendorStatus: builder.query<
       {
         status: 'Submitted' | 'Draft' | 'Initial' | 'Completed' | 'Approved';
@@ -196,6 +206,13 @@ export const vendorRegistrationQuery = vendorRegistrationApi.injectEndpoints({
         };
       },
     }),
+    addAdditionalService: builder.mutation<any, AreasOfBusinessInterestType[]>({
+      query: (data) => ({
+        url: `vendor-registrations/add-service`,
+        method: 'POST',
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -251,6 +268,8 @@ export const {
   useGetCertificateInformationQuery,
   useGetVendorStatusQuery,
   useGetApprovedVendorInfoQuery,
+  useAddAdditionalServiceMutation,
+  useGetInvoiceByUserIdQuery,
 } = vendorRegistrationQuery;
 
 export const {

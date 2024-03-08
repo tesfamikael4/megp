@@ -111,6 +111,11 @@ function Page() {
       NotificationService.successNotification('Payed Successfully!');
       router.push('preferential');
     }
+    if (uploadFileInfo.error) {
+      NotificationService.requestErrorNotification(
+        'Failed to save Payment receipt',
+      );
+    }
     return () => {};
   }, [invoiceInfo.data, uploadFileInfo.data]);
 
