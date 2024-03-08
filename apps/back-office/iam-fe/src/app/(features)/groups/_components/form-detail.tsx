@@ -60,14 +60,17 @@ export function FormDetail({ mode }: FormDetailProps) {
       const result = await create({
         ...data,
         organizationId: organizationId,
-      });
+      }).unwrap();
 
       if ('data' in result) {
         router.push(`/groups/${result?.data?.id}`);
       }
       notify('Success', 'Group created successfully');
     } catch (err) {
-      notify('Error', 'Errors in creating Group.');
+      notify(
+        'Error',
+        `${err.data.message.toLowerCase().startsWith('duplicate') ? 'Group already exist' : 'Errors in creating Group.'}`,
+      );
     }
   };
   const onUpdate = async (data) => {
@@ -78,8 +81,11 @@ export function FormDetail({ mode }: FormDetailProps) {
         organizationId: organizationId,
       }).unwrap();
       notify('Success', 'Group updated successfully');
-    } catch {
-      notify('Error', 'Errors in updating group.');
+    } catch (err) {
+      notify(
+        'Error',
+        `${err.data.message.toLowerCase().startsWith('duplicate') ? 'Group already exist' : 'Errors in creating Group.'}`,
+      );
     }
   };
   const onDelete = async () => {

@@ -21,7 +21,7 @@ export default function UserDetailPage() {
     const permission =
       user &&
       user?.organizations?.[0]?.permissions.filter((p) => {
-        return p.key === 'iam:user';
+        return p === 'iam:user';
       });
 
     setPermissions(permission);

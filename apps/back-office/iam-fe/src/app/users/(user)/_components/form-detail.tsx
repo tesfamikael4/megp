@@ -13,7 +13,7 @@ import {
 import { useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { User } from '@/models/user/user';
-import { logger, notify } from '@megp/core-fe';
+import { notify } from '@megp/core-fe';
 import { useAuth } from '@megp/auth';
 
 interface FormDetailProps {
@@ -31,11 +31,11 @@ const userSchema: ZodType<Partial<User>> = z.object({
     .string()
 
     .min(1, { message: 'First Name is required' })
-    .regex(/^[a-zA-Z\s]+$/, { message: 'Only texts are allowed' }),
+    .regex(/^[a-zA-Z\s]+$/, { message: 'Only Alphabetic letters are allowed' }),
   lastName: z
     .string()
     .min(1, { message: 'Last Name is required' })
-    .regex(/^[a-zA-Z\s]+$/, { message: 'Only texts are allowed' }),
+    .regex(/^[a-zA-Z\s]+$/, { message: 'Only Alphabetic letters are allowed' }),
   email: z
     .string()
     .email({ message: 'Must be a valid email' })

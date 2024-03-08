@@ -24,12 +24,12 @@ const userSchema: ZodType<Partial<User>> = z.object({
   firstName: z
     .string()
     .min(1, { message: 'First Name is required' })
-    .regex(/^[a-zA-Z\s]+$/, { message: 'Only texts are allowed' }),
+    .regex(/^[a-zA-Z\s]+$/, { message: 'Only Alphabetic letters are allowed' }),
 
   lastName: z
     .string()
     .min(1, { message: 'Last Name is required' })
-    .regex(/^[a-zA-Z\s]+$/, { message: 'Only texts are allowed' }),
+    .regex(/^[a-zA-Z\s]+$/, { message: 'Only Alphabetic letters are allowed' }),
   email: z.union([
     z.literal(''),
     z.string().email({ message: 'Email must be a valid email.' }),
