@@ -52,7 +52,7 @@ export default function Invitation({ user }: invitationProps) {
         'Error',
         `${
           err.data.message === 'organization_is_not_active'
-            ? 'Organization is not active '
+            ? 'The organization needs to be activated before inviting the administrator'
             : 'Error encountered while sending invitation link to the user.'
         }`,
       );
