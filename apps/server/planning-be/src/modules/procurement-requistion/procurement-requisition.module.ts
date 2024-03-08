@@ -11,6 +11,7 @@ import { ProcurementMechanismService } from './services/procurement-mechanism.se
 import { ProcurementRequisitionTimelineService } from './services/procurement-requisition-timeline.service';
 import { MinIOModule } from 'src/shared/min-io/min-io.module';
 import {
+  PostBudgetPlanActivity,
   ProcurementMechanism,
   ProcurementRequisition,
   ProcurementRequisitionDocument,
@@ -33,6 +34,7 @@ import { ProcurementRequisitionService } from './services/procurement-requisitio
       ProcurementRequisitionTimeline,
       ProcurementRequisitionTechnicalTeam,
       ProcurementMechanism,
+      PostBudgetPlanActivity,
     ]),
     ClientsModule.register([
       {

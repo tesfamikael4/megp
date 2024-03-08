@@ -1,4 +1,11 @@
-import { Body, Controller, Post, UseInterceptors } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  UseInterceptors,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ProcurementRequisitionService } from '../services/procurement-requisition.service';
 import {
@@ -46,5 +53,11 @@ export class ProcurementRequisitionController extends EntityCrudController<Procu
       itemData,
       user,
     );
+  }
+
+  @Get('get-analytics/:id')
+  @ApiPaginatedResponse(ProcurementRequisition)
+  async getAnalytics(@Param('id') id: string) {
+    return await this.procurementRequisitionService.getAnalytics(id);
   }
 }
