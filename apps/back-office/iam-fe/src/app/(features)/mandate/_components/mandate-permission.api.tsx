@@ -117,7 +117,7 @@ const AddPermission = () => {
         onRequestChange={onRequestChange}
         isSaving={isSaving}
         isLoading={isLoading}
-        total={currentAssigned.length ?? 0}
+        total={mandatePermission?.total ?? 0}
         collapsed={false}
       />
       <Modal

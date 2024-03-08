@@ -119,7 +119,7 @@ const AddPermissionModal = () => {
         data={currentAssigned ? currentAssigned : []}
         isSaving={isSaving}
         isLoading={isLoading}
-        total={currentAssigned.length ?? 0}
+        total={rolePermision?.total ?? 0}
         onRequestChange={onRequestChange}
         readOnly={false}
         collapsed={true}
