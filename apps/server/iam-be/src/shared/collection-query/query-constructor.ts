@@ -179,7 +179,12 @@ const applyOrderBy = <T>(
   orderBy: Order[],
 ) => {
   orderBy.forEach(({ column, direction = 'ASC', nulls }) => {
-    queryBuilder.addOrderBy(`${aggregate}.${column}`, direction, nulls);
+    if (column.includes('.')) {
+      const [relation, field] = column.split('.');
+      queryBuilder.addOrderBy(`${relation}.${field}`, direction, nulls);
+    } else {
+      queryBuilder.addOrderBy(`${aggregate}.${column}`, direction, nulls);
+    }
   });
 };
 
