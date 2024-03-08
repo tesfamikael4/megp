@@ -44,7 +44,7 @@ export class PostBudgetPlanDisbursementService extends ExtraCrudService<PostBudg
       if (+act.estimatedAmount < totalAmount) {
         throw new HttpException(
           'Disbursement amount is greater than budget amount',
-          400,
+          430,
         );
       }
 

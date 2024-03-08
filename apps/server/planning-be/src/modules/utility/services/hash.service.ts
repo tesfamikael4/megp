@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { createHash } from 'crypto';
 
 @Injectable()
-export class hashService {
+export class HashService {
   hashData(data: any) {
     return createHash('sha-256').update(JSON.stringify(data)).digest('hex');
   }
