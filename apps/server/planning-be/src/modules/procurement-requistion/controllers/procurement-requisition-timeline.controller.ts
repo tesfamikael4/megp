@@ -1,4 +1,4 @@
-import { Controller } from '@nestjs/common';
+import { Body, Controller, Post, Req } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ProcurementRequisitionTimeline } from 'src/entities';
 import { ExtraCrudController } from 'src/shared/controller';
@@ -24,5 +24,12 @@ export class ProcurementRequisitionTimelineController extends ExtraCrudControlle
     private readonly procurementRequisitionTimelineService: ProcurementRequisitionTimelineService,
   ) {
     super(procurementRequisitionTimelineService);
+  }
+  @Post('bulk-create')
+  async bulkCreate(@Body() timelines: any, @Req() req: any) {
+    return this.procurementRequisitionTimelineService.bulkCreate(
+      timelines,
+      req,
+    );
   }
 }

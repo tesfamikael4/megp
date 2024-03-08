@@ -18,6 +18,9 @@ export class CreateProcurementRequisitionDto {
   userReference: string;
 
   @ApiProperty()
+  preBudgetPlanId: string;
+
+  @ApiProperty()
   @IsEnum(ProcurementApplication, {
     message: `procurementApplication must be one of the following values:${ProcurementApplication.AUCTIONING},${ProcurementApplication.TENDERING}, ${ProcurementApplication.PURCHASING}`,
   })

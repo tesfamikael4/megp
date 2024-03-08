@@ -27,7 +27,7 @@ export class ProcurementMechanism extends OrgAudit {
   donor: string[];
 
   @Column({ type: 'jsonb' })
-  targetGroup: string[];
+  targetGroup: any;
 
   @Column({ default: true })
   isOnline: boolean;

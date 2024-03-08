@@ -12,13 +12,14 @@ import {
 
 import { OrgAudit } from 'src/shared/entities/audit.entity';
 import { ProcurementApplication } from 'src/shared/domain';
-import { BudgetCodeResponse } from 'src/shared/entities';
 import { ProcurementMechanism } from './procurement-mechanism.entity';
 import { ProcurementRequisitionDocument } from './procurement-requisition-document.entity';
 import { ProcurementRequisitionItem } from './procurement-requisition-item.entity';
 import { ProcurementRequisitionTechnicalTeam } from './procurement-requisition-technical-team.entity';
 import { ProcurementRequisitionTimeline } from './procurement-requisition-timeline.entity';
 import { Budget } from './budget.entity';
+import { ProcurementRequisitionStatusEnum } from 'src/shared/enums';
+import { PostBudgetPlan } from './post-budget-plan.entity';
 @Entity({ name: 'procurement_requisitions' })
 @Unique(['procurementReference', 'deletedAt'])
 export class ProcurementRequisition extends OrgAudit {
@@ -69,6 +70,16 @@ export class ProcurementRequisition extends OrgAudit {
   @Column({ nullable: true })
   budgetId: string;
 
+  @Column({ nullable: true })
+  postBudgetPlanId: string;
+
+  @ManyToOne(
+    () => PostBudgetPlan,
+    (postBudgetPlan) => postBudgetPlan.procurementRequisitions,
+  )
+  @JoinColumn({ name: 'postBudgetPlanId' })
+  public postBudgetPlan: PostBudgetPlan;
+
   @ManyToOne(() => Budget, (budget) => budget.procurementRequisitions)
   @JoinColumn({ name: 'budgetId' })
   public budget?: Budget;
@@ -88,8 +99,12 @@ export class ProcurementRequisition extends OrgAudit {
   @Column({ nullable: true })
   remark: string;
 
-  @Column({ default: 'Draft' })
-  status: string;
+  @Column({
+    type: 'enum',
+    enum: ProcurementRequisitionStatusEnum,
+    default: ProcurementRequisitionStatusEnum.DRAFT,
+  })
+  public status: string;
 
   @OneToMany(
     () => ProcurementRequisitionDocument,
@@ -139,13 +154,13 @@ export class ProcurementRequisition extends OrgAudit {
       onDelete: 'CASCADE',
     },
   )
-  procurementMechanisms: ProcurementMechanism[];
+  procurementMechanisms: ProcurementMechanism;
   @BeforeInsert()
   generateRandomNumbers(): void {
     const randomNumUser = () => Math.floor(100000 + Math.random() * 900000);
     this.userReference = this.userReference
       ? this.userReference
-      : (this.userReference = `uREF-${randomNumUser()}`);
+      : (this.userReference = `REF-${randomNumUser()}`);
     this.procurementReference = this.procurementReference
       ? this.procurementReference
       : (this.procurementReference = `uREF-${randomNumUser()}`);
