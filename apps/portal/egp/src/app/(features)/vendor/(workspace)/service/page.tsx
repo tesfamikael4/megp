@@ -12,7 +12,6 @@ import NewRegistrationLanding from './_components/new-registration-landing';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
 const ServiceLayout = () => {
-  // const { data, isLoading, isSuccess, isError } = useGetVendorStatusQuery({});
   const { data, isLoading, isError, error } = useGetVendorInfoQuery(
     {},
     { refetchOnMountOrArgChange: true },
@@ -24,9 +23,6 @@ const ServiceLayout = () => {
     error: vendorError,
   } = useGetVendorQuery({}, { refetchOnMountOrArgChange: true });
   const router = useRouter();
-
-  console.log(vendor, 'vendor');
-  console.log(error, 'data');
 
   if (isLoading || vendorLoading) return <LoadingOverlay visible={isLoading} />;
   if (
@@ -46,9 +42,14 @@ const ServiceLayout = () => {
         return router.push('/vendor/registration/new/detail');
     }
   } else {
-    if (data.Status === 'Submitted') return <SubmittedApplication />;
-    else if (data.Status === 'Adjustment')
-      return router.push('/vendor/registrations/track-application');
+    if (
+      data.Status === 'Adjustment' ||
+      data.vendorStatus === 'Adjustment' ||
+      (data.services?.length &&
+        data.services.some((service) => service.status === 'Adjustment'))
+    )
+      return router.push('/vendor/registration/track-applications');
+    else if (data.Status === 'Submitted') return <SubmittedApplication />;
   }
 };
 
