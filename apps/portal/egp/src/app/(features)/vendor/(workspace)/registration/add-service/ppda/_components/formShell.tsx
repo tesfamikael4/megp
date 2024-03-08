@@ -5,21 +5,14 @@ import { useRouter } from 'next/navigation';
 import { Control, RegisterOptions, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useAddFormMutation } from '../../../_api/query';
+import {
+  useAddAdditionalServiceMutation,
+  useAddFormMutation,
+} from '../../../_api/query';
 import { NotificationService } from '@/app/(features)/vendor/_components/notification';
-import { FormData } from '@/models/vendorRegistration';
-import { ExtendedRegistrationReturnType } from '../detail/formShell';
-import AreasOfBusinessInterest from './areasOfBusinessInterest';
-import { usePrivilege } from '../../_context/privilege-context';
+import { ExtendedRegistrationReturnType } from '../../../new/_components/detail/formShell';
+import { AreasOfBusinessInterest } from './areasOfBusinessInterest';
 
-export interface PassFormDataProps {
-  register: (
-    name: any,
-    type?: 'input' | 'select' | 'checkbox' | 'file',
-    options?: RegisterOptions<FormData, any> | undefined,
-  ) => ExtendedRegistrationReturnType;
-  control: Control<FormData, any>;
-}
 export const lineOfBusinessSchema = z.object({
   id: z
     .string()
@@ -27,6 +20,7 @@ export const lineOfBusinessSchema = z.object({
 });
 
 export const areasOfBusinessInterestSchema = z.object({
+  category: z.string().min(2, { message: 'Category is required' }),
   lineOfBusiness: z
     .array(lineOfBusinessSchema)
     .refine((arr) => arr.length > 0, {
@@ -43,11 +37,20 @@ export const formDataSchema = z.object({
     }),
 });
 
+export interface PassFormDataProps {
+  register: (
+    name: any,
+    type?: 'input' | 'select' | 'checkbox' | 'file',
+    options?: RegisterOptions<z.infer<typeof formDataSchema>, any> | undefined,
+  ) => ExtendedRegistrationReturnType;
+  control: Control<z.infer<typeof formDataSchema>, any>;
+}
+
 export const AreasOfBusinessInterestForm = ({
   initialValues,
   vendorInfo,
 }: {
-  initialValues: FormData;
+  initialValues: z.infer<typeof formDataSchema>;
   vendorInfo: {
     userId: string; //session
     status: string;
@@ -65,30 +68,14 @@ export const AreasOfBusinessInterestForm = ({
     control,
     trigger,
     clearErrors,
-  } = useForm<FormData>({
+  } = useForm<z.infer<typeof formDataSchema>>({
     resolver: zodResolver(formDataSchema),
     defaultValues: initialValues,
   });
 
   const router = useRouter();
-  const [save, saveValues] = useAddFormMutation();
-  const { checkAccess, lockElements, updateAccess } = usePrivilege();
-
-  useEffect(() => {
-    return () => {
-      updateAccess(vendorInfo.level);
-    };
-  }, [updateAccess, vendorInfo.level]);
-  useEffect(() => {
-    if (saveValues.isSuccess) {
-      NotificationService.successNotification('Submitted Successfully!');
-      router.push(`payment`);
-    }
-    if (saveValues.isError) {
-      NotificationService.requestErrorNotification('Error on Request');
-    }
-    return () => {};
-  }, [saveValues.isSuccess, saveValues.isError, router]);
+  const [saveAdditionalService, { isLoading: isSaving }] =
+    useAddAdditionalServiceMutation({});
 
   const extendedRegister = (
     name: any,
@@ -118,26 +105,32 @@ export const AreasOfBusinessInterestForm = ({
           ? async (e) => await setValue(name, e)
           : fieldRegister.onChange,
       error: fieldState.error?.message,
-      ...lockElements('ppda'),
     };
   };
 
-  const onSubmit = (data: typeof formState.defaultValues) => {
-    save({
-      data: {
-        ...initialValues,
-        areasOfBusinessInterest: getValues().areasOfBusinessInterest,
-        initial: {
-          ...vendorInfo,
-          level: 'payment',
-        },
-      },
-    });
+  const onSubmit = async (values) => {
+    try {
+      await saveAdditionalService(values.areasOfBusinessInterest)
+        .unwrap()
+        .then((response) => {
+          if (response && response.length > 0) {
+            if (response.some((item) => item.canPay)) {
+              NotificationService.successNotification(
+                'PPDA successfully created',
+              );
+              router.push('payment');
+            }
+          }
+        });
+    } catch (error) {
+      NotificationService.requestErrorNotification(error.data.message);
+    }
   };
+
   return (
     <Box className="p-2 w-full relative">
       <LoadingOverlay
-        visible={saveValues.isLoading}
+        visible={isSaving}
         overlayProps={{ radius: 'sm', blur: 2 }}
       />
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -146,24 +139,16 @@ export const AreasOfBusinessInterestForm = ({
             name="areasOfBusinessInterest"
             control={control}
             register={extendedRegister}
-            adjustment={checkAccess('ppda')}
+            adjustment={vendorInfo?.status === 'Adjustment' ? false : true}
           />
         </Flex>
-        {watch('areasOfBusinessInterest') &&
-          watch('areasOfBusinessInterest').length > 0 && (
-            <Flex className="mt-10 justify-end gap-2">
-              {
-                <Button onClick={() => router.push('detail')} variant="outline">
-                  Back
-                </Button>
-              }
-              {checkAccess('ppda') ? (
-                <Button type="submit">Save & Continue</Button>
-              ) : (
-                <Button onClick={() => router.push('payment')}>Continue</Button>
-              )}
-            </Flex>
+        <Flex justify={'flex-end'} mt={'md'}>
+          {watch('areasOfBusinessInterest')?.length > 0 && (
+            <Button type="submit" size="sm" disabled={isSaving}>
+              Add Service
+            </Button>
           )}
+        </Flex>
       </form>
     </Box>
   );

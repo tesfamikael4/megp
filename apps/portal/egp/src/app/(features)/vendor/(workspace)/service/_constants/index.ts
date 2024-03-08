@@ -24,6 +24,6 @@ export const services: { title; description; link }[] = [
   {
     title: 'Add Additional Services',
     description: 'Renew registration',
-    link: '/vendor/registration/add-service',
+    link: '/vendor/registration/add-service/ppda',
   },
 ];

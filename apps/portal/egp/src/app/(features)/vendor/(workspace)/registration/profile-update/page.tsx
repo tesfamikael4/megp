@@ -109,6 +109,7 @@ export default function Page() {
                     previousPPDARegistrationCertificate: '',
                   },
               paymentReceipt: requestInfo.data.paymentReceipt,
+              preferential: [],
             }}
           />
         ) : (
