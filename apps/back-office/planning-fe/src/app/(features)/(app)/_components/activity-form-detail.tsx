@@ -322,6 +322,7 @@ export const FormDetail = ({
             withAsterisk
             disabled={method === 'Purchased Orders' || disableFields}
             placeholder="Estimated Amount"
+            type="number"
           />
           <MultiSelect
             label="Tag Classification"

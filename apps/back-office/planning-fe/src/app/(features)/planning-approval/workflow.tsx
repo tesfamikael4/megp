@@ -268,7 +268,7 @@ export function WorkflowHandling({
                                 user?.organizations?.[0].userId,
                                 step.id,
                               ) &&
-                              (roles.some(
+                              (roles?.some(
                                 (role) =>
                                   role?.id ==
                                   currentStep?.step.approvers?.[0]?.id,

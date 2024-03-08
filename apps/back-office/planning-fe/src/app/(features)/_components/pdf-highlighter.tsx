@@ -219,7 +219,10 @@ export function PDFHighlighter({
         <Sidebar
           highlights={
             data?.items?.map((highlight) => ({
-              user: highlight.metaData.fullName,
+              from: {
+                fullName: highlight.metaData.fullName,
+                id: highlight.metaData.userId,
+              },
               highlight: {
                 ...highlight.metaData?.highlight,
                 id: highlight.id,

@@ -1,8 +1,18 @@
-import { ActionIcon, Alert, Box, Menu } from '@mantine/core';
-import { IconChevronDown, IconTrash } from '@tabler/icons-react';
+'use client';
+
+import { ActionIcon, Alert, Box, Menu, Text } from '@mantine/core';
+import { modals } from '@mantine/modals';
+import { useAuth } from '@megp/auth';
+import {
+  IconArrowForwardUp,
+  IconChevronDown,
+  IconTrash,
+} from '@tabler/icons-react';
 import type { ReactElement } from 'react';
 import React from 'react';
 import type { IHighlight } from 'react-pdf-highlighter';
+import { useDeleteMutation } from '../(app)/_api/note.api';
+import { notify } from '@megp/core-fe';
 
 const updateHash = (highlight: IHighlight) => {
   document.location.hash = `highlight-${highlight.id}`;
@@ -11,8 +21,34 @@ const updateHash = (highlight: IHighlight) => {
 export function Sidebar({
   highlights,
 }: {
-  highlights: { highlight: IHighlight; user: string }[];
+  highlights: { highlight: IHighlight; from: Record<string, string> }[];
 }): ReactElement {
+  const { user } = useAuth();
+  const [remove] = useDeleteMutation();
+
+  const openDeleteModal = (commentId: string) => {
+    modals.openConfirmModal({
+      title: `Delete Comment`,
+      centered: true,
+      children: (
+        <Text size="sm">Are you sure you want to delete this Comment</Text>
+      ),
+      labels: { confirm: 'Yes', cancel: 'No' },
+      confirmProps: { color: 'red' },
+      onConfirm: () => {
+        onDelete(commentId);
+      },
+    });
+  };
+
+  const onDelete = async (commentId: string) => {
+    try {
+      await remove(commentId).unwrap();
+      notify('Success', 'Deleted Successfully');
+    } catch (err) {
+      notify('Error', 'Something went wrong');
+    }
+  };
   return (
     <div className="p-5 border-r" style={{ width: '25vw' }}>
       <div className="description" style={{ padding: '1rem' }}>
@@ -30,7 +66,7 @@ export function Sidebar({
           >
             <div className="border rounded p-2 mr-5 mb-2 cursor-pointer bg-white">
               <p className="border-l-4 px-2 border-[rgb(77,74,184)] font-semibold text-sm flex justify-between">
-                {highlight?.user}
+                {highlight?.from.fullName}
                 <Menu>
                   <Menu.Target>
                     <ActionIcon variant="subtle">
@@ -38,12 +74,18 @@ export function Sidebar({
                     </ActionIcon>
                   </Menu.Target>
                   <Menu.Dropdown>
-                    <Menu.Item
-                      color="red"
-                      leftSection={<IconTrash size={14} />}
-                    >
-                      Delete
+                    <Menu.Item leftSection={<IconArrowForwardUp size={14} />}>
+                      Reply
                     </Menu.Item>
+                    {highlight.from.id === user?.id && (
+                      <Menu.Item
+                        color="red"
+                        leftSection={<IconTrash size={14} />}
+                        onClick={() => openDeleteModal(highlight.highlight.id)}
+                      >
+                        Delete
+                      </Menu.Item>
+                    )}
                   </Menu.Dropdown>
                 </Menu>
               </p>
@@ -58,9 +100,7 @@ export function Sidebar({
                   </p>
                 </Alert>
               ) : null}
-              <p className="mt-2 text-xs">
-                {highlight?.highlight?.comment?.text}
-              </p>
+
               {/* Highlight image */}
               {highlight?.highlight?.content?.image ? (
                 <div
@@ -78,6 +118,41 @@ export function Sidebar({
                   </p>
                 </div>
               ) : null}
+              <p className="mt-2 text-xs">
+                {highlight?.highlight?.comment?.text}
+              </p>
+
+              {/* reply */}
+              {/* <div className="ml-3 p-2">
+                <div className="border rounded p-2">
+                  <p className="border-l-4 px-2 border-[rgb(77,74,184)] font-semibold text-xs flex justify-between">
+                    {highlight?.from.fullName}
+                    {highlight.from.id === user?.id && (
+                      <Menu>
+                        <Menu.Target>
+                          <ActionIcon variant="subtle">
+                            <IconChevronDown color="gray" size={14} />
+                          </ActionIcon>
+                        </Menu.Target>
+                        <Menu.Dropdown>
+                          <Menu.Item
+                            color="red"
+                            leftSection={<IconTrash size={14} />}
+                            onClick={() =>
+                              openDeleteModal(highlight.highlight.id)
+                            }
+                          >
+                            Delete
+                          </Menu.Item>
+                        </Menu.Dropdown>
+                      </Menu>
+                    )}
+                  </p>
+                  <p className="mt-2 text-xs">
+                    {highlight?.highlight?.comment?.text}
+                  </p>
+                </div>
+              </div> */}
             </div>
           </Box>
         ))}
