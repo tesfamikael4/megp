@@ -83,7 +83,8 @@ export interface FormData {
   }[];
   areasOfBusinessInterest: AreasOfBusinessInterestType[] | [];
   preferential: PreferentialTreatment[] | [];
-  invoice: InvoiceData[] | [];
+  //TODO: Check this later
+  invoice: InvoiceData | null;
   supportingDocuments: {
     businessRegistration_IncorporationCertificate: string;
     mRA_TPINCertificate: string;
@@ -317,7 +318,7 @@ export type PostForRenewalVendorRequest = {
 
 export type RenewalInvoiceRenewalVendorResponse = {
   total: number;
-  items: InvoiceData[];
+  items: InvoiceData;
   businessAreas: {
     id: string;
     vendorId: string;

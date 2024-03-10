@@ -8,35 +8,32 @@ import { useReactToPrint } from 'react-to-print';
 export default function InvoiceTemplate({
   invoiceData,
 }: {
-  invoiceData: InvoiceData[];
+  invoiceData: InvoiceData;
 }) {
   const data = {
-    id: invoiceData[0].id ?? '',
-    instanceId: invoiceData[0].instanceId ?? '',
-    applicationNo: invoiceData[0].applicationNo ?? '',
-    pricingId: invoiceData[0].pricingId ?? '',
-    taskName: invoiceData[0].taskName ?? '',
-    taskId: invoiceData[0].taskId ?? '',
-    serviceId: invoiceData[0].serviceId ?? '',
-    serviceName: invoiceData,
-    payerName: invoiceData[0].payerName ?? '',
-    userId: invoiceData[0].userId ?? '',
-    payToAccNo: invoiceData[0].payToAccNo ?? '',
-    payToAccName: invoiceData[0].payToAccName ?? '',
-    payToBank: invoiceData[0].payToBank ?? '',
-    amount:
-      invoiceData.reduce(
-        (sum, item) => sum + (parseInt(item.amount) || 0),
-        0,
-      ) ?? '',
-    createdOn: invoiceData[0].createdOn ?? '',
-    paymentStatus: invoiceData[0].paymentStatus ?? '',
-    remark: invoiceData[0].remark ?? '',
-    attachment: invoiceData[0].attachment ?? '',
-    expired: invoiceData[0].expired ?? '',
+    id: invoiceData.id ?? '',
+    instanceId: invoiceData.instanceId ?? '',
+    applicationNo: invoiceData.applicationNo ?? '',
+    pricingId: invoiceData.pricingId ?? '',
+    taskName: invoiceData.taskName ?? '',
+    refNumber: invoiceData.refNumber,
+    taskId: invoiceData.taskId ?? '',
+    serviceId: invoiceData.serviceId ?? '',
+    serviceName: invoiceData.serviceName ?? '',
+    payerName: invoiceData.payerName ?? '',
+    userId: invoiceData.userId ?? '',
+    payToAccNo: invoiceData.payToAccNo ?? '',
+    payToAccName: invoiceData.payToAccName ?? '',
+    payToBank: invoiceData.payToBank ?? '',
+    amount: invoiceData.amount ?? 0,
+    createdOn: invoiceData.createdOn ?? '',
+    paymentStatus: invoiceData.paymentStatus ?? '',
+    remark: invoiceData.remark ?? '',
+    attachment: invoiceData.attachment ?? '',
+    expired: invoiceData.expired ?? '',
   };
 
-  const date = new Date(invoiceData[0].createdOn);
+  const date = new Date(invoiceData.createdOn);
 
   // Convert the date to a desired format, e.g., "YYYY-MM-DD HH:mm:ss"
   const invoiceDate = date.toLocaleString('en-US', {
@@ -53,7 +50,7 @@ export default function InvoiceTemplate({
     content: () => componentRef.current,
   });
 
-  if (invoiceData.length <= 0) {
+  if (!invoiceData) {
     return <></>;
   }
 
@@ -91,7 +88,7 @@ export default function InvoiceTemplate({
           <div className="flex justify-between items-end p-4 flex-col gap-4  ">
             <div className="flex w-full items-center justify-center">
               <p className=" text-sm font-bold">
-                INVOICE <span className=" text-blue-600">#{data.id}</span>
+                INVOICE <span className=" text-blue-600">{data.refNumber}</span>
               </p>
             </div>
             <div className="flex w-full items-center justify-between">
@@ -124,7 +121,7 @@ export default function InvoiceTemplate({
                   </tr>
                 </thead>
                 <tbody>
-                  {invoiceData?.[0]?.paymentDetail?.map((item, index) => (
+                  {invoiceData?.paymentDetail?.map((item, index) => (
                     <tr key={index}>
                       <td className="border p-2 text-center">{index + 1}</td>
                       <td className="border p-2 items-center">
@@ -137,11 +134,7 @@ export default function InvoiceTemplate({
                     <td></td>
                     <td className="p-2 items-center">Total</td>
                     <td className="p-2 border text-center">
-                      $
-                      {invoiceData.reduce(
-                        (sum, item) => sum + (parseInt(item.amount) || 0),
-                        0,
-                      )}
+                      ${invoiceData.amount}
                     </td>
                   </tr>
                 </tbody>

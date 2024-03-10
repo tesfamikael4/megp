@@ -142,9 +142,7 @@ function Page() {
               </Flex>
             </form>
             <Flex className="min-w-1/2 flex-col border w-1/2">
-              {data?.items && data?.items?.length > 0 && (
-                <InvoiceTemplate invoiceData={data?.items} />
-              )}
+              {data?.items && <InvoiceTemplate invoiceData={data?.items} />}
             </Flex>
           </Flex>
         </Box>
