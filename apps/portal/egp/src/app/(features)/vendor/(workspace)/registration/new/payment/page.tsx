@@ -79,15 +79,8 @@ function Page() {
   }, [invoiceInfo.data]);
 
   useEffect(() => {
-    if (
-      invoiceInfo.data &&
-      Array.isArray(invoiceInfo.data?.invoice) &&
-      invoiceInfo.data?.invoice.length > 0
-    ) {
-      setValue(
-        'invoiceId',
-        invoiceInfo.data?.invoice.map((i) => i.id).join(',') ?? '',
-      );
+    if (invoiceInfo.data && invoiceInfo?.data?.invoice) {
+      setValue('invoiceId', invoiceInfo?.data?.invoice.id ?? '');
       setValue(
         'serviceId',
         invoiceInfo.data?.paymentReceipt?.attachment === ''
@@ -133,7 +126,7 @@ function Page() {
   if (invoiceInfo.isError) {
     return null;
   }
-  if (!invoiceInfo.data?.invoice || invoiceInfo.data?.invoice?.length === 0) {
+  if (!invoiceInfo.data?.invoice) {
     return router.push('preferential');
   }
 
@@ -155,7 +148,7 @@ function Page() {
                 value={
                   invoiceArraySchema.safeParse(invoiceInfo.data?.invoice)
                     .success
-                    ? invoiceInfo.data?.invoice[0].id
+                    ? invoiceInfo.data?.invoice.id
                     : ''
                 }
                 hidden={true}
@@ -165,7 +158,7 @@ function Page() {
                 value={
                   invoiceArraySchema.safeParse(invoiceInfo.data?.invoice)
                     .success
-                    ? invoiceInfo.data?.invoice[0].serviceId
+                    ? invoiceInfo.data?.invoice.serviceId
                     : ''
                 }
                 hidden={true}
@@ -202,10 +195,9 @@ function Page() {
             </Flex>
           </form>
           <Flex className="flex-col border w-1/2">
-            {invoiceInfo.data?.invoice &&
-              invoiceInfo.data?.invoice?.length > 0 && (
-                <InvoiceTemplate invoiceData={invoiceInfo.data?.invoice} />
-              )}
+            {invoiceInfo.data?.invoice && (
+              <InvoiceTemplate invoiceData={invoiceInfo.data?.invoice} />
+            )}
           </Flex>
         </Flex>
       </Box>

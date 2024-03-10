@@ -96,7 +96,7 @@ export default function Page() {
                   : requestInfo.data.areasOfBusinessInterest,
               invoice:
                 requestInfo.data.invoice == null
-                  ? []
+                  ? null
                   : requestInfo.data.invoice,
               supportingDocuments: requestInfo.data.supportingDocuments ?? {
                 businessRegistration_IncorporationCertificate: '',

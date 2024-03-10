@@ -16,6 +16,7 @@ import {
   IconFileDescription,
   IconPlus,
 } from '@tabler/icons-react';
+import { AccordionCard } from '../../_components/accordion-card';
 
 export const groceries = [
   {
@@ -49,27 +50,6 @@ export const groceries = [
       'You have the capability to manage multiple business entities under your account. Access the Lorem Ipsum feature to retrieve profiles of these entities efficiently. Utilize this feature to view and manage the details and statuses of all associated entities conveniently. Stay organized by accessing comprehensive profiles for each business entity within your account. Ensure seamless management and oversight of all entities through this user-friendly feature. Utilize the Lorem Ipsum tool to access and review entity profiles with ease.',
   },
 ];
-
-const AccordionCard = ({ icon, value, description }) => {
-  return (
-    <Accordion.Item value={value}>
-      <Accordion.Control
-        className="pl-0"
-        icon={icon}
-        styles={{
-          icon: {
-            color: '#40C057',
-          },
-        }}
-      >
-        {value}
-      </Accordion.Control>
-      <Accordion.Panel c="dimmed" className="pl-5">
-        {description}
-      </Accordion.Panel>
-    </Accordion.Item>
-  );
-};
 
 function Dashboard() {
   return (

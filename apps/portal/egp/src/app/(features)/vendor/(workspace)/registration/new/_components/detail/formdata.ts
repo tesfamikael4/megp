@@ -40,7 +40,7 @@ export const formData: GetFormResponse = {
   beneficialOwnership: [],
   bankAccountDetails: [],
   areasOfBusinessInterest: [],
-  invoice: [],
+  invoice: null,
   preferential: [],
   supportingDocuments: {
     businessRegistration_IncorporationCertificate: '',

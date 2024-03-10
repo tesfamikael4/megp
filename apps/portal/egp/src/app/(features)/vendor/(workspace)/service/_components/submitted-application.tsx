@@ -16,7 +16,7 @@ export const SubmittedApplication = () => {
   const { initials, color } = processCompanyName(data?.basic?.name);
   return (
     <Box className="p-4">
-      <Box className=" w-full min-h-screen bg-white  relative">
+      <Box className=" w-full h-full bg-white  relative">
         <Paper className="p-4 pb-0">
           <Flex
             direction="row"

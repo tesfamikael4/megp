@@ -4,6 +4,7 @@ export interface InvoiceData {
   attachment: null;
   createdOn: string;
   expired: boolean;
+  refNumber: string;
   id: string;
   instanceId: null;
   payToAccName: string;
