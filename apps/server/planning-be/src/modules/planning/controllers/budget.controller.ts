@@ -24,14 +24,14 @@ export class BudgetController extends ExtraCrudController<Budget>(options) {
     return await this.budgetService.bulkCreate(budgets);
   }
 
-  @Get('/summation/:budgetYear')
+  @Get('/summation/:budgetYearId')
   async getSummation(
     @CurrentUser() user: any,
-    @Param('budgetYear') budgetYear: string,
+    @Param('budgetYearId') budgetYearId: string,
   ) {
     return await this.budgetService.getSummation(
       user.organization.id,
-      budgetYear,
+      budgetYearId,
     );
   }
 }
