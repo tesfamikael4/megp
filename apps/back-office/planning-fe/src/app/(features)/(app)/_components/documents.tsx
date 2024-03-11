@@ -42,7 +42,7 @@ export const Documents = ({
   const [opened, { open, close }] = useDisclosure(false);
   const { id } = useParams();
   const [file, setFile] = useState<File[]>();
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, setValue } = useForm();
   const [retrieveNewURL] = usePreSignedUrlMutation();
   const [deleteFile, { isLoading: isDeleting }] = useDeleteDocumentMutation();
   const { data } = useGetFilesQuery(id);
@@ -63,6 +63,10 @@ export const Documents = ({
       },
     ],
   };
+
+  useEffect(() => {
+    setValue('name', '');
+  }, [opened]);
 
   const Action = ({ data }: any) => {
     const [opened, { open, close }] = useDisclosure(false);
