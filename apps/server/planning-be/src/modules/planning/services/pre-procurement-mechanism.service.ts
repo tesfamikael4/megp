@@ -17,20 +17,51 @@ export class PreProcurementMechanismService extends ExtraCrudService<PreProcurem
   }
 
   async create(itemData: any, req?: any): Promise<any> {
-    if (req?.user?.organization) {
-      itemData.organizationId = req.user.organization.id;
-    }
-    if (itemData.justification.length > 0) {
-      itemData.justification.map(async (element) => {
-        await this.reasonService.isValid(
-          itemData.preBudgetPlanActivityId,
-          element.key,
-          element.status,
+    try {
+      if (req?.user?.organization) {
+        itemData.organizationId = req.user.organization.id;
+      }
+      if (itemData.justification?.length > 0) {
+        const validationPromises = itemData.justification.map(
+          async (element) => {
+            await this.reasonService.isValid(
+              itemData.preBudgetPlanActivityId,
+              element.key,
+              element.status,
+            );
+          },
         );
-      });
+        await Promise.all(validationPromises);
+      }
+      const item = this.repositoryPreProcurementMechanism.create(itemData);
+      await this.repositoryPreProcurementMechanism.insert(item);
+      return item;
+    } catch (error) {
+      throw error;
     }
-    const item = this.repositoryPreProcurementMechanism.create(itemData);
-    await this.repositoryPreProcurementMechanism.insert(item);
-    return item;
+  }
+
+  async update(id: string, itemData: any): Promise<any> {
+    try {
+      await this.repositoryPreProcurementMechanism.findOneOrFail({
+        where: { id },
+      });
+      if (itemData.justification?.length > 0) {
+        const validationPromises = itemData.justification.forEach(
+          async (element) => {
+            return await this.reasonService.isValid(
+              itemData.preBudgetPlanActivityId,
+              element.key,
+              element.status,
+            );
+          },
+        );
+        await Promise.all(validationPromises);
+      }
+      await this.repositoryPreProcurementMechanism.update(id, itemData);
+      return this.findOne(id);
+    } catch (error) {
+      throw error;
+    }
   }
 }
