@@ -46,9 +46,9 @@ export class BudgetService extends ExtraCrudService<Budget> {
     }
   }
 
-  async getSummation(organizationId: string, budgetyear: string) {
+  async getSummation(organizationId: string, budgetYearId: string) {
     const budgets = await this.repositoryBudget.find({
-      where: { organizationId, budgetYears: { name: budgetyear } },
+      where: { organizationId, budgetYearId },
     });
     const resp = {};
     budgets.forEach((budget) => {

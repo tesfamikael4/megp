@@ -210,21 +210,21 @@ export class PostBudgetPlanService extends ExtraCrudService<PostBudgetPlan> {
       'Marginalized Group': 0,
       Others: 0,
     };
-    activities.forEach((activity) => {
-      activity.postProcurementMechanisms.forEach((mechanism) => {
-        procurementType[mechanism.procurementType]++;
-        procurementMethods[mechanism.procurementMethod]++;
-        fundingSources[mechanism.fundingSource]++;
-        const online = mechanism.isOnline ? 'true' : 'false';
-        isOnline[online]++;
-        const validGroups = [
-          'Small Enterprises',
-          'Micro Enterprises',
-          'Medium Enterprises',
-        ];
-        const target = validGroups.includes(mechanism.targetGroup)
+    activities[0].postProcurementMechanisms.forEach((mechanism) => {
+      procurementType[mechanism.procurementType]++;
+      procurementMethods[mechanism.procurementMethod]++;
+      fundingSources[mechanism.fundingSource]++;
+      const online = mechanism.isOnline ? 'true' : 'false';
+      isOnline[online]++;
+      const validGroups = [
+        'Small Enterprises',
+        'Micro Enterprises',
+        'Medium Enterprises',
+      ];
+      mechanism.targetGroup.forEach((element) => {
+        const target = validGroups.includes(element)
           ? 'MSM Enterprises'
-          : mechanism.targetGroup;
+          : element;
 
         targetGroups[target]++;
       });
