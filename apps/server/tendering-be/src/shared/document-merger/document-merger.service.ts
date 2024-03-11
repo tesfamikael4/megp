@@ -7,6 +7,8 @@ import * as DocxMerger from '@scholarcy/docx-merger';
 import { createReport } from 'docx-templates';
 import * as libre from 'libreoffice-convert';
 import { promisify } from 'util';
+import { spawn } from 'child_process';
+import { PythonShell } from 'python-shell';
 
 @Injectable()
 export class DocumentMergerService {
@@ -93,7 +95,8 @@ export class DocumentMergerService {
       '.html',
       undefined,
     );
-    const bds = bdsTemplatePopulatedHtmlBuffer.toString('utf-8');
+
+    const bds = bdsTemplatePopulatedHtmlBuffer.toString();
 
     const testRead = await this.minIOService.downloadBuffer({
       filepath: 'test.docx',
@@ -117,11 +120,21 @@ export class DocumentMergerService {
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
     );
 
-    const pdfBuffer = await libreConverterAsync(
-      testPopulatedBuffer,
-      '.pdf',
-      undefined,
+    await fs.writeFileSync('bidding_document.docx', testPopulatedBuffer);
+    await this.convertDocxToPdf(
+      'bidding_document.docx',
+      'bidding_document.pdf',
     );
+
+    const pdfBuffer = await fs.readFileSync('bidding_document.pdf');
+
+    // const pdfBuffer = await libreConverterAsync(
+    //   testPopulatedBuffer,
+    //   '.pdf',
+    //   undefined,
+    // );
+
+    // await fs.writeFileSync('temp.pdf', pdfBuffer);
 
     await this.minIOService.uploadBuffer(
       pdfBuffer,
@@ -145,5 +158,51 @@ export class DocumentMergerService {
       data,
     });
     return Buffer.from(buffer);
+  }
+
+  async convertDocxToPdf(inputFile, outputFile): Promise<void> {
+    // let outputPath = join(process.cwd(), 'src', 'temp.pdf');
+
+    // if (process.env.NODE_ENV === 'production') {
+    //   outputPath = join(
+    //     process.cwd(),
+    //     'apps',
+    //     'server',
+    //     'tendering-be',
+    //     'dist',
+    //     'temp.pdf',
+    //   );
+    // }
+
+    const pythonCode = `from docx2pdf import convert
+convert("${inputFile}", "${outputFile}")`;
+
+    const c = await PythonShell.runString(pythonCode, null);
+
+    console.log(c);
+    // return new Promise((resolve, reject) => {
+    //   const pythonProcess = spawn('python', ['pdf-convertor.py', inputFile, outputFile]);
+
+    //   pythonProcess.stdout.on('data', (data) => {
+    //     // Handle any output from the Python script
+    //     console.log(`stdout: ${data}`);
+    //   });
+
+    //   pythonProcess.stderr.on('data', (data) => {
+    //     // Handle errors from the Python script
+    //     console.error(`stderr: ${data}`);
+    //     reject(new Error(`Error: ${data}`));
+    //   });
+
+    //   pythonProcess.on('close', (code) => {
+    //     // Handle process termination
+    //     console.log(`child process exited with code ${code}`);
+    //     if (code === 0) {
+    //       resolve();
+    //     } else {
+    //       reject(new Error(`Python script exited with code ${code}`));
+    //     }
+    //   });
+    // });
   }
 }
