@@ -15,6 +15,7 @@ RUN turbo prune --scope=tendering-be --docker
 
 # Add lockfile and package.json's of isolated subworkspace
 FROM base AS installer
+RUN apk add libreoffice
 RUN apk add --no-cache libc6-compat
 RUN apk update
 WORKDIR /app

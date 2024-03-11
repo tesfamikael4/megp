@@ -61,4 +61,21 @@ export class SpdTemplateController extends ExtraCrudController<SpdTemplate>(
   ) {
     return this.spdService.downloadSPDDocumentPdf(spdId, type);
   }
+
+  @Get('/mergePdf')
+  @AllowAnonymous()
+  async mergePdf() {
+    return this.spdService.mergePdf();
+  }
+  @Get('/mergeDocx')
+  @AllowAnonymous()
+  async mergeDocx() {
+    return this.spdService.mergeDocx();
+  }
+
+  @Get('/merge')
+  @AllowAnonymous()
+  async merge() {
+    return await this.spdService.merge();
+  }
 }

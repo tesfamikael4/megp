@@ -4,10 +4,9 @@ import { Repository } from 'typeorm';
 import { ExtraCrudService } from 'src/shared/service';
 import { DocxService } from 'src/shared/docx/docx.service';
 import { MinIOService } from 'src/shared/min-io/min-io.service';
-import { Response } from 'express';
 import { SpdTemplate } from 'src/entities/spd-template.entity';
-import { Readable } from 'stream';
-import { FileHelperService } from '../../../shared/min-io/file-helper.service';
+import { DocumentMergerService } from 'src/shared/document-merger/document-merger.service';
+import { FileHelperService } from 'src/shared/min-io/file-helper.service';
 
 @Injectable()
 export class SpdTemplateService extends ExtraCrudService<SpdTemplate> {
@@ -17,6 +16,7 @@ export class SpdTemplateService extends ExtraCrudService<SpdTemplate> {
     private readonly docxService: DocxService,
     private readonly minIOService: MinIOService,
     private readonly fileHelperService: FileHelperService,
+    private readonly documentMergerService: DocumentMergerService,
   ) {
     super(spdTemplateRepository);
   }
@@ -34,6 +34,7 @@ export class SpdTemplateService extends ExtraCrudService<SpdTemplate> {
       if (result.length != 0) {
         throw new HttpException(result, HttpStatus.BAD_REQUEST);
       }
+
       const documentDocx = await this.minIOService.upload(file);
 
       const documentPdf = await this.fileHelperService.convertAndUpload(file);
@@ -102,5 +103,15 @@ export class SpdTemplateService extends ExtraCrudService<SpdTemplate> {
     } catch (error) {
       throw error;
     }
+  }
+
+  async mergePdf() {
+    await this.documentMergerService.mergePdf();
+  }
+  async mergeDocx() {
+    await this.documentMergerService.mergeDocx();
+  }
+  async merge() {
+    return await this.documentMergerService.merge();
   }
 }
