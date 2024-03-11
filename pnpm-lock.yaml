@@ -1378,6 +1378,9 @@ importers:
       '@megp/core-fe':
         specifier: workspace:*
         version: link:../../../packages/fe/core-fe
+      '@megp/entity':
+        specifier: workspace:*
+        version: link:../../../packages/fe/entity
       '@megp/theme':
         specifier: workspace:*
         version: link:../../../packages/config/theme

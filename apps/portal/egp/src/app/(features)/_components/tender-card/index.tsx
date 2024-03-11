@@ -2,6 +2,7 @@ import React from 'react';
 import { Text, Card, Flex, Button, Avatar, Box, rgba } from '@mantine/core';
 import classes from './TenderCard.module.css';
 import { IconBookmark, IconTools } from '@tabler/icons-react';
+import { useRouter } from 'next/navigation';
 
 interface TenderCardProps {
   color: string;
@@ -16,6 +17,10 @@ interface TenderCardProps {
 }
 
 const TenderCard = ({ color, register, textColor }: TenderCardProps) => {
+  const router = useRouter();
+  const handleNavigation = () => {
+    router.push('/vendor/my-tenders/guarantee');
+  };
   return (
     <Card withBorder radius="md" shadow="xs">
       <Box
@@ -176,6 +181,7 @@ const TenderCard = ({ color, register, textColor }: TenderCardProps) => {
                 fz={'xs'}
                 lh={'sm'}
                 className="hover:bg-[var(--button-hover)]"
+                onClick={handleNavigation}
               >
                 View More
               </Button>
