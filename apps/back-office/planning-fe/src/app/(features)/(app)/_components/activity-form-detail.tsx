@@ -228,7 +228,11 @@ export const FormDetail = ({
   const onReset = () => {
     reset({
       name: '',
+      currency: undefined,
       description: '',
+      isMultiYear: false,
+      remark: '',
+      estimatedAmount: '',
     });
   };
 
