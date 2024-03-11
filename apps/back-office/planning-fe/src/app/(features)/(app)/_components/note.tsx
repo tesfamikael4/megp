@@ -58,8 +58,8 @@ export const Note = ({ height }: { height?: string }) => {
       className="border rounded overflow-scroll relative"
       h={height ?? '400px'}
     >
-      <h1 className="p-2 border-b-2 sticky  top-0 bg-white">Note</h1>
-      <Box ref={noteRef} className="bg-slate-100 min-h-full">
+      <h1 className="px-2 py-3 border-b-2 sticky  top-0 bg-white">Note</h1>
+      <Box ref={noteRef} className="bg-gray-100 min-h-full">
         <Box
           className="p-2 flex flex-col-reverse"
           style={{ height: height ?? '300px' }}

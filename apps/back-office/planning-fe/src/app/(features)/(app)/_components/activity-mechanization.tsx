@@ -123,7 +123,11 @@ export const ActivityMechanization = ({
         notify('Success', 'Procurement Method Saved Successfully');
       }
     } catch (err) {
-      notify('Error', 'Something went wrong');
+      if (err.status === 430) {
+        notify('Error', err.data.message);
+      } else {
+        notify('Error', 'Something went wrong');
+      }
     }
   };
   const onUpdate = async (data) => {
@@ -153,7 +157,11 @@ export const ActivityMechanization = ({
         notify('Success', 'Procurement Method updated successfully');
       }
     } catch (err) {
-      notify('Error', 'Something went wrong');
+      if (err.status === 430) {
+        notify('Error', err.data.message);
+      } else {
+        notify('Error', 'Something went wrong');
+      }
     }
   };
   const onError = (err) => {
@@ -161,10 +169,23 @@ export const ActivityMechanization = ({
   };
 
   const onSubmit = (data) => {
+    const castedData = {
+      ...data,
+      justification: [
+        {
+          key: 'procurementMethod',
+          status: justifications.procurementMethod ? 'fail' : 'pass',
+        },
+        {
+          key: 'targetGroup',
+          status: justifications.targetGroup ? 'fail' : 'pass',
+        },
+      ],
+    };
     if (mode === 'detail') {
-      onUpdate(data);
+      onUpdate(castedData);
     } else {
-      onCreate(data);
+      onCreate(castedData);
     }
   };
 

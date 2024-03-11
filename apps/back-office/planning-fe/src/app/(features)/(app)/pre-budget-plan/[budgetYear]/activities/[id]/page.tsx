@@ -1,5 +1,13 @@
 'use client';
-import { ActionIcon, Box, Flex, Tabs, Tooltip } from '@mantine/core';
+import {
+  ActionIcon,
+  Box,
+  Divider,
+  Flex,
+  Tabs,
+  Text,
+  Tooltip,
+} from '@mantine/core';
 import { Section } from '@megp/core-fe';
 import { FormDetail } from '@/app/(features)/(app)/_components/activity-form-detail';
 import { Documents } from '@/app/(features)/(app)/_components/documents';
@@ -13,6 +21,7 @@ import { IconChevronLeft, IconMessage2 } from '@tabler/icons-react';
 import { useReadQuery } from '../_api/activities.api';
 import { useDisclosure } from '@mantine/hooks';
 import { Note } from '@/app/(features)/(app)/_components/note';
+import { useState } from 'react';
 
 export default function NewActivity() {
   const { budgetYear, id } = useParams();
@@ -25,81 +34,137 @@ export default function NewActivity() {
   const disableFields = preBudgetYear
     ? preBudgetYear.status != 'Draft' && preBudgetYear.status != 'Adjust'
     : false;
+
+  const [currentTab, setCurrentTab] = useState('identification');
+  const activeTabStyle =
+    'bg-gray-100 cursor-pointer border-l border-r border-t py-2 px-10 rounded-t text-gray-700 font-medium';
+  const inActiveTabStyle =
+    'cursor-pointer py-2 px-10 text-gray-700 font-medium';
   return (
     <>
-      <Section
-        title={
+      <Box className="bg-white">
+        <Flex justify="space-between" className="p-2">
           <Tooltip
             label="List Activities"
             className="cursor-pointer"
             onClick={() => router.back()}
           >
             <Flex align="center">
-              <IconChevronLeft />
-              {activity?.name ?? ''}
+              <IconChevronLeft size={14} />
+              <Text className="font-semibold text-lg">
+                {activity?.name ?? ''}
+              </Text>
             </Flex>
           </Tooltip>
-        }
-        collapsible={false}
-        action={
           <Tooltip label="Note">
             <ActionIcon variant="subtle" onClick={toggle}>
               <IconMessage2 size={18} color="gray" />
             </ActionIcon>
           </Tooltip>
-        }
-      >
-        <Flex>
-          <Tabs
-            defaultValue="identification"
-            keepMounted={false}
-            className="w-full"
+        </Flex>
+        {/* <Divider /> */}
+        <Flex gap={10} className="mt-2 ml-2">
+          <Box
+            className={
+              currentTab === 'identification'
+                ? activeTabStyle
+                : inActiveTabStyle
+            }
+            onClick={() => setCurrentTab('identification')}
           >
-            <Tabs.List>
-              <Tabs.Tab value="identification">
-                Activity Identification
-              </Tabs.Tab>
-              <Tabs.Tab value="method">Procurement Methods</Tabs.Tab>
-              <Tabs.Tab value="items">Items</Tabs.Tab>
-              <Tabs.Tab value="documents">Documents</Tabs.Tab>
-              <Tabs.Tab value="timeline">Timeline</Tabs.Tab>
-              <Tabs.Tab value="requisitioner">Requisitioner</Tabs.Tab>
-            </Tabs.List>
-
-            <Tabs.Panel value="identification" className="pt-2">
+            Activity Identification
+          </Box>
+          <Box
+            className={
+              currentTab === 'method' ? activeTabStyle : inActiveTabStyle
+            }
+            onClick={() => setCurrentTab('method')}
+          >
+            Procurement Methods
+          </Box>
+          <Box
+            className={
+              currentTab === 'items' ? activeTabStyle : inActiveTabStyle
+            }
+            onClick={() => setCurrentTab('items')}
+          >
+            Items
+          </Box>
+          <Box
+            className={
+              currentTab === 'documents' ? activeTabStyle : inActiveTabStyle
+            }
+            onClick={() => setCurrentTab('documents')}
+          >
+            Documents
+          </Box>
+          <Box
+            className={
+              currentTab === 'timeline' ? activeTabStyle : inActiveTabStyle
+            }
+            onClick={() => setCurrentTab('timeline')}
+          >
+            Timeline
+          </Box>
+          <Box
+            className={
+              currentTab === 'requisitioner' ? activeTabStyle : inActiveTabStyle
+            }
+            onClick={() => setCurrentTab('requisitioner')}
+          >
+            Requisitioner
+          </Box>
+        </Flex>
+      </Box>
+      <Box className="mt-5">
+        <Flex>
+          {currentTab === 'identification' && (
+            <Section title="Activity Identification" collapsible={false}>
               <FormDetail
                 mode="detail"
                 page="pre"
                 disableFields={disableFields}
               />
-            </Tabs.Panel>
-            <Tabs.Panel value="method" className="pt-2">
+            </Section>
+          )}
+
+          {currentTab === 'method' && (
+            <Section title="Procurement Method" collapsible={false}>
               <ActivityMechanization page="pre" disableFields={disableFields} />
-            </Tabs.Panel>
+            </Section>
+          )}
 
-            <Tabs.Panel value="items">
+          {currentTab === 'items' && (
+            <Section title="Items" collapsible={false}>
               <Items page="pre" disableFields={disableFields} />
-            </Tabs.Panel>
+            </Section>
+          )}
 
-            <Tabs.Panel value="documents">
+          {currentTab === 'documents' && (
+            <Section title="Documents" collapsible={false}>
               <Documents disableFields={disableFields} />
-            </Tabs.Panel>
+            </Section>
+          )}
 
-            <Tabs.Panel value="timeline">
+          {currentTab === 'timeline' && (
+            <Section title="Timeline" collapsible={false}>
               <TimelineTab page="pre" disableFields={disableFields} />
-            </Tabs.Panel>
+            </Section>
+          )}
 
-            <Tabs.Panel value="requisitioner">
+          {currentTab === 'requisitioner' && (
+            <Section title="Requisitioners" collapsible={false}>
               <Requisitioner page="pre" disableFields={disableFields} />
-            </Tabs.Panel>
-          </Tabs>
+            </Section>
+          )}
+
           {opened && (
-            <Box className="w-2/4 p-2 ">
+            <Box className="w-2/4 ml-2">
               <Note />
             </Box>
           )}
         </Flex>
-      </Section>
+      </Box>
     </>
   );
 }
