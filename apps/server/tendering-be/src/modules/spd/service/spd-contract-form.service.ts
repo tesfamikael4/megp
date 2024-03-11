@@ -19,6 +19,7 @@ export class SpdContractFormService extends ExtraCrudService<SpdContractForm> {
 
   async uploadSPDDocument(payload: any, file: Express.Multer.File) {
     try {
+      String(Date.now());
       const documentDocx = await this.minIOService.upload(file);
 
       const documentPdf = await this.fileHelperService.convertAndUpload(file);
