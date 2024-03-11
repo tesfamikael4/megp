@@ -7,7 +7,6 @@ import * as DocxMerger from '@scholarcy/docx-merger';
 import { createReport } from 'docx-templates';
 import * as libre from 'libreoffice-convert';
 import { promisify } from 'util';
-import { spawn } from 'child_process';
 import { PythonShell } from 'python-shell';
 
 @Injectable()
@@ -177,32 +176,6 @@ export class DocumentMergerService {
     const pythonCode = `from docx2pdf import convert
 convert("${inputFile}", "${outputFile}")`;
 
-    const c = await PythonShell.runString(pythonCode, null);
-
-    console.log(c);
-    // return new Promise((resolve, reject) => {
-    //   const pythonProcess = spawn('python', ['pdf-convertor.py', inputFile, outputFile]);
-
-    //   pythonProcess.stdout.on('data', (data) => {
-    //     // Handle any output from the Python script
-    //     console.log(`stdout: ${data}`);
-    //   });
-
-    //   pythonProcess.stderr.on('data', (data) => {
-    //     // Handle errors from the Python script
-    //     console.error(`stderr: ${data}`);
-    //     reject(new Error(`Error: ${data}`));
-    //   });
-
-    //   pythonProcess.on('close', (code) => {
-    //     // Handle process termination
-    //     console.log(`child process exited with code ${code}`);
-    //     if (code === 0) {
-    //       resolve();
-    //     } else {
-    //       reject(new Error(`Python script exited with code ${code}`));
-    //     }
-    //   });
-    // });
+    await PythonShell.runString(pythonCode, null);
   }
 }
