@@ -58,6 +58,7 @@ export class PreProcurementMechanismService extends ExtraCrudService<PreProcurem
         );
         await Promise.all(validationPromises);
       }
+      delete itemData.justification;
       await this.repositoryPreProcurementMechanism.update(id, itemData);
       return this.findOne(id);
     } catch (error) {
