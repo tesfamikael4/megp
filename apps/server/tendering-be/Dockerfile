@@ -15,7 +15,6 @@ RUN turbo prune --scope=tendering-be --docker
 
 # Add lockfile and package.json's of isolated subworkspace
 FROM base AS installer
-RUN apk add libreoffice
 RUN apk add --no-cache libc6-compat
 RUN apk update
 WORKDIR /app
@@ -41,7 +40,12 @@ COPY turbo.json turbo.json
 # ENV TURBO_TOKEN=$TURBO_TOKEN
 
 RUN yarn turbo run build --filter=tendering-be...
+
 FROM base AS runner
+
+RUN apk add libreoffice
+RUN apk update
+
 WORKDIR /
 
 # Don't run production as root
