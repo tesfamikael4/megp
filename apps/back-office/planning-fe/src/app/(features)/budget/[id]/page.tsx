@@ -7,7 +7,10 @@ import { useEffect, useState } from 'react';
 import { DetailTable } from '../../_components/detail-table';
 import { useLazyReadQuery } from '../../_api/app.api';
 import { useLazyListByIdQuery } from '../_api/budget.api';
-import { useBulkCreateMutation } from '@/store/api/budget/budget.api';
+import {
+  useBulkCreateMutation,
+  useLazyGetBudgetSummationQuery,
+} from '@/store/api/budget/budget.api';
 import DataImport from '../../_components/data-import';
 import { ExpandableTable } from '../../_components/expandable-table';
 
@@ -89,6 +92,8 @@ export default function DetailPage() {
   const [create, { isLoading }] = useBulkCreateMutation();
   const [opened, { open, close }] = useDisclosure(false);
   const [getBudgetYear, { data: budgetYear }] = useLazyReadQuery();
+  const [getBudgetSummation, { data: budgetSummation }] =
+    useLazyGetBudgetSummationQuery();
 
   const config = {
     columns: [
@@ -169,7 +174,8 @@ export default function DetailPage() {
 
   useEffect(() => {
     getBudgetYear(id as string);
-  }, [getBudgetYear, id]);
+    getBudgetSummation(id as string);
+  }, [getBudgetSummation, getBudgetYear, id]);
 
   const onRequestChange = (request) => {
     getBudgets({ id: id as string, collectionQuery: request });
@@ -189,6 +195,19 @@ export default function DetailPage() {
       notify('Error', 'Something went wrong');
     }
   };
+  const TotalBudget = () => {
+    let totalBudget = 'Total Budget MKW 0.00';
+
+    if (budgetSummation && Object.keys(budgetSummation).length !== 0) {
+      let msg = 'Total Budget ';
+      Object.entries(budgetSummation).map(([key, value]) => {
+        msg += `${parseFloat(value as string).toLocaleString('en-US', { style: 'currency', currency: key, minimumFractionDigits: 2, maximumFractionDigits: 2, currencyDisplay: 'code' })} `;
+      });
+      // logger.log({ msg });
+      totalBudget = msg;
+    }
+    return <p>{totalBudget}</p>;
+  };
   return (
     <Stack>
       <Modal opened={opened} onClose={close} title="Import File" centered>
@@ -206,7 +225,7 @@ export default function DetailPage() {
       </Modal>
       <Section
         title={`Budget Year ${budgetYear?.budgetYear ?? ''}`}
-        subTitle={'Total Budget USD 1,234.00 MKW 2,345.68'}
+        subTitle={<TotalBudget />}
         collapsible={false}
         action={<Button onClick={open}>Import</Button>}
       >

@@ -9,6 +9,7 @@ import { iamApi } from './api/iam/iam.api';
 import { workflowApi } from './api/workflow/workflow.api';
 import { ruleApi } from './api/rule-designer/rule-designer';
 import { reasonApi } from './api/reason/reason.api';
+import { budgetsApi } from './api/budget/budget.api';
 
 const { reducers, middleware } = entityApi;
 
@@ -24,6 +25,7 @@ export const store = configureStore({
     [planningIamApi.reducerPath]: planningIamApi.reducer,
     [ruleApi.reducerPath]: ruleApi.reducer,
     [reasonApi.reducerPath]: reasonApi.reducer,
+    [budgetsApi.reducerPath]: budgetsApi.reducer,
   },
   devTools: process.env.NODE_ENV !== 'production',
   middleware: (getDefaultMiddleware) =>
@@ -38,6 +40,7 @@ export const store = configureStore({
       planningIamApi.middleware,
       ruleApi.middleware,
       reasonApi.middleware,
+      budgetsApi.middleware,
     ]),
 });
 

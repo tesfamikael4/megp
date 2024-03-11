@@ -45,7 +45,7 @@ export const Reasons = ({
         type: key,
       }).unwrap();
       notify('Success', 'Justification added successfully');
-      close();
+      // close();
     } catch (err) {
       logger.log({ err });
       notify('Error', 'Something went wrong');
