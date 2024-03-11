@@ -45,8 +45,15 @@ FROM base AS runner
 
 RUN apk add libreoffice
 
+# Install Python3 and create virtual environment
 RUN apk add --no-cache python3 py3-pip && \
-    pip3 install --no-cache-dir docx2pdf
+    python3 -m venv /venv
+
+# Activate virtual environment
+ENV PATH="/venv/bin:$PATH"
+
+# Install docx2pdf inside the virtual environment
+RUN pip install --no-cache-dir docx2pdf
 
 RUN apk update
 
