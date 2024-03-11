@@ -47,7 +47,7 @@ export class PreProcurementMechanismService extends ExtraCrudService<PreProcurem
         where: { id },
       });
       if (itemData.justification?.length > 0) {
-        const validationPromises = itemData.justification.forEach(
+        const validationPromises = itemData.justification.map(
           async (element) => {
             return await this.reasonService.isValid(
               itemData.preBudgetPlanActivityId,
