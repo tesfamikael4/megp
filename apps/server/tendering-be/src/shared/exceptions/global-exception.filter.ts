@@ -16,8 +16,6 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse();
     const request: any = ctx.getRequest();
 
-    this.logger.error(exception);
-
     const status =
       exception instanceof HttpException
         ? exception.getStatus()
@@ -37,7 +35,10 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       message,
       path: request.url,
       timestamp: new Date().toISOString(),
+      exception,
     };
+
+    this.logger.error(responseData);
 
     response.status(status).json(responseData);
     return;
