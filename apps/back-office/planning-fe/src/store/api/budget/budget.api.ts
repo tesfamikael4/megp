@@ -17,7 +17,11 @@ export const budgetsApi = createApi({
       }),
       invalidatesTags: ['budgets'],
     }),
+    getBudgetSummation: builder.query<any, any>({
+      query: (budgetYearId) => `budgets/summation/${budgetYearId}`,
+    }),
   }),
 });
 
-export const { useBulkCreateMutation } = budgetsApi;
+export const { useBulkCreateMutation, useLazyGetBudgetSummationQuery } =
+  budgetsApi;
