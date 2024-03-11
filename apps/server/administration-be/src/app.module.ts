@@ -16,6 +16,7 @@ import { TaxPayerModule } from './modules/tax-payer/tax-payer.module';
 import { TccDocumentValidationModule } from './modules/tcc-document-validation/tcc-document-validation.module';
 import { ProcurementThresholdModule } from './modules/procurement-threshold/procurement-threshold.module';
 import { OrganizationBudgetCategoryModule } from './modules/organization-budget-category/organization-budget-category.module';
+import { GuaranteeServiceModule } from './modules/guarantee-services/guarantee-service.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { OrganizationBudgetCategoryModule } from './modules/organization-budget-
     BudgetCategoriesModule,
     ProcurementThresholdModule,
     OrganizationBudgetCategoryModule,
+    GuaranteeServiceModule,
   ],
   controllers: [],
   providers: [],
