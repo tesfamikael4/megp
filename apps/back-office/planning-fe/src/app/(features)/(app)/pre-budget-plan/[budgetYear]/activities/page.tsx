@@ -33,7 +33,7 @@ export default function PreBudget() {
         textAlign: 'right',
         render: (activity) => (
           <>
-            {parseInt(activity.estimatedAmount).toLocaleString('en-US', {
+            {parseFloat(activity.estimatedAmount).toLocaleString('en-US', {
               style: 'currency',
               currency: activity.currency,
               minimumFractionDigits: 2,
