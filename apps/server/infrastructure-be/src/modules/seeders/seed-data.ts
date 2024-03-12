@@ -834,146 +834,146 @@ export const seedDesigns = [
 ];
 export const seedPossibleReasons = [
   {
-    ruleDesignerId: 'cc2843d7-c20b-4bcb-b619-c978b30ceed6',
+    designerId: 'cc2843d7-c20b-4bcb-b619-c978b30ceed6',
     reason:
       'Adoption of new cost-effective technologies or materials that impact the quotation process.',
   },
   {
-    ruleDesignerId: 'cc2843d7-c20b-4bcb-b619-c978b30ceed6',
+    designerId: 'cc2843d7-c20b-4bcb-b619-c978b30ceed6',
     reason: 'Changes in market dynamics affecting supplier pricing strategies.',
   },
   {
-    ruleDesignerId: 'cc2843d7-c20b-4bcb-b619-c978b30ceed6',
+    designerId: 'cc2843d7-c20b-4bcb-b619-c978b30ceed6',
     reason:
       'Internal initiatives to streamline the procurement process for efficiency.',
   },
   {
-    ruleDesignerId: 'cc2843d7-c20b-4bcb-b619-c978b30ceed6',
+    designerId: 'cc2843d7-c20b-4bcb-b619-c978b30ceed6',
     reason:
       'Emergence of more cost-effective suppliers after the initial quotation request.',
   },
   {
-    ruleDesignerId: 'cc2843d7-c20b-4bcb-b619-c978b30ceed6',
+    designerId: 'cc2843d7-c20b-4bcb-b619-c978b30ceed6',
     reason:
       'Changes in project specifications or quantities requiring revised quotations.',
   },
   {
-    ruleDesignerId: 'cc2843d7-c20b-4bcb-b619-c978b30ceed6',
+    designerId: 'cc2843d7-c20b-4bcb-b619-c978b30ceed6',
     reason: 'Legal challenges or concerns regarding the RFQ process.',
   },
   {
-    ruleDesignerId: '6c265e97-4498-4d89-9ccd-c2bbb3c56509',
+    designerId: '6c265e97-4498-4d89-9ccd-c2bbb3c56509',
     reason:
       'Change in supplier availability due to unforeseen events (e.g., natural disasters, economic crises).',
   },
   {
-    ruleDesignerId: '6c265e97-4498-4d89-9ccd-c2bbb3c56509',
+    designerId: '6c265e97-4498-4d89-9ccd-c2bbb3c56509',
     reason:
       'Changes in project financing necessitating a reevaluation of procurement strategies.',
   },
   {
-    ruleDesignerId: '6c265e97-4498-4d89-9ccd-c2bbb3c56509',
+    designerId: '6c265e97-4498-4d89-9ccd-c2bbb3c56509',
     reason:
       'Legal challenges or concerns regarding the open tendering process.',
   },
   {
-    ruleDesignerId: '6c265e97-4498-4d89-9ccd-c2bbb3c56509',
+    designerId: '6c265e97-4498-4d89-9ccd-c2bbb3c56509',
     reason: 'Change in market conditions, leading to a lack of competition.',
   },
   {
-    ruleDesignerId: '6c265e97-4498-4d89-9ccd-c2bbb3c56509',
+    designerId: '6c265e97-4498-4d89-9ccd-c2bbb3c56509',
     reason:
       'Emergence of new, more qualified suppliers after the initial tender announcement.',
   },
   {
-    ruleDesignerId: '6c265e97-4498-4d89-9ccd-c2bbb3c56509',
+    designerId: '6c265e97-4498-4d89-9ccd-c2bbb3c56509',
     reason: 'Unexpected changes in project scope or specifications.',
   },
   {
-    ruleDesignerId: '99a4e21f-b91d-484b-a291-e637366526ee',
+    designerId: '99a4e21f-b91d-484b-a291-e637366526ee',
     reason:
       'Introduction of new technology or methodologies that require expertise from a broader range of suppliers.',
   },
   {
-    ruleDesignerId: '99a4e21f-b91d-484b-a291-e637366526ee',
+    designerId: '99a4e21f-b91d-484b-a291-e637366526ee',
     reason:
       'Changes in government policies or regulations affecting supplier selection criteria.',
   },
   {
-    ruleDesignerId: '99a4e21f-b91d-484b-a291-e637366526ee',
+    designerId: '99a4e21f-b91d-484b-a291-e637366526ee',
     reason:
       'Internal organizational changes impacting the composition of the supplier pool.',
   },
   {
-    ruleDesignerId: '99a4e21f-b91d-484b-a291-e637366526ee',
+    designerId: '99a4e21f-b91d-484b-a291-e637366526ee',
     reason:
       'Identification of additional qualified suppliers after the initial selection.',
   },
   {
-    ruleDesignerId: '99a4e21f-b91d-484b-a291-e637366526ee',
+    designerId: '99a4e21f-b91d-484b-a291-e637366526ee',
     reason:
       'Changes in project requirements necessitating a broader pool of suppliers.',
   },
   {
-    ruleDesignerId: '99a4e21f-b91d-484b-a291-e637366526ee',
+    designerId: '99a4e21f-b91d-484b-a291-e637366526ee',
     reason: 'Legal challenges or concerns regarding the selectivity criteria.',
   },
   {
-    ruleDesignerId: '303bf39a-070e-4185-8439-a211efa1cbe2',
+    designerId: '303bf39a-070e-4185-8439-a211efa1cbe2',
     reason:
       'Emergence of innovative solutions or technologies that prompt a reassessment of proposal requirements.',
   },
   {
-    ruleDesignerId: '303bf39a-070e-4185-8439-a211efa1cbe2',
+    designerId: '303bf39a-070e-4185-8439-a211efa1cbe2',
     reason:
       'Changes in project stakeholders or decision-makers necessitating a reevaluation of criteria.',
   },
   {
-    ruleDesignerId: '303bf39a-070e-4185-8439-a211efa1cbe2',
+    designerId: '303bf39a-070e-4185-8439-a211efa1cbe2',
     reason:
       'Internal capacity-building initiatives requiring a more detailed proposal review.',
   },
   {
-    ruleDesignerId: '303bf39a-070e-4185-8439-a211efa1cbe2',
+    designerId: '303bf39a-070e-4185-8439-a211efa1cbe2',
     reason:
       'Need for a more detailed proposal evaluation due to project complexity.',
   },
   {
-    ruleDesignerId: '303bf39a-070e-4185-8439-a211efa1cbe2',
+    designerId: '303bf39a-070e-4185-8439-a211efa1cbe2',
     reason:
       'Changes in project scope or requirements that necessitate a new proposal.',
   },
   {
-    ruleDesignerId: '303bf39a-070e-4185-8439-a211efa1cbe2',
+    designerId: '303bf39a-070e-4185-8439-a211efa1cbe2',
     reason: 'Legal challenges or concerns regarding the RFP process.',
   },
   {
-    ruleDesignerId: 'f0437508-dcaf-42bd-8df9-27aedeb53162',
+    designerId: 'f0437508-dcaf-42bd-8df9-27aedeb53162',
     reason:
       'Changes in supplier capacity or reliability affecting the single-source decision.',
   },
   {
-    ruleDesignerId: 'f0437508-dcaf-42bd-8df9-27aedeb53162',
+    designerId: 'f0437508-dcaf-42bd-8df9-27aedeb53162',
     reason:
       "Shift in the organization's risk tolerance or risk management approach.",
   },
   {
-    ruleDesignerId: 'f0437508-dcaf-42bd-8df9-27aedeb53162',
+    designerId: 'f0437508-dcaf-42bd-8df9-27aedeb53162',
     reason:
       'External pressures or legal challenges prompting a reevaluation of the direct procurement method.',
   },
   {
-    ruleDesignerId: 'f0437508-dcaf-42bd-8df9-27aedeb53162',
+    designerId: 'f0437508-dcaf-42bd-8df9-27aedeb53162',
     reason:
       'Identification of additional qualified suppliers after the initial decision.',
   },
   {
-    ruleDesignerId: 'f0437508-dcaf-42bd-8df9-27aedeb53162',
+    designerId: 'f0437508-dcaf-42bd-8df9-27aedeb53162',
     reason:
       'Changes in project scope or specifications requiring a new procurement approach.',
   },
   {
-    ruleDesignerId: 'f0437508-dcaf-42bd-8df9-27aedeb53162',
+    designerId: 'f0437508-dcaf-42bd-8df9-27aedeb53162',
     reason:
       'Legal challenges or concerns regarding the direct procurement decision.',
   },

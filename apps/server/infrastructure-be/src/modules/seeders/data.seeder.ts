@@ -36,7 +36,7 @@ export class DataSeeder implements Seeder {
 
     await repositoryRule.upsert(seedRules as any, {
       skipUpdateIfNoValuesChanged: true,
-      conflictPaths: ['key'],
+      conflictPaths: ['key', 'designerId'],
     });
 
     await repositoryRuleHandler.upsert(seedRuleHandlers as any, {
@@ -51,7 +51,7 @@ export class DataSeeder implements Seeder {
 
     await repositoryPossibleReasons.upsert(seedPossibleReasons as any, {
       skipUpdateIfNoValuesChanged: true,
-      conflictPaths: ['reason'],
+      conflictPaths: ['reason', 'designerId'],
     });
 
     dataSource.destroy();

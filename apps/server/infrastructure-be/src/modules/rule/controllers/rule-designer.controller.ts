@@ -7,11 +7,9 @@ import {
   UpdateRuleDesignerDto,
 } from '../dto/rule-designer.dto';
 import { RuleDesignerService } from '../services/rule-designer.service';
-import { ValidateRuleDto } from '../dto/validate-rule.dto';
-// import { ValidateRuleDto } from '../dto/validate-rule.dto';
 
-@Controller('rule-designer')
-@ApiTags('rule-designer')
+@Controller('rule-designers')
+@ApiTags('rule-designers')
 export class RuleDesignerController extends EntityCrudController<RuleDesigner>({
   createDto: CreateRuleDesignerDto,
   updateDto: UpdateRuleDesignerDto,

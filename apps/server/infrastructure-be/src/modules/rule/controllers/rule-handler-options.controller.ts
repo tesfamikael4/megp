@@ -8,8 +8,8 @@ import { ExtraCrudOptions } from 'megp-shared-be';
 const option: ExtraCrudOptions = {
   entityIdName: 'ruleHandlerId',
 };
-@Controller('rule-handler-option')
-@ApiTags('rule-handler-option')
+@Controller('rule-handler-options')
+@ApiTags('rule-handler-options')
 export class RuleHandlerOptionsController extends ExtraCrudController<RuleHandlerOptions>(
   option,
 ) {

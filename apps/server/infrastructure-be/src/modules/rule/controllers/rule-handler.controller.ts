@@ -4,8 +4,8 @@ import { EntityCrudController } from 'megp-shared-be';
 import { ApiTags } from '@nestjs/swagger';
 import { RuleHandlerService } from '../services/rule-handler.service';
 
-@Controller('rule-handler')
-@ApiTags('rule-handler')
+@Controller('rule-handlers')
+@ApiTags('rule-handlers')
 export class RuleHandlerController extends EntityCrudController<RuleHandler>(
   {},
 ) {
