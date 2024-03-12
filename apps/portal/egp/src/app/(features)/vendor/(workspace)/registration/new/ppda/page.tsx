@@ -13,11 +13,7 @@ function Page() {
 
   const router = useRouter();
   const requestInfo = useGetVendorQuery(
-    searchParams.get('flag') === 'adjustment'
-      ? {
-          flag: 'Adjustment',
-        }
-      : {},
+    {},
     { refetchOnMountOrArgChange: true },
   );
   if (requestInfo.data?.initial) {

@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect } from 'react';
-import { Box, LoadingOverlay, MultiSelect } from '@mantine/core';
+import { Box, LoadingOverlay } from '@mantine/core';
 import { useRouter } from 'next/navigation';
 import { NotificationService } from '../../../../_components/notification';
 
@@ -21,10 +21,6 @@ function Page() {
     return () => {};
   }, [requestInfo, router]);
 
-  console.log(
-    validateApprovedVendorServiceSchema(requestInfo.data).errors,
-    requestInfo.data,
-  );
   if (requestInfo.isLoading) {
     return (
       <Box pos="relative" className="w-full min-h-screen">

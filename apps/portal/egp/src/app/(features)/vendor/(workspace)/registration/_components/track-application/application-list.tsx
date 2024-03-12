@@ -2,6 +2,7 @@
 import {
   Badge,
   Box,
+  Button,
   Flex,
   LoadingOverlay,
   Text,
@@ -9,7 +10,10 @@ import {
 } from '@mantine/core';
 import { useState, type FC } from 'react';
 import { StatsListCard } from './stats-card';
-import { useGetVendorInfoQuery } from '../../_api/query';
+import {
+  useGetApplicationListQuery,
+  useGetVendorInfoQuery,
+} from '../../_api/query';
 import styles from './application-list.module.scss';
 import DetailViewCard from './detail-view-card';
 import { useDisclosure } from '@mantine/hooks';
@@ -19,6 +23,7 @@ import { IconSearch } from '@tabler/icons-react';
 // import { ExpandableTable } from './table';
 import 'mantine-datatable/styles.layer.css';
 import { ExpandableTable } from '@megp/core-fe';
+import { formatDateTimeFromString } from '../review/utils';
 
 const badgeBGColor: { [key: string]: string } = {
   Rejected: `red.0`,
@@ -44,7 +49,7 @@ function capitalizeFirstLetter(string) {
 const ApplicationList = () => {
   const [selectData, setSelectData] = useState<ApplicationInfo | null>(null);
   const [opened, { open, close }] = useDisclosure(false);
-  const requestInfo = useGetVendorInfoQuery(
+  const requestInfo = useGetApplicationListQuery(
     {},
     { refetchOnMountOrArgChange: true },
   );
@@ -57,18 +62,18 @@ const ApplicationList = () => {
   const config = {
     columns: [
       {
-        accessor: 'name',
+        accessor: 'service',
         title: 'Service Name',
-        render: (application) => application.BpService.name,
       },
+
+      { accessor: 'ApplicationNumber', title: 'Application No.' },
       {
-        accessor: 'category',
-        title: 'Category',
+        accessor: 'submittedAt',
+        title: 'Submitted At',
         render: (val) => {
-          return capitalizeFirstLetter(val.category);
+          return formatDateTimeFromString(val.submittedAt);
         },
       },
-      { accessor: 'applicationNumber', title: 'Application No.' },
       {
         accessor: 'status',
         title: 'Status',
@@ -77,7 +82,7 @@ const ApplicationList = () => {
             <Badge
               size="xs"
               color={badgeBGColor[val.status]}
-              className={'rounded-none flex items-center p-1.5'}
+              className={`rounded-none flex items-center p-1.5 ${val.status === 'Adjustment' && 'animate-bounce'}`}
             >
               <Box c={badgeTextColor[val.status]}>{val.status}</Box>
             </Badge>
@@ -86,14 +91,18 @@ const ApplicationList = () => {
       },
     ],
     isExpandable: true,
-    expandedRowContent: (record, collapse) => (
-      <DetailViewCard
-        data={record}
-        close={() => {
-          handleDetailClose();
-        }}
-      />
-    ),
+    expandedRowContent: (record, collapse) => {
+      if (record.status === 'Adjustment')
+        return (
+          <DetailViewCard
+            data={record}
+            close={() => {
+              handleDetailClose();
+            }}
+          />
+        );
+      return <></>;
+    },
   };
 
   if (requestInfo.isLoading) {
@@ -119,7 +128,7 @@ const ApplicationList = () => {
             faucibus, enim ac dictum rutrum, velit quam pharetra mi, aliquet
             interdum velit libero nec risus. Aliquam non libero dolor.
           </Text>
-          <Flex justify="flex-end">
+          <Flex justify="flex-end" mt={2}>
             <TextInput
               className="mb-2 w-80 h-8"
               leftSection={<IconSearch />}
@@ -132,13 +141,13 @@ const ApplicationList = () => {
             />
           </Flex>
         </Flex>
-        {requestInfo.data?.services && requestInfo.data?.services.length > 0 ? (
+        {requestInfo.data && requestInfo.data.length > 0 ? (
           <Box className={styles.mainGrid}>
             <Box className={`w-full`}>
               <ExpandableTable
                 config={config}
-                data={requestInfo.data?.services ?? []}
-                total={requestInfo.data?.services.length ?? 0}
+                data={requestInfo.data ?? []}
+                total={requestInfo.data.length ?? 0}
               />
             </Box>
             {opened && selectData && (

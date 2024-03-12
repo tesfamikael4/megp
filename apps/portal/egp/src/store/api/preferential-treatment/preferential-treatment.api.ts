@@ -28,9 +28,9 @@ export const preferentialTreatmentApi = createApi({
         body.map((preferential) => {
           formData.append(
             `${preferential.category}Certi`,
-            preferential.attachment,
+            preferential.certificateUrl,
           );
-          const { attachment, category, type, ...rest } = preferential;
+          const { certificateUrl, category, type, ...rest } = preferential;
           createPTDto.push(rest);
         });
 

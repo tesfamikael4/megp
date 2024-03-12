@@ -48,7 +48,12 @@ const FileUploader: React.FC<FileUploaderProps> = ({
           setSelectedFile(response as any);
           return response.blob();
         })
-        .then((blob) => URL.createObjectURL(blob))
+        .then((blob) => {
+          if (onChange)
+            onChange(new File([blob], url.substring(url.lastIndexOf('/') + 1)));
+
+          return URL.createObjectURL(blob);
+        })
         .then((objectUrl) => setCurrent(objectUrl));
     }
 
@@ -59,15 +64,8 @@ const FileUploader: React.FC<FileUploaderProps> = ({
     return () => {};
   }, [getImageUrl]);
 
-  const handleUploadClick = () => {
-    const fileInput = document.getElementById(id) as HTMLInputElement | null;
-
-    if (fileInput) {
-      fileInput.click();
-    }
-  };
-
   const handleOnChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    console.log(e);
     if (
       e.currentTarget.files &&
       e.currentTarget.files.length > 0 &&

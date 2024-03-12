@@ -67,3 +67,33 @@ export const malawianDistricts = [
   'Thyolo',
   'Zomba',
 ];
+
+export const servicesList = [
+  {
+    value: 'Goods',
+    label: 'Goods',
+  },
+  {
+    value: 'Services',
+    label: 'Services',
+  },
+  {
+    value: 'Works',
+    label: 'Works',
+  },
+];
+
+export const preferential = [
+  {
+    value: 'ibm',
+    label: 'IBM',
+  },
+  {
+    value: 'msme',
+    label: 'Micro, Small, or Medium Enterprise (MSME)',
+  },
+  {
+    value: 'marginalized',
+    label: 'Marginalized',
+  },
+];

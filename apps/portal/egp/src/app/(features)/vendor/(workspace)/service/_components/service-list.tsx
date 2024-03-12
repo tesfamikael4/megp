@@ -45,7 +45,7 @@ export const ServiceLists = ({ isCompleted }: { isCompleted?: boolean }) => {
             {services.map((service) => {
               if (isCompleted && service.title === 'Add Additional Services')
                 return;
-              if (!isExpired && service.title === 'Renew registration') return;
+              // if (!isExpired && service.title === 'Renew registration') return;
               return <ServiceCard key={service.title} {...service} />;
             })}
           </SimpleGrid>

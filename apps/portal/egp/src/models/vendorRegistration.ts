@@ -114,9 +114,10 @@ export interface AreasOfBusinessInterestType {
 export interface PreferentialTreatment {
   category: string;
   type: string;
-  attachment: any;
+  attachment?: any;
   serviceId: string;
   certiNumber: string;
+  certificateUrl: any;
 }
 
 export interface AddFormRequestData extends FormData {
@@ -142,6 +143,7 @@ export interface ApplicationInfo {
   expireDate: string | null;
   status: string;
   remark: string | null;
+  key: string;
   BpService: BpService;
 }
 export interface BpService {
@@ -171,6 +173,12 @@ export interface GetFormResponse extends FormData {
     level: string;
   };
   id?: string;
+}
+export interface GetApplicationListResponse {
+  service: string;
+  ApplicationNumber: string;
+  submittedAt: string;
+  status: string;
 }
 
 export interface CreateVendorIdRequest {
@@ -316,34 +324,7 @@ export type PostForRenewalVendorRequest = {
   businessAreaIds: string[];
 };
 
-export type RenewalInvoiceRenewalVendorResponse = {
-  total: number;
-  items: InvoiceData;
-  businessAreas: {
-    id: string;
-    vendorId: string;
-    priceRangeId: string;
-    serviceId: string;
-    businessAreaState: {
-      level: string;
-      status: string;
-    };
-    instanceId: string;
-    category: string;
-    approvedAt: null | string;
-    applicationNumber: string;
-    certificateUrl: null | string;
-    expireDate: null | string;
-    status: string;
-    remark: null | string;
-  }[];
-  paymentReceipt: {
-    transactionId: string;
-    category: string;
-    invoiceId: string;
-    attachment: string;
-  };
-};
+export type RenewalInvoiceRenewalVendorResponse = PaymentReceipt;
 export type RenewalInvoiceRenewalVendorRequest = {
   status: { level: String; status: String };
 };
@@ -368,3 +349,29 @@ export type ApprovalVendorData = {
 };
 
 export type GetCertificateInformationResponse = ApprovalVendorData[];
+
+export interface PaymentReceipt {
+  id: string;
+  refNumber: string;
+  serviceId: string;
+  paymentDetail: PaymentDetail[];
+  payerName: string;
+  userId: string;
+  payToAccNo: string;
+  payToAccName: string;
+  payToBank: string;
+  amount: string;
+  createdOn: string;
+  paymentStatus: string;
+  remark: string;
+  attachment: any;
+}
+
+export interface PaymentDetail {
+  bc: string;
+  fee: string;
+  name: string;
+  category: string;
+  pricingId?: string;
+  businessAreaId?: string;
+}

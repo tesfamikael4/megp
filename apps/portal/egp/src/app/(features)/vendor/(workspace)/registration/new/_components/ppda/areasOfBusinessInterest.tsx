@@ -4,41 +4,17 @@ import { Fieldset, Flex, Group, LoadingOverlay, Select } from '@mantine/core';
 import { MultiSelect } from '@mantine/core';
 import MultiCheckBox from '../../../../../_components/multiCheckBox';
 import { PassFormDataProps } from './formShell';
-
 import {
   useGetLineOfBusinessQuery,
-  useGetPriceRangeQuery,
+  useGetServicePriceRangeQuery,
 } from '../../../_api/query';
 import { usePrivilege } from '../../_context/privilege-context';
-
-export const transformCategoryPriceRange = (
-  inputData: any,
-  businessArea: string,
-) =>
-  inputData
-    .filter(
-      (item: any) =>
-        item.businessArea.toLowerCase() === businessArea.toLowerCase(),
-    )
-    .map((item: any) => ({
-      value: item.id,
-      label: `${item.valueFrom} to ${item.valueTo} ${item.currency}`,
-    }));
-
-const getLabelByValue = (
-  data: {
-    value: string;
-    label: string;
-  }[],
-  targetValue: string,
-): string | null => {
-  for (const item of data) {
-    if (item.value === targetValue) {
-      return item.label;
-    }
-  }
-  return null;
-};
+import { servicesList } from '../../../_constants';
+import {
+  getCategoryProps,
+  getFormattedPriceRangeValues,
+  getLineOfBusinessMultiSelectData,
+} from '../../../_utils';
 interface Props extends PassFormDataProps {
   name: any;
   adjustment?: boolean;
@@ -50,12 +26,9 @@ export const AreasOfBusinessInterest: React.FC<Props> = ({
   adjustment,
 }) => {
   const getLineOfBusinessValues = useGetLineOfBusinessQuery({});
-  const getPriceRangeValues = useGetPriceRangeQuery(
-    {
-      type: 'new',
-    },
-    { refetchOnMountOrArgChange: true },
-  );
+  const { data: priceRange, isLoading } = useGetServicePriceRangeQuery({
+    key: 'new',
+  });
 
   const { lockElements } = usePrivilege();
 
@@ -65,181 +38,87 @@ export const AreasOfBusinessInterest: React.FC<Props> = ({
   });
   const fieldState = control.getFieldState(name, control._formState);
 
-  const getCategoryProps = () => {
-    return {
-      value: fields.map((item) => item.category),
-      onChange: (categorys: string[]) => {
-        // console.log(fields.)
-        const fieldsCategorys = fields.map((item) => item.category);
-        const difference = fieldsCategorys.filter(
-          (category) => !categorys.includes(category),
-        );
-        difference.map((category) => {
-          const notExistingIndex = fields.findIndex(
-            (field) => field.category === category,
-          );
-          remove(notExistingIndex);
-        });
-        categorys.map((category) => {
-          const existingIndex = fields.findIndex(
-            (field) => field.category === category,
-          );
-          if (existingIndex === -1) {
-            append({
-              category,
-              lineOfBusiness: [], // Start with an empty array
-              priceRange: '',
-            });
-          }
-        });
-      },
-      error: fieldState?.error?.message,
-
-      // onFocus: () => clearValidationError(fieldName),
-      // onBlur: () => validateField(fieldName),
-      ...lockElements('ppda'),
-    };
-  };
-  const getLineOfBusinessMultiSelectData = (
-    businessArea: string,
-  ): { value: string; label: string }[] | string[] | [] => {
-    if (businessArea === 'Services') {
-      return (
-        ([...(getLineOfBusinessValues.data?.items || [])]
-
-          .map((item) => {
-            if (item.businessArea === 'Services') {
-              return {
-                value: item.id,
-                label: item.description,
-              };
-            } else {
-              return undefined;
-            }
-          })
-          .filter(Boolean) as { value: string; label: string }[]) || []
-      );
-    } else if (businessArea === 'Goods') {
-      return (
-        ((getLineOfBusinessValues.data?.items || [])
-          .map((item) => {
-            if (item.businessArea === 'Goods') {
-              return {
-                value: item.id,
-                label: item.description,
-              };
-            } else {
-              return undefined;
-            }
-          })
-          .filter(Boolean) as { value: string; label: string }[]) || []
-      );
-    } else if (businessArea === 'Works') {
-      return [
-        'Building',
-        'Civil',
-        'Consultants',
-        'Electrical',
-        'Specialist',
-        'Temporal Consultant',
-      ];
-    } else {
-      // Handle unexpected values of businessArea
-      console.error(`Unsupported businessArea: ${businessArea}`);
-      return [];
-    }
-  };
-
   return (
     <Suspense>
       <Flex className="flex-col gap-6 w-full" justify={'flex-start'}>
         <LoadingOverlay
-          visible={
-            getLineOfBusinessValues.isLoading || getPriceRangeValues.isLoading
-          }
+          visible={getLineOfBusinessValues.isLoading || isLoading}
           overlayProps={{ radius: 'sm', blur: 2 }}
         />
         {adjustment && (
           <MultiCheckBox
             label="Category"
             id="category"
-            data={[
-              {
-                value: 'Goods',
-                label: 'Goods',
-              },
-              {
-                value: 'Services',
-                label: 'Services',
-              },
-              {
-                value: 'Works',
-                label: 'Works',
-              },
-            ]}
-            {...getCategoryProps()}
+            data={servicesList}
+            {...getCategoryProps(
+              fields,
+              remove,
+              append,
+              fieldState,
+              lockElements,
+            )}
           />
         )}
-        {fields.map((field, index) => (
-          <Fieldset
-            tt="uppercase"
-            fw={500}
-            legend={`${field.category}`}
-            key={field.id}
-          >
-            <Group grow>
-              <MultiSelect
-                label="Line Of Business"
-                data={getLineOfBusinessMultiSelectData(field.category)}
-                placeholder="Select"
-                {...register(`${name}.${index}.lineOfBusiness`, 'select')}
-                value={
-                  register(`${name}.${index}.lineOfBusiness`, 'select').value
-                    ?.id
-                }
-                defaultValue={register(
-                  `${name}.${index}.lineOfBusiness`,
-                  'select',
-                ).value?.map((v: any) => v.id)}
-                onChange={(value) => {
-                  register(
+        {fields.map((field, index) => {
+          return (
+            <Fieldset
+              tt="uppercase"
+              fw={500}
+              legend={`${field.category}`}
+              key={field.id}
+            >
+              <Group grow>
+                <MultiSelect
+                  label="Line Of Business"
+                  data={getLineOfBusinessMultiSelectData(
+                    field.category,
+                    getLineOfBusinessValues.data?.items ?? [],
+                  )}
+                  placeholder="Select"
+                  {...register(`${name}.${index}.lineOfBusiness`, 'select')}
+                  value={
+                    register(`${name}.${index}.lineOfBusiness`, 'select').value
+                      ?.id
+                  }
+                  defaultValue={register(
                     `${name}.${index}.lineOfBusiness`,
                     'select',
-                  ).onChange(
-                    value.map((v) => ({
-                      id: v,
-                      name: (
-                        getLineOfBusinessMultiSelectData(field.category)?.find(
-                          (item: any) => item.value == v,
-                        ) as { value: string; label: string }
-                      )?.label,
-                    })),
-                  );
-                }}
-                withAsterisk
-                required
-              />
-              <Select
-                label="Price Range"
-                placeholder="Select"
-                data={transformCategoryPriceRange(
-                  getPriceRangeValues.isSuccess &&
-                    getPriceRangeValues.data &&
-                    getPriceRangeValues.data.length
-                    ? ([...getPriceRangeValues.data] ?? []).sort(
-                        (
-                          { valueFrom: valueFromA },
-                          { valueFrom: valueFromB },
-                        ) => Number(valueFromA) - Number(valueFromB),
-                      )
-                    : [],
-                  field.category,
-                )}
-                {...register(`${name}.${index}.priceRange`, 'select')}
-              />
-            </Group>
-          </Fieldset>
-        ))}
+                  ).value?.map((v: any) => v.id)}
+                  onChange={(value) => {
+                    register(
+                      `${name}.${index}.lineOfBusiness`,
+                      'select',
+                    ).onChange(
+                      value.map((v) => ({
+                        id: v,
+                        name: (
+                          getLineOfBusinessMultiSelectData(
+                            field.category,
+                            getLineOfBusinessValues.data?.items ?? [],
+                          )?.find((item: any) => item.value == v) as {
+                            value: string;
+                            label: string;
+                          }
+                        )?.label,
+                      })),
+                    );
+                  }}
+                  withAsterisk
+                  required
+                />
+                <Select
+                  label="Price Range"
+                  placeholder="Select"
+                  data={getFormattedPriceRangeValues(
+                    field.category,
+                    priceRange ?? [],
+                  )}
+                  {...register(`${name}.${index}.priceRange`, 'select')}
+                />
+              </Group>
+            </Fieldset>
+          );
+        })}
       </Flex>
     </Suspense>
   );

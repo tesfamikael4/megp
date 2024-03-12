@@ -12,45 +12,30 @@ import NewRegistrationLanding from './_components/new-registration-landing';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
 const ServiceLayout = () => {
-  const { data, isLoading, isError, error } = useGetVendorInfoQuery(
-    {},
-    { refetchOnMountOrArgChange: true },
-  );
+  // const { data, isLoading, isError, error } = useGetVendorInfoQuery(
+  //   {},
+  //   { refetchOnMountOrArgChange: true },
+  // );
   const {
     data: vendor,
     isLoading: vendorLoading,
     isError: isVendorError,
     error: vendorError,
   } = useGetVendorQuery({}, { refetchOnMountOrArgChange: true });
+  const { data, isLoading, isError, error } = useGetVendorStatusQuery({});
   const router = useRouter();
 
   if (isLoading || vendorLoading) return <LoadingOverlay visible={isLoading} />;
-  if (
-    (isError && (error as FetchBaseQueryError).status !== 404) ||
-    isVendorError
-  )
-    return router.push('/vendor/dashboard');
-  if (!data) {
-    if (!vendor) return <NewRegistrationLanding />;
-    else {
-      if (vendor.status === 'Approved') return <ServiceLists />;
-      else if (vendor.status === 'Completed')
-        return <ServiceLists isCompleted={true} />;
-      else if (vendor.status === 'Draft')
-        return router.push('/vendor/registration/new/detail');
-      else if (vendor.status === 'Adjustment')
-        return router.push('/vendor/registration/new/detail');
-    }
-  } else {
-    if (
-      data.Status === 'Adjustment' ||
-      data.vendorStatus === 'Adjustment' ||
-      (data.services?.length &&
-        data.services.some((service) => service.status === 'Adjustment'))
-    )
-      return router.push('/vendor/registration/track-applications');
-    else if (data.Status === 'Submitted') return <SubmittedApplication />;
-  }
+  if (error) return router.push('/vendor/dashboard');
+  if (!data) return router.push('/vendor/dashboard');
+  if (data?.status === 'Initial') return <NewRegistrationLanding />;
+  if (data?.status === 'Pending' || data?.status === 'Submitted')
+    return <SubmittedApplication />;
+  if (data.status === 'Approved') return <ServiceLists />;
+  if (data.status === 'Draft')
+    return router.push('/vendor/registration/new/detail');
+  if (data.status === 'Adjustment')
+    return router.push('/vendor/registration/track-applications');
 };
 
 export default ServiceLayout;

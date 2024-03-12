@@ -28,7 +28,7 @@ export interface PassFormDataProps {
 export const preferentialSchema = z.object({
   category: z.string(),
   type: z.string().min(2, { message: 'MSME is required' }),
-  attachment: z
+  certificateUrl: z
     .instanceof(File, { message: 'Attachment is required', fatal: true })
     .refine((data) => data instanceof File, {
       message: 'Attachment is required',

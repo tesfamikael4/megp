@@ -44,7 +44,7 @@ function Page() {
   const { register, formState, setValue, watch, handleSubmit } =
     useForm<IPaymentSlipUploadSchema>({
       defaultValues: {
-        invoiceId: '',
+        invoiceIds: [],
         serviceId: '',
         transactionNumber: '',
         file: undefined,
@@ -80,7 +80,7 @@ function Page() {
 
   useEffect(() => {
     if (invoiceInfo.data && invoiceInfo?.data?.invoice) {
-      setValue('invoiceId', invoiceInfo?.data?.invoice.id ?? '');
+      setValue('invoiceIds', [invoiceInfo?.data?.invoice.id]);
       setValue(
         'serviceId',
         invoiceInfo.data?.paymentReceipt?.attachment === ''
@@ -144,7 +144,7 @@ function Page() {
 
             <Stack className="mt-10">
               <input
-                {...register('invoiceId')}
+                {...register('invoiceIds')}
                 value={
                   invoiceArraySchema.safeParse(invoiceInfo.data?.invoice)
                     .success
