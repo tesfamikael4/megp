@@ -35,7 +35,6 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
       where: {
         id: itemData.id,
         organizationId: user.organization.id,
-        status: 'Approved',
         postBudgetRequisitioners: {
           userId: user.userId,
         },
@@ -47,9 +46,15 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
         postProcurementMechanisms: true,
       },
     });
-    if (!activity) {
+    if (
+      !activity ||
+      !activity.postBudgetPlan ||
+      activity.postBudgetPlan.status.toUpperCase() !==
+        ProcurementRequisitionStatusEnum.APPROVED
+    ) {
       throw new NotFoundException('Activity should be approved or not found');
     }
+
     const procurementRequisitionItems = [];
     activity.postBudgetPlanItems.forEach((item: any) => {
       procurementRequisitionItems.push({
