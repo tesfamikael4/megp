@@ -26,6 +26,12 @@ export const procurementMethodRuleKeys = {
   expressionOfInterest: 'Request for Proposal (RFP)',
 };
 
+export const targetGroupRuleKeys = {
+  micro: 'Micro Enterprises',
+  small: 'Small Enterprises',
+  medium: 'Medium Enterprises',
+};
+
 export const fundingSources = ['Internal Revenue', 'Treasury', 'Loan', 'Donor'];
 
 export const targetGroups = [
