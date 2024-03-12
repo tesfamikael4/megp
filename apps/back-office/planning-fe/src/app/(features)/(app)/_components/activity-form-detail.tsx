@@ -17,7 +17,13 @@ import {
   TextInput,
   Textarea,
 } from '@mantine/core';
-import { MantineTree, TreeConfig, logger, notify } from '@megp/core-fe';
+import {
+  MantineTree,
+  Section,
+  TreeConfig,
+  logger,
+  notify,
+} from '@megp/core-fe';
 import { EntityButton } from '@megp/entity';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -281,139 +287,141 @@ export const FormDetail = ({
   ]);
 
   return (
-    <Stack>
-      <Flex gap="md">
-        <Box className="w-1/2">
-          <TextInput
-            label="Name"
-            withAsterisk
-            {...register('name')}
-            error={errors.name?.message}
-            disabled={disableFields}
-            placeholder="Activity Name"
-          />
-          <Controller
-            name="currency"
-            control={control}
-            render={({ field: { name, value, onChange } }) => (
-              <Select
-                withCheckIcon={false}
-                name={name}
-                value={value}
-                onChange={onChange}
-                label="Currency"
-                data={currency?.items?.map((c) => c.abbreviation) ?? []}
-                className="w-full"
-                withAsterisk
-                searchable
-                placeholder="Select Currency"
-                error={errors?.currency?.message}
-                disabled={disableFields}
-              />
-            )}
-          />
-          <Checkbox
-            label="is Multi Year"
-            className="w-full mt-4 mb-2"
-            {...register('isMultiYear')}
-            disabled={disableFields}
-          />
-          <TextInput
-            label="Estimated Amount"
-            className="w-full"
-            {...register('estimatedAmount')}
-            error={errors?.estimatedAmount?.message}
-            withAsterisk
-            disabled={method === 'Purchased Orders' || disableFields}
-            placeholder="Estimated Amount"
-            type="number"
-          />
-          <MultiSelect
-            label="Tag Classification"
-            value={tags.map((t) => t.code)}
-            data={tags.map((t) => ({
-              label: t.title + ' (' + t.code + ')',
-              value: t.code,
-            }))}
-            className="w-full"
-            onChange={(data) => {
-              setTags(tags.filter((t) => data.includes(t.code)));
-              logger.log({ data });
-            }}
-            disabled={disableFields}
-            leftSection={
-              <ActionIcon
-                onClick={open}
-                variant="subtle"
-                disabled={disableFields}
-              >
-                <IconPlus />
-              </ActionIcon>
-            }
-            placeholder="Tag Classification"
-          />
-        </Box>
-        <Box className="w-1/2">
-          <Textarea
-            label="Description"
-            withAsterisk
-            autosize
-            minRows={5}
-            maxRows={5}
-            {...register('description')}
-            error={errors.description?.message}
-            disabled={disableFields}
-            placeholder="Activity Description"
-          />
-          <Textarea
-            label="Remark"
-            autosize
-            minRows={4}
-            maxRows={4}
-            {...register('remark')}
-            disabled={disableFields}
-            className="mt-2"
-            placeholder="Activity Remark"
-          />
-        </Box>
-      </Flex>
+    <Section title="Activity Identification" collapsible={false}>
+      <Stack>
+        <Flex gap="md">
+          <Box className="w-1/2">
+            <TextInput
+              label="Name"
+              withAsterisk
+              {...register('name')}
+              error={errors.name?.message}
+              disabled={disableFields}
+              placeholder="Activity Name"
+            />
+            <Controller
+              name="currency"
+              control={control}
+              render={({ field: { name, value, onChange } }) => (
+                <Select
+                  withCheckIcon={false}
+                  name={name}
+                  value={value}
+                  onChange={onChange}
+                  label="Currency"
+                  data={currency?.items?.map((c) => c.abbreviation) ?? []}
+                  className="w-full"
+                  withAsterisk
+                  searchable
+                  placeholder="Select Currency"
+                  error={errors?.currency?.message}
+                  disabled={disableFields}
+                />
+              )}
+            />
+            <Checkbox
+              label="is Multi Year"
+              className="w-full mt-4 mb-2"
+              {...register('isMultiYear')}
+              disabled={disableFields}
+            />
+            <TextInput
+              label="Estimated Amount"
+              className="w-full"
+              {...register('estimatedAmount')}
+              error={errors?.estimatedAmount?.message}
+              withAsterisk
+              disabled={method === 'Purchased Orders' || disableFields}
+              placeholder="Estimated Amount"
+              type="number"
+            />
+            <MultiSelect
+              label="Tag Classification"
+              value={tags.map((t) => t.code)}
+              data={tags.map((t) => ({
+                label: t.title + ' (' + t.code + ')',
+                value: t.code,
+              }))}
+              className="w-full"
+              onChange={(data) => {
+                setTags(tags.filter((t) => data.includes(t.code)));
+                logger.log({ data });
+              }}
+              disabled={disableFields}
+              leftSection={
+                <ActionIcon
+                  onClick={open}
+                  variant="subtle"
+                  disabled={disableFields}
+                >
+                  <IconPlus />
+                </ActionIcon>
+              }
+              placeholder="Tag Classification"
+            />
+          </Box>
+          <Box className="w-1/2">
+            <Textarea
+              label="Description"
+              withAsterisk
+              autosize
+              minRows={5}
+              maxRows={5}
+              {...register('description')}
+              error={errors.description?.message}
+              disabled={disableFields}
+              placeholder="Activity Description"
+            />
+            <Textarea
+              label="Remark"
+              autosize
+              minRows={4}
+              maxRows={4}
+              {...register('remark')}
+              disabled={disableFields}
+              className="mt-2"
+              placeholder="Activity Remark"
+            />
+          </Box>
+        </Flex>
 
-      <EntityButton
-        mode={mode}
-        isSaving={isPreCreating || isPostCreating}
-        isUpdating={isPreUpdating || isPostUpdating}
-        isDeleting={isPreDeleting || isPostDeleting}
-        onCreate={handleSubmit(onCreate)}
-        onReset={onReset}
-        onUpdate={handleSubmit(onUpdate)}
-        onDelete={handleSubmit(onDelete)}
-        disabled={disableFields}
-      />
+        <EntityButton
+          mode={mode}
+          isSaving={isPreCreating || isPostCreating}
+          isUpdating={isPreUpdating || isPostUpdating}
+          isDeleting={isPreDeleting || isPostDeleting}
+          onCreate={handleSubmit(onCreate)}
+          onReset={onReset}
+          onUpdate={handleSubmit(onUpdate)}
+          onDelete={handleSubmit(onDelete)}
+          disabled={disableFields}
+        />
 
-      <Modal
-        opened={opened}
-        onClose={close}
-        title="Select Classifications"
-        size="lg"
-      >
-        <Box className="overflow-y-auto h-[35rem]">
-          <MantineTree
-            config={treeConfig}
-            data={
-              classifications
-                ? classifications.items.map((c) => ({
-                    code: c.code,
-                    title: c.title,
-                  }))
-                : []
-            }
-          />
-        </Box>
-        <Divider h={5} />
-        <Group justify="end">
-          <Button onClick={close}>Done</Button>
-        </Group>
-      </Modal>
-    </Stack>
+        <Modal
+          opened={opened}
+          onClose={close}
+          title="Select Classifications"
+          size="lg"
+        >
+          <Box className="overflow-y-auto h-[35rem]">
+            <MantineTree
+              config={treeConfig}
+              data={
+                classifications
+                  ? classifications.items.map((c) => ({
+                      code: c.code,
+                      title: c.title,
+                    }))
+                  : []
+              }
+            />
+          </Box>
+          <Divider h={5} />
+          <Group justify="end">
+            <Button onClick={close}>Done</Button>
+          </Group>
+        </Modal>
+      </Stack>
+    </Section>
   );
 };

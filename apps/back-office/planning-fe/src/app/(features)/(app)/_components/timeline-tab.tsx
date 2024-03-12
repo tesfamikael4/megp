@@ -1,7 +1,7 @@
 'use client';
 
 import { Box, Button, Group, NumberInput, TextInput } from '@mantine/core';
-import { logger, notify } from '@megp/core-fe';
+import { Section, logger, notify } from '@megp/core-fe';
 
 import { useEffect, useState } from 'react';
 import { DateInput } from '@mantine/dates';
@@ -286,8 +286,7 @@ export default function TimelineTab({
   ]);
 
   return (
-    <div className="mt-4">
-      {/* {data.length != 0 && <Table config={listConfig} data={data} />} */}
+    <Section title="Timeline" collapsible={false}>
       <ExpandableTable data={data} config={listConfig} />
       <Group className="mt-2" justify="end">
         <Button
@@ -298,6 +297,6 @@ export default function TimelineTab({
           <IconDeviceFloppy size={16} /> Save
         </Button>
       </Group>
-    </div>
+    </Section>
   );
 }

@@ -9,7 +9,7 @@ import {
   Modal,
   Text,
 } from '@mantine/core';
-import { logger, notify } from '@megp/core-fe';
+import { Section, logger, notify } from '@megp/core-fe';
 import { useDisclosure } from '@mantine/hooks';
 import {
   IconDeviceFloppy,
@@ -378,68 +378,75 @@ export function Items({
   }, [isPreSuccess, preList, postList, isPostSuccess, page]);
 
   return (
-    <Box>
-      <Group justify="end" className="my-2" gap="md">
-        <Button onClick={openImportModal} disabled={disableFields}>
-          <IconFileImport size={18} /> Import
-        </Button>
-        <Button onClick={open} disabled={disableFields}>
-          <IconPlus size={18} /> Add
-        </Button>
-      </Group>
-      {newItems.length !== 0 && (
-        <>
-          <Text className="text-lg" fw="500">
-            New Items
-          </Text>
-          <ExpandableTable
-            config={addConfig}
-            data={newItems}
-            total={newItems.length}
-          />
-          {/* <Table config={config} data={newItems} /> */}
-          <Flex justify="end" className="my-2" gap="sm">
-            <Button
-              onClick={handelOnSave}
-              loading={isPreAddingItems || isPostAddingItems}
-            >
-              <IconDeviceFloppy /> Save
-            </Button>
-            <Button variant="outline" onClick={() => setNewItems([])}>
-              Reset
-            </Button>
-          </Flex>
-        </>
-      )}
-      {(data.length != 0 || newItems.length === 0) && (
-        <>
-          <Text className="text-lg" fw="500">
-            Items List
-          </Text>
+    <Section
+      title="Items"
+      collapsible={false}
+      action={
+        <Group justify="end" gap="md">
+          <Button onClick={openImportModal} disabled={disableFields}>
+            <IconFileImport size={18} /> Import
+          </Button>
+          <Button onClick={open} disabled={disableFields}>
+            <IconPlus size={18} /> Add
+          </Button>
+        </Group>
+      }
+    >
+      <Box>
+        {newItems.length !== 0 && (
+          <>
+            <Text className="text-lg" fw="500">
+              New Items
+            </Text>
+            <ExpandableTable
+              config={addConfig}
+              data={newItems}
+              total={newItems.length}
+            />
+            {/* <Table config={config} data={newItems} /> */}
+            <Flex justify="end" className="my-2" gap="sm">
+              <Button
+                onClick={handelOnSave}
+                loading={isPreAddingItems || isPostAddingItems}
+              >
+                <IconDeviceFloppy /> Save
+              </Button>
+              <Button variant="outline" onClick={() => setNewItems([])}>
+                Reset
+              </Button>
+            </Flex>
+          </>
+        )}
+        {(data.length != 0 || newItems.length === 0) && (
+          <>
+            <Text className="text-lg" fw="500">
+              Items List
+            </Text>
 
-          <ExpandableTable
-            config={listConfig}
-            data={data}
-            total={total}
-            onRequestChange={onRequestChange}
-          />
-        </>
-      )}
-      <ItemSelector onDone={handelAddItem} opened={opened} close={close} />
-      <Modal
-        opened={openedImportModal}
-        onClose={closeImportModal}
-        title="Import Items"
-      >
-        <DataImport onDone={handelAddItem} />
-        <Button
-          className="mt-4 ml-auto"
-          onClick={closeImportModal}
-          // loading={isLoading}
+            <ExpandableTable
+              config={listConfig}
+              data={data}
+              total={total}
+              onRequestChange={onRequestChange}
+            />
+          </>
+        )}
+        <ItemSelector onDone={handelAddItem} opened={opened} close={close} />
+        <Modal
+          opened={openedImportModal}
+          onClose={closeImportModal}
+          title="Import Items"
         >
-          Done
-        </Button>
-      </Modal>
-    </Box>
+          <DataImport onDone={handelAddItem} />
+          <Button
+            className="mt-4 ml-auto"
+            onClick={closeImportModal}
+            // loading={isLoading}
+          >
+            Done
+          </Button>
+        </Modal>
+      </Box>
+    </Section>
   );
 }

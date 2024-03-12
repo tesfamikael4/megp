@@ -1,14 +1,5 @@
 'use client';
-import {
-  ActionIcon,
-  Box,
-  Divider,
-  Flex,
-  Tabs,
-  Text,
-  Tooltip,
-} from '@mantine/core';
-import { Section } from '@megp/core-fe';
+import { ActionIcon, Box, Flex, Text, Tooltip } from '@mantine/core';
 import { FormDetail } from '@/app/(features)/(app)/_components/activity-form-detail';
 import { Documents } from '@/app/(features)/(app)/_components/documents';
 import TimelineTab from '@/app/(features)/(app)/_components/timeline-tab';
@@ -119,43 +110,31 @@ export default function NewActivity() {
       <Box className="mt-5">
         <Flex>
           {currentTab === 'identification' && (
-            <Section title="Activity Identification" collapsible={false}>
-              <FormDetail
-                mode="detail"
-                page="pre"
-                disableFields={disableFields}
-              />
-            </Section>
+            <FormDetail
+              mode="detail"
+              page="pre"
+              disableFields={disableFields}
+            />
           )}
 
           {currentTab === 'method' && (
-            <Section title="Procurement Method" collapsible={false}>
-              <ActivityMechanization page="pre" disableFields={disableFields} />
-            </Section>
+            <ActivityMechanization page="pre" disableFields={disableFields} />
           )}
 
           {currentTab === 'items' && (
-            <Section title="Items" collapsible={false}>
-              <Items page="pre" disableFields={disableFields} />
-            </Section>
+            <Items page="pre" disableFields={disableFields} />
           )}
 
           {currentTab === 'documents' && (
-            <Section title="Documents" collapsible={false}>
-              <Documents disableFields={disableFields} />
-            </Section>
+            <Documents disableFields={disableFields} />
           )}
 
           {currentTab === 'timeline' && (
-            <Section title="Timeline" collapsible={false}>
-              <TimelineTab page="pre" disableFields={disableFields} />
-            </Section>
+            <TimelineTab page="pre" disableFields={disableFields} />
           )}
 
           {currentTab === 'requisitioner' && (
-            <Section title="Requisitioners" collapsible={false}>
-              <Requisitioner page="pre" disableFields={disableFields} />
-            </Section>
+            <Requisitioner page="pre" disableFields={disableFields} />
           )}
 
           {opened && (
