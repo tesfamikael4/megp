@@ -51,10 +51,10 @@ export class InvoicesController {
 
   @Get('get-my-renewal-invoice')
   async getMyRenewalInvoice(@CurrentUser() userInfo: any) {
-    const serviceKeys = [ServiceKeyEnum.REGISTRATION_RENEWAL];
-    return await this.invoiceService.getMyActiveInvoices(
+
+    return await this.invoiceService.getMyInvoice(
       userInfo.id,
-      serviceKeys,
+      ServiceKeyEnum.REGISTRATION_RENEWAL,
     );
   }
   @Post('generate-upgrade-invoice')

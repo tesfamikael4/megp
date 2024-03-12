@@ -116,6 +116,9 @@ export class WorkflowService {
       nextCommand.data = { ...dto?.data };
       await this.gotoNextStep(nextCommand, user);
     }
+    const vendor = await this.vendorRegService.findOne(wfinstance.requestorId);
+    vendor.canRequest = false;
+    await this.vendorRegService.update(vendor.id, vendor);
     return response;
   }
   async changeWorkflowInstanceStatus(status: string, instanceId: string) {
@@ -183,6 +186,10 @@ export class WorkflowService {
           await this.addTaskTracker(currentTaskHandler, nextCommand, user);
           await this.handlerRepository.delete(currentTaskHandler.id);
           workflowInstance.taskHandler = null;
+          const vendor = await this.vendorRegService.findOne(wfInstance.requestorId);
+          vendor.canRequest = true;
+          await this.vendorRegService.update(vendor.id, vendor);
+
         } else {
           throw new Error('Unable to update vender status');
         }
@@ -571,7 +578,8 @@ export class WorkflowService {
   async getMyApplications(user: any) {
 
     const result = await this.workflowInstanceRepository.find({
-      relations: { service: true },
+      relations: { service: true, taskTrackers: true },
+      order: { updatedAt: 'DESC', taskTrackers: { executedAt: 'DESC' } },
       where: { userId: user.id, status: In([ApplicationStatus.INPROGRESS, ApplicationStatus.ADJUSTMENT]) }
     });
 
