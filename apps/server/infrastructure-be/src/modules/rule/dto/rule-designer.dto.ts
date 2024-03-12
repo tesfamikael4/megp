@@ -1,4 +1,10 @@
-import { IsString, ValidateNested, IsUUID, IsEnum } from 'class-validator';
+import {
+  IsString,
+  ValidateNested,
+  IsUUID,
+  IsEnum,
+  IsArray,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { EnforcementMethodEnum, Rule } from 'src/entities';
 import { CreateRuleDto } from './rule.dto';
@@ -47,6 +53,10 @@ export class CreateRuleDesignerDto {
   })
   @ValidateNested({ each: true })
   actions: ActionDto[];
+
+  @ApiProperty()
+  @IsArray()
+  possibleReasons: any[];
 }
 
 export class UpdateRuleDesignerDto extends CreateRuleDesignerDto {

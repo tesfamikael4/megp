@@ -4,6 +4,7 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   JoinColumn,
+  Unique,
 } from 'typeorm';
 import { RuleDesigner } from './rule-designer.entity';
 import { Audit } from 'megp-shared-be';
@@ -17,11 +18,12 @@ type Condition = {
 };
 
 @Entity({ name: 'rules' })
+@Unique(['key', 'designerId'])
 export class Rule extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ unique: true })
+  @Column()
   key: string;
 
   @Column()

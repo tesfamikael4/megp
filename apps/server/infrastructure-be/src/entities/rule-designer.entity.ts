@@ -44,7 +44,7 @@ export class RuleDesigner extends Audit {
 
   @OneToMany(
     () => PossibleReasons,
-    (possibleReasons) => possibleReasons.ruleDesigner,
+    (possibleReasons) => possibleReasons.designer,
     {
       cascade: true,
     },

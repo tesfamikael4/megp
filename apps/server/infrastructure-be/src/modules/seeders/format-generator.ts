@@ -104,7 +104,7 @@ designFormattedArray.forEach((designs) => {
     rules.forEach((rule) => {
       if (rule.possibleReasons) {
         seedPossibeReasons.push({
-          ruleDesignerId: uid,
+          designerId: uid,
           reason: rule.possibleReasons,
         });
       }

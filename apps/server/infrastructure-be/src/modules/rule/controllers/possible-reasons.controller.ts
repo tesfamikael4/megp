@@ -6,7 +6,7 @@ import { ExtraCrudOptions } from 'megp-shared-be';
 import { PossibleReasonsService } from '../services/possible-service.service';
 
 const option: ExtraCrudOptions = {
-  entityIdName: 'ruleDesignerId',
+  entityIdName: 'designerId',
 };
 @Controller('possible-reasons')
 @ApiTags('possible-reasons')

@@ -11,8 +11,8 @@ const options: ExtraCrudOptions = {
   createDto: CreateRuleDto,
   updateDto: UpdateRuleDto,
 };
-@Controller('rule')
-@ApiTags('rule')
+@Controller('rules')
+@ApiTags('rules')
 export class RuleController extends ExtraCrudController<Rule>(options) {
   constructor(private readonly ruleService: RuleService) {
     super(ruleService);
