@@ -58,13 +58,18 @@ export function FormDetail({ mode }: FormDetailProps) {
         ...data,
         organizationId: `${organizationId}`,
         isSystemRole: false,
-      });
-      if ('data' in result) {
-        router.push(`/roles/${result?.data?.id}`);
-      }
+      }).unwrap();
+      router.push(`/roles/${result?.id}`);
       notify('Success', 'Role created successfully');
     } catch (err) {
-      notify('Error', 'Errors in creating Role.');
+      notify(
+        'Error',
+        `${
+          err.data.message.toLowerCase().startsWith('duplicate')
+            ? 'Role already exists'
+            : 'Errors in creating role'
+        }`,
+      );
     }
   };
   const onUpdate = async (data) => {
@@ -76,8 +81,15 @@ export function FormDetail({ mode }: FormDetailProps) {
         organizationId: `${organizationId}`,
       }).unwrap();
       notify('Success', 'Role updated successfully');
-    } catch {
-      notify('Error', 'Errors in updating Role.');
+    } catch (err) {
+      notify(
+        'Error',
+        `${
+          err.data.message.toLowerCase().startsWith('duplicate')
+            ? 'Role already exists'
+            : 'Errors in updating Role'
+        }`,
+      );
     }
   };
   const onDelete = async () => {
