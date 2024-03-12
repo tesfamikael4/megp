@@ -188,6 +188,8 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
       },
       relations: { service: true },
     });
+    if (result)
+      delete result.service;
     return result;
   }
 
@@ -337,7 +339,7 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
         );
         totalFee = totalFee + Number(upgradePayment);
         const formatedBC = this.commonService.formatPriceRange(CurrentpricingData);
-        paymentDetail.push({ name: CurrentpricingData.service.name, category: CurrentpricingData.businessArea, bc: formatedBC, fee: upgradePayment });
+        paymentDetail.push({ name: bp.service.name, category: CurrentpricingData.businessArea, bc: formatedBC, fee: upgradePayment });
         const business: BusinessAreaEntity = new BusinessAreaEntity();
         business.serviceId = bp.serviceId;
         business.priceRangeId = newPricingId;
@@ -357,7 +359,9 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
           bp.service,
           user
         );
+        invoice.paymentDetail = [...paymentDetail];
         invoice.amount = totalFee;
+        invoice.refNumber = this.commonService.generateRandomString(7);
         await this.invoiceRepository.save(invoice);
         const response = { messaage: 'Invoice Created', state: 'success' };
         return response;

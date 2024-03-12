@@ -180,7 +180,7 @@ export class WorkflowInstanceResponse extends UpdateWorkflowInstanceDto {
     if (bia?.length > 0) {
       for (const bi of bia) {
         const lobs = bi.lineOfBusiness.map((item: any) => {
-          return item.name;
+          return item?.name;
         });
         let range = {};
         for (const item of prices) {

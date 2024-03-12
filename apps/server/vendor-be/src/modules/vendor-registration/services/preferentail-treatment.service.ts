@@ -123,56 +123,21 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
           ba.serviceId = dto.serviceId;
           await this.baService.create(ba);
         }
-        const pts = await this.ptRepository.find({
-          relations: { service: true },
-          where: { serviceId: In(serviceIds), userId: user.id },
-        });
-        for (const row of pts) {
-          if ((row.service.key == ServiceKeyEnum.IBM)) {
-            const formatted = this.commonService.reduceAttributes(row);
-            delete formatted.service;
-            response.push({
-              ...formatted,
-              category: row.service.key,
-              type: row.service.key,
-            });
-          }
-          if ((row.service.key == ServiceKeyEnum.MARGINALIZED_GROUP)) {
-            const formatted = this.commonService.reduceAttributes(row);
-            delete formatted.service;
-            response.push({
-              ...formatted,
-              category: row.service.key,
-              type: row.service.key,
-            });
-          }
-          const keys = this.commonService.getServiceCatagoryKeys(
-            ServiceKeyEnum.MSME,
-          );
-          if (keys.filter((item: any) => row.service.key == item).length > 0) {
-            const formatted = this.commonService.reduceAttributes(row);
-            delete formatted.service;
-            response.push({
-              ...formatted,
-              category: ServiceKeyEnum.MSME,
-              type: row.service.key,
-            });
-          }
-        }
 
-        return response;
       } catch (error) {
         throw new HttpException(error, 500);
       }
     }
+
+    return true;
   }
   async uploadPreferentialAttachments(attachments: any, user: any) {
     const subdirectory = 'preferential-documents';
     const response = {};
     try {
-      if (attachments.msmeCerti) {
+      if (attachments?.msmeCerti?.length) {
         const certificateUrl = await this.uploaderService.uploadDocuments(
-          attachments.msmeCerti,
+          attachments.msmeCerti[0],
           user,
           subdirectory,
         );
@@ -197,9 +162,9 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
         }
 
       }
-      if (attachments.ibmCerti) {
+      if (attachments?.ibmCerti?.length) {
         const certificateUrl = await this.uploaderService.uploadDocuments(
-          attachments.ibmCerti,
+          attachments.ibmCerti[0],
           user,
           subdirectory,
         );
@@ -219,9 +184,9 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
         }
 
       }
-      if (attachments.marginalizedCerti) {
+      if (attachments?.marginalizedCerti?.length) {
         const certificateUrl = await this.uploaderService.uploadDocuments(
-          attachments.marginalizedCerti,
+          attachments.marginalizedCerti[0],
           user,
           subdirectory,
         );
@@ -246,6 +211,89 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
       throw new Error(error);
     }
   }
+
+
+
+  // async uploadPreferentialAttachments(attachments: any, user: any) {
+  //   const subdirectory = 'preferential-documents';
+  //   const response = {};
+  //   try {
+  //     if (attachments.msmeCerti) {
+  //       const certificateUrl = await this.uploaderService.uploadDocuments(
+  //         attachments.msmeCerti[0],
+  //         user,
+  //         subdirectory,
+  //       );
+  //       const keys = this.commonService.getServiceCatagoryKeys(
+  //         ServiceKeyEnum.MSME,
+  //       );
+  //       const pt = await this.ptRepository.findOne({
+  //         where: {
+  //           service: {
+  //             key: In(keys),
+  //           },
+  //           status: In([ApplicationStatus.SUBMITTED, ApplicationStatus.DRAFT]),
+  //           userId: user.id,
+  //         },
+  //       });
+  //       if (pt) {
+  //         pt.certificateUrl = certificateUrl;
+  //         await this.ptRepository.save(pt);
+  //         response['msmeCerti'] = certificateUrl;
+  //       } else {
+  //         throw new HttpException("MSME data Not found", 404);
+  //       }
+
+  //     }
+  //     if (attachments.ibmCerti) {
+  //       const certificateUrl = await this.uploaderService.uploadDocuments(
+  //         attachments.ibmCerti,
+  //         user,
+  //         subdirectory,
+  //       );
+  //       const pt = await this.ptRepository.findOne({
+  //         where: {
+  //           service: { key: ServiceKeyEnum.IBM },
+  //           status: In([ApplicationStatus.SUBMITTED, ApplicationStatus.DRAFT]),
+  //           userId: user.id,
+  //         },
+  //       });
+  //       if (pt) {
+  //         pt.certificateUrl = certificateUrl;
+  //         await this.ptRepository.save(pt);
+  //         response['ibmCerti'] = certificateUrl;
+  //       } else {
+  //         throw new HttpException("IBM data Not found", 404);
+  //       }
+
+  //     }
+  //     if (attachments.marginalizedCerti) {
+  //       const certificateUrl = await this.uploaderService.uploadDocuments(
+  //         attachments.marginalizedCerti,
+  //         user,
+  //         subdirectory,
+  //       );
+  //       const pt = await this.ptRepository.findOne({
+  //         where: {
+  //           service: { key: ServiceKeyEnum.MARGINALIZED_GROUP },
+  //           status: In([ApplicationStatus.SUBMITTED, ApplicationStatus.DRAFT]),
+  //           userId: user.id,
+  //         },
+  //       });
+  //       if (pt) {
+  //         pt.certificateUrl = certificateUrl;
+  //         await this.ptRepository.save(pt);
+  //         response['marginalizedCerti'] = certificateUrl;
+  //       } else {
+  //         throw new HttpException("marginalized Data Not found", 404);
+  //       }
+
+  //     }
+  //     return response;
+  //   } catch (error) {
+  //     throw new Error(error);
+  //   }
+  // }
   async getDraftPreferentialApplications(user: any) {
     const response = []
     const result = await this.ptRepository.find({
