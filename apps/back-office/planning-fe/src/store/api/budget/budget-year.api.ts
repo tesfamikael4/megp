@@ -2,7 +2,7 @@ import { baseQuery } from '@/store/base-query';
 import { CollectionQuery, encodeCollectionQuery } from '@megp/entity';
 import { createApi } from '@reduxjs/toolkit/query/react';
 
-export const budgetApi = createApi({
+export const budgetYearApi = createApi({
   reducerPath: 'budgetYearApi',
   refetchOnFocus: true,
   tagTypes: ['pr-files'],
@@ -80,4 +80,4 @@ export const {
   useGetFilesQuery,
   useLazyDownloadFilesQuery,
   usePreSignedUrlMutation,
-} = budgetApi;
+} = budgetYearApi;

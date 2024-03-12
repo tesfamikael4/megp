@@ -4,11 +4,11 @@ export const DetailPr = ({ cell }: any) => {
   const data = [
     {
       key: 'Reference',
-      value: cell.requisitionReferenceNumber,
+      value: cell.procurementReference,
     },
     {
       key: 'Title',
-      value: cell.title,
+      value: cell.name,
     },
     {
       key: 'Description',

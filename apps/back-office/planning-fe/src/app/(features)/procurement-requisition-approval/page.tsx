@@ -3,27 +3,14 @@
 import { ExpandableTable } from '@/app/(features)/procurement-requisition/_components/expandable-table';
 import { Section } from '@megp/core-fe';
 import { useRouter } from 'next/navigation';
-import {
-  ActionIcon,
-  Button,
-  Divider,
-  Group,
-  Modal,
-  Radio,
-} from '@mantine/core';
-import { IconChevronRight, IconPlus } from '@tabler/icons-react';
+import { ActionIcon } from '@mantine/core';
+import { IconChevronRight } from '@tabler/icons-react';
 import { DetailRequisition } from '@/app/(features)/procurement-requisition/_components/detail-requisition-list';
-import { useLazyListQuery } from './_api/procurement-requisition.api';
-import { useDisclosure } from '@mantine/hooks';
-import { ActivitySelector } from './_components/activity-selector';
-import { useState } from 'react';
+import { useLazyListQuery } from '@/app/(features)/procurement-requisition/_api/procurement-requisition.api';
 
 export default function ProcurementRequisition() {
   const [trigger, { data, isLoading }] = useLazyListQuery();
   const router = useRouter();
-  const [opened, { open, close }] = useDisclosure(false);
-  const [type, setType] = useState<string>('');
-  const [mode, setMode] = useState<string>('');
 
   const config = {
     columns: [
@@ -67,7 +54,7 @@ export default function ProcurementRequisition() {
             variant="outline"
             onClick={(e) => {
               e.stopPropagation();
-              router.push(`/procurement-requisition/${pr.id}`);
+              router.push(`/procurement-requisition-approval/${pr.id}`);
             }}
           >
             <IconChevronRight />
@@ -90,73 +77,13 @@ export default function ProcurementRequisition() {
   };
 
   return (
-    <Section
-      title="Procurement Requisition"
-      collapsible={false}
-      action={
-        <Button
-          onClick={() => {
-            setMode('');
-            open();
-          }}
-        >
-          <IconPlus size={14} /> Create
-        </Button>
-      }
-    >
+    <Section title="Procurement Requisition" collapsible={false}>
       <ExpandableTable
         config={config}
         data={data?.items ?? []}
         total={data?.total ?? 0}
         onRequestChange={onRequestChange}
       />
-      <Modal
-        opened={opened}
-        onClose={close}
-        title="Create Procurement Requisition"
-      >
-        <Divider />
-        <p className=" mb-4 mt-2">Select procurement requisition type</p>
-
-        <Group gap="md">
-          <Radio
-            label="From Planned Activities"
-            checked={type === 'planned'}
-            onChange={() => setType('planned')}
-          />
-          <Radio
-            label="Manual Procurement Requisition"
-            checked={type === 'custom'}
-            onChange={() => setType('custom')}
-          />
-        </Group>
-        <Button
-          loading={isLoading}
-          className="mt-5"
-          onClick={
-            type == 'planned'
-              ? () => setMode(type)
-              : () => router.push(`/procurement-requisition/new`)
-          }
-        >
-          Next
-        </Button>
-      </Modal>
-
-      {mode === 'planned' && (
-        <Modal
-          opened={opened}
-          onClose={close}
-          size={'80%'}
-          title={
-            <Group className=" text-lg font-medium ">
-              Select Procurement Activity
-            </Group>
-          }
-        >
-          <ActivitySelector />
-        </Modal>
-      )}
     </Section>
   );
 }
