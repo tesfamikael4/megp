@@ -565,13 +565,14 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       return {
         status: 'Initial'
       };
+
     const bas = await this.businessAreaRepository.find({
       where: { vendorId: data.id },
     });
 
     if (bas.length === 0) {
       return {
-        status: 'Initial'
+        status: ApplicationStatus.DRAFT
       };
     }
 

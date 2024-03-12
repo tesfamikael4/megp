@@ -117,8 +117,11 @@ export class WorkflowService {
       await this.gotoNextStep(nextCommand, user);
     }
     const vendor = await this.vendorRegService.findOne(wfinstance.requestorId);
-    vendor.canRequest = false;
-    await this.vendorRegService.update(vendor.id, vendor);
+    if (vendor) {
+      vendor.canRequest = false;
+      await this.vendorRegService.update(vendor.id, vendor);
+    }
+
     return response;
   }
   async changeWorkflowInstanceStatus(status: string, instanceId: string) {
@@ -187,8 +190,11 @@ export class WorkflowService {
           await this.handlerRepository.delete(currentTaskHandler.id);
           workflowInstance.taskHandler = null;
           const vendor = await this.vendorRegService.findOne(wfInstance.requestorId);
-          vendor.canRequest = true;
-          await this.vendorRegService.update(vendor.id, vendor);
+          if (vendor) {
+            vendor.canRequest = true;
+            await this.vendorRegService.update(vendor.id, vendor);
+          }
+
 
         } else {
           throw new Error('Unable to update vender status');
