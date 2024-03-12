@@ -11,7 +11,7 @@ import {
 import { Controller, useForm } from 'react-hook-form';
 import { FrameworkSelector } from './framework-selector';
 import { ZodType, z } from 'zod';
-import { logger, notify } from '@megp/core-fe';
+import { Section, logger, notify } from '@megp/core-fe';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import {
@@ -305,108 +305,113 @@ export const ActivityMechanization = ({
     reset,
   ]);
   return (
-    <div className="flex gap-4">
-      <Stack
-        pos="relative"
-        className={
-          Object.keys(justifications).length === 0 ? 'w-full' : 'w-3/5'
-        }
-      >
-        <LoadingOverlay
-          visible={isGetPreMechanismLoading || isGetPostMechanismLoading}
-        />
-        <Flex gap="md">
-          <CustomSelect
-            label="Procurement Type"
-            placeholder="Select Procurement Type"
-            name="procurementType"
-            control={control}
-            data={procurementType}
-            errors={errors}
-            disableFields={disableFields}
+    <Section title="Procurement Method" collapsible={false}>
+      <div className="flex gap-4">
+        <Stack
+          pos="relative"
+          className={
+            Object.keys(justifications).length === 0 ? 'w-full' : 'w-3/5'
+          }
+        >
+          <LoadingOverlay
+            visible={isGetPreMechanismLoading || isGetPostMechanismLoading}
           />
-          <CustomSelect
-            label="Procurement Method"
-            name="procurementMethod"
-            placeholder="Select Procurement Method"
-            control={control}
-            data={procurementMethods}
-            errors={errors}
-            actions={checkIfMethodIsValid}
-            disableFields={disableFields || !type}
-          />
-        </Flex>
-        {method === 'Purchased Orders (Call off)' && (
-          <FrameworkSelector
-            contract={contract}
-            onSelect={(contract) => setContract(contract)}
-          />
-        )}
-        <Flex gap="md" align="center">
-          <CustomSelect
-            label="Funding Source"
-            name="fundingSource"
-            control={control}
-            data={fundingSources}
-            placeholder="Select Funding Source"
-            errors={errors}
-            disableFields={disableFields}
-          />
-          <CustomSelect
-            label="Procurement Process"
-            name="isOnline"
-            placeholder="Select Procurement Process"
-            control={control}
-            data={[
-              { label: 'Online', value: 'true' },
-              { label: 'Offline', value: 'false' },
-            ]}
-            errors={errors}
-            disableFields={disableFields}
-          />
-        </Flex>
-        {(fundingSource == 'Loan' || fundingSource == 'Donor') && (
-          <TextInput
-            label="Donor"
-            withAsterisk
-            value={donor[0] ?? ''}
-            onChange={(e) => setDonor([e.target.value])}
-            disabled={disableFields}
-          />
-        )}
-        <Controller
-          name="targetGroup"
-          control={control}
-          render={({ field: { name, value, onChange } }) => (
-            <MultiSelect
-              name={name}
-              value={value}
-              onChange={onChange}
-              label="Supplier Target Group"
-              data={targetGroups}
-              className="w-full"
-              disabled={disableFields}
-              placeholder="Select Supplier Target Group"
+          <Flex gap="md">
+            <CustomSelect
+              label="Procurement Type"
+              placeholder="Select Procurement Type"
+              name="procurementType"
+              control={control}
+              data={procurementType}
+              errors={errors}
+              disableFields={disableFields}
+            />
+            <CustomSelect
+              label="Procurement Method"
+              name="procurementMethod"
+              placeholder="Select Procurement Method"
+              control={control}
+              data={procurementMethods}
+              errors={errors}
+              actions={checkIfMethodIsValid}
+              disableFields={disableFields || !type}
+            />
+          </Flex>
+          {method === 'Purchased Orders (Call off)' && (
+            <FrameworkSelector
+              contract={contract}
+              onSelect={(contract) => setContract(contract)}
             />
           )}
-        />
+          <Flex gap="md" align="center">
+            <CustomSelect
+              label="Funding Source"
+              name="fundingSource"
+              control={control}
+              data={fundingSources}
+              placeholder="Select Funding Source"
+              errors={errors}
+              disableFields={disableFields}
+            />
+            <CustomSelect
+              label="Procurement Process"
+              name="isOnline"
+              placeholder="Select Procurement Process"
+              control={control}
+              data={[
+                { label: 'Online', value: 'true' },
+                { label: 'Offline', value: 'false' },
+              ]}
+              errors={errors}
+              disableFields={disableFields}
+            />
+          </Flex>
+          {(fundingSource == 'Loan' || fundingSource == 'Donor') && (
+            <TextInput
+              label="Donor"
+              withAsterisk
+              value={donor[0] ?? ''}
+              onChange={(e) => setDonor([e.target.value])}
+              disabled={disableFields}
+            />
+          )}
+          <Controller
+            name="targetGroup"
+            control={control}
+            render={({ field: { name, value, onChange } }) => (
+              <MultiSelect
+                name={name}
+                value={value}
+                onChange={onChange}
+                label="Supplier Target Group"
+                data={targetGroups}
+                className="w-full"
+                disabled={disableFields}
+                placeholder="Select Supplier Target Group"
+              />
+            )}
+          />
 
-        <Group>
-          <Button
-            loading={
-              isPreCreating || isPostCreating || isPreUpdating || isPostUpdating
-            }
-            onClick={handleSubmit(onSubmit, onError)}
-            disabled={disableFields}
-          >
-            <IconDeviceFloppy size={14} /> Save
-          </Button>
-        </Group>
-      </Stack>
+          <Group>
+            <Button
+              loading={
+                isPreCreating ||
+                isPostCreating ||
+                isPreUpdating ||
+                isPostUpdating
+              }
+              onClick={handleSubmit(onSubmit, onError)}
+              disabled={disableFields}
+            >
+              <IconDeviceFloppy size={14} /> Save
+            </Button>
+          </Group>
+        </Stack>
 
-      {Object.keys(justifications).length !== 0 && (
-        <Reasons justification={justifications} />
-      )}
-    </div>
+        {Object.keys(justifications).length !== 0 && (
+          <Reasons justification={justifications} />
+        )}
+      </div>
+    </Section>
   );
 };

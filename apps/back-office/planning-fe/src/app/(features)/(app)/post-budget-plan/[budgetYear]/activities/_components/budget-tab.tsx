@@ -12,7 +12,7 @@ import { useLazyReadQuery } from '../_api/activities.api';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { IconPlus } from '@tabler/icons-react';
-import { logger, notify } from '@megp/core-fe';
+import { Section, logger, notify } from '@megp/core-fe';
 import {
   useCreatePostBudgetDisbursementMutation,
   useLazyGetPostBudgetDisbursementQuery,
@@ -233,35 +233,37 @@ export const BudgetTab = ({ disableFields }: { disableFields?: boolean }) => {
     }
   };
   return (
-    <Box className="mt-2" pos="relative">
-      <LoadingOverlay
-        visible={isLoading || isDisbursementLoading || isGetWithAppLoading}
-      />
-      <BudgetSelector activity={data} disableFields={disableFields} />
+    <Section title="Budget" collapsible={false}>
+      <Box className="mt-2" pos="relative">
+        <LoadingOverlay
+          visible={isLoading || isDisbursementLoading || isGetWithAppLoading}
+        />
+        <BudgetSelector activity={data} disableFields={disableFields} />
 
-      <Box className="mt-5">
-        <Divider label="Disbursement" my="lg" />
-        {data?.isMultiYear && (
-          <Flex justify="end" align="center" className="mt-2 text-slate-500 ">
-            <IconPlus size="16" />
-            <Text fw="500" onClick={handleAdd} className="cursor-pointer">
-              Add
-            </Text>
-          </Flex>
-        )}
+        <Box className="mt-5">
+          <Divider label="Disbursement" my="lg" />
+          {data?.isMultiYear && (
+            <Flex justify="end" align="center" className="mt-2 text-slate-500 ">
+              <IconPlus size="16" />
+              <Text fw="500" onClick={handleAdd} className="cursor-pointer">
+                Add
+              </Text>
+            </Flex>
+          )}
+        </Box>
+        <ExpandableTable data={budgetYearDisbursement ?? []} config={config} />
+
+        <Group justify="end" className="mt-2">
+          <Divider h={2} />
+          <Button
+            loading={isDisbursementCreating}
+            onClick={onSave}
+            disabled={disableFields}
+          >
+            Save
+          </Button>
+        </Group>
       </Box>
-      <ExpandableTable data={budgetYearDisbursement ?? []} config={config} />
-
-      <Group justify="end" className="mt-2">
-        <Divider h={2} />
-        <Button
-          loading={isDisbursementCreating}
-          onClick={onSave}
-          disabled={disableFields}
-        >
-          Save
-        </Button>
-      </Group>
-    </Box>
+    </Section>
   );
 };

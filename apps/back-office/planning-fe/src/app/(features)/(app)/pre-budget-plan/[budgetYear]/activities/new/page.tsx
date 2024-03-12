@@ -1,7 +1,7 @@
 'use client';
 import { Section } from '@megp/core-fe';
 import { FormDetail } from '@/app/(features)/(app)/_components/activity-form-detail';
-import { Box, Flex, Tabs, Text, Tooltip } from '@mantine/core';
+import { Box, Flex, Text, Tooltip } from '@mantine/core';
 import { IconChevronLeft } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 
@@ -30,9 +30,7 @@ export default function NewActivity() {
         </Flex>
       </Box>
       <Box className="mt-5">
-        <Section title="Activity Identification" collapsible={false}>
-          <FormDetail mode="new" page="pre" />
-        </Section>
+        <FormDetail mode="new" page="pre" />
       </Box>
     </>
   );

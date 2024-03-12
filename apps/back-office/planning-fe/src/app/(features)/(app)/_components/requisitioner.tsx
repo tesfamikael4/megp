@@ -1,7 +1,7 @@
 import { useLazyGetUsersQuery } from '@/store/api/iam/iam.api';
 import { ActionIcon, Box, Button, Group, Modal } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { logger, notify } from '@megp/core-fe';
+import { Section, logger, notify } from '@megp/core-fe';
 import { IconDeviceFloppy, IconTrash } from '@tabler/icons-react';
 import { useAuth } from '@megp/auth';
 import { useEffect, useState } from 'react';
@@ -138,71 +138,78 @@ export const Requisitioner = ({
     setSelectedItems(requisitioners);
   }, [requisitioners]);
   return (
-    <Box>
-      <Group justify="end" className="my-2">
-        <Button disabled={disableFields} onClick={open}>
-          Add
-        </Button>
-      </Group>
-      <ExpandableTable
-        data={requisitioners}
-        config={config}
-        total={requisitioners.length}
-      />
-
-      <Group justify="end" className="my-2">
-        <Button
-          disabled={disableFields}
-          onClick={onCreate}
-          loading={isPreCreatingLoading || isPostCreatingLoading}
-        >
-          <IconDeviceFloppy size={14} />
-          Save
-        </Button>
-      </Group>
-
-      <Modal
-        opened={opened}
-        onClose={close}
-        title="Add Requisitioner"
-        size="lg"
-      >
-        <ExpandableTable
-          config={addConfig}
-          data={
-            users
-              ? users.items.map((user) => ({
-                  name: user.firstName + ' ' + user.lastName,
-                  id: user.id,
-                }))
-              : []
-          }
-          total={users ? users.total : 0}
-          onRequestChange={(collectionQuery) => {
-            const id = organizationId ?? '';
-            const castedCollectionQuery: CollectionQuery = {
-              ...collectionQuery,
-              include: 'account',
-            };
-            getUsers({ id, collectionQuery: castedCollectionQuery });
-          }}
-        />
-
+    <Section
+      title="Requisitioners"
+      collapsible={false}
+      action={
         <Group justify="end">
-          <Button
-            onClick={() => {
-              const castedData = selectedItems.map((r: any) => ({
-                name: r.name,
-                userId: r.id,
-              }));
-              setRequisitioners(castedData);
-              close();
-            }}
-          >
-            Done
+          <Button disabled={disableFields} onClick={open}>
+            Add
           </Button>
         </Group>
-      </Modal>
-    </Box>
+      }
+    >
+      <Box>
+        <ExpandableTable
+          data={requisitioners}
+          config={config}
+          total={requisitioners.length}
+        />
+
+        <Group justify="end" className="my-2">
+          <Button
+            disabled={disableFields}
+            onClick={onCreate}
+            loading={isPreCreatingLoading || isPostCreatingLoading}
+          >
+            <IconDeviceFloppy size={14} />
+            Save
+          </Button>
+        </Group>
+
+        <Modal
+          opened={opened}
+          onClose={close}
+          title="Add Requisitioner"
+          size="lg"
+        >
+          <ExpandableTable
+            config={addConfig}
+            data={
+              users
+                ? users.items.map((user) => ({
+                    name: user.firstName + ' ' + user.lastName,
+                    id: user.id,
+                  }))
+                : []
+            }
+            total={users ? users.total : 0}
+            onRequestChange={(collectionQuery) => {
+              const id = organizationId ?? '';
+              const castedCollectionQuery: CollectionQuery = {
+                ...collectionQuery,
+                include: 'account',
+              };
+              getUsers({ id, collectionQuery: castedCollectionQuery });
+            }}
+          />
+
+          <Group justify="end">
+            <Button
+              onClick={() => {
+                const castedData = selectedItems.map((r: any) => ({
+                  name: r.name,
+                  userId: r.id,
+                }));
+                setRequisitioners(castedData);
+                close();
+              }}
+            >
+              Done
+            </Button>
+          </Group>
+        </Modal>
+      </Box>
+    </Section>
   );
 };
