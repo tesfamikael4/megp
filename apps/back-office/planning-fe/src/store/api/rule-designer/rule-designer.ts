@@ -13,14 +13,14 @@ export const ruleApi = createApi({
   endpoints: (builder) => ({
     validateProcurementMethod: builder.mutation<any, any>({
       query: (data: { data: any; key: string }) => ({
-        url: `rule-designer/validate/${data.key}`,
+        url: `rule-designers/validate/${data.key}`,
         method: 'POST',
         body: data.data,
       }),
     }),
     validateTargetGroup: builder.mutation<any, any>({
       query: (data) => ({
-        url: `rule-designer/bulk-validate`,
+        url: `rule-designers/bulk-validate`,
         method: 'POST',
         body: data,
       }),

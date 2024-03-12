@@ -24,7 +24,10 @@ import {
   useLazyListByIdQuery as useLazyListPostByIdQuery,
   useUpdateMutation as useUpdatePostMutation,
 } from '../_api/post-mechanism';
-import { useValidateProcurementMethodMutation } from '@/store/api/rule-designer/rule-designer';
+import {
+  useValidateProcurementMethodMutation,
+  useValidateTargetGroupMutation,
+} from '@/store/api/rule-designer/rule-designer';
 import { useLazyReadQuery } from '../_api/activities.api';
 import { useLazyReadQuery as useLazyReadPostActivityQuery } from '../_api/post-activity.api';
 import { IconDeviceFloppy } from '@tabler/icons-react';
@@ -34,6 +37,7 @@ import {
   procurementMethodRuleKeys,
   procurementMethods,
   procurementType,
+  targetGroupRuleKeys,
   targetGroups,
 } from '../_constants/procurement-method';
 import { CustomSelect } from './custom-select';
@@ -96,6 +100,7 @@ export const ActivityMechanization = ({
     },
   ] = useLazyListPostByIdQuery();
   const [validateMethod] = useValidateProcurementMethodMutation();
+  const [validateTargetGroup] = useValidateTargetGroupMutation();
 
   //activity
   const [getPreActivity, { data: preActivity }] = useLazyReadQuery();
@@ -230,6 +235,51 @@ export const ActivityMechanization = ({
       }
     } else {
       const { procurementMethod, ...temp } = justifications;
+      setJustifications({ ...temp });
+    }
+  };
+
+  const checkIfTargetGroupIsValid = async (val: string[]) => {
+    const valueThreshold =
+      page == 'pre'
+        ? preActivity?.estimatedAmount
+        : postActivity?.estimatedAmount ?? 0;
+    const key: string[] = Object.keys(targetGroupRuleKeys).filter((key) =>
+      val.includes(targetGroupRuleKeys[key]),
+    );
+    const data = {
+      procurementCategory: type?.toLowerCase(),
+      valueThreshold: valueThreshold,
+    };
+
+    if (key.length !== 0) {
+      try {
+        const res = await validateTargetGroup({
+          params: data,
+          designerKeys: key,
+        }).unwrap();
+
+        if (!res.validation) {
+          setJustifications({
+            ...justifications,
+            targetGroup: {
+              title: 'Target Group',
+              message:
+                'The target group used for this activity violates the rule. Please select possible reason why you want this activity by this target group',
+              possibleReasons: res.possibleReasons,
+              objectId: procurementMethodId,
+              activityId: id as string,
+            },
+          });
+        } else {
+          const { targetGroup, ...temp } = justifications;
+          setJustifications({ ...temp });
+        }
+      } catch (err) {
+        logger.log({ err });
+      }
+    } else {
+      const { targetGroup, ...temp } = justifications;
       setJustifications({ ...temp });
     }
   };
@@ -382,7 +432,10 @@ export const ActivityMechanization = ({
               <MultiSelect
                 name={name}
                 value={value}
-                onChange={onChange}
+                onChange={(val) => {
+                  onChange(val);
+                  checkIfTargetGroupIsValid(val);
+                }}
                 label="Supplier Target Group"
                 data={targetGroups}
                 className="w-full"
