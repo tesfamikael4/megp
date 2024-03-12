@@ -48,7 +48,7 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
       },
     });
     if (!activity) {
-      throw new NotFoundException('Activity is approved or not found');
+      throw new NotFoundException('Activity should be approved or not found');
     }
     const procurementRequisitionItems = [];
     activity.postBudgetPlanItems.forEach((item: any) => {

@@ -10,7 +10,7 @@ import {
 
 import { OrgAudit } from 'src/shared/entities/audit.entity';
 import { ProcurementRequisition } from './procurement-requisition.entity';
-@Entity({ name: 'procurement_mechanism_timelines' })
+@Entity({ name: 'procurement_requisition_timelines' })
 @Check('"order" >= 0 AND "period" >= 0')
 @Unique(['order', 'procurementRequisitionId', 'deletedAt'])
 export class ProcurementRequisitionTimeline extends OrgAudit {

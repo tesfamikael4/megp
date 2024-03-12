@@ -17,8 +17,8 @@ export class ProcurementRequisitionTimelineService extends ExtraCrudService<Proc
   ) {
     super(repositoryProcurementRequisitionTimeline);
   }
-  async bulkCreate(timelines: any[], req: any) {
-    const organizationId = req?.user?.organization?.id;
+  async bulkCreate(timelines: any[], user: any) {
+    const organizationId = user?.organization?.id;
     const procurementRequisitionId = timelines[0].procurementRequisitionId;
 
     timelines.forEach((timeline) => {
