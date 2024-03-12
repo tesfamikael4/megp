@@ -27,7 +27,7 @@ import { useForm } from 'react-hook-form';
 import {
   useGetFilesQuery,
   useLazyDownloadFilesQuery,
-  usePreSignedUrlMutation,
+  useUploadMutation,
 } from '@/store/api/budget/budget-year.api';
 import { useParams } from 'next/navigation';
 import { ExpandableTable } from './expandable-table';
@@ -42,7 +42,7 @@ export const Documents = ({
   const { id } = useParams();
   const [file, setFile] = useState<File[]>();
   const { register, handleSubmit } = useForm();
-  const [retrieveNewURL] = usePreSignedUrlMutation();
+  const [retrieveNewURL] = useUploadMutation();
   const { data } = useGetFilesQuery(id);
   const [dowloadFile, { isLoading: isDownloading }] =
     useLazyDownloadFilesQuery();
@@ -185,10 +185,12 @@ export const Documents = ({
       const file = fileList[i];
       try {
         const url = await retrieveNewURL({
-          originalname: file.name,
-          contentType: file.type,
-          name: name,
-          procurementRequisitionId: id,
+          fileInfo: {
+            originalname: file.name,
+            contentType: file.type,
+            filename: name,
+            procurementRequisitionId: id,
+          },
         }).unwrap();
         await uploadFile(file, url.presignedUrl);
       } catch (error) {

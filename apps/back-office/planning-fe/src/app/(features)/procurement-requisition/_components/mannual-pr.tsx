@@ -28,22 +28,20 @@ import {
   useLazyReadQuery,
   useUpdateMutation,
 } from '../_api/procurement-requisition.api';
-
+import { useLazyListByIdQuery } from '@/app/(features)/budget/_api/budget.api';
 import { useParams, useRouter } from 'next/navigation';
 import {
   useGetClassificationsQuery,
   useGetCurrenciesQuery,
   useLazyGetClassificationsQuery,
 } from '@/store/api/administration/administration.api';
+import { ProcurementRequisition } from '@/models/procurement-requsition';
+import { useAuth } from '@megp/auth';
 import { useDisclosure } from '@mantine/hooks';
 import { IconPlus } from '@tabler/icons-react';
-import { ProcurementRequisition } from '@/models/procurement-requsition';
-import { DateInput } from '@mantine/dates';
-import { useGetPostBudgetPlansQuery } from '@/store/api/post-budget-plan/post-budget-plan.api';
 
 interface FormDetailProps {
   mode: 'detail' | 'new';
-
   disableFields?: boolean;
 }
 
@@ -63,11 +61,7 @@ const prSchema: ZodType<Partial<ProcurementRequisition>> = z.object({
     required_error: 'This field is required',
     invalid_type_error: 'This field is required to be a string',
   }),
-  budgetYear: z.object({
-    budgetYearId: z.string({
-      required_error: 'Budget Year is required',
-    }),
-  }),
+  budgetId: z.string().nullable().optional(),
 });
 
 export const FormDetail = ({
@@ -86,30 +80,26 @@ export const FormDetail = ({
   } = useForm<ProcurementRequisition>({
     resolver: zodResolver(prSchema),
   });
-  // const [opened, { close, open }] = useDisclosure();
-  // const [tags, setTags] = useState<any>([]);
-
+  const [opened, { close, open }] = useDisclosure();
+  const [tags, setTags] = useState<any>([]);
+  const [getBudget, { data: budget }] = useLazyListByIdQuery();
   //
-  // const { data: classifications } = useGetClassificationsQuery({
-  //   where: [
-  //     [
-  //       {
-  //         column: 'parentCode',
-  //         value: 'IsNull',
-  //         operator: 'IsNull',
-  //       },
-  //     ],
-  //   ],
-  // } as any);
+  const { data: classifications } = useGetClassificationsQuery({
+    where: [
+      [
+        {
+          column: 'parentCode',
+          value: 'IsNull',
+          operator: 'IsNull',
+        },
+      ],
+    ],
+  } as any);
 
   const { data: currency } = useGetCurrenciesQuery({} as any);
+  const { organizationId } = useAuth();
 
-  const {
-    data: budget,
-    // isSuccess: budgetFetched,
-    // isLoading: isBudgetYearLoading,
-  } = useGetPostBudgetPlansQuery(undefined);
-  // const [getChildren, { isLoading }] = useLazyGetClassificationsQuery();
+  const [getChildren, { isLoading }] = useLazyGetClassificationsQuery();
   // pr rtk query
   const [create, { isLoading: isCreating }] = useCreateMutation();
   const [
@@ -123,50 +113,44 @@ export const FormDetail = ({
   const [updatePr, { isLoading: isPrUpdating }] = useUpdateMutation();
   const [removePr, { isLoading: isPrDeleting }] = useDeleteMutation();
 
-  //configs
-  // const treeConfig: TreeConfig<any> = {
-  //   id: 'code',
-  //   label: 'title',
-  //   selectable: true,
-  //   multipleSelect: true,
-  //   selectedIds: tags,
-  //   setSelectedIds: setTags,
-  //   load: async (data) => {
-  //     const res = await getChildren({
-  //       where: [
-  //         [
-  //           {
-  //             column: 'parentCode',
-  //             value: data.code,
-  //             operator: '=',
-  //           },
-  //         ],
-  //       ],
-  //     }).unwrap();
-  //     return {
-  //       result:
-  //         res?.items?.map((c) => ({
-  //           code: c.code,
-  //           title: c.title,
-  //         })) ?? [],
-  //       loading: isLoading,
-  //     };
-  //   },
-  // };
-
+  // configs;
+  const treeConfig: TreeConfig<any> = {
+    id: 'code',
+    label: 'title',
+    selectable: true,
+    multipleSelect: true,
+    selectedIds: tags,
+    setSelectedIds: setTags,
+    load: async (data) => {
+      const res = await getChildren({
+        where: [
+          [
+            {
+              column: 'parentCode',
+              value: data.code,
+              operator: '=',
+            },
+          ],
+        ],
+      }).unwrap();
+      return {
+        result:
+          res?.items?.map((c) => ({
+            code: c.code,
+            title: c.title,
+          })) ?? [],
+        loading: isLoading,
+      };
+    },
+  };
+  logger.log(budget);
   //event handler
   const onCreate = async (data) => {
-    const rawData = {
-      ...data,
-      status: 'Draft',
-      // classification: tags,
-      // preBudgetPlanId: budgetPlanId,
-    };
-
-    logger.log(rawData);
-
     try {
-      const res = await create(rawData).unwrap();
+      const res = await create({
+        ...data,
+        budgetId: data?.budgetId ?? null,
+      }).unwrap();
       notify('Success', 'Procurement Requisition created Successfully');
       router.push(`/procurement-requisition/${res.id}`);
     } catch (err) {
@@ -188,8 +172,7 @@ export const FormDetail = ({
       id,
 
       ...newData,
-      // classification: tags,
-      // preBudgetPlanId: budgetPlanId,
+      classification: tags,
     };
 
     try {
@@ -207,6 +190,10 @@ export const FormDetail = ({
       description: '',
     });
   };
+
+  useEffect(() => {
+    getBudget({ id: organizationId, collectionQuery: undefined }).unwrap();
+  }, [getBudget]);
 
   useEffect(() => {
     if (mode === 'detail') {
@@ -243,14 +230,14 @@ export const FormDetail = ({
         procurementRequisition?.procurementApplication,
       );
 
-      // setTags(procurementRequisition?.classification ?? []);
+      setTags(procurementRequisition?.classification ?? []);
     }
   }, [mode, isPrSuccess, setValue, procurementRequisition]);
   const onError = (error) => {
     logger.log({ error });
   };
   return (
-    <Stack>
+    <Stack pos={'relative'}>
       <Flex gap="md" pos={'relative'}>
         <Box className="w-1/2">
           {mode == 'detail' && <LoadingOverlay visible={isPrLoading} />}
@@ -262,14 +249,7 @@ export const FormDetail = ({
               {...register('requisitionReferenceNumber')}
             />
           )}
-          {/* {mode == 'new' && (
-            <TextInput
-              withAsterisk
-              disabled
-              label="Reference Number"
-              {...register('requisitionReferenceNumber')}
-            />
-          )} */}
+
           <TextInput
             label="Name"
             withAsterisk
@@ -313,28 +293,53 @@ export const FormDetail = ({
             disabled={disableFields}
           />
           <Controller
-            name="budgetYear.budgetYearId"
+            name="budgetId"
             control={control}
-            render={({ field: { name, value, onChange } }) => (
+            render={({ field: { value, onChange } }) => (
               <Select
                 name="name"
                 value={value}
                 onChange={onChange}
                 data={budget?.items.map((b) => {
                   return {
-                    value: b.app.budgetYearId,
-                    label: b.app.planName,
+                    value: b.id,
+                    label: b.budgetYear,
                   };
                 })}
                 //  className="w-full"
                 label="Budget Year"
-                withAsterisk
                 placeholder="Select Budget Year"
-                error={errors?.budgetYear?.budgetYearId?.message}
+                error={errors?.budgetId?.message}
                 disabled={disableFields}
               />
             )}
           />
+
+          <MultiSelect
+            label="Tag Classification"
+            value={tags.map((t) => t.code)}
+            data={tags.map((t) => ({
+              label: t.title + ' (' + t.code + ')',
+              value: t.code,
+            }))}
+            className="w-full"
+            onChange={(data) => {
+              setTags(tags.filter((t) => data.includes(t.code)));
+              logger.log({ data });
+            }}
+            disabled={disableFields}
+            leftSection={
+              <ActionIcon
+                onClick={open}
+                variant="subtle"
+                disabled={disableFields}
+              >
+                <IconPlus />
+              </ActionIcon>
+            }
+          />
+        </Box>
+        <Box className="w-1/2">
           <Controller
             name="procurementApplication"
             control={control}
@@ -367,31 +372,6 @@ export const FormDetail = ({
               />
             )}
           />
-          {/* <MultiSelect
-            label="Tag Classification"
-            value={tags.map((t) => t.code)}
-            data={tags.map((t) => ({
-              label: t.title + ' (' + t.code + ')',
-              value: t.code,
-            }))}
-            className="w-full"
-            onChange={(data) => {
-              setTags(tags.filter((t) => data.includes(t.code)));
-              logger.log({ data });
-            }}
-            disabled={disableFields}
-            leftSection={
-              <ActionIcon
-                onClick={open}
-                variant="subtle"
-                disabled={disableFields}
-              >
-                <IconPlus />
-              </ActionIcon>
-            }
-          /> */}
-        </Box>
-        <Box className="w-1/2">
           <Textarea
             label="Description"
             withAsterisk
@@ -426,7 +406,7 @@ export const FormDetail = ({
         disabled={disableFields}
       />
 
-      {/* <Modal
+      <Modal
         opened={opened}
         onClose={close}
         title="Select Classifications"
@@ -449,7 +429,7 @@ export const FormDetail = ({
         <Group justify="end">
           <Button onClick={close}>Done</Button>
         </Group>
-      </Modal> */}
+      </Modal>
     </Stack>
   );
 };

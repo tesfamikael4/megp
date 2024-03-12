@@ -61,6 +61,10 @@ export const Menu: MenuItem[] = [
         link: '/post-budget-plan-approval',
         permission: ['planning:approvePostPlan'],
       },
+      {
+        label: 'Procurement Requisition Approval',
+        link: '/procurement-requisition-approval',
+      },
     ],
   },
 

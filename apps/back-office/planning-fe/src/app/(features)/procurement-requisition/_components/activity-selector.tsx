@@ -105,7 +105,6 @@ export const ActivitySelector = () => {
   useEffect(() => {
     budgetFetched && setSelectedBudgetYear(budget?.items?.[0]?.id);
   }, [budget?.items, budgetFetched]);
-
   useEffect(() => {
     if (budgetFetched) {
       onRequestChange({ skip: 0, take: 10 });
@@ -124,8 +123,8 @@ export const ActivitySelector = () => {
             [
               {
                 column: 'status',
-                value: 'Assigned',
-                operator: '!=',
+                value: 'Approved',
+                operator: '=',
               },
             ],
           ],
@@ -143,7 +142,7 @@ export const ActivitySelector = () => {
               label="Budget Year"
               value={selectedBudgetYear}
               onChange={(e: any) => {
-                setSelectedBudgetYear(e?.id);
+                setSelectedBudgetYear(e);
               }}
               data={budget?.items.map((b) => {
                 return {

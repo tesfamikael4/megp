@@ -203,7 +203,7 @@ export default function TimelineTab({ activityId }: { activityId?: string }) {
       return {
         ...activityId,
         dueDate: d.dueDate,
-        noOfDays: d.noOfDays,
+        period: d.noOfDays,
         timeline: d.timeline,
         order: index,
       };

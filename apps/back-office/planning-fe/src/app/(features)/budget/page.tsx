@@ -1,7 +1,7 @@
 'use client';
 
 import { ExpandableTable } from '../_components/expandable-table';
-import { useListQuery, useLazyListQuery } from '../_api/app.api';
+import { useLazyListQuery } from '../_api/app.api';
 import { ActionIcon } from '@mantine/core';
 import { IconChevronRight } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';

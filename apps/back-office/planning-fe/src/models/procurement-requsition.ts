@@ -4,10 +4,8 @@ export interface ProcurementRequisition {
   name: string;
   description: string;
   requisitionReferenceNumber: string;
-  userReferncceNumber: string;
-  budgetYear: {
-    budgetYearId: string;
-  };
+  userReferenceNumber: string;
+  budgetId: string | null;
   budgetCode: {
     name: string;
     endDate: Date;
