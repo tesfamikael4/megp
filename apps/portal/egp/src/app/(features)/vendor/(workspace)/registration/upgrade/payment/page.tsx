@@ -59,27 +59,23 @@ function Page() {
     const paymentData = {
       file: values.file,
       transactionNumber: values.transactionNumber,
-      invoiceIds: data?.items?.map((item) => item.id),
+      invoiceIds: [data?.id],
     };
-    return uploadFile(paymentData);
+    try {
+      uploadFile(paymentData)
+        .unwrap()
+        .then((response) => {
+          NotificationService.successNotification('Payed Successfully!');
+          router.push('/vendor/registration/track-applications');
+        });
+    } catch (error) {
+      NotificationService.requestErrorNotification('Something went wrong');
+    }
   };
 
   const handleFileChange = (file: File) => {
     setValue('file', file);
   };
-
-  useEffect(() => {
-    if (uploadFileInfo.isSuccess) {
-      NotificationService.successNotification('Payed Successfully!');
-      router.push('/vendor/registration/track-applications');
-    }
-    return () => {};
-  }, [data, uploadFileInfo.data]);
-
-  useEffect(() => {
-    if (data?.items.length === 0)
-      NotificationService.requestErrorNotification('No invoice found');
-  }, [data?.items]);
 
   if (isLoading) {
     return (
@@ -91,8 +87,9 @@ function Page() {
       </Box>
     );
   }
-  if (data?.total === 0) {
-    return router.push('business-areas');
+  if (!data) {
+    NotificationService.requestErrorNotification('No invoice found');
+    return router.push('ppda');
   }
   return (
     <Flex className="flex-col w-full relative min-h-[70vh] justify-between">
@@ -134,9 +131,7 @@ function Page() {
             </Flex>
           </form>
           <Flex className="min-w-1/2 flex-col border w-1/2">
-            {data?.items && data?.items?.length > 0 && (
-              <InvoiceTemplate invoiceData={data?.items} />
-            )}
+            {data && <InvoiceTemplate invoiceData={data} />}
           </Flex>
         </Flex>
       </Box>

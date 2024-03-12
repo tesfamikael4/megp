@@ -7,7 +7,7 @@ import { Section } from '@megp/core-fe';
 function StyledStepper() {
   const router = useRouter();
   const path = usePathname();
-  const routes = ['business-areas', 'payment'];
+  const routes = ['ppda', 'payment'];
 
   const canAccessRoute = (route) => {
     // return routes.slice(0, routes.indexOf(accessLevel)).includes(route);

@@ -332,8 +332,8 @@ const DocumentPanel = ({
             {data[tabValue]?.[fieldKey] ? (
               <ShowFile
                 url={`${
-                  process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api/'
-                }upload/get-file-bo/${
+                  process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api'
+                }/upload/get-file-bo/${
                   tabValue === 'supportingDocuments'
                     ? 'SupportingDocument'
                     : tabValue === 'certificate'

@@ -9,17 +9,12 @@ import { useGetDraftApplicationQuery } from '@/store/api/preferential-treatment/
 
 function Page() {
   const router = useRouter();
-  const {
-    data: draft,
-    isSuccess: isDraftSuccess,
-    isLoading: isDraftLoading,
-  } = useGetDraftApplicationQuery({});
-  const { data, isError } = useGetVendorQuery(
+  const { data, isError, isLoading } = useGetVendorQuery(
     {},
     { refetchOnMountOrArgChange: true },
   );
 
-  if (isDraftLoading) {
+  if (isLoading) {
     return <LoadingOverlay visible />;
   }
   if (isError) {
@@ -33,7 +28,7 @@ function Page() {
     return (
       <PreferentialTreatmentForm
         vendorInfo={data.initial}
-        initialValues={draft}
+        initialValues={data}
       />
     );
   }

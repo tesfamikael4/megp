@@ -61,7 +61,7 @@ export const PreferentialTreatment: React.FC<Props> = ({
             append({
               category,
               type: category !== 'msme' ? category : '',
-              attachment: '' as any,
+              certificateUrl: '' as any,
               certiNumber: '',
               serviceId:
                 category !== 'msme' ? findServiceIdByType(data, category) : '',
@@ -145,7 +145,7 @@ export const PreferentialTreatment: React.FC<Props> = ({
                 </Input.Wrapper>
               </Flex>
               <Controller
-                name={`preferential.${index}.attachment`}
+                name={`preferential.${index}.certificateUrl`}
                 control={control}
                 render={({ field: { name, value, onChange } }) => (
                   <FileUploader
@@ -154,7 +154,9 @@ export const PreferentialTreatment: React.FC<Props> = ({
                     placeholder="Choose File"
                     onChange={onChange}
                     onRemove={onChange}
-                    error={register(`preferential.${index}.attachment`).error}
+                    error={
+                      register(`preferential.${index}.certificateUrl`).error
+                    }
                     getImageUrl={null}
                   />
                 )}

@@ -4,22 +4,17 @@ import { InvoiceData } from '@/models/vendorInvoice';
 import { IconPrinter } from '@tabler/icons-react';
 import { useRef } from 'react';
 import { useReactToPrint } from 'react-to-print';
+import { PaymentReceipt } from '@/models/vendorRegistration';
 
 export default function InvoiceTemplate({
   invoiceData,
 }: {
-  invoiceData: InvoiceData;
+  invoiceData: PaymentReceipt;
 }) {
   const data = {
     id: invoiceData.id ?? '',
-    instanceId: invoiceData.instanceId ?? '',
-    applicationNo: invoiceData.applicationNo ?? '',
-    pricingId: invoiceData.pricingId ?? '',
-    taskName: invoiceData.taskName ?? '',
     refNumber: invoiceData.refNumber,
-    taskId: invoiceData.taskId ?? '',
     serviceId: invoiceData.serviceId ?? '',
-    serviceName: invoiceData.serviceName ?? '',
     payerName: invoiceData.payerName ?? '',
     userId: invoiceData.userId ?? '',
     payToAccNo: invoiceData.payToAccNo ?? '',
@@ -30,7 +25,6 @@ export default function InvoiceTemplate({
     paymentStatus: invoiceData.paymentStatus ?? '',
     remark: invoiceData.remark ?? '',
     attachment: invoiceData.attachment ?? '',
-    expired: invoiceData.expired ?? '',
   };
 
   const date = new Date(invoiceData.createdOn);
@@ -80,7 +74,6 @@ export default function InvoiceTemplate({
             Private Bag 383, Lilongwe 3, Phone (265)0887083261 / 0887083262 /
             08870083263
           </div>
-          I
         </Flex>
 
         {/* Main Content */}

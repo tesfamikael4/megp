@@ -3,6 +3,7 @@ import {
   AreasOfBusinessInterestType,
   CreateVendorIdRequest,
   CreateVendorIdResponse,
+  GetApplicationListResponse,
   GetCertificateInformationResponse,
   GetForRenewalVendorResponse,
   GetFormResponse,
@@ -40,6 +41,9 @@ export const vendorRegistrationQuery = vendorRegistrationApi.injectEndpoints({
     getInvoice: builder.query<GetFormResponse, any>({
       query: () => `/vendor-registrations/get-isr-vendor-invoice-by-userId`,
     }),
+    getApplicationList: builder.query<GetApplicationListResponse[], any>({
+      query: () => `/vendor-registrations/track-application`,
+    }),
     getForRenewalVendor: builder.query<GetForRenewalVendorResponse, any>({
       query: () => `/vendor-registrations/get-approved-vendor-service-byUserId`,
     }),
@@ -62,8 +66,16 @@ export const vendorRegistrationQuery = vendorRegistrationApi.injectEndpoints({
     ),
     getVendorStatus: builder.query<
       {
-        status: 'Submitted' | 'Draft' | 'Initial' | 'Completed' | 'Approved';
+        status:
+          | 'Submitted'
+          | 'Draft'
+          | 'Initial'
+          | 'Completed'
+          | 'Approved'
+          | 'Pending'
+          | 'Adjustment';
         initial: { status: string; level: string };
+        q;
       },
       any
     >({
