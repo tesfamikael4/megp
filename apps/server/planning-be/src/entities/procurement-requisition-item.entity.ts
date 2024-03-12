@@ -10,10 +10,10 @@ import {
 
 import { OrgAudit } from 'src/shared/entities/audit.entity';
 import { ProcurementRequisition } from './procurement-requisition.entity';
-import { BudgetCodeResponse } from 'src/shared/entities';
 import { Budget } from './budget.entity';
-@Entity({ name: 'procurement_mechanism_items' })
+@Entity({ name: 'procurement_requisition_items' })
 @Check('"unitPrice" >= 0 AND "quantity" >= 0')
+@Unique(['organizationId', 'itemCode', 'deletedAt'])
 @Unique([
   'procurementRequisitionId',
   'itemCode',
@@ -56,8 +56,8 @@ export class ProcurementRequisitionItem extends OrgAudit {
   @JoinColumn({ name: 'budgetId' })
   public budget: Budget;
 
-  @Column({ type: 'jsonb' })
-  classification: any;
+  @Column({ nullable: true })
+  classification: string;
 
   @Column({ type: 'uuid' })
   procurementRequisitionId: string;

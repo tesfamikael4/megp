@@ -24,11 +24,11 @@ export class ProcurementRequisitionItemService extends ExtraCrudService<Procurem
     super(repositoryProcurementRequisitionItem);
   }
 
-  async bulkCreate(itemData: any, req?: any): Promise<any> {
+  async bulkCreate(itemData: any, user?: any): Promise<any> {
     const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
-    if (req?.user?.organization) {
-      itemData.items.map((item: any) => {
-        item.organizationId = req.user.organization.id;
+    if (user?.organization) {
+      itemData.map((item: any) => {
+        item.organizationId = user.organization.id;
       });
     }
     const result = await entityManager
@@ -96,17 +96,18 @@ export class ProcurementRequisitionItemService extends ExtraCrudService<Procurem
       });
     if (type === 'add') {
       procurementRequisition.calculatedAmount =
-        procurementRequisition.calculatedAmount + temp;
+        Number(procurementRequisition.calculatedAmount) + temp;
     } else if (type === 'remove') {
       procurementRequisition.calculatedAmount =
-        procurementRequisition.calculatedAmount - temp;
+        Number(procurementRequisition.calculatedAmount) - temp;
     } else if (type === 'update') {
-      procurementRequisition.calculatedAmount =
-        procurementRequisition.calculatedAmount + balancedItem;
+      procurementRequisition.calculatedAmount = Number(
+        procurementRequisition.calculatedAmount + balancedItem,
+      );
     }
     if (
-      procurementRequisition.totalEstimatedAmount <
-      procurementRequisition.calculatedAmount
+      Number(procurementRequisition.totalEstimatedAmount) <
+      Number(procurementRequisition.calculatedAmount)
     ) {
       throw new HttpException(
         'Total Estimated Amount cannot be less than Calculated Amount',

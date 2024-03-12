@@ -28,9 +28,6 @@ export class ProcurementRequisitionItemController extends ExtraCrudController<Pr
   }
   @Post('bulk-create')
   async bulkCreate(@CurrentUser() user: any, @Body() data: any) {
-    return this.procurementRequisitionItemService.bulkCreate(
-      data,
-      user.organization.id,
-    );
+    return this.procurementRequisitionItemService.bulkCreate(data, user);
   }
 }

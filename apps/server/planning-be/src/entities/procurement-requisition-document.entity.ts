@@ -8,7 +8,7 @@ import {
 
 import { OrgAudit } from 'src/shared/entities/audit.entity';
 import { ProcurementRequisition } from './procurement-requisition.entity';
-@Entity({ name: 'procurement_mechanism_documents' })
+@Entity({ name: 'procurement_requisition_documents' })
 export class ProcurementRequisitionDocument extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string;

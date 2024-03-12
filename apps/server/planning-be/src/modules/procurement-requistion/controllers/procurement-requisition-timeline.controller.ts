@@ -8,6 +8,7 @@ import {
   UpdateProcurementRequisitionTimelineDto,
 } from '../dto/procurement-requisition-timeline.dto';
 import { ProcurementRequisitionTimelineService } from '../services/procurement-requisition-timeline.service';
+import { CurrentUser } from 'src/shared/authorization';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'procurementRequisitionId',
@@ -26,10 +27,10 @@ export class ProcurementRequisitionTimelineController extends ExtraCrudControlle
     super(procurementRequisitionTimelineService);
   }
   @Post('bulk-create')
-  async bulkCreate(@Body() timelines: any, @Req() req: any) {
+  async bulkCreate(@Body() timelines: any, @CurrentUser() user: any) {
     return this.procurementRequisitionTimelineService.bulkCreate(
       timelines,
-      req,
+      user,
     );
   }
 }

@@ -18,7 +18,7 @@ export class CreateProcurementRequisitionDto {
   userReference: string;
 
   @ApiProperty()
-  preBudgetPlanId: string;
+  postBudgetPlanId: string;
 
   @ApiProperty()
   @IsEnum(ProcurementApplication, {
