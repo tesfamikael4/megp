@@ -91,7 +91,6 @@ export const ActivitySelector = () => {
     try {
       const result = await create({
         id: selected[0].id,
-        budgetYear: { budgetYearId: selectedBudgetYear },
       }).unwrap();
 
       router.push(`/procurement-requisition/${result.id}`);
@@ -118,16 +117,6 @@ export const ActivitySelector = () => {
         collectionQuery: {
           ...collectionQuery,
           includes: ['postProcurementMechanisms', 'postBudgetPlanItems'],
-          where: [
-            ...(collectionQuery?.where ?? []),
-            [
-              {
-                column: 'status',
-                value: 'Approved',
-                operator: '=',
-              },
-            ],
-          ],
         },
       });
   };

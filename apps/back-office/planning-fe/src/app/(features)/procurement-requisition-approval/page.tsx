@@ -73,6 +73,14 @@ export default function ProcurementRequisition() {
   };
 
   const onRequestChange = (request: any) => {
+    request?.where?.push([
+      {
+        column: 'status',
+        value: 'SUBMITTED',
+        operator: '=',
+      },
+    ]);
+
     trigger(request);
   };
 

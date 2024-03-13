@@ -11,6 +11,7 @@ import { ruleApi } from './api/rule-designer/rule-designer';
 import { reasonApi } from './api/reason/reason.api';
 import { budgetsApi } from './api/budget/budget.api';
 import { budgetYearApi } from './api/budget/budget-year.api';
+import { prApi } from './api/pr/pr.api';
 
 const { reducers, middleware } = entityApi;
 
@@ -28,6 +29,7 @@ export const store = configureStore({
     [reasonApi.reducerPath]: reasonApi.reducer,
     [budgetsApi.reducerPath]: budgetsApi.reducer,
     [budgetYearApi.reducerPath]: budgetYearApi.reducer,
+    [prApi.reducerPath]: prApi.reducer,
   },
   devTools: process.env.NODE_ENV !== 'production',
   middleware: (getDefaultMiddleware) =>
@@ -44,6 +46,7 @@ export const store = configureStore({
       ruleApi.middleware,
       reasonApi.middleware,
       budgetsApi.middleware,
+      prApi.middleware,
     ]),
 });
 

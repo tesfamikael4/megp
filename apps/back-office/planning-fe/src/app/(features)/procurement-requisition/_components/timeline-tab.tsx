@@ -9,49 +9,49 @@ import { IconDeviceFloppy } from '@tabler/icons-react';
 import { useParams } from 'next/navigation';
 
 import {
-  useCreateMutation,
-  useLazyListByIdQuery,
-} from '@/app/(features)/procurement-requisition/_api/timeline.api';
+  useCreatePrTimelineMutation,
+  useLazyGetPrTimelineQuery,
+} from '@/store/api/pr/pr.api';
 
 const tableData = [
   {
     timeline: 'Procurement Initiation',
-    noOfDays: 0,
+    period: 0,
     dueDate: new Date(),
   },
   {
     timeline: 'Procurement Requisition',
-    noOfDays: 10,
+    period: 10,
     dueDate: new Date(),
   },
   {
     timeline: 'Tender Publication',
-    noOfDays: 10,
+    period: 10,
     dueDate: new Date(),
   },
   {
     timeline: 'Tender Submission',
-    noOfDays: 10,
+    period: 10,
     dueDate: new Date(),
   },
   {
     timeline: ' Evaluation',
-    noOfDays: 10,
+    period: 10,
     dueDate: new Date(),
   },
   {
     timeline: 'Award',
-    noOfDays: 10,
+    period: 10,
     dueDate: new Date(),
   },
   {
     timeline: 'Contract Signing',
-    noOfDays: 10,
+    period: 10,
     dueDate: new Date(),
   },
   {
     timeline: 'Contract Closure',
-    noOfDays: 10,
+    period: 10,
     dueDate: new Date(),
   },
 ];
@@ -61,10 +61,10 @@ export default function TimelineTab({ activityId }: { activityId?: string }) {
   const { id } = useParams();
 
   const [createTimeline, { isLoading: isTimelineCreating }] =
-    useCreateMutation();
+    useCreatePrTimelineMutation();
 
   const [getTimeline, { data: timeline, isSuccess: isTimelineSuccess }] =
-    useLazyListByIdQuery();
+    useLazyGetPrTimelineQuery();
   const listConfig: TableConfig<any> = {
     columns: [
       {
@@ -72,9 +72,9 @@ export default function TimelineTab({ activityId }: { activityId?: string }) {
         accessorKey: 'timeline',
       },
       {
-        id: 'noOfDays',
-        header: 'No of days',
-        accessorKey: 'noOfDays',
+        id: 'period',
+        header: 'Period',
+        accessorKey: 'period',
         cell: ({ getValue, row, column }) => (
           <Period getValue={getValue} row={row} column={column} />
         ),
