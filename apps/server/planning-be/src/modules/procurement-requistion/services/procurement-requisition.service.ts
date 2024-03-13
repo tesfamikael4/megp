@@ -50,7 +50,8 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
       !activity ||
       !activity.postBudgetPlan ||
       activity.postBudgetPlan.status.toUpperCase() !==
-        ProcurementRequisitionStatusEnum.APPROVED
+        ProcurementRequisitionStatusEnum.APPROVED ||
+      activity.status !== 'USED_IN_PR'
     ) {
       throw new NotFoundException('Activity should be approved or not found');
     }
@@ -69,16 +70,19 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
         appDueDate: timeline.dueDate,
       });
     });
-    const procurementRequisition = {
+    const procurementRequisition: ProcurementRequisition = {
       ...activity,
       id: itemData.id,
+      isPlanned: true,
+      totalEstimatedAmount: activity.estimatedAmount,
       userReference: `u${activity.procurementReference}`,
       postBudgetPlanId: activity.postBudgetPlan.id,
       status: ProcurementRequisitionStatusEnum.DRAFT,
       organization: user.organization.id,
       procurementRequisitionItems,
-      procurementMechanism:
-        activity.postProcurementMechanisms[0]?.procurementMechanism || null,
+      procurementMechanisms: activity.postProcurementMechanisms
+        ? activity.postProcurementMechanisms[0]
+        : null,
       procurementRequisitionTimelines,
     };
     const isFundAvailable = false; // TODO: check if fund is available
@@ -88,14 +92,14 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
     await entityManager
       .getRepository(PostBudgetPlanActivity)
       .update(activity.id, {
-        status: 'PR Used',
+        status: 'USED_IN_PR',
       });
     return await entityManager
       .getRepository(ProcurementRequisition)
       .save(procurementRequisition);
   }
 
-  async initiateWorkflow(data: any) {
+  async initiateWorkflow(data: any): Promise<boolean> {
     const pr = await this.repositoryProcurementRequisition.findOneOrFail({
       where: {
         id: data.id,
@@ -112,6 +116,7 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
       status: ProcurementRequisitionStatusEnum.SUBMITTED,
     });
     this.prRMQClient.emit('initiate-workflow', pr);
+    return true;
   }
 
   async prApprovalDecision(data: any): Promise<void> {

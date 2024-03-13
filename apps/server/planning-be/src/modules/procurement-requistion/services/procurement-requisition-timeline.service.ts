@@ -47,19 +47,8 @@ export class ProcurementRequisitionTimelineService extends ExtraCrudService<Proc
         },
       });
 
-    const budgetPlanEndDate = new Date(
-      procurementRequisition.postBudgetPlan.app.budgetYears.endDate,
-    );
-    const budgetPlanStartDate = new Date(
-      procurementRequisition.postBudgetPlan.app.budgetYears.startDate,
-    );
-
     // Validate timelines
-    const validationResult = this.validateTimelines(
-      timelines,
-      budgetPlanStartDate,
-      budgetPlanEndDate,
-    );
+    const validationResult = this.validateTimelines(timelines);
     if (validationResult !== true) {
       throw new HttpException(validationResult, 430);
     }
@@ -78,16 +67,8 @@ export class ProcurementRequisitionTimelineService extends ExtraCrudService<Proc
     return timelines;
   }
 
-  validateTimelines(timelines: any[], startDate: Date, endDate: Date) {
+  validateTimelines(timelines: any[]) {
     const ordered = timelines.sort((a, b) => a.order - b.order);
-    if (new Date(ordered[0].dueDate) < startDate) {
-      return 'Start date must be greater than budget plan start date';
-    }
-
-    if (new Date(ordered[ordered.length - 1].dueDate) > endDate) {
-      return 'End date must be less than budget plan end date';
-    }
-
     for (let i = 0; i < ordered.length - 1; i++) {
       const dueDate = new Date(ordered[i].dueDate);
       const nextDueDate = new Date(ordered[i + 1].dueDate);
@@ -95,7 +76,6 @@ export class ProcurementRequisitionTimelineService extends ExtraCrudService<Proc
       assumedNextDueDate.setDate(
         assumedNextDueDate.getDate() + Number(ordered[i + 1].period),
       );
-
       if (
         assumedNextDueDate.getTime() !== nextDueDate.getTime() ||
         i !== ordered[i].order
