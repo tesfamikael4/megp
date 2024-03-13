@@ -17,6 +17,7 @@ import {
   IconPlus,
 } from '@tabler/icons-react';
 import { AccordionCard } from '../../_components/accordion-card';
+import { useState } from 'react';
 
 export const groceries = [
   {
@@ -52,6 +53,7 @@ export const groceries = [
 ];
 
 function Dashboard() {
+  const [value, setValue] = useState<string | null>('New Application');
   return (
     <Card mx={24} className="p-5 mx-auto mt-6 mb-6 bg-white border">
       <Flex className="pl-6" direction={'column'}>
@@ -65,13 +67,19 @@ function Dashboard() {
         </Text>
       </Flex>
       <Divider my="md" className="w-full" size={'xs'} />
-      <Accordion className="pl-6" defaultValue="New Application">
+      <Accordion
+        className="pl-6"
+        defaultValue="New Application"
+        value={value}
+        onChange={setValue}
+      >
         {groceries.map((item, index) => (
           <AccordionCard
             key={index}
             icon={item.icon}
             value={item.value}
             description={item.description}
+            activeValue={value}
           />
         ))}
       </Accordion>
