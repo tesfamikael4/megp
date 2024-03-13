@@ -119,21 +119,11 @@ export class DocumentMergerService {
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
     );
 
-    await fs.writeFileSync('bidding_document.docx', testPopulatedBuffer);
-    await this.convertDocxToPdf(
-      'bidding_document.docx',
-      'bidding_document.pdf',
+    const pdfBuffer = await libreConverterAsync(
+      testPopulatedBuffer,
+      '.pdf',
+      undefined,
     );
-
-    const pdfBuffer = await fs.readFileSync('bidding_document.pdf');
-
-    // const pdfBuffer = await libreConverterAsync(
-    //   testPopulatedBuffer,
-    //   '.pdf',
-    //   undefined,
-    // );
-
-    // await fs.writeFileSync('temp.pdf', pdfBuffer);
 
     await this.minIOService.uploadBuffer(
       pdfBuffer,
@@ -160,22 +150,13 @@ export class DocumentMergerService {
   }
 
   async convertDocxToPdf(inputFile, outputFile): Promise<void> {
-    // let outputPath = join(process.cwd(), 'src', 'temp.pdf');
+    try {
+      const pythonCode = `from docx2pdf import convert
+      convert("${inputFile}", "${outputFile}")`;
 
-    // if (process.env.NODE_ENV === 'production') {
-    //   outputPath = join(
-    //     process.cwd(),
-    //     'apps',
-    //     'server',
-    //     'tendering-be',
-    //     'dist',
-    //     'temp.pdf',
-    //   );
-    // }
-
-    const pythonCode = `from docx2pdf import convert
-convert("${inputFile}", "${outputFile}")`;
-
-    await PythonShell.runString(pythonCode, null);
+      await PythonShell.runString(pythonCode, null);
+    } catch (error) {
+      throw error;
+    }
   }
 }
