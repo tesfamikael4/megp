@@ -1,5 +1,6 @@
 import { Shell } from '@megp/core-fe';
 import type { Metadata } from 'next';
+import '@mantine/dates/styles.css';
 
 import { ShellProvider } from './shell';
 import Protected from './protected';
