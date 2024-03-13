@@ -8,6 +8,7 @@ import { ActionIcon, Button, Tooltip } from '@mantine/core';
 import { IconChevronRight, IconPlus } from '@tabler/icons-react';
 import { DetailActivity } from '@/app/(features)/(app)/_components/detail-activity';
 import { useGetPreBudgetPlanQuery } from '@/store/api/pre-budget-plan/pre-budget-plan.api';
+import PlanningTab from '../../../_components/planning-tab';
 
 export default function PreBudget() {
   const { budgetYear } = useParams();
@@ -97,27 +98,30 @@ export default function PreBudget() {
     });
   };
   return (
-    <Section
-      title="Activities"
-      collapsible={false}
-      action={
-        preBudgetYear?.status == 'Draft' && (
-          <Button
-            onClick={() =>
-              router.push(`/pre-budget-plan/${budgetYear}/activities/new`)
-            }
-          >
-            <IconPlus size={14} /> Add
-          </Button>
-        )
-      }
-    >
-      <ExpandableTable
-        config={config}
-        data={list?.items ?? []}
-        total={list?.total ?? 0}
-        onRequestChange={onRequestChange}
-      />
-    </Section>
+    <>
+      <PlanningTab page="pre" />
+      <Section
+        title="Activities"
+        collapsible={false}
+        action={
+          preBudgetYear?.status == 'Draft' && (
+            <Button
+              onClick={() =>
+                router.push(`/pre-budget-plan/${budgetYear}/activities/new`)
+              }
+            >
+              <IconPlus size={14} /> Add
+            </Button>
+          )
+        }
+      >
+        <ExpandableTable
+          config={config}
+          data={list?.items ?? []}
+          total={list?.total ?? 0}
+          onRequestChange={onRequestChange}
+        />
+      </Section>
+    </>
   );
 }
