@@ -8,13 +8,14 @@ import {
   Text,
 } from '@mantine/core';
 import { useRouter } from 'next/navigation';
-import React from 'react';
+import React, { useState } from 'react';
 import { groceries } from '../../dashboard/_components/dashboard';
 import { AccordionCard } from '../../_components/accordion-card';
 import { IconFile, IconNote, IconPlus } from '@tabler/icons-react';
 
 const NewRegistrationLanding = () => {
   const router = useRouter();
+  const [value, setValue] = useState<string | null>('New Application');
   const groceries = [
     {
       icon: <IconPlus size={24} stroke={1.6} />,
@@ -45,13 +46,19 @@ const NewRegistrationLanding = () => {
         </Text>
       </Flex>
       <Divider my="md" className="w-full" size={'xs'} />
-      <Accordion className="pl-6" defaultValue="New Application">
+      <Accordion
+        className="pl-6"
+        defaultValue="New Application"
+        value={value}
+        onChange={setValue}
+      >
         {groceries.map((item, index) => (
           <AccordionCard
             key={index}
             icon={item.icon}
             value={item.value}
             description={item.description}
+            activeValue={value}
           />
         ))}
       </Accordion>

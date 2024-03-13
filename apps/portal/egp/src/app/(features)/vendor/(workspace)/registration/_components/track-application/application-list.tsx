@@ -128,7 +128,7 @@ const ApplicationList = () => {
             faucibus, enim ac dictum rutrum, velit quam pharetra mi, aliquet
             interdum velit libero nec risus. Aliquam non libero dolor.
           </Text>
-          <Flex justify="flex-end" mt={2}>
+          <Flex justify="flex-end" mt={8}>
             <TextInput
               className="mb-2 w-80 h-8"
               leftSection={<IconSearch />}

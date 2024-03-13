@@ -182,7 +182,6 @@ const RegistrationForm = ({
           NotificationService.successNotification(
             'Form Submitted Successfully',
           );
-          router.push(`/vendor/registration/track-application`);
         });
     } catch (error) {
       NotificationService.requestErrorNotification(
@@ -205,7 +204,7 @@ const RegistrationForm = ({
           NotificationService.successNotification(
             'Form Submitted Successfully',
           );
-          router.push(`/vendor/registration/track-application`);
+          router.push(`/vendor/registration/track-applications`);
         });
     } catch (error) {
       NotificationService.requestErrorNotification(
@@ -228,7 +227,6 @@ const RegistrationForm = ({
           NotificationService.successNotification(
             'Form Submitted Successfully',
           );
-          router.push(`/vendor/registration/track-application`);
         });
     } catch (error) {
       NotificationService.requestErrorNotification(
