@@ -2666,6 +2666,9 @@ importers:
       dotenv:
         specifier: ^16.0.3
         version: 16.4.1
+      form-data:
+        specifier: ^4.0.0
+        version: 4.0.0
       google-auth-library:
         specifier: ^8.7.0
         version: 8.9.0
@@ -2687,6 +2690,9 @@ importers:
       nestjs-minio-client:
         specifier: ^2.2.0
         version: 2.2.0(@nestjs/common@9.4.3)(@nestjs/core@9.4.3)
+      node-pandoc:
+        specifier: ^0.3.0
+        version: 0.3.0
       nodemailer:
         specifier: ^6.9.1
         version: 6.9.8
@@ -17685,6 +17691,10 @@ packages:
   /node-int64@0.4.0:
     resolution: {integrity: sha512-O5lz91xSOeoXP6DulyHfllpq+Eg00MWitZIbtPfoSEvqIHdl5gfcY6hYzDWnj0qD5tz52PI08u9qUvSVeUBeHw==}
     dev: true
+
+  /node-pandoc@0.3.0:
+    resolution: {integrity: sha512-e+kANHQQFBlN7J8wEFf7sNc1sSCLltyPtPqNA/IEapiNsA1LjZ9mtV/B0lU6b2cAdvn7rrAVNBONw+Fo1YsY+A==}
+    dev: false
 
   /node-plop@0.26.3:
     resolution: {integrity: sha512-Cov028YhBZ5aB7MdMWJEmwyBig43aGL5WT4vdoB28Oitau1zZAcHUn8Sgfk9HM33TqhtLJ9PlM/O0Mv+QpV/4Q==}
