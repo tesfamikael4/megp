@@ -42,6 +42,7 @@ export default function PrDetailPage() {
                 <Tabs.Tab value="items">Items</Tabs.Tab>
                 <Tabs.Tab value="documents">Document</Tabs.Tab>
                 <Tabs.Tab value="timeline">Timeline</Tabs.Tab>
+                <Tabs.Tab value="requisitioner">Requisitioner</Tabs.Tab>
               </Tabs.List>
 
               <Tabs.Panel value="definition" className="pt-2">

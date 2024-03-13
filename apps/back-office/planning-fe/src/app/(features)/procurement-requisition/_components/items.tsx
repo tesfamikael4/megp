@@ -22,9 +22,9 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useDeleteMutation, useUpdateMutation } from '../_api/items.api';
 import {
-  useLazyListByIdQuery,
-  useCreateMutation,
-} from '@/app/(features)/procurement-requisition/_api/items.api';
+  useCreateMultipleItemsMutation,
+  useLazyGetPrItemsQuery,
+} from '@/store/api/pr/pr.api';
 import { modals } from '@mantine/modals';
 import ItemSelector from '@/app/(features)/procurement-requisition/_components/item-selector';
 import DataImport from './data-import';
@@ -43,14 +43,15 @@ export function Items({ activityId }: { activityId?: string }) {
   const [total, setTotal] = useState<number>(0);
   const [newItems, setNewItems] = useState<any[]>([]);
 
-  const [addItems, { isLoading: isAddingItems }] = useCreateMutation();
+  const [addItems, { isLoading: isAddingItems }] =
+    useCreateMultipleItemsMutation();
 
   const [updateItem, { isLoading: isUpdating }] = useUpdateMutation();
 
   const route = useRouter();
 
   const [listById, { data: itemsList, isSuccess, isLoading }] =
-    useLazyListByIdQuery();
+    useLazyGetPrItemsQuery();
 
   const [remove] = useDeleteMutation();
 
@@ -275,7 +276,7 @@ export function Items({ activityId }: { activityId?: string }) {
   };
 
   const onRequestChange = (request: CollectionQuery) => {
-    listById({ id: activityId ?? (id as string), collectionQuery: request });
+    listById({ id: id as string, collectionQuery: request });
   };
 
   useEffect(() => {
