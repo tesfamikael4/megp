@@ -122,10 +122,11 @@ export class VendorRegistrationsController {
     @CurrentUser() userInfo: any,
   ) {
     data.data.userId = userInfo.id;
-    const result = await this.regService.addVendorInformations(
-      data.data,
-      userInfo,
-    );
+    const result = await this.
+      regService.addVendorInformations(
+        data.data,
+        userInfo,
+      );
     if (!result) throw new BadRequestException(`vendor registration failed`);
     return result;
   }
@@ -251,7 +252,7 @@ export class VendorRegistrationsController {
   async getVendorInformation(@CurrentUser() userInfo: any) {
     return await this.regService.getVendorInformation(userInfo.id);
   }
-
+  //draft profile update  data
   @Post('add-vendor-update-information')
   async addVendorProfileUpdate(
     @Body() vendorprofileUpdateDara: any,
@@ -262,7 +263,7 @@ export class VendorRegistrationsController {
       userInfo,
     );
   }
-
+  //submit profile update request
   @Post('submit-vendor-update-information')
   async submitVendorProfileUpdate(
     @Body() vendorprofileUpdateDara: any,
