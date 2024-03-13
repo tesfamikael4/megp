@@ -1,24 +1,24 @@
 import React from 'react';
 import { TextInput, Stack, Group, Text, Flex } from '@mantine/core';
+import { PassFormDataProps } from './formShell';
+import { IconMail, IconPhone, IconUser } from '@tabler/icons-react';
 import {
   CardListShell,
   SingleCardWrapper,
-} from '../../../../../_components/cardList/cardListShell';
-import { PassFormDataProps } from './formShell';
-import { usePrivilege } from '../../_context/privilege-context';
-import { IconMail, IconPhone, IconUser } from '@tabler/icons-react';
+} from '@/app/(features)/vendor/_components/cardList/cardListShell';
+import { usePrivilege } from '../../new/_context/privilege-context';
 
 interface Props extends Partial<PassFormDataProps> {
   itemSchema: any;
   name: string;
+  disabled: boolean;
 }
 export const ContactPersons: React.FC<Props> = ({
   control,
   itemSchema,
   name,
+  disabled,
 }) => {
-  const { checkAccess } = usePrivilege();
-
   return (
     <>
       <CardListShell
@@ -32,7 +32,7 @@ export const ContactPersons: React.FC<Props> = ({
         }}
         title="Contact Persons"
         itemSchema={itemSchema}
-        disabled={!checkAccess('detail')}
+        disabled={disabled}
         modalBody={(getInputProps) => (
           <Stack>
             <Group grow>
@@ -74,7 +74,7 @@ export const ContactPersons: React.FC<Props> = ({
                   key={index}
                   edit={() => edit(index)}
                   remove={() => remove(index)}
-                  disabled={!checkAccess('detail')}
+                  disabled={disabled}
                 >
                   <Stack gap={0}>
                     <CardItem

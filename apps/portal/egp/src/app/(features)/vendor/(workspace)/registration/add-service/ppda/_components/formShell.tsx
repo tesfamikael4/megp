@@ -10,8 +10,8 @@ import {
   useAddFormMutation,
 } from '../../../_api/query';
 import { NotificationService } from '@/app/(features)/vendor/_components/notification';
-import { ExtendedRegistrationReturnType } from '../../../new/_components/detail/formShell';
 import { AreasOfBusinessInterest } from './areasOfBusinessInterest';
+import { ExtendedRegistrationReturnType } from '../../../_components/detail/formShell';
 
 export const lineOfBusinessSchema = z.object({
   id: z

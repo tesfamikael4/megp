@@ -1,29 +1,16 @@
 'use client';
-import { useEffect } from 'react';
 import { Flex, LoadingOverlay, Text } from '@mantine/core';
-import { useRouter } from 'next/navigation';
-import RegistrationForm from './_components/detail/formShell';
 import { IconFile, IconUserCircle } from '@tabler/icons-react';
-import CardLayout from './_components/card-layout/card-layout';
 import { useGetApproveVendorInfoQuery } from './_api/query';
+import RegistrationForm from '../_components/detail/formShell';
+import { getInitialValues } from '../_utils';
+import CardLayout from '../_components/card-layout/card-layout';
 
 export default function Page() {
-  const router = useRouter();
-
   const requestInfo = useGetApproveVendorInfoQuery(
     {},
     { refetchOnMountOrArgChange: true },
   );
-
-  useEffect(() => {
-    if (requestInfo.error) {
-      // NotificationService.requestErrorNotification('Error on fetching data');
-    }
-
-    return () => {
-      // router.refresh();
-    };
-  }, [requestInfo.data, requestInfo.error]);
 
   return (
     <section className="w-full relative flex flex-col p-6">
@@ -46,71 +33,10 @@ export default function Page() {
         {requestInfo.data && requestInfo.isSuccess ? (
           <RegistrationForm
             vendorInfo={requestInfo.data.initial}
-            initialValues={{
-              ...requestInfo.data,
-              address:
-                requestInfo.data.address == null
-                  ? {
-                      postalAddress: '',
-                      primaryEmail: '',
-                      alternateEmail: '',
-                      mobilePhone: '',
-                      telephone: '',
-                      fax: '',
-                      website: '',
-                    }
-                  : requestInfo.data.address,
-              contactPersons:
-                requestInfo.data.contactPersons == null
-                  ? []
-                  : requestInfo.data.contactPersons,
-              businessSizeAndOwnership:
-                requestInfo.data.businessSizeAndOwnership == null
-                  ? {
-                      registeredCapital: {
-                        amount: '',
-                        currency: '',
-                      },
-                      paidUpCapital: {
-                        amount: '',
-                        currency: '',
-                      },
-                      numberOfEmployees: '',
-                      ownershipType: '',
-                    }
-                  : requestInfo.data.businessSizeAndOwnership,
-              shareHolders:
-                requestInfo.data.shareHolders == null
-                  ? []
-                  : requestInfo.data.shareHolders,
-              beneficialOwnership:
-                requestInfo.data.beneficialOwnership == null
-                  ? []
-                  : requestInfo.data.beneficialOwnership,
-              bankAccountDetails:
-                requestInfo.data.bankAccountDetails == null
-                  ? []
-                  : requestInfo.data.bankAccountDetails,
-              areasOfBusinessInterest:
-                requestInfo.data.areasOfBusinessInterest == null
-                  ? []
-                  : requestInfo.data.areasOfBusinessInterest,
-              invoice:
-                requestInfo.data.invoice == null
-                  ? null
-                  : requestInfo.data.invoice,
-              supportingDocuments: requestInfo.data.supportingDocuments
-                ? requestInfo.data.supportingDocuments
-                : {
-                    businessRegistration_IncorporationCertificate: '',
-                    mRA_TPINCertificate: '',
-                    generalReceipt_BankDepositSlip: '',
-                    mRATaxClearanceCertificate: '',
-                    previousPPDARegistrationCertificate: '',
-                  },
-              paymentReceipt: requestInfo.data.paymentReceipt,
-              preferential: [],
-            }}
+            initialValues={getInitialValues(requestInfo.data)}
+            disabled={false}
+            lockElements={{}}
+            isProfileUpdate={true}
           />
         ) : (
           <Flex className="w-full h-full items-center justify-center flex-col">

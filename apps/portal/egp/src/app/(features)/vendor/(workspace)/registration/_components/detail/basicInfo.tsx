@@ -1,8 +1,8 @@
 import { Flex, Group, Select, Stack, TextInput } from '@mantine/core';
 import React from 'react';
 import { PassFormDataProps } from './formShell';
-import { getNationalityValues } from '../mockup/nationality';
-import { formOfBusiness, malawianDistricts } from '../../../_constants';
+import { formOfBusiness, malawianDistricts } from '../../_constants';
+import { getNationalityValues } from '../../new/_components/mockup/nationality';
 
 export const BasicInfo: React.FC<PassFormDataProps> = ({ register }) => {
   return (

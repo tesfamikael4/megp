@@ -11,7 +11,7 @@ import {
   useSubmitRequestMutation,
   useUploadPreferentialAttachmentsMutation,
 } from '@/store/api/preferential-treatment/preferential-treatment.api';
-import { ExtendedRegistrationReturnType } from '../../new/_components/detail/formShell';
+import { ExtendedRegistrationReturnType } from '../../_components/detail/formShell';
 
 export interface PassFormDataProps {
   register: (
