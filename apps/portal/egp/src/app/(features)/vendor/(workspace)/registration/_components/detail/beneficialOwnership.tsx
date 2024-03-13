@@ -2,26 +2,26 @@ import React from 'react';
 import { TextInput, Group, Stack } from '@mantine/core';
 import { Select } from '@mantine/core';
 import { PassFormDataProps } from './formShell';
+import { CardItem } from './contactPersons';
+import { IconFlag, IconUser } from '@tabler/icons-react';
 import {
   CardListShell,
   SingleCardWrapper,
-} from '../../../../../_components/cardList/cardListShell';
-import { getNationalityValues } from '../mockup/nationality';
-import { usePrivilege } from '../../_context/privilege-context';
-import { CardItem } from './contactPersons';
-import { IconFlag, IconUser } from '@tabler/icons-react';
+} from '@/app/(features)/vendor/_components/cardList/cardListShell';
+import { getNationalityValues } from '../../new/_components/mockup/nationality';
+import { usePrivilege } from '../../new/_context/privilege-context';
 
 interface Props extends Partial<PassFormDataProps> {
   itemSchema: any;
   name: string;
+  disabled: boolean;
 }
 export const BeneficialOwnership: React.FC<Props> = ({
   control,
   itemSchema,
   name,
+  disabled,
 }) => {
-  const { checkAccess } = usePrivilege();
-
   return (
     <>
       <CardListShell
@@ -34,7 +34,7 @@ export const BeneficialOwnership: React.FC<Props> = ({
         }}
         title="Beneficial Ownership"
         itemSchema={itemSchema}
-        disabled={!checkAccess('detail')}
+        disabled={disabled}
         modalBody={(getInputProps) => (
           <Stack>
             <Group grow>
@@ -71,7 +71,7 @@ export const BeneficialOwnership: React.FC<Props> = ({
                   key={index}
                   edit={() => edit(index)}
                   remove={() => remove(index)}
-                  disabled={!checkAccess('detail')}
+                  disabled={disabled}
                 >
                   <Stack gap={0}>
                     <CardItem

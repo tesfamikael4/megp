@@ -8,9 +8,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useAddFormMutation } from '../../../_api/query';
 import { NotificationService } from '@/app/(features)/vendor/_components/notification';
 import { FormData } from '@/models/vendorRegistration';
-import { ExtendedRegistrationReturnType } from '../detail/formShell';
 import AreasOfBusinessInterest from './areasOfBusinessInterest';
 import { usePrivilege } from '../../_context/privilege-context';
+import { ExtendedRegistrationReturnType } from '../../../_components/detail/formShell';
 
 export interface PassFormDataProps {
   register: (
