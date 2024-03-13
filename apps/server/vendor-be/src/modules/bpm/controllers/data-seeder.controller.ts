@@ -252,7 +252,7 @@ export class DataSeederController {
             'Approval of New Vendor Registration Request by Senior or chief registration officer or RRM/DRRM':
             {
               on: {
-                NO: 'Review New Vendor Registration Request by Registration Officer',
+                NO: 'Submit New Vendor Registration Request',
                 YES: 'Approval of New Vendor Registration Request by Director General (DG)',
               },
               meta: {

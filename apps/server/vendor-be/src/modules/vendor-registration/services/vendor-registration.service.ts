@@ -584,10 +584,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     else if (bas.every((ba) => ba.status == ApplicationStatus.APPROVED || ba.status == ApplicationStatus.OUTDATED))
       return { status: ApplicationStatus.APPROVED }
 
-
-
-
-
   }
   fromInitialValue = async (data: any) => {
     let vendorsEntity = new IsrVendorsEntity();
@@ -613,12 +609,37 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     vendorsEntity.tinNumber = data.basic.tinNumber;
     return vendorsEntity;
   };
+
+  async setProfileSatus(vendorId: string, status: string, vendor: any) {
+    try {
+      const profile = await this.profileInfoRepository.findOne({ where: { vendorId: vendorId, status: ApplicationStatus.SUBMITTED } });
+      if (status == ApplicationStatus.APPROVE)
+        profile.status = ApplicationStatus.APPROVED;
+      else if (status == ApplicationStatus.ADJUST) {
+        profile.status = ApplicationStatus.ADJUSTMENT;
+      } else if (status == ApplicationStatus.REJECT) {
+        profile.status = ApplicationStatus.REJECTED;
+      }
+      const profiles = [];
+      const oldProfile = await this.profileInfoRepository.find({ where: { vendorId: vendorId, status: ApplicationStatus.APPROVED } });
+      for (const row of oldProfile) {
+        row.status = ApplicationStatus.OUTDATED;
+        profiles.push(row);
+      }
+      await this.profileInfoRepository.save(profile);
+      return await this.mapVendor(vendor, profile);
+
+    } catch (error) {
+      throw new Error(error);
+    }
+
+
+  }
+
   async updateVendor(vendorStatusDto: SetVendorStatus): Promise<any> {
     const service = await this.serviceService.findOne(
       vendorStatusDto.serviceId
     );
-
-
     if (!service) throw new HttpException('Bp service not found', 404);
     try {
       const response: any = null;
@@ -633,6 +654,11 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       const vendor = await this.vendorRepository.findOne({
         where: { isrVendorId: vendorStatusDto.isrVendorId },
       });
+      if (service.key == ServiceKeyEnum.PROFILE_UPDATE) {
+        this.setProfileSatus(vendorStatusDto.isrVendorId, vendorStatusDto.status, vendor);
+
+      }
+
       if (vendor) {
         const businessAreas = await this.businessAreaRepository.find({
           where: { instanceId: vendorStatusDto.instanceId },
@@ -643,22 +669,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             ba.status = VendorStatusEnum.APPROVED;
           } else if (vendorStatusDto.status == VendorStatusEnum.REJECT) {
             ba.status = VendorStatusEnum.REJECTED;
-            ///for profile service
-            if (
-              service.key == VendorStatusEnum.PROFILE_UPDATE_KEY &&
-              vendorStatusDto.status == VendorStatusEnum.REJECT
-            ) {
-              const profileData = await this.profileInfoRepository.findOne({
-                where: {
-                  vendorId: vendor.id,
-                  status: VendorStatusEnum.SUBMITTED,
-                },
-              });
-              if (!profileData)
-                throw new HttpException(`profile not found`, 404);
-              profileData.status = VendorStatusEnum.REJECTED;
-              await this.profileInfoRepository.save(profileData);
-            }
+
           }
           ba.approvedAt = new Date();
           if (service.key != ServiceKeyEnum.PROFILE_UPDATE) {
@@ -700,41 +711,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           }
           await this.isrVendorsRepository.save(result);
           await this.saveSRAsVendor(result);
-          /*
-                      const vendorEntity = new VendorsEntity();
-                      vendorEntity.id = result.id;
-                      vendorEntity.status = VendorStatusEnum.APPROVED;
-                      vendorEntity.level = VendorStatusEnum.COMPLETED;
-                      vendorEntity.name = basic.name;
-                      vendorEntity.formOfEntity = basic.businessType;
-                      vendorEntity.origin = basic.origin;
-                      vendorEntity.district = basic.district;
-                      vendorEntity.tin = basic.tinNumber;
-                      vendorEntity.userId = result.userId;
-                      vendorEntity.isrVendorId = result.id;
-                      vendorEntity.shareholders = isrVendorData.shareHolders;
-                      vendorEntity.vendorAccounts = isrVendorData.bankAccountDetails;
-                      vendorEntity.areasOfBusinessInterest =
-                        isrVendorData.areasOfBusinessInterest;
-                      vendorEntity.beneficialOwnership =
-                        isrVendorData.beneficialOwnership;
-                      vendorEntity.registrationNumber =
-                        await this.commonService.generateApplicationNumber('MW', 'EGP');
-                      let tempMetadata = null;
-                      tempMetadata = {
-                        address: isrVendorData.address,
-                        contactPersons: isrVendorData.contactPersons,
-                        businessSizeAndOwnership: isrVendorData.businessSizeAndOwnership,
-                        supportingDocuments: isrVendorData.supportingDocuments,
-                        paymentReceipt: isrVendorData.paymentReceipt,
-                        initial: isrVendorData.initial,
-                      };
-                      vendorEntity.metaData = tempMetadata;
-                      await this.vendorRepository.save(vendorEntity);
-                      */
-
-          // const nextYear = new Date();
-          // nextYear.setFullYear(nextYear.getFullYear() + 1);
           const bas = await this.baService.getVendorBusinessAreaByInstanceId(vendorStatusDto.isrVendorId, vendorStatusDto.instanceId);
           if (bas.length == 0)
             throw new HttpException(
@@ -742,39 +718,24 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
               HttpStatus.NOT_FOUND,
             );
           //update states of each service and categories
+          const expiryServices = [ServiceKeyEnum.NEW_REGISTRATION, ServiceKeyEnum.REGISTRATION_UPGRADE, ServiceKeyEnum.REGISTRATION_RENEWAL];
           for (const ba of bas) {
             ba.status = VendorStatusEnum.APPROVED;
             ba.approvedAt = new Date();
             ba.remark = vendorStatusDto.remark;
-            const expireDate = new Date();
-            if (service.key != ServiceKeyEnum.PROFILE_UPDATE) {
+            if (expiryServices.filter((item) => service.key == item).length > 0) {
+              const expireDate = new Date();
               expireDate.setFullYear(expireDate.getFullYear() + 1);
               ba.expireDate = expireDate;
             }
             await this.businessAreaRepository.save(ba);
           }
-
           return true;
         } else {
           return await this.rejectVendor(vendorStatusDto);
         }
       }
 
-
-      ////refactor required
-      if (
-        service.key == VendorStatusEnum.PROFILE_UPDATE_KEY &&
-        vendorStatusDto.status == VendorStatusEnum.APPROVE
-      ) {
-        const profileData = await this.profileInfoRepository.findOne({
-          where: { vendorId: vendor.id, status: VendorStatusEnum.SUBMITTED },
-        });
-        if (profileData) {
-          profileData.status = VendorStatusEnum.APPROVED;
-          await this.profileInfoRepository.save(profileData);
-          return await this.mapVendor(vendor, profileData);
-        }
-      }
       return true;
     } catch (error) {
       console.log(error);
@@ -1283,8 +1244,9 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     const apps = [];
     const result = await this.workflowService.getMyApplications(user)
     for (const row of result) {
-      const status = this.setStatus(row.taskTrackers[0].action);
-      const remark = row.taskTrackers[0].remark;
+      // const business = await this.baService.getBusinessAreaByInstanceId(row.id);
+      const status = row.businessArea.status;
+      const remark = '';
       apps.push({ service: row.service.name, key: row.service.key, ApplicationNumber: row.applicationNumber, submittedAt: row.submittedAt, remark: remark, status: status })
     }
     return apps;
@@ -2009,7 +1971,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             await this.pricingService.findPriceRangeByIds(priceRangeIds);
           const businessInterest = WorkflowInstanceResponse.formatBusinessLines(
             vendor.areasOfBusinessInterest,
-            priceRanges,
+            priceRanges
           );
           vendorEntity.areasOfBusinessInterest = businessInterest;
         }
@@ -2074,13 +2036,13 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         return { status: 'profile update is already submitted' };
       }
       const updateInfo = await this.profileInfoRepository.findOne({
-        where: { vendorId: result.id, status: 'Active' },
+        where: { vendorId: result.id, status: In([ApplicationStatus.ADJUSTMENT, ApplicationStatus.DRAFT]) },
       });
       let resultData = null;
       if (updateInfo == null) {
         const profileInfoEntity = new ProfileInfoEntity();
         profileInfoEntity.vendorId = result?.id;
-        profileInfoEntity.status = 'Active';
+        profileInfoEntity.status = ApplicationStatus.DRAFT;
         profileInfoEntity.profileData = profileData;
         resultData = this.profileInfoRepository.save(profileInfoEntity);
       } else {
@@ -2100,77 +2062,131 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       });
       if (!vendor) throw new NotFoundException('vendor not found');
       if (!vendor.canRequest)
-        throw new NotFoundException('profile update already submitted');
+        throw new HttpException('profile update already submitted', 400);
       const updateInfo = await this.profileInfoRepository.findOne({
         where: {
           vendorId: vendor.id,
-          status: In([
-            VendorStatusEnum.ACTIVE,
-            VendorStatusEnum.SUBMITTED,
-            VendorStatusEnum.DRAFT,
-            VendorStatusEnum.ADJUSTMENT,
-          ]),
+          status: ApplicationStatus.SUBMITTED,
         },
       });
-
-      if (updateInfo?.status == 'Submitted')
+      if (updateInfo) {
         throw new BadRequestException('Already Submitted Profile Update');
-      if (
-        updateInfo == null ||
-        updateInfo.status == VendorStatusEnum.APPROVED
-      ) {
-        const profileInfoEntity = new ProfileInfoEntity();
-        profileInfoEntity.vendorId = vendor?.id;
-        profileInfoEntity.status = ApplicationStatus.SUBMITTED;
-        profileInfoEntity.profileData = profileData;
-        await this.profileInfoRepository.save(profileInfoEntity);
-      } else if (
-        updateInfo.status == VendorStatusEnum.ACTIVE ||
-        updateInfo.status == VendorStatusEnum.DRAFT
-      ) {
-        updateInfo.profileData = profileData;
-        updateInfo.status = 'Submitted';
-        await this.profileInfoRepository.save(updateInfo);
-      } else if (updateInfo.status == VendorStatusEnum.ADJUSTMENT) {
-        updateInfo.status = 'Submitted';
-        updateInfo.profileData = profileData;
-        const resultData = await this.profileInfoRepository.save(updateInfo);
-        const response = this.goToworkflow(userInfo, resultData);
-        return response;
+
+      } else {
+        const updateInfo = await this.profileInfoRepository.findOne({
+          where: {
+            vendorId: vendor.id,
+            status: In([ApplicationStatus.ADJUSTMENT, ApplicationStatus.DRAFT])
+          },
+        });
+        if (updateInfo) {
+          updateInfo.status = ApplicationStatus.SUBMITTED;
+          updateInfo.profileData = profileData;
+          const resultData = await this.profileInfoRepository.save(updateInfo);
+          const response = await this.goToworkflow(userInfo, resultData);
+          return response;
+        } else {
+          const profileInfoEntity = new ProfileInfoEntity();
+          profileInfoEntity.vendorId = vendor?.id;
+          profileInfoEntity.status = ApplicationStatus.SUBMITTED;
+          profileInfoEntity.profileData = profileData;
+          await this.profileInfoRepository.save(profileInfoEntity);
+          const wfi = new CreateWorkflowInstanceDto();
+          wfi.user = userInfo;
+          const bp = await this.bpService.findBpWithServiceByKey(
+            VendorStatusEnum.PROFILE_UPDATE_KEY,
+          );
+          if (!bp) throw new NotFoundException('bp service with this key notfound');
+          wfi.bpId = bp.id;
+          wfi.serviceId = bp.serviceId;
+          wfi.requestorId = vendor.id;
+          wfi.data = { ...profileData };
+          const workflowInstance =
+            await this.workflowService.intiateWorkflowInstance(wfi, userInfo);
+          if (!workflowInstance)
+            throw new HttpException('workflow initiation failed', 400);
+          const baEntity = new BusinessAreaEntity();
+          baEntity.instanceId = workflowInstance.application.id;
+          baEntity.category = ServiceKeyEnum.PROFILE_UPDATE;
+          baEntity.serviceId = bp.serviceId;
+          baEntity.applicationNumber =
+            workflowInstance.application.applicationNumber;
+          baEntity.status = VendorStatusEnum.PENDING;
+          baEntity.vendorId = vendor.id;
+          baEntity.status = 'Pending';
+          await this.businessAreaRepository.save(baEntity);
+          await this.vendorRepository.update(
+            { id: vendor.id },
+            { canRequest: false },
+          );
+          return {
+            applicationNumber: workflowInstance.application.applicationNumber,
+            instanceNumber: workflowInstance.application.id,
+            vendorId: workflowInstance.application.requestorId,
+          };
+        }
+
       }
-      const wfi = new CreateWorkflowInstanceDto();
-      wfi.user = userInfo;
-      const bp = await this.bpService.findBpWithServiceByKey(
-        VendorStatusEnum.PROFILE_UPDATE_KEY,
-      );
-      if (!bp) throw new NotFoundException('bp service with this key notfound');
-      wfi.bpId = bp.id;
-      wfi.serviceId = bp.serviceId;
-      wfi.requestorId = vendor.id;
-      wfi.data = { ...profileData };
-      const workflowInstance =
-        await this.workflowService.intiateWorkflowInstance(wfi, userInfo);
-      if (!workflowInstance)
-        throw new HttpException('workflow initiation failed', 400);
-      const businessAreaEntity = new BusinessAreaEntity();
-      businessAreaEntity.instanceId = workflowInstance.application.id;
-      businessAreaEntity.category = ServiceKeyEnum.PROFILE_UPDATE;
-      businessAreaEntity.serviceId = bp.serviceId;
-      businessAreaEntity.applicationNumber =
-        workflowInstance.application.applicationNumber;
-      businessAreaEntity.status = VendorStatusEnum.PENDING;
-      businessAreaEntity.vendorId = vendor.id;
-      businessAreaEntity.status = 'Pending';
-      await this.businessAreaRepository.save(businessAreaEntity);
-      await this.vendorRepository.update(
-        { id: vendor.id },
-        { canRequest: false },
-      );
-      return {
-        applicationNumber: workflowInstance.application.applicationNumber,
-        instanceNumber: workflowInstance.application.id,
-        vendorId: workflowInstance.application.requestorId,
-      };
+
+      /*
+              if (
+           updateInfo == null ||
+           updateInfo.status == VendorStatusEnum.APPROVED
+         ) {
+           const profileInfoEntity = new ProfileInfoEntity();
+           profileInfoEntity.vendorId = vendor?.id;
+           profileInfoEntity.status = ApplicationStatus.SUBMITTED;
+           profileInfoEntity.profileData = profileData;
+           await this.profileInfoRepository.save(profileInfoEntity);
+         } else if (
+           updateInfo.status == VendorStatusEnum.ACTIVE ||
+           updateInfo.status == VendorStatusEnum.DRAFT
+         ) {
+           updateInfo.profileData = profileData;
+           updateInfo.status = 'Submitted';
+           await this.profileInfoRepository.save(updateInfo);
+         } else if (updateInfo.status == VendorStatusEnum.ADJUSTMENT) {
+           updateInfo.status = 'Submitted';
+           updateInfo.profileData = profileData;
+           const resultData = await this.profileInfoRepository.save(updateInfo);
+           const response = this.goToworkflow(userInfo, resultData);
+           return response;
+         }
+   
+         const wfi = new CreateWorkflowInstanceDto();
+         wfi.user = userInfo;
+         const bp = await this.bpService.findBpWithServiceByKey(
+           VendorStatusEnum.PROFILE_UPDATE_KEY,
+         );
+         if (!bp) throw new NotFoundException('bp service with this key notfound');
+         wfi.bpId = bp.id;
+         wfi.serviceId = bp.serviceId;
+         wfi.requestorId = vendor.id;
+         wfi.data = { ...profileData };
+         const workflowInstance =
+           await this.workflowService.intiateWorkflowInstance(wfi, userInfo);
+         if (!workflowInstance)
+           throw new HttpException('workflow initiation failed', 400);
+         const businessAreaEntity = new BusinessAreaEntity();
+         businessAreaEntity.instanceId = workflowInstance.application.id;
+         businessAreaEntity.category = ServiceKeyEnum.PROFILE_UPDATE;
+         businessAreaEntity.serviceId = bp.serviceId;
+         businessAreaEntity.applicationNumber =
+           workflowInstance.application.applicationNumber;
+         businessAreaEntity.status = VendorStatusEnum.PENDING;
+         businessAreaEntity.vendorId = vendor.id;
+         businessAreaEntity.status = 'Pending';
+         await this.businessAreaRepository.save(businessAreaEntity);
+         await this.vendorRepository.update(
+           { id: vendor.id },
+           { canRequest: false },
+         );
+         return {
+           applicationNumber: workflowInstance.application.applicationNumber,
+           instanceNumber: workflowInstance.application.id,
+           vendorId: workflowInstance.application.requestorId,
+         };
+         */
     } catch (error) {
       console.log(error);
       throw error;
