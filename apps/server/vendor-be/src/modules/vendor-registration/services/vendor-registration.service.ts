@@ -309,7 +309,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       const wfi = new CreateWorkflowInstanceDto();
       wfi.user = userInfo;
       const userId = userInfo.id;
-      const data = await this.isrVendorsRepository
+      const srVendor = await this.isrVendorsRepository
         .createQueryBuilder('isrVendor')
         .leftJoinAndSelect('isrVendor.businessAreas', 'businessArea')
         .where('isrVendor.userId = :userId', { userId: userId })
@@ -318,11 +318,11 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         })
         .getOne();
       if (
-        data?.status == VendorStatusEnum.SUBMITTED ||
-        data?.status == VendorStatusEnum.ADJUSTMENT
+        srVendor?.status == VendorStatusEnum.SUBMITTED ||
+        srVendor?.status == VendorStatusEnum.ADJUSTMENT
       )
         throw new HttpException('have already pending application', 400);
-      if (data?.status == VendorStatusEnum.COMPLETED)
+      if (srVendor?.status == VendorStatusEnum.COMPLETED)
         throw new NotFoundException('Applied for all services');
       if (businessArea?.length <= 0)
         throw new HttpException('areas_of_businessInterest_not_found', 404);
@@ -330,7 +330,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       const response = [];
       let fppaData = null;
       const canRequest = null;
-      const appliedBuinessAreas = data.businessAreas.filter(
+      const appliedBuinessAreas = srVendor.businessAreas.filter(
         (item) => item.status !== VendorStatusEnum.REJECTED,
       );
       for (let i = 0; i < length; i++) {
@@ -349,8 +349,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         }
         wfi.bpId = bp.id;
         wfi.serviceId = bp.serviceId;
-        wfi.requestorId = data.id;
-        wfi.data = data;
+        wfi.requestorId = srVendor.id;
+        wfi.data = srVendor;
         let workflowInstance = null;
         const businessAreaApproved = await this.businessAreaRepository.findOne({
           where: {
@@ -376,17 +376,17 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           businessAreaEntity.applicationNumber =
             workflowInstance.application.applicationNumber;
           businessAreaEntity.status = VendorStatusEnum.PENDING;
-          businessAreaEntity.vendorId = data.id;
+          businessAreaEntity.vendorId = srVendor.id;
           businessAreaEntity.priceRangeId = businessArea[i].priceRange;
           await this.businessAreaRepository.save(businessAreaEntity);
-          const areaOfBusinessInterest = data.areasOfBusinessInterest;
+          const areaOfBusinessInterest = srVendor.areasOfBusinessInterest;
           areaOfBusinessInterest.push(...businessArea);
           await this.isrVendorsRepository.update(
-            { id: data.id },
+            { id: srVendor.id },
             { areasOfBusinessInterest: areaOfBusinessInterest },
           );
 
-          const ba = data.businessAreas;
+          const ba = srVendor.businessAreas;
           let count = 0;
           ba?.map((item) => {
             if (
@@ -398,15 +398,15 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             }
           });
           if (count == 3) {
-            data.status = VendorStatusEnum.COMPLETED;
-            data.initial.status = VendorStatusEnum.COMPLETED;
-            data.initial.level = VendorStatusEnum.COMPLETED;
+            srVendor.status = VendorStatusEnum.COMPLETED;
+            srVendor.initial.status = VendorStatusEnum.COMPLETED;
+            srVendor.initial.level = VendorStatusEnum.COMPLETED;
             await this.isrVendorsRepository.update(
-              { id: data.id },
+              { id: srVendor.id },
               { status: VendorStatusEnum.COMPLETED },
             );
             await this.vendorRepository.update(
-              { userId: data.userId },
+              { userId: srVendor.userId },
               { status: VendorStatusEnum.COMPLETED },
             );
           }
@@ -415,7 +415,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             businessArea[i].category !== BusinessCategories.WORKS &&
             fppaData == null
           ) {
-            fppaData = await this.GetFPPAData(data.tinNumber);
+            fppaData = await this.GetFPPAData(srVendor.tinNumber);
             if (fppaData !== null) {
               canPay = false;
               continue;
@@ -441,7 +441,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       }
       if (canRequest !== null) {
         await this.vendorRepository.update(
-          { userId: data.userId },
+          { userId: srVendor.userId },
           { canRequest: false },
         );
       }

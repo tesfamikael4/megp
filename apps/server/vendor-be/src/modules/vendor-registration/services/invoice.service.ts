@@ -28,6 +28,7 @@ import { ApplicationStatus } from 'src/modules/handling/enums/application-status
 import { PaymentStatus } from 'src/shared/enums/payment-status.enum';
 import { ServiceKeyEnum } from 'src/shared/enums/service-key.enum';
 import { BusinessCategories } from 'src/modules/handling/enums/business-category.enum';
+import { CreateAreasOfBusinessInterest } from '../dto/areas-of-business-interest';
 
 @Injectable()
 export class InvoiceService extends EntityCrudService<InvoiceEntity> {
@@ -46,7 +47,62 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
   ) {
     super(invoiceRepository);
   }
-
+  async generateNewregistrationInvoice(businesses: CreateAreasOfBusinessInterest[], user: any,) {
+    try {
+      const priceRangeIds = businesses.map((item) => item.priceRange);
+      const vendor = await this.vendorsRepository.findOne({
+        where: { userId: user.id },
+      });
+      if (!vendor) {
+        throw new HttpException("Register as  Vendor", 4040);
+      }
+      const serviceBp = await this.bpService.findBpWithServiceByKey(ServiceKeyEnum.NEW_REGISTRATION);
+      if (!serviceBp)
+        throw new NotFoundException("Business Process Not Defined");
+      const previousInvoice = await this.getMyInvoice(user.id, ServiceKeyEnum.NEW_REGISTRATION);
+      if (previousInvoice) {
+        const draftedBAs = await this.baService.getUserInprogressBusinessAreasByServiceId(serviceBp.serviceId, user.id);
+        let regenerateInvoice = false;
+        for (const ba of businesses) {
+          if (draftedBAs.filter((item) => item.priceRangeId == ba.priceRange).length == 0) {
+            regenerateInvoice = true;
+            break;
+          }
+        }
+        if (regenerateInvoice) {
+          await this.invoiceRepository.delete(previousInvoice.id);
+          await this.generateInvoice(priceRangeIds, vendor, user);
+        } else {
+          throw new HttpException("Invoice already generated", 400)
+        }
+      }
+      const registeredServices = await this.baService.getVendorRegisteredServices(vendor.id);
+      //check the service existence in the preouse approved services 
+      for (const row of businesses) {
+        if (registeredServices.some((item) => item.category == row.category)) {
+          return new HttpException("invalid Request", 400);
+        }
+      }
+      const bas = [];
+      for (const row of businesses) {
+        const ba = new BusinessAreaEntity();
+        ba.category = row.category;
+        ba.vendorId = vendor.id;
+        ba.serviceId = serviceBp.serviceId;
+        ba.priceRangeId = row.priceRange;
+        ba.status = ApplicationStatus.PENDING
+        bas.push(ba);
+      }
+      if (bas.length) {
+        await this.baService.create(bas);
+        await this.generateInvoice(priceRangeIds, vendor, user);
+        return HttpStatus.ACCEPTED;
+      }
+      return HttpStatus.BAD_REQUEST;
+    } catch (error) {
+      return new Error(error);
+    }
+  }
   async generateInvoice(
     currentPriceRangeIds: string[],
     vendor: VendorsEntity,
