@@ -34,6 +34,7 @@ import { ProcurementInstitutionController } from './controllers/procurement-inst
     ]),
     AuthorizationModule,
   ],
+
   providers: [
     AdhocTeamMemberService,
     AdhocTeamService,
@@ -42,6 +43,7 @@ import { ProcurementInstitutionController } from './controllers/procurement-inst
     ProcurementInstitutionService,
     ProcurementDisposalUnitService,
   ],
+
   controllers: [
     AdhocTeamController,
     AdhocTeamMemberController,
@@ -50,6 +52,7 @@ import { ProcurementInstitutionController } from './controllers/procurement-inst
     ProcurementDisposalUnitController,
     ProcurementInstitutionController,
   ],
+
   exports: [],
 })
 export class ProcurementInstitutionModule {}
