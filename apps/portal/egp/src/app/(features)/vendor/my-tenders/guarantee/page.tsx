@@ -1,28 +1,65 @@
 'use client';
-import { Box, Button, Flex, Modal, Text } from '@mantine/core';
+import { Extension } from '@/models/extension';
+import { useExtendGuaranteeMutation } from '@/store/api/guarantee-extension/extension.api';
+import { useGetGuaranteeQuery } from '@/store/api/guarantee/guarantee.api';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Box, Button, Flex, Modal, Text, Textarea } from '@mantine/core';
 import { DatePickerInput } from '@mantine/dates';
-import { useDisclosure, useMediaQuery } from '@mantine/hooks';
+import { useDisclosure } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { ZodType, z } from 'zod';
 import Table from '../_components/table/table';
-const data = [
-  {
-    id: '1323addd-a4ac-4dd2-8de2-6f934969a0f1',
-    lotName: 'Toilet paper',
-    procuringEntity: 'PERAGO',
-    date: 'Mar/20/2024',
-    status: 'Accepted',
-  },
-];
-// const data = [];
-const TenderPage = () => {
+import { logger } from '@megp/core-fe';
+
+const GuaranteePage = () => {
+  const extensionSchema: ZodType<Partial<Extension>> = z.object({
+    extensionDate: z
+      .date()
+      .min(new Date(), { message: 'This field is required' }),
+
+    remark: z.string().optional(),
+  });
+
+  const {
+    handleSubmit,
+    control,
+    register,
+    formState: { errors },
+  } = useForm<Partial<Extension>>({
+    resolver: zodResolver(extensionSchema),
+  });
   const [opened, { open, close }] = useDisclosure(false);
-  const [value, setValue] = useState<Date | null>(null);
   const router = useRouter();
+  const { data: data } = useGetGuaranteeQuery({});
+  const [create, { isLoading: isSaving }] = useExtendGuaranteeMutation();
+  const onCreate = async (data) => {
+    logger.log(data);
+    close();
+    try {
+      const result = await create(data).unwrap();
+      if ('data' in result) {
+        router.push(`/vendor/my-tenders/guarantee/${result.data.id}`);
+      }
+      notifications.show({
+        message: 'Guarantee exteneded successfully',
+        title: 'Success',
+        color: 'green',
+      });
+    } catch (err) {
+      notifications.show({
+        color: 'red',
+        message: 'errors in extending guarantee.',
+        title: 'Error',
+      });
+    }
+  };
+
   const handleButtonClick = () => {
     router.push('/vendor/my-tenders/guarantee/new');
   };
-  const isMobile = useMediaQuery('(max-width: 768px)');
+  const onError = (err) => logger.log(err);
   return (
     <Box className="p-6 w-full bg-[#e7f4f7]">
       <Box className=" w-full p-6 min-h-screen bg-white">
@@ -34,25 +71,54 @@ const TenderPage = () => {
             <Button onClick={handleButtonClick}>New Guarantee</Button>
             <Button onClick={open}>Date</Button>
           </Flex>
+
           <Modal
             opened={opened}
             onClose={close}
             title="Extend Guarantee"
             centered
           >
-            <DatePickerInput
-              label="Extend"
-              withAsterisk
-              placeholder="Pick a date here"
-              value={value}
-              onChange={setValue}
+            <Controller
+              name="extensionDate"
+              control={control}
+              render={({ field: { onChange, value, name } }) => (
+                <DatePickerInput
+                  label="Extend"
+                  withAsterisk
+                  placeholder="Pick a date here"
+                  value={value ? new Date(value) : new Date()}
+                  onChange={onChange}
+                  error={errors?.extensionDate?.message}
+                />
+              )}
             />
+
+            <Textarea
+              label="Remark"
+              resize="vertical"
+              autosize
+              minRows={2}
+              maxRows={6}
+              {...register('remark')}
+            />
+            <Flex justify="flex-end" gap={10}>
+              <Button variant="outline" className="mt-5" onClick={close}>
+                Cancel
+              </Button>
+
+              <Button
+                onClick={handleSubmit(onCreate, onError)}
+                className="mt-5"
+              >
+                Done
+              </Button>
+            </Flex>
           </Modal>
         </Flex>
-        <Table data={data ?? []} />
+        <Table data={data} />
       </Box>
     </Box>
   );
 };
 
-export default TenderPage;
+export default GuaranteePage;
