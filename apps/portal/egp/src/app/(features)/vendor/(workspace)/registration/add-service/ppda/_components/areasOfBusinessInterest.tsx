@@ -24,6 +24,7 @@ import {
   getLineOfBusinessMultiSelectData,
 } from '../../../_utils';
 import { Suspense } from 'react';
+import { AreasOfBusinessInterestType } from '@/models/vendorRegistration';
 
 export const AreasOfBusinessInterest = ({
   name,
@@ -71,7 +72,13 @@ export const AreasOfBusinessInterest = ({
           <MultiCheckBox
             label="Category"
             id="category"
-            data={servicesList}
+            data={servicesList.filter(
+              (service) =>
+                !data?.areasOfBusinessInterest.some(
+                  (val: AreasOfBusinessInterestType) =>
+                    val.category === service.value,
+                ),
+            )}
             {...getAddServiceCategoryProps(fields, remove, append, fieldState)}
           />
         )}

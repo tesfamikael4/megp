@@ -14,6 +14,9 @@ import { PassFormDataProps } from './formShell';
 import FileUploader from '@/app/(features)/vendor/_components/uploader';
 import { logger } from '@megp/core-fe';
 import { useGetPreferentialQuery } from '@/store/api/preferential-treatment/preferential-treatment.api';
+import { preferential } from '../../_constants';
+import { PreferentialTreatment as PreferentialTreatmentType } from '@/models/vendorRegistration';
+import { useGetVendorQuery } from '../../_api/query';
 
 interface Props extends PassFormDataProps {
   name: any;
@@ -36,6 +39,8 @@ export const PreferentialTreatment: React.FC<Props> = ({
     name: 'preferential',
   });
   const { data, isLoading } = useGetPreferentialQuery({});
+  const { data: vendor, isLoading: isVendorLoading } = useGetVendorQuery({});
+
   const fieldState = control.getFieldState(name, control._formState);
 
   const getCategoryProps = () => {
@@ -73,7 +78,7 @@ export const PreferentialTreatment: React.FC<Props> = ({
     };
   };
 
-  if (isLoading) <LoadingOverlay />;
+  if (isLoading || isVendorLoading) <LoadingOverlay />;
   return (
     <Suspense>
       <Flex className="flex-col gap-6">
@@ -82,20 +87,13 @@ export const PreferentialTreatment: React.FC<Props> = ({
           <MultiCheckBox
             label="Preferential Group"
             id="category"
-            data={[
-              {
-                value: 'ibm',
-                label: 'IBM',
-              },
-              {
-                value: 'msme',
-                label: 'Micro, Small, or Medium Enterprise (MSME)',
-              },
-              {
-                value: 'marginalized',
-                label: 'Marginalized',
-              },
-            ]}
+            data={preferential.filter(
+              (service) =>
+                !vendor?.preferential.some(
+                  (val: PreferentialTreatmentType) =>
+                    val.category === service.value,
+                ),
+            )}
             {...getCategoryProps()}
           />
         }

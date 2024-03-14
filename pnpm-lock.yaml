@@ -1453,6 +1453,9 @@ importers:
       mantine-datatable:
         specifier: ^7.5.0
         version: 7.5.0(@mantine/core@7.5.2)(@mantine/hooks@7.5.2)(clsx@2.1.0)(react@18.2.0)
+      moment:
+        specifier: ^2.30.1
+        version: 2.30.1
       next:
         specifier: 14.1.0
         version: 14.1.0(@babel/core@7.23.9)(react-dom@18.2.0)(react@18.2.0)(sass@1.70.0)
@@ -9169,6 +9172,7 @@ packages:
 
   /@types/node@18.16.12:
     resolution: {integrity: sha512-tIRrjbY9C277MOfP8M3zjMIhtMlUJ6YVqkGgLjz+74jVsdf4/UjC6Hku4+1N0BS0qyC0JAS6tJLUk9H6JUKviQ==}
+    dev: true
 
   /@types/node@20.5.1:
     resolution: {integrity: sha512-4tT2UrL5LBqDwoed9wZ6N3umC4Yhz3W3FloMmiiG4JwmUJWpie0c7lcnUNd4gtMKuDEO4wRVS8B6Xa0uMRsMKg==}
@@ -17419,6 +17423,10 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
 
+  /moment@2.30.1:
+    resolution: {integrity: sha512-uEmtNhbDOrWPFS+hdjFCBfy9f2YoyzRpwcl+DqpC6taX21FzsTLQVbMV/W7PzNSX6x/bhC1zA3c2UQ5NzH6how==}
+    dev: false
+
   /ms@2.0.0:
     resolution: {integrity: sha512-Tpp60P6IUJDTuOq/5Z8cdskzJujfwqfOTkrwIwj7IRISpnkJnT6SyJ4PCPnGMoFjC9ddhal5KVIYtAt97ix05A==}
 
@@ -21242,7 +21250,6 @@ packages:
       typescript: 4.9.5
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
-    dev: true
 
   /ts-node@10.9.2(@types/node@18.16.12)(typescript@5.3.3):
     resolution: {integrity: sha512-f0FFpIdcHgn8zcPSbf1dRevwt047YMnaiJM3u2w2RewrB+fob/zePZcrOyQoLMMO7aBIddLcQIEK5dYjkLnGrQ==}
@@ -21273,6 +21280,7 @@ packages:
       typescript: 5.3.3
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
+    dev: true
 
   /ts-node@10.9.2(@types/node@20.5.1)(typescript@5.3.3):
     resolution: {integrity: sha512-f0FFpIdcHgn8zcPSbf1dRevwt047YMnaiJM3u2w2RewrB+fob/zePZcrOyQoLMMO7aBIddLcQIEK5dYjkLnGrQ==}
@@ -21744,7 +21752,7 @@ packages:
       pg: 8.11.3
       reflect-metadata: 0.2.1
       sha.js: 2.4.11
-      ts-node: 10.9.2(@types/node@18.16.12)(typescript@5.3.3)
+      ts-node: 10.9.2(@types/node@16.18.77)(typescript@4.9.5)
       tslib: 2.6.2
       uuid: 9.0.1
       yargs: 17.7.2
@@ -21755,7 +21763,6 @@ packages:
     resolution: {integrity: sha512-1FXk9E2Hm+QzZQ7z+McJiHL4NW1F2EzMu9Nq9i3zAaGqibafqYwCVU6WyWAuyQRRzOlxou8xZSyXLEN8oKj24g==}
     engines: {node: '>=4.2.0'}
     hasBin: true
-    dev: true
 
   /typescript@5.3.3:
     resolution: {integrity: sha512-pXWcraxM0uxAS+tN0AG/BF2TyqmHO014Z070UsJ+pFvYuRSq8KH8DmWpnbXe0pEPDHXZV3FcAbJkijJ5oNEnWw==}
