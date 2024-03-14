@@ -15,6 +15,12 @@ import { vendorRegistrationApi } from '@/store/api/vendor_registration/api';
 
 export const paymentApi = vendorRegistrationApi.injectEndpoints({
   endpoints: (builder) => ({
+    getServicePriceRange: builder.query<any[], { key: string }>({
+      query: ({ key }) => ({
+        url: `Service-pricing/get-formatted-business-classes/${key}`,
+        method: 'GET',
+      }),
+    }),
     postRenewalInvoice: builder.mutation<any, string[]>({
       query: (data) => ({
         url: `/invoices/generate-renewal-invoice`,
@@ -37,7 +43,7 @@ export const paymentApi = vendorRegistrationApi.injectEndpoints({
         const formData = new FormData();
         formData.append('attachmentUrl', data.file);
         return {
-          url: `upload/upload-payment-receipt-new/${data.transactionNumber}/${data.invoiceId}/${data.serviceId}`,
+          url: `upload/upload-payment-receipt-new/${data.transactionNumber}/${data.invoiceIds}/${data.serviceId}`,
           method: 'POST',
           body: formData,
         };

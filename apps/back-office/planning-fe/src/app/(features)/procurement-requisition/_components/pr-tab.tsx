@@ -46,11 +46,11 @@ const PlanYearTab = () => {
 
   const submitPlan = () => {
     modals.openConfirmModal({
-      title: ` ${pr?.title}`,
+      title: ` ${pr?.name}`,
       centered: true,
       children: (
         <Text size="sm">
-          {`Are you sure you want to submit  procurement requisition  ${pr?.title}`}
+          {`Are you sure you want to submit  procurement requisition  ${pr?.name}`}
         </Text>
       ),
       labels: { confirm: 'Yes', cancel: 'No' },
@@ -100,11 +100,11 @@ const PlanYearTab = () => {
               onClick={submitPlan}
               loading={isLoading}
               disabled={
-                (pr as any)?.status != 'Draft' &&
-                (pr as any)?.status != 'Adjust'
+                (pr as any)?.status != 'DRAFT' &&
+                (pr as any)?.status != 'ADJUST'
               }
             >
-              {(pr as any)?.status != 'Draft' && (pr as any)?.status != 'Adjust'
+              {(pr as any)?.status != 'DRAFT' && (pr as any)?.status != 'ADJUST'
                 ? 'Submitted'
                 : 'Submit'}
             </Button>

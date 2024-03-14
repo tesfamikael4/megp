@@ -62,9 +62,8 @@ export function FormDetail({ mode }: FormDetailProps) {
         organizationId: organizationId,
       }).unwrap();
 
-      if ('data' in result) {
-        router.push(`/groups/${result?.data?.id}`);
-      }
+      router.push(`/groups/${result?.id}`);
+
       notify('Success', 'Group created successfully');
     } catch (err) {
       notify(

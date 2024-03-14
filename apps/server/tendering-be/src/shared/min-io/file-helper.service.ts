@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { PDFEngine } from 'chromiumly';
-import { unlinkSync, writeFileSync } from 'fs';
-import { join } from 'path';
 import { MinIOService } from 'src/shared/min-io/min-io.service';
+import * as libre from 'libreoffice-convert';
+import { promisify } from 'util';
 
 @Injectable()
 export class FileHelperService {
@@ -10,33 +9,20 @@ export class FileHelperService {
 
   async convertAndUpload(file: Express.Multer.File) {
     try {
-      let outputPath = join(process.cwd(), 'src', 'temp.pdf');
+      const libreConverterAsync = promisify(libre.convert);
 
-      if (process.env.NODE_ENV === 'production') {
-        outputPath = join(
-          process.cwd(),
-          'apps',
-          'server',
-          'tendering-be',
-          'dist',
-          'temp.pdf',
-        );
-      }
-
-      await writeFileSync(outputPath, '');
-
-      const buffer = await PDFEngine.convert({
-        files: [file.buffer, outputPath],
-      });
-
-      await unlinkSync(outputPath);
+      const pdfBuffer = await libreConverterAsync(
+        file.buffer,
+        '.pdf',
+        undefined,
+      );
 
       const fileType = file.originalname.split('.');
 
       const fileName = fileType[0] + '.pdf';
 
       const fileInfo = await this.minIOService.uploadBuffer(
-        buffer,
+        pdfBuffer,
         fileName,
         'application/pdf',
       );

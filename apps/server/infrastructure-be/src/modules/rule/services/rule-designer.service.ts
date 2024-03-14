@@ -1,14 +1,15 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PossibleReasons, Rule, RuleDesigner } from 'src/entities';
 import { ENTITY_MANAGER_KEY, EntityCrudService } from 'megp-shared-be';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager, In, Repository } from 'typeorm';
 import { compareCondition } from './check-conditions.js';
 import {
   CreateRuleDesignerDto,
   UpdateRuleDesignerDto,
 } from '../dto/rule-designer.dto.js';
 import { REQUEST } from '@nestjs/core';
+import { ValidateMultipleRuleDto } from '../dto/validate-rule.dto.js';
 
 @Injectable()
 export class RuleDesignerService extends EntityCrudService<RuleDesigner> {
@@ -49,7 +50,53 @@ export class RuleDesignerService extends EntityCrudService<RuleDesigner> {
 
     return ruleDesign;
   }
+  async bulkValidate(validateMultipleRuleDto: ValidateMultipleRuleDto) {
+    const ruleDesigns = await this.repositoryRuleDesigner.find({
+      where: { key: In(validateMultipleRuleDto.designerKeys) },
+      relations: ['rules', 'possibleReasons'],
+      order: {
+        rules: {
+          executionOrder: 'ASC',
+        },
+      },
+    });
 
+    if (ruleDesigns.length == 0) {
+      throw new NotFoundException(`no_rule_designers_found`);
+    }
+
+    // if (ruleDesigns.length != validateMultipleRuleDto.designerKeys.length) {
+    //   throw new NotFoundException(
+    //     `some rule designer not found for keys ${validateMultipleRuleDto.designerKeys.join(', ')}`,
+    //   );
+    // }
+
+    const failedRuleKeys = [];
+    const possibleReasons = new Set([]);
+
+    const resp = {
+      validation: true,
+      failedRuleKeys,
+      possibleReasons: [],
+    };
+
+    for (const designer of ruleDesigns) {
+      const result = this.validateDesignerAndTakeAction(
+        designer,
+        validateMultipleRuleDto.params,
+      );
+      if (result.validation == false) {
+        failedRuleKeys.push(designer.key);
+        designer.possibleReasons.forEach((reason) => {
+          possibleReasons.add(reason.reason);
+        });
+        resp.validation = false;
+      }
+    }
+
+    resp.possibleReasons = [...possibleReasons];
+    return resp;
+  }
   async validate(designKey, params) {
     const designer = await this.repositoryRuleDesigner.findOneOrFail({
       where: { key: designKey },
@@ -60,26 +107,24 @@ export class RuleDesignerService extends EntityCrudService<RuleDesigner> {
         },
       },
     });
+    return this.validateDesignerAndTakeAction(designer, params);
+  }
+
+  private validateDesignerAndTakeAction(designer, params) {
     let valid = false;
 
     for (const rule of designer.rules) {
       valid = compareCondition(rule.conditions, params);
       if (valid) {
-        return await this.takeAction(designer.actions, valid);
+        return this.takeAction(designer.actions, valid);
       }
     }
-
-    const possibleReasons = [];
-    designer.possibleReasons.forEach((reason) => {
-      possibleReasons.push(reason.reason);
-    });
 
     const resp = this.takeAction(designer.defaultActions, false);
 
     return {
       ...resp,
       enforcementMethod: designer.enforcementMethod,
-      possibleReasons: possibleReasons,
     };
   }
 

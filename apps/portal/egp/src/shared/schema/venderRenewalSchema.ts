@@ -3,7 +3,7 @@ export const approvedVendorServiceSchema = z.object({
   status: z.object({
     level: z.string().optional(),
     status: z.string().optional(),
-    selectedPriceRange: z.any(),
+    selectedPriceRange: z.any().optional(),
   }),
   data: z.array(
     z.object({

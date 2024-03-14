@@ -29,7 +29,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
 
       columns: [
         {
-          id: 'name',
+          id: 'account.firstName',
           header: 'Name',
           accessorKey: 'account.firstName',
           cell: ({ row }) => (
@@ -40,12 +40,12 @@ export function Entity({ children }: { children: React.ReactNode }) {
             </div>
           ),
           meta: {
-            widget: 'primary',
+            widget: 'expand',
           },
         },
         {
-          id: 'username',
-          header: 'User Name',
+          id: 'account.username',
+          header: 'Username',
           accessorKey: 'account.username',
           cell: (info) => info.getValue(),
           meta: {

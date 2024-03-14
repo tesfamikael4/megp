@@ -26,6 +26,7 @@ import { TaskService } from './task.service';
 
 import { EmailService } from 'src/shared/email/email.service';
 import {
+  BusinessAreaEntity,
   InvoiceEntity,
   TaskEntity,
   TaskHandlerEntity,
@@ -116,6 +117,12 @@ export class WorkflowService {
       nextCommand.data = { ...dto?.data };
       await this.gotoNextStep(nextCommand, user);
     }
+    const vendor = await this.vendorRegService.findOne(wfinstance.requestorId);
+    if (vendor) {
+      vendor.canRequest = false;
+      await this.vendorRegService.update(vendor.id, vendor);
+    }
+
     return response;
   }
   async changeWorkflowInstanceStatus(status: string, instanceId: string) {
@@ -183,6 +190,13 @@ export class WorkflowService {
           await this.addTaskTracker(currentTaskHandler, nextCommand, user);
           await this.handlerRepository.delete(currentTaskHandler.id);
           workflowInstance.taskHandler = null;
+          const vendor = await this.vendorRegService.findOne(wfInstance.requestorId);
+          if (vendor) {
+            vendor.canRequest = true;
+            await this.vendorRegService.update(vendor.id, vendor);
+          }
+
+
         } else {
           throw new Error('Unable to update vender status');
         }
@@ -316,14 +330,28 @@ export class WorkflowService {
           command.action.toUpperCase() == ApplicationStatus.ADJUST.toUpperCase()
           // ||  command.action.toUpperCase() == ReviewStatus.Reject.toUpperCase()
         ) {
-          return this.notify(wfi, stateMetadata['apiUrl'], command);
+          const result = await this.notify(wfi, stateMetadata['apiUrl'], command);
+          if (result) {
+            const vendor = await this.vendorRegService.findOne(wfi.requestorId);
+            if (vendor) {
+              vendor.canRequest = true;
+              await this.vendorRegService.create(vendor);
+            }
+          }
         }
         break;
       case TaskTypes.INITIAL_REVIEW.toLowerCase():
         if (
           command.action.toUpperCase() == ApplicationStatus.ADJUST.toUpperCase()
         ) {
-          return this.notify(wfi, stateMetadata['apiUrl'], command);
+          const result = await this.notify(wfi, stateMetadata['apiUrl'], command);
+          if (result) {
+            const vendor = await this.vendorRegService.findOne(wfi.requestorId);
+            if (vendor) {
+              vendor.canRequest = true;
+              await this.vendorRegService.update(vendor.id, vendor);
+            }
+          }
         }
         break;
       case TaskTypes.EMAIl:
@@ -568,11 +596,19 @@ export class WorkflowService {
     }, {});
   }
 
-  async getMyApplications(user: any) {
+  async getMyApplications(user: any): Promise<any> {
 
+    const result_ = await this.workflowInstanceRepository.createQueryBuilder('wf')
+      .innerJoinAndMapOne('wf.businessArea', BusinessAreaEntity, 'ba', 'wf.id = ba.instanceId')
+      .innerJoinAndSelect('wf.service', 'service')
+      .where('wf.userId = :userId', { userId: user.id })
+      .orderBy('wf.updatedAt', 'DESC')
+      .getMany();
+    return result_
     const result = await this.workflowInstanceRepository.find({
-      relations: { service: true },
-      where: { userId: user.id, status: In([ApplicationStatus.INPROGRESS, ApplicationStatus.ADJUSTMENT]) }
+      relations: { service: true, taskTrackers: true },
+      order: { updatedAt: 'DESC', taskTrackers: { executedAt: 'DESC' } },
+      where: { userId: user.id }
     });
 
     return result;

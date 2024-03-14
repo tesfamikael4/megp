@@ -5,17 +5,15 @@ import { useRouter } from 'next/navigation';
 import { Control, RegisterOptions, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useAddFormMutation } from '../../../_api/query';
 import { NotificationService } from '@/app/(features)/vendor/_components/notification';
 import { FormData } from '@/models/vendorRegistration';
-import { ExtendedRegistrationReturnType } from '../detail/formShell';
 import PreferentialTreatment from './preferentialTreatment';
 import { usePrivilege } from '../../_context/privilege-context';
-import { logger } from '@megp/core-fe';
 import {
   useSubmitRequestMutation,
   useUploadPreferentialAttachmentsMutation,
 } from '@/store/api/preferential-treatment/preferential-treatment.api';
+import { ExtendedRegistrationReturnType } from '../../../_components/detail/formShell';
 
 export interface PassFormDataProps {
   register: (
@@ -28,7 +26,7 @@ export interface PassFormDataProps {
 export const preferentialSchema = z.object({
   category: z.string(),
   type: z.string().min(2, { message: 'MSME is required' }),
-  attachment: z
+  certificateUrl: z
     .instanceof(File, { message: 'Attachment is required', fatal: true })
     .refine((data) => data instanceof File, {
       message: 'Attachment is required',

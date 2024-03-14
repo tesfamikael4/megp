@@ -17,7 +17,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { paymentSlipUploadSchema } from '@/shared/schema/paymentSlipUploadSchema';
 import { useRouter } from 'next/navigation';
-import { useUploadPaymentReceiptUpgradeMutation } from '@/store/api/vendor-upgrade/api';
+import { useUploadPaymentReceiptRenewalMutation } from '@/store/api/vendor-upgrade/api';
 import FileUploader from '../../../../_components/uploader';
 const VENDOR_URL = process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api';
 
@@ -33,23 +33,25 @@ function Page() {
   );
 
   const [uploadFile, { isLoading: isUploading, isSuccess: isUploadSuccess }] =
-    useUploadPaymentReceiptUpgradeMutation({});
+    useUploadPaymentReceiptRenewalMutation({});
 
   const { register, formState, setValue, watch, handleSubmit } = useForm<any>({
     defaultValues: {
-      invoiceId: '',
+      invoiceIds: '',
       transactionNumber: '',
       file: undefined,
     },
     resolver: zodResolver(paymentSlipUploadSchema),
   });
 
+  console.log(formState.errors);
+
   const onSubmitHandler: SubmitHandler<any> = async (values) => {
-    if (data?.items && Array.isArray(data?.items) && data?.items.length > 0) {
+    if (data) {
       const paymentData = {
         file: values.file,
         transactionNumber: values.transactionNumber,
-        invoiceIds: data?.items?.map((item) => item.id),
+        invoiceIds: [data.id],
       };
       // submitRequest(data?.items.map((i) => i.id));
       uploadFile(paymentData)
@@ -65,26 +67,16 @@ function Page() {
   };
 
   useEffect(() => {
-    if (data && Array.isArray(data?.items) && data?.items.length > 0) {
-      setValue('invoiceId', data?.items.map((i) => i.id).join(',') ?? '');
-      setValue(
-        'serviceId',
-        data?.paymentReceipt?.attachment === ''
-          ? 'null'
-          : data?.paymentReceipt?.attachment,
-      );
-      if (data && data?.paymentReceipt?.transactionId) {
-        setValue('transactionNumber', data?.paymentReceipt.transactionId);
-      }
+    if (data) {
+      setValue('invoiceIds', [data.id]);
     }
-
     return () => {};
   }, [data]);
 
   useEffect(() => {
-    if (data && data?.paymentReceipt && data?.paymentReceipt.attachment) {
+    if (data && data.attachment) {
       setInvoiceSlipImageUrl(
-        `${VENDOR_URL}/upload/get-file/paymentReceipt/${data?.paymentReceipt.attachment}`,
+        `${VENDOR_URL}/upload/get-file/paymentReceipt/${data?.attachment}`,
       );
     }
 
@@ -100,7 +92,7 @@ function Page() {
         />
       </Box>
     );
-  } else if (data && data.total === 0) {
+  } else if (!data) {
     router.push('ppda');
   } else
     return (
@@ -142,7 +134,7 @@ function Page() {
               </Flex>
             </form>
             <Flex className="min-w-1/2 flex-col border w-1/2">
-              {data?.items && <InvoiceTemplate invoiceData={data?.items} />}
+              {data && <InvoiceTemplate invoiceData={data} />}
             </Flex>
           </Flex>
         </Box>

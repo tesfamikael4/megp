@@ -7,7 +7,6 @@ import type { ColumnDef } from '@tanstack/react-table';
 import {
   getCoreRowModel,
   useReactTable,
-  getSortedRowModel,
   getExpandedRowModel,
 } from '@tanstack/react-table';
 import Link from 'next/link';
@@ -48,7 +47,6 @@ export function EntityList<T>({
   const [treeView, setTreeView] = useState(false);
   const [width, setWidth] = useState(100);
   const [data, setData] = useState([]);
-  const [sorting, setSorting] = useState([]);
 
   // construct header columns with the select column and action column
   const tableColumns = useMemo<ColumnDef<T>[]>(
@@ -118,13 +116,10 @@ export function EntityList<T>({
         mode,
       ),
       expanded,
-      sorting,
     },
     getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    onSortingChange: setSorting,
-    columns: tableColumns,
     enableSortingRemoval: false,
+    columns: tableColumns,
     enableRowSelection: true,
     getSubRows: (row: any) => row.subRows,
     onExpandedChange: setExpanded,

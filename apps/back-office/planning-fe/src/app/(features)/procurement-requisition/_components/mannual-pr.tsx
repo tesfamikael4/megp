@@ -2,22 +2,16 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
-  ActionIcon,
   Box,
-  Button,
   Checkbox,
-  Divider,
   Flex,
-  Group,
   LoadingOverlay,
-  Modal,
-  MultiSelect,
   Select,
   Stack,
   TextInput,
   Textarea,
 } from '@mantine/core';
-import { MantineTree, TreeConfig, logger, notify } from '@megp/core-fe';
+import { notify } from '@megp/core-fe';
 import { EntityButton } from '@megp/entity';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -28,17 +22,11 @@ import {
   useLazyReadQuery,
   useUpdateMutation,
 } from '../_api/procurement-requisition.api';
-import { useLazyListByIdQuery } from '@/app/(features)/budget/_api/budget.api';
 import { useParams, useRouter } from 'next/navigation';
-import {
-  useGetClassificationsQuery,
-  useGetCurrenciesQuery,
-  useLazyGetClassificationsQuery,
-} from '@/store/api/administration/administration.api';
+import { useGetCurrenciesQuery } from '@/store/api/administration/administration.api';
+import { useGetPostBudgetPlansQuery } from '@/store/api/post-budget-plan/post-budget-plan.api';
+
 import { ProcurementRequisition } from '@/models/procurement-requsition';
-import { useAuth } from '@megp/auth';
-import { useDisclosure } from '@mantine/hooks';
-import { IconPlus } from '@tabler/icons-react';
 
 interface FormDetailProps {
   mode: 'detail' | 'new';
@@ -61,7 +49,7 @@ const prSchema: ZodType<Partial<ProcurementRequisition>> = z.object({
     required_error: 'This field is required',
     invalid_type_error: 'This field is required to be a string',
   }),
-  budgetId: z.string().nullable().optional(),
+  postBudgetPlanId: z.string(),
 });
 
 export const FormDetail = ({
@@ -80,26 +68,12 @@ export const FormDetail = ({
   } = useForm<ProcurementRequisition>({
     resolver: zodResolver(prSchema),
   });
-  const [opened, { close, open }] = useDisclosure();
-  const [tags, setTags] = useState<any>([]);
-  const [getBudget, { data: budget }] = useLazyListByIdQuery();
+
+  const { data: budgetYear } = useGetPostBudgetPlansQuery(undefined);
   //
-  const { data: classifications } = useGetClassificationsQuery({
-    where: [
-      [
-        {
-          column: 'parentCode',
-          value: 'IsNull',
-          operator: 'IsNull',
-        },
-      ],
-    ],
-  } as any);
 
   const { data: currency } = useGetCurrenciesQuery({} as any);
-  const { organizationId } = useAuth();
 
-  const [getChildren, { isLoading }] = useLazyGetClassificationsQuery();
   // pr rtk query
   const [create, { isLoading: isCreating }] = useCreateMutation();
   const [
@@ -114,42 +88,12 @@ export const FormDetail = ({
   const [removePr, { isLoading: isPrDeleting }] = useDeleteMutation();
 
   // configs;
-  const treeConfig: TreeConfig<any> = {
-    id: 'code',
-    label: 'title',
-    selectable: true,
-    multipleSelect: true,
-    selectedIds: tags,
-    setSelectedIds: setTags,
-    load: async (data) => {
-      const res = await getChildren({
-        where: [
-          [
-            {
-              column: 'parentCode',
-              value: data.code,
-              operator: '=',
-            },
-          ],
-        ],
-      }).unwrap();
-      return {
-        result:
-          res?.items?.map((c) => ({
-            code: c.code,
-            title: c.title,
-          })) ?? [],
-        loading: isLoading,
-      };
-    },
-  };
-  logger.log(budget);
+
   //event handler
   const onCreate = async (data) => {
     try {
       const res = await create({
         ...data,
-        budgetId: data?.budgetId ?? null,
       }).unwrap();
       notify('Success', 'Procurement Requisition created Successfully');
       router.push(`/procurement-requisition/${res.id}`);
@@ -172,14 +116,12 @@ export const FormDetail = ({
       id,
 
       ...newData,
-      classification: tags,
     };
 
     try {
       await updatePr(rawData).unwrap();
       notify('Success', 'Procurement Requisition Updated Successfully');
     } catch (err) {
-      logger.log(err);
       notify('Error', 'Something went wrong');
     }
   };
@@ -191,9 +133,9 @@ export const FormDetail = ({
     });
   };
 
-  useEffect(() => {
-    getBudget({ id: organizationId, collectionQuery: undefined }).unwrap();
-  }, [getBudget]);
+  // useEffect(() => {
+  //   getBudgetYear({ id: organizationId, collectionQuery: undefined }).unwrap();
+  // }, [getBudget]);
 
   useEffect(() => {
     if (mode === 'detail') {
@@ -229,13 +171,9 @@ export const FormDetail = ({
         'procurementApplication',
         procurementRequisition?.procurementApplication,
       );
-
-      setTags(procurementRequisition?.classification ?? []);
     }
   }, [mode, isPrSuccess, setValue, procurementRequisition]);
-  const onError = (error) => {
-    logger.log({ error });
-  };
+
   return (
     <Stack pos={'relative'}>
       <Flex gap="md" pos={'relative'}>
@@ -292,7 +230,7 @@ export const FormDetail = ({
             type="number"
             disabled={disableFields}
           />
-          <Controller
+          {/* <Controller
             name="budgetId"
             control={control}
             render={({ field: { value, onChange } }) => (
@@ -300,10 +238,10 @@ export const FormDetail = ({
                 name="name"
                 value={value}
                 onChange={onChange}
-                data={budget?.items.map((b) => {
+                data={budgetYear?.items.map((b) => {
                   return {
                     value: b.id,
-                    label: b.budgetYear,
+                    label: b.app.budgetYear,
                   };
                 })}
                 //  className="w-full"
@@ -313,33 +251,30 @@ export const FormDetail = ({
                 disabled={disableFields}
               />
             )}
-          />
-
-          <MultiSelect
-            label="Tag Classification"
-            value={tags.map((t) => t.code)}
-            data={tags.map((t) => ({
-              label: t.title + ' (' + t.code + ')',
-              value: t.code,
-            }))}
-            className="w-full"
-            onChange={(data) => {
-              setTags(tags.filter((t) => data.includes(t.code)));
-              logger.log({ data });
-            }}
-            disabled={disableFields}
-            leftSection={
-              <ActionIcon
-                onClick={open}
-                variant="subtle"
+          /> */}
+          <Controller
+            name="postBudgetPlanId"
+            control={control}
+            render={({ field: { value, onChange } }) => (
+              <Select
+                name="name"
+                value={value}
+                onChange={onChange}
+                data={budgetYear?.items.map((b) => {
+                  return {
+                    value: b.id,
+                    label: b.app.budgetYear,
+                  };
+                })}
+                //  className="w-full"
+                label="Budget Year"
+                placeholder="Select Budget Year"
+                withAsterisk
+                error={errors?.budgetId?.message}
                 disabled={disableFields}
-              >
-                <IconPlus />
-              </ActionIcon>
-            }
+              />
+            )}
           />
-        </Box>
-        <Box className="w-1/2">
           <Controller
             name="procurementApplication"
             control={control}
@@ -372,6 +307,8 @@ export const FormDetail = ({
               />
             )}
           />
+        </Box>
+        <Box className="w-1/2">
           <Textarea
             label="Description"
             withAsterisk
@@ -399,37 +336,12 @@ export const FormDetail = ({
         isSaving={isCreating}
         isUpdating={isPrUpdating}
         isDeleting={isPrDeleting}
-        onCreate={handleSubmit(onCreate, onError)}
+        onCreate={handleSubmit(onCreate)}
         onReset={onReset}
         onUpdate={handleSubmit(onUpdate)}
         onDelete={handleSubmit(onDelete)}
         disabled={disableFields}
       />
-
-      <Modal
-        opened={opened}
-        onClose={close}
-        title="Select Classifications"
-        size="lg"
-      >
-        <Box className="overflow-y-auto h-[35rem]">
-          <MantineTree
-            config={treeConfig}
-            data={
-              classifications
-                ? classifications.items.map((c) => ({
-                    code: c.code,
-                    title: c.title,
-                  }))
-                : []
-            }
-          />
-        </Box>
-        <Divider h={5} />
-        <Group justify="end">
-          <Button onClick={close}>Done</Button>
-        </Group>
-      </Modal>
     </Stack>
   );
 };

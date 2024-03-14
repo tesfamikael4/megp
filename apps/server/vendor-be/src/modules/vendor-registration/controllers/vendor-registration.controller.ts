@@ -33,6 +33,7 @@ import { MbrsDataDto } from '../dto/mbrsData.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ReceiptDto } from '../dto/receipt.dto';
 import { CreateAreasOfBusinessInterest } from '../dto/areas-of-business-interest';
+import { ServiceKeyEnum } from 'src/shared/enums/service-key.enum';
 @ApiBearerAuth()
 @Controller('vendor-registrations')
 @ApiTags('Vendor-registrations')
@@ -121,10 +122,11 @@ export class VendorRegistrationsController {
     @CurrentUser() userInfo: any,
   ) {
     data.data.userId = userInfo.id;
-    const result = await this.regService.addVendorInformations(
-      data.data,
-      userInfo,
-    );
+    const result = await this.
+      regService.addVendorInformations(
+        data.data,
+        userInfo,
+      );
     if (!result) throw new BadRequestException(`vendor registration failed`);
     return result;
   }
@@ -199,6 +201,13 @@ export class VendorRegistrationsController {
   async getApprovedVendorServiceByUserId(@CurrentUser() userInfo: any) {
     return await this.regService.getApprovedVendorServiceByUserId(userInfo.id);
   }
+  @Post('add-service')
+  async addService(
+    @CurrentUser() userInfo: any,
+    @Body() command: CreateAreasOfBusinessInterest[],
+  ) {
+    return await this.regService.addService(command, userInfo);
+  }
 
   @Post('upgrade-service')
   @ApiConsumes('multipart/form-data')
@@ -208,16 +217,10 @@ export class VendorRegistrationsController {
     @CurrentUser() user: any,
     @Body() dto: ReceiptDto,
   ) {
-    return await this.regService.submitServiceUpgrade(attachment, user, dto);
+    return await this.regService.submitServiceUpgradeOrRenewal(attachment, user, dto, ServiceKeyEnum.REGISTRATION_UPGRADE);
   }
 
-  @Post('add-service')
-  async addService(
-    @CurrentUser() userInfo: any,
-    @Body() command: CreateAreasOfBusinessInterest[],
-  ) {
-    return await this.regService.addService(command, userInfo);
-  }
+
 
   @Post('renew-service')
   @ApiConsumes('multipart/form-data')
@@ -227,7 +230,7 @@ export class VendorRegistrationsController {
     @CurrentUser() user: any,
     @Body() dto: ReceiptDto,
   ) {
-    return await this.regService.submitServiceUpgrade(attachment, user, dto);
+    return await this.regService.submitServiceUpgradeOrRenewal(attachment, user, dto, ServiceKeyEnum.REGISTRATION_RENEWAL);
   }
 
   @Get('get-my-approved-services')
@@ -249,7 +252,7 @@ export class VendorRegistrationsController {
   async getVendorInformation(@CurrentUser() userInfo: any) {
     return await this.regService.getVendorInformation(userInfo.id);
   }
-
+  //draft profile update  data
   @Post('add-vendor-update-information')
   async addVendorProfileUpdate(
     @Body() vendorprofileUpdateDara: any,
@@ -260,7 +263,7 @@ export class VendorRegistrationsController {
       userInfo,
     );
   }
-
+  //submit profile update request
   @Post('submit-vendor-update-information')
   async submitVendorProfileUpdate(
     @Body() vendorprofileUpdateDara: any,

@@ -59,6 +59,14 @@ export function Grid<T>({
 }: GridProps<T>): React.ReactElement {
   const [search, setSearch] = useDebouncedState('', 500);
   const [page, setPage] = useState(1);
+  const [sortBy, setSortBy] = useState<
+    [
+      {
+        column: string;
+        direction: 'ASC' | 'DESC';
+      },
+    ]
+  >([]);
 
   const totalPages = calculateTotalPages(total, perPage);
 
@@ -79,8 +87,9 @@ export function Grid<T>({
             ],
           ]
         : [],
+      orderBy: sortBy,
     });
-  }, [page]);
+  }, [search, sortBy]);
 
   useEffect(() => {
     if (page === 1) {
@@ -99,11 +108,30 @@ export function Grid<T>({
               ],
             ]
           : [],
+        orderBy: sortBy,
       });
     } else {
       setPage(1);
     }
-  }, [search]);
+  }, [search, sortBy]);
+
+  const handleSort = (column: any) => {
+    column.toggleSorting();
+    let direction: 'ASC' | 'DESC' = 'ASC';
+    if (column.getIsSorted() !== false) {
+      direction =
+        (column.getIsSorted() as string).toUpperCase() === 'ASC'
+          ? 'DESC'
+          : 'ASC';
+    }
+    setSortBy([
+      {
+        column: column.id,
+        direction,
+      },
+    ]);
+  };
+
   return (
     <Box pos="relative">
       <LoadingOverlay
@@ -179,13 +207,19 @@ export function Grid<T>({
                         header.column.id !== 'select' &&
                         options.sortable ? (
                           <ActionIcon
-                            onClick={header.column.getToggleSortingHandler()}
+                            onClick={() => {
+                              handleSort(header.column);
+                            }}
                             size="sm"
                             variant="transparent"
                           >
                             <IconArrowsSort
                               className="mt-1 ml-1"
-                              color="grey"
+                              color={
+                                sortBy?.column === header.column.id
+                                  ? 'blue'
+                                  : 'grey'
+                              }
                               height={14}
                               width={14}
                             />

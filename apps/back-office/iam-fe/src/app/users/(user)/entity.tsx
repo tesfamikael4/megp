@@ -33,7 +33,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
       sortable: true,
       columns: [
         {
-          id: 'name',
+          id: 'account.firstName',
           header: 'Name',
           accessorKey: 'account.firstName',
           cell: ({ row }) => (
@@ -41,7 +41,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
           ),
         },
         {
-          id: 'username',
+          id: 'account.username',
           header: 'Username',
           accessorKey: 'username',
           cell: (info) => info.getValue(),

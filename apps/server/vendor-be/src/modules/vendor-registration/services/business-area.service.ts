@@ -7,6 +7,9 @@ import { BusinessAreaEntity } from 'src/entities';
 import { ApplicationStatus } from 'src/modules/handling/enums/application-status.enum';
 import { PaymentStatus } from 'src/shared/enums/payment-status.enum';
 import { HandlingCommonService } from 'src/modules/handling/services/handling-common-services';
+import { ServiceKeyEnum } from 'src/shared/enums/service-key.enum';
+import { BusinessCategories } from 'src/modules/handling/enums/business-category.enum';
+import { VendorStatusEnum } from 'src/shared/enums/vendor-status-enums';
 
 @Injectable()
 export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
@@ -32,6 +35,13 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
     return this.businessAreaRepository.findOne({
       where: { id: id },
       relations: { servicePrice: true },
+    });
+  }
+
+  async getBusinessUppgradesOrRenewal(categories: string[], serviceKey: string) {
+    return this.businessAreaRepository.find({
+      where: { category: In(categories), BpService: { key: serviceKey }, status: In([ApplicationStatus.PENDING, ApplicationStatus.ADJUSTMENT]) },
+      relations: { BpService: true },
     });
   }
   // async getBusinessAreaWithPendingInvoice(ids: string[], keys: string[], user: any): Promise<BusinessAreaEntity[]> {
@@ -124,6 +134,33 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
         isrVendor: true,
       },
     });
+  }
+
+
+  async getVendorRegisteredServices(vendorId: string) {
+    const result = await this.businessAreaRepository.find({
+      where: {
+        vendorId: vendorId,
+        status: VendorStatusEnum.APPROVED,
+        category: In([
+          BusinessCategories.SERVICES,
+          BusinessCategories.GOODS,
+          BusinessCategories.WORKS,
+        ]),
+      },
+    });
+    return result;
+  }
+
+  async getVendorBusinessAreaByInstanceId(vendorId: string, instanceId: string) {
+    const businessArea = await this.businessAreaRepository.find({
+      where: {
+        vendorId: vendorId,
+        instanceId: instanceId,
+      },
+      relations: { BpService: true },
+    });
+    return businessArea;
   }
   async getPTByServiceId(
     serviceId: string,

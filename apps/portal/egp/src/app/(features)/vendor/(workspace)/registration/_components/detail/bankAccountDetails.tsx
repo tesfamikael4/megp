@@ -8,12 +8,6 @@ import {
 import React from 'react';
 import { Select } from '@mantine/core';
 import { PassFormDataProps } from './formShell';
-import {
-  CardListShell,
-  SingleCardWrapper,
-} from '../../../../../_components/cardList/cardListShell';
-import { useGetBankListQuery } from '../../../_api/query';
-import { usePrivilege } from '../../_context/privilege-context';
 import { CardItem } from './contactPersons';
 import {
   Icon123,
@@ -21,10 +15,17 @@ import {
   IconMapPin,
   IconUser,
 } from '@tabler/icons-react';
+import { usePrivilege } from '../../new/_context/privilege-context';
+import { useGetBankListQuery } from '../../_api/query';
+import {
+  CardListShell,
+  SingleCardWrapper,
+} from '@/app/(features)/vendor/_components/cardList/cardListShell';
 
 interface Props extends PassFormDataProps {
   itemSchema: any;
   name: string;
+  disabled: boolean;
 }
 
 export const BankAccountDetails: React.FC<Props> = ({
@@ -32,9 +33,8 @@ export const BankAccountDetails: React.FC<Props> = ({
   itemSchema,
   name,
   register,
+  disabled,
 }) => {
-  const { checkAccess } = usePrivilege();
-
   const { data, isLoading, isSuccess, status } = useGetBankListQuery({});
 
   const bankList =
@@ -79,7 +79,7 @@ export const BankAccountDetails: React.FC<Props> = ({
           isDefualt: true,
         }}
         itemSchema={itemSchema}
-        disabled={!checkAccess('detail')}
+        disabled={disabled}
         modalBody={(getInputProps) => (
           <>
             <LoadingOverlay
@@ -180,7 +180,7 @@ export const BankAccountDetails: React.FC<Props> = ({
                   key={index}
                   edit={() => edit(index)}
                   remove={() => remove(index)}
-                  disabled={!checkAccess('detail')}
+                  disabled={disabled}
                 >
                   <Stack gap={0}>
                     <CardItem

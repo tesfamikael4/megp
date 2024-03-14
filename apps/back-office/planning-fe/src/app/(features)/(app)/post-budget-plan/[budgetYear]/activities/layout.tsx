@@ -1,5 +1,5 @@
 import { Box } from '@mantine/core';
-import PlanningTab from '@/app/(features)/(app)/_components/planning-tab';
+// import PlanningTab from '@/app/(features)/(app)/_components/planning-tab';
 
 export default function PreBudgetPlanLayout({
   children,
@@ -8,7 +8,7 @@ export default function PreBudgetPlanLayout({
 }) {
   return (
     <Box>
-      <PlanningTab page="post" />
+      {/* <PlanningTab page="post" /> */}
       {/* <Entity>{children}</Entity> */}
       {children}
     </Box>

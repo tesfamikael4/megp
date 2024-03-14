@@ -37,6 +37,19 @@ export const vendorUpgradeApi = createApi({
         };
       },
     }),
+    uploadPaymentReceiptRenewal: builder.mutation<any, any>({
+      query: (data) => {
+        const formData = new FormData();
+        formData.append('attachmentUrl', data.file);
+        formData.append('transactionNumber', data.transactionNumber);
+        formData.append('invoiceIds', JSON.stringify(data.invoiceIds));
+        return {
+          url: `vendor-registrations/renew-service`,
+          method: 'POST',
+          body: formData,
+        };
+      },
+    }),
   }),
 });
 
@@ -46,4 +59,5 @@ export const {
   useLazyGetMyInvoiceQuery,
   useUploadPaymentReceiptUpgradeMutation,
   useGetMyApprovedServicesQuery,
+  useUploadPaymentReceiptRenewalMutation,
 } = vendorUpgradeApi;

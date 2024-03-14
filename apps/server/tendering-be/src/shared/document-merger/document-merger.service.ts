@@ -7,11 +7,14 @@ import * as DocxMerger from '@scholarcy/docx-merger';
 import { createReport } from 'docx-templates';
 import * as libre from 'libreoffice-convert';
 import { promisify } from 'util';
-import { PythonShell } from 'python-shell';
+import { ConvertDocxToPdsService } from './convert-docx-to-pds.service';
 
 @Injectable()
 export class DocumentMergerService {
-  constructor(private readonly minIOService: MinIOService) {}
+  constructor(
+    private readonly minIOService: MinIOService,
+    private readonly convertDocxToPdsService: ConvertDocxToPdsService,
+  ) {}
   async mergePdf() {
     try {
       const basePath = process.cwd();
@@ -113,32 +116,21 @@ export class DocumentMergerService {
       bds: `${bds}`,
     });
 
-    await this.minIOService.uploadBuffer(
-      testPopulatedBuffer,
-      'report.docx',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-    );
+    const pdfBuffer =
+      await this.convertDocxToPdsService.convertDocxToPdf(testPopulatedBuffer);
 
-    await fs.writeFileSync('bidding_document.docx', testPopulatedBuffer);
-    await this.convertDocxToPdf(
-      'bidding_document.docx',
-      'bidding_document.pdf',
-    );
-
-    const pdfBuffer = await fs.readFileSync('bidding_document.pdf');
-
-    // const pdfBuffer = await libreConverterAsync(
-    //   testPopulatedBuffer,
-    //   '.pdf',
-    //   undefined,
-    // );
-
-    // await fs.writeFileSync('temp.pdf', pdfBuffer);
+    await fs.writeFileSync('report.pdf', pdfBuffer);
 
     await this.minIOService.uploadBuffer(
       pdfBuffer,
       'report.pdf',
       'application/pdf',
+    );
+
+    await this.minIOService.uploadBuffer(
+      testPopulatedBuffer,
+      'report.docx',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
     );
   }
 
@@ -157,25 +149,5 @@ export class DocumentMergerService {
       data,
     });
     return Buffer.from(buffer);
-  }
-
-  async convertDocxToPdf(inputFile, outputFile): Promise<void> {
-    // let outputPath = join(process.cwd(), 'src', 'temp.pdf');
-
-    // if (process.env.NODE_ENV === 'production') {
-    //   outputPath = join(
-    //     process.cwd(),
-    //     'apps',
-    //     'server',
-    //     'tendering-be',
-    //     'dist',
-    //     'temp.pdf',
-    //   );
-    // }
-
-    const pythonCode = `from docx2pdf import convert
-convert("${inputFile}", "${outputFile}")`;
-
-    await PythonShell.runString(pythonCode, null);
   }
 }

@@ -1,7 +1,7 @@
 import { TypeOf, z } from 'zod';
 
 export const paymentSlipUploadSchema = z.object({
-  invoiceId: z.string().min(1, { message: 'ID is required' }),
+  invoiceIds: z.array(z.string().min(1, { message: 'ID is required' })),
   serviceId: z.string().optional(),
   transactionNumber: z
     .string()
@@ -14,7 +14,7 @@ export const paymentSlipUploadSchema = z.object({
 export const paymentSlipResponseSchema = z.object({
   transactionId: z.string().min(1, { message: 'Transaction ID is required' }),
   category: z.string().min(1, { message: 'Category is required' }),
-  invoiceId: z.string().min(1, { message: 'Invoice ID is required' }),
+  invoiceIds: z.string().min(1, { message: 'Invoice ID is required' }),
   attachment: z.string().min(1, { message: 'Attachment is required' }),
 });
 

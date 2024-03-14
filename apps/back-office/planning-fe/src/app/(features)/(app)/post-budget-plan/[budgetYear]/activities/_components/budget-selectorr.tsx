@@ -60,6 +60,7 @@ export const BudgetSelector = ({ activity, disableFields }: any) => {
             currency: budget?.currency ?? 'MKW',
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
+            currencyDisplay: 'code',
           }),
         },
         {
@@ -69,6 +70,7 @@ export const BudgetSelector = ({ activity, disableFields }: any) => {
             currency: budget?.currency ?? 'MKW',
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
+            currencyDisplay: 'code',
           }),
         },
         {
@@ -78,16 +80,14 @@ export const BudgetSelector = ({ activity, disableFields }: any) => {
             currency: budget?.currency ?? 'MKW',
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
+            currencyDisplay: 'code',
           }),
         },
         {
           key: 'Funding Source',
           value: budget?.fundingSource,
         },
-        {
-          key: 'Currency',
-          value: budget?.currency,
-        },
+
         {
           key: 'Type',
           value: budget?.type,
@@ -115,6 +115,7 @@ export const BudgetSelector = ({ activity, disableFields }: any) => {
               currency: record.currency,
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
+              currencyDisplay: 'code',
             })}
           </p>
         ),
@@ -130,6 +131,7 @@ export const BudgetSelector = ({ activity, disableFields }: any) => {
               currency: record.currency,
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
+              currencyDisplay: 'code',
             })}
           </p>
         ),
@@ -145,6 +147,7 @@ export const BudgetSelector = ({ activity, disableFields }: any) => {
               currency: record.currency,
               minimumFractionDigits: 2,
               maximumFractionDigits: 2,
+              currencyDisplay: 'code',
             })}
           </p>
         ),
@@ -206,7 +209,7 @@ export const BudgetSelector = ({ activity, disableFields }: any) => {
         opened={opened}
         onClose={close}
         title="Budget Line"
-        size="55rem"
+        size="70%"
         // centered
       >
         <>

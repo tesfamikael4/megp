@@ -9,7 +9,7 @@ export const services: { title; description; link }[] = [
     title: 'Upgrade registration',
     description:
       'New Professional Licensing Service is provided: - for those who have graduated from an accredited educational institution and/or for the expert of experience who has Certification of Occupational Competency (COC), to register as a new professional, one must have received no professional licenses form this Authority before. New professional licensing registration services will be provided by design or construction as appropriate. Design professional licenses are issued, for professionals who are employed in the consulting sector, for professionals who are organized or run a consulting firm; in other hand, construction professional licenses are issued for professionals who are employed in the construction sector, for professionals who are organized or run a construction firm.',
-    link: '/vendor/registration/upgrade/business-areas',
+    link: '/vendor/registration/upgrade/ppda',
   },
   {
     title: 'Profile update',

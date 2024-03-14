@@ -18,7 +18,7 @@ interface Tabs {
   tabDescription: string;
   tabPanelComponent: React.ReactNode;
 }
-export const useTabs = (extendedRegister, control): Tabs[] => [
+export const useTabs = (extendedRegister, control, disabled): Tabs[] => [
   {
     tabValue: 'basic',
     tabName: 'Basic Registration',
@@ -44,6 +44,7 @@ export const useTabs = (extendedRegister, control): Tabs[] => [
         name="contactPersons"
         control={control}
         itemSchema={contactPersonSchema}
+        disabled={disabled}
       />
     ),
   },
@@ -64,6 +65,7 @@ export const useTabs = (extendedRegister, control): Tabs[] => [
         name="shareHolders"
         control={control}
         itemSchema={shareHoldersSchema}
+        disabled={disabled}
       />
     ),
   },
@@ -76,6 +78,7 @@ export const useTabs = (extendedRegister, control): Tabs[] => [
         name="beneficialOwnership"
         control={control}
         itemSchema={beneficialOwnershipSchema}
+        disabled={disabled}
       />
     ),
   },
@@ -87,7 +90,9 @@ export const useTabs = (extendedRegister, control): Tabs[] => [
       <BankAccountDetails
         name="bankAccountDetails"
         control={control}
+        register={extendedRegister}
         itemSchema={bankAccountSchema}
+        disabled={disabled}
       />
     ),
   },

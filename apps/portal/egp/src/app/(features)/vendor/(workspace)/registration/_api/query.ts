@@ -18,6 +18,7 @@ export const {
   useGetApprovedVendorInfoQuery,
   useAddAdditionalServiceMutation,
   useGetInvoiceByUserIdQuery,
+  useGetApplicationListQuery,
 } = vendorRegistrationQuery;
 
 export const {
@@ -30,6 +31,8 @@ export const {
   useLazyGetPaymentSlipQuery,
   useGetRenewalInvoiceQuery,
   usePostRenewalInvoiceMutation,
+  useGetServicePriceRangeQuery,
+  useLazyGetServicePriceRangeQuery,
 } = paymentApi;
 
 export const {

@@ -11,7 +11,7 @@ import {
   useSubmitRequestMutation,
   useUploadPreferentialAttachmentsMutation,
 } from '@/store/api/preferential-treatment/preferential-treatment.api';
-import { ExtendedRegistrationReturnType } from '../../new/_components/detail/formShell';
+import { ExtendedRegistrationReturnType } from '../../_components/detail/formShell';
 
 export interface PassFormDataProps {
   register: (
@@ -24,7 +24,7 @@ export interface PassFormDataProps {
 export const preferentialSchema = z.object({
   category: z.string(),
   type: z.string().min(2, { message: 'MSME is required' }),
-  attachment: z
+  certificateUrl: z
     .instanceof(File, { message: 'Attachment is required', fatal: true })
     .refine((data) => data instanceof File, {
       message: 'Attachment is required',

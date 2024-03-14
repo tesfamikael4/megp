@@ -11,9 +11,7 @@ import {
   Paper,
   Text,
 } from '@mantine/core';
-import { IconArrowLeft } from '@tabler/icons-react';
-import ProgressBar from './progressBar';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { ApplicationInfo } from '@/models/vendorRegistration';
 
 const callbackURL = (key: string) => {
@@ -59,29 +57,18 @@ const DetailViewCard: React.FC<Props> = ({ data, close }) => {
     <Paper shadow="xs" withBorder className={styles.card}>
       <Box className={styles.cardHeader}>
         <Flex gap={'xs'}>
-          <ActionIcon variant="transparent" onClick={close}>
-            <IconArrowLeft size={18} />
-          </ActionIcon>
+          <Text className="text-md font-semibold text-green-500">
+            Adjustment Required
+          </Text>
           <Text fz={'sm'}>{data.applicationNumber}</Text>
         </Flex>
-        <Badge
-          size="sm"
-          color={badgeBGColor[data.status]}
-          className={'rounded-none flex items-center p-1.5'}
-        >
-          <Box c={badgeTextColor[data.status]}>{data.status}</Box>
-        </Badge>
       </Box>
-      <Box className={styles.cardBody}>
-        <ProgressBar instanceId={data.instanceId} />
-      </Box>
+      <Box className={styles.cardBody}>Remark: {data.remark}</Box>
       <Box className={styles.cardFooter}>
         {data.status === 'Adjustment' && (
           <Button
             onClick={() => {
-              router.push(
-                `/vendor/registration/${callbackURL(data.BpService.key)}`,
-              );
+              router.push(`/vendor/registration/${callbackURL(data.key)}`);
             }}
           >
             Adjust

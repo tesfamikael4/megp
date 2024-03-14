@@ -122,11 +122,9 @@ export default function ServicesCard({ servicesData }: { servicesData: any }) {
   const isServiceDrafted = (
     businessAreaId: string,
   ): { hasInvoice: boolean; newPricingId: string } => {
-    const hasInvoice = servicesData?.status?.selectedPriceRange?.find(
-      (item: any) => {
-        return item._businessAreaId == businessAreaId;
-      },
-    );
+    const hasInvoice = servicesData?.data?.some((item: any) => {
+      return item.pricingId == businessAreaId;
+    });
     return {
       hasInvoice: hasInvoice ? true : false,
       newPricingId: hasInvoice?.pricingId,
@@ -149,34 +147,23 @@ export default function ServicesCard({ servicesData }: { servicesData: any }) {
   }, [requestInfo.isSuccess]);
 
   useEffect(() => {
-    if (
-      servicesData?.status?.selectedPriceRange &&
-      servicesData?.status?.selectedPriceRange.length > 0
-    ) {
-      setSelectedServices([]);
-      servicesData?.status?.selectedPriceRange.forEach((item) => {
-        const matchedService = servicesData.data.find((service) => {
-          return service._businessAreaId === item.id;
-        });
-
+    if (servicesData?.data) {
+      servicesData?.data?.map((service) => {
+        console.log(
+          service,
+          service?.areaOfBusinessInterest?.priceRange,
+          service?.pricingId,
+          service?.pricingId !== service?.areaOfBusinessInterest?.priceRange,
+        );
         if (
-          matchedService &&
-          !selectedServices.some(
-            (service) => service.id === item._businessAreaId,
-          )
+          service?.areaOfBusinessInterest?.priceRange &&
+          service?.pricingId !== service?.areaOfBusinessInterest?.priceRange
         ) {
-          setSelectedServices((prevSelected) => [
-            ...prevSelected,
-            {
-              id: matchedService.id,
-              pricingId: item.pricingId,
-              category: matchedService.areaOfBusinessInterest?.category,
-            },
-          ]);
+          setSelectedServices((prev) => [...prev, service]);
         }
       });
     }
-  }, [servicesData.data, servicesData?.status?.selectedPriceRange]);
+  }, [servicesData.data]);
 
   const priceRangeByCategory = (category: 'Goods' | 'Services' | 'Works') => {
     return getPriceRangeValues.data
@@ -238,9 +225,13 @@ export default function ServicesCard({ servicesData }: { servicesData: any }) {
               </Box>
             ))
           : servicesData.data.map((services) => {
-              const { hasInvoice, newPricingId } = isServiceDrafted(
-                services.id,
-              );
+              const { hasInvoice, newPricingId } = {
+                hasInvoice:
+                  services?.areaOfBusinessInterest?.priceRange &&
+                  services.pricingId !==
+                    services?.areaOfBusinessInterest?.priceRange,
+                newPricingId: services.pricingId,
+              };
               return (
                 <Box
                   key={services.id}

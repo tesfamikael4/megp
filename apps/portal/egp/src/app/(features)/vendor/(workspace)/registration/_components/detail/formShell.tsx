@@ -20,11 +20,15 @@ import { formDataSchema } from './schema';
 import { FormData } from '@/models/vendorRegistration';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { NotificationService } from '../../../../../_components/notification';
 import classes from './accordion.module.scss';
-import { useAddFormMutation } from '../../../_api/query';
 import { useTabs } from './accordion.data';
-import { usePrivilege } from '../../_context/privilege-context';
+import { usePrivilege } from '../../new/_context/privilege-context';
+import { useAddFormMutation } from '../../_api/query';
+import { NotificationService } from '@/app/(features)/vendor/_components/notification';
+import {
+  useSaveAsDraftApproveVendorInfoMutation,
+  useUpdateSaveAsDraftApproveVendorInfoMutation,
+} from '../../profile-update/_api/query';
 
 export interface ExtendedRegistrationReturnType
   extends UseFormRegisterReturn<any> {
@@ -64,6 +68,9 @@ function getFieldsHolderError(input: any, keyToCheck: string) {
 const RegistrationForm = ({
   initialValues,
   vendorInfo,
+  lockElements,
+  disabled,
+  isProfileUpdate,
 }: {
   initialValues: FormData;
   vendorInfo: {
@@ -71,6 +78,9 @@ const RegistrationForm = ({
     status: string;
     level: string;
   };
+  lockElements: any;
+  disabled: boolean;
+  isProfileUpdate: boolean;
 }) => {
   const {
     control,
@@ -87,17 +97,14 @@ const RegistrationForm = ({
     resolver: zodResolver(formDataSchema),
     defaultValues: initialValues,
   });
-  const { checkAccess, lockElements, updateAccess } = usePrivilege();
+
   const [submitTrigger, submitRequestInfo] = useAddFormMutation();
   const [saveAsDraftTrigger, saveAsDraftRequestInfo] = useAddFormMutation();
+  const [updateTrigger, updateRequestInfo] =
+    useUpdateSaveAsDraftApproveVendorInfoMutation();
+  const [saveUpdateAsDraftTrigger, saveUpdateAsDraftRequestInfo] =
+    useSaveAsDraftApproveVendorInfoMutation();
   const router = useRouter();
-  const searchParams = useSearchParams();
-
-  useEffect(() => {
-    updateAccess(vendorInfo.level);
-
-    return () => {};
-  }, [updateAccess, vendorInfo.level]);
 
   const extendedRegister = (
     name: any,
@@ -129,50 +136,104 @@ const RegistrationForm = ({
           ? async (e) => await setValue(name, e)
           : fieldRegister.onChange,
       error: fieldState.error?.message,
-      ...lockElements('detail'),
+      ...lockElements,
     };
   };
 
-  const onSubmit = (data: FormData) => {
-    submitTrigger({
-      data: {
-        ...getValues(),
-        initial: {
-          ...vendorInfo,
-          status: 'Save',
-          level: 'ppda',
+  const onSubmit = async (data: FormData) => {
+    try {
+      await submitTrigger({
+        data: {
+          ...getValues(),
+          initial: {
+            ...vendorInfo,
+            status: 'Save',
+            level: 'ppda',
+          },
         },
-      },
-    });
+      })
+        .unwrap()
+        .then(() => {
+          NotificationService.successNotification(
+            'Form Submitted Successfully',
+          );
+          router.push(`ppda`);
+        });
+    } catch (error) {
+      NotificationService.requestErrorNotification(
+        'Something went wrong while submitting the field',
+      );
+    }
   };
-  const onSaveAsDraft = () => {
-    saveAsDraftTrigger({
-      data: {
+  const onSaveAsDraft = async () => {
+    try {
+      await saveAsDraftTrigger({
+        data: {
+          ...getValues(),
+          initial: {
+            ...vendorInfo,
+            status: 'Draft',
+            level: 'detail',
+          },
+        },
+      })
+        .unwrap()
+        .then(() => {
+          NotificationService.successNotification(
+            'Form Submitted Successfully',
+          );
+        });
+    } catch (error) {
+      NotificationService.requestErrorNotification(
+        'Something went wrong while submitting the field',
+      );
+    }
+  };
+  const onUpdateSubmit = async (data: FormData) => {
+    try {
+      await updateTrigger({
         ...getValues(),
         initial: {
           ...vendorInfo,
           status: 'Draft',
           level: 'detail',
         },
-      },
-    });
+      })
+        .unwrap()
+        .then(() => {
+          NotificationService.successNotification(
+            'Form Submitted Successfully',
+          );
+          router.push(`/vendor/registration/track-applications`);
+        });
+    } catch (error) {
+      NotificationService.requestErrorNotification(
+        'Something went wrong while submitting the field',
+      );
+    }
   };
-
-  useEffect(() => {
-    if (submitRequestInfo.isSuccess && submitRequestInfo.data) {
-      NotificationService.successNotification('Form Submitted Successfully!');
-      router.push(`ppda`);
+  const onUPdateSaveAsDraft = async () => {
+    try {
+      await saveUpdateAsDraftTrigger({
+        ...getValues(),
+        initial: {
+          ...vendorInfo,
+          status: 'Draft',
+          level: 'detail',
+        },
+      })
+        .unwrap()
+        .then(() => {
+          NotificationService.successNotification(
+            'Form Submitted Successfully',
+          );
+        });
+    } catch (error) {
+      NotificationService.requestErrorNotification(
+        'Something went wrong while submitting the field',
+      );
     }
-    return () => {};
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [submitRequestInfo.data, submitRequestInfo.isSuccess]);
-
-  useEffect(() => {
-    if (saveAsDraftRequestInfo.isSuccess && saveAsDraftRequestInfo.data) {
-      NotificationService.successNotification('Save as draft Successfully!');
-    }
-    return () => {};
-  }, [saveAsDraftRequestInfo.data, saveAsDraftRequestInfo.isSuccess]);
+  };
 
   return (
     <Suspense>
@@ -183,9 +244,12 @@ const RegistrationForm = ({
           }
           overlayProps={{ radius: 'sm', blur: 2 }}
         />
-        <form onSubmit={handleSubmit(onSubmit)} className="w-full">
+        <form
+          onSubmit={handleSubmit(isProfileUpdate ? onUpdateSubmit : onSubmit)}
+          className="w-full"
+        >
           <Accordion variant="separated" classNames={classes}>
-            {useTabs(extendedRegister, control).map((tab) => {
+            {useTabs(extendedRegister, control, disabled).map((tab) => {
               getFieldsHolderError(formState.errors, tab.tabValue);
               return (
                 <Accordion.Item
@@ -206,8 +270,16 @@ const RegistrationForm = ({
                     <Stack>
                       {tab.tabPanelComponent}
                       <Flex justify="end">
-                        {checkAccess('detail') && (
-                          <Button onClick={onSaveAsDraft}>Save as draft</Button>
+                        {!disabled && (
+                          <Button
+                            onClick={
+                              isProfileUpdate
+                                ? onUPdateSaveAsDraft
+                                : onSaveAsDraft
+                            }
+                          >
+                            Save as draft
+                          </Button>
                         )}
                       </Flex>
                     </Stack>
@@ -217,7 +289,7 @@ const RegistrationForm = ({
             })}
           </Accordion>
           <Flex justify="end" className="gap-2 m-4">
-            {checkAccess('detail') && (
+            {!disabled && (
               <>
                 <Button type="submit">Save & Continue</Button>
               </>

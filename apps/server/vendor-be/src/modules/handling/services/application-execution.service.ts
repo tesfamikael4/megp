@@ -21,8 +21,6 @@ import { VendorRegistrationsService } from 'src/modules/vendor-registration/serv
 import { ServiceKeyEnum } from 'src/shared/enums/service-key.enum';
 import { BusinessAreaEntity } from 'src/entities';
 import { BusinessAreaService } from 'src/modules/vendor-registration/services/business-area.service';
-import { BpServiceService } from 'src/modules/services/services/service.service';
-import { ProfileInfoEntity } from 'src/entities/profile-info.entity';
 import { PreferentailTreatmentService } from 'src/modules/vendor-registration/services/preferentail-treatment.service';
 import { userInfo } from 'os';
 @Injectable()

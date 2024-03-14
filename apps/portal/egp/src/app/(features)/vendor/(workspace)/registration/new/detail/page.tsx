@@ -4,7 +4,9 @@ import { LoadingOverlay } from '@mantine/core';
 import { useRouter } from 'next/navigation';
 import { NotificationService } from '../../../../_components/notification';
 import { useGetVendorQuery } from '../../_api/query';
-import RegistrationForm from '../_components/detail/formShell';
+import RegistrationForm from '../../_components/detail/formShell';
+import { usePrivilege } from '../_context/privilege-context';
+import { getInitialValues } from '../../_utils';
 
 export default function Page() {
   const router = useRouter();
@@ -13,11 +15,7 @@ export default function Page() {
     {},
     { refetchOnMountOrArgChange: true },
   );
-
-  // if (requestInfo.data?.initial) {
-  //   updateAccess(requestInfo.data?.initial.level);
-  //   updateStatus(requestInfo.data?.initial.status);
-  // }
+  const { checkAccess, lockElements } = usePrivilege();
 
   useEffect(() => {
     if (requestInfo.error) {
@@ -45,68 +43,10 @@ export default function Page() {
         {requestInfo.data && requestInfo.isSuccess ? (
           <RegistrationForm
             vendorInfo={requestInfo.data.initial}
-            initialValues={{
-              ...requestInfo.data,
-              address:
-                requestInfo.data.address == null
-                  ? {
-                      postalAddress: '',
-                      primaryEmail: '',
-                      alternateEmail: '',
-                      mobilePhone: '',
-                      telephone: '',
-                      fax: '',
-                      website: '',
-                    }
-                  : requestInfo.data.address,
-              contactPersons:
-                requestInfo.data.contactPersons == null
-                  ? []
-                  : requestInfo.data.contactPersons,
-              businessSizeAndOwnership:
-                requestInfo.data.businessSizeAndOwnership == null
-                  ? {
-                      registeredCapital: {
-                        amount: '',
-                        currency: '',
-                      },
-                      paidUpCapital: {
-                        amount: '',
-                        currency: '',
-                      },
-                      numberOfEmployees: '',
-                      ownershipType: '',
-                    }
-                  : requestInfo.data.businessSizeAndOwnership,
-              shareHolders:
-                requestInfo.data.shareHolders == null
-                  ? []
-                  : requestInfo.data.shareHolders,
-              beneficialOwnership:
-                requestInfo.data.beneficialOwnership == null
-                  ? []
-                  : requestInfo.data.beneficialOwnership,
-              bankAccountDetails:
-                requestInfo.data.bankAccountDetails == null
-                  ? []
-                  : requestInfo.data.bankAccountDetails,
-              areasOfBusinessInterest:
-                requestInfo.data.areasOfBusinessInterest == null
-                  ? []
-                  : requestInfo.data.areasOfBusinessInterest,
-              invoice:
-                requestInfo.data.invoice == null
-                  ? null
-                  : requestInfo.data.invoice,
-              supportingDocuments: requestInfo.data.supportingDocuments ?? {
-                businessRegistration_IncorporationCertificate: '',
-                mRA_TPINCertificate: '',
-                generalReceipt_BankDepositSlip: '',
-                mRATaxClearanceCertificate: '',
-                previousPPDARegistrationCertificate: '',
-              },
-              paymentReceipt: requestInfo.data.paymentReceipt,
-            }}
+            initialValues={getInitialValues(requestInfo.data)}
+            disabled={!checkAccess('detail')}
+            lockElements={lockElements('detail')}
+            isProfileUpdate={false}
           />
         ) : (
           <></>

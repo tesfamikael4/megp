@@ -119,15 +119,8 @@ const accessRules: AccessRules = {
   },
   Adjustment: {
     active: true,
-    readWriteLevels: [
-      'detail',
-      'doc',
-      'info',
-      'payment',
-      'preferential',
-      'review',
-    ],
-    readOnlyLevels: ['basic', 'ppda'],
+    readWriteLevels: ['detail', 'doc', 'info', 'payment', 'review'],
+    readOnlyLevels: ['basic', 'ppda', 'preferential'],
   },
   Submitted: {
     active: true,
