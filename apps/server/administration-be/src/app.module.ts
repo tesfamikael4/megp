@@ -17,6 +17,7 @@ import { TccDocumentValidationModule } from './modules/tcc-document-validation/t
 import { ProcurementThresholdModule } from './modules/procurement-threshold/procurement-threshold.module';
 import { OrganizationBudgetCategoryModule } from './modules/organization-budget-category/organization-budget-category.module';
 import { GuaranteeServiceModule } from './modules/guarantee-services/guarantee-service.module';
+import { ClarificationModule } from './modules/clarification/clarification.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { GuaranteeServiceModule } from './modules/guarantee-services/guarantee-s
     ProcurementThresholdModule,
     OrganizationBudgetCategoryModule,
     GuaranteeServiceModule,
+    ClarificationModule,
   ],
   controllers: [],
   providers: [],
