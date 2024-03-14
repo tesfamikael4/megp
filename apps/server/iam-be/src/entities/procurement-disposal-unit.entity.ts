@@ -32,9 +32,6 @@ export class ProcurementDisposalUnit extends OrgAudit {
   @JoinColumn({ name: 'unitId' })
   public unit: ProcurementInstitution;
 
-  @Column()
-  name: string;
-
   @Column({ default: 'Draft' })
   status: string;
 }

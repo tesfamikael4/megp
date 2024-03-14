@@ -3,11 +3,6 @@ import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
 
 export class CreateProcurementDisposalUnitDto {
   @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  name: string;
-
-  @ApiProperty()
   @IsUUID()
   @IsNotEmpty()
   procurementInstitutionId: string;
