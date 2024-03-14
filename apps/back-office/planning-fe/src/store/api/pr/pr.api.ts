@@ -4,7 +4,7 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 
 export const prApi = createApi({
   reducerPath: 'prApi',
-  tagTypes: ['items', 'timelines'],
+  tagTypes: ['items', 'timelines', 'requisitioner'],
   refetchOnFocus: true,
   baseQuery: baseQuery(
     process.env.NEXT_PUBLIC_PLANNING_API ?? '/planning/api/',
@@ -57,6 +57,22 @@ export const prApi = createApi({
       },
       providesTags: ['items'],
     }),
+    getSubmittedPr: builder.query<any, any>({
+      query: (itemId: string) => `documents/getDocumentByItemId/${itemId}`,
+    }),
+
+    createRequisitioner: builder.mutation<any, any>({
+      query: (data) => ({
+        url: `Procurement-requisition-technical-teams/bulk-assign`,
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['requisitioner'],
+    }),
+    getRequisitioner: builder.query<any, string>({
+      query: (id: string) =>
+        `Procurement-requisition-technical-teams/list/${id}`,
+    }),
   }),
 });
 
@@ -67,4 +83,9 @@ export const {
   useLazyGetPrTimelineQuery,
   useGetPrItemsQuery,
   useLazyGetPrItemsQuery,
+  useGetSubmittedPrQuery,
+  useLazyGetSubmittedPrQuery,
+  useCreateRequisitionerMutation,
+  useGetRequisitionerQuery,
+  useLazyGetRequisitionerQuery,
 } = prApi;

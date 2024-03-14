@@ -97,6 +97,7 @@ export const ActivitySelector = () => {
 
       notify('Success', 'Procurement requisition created successfully');
     } catch (err) {
+      router.push(`/procurement-requisition`);
       notify('Error', 'Error in creating Procurement requisition');
     }
   };
@@ -117,6 +118,16 @@ export const ActivitySelector = () => {
         collectionQuery: {
           ...collectionQuery,
           includes: ['postProcurementMechanisms', 'postBudgetPlanItems'],
+          where: [
+            ...(collectionQuery?.where ?? []),
+            [
+              {
+                column: 'status',
+                value: 'USED_IN_PR',
+                operator: '!=',
+              },
+            ],
+          ],
         },
       });
   };
@@ -133,12 +144,14 @@ export const ActivitySelector = () => {
               onChange={(e: any) => {
                 setSelectedBudgetYear(e);
               }}
-              data={budget?.items.map((b) => {
-                return {
-                  value: b.id,
-                  label: b.app.planName,
-                };
-              })}
+              data={budget?.items
+                .filter((b) => b.status === 'Approved')
+                .map((b) => {
+                  return {
+                    value: b.id,
+                    label: b.app.planName,
+                  };
+                })}
             />
           </Group>
 

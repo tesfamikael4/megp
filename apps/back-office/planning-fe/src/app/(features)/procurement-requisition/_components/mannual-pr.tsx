@@ -13,7 +13,7 @@ import {
 } from '@mantine/core';
 import { notify } from '@megp/core-fe';
 import { EntityButton } from '@megp/entity';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z, ZodType } from 'zod';
 import {
@@ -209,7 +209,7 @@ export const FormDetail = ({
                 className="w-full"
                 withAsterisk
                 searchable
-                placeholder="Select Procurement Type"
+                placeholder="Select Currency"
                 error={errors?.currency?.message}
                 disabled={disableFields}
               />
@@ -266,7 +266,6 @@ export const FormDetail = ({
                     label: b.app.budgetYear,
                   };
                 })}
-                //  className="w-full"
                 label="Budget Year"
                 placeholder="Select Budget Year"
                 withAsterisk
@@ -275,6 +274,8 @@ export const FormDetail = ({
               />
             )}
           />
+        </Box>
+        <Box className="w-1/2">
           <Controller
             name="procurementApplication"
             control={control}
@@ -304,11 +305,10 @@ export const FormDetail = ({
                     label: 'Auctioning',
                   },
                 ]}
+                placeholder="select Procurement Application"
               />
             )}
           />
-        </Box>
-        <Box className="w-1/2">
           <Textarea
             label="Description"
             withAsterisk
