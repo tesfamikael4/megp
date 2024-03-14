@@ -291,7 +291,9 @@ const RegistrationForm = ({
           <Flex justify="end" className="gap-2 m-4">
             {!disabled && (
               <>
-                <Button type="submit">Save & Continue</Button>
+                <Button type="submit">
+                  {isProfileUpdate ? 'Submit' : 'Save & Continue'}
+                </Button>
               </>
             )}
           </Flex>

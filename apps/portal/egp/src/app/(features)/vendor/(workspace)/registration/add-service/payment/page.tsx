@@ -11,7 +11,11 @@ import {
 } from '@mantine/core';
 import React, { useEffect, useState } from 'react';
 import InvoiceTemplate from '../../../../_components/dynamicPrintComponent/invoice-sm';
-import { useGetInvoiceByUserIdQuery } from '../../_api/query';
+import {
+  useAddAdditionalServiceMutation,
+  useGetInvoiceByUserIdQuery,
+  useLazyUploadPaymentSlipQuery,
+} from '../../_api/query';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { paymentSlipUploadSchema } from '@/shared/schema/paymentSlipUploadSchema';
@@ -31,10 +35,8 @@ function Page() {
     {},
     { refetchOnMountOrArgChange: true },
   );
-  console.log(data);
-
   const [uploadFile, { isLoading: isUploading, isSuccess: isUploadSuccess }] =
-    useUploadPaymentReceiptUpgradeMutation({});
+    useAddAdditionalServiceMutation({});
 
   const { register, formState, setValue, watch, handleSubmit } = useForm<any>({
     defaultValues: {
@@ -46,6 +48,7 @@ function Page() {
   });
 
   const onSubmitHandler: SubmitHandler<any> = async (values) => {
+    console.log(values);
     if (data) {
       const paymentData = {
         file: values.file,

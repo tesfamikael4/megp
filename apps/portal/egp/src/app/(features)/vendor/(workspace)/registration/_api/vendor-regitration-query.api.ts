@@ -10,6 +10,7 @@ import {
   GetVendorInfoResponse,
   RenewalInvoiceRenewalVendorResponse,
 } from '@/models/vendorRegistration';
+import { IPaymentSlipUploadSchema } from '@/shared/schema/paymentSlipUploadSchema';
 import { vendorRegistrationApi } from '@/store/api/vendor_registration/api';
 
 export const vendorRegistrationQuery = vendorRegistrationApi.injectEndpoints({
@@ -58,7 +59,7 @@ export const vendorRegistrationQuery = vendorRegistrationApi.injectEndpoints({
     getInvoiceByUserId: builder.query<RenewalInvoiceRenewalVendorResponse, any>(
       {
         query: () => ({
-          url: `/vendor-registrations/get-invoice-by-userId`,
+          url: `invoices/get-my-registration-invoice`,
           method: 'GET',
           // body: data,
         }),
@@ -117,11 +118,24 @@ export const vendorRegistrationQuery = vendorRegistrationApi.injectEndpoints({
         };
       },
     }),
-    addAdditionalService: builder.mutation<any, AreasOfBusinessInterestType[]>({
-      query: (data) => ({
-        url: `vendor-registrations/add-service`,
-        method: 'POST',
-        body: data,
+    addAdditionalService: builder.mutation<any, IPaymentSlipUploadSchema>({
+      query: (data) => {
+        const formData = new FormData();
+        formData.append('attachmentUrl', data.file);
+        formData.append('transactionNumber', data.transactionNumber);
+        formData.append('invoiceIds', JSON.stringify(data.invoiceIds));
+
+        return {
+          url: `vendor-registrations/add-service`,
+          method: 'POST',
+          body: formData,
+        };
+      },
+    }),
+    getMyDraftServices: builder.query<any, any>({
+      query: () => ({
+        url: `vendor-registrations/get-my-draft-erg-services`,
+        method: 'GET',
       }),
     }),
   }),

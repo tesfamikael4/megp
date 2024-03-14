@@ -1,14 +1,10 @@
 'use client';
-import { useEffect } from 'react';
 import { Flex, Box, Button, LoadingOverlay } from '@mantine/core';
 import { useRouter } from 'next/navigation';
 import { Control, RegisterOptions, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  useAddAdditionalServiceMutation,
-  useAddFormMutation,
-} from '../../../_api/query';
+import { useGenerateInvoiceForAdditionalServiceMutation } from '../../../_api/query';
 import { NotificationService } from '@/app/(features)/vendor/_components/notification';
 import { AreasOfBusinessInterest } from './areasOfBusinessInterest';
 import { ExtendedRegistrationReturnType } from '../../../_components/detail/formShell';
@@ -74,8 +70,8 @@ export const AreasOfBusinessInterestForm = ({
   });
 
   const router = useRouter();
-  const [saveAdditionalService, { isLoading: isSaving }] =
-    useAddAdditionalServiceMutation({});
+  const [generatePayment, { isLoading: isSaving }] =
+    useGenerateInvoiceForAdditionalServiceMutation({});
 
   const extendedRegister = (
     name: any,
@@ -110,17 +106,16 @@ export const AreasOfBusinessInterestForm = ({
 
   const onSubmit = async (values) => {
     try {
-      await saveAdditionalService(values.areasOfBusinessInterest)
+      await generatePayment(values.areasOfBusinessInterest)
         .unwrap()
         .then((response) => {
-          if (response && response.length > 0) {
-            if (response.some((item) => item.canPay)) {
-              NotificationService.successNotification(
-                'PPDA successfully created',
-              );
-              router.push('payment');
-            }
-          }
+          console.log(response);
+          // if (response && response.length > 0) {
+          // if (response.some((item) => item.canPay)) {
+          NotificationService.successNotification('PPDA successfully created');
+          router.push('payment');
+          // }
+          // }
         });
     } catch (error) {
       NotificationService.requestErrorNotification(error.data.message);

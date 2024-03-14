@@ -1,3 +1,5 @@
+import moment, { Moment } from 'moment';
+
 export function processCompanyName(name: string): {
   initials: string;
   color: string;
@@ -112,10 +114,7 @@ export function displayFormattedObject(
 }
 
 export function isDate(value: any) {
-  const date = new Date(value);
-
-  if (!value || typeof value !== 'string' || Number(value)) return false;
-  return !isNaN(date.getDate());
+  return moment(value, "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", true).isValid();
 }
 
 export type RequiredFieldsOnly<T> = {

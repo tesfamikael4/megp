@@ -2,13 +2,13 @@ export const services: { title; description; link }[] = [
   {
     title: 'Renew registration',
     description:
-      'New Professional Licensing Service is provided: - for those who have graduated from an accredited educational institution and/or for the expert of experience who has Certification of Occupational Competency (COC), to register as a new professional, one must have received no professional licenses form this Authority before. New professional licensing registration services will be provided by design or construction as appropriate. Design professional licenses are issued, for professionals who are employed in the consulting sector, for professionals who are organized or run a consulting firm; in other hand, construction professional licenses are issued for professionals who are employed in the construction sector, for professionals who are organized or run a construction firm.',
+      'Renew Registration refers to the process in which existing vendors extend the validity of their registration for an additional period, typically one year. Vendors submit the necessary documentation and fees to maintain their status and continue participating in projects.',
     link: '/vendor/registration/renewal/ppda',
   },
   {
     title: 'Upgrade registration',
     description:
-      'New Professional Licensing Service is provided: - for those who have graduated from an accredited educational institution and/or for the expert of experience who has Certification of Occupational Competency (COC), to register as a new professional, one must have received no professional licenses form this Authority before. New professional licensing registration services will be provided by design or construction as appropriate. Design professional licenses are issued, for professionals who are employed in the consulting sector, for professionals who are organized or run a consulting firm; in other hand, construction professional licenses are issued for professionals who are employed in the construction sector, for professionals who are organized or run a construction firm.',
+      'Upgrade Registration involves the transition of a vendor from one registration category or value range to a higher one. Vendors seeking to expand their capabilities or engage in larger projects can apply for an upgrade.',
     link: '/vendor/registration/upgrade/ppda',
   },
   {
@@ -18,7 +18,8 @@ export const services: { title; description; link }[] = [
   },
   {
     title: 'Eligibility for Preferential Treatment',
-    description: 'Renew registration',
+    description:
+      'Often involves recognizing and offering benefits to entities based on factors such as citizenship, ethnicity, or ownership by marginalized groups, fostering inclusivity and diversity in procurement processes.',
     link: '/vendor/registration/preferential-treatment',
   },
   {

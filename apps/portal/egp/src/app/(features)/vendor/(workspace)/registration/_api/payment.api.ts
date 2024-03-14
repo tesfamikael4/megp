@@ -1,4 +1,5 @@
 import {
+  AreasOfBusinessInterestType,
   BankNamesResponse,
   GetActivitiesProgressResponse,
   LineOfBusinessResponse,
@@ -101,6 +102,16 @@ export const paymentApi = vendorRegistrationApi.injectEndpoints({
       query: (data) => ({
         url: `application-execution/get-activities-progress/${data.instanceId}`,
         method: 'GET',
+      }),
+    }),
+    generateInvoiceForAdditionalService: builder.mutation<
+      any,
+      AreasOfBusinessInterestType[]
+    >({
+      query: (data) => ({
+        url: `invoices/generate-new-registration-invoice`,
+        method: 'POST',
+        body: data,
       }),
     }),
   }),
