@@ -15,8 +15,8 @@ const options: ExtraCrudOptions = {
   updateDto: UpdateIPDCMemberDto,
 };
 
-@Controller('ipdc-member')
-@ApiTags('ipdc-member')
+@Controller('IPDCMembers')
+@ApiTags('IPDCMembers')
 export class IPDCMemberController extends ExtraCrudController<IPDCMember>(
   options,
 ) {

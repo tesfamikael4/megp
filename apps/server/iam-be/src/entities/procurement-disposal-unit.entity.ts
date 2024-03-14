@@ -1,4 +1,4 @@
-import { Audit } from '@audit';
+import { OrgAudit } from '@audit';
 import {
   Column,
   Entity,
@@ -8,9 +8,10 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { ProcurementInstitution } from './procurement-institution.entity';
+import { Unit } from './unit.entity';
 
 @Entity({ name: 'procurement_disposal_units' })
-export class ProcurementDisposalUnit extends Audit {
+export class ProcurementDisposalUnit extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -25,11 +26,15 @@ export class ProcurementDisposalUnit extends Audit {
   public procurementInstitution: ProcurementInstitution;
 
   @Column()
+  unitId: string;
+
+  @ManyToOne(() => Unit, (unit) => unit.procurementDisposalUnits)
+  @JoinColumn({ name: 'unitId' })
+  public unit: ProcurementInstitution;
+
+  @Column()
   name: string;
 
-  @Column()
+  @Column({ default: 'Draft' })
   status: string;
-
-  @Column()
-  organizationId: string;
 }

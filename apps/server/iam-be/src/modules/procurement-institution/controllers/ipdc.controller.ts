@@ -12,8 +12,8 @@ const options: ExtraCrudOptions = {
   updateDto: UpdateIPDCDto,
 };
 
-@Controller('ipdc')
-@ApiTags('iPDC')
+@Controller('iPDCs')
+@ApiTags('iPDCs')
 export class IPDCController extends ExtraCrudController<IPDC>(options) {
   constructor(private readonly iPDCService: IPDCService) {
     super(iPDCService);

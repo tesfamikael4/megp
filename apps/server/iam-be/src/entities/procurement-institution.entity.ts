@@ -32,7 +32,7 @@ export class ProcurementInstitution extends Audit {
   name: string;
 
   @Column({ default: 'Draft' })
-  status: string;
+  status: number;
 
   @Column()
   organizationId: string;

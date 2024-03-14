@@ -1,4 +1,4 @@
-import { Audit } from '@audit';
+import { OrgAudit } from '@audit';
 import {
   Column,
   Entity,
@@ -11,7 +11,7 @@ import { MEMBER_TYPE_ENUM } from 'src/shared/enums/member-type.enum';
 import { User } from './user.entity';
 
 @Entity({ name: 'adhoc_team_members' })
-export class AdhocTeamMember extends Audit {
+export class AdhocTeamMember extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -35,7 +35,4 @@ export class AdhocTeamMember extends Audit {
     default: MEMBER_TYPE_ENUM.MEMBER,
   })
   type: string;
-
-  @Column()
-  organizationId: string;
 }
