@@ -1,24 +1,25 @@
 'use client';
-
+import React from 'react';
 import { Badge, Box } from '@mantine/core';
 import { IconBoxOff } from '@tabler/icons-react';
 import { DataTable } from 'mantine-datatable';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-export type Company = {
-  id: string;
-  lotName: string;
-  procuringEntity: string;
-  date: string;
-  status: string;
-};
 
-export default function Table({ data }: { data: any[] }) {
-  const [status] = useState('Accepted');
+export default function Table({ data }: any) {
   const router = useRouter();
-  const handleRowClick = () => {
-    router.push('/vendor/my-tenders/guarantee/detail');
+  const handleRowClick = (record) => {
+    router.push(`/vendor/my-tenders/guarantee/${record?.id}`);
   };
+  const transformedData = data?.items?.map((data: any) => {
+    return {
+      lotName: 'lotName',
+      procuringEntity: 'procuringEntity',
+      createdAt: data?.createdAt,
+      status: data?.status,
+      id: data?.id,
+    };
+  });
+
   return (
     <DataTable
       height="665px"
@@ -31,7 +32,7 @@ export default function Table({ data }: { data: any[] }) {
       columns={[
         { accessor: 'lotName' },
         { accessor: 'procuringEntity' },
-        { accessor: 'date' },
+        { accessor: 'createdAt' },
         {
           accessor: 'status',
           render: ({ status }) => (
@@ -51,8 +52,10 @@ export default function Table({ data }: { data: any[] }) {
           <IconBoxOff />
         </Box>
       }
-      records={data}
-      onRowClick={handleRowClick}
+      records={transformedData}
+      onRowClick={({ record }) => {
+        handleRowClick(record);
+      }}
       noRecordsText="No Data"
       styles={{
         header: {

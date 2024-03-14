@@ -21,6 +21,9 @@ export const organazationApi = createApi({
         };
       },
     }),
+    getOrganazation: builder.query<any, string>({
+      query: (id) => `organizations/${id}`,
+    }),
   }),
 });
 
@@ -36,5 +39,9 @@ export const unitApi = createApi({
 });
 
 export const { useGetUintByIdQuery, useLazyGetUintByIdQuery } = unitApi;
-export const { useOrganizationsQuery, useLazyOrganizationsQuery } =
-  organazationApi;
+export const {
+  useOrganizationsQuery,
+  useLazyOrganizationsQuery,
+  useGetOrganazationQuery,
+  useLazyGetOrganazationQuery,
+} = organazationApi;
