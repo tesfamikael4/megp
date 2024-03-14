@@ -75,7 +75,7 @@ export class RuleDesignerService extends EntityCrudService<RuleDesigner> {
     const possibleReasons = new Set([]);
 
     const resp = {
-      valid: true,
+      validation: true,
       failedRuleKeys,
       possibleReasons: [],
     };
@@ -90,7 +90,7 @@ export class RuleDesignerService extends EntityCrudService<RuleDesigner> {
         designer.possibleReasons.forEach((reason) => {
           possibleReasons.add(reason.reason);
         });
-        resp.valid = false;
+        resp.validation = false;
       }
     }
 
