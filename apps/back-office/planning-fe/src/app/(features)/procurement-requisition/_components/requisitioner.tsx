@@ -1,16 +1,16 @@
 import { useLazyListByIdQuery as useLazyGetUsersQuery } from '@/app/(features)/procurement-requisition/_api/user.api';
 import { ActionIcon, Box, Button, Group, Modal } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { notify } from '@megp/core-fe';
+import { logger, notify } from '@megp/core-fe';
 import { IconDeviceFloppy, IconTrash } from '@tabler/icons-react';
 import { useAuth } from '@megp/auth';
 import { useEffect, useState } from 'react';
 
 import { useParams } from 'next/navigation';
 import {
-  useCreateMutation,
-  useLazyListByIdQuery,
-} from '@/app/(features)/procurement-requisition/_api/requisitioner.api';
+  useCreateRequisitionerMutation,
+  useLazyGetRequisitionerQuery,
+} from '@/store/api/pr/pr.api';
 import { ExpandableTable } from './expandable-table';
 
 export const Requisitioner = () => {
@@ -67,22 +67,21 @@ export const Requisitioner = () => {
   const [opened, { open, close }] = useDisclosure(false);
   const [getUsers, { data: users }] = useLazyGetUsersQuery();
   const [createRequisitioner, { isLoading: isCreatingLoading }] =
-    useCreateMutation();
+    useCreateRequisitionerMutation();
 
   const [getRequisitioner, { data: requisitioner, isSuccess }] =
-    useLazyListByIdQuery();
+    useLazyGetRequisitionerQuery();
 
   const [requisitioners, setRequisitioners] = useState<any[]>([]);
 
   const onCreate = async () => {
-    const castedData = requisitioners.map((r: any) => ({
-      ...r,
-      procurementRequisitionId: id,
-      name: r.name,
-    }));
+    const castedData = requisitioners.map((r: any) => r);
 
     try {
-      await createRequisitioner(castedData).unwrap();
+      await createRequisitioner({
+        procurementRequisitionId: id.toString(),
+        officers: castedData,
+      }).unwrap();
       notify('Success', 'Requisitioner Added successfully');
     } catch (err) {
       notify('Error', 'Something went wrong');
@@ -90,7 +89,7 @@ export const Requisitioner = () => {
   };
 
   useEffect(() => {
-    getRequisitioner({ id: id.toString(), collectionQuery: undefined });
+    getRequisitioner(id.toString());
   }, [getRequisitioner, id]);
 
   useEffect(() => {

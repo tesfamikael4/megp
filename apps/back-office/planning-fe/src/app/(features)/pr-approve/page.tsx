@@ -54,7 +54,7 @@ export default function ProcurementRequisition() {
             variant="outline"
             onClick={(e) => {
               e.stopPropagation();
-              router.push(`/procurement-requisition-approval/${pr.id}`);
+              router.push(`/pr-approve/${pr.id}`);
             }}
           >
             <IconChevronRight />
@@ -73,14 +73,13 @@ export default function ProcurementRequisition() {
   };
 
   const onRequestChange = (request: any) => {
-    request?.where?.push([
+    request.where.push([
       {
         column: 'status',
-        value: 'SUBMITTED',
         operator: '=',
+        value: 'SUBMITTED',
       },
     ]);
-
     trigger(request);
   };
 

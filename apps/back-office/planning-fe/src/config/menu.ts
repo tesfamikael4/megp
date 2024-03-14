@@ -63,7 +63,7 @@ export const Menu: MenuItem[] = [
       },
       {
         label: 'Procurement Requisition Approval',
-        link: '/procurement-requisition-approval',
+        link: '/pr-approve',
       },
     ],
   },
