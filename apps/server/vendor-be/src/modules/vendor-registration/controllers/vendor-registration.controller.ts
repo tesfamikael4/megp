@@ -34,13 +34,16 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { ReceiptDto } from '../dto/receipt.dto';
 import { CreateAreasOfBusinessInterest } from '../dto/areas-of-business-interest';
 import { ServiceKeyEnum } from 'src/shared/enums/service-key.enum';
+import { BusinessAreaService } from '../services/business-area.service';
 @ApiBearerAuth()
 @Controller('vendor-registrations')
 @ApiTags('Vendor-registrations')
 @ApiResponse({ status: 500, description: 'Internal error' })
 @ApiExtraModels(DataResponseFormat)
 export class VendorRegistrationsController {
-  constructor(private readonly regService: VendorRegistrationsService) { }
+  constructor(private readonly regService: VendorRegistrationsService,
+    private readonly baService: BusinessAreaService
+  ) { }
   @Get('get-isr-vendors')
   async getVendors() {
     return await this.regService.getIsrVendors();
@@ -205,11 +208,14 @@ export class VendorRegistrationsController {
   }
   //additional services registration 
   @Post('add-service')
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('attachmentUrl'))
   async addService(
-    @CurrentUser() userInfo: any,
-    @Body() command: CreateAreasOfBusinessInterest[],
+    @UploadedFile() attachment: Express.Multer.File,
+    @CurrentUser() user: any,
+    @Body() paymentReceiptDto: ReceiptDto,
   ) {
-    return await this.regService.addService(command, userInfo);
+    return await this.regService.addService(paymentReceiptDto, attachment, user);
   }
 
   @Post('upgrade-service')
@@ -239,6 +245,10 @@ export class VendorRegistrationsController {
   @Get('get-my-approved-services')
   async getMyApprovedService(@CurrentUser() userInfo: any) {
     return await this.regService.getMyApprovedService(userInfo);
+  }
+  @Get('get-my-draft-reg-services')
+  async getMyDraftedService(@CurrentUser() user: any) {
+    return await this.regService.getmyDraftServices(ServiceKeyEnum.NEW_REGISTRATION, user);
   }
 
   @Get('cancel-registration')

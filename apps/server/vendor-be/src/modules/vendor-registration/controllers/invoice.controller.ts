@@ -41,7 +41,6 @@ export class InvoicesController {
     @CurrentUser() user: any,
   ) {
     if (businesses.length > 0) {
-
       const result = await this.invoiceService.generateNewregistrationInvoice(
         businesses,
         user

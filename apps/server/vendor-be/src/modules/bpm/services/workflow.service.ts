@@ -596,6 +596,7 @@ export class WorkflowService {
       .innerJoinAndMapOne('wf.businessArea', BusinessAreaEntity, 'ba', 'wf.id = ba.instanceId')
       .innerJoinAndSelect('wf.service', 'service')
       .where('wf.userId = :userId', { userId: user.id })
+      .andWhere('ba.status In(:...statuses)', { statuses: [ApplicationStatus.APPROVED, ApplicationStatus.ADJUSTMENT, ApplicationStatus.REJECTED, ApplicationStatus.PENDING] })
       .orderBy('wf.updatedAt', 'DESC')
       .getMany();
     return result
