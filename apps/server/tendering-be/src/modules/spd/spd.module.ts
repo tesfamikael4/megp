@@ -36,7 +36,7 @@ import { SpdBidFormController } from './controller/spd-bid-form.controller';
 import { SpdContractForm } from 'src/entities/spd-contract-form.entity';
 import { SpdContractFormService } from './service/spd-contract-form.service';
 import { SpdContractFormController } from './controller/spd-contract-form.controller';
-import { DocumentMergerModule } from 'src/shared/document-merger/document-merger.module';
+import { DocumentManipulatorModule } from 'src/shared/document-manipulator/document-manipulator.module';
 
 @Module({
   imports: [
@@ -53,7 +53,7 @@ import { DocumentMergerModule } from 'src/shared/document-merger/document-merger
     ]),
     DocxModule,
     MinIOModule,
-    DocumentMergerModule,
+    DocumentManipulatorModule,
   ],
   providers: [
     SpdService,

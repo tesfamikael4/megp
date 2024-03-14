@@ -1,33 +1,22 @@
 import { Injectable } from '@nestjs/common';
-import { join } from 'path';
 import { PDFDocument } from 'pdf-lib';
-import * as fs from 'fs';
 import { MinIOService } from '../min-io/min-io.service';
 import * as DocxMerger from '@scholarcy/docx-merger';
 import { createReport } from 'docx-templates';
 import * as libre from 'libreoffice-convert';
 import { promisify } from 'util';
-import { ConvertDocxToPdsService } from './convert-docx-to-pds.service';
+import * as FormData from 'form-data';
+import axios from 'axios';
 
 @Injectable()
-export class DocumentMergerService {
-  constructor(
-    private readonly minIOService: MinIOService,
-    private readonly convertDocxToPdsService: ConvertDocxToPdsService,
-  ) {}
-  async mergePdf() {
-    try {
-      const basePath = process.cwd();
-      const file1 = join(basePath, '1.pdf');
-      const file2 = join(basePath, '2.pdf');
-      const file3 = join(basePath, '4.pdf');
+export class DocumentManipulatorService {
+  constructor(private readonly minIOService: MinIOService) {}
 
+  async mergePdf(pdfBuffers: Buffer[]) {
+    try {
       const mergedPdf = await PDFDocument.create();
-      const pdfBuffer1 = fs.readFileSync(file1);
-      const pdfBuffer2 = fs.readFileSync(file2);
-      const pdfsToMerge = [pdfBuffer1, pdfBuffer2];
-      for (const pdfBytes of pdfsToMerge) {
-        const pdf = await PDFDocument.load(pdfBytes);
+      for (const pdfBuffer of pdfBuffers) {
+        const pdf = await PDFDocument.load(pdfBuffer);
 
         const copiedPages = await mergedPdf.copyPages(
           pdf,
@@ -37,10 +26,10 @@ export class DocumentMergerService {
           mergedPdf.addPage(page);
         });
       }
-      const buf = await mergedPdf.save(); // Uint8Array
+      const result = await mergedPdf.save(); // Uint8Array
 
       await this.minIOService.uploadBuffer(
-        Buffer.from(buf),
+        Buffer.from(result),
         'preBudgetPlanReport.pdf',
         'application/pdf',
       );
@@ -49,24 +38,16 @@ export class DocumentMergerService {
     }
   }
 
-  async mergeDocx() {
+  async mergeDocx(docxBuffers: Buffer[]) {
     try {
-      const basePath = process.cwd();
-      const file1 = join(basePath, '1.docx');
-      const file2 = join(basePath, '3.docx');
-      const file3 = join(basePath, '4.docx');
-
-      const pdfBuffer1 = fs.readFileSync(file1);
-      const pdfBuffer2 = fs.readFileSync(file2);
       const docx = new DocxMerger();
 
-      await docx.initialize({}, [pdfBuffer1, pdfBuffer2]);
+      await docx.initialize({}, [docxBuffers]);
 
-      const buf = await docx.save('nodebuffer');
+      const buffer = await docx.save('nodebuffer');
 
       await this.minIOService.uploadBuffer(
-        String(Date.now()),
-        buf,
+        buffer,
         'preBudgetPlanReport.docx',
         'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
       );
@@ -76,8 +57,6 @@ export class DocumentMergerService {
   }
 
   async merge() {
-    const libreConverterAsync = promisify(libre.convert);
-
     const bdsTemplateRead = await this.minIOService.downloadBuffer({
       filepath: 'bds-template.docx',
       bucketName: 'megp',
@@ -92,10 +71,9 @@ export class DocumentMergerService {
       },
     );
 
-    const bdsTemplatePopulatedHtmlBuffer = await libreConverterAsync(
+    const bdsTemplatePopulatedHtmlBuffer = await this.convertDocument(
       bdsTemplatePopulatedBuffer,
       '.html',
-      undefined,
     );
 
     const bds = bdsTemplatePopulatedHtmlBuffer.toString();
@@ -116,10 +94,7 @@ export class DocumentMergerService {
       bds: `${bds}`,
     });
 
-    const pdfBuffer =
-      await this.convertDocxToPdsService.convertDocxToPdf(testPopulatedBuffer);
-
-    await fs.writeFileSync('report.pdf', pdfBuffer);
+    const pdfBuffer = await this.convertDocxToPdf(testPopulatedBuffer);
 
     await this.minIOService.uploadBuffer(
       pdfBuffer,
@@ -132,6 +107,17 @@ export class DocumentMergerService {
       'report.docx',
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
     );
+  }
+
+  async convertDocument(inputBuffer: Buffer, fileType: string) {
+    const libreConverterAsync = promisify(libre.convert);
+    const convertedBuffer = await libreConverterAsync(
+      inputBuffer,
+      fileType,
+      undefined,
+    );
+
+    return convertedBuffer;
   }
 
   async streamToBuffer(readableStream: any): Promise<Buffer> {
@@ -149,5 +135,24 @@ export class DocumentMergerService {
       data,
     });
     return Buffer.from(buffer);
+  }
+
+  async convertDocxToPdf(file: Buffer): Promise<Buffer> {
+    try {
+      const DOCUMENT_CONVERT_ENDPOINT =
+        process.env.DOCUMENT_CONVERT_ENDPOINT ?? 'http://196.189.44.48:3000/';
+      const form = new FormData();
+
+      form.append('file', file, 'inputFile.docx');
+
+      const request = await axios.post(DOCUMENT_CONVERT_ENDPOINT, form, {
+        responseType: 'arraybuffer',
+      });
+
+      const outputBuffer = request.data;
+      return outputBuffer;
+    } catch (error) {
+      throw error;
+    }
   }
 }
