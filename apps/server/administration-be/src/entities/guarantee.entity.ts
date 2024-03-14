@@ -34,14 +34,14 @@ export class Guarantee extends Audit {
   title: string;
   @Column({ nullable: true })
   objectId: string;
-  @Column({ type: 'float' })
+  @Column({ default: 0, type: 'decimal', precision: 14, scale: 2 })
   amount: number;
   @Column({ nullable: true })
   currencyType: string;
   @Column({ nullable: true })
-  GuarantorId: string;
+  guarantorId: string;
   @Column({ nullable: true })
-  GuarantorBranchId: string;
+  guarantorBranchId: string;
   @Column({ nullable: true })
   remark: string;
   @Column({ nullable: true })
@@ -56,7 +56,7 @@ export class Guarantee extends Audit {
     cascade: true,
     onDelete: 'CASCADE',
   })
-  GuaExtensions: GuaranteeExtension[];
+  guaranteeExtensions: GuaranteeExtension[];
   @OneToMany(() => GuaranteeForfeit, (forfeit) => forfeit.guarantee, {
     cascade: true,
     onDelete: 'CASCADE',

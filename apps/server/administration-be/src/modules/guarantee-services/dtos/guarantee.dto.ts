@@ -36,10 +36,10 @@ export class CreateGuaranteeDto {
   currencyType: string;
   @ApiProperty()
   @IsNotEmpty()
-  GuarantorId: string;
+  guarantorId: string;
   @ApiProperty()
   @IsNotEmpty()
-  GuarantorBranchId: string;
+  guarantorBranchId: string;
   @ApiProperty({ required: false })
   remark?: string;
   @ApiProperty()
@@ -67,8 +67,8 @@ export class CreateGuaranteeDto {
     entity.objectId = dto.objectId;
     entity.amount = dto.amount;
     entity.currencyType = dto.currencyType;
-    entity.GuarantorId = dto.GuarantorId;
-    entity.GuarantorBranchId = dto.GuarantorBranchId;
+    entity.guarantorId = dto.guarantorId;
+    entity.guarantorBranchId = dto.guarantorBranchId;
     entity.remark = dto.remark;
     entity.attachment = dto.attachment;
     entity.status = dto.status;
@@ -105,8 +105,8 @@ export class UpdateGuaranteeDto extends CreateGuaranteeDto {
     entity.objectId = dto.objectId;
     entity.amount = dto.amount;
     entity.currencyType = dto.currencyType;
-    entity.GuarantorId = dto.GuarantorId;
-    entity.GuarantorBranchId = dto.GuarantorBranchId;
+    entity.guarantorId = dto.guarantorId;
+    entity.guarantorBranchId = dto.guarantorBranchId;
     entity.remark = dto.remark;
     entity.attachment = dto.attachment;
     entity.status = dto.status;
@@ -133,8 +133,8 @@ export class GuaranteeResponseDto extends UpdateGuaranteeDto {
     response.objectId = entity.objectId;
     response.amount = entity.amount;
     response.currencyType = entity.currencyType;
-    response.GuarantorId = entity.GuarantorId;
-    response.GuarantorBranchId = entity.GuarantorBranchId;
+    response.guarantorId = entity.guarantorId;
+    response.guarantorBranchId = entity.guarantorBranchId;
     response.remark = entity.remark;
     response.attachment = entity.attachment;
     response.status = entity.status;
