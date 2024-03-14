@@ -44,16 +44,6 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
       relations: { BpService: true },
     });
   }
-  // async getBusinessAreaWithPendingInvoice(ids: string[], keys: string[], user: any): Promise<BusinessAreaEntity[]> {
-  //   return this.businessAreaRepository.find({
-  //     where: {
-  //       id: In(ids),
-  //       status: 'Pending', invoice: { paymentStatus: 'Pending', userId: user.id }
-  //     },
-  //     relations: { servicePrice: true, invoice: true, BpService: true },
-  //   });
-  // }
-
 
   async getBusinessAreaByInstanceId(
     instanceId: string,
@@ -102,13 +92,7 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
     });
   }
 
-  // async getBusinessAreaByIds(businessIds: string[]): Promise<BusinessAreaEntity[]> {
-  //   return this.businessAreaRepository.find({
-  //     where: { id: In(businessIds), status: ApplicationStatus.APPROVED }
 
-  //   });
-
-  // }
   async getBusinessAreaByInstanceIds(
     instanceIds: string[],
   ): Promise<BusinessAreaEntity[]> {

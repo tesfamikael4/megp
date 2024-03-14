@@ -27,7 +27,7 @@ export class BusinessAreaEntity extends Audit {
     level: string;
     status: string;
   };
-  @Column({ type: 'uuid' })
+  @Column({ type: 'uuid', nullable: true })
   instanceId: string;
   @Column()
   category: string;

@@ -10,6 +10,7 @@ import {
   BusinessAreaEntity,
   BusinessProcessEntity,
   InvoiceEntity,
+  IsrVendorsEntity,
   ServicePrice,
   VendorsEntity,
 } from 'src/entities';
@@ -37,12 +38,14 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     private readonly invoiceRepository: Repository<InvoiceEntity>,
     @InjectRepository(VendorsEntity)
     private readonly vendorsRepository: Repository<VendorsEntity>,
+    @InjectRepository(IsrVendorsEntity)
+    private readonly srRepository: Repository<IsrVendorsEntity>,
     @InjectRepository(BusinessAreaEntity)
     private readonly businessAreaRepository: Repository<BusinessAreaEntity>,
     private readonly pricingService: ServicePricingService,
     private readonly commonService: HandlingCommonService,
     private readonly baService: BusinessAreaService,
-    private readonly bpService: BusinessProcessService,
+    private readonly bpService: BusinessProcessService
 
   ) {
     super(invoiceRepository);
@@ -56,14 +59,20 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
       if (!vendor) {
         throw new HttpException("Register as  Vendor", 4040);
       }
+      let regenerateInvoice = false;
+      let draftedBAs = []
       const serviceBp = await this.bpService.findBpWithServiceByKey(ServiceKeyEnum.NEW_REGISTRATION);
       if (!serviceBp)
         throw new NotFoundException("Business Process Not Defined");
       const previousInvoice = await this.getMyInvoice(user.id, ServiceKeyEnum.NEW_REGISTRATION);
       if (previousInvoice) {
-        const draftedBAs = await this.baService.getUserInprogressBusinessAreasByServiceId(serviceBp.serviceId, user.id);
-        let regenerateInvoice = false;
+        draftedBAs = await this.baService.getUserInprogressBusinessAreasByServiceId(serviceBp.serviceId, user.id);
+
         for (const ba of businesses) {
+          // if (previousInvoice.paymentDetail.filter((item) => item.category == ba.category).length == 0) {
+          //   regenerateInvoice = true;
+          //   break;
+          // }
           if (draftedBAs.filter((item) => item.priceRangeId == ba.priceRange).length == 0) {
             regenerateInvoice = true;
             break;
@@ -84,16 +93,31 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
         }
       }
       const bas = [];
+      const areaOfBisunessInterests = [];
       for (const row of businesses) {
         const ba = new BusinessAreaEntity();
         ba.category = row.category;
+        const drafted = draftedBAs.find((item) => item.category == row.category);
+        if (drafted) {
+          ba.id = drafted.id;
+        }
         ba.vendorId = vendor.id;
         ba.serviceId = serviceBp.serviceId;
         ba.priceRangeId = row.priceRange;
         ba.status = ApplicationStatus.PENDING
         bas.push(ba);
+        areaOfBisunessInterests.push({
+          category: row.category,
+          priceRange: row.priceRange,
+          lineOfBusiness: row.lineOfBusiness,
+        });
       }
+
+
       if (bas.length) {
+        const isrvendor = await this.srRepository.findOne({ where: { id: vendor.id } });
+        isrvendor.areasOfBusinessInterest.push(areaOfBisunessInterests);
+        await this.srRepository.update(isrvendor.id, isrvendor);
         await this.baService.create(bas);
         await this.generateInvoice(priceRangeIds, vendor, user);
         return HttpStatus.ACCEPTED;
@@ -238,6 +262,7 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
       where: {
         userId: userId,
         createdOn: MoreThanOrEqual(oneWeekAgo),
+        paymentStatus: PaymentStatus.PENDING,
         service: {
           key: serviceType
         },
@@ -454,4 +479,20 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
   async remove(id: string) {
     this.invoiceRepository.delete({ id: id });
   }
+  async getInvoiceByIds(ids: string[]) {
+    const invoice = await this.invoiceRepository.findOne({
+      where: {
+        id: In(ids),
+        service: { businessProcesses: { isActive: true } },
+      },
+      relations: {
+        service: {
+          businessProcesses: true,
+        },
+      },
+    });
+    return invoice;
+  }
+
+
 }
