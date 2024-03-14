@@ -143,6 +143,8 @@ export class VendorRegistrationsController {
     if (!result) throw new BadRequestException(`vendor registration failed`);
     return result;
   }
+
+
   @Post('submit-vendor-information')
   async submitNewRegistratinRequest(
     @Body() data: InsertAllDataDto,
@@ -201,6 +203,7 @@ export class VendorRegistrationsController {
   async getApprovedVendorServiceByUserId(@CurrentUser() userInfo: any) {
     return await this.regService.getApprovedVendorServiceByUserId(userInfo.id);
   }
+  //additional services registration 
   @Post('add-service')
   async addService(
     @CurrentUser() userInfo: any,

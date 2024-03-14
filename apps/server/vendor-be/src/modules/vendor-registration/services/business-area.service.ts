@@ -53,6 +53,8 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
   //     relations: { servicePrice: true, invoice: true, BpService: true },
   //   });
   // }
+
+
   async getBusinessAreaByInstanceId(
     instanceId: string,
   ): Promise<BusinessAreaEntity> {
@@ -124,6 +126,22 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
     userId: string,
   ): Promise<BusinessAreaEntity> {
     return this.businessAreaRepository.findOne({
+      select: { id: true },
+      where: {
+        serviceId: serviceId,
+        status: ApplicationStatus.PENDING,
+        isrVendor: { userId: userId },
+      },
+      relations: {
+        isrVendor: true,
+      },
+    });
+  }
+  async getUserInprogressBusinessAreasByServiceId(
+    serviceId: string,
+    userId: string,
+  ): Promise<BusinessAreaEntity[]> {
+    return this.businessAreaRepository.find({
       select: { id: true },
       where: {
         serviceId: serviceId,
