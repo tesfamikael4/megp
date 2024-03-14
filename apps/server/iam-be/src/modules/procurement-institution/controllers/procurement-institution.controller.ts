@@ -14,8 +14,8 @@ const options: EntityCrudOptions = {
   updateDto: UpdateProcurementInstitutionDto,
 };
 
-@Controller('procurementInstitutions')
-@ApiTags('procurementInstitutions')
+@Controller('procurement-institution')
+@ApiTags('procurement-institution')
 export class ProcurementInstitutionController extends EntityCrudController<ProcurementInstitution>(
   options,
 ) {
