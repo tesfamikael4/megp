@@ -13,6 +13,7 @@ import { UserRole } from '@entities';
 import { UserUnit } from '@entities';
 import { UserGroup } from '@entities';
 import { UserStatus } from 'src/shared/enums';
+import { AdhocTeamMember } from './adhoc-team-member.entity';
 
 @Entity({ name: 'users' })
 export class User extends Audit {
@@ -63,4 +64,7 @@ export class User extends Audit {
     onDelete: 'CASCADE',
   })
   userGroups: UserGroup[];
+
+  @OneToMany(() => AdhocTeamMember, (adhocTeamMember) => adhocTeamMember.user)
+  adhocTeamMembers: AdhocTeamMember[];
 }

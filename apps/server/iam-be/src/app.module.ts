@@ -15,6 +15,7 @@ import { DataSeeder } from './modules/seeders/data.seeder';
 import { RoleSystemModule } from './modules/role-system/role-system.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TenantInterceptor, TransactionInterceptor } from '@interceptors';
+import { ProcurementInstitutionModule } from './modules/procurement-institution/procurement-institution.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { TenantInterceptor, TransactionInterceptor } from '@interceptors';
     ApplicationModule,
     MandateModule,
     RoleSystemModule,
+    ProcurementInstitutionModule,
   ],
   controllers: [],
   providers: [
