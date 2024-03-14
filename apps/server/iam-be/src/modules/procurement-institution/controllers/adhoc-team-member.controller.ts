@@ -15,8 +15,8 @@ const options: ExtraCrudOptions = {
   updateDto: UpdateAdhocTeamMemberDto,
 };
 
-@Controller('adhoc-team-member')
-@ApiTags('adhoc-team-member')
+@Controller('AdhocTeamMembers')
+@ApiTags('AdhocTeamMembers')
 export class AdhocTeamMemberController extends ExtraCrudController<AdhocTeamMember>(
   options,
 ) {

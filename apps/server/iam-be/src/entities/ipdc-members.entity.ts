@@ -1,4 +1,4 @@
-import { Audit } from '@audit';
+import { OrgAudit } from '@audit';
 import {
   Column,
   Entity,
@@ -8,9 +8,10 @@ import {
 } from 'typeorm';
 import { IPDC } from './ipdc.entity';
 import { MEMBER_TYPE_ENUM } from 'src/shared/enums/member-type.enum';
+import { User } from './user.entity';
 
 @Entity({ name: 'ipdc_members' })
-export class IPDCMember extends Audit {
+export class IPDCMember extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -31,6 +32,7 @@ export class IPDCMember extends Audit {
   @Column()
   userId: string;
 
-  @Column()
-  organizationId: string;
+  @ManyToOne(() => User, (User) => User.iPDCMembers)
+  @JoinColumn({ name: 'userId' })
+  public user: User;
 }

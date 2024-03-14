@@ -8,11 +8,6 @@ export class CreateAdhocTeamDto {
   procurementInstitutionId: string;
 
   @ApiProperty()
-  @IsUUID()
-  @IsNotEmpty()
-  organizationId: string;
-
-  @ApiProperty()
   @IsString()
   @IsNotEmpty()
   status: string;

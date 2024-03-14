@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 import { Audit } from 'src/shared/entities/audit.entity';
 
-import { Account, Organization, UserRoleSystem } from '@entities';
+import { Account, IPDCMember, Organization, UserRoleSystem } from '@entities';
 import { UserRole } from '@entities';
 import { UserUnit } from '@entities';
 import { UserGroup } from '@entities';
@@ -67,4 +67,7 @@ export class User extends Audit {
 
   @OneToMany(() => AdhocTeamMember, (adhocTeamMember) => adhocTeamMember.user)
   adhocTeamMembers: AdhocTeamMember[];
+
+  @OneToMany(() => IPDCMember, (iPDCMember) => iPDCMember.user)
+  iPDCMembers: AdhocTeamMember[];
 }

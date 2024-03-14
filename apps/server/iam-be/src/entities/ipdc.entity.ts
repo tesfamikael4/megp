@@ -1,4 +1,4 @@
-import { Audit } from '@audit';
+import { OrgAudit } from '@audit';
 import {
   Column,
   Entity,
@@ -11,7 +11,7 @@ import { ProcurementInstitution } from './procurement-institution.entity';
 import { IPDCMember } from './ipdc-members.entity';
 
 @Entity({ name: 'ipdc' })
-export class IPDC extends Audit {
+export class IPDC extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -28,15 +28,15 @@ export class IPDC extends Audit {
   @OneToMany(() => IPDCMember, (iPDCMember) => iPDCMember.iPDC)
   public iPDCMembers: IPDCMember[];
 
-  @Column()
+  @Column({ default: 'Draft' })
   status: string;
+
+  @Column()
+  name: string;
 
   @Column()
   startDate: Date;
 
   @Column()
   endDate: Date;
-
-  @Column()
-  organizationId: string;
 }

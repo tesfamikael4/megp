@@ -15,8 +15,8 @@ const options: ExtraCrudOptions = {
   updateDto: UpdateProcurementDisposalUnitDto,
 };
 
-@Controller('procurement-disposal-unit')
-@ApiTags('procurement-disposal-unit')
+@Controller('procurementDisposalUnits')
+@ApiTags('procurementDisposalUnits')
 export class ProcurementDisposalUnitController extends ExtraCrudController<ProcurementDisposalUnit>(
   options,
 ) {

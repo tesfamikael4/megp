@@ -1,4 +1,4 @@
-import { Audit } from '@audit';
+import { OrgAudit } from '@audit';
 import {
   Column,
   Entity,
@@ -11,7 +11,7 @@ import { ProcurementInstitution } from './procurement-institution.entity';
 import { AdhocTeamMember } from './adhoc-team-member.entity';
 
 @Entity({ name: 'adhoc_teams' })
-export class AdhocTeam extends Audit {
+export class AdhocTeam extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -31,11 +31,11 @@ export class AdhocTeam extends Audit {
   )
   public adhocTeamMembers: AdhocTeamMember[];
 
-  @Column()
+  @Column({ default: 'Draft' })
   status: string;
 
   @Column()
-  organizationId: string;
+  name: string;
 
   @Column()
   startDate: Date;
