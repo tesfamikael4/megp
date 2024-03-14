@@ -51,7 +51,7 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
       !activity.postBudgetPlan ||
       activity.postBudgetPlan.status.toUpperCase() !==
         ProcurementRequisitionStatusEnum.APPROVED ||
-      activity.status !== 'USED_IN_PR'
+      activity.status === 'USED_IN_PR'
     ) {
       throw new NotFoundException('Activity should be approved or not found');
     }
