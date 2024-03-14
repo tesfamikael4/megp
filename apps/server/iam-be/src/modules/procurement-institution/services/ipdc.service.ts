@@ -13,10 +13,9 @@ export class IPDCService extends ExtraCrudService<IPDC> {
   ) {
     super(iPDCRepository);
   }
-
   async create(itemData: IPDCDto, req?: any): Promise<any> {
-    const name = `IPDC (${itemData.startDate.getFullYear()} - ${itemData.endDate.getFullYear()})`;
-    const item = this.iPDCRepository.create({ ...itemData, name });
+    const name = `IPDC (${new Date(itemData.startDate).getFullYear()} - ${new Date(itemData.endDate).getFullYear()})`;
+    const item = this.iPDCRepository.create({ ...itemData, name: name });
     if (req?.user?.organization) {
       item.organizationId = req.user.organization.id;
     }
