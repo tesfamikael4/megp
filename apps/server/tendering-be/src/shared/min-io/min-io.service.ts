@@ -3,6 +3,7 @@ import { Response } from 'express';
 import { MinioService } from 'nestjs-minio-client';
 import { extname } from 'path';
 import { randomUUID } from 'crypto';
+import { BucketNameEnum } from './bucket-name.enum';
 
 @Injectable()
 export class MinIOService {
@@ -10,14 +11,14 @@ export class MinIOService {
 
   async upload(
     file: Express.Multer.File,
-    bucketName = 'megp',
+    bucketName: string,
     metaData = {},
   ): Promise<any> {
     try {
       const filepath = randomUUID() + extname(file.originalname);
       await this.minioService.client.putObject(
-        bucketName,
-        filepath,
+        BucketNameEnum.MEGP,
+        bucketName + filepath,
         file.buffer,
         metaData,
       );
@@ -37,13 +38,12 @@ export class MinIOService {
     originalname: string;
     contentType?: string;
   }): Promise<{ presignedUrl: string; file: any }> {
-    fileInfo.bucketName ??= 'megp';
     const filepath = randomUUID() + extname(fileInfo.originalname);
 
     const duration = Number(process.env.DURATION_OF_PRE_SIGNED_DOCUMENT ?? 120);
     const presignedUrl = await this.minioService.client.presignedPutObject(
-      fileInfo.bucketName,
-      filepath,
+      BucketNameEnum.MEGP,
+      fileInfo.bucketName + filepath,
       duration,
     );
 
@@ -61,7 +61,7 @@ export class MinIOService {
     buffer: any,
     originalname: string,
     mimetype: string,
-    bucketName = 'megp',
+    bucketName: string,
     metaData = {},
   ): Promise<{
     filepath: string;
@@ -72,8 +72,8 @@ export class MinIOService {
     try {
       const filepath = randomUUID() + extname(originalname);
       await this.minioService.client.putObject(
-        bucketName,
-        filepath,
+        BucketNameEnum.MEGP,
+        bucketName + filepath,
         buffer,
         metaData,
       );
@@ -92,11 +92,9 @@ export class MinIOService {
     fileInfo: { bucketName: string; filepath: string; contentType?: string },
     response: Response,
   ) {
-    fileInfo.bucketName ??= 'megp';
-
     const result = await this.minioService.client.getObject(
-      fileInfo.bucketName,
-      fileInfo.filepath,
+      BucketNameEnum.MEGP,
+      fileInfo.bucketName + fileInfo.filepath,
     );
 
     response.setHeader('Content-Type', fileInfo.contentType);
@@ -114,12 +112,11 @@ export class MinIOService {
     filepath: string;
     contentType?: string;
   }): Promise<string> {
-    fileInfo.bucketName ??= 'megp';
     const duration = Number(process.env.DURATION_OF_PRE_SIGNED_DOCUMENT ?? 120);
 
     const presignedUrl = await this.minioService.client.presignedGetObject(
-      fileInfo.bucketName,
-      fileInfo.filepath,
+      BucketNameEnum.MEGP,
+      fileInfo.bucketName + fileInfo.filepath,
       duration,
     );
     return presignedUrl;
@@ -130,11 +127,9 @@ export class MinIOService {
     filepath: string;
     contentType?: string;
   }) {
-    fileInfo.bucketName ??= 'megp';
-
     const result = await this.minioService.client.getObject(
-      fileInfo.bucketName,
-      fileInfo.filepath,
+      BucketNameEnum.MEGP,
+      fileInfo.bucketName + fileInfo.filepath,
     );
 
     return result;

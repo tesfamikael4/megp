@@ -11,6 +11,8 @@ class SorFileDto {
   @IsNotEmpty()
   @ApiProperty()
   contentType: string;
+
+  bucketName: string;
 }
 
 export class CreateSorDocumentDto {

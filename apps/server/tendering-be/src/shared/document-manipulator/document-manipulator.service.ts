@@ -7,10 +7,11 @@ import * as libre from 'libreoffice-convert';
 import { promisify } from 'util';
 import * as FormData from 'form-data';
 import axios from 'axios';
+import { BucketNameEnum } from '../min-io/bucket-name.enum';
 
 @Injectable()
 export class DocumentManipulatorService {
-  constructor(private readonly minIOService: MinIOService) {}
+  constructor(private readonly minIOService: MinIOService) { }
 
   async mergePdf(pdfBuffers: Buffer[]) {
     try {
@@ -32,6 +33,7 @@ export class DocumentManipulatorService {
         Buffer.from(result),
         'preBudgetPlanReport.pdf',
         'application/pdf',
+        BucketNameEnum.SPD_TEMPLATE,
       );
     } catch (error) {
       throw error;
@@ -50,6 +52,7 @@ export class DocumentManipulatorService {
         buffer,
         'preBudgetPlanReport.docx',
         'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        BucketNameEnum.SPD_TEMPLATE,
       );
     } catch (error) {
       throw error;
@@ -59,7 +62,7 @@ export class DocumentManipulatorService {
   async merge() {
     const bdsTemplateRead = await this.minIOService.downloadBuffer({
       filepath: 'bds-template.docx',
-      bucketName: 'megp',
+      bucketName: BucketNameEnum.SPD_TEMPLATE,
     });
 
     const bdsTemplateBuffer = await this.streamToBuffer(bdsTemplateRead);
@@ -80,7 +83,7 @@ export class DocumentManipulatorService {
 
     const testRead = await this.minIOService.downloadBuffer({
       filepath: 'test.docx',
-      bucketName: 'megp',
+      bucketName: BucketNameEnum.SPD_TEMPLATE,
     });
 
     const testBuffer = await this.streamToBuffer(testRead);
@@ -100,12 +103,14 @@ export class DocumentManipulatorService {
       pdfBuffer,
       'report.pdf',
       'application/pdf',
+      BucketNameEnum.SPD_TEMPLATE,
     );
 
     await this.minIOService.uploadBuffer(
       testPopulatedBuffer,
       'report.docx',
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      BucketNameEnum.SPD_TEMPLATE,
     );
   }
 
