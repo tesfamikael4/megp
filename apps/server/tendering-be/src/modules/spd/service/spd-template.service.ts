@@ -9,6 +9,7 @@ import { DocumentManipulatorService } from 'src/shared/document-manipulator/docu
 import { FileHelperService } from 'src/shared/min-io/file-helper.service';
 import { join } from 'path';
 import * as fs from 'fs';
+import { BucketNameEnum } from 'src/shared/min-io/bucket-name.enum';
 
 @Injectable()
 export class SpdTemplateService extends ExtraCrudService<SpdTemplate> {
@@ -37,7 +38,10 @@ export class SpdTemplateService extends ExtraCrudService<SpdTemplate> {
         throw new HttpException(result, HttpStatus.BAD_REQUEST);
       }
 
-      const documentDocx = await this.minIOService.upload(file);
+      const documentDocx = await this.minIOService.upload(
+        file,
+        BucketNameEnum.SPD_TEMPLATE,
+      );
 
       const documentPdf = await this.fileHelperService.convertAndUpload(file);
 

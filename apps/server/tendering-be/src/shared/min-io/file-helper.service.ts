@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { MinIOService } from 'src/shared/min-io/min-io.service';
 import * as libre from 'libreoffice-convert';
 import { promisify } from 'util';
+import { BucketNameEnum } from './bucket-name.enum';
 
 @Injectable()
 export class FileHelperService {
@@ -25,6 +26,7 @@ export class FileHelperService {
         pdfBuffer,
         fileName,
         'application/pdf',
+        BucketNameEnum.SPD_TEMPLATE,
       );
 
       // return { fileInfo, buffer };
