@@ -25,7 +25,10 @@ export class SpdBidFormService extends ExtraCrudService<SpdBidForm> {
         BucketNameEnum.SPD_BID_FORM,
       );
 
-      const documentPdf = await this.fileHelperService.convertAndUpload(file);
+      const documentPdf = await this.fileHelperService.convertAndUpload(
+        file,
+        BucketNameEnum.SPD_BID_FORM,
+      );
 
       const data = this.spdBidFormRepository.create({
         spdId: payload.spdId,

@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { MinIOService } from 'src/shared/min-io/min-io.service';
-import { BucketNameEnum } from './bucket-name.enum';
-import { join } from 'path';
 import * as fs from 'fs';
 import { PDFEngine } from 'chromiumly';
 
@@ -9,7 +7,7 @@ import { PDFEngine } from 'chromiumly';
 export class FileHelperService {
   constructor(private readonly minIOService: MinIOService) {}
 
-  async convertAndUpload(file: Express.Multer.File) {
+  async convertAndUpload(file: Express.Multer.File, bucketName: string) {
     try {
       const outputPath = 'temp.pdf';
 
@@ -29,7 +27,7 @@ export class FileHelperService {
         buffer,
         fileName,
         'application/pdf',
-        BucketNameEnum.SPD_TEMPLATE,
+        bucketName,
       );
 
       // return { fileInfo, buffer };
