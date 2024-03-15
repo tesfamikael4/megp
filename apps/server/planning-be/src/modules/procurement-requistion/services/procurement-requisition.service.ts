@@ -1,12 +1,15 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { DataSource, EntityManager, Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import { PostBudgetPlanActivity, ProcurementRequisition } from 'src/entities';
 import { EntityCrudService } from 'src/shared/service';
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 import { REQUEST } from '@nestjs/core';
 import { ClientProxy } from '@nestjs/microservices';
 import { ProcurementRequisitionStatusEnum } from 'src/shared/enums';
+import { PdfGeneratorService } from 'src/modules/utility/services/pdf-generator.service';
+import { DocumentService } from 'src/modules/utility/services/document.service';
+import { MinIOService } from 'src/shared/min-io/min-io.service';
 
 @Injectable()
 export class ProcurementRequisitionService extends EntityCrudService<ProcurementRequisition> {
@@ -17,8 +20,10 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
     private readonly repositoryPostBudgetPlanActivity: Repository<PostBudgetPlanActivity>,
     @Inject('PR_RMQ_SERVICE')
     private readonly prRMQClient: ClientProxy,
+    private readonly minIoService: MinIOService,
 
-    private dataSource: DataSource,
+    private readonly pdfGeneratorService: PdfGeneratorService,
+    private readonly documentService: DocumentService,
 
     @Inject(REQUEST)
     private readonly request: Request,
@@ -115,7 +120,10 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
     await this.repositoryProcurementRequisition.update(pr.id, {
       status: ProcurementRequisitionStatusEnum.SUBMITTED,
     });
-    this.prRMQClient.emit('initiate-workflow', pr);
+    const itemName = 'procurementRequisition';
+    const prWithItemName = { ...pr, itemName };
+    await this.pdfGenerator(data.id, prWithItemName.itemName);
+    this.prRMQClient.emit('initiate-workflow', prWithItemName);
     return true;
   }
 
@@ -251,10 +259,53 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
         percentages[group] = { count, percentage };
       }
     }
-
     return {
       percentages,
       total: total,
     };
+  }
+
+  async pdfGenerator(id: string, itemName: string) {
+    const data = await this.repositoryProcurementRequisition.find({
+      where: { id: id },
+      relations: {
+        procurementRequisitionItems: true,
+        procurementRequisitionTimelines: true,
+        procurementRequisitionTechnicalTeams: true,
+        procurementMechanisms: true,
+        postBudgetPlan: {
+          app: true,
+        },
+      },
+    });
+    const buffer = await this.pdfGeneratorService.pdfGenerator(data, 'post');
+
+    const fileInfo = await this.minIoService.uploadBuffer(
+      buffer,
+      'procurementRequisitionReport.pdf',
+      'application/pdf',
+    );
+
+    await this.documentService.create({
+      fileInfo,
+      title: itemName,
+      itemId: id,
+      type: 'procurementRequisition',
+      version: 1,
+      key: 'onApprovalSubmit',
+    });
+    return buffer;
+  }
+
+  async getProcurementRequisitionByReference(procurementReference: string) {
+    const pr = await this.repositoryProcurementRequisition.find({
+      where: { procurementReference: procurementReference },
+      relations: {
+        procurementRequisitionItems: true,
+        procurementRequisitionTechnicalTeams: true,
+        procurementMechanisms: true,
+      },
+    });
+    return pr;
   }
 }

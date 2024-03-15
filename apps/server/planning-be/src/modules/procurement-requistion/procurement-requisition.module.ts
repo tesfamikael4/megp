@@ -23,10 +23,12 @@ import { ProcurementRequisitionTechnicalTeamController } from './controllers/pro
 import { ProcurementRequisitionItemService } from './services/procurement-requisition-item.service';
 import { ProcurementRequisitionController } from './controllers/procurement-requisition.controller';
 import { ProcurementRequisitionService } from './services/procurement-requisition.service';
+import { UtilityModule } from '../utility/utility.module';
 
 @Module({
   imports: [
     MinIOModule,
+    UtilityModule,
     TypeOrmModule.forFeature([
       ProcurementRequisition,
       ProcurementRequisitionDocument,
