@@ -52,6 +52,14 @@ export function ExpandableTable({
         : [],
     });
   }, [page, search, sortStatus]);
+  const paginationProps = total
+    ? {
+        page,
+        onPageChange: setPage,
+        recordsPerPage: perPage,
+        totalRecords: total,
+      }
+    : {};
   return (
     <>
       {config.isSearchable ? (
@@ -78,10 +86,10 @@ export function ExpandableTable({
         defaultColumnRender={defaultColumnRender}
         highlightOnHover
         idAccessor={config.idAccessor ?? 'id'}
-        minHeight={300}
+        minHeight={config.minHeight ?? 300}
         noRecordsIcon={<IconInboxOff size={40} />}
-        noRecordsText="No Data Found"
-        onPageChange={setPage}
+        noRecordsText={config.noRecordsText ?? 'No Data Found'}
+        {...paginationProps}
         onRowClick={config.onClick ?? undefined}
         onSelectedRecordsChange={(records) => {
           if (config.disableMultiSelect) {
@@ -92,9 +100,7 @@ export function ExpandableTable({
           } else config.setSelectedItems && config.setSelectedItems(records);
         }}
         onSortStatusChange={setSortStatus}
-        page={total ? page : 0}
         records={data}
-        recordsPerPage={perPage}
         rowExpansion={{
           trigger: config.isExpandable ? 'click' : 'never',
           content: ({ record, collapse }: any) =>
@@ -113,7 +119,6 @@ export function ExpandableTable({
             backgroundColor: '#D9D9D9',
           },
         }}
-        totalRecords={total}
       />
     </>
   );

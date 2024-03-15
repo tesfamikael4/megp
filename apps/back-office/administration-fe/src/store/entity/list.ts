@@ -98,4 +98,24 @@ export const ENTITY_LIST: EntityStoreConfig[] = [
     entity: 'organizations',
     baseUrl: process.env.NEXT_PUBLIC_IAM_API ?? '/iam/api/',
   },
+
+  {
+    entity: 'procurement-institution',
+    baseUrl: process.env.NEXT_PUBLIC_IAM_API ?? '/iam/api/',
+  },
+
+  {
+    entity: 'procurement-disposal-unit',
+    baseUrl: process.env.NEXT_PUBLIC_IAM_API ?? '/iam/api/',
+  },
+
+  {
+    entity: 'iPDC',
+    baseUrl: process.env.NEXT_PUBLIC_IAM_API ?? '/iam/api/',
+  },
+
+  {
+    entity: 'adhoc-team',
+    baseUrl: process.env.NEXT_PUBLIC_IAM_API ?? '/iam/api/',
+  },
 ];

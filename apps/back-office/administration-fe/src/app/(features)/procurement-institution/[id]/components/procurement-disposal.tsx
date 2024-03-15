@@ -6,7 +6,12 @@ import { useDisclosure } from '@mantine/hooks';
 import { useAuth } from '@megp/auth';
 import { ExpandableTable, Section, logger, notify } from '@megp/core-fe';
 import { useParams } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import {
+  useCreateMutation,
+  useLazyListByIdQuery,
+} from '../../_api/procurement-disposal-unit.api';
+import { useUpdateMutation } from '../../_api/ipdc.api';
 
 export const ProcurementDisposal = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -14,20 +19,45 @@ export const ProcurementDisposal = () => {
   const { organizationId } = useAuth();
   const [getUnits, { data: units }] = useLazyGetUnitsQuery();
   const { id } = useParams();
+  const [getDisposalUnit, { data: disposalUnit }] = useLazyListByIdQuery();
+  const [create] = useCreateMutation();
+  const [update] = useUpdateMutation();
 
   const onSave = async () => {
     try {
-      const data = {
-        procurementInstituionId: id,
-        unitId: currentUnit[0].id,
-        unitName: currentUnit[0].name,
-      };
-      logger.log({ data });
+      if (disposalUnit?.total ?? 0 > 0) {
+        const data = {
+          id: disposalUnit?.items?.[0].id,
+          procurementInstitutionId: id,
+          unitId: currentUnit[0].id,
+        };
+        await update(data).unwrap();
+      } else {
+        const data = {
+          procurementInstitutionId: id,
+          unitId: currentUnit[0].id,
+        };
+        await create(data).unwrap();
+      }
+      // logger.log({ data });
       notify('Success', 'Procurement Disposal Unit saved successfully');
     } catch (err) {
       notify('Error', 'Something went wrong');
     }
   };
+
+  useEffect(() => {
+    getDisposalUnit({
+      id: id as string,
+      collectionQuery: { includes: ['unit'] },
+    });
+  }, [id]);
+
+  useEffect(() => {
+    if (disposalUnit) {
+      setCurrentUnit([disposalUnit?.items?.[0].unit]);
+    }
+  }, [disposalUnit]);
   return (
     <>
       <Section
@@ -37,7 +67,7 @@ export const ProcurementDisposal = () => {
         action={<Button onClick={open}>Add</Button>}
       >
         <ExpandableTable
-          config={{ columns: [{ accessor: 'name' }] }}
+          config={{ columns: [{ accessor: 'name' }], minHeight: 100 }}
           data={currentUnit}
         />
         <Group className="mt-2" justify="end">

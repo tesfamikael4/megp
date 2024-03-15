@@ -1,16 +1,70 @@
 'use client';
 
-import { Button, Flex, Group, Modal } from '@mantine/core';
+import { Badge, Button, Flex, Group, Modal, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { ExpandableTable, Section, logger } from '@megp/core-fe';
+import { ExpandableTable, Section, logger, notify } from '@megp/core-fe';
 import { DateInput } from '@mantine/dates';
 import { useState } from 'react';
+import { useCreateMutation, useListByIdQuery } from '../../_api/ipdc.api';
+import { useParams } from 'next/navigation';
+import { AddMembers } from './members';
 
 export const Ipdc = () => {
   const [opened, { open, close }] = useDisclosure(false);
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [minEndDate, setMinEndDate] = useState<Date>(new Date());
+  const [create, { isLoading: isCreating }] = useCreateMutation();
+  const { id } = useParams();
+  const { data: ipdc } = useListByIdQuery({
+    id: id as string,
+    collectionQuery: {},
+  });
+
+  const config = {
+    minHeight: 200,
+    isExpandable: true,
+    expandedRowContent: (record) => (
+      <AddMembers record={record} onSave={onMemberSave} />
+    ),
+    columns: [
+      { accessor: 'name' },
+
+      {
+        accessor: 'members',
+        width: 200,
+        textAlign: 'center',
+        render: (record) => 0,
+      },
+      {
+        accessor: 'status',
+        width: 200,
+        render: (record) => (
+          <Badge color={record.status == 'Active' ? 'green' : 'yellow'}>
+            {record.status}
+          </Badge>
+        ),
+      },
+    ],
+  };
+
+  const onMemberSave = (members) => {
+    logger.log({ members });
+  };
+
+  const onSave = async () => {
+    try {
+      await create({
+        startDate,
+        endDate,
+        procurementInstitutionId: id,
+      }).unwrap();
+      notify('Success', 'IPDC saved successfully');
+      close();
+    } catch (err) {
+      notify('Error', 'Something went wrong');
+    }
+  };
   return (
     <>
       <Section
@@ -20,15 +74,21 @@ export const Ipdc = () => {
         action={<Button onClick={open}>Add</Button>}
       >
         <ExpandableTable
-          config={{ columns: [{ accessor: 'name' }] }}
-          data={[]}
+          config={config}
+          data={ipdc?.items ?? []}
+          total={ipdc?.total ?? 0}
         />
       </Section>
 
-      <Modal opened={opened} onClose={close} title="Add New IPDC" size={'lg'}>
+      <Modal
+        opened={opened}
+        onClose={close}
+        title={<Text fw={500}>Add New IPDC</Text>}
+        size={'lg'}
+      >
         <Flex gap={'md'}>
           <DateInput
-            label="Start Date"
+            label="Starting Date"
             className="w-full"
             minDate={new Date()}
             value={startDate}
@@ -52,12 +112,9 @@ export const Ipdc = () => {
         </Flex>
         <Group justify="end" className="mt-2">
           <Button
-            onClick={() => {
-              logger.log({ startDate, endDate });
-              close();
-              setEndDate(null);
-              setStartDate(null);
-            }}
+            onClick={onSave}
+            loading={isCreating}
+            disabled={!startDate || !endDate}
           >
             Save
           </Button>

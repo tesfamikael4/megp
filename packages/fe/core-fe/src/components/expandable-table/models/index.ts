@@ -13,4 +13,6 @@ export interface ExpandableTableConfig {
   setSelectedItems?: (items: any[]) => void;
   action?: ReactNode;
   onClick?: (record: any) => void;
+  minHeight?: number;
+  noRecordsText?: string;
 }
