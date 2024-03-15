@@ -42,7 +42,7 @@ function Page() {
 
             <PreferentialTreatmentForm
               initialValues={{
-                preferential: requestInfo?.data?.preferential ?? [],
+                preferential: [],
               }}
             />
           </section>

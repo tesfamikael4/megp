@@ -49,26 +49,17 @@ export const ENTITY_LIST: EntityStoreConfig[] = [
 
   {
     entity: 'procurement-requisitions',
-    baseUrl:
-      process.env.NEXT_PUBLIC_PLANNING_API ?? '/procurement-requisition/api',
+    baseUrl: process.env.NEXT_PUBLIC_PLANNING_API ?? '/planning/api',
   },
-  // {
-  //   entity: 'post-budget-plan-activities',
-  //   baseUrl: process.env.NEXT_PUBLIC_PLANNING_API ?? '/planning/api',
-  // },
+
   {
     entity: 'procurement-requisition-activities',
-    baseUrl:
-      process.env.NEXT_PUBLIC_PLANNING_API ?? '/procurement-requisition/api',
+    baseUrl: process.env.NEXT_PUBLIC_PLANNING_API ?? '/planning/api',
   },
-  // {
-  //   entity: 'post-procurement-mechanism',
-  //   baseUrl: process.env.NEXT_PUBLIC_PLANNING_API ?? '/planning/api',
-  // },
+
   {
     entity: 'procurement-requisition-items',
-    baseUrl:
-      process.env.NEXT_PUBLIC_PLANNING_API ?? '/procurement-requisition/api',
+    baseUrl: process.env.NEXT_PUBLIC_PLANNING_API ?? '/planning/api',
   },
   {
     entity: 'user',
@@ -76,27 +67,22 @@ export const ENTITY_LIST: EntityStoreConfig[] = [
   },
   {
     entity: 'procurement-mechanisms',
-    baseUrl:
-      process.env.NEXT_PUBLIC_PLANNING_API ?? '/procurement-requisition/api',
+    baseUrl: process.env.NEXT_PUBLIC_PLANNING_API ?? '/planning/api',
   },
   {
     entity: 'procurement-requisition-officer-assignments',
-    baseUrl:
-      process.env.NEXT_PUBLIC_PLANNING_API ?? '/procurement-requisition/api',
+    baseUrl: process.env.NEXT_PUBLIC_PLANNING_API ?? '/planning/api',
   },
   {
     entity: 'annual-procurement-plan-activities',
-    baseUrl:
-      process.env.NEXT_PUBLIC_PLANNING_API ?? '/procurement-requisition/api',
+    baseUrl: process.env.NEXT_PUBLIC_PLANNING_API ?? '/planning/api',
   },
   {
     entity: 'procurement-requisition-timelines',
-    baseUrl:
-      process.env.NEXT_PUBLIC_PLANNING_API ?? '/procurement-requisition/api',
+    baseUrl: process.env.NEXT_PUBLIC_PLANNING_API ?? '/planning/api',
   },
   {
     entity: 'procurement-requisition-disbursements',
-    baseUrl:
-      process.env.NEXT_PUBLIC_PLANNING_API ?? '/procurement-requisition/api',
+    baseUrl: process.env.NEXT_PUBLIC_PLANNING_API ?? '/planning/api',
   },
 ];

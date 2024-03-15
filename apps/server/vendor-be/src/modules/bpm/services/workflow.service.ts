@@ -370,13 +370,7 @@ export class WorkflowService {
         break;
       case TaskTypes.PAYMENT:
 
-        // const data = await this.invoiceRepository.find({
-        //   where: { businessAreaId: command.instanceId },
-        // });
-        // data.map((row) => {
-        //   row.paymentStatus = 'Paid';
-        //   return this.invoiceRepository.update(row.id, row);
-        // });
+
         break;
     }
     return true;
@@ -598,20 +592,15 @@ export class WorkflowService {
 
   async getMyApplications(user: any): Promise<any> {
 
-    const result_ = await this.workflowInstanceRepository.createQueryBuilder('wf')
+    const result = await this.workflowInstanceRepository.createQueryBuilder('wf')
       .innerJoinAndMapOne('wf.businessArea', BusinessAreaEntity, 'ba', 'wf.id = ba.instanceId')
       .innerJoinAndSelect('wf.service', 'service')
       .where('wf.userId = :userId', { userId: user.id })
+      .andWhere('ba.status In(:...statuses)', { statuses: [ApplicationStatus.APPROVED, ApplicationStatus.ADJUSTMENT, ApplicationStatus.REJECTED, ApplicationStatus.PENDING] })
       .orderBy('wf.updatedAt', 'DESC')
       .getMany();
-    return result_
-    const result = await this.workflowInstanceRepository.find({
-      relations: { service: true, taskTrackers: true },
-      order: { updatedAt: 'DESC', taskTrackers: { executedAt: 'DESC' } },
-      where: { userId: user.id }
-    });
+    return result
 
-    return result;
 
   }
 }

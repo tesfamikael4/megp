@@ -5,8 +5,11 @@ import { ExtraCrudService } from 'src/shared/service';
 import { DocxService } from 'src/shared/docx/docx.service';
 import { MinIOService } from 'src/shared/min-io/min-io.service';
 import { SpdTemplate } from 'src/entities/spd-template.entity';
-import { DocumentMergerService } from 'src/shared/document-merger/document-merger.service';
+import { DocumentManipulatorService } from 'src/shared/document-manipulator/document-manipulator.service';
 import { FileHelperService } from 'src/shared/min-io/file-helper.service';
+import { join } from 'path';
+import * as fs from 'fs';
+import { BucketNameEnum } from 'src/shared/min-io/bucket-name.enum';
 
 @Injectable()
 export class SpdTemplateService extends ExtraCrudService<SpdTemplate> {
@@ -16,7 +19,7 @@ export class SpdTemplateService extends ExtraCrudService<SpdTemplate> {
     private readonly docxService: DocxService,
     private readonly minIOService: MinIOService,
     private readonly fileHelperService: FileHelperService,
-    private readonly documentMergerService: DocumentMergerService,
+    private readonly documentManipulatorService: DocumentManipulatorService,
   ) {
     super(spdTemplateRepository);
   }
@@ -35,7 +38,10 @@ export class SpdTemplateService extends ExtraCrudService<SpdTemplate> {
         throw new HttpException(result, HttpStatus.BAD_REQUEST);
       }
 
-      const documentDocx = await this.minIOService.upload(file);
+      const documentDocx = await this.minIOService.upload(
+        file,
+        BucketNameEnum.SPD_TEMPLATE,
+      );
 
       const documentPdf = await this.fileHelperService.convertAndUpload(file);
 
@@ -106,12 +112,25 @@ export class SpdTemplateService extends ExtraCrudService<SpdTemplate> {
   }
 
   async mergePdf() {
-    await this.documentMergerService.mergePdf();
+    const basePath = process.cwd();
+    const file1 = join(basePath, '1.pdf');
+    const file2 = join(basePath, '2.pdf');
+    const pdfBuffer1 = fs.readFileSync(file1);
+    const pdfBuffer2 = fs.readFileSync(file2);
+    const pdfBuffers = [pdfBuffer1, pdfBuffer2];
+
+    await this.documentManipulatorService.mergePdf(pdfBuffers);
   }
   async mergeDocx() {
-    await this.documentMergerService.mergeDocx();
+    const basePath = process.cwd();
+    const file1 = join(basePath, '1.docx');
+    const file2 = join(basePath, '3.docx');
+    const docxBuffers = [fs.readFileSync(file1), fs.readFileSync(file2)];
+
+    await this.documentManipulatorService.mergeDocx(docxBuffers);
   }
+
   async merge() {
-    return await this.documentMergerService.merge();
+    return await this.documentManipulatorService.merge();
   }
 }

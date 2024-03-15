@@ -3,7 +3,11 @@ import React, { Suspense, useEffect } from 'react';
 import { LoadingOverlay } from '@mantine/core';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { NotificationService } from '../../../../_components/notification';
-import { useGetVendorInfoQuery, useGetVendorQuery } from '../../_api/query';
+import {
+  useGetMyDraftServicesQuery,
+  useGetVendorInfoQuery,
+  useGetVendorQuery,
+} from '../../_api/query';
 import { AreasOfBusinessInterestForm } from './_components/formShell';
 
 function Page() {
@@ -16,7 +20,7 @@ function Page() {
     isSuccess,
     isError,
   } = useGetVendorQuery({}, { refetchOnMountOrArgChange: true });
-  const { data } = useGetVendorInfoQuery({});
+  const { data: myDraftServices } = useGetMyDraftServicesQuery({});
   useEffect(() => {
     if (isError) {
       NotificationService.requestErrorNotification('Error on fetching data');
@@ -35,7 +39,7 @@ function Page() {
         {vendor && isSuccess ? (
           <AreasOfBusinessInterestForm
             vendorInfo={vendor.initial}
-            initialValues={{ areasOfBusinessInterest: [] }}
+            initialValues={{ areasOfBusinessInterest: myDraftServices }}
           />
         ) : (
           <></>

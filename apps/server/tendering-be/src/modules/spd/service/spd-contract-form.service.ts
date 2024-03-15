@@ -5,6 +5,7 @@ import { ExtraCrudService } from 'src/shared/service';
 import { MinIOService } from 'src/shared/min-io/min-io.service';
 import { SpdContractForm } from 'src/entities/spd-contract-form.entity';
 import { FileHelperService } from '../../../shared/min-io/file-helper.service';
+import { BucketNameEnum } from 'src/shared/min-io/bucket-name.enum';
 
 @Injectable()
 export class SpdContractFormService extends ExtraCrudService<SpdContractForm> {
@@ -19,7 +20,10 @@ export class SpdContractFormService extends ExtraCrudService<SpdContractForm> {
 
   async uploadSPDDocument(payload: any, file: Express.Multer.File) {
     try {
-      const documentDocx = await this.minIOService.upload(file);
+      const documentDocx = await this.minIOService.upload(
+        file,
+        BucketNameEnum.SPD_CONTRACT_FORM,
+      );
 
       const documentPdf = await this.fileHelperService.convertAndUpload(file);
 

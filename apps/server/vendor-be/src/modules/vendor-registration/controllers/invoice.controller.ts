@@ -17,6 +17,7 @@ import { ApiPaginatedResponse } from 'src/shared/api-data';
 import { InvoiceResponseDto } from '../dto/invoice.dto';
 import { decodeCollectionQuery } from 'src/shared/collection-query';
 import { ServiceKeyEnum } from 'src/shared/enums/service-key.enum';
+import { CreateAreasOfBusinessInterest } from '../dto/areas-of-business-interest';
 
 @Controller('invoices')
 @ApiTags('Invoices')
@@ -34,6 +35,25 @@ export class InvoicesController {
     );
   }
 
+  @Post('generate-new-registration-invoice')
+  async generateNewRegistrationInvoice(
+    @Body() businesses: CreateAreasOfBusinessInterest[],
+    @CurrentUser() user: any,
+  ) {
+    if (businesses.length > 0) {
+      const result = await this.invoiceService.generateNewregistrationInvoice(
+        businesses,
+        user
+      );
+      if (result)
+        return HttpStatus.CREATED;
+      else {
+        throw new HttpException("Invoice not created", 400)
+      }
+    } else {
+      throw new HttpException('Invalid Request', HttpStatus.BAD_REQUEST);
+    }
+  }
   @Post('generate-renewal-invoice')
   async generateRenewalInvoice(
     @Body() businessAreaIds: string[],
@@ -57,6 +77,15 @@ export class InvoicesController {
       ServiceKeyEnum.REGISTRATION_RENEWAL,
     );
   }
+  @Get('get-my-registration-invoice')
+  async getMyRegistrationInvoice(@CurrentUser() userInfo: any) {
+    return await this.invoiceService.getMyInvoice(
+      userInfo.id,
+      ServiceKeyEnum.NEW_REGISTRATION,
+    );
+  }
+
+
   @Post('generate-upgrade-invoice')
   async generateServiceInvoiceForUpgrade(
     @CurrentUser() userInfo: any,

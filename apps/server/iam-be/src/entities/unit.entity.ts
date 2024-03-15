@@ -12,6 +12,7 @@ import { UserUnit } from './user-unit.entity';
 import { Organization } from './organization.entity';
 import { UnitType } from './unit-type.entity';
 import { UnitStatus } from 'src/shared/enums';
+import { ProcurementDisposalUnit } from './procurement-disposal-unit.entity';
 
 @Entity({ name: 'units' })
 @Unique(['name', 'organizationId'])
@@ -69,4 +70,10 @@ export class Unit extends Audit {
   })
   @JoinColumn({ name: 'typeId' })
   public unitType: UnitType;
+
+  @OneToMany(
+    () => ProcurementDisposalUnit,
+    (procurementDisposalUnit) => procurementDisposalUnit.unit,
+  )
+  procurementDisposalUnits: ProcurementDisposalUnit[];
 }

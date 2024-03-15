@@ -21,3 +21,10 @@ export * from './user.entity';
 export * from './role-system.entity';
 export * from './role-system-permission.entity';
 export * from './user-role-system.entity';
+
+export * from 'src/entities/procurement-institution.entity';
+export * from 'src/entities/procurement-disposal-unit.entity';
+export * from 'src/entities/ipdc.entity';
+export * from 'src/entities/ipdc-members.entity';
+export * from 'src/entities/adhoc-team.entity';
+export * from 'src/entities/adhoc-team-member.entity';

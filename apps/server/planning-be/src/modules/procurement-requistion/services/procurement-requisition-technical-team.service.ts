@@ -26,7 +26,12 @@ export class ProcurementRequisitionTechnicalTeamService extends ExtraCrudService
       this.repositoryProcurementRequisitionTechnicalTeam.create(
         technicalTeam.officers as any,
       );
-    newTechnicalTeam.forEach((x) => (x.organizationId = organizationId));
+    newTechnicalTeam.forEach(
+      (x) => (
+        (x.organizationId = organizationId),
+        (x.procurementRequisitionId = technicalTeam.procurementRequisitionId)
+      ),
+    );
 
     await this.repositoryProcurementRequisitionTechnicalTeam.insert(
       newTechnicalTeam,

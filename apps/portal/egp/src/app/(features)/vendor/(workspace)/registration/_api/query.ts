@@ -19,6 +19,7 @@ export const {
   useAddAdditionalServiceMutation,
   useGetInvoiceByUserIdQuery,
   useGetApplicationListQuery,
+  useGetMyDraftServicesQuery,
 } = vendorRegistrationQuery;
 
 export const {
@@ -33,6 +34,7 @@ export const {
   usePostRenewalInvoiceMutation,
   useGetServicePriceRangeQuery,
   useLazyGetServicePriceRangeQuery,
+  useGenerateInvoiceForAdditionalServiceMutation,
 } = paymentApi;
 
 export const {

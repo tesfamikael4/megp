@@ -5,6 +5,7 @@ import { ExtraCrudService } from 'src/shared/service';
 import { MinIOService } from 'src/shared/min-io/min-io.service';
 import { SpdBidForm } from 'src/entities/spd-bid-form.entity';
 import { FileHelperService } from '../../../shared/min-io/file-helper.service';
+import { BucketNameEnum } from 'src/shared/min-io/bucket-name.enum';
 
 @Injectable()
 export class SpdBidFormService extends ExtraCrudService<SpdBidForm> {
@@ -19,7 +20,10 @@ export class SpdBidFormService extends ExtraCrudService<SpdBidForm> {
 
   async uploadSPDDocument(payload: any, file: Express.Multer.File) {
     try {
-      const documentDocx = await this.minIOService.upload(file);
+      const documentDocx = await this.minIOService.upload(
+        file,
+        BucketNameEnum.SPD_BID_FORM,
+      );
 
       const documentPdf = await this.fileHelperService.convertAndUpload(file);
 

@@ -30,7 +30,7 @@ export class ProcurementRequisitionTechnicalTeamController extends ExtraCrudCont
 
   @Post('bulk-assign')
   async bulkCreate(
-    @Body() technicalTeam: CreateProcurementRequisitionTechnicalTeamsDto,
+    @Body() technicalTeam: any,
     @CurrentUser() user: any,
   ): Promise<any> {
     return this.procurementRequisitionTechnicalTeamService.bulkCreate(

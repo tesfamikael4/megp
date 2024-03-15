@@ -2,12 +2,11 @@
 
 import { Box, Button, Group, NumberInput, TextInput } from '@mantine/core';
 import { Table, TableConfig, notify } from '@megp/core-fe';
-
 import { useEffect, useState } from 'react';
 import { DateInput } from '@mantine/dates';
 import { IconDeviceFloppy } from '@tabler/icons-react';
+import { useReadQuery } from '../_api/procurement-requisition.api';
 import { useParams } from 'next/navigation';
-
 import {
   useCreatePrTimelineMutation,
   useLazyGetPrTimelineQuery,
@@ -60,16 +59,28 @@ export default function TimelineTab({ activityId }: { activityId?: string }) {
   const [data, setData] = useState<any[]>(tableData);
   const { id } = useParams();
 
+  const { data: procurementRequisition } = useReadQuery(id.toString());
+
   const [createTimeline, { isLoading: isTimelineCreating }] =
     useCreatePrTimelineMutation();
 
   const [getTimeline, { data: timeline, isSuccess: isTimelineSuccess }] =
     useLazyGetPrTimelineQuery();
+
   const listConfig: TableConfig<any> = {
     columns: [
       {
         header: 'Name',
         accessorKey: 'timeline',
+      },
+      {
+        id: 'appDueDate',
+        header: procurementRequisition?.isPlanned && 'Due Date From Planned',
+        accessorKey: 'appDueDate',
+        cell: ({ getValue, row, column }) =>
+          procurementRequisition?.isPlanned && (
+            <DueDate getValue={getValue} row={row} column={column} />
+          ),
       },
       {
         id: 'period',
@@ -109,7 +120,7 @@ export default function TimelineTab({ activityId }: { activityId?: string }) {
         old.map((row, i) => {
           const cumulativeSum = old
             .slice(0, i + 1)
-            .reduce((sum, item) => sum + item.noOfDays, 0);
+            .reduce((sum, item) => sum + item.period, 0);
           const currentDate = new Date(old[0].dueDate ?? new Date());
           currentDate.setDate(currentDate.getDate() + cumulativeSum);
           if (!isNaN(currentDate.getTime())) {
@@ -167,7 +178,7 @@ export default function TimelineTab({ activityId }: { activityId?: string }) {
         old.map((row, i) => {
           const cumulativeSum = old
             .slice(0, i + 1)
-            .reduce((sum, item) => sum + item.noOfDays, 0);
+            .reduce((sum, item) => sum + item.period, 0);
           const currentDate = new Date(old[0].dueDate ?? new Date());
           currentDate.setDate(currentDate.getDate() + cumulativeSum);
           if (!isNaN(currentDate.getTime())) {
@@ -203,7 +214,7 @@ export default function TimelineTab({ activityId }: { activityId?: string }) {
       return {
         ...activityId,
         dueDate: d.dueDate,
-        period: d.noOfDays,
+        period: d.period,
         timeline: d.timeline,
         order: index,
       };
@@ -213,16 +224,20 @@ export default function TimelineTab({ activityId }: { activityId?: string }) {
       await createTimeline(castedData).unwrap();
       notify('Success', 'Timeline saved successfully');
     } catch (err) {
-      notify('Error', 'Something went wrong');
+      if (err.data.statusCode === 430) {
+        notify('Error', err.data.message);
+      } else {
+        notify('Error', 'Something went wrong');
+      }
     }
   };
 
   useEffect(() => {
     getTimeline({
-      id: activityId ?? id.toString(),
+      id: id.toString(),
       collectionQuery: undefined,
     });
-  }, [activityId, getTimeline, id]);
+  }, [getTimeline, id]);
 
   useEffect(() => {
     if (isTimelineSuccess && timeline?.total !== 0) {
@@ -237,6 +252,7 @@ export default function TimelineTab({ activityId }: { activityId?: string }) {
 
   return (
     <div className="mt-4">
+      {/* {<Table config={listplannedConfig} data={data} />} */}
       {data.length != 0 && <Table config={listConfig} data={data} />}
       {!activityId && (
         <Group className="mt-2" justify="end">

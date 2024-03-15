@@ -17,9 +17,13 @@ export class GuaranteeExtension {
   remark: string;
   @Column({ type: 'date', nullable: true })
   extensionDate: Date;
-  @Column({ type: 'enum', enum: ['reviewed', 'approved', 'rejected'] })
+  @Column({
+    type: 'enum',
+    enum: ['reviewed', 'approved', 'rejected'],
+    nullable: true,
+  })
   status: string;
-  @ManyToOne(() => Guarantee, (guarantee) => guarantee.GuaExtensions, {
+  @ManyToOne(() => Guarantee, (guarantee) => guarantee.guaranteeExtensions, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'guaranteeId' })

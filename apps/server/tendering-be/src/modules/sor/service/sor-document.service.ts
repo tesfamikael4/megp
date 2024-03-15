@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { SorDocument } from 'src/entities/sor-document.entity';
 import { MinIOService } from 'src/shared/min-io/min-io.service';
 import { CreateSorDocumentDto } from '../dto/sor-document.dto';
+import { BucketNameEnum } from 'src/shared/min-io/bucket-name.enum';
 
 @Injectable()
 export class SorDocumentService extends ExtraCrudService<SorDocument> {
@@ -17,6 +18,7 @@ export class SorDocumentService extends ExtraCrudService<SorDocument> {
   }
 
   async create(itemData: CreateSorDocumentDto): Promise<any> {
+    itemData.file.bucketName = BucketNameEnum.SOR_DOCUMENT;
     const file = await this.minIOService.generatePresignedUploadUrl(
       itemData.file as any,
     );

@@ -4,6 +4,8 @@ import {
   Get,
   Param,
   Post,
+  Query,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
@@ -15,7 +17,11 @@ import {
 import { ProcurementRequisition } from 'src/entities';
 import { EntityCrudOptions } from 'src/shared/types/crud-option.type';
 import { EntityCrudController } from 'src/shared/controller';
-import { CurrentUser } from 'src/shared/authorization';
+import {
+  AllowAnonymous,
+  ApiKeyGuard,
+  CurrentUser,
+} from 'src/shared/authorization';
 import { TransactionInterceptor } from 'src/shared/interceptors';
 import { EventPattern } from '@nestjs/microservices';
 import { ApiPaginatedResponse } from 'src/shared/api-data';
@@ -59,5 +65,17 @@ export class ProcurementRequisitionController extends EntityCrudController<Procu
   @ApiPaginatedResponse(ProcurementRequisition)
   async getAnalytics(@Param('id') id: string) {
     return await this.procurementRequisitionService.getAnalytics(id);
+  }
+  //for tendering
+  @AllowAnonymous()
+  @UseGuards(ApiKeyGuard)
+  @Get('get-procurement-requisition')
+  @ApiPaginatedResponse(ProcurementRequisition)
+  async getProcurementRequisitionByReference(
+    @Query('procurementReference') procurementReference: string,
+  ) {
+    return await this.procurementRequisitionService.getProcurementRequisitionByReference(
+      procurementReference,
+    );
   }
 }

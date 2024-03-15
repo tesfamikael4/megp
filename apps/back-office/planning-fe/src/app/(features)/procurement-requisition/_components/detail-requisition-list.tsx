@@ -10,12 +10,12 @@ export const DetailRequisition = ({ requisition }: { requisition: any }) => {
   const data = [
     {
       key: 'Reference',
-      value: requisition.requisitionReferenceNumber,
+      value: requisition.procurementReference,
       titleStyle: (theme) => ({ color: theme.colors.green[6] }),
     },
     {
       key: 'Title',
-      value: requisition.title,
+      value: requisition.name,
     },
     {
       key: 'Description',

@@ -1,85 +1,14 @@
 'use client';
-import { BidSecurity } from '@/models/bidSecurity';
-import {
-  useLazyGetUintByIdQuery,
-  useOrganizationsQuery,
-} from '@/store/api/organazation/organazation.api';
-import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  Accordion,
-  Box,
-  Button,
-  Divider,
-  Flex,
-  Modal,
-  Select,
-  Table,
-  Text,
-  Textarea,
-} from '@mantine/core';
-import { useDisclosure, useMediaQuery } from '@mantine/hooks';
-import { CollectionQuery } from '@megp/entity';
+
+import { Accordion, Box, Divider, Flex, Table, Text } from '@mantine/core';
 import { IconFileInvoice } from '@tabler/icons-react';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
-import { ZodType, z } from 'zod';
-
-const defaultValues = {
-  guarantorId: '',
-  guarantorBranchId: '',
-  remark: '',
-};
-
-const NewBidSecurity = () => {
-  const bidSecuritySchema: ZodType<Partial<BidSecurity>> = z.object({
-    guarantorId: z.string().min(1, { message: 'This field is required' }),
-    guarantorBranchId: z.string().min(1, { message: 'This field is required' }),
-    remark: z.string().min(1, { message: 'This field is required' }),
-  });
-  const {
-    handleSubmit,
-    reset,
-    formState: { errors },
-    control,
-    register,
-    watch,
-  } = useForm({
-    resolver: zodResolver(bidSecuritySchema),
-  });
-
+import { useState } from 'react';
+import FormDetail from '../_components/form-detail';
+export default function BidSecurityPage() {
   const [openedTerm, setOpenedTerm] = useState(false);
-  const [opened, { toggle }] = useDisclosure(false);
-  const [open, setOpen] = useState(false);
-  const isMobile = useMediaQuery('(max-width: 768px)');
-  const router = useRouter();
-  const handleButtonClick = () => {
-    setOpen(true);
-  };
   const togglePanel = () => {
     setOpenedTerm(!openedTerm);
   };
-  const { data: guarantor } = useOrganizationsQuery({});
-  const [trigger, { data }] = useLazyGetUintByIdQuery();
-  const guarantorId = watch('guarantorId');
-
-  useEffect(() => {
-    if (guarantorId) {
-      const request: CollectionQuery = {
-        where: [
-          [
-            {
-              column: 'parentId',
-              value: guarantorId,
-              operator: '=',
-            },
-          ],
-        ],
-      };
-      trigger(guarantorId);
-    }
-  }, [guarantorId]);
-
   return (
     <Flex>
       <Box className=" w-full p-6 bg-[#e7f4f7]">
@@ -195,88 +124,9 @@ const NewBidSecurity = () => {
             </Accordion.Item>
           </Accordion>
 
-          <Flex gap={30} className="mt-5">
-            <Controller
-              name="guarantorId"
-              control={control}
-              render={({ field: { onChange, value, name } }) => (
-                <Select
-                  w={570}
-                  name={name}
-                  label="Guarantor"
-                  value={value}
-                  withAsterisk
-                  error={
-                    errors?.guarantorId
-                      ? errors?.guarantorId?.message?.toString()
-                      : ''
-                  }
-                  onChange={onChange}
-                  data={
-                    guarantor?.items?.map((guarantor) => ({
-                      value: guarantor?.id,
-                      label: guarantor?.name,
-                    })) || []
-                  }
-                />
-              )}
-            />
-            <Controller
-              name="guarantorBranchId"
-              control={control}
-              render={({ field: { onChange, value, name } }) => (
-                <Select
-                  w={570}
-                  name={name}
-                  label="Guarantor Branch"
-                  value={value}
-                  withAsterisk
-                  error={
-                    errors?.guarantorId
-                      ? errors?.guarantorId?.message?.toString()
-                      : ''
-                  }
-                  onChange={onChange}
-                  data={
-                    data?.items?.map((branch) => ({
-                      value: branch?.id,
-                      label: branch?.name,
-                    })) || []
-                  }
-                />
-              )}
-            />
-          </Flex>
-          <Flex justify={'flex-end'} gap={30}>
-            <Box></Box>
-            <Button w={100} className=" mt-5 " onClick={handleButtonClick}>
-              Save
-            </Button>
-          </Flex>
-          <Modal
-            opened={open}
-            onClose={() => setOpen(false)}
-            centered
-            title="Add Guarantee Remark "
-          >
-            <Textarea
-              label="Remark"
-              resize="vertical"
-              autosize
-              minRows={2}
-              maxRows={6}
-            />
-            <Flex justify="flex-end" gap={10}>
-              <Button variant="outline" className="mt-5">
-                Cancel
-              </Button>
-              <Button className="mt-5">Done</Button>
-            </Flex>
-          </Modal>
+          <FormDetail mode="new" />
         </Box>
       </Box>
     </Flex>
   );
-};
-
-export default NewBidSecurity;
+}

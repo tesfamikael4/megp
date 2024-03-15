@@ -48,8 +48,6 @@ export function Items({ activityId }: { activityId?: string }) {
 
   const [updateItem, { isLoading: isUpdating }] = useUpdateMutation();
 
-  const route = useRouter();
-
   const [listById, { data: itemsList, isSuccess, isLoading }] =
     useLazyGetPrItemsQuery();
 
@@ -266,11 +264,15 @@ export function Items({ activityId }: { activityId?: string }) {
           };
         });
         await addItems(castedData).unwrap();
-        route.push(`/procurement-requisition/${id}`);
+
         notify('Success', 'Items Created Success-fully');
         setNewItems([]);
       } catch (err) {
-        notify('Error', 'Something Went wrong');
+        if (err.data.statusCode === 430) {
+          notify('Error', err.data.message);
+        } else {
+          notify('Error', 'Something went wrong');
+        }
       }
     }
   };

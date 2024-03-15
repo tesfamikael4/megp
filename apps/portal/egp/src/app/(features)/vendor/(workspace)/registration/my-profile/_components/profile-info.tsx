@@ -1,11 +1,10 @@
 'use client';
 import React from 'react';
-import { LoadingOverlay, Text } from '@mantine/core';
+import { Divider, Text } from '@mantine/core';
 import { useGetApproveVendorInfoQuery } from '../_api/query';
-import { Avatar, Badge, Box, Flex, Paper, ScrollArea } from '@mantine/core';
-import { processCompanyName } from '../../../service/_util';
-import { badgeBGColor, badgeTextColor } from '../../../_constants';
+import { Box, Flex, Paper, ScrollArea } from '@mantine/core';
 import FormPreview from '../../_components/review/form-preview';
+import { addSpacesToCamelCase } from '../../_components/review/addSpaceToCamelCase';
 
 export default function ProfileInfo() {
   const { data, isLoading } = useGetApproveVendorInfoQuery({});
@@ -25,33 +24,24 @@ export default function ProfileInfo() {
         </Box>
       </Box>
     );
-  const { initials, color } = processCompanyName(data?.basic?.name);
+
   return (
     <Box className="p-4">
       <Box className=" w-full min-h-screen bg-white  relative">
-        <Paper className="p-4 pb-0">
-          <Flex
-            direction="row"
-            className="flex items-center justify-between w-full border-b"
-          >
-            <Flex direction="row">
-              <Box className="p-3">
-                <Avatar color={'white'} radius="xl" size="lg" bg={color}>
-                  {initials}
-                </Avatar>
-              </Box>
-              <Flex
-                direction="column"
-                className="w-full text-sm justify-center"
-              >
-                <Box className="text-primary-800 font-bold" size="xl">
-                  {data.basic.name}
-                </Box>
-                <Box>Country: {data.basic.origin}</Box>
-              </Flex>
+        <Paper className="p-7">
+          <Flex direction="column" className="w-full text-sm justify-center">
+            <Flex align="center" columnGap={4}>
+              <Text className="text-primary-800 font-bold" size="xl">
+                {data.basic.name}
+              </Text>
+              ({data.basic.origin})
             </Flex>
+            <Text size="md">
+              {addSpacesToCamelCase(data.basic?.businessType)}
+            </Text>
           </Flex>
         </Paper>
+        <Divider />
         <ScrollArea className="h-screen w-full p-4">
           <FormPreview data={data} />
         </ScrollArea>

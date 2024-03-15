@@ -31,6 +31,8 @@ export class IsrVendorsEntity extends Audit {
   @Column({ type: 'jsonb', nullable: true })
   areasOfBusinessInterest: any;
   @Column({ type: 'jsonb', nullable: true })
+  lineOfBusiness: any;
+  @Column({ type: 'jsonb', nullable: true })
   invoice: any;
   @Column({ type: 'jsonb', nullable: true })
   supportingDocuments: any;
