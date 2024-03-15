@@ -1,10 +1,25 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
+import { PaymentInvoice } from 'src/entities/payment-invoice.entity';
+import { Repository } from 'typeorm';
+import { InitiatePaymentDto } from '../dto/initiate-payment.dto';
 
 @Injectable()
 export class MpgsPaymentService {
-  async initiatePayment() {
+  constructor(
+    @InjectRepository(PaymentInvoice)
+    private readonly paymentInvoiceRepository: Repository<PaymentInvoice>,
+  ) {}
+
+  async initiatePayment(request: InitiatePaymentDto) {
     try {
+      const orderId = `ORDER-${Date.now()}`;
+
+      const notificationUrl =
+        process.env.MPGS_PAYMENT_NOTIFICATION_URL ??
+        'https://dev-bo.megp.peragosystems.com/infrastructure/api/mpgs-payments/notify';
+
       const payload = {
         apiOperation: 'INITIATE_CHECKOUT',
         interaction: {
@@ -21,15 +36,13 @@ export class MpgsPaymentService {
           timeoutUrl: 'https://www.google.com',
           cancelUrl: 'http://www.google.com',
           operation: 'PURCHASE',
-          // "style": {
-          //     "accentColor": "#30cbe3"
-          // }
         },
         order: {
-          amount: '123.60',
-          currency: 'MWK',
+          amount: request.amount,
+          currency: request.currency,
           description: 'This is the order description',
-          id: 'ORDER-4142773a-ac2e',
+          id: orderId,
+          notificationUrl: notificationUrl,
         },
       };
 
@@ -48,11 +61,48 @@ export class MpgsPaymentService {
 
       const data = await result.data;
 
+      const invoice = this.paymentInvoiceRepository.create({
+        applicationKey: request.applicationKey,
+        amount: request.amount,
+        currency: request.currency,
+        invoiceReference: request.invoiceReference,
+        sessionId: data.session.id,
+        orderId: orderId,
+        notificationUrl: notificationUrl,
+        callbackUrl: request.callbackUrl,
+        status: 'PENDING',
+      });
+
+      await this.paymentInvoiceRepository.insert(invoice);
+
       return {
         ...data,
         paymentLink:
           process.env.MPGS_PAYMENT_CHECKOUT_BASE_API + data.session.id,
       };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async paymentStatusNotification(payload: any, req: any) {
+    try {
+      const paymentInvoice = await this.paymentInvoiceRepository.findOneBy({
+        orderId: payload.order.id,
+      });
+      if (!paymentInvoice) {
+        throw new BadRequestException('payment_invoice_not_found');
+      }
+
+      await this.paymentInvoiceRepository.update(paymentInvoice.id, {
+        status: payload.result,
+      });
+
+      const requestPayload = {
+        status: payload.result,
+        invoiceReference: payload.invoiceReference,
+      };
+      await axios.post(paymentInvoice.callbackUrl, requestPayload);
     } catch (error) {
       throw error;
     }
