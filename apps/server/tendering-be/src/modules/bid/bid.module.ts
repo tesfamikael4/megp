@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { BidSecurity } from 'src/entities';
-import { BidSecurityController } from './controller';
-import { BidSecurityService } from './service';
+import { BidBookmark } from 'src/entities/bid-bookmark.entity';
+import { BidBookmarkController } from './controller/bid-bookmark.controller';
+import { BidBookmarkService } from './service/bid-bookmark.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([BidSecurity])],
-  controllers: [BidSecurityController],
-  providers: [BidSecurityService],
+  imports: [TypeOrmModule.forFeature([BidBookmark])],
+  controllers: [BidBookmarkController],
+  providers: [BidBookmarkService],
 })
 export class BidModule {}

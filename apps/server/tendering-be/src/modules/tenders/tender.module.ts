@@ -32,6 +32,12 @@ import { TenderSpdBidFormController } from './controller/tender-spd-bid-form.con
 import { TenderSpdBidFormService } from './service/tender-spd-bid-form.service';
 import { MinIOModule } from 'src/shared/min-io/min-io.module';
 import { TenderSpdContractFormController } from './controller/tender-spd-contract-form.controller';
+import { TenderClassification } from 'src/entities/tender-classification.entity';
+import { TenderParticipationFee } from 'src/entities/tender-participation-fee.entity';
+import { TenderClassificationService } from './service/tender-classification.service';
+import { TenderParticipationFeeService } from './service/tender-participation-fee.service';
+import { TenderClassificationController } from './controller/tender-classification.controller';
+import { TenderParticipationFeeController } from './controller/tender-participation-fee.controller';
 
 @Module({
   imports: [
@@ -44,6 +50,8 @@ import { TenderSpdContractFormController } from './controller/tender-spd-contrac
       ProcurementTechnicalTeam,
       TenderSpdBidForm,
       TenderSpdContractForm,
+      TenderClassification,
+      TenderParticipationFee,
     ]),
     MinIOModule,
   ],
@@ -56,6 +64,8 @@ import { TenderSpdContractFormController } from './controller/tender-spd-contrac
     ProcurementTechnicalTeamController,
     TenderSpdBidFormController,
     TenderSpdContractFormController,
+    TenderClassificationController,
+    TenderParticipationFeeController,
   ],
   providers: [
     TenderSpdService,
@@ -67,6 +77,8 @@ import { TenderSpdContractFormController } from './controller/tender-spd-contrac
     FileHelperService,
     TenderSpdContractFormService,
     TenderSpdBidFormService,
+    TenderClassificationService,
+    TenderParticipationFeeService,
   ],
 })
 export class TenderModule {}

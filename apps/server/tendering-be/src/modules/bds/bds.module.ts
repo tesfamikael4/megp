@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {
   BdsAward,
+  BdsBidSecurity,
   BdsEvaluation,
   BdsGeneral,
   BdsPreparation,
@@ -17,6 +18,8 @@ import { BdsEvaluationService } from './service/evaluation.service';
 import { BdsGeneralService } from './service/general.service';
 import { BdsPreparationService } from './service/preparation.service';
 import { BdsSubmissionService } from './service/submission.service';
+import { BdsBidSecurityController } from './controller/bid-security.controller';
+import { BdsBidSecurityService } from './service/bid-security.service';
 
 @Module({
   imports: [
@@ -26,6 +29,7 @@ import { BdsSubmissionService } from './service/submission.service';
       BdsGeneral,
       BdsPreparation,
       BdsSubmission,
+      BdsBidSecurity,
     ]),
   ],
   controllers: [
@@ -34,6 +38,7 @@ import { BdsSubmissionService } from './service/submission.service';
     BdsGeneralController,
     BdsPreparationController,
     BdsSubmissionController,
+    BdsBidSecurityController,
   ],
   providers: [
     BdsAwardService,
@@ -41,6 +46,7 @@ import { BdsSubmissionService } from './service/submission.service';
     BdsGeneralService,
     BdsPreparationService,
     BdsSubmissionService,
+    BdsBidSecurityService,
   ],
 })
 export class BdsModule {}
