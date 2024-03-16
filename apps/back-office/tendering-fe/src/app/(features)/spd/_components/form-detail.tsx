@@ -62,7 +62,7 @@ export function FormDetail({ mode }: FormDetailProps) {
   const onCreate = async (data) => {
     logger.log('here');
     try {
-      const result = await create({ ...data, isActive: true });
+      const result = await create({ ...data, isActive: false });
       if ('data' in result) {
         router.push(`/spd/${result.data.id}`);
       }

@@ -78,7 +78,7 @@ export function SpdTechnicalScoringFormDetail({
       await create({
         ...data,
         spdId: id,
-        parentId: parentId ?? '00000000-0000-0000-0000-000000000000',
+        parentId: parentId ?? null,
         orderNo: 1,
       });
       notify('Success', 'technical scoring created successfully');

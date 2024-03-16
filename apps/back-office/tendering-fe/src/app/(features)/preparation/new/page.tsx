@@ -22,7 +22,7 @@ const fakeData = [
 
 export default function TenderingPage() {
   const router = useRouter();
-  const [trigger, { isLoading }] = useLazyListQuery();
+  const [trigger, { data, isLoading }] = useLazyListQuery();
 
   const [create, { isLoading: isSaving }] = useCreateMutation();
   const onClickPRSelection = async (value: any) => {
@@ -40,12 +40,12 @@ export default function TenderingPage() {
   const config = {
     columns: [
       {
-        accessor: 'requisitionReferenceNumber',
+        accessor: 'procurementReference',
         title: '#Ref',
         width: 150,
         sortable: true,
       },
-      { accessor: 'title', title: 'Title', width: 200, sortable: true },
+      { accessor: 'name', title: 'Title', width: 200, sortable: true },
       {
         accessor: 'description',
         title: 'Description',
@@ -56,19 +56,10 @@ export default function TenderingPage() {
       {
         accessor: 'calculatedAmount',
         title: 'Total Amount',
-        textAlign: 'right',
         sortable: true,
-        // render: (activity) => (
-        //   <>
-        //     {parseInt(activity.calculatedAmount).toLocaleString('en-US', {
-        //       style: 'currency',
-        //       currency: activity.currency,
-        //       minimumFractionDigits: 2,
-        //       maximumFractionDigits: 2,
-        //       currencyDisplay: 'code',
-        //     })}
-        //   </>
-        // ),
+        render: (pr) => (
+          <>{parseInt(pr.calculatedAmount).toLocaleString('en-US')}</>
+        ),
         width: 150,
       },
       {
@@ -103,24 +94,19 @@ export default function TenderingPage() {
   };
   return (
     <>
-      <div className="w-full flex flex-col gap-6 justify-start bg-white p-6">
-        <div className="w-full flex flex-col gap-4">
-          <Section title="Select Procurement Requisition" collapsible={false}>
-            <div className="w-5/6 xl:w-3/4 flex flex-col items-start">
-              <p className="text-sm">
-                To create a tender you should select a procurement requisition
-                first
-              </p>
-            </div>
-            <ExpandableTable
-              config={config}
-              data={fakeData ?? []}
-              total={fakeData.length ?? 0}
-              onRequestChange={onRequestChange}
-            />
-          </Section>
+      <Section title="Select Procurement Requisition" collapsible={false}>
+        <div className="w-5/6 xl:w-3/4 flex flex-col items-start">
+          <p className="text-sm">
+            To create a tender you should select a procurement requisition first
+          </p>
         </div>
-      </div>
+        <ExpandableTable
+          config={config}
+          data={data ? data.items : fakeData ?? []}
+          total={fakeData.length ?? 0}
+          onRequestChange={onRequestChange}
+        />
+      </Section>
     </>
   );
 }

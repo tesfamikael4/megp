@@ -23,6 +23,7 @@ import BidForm from '../_components/bid-form';
 import { useReadQuery } from '../_api/spd.api';
 import { Section } from '@megp/core-fe';
 import ContractForm from '../_components/contract-form';
+import { useApproveSpdMutation } from '../_api/approve-spd.api';
 export default function SpdDetailPage() {
   const router = useRouter();
   const [currentTab, setCurrentTab] = useState('definition');
@@ -31,6 +32,7 @@ export default function SpdDetailPage() {
   });
   const { id } = useParams();
   const { data: selected, isLoading } = useReadQuery(id?.toString());
+  const [approve, { isLoading: isChanging }] = useApproveSpdMutation();
 
   return (
     <>
@@ -50,9 +52,34 @@ export default function SpdDetailPage() {
               </Flex>
             </Tooltip>
             <div className="flex space-x-4">
-              <Button variant="filled" className="my-auto">
-                Activate
-              </Button>
+              {selected &&
+                (selected.isActive ? (
+                  <>
+                    <Button
+                      variant="filled"
+                      loading={isChanging}
+                      className="my-auto bg-red-500"
+                      onClick={() => {
+                        approve({ id: selected.id });
+                      }}
+                    >
+                      Deactivate
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button
+                      variant="filled"
+                      className="my-auto"
+                      loading={isChanging}
+                      onClick={() => {
+                        approve({ id: selected.id });
+                      }}
+                    >
+                      Activate
+                    </Button>
+                  </>
+                ))}
             </div>
           </div>
           <div className="flex">

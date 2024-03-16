@@ -32,7 +32,7 @@ export function BillOfMaterialTreeTable({
     <NodeTree
       childrenScoring={boq.filter((s) => s.parentCode === record.code)}
       boq={boq}
-      padding={0}
+      padding={10}
     />
   );
   const Action = ({ data }: any) => {
@@ -129,16 +129,19 @@ export function BillOfMaterialTreeTable({
           {
             accessor: 'description',
             title: 'Description',
+            width: 300,
             noWrap: true,
             render: ({ id, description }) => (
               <>
                 <div className="flex">
-                  {expandedIds.includes(id) ? (
-                    <IconChevronDown size={20} />
-                  ) : (
-                    <IconChevronRight size={20} />
-                  )}
-                  <span>{description}</span>
+                  <div>
+                    {expandedIds.includes(id) ? (
+                      <IconChevronDown size={20} />
+                    ) : (
+                      <IconChevronRight size={20} />
+                    )}
+                  </div>
+                  <span className="whitespace-pre-line">{description}</span>
                 </div>
               </>
             ),
@@ -177,7 +180,7 @@ export function BillOfMaterialTreeTable({
         withCloseButton={false}
       >
         <div className="flex justify-between">
-          <h2 className="font-medium text-lg capitalize">Technical Scoring</h2>
+          <h2 className="font-medium text-lg capitalize">Bill of Material</h2>
           <IconX onClick={close} />
         </div>
         <Divider mt={'md'} mb={'md'} />
@@ -302,16 +305,19 @@ export function NodeTree({
           {
             accessor: 'description',
             title: 'Description',
+            width: 300,
             noWrap: true,
             render: ({ id, description }) => (
               <>
-                <div className="flex">
-                  {expandedIds.includes(id) ? (
-                    <IconChevronDown size={20} />
-                  ) : (
-                    <IconChevronRight size={20} />
-                  )}
-                  <span>{description}</span>
+                <div className={`flex pl-${padding}`}>
+                  <div>
+                    {expandedIds.includes(id) ? (
+                      <IconChevronDown size={20} />
+                    ) : (
+                      <IconChevronRight size={20} />
+                    )}
+                  </div>
+                  <span className="whitespace-pre-line">{description}</span>
                 </div>
               </>
             ),

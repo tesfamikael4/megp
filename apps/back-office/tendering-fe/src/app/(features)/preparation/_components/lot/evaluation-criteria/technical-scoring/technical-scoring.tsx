@@ -4,7 +4,7 @@ import { Box, Button, Divider, Modal } from '@mantine/core';
 import { IconX, IconPlus } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
 import { TechnicalScoringFormDetail } from './technical-scoring-form-detail';
-import { ScoringTable } from '@/app/(features)/_components/scoring-table';
+import { ScoringTable } from './scoring-table';
 import { useListByIdQuery } from '@/app/(features)/preparation/_api/lot/technical-scoring.api';
 
 export default function TechnicalScoring({ lotId }: { lotId: string }) {
@@ -24,7 +24,10 @@ export default function TechnicalScoring({ lotId }: { lotId: string }) {
         </Button>
       }
     >
-      <ScoringTable scoring={technicalScoring ? technicalScoring.items : []} />
+      <ScoringTable
+        scoring={technicalScoring ? technicalScoring.items : []}
+        lotId={lotId}
+      />
       <Modal
         opened={opened}
         size={'xl'}
