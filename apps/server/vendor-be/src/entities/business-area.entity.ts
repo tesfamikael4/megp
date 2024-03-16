@@ -53,5 +53,4 @@ export class BusinessAreaEntity extends Audit {
   @ManyToOne(() => ServicePrice, (servicePrice) => servicePrice.businessAreas)
   @JoinColumn({ name: 'priceRangeId' })
   servicePrice: ServicePrice;
-
 }

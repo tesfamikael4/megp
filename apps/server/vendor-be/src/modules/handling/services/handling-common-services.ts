@@ -9,7 +9,7 @@ export class HandlingCommonService {
   constructor(
     @InjectRepository(WorkflowInstanceEntity)
     private readonly wfiRepository: Repository<WorkflowInstanceEntity>,
-  ) { }
+  ) {}
   generateRandomString(length: number, prefix = '') {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     const charsLength = characters.length;

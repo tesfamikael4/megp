@@ -27,7 +27,9 @@ export class BpServiceService extends EntityCrudService<BpServiceEntity> {
       },
     });
   }
-  async getPreferentialTreatmentByKeys(keys: string[]): Promise<BpServiceEntity[]> {
+  async getPreferentialTreatmentByKeys(
+    keys: string[],
+  ): Promise<BpServiceEntity[]> {
     return await this.serviceRepository.find({
       select: { id: true, name: true },
       where: {

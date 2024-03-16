@@ -79,5 +79,4 @@ export class BusinessProcessService extends EntityCrudService<BusinessProcessEnt
       throw new Error(error);
     }
   }
-
 }

@@ -24,11 +24,10 @@ import { CreateAreasOfBusinessInterest } from '../dto/areas-of-business-interest
 @UseGuards(JwtGuard)
 @ApiResponse({ status: 500, description: 'Internal error' })
 export class InvoicesController {
-  constructor(private invoiceService: InvoiceService) { }
+  constructor(private invoiceService: InvoiceService) {}
 
   @Get('get-my-upgrade-invoice')
   async getMyInvoice(@CurrentUser() userInfo: any) {
-
     return await this.invoiceService.getMyInvoice(
       userInfo.id,
       ServiceKeyEnum.REGISTRATION_UPGRADE,
@@ -43,12 +42,11 @@ export class InvoicesController {
     if (businesses.length > 0) {
       const result = await this.invoiceService.generateNewregistrationInvoice(
         businesses,
-        user
+        user,
       );
-      if (result)
-        return HttpStatus.CREATED;
+      if (result) return HttpStatus.CREATED;
       else {
-        throw new HttpException("Invoice not created", 400)
+        throw new HttpException('Invoice not created', 400);
       }
     } else {
       throw new HttpException('Invalid Request', HttpStatus.BAD_REQUEST);
@@ -71,7 +69,6 @@ export class InvoicesController {
 
   @Get('get-my-renewal-invoice')
   async getMyRenewalInvoice(@CurrentUser() userInfo: any) {
-
     return await this.invoiceService.getMyInvoice(
       userInfo.id,
       ServiceKeyEnum.REGISTRATION_RENEWAL,
@@ -84,7 +81,6 @@ export class InvoicesController {
       ServiceKeyEnum.NEW_REGISTRATION,
     );
   }
-
 
   @Post('generate-upgrade-invoice')
   async generateServiceInvoiceForUpgrade(

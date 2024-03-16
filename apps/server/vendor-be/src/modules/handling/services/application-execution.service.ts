@@ -33,8 +33,8 @@ export class ApplicationExcutionService {
     private readonly vendorService: VendorRegistrationsService,
     private readonly baService: BusinessAreaService,
     private readonly invoiceService: InvoiceService,
-    private readonly ptService: PreferentailTreatmentService
-  ) { }
+    private readonly ptService: PreferentailTreatmentService,
+  ) {}
 
   async getCurruntTaskByServiceKey(
     serviceKey: string,
@@ -147,20 +147,27 @@ export class ApplicationExcutionService {
       response.isrvendor.areasOfBusinessInterest = businessInterest;
     }
     const preferentialkeys = this.commonService.getPreferencialServices();
-    if (preferentialkeys.filter((item) => appData.service.key == item).length > 0
+    if (
+      preferentialkeys.filter((item) => appData.service.key == item).length > 0
     ) {
-      const preferential = await this.ptService.getPreferetialTreatmentsByUserId(appData.serviceId, userInfo)
+      const preferential =
+        await this.ptService.getPreferetialTreatmentsByUserId(
+          appData.serviceId,
+          userInfo,
+        );
       delete preferential.userId;
       const serviceName = preferential.service.name;
       delete preferential.service;
-      const pt = { serviceName: serviceName, ...this.commonService.reduceAttributes(preferential) };
+      const pt = {
+        serviceName: serviceName,
+        ...this.commonService.reduceAttributes(preferential),
+      };
 
       if (preferential) {
         response.preferential = pt;
         return response;
       }
-    }
-    else if (ServiceKeyEnum.REGISTRATION_RENEWAL == serviceKey) {
+    } else if (ServiceKeyEnum.REGISTRATION_RENEWAL == serviceKey) {
       const business: BusinessAreaEntity = instance.isrVendor.businessAreas[0];
       const result = await this.appendRenewalData(business, instance, response);
       response = { ...result };
@@ -174,7 +181,11 @@ export class ApplicationExcutionService {
         response.isrvendor.userId,
         appData.serviceId,
       );
-      const result = await this.appendProfileData(vendorInfo, response, businessInterest);
+      const result = await this.appendProfileData(
+        vendorInfo,
+        response,
+        businessInterest,
+      );
       response.isrvendor.businessAreas = null;
       return result;
     }
@@ -186,8 +197,11 @@ export class ApplicationExcutionService {
   /*
   Append renewal information in to response object
   */
-  async appendRenewalData(business: BusinessAreaEntity, instance: any, response: any) {
-
+  async appendRenewalData(
+    business: BusinessAreaEntity,
+    instance: any,
+    response: any,
+  ) {
     const formattedBusinessclass = this.commonService.formatPriceRange(
       business.servicePrice,
     );
@@ -212,7 +226,11 @@ export class ApplicationExcutionService {
   /*
  Append upgrade information in to response object
  */
-  async appendUpgradeData(business: BusinessAreaEntity, instance: WorkflowInstanceEntity, response: any) {
+  async appendUpgradeData(
+    business: BusinessAreaEntity,
+    instance: WorkflowInstanceEntity,
+    response: any,
+  ) {
     const previousBusinessClass =
       await this.baService.getPreviousUpgradeService(
         instance.requestorId,
@@ -252,7 +270,11 @@ export class ApplicationExcutionService {
   /*
  Append profile information in to response object
  */
-  async appendProfileData(vendorInfo: any, response: any, businessInterest: any) {
+  async appendProfileData(
+    vendorInfo: any,
+    response: any,
+    businessInterest: any,
+  ) {
     if (vendorInfo?.ProfileInfo) {
       const profileUpdate = vendorInfo?.ProfileInfo[0];
       for (const price of profileUpdate.profileData.areasOfBusinessInterest) {
@@ -268,9 +290,7 @@ export class ApplicationExcutionService {
           lineOfBusiness: bls,
         });
       }
-      profileUpdate.profileData.areasOfBusinessInterest = [
-        ...businessInterest,
-      ];
+      profileUpdate.profileData.areasOfBusinessInterest = [...businessInterest];
       const bainfo = profileUpdate.profileData.bankAccountDetails.map(
         (item: any) => {
           if (item.isDefualt) {
@@ -282,8 +302,8 @@ export class ApplicationExcutionService {
         },
       );
       profileUpdate.profileData.bankAccountDetails = [...bainfo];
-      const shareholders = profileUpdate.profileData.shareHolders.map(
-        (item) => this.reduceAttributes(item),
+      const shareholders = profileUpdate.profileData.shareHolders.map((item) =>
+        this.reduceAttributes(item),
       );
       profileUpdate.profileData.shareholders = shareholders;
       const beneficialOwnership =

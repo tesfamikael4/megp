@@ -45,35 +45,49 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     private readonly pricingService: ServicePricingService,
     private readonly commonService: HandlingCommonService,
     private readonly baService: BusinessAreaService,
-    private readonly bpService: BusinessProcessService
-
+    private readonly bpService: BusinessProcessService,
   ) {
     super(invoiceRepository);
   }
-  async generateNewregistrationInvoice(businesses: CreateAreasOfBusinessInterest[], user: any,) {
+  async generateNewregistrationInvoice(
+    businesses: CreateAreasOfBusinessInterest[],
+    user: any,
+  ) {
     try {
       const priceRangeIds = businesses.map((item) => item.priceRange);
       const vendor = await this.vendorsRepository.findOne({
         where: { userId: user.id },
       });
       if (!vendor) {
-        throw new HttpException("Register as  Vendor", 4040);
+        throw new HttpException('Register as  Vendor', 4040);
       }
       let regenerateInvoice = false;
-      let draftedBAs = []
-      const serviceBp = await this.bpService.findBpWithServiceByKey(ServiceKeyEnum.NEW_REGISTRATION);
+      let draftedBAs = [];
+      const serviceBp = await this.bpService.findBpWithServiceByKey(
+        ServiceKeyEnum.NEW_REGISTRATION,
+      );
       if (!serviceBp)
-        throw new NotFoundException("Business Process Not Defined");
-      const previousInvoice = await this.getMyInvoice(user.id, ServiceKeyEnum.NEW_REGISTRATION);
+        throw new NotFoundException('Business Process Not Defined');
+      const previousInvoice = await this.getMyInvoice(
+        user.id,
+        ServiceKeyEnum.NEW_REGISTRATION,
+      );
       if (previousInvoice) {
-        draftedBAs = await this.baService.getUserInprogressBusinessAreasByServiceId(serviceBp.serviceId, user.id);
+        draftedBAs =
+          await this.baService.getUserInprogressBusinessAreasByServiceId(
+            serviceBp.serviceId,
+            user.id,
+          );
 
         for (const ba of businesses) {
           // if (previousInvoice.paymentDetail.filter((item) => item.category == ba.category).length == 0) {
           //   regenerateInvoice = true;
           //   break;
           // }
-          if (draftedBAs.filter((item) => item.priceRangeId == ba.priceRange).length == 0) {
+          if (
+            draftedBAs.filter((item) => item.priceRangeId == ba.priceRange)
+              .length == 0
+          ) {
             regenerateInvoice = true;
             break;
           }
@@ -82,14 +96,15 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
           await this.invoiceRepository.delete(previousInvoice.id);
           await this.generateInvoice(priceRangeIds, vendor, user);
         } else {
-          throw new HttpException("Invoice already generated", 400)
+          throw new HttpException('Invoice already generated', 400);
         }
       }
-      const registeredServices = await this.baService.getVendorRegisteredServices(vendor.id);
-      //check the service existence in the preouse approved services 
+      const registeredServices =
+        await this.baService.getVendorRegisteredServices(vendor.id);
+      //check the service existence in the preouse approved services
       for (const row of businesses) {
         if (registeredServices.some((item) => item.category == row.category)) {
-          return new HttpException("invalid Request", 400);
+          return new HttpException('invalid Request', 400);
         }
       }
       const bas = [];
@@ -97,14 +112,16 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
       for (const row of businesses) {
         const ba = new BusinessAreaEntity();
         ba.category = row.category;
-        const drafted = draftedBAs.find((item) => item.category == row.category);
+        const drafted = draftedBAs.find(
+          (item) => item.category == row.category,
+        );
         if (drafted) {
           ba.id = drafted.id;
         }
         ba.vendorId = vendor.id;
         ba.serviceId = serviceBp.serviceId;
         ba.priceRangeId = row.priceRange;
-        ba.status = ApplicationStatus.PENDING
+        ba.status = ApplicationStatus.PENDING;
         bas.push(ba);
         areaOfBisunessInterests.push({
           category: row.category,
@@ -113,9 +130,10 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
         });
       }
 
-
       if (bas.length) {
-        const isrvendor = await this.srRepository.findOne({ where: { id: vendor.id } });
+        const isrvendor = await this.srRepository.findOne({
+          where: { id: vendor.id },
+        });
         isrvendor.areasOfBusinessInterest.push(areaOfBisunessInterests);
         await this.srRepository.update(isrvendor.id, isrvendor);
         await this.baService.create(bas);
@@ -133,7 +151,9 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     user: any,
   ): Promise<boolean> {
     const curruntPricings =
-      await this.pricingService.findPricingWithServiceByIds(currentPriceRangeIds);
+      await this.pricingService.findPricingWithServiceByIds(
+        currentPriceRangeIds,
+      );
     if (curruntPricings.length == 0) {
       throw new NotFoundException('Not Found, please set the price range');
     }
@@ -142,7 +162,12 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     for (const item of curruntPricings) {
       totalFee = totalFee + Number(item.fee);
       const formatedBC = this.commonService.formatPriceRange(item);
-      paymentDetail.push({ name: item.service.name, category: item.businessArea, bc: formatedBC, fee: item.fee, });
+      paymentDetail.push({
+        name: item.service.name,
+        category: item.businessArea,
+        bc: formatedBC,
+        fee: item.fee,
+      });
     }
     const priceRange = curruntPricings[0];
     // const service = curruntPricings.service;
@@ -160,7 +185,6 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     if (response) return true;
     return false;
   }
-
 
   computingPaymentForUpgrade(
     ba: BusinessAreaEntity,
@@ -237,9 +261,8 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
         userId: userId,
         createdOn: MoreThanOrEqual(oneWeekAgo),
         service: {
-          key: In(serviceTypes)
+          key: In(serviceTypes),
         },
-
       },
       relations: { service: { businessAreas: true } },
     });
@@ -264,13 +287,12 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
         createdOn: MoreThanOrEqual(oneWeekAgo),
         paymentStatus: PaymentStatus.PENDING,
         service: {
-          key: serviceType
+          key: serviceType,
         },
       },
       relations: { service: true },
     });
-    if (result)
-      delete result.service;
+    if (result) delete result.service;
     return result;
   }
 
@@ -292,7 +314,11 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
   }
 
   async generateRenewalInvoice(businessAreaIds: string[], user: any) {
-    const bcs = [BusinessCategories.GOODS, BusinessCategories.WORKS, BusinessCategories.SERVICES,]
+    const bcs = [
+      BusinessCategories.GOODS,
+      BusinessCategories.WORKS,
+      BusinessCategories.SERVICES,
+    ];
     try {
       const businessAreas = businessAreaIds;
       const businessareasData = await this.businessAreaRepository.find({
@@ -301,7 +327,7 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
       });
 
       if (businessareasData.length == 0)
-        throw new HttpException("You have no approved service", 404);
+        throw new HttpException('You have no approved service', 404);
       const vendor = await this.vendorsRepository.findOne({
         where: { id: businessareasData[0].vendorId },
       });
@@ -309,10 +335,12 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
       const businessAreasNew_ = await this.businessAreaRepository.find({
         relations: { BpService: true },
         where: {
-          vendorId: vendor.id, BpService: { key: ServiceKeyEnum.REGISTRATION_RENEWAL },
-          status: ApplicationStatus.PENDING, category: In(bcs)
+          vendorId: vendor.id,
+          BpService: { key: ServiceKeyEnum.REGISTRATION_RENEWAL },
+          status: ApplicationStatus.PENDING,
+          category: In(bcs),
         },
-      })
+      });
       let invoice_ = null;
       if (businessAreasNew_.length > 0) {
         const serviceId = businessAreasNew_[0].serviceId;
@@ -320,32 +348,41 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
         oneWeekAgo.setDate(new Date().getDate() - 7);
         invoice_ = await this.invoiceRepository.findOne({
           where: {
-            serviceId: serviceId, userId: user.id,
+            serviceId: serviceId,
+            userId: user.id,
             paymentStatus: PaymentStatus.PENDING,
             createdOn: MoreThanOrEqual(oneWeekAgo),
-          }
+          },
         });
         if (invoice_.paymentDetail.length == businessAreaIds.length) {
           return { messaage: 'Invoice already Created', state: 'success' };
-
         } else {
           await this.invoiceRepository.remove(invoice_.id);
-
         }
-
       }
 
       const bp: BusinessProcessEntity =
-        await this.bpService.findBpWithServiceByKey(ServiceKeyEnum.REGISTRATION_RENEWAL);
+        await this.bpService.findBpWithServiceByKey(
+          ServiceKeyEnum.REGISTRATION_RENEWAL,
+        );
       let totalFee = 0;
       const paymentDetail: any = [];
       for (const ba of businessareasData) {
-        const price = await this.pricingService.getRenewalPrice(ba, ServiceKeyEnum.REGISTRATION_RENEWAL);
-        if (!price)
-          throw new HttpException("Renewal Price not set", 404);
+        const price = await this.pricingService.getRenewalPrice(
+          ba,
+          ServiceKeyEnum.REGISTRATION_RENEWAL,
+        );
+        if (!price) throw new HttpException('Renewal Price not set', 404);
         totalFee = totalFee + Number(price.fee);
         const formatedBC = this.commonService.formatPriceRange(price);
-        paymentDetail.push({ name: price.service.name, category: price.businessArea, bc: formatedBC, fee: price.fee, pricingId: price.id, businessAreaId: ba.id });
+        paymentDetail.push({
+          name: price.service.name,
+          category: price.businessArea,
+          bc: formatedBC,
+          fee: price.fee,
+          pricingId: price.id,
+          businessAreaId: ba.id,
+        });
         const business: BusinessAreaEntity = new BusinessAreaEntity();
         business.status = PaymentStatus.PENDING;
         business.businessAreaState = ba.businessAreaState;
@@ -356,11 +393,7 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
         business.priceRangeId = price.id;
         await this.baService.create(business);
       }
-      const invoice: InvoiceEntity = this.mapInvoice(
-        vendor,
-        bp.service,
-        user
-      );
+      const invoice: InvoiceEntity = this.mapInvoice(vendor, bp.service, user);
       if (paymentDetail.length > 0) {
         invoice.paymentDetail = [...paymentDetail];
         invoice.refNumber = this.commonService.generateRandomString(7);
@@ -369,7 +402,7 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
         const response = { messaage: 'Invoice Created', state: 'success' };
         return response;
       } else {
-        throw new HttpException("Invioice Cannot generated", 400);
+        throw new HttpException('Invioice Cannot generated', 400);
       }
     } catch (error) {
       console.log(error);
@@ -385,7 +418,9 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
         where: { userId: user.id },
       });
       const bp: BusinessProcessEntity =
-        await this.bpService.findBpWithServiceByKey(ServiceKeyEnum.REGISTRATION_UPGRADE);
+        await this.bpService.findBpWithServiceByKey(
+          ServiceKeyEnum.REGISTRATION_UPGRADE,
+        );
       for (const ba of businessArea.upgrades) {
         const bAId = ba.id;
         const newPricingId = ba.pricingId;
@@ -400,7 +435,7 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
             instanceId: businessAreaData?.instanceId,
             BpService: {
               invoices: { userId: user.id, serviceId: bp.serviceId },
-              key: ServiceKeyEnum.REGISTRATION_UPGRADE
+              key: ServiceKeyEnum.REGISTRATION_UPGRADE,
             },
           },
           relations: { BpService: { invoices: true }, servicePrice: true },
@@ -410,7 +445,6 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
           if (businessAreaNew.priceRangeId == businessAreaData.priceRangeId) {
             continue;
           }
-
         }
         const CurrentpricingData =
           await this.pricingService.findPricingWithServiceById(newPricingId);
@@ -419,8 +453,14 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
           CurrentpricingData,
         );
         totalFee = totalFee + Number(upgradePayment);
-        const formatedBC = this.commonService.formatPriceRange(CurrentpricingData);
-        paymentDetail.push({ name: bp.service.name, category: CurrentpricingData.businessArea, bc: formatedBC, fee: upgradePayment });
+        const formatedBC =
+          this.commonService.formatPriceRange(CurrentpricingData);
+        paymentDetail.push({
+          name: bp.service.name,
+          category: CurrentpricingData.businessArea,
+          bc: formatedBC,
+          fee: upgradePayment,
+        });
         const business: BusinessAreaEntity = new BusinessAreaEntity();
         business.serviceId = bp.serviceId;
         business.priceRangeId = newPricingId;
@@ -438,7 +478,7 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
         const invoice: InvoiceEntity = this.mapInvoice(
           vendor,
           bp.service,
-          user
+          user,
         );
         invoice.paymentDetail = [...paymentDetail];
         invoice.amount = totalFee;
@@ -447,8 +487,7 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
         const response = { messaage: 'Invoice Created', state: 'success' };
         return response;
       }
-      throw new HttpException("invoice not generated", 400)
-
+      throw new HttpException('invoice not generated', 400);
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
@@ -493,6 +532,4 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     });
     return invoice;
   }
-
-
 }

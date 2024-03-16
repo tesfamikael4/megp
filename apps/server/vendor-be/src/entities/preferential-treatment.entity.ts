@@ -20,7 +20,6 @@ export class PreferentialTreatmentsEntity extends Audit {
   @Column({ default: 'Submitted' })
   status: string;
 
-
   @Column({ nullable: true })
   certificateUrl: string;
   @Column()

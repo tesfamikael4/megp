@@ -41,9 +41,10 @@ import { BusinessAreaService } from '../services/business-area.service';
 @ApiResponse({ status: 500, description: 'Internal error' })
 @ApiExtraModels(DataResponseFormat)
 export class VendorRegistrationsController {
-  constructor(private readonly regService: VendorRegistrationsService,
-    private readonly baService: BusinessAreaService
-  ) { }
+  constructor(
+    private readonly regService: VendorRegistrationsService,
+    private readonly baService: BusinessAreaService,
+  ) {}
   @Get('get-isr-vendors')
   async getVendors() {
     return await this.regService.getIsrVendors();
@@ -60,9 +61,7 @@ export class VendorRegistrationsController {
     return await this.regService.getApplicationStatus(userInfo.id);
   }
   @Get('track-application')
-  async trackApplication(
-    @CurrentUser() user: any
-  ) {
+  async trackApplication(@CurrentUser() user: any) {
     return await this.regService.trackApplication(user);
   }
   @Get('get-isr-vendor-by-userId')
@@ -125,11 +124,10 @@ export class VendorRegistrationsController {
     @CurrentUser() userInfo: any,
   ) {
     data.data.userId = userInfo.id;
-    const result = await this.
-      regService.addVendorInformations(
-        data.data,
-        userInfo,
-      );
+    const result = await this.regService.addVendorInformations(
+      data.data,
+      userInfo,
+    );
     if (!result) throw new BadRequestException(`vendor registration failed`);
     return result;
   }
@@ -146,7 +144,6 @@ export class VendorRegistrationsController {
     if (!result) throw new BadRequestException(`vendor registration failed`);
     return result;
   }
-
 
   @Post('submit-vendor-information')
   async submitNewRegistratinRequest(
@@ -206,7 +203,7 @@ export class VendorRegistrationsController {
   async getApprovedVendorServiceByUserId(@CurrentUser() userInfo: any) {
     return await this.regService.getApprovedVendorServiceByUserId(userInfo.id);
   }
-  //additional services registration 
+  //additional services registration
   @Post('add-service')
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileInterceptor('attachmentUrl'))
@@ -215,7 +212,11 @@ export class VendorRegistrationsController {
     @CurrentUser() user: any,
     @Body() paymentReceiptDto: ReceiptDto,
   ) {
-    return await this.regService.addService(paymentReceiptDto, attachment, user);
+    return await this.regService.addService(
+      paymentReceiptDto,
+      attachment,
+      user,
+    );
   }
 
   @Post('upgrade-service')
@@ -226,10 +227,13 @@ export class VendorRegistrationsController {
     @CurrentUser() user: any,
     @Body() dto: ReceiptDto,
   ) {
-    return await this.regService.submitServiceUpgradeOrRenewal(attachment, user, dto, ServiceKeyEnum.REGISTRATION_UPGRADE);
+    return await this.regService.submitServiceUpgradeOrRenewal(
+      attachment,
+      user,
+      dto,
+      ServiceKeyEnum.REGISTRATION_UPGRADE,
+    );
   }
-
-
 
   @Post('renew-service')
   @ApiConsumes('multipart/form-data')
@@ -239,7 +243,12 @@ export class VendorRegistrationsController {
     @CurrentUser() user: any,
     @Body() dto: ReceiptDto,
   ) {
-    return await this.regService.submitServiceUpgradeOrRenewal(attachment, user, dto, ServiceKeyEnum.REGISTRATION_RENEWAL);
+    return await this.regService.submitServiceUpgradeOrRenewal(
+      attachment,
+      user,
+      dto,
+      ServiceKeyEnum.REGISTRATION_RENEWAL,
+    );
   }
 
   @Get('get-my-approved-services')
@@ -248,7 +257,10 @@ export class VendorRegistrationsController {
   }
   @Get('get-my-draft-reg-services')
   async getMyDraftedService(@CurrentUser() user: any) {
-    return await this.regService.getmyDraftServices(ServiceKeyEnum.NEW_REGISTRATION, user);
+    return await this.regService.getmyDraftServices(
+      ServiceKeyEnum.NEW_REGISTRATION,
+      user,
+    );
   }
 
   @Get('cancel-registration')
@@ -310,5 +322,4 @@ export class VendorRegistrationsController {
   async getpreferentialCertificates(@CurrentUser() userInfo: any) {
     return await this.regService.getCertificateInformations(userInfo.id);
   }
-
 }
