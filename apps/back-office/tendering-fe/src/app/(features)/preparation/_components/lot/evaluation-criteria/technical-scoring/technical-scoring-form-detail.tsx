@@ -73,7 +73,7 @@ export function TechnicalScoringFormDetail({
       await create({
         ...data,
         lotId: lotId,
-        parentId: parentId ?? '00000000-0000-0000-0000-000000000000',
+        parentId: parentId ?? null,
         isProfessional: false,
         hasProfessional: false,
         isRequired: false,

@@ -8,8 +8,8 @@ export const approveSpdApi = createApi({
   baseQuery: baseQuery(process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api/'),
   endpoints: (builder) => ({
     approveSpd: builder.mutation<any, any>({
-      query: (data: { id: string; itemName: string }) => ({
-        url: `spd/approve`,
+      query: (data: { id: string }) => ({
+        url: `spd/toggle-is-active`,
         method: 'POST',
         body: data,
       }),

@@ -14,15 +14,17 @@ import { SpdTechnicalScoring } from '@/models/spd/technical-scoring';
 import { logger } from '@megp/core-fe';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
-import { useDeleteMutation } from '../spd/_api/technical-scoring.api';
-import { SpdTechnicalScoringFormDetail } from '../spd/_components/technical-scoring-form-detail';
+import { useDeleteMutation } from '@/app/(features)/preparation/_api/lot/technical-scoring.api';
 import { useDisclosure } from '@mantine/hooks';
+import { TechnicalScoringFormDetail } from './technical-scoring-form-detail';
 
 export function ScoringTable({
   scoring,
+  lotId,
   onRequestChange,
 }: {
   scoring: SpdTechnicalScoring[];
+  lotId: string;
   onRequestChange?: (request) => void;
 }): React.ReactNode {
   const [expandedIds, setExpandedIds] = useState<string[]>([]);
@@ -35,6 +37,7 @@ export function ScoringTable({
       childrenScoring={scoring.filter((s) => s.parentId === record.id)}
       scoring={scoring}
       padding={0}
+      lotId={lotId}
     />
   );
   useEffect(() => {
@@ -149,18 +152,9 @@ export function ScoringTable({
             ),
           },
           {
-            accessor: 'validation',
-            title: 'Validation',
+            accessor: 'point',
+            title: 'Point',
             textAlign: 'right',
-            render: (record: SpdTechnicalScoring) => {
-              return (
-                <Box>
-                  <Text>
-                    {record.validation.min} - {record.validation.max}
-                  </Text>
-                </Box>
-              );
-            },
             width: 200,
           },
           {
@@ -192,7 +186,11 @@ export function ScoringTable({
         </div>
         <Divider mt={'md'} mb={'md'} />
         <Box className="bg-white rounded shadow-sm ">
-          <SpdTechnicalScoringFormDetail mode={mode} parentId={adId} />
+          <TechnicalScoringFormDetail
+            mode={mode}
+            parentId={adId}
+            lotId={lotId}
+          />
         </Box>
       </Modal>
     </>
@@ -203,10 +201,12 @@ export function NodeTree({
   childrenScoring,
   scoring,
   padding,
+  lotId,
 }: {
   childrenScoring: SpdTechnicalScoring[];
   scoring: SpdTechnicalScoring[];
   padding: number;
+  lotId: string;
 }): React.ReactNode {
   const [expandedIds, setExpandedIds] = useState<string[]>([]);
   const [adId, setId] = useState('');
@@ -218,6 +218,7 @@ export function NodeTree({
       childrenScoring={scoring.filter((s) => s.parentId === record.id)}
       scoring={scoring}
       padding={20 + padding}
+      lotId={lotId}
     />
   );
   const Action = ({ data }: any) => {
@@ -325,18 +326,9 @@ export function NodeTree({
             ),
           },
           {
-            accessor: 'validation',
-            title: 'Validation',
+            accessor: 'point',
+            title: 'Point',
             textAlign: 'right',
-            render: (record: SpdTechnicalScoring) => {
-              return (
-                <Box>
-                  <Text>
-                    {record.validation.min} - {record.validation.max}
-                  </Text>
-                </Box>
-              );
-            },
             width: 200,
           },
           {
@@ -368,7 +360,11 @@ export function NodeTree({
         </div>
         <Divider mt={'md'} mb={'md'} />
         <Box className="bg-white rounded shadow-sm ">
-          <SpdTechnicalScoringFormDetail mode={mode} parentId={adId} />
+          <TechnicalScoringFormDetail
+            mode={mode}
+            parentId={adId}
+            lotId={lotId}
+          />
         </Box>
       </Modal>
     </>

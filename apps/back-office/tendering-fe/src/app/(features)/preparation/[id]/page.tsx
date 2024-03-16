@@ -10,13 +10,14 @@ import {
   LoadingOverlay,
   Button,
   Select,
+  Modal,
 } from '@mantine/core';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import Items from '../_components/item/items';
-import { IconChevronLeft } from '@tabler/icons-react';
+import { IconChevronLeft, IconFolderOpen } from '@tabler/icons-react';
 import FormDetail from '../_components/tender/form-detail';
-import { Section, logger } from '@megp/core-fe';
+import { Section } from '@megp/core-fe';
 import BidProGeneral from '../_components/bidding-procedure/bid-pro-general';
 import PreparationDetail from '../_components/bidding-procedure/preparation-detail';
 import SubmissionDetail from '../_components/bidding-procedure/submission-detail';
@@ -30,10 +31,15 @@ import TenderConfigSpd from '../_components/tender/tender-config-spd';
 import PreliminaryExamination from '../_components/lot/evaluation-criteria/preliminary-examination/preliminary-examination';
 import Qualification from '../_components/lot/evaluation-criteria/qualification/qualification';
 import TechnicalScoring from '../_components/lot/evaluation-criteria/technical-scoring/technical-scoring';
+import BidSecurity from '../_components/lot/bid-security/bid-security';
+import { useDisclosure } from '@mantine/hooks';
+import SplitTenderModal from '../_components/tender/split-tender-modal';
+import ContractConditionTab from '../_components/contact-condition/contract-condition-tab';
 
 export default function TenderDetailPage() {
   const router = useRouter();
   const [currentTab, setCurrentTab] = useState('configuration');
+  const [opened, { open, close }] = useDisclosure(false);
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
   });
@@ -68,33 +74,9 @@ export default function TenderDetailPage() {
                 {selected?.name}
               </Flex>
             </Tooltip>
-            <div className="flex space-x-4">
-              <Button variant="filled" className="my-auto">
-                Submit
-              </Button>
-              <div className="flex justify-end">
-                {currentTab !== 'configuration' && (
-                  <>
-                    <LoadingOverlay visible={isFetching} />
-                    <Select
-                      placeholder="Pick Lot"
-                      data={
-                        data
-                          ? data.items.map((single) => {
-                              const value = { ...single };
-                              value['label'] = value.name;
-                              value['value'] = value.id;
-                              return value;
-                            })
-                          : []
-                      }
-                      onChange={setValue}
-                    />
-                  </>
-                )}
-                <Divider mb={'md'} />
-              </div>
-            </div>
+            <Button variant="filled" className="my-auto">
+              Submit
+            </Button>
           </div>
           <div className="flex">
             <div>
@@ -165,6 +147,38 @@ export default function TenderDetailPage() {
         </div>
       </div>
       <Box className="container mx-auto my-4">
+        {currentTab !== 'configuration' && (
+          <>
+            <Box className="w-full flex flex-row justify-between items-center container my-2">
+              <p className="text-lg font-semibold">
+                <Select
+                  placeholder="Pick Lot"
+                  data={
+                    data
+                      ? data.items.map((single) => {
+                          const value = { ...single };
+                          value['label'] = value.name;
+                          value['value'] = value.id;
+                          return value;
+                        })
+                      : []
+                  }
+                  onChange={setValue}
+                />
+              </p>
+              <div className="flex justify-end items-center gap-3">
+                <LoadingOverlay visible={isFetching} />
+                {value && (
+                  <Button variant="filled" className="my-auto" onClick={open}>
+                    Split
+                  </Button>
+                )}
+
+                <Divider mb={'md'} />
+              </div>
+            </Box>
+          </>
+        )}
         <Container fluid>
           {currentTab === 'configuration' && (
             <>
@@ -189,10 +203,21 @@ export default function TenderDetailPage() {
               </Section>
             </>
           )}
-          {currentTab === 'item' &&
-            (value ? <Items lotId={value} /> : <>please select lot</>)}
-          {currentTab === 'bidding-procedure' && (
+          {currentTab === 'item' && (
             <>
+              {value ? (
+                <Items lotId={value} />
+              ) : (
+                <div className="w-full bg-white flex flex-col h-96 justify-center items-center">
+                  <IconFolderOpen className="w-32 h-16 stroke-1" />
+                  <p className="text-base font-semibold">no lot selected</p>
+                  <p>Please Select a lot first</p>
+                </div>
+              )}
+            </>
+          )}
+          {currentTab === 'bidding-procedure' && (
+            <div className="w-full flex flex-col gap-3">
               {value ? (
                 <Section
                   title="Bid Security"
@@ -200,7 +225,7 @@ export default function TenderDetailPage() {
                   defaultCollapsed={true}
                   className="capitalize my-2"
                 >
-                  <p>Bid Security Selected</p>
+                  <BidSecurity lotId={value} />
                 </Section>
               ) : (
                 <>
@@ -246,47 +271,67 @@ export default function TenderDetailPage() {
                   </Section>
                 </>
               )}
+            </div>
+          )}
+          {currentTab === 'criteria' && (
+            <>
+              {value ? (
+                <>
+                  <div className="text-lg font-medium mt-4 pt-4 pb-4">
+                    Preliminary Examination
+                  </div>
+                  <div className="py-2">
+                    <PreliminaryExamination type="technical" lotId={value} />
+                  </div>
+                  <div className="py-2">
+                    <PreliminaryExamination type="financial" lotId={value} />
+                  </div>
+                  <div className="text-lg font-medium mt-4 pt-4 pb-4">
+                    Qualification
+                  </div>
+                  <div className="py-2">
+                    <Qualification type="legal" lotId={value} />
+                  </div>
+                  <div className="py-2">
+                    <Qualification type="professional" lotId={value} />
+                  </div>
+                  <div className="py-2">
+                    <Qualification type="technical" lotId={value} />
+                  </div>
+                  <div className="py-2">
+                    <Qualification type="financial" lotId={value} />
+                  </div>
+                  <div className="text-lg font-medium mt-4 pt-4 pb-4">
+                    Technical Evaluation
+                  </div>
+                  <div className="py-2">
+                    <TechnicalScoring lotId={value} />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="w-full bg-white flex flex-col h-96 justify-center items-center">
+                    <IconFolderOpen className="w-32 h-16 stroke-1" />
+                    <p className="text-base font-semibold">no lot selected</p>
+                    <p>Please Select a lot first</p>
+                  </div>
+                </>
+              )}
             </>
           )}
-          {currentTab === 'criteria' &&
-            (value ? (
-              <>
-                <div className="text-lg font-medium mt-4 pt-4 pb-4">
-                  Preliminary Examination
-                </div>
-                <div className="py-2">
-                  <PreliminaryExamination type="technical" lotId={value} />
-                </div>
-                <div className="py-2">
-                  <PreliminaryExamination type="financial" lotId={value} />
-                </div>
-                <div className="text-lg font-medium mt-4 pt-4 pb-4">
-                  Qualification
-                </div>
-                <div className="py-2">
-                  <Qualification type="legal" lotId={value} />
-                </div>
-                <div className="py-2">
-                  <Qualification type="professional" lotId={value} />
-                </div>
-                <div className="py-2">
-                  <Qualification type="technical" lotId={value} />
-                </div>
-                <div className="py-2">
-                  <Qualification type="financial" lotId={value} />
-                </div>
-                <div className="text-lg font-medium mt-4 pt-4 pb-4">
-                  Technical Evaluation
-                </div>
-                <div className="py-2">
-                  <TechnicalScoring lotId={value} />
-                </div>
-              </>
-            ) : (
-              <>please select lot</>
-            ))}
+
+          {currentTab === 'condition' && <ContractConditionTab />}
         </Container>
       </Box>
+      <Modal
+        title="Select Items To Create A Lot"
+        opened={opened}
+        size={'80%'}
+        onClose={close}
+        withCloseButton={false}
+      >
+        <SplitTenderModal lotId={value} />
+      </Modal>
     </>
   );
 }

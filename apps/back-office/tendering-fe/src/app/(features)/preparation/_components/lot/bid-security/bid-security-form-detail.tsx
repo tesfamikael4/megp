@@ -70,7 +70,6 @@ export function BidSecurityFormDetail({
   } = useReadQuery(adId?.toString());
 
   const onCreate = async (data) => {
-    logger.log('here');
     try {
       await create({
         ...data,
