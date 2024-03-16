@@ -81,22 +81,23 @@ export class TenderSpdService extends ExtraCrudService<TenderSpd> {
           eqcQualificationPayload.push(eqcQualification);
         });
 
-        spd.spdTechnicalScores.forEach((scoring: SpdTechnicalScoring) => {
-          const eqcTechnicalScoring = new EqcTechnicalScoring();
-          eqcTechnicalScoring.lotId = lot.id;
-          eqcTechnicalScoring.spdTechnicalScoringId = scoring.id;
-          eqcTechnicalScoring.spdTechnicalScoringParentId = scoring.parentId;
-          eqcTechnicalScoring.requirement = scoring.requirement;
-          eqcTechnicalScoring.formLink = scoring.formLink;
-          eqcTechnicalScoring.isProfessional = scoring.isProfessional;
-          eqcTechnicalScoring.hasProfessional = false;
-          eqcTechnicalScoring.point = 0;
-          eqcTechnicalScoring.isRequired = false;
-          eqcTechnicalScoring.validation = scoring.validation;
-          eqcTechnicalScoring.requirementCondition = 'Must meet';
+        spd.spdTechnicalScores
+          .filter((scoring: SpdTechnicalScoring) => scoring.parentId === null)
+          .forEach((scoring: SpdTechnicalScoring) => {
+            const eqcTechnicalScoring = new EqcTechnicalScoring();
+            eqcTechnicalScoring.lotId = lot.id;
+            eqcTechnicalScoring.spdTechnicalScoringId = scoring.id;
+            eqcTechnicalScoring.requirement = scoring.requirement;
+            eqcTechnicalScoring.formLink = scoring.formLink;
+            eqcTechnicalScoring.isProfessional = scoring.isProfessional;
+            eqcTechnicalScoring.hasProfessional = false;
+            eqcTechnicalScoring.point = 0;
+            eqcTechnicalScoring.isRequired = false;
+            eqcTechnicalScoring.validation = scoring.validation;
+            eqcTechnicalScoring.requirementCondition = 'Must meet';
 
-          eqcTechnicalScoringPayload.push(eqcTechnicalScoring);
-        });
+            eqcTechnicalScoringPayload.push(eqcTechnicalScoring);
+          });
 
         spd.spdPreliminaryEvaluations.forEach(
           (evaluation: SpdPreliminaryEvaluation) => {

@@ -4,7 +4,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Lot } from '.';
@@ -21,21 +21,21 @@ export class EqcTechnicalScoring extends Audit {
   @JoinColumn()
   lot: Lot;
 
-  @Column({ nullable: true })
+  @Column({ type: 'uuid', nullable: true })
   parentId: string;
 
-  @OneToOne(
+  @ManyToOne(
     () => EqcTechnicalScoring,
-    (technicalScoring) => technicalScoring.child,
+    (technicalScoring) => technicalScoring.children,
   )
   @JoinColumn()
   parent: EqcTechnicalScoring;
 
-  @OneToOne(
+  @OneToMany(
     () => EqcTechnicalScoring,
     (technicalScoring) => technicalScoring.parent,
   )
-  child: EqcTechnicalScoring;
+  children: EqcTechnicalScoring[];
 
   @Column()
   requirement: string;
