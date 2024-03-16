@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { InjectRepository } from '@nestjs/typeorm';
+import axios from 'axios';
 import {
   Lot,
   ProcurementMechanism,
@@ -27,38 +28,65 @@ export class TenderService extends EntityCrudService<Tender> {
       const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
 
       const prId = itemData.prId;
+      const prExists = await this.tenderRepository.existsBy({
+        prId,
+      });
 
-      const time = new Date().getTime();
+      if (prExists) {
+        throw new Error('PR already used in a tender');
+      }
+
+      const PR_ENDPOINT =
+        process.env.PR_ENDPOINT ??
+        'https://dev-bo.megp.peragosystems.com/planning/api/procurement-requisitions/get-procurement-requisition/';
+
+      const prRequest = await axios.get(PR_ENDPOINT + prId, {
+        headers: {
+          'X-API-KEY': '25bc1622e5fb42cca3d3e62e90a3a20f',
+        },
+      });
+
+      const prResponse = prRequest.data;
 
       const tenderPayload = {
-        name: `tender_${time}`,
-        procurementReferenceNumber: `tender_${time}`,
-        budgetAmount: 10,
-        budgetAmountCurrency: `tender_${time}`,
-        budgetCode: `tender_${time}`,
+        name: prResponse.name,
+        procurementReferenceNumber: prResponse.procurementReference,
+        budgetAmount: Number(prResponse.totalEstimatedAmount),
+        budgetAmountCurrency: prResponse.currency,
+        budgetCode: prResponse.budgetId,
         prId: prId,
-        marketEstimate: 10,
-        marketEstimateCurrency: `tender_${time}`,
-        status: `tender_${time}`,
-        organizationId: req?.user?.organization?.id,
+        marketEstimate: Number(prResponse.calculatedAmount),
+        marketEstimateCurrency: prResponse.currency,
+        status: 'DRAFT',
+        organizationId: prResponse.organizationId,
       };
       const tender = manager.getRepository(Tender).create(tenderPayload);
       await manager.getRepository(Tender).insert(tender);
 
-      const procurementTechnicalTeam = new ProcurementTechnicalTeam();
-      procurementTechnicalTeam.userId = req?.user?.userId;
-      procurementTechnicalTeam.isTeamLead = true;
-      procurementTechnicalTeam.tenderId = tender.id;
+      const procurementTechnicalTeams: ProcurementTechnicalTeam[] = [];
+      for (const iterator of prResponse.procurementRequisitionTechnicalTeams) {
+        const procurementTechnicalTeam = new ProcurementTechnicalTeam();
+        procurementTechnicalTeam.tenderId = tender.id;
+        procurementTechnicalTeam.userId = iterator.userId;
+        procurementTechnicalTeam.isTeamLead = false;
+        procurementTechnicalTeams.push(procurementTechnicalTeam);
+      }
+
       await manager
         .getRepository(ProcurementTechnicalTeam)
-        .insert(procurementTechnicalTeam);
+        .insert(procurementTechnicalTeams);
 
+      const {
+        tenantId,
+        createdAt,
+        updatedAt,
+        organizationId,
+        id,
+        procurementRequisitionId,
+        ...PRProcurementMechanisms
+      } = prResponse.procurementMechanisms;
       const procurementMechanism = new ProcurementMechanism();
-      procurementMechanism.PRProcurementMechanisms = { test: 'test' };
-      procurementMechanism.invitationType = `procurementMechanism_${time}`;
-      procurementMechanism.marketApproach = `marketApproach_${time}`;
-      procurementMechanism.stageType = `stageType${time}`;
-      procurementMechanism.stage = 1;
+      procurementMechanism.PRProcurementMechanisms = PRProcurementMechanisms;
       procurementMechanism.tenderId = tender.id;
       await manager
         .getRepository(ProcurementMechanism)
@@ -66,26 +94,31 @@ export class TenderService extends EntityCrudService<Tender> {
 
       const lot = new Lot();
       lot.number = 1;
-      lot.name = `lot_${time}`;
-      lot.status = `lot_${time}`;
+      lot.name = `lot_1`;
+      lot.status = `DRAFT`;
       lot.tenderId = tender.id;
       const lotResult = await manager.getRepository(Lot).insert(lot);
 
-      const item = new Item();
-      item.itemCode = `code_${time}`;
-      item.itemType = `type_${time}`;
-      item.procurementCategory = `procurementCategory_${time}`;
-      item.name = `item_${time}`;
-      item.description = `item_${time}`;
-      item.quantity = 1;
-      item.unitOfMeasure = `item_${time}`;
-      item.estimatedPrice = 1;
-      item.estimatedPriceCurrency = `item_${time}`;
-      item.marketPrice = 1;
-      item.marketPriceCurrency = `item_${time}`;
-      item.hasBom = false;
-      item.lotId = lotResult.identifiers[0].id;
-      await manager.getRepository(Item).insert(item);
+      const items: Item[] = [];
+      for (const iterator of prResponse.procurementRequisitionItems) {
+        const item = new Item();
+        item.itemCode = iterator.itemCode;
+        item.procurementCategory = `Goods`;
+        item.name = iterator.description;
+        item.description = iterator.description;
+        item.quantity = iterator.quantity;
+        item.unitOfMeasure = iterator.uom;
+        item.estimatedPrice = Number(iterator.unitPrice);
+        item.estimatedPriceCurrency = iterator.currency;
+        item.hasBom = false;
+        item.lotId = lotResult.identifiers[0].id;
+        items.push(item);
+      }
+      await manager.getRepository(Item).insert(items);
+
+      // await axios.post('', {
+
+      // })
 
       return tender;
     } catch (error) {

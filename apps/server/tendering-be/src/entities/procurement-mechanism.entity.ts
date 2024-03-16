@@ -24,15 +24,15 @@ export class ProcurementMechanism extends Audit {
   @Column({ type: 'json' })
   PRProcurementMechanisms: any;
 
-  @Column()
+  @Column({ nullable: true })
   invitationType: string;
 
-  @Column()
+  @Column({ nullable: true })
   marketApproach: string;
 
-  @Column()
+  @Column({ nullable: true })
   stageType: string;
 
-  @Column()
+  @Column({ nullable: true })
   stage: number;
 }

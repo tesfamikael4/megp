@@ -33,9 +33,6 @@ export class Item extends Audit {
   itemCode: string;
 
   @Column()
-  itemType: string;
-
-  @Column()
   procurementCategory: string;
 
   @Column()
@@ -56,10 +53,10 @@ export class Item extends Audit {
   @Column()
   estimatedPriceCurrency: string;
 
-  @Column()
+  @Column({ nullable: true })
   marketPrice: number;
 
-  @Column()
+  @Column({ nullable: true })
   marketPriceCurrency: string;
 
   @Column()

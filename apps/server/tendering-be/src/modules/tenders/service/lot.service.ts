@@ -4,7 +4,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Item, Lot } from 'src/entities';
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 import { ExtraCrudService } from 'src/shared/service';
-import { DeepPartial, EntityManager, Repository } from 'typeorm';
+import { DeepPartial, EntityManager, In, Repository } from 'typeorm';
+import { SplitItemDto } from '../dto';
 
 @Injectable()
 export class LotService extends ExtraCrudService<Lot> {
@@ -16,38 +17,35 @@ export class LotService extends ExtraCrudService<Lot> {
     super(lotRepository);
   }
 
-  async splitItems(itemData: DeepPartial<any>, req?: any): Promise<any> {
+  async splitItems(itemData: SplitItemDto, req?: any): Promise<any> {
     try {
       const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
       const itemIds = itemData.itemIds;
 
-      if (itemData?.lotId) {
-        const lot = await manager
-          .getRepository(Lot)
-          .findOneOrFail({ where: { id: itemData?.lotId } });
-        const items = await manager
-          .getRepository(Item)
-          .update({ id: itemIds }, { lotId: lot.id });
+      if (!itemData?.lotId) {
+        const lotCount = await this.lotRepository.findOne({
+          where: {
+            tenderId: itemData.tenderId,
+          },
+          order: {
+            number: 'DESC',
+          },
+        });
 
-        return items.affected;
+        const lot = this.lotRepository.create({
+          number: lotCount.number + 1,
+          name: itemData.name,
+          status: `DRAFT`,
+          tenderId: itemData.tenderId,
+        });
+        await manager.getRepository(Lot).insert(lot);
+
+        itemData.lotId = lot.id;
       }
 
-      const item = await manager.getRepository(Item).findOneOrFail({
-        where: { id: itemIds[0] },
-        relations: { lot: true },
-      });
-
-      const time = new Date().getTime();
-      const lot = new Lot();
-      lot.number = 1;
-      lot.name = `lot_${time}`;
-      lot.status = `lot_${time}`;
-      lot.tenderId = item.lot.tenderId;
-
-      const lotResult = await manager.getRepository(Lot).insert(lot);
       const items = await manager
         .getRepository(Item)
-        .update({ id: itemIds }, { lotId: lotResult.identifiers[0].id });
+        .update({ id: In(itemIds) }, { lotId: itemData.lotId });
 
       return items.affected;
     } catch (e) {
