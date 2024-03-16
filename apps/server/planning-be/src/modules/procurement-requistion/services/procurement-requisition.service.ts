@@ -297,9 +297,9 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
     return buffer;
   }
 
-  async getProcurementRequisitionByReference(procurementReference: string) {
+  async getProcurementRequisitionById(id: string) {
     const pr = await this.repositoryProcurementRequisition.find({
-      where: { procurementReference: procurementReference },
+      where: { id },
       relations: {
         procurementRequisitionItems: true,
         procurementRequisitionTechnicalTeams: true,
