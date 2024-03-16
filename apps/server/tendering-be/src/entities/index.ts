@@ -30,7 +30,7 @@ export * from './spd-professional-setting.entity';
 export * from './spd-qualification.entity';
 export * from './spd-technical-scoring.entity';
 export * from './spd-template.entity';
-export * from './bid-security.entity';
+export * from './bsd-bid-security.entity';
 export * from './scc-contract-deliverable.entity';
 export * from './scc-general-provision.entity';
 export * from './scc-guarantee.entity';

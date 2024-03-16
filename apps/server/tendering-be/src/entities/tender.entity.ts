@@ -23,6 +23,9 @@ import { SccPaymentSchedule } from './scc-payment-schedule.entity';
 import { SccPaymentTerm } from './scc-payment-term.entity';
 import { TenderSpdBidForm } from './tender-spd-bid-form.entity';
 import { TenderSpdContractForm } from './tender-spd-contract-form.entity';
+import { TenderParticipationFee } from './tender-participation-fee.entity';
+import { TenderClassification } from './tender-classification.entity';
+import { BidBookmark } from './bid-bookmark.entity';
 
 @Entity({ name: 'tenders' })
 export class Tender extends Audit {
@@ -31,6 +34,9 @@ export class Tender extends Audit {
 
   @Column()
   name: string;
+
+  @Column({ nullable: true })
+  procurementCategory: string;
 
   @Column({ nullable: true })
   procurementReferenceNumber: string;
@@ -132,4 +138,26 @@ export class Tender extends Audit {
     onDelete: 'CASCADE',
   })
   tenderSpdContractForm: TenderSpdContractForm[];
+
+  @OneToOne(
+    () => TenderParticipationFee,
+    (tenderParticipationFee) => tenderParticipationFee.tender,
+  )
+  tenderParticipationFee: TenderParticipationFee;
+
+  @OneToMany(
+    () => TenderClassification,
+    (tenderClassification) => tenderClassification.tender,
+    {
+      cascade: true,
+      onDelete: 'CASCADE',
+    },
+  )
+  tenderClassifications: TenderClassification[];
+
+  @OneToMany(() => BidBookmark, (bidBookmark) => bidBookmark.tender, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  bidBookmark: BidBookmark[];
 }

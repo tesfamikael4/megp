@@ -1,19 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { BidSecurity } from 'src/entities';
+import { BdsBidSecurity } from 'src/entities';
 import { ExtraCrudService } from 'src/shared/service';
 import { Repository } from 'typeorm';
 
 @Injectable()
-export class BidSecurityService extends ExtraCrudService<BidSecurity> {
+export class BdsBidSecurityService extends ExtraCrudService<BdsBidSecurity> {
   constructor(
-    @InjectRepository(BidSecurity)
-    private readonly bidSecurityRepository: Repository<BidSecurity>,
+    @InjectRepository(BdsBidSecurity)
+    private readonly bidSecurityRepository: Repository<BdsBidSecurity>,
   ) {
     super(bidSecurityRepository);
   }
 
-  async findOne(lotId: string, req?: any): Promise<BidSecurity | undefined> {
+  async findOne(lotId: string, req?: any): Promise<BdsBidSecurity | undefined> {
     return await this.bidSecurityRepository.findOneBy({ lotId });
   }
 }
