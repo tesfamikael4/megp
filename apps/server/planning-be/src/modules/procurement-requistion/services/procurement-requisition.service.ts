@@ -298,7 +298,7 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
   }
 
   async getProcurementRequisitionById(id: string) {
-    const pr = await this.repositoryProcurementRequisition.find({
+    const pr = await this.repositoryProcurementRequisition.findOne({
       where: { id },
       relations: {
         procurementRequisitionItems: true,
