@@ -65,6 +65,11 @@ export class UpdateSorBillOfMaterialDto extends CreateSorBillOfMaterialDto {
 export class SorBillOfMaterialResponseDto extends UpdateSorBillOfMaterialDto {}
 
 export class BulkCreateBillOfMaterialDto {
+  @IsNotEmpty()
+  @IsUUID()
+  @ApiProperty()
+  itemId: string;
+
   @ApiProperty({ isArray: true, type: () => CreateSorBillOfMaterialDto })
   @IsArray()
   boqs: CreateSorBillOfMaterialDto[];

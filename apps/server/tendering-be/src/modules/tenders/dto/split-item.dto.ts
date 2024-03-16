@@ -1,7 +1,24 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ArrayMinSize, IsArray, IsOptional, IsUUID } from 'class-validator';
+import {
+  ArrayMinSize,
+  IsArray,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 
 export class SplitItemDto {
+  @ApiProperty()
+  @IsUUID()
+  @IsNotEmpty()
+  tenderId: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  name: string;
+
   @ApiProperty()
   @IsUUID()
   @IsOptional()
