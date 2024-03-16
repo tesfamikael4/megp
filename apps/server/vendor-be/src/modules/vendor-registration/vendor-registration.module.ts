@@ -91,7 +91,6 @@ import { PreferentailTreatmentsController } from './controllers/preferential-tre
     HttpModule,
     ServicePricingModule,
     ServiceModule,
-
   ],
   exports: [VendorRegistrationsService, FileService, BusinessAreaService],
   providers: [
@@ -108,7 +107,7 @@ import { PreferentailTreatmentsController } from './controllers/preferential-tre
     BusinessAreaService,
     InvoiceService,
     BpServiceService,
-    PreferentailTreatmentService
+    PreferentailTreatmentService,
     // TusService,
   ],
   controllers: [
@@ -123,7 +122,7 @@ import { PreferentailTreatmentsController } from './controllers/preferential-tre
     AreasOfBusinessInterestController,
     BusinessAreaController,
     InvoicesController,
-    PreferentailTreatmentsController
+    PreferentailTreatmentsController,
   ],
 })
-export class VendorRegistrationModule { }
+export class VendorRegistrationModule {}

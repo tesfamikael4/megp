@@ -175,7 +175,7 @@ export class WorkflowService {
         if (
           curruntTask.taskType == TaskTypes.INITIAL_REVIEW &&
           nextCommand.action.toUpperCase() ==
-          ApplicationStatus.CANCEL.toUpperCase()
+            ApplicationStatus.CANCEL.toUpperCase()
         ) {
           response = await this.vendorRegService.cancelApplication(wfInstance);
         } else {
@@ -190,13 +190,13 @@ export class WorkflowService {
           await this.addTaskTracker(currentTaskHandler, nextCommand, user);
           await this.handlerRepository.delete(currentTaskHandler.id);
           workflowInstance.taskHandler = null;
-          const vendor = await this.vendorRegService.findOne(wfInstance.requestorId);
+          const vendor = await this.vendorRegService.findOne(
+            wfInstance.requestorId,
+          );
           if (vendor) {
             vendor.canRequest = true;
             await this.vendorRegService.update(vendor.id, vendor);
           }
-
-
         } else {
           throw new Error('Unable to update vender status');
         }
@@ -330,7 +330,11 @@ export class WorkflowService {
           command.action.toUpperCase() == ApplicationStatus.ADJUST.toUpperCase()
           // ||  command.action.toUpperCase() == ReviewStatus.Reject.toUpperCase()
         ) {
-          const result = await this.notify(wfi, stateMetadata['apiUrl'], command);
+          const result = await this.notify(
+            wfi,
+            stateMetadata['apiUrl'],
+            command,
+          );
           if (result) {
             const vendor = await this.vendorRegService.findOne(wfi.requestorId);
             if (vendor) {
@@ -344,7 +348,11 @@ export class WorkflowService {
         if (
           command.action.toUpperCase() == ApplicationStatus.ADJUST.toUpperCase()
         ) {
-          const result = await this.notify(wfi, stateMetadata['apiUrl'], command);
+          const result = await this.notify(
+            wfi,
+            stateMetadata['apiUrl'],
+            command,
+          );
           if (result) {
             const vendor = await this.vendorRegService.findOne(wfi.requestorId);
             if (vendor) {
@@ -369,8 +377,6 @@ export class WorkflowService {
         console.log(TaskTypes.PAYMENTCONFIRMATION, command);
         break;
       case TaskTypes.PAYMENT:
-
-
         break;
     }
     return true;
@@ -410,8 +416,8 @@ export class WorkflowService {
     const commandLower = command.action.toLowerCase();
     const status =
       commandLower == 'approve' ||
-        commandLower == 'yes' ||
-        commandLower == 'success'
+      commandLower == 'yes' ||
+      commandLower == 'success'
         ? 'Approve'
         : 'Reject';
     const payload = {
@@ -591,16 +597,26 @@ export class WorkflowService {
   }
 
   async getMyApplications(user: any): Promise<any> {
-
-    const result = await this.workflowInstanceRepository.createQueryBuilder('wf')
-      .innerJoinAndMapOne('wf.businessArea', BusinessAreaEntity, 'ba', 'wf.id = ba.instanceId')
+    const result = await this.workflowInstanceRepository
+      .createQueryBuilder('wf')
+      .innerJoinAndMapOne(
+        'wf.businessArea',
+        BusinessAreaEntity,
+        'ba',
+        'wf.id = ba.instanceId',
+      )
       .innerJoinAndSelect('wf.service', 'service')
       .where('wf.userId = :userId', { userId: user.id })
-      .andWhere('ba.status In(:...statuses)', { statuses: [ApplicationStatus.APPROVED, ApplicationStatus.ADJUSTMENT, ApplicationStatus.REJECTED, ApplicationStatus.PENDING] })
+      .andWhere('ba.status In(:...statuses)', {
+        statuses: [
+          ApplicationStatus.APPROVED,
+          ApplicationStatus.ADJUSTMENT,
+          ApplicationStatus.REJECTED,
+          ApplicationStatus.PENDING,
+        ],
+      })
       .orderBy('wf.updatedAt', 'DESC')
       .getMany();
-    return result
-
-
+    return result;
   }
 }

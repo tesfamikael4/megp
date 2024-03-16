@@ -12,10 +12,9 @@ import { ServiceModule } from '../services/service.module';
   imports: [
     TypeOrmModule.forFeature([PreferentialTreatmentsEntity]),
     AuthorizationModule,
-
   ],
   exports: [PreferentailTreatmentService],
   providers: [PreferentailTreatmentService],
   controllers: [PreferentailTreatmentsController],
 })
-export class PreferentialTreatmentModule { }
+export class PreferentialTreatmentModule {}

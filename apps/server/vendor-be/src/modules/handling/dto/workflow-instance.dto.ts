@@ -151,9 +151,9 @@ export class WorkflowInstanceResponse extends UpdateWorkflowInstanceDto {
       response.isrvendor = entity?.isrVendor;
       const bainfo = response.isrvendor.bankAccountDetails.map((item) => {
         if (item.isDefualt) {
-          item.isDefualt = "Yes";
+          item.isDefualt = 'Yes';
         } else {
-          item.isDefualt = "No";
+          item.isDefualt = 'No';
         }
         return item;
       });

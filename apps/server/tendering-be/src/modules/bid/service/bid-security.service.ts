@@ -12,4 +12,8 @@ export class BidSecurityService extends ExtraCrudService<BidSecurity> {
   ) {
     super(bidSecurityRepository);
   }
+
+  async findOne(lotId: string, req?: any): Promise<BidSecurity | undefined> {
+    return await this.bidSecurityRepository.findOneBy({ lotId });
+  }
 }
