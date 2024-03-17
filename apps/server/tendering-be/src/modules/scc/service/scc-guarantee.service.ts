@@ -12,4 +12,11 @@ export class SccGuaranteeService extends ExtraCrudService<SccGuarantee> {
   ) {
     super(sccGuaranteeRepository);
   }
+
+  async findOne(
+    tenderId: string,
+    req?: any,
+  ): Promise<SccGuarantee | undefined> {
+    return await this.sccGuaranteeRepository.findOneBy({ tenderId });
+  }
 }

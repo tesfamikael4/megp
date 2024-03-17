@@ -12,4 +12,11 @@ export class SccPaymentTermService extends ExtraCrudService<SccPaymentTerm> {
   ) {
     super(sccPaymentTermRepository);
   }
+
+  async findOne(
+    tenderId: string,
+    req?: any,
+  ): Promise<SccPaymentTerm | undefined> {
+    return await this.sccPaymentTermRepository.findOneBy({ tenderId });
+  }
 }

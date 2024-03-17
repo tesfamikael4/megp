@@ -12,4 +12,11 @@ export class SccContractDeliverableService extends ExtraCrudService<SccContractD
   ) {
     super(sccContractDeliverableRepository);
   }
+
+  async findOne(
+    tenderId: string,
+    req?: any,
+  ): Promise<SccContractDeliverable | undefined> {
+    return await this.sccContractDeliverableRepository.findOneBy({ tenderId });
+  }
 }

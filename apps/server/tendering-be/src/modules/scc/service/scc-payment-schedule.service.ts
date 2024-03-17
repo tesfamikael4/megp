@@ -12,4 +12,11 @@ export class SccPaymentScheduleService extends ExtraCrudService<SccPaymentSchedu
   ) {
     super(sccPaymentScheduleRepository);
   }
+
+  async findOne(
+    tenderId: string,
+    req?: any,
+  ): Promise<SccPaymentSchedule | undefined> {
+    return await this.sccPaymentScheduleRepository.findOneBy({ tenderId });
+  }
 }
