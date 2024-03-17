@@ -15,7 +15,7 @@ export class LoginDto {
 
   @ApiProperty()
   @IsNotEmpty()
-  @MinLength(Number(process.env.PASSWORD_MIN_LENGTH ?? 8))
+  @MinLength(Number(process.env.PASSWORD_MIN_LENGTH ?? 5))
   @MaxLength(Number(process.env.PASSWORD_MAX_LENGTH ?? 25))
   public password: string;
 }
@@ -56,7 +56,7 @@ export class ResetPasswordDto {
 
   @ApiProperty()
   @IsNotEmpty()
-  @MinLength(Number(process.env.PASSWORD_MIN_LENGTH ?? 8))
+  @MinLength(Number(process.env.PASSWORD_MIN_LENGTH ?? 5))
   @MaxLength(Number(process.env.PASSWORD_MAX_LENGTH ?? 25))
   public password: string;
 
@@ -84,13 +84,13 @@ export class ChangePasswordDto {
 
   @ApiProperty()
   @IsNotEmpty()
-  @MinLength(Number(process.env.PASSWORD_MIN_LENGTH ?? 8))
+  @MinLength(Number(process.env.PASSWORD_MIN_LENGTH ?? 5))
   @MaxLength(Number(process.env.PASSWORD_MAX_LENGTH ?? 25))
   public oldPassword: string;
 
   @ApiProperty()
   @IsNotEmpty()
-  @MinLength(Number(process.env.PASSWORD_MIN_LENGTH ?? 8))
+  @MinLength(Number(process.env.PASSWORD_MIN_LENGTH ?? 5))
   @MaxLength(Number(process.env.PASSWORD_MAX_LENGTH ?? 25))
   public newPassword: string;
 }
@@ -102,7 +102,7 @@ export class ResetAccountPasswordDto {
 
   @ApiProperty()
   @IsNotEmpty()
-  @MinLength(Number(process.env.PASSWORD_MIN_LENGTH ?? 8))
+  @MinLength(Number(process.env.PASSWORD_MIN_LENGTH ?? 5))
   @MaxLength(Number(process.env.PASSWORD_MAX_LENGTH ?? 25))
   public password: string;
 }
