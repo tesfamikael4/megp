@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import { IsArray, IsEnum, IsNotEmpty, IsString, IsUUID } from 'class-validator';
 import { MEMBER_TYPE_ENUM } from 'src/shared/enums/member-type.enum';
 
 export class CreateAdhocTeamMemberDto {
@@ -30,3 +30,14 @@ export class UpdateAdhocTeamMemberDto extends CreateAdhocTeamMemberDto {
 }
 
 export class AdhocTeamMemberDto extends UpdateAdhocTeamMemberDto {}
+
+export class BulkAdhocTeamMemberDto {
+  @ApiProperty({ isArray: true, type: () => AdhocTeamMemberDto })
+  @IsArray()
+  members: AdhocTeamMemberDto[];
+
+  @ApiProperty()
+  @IsUUID()
+  @IsNotEmpty()
+  ipdcId: string;
+}
