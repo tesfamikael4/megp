@@ -1,6 +1,14 @@
 'use client';
 
-import { Box, Button, Center, Container, Flex, Text } from '@mantine/core';
+import {
+  Box,
+  Button,
+  Center,
+  Container,
+  Flex,
+  LoadingOverlay,
+  Text,
+} from '@mantine/core';
 import Image from 'next/image';
 import { StepsCard } from './steps-card';
 import {
@@ -12,31 +20,41 @@ import {
 import styles from './page.module.scss';
 import { useRouter } from 'next/navigation';
 import Footer from '../(landing)/_components/footer';
+import { useEffect } from 'react';
+import { useGetApproveVendorInfoQuery } from '../vendor/(workspace)/registration/_api/query';
 
 export default function GettingStarted() {
   const router = useRouter();
+  const { data, isLoading } = useGetApproveVendorInfoQuery({});
+
+  if (isLoading) {
+    return <LoadingOverlay />;
+  }
+  if (data) {
+    router.push('/vendor/dashboard');
+  }
   return (
     <>
       <Container className={styles.container}>
-        {/* <Box className={styles.about_card}>
-        <p className={styles.about_title}>About eGP</p>
-        <Text mb="md">
-          eGP is a national electronic government procurement portal that uses
-          an electronic system to handle transactions in the public procurement
-          process. eGP is designed with innovative measures using information
-          and communication technology to streamline the public procurement with
-          greater efficiency that breaks down the physical barriers of space and
-          time to have a transparent procurement process through a wider access
-          to information and markets. eGP helps to ensure the provision of equal
-          treatment to all bidders, applying same rule of law, increase
-          accountability of participants in the procurement process and at the
-          same time raising awareness on the general public about the expenses
-          of the government.
-        </Text>
-        <Center>
-          <Image src="/ppda.png" width={50} height={50} alt="logo " />
-        </Center>
-      </Box> */}
+        <Box className={styles.about_card}>
+          <p className={styles.about_title}>About eGP</p>
+          <Text mb="md">
+            eGP is a national electronic government procurement portal that uses
+            an electronic system to handle transactions in the public
+            procurement process. eGP is designed with innovative measures using
+            information and communication technology to streamline the public
+            procurement with greater efficiency that breaks down the physical
+            barriers of space and time to have a transparent procurement process
+            through a wider access to information and markets. eGP helps to
+            ensure the provision of equal treatment to all bidders, applying
+            same rule of law, increase accountability of participants in the
+            procurement process and at the same time raising awareness on the
+            general public about the expenses of the government.
+          </Text>
+          <Center>
+            <Image src="/ppda.png" width={50} height={50} alt="logo " />
+          </Center>
+        </Box>
 
         <p className={styles.get_started_title}>Get Started</p>
         <p className={styles.get_started_description}>

@@ -9,6 +9,7 @@ import { formatColumns, tab } from '../../_constants';
 import { ShowFile } from './panels/showFile';
 import { FormattedPanel } from './panels/formatedPanel';
 import { RenderObject } from './panels/renderObject';
+import { useAuth } from '@megp/auth';
 
 function FormPreview({
   data,
@@ -21,6 +22,8 @@ function FormPreview({
 
   const [url, setUrl] = useState('');
   const [opened, { close, open }] = useDisclosure(false);
+  const { user } = useAuth();
+
   return (
     <Accordion variant="separated" classNames={classes}>
       {tabs.map((tab) => {
@@ -57,7 +60,14 @@ function FormPreview({
                       },
                     }}
                   >
-                    {renderTable(data[tabValue], formatColumns, tabValue)}
+                    {renderTable(
+                      data[tabValue],
+                      formatColumns,
+                      tabValue,
+                      open,
+                      setUrl,
+                      user?.id,
+                    )}
                   </Accordion.Panel>
                 ) : formatColumns[tabValue] ? (
                   <FormattedPanel data={data} tabValue={tabValue} />
