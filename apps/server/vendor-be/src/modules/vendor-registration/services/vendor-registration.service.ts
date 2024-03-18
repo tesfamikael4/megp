@@ -809,15 +809,24 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             await this.businessAreaRepository.save(ba);
           }
 
-          // const invoice = await this.invoiceService.getInvoicesByUserAndService(vendorStatusDto.userId, vendorStatusDto.serviceId);
-          // if (invoice) {
-          //   invoice.paymentStatus = PaymentStatus.COMPLETED;
-          //   await this.invoiceService.update(invoice.id, invoice);
-          // }
+          const vendor = await this.vendorRepository.findOne({ where: { id: vendorStatusDto.isrVendorId } });
+          if (vendor) {
+            vendor.canRequest = true;
+            await this.vendorRepository.update(vendor.id, vendor);
+          }
+
+
 
           return true;
         } else {
-          return await this.rejectVendor(vendorStatusDto);
+          const result = await this.rejectVendor(vendorStatusDto);
+          const vendor = await this.vendorRepository.findOne({ where: { id: vendorStatusDto.isrVendorId } });
+          if (vendor) {
+            vendor.canRequest = true;
+            await this.vendorRepository.update(vendor.id, vendor);
+          }
+          return result;
+
         }
       }
 
@@ -1275,6 +1284,12 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           }
         }
         vendorEntity.areasOfBusinessInterestView = formattedAreaOfBi;
+        const invoice = this.invoiceService.getInvoiceByUser(userId);
+        if (invoice) {
+          vendorEntity.invoice = invoice;
+        }
+
+
       }
 
       // getting the preferential treatments  if any
@@ -1932,6 +1947,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       data?.initial?.status == VendorStatusEnum.SUBMIT &&
       data.initial.level !== VendorStatusEnum.SUBMIT
     ) {
+
     }
   }
 
@@ -2133,8 +2149,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         where: { userId: userInfo.id },
       });
       if (!vendor) throw new NotFoundException('vendor not found');
-      if (!vendor.canRequest)
-        throw new HttpException('profile update already submitted', 400);
+
       const updateInfo = await this.profileInfoRepository.findOne({
         where: {
           vendorId: vendor.id,
