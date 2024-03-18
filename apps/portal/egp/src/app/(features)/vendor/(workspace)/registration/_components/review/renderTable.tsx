@@ -63,7 +63,7 @@ const renderCell = (header, item, open, setUrl, userId) => {
               open && open();
               setUrl &&
                 setUrl(
-                  `${process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api'}/upload/get-file-bo/certificate/${cellValue}/${userId}`,
+                  `${process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api'}/upload/get-file-bo/preferential-documents/${cellValue}/${userId}`,
                 );
             }}
           >
