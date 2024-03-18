@@ -34,7 +34,7 @@ export class ApplicationExcutionService {
     private readonly baService: BusinessAreaService,
     private readonly invoiceService: InvoiceService,
     private readonly ptService: PreferentailTreatmentService,
-  ) {}
+  ) { }
 
   async getCurruntTaskByServiceKey(
     serviceKey: string,
@@ -127,17 +127,16 @@ export class ApplicationExcutionService {
           const bia = instance.isrVendor?.areasOfBusinessInterest.find(
             (item: any) => item.category == range.category,
           );
-          const lobs = bia.lineOfBusiness.map((item: any) => {
+          const lobs = bia?.lineOfBusiness.map((item: any) => {
             return item.name;
           });
-          const category = this.commonService.capitalizeFirstLetter(
-            bia.category,
-          );
+
           businessInterest.push({
-            category: category,
+            category: bia?.category,
             priceRange: formattedBC,
             lineOfBusiness: lobs,
           });
+
           response.isrvendor.basic.status =
             range.status == ApplicationStatus.PENDING
               ? ApplicationStatus.INPROGRESS
