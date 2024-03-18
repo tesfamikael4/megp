@@ -22,8 +22,8 @@ export class ProcurementInstitution extends Audit {
   )
   procurementDisposalUnits: ProcurementDisposalUnit;
 
-  @OneToMany(() => IPDC, (iPDCs) => iPDCs.procurementInstitution)
-  iPDCs: IPDC[];
+  @OneToMany(() => IPDC, (ipdcs) => ipdcs.procurementInstitution)
+  ipdcs: IPDC[];
 
   @OneToMany(() => AdhocTeam, (adhocTeams) => adhocTeams.procurementInstitution)
   adhocTeams: AdhocTeam[];

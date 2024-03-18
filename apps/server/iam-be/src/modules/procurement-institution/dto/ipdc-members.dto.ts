@@ -1,18 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import { IsArray, IsEnum, IsNotEmpty, IsString, IsUUID } from 'class-validator';
 import { MEMBER_TYPE_ENUM } from 'src/shared/enums/member-type.enum';
 
-export class CreateIPDCMemberDto {
-  @ApiProperty()
-  @IsUUID()
-  @IsNotEmpty()
-  iPDCId: string;
-
-  @ApiProperty()
-  @IsUUID()
-  @IsNotEmpty()
-  organizationId: string;
-
+export class IPDCMemberDto {
   @ApiProperty({ enum: MEMBER_TYPE_ENUM })
   @IsEnum(MEMBER_TYPE_ENUM)
   type: string;
@@ -23,10 +13,26 @@ export class CreateIPDCMemberDto {
   userId: string;
 }
 
+export class CreateIPDCMemberDto extends IPDCMemberDto {
+  @ApiProperty()
+  @IsUUID()
+  @IsNotEmpty()
+  ipdcId: string;
+}
+
 export class UpdateIPDCMemberDto extends CreateIPDCMemberDto {
   @ApiProperty()
   @IsString()
   id: string;
 }
 
-export class IPDCMemberDto extends UpdateIPDCMemberDto {}
+export class BulkIPDCMemberDto {
+  @ApiProperty({ isArray: true, type: () => IPDCMemberDto })
+  @IsArray()
+  members: IPDCMemberDto[];
+
+  @ApiProperty()
+  @IsUUID()
+  @IsNotEmpty()
+  ipdcId: string;
+}
