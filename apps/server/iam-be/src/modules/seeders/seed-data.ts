@@ -345,6 +345,41 @@ export const permissions = [
     key: 'iam:manageSuperAdmin',
     applicationId: 2,
   },
+  {
+    id: 48,
+    name: 'Create Procurement Requisition',
+    description: 'Create Procurement Requisition',
+    key: 'iam:createProcurementRequisition',
+    applicationId: 3,
+  },
+  {
+    id: 49,
+    name: 'Manage Items On PR',
+    description: 'Manage Items On PR',
+    key: 'iam:manageItemsOnPR',
+    applicationId: 3,
+  },
+  {
+    id: 50,
+    name: 'Submit Procurement Requisition',
+    description: 'Submit Procurement Requisition',
+    key: 'iam:submitProcurementRequisition',
+    applicationId: 3,
+  },
+  {
+    id: 51,
+    name: 'Review Procurement Requisition',
+    description: 'Review Procurement Requisition',
+    key: 'iam:reviewProcurementRequisition',
+    applicationId: 3,
+  },
+  {
+    id: 52,
+    name: 'Approve Procurement Requisition',
+    description: 'Approve Procurement Requisition',
+    key: 'iam:approveProcurementRequisition',
+    applicationId: 3,
+  },
 ];
 export const roleSystems = [
   {
@@ -433,6 +468,24 @@ export const roleSystems = [
     description: 'Director General',
     key: 'DIRECTOR_GENERAL',
   },
+  {
+    id: 17,
+    name: 'Requisitioner',
+    description: 'Requisitioner',
+    key: 'REQUISITIONER',
+  },
+  {
+    id: 18,
+    name: 'Budget Officer',
+    description: 'Budget Officer',
+    key: 'BUDGET_OFFICER',
+  },
+  {
+    id: 18,
+    name: 'HPDU',
+    description: '',
+    key: 'HPDU',
+  },
 ];
 
 export const roleSystemPermissions = [
@@ -478,6 +531,13 @@ export const roleSystemPermissions = [
   { roleSystemId: 11, permissionId: 42 },
   { roleSystemId: 11, permissionId: 43 },
   { roleSystemId: 16, permissionId: 44 },
+  { roleSystemId: 17, permissionId: 48 },
+  { roleSystemId: 17, permissionId: 49 },
+  { roleSystemId: 17, permissionId: 50 },
+  { roleSystemId: 18, permissionId: 51 },
+  { roleSystemId: 18, permissionId: 52 },
+  { roleSystemId: 19, permissionId: 51 },
+  { roleSystemId: 19, permissionId: 52 },
 ];
 
 export const account = {
