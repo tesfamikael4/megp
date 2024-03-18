@@ -18,10 +18,20 @@ export class BidBookmark extends Audit {
   @Column()
   tenderId: string;
 
-  @ManyToOne(() => Tender, (tender) => tender.spd)
+  @ManyToOne(() => Tender, (tender) => tender.bidBookmarks)
   @JoinColumn()
   tender: Tender;
 
   @Column()
   bidderId: string;
+
+  // @Column({ name: 'external_organizations_name', nullable: true })
+  // bidderName: string;
+
+  @Column({
+    type: 'enum',
+    enum: ['BOOKMARKED', 'REGISTERED'],
+    default: 'BOOKMARKED',
+  })
+  status: string;
 }

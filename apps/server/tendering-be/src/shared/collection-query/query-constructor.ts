@@ -1,7 +1,6 @@
 import { ObjectLiteral, Repository, SelectQueryBuilder } from 'typeorm';
 import { CollectionQuery, Order, Where } from './query';
 import { FilterOperators } from './filter_operators';
-import { decodeCollectionQuery, encodeCollectionQuery } from './query-mapper';
 
 const addFilterConditions = (
   op: string,
@@ -179,7 +178,12 @@ const applyOrderBy = <T>(
   orderBy: Order[],
 ) => {
   orderBy.forEach(({ column, direction = 'ASC', nulls }) => {
-    queryBuilder.addOrderBy(`${aggregate}.${column}`, direction, nulls);
+    if (column.includes('.')) {
+      const [relation, field] = column.split('.');
+      queryBuilder.addOrderBy(`${relation}.${field}`, direction, nulls);
+    } else {
+      queryBuilder.addOrderBy(`${aggregate}.${column}`, direction, nulls);
+    }
   });
 };
 
@@ -343,13 +347,13 @@ export class QueryConstructor {
       query = this.removeFilter(query, 'organizationId');
     }
 
-    query = this.removeEmtpyFilter(query);
+    query = this.removeEmptyFilter(query);
 
     buildQuery(aggregate, queryBuilder, query);
 
     return queryBuilder;
   }
-  static removeEmtpyFilter(query: CollectionQuery) {
+  static removeEmptyFilter(query: CollectionQuery) {
     query.where = query.where.filter((x) => x.length > 0);
     return query;
   }
