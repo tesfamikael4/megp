@@ -26,6 +26,7 @@ import { TenderSpdContractForm } from './tender-spd-contract-form.entity';
 import { TenderParticipationFee } from './tender-participation-fee.entity';
 import { TenderClassification } from './tender-classification.entity';
 import { BidBookmark } from './bid-bookmark.entity';
+import { BidRegistration } from './bid-registration.entity';
 
 @Entity({ name: 'tenders' })
 export class Tender extends Audit {
@@ -159,5 +160,15 @@ export class Tender extends Audit {
     cascade: true,
     onDelete: 'CASCADE',
   })
-  bidBookmark: BidBookmark[];
+  bidBookmarks: BidBookmark[];
+
+  @OneToMany(
+    () => BidRegistration,
+    (bidRegistrations) => bidRegistrations.tender,
+    {
+      cascade: true,
+      onDelete: 'CASCADE',
+    },
+  )
+  bidRegistrations: BidRegistration[];
 }

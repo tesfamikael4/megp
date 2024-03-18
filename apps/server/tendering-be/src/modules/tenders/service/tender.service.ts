@@ -9,9 +9,20 @@ import {
   Tender,
 } from 'src/entities';
 import { Item } from 'src/entities/tender-item.entity';
+import { DataResponseFormat } from 'src/shared/api-data';
+import {
+  CollectionQuery,
+  FilterOperators,
+  QueryConstructor,
+} from 'src/shared/collection-query';
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 import { EntityCrudService } from 'src/shared/service';
-import { EntityManager, Repository } from 'typeorm';
+import {
+  EntityManager,
+  LessThanOrEqual,
+  MoreThanOrEqual,
+  Repository,
+} from 'typeorm';
 
 @Injectable()
 export class TenderService extends EntityCrudService<Tender> {
@@ -124,5 +135,46 @@ export class TenderService extends EntityCrudService<Tender> {
     } catch (error) {
       throw error;
     }
+  }
+
+  async getActiveTenders(query: CollectionQuery) {
+    query.includes.push('bdsSubmission');
+
+    query.where.push([
+      {
+        column: 'status',
+        operator: FilterOperators.EqualTo,
+        value: 'PUBLISHED',
+      },
+    ]);
+    query.where.push([
+      {
+        column: 'bdsSubmission.invitationDate',
+        operator: FilterOperators.LessThanOrEqualTo,
+        value: new Date(),
+      },
+    ]);
+    query.where.push([
+      {
+        column: 'bdsSubmission.submissionDeadline',
+        operator: FilterOperators.GreaterThanOrEqualTo,
+        value: new Date(),
+      },
+    ]);
+
+    const dataQuery = QueryConstructor.constructQuery<Tender>(
+      this.tenderRepository,
+      query,
+    );
+
+    const response = new DataResponseFormat<Tender>();
+    if (query.count) {
+      response.total = await dataQuery.getCount();
+    } else {
+      const [result, total] = await dataQuery.getManyAndCount();
+      response.total = total;
+      response.items = result;
+    }
+    return response;
   }
 }
