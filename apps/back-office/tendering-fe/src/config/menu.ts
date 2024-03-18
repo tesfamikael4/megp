@@ -3,6 +3,7 @@ import {
   IconBuildingBank,
   IconCoins,
   IconFileStack,
+  IconFolderOpen,
   IconLockSquareRounded,
   IconReportAnalytics,
 } from '@tabler/icons-react';
@@ -13,6 +14,11 @@ export const Menu: MenuItem[] = [
     label: 'Standard Procurement Document',
     icon: IconFileStack,
     link: '/spd',
+  },
+  {
+    label: 'Bid Opening',
+    icon: IconFolderOpen,
+    link: '/opening',
   },
   {
     label: 'Procurement requisition',
