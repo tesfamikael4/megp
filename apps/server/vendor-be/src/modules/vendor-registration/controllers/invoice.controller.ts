@@ -4,6 +4,7 @@ import {
   Get,
   HttpException,
   HttpStatus,
+  NotFoundException,
   Param,
   Post,
   Query,
@@ -18,20 +19,53 @@ import { InvoiceResponseDto } from '../dto/invoice.dto';
 import { decodeCollectionQuery } from 'src/shared/collection-query';
 import { ServiceKeyEnum } from 'src/shared/enums/service-key.enum';
 import { CreateAreasOfBusinessInterest } from '../dto/areas-of-business-interest';
+import axios from 'axios';
+import { PaymentCommand, PaymentReceiptCommand } from '../dto/payment-command.dto';
 
 @Controller('invoices')
 @ApiTags('Invoices')
 @UseGuards(JwtGuard)
 @ApiResponse({ status: 500, description: 'Internal error' })
 export class InvoicesController {
-  constructor(private invoiceService: InvoiceService) {}
+  constructor(private invoiceService: InvoiceService) {
 
-  @Get('get-my-upgrade-invoice')
-  async getMyInvoice(@CurrentUser() userInfo: any) {
-    return await this.invoiceService.getMyInvoice(
-      userInfo.id,
-      ServiceKeyEnum.REGISTRATION_UPGRADE,
-    );
+
+  }
+  @Post('pay')
+  async pay(@CurrentUser() user: any, @Param('invoiceId') invoiceId: string) {
+    const PaymentGateway = process.env.MEGP_PAYMENT_GATEWAY ?? '/infrastructure/api/';
+    const url = PaymentGateway + '/mpgs-payments';
+    const invoice = await this.invoiceService.getInvoiceActiveById(invoiceId);
+    if (invoice) {
+      const payload = new PaymentCommand();
+      payload.invoiceReference = invoice.refNumber;
+      payload.currency = 'MWK';
+      payload.applicationKey = 'Vendor';
+      payload.amount = invoice.amount;
+      payload.callbackUrl = '';
+      const headers = {
+        'Content-Type': 'application/json',
+        // 'x-api-key': process.env.MEGP_PAYMENT_GATEWAY_API_KEY ?? 'qywteqajdfhasdfagsdhfasdfkdfgdkfg',
+      };
+      try {
+        const response = await axios.post(url, payload, { headers });
+        console.log('response-----', response);
+        if (response.status === 201) {
+          const responseData = response.data;
+          return responseData;
+        } else {
+          return null;
+        }
+      } catch (error) {
+        throw new Error('Error making API request' + error);
+      }
+    } else {
+      throw new NotFoundException("Invoice Not found");
+    }
+  }
+  @Post('update-payment-status')
+  async updateStatus(@Body() receipt: PaymentReceiptCommand) {
+    return this.invoiceService.updateStatus(receipt);
   }
 
   @Post('generate-new-registration-invoice')
@@ -52,6 +86,7 @@ export class InvoicesController {
       throw new HttpException('Invalid Request', HttpStatus.BAD_REQUEST);
     }
   }
+
   @Post('generate-renewal-invoice')
   async generateRenewalInvoice(
     @Body() businessAreaIds: string[],
@@ -67,6 +102,24 @@ export class InvoicesController {
     }
   }
 
+  @Post('generate-upgrade-invoice')
+  async generateServiceInvoiceForUpgrade(
+    @CurrentUser() userInfo: any,
+    @Body() businessArea: UpgradeInfoDTO,
+  ) {
+    return await this.invoiceService.generateUpgradeInvoice(
+      businessArea,
+      userInfo,
+    );
+  }
+  @Get('get-my-upgrade-invoice')
+  async getMyInvoice(@CurrentUser() userInfo: any) {
+
+    return await this.invoiceService.getMyInvoice(
+      userInfo.id,
+      ServiceKeyEnum.REGISTRATION_UPGRADE,
+    );
+  }
   @Get('get-my-renewal-invoice')
   async getMyRenewalInvoice(@CurrentUser() userInfo: any) {
     return await this.invoiceService.getMyInvoice(
@@ -79,17 +132,6 @@ export class InvoicesController {
     return await this.invoiceService.getMyInvoice(
       userInfo.id,
       ServiceKeyEnum.NEW_REGISTRATION,
-    );
-  }
-
-  @Post('generate-upgrade-invoice')
-  async generateServiceInvoiceForUpgrade(
-    @CurrentUser() userInfo: any,
-    @Body() businessArea: UpgradeInfoDTO,
-  ) {
-    return await this.invoiceService.generateUpgradeInvoice(
-      businessArea,
-      userInfo,
     );
   }
 

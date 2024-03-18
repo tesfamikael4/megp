@@ -12,22 +12,6 @@ export class CreatePTDto {
   @IsNotEmpty()
   certiNumber: string;
 
-  // @ApiProperty()
-  // @IsOptional()
-  // otherDocumentsMetadata: any;
-  // @ApiProperty()
-  // @IsNotEmpty()
-  // remark: string;
-  // @ApiProperty()
-  // @IsNotEmpty()
-  // certificate: Express.Multer.File;
-  // @ApiProperty()
-  // @IsOptional()
-  // additionalDocuments: any[];
-  /**
-   * Transfer Data from DTO object to Entity object
-   *
-   */
   static fromDto(dto: CreatePTDto): PreferentialTreatmentsEntity {
     const entity = new PreferentialTreatmentsEntity();
     if (!dto) {
