@@ -195,7 +195,7 @@ export class HandlingCommonService {
     } else if (priceRange.valueFrom >= 1) {
       valueTo = (priceRange.valueTo / 1000000).toFixed(0);
       valueTo = curruncy + valueTo + ' million';
-      return 'Up to ' + curruncy + valueTo;
+      return 'Up to ' + valueTo;
     }
     if (priceRange.valueFrom) return priceRange.valueFrom.toString();
     return '';
