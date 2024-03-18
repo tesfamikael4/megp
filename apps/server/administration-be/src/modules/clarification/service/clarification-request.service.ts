@@ -5,6 +5,13 @@ import { ExtraCrudService } from 'src/shared/service';
 import { Repository } from 'typeorm';
 import { CreateClarificationRequestDTO } from '../dto/clarification-request.dto';
 import { MinIOService } from 'src/shared/min-io/min-io.service';
+import { query } from 'express';
+import { DataResponseFormat } from 'src/shared/api-data';
+import {
+  CollectionQuery,
+  FilterOperators,
+  QueryConstructor,
+} from 'src/shared/collection-query';
 
 @Injectable()
 export class ClarificationRequestService extends ExtraCrudService<ClarificationRequest> {
@@ -52,5 +59,33 @@ export class ClarificationRequestService extends ExtraCrudService<ClarificationR
       clarificationRequest.fileInfo,
     );
     return { preSignedUrl };
+  }
+
+  async getAllRequests(query: CollectionQuery) {
+    const dataQuery = QueryConstructor.constructQuery<ClarificationRequest>(
+      this.repositoryClarificationRequest,
+      query,
+    );
+    const response = new DataResponseFormat<ClarificationRequest>();
+    if (query.count) {
+      response.total = await dataQuery.getCount();
+    } else {
+      const [result, total] = await dataQuery.getManyAndCount();
+      response.total = total;
+      response.items = result;
+    }
+    return response;
+  }
+
+  async getMyRequests(userId, query: CollectionQuery) {
+    query.where.push([
+      {
+        column: 'requesterId',
+        value: userId,
+        operator: FilterOperators.EqualTo,
+      },
+    ]);
+
+    return await this.getAllRequests(query);
   }
 }
