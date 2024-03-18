@@ -476,15 +476,15 @@ export const roleSystems = [
   },
   {
     id: 18,
-    name: 'Budget Officer',
-    description: 'Budget Officer',
-    key: 'BUDGET_OFFICER',
+    name: 'Budget Officer PR',
+    description: 'Budget Officer PR',
+    key: 'BUDGET_OFFICER_PR',
   },
   {
     id: 19,
-    name: 'HPDU',
-    description: '',
-    key: 'HPDU',
+    name: 'HPDU PR',
+    description: 'HPDU PR',
+    key: 'HPDU_PR',
   },
 ];
 
