@@ -36,7 +36,7 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
     private readonly baService: BusinessAreaService,
     private readonly uploaderService: FileService,
     private readonly commonService: HandlingCommonService,
-    private readonly serviceService: BpServiceService
+    private readonly serviceService: BpServiceService,
   ) {
     super(ptRepository);
   }
@@ -50,7 +50,11 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
   async getPreferetialTreatmentsByUserId(serviceId: string, user: any) {
     const result = await this.ptRepository.findOne({
       relations: { service: true },
-      where: { userId: user.id, status: Not(ApplicationStatus.APPROVED), serviceId: serviceId },
+      where: {
+        userId: user.id,
+        status: Not(ApplicationStatus.APPROVED),
+        serviceId: serviceId,
+      },
     });
     return result;
   }
@@ -58,22 +62,19 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
   getServiceKey(item) {
     item.service.key == ServiceKeyEnum.IBM;
   }
-  async submitPreferential(
-    dtos: CreatePTDto[],
-    user: any
-  ) {
+  async submitPreferential(dtos: CreatePTDto[], user: any) {
     const response = [];
-    const vendor = await this.srRepository.findOne({ where: { userId: user.id } });
-    if (!vendor)
-      throw new HttpException('First, Register as a vendor', 404);
+    const vendor = await this.srRepository.findOne({
+      where: { userId: user.id },
+    });
+    if (!vendor) throw new HttpException('First, Register as a vendor', 404);
     const serviceIds = dtos.map((item) => item.serviceId);
     const bps = await this.bpService.findBpWithServiceByServiceIds(serviceIds);
     for (const dto of dtos) {
       const entity = CreatePTDto.fromDto(dto);
       entity.userId = user.id;
-      const wf = bps.find((item: any) => item.serviceId == dto.serviceId)
-      if (!wf)
-        throw new HttpException("Business procees not defined", 404);
+      const wf = bps.find((item: any) => item.serviceId == dto.serviceId);
+      if (!wf) throw new HttpException('Business procees not defined', 404);
       const bpId = wf.id;
       try {
         entity.status =
@@ -112,8 +113,10 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
             nextCommand.data = wfi.data;
             return await this.workflowService.gotoNextStep(nextCommand, user);
           }
-          const wfiResult =
-            await this.workflowService.intiateWorkflowInstance(wfi, user);
+          const wfiResult = await this.workflowService.intiateWorkflowInstance(
+            wfi,
+            user,
+          );
           const ba = new BusinessAreaEntity();
           ba.instanceId = wfiResult.application.id;
           ba.vendorId = vendor?.id;
@@ -123,7 +126,6 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
           ba.serviceId = dto.serviceId;
           await this.baService.create(ba);
         }
-
       } catch (error) {
         throw new HttpException(error, 500);
       }
@@ -158,9 +160,8 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
           await this.ptRepository.save(pt);
           response['msmeCerti'] = certificateUrl;
         } else {
-          throw new HttpException("MSME data Not found", 404);
+          throw new HttpException('MSME data Not found', 404);
         }
-
       }
       if (attachments?.ibmCerti?.length) {
         const certificateUrl = await this.uploaderService.uploadDocuments(
@@ -180,9 +181,8 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
           await this.ptRepository.save(pt);
           response['ibmCerti'] = certificateUrl;
         } else {
-          throw new HttpException("IBM data Not found", 404);
+          throw new HttpException('IBM data Not found', 404);
         }
-
       }
       if (attachments?.marginalizedCerti?.length) {
         const certificateUrl = await this.uploaderService.uploadDocuments(
@@ -202,17 +202,14 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
           await this.ptRepository.save(pt);
           response['marginalizedCerti'] = certificateUrl;
         } else {
-          throw new HttpException("marginalized Data Not found", 404);
+          throw new HttpException('marginalized Data Not found', 404);
         }
-
       }
       return response;
     } catch (error) {
       throw new Error(error);
     }
   }
-
-
 
   // async uploadPreferentialAttachments(attachments: any, user: any) {
   //   const subdirectory = 'preferential-documents';
@@ -295,36 +292,35 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
   //   }
   // }
   async getDraftPreferentialApplications(user: any) {
-    const response = []
+    const response = [];
     const result = await this.ptRepository.find({
       relations: { service: true },
       where: { userId: user.id, status: ApplicationStatus.DRAFT },
     });
-    const keys = this.commonService.getServiceCatagoryKeys(
-      ServiceKeyEnum.MSME,
-    );
+    const keys = this.commonService.getServiceCatagoryKeys(ServiceKeyEnum.MSME);
     for (const row of result) {
-      if ((row.service.key == ServiceKeyEnum.IBM)) {
+      if (row.service.key == ServiceKeyEnum.IBM) {
         response.push({
           ...row,
           category: row.service.key,
           type: row.service.key,
         });
-      } else if ((row.service.key == ServiceKeyEnum.MARGINALIZED_GROUP)) {
+      } else if (row.service.key == ServiceKeyEnum.MARGINALIZED_GROUP) {
         response.push({
           ...row,
           category: row.service.key,
           type: row.service.key,
         });
-      } else
-        if (keys.filter((item: any) => row.service.key == item.service.key).length > 0) {
-          response.push({
-            ...row,
-            category: ServiceKeyEnum.MSME,
-            type: row.service.key,
-          });
-        }
-
+      } else if (
+        keys.filter((item: any) => row.service.key == item.service.key).length >
+        0
+      ) {
+        response.push({
+          ...row,
+          category: ServiceKeyEnum.MSME,
+          type: row.service.key,
+        });
+      }
     }
     return response;
   }
@@ -343,17 +339,25 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
     return await this.ptRepository.delete({ id: id, userId: user.id });
   }
   async getUnregisteredPreferentials(user: any) {
-    const result = await this.ptRepository.find({ relations: { service: true, }, where: { userId: user.id } });
+    const result = await this.ptRepository.find({
+      relations: { service: true },
+      where: { userId: user.id },
+    });
     let keys = [];
     for (const item of result) {
-      if (item.service.key == ServiceKeyEnum.MEDIUM
-        || item.service.key == ServiceKeyEnum.MICRO ||
-        item.service.key == ServiceKeyEnum.SMALL) {
-        keys = [...this.commonService.getServiceCatagoryKeys(ServiceKeyEnum.MSME)];
+      if (
+        item.service.key == ServiceKeyEnum.MEDIUM ||
+        item.service.key == ServiceKeyEnum.MICRO ||
+        item.service.key == ServiceKeyEnum.SMALL
+      ) {
+        keys = [
+          ...this.commonService.getServiceCatagoryKeys(ServiceKeyEnum.MSME),
+        ];
       }
       keys.push(item.service.key);
     }
-    const services = await this.serviceService.getPreferentialTreatmentByKeys(keys);
+    const services =
+      await this.serviceService.getPreferentialTreatmentByKeys(keys);
     return services;
   }
 }

@@ -5,6 +5,7 @@ import {
   IsNotEmpty,
   IsObject,
   IsString,
+  MaxLength,
   MinLength,
 } from 'class-validator';
 
@@ -28,7 +29,8 @@ export class CreateAccountDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  @MinLength(Number(process.env.PASSWORD_LENGTH ?? 8))
+  @MinLength(Number(process.env.PASSWORD_MIN_LENGTH ?? 8))
+  @MaxLength(Number(process.env.PASSWORD_MAX_LENGTH ?? 25))
   public password: string;
 }
 

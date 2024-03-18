@@ -10,6 +10,7 @@ import { EqcModule } from './modules/eqc/eqc.module';
 import { BdsModule } from './modules/bds/bds.module';
 import { SorModule } from './modules/sor/sor.module';
 import { BidModule } from './modules/bid/bid.module';
+import { SccModule } from './modules/scc/scc.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TransactionInterceptor } from './shared/interceptors';
 
@@ -24,6 +25,7 @@ import { TransactionInterceptor } from './shared/interceptors';
     BdsModule,
     SorModule,
     BidModule,
+    SccModule,
   ],
   providers: [
     EventEmitterModule,

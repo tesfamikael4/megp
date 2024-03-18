@@ -1,5 +1,6 @@
 export interface BidSecurity {
   id: string;
+  lotId: string;
   bidSecurityRequired: boolean;
   bidSecurityAmount: number;
   bidSecurityCurrency: any;

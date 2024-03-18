@@ -11,7 +11,7 @@ import { BucketNameEnum } from '../min-io/bucket-name.enum';
 
 @Injectable()
 export class DocumentManipulatorService {
-  constructor(private readonly minIOService: MinIOService) { }
+  constructor(private readonly minIOService: MinIOService) {}
 
   async mergePdf(pdfBuffers: Buffer[]) {
     try {

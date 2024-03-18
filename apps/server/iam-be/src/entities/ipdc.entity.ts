@@ -20,13 +20,13 @@ export class IPDC extends OrgAudit {
 
   @ManyToOne(
     () => ProcurementInstitution,
-    (procurementInstitution) => procurementInstitution.iPDCs,
+    (procurementInstitution) => procurementInstitution.ipdcs,
   )
   @JoinColumn({ name: 'procurementInstitutionId' })
   public procurementInstitution: ProcurementInstitution;
 
-  @OneToMany(() => IPDCMember, (iPDCMember) => iPDCMember.iPDC)
-  public iPDCMembers: IPDCMember[];
+  @OneToMany(() => IPDCMember, (iPDCMember) => iPDCMember.ipdc)
+  public ipdcMembers: IPDCMember[];
 
   @Column({ default: 'Draft' })
   status: string;

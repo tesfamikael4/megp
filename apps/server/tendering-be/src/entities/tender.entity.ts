@@ -15,8 +15,17 @@ import { BdsEvaluation } from './bds-evaluation.entity';
 import { BdsPreparation } from './bds-preparation.entity';
 import { BdsAward } from './bds-award.entity';
 import { TenderSpd } from './tender-spd.entity';
+import { SccContractDeliverable } from './scc-contract-deliverable.entity';
+import { SccGeneralProvision } from './scc-general-provision.entity';
+import { SccGuarantee } from './scc-guarantee.entity';
+import { SccLiability } from './scc-liability.entity';
+import { SccPaymentSchedule } from './scc-payment-schedule.entity';
+import { SccPaymentTerm } from './scc-payment-term.entity';
 import { TenderSpdBidForm } from './tender-spd-bid-form.entity';
 import { TenderSpdContractForm } from './tender-spd-contract-form.entity';
+import { TenderParticipationFee } from './tender-participation-fee.entity';
+import { TenderClassification } from './tender-classification.entity';
+import { BidBookmark } from './bid-bookmark.entity';
 
 @Entity({ name: 'tenders' })
 export class Tender extends Audit {
@@ -25,6 +34,9 @@ export class Tender extends Audit {
 
   @Column()
   name: string;
+
+  @Column({ nullable: true })
+  procurementCategory: string;
 
   @Column({ nullable: true })
   procurementReferenceNumber: string;
@@ -89,6 +101,32 @@ export class Tender extends Audit {
   )
   procurementMechanism: ProcurementMechanism;
 
+  @OneToMany(
+    () => SccContractDeliverable,
+    (sccContractDeliverable) => sccContractDeliverable.tender,
+  )
+  sccContractDeliverables: SccContractDeliverable[];
+
+  @OneToMany(
+    () => SccGeneralProvision,
+    (sccGeneralProvision) => sccGeneralProvision.tender,
+  )
+  sccGeneralProvisions: SccGeneralProvision[];
+
+  @OneToMany(() => SccGuarantee, (sccGuarantee) => sccGuarantee.tender)
+  sccGuarantees: SccGuarantee[];
+
+  @OneToMany(() => SccLiability, (sccLiability) => sccLiability.tender)
+  sccLiabilities: SccLiability[];
+
+  @OneToMany(
+    () => SccPaymentSchedule,
+    (sccPaymentSchedule) => sccPaymentSchedule.tender,
+  )
+  sccPaymentSchedules: SccPaymentSchedule[];
+
+  @OneToMany(() => SccPaymentTerm, (sccPaymentTerm) => sccPaymentTerm.tender)
+  sccPaymentTerms: SccPaymentTerm[];
   @OneToMany(() => TenderSpdBidForm, (spdBidForm) => spdBidForm.tender, {
     cascade: true,
     onDelete: 'CASCADE',
@@ -100,4 +138,26 @@ export class Tender extends Audit {
     onDelete: 'CASCADE',
   })
   tenderSpdContractForm: TenderSpdContractForm[];
+
+  @OneToOne(
+    () => TenderParticipationFee,
+    (tenderParticipationFee) => tenderParticipationFee.tender,
+  )
+  tenderParticipationFee: TenderParticipationFee;
+
+  @OneToMany(
+    () => TenderClassification,
+    (tenderClassification) => tenderClassification.tender,
+    {
+      cascade: true,
+      onDelete: 'CASCADE',
+    },
+  )
+  tenderClassifications: TenderClassification[];
+
+  @OneToMany(() => BidBookmark, (bidBookmark) => bidBookmark.tender, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  bidBookmark: BidBookmark[];
 }

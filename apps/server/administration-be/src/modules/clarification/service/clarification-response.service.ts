@@ -12,6 +12,12 @@ import {
 } from 'src/shared/types/notification.type';
 import { Repository } from 'typeorm';
 import { CreateClarificationResponseDTO } from '../dto/clarification-response.dto';
+import {
+  CollectionQuery,
+  FilterOperators,
+  QueryConstructor,
+} from 'src/shared/collection-query';
+import { DataResponseFormat } from 'src/shared/api-data';
 
 @Injectable()
 export class ClarificationResponseService extends EntityCrudService<ClarificationResponse> {
@@ -87,5 +93,29 @@ export class ClarificationResponseService extends EntityCrudService<Clarificatio
     );
 
     return { preSignedUrl };
+  }
+
+  async getMyResponses(userId: string, query: CollectionQuery) {
+    query.where.push([
+      {
+        column: 'responderId',
+        value: userId,
+        operator: FilterOperators.EqualTo,
+      },
+    ]);
+    const dataQuery = QueryConstructor.constructQuery<ClarificationResponse>(
+      this.repositoryClarificationResponse,
+      query,
+    );
+
+    const response = new DataResponseFormat<ClarificationResponse>();
+    if (query.count) {
+      response.total = await dataQuery.getCount();
+    } else {
+      const [result, total] = await dataQuery.getManyAndCount();
+      response.total = total;
+      response.items = result;
+    }
+    return response;
   }
 }

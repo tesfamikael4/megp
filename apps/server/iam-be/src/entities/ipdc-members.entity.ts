@@ -16,11 +16,11 @@ export class IPDCMember extends OrgAudit {
   id: string;
 
   @Column()
-  iPDCId: string;
+  ipdcId: string;
 
-  @ManyToOne(() => IPDC, (iPDC) => iPDC.iPDCMembers)
-  @JoinColumn({ name: 'iPDCId' })
-  public iPDC: IPDC;
+  @ManyToOne(() => IPDC, (iPDC) => iPDC.ipdcMembers)
+  @JoinColumn({ name: 'ipdcId' })
+  public ipdc: IPDC;
 
   @Column({
     type: 'enum',

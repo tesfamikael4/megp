@@ -1,5 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsEmail,
+  IsNotEmpty,
+  IsString,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
 
 export class LoginDto {
   @ApiProperty()
@@ -8,6 +15,8 @@ export class LoginDto {
 
   @ApiProperty()
   @IsNotEmpty()
+  @MinLength(Number(process.env.PASSWORD_MIN_LENGTH ?? 5))
+  @MaxLength(Number(process.env.PASSWORD_MAX_LENGTH ?? 25))
   public password: string;
 }
 
@@ -47,6 +56,8 @@ export class ResetPasswordDto {
 
   @ApiProperty()
   @IsNotEmpty()
+  @MinLength(Number(process.env.PASSWORD_MIN_LENGTH ?? 5))
+  @MaxLength(Number(process.env.PASSWORD_MAX_LENGTH ?? 25))
   public password: string;
 
   @ApiProperty()
@@ -73,10 +84,14 @@ export class ChangePasswordDto {
 
   @ApiProperty()
   @IsNotEmpty()
+  @MinLength(Number(process.env.PASSWORD_MIN_LENGTH ?? 5))
+  @MaxLength(Number(process.env.PASSWORD_MAX_LENGTH ?? 25))
   public oldPassword: string;
 
   @ApiProperty()
   @IsNotEmpty()
+  @MinLength(Number(process.env.PASSWORD_MIN_LENGTH ?? 5))
+  @MaxLength(Number(process.env.PASSWORD_MAX_LENGTH ?? 25))
   public newPassword: string;
 }
 
@@ -87,5 +102,7 @@ export class ResetAccountPasswordDto {
 
   @ApiProperty()
   @IsNotEmpty()
+  @MinLength(Number(process.env.PASSWORD_MIN_LENGTH ?? 5))
+  @MaxLength(Number(process.env.PASSWORD_MAX_LENGTH ?? 25))
   public password: string;
 }

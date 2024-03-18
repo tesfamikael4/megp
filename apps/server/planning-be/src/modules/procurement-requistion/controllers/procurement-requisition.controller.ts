@@ -66,16 +66,15 @@ export class ProcurementRequisitionController extends EntityCrudController<Procu
   async getAnalytics(@Param('id') id: string) {
     return await this.procurementRequisitionService.getAnalytics(id);
   }
+
   //for tendering
   @AllowAnonymous()
   @UseGuards(ApiKeyGuard)
-  @Get('get-procurement-requisition')
+  @Get('get-procurement-requisition/:id')
   @ApiPaginatedResponse(ProcurementRequisition)
-  async getProcurementRequisitionByReference(
-    @Query('procurementReference') procurementReference: string,
-  ) {
-    return await this.procurementRequisitionService.getProcurementRequisitionByReference(
-      procurementReference,
+  async getProcurementRequisitionByReference(@Param('id') id: string) {
+    return await this.procurementRequisitionService.getProcurementRequisitionById(
+      id,
     );
   }
 }

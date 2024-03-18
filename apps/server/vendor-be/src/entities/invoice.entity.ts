@@ -19,7 +19,7 @@ export class InvoiceEntity extends Audit {
   @Column({ nullable: true })
   serviceId: string;
   @Column({ type: 'jsonb', nullable: true })
-  paymentDetail: any
+  paymentDetail: any;
   @Column()
   payerName: string;
   @Column({ nullable: true })

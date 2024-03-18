@@ -43,7 +43,10 @@ export class SpdTemplateService extends ExtraCrudService<SpdTemplate> {
         BucketNameEnum.SPD_TEMPLATE,
       );
 
-      const documentPdf = await this.fileHelperService.convertAndUpload(file);
+      const documentPdf = await this.fileHelperService.convertAndUpload(
+        file,
+        BucketNameEnum.SPD_TEMPLATE,
+      );
 
       const spdTemplate = await this.spdTemplateRepository.findOneBy({
         type,

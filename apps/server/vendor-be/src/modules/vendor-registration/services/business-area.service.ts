@@ -38,9 +38,16 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
     });
   }
 
-  async getBusinessUppgradesOrRenewal(categories: string[], serviceKey: string) {
+  async getBusinessUppgradesOrRenewal(
+    categories: string[],
+    serviceKey: string,
+  ) {
     return this.businessAreaRepository.find({
-      where: { category: In(categories), BpService: { key: serviceKey }, status: In([ApplicationStatus.PENDING, ApplicationStatus.ADJUSTMENT]) },
+      where: {
+        category: In(categories),
+        BpService: { key: serviceKey },
+        status: In([ApplicationStatus.PENDING, ApplicationStatus.ADJUSTMENT]),
+      },
       relations: { BpService: true },
     });
   }
@@ -61,7 +68,6 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
     }
     return false;
   }
-
 
   async getPreviousUpgradeService(
     vendorId: string,
@@ -91,7 +97,6 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
       },
     });
   }
-
 
   async getBusinessAreaByInstanceIds(
     instanceIds: string[],
@@ -138,7 +143,6 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
     });
   }
 
-
   async getVendorRegisteredServices(vendorId: string) {
     const result = await this.businessAreaRepository.find({
       where: {
@@ -154,7 +158,10 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
     return result;
   }
 
-  async getVendorBusinessAreaByInstanceId(vendorId: string, instanceId: string) {
+  async getVendorBusinessAreaByInstanceId(
+    vendorId: string,
+    instanceId: string,
+  ) {
     const businessArea = await this.businessAreaRepository.find({
       where: {
         vendorId: vendorId,
@@ -166,7 +173,7 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
   }
   async getPTByServiceId(
     serviceId: string,
-    userId: string
+    userId: string,
   ): Promise<BusinessAreaEntity> {
     return this.businessAreaRepository.findOne({
       where: {
@@ -174,7 +181,6 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
         status: ApplicationStatus.APPROVED,
         isrVendor: { userId: userId },
       },
-
     });
   }
 }

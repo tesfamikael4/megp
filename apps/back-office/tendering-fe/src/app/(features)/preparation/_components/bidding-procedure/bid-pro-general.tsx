@@ -43,7 +43,7 @@ export default function BidProGeneral() {
     })
     .refine((data) => data.preBidConferenceRequired, {
       message: 'prebid conference date is required',
-      path: ['preBidConferenceDate'], // Pointing out which field is invalid
+      path: ['preBidConferenceDate'],
     });
   const {
     handleSubmit,

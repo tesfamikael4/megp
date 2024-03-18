@@ -41,7 +41,7 @@ export class SpdTemplateController extends ExtraCrudController<SpdTemplate>(
     @Param('type') type: string,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    return this.spdService.uploadSPDDocument(spdId, type, file);
+    return await this.spdService.uploadSPDDocument(spdId, type, file);
   }
 
   @Get('/download-spd-docx/:spdId/:type')
@@ -50,7 +50,7 @@ export class SpdTemplateController extends ExtraCrudController<SpdTemplate>(
     @Param('spdId') spdId: string,
     @Param('type') type: string,
   ) {
-    return this.spdService.downloadSPDDocumentDocx(spdId, type);
+    return await this.spdService.downloadSPDDocumentDocx(spdId, type);
   }
 
   @Get('/download-spd-pdf/:spdId/:type')
@@ -59,18 +59,18 @@ export class SpdTemplateController extends ExtraCrudController<SpdTemplate>(
     @Param('spdId') spdId: string,
     @Param('type') type: string,
   ) {
-    return this.spdService.downloadSPDDocumentPdf(spdId, type);
+    return await this.spdService.downloadSPDDocumentPdf(spdId, type);
   }
 
   @Get('/mergePdf')
   @AllowAnonymous()
   async mergePdf() {
-    return this.spdService.mergePdf();
+    return await this.spdService.mergePdf();
   }
   @Get('/mergeDocx')
   @AllowAnonymous()
   async mergeDocx() {
-    return this.spdService.mergeDocx();
+    return await this.spdService.mergeDocx();
   }
 
   @Get('/merge')

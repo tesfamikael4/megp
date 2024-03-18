@@ -4,6 +4,7 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 import { Spd } from './spd.entity';
 import { Audit } from 'src/shared/entities';
@@ -16,8 +17,21 @@ export class SpdTechnicalScoring extends Audit {
   @Column({ type: 'uuid' })
   spdId: string;
 
-  @Column({ type: 'uuid' })
+  @Column({ type: 'uuid', nullable: true })
   parentId: string;
+
+  @ManyToOne(
+    () => SpdTechnicalScoring,
+    (technicalScoring) => technicalScoring.children,
+  )
+  @JoinColumn()
+  parent: SpdTechnicalScoring;
+
+  @OneToMany(
+    () => SpdTechnicalScoring,
+    (technicalScoring) => technicalScoring.parent,
+  )
+  children: SpdTechnicalScoring[];
 
   @Column()
   requirement: string;

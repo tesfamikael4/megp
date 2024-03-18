@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import React from 'react';
 import { ExpandableTable } from '../_components/expandable-table';
 import { useLazyListQuery } from './_api/tender/tender.api';
+import TenderDetail from './_components/tender/tender-detail';
 
 export default function Preparation() {
   const [trigger, { data, isFetching }] = useLazyListQuery();
@@ -26,12 +27,12 @@ export default function Preparation() {
       {
         accessor: 'id',
         title: '',
-        render: (pr) => (
+        render: (tender) => (
           <ActionIcon
             variant="outline"
             onClick={(e) => {
               e.stopPropagation();
-              router.push(`/preparation/${pr.id}`);
+              router.push(`/preparation/${tender.id}`);
             }}
           >
             <IconChevronRight />
@@ -44,8 +45,8 @@ export default function Preparation() {
     isSearchable: true,
     primaryColumn: 'title',
     isFetching: isFetching,
-    expandedRowContent: () => {
-      return <div>hello</div>;
+    expandedRowContent: (tender) => {
+      return <TenderDetail tender={tender} />;
     },
   };
 

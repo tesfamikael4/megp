@@ -25,7 +25,10 @@ export class TenderSpdContractFormService extends ExtraCrudService<TenderSpdCont
         BucketNameEnum.TENDER_SPD_CONTRACT_FORM,
       );
 
-      const documentPdf = await this.fileHelperService.convertAndUpload(file);
+      const documentPdf = await this.fileHelperService.convertAndUpload(
+        file,
+        BucketNameEnum.TENDER_SPD_CONTRACT_FORM,
+      );
 
       const data = this.spdContractFormRepository.create({
         tenderId: payload.tenderId,

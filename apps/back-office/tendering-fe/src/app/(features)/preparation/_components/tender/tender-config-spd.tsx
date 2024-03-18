@@ -5,8 +5,6 @@ import {
   LoadingOverlay,
   Modal,
   Table,
-  TextInput,
-  Textarea,
 } from '@mantine/core';
 import { Section, logger, notify } from '@megp/core-fe';
 import { useDisclosure } from '@mantine/hooks';
@@ -40,15 +38,12 @@ export default function TenderConfigSpd() {
 
   const handelTenderSpd = (data) => {
     if (selected) {
-      logger.log('update', data.id);
       onUpdate(data);
     } else {
-      logger.log('create', data.id);
       onCreate(data);
     }
   };
   const onCreate = async (data) => {
-    logger.log('here');
     try {
       await create({
         spdId: data.id,
@@ -115,36 +110,28 @@ export default function TenderConfigSpd() {
               <Table.Td className="bg-slate-100 font-semibold w-2/6">
                 Name
               </Table.Td>
-              <Table.Td>
-                <TextInput type="string" disabled value={name} />
-              </Table.Td>
+              <Table.Td>{name}</Table.Td>
             </Table.Tr>
 
             <Table.Tr>
               <Table.Td className="bg-slate-100 font-semibold w-2/6">
                 Market Type
               </Table.Td>
-              <Table.Td>
-                <TextInput type="string" disabled value={marketType} />
-              </Table.Td>
+              <Table.Td>{marketType}</Table.Td>
             </Table.Tr>
 
             <Table.Tr>
               <Table.Td className="bg-slate-100 font-semibold w-2/6">
                 Procurement Category
               </Table.Td>
-              <Table.Td>
-                <TextInput type="string" disabled value={procurementCategory} />
-              </Table.Td>
+              <Table.Td>{procurementCategory}</Table.Td>
             </Table.Tr>
 
             <Table.Tr>
               <Table.Td className="bg-slate-100 font-semibold w-2/6">
                 Description
               </Table.Td>
-              <Table.Td>
-                <Textarea disabled value={description} />
-              </Table.Td>
+              <Table.Td>{description}</Table.Td>
             </Table.Tr>
           </Table.Tbody>
         </Table>

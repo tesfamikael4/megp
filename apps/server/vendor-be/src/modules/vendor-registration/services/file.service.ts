@@ -43,14 +43,14 @@ export class FileService {
     private readonly businessAreaRepository: Repository<BusinessAreaEntity>,
     private readonly busineAreaService: BusinessAreaService,
     private readonly workflowService: WorkflowService,
-  ) { }
+  ) {}
   private updateVendorEnums = [
     VendorStatusEnum.ACTIVE,
     VendorStatusEnum.ADJUSTMENT,
     VendorStatusEnum.COMPLETED,
     VendorStatusEnum.SUBMITTED,
     VendorStatusEnum.APPROVED,
-    VendorStatusEnum.DRAFT
+    VendorStatusEnum.DRAFT,
   ];
   async getFileNameByVendorId(vendorId: string) {
     try {
@@ -318,20 +318,18 @@ export class FileService {
           id: In(ids),
           service: {
             businessProcesses: { isActive: true },
-
           },
         },
         relations: {
           service: {
             businessAreas: { isrVendor: true },
-            businessProcesses: true
+            businessProcesses: true,
           },
         },
       });
 
       const wfi: CreateWorkflowInstanceDto = new CreateWorkflowInstanceDto();
       for (const row of invoices) {
-
         const businessArea = row.service.businessAreas[0];
         const ba = await this.busineAreaService.findOne(businessArea.id);
         if (ba.status == ApplicationStatus.PENDING) {

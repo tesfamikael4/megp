@@ -170,9 +170,7 @@ export function ScoringTable({
             width: 70,
           },
         ]}
-        records={scoring.filter(
-          (score) => score.parentId === '00000000-0000-0000-0000-000000000000',
-        )}
+        records={scoring.filter((score) => !score.parentId)}
         rowExpansion={{
           allowMultiple: true,
           expanded: {

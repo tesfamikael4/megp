@@ -28,7 +28,13 @@ export class CreateSpdDto {
   isActive: boolean;
 }
 
-export class UpdateSpdDto {
+export class UpdateSpdDto extends CreateSpdDto {
+  @ApiProperty()
+  @IsUUID()
+  id: string;
+}
+
+export class ToggleIsActiveDto {
   @ApiProperty()
   @IsUUID()
   id: string;
