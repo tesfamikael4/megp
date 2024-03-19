@@ -30,7 +30,7 @@ import {
   procurementType,
   targetGroups,
 } from '../_constants/procurement-method';
-import { logger, notify } from '@megp/core-fe';
+import { Section, logger, notify } from '@megp/core-fe';
 import { IconDeviceFloppy } from '@tabler/icons-react';
 
 const activitiesSchema: ZodType<Partial<any>> = z.object({
@@ -211,105 +211,107 @@ export const PrMechanization = ({
   }, [isGetMechanismSuccess, mechanism, setValue]);
 
   return (
-    <div className="flex gap-4">
-      <Stack
-        pos="relative"
-        className={
-          Object.keys(justifications).length === 0 ? 'w-full' : 'w-3/5'
-        }
-      >
-        <LoadingOverlay visible={isGetMechanismLoading} />
-        <Flex gap="md">
-          <CustomSelect
-            label="Procurement Type"
-            placeholder="Select Procurement Type"
-            name="procurementType"
-            control={control}
-            data={procurementType}
-            errors={errors}
-            disableFields={disableFields}
-          />
-          <CustomSelect
-            label="Procurement Method"
-            name="procurementMethod"
-            placeholder="Select Procurement Method"
-            control={control}
-            data={procurementMethods}
-            errors={errors}
-            actions={checkIfMethodIsValid}
-            // disableFields={disableFields || !type}
-          />
-        </Flex>
-        {method === 'Purchased Orders (Call off)' && (
-          <FrameworkSelector
-            contract={contract}
-            onSelect={(contract) => setContract(contract)}
-          />
-        )}
-        <Flex gap="md" align="center">
-          <CustomSelect
-            label="Funding Source"
-            name="fundingSource"
-            control={control}
-            data={fundingSources}
-            placeholder="Select Funding Source"
-            errors={errors}
-            disableFields={disableFields}
-          />
-          <CustomSelect
-            label="Procurement Process"
-            name="isOnline"
-            placeholder="Select Procurement Process"
-            control={control}
-            data={[
-              { label: 'Online', value: 'true' },
-              { label: 'Offline', value: 'false' },
-            ]}
-            errors={errors}
-            disableFields={disableFields}
-          />
-        </Flex>
-        {(fundingSource == 'Loan' || fundingSource == 'Donor') && (
-          <TextInput
-            label="Donor"
-            withAsterisk
-            value={donor[0] ?? ''}
-            onChange={(e) => setDonor([e.target.value])}
-            disabled={disableFields}
-          />
-        )}
-        <Controller
-          name="targetGroup"
-          control={control}
-          render={({ field: { name, value, onChange } }) => (
-            <MultiSelect
-              name={name}
-              value={value}
-              onChange={onChange}
-              label="Supplier Target Group"
-              data={targetGroups}
-              className="w-full"
-              disabled={disableFields}
-              placeholder="Select Supplier Target Group"
+    <Section title="Procurement Method" collapsible={false}>
+      <div className="flex gap-4">
+        <Stack
+          pos="relative"
+          className={
+            Object.keys(justifications).length === 0 ? 'w-full' : 'w-3/5'
+          }
+        >
+          <LoadingOverlay visible={isGetMechanismLoading} />
+          <Flex gap="md">
+            <CustomSelect
+              label="Procurement Type"
+              placeholder="Select Procurement Type"
+              name="procurementType"
+              control={control}
+              data={procurementType}
+              errors={errors}
+              disableFields={disableFields}
+            />
+            <CustomSelect
+              label="Procurement Method"
+              name="procurementMethod"
+              placeholder="Select Procurement Method"
+              control={control}
+              data={procurementMethods}
+              errors={errors}
+              actions={checkIfMethodIsValid}
+              disableFields={!type}
+            />
+          </Flex>
+          {method === 'Purchased Orders (Call off)' && (
+            <FrameworkSelector
+              contract={contract}
+              onSelect={(contract) => setContract(contract)}
             />
           )}
-        />
+          <Flex gap="md" align="center">
+            <CustomSelect
+              label="Funding Source"
+              name="fundingSource"
+              control={control}
+              data={fundingSources}
+              placeholder="Select Funding Source"
+              errors={errors}
+              disableFields={disableFields}
+            />
+            <CustomSelect
+              label="Procurement Process"
+              name="isOnline"
+              placeholder="Select Procurement Process"
+              control={control}
+              data={[
+                { label: 'Online', value: 'true' },
+                { label: 'Offline', value: 'false' },
+              ]}
+              errors={errors}
+              disableFields={disableFields}
+            />
+          </Flex>
+          {(fundingSource == 'Loan' || fundingSource == 'Donor') && (
+            <TextInput
+              label="Donor"
+              withAsterisk
+              value={donor[0] ?? ''}
+              onChange={(e) => setDonor([e.target.value])}
+              disabled={disableFields}
+            />
+          )}
+          <Controller
+            name="targetGroup"
+            control={control}
+            render={({ field: { name, value, onChange } }) => (
+              <MultiSelect
+                name={name}
+                value={value}
+                onChange={onChange}
+                label="Supplier Target Group"
+                data={targetGroups}
+                className="w-full"
+                disabled={disableFields}
+                placeholder="Select Supplier Target Group"
+              />
+            )}
+          />
 
-        <Group>
-          <Button
-            loading={isPrCreating || isPrUpdating}
-            onClick={handleSubmit(onSubmit, onError)}
-            disabled={disableFields}
-          >
-            <IconDeviceFloppy size={14} />
-            {mode === 'new' ? 'Save' : 'Update'}
-          </Button>
-        </Group>
-      </Stack>
+          <Group>
+            <Button
+              loading={isPrCreating || isPrUpdating}
+              onClick={handleSubmit(onSubmit, onError)}
+              disabled={disableFields}
+            >
+              <IconDeviceFloppy size={14} />
+              {mode === 'new' ? 'Save' : 'Update'}
+            </Button>
+          </Group>
+        </Stack>
 
-      {Object.keys(justifications).length !== 0 && (
-        <Reasons justification={justifications} />
-      )}
-    </div>
+        {Object.keys(justifications).length !== 0 && (
+          <Reasons justification={justifications} />
+        )}
+      </div>
+    </Section>
   );
 };

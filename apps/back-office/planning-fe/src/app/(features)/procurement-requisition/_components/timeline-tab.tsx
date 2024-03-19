@@ -1,7 +1,7 @@
 'use client';
 
 import { Box, Button, Group, NumberInput, TextInput } from '@mantine/core';
-import { Table, TableConfig, logger, notify } from '@megp/core-fe';
+import { Section, Table, TableConfig, logger, notify } from '@megp/core-fe';
 import { useEffect, useState } from 'react';
 import { DateInput } from '@mantine/dates';
 import { IconDeviceFloppy } from '@tabler/icons-react';
@@ -304,20 +304,24 @@ export default function TimelineTab({ activityId }: { activityId?: string }) {
   }, [isTimelineSuccess, timeline?.items, timeline?.total]);
 
   return (
-    <div className="mt-4">
-      {isSuccess && procurementRequisition?.isPlanned && (
-        <Table config={listAppConfig} data={data} />
-      )}
-      {data.length != 0 && isSuccess && !procurementRequisition?.isPlanned && (
-        <Table config={listConfig} data={data} />
-      )}
-      {!activityId && (
-        <Group className="mt-2" justify="end">
-          <Button onClick={handleSave} loading={isTimelineCreating} mb={'sm'}>
-            <IconDeviceFloppy size={16} /> Save
-          </Button>
-        </Group>
-      )}
-    </div>
+    <Section title="Activity Identification" collapsible={false}>
+      <div className="mt-4">
+        {isSuccess && procurementRequisition?.isPlanned && (
+          <Table config={listAppConfig} data={data} />
+        )}
+        {data.length != 0 &&
+          isSuccess &&
+          !procurementRequisition?.isPlanned && (
+            <Table config={listConfig} data={data} />
+          )}
+        {!activityId && (
+          <Group className="mt-2" justify="end">
+            <Button onClick={handleSave} loading={isTimelineCreating} mb={'sm'}>
+              <IconDeviceFloppy size={16} /> Save
+            </Button>
+          </Group>
+        )}
+      </div>
+    </Section>
   );
 }

@@ -14,7 +14,7 @@ import {
 import { useDisclosure } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
-import { logger, notify } from '@megp/core-fe';
+import { Section, logger, notify } from '@megp/core-fe';
 import {
   IconDotsVertical,
   IconDownload,
@@ -217,50 +217,62 @@ export const Documents = ({
   };
 
   return (
-    <Box className="pt-2">
-      <Group justify="end" className="pb-2">
-        <Button
-          leftSection={<IconUpload size={18} />}
-          onClick={open}
-          disabled={disableFields}
-        >
-          Upload
-        </Button>
-      </Group>
-      <ExpandableTable
-        data={data?.items ?? []}
-        config={config}
-        total={data?.total ?? 0}
-      />
+    <Section
+      title="Documents"
+      collapsible={false}
+      action={
+        <Group justify="end" className="pb-2">
+          <Button
+            leftSection={<IconUpload size={18} />}
+            onClick={open}
+            disabled={disableFields}
+          >
+            Upload
+          </Button>
+        </Group>
+      }
+    >
+      <Box className="pt-2">
+        <ExpandableTable
+          data={data?.items ?? []}
+          config={config}
+          total={data?.total ?? 0}
+        />
 
-      <Modal title="Upload New Document" opened={opened} onClose={close}>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <TextInput label="Name" {...register('name')} required withAsterisk />
+        <Modal title="Upload New Document" opened={opened} onClose={close}>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <TextInput
+              label="Name"
+              {...register('name')}
+              required
+              withAsterisk
+            />
 
-          <FileInput
-            accept=".pdf"
-            multiple
-            label="Document"
-            withAsterisk
-            className="my-2"
-            leftSection={<IconUpload />}
-            onChange={(files) => setFile(files)}
-          />
-          <Group gap="md" justify="end">
-            <Button
-              leftSection={<IconUpload size={18} />}
-              type="submit"
-              loading={isLoading}
-            >
-              Upload
-            </Button>
-            <Button variant="outline" onClick={close}>
-              Close
-            </Button>
-          </Group>
-        </form>
-      </Modal>
-    </Box>
+            <FileInput
+              accept=".pdf"
+              multiple
+              label="Document"
+              withAsterisk
+              className="my-2"
+              leftSection={<IconUpload />}
+              onChange={(files) => setFile(files)}
+            />
+            <Group gap="md" justify="end">
+              <Button
+                leftSection={<IconUpload size={18} />}
+                type="submit"
+                loading={isLoading}
+              >
+                Upload
+              </Button>
+              <Button variant="outline" onClick={close}>
+                Close
+              </Button>
+            </Group>
+          </form>
+        </Modal>
+      </Box>
+    </Section>
   );
 };
 

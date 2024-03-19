@@ -1,7 +1,7 @@
 import { useLazyListByIdQuery as useLazyGetUsersQuery } from '@/app/(features)/procurement-requisition/_api/user.api';
 import { ActionIcon, Box, Button, Group, Modal } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { logger, notify } from '@megp/core-fe';
+import { Section, notify } from '@megp/core-fe';
 import { IconDeviceFloppy, IconTrash } from '@tabler/icons-react';
 import { useAuth } from '@megp/auth';
 import { useEffect, useState } from 'react';
@@ -103,53 +103,59 @@ export const Requisitioner = () => {
   };
 
   return (
-    <Box>
-      <Group justify="end" className="my-2">
-        <Button onClick={open}>Add</Button>
-      </Group>
-
-      <ExpandableTable
-        data={requisitioners}
-        config={config}
-        total={requisitioners.length}
-      />
-      {requisitioners.length !== 0 && (
+    <Section
+      title="Requisitioners"
+      collapsible={false}
+      action={
         <Group justify="end" className="my-2">
-          <Button onClick={onCreate} loading={isCreatingLoading} mb={'sm'}>
-            <IconDeviceFloppy size={14} />
-            Save
-          </Button>
+          <Button onClick={open}>Add</Button>
         </Group>
-      )}
-      <Modal
-        opened={opened}
-        onClose={close}
-        title="Add Requisitioner"
-        size="lg"
-      >
+      }
+    >
+      <Box>
         <ExpandableTable
-          config={addConfig}
-          data={users?.items ?? []}
-          total={users ? users.total : 0}
-          onRequestChange={onRequestChange}
+          data={requisitioners}
+          config={config}
+          total={requisitioners.length}
         />
+        {requisitioners.length !== 0 && (
+          <Group justify="end" className="my-2">
+            <Button onClick={onCreate} loading={isCreatingLoading} mb={'sm'}>
+              <IconDeviceFloppy size={14} />
+              Save
+            </Button>
+          </Group>
+        )}
+        <Modal
+          opened={opened}
+          onClose={close}
+          title="Add Requisitioner"
+          size="lg"
+        >
+          <ExpandableTable
+            config={addConfig}
+            data={users?.items ?? []}
+            total={users ? users.total : 0}
+            onRequestChange={onRequestChange}
+          />
 
-        <Group justify="end">
-          <Button
-            onClick={() => {
-              const castedData = selectedItems.map((r: any) => ({
-                name: r.firstName + ' ' + r.lastName,
-                userId: r.id,
-              }));
+          <Group justify="end">
+            <Button
+              onClick={() => {
+                const castedData = selectedItems.map((r: any) => ({
+                  name: r.firstName + ' ' + r.lastName,
+                  userId: r.id,
+                }));
 
-              setRequisitioners(castedData);
-              close();
-            }}
-          >
-            Done
-          </Button>
-        </Group>
-      </Modal>
-    </Box>
+                setRequisitioners(castedData);
+                close();
+              }}
+            >
+              Done
+            </Button>
+          </Group>
+        </Modal>
+      </Box>
+    </Section>
   );
 };

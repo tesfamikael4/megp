@@ -1,7 +1,7 @@
 'use client';
 
-import { useLazyReadQuery } from '@/app/(features)/procurement-requisition/_api/procurement-requisition.api';
-import { useApprovePrMutation } from '@/app/(features)/procurement-requisition/_api/approve.api';
+import { useReadQuery } from '@/store/api/pr/pr.api';
+import { useApprovePrMutation } from '@/store/api/pr/pr.api';
 import {
   Avatar,
   Badge,
@@ -34,9 +34,9 @@ const PlanYearTab = () => {
   //states
   const [opened, { toggle }] = useDisclosure(false);
   const [mode, setMode] = useState('plan');
-
-  const [triggerPr, { data: pr }] = useLazyReadQuery();
   const { id } = useParams();
+
+  const { data: pr } = useReadQuery(id?.toString());
 
   // rtk queries
 
@@ -74,10 +74,6 @@ const PlanYearTab = () => {
   useEffect(() => {
     id !== undefined && setMode('pr');
   }, [id]);
-
-  useEffect(() => {
-    triggerPr(id?.toString());
-  }, [id, triggerPr]);
 
   useEffect(() => {
     getplan(undefined);
