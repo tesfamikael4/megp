@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { preReportPdf } from './report-pre-budget';
 import { postReportPdf } from './report-post-budget';
+import { procurementRequisitionPdf } from './report-procurement-requisition';
 
 @Injectable()
 export class PdfGeneratorService {
@@ -9,6 +10,7 @@ export class PdfGeneratorService {
     const functionMap = {
       pre: preReportPdf,
       post: postReportPdf,
+      pr: procurementRequisitionPdf,
     };
 
     if (functionMap.hasOwnProperty(type)) {
