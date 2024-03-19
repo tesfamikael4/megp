@@ -10,7 +10,7 @@ import {
   Modal,
   Text,
 } from '@mantine/core';
-import { notify } from '@megp/core-fe';
+import { Section, notify } from '@megp/core-fe';
 import { useDisclosure } from '@mantine/hooks';
 import {
   IconDeviceFloppy,
@@ -290,62 +290,69 @@ export function Items({ activityId }: { activityId?: string }) {
   }, [isSuccess, itemsList?.items, itemsList?.total]);
 
   return (
-    <Box className="mt-2">
-      {!activityId && (
-        <Group justify="end" className="my-2" gap="md">
-          <Button onClick={openImportModal}>
-            <IconFileImport size={18} /> Import
-          </Button>
-          <Button onClick={open}>
-            <IconPlus size={18} /> Add
-          </Button>
-        </Group>
-      )}
-      {newItems.length !== 0 && (
-        <>
-          <Text className="text-lg" fw="500">
-            New Items
-          </Text>
-          <ExpandableTable config={addConfig} data={newItems} />
-
-          <Flex justify="end" className="my-2" gap="sm">
-            <Button onClick={handelOnSave} loading={isAddingItems}>
-              <IconDeviceFloppy /> Save
+    <Section
+      title="Items"
+      collapsible={false}
+      action={
+        !activityId && (
+          <Group justify="end" className="my-2" gap="md">
+            <Button onClick={openImportModal}>
+              <IconFileImport size={18} /> Import
             </Button>
-            <Button variant="outline" onClick={() => setNewItems([])}>
-              Reset
+            <Button onClick={open}>
+              <IconPlus size={18} /> Add
             </Button>
-          </Flex>
-        </>
-      )}
-      {(data.length != 0 || newItems.length === 0) && (
-        <Box pos={'relative'}>
-          <LoadingOverlay visible={itemLoading} />
-          {!activityId && (
+          </Group>
+        )
+      }
+    >
+      <Box className="mt-2">
+        {newItems.length !== 0 && (
+          <>
             <Text className="text-lg" fw="500">
-              Items List
+              New Items
             </Text>
-          )}
+            <ExpandableTable config={addConfig} data={newItems} />
 
-          <ExpandableTable
-            config={listConfig}
-            data={data}
-            total={total}
-            onRequestChange={onRequestChange}
-          />
-        </Box>
-      )}
-      <ItemSelector onDone={handelAddItem} opened={opened} close={close} />
-      <Modal
-        opened={openedImportModal}
-        onClose={closeImportModal}
-        title="Import Items"
-      >
-        <DataImport onDone={handelAddItem} />
-        <Button className="mt-4 ml-auto" onClick={closeImportModal}>
-          Done
-        </Button>
-      </Modal>
-    </Box>
+            <Flex justify="end" className="my-2" gap="sm">
+              <Button onClick={handelOnSave} loading={isAddingItems}>
+                <IconDeviceFloppy /> Save
+              </Button>
+              <Button variant="outline" onClick={() => setNewItems([])}>
+                Reset
+              </Button>
+            </Flex>
+          </>
+        )}
+        {(data.length != 0 || newItems.length === 0) && (
+          <Box pos={'relative'}>
+            <LoadingOverlay visible={itemLoading} />
+            {!activityId && (
+              <Text className="text-lg" fw="500">
+                Items List
+              </Text>
+            )}
+
+            <ExpandableTable
+              config={listConfig}
+              data={data}
+              total={total}
+              onRequestChange={onRequestChange}
+            />
+          </Box>
+        )}
+        <ItemSelector onDone={handelAddItem} opened={opened} close={close} />
+        <Modal
+          opened={openedImportModal}
+          onClose={closeImportModal}
+          title="Import Items"
+        >
+          <DataImport onDone={handelAddItem} />
+          <Button className="mt-4 ml-auto" onClick={closeImportModal}>
+            Done
+          </Button>
+        </Modal>
+      </Box>
+    </Section>
   );
 }
