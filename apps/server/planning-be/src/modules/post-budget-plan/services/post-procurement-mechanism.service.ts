@@ -27,6 +27,7 @@ export class PostProcurementMechanismService extends ExtraCrudService<PostProcur
               itemData.preBudgetPlanActivityId,
               element.key,
               element.status,
+              'post',
             );
           },
         );
@@ -52,6 +53,7 @@ export class PostProcurementMechanismService extends ExtraCrudService<PostProcur
               itemData.preBudgetPlanActivityId,
               element.key,
               element.status,
+              'post',
             );
           },
         );

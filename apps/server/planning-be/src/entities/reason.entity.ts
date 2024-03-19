@@ -39,7 +39,7 @@ export class Reason extends OrgAudit {
   @JoinColumn({ name: 'postBudgetPlanActivityId' })
   public postBudgetPlanActivity: PostBudgetPlanActivity;
 
-  @Column({ type: 'uuid' })
+  @Column({ type: 'uuid', nullable: true })
   objectId: string;
 
   @Column()

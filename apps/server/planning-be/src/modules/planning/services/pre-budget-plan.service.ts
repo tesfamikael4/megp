@@ -32,6 +32,7 @@ import { createHash } from 'crypto';
 import { PdfGeneratorService } from 'src/modules/utility/services/pdf-generator.service';
 import { MinIOService } from 'src/shared/min-io/min-io.service';
 import { DocumentService } from 'src/modules/utility/services/document.service';
+import { HashService } from 'src/modules/utility/services/hash.service';
 
 @Injectable()
 export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
@@ -45,6 +46,7 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
 
     private readonly pdfGeneratorService: PdfGeneratorService,
     private readonly documentService: DocumentService,
+    private readonly hashService: HashService,
 
     private readonly minIoService: MinIOService,
 
@@ -353,18 +355,15 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
       exclude: ['createdAt', 'deletedAt'],
     });
 
-    const hashData = (data) => {
-      return createHash('sha-256').update(data).digest('hex');
-    };
-
-    const hashedData = hashData(JSON.stringify(data));
-
-    return hashedData;
+    return this.hashService.hashData(transformedData);
   }
 
-  async hashMatch(dataId: string, hash: string): Promise<boolean> {
-    const originalHash = await this.hashData(dataId);
-    return originalHash === hash;
+  async hashMatch(id: string, hashData: string) {
+    const hash = await this.hashService.hashData(id);
+    if (hash == hashData) {
+      return true;
+    }
+    return false;
   }
 
   async pdfGenerator(id: string, itemName: string) {
