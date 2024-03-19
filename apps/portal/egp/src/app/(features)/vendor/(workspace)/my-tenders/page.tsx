@@ -18,7 +18,7 @@ import {
   IconFolder,
   IconSearch,
 } from '@tabler/icons-react';
-import DashboardCard from '../dashboard/_components/card';
+import DashboardCard from '../../_components/card';
 
 type TendersProps = {
   title: string;

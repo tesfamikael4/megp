@@ -58,6 +58,7 @@ function Header() {
       link: '#more',
       label: 'More',
       links: [
+        { link: '/vendors', label: 'Vendor List' },
         { link: '/faq', label: 'FAQ' },
         { link: '/resources', label: 'Resources' },
         { link: '/about-us', label: 'About E-gp' },
