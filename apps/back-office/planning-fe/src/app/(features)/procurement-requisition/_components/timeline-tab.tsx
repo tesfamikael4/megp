@@ -304,7 +304,7 @@ export default function TimelineTab({ activityId }: { activityId?: string }) {
   }, [isTimelineSuccess, timeline?.items, timeline?.total]);
 
   return (
-    <Section title="Activity Identification" collapsible={false}>
+    <Section title="Timeline" collapsible={false}>
       <div className="mt-4">
         {isSuccess && procurementRequisition?.isPlanned && (
           <Table config={listAppConfig} data={data} />

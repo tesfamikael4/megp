@@ -1,5 +1,4 @@
 'use client';
-import { Section } from '@megp/core-fe';
 import { FormDetail } from '@/app/(features)/(app)/_components/activity-form-detail';
 import { Box, Flex, Text, Tooltip } from '@mantine/core';
 import { IconChevronLeft } from '@tabler/icons-react';
