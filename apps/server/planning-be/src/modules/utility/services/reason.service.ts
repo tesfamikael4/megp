@@ -18,14 +18,18 @@ export class ReasonService extends EntityCrudService<Reason> {
       itemData.organizationId = req.user.organization.id;
     }
 
+    const [budgetPlanActivityId, type] = itemData.preBudgetPlanActivityId
+      ? [itemData.preBudgetPlanActivityId, 'preBudgetPlanActivityId']
+      : [itemData.postBudgetPlanActivityId, 'postBudgetPlanActivityId'];
+
     const reason = await this.repositoryReason.find({
       where: {
-        objectId: itemData.objectId,
+        [type]: budgetPlanActivityId,
         type: itemData.type,
       },
     });
     if (reason.length > 0) {
-      await this.repositoryReason.delete(reason as any);
+      await this.repositoryReason.remove(reason as any);
     }
 
     const item = this.repositoryReason.create(itemData);
@@ -34,21 +38,29 @@ export class ReasonService extends EntityCrudService<Reason> {
   }
 
   // remove previous justification reason when they became valid
-  async isValid(preBudgetPlanActivityId: string, key: string, status: string) {
+  async isValid(
+    activityId: string,
+    key: string,
+    status: string,
+    planType: 'pre' | 'post',
+  ) {
     try {
-      if (status == 'fail') {
-        const count = await this.repositoryReason.count({
+      if (status === 'fail') {
+        const countQuery = {
           where: {
-            objectId: preBudgetPlanActivityId,
+            [`${planType}BudgetPlanActivityId`]: activityId,
             type: key,
           },
-        });
-        if (count == 0) {
+        };
+
+        const count = await this.repositoryReason.count(countQuery);
+
+        if (count === 0) {
           throw new HttpException(`Please enter justification for ${key}`, 430);
         }
       } else {
         await this.repositoryReason.softDelete({
-          objectId: preBudgetPlanActivityId,
+          objectId: activityId,
           type: key,
         });
         return true;
