@@ -4,16 +4,16 @@ import { BidBookmark } from 'src/entities/bid-bookmark.entity';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { BidBookmarkService } from '../service/bid-bookmark.service';
 import { ExtraCrudController } from 'src/shared/controller';
-import { AllowAnonymous } from 'src/shared/authorization';
+import { CreateBidBookmarkDto } from '../dto/bid-bookmark.dto';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'tenderId',
+  createDto: CreateBidBookmarkDto,
 };
 
 @ApiBearerAuth()
 @Controller('bid-bookmarks')
 @ApiTags('Bid Bookmark Controller')
-@AllowAnonymous()
 export class BidBookmarkController extends ExtraCrudController<BidBookmark>(
   options,
 ) {
@@ -21,8 +21,8 @@ export class BidBookmarkController extends ExtraCrudController<BidBookmark>(
     super(bidSecurityService);
   }
 
-  @Get('ttt')
-  async findOnes() {
-    return this.bidSecurityService.findOnes();
-  }
+  // @Get('ttt')
+  // async findOnes() {
+  //   return this.bidSecurityService.findOnes();
+  // }
 }

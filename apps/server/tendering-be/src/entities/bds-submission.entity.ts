@@ -7,6 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Tender } from './tender.entity';
+import { EnvelopTypeEnum } from 'src/shared/enums';
 
 @Entity({ name: 'bds_submissions' })
 export class BdsSubmission extends Audit {
@@ -29,6 +30,9 @@ export class BdsSubmission extends Audit {
   @Column()
   invitationDate: Date;
 
-  @Column()
+  @Column({
+    type: 'enum',
+    enum: EnvelopTypeEnum,
+  })
   envelopType: string;
 }

@@ -8,6 +8,7 @@ import {
   Unique,
 } from 'typeorm';
 import { Tender } from './tender.entity';
+import { BidBookmarkStatusEnum } from 'src/shared/enums';
 
 @Entity({ name: 'bid_bookmarks' })
 @Unique(['tenderId', 'bidderId'])
@@ -25,13 +26,10 @@ export class BidBookmark extends Audit {
   @Column()
   bidderId: string;
 
-  // @Column({ name: 'external_organizations_name', nullable: true })
-  // bidderName: string;
-
   @Column({
     type: 'enum',
-    enum: ['BOOKMARKED', 'REGISTERED'],
-    default: 'BOOKMARKED',
+    enum: BidBookmarkStatusEnum,
+    default: BidBookmarkStatusEnum.BOOKMARKED,
   })
   status: string;
 }
