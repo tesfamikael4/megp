@@ -24,7 +24,6 @@ import { VendorInitiationDto } from '../dto/vendor-initiation.dto';
 import {
   AllowAnonymous,
   CurrentUser,
-  JwtGuard,
 } from 'src/shared/authorization';
 import { InsertAllDataDto } from '../dto/save-all.dto';
 import { SetVendorStatus } from '../dto/vendor.dto';
@@ -32,7 +31,6 @@ import { CollectionQuery } from 'src/shared/collection-query';
 import { MbrsDataDto } from '../dto/mbrsData.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ReceiptDto } from '../dto/receipt.dto';
-import { CreateAreasOfBusinessInterest } from '../dto/areas-of-business-interest';
 import { ServiceKeyEnum } from 'src/shared/enums/service-key.enum';
 import { BusinessAreaService } from '../services/business-area.service';
 @ApiBearerAuth()
@@ -43,8 +41,7 @@ import { BusinessAreaService } from '../services/business-area.service';
 export class VendorRegistrationsController {
   constructor(
     private readonly regService: VendorRegistrationsService,
-    private readonly baService: BusinessAreaService,
-  ) {}
+  ) { }
   @Get('get-isr-vendors')
   async getVendors() {
     return await this.regService.getIsrVendors();

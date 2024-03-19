@@ -200,9 +200,9 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           businessAreaEntities.push(businessAreaEntity);
         }
         //prefrenctial treatment 
-        if (data.eligibility?.length) {
+        if (data.preferential?.length) {
 
-          this.ptService.submitPreferential(data.CreatePTDto, userInfo, workflowInstance.id, workflowInstance.applicationNumber);
+          this.ptService.submitPreferential(data.preferential, userInfo, workflowInstance.id, workflowInstance.applicationNumber);
 
         }
 
@@ -1334,7 +1334,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
               });
             }
           }
-          vendorEntity.preferential = formattedPt;
+          vendorEntity.preferentials = formattedPt;
         }
       }
       return vendorEntity;
@@ -1358,7 +1358,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         key: row.service.key,
         ApplicationNumber: row.applicationNumber,
         submittedAt: row.submittedAt,
-        remark: remark,
+        remark: row?.businessArea?.remark,
         status: status,
       });
     }
@@ -2165,7 +2165,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             status: In([ApplicationStatus.ADJUSTMENT, ApplicationStatus.DRAFT]),
           },
         });
-        if (updateInfo) {
+        if (updateInfo?.status == ApplicationStatus.ADJUSTMENT) {
           updateInfo.status = ApplicationStatus.SUBMITTED;
           updateInfo.profileData = profileData;
           const resultData = await this.profileInfoRepository.save(updateInfo);

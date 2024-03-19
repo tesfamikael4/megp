@@ -145,28 +145,30 @@ export class ApplicationExcutionService {
       }
       response.isrvendor.areasOfBusinessInterest = businessInterest;
     }
-    const preferentialkeys = this.commonService.getPreferencialServices();
-    if (
-      preferentialkeys.filter((item) => appData.service.key == item).length > 0
-    ) {
-      const preferential =
-        await this.ptService.getPreferetialTreatmentsByUserId(
-          appData.serviceId,
-          userInfo,
-        );
-      delete preferential.userId;
-      const serviceName = preferential.service.name;
-      delete preferential.service;
-      const pt = {
-        serviceName: serviceName,
-        ...this.commonService.reduceAttributes(preferential),
-      };
 
-      if (preferential) {
-        response.preferential = pt;
-        return response;
+    const preferentials =
+      await this.ptService.getPreferetialTreatmentsByUserId(
+        appData.serviceId,
+        appData.userId,
+      );
+
+    const pts = [];
+    if (preferentials.length) {
+      for (const preferential of preferentials) {
+        delete preferential.userId;
+        const serviceName = preferential.service.name;
+        delete preferential.service;
+        const pt = {
+          serviceName: serviceName,
+          ...this.commonService.reduceAttributes(preferential),
+        };
+        pts.push(pt);
       }
-    } else if (ServiceKeyEnum.REGISTRATION_RENEWAL == serviceKey) {
+      response.preferentials = pts;
+      return response;
+    }
+
+    if (ServiceKeyEnum.REGISTRATION_RENEWAL == serviceKey) {
       const business: BusinessAreaEntity = instance.isrVendor.businessAreas[0];
       const result = await this.appendRenewalData(business, instance, response);
       response = { ...result };

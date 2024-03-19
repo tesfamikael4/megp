@@ -114,13 +114,13 @@ export class WorkflowInstanceResponse extends UpdateWorkflowInstanceDto {
   @ApiProperty()
   applicationNumber: string;
   @ApiProperty()
-  businessArea: BusinessAreaEntity;
+  businessArea: BusinessAreaEntity[];
   profileUpdate: ProfileInfoEntity;
   upgrade: any;
   upgradePaymentReceipt: any;
   invoice: any;
   renewal: any;
-  preferential: any;
+  preferentials: any;
   static toResponse(entity: WorkflowInstanceEntity) {
     const response = new WorkflowInstanceResponse();
     response.id = entity.id;

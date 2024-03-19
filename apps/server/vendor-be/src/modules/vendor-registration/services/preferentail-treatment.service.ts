@@ -48,13 +48,13 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
     });
     return result;
   }
-  async getPreferetialTreatmentsByUserId(serviceId: string, user: any) {
-    const result = await this.ptRepository.findOne({
+  async getPreferetialTreatmentsByUserId(serviceId: string, userId: string) {
+    const result = await this.ptRepository.find({
       relations: { service: true },
       where: {
-        userId: user.id,
-        status: Not(ApplicationStatus.APPROVED),
-        serviceId: serviceId,
+        userId: userId,
+        status: Not(In([ApplicationStatus.APPROVED, ApplicationStatus.REJECTED])),
+        // serviceId: serviceId,
       },
     });
     return result;
@@ -109,7 +109,7 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
           entity.id = existedRequest.id;
         }
         await this.ptRepository.save(entity);
-        if (dto.status == ApplicationStatus.SUBMIT) {
+        if (dto.status == ApplicationStatus.SUBMIT || instanceId != undefined || instanceId != null) {
           const wfi = new CreateWorkflowInstanceDto();
           wfi.bpId = bpId;
           wfi.requestorId = vendor.id;

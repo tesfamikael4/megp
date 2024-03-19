@@ -7,11 +7,10 @@ import {
   Post,
   Put,
   UseInterceptors,
-  UploadedFile,
   Delete,
   UploadedFiles,
 } from '@nestjs/common';
-import { ApiTags, ApiResponse, ApiOkResponse, ApiBody } from '@nestjs/swagger';
+import { ApiTags, ApiResponse, ApiOkResponse } from '@nestjs/swagger';
 import { JwtGuard, CurrentUser } from 'src/shared/authorization';
 import { PreferentialTreatmentsEntity } from 'src/entities/preferential-treatment.entity';
 import { EntityCrudController } from 'src/shared/controller';
