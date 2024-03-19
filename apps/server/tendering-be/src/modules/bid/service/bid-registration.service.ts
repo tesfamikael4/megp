@@ -3,10 +3,13 @@ import { REQUEST } from '@nestjs/core';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Tender } from 'src/entities';
 import { BidBookmark } from 'src/entities/bid-bookmark.entity';
+import { BidRegistrationDetail } from 'src/entities/bid-registration-detail.entity';
 import { BidRegistration } from 'src/entities/bid-registration.entity';
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 import { ExtraCrudService } from 'src/shared/service';
 import { EntityManager, Repository } from 'typeorm';
+import { CreateBidRegistrationDto } from '../dto/bid-registration.dto';
+import { EnvelopTypeEnum } from 'src/shared/enums';
 
 @Injectable()
 export class BidRegistrationService extends ExtraCrudService<BidRegistration> {
@@ -18,10 +21,7 @@ export class BidRegistrationService extends ExtraCrudService<BidRegistration> {
     super(bidSecurityRepository);
   }
 
-  async create(itemData: any, req?: any): Promise<any> {
-    if (req?.user?.organization) {
-      itemData.organizationId = req.user.organization.id;
-    }
+  async create(itemData: CreateBidRegistrationDto, req?: any): Promise<any> {
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
 
     const tender = await manager.getRepository(Tender).findOne({
@@ -29,6 +29,7 @@ export class BidRegistrationService extends ExtraCrudService<BidRegistration> {
         id: itemData.tenderId,
       },
       relations: {
+        lots: true,
         tenderParticipationFee: true,
         bdsSubmission: true,
       },
@@ -40,18 +41,20 @@ export class BidRegistrationService extends ExtraCrudService<BidRegistration> {
       throw new Error('Submission deadline has passed');
     }
 
+    const bidderId = req.user.organization.id;
+
     const bidBookmarkExists = await manager
       .getRepository(BidBookmark)
       .findOneBy({
         tenderId: itemData.tenderId,
-        bidderId: itemData.bidderId,
+        bidderId: bidderId,
       });
 
     if (bidBookmarkExists) {
       await manager.getRepository(BidBookmark).update(
         {
           tenderId: itemData.tenderId,
-          bidderId: itemData.bidderId,
+          bidderId: bidderId,
         },
         {
           status: 'REGISTERED',
@@ -59,23 +62,52 @@ export class BidRegistrationService extends ExtraCrudService<BidRegistration> {
       );
     }
     let paymentLink = null;
+
+    const bidRegistration = this.bidSecurityRepository.create({
+      tenderId: itemData.tenderId,
+      bidderId: bidderId,
+    });
     if (tender.tenderParticipationFee) {
       const invoice = await this.generatePaymentLink(
         tender.tenderParticipationFee.amount,
       );
 
-      itemData.amount = tender.tenderParticipationFee.amount;
-      itemData.currency = tender.tenderParticipationFee.currency;
-      itemData.status = 'PENDING';
-      itemData.paymentInvoice = invoice.paymentInvoice;
+      bidRegistration.amount = tender.tenderParticipationFee.amount;
+      bidRegistration.currency = tender.tenderParticipationFee.currency;
+      bidRegistration.status = 'PENDING';
+      bidRegistration.paymentInvoice = invoice.paymentInvoice;
 
       paymentLink = invoice.paymentLink;
     }
 
-    const item = manager.getRepository(BidRegistration).create(itemData);
-    await manager.getRepository(BidRegistration).insert(item);
+    await manager.getRepository(BidRegistration).insert(bidRegistration);
+    const bidRegistrationDetails: BidRegistrationDetail[] = [];
+
+    for (const lot of tender.lots) {
+      const dataToEncrypt = bidderId + tender.id + bidRegistration.id;
+
+      const encryptedData = await this.generateInitialEncryption(
+        dataToEncrypt,
+        'private key',
+        tender.bdsSubmission.envelopType,
+      );
+
+      const bidRegistrationDetail = manager
+        .getRepository(BidRegistrationDetail)
+        .create({
+          bidRegistrationId: bidRegistration.id,
+          lotId: lot.id,
+          ...encryptedData,
+        });
+
+      bidRegistrationDetails.push(bidRegistrationDetail);
+    }
+
+    await manager
+      .getRepository(BidRegistrationDetail)
+      .insert(bidRegistrationDetails);
     return {
-      ...item,
+      ...bidRegistration,
       paymentLink,
     };
   }
@@ -89,5 +121,23 @@ export class BidRegistrationService extends ExtraCrudService<BidRegistration> {
       paymentLink:
         'https://dev-bo.megp.peragosystems.com/infrastructure/api/mpgs-payments/initiate',
     };
+  }
+
+  async generateInitialEncryption(
+    dataToEncrypt: string,
+    privateKey: string,
+    envelopType: string,
+  ) {
+    if (envelopType == EnvelopTypeEnum.SINGLE_ENVELOP) {
+      return {
+        response: dataToEncrypt + privateKey,
+      };
+    } else {
+      return {
+        financialResponse: dataToEncrypt + privateKey,
+        technicalResponse: dataToEncrypt + privateKey,
+        response: dataToEncrypt + privateKey,
+      };
+    }
   }
 }

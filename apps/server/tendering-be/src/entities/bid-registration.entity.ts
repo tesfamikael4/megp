@@ -4,10 +4,13 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
 import { Tender } from './tender.entity';
+import { BidRegistrationDetail } from './bid-registration-detail.entity';
+import { BidRegistrationStatusEnum } from 'src/shared/enums';
 
 @Entity({ name: 'bid_registrations' })
 @Unique(['tenderId', 'bidderId'])
@@ -42,8 +45,14 @@ export class BidRegistration extends Audit {
 
   @Column({
     type: 'enum',
-    enum: ['PENDING', 'REGISTERED', 'SUBMITTED'],
-    default: 'REGISTERED',
+    enum: BidRegistrationStatusEnum,
+    default: BidRegistrationStatusEnum.REGISTERED,
   })
   status: string;
+
+  @OneToMany(
+    () => BidRegistrationDetail,
+    (bidRegistrationDetails) => bidRegistrationDetails.bidRegistration,
+  )
+  bidRegistrationDetails: BidRegistrationDetail[];
 }
