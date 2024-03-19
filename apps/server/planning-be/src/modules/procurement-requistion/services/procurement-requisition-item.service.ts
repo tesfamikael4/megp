@@ -44,7 +44,7 @@ export class ProcurementRequisitionItemService extends ExtraCrudService<Procurem
     const result = await entityManager
       .getRepository(ProcurementRequisitionItem)
       .insert(this.repositoryProcurementRequisitionItem.create(itemData));
-    await this.updatePR(result, 'add');
+    await this.updatePR(itemData, 'add');
 
     return result;
   }

@@ -278,7 +278,7 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
         },
       },
     });
-    const buffer = await this.pdfGeneratorService.pdfGenerator(data, 'post');
+    const buffer = await this.pdfGeneratorService.pdfGenerator(data, 'pr');
 
     const fileInfo = await this.minIoService.uploadBuffer(
       buffer,
