@@ -39,10 +39,7 @@ function Page() {
     );
   }
 
-  if (
-    requestInfo.data &&
-    validateApprovedVendorServiceSchema(requestInfo.data).success
-  ) {
+  if (requestInfo.data) {
     return (
       <section className="w-full min-h-screen">
         <ServicesCard servicesData={requestInfo.data} />

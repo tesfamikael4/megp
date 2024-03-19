@@ -16,7 +16,10 @@ import {
   usePostRenewalInvoiceMutation,
 } from '../../../_api/query';
 import { IconCheckbox } from '@tabler/icons-react';
-import { ApprovedVendorServiceSchema } from '@/shared/schema/venderRenewalSchema';
+import {
+  ApprovedVendorServiceSchema,
+  validateApprovedVendorServiceSchema,
+} from '@/shared/schema/venderRenewalSchema';
 import { NotificationService } from '@/app/(features)/vendor/_components/notification';
 import { useRouter } from 'next/navigation';
 
@@ -134,72 +137,77 @@ export default function ServicesCard({
                 </dl>
               </Box>
             ))
-          : servicesData.data.map((services) => (
-              <Box
-                key={services.id}
-                className={`overflow-hidden rounded-md border-2 ${
-                  isServiceSelected(services.id)
-                    ? 'border-[--mantine-color-primary-5] shadow-md'
-                    : 'border-gray-200'
-                }`}
-              >
-                <div className="flex items-center justify-between gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">
-                  <Text fw={700} fz={'lg'} color="gray.7">
-                    {services.areaOfBusinessInterest?.category?.toUpperCase()}
-                  </Text>
+          : servicesData.data.map((services) => {
+              if (validateApprovedVendorServiceSchema(services).success)
+                return (
+                  <Box
+                    key={services.id}
+                    className={`overflow-hidden rounded-md border-2 ${
+                      isServiceSelected(services.id)
+                        ? 'border-[--mantine-color-primary-5] shadow-md'
+                        : 'border-gray-200'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">
+                      <Text fw={700} fz={'lg'} color="gray.7">
+                        {services.areaOfBusinessInterest?.category?.toUpperCase()}
+                      </Text>
 
-                  {isServiceSelected(services.id) ? (
-                    <Button
-                      variant="light"
-                      leftSection={<IconCheckbox size={18} className="p-0" />}
-                      onClick={() => handleProductClick(services.id)}
-                    >
-                      Selected
-                    </Button>
-                  ) : (
-                    <Button
-                      variant="outline"
-                      onClick={() => handleProductClick(services.id)}
-                    >
-                      Select
-                    </Button>
-                  )}
-                </div>
-                <dl className="-my-3 divide-y divide-gray-100 px-6 py-4 text-sm leading-6">
-                  <div className="flex justify-between gap-x-4 py-3">
-                    <Text fw={600} fz={12}>
-                      PRICE RANGE
-                    </Text>
-                    <Text fw={600} fz={'xs'}>
-                      {getPriceRangeValues.data &&
-                        transformCategoryPriceRange(
-                          getPriceRangeValues?.data,
-                          services.areaOfBusinessInterest?.category,
-                          services.areaOfBusinessInterest?.priceRange,
-                        )}
-                    </Text>
-                  </div>
-                  <div className="flex justify-between gap-x-4 py-3">
-                    <Text fw={600} fz={12}>
-                      LINE OF BUSINESS
-                    </Text>
-                    <Flex className="items-start gap-x-2  justify-end">
-                      <div className="flex flex-grow  gap-2 max-w-[16rem]">
-                        {services.areaOfBusinessInterest?.lineOfBusiness.map(
-                          (line) => (
-                            <Tooltip label={line.name} key={line.id}>
-                              <Badge variant="light" color="green" fz={8}>
-                                {line.name}
-                              </Badge>
-                            </Tooltip>
-                          ),
-                        )}
+                      {isServiceSelected(services.id) ? (
+                        <Button
+                          variant="light"
+                          leftSection={
+                            <IconCheckbox size={18} className="p-0" />
+                          }
+                          onClick={() => handleProductClick(services.id)}
+                        >
+                          Selected
+                        </Button>
+                      ) : (
+                        <Button
+                          variant="outline"
+                          onClick={() => handleProductClick(services.id)}
+                        >
+                          Select
+                        </Button>
+                      )}
+                    </div>
+                    <dl className="-my-3 divide-y divide-gray-100 px-6 py-4 text-sm leading-6">
+                      <div className="flex justify-between gap-x-4 py-3">
+                        <Text fw={600} fz={12}>
+                          PRICE RANGE
+                        </Text>
+                        <Text fw={600} fz={'xs'}>
+                          {getPriceRangeValues.data &&
+                            transformCategoryPriceRange(
+                              getPriceRangeValues?.data,
+                              services.areaOfBusinessInterest?.category,
+                              services.areaOfBusinessInterest?.priceRange,
+                            )}
+                        </Text>
                       </div>
-                    </Flex>
-                  </div>
-                </dl>
-              </Box>
-            ))}
+                      <div className="flex justify-between gap-x-4 py-3">
+                        <Text fw={600} fz={12}>
+                          LINE OF BUSINESS
+                        </Text>
+                        <Flex className="items-start gap-x-2  justify-end">
+                          <div className="flex flex-grow  gap-2 max-w-[16rem]">
+                            {services.areaOfBusinessInterest?.lineOfBusiness.map(
+                              (line) => (
+                                <Tooltip label={line.name} key={line.id}>
+                                  <Badge variant="light" color="green" fz={8}>
+                                    {line.name}
+                                  </Badge>
+                                </Tooltip>
+                              ),
+                            )}
+                          </div>
+                        </Flex>
+                      </div>
+                    </dl>
+                  </Box>
+                );
+            })}
       </SimpleGrid>
 
       <Flex className="w-full justify-end p-8">

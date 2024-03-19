@@ -14,7 +14,10 @@ import {
 import { Fragment, useEffect, useState } from 'react';
 import { useGetPriceRangeQuery } from '../../../_api/query';
 import { IconCheckbox, IconRectangle } from '@tabler/icons-react';
-import { ApprovedVendorServiceSchema } from '@/shared/schema/venderRenewalSchema';
+import {
+  ApprovedVendorServiceSchema,
+  validateApprovedVendorServiceSchema,
+} from '@/shared/schema/venderRenewalSchema';
 import { NotificationService } from '@/app/(features)/vendor/_components/notification';
 import { useRouter } from 'next/navigation';
 import {
@@ -232,111 +235,115 @@ export default function ServicesCard({ servicesData }: { servicesData: any }) {
                     services?.areaOfBusinessInterest?.priceRange,
                 newPricingId: services.pricingId,
               };
-              return (
-                <Box
-                  key={services.id}
-                  className={`overflow-hidden rounded-md border-2 ${
-                    isServiceSelected(services.id) || hasInvoice
-                      ? 'border-[--mantine-color-primary-5] shadow-md'
-                      : 'border-gray-200'
-                  } `}
-                >
-                  <div className="flex items-center justify-between gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">
-                    <Text fw={700} fz={'lg'} color="gray.7">
-                      {services?.areaOfBusinessInterest?.category.toUpperCase()}
-                    </Text>
+              if (validateApprovedVendorServiceSchema(services).success)
+                return (
+                  <Box
+                    key={services.id}
+                    className={`overflow-hidden rounded-md border-2 ${
+                      isServiceSelected(services.id) || hasInvoice
+                        ? 'border-[--mantine-color-primary-5] shadow-md'
+                        : 'border-gray-200'
+                    } `}
+                  >
+                    <div className="flex items-center justify-between gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">
+                      <Text fw={700} fz={'lg'} color="gray.7">
+                        {services?.areaOfBusinessInterest?.category.toUpperCase()}
+                      </Text>
 
-                    {isServiceSelected(services.id) ? (
-                      <Button
-                        variant="light"
-                        leftSection={<IconCheckbox size={18} className="p-0" />}
-                        onClick={() =>
-                          handleProductClick(
-                            services?.id,
-                            services?.areaOfBusinessInterest?.category,
-                          )
-                        }
-                      >
-                        Selected
-                      </Button>
-                    ) : (
-                      <Button
-                        variant="outline"
-                        onClick={() =>
-                          handleProductClick(
-                            services?.id,
-                            services?.areaOfBusinessInterest?.category,
-                          )
-                        }
-                      >
-                        Select
-                      </Button>
-                    )}
-                  </div>
-                  <dl className="-my-3 divide-y divide-gray-100 px-6 py-4 text-sm leading-6">
-                    <div className="flex justify-between gap-x-4 py-3">
-                      <Text fw={600} fz={12}>
-                        Price Range
-                      </Text>
-                      <Text fw={600} fz={'xs'}>
-                        {getPriceRangeValues.data &&
-                          transformCategoryPriceRange(
-                            getPriceRangeValues?.data,
-                            services?.areaOfBusinessInterest?.category,
-                            services?.areaOfBusinessInterest?.priceRange,
-                          )}
-                        {/* {services.areaOfBusinessInterest.priceRange} */}
-                      </Text>
+                      {isServiceSelected(services.id) ? (
+                        <Button
+                          variant="light"
+                          leftSection={
+                            <IconCheckbox size={18} className="p-0" />
+                          }
+                          onClick={() =>
+                            handleProductClick(
+                              services?.id,
+                              services?.areaOfBusinessInterest?.category,
+                            )
+                          }
+                        >
+                          Selected
+                        </Button>
+                      ) : (
+                        <Button
+                          variant="outline"
+                          onClick={() =>
+                            handleProductClick(
+                              services?.id,
+                              services?.areaOfBusinessInterest?.category,
+                            )
+                          }
+                        >
+                          Select
+                        </Button>
+                      )}
                     </div>
-                    <div className="flex justify-between gap-x-4 py-3">
-                      <Text fw={600} fz={12}>
-                        Line Of Business
-                      </Text>
-                      <Flex className="items-start gap-x-2  justify-end">
-                        <div className="flex flex-grow  gap-2 max-w-[16rem]">
-                          {services?.areaOfBusinessInterest?.lineOfBusiness.map(
-                            (line) => (
-                              <Tooltip label={line.name} key={line.id}>
-                                <Badge variant="light" color="green" fz={8}>
-                                  {line.name}
-                                </Badge>
-                              </Tooltip>
-                            ),
-                          )}
-                        </div>
-                      </Flex>
-                    </div>
-                    {isServiceSelected(services.id) && (
+                    <dl className="-my-3 divide-y divide-gray-100 px-6 py-4 text-sm leading-6">
                       <div className="flex justify-between gap-x-4 py-3">
                         <Text fw={600} fz={12}>
-                          Select New Price Range
+                          Price Range
                         </Text>
-                        <Flex className="items-start gap-x-2  justify-end w-1/2">
-                          <Select
-                            data={priceRangeByCategory(
-                              services?.areaOfBusinessInterest?.category as any,
+                        <Text fw={600} fz={'xs'}>
+                          {getPriceRangeValues.data &&
+                            transformCategoryPriceRange(
+                              getPriceRangeValues?.data,
+                              services?.areaOfBusinessInterest?.category,
+                              services?.areaOfBusinessInterest?.priceRange,
                             )}
-                            defaultValue={
-                              newPricingId ??
-                              services?.areaOfBusinessInterest?.priceRange
-                            }
-                            className="w-full"
-                            checkIconPosition="right"
-                            placeholder="Select new price range"
-                            onChange={(value) => {
-                              return handlePriceRangeChange(
-                                services.id,
-                                value as string,
-                              );
-                            }}
-                            allowDeselect={false}
-                          />
+                          {/* {services.areaOfBusinessInterest.priceRange} */}
+                        </Text>
+                      </div>
+                      <div className="flex justify-between gap-x-4 py-3">
+                        <Text fw={600} fz={12}>
+                          Line Of Business
+                        </Text>
+                        <Flex className="items-start gap-x-2  justify-end">
+                          <div className="flex flex-grow  gap-2 max-w-[16rem]">
+                            {services?.areaOfBusinessInterest?.lineOfBusiness.map(
+                              (line) => (
+                                <Tooltip label={line.name} key={line.id}>
+                                  <Badge variant="light" color="green" fz={8}>
+                                    {line.name}
+                                  </Badge>
+                                </Tooltip>
+                              ),
+                            )}
+                          </div>
                         </Flex>
                       </div>
-                    )}
-                  </dl>
-                </Box>
-              );
+                      {isServiceSelected(services.id) && (
+                        <div className="flex justify-between gap-x-4 py-3">
+                          <Text fw={600} fz={12}>
+                            Select New Price Range
+                          </Text>
+                          <Flex className="items-start gap-x-2  justify-end w-1/2">
+                            <Select
+                              data={priceRangeByCategory(
+                                services?.areaOfBusinessInterest
+                                  ?.category as any,
+                              )}
+                              defaultValue={
+                                newPricingId ??
+                                services?.areaOfBusinessInterest?.priceRange
+                              }
+                              className="w-full"
+                              checkIconPosition="right"
+                              placeholder="Select new price range"
+                              onChange={(value) => {
+                                return handlePriceRangeChange(
+                                  services.id,
+                                  value as string,
+                                );
+                              }}
+                              allowDeselect={false}
+                            />
+                          </Flex>
+                        </div>
+                      )}
+                    </dl>
+                  </Box>
+                );
             })}
       </SimpleGrid>
 
