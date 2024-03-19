@@ -54,19 +54,19 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
 
   async getBusinessAreaByInstanceId(
     instanceId: string,
-  ): Promise<BusinessAreaEntity> {
-    return this.businessAreaRepository.findOne({
+  ): Promise<BusinessAreaEntity[]> {
+    return this.businessAreaRepository.find({
       where: { instanceId: instanceId },
     });
   }
   async cancelServiceApplication(instanceId: string) {
-    const ba = await this.getBusinessAreaByInstanceId(instanceId);
-    if (ba.status == ApplicationStatus.PENDING) {
+    const bas = await this.getBusinessAreaByInstanceId(instanceId);
+    for (const ba of bas) {
       ba.status = ApplicationStatus.CANCELED;
       await this.update(ba.id, ba);
-      return true;
     }
-    return false;
+
+    return true;
   }
 
   async getPreviousUpgradeService(

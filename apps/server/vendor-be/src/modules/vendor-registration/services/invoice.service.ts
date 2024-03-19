@@ -144,7 +144,8 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
           where: { id: vendor.id },
         });
         isrvendor.areasOfBusinessInterest.push(areaOfBisunessInterests);
-        await this.srRepository.update(isrvendor.id, isrvendor);
+        isrvendor.lineOfBusiness =
+          await this.srRepository.update(isrvendor.id, isrvendor);
         await this.baService.create(bas);
         await this.generateInvoice(priceRangeIds, vendor, user);
         return HttpStatus.ACCEPTED;
