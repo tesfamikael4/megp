@@ -69,6 +69,9 @@ export class Tender extends Audit {
   @Column()
   organizationId: string;
 
+  @Column()
+  organizationName: string;
+
   @OneToMany(
     () => ProcurementTechnicalTeam,
     (procurementTechnicalTeam) => procurementTechnicalTeam.tender,

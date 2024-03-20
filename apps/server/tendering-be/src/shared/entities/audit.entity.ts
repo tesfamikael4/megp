@@ -22,4 +22,7 @@ export class Audit {
 export class OrgAudit extends Audit {
   @Column({ type: 'uuid', nullable: true, default: null })
   public organizationId: string | null;
+
+  @Column({ nullable: true })
+  public organizationName: string;
 }

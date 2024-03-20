@@ -28,6 +28,9 @@ export class BidRegistration extends Audit {
   @Column()
   bidderId: string;
 
+  @Column()
+  bidderName: string;
+
   @Column({ nullable: true })
   paymentInvoice: string;
 
