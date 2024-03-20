@@ -34,7 +34,7 @@ export class ApplicationExcutionService {
     private readonly baService: BusinessAreaService,
     private readonly invoiceService: InvoiceService,
     private readonly ptService: PreferentailTreatmentService,
-  ) {}
+  ) { }
 
   async getCurruntTaskByServiceKey(
     serviceKey: string,
@@ -163,7 +163,7 @@ export class ApplicationExcutionService {
         };
         pts.push(pt);
       }
-      response.preferentials = pts;
+      response.preferential = pts;
       return response;
     }
 
