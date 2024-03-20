@@ -88,9 +88,10 @@ function Header() {
   }, [isAuthenticated]);
 
   const items = links.map((link) => {
-    console.log(currentPath === link.link);
     const menuItems = link.links?.map((item) => (
-      <Menu.Item key={item.link}>{item.label}</Menu.Item>
+      <Menu.Item key={item.link} onClick={() => router.push(item.link)}>
+        {item.label}
+      </Menu.Item>
     ));
 
     if (menuItems) {
