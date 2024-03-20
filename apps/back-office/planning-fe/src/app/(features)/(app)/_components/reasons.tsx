@@ -23,8 +23,10 @@ const reasonsSchema: ZodType<any> = z.object({
 
 export const Reasons = ({
   justification,
+  page,
 }: {
   justification: Record<string, any>;
+  page: 'pre' | 'post';
 }) => {
   const [addJustification, { isLoading }] = useAddJustificationMutation();
 
@@ -40,8 +42,7 @@ export const Reasons = ({
     try {
       await addJustification({
         ...data,
-        objectId: justification?.[key]?.objectId,
-        preBudgetPlanActivityId: justification?.[key]?.activityId,
+        [`${page}BudgetPlanActivityId`]: justification?.[key]?.activityId,
         type: key,
       }).unwrap();
       notify('Success', 'Justification added successfully');

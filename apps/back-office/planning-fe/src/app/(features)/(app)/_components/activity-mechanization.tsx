@@ -108,7 +108,7 @@ export const ActivityMechanization = ({
     useLazyReadPostActivityQuery();
 
   const { id } = useParams();
-  const [procurementMethodId, setProcurementMethodId] = useState('');
+  // const [procurementMethodId, setProcurementMethodId] = useState('');
   const [contract, setContract] = useState({});
   const [mode, setMode] = useState<'new' | 'detail'>('new');
   const [donor, setDonor] = useState<string[]>([]);
@@ -222,7 +222,7 @@ export const ActivityMechanization = ({
               message:
                 'The procurement method used for this activity violates the rule. Please select possible reason why you want this activity by this procurement method',
               possibleReasons: res.possibleReasons,
-              objectId: procurementMethodId,
+              // objectId: procurementMethodId,
               activityId: id as string,
             },
           });
@@ -267,7 +267,7 @@ export const ActivityMechanization = ({
               message:
                 'The target group used for this activity violates the rule. Please select possible reason why you want this activity by this target group',
               possibleReasons: res.possibleReasons,
-              objectId: procurementMethodId,
+              // objectId: procurementMethodId,
               activityId: id as string,
             },
           });
@@ -326,7 +326,7 @@ export const ActivityMechanization = ({
       setMode('detail');
       setDonor(items.donor);
       setContract(items.contract);
-      setProcurementMethodId(items.id);
+      // setProcurementMethodId(items.id);
     }
     if (
       page == 'post' &&
@@ -344,7 +344,7 @@ export const ActivityMechanization = ({
       });
       setDonor(items.donor);
       setContract(items.contract);
-      setProcurementMethodId(items.id);
+      // setProcurementMethodId(items.id);
     }
   }, [
     isGetPreMechanismSuccess,
@@ -462,7 +462,7 @@ export const ActivityMechanization = ({
         </Stack>
 
         {Object.keys(justifications).length !== 0 && (
-          <Reasons justification={justifications} />
+          <Reasons justification={justifications} page={page} />
         )}
       </div>
     </Section>
