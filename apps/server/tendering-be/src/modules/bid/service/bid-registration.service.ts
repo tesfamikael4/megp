@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Tender } from 'src/entities';
@@ -10,12 +10,21 @@ import { ExtraCrudService } from 'src/shared/service';
 import { EntityManager, Repository } from 'typeorm';
 import { CreateBidRegistrationDto } from '../dto/bid-registration.dto';
 import { EnvelopTypeEnum } from 'src/shared/enums';
+import {
+  CollectionQuery,
+  FilterOperators,
+  QueryConstructor,
+} from 'src/shared/collection-query';
+import { DataResponseFormat } from 'src/shared/api-data';
+import * as crypto from 'crypto';
+import { EncryptionHelperService } from './encryption-helper.service';
 
 @Injectable()
 export class BidRegistrationService extends ExtraCrudService<BidRegistration> {
   constructor(
     @InjectRepository(BidRegistration)
     private readonly bidSecurityRepository: Repository<BidRegistration>,
+    private readonly encryptionHelperService: EncryptionHelperService,
     @Inject(REQUEST) private request: Request,
   ) {
     super(bidSecurityRepository);
@@ -36,12 +45,13 @@ export class BidRegistrationService extends ExtraCrudService<BidRegistration> {
     });
 
     if (!tender) {
-      throw new Error('Tender not found');
+      throw new BadRequestException('Tender not found');
     } else if (tender.bdsSubmission.submissionDeadline < new Date()) {
-      throw new Error('Submission deadline has passed');
+      throw new BadRequestException('Submission deadline has passed');
     }
 
     const bidderId = req.user.organization.id;
+    const bidderName = req.user.organization.name;
 
     const bidBookmarkExists = await manager
       .getRepository(BidBookmark)
@@ -66,6 +76,7 @@ export class BidRegistrationService extends ExtraCrudService<BidRegistration> {
     const bidRegistration = this.bidSecurityRepository.create({
       tenderId: itemData.tenderId,
       bidderId: bidderId,
+      bidderName: bidderName,
     });
     if (tender.tenderParticipationFee) {
       const invoice = await this.generatePaymentLink(
@@ -83,13 +94,20 @@ export class BidRegistrationService extends ExtraCrudService<BidRegistration> {
     await manager.getRepository(BidRegistration).insert(bidRegistration);
     const bidRegistrationDetails: BidRegistrationDetail[] = [];
 
-    for (const lot of tender.lots) {
-      const dataToEncrypt = bidderId + tender.id + bidRegistration.id;
+    const saltLength = 16;
+    const salt = crypto
+      .randomBytes(Math.ceil(saltLength / 2))
+      .toString('hex')
+      .slice(0, saltLength);
 
-      const encryptedData = await this.generateInitialEncryption(
+    for (const lot of tender.lots) {
+      const dataToEncrypt = bidderId + bidRegistration.id;
+
+      const encryptedData = this.generateInitialEncryption(
         dataToEncrypt,
-        'private key',
+        'password',
         tender.bdsSubmission.envelopType,
+        salt,
       );
 
       const bidRegistrationDetail = manager
@@ -97,6 +115,8 @@ export class BidRegistrationService extends ExtraCrudService<BidRegistration> {
         .create({
           bidRegistrationId: bidRegistration.id,
           lotId: lot.id,
+          envelopType: tender.bdsSubmission.envelopType,
+          salt,
           ...encryptedData,
         });
 
@@ -112,6 +132,32 @@ export class BidRegistrationService extends ExtraCrudService<BidRegistration> {
     };
   }
 
+  async getMyRegisteredBids(query: CollectionQuery, req?: any): Promise<any> {
+    query.includes.push('tender');
+    query.includes.push('tender.lots');
+
+    query.where.push([
+      {
+        column: 'bidderId',
+        operator: FilterOperators.EqualTo,
+        value: req.user.organization.id,
+      },
+    ]);
+    const dataQuery = QueryConstructor.constructQuery<BidRegistration>(
+      this.bidSecurityRepository,
+      query,
+    );
+    const response = new DataResponseFormat<BidRegistration>();
+    if (query.count) {
+      response.total = await dataQuery.getCount();
+    } else {
+      const [result, total] = await dataQuery.getManyAndCount();
+      response.total = total;
+      response.items = result;
+    }
+    return response;
+  }
+
   async generatePaymentLink(amount: number) {
     const paymentInvoice = `INVOICE-${Date.now()}-${amount}`;
     //TODO: call payment gateway API here
@@ -122,21 +168,33 @@ export class BidRegistrationService extends ExtraCrudService<BidRegistration> {
         'https://dev-bo.megp.peragosystems.com/infrastructure/api/mpgs-payments/initiate',
     };
   }
-
-  async generateInitialEncryption(
+  generateInitialEncryption(
     dataToEncrypt: string,
-    privateKey: string,
+    password: string,
     envelopType: string,
-  ) {
+    salt: string,
+  ):
+    | {
+        response: string;
+      }
+    | {
+        financialResponse: string;
+        technicalResponse: string;
+      } {
+    const encryptedData = this.encryptionHelperService.encryptData(
+      dataToEncrypt,
+      password,
+      salt,
+    );
+
     if (envelopType == EnvelopTypeEnum.SINGLE_ENVELOP) {
       return {
-        response: dataToEncrypt + privateKey,
+        response: encryptedData,
       };
     } else {
       return {
-        financialResponse: dataToEncrypt + privateKey,
-        technicalResponse: dataToEncrypt + privateKey,
-        response: dataToEncrypt + privateKey,
+        financialResponse: encryptedData,
+        technicalResponse: encryptedData,
       };
     }
   }

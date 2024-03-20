@@ -26,6 +26,9 @@ export class BidBookmark extends Audit {
   @Column()
   bidderId: string;
 
+  @Column()
+  bidderName: string;
+
   @Column({
     type: 'enum',
     enum: BidBookmarkStatusEnum,

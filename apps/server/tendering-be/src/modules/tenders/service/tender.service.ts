@@ -6,6 +6,7 @@ import {
   Lot,
   ProcurementMechanism,
   ProcurementTechnicalTeam,
+  SpdTemplate,
   Tender,
 } from 'src/entities';
 import { Item } from 'src/entities/tender-item.entity';
@@ -16,6 +17,7 @@ import {
   QueryConstructor,
 } from 'src/shared/collection-query';
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
+import { MinIOService } from 'src/shared/min-io/min-io.service';
 import { EntityCrudService } from 'src/shared/service';
 import {
   EntityManager,
@@ -29,6 +31,7 @@ export class TenderService extends EntityCrudService<Tender> {
   constructor(
     @InjectRepository(Tender)
     private readonly tenderRepository: Repository<Tender>,
+    private readonly minIOService: MinIOService,
     @Inject(REQUEST) private request: Request,
   ) {
     super(tenderRepository);
@@ -69,8 +72,10 @@ export class TenderService extends EntityCrudService<Tender> {
         marketEstimate: Number(prResponse.calculatedAmount),
         marketEstimateCurrency: prResponse.currency,
         status: 'DRAFT',
-        organizationId: prResponse.organizationId,
+        organizationId: req.user.organization.id,
+        organizationName: req.user.organization.name,
       };
+
       const tender = manager.getRepository(Tender).create(tenderPayload);
       await manager.getRepository(Tender).insert(tender);
 
@@ -79,6 +84,7 @@ export class TenderService extends EntityCrudService<Tender> {
         const procurementTechnicalTeam = new ProcurementTechnicalTeam();
         procurementTechnicalTeam.tenderId = tender.id;
         procurementTechnicalTeam.userId = iterator.userId;
+        procurementTechnicalTeam.userName = iterator.userName;
         procurementTechnicalTeam.isTeamLead = false;
         procurementTechnicalTeams.push(procurementTechnicalTeam);
       }
@@ -176,5 +182,36 @@ export class TenderService extends EntityCrudService<Tender> {
       response.items = result;
     }
     return response;
+  }
+
+  async downloadInvitation(id: string) {
+    try {
+      const tender = await this.tenderRepository.findOne({
+        where: {
+          id,
+        },
+        relations: {
+          spd: true,
+        },
+      });
+
+      const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
+      const spd = await manager
+        .getRepository(SpdTemplate)
+        .findOneBy({ id: tender.spd.spdId, type: 'main-document' });
+      if (!spd) {
+        throw new Error('SPD not found');
+      }
+      if (!spd.documentPdf) {
+        throw new Error('SPD Document not found');
+      }
+
+      const presignedDownload =
+        await this.minIOService.generatePresignedDownloadUrl(spd.documentPdf);
+      return { presignedDownload };
+    } catch (error) {
+      throw error;
+    }
   }
 }
