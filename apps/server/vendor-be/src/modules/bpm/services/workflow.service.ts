@@ -194,7 +194,7 @@ export class WorkflowService {
         if (
           curruntTask.taskType == TaskTypes.INITIAL_REVIEW &&
           nextCommand.action.toUpperCase() ==
-            ApplicationStatus.CANCEL.toUpperCase()
+          ApplicationStatus.CANCEL.toUpperCase()
         ) {
           response = await this.vendorRegService.cancelApplication(wfInstance);
         } else {
@@ -355,7 +355,7 @@ export class WorkflowService {
             const vendor = await this.vendorRegService.findOne(wfi.requestorId);
             if (vendor) {
               vendor.canRequest = true;
-              await this.vendorRegService.create(vendor);
+              await this.vendorRegService.update(vendor.id, vendor);
             }
           }
         }
@@ -432,8 +432,8 @@ export class WorkflowService {
     const commandLower = command.action.toLowerCase();
     const status =
       commandLower == 'approve' ||
-      commandLower == 'yes' ||
-      commandLower == 'success'
+        commandLower == 'yes' ||
+        commandLower == 'success'
         ? 'Approve'
         : 'Reject';
     const payload = {
