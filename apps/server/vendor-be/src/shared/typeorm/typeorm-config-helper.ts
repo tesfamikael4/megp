@@ -1,7 +1,6 @@
 import * as dotenv from 'dotenv';
 import { SeederOptions } from 'typeorm-extension';
 import { DataSource, DataSourceOptions } from 'typeorm';
-
 dotenv.config({ path: '.env' });
 
 export const TypeOrmConfigHelper = {
@@ -14,7 +13,6 @@ export const TypeOrmConfigHelper = {
 
 const pathPrefix =
   process.env.NODE_ENV === 'production' ? 'apps/server/vendor-be/' : '';
-
 export const dataSourceOptions = {
   type: 'postgres',
   host: TypeOrmConfigHelper.DATABASE_HOST,
@@ -28,7 +26,7 @@ export const dataSourceOptions = {
   seeds: [`${pathPrefix}dist/modules/seeders/**.seeder.{ts,js}`],
   migrationsTableName: 'typeorm_migrations',
   logger: 'advanced-console',
-  // logging: 'all',
+  logging: 'all',
   synchronize: false,
   autoLoadEntities: true,
 } as DataSourceOptions & SeederOptions;
