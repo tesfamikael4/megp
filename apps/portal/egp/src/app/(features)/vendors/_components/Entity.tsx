@@ -1,10 +1,15 @@
 'use client';
 
 import { Box, Container, LoadingOverlay } from '@mantine/core';
-import React, { useMemo } from 'react';
-import { EntityConfig, EntityLayout, EntityList } from '@megp/entity';
+import React, { useCallback, useEffect, useMemo } from 'react';
+import {
+  CollectionQuery,
+  EntityConfig,
+  EntityLayout,
+  EntityList,
+} from '@megp/entity';
 import { addSpacesToCamelCase } from '../../vendor/(workspace)/registration/_components/review/addSpaceToCamelCase';
-import { useGetVendorsQuery } from '../../_api/reports';
+import { useGetVendorsQuery, useLazyGetVendorsQuery } from '../../_api/reports';
 import { usePathname, useRouter } from 'next/navigation';
 
 const Entity = ({ children }: { children: React.ReactNode }) => {
@@ -14,13 +19,15 @@ const Entity = ({ children }: { children: React.ReactNode }) => {
     return {
       basePath: `/vendors`,
       mode: 'list',
-      entity: 'Approved Vendors',
+      entity: 'vendors',
       primaryKey: 'id',
       primaryContent: 'name',
       searchable: true,
       title: 'Vendors List',
       hasAdd: false,
       hasDetail: true,
+      pagination: true,
+      sortable: true,
       onDetail: (selected: any) => {
         router.push(`/vendors/${selected.id}`);
       },
@@ -55,15 +62,24 @@ const Entity = ({ children }: { children: React.ReactNode }) => {
           cell: (info) => info.getValue(),
         },
       ],
-      sortable: true,
-      pagination: true,
     };
-  }, []);
-  const { data: list, isLoading } = useGetVendorsQuery({
-    take: 20,
-    skip: 0,
-  });
+  }, [router]);
+  const [trigger, { data: list, isLoading }] = useLazyGetVendorsQuery();
   const mode = pathname == '/vendors' ? 'list' : 'detail';
+
+  const onRequestChange = useCallback(
+    (request: CollectionQuery) => {
+      trigger(request);
+    },
+    [trigger],
+  );
+
+  useEffect(() => {
+    onRequestChange({
+      take: 20,
+      skip: 0,
+    });
+  }, [onRequestChange]);
 
   if (isLoading) <LoadingOverlay />;
   else if (!list) <Box>No Data Message</Box>;
@@ -78,7 +94,7 @@ const Entity = ({ children }: { children: React.ReactNode }) => {
           mode={mode}
           total={list.total}
           detail={children}
-          // onRequestChange={onRequestChange}
+          onRequestChange={onRequestChange}
         />
       </Box>
     );

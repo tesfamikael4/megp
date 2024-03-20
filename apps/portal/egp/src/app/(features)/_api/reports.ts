@@ -1,3 +1,4 @@
+import { ApprovedVendorResponse } from '@/models/approved-vendor-response';
 import { vendorRegistrationApi } from '@/store/api/vendor_registration/api';
 import { CollectionQuery, encodeCollectionQuery } from '@megp/entity';
 
@@ -25,6 +26,12 @@ export const reportsApi = vendorRegistrationApi.injectEndpoints({
         };
       },
     }),
+    getApprovedVendorById: build.query<ApprovedVendorResponse, { id: string }>({
+      query: ({ id }) => ({
+        url: `vendor-registrations/get-approved-vendor-byId/${id}`,
+        method: 'GET',
+      }),
+    }),
   }),
 });
 
@@ -32,4 +39,5 @@ export const {
   useGetReportsQuery,
   useGetVendorsQuery,
   useLazyGetVendorsQuery,
+  useGetApprovedVendorByIdQuery,
 } = reportsApi;
