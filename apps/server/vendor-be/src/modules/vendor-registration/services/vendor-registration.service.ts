@@ -1380,7 +1380,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
               });
             }
           }
-          vendorEntity.preferentials = formattedPt;
+          vendorEntity.preferential = formattedPt;
         }
       }
       return vendorEntity;
@@ -1395,7 +1395,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     for (const row of result) {
       // const business = await this.baService.getBusinessAreaByInstanceId(row.id);
       const status = row.businessArea.status;
-      const remark = '';
       apps.push({
         service: row.service.name,
         key: row.service.key,
@@ -2253,66 +2252,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           };
         }
       }
-
-      /*
-              if (
-           updateInfo == null ||
-           updateInfo.status == VendorStatusEnum.APPROVED
-         ) {
-           const profileInfoEntity = new ProfileInfoEntity();
-           profileInfoEntity.vendorId = vendor?.id;
-           profileInfoEntity.status = ApplicationStatus.SUBMITTED;
-           profileInfoEntity.profileData = profileData;
-           await this.profileInfoRepository.save(profileInfoEntity);
-         } else if (
-           updateInfo.status == VendorStatusEnum.ACTIVE ||
-           updateInfo.status == VendorStatusEnum.DRAFT
-         ) {
-           updateInfo.profileData = profileData;
-           updateInfo.status = 'Submitted';
-           await this.profileInfoRepository.save(updateInfo);
-         } else if (updateInfo.status == VendorStatusEnum.ADJUSTMENT) {
-           updateInfo.status = 'Submitted';
-           updateInfo.profileData = profileData;
-           const resultData = await this.profileInfoRepository.save(updateInfo);
-           const response = this.goToworkflow(userInfo, resultData);
-           return response;
-         }
-   
-         const wfi = new CreateWorkflowInstanceDto();
-         wfi.user = userInfo;
-         const bp = await this.bpService.findBpWithServiceByKey(
-           VendorStatusEnum.PROFILE_UPDATE_KEY,
-         );
-         if (!bp) throw new NotFoundException('bp service with this key notfound');
-         wfi.bpId = bp.id;
-         wfi.serviceId = bp.serviceId;
-         wfi.requestorId = vendor.id;
-         wfi.data = { ...profileData };
-         const workflowInstance =
-           await this.workflowService.intiateWorkflowInstance(wfi, userInfo);
-         if (!workflowInstance)
-           throw new HttpException('workflow initiation failed', 400);
-         const businessAreaEntity = new BusinessAreaEntity();
-         businessAreaEntity.instanceId = workflowInstance.application.id;
-         businessAreaEntity.category = ServiceKeyEnum.PROFILE_UPDATE;
-         businessAreaEntity.serviceId = bp.serviceId;
-         businessAreaEntity.applicationNumber =
-           workflowInstance.application.applicationNumber;
-         businessAreaEntity.status = VendorStatusEnum.PENDING;
-         businessAreaEntity.vendorId = vendor.id;
-         businessAreaEntity.status = 'Pending';
-         await this.businessAreaRepository.save(businessAreaEntity);
-         await this.vendorRepository.update(
-           { id: vendor.id },
-           { canRequest: false },
-         );
-         return {
-           applicationNumber: workflowInstance.application.applicationNumber,
-           instanceNumber: workflowInstance.application.id,
-           vendorId: workflowInstance.application.requestorId,
-         };
-         */
     } catch (error) {
       console.log(error);
       throw error;

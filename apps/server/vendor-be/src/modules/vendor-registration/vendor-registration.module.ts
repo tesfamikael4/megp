@@ -57,6 +57,9 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { PreferentialTreatmentsEntity } from 'src/entities/preferential-treatment.entity';
 import { PreferentailTreatmentService } from './services/preferentail-treatment.service';
 import { PreferentailTreatmentsController } from './controllers/preferential-treatment.controller';
+import { BriefcasesController } from './controllers/briefcases.controller';
+import { BriefcasesService } from './services/briefcases.service';
+import { BriefecaseEntity } from 'src/entities/brifecase.entity';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -83,6 +86,7 @@ import { PreferentailTreatmentsController } from './controllers/preferential-tre
       IsrVendorsEntity,
       ProfileInfoEntity,
       PreferentialTreatmentsEntity,
+      BriefecaseEntity
     ]),
     EventEmitterModule.forRoot(),
     AuthorizationModule,
@@ -108,6 +112,7 @@ import { PreferentailTreatmentsController } from './controllers/preferential-tre
     InvoiceService,
     BpServiceService,
     PreferentailTreatmentService,
+    BriefcasesService
     // TusService,
   ],
   controllers: [
@@ -123,6 +128,7 @@ import { PreferentailTreatmentsController } from './controllers/preferential-tre
     BusinessAreaController,
     InvoicesController,
     PreferentailTreatmentsController,
+    BriefcasesController
   ],
 })
-export class VendorRegistrationModule {}
+export class VendorRegistrationModule { }
