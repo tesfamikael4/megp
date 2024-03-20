@@ -1,6 +1,7 @@
-import { Image, Modal } from '@mantine/core';
+import { Image, Loader, LoadingOverlay, Modal } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { logger } from '@megp/core-fe';
+import { IconLoader2 } from '@tabler/icons-react';
 import { getCookie } from 'cookies-next';
 import { useEffect, useState } from 'react';
 
@@ -15,10 +16,12 @@ export const ShowFile = ({
   const [pdfData, setPdfData] = useState<ArrayBuffer | null>(null); // Use null as initial state
   const [fileContent, setFileContent] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(true); // Introduce loading state
 
   useEffect(() => {
     const getFile = async () => {
       try {
+        setLoading(true); // Set loading to true when fetching starts
         const token = getCookie('token');
         const response = await fetch(url, {
           headers: {
@@ -35,25 +38,10 @@ export const ShowFile = ({
         if (blobType.includes('image')) {
           const fileUrl = URL.createObjectURL(fileBlob);
           setFileContent(fileUrl);
-        } else if (blobType.includes('pdf')) {
-          const arrayBuffer = await new Promise<ArrayBuffer>(
-            (resolve, reject) => {
-              const reader = new FileReader();
-              reader.onload = () => {
-                if (reader.result instanceof ArrayBuffer) {
-                  resolve(reader.result);
-                } else {
-                  reject(new Error('Failed to convert Blob to ArrayBuffer'));
-                }
-              };
-              reader.onerror = () => {
-                reject(new Error('Error reading Blob as ArrayBuffer'));
-              };
-              reader.readAsArrayBuffer(fileBlob);
-            },
-          );
-          setPdfData(arrayBuffer);
-        } else if (blobType.includes('octet-stream')) {
+        } else if (
+          blobType.includes('pdf') ||
+          blobType.includes('octet-stream')
+        ) {
           const arrayBuffer = await new Promise<ArrayBuffer>(
             (resolve, reject) => {
               const reader = new FileReader();
@@ -76,6 +64,8 @@ export const ShowFile = ({
       } catch (err) {
         setError(err.message);
         logger.log(err);
+      } finally {
+        setLoading(false); // Set loading to false when fetching completes (whether successful or not)
       }
     };
 
@@ -99,7 +89,9 @@ export const ShowFile = ({
         className="w-full h-full flex items-center justify-center"
         style={{ height: '500px' }}
       >
-        {pdfData ? (
+        {loading ? (
+          <Loader size={30} /> // Display loading message while loading
+        ) : pdfData ? (
           <iframe
             src={`data:application/pdf;base64,${Buffer.from(pdfData).toString(
               'base64',
@@ -117,7 +109,7 @@ export const ShowFile = ({
             onClick={() => open()}
           />
         ) : (
-          <p>Loading...</p>
+          <p>No content available</p> // Handle case when no content is available
         )}
       </div>
     </>
