@@ -21,10 +21,7 @@ import {
 import { DataResponseFormat } from '@api-data';
 import { VendorRegistrationsService } from '../services/vendor-registration.service';
 import { VendorInitiationDto } from '../dto/vendor-initiation.dto';
-import {
-  AllowAnonymous,
-  CurrentUser,
-} from 'src/shared/authorization';
+import { AllowAnonymous, CurrentUser } from 'src/shared/authorization';
 import { InsertAllDataDto } from '../dto/save-all.dto';
 import { SetVendorStatus } from '../dto/vendor.dto';
 import { CollectionQuery } from 'src/shared/collection-query';
@@ -39,9 +36,7 @@ import { BusinessAreaService } from '../services/business-area.service';
 @ApiResponse({ status: 500, description: 'Internal error' })
 @ApiExtraModels(DataResponseFormat)
 export class VendorRegistrationsController {
-  constructor(
-    private readonly regService: VendorRegistrationsService,
-  ) { }
+  constructor(private readonly regService: VendorRegistrationsService) {}
   @Get('get-isr-vendors')
   async getVendors() {
     return await this.regService.getIsrVendors();

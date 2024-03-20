@@ -34,7 +34,7 @@ export class ApplicationExcutionService {
     private readonly baService: BusinessAreaService,
     private readonly invoiceService: InvoiceService,
     private readonly ptService: PreferentailTreatmentService,
-  ) { }
+  ) {}
 
   async getCurruntTaskByServiceKey(
     serviceKey: string,
@@ -146,11 +146,10 @@ export class ApplicationExcutionService {
       response.isrvendor.areasOfBusinessInterest = businessInterest;
     }
 
-    const preferentials =
-      await this.ptService.getPreferetialTreatmentsByUserId(
-        appData.serviceId,
-        appData.userId,
-      );
+    const preferentials = await this.ptService.getPreferetialTreatmentsByUserId(
+      appData.serviceId,
+      appData.userId,
+    );
 
     const pts = [];
     if (preferentials.length) {

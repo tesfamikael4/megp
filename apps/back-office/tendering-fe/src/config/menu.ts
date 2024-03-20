@@ -4,6 +4,7 @@ import {
   IconCoins,
   IconFileStack,
   IconFolderOpen,
+  IconListCheck,
   IconLockSquareRounded,
   IconReportAnalytics,
 } from '@tabler/icons-react';
@@ -19,6 +20,16 @@ export const Menu: MenuItem[] = [
     label: 'Bid Opening',
     icon: IconFolderOpen,
     link: '/opening',
+  },
+  {
+    label: 'Bid Evaluation',
+    icon: IconListCheck,
+    link: '/evaluation',
+  },
+  {
+    label: 'Administration',
+    icon: IconBuildingBank,
+    link: '/administration',
   },
   {
     label: 'Procurement requisition',

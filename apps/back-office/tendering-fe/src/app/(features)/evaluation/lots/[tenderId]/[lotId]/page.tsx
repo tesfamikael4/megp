@@ -3,14 +3,14 @@
 import { ActionIcon, Button, Box, Badge } from '@mantine/core';
 import { ExpandableTable, ExpandableTableConfig, Section } from '@megp/core-fe';
 import { IconChevronRight } from '@tabler/icons-react';
-import { bidders, data } from '../_constants/data';
-import { DetailTable } from '../_components/detail-table';
-import { TenderOverView } from './_components/tender-overview';
 import { useParams, useRouter } from 'next/navigation';
+import { TenderOverView } from '../../../[id]/_components/tender-overview';
+import { bidders } from '../../../_constants/data';
+import { DetailTable } from '../../../_components/detail-table';
 
 export default function BidOpening() {
   const router = useRouter();
-  const { id } = useParams();
+  const { tenderId, lotId } = useParams();
   const config: ExpandableTableConfig = {
     isSearchable: true,
     isExpandable: true,
@@ -29,34 +29,36 @@ export default function BidOpening() {
         accessor: 'status',
         width: 150,
         render: (record) => {
-          const color =
-            record.status === 'Opened'
-              ? 'green'
-              : record.status === 'Key not shared'
-                ? 'red'
-                : 'yellow';
+          //   const color =
+          //     record.status === 'Opened'
+          //       ? 'green'
+          //       : record.status === 'Key not shared'
+          //         ? 'red'
+          //         : 'yellow';
           return (
-            <Badge color={color} size="sm">
-              {record.status}
+            <Badge color={'green'} size="sm">
+              Open
+              {/* <Badge color={color} size="sm">
+              {record.status} */}
             </Badge>
           );
         },
       },
-      // {
-      //   accessor: '',
-      //   render: (record) => (
-      //     <ActionIcon
-      //       variant="subtle"
-      //       onClick={(e) => {
-      //         e.stopPropagation();
-      //         router.push(`/opening/${id}/${record.id}`);
-      //       }}
-      //     >
-      //       <IconChevronRight size={14} />
-      //     </ActionIcon>
-      //   ),
-      //   width: 70,
-      // },
+      {
+        accessor: '',
+        render: (record) => (
+          <ActionIcon
+            variant="subtle"
+            onClick={(e) => {
+              e.stopPropagation();
+              router.push(`/opening/lots/${tenderId}/${lotId}/${record.id}`);
+            }}
+          >
+            <IconChevronRight size={14} />
+          </ActionIcon>
+        ),
+        width: 70,
+      },
     ],
   };
   return (
@@ -66,15 +68,7 @@ export default function BidOpening() {
         title="Bidders List"
         collapsible={false}
         className="mt-2"
-        action={
-          <Button
-            onClick={() => {
-              router.push(`/opening/lots/${id}`);
-            }}
-          >
-            Open All
-          </Button>
-        }
+        action={<Button>Complete</Button>}
       >
         <ExpandableTable
           config={config}

@@ -26,7 +26,6 @@ import { BpServiceService } from 'src/modules/services/services/service.service'
 
 @Injectable()
 export class PreferentailTreatmentService extends EntityCrudService<PreferentialTreatmentsEntity> {
-
   constructor(
     @InjectRepository(PreferentialTreatmentsEntity)
     private readonly ptRepository: Repository<PreferentialTreatmentsEntity>,
@@ -53,23 +52,34 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
       relations: { service: true },
       where: {
         userId: userId,
-        status: Not(In([ApplicationStatus.APPROVED, ApplicationStatus.REJECTED])),
+        status: Not(
+          In([ApplicationStatus.APPROVED, ApplicationStatus.REJECTED]),
+        ),
         // serviceId: serviceId,
       },
     });
     return result;
   }
-  async getSubmittedPTByUserId(userId: any): Promise<PreferentialTreatmentsEntity[]> {
+  async getSubmittedPTByUserId(
+    userId: any,
+  ): Promise<PreferentialTreatmentsEntity[]> {
     const result = await this.ptRepository.find({
       relations: { service: true },
       where: { userId: userId, status: ApplicationStatus.SUBMITTED },
     });
     return result;
   }
-  async getPreviousPTByUserId(userId: any, serviceIds: string[]): Promise<PreferentialTreatmentsEntity[]> {
+  async getPreviousPTByUserId(
+    userId: any,
+    serviceIds: string[],
+  ): Promise<PreferentialTreatmentsEntity[]> {
     const result = await this.ptRepository.find({
       relations: { service: true },
-      where: { userId: userId, status: ApplicationStatus.APPROVED, service: In(serviceIds) },
+      where: {
+        userId: userId,
+        status: ApplicationStatus.APPROVED,
+        service: In(serviceIds),
+      },
     });
     return result;
   }
@@ -80,11 +90,14 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
   }
   async submitPreferential(
     dtos: CreatePTDto[],
-    user: any, instanceId: string = null, applicationNumber = null
+    user: any,
+    instanceId: string = null,
+    applicationNumber = null,
   ) {
-    const vendor = await this.srRepository.findOne({ where: { userId: user.id } });
-    if (!vendor)
-      throw new HttpException('First, Register as a vendor', 404);
+    const vendor = await this.srRepository.findOne({
+      where: { userId: user.id },
+    });
+    if (!vendor) throw new HttpException('First, Register as a vendor', 404);
     const serviceIds = dtos.map((item) => item.serviceId);
     const bps = await this.bpService.findBpWithServiceByServiceIds(serviceIds);
     for (const dto of dtos) {
@@ -109,7 +122,11 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
           entity.id = existedRequest.id;
         }
         await this.ptRepository.save(entity);
-        if (dto.status == ApplicationStatus.SUBMIT || instanceId != undefined || instanceId != null) {
+        if (
+          dto.status == ApplicationStatus.SUBMIT ||
+          instanceId != undefined ||
+          instanceId != null
+        ) {
           const wfi = new CreateWorkflowInstanceDto();
           wfi.bpId = bpId;
           wfi.requestorId = vendor.id;
@@ -301,6 +318,6 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
   }
 
   async saveAll(pts: PreferentialTreatmentsEntity[]) {
-    return this.ptRepository.save(pts)
+    return this.ptRepository.save(pts);
   }
 }
