@@ -3,9 +3,9 @@
 import { ActionIcon, Box } from '@mantine/core';
 import { ExpandableTable, ExpandableTableConfig, Section } from '@megp/core-fe';
 import { IconChevronRight } from '@tabler/icons-react';
-import { data } from './_constants/data';
 import { DetailTable } from '../_components/detail-table';
 import { useRouter } from 'next/navigation';
+import { data } from '../opening/_constants/data';
 
 export default function BidOpening() {
   const router = useRouter();
@@ -52,7 +52,7 @@ export default function BidOpening() {
             variant="subtle"
             onClick={(e) => {
               e.stopPropagation();
-              router.push(`/opening/${record.id}`);
+              router.push(`/administration/${record.id}`);
             }}
           >
             <IconChevronRight size={14} />

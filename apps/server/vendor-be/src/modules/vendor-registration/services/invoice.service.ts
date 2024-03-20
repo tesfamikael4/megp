@@ -52,16 +52,20 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
   }
 
   async updateStatus(dto: PaymentReceiptCommand) {
-    const invoice = await this.invoiceRepository.findOne({ where: { refNumber: dto.referenceNo } });
+    const invoice = await this.invoiceRepository.findOne({
+      where: { refNumber: dto.referenceNo },
+    });
     if (invoice && dto.status == 'Success') {
       invoice.paymentStatus = PaymentStatus.COMPLETED;
       this.invoiceRepository.update(invoice.id, invoice);
     } else {
-
     }
   }
 
-  async generateNewregistrationInvoice(businesses: CreateAreasOfBusinessInterest[], user: any,) {
+  async generateNewregistrationInvoice(
+    businesses: CreateAreasOfBusinessInterest[],
+    user: any,
+  ) {
     try {
       const priceRangeIds = businesses.map((item) => item.priceRange);
       const vendor = await this.vendorsRepository.findOne({
@@ -144,8 +148,10 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
           where: { id: vendor.id },
         });
         isrvendor.areasOfBusinessInterest.push(areaOfBisunessInterests);
-        isrvendor.lineOfBusiness =
-          await this.srRepository.update(isrvendor.id, isrvendor);
+        isrvendor.lineOfBusiness = await this.srRepository.update(
+          isrvendor.id,
+          isrvendor,
+        );
         await this.baService.create(bas);
         await this.generateInvoice(priceRangeIds, vendor, user);
         return HttpStatus.ACCEPTED;
@@ -256,7 +262,10 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
 
     return invoice;
   }
-  async getInvoicesByUserAndService(userId: string, serviceId: string): Promise<InvoiceEntity> {
+  async getInvoicesByUserAndService(
+    userId: string,
+    serviceId: string,
+  ): Promise<InvoiceEntity> {
     const result = await this.invoiceRepository.findOne({
       where: { userId: userId, serviceId: serviceId },
     });
@@ -311,9 +320,7 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     if (result) delete result.service;
     return result;
   }
-  async getInvoiceByUser(
-    userId: string,
-  ): Promise<InvoiceEntity> {
+  async getInvoiceByUser(userId: string): Promise<InvoiceEntity> {
     const oneWeekAgo = new Date();
     oneWeekAgo.setDate(new Date().getDate() - 7);
     const result = await this.invoiceRepository.findOne({

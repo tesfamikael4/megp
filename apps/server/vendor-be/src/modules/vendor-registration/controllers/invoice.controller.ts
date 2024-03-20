@@ -20,20 +20,21 @@ import { decodeCollectionQuery } from 'src/shared/collection-query';
 import { ServiceKeyEnum } from 'src/shared/enums/service-key.enum';
 import { CreateAreasOfBusinessInterest } from '../dto/areas-of-business-interest';
 import axios from 'axios';
-import { PaymentCommand, PaymentReceiptCommand } from '../dto/payment-command.dto';
+import {
+  PaymentCommand,
+  PaymentReceiptCommand,
+} from '../dto/payment-command.dto';
 
 @Controller('invoices')
 @ApiTags('Invoices')
 @UseGuards(JwtGuard)
 @ApiResponse({ status: 500, description: 'Internal error' })
 export class InvoicesController {
-  constructor(private invoiceService: InvoiceService) {
-
-
-  }
+  constructor(private invoiceService: InvoiceService) {}
   @Post('pay')
   async pay(@CurrentUser() user: any, @Param('invoiceId') invoiceId: string) {
-    const PaymentGateway = process.env.MEGP_PAYMENT_GATEWAY ?? '/infrastructure/api/';
+    const PaymentGateway =
+      process.env.MEGP_PAYMENT_GATEWAY ?? '/infrastructure/api/';
     const url = PaymentGateway + '/mpgs-payments';
     const invoice = await this.invoiceService.getInvoiceActiveById(invoiceId);
     if (invoice) {
@@ -60,7 +61,7 @@ export class InvoicesController {
         throw new Error('Error making API request' + error);
       }
     } else {
-      throw new NotFoundException("Invoice Not found");
+      throw new NotFoundException('Invoice Not found');
     }
   }
   @Post('update-payment-status')
@@ -114,7 +115,6 @@ export class InvoicesController {
   }
   @Get('get-my-upgrade-invoice')
   async getMyInvoice(@CurrentUser() userInfo: any) {
-
     return await this.invoiceService.getMyInvoice(
       userInfo.id,
       ServiceKeyEnum.REGISTRATION_UPGRADE,

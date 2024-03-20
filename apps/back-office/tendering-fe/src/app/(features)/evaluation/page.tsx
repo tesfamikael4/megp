@@ -7,7 +7,7 @@ import { data } from './_constants/data';
 import { DetailTable } from '../_components/detail-table';
 import { useRouter } from 'next/navigation';
 
-export default function BidOpening() {
+export default function BidEvaluation() {
   const router = useRouter();
   const config: ExpandableTableConfig = {
     isSearchable: true,
@@ -52,7 +52,7 @@ export default function BidOpening() {
             variant="subtle"
             onClick={(e) => {
               e.stopPropagation();
-              router.push(`/opening/${record.id}`);
+              router.push(`/evaluation/lots/${record.id}`);
             }}
           >
             <IconChevronRight size={14} />

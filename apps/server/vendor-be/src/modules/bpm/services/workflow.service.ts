@@ -74,10 +74,14 @@ export class WorkflowService {
       code = 'RU';
     } else if (service.key == ServiceKeyEnum.PROFILE_UPDATE) {
       code = 'PU';
-    } else if (this.commonService.getServiceCatagoryKeys(ServiceKeyEnum.PREFERENCTIAL).some((item) => item == service.key)) {
+    } else if (
+      this.commonService
+        .getServiceCatagoryKeys(ServiceKeyEnum.PREFERENCTIAL)
+        .some((item) => item == service.key)
+    ) {
       code = 'PT';
     } else {
-      throw new NotFoundException("Service code undefined");
+      throw new NotFoundException('Service code undefined');
     }
     return code;
   }
@@ -190,7 +194,7 @@ export class WorkflowService {
         if (
           curruntTask.taskType == TaskTypes.INITIAL_REVIEW &&
           nextCommand.action.toUpperCase() ==
-          ApplicationStatus.CANCEL.toUpperCase()
+            ApplicationStatus.CANCEL.toUpperCase()
         ) {
           response = await this.vendorRegService.cancelApplication(wfInstance);
         } else {
@@ -428,8 +432,8 @@ export class WorkflowService {
     const commandLower = command.action.toLowerCase();
     const status =
       commandLower == 'approve' ||
-        commandLower == 'yes' ||
-        commandLower == 'success'
+      commandLower == 'yes' ||
+      commandLower == 'success'
         ? 'Approve'
         : 'Reject';
     const payload = {
@@ -446,7 +450,6 @@ export class WorkflowService {
       const result = await this.vendorRegService.updateVendor(payload);
 
       if (result) {
-
         return true;
       } else {
         return false;

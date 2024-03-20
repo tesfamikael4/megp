@@ -158,7 +158,10 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
     return result;
   }
 
-  async getVendorBusinessAreaByInstanceId(vendorId: string, instanceId: string): Promise<BusinessAreaEntity[]> {
+  async getVendorBusinessAreaByInstanceId(
+    vendorId: string,
+    instanceId: string,
+  ): Promise<BusinessAreaEntity[]> {
     const businessArea = await this.businessAreaRepository.find({
       where: {
         vendorId: vendorId,
@@ -190,8 +193,7 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
         status: ApplicationStatus.APPROVED,
         category: category,
         vendorId: vendorId,
-      }
+      },
     });
   }
-
 }

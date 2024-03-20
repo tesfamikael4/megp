@@ -1,14 +1,16 @@
 'use client';
 
-import { ActionIcon, Box } from '@mantine/core';
+import { Button, ActionIcon, Box } from '@mantine/core';
 import { ExpandableTable, ExpandableTableConfig, Section } from '@megp/core-fe';
 import { IconChevronRight } from '@tabler/icons-react';
-import { data } from './_constants/data';
-import { DetailTable } from '../_components/detail-table';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
+import { data } from '../../_constants/data';
+import { DetailTable } from '../../_components/detail-table';
+import { TenderOverView } from '../../[id]/_components/tender-overview';
 
 export default function BidOpening() {
   const router = useRouter();
+  const { tenderId } = useParams();
   const config: ExpandableTableConfig = {
     isSearchable: true,
     isExpandable: true,
@@ -52,7 +54,7 @@ export default function BidOpening() {
             variant="subtle"
             onClick={(e) => {
               e.stopPropagation();
-              router.push(`/opening/${record.id}`);
+              router.push(`/opening/lots/${tenderId}/${record.id}`);
             }}
           >
             <IconChevronRight size={14} />
@@ -63,9 +65,16 @@ export default function BidOpening() {
     ],
   };
   return (
-    <Section title="Tenders List" collapsible={false}>
-      <ExpandableTable config={config} data={data ?? []} total={data?.length} />
-    </Section>
+    <>
+      <TenderOverView />
+      <Section title="Lots List" collapsible={false} className="mt-2">
+        <ExpandableTable
+          config={config}
+          data={data ?? []}
+          total={data?.length}
+        />
+      </Section>
+    </>
   );
 }
 
