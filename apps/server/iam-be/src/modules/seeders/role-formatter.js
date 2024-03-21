@@ -3,7 +3,7 @@ const XLSX = require('xlsx');
 const path = require('path');
 
 // read csv file
-const xlFile = path.join(__dirname, 'APPRoleandPermission.csv');
+const xlFile = path.join(__dirname, 'GuarnteeServiceRoleAndPermission.csv');
 
 const workbook = XLSX.readFile(xlFile);
 
