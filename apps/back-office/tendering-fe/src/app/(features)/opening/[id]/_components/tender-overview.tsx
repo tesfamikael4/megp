@@ -1,10 +1,11 @@
 'use client';
-import { Badge, Box, Flex, Text } from '@mantine/core';
+import { ActionIcon, Badge, Box, Flex, Text, Tooltip } from '@mantine/core';
 import { Section } from '@megp/core-fe';
-import { IconChevronLeft } from '@tabler/icons-react';
-import { useRouter } from 'next/navigation';
+import { IconChevronLeft, IconEye } from '@tabler/icons-react';
+import { useParams, useRouter } from 'next/navigation';
 
 export const TenderOverView = () => {
+  const { id, tenderId } = useParams();
   const router = useRouter();
   return (
     <Section
@@ -23,6 +24,17 @@ export const TenderOverView = () => {
       }
       subTitle="RFQ2024001"
       collapsible={false}
+      action={
+        <Tooltip label="Show opening minute">
+          <ActionIcon
+            variant="subtle"
+            color="gray"
+            onClick={() => router.push(`/opening/minute/${id ?? tenderId}`)}
+          >
+            <IconEye size={14} />
+          </ActionIcon>
+        </Tooltip>
+      }
     >
       <Flex gap={20}>
         <Box className="w-full">
