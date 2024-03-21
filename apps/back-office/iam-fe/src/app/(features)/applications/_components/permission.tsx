@@ -9,7 +9,6 @@ const AddPermisionModal = () => {
   const { id } = useParams();
 
   const [trigger, { data: applicationPermission }] = useLazyListByIdQuery();
-
   const relationConfig: RelationConfig<Permission> = {
     title: 'Application Permission',
     hasAdd: false,
@@ -27,10 +26,6 @@ const AddPermisionModal = () => {
     pagination: true,
   };
 
-  useEffect(() => {
-    onRequestChange({ skip: 0, take: 15 });
-  }, []);
-
   const onRequestChange = (request: CollectionQuery) => {
     trigger({
       id: id?.toString(),
@@ -43,7 +38,7 @@ const AddPermisionModal = () => {
       <Relation
         config={relationConfig}
         data={applicationPermission?.items ?? []}
-        total={applicationPermission?.items.length}
+        total={applicationPermission?.total ?? 0}
         readOnly={true}
         onRequestChange={onRequestChange}
         collapsed={false}
