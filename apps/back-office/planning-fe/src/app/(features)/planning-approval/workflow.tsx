@@ -86,7 +86,6 @@ export function WorkflowHandling({
   const handleApprove = async () => {
     try {
       await approve({
-        workFlowType: 'test',
         metaData: {
           name: currentStep?.step.name.split(' ').join(''),
           action: 'Approved',
@@ -96,15 +95,18 @@ export function WorkflowHandling({
         },
         itemId: itemId,
         activityId: currentStep?.step.activityId,
+        instanceId: currentStep?.id,
       }).unwrap();
       notifications.show({
         title: 'Success',
         message: 'Approved successfully.',
+        color: 'green',
       });
     } catch (error) {
       notifications.show({
         title: 'Error',
         message: 'Error approving.',
+        color: 'red',
       });
     }
   };
@@ -112,7 +114,6 @@ export function WorkflowHandling({
   const handleAdjust = async () => {
     try {
       await approve({
-        workFlowType: 'test',
         metaData: {
           name: currentStep?.step.name.split(' ').join(''),
           action: 'reject',
@@ -122,16 +123,19 @@ export function WorkflowHandling({
         },
         itemId: itemId,
         activityId: currentStep?.step.activityId,
+        instanceId: currentStep?.id,
       }).unwrap();
 
       notifications.show({
         title: 'Success',
         message: 'Submitted for adjustment successfully.',
+        color: 'green',
       });
     } catch (error) {
       notifications.show({
         title: 'Error',
         message: 'Error adjusting.',
+        color: 'red',
       });
     }
   };
@@ -139,7 +143,6 @@ export function WorkflowHandling({
   const handleGoTo = async (stepId, stepName) => {
     try {
       await goToStep({
-        workFlowType: 'test',
         details: {
           name: currentStep?.step.name.split(' ').join(''),
           action: 'reject',
@@ -149,16 +152,19 @@ export function WorkflowHandling({
         },
         itemId: itemId,
         activityId: currentStep?.step.activityId,
+        instanceId: currentStep?.id,
         goto: { id: stepId, status: stepName },
       }).unwrap();
       notifications.show({
         title: 'Success',
         message: 'Approved successfully.',
+        color: 'green',
       });
     } catch (error) {
       notifications.show({
         title: 'Error',
         message: 'Error rejecting.',
+        color: 'red',
       });
     }
   };
