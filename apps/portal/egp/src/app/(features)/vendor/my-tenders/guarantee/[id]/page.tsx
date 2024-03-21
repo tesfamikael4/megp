@@ -1,7 +1,10 @@
 'use client';
 
 import { useReadQuery } from '@/store/api/guarantee/guarantee.api';
-import { useLazyGetOrganazationQuery } from '@/store/api/organazation/organazation.api';
+import {
+  useGetOrganazationQuery,
+  useLazyGetOrganazationQuery,
+} from '@/store/api/organazation/organazation.api';
 import { Accordion, Box, Divider, Flex, Table, Text } from '@mantine/core';
 import { logger } from '@megp/core-fe';
 import { IconFileInvoice } from '@tabler/icons-react';
@@ -15,14 +18,16 @@ export default function BidSecurityPage() {
   const { id } = useParams();
 
   const { data: data, isSuccess } = useReadQuery(id?.toString());
-  const [trigger, { data: org, isSuccess: isSuccessOrg }] =
-    useLazyGetOrganazationQuery();
-  useEffect(() => {
-    if (isSuccessOrg) {
-      trigger(org.id);
-    }
-  }, [isSuccessOrg, org?.id, trigger]);
-  logger.log(org?.id);
+  const { data: guarantor } = useGetOrganazationQuery(
+    data?.guarantorId?.toString() || '',
+  );
+  // const [trigger, { data: org, isSuccess: isSuccessOrg }] =
+  //   useLazyGetOrganazationQuery();
+  // useEffect(() => {
+  //   if (isSuccessOrg) {
+  //     trigger(org.data.guarantorId);
+  //   }
+  // }, [isSuccessOrg, org.data.guarantorId, trigger]);
   return (
     <Flex w={'100%'}>
       <Box className=" w-full p-6 bg-[#e7f4f7]">
@@ -35,11 +40,11 @@ export default function BidSecurityPage() {
           <Table h={100} className="mb-5 ">
             <Table.Tbody className=" border-2">
               <Table.Tr className=" border-2 ">
-                <Table.Th className="bg-[#edf3f8] font-normal  w-72 font-normal text-[14px]">
+                <Table.Th className="bg-[#edf3f8] font-normal  w-72  text-[14px]">
                   Guaranter Name
                 </Table.Th>
                 <Table.Td>
-                  <Text size="sm">{org?.name}</Text>
+                  <Text size="sm">{guarantor?.name}</Text>
                 </Table.Td>
               </Table.Tr>
               <Table.Tr className=" border-2 ">
