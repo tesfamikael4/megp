@@ -24,8 +24,8 @@ interface FormDetailProps {
 
 const FormDetail = ({ mode }: FormDetailProps) => {
   const bidSecuritySchema: ZodType<Partial<BidSecurity>> = z.object({
-    GuarantorId: z.string().min(1, { message: 'This field is required' }),
-    GuarantorBranchId: z.string().min(1, { message: 'This field is required' }),
+    guarantorId: z.string().min(1, { message: 'This field is required' }),
+    guarantorBranchId: z.string().min(1, { message: 'This field is required' }),
     amount: z.number().min(1, { message: 'This field is required' }),
     remark: z.string().optional(),
   });
@@ -50,7 +50,7 @@ const FormDetail = ({ mode }: FormDetailProps) => {
 
   const { data: guarantor } = useOrganizationsQuery({});
   const [trigger, { data }] = useLazyGetUintByIdQuery();
-  const GuarantorId = watch('GuarantorId');
+  const guarantorId = watch('guarantorId');
   const { id } = useParams();
   const [create, { isLoading: isSaving }] = useSubmitRequestMutation();
   const [
@@ -65,21 +65,21 @@ const FormDetail = ({ mode }: FormDetailProps) => {
   }, [id]);
 
   useEffect(() => {
-    if (GuarantorId) {
+    if (guarantorId) {
       const request: CollectionQuery = {
         where: [
           [
             {
               column: 'parentId',
-              value: GuarantorId,
+              value: guarantorId,
               operator: '=',
             },
           ],
         ],
       };
-      trigger(GuarantorId);
+      trigger(guarantorId);
     }
-  }, [GuarantorId]);
+  }, [guarantorId]);
 
   const onCreate = async (data) => {
     close();
@@ -106,7 +106,7 @@ const FormDetail = ({ mode }: FormDetailProps) => {
     <>
       <Flex gap={30} className="mt-5">
         <Controller
-          name="GuarantorId"
+          name="guarantorId"
           control={control}
           render={({ field: { onChange, value, name } }) => (
             <Select
@@ -116,8 +116,8 @@ const FormDetail = ({ mode }: FormDetailProps) => {
               value={value}
               withAsterisk
               error={
-                errors?.GuarantorId
-                  ? errors?.GuarantorId?.message?.toString()
+                errors?.guarantorId
+                  ? errors?.guarantorId?.message?.toString()
                   : ''
               }
               onChange={onChange}
@@ -131,7 +131,7 @@ const FormDetail = ({ mode }: FormDetailProps) => {
           )}
         />
         <Controller
-          name="GuarantorBranchId"
+          name="guarantorBranchId"
           control={control}
           render={({ field: { onChange, value, name } }) => (
             <Select
@@ -141,8 +141,8 @@ const FormDetail = ({ mode }: FormDetailProps) => {
               value={value}
               withAsterisk
               error={
-                errors?.GuarantorId
-                  ? errors?.GuarantorId?.message?.toString()
+                errors?.guarantorId
+                  ? errors?.guarantorId?.message?.toString()
                   : ''
               }
               onChange={onChange}
