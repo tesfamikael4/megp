@@ -25,19 +25,14 @@ import {
   TenderService,
 } from './service';
 import { FileHelperService } from '../../shared/min-io/file-helper.service';
-import { TenderSpdBidForm } from 'src/entities/tender-spd-bid-form.entity';
-import { TenderSpdContractForm } from 'src/entities/tender-spd-contract-form.entity';
-import { TenderSpdContractFormService } from './service/tender-spd-contract-form.service';
-import { TenderSpdBidFormController } from './controller/tender-spd-bid-form.controller';
-import { TenderSpdBidFormService } from './service/tender-spd-bid-form.service';
 import { MinIOModule } from 'src/shared/min-io/min-io.module';
-import { TenderSpdContractFormController } from './controller/tender-spd-contract-form.controller';
 import { TenderClassification } from 'src/entities/tender-classification.entity';
 import { TenderParticipationFee } from 'src/entities/tender-participation-fee.entity';
 import { TenderClassificationService } from './service/tender-classification.service';
-import { TenderParticipationFeeService } from './service/tender-participation-fee.service';
 import { TenderClassificationController } from './controller/tender-classification.controller';
 import { TenderParticipationFeeController } from './controller/tender-participation-fee.controller';
+import { DocxModule } from 'src/shared/docx/docx.module';
+import { TenderParticipationFeeService } from './service/tender-participation-fee.service';
 
 @Module({
   imports: [
@@ -48,12 +43,11 @@ import { TenderParticipationFeeController } from './controller/tender-participat
       Item,
       ProcurementMechanism,
       ProcurementTechnicalTeam,
-      TenderSpdBidForm,
-      TenderSpdContractForm,
       TenderClassification,
       TenderParticipationFee,
     ]),
     MinIOModule,
+    DocxModule,
   ],
   controllers: [
     TenderController,
@@ -62,8 +56,6 @@ import { TenderParticipationFeeController } from './controller/tender-participat
     LotController,
     ProcurementMechanismController,
     ProcurementTechnicalTeamController,
-    TenderSpdBidFormController,
-    TenderSpdContractFormController,
     TenderClassificationController,
     TenderParticipationFeeController,
   ],
@@ -75,8 +67,6 @@ import { TenderParticipationFeeController } from './controller/tender-participat
     ProcurementMechanismService,
     ProcurementTechnicalTeamService,
     FileHelperService,
-    TenderSpdContractFormService,
-    TenderSpdBidFormService,
     TenderClassificationService,
     TenderParticipationFeeService,
   ],

@@ -105,7 +105,7 @@ export class BidRegistrationService extends ExtraCrudService<BidRegistration> {
 
       const encryptedData = this.generateInitialEncryption(
         dataToEncrypt,
-        'password',
+        itemData.password,
         tender.bdsSubmission.envelopType,
         salt,
       );

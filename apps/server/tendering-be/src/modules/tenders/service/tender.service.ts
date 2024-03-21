@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
@@ -25,6 +25,11 @@ import {
   MoreThanOrEqual,
   Repository,
 } from 'typeorm';
+import {
+  ChangeTenderStatusDto,
+  CreateTenderDto,
+  GenerateTenderDocumentDto,
+} from '../dto';
 
 @Injectable()
 export class TenderService extends EntityCrudService<Tender> {
@@ -37,7 +42,7 @@ export class TenderService extends EntityCrudService<Tender> {
     super(tenderRepository);
   }
 
-  async create(itemData: any, req?: any): Promise<any> {
+  async create(itemData: CreateTenderDto, req?: any): Promise<any> {
     try {
       const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
 
@@ -64,6 +69,7 @@ export class TenderService extends EntityCrudService<Tender> {
 
       const tenderPayload = {
         name: prResponse.name,
+        procurementCategory: prResponse.procurementCategory ?? 'Goods',
         procurementReferenceNumber: prResponse.procurementReference,
         budgetAmount: Number(prResponse.totalEstimatedAmount),
         budgetAmountCurrency: prResponse.currency,
@@ -120,7 +126,7 @@ export class TenderService extends EntityCrudService<Tender> {
       for (const iterator of prResponse.procurementRequisitionItems) {
         const item = new Item();
         item.itemCode = iterator.itemCode;
-        item.procurementCategory = `Goods`;
+        item.procurementCategory = iterator.procurementCategory ?? `Goods`;
         item.name = iterator.description;
         item.description = iterator.description;
         item.quantity = iterator.quantity;
@@ -182,6 +188,29 @@ export class TenderService extends EntityCrudService<Tender> {
       response.items = result;
     }
     return response;
+  }
+
+  async changeStatus(input: ChangeTenderStatusDto) {
+    const tender = await this.tenderRepository.findOneBy({
+      id: input.id,
+    });
+    if (!tender) {
+      throw new BadRequestException('Tender not found');
+    }
+
+    await this.tenderRepository.update(
+      { id: input.id },
+      { status: input.status },
+    );
+  }
+
+  async generateTenderDocument(input: GenerateTenderDocumentDto) {
+    const tender = await this.tenderRepository.findOneBy({
+      id: input.id,
+    });
+    if (!tender) {
+      throw new BadRequestException('Tender not found');
+    }
   }
 
   async downloadInvitation(id: string) {
