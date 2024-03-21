@@ -1,5 +1,10 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { ExtraCrudService } from 'src/shared/service';
 import { DocxService } from 'src/shared/docx/docx.service';
@@ -35,7 +40,7 @@ export class SpdTemplateService extends ExtraCrudService<SpdTemplate> {
       ]);
 
       if (result.length != 0) {
-        throw new HttpException(result, HttpStatus.BAD_REQUEST);
+        throw new BadRequestException(result);
       }
 
       const documentDocx = await this.minIOService.upload(

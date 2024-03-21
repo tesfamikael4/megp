@@ -27,4 +27,16 @@ export class TenderSpd extends Audit {
   @OneToOne(() => Spd, (spd) => spd.tender)
   @JoinColumn()
   spd: Spd;
+
+  @Column({
+    type: 'jsonb',
+    nullable: true,
+  })
+  bds: any;
+
+  @Column({
+    type: 'jsonb',
+    nullable: true,
+  })
+  scc: any;
 }

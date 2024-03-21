@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
@@ -13,7 +13,10 @@ import {
   EqcTechnicalScoring,
   EqcPreliminaryExamination,
 } from 'src/entities';
+import { DocxService } from 'src/shared/docx/docx.service';
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
+import { BucketNameEnum } from 'src/shared/min-io/bucket-name.enum';
+import { MinIOService } from 'src/shared/min-io/min-io.service';
 import { ExtraCrudService } from 'src/shared/service';
 import { EntityManager, DeepPartial, Repository } from 'typeorm';
 
@@ -22,6 +25,8 @@ export class TenderSpdService extends ExtraCrudService<TenderSpd> {
   constructor(
     @InjectRepository(TenderSpd)
     private readonly tenderSpdRepository: Repository<TenderSpd>,
+    private readonly docxService: DocxService,
+    private readonly minIOService: MinIOService,
     @Inject(REQUEST) private request: Request,
   ) {
     super(tenderSpdRepository);
@@ -137,5 +142,47 @@ export class TenderSpdService extends ExtraCrudService<TenderSpd> {
 
   async findOne(tenderId: string, req?: any): Promise<TenderSpd | undefined> {
     return await this.tenderSpdRepository.findOneBy({ tenderId });
+  }
+
+  async uploadBds(tenderId: string, file: Express.Multer.File) {
+    const tender = await this.tenderSpdRepository.findOneBy({ tenderId });
+
+    const result = await this.docxService.validateDocument(file.buffer, [
+      'public_body',
+    ]);
+
+    if (result.length != 0) {
+      throw new BadRequestException(result);
+    }
+
+    const bds = await this.minIOService.upload(file, BucketNameEnum.TENDER_BDS);
+
+    await this.tenderSpdRepository.update(tender.id, { bds });
+
+    return {
+      ...tender,
+      bds,
+    };
+  }
+
+  async uploadScc(tenderId: string, file: Express.Multer.File) {
+    const tender = await this.tenderSpdRepository.findOneBy({ tenderId });
+
+    const result = await this.docxService.validateDocument(file.buffer, [
+      'public_body',
+    ]);
+
+    if (result.length != 0) {
+      throw new BadRequestException(result);
+    }
+
+    const scc = await this.minIOService.upload(file, BucketNameEnum.TENDER_BDS);
+
+    await this.tenderSpdRepository.update(tender.id, { scc });
+
+    return {
+      ...tender,
+      scc,
+    };
   }
 }
