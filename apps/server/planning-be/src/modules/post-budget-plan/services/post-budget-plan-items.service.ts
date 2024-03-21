@@ -51,12 +51,10 @@ export class PostBudgetPlanItemService extends ExtraCrudService<PostBudgetPlanIt
     return item;
   }
 
-  async bulkCreate(itemData: any, req: any): Promise<any> {
-    if (req?.user?.organization) {
-      itemData.items.map((item) => {
-        item.organizationId = req.user.organization.id;
-      });
-    }
+  async bulkCreate(itemData: any, organizationId: any): Promise<any> {
+    itemData.items.map((item) => {
+      item.organizationId = organizationId;
+    });
 
     const activity = await this.repositoryPostBudgetPlanActivity.findOne({
       where: {

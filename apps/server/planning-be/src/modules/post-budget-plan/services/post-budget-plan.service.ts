@@ -287,6 +287,12 @@ export class PostBudgetPlanService extends ExtraCrudService<PostBudgetPlan> {
           430,
         );
       }
+      if (element.postBudgetRequisitioners.length == 0) {
+        throw new HttpException(
+          `Requisitioner not found for ${element.name} ${element.procurementReference}`,
+          430,
+        );
+      }
       if (element.budgetId == null) {
         throw new HttpException(
           `Budget is not linked for ${element.name} ${element.procurementReference}`,
