@@ -25,6 +25,7 @@ export class WorkflowController extends EntityCrudController<Workflow>(
     return this.workflowService.approveWorkflow(
       data.metaData,
       data.activityId,
+      data.instanceId,
       data.itemId,
     );
   }

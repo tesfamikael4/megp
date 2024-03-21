@@ -24,12 +24,15 @@ export class WorkflowService extends EntityCrudService<Workflow> {
     super(repositoryWorkflow);
   }
 
-  async approveWorkflow(metaData: any, activityId: string, itemId: string) {
+  async approveWorkflow(
+    metaData: any,
+    activityId: string,
+    instanceId: string,
+    itemId: string,
+  ) {
     const instance = await this.repositoryInstance.findOne({
       where: {
-        activityId,
-        organizationId: metaData.organizationId,
-        itemId: itemId,
+        id: instanceId,
       },
       relations: {
         state: true,
@@ -44,6 +47,7 @@ export class WorkflowService extends EntityCrudService<Workflow> {
         metaData,
         instance.state.state,
         itemId,
+        instanceId,
       );
       const actor = createActor(workflowMachine);
       let currentState = '';
@@ -58,7 +62,6 @@ export class WorkflowService extends EntityCrudService<Workflow> {
       return {
         status: 'success',
         workflowID: currentState,
-        // init: workflowMachine.initialState,
       };
     } catch (error) {
       return {
