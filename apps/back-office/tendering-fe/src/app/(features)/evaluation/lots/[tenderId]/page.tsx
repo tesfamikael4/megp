@@ -54,7 +54,7 @@ export default function BidOpening() {
             variant="subtle"
             onClick={(e) => {
               e.stopPropagation();
-              router.push(`/opening/lots/${tenderId}/${record.id}`);
+              router.push(`/evaluation/lots/${tenderId}/${record.id}`);
             }}
           >
             <IconChevronRight size={14} />

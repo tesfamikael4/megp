@@ -64,7 +64,7 @@ export default function BiderDetail() {
       <Flex gap={10} mt={10}>
         <Box className=" bg-white w-1/4">
           <Section
-            title="Bid Attributes"
+            title="Assessment Criteria"
             className="h-full"
             collapsible={false}
           >
@@ -73,7 +73,7 @@ export default function BiderDetail() {
         </Box>
         <Box className=" bg-white w-2/4">
           <Section
-            title="The Bid Opening Team has opened each bid"
+            title="Bid Document"
             collapsible={false}
             className="h-full overflow-scroll"
           >

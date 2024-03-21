@@ -1,12 +1,20 @@
+'use client';
+
 import { Badge, Box, Flex, Text, Tooltip } from '@mantine/core';
 import { Section } from '@megp/core-fe';
 import { IconChevronLeft } from '@tabler/icons-react';
+import { useRouter } from 'next/navigation';
 
 export const BidderOverView = () => {
+  const router = useRouter();
   return (
     <Section
       title={
-        <Tooltip label="List of bidders" className="cursor-pointer">
+        <Tooltip
+          label="List of bidders"
+          className="cursor-pointer"
+          onClick={() => router.back()}
+        >
           <Flex justify="center" align="center">
             <IconChevronLeft size={14} />
             <Text className="font-semibold">
