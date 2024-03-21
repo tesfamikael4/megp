@@ -12,6 +12,8 @@ import { GuaranteeController } from './controllers/guarantee.controller';
 import { GuaranteeExtensionController } from './controllers/guarantee-extension.controller';
 import { GuaranteeForfeitController } from './controllers/guarantee-forfeit.controller';
 import { GuaranteeReleaseController } from './controllers/guarantee-release.controller';
+import { MinIOModule } from 'src/shared/min-io/min-io.module';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
   imports: [
@@ -21,6 +23,20 @@ import { GuaranteeReleaseController } from './controllers/guarantee-release.cont
       GuaranteeForfeit,
       GuaranteeRelease,
     ]),
+    ClientsModule.register([
+      {
+        name: 'NOTIFICATION_SERVICE',
+        transport: Transport.RMQ,
+        options: {
+          urls: [process.env.RMQ_URL],
+          queue: 'send-notification',
+          queueOptions: {
+            durable: false,
+          },
+        },
+      },
+    ]),
+    MinIOModule,
   ],
   providers: [
     GuaranteeService,
@@ -33,6 +49,12 @@ import { GuaranteeReleaseController } from './controllers/guarantee-release.cont
     GuaranteeExtensionController,
     GuaranteeForfeitController,
     GuaranteeReleaseController,
+  ],
+  exports: [
+    GuaranteeService,
+    GuaranteeExtensionService,
+    GuaranteeForfeitService,
+    GuaranteeReleaseService,
   ],
 })
 export class GuaranteeServiceModule {}

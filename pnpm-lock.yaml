@@ -1776,6 +1776,9 @@ importers:
       typeorm:
         specifier: ^0.3.14
         version: 0.3.20(pg@8.11.3)(ts-node@10.9.2)
+      typeorm-extension:
+        specifier: ^3.2.0
+        version: 3.4.0(typeorm@0.3.20)
     devDependencies:
       '@nestjs/cli':
         specifier: ^9.0.0

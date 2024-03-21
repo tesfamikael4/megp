@@ -1,32 +1,47 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsUUID, IsEnum, IsDate, IsNumber } from 'class-validator';
-import { Guarantee } from 'src/entities/guarantee.entity';
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
+import {
+  IsNotEmpty,
+  IsUUID,
+  IsEnum,
+  IsDate,
+  IsNumber,
+  IsOptional,
+  IsDateString,
+} from 'class-validator';
+import {
+  Guarantee,
+  GuaranteeStatusEnum,
+  GuaranteeTypeEnum,
+} from 'src/entities/guarantee.entity';
 
 export class CreateGuaranteeDto {
   @ApiProperty()
   @IsNotEmpty()
   name: string;
-  @ApiProperty()
+  @ApiHideProperty()
   vendorId: string;
   @ApiProperty()
-  @IsDate()
+  @IsDateString()
   startDate: Date;
   @ApiProperty()
-  @IsDate()
+  @IsDateString()
   endDate: Date;
+  @ApiProperty({ default: GuaranteeTypeEnum.BID_SECURITY })
+  @IsEnum(GuaranteeTypeEnum)
+  type: GuaranteeTypeEnum;
   @ApiProperty()
-  @IsEnum(['bid guarantee', 'advanced', 'performance', 'retention'])
-  type: string;
-  @ApiProperty()
+  @IsOptional()
   objectType: string;
   @ApiProperty({ required: false })
-  minValidityDate?: number;
+  @IsDateString()
+  minValidityDate?: Date;
   @ApiProperty({ required: false })
-  guarantorValidityDate?: number;
+  @IsDateString()
+  guarantorValidityDate?: Date;
   @ApiProperty({ required: false })
   title?: string;
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   objectId: string;
   @ApiProperty()
   @IsNumber()
@@ -43,11 +58,11 @@ export class CreateGuaranteeDto {
   @ApiProperty({ required: false })
   remark?: string;
   @ApiProperty()
-  @IsNotEmpty()
-  attachment: string;
-  @ApiProperty()
-  @IsEnum(['reviewed', 'approved', 'rejected'])
-  status: string;
+  @IsOptional()
+  attachment: any;
+  @ApiProperty({ default: GuaranteeStatusEnum.REQUESTED })
+  @IsEnum(GuaranteeStatusEnum)
+  status: GuaranteeStatusEnum;
 
   static fromDto(dto: CreateGuaranteeDto): Guarantee {
     const entity = new Guarantee();

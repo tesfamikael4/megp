@@ -1,15 +1,11 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { ConfigService } from '@nestjs/config';
 import { randomInt } from 'crypto';
 
 @Injectable()
 export class AuthHelper {
-  constructor(
-    private readonly jwt: JwtService,
-    private readonly configService: ConfigService,
-  ) {}
+  constructor(private readonly jwt: JwtService) {}
 
   public async verify(token: string, secret: string) {
     const decoded: any = this.jwt.verify(token, { secret });
@@ -31,8 +27,8 @@ export class AuthHelper {
     return this.jwt.sign(
       { ...payload },
       {
-        secret: this.configService.get<string>('JWT_ACCESS_TOKEN_SECRET'),
-        expiresIn: this.configService.get<string>('JWT_ACCESS_TOKEN_EXPIRES'),
+        secret: process.env.JWT_ACCESS_TOKEN_SECRET,
+        expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRES,
       },
     );
   }
@@ -42,8 +38,8 @@ export class AuthHelper {
     return this.jwt.sign(
       { ...payload },
       {
-        secret: this.configService.get<string>('JWT_REFRESH_TOKEN_SECRET'),
-        expiresIn: this.configService.get<string>('JWT_REFRESH_TOKEN_EXPIRES'),
+        secret: process.env.JWT_REFRESH_TOKEN_SECRET,
+        expiresIn: process.env.JWT_REFRESH_TOKEN_EXPIRES,
       },
     );
   }
@@ -53,17 +49,15 @@ export class AuthHelper {
       this.jwt.signAsync(
         { id: account.id, email: account.email },
         {
-          secret: this.configService.get<string>('JWT_ACCESS_TOKEN_SECRET'),
-          expiresIn: this.configService.get<string>('JWT_ACCESS_TOKEN_EXPIRES'),
+          secret: process.env.JWT_ACCESS_TOKEN_SECRET,
+          expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRES,
         },
       ),
       this.jwt.signAsync(
         { id: account.id },
         {
-          secret: this.configService.get<string>('JWT_REFRESH_TOKEN_SECRET'),
-          expiresIn: this.configService.get<string>(
-            'JWT_REFRESH_TOKEN_EXPIRES',
-          ),
+          secret: process.env.JWT_REFRESH_TOKEN_SECRET,
+          expiresIn: process.env.JWT_REFRESH_TOKEN_EXPIRES,
         },
       ),
     ]);
@@ -142,8 +136,6 @@ export class AuthHelper {
       <main>
         <div
           style="
-            margin: 0;
-            margin-top: 70px;
             padding: 92px 30px 115px;
             background: #ffffff;
             border-radius: 30px;
@@ -151,20 +143,10 @@ export class AuthHelper {
           "
         >
           <div style="width: 100%; max-width: 489px; margin: 0 auto;">
-            <h1
-              style="
-                margin: 0;
-                font-size: 24px;
-                font-weight: 500;
-                color: #1f1f1f;
-              "
-            >
-              Your OTP
-            </h1>
             <p
               style="
                 margin: 0;
-                margin-top: 17px;
+                margin-top: 5px;
                 font-size: 16px;
                 font-weight: 500;
               "
@@ -188,7 +170,36 @@ export class AuthHelper {
             <p
               style="
                 margin: 0;
-                margin-top: 60px;
+                margin-top: 24px;
+                font-size: 16px;
+                font-weight: 500;
+              "
+            >
+              Your Username
+            </p>
+            <p
+              style="
+                 margin: 0;
+                margin-top: 17px;
+                font-size: 28px;
+                font-weight: 600;
+              "
+            >
+              ${username}
+            </p>
+            <p
+              style="
+                margin: 0;
+                margin-top: 17px;
+                font-size: 24px;
+                font-weight: 500;
+                color: #1f1f1f;
+              "
+            >
+              Your OTP
+            </p>
+            <p
+              style="
                 font-size: 40px;
                 font-weight: 600;
                 letter-spacing: 25px;
