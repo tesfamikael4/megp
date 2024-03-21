@@ -1,7 +1,7 @@
 'use client';
 
 import { Box, Button, Group, NumberInput, TextInput } from '@mantine/core';
-import { Section, Table, TableConfig, logger, notify } from '@megp/core-fe';
+import { Section, Table, TableConfig, notify } from '@megp/core-fe';
 import { useEffect, useState } from 'react';
 import { DateInput } from '@mantine/dates';
 import { IconDeviceFloppy } from '@tabler/icons-react';
@@ -198,7 +198,6 @@ export default function TimelineTab({ activityId }: { activityId?: string }) {
   };
   const DueDate = ({ getValue, row: { index }, column: { id } }: any) => {
     const initialValue = getValue();
-    logger.log('app', initialValue);
     const [value, setValue] = useState<Date | null>(initialValue);
 
     const onBlur = () => {
