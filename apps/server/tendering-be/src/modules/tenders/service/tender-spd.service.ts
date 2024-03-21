@@ -34,24 +34,21 @@ export class TenderSpdService extends ExtraCrudService<TenderSpd> {
 
     try {
       const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
-      const tenderId = itemData.tenderId;
-      const spdId = itemData.spdId;
-
       const entity = manager.getRepository(TenderSpd).create(itemData);
       await manager.getRepository(TenderSpd).insert(entity);
 
       const tender = await manager.getRepository(Tender).findOne({
-        where: { id: tenderId },
+        where: { id: itemData.tenderId },
         relations: { lots: true },
       });
 
       const spd = await manager.getRepository(Spd).findOne({
-        where: { id: spdId },
-        relations: {
-          spdQualifications: true,
-          spdTechnicalScores: true,
-          spdPreliminaryEvaluations: true,
-        },
+        where: { id: itemData.spdId },
+        relations: [
+          'spdQualifications',
+          'spdTechnicalScores',
+          'spdPreliminaryEvaluations',
+        ],
       });
 
       const eqcQualificationPayload: EqcQualification[] = [];

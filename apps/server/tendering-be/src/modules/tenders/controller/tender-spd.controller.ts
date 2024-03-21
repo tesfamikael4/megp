@@ -4,9 +4,11 @@ import { TenderSpd } from 'src/entities';
 import { ExtraCrudController } from 'src/shared/controller';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { TenderSpdService } from '../service/tender-spd.service';
+import { CreateTenderSpdDto } from '../dto';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'tenderId',
+  createDto: CreateTenderSpdDto,
 };
 
 @ApiBearerAuth()
