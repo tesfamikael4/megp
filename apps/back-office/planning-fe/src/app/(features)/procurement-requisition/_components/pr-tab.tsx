@@ -1,7 +1,10 @@
 'use client';
 
 import { useReadQuery } from '@/store/api/pr/pr.api';
-import { useApprovePrMutation } from '@/store/api/pr/pr.api';
+import {
+  useApprovePrMutation,
+  useLazyGetPrItemsQuery,
+} from '@/store/api/pr/pr.api';
 import {
   Avatar,
   Badge,
@@ -21,6 +24,7 @@ import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { StatisticCard } from './statistic-card';
 import { useLazyGetPostBudgetPlansQuery } from '@/store/api/post-budget-plan/post-budget-plan.api';
+import { useCanSubmitQuery } from '@/store/api/workflow/workflow.api';
 
 const PlanYearTab = () => {
   const badgeColor = {
@@ -37,6 +41,10 @@ const PlanYearTab = () => {
   const { id } = useParams();
 
   const { data: pr } = useReadQuery(id?.toString());
+
+  const { data: canSubmit } = useCanSubmitQuery('procurementrequisition');
+
+  const [triggerItem, { data: items }] = useLazyGetPrItemsQuery();
 
   // rtk queries
 
@@ -79,6 +87,10 @@ const PlanYearTab = () => {
     getplan(undefined);
   }, [getplan]);
 
+  useEffect(() => {
+    id && triggerItem({ id: id?.toString(), collectionQuery: undefined });
+  }, [id, triggerItem]);
+
   return (
     <Box>
       <Box className="bg-white mb-2 rounded-r-md rounded-b-md">
@@ -96,8 +108,9 @@ const PlanYearTab = () => {
               onClick={submitPlan}
               loading={isLoading}
               disabled={
-                (pr as any)?.status != 'DRAFT' &&
-                (pr as any)?.status != 'ADJUST'
+                ((pr as any)?.status != 'DRAFT' &&
+                  (pr as any)?.status != 'ADJUST') ||
+                canSubmit == false
               }
             >
               {(pr as any)?.status != 'DRAFT' && (pr as any)?.status != 'ADJUST'
@@ -122,7 +135,11 @@ const PlanYearTab = () => {
                   minValue={50}
                   type="targetGroup"
                 />
-                <StatisticCard title="Activities" value={1} type="activity" />
+                <StatisticCard
+                  title="Items"
+                  value={items?.total}
+                  type="activity"
+                />
 
                 <StatisticCard
                   title="Status"

@@ -154,19 +154,12 @@ export const FormDetail = ({
         'totalEstimatedAmount',
         procurementRequisition?.totalEstimatedAmount,
       );
-      setValue('budgetCode.name', procurementRequisition?.budgetCode?.name);
-      setValue(
-        'budgetCode.startDate',
-        new Date(procurementRequisition?.budgetCode?.startDate),
-      );
-      setValue(
-        'budgetCode.endDate',
-        new Date(procurementRequisition?.budgetCode?.endDate),
-      );
+
       setValue(
         'procurementApplication',
         procurementRequisition?.procurementApplication,
       );
+      setValue('postBudgetPlanId', procurementRequisition?.postBudgetPlanId);
     }
   }, [mode, isPrSuccess, setValue, procurementRequisition]);
 
@@ -244,7 +237,7 @@ export const FormDetail = ({
                   label="Budget Year"
                   placeholder="Select Budget Year"
                   withAsterisk
-                  error={errors?.budgetId?.message}
+                  error={errors?.postBudgetPlanId?.message}
                   disabled={disableFields}
                 />
               )}

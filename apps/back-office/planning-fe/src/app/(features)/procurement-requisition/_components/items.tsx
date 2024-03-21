@@ -19,7 +19,7 @@ import {
   IconTrash,
 } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { useDeleteMutation, useUpdateMutation } from '../_api/items.api';
 import {
   useCreateMultipleItemsMutation,
@@ -61,7 +61,7 @@ export function Items({ activityId }: { activityId?: string }) {
       { accessor: 'description', title: 'Description' },
       {
         title: 'UoM',
-        accessor: 'uoM',
+        accessor: 'uom',
         width: 200,
       },
       {

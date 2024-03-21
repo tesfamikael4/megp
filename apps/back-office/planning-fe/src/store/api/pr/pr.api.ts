@@ -88,6 +88,12 @@ export const prApi = createApi({
       }),
       providesTags: ['pr'],
     }),
+    getAnalytics: builder.query<any, string>({
+      query: (key) => ({
+        url: `/procurement-requisitions/get-analytics/${key}`,
+        method: 'GET',
+      }),
+    }),
   }),
 });
 
@@ -107,4 +113,7 @@ export const {
   useApprovePrMutation,
   useReadQuery,
   useLazyReadQuery,
+
+  useGetAnalyticsQuery,
+  useLazyGetAnalyticsQuery,
 } = prApi;
