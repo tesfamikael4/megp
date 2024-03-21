@@ -1318,13 +1318,14 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         );
         const priceRanges =
           await this.pricingService.findPriceRangeByIds(pricesIds);
+
         for (const price of priceRanges) {
           for (const bi of vendorEntity?.areasOfBusinessInterest) {
             if (bi.priceRange == price.id) {
               const priceRange = this.commonService.formatPriceRange(price);
               const lob = bi.lineOfBusiness.map((item: any) => item.name);
               formattedAreaOfBi.push({
-                category: this.commonService.capitalizeFirstLetter(bi.category),
+                category: bi.category,
                 priceRange: priceRange,
                 lineOfBusiness: lob,
               });
@@ -1380,7 +1381,9 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
               });
             }
           }
+          const certeficate = await this.baService.getCerteficate(vendorEntity.id);
           vendorEntity.preferential = formattedPt;
+          vendorEntity.certificate = certeficate?.certificateUrl;
         }
       }
       return vendorEntity;
@@ -1673,7 +1676,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             },
           },
         },
-        { id: vendorId },
+        // { id: vendorId },
       ],
       select: {
         id: true,
@@ -2062,6 +2065,27 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       return businessInterests;
     }
   }
+  formatingBusinessArea(priceRanges: ServicePrice[], abis: any[]) {
+    const formattedAreaOfBi = [];
+    for (const price of priceRanges) {
+      for (const bi of abis) {
+        if (bi.priceRange == price.id) {
+          const priceRange = this.commonService.formatPriceRange(price);
+          const lob = bi.lineOfBusiness.map((item: any) => item.name);
+          formattedAreaOfBi.push({
+            category: bi.category,
+            priceRange: priceRange,
+            lineOfBusiness: lob,
+          });
+        }
+      }
+    }
+    return formattedAreaOfBi;
+  }
+
+
+
+
   async getVendorInformation(userId: string) {
     try {
       const vendor = await this.vendorRepository.findOne({
@@ -2075,6 +2099,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         },
       });
       if (!vendor) throw new NotFoundException('vendor not found');
+
       const result = await this.profileInfoRepository.findOne({
         where: {
           vendorId: vendor.id,
@@ -2083,20 +2108,17 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       });
       if (result == null) {
         const vendorEntity = new IsrVendorsEntity();
-
         vendorEntity.areasOfBusinessInterest = vendor.areasOfBusinessInterest;
-
+        //   vendorEntity.areasOfBusinessInterestView=
         const priceRangeIds = vendor?.areasOfBusinessInterest.map(
           (item: any) => item.priceRange,
         );
+        let businessInterest = []
         let priceRanges = [];
         if (priceRangeIds.length > 0) {
           priceRanges =
             await this.pricingService.findPriceRangeByIds(priceRangeIds);
-          const businessInterest = WorkflowInstanceResponse.formatBusinessLines(
-            vendor.areasOfBusinessInterest,
-            priceRanges,
-          );
+          businessInterest = this.formatingBusinessArea(priceRanges, vendor.areasOfBusinessInterest);
           vendorEntity.areasOfBusinessInterest = businessInterest;
         }
         vendorEntity.bankAccountDetails = vendor.vendorAccounts;
@@ -2122,7 +2144,18 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           vendor.metaData?.businessSizeAndOwnership;
         vendorEntity.supportingDocuments = vendor.metaData?.supportingDocuments;
         vendorEntity.paymentReceipt = vendor.metaData?.paymentReceipt;
-        return vendorEntity;
+
+        const ceretficate = await this.baService.getCerteficate(vendor.id);
+        const preferentails = await this.baService.getPreferentials(vendor.id);
+        const response = {
+          ...vendorEntity,
+          certificate: ceretficate?.certificateUrl,
+          preferentail: [...preferentails],
+          areasOfBusinessInterestView: [...businessInterest]
+        }
+        return response;
+
+
       } else {
         const priceRangeIds = result.profileData?.areasOfBusinessInterest.map(
           (item: any) => item.priceRange,
@@ -2131,6 +2164,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         if (priceRangeIds.length > 0) {
           priceRanges =
             await this.pricingService.findPriceRangeByIds(priceRangeIds);
+          // this.commonService.formatPriceRange()
           const businessInterest = WorkflowInstanceResponse.formatBusinessLines(
             result.profileData?.areasOfBusinessInterest,
             priceRanges,
