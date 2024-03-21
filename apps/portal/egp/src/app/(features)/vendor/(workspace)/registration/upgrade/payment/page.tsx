@@ -20,8 +20,8 @@ import {
   useGetMyInvoiceQuery,
   useUploadPaymentReceiptUpgradeMutation,
 } from '@/store/api/vendor-upgrade/api';
-import FileUploader from '../../../../_components/file-uploader/upload';
 import { z } from 'zod';
+import FileUploader from '@/app/(features)/vendor/_components/uploader';
 
 const UpgradePaymentSchema = z.object({
   transactionNumber: z

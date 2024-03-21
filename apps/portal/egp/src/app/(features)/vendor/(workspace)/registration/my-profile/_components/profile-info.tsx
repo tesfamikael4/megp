@@ -43,7 +43,15 @@ export default function ProfileInfo() {
         </Paper>
         <Divider />
         <ScrollArea className="h-screen w-full p-4">
-          <FormPreview data={data} />
+          <FormPreview
+            data={data}
+            uniqueTabs={[
+              {
+                tabValue: 'certificate',
+                tabName: 'Certificate',
+              },
+            ]}
+          />
         </ScrollArea>
       </Box>
     </Box>
