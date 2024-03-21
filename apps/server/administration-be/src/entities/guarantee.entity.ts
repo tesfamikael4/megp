@@ -33,10 +33,9 @@ export class Guarantee extends Audit {
   @Column({
     type: 'enum',
     enum: GuaranteeTypeEnum,
-    default: GuaranteeTypeEnum.BID_SECURITY,
     nullable: true,
   })
-  type: GuaranteeTypeEnum;
+  type: string;
   @Column({ nullable: true })
   objectType: string;
   @Column({ type: 'date', nullable: true })
@@ -67,7 +66,7 @@ export class Guarantee extends Audit {
     default: GuaranteeStatusEnum.REQUESTED,
     nullable: true,
   })
-  status: GuaranteeStatusEnum;
+  status: string;
   @OneToMany(() => GuaranteeExtension, (extension) => extension.guarantee, {
     cascade: true,
     onDelete: 'CASCADE',
