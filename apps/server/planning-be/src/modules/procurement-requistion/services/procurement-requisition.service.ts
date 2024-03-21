@@ -117,13 +117,13 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
         organizationId: true,
       },
     });
-    await this.repositoryProcurementRequisition.update(pr.id, {
-      status: ProcurementRequisitionStatusEnum.SUBMITTED,
-    });
     const itemName = 'procurementRequisition';
     const prWithItemName = { ...pr, itemName };
     await this.pdfGenerator(data.id, prWithItemName.itemName);
     this.prRMQClient.emit('initiate-workflow', prWithItemName);
+    await this.repositoryProcurementRequisition.update(pr.id, {
+      status: ProcurementRequisitionStatusEnum.SUBMITTED,
+    });
     return true;
   }
 
@@ -266,7 +266,7 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
   }
 
   async pdfGenerator(id: string, itemName: string) {
-    const data = await this.repositoryProcurementRequisition.find({
+    const data = await this.repositoryProcurementRequisition.findOne({
       where: { id: id },
       relations: {
         procurementRequisitionItems: true,
