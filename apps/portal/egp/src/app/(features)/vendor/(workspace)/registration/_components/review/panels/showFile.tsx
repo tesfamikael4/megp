@@ -3,14 +3,16 @@ import { useDisclosure } from '@mantine/hooks';
 import { logger } from '@megp/core-fe';
 import { IconLoader2 } from '@tabler/icons-react';
 import { getCookie } from 'cookies-next';
-import { useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 
 export const ShowFile = ({
   url,
   filename,
+  setStatus,
 }: {
   url: string;
   filename: string;
+  setStatus?: Dispatch<SetStateAction<string>>;
 }) => {
   const [opened, { close, open }] = useDisclosure(false);
   const [pdfData, setPdfData] = useState<ArrayBuffer | null>(null); // Use null as initial state
@@ -19,7 +21,13 @@ export const ShowFile = ({
   const [loading, setLoading] = useState<boolean>(true); // Introduce loading state
 
   useEffect(() => {
+    setStatus && setStatus(loading ? 'loading' : error ? 'error' : 'success');
+  }, [error, loading]);
+
+  useEffect(() => {
     const getFile = async () => {
+      setPdfData(null);
+      setFileContent(null);
       try {
         setLoading(true); // Set loading to true when fetching starts
         const token = getCookie('token');
@@ -35,7 +43,10 @@ export const ShowFile = ({
         const blobType = fileBlob.type;
 
         // Check if the blob is an image or a PDF
-        if (blobType.includes('image')) {
+        if (
+          blobType.includes('image') ||
+          ['png', 'jpg', 'jpeg'].includes(filename.split('.')[1])
+        ) {
           const fileUrl = URL.createObjectURL(fileBlob);
           setFileContent(fileUrl);
         } else if (
@@ -70,7 +81,7 @@ export const ShowFile = ({
     };
 
     getFile();
-  }, [url]);
+  }, [url, filename]);
 
   if (error) {
     return (
