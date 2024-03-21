@@ -16,26 +16,33 @@ import {
 
 export class CreateGuaranteeDto {
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   name: string;
   @ApiHideProperty()
   vendorId: string;
   @ApiProperty()
   @IsDateString()
+  @IsOptional()
   startDate: Date;
   @ApiProperty()
   @IsDateString()
+  @IsOptional()
   endDate: Date;
+
   @ApiProperty({ default: GuaranteeTypeEnum.BID_SECURITY })
   @IsEnum(GuaranteeTypeEnum)
-  type: GuaranteeTypeEnum;
+  @IsOptional()
+  type: string;
+
   @ApiProperty()
   @IsOptional()
   objectType: string;
   @ApiProperty({ required: false })
+  @IsOptional()
   @IsDateString()
   minValidityDate?: Date;
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, nullable: true })
+  @IsOptional()
   @IsDateString()
   guarantorValidityDate?: Date;
   @ApiProperty({ required: false })
@@ -47,8 +54,9 @@ export class CreateGuaranteeDto {
   @IsNumber()
   amount: number;
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   currencyType: string;
+
   @ApiProperty()
   @IsNotEmpty()
   guarantorId: string;
@@ -57,12 +65,14 @@ export class CreateGuaranteeDto {
   guarantorBranchId: string;
   @ApiProperty({ required: false })
   remark?: string;
+
   @ApiProperty()
   @IsOptional()
   attachment: any;
   @ApiProperty({ default: GuaranteeStatusEnum.REQUESTED })
   @IsEnum(GuaranteeStatusEnum)
-  status: GuaranteeStatusEnum;
+  @IsOptional()
+  status: string;
 
   static fromDto(dto: CreateGuaranteeDto): Guarantee {
     const entity = new Guarantee();

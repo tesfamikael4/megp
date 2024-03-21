@@ -5,7 +5,7 @@ import { IsDate, IsEnum, IsOptional } from 'class-validator';
 export class UpdateGuaranteeStatusDto {
   @ApiProperty({ enum: GuaranteeStatusEnum, enumName: 'GuaranteeStatusEnum' })
   @IsEnum(GuaranteeStatusEnum)
-  status: GuaranteeStatusEnum;
+  status: string;
 
   @ApiProperty({ required: false })
   remark?: string;
