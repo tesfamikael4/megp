@@ -89,7 +89,7 @@ export function Grid<T>({
         : [],
       orderBy: sortBy,
     });
-  }, [search, sortBy]);
+  }, [page, search, sortBy]);
 
   useEffect(() => {
     if (page === 1) {
