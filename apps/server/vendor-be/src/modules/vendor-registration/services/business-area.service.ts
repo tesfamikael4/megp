@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { In, IsNull, Not, Repository } from 'typeorm';
 import { EntityCrudService } from 'src/shared/service';
 import { BusinessAreaResponseDto } from '../dto/business-area.dto';
 import { BusinessAreaEntity } from 'src/entities';
@@ -37,7 +37,27 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
       relations: { servicePrice: true },
     });
   }
+  async getCerteficate(vendorId: string): Promise<BusinessAreaEntity> {
+    const bas = await this.businessAreaRepository.find({
+      where: { vendorId: vendorId, status: ApplicationStatus.APPROVED, certificateUrl: Not(IsNull()) },
+      order: { updatedAt: 'DESC' }
+    });
+    if (bas.length)
+      return bas[0]
+    return null;
+  }
+  async getPreferentials(vendorId: string): Promise<BusinessAreaEntity[]> {
+    const bas = await this.businessAreaRepository.find({
+      where: {
+        vendorId: vendorId,
+        status: ApplicationStatus.APPROVED,
+        certificateUrl: Not(IsNull()), BpService: { key: In([this.commonService.getPreferencialServices()]) }
+      },
+      order: { updatedAt: 'DESC' }
+    });
 
+    return bas;
+  }
   async getBusinessUppgradesOrRenewal(
     categories: string[],
     serviceKey: string,

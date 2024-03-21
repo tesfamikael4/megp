@@ -189,6 +189,7 @@ export class WorkflowInstanceResponse extends UpdateWorkflowInstanceDto {
               priceFrom: item?.valueFrom,
               priceTo: item?.valueTo == -1 ? 'infinity' : item?.valueTo,
             };
+
             break;
           }
         }

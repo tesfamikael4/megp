@@ -5,11 +5,9 @@ import {
   Post,
   Param,
   BadRequestException,
-  UseGuards,
   Query,
   UseInterceptors,
   UploadedFile,
-  Req,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -29,14 +27,13 @@ import { MbrsDataDto } from '../dto/mbrsData.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ReceiptDto } from '../dto/receipt.dto';
 import { ServiceKeyEnum } from 'src/shared/enums/service-key.enum';
-import { BusinessAreaService } from '../services/business-area.service';
 @ApiBearerAuth()
 @Controller('vendor-registrations')
 @ApiTags('Vendor-registrations')
 @ApiResponse({ status: 500, description: 'Internal error' })
 @ApiExtraModels(DataResponseFormat)
 export class VendorRegistrationsController {
-  constructor(private readonly regService: VendorRegistrationsService) {}
+  constructor(private readonly regService: VendorRegistrationsService) { }
   @Get('get-isr-vendors')
   async getVendors() {
     return await this.regService.getIsrVendors();
@@ -264,7 +261,7 @@ export class VendorRegistrationsController {
   async getAllBusinessAreasByUserId(@CurrentUser() userInfo: any) {
     return await this.regService.getAllBusinessAreasByUserId(userInfo.id);
   }
-
+  //profile information
   @Get('get-vendor-information')
   async getVendorInformation(@CurrentUser() userInfo: any) {
     return await this.regService.getVendorInformation(userInfo.id);

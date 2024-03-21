@@ -14,8 +14,12 @@ import { CurrentUser } from 'src/shared/authorization';
 import { Response } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { BriefcasesService } from '../services/briefcases.service';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @Controller('briefcases')
+@ApiTags('briefcases')
+@ApiResponse({ status: 500, description: 'Internal error' })
+
 export class BriefcasesController {
     constructor(private readonly brifrcaseService: BriefcasesService) { }
 
