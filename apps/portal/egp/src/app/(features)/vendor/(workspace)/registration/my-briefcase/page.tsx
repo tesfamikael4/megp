@@ -1,38 +1,59 @@
 'use client';
 
-import { Box, Flex, TextInput } from '@mantine/core';
+import { Box, Flex, TextInput, LoadingOverlay } from '@mantine/core';
 import { Card, Image, Text, Badge, Button, Group } from '@mantine/core';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { IconPlus, IconSearch, IconX } from '@tabler/icons-react';
-import { ExpandableTable } from '@megp/core-fe';
+import { ExpandableTable, ExpandableTableConfig } from '@megp/core-fe';
 import { useDisclosure } from '@mantine/hooks';
 import UploadModal from './_components/upload-modal';
 import DocumentDetail from './_components/document-detail';
+import { useLazyGetBriefcaseFilesQuery } from '../_api/query';
 // import { useDebouncedState } from '@mantine/hooks';
 
 function Page() {
   const [row, setRow] = useState(null);
   const [opened, { close, open }] = useDisclosure();
-  const config = {
+  const config: ExpandableTableConfig = {
     columns: [
       {
         accessor: 'name',
         title: 'Name',
+        render: (record) => {
+          return record.attachmentId?.substring(
+            0,
+            record?.attachmentId?.indexOf('.'),
+          );
+        },
       },
       {
         accessor: 'size',
         title: 'Size',
       },
-      { accessor: 'type', title: 'File Type' },
+      {
+        accessor: 'type',
+        title: 'File Type',
+        render: (record) => {
+          return record.attachmentId?.substring(
+            record?.attachmentId?.indexOf('.') + 1,
+          );
+        },
+      },
     ],
     onClick: ({ record }) => {
       setRow(record);
     },
   };
 
+  const [fetch, { data, isLoading }] = useLazyGetBriefcaseFilesQuery();
+  useEffect(() => {
+    fetch({});
+  }, []);
+
+  if (isLoading) <LoadingOverlay />;
   return (
     <>
-      <UploadModal opened={opened} close={close} />
+      <UploadModal opened={opened} close={close} fetch={fetch} />
       <Box className="p-4 bg-[#f7f7f7]">
         <Box className=" w-full p-6 min-h-screen bg-white">
           <Flex direction={'column'} className="w-full py-2 border-b">
@@ -61,33 +82,9 @@ function Page() {
               />
             </Flex>
           </Flex>
-          <Flex gap={'lg'} mt={'md'}>
-            <Box miw={row ? '70%' : '100%'}>
-              <ExpandableTable
-                config={config}
-                data={[
-                  {
-                    name: 'certificate1.pdf',
-                    size: '10 MB',
-                    type: 'PDF',
-                  },
-                  {
-                    name: 'certificate2.pdf',
-                    size: '10 MB',
-                    type: 'PDF',
-                  },
-                  {
-                    name: 'certificate3.pdf',
-                    size: '10 MB',
-                    type: 'PDF',
-                  },
-                  {
-                    name: 'certificate4.pdf',
-                    size: '10 MB',
-                    type: 'PDF',
-                  },
-                ]}
-              />
+          <Flex mt={'md'}>
+            <Box miw={row ? '60%' : '100%'}>
+              <ExpandableTable config={config} data={data as any[]} />
             </Box>
             {row && <DocumentDetail row={row} setRow={setRow} />}
           </Flex>
