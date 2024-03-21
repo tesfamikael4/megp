@@ -37,7 +37,7 @@ export default function BidOpening() {
           //         : 'yellow';
           return (
             <Badge color={'green'} size="sm">
-              Open
+              Opened
               {/* <Badge color={color} size="sm">
               {record.status} */}
             </Badge>

@@ -1,10 +1,27 @@
-import { Badge, Box, Flex, Text } from '@mantine/core';
+'use client';
+
+import { Badge, Box, Flex, Text, Tooltip } from '@mantine/core';
 import { Section } from '@megp/core-fe';
+import { IconChevronLeft } from '@tabler/icons-react';
+import { useRouter } from 'next/navigation';
 
 export const TenderOverView = () => {
+  const router = useRouter();
   return (
     <Section
-      title="Construction of Community Center"
+      title={
+        <Flex
+          justify="center"
+          align="center"
+          className="cursor-pointer"
+          onClick={() => router.back()}
+        >
+          <IconChevronLeft size={14} />
+          <Text className="font-semibold">
+            Construction of Community Center
+          </Text>
+        </Flex>
+      }
       subTitle="RFQ2024001"
       collapsible={false}
     >

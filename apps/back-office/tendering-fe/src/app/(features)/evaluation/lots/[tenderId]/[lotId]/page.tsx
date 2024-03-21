@@ -36,8 +36,8 @@ export default function BidOpening() {
           //         ? 'red'
           //         : 'yellow';
           return (
-            <Badge color={'green'} size="sm">
-              Open
+            <Badge color="gray" variant="outline" size="xs">
+              Not Evaluated Yet
               {/* <Badge color={color} size="sm">
               {record.status} */}
             </Badge>
@@ -51,7 +51,7 @@ export default function BidOpening() {
             variant="subtle"
             onClick={(e) => {
               e.stopPropagation();
-              router.push(`/opening/lots/${tenderId}/${lotId}/${record.id}`);
+              router.push(`/evaluation/lots/${tenderId}/${lotId}/${record.id}`);
             }}
           >
             <IconChevronRight size={14} />
@@ -97,7 +97,7 @@ const DetailTender = ({ tender }: any) => {
     },
     {
       key: 'Status',
-      value: tender.status,
+      value: 'Not Evaluated Yet',
     },
   ];
 
