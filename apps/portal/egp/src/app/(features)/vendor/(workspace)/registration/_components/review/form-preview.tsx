@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Accordion, Modal } from '@mantine/core';
+import { Accordion, Box, Modal } from '@mantine/core';
 import classes from './accordion.module.scss';
 import { renderTable } from './renderTable';
 import { useDisclosure } from '@mantine/hooks';
@@ -47,7 +47,30 @@ function FormPreview({
                 value={tabValue}
               >
                 <Accordion.Control>{tabName}</Accordion.Control>
-                {Array.isArray(data[tabValue]) ? (
+                {typeof data[tabValue] === 'string' ? (
+                  <Accordion.Panel key={tabValue}>
+                    <Accordion.Panel>
+                      {data[tabValue] ? (
+                        <ShowFile
+                          url={`${
+                            process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api'
+                          }/upload/get-file-bo/${
+                            tabValue === 'supportingDocuments'
+                              ? 'SupportingDocument'
+                              : tabValue === 'certificate'
+                                ? 'Certificate'
+                                : 'paymentReceipt'
+                          }/${data[tabValue]}/${data?.userId}`}
+                          filename={data[tabValue]}
+                        />
+                      ) : (
+                        <Box className="flex items-center h-20 w-full justify-center">
+                          No file uploaded
+                        </Box>
+                      )}
+                    </Accordion.Panel>
+                  </Accordion.Panel>
+                ) : Array.isArray(data[tabValue]) ? (
                   <Accordion.Panel
                     key={tabValue}
                     className="items-center"
