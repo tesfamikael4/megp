@@ -63,7 +63,7 @@ export default function BidEvaluation() {
     ],
   };
   return (
-    <Section title="Tenders List" collapsible={false}>
+    <Section title="Tenders List (Evaluation)" collapsible={false}>
       <ExpandableTable config={config} data={data ?? []} total={data?.length} />
     </Section>
   );

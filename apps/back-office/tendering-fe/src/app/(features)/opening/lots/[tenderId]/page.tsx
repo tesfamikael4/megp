@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, ActionIcon, Box } from '@mantine/core';
+import { Button, ActionIcon, Box, Text } from '@mantine/core';
 import { ExpandableTable, ExpandableTableConfig, Section } from '@megp/core-fe';
 import { IconChevronRight } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -17,36 +17,11 @@ export default function BidOpening() {
     expandedRowContent: (record) => <DetailTender tender={record} />,
     columns: [
       {
-        accessor: 'reference',
-        title: '#Ref',
-        width: 100,
-        sortable: true,
-      },
-      {
         accessor: 'name',
-        width: 150,
+        width: 400,
         sortable: true,
       },
-      {
-        accessor: 'envelope',
-        width: 100,
-        sortable: true,
-      },
-      {
-        accessor: 'bid',
-        width: 100,
-        sortable: true,
-      },
-      {
-        accessor: 'evaluationMethod',
-        width: 100,
-        sortable: true,
-      },
-      {
-        accessor: 'milestone',
-        width: 150,
-        sortable: true,
-      },
+
       {
         accessor: '',
         render: (record) => (
@@ -60,7 +35,7 @@ export default function BidOpening() {
             <IconChevronRight size={14} />
           </ActionIcon>
         ),
-        width: 30,
+        width: 10,
       },
     ],
   };
@@ -79,36 +54,25 @@ export default function BidOpening() {
 }
 
 const DetailTender = ({ tender }: any) => {
-  const data = [
-    {
-      key: 'Reference',
-      value: tender.reference,
-    },
-    {
-      key: 'Name',
-      value: tender.name,
-    },
-    {
-      key: 'Envelope',
-      value: tender.envelope,
-    },
-    {
-      key: 'Bid',
-      value: tender.bid,
-    },
-    {
-      key: 'Evaluation Method',
-      value: tender.evaluationMethod,
-    },
-    {
-      key: 'Milestone',
-      value: tender.milestone,
-    },
-  ];
+  const config: ExpandableTableConfig = {
+    columns: [
+      {
+        accessor: 'name',
+      },
+      {
+        accessor: 'email',
+      },
+      {
+        accessor: 'phone',
+      },
+    ],
+  };
 
   return (
-    <Box className="bg-white p-2">
-      <DetailTable data={data} />
+    <Box className="bg-white p-5">
+      {/* <DetailTable data={data} /> */}
+      <Text fw={500}>Bidders List</Text>
+      <ExpandableTable config={config} data={[]} />
     </Box>
   );
 };
