@@ -135,7 +135,7 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
     userId: string,
   ): Promise<BusinessAreaEntity> {
     return this.businessAreaRepository.findOne({
-      select: { id: true },
+      select: { id: true, status: true },
       where: {
         serviceId: serviceId,
         status: In([ApplicationStatus.PENDING, ApplicationStatus.ADJUSTMENT]),

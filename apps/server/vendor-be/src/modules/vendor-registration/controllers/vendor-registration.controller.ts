@@ -87,7 +87,7 @@ export class VendorRegistrationsController {
   ) {
     return await this.regService.getIsrVendorByStatusBUserId(
       userInfo.id,
-      status,
+      status
     );
   }
   @Get('get-pending-services')

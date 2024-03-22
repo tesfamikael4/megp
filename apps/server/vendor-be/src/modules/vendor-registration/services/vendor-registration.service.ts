@@ -806,7 +806,11 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           }
           ba.remark = vendorStatusDto.remark;
           await this.businessAreaRepository.save(ba);
+
+
+
         }
+        this.updateBusinessInterestArea(result);
       } else {
         if (vendorStatusDto.status == VendorStatusEnum.APPROVE) {
           const isrVendorData = result;
@@ -881,6 +885,20 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       console.log(error);
       throw error;
     }
+  }
+
+  async updateBusinessInterestArea(isrVendor: IsrVendorsEntity) {
+    const vendor_ = await this.vendorRepository.findOne({ where: { id: isrVendor.id }, relations: { areasOfBusinessInterest: true } });
+    const bias = [];
+    for (const row of isrVendor.areasOfBusinessInterest) {
+      if (vendor_.areasOfBusinessInterest.some((item) => item.category == row.category)) {
+        bias.push(row);
+      } else {
+        bias.push({ category: row.category, priceRange: row.priceRange, lineOfBusiness: row.lineOfBusiness, vendorId: row.vendorId });
+      }
+    }
+    vendor_.areasOfBusinessInterest = [...bias];
+    this.vendorRepository.save(vendor_);
   }
   async saveSRAsVendor(isrVendorData: IsrVendorsEntity) {
     const vendorEntity = new VendorsEntity();
@@ -1725,6 +1743,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         // preferentials: true,
       },
     });
+    if (!vendorData)
+      throw new HttpException("Vendor not found", 404);
     const { isrVendor, ...rest } = vendorData;
     const bussinessAreas = [];
     for (const ba of vendorData.isrVendor?.businessAreas) {
@@ -1732,6 +1752,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       let businessarea = {};
       let bl = [];
       const priceRange = this.commonService.formatPriceRange(ba.servicePrice);
+
       for (const lob of vendorData.areasOfBusinessInterest) {
         if (lob.category == ba.category) {
           bl = lob.lineOfBusiness.map((item: any) => item.name);
@@ -2039,32 +2060,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     });
     return vendorEntity;
   }
-  formatBusinessLines(bia: any[], prices: ServicePrice[]): any[] {
-    const businessInterests = [];
-    if (bia?.length > 0) {
-      for (const bi of bia) {
-        const lobs = bi?.lineOfBusiness?.map((item) => {
-          return item?.name;
-        });
-        let range = {};
-        for (const item of prices) {
-          if (bi.priceRange == item.id) {
-            range = {
-              priceFrom: item?.valueFrom,
-              priceTo: item?.valueTo == -1 ? 'infinity' : item?.valueTo,
-            };
-            break;
-          }
-        }
-        businessInterests.push({
-          category: bi.category,
-          lineOfBusiness: lobs,
-          ...range,
-        });
-      }
-      return businessInterests;
-    }
-  }
+
   formatingBusinessArea(priceRanges: ServicePrice[], abis: any[]) {
     const formattedAreaOfBi = [];
     for (const price of priceRanges) {

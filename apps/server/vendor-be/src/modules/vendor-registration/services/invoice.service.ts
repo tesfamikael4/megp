@@ -147,8 +147,9 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
         const isrvendor = await this.srRepository.findOne({
           where: { id: vendor.id },
         });
-        isrvendor.areasOfBusinessInterest.push(areaOfBisunessInterests);
-        isrvendor.lineOfBusiness = await this.srRepository.update(
+        const previousBA = isrvendor.areasOfBusinessInterest;
+        isrvendor.areasOfBusinessInterest = [...areaOfBisunessInterests, ...previousBA];
+        await this.srRepository.update(
           isrvendor.id,
           isrvendor,
         );
