@@ -39,7 +39,7 @@ export class VendorDiscoveryService {
                         },
                     },
                 },
-                // { id: vendorId },
+
             ],
             select: {
                 id: true,

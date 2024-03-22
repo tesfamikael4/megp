@@ -139,12 +139,16 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
               dto.serviceId,
               user.id,
             );
-          if (baexisted) {
+          if (baexisted?.status == ApplicationStatus.ADJUSTMENT && instanceId == null) {
             const nextCommand = new GotoNextStateDto();
             nextCommand.instanceId = baexisted.instanceId;
             nextCommand.action = 'ISR';
             nextCommand.data = wfi.data;
             return await this.workflowService.gotoNextStep(nextCommand, user);
+          } else if (baexisted?.status == ApplicationStatus.ADJUSTMENT && instanceId != null) {
+            baexisted.status = ApplicationStatus.PENDING;
+            this.baService.update(baexisted.id, baexisted);
+            continue;
           }
           const baEnt = new BusinessAreaEntity();
           baEnt.vendorId = vendor?.id;
