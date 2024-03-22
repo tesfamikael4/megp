@@ -1088,6 +1088,119 @@ export class AccountsService {
     return tokenPayload;
   }
 
+  async getUserDetail(account: Account) {
+    const userInfo = await this.getUserInfo(account.id);
+
+    const organizations = [];
+
+    const users = userInfo?.users?.filter((x) => x.organization != null);
+
+    for (const user of users) {
+      const permissions = [];
+      const roles = [];
+      const roleSystems = [];
+      const applications = [];
+      user?.userRoles?.forEach((userRole) => {
+        const role = {
+          id: userRole.role.id,
+          name: userRole.role.name,
+        };
+
+        roles.push(role);
+
+        userRole?.role?.rolePermissions?.forEach((rolePermission) => {
+          if (rolePermission?.permission) {
+            permissions.push({
+              id: rolePermission.permission.id,
+              name: rolePermission.permission.name,
+              key: rolePermission.permission.key,
+              applicationId: rolePermission.permission.applicationId,
+            });
+
+            if (
+              !applications.find(
+                (x) => x.id === rolePermission.permission.applicationId,
+              )
+            ) {
+              applications.push({
+                id: rolePermission.permission.application.id,
+                key: rolePermission.permission.application.key,
+                name: rolePermission.permission.application.name,
+              });
+            }
+          }
+        });
+      });
+
+      user?.userRoleSystems?.forEach((userRole) => {
+        const roleSystem = {
+          id: userRole.roleSystem.id,
+          key: userRole.roleSystem.key,
+          name: userRole.roleSystem.name,
+        };
+
+        roleSystems.push(roleSystem);
+
+        userRole?.roleSystem?.roleSystemPermissions?.forEach(
+          (rolePermission) => {
+            if (rolePermission?.permission) {
+              permissions.push({
+                id: rolePermission.permission.id,
+                name: rolePermission.permission.name,
+                key: rolePermission.permission.key,
+                applicationId: rolePermission.permission.applicationId,
+              });
+
+              if (
+                !applications.find(
+                  (x) => x.id === rolePermission.permission.applicationId,
+                )
+              ) {
+                applications.push({
+                  id: rolePermission.permission.application.id,
+                  key: rolePermission.permission.application.key,
+                  name: rolePermission.permission.application.name,
+                });
+              }
+            }
+          },
+        );
+      });
+
+      let organization: any;
+      if (user?.organization) {
+        const org = user?.organization;
+        organization = {
+          id: org.id,
+          name: org.name,
+          shortName: org.shortName,
+          code: org.code,
+        };
+      }
+
+      organizations.push({
+        userId: user?.id,
+        organization,
+        permissions,
+        roles,
+        roleSystems,
+        applications,
+      });
+    }
+
+    const tokenPayload = {
+      tenantId: account.tenantId,
+      id: account.id,
+      username: account.username,
+      firstName: account.firstName,
+      lastName: account.lastName,
+      email: account.email,
+      organizations,
+    };
+
+    return tokenPayload;
+  }
+
   private generateUsername() {
     let result = '';
     const characters = 'abcdefghijklmnopqrstuvwxyz';
