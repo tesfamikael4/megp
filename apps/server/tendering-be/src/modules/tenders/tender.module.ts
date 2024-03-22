@@ -33,6 +33,7 @@ import { TenderClassificationController } from './controller/tender-classificati
 import { TenderParticipationFeeController } from './controller/tender-participation-fee.controller';
 import { DocxModule } from 'src/shared/docx/docx.module';
 import { TenderParticipationFeeService } from './service/tender-participation-fee.service';
+import { DocumentManipulatorModule } from 'src/shared/document-manipulator/document-manipulator.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { TenderParticipationFeeService } from './service/tender-participation-fe
     ]),
     MinIOModule,
     DocxModule,
+    DocumentManipulatorModule,
   ],
   controllers: [
     TenderController,
