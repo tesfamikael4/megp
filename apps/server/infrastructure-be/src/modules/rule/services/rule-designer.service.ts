@@ -85,7 +85,7 @@ export class RuleDesignerService extends EntityCrudService<RuleDesigner> {
         designer,
         validateMultipleRuleDto.params,
       );
-      if (result.validation == false) {
+      if (!result.validation) {
         failedRuleKeys.push(designer.key);
         designer.possibleReasons.forEach((reason) => {
           possibleReasons.add(reason.reason);
@@ -107,7 +107,20 @@ export class RuleDesignerService extends EntityCrudService<RuleDesigner> {
         },
       },
     });
-    return this.validateDesignerAndTakeAction(designer, params);
+    const resp = this.validateDesignerAndTakeAction(designer, params);
+
+    const possibleReasons = [];
+
+    if (!resp.validation) {
+      designer.possibleReasons.forEach((reason) => {
+        possibleReasons.push(reason.reason);
+      });
+    }
+
+    return {
+      ...resp,
+      possibleReasons,
+    };
   }
 
   private validateDesignerAndTakeAction(designer, params) {
