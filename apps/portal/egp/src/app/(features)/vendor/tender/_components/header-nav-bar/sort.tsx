@@ -1,7 +1,12 @@
 import { Flex, Menu, UnstyledButton } from '@mantine/core';
 import React from 'react';
 import styles from './sort.module.scss';
-import { IconArrowDown, IconArrowUp, IconFilter } from '@tabler/icons-react';
+import {
+  IconArrowDown,
+  IconArrowUp,
+  IconChevronDown,
+  IconFilter,
+} from '@tabler/icons-react';
 
 type SortProps = {
   sortBy: string | null;
@@ -14,7 +19,7 @@ const Sort = ({ sortBy, setSortBy, id }: SortProps) => {
     <Flex className={styles.root}>
       <Menu
         shadow="lg"
-        width={170}
+        width={180}
         position="bottom-end"
         offset={13}
         withArrow
@@ -22,20 +27,16 @@ const Sort = ({ sortBy, setSortBy, id }: SortProps) => {
       >
         <Menu.Target>
           <UnstyledButton className={styles.selection}>
-            <Flex className=" items-start gap-2" fw={400} fz={14}>
+            <Flex className="w-full items-start gap-2" fw={400} fz={14}>
               {/* <IconFilter size={16} stroke={2.1} /> */}
               {sortBy === 'asc' && <>Sort by: All Tenders</>}
               {sortBy === 'desc' && <>Sort by: DESC</>}
+              <IconChevronDown size={16} />
             </Flex>
           </UnstyledButton>
         </Menu.Target>
         <Menu.Dropdown>
-          <Menu.Item
-            leftSection={<IconArrowUp size={16} />}
-            fw={500}
-            fz={12}
-            onClick={(v) => setSortBy('asc')}
-          >
+          <Menu.Item fw={500} fz={12} onClick={(v) => setSortBy('asc')}>
             Sort by All Tenders
           </Menu.Item>
         </Menu.Dropdown>

@@ -45,7 +45,7 @@ export function HeroSection() {
               md: 'left',
             }}
           >
-            Empower Your Business Through Electronic Public Procurement
+            Empower Your Business Through MANEPS
           </Text>
 
           <Flex

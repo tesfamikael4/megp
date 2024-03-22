@@ -62,12 +62,7 @@ const Filter = ({ filterOptions }: { filterOptions: FilterOptions }) => {
           }
         />
       </Box>
-      <ScrollArea
-        h={200}
-        type="always"
-        mt="6"
-        onScrollPositionChange={onScrollPositionChange}
-      >
+      <ScrollArea mt="6" onScrollPositionChange={onScrollPositionChange}>
         {filterOptions.value
           .filter((value) =>
             value.toLowerCase().startsWith(query.toLowerCase()),

@@ -4,7 +4,6 @@ export const theme: Partial<MantineThemeOverride> = {
   defaultRadius: 'sm',
   primaryColor: 'primary',
   primaryShade: 7,
-
   breakpoints: {
     xs: '36rem',
     sm: '48rem',

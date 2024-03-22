@@ -3,9 +3,12 @@ import React, { PropsWithChildren } from 'react';
 
 interface CardLayoutProps extends PropsWithChildren {
   header?: React.ReactNode;
+  headerRight?: React.ReactNode;
+  headerLeft?: React.ReactNode;
   footer?: React.ReactNode;
+  footerRight?: React.ReactNode;
+  footerLeft?: React.ReactNode;
   className?: string;
-  headerBorder?: boolean;
   [key: string]: any;
 }
 export default function CardLayout(props: CardLayoutProps) {
