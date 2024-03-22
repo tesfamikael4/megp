@@ -1,10 +1,10 @@
 import {
   IconCalendarEvent,
   IconClipboardList,
-  IconFiles,
   IconNotes,
   IconPackage,
   IconUserPlus,
+  IconFiles,
 } from '@tabler/icons-react';
 
 export const featuredContent = [
@@ -13,42 +13,41 @@ export const featuredContent = [
     color: 'red',
     title: 'Vendor Registration',
     description:
-      ' Register your company in the national suppliers list to be able to identify government procurement opportunities and participate in tenders. ',
+      'Vendor registration allows businesses to access public sector opportunities. Online registration leads to approval and access to diverse procurement options. Compliance and updates are vital for eligibility and success in government contracts.',
   },
   {
     icon: <IconClipboardList />,
     color: 'cyan',
-    title: 'Registered Vendor List',
+    title: 'Registered Vendors',
     description:
-      ' Access registered companies from the national suppliers list. Identify suppliers that are debarred from participating in government procurement. ',
+      'Registered vendors are authorized companies validated to engage in government procurement via the electronic platform. Registered Vendors access opportunities, demonstrating their reliability and adherence to procurement regulations.',
   },
-
   {
     icon: <IconCalendarEvent />,
     color: 'green',
     title: 'Procurement Plans',
     description:
-      ' Publish annual procurement plans of government agencies so that the business community gets prepared and respond more effectively. ',
+      'A predetermined acquisition, encompassing goods, services, or works, each accompanied by its allocated budget, designated timeline for procurement, and specified procurement methods.',
   },
   {
     icon: <IconNotes />,
     color: 'yellow',
-    title: 'Tenders',
+    title: 'Procurement Notices',
     description:
-      ' Access tender notices of various government agencies for the procurement of goods, services and works. ',
-  },
-  {
-    icon: <IconFiles />,
-    color: 'red',
-    title: 'Procurement Information',
-    description:
-      ' Provide access to tender statistics, tender opening minutes, evaluation reports, contract awards, and other procurement information. ',
+      'Official announcements by procurement authorities, providing details of published opportunities for goods, services, or works.',
   },
   {
     icon: <IconPackage />,
-    color: 'cyan',
-    title: 'Resources',
+    color: 'red',
+    title: 'Contract Notices',
     description:
-      ' Access various electronic resources related public procurement legislation, standard bidding documents, eGP materials and the like.   ',
+      'Official announcements by procurement authorities disclosing awarded contracts and upcoming contract opportunities.',
+  },
+  {
+    icon: <IconFiles />,
+    color: 'cyan',
+    title: 'Procurement Information',
+    description:
+      'Digital repository provides essential information on procurement activities, including procurement legislation, standard bidding documents, templates, contract awards, spending trends, and vendor performance metrics.',
   },
 ];

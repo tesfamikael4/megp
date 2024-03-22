@@ -6,39 +6,49 @@ import styles from './grid-display.module.scss';
 import TenderCard from '@/app/(features)/_components/tender-card';
 import Navbar from '../nav-bar';
 import HeaderNav from '../header-nav-bar';
+import PageWrapper from '../../../_components/page-wrapper';
+import EmptyDataPlaceholder from '../../../_components/empty-data-placeholder';
 
 const GridDisplay = () => {
   const isMobile = useMediaQuery('(max-width: 768px)');
 
-  return (
-    <>
-      <Box className="flex">
-        <nav
-          className={styles.nav}
-          style={{
-            backgroundColor: '#f5fbfe',
-            display: isMobile ? 'none' : 'block',
-          }}
-        >
-          <Navbar />
-        </nav>
-        <main className={styles.main}>
-          <Box px={{ base: 'xs', sm: 'lg' }}>
-            <HeaderNav />
+  const { data, isLoading } = (() => ({
+    data: Array.from({ length: 8 }), // Empty array for now
+    isLoading: false,
+  }))();
 
+  return (
+    <Box className="flex">
+      <nav
+        className={styles.nav}
+        style={{
+          backgroundColor: '#f5fbfe',
+          display: isMobile ? 'none' : 'block',
+        }}
+      >
+        <Navbar />
+      </nav>
+      <main className={styles.main}>
+        <Box px={{ base: 'xs', sm: 'lg' }}>
+          <HeaderNav />
+          <PageWrapper
+            condition={data.length > 0}
+            isLoading={isLoading}
+            placeholder={<EmptyDataPlaceholder />}
+          >
             <SimpleGrid
               mt={{ base: 10, sm: 20 }}
               cols={{ base: 1, sm: 2, md: 2, lg: 2 }}
               spacing={{ base: 10, sm: 10, md: 10, lg: 10 }}
             >
-              {Array.from({ length: 8 }).map((_, index) => (
-                <TenderCard key={index} color={'orange'} />
+              {data.map((_, index) => (
+                <TenderCard key={index} color={'orange'} textColor="white" />
               ))}
             </SimpleGrid>
-          </Box>
-        </main>
-      </Box>
-    </>
+          </PageWrapper>
+        </Box>
+      </main>
+    </Box>
   );
 };
 

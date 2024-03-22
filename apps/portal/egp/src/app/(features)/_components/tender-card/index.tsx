@@ -42,79 +42,19 @@ const TenderCard = ({ color, register, textColor }: TenderCardProps) => {
       </Box>
       <Box className="flex flex-col" c={'black'}>
         <Flex align={'center'} gap={'sm'}>
-          <Flex
-            direction={'column'}
-            className="text-center text-sm"
-            visibleFrom="sm"
-          >
-            <Avatar
-              variant="transparent"
-              w={{
-                xs: 50,
-                sm: 50,
-                md: 80,
+          <Flex mt={30} direction={'column'} w={'100%'} gap={8}>
+            <Text
+              fz={'sm'}
+              lh={{
+                xs: 'xs',
+                sm: 'xs',
+                md: '24px',
               }}
-              h={{ xs: 50, sm: 50, md: 80 }}
-              mb={10}
-              style={{
-                border: '1px solid #A5D2B2',
-              }}
-              bg={rgba('var(--mantine-primary-color-3)', 0.1)}
+              className="font-semibold"
             >
-              <IconTools color="black" size={25} stroke={1} />
-            </Avatar>
-            <Text fw={500} fz={'12px'} lh={'12px'}>
-              Services
+              Computer services and devices, Lorem Ipsum Computer services and
+              devices.
             </Text>
-          </Flex>
-          <Flex direction={'column'} w={'100%'}>
-            <Flex align={'center'} mt={30}>
-              <Flex
-                direction={'column'}
-                className="text-center text-sm"
-                hiddenFrom="sm"
-                mb={{
-                  base: 'xs',
-                }}
-                mr={{
-                  base: 'xs',
-                  md: 'unset',
-                }}
-              >
-                <Avatar
-                  variant="transparent"
-                  w={{
-                    xs: 50,
-                    sm: 50,
-                    md: 80,
-                  }}
-                  h={{ xs: 50, sm: 50, md: 80 }}
-                  bg={rgba('var(--mantine-primary-color-3)', 0.1)}
-                  mb={4}
-                  style={{
-                    border: '1px solid #A5D2B2',
-                  }}
-                >
-                  <IconTools color="black" size={18} strokeWidth={1} />
-                </Avatar>
-                <Text fw={500} fz={'xs'} lh={'12px'}>
-                  Services
-                </Text>
-              </Flex>
-              <Text
-                fz={'sm'}
-                lh={{
-                  xs: 'xs',
-                  sm: 'xs',
-                  md: '24px',
-                }}
-                className="font-semibold"
-              >
-                Computer services and devices, Lorem Ipsum Computer services and
-                devices.
-              </Text>
-            </Flex>
-
             <Text
               c="dimmed"
               fz={'xs'}
@@ -134,6 +74,7 @@ const TenderCard = ({ color, register, textColor }: TenderCardProps) => {
                 sm: '4px',
                 md: '8px',
               }}
+              gap={5}
             >
               <Text
                 className="sm:text-sm lg:text-md"
@@ -148,27 +89,19 @@ const TenderCard = ({ color, register, textColor }: TenderCardProps) => {
                 Minister of Education
               </Text>
               <Box className="flex flex-col gap-0">
-                <Flex
-                  align={'center'}
-                  columnGap={'sm'}
-                  className={classes.dateInfo}
-                >
-                  <Text fw={500} fz={'sm'} lh={'sm'} mr={'4px'}>
+                <Flex align={'center'} className={classes.dateInfo} gap={5}>
+                  <Text fw={500} fz={14} lh={'sm'}>
                     Published:
                   </Text>
-                  <Text className="text-gray-400" fw={400} fz={'sm'} lh={'sm'}>
+                  <Text className="text-gray-400" fw={400} fz={14} lh={'sm'}>
                     14-Jan-2024
                   </Text>
                 </Flex>
-                <Flex
-                  align={'center'}
-                  columnGap={'sm'}
-                  className={classes.dateInfo}
-                >
-                  <Text fw={500} fz={'sm'} lh={'sm'} mr={'4px'}>
+                <Flex align={'center'} className={classes.dateInfo} gap={5}>
+                  <Text fw={500} fz={14} lh={'sm'}>
                     Closing:
                   </Text>
-                  <Text className="text-gray-400" fw={400} fz={'sm'} lh={'sm'}>
+                  <Text className="text-gray-400" fw={400} fz={14} lh={'sm'}>
                     14-Jan-2024 3:00 PM
                   </Text>
                 </Flex>

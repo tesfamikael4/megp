@@ -10,7 +10,6 @@ import UploadModal from './_components/upload-modal';
 import DocumentDetail from './_components/document-detail';
 import { useLazyGetBriefcaseFilesQuery } from '../_api/query';
 // import { useDebouncedState } from '@mantine/hooks';
-
 function Page() {
   const [row, setRow] = useState(null);
   const [opened, { close, open }] = useDisclosure();
@@ -27,8 +26,8 @@ function Page() {
         },
       },
       {
-        accessor: 'size',
-        title: 'Size',
+        name: 'Product Catalog',
+        size: '5.7MB',
       },
       {
         accessor: 'type',

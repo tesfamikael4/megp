@@ -1,29 +1,19 @@
 'use client';
-import {
-  Badge,
-  Box,
-  Button,
-  Flex,
-  LoadingOverlay,
-  Text,
-  TextInput,
-} from '@mantine/core';
+import { Badge, Box, TextInput } from '@mantine/core';
 import { useState, type FC } from 'react';
 import { StatsListCard } from './stats-card';
-import {
-  useGetApplicationListQuery,
-  useGetVendorInfoQuery,
-} from '../../_api/query';
+import { useGetApplicationListQuery } from '../../_api/query';
 import styles from './application-list.module.scss';
 import DetailViewCard from './detail-view-card';
 import { useDisclosure } from '@mantine/hooks';
 import { ApplicationInfo } from '@/models/vendorRegistration';
-import { IconFile, IconTrack } from '@tabler/icons-react';
 import { IconSearch } from '@tabler/icons-react';
 // import { ExpandableTable } from './table';
 import 'mantine-datatable/styles.layer.css';
 import { ExpandableTable } from '@megp/core-fe';
 import { formatDateTimeFromString } from '../review/utils';
+import PageWrapper from '@/app/(features)/vendor/_components/page-wrapper';
+import EmptyDataPlaceholder from '@/app/(features)/vendor/_components/empty-data-placeholder';
 
 const badgeBGColor: { [key: string]: string } = {
   Rejected: `red.0`,
@@ -105,65 +95,45 @@ const ApplicationList = () => {
     },
   };
 
-  if (requestInfo.isLoading) {
-    return (
-      <Box pos="relative" className="w-full h-full">
-        <LoadingOverlay
-          visible={true}
-          zIndex={1000}
-          overlayProps={{ radius: 'sm', blur: 2 }}
-        />
-      </Box>
-    );
-  }
   return (
-    <Box className="p-4">
-      <Box className=" w-full p-4 min-h-screen bg-white">
-        <Flex direction={'column'} className="w-full py-4 mb-3 border-b">
-          <Text fw={700} fz="xl" c={'#1D8E3F'}>
-            Application List
-          </Text>
-          <Text c={'dimmed'} size={'14px'} mt={2}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut
+    <PageWrapper
+      title="Track Application"
+      info="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut
             faucibus, enim ac dictum rutrum, velit quam pharetra mi, aliquet
-            interdum velit libero nec risus. Aliquam non libero dolor.
-          </Text>
-          <Flex justify="flex-end" mt={8}>
-            <TextInput
-              className="mb-2 w-80 h-8"
-              leftSection={<IconSearch />}
-              onChange={(event) => {
-                console.log('Hello world');
-                // setSearch(event.currentTarget.value);
-              }}
-              placeholder="Search files by lorem, lorem"
-              rightSectionWidth={30}
+            interdum velit libero nec risus. Aliquam non libero dolor."
+      actions={
+        <TextInput
+          size="xs"
+          maw={300}
+          w="100%"
+          leftSection={<IconSearch size={18} />}
+          placeholder="Search files by lorem, lorem"
+          rightSectionWidth={30}
+        />
+      }
+      headerBorder
+      condition={requestInfo.data && requestInfo.data.length > 0}
+      isLoading={requestInfo.isLoading}
+    >
+      {requestInfo.data && requestInfo.data.length > 0 ? (
+        <Box className={styles.mainGrid}>
+          <Box className={`w-full`}>
+            <ExpandableTable
+              config={config}
+              data={requestInfo.data ?? []}
+              total={requestInfo.data.length ?? 0}
             />
-          </Flex>
-        </Flex>
-        {requestInfo.data && requestInfo.data.length > 0 ? (
-          <Box className={styles.mainGrid}>
-            <Box className={`w-full`}>
-              <ExpandableTable
-                config={config}
-                data={requestInfo.data ?? []}
-                total={requestInfo.data.length ?? 0}
-              />
-            </Box>
-            {opened && selectData && (
-              <Box className={styles.detail}>
-                <DetailViewCard data={selectData} close={handleDetailClose} />
-              </Box>
-            )}
           </Box>
-        ) : (
-          <Flex className="w-full h-full items-center justify-center flex-col">
-            <IconFile size={30} />
-            No Data Found
-          </Flex>
-        )}
-      </Box>
-    </Box>
+          {opened && selectData && (
+            <Box className={styles.detail}>
+              <DetailViewCard data={selectData} close={handleDetailClose} />
+            </Box>
+          )}
+        </Box>
+      ) : (
+        <EmptyDataPlaceholder />
+      )}
+    </PageWrapper>
   );
 };
 export default ApplicationList;
