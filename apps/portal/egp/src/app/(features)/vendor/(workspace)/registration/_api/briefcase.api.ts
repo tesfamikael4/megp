@@ -20,5 +20,11 @@ export const briefcaseApi = vendorRegistrationApi.injectEndpoints({
         method: 'GET',
       }),
     }),
+    deleteBriefcaseFile: build.mutation<any, any>({
+      query: (id) => ({
+        url: `briefcases/{id}`,
+        method: 'DELETE',
+      }),
+    }),
   }),
 });

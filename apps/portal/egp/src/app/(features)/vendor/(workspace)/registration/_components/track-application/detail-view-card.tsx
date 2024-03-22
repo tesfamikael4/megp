@@ -15,7 +15,6 @@ import { useRouter } from 'next/navigation';
 import { ApplicationInfo } from '@/models/vendorRegistration';
 
 const callbackURL = (key: string) => {
-  console.log(key);
   if (key == 'NewRegistration') {
     return 'new/detail';
   }
@@ -23,10 +22,13 @@ const callbackURL = (key: string) => {
     return 'profile-update';
   }
   if (key == 'Medium' || key == 'Small' || key == ' MIrc') {
-    return 'msme';
+    return 'preferential-treatment';
   }
   if (key == 'ibm') {
-    return 'ibm';
+    return 'preferential-treatment';
+  }
+  if (key == 'Marginalized_Group') {
+    return 'preferential-treatment';
   }
 };
 

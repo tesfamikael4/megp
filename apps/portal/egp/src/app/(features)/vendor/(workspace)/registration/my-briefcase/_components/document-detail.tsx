@@ -1,15 +1,39 @@
 import { DeleteButton } from '@/app/(features)/_components/delete-button';
-import { Box, Card, Flex, Group, Image, Text } from '@mantine/core';
+import { Box, Card, Flex, Group, Image, Paper, Text } from '@mantine/core';
 import { IconX } from '@tabler/icons-react';
 import React, { useState } from 'react';
 import { ShowFile } from '../../_components/review/panels/showFile';
+import { useDeleteBriefcaseFileMutation } from '../../_api/query';
+import { NotificationService } from '@/app/(features)/vendor/_components/notification';
 
-const DocumentDetail = ({ row, setRow }: any) => {
+const DocumentDetail = ({ row, setRow, fetch }: any) => {
   const [status, setStatus] = useState('');
+  const [deleteFile, { isLoading, isSuccess }] =
+    useDeleteBriefcaseFileMutation();
+
+  const handleDelete = async () => {
+    if (row.id) {
+      try {
+        await deleteFile(row.id)
+          .unwrap()
+          .then(() => {
+            NotificationService.successNotification(
+              'File deleted successfully',
+            );
+            fetch();
+            setRow(null);
+          });
+      } catch (error) {
+        NotificationService.requestErrorNotification(
+          'Something went wrong while deleting the file',
+        );
+      }
+    }
+  };
+
   return (
-    <Box className="relative w-full shadow-xs rounded-md" px={'sm'}>
+    <Paper className="relative w-full shadow-xs rounded-md" px={'sm'}>
       <Flex align="center" fw={700} justify="space-between" py={'xs'}>
-        {' '}
         <Text>Document Detail</Text>{' '}
         <IconX
           size={20}
@@ -42,16 +66,17 @@ const DocumentDetail = ({ row, setRow }: any) => {
             </Text>
             <Flex justify={'flex-end'}>
               <DeleteButton
-                onDelete={() => setRow(null)}
+                onDelete={handleDelete}
                 buttonName="Delete"
                 title={`Delete ${row && (row as any).name}`}
-                message={`Are you sure you want to delete ${row && (row as any).name}`}
+                message={`Are you sure you want to delete ${row && (row as any).attachmentId}`}
+                isDeleting={isLoading}
               />
             </Flex>
           </>
         )}
       </Card>
-    </Box>
+    </Paper>
   );
 };
 
