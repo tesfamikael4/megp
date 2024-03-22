@@ -23,7 +23,7 @@ export const ServiceLists = ({ isCompleted }: { isCompleted?: boolean }) => {
         new Date(service.expireDate as string) < threeMonthsBeforeToday,
     );
     return (
-      <Box className="p-4 bg-[#f7f7f7]">
+      <Box className="bg-[#f7f7f7]">
         <Box className=" w-full p-6 min-h-screen bg-white">
           <Flex direction={'column'} className="w-full py-2 mb-3 ">
             <Text fw={700} fz="xl" c={'#1D8E3F'}>

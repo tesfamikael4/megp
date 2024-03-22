@@ -18,7 +18,9 @@ interface PanelProps {
   data: any;
   tabValue: string;
   fieldKey?: string;
-  setUrl?: React.Dispatch<React.SetStateAction<string>>;
+  setUrl?: React.Dispatch<
+    React.SetStateAction<{ url: string; filename: string }>
+  >;
   open?: () => void;
   userId?: string;
 }
@@ -93,11 +95,12 @@ export const MiscellaneousPanel = ({
               <Button
                 onClick={() => {
                   open();
-                  setUrl(
-                    `${
+                  setUrl({
+                    url: `${
                       process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api/'
                     }upload/get-file-bo/preferential-documents/${data}/${userId}`,
-                  );
+                    filename: data,
+                  });
                 }}
               >
                 View

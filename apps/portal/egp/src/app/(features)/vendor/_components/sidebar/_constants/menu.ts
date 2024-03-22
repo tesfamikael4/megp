@@ -13,11 +13,11 @@ import { IconShoppingCart } from '@tabler/icons-react';
 import { IconAddressBook } from '@tabler/icons-react';
 
 export const informationLinks: MenuLinks.SidebarLinks[] = [
-  {
-    label: 'Dashboard',
-    icon: IconDashboard,
-    link: '/vendor/dashboard',
-  },
+  // {
+  //   label: 'Dashboard',
+  //   icon: IconDashboard,
+  //   link: '/vendor/dashboard',
+  // },
   {
     label: 'Bookmarks',
     icon: IconBookmark,

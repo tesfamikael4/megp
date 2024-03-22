@@ -20,7 +20,7 @@ function FormPreview({
 }) {
   const tabs = [...uniqueTabs, ...tab];
 
-  const [url, setUrl] = useState('');
+  const [url, setUrl] = useState({ url: '', filename: '' });
   const [opened, { close, open }] = useDisclosure(false);
   const { user } = useAuth();
 
@@ -39,7 +39,7 @@ function FormPreview({
                 title={'Attachment'}
                 bg={'transparent'}
               >
-                {url && <ShowFile url={url} filename={data[tabValue]} />}
+                {url.url && <ShowFile url={url.url} filename={url.filename} />}
               </Modal>
               <Accordion.Item
                 key={tabValue}
@@ -54,13 +54,13 @@ function FormPreview({
                         <ShowFile
                           url={`${
                             process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api'
-                          }/upload/get-file-bo/${
+                          }/upload/get-file/${
                             tabValue === 'supportingDocuments'
                               ? 'SupportingDocument'
                               : tabValue === 'certificate'
                                 ? 'Certificate'
                                 : 'paymentReceipt'
-                          }/${data[tabValue]}/${data?.userId}`}
+                          }/${data[tabValue]}`}
                           filename={data[tabValue]}
                         />
                       ) : (

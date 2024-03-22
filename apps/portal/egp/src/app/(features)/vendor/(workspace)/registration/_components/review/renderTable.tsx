@@ -56,21 +56,24 @@ const renderCell = (header, item, open, setUrl, userId) => {
 
   if ((header.name ?? header) === 'certificateUrl') {
     return (
-      <Table.Td>
-        {cellValue && (
-          <Button
-            onClick={() => {
-              open && open();
-              setUrl &&
-                setUrl(
-                  `${process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api'}/upload/get-file-bo/preferential-documents/${cellValue}/${userId}`,
-                );
-            }}
-          >
-            View
-          </Button>
-        )}
-      </Table.Td>
+      <>
+        <Table.Td>
+          {cellValue && (
+            <Button
+              onClick={() => {
+                open && open();
+                setUrl &&
+                  setUrl({
+                    url: `${process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api'}/upload/get-file/preferential-documents/${cellValue}`,
+                    filename: cellValue,
+                  });
+              }}
+            >
+              View
+            </Button>
+          )}
+        </Table.Td>
+      </>
     );
   }
 

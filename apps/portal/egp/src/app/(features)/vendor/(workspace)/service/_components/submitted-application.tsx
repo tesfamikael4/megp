@@ -11,8 +11,8 @@ export const SubmittedApplication = () => {
   if (isLoading) return null;
   if (!data) return null;
   return (
-    <Box className="p-4">
-      <Box className=" w-full h-full bg-white  relative">
+    <Box className="">
+      <Box className=" w-full p-4 h-full bg-white  relative">
         <Paper className="p-7">
           <Flex direction="column" className="w-full text-sm justify-center">
             <Flex align="center" columnGap={4}>
