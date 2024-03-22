@@ -34,7 +34,7 @@ export class Guarantee extends Audit {
   type: string;
   @Column()
   objectType: string;
-  @Column({ type: 'date', nullable: true })
+  @Column({ type: 'timestamp', nullable: true })
   minValidityDate: Date;
   @Column()
   guarantorValidityDate: Date;
