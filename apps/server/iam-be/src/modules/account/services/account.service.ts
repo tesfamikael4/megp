@@ -1088,8 +1088,8 @@ export class AccountsService {
     return tokenPayload;
   }
 
-  async getUserDetail(account: Account) {
-    const userInfo = await this.getUserInfo(account.id);
+  async getUserDetail(accountId: string) {
+    const userInfo = await this.getUserInfo(accountId);
 
     const organizations = [];
 
@@ -1189,12 +1189,12 @@ export class AccountsService {
     }
 
     const tokenPayload = {
-      tenantId: account.tenantId,
-      id: account.id,
-      username: account.username,
-      firstName: account.firstName,
-      lastName: account.lastName,
-      email: account.email,
+      tenantId: userInfo.tenantId,
+      id: userInfo.id,
+      username: userInfo.username,
+      firstName: userInfo.firstName,
+      lastName: userInfo.lastName,
+      email: userInfo.email,
       organizations,
     };
 
