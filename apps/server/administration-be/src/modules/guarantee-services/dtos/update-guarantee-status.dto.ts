@@ -5,9 +5,11 @@ import { IsDate, IsEnum, IsOptional } from 'class-validator';
 export class UpdateGuaranteeStatusDto {
   @ApiProperty({ enum: GuaranteeStatusEnum, enumName: 'GuaranteeStatusEnum' })
   @IsEnum(GuaranteeStatusEnum)
+  @IsOptional()
   status: string;
 
   @ApiProperty({ required: false })
+  @IsOptional()
   remark?: string;
 
   @ApiProperty()
@@ -15,6 +17,7 @@ export class UpdateGuaranteeStatusDto {
   attachment: any;
 
   @ApiProperty({ required: false })
+  @IsOptional()
   @IsDate()
   minValidityDate?: Date;
 }

@@ -29,7 +29,7 @@ export class CreateGuaranteeDto {
   @IsOptional()
   endDate: Date;
 
-  @ApiProperty({ default: GuaranteeTypeEnum.BID_SECURITY })
+  @ApiProperty()
   @IsEnum(GuaranteeTypeEnum)
   @IsOptional()
   type: string;
@@ -37,7 +37,7 @@ export class CreateGuaranteeDto {
   @ApiProperty()
   @IsOptional()
   objectType: string;
-  @ApiProperty({ required: false })
+  @ApiProperty()
   @IsOptional()
   @IsDateString()
   minValidityDate?: Date;
@@ -45,7 +45,8 @@ export class CreateGuaranteeDto {
   @IsOptional()
   @IsDateString()
   guarantorValidityDate?: Date;
-  @ApiProperty({ required: false })
+  @ApiProperty()
+  @IsOptional()
   title?: string;
   @ApiProperty()
   @IsOptional()
@@ -63,7 +64,8 @@ export class CreateGuaranteeDto {
   @ApiProperty()
   @IsNotEmpty()
   guarantorBranchId: string;
-  @ApiProperty({ required: false })
+  @ApiProperty()
+  @IsOptional()
   remark?: string;
 
   @ApiProperty()
