@@ -21,13 +21,7 @@ export default function BidSecurityPage() {
   const { data: guarantor } = useGetOrganazationQuery(
     data?.guarantorId?.toString() || '',
   );
-  // const [trigger, { data: org, isSuccess: isSuccessOrg }] =
-  //   useLazyGetOrganazationQuery();
-  // useEffect(() => {
-  //   if (isSuccessOrg) {
-  //     trigger(org.data.guarantorId);
-  //   }
-  // }, [isSuccessOrg, org.data.guarantorId, trigger]);
+
   return (
     <Flex w={'100%'}>
       <Box className=" w-full p-6 bg-[#e7f4f7]">
@@ -52,7 +46,7 @@ export default function BidSecurityPage() {
                   Validity Date
                 </Table.Th>
                 <Table.Td>
-                  <Text size="sm">Mar/30/2024</Text>
+                  <Text size="sm">Mar 30, 2024</Text>
                 </Table.Td>
               </Table.Tr>
 
@@ -61,7 +55,15 @@ export default function BidSecurityPage() {
                   Request Date
                 </Table.Th>
                 <Table.Td>
-                  <Text size="sm">{data?.createdAt}</Text>
+                  <Text size="sm">
+                    {data?.createdAt
+                      ? new Date(data.createdAt).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric',
+                        })
+                      : ''}
+                  </Text>
                 </Table.Td>
               </Table.Tr>
 
@@ -70,7 +72,7 @@ export default function BidSecurityPage() {
                   Submission Deadline
                 </Table.Th>
                 <Table.Td className=" ">
-                  <Text size="sm">Mar/30/2024</Text>
+                  <Text size="sm">Mar 30,2024</Text>
                 </Table.Td>
               </Table.Tr>
               <Table.Tr>

@@ -32,7 +32,15 @@ export default function Table({ data }: any) {
       columns={[
         { accessor: 'lotName' },
         { accessor: 'procuringEntity' },
-        { accessor: 'createdAt' },
+        {
+          accessor: 'createdAt',
+          render: ({ createdAt }) =>
+            new Date(createdAt).toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+            }),
+        },
         {
           accessor: 'status',
           render: ({ status }) => (
