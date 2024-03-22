@@ -37,7 +37,7 @@ export function WorkflowHandling({
   itemId: string;
   itemKey: string;
 }) {
-  const { roles, user } = useAuth();
+  const { userCall, user } = useAuth();
   const [active, setActive] = useState(0);
   const [steps, setSteps] = useState<Record<string, any>[]>([]);
   const [currentStep, setCurrentStep] = useState<Record<string, any>>({});
@@ -274,7 +274,7 @@ export function WorkflowHandling({
                                 user?.organizations?.[0].userId,
                                 step.id,
                               ) &&
-                              (roles?.some(
+                              (userCall?.organizations?.[0]?.roles?.some(
                                 (role) =>
                                   role?.id ==
                                   currentStep?.step.approvers?.[0]?.id,
@@ -350,83 +350,7 @@ export function WorkflowHandling({
                     />
                   );
                 })}
-              {/* <Stepper.Step
-                label="Approval 1"
-                description={
-                  (role === currentStep?.step.approvers[0] || true) && (
-                    <>
-                      <Stack className="w-[400px]">
-                        <Text>Approval by Procurment Unit Head</Text>
-                        <Textarea minRows={6} label="Remark" />
-                        <Group>
-                          <Button
-                            onClick={async () => {
-                              await handleApprove();
-                            }}
-                            loading={isApproving}
-                            className="bg-green-500"
-                          >
-                            Approve
-                          </Button>
-                          <Button
-                            className="bg-yellow-500"
-                            onClick={async () => {
-                              await handleAdjust();
-                            }}
-                          >
-                            Adjust
-                          </Button>
-                          <Button leftSection={<IconArrowBackUp />}>
-                            Go to
-                          </Button>
-                        </Group>
-                      </Stack>
-                    </>
-                  )
-                }
-              />
-              <Stepper.Step
-                label="Approval 2"
-                description="Approval by Head of Procuring Entity"
-              />
-              <Stepper.Step
-                label="Approval 3"
-                description="Approval by endorsing committee"
-              />
-              <Stepper.Step
-                label="Approval 4"
-                description="Approval by Alemu Kebede"
-              /> */}
             </Stepper>
-            {/* <Stack className="w-1/2">
-              {(role === currentStep?.step.approvers[0] ||
-                `${user?.firstName} ${user?.lastName}` ===
-                  currentStep?.step.approvers[0]) && (
-                <>
-                  <Textarea minRows={6} label="Remark" />
-                  <Group>
-                    <Button
-                      onClick={async () => {
-                        await handleApprove();
-                      }}
-                      loading={isApproving}
-                      className="bg-green-500"
-                    >
-                      Approve
-                    </Button>
-                    <Button
-                      className="bg-yellow-500"
-                      onClick={async () => {
-                        await handleAdjust();
-                      }}
-                    >
-                      Adjust
-                    </Button>
-                    <Button leftSection={<IconArrowBackUp />}>Go to</Button>
-                  </Group>
-                </>
-              )}
-            </Stack> */}
           </Flex>
         </Section>
       </Box>

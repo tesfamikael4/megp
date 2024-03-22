@@ -98,6 +98,7 @@ interface AuthContextValue {
   setRole: any;
   role: any;
   roles: any;
+  userCall: any;
 }
 
 interface BuildFetchAPI {
@@ -128,6 +129,7 @@ function AuthProvider({
   children: React.ReactNode;
 }): JSX.Element {
   const [user, setUser] = useState<any>();
+  const [userCall, setUserCall] = useState<any>();
   const [organizationId, setOrganizationId] = useState<any>();
   const [error, setError] = useState<any>();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -155,6 +157,24 @@ function AuthProvider({
       }
     }
   }, [isAuthenticated]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetch(`${baseURL}/auth/me`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${getCookie('token')}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setUserCall(data);
+        })
+        .catch((userErr) => {
+          return userErr;
+        });
+    }
+  }, [getCookie('token'), isAuthenticated]);
 
   const isUser = () => {
     return hasCookie('token');
@@ -430,6 +450,7 @@ function AuthProvider({
     role,
     organizationId,
     roles,
+    userCall,
   };
 
   return (
