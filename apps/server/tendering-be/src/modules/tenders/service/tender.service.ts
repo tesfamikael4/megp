@@ -30,6 +30,8 @@ import {
   CreateTenderDto,
   GenerateTenderDocumentDto,
 } from '../dto';
+import { DocumentManipulatorService } from 'src/shared/document-manipulator/document-manipulator.service';
+import { BucketNameEnum } from 'src/shared/min-io/bucket-name.enum';
 
 @Injectable()
 export class TenderService extends EntityCrudService<Tender> {
@@ -37,6 +39,7 @@ export class TenderService extends EntityCrudService<Tender> {
     @InjectRepository(Tender)
     private readonly tenderRepository: Repository<Tender>,
     private readonly minIOService: MinIOService,
+    private readonly documentManipulatorService: DocumentManipulatorService,
     @Inject(REQUEST) private request: Request,
   ) {
     super(tenderRepository);
@@ -117,7 +120,7 @@ export class TenderService extends EntityCrudService<Tender> {
 
       const lot = new Lot();
       lot.number = 1;
-      lot.name = `lot_1`;
+      lot.name = `Lot 1`;
       lot.status = `DRAFT`;
       lot.tenderId = tender.id;
       const lotResult = await manager.getRepository(Lot).insert(lot);
@@ -205,12 +208,65 @@ export class TenderService extends EntityCrudService<Tender> {
   }
 
   async generateTenderDocument(input: GenerateTenderDocumentDto) {
-    const tender = await this.tenderRepository.findOneBy({
-      id: input.id,
+    const tender = await this.tenderRepository.findOne({
+      where: {
+        id: input.id,
+      },
+      relations: {
+        spd: true,
+      },
     });
+
     if (!tender) {
-      throw new BadRequestException('Tender not found');
+      throw new BadRequestException('tender_not_found');
+    } else if (!tender.spd.bds) {
+      throw new BadRequestException('bds_not_found');
+    } else if (!tender.spd.scc) {
+      throw new BadRequestException('scc_not_found');
     }
+
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+    const spdTemplate = await manager.getRepository(SpdTemplate).findOneBy({
+      spdId: tender.spd.spdId,
+      type: 'main-document',
+    });
+    if (!spdTemplate) {
+      throw new BadRequestException('spd_document_not_found');
+    }
+
+    //TODO: Convert bds to html
+    const bdsHtml = await this.downloadAndConvert(tender.spd.bds);
+
+    //TODO: Convert scc to html
+    const sccHtml = await this.downloadAndConvert(tender.spd.scc);
+
+    //TODO: add bds and scc to main-document
+    const mainDocumentBuffer =
+      await this.documentManipulatorService.populateTemplate(bdsHtml, {
+        bds: `${bdsHtml}`,
+        scc: `${sccHtml}`,
+      });
+
+    //TODO: convert document to pdf and upload it to minIO
+    const pdfBuffer =
+      await this.documentManipulatorService.convertDocxToPdf(
+        mainDocumentBuffer,
+      );
+    const tenderDocument = await this.minIOService.uploadBuffer(
+      pdfBuffer,
+      '',
+      'application/pdf',
+      BucketNameEnum.TENDERING_DOCUMENT,
+    );
+
+    await this.tenderRepository.update(tender.id, {
+      tenderDocument: tenderDocument as any,
+    });
+
+    return {
+      ...tender,
+      tenderDocument,
+    };
   }
 
   async downloadInvitation(id: string) {
@@ -219,28 +275,29 @@ export class TenderService extends EntityCrudService<Tender> {
         where: {
           id,
         },
-        relations: {
-          spd: true,
-        },
       });
-
-      const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
-
-      const spd = await manager
-        .getRepository(SpdTemplate)
-        .findOneBy({ id: tender.spd.spdId, type: 'main-document' });
-      if (!spd) {
-        throw new Error('SPD not found');
-      }
-      if (!spd.documentPdf) {
-        throw new Error('SPD Document not found');
+      if (!tender.tenderDocument) {
+        throw new Error('tender_document_not_found');
       }
 
       const presignedDownload =
-        await this.minIOService.generatePresignedDownloadUrl(spd.documentPdf);
+        await this.minIOService.generatePresignedDownloadUrl(
+          tender.tenderDocument,
+        );
       return { presignedDownload };
     } catch (error) {
       throw error;
     }
+  }
+
+  private async downloadAndConvert(fileInfo: any) {
+    const fileReadable = await this.minIOService.downloadBuffer(fileInfo);
+    const fileBuffer =
+      await this.documentManipulatorService.streamToBuffer(fileReadable);
+    const html = await this.documentManipulatorService.convertDocument(
+      fileBuffer,
+      '.html',
+    );
+    return html;
   }
 }

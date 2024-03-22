@@ -60,7 +60,7 @@ export class GetBidResponseDto {
   key: string;
 
   @ApiProperty()
-  @IsString()
+  @IsObject()
   @IsNotEmpty()
   password: string;
 }
