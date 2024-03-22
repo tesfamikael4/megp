@@ -22,8 +22,8 @@ function Page() {
 
   return (
     <Suspense>
-      <Box className="p-4 bg-[#f7f7f7]">
-        <Box className=" w-full p-6 min-h-screen bg-white">
+      <Box className="">
+        <Box className=" w-full p-4 min-h-screen bg-white">
           <Flex direction={'column'} className="w-full py-2 mb-3 ">
             <Text fw={700} fz="xl" c={'#1D8E3F'}>
               Eligibility for Preferential Treatment

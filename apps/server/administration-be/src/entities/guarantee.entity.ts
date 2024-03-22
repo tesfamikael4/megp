@@ -3,53 +3,63 @@ import { Audit } from 'src/shared/entities';
 import { GuaranteeExtension } from './guarantee-extension.entity';
 import { GuaranteeForfeit } from './guarantee-forfeit.entity';
 import { GuaranteeRelease } from './guarantee-release.entity';
+
+export enum GuaranteeStatusEnum {
+  REQUESTED = 'REQUESTED',
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED',
+}
+
+export enum GuaranteeTypeEnum {
+  BID_SECURITY = 'BID_SECURITY',
+  ADVANCED = 'ADVANCED',
+  PERFORMANCE = 'PERFORMANCE',
+  RETENTION = 'RETENTION',
+}
+
 @Entity({ name: 'guarantees' })
 export class Guarantee extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column({ nullable: true })
+  @Column()
   vendorId: string;
-  @Column({
-    type: 'date',
-    nullable: true,
-  })
+  @Column()
   startDate: Date;
-  @Column({ type: 'date', nullable: true })
+  @Column()
   endDate: Date;
   @Column({
     type: 'enum',
-    enum: ['bid guarantee', 'advanced', 'performance', 'retention'],
-    nullable: true,
+    enum: GuaranteeTypeEnum,
   })
   type: string;
-  @Column({ nullable: true })
+  @Column()
   objectType: string;
-  @Column({ type: 'int', nullable: true })
-  minValidityDate: number;
-  @Column({ type: 'int', nullable: true })
-  guarantorValidityDate: number;
-  @Column({ nullable: true })
+  @Column({ type: 'date', nullable: true })
+  minValidityDate: Date;
+  @Column()
+  guarantorValidityDate: Date;
+  @Column()
   name: string;
-  @Column({ nullable: true })
+  @Column()
   title: string;
-  @Column({ nullable: true })
+  @Column()
   objectId: string;
   @Column({ default: 0, type: 'decimal', precision: 14, scale: 2 })
   amount: number;
-  @Column({ nullable: true })
+  @Column()
   currencyType: string;
-  @Column({ nullable: true })
+  @Column()
   guarantorId: string;
-  @Column({ nullable: true })
+  @Column()
   guarantorBranchId: string;
   @Column({ nullable: true })
   remark: string;
-  @Column({ nullable: true })
-  attachment: string;
+  @Column({ nullable: true, type: 'jsonb' })
+  attachment: any;
   @Column({
     type: 'enum',
-    enum: ['reviewed', 'approved', 'rejected'],
-    nullable: true,
+    enum: GuaranteeStatusEnum,
+    default: GuaranteeStatusEnum.REQUESTED,
   })
   status: string;
   @OneToMany(() => GuaranteeExtension, (extension) => extension.guarantee, {

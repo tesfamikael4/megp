@@ -43,7 +43,7 @@ export class FileService {
     private readonly businessAreaRepository: Repository<BusinessAreaEntity>,
     private readonly busineAreaService: BusinessAreaService,
     private readonly workflowService: WorkflowService,
-  ) {}
+  ) { }
   private updateVendorEnums = [
     VendorStatusEnum.ACTIVE,
     VendorStatusEnum.ADJUSTMENT,
@@ -650,11 +650,14 @@ export class FileService {
         file.buffer,
         metaData,
       );
-
       return fileId;
     } catch (error) {
       console.log(error);
       throw error;
     }
+  }
+
+  async removeObject(filepath: string) {
+    return this.minioClient.removeObject(this.bucketName, filepath);
   }
 }

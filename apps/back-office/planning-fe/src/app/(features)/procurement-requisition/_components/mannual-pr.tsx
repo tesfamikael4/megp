@@ -11,7 +11,7 @@ import {
   TextInput,
   Textarea,
 } from '@mantine/core';
-import { notify } from '@megp/core-fe';
+import { Section, notify } from '@megp/core-fe';
 import { EntityButton } from '@megp/entity';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -133,10 +133,6 @@ export const FormDetail = ({
     });
   };
 
-  // useEffect(() => {
-  //   getBudgetYear({ id: organizationId, collectionQuery: undefined }).unwrap();
-  // }, [getBudget]);
-
   useEffect(() => {
     if (mode === 'detail') {
       getPr(id as string);
@@ -158,190 +154,163 @@ export const FormDetail = ({
         'totalEstimatedAmount',
         procurementRequisition?.totalEstimatedAmount,
       );
-      setValue('budgetCode.name', procurementRequisition?.budgetCode?.name);
-      setValue(
-        'budgetCode.startDate',
-        new Date(procurementRequisition?.budgetCode?.startDate),
-      );
-      setValue(
-        'budgetCode.endDate',
-        new Date(procurementRequisition?.budgetCode?.endDate),
-      );
+
       setValue(
         'procurementApplication',
         procurementRequisition?.procurementApplication,
       );
+      setValue('postBudgetPlanId', procurementRequisition?.postBudgetPlanId);
     }
   }, [mode, isPrSuccess, setValue, procurementRequisition]);
 
   return (
-    <Stack pos={'relative'}>
-      <Flex gap="md" pos={'relative'}>
-        <Box className="w-1/2">
-          {mode == 'detail' && <LoadingOverlay visible={isPrLoading} />}
-          {mode === 'detail' && (
+    <Section title="Procurement Requisition Identification" collapsible={false}>
+      <Stack pos={'relative'}>
+        <Flex gap="md" pos={'relative'}>
+          <Box className="w-1/2">
+            {mode == 'detail' && <LoadingOverlay visible={isPrLoading} />}
+
             <TextInput
               withAsterisk
               disabled
               label="Reference Number"
               {...register('requisitionReferenceNumber')}
             />
-          )}
 
-          <TextInput
-            label="Name"
-            withAsterisk
-            {...register('name')}
-            error={errors.name?.message}
-            disabled={disableFields}
-          />
-          <Controller
-            name="currency"
-            control={control}
-            render={({ field: { name, value, onChange } }) => (
-              <Select
-                withCheckIcon={false}
-                name={name}
-                value={value}
-                onChange={onChange}
-                label="Currency"
-                data={currency?.items?.map((c) => c.abbreviation) ?? []}
-                className="w-full"
-                withAsterisk
-                searchable
-                placeholder="Select Currency"
-                error={errors?.currency?.message}
-                disabled={disableFields}
-              />
-            )}
-          />
-          <Checkbox
-            label="is Multi Year"
-            className="w-full mt-4 mb-2"
-            {...register('isMultiYear')}
-            disabled={disableFields}
-          />
-          <TextInput
-            label="Estimated Amount"
-            className="w-full"
-            {...register('totalEstimatedAmount')}
-            error={errors?.totalEstimatedAmount?.message}
-            withAsterisk
-            type="number"
-            disabled={disableFields}
-          />
-          {/* <Controller
-            name="budgetId"
-            control={control}
-            render={({ field: { value, onChange } }) => (
-              <Select
-                name="name"
-                value={value}
-                onChange={onChange}
-                data={budgetYear?.items.map((b) => {
-                  return {
-                    value: b.id,
-                    label: b.app.budgetYear,
-                  };
-                })}
-                //  className="w-full"
-                label="Budget Year"
-                placeholder="Select Budget Year"
-                error={errors?.budgetId?.message}
-                disabled={disableFields}
-              />
-            )}
-          /> */}
-          <Controller
-            name="postBudgetPlanId"
-            control={control}
-            render={({ field: { value, onChange } }) => (
-              <Select
-                name="name"
-                value={value}
-                onChange={onChange}
-                data={budgetYear?.items.map((b) => {
-                  return {
-                    value: b.id,
-                    label: b.app.budgetYear,
-                  };
-                })}
-                label="Budget Year"
-                placeholder="Select Budget Year"
-                withAsterisk
-                error={errors?.budgetId?.message}
-                disabled={disableFields}
-              />
-            )}
-          />
-        </Box>
-        <Box className="w-1/2">
-          <Controller
-            name="procurementApplication"
-            control={control}
-            render={({ field: { onChange, value } }) => (
-              <Select
-                name="name"
-                label="Procured By"
-                value={value}
-                withAsterisk
-                error={
-                  errors?.procurementApplication
-                    ? errors?.procurementApplication?.message?.toString()
-                    : ''
-                }
-                onChange={onChange}
-                data={[
-                  {
-                    value: 'tendering',
-                    label: 'Tendering',
-                  },
-                  {
-                    value: 'purchasing',
-                    label: 'Purchasing',
-                  },
-                  {
-                    value: 'auctioning',
-                    label: 'Auctioning',
-                  },
-                ]}
-                placeholder="select Procurement Application"
-              />
-            )}
-          />
-          <Textarea
-            label="Description"
-            withAsterisk
-            autosize
-            minRows={5}
-            maxRows={5}
-            {...register('description')}
-            error={errors.description?.message}
-            disabled={disableFields}
-          />
-          <Textarea
-            label="Remark"
-            autosize
-            minRows={4}
-            maxRows={4}
-            {...register('remark')}
-            disabled={disableFields}
-            className="mt-2"
-          />
-        </Box>
-      </Flex>
+            <TextInput
+              label="Name"
+              withAsterisk
+              {...register('name')}
+              error={errors.name?.message}
+              disabled={disableFields}
+            />
+            <Controller
+              name="currency"
+              control={control}
+              render={({ field: { name, value, onChange } }) => (
+                <Select
+                  withCheckIcon={false}
+                  name={name}
+                  value={value}
+                  onChange={onChange}
+                  label="Currency"
+                  data={currency?.items?.map((c) => c.abbreviation) ?? []}
+                  className="w-full"
+                  withAsterisk
+                  searchable
+                  placeholder="Select Currency"
+                  error={errors?.currency?.message}
+                  disabled={disableFields}
+                />
+              )}
+            />
+            <Checkbox
+              label="is Multi Year"
+              className="w-full mt-4 mb-2"
+              {...register('isMultiYear')}
+              disabled={disableFields}
+            />
+            <TextInput
+              label="Estimated Amount"
+              className="w-full"
+              {...register('totalEstimatedAmount')}
+              error={errors?.totalEstimatedAmount?.message}
+              withAsterisk
+              type="number"
+              disabled={disableFields}
+            />
 
-      <EntityButton
-        mode={mode}
-        isSaving={isCreating}
-        isUpdating={isPrUpdating}
-        isDeleting={isPrDeleting}
-        onCreate={handleSubmit(onCreate)}
-        onReset={onReset}
-        onUpdate={handleSubmit(onUpdate)}
-        onDelete={handleSubmit(onDelete)}
-        disabled={disableFields}
-      />
-    </Stack>
+            <Controller
+              name="postBudgetPlanId"
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <Select
+                  name="name"
+                  value={value}
+                  onChange={onChange}
+                  data={budgetYear?.items.map((b) => {
+                    return {
+                      value: b.id,
+                      label: b.app.budgetYear,
+                    };
+                  })}
+                  label="Budget Year"
+                  placeholder="Select Budget Year"
+                  withAsterisk
+                  error={errors?.postBudgetPlanId?.message}
+                  disabled={disableFields}
+                />
+              )}
+            />
+          </Box>
+          <Box className="w-1/2">
+            <Controller
+              name="procurementApplication"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <Select
+                  name="name"
+                  label="Procured By"
+                  value={value}
+                  withAsterisk
+                  error={
+                    errors?.procurementApplication
+                      ? errors?.procurementApplication?.message?.toString()
+                      : ''
+                  }
+                  onChange={onChange}
+                  data={[
+                    {
+                      value: 'tendering',
+                      label: 'Tendering',
+                    },
+                    {
+                      value: 'purchasing',
+                      label: 'Purchasing',
+                    },
+                    {
+                      value: 'auctioning',
+                      label: 'Auctioning',
+                    },
+                  ]}
+                  placeholder="select Procurement Application"
+                />
+              )}
+            />
+            <Textarea
+              label="Description"
+              withAsterisk
+              autosize
+              minRows={5}
+              maxRows={5}
+              {...register('description')}
+              error={errors.description?.message}
+              disabled={disableFields}
+            />
+            <Textarea
+              label="Remark"
+              autosize
+              minRows={4}
+              maxRows={4}
+              {...register('remark')}
+              disabled={disableFields}
+              className="mt-2"
+            />
+          </Box>
+        </Flex>
+
+        <EntityButton
+          mode={mode}
+          isSaving={isCreating}
+          isUpdating={isPrUpdating}
+          isDeleting={isPrDeleting}
+          onCreate={handleSubmit(onCreate)}
+          onReset={onReset}
+          onUpdate={handleSubmit(onUpdate)}
+          onDelete={handleSubmit(onDelete)}
+          disabled={disableFields}
+        />
+      </Stack>
+    </Section>
   );
 };

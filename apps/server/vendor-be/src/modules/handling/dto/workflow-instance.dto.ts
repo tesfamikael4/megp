@@ -114,7 +114,7 @@ export class WorkflowInstanceResponse extends UpdateWorkflowInstanceDto {
   @ApiProperty()
   applicationNumber: string;
   @ApiProperty()
-  businessArea: BusinessAreaEntity;
+  businessArea: BusinessAreaEntity[];
   profileUpdate: ProfileInfoEntity;
   upgrade: any;
   upgradePaymentReceipt: any;
@@ -189,6 +189,7 @@ export class WorkflowInstanceResponse extends UpdateWorkflowInstanceDto {
               priceFrom: item?.valueFrom,
               priceTo: item?.valueTo == -1 ? 'infinity' : item?.valueTo,
             };
+
             break;
           }
         }

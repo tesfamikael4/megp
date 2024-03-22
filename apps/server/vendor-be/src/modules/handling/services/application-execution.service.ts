@@ -34,7 +34,7 @@ export class ApplicationExcutionService {
     private readonly baService: BusinessAreaService,
     private readonly invoiceService: InvoiceService,
     private readonly ptService: PreferentailTreatmentService,
-  ) {}
+  ) { }
 
   async getCurruntTaskByServiceKey(
     serviceKey: string,
@@ -127,17 +127,16 @@ export class ApplicationExcutionService {
           const bia = instance.isrVendor?.areasOfBusinessInterest.find(
             (item: any) => item.category == range.category,
           );
-          const lobs = bia.lineOfBusiness.map((item: any) => {
+          const lobs = bia?.lineOfBusiness.map((item: any) => {
             return item.name;
           });
-          const category = this.commonService.capitalizeFirstLetter(
-            bia.category,
-          );
+
           businessInterest.push({
-            category: category,
+            category: bia?.category,
             priceRange: formattedBC,
             lineOfBusiness: lobs,
           });
+
           response.isrvendor.basic.status =
             range.status == ApplicationStatus.PENDING
               ? ApplicationStatus.INPROGRESS
@@ -146,28 +145,29 @@ export class ApplicationExcutionService {
       }
       response.isrvendor.areasOfBusinessInterest = businessInterest;
     }
-    const preferentialkeys = this.commonService.getPreferencialServices();
-    if (
-      preferentialkeys.filter((item) => appData.service.key == item).length > 0
-    ) {
-      const preferential =
-        await this.ptService.getPreferetialTreatmentsByUserId(
-          appData.serviceId,
-          userInfo,
-        );
-      delete preferential.userId;
-      const serviceName = preferential.service.name;
-      delete preferential.service;
-      const pt = {
-        serviceName: serviceName,
-        ...this.commonService.reduceAttributes(preferential),
-      };
 
-      if (preferential) {
-        response.preferential = pt;
-        return response;
+    const preferentials = await this.ptService.getPreferetialTreatmentsByUserId(
+      appData.serviceId,
+      appData.userId,
+    );
+
+    const pts = [];
+    if (preferentials.length) {
+      for (const preferential of preferentials) {
+        delete preferential.userId;
+        const serviceName = preferential.service.name;
+        delete preferential.service;
+        const pt = {
+          serviceName: serviceName,
+          ...this.commonService.reduceAttributes(preferential),
+        };
+        pts.push(pt);
       }
-    } else if (ServiceKeyEnum.REGISTRATION_RENEWAL == serviceKey) {
+      response.preferential = pts;
+      return response;
+    }
+
+    if (ServiceKeyEnum.REGISTRATION_RENEWAL == serviceKey) {
       const business: BusinessAreaEntity = instance.isrVendor.businessAreas[0];
       const result = await this.appendRenewalData(business, instance, response);
       response = { ...result };

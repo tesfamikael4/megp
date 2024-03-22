@@ -44,7 +44,7 @@ import { UtilityModule } from '../utility/utility.module';
         transport: Transport.RMQ,
         options: {
           urls: [process.env.RMQ_URL],
-          queue: 'pr-workflow-initiate',
+          queue: 'work-plan-initiate',
           queueOptions: {
             durable: false,
           },

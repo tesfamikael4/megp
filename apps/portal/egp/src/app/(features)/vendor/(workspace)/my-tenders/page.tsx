@@ -10,6 +10,8 @@ import {
   Text,
   Divider,
   Avatar,
+  Menu,
+  UnstyledButton,
 } from '@mantine/core';
 import {
   IconBriefcase,
@@ -18,7 +20,9 @@ import {
   IconFolder,
   IconSearch,
 } from '@tabler/icons-react';
-import DashboardCard from '../dashboard/_components/card';
+import DashboardCard from '../../_components/card';
+import EmptyPlaceholder from '../../_components/empty-placeholder';
+import PageWrapper from '../../_components/page-wrapper';
 
 type TendersProps = {
   title: string;
@@ -72,11 +76,19 @@ const infoCard = [
   },
 ];
 export default function MyTenders() {
+  const { data, isLoading } = (() => ({
+    data: Array.from({ length: 8 }), // Empty array for now
+    isLoading: false,
+  }))();
   return (
-    <main className="">
+    <PageWrapper
+      condition={data.length > 0}
+      isLoading={isLoading}
+      placeholder={<EmptyPlaceholder />}
+    >
       <DashboardCard infoData={infoCard} />
       <Box>
-        <Box className="bg-white mr-5 ml-5 mb-4">
+        <Box>
           <Flex direction="column" align="start" className="space-y-4">
             <Text fw={700} size="xl" className="mt-4 text-green-500 ml-4">
               My Tenders
@@ -99,8 +111,8 @@ export default function MyTenders() {
             className="justify-end mt-4  "
           >
             <Flex
-              align="center"
-              className="w-1/2  mb-4 h-4"
+              align="end"
+              className="w-1/2  mb-4 h-4 gap-4"
               justify={{ base: 'flex-end', sm: 'flex-end' }}
             >
               <Input
@@ -109,20 +121,28 @@ export default function MyTenders() {
                 leftSection={<IconSearch width={16} height={16} />}
                 className="flex-grow bg-[#f5fbfe] w-auto ml-2"
               />
-              <Flex ml={'sm'} className="w-1/4 border-b" align="center">
-                <Text c="dimmed" size="xs" className="w-full ">
-                  Sort By
-                </Text>
-
-                <Select
-                  size="xs"
-                  placeholder="All Tenders"
-                  variant="unstyle"
-                  className="w-fit"
-                  rightSection={<IconChevronDown width={16} height={16} />}
-                  data={['All Tenders', 'Latest Tenders']}
-                />
-              </Flex>
+              <Menu
+                shadow="lg"
+                width={160}
+                position="bottom-end"
+                offset={13}
+                withArrow
+                arrowPosition="center"
+              >
+                <Menu.Target>
+                  <UnstyledButton
+                    fz={14}
+                    className="flex gap-2 px-2 py-1 border-b border-solid border-[var(--mantine-color-primary-filled)] items-center justify-center"
+                  >
+                    Sort by: All Tenders
+                    <IconChevronDown size={16} />
+                  </UnstyledButton>
+                </Menu.Target>
+                <Menu.Dropdown>
+                  <Menu.Item>All Tenders</Menu.Item>
+                  <Menu.Item>Latest Tenders</Menu.Item>
+                </Menu.Dropdown>
+              </Menu>
             </Flex>
           </Flex>
         </Box>
@@ -136,6 +156,6 @@ export default function MyTenders() {
           ))}
         </SimpleGrid>
       </Box>
-    </main>
+    </PageWrapper>
   );
 }

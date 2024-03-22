@@ -24,14 +24,16 @@ export class PostProcurementMechanismService extends ExtraCrudService<PostProcur
         const validationPromises = itemData.justification.map(
           async (element) => {
             await this.reasonService.isValid(
-              itemData.preBudgetPlanActivityId,
+              itemData.postBudgetPlanActivityId,
               element.key,
               element.status,
+              'post',
             );
           },
         );
         await Promise.all(validationPromises);
       }
+      delete itemData.justification;
       const item = this.repositoryPostProcurementMechanism.create(itemData);
       await this.repositoryPostProcurementMechanism.insert(item);
       return item;
@@ -52,11 +54,13 @@ export class PostProcurementMechanismService extends ExtraCrudService<PostProcur
               itemData.preBudgetPlanActivityId,
               element.key,
               element.status,
+              'post',
             );
           },
         );
         await Promise.all(validationPromises);
       }
+      delete itemData.justification;
       await this.repositoryPostProcurementMechanism.update(id, itemData);
       return this.findOne(id);
     } catch (error) {

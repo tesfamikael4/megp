@@ -13,7 +13,7 @@ export default function Page() {
   );
 
   return (
-    <section className="w-full relative flex flex-col p-6">
+    <section className="w-full relative flex flex-col">
       <CardLayout
         withBorder
         className="w-full"

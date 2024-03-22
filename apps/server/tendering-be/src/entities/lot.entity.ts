@@ -14,7 +14,8 @@ import { EqcTechnicalScoring } from './eqc-technical-scoring.entity';
 import { EqcPreferenceMargin } from './eqc-preference-margin.entity';
 import { EqcDueDiligence } from './eqc-due-diligence.entity';
 import { Item } from './tender-item.entity';
-import { BdsBidSecurity } from './bsd-bid-security.entity';
+import { BdsBidSecurity } from './bds-bid-security.entity';
+import { BidRegistrationDetail } from './bid-registration-detail.entity';
 
 @Entity({ name: 'lots' })
 export class Lot extends Audit {
@@ -69,4 +70,10 @@ export class Lot extends Audit {
 
   @OneToMany(() => BdsBidSecurity, (bdsBidSecurity) => bdsBidSecurity.lot)
   bdsBidSecurity: BdsBidSecurity[];
+
+  @OneToMany(
+    () => BidRegistrationDetail,
+    (bidRegistrationDetails) => bidRegistrationDetails.lot,
+  )
+  bidRegistrationDetails: BidRegistrationDetail[];
 }

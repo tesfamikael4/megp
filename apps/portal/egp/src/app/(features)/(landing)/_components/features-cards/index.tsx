@@ -5,10 +5,6 @@ import { featuredContent } from './data';
 import { FeaturesCard } from './card';
 
 const InfoCards = () => {
-  const card = () => {
-    return {};
-  };
-
   return (
     <Flex className={styles.root}>
       <Flex className={styles.titleContainer}>

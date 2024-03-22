@@ -14,14 +14,17 @@ import { IconSearch } from '@tabler/icons-react';
 import { useAuth } from '@megp/auth';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { useLazyGetApproveVendorInfoQuery } from '@/app/(features)/vendor/(workspace)/registration/_api/query';
+import {
+  useGetApproveVendorInfoQuery,
+  useLazyGetApproveVendorInfoQuery,
+} from '@/app/(features)/vendor/(workspace)/registration/_api/query';
 import InputWithButton from './input-with-button';
 
 export function HeroSection() {
   const { isAuthenticated } = useAuth();
   const router = useRouter();
 
-  const [getVendorInfo, { data }] = useLazyGetApproveVendorInfoQuery();
+  const { data } = useGetApproveVendorInfoQuery({});
 
   // if (isAuthenticated) {
   //   getVendorInfo({});
@@ -42,7 +45,7 @@ export function HeroSection() {
               md: 'left',
             }}
           >
-            Empower Your Business Through Electronic Public Procurement
+            Empower Your Business Through MANEPS
           </Text>
 
           <Flex
@@ -53,22 +56,24 @@ export function HeroSection() {
           >
             <InputWithButton />
             <Flex className="w-full" columnGap={'md'}>
-              <Button
-                bg={'#1D8E3F'}
-                size="sm"
-                className={classes.btn}
-                onClick={() => {
-                  isAuthenticated
-                    ? router.push('getting-started')
-                    : router.push('/auth/login');
-                }}
-                mx={{
-                  base: 'auto',
-                  md: 'unset',
-                }}
-              >
-                Get Started
-              </Button>
+              {!data && (
+                <Button
+                  bg={'#1D8E3F'}
+                  size="sm"
+                  className={classes.btn}
+                  onClick={() => {
+                    isAuthenticated
+                      ? router.push('getting-started')
+                      : router.push('/auth/login');
+                  }}
+                  mx={{
+                    base: 'auto',
+                    md: 'unset',
+                  }}
+                >
+                  Get Started
+                </Button>
+              )}
               {!isAuthenticated && (
                 <Button
                   bg={'transparent'}

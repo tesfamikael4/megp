@@ -5,11 +5,9 @@ import {
   Post,
   Param,
   BadRequestException,
-  UseGuards,
   Query,
   UseInterceptors,
   UploadedFile,
-  Req,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -21,30 +19,21 @@ import {
 import { DataResponseFormat } from '@api-data';
 import { VendorRegistrationsService } from '../services/vendor-registration.service';
 import { VendorInitiationDto } from '../dto/vendor-initiation.dto';
-import {
-  AllowAnonymous,
-  CurrentUser,
-  JwtGuard,
-} from 'src/shared/authorization';
+import { AllowAnonymous, CurrentUser } from 'src/shared/authorization';
 import { InsertAllDataDto } from '../dto/save-all.dto';
 import { SetVendorStatus } from '../dto/vendor.dto';
 import { CollectionQuery } from 'src/shared/collection-query';
 import { MbrsDataDto } from '../dto/mbrsData.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ReceiptDto } from '../dto/receipt.dto';
-import { CreateAreasOfBusinessInterest } from '../dto/areas-of-business-interest';
 import { ServiceKeyEnum } from 'src/shared/enums/service-key.enum';
-import { BusinessAreaService } from '../services/business-area.service';
 @ApiBearerAuth()
 @Controller('vendor-registrations')
 @ApiTags('Vendor-registrations')
 @ApiResponse({ status: 500, description: 'Internal error' })
 @ApiExtraModels(DataResponseFormat)
 export class VendorRegistrationsController {
-  constructor(
-    private readonly regService: VendorRegistrationsService,
-    private readonly baService: BusinessAreaService,
-  ) {}
+  constructor(private readonly regService: VendorRegistrationsService) { }
   @Get('get-isr-vendors')
   async getVendors() {
     return await this.regService.getIsrVendors();
@@ -98,7 +87,7 @@ export class VendorRegistrationsController {
   ) {
     return await this.regService.getIsrVendorByStatusBUserId(
       userInfo.id,
-      status,
+      status
     );
   }
   @Get('get-pending-services')
@@ -272,7 +261,7 @@ export class VendorRegistrationsController {
   async getAllBusinessAreasByUserId(@CurrentUser() userInfo: any) {
     return await this.regService.getAllBusinessAreasByUserId(userInfo.id);
   }
-
+  //profile information
   @Get('get-vendor-information')
   async getVendorInformation(@CurrentUser() userInfo: any) {
     return await this.regService.getVendorInformation(userInfo.id);

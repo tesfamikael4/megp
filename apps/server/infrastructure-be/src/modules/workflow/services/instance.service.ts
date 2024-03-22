@@ -127,7 +127,12 @@ export class InstanceService extends EntityCrudService<Instance> {
       });
 
       const instance = await this.repositoryInstance.findOne({
-        where: { activityId: activity.id, organizationId, itemId: itemId },
+        where: {
+          activityId: activity.id,
+          organizationId,
+          itemId: itemId,
+          status: Not(In(['Rejected', 'Approved'])),
+        },
         relations: {
           step: true,
         },

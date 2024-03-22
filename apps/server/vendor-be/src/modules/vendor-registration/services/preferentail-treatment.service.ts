@@ -47,23 +47,53 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
     });
     return result;
   }
-  async getPreferetialTreatmentsByUserId(serviceId: string, user: any) {
-    const result = await this.ptRepository.findOne({
+  async getPreferetialTreatmentsByUserId(serviceId: string, userId: string) {
+    const result = await this.ptRepository.find({
       relations: { service: true },
       where: {
-        userId: user.id,
-        status: Not(ApplicationStatus.APPROVED),
-        serviceId: serviceId,
+        userId: userId,
+        status: Not(
+          In([ApplicationStatus.APPROVED, ApplicationStatus.REJECTED]),
+        ),
+        // serviceId: serviceId,
       },
     });
     return result;
   }
+  async getSubmittedPTByUserId(
+    userId: any,
+  ): Promise<PreferentialTreatmentsEntity[]> {
+    const result = await this.ptRepository.find({
+      relations: { service: true },
+      where: { userId: userId, status: ApplicationStatus.SUBMITTED },
+    });
+    return result;
+  }
+  async getPreviousPTByUserId(
+    userId: any,
+    serviceIds: string[],
+  ): Promise<PreferentialTreatmentsEntity[]> {
+    const result = await this.ptRepository.find({
+      relations: { service: true },
+      where: {
+        userId: userId,
+        status: ApplicationStatus.APPROVED,
+        service: In(serviceIds),
+      },
+    });
+    return result;
+  }
+
   //otherDocuments: Express.Multer.File[]
   getServiceKey(item) {
     item.service.key == ServiceKeyEnum.IBM;
   }
-  async submitPreferential(dtos: CreatePTDto[], user: any) {
-    const response = [];
+  async submitPreferential(
+    dtos: CreatePTDto[],
+    user: any,
+    instanceId: string = null,
+    applicationNumber = null,
+  ) {
     const vendor = await this.srRepository.findOne({
       where: { userId: user.id },
     });
@@ -81,7 +111,6 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
           dto.status == ApplicationStatus.DRAFT
             ? ApplicationStatus.DRAFT
             : ApplicationStatus.SUBMITTED;
-
         const existedRequest = await this.ptRepository.findOne({
           where: {
             serviceId: dto.serviceId,
@@ -93,7 +122,11 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
           entity.id = existedRequest.id;
         }
         await this.ptRepository.save(entity);
-        if (dto.status == ApplicationStatus.SUBMIT) {
+        if (
+          dto.status == ApplicationStatus.SUBMIT ||
+          instanceId != undefined ||
+          instanceId != null
+        ) {
           const wfi = new CreateWorkflowInstanceDto();
           wfi.bpId = bpId;
           wfi.requestorId = vendor.id;
@@ -106,25 +139,32 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
               dto.serviceId,
               user.id,
             );
-          if (baexisted) {
+          if (baexisted?.status == ApplicationStatus.ADJUSTMENT && instanceId == null) {
             const nextCommand = new GotoNextStateDto();
             nextCommand.instanceId = baexisted.instanceId;
             nextCommand.action = 'ISR';
             nextCommand.data = wfi.data;
             return await this.workflowService.gotoNextStep(nextCommand, user);
+          } else if (baexisted?.status == ApplicationStatus.ADJUSTMENT && instanceId != null) {
+            baexisted.status = ApplicationStatus.PENDING;
+            this.baService.update(baexisted.id, baexisted);
+            continue;
           }
-          const wfiResult = await this.workflowService.intiateWorkflowInstance(
-            wfi,
-            user,
-          );
-          const ba = new BusinessAreaEntity();
-          ba.instanceId = wfiResult.application.id;
-          ba.vendorId = vendor?.id;
-          ba.category = ServiceKeyEnum.preferentialTreatment;
-          ba.applicationNumber = wfiResult.application.applicationNumber;
-          ba.status = ApplicationStatus.PENDING;
-          ba.serviceId = dto.serviceId;
-          await this.baService.create(ba);
+          const baEnt = new BusinessAreaEntity();
+          baEnt.vendorId = vendor?.id;
+          baEnt.category = ServiceKeyEnum.preferentialTreatment;
+          baEnt.status = ApplicationStatus.PENDING;
+          baEnt.serviceId = dto.serviceId;
+          if (!instanceId) {
+            const wfiResult =
+              await this.workflowService.intiateWorkflowInstance(wfi, user);
+            baEnt.applicationNumber = wfiResult.application.applicationNumber;
+            baEnt.instanceId = wfiResult.application.id;
+          } else {
+            baEnt.instanceId = instanceId;
+            baEnt.applicationNumber = applicationNumber;
+          }
+          await this.baService.create(baEnt);
         }
       } catch (error) {
         throw new HttpException(error, 500);
@@ -211,86 +251,6 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
     }
   }
 
-  // async uploadPreferentialAttachments(attachments: any, user: any) {
-  //   const subdirectory = 'preferential-documents';
-  //   const response = {};
-  //   try {
-  //     if (attachments.msmeCerti) {
-  //       const certificateUrl = await this.uploaderService.uploadDocuments(
-  //         attachments.msmeCerti[0],
-  //         user,
-  //         subdirectory,
-  //       );
-  //       const keys = this.commonService.getServiceCatagoryKeys(
-  //         ServiceKeyEnum.MSME,
-  //       );
-  //       const pt = await this.ptRepository.findOne({
-  //         where: {
-  //           service: {
-  //             key: In(keys),
-  //           },
-  //           status: In([ApplicationStatus.SUBMITTED, ApplicationStatus.DRAFT]),
-  //           userId: user.id,
-  //         },
-  //       });
-  //       if (pt) {
-  //         pt.certificateUrl = certificateUrl;
-  //         await this.ptRepository.save(pt);
-  //         response['msmeCerti'] = certificateUrl;
-  //       } else {
-  //         throw new HttpException("MSME data Not found", 404);
-  //       }
-
-  //     }
-  //     if (attachments.ibmCerti) {
-  //       const certificateUrl = await this.uploaderService.uploadDocuments(
-  //         attachments.ibmCerti,
-  //         user,
-  //         subdirectory,
-  //       );
-  //       const pt = await this.ptRepository.findOne({
-  //         where: {
-  //           service: { key: ServiceKeyEnum.IBM },
-  //           status: In([ApplicationStatus.SUBMITTED, ApplicationStatus.DRAFT]),
-  //           userId: user.id,
-  //         },
-  //       });
-  //       if (pt) {
-  //         pt.certificateUrl = certificateUrl;
-  //         await this.ptRepository.save(pt);
-  //         response['ibmCerti'] = certificateUrl;
-  //       } else {
-  //         throw new HttpException("IBM data Not found", 404);
-  //       }
-
-  //     }
-  //     if (attachments.marginalizedCerti) {
-  //       const certificateUrl = await this.uploaderService.uploadDocuments(
-  //         attachments.marginalizedCerti,
-  //         user,
-  //         subdirectory,
-  //       );
-  //       const pt = await this.ptRepository.findOne({
-  //         where: {
-  //           service: { key: ServiceKeyEnum.MARGINALIZED_GROUP },
-  //           status: In([ApplicationStatus.SUBMITTED, ApplicationStatus.DRAFT]),
-  //           userId: user.id,
-  //         },
-  //       });
-  //       if (pt) {
-  //         pt.certificateUrl = certificateUrl;
-  //         await this.ptRepository.save(pt);
-  //         response['marginalizedCerti'] = certificateUrl;
-  //       } else {
-  //         throw new HttpException("marginalized Data Not found", 404);
-  //       }
-
-  //     }
-  //     return response;
-  //   } catch (error) {
-  //     throw new Error(error);
-  //   }
-  // }
   async getDraftPreferentialApplications(user: any) {
     const response = [];
     const result = await this.ptRepository.find({
@@ -359,5 +319,9 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
     const services =
       await this.serviceService.getPreferentialTreatmentByKeys(keys);
     return services;
+  }
+
+  async saveAll(pts: PreferentialTreatmentsEntity[]) {
+    return this.ptRepository.save(pts);
   }
 }

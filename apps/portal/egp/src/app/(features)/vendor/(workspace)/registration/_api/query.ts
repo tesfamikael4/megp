@@ -1,3 +1,4 @@
+import { briefcaseApi } from './briefcase.api';
 import { paymentApi } from './payment.api';
 import { vendorDataGetawayQuery } from './vendor-dategateway-query';
 import { vendorRegistrationQuery } from './vendor-regitration-query.api';
@@ -43,3 +44,9 @@ export const {
   useLazyGetFPPADataQuery,
   useLazyGetNCICDataQuery,
 } = vendorDataGetawayQuery;
+
+export const {
+  useUploadToBriefcaseMutation,
+  useGetBriefcaseFilesQuery,
+  useLazyGetBriefcaseFilesQuery,
+} = briefcaseApi;

@@ -1,7 +1,7 @@
 'use client';
 
 import { Box, Button, Group, NumberInput, TextInput } from '@mantine/core';
-import { Table, TableConfig, notify } from '@megp/core-fe';
+import { Section, Table, TableConfig, notify } from '@megp/core-fe';
 import { useEffect, useState } from 'react';
 import { DateInput } from '@mantine/dates';
 import { IconDeviceFloppy } from '@tabler/icons-react';
@@ -17,41 +17,49 @@ const tableData = [
     timeline: 'Procurement Initiation',
     period: 0,
     dueDate: new Date(),
+    appDueDate: new Date(),
   },
   {
     timeline: 'Procurement Requisition',
     period: 10,
     dueDate: new Date(),
+    appDueDate: new Date(),
   },
   {
     timeline: 'Tender Publication',
     period: 10,
     dueDate: new Date(),
+    appDueDate: new Date(),
   },
   {
     timeline: 'Tender Submission',
     period: 10,
     dueDate: new Date(),
+    appDueDate: new Date(),
   },
   {
     timeline: ' Evaluation',
     period: 10,
     dueDate: new Date(),
+    appDueDate: new Date(),
   },
   {
     timeline: 'Award',
     period: 10,
     dueDate: new Date(),
+    appDueDate: new Date(),
   },
   {
     timeline: 'Contract Signing',
     period: 10,
     dueDate: new Date(),
+    appDueDate: new Date(),
   },
   {
     timeline: 'Contract Closure',
     period: 10,
     dueDate: new Date(),
+    appDueDate: new Date(),
   },
 ];
 
@@ -59,7 +67,9 @@ export default function TimelineTab({ activityId }: { activityId?: string }) {
   const [data, setData] = useState<any[]>(tableData);
   const { id } = useParams();
 
-  const { data: procurementRequisition } = useReadQuery(id.toString());
+  const { data: procurementRequisition, isSuccess } = useReadQuery(
+    id.toString(),
+  );
 
   const [createTimeline, { isLoading: isTimelineCreating }] =
     useCreatePrTimelineMutation();
@@ -73,15 +83,7 @@ export default function TimelineTab({ activityId }: { activityId?: string }) {
         header: 'Name',
         accessorKey: 'timeline',
       },
-      {
-        id: 'appDueDate',
-        header: procurementRequisition?.isPlanned && 'Due Date From Planned',
-        accessorKey: 'appDueDate',
-        cell: ({ getValue, row, column }) =>
-          procurementRequisition?.isPlanned && (
-            <DueDate getValue={getValue} row={row} column={column} />
-          ),
-      },
+
       {
         id: 'period',
         header: 'Period',
@@ -90,6 +92,42 @@ export default function TimelineTab({ activityId }: { activityId?: string }) {
           <Period getValue={getValue} row={row} column={column} />
         ),
       },
+
+      {
+        id: 'dueDate',
+        header: 'Due Date',
+        accessorKey: 'dueDate',
+        cell: ({ getValue, row, column }) => (
+          <DueDate getValue={getValue} row={row} column={column} />
+        ),
+      },
+    ],
+  };
+  const listAppConfig: TableConfig<any> = {
+    columns: [
+      {
+        header: 'Name',
+        accessorKey: 'timeline',
+      },
+
+      {
+        id: 'appDueDate',
+        header: 'Planned Due Date',
+        accessorKey: 'appDueDate',
+        cell: ({ getValue, row, column }) => (
+          <AppDueDate getValue={getValue} row={row} column={column} />
+        ),
+      },
+
+      {
+        id: 'period',
+        header: 'Period',
+        accessorKey: 'period',
+        cell: ({ getValue, row, column }) => (
+          <Period getValue={getValue} row={row} column={column} />
+        ),
+      },
+
       {
         id: 'dueDate',
         header: 'Due Date',
@@ -207,6 +245,19 @@ export default function TimelineTab({ activityId }: { activityId?: string }) {
       </>
     );
   };
+  const AppDueDate = ({ getValue, row: { index }, column: { id } }: any) => {
+    const initialValue = getValue();
+    return (
+      <>
+        <DateInput
+          valueFormat="DD-MMM-YYYY"
+          value={new Date(initialValue)}
+          placeholder="Pick date"
+          disabled={true}
+        />
+      </>
+    );
+  };
 
   const handleSave = async () => {
     const activityId = { procurementRequisitionId: id };
@@ -244,6 +295,7 @@ export default function TimelineTab({ activityId }: { activityId?: string }) {
       const castedData = timeline?.items?.map((t) => ({
         ...t,
         dueDate: new Date(t.dueDate),
+        AppDueDate: new Date(t.appDueDate),
         fromDate: new Date(t.fromDate),
       }));
       castedData && setData([...castedData]);
@@ -251,16 +303,24 @@ export default function TimelineTab({ activityId }: { activityId?: string }) {
   }, [isTimelineSuccess, timeline?.items, timeline?.total]);
 
   return (
-    <div className="mt-4">
-      {/* {<Table config={listplannedConfig} data={data} />} */}
-      {data.length != 0 && <Table config={listConfig} data={data} />}
-      {!activityId && (
-        <Group className="mt-2" justify="end">
-          <Button onClick={handleSave} loading={isTimelineCreating} mb={'sm'}>
-            <IconDeviceFloppy size={16} /> Save
-          </Button>
-        </Group>
-      )}
-    </div>
+    <Section title="Timeline" collapsible={false}>
+      <div className="mt-4">
+        {isSuccess && procurementRequisition?.isPlanned && (
+          <Table config={listAppConfig} data={data} />
+        )}
+        {data.length != 0 &&
+          isSuccess &&
+          !procurementRequisition?.isPlanned && (
+            <Table config={listConfig} data={data} />
+          )}
+        {!activityId && (
+          <Group className="mt-2" justify="end">
+            <Button onClick={handleSave} loading={isTimelineCreating} mb={'sm'}>
+              <IconDeviceFloppy size={16} /> Save
+            </Button>
+          </Group>
+        )}
+      </div>
+    </Section>
   );
 }

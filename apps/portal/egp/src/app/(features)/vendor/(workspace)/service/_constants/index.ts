@@ -13,7 +13,8 @@ export const services: { title; description; link }[] = [
   },
   {
     title: 'Profile update',
-    description: 'Renew registration',
+    description:
+      'Activated vendors can update key details such as contact information, business name, and ownership status in their profiles.',
     link: '/vendor/registration/profile-update',
   },
   {
@@ -24,7 +25,8 @@ export const services: { title; description; link }[] = [
   },
   {
     title: 'Add Additional Services',
-    description: 'Renew registration',
+    description:
+      "Vendors initially register specifying a primary service category like 'Works' on Malawi's e-GP. They can later expand their services, like Goods, Services,' for a more comprehensive representation.",
     link: '/vendor/registration/add-service/ppda',
   },
 ];

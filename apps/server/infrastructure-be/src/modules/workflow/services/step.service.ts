@@ -54,8 +54,7 @@ export class StepService extends ExtraCrudService<Step> {
     const orderList = [];
 
     for (const element of defaultStep) {
-      const name = element.name;
-      const matchingStep = steps.find((step) => step.name === name);
+      const matchingStep = steps.find((step) => step.name === element.name);
 
       if (matchingStep) {
         orderList.push(matchingStep);
@@ -63,10 +62,7 @@ export class StepService extends ExtraCrudService<Step> {
     }
 
     for (let i = 1; i < orderList.length; i++) {
-      const currentStep = orderList[i];
-      const previousStep = orderList[i - 1];
-
-      if (currentStep.order <= previousStep.order) {
+      if (orderList[i].order <= orderList[i - 1].order) {
         return false;
       }
     }

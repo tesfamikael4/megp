@@ -44,7 +44,7 @@ export class ProcurementRequisitionItemService extends ExtraCrudService<Procurem
     const result = await entityManager
       .getRepository(ProcurementRequisitionItem)
       .insert(this.repositoryProcurementRequisitionItem.create(itemData));
-    await this.updatePR(result, 'add');
+    await this.updatePR(itemData, 'add');
 
     return result;
   }
@@ -75,10 +75,7 @@ export class ProcurementRequisitionItemService extends ExtraCrudService<Procurem
     type: 'add' | 'remove' | 'update',
     balancedItem = null,
   ): Promise<void> {
-    const procurementRequisitionId =
-      itemData.length > 1
-        ? itemData[0].procurementRequisitionId
-        : itemData.procurementRequisitionId;
+    const procurementRequisitionId = itemData[0].procurementRequisitionId;
     let temp = 0;
     if (Array.isArray(itemData)) {
       temp = itemData.reduce(

@@ -23,6 +23,9 @@ export class ProcurementTechnicalTeam extends Audit {
   @Column()
   userId: string;
 
+  @Column({ nullable: true })
+  userName: string;
+
   @Column()
   isTeamLead: boolean;
 }

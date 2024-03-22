@@ -5,7 +5,6 @@ import {
   SimpleGrid,
   Flex,
   Box,
-  Image,
   Text,
   ActionIcon,
   Group,
@@ -23,6 +22,8 @@ import {
   IconArrowUp,
 } from '@tabler/icons-react';
 import Link from 'next/link';
+import { LogoFooter } from './logo';
+import Image from 'next/image';
 
 export default function Footer() {
   const navigateToTop = () => {
@@ -31,22 +32,16 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-[#002D0D] md:py-16 xs:pt-16  text-[#8C94A3] items-center justify-center">
-      <Container size={'xl'} className="relative">
+    <footer className=" bg-[var(--mantine-color-primary-7)] xs:pt-16 text-white items-center justify-center p-4">
+      <Container size={'xl'} className="relative pt-10">
         <SimpleGrid cols={{ base: 1, sm: 2, md: 2, lg: 2 }} className="ml-auto">
           <Flex direction="column" gap={'md'} px="sm">
             <Group>
-              <Link href="http://peragosystems.com/home">
-                <Image
-                  src="/ppda-svg.svg"
-                  alt="logo"
-                  height="32"
-                  width="32"
-                  className="object-contain"
-                />
+              <Link href="/">
+                <LogoFooter />
               </Link>
 
-              <Text size="xs" className="text-[#8F9FA3] text-justify">
+              <Text size="xs" className=" text-justify">
                 Electronic Government Procurement (eGP) refers to the use of
                 digital technologies to enable a more efficient and transparent
                 exchange of information, and interactions and transactions
@@ -58,10 +53,7 @@ export default function Footer() {
               </Text>
               <Box>
                 <Link href="#">
-                  <Text
-                    size="xs"
-                    className="flex items-center justify-center text-white"
-                  >
+                  <Text size="xs" className="flex items-center justify-center ">
                     More about us <IconPointFilled />
                   </Text>
                 </Link>
@@ -120,38 +112,19 @@ export default function Footer() {
 
           <Flex direction={'column'} gap={'lg'} px="md">
             {/* contact us */}
-            <Flex direction={'column'} mt={18}>
-              <Text className="text-white mb-2">CONTACT US</Text>
-              <Flex
-                columnGap={'xl'}
-                className="w-full flex-col gap-4 lg:flex-row lg:items-center lg:justify-between"
-              >
-                <Flex direction={'column'}>
-                  <Text size="xs" className="text-[#8F9FA3] mb-2">
-                    +1 (999) 888-77-66
-                  </Text>
-                  <Text size="xs" className="text-[#8F9FA3] mb-2">
-                    hello@logoipsum.com
-                  </Text>
-                </Flex>
-                <Flex direction="column" ml={3}>
-                  <Text size="xs" className="text-[#8F9FA3] mb-2">
-                    Fax:+251111248612 / +251111540120
-                  </Text>
-                  <Text size="xs" className="text-[#8F9FA3]">
-                    P.O.Box: 6217376, Addis Ababa, Ethiopia
-                  </Text>
-                </Flex>
+            <Flex direction={'column'} gap={5}>
+              <Text fw={500}>CONTACT US</Text>
+              <Flex direction={'column'}>
+                <Text size="xs">+1 (999) 888-77-66</Text>
+                <Text size="xs">hello@logoipsum.com</Text>
+                <Text size="xs">Fax:+251111248612 / +251111540120</Text>
+                <Text size="xs">P.O.Box: 6217376, Addis Ababa, Ethiopia</Text>
               </Flex>
             </Flex>
-            {/* Location */}
-            <Flex
-              className="w-full  flex-col justify-center gap-4 lg:flex-row lg:items-center lg:justify-between "
-              columnGap={'xl'}
-            >
-              <Box>
-                <Text className="text-white mb-2 ">LOCATION</Text>
-                <Text className="text-sm">
+            <Flex direction={'column'} gap={5}>
+              <Text fw={500}>LOCATION</Text>
+              <Flex direction={'column'}>
+                <Text fz={12}>
                   Public Procurement and Disposal of Assets Authority,
                   <br />
                   The Jireh Bible House,
@@ -162,35 +135,36 @@ export default function Footer() {
                   <br />
                   Capital City,Lilongwe 3, Malawi
                 </Text>
-              </Box>
-              <Flex direction={'column'} className="flex-auto">
-                <Text className="text-white ">IMPORTANT LINKS</Text>
-                <Box>
-                  <SimpleGrid cols={1} className="sm:text-xs">
-                    <Link href="#">https://www.figma.com/file/</Link>
-                    <Link href="#">https://www.figma.com/file/</Link>
-                    <Link href="#">https://www.figma.com/file/</Link>
-                    <Link href="#">https://www.figma.com/file/</Link>
-                    <Link href="#">https://www.figma.com/file/</Link>
-                    <Link href="#">https://www.figma.com/file/</Link>
-                  </SimpleGrid>
-                </Box>
+              </Flex>
+            </Flex>
+            {/* Location */}
+            <Flex direction={'column'} gap={5}>
+              <Text fw={500}>IMPORTANT LINKS</Text>
+              <Flex fz={12} direction={'column'}>
+                <Link href="#">https://www.figma.com/file/</Link>
+                <Link href="#">https://www.figma.com/file/</Link>
               </Flex>
             </Flex>
           </Flex>
         </SimpleGrid>
 
-        <Flex className="items-center justify-center mx-auto mt-12 text-[#8e96a1]">
-          <Text size="xs">
-            Copyright &copy; {currentYear} All rights reserved. Powered by
-            Perago Inc.
+        <Flex className="flex-col items-center justify-center mx-auto mt-12 ">
+          <Text ta={'center'} fz={14}>
+            Copyright © {currentYear}, Procurement and Disposal of Assets
+            Authority
           </Text>
+          <Flex gap={5} fw={500} className=" items-center justify-center">
+            Powered By
+            <div className="w-[80px] h-[40px] relative">
+              <Image src={'/perago-white.png'} fill alt="perago" />
+            </div>
+          </Flex>
         </Flex>
 
         <Avatar
           bg="white"
           onClick={navigateToTop}
-          className="absolute -top-0 right-0 cursor-pointer"
+          className="absolute top-5 right-0 cursor-pointer"
         >
           <IconArrowUp />
         </Avatar>

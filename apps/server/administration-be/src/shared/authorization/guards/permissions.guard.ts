@@ -1,4 +1,5 @@
 import { CanActivate, ExecutionContext, Type } from '@nestjs/common';
+import { CurrentUserDto } from '../models/auth.model';
 
 export function PermissionsGuard(permissions: string): Type<CanActivate> {
   class PermissionsGuardMixin implements CanActivate {
@@ -9,12 +10,11 @@ export function PermissionsGuard(permissions: string): Type<CanActivate> {
       }
 
       const request = context.switchToHttp().getRequest();
-      const user: any = request.user;
+      const user: CurrentUserDto = request.user;
       const userPermissions = user?.permissions;
 
-      return requiredPermissions.some(
-        (requiredPermission) =>
-          userPermissions?.find((x: any) => x.key == requiredPermission.trim()),
+      return requiredPermissions.some((requiredPermission) =>
+        userPermissions?.find((x: any) => x == requiredPermission.trim()),
       );
     }
   }

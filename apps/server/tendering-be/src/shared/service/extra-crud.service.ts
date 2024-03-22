@@ -57,9 +57,12 @@ export class ExtraCrudService<T extends ObjectLiteral> {
   }
 
   async update(id: string, itemData: any): Promise<T | undefined> {
-    const entity = await this.findOneOrFail(id);
-    await this.repository.update(entity.id, itemData);
-    return this.findOne(id);
+    const item = await this.findOneOrFail(id);
+    await this.repository.update(item.id, itemData);
+    return {
+      ...item,
+      ...itemData,
+    };
   }
 
   async softDelete(id: string, req?: any): Promise<void> {
@@ -111,7 +114,7 @@ export class ExtraCrudService<T extends ObjectLiteral> {
   }
 
   private async findOneOrFail(id: any): Promise<T> {
-    const item = await this.findOne(id);
+    const item = await this.repository.findOne(id);
     if (!item) {
       throw new NotFoundException(`not_found`);
     }

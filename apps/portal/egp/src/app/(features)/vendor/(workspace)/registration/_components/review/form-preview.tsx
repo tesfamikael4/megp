@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Accordion, Modal } from '@mantine/core';
+import { Accordion, Box, Modal } from '@mantine/core';
 import classes from './accordion.module.scss';
 import { renderTable } from './renderTable';
 import { useDisclosure } from '@mantine/hooks';
@@ -9,6 +9,7 @@ import { formatColumns, tab } from '../../_constants';
 import { ShowFile } from './panels/showFile';
 import { FormattedPanel } from './panels/formatedPanel';
 import { RenderObject } from './panels/renderObject';
+import { useAuth } from '@megp/auth';
 
 function FormPreview({
   data,
@@ -19,8 +20,10 @@ function FormPreview({
 }) {
   const tabs = [...uniqueTabs, ...tab];
 
-  const [url, setUrl] = useState('');
+  const [url, setUrl] = useState({ url: '', filename: '' });
   const [opened, { close, open }] = useDisclosure(false);
+  const { user } = useAuth();
+
   return (
     <Accordion variant="separated" classNames={classes}>
       {tabs.map((tab) => {
@@ -36,7 +39,7 @@ function FormPreview({
                 title={'Attachment'}
                 bg={'transparent'}
               >
-                {url && <ShowFile url={url} filename={data[tabValue]} />}
+                {url.url && <ShowFile url={url.url} filename={url.filename} />}
               </Modal>
               <Accordion.Item
                 key={tabValue}
@@ -44,7 +47,30 @@ function FormPreview({
                 value={tabValue}
               >
                 <Accordion.Control>{tabName}</Accordion.Control>
-                {Array.isArray(data[tabValue]) ? (
+                {typeof data[tabValue] === 'string' ? (
+                  <Accordion.Panel key={tabValue}>
+                    <Accordion.Panel>
+                      {data[tabValue] ? (
+                        <ShowFile
+                          url={`${
+                            process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api'
+                          }/upload/get-file/${
+                            tabValue === 'supportingDocuments'
+                              ? 'SupportingDocument'
+                              : tabValue === 'certificate'
+                                ? 'Certificate'
+                                : 'paymentReceipt'
+                          }/${data[tabValue]}`}
+                          filename={data[tabValue]}
+                        />
+                      ) : (
+                        <Box className="flex items-center h-20 w-full justify-center">
+                          No file uploaded
+                        </Box>
+                      )}
+                    </Accordion.Panel>
+                  </Accordion.Panel>
+                ) : Array.isArray(data[tabValue]) ? (
                   <Accordion.Panel
                     key={tabValue}
                     className="items-center"
@@ -57,7 +83,14 @@ function FormPreview({
                       },
                     }}
                   >
-                    {renderTable(data[tabValue], formatColumns, tabValue)}
+                    {renderTable(
+                      data[tabValue],
+                      formatColumns,
+                      tabValue,
+                      open,
+                      setUrl,
+                      user?.id,
+                    )}
                   </Accordion.Panel>
                 ) : formatColumns[tabValue] ? (
                   <FormattedPanel data={data} tabValue={tabValue} />

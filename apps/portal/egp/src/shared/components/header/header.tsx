@@ -29,6 +29,7 @@ import {
 import { useAuth } from '@megp/auth';
 import { usePathname, useRouter } from 'next/navigation';
 import { IconSearch } from '@tabler/icons-react';
+import LogoIcon from './logo-icon';
 
 function Header() {
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] =
@@ -41,7 +42,7 @@ function Header() {
   const currentPath = usePathname();
 
   const workspace = isAuthenticated
-    ? [{ link: '/vendor/dashboard', label: 'Workspace' }]
+    ? [{ link: '/vendor/service', label: 'Workspace' }]
     : [];
 
   const links: {
@@ -51,13 +52,18 @@ function Header() {
   }[] = [
     { link: '/', label: 'Home' },
 
-    { link: '/vendor/tender', label: 'Procurement Notice' },
+    { link: '/vendor/tender', label: 'Procurement Notices' },
     { link: '/vendor/plans', label: 'Plans' },
     { link: '/vendor/contracts', label: 'Contracts' },
+    { link: '/vendor/data', label: 'Data' },
+
     {
       link: '#more',
       label: 'More',
       links: [
+        { link: '/resources', label: 'Vendor Registration' },
+        { link: '/about-us', label: 'Registered Vendors' },
+        { link: '/about-us', label: 'Procurement Information' },
         { link: '/faq', label: 'FAQ' },
         { link: '/resources', label: 'Resources' },
         { link: '/about-us', label: 'About E-gp' },
@@ -87,9 +93,10 @@ function Header() {
   }, [isAuthenticated]);
 
   const items = links.map((link) => {
-    console.log(currentPath === link.link);
     const menuItems = link.links?.map((item) => (
-      <Menu.Item key={item.link}>{item.label}</Menu.Item>
+      <Menu.Item key={item.link} onClick={() => router.push(item.link)}>
+        {item.label}
+      </Menu.Item>
     ));
 
     if (menuItems) {
@@ -131,16 +138,9 @@ function Header() {
         <div className={styles.inner}>
           <Flex justify="space-between" w="100%" h={'100%'}>
             <Flex align={'center'} gap={'xs'} h={'100%'}>
-              <Image
-                src="/ppda-svg.svg"
-                alt="logo"
-                height="32"
-                width="32"
-                className="object-contain"
-              />
-              <Text className="text-xl font-bold">PPDA</Text>
+              <LogoIcon />
             </Flex>
-            <Group gap="xl" visibleFrom="md" h={'100%'}>
+            <Group gap="xl" visibleFrom="md" h={'100%'} py={10}>
               {items}
             </Group>
             {user && (

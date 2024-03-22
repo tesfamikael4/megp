@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Step, Workflow } from 'src/entities';
 import { Instance } from 'src/entities/instance.entity';
 import { State } from 'src/entities/state.entity';
-import { Repository } from 'typeorm';
+import { In, Not, Repository } from 'typeorm';
 import { setup } from 'xstate';
 import axios from 'axios';
 import { ClientProxy } from '@nestjs/microservices';
@@ -44,7 +44,13 @@ export class XMachineService {
     private readonly workflowRMQClient: ClientProxy,
   ) {}
 
-  async createMachineConfig(activityId, details, state, itemId): Promise<any> {
+  async createMachineConfig(
+    activityId: string,
+    details,
+    state,
+    itemId: string,
+    instanceId: string,
+  ): Promise<any> {
     try {
       const adjust = '';
       let isWorkGroup = {
@@ -54,9 +60,8 @@ export class XMachineService {
       let isAllChecked = false;
       const existingData = await this.repositoryInstance.findOne({
         where: {
-          activityId: activityId,
-          organizationId: details.organizationId,
-          itemId,
+          id: instanceId,
+          status: Not(In(['Rejected', 'Approved'])),
         },
       });
 

@@ -1,7 +1,10 @@
 'use client';
 
-import { useLazyReadQuery } from '@/app/(features)/procurement-requisition/_api/procurement-requisition.api';
-import { useApprovePrMutation } from '@/app/(features)/procurement-requisition/_api/approve.api';
+import { useReadQuery } from '@/store/api/pr/pr.api';
+import {
+  useApprovePrMutation,
+  useLazyGetPrItemsQuery,
+} from '@/store/api/pr/pr.api';
 import {
   Avatar,
   Badge,
@@ -21,6 +24,7 @@ import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { StatisticCard } from './statistic-card';
 import { useLazyGetPostBudgetPlansQuery } from '@/store/api/post-budget-plan/post-budget-plan.api';
+import { useCanSubmitQuery } from '@/store/api/workflow/workflow.api';
 
 const PlanYearTab = () => {
   const badgeColor = {
@@ -34,9 +38,13 @@ const PlanYearTab = () => {
   //states
   const [opened, { toggle }] = useDisclosure(false);
   const [mode, setMode] = useState('plan');
-
-  const [triggerPr, { data: pr }] = useLazyReadQuery();
   const { id } = useParams();
+
+  const { data: pr } = useReadQuery(id?.toString());
+
+  const { data: canSubmit } = useCanSubmitQuery('procurementrequisition');
+
+  const [triggerItem, { data: items }] = useLazyGetPrItemsQuery();
 
   // rtk queries
 
@@ -76,12 +84,12 @@ const PlanYearTab = () => {
   }, [id]);
 
   useEffect(() => {
-    triggerPr(id?.toString());
-  }, [id, triggerPr]);
-
-  useEffect(() => {
     getplan(undefined);
   }, [getplan]);
+
+  useEffect(() => {
+    id && triggerItem({ id: id?.toString(), collectionQuery: undefined });
+  }, [id, triggerItem]);
 
   return (
     <Box>
@@ -100,8 +108,9 @@ const PlanYearTab = () => {
               onClick={submitPlan}
               loading={isLoading}
               disabled={
-                (pr as any)?.status != 'DRAFT' &&
-                (pr as any)?.status != 'ADJUST'
+                ((pr as any)?.status != 'DRAFT' &&
+                  (pr as any)?.status != 'ADJUST') ||
+                canSubmit == false
               }
             >
               {(pr as any)?.status != 'DRAFT' && (pr as any)?.status != 'ADJUST'
@@ -126,7 +135,11 @@ const PlanYearTab = () => {
                   minValue={50}
                   type="targetGroup"
                 />
-                <StatisticCard title="Activities" value={1} type="activity" />
+                <StatisticCard
+                  title="Items"
+                  value={items?.total}
+                  type="activity"
+                />
 
                 <StatisticCard
                   title="Status"

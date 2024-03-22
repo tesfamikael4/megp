@@ -10,7 +10,9 @@ export const RenderObject = ({
 }: {
   data: any;
   tabValue: string;
-  setUrl: React.Dispatch<React.SetStateAction<string>>;
+  setUrl: React.Dispatch<
+    React.SetStateAction<{ url: string; filename: string }>
+  >;
   open: () => void;
 }): React.ReactNode => {
   return (

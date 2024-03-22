@@ -1,5 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { BusinessAreaEntity } from 'src/entities';
+import { BusinessAreaEntity, ServicePrice } from 'src/entities';
 import { WorkflowInstanceEntity } from 'src/entities/workflow-instance.entity';
 import { BAEnum } from 'src/modules/vendor-registration/dto/business-area.enum';
 import { ServiceKeyEnum } from 'src/shared/enums/service-key.enum';
@@ -9,7 +9,7 @@ export class HandlingCommonService {
   constructor(
     @InjectRepository(WorkflowInstanceEntity)
     private readonly wfiRepository: Repository<WorkflowInstanceEntity>,
-  ) {}
+  ) { }
   generateRandomString(length: number, prefix = '') {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     const charsLength = characters.length;
@@ -195,7 +195,7 @@ export class HandlingCommonService {
     } else if (priceRange.valueFrom >= 1) {
       valueTo = (priceRange.valueTo / 1000000).toFixed(0);
       valueTo = curruncy + valueTo + ' million';
-      return 'Up to ' + curruncy + valueTo;
+      return 'Up to ' + valueTo;
     }
     if (priceRange.valueFrom) return priceRange.valueFrom.toString();
     return '';
@@ -231,4 +231,27 @@ export class HandlingCommonService {
     } = object;
     return rest;
   }
+  formatingBusinessArea(priceRanges: ServicePrice[], abis: any[]) {
+    const formattedAreaOfBi = [];
+    for (const price of priceRanges) {
+      for (const bi of abis) {
+        if (bi.priceRange == price.id) {
+          const priceRange = this.formatPriceRange(price);
+          const lob = bi.lineOfBusiness.map((item: any) => item.name);
+          formattedAreaOfBi.push({
+            category: bi.category,
+            priceRange: priceRange,
+            lineOfBusiness: lob,
+            approvedAt: bi?.approvedAt,
+            expireDate: bi?.expireDate,
+            certificateUrl: bi?.certificateUrl,
+
+          });
+        }
+      }
+    }
+    return formattedAreaOfBi;
+  }
+
+
 }

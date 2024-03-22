@@ -24,14 +24,8 @@ export class BudgetController extends ExtraCrudController<Budget>(options) {
     return await this.budgetService.bulkCreate(budgets);
   }
 
-  @Get('/summation/:budgetYearId')
-  async getSummation(
-    @CurrentUser() user: any,
-    @Param('budgetYearId') budgetYearId: string,
-  ) {
-    return await this.budgetService.getSummation(
-      user.organization.id,
-      budgetYearId,
-    );
+  @Get('/summation/:appId')
+  async getSummation(@CurrentUser() user: any, @Param('appId') appId: string) {
+    return await this.budgetService.getSummation(user.organization.id, appId);
   }
 }

@@ -30,6 +30,7 @@ import { PaymentStatus } from 'src/shared/enums/payment-status.enum';
 import { ServiceKeyEnum } from 'src/shared/enums/service-key.enum';
 import { BusinessCategories } from 'src/modules/handling/enums/business-category.enum';
 import { CreateAreasOfBusinessInterest } from '../dto/areas-of-business-interest';
+import { PaymentReceiptCommand } from '../dto/payment-command.dto';
 
 @Injectable()
 export class InvoiceService extends EntityCrudService<InvoiceEntity> {
@@ -49,6 +50,18 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
   ) {
     super(invoiceRepository);
   }
+
+  async updateStatus(dto: PaymentReceiptCommand) {
+    const invoice = await this.invoiceRepository.findOne({
+      where: { refNumber: dto.referenceNo },
+    });
+    if (invoice && dto.status == 'Success') {
+      invoice.paymentStatus = PaymentStatus.COMPLETED;
+      this.invoiceRepository.update(invoice.id, invoice);
+    } else {
+    }
+  }
+
   async generateNewregistrationInvoice(
     businesses: CreateAreasOfBusinessInterest[],
     user: any,
@@ -134,8 +147,12 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
         const isrvendor = await this.srRepository.findOne({
           where: { id: vendor.id },
         });
-        isrvendor.areasOfBusinessInterest.push(areaOfBisunessInterests);
-        await this.srRepository.update(isrvendor.id, isrvendor);
+        const previousBA = isrvendor.areasOfBusinessInterest;
+        isrvendor.areasOfBusinessInterest = [...areaOfBisunessInterests, ...previousBA];
+        await this.srRepository.update(
+          isrvendor.id,
+          isrvendor,
+        );
         await this.baService.create(bas);
         await this.generateInvoice(priceRangeIds, vendor, user);
         return HttpStatus.ACCEPTED;
@@ -179,7 +196,7 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     );
     invoice.amount = totalFee;
 
-    invoice.refNumber = this.commonService.generateRandomString(7);
+    invoice.refNumber = this.commonService.generateRandomString(10);
     invoice.paymentDetail = [...paymentDetail];
     const response = await this.invoiceRepository.save(invoice);
     if (response) return true;
@@ -239,10 +256,19 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     }
     return null;
   }
+  async getInvoiceActiveById(invoceId: string): Promise<InvoiceEntity> {
+    const invoice = await this.invoiceRepository.findOne({
+      where: { id: invoceId, paymentStatus: PaymentStatus.PENDING },
+    });
 
-  async getInvoicesUserAndService(userId: string): Promise<InvoiceEntity[]> {
-    const result = await this.invoiceRepository.find({
-      where: { userId: userId, paymentStatus: 'Paid' },
+    return invoice;
+  }
+  async getInvoicesByUserAndService(
+    userId: string,
+    serviceId: string,
+  ): Promise<InvoiceEntity> {
+    const result = await this.invoiceRepository.findOne({
+      where: { userId: userId, serviceId: serviceId },
     });
 
     return result;
@@ -289,6 +315,20 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
         service: {
           key: serviceType,
         },
+      },
+      relations: { service: true },
+    });
+    if (result) delete result.service;
+    return result;
+  }
+  async getInvoiceByUser(userId: string): Promise<InvoiceEntity> {
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(new Date().getDate() - 7);
+    const result = await this.invoiceRepository.findOne({
+      where: {
+        userId: userId,
+        createdOn: MoreThanOrEqual(oneWeekAgo),
+        paymentStatus: PaymentStatus.PENDING,
       },
       relations: { service: true },
     });
@@ -396,7 +436,7 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
       const invoice: InvoiceEntity = this.mapInvoice(vendor, bp.service, user);
       if (paymentDetail.length > 0) {
         invoice.paymentDetail = [...paymentDetail];
-        invoice.refNumber = this.commonService.generateRandomString(7);
+        invoice.refNumber = this.commonService.generateRandomString(10);
         invoice.amount = totalFee;
         await this.invoiceRepository.save(invoice);
         const response = { messaage: 'Invoice Created', state: 'success' };
@@ -482,7 +522,7 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
         );
         invoice.paymentDetail = [...paymentDetail];
         invoice.amount = totalFee;
-        invoice.refNumber = this.commonService.generateRandomString(7);
+        invoice.refNumber = this.commonService.generateRandomString(10);
         await this.invoiceRepository.save(invoice);
         const response = { messaage: 'Invoice Created', state: 'success' };
         return response;
@@ -512,7 +552,7 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
     invoice.userId = user.id;
     // invoice.serviceName = service.name;
     invoice.remark = 'invoice for ' + service.name;
-    // invoice.reference = this.commonService.generateRandomString(8)
+    // invoice.reference = this.commonService.generateRandomString(10)
     return invoice;
   }
   async remove(id: string) {

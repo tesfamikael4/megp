@@ -1,16 +1,12 @@
 import {
   Column,
   Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { BankAccountDetailEntity } from './bank-account-detail.entity';
 import { Audit } from 'src/shared/entities';
 @Entity({ name: 'brifecases' })
-export class BrifecaseEntity extends Audit {
+export class BriefecaseEntity extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
   @Column()

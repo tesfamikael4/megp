@@ -13,22 +13,7 @@ const filters = [
       'Canceled Tenders',
     ],
   },
-  {
-    key: 'Organization',
-    value: [
-      'Malawi Country Ministry Offices',
-      'Ministry of Agriculture, Irrigation, and Water Development - Agriculture, Irrigation, and Water Management',
-      'Ministry of Education, Science, and Technology - Education, Science, and Technology Advancement',
-      'Ministry of Health - Public Health and Healthcare Services',
-      'Ministry of Finance, Economic Planning and Development - Financial Management and Economic Planning',
-      'Ministry of Gender, Children, Disability, and Social Welfare - Gender Equality, Child Welfare, Disability Rights, and Social Welfare',
-      'Ministry of Transport and Public Works - Transportation Infrastructure and Public Works',
-      'Ministry of Natural Resources, Energy, and Mining - Natural Resource Management, Energy Production, and Mining',
-      'Ministry of Industry, Trade, and Tourism - Industrial Development, Trade Promotion, and Tourism',
-      'Ministry of Local Government and Rural Development - Local Governance and Rural Development',
-      'Ministry of Justice and Constitutional Affairs - Legal Affairs, Justice, and Constitutional Governance',
-    ],
-  },
+
   {
     key: 'Type',
     value: ['Service', 'Goods', 'Works'],

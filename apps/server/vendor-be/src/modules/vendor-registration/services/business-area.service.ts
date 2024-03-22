@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { In, IsNull, Not, Repository } from 'typeorm';
 import { EntityCrudService } from 'src/shared/service';
 import { BusinessAreaResponseDto } from '../dto/business-area.dto';
 import { BusinessAreaEntity } from 'src/entities';
@@ -37,7 +37,27 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
       relations: { servicePrice: true },
     });
   }
+  async getCerteficate(vendorId: string): Promise<BusinessAreaEntity> {
+    const bas = await this.businessAreaRepository.find({
+      where: { vendorId: vendorId, status: ApplicationStatus.APPROVED, certificateUrl: Not(IsNull()) },
+      order: { updatedAt: 'DESC' }
+    });
+    if (bas.length)
+      return bas[0]
+    return null;
+  }
+  async getPreferentials(vendorId: string): Promise<BusinessAreaEntity[]> {
+    const bas = await this.businessAreaRepository.find({
+      where: {
+        vendorId: vendorId,
+        status: ApplicationStatus.APPROVED,
+        certificateUrl: Not(IsNull()), BpService: { key: In([this.commonService.getPreferencialServices()]) }
+      },
+      order: { updatedAt: 'DESC' }
+    });
 
+    return bas;
+  }
   async getBusinessUppgradesOrRenewal(
     categories: string[],
     serviceKey: string,
@@ -54,19 +74,19 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
 
   async getBusinessAreaByInstanceId(
     instanceId: string,
-  ): Promise<BusinessAreaEntity> {
-    return this.businessAreaRepository.findOne({
+  ): Promise<BusinessAreaEntity[]> {
+    return this.businessAreaRepository.find({
       where: { instanceId: instanceId },
     });
   }
   async cancelServiceApplication(instanceId: string) {
-    const ba = await this.getBusinessAreaByInstanceId(instanceId);
-    if (ba.status == ApplicationStatus.PENDING) {
+    const bas = await this.getBusinessAreaByInstanceId(instanceId);
+    for (const ba of bas) {
       ba.status = ApplicationStatus.CANCELED;
       await this.update(ba.id, ba);
-      return true;
     }
-    return false;
+
+    return true;
   }
 
   async getPreviousUpgradeService(
@@ -115,10 +135,10 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
     userId: string,
   ): Promise<BusinessAreaEntity> {
     return this.businessAreaRepository.findOne({
-      select: { id: true },
+      select: { id: true, status: true },
       where: {
         serviceId: serviceId,
-        status: ApplicationStatus.PENDING,
+        status: In([ApplicationStatus.PENDING, ApplicationStatus.ADJUSTMENT]),
         isrVendor: { userId: userId },
       },
       relations: {
@@ -161,7 +181,7 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
   async getVendorBusinessAreaByInstanceId(
     vendorId: string,
     instanceId: string,
-  ) {
+  ): Promise<BusinessAreaEntity[]> {
     const businessArea = await this.businessAreaRepository.find({
       where: {
         vendorId: vendorId,
@@ -180,6 +200,19 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
         serviceId: serviceId,
         status: ApplicationStatus.APPROVED,
         isrVendor: { userId: userId },
+      },
+    });
+  }
+
+  async saveAll(businessArea: BusinessAreaEntity[]) {
+    this.businessAreaRepository.save(businessArea);
+  }
+  async getPreviousService(vendorId: string, category: string) {
+    return await this.businessAreaRepository.findOne({
+      where: {
+        status: ApplicationStatus.APPROVED,
+        category: category,
+        vendorId: vendorId,
       },
     });
   }

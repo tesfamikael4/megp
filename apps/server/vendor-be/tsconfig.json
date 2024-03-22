@@ -12,9 +12,12 @@
     "outDir": "./dist",
     "baseUrl": "./",
     "paths": {
-      "@auth": ["./src/accounts/"],
+     // "@auth": ["./src/accounts/"],
       "@collection-query": ["./src/shared/collection-query/"],
-      "@api-data": ["./src/shared/api-data/"]
+      "@api-data": ["./src/shared/api-data/"],
+      "@auth": ["./src/shared/authorization/"],
+      "@interceptors": ["./src/shared/interceptors/"],
+      "@decorators": ["./src/shared/decorators/"]
     },   
     "incremental": true,
     "skipLibCheck": true,

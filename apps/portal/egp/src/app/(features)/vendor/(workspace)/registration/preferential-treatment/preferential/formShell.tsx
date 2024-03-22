@@ -115,7 +115,7 @@ export const PreferentialTreatmentForm = ({
         return {
           certiNumber,
           serviceId,
-          status: 'Draft',
+          status: 'Submit',
         };
       },
     );

@@ -17,17 +17,14 @@ import { TaskHandlerResponse } from '../dto/task-handler.dto';
 import { StateNode, createMachine } from 'xstate';
 import { TaskTypes } from '../enums/task-type.enum';
 import { StateMetaData } from '../dto/state-metadata';
-
 import { HandlingCommonService } from '../../handling/services/handling-common-services';
 import axios from 'axios';
-
 import { BusinessProcessService } from './business-process.service';
 import { TaskService } from './task.service';
-
 import { EmailService } from 'src/shared/email/email.service';
 import {
+  BpServiceEntity,
   BusinessAreaEntity,
-  InvoiceEntity,
   TaskEntity,
   TaskHandlerEntity,
   TaskTrackerEntity,
@@ -43,6 +40,8 @@ import { BusinessAreaService } from 'src/modules/vendor-registration/services/bu
 import { AssignmentEnum } from 'src/modules/handling/enums/assignment.enum';
 import { HandlerTypeEnum } from 'src/modules/handling/enums/handler-type.enum';
 import { ApplicationStatus } from 'src/modules/handling/enums/application-status.enum';
+import { ServiceKeyEnum } from 'src/shared/enums/service-key.enum';
+// import { ServiceKeyEnum } from '../dto/workflow-instance.enum';
 @Injectable()
 export class WorkflowService {
   VENDOR_API_KEY: string;
@@ -51,8 +50,6 @@ export class WorkflowService {
     private readonly workflowInstanceRepository: Repository<WorkflowInstanceEntity>,
     @InjectRepository(TaskHandlerEntity)
     private readonly handlerRepository: Repository<TaskHandlerEntity>,
-    @InjectRepository(InvoiceEntity)
-    private readonly invoiceRepository: Repository<InvoiceEntity>,
     @InjectRepository(TaskTrackerEntity)
     private readonly trackerRepository: Repository<TaskTrackerEntity>,
     private readonly bpService: BusinessProcessService,
@@ -66,6 +63,27 @@ export class WorkflowService {
     this.VENDOR_API_KEY =
       process.env.VENDOR_API_ACCESS_KEY ??
       'dGtjFGcLjKU6pXRYx1tOnqGeycJtxJoavgwqYgDd';
+  }
+  getServiceCode(service: BpServiceEntity) {
+    let code = '';
+    if (service.key == ServiceKeyEnum.NEW_REGISTRATION) {
+      code = 'NR';
+    } else if (service.key == ServiceKeyEnum.REGISTRATION_RENEWAL) {
+      code = 'RR';
+    } else if (service.key == ServiceKeyEnum.REGISTRATION_UPGRADE) {
+      code = 'RU';
+    } else if (service.key == ServiceKeyEnum.PROFILE_UPDATE) {
+      code = 'PU';
+    } else if (
+      this.commonService
+        .getServiceCatagoryKeys(ServiceKeyEnum.PREFERENCTIAL)
+        .some((item) => item == service.key)
+    ) {
+      code = 'PT';
+    } else {
+      throw new NotFoundException('Service code undefined');
+    }
+    return code;
   }
   async intiateWorkflowInstance(
     dto: CreateWorkflowInstanceDto,
@@ -83,8 +101,9 @@ export class WorkflowService {
     console.log('serviceBp', serviceBp);
     if (!serviceBp || !dto.requestorId)
       throw new NotFoundException('Business Process Not Found');
+    const serviceCode = this.getServiceCode(serviceBp.service);
     instanceEntity.applicationNumber =
-      await this.commonService.generateApplicationNumber('PPDA', 'GNR');
+      await this.commonService.generateApplicationNumber('PPDA', serviceCode);
     const wfinstance =
       await this.workflowInstanceRepository.save(instanceEntity);
     const machine = createMachine({
@@ -175,7 +194,7 @@ export class WorkflowService {
         if (
           curruntTask.taskType == TaskTypes.INITIAL_REVIEW &&
           nextCommand.action.toUpperCase() ==
-            ApplicationStatus.CANCEL.toUpperCase()
+          ApplicationStatus.CANCEL.toUpperCase()
         ) {
           response = await this.vendorRegService.cancelApplication(wfInstance);
         } else {
@@ -185,7 +204,6 @@ export class WorkflowService {
             nextCommand,
           );
         }
-
         if (response) {
           await this.addTaskTracker(currentTaskHandler, nextCommand, user);
           await this.handlerRepository.delete(currentTaskHandler.id);
@@ -266,7 +284,6 @@ export class WorkflowService {
       relations: { taskHandler: true },
       where: { id: instanceId },
     });
-    console.log(instanceId);
     if (!wfi) throw new NotFoundException('Not Found');
     const tasks = await this.taskService.getTasksByBP(wfi.bpId);
     const completedTasks = await this.trackerRepository.find({
@@ -323,7 +340,6 @@ export class WorkflowService {
     wfi: WorkflowInstanceEntity,
     user: any,
   ) {
-    console.log('stateMetadata.type', stateMetadata.type);
     switch (stateMetadata.type.toLowerCase()) {
       case TaskTypes.APPROVAL:
         if (
@@ -339,7 +355,7 @@ export class WorkflowService {
             const vendor = await this.vendorRegService.findOne(wfi.requestorId);
             if (vendor) {
               vendor.canRequest = true;
-              await this.vendorRegService.create(vendor);
+              await this.vendorRegService.update(vendor.id, vendor);
             }
           }
         }
@@ -416,8 +432,8 @@ export class WorkflowService {
     const commandLower = command.action.toLowerCase();
     const status =
       commandLower == 'approve' ||
-      commandLower == 'yes' ||
-      commandLower == 'success'
+        commandLower == 'yes' ||
+        commandLower == 'success'
         ? 'Approve'
         : 'Reject';
     const payload = {

@@ -5,20 +5,41 @@ import {
   CallHandler,
 } from '@nestjs/common';
 import { Request } from 'express';
+import { Observable } from 'rxjs';
+import { Reflector } from '@nestjs/core';
+import { IGNORE_TENANT_INTERCEPTOR_KEY } from '@decorators';
 
 @Injectable()
 export class TenantInterceptor implements NestInterceptor {
-  intercept(context: ExecutionContext, next: CallHandler): any {
+  constructor(private readonly reflector: Reflector) { }
+
+  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const req = context.switchToHttp().getRequest<Request>();
 
-    const organizationId = req.headers['organization_id'];
-    const tenantId = req.headers['tenant_id'];
+    const isTenantInterceptorIgnored =
+      this.reflector?.getAllAndOverride<boolean>(
+        IGNORE_TENANT_INTERCEPTOR_KEY,
+        [context.getHandler(), context.getClass()],
+      );
 
-    let query = req.query.q as string;
+    if (isTenantInterceptorIgnored) {
+      return next.handle();
+    }
+
+    const user: any = req.user;
+
+    if (!user) {
+      return next.handle();
+    }
+
+    const organizationId = user.organization?.id;
+    const tenantId = user.tenantId + '';
 
     if (!tenantId && !organizationId) {
       return next.handle();
     }
+
+    let query = req.query.q as string;
 
     if (query == undefined) {
       query = '';
@@ -27,8 +48,9 @@ export class TenantInterceptor implements NestInterceptor {
     const whereExist: boolean = query.includes('w=');
 
     const queryArr = query.split('&');
-    let whereQuery;
-    let whereIndex;
+    let whereQuery: string;
+    let whereIndex: number;
+
     queryArr.map((q, i) => {
       if (q.startsWith('w=')) {
         whereQuery = q;
@@ -62,6 +84,7 @@ export class TenantInterceptor implements NestInterceptor {
     queryArr[whereIndex] = whereQuery;
 
     const finalWhereQuery = queryArr.join('&');
+
     req.query.q = finalWhereQuery;
 
     return next.handle();

@@ -1,52 +1,79 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsUUID, IsEnum, IsDate, IsNumber } from 'class-validator';
-import { Guarantee } from 'src/entities/guarantee.entity';
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
+import {
+  IsNotEmpty,
+  IsUUID,
+  IsEnum,
+  IsDate,
+  IsNumber,
+  IsOptional,
+  IsDateString,
+} from 'class-validator';
+import {
+  Guarantee,
+  GuaranteeStatusEnum,
+  GuaranteeTypeEnum,
+} from 'src/entities/guarantee.entity';
 
 export class CreateGuaranteeDto {
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   name: string;
-  @ApiProperty()
+  @ApiHideProperty()
   vendorId: string;
   @ApiProperty()
-  @IsDate()
+  @IsDateString()
+  @IsOptional()
   startDate: Date;
   @ApiProperty()
-  @IsDate()
+  @IsDateString()
+  @IsOptional()
   endDate: Date;
+
   @ApiProperty()
-  @IsEnum(['bid guarantee', 'advanced', 'performance', 'retention'])
+  @IsEnum(GuaranteeTypeEnum)
+  @IsOptional()
   type: string;
+
   @ApiProperty()
+  @IsOptional()
   objectType: string;
-  @ApiProperty({ required: false })
-  minValidityDate?: number;
-  @ApiProperty({ required: false })
-  guarantorValidityDate?: number;
-  @ApiProperty({ required: false })
+  @ApiProperty()
+  @IsOptional()
+  @IsDateString()
+  minValidityDate?: Date;
+  @ApiProperty({ required: false, nullable: true })
+  @IsOptional()
+  @IsDateString()
+  guarantorValidityDate?: Date;
+  @ApiProperty()
+  @IsOptional()
   title?: string;
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   objectId: string;
   @ApiProperty()
   @IsNumber()
   amount: number;
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
   currencyType: string;
+
   @ApiProperty()
   @IsNotEmpty()
   guarantorId: string;
   @ApiProperty()
   @IsNotEmpty()
   guarantorBranchId: string;
-  @ApiProperty({ required: false })
+  @ApiProperty()
+  @IsOptional()
   remark?: string;
+
   @ApiProperty()
-  @IsNotEmpty()
-  attachment: string;
-  @ApiProperty()
-  @IsEnum(['reviewed', 'approved', 'rejected'])
+  @IsOptional()
+  attachment: any;
+  @ApiProperty({ default: GuaranteeStatusEnum.REQUESTED })
+  @IsEnum(GuaranteeStatusEnum)
+  @IsOptional()
   status: string;
 
   static fromDto(dto: CreateGuaranteeDto): Guarantee {

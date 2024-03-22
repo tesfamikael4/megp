@@ -1,7 +1,7 @@
 export interface BidSecurity {
   id: string;
-  GuarantorId: string;
-  GuarantorBranchId: string;
+  guarantorId: string;
+  guarantorBranchId: string;
   amount: number;
   remark: string;
   status?: string;

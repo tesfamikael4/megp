@@ -14,13 +14,4 @@ export class ReasonController extends EntityCrudController<Reason>(options) {
   constructor(private readonly reasonService: ReasonService) {
     super(reasonService);
   }
-
-  @Post('isValid')
-  async isValid(@Body() data, @CurrentUser() user) {
-    await this.reasonService.isValid(
-      data.objectId,
-      data.type,
-      user.organization.id,
-    );
-  }
 }

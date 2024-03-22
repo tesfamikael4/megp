@@ -4,7 +4,7 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 
 export const prApi = createApi({
   reducerPath: 'prApi',
-  tagTypes: ['items', 'timelines', 'requisitioner'],
+  tagTypes: ['items', 'timelines', 'requisitioner', 'pr'],
   refetchOnFocus: true,
   baseQuery: baseQuery(
     process.env.NEXT_PUBLIC_PLANNING_API ?? '/planning/api/',
@@ -16,7 +16,7 @@ export const prApi = createApi({
         method: 'POST',
         body: data,
       }),
-      invalidatesTags: ['items'],
+      invalidatesTags: ['items', 'pr'],
     }),
 
     createPrTimeline: builder.mutation<any, any[]>({
@@ -73,6 +73,27 @@ export const prApi = createApi({
       query: (id: string) =>
         `Procurement-requisition-technical-teams/list/${id}`,
     }),
+    approvePr: builder.mutation<any, any>({
+      query: (data: { id: string; itemName: string }) => ({
+        url: `procurement-requisitions/initiate-workflow`,
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['pr'],
+    }),
+    read: builder.query<any, any>({
+      query: (id) => ({
+        url: `procurement-requisitions/${id}`,
+        method: 'GET',
+      }),
+      providesTags: ['pr'],
+    }),
+    getAnalytics: builder.query<any, string>({
+      query: (key) => ({
+        url: `/procurement-requisitions/get-analytics/${key}`,
+        method: 'GET',
+      }),
+    }),
   }),
 });
 
@@ -88,4 +109,11 @@ export const {
   useCreateRequisitionerMutation,
   useGetRequisitionerQuery,
   useLazyGetRequisitionerQuery,
+
+  useApprovePrMutation,
+  useReadQuery,
+  useLazyReadQuery,
+
+  useGetAnalyticsQuery,
+  useLazyGetAnalyticsQuery,
 } = prApi;
