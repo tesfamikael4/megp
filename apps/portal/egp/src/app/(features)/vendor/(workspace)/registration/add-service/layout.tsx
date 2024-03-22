@@ -28,7 +28,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     );
   else if (!data && vendor && vendor.status === 'Approved')
     return (
-      <Flex className={styles.main} gap={24}>
+      <Flex className={styles.main} gap={16}>
         <Flex className="w-full flex-col border border-l-0 bg-white">
           <Flex className="w-full border-b p-3 flex justify-between">
             <PageTitle />

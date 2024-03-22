@@ -42,7 +42,7 @@ function Header() {
   const currentPath = usePathname();
 
   const workspace = isAuthenticated
-    ? [{ link: '/vendor/dashboard', label: 'Workspace' }]
+    ? [{ link: '/vendor/service', label: 'Workspace' }]
     : [];
 
   const links: {

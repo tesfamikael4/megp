@@ -15,10 +15,10 @@ export const ShowFile = ({
   setStatus?: Dispatch<SetStateAction<string>>;
 }) => {
   const [opened, { close, open }] = useDisclosure(false);
-  const [pdfData, setPdfData] = useState<ArrayBuffer | null>(null); // Use null as initial state
+  const [pdfData, setPdfData] = useState<ArrayBuffer | null>(null);
   const [fileContent, setFileContent] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(true); // Introduce loading state
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     setStatus && setStatus(loading ? 'loading' : error ? 'error' : 'success');
@@ -45,7 +45,7 @@ export const ShowFile = ({
         // Check if the blob is an image or a PDF
         if (
           blobType.includes('image') ||
-          ['png', 'jpg', 'jpeg'].includes(filename.split('.')[1])
+          (filename && ['png', 'jpg', 'jpeg'].includes(filename.split('.')[1]))
         ) {
           const fileUrl = URL.createObjectURL(fileBlob);
           setFileContent(fileUrl);
@@ -76,7 +76,7 @@ export const ShowFile = ({
         setError(err.message);
         logger.log(err);
       } finally {
-        setLoading(false); // Set loading to false when fetching completes (whether successful or not)
+        setLoading(false);
       }
     };
 
@@ -88,7 +88,7 @@ export const ShowFile = ({
       <div>
         <p className="text-center py-2 text-md">{`
     Looks like something went wrong while loading the file.
-    Double-check your connection and try reloading`}</p>
+    Double-check your connection and try reloading.`}</p>
       </div>
     );
   }
@@ -101,7 +101,7 @@ export const ShowFile = ({
         style={{ height: '500px' }}
       >
         {loading ? (
-          <Loader size={30} /> // Display loading message while loading
+          <Loader size={30} />
         ) : pdfData ? (
           <iframe
             src={`data:application/pdf;base64,${Buffer.from(pdfData).toString(
@@ -120,7 +120,7 @@ export const ShowFile = ({
             onClick={() => open()}
           />
         ) : (
-          <p>No content available</p> // Handle case when no content is available
+          <p>No content available</p>
         )}
       </div>
     </>
