@@ -21,40 +21,36 @@ export enum GuaranteeTypeEnum {
 export class Guarantee extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column({ nullable: true })
+  @Column()
   vendorId: string;
-  @Column({
-    type: 'date',
-    nullable: true,
-  })
+  @Column()
   startDate: Date;
-  @Column({ type: 'date', nullable: true })
+  @Column()
   endDate: Date;
   @Column({
     type: 'enum',
     enum: GuaranteeTypeEnum,
-    nullable: true,
   })
   type: string;
-  @Column({ nullable: true })
+  @Column()
   objectType: string;
   @Column({ type: 'date', nullable: true })
   minValidityDate: Date;
-  @Column({ type: 'date', nullable: true })
+  @Column()
   guarantorValidityDate: Date;
-  @Column({ nullable: true })
+  @Column()
   name: string;
-  @Column({ nullable: true })
+  @Column()
   title: string;
-  @Column({ nullable: true })
+  @Column()
   objectId: string;
   @Column({ default: 0, type: 'decimal', precision: 14, scale: 2 })
   amount: number;
-  @Column({ nullable: true })
+  @Column()
   currencyType: string;
-  @Column({ nullable: true })
+  @Column()
   guarantorId: string;
-  @Column({ nullable: true })
+  @Column()
   guarantorBranchId: string;
   @Column({ nullable: true })
   remark: string;
@@ -64,7 +60,6 @@ export class Guarantee extends Audit {
     type: 'enum',
     enum: GuaranteeStatusEnum,
     default: GuaranteeStatusEnum.REQUESTED,
-    nullable: true,
   })
   status: string;
   @OneToMany(() => GuaranteeExtension, (extension) => extension.guarantee, {
