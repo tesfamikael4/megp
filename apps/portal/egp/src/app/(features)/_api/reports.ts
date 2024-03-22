@@ -1,10 +1,11 @@
 import { ApprovedVendorResponse } from '@/models/approved-vendor-response';
+import { Report } from '@/models/report';
 import { vendorRegistrationApi } from '@/store/api/vendor_registration/api';
 import { CollectionQuery, encodeCollectionQuery } from '@megp/entity';
 
 export const reportsApi = vendorRegistrationApi.injectEndpoints({
   endpoints: (build) => ({
-    getReports: build.query({
+    getReports: build.query<Report, any>({
       query: () => ({
         url: `reports/get-dashboard-report`,
         method: 'GET',

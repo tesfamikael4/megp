@@ -1,9 +1,18 @@
-import { Image, Loader, LoadingOverlay, Modal } from '@mantine/core';
+import {
+  Box,
+  Flex,
+  Image,
+  Loader,
+  LoadingOverlay,
+  Modal,
+  Text,
+} from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { logger } from '@megp/core-fe';
 import { IconLoader2 } from '@tabler/icons-react';
 import { getCookie } from 'cookies-next';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import Error from './error.svg';
 
 export const ShowFile = ({
   url,
@@ -86,9 +95,17 @@ export const ShowFile = ({
   if (error) {
     return (
       <div>
-        <p className="text-center py-2 text-md">{`
-    Looks like something went wrong while loading the file.
-    Double-check your connection and try reloading.`}</p>
+        <Flex
+          direction={'column'}
+          justify={'center'}
+          className="text-center py-2 text-md"
+        >
+          <Image src={Error} alt="Error" />
+          <Text>
+            Looks like something went wrong while loading the file. Double-check
+            your connection and try reloading.
+          </Text>
+        </Flex>
       </div>
     );
   }
