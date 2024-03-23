@@ -270,6 +270,7 @@ export class PostBudgetPlanService extends ExtraCrudService<PostBudgetPlan> {
       relations: {
         postBudgetPlanTimelines: true,
         postProcurementMechanisms: true,
+        postBudgetRequisitioners: true,
         budget: true,
       },
     });
@@ -287,7 +288,7 @@ export class PostBudgetPlanService extends ExtraCrudService<PostBudgetPlan> {
           430,
         );
       }
-      if (element.postBudgetRequisitioners.length == 0) {
+      if (element.postBudgetRequisitioners?.length == 0) {
         throw new HttpException(
           `Requisitioner not found for ${element.name} ${element.procurementReference}`,
           430,
