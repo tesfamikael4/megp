@@ -5,10 +5,12 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  Unique,
 } from 'typeorm';
 import { BidRegistrationDetail } from './bid-registration-detail.entity';
 
 @Entity({ name: 'bid_responses' })
+@Unique(['bidRegistrationDetailId', 'key'])
 export class BidResponse extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;

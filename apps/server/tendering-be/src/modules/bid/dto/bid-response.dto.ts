@@ -50,7 +50,7 @@ export class GetBidResponseDto {
       DocumentTypeEnum.RESPONSE,
     ],
   })
-  @IsUUID()
+  @IsString()
   @IsNotEmpty()
   documentType: string;
 
@@ -60,7 +60,7 @@ export class GetBidResponseDto {
   key: string;
 
   @ApiProperty()
-  @IsObject()
+  @IsString()
   @IsNotEmpty()
   password: string;
 }

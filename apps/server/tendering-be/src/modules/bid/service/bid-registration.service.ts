@@ -73,10 +73,18 @@ export class BidRegistrationService extends ExtraCrudService<BidRegistration> {
     }
     let paymentLink = null;
 
+    const saltLength = 16;
+    const salt = crypto
+      .randomBytes(Math.ceil(saltLength / 2))
+      .toString('hex')
+      .slice(0, saltLength);
+
     const bidRegistration = this.bidSecurityRepository.create({
       tenderId: itemData.tenderId,
       bidderId: bidderId,
       bidderName: bidderName,
+      salt: salt,
+      envelopType: tender.bdsSubmission.envelopType,
     });
     if (tender.tenderParticipationFee) {
       const invoice = await this.generatePaymentLink(
@@ -92,32 +100,26 @@ export class BidRegistrationService extends ExtraCrudService<BidRegistration> {
     }
 
     await manager.getRepository(BidRegistration).insert(bidRegistration);
+
+    const dataToEncrypt = bidderId + bidRegistration.id;
+
+    const encryptedData = this.generateInitialEncryption(
+      dataToEncrypt,
+      itemData.password,
+      tender.bdsSubmission.envelopType,
+      salt,
+    );
+    await manager
+      .getRepository(BidRegistration)
+      .update(bidRegistration.id, { ...encryptedData });
     const bidRegistrationDetails: BidRegistrationDetail[] = [];
 
-    const saltLength = 16;
-    const salt = crypto
-      .randomBytes(Math.ceil(saltLength / 2))
-      .toString('hex')
-      .slice(0, saltLength);
-
     for (const lot of tender.lots) {
-      const dataToEncrypt = bidderId + bidRegistration.id;
-
-      const encryptedData = this.generateInitialEncryption(
-        dataToEncrypt,
-        itemData.password,
-        tender.bdsSubmission.envelopType,
-        salt,
-      );
-
       const bidRegistrationDetail = manager
         .getRepository(BidRegistrationDetail)
         .create({
           bidRegistrationId: bidRegistration.id,
           lotId: lot.id,
-          envelopType: tender.bdsSubmission.envelopType,
-          salt,
-          ...encryptedData,
         });
 
       bidRegistrationDetails.push(bidRegistrationDetail);
@@ -126,6 +128,7 @@ export class BidRegistrationService extends ExtraCrudService<BidRegistration> {
     await manager
       .getRepository(BidRegistrationDetail)
       .insert(bidRegistrationDetails);
+
     return {
       ...bidRegistration,
       paymentLink,
