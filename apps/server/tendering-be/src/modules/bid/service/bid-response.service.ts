@@ -12,6 +12,7 @@ import {
 import { BidRegistrationDetail } from 'src/entities/bid-registration-detail.entity';
 import { DocumentTypeEnum, EnvelopTypeEnum } from 'src/shared/enums';
 import { EncryptionHelperService } from './encryption-helper.service';
+import { BidRegistration } from 'src/entities/bid-registration.entity';
 
 @Injectable()
 export class BidResponseService extends ExtraCrudService<BidResponse> {
@@ -46,7 +47,7 @@ export class BidResponseService extends ExtraCrudService<BidResponse> {
     }
 
     const isPasswordValid = this.checkPasswordValidity(
-      bidRegistrationDetail,
+      bidRegistrationDetail.bidRegistration,
       itemData.documentType,
       itemData.password,
     );
@@ -57,13 +58,16 @@ export class BidResponseService extends ExtraCrudService<BidResponse> {
     const encryptedValue = this.encryptionHelperService.encryptData(
       JSON.stringify(itemData.value),
       itemData.password,
-      bidRegistrationDetail.salt,
+      bidRegistrationDetail.bidRegistration.salt,
     );
 
     const item = this.bidSecurityRepository.create(itemData);
     item.bidRegistrationDetailId = bidRegistrationDetail.id;
     item.value = encryptedValue;
-    await this.bidSecurityRepository.insert(item);
+    await this.bidSecurityRepository.upsert(item, [
+      'bidRegistrationDetailId',
+      'key',
+    ]);
     return item;
   }
 
@@ -88,58 +92,48 @@ export class BidResponseService extends ExtraCrudService<BidResponse> {
       throw new BadRequestException('bid_registration_not_found');
     }
 
-    const isPasswordValid = this.checkPasswordValidity(
-      bidRegistrationDetail,
-      itemData.documentType,
-      itemData.password,
-    );
-    if (!isPasswordValid) {
-      throw new BadRequestException('invalid_password');
-    }
     const bidResponse = await this.bidSecurityRepository.findOneBy({
       bidRegistrationDetailId: bidRegistrationDetail.id,
       documentType: itemData.documentType,
       key: itemData.key,
     });
 
-    const decryptedValue = this.encryptionHelperService.encryptData(
+    const decryptedValue = this.encryptionHelperService.decryptedData(
       bidResponse.value,
       itemData.password,
-      bidRegistrationDetail.salt,
+      bidRegistrationDetail.bidRegistration.salt,
     );
     return decryptedValue;
   }
 
   checkPasswordValidity(
-    bidRegistrationDetail: BidRegistrationDetail,
+    bidRegistration: BidRegistration,
     documentType: string,
     password: string,
   ) {
-    const data =
-      bidRegistrationDetail.bidRegistration.bidderId +
-      bidRegistrationDetail.bidRegistrationId;
+    const data = bidRegistration.bidderId + bidRegistration.id;
 
     if (documentType == DocumentTypeEnum.RESPONSE) {
       const decrypted = this.encryptionHelperService.decryptedData(
-        bidRegistrationDetail.response,
+        bidRegistration.response,
         password,
-        bidRegistrationDetail.salt,
+        bidRegistration.salt,
       );
 
       return data == decrypted;
     } else if (documentType == DocumentTypeEnum.FINANCIAL_RESPONSE) {
       const decrypted = this.encryptionHelperService.decryptedData(
-        bidRegistrationDetail.financialResponse,
+        bidRegistration.financialResponse,
         password,
-        bidRegistrationDetail.salt,
+        bidRegistration.salt,
       );
 
       return data == decrypted;
     } else if (documentType == DocumentTypeEnum.TECHNICAL_RESPONSE) {
       const decrypted = this.encryptionHelperService.decryptedData(
-        bidRegistrationDetail.technicalResponse,
+        bidRegistration.technicalResponse,
         password,
-        bidRegistrationDetail.salt,
+        bidRegistration.salt,
       );
 
       return data == decrypted;

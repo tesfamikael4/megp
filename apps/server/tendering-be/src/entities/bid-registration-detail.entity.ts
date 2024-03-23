@@ -10,10 +10,7 @@ import {
 } from 'typeorm';
 import { BidRegistration } from './bid-registration.entity';
 import { Lot } from './lot.entity';
-import {
-  BidRegistrationDetailStatusEnum,
-  EnvelopTypeEnum,
-} from 'src/shared/enums';
+import { BidRegistrationDetailStatusEnum } from 'src/shared/enums';
 import { BidResponse } from './bid-response.entity';
 
 @Entity({ name: 'bid_registration_details' })
@@ -35,24 +32,6 @@ export class BidRegistrationDetail extends Audit {
   @ManyToOne(() => Lot, (lot) => lot.bidRegistrationDetails)
   @JoinColumn()
   lot: Lot;
-
-  @Column({ type: 'text', nullable: true })
-  financialResponse: string;
-
-  @Column({ type: 'text', nullable: true })
-  technicalResponse: string;
-
-  @Column({ type: 'text', nullable: true })
-  response: string;
-
-  @Column()
-  salt: string;
-
-  @Column({
-    type: 'enum',
-    enum: EnvelopTypeEnum,
-  })
-  envelopType: string;
 
   @Column({
     type: 'enum',
