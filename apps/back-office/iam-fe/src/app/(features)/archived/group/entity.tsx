@@ -56,7 +56,6 @@ export function Entity({ children }: { children: React.ReactNode }) {
             widget: 'expand',
           },
         },
-
         {
           id: 'action',
           header: () => <p className="ml-auto">Action</p>,
