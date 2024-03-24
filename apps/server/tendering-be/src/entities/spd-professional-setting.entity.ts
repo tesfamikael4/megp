@@ -23,7 +23,7 @@ export class SpdProfessionalSetting extends Audit {
   formLink: string;
 
   @Column({ type: 'jsonb' })
-  validation: JSON;
+  validation: any;
 
   @ManyToOne(() => Spd, (spd) => spd.spdProfessionalSettings)
   @JoinColumn({ name: 'spdId' })

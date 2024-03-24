@@ -4,9 +4,11 @@ import { EqcTechnicalScoring } from 'src/entities';
 import { ExtraCrudController } from 'src/shared/controller';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { EqcTechnicalScoringService } from '../service/eqc-technical-scoring.service';
+import { UpdateEqcTechnicalScoringDto } from '../dto';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'lotId',
+  updateDto: UpdateEqcTechnicalScoringDto,
 };
 
 @ApiBearerAuth()
