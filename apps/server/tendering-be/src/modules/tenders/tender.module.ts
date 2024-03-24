@@ -1,10 +1,17 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { FileHelperService } from '../../shared/min-io/file-helper.service';
+import { MinIOModule } from 'src/shared/min-io/min-io.module';
+import { DocxModule } from 'src/shared/docx/docx.module';
+import { DocumentManipulatorModule } from 'src/shared/document-manipulator/document-manipulator.module';
 import {
   Lot,
   Item,
   ProcurementMechanism,
   ProcurementTechnicalTeam,
+  TenderClassification,
+  TenderParticipationFee,
+  TenderPersonal,
   TenderSpd,
   Tender,
 } from 'src/entities';
@@ -13,6 +20,9 @@ import {
   LotController,
   ProcurementMechanismController,
   ProcurementTechnicalTeamController,
+  TenderClassificationController,
+  TenderParticipationFeeController,
+  TenderPersonalController,
   TenderSpdController,
   TenderController,
 } from './controller';
@@ -21,19 +31,12 @@ import {
   LotService,
   ProcurementMechanismService,
   ProcurementTechnicalTeamService,
+  TenderClassificationService,
+  TenderParticipationFeeService,
+  TenderPersonalService,
   TenderSpdService,
   TenderService,
 } from './service';
-import { FileHelperService } from '../../shared/min-io/file-helper.service';
-import { MinIOModule } from 'src/shared/min-io/min-io.module';
-import { TenderClassification } from 'src/entities/tender-classification.entity';
-import { TenderParticipationFee } from 'src/entities/tender-participation-fee.entity';
-import { TenderClassificationService } from './service/tender-classification.service';
-import { TenderClassificationController } from './controller/tender-classification.controller';
-import { TenderParticipationFeeController } from './controller/tender-participation-fee.controller';
-import { DocxModule } from 'src/shared/docx/docx.module';
-import { TenderParticipationFeeService } from './service/tender-participation-fee.service';
-import { DocumentManipulatorModule } from 'src/shared/document-manipulator/document-manipulator.module';
 
 @Module({
   imports: [
@@ -46,6 +49,7 @@ import { DocumentManipulatorModule } from 'src/shared/document-manipulator/docum
       ProcurementTechnicalTeam,
       TenderClassification,
       TenderParticipationFee,
+      TenderPersonal,
     ]),
     MinIOModule,
     DocxModule,
@@ -60,6 +64,7 @@ import { DocumentManipulatorModule } from 'src/shared/document-manipulator/docum
     ProcurementTechnicalTeamController,
     TenderClassificationController,
     TenderParticipationFeeController,
+    TenderPersonalService,
   ],
   providers: [
     TenderSpdService,
@@ -71,6 +76,7 @@ import { DocumentManipulatorModule } from 'src/shared/document-manipulator/docum
     FileHelperService,
     TenderClassificationService,
     TenderParticipationFeeService,
+    TenderPersonalController,
   ],
 })
 export class TenderModule {}
