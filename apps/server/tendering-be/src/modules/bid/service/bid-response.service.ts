@@ -6,11 +6,12 @@ import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 import { ExtraCrudService } from 'src/shared/service';
 import { EntityManager, Repository } from 'typeorm';
 import {
+  CheckPasswordDto,
   CreateBidResponseDto,
   GetBidResponseDto,
 } from '../dto/bid-response.dto';
 import { BidRegistrationDetail } from 'src/entities/bid-registration-detail.entity';
-import { DocumentTypeEnum, EnvelopTypeEnum } from 'src/shared/enums';
+import { DocumentTypeEnum } from 'src/shared/enums';
 import { EncryptionHelperService } from './encryption-helper.service';
 import { BidRegistration } from 'src/entities/bid-registration.entity';
 
@@ -103,6 +104,31 @@ export class BidResponseService extends ExtraCrudService<BidResponse> {
       itemData.password,
       bidRegistrationDetail.bidRegistration.salt,
     );
+    return decryptedValue;
+  }
+
+  async checkPassword(itemData: CheckPasswordDto, req?: any) {
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+    const bidderId = req.user.organization.id;
+
+    const bidRegistration = await manager
+      .getRepository(BidRegistration)
+      .findOne({
+        where: {
+          tenderId: itemData.tenderId,
+          bidderId: bidderId,
+        },
+      });
+    if (!bidRegistration) {
+      throw new BadRequestException('bid_registration_not_found');
+    }
+
+    const decryptedValue = this.checkPasswordValidity(
+      bidRegistration,
+      itemData.password,
+      bidRegistration.salt,
+    );
+
     return decryptedValue;
   }
 

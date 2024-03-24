@@ -5,6 +5,7 @@ import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { BidResponseService } from '../service/bid-response.service';
 import { ExtraCrudController } from 'src/shared/controller';
 import {
+  CheckPasswordDto,
   CreateBidResponseDto,
   GetBidResponseDto,
 } from '../dto/bid-response.dto';
@@ -24,11 +25,16 @@ export class BidResponseController extends ExtraCrudController<BidResponse>(
     super(bidSecurityService);
   }
 
+  @Post('check-password')
+  async checkPassword(@Body() payload: CheckPasswordDto, @Req() req?: any) {
+    return await this.bidSecurityService.checkPassword(payload, req);
+  }
+
   @Post('get-bid-response')
   async getBidResponseByKey(
     @Body() payload: GetBidResponseDto,
     @Req() req?: any,
   ) {
-    return this.bidSecurityService.getBidResponseByKey(payload, req);
+    return await this.bidSecurityService.getBidResponseByKey(payload, req);
   }
 }

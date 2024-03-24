@@ -64,3 +64,27 @@ export class GetBidResponseDto {
   @IsNotEmpty()
   password: string;
 }
+
+export class CheckPasswordDto {
+  @ApiProperty()
+  @IsUUID()
+  @IsNotEmpty()
+  tenderId: string;
+
+  @ApiProperty({
+    default: DocumentTypeEnum.RESPONSE,
+    examples: [
+      DocumentTypeEnum.FINANCIAL_RESPONSE,
+      DocumentTypeEnum.TECHNICAL_RESPONSE,
+      DocumentTypeEnum.RESPONSE,
+    ],
+  })
+  @IsString()
+  @IsNotEmpty()
+  documentType: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  password: string;
+}
