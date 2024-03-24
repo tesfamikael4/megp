@@ -4,7 +4,6 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 import { useLazyListQuery } from './_api/application.api';
 import { Application } from '@/models/application';
-import { logger } from '@megp/core-fe';
 
 export function Entity({ children }: { children: React.ReactElement }) {
   const route = useRouter();
