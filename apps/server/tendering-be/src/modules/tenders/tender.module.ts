@@ -64,7 +64,7 @@ import {
     ProcurementTechnicalTeamController,
     TenderClassificationController,
     TenderParticipationFeeController,
-    TenderPersonalService,
+    TenderPersonalController,
   ],
   providers: [
     TenderSpdService,
@@ -76,7 +76,7 @@ import {
     FileHelperService,
     TenderClassificationService,
     TenderParticipationFeeService,
-    TenderPersonalController,
+    TenderPersonalService,
   ],
 })
 export class TenderModule {}
