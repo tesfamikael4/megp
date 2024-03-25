@@ -1,6 +1,7 @@
 export interface liabililitesForm {
+  id: string;
   warrantyPeriod: number;
   postWarrantyServicePeriod: number;
-  liquidtyDamage: number;
-  liquidtyDamageLimit: number;
+  liquidityDamage: number;
+  liquidityDamageLimit: number;
 }

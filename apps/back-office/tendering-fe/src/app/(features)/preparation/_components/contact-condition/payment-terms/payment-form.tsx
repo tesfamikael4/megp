@@ -3,16 +3,23 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Checkbox,
   Flex,
+  LoadingOverlay,
   MultiSelect,
   NativeSelect,
   NumberInput,
   Stack,
 } from '@mantine/core';
-import { logger } from '@megp/core-fe';
+import { notify } from '@megp/core-fe';
 import { EntityButton } from '@megp/entity';
-import React from 'react';
+import { useParams } from 'next/navigation';
+import React, { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { ZodType, z } from 'zod';
+import {
+  useCreateMutation,
+  useReadQuery,
+  useUpdateMutation,
+} from '../../../_api/scc/payment-terms';
 
 const currencyList = [
   {
@@ -34,20 +41,23 @@ const currencyList = [
 ];
 
 export default function PaymentForm() {
+  const { id } = useParams();
   const PaymentTermsform: ZodType<Partial<PaymentTermsForm>> = z
     .object({
       contractCurrency: z.array(
         z.string({ required_error: 'Contract currency is required' }),
       ),
-      paymentMode: z.enum(['payment method one', 'payment method two']),
+      paymentMode: z
+        .array(z.enum(['paymentMethodOne', 'paymentMethodTwo']))
+        .min(1, { message: 'Payment Mode is required' }),
       advancePaymentAllowed: z.boolean(),
-      advancePaymentLimit: z.number().min(30, {
+      advancePaymentLimit: z.number().max(30, {
         message: 'advance Payment should be less than or equal to 30 percent',
       }),
       paymentReleasePeriod: z
         .number()
         .min(1, { message: 'Payment Release Period is required' }),
-      latePaymentPenality: z
+      latePaymentPenalty: z
         .number()
         .min(1, { message: 'Late Payment Penality is required' }),
     })
@@ -57,19 +67,65 @@ export default function PaymentForm() {
     });
 
   const {
+    data: selected,
+    isSuccess: selectedSuccess,
+    isLoading,
+  } = useReadQuery(id?.toString());
+
+  const [create, { isLoading: isSaving }] = useCreateMutation();
+  const [update, { isLoading: isUpdating }] = useUpdateMutation();
+
+  const {
     handleSubmit,
     control,
     formState: { errors },
     register,
+    reset,
   } = useForm({
     resolver: zodResolver(PaymentTermsform),
   });
 
-  const onCreate = () => {
-    logger.log('here');
+  const onCreate = async (data) => {
+    try {
+      await create({
+        ...data,
+        tenderId: id,
+      });
+      notify('Success', 'Contract general provision created successfully');
+    } catch (err) {
+      notify('Error', 'Error in creating contract general provision');
+    }
   };
+
+  const onUpdate = async (data) => {
+    try {
+      await update({
+        ...data,
+        tenderId: id,
+        id: id?.toString(),
+      });
+      notify('Success', 'Contract general provision updated successfully');
+    } catch {
+      notify('Error', 'Error in updating contract general provision');
+    }
+  };
+
+  useEffect(() => {
+    if (selectedSuccess && selected !== undefined) {
+      reset({
+        contractCurrency: selected?.contractCurrency,
+        paymentMode: selected?.paymentMode,
+        advancePaymentAllowed: selected?.advancePaymentAllowed,
+        advancePaymentLimit: selected?.advancePaymentLimit,
+        paymentReleasePeriod: selected?.paymentReleasePeriod,
+        latePaymentPenalty: selected?.latePaymentPenalty,
+      });
+    }
+  }, [reset, selected, selectedSuccess]);
+
   return (
     <Stack>
+      <LoadingOverlay visible={isLoading || isUpdating || isSaving} />
       <Flex gap="md">
         <Controller
           name="contractCurrency"
@@ -92,18 +148,26 @@ export default function PaymentForm() {
             />
           )}
         />
-        <NativeSelect
-          placeholder="Payment Mode"
-          withAsterisk
-          label="Payment Mode"
-          className="w-1/2"
-          data={['FromTheTotalContractAmount', 'FromRemainingAmount']}
-          error={
-            errors['paymentMode']
-              ? errors['paymentMode']?.message?.toString()
-              : ''
-          }
-          {...register('paymentMode')}
+        <Controller
+          name="paymentMode"
+          control={control}
+          render={({ field: { value, name, onChange } }) => (
+            <MultiSelect
+              label="Payment Mode"
+              name={name}
+              value={value}
+              onChange={onChange}
+              className="w-1/2"
+              withAsterisk
+              data={[
+                { label: 'payment method one', value: 'paymentMethodOne' },
+                { label: 'payment method two', value: 'paymentMethodTwo' },
+              ]}
+              searchable
+              clearable
+              error={errors.paymentMode?.message as string | undefined}
+            />
+          )}
         />
       </Flex>
       <Flex gap="md">
@@ -152,7 +216,7 @@ export default function PaymentForm() {
           )}
         />
         <Controller
-          name="latePaymentPenality"
+          name="latePaymentPenalty"
           control={control}
           render={({ field: { name, value, onChange } }) => (
             <NumberInput
@@ -162,7 +226,7 @@ export default function PaymentForm() {
               className="w-1/2"
               onChange={(d) => onChange(parseInt(d as string))}
               error={
-                errors['latePaymentPenality']
+                errors['latePaymentPenalty']
                   ? errors['latePaymentPenality']?.message?.toString()
                   : ''
               }
@@ -170,7 +234,12 @@ export default function PaymentForm() {
           )}
         />
       </Flex>
-      <EntityButton mode={'new'} onCreate={handleSubmit(onCreate)} />
+      <EntityButton
+        mode={selected ? 'detail' : 'new'}
+        onCreate={handleSubmit(onCreate)}
+        onUpdate={handleSubmit(onUpdate)}
+        onReset={reset}
+      />
     </Stack>
   );
 }

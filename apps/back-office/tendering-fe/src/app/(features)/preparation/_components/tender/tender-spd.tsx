@@ -1,6 +1,4 @@
-// import { LoadingOverlay, NativeSelect, Stack, TextInput, Textarea } from '@mantine/core'
 import { CollectionSelector } from '@/app/(features)/_components/collection-selector';
-import { logger } from '@megp/core-fe';
 import { CollectionQuery, RelationConfig } from '@megp/entity';
 import React from 'react';
 import { useLazyListQuery } from '../../_api/tender/config-spd.api';
@@ -49,8 +47,8 @@ export default function TenderSpd({ onSelect }: TenderSpdProps) {
       },
     ],
     onSave: (selected) => {
-      logger.log(selected[0]);
-      //   onDone(selected[0]);
+      // logger.log(selected[0]);
+      // onSelect(selected);
       close();
     },
     searchable: true,

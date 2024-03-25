@@ -1,18 +1,25 @@
-import { GuaranteesForm } from '@/models/contract-condition/guararentee-form';
+import { GuaranteesForm } from '@/models/contract-condition/guararentee-form.model';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Checkbox,
   Flex,
+  LoadingOverlay,
   MultiSelect,
   NativeSelect,
   NumberInput,
   Stack,
 } from '@mantine/core';
-import { logger } from '@megp/core-fe';
+import { logger, notify } from '@megp/core-fe';
 import { EntityButton } from '@megp/entity';
-import React from 'react';
+import { useParams } from 'next/navigation';
+import React, { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { ZodType, z } from 'zod';
+import {
+  useCreateMutation,
+  useReadQuery,
+  useUpdateMutation,
+} from '../../../_api/scc/guarantees';
 
 const guarenteeFormData = [
   {
@@ -38,6 +45,7 @@ const guarenteeFormData = [
 ];
 
 export default function Guarantees() {
+  const { id } = useParams();
   const guaranteesForm: ZodType<Partial<GuaranteesForm>> = z.object({
     guaranteeType: z.enum([
       'Advance Payment Guarantee',
@@ -48,18 +56,31 @@ export default function Guarantees() {
     guaranteePercentage: z
       .number()
       .min(1, { message: 'Guarantee Percentage is required ' }),
-    currency: z.enum(['']),
-    guaranteeForm: z.enum([
-      'Bank Guarantee',
-      'Insurance Guarantee',
-      'Letter of Credit',
-      'Certified Cheque',
-      'Cash',
-    ]),
+    currency: z.enum(['USD', 'Birr']),
+    guaranteeForm: z
+      .array(
+        z.enum([
+          'Bank Guarantee',
+          'Insurance Guarantee',
+          'Letter of Credit',
+          'Certified Cheque',
+          'Cash',
+        ]),
+      )
+      .min(1, { message: 'This feild is required' }),
     validityPeriod: z
       .number()
       .min(1, { message: 'Validity period is required' }),
   });
+
+  const {
+    data: selected,
+    isSuccess: selectedSuccess,
+    isLoading,
+  } = useReadQuery(id?.toString());
+
+  const [create, { isLoading: isSaving }] = useCreateMutation();
+  const [update, { isLoading: isUpdating }] = useUpdateMutation();
 
   const {
     handleSubmit,
@@ -71,12 +92,46 @@ export default function Guarantees() {
     resolver: zodResolver(guaranteesForm),
   });
 
-  const onCreate = () => {
-    logger.log('here');
+  const onCreate = async (data) => {
+    try {
+      await create({
+        ...data,
+        tenderId: id,
+      });
+      notify('Success', 'Contract general provision created successfully');
+    } catch (err) {
+      notify('Error', 'Error in creating contract general provision');
+    }
   };
+  const onUpdate = async (data) => {
+    try {
+      await update({
+        ...data,
+        tenderId: id,
+        id: id?.toString(),
+      });
+      notify('Success', 'Contract general provision updated successfully');
+    } catch {
+      notify('Error', 'Error in updating contract general provision');
+    }
+  };
+
+  useEffect(() => {
+    if (selectedSuccess && selected !== undefined) {
+      reset({
+        guaranteeType: selected?.guaranteeType,
+        guaranteeRequired: selected?.guaranteeRequired,
+        guaranteePercentage: selected?.guaranteePercentage,
+        currency: selected?.currency,
+        guaranteeForm: selected?.guaranteeForm,
+        validityPeriod: selected?.validityPeriod,
+      });
+    }
+  }, [reset, selected, selectedSuccess]);
 
   return (
     <Stack>
+      <LoadingOverlay visible={isLoading || isUpdating || isSaving} />
       <Flex gap="md">
         <Checkbox
           label="Guarantee Required"
@@ -145,7 +200,7 @@ export default function Guarantees() {
               className="w-1/2"
               withAsterisk
               data={guarenteeFormData?.map((tag) => ({
-                value: tag.id,
+                value: tag.name,
                 label: tag.name,
               }))}
               searchable
@@ -176,6 +231,7 @@ export default function Guarantees() {
       <EntityButton
         mode={'new'}
         onCreate={handleSubmit(onCreate)}
+        onUpdate={handleSubmit(onUpdate)}
         onReset={reset}
       />
     </Stack>

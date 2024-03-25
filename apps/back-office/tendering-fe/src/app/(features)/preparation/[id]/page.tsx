@@ -33,7 +33,7 @@ import Qualification from '../_components/lot/evaluation-criteria/qualification/
 import TechnicalScoring from '../_components/lot/evaluation-criteria/technical-scoring/technical-scoring';
 import BidSecurity from '../_components/lot/bid-security/bid-security';
 import { useDisclosure } from '@mantine/hooks';
-import SplitTenderModal from '../_components/tender/split-tender-modal';
+import SplitTenderModal from '../_components/lot/split-tender-modal';
 import ContractConditionTab from '../_components/contact-condition/contract-condition-tab';
 
 export default function TenderDetailPage() {
@@ -53,9 +53,6 @@ export default function TenderDetailPage() {
       trigger({ id: selected.id, collectionQuery: { skip: 0, take: 10 } });
     }
   }, [selected, trigger]);
-  useEffect(() => {
-    // logger.log(value);
-  }, [value]);
 
   return (
     <>
@@ -148,36 +145,32 @@ export default function TenderDetailPage() {
       </div>
       <Box className="container mx-auto my-4">
         {currentTab !== 'configuration' && (
-          <>
-            <Box className="w-full flex flex-row justify-between items-center container my-2">
-              <p className="text-lg font-semibold">
-                <Select
-                  placeholder="Pick Lot"
-                  data={
-                    data
-                      ? data.items.map((single) => {
-                          const value = { ...single };
-                          value['label'] = value.name;
-                          value['value'] = value.id;
-                          return value;
-                        })
-                      : []
-                  }
-                  onChange={setValue}
-                />
-              </p>
-              <div className="flex justify-end items-center gap-3">
-                <LoadingOverlay visible={isFetching} />
-                {value && (
-                  <Button variant="filled" className="my-auto" onClick={open}>
-                    Split
-                  </Button>
-                )}
+          <Box className="w-full flex flex-row justify-between items-center container my-2">
+            <Select
+              placeholder="Pick Lot"
+              data={
+                data
+                  ? data.items.map((single) => {
+                      const value = { ...single };
+                      value['label'] = value.name;
+                      value['value'] = value.id;
+                      return value;
+                    })
+                  : []
+              }
+              onChange={setValue}
+            />
+            <div className="flex justify-end items-center gap-3">
+              <LoadingOverlay visible={isFetching} />
+              {value && (
+                <Button variant="filled" className="my-auto" onClick={open}>
+                  Split
+                </Button>
+              )}
 
-                <Divider mb={'md'} />
-              </div>
-            </Box>
-          </>
+              <Divider mb={'md'} />
+            </div>
+          </Box>
         )}
         <Container fluid>
           {currentTab === 'configuration' && (
@@ -330,7 +323,11 @@ export default function TenderDetailPage() {
         onClose={close}
         withCloseButton={false}
       >
-        <SplitTenderModal lotId={value} />
+        <SplitTenderModal
+          lotId={value}
+          listOfLots={data ? data.items : []}
+          closeModal={close}
+        />
       </Modal>
     </>
   );

@@ -7,6 +7,7 @@ import { IconChevronRight } from '@tabler/icons-react';
 import { useLazyListByIdQuery } from '@/app/(features)/preparation/_api/lot/items.api';
 import { useParams, useRouter } from 'next/navigation';
 import { CollectionQuery } from '@megp/entity';
+import { useEffect } from 'react';
 
 export default function ItemList({
   lotId,
@@ -51,6 +52,12 @@ export default function ItemList({
   const onRequestChange = (request: CollectionQuery) => {
     trigger({ id: lotId ?? '', collectionQuery: request });
   };
+
+  useEffect(() => {
+    if (lotId) {
+      trigger({ id: lotId ?? '', collectionQuery: { skip: 0, take: 10 } });
+    }
+  }, [lotId, trigger]);
 
   return (
     <Section title="Items" collapsible={false} defaultCollapsed={false}>

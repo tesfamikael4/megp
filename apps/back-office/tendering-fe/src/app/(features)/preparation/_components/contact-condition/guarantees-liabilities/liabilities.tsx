@@ -1,30 +1,39 @@
-import { liabililitesForm } from '@/models/contract-condition/liability-forms';
+import { liabililitesForm } from '@/models/contract-condition/liability-forms.model';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Flex, NumberInput, Stack } from '@mantine/core';
-import { logger } from '@megp/core-fe';
+import { Flex, LoadingOverlay, NumberInput, Stack } from '@mantine/core';
+import { notify } from '@megp/core-fe';
 import { EntityButton } from '@megp/entity';
-import React from 'react';
+import { useParams } from 'next/navigation';
+import React, { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { ZodType, z } from 'zod';
-
-interface LiabililitesFormInterface {
-  warrantyPeriod: number;
-  postWarrantyServicePeriod: number;
-  liquidtyDamage: number;
-  liquidtyDamageLimit: number;
-}
+import {
+  useCreateMutation,
+  useReadQuery,
+  useUpdateMutation,
+} from '../../../_api/scc/liabilities';
 
 export default function Liabilities() {
+  const { id } = useParams();
   const liabililitesForm: ZodType<Partial<liabililitesForm>> = z.object({
     warrantyPeriod: z.number(),
     postWarrantyServicePeriod: z.number(),
-    liquidtyDamage: z
+    liquidityDamage: z
       .number()
       .min(1, { message: 'Liquidity Damage is required' }),
-    liquidtyDamageLimit: z
+    liquidityDamageLimit: z
       .number()
       .min(1, { message: 'Liquidity Damage is required' }),
   });
+
+  const {
+    data: selected,
+    isSuccess: selectedSuccess,
+    isLoading,
+  } = useReadQuery(id?.toString());
+
+  const [create, { isLoading: isSaving }] = useCreateMutation();
+  const [update, { isLoading: isUpdating }] = useUpdateMutation();
 
   const {
     handleSubmit,
@@ -35,12 +44,44 @@ export default function Liabilities() {
     resolver: zodResolver(liabililitesForm),
   });
 
-  const onCreate = () => {
-    logger.log('here');
+  const onCreate = async (data) => {
+    try {
+      await create({
+        ...data,
+        tenderId: id,
+      });
+      notify('Success', 'Contract liabilities created successfully');
+    } catch (err) {
+      notify('Error', 'Error in creating contract liabilities');
+    }
   };
+  const onUpdate = async (data) => {
+    try {
+      await update({
+        ...data,
+        tenderId: id,
+        id: id?.toString(),
+      });
+      notify('Success', 'Contract liabilities updated successfully');
+    } catch {
+      notify('Error', 'Error in updating contract liabilities');
+    }
+  };
+
+  useEffect(() => {
+    if (selectedSuccess && selected !== undefined) {
+      reset({
+        warrantyPeriod: selected?.warrantyPeriod,
+        postWarrantyServicePeriod: selected?.postWarrantyServicePeriod,
+        liquidityDamage: selected?.liquidityDamage,
+        liquidityDamageLimit: selected?.liquidityDamageLimit,
+      });
+    }
+  }, [reset, selected, selectedSuccess]);
 
   return (
     <Stack>
+      <LoadingOverlay visible={isLoading || isUpdating || isSaving} />
       <Flex gap="md">
         <Controller
           name="warrantyPeriod"
@@ -81,7 +122,7 @@ export default function Liabilities() {
       </Flex>
       <Flex gap="md">
         <Controller
-          name="liquidtyDamage"
+          name="liquidityDamage"
           control={control}
           render={({ field: { name, value, onChange } }) => (
             <NumberInput
@@ -91,26 +132,26 @@ export default function Liabilities() {
               className="w-1/2"
               onChange={(d) => onChange(parseInt(d as string))}
               error={
-                errors['liquidtyDamage']
-                  ? errors['liquidtyDamage']?.message?.toString()
+                errors['liquidityDamage']
+                  ? errors['liquidityDamage']?.message?.toString()
                   : ''
               }
             />
           )}
         />
         <Controller
-          name="liquidtyDamageLimit"
+          name="liquidityDamageLimit"
           control={control}
           render={({ field: { name, value, onChange } }) => (
             <NumberInput
-              label="Post-Warranty Service Period"
+              label="Liquidty Damage Limit"
               name={name}
               value={value}
               className="w-1/2"
               onChange={(d) => onChange(parseInt(d as string))}
               error={
-                errors['liquidtyDamageLimit']
-                  ? errors['liquidtyDamageLimit']?.message?.toString()
+                errors['liquidityDamageLimit']
+                  ? errors['liquidityDamageLimit']?.message?.toString()
                   : ''
               }
             />
@@ -118,8 +159,9 @@ export default function Liabilities() {
         />
       </Flex>
       <EntityButton
-        mode={'new'}
+        mode={selected ? 'detail' : 'new'}
         onCreate={handleSubmit(onCreate)}
+        onUpdate={handleSubmit(onUpdate)}
         onReset={reset}
       />
     </Stack>

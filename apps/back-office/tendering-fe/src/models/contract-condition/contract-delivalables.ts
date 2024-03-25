@@ -1,4 +1,5 @@
 export interface ContactDeliverablesForm {
-  delivarable: string[];
+  id: string;
+  deliverable: string[];
   deliverySchedule: number;
 }
