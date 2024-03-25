@@ -30,7 +30,7 @@ export class ProcurementDisposalUnit extends Audit {
 
   @ManyToOne(() => Unit, (unit) => unit.procurementDisposalUnits)
   @JoinColumn({ name: 'unitId' })
-  public unit: ProcurementInstitution;
+  public unit: Unit;
 
   @Column({ default: 'Draft' })
   status: string;
