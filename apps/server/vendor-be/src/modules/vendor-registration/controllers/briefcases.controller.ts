@@ -52,7 +52,7 @@ export class BriefcasesController {
     }
 
     @Get('get-briefcases')
-    async mybriefcases(@Body() user: any) {
+    async mybriefcases(@CurrentUser() user: any) {
         const result = this.brifrcaseService.getBriefcases(user);
         return result;
     }

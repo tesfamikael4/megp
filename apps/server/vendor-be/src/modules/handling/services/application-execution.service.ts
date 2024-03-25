@@ -42,7 +42,6 @@ export class ApplicationExcutionService {
     user: any,
   ): Promise<DataResponseFormat<WorkflowInstanceResponse>> {
     const keys = this.commonService.getServiceCatagoryKeys(serviceKey);
-    console.log(keys);
     if (keys.length < 0) throw new HttpException('Invalid Request', 400);
     const dataQuery = QueryConstructor.constructQuery<WorkflowInstanceEntity>(
       this.wiRepository,
@@ -164,7 +163,7 @@ export class ApplicationExcutionService {
         pts.push(pt);
       }
       response.preferential = pts;
-      return response;
+
     }
 
     if (ServiceKeyEnum.REGISTRATION_RENEWAL == serviceKey) {
