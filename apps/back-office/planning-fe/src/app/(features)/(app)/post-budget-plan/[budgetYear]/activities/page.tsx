@@ -93,7 +93,7 @@ export default function PostBudget() {
       id: budgetYear as string,
       collectionQuery: {
         ...request,
-        includes: ['reasons', 'postProcurementMechanisms'],
+        includes: ['reasons', 'postProcurementMechanism'],
       },
     });
   };

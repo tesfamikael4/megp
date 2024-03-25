@@ -14,11 +14,11 @@ export const DetailActivity = ({
 }) => {
   const tempMethod =
     page === 'pre'
-      ? activity.preProcurementMechanisms?.length > 0
-        ? activity.preProcurementMechanisms?.[0]
+      ? activity.preProcurementMechanism !== null
+        ? activity.preProcurementMechanism
         : undefined
-      : activity.postProcurementMechanisms?.length > 0
-        ? activity.postProcurementMechanisms?.[0]
+      : activity.postProcurementMechanisms !== null
+        ? activity.postProcurementMechanism
         : undefined;
   const methods = tempMethod
     ? [
