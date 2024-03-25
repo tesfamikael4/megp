@@ -19,7 +19,13 @@ export class IPDCMemberService extends ExtraCrudService<IPDCMember> {
     await this.ipdcMemberRepository.delete({
       ipdcId: itemData.adhocTeamId,
     });
-    const item = this.ipdcMemberRepository.create(itemData);
+    const members = itemData.members.map((item) => {
+      item.ipdcId = itemData.ipdcId;
+      item.organizationId = req.user.organization.id;
+      item.organizationName = req.user.organization.name;
+      return item;
+    });
+    const item = this.ipdcMemberRepository.create(members);
     await this.ipdcMemberRepository.insert(item);
     return item;
   }

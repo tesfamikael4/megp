@@ -17,9 +17,6 @@ export class AdhocTeamService extends ExtraCrudService<AdhocTeam> {
   async create(itemData: AdhocTeamDto, req?: any): Promise<any> {
     const name = `Adhoc Team (${new Date(itemData.startDate).getFullYear()} - ${new Date(itemData.endDate).getFullYear()})`;
     const item = this.adhocTeamRepository.create({ ...itemData, name });
-    if (req?.user?.organization) {
-      item.organizationId = req.user.organization.id;
-    }
     await this.adhocTeamRepository.insert(item);
     return item;
   }

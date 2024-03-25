@@ -18,7 +18,3 @@ export class Audit {
   @DeleteDateColumn({ type: 'timestamp' })
   public deletedAt!: Date;
 }
-export class OrgAudit extends Audit {
-  @Column({ type: 'uuid', nullable: true, default: null })
-  public organizationId: string | null;
-}
