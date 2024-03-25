@@ -25,7 +25,7 @@ export class PostBudgetPlanDisbursement extends OrgAudit {
   @ManyToOne(
     () => PostBudgetPlanActivity,
     (postBudgetPlanActivity) =>
-      postBudgetPlanActivity.postBudgePlantDisbursements,
+      postBudgetPlanActivity.postBudgePlanDisbursements,
   )
   @JoinColumn({ name: 'postBudgetPlanActivityId' })
   public postBudgetPlanActivity: PostBudgetPlanActivity;

@@ -13,9 +13,10 @@ export class PostBudgetRequisitionerService extends ExtraCrudService<PostBudgetR
     super(repositoryPostBudgetRequisitioner);
   }
 
-  async bulkCreate(requisitioner: any, organizationId: string): Promise<any> {
+  async bulkCreate(requisitioner: any, organization: any): Promise<any> {
     requisitioner.requisitioner.map((item) => {
-      item.organizationId = organizationId;
+      item.organizationId = organization.id;
+      item.organizationName = organization.name;
     });
     await this.repositoryPostBudgetRequisitioner.delete({
       postBudgetPlanActivityId:

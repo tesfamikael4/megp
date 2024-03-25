@@ -10,6 +10,7 @@ export class EntityCrudService<T extends ObjectLiteral> {
   async create(itemData: DeepPartial<any>, req?: any): Promise<any> {
     if (req?.user?.organization) {
       itemData.organizationId = req.user.organization.id;
+      itemData.organizationName = req.user.organization.name;
     }
     const item = this.repository.create(itemData);
     await this.repository.insert(item);

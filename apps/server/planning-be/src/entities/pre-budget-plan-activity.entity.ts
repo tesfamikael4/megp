@@ -49,11 +49,11 @@ export class PreBudgetPlanActivity extends OrgAudit {
   )
   preBudgetPlanTimelines: PreBudgetPlanTimeline[];
 
-  @OneToMany(
+  @OneToOne(
     () => PreProcurementMechanism,
     (preProcurementMechanism) => preProcurementMechanism.preBudgetPlanActivity,
   )
-  preProcurementMechanisms: PreProcurementMechanism[];
+  preProcurementMechanism: PreProcurementMechanism;
 
   @OneToMany(
     () => PreBudgetRequisitioner,

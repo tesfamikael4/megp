@@ -18,9 +18,9 @@ export class PreProcurementMechanism extends OrgAudit {
   @Column()
   preBudgetPlanActivityId: string;
 
-  @ManyToOne(
+  @OneToOne(
     () => PreBudgetPlanActivity,
-    (preBudgetPlanActivity) => preBudgetPlanActivity.preProcurementMechanisms,
+    (preBudgetPlanActivity) => preBudgetPlanActivity.preProcurementMechanism,
   )
   @JoinColumn({ name: 'preBudgetPlanActivityId' })
   public preBudgetPlanActivity: PreBudgetPlanActivity;

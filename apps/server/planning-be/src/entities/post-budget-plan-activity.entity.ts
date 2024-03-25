@@ -64,7 +64,7 @@ export class PostBudgetPlanActivity extends OrgAudit {
     (postBudgePlantDisbursements) =>
       postBudgePlantDisbursements.postBudgetPlanActivity,
   )
-  postBudgePlantDisbursements: PostBudgetPlanDisbursement[];
+  postBudgePlanDisbursements: PostBudgetPlanDisbursement[];
 
   @OneToMany(
     () => PostBudgetActivityDocument,
@@ -79,12 +79,12 @@ export class PostBudgetPlanActivity extends OrgAudit {
   )
   postBudgetRequisitioners: PostBudgetRequisitioner[];
 
-  @OneToMany(
+  @OneToOne(
     () => PostProcurementMechanism,
     (postProcurementMechanism) =>
       postProcurementMechanism.postBudgetPlanActivity,
   )
-  postProcurementMechanisms: PostProcurementMechanism[];
+  postProcurementMechanism: PostProcurementMechanism;
 
   @OneToMany(
     () => ActivityBudgetLine,

@@ -24,6 +24,7 @@ export class PostBudgePlantDisbursementController extends ExtraCrudController<Po
   @Post('bulk-create')
   async bulkCreate(@Body() itemData: any, @CurrentUser() user): Promise<any> {
     itemData.organizationId = user.organization.id;
+    itemData.organizationName = user.organization.name;
     return this.postBudgetPlanDisbursementService.bulkCreate(itemData);
   }
 }

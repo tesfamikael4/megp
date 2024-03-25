@@ -28,7 +28,7 @@ export class PostBudgetRequisitionerController extends ExtraCrudController<PostB
   ): Promise<any> {
     return this.postBudgetRequisitionerService.bulkCreate(
       requisitioner,
-      user.organization.id,
+      user.organization,
     );
   }
 }

@@ -48,7 +48,7 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
         postBudgetPlan: true,
         postBudgetPlanItems: true,
         postBudgetPlanTimelines: true,
-        postProcurementMechanisms: true,
+        postProcurementMechanism: true,
       },
     });
     if (
@@ -85,8 +85,8 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
       status: ProcurementRequisitionStatusEnum.DRAFT,
       organization: user.organization.id,
       procurementRequisitionItems,
-      procurementMechanisms: activity.postProcurementMechanisms
-        ? activity.postProcurementMechanisms[0]
+      procurementMechanisms: activity.postProcurementMechanism
+        ? activity.postProcurementMechanism
         : null,
       procurementRequisitionTimelines,
     };

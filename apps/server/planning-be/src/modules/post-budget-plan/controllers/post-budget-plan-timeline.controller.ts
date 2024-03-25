@@ -5,6 +5,7 @@ import { PostBudgetPlanTimelineService } from '../services/post-budget-plan-time
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { ExtraCrudController } from 'src/shared/controller';
 import { BulkTimelineDto } from '../dtos/post-budget-plan-timeline.dto';
+import { CurrentUser } from 'src/shared/authorization';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'postBudgetPlanActivityId',
@@ -23,8 +24,11 @@ export class PostBudgetPlanTimelineController extends ExtraCrudController<PostBu
   @Post('bulk-create')
   async bulkCreate(
     @Body() timelines: BulkTimelineDto,
-    @Req() req: any,
+    @CurrentUser() user: any,
   ): Promise<BulkTimelineDto> {
-    return this.postBudgetPlanTimelineService.bulkCreate(timelines, req);
+    return this.postBudgetPlanTimelineService.bulkCreate(
+      timelines,
+      user.organization,
+    );
   }
 }
