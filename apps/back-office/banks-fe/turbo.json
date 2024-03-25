@@ -4,9 +4,11 @@
   "pipeline": {
     "build": {
       "env": [
+        "NEXT_PUBLIC_BANKS_API",
         "NEXT_PUBLIC_PLANNING_API",
         "NEXT_PUBLIC_ADMINISTRATION_API",
-        "NEXT_PUBLIC_INFRASTRUCTURE_API"
+        "NEXT_PUBLIC_INFRASTRUCTURE_API",
+        "NEXT_PUBLIC_VENDOR_API"
       ]
     }
   }

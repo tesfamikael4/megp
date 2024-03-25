@@ -1,8 +1,9 @@
 import { EntityStoreConfig } from '@megp/entity';
 
 export const ENTITY_LIST: EntityStoreConfig[] = [
-  // {
-  //   entity: 'group',
-  //   baseUrl: process.env.NEXT_PUBLIC_BANKS_API ?? '/banks/api',
-  // },
+  {
+    entity: 'guarantees',
+    baseUrl:
+      process.env.NEXT_PUBLIC_ADMINISTRATION_API ?? '/administration/api/',
+  },
 ];
