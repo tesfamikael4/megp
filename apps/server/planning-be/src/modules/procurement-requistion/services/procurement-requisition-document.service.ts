@@ -15,25 +15,35 @@ export class ProcurementRequisitionDocumentService extends ExtraCrudService<Proc
     super(repositoryProcurementRequisitionDocument);
   }
 
-  async download(fileInfo: any) {
+  async download(id: string): Promise<any> {
+    const { fileInfo }: any =
+      await this.repositoryProcurementRequisitionDocument.findOne({
+        where: { id },
+        select: { fileInfo: true },
+      });
     return this.minIOService.download(fileInfo, null);
   }
 
-  async generatePresignedGetUrl(fileInfo: any): Promise<string> {
-    const presignedUrl =
-      await this.minIOService.generatePresignedDownloadUrl(fileInfo);
-    return presignedUrl;
+  async generatePresignedGetUrl(id: string): Promise<any> {
+    const { fileInfo }: any =
+      await this.repositoryProcurementRequisitionDocument.findOne({
+        where: { id },
+        select: { fileInfo: true },
+      });
+    return await this.minIOService.generatePresignedDownloadUrl(fileInfo);
   }
 
-  async upload(fileInfo: any): Promise<any> {
-    const presignedUrl =
+  async upload(organizationId: string, fileInfo: any): Promise<any> {
+    const { file: presignedUrl } =
       await this.minIOService.generatePresignedUploadUrl(fileInfo);
-    const itemData = {
+    const documentData = {
+      fileInfo: presignedUrl,
       procurementRequisitionId: fileInfo.procurementRequisitionId,
-      ...fileInfo,
+      organizationId: organizationId,
     };
-    const doc = this.repositoryProcurementRequisitionDocument.create(itemData);
-    await this.repositoryProcurementRequisitionDocument.insert(doc);
-    return presignedUrl;
+    await this.repositoryProcurementRequisitionDocument.insert(
+      this.repositoryProcurementRequisitionDocument.create(documentData),
+    );
+    return presignedUrl.presignedUrl;
   }
 }
