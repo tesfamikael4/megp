@@ -78,6 +78,7 @@ export class PreBudgetPlanController extends ExtraCrudController<PreBudgetPlan>(
   @UseInterceptors(TransactionInterceptor)
   async initiateWorkflow(@Body() data: any, @CurrentUser() user) {
     data.organizationId = user.organization.id;
+    data.organizationName = user.organization.name;
     await this.preBudgetPlanService.initiateWorkflow(data);
   }
 
@@ -107,8 +108,12 @@ export class PreBudgetPlanController extends ExtraCrudController<PreBudgetPlan>(
     @Param('id') id: string,
     @Param('itemName') itemName: string,
     @Res() response,
+    @CurrentUser() user: any,
   ) {
-    const buffer = await this.preBudgetPlanService.pdfGenerator(id, itemName);
+    const buffer = await this.preBudgetPlanService.pdfGenerator(id, itemName, {
+      organizationId: user.organization.id,
+      organizationName: user.organization.name,
+    });
     response.setHeader('Content-Type', 'application/pdf');
     response.setHeader(
       'Content-Disposition',
