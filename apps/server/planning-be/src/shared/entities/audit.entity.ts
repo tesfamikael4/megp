@@ -23,6 +23,6 @@ export class OrgAudit extends Audit {
   @Column({ type: 'uuid' })
   public organizationId: string;
 
-  @Column()
+  @Column({ default: 'DefaultOrganization' })
   public organizationName: string;
 }
