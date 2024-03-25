@@ -16,7 +16,7 @@ import {
 import { useDisclosure } from '@mantine/hooks';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { notifications } from '@mantine/notifications';
+import { notify } from '@megp/core-fe';
 
 export default function PreBudgetPlan() {
   const { data: list, isSuccess } = useGetPreBudgetPlansQuery({} as any);
@@ -37,18 +37,14 @@ export default function PreBudgetPlan() {
     try {
       const res = await appCreate(type).unwrap();
       close();
-      notifications.show({
-        title: 'Success',
-        message: 'APP Created successfully',
-        color: 'green',
-      });
+      notify('Success', 'APP Created successfully');
       router.push(`/pre-budget-plan/${res.id}/activities`);
     } catch (err) {
-      notifications.show({
-        title: 'Error',
-        message: 'Something went wrong',
-        color: 'red',
-      });
+      if (err.status === 430) {
+        notify('Error', err.data.message);
+      } else {
+        notify('Error', 'Something went wrong');
+      }
     }
   };
   return (

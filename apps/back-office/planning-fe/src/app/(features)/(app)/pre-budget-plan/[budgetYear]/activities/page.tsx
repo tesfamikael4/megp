@@ -93,7 +93,7 @@ export default function PreBudget() {
       id: budgetYear as string,
       collectionQuery: {
         ...request,
-        includes: ['reasons', 'preProcurementMechanisms'],
+        includes: ['reasons', 'preProcurementMechanism'],
       },
     });
   };
