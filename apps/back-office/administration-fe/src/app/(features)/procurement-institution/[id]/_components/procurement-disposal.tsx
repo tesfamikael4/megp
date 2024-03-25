@@ -4,7 +4,7 @@ import { useLazyGetUnitsQuery } from '@/store/api/iam/iam.api';
 import { Button, Group, Modal } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { useAuth } from '@megp/auth';
-import { ExpandableTable, Section, logger, notify } from '@megp/core-fe';
+import { ExpandableTable, Section, notify } from '@megp/core-fe';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import {
@@ -54,7 +54,7 @@ export const ProcurementDisposal = () => {
   }, [id]);
 
   useEffect(() => {
-    if (disposalUnit) {
+    if (disposalUnit && disposalUnit.total > 0) {
       setCurrentUnit([disposalUnit?.items?.[0].unit]);
     }
   }, [disposalUnit]);

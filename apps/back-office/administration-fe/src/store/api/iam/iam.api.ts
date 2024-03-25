@@ -27,7 +27,18 @@ export const iamApi = createApi({
         return { url: `user/list/${organizationId}${q}` };
       },
     }),
+    createIpdcMembers: builder.mutation<any, any>({
+      query: (data) => ({
+        url: `ipdc-member/bulk-create`,
+        method: 'POST',
+        body: data,
+      }),
+    }),
   }),
 });
 
-export const { useLazyGetUnitsQuery, useLazyGetUsersQuery } = iamApi;
+export const {
+  useLazyGetUnitsQuery,
+  useLazyGetUsersQuery,
+  useCreateIpdcMembersMutation,
+} = iamApi;
