@@ -58,6 +58,14 @@ export const tab = [
 ];
 
 export const formatColumns = {
+  basic: [
+    { name: 'name', displayName: 'Name of Business Company' },
+    { name: 'origin', displayName: 'Country of Registration' },
+    { name: 'businessType', displayName: 'Form of Business' },
+    { name: 'tinNumber', displayName: 'Taxpayer Identification Number' },
+    { name: 'district', displayName: 'District' },
+    { status: 'status' },
+  ],
   businessSizeAndOwnership: [
     { name: 'registeredCapital' },
     { name: 'paidUpCapital' },

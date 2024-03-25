@@ -109,7 +109,6 @@ export const ShowFile = ({
       </div>
     );
   }
-
   return (
     <>
       <ImageModal opened={opened} close={close} url={fileContent as string} />
@@ -137,7 +136,7 @@ export const ShowFile = ({
             onClick={() => open()}
           />
         ) : (
-          <p>No content available</p>
+          <p>No content available {error}</p>
         )}
       </div>
     </>

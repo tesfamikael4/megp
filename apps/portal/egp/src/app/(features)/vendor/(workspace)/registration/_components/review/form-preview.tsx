@@ -58,7 +58,7 @@ function FormPreview({
                             tabValue === 'supportingDocuments'
                               ? 'SupportingDocument'
                               : tabValue === 'certificate'
-                                ? 'Certificate'
+                                ? 'certificate'
                                 : 'paymentReceipt'
                           }/${data[tabValue]}`}
                           filename={data[tabValue]}
