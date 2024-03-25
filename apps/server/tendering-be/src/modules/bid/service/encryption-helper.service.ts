@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import * as crypto from 'crypto';
 
 @Injectable()
@@ -34,6 +34,10 @@ export class EncryptionHelperService {
       decrypted += decipher.final('utf8');
       return decrypted;
     } catch (error) {
+      if (error?.code == 'ERR_OSSL_BAD_DECRYPT') {
+        throw new BadRequestException('invalid_password');
+      }
+
       throw error;
     }
   }
