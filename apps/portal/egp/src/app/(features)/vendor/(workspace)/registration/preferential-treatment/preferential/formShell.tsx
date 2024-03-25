@@ -68,15 +68,15 @@ export const PreferentialTreatmentForm = ({
     useUploadPreferentialAttachmentsMutation();
 
   useEffect(() => {
-    if (saveValues.isSuccess) {
+    if (saveAttachmentValues.isSuccess) {
       NotificationService.successNotification('Submitted Successfully!');
       router.push(`/vendor/registration/track-applications`);
     }
-    if (saveValues.isError) {
+    if (saveAttachmentValues.isError) {
       NotificationService.requestErrorNotification('Error on Request');
     }
     return () => {};
-  }, [saveValues.isSuccess, saveValues.isError]);
+  }, [saveAttachmentValues.isSuccess, saveAttachmentValues.isError]);
 
   const extendedRegister = (
     name: any,
@@ -132,7 +132,7 @@ export const PreferentialTreatmentForm = ({
   return (
     <Box className="p-2 w-full relative">
       <LoadingOverlay
-        visible={saveValues.isLoading}
+        visible={saveAttachmentValues.isLoading}
         overlayProps={{ radius: 'sm', blur: 2 }}
       />
       <form onSubmit={handleSubmit(onSubmit)}>

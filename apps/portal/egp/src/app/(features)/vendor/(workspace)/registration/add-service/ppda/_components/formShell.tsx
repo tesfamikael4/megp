@@ -13,6 +13,7 @@ export const lineOfBusinessSchema = z.object({
   id: z
     .string()
     .min(2, { message: 'At least one Line Of Business Interest is required' }),
+  name: z.string().min(2, { message: 'Line Of Business Interest is required' }),
 });
 
 export const areasOfBusinessInterestSchema = z.object({

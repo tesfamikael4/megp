@@ -11,7 +11,7 @@ export default function ProfileInfo() {
   if (isLoading) return null;
   if (!data)
     return (
-      <Box className="p-6 bg-[#e7f4f7]">
+      <Box className="">
         <Box className=" w-full p-6 min-h-screen bg-white">
           <Flex direction={'column'} className="w-full py-2 mb-3 border-b-2">
             <Text fw={700} fz="xl" c={'#1D8E3F'}>
@@ -26,7 +26,7 @@ export default function ProfileInfo() {
     );
 
   return (
-    <Box className="p-4">
+    <Box className="">
       <Box className=" w-full min-h-screen bg-white  relative">
         <Paper className="p-7">
           <Flex direction="column" className="w-full text-sm justify-center">
