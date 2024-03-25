@@ -45,7 +45,7 @@ export class ApplicationExcutionController {
     private readonly workflowService: WorkflowService,
     private readonly bpService: BusinessProcessService,
     private readonly vendorService: VendorRegistrationsService,
-  ) {}
+  ) { }
   @UseGuards(JwtGuard)
   @Get('email')
   async email(@Req() request: Request, @CurrentUser() user: any) {
@@ -122,8 +122,6 @@ export class ApplicationExcutionController {
     @Query('q') q: string,
     @CurrentUser() user: any,
   ) {
-    console.log('serviceKey', serviceKey);
-
     const query = decodeCollectionQuery(q);
     return await this.executeService.getCurruntTaskByServiceKey(
       serviceKey,

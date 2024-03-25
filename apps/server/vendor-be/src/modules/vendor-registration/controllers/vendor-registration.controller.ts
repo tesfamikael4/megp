@@ -8,6 +8,9 @@ import {
   Query,
   UseInterceptors,
   UploadedFile,
+  Req,
+  Res,
+  StreamableFile,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -311,4 +314,20 @@ export class VendorRegistrationsController {
   async getpreferentialCertificates(@CurrentUser() userInfo: any) {
     return await this.regService.getCertificateInformations(userInfo.id);
   }
+
+  @Post('submit-registration-request')
+  async submitRegistrationRequest(
+    @CurrentUser() user: string, @Res() res: any
+  ) {
+    const result = await this.regService.submitRegistrationRequest(
+      user
+    );
+    res.set({
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': 'attachment; filename="document.pdf"',
+    });
+    result.pipe(res);
+
+  }
+
 }

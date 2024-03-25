@@ -13,7 +13,7 @@ export class CertificateController {
   constructor(
     private readonly certificateService: CertificateService,
     private readonly fileService: FileService,
-  ) {}
+  ) { }
   @UseGuards(JwtGuard)
   @Get('generate-certeficate/:vendorId/:instanceId')
   async generateCertificate(
@@ -51,4 +51,7 @@ export class CertificateController {
     console.log('fileId', userInfo);
     return await this.fileService.getCertificate(fileId, vendorId, resp);
   }
+
+
+
 }

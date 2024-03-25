@@ -51,7 +51,7 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
       where: {
         vendorId: vendorId,
         status: ApplicationStatus.APPROVED,
-        certificateUrl: Not(IsNull()), BpService: { key: In([this.commonService.getPreferencialServices()]) }
+        BpService: { key: In(this.commonService.getPreferencialServices()) }
       },
       order: { updatedAt: 'DESC' }
     });

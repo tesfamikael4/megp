@@ -26,7 +26,6 @@ import {
   CreateWorkflowInstanceDto,
   GotoNextStateDto,
   UpdateWorkflowInstanceDto,
-  WorkflowInstanceResponse,
 } from 'src/modules/handling/dto/workflow-instance.dto';
 import { VendorStatusEnum } from 'src/shared/enums/vendor-status-enums';
 import { WorkflowService } from 'src/modules/bpm/services/workflow.service';
@@ -49,20 +48,16 @@ import { ReceiptDto } from '../dto/receipt.dto';
 import { FileService } from './file.service';
 import { REQUEST } from '@nestjs/core';
 import { HandlingCommonService } from 'src/modules/handling/services/handling-common-services';
-import { CreateAreasOfBusinessInterest } from '../dto/areas-of-business-interest';
 import { BusinessCategories } from 'src/modules/handling/enums/business-category.enum';
 import { PreferentailTreatmentService } from './preferentail-treatment.service';
-import { PreferentialTreatmentsEntity } from 'src/entities/preferential-treatment.entity';
-import { stat } from 'fs';
-import { userInfo } from 'os';
+import PdfDocumentTemplate from 'src/modules/certificates/templates/pdf-tamplate';
+
 @Injectable()
 export class VendorRegistrationsService extends EntityCrudService<VendorsEntity> {
   constructor(
     @Inject(REQUEST) private request: Request,
     @InjectRepository(VendorsEntity)
     private readonly vendorRepository: Repository<VendorsEntity>,
-    @InjectRepository(PreferentialTreatmentsEntity)
-    private readonly ptRepository: Repository<PreferentialTreatmentsEntity>,
     @InjectRepository(BusinessAreaEntity)
     private readonly businessAreaRepository: Repository<BusinessAreaEntity>,
     @InjectRepository(IsrVendorsEntity)
@@ -760,6 +755,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       const vendor = await this.vendorRepository.findOne({
         where: { isrVendorId: vendorStatusDto.isrVendorId },
       });
+
       if (service.key == ServiceKeyEnum.PROFILE_UPDATE) {
         await this.setProfileSatus(
           vendorStatusDto.isrVendorId,
@@ -786,7 +782,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             expireDate.setFullYear(expireDate.getFullYear() + 1);
             ba.expireDate = expireDate;
           }
-
           if (
             ServiceKeyEnum.REGISTRATION_RENEWAL == service.key ||
             ServiceKeyEnum.REGISTRATION_UPGRADE == service.key
@@ -806,11 +801,11 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           }
           ba.remark = vendorStatusDto.remark;
           await this.businessAreaRepository.save(ba);
-
-
-
         }
-        this.updateBusinessInterestArea(result);
+        if (ServiceKeyEnum.NEW_REGISTRATION == service.key) {
+          this.updateBusinessInterestArea(result);
+        }
+
       } else {
         if (vendorStatusDto.status == VendorStatusEnum.APPROVE) {
           const isrVendorData = result;
@@ -894,7 +889,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       if (vendor_.areasOfBusinessInterest.some((item) => item.category == row.category)) {
         bias.push(row);
       } else {
-        bias.push({ category: row.category, priceRange: row.priceRange, lineOfBusiness: row.lineOfBusiness, vendorId: row.vendorId });
+        bias.push({ category: row.category, priceRange: row.priceRange, lineOfBusiness: row.lineOfBusiness, vendorId: isrVendor.id });
       }
     }
     vendor_.areasOfBusinessInterest = [...bias];
@@ -955,7 +950,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         paymentReceipt: profileData.profileData?.paymentReceipt,
         invoice: profileData.profileData?.invoice,
       };
-      vendor.metaData = profileData.profileData?.tempMetadata;
+      vendor.metaData = tempMetadata;
       await this.vendorRepository.save(vendor);
       return true;
     } catch (error) {
@@ -1770,8 +1765,10 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       bussinessAreas.push(businessarea);
     }
     rest.areasOfBusinessInterest = bussinessAreas;
+    const certeficate = await this.baService.getCerteficate(vendorData.id);
+    const preferentails = await this.baService.getPreferentials(vendorData.id);
     const vendor = {
-      ...rest,
+      ...rest, certificate: certeficate?.certificateUrl, preferentail: [...preferentails],
     };
     return vendor;
   }
@@ -2095,7 +2092,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         },
       });
       if (!vendor) throw new NotFoundException('vendor not found');
-
       const result = await this.profileInfoRepository.findOne({
         where: {
           vendorId: vendor.id,
@@ -2153,20 +2149,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
 
 
       } else {
-        const priceRangeIds = result.profileData?.areasOfBusinessInterest.map(
-          (item: any) => item.priceRange,
-        );
-        let priceRanges = [];
-        if (priceRangeIds.length > 0) {
-          priceRanges =
-            await this.pricingService.findPriceRangeByIds(priceRangeIds);
-          // this.commonService.formatPriceRange()
-          const businessInterest = WorkflowInstanceResponse.formatBusinessLines(
-            result.profileData?.areasOfBusinessInterest,
-            priceRanges,
-          );
-          result.profileData.areasOfBusinessInterest = businessInterest;
-        }
+
         return result.profileData;
       }
     } catch (error) {
@@ -2327,7 +2310,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
   }
 
   async cancelApplication(wfi: UpdateWorkflowInstanceDto) {
-    const vendor = this.vendorRepository.findOne({
+    const vendor = await this.vendorRepository.findOne({
       where: { id: wfi.requestorId },
     });
     if (vendor) {
@@ -2342,4 +2325,17 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       return true;
     }
   }
+  async submitRegistrationRequest(user: any) {
+
+    const data = this.isrVendorsRepository.find({ where: { userId: user.id } });
+    const pdf = await PdfDocumentTemplate(data);
+
+
+
+    return pdf;
+
+  }
+
+
+
 }
