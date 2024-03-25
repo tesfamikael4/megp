@@ -125,8 +125,8 @@ export class BidResponseService extends ExtraCrudService<BidResponse> {
 
     const decryptedValue = this.checkPasswordValidity(
       bidRegistration,
+      itemData.documentType,
       itemData.password,
-      bidRegistration.salt,
     );
 
     return decryptedValue;
