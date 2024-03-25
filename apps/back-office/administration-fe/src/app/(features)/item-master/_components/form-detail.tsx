@@ -20,12 +20,11 @@ import {
   useCreateMutation,
   useLazyReadQuery,
 } from '../_api/item-master.api';
-import { MantineTree, TreeConfig, logger } from '@megp/core-fe';
+import { MantineTree, TreeConfig, logger, notify } from '@megp/core-fe';
 import { ZodType, z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { notifications } from '@mantine/notifications';
 import { ItemMaster } from '@/models/item-master';
 import {
   useGetMeasurementsQuery,
@@ -152,18 +151,11 @@ export function FormDetail({ mode }: FormDetailProps) {
     };
     try {
       const result = await create(rawData).unwrap();
-      notifications.show({
-        color: 'green',
-        message: 'Success-fully created',
-        title: 'Success',
-      });
+      notify('Success', 'Item Master created successfully');
+
       router.push(`/item-master/${result.id}`);
     } catch (e) {
-      notifications.show({
-        color: 'red',
-        message: 'Something went wrong',
-        title: 'Error',
-      });
+      notify('Error', 'Something went wrong');
     }
   };
   const onUpdate = async (data) => {
@@ -174,34 +166,18 @@ export function FormDetail({ mode }: FormDetailProps) {
     try {
       const res = await update({ id: id as string, ...rawData }).unwrap();
       logger.log(res);
-      notifications.show({
-        color: 'green',
-        message: 'Success-fully Updated',
-        title: 'Success',
-      });
+      notify('Success', 'Item Master updated successfully');
     } catch (e) {
-      notifications.show({
-        color: 'red',
-        message: 'Something went wrong',
-        title: 'Error',
-      });
+      notify('Error', 'Something went wrong');
     }
   };
   const onDelete = async (data) => {
     try {
       await remove(id as string);
-      notifications.show({
-        color: 'green',
-        message: 'Success-fully deleted',
-        title: 'Success',
-      });
+      notify('Success', 'Item Master deleted successfully');
       router.push(`/item-master`);
     } catch (e) {
-      notifications.show({
-        color: 'red',
-        message: 'Something went wrong',
-        title: 'Error',
-      });
+      notify('Error', 'Something went wrong');
     }
   };
   const onReset = async () => {
