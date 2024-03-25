@@ -1,21 +1,20 @@
 import { MenuItem } from '@megp/core-fe';
-import { IconAdjustmentsHorizontal, IconCoin } from '@tabler/icons-react';
+import { IconCoin } from '@tabler/icons-react';
 
 export const Menu: MenuItem[] = [
   {
-    label: 'Release',
+    label: 'Guarantee Request',
     icon: IconCoin,
-    link: '/release',
+    link: '/guarantee-request',
   },
-
   {
-    label: 'Settings',
-    icon: IconAdjustmentsHorizontal,
-    links: [
-      {
-        label: 'Adjust Release',
-        link: '/settings/adjust-release',
-      },
-    ],
+    label: 'Guarantee Release',
+    icon: IconCoin,
+    link: '/guarantee-release',
+  },
+  {
+    label: 'Guarantee Forfeit',
+    icon: IconCoin,
+    link: '/guarantee-forfeit',
   },
 ];
