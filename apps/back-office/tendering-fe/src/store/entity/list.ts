@@ -34,6 +34,10 @@ export const ENTITY_LIST: EntityStoreConfig[] = [
     baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
   },
   {
+    entity: 'lots/split-items',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
+  },
+  {
     entity: 'items',
     baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
   },
@@ -139,6 +143,30 @@ export const ENTITY_LIST: EntityStoreConfig[] = [
   },
   {
     entity: 'tender-spd',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
+  },
+  {
+    entity: 'scc-contract-deliverables',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
+  },
+  {
+    entity: 'scc-general-provisions',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
+  },
+  {
+    entity: 'scc-guarantees',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
+  },
+  {
+    entity: 'scc-liabilities',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
+  },
+  {
+    entity: 'scc-payment-schedules',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
+  },
+  {
+    entity: 'scc-payment-terms',
     baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
   },
 ];

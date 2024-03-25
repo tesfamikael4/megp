@@ -8,7 +8,7 @@ import {
   TextInput,
 } from '@mantine/core';
 import { useDebouncedState } from '@mantine/hooks';
-import { Table, TableConfig } from '@megp/core-fe';
+import { Table, TableConfig, logger } from '@megp/core-fe';
 import { IconSearch } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 
@@ -21,15 +21,24 @@ function calculateTotalPages(totalItems: number, itemsPerPage: number): number {
 
   return Math.ceil(totalItems / itemsPerPage);
 }
-
+interface CollectionSelectorInterface {
+  config: any;
+  data: any;
+  multiSelect?: boolean;
+  isForSplitting?: boolean;
+  total: any;
+  onDone: (item: any) => void;
+  onRequestChange: (data: any) => void;
+}
 export const CollectionSelector = ({
   config,
   data,
-  multiSelect = false,
+  multiSelect,
+  isForSplitting,
   total,
   onDone,
   onRequestChange,
-}: any) => {
+}: CollectionSelectorInterface) => {
   const [selected, setSelected] = useState<any | any[]>([]);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useDebouncedState('', 500);
@@ -121,7 +130,9 @@ export const CollectionSelector = ({
         />
       </Group>
       <Group justify="end" className="mt-2">
-        <Button onClick={() => onDone(selected)}>Done</Button>
+        <Button onClick={() => onDone(selected)}>
+          {isForSplitting ? 'Next' : 'Done'}
+        </Button>
       </Group>
     </>
   );

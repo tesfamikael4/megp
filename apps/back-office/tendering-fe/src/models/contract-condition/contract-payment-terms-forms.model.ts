@@ -1,4 +1,5 @@
 export interface PaymentTermsForm {
+  id: string;
   contractCurrency: string[];
   PaymentMode: 'payment method one' | 'payment method two';
   advancePaymentAllowed: boolean;

@@ -2,16 +2,23 @@ import { ContractPaymentScheduleForm } from '@/models/contract-condition/contrac
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Flex,
+  LoadingOverlay,
   MultiSelect,
   NumberInput,
   Stack,
   TextInput,
 } from '@mantine/core';
-import { logger } from '@megp/core-fe';
+import { notify, logger } from '@megp/core-fe';
 import { EntityButton } from '@megp/entity';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { ZodType, z } from 'zod';
+import {
+  useCreateMutation,
+  useReadQuery,
+  useUpdateMutation,
+} from '../../../_api/scc/payment-schedules';
+import { useParams } from 'next/navigation';
 
 const requiredDcoument = [
   {
@@ -29,6 +36,7 @@ const requiredDcoument = [
 ];
 
 export default function PaymentSchedule() {
+  const { id } = useParams();
   const ContractDatesForm: ZodType<Partial<ContractPaymentScheduleForm>> =
     z.object({
       paymentSchedule: z.string().min(1, { message: 'This field is required' }),
@@ -42,6 +50,15 @@ export default function PaymentSchedule() {
     });
 
   const {
+    data: selected,
+    isSuccess: selectedSuccess,
+    isLoading,
+  } = useReadQuery(id?.toString());
+
+  const [create, { isLoading: isSaving }] = useCreateMutation();
+  const [update, { isLoading: isUpdating }] = useUpdateMutation();
+
+  const {
     handleSubmit,
     reset,
     formState: { errors },
@@ -50,12 +67,48 @@ export default function PaymentSchedule() {
   } = useForm({
     resolver: zodResolver(ContractDatesForm),
   });
-  const onCreate = () => {
-    logger.log('create');
+
+  const onCreate = async (data) => {
+    try {
+      await create({
+        ...data,
+        tenderId: id,
+      });
+      notify('Success', 'Payment schedule created successfully');
+    } catch (err) {
+      notify('Error', 'Error in creating payment schedule');
+    }
+  };
+  const onUpdate = async (data) => {
+    try {
+      await update({
+        ...data,
+        tenderId: id,
+        id: id?.toString(),
+      });
+      notify('Success', 'Payment schedule updated successfully');
+    } catch {
+      notify('Error', 'Error in updating payment schedule');
+    }
   };
 
+  useEffect(() => {
+    if (selectedSuccess && selected !== undefined) {
+      reset({
+        paymentSchedule: selected?.paymentSchedule,
+        paymentPercentage: selected?.paymentPercentage,
+        order: selected?.order,
+        requiredDocuments: selected?.requiredDocuments,
+      });
+    }
+  }, [reset, selected, selectedSuccess]);
+
+  useEffect(() => {
+    logger.log(errors);
+  }, [errors]);
   return (
     <Stack>
+      <LoadingOverlay visible={isLoading || isUpdating || isSaving} />
       <Flex gap="md">
         <TextInput
           placeholder="Payment Schedule"
@@ -108,8 +161,6 @@ export default function PaymentSchedule() {
             />
           )}
         />
-      </Flex>
-      <Flex gap="md">
         <Controller
           name="requiredDocuments"
           control={control}
@@ -133,9 +184,10 @@ export default function PaymentSchedule() {
         />
       </Flex>
       <EntityButton
-        mode={'new'}
+        mode={selected ? 'detail' : 'new'}
         onCreate={handleSubmit(onCreate)}
         onReset={reset}
+        onUpdate={handleSubmit(onUpdate)}
       />
     </Stack>
   );

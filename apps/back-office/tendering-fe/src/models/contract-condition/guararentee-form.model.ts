@@ -1,4 +1,5 @@
 export interface GuaranteesForm {
+  id: string;
   guaranteeType:
     | 'Advance Payment Guarantee'
     | 'Performance Guarantee'
@@ -6,11 +7,6 @@ export interface GuaranteesForm {
   guaranteeRequired: boolean;
   guaranteePercentage: number;
   currency: string;
-  guaranteeForm:
-    | 'Bank Guarantee'
-    | 'Insurance Guarantee'
-    | 'Letter of Credit'
-    | 'Certified Cheque'
-    | 'Cash';
+  guaranteeForm: string[];
   validityPeriod: number;
 }
