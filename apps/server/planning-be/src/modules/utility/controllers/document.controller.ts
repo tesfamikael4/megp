@@ -17,6 +17,11 @@ export class DocumentController extends EntityCrudController<Document>(
     super(documentService);
   }
 
+  @Post()
+  async create(@Body() itemData: any, @CurrentUser() user): Promise<any> {
+    return await this.documentService.create(itemData, user.organization);
+  }
+
   @Get('download/:id')
   async download(@Param('id') id: string) {
     const presignedUrl = await this.documentService.generatePresignedGetUrl(id);

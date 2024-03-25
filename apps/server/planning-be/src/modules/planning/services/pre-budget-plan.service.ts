@@ -331,7 +331,10 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
       status: 'Submitted',
     });
 
-    await this.pdfGenerator(data.id, data.itemName);
+    await this.pdfGenerator(data.id, data.itemName, {
+      organizationId: data.organizationId,
+      organizationName: data.organizationName,
+    });
     await this.planningRMQClient.emit('initiate-workflow', {
       name: data.name,
       id: data.id,
@@ -365,7 +368,11 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
     return false;
   }
 
-  async pdfGenerator(id: string, itemName: string) {
+  async pdfGenerator(
+    id: string,
+    itemName: string,
+    organization: { organizationId: string; organizationName: string },
+  ) {
     const data = await this.preBudgetActivityRepository.find({
       where: { preBudgetPlanId: id },
       relations: {
@@ -387,14 +394,17 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
       'application/pdf',
     );
 
-    await this.documentService.create({
-      fileInfo,
-      title: itemName,
-      itemId: id,
-      type: 'preBudgetPlan',
-      version: 1,
-      key: 'onApprovalSubmit',
-    });
+    await this.documentService.create(
+      {
+        fileInfo,
+        title: itemName,
+        itemId: id,
+        type: 'preBudgetPlan',
+        version: 1,
+        key: 'onApprovalSubmit',
+      },
+      organization,
+    );
   }
 
   instanceToPlainExclude(

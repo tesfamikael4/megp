@@ -45,6 +45,7 @@ export class ProcurementRequisitionController extends EntityCrudController<Procu
   @UseInterceptors(TransactionInterceptor)
   async initiateWorkflow(@Body() data: any, @CurrentUser() user: any) {
     data.organizationId = user.organization.id;
+    data.organizationName = user.organization.name;
     return await this.procurementRequisitionService.initiateWorkflow(data);
   }
   @EventPattern('workflow-approval.prApproval')

@@ -63,7 +63,7 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
 
     const procurementRequisitionItems = [];
     activity.postBudgetPlanItems.forEach((item: any) => {
-      item.uom = item.uomName,
+      (item.uom = item.uomName),
         procurementRequisitionItems.push({
           item,
         });
@@ -119,7 +119,10 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
     });
     const itemName = 'procurementRequisition';
     const prWithItemName = { ...pr, itemName };
-    await this.pdfGenerator(data.id, prWithItemName.itemName);
+    await this.pdfGenerator(data.id, prWithItemName.itemName, {
+      organizationId: data.organizationId,
+      organizationName: data.organizationName,
+    });
     this.prRMQClient.emit('initiate-workflow', prWithItemName);
     await this.repositoryProcurementRequisition.update(pr.id, {
       status: ProcurementRequisitionStatusEnum.SUBMITTED,
@@ -318,7 +321,11 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
     };
   }
 
-  async pdfGenerator(id: string, itemName: string) {
+  async pdfGenerator(
+    id: string,
+    itemName: string,
+    organization: { organizationId: string; organizationName: string },
+  ) {
     const data = await this.repositoryProcurementRequisition.findOne({
       where: { id: id },
       relations: {
@@ -339,14 +346,17 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
       'application/pdf',
     );
 
-    await this.documentService.create({
-      fileInfo,
-      title: itemName,
-      itemId: id,
-      type: 'procurementRequisition',
-      version: 1,
-      key: 'onApprovalSubmit',
-    });
+    await this.documentService.create(
+      {
+        fileInfo,
+        title: itemName,
+        itemId: id,
+        type: 'procurementRequisition',
+        version: 1,
+        key: 'onApprovalSubmit',
+      },
+      organization,
+    );
     return buffer;
   }
 

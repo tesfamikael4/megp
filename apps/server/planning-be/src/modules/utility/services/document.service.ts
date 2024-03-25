@@ -16,10 +16,9 @@ export class DocumentService extends EntityCrudService<Document> {
     super(repositoryDocument);
   }
 
-  async create(itemData: any, req?: any): Promise<any> {
-    if (req?.user?.organization) {
-      itemData.organizationId = req.user.organization.id;
-    }
+  async create(itemData: any, organization: any): Promise<any> {
+    itemData.organizationId = organization.id;
+    itemData.organizationName = organization.name;
 
     const doc = await this.repositoryDocument.findOne({
       where: {
