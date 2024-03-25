@@ -1,4 +1,3 @@
-import { OrgAudit } from '@audit';
 import {
   Column,
   Entity,
@@ -9,9 +8,11 @@ import {
 } from 'typeorm';
 import { ProcurementInstitution } from './procurement-institution.entity';
 import { IPDCMember } from './ipdc-members.entity';
+import { Organization } from './organization.entity';
+import { Audit } from 'src/shared/entities';
 
 @Entity({ name: 'ipdc' })
-export class IPDC extends OrgAudit {
+export class IPDC extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

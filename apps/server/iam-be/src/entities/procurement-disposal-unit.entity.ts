@@ -1,4 +1,4 @@
-import { OrgAudit } from '@audit';
+import { Audit } from '@audit';
 import {
   Column,
   Entity,
@@ -11,7 +11,7 @@ import { ProcurementInstitution } from './procurement-institution.entity';
 import { Unit } from './unit.entity';
 
 @Entity({ name: 'procurement_disposal_units' })
-export class ProcurementDisposalUnit extends OrgAudit {
+export class ProcurementDisposalUnit extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

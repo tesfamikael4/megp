@@ -1,4 +1,4 @@
-import { OrgAudit } from '@audit';
+import { Audit } from '@audit';
 import {
   Column,
   Entity,
@@ -9,9 +9,10 @@ import {
 import { IPDC } from './ipdc.entity';
 import { MEMBER_TYPE_ENUM } from 'src/shared/enums/member-type.enum';
 import { User } from './user.entity';
+import { Organization } from './organization.entity';
 
 @Entity({ name: 'ipdc_members' })
-export class IPDCMember extends OrgAudit {
+export class IPDCMember extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

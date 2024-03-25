@@ -1,7 +1,9 @@
-import { Audit, OrgAudit } from '@audit';
+import { Audit } from '@audit';
 import {
   Column,
   Entity,
+  JoinColumn,
+  ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -9,6 +11,7 @@ import {
 import { ProcurementDisposalUnit } from './procurement-disposal-unit.entity';
 import { IPDC } from './ipdc.entity';
 import { AdhocTeam } from './adhoc-team.entity';
+import { Organization } from './organization.entity';
 
 @Entity({ name: 'procurement_institutions' })
 export class ProcurementInstitution extends Audit {
@@ -36,4 +39,11 @@ export class ProcurementInstitution extends Audit {
 
   @Column()
   organizationId: string;
+
+  @ManyToOne(
+    () => Organization,
+    (organization) => organization.procurementInstitution,
+  )
+  @JoinColumn({ name: 'organizationId' })
+  public organization: Organization;
 }

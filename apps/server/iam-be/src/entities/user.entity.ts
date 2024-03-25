@@ -69,5 +69,5 @@ export class User extends Audit {
   adhocTeamMembers: AdhocTeamMember[];
 
   @OneToMany(() => IPDCMember, (iPDCMember) => iPDCMember.user)
-  iPDCMembers: AdhocTeamMember[];
+  iPDCMembers: IPDCMember[];
 }

@@ -16,6 +16,9 @@ import { UnitType } from './unit-type.entity';
 import { User } from './user.entity';
 import { Role } from './role.entity';
 import { OrganizationStatus } from 'src/shared/enums';
+import { IPDCMember } from './ipdc-members.entity';
+import { IPDC } from './ipdc.entity';
+import { ProcurementInstitution } from './procurement-institution.entity';
 
 @Entity({ name: 'organizations' })
 export class Organization extends Audit {
@@ -90,4 +93,10 @@ export class Organization extends Audit {
     onDelete: 'CASCADE',
   })
   roles: Role[];
+
+  @OneToMany(
+    () => ProcurementInstitution,
+    (procurementInstitution) => procurementInstitution.organization,
+  )
+  procurementInstitution: ProcurementInstitution[];
 }
