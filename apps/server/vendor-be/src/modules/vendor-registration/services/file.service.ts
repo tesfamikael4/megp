@@ -43,7 +43,7 @@ export class FileService {
     private readonly businessAreaRepository: Repository<BusinessAreaEntity>,
     private readonly busineAreaService: BusinessAreaService,
     private readonly workflowService: WorkflowService,
-  ) { }
+  ) {}
   private updateVendorEnums = [
     VendorStatusEnum.ACTIVE,
     VendorStatusEnum.ADJUSTMENT,
@@ -216,7 +216,7 @@ export class FileService {
 
       if (alreadyExisting) {
         const objectName = `${userId}/${fileUploadName}/${alreadyExisting.attachment}`;
-        await this.minioClient.removeObject('megp', objectName);
+        await this.minioClient.removeObject(this.bucketName, objectName);
       }
       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
       const fileId = `${uniqueSuffix}_${file.originalname}`;
@@ -281,7 +281,7 @@ export class FileService {
       const fileUploadName = 'paymentReceipt';
       if (paymentReceiptDto?.attachment) {
         const objectName = `${userId}/${fileUploadName}/${paymentReceiptDto?.attachment}`;
-        await this.minioClient.removeObject('megp', objectName);
+        await this.minioClient.removeObject(this.bucketName, objectName);
       }
       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
       const fileId = `${uniqueSuffix}_${file.originalname}`;
@@ -599,7 +599,7 @@ export class FileService {
     try {
       const fileUploadName = 'certificate';
       const fileId = `${userId}/${fileUploadName}/${filename}`;
-      const result = await this.minioClient.getObject('megp', fileId);
+      const result = await this.minioClient.getObject(this.bucketName, fileId);
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader(
         'Content-Disposition',
@@ -626,15 +626,23 @@ export class FileService {
   ) {
     try {
       const filename = `${userId}/${fileUploadName}/${fielId}`;
-      const fileInfo = await this.minioClient.statObject('megp', filename);
+      const fileInfo = await this.minioClient.statObject(
+        this.bucketName,
+        filename,
+      );
       const contentType = fileInfo.metaData['content-type'];
       res.setHeader('Content-Type', contentType);
-      return (await this.minioClient.getObject('megp', filename)).pipe(res);
+      const result = await this.minioClient.getObject(
+        this.bucketName,
+        filename,
+      );
+      return result.pipe(res);
     } catch (error) {
       console.log(error);
       throw error;
     }
   }
+
   async uploadBrifecase(file: Express.Multer.File, user: any): Promise<string> {
     try {
       const filetype = this.getFileExtension(file.originalname);

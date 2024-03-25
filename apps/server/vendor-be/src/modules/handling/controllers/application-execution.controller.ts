@@ -122,8 +122,6 @@ export class ApplicationExcutionController {
     @Query('q') q: string,
     @CurrentUser() user: any,
   ) {
-    console.log('serviceKey', serviceKey);
-
     const query = decodeCollectionQuery(q);
     return await this.executeService.getCurruntTaskByServiceKey(
       serviceKey,

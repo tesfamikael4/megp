@@ -549,7 +549,7 @@ export class DataSeederController {
             'Approval of Renewal Registration Request by Senior or chief registration officer or RRM/DRRM':
               {
                 on: {
-                  NO: 'Review Vendor Renewal Registration Request by Registration Officer(RO)',
+                  NO: 'Submit Renewal Registration Request',
                   YES: 'Approval of Renewal Registration Request of vendor by Director General (DG)',
                 },
                 meta: {
@@ -774,7 +774,7 @@ export class DataSeederController {
             'Approval of Upgrade Registration Request of Vendor by Senior or chief registration officer or RRM/ DRRM':
               {
                 on: {
-                  NO: 'Review Upgrade Registration Request of Vendor by Registration Officer',
+                  NO: 'Submit Vendor Upgrade Registration Request',
                   YES: 'Approval of Upgrade Registration Request of vendor by Director General (DG)',
                 },
                 meta: {

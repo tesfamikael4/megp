@@ -106,7 +106,11 @@ const PlanningTab = ({ page }: { page: 'pre' | 'post' }) => {
       notify('Success', 'APP Created successfully');
       router.push(`/pre-budget-plan/${res.id}/activities`);
     } catch (err) {
-      notify('Error', 'Something went wrong');
+      if (err.status === 430) {
+        notify('Error', err.data.message);
+      } else {
+        notify('Error', 'Something went wrong');
+      }
     }
   };
 

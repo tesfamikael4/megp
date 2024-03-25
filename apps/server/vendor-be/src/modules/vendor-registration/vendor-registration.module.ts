@@ -60,6 +60,7 @@ import { PreferentailTreatmentsController } from './controllers/preferential-tre
 import { BriefcasesController } from './controllers/briefcases.controller';
 import { BriefcasesService } from './services/briefcases.service';
 import { BriefecaseEntity } from 'src/entities/brifecase.entity';
+import { CertificateModule } from '../certificates/certificate.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -86,7 +87,7 @@ import { BriefecaseEntity } from 'src/entities/brifecase.entity';
       IsrVendorsEntity,
       ProfileInfoEntity,
       PreferentialTreatmentsEntity,
-      BriefecaseEntity
+      BriefecaseEntity,
     ]),
     EventEmitterModule.forRoot(),
     AuthorizationModule,
@@ -112,7 +113,7 @@ import { BriefecaseEntity } from 'src/entities/brifecase.entity';
     InvoiceService,
     BpServiceService,
     PreferentailTreatmentService,
-    BriefcasesService
+    BriefcasesService,
     // TusService,
   ],
   controllers: [
@@ -128,7 +129,7 @@ import { BriefecaseEntity } from 'src/entities/brifecase.entity';
     BusinessAreaController,
     InvoicesController,
     PreferentailTreatmentsController,
-    BriefcasesController
+    BriefcasesController,
   ],
 })
-export class VendorRegistrationModule { }
+export class VendorRegistrationModule {}

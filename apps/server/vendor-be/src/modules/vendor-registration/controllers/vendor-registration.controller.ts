@@ -8,6 +8,9 @@ import {
   Query,
   UseInterceptors,
   UploadedFile,
+  Req,
+  Res,
+  StreamableFile,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -33,7 +36,7 @@ import { ServiceKeyEnum } from 'src/shared/enums/service-key.enum';
 @ApiResponse({ status: 500, description: 'Internal error' })
 @ApiExtraModels(DataResponseFormat)
 export class VendorRegistrationsController {
-  constructor(private readonly regService: VendorRegistrationsService) { }
+  constructor(private readonly regService: VendorRegistrationsService) {}
   @Get('get-isr-vendors')
   async getVendors() {
     return await this.regService.getIsrVendors();
@@ -87,7 +90,7 @@ export class VendorRegistrationsController {
   ) {
     return await this.regService.getIsrVendorByStatusBUserId(
       userInfo.id,
-      status
+      status,
     );
   }
   @Get('get-pending-services')
@@ -310,5 +313,18 @@ export class VendorRegistrationsController {
   @Get('get-preferential-certificate')
   async getpreferentialCertificates(@CurrentUser() userInfo: any) {
     return await this.regService.getCertificateInformations(userInfo.id);
+  }
+
+  @Post('submit-registration-request')
+  async submitRegistrationRequest(
+    @CurrentUser() user: string,
+    @Res() res: any,
+  ) {
+    const result = await this.regService.submitRegistrationRequest(user);
+    res.set({
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': 'attachment; filename="document.pdf"',
+    });
+    result.pipe(res);
   }
 }

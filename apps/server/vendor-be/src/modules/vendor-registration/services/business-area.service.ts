@@ -39,11 +39,14 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
   }
   async getCerteficate(vendorId: string): Promise<BusinessAreaEntity> {
     const bas = await this.businessAreaRepository.find({
-      where: { vendorId: vendorId, status: ApplicationStatus.APPROVED, certificateUrl: Not(IsNull()) },
-      order: { updatedAt: 'DESC' }
+      where: {
+        vendorId: vendorId,
+        status: ApplicationStatus.APPROVED,
+        certificateUrl: Not(IsNull()),
+      },
+      order: { updatedAt: 'DESC' },
     });
-    if (bas.length)
-      return bas[0]
+    if (bas.length) return bas[0];
     return null;
   }
   async getPreferentials(vendorId: string): Promise<BusinessAreaEntity[]> {
@@ -51,9 +54,9 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
       where: {
         vendorId: vendorId,
         status: ApplicationStatus.APPROVED,
-        certificateUrl: Not(IsNull()), BpService: { key: In([this.commonService.getPreferencialServices()]) }
+        BpService: { key: In(this.commonService.getPreferencialServices()) },
       },
-      order: { updatedAt: 'DESC' }
+      order: { updatedAt: 'DESC' },
     });
 
     return bas;

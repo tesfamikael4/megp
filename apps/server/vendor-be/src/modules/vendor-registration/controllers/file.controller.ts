@@ -185,7 +185,16 @@ export class UploadController {
   ) {
     console.log('fileName, documentType', fileName, documentType);
     try {
-      return this.fileService.getFile(userId, fileName, documentType, res);
+      const result = await this.fileService.getFile(
+        userId,
+        fileName,
+        documentType,
+        res,
+      );
+      return result;
+      //   return result;
+      // res.setHeader('Content-Type', 'application/octet-stream');
+      // res.send(result);
     } catch (error) {
       throw error;
     }
