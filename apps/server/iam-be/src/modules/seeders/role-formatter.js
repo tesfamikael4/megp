@@ -54,7 +54,7 @@ systemRoleFormattedArray.forEach((systemRole) => {
       id: permissionId,
       name: permission.permission,
       description: permission.permission,
-      key: `planning:${permission.key}`,
+      key: `guarantee:${permission.key}`,
       applicationId: 3,
     });
     roleSystemPermissions.push({
