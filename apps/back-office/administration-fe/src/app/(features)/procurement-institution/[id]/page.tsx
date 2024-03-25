@@ -1,9 +1,9 @@
 'use client';
 import { Badge, Box, Text } from '@mantine/core';
 
-import { ProcurementDisposal } from './components/procurement-disposal';
-import { Ipdc } from './components/ipcd';
-import { Adhoc } from './components/adhoc';
+import { ProcurementDisposal } from './_components/procurement-disposal';
+import { Ipdc } from './_components/ipcd';
+import { Adhoc } from './_components/adhoc';
 import { useParams } from 'next/navigation';
 import { useReadQuery } from '../_api/procurement-institution.api';
 

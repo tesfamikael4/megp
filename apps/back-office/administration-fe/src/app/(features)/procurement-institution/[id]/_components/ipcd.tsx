@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { useCreateMutation, useListByIdQuery } from '../../_api/ipdc.api';
 import { useParams } from 'next/navigation';
 import { AddMembers } from './members';
+import { useCreateIpdcMembersMutation } from '@/store/api/iam/iam.api';
 
 export const Ipdc = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -15,6 +16,7 @@ export const Ipdc = () => {
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [minEndDate, setMinEndDate] = useState<Date>(new Date());
   const [create, { isLoading: isCreating }] = useCreateMutation();
+  const [createMembers] = useCreateIpdcMembersMutation();
   const { id } = useParams();
   const { data: ipdc } = useListByIdQuery({
     id: id as string,
@@ -48,7 +50,14 @@ export const Ipdc = () => {
     ],
   };
 
-  const onMemberSave = (members) => {
+  const onMemberSave = async (members) => {
+    try {
+      await createMembers({ members, ipdcId: id }).unwrap();
+      notify('Success', 'Members added successfully');
+    } catch (err) {
+      logger.log({ err });
+      notify('Error', 'Something went wrong');
+    }
     logger.log({ members });
   };
 

@@ -1,12 +1,12 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { baseQuery } from '@/store/base-query';
+import { createApi } from '@reduxjs/toolkit/query/react';
 
 export const tagsApi = createApi({
   reducerPath: 'tagsApi',
   refetchOnFocus: true,
-  baseQuery: fetchBaseQuery({
-    baseUrl:
-      process.env.NEXT_PUBLIC_ADMINISTRATION_API ?? '/administration/api/',
-  }),
+  baseQuery: baseQuery(
+    process.env.NEXT_PUBLIC_ADMINISTRATION_API ?? '/administration/api/',
+  ),
   endpoints: (builder) => ({
     getTags: builder.query<any, null>({
       query: () => 'tags',
