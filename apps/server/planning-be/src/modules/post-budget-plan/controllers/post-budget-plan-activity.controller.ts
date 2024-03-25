@@ -42,6 +42,7 @@ export class PostBudgetPlanActivityController extends ExtraCrudController<PostBu
     @CurrentUser() user,
   ): Promise<PostBudgetPlanActivity> {
     itemData.organizationId = user.organization.id;
+    itemData.organizationName = user.organization.name;
     return this.postBudgetPlanActivityService.create(itemData);
   }
 

@@ -137,10 +137,11 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
   ): Promise<Record<string, number>> {
     const preBudgetPlan = await this.repositoryPreBudgetPlan.findOne({
       where: { id: preBudgetPlanId },
-      relations: [
-        'preBudgetPlanActivities',
-        'preBudgetPlanActivities.preProcurementMechanisms',
-      ],
+      relations: {
+        preBudgetPlanActivities: {
+          preProcurementMechanism: true,
+        },
+      },
     });
 
     if (!preBudgetPlan) {
@@ -150,27 +151,25 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
     const targetGroupCounts: Record<string, number> = {};
 
     preBudgetPlan.preBudgetPlanActivities.forEach((activity) => {
-      activity.preProcurementMechanisms.forEach((mechanism) => {
-        const targetGroups = mechanism.targetGroup || [];
-        let msme = false;
+      const targetGroups = activity.preProcurementMechanism.targetGroup || [];
+      let msme = false;
 
-        targetGroups.forEach((group) => {
-          const validGroups = [
-            'Small Enterprises',
-            'Micro Enterprises',
-            'Medium Enterprises',
-          ];
-          const target = validGroups.includes(group);
-          if (target && !msme) {
-            targetGroupCounts['MSM Enterprises'] =
-              (targetGroupCounts['MSM Enterprises'] || 0) +
-              +activity.estimatedAmount;
-            msme = true;
-          } else if (!target) {
-            targetGroupCounts[group] =
-              (targetGroupCounts[group] || 0) + +activity.estimatedAmount;
-          }
-        });
+      targetGroups.forEach((group) => {
+        const validGroups = [
+          'Small Enterprises',
+          'Micro Enterprises',
+          'Medium Enterprises',
+        ];
+        const target = validGroups.includes(group);
+        if (target && !msme) {
+          targetGroupCounts['MSM Enterprises'] =
+            (targetGroupCounts['MSM Enterprises'] || 0) +
+            +activity.estimatedAmount;
+          msme = true;
+        } else if (!target) {
+          targetGroupCounts[group] =
+            (targetGroupCounts[group] || 0) + +activity.estimatedAmount;
+        }
       });
     });
 
@@ -305,7 +304,7 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
       where: { preBudgetPlanId: data.id },
       relations: {
         preBudgetPlanTimelines: true,
-        preProcurementMechanisms: true,
+        preProcurementMechanism: true,
       },
     });
 
@@ -320,7 +319,7 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
           430,
         );
       }
-      if (element.preProcurementMechanisms.length == 0) {
+      if (element.preProcurementMechanism) {
         throw new HttpException(
           `Procurement Method not found for ${element.name} ${element.procurementReference}`,
           430,
@@ -348,7 +347,7 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
         preBudgetPlanItems: true,
         preBudgetPlanTimelines: true,
         preBudgetRequisitioners: true,
-        preProcurementMechanisms: true,
+        preProcurementMechanism: true,
       },
     });
     const transformedData = this.instanceToPlainExclude(data, {
@@ -373,7 +372,7 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
         preBudgetPlanItems: true,
         preBudgetPlanTimelines: true,
         preBudgetRequisitioners: true,
-        preProcurementMechanisms: true,
+        preProcurementMechanism: true,
         preBudgetPlan: {
           app: true,
         },

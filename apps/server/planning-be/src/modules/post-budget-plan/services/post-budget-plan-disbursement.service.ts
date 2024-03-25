@@ -38,12 +38,13 @@ export class PostBudgetPlanDisbursementService extends ExtraCrudService<PostBudg
       const act = await this.repositoryPostBudgetPlanActivity.findOneBy({
         id: data.postBudgetPlanActivityId,
         organizationId: data.organizationId,
+        organizationName: data.organizationName,
       });
       const totalAmount = data.data.reduce((acc, item) => acc + item.amount, 0);
 
       if (+act.estimatedAmount < totalAmount) {
         throw new HttpException(
-          'Disbursement amount is greater than budget amount',
+          'Disbursement amount is greater than estimated amount',
           430,
         );
       }

@@ -29,7 +29,7 @@ export class PostBudgetPlanItemController extends ExtraCrudController<PostBudget
   ): Promise<BulkItemsDto> {
     return this.postBudgetPlanItemService.bulkCreate(
       itemData,
-      user.organization.id,
+      user.organization,
     );
   }
 }

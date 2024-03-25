@@ -18,10 +18,9 @@ export class PostProcurementMechanism extends OrgAudit {
   @Column()
   postBudgetPlanActivityId: string;
 
-  @ManyToOne(
+  @OneToOne(
     () => PostBudgetPlanActivity,
-    (postBudgetPlanActivity) =>
-      postBudgetPlanActivity.postProcurementMechanisms,
+    (postBudgetPlanActivity) => postBudgetPlanActivity.postProcurementMechanism,
   )
   @JoinColumn({ name: 'postBudgetPlanActivityId' })
   public postBudgetPlanActivity: PostBudgetPlanActivity;

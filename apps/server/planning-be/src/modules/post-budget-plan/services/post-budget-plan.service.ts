@@ -113,7 +113,7 @@ export class PostBudgetPlanService extends ExtraCrudService<PostBudgetPlan> {
       where: { id: postBudgetPlanId },
       relations: [
         'postBudgetPlanActivities',
-        'postBudgetPlanActivities.postProcurementMechanisms',
+        'postBudgetPlanActivities.postProcurementMechanism',
       ],
     });
 
@@ -124,27 +124,25 @@ export class PostBudgetPlanService extends ExtraCrudService<PostBudgetPlan> {
     const targetGroupCounts: Record<string, number> = {};
 
     postBudgetPlan.postBudgetPlanActivities.forEach((activity) => {
-      activity.postProcurementMechanisms.forEach((mechanism) => {
-        const targetGroups = mechanism.targetGroup || [];
-        let msme = false;
+      const targetGroups = activity.postProcurementMechanism.targetGroup || [];
+      let msme = false;
 
-        targetGroups.forEach((group) => {
-          const validGroups = [
-            'Small Enterprises',
-            'Micro Enterprises',
-            'Medium Enterprises',
-          ];
-          const target = validGroups.includes(group);
-          if (target && !msme) {
-            targetGroupCounts['MSM Enterprises'] =
-              (targetGroupCounts['MSM Enterprises'] || 0) +
-              +activity.estimatedAmount;
-            msme = true;
-          } else if (!target) {
-            targetGroupCounts[group] =
-              (targetGroupCounts[group] || 0) + +activity.estimatedAmount;
-          }
-        });
+      targetGroups.forEach((group) => {
+        const validGroups = [
+          'Small Enterprises',
+          'Micro Enterprises',
+          'Medium Enterprises',
+        ];
+        const target = validGroups.includes(group);
+        if (target && !msme) {
+          targetGroupCounts['MSM Enterprises'] =
+            (targetGroupCounts['MSM Enterprises'] || 0) +
+            +activity.estimatedAmount;
+          msme = true;
+        } else if (!target) {
+          targetGroupCounts[group] =
+            (targetGroupCounts[group] || 0) + +activity.estimatedAmount;
+        }
       });
     });
 
@@ -169,7 +167,7 @@ export class PostBudgetPlanService extends ExtraCrudService<PostBudgetPlan> {
         postBudgetPlanId,
       },
       relations: {
-        postProcurementMechanisms: true,
+        postProcurementMechanism: true,
       },
     });
 
@@ -210,18 +208,20 @@ export class PostBudgetPlanService extends ExtraCrudService<PostBudgetPlan> {
       'Marginalized Group': 0,
       Others: 0,
     };
-    activities[0].postProcurementMechanisms.forEach((mechanism) => {
-      procurementType[mechanism.procurementType]++;
-      procurementMethods[mechanism.procurementMethod]++;
-      fundingSources[mechanism.fundingSource]++;
-      const online = mechanism.isOnline ? 'true' : 'false';
+    activities.forEach((element) => {
+      procurementType[element.postProcurementMechanism.procurementType]++;
+      procurementMethods[element.postProcurementMechanism.procurementMethod]++;
+      fundingSources[element.postProcurementMechanism.fundingSource]++;
+      const online = element.postProcurementMechanism.isOnline
+        ? 'true'
+        : 'false';
       isOnline[online]++;
       const validGroups = [
         'Small Enterprises',
         'Micro Enterprises',
         'Medium Enterprises',
       ];
-      mechanism.targetGroup.forEach((element) => {
+      element.postProcurementMechanism.targetGroup.forEach((element) => {
         const target = validGroups.includes(element)
           ? 'MSM Enterprises'
           : element;
@@ -269,7 +269,7 @@ export class PostBudgetPlanService extends ExtraCrudService<PostBudgetPlan> {
       where: { postBudgetPlanId: data.id },
       relations: {
         postBudgetPlanTimelines: true,
-        postProcurementMechanisms: true,
+        postProcurementMechanism: true,
         postBudgetRequisitioners: true,
         budget: true,
       },
@@ -282,7 +282,7 @@ export class PostBudgetPlanService extends ExtraCrudService<PostBudgetPlan> {
           430,
         );
       }
-      if (element.postProcurementMechanisms.length == 0) {
+      if (element.postProcurementMechanism) {
         throw new HttpException(
           `Procurement Method not found for ${element.name} ${element.procurementReference}`,
           430,
@@ -346,7 +346,7 @@ export class PostBudgetPlanService extends ExtraCrudService<PostBudgetPlan> {
         postBudgetPlanItems: true,
         postBudgetPlanTimelines: true,
         postBudgetRequisitioners: true,
-        postProcurementMechanisms: true,
+        postProcurementMechanism: true,
         postBudgetPlan: {
           app: true,
         },
