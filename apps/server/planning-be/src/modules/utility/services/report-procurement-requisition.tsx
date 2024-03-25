@@ -78,6 +78,10 @@ export const procurementRequisitionPdf = async (
                     currencyDisplay: 'code',
                   }),
                 },
+                {
+                  key: 'Procured By',
+                  value: procurementRequisition.procurementApplication,
+                },
                 { key: 'Remark', value: procurementRequisition.remark },
               ]}
               config={{}}

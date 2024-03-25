@@ -63,16 +63,16 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
 
     const procurementRequisitionItems = [];
     activity.postBudgetPlanItems.forEach((item: any) => {
-      procurementRequisitionItems.push({
-        ...item,
-        uom: item.uomName,
-      });
+      item.uom = item.uomName,
+        procurementRequisitionItems.push({
+          item,
+        });
     });
     const procurementRequisitionTimelines = [];
     activity.postBudgetPlanTimelines.forEach((timeline: any) => {
+      timeline.appDueDate = new Date(timeline.dueDate);
       procurementRequisitionTimelines.push({
-        ...timeline,
-        appDueDate: timeline.dueDate,
+        timeline,
       });
     });
     const procurementRequisition: ProcurementRequisition = {
@@ -140,7 +140,60 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
       });
   }
   //reports
+  async calculateTargetGroupPercentage(
+    postBudgetPlanId: string,
+  ): Promise<Record<string, number>> {
+    const procurementRequisitions =
+      await this.repositoryProcurementRequisition.find({
+        where: { postBudgetPlanId: postBudgetPlanId },
+        relations: {
+          postBudgetPlan: true,
+          procurementMechanisms: true,
+        },
+      });
 
+    if (!procurementRequisitions) {
+      throw new NotFoundException(`Procurement Requisition does not found`);
+    }
+
+    const targetGroupCounts: Record<string, number> = {};
+
+    procurementRequisitions.forEach((pr) => {
+      const targetGroups = pr.procurementMechanisms?.targetGroup || [];
+      let msme = false;
+      targetGroups.forEach((group) => {
+        const validGroups = [
+          'Small Enterprises',
+          'Micro Enterprises',
+          'Medium Enterprises',
+        ];
+        const target = validGroups.includes(group);
+        if (target && !msme) {
+          targetGroupCounts['MSM Enterprises'] =
+            (targetGroupCounts['MSM Enterprises'] || 0) +
+            +pr.totalEstimatedAmount;
+          msme = true;
+        } else if (!target) {
+          targetGroupCounts[group] =
+            (targetGroupCounts[group] || 0) + +pr.totalEstimatedAmount;
+        }
+      });
+    });
+
+    const totalMechanisms = procurementRequisitions.reduce(
+      (total, pr) => total + +pr.totalEstimatedAmount,
+      0,
+    );
+
+    const targetGroupPercentages: Record<string, number> = {};
+
+    for (const group in targetGroupCounts) {
+      const percentage = (targetGroupCounts[group] / totalMechanisms) * 100;
+      targetGroupPercentages[group] = parseFloat(percentage.toFixed(2));
+    }
+
+    return targetGroupPercentages;
+  }
   async getAnalytics(id: string): Promise<{
     totalItems: number;
     currencyTotalAmounts: Record<string, number>;

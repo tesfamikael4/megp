@@ -67,6 +67,12 @@ export class ProcurementRequisitionController extends EntityCrudController<Procu
     return await this.procurementRequisitionService.getAnalytics(id);
   }
 
+  @Get(':id/target-group-percentage')
+  async getTargetGroupPercentage(@Param('id') preBudgetPlanId: string) {
+    return await this.procurementRequisitionService.calculateTargetGroupPercentage(
+      preBudgetPlanId,
+    );
+  }
   //for tendering
   @AllowAnonymous()
   @UseGuards(ApiKeyGuard)
