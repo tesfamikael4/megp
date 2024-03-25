@@ -108,28 +108,36 @@ export class BidResponseService extends ExtraCrudService<BidResponse> {
   }
 
   async checkPassword(itemData: CheckPasswordDto, req?: any) {
-    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
-    const bidderId = req.user.organization.id;
+    try {
+      const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+      const bidderId = req.user.organization.id;
 
-    const bidRegistration = await manager
-      .getRepository(BidRegistration)
-      .findOne({
-        where: {
-          tenderId: itemData.tenderId,
-          bidderId: bidderId,
-        },
-      });
-    if (!bidRegistration) {
-      throw new BadRequestException('bid_registration_not_found');
+      const bidRegistration = await manager
+        .getRepository(BidRegistration)
+        .findOne({
+          where: {
+            tenderId: itemData.tenderId,
+            bidderId: bidderId,
+          },
+        });
+      if (!bidRegistration) {
+        throw new BadRequestException('bid_registration_not_found');
+      }
+
+      const decryptedValue = this.checkPasswordValidity(
+        bidRegistration,
+        itemData.documentType,
+        itemData.password,
+      );
+
+      return decryptedValue;
+    } catch (error) {
+      if (error?.message == 'invalid_password') {
+        return false;
+      }
+
+      throw error;
     }
-
-    const decryptedValue = this.checkPasswordValidity(
-      bidRegistration,
-      itemData.documentType,
-      itemData.password,
-    );
-
-    return decryptedValue;
   }
 
   checkPasswordValidity(
