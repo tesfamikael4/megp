@@ -12,8 +12,8 @@ export default function Table({ data }: any) {
   };
   const transformedData = data?.items?.map((data: any) => {
     return {
-      lotName: 'lotName',
-      procuringEntity: 'procuringEntity',
+      name: data?.name,
+      title: data?.title,
       createdAt: data?.createdAt,
       status: data?.status,
       id: data?.id,
@@ -30,10 +30,11 @@ export default function Table({ data }: any) {
         if (index % 2 !== 0) return '#e7f4f7';
       }}
       columns={[
-        { accessor: 'lotName' },
-        { accessor: 'procuringEntity' },
+        { accessor: 'title', title: 'Lot Name' },
+        { accessor: 'name', title: 'Procuring Entity ' },
         {
           accessor: 'createdAt',
+          title: 'Request Date',
           render: ({ createdAt }) =>
             new Date(createdAt).toLocaleDateString('en-US', {
               year: 'numeric',
