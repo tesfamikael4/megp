@@ -273,13 +273,12 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
                 .getRepository(PostBudgetRequisitioner)
                 .insert(requisitioner as any);
 
-              const mechanism = element.preProcurementMechanisms?.map(
-                (item) => ({
-                  ...item,
-                  postBudgetPlanActivityId: element.id,
-                  id: undefined,
-                }),
-              );
+              const mechanism = {
+                ...element.preProcurementMechanisms,
+                postBudgetPlanActivityId: element.id,
+                id: undefined,
+              };
+
               await entityManager
                 .getRepository(PostProcurementMechanism)
                 .insert(mechanism as any);
