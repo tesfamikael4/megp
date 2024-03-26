@@ -19,6 +19,9 @@ export class Audit {
   public deletedAt!: Date;
 }
 export class OrgAudit extends Audit {
-  @Column({ type: 'uuid', nullable: true, default: null })
-  public organizationId: string | null;
+  @Column({ type: 'uuid' })
+  public organizationId: string;
+
+  @Column({ type: 'string' })
+  public organizationName: string;
 }

@@ -8,7 +8,7 @@ export class UpdateGuaranteeStatusDto {
   @IsOptional()
   status: string;
 
-  @ApiProperty({ required: false })
+  @ApiProperty()
   @IsOptional()
   remark?: string;
 
@@ -16,7 +16,7 @@ export class UpdateGuaranteeStatusDto {
   @IsOptional()
   attachment: any;
 
-  @ApiProperty({ required: false })
+  @ApiProperty()
   @IsOptional()
   @IsDate()
   minValidityDate?: Date;
