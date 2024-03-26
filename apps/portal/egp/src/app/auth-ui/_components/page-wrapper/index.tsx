@@ -31,7 +31,9 @@ const PageWrapper: React.FC<PropsWithChildren> = ({ children }) => {
     <Container fluid className={classes.root}>
       <SimpleGrid
         cols={{
-          base: 2,
+          base: 1,
+          md: 2,
+          sm: 2,
         }}
         className="h-full"
       >
@@ -40,12 +42,18 @@ const PageWrapper: React.FC<PropsWithChildren> = ({ children }) => {
             <Flex align={'center'} gap={'xs'}>
               <LogoWithOrg />
             </Flex>
-            <Flex mt={10} className="flex flex-col gap-6">
-              <Text fw={700} fz={38}>
-                Welcome to MNEPS
+            <Flex mt={10} className="flex flex-col items-center gap-6">
+              <Text
+                fw={700}
+                fz={{
+                  sm: 38,
+                  base: 16,
+                }}
+              >
+                Welcome to MANEPS
               </Text>
-              <Text fz={16} maw={410}>
-                The MNEPS Malawi Platform is a web-based, collaborative system
+              <Text fz={16} maw={410} visibleFrom="sm" className="text-justify">
+                The MANEPS Malawi Platform is a web-based, collaborative system
                 to manage the full life cycle of a tendering and contract
                 management process, for both government agencies and suppliers.
               </Text>

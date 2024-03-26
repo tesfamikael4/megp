@@ -4,14 +4,14 @@
   background-color: var(--page-bg-color);
 }
 .leftLayout {
-  @apply w-full h-full flex justify-center items-center min-h-screen;
+  @apply w-full h-full flex  justify-center items-center mt-12 sm:min-h-screen;
 }
 
 .leftLayoutWrapper {
-  height: 470px;
+  @apply sm:h-[470px] sm:w-[100%] flex flex-col items-start;
   width: 70%;
 }
 
 .rightLayout {
-  @apply w-full h-full flex justify-center items-center min-h-screen;
+  @apply w-full h-full flex justify-center items-center sm:min-h-screen;
 }

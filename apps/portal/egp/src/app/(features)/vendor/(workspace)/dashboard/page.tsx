@@ -55,7 +55,7 @@ const infoCard = [
 function Page() {
   return (
     <>
-      <DashboardCard infoData={infoCard} />
+      <DashboardCard infoCard={infoCard} />
 
       <Dashboard />
     </>

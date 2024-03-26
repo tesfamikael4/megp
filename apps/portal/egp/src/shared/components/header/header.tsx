@@ -24,6 +24,7 @@ import {
   IconBellRinging,
   IconChevronDown,
   IconLogout,
+  IconUser,
   IconUserCircle,
 } from '@tabler/icons-react';
 import { useAuth } from '@megp/auth';
@@ -50,8 +51,6 @@ function Header() {
     label: string;
     links?: { link: string; label: string }[];
   }[] = [
-    { link: '/', label: 'Home' },
-
     { link: '/vendor/tender', label: 'Procurement Notices' },
     { link: '/vendor/plans', label: 'Plans' },
     { link: '/vendor/contracts', label: 'Contracts' },
@@ -138,7 +137,9 @@ function Header() {
         <div className={styles.inner}>
           <Flex justify="space-between" w="100%" h={'100%'}>
             <Flex align={'center'} gap={'xs'} h={'100%'}>
-              <LogoIcon />
+              <Link href="/">
+                <LogoIcon />
+              </Link>
             </Flex>
             <Group gap="xl" visibleFrom="md" h={'100%'} py={10}>
               {items}
@@ -150,13 +151,18 @@ function Header() {
                     <Flex
                       align={'center'}
                       justify={'center'}
-                      columnGap={'xs'}
+                      columnGap={4}
                       className="cursor-pointer"
                     >
-                      <Avatar size={'sm'} radius="xl" />
-                      Hi, {user.firstName + ' ' + user.lastName}
-                      <IconChevronDown size={16} stroke={1.6} />
-                      <IconBellRinging size={16} stroke={1.6} />
+                      <Flex className="items-center gap-1">
+                        <IconUserCircle size={19} stroke={1.2} />
+                        <Text fz={14}>
+                          Hi, {user.firstName + ' ' + user.lastName}
+                        </Text>
+                        <IconChevronDown size={16} stroke={1.6} />
+                      </Flex>
+
+                      <IconBellRinging size={19} stroke={1.2} />
                     </Flex>
                   </Menu.Target>
 

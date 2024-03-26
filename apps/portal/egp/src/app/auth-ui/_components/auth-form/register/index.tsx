@@ -47,7 +47,7 @@ const RegistrationForm: React.FC = () => {
       <Stack mt={15} gap={10}>
         <Flex align="center" justify="center">
           <Text fw={600} fz={22}>
-            Welcome to MNEPS!
+            Welcome to MANEPS!
           </Text>
         </Flex>
         <Group gap="sm">

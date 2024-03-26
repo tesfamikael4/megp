@@ -6,6 +6,8 @@ import { AuthSlug } from '../../_model/auth';
 import classes from './auth-card-styles.module.scss';
 import LoginForm from '../auth-form/login';
 import RegistrationForm from '../auth-form/register';
+import OtpForm from '../auth-form/otp';
+import ResetPasswordForm from '../auth-form/reset-password';
 
 interface AuthCardProps {
   type: AuthSlug;
@@ -27,20 +29,30 @@ const AuthCard = ({ type }: AuthCardProps) => {
             value={type}
             onChange={(value) => router.push(`${value}`)}
           >
-            <Tabs.List>
-              <Tabs.Tab data-direction="left" value="login" fw={500}>
-                Login
-              </Tabs.Tab>
-              <Tabs.Tab data-direction="right" value="register" fw={500}>
-                Sign up
-              </Tabs.Tab>
-            </Tabs.List>
+            {type === 'login' || type === 'register' ? (
+              <Tabs.List>
+                <Tabs.Tab data-direction="left" value="login" fw={500}>
+                  Login
+                </Tabs.Tab>
+                <Tabs.Tab data-direction="right" value="register" fw={500}>
+                  Sign up
+                </Tabs.Tab>
+              </Tabs.List>
+            ) : (
+              ''
+            )}
 
             <Tabs.Panel value="login">
               <LoginForm />
             </Tabs.Panel>
             <Tabs.Panel value="register">
               <RegistrationForm />
+            </Tabs.Panel>
+            <Tabs.Panel value="otp">
+              <OtpForm />
+            </Tabs.Panel>
+            <Tabs.Panel value="reset-password">
+              <ResetPasswordForm />
             </Tabs.Panel>
           </Tabs>
         </Box>
