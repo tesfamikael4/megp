@@ -5,7 +5,6 @@ import {
   IconBuildingBank,
   IconBuildingStore,
   IconCalendarEvent,
-  IconShoppingBag,
   IconUsersGroup,
 } from '@tabler/icons-react';
 
@@ -16,14 +15,13 @@ interface ApplicationType {
 }
 
 export const Applications = [
-  { key: 'vendors', name: 'Vendor Management', icon: IconBuildingStore },
+  { key: 'administration', name: 'Administration', icon: IconAdjustmentsCog },
+  { key: 'banks', name: 'Banks', icon: IconBuildingBank },
+  { key: 'iam', name: 'Identity & Access', icon: IconUsersGroup },
   { key: 'planning', name: 'Planning', icon: IconCalendarEvent },
   { key: 'tendering', name: 'Tendering', icon: IconBasketCog },
-  { key: 'procurement-requisition', name: 'PR', icon: IconShoppingBag },
+  { key: 'vendors', name: 'Vendor Management', icon: IconBuildingStore },
   // { key: 'contract', name: 'Contract', icon: IconFileSpreadsheet },
-  { key: 'administration', name: 'Administration', icon: IconAdjustmentsCog },
-  { key: 'iam', name: 'Identity & Access', icon: IconUsersGroup },
-  { key: 'banks', name: 'Banks', icon: IconBuildingBank },
 ];
 
 export const CurrentApplication = (key = 'iam'): ApplicationType => {
