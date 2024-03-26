@@ -357,6 +357,7 @@ export class PostBudgetPlanService extends ExtraCrudService<PostBudgetPlan> {
         postBudgetPlan: {
           app: true,
         },
+        reasons: true,
       },
     });
     const buffer = await this.pdfGeneratorService.pdfGenerator(data, 'post');

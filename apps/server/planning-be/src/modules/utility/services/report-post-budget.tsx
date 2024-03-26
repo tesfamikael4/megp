@@ -82,45 +82,74 @@ export const postReportPdf = async ({ activities }: any) => {
               />
             </View>
 
-            {item.postProcurementMechanisms && (
+            {item.postProcurementMechanism && (
               <View>
                 <View style={styles.activity}>
                   <Text>Procurement Methods</Text>
                 </View>
+                {item.reasons &&
+                  item.reasons.map((reason) => {
+                    return (
+                      <View
+                        key={reason.id}
+                        style={{
+                          backgroundColor: '#ffe3e3',
+                          padding: '10px',
+                          borderRadius: '2px',
+                          marginTop: '5px',
+                        }}
+                      >
+                        <Text style={{ color: 'red' }}>
+                          Justification for{' '}
+                          {reason.type === 'procurementMethod'
+                            ? 'Procurement Method'
+                            : 'Target Group'}
+                        </Text>
+                        <Text style={{ fontWeight: 'bold', marginTop: '6px' }}>
+                          Possible Reason :
+                        </Text>
+                        <Text style={{ fontSize: 10, marginLeft: 10 }}>
+                          {reason.reason}
+                        </Text>
+
+                        <Text style={{ fontWeight: 'bold', marginTop: '5px' }}>
+                          Remark :
+                        </Text>
+                        <Text style={{ fontSize: 10, marginLeft: 10 }}>
+                          {reason.remark}
+                        </Text>
+                      </View>
+                    );
+                  })}
                 <View style={styles.activityDetail}>
                   <ReactPdfTable
                     data={[
                       {
                         key: 'Procurement Type',
-                        value:
-                          item.postProcurementMechanisms[0].procurementType,
+                        value: item.postProcurementMechanism.procurementType,
                       },
                       {
                         key: 'Procurement Method',
-                        value:
-                          item.postProcurementMechanisms[0].procurementMethod,
+                        value: item.postProcurementMechanism.procurementMethod,
                       },
                       {
                         key: 'Funding Source',
-                        value: item.postProcurementMechanisms[0].fundingSource,
+                        value: item.postProcurementMechanism.fundingSource,
                       },
                       {
                         key: 'Procurement Process',
-                        value: item.postProcurementMechanisms[0].isOnline
+                        value: item.postProcurementMechanism.isOnline
                           ? 'Online'
                           : 'Offline',
                       },
                       {
                         key: 'Supplier Target Group',
                         value:
-                          item.postProcurementMechanisms[0].targetGroup?.join(
-                            ', ',
-                          ),
+                          item.postProcurementMechanism.targetGroup?.join(', '),
                       },
                       {
                         key: 'Donor',
-                        value:
-                          item.postProcurementMechanisms[0].donor?.[0] ?? '',
+                        value: item.postProcurementMechanism.donor?.[0] ?? '',
                       },
                     ]}
                     config={{}}
