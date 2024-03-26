@@ -382,6 +382,7 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
         preBudgetPlan: {
           app: true,
         },
+        reasons: true,
       },
     });
 
