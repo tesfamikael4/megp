@@ -23,28 +23,12 @@ export class CreateGuaranteeDto {
   @ApiHideProperty()
   vendorName: string;
   @ApiProperty()
-  @IsDateString()
-  @IsOptional()
-  startDate: Date;
-  @ApiProperty()
-  @IsDateString()
-  @IsOptional()
-  endDate: Date;
-  @ApiProperty()
   @IsEnum(GuaranteeTypeEnum)
   @IsNotEmpty()
   type: string;
   @ApiProperty()
   @IsNotEmpty()
   objectType: string;
-  @ApiProperty()
-  @IsOptional()
-  @IsDateString()
-  minValidityDate?: Date;
-  @ApiProperty()
-  @IsOptional()
-  @IsDateString()
-  guarantorValidityDate?: Date;
   @ApiProperty()
   @IsNotEmpty()
   title: string;
@@ -72,18 +56,41 @@ export class CreateGuaranteeDto {
   guarantorName: string;
   @ApiProperty()
   @IsOptional()
-  remark?: string;
-  @ApiProperty()
   attachment: any;
-  @ApiProperty({ default: GuaranteeStatusEnum.REQUESTED })
-  @IsEnum(GuaranteeStatusEnum)
-  status: string;
+  @ApiProperty()
+  @IsOptional()
+  remark?: string;
 }
 
 export class UpdateGuaranteeDto extends CreateGuaranteeDto {
   @ApiProperty()
   @IsUUID()
   id: string;
+
+  @ApiProperty({ default: GuaranteeStatusEnum.REQUESTED })
+  @IsOptional()
+  @IsEnum(GuaranteeStatusEnum)
+  status: string;
+
+  @ApiProperty()
+  @IsDateString()
+  @IsOptional()
+  startDate: Date;
+
+  @ApiProperty()
+  @IsDateString()
+  @IsOptional()
+  endDate: Date;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsDate()
+  minValidityDate?: Date;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsDateString()
+  guarantorValidityDate?: Date;
 }
 
 export class GuaranteeResponseDto extends UpdateGuaranteeDto {}
