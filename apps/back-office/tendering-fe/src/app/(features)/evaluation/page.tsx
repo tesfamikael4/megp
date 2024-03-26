@@ -52,7 +52,13 @@ export default function BidEvaluation() {
             variant="subtle"
             onClick={(e) => {
               e.stopPropagation();
-              router.push(`/evaluation/lots/${record.id}`);
+              if (record.id == '7daab8e2-0c59-49e7-ae12-bf537c5fde6d') {
+                router.push(`/evaluation/lots/${record.id}/responsivness`);
+              } else if (record.id == '4cde31ab-ebb5-4b9a-afc3-1a5b48238f69') {
+                router.push(`/evaluation/lots/${record.id}/bid-price`);
+              } else {
+                router.push(`/evaluation/lots/${record.id}`);
+              }
             }}
           >
             <IconChevronRight size={14} />

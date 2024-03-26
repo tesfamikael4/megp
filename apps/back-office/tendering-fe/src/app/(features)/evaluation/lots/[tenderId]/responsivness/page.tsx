@@ -9,7 +9,7 @@ import { useParams, useRouter } from 'next/navigation';
 
 export default function Items() {
   const router = useRouter();
-  const { tenderId, lotId } = useParams();
+  const { tenderId } = useParams();
   const config: ExpandableTableConfig = {
     isSearchable: true,
     isExpandable: true,
@@ -48,7 +48,7 @@ export default function Items() {
             onClick={(e) => {
               e.stopPropagation();
               router.push(
-                `/evaluation/lots/${tenderId}/${lotId}/responsivnes/${record.id}`,
+                `/evaluation/lots/${tenderId}/responsivness/${record.id}`,
               );
             }}
           >
