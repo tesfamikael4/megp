@@ -88,7 +88,7 @@ export default function BidSecurityPage() {
                   Procuring Entity Name
                 </Table.Th>
                 <Table.Td className=" ">
-                  <Text size="sm">Perago </Text>
+                  <Text size="sm">{data?.name} </Text>
                 </Table.Td>
               </Table.Tr>
               <Table.Tr>
@@ -96,7 +96,7 @@ export default function BidSecurityPage() {
                   Security Currency
                 </Table.Th>
                 <Table.Td className=" ">
-                  <Text size="sm">MMK</Text>
+                  <Text size="sm">{data?.currencyType}</Text>
                 </Table.Td>
               </Table.Tr>
               <Table.Tr>
@@ -105,14 +105,6 @@ export default function BidSecurityPage() {
                 </Table.Th>
                 <Table.Td className=" ">
                   <Text size="sm">{data?.amount}</Text>
-                </Table.Td>
-              </Table.Tr>
-              <Table.Tr>
-                <Table.Th className="bg-[#edf3f8] font-normal text-[14px]  ">
-                  Security Form
-                </Table.Th>
-                <Table.Td className=" ">
-                  <Text size="sm">string</Text>
                 </Table.Td>
               </Table.Tr>
             </Table.Tbody>
