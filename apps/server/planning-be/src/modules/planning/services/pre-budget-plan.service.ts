@@ -206,12 +206,12 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
         if (data.status == 'Approved') {
           const activities = await this.preBudgetActivityRepository.find({
             where: { preBudgetPlanId: data.itemId },
-            relations: [
-              'preBudgetPlanItems',
-              'preBudgetPlanTimelines',
-              'preBudgetRequisitioners',
-              'preProcurementMechanisms',
-            ],
+            relations: {
+              preBudgetPlanItems: true,
+              preBudgetPlanTimelines: true,
+              preBudgetRequisitioners: true,
+              preProcurementMechanism: true,
+            },
           });
 
           if (activities.length == 0) {
@@ -274,7 +274,7 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
                 .insert(requisitioner as any);
 
               const mechanism = {
-                ...element.preProcurementMechanisms,
+                ...element.preProcurementMechanism,
                 postBudgetPlanActivityId: element.id,
                 id: undefined,
               };
