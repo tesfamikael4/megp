@@ -67,7 +67,8 @@ export function Auth({
         <Box>{render()}</Box>
         <div className="bottom-0">
           <p className={styles.footer_text}>
-            Copyright &copy; 2023, Procurement and Disposal of Assets Authority.
+            Copyright &copy; {new Date().getFullYear()}, Procurement and
+            Disposal of Assets Authority.
           </p>
           <Flex className={styles.footer_text}>
             <p className="mt-2">Powered by </p>
