@@ -319,7 +319,7 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
           430,
         );
       }
-      if (element.preProcurementMechanism) {
+      if (!element.preProcurementMechanism) {
         throw new HttpException(
           `Procurement Method not found for ${element.name} ${element.procurementReference}`,
           430,
