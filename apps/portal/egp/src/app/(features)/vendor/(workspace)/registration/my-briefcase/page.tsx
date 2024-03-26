@@ -50,7 +50,6 @@ function Page() {
     fetch({});
   }, []);
 
-  if (isLoading) <LoadingOverlay />;
   return (
     <>
       <UploadModal opened={opened} close={close} fetch={fetch} />

@@ -1,7 +1,7 @@
 .root {
-  @apply p-4 w-full flex justify-center flex-wrap rounded-md;
+  @apply p-4 w-full flex justify-center flex-wrap rounded-md sm:min-h-[100%];
   background-color: white;
-  min-height: 356px;
+  min-height: 250px;
   max-width: 380px;
 }
 

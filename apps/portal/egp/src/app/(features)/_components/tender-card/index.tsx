@@ -108,7 +108,7 @@ const TenderCard = ({ color, register, textColor }: TenderCardProps) => {
               </Box>
             </Flex>
             <Flex columnGap={'md'} mt={'sm'} justify={'flex-end'}>
-              {register && <Button>Register</Button>}
+              <Button>Bid Now</Button>
               <Button
                 variant="outline"
                 fz={'xs'}
