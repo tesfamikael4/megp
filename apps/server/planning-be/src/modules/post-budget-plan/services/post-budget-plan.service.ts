@@ -282,7 +282,7 @@ export class PostBudgetPlanService extends ExtraCrudService<PostBudgetPlan> {
           430,
         );
       }
-      if (element.postProcurementMechanism) {
+      if (!element.postProcurementMechanism) {
         throw new HttpException(
           `Procurement Method not found for ${element.name} ${element.procurementReference}`,
           430,
