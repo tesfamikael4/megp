@@ -10,7 +10,7 @@ import { useParams, useRouter } from 'next/navigation';
 
 export default function BidOpening() {
   const router = useRouter();
-  const { tenderId, lotId, itemId } = useParams();
+  const { tenderId, itemId } = useParams();
   const config: ExpandableTableConfig = {
     isSearchable: true,
     isExpandable: true,
@@ -52,7 +52,7 @@ export default function BidOpening() {
             onClick={(e) => {
               e.stopPropagation();
               router.push(
-                `/evaluation/lots/${tenderId}/${lotId}/responsivnes/${itemId}/${record.id}`,
+                `/evaluation/lots/${tenderId}/responsivness/${itemId}/${record.id}`,
               );
             }}
           >

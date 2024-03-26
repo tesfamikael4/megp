@@ -51,7 +51,15 @@ export default function BidOpening() {
             variant="subtle"
             onClick={(e) => {
               e.stopPropagation();
-              router.push(`/evaluation/lots/${tenderId}/${lotId}/${record.id}`);
+              if (tenderId == 'ac67ac94-6b2f-4715-b0d3-eb0e2b853a6c') {
+                router.push(
+                  `/evaluation/lots/${tenderId}/${lotId}/qualification`,
+                );
+              } else {
+                router.push(
+                  `/evaluation/lots/${tenderId}/${lotId}/${record.id}`,
+                );
+              }
             }}
           >
             <IconChevronRight size={14} />

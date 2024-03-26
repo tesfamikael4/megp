@@ -6,16 +6,16 @@ export const data = [
     envelope: 'Single Envelope',
     bid: 'Item-based',
     evaluationMethod: 'Compliance Based',
-    milestone: 'Financial Opening - In Progress',
+    milestone: 'Preliminary Evaluation',
   },
   {
     id: 'ac67ac94-6b2f-4715-b0d3-eb0e2b853a6c',
     reference: 'RFP2024010',
     name: 'IT System Upgrade',
-    envelope: 'Two Envelopes',
+    envelope: 'Single Envelopes',
     bid: 'Lot-based',
     evaluationMethod: 'Merit Based',
-    milestone: 'Technical Opening - In Progress',
+    milestone: 'Qualification Evaluation',
   },
   {
     id: '7daab8e2-0c59-49e7-ae12-bf537c5fde6d',
@@ -24,7 +24,7 @@ export const data = [
     envelope: 'Single Envelope',
     bid: 'Item-based',
     evaluationMethod: 'Merit Based',
-    milestone: 'Financial Opening - In Progress',
+    milestone: 'Responsiveness Evaluation',
   },
   {
     id: '4cde31ab-ebb5-4b9a-afc3-1a5b48238f69',
@@ -33,7 +33,7 @@ export const data = [
     envelope: 'Single Envelope',
     bid: 'Item-based',
     evaluationMethod: 'Merit Based',
-    milestone: 'Financial Opening - In Progress',
+    milestone: 'Bid Price Evaluation',
   },
   {
     id: '9f2e7dfc-47cb-4b2d-92e7-d8df41dab9b7',
