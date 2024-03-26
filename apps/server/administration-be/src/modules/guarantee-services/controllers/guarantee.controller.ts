@@ -30,10 +30,11 @@ export class GuaranteeController extends EntityCrudController<Guarantee>(
 
   @Post()
   async create(
-    @Body() data: CreateGuaranteeDto,
+    @Body() data: any,
     @CurrentUser() user: any,
   ): Promise<Guarantee> {
     data.vendorId = user.organization?.id;
+    data.vendorName = user.organization?.name;
     return this.guaranteeService.create(data);
   }
 
