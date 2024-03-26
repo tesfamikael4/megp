@@ -12,6 +12,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Box, Button, Flex, Modal, Select, Textarea } from '@mantine/core';
 import { useDisclosure, useMediaQuery } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
+import { logger } from '@megp/core-fe';
 import { CollectionQuery } from '@megp/entity';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -25,9 +26,19 @@ interface FormDetailProps {
 const FormDetail = ({ mode }: FormDetailProps) => {
   const bidSecuritySchema: ZodType<Partial<BidSecurity>> = z.object({
     guarantorId: z.string().min(1, { message: 'This field is required' }),
+    guarantorName: z.string().min(1, { message: 'This field is required' }),
     guarantorBranchId: z.string().min(1, { message: 'This field is required' }),
+    guarantorBranchName: z
+      .string()
+      .min(1, { message: 'This field is required' }),
     amount: z.number().min(1, { message: 'This field is required' }),
     remark: z.string().optional(),
+    type: z.string().min(1, { message: 'This field is required' }),
+    name: z.string().min(1, { message: 'This field is required' }),
+    title: z.string().min(1, { message: 'This field is required' }),
+    objectId: z.string().min(1, { message: 'This field is required' }),
+    objectType: z.string().min(1, { message: 'This field is required' }),
+    currencyType: z.string().min(1, { message: 'This field is required' }),
   });
 
   const {
@@ -37,10 +48,17 @@ const FormDetail = ({ mode }: FormDetailProps) => {
     control,
     formState: { errors },
     watch,
+    setValue,
   } = useForm<Partial<BidSecurity>>({
     resolver: zodResolver(bidSecuritySchema),
     defaultValues: {
       amount: 10,
+      name: 'Perago',
+      title: 'Tender1',
+      objectType: 'Tender',
+      type: 'BID_SECURITY',
+      objectId: '18780bb0-45c9-406f-ba83-a2607bb6d6ba',
+      currencyType: 'string',
     },
   });
 
@@ -120,7 +138,14 @@ const FormDetail = ({ mode }: FormDetailProps) => {
                   ? errors?.guarantorId?.message?.toString()
                   : ''
               }
-              onChange={onChange}
+              onChange={(value, option) => {
+                console.log(option);
+                const selectedGuarantor = guarantor?.items?.filter(
+                  (item) => item?.id == value,
+                )?.[0];
+                setValue('guarantorId', selectedGuarantor?.id);
+                setValue('guarantorName', selectedGuarantor?.name);
+              }}
               data={
                 guarantor?.items?.map((guarantor) => ({
                   value: guarantor?.id,
@@ -145,7 +170,14 @@ const FormDetail = ({ mode }: FormDetailProps) => {
                   ? errors?.guarantorId?.message?.toString()
                   : ''
               }
-              onChange={onChange}
+              onChange={(value, option) => {
+                console.log(option);
+                const selectedGuarantor = data?.items?.filter(
+                  (item) => item?.id == value,
+                )?.[0];
+                setValue('guarantorBranchId', selectedGuarantor?.id);
+                setValue('guarantorBranchName', selectedGuarantor?.name);
+              }}
               data={
                 data?.items?.map((branch) => ({
                   value: branch?.id,
@@ -181,7 +213,10 @@ const FormDetail = ({ mode }: FormDetailProps) => {
             Cancel
           </Button>
 
-          <Button onClick={handleSubmit(onCreate)} className="mt-5">
+          <Button
+            onClick={handleSubmit(onCreate, (err) => logger.log(err))}
+            className="mt-5"
+          >
             Done
           </Button>
         </Flex>
