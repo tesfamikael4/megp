@@ -58,7 +58,7 @@ const FormDetail = ({ mode }: FormDetailProps) => {
       objectType: 'Tender',
       type: 'BID_SECURITY',
       objectId: '18780bb0-45c9-406f-ba83-a2607bb6d6ba',
-      currencyType: 'string',
+      currencyType: 'MMK',
     },
   });
 
