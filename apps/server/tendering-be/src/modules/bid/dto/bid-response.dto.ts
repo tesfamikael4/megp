@@ -36,6 +36,40 @@ export class CreateBidResponseDto {
   password: string;
 }
 
+export class CreateBidResponseTenderDto {
+  @ApiProperty()
+  @IsUUID()
+  @IsNotEmpty()
+  tenderId: string;
+
+  @ApiProperty({
+    default: DocumentTypeEnum.RESPONSE,
+    examples: [
+      DocumentTypeEnum.FINANCIAL_RESPONSE,
+      DocumentTypeEnum.TECHNICAL_RESPONSE,
+      DocumentTypeEnum.RESPONSE,
+    ],
+  })
+  @IsUUID()
+  @IsNotEmpty()
+  documentType: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  key: string;
+
+  @ApiProperty()
+  @IsObject()
+  @IsNotEmpty()
+  value: any;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  password: string;
+}
+
 export class GetBidResponseDto {
   @ApiProperty()
   @IsUUID()
@@ -53,6 +87,23 @@ export class GetBidResponseDto {
   @IsString()
   @IsNotEmpty()
   documentType: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  key: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  password: string;
+}
+
+export class GetBidResponseTenderDto {
+  @ApiProperty()
+  @IsUUID()
+  @IsNotEmpty()
+  tenderId: string;
 
   @ApiProperty()
   @IsString()

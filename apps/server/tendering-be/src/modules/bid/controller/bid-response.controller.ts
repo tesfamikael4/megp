@@ -7,7 +7,9 @@ import { ExtraCrudController } from 'src/shared/controller';
 import {
   CheckPasswordDto,
   CreateBidResponseDto,
+  CreateBidResponseTenderDto,
   GetBidResponseDto,
+  GetBidResponseTenderDto,
 } from '../dto/bid-response.dto';
 
 const options: ExtraCrudOptions = {
@@ -25,6 +27,14 @@ export class BidResponseController extends ExtraCrudController<BidResponse>(
     super(bidSecurityService);
   }
 
+  @Post('create-bid-response-tender')
+  async createBidResponseTender(
+    @Body() payload: CreateBidResponseTenderDto,
+    @Req() req?: any,
+  ) {
+    return await this.bidSecurityService.createBidResponseTender(payload, req);
+  }
+
   @Post('check-password')
   async checkPassword(@Body() payload: CheckPasswordDto, @Req() req?: any) {
     return await this.bidSecurityService.checkPassword(payload, req);
@@ -36,5 +46,16 @@ export class BidResponseController extends ExtraCrudController<BidResponse>(
     @Req() req?: any,
   ) {
     return await this.bidSecurityService.getBidResponseByKey(payload, req);
+  }
+
+  @Post('get-bid-response-tender')
+  async getBidResponseTenderByKey(
+    @Body() payload: GetBidResponseTenderDto,
+    @Req() req?: any,
+  ) {
+    return await this.bidSecurityService.getBidResponseTenderByKey(
+      payload,
+      req,
+    );
   }
 }

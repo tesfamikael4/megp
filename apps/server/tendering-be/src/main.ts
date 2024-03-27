@@ -14,20 +14,7 @@ async function bootstrap() {
   const app: NestExpressApplication = await NestFactory.create(AppModule, {
     cors: true,
   });
-  app.connectMicroservice<MicroserviceOptions>(
-    {
-      transport: Transport.RMQ,
-      options: {
-        urls: [process.env.RMQ_URL],
-        queue: 'to-pr',
-        queueOptions: {
-          durable: false,
-        },
-      },
-    },
-    { inheritAppConfig: true },
-  );
-  await app.startAllMicroservices();
+
   app.enableCors();
 
   const port = Number(process.env.PORT || 3000);
