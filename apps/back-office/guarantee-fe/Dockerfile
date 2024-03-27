@@ -86,4 +86,4 @@ ENV ENV_RECAPTCHA_SITE_KEY ""
 EXPOSE 5544
 
 # Specify the command to run your application, passing the environment variables
-CMD ["node", "apps/back-office/planning-fe/server.js"]
+CMD ["node", "apps/back-office/guarantee-fe/server.js"]

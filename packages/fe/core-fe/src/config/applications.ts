@@ -16,7 +16,7 @@ interface ApplicationType {
 
 export const Applications = [
   { key: 'administration', name: 'Administration', icon: IconAdjustmentsCog },
-  { key: 'banks', name: 'Banks', icon: IconBuildingBank },
+  { key: 'guarantee', name: 'Guarantee', icon: IconBuildingBank },
   { key: 'iam', name: 'Identity & Access', icon: IconUsersGroup },
   { key: 'planning', name: 'Planning', icon: IconCalendarEvent },
   { key: 'tendering', name: 'Tendering', icon: IconBasketCog },

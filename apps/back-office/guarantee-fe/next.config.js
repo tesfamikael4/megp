@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = { 
-  basePath: '/banks',
+  basePath: '/guarantee',
   reactStrictMode: true,
   transpilePackages: ['@megp/theme','@megp/auth','@megp/core-fe','@megp/entity'],
   output: 'standalone',
