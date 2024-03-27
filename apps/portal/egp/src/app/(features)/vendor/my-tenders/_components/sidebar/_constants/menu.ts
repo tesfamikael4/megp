@@ -15,7 +15,7 @@ export const infomationLinks: MenuLinks.SidebarLinks[] = [
   {
     label: 'Tender Preparation',
     icon: IconFolderPlus,
-    link: `/vendor/my-tenders/tender-preparation`,
+    link: `check-password`,
   },
   {
     label: 'Bid Security',

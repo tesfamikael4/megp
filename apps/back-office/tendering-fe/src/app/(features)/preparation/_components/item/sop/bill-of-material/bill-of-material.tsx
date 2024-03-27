@@ -23,8 +23,8 @@ export default function BillOfMaterial({ item }: { item: Item }) {
   const onBulkSave = async () => {
     try {
       const toApiBoq: any[] = [...(boq ?? [])];
-      await saveBoq(
-        toApiBoq.map((boq) => {
+      await saveBoq({
+        boqs: toApiBoq.map((boq) => {
           boq['itemId'] = item.id;
           boq['unit'] = boq.unit ? boq.unit : '';
           boq['quantity'] = boq.quantity ? boq.quantity : 1;
@@ -32,7 +32,8 @@ export default function BillOfMaterial({ item }: { item: Item }) {
 
           return boq;
         }),
-      );
+        itemId: item.id,
+      });
       notify('Success', 'bulk bill of material saved successfully');
     } catch {
       notify('Error', 'Error in deleting bulk boq');

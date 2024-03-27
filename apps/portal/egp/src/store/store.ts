@@ -10,6 +10,14 @@ import { preferentialTreatmentApi } from './api/preferential-treatment/preferent
 import { organazationApi, unitApi } from './api/organazation/organazation.api';
 import { guaranteeApi } from './api/guarantee/guarantee.api';
 import { extensionApi } from './api/guarantee-extension/extension.api';
+import { getTendersApi } from '@/app/(features)/vendor/tender/_api/tender.api';
+import { invitationDocumentApi } from '@/app/(features)/vendor/tender/_api/invitation-document.api';
+import { registrationApi } from '@/app/(features)/vendor/tender/_api/register.api';
+import { bookmarkApi } from '@/app/(features)/vendor/tender/_api/bookmark.api';
+import { getBookmarkApi } from '@/app/(features)/vendor/_api/bookmark.api';
+import { getRegistrationApi } from '@/app/(features)/vendor/_api/registration.api';
+import { getItemsApi } from '@/app/(features)/vendor/_api/item.api';
+import { checkPasswordApi } from '@/app/(features)/vendor/_api/bid-response.api';
 
 export const store = configureStore({
   reducer: {
@@ -21,6 +29,14 @@ export const store = configureStore({
     [unitApi.reducerPath]: unitApi.reducer,
     [guaranteeApi.reducerPath]: guaranteeApi.reducer,
     [extensionApi.reducerPath]: extensionApi.reducer,
+    [getTendersApi.reducerPath]: getTendersApi.reducer,
+    [invitationDocumentApi.reducerPath]: invitationDocumentApi.reducer,
+    [registrationApi.reducerPath]: registrationApi.reducer,
+    [bookmarkApi.reducerPath]: bookmarkApi.reducer,
+    [getBookmarkApi.reducerPath]: getBookmarkApi.reducer,
+    [getRegistrationApi.reducerPath]: getRegistrationApi.reducer,
+    [getItemsApi.reducerPath]: getItemsApi.reducer,
+    [checkPasswordApi.reducerPath]: checkPasswordApi.reducer,
   },
   devTools: process.env.NODE_ENV !== 'production',
   middleware: (getDefaultMiddleware) => {
