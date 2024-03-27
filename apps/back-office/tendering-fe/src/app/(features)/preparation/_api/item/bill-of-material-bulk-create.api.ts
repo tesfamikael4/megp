@@ -9,10 +9,10 @@ export const sorBillOfMaterialBulkCreateApi = createApi({
   baseQuery: baseQuery(process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api/'),
   endpoints: (builder) => ({
     saveBoq: builder.mutation<any, any>({
-      query: (boqs: BillOfMaterial[]) => ({
+      query: (args: { boqs: BillOfMaterial[]; itemId: string }) => ({
         url: `sor-bill-of-materials/bulk-create`,
         method: 'POST',
-        body: { boqs: boqs },
+        body: { boqs: args.boqs, itemId: args.itemId },
       }),
       invalidatesTags: ['boq-bulk-create'],
     }),

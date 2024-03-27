@@ -6,16 +6,14 @@ import styles from './grid-display.module.scss';
 import TenderCard from '@/app/(features)/_components/tender-card';
 import Navbar from '../nav-bar';
 import HeaderNav from '../header-nav-bar';
+import { useGetTendersQuery } from '../../_api/tender.api';
 import PageWrapper from '../../../_components/page-wrapper';
 import EmptyDataPlaceholder from '../../../_components/empty-data-placeholder';
-
 const GridDisplay = () => {
   const isMobile = useMediaQuery('(max-width: 768px)');
-
-  const { data, isLoading } = (() => ({
-    data: Array.from({ length: 8 }), // Empty array for now
-    isLoading: false,
-  }))();
+  const { data: tenders, isLoading } = useGetTendersQuery({
+    where: [],
+  });
 
   return (
     <Box className="flex">
@@ -32,7 +30,7 @@ const GridDisplay = () => {
         <Box px={{ base: 'xs', sm: 'lg' }}>
           <HeaderNav />
           <PageWrapper
-            condition={data.length > 0}
+            condition={tenders?.items.length > 0}
             isLoading={isLoading}
             placeholder={<EmptyDataPlaceholder />}
           >
@@ -41,9 +39,18 @@ const GridDisplay = () => {
               cols={{ base: 1, sm: 2, md: 2, lg: 2 }}
               spacing={{ base: 10, sm: 10, md: 10, lg: 10 }}
             >
-              {data.map((_, index) => (
-                <TenderCard key={index} color={'orange'} textColor="white" />
-              ))}
+              {tenders &&
+                tenders.items.map((tender, index) => (
+                  <>
+                    {tender && (
+                      <TenderCard
+                        key={index}
+                        color={'orange'}
+                        tender={tender}
+                      />
+                    )}
+                  </>
+                ))}
             </SimpleGrid>
           </PageWrapper>
         </Box>

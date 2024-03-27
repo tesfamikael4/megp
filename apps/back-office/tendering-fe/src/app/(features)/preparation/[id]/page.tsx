@@ -17,7 +17,7 @@ import { useEffect, useState } from 'react';
 import Items from '../_components/item/items';
 import { IconChevronLeft, IconFolderOpen } from '@tabler/icons-react';
 import FormDetail from '../_components/tender/form-detail';
-import { Section } from '@megp/core-fe';
+import { Section, logger, notify } from '@megp/core-fe';
 import BidProGeneral from '../_components/bidding-procedure/bid-pro-general';
 import PreparationDetail from '../_components/bidding-procedure/preparation-detail';
 import SubmissionDetail from '../_components/bidding-procedure/submission-detail';
@@ -25,7 +25,7 @@ import BidProEvaluation from '../_components/bidding-procedure/bid-pro-evaluatio
 import BidProAwards from '../_components/bidding-procedure/bid-pro-awards';
 import TechnicalTeams from '../_components/tender/technical-teams';
 import ProcurementMechanismForm from '../_components/tender/procurement-mechanism-form';
-import { useReadQuery } from '../_api/tender/tender.api';
+import { useReadQuery, useUpdateMutation } from '../_api/tender/tender.api';
 import { useLazyListByIdQuery } from '../_api/tender/lot.api';
 import TenderConfigSpd from '../_components/tender/tender-config-spd';
 import PreliminaryExamination from '../_components/lot/evaluation-criteria/preliminary-examination/preliminary-examination';
@@ -47,13 +47,20 @@ export default function TenderDetailPage() {
   const { id } = useParams();
   const { data: selected, isLoading } = useReadQuery(id?.toString());
   const [trigger, { data, isFetching }] = useLazyListByIdQuery();
-
+  const [update, { isLoading: isUpdating }] = useUpdateMutation();
   useEffect(() => {
     if (selected) {
       trigger({ id: selected.id, collectionQuery: { skip: 0, take: 10 } });
     }
   }, [selected, trigger]);
-
+  useEffect(() => {
+    // logger.log(value);
+  }, [value]);
+  const onUpdate = (data) => {
+    logger.log(data);
+    update({ ...data, id: id?.toString() });
+    notify('Success', 'Tendering Updated successfully');
+  };
   return (
     <>
       <LoadingOverlay visible={isLoading} />
@@ -71,8 +78,18 @@ export default function TenderDetailPage() {
                 {selected?.name}
               </Flex>
             </Tooltip>
-            <Button variant="filled" className="my-auto">
-              Submit
+            <Button
+              variant="filled"
+              className="my-auto"
+              loading={isUpdating}
+              onClick={() => {
+                onUpdate({
+                  ...selected,
+                  status: 'PUBLISHED',
+                });
+              }}
+            >
+              Publish
             </Button>
           </div>
           <div className="flex">
@@ -145,32 +162,37 @@ export default function TenderDetailPage() {
       </div>
       <Box className="container mx-auto my-4">
         {currentTab !== 'configuration' && (
-          <Box className="w-full flex flex-row justify-between items-center container my-2">
-            <Select
-              placeholder="Pick Lot"
-              data={
-                data
-                  ? data.items.map((single) => {
-                      const value = { ...single };
-                      value['label'] = value.name;
-                      value['value'] = value.id;
-                      return value;
-                    })
-                  : []
-              }
-              onChange={setValue}
-            />
-            <div className="flex justify-end items-center gap-3">
-              <LoadingOverlay visible={isFetching} />
-              {value && (
-                <Button variant="filled" className="my-auto" onClick={open}>
-                  Split
-                </Button>
-              )}
+          <>
+            <Box className="w-full flex flex-row justify-between items-center container my-2">
+              <p className="text-lg font-semibold">
+                <Select
+                  placeholder="Pick Lot"
+                  data={
+                    data
+                      ? data.items.map((single) => {
+                          const value = { ...single };
+                          value['label'] = value.name;
+                          value['value'] = value.id;
+                          return value;
+                        })
+                      : []
+                  }
+                  onChange={setValue}
+                />
+              </p>
+              <div className="flex justify-end items-center gap-3">
+                <LoadingOverlay visible={isFetching} />
+                {value && (
+                  <Button variant="filled" className="my-auto" onClick={open}>
+                    Split
+                  </Button>
+                )}
+                {currentTab === 'bidding-procedure' && <></>}
 
-              <Divider mb={'md'} />
-            </div>
-          </Box>
+                <Divider mb={'md'} />
+              </div>
+            </Box>
+          </>
         )}
         <Container fluid>
           {currentTab === 'configuration' && (
