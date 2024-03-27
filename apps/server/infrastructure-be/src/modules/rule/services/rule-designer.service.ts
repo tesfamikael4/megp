@@ -95,6 +95,7 @@ export class RuleDesignerService extends EntityCrudService<RuleDesigner> {
     }
 
     resp.possibleReasons = [...possibleReasons];
+    if (resp.possibleReasons.length == 0) resp.possibleReasons.push('others');
     return resp;
   }
   async validate(designKey, params) {
@@ -117,6 +118,7 @@ export class RuleDesignerService extends EntityCrudService<RuleDesigner> {
       });
     }
 
+    if (possibleReasons.length == 0) possibleReasons.push('others');
     return {
       ...resp,
       possibleReasons,
