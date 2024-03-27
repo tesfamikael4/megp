@@ -42,7 +42,7 @@ const PlanYearTab = () => {
 
   const { data: pr } = useReadQuery(id?.toString());
 
-  const { data: canSubmit } = useCanSubmitQuery('procurementrequisition');
+  const { data: canSubmit } = useCanSubmitQuery('procurementRequisition');
 
   const [triggerItem, { data: items }] = useLazyGetPrItemsQuery();
 
