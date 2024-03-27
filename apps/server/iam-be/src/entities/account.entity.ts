@@ -11,6 +11,7 @@ import { AccountVerification } from './account-verification.entity';
 import { SecurityQuestion } from './security-question.entity';
 import { User } from './user.entity';
 import { AccountProfile } from './account-profile.entity';
+import { EmailChangeRequest } from './email-change-request.entity';
 
 @Entity('accounts')
 export class Account extends Audit {
@@ -72,6 +73,15 @@ export class Account extends Audit {
     onDelete: 'CASCADE',
   })
   users: User[];
+
+  @OneToMany(
+    () => EmailChangeRequest,
+    (emailChangeRequest) => emailChangeRequest.account,
+    {
+      onDelete: 'CASCADE',
+    },
+  )
+  emailChangeRequests: EmailChangeRequest[];
 
   @OneToOne(() => AccountProfile, (accountProfile) => accountProfile.account, {
     cascade: true,
