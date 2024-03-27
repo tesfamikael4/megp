@@ -8,11 +8,8 @@ import {
   IsOptional,
   IsDateString,
 } from 'class-validator';
-import {
-  Guarantee,
-  GuaranteeStatusEnum,
-  GuaranteeTypeEnum,
-} from 'src/entities/guarantee.entity';
+import { GuaranteeStatusEnum } from 'src/shared/enums/guarantee-status.enum';
+import { GuaranteeTypeEnum } from 'src/shared/enums/guarantee-type.enum';
 
 export class CreateGuaranteeDto {
   @ApiProperty()
