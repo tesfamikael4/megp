@@ -5,10 +5,10 @@ import {
   Text,
   Button,
   Flex,
-  Box,
+  Stack,
+  Checkbox,
 } from '@mantine/core';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { useState } from 'react';
 import type { SubmitHandler } from 'react-hook-form';
 import { Controller, useForm } from 'react-hook-form';
@@ -17,7 +17,6 @@ import z from 'zod';
 import { notifications } from '@mantine/notifications';
 import { useAuth } from '../../../context';
 import { Phone, isPhoneValid } from '../../phone-input/phone-input';
-import styles from './signup.module.scss';
 
 const schema = z.object({
   firstName: z.string().min(1, { message: 'This field is required.' }),
@@ -81,19 +80,23 @@ export function SignUp(): JSX.Element {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <Box>
-        <p className={styles.title}>Create Account</p>
-        <Flex className="gap-2 mt-4" direction="row">
+      <Stack gap={10} mt={15}>
+        <Flex align="center" justify="center">
+          <Text fw={600} fz={22}>
+            Welcome to MANEPS!
+          </Text>
+        </Flex>
+        <Flex gap="xs">
           <TextInput
-            className={styles.half_width}
             error={errors.firstName?.message}
             label="First Name"
             placeholder="First name"
             {...register('firstName')}
+            required
+            size="sm"
             withAsterisk
           />
           <TextInput
-            className={styles.half_width}
             error={errors.lastName?.message}
             label="Last Name"
             placeholder="Last name"
@@ -101,47 +104,42 @@ export function SignUp(): JSX.Element {
             withAsterisk
           />
         </Flex>
-        <Flex direction="column">
-          <Controller
-            control={control}
-            name="phone"
-            render={({ field: { name, value, onChange } }) => (
-              <Phone
-                disableValidation
-                error={errors.phone?.message}
-                label="Mobile Phone"
-                name={name}
-                onChange={onChange}
-                placeholder="Your phone"
-                value={value}
-              />
-            )}
-          />
-          <TextInput
-            error={errors.email?.message}
-            label="Email"
-            placeholder="Your email"
-            {...register('email')}
-            withAsterisk
-          />
-          <PasswordInput
-            error={errors.password?.message}
-            label="Password"
-            placeholder="Your password"
-            {...register('password')}
-            withAsterisk
-          />
-          <Button className="mt-6" loading={isSigningUp} type="submit">
-            Create Account
-          </Button>
-          <Text c="dimmed" className={styles.account_que}>
-            Already have an account?{' '}
-            <Link className={styles.signup_link} href="/auth/login">
-              Sign In
-            </Link>
-          </Text>
-        </Flex>
-      </Box>
+        <Controller
+          control={control}
+          name="phone"
+          render={({ field: { name, value, onChange } }) => (
+            <Phone
+              disableValidation
+              error={errors.phone?.message}
+              label="Mobile Phone"
+              name={name}
+              onChange={onChange}
+              placeholder="Your phone"
+              value={value}
+            />
+          )}
+        />
+        <TextInput
+          error={errors.email?.message}
+          label="Email"
+          placeholder="Your email"
+          {...register('email')}
+          withAsterisk
+        />
+        <PasswordInput
+          error={errors.password?.message}
+          label="Password"
+          placeholder="Your password"
+          size="sm"
+          {...register('password')}
+          withAsterisk
+        />
+
+        <Checkbox label="Keep me logged in " size="xs" />
+        <Button fullWidth h={40} loading={isSigningUp} type="submit">
+          Sign up
+        </Button>
+      </Stack>
     </form>
   );
 }

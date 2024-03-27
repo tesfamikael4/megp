@@ -1,33 +1,28 @@
-.left_content {
-    @apply flex-grow flex justify-between min-h-screen flex-col border bg-gray-100;
-    width: 40%;
-    padding: 4rem;
+.root {
+  @apply p-4 w-full flex justify-center flex-wrap rounded-md sm:min-h-[100%];
+  background-color: white;
+  min-height: 250px;
+  max-width: 380px;
 }
 
-.workflow {
-    background-position: center;
-    background-size: contain;
-    background-repeat: no-repeat;
-    width: 50%;
-    height: 45vh
-}
+.tab {
+  @apply w-full;
+  width: 156px;
 
-.right_content {
-    @apply md:flex w-8/12 flex-col items-center justify-center min-h-screen hidden
+  &[data-active] {
+  }
+  &[data-direction='left'] {
+    border-radius: 3px 0px 0px 3px;
+  }
+  &[data-direction='right'] {
+    border-radius: 0px 3px 3px 0px;
+  }
 }
-
-.logo {
-    @apply self-center
+.tabList {
+  gap: 0;
+  background-color: #e9ecef;
+  border-radius: 3px;
 }
-
-.form {
-    @apply border-r border-solid border-gray-300 dark:border-gray-700 min-h-[900px] max-w-[450px] pt-[80px] md:max-w-full
-}
-
-.welcome {
-    @apply text-center text-3xl mt-5
-}
-
-.footer_text {
-    @apply justify-center text-center text-sm self-end gap-1
+.tabPanal {
+  @apply p-4;
 }

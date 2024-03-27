@@ -1,7 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { TextInput, Button, Flex, Title, Divider } from '@mantine/core';
-import Image from 'next/image';
+import { TextInput, Button, Flex, Stack, Text } from '@mantine/core';
 import { IconAt } from '@tabler/icons-react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -47,39 +46,40 @@ export function ForgotPassword(): JSX.Element {
   };
 
   return (
-    <Flex direction="column">
-      <Image
-        alt="forgot-password"
-        className="mx-auto"
-        height={250}
-        src="/forgot-password.svg"
-        width={250}
-      />
-      <Title className="text-center">Reset Password</Title>
-      <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
+    <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
+      <Stack gap={14} mt={15}>
+        <Flex className=" flex flex-col justify-center items-center gap-6">
+          <Text fw={600} fz={22}>
+            Reset Password
+          </Text>
+          <Text fw={500} fz={14}>
+            We&lsquo;ll send you a quick link to reset your password
+          </Text>
+        </Flex>
         <TextInput
-          description="Please enter your email below so we can send you a reset link: "
           error={errors.email?.message}
           label="Email"
           leftSection={<IconAt size="0.8rem" />}
           placeholder="Your email"
           {...register('email')}
           className="mt-3"
+          required
         />
-        <Button className="mt-6" loading={loading} type="submit">
+        <Button fullWidth h={40} loading={loading} type="submit">
           Send link
-        </Button>{' '}
-        <Divider label="Or" labelPosition="center" my="xs" />
+        </Button>
+        {/* <Divider label="Or" labelPosition="center" />
         <Button
-          className="underline text-center text-green-700 cursor-pointer"
+          fullWidth
+          h={40}
           onClick={() => {
             router.push('/auth/questions');
           }}
           variant="outline"
         >
           Reset Using Security Questions
-        </Button>
-      </form>
-    </Flex>
+        </Button> */}
+      </Stack>
+    </form>
   );
 }
