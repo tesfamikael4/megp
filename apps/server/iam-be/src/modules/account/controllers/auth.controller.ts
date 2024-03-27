@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 import { AccountsService } from '../services/account.service';
 import {
+  ChangeEmailRequestDto,
   CreateAccountDto,
   ResendOtpDto,
   UpdateAccountDto,
@@ -185,6 +186,26 @@ export class AuthController {
   @Get('account-profile')
   async getAccountProfile(@CurrentUser() user: any): Promise<any> {
     return await this.accountsService.getAccountProfile(user.id);
+  }
+
+  @Post('change-email-request')
+  async changeEmailRequest(
+    @Body() payload: ChangeEmailRequestDto,
+    @CurrentUser() user: any,
+  ): Promise<any> {
+    return await this.accountsService.changeEmailRequest(payload, user.id);
+  }
+
+  @Post('confirm-old-email')
+  @AllowAnonymous()
+  async confirmOldEmail(@Body() payload: AcceptAccountDto): Promise<any> {
+    return await this.accountsService.confirmOldEmail(payload);
+  }
+
+  @Post('confirm-new-email')
+  @AllowAnonymous()
+  async confirmNewEmail(@Body() payload: AcceptAccountDto): Promise<any> {
+    return await this.accountsService.confirmNewEmail(payload);
   }
 
   @Get('send-email/:email')

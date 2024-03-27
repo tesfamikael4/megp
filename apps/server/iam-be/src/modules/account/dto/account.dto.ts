@@ -69,3 +69,10 @@ export class UpdateAccountProfileDto {
   @IsObject()
   public extendedProfile: any;
 }
+
+export class ChangeEmailRequestDto {
+  @ApiProperty()
+  @IsString()
+  @IsEmail()
+  public newEmail: string;
+}

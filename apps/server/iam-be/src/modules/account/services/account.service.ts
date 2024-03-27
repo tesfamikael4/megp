@@ -6,7 +6,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import {
   Account,
   AccountVerification,
@@ -15,6 +15,7 @@ import {
   AccountProfile,
 } from '@entities';
 import {
+  ChangeEmailRequestDto,
   CreateAccountDto,
   ResendOtpDto,
   UpdateAccountDto,
@@ -44,6 +45,7 @@ import {
 import { EmailService } from 'src/shared/email/email.service';
 import { REQUEST } from '@nestjs/core';
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
+import { EmailChangeRequest } from 'src/entities/email-change-request.entity';
 
 @Injectable()
 export class AccountsService {
@@ -717,6 +719,258 @@ export class AccountsService {
       .findOneBy({ accountId });
   }
 
+  async changeEmailRequest(payload: ChangeEmailRequestDto, accountId: string) {
+    const account = await this.repository.findOneBy({ id: accountId });
+    if (!account) {
+      throw new BadRequestException('account_not_found');
+    } else if (!account.email) {
+      throw new BadRequestException('account_email_not_found');
+    }
+
+    const emailExists = await this.repository.existsBy({
+      email: payload.newEmail,
+    });
+    if (emailExists) {
+      throw new BadRequestException('account_email_exists');
+    }
+
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
+    const emailChangeRequest = manager
+      .getRepository(EmailChangeRequest)
+      .create({
+        accountId,
+        newEmail: payload.newEmail,
+        oldEmail: account.email,
+      });
+
+    await manager.getRepository(EmailChangeRequest).insert(emailChangeRequest);
+
+    const { accountVerification, otp } = await this.createOTP(
+      account,
+      AccountVerificationTypeEnum.CONFIRM_OLD_EMAIL,
+      emailChangeRequest.id,
+    );
+
+    // const fullName = `${account.firstName} ${account.lastName}`;
+
+    // const OTP_LIFE_TIME = Number(process.env.OTP_LIFE_TIME ?? 60);
+
+    // const body = this.helper.verifyEmailTemplateForOtp(
+    //   fullName,
+    //   account.username,
+    //   otp,
+    //   OTP_LIFE_TIME,
+    // );
+
+    const body = 'OTP: ' + otp;
+
+    await this.emailService.sendEmail(account.email, 'Change Email OTP', body);
+
+    //TODO: send sms
+
+    return { verificationId: accountVerification.id };
+  }
+
+  async confirmOldEmail(payload: AcceptAccountDto) {
+    const { verificationId, otp, isOtp }: AcceptAccountDto = payload;
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
+    const accountVerification = await this.verifyOTPBackOffice(
+      verificationId,
+      otp,
+      isOtp,
+    );
+    if (!accountVerification?.userId) {
+      throw new BadRequestException('verification_token_not_found');
+    }
+
+    const emailChangeRequest = await manager
+      .getRepository(EmailChangeRequest)
+      .findOne({
+        where: {
+          id: accountVerification.userId,
+        },
+        relations: {
+          account: true,
+        },
+      });
+
+    await manager.getRepository(EmailChangeRequest).update(
+      {
+        id: emailChangeRequest.id,
+      },
+      { status: 'OLD_EMAIL_CONFIRMED' },
+    );
+
+    const newOtp = await this.createOTP(
+      emailChangeRequest.account,
+      AccountVerificationTypeEnum.CONFIRM_NEW_EMAIL,
+      emailChangeRequest.id,
+    );
+
+    // const fullName = `${emailChangeRequest.account.firstName} ${emailChangeRequest.account.lastName}`;
+
+    // const OTP_LIFE_TIME = Number(process.env.OTP_LIFE_TIME ?? 60);
+
+    const body = 'OTP: ' + newOtp.otp;
+
+    await this.emailService.sendEmail(
+      emailChangeRequest.newEmail,
+      'Confirm New Email OTP',
+      body,
+    );
+
+    return {
+      verificationId: newOtp.accountVerification.id,
+    };
+  }
+
+  async confirmNewEmail(payload: AcceptAccountDto) {
+    const { verificationId, otp, isOtp }: AcceptAccountDto = payload;
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
+    const accountVerification = await this.verifyOTPBackOffice(
+      verificationId,
+      otp,
+      isOtp,
+    );
+    if (!accountVerification?.userId) {
+      throw new BadRequestException('verification_token_not_found');
+    }
+
+    const emailChangeRequest = await manager
+      .getRepository(EmailChangeRequest)
+      .findOne({
+        where: {
+          id: accountVerification.userId,
+        },
+      });
+
+    await manager.getRepository(EmailChangeRequest).update(
+      {
+        id: emailChangeRequest.id,
+      },
+      { status: 'EMAIL_CHANGED' },
+    );
+    await manager.getRepository(Account).update(emailChangeRequest.accountId, {
+      email: emailChangeRequest.newEmail,
+    });
+  }
+
+  async getUserDetail(accountId: string) {
+    const userInfo = await this.getUserInfo(accountId);
+
+    const organizations = [];
+
+    const users = userInfo?.users?.filter((x) => x.organization != null);
+
+    for (const user of users) {
+      const permissions = [];
+      const roles = [];
+      const roleSystems = [];
+      const applications = [];
+      user?.userRoles?.forEach((userRole) => {
+        const role = {
+          id: userRole.role.id,
+          name: userRole.role.name,
+        };
+
+        roles.push(role);
+
+        userRole?.role?.rolePermissions?.forEach((rolePermission) => {
+          if (rolePermission?.permission) {
+            permissions.push({
+              id: rolePermission.permission.id,
+              name: rolePermission.permission.name,
+              key: rolePermission.permission.key,
+              applicationId: rolePermission.permission.applicationId,
+            });
+
+            if (
+              !applications.find(
+                (x) => x.id === rolePermission.permission.applicationId,
+              )
+            ) {
+              applications.push({
+                id: rolePermission.permission.application.id,
+                key: rolePermission.permission.application.key,
+                name: rolePermission.permission.application.name,
+              });
+            }
+          }
+        });
+      });
+
+      user?.userRoleSystems?.forEach((userRole) => {
+        const roleSystem = {
+          id: userRole.roleSystem.id,
+          key: userRole.roleSystem.key,
+          name: userRole.roleSystem.name,
+        };
+
+        roleSystems.push(roleSystem);
+
+        userRole?.roleSystem?.roleSystemPermissions?.forEach(
+          (rolePermission) => {
+            if (rolePermission?.permission) {
+              permissions.push({
+                id: rolePermission.permission.id,
+                name: rolePermission.permission.name,
+                key: rolePermission.permission.key,
+                applicationId: rolePermission.permission.applicationId,
+              });
+
+              if (
+                !applications.find(
+                  (x) => x.id === rolePermission.permission.applicationId,
+                )
+              ) {
+                applications.push({
+                  id: rolePermission.permission.application.id,
+                  key: rolePermission.permission.application.key,
+                  name: rolePermission.permission.application.name,
+                });
+              }
+            }
+          },
+        );
+      });
+
+      let organization: any;
+      if (user?.organization) {
+        const org = user?.organization;
+        organization = {
+          id: org.id,
+          name: org.name,
+          shortName: org.shortName,
+          code: org.code,
+        };
+      }
+
+      organizations.push({
+        userId: user?.id,
+        organization,
+        permissions,
+        roles,
+        roleSystems,
+        applications,
+      });
+    }
+
+    const tokenPayload = {
+      tenantId: userInfo.tenantId,
+      id: userInfo.id,
+      username: userInfo.username,
+      firstName: userInfo.firstName,
+      lastName: userInfo.lastName,
+      email: userInfo.email,
+      organizations,
+    };
+
+    return tokenPayload;
+  }
+
   private async verifyOTP(
     verificationId: string,
     otp: string,
@@ -1070,119 +1324,6 @@ export class AccountsService {
         organization,
         permissions,
         // roles,
-        roleSystems,
-        applications,
-      });
-    }
-
-    const tokenPayload = {
-      tenantId: userInfo.tenantId,
-      id: userInfo.id,
-      username: userInfo.username,
-      firstName: userInfo.firstName,
-      lastName: userInfo.lastName,
-      email: userInfo.email,
-      organizations,
-    };
-
-    return tokenPayload;
-  }
-
-  async getUserDetail(accountId: string) {
-    const userInfo = await this.getUserInfo(accountId);
-
-    const organizations = [];
-
-    const users = userInfo?.users?.filter((x) => x.organization != null);
-
-    for (const user of users) {
-      const permissions = [];
-      const roles = [];
-      const roleSystems = [];
-      const applications = [];
-      user?.userRoles?.forEach((userRole) => {
-        const role = {
-          id: userRole.role.id,
-          name: userRole.role.name,
-        };
-
-        roles.push(role);
-
-        userRole?.role?.rolePermissions?.forEach((rolePermission) => {
-          if (rolePermission?.permission) {
-            permissions.push({
-              id: rolePermission.permission.id,
-              name: rolePermission.permission.name,
-              key: rolePermission.permission.key,
-              applicationId: rolePermission.permission.applicationId,
-            });
-
-            if (
-              !applications.find(
-                (x) => x.id === rolePermission.permission.applicationId,
-              )
-            ) {
-              applications.push({
-                id: rolePermission.permission.application.id,
-                key: rolePermission.permission.application.key,
-                name: rolePermission.permission.application.name,
-              });
-            }
-          }
-        });
-      });
-
-      user?.userRoleSystems?.forEach((userRole) => {
-        const roleSystem = {
-          id: userRole.roleSystem.id,
-          key: userRole.roleSystem.key,
-          name: userRole.roleSystem.name,
-        };
-
-        roleSystems.push(roleSystem);
-
-        userRole?.roleSystem?.roleSystemPermissions?.forEach(
-          (rolePermission) => {
-            if (rolePermission?.permission) {
-              permissions.push({
-                id: rolePermission.permission.id,
-                name: rolePermission.permission.name,
-                key: rolePermission.permission.key,
-                applicationId: rolePermission.permission.applicationId,
-              });
-
-              if (
-                !applications.find(
-                  (x) => x.id === rolePermission.permission.applicationId,
-                )
-              ) {
-                applications.push({
-                  id: rolePermission.permission.application.id,
-                  key: rolePermission.permission.application.key,
-                  name: rolePermission.permission.application.name,
-                });
-              }
-            }
-          },
-        );
-      });
-
-      let organization: any;
-      if (user?.organization) {
-        const org = user?.organization;
-        organization = {
-          id: org.id,
-          name: org.name,
-          shortName: org.shortName,
-          code: org.code,
-        };
-      }
-
-      organizations.push({
-        userId: user?.id,
-        organization,
-        permissions,
-        roles,
         roleSystems,
         applications,
       });
