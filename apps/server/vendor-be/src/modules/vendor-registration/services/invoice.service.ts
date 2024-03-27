@@ -339,7 +339,7 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
   async getServiceReceipt(
     userId: string,
     serviceId: string,
-  ): Promise<InvoiceResponseDto> {
+  ): Promise<InvoiceEntity> {
     const result = await this.invoiceRepository.findOne({
       where: {
         userId: userId,
@@ -349,8 +349,8 @@ export class InvoiceService extends EntityCrudService<InvoiceEntity> {
       },
       relations: { service: { businessAreas: { BpService: true } } },
     });
-    const invoice = InvoiceResponseDto.toResponse(result);
-    return invoice;
+    // const invoice = InvoiceResponseDto.toResponse(result);
+    return result;
   }
 
   async generateRenewalInvoice(businessAreaIds: string[], user: any) {

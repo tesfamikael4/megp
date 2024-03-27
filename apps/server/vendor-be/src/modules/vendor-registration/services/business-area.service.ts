@@ -95,8 +95,8 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
   async getPreviousUpgradeService(
     vendorId: string,
     category: string,
-  ): Promise<BusinessAreaEntity> {
-    return this.businessAreaRepository.findOne({
+  ): Promise<BusinessAreaEntity[]> {
+    return this.businessAreaRepository.find({
       relations: { BpService: true, servicePrice: true },
       where: {
         category: category,
@@ -109,8 +109,8 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
     vendorId: string,
     category: string,
     serviceId: string,
-  ): Promise<BusinessAreaEntity> {
-    return this.businessAreaRepository.findOne({
+  ): Promise<BusinessAreaEntity[]> {
+    return this.businessAreaRepository.find({
       relations: { BpService: true, servicePrice: true },
       where: {
         category: category,
