@@ -3,10 +3,12 @@ import {
   TextInput,
   PasswordInput,
   Checkbox,
-  Title,
   Text,
   Group,
   Button,
+  Stack,
+  Flex,
+  Anchor,
 } from '@mantine/core';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -16,7 +18,6 @@ import z from 'zod';
 import { notifications } from '@mantine/notifications';
 import { setCookie } from 'cookies-next';
 import { useAuth } from '../../../context/auth.context';
-import styles from './login.module.scss';
 
 const schema = z
   .object({
@@ -76,58 +77,47 @@ export function Login({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <Title
-        className="text-center"
-        style={(theme) => ({
-          fontFamily: `Greycliff CF, ${theme.fontFamily}`,
-          fontWeight: 750,
-        })}
-      >
-        Sign In
-      </Title>
-      <TextInput
-        error={errors.username?.message}
-        label="Email / Username"
-        placeholder="Your email"
-        {...register('username')}
-      />
-      <PasswordInput
-        error={errors.password?.message}
-        label="Password"
-        placeholder="Your password"
-        {...register('password')}
-        mt="md"
-      />
-
-      <Group className={styles.group} justify="space-between">
-        <Checkbox label="Remember me" style={{ lineHeight: 1 }} />
-        {app !== 'bo' && (
-          <Link
-            className="text-green-700 hover:text-green-800"
-            href="/auth/forgot-password"
-          >
-            Forgot password?
-          </Link>
-        )}
-      </Group>
-
-      <Button
-        className="mt-4"
-        fullWidth
-        loading={isSigningIn}
-        mt="xl"
-        type="submit"
-      >
-        Sign in
-      </Button>
-      {app === 'portal' && (
-        <Text c="dimmed" className={styles.account_que}>
-          Do not have an account yet?{' '}
-          <Link className={styles.signup_link} href="/auth/signup">
-            Create Account
-          </Link>
-        </Text>
-      )}
+      <Stack gap={10} mt={15}>
+        <Flex align="center" justify="center">
+          <Text fw={600} fz={22}>
+            Welcome Back!
+          </Text>
+        </Flex>
+        <TextInput
+          error={errors.username?.message}
+          label="Email / Username"
+          placeholder="Your email"
+          {...register('username')}
+        />
+        <PasswordInput
+          error={errors.password?.message}
+          label="Password"
+          placeholder="**********"
+          {...register('password')}
+          mt="md"
+        />
+        <Group justify="space-between" mt="lg">
+          <Checkbox
+            color="#1199ee"
+            fz={14}
+            label="Keep me logged in "
+            size="xs"
+          />
+          {app !== 'bo' && (
+            <Anchor
+              component={Link}
+              fz={13}
+              href="/auth/forgot-password"
+              size="sm"
+            >
+              Forgot password?
+            </Anchor>
+          )}
+        </Group>
+        <Button fullWidth h={40} loading={isSigningIn} type="submit">
+          Login
+        </Button>
+      </Stack>
     </form>
   );
 }

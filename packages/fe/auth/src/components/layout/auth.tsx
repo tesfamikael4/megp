@@ -1,6 +1,6 @@
 'use client';
-import { Box, Divider, Flex, Title } from '@mantine/core';
-import Image from 'next/image';
+import { Box, Flex, Tabs } from '@mantine/core';
+import { useRouter } from 'next/navigation';
 import { ForgotPassword } from '../auth/forgot-password/forgot-password';
 import { SecurityQPassReset } from '../auth/questions-reset/questions-reset';
 import { PasswordReset } from '../auth/otp-reset/otp-reset';
@@ -8,10 +8,8 @@ import { SetSecurity } from '../auth/setSecurity/set-security';
 import { SignUp } from '../auth/signup/signup';
 import { Otp } from '../auth/verification/otp';
 import { Login } from '../auth/login/login';
-import styles from './auth.module.scss';
-import workflow from './workflow.png';
-import ppda from './ppda.png';
-import perago from './perago.png';
+import { PageWrapper } from '../page-wrapper';
+import classes from './auth.module.scss';
 
 interface Config {
   app?: 'portal' | 'bo';
@@ -39,6 +37,9 @@ export function Auth({
   config: Config;
 }): JSX.Element {
   const options = { ...defaultConfig, ...config };
+
+  const router = useRouter();
+
   const render = () => {
     if (options.app === 'bo' && path[0].startsWith('login')) {
       return <Login app="bo" basePath={options.basePath} />;
@@ -55,51 +56,42 @@ export function Auth({
     return page[path];
   };
   return (
-    <div className="flex flex-row">
-      <div className={styles.left_content}>
-        <Image
-          alt="Malawi Republic"
-          className={styles.logo}
-          height={100}
-          src={ppda.src}
-          width={100}
-        />
-        <Box>{render()}</Box>
-        <div className="bottom-0">
-          <p className={styles.footer_text}>
-            Copyright &copy; {new Date().getFullYear()}, Procurement and
-            Disposal of Assets Authority.
-          </p>
-          <Flex className={styles.footer_text}>
-            <p className="mt-2">Powered by </p>
-            <Image
-              alt="logo"
-              className="mt-2 ml-1"
-              height={30}
-              src={perago.src}
-              width={80}
-            />
-          </Flex>
-        </div>
-      </div>
-      <div className={styles.right_content}>
-        <div
-          className={styles.workflow}
-          style={{ backgroundImage: `url(${workflow.src})` }}
-        />
-        <Title className={styles.welcome}>Welcome to eGP Malawi</Title>
-        <Divider my="sm" />
-        <div className="w-2/3 bg-white rounded-sm">
-          <p className="text-center justify-center text-lg">
-            The eGP Malawi Platform is a web-based, collaborative system to
-            manage the full lifecycle of a tendering and contract management
-            process, for both government agencies and suppliers. It offers a
-            secure, interactive, dynamic environment for procurements of any
-            nature, complexity or value, enforcing compliance to regulations,
-            and encouraging recognized best practices.
-          </p>
-        </div>
-      </div>
-    </div>
+    <PageWrapper>
+      <Box className={classes.root}>
+        <Flex className="py-4">
+          <Box>
+            <Tabs
+              classNames={{
+                tab: classes.tab,
+                list: classes.tabList,
+                panel: classes.tabPanel,
+              }}
+              onChange={(value) => {
+                router.push(`${value}`);
+              }}
+              value={path[0]}
+              variant="pills"
+            >
+              {path[0].startsWith('login') || path[0].startsWith('signup') ? (
+                <Tabs.List>
+                  <Tabs.Tab data-direction="left" fw={500} value="login">
+                    Login
+                  </Tabs.Tab>
+                  <Tabs.Tab data-direction="right" fw={500} value="signup">
+                    Sign up
+                  </Tabs.Tab>
+                </Tabs.List>
+              ) : (
+                ''
+              )}
+
+              <Tabs.Panel value={path[0]}>
+                <Box maw={310}>{render()}</Box>
+              </Tabs.Panel>
+            </Tabs>
+          </Box>
+        </Flex>
+      </Box>
+    </PageWrapper>
   );
 }
