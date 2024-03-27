@@ -56,7 +56,7 @@ const refactor = (arrObj, uid) => {
         {
           field: obj.field,
           operator: obj.operator,
-          value: `${obj.value}`.toLowerCase(),
+          value: toCamelCase(`${obj.value}`),
           type: obj.type,
           joinType: obj.joinType,
         },
@@ -65,7 +65,7 @@ const refactor = (arrObj, uid) => {
       const ands = {
         field: obj.field,
         operator: obj.operator,
-        value: `${obj.value}`, //.toLowerCase(),
+        value: toCamelCase(`${obj.value}`), //.toLowerCase(),
         type: obj.type,
         joinType: obj.joinType,
       };
