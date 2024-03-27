@@ -1901,10 +1901,10 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
 
       let bas = vendorEntity?.isrVendor?.businessAreas;
       if (bas.length == 0) bas = [];
-      const baInstanceIds = [];
+      // const baInstanceIds = [];
       const baResponse = [];
       for (const row of bas) {
-        baInstanceIds.push(row.instanceId);
+        //  baInstanceIds.push(row.instanceId);
         baResponse.push({
           id: row.id,
           vendorId: row.vendorId,
@@ -2156,7 +2156,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         const response = {
           ...vendorEntity,
           certificate: ceretficate?.certificateUrl,
-          preferentail: [...preferentails],
+          preferential: [...preferentails],
           areasOfBusinessInterestView: [...businessInterest],
         };
         return response;

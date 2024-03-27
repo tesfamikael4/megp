@@ -36,7 +36,7 @@ import { ServiceKeyEnum } from 'src/shared/enums/service-key.enum';
 @ApiResponse({ status: 500, description: 'Internal error' })
 @ApiExtraModels(DataResponseFormat)
 export class VendorRegistrationsController {
-  constructor(private readonly regService: VendorRegistrationsService) {}
+  constructor(private readonly regService: VendorRegistrationsService) { }
   @Get('get-isr-vendors')
   async getVendors() {
     return await this.regService.getIsrVendors();
@@ -264,7 +264,7 @@ export class VendorRegistrationsController {
   async getAllBusinessAreasByUserId(@CurrentUser() userInfo: any) {
     return await this.regService.getAllBusinessAreasByUserId(userInfo.id);
   }
-  //profile information
+  //profile informationget-my-approved-services
   @Get('get-vendor-information')
   async getVendorInformation(@CurrentUser() userInfo: any) {
     return await this.regService.getVendorInformation(userInfo.id);
@@ -282,7 +282,7 @@ export class VendorRegistrationsController {
   }
   //submit profile update request
   @Post('submit-vendor-update-information')
-  async submitVendorProfileUpdate(
+  async submitProfileUpdateRequest(
     @Body() vendorprofileUpdateDara: any,
     @CurrentUser() userInfo: string,
   ) {

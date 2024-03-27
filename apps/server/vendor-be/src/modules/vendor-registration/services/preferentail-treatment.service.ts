@@ -53,7 +53,7 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
       where: {
         userId: userId,
         status: Not(
-          In([ApplicationStatus.APPROVED, ApplicationStatus.REJECTED]),
+          In([ApplicationStatus.APPROVED, ApplicationStatus.REJECTED, ApplicationStatus.DRAFT]),
         ),
         // serviceId: serviceId,
       },
