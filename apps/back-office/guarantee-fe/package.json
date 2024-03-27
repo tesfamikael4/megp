@@ -1,11 +1,11 @@
 {
-  "name": "banks-fe",
+  "name": "guarantee-fe",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev -p 5577",
     "build": "next build",
-    "gitops": "sh ../../../.gitops/gitops.sh 'apps/back-office/banks-fe' banks-fe banksFe",
+    "gitops": "sh ../../../.gitops/gitops.sh 'apps/back-office/guarantee-fe' guarantee-fe guaranteeFe",
     "start": "next start -p 5577",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "lint": "next lint"
