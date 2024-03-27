@@ -1,4 +1,5 @@
 export * from './spd.service';
+export * from './spd-opening-checklist.service';
 export * from './spd-preference-margin.service';
 export * from './spd-preliminary-evaluation.service';
 export * from './spd-professional-setting.service';

@@ -28,6 +28,7 @@ export * from './sor-reimburseable-expense.entity';
 export * from './sor-technical-requirement.entity';
 export * from './spd.entity';
 export * from './spd-preference-margin.entity';
+export * from './spd-opening-checklist.entity';
 export * from './spd-preliminary-evaluation.entity';
 export * from './spd-professional-setting.entity';
 export * from './spd-qualification.entity';
