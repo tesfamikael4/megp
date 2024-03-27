@@ -11,7 +11,7 @@ export const WorkFlowLayout = ({ children }: { children: React.ReactNode }) => {
       <Box className="mb-2">{children}</Box>
       <WorkflowHandling
         itemId={id as string}
-        itemKey={'procurementrequisition'}
+        itemKey={'procurementRequisition'}
       />
     </Box>
   );
