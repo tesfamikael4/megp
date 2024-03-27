@@ -6,18 +6,25 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { Guarantee } from './guarantee.entity';
+import { Audit } from 'src/shared/entities';
+import { GuaranteeForefitStatusEnum } from 'src/shared/enums/guarantee-forefit.enum';
 
 @Entity({ name: 'guarantee_forfeits' })
-export class GuaranteeForfeit {
+export class GuaranteeForfeit extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column({ nullable: true })
+  @Column()
   reason: string;
-  @Column({ nullable: true })
+  @Column({ type: 'uuid' })
   guaranteeId: string;
   @Column({ type: 'json', nullable: true })
   attachment: any;
-  @Column({ type: 'enum', enum: ['reviewed', 'approved', 'rejected'] })
+  @Column({
+    type: 'enum',
+    enum: GuaranteeForefitStatusEnum,
+    default: GuaranteeForefitStatusEnum.REQUESTED,
+    nullable: false,
+  })
   status: string;
   @ManyToOne(() => Guarantee, (guarantee) => guarantee.forfeits, {
     onDelete: 'CASCADE',

@@ -3,7 +3,7 @@ import { ApiExtraModels, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { DataResponseFormat } from 'src/shared/api-data';
 import { EntityCrudOptions } from 'src/shared/types/crud-option.type';
 import { EntityCrudController } from 'src/shared/controller';
-import { Guarantee, GuaranteeStatusEnum } from 'src/entities/guarantee.entity';
+import { Guarantee } from 'src/entities/guarantee.entity';
 import { GuaranteeService } from '../services/guarantee.service';
 import { CreateGuaranteeDto, UpdateGuaranteeDto } from '../dtos/guarantee.dto';
 import { CurrentUser } from 'src/shared/authorization';

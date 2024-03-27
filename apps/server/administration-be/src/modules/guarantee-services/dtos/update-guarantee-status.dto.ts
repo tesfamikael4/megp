@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { GuaranteeStatusEnum } from 'src/entities/guarantee.entity';
 import { IsDate, IsEnum, IsOptional } from 'class-validator';
+import { GuaranteeStatusEnum } from 'src/shared/enums/guarantee-status.enum';
 
 export class UpdateGuaranteeStatusDto {
   @ApiProperty({ enum: GuaranteeStatusEnum, enumName: 'GuaranteeStatusEnum' })

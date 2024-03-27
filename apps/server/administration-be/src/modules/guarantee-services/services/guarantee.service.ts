@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { EntityCrudService } from 'src/shared/service';
-import { Guarantee, GuaranteeStatusEnum } from 'src/entities/guarantee.entity';
+import { Guarantee } from 'src/entities/guarantee.entity';
 import { UpdateGuaranteeStatusDto } from '../dtos/update-guarantee-status.dto';
 import { CreateGuaranteeDto } from '../dtos/guarantee.dto';
 import { MinIOService } from 'src/shared/min-io/min-io.service';

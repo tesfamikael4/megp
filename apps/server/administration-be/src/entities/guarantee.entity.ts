@@ -3,19 +3,8 @@ import { Audit } from 'src/shared/entities';
 import { GuaranteeExtension } from './guarantee-extension.entity';
 import { GuaranteeForfeit } from './guarantee-forfeit.entity';
 import { GuaranteeRelease } from './guarantee-release.entity';
-
-export enum GuaranteeStatusEnum {
-  REQUESTED = 'REQUESTED',
-  APPROVED = 'APPROVED',
-  REJECTED = 'REJECTED',
-}
-
-export enum GuaranteeTypeEnum {
-  BID_SECURITY = 'BID_SECURITY',
-  ADVANCED = 'ADVANCED',
-  PERFORMANCE = 'PERFORMANCE',
-  RETENTION = 'RETENTION',
-}
+import { GuaranteeTypeEnum } from 'src/shared/enums/guarantee-type.enum';
+import { GuaranteeStatusEnum } from 'src/shared/enums/guarantee-status.enum';
 
 @Entity({ name: 'guarantees' })
 export class Guarantee extends Audit {
