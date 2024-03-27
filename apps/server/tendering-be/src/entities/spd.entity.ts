@@ -15,6 +15,7 @@ import { SpdTemplate } from './spd-template.entity';
 import { SpdBidForm } from './spd-bid-form.entity';
 import { SpdContractForm } from './spd-contract-form.entity';
 import { TenderSpd } from './tender-spd.entity';
+import { SpdOpeningChecklist } from './spd-opening-checklist.entity';
 
 @Entity({ name: 'spd' })
 export class Spd extends Audit {
@@ -100,6 +101,16 @@ export class Spd extends Audit {
     onDelete: 'CASCADE',
   })
   spdBidForm: SpdBidForm[];
+
+  @OneToMany(
+    () => SpdOpeningChecklist,
+    (SpdOpeningChecklist) => SpdOpeningChecklist.spd,
+    {
+      cascade: true,
+      onDelete: 'CASCADE',
+    },
+  )
+  spdOpeningChecklists: SpdOpeningChecklist[];
 
   @OneToMany(() => SpdContractForm, (spdContractForm) => spdContractForm.spd, {
     cascade: true,
