@@ -3,9 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ExtraCrudService } from 'src/shared/service';
 import { Repository } from 'typeorm';
 import { SorDocument } from 'src/entities/sor-document.entity';
-import { MinIOService } from 'src/shared/min-io/min-io.service';
+import { MinIOService, BucketNameEnum } from 'src/shared/min-io';
 import { CreateSorDocumentDto } from '../dto/sor-document.dto';
-import { BucketNameEnum } from 'src/shared/min-io/bucket-name.enum';
 
 @Injectable()
 export class SorDocumentService extends ExtraCrudService<SorDocument> {

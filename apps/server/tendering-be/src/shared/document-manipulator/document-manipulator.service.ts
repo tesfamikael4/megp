@@ -1,13 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { PDFDocument } from 'pdf-lib';
-import { MinIOService } from '../min-io/min-io.service';
+import { MinIOService, BucketNameEnum } from '../min-io/';
 import * as DocxMerger from '@scholarcy/docx-merger';
 import { createReport } from 'docx-templates';
 import * as libre from 'libreoffice-convert';
 import { promisify } from 'util';
 import * as FormData from 'form-data';
 import axios from 'axios';
-import { BucketNameEnum } from '../min-io/bucket-name.enum';
 
 @Injectable()
 export class DocumentManipulatorService {
