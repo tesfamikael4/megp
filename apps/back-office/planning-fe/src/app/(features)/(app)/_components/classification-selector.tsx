@@ -154,6 +154,7 @@ const ClassificationSelector = ({
                 const req = {
                   ...collectionQuery,
                   where: [
+                    ...collectionQuery.where,
                     [
                       {
                         column: 'type',
