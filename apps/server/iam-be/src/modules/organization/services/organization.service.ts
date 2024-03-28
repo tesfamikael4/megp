@@ -14,6 +14,7 @@ import {
   CreateOrganizationDto,
   OrganizationResponseDto,
   UpdateAddressOrLogoDto,
+  VendorRegistrationCompletedEvent,
 } from '../dto/organization.dto';
 
 import { EntityCrudService } from 'src/shared/service';
@@ -167,13 +168,13 @@ export class OrganizationService extends EntityCrudService<Organization> {
     return item;
   }
 
-  async vendorRegistrationCompleted(payload: { email: string; name: string }) {
+  async vendorRegistrationCompleted(payload: VendorRegistrationCompletedEvent) {
     const account = await this.accountService.getAccountByEmail(payload.email);
 
     const organizationDto = {
       name: payload.name,
       shortName: payload.name,
-      code: this.generateOrganizationCode(),
+      code: payload.egpRegistrationNumber,
       type: 'PORTAL',
       status: OrganizationStatus.ACTIVE,
     };

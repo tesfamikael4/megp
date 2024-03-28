@@ -17,6 +17,13 @@ import {
 } from './organization-mandate.dto';
 import { ContactNumberCommand } from 'src/shared/domain';
 
+export class VendorRegistrationCompletedEvent {
+  name: string;
+  email: string;
+  accountId: string;
+  egpRegistrationNumber: string;
+}
+
 export class CreateOrganizationDto {
   @ApiProperty()
   @IsString()
