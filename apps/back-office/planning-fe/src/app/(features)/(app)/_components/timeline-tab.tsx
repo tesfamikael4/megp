@@ -115,7 +115,7 @@ export default function TimelineTab({
         if (i === index) {
           return {
             ...item,
-            period: value == '' || (value as number) < 0 ? 0 : value,
+            period: value == '' || (value as number) <= 0 ? 1 : value,
           };
         }
         return item;

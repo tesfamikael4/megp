@@ -23,7 +23,7 @@ export default function PreBudgetPlan() {
   const [opened, { open, close }] = useDisclosure(false);
   const router = useRouter();
   const [appCreate, { isLoading }] = useCreateAppMutation();
-  const [type, setType] = useState<string>('');
+  const [type, setType] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     if (isSuccess && list !== undefined) {
@@ -35,7 +35,7 @@ export default function PreBudgetPlan() {
 
   const onCreate = async () => {
     try {
-      const res = await appCreate(type).unwrap();
+      const res = await appCreate(type as string).unwrap();
       close();
       notify('Success', 'APP Created successfully');
       router.push(`/pre-budget-plan/${res.id}/activities`);
@@ -81,7 +81,12 @@ export default function PreBudgetPlan() {
             onChange={() => setType('next')}
           />
         </Group>
-        <Button onClick={onCreate} loading={isLoading} className="mt-5">
+        <Button
+          onClick={onCreate}
+          loading={isLoading}
+          className="mt-5"
+          disabled={type == undefined}
+        >
           Create
         </Button>
       </Modal>
