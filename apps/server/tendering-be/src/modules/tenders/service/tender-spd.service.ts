@@ -15,8 +15,7 @@ import {
 } from 'src/entities';
 import { DocxService } from 'src/shared/docx/docx.service';
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
-import { BucketNameEnum } from 'src/shared/min-io/bucket-name.enum';
-import { MinIOService } from 'src/shared/min-io/min-io.service';
+import { BucketNameEnum, MinIOService } from 'src/shared/min-io';
 import { ExtraCrudService } from 'src/shared/service';
 import { EntityManager, DeepPartial, Repository } from 'typeorm';
 

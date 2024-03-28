@@ -1,20 +1,17 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import {
-  BadRequestException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { ExtraCrudService } from 'src/shared/service';
 import { DocxService } from 'src/shared/docx/docx.service';
-import { MinIOService } from 'src/shared/min-io/min-io.service';
+import {
+  MinIOService,
+  FileHelperService,
+  BucketNameEnum,
+} from 'src/shared/min-io';
 import { SpdTemplate } from 'src/entities/spd-template.entity';
 import { DocumentManipulatorService } from 'src/shared/document-manipulator/document-manipulator.service';
-import { FileHelperService } from 'src/shared/min-io/file-helper.service';
 import { join } from 'path';
 import * as fs from 'fs';
-import { BucketNameEnum } from 'src/shared/min-io/bucket-name.enum';
 
 @Injectable()
 export class SpdTemplateService extends ExtraCrudService<SpdTemplate> {

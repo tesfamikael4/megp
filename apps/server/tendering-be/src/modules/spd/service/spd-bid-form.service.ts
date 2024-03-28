@@ -2,10 +2,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { ExtraCrudService } from 'src/shared/service';
-import { MinIOService } from 'src/shared/min-io/min-io.service';
+import {
+  MinIOService,
+  BucketNameEnum,
+  FileHelperService,
+} from 'src/shared/min-io';
 import { SpdBidForm } from 'src/entities/spd-bid-form.entity';
-import { FileHelperService } from '../../../shared/min-io/file-helper.service';
-import { BucketNameEnum } from 'src/shared/min-io/bucket-name.enum';
+import { Response } from 'express';
 
 @Injectable()
 export class SpdBidFormService extends ExtraCrudService<SpdBidForm> {
@@ -78,6 +81,25 @@ export class SpdBidFormService extends ExtraCrudService<SpdBidForm> {
       const presignedDownload =
         await this.minIOService.generatePresignedDownloadUrl(spd.documentPdf);
       return { presignedDownload };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async downloadSPDDocumentPdfBuffer(id: string, response: Response) {
+    try {
+      const spd = await this.spdBidFormRepository.findOneBy({ id });
+      if (!spd) {
+        throw new Error('SPD not found');
+      }
+      if (!spd.documentPdf) {
+        throw new Error('SPD Document not found');
+      }
+      const result = await this.minIOService.download(
+        spd.documentPdf,
+        response,
+      );
+      return result;
     } catch (error) {
       throw error;
     }

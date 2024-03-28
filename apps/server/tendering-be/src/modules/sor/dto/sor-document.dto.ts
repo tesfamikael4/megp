@@ -1,19 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsNotEmpty, IsUUID, IsObject } from 'class-validator';
-
-class SorFileDto {
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty()
-  originalname: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @ApiProperty()
-  contentType: string;
-
-  bucketName: string;
-}
+import { FileUploadDto } from 'src/shared/min-io';
 
 export class CreateSorDocumentDto {
   @IsString()
@@ -27,8 +14,8 @@ export class CreateSorDocumentDto {
   description: string;
 
   @IsObject()
-  @ApiProperty({ isArray: false, type: () => SorFileDto })
-  file: SorFileDto;
+  @ApiProperty({ isArray: false, type: () => FileUploadDto })
+  file: FileUploadDto;
 }
 
 export class UpdateSorDocumentDto extends CreateSorDocumentDto {

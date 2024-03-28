@@ -2,10 +2,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { ExtraCrudService } from 'src/shared/service';
-import { MinIOService } from 'src/shared/min-io/min-io.service';
+import {
+  MinIOService,
+  BucketNameEnum,
+  FileHelperService,
+} from 'src/shared/min-io';
 import { SpdContractForm } from 'src/entities/spd-contract-form.entity';
-import { FileHelperService } from '../../../shared/min-io/file-helper.service';
-import { BucketNameEnum } from 'src/shared/min-io/bucket-name.enum';
 
 @Injectable()
 export class SpdContractFormService extends ExtraCrudService<SpdContractForm> {
