@@ -1,25 +1,16 @@
 'use client';
 
 import { GuaranteeRequest } from '@/models/guarantee-request';
-import {
-  useGetVendorQuery,
-  useLazyGetVendorQuery,
-} from '@/store/api/vendor/vendor.api';
 import { Box } from '@mantine/core';
 import { logger } from '@megp/core-fe';
 import { EntityConfig, EntityLayout } from '@megp/entity';
 import { usePathname, useRouter } from 'next/navigation';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useListQuery } from './_api/guarantee-request.api';
 
 export function Entity({ children }: { children: React.ReactElement }) {
   const route = useRouter();
   const { data: list } = useListQuery({});
-
-  const [trigger, { data: vendor }] = useLazyGetVendorQuery();
-  useEffect(() => {
-    trigger(list?.items[0].vendorId);
-  }, [vendor?.items, trigger, list?.items]);
 
   const config: EntityConfig<Partial<GuaranteeRequest>> = useMemo(() => {
     return {
@@ -39,32 +30,32 @@ export function Entity({ children }: { children: React.ReactElement }) {
 
       columns: [
         {
-          id: 'vendorId',
+          id: 'vendorName',
           header: 'Economic Operator Name',
-          accessorKey: 'vendorId',
+          accessorKey: 'vendorName',
           meta: {
-            widget: 'expand',
+            widget: 'primary',
           },
           cell: (info) => info.getValue(),
         },
 
         {
-          id: 'procurementTitle',
+          id: 'title',
           header: 'Procurement Title',
-          accessorKey: 'procurementTitle',
+          accessorKey: 'title',
           meta: {
             widget: 'expand',
           },
-          cell: 'Tender Title',
+          cell: (info) => info.getValue(),
         },
         {
-          id: 'procuringEntityName',
+          id: 'name',
           header: 'Procuring Entity Name ',
-          accessorKey: 'procuringEntityName',
+          accessorKey: 'name',
           meta: {
             widget: 'expand',
           },
-          cell: 'Perago Information Systems',
+          cell: (info) => info.getValue(),
         },
 
         {

@@ -3,6 +3,7 @@ import entityApi from './entity/api';
 import { vendorApi } from './api/vendor/vendor.api';
 import { statusApi } from './api/status/status.api';
 import { organazationApi } from './api/organazation/organazation.api';
+import { forfeitApi } from './api/guarantee-forfeit/guarantee-forfeit.api';
 const { reducers, middleware } = entityApi;
 
 export const store = configureStore({
@@ -11,6 +12,7 @@ export const store = configureStore({
     [vendorApi.reducerPath]: vendorApi.reducer,
     [statusApi.reducerPath]: statusApi.reducer,
     [organazationApi.reducerPath]: organazationApi.reducer,
+    [forfeitApi.reducerPath]: forfeitApi.reducer,
   },
   devTools: process.env.NODE_ENV !== 'production',
   middleware: (getDefaultMiddleware) =>
@@ -19,6 +21,7 @@ export const store = configureStore({
       vendorApi.middleware,
       statusApi.middleware,
       organazationApi.middleware,
+      forfeitApi.middleware,
     ]),
 });
 

@@ -1,34 +1,21 @@
 'use client';
 
+import { GuaranteeForfeit } from '@/models/guarantee-forfeit';
+import { useLazyGetGuranateeForfeitsQuery } from '@/store/api/guarantee-forfeit/guarantee-forfeit.api';
 import { Box } from '@mantine/core';
 import { logger } from '@megp/core-fe';
 import { EntityConfig, EntityLayout } from '@megp/entity';
 import { usePathname, useRouter } from 'next/navigation';
 import { useMemo } from 'react';
-import { useLazyListQuery } from './_api/guarantee-forfeit.api';
-import { GuaranteeRequest } from '@/models/guarantee-request';
-import { GuaranteeForfeit } from '@/models/guarantee-forfeit';
 
 export function Entity({ children }: { children: React.ReactElement }) {
   const route = useRouter();
-  const data = [
-    {
-      id: '1',
-      economicOperatorName: 'economicOperatorName',
-      procurementTitle: 'procurementTitle',
-      procuringEntityName: 'procuringEntityName',
-      type: 'type',
-      status: 'status',
-    },
-  ];
-  // const { data: list, isLoading, isError } = useListQuery({});
-  const [getRequest, { data: list, isLoading, isError }] = useLazyListQuery({});
 
-  logger.log('list', list, isLoading, isError);
+  const [trigger, { data, isLoading }] = useLazyGetGuranateeForfeitsQuery();
 
   const config: EntityConfig<Partial<GuaranteeForfeit>> = useMemo(() => {
     return {
-      basePath: `/guarantee`,
+      basePath: `/guarantee/guarantee-forfeit`,
       mode: 'list',
       entity: 'Guarantee Forfeits',
       primaryKey: 'id',
@@ -37,36 +24,37 @@ export function Entity({ children }: { children: React.ReactElement }) {
       hasAdd: false,
       searchable: true,
       pagination: true,
+      isLoading: isLoading,
 
       onDetail: (selected: GuaranteeForfeit) => {
         logger.log('detail', selected);
-        route.push(`/guarantee-forfeit/${selected.id}`);
+        route.push(`/guarantee/guarantee-forfeit/${selected?.id}`);
       },
 
       columns: [
         {
-          id: 'economicOperatorName',
+          id: 'vendorName',
           header: 'Economic Operator Name',
-          accessorKey: 'economicOperatorName',
+          accessorKey: 'vendorName',
           meta: {
-            widget: 'expand',
+            widget: 'primary',
           },
           cell: (info) => info.getValue(),
         },
 
         {
-          id: 'procurementTitle',
+          id: 'title',
           header: 'Procurement Title',
-          accessorKey: 'procurementTitle',
+          accessorKey: 'title',
           meta: {
             widget: 'expand',
           },
           cell: (info) => info.getValue(),
         },
         {
-          id: 'procuringEntityName',
+          id: 'name',
           header: 'Procuring Entity Name ',
-          accessorKey: 'procuringEntityName',
+          accessorKey: 'name',
           meta: {
             widget: 'expand',
           },
@@ -104,21 +92,42 @@ export function Entity({ children }: { children: React.ReactElement }) {
         ? 'new'
         : 'detail';
 
-  logger.log('mode', mode, pathname);
-
-  const onRequestChange = (collectionQuery) => {
-    getRequest(collectionQuery);
+  const onRequestChange = (request: any) => {
+    request.where.push([
+      {
+        column: 'status',
+        operator: '=',
+        value: 'APPROVED',
+      },
+    ]);
+    trigger(request);
   };
+
+  // useEffect(() => {
+  //   if (guaranteeId) {
+  //     const request: CollectionQuery = {
+  //       where: [
+  //         [
+  //           {
+  //             column: 'parentId',
+  //             value: guaranteeId,
+  //             operator: '=',
+  //           },
+  //         ],
+  //       ],
+  //     };
+  //     trigger(guaranteeId);
+  //   }
+  // }, [guaranteeId]);
 
   return (
     <Box className="w-full">
       <EntityLayout
         mode={mode}
         config={config}
+        data={data?.items ?? []}
+        total={data?.total ?? 0}
         onRequestChange={onRequestChange}
-        total={list?.total ?? 0}
-        // data={list?.items ?? []}
-        data={data}
         detail={children}
       />
     </Box>

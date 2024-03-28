@@ -6,12 +6,12 @@ import { ZodType, z } from 'zod';
 
 import { GuaranteeRequest } from '@/models/guarantee-request';
 import { useChangeStatusMutation } from '@/store/api/status/status.api';
-import { DatePickerInput } from '@mantine/dates';
+import { DateInput } from '@mantine/dates';
 import { notifications } from '@mantine/notifications';
+import { notify } from '@megp/core-fe';
 import { IconUpload } from '@tabler/icons-react';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
-import { logger, notify } from '@megp/core-fe';
 
 interface FormDetailProps {
   mode: 'new' | 'detail';
@@ -20,7 +20,7 @@ interface FormDetailProps {
 export function FormDetail({ mode }: FormDetailProps) {
   const requestSchema: ZodType<Partial<GuaranteeRequest>> = z.object({
     attachment: z.string().optional(),
-    minValidityDate: z.date().optional(),
+    guarantorValidityDate: z.date().optional(),
     remark: z.string().optional(),
     status: z.string().optional(),
   });
@@ -52,7 +52,7 @@ export function FormDetail({ mode }: FormDetailProps) {
       return;
     }
 
-    const fileList = Array.from(files); // Convert FileList to Array
+    const fileList = Array.from(files || []);
     for (let i = 0; i < fileList.length; i++) {
       const file = fileList[i];
       const dataSent = showRemark
@@ -61,10 +61,10 @@ export function FormDetail({ mode }: FormDetailProps) {
           }
         : {
             ...dataModified,
+
             attachment: {
               originalname: file.name,
               contentType: file.type,
-              name: name,
               guaranteeRequestId: id?.toString,
             },
           };
@@ -101,12 +101,11 @@ export function FormDetail({ mode }: FormDetailProps) {
           ...data,
           id: id?.toString(),
           status: value,
-          minValidityDate: null,
           remark: data.remark,
         }
       : {
           status: value,
-          minValidityDate: data.minValidityDate,
+          guarantorValidityDate: data.guarantorValidityDate?.toISOString(),
         };
 
     try {
@@ -145,7 +144,7 @@ export function FormDetail({ mode }: FormDetailProps) {
         />
       </Group>
 
-      {showRemark ? (
+      {showRemark && value === 'REJECTED' ? (
         <Textarea
           label="Remark"
           resize="vertical"
@@ -154,34 +153,33 @@ export function FormDetail({ mode }: FormDetailProps) {
           maxRows={6}
           {...register('remark')}
         />
-      ) : (
+      ) : value === 'APPROVED' ? (
         <>
           <Flex gap={100} mt={10}>
             <FileInput
               multiple
               label="Attach File"
               placeholder="Attach File"
-              withAsterisk
               leftSection={<IconUpload />}
               onChange={(files) => setFile(files)}
             />
             <Controller
-              name="minValidityDate"
+              name="guarantorValidityDate"
               control={control}
               render={({ field: { onChange, value } }) => (
-                <DatePickerInput
+                <DateInput
                   label="Guarantor validity date"
-                  withAsterisk
                   placeholder=" Select date"
                   value={value ? new Date(value) : new Date()}
+                  defaultValue={new Date()}
                   onChange={onChange}
-                  error={errors?.minValidityDate?.message}
+                  error={errors?.guarantorValidityDate?.message}
                 />
               )}
             />
           </Flex>
         </>
-      )}
+      ) : null}
 
       <Button onClick={handleSubmit(onUpdate)} className="mt-5">
         Done
