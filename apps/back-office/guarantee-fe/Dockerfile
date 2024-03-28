@@ -12,7 +12,7 @@ RUN apk update
 WORKDIR /app
 RUN yarn global add turbo pnpm
 COPY . .
-RUN turbo prune --scope=planning-fe --docker
+RUN turbo prune --scope=guarantee-fe --docker
 
 # Add lockfile and package.json's of isolated subworkspace
 FROM base AS installer
@@ -49,7 +49,7 @@ ENV NEXT_PUBLIC_VERSION=$VERSION_ARG
 
 
 
-RUN pnpm turbo run build --filter=planning-fe...
+RUN pnpm turbo run build --filter=guarantee-fe...
 
 FROM base AS runner
 WORKDIR /app
@@ -59,14 +59,14 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 USER nextjs
 
-COPY --from=installer /app/apps/back-office/planning-fe/next.config.js .
-COPY --from=installer /app/apps/back-office/planning-fe/package.json .
+COPY --from=installer /app/apps/back-office/guarantee-fe/next.config.js .
+COPY --from=installer /app/apps/back-office/guarantee-fe/package.json .
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
-COPY --from=installer --chown=nextjs:nodejs /app/apps/back-office/planning-fe/.next/standalone ./
-COPY --from=installer --chown=nextjs:nodejs /app/apps/back-office/planning-fe/.next/static ./apps/back-office/planning-fe/.next/static
-COPY --from=installer --chown=nextjs:nodejs /app/apps/back-office/planning-fe/public ./apps/back-office/planning-fe/public
+COPY --from=installer --chown=nextjs:nodejs /app/apps/back-office/guarantee-fe/.next/standalone ./
+COPY --from=installer --chown=nextjs:nodejs /app/apps/back-office/guarantee-fe/.next/static ./apps/back-office/guarantee-fe/.next/static
+COPY --from=installer --chown=nextjs:nodejs /app/apps/back-office/guarantee-fe/public ./apps/back-office/guarantee-fe/public
 
 
 # Set environment variables with default values
