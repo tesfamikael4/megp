@@ -7,10 +7,15 @@ import {
   LoadingOverlay,
   Box,
 } from '@mantine/core';
-import { useParams, useRouter } from 'next/navigation';
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from 'next/navigation';
 import { IconChevronLeft } from '@tabler/icons-react';
 import TechnicalRequirement from '../../_components/item/sor/technical-requirement/technical-requirement';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { DetailItem } from '../../_components/item/detail-item';
 import { useReadQuery } from '../../_api/lot/items.api';
 import { useReadQuery as useReadTenderDetail } from '../../_api/tender/tender.api';
@@ -23,12 +28,20 @@ import Document from '../../_components/item/document/document';
 import Fee from '../../_components/item/sop/fee/fee';
 import ReimburseableExpense from '../../_components/item/sop/reimburseable-expense/reimburseable-expense';
 export default function ItemDetailPage() {
-  const [currentTab, setCurrentTab] = useState('configuration');
-
   const router = useRouter();
   const { id, itemId } = useParams();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { data: selected, isLoading } = useReadQuery(itemId?.toString());
   const { data: tender } = useReadTenderDetail(id?.toString());
+  const createQueryString = useCallback(
+    (name: string, value: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set(name, value);
+      return params.toString();
+    },
+    [searchParams],
+  );
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
   });
@@ -43,7 +56,9 @@ export default function ItemDetailPage() {
                 <Tooltip
                   label="Tender Detail"
                   className="cursor-pointer"
-                  onClick={() => router.push(`/preparation/${id}`)}
+                  onClick={() =>
+                    router.push(`/preparation/${id}?tab=configuration`)
+                  }
                   position="top-start"
                 >
                   <Flex align="center">
@@ -62,48 +77,64 @@ export default function ItemDetailPage() {
               <div className="flex space-x-4">
                 <Text
                   className={
-                    currentTab === 'configuration'
+                    searchParams.get('tab') === 'configuration'
                       ? 'border-l bg-gray-100 pointer text-gray-700 border-t border-r border-gray-200 rounded-tl-md rounded-tr-md py-2 px-12 font-medium text-center'
-                      : ' pointer text-gray-700 py-2 px-12 font-medium text-center'
+                      : ' pointer text-gray-700 py-2 pointer  px-12 font-medium text-center'
                   }
                   onClick={() => {
-                    setCurrentTab('configuration');
+                    router.push(
+                      pathname +
+                        '?' +
+                        createQueryString('tab', 'configuration' as string),
+                    );
                   }}
                 >
                   Configuration
                 </Text>
                 <Text
                   className={
-                    currentTab === 'sor'
+                    searchParams.get('tab') === 'sor'
                       ? 'border-l bg-gray-100 pointer text-gray-700 border-t border-r border-gray-200 rounded-tl-md rounded-tr-md py-2 px-12 font-medium text-center'
-                      : ' pointer text-gray-700 py-2 px-12 font-medium text-center'
+                      : ' pointer text-gray-700 py-2 pointer px-12 font-medium text-center'
                   }
                   onClick={() => {
-                    setCurrentTab('sor');
+                    router.push(
+                      pathname +
+                        '?' +
+                        createQueryString('tab', 'sor' as string),
+                    );
                   }}
                 >
                   Schedule of requirement
                 </Text>
                 <Text
                   className={
-                    currentTab === 'sop'
+                    searchParams.get('tab') === 'sop'
                       ? 'border-l bg-gray-100 pointer text-gray-700 border-t border-r border-gray-200 rounded-tl-md rounded-tr-md py-2 px-12 font-medium text-center'
-                      : ' pointer text-gray-700 py-2 px-12 font-medium text-center'
+                      : ' pointer text-gray-700 py-2 pointer px-12 font-medium text-center'
                   }
                   onClick={() => {
-                    setCurrentTab('sop');
+                    router.push(
+                      pathname +
+                        '?' +
+                        createQueryString('tab', 'sop' as string),
+                    );
                   }}
                 >
                   Schedule of price
                 </Text>
                 <Text
                   className={
-                    currentTab === 'document'
+                    searchParams.get('tab') === 'document'
                       ? 'border-l bg-gray-100 pointer text-gray-700 border-t border-r border-gray-200 rounded-tl-md rounded-tr-md py-2 px-12 font-medium text-center'
-                      : ' pointer text-gray-700 py-2 px-12 font-medium text-center'
+                      : ' pointer text-gray-700 py-2 pointer px-12 font-medium text-center'
                   }
                   onClick={() => {
-                    setCurrentTab('document');
+                    router.push(
+                      pathname +
+                        '?' +
+                        createQueryString('tab', 'document' as string),
+                    );
                   }}
                 >
                   Document
@@ -114,10 +145,10 @@ export default function ItemDetailPage() {
         </div>
       </div>
       <Box className="container mx-auto my-4">
-        {currentTab === 'configuration' && selected && (
+        {searchParams.get('tab') === 'configuration' && selected && (
           <DetailItem cell={selected} />
         )}
-        {currentTab === 'sor' && (
+        {searchParams.get('tab') === 'sor' && (
           <>
             <div className="my-4">
               <TechnicalRequirement
@@ -145,7 +176,7 @@ export default function ItemDetailPage() {
             </div>
           </>
         )}
-        {currentTab === 'sop' && (
+        {searchParams.get('tab') === 'sop' && (
           <>
             <div className="my-4">
               <BillOfMaterial item={selected} />
@@ -167,7 +198,7 @@ export default function ItemDetailPage() {
             </div>
           </>
         )}
-        {currentTab === 'document' && (
+        {searchParams.get('tab') === 'document' && (
           <>
             <div className="my-4">
               <Document item={selected} />

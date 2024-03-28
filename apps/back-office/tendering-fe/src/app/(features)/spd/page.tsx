@@ -24,7 +24,7 @@ export default function StandardProcurementDocument() {
             variant="outline"
             onClick={(e) => {
               e.stopPropagation();
-              router.push(`/spd/${pr.id}`);
+              router.push(`/spd/${pr.id}?tab=definition`);
             }}
           >
             <IconChevronRight />

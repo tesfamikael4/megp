@@ -1,17 +1,14 @@
-import { logger } from '@megp/core-fe';
+import { useState } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 export const FileViewer = ({ url }: { url: string; filename: string }) => {
-  function onDocumentLoadSuccess({
-    numPages: nextNumPages,
-  }: {
-    numPages: number;
-  }) {
-    logger.log(nextNumPages);
+  const [pageNumber] = useState<number>(1);
+  const [numPages, setNumPages] = useState<number>();
+  function onDocumentLoadSuccess({ numPages }: { numPages: number }): void {
+    setNumPages(numPages);
   }
-
   const options = {
     cMapUrl: 'cmaps/',
     cMapPacked: true,
@@ -34,10 +31,14 @@ export const FileViewer = ({ url }: { url: string; filename: string }) => {
           >
             <Page
               className=""
+              pageNumber={pageNumber}
               renderAnnotationLayer={false}
               renderTextLayer={false}
             />
           </Document>
+          <p>
+            Page {pageNumber} of {numPages}
+          </p>
         </div>
       </div>
     </>

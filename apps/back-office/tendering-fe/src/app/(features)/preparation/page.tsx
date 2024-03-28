@@ -32,7 +32,7 @@ export default function Preparation() {
             variant="outline"
             onClick={(e) => {
               e.stopPropagation();
-              router.push(`/preparation/${tender.id}`);
+              router.push(`/preparation/${tender.id}?tab=configuration`);
             }}
           >
             <IconChevronRight />

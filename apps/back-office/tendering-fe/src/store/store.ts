@@ -8,6 +8,8 @@ import { approveTenderApi } from '@/app/(features)/preparation/_api/tender/appro
 import { sorDocumentApi } from '@/app/(features)/preparation/_api/item/sor-document.api';
 import { contractFormSpdApi } from '@/app/(features)/spd/_api/contract-form-upload.api';
 import { sorBillOfMaterialBulkCreateApi } from '@/app/(features)/preparation/_api/item/bill-of-material-bulk-create.api';
+import { getClassificationApi } from '@/app/(features)/preparation/_api/tender/get-classification.api';
+import { tenderTemplateApi } from '@/app/(features)/preparation/_api/tender/tender-template.api';
 const { reducers, middleware } = entityApi;
 
 export const store = configureStore({
@@ -20,6 +22,8 @@ export const store = configureStore({
     [approveTenderApi.reducerPath]: approveTenderApi.reducer,
     [sorDocumentApi.reducerPath]: sorDocumentApi.reducer,
     [contractFormSpdApi.reducerPath]: contractFormSpdApi.reducer,
+    [getClassificationApi.reducerPath]: getClassificationApi.reducer,
+    [tenderTemplateApi.reducerPath]: tenderTemplateApi.reducer,
     [sorBillOfMaterialBulkCreateApi.reducerPath]:
       sorBillOfMaterialBulkCreateApi.reducer,
   },
@@ -34,6 +38,8 @@ export const store = configureStore({
       approveTenderApi.middleware,
       sorDocumentApi.middleware,
       contractFormSpdApi.middleware,
+      getClassificationApi.middleware,
+      tenderTemplateApi.middleware,
       sorBillOfMaterialBulkCreateApi.middleware,
     ]),
 });
