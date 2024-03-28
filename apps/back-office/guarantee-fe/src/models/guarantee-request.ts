@@ -1,12 +1,26 @@
 export interface GuaranteeRequest {
   id: string;
+  tenantId: string;
   vendorId: string;
+  vendorName: string;
   guarantorId: string;
+  guarantorName: string;
   guarantorBranchId: string;
+  guarantorBranchName: string;
+  startDate: Date;
+  endDate: Date;
   type: string;
-  attachment: any;
-  presignedUrl?: any;
+  objectId: string;
+  objectType: string;
   minValidityDate: Date;
-  remark?: string;
+  guarantorValidityDate: Date;
+  name: string;
+  title: string;
+  amount: number;
+  currencyType: string;
+  remark: string;
+  attachment: any;
   status: string;
+  presignedUrl: any;
+  createdAt?: string;
 }

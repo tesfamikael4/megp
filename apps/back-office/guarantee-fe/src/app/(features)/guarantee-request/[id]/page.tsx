@@ -14,7 +14,7 @@ export default function RequestPage() {
 
   const { id } = useParams();
   const { data: selected } = useReadQuery(id?.toString());
-
+  logger.log({ selected });
   const { data: guarantor } = useGetOrganazationQuery(
     selected?.guarantorId?.toString() || '',
   );
@@ -148,9 +148,9 @@ export default function RequestPage() {
         <Accordion
           variant="contained"
           className="mt-5"
-          defaultValue="Terms and Conditions"
+          defaultValue="Guarantee Remarks"
         >
-          <Accordion.Item value={'    Terms and Conditions'}>
+          <Accordion.Item value={'Guarantee Remarks'}>
             <Accordion.Control
               className="pl-0"
               icon={<IconFileInvoice />}
