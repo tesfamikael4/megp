@@ -40,21 +40,28 @@ export default function BiderDetail() {
   };
   const checklistData = [
     {
-      title:
-        'Internal auditor as independent party have been invited to witness the bid opening ceremony.',
+      title: 'Bid is written in language specified in the ITB Clause 11.1',
       status: 'checked',
     },
     {
-      title: 'Other interested observers attended the bid opening ceremony.',
+      title: 'Bidder has to submit Bid Submission Sheet Form',
       status: 'checked',
     },
     {
-      title:
-        'Registered representatives from mass media attending the bid opening ceremony',
+      title: 'Bidder has to submit Bidder Certification of Compliance Form',
       status: 'draft',
     },
     {
-      title: 'The Bid Opening Team has opened each bid',
+      title:
+        'Bidder has to submit signed and dated Technical Specification + Technical Offer+ Compliance Sheet Form',
+      status: 'draft',
+    },
+    {
+      title: 'Bidder has to submit Bid Security',
+      status: 'draft',
+    },
+    {
+      title: 'The Bid Security is in accordance with ITB Clause 22',
       status: 'draft',
     },
   ];
