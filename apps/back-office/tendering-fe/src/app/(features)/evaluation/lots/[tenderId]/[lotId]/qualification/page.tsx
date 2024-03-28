@@ -25,7 +25,7 @@ export default function BiderDetail() {
       return (
         <Box className="ml-2">
           <DataTable
-            records={checklistData}
+            records={record.subChecklist}
             columns={[
               {
                 accessor: 'title',
@@ -89,25 +89,94 @@ export default function BiderDetail() {
   const checklistData = [
     {
       id: 1,
-      title:
-        'Internal auditor as independent party have been invited to witness the bid opening ceremony.',
+      title: 'Legal Qualification',
       status: 'checked',
+      subChecklist: [
+        {
+          id: 1,
+          title: 'Nationality in accordance with ITB Sub-Clause 4.2',
+          status: 'checked',
+        },
+        {
+          id: 2,
+          title: 'No conflict of interest as described in ITB Clause 4.3',
+          status: 'checked',
+        },
+        {
+          id: 3,
+          title:
+            'Having been submitted valid tax clearance certificate issued by the tax authority (Domestic Bidders Only) in accordance with ITB Clause 4.6(b)(iii)',
+          status: 'checked',
+        },
+      ],
     },
     {
       id: 2,
-      title: 'Other interested observers attended the bid opening ceremony.',
+      title: 'Professional Qualification',
       status: 'checked',
+      subChecklist: [
+        {
+          id: 1,
+          title: 'At least staff currently work for the Bidder.',
+          status: 'checked',
+        },
+        {
+          id: 2,
+          title:
+            'Among the staff mentioned in Sub-Clause 2.1 Bidder must demonstrate that it will have the personnel for the key positions that meet the following requirements',
+          status: 'checked',
+        },
+      ],
     },
     {
       id: 3,
-      title:
-        'Registered representatives from mass media attending the bid opening ceremony',
+      title: 'Technical Qualification',
       status: 'draft',
+      subChecklist: [
+        {
+          id: 1,
+          title:
+            'Bidder has to provide in the Bid Submission Sheet Form the Statement attesting the origin of the Goods and Related Services offered',
+          status: 'checked',
+        },
+        {
+          id: 2,
+          title:
+            'Bidder has to provide in the Bidder Certification of Compliance Form information about major relevant contracts successfully completed in the number and period specified in the BDS',
+          status: 'draft',
+        },
+        {
+          id: 2,
+          title:
+            'Bidder has to submit Certificates of satisfactory execution of contracts provided by contracting parties to the contracts successfully completed in the period and budget as specified in the BDS Clause 16.3',
+          status: 'draft',
+        },
+      ],
     },
     {
       id: 4,
-      title: 'The Bid Opening Team has opened each bid',
+      title: 'Financial Qualification',
       status: 'draft',
+      subChecklist: [
+        {
+          id: 1,
+          title:
+            'Bidder has to submit financial statements certified by an independent auditor as required in ITB Clause 15.2(a) for the period specified in Section 3, Evaluation Methodology and Criteria',
+          status: 'draft',
+        },
+        {
+          id: 2,
+          title:
+            'Bidder has to submit other documents proofing its financial standing, as required in the BDS Clause 15.2',
+          status: 'draft',
+        },
+      ],
+    },
+    {
+      id: 5,
+      title: 'Performance Qualification',
+      status: 'draft',
+      subChecklist: [],
     },
   ];
   return (
