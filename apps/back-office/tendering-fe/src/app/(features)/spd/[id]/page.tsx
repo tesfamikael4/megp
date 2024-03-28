@@ -9,8 +9,13 @@ import {
   LoadingOverlay,
   Button,
 } from '@mantine/core';
-import { useParams, useRouter } from 'next/navigation';
-import { useState } from 'react';
+import {
+  useParams,
+  useRouter,
+  useSearchParams,
+  usePathname,
+} from 'next/navigation';
+import { useCallback } from 'react';
 import { IconChevronLeft } from '@tabler/icons-react';
 import UploadTemplate from '../_components/upload-template';
 import SpdAdministrativeCompliance from '../_components/administrative-compliance';
@@ -24,16 +29,25 @@ import { useReadQuery } from '../_api/spd.api';
 import { Section } from '@megp/core-fe';
 import ContractForm from '../_components/contract-form';
 import { useApproveSpdMutation } from '../_api/approve-spd.api';
+import OpeningChecklist from '../_components/openinig-checklist';
 export default function SpdDetailPage() {
   const router = useRouter();
-  const [currentTab, setCurrentTab] = useState('definition');
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
   });
   const { id } = useParams();
   const { data: selected, isLoading } = useReadQuery(id?.toString());
   const [approve, { isLoading: isChanging }] = useApproveSpdMutation();
-
+  const createQueryString = useCallback(
+    (name: string, value: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set(name, value);
+      return params.toString();
+    },
+    [searchParams],
+  );
   return (
     <>
       <LoadingOverlay visible={isLoading} />
@@ -87,63 +101,102 @@ export default function SpdDetailPage() {
               <div className="flex space-x-4">
                 <Text
                   className={
-                    currentTab === 'definition'
+                    searchParams.get('tab') === 'definition'
                       ? 'border-l bg-gray-100 pointer text-gray-700 border-t border-r border-gray-200 rounded-tl-md rounded-tr-md py-2 px-12 font-medium text-center'
                       : ' pointer text-gray-700 py-2 px-12 font-medium text-center'
                   }
                   onClick={() => {
-                    setCurrentTab('definition');
+                    router.push(
+                      pathname +
+                        '?' +
+                        createQueryString('tab', 'definition' as string),
+                    );
                   }}
                 >
                   Definition
                 </Text>
                 <Text
                   className={
-                    currentTab === 'template'
+                    searchParams.get('tab') === 'template'
                       ? 'border-l bg-gray-100 pointer text-gray-700 border-t border-r border-gray-200 rounded-tl-md rounded-tr-md py-2 px-12 font-medium text-center'
                       : ' pointer text-gray-700 py-2 px-12 font-medium text-center'
                   }
                   onClick={() => {
-                    setCurrentTab('template');
+                    router.push(
+                      pathname +
+                        '?' +
+                        createQueryString('tab', 'template' as string),
+                    );
                   }}
                 >
                   Template
                 </Text>
                 <Text
                   className={
-                    currentTab === 'bid-form'
+                    searchParams.get('tab') === 'bid-form'
                       ? 'border-l bg-gray-100 pointer text-gray-700 border-t border-r border-gray-200 rounded-tl-md rounded-tr-md py-2 px-12 font-medium text-center'
                       : ' pointer text-gray-700 py-2 px-12 font-medium text-center'
                   }
                   onClick={() => {
-                    setCurrentTab('bid-form');
+                    router.push(
+                      pathname +
+                        '?' +
+                        createQueryString('tab', 'bid-form' as string),
+                    );
                   }}
                 >
                   Bid Form
                 </Text>
                 <Text
                   className={
-                    currentTab === 'contract-form'
+                    searchParams.get('tab') === 'contract-form'
                       ? 'border-l bg-gray-100 pointer text-gray-700 border-t border-r border-gray-200 rounded-tl-md rounded-tr-md py-2 px-12 font-medium text-center'
                       : ' pointer text-gray-700 py-2 px-12 font-medium text-center'
                   }
                   onClick={() => {
-                    setCurrentTab('contract-form');
+                    router.push(
+                      pathname +
+                        '?' +
+                        createQueryString('tab', 'contract-form' as string),
+                    );
                   }}
                 >
                   Contract Form
                 </Text>
                 <Text
                   className={
-                    currentTab === 'evaluation-criteria'
+                    searchParams.get('tab') === 'evaluation-criteria'
                       ? 'border-l bg-gray-100 pointer text-gray-700 border-t border-r border-gray-200 rounded-tl-md rounded-tr-md py-2 px-12 font-medium text-center'
                       : ' pointer text-gray-700 py-2 px-12 font-medium text-center'
                   }
                   onClick={() => {
-                    setCurrentTab('evaluation-criteria');
+                    router.push(
+                      pathname +
+                        '?' +
+                        createQueryString(
+                          'tab',
+                          'evaluation-criteria' as string,
+                        ),
+                    );
                   }}
                 >
                   Evaluation criteria
+                </Text>
+                <Text
+                  className={
+                    searchParams.get('tab') === 'opening-minutes'
+                      ? 'border-l bg-gray-100 pointer text-gray-700 border-t border-r border-gray-200 rounded-tl-md rounded-tr-md py-2 px-12 font-medium text-center'
+                      : ' pointer text-gray-700 py-2 px-12 font-medium text-center'
+                  }
+                  onClick={() => {
+                    router.push(
+                      pathname +
+                        '?' +
+                        createQueryString('tab', 'opening-minutes' as string),
+                    );
+                  }}
+                >
+                  Opening Minutes
                 </Text>
               </div>
             </div>
@@ -152,7 +205,7 @@ export default function SpdDetailPage() {
       </div>
       <Box className="container mx-auto my-4">
         <Container fluid>
-          {currentTab === 'definition' && (
+          {searchParams.get('tab') === 'definition' && (
             <>
               <Section
                 title="Standard procurement document detail"
@@ -163,7 +216,7 @@ export default function SpdDetailPage() {
               </Section>
             </>
           )}
-          {currentTab === 'template' && (
+          {searchParams.get('tab') === 'template' && (
             <>
               <Section
                 title="Template"
@@ -174,17 +227,17 @@ export default function SpdDetailPage() {
               </Section>
             </>
           )}
-          {currentTab === 'bid-form' && (
+          {searchParams.get('tab') === 'bid-form' && (
             <>
               <BidForm spdId={selected.id} />
             </>
           )}
-          {currentTab === 'contract-form' && (
+          {searchParams.get('tab') === 'contract-form' && (
             <>
               <ContractForm spdId={selected.id} />
             </>
           )}
-          {currentTab === 'evaluation-criteria' && (
+          {searchParams.get('tab') === 'evaluation-criteria' && (
             <>
               <div className="text-lg font-medium mt-4 pt-4 pb-4">
                 Preliminary Examination
@@ -224,6 +277,11 @@ export default function SpdDetailPage() {
               <div className="pt-2">
                 <SpdProfessionalSetting />
               </div>
+            </>
+          )}
+          {searchParams.get('tab') === 'opening-minutes' && (
+            <>
+              <OpeningChecklist />
             </>
           )}
         </Container>

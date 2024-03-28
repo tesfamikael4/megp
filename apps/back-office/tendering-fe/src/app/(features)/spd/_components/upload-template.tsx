@@ -7,7 +7,7 @@ import {
   LoadingOverlay,
   Modal,
 } from '@mantine/core';
-import { logger } from '@megp/core-fe';
+import { logger, notify } from '@megp/core-fe';
 import {
   useLazyGetFilesQuery,
   useUploadSpdMutation,
@@ -25,7 +25,12 @@ const UploadTemplate = () => {
     logger.log(file);
     const formData = new FormData();
     formData.append('file', file?.[type] ?? '');
-    uploadFile({ id: id, type: type, file: formData });
+    try {
+      await uploadFile({ id: id, type: type, file: formData });
+      notify('Success', `${type} uploaded successfully`);
+    } catch (err) {
+      notify('Error', `Error in uploading ${type}`);
+    }
   }
   function onFileChange(file: File | null, key: string) {
     const value = { [key]: file };
@@ -542,7 +547,7 @@ const UploadTemplate = () => {
           </Table.Tr>
         </Table.Tbody>
       </Table>
-      <Modal title="View Document" opened={opened} onClose={close}>
+      <Modal title="View Document" opened={opened} onClose={close} size="100%">
         <FilePreview id={id as any} type={currentView} />
       </Modal>
     </>

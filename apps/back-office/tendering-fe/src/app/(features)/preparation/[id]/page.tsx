@@ -11,9 +11,15 @@ import {
   Button,
   Select,
   Modal,
+  FileButton,
 } from '@mantine/core';
-import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from 'next/navigation';
+import { useCallback, useEffect, useState } from 'react';
 import Items from '../_components/item/items';
 import { IconChevronLeft, IconFolderOpen } from '@tabler/icons-react';
 import FormDetail from '../_components/tender/form-detail';
@@ -35,10 +41,17 @@ import BidSecurity from '../_components/lot/bid-security/bid-security';
 import { useDisclosure } from '@mantine/hooks';
 import SplitTenderModal from '../_components/lot/split-tender-modal';
 import ContractConditionTab from '../_components/contact-condition/contract-condition-tab';
+import Classification from '../_components/tender/invitation/classification/classification';
+import ParticipationFee from '../_components/tender/invitation/participation-fee';
+import {
+  useUploadBdsTemplateMutation,
+  useUploadSccTemplateMutation,
+} from '../_api/tender/tender-template.api';
 
 export default function TenderDetailPage() {
   const router = useRouter();
-  const [currentTab, setCurrentTab] = useState('configuration');
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [opened, { open, close }] = useDisclosure(false);
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
@@ -48,14 +61,50 @@ export default function TenderDetailPage() {
   const { data: selected, isLoading } = useReadQuery(id?.toString());
   const [trigger, { data, isFetching }] = useLazyListByIdQuery();
   const [update, { isLoading: isUpdating }] = useUpdateMutation();
+  const [uploadBdsFile, { isLoading: isBdsUploading }] =
+    useUploadBdsTemplateMutation();
+  const [uploadSccFile, { isLoading: isSccUploading }] =
+    useUploadSccTemplateMutation();
+  const [file, setFile] = useState<{ [key: string]: File | null }>({});
   useEffect(() => {
     if (selected) {
       trigger({ id: selected.id, collectionQuery: { skip: 0, take: 10 } });
     }
   }, [selected, trigger]);
-  useEffect(() => {
-    // logger.log(value);
-  }, [value]);
+  const createQueryString = useCallback(
+    (name: string, value: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set(name, value);
+      return params.toString();
+    },
+    [searchParams],
+  );
+  async function onUploadBds(type: string) {
+    logger.log(file);
+    const formData = new FormData();
+    formData.append('file', file?.[type] ?? '');
+    try {
+      uploadBdsFile({ id: id, type: type, file: formData });
+      notify('Success', 'Bid data sheet uploaded successfully');
+    } catch (err) {
+      notify('Error', 'Error in uploading bid data sheet');
+    }
+  }
+  async function onUploadScc(type: string) {
+    logger.log(file);
+    const formData = new FormData();
+    formData.append('file', file?.[type] ?? '');
+    try {
+      uploadSccFile({ id: id, type: type, file: formData });
+      notify('Success', 'Bid data sheet uploaded successfully');
+    } catch (err) {
+      notify('Error', 'Error in uploading bid data sheet');
+    }
+  }
+  function onFileChange(file: File | null, key: string) {
+    const value = { [key]: file };
+    setFile(value);
+  }
   const onUpdate = (data) => {
     logger.log(data);
     update({ ...data, id: id?.toString() });
@@ -89,7 +138,7 @@ export default function TenderDetailPage() {
                 });
               }}
             >
-              Publish
+              Submit
             </Button>
           </div>
           <div className="flex">
@@ -97,63 +146,91 @@ export default function TenderDetailPage() {
               <div className="flex space-x-4">
                 <Text
                   className={
-                    currentTab === 'configuration'
-                      ? 'border-l bg-gray-100 pointer text-gray-700 border-t border-r border-gray-200 rounded-tl-md rounded-tr-md py-2 px-12 font-medium text-center'
-                      : ' pointer text-gray-700 py-2 px-12 font-medium text-center'
+                    searchParams.get('tab') === 'configuration'
+                      ? 'border-l bg-gray-100 pointer text-gray-700 border-t border-r border-gray-200 rounded-tl-md rounded-tr-md py-2 px-10 font-medium text-center'
+                      : ' pointer text-gray-700 py-2 px-10 font-medium text-center'
                   }
                   onClick={() => {
-                    setCurrentTab('configuration');
+                    router.push(
+                      pathname +
+                        '?' +
+                        createQueryString('tab', 'configuration'),
+                    );
                   }}
                 >
                   Configuration
                 </Text>
                 <Text
                   className={
-                    currentTab === 'item'
-                      ? 'border-l bg-gray-100 pointer text-gray-700 border-t border-r border-gray-200 rounded-tl-md rounded-tr-md py-2 px-12 font-medium text-center'
-                      : ' pointer text-gray-700 py-2 px-12 font-medium text-center'
+                    searchParams.get('tab') === 'item'
+                      ? 'border-l bg-gray-100 pointer text-gray-700 border-t border-r border-gray-200 rounded-tl-md rounded-tr-md py-2 px-10 font-medium text-center'
+                      : ' pointer text-gray-700 py-2 px-10 font-medium text-center'
                   }
                   onClick={() => {
-                    setCurrentTab('item');
+                    router.push(
+                      pathname + '?' + createQueryString('tab', 'item'),
+                    );
                   }}
                 >
                   Items
                 </Text>
                 <Text
                   className={
-                    currentTab === 'bidding-procedure'
-                      ? 'border-l bg-gray-100 pointer text-gray-700 border-t border-r border-gray-200 rounded-tl-md rounded-tr-md py-2 px-12 font-medium text-center'
-                      : ' pointer text-gray-700 py-2 px-12 font-medium text-center'
+                    searchParams.get('tab') === 'bidding-procedure'
+                      ? 'border-l bg-gray-100 pointer text-gray-700 border-t border-r border-gray-200 rounded-tl-md rounded-tr-md py-2 px-10 font-medium text-center'
+                      : ' pointer text-gray-700 py-2 px-10 font-medium text-center'
                   }
                   onClick={() => {
-                    setCurrentTab('bidding-procedure');
+                    router.push(
+                      pathname +
+                        '?' +
+                        createQueryString('tab', 'bidding-procedure'),
+                    );
                   }}
                 >
                   Bidding procedure
                 </Text>
                 <Text
                   className={
-                    currentTab === 'criteria'
-                      ? 'border-l bg-gray-100 pointer text-gray-700 border-t border-r border-gray-200 rounded-tl-md rounded-tr-md py-2 px-12 font-medium text-center'
-                      : ' pointer text-gray-700 py-2 px-12 font-medium text-center'
+                    searchParams.get('tab') === 'criteria'
+                      ? 'border-l bg-gray-100 pointer text-gray-700 border-t border-r border-gray-200 rounded-tl-md rounded-tr-md py-2 px-10 font-medium text-center'
+                      : ' pointer text-gray-700 py-2 px-10 font-medium text-center'
                   }
                   onClick={() => {
-                    setCurrentTab('criteria');
+                    router.push(
+                      pathname + '?' + createQueryString('tab', 'criteria'),
+                    );
                   }}
                 >
                   Evaluation criteria
                 </Text>
                 <Text
                   className={
-                    currentTab === 'condition'
-                      ? 'border-l bg-gray-100 pointer text-gray-700 border-t border-r border-gray-200 rounded-tl-md rounded-tr-md py-2 px-12 font-medium text-center'
-                      : ' pointer text-gray-700 py-2 px-12 font-medium text-center'
+                    searchParams.get('tab') === 'condition'
+                      ? 'border-l bg-gray-100 pointer text-gray-700 border-t border-r border-gray-200 rounded-tl-md rounded-tr-md py-2 px-10 font-medium text-center'
+                      : ' pointer text-gray-700 py-2 px-10 font-medium text-center'
                   }
                   onClick={() => {
-                    setCurrentTab('condition');
+                    router.push(
+                      pathname + '?' + createQueryString('tab', 'condition'),
+                    );
                   }}
                 >
                   Contract conditions
+                </Text>
+                <Text
+                  className={
+                    searchParams.get('tab') === 'invitation'
+                      ? 'border-l bg-gray-100 pointer text-gray-700 border-t border-r border-gray-200 rounded-tl-md rounded-tr-md py-2 px-10 font-medium text-center'
+                      : ' pointer text-gray-700 py-2 px-10 font-medium text-center'
+                  }
+                  onClick={() => {
+                    router.push(
+                      pathname + '?' + createQueryString('tab', 'invitation'),
+                    );
+                  }}
+                >
+                  Invitation
                 </Text>
               </div>
             </div>
@@ -161,7 +238,7 @@ export default function TenderDetailPage() {
         </div>
       </div>
       <Box className="container mx-auto my-4">
-        {currentTab !== 'configuration' && (
+        {searchParams.get('tab') !== 'configuration' && (
           <>
             <Box className="w-full flex flex-row justify-between items-center container my-2">
               <p className="text-lg font-semibold">
@@ -187,7 +264,62 @@ export default function TenderDetailPage() {
                     Split
                   </Button>
                 )}
-                {currentTab === 'bidding-procedure' && <></>}
+                {searchParams.get('tab') === 'bidding-procedure' && (
+                  <>
+                    <a href="./bds-template.docx" download>
+                      Download template
+                    </a>
+                    <FileButton
+                      onChange={(event) => {
+                        onFileChange(event, 'bds');
+                      }}
+                      accept=".docx"
+                    >
+                      {(props) => (
+                        <Button {...props} variant="subtle">
+                          Select
+                        </Button>
+                      )}
+                    </FileButton>
+                    <Button
+                      variant="filled"
+                      loading={isBdsUploading}
+                      onClick={() => {
+                        onUploadBds('bds');
+                      }}
+                    >
+                      Upload
+                    </Button>
+                  </>
+                )}
+                {searchParams.get('tab') === 'condition' && (
+                  <>
+                    <a href="./bds-template.docx" download>
+                      Download template
+                    </a>
+                    <FileButton
+                      onChange={(event) => {
+                        onFileChange(event, 'bds');
+                      }}
+                      accept=".docx"
+                    >
+                      {(props) => (
+                        <Button {...props} variant="subtle">
+                          Select
+                        </Button>
+                      )}
+                    </FileButton>
+                    <Button
+                      variant="filled"
+                      loading={isSccUploading}
+                      onClick={() => {
+                        onUploadScc('bds');
+                      }}
+                    >
+                      Upload
+                    </Button>
+                  </>
+                )}
 
                 <Divider mb={'md'} />
               </div>
@@ -195,7 +327,7 @@ export default function TenderDetailPage() {
           </>
         )}
         <Container fluid>
-          {currentTab === 'configuration' && (
+          {searchParams.get('tab') === 'configuration' && (
             <>
               <Section
                 title="Tender Detail"
@@ -218,7 +350,7 @@ export default function TenderDetailPage() {
               </Section>
             </>
           )}
-          {currentTab === 'item' && (
+          {searchParams.get('tab') === 'item' && (
             <>
               {value ? (
                 <Items lotId={value} />
@@ -231,7 +363,7 @@ export default function TenderDetailPage() {
               )}
             </>
           )}
-          {currentTab === 'bidding-procedure' && (
+          {searchParams.get('tab') === 'bidding-procedure' && (
             <div className="w-full flex flex-col gap-3">
               {value ? (
                 <Section
@@ -288,7 +420,7 @@ export default function TenderDetailPage() {
               )}
             </div>
           )}
-          {currentTab === 'criteria' && (
+          {searchParams.get('tab') === 'criteria' && (
             <>
               {value ? (
                 <>
@@ -335,7 +467,26 @@ export default function TenderDetailPage() {
             </>
           )}
 
-          {currentTab === 'condition' && <ContractConditionTab />}
+          {searchParams.get('tab') === 'condition' && <ContractConditionTab />}
+          {searchParams.get('tab') === 'invitation' && (
+            <>
+              <div className="text-lg font-medium mt-4 pt-4 pb-4">
+                Classification
+              </div>
+              <Classification />
+              <div className="text-lg font-medium mt-4 pt-4 pb-4">
+                Participation Fee
+              </div>
+              <Section
+                title="Participation Fee"
+                collapsible={true}
+                defaultCollapsed={true}
+                className="capitalize my-2"
+              >
+                <ParticipationFee />
+              </Section>
+            </>
+          )}
         </Container>
       </Box>
       <Modal

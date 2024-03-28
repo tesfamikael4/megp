@@ -34,7 +34,7 @@ export default function ItemList({
             variant="outline"
             onClick={(e) => {
               e.stopPropagation();
-              router.push(`/preparation//${id}/${pr.id}`);
+              router.push(`/preparation//${id}/${pr.id}?tab=configuration`);
             }}
           >
             <IconChevronRight />

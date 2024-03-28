@@ -30,6 +30,10 @@ export const ENTITY_LIST: EntityStoreConfig[] = [
     baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
   },
   {
+    entity: 'tender-classifications',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
+  },
+  {
     entity: 'lots',
     baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
   },
@@ -106,6 +110,10 @@ export const ENTITY_LIST: EntityStoreConfig[] = [
     baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
   },
   {
+    entity: 'spd-opening-checklists',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
+  },
+  {
     entity: 'procurement-requisitions',
     baseUrl: process.env.NEXT_PUBLIC_PLANNING_API ?? '/planning/api',
   },
@@ -149,5 +157,33 @@ export const ENTITY_LIST: EntityStoreConfig[] = [
     entity: 'guarantees',
     baseUrl:
       process.env.NEXT_PUBLIC_ADMINISTRATION_API ?? '/administration/api',
+  },
+  {
+    entity: 'scc-contract-deliverables',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
+  },
+  {
+    entity: 'scc-general-provisions',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
+  },
+  {
+    entity: 'scc-guarantees',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
+  },
+  {
+    entity: 'scc-liabilities',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
+  },
+  {
+    entity: 'scc-payment-schedules',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
+  },
+  {
+    entity: 'scc-payment-terms',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
+  },
+  {
+    entity: 'tender-participation-fees',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
   },
 ];

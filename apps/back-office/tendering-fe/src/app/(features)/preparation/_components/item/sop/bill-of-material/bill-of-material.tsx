@@ -10,9 +10,11 @@ import { Item } from '@/models/tender/lot/item';
 import DataImport from './data-import';
 import { useState } from 'react';
 import { useSaveBoqMutation } from '@/app/(features)/preparation/_api/item/bill-of-material-bulk-create.api';
+import { useParams } from 'next/navigation';
 export default function BillOfMaterial({ item }: { item: Item }) {
+  const { itemId } = useParams();
   const { data: billOfMaterial } = useGetBillOfMaterialQuery({
-    itemId: item.id,
+    itemId: itemId,
     collectionQuery: {
       where: [],
     },
@@ -25,14 +27,14 @@ export default function BillOfMaterial({ item }: { item: Item }) {
       const toApiBoq: any[] = [...(boq ?? [])];
       await saveBoq({
         boqs: toApiBoq.map((boq) => {
-          boq['itemId'] = item.id;
+          boq['itemId'] = itemId;
           boq['unit'] = boq.unit ? boq.unit : '';
           boq['quantity'] = boq.quantity ? boq.quantity : 1;
           delete boq.id;
 
           return boq;
         }),
-        itemId: item.id,
+        itemId: itemId,
       });
       notify('Success', 'bulk bill of material saved successfully');
     } catch {

@@ -16,6 +16,8 @@ export const Menu: MenuItem[] = [
     icon: IconFileStack,
     link: '/spd',
   },
+  { label: 'Preparation', icon: IconLockSquareRounded, link: '/preparation' },
+  { label: 'Solicitation', icon: IconLockSquareRounded, link: '/solicitation' },
   {
     label: 'Bid Opening',
     icon: IconFolderOpen,
@@ -32,17 +34,10 @@ export const Menu: MenuItem[] = [
     link: '/administration',
   },
   {
-    label: 'Procurement requisition',
-    icon: IconCoins,
-    link: '/procurement-requisition',
-  },
-  {
     label: 'Report',
     icon: IconReportAnalytics,
     link: '/report',
   },
-  { label: 'Preparation', icon: IconLockSquareRounded, link: '/preparation' },
-  { label: 'Solicitation', icon: IconLockSquareRounded, link: '/solicitation' },
   {
     label: 'Guarantees',
     icon: IconCoins,
