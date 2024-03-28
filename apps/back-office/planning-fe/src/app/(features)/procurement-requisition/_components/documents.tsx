@@ -32,6 +32,7 @@ import {
 import { useParams } from 'next/navigation';
 import { ExpandableTable } from './expandable-table';
 import { FileViewer } from './file-viewer';
+import { record } from 'zod';
 
 export const Documents = ({
   disableFields = false,
@@ -50,8 +51,9 @@ export const Documents = ({
   const config = {
     columns: [
       {
-        header: 'Name',
-        accessor: 'fileName',
+        header: 'File name',
+        accessor: 'fileInfo.filename',
+        render: (record) => <div>{record.fileInfo.filename}</div>,
       },
       {
         accessor: 'action',
@@ -81,7 +83,7 @@ export const Documents = ({
     const handleDownload = async () => {
       try {
         const res = await dowloadFile(data.id).unwrap();
-        await fetch(res.presignedUrl)
+        await fetch(res)
           .then((res) => res.blob())
           .then((blob) => {
             const url = window.URL.createObjectURL(blob);
@@ -185,12 +187,10 @@ export const Documents = ({
       const file = fileList[i];
       try {
         const url = await retrieveNewURL({
-          fileInfo: {
-            originalname: file.name,
-            contentType: file.type,
-            filename: name,
-            procurementRequisitionId: id,
-          },
+          originalname: file.name,
+          contentType: file.type,
+          filename: name,
+          procurementRequisitionId: id,
         }).unwrap();
         await uploadFile(file, url.presignedUrl);
       } catch (error) {

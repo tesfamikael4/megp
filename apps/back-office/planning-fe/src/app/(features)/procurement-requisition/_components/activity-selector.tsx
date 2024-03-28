@@ -97,13 +97,19 @@ export const ActivitySelector = () => {
 
       notify('Success', 'Procurement requisition created successfully');
     } catch (err) {
-      router.push(`/procurement-requisition`);
-      notify('Error', 'Error in creating Procurement requisition');
+      if (err.data.statusCode === 430) {
+        notify('Error', err.data.message);
+      } else {
+        notify('Error', 'Error in creating Procurement requisition');
+      }
     }
   };
 
   useEffect(() => {
-    budgetFetched && setSelectedBudgetYear(budget?.items?.[0]?.id);
+    budgetFetched &&
+      setSelectedBudgetYear(
+        budget?.items.filter((b) => b.status === 'Approved')?.[0]?.id,
+      );
   }, [budget?.items, budgetFetched]);
   useEffect(() => {
     if (budgetFetched) {
@@ -117,7 +123,11 @@ export const ActivitySelector = () => {
         id: selectedBudgetYear,
         collectionQuery: {
           ...collectionQuery,
-          includes: ['postProcurementMechanisms', 'postBudgetPlanItems'],
+          includes: [
+            'postProcurementMechanism',
+            'postBudgetPlanItems',
+            'postBudgetRequisitioners',
+          ],
           where: [
             ...(collectionQuery?.where ?? []),
             [
@@ -137,8 +147,9 @@ export const ActivitySelector = () => {
       <LoadingOverlay visible={loadingActivity || isBudgetYearLoading} />
       {!selectedActivity && (
         <>
-          <Group w={300}>
+          <Group w={500}>
             <Select
+              w={'300'}
               label="Budget Year"
               value={selectedBudgetYear}
               onChange={(e: any) => {

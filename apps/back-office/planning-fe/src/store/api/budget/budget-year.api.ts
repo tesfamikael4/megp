@@ -45,6 +45,7 @@ export const budgetYearApi = createApi({
         method: 'POST',
         body: data,
       }),
+      invalidatesTags: ['pr-files'],
     }),
 
     preSignedUrl: builder.mutation<any, any>({
