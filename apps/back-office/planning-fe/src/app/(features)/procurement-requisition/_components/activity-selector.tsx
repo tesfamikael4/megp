@@ -97,8 +97,8 @@ export const ActivitySelector = () => {
 
       notify('Success', 'Procurement requisition created successfully');
     } catch (err) {
-      if (err.data.statusCode === 430) {
-        notify('Error', err.data.message);
+      if (err?.data?.statusCode === 430) {
+        notify('Error', err?.data?.message);
       } else {
         notify('Error', 'Error in creating Procurement requisition');
       }
