@@ -16,7 +16,7 @@ import {
   Modal,
   Text,
 } from '@mantine/core';
-import { ExpandableTable } from '@megp/core-fe';
+import { ExpandableTable, logger } from '@megp/core-fe';
 
 export const AddMembers = ({
   record,
@@ -97,7 +97,7 @@ export const AddMembers = ({
     const temp: any[] = [];
     selectedItems.map((item) => {
       if (!members.includes(item)) {
-        temp.push({ ...item, type: 'Member' });
+        temp.push({ ...item, type: 'MEMBER' });
       } else {
         const m = members.filter((member) => member.id === item.id);
         temp.push(m[0]);
@@ -110,9 +110,9 @@ export const AddMembers = ({
   const setChairMan = (id) => {
     const temp = members.map((member) => {
       if (member.id === id) {
-        return { ...member, type: 'Chairman' };
-      } else if (member.type === 'Chairman') {
-        return { ...member, type: 'Member' };
+        return { ...member, type: 'CHAIRMAN' };
+      } else if (member.type === 'CHAIRMAN') {
+        return { ...member, type: 'MEMBER' };
       }
       return member;
     });
@@ -121,9 +121,9 @@ export const AddMembers = ({
   const setSecretary = (id) => {
     const temp = members.map((member) => {
       if (member.id === id) {
-        return { ...member, type: 'Secretary' };
-      } else if (member.type === 'Secretary') {
-        return { ...member, type: 'Member' };
+        return { ...member, type: 'SECRETARY' };
+      } else if (member.type === 'SECRETARY') {
+        return { ...member, type: 'MEMBER' };
       }
       return member;
     });
@@ -142,7 +142,6 @@ export const AddMembers = ({
         type: member.type,
       };
     });
-
     onSave(castedData);
   };
   return (
