@@ -1,4 +1,4 @@
-import { Controller, Get, Query, Req } from '@nestjs/common';
+import { Controller, Get, Query, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { BidRegistration } from 'src/entities/bid-registration.entity';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
@@ -6,6 +6,8 @@ import { BidRegistrationService } from '../service/bid-registration.service';
 import { ExtraCrudController } from 'src/shared/controller';
 import { CreateBidRegistrationDto } from '../dto/bid-registration.dto';
 import { decodeCollectionQuery } from 'src/shared/collection-query';
+import { JwtGuard } from 'src/shared/authorization';
+import { VendorGuard } from 'src/shared/authorization/guards/vendor.guard';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'tenderId',
@@ -15,6 +17,7 @@ const options: ExtraCrudOptions = {
 @ApiBearerAuth()
 @Controller('bid-registrations')
 @ApiTags('Bid Registration Controller')
+@UseGuards(JwtGuard, VendorGuard())
 export class BidRegistrationController extends ExtraCrudController<BidRegistration>(
   options,
 ) {

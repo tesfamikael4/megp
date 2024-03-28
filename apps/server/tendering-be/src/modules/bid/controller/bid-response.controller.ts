@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { BidResponse } from 'src/entities/bid-response.entity';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
@@ -11,6 +11,8 @@ import {
   GetBidResponseDto,
   GetBidResponseTenderDto,
 } from '../dto/bid-response.dto';
+import { JwtGuard } from 'src/shared/authorization';
+import { VendorGuard } from 'src/shared/authorization/guards/vendor.guard';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'tenderId',
@@ -20,6 +22,7 @@ const options: ExtraCrudOptions = {
 @ApiBearerAuth()
 @Controller('bid-responses')
 @ApiTags('Bid Response Controller')
+@UseGuards(JwtGuard, VendorGuard())
 export class BidResponseController extends ExtraCrudController<BidResponse>(
   options,
 ) {
