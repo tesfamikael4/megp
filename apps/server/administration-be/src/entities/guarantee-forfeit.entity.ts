@@ -22,8 +22,6 @@ export class GuaranteeForfeit extends Audit {
   @Column({
     type: 'enum',
     enum: GuaranteeForefitStatusEnum,
-    default: GuaranteeForefitStatusEnum.REQUESTED,
-    nullable: false,
   })
   status: string;
   @ManyToOne(() => Guarantee, (guarantee) => guarantee.forfeits, {
