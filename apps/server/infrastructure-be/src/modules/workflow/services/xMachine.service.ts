@@ -192,15 +192,28 @@ export class XMachineService {
             ],
             target: i < steps.length - 1 ? `${steps[i + 1].name}` : 'Approved',
           },
+          // [`${step.name}.reject`]: {
+          //   target: i > 0 ? `${steps[i - 1].name}` : currentState,
+          //   actions: [
+          //     {
+          //       type: 'recordAction',
+          //       params: {
+          //         id: i == 0 ? null : steps[i - 1].id,
+          //         currentId: step.id,
+          //         status: i == 0 ? 'Rejected' : `${steps[i - 1].name}`,
+          //       },
+          //     },
+          //   ],
+          // },
           [`${step.name}.reject`]: {
             target: i > 0 ? `${steps[i - 1].name}` : currentState,
             actions: [
               {
                 type: 'recordAction',
                 params: {
-                  id: i == 0 ? null : steps[i - 1].id,
+                  id: null,
                   currentId: step.id,
-                  status: i == 0 ? 'Rejected' : `${steps[i - 1].name}`,
+                  status: 'Rejected',
                 },
               },
             ],
