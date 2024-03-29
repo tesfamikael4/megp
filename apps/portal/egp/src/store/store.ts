@@ -18,6 +18,7 @@ import { getBookmarkApi } from '@/app/(features)/vendor/_api/bookmark.api';
 import { getRegistrationApi } from '@/app/(features)/vendor/_api/registration.api';
 import { getItemsApi } from '@/app/(features)/vendor/_api/item.api';
 import { checkPasswordApi } from '@/app/(features)/vendor/_api/bid-response.api';
+import { bidApi } from './api/registered-bid/registered-bid.api';
 
 export const store = configureStore({
   reducer: {
@@ -37,6 +38,7 @@ export const store = configureStore({
     [getRegistrationApi.reducerPath]: getRegistrationApi.reducer,
     [getItemsApi.reducerPath]: getItemsApi.reducer,
     [checkPasswordApi.reducerPath]: checkPasswordApi.reducer,
+    [bidApi.reducerPath]: bidApi.reducer,
   },
   devTools: process.env.NODE_ENV !== 'production',
   middleware: (getDefaultMiddleware) => {

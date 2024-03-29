@@ -3,17 +3,18 @@ import React from 'react';
 import { Badge, Box } from '@mantine/core';
 import { IconBoxOff } from '@tabler/icons-react';
 import { DataTable } from 'mantine-datatable';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 
-export default function Table({ data }: any) {
+export default function Table({ data, tenderData }: any) {
   const router = useRouter();
+  const { id } = useParams();
   const handleRowClick = (record) => {
-    router.push(`/vendor/my-tenders/guarantee/${record?.id}`);
+    router.push(`/vendor/my-tenders/${id}/guarantee/${record?.id}`);
   };
   const transformedData = data?.items?.map((data: any) => {
     return {
-      name: data?.name,
-      title: data?.title,
+      name: tenderData?.organizationName,
+      title: tenderData?.name,
       createdAt: data?.createdAt,
       status: data?.status,
       id: data?.id,

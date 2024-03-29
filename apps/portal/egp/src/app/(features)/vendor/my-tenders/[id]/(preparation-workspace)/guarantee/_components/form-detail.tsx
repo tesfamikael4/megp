@@ -104,7 +104,7 @@ const FormDetail = ({ mode }: FormDetailProps) => {
     try {
       const result = await create(data).unwrap();
 
-      router.push(`/vendor/my-tenders/guarantee/${result.id}`);
+      router.push(`/vendor/my-tenders/${id}/guarantee/${result.id}`);
 
       notifications.show({
         message: 'Guarantee request send successfully',

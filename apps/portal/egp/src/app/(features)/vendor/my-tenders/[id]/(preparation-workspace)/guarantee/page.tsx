@@ -2,16 +2,17 @@
 import { Extension } from '@/models/extension';
 import { useExtendGuaranteeMutation } from '@/store/api/guarantee-extension/extension.api';
 import { useGetGuaranteeQuery } from '@/store/api/guarantee/guarantee.api';
+import { useGetRegisteredBidQuery } from '@/store/api/registered-bid/registered-bid.api';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Box, Button, Flex, Modal, Text, Textarea } from '@mantine/core';
 import { DatePickerInput } from '@mantine/dates';
 import { useDisclosure } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
-import { useRouter } from 'next/navigation';
+import { logger } from '@megp/core-fe';
+import { useParams, useRouter } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
 import { ZodType, z } from 'zod';
-import Table from '../_components/table/table';
-import { logger } from '@megp/core-fe';
+import Table from '../../../_components/table/table';
 
 const GuaranteePage = () => {
   const extensionSchema: ZodType<Partial<Extension>> = z.object({
@@ -32,7 +33,10 @@ const GuaranteePage = () => {
   });
   const [opened, { open, close }] = useDisclosure(false);
   const router = useRouter();
+  const { id } = useParams();
   const { data: data } = useGetGuaranteeQuery({});
+  const { data: tenderData } = useGetRegisteredBidQuery(id?.toString());
+
   const [create, { isLoading: isSaving }] = useExtendGuaranteeMutation();
   const onCreate = async (data) => {
     logger.log(data);
@@ -40,7 +44,7 @@ const GuaranteePage = () => {
     try {
       const result = await create(data).unwrap();
       if ('data' in result) {
-        router.push(`/vendor/my-tenders/guarantee/${result.data.id}`);
+        router.push(`/vendor/my-tenders/${id}/guarantee/${result.data.id}`);
       }
       notifications.show({
         message: 'Guarantee exteneded successfully',
@@ -57,7 +61,7 @@ const GuaranteePage = () => {
   };
 
   const handleButtonClick = () => {
-    router.push('/vendor/my-tenders/guarantee/new');
+    router.push(`/vendor/my-tenders/${id}/guarantee/new`);
   };
   const onError = (err) => logger.log(err);
   return (
@@ -68,7 +72,15 @@ const GuaranteePage = () => {
             Guarantee List
           </Text>
           <Flex justify="flex-end " gap="md">
+            {/* {data?.data < 0 ? (
+              <Button onClick={handleButtonClick}>New Guarantee</Button>
+            ) : (
+              <Button disabled onClick={handleButtonClick}>
+                New Guarantee
+              </Button>
+            )} */}
             <Button onClick={handleButtonClick}>New Guarantee</Button>
+
             <Button onClick={open}>Date</Button>
           </Flex>
 
@@ -115,7 +127,7 @@ const GuaranteePage = () => {
             </Flex>
           </Modal>
         </Flex>
-        <Table data={data} />
+        <Table data={data} tenderData={tenderData} />
       </Box>
     </Box>
   );
