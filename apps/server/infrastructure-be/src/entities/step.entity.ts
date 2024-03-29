@@ -37,9 +37,6 @@ export class Step extends OrgAudit {
   @JoinColumn({ name: 'activityId' })
   public activity: Activity;
 
-  @OneToMany(() => Instance, (instance) => instance.step)
-  instances: Instance[];
-
   @Column({ type: 'jsonb' })
   approvers: approver[];
 

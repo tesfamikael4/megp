@@ -70,7 +70,7 @@ export class XMachineService {
           ? existingData.version + 1
           : existingData.version;
 
-      isWorkGroup = await this.checkGroup(existingData.stepId, details);
+      isWorkGroup = await this.checkGroup(existingData.instanceStepId, details);
       if (isWorkGroup.value) {
         isAllChecked = await this.canContinue(isWorkGroup, activityId, details);
         if (!isAllChecked) {
@@ -81,7 +81,7 @@ export class XMachineService {
               remark: details.remark,
               approver: details.approver,
               at: String(Date.now()),
-              stepId: existingData.stepId,
+              stepId: existingData.instanceStepId,
               version: existingData.version,
             });
 
@@ -111,7 +111,7 @@ export class XMachineService {
 
               await this.repositoryInstance.update(existingData?.id, {
                 status: params.status,
-                stepId: params?.id,
+                instanceStepId: params?.id,
                 version: ver,
                 metadata: existingData.metadata,
               });
@@ -253,11 +253,12 @@ export class XMachineService {
       throw new Error('InstanceNotInitiated');
     }
     const currentStep = await this.repositoryStep.findOne({
-      where: { id: existingData.stepId },
+      where: { id: existingData.instanceStepId },
     });
     const prevMetadata = existingData.metadata.filter(
       (x) =>
-        x.stepId == existingData.stepId && x.version == existingData.version,
+        x.stepId == existingData.instanceStepId &&
+        x.version == existingData.version,
     );
     const members = await this.getGroupMembers(currentStep.approvers[0].id);
     if (info.value && info.method == 'Consensus') {
