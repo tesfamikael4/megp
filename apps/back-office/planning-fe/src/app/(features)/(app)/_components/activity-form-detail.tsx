@@ -59,9 +59,11 @@ const activitiesSchema: ZodType<Partial<BudgetPlanActivities>> = z.object({
   name: z.string().min(1, { message: 'Name is required' }),
   description: z.string().min(1, { message: 'Description is required' }),
 
-  currency: z.string({
-    required_error: 'Currency is required',
-  }),
+  currency: z
+    .string({
+      required_error: 'Currency is required',
+    })
+    .default('MKW'),
   estimatedAmount: z.string().min(1, {
     message: 'Estimated Amount is required',
   }),
@@ -246,7 +248,7 @@ export const FormDetail = ({
     setTags([]);
     reset({
       name: '',
-      currency: undefined,
+      // currency: undefined,
       description: '',
       isMultiYear: false,
       remark: '',
@@ -318,7 +320,8 @@ export const FormDetail = ({
                 <Select
                   withCheckIcon={false}
                   name={name}
-                  value={value ?? null}
+                  // value={value ?? null}
+                  value="MKW"
                   onChange={onChange}
                   label="Currency"
                   data={currency?.items?.map((c) => c.abbreviation) ?? []}
@@ -327,7 +330,8 @@ export const FormDetail = ({
                   searchable
                   placeholder="Select Currency"
                   error={errors?.currency?.message}
-                  disabled={disableFields}
+                  // disabled={disableFields}
+                  disabled
                 />
               )}
             />
