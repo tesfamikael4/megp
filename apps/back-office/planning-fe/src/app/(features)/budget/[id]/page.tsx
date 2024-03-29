@@ -189,6 +189,7 @@ export default function DetailPage() {
     try {
       await create({ appId: id, budgets: data }).unwrap();
       notify('Success', 'Budget Year Uploaded Successfully');
+      onRequestChange({ skip: 0, top: 0 });
       close();
     } catch (err) {
       logger.log(err);
