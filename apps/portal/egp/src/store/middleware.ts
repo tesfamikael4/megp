@@ -17,6 +17,7 @@ import { getBookmarkApi } from '@/app/(features)/vendor/_api/bookmark.api';
 import { getRegistrationApi } from '@/app/(features)/vendor/_api/registration.api';
 import { getItemsApi } from '@/app/(features)/vendor/_api/item.api';
 import { checkPasswordApi } from '@/app/(features)/vendor/_api/bid-response.api';
+import { bidApi } from './api/registered-bid/registered-bid.api';
 
 const middleware = [
   vendorRegistrationApi.middleware,
@@ -35,6 +36,7 @@ const middleware = [
   getRegistrationApi.middleware,
   getItemsApi.middleware,
   checkPasswordApi.middleware,
+  bidApi.middleware,
 ];
 
 export { middleware };

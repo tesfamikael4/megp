@@ -20,7 +20,7 @@ export const infomationLinks: MenuLinks.SidebarLinks[] = [
   {
     label: 'Bid Security',
     icon: IconAdjustments,
-    link: `/vendor/my-tenders/guarantee`,
+    link: `guarantee`,
   },
   {
     label: 'Clarification',
