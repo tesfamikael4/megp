@@ -9,6 +9,7 @@ export const postBudgetPlanApi = createApi({
     'post-budget-timeline',
     'post-budget-requisitioner',
     'post-budget-disbursement',
+    'post-budget-activity-files',
   ],
   refetchOnFocus: true,
   baseQuery: baseQuery(
@@ -100,6 +101,27 @@ export const postBudgetPlanApi = createApi({
         body: data,
       }),
     }),
+    preSignedUrl: builder.mutation<any, any>({
+      query: (data) => ({
+        url: 'post-budget-activity-documents/pre-signed-put-url',
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['post-budget-activity-files'],
+    }),
+    deleteDocument: builder.mutation<any, string>({
+      query: (id: string) => ({
+        url: `post-budget-activity-documents/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['post-budget-activity-files'],
+    }),
+    downloadFiles: builder.query<any, any>({
+      query: (id: string) => ({
+        url: `post-budget-activity-documents/download/${id}`,
+      }),
+      providesTags: ['post-budget-activity-files'],
+    }),
   }),
 });
 
@@ -120,4 +142,7 @@ export const {
   useAddBudgetMutation,
   useGetPostBudgetPlanReportQuery,
   useLazyGetPostBudgetPlanReportQuery,
+  usePreSignedUrlMutation,
+  useDeleteDocumentMutation,
+  useLazyDownloadFilesQuery,
 } = postBudgetPlanApi;

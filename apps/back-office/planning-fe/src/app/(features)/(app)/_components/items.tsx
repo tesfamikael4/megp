@@ -48,6 +48,7 @@ export function Items({
   page: 'pre' | 'post';
   disableFields?: boolean;
 }) {
+  const [isUploadBtnDisabled, setIsUploadBtnDisabled] = useState<boolean>(true);
   const [opened, { open, close }] = useDisclosure(false);
   const [
     openedImportModal,
@@ -287,6 +288,7 @@ export function Items({
     }));
 
     setNewItems([...castedData, ...newItems]);
+    setIsUploadBtnDisabled(false);
   };
 
   const handelOnDone = (data, id, collapse) => {
@@ -434,6 +436,7 @@ export function Items({
             className="mt-4 ml-auto"
             onClick={closeImportModal}
             // loading={isLoading}
+            disabled={isUploadBtnDisabled}
           >
             Done
           </Button>

@@ -1,4 +1,7 @@
-import { useLazyGetUsersQuery } from '@/store/api/iam/iam.api';
+import {
+  useLazyGetUsersByPermissionQuery,
+  useLazyGetUsersQuery,
+} from '@/store/api/iam/iam.api';
 import { ActionIcon, Box, Button, Group, Modal } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { Section, logger, notify } from '@megp/core-fe';
@@ -72,7 +75,7 @@ export const Requisitioner = ({
   };
   const { id } = useParams();
   const [opened, { open, close }] = useDisclosure(false);
-  const [getUsers, { data: users }] = useLazyGetUsersQuery();
+  const [getUsers, { data: users }] = useLazyGetUsersByPermissionQuery();
   const [createPreRequisitioner, { isLoading: isPreCreatingLoading }] =
     useCreatePreBudgetRequisitionerMutation();
   const [createPostRequisitioner, { isLoading: isPostCreatingLoading }] =
@@ -194,7 +197,11 @@ export const Requisitioner = ({
                 ...collectionQuery,
                 include: 'account',
               };
-              getUsers({ id, collectionQuery: castedCollectionQuery });
+              getUsers({
+                organizationId: id,
+                collectionQuery: castedCollectionQuery,
+                permissionKey: 'planning:createProcurementRequisition',
+              });
             }}
           />
 
