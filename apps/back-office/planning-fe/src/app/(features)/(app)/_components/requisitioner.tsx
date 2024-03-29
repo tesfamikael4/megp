@@ -94,6 +94,10 @@ export const Requisitioner = ({
       [page == 'pre' ? 'preBudgetPlanActivityId' : 'postBudgetPlanActivityId']:
         id,
     }));
+    if (castedData.length === 0) {
+      notify('Error', 'Please select atleast one requisitioner');
+      return;
+    }
 
     try {
       if (page == 'pre') {

@@ -62,8 +62,8 @@ const activitiesSchema: ZodType<Partial<BudgetPlanActivities>> = z.object({
   currency: z.string({
     required_error: 'Currency is required',
   }),
-  estimatedAmount: z.string({
-    required_error: 'Estimated Amount is required',
+  estimatedAmount: z.string().min(1, {
+    message: 'Estimated Amount is required',
   }),
   remark: z.string().default(''),
   isMultiYear: z.boolean().default(false),
@@ -129,7 +129,18 @@ export const FormDetail = ({
     selectable: true,
     multipleSelect: true,
     selectedIds: tags,
-    setSelectedIds: setTags,
+    setSelectedIds: (data: any[]) => {
+      let temp: any[] = [];
+      data.map((item: any) => {
+        if (!temp.includes(item)) {
+          temp.push(item);
+        } else {
+          const filteredTags = temp.filter((tag) => tag.code !== item.code);
+          temp = filteredTags;
+        }
+      });
+      setTags(temp);
+    },
     load: async (data) => {
       // logger.log({ data });
       const res = await getChildren({
@@ -232,13 +243,14 @@ export const FormDetail = ({
   };
 
   const onReset = () => {
+    setTags([]);
     reset({
       name: '',
       currency: undefined,
       description: '',
       isMultiYear: false,
       remark: '',
-      estimatedAmount: '',
+      estimatedAmount: undefined,
     });
   };
 
@@ -306,7 +318,7 @@ export const FormDetail = ({
                 <Select
                   withCheckIcon={false}
                   name={name}
-                  value={value}
+                  value={value ?? null}
                   onChange={onChange}
                   label="Currency"
                   data={currency?.items?.map((c) => c.abbreviation) ?? []}
