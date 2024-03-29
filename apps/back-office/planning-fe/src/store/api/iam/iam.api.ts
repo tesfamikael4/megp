@@ -17,7 +17,21 @@ export const iamApi = createApi({
         return { url: `user/list/${id}${q}`, method: 'GET' };
       },
     }),
+    getUsersByPermission: builder.query<any, any>({
+      query: ({ organizationId, collectionQuery, permissionKey }) => {
+        let q = '';
+        if (collectionQuery) {
+          const query = encodeCollectionQuery(collectionQuery);
+          q = `?q=${query}`;
+        }
+        return {
+          url: `user/list/${organizationId}/permission/${permissionKey}${q}`,
+          method: 'GET',
+        };
+      },
+    }),
   }),
 });
 
-export const { useLazyGetUsersQuery } = iamApi;
+export const { useLazyGetUsersQuery, useLazyGetUsersByPermissionQuery } =
+  iamApi;

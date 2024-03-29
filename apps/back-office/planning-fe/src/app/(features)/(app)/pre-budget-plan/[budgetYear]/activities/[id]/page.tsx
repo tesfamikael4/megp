@@ -164,7 +164,7 @@ export default function NewActivity() {
             )}
 
             {currentTab === 'documents' && (
-              <Documents disableFields={disableFields} />
+              <Documents disableFields={disableFields} page="pre" />
             )}
 
             {currentTab === 'timeline' && (

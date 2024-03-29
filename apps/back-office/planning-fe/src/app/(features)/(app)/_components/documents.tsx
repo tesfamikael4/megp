@@ -13,7 +13,6 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
-import { notifications } from '@mantine/notifications';
 import { Section, logger, notify } from '@megp/core-fe';
 import {
   IconDotsVertical,
@@ -30,13 +29,20 @@ import {
   useLazyDownloadFilesQuery,
   usePreSignedUrlMutation,
 } from '@/store/api/pre-budget-plan/pre-budget-plan.api';
+import {
+  usePreSignedUrlMutation as usePostPreSignedUrlMutation,
+  useDeleteDocumentMutation as usePostDeleteDocumentMutation,
+  useLazyDownloadFilesQuery as useLazyDownloadPostFilesQuery,
+} from '@/store/api/post-budget-plan/post-budget-plan.api';
 import { useParams } from 'next/navigation';
 import { ExpandableTable } from '../../_components/expandable-table';
 import { FileViewer } from '../../_components/file-viewer';
 
 export const Documents = ({
   disableFields = false,
+  page,
 }: {
+  page: 'pre' | 'post';
   disableFields?: boolean;
 }) => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -44,10 +50,15 @@ export const Documents = ({
   const [file, setFile] = useState<File[]>();
   const { register, handleSubmit, setValue } = useForm();
   const [retrieveNewURL] = usePreSignedUrlMutation();
+  const [retrieveNewPostURL] = usePostPreSignedUrlMutation();
   const [deleteFile, { isLoading: isDeleting }] = useDeleteDocumentMutation();
-  const { data } = useGetFilesQuery(id);
+  const [deletePostFile, { isLoading: isPostDeleting }] =
+    usePostDeleteDocumentMutation();
+  const { data: documents } = useGetFilesQuery(id);
   const [dowloadFile, { isLoading: isDownloading }] =
     useLazyDownloadFilesQuery();
+  const [dowloadPostFile, { isLoading: isPostDownloading }] =
+    useLazyDownloadPostFilesQuery();
   const [isLoading, setIsLoading] = useState(false);
   const config = {
     columns: [
@@ -86,7 +97,10 @@ export const Documents = ({
     };
     const handleDownload = async () => {
       try {
-        const res = await dowloadFile(data.id).unwrap();
+        const res =
+          page == 'pre'
+            ? await dowloadFile(data.id).unwrap()
+            : await dowloadPostFile(data.id).unwrap();
         await fetch(res.presignedUrl)
           .then((res) => res.blob())
           .then((blob) => {
@@ -104,19 +118,15 @@ export const Documents = ({
     };
     const handleDelete = async (id) => {
       try {
-        await deleteFile(id).unwrap();
-        notifications.show({
-          title: 'Success',
-          message: 'Document Deleted Successfully',
-          color: 'green',
-        });
+        if (page == 'pre') {
+          await deleteFile(id).unwrap();
+        } else {
+          await deletePostFile(id).unwrap();
+        }
+        notify('Success', 'Document deleted successfully');
       } catch (err) {
         logger.log(err);
-        notifications.show({
-          title: 'Error',
-          message: 'Something went wrong',
-          color: 'red',
-        });
+        notify('Error', 'Something went wrong while deleting document');
       }
     };
 
@@ -140,7 +150,7 @@ export const Documents = ({
             <Menu.Item
               leftSection={<IconDownload size={15} />}
               onClick={handleDownload}
-              disabled={isDownloading}
+              disabled={isDownloading || isPostDownloading}
             >
               Download
             </Menu.Item>
@@ -149,7 +159,7 @@ export const Documents = ({
               color="red"
               leftSection={<IconTrash size={15} />}
               onClick={openDeleteModal}
-              disabled={disableFields || isDeleting}
+              disabled={disableFields || isDeleting || isPostDeleting}
             >
               Delete
             </Menu.Item>
@@ -163,16 +173,16 @@ export const Documents = ({
           size="xl"
           pos="relative"
         >
-          <FilePriview data={data} />
+          <FilePriview data={data} page={page} />
         </Modal>
       </>
     );
   };
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (document) => {
     try {
       setIsLoading(true);
-      await upload(file as unknown as FileList, data.name);
+      await upload(file as unknown as FileList, document.name);
     } catch (error) {
       setIsLoading(false);
       logger.log(error);
@@ -190,12 +200,20 @@ export const Documents = ({
     for (let i = 0; i < fileList.length; i++) {
       const file = fileList[i];
       try {
-        const url = await retrieveNewURL({
-          originalname: file.name,
-          contentType: file.type,
-          name: name,
-          preBudgetPlanActivityId: id,
-        }).unwrap();
+        const url =
+          page === 'pre'
+            ? await retrieveNewURL({
+                originalname: file.name,
+                contentType: file.type,
+                name: name,
+                preBudgetPlanActivityId: id,
+              }).unwrap()
+            : await retrieveNewPostURL({
+                originalname: file.name,
+                contentType: file.type,
+                name: name,
+                postBudgetPlanActivityId: id,
+              }).unwrap();
         await uploadFile(file, url.presignedUrl.presignedUrl);
       } catch (error) {
         setIsLoading(false);
@@ -238,9 +256,9 @@ export const Documents = ({
     >
       <Box className="pt-2">
         <ExpandableTable
-          data={data?.items ?? []}
+          data={documents?.items ?? []}
           config={config}
-          total={data?.total ?? 0}
+          total={documents?.total ?? 0}
         />
 
         <Modal title="Upload New Document" opened={opened} onClose={close}>
@@ -280,16 +298,21 @@ export const Documents = ({
   );
 };
 
-const FilePriview = ({ data }: { data: any }) => {
+const FilePriview = ({ data, page }: { data: any; page: 'pre' | 'post' }) => {
   const [dowloadFile, { data: url, isLoading }] = useLazyDownloadFilesQuery();
+  const [dowloadPostFile, { data: postUrl, isLoading: isPostLoading }] =
+    useLazyDownloadPostFilesQuery();
 
   useEffect(() => {
-    dowloadFile(data.id);
+    page == 'pre' ? dowloadFile(data.id) : dowloadPostFile(data.id);
   }, [data]);
   return (
     <>
-      <LoadingOverlay visible={isLoading} />
-      <FileViewer url={url?.presignedUrl ?? ''} filename={data.fileName} />
+      <LoadingOverlay visible={isLoading || isPostLoading} />
+      <FileViewer
+        url={url?.presignedUrl ?? postUrl?.presignedUrl ?? ''}
+        filename={data.fileName}
+      />
     </>
   );
 };
