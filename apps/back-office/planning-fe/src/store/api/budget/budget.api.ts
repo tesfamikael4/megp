@@ -19,6 +19,7 @@ export const budgetsApi = createApi({
     }),
     getBudgetSummation: builder.query<any, any>({
       query: (budgetYearId) => `budgets/summation/${budgetYearId}`,
+      providesTags: ['budgets'],
     }),
   }),
 });
