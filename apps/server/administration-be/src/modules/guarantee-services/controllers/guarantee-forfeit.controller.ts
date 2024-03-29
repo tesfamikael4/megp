@@ -1,18 +1,26 @@
-import { Controller } from '@nestjs/common';
-import { ApiExtraModels, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import {
+  ApiExtraModels,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { DataResponseFormat } from 'src/shared/api-data';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { ExtraCrudController } from 'src/shared/controller';
-import {
-  CreateGuaranteeReleaseDto,
-  UpdateGuaranteeReleaseDto,
-} from '../dtos/guarantee-release.dto';
 import { GuaranteeForfeit } from 'src/entities/guarantee-forfeit.entity';
 import { GuaranteeForfeitService } from '../services/guarantee-forfeit.service';
+import {
+  CreateGuaranteeForfeitDto,
+  UpdateGuaranteeForfeitDto,
+} from '../dtos/guarantee-forfeit.dto';
+import { decodeCollectionQuery } from 'src/shared/collection-query';
+import { CurrentUser } from 'src/shared/authorization';
+
 const options: ExtraCrudOptions = {
   entityIdName: 'guaranteeId',
-  createDto: CreateGuaranteeReleaseDto,
-  updateDto: UpdateGuaranteeReleaseDto,
+  createDto: CreateGuaranteeForfeitDto,
+  updateDto: UpdateGuaranteeForfeitDto,
 };
 @Controller('guarantee-forfeits')
 @ApiTags('guarantee forfeits')
@@ -25,5 +33,10 @@ export class GuaranteeForfeitController extends ExtraCrudController<GuaranteeFor
     private readonly guaranteeForfeitService: GuaranteeForfeitService,
   ) {
     super(guaranteeForfeitService);
+  }
+
+  @Get('document/:id')
+  async getDocument(@Param('id') id: string) {
+    return await this.guaranteeForfeitService.getDocumentsPresignedUrl(id);
   }
 }

@@ -14,9 +14,9 @@ export class Guarantee extends Audit {
   vendorId: string;
   @Column()
   vendorName: string;
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ type: 'timestamptz', nullable: true })
   startDate: Date;
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ type: 'timestamptz', nullable: true })
   endDate: Date;
   @Column({
     type: 'enum',
@@ -25,9 +25,9 @@ export class Guarantee extends Audit {
   type: string;
   @Column()
   objectType: string;
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ type: 'timestamptz', nullable: true })
   minValidityDate: Date;
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ type: 'timestamptz', nullable: true })
   guarantorValidityDate: Date;
   @Column()
   name: string;

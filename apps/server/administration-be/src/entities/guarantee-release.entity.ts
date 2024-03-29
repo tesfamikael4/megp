@@ -6,19 +6,20 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { Guarantee } from './guarantee.entity';
+import { GuaranteeReleaseEnum } from 'src/shared/enums/guarantee-release.enum';
+import { Audit } from 'src/shared/entities';
 
 @Entity({ name: 'guarantee_releases' })
-export class GuaranteeRelease {
+export class GuaranteeRelease extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column({ nullable: true })
+  @Column()
   reason: string;
-  @Column({ nullable: true })
+  @Column({ type: 'uuid' })
   guaranteeId: string;
   @Column({
     type: 'enum',
-    enum: ['reviewed', 'approved', 'rejected'],
-    nullable: true,
+    enum: GuaranteeReleaseEnum,
   })
   status: string;
   @ManyToOne(() => Guarantee, (guarantee) => guarantee.releases, {
