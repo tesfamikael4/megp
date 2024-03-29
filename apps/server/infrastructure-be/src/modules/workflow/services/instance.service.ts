@@ -89,12 +89,12 @@ export class InstanceService extends EntityCrudService<Instance> {
         approver: details.approver,
         at: String(Date.now()),
         goto: goto.id,
-        stepId: existingData.stepId,
+        stepId: existingData.instanceStepId,
         version: existingData.version,
       });
       await this.repositoryInstance.update(existingData.id, {
         status: goto.status,
-        stepId: goto.id,
+        instanceStepId: goto.id,
         version: existingData.version + 1,
         metadata: existingData.metadata,
       });
@@ -105,7 +105,7 @@ export class InstanceService extends EntityCrudService<Instance> {
     const instance = await this.repositoryInstance.findOne({
       where: { activityId, organizationId },
       relations: {
-        step: true,
+        instanceStep: true,
       },
       order: {
         createdAt: 'DESC',
@@ -134,7 +134,7 @@ export class InstanceService extends EntityCrudService<Instance> {
           status: Not(In(['Rejected', 'Approved'])),
         },
         relations: {
-          step: true,
+          instanceStep: true,
         },
         order: {
           createdAt: 'DESC',
@@ -154,7 +154,7 @@ export class InstanceService extends EntityCrudService<Instance> {
     const instance = await this.repositoryInstance.findOne({
       where: { activityId, organizationId, itemId },
       relations: {
-        step: true,
+        instanceStep: true,
       },
       order: {
         createdAt: 'DESC',
@@ -181,7 +181,7 @@ export class InstanceService extends EntityCrudService<Instance> {
         status: Not(In(['Rejected', 'Approved'])),
       },
       relations: {
-        step: true,
+        instanceStep: true,
       },
     });
 

@@ -21,7 +21,7 @@ export class InstanceStepService extends ExtraCrudService<InstanceStep> {
     super(repositoryInstanceStep);
   }
 
-  async bulkCreate(steps: InstanceStep[]): Promise<InstanceStep[]> {
+  async bulkCreate(steps: any): Promise<InstanceStep[]> {
     const organizationId = steps[0].organizationId;
     const preStep = await this.repositoryInstanceStep.find({
       where: {

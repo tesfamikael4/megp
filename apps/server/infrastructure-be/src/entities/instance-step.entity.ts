@@ -37,7 +37,7 @@ export class InstanceStep extends OrgAudit {
   @JoinColumn({ name: 'activityId' })
   public activity: Activity;
 
-  @OneToMany(() => Instance, (instance) => instance.step)
+  @OneToMany(() => Instance, (instance) => instance.instanceStep)
   instances: Instance[];
 
   @Column({ type: 'jsonb' })

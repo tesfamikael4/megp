@@ -12,6 +12,7 @@ import { Activity } from './activity.entity';
 import { Step } from './step.entity';
 import { OrgAudit } from 'megp-shared-be';
 import { State } from './state.entity';
+import { InstanceStep } from './instance-step.entity';
 
 @Entity({ name: 'instances' })
 export class Instance extends OrgAudit {
@@ -26,13 +27,13 @@ export class Instance extends OrgAudit {
   public activity: Activity;
 
   @Column({ nullable: true })
-  stepId: string;
+  instanceStepId: string;
 
-  @ManyToOne(() => Step, (step) => step.instances, {
+  @ManyToOne(() => InstanceStep, (instanceStep) => instanceStep.instances, {
     cascade: true,
   })
-  @JoinColumn({ name: 'stepId' })
-  public step: Step;
+  @JoinColumn({ name: 'instanceStepId' })
+  public instanceStep: InstanceStep;
 
   @Column()
   stateId: string;
