@@ -331,19 +331,11 @@ export function Items({
         });
         if (page == 'pre') {
           await addPreItems({ items: castedData }).unwrap();
-          notifications.show({
-            title: 'Success',
-            message: 'Items Created Successfully',
-            color: 'green',
-          });
         } else {
           await addPostItems({ items: castedData }).unwrap();
-          notifications.show({
-            title: 'Success',
-            message: 'Items Created Successfully',
-            color: 'green',
-          });
         }
+        notify('Success', 'Items Created Success-fully');
+        onRequestChange({});
         setNewItems([]);
       } catch (err) {
         logger.log(err);

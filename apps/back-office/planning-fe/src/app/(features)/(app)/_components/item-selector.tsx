@@ -196,6 +196,7 @@ const ItemSelector = ({ onDone, opened, close }: ItemSelectorProps) => {
                   onClick={() => {
                     onDone(selectedItems);
                     close();
+                    setSelectedItems([]);
                   }}
                 >
                   Done

@@ -297,7 +297,9 @@ const PlanningTab = ({ page }: { page: 'pre' | 'post' }) => {
               <Flex>
                 <StatisticCard
                   title="MSME"
-                  value={analytics?.targetGroupPercentages?.MSME ?? 0}
+                  value={
+                    analytics?.targetGroupPercentages?.['MSM Enterprises'] ?? 0
+                  }
                   minValue={50}
                   type="targetGroup"
                 />
