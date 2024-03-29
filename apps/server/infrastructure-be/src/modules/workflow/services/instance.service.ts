@@ -52,7 +52,8 @@ export class InstanceService extends EntityCrudService<Instance> {
     const instanceSteps = steps.map((step) => {
       return { ...step, itemId: data.id };
     });
-    await this.repositoryInstanceStepService.bulkCreate(instanceSteps);
+    const instanceStep =
+      await this.repositoryInstanceStepService.bulkCreate(instanceSteps);
 
     const instanceState = await this.stateService.createState(
       act.id,
@@ -64,8 +65,8 @@ export class InstanceService extends EntityCrudService<Instance> {
       itemName: data.itemName,
       organizationId: data.organizationId,
       activityId: act.id,
-      status: steps[0].name,
-      stepId: steps[0].id,
+      status: instanceStep[0].name,
+      stepId: instanceStep[0].id,
       metadata: [],
       stateId: instanceState.id,
     };
