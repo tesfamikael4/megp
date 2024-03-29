@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MinioModule } from 'nestjs-minio-client';
 import { MinIOService } from './min-io.service';
-import { FileHelperService } from './file-helper.service';
 
 @Module({
   imports: [
@@ -16,7 +15,7 @@ import { FileHelperService } from './file-helper.service';
     }),
   ],
   controllers: [],
-  providers: [MinIOService, FileHelperService],
-  exports: [MinIOService, FileHelperService],
+  providers: [MinIOService],
+  exports: [MinIOService],
 })
 export class MinIOModule {}

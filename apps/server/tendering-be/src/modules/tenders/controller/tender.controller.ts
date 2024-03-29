@@ -10,6 +10,7 @@ import {
   GenerateTenderDocumentDto,
 } from '../dto/tender.dto';
 import { decodeCollectionQuery } from 'src/shared/collection-query';
+import { AllowAnonymous } from 'src/shared/authorization';
 
 const options: EntityCrudOptions = {
   createDto: CreateTenderDto,
@@ -30,6 +31,7 @@ export class TenderController extends EntityCrudController<Tender>(options) {
     description: 'Collection Query Parameter. Optional',
     required: false,
   })
+  @AllowAnonymous()
   async getActiveTenders(@Query('q') q?: string) {
     const query = decodeCollectionQuery(q);
     return await this.tenderService.getActiveTenders(query);

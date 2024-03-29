@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { FileHelperService } from '../../shared/min-io/file-helper.service';
+import { FileHelperService } from '../../shared/document-manipulator/file-helper.service';
 import { MinIOModule } from 'src/shared/min-io/min-io.module';
 import { DocxModule } from 'src/shared/docx/docx.module';
 import { DocumentManipulatorModule } from 'src/shared/document-manipulator/document-manipulator.module';
