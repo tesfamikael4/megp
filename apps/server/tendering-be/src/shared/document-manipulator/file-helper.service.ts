@@ -1,23 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { MinIOService } from 'src/shared/min-io/min-io.service';
-import * as fs from 'fs';
-import { PDFEngine } from 'chromiumly';
+import { DocumentManipulatorService } from './document-manipulator.service';
 
 @Injectable()
 export class FileHelperService {
-  constructor(private readonly minIOService: MinIOService) {}
+  constructor(
+    private readonly minIOService: MinIOService,
+    private readonly documentManipulatorService: DocumentManipulatorService,
+  ) {}
 
   async convertAndUpload(file: Express.Multer.File, bucketName: string) {
     try {
-      const outputPath = 'temp.pdf';
-
-      await fs.writeFileSync(outputPath, '');
-
-      const buffer = await PDFEngine.convert({
-        files: [file.buffer, outputPath],
-      });
-
-      await fs.unlinkSync(outputPath);
+      const buffer = await this.documentManipulatorService.convertDocxToPdf(
+        file.buffer,
+      );
 
       const fileType = file.originalname.split('.');
 

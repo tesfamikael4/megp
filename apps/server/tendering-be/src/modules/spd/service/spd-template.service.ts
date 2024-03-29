@@ -3,15 +3,12 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { ExtraCrudService } from 'src/shared/service';
 import { DocxService } from 'src/shared/docx/docx.service';
-import {
-  MinIOService,
-  FileHelperService,
-  BucketNameEnum,
-} from 'src/shared/min-io';
+import { MinIOService, BucketNameEnum } from 'src/shared/min-io';
 import { SpdTemplate } from 'src/entities/spd-template.entity';
 import { DocumentManipulatorService } from 'src/shared/document-manipulator/document-manipulator.service';
 import { join } from 'path';
 import * as fs from 'fs';
+import { FileHelperService } from 'src/shared/document-manipulator/file-helper.service';
 
 @Injectable()
 export class SpdTemplateService extends ExtraCrudService<SpdTemplate> {
