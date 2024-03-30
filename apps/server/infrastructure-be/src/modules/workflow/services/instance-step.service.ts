@@ -1,5 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { ExtraCrudService } from 'megp-shared-be';
 import { Step } from '../../../entities';
@@ -22,21 +22,26 @@ export class InstanceStepService extends ExtraCrudService<InstanceStep> {
   }
 
   async bulkCreate(steps: any): Promise<InstanceStep[]> {
-    const organizationId = steps[0].organizationId;
-    const preStep = await this.repositoryInstanceStep.find({
-      where: {
-        activityId: steps[0].activityId,
-        organizationId: organizationId,
-      },
-    });
-    if (preStep.length > 0) {
-      await this.repositoryInstanceStep.delete(preStep as any);
+    try {
+      const organizationId = steps[0].organizationId;
+      const preStep = await this.repositoryInstanceStep.find({
+        where: {
+          activityId: steps[0].activityId,
+          organizationId: organizationId,
+          itemId: steps[0].itemId,
+        },
+      });
+      if (preStep.length > 0) {
+        await this.repositoryInstanceStep.delete({ itemId: steps[0].itemId });
+      }
+
+      const items = this.repositoryInstanceStep.create(steps);
+      await this.repositoryInstanceStep.insert(items);
+
+      return items;
+    } catch (error) {
+      throw error;
     }
-
-    const items = this.repositoryInstanceStep.create(steps);
-    await this.repositoryInstanceStep.insert(items);
-
-    return items;
   }
 
   private checkOrder(defaultStep: any, steps: any): boolean {
