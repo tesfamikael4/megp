@@ -66,7 +66,7 @@ export class InstanceService extends EntityCrudService<Instance> {
       organizationId: data.organizationId,
       activityId: act.id,
       status: instanceStep[0].name,
-      stepId: instanceStep[0].id,
+      instanceStepId: instanceStep[0].id,
       metadata: [],
       stateId: instanceState.id,
     };

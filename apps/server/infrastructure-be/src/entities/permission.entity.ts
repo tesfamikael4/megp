@@ -19,7 +19,7 @@ export class Permission extends OrgAudit {
   @Column()
   name: string;
 
-  @Column({ type: 'uuid' })
+  @Column()
   permissionId: string;
 
   @Column()
