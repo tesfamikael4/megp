@@ -1,8 +1,12 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
-  Tender,
   Spd,
   Lot,
   TenderSpd,
@@ -17,7 +21,7 @@ import { DocxService } from 'src/shared/docx/docx.service';
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 import { BucketNameEnum, MinIOService } from 'src/shared/min-io';
 import { ExtraCrudService } from 'src/shared/service';
-import { EntityManager, DeepPartial, Repository } from 'typeorm';
+import { EntityManager, DeepPartial, Repository, In } from 'typeorm';
 
 @Injectable()
 export class TenderSpdService extends ExtraCrudService<TenderSpd> {
@@ -38,14 +42,23 @@ export class TenderSpdService extends ExtraCrudService<TenderSpd> {
 
     try {
       const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
-      const entity = manager.getRepository(TenderSpd).create(itemData);
-      await manager.getRepository(TenderSpd).insert(entity);
+      let entity = await manager
+        .getRepository(TenderSpd)
+        .findOneBy({ tenderId: itemData.tenderId });
 
-      const tender = await manager.getRepository(Tender).findOne({
-        where: { id: itemData.tenderId },
-        relations: { lots: true },
-      });
+      if (entity && entity.spdId === itemData.spdId) {
+        return entity;
+      }
 
+      const lots = await manager
+        .getRepository(Lot)
+        .findBy({ tenderId: itemData.tenderId });
+
+      if (!lots.length) {
+        throw new NotFoundException(`not_found`);
+      }
+
+      const lotIds = lots.map((lot) => lot.id);
       const spd = await manager.getRepository(Spd).findOne({
         where: { id: itemData.spdId },
         relations: [
@@ -55,83 +68,31 @@ export class TenderSpdService extends ExtraCrudService<TenderSpd> {
         ],
       });
 
-      const eqcQualificationPayload: EqcQualification[] = [];
-      const eqcTechnicalScoringPayload: EqcTechnicalScoring[] = [];
-      const eqcPreliminaryExaminationPayload: EqcPreliminaryExamination[] = [];
-      tender.lots.forEach((lot: Lot) => {
-        spd.spdQualifications.forEach((qualification: SpdQualification) => {
-          const eqcQualification = new EqcQualification();
-          eqcQualification.lotId = lot.id;
-          eqcQualification.spdQualificationId = qualification.id;
-          eqcQualification.category = qualification.category;
-          eqcQualification.requirement = qualification.requirement;
-          eqcQualification.factor = qualification.factor;
-          eqcQualification.formLink = qualification.formLink;
-          eqcQualification.itbReference = qualification.itbReference;
-          eqcQualification.itbDescription = qualification.itbDescription;
-          eqcQualification.order = 0;
-          eqcQualification.isRequired = false;
-          eqcQualification.singleEntityCondition = {};
-          eqcQualification.jvEachPartnerCondition = {};
-          eqcQualification.jvCombinedPartnerCondition = {};
-          eqcQualification.jvAtleastOnePartnerCondition = {
-            value: 'Must meet',
-            additionalRequirements: '',
-          };
+      if (!spd) {
+        throw new NotFoundException(`not_found`);
+      }
 
-          eqcQualificationPayload.push(eqcQualification);
-        });
+      if (!entity) {
+        [entity] = manager.getRepository(TenderSpd).create(itemData);
+        await manager.getRepository(TenderSpd).insert(entity);
+        await this.createEqc(manager, lotIds, spd);
 
-        spd.spdTechnicalScores
-          .filter((scoring: SpdTechnicalScoring) => scoring.parentId === null)
-          .forEach((scoring: SpdTechnicalScoring) => {
-            const eqcTechnicalScoring = new EqcTechnicalScoring();
-            eqcTechnicalScoring.lotId = lot.id;
-            eqcTechnicalScoring.spdTechnicalScoringId = scoring.id;
-            eqcTechnicalScoring.requirement = scoring.requirement;
-            eqcTechnicalScoring.formLink = scoring.formLink;
-            eqcTechnicalScoring.isProfessional = scoring.isProfessional;
-            eqcTechnicalScoring.hasProfessional = false;
-            eqcTechnicalScoring.point = 0;
-            eqcTechnicalScoring.isRequired = false;
-            eqcTechnicalScoring.validation = scoring.validation;
-            eqcTechnicalScoring.requirementCondition = 'Must meet';
+        return entity;
+      }
 
-            eqcTechnicalScoringPayload.push(eqcTechnicalScoring);
-          });
-
-        spd.spdPreliminaryEvaluations.forEach(
-          (evaluation: SpdPreliminaryEvaluation) => {
-            const eqcPreliminaryExamination = new EqcPreliminaryExamination();
-            eqcPreliminaryExamination.lotId = lot.id;
-            eqcPreliminaryExamination.spdEqcPreliminaryExaminationId =
-              evaluation.id;
-            eqcPreliminaryExamination.criteria = evaluation.criteria;
-            eqcPreliminaryExamination.type = evaluation.type;
-            eqcPreliminaryExamination.formLink = evaluation.formLink;
-            eqcPreliminaryExamination.itbReference = evaluation.itbReference;
-            eqcPreliminaryExamination.itbDescription =
-              evaluation.itbDescription;
-            eqcPreliminaryExamination.order = 0;
-            eqcPreliminaryExamination.isRequired = false;
-            eqcPreliminaryExamination.requirementCondition = 'Must meet';
-
-            eqcPreliminaryExaminationPayload.push(eqcPreliminaryExamination);
-          },
-        );
-      });
-
+      await manager
+        .getRepository(TenderSpd)
+        .update(entity.id, { spdId: itemData.spdId });
       await manager
         .getRepository(EqcQualification)
-        .insert(eqcQualificationPayload);
-
+        .delete({ lotId: In(lotIds) });
       await manager
         .getRepository(EqcTechnicalScoring)
-        .insert(eqcTechnicalScoringPayload);
-
+        .delete({ lotId: In(lotIds) });
       await manager
         .getRepository(EqcPreliminaryExamination)
-        .insert(eqcPreliminaryExaminationPayload);
+        .delete({ lotId: In(lotIds) });
+      await this.createEqc(manager, lotIds, spd);
 
       return entity;
     } catch (e) {
@@ -183,5 +144,88 @@ export class TenderSpdService extends ExtraCrudService<TenderSpd> {
       ...tender,
       scc,
     };
+  }
+
+  private async createEqc(
+    manager: EntityManager,
+    lotIds: string[],
+    spd: Spd,
+  ): Promise<void> {
+    const eqcQualificationPayload: EqcQualification[] = [];
+    const eqcTechnicalScoringPayload: EqcTechnicalScoring[] = [];
+    const eqcPreliminaryExaminationPayload: EqcPreliminaryExamination[] = [];
+    lotIds.forEach((lotId: string) => {
+      spd.spdQualifications.forEach((qualification: SpdQualification) => {
+        const eqcQualification = new EqcQualification();
+        eqcQualification.lotId = lotId;
+        eqcQualification.spdQualificationId = qualification.id;
+        eqcQualification.category = qualification.category;
+        eqcQualification.requirement = qualification.requirement;
+        eqcQualification.factor = qualification.factor;
+        eqcQualification.formLink = qualification.formLink;
+        eqcQualification.itbReference = qualification.itbReference;
+        eqcQualification.itbDescription = qualification.itbDescription;
+        eqcQualification.order = 0;
+        eqcQualification.isRequired = false;
+        eqcQualification.singleEntityCondition = {};
+        eqcQualification.jvEachPartnerCondition = {};
+        eqcQualification.jvCombinedPartnerCondition = {};
+        eqcQualification.jvAtleastOnePartnerCondition = {
+          value: 'Must meet',
+          additionalRequirements: '',
+        };
+
+        eqcQualificationPayload.push(eqcQualification);
+      });
+
+      spd.spdTechnicalScores
+        .filter((scoring: SpdTechnicalScoring) => scoring.parentId === null)
+        .forEach((scoring: SpdTechnicalScoring) => {
+          const eqcTechnicalScoring = new EqcTechnicalScoring();
+          eqcTechnicalScoring.lotId = lotId;
+          eqcTechnicalScoring.spdTechnicalScoringId = scoring.id;
+          eqcTechnicalScoring.requirement = scoring.requirement;
+          eqcTechnicalScoring.formLink = scoring.formLink;
+          eqcTechnicalScoring.isProfessional = scoring.isProfessional;
+          eqcTechnicalScoring.hasProfessional = false;
+          eqcTechnicalScoring.point = 0;
+          eqcTechnicalScoring.isRequired = false;
+          eqcTechnicalScoring.validation = scoring.validation;
+          eqcTechnicalScoring.requirementCondition = 'Must meet';
+
+          eqcTechnicalScoringPayload.push(eqcTechnicalScoring);
+        });
+
+      spd.spdPreliminaryEvaluations.forEach(
+        (evaluation: SpdPreliminaryEvaluation) => {
+          const eqcPreliminaryExamination = new EqcPreliminaryExamination();
+          eqcPreliminaryExamination.lotId = lotId;
+          eqcPreliminaryExamination.spdEqcPreliminaryExaminationId =
+            evaluation.id;
+          eqcPreliminaryExamination.criteria = evaluation.criteria;
+          eqcPreliminaryExamination.type = evaluation.type;
+          eqcPreliminaryExamination.formLink = evaluation.formLink;
+          eqcPreliminaryExamination.itbReference = evaluation.itbReference;
+          eqcPreliminaryExamination.itbDescription = evaluation.itbDescription;
+          eqcPreliminaryExamination.order = 0;
+          eqcPreliminaryExamination.isRequired = false;
+          eqcPreliminaryExamination.requirementCondition = 'Must meet';
+
+          eqcPreliminaryExaminationPayload.push(eqcPreliminaryExamination);
+        },
+      );
+    });
+
+    await manager
+      .getRepository(EqcQualification)
+      .insert(eqcQualificationPayload);
+
+    await manager
+      .getRepository(EqcTechnicalScoring)
+      .insert(eqcTechnicalScoringPayload);
+
+    await manager
+      .getRepository(EqcPreliminaryExamination)
+      .insert(eqcPreliminaryExaminationPayload);
   }
 }
