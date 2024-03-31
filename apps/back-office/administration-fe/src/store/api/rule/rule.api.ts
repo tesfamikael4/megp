@@ -7,7 +7,7 @@ export const ruleDesignerApi = createApi({
   tagTypes: ['Rules'],
   refetchOnFocus: true,
   baseQuery: baseQuery(
-    process.env.NEXT_PUBLIC_INFRASTRUCTURE_API ?? 'infrastructure/api',
+    process.env.NEXT_PUBLIC_INFRASTRUCTURE_API ?? '/infrastructure/api/',
   ),
   endpoints: (builder) => ({
     getRules: builder.query<any, any>({
