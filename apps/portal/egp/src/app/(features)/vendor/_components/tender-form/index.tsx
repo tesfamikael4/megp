@@ -50,15 +50,18 @@ export function TenderFormDetail({ tenderId }: FormDetailProps) {
 
   const onCreate = async (data) => {
     logger.log('here');
-    try {
-      await registration({
-        ...data,
-        tenderId: tenderId,
+
+    registration({
+      ...data,
+      tenderId: tenderId,
+    })
+      .unwrap()
+      .then(() => {
+        notify('Success', 'tender created successfully');
+      })
+      .catch(() => {
+        notify('Error', 'Already Registered');
       });
-      notify('Success', 'tender created successfully');
-    } catch (err) {
-      notify('Error', 'Error in creating tender');
-    }
   };
 
   return (

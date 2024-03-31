@@ -2,8 +2,10 @@
 import {
   Box,
   Button,
+  Divider,
   Flex,
   LoadingOverlay,
+  Modal,
   SimpleGrid,
   Text,
 } from '@mantine/core';
@@ -12,16 +14,29 @@ import { FileViewer } from '../../_components/file-viewer';
 import { useRegistrationMutation } from '../_api/register.api';
 import { useBookmarkMutation } from '../_api/bookmark.api';
 import { useParams } from 'next/navigation';
+import { useDisclosure } from '@mantine/hooks';
+import { TenderFormDetail } from '../../_components/tender-form';
+import { IconX } from '@tabler/icons-react';
+import { notify } from '@megp/core-fe';
 
 export default function TenderDetailPage() {
-  const [register, { isLoading: isRegistering }] = useRegistrationMutation();
+  const [opened, { open, close }] = useDisclosure(false);
   const [bookmark, { isLoading: isBookmarking }] = useBookmarkMutation();
   const { data: url, isLoading } = useGetFilesQuery({
     id: '96448925-0cfa-4781-8e8b-958cdf845fd1',
     type: 'main-document',
   });
   const { id } = useParams();
-
+  const onBookmark = async (data) => {
+    bookmark(data)
+      .unwrap()
+      .then(() => {
+        notify('Success', 'tender created successfully');
+      })
+      .catch(() => {
+        notify('Error', 'Already Registered');
+      });
+  };
   return (
     <>
       <main className="mt-4">
@@ -37,9 +52,8 @@ export default function TenderDetailPage() {
           <Flex align={'end'} justify={{ base: 'center', sm: 'flex-end' }}>
             <Button
               variant="filled"
-              loading={isRegistering}
               onClick={() => {
-                register({ tenderId: id });
+                open();
               }}
             >
               Register
@@ -53,7 +67,7 @@ export default function TenderDetailPage() {
                 variant="filled"
                 loading={isBookmarking}
                 onClick={() => {
-                  bookmark({ tenderId: id });
+                  onBookmark({ tenderId: id });
                 }}
               >
                 Bookmark
@@ -68,6 +82,23 @@ export default function TenderDetailPage() {
             filename="Invitation"
           />
         </Box>
+        <Modal
+          opened={opened}
+          size={'xl'}
+          onClose={close}
+          withCloseButton={false}
+        >
+          <div className="flex justify-between">
+            <h2 className="font-medium text-lg capitalize">
+              Set password for your bid
+            </h2>
+            <IconX onClick={close} />
+          </div>
+          <Divider mt={'md'} mb={'md'} />
+          <Box className="bg-white rounded shadow-sm ">
+            <TenderFormDetail tenderId={id.toString()} />
+          </Box>
+        </Modal>
       </main>
     </>
   );

@@ -13,7 +13,17 @@ export const invitationDocumentApi = createApi({
       }),
       providesTags: ['spd-templates'],
     }),
+    getBidFormFiles: builder.query<any, any>({
+      query: (id: string) => ({
+        url: `spd-bid-forms/download/${id}`,
+      }),
+      providesTags: ['spd-templates'],
+    }),
   }),
 });
 
-export const { useGetFilesQuery, useLazyGetFilesQuery } = invitationDocumentApi;
+export const {
+  useGetFilesQuery,
+  useLazyGetFilesQuery,
+  useGetBidFormFilesQuery,
+} = invitationDocumentApi;

@@ -1,12 +1,12 @@
 'use client';
 import {
-  Text,
+  Box,
   useCombobox,
   Tooltip,
   Flex,
   LoadingOverlay,
-  Box,
   Select,
+  Button,
 } from '@mantine/core';
 import {
   useParams,
@@ -24,19 +24,21 @@ import {
 import BidDeclarationPage from './_components/bid-declaration';
 import TechnicalOfferPage from './_components/technical-offer';
 import FinancialOfferPage from './_components/financial-offer';
+import FormsPage from './_components/forms';
 
 export default function TenderDetailPage() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const [opened, { open, close }] = useDisclosure(false);
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
   });
-  const { id } = useParams();
-  const { data: selected, isLoading } = useTenderDetailQuery(id?.toString());
+  const { tenderId } = useParams();
+  const { data: selected, isLoading } = useTenderDetailQuery(
+    tenderId?.toString(),
+  );
   const { data: lots, isLoading: lotLoading } = useGetAllLotsQuery(
-    id?.toString(),
+    tenderId?.toString(),
   );
   const createQueryString = useCallback(
     (name: string, value: string) => {
@@ -52,25 +54,22 @@ export default function TenderDetailPage() {
       <div className="bg-white">
         <div className="container mx-auto ">
           <div className="pt-10 pb-10 text-black font-bold text-2xl flex justify-between">
-            <Tooltip
-              label="List of Tenders"
-              className="cursor-pointer"
+            <Box>{selected?.name}</Box>
+            <Button
+              variant="filled"
+              className="my-auto"
               onClick={() => {
-                localStorage.removeItem('password');
-                router.push(`/check-password`);
+                sessionStorage.removeItem('password');
+                router.push(`/vendor/my-tenders/${tenderId}/check-password`);
               }}
-              position="top-start"
             >
-              <Flex align="center">
-                <IconChevronLeft />
-                {selected?.name}
-              </Flex>
-            </Tooltip>
+              Release Key
+            </Button>
           </div>
           <div className="flex">
             <div>
               <div className="flex space-x-4">
-                <Text
+                <Box
                   className={
                     searchParams.get('tab') === 'bid-declaration'
                       ? 'border-l bg-gray-100 pointer text-gray-700 border-t border-r border-gray-200 rounded-tl-md rounded-tr-md py-2 px-12 font-medium text-center'
@@ -85,8 +84,8 @@ export default function TenderDetailPage() {
                   }}
                 >
                   Bid Declaration
-                </Text>
-                <Text
+                </Box>
+                <Box
                   className={
                     searchParams.get('tab') === 'technical-offer'
                       ? 'border-l bg-gray-100 pointer text-gray-700 border-t border-r border-gray-200 rounded-tl-md rounded-tr-md py-2 px-12 font-medium text-center'
@@ -100,9 +99,9 @@ export default function TenderDetailPage() {
                     );
                   }}
                 >
-                  Technical Offer
-                </Text>
-                <Text
+                  Technical Compliance Sheet
+                </Box>
+                <Box
                   className={
                     searchParams.get('tab') === 'financial-offer'
                       ? 'border-l bg-gray-100 pointer text-gray-700 border-t border-r border-gray-200 rounded-tl-md rounded-tr-md py-2 px-12 font-medium text-center'
@@ -116,9 +115,25 @@ export default function TenderDetailPage() {
                     );
                   }}
                 >
-                  Financial Offer
-                </Text>
-                <Text
+                  Price Schedule
+                </Box>
+                <Box
+                  className={
+                    searchParams.get('tab') === 'forms'
+                      ? 'border-l bg-gray-100 pointer text-gray-700 border-t border-r border-gray-200 rounded-tl-md rounded-tr-md py-2 px-12 font-medium text-center'
+                      : ' pointer text-gray-700 py-2 px-12 font-medium text-center'
+                  }
+                  onClick={() => {
+                    router.push(
+                      pathname +
+                        '?' +
+                        createQueryString('tab', 'forms' as string),
+                    );
+                  }}
+                >
+                  Forms
+                </Box>
+                <Box
                   className={
                     searchParams.get('tab') === 'bid-security'
                       ? 'border-l bg-gray-100 pointer text-gray-700 border-t border-r border-gray-200 rounded-tl-md rounded-tr-md py-2 px-12 font-medium text-center'
@@ -133,14 +148,14 @@ export default function TenderDetailPage() {
                   }}
                 >
                   Bid Security
-                </Text>
+                </Box>
               </div>
             </div>
           </div>
         </div>
       </div>
       <Box className="w-full flex flex-row justify-between items-center container my-2">
-        <p className="text-lg font-semibold">
+        <Box className="text-lg font-semibold">
           <Select
             placeholder="Pick Lot"
             value={searchParams.get('lot')}
@@ -160,7 +175,7 @@ export default function TenderDetailPage() {
               );
             }}
           />
-        </p>
+        </Box>
       </Box>
       <Box className="mx-4">
         {searchParams.get('tab') === 'bid-declaration' && (
@@ -176,6 +191,11 @@ export default function TenderDetailPage() {
         {searchParams.get('tab') === 'financial-offer' && (
           <>
             <FinancialOfferPage />
+          </>
+        )}
+        {searchParams.get('tab') === 'forms' && (
+          <>
+            <FormsPage />
           </>
         )}
       </Box>

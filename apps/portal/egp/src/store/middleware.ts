@@ -18,6 +18,8 @@ import { getRegistrationApi } from '@/app/(features)/vendor/_api/registration.ap
 import { getItemsApi } from '@/app/(features)/vendor/_api/item.api';
 import { checkPasswordApi } from '@/app/(features)/vendor/_api/bid-response.api';
 import { bidApi } from './api/registered-bid/registered-bid.api';
+import { getBidFormApi } from '@/app/(features)/vendor/_api/bid-form';
+import { getTenderSpdApi } from '@/app/(features)/vendor/_api/tender-spd';
 
 const middleware = [
   vendorRegistrationApi.middleware,
@@ -37,6 +39,8 @@ const middleware = [
   getItemsApi.middleware,
   checkPasswordApi.middleware,
   bidApi.middleware,
+  getBidFormApi.middleware,
+  getTenderSpdApi.middleware,
 ];
 
 export { middleware };

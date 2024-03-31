@@ -39,7 +39,7 @@ const CheckPassword = () => {
         'password',
         JSON.stringify({ tenderId: id, password: data.password }),
       );
-      router.push(`/vendor/my-tenders/${id}/prepare-bid`);
+      router.push(`/vendor/my-tenders/prepare-bid/${id}`);
     } else {
       notify('Error', 'incorrect password please insert correct password');
     }
@@ -50,7 +50,7 @@ const CheckPassword = () => {
       sessionStorage.getItem('password') &&
       JSON.parse(sessionStorage.getItem('password') ?? '').tenderId === id
     ) {
-      router.push(`/vendor/my-tenders/${id}/prepare-bid`);
+      router.push(`/vendor/my-tenders/prepare-bid/${id}`);
     }
   }, [id]);
 
