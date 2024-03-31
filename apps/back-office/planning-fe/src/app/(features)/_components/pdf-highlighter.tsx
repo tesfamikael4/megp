@@ -62,6 +62,7 @@ export function PDFHighlighter({
   title: string;
 }): ReactElement {
   const [create] = useCreateMutation();
+  const [zoomLevel, setZoomLevel] = useState<string>('1');
   const { data } = useListQuery({
     where: [
       [{ column: 'objectId', value: objectId, operator: '=' }],
@@ -95,6 +96,19 @@ export function PDFHighlighter({
         window.removeEventListener('hashchange', scrollToHighlightFromHash);
     };
   }, [scrollToHighlightFromHash]);
+
+  const handleDownload = async () => {
+    await fetch(pdfUrl)
+      .then((res) => res.blob())
+      .then((blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = title;
+        document.body.appendChild(a);
+        a.click();
+      });
+  };
 
   const highlightTransform = (
     highlight,
@@ -171,19 +185,33 @@ export function PDFHighlighter({
         <h2 className="text-white font-semibold">{title}</h2>
 
         <Group gap={2}>
-          <ActionIcon variant="subtle">
+          <ActionIcon
+            variant="subtle"
+            onClick={() => {
+              if (parseFloat(zoomLevel) > 0.5) {
+                setZoomLevel((prev) => `${parseFloat(prev) - 0.1}`);
+              }
+            }}
+          >
             <IconMinus color="white" size={16} />
           </ActionIcon>
           <Text c="white" size="sm">
-            100%
+            {parseInt((parseFloat(zoomLevel) * 100).toString())}%
           </Text>
-          <ActionIcon variant="subtle">
+          <ActionIcon
+            variant="subtle"
+            onClick={() => {
+              if (parseInt(zoomLevel) < 2) {
+                setZoomLevel((prev) => `${parseFloat(prev) + 0.1}`);
+              }
+            }}
+          >
             <IconPlus color="white" size={16} />
           </ActionIcon>
         </Group>
 
         <Group gap={2}>
-          <ActionIcon variant="subtle">
+          <ActionIcon variant="subtle" onClick={handleDownload}>
             <IconDownload color="white" size={16} />
           </ActionIcon>
           <ActionIcon variant="subtle">
@@ -199,6 +227,7 @@ export function PDFHighlighter({
           <PdfLoader beforeLoad={<Loader />} url={pdfUrl}>
             {(pdfDocument) => (
               <PdfHighlighter
+                pdfScaleValue={zoomLevel}
                 enableAreaSelection={(event) => event.altKey}
                 highlightTransform={highlightTransform}
                 highlights={

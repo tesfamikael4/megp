@@ -169,32 +169,36 @@ export const FormDetail = ({
 
   //event handler
   const onCreate = async (data) => {
-    const rawData =
-      page == 'pre'
-        ? {
-            ...data,
-            classification: tags,
-            preBudgetPlanId: budgetPlanId,
-          }
-        : {
-            ...data,
-            classification: tags,
-            postBudgetPlanId: budgetPlanId,
-          };
-    logger.log(rawData);
+    if (parseInt(data.estimatedAmount) >= 0) {
+      const rawData =
+        page == 'pre'
+          ? {
+              ...data,
+              classification: tags,
+              preBudgetPlanId: budgetPlanId,
+            }
+          : {
+              ...data,
+              classification: tags,
+              postBudgetPlanId: budgetPlanId,
+            };
+      logger.log(rawData);
 
-    try {
-      if (page == 'pre') {
-        const res = await createPre(rawData).unwrap();
-        notify('Success', 'Activity created Successfully');
-        router.push(`/pre-budget-plan/${budgetPlanId}/activities/${res.id}`);
-      } else {
-        const res = await createPost(rawData).unwrap();
-        notify('Success', 'Activity created Successfully');
-        router.push(`/post-budget-plan/${budgetPlanId}/activities/${res.id}`);
+      try {
+        if (page == 'pre') {
+          const res = await createPre(rawData).unwrap();
+          notify('Success', 'Activity created Successfully');
+          router.push(`/pre-budget-plan/${budgetPlanId}/activities/${res.id}`);
+        } else {
+          const res = await createPost(rawData).unwrap();
+          notify('Success', 'Activity created Successfully');
+          router.push(`/post-budget-plan/${budgetPlanId}/activities/${res.id}`);
+        }
+      } catch (err) {
+        notify('Error', 'Something went wrong');
       }
-    } catch (err) {
-      notify('Error', 'Something went wrong');
+    } else {
+      notify('Error', 'Estimated Amount should be greater than 0');
     }
   };
   const onDelete = async () => {
@@ -214,33 +218,37 @@ export const FormDetail = ({
   };
 
   const onUpdate = async (newData) => {
-    const rawData =
-      page === 'pre'
-        ? {
-            id,
-            ...preActivity,
-            ...newData,
-            classification: tags,
-            preBudgetPlanId: budgetPlanId,
-          }
-        : {
-            id,
-            ...postActivity,
-            ...newData,
-            classification: tags,
-            postBudgetPlanId: budgetPlanId,
-          };
-    try {
-      if (page == 'pre') {
-        await updatePre(rawData).unwrap();
-        notify('Success', 'Activity Updated Successfully');
-      } else {
-        await updatePost(rawData).unwrap();
-        notify('Success', 'Activity Updated Successfully');
+    if (parseInt(newData.estimatedAmount) >= 0) {
+      const rawData =
+        page === 'pre'
+          ? {
+              id,
+              ...preActivity,
+              ...newData,
+              classification: tags,
+              preBudgetPlanId: budgetPlanId,
+            }
+          : {
+              id,
+              ...postActivity,
+              ...newData,
+              classification: tags,
+              postBudgetPlanId: budgetPlanId,
+            };
+      try {
+        if (page == 'pre') {
+          await updatePre(rawData).unwrap();
+          notify('Success', 'Activity Updated Successfully');
+        } else {
+          await updatePost(rawData).unwrap();
+          notify('Success', 'Activity Updated Successfully');
+        }
+      } catch (err) {
+        logger.log(err);
+        notify('Error', 'Something went wrong');
       }
-    } catch (err) {
-      logger.log(err);
-      notify('Error', 'Something went wrong');
+    } else {
+      notify('Error', 'Estimated Amount should be greater than 0');
     }
   };
 
