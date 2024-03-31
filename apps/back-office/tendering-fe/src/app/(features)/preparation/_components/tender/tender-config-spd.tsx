@@ -32,16 +32,11 @@ export default function TenderConfigSpd() {
     { isLoading: isSpdLoading, isSuccess: isSpdSuccess, data: selectedSpd },
   ] = spdUseLazyReadQuery();
   const [create, { isLoading: isSaving }] = useCreateMutation();
-  const [update, { isLoading: isUpdating }] = useUpdateMutation();
 
   const { data: selected, isSuccess, isLoading } = useReadQuery(id?.toString());
 
   const handelTenderSpd = (data) => {
-    if (selected) {
-      onUpdate(data);
-    } else {
-      onCreate(data);
-    }
+    onCreate(data);
   };
   const onCreate = async (data) => {
     try {
@@ -57,25 +52,6 @@ export default function TenderConfigSpd() {
       notify(
         'Error',
         'Error in creating Tendering Standard Procurement Document',
-      );
-    }
-  };
-
-  const onUpdate = async (data) => {
-    try {
-      await update({
-        id: id?.toString(),
-        spdId: data.id,
-        tenderId: id?.toString(),
-      });
-      notify(
-        'Success',
-        'Tendering Standard Procurement Document updated successfully',
-      );
-    } catch {
-      notify(
-        'Error',
-        'Error in updating Tendering Standard Procurement Document',
       );
     }
   };
@@ -100,9 +76,7 @@ export default function TenderConfigSpd() {
       action={<Button onClick={open}>Select</Button>}
       className="capitalize my-2"
     >
-      <LoadingOverlay
-        visible={isLoading || isUpdating || isSaving || isSpdLoading}
-      />
+      <LoadingOverlay visible={isLoading || isSaving || isSpdLoading} />
       <div>
         <Table highlightOnHover withTableBorder withColumnBorders>
           <Table.Tbody>

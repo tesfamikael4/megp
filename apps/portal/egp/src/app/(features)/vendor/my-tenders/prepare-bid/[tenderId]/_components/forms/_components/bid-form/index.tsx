@@ -11,19 +11,14 @@ import {
 } from '@mantine/core';
 
 import { useParams } from 'next/navigation';
-import { useGetFilesQuery } from '../../../tender/_api/invitation-document.api';
-import { useRegistrationMutation } from '../../../tender/_api/register.api';
-import { FileViewer } from '../../../_components/file-viewer';
 import { useDisclosure } from '@mantine/hooks';
 import { IconX } from '@tabler/icons-react';
-import { TenderFormDetail } from '../../../_components/tender-form';
+import { FileViewer } from '@/app/(features)/vendor/_components/file-viewer';
+import { useGetBidFormFilesQuery } from '@/app/(features)/vendor/tender/_api/invitation-document.api';
 
-export default function BookmarkDetailPage() {
+export default function BidForm({ bidFormId }: { bidFormId: string }) {
   const [opened, { open, close }] = useDisclosure(false);
-  const { data: url, isLoading } = useGetFilesQuery({
-    id: '96448925-0cfa-4781-8e8b-958cdf845fd1',
-    type: 'main-document',
-  });
+  const { data: url, isLoading } = useGetBidFormFilesQuery(bidFormId);
   const { id } = useParams();
 
   return (
@@ -45,7 +40,7 @@ export default function BookmarkDetailPage() {
                 open();
               }}
             >
-              Register
+              Upload
             </Button>
           </Flex>
         </Flex>
@@ -56,23 +51,6 @@ export default function BookmarkDetailPage() {
             filename="Invitation"
           />
         </Box>
-        <Modal
-          opened={opened}
-          size={'xl'}
-          onClose={close}
-          withCloseButton={false}
-        >
-          <div className="flex justify-between">
-            <h2 className="font-medium text-lg capitalize">
-              Set password for your bid
-            </h2>
-            <IconX onClick={close} />
-          </div>
-          <Divider mt={'md'} mb={'md'} />
-          <Box className="bg-white rounded shadow-sm ">
-            <TenderFormDetail tenderId={id.toString()} />
-          </Box>
-        </Modal>
       </main>
     </>
   );

@@ -1,0 +1,20 @@
+.nav {
+  @apply min-h-screen transform-gpu transition-transform;
+  &[data-open='true'] {
+    @apply block md:hidden;
+  }
+  &[data-open='false'] {
+    @apply hidden md:block;
+  }
+  min-width: 400px;
+  /* height: rem(700px); */
+  width: 320px;
+  /* padding: var(--mantine-spacing-md); */
+  padding-top: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.main {
+  @apply flex-grow mx-4 w-full min-h-[calc(100vh-64px)];
+}
