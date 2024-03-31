@@ -42,22 +42,34 @@ import {
 } from '../_constants/procurement-method';
 import { CustomSelect } from './custom-select';
 
-const activitiesSchema: ZodType<Partial<any>> = z.object({
-  procurementMethod: z.string({
-    required_error: 'Procurement Method is required',
-  }),
-  procurementType: z.string({
-    required_error: 'Procurement Type is required',
-  }),
-  fundingSource: z.string({
-    required_error: 'Funding Source  is required',
-  }),
+const activitiesSchema: ZodType<Partial<any>> = z
+  .object({
+    procurementMethod: z.string({
+      required_error: 'Procurement Method is required',
+    }),
+    procurementType: z.string({
+      required_error: 'Procurement Type is required',
+    }),
+    fundingSource: z.string({
+      required_error: 'Funding Source  is required',
+    }),
 
-  isOnline: z.coerce.boolean({
-    required_error: 'Procurement Process is required',
-  }),
-  targetGroup: z.array(z.string()).default(['Not Applicable']),
-});
+    isOnline: z.coerce.boolean({
+      required_error: 'Procurement Process is required',
+    }),
+    targetGroup: z.array(z.string()).default(['Not Applicable']),
+    donor: z.array(z.string()).optional(),
+  })
+  .refine(
+    (data) =>
+      (data.fundingSource !== 'Donor' && data.fundingSource !== 'Loan') ||
+      ((data.fundingSource === 'Donor' || data.fundingSource === 'Loan') &&
+        data.donor),
+    {
+      message: 'Donor is required',
+      path: ['donor'], // Pointing out which field is invalid
+    },
+  );
 
 export const ActivityMechanization = ({
   page,
@@ -72,6 +84,7 @@ export const ActivityMechanization = ({
     control,
     watch,
     reset,
+    setValue,
   } = useForm<any>({
     resolver: zodResolver(activitiesSchema),
   });
@@ -111,13 +124,12 @@ export const ActivityMechanization = ({
   // const [procurementMethodId, setProcurementMethodId] = useState('');
   const [contract, setContract] = useState({});
   const [mode, setMode] = useState<'new' | 'detail'>('new');
-  const [donor, setDonor] = useState<string[]>([]);
   const [justifications, setJustifications] = useState<Record<string, any>>({});
   const onCreate = async (data) => {
     const castedData =
       page == 'pre'
-        ? { ...data, preBudgetPlanActivityId: id, contract, donor }
-        : { ...data, postBudgetPlanActivityId: id, contract, donor };
+        ? { ...data, preBudgetPlanActivityId: id, contract }
+        : { ...data, postBudgetPlanActivityId: id, contract };
 
     try {
       if (page == 'pre') {
@@ -143,14 +155,12 @@ export const ActivityMechanization = ({
             ...data,
             preBudgetPlanActivityId: id,
             contract,
-            donor,
           }
         : {
             ...postMechanism?.items[0],
             ...data,
             postBudgetPlanActivityId: id,
             contract,
-            donor,
           };
 
     try {
@@ -286,7 +296,7 @@ export const ActivityMechanization = ({
 
   useEffect(() => {
     (fundingSource == 'Internal Revenue' || fundingSource == 'Treasury') &&
-      setDonor([]);
+      setValue('donor', []);
   }, [fundingSource]);
 
   useEffect(() => {
@@ -324,7 +334,7 @@ export const ActivityMechanization = ({
         targetGroup: items.targetGroup,
       });
       setMode('detail');
-      setDonor(items.donor);
+      setValue('donor', items.donor);
       setContract(items.contract);
       // setProcurementMethodId(items.id);
     }
@@ -342,7 +352,7 @@ export const ActivityMechanization = ({
         procurementType: items.procurementType,
         targetGroup: items.targetGroup,
       });
-      setDonor(items.donor);
+      setValue('donor', items.donor);
       setContract(items.contract);
       // setProcurementMethodId(items.id);
     }
@@ -353,6 +363,7 @@ export const ActivityMechanization = ({
     preMechanism,
     postMechanism,
     reset,
+    setValue,
   ]);
   return (
     <Section title="Procurement Method" collapsible={false}>
@@ -417,12 +428,22 @@ export const ActivityMechanization = ({
             />
           </Flex>
           {(fundingSource == 'Loan' || fundingSource == 'Donor') && (
-            <TextInput
-              label="Donor"
-              withAsterisk
-              value={donor[0] ?? ''}
-              onChange={(e) => setDonor([e.target.value])}
-              disabled={disableFields}
+            <Controller
+              control={control}
+              name="donor"
+              render={({ field: { name, value, onChange } }) => (
+                <TextInput
+                  name={name}
+                  label="Donor"
+                  withAsterisk
+                  value={value[0] ?? ''}
+                  onChange={(e) => {
+                    onChange([e.target.value]);
+                  }}
+                  disabled={disableFields}
+                  error={errors?.donor?.message?.toString()}
+                />
+              )}
             />
           )}
           <Controller
