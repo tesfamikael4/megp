@@ -1,0 +1,24 @@
+.container {
+  @apply bg-white rounded shadow-sm w-full border;
+}
+.container.collapsed {
+  box-shadow: none;
+}
+.header {
+  @apply flex justify-between items-center py-2 px-3 border-b;
+}
+.collapsed .header {
+  @apply border-0;
+}
+.title {
+  @apply text-lg font-medium;
+}
+.subTitle {
+  @apply text-xs text-gray-600;
+}
+.action {
+  @apply flex gap-2;
+}
+.body {
+  @apply p-3;
+}

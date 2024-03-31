@@ -7,6 +7,7 @@ import {
   IconListCheck,
   IconLockSquareRounded,
   IconReportAnalytics,
+  IconRuler,
 } from '@tabler/icons-react';
 
 export const Menu: MenuItem[] = [

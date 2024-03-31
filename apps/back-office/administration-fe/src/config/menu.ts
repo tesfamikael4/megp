@@ -2,6 +2,7 @@ import { MenuItem } from '@megp/core-fe';
 import {
   IconAdjustmentsHorizontal,
   IconBuildingBank,
+  IconScale,
 } from '@tabler/icons-react';
 
 export const Menu: MenuItem[] = [
@@ -11,6 +12,7 @@ export const Menu: MenuItem[] = [
   { label: 'Item Category', icon: IconBuildingBank, link: '/item-category' },
   { label: 'Measurements', icon: IconBuildingBank, link: '/measurement' },
   { label: 'Tags', icon: IconBuildingBank, link: '/tag' },
+  { label: 'Rules', icon: IconScale, link: '/rule-designer' },
   { label: 'Currency', icon: IconBuildingBank, link: '/currency' },
   { label: 'Target Group', icon: IconBuildingBank, link: '/target-group' },
   { label: 'Region', icon: IconBuildingBank, link: '/region' },
