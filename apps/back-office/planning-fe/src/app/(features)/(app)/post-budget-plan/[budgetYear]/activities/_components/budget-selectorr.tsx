@@ -1,7 +1,7 @@
 'use client';
 
 import { DetailTable } from '@/app/(features)/_components/detail-table';
-import { ExpandableTable } from '@/app/(features)/_components/expandable-table';
+
 import { useLazyListByIdQuery } from '@/app/(features)/budget/_api/budget.api';
 import {
   useAddBudgetMutation,
@@ -17,7 +17,12 @@ import {
   LoadingOverlay,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { logger, notify } from '@megp/core-fe';
+import {
+  ExpandableTable,
+  ExpandableTableConfig,
+  logger,
+  notify,
+} from '@megp/core-fe';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -36,7 +41,8 @@ export const BudgetSelector = ({ activity, disableFields }: any) => {
   const { data: postBudget, isLoading: isPostBudgetLoading } =
     useGetPostBudgetPlanQuery(budgetYear as string);
 
-  const config = {
+  const config: ExpandableTableConfig = {
+    disableMultiSelect: true,
     selectedItems: selectedContract,
     setSelectedItems: (data) => {
       const temp = data.filter((d) => !selectedContract.includes(d));
