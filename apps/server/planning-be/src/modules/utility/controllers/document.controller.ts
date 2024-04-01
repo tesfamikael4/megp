@@ -24,13 +24,15 @@ export class DocumentController extends EntityCrudController<Document>(
 
   @Get('download/:id')
   async download(@Param('id') id: string) {
-    const presignedUrl = await this.documentService.generatePresignedGetUrl(id);
-    return presignedUrl;
+    return await this.documentService.generatePresignedGetUrl(id);
   }
 
   @Get('getDocumentByItemId/:id')
   async getDocumentByItemId(@Param('id') id: string) {
-    const document = await this.documentService.getDocumentByItemId(id);
-    return document;
+    return await this.documentService.getDocumentByItemId(id);
+  }
+  @Get('getAllDocumentsByItemId/:id')
+  async getAllDocumentsByItemId(@Param('id') id: string) {
+    return await this.documentService.getDocumentByItemId(id);
   }
 }

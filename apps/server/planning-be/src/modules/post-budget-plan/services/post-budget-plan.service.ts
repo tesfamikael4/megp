@@ -124,7 +124,7 @@ export class PostBudgetPlanService extends ExtraCrudService<PostBudgetPlan> {
     const targetGroupCounts: Record<string, number> = {};
 
     postBudgetPlan.postBudgetPlanActivities.forEach((activity) => {
-      const targetGroups = activity.postProcurementMechanism.targetGroup || [];
+      const targetGroups = activity.postProcurementMechanism?.targetGroup || [];
       let msme = false;
 
       targetGroups.forEach((group) => {
