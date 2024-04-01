@@ -52,8 +52,7 @@ export const Documents = ({
     columns: [
       {
         header: 'File name',
-        accessor: 'fileInfo.filename',
-        render: (record) => <div>{record.fileInfo.filename}</div>,
+        accessor: 'title',
       },
       {
         accessor: 'action',
@@ -187,10 +186,12 @@ export const Documents = ({
       const file = fileList[i];
       try {
         const url = await retrieveNewURL({
-          originalname: file.name,
-          contentType: file.type,
-          filename: name,
+          fileInfo: {
+            originalname: file.name,
+            contentType: file.type,
+          },
           procurementRequisitionId: id,
+          title: name,
         }).unwrap();
         await uploadFile(file, url.presignedUrl);
       } catch (error) {

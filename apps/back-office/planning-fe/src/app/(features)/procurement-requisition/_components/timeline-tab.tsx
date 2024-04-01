@@ -268,6 +268,7 @@ export default function TimelineTab({ activityId }: { activityId?: string }) {
         period: d.period,
         timeline: d.timeline,
         order: index,
+        appDueDate: d.appDueDate,
       };
     });
 
