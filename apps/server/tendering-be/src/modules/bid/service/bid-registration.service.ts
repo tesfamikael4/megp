@@ -135,6 +135,19 @@ export class BidRegistrationService extends ExtraCrudService<BidRegistration> {
     };
   }
 
+  async findOne(id: any) {
+    return await this.bidSecurityRepository.findOne({
+      where: { id },
+      relations: {
+        tender: {
+          lots: {
+            bdsBidSecurity: true,
+          },
+        },
+      },
+    });
+  }
+
   async getMyRegisteredBids(query: CollectionQuery, req?: any): Promise<any> {
     query.includes.push('tender');
     query.includes.push('tender.lots');
@@ -171,6 +184,7 @@ export class BidRegistrationService extends ExtraCrudService<BidRegistration> {
         'https://dev-bo.megp.peragosystems.com/infrastructure/api/mpgs-payments/initiate',
     };
   }
+
   generateInitialEncryption(
     dataToEncrypt: string,
     password: string,
