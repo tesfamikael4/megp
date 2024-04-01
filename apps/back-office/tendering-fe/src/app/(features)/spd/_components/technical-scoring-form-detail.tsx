@@ -25,11 +25,13 @@ import { TechnicalScoring } from '@/models/tender/lot/technical-scoring.model';
 interface FormDetailProps {
   mode: 'new' | 'detail';
   parentId?: string;
+  returnFunction: () => void;
 }
 
 export function SpdTechnicalScoringFormDetail({
   mode,
   parentId,
+  returnFunction,
 }: Readonly<FormDetailProps>) {
   const spdSchema: ZodType<Partial<TechnicalScoring>> = z.object({
     requirement: z.string().min(1, { message: 'This field is required' }),
@@ -82,6 +84,7 @@ export function SpdTechnicalScoringFormDetail({
         orderNo: 1,
       });
       notify('Success', 'technical scoring created successfully');
+      returnFunction();
     } catch (err) {
       notify('Error', 'Error in creating technical scoring');
     }
@@ -91,6 +94,7 @@ export function SpdTechnicalScoringFormDetail({
     try {
       await update({ ...data, id: id?.toString(), spdId: id });
       notify('Success', 'technical scoring updated successfully');
+      returnFunction();
     } catch {
       notify('Error', 'Error in updating technical scoring');
     }
@@ -99,6 +103,7 @@ export function SpdTechnicalScoringFormDetail({
     try {
       await remove(id?.toString());
       notify('Success', 'technical scoring  deleted successfully');
+      returnFunction();
     } catch {
       notify('Error', 'Error in deleting technical scoring');
     }

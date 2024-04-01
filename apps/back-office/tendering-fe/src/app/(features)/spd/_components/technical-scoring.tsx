@@ -18,6 +18,11 @@ export default function SpdTechnicalScoring() {
       where: [],
     });
   };
+
+  const onReturnFunction = () => {
+    close();
+    trigger({ where: [] });
+  };
   return (
     <Section
       title="Technical Scoring"
@@ -46,7 +51,10 @@ export default function SpdTechnicalScoring() {
         </div>
         <Divider mt={'md'} mb={'md'} />
         <Box className="bg-white rounded shadow-sm ">
-          <SpdTechnicalScoringFormDetail mode="new" />
+          <SpdTechnicalScoringFormDetail
+            mode="new"
+            returnFunction={onReturnFunction}
+          />
         </Box>
       </Modal>
     </Section>

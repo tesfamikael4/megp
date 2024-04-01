@@ -131,6 +131,14 @@ export default function Labour({ item }: { item: Item }) {
     });
   };
 
+  const onReturnFunction = () => {
+    close();
+    trigger({
+      id: item.id,
+      collectionQuery: { where: [] },
+    });
+  };
+
   return (
     <Section
       title="Labour"
@@ -162,7 +170,11 @@ export default function Labour({ item }: { item: Item }) {
         </div>
         <Divider mt={'md'} mb={'md'} />
         <Box className="bg-white rounded shadow-sm ">
-          <LabourFormDetail mode={mode} labourId={adId} />
+          <LabourFormDetail
+            mode={mode}
+            labourId={adId}
+            returnFunction={onReturnFunction}
+          />
         </Box>
       </Modal>
     </Section>

@@ -7,8 +7,12 @@ import { Spd } from '@/models/spd/spd.model';
 
 interface TenderSpdProps {
   onSelect: (data: Spd) => void;
+  returnFunction: () => void;
 }
-export default function TenderSpd({ onSelect }: TenderSpdProps) {
+export default function TenderSpd({
+  onSelect,
+  returnFunction,
+}: TenderSpdProps) {
   const [trigger, { data, isFetching }] = useLazyListQuery();
   const addConfig: RelationConfig<any> = {
     title: 'Standard Procurement Document',
@@ -70,6 +74,7 @@ export default function TenderSpd({ onSelect }: TenderSpdProps) {
         onDone={(data) => {
           onSelect(data);
           close();
+          returnFunction();
         }}
         onRequestChange={onRequestChange}
       />

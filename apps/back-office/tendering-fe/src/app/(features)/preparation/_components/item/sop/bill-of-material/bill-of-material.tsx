@@ -10,8 +10,10 @@ import { Item } from '@/models/tender/lot/item';
 import DataImport from './data-import';
 import { useState } from 'react';
 import { useSaveBoqMutation } from '@/app/(features)/preparation/_api/item/bill-of-material-bulk-create.api';
+import { useRouter } from 'next/navigation';
 import { useParams } from 'next/navigation';
 export default function BillOfMaterial({ item }: { item: Item }) {
+  const router = useRouter();
   const { itemId } = useParams();
   const { data: billOfMaterial } = useGetBillOfMaterialQuery({
     itemId: itemId,
@@ -40,6 +42,10 @@ export default function BillOfMaterial({ item }: { item: Item }) {
     } catch {
       notify('Error', 'Error in deleting bulk boq');
     }
+  };
+  const onReturnFunction = () => {
+    close();
+    router.refresh();
   };
   return (
     <Section
@@ -78,7 +84,10 @@ export default function BillOfMaterial({ item }: { item: Item }) {
         </div>
         <Divider mt={'md'} mb={'md'} />
         <Box className="bg-white rounded shadow-sm ">
-          <BillOfMaterialFormDetail mode="new" />
+          <BillOfMaterialFormDetail
+            mode="new"
+            returnFunction={onReturnFunction}
+          />
         </Box>
       </Modal>
     </Section>

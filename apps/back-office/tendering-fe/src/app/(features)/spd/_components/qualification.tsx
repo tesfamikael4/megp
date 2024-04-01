@@ -57,6 +57,21 @@ export default function SpdQualification({
     },
   };
 
+  const onReturnFunction = () => {
+    close();
+    trigger({
+      where: [
+        [
+          {
+            column: 'category',
+            value: type,
+            operator: '=',
+          },
+        ],
+      ],
+    });
+  };
+
   const Action = ({ data }: any) => {
     const openDeleteModal = () => {
       modals.openConfirmModal({
@@ -75,6 +90,7 @@ export default function SpdQualification({
     const handleDelete = async () => {
       try {
         await remove(data.id).unwrap();
+        onReturnFunction();
         notifications.show({
           title: 'Success',
           message: `${type} qualification Deleted Successfully`,
@@ -174,7 +190,12 @@ export default function SpdQualification({
         </div>
         <Divider mt={'md'} mb={'md'} />
         <Box className="bg-white rounded shadow-sm mx-2">
-          <SpdQualificationFormDetail mode={mode} adId={qId} type={type} />
+          <SpdQualificationFormDetail
+            mode={mode}
+            adId={qId}
+            type={type}
+            returnFunction={onReturnFunction}
+          />
         </Box>
       </Modal>
     </Section>

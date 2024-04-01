@@ -17,11 +17,13 @@ import { ReimburseableExpense } from '@/models/tender/lot/item/reimburseable-exp
 interface FormDetailProps {
   mode: 'new' | 'detail';
   reimburseableExpenseId?: string;
+  returnFunction: () => void;
 }
 
 export function ReimburseableExpenseFormDetail({
   mode,
   reimburseableExpenseId,
+  returnFunction,
 }: FormDetailProps) {
   const reimburseableExpenseSchema: ZodType<Partial<ReimburseableExpense>> =
     z.object({
@@ -65,6 +67,7 @@ export function ReimburseableExpenseFormDetail({
         itemId: itemId,
       });
       notify('Success', 'reimburseable expense created successfully');
+      returnFunction();
     } catch (err) {
       notify('Error', 'Error in creating reimburseableExpense');
     }
@@ -76,6 +79,7 @@ export function ReimburseableExpenseFormDetail({
         ...data,
         id: reimburseableExpenseId?.toString(),
       });
+      returnFunction();
       notify('Success', 'reimburseable expense updated successfully');
     } catch {
       notify('Error', 'Error in updating reimburseableExpense');
@@ -84,6 +88,7 @@ export function ReimburseableExpenseFormDetail({
   const onDelete = async () => {
     try {
       await remove(reimburseableExpenseId ?? '');
+      returnFunction();
       notify('Success', 'reimburseable expense  deleted successfully');
     } catch {
       notify('Error', 'Error in deleting reimburseableExpense');

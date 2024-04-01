@@ -23,9 +23,14 @@ import { DayWork } from '@/models/tender/lot/item/day-work';
 interface FormDetailProps {
   mode: 'new' | 'detail';
   equipmentId?: string;
+  returnFunction: () => void;
 }
 
-export function EquipmentFormDetail({ mode, equipmentId }: FormDetailProps) {
+export function EquipmentFormDetail({
+  mode,
+  equipmentId,
+  returnFunction,
+}: FormDetailProps) {
   const equipmentSchema: ZodType<Partial<DayWork>> = z.object({
     itemNumber: z.string().min(1, { message: 'This field is required' }),
     description: z.string().min(1, { message: 'This field is required' }),
@@ -65,6 +70,7 @@ export function EquipmentFormDetail({ mode, equipmentId }: FormDetailProps) {
         ...data,
         itemId: itemId,
       });
+      returnFunction();
       notify('Success', 'equipment created successfully');
     } catch (err) {
       notify('Error', 'Error in creating equipment');
@@ -77,6 +83,7 @@ export function EquipmentFormDetail({ mode, equipmentId }: FormDetailProps) {
         ...data,
         id: equipmentId?.toString(),
       });
+      returnFunction();
       notify('Success', 'equipment updated successfully');
     } catch {
       notify('Error', 'Error in updating equipment');
@@ -85,6 +92,7 @@ export function EquipmentFormDetail({ mode, equipmentId }: FormDetailProps) {
   const onDelete = async () => {
     try {
       await remove(equipmentId ?? '');
+      returnFunction();
       notify('Success', 'equipment  deleted successfully');
     } catch {
       notify('Error', 'Error in deleting equipment');

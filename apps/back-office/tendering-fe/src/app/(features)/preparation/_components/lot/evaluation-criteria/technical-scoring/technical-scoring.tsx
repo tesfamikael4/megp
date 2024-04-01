@@ -6,13 +6,20 @@ import { useDisclosure } from '@mantine/hooks';
 import { TechnicalScoringFormDetail } from './technical-scoring-form-detail';
 import { ScoringTable } from './scoring-table';
 import { useListByIdQuery } from '@/app/(features)/preparation/_api/lot/technical-scoring.api';
+import { useRouter } from 'next/navigation';
 
 export default function TechnicalScoring({ lotId }: { lotId: string }) {
+  const router = useRouter();
   const { data: technicalScoring } = useListByIdQuery({
     id: lotId,
     collectionQuery: { where: [] },
   });
   const [opened, { open, close }] = useDisclosure(false);
+
+  const onReturnFunction = () => {
+    close();
+    router.refresh();
+  };
   return (
     <Section
       title="Technical Scoring"
@@ -40,7 +47,11 @@ export default function TechnicalScoring({ lotId }: { lotId: string }) {
         </div>
         <Divider mt={'md'} mb={'md'} />
         <Box className="bg-white rounded shadow-sm ">
-          <TechnicalScoringFormDetail mode="new" lotId={lotId} />
+          <TechnicalScoringFormDetail
+            mode="new"
+            lotId={lotId}
+            returnFunction={onReturnFunction}
+          />
         </Box>
       </Modal>
     </Section>

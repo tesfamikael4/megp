@@ -51,6 +51,11 @@ export default function SpdPreferenceMargin() {
     primaryColumn: 'name',
   };
 
+  const onReturnFunction = () => {
+    close();
+    trigger({ where: [] });
+  };
+
   const Action = ({ data }: any) => {
     const openDeleteModal = () => {
       modals.openConfirmModal({
@@ -69,6 +74,7 @@ export default function SpdPreferenceMargin() {
     const handleDelete = async () => {
       try {
         await remove(data.id).unwrap();
+        onReturnFunction();
         notifications.show({
           title: 'Success',
           message: 'Document Deleted Successfully',
@@ -155,7 +161,11 @@ export default function SpdPreferenceMargin() {
         </div>
         <Divider mt={'md'} mb={'md'} />
         <Box className="bg-white rounded shadow-sm ">
-          <SpdPreferenceMarginFormDetail mode={mode} pmId={pmId} />
+          <SpdPreferenceMarginFormDetail
+            mode={mode}
+            pmId={pmId}
+            returnFunction={onReturnFunction}
+          />
         </Box>
       </Modal>
     </Section>

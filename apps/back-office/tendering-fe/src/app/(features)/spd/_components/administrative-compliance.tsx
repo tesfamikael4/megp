@@ -19,16 +19,33 @@ import { useState } from 'react';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 
+interface SpdAdministrativeComplianceProps {
+  type?: 'technical' | 'financial';
+}
 export default function SpdAdministrativeCompliance({
   type = 'technical',
-}: {
-  type?: 'technical' | 'financial';
-}) {
+}: SpdAdministrativeComplianceProps) {
   const [trigger, { data, isFetching }] = useLazyListQuery();
   const [opened, { open, close }] = useDisclosure(false);
   const [adId, setId] = useState('');
   const [mode, setMode] = useState<'new' | 'detail'>('new');
   const [remove, { isLoading: isDeleting }] = useDeleteMutation();
+
+  const onReturnFunction = () => {
+    close();
+    trigger({
+      where: [
+        [
+          {
+            column: 'type',
+            value: type,
+            operator: '=',
+          },
+        ],
+      ],
+    });
+  };
+
   const config = {
     columns: [
       { accessor: 'criteria', title: 'Criterion', width: 300 },
@@ -41,7 +58,9 @@ export default function SpdAdministrativeCompliance({
       {
         accessor: 'action',
         header: 'Action',
-        render: (record) => <Action data={record} />,
+        render: (record) => (
+          <Action data={record} returnFunction={onReturnFunction} />
+        ),
         width: 70,
       },
     ],
@@ -170,6 +189,7 @@ export default function SpdAdministrativeCompliance({
             mode={mode}
             adId={adId}
             type={type}
+            returnFunction={onReturnFunction}
           />
         </Box>
       </Modal>

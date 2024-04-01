@@ -86,7 +86,6 @@ export default function Material({ item }: { item: Item }) {
         });
       }
     };
-
     return (
       <Menu shadow="md">
         <Menu.Target>
@@ -130,6 +129,13 @@ export default function Material({ item }: { item: Item }) {
       },
     });
   };
+  const onReturnFunction = () => {
+    close();
+    trigger({
+      id: item.id,
+      collectionQuery: { where: [] },
+    });
+  };
 
   return (
     <Section
@@ -162,7 +168,11 @@ export default function Material({ item }: { item: Item }) {
         </div>
         <Divider mt={'md'} mb={'md'} />
         <Box className="bg-white rounded shadow-sm ">
-          <MaterialFormDetail mode={mode} materialId={adId} />
+          <MaterialFormDetail
+            mode={mode}
+            materialId={adId}
+            returnFunction={onReturnFunction}
+          />
         </Box>
       </Modal>
     </Section>

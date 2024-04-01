@@ -150,7 +150,23 @@ export default function Qualification({
       },
     });
   };
-
+  const onReturnFunction = () => {
+    close();
+    trigger({
+      id: lotId,
+      collectionQuery: {
+        where: [
+          [
+            {
+              column: 'category',
+              value: type,
+              operator: '=',
+            },
+          ],
+        ],
+      },
+    });
+  };
   return (
     <Section
       title={type}
@@ -186,6 +202,7 @@ export default function Qualification({
             adId={qId}
             type={type}
             lotId={lotId}
+            returnFunction={onReturnFunction}
           />
         </Box>
       </Modal>

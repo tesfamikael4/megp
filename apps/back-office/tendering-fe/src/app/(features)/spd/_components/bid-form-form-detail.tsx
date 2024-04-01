@@ -26,9 +26,14 @@ import { IconUpload } from '@tabler/icons-react';
 interface FormDetailProps {
   mode: 'new' | 'detail';
   adId: string;
+  returnFunction: () => void;
 }
 
-export function BidFormFormDetail({ mode, adId }: FormDetailProps) {
+export function BidFormFormDetail({
+  mode,
+  adId,
+  returnFunction,
+}: FormDetailProps) {
   const spdSchema: ZodType<Partial<BidForm>> = z.object({
     title: z.string().min(1, { message: 'This field is required' }),
     code: z.string().min(1, { message: 'This field is required' }),
@@ -68,6 +73,7 @@ export function BidFormFormDetail({ mode, adId }: FormDetailProps) {
       formData.append('code', data.code);
       formData.append('type', data.type);
       await uploadFile(formData);
+      returnFunction();
       notify('Success', 'Bid form created successfully');
     } catch (err) {
       notify('Error', 'Error in creating bid form');
@@ -77,6 +83,7 @@ export function BidFormFormDetail({ mode, adId }: FormDetailProps) {
   const onUpdate = async (data) => {
     try {
       await update({ ...data, pdId: id, id: adId?.toString() });
+      returnFunction();
       notify('Success', 'Bid form updated successfully');
     } catch {
       notify('Error', 'Error in updating bid form');
@@ -85,6 +92,7 @@ export function BidFormFormDetail({ mode, adId }: FormDetailProps) {
   const onDelete = async () => {
     try {
       await remove(adId?.toString());
+      returnFunction();
       notify('Success', 'Bid form deleted successfully');
     } catch {
       notify('Error', 'Error in deleting bid form');

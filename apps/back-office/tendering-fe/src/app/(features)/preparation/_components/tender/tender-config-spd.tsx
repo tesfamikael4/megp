@@ -68,6 +68,13 @@ export default function TenderConfigSpd() {
     }
   }, [isSuccess, selected, isSpdSuccess, selectedSpd, trigger]);
 
+  const onReturnFunction = () => {
+    close();
+    if (selected && selected.spdId) {
+      trigger(selected.spdId);
+    }
+  };
+
   return (
     <Section
       title="Standard Procurement Document"
@@ -124,7 +131,10 @@ export default function TenderConfigSpd() {
         </div>
         <Divider mt={'md'} mb={'md'} />
         <Box className="bg-white rounded shadow-sm mx-2">
-          <TenderSpd onSelect={handelTenderSpd} />
+          <TenderSpd
+            onSelect={handelTenderSpd}
+            returnFunction={onReturnFunction}
+          />
         </Box>
       </Modal>
     </Section>

@@ -21,12 +21,15 @@ import { useParams } from 'next/navigation';
 import { logger, notify } from '@megp/core-fe';
 import { PreliminaryExamination } from '@/models/tender/lot/preliminary-examination.model';
 import { RequirementCondition } from '@/models/tender/lot/technical-scoring.model';
+import { useReadQuery as useGetSpd } from '@/app/(features)/preparation/_api/tender/tender-spd.api';
+import { useLazyListByIdQuery } from '@/app/(features)/preparation/_api/lot/bid-form.api';
 
 interface FormDetailProps {
   mode: 'new' | 'detail';
   adId: string;
   type: 'technical' | 'financial';
   lotId: string;
+  returnFunction: () => void;
 }
 
 export function PreliminaryExaminationFormDetail({
@@ -34,6 +37,7 @@ export function PreliminaryExaminationFormDetail({
   adId,
   type,
   lotId,
+  returnFunction,
 }: Readonly<FormDetailProps>) {
   const preliminaryExaminationSchema: ZodType<Partial<PreliminaryExamination>> =
     z.object({
@@ -61,6 +65,13 @@ export function PreliminaryExaminationFormDetail({
   }, [errors]);
   const { id } = useParams();
 
+  const {
+    data: selectedSpd,
+    isSuccess: isSpdSuccess,
+    isLoading: isSpdLoading,
+  } = useGetSpd(id?.toString());
+  const [trigger, { data: bidFormLinks, isLoading: isBidFormLoading }] =
+    useLazyListByIdQuery();
   const [create, { isLoading: isSaving }] = useCreateMutation();
   const [update, { isLoading: isUpdating }] = useUpdateMutation();
   const [remove, { isLoading: isDeleting }] = useDeleteMutation();
@@ -82,6 +93,7 @@ export function PreliminaryExaminationFormDetail({
         order: 1,
       });
       notify('Success', 'Preliminary examination created successfully');
+      returnFunction();
     } catch (err) {
       notify('Error', 'Error in creating preliminary examination');
     }
@@ -91,6 +103,7 @@ export function PreliminaryExaminationFormDetail({
     try {
       await update({ ...data, pdId: id, type: type, id: adId?.toString() });
       notify('Success', 'Preliminary examination updated successfully');
+      returnFunction();
     } catch {
       notify('Error', 'Error in updating preliminary examination');
     }
@@ -99,11 +112,20 @@ export function PreliminaryExaminationFormDetail({
     try {
       await remove(adId?.toString());
       notify('Success', 'Preliminary examination deleted successfully');
+      returnFunction();
     } catch {
       notify('Error', 'Error in deleting preliminary examination');
     }
   };
 
+  useEffect(() => {
+    if (isSpdSuccess && selectedSpd) {
+      trigger({
+        id: selectedSpd.spdId,
+        collectionQuery: { where: [] },
+      });
+    }
+  }, [isSpdSuccess, selectedSpd, trigger]);
   useEffect(() => {
     if (mode == 'detail' && selectedSuccess && selected !== undefined) {
       reset({
@@ -118,7 +140,7 @@ export function PreliminaryExaminationFormDetail({
 
   return (
     <Stack pos="relative">
-      <LoadingOverlay visible={isLoading} />
+      <LoadingOverlay visible={isLoading || isSpdLoading || isBidFormLoading} />
       <Textarea
         label="Criteria"
         withAsterisk
@@ -150,12 +172,20 @@ export function PreliminaryExaminationFormDetail({
         {...register('itbDescription')}
       />
       <div className="flex space-x-4">
-        <TextInput
+        <NativeSelect
           placeholder="Bid Form Link"
           withAsterisk
-          label="formLink"
+          label="Bid Form Link"
           className="w-1/2"
           error={errors?.formLink ? errors?.formLink?.message?.toString() : ''}
+          data={
+            bidFormLinks?.items
+              ? bidFormLinks?.items.map((link) => ({
+                  label: link.title,
+                  value: link.code,
+                }))
+              : []
+          }
           {...register('formLink')}
         />
         <NativeSelect
