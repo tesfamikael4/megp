@@ -1,5 +1,8 @@
 'use ';
-import { useGoToNextStateMutation } from '@/store/api/vendor_request_handler/new-registration-api';
+import {
+  useGetVendorQuery,
+  useGoToNextStateMutation,
+} from '@/store/api/vendor_request_handler/new-registration-api';
 import { Box, Button, Checkbox, Flex, Textarea } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { useRouter } from 'next/navigation';
@@ -236,7 +239,7 @@ export default function TaskHandler({
           )}
           <Button
             onClick={() => {
-              handleButtonClick('REJECT');
+              handleButtonClick(requestType === 'update' ? 'Cancel' : 'REJECT');
               if (remark) {
                 router.push(
                   `/${requestType === 'update' ? 'info-change' : requestType === 'preferential' ? 'preferential-services' : requestType}`,
@@ -246,7 +249,7 @@ export default function TaskHandler({
             className="bg-red-600 hover:bg-red-700"
             loading={loading['REJECT']}
           >
-            Reject
+            {requestType === 'update' ? 'Cancel' : 'Reject'}
           </Button>
         </Flex>
       )}

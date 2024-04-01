@@ -21,6 +21,10 @@ import Link from 'next/link';
 
 const tabs = [
   {
+    tabValue: 'certificate',
+    tabName: 'Certificate',
+  },
+  {
     tabValue: 'basic',
     tabName: 'Basic Registration',
   },
@@ -75,6 +79,10 @@ const tabs = [
   {
     tabValue: 'businessAreas',
     tabName: 'Business Areas',
+  },
+  {
+    tabValue: 'preferentail',
+    tabName: 'Eligibility for Preferential Services',
   },
 ];
 
@@ -133,6 +141,11 @@ const formatColumns = {
       name: 'name',
       displayName: 'Preferential Treatment Type',
     },
+  ],
+  preferentail: [
+    { name: 'type', displayName: 'Preferential Service' },
+    { name: 'certiNumber', displayName: 'Certificate Number' },
+    { name: 'certificateUrl', displayName: 'Certificate' },
   ],
 };
 
@@ -199,7 +212,46 @@ function FormPreview({ data }: { data: any }) {
 
         {selected &&
           data[selected] &&
-          (Array.isArray(data[selected]) ? (
+          (typeof data[selected] === 'string' ? (
+            <Accordion variant="separated" styles={{}} key={data[selected]}>
+              <Accordion.Item
+                key={addSpacesToCamelCase(selected)}
+                className={classes.item}
+                value={addSpacesToCamelCase(selected)}
+              >
+                <Accordion.Control
+                  styles={{
+                    control: {
+                      border: 'none',
+                      borderBottom: '1px solid #E5E7EB',
+                    },
+                  }}
+                >
+                  {addSpacesToCamelCase(selected)}
+                </Accordion.Control>
+                <Accordion.Panel>
+                  {data[selected] ? (
+                    <ShowFile
+                      url={`${
+                        process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api'
+                      }/upload/get-file-bo/${
+                        selected === 'supportingDocuments'
+                          ? 'SupportingDocument'
+                          : selected === 'certificate'
+                            ? 'certificate'
+                            : 'paymentReceipt'
+                      }/${data[selected]}/${data?.userId}`}
+                      filename={data[selected]}
+                    />
+                  ) : (
+                    <Box className="flex items-center h-20 w-full justify-center">
+                      No file uploaded
+                    </Box>
+                  )}
+                </Accordion.Panel>
+              </Accordion.Item>
+            </Accordion>
+          ) : Array.isArray(data[selected]) ? (
             <Table.ScrollContainer
               minWidth={300}
               style={{
@@ -217,8 +269,6 @@ function FormPreview({ data }: { data: any }) {
             </Table.ScrollContainer>
           ) : (
             Object.keys(data[selected]).map((fieldKey) => {
-              logger.log(selected);
-
               return selected === 'supportingDocuments' ||
                 selected === 'certificate' ||
                 (selected === 'paymentReceipt' && fieldKey === 'attachment') ? (
