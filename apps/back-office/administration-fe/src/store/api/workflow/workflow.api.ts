@@ -40,6 +40,12 @@ export const workflowApi = createApi({
       query: (payload) => `default-steps/order-admin/${payload.activityId}`,
       providesTags: ['Steps'],
     }),
+
+    getDefaultPermissions: builder.query<any, { activityId: string }>({
+      query: (payload) => `permissions/list/${payload.activityId}`,
+      providesTags: ['Steps'],
+    }),
+
     getSteps: builder.query<any, { activityId: string }>({
       query: (payload) => `steps/list/${payload.activityId}`,
     }),
@@ -55,6 +61,7 @@ export const workflowApi = createApi({
 
 export const {
   useLazyGetActivitiesQuery,
+  useLazyGetDefaultPermissionsQuery,
   useCreateStepsMutation,
   useCreateDefaultStepsMutation,
   useAddPermissionsMutation,

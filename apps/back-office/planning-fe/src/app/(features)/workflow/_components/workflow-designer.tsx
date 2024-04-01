@@ -272,7 +272,7 @@ export function Steps({ activityId }: { activityId: string }) {
                 (item) => item.approver === original.approver,
               )}
               onChange={(e) => {
-                if (e.target.checked) setSelected([...selected, original]);
+                if (e.target.checked) setSelected([original]);
                 else {
                   setSelected([
                     ...selected.filter((s) => s.id !== original.id),
@@ -352,7 +352,7 @@ export function Steps({ activityId }: { activityId: string }) {
                     key={index}
                     withBorder
                     onClick={async () => {
-                      setType([...type, e]);
+                      if (!type.includes(e)) setType([...type, e]);
                       await handleAssignment({ type: [e] });
                       setIsSelectorOpened(true);
                     }}
@@ -461,6 +461,7 @@ export function Steps({ activityId }: { activityId: string }) {
     const [isSelectorOpened, setIsSelectorOpened] = useState(false);
     const [type, setType] = useState<string[]>([]);
     const [name, setName] = useState<string>('');
+    const [nameError, setNameError] = useState<string>('');
     const [getRoles, { data: rolesList }] = useLazyGetRolesQuery();
     const [getGroups, { data: groupsList }] = useLazyGetGroupsQuery();
     const [getUsers, { data: usersList }] = useLazyGetUsersQuery();
@@ -545,7 +546,7 @@ export function Steps({ activityId }: { activityId: string }) {
                 (item) => item.approver === original.approver,
               )}
               onChange={(e) => {
-                if (e.target.checked) setSelected([...selected, original]);
+                if (e.target.checked) setSelected([original]);
                 else {
                   setSelected([
                     ...selected.filter((s) => s.id !== original.id),
@@ -609,8 +610,13 @@ export function Steps({ activityId }: { activityId: string }) {
           <Stack>
             <TextInput
               label="Name"
+              withAsterisk
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => {
+                setNameError('');
+                setName(e.target.value);
+              }}
+              error={nameError}
             />
 
             <Flex className="w-full flex-grow" gap={'lg'}>
@@ -620,7 +626,7 @@ export function Steps({ activityId }: { activityId: string }) {
                     key={index}
                     withBorder
                     onClick={async () => {
-                      setType([...type, e]);
+                      if (!type.includes(e)) setType([...type, e]);
                       await handleAssignment({ type: e });
                       setIsSelectorOpened(true);
                     }}
@@ -660,6 +666,10 @@ export function Steps({ activityId }: { activityId: string }) {
 
                 <Button
                   onClick={() => {
+                    if (!name) {
+                      setNameError('Name is required');
+                      return;
+                    }
                     const approvers = selected.map((item) => {
                       return { ...item };
                     });
@@ -681,32 +691,6 @@ export function Steps({ activityId }: { activityId: string }) {
                 >
                   Save
                 </Button>
-                {/* <Button
-                  onClick={() => {
-                    const approvers = selected.map((item) => {
-                      return { ...item };
-                    });
-                    const temp = data.map((item: any) => {
-                        const selectedApprovers = approvers.filter(
-                          (approver) => {
-                            return approver.id !== item.id;
-                          },
-                        );
-                        return {
-                          ...item,
-                          approvers: [...selectedApprovers],
-                          id: data.length + 1,
-                          type: 'custom',
-                        };
-                      return item;
-                    });
-                    setData([...temp]);
-                    setOrderedData([...temp]);
-                  }}
-                  className="ml-auto"
-                >
-                  Save
-                </Button> */}
               </>
             )}
           </Stack>

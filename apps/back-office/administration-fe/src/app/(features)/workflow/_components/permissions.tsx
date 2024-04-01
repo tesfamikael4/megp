@@ -19,45 +19,53 @@ import {
 } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
-import { useGetPermissionsQuery } from '@/store/api/workflow/workflow-iam.api';
-import { useAddPermissionsMutation } from '@/store/api/workflow/workflow.api';
+import {
+  useGetPermissionsQuery,
+  useLazyGetPermissionsQuery,
+} from '@/store/api/workflow/workflow-iam.api';
+import {
+  useAddPermissionsMutation,
+  useLazyGetDefaultPermissionsQuery,
+} from '@/store/api/workflow/workflow.api';
 import { useAuth } from '@megp/auth';
 import { notifications } from '@mantine/notifications';
 
 export function Permissions() {
   const [data, setData] = useState<any>([]);
-  const { user } = useAuth();
+  const { organizationId } = useAuth();
   const { id } = useParams();
   const [opened, { open, close }] = useDisclosure(false);
 
   const [selected, setSelected] = useState<any>([]);
 
-  const { data: permissions } = useGetPermissionsQuery({
-    id: user?.organization?.id ?? '',
-  });
+  const [getPermissions, { data: permissions }] = useLazyGetPermissionsQuery();
   const [permissionsList, setPermissionList] = useState([]);
   const [addPermissions, { isLoading: isAddingPermissions }] =
     useAddPermissionsMutation();
+  const [
+    getDefaultPermissions,
+    { data: defaultPermissions, isLoading: isGettingDefaultPermissions },
+  ] = useLazyGetDefaultPermissionsQuery();
+
+  useEffect(() => {
+    getPermissions({ id: organizationId });
+  }, [organizationId]);
+
+  useEffect(() => {
+    getDefaultPermissions({ activityId: `${id}` });
+  }, [id]);
 
   useEffect(() => {
     setPermissionList(permissions?.items);
   }, [permissions]);
 
   useEffect(() => {
-    setSelected([]);
-  }, []);
+    setData(defaultPermissions?.items);
+  }, [defaultPermissions]);
 
-  // const permissions = [
-  //   {
-  //     name: 'Procurment Unit Head',
-  //   },
-  //   {
-  //     name: 'Procurement Requisition',
-  //   },
-  //   {
-  //     name: 'Procurement Approver',
-  //   },
-  // ];
+  useEffect(() => {
+    setSelected(defaultPermissions?.items);
+  }, [defaultPermissions]);
 
   const listConfig: TableConfig<any> = {
     columns: [
@@ -107,7 +115,7 @@ export function Permissions() {
           <Checkbox
             checked={selected.some((item) => item.name === original.name)}
             onChange={(data) => {
-              if (data.target.checked) setSelected([...selected, original]);
+              if (data.target.checked) setSelected([original]);
               else
                 setSelected([...selected.filter((s) => s.id !== original.id)]);
             }}
@@ -161,7 +169,8 @@ export function Permissions() {
       >
         Add Permission
       </Button>
-      <Table config={listConfig} data={data} />
+      <LoadingOverlay visible={isGettingDefaultPermissions} />
+      <Table config={listConfig} data={data ?? []} />
       {data?.length > 0 && (
         <Button
           leftSection={<IconDeviceFloppy size={18} />}
