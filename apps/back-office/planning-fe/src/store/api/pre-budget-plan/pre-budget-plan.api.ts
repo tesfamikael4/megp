@@ -116,6 +116,12 @@ export const preBudgetPlanApi = createApi({
     getSubmittedPlans: builder.query<any, any>({
       query: (itemId: string) => `documents/getDocumentByItemId/${itemId}`,
     }),
+    getApprovalDocuments: builder.query<any, any>({
+      query: (id) => `documents/getAllDocumentsByItemId/${id}`,
+    }),
+    getApprovalDocumentDetailById: builder.query<any, any>({
+      query: (id) => `documents/getPresignedUrlWithDoc/${id}`,
+    }),
   }),
 });
 
@@ -137,4 +143,6 @@ export const {
   useDeleteDocumentMutation,
   useGetFilesQuery,
   useLazyDownloadFilesQuery,
+  useLazyGetApprovalDocumentsQuery,
+  useLazyGetApprovalDocumentDetailByIdQuery,
 } = preBudgetPlanApi;

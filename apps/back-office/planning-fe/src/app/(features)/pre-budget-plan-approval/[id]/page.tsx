@@ -33,7 +33,7 @@ export default function WorkflowPage() {
       {data && (
         <PDFHighlighter
           title={data?.document.fileInfo.originalname}
-          objectId={id as string}
+          objectId={data?.document.id as string}
           pdfUrl={fileUrl}
           workflow={
             <WorkflowHandling
