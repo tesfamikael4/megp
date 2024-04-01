@@ -13,6 +13,9 @@ export class ProcurementRequisitionDocument extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column({ nullable: true })
+  title: string;
+
   @Column({ type: 'jsonb' })
   fileInfo: any;
 

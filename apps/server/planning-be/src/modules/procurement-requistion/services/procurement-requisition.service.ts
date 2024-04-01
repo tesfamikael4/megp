@@ -1,5 +1,10 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  HttpException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { EntityManager, Repository } from 'typeorm';
 import { PostBudgetPlanActivity, ProcurementRequisition } from 'src/entities';
 import { EntityCrudService } from 'src/shared/service';
@@ -51,30 +56,27 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
         postProcurementMechanism: true,
       },
     });
+
+    if (!activity || activity.status === 'USED_IN_PR') {
+      throw new HttpException(
+        'Activity is used in Procurement requisition',
+        430,
+      );
+    }
     if (
-      !activity ||
       !activity.postBudgetPlan ||
       activity.postBudgetPlan.status.toUpperCase() !==
-        ProcurementRequisitionStatusEnum.APPROVED ||
-      activity.status === 'USED_IN_PR'
+        ProcurementRequisitionStatusEnum.APPROVED
     ) {
-      throw new NotFoundException('Activity should be approved or not found');
+      throw new HttpException('Plan is not approved', 430);
     }
 
-    const procurementRequisitionItems = [];
-    activity.postBudgetPlanItems.forEach((item: any) => {
-      (item.uom = item.uomName),
-        procurementRequisitionItems.push({
-          item,
-        });
-    });
-    const procurementRequisitionTimelines = [];
-    activity.postBudgetPlanTimelines.forEach((timeline: any) => {
-      timeline.appDueDate = new Date(timeline.dueDate);
-      procurementRequisitionTimelines.push({
-        timeline,
-      });
-    });
+    const procurementRequisitionItems = activity.postBudgetPlanItems;
+    procurementRequisitionItems.forEach((x: any) => (x.uom = x.uomName));
+    const procurementRequisitionTimelines = activity.postBudgetPlanTimelines;
+    procurementRequisitionTimelines.forEach(
+      (x: any) => (x.appDueDate = new Date(x.dueDate)),
+    );
     const procurementRequisition: ProcurementRequisition = {
       ...activity,
       id: itemData.id,
@@ -83,7 +85,8 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
       userReference: `u${activity.procurementReference}`,
       postBudgetPlanId: activity.postBudgetPlan.id,
       status: ProcurementRequisitionStatusEnum.DRAFT,
-      organization: user.organization.id,
+      organizationId: user.organization.id,
+      organizationName: user.organization.name,
       procurementRequisitionItems,
       procurementMechanisms: activity.postProcurementMechanism
         ? activity.postProcurementMechanism
@@ -117,13 +120,17 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
         organizationId: true,
       },
     });
-    const itemName = 'procurementRequisition';
-    const prWithItemName = { ...pr, itemName };
-    await this.pdfGenerator(data.id, prWithItemName.itemName, {
+    const prWithName = {
+      itemName: pr.name,
+      id: pr.id,
+      organizationId: pr.organizationId,
+      name: 'procurementRequisition',
+    };
+    await this.pdfGenerator(data.id, prWithName.itemName, {
       organizationId: data.organizationId,
       organizationName: data.organizationName,
     });
-    this.prRMQClient.emit('initiate-workflow', prWithItemName);
+    this.prRMQClient.emit('initiate-workflow', prWithName);
     await this.repositoryProcurementRequisition.update(pr.id, {
       status: ProcurementRequisitionStatusEnum.SUBMITTED,
     });
