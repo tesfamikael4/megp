@@ -64,7 +64,7 @@ export const formatColumns = {
     { name: 'businessType', displayName: 'Form of Business' },
     { name: 'tinNumber', displayName: 'Taxpayer Identification Number' },
     { name: 'district', displayName: 'District' },
-    { status: 'status' },
+    { name: 'tinIssuedDate' },
   ],
   businessSizeAndOwnership: [
     { name: 'registeredCapital' },

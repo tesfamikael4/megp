@@ -33,55 +33,54 @@ export const MiscellaneousPanel = ({
   open,
   userId,
 }: Required<PanelProps>) => {
-  return (
-    <Accordion.Panel
-      key={fieldKey}
-      styles={{
-        panel: {
-          padding: 0,
-        },
-        content: {
-          padding: 0,
-        },
-      }}
-    >
-      {data !== null &&
-        typeof data === 'object' &&
-        fieldKey !== 'invoiceIds' && (
-          <Flex align="center" gap={'md'}>
-            <Text
-              size="xs"
-              fw={700}
-              tt="capitalize"
-              className="text-md max:w-1/5 w-1/5 bg-[#DCE8F2] p-3"
-            >
-              {addSpacesToCamelCase(fieldKey)}
-            </Text>
-            <Text size="xs" fw={500} tt="capitalize">
-              {tabValue === 'businessSizeAndOwnership'
-                ? displayFormattedObject(data, {
-                    [fieldKey]: 'amount+currency',
-                  })
-                : Object.keys(data).map((key) => {
-                    return (
-                      <MiscellaneousPanel
-                        key={key}
-                        data={data[key]}
-                        fieldKey={key}
-                        tabValue={tabValue}
-                        setUrl={setUrl}
-                        open={open}
-                        userId={userId}
-                      />
-                    );
-                  })}
-            </Text>
-          </Flex>
-        )}
-      {typeof data === 'string' &&
-        fieldKey !== 'invoiceIds' &&
-        fieldKey !== 'invoiceId' &&
-        fieldKey !== 'serviceId' && (
+  if (!['invoiceIds', 'invoiceId', 'serviceId'].includes(fieldKey))
+    return (
+      <Accordion.Panel
+        key={fieldKey}
+        styles={{
+          panel: {
+            padding: 0,
+          },
+          content: {
+            padding: 0,
+          },
+        }}
+      >
+        {data !== null &&
+          typeof data === 'object' &&
+          fieldKey !== 'invoiceIds' && (
+            <Flex align="center" gap={'md'}>
+              <Text
+                size="xs"
+                fw={700}
+                tt="capitalize"
+                className="text-md max:w-1/5 w-1/5 bg-[#DCE8F2] p-3"
+              >
+                {addSpacesToCamelCase(fieldKey)}
+              </Text>
+              <Text size="xs" fw={500} tt="capitalize">
+                {tabValue === 'businessSizeAndOwnership'
+                  ? displayFormattedObject(data, {
+                      [fieldKey]: 'amount+currency',
+                    })
+                  : Object.keys(data).map((key) => {
+                      return (
+                        <MiscellaneousPanel
+                          key={key}
+                          data={data[key]}
+                          fieldKey={key}
+                          tabValue={tabValue}
+                          setUrl={setUrl}
+                          open={open}
+                          userId={userId}
+                        />
+                      );
+                    })}
+              </Text>
+            </Flex>
+          )}
+
+        {typeof data === 'string' && (
           <Flex align="center" gap="md">
             <Text
               size="xs"
@@ -120,7 +119,7 @@ export const MiscellaneousPanel = ({
             )}
           </Flex>
         )}
-      <Divider />
-    </Accordion.Panel>
-  );
+        <Divider />
+      </Accordion.Panel>
+    );
 };

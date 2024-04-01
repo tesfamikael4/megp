@@ -114,7 +114,11 @@ export const BusinessSizeAndOwnership: React.FC<PassFormDataProps> = ({
           label="Ownership Type"
           withAsterisk
           id="ownershipType"
-          data={['Malawian', 'Local', 'Foreign', 'Mixed']}
+          data={
+            register('basic.origin', 'select').value === 'Malawi'
+              ? ['Local', 'Malawian', 'Mixed']
+              : ['Mixed', 'Foreign']
+          }
           placeholder="select"
           searchable
           {...register('businessSizeAndOwnership.ownershipType', 'select')}

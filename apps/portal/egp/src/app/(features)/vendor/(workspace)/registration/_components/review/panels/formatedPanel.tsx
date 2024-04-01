@@ -6,6 +6,12 @@ export const FormattedPanel = ({ data, tabValue }: any) => {
   return (
     <>
       {formatColumns[tabValue].map((field) => {
+        if (
+          field.name === 'tinIssuedDate' &&
+          data[tabValue]?.origin !== 'Malawi'
+        ) {
+          return null;
+        }
         return (
           <Accordion.Panel
             key={field.name}
