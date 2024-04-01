@@ -109,7 +109,7 @@ export class VendorRegistrationsController {
   async getIsrVendorInvoiceByuserId(@CurrentUser() userInfo: any) {
     return await this.regService.getIsrVendorInvoiceByUserId(userInfo.id);
   }
-
+  //new registration request draft
   @Post('add-vendor-information')
   async addVendorInformation(
     @Body() data: InsertAllDataDto,
