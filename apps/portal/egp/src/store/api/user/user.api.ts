@@ -1,20 +1,44 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { User } from '@/models/user';
+import { baseQuery } from '@/store/base-query';
 
 export const userApi = createApi({
   reducerPath: 'userApi',
   refetchOnFocus: true,
-  baseQuery: fetchBaseQuery({
-    baseUrl: 'https://jsonplaceholder.typicode.com/',
-  }),
+  baseQuery: baseQuery(process.env.NEXT_PUBLIC_IAM_API ?? 'iam/api'),
   endpoints: (builder) => ({
-    getUsers: builder.query<User[], null>({
-      query: () => 'users',
+    changeEmail: builder.mutation<any, { newEmail: string }>({
+      query: (data) => ({
+        url: `/auth/change-email-request`,
+        method: 'POST',
+        body: data,
+      }),
     }),
-    getUserById: builder.query<User, { id: string }>({
-      query: ({ id }) => `users/${id}`,
+    confirmOldEmail: builder.mutation<
+      any,
+      { verificationId: string; otp: string; isOtp: boolean }
+    >({
+      query: (data) => ({
+        url: `/auth/confirm-old-email`,
+        method: 'POST',
+        body: data,
+      }),
+    }),
+    confirmNewEmail: builder.mutation<
+      any,
+      { verificationId: string; otp: string; isOtp: boolean }
+    >({
+      query: (data) => ({
+        url: `/auth/confirm-new-email`,
+        method: 'POST',
+        body: data,
+      }),
     }),
   }),
 });
 
-export const { useGetUsersQuery, useGetUserByIdQuery } = userApi;
+export const {
+  useChangeEmailMutation,
+  useConfirmOldEmailMutation,
+  useConfirmNewEmailMutation,
+} = userApi;

@@ -23,6 +23,7 @@ import PhoneOTP from './phoneOTP';
 import { useAuth } from '@megp/auth';
 import { notifications } from '@mantine/notifications';
 import { useRouter } from 'next/navigation';
+import ChangeEmail from './change-email.component';
 
 const schema = z.object({
   firstName: z.string().min(1, { message: 'This field is required.' }),
@@ -97,6 +98,7 @@ export default function MyProfilePage() {
       <Paper shadow="sm" withBorder className="p-10 mt-4">
         <PhoneOTP phone={user.phone as string} email={user.email} />
       </Paper>
+      <ChangeEmail />
     </div>
   );
 }
