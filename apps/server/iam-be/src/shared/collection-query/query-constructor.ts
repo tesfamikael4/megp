@@ -98,7 +98,7 @@ const applyWhereConditions = <T>(
             return addFilterConditions(
               op,
               value,
-              `${relation}."${mainColumn}"->>'${nestedColumn}'`,
+              `"${relation}"."${mainColumn}"->>'${nestedColumn}'`,
               `${mainColumn}_${nestedColumn}`,
             );
           } else {
