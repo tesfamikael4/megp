@@ -126,13 +126,14 @@ export function renderTable(
                             ? cellValue && (
                                 <Button
                                   onClick={() => {
-                                    open();
-                                    setUrl(
-                                      `${
-                                        process.env.NEXT_PUBLIC_VENDOR_API ??
-                                        '/vendors/api/'
-                                      }upload/get-file-bo/certificate/${cellValue}/${userId}`,
-                                    );
+                                    open && open();
+                                    setUrl &&
+                                      setUrl(
+                                        `${
+                                          process.env.NEXT_PUBLIC_VENDOR_API ??
+                                          '/vendors/api/'
+                                        }upload/get-file-bo/${selected === 'preferential' ? 'preferential-documents' : 'certificate'}/${cellValue}/${userId}`,
+                                      );
                                   }}
                                 >
                                   View

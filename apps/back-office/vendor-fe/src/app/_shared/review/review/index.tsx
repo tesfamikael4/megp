@@ -20,129 +20,10 @@ import {
   isDate,
 } from '@/app/(features)/util';
 import Link from 'next/link';
-
-const tab = [
-  {
-    tabValue: 'basic',
-    tabName: 'Basic Registration',
-  },
-  {
-    tabValue: 'address',
-    tabName: 'Address Information',
-  },
-  {
-    tabValue: 'contactPersons',
-    tabName: 'Contact Persons',
-  },
-  {
-    tabValue: 'businessSizeAndOwnership',
-    tabName: 'Business Size and Ownership',
-  },
-  {
-    tabValue: 'shareHolders',
-    tabName: 'Shareholders',
-  },
-  {
-    tabValue: 'beneficialOwnership',
-    tabName: 'Beneficial Ownership',
-  },
-  {
-    tabValue: 'bankAccountDetails',
-    tabName: 'Bank Account Details',
-  },
-  {
-    tabValue: 'vendorAccounts',
-    tabName: 'Bank Account Details',
-  },
-  {
-    tabValue: 'areasOfBusinessInterest',
-    tabName: 'Areas of Business Interest',
-  },
-  {
-    tabValue: 'customCats',
-    tabName: 'Custom Categories',
-  },
-  {
-    tabValue: 'businessCats',
-    tabName: 'Business Categories',
-  },
-  {
-    tabValue: 'supportingDocuments',
-    tabName: 'Supporting Documents',
-  },
-  {
-    tabValue: 'paymentReceipt',
-    tabName: 'Payment Receipts',
-  },
-  {
-    tabValue: 'businessAreas',
-    tabName: 'Business Areas',
-  },
-];
-
-const formatColumns = {
-  basic: [
-    { name: 'name', displayName: 'Name of Business/Company ' },
-    { name: 'origin', displayName: 'Country of Registration ' },
-    { name: 'status' },
-    { name: 'country' },
-    { name: 'district' },
-    { name: 'tinNumber', displayName: 'Tax Identification Number (TIN) ' },
-    { name: 'businessType ' },
-    { name: 'tinIssuedDate ', displayName: 'TIN Issued date' },
-  ],
-  contactPersons: [
-    { name: 'firstName' },
-    { name: 'lastName' },
-    { name: 'email' },
-    { name: 'mobileNumber' },
-  ],
-  businessAreas: [
-    { name: 'category' },
-    { name: 'priceFrom' },
-    { name: 'priceTo' },
-    { name: 'currency' },
-    { name: 'approvedAt', displayName: 'Approved On' },
-    { name: 'expireDate', displayName: 'Expiry Date' },
-    { name: 'certificateUrl', displayName: 'Certificate URL' },
-  ],
-  bankAccountDetails: [
-    { name: 'accountHolderFullName', displayName: 'fullName' },
-    { name: 'accountNumber' },
-    { name: 'bankName' },
-    { name: 'branchName' },
-    { name: 'branchAddress' },
-    { name: 'IBAN' },
-    { name: 'isDefualt' },
-  ],
-  shareHolders: [
-    { name: 'firstName' },
-    { name: 'lastName' },
-    { name: 'nationality' },
-    { name: 'share' },
-  ],
-  address: [
-    { name: 'mobilePhone', displayName: 'Telephone 1 ' },
-    { name: 'primaryEmail' },
-    { name: 'postalAddress' },
-    { name: 'alternateEmail' },
-    { name: 'telephone', displayName: 'Telephone 2 ' },
-    { name: 'website' },
-    { name: 'fax' },
-  ],
-  businessSizeAndOwnership: [
-    { name: 'registeredCapital' },
-    { name: 'paidUpCapital' },
-    { name: 'numberOfEmployees' },
-    { name: 'ownershipType' },
-  ],
-  beneficialOwnership: [
-    { name: 'firstName' },
-    { name: 'lastName' },
-    { name: 'nationality' },
-  ],
-  service: [{ name: 'name', displayName: 'Service Type' }],
-};
+import {
+  accordionTabs,
+  formatColumns,
+} from '@/app/(features)/_constants/reviewTabs';
 
 function FormPreview({
   data,
@@ -151,7 +32,7 @@ function FormPreview({
   data: any;
   uniqueTabs?: { tabValue: string; tabName: string }[];
 }) {
-  const tabs = [...uniqueTabs, ...tab];
+  const tabs = [...uniqueTabs, ...accordionTabs];
 
   const [url, setUrl] = useState('');
   const [opened, { close, open }] = useDisclosure(false);
@@ -191,7 +72,14 @@ function FormPreview({
                       },
                     }}
                   >
-                    {renderTable(data[tabValue], formatColumns, tabValue)}
+                    {renderTable(
+                      data[tabValue],
+                      formatColumns,
+                      tabValue,
+                      open,
+                      setUrl,
+                      data?.userId,
+                    )}
                   </Accordion.Panel>
                 ) : formatColumns[tabValue] ? (
                   <FormattedPanel data={data} tabValue={tabValue} />
@@ -266,6 +154,12 @@ const FormattedPanel = ({ data, tabValue }: RequiredFieldsOnly<PanelProps>) => {
   return (
     <>
       {formatColumns[tabValue].map((field) => {
+        if (
+          field.name === 'tinIssuedDate' &&
+          data[tabValue]?.origin !== 'Malawi'
+        ) {
+          return null;
+        }
         return (
           <>
             <Accordion.Panel
