@@ -547,7 +547,7 @@ const UploadTemplate = () => {
           </Table.Tr>
         </Table.Tbody>
       </Table>
-      <Modal title="View Document" opened={opened} onClose={close} size="100%">
+      <Modal title="View Document" opened={opened} onClose={close} size="xl">
         <FilePreview id={id as any} type={currentView} />
       </Modal>
     </>

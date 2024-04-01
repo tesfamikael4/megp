@@ -201,7 +201,7 @@ export default function ItemDetailPage() {
         {searchParams.get('tab') === 'document' && (
           <>
             <div className="my-4">
-              <Document item={selected} />
+              <Document />
             </div>
           </>
         )}

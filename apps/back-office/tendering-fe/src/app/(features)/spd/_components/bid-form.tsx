@@ -166,7 +166,7 @@ export default function BidForm({ spdId }: { spdId: string }) {
           opened={opened}
           onClose={close}
           title={bidForm.title}
-          size="100%"
+          size="xl"
           pos="relative"
         >
           <FilePriview data={bidForm} />

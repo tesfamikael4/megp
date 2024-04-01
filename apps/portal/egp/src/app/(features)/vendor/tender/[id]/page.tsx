@@ -39,7 +39,7 @@ export default function TenderDetailPage() {
   };
   return (
     <>
-      <main className="mt-4">
+      <main className="mt-4" style={{ height: 'calc(100vh - 200px)' }}>
         <Box px={{ base: 'xs', sm: 'lg' }}></Box>
         <Flex
           align={'center'}

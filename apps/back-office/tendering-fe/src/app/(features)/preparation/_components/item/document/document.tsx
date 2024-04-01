@@ -28,14 +28,14 @@ import {
 import { ExpandableTable } from '@/app/(features)/_components/expandable-table';
 import { FileViewer } from '@/app/(features)/_components/file-viewer';
 import { DocumentFormDetail } from './document-form-detail';
-import { Item } from '@/models/tender/lot/item';
 import { useDeleteMutation } from '../../../_api/item/document.api';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 
-export default function Document({ item }: { item: Item }) {
+export default function Document() {
   const router = useRouter();
+  const { itemId } = useParams();
   const [opened, { open, close }] = useDisclosure(false);
-  const { data } = useGetFilesQuery(item.id);
+  const { data } = useGetFilesQuery(itemId);
   const [dowloadFile, { isLoading: isDownloading }] =
     useLazyDownloadFilesQuery();
   const [remove, { isLoading: isDeleting }] = useDeleteMutation();
