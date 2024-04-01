@@ -33,6 +33,6 @@ export class DocumentController extends EntityCrudController<Document>(
   }
   @Get('getAllDocumentsByItemId/:id')
   async getAllDocumentsByItemId(@Param('id') id: string) {
-    return await this.documentService.getDocumentByItemId(id);
+    return await this.documentService.getAllDocumentsByItemId(id);
   }
 }
