@@ -75,4 +75,14 @@ export class DocumentService extends EntityCrudService<Document> {
     });
     return { presignedUrl, document };
   }
+  async getAllDocumentsByItemId(id: string): Promise<any> {
+    return await this.repositoryDocument.find({
+      where: {
+        itemId: id,
+      },
+      order: {
+        createdAt: 'DESC',
+      },
+    });
+  }
 }

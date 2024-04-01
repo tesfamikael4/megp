@@ -151,7 +151,7 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
     const targetGroupCounts: Record<string, number> = {};
 
     preBudgetPlan.preBudgetPlanActivities.forEach((activity) => {
-      const targetGroups = activity.preProcurementMechanism.targetGroup || [];
+      const targetGroups = activity.preProcurementMechanism?.targetGroup || [];
       let msme = false;
 
       targetGroups.forEach((group) => {
