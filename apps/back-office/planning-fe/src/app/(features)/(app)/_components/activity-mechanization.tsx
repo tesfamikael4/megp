@@ -62,7 +62,9 @@ const activitiesSchema: ZodType<Partial<any>> = z
   })
   .refine(
     (data) =>
-      (data.fundingSource !== 'Donor' && data.fundingSource !== 'Loan') ||
+      (data.fundingSource !== 'Donor' &&
+        data.fundingSource !== 'Loan' &&
+        data.fundingSource !== 'Loan') ||
       ((data.fundingSource === 'Donor' || data.fundingSource === 'Loan') &&
         data.donor),
     {

@@ -349,16 +349,25 @@ export const FormDetail = ({
               {...register('isMultiYear')}
               disabled={disableFields}
             />
-            <TextInput
-              label="Estimated Amount"
-              className="w-full"
-              {...register('estimatedAmount')}
-              error={errors?.estimatedAmount?.message}
-              withAsterisk
-              disabled={method === 'Purchased Orders' || disableFields}
-              placeholder="Estimated Amount"
-              type="number"
+            <Controller
+              name="estimatedAmount"
+              control={control}
+              render={({ field: { name, value, onChange } }) => (
+                <TextInput
+                  label="Estimated Amount"
+                  className="w-full"
+                  name={name}
+                  value={value ?? ''}
+                  onChange={onChange}
+                  error={errors?.estimatedAmount?.message}
+                  withAsterisk
+                  disabled={method === 'Purchased Orders' || disableFields}
+                  placeholder="Estimated Amount"
+                  type="number"
+                />
+              )}
             />
+
             <MultiSelect
               label="Tag Classification"
               value={tags.map((t) => t.code)}
