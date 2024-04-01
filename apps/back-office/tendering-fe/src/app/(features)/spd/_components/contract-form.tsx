@@ -165,7 +165,7 @@ export default function ContractForm({ spdId }: { spdId: string }) {
           opened={opened}
           onClose={close}
           title={contractForm.title}
-          size="100%"
+          size="xl"
           pos="relative"
         >
           <FilePriview data={contractForm} />

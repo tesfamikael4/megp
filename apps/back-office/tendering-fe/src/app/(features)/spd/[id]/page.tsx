@@ -227,12 +227,12 @@ export default function SpdDetailPage() {
               </Section>
             </>
           )}
-          {searchParams.get('tab') === 'bid-form' && (
+          {searchParams.get('tab') === 'bid-form' && selected && (
             <>
               <BidForm spdId={selected.id} />
             </>
           )}
-          {searchParams.get('tab') === 'contract-form' && (
+          {searchParams.get('tab') === 'contract-form' && selected && (
             <>
               <ContractForm spdId={selected.id} />
             </>

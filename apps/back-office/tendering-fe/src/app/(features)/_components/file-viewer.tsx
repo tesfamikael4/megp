@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
-
+import 'react-pdf/dist/Page/TextLayer.css';
+import 'react-pdf/dist/Page/AnnotationLayer.css';
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 export const FileViewer = ({ url }: { url: string; filename: string }) => {
-  const [pageNumber] = useState<number>(1);
-  const [numPages, setNumPages] = useState<number>();
+  const [numPages, setNumPages] = useState<number>(0);
   function onDocumentLoadSuccess({ numPages }: { numPages: number }): void {
     setNumPages(numPages);
   }
@@ -29,16 +29,10 @@ export const FileViewer = ({ url }: { url: string; filename: string }) => {
             renderMode="canvas"
             className=""
           >
-            <Page
-              className=""
-              pageNumber={pageNumber}
-              renderAnnotationLayer={false}
-              renderTextLayer={false}
-            />
+            {Array.from(new Array(numPages), (el, index) => (
+              <Page key={`page_${index + 1}`} pageNumber={index + 1} />
+            ))}
           </Document>
-          <p>
-            Page {pageNumber} of {numPages}
-          </p>
         </div>
       </div>
     </>

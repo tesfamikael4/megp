@@ -22,7 +22,16 @@ export const getBidFormApi = createApi({
       },
       providesTags: ['bid-form'],
     }),
+    bidFormDetail: builder.query<any, any>({
+      query: (id: string) => {
+        return {
+          url: `/spd-bid-forms/${id}/`,
+          method: 'GET',
+        };
+      },
+      providesTags: ['bid-form'],
+    }),
   }),
 });
 
-export const { useLazyBidFormsQuery } = getBidFormApi;
+export const { useLazyBidFormsQuery, useBidFormDetailQuery } = getBidFormApi;
