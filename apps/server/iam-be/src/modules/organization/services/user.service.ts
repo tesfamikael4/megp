@@ -172,7 +172,8 @@ export class UserService extends ExtraCrudService<User> {
           organizationIdRole: organizationId,
           organizationIdRoleSystem: organizationId,
         },
-      );
+      )
+      .andWhere('users.organizationId=:organizationId', { organizationId });
 
     const response = new DataResponseFormat<UserResponseDto>();
 
