@@ -70,9 +70,9 @@ export function WorkflowHandling({
 
   useEffect(() => {
     if (currentStep?.status === 'Approved') {
-      setActive(currentStep?.step?.order);
+      setActive(currentStep?.instanceStep?.order);
     } else {
-      setActive(currentStep?.step?.order - 1);
+      setActive(currentStep?.instanceStep?.order - 1);
     }
   }, [currentStep]);
 
@@ -92,14 +92,14 @@ export function WorkflowHandling({
     try {
       await approve({
         metaData: {
-          name: currentStep?.step.name.split(' ').join(''),
+          name: currentStep?.instanceStep?.name.split(' ').join(''),
           action: 'Approved',
           remark: remark,
           approver: `${user?.firstName} ${user?.lastName}`,
           userId: user?.id,
         },
         itemId: itemId,
-        activityId: currentStep?.step.activityId,
+        activityId: currentStep?.instanceStep?.activityId,
         instanceId: currentStep?.id,
       }).unwrap();
       notifications.show({
@@ -124,14 +124,14 @@ export function WorkflowHandling({
     try {
       await approve({
         metaData: {
-          name: currentStep?.step.name.split(' ').join(''),
+          name: currentStep?.instanceStep?.name.split(' ').join(''),
           action: 'reject',
           remark: remark,
           approver: `${user?.firstName} ${user?.lastName}`,
           userId: user?.id,
         },
         itemId: itemId,
-        activityId: currentStep?.step.activityId,
+        activityId: currentStep?.instanceStep?.activityId,
         instanceId: currentStep?.id,
       }).unwrap();
 
@@ -157,14 +157,14 @@ export function WorkflowHandling({
     try {
       await goToStep({
         details: {
-          name: currentStep?.step.name.split(' ').join(''),
+          name: currentStep?.instanceStep?.name.split(' ').join(''),
           action: 'reject',
           remark: remark,
           approver: `${user?.firstName} ${user?.lastName}`,
           userId: user?.id,
         },
         itemId: itemId,
-        activityId: currentStep?.step.activityId,
+        activityId: currentStep?.instanceStep?.activityId,
         instanceId: currentStep?.id,
         goto: { id: stepId, status: stepName },
       }).unwrap();
@@ -193,7 +193,7 @@ export function WorkflowHandling({
 
   function checkUserGroup() {
     return group?.some(
-      (entry) => entry.groupId === currentStep?.step.approvers[0].id,
+      (entry) => entry.groupId === currentStep?.instanceStep?.approvers[0].id,
     );
   }
 
@@ -242,7 +242,7 @@ export function WorkflowHandling({
                       description={
                         <>
                           <Stack className="min-w-full">
-                            {step?.order < currentStep?.step?.order ? (
+                            {step?.order < currentStep?.instanceStep?.order ? (
                               <Accordion
                                 className="min-w-full"
                                 styles={{
@@ -288,10 +288,10 @@ export function WorkflowHandling({
                               (userCall?.organizations?.[0]?.roles?.some(
                                 (role) =>
                                   role?.id ==
-                                  currentStep?.step.approvers?.[0]?.id,
+                                  currentStep?.instanceStep?.approvers?.[0]?.id,
                               ) ||
                                 user?.organizations?.[0].userId ===
-                                  currentStep?.step.approvers[0].id ||
+                                  currentStep?.instanceStep?.approvers[0].id ||
                                 checkUserGroup()) && (
                                 <>
                                   <Textarea
@@ -339,7 +339,7 @@ export function WorkflowHandling({
                                       )}
                                       <Menu.Dropdown>
                                         {getPreviousSteps(
-                                          currentStep?.step.order,
+                                          currentStep?.instanceStep?.order,
                                         ).map((step, index) => {
                                           return (
                                             <Menu.Item

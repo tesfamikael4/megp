@@ -139,6 +139,10 @@ export function Designer() {
                   setNameError('Name is required');
                   return;
                 }
+                if (data.some((item) => item.title === name)) {
+                  setNameError('Name already exists');
+                  return;
+                }
                 const editedData = data?.map((entry) => {
                   if (entry?.name == cell?.name) {
                     return {
@@ -222,6 +226,10 @@ export function Designer() {
               onClick={() => {
                 if (!name) {
                   setNameError('Name is required');
+                  return;
+                }
+                if (data.some((item) => item.title === name)) {
+                  setNameError('Name already exists');
                   return;
                 }
                 setData([...data, { name: name, id: data.length + 1 }]);

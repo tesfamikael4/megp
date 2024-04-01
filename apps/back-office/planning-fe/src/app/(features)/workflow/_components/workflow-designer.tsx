@@ -670,6 +670,10 @@ export function Steps({ activityId }: { activityId: string }) {
                       setNameError('Name is required');
                       return;
                     }
+                    if (data.some((item) => item.title === name)) {
+                      setNameError('Name already exists');
+                      return;
+                    }
                     const approvers = selected.map((item) => {
                       return { ...item };
                     });
