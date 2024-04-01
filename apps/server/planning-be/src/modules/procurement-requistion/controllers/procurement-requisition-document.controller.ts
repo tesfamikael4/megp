@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpStatus,
+  Param,
+  Post,
+  Res,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ExtraCrudController } from 'src/shared/controller/extra-crud.controller';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
@@ -29,7 +37,7 @@ export class ProcurementRequisitionDocumentController extends ExtraCrudControlle
   @Post('upload')
   async upload(@CurrentUser() user: any, @Body() fileInfo: any) {
     return await this.procurementRequisitionDocumentService.upload(
-      user.organization.id,
+      user,
       fileInfo,
     );
   }

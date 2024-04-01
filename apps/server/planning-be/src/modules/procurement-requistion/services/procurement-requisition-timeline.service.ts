@@ -31,22 +31,17 @@ export class ProcurementRequisitionTimelineService extends ExtraCrudService<Proc
           id: procurementRequisitionId,
         },
         relations: {
-          postBudgetPlan: {
-            app: { budgetYears: true },
-          },
-        },
-        select: {
-          id: true,
-          postBudgetPlan: {
-            id: true,
-            app: {
-              id: true,
-              budgetYears: { endDate: true, startDate: true },
-            },
-          },
+          procurementRequisitionTimelines: true,
         },
       });
-
+    // compare dueDates
+    const checkAppDates = this.compareAppDueDates(
+      procurementRequisition.procurementRequisitionTimelines,
+      timelines,
+    );
+    if (!checkAppDates) {
+      throw new HttpException('Invalid App Due Dates', 430);
+    }
     // Validate timelines
     const validationResult = this.validateTimelines(timelines);
     if (validationResult !== true) {
@@ -65,6 +60,20 @@ export class ProcurementRequisitionTimelineService extends ExtraCrudService<Proc
     );
 
     return timelines;
+  }
+
+  compareAppDueDates(
+    procurementRequisitionTimelines: any[],
+    timelines: any[],
+  ): boolean {
+    for (let i = 0; i < procurementRequisitionTimelines.length; i++) {
+      const dueDate = new Date(procurementRequisitionTimelines[i].appDueDate);
+      const appDueDate = new Date(timelines[i].appDueDate);
+      if (dueDate.getTime() !== appDueDate.getTime()) {
+        return false;
+      }
+    }
+    return true;
   }
 
   validateTimelines(timelines: any[]) {

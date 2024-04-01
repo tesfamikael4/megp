@@ -9,7 +9,6 @@ import { ProcurementRequisitionTimelineController } from './controllers/procurem
 import { ProcurementRequisitionDocumentService } from './services/procurement-requisition-document.service';
 import { ProcurementMechanismService } from './services/procurement-mechanism.service';
 import { ProcurementRequisitionTimelineService } from './services/procurement-requisition-timeline.service';
-import { MinIOModule } from 'src/shared/min-io/min-io.module';
 import {
   PostBudgetPlanActivity,
   ProcurementMechanism,
@@ -24,6 +23,7 @@ import { ProcurementRequisitionItemService } from './services/procurement-requis
 import { ProcurementRequisitionController } from './controllers/procurement-requisition.controller';
 import { ProcurementRequisitionService } from './services/procurement-requisition.service';
 import { UtilityModule } from '../utility/utility.module';
+import { MinIOModule } from 'src/shared/min-io';
 
 @Module({
   imports: [
