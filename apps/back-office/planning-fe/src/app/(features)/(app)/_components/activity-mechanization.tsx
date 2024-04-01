@@ -436,7 +436,7 @@ export const ActivityMechanization = ({
                   name={name}
                   label="Donor"
                   withAsterisk
-                  value={value[0] ?? ''}
+                  value={value?.[0] ?? ''}
                   onChange={(e) => {
                     onChange([e.target.value]);
                   }}

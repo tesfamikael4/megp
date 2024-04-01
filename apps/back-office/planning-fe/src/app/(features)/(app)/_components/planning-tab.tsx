@@ -8,6 +8,7 @@ import {
 import {
   useApprovePreBudgetMutation,
   useCreateAppMutation,
+  useLazyGetApprovalDocumentsQuery,
   useLazyGetPreBudgetPlanAnalyticsQuery,
   useLazyGetPreBudgetPlansQuery,
 } from '@/store/api/pre-budget-plan/pre-budget-plan.api';
@@ -20,6 +21,7 @@ import {
   Flex,
   Group,
   LoadingOverlay,
+  Select,
   Text,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
@@ -37,7 +39,7 @@ import { StatisticCard } from './statistic-card';
 import { useCanSubmitQuery } from '@/store/api/workflow/workflow.api';
 
 const PlanningTab = ({ page }: { page: 'pre' | 'post' }) => {
-  const { budgetYear } = useParams();
+  const { budgetYear, documentId } = useParams();
   const router = useRouter();
   const btnStyle =
     'w-fit px-3 py-1 bg-white cursor-pointer border-l border-r border-t hover:shadow-lg ';
@@ -56,6 +58,8 @@ const PlanningTab = ({ page }: { page: 'pre' | 'post' }) => {
 
   // rtk queries
   const [appCreate] = useCreateAppMutation();
+  const [getApprovalDocuments, { data: documents }] =
+    useLazyGetApprovalDocumentsQuery();
   const [getPre, { data: pre }] = useLazyGetPreBudgetPlansQuery();
   const [getPost, { data: post }] = useLazyGetPostBudgetPlansQuery();
   const [
@@ -203,6 +207,11 @@ const PlanningTab = ({ page }: { page: 'pre' | 'post' }) => {
     preAnalytics,
   ]);
 
+  useEffect(() => {
+    if ((selectedYear as any)?.status == 'Draft')
+      getApprovalDocuments(budgetYear);
+  }, [budgetYear, getApprovalDocuments, selectedYear]);
+
   return (
     <Box>
       <Flex>
@@ -248,7 +257,31 @@ const PlanningTab = ({ page }: { page: 'pre' | 'post' }) => {
               {(selectedYear as any)?.status}
             </Badge>
           </Group>
-          <Group>
+          <Group gap={5}>
+            {(selectedYear as any)?.status == 'Draft' &&
+              documents &&
+              documents.length > 0 && (
+                <Select
+                  placeholder="Comments"
+                  value={(documentId as string) ?? ''}
+                  data={documents?.map((document) => ({
+                    label: `V${document.version}`,
+                    value: document.id,
+                  }))}
+                  size="xs"
+                  onChange={(value) => {
+                    const link = `/${page}-budget-plan/${budgetYear}/document/${value}`;
+                    if (value !== null) {
+                      if (documentId) {
+                        router.push(link);
+                      } else {
+                        open('/planning' + link);
+                      }
+                    }
+                  }}
+                  width={50}
+                />
+              )}
             <Button
               onClick={submitPlan}
               loading={isLoading || isPostApproveLoading}
