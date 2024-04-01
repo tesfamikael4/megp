@@ -26,6 +26,7 @@ interface FormDetailProps {
   adId: string;
   type: 'legal' | 'professional' | 'technical' | 'financial' | 'performance';
   lotId: string;
+  returnFunction: () => void;
 }
 
 export function QualificationFormDetail({
@@ -33,6 +34,7 @@ export function QualificationFormDetail({
   adId,
   type,
   lotId,
+  returnFunction,
 }: FormDetailProps) {
   const qualificationSchema: ZodType<Partial<Qualification>> = z.object({
     category: z.string().optional(),
@@ -93,6 +95,7 @@ export function QualificationFormDetail({
         category: type,
       });
       notify('Success', 'Qualification created successfully');
+      returnFunction();
     } catch (err) {
       notify('Error', 'Error in creating qualification');
     }
@@ -110,6 +113,7 @@ export function QualificationFormDetail({
         id: adId?.toString(),
       });
       notify('Success', 'Qualification updated successfully');
+      returnFunction();
     } catch {
       notify('Error', 'Error in updating qualification');
     }
@@ -118,6 +122,7 @@ export function QualificationFormDetail({
     try {
       await remove(adId?.toString());
       notify('Success', 'Qualification  deleted successfully');
+      returnFunction();
     } catch {
       notify('Error', 'Error in deleting qualification');
     }

@@ -139,7 +139,23 @@ export default function PreliminaryExamination({
       },
     });
   };
-
+  const onReturnFunction = () => {
+    close();
+    trigger({
+      id: lotId,
+      collectionQuery: {
+        where: [
+          [
+            {
+              column: 'type',
+              value: type,
+              operator: '=',
+            },
+          ],
+        ],
+      },
+    });
+  };
   return (
     <Section
       title={type}
@@ -176,6 +192,7 @@ export default function PreliminaryExamination({
             adId={adId}
             type={type}
             lotId={lotId}
+            returnFunction={onReturnFunction}
           />
         </Box>
       </Modal>

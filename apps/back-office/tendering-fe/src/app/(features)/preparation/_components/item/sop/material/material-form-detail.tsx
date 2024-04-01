@@ -23,9 +23,14 @@ import { DayWork } from '@/models/tender/lot/item/day-work';
 interface FormDetailProps {
   mode: 'new' | 'detail';
   materialId?: string;
+  returnFunction: () => void;
 }
 
-export function MaterialFormDetail({ mode, materialId }: FormDetailProps) {
+export function MaterialFormDetail({
+  mode,
+  materialId,
+  returnFunction,
+}: FormDetailProps) {
   const materialSchema: ZodType<Partial<DayWork>> = z.object({
     itemNumber: z.string().min(1, { message: 'This field is required' }),
     description: z.string().min(1, { message: 'This field is required' }),
@@ -65,6 +70,7 @@ export function MaterialFormDetail({ mode, materialId }: FormDetailProps) {
         ...data,
         itemId: itemId,
       });
+      returnFunction();
       notify('Success', 'material created successfully');
     } catch (err) {
       notify('Error', 'Error in creating material');
@@ -77,6 +83,7 @@ export function MaterialFormDetail({ mode, materialId }: FormDetailProps) {
         ...data,
         id: materialId?.toString(),
       });
+      returnFunction();
       notify('Success', 'material updated successfully');
     } catch {
       notify('Error', 'Error in updating material');
@@ -85,6 +92,7 @@ export function MaterialFormDetail({ mode, materialId }: FormDetailProps) {
   const onDelete = async () => {
     try {
       await remove(materialId ?? '');
+      returnFunction();
       notify('Success', 'material  deleted successfully');
     } catch {
       notify('Error', 'Error in deleting material');

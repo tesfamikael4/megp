@@ -28,12 +28,14 @@ interface FormDetailProps {
   mode: 'new' | 'detail';
   parentId?: string;
   lotId: string;
+  returnFunction: () => void;
 }
 
 export function TechnicalScoringFormDetail({
   mode,
   parentId,
   lotId,
+  returnFunction,
 }: FormDetailProps) {
   const spdSchema: ZodType<Partial<TechnicalScoring>> = z.object({
     requirement: z.string().min(1, { message: 'This field is required' }),
@@ -68,7 +70,6 @@ export function TechnicalScoringFormDetail({
   }, [errors]);
 
   const onCreate = async (data) => {
-    logger.log('here');
     try {
       await create({
         ...data,
@@ -80,6 +81,7 @@ export function TechnicalScoringFormDetail({
         validation: { min: 0, max: 100 },
       });
       notify('Success', 'technical scoring created successfully');
+      returnFunction();
     } catch (err) {
       notify('Error', 'Error in creating technical scoring');
     }
@@ -89,6 +91,7 @@ export function TechnicalScoringFormDetail({
     try {
       await update({ ...data, id: id?.toString(), spdId: id });
       notify('Success', 'technical scoring updated successfully');
+      returnFunction();
     } catch {
       notify('Error', 'Error in updating technical scoring');
     }
@@ -97,6 +100,7 @@ export function TechnicalScoringFormDetail({
     try {
       await remove(id?.toString());
       notify('Success', 'technical scoring  deleted successfully');
+      returnFunction();
     } catch {
       notify('Error', 'Error in deleting technical scoring');
     }

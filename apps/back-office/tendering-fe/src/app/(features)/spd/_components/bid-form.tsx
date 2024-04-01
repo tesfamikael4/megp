@@ -33,6 +33,14 @@ export default function BidForm({ spdId }: { spdId: string }) {
   const [opened, { open, close }] = useDisclosure(false);
   const [dowloadFile, { isLoading: isDownloading }] = useLazyGetFilesQuery();
   const [remove, { isLoading: isDeleting }] = useDeleteMutation();
+
+  const onReturnFunction = () => {
+    close();
+    trigger({
+      id: spdId,
+      collectionQuery: { where: [] },
+    });
+  };
   const config = {
     columns: [
       { accessor: 'title', title: 'Title', width: 300 },
@@ -45,7 +53,9 @@ export default function BidForm({ spdId }: { spdId: string }) {
       {
         accessor: 'action',
         header: 'Action',
-        render: (record) => <Action bidForm={record} />,
+        render: (record) => (
+          <Action bidForm={record} returnFunction={onReturnFunction} />
+        ),
         width: 70,
       },
     ],
@@ -54,7 +64,13 @@ export default function BidForm({ spdId }: { spdId: string }) {
     isLoading: isFetching || isDeleting,
     primaryColumn: 'name',
   };
-  const Action = ({ bidForm }: any) => {
+  const Action = ({
+    bidForm,
+    returnFunction,
+  }: {
+    bidForm: any;
+    returnFunction: () => void;
+  }) => {
     const [opened, { open, close }] = useDisclosure(false);
     const openDeleteModal = () => {
       modals.openConfirmModal({
@@ -91,6 +107,7 @@ export default function BidForm({ spdId }: { spdId: string }) {
     const handleDelete = async () => {
       try {
         await remove(bidForm.id).unwrap();
+        returnFunction();
         notifications.show({
           title: 'Success',
           message: 'Bid form Deleted Successfully',
@@ -192,7 +209,11 @@ export default function BidForm({ spdId }: { spdId: string }) {
         </div>
         <Divider mt={'md'} mb={'md'} />
         <Box className="bg-white rounded shadow-sm ">
-          <BidFormFormDetail mode="new" adId="" />
+          <BidFormFormDetail
+            mode="new"
+            adId=""
+            returnFunction={onReturnFunction}
+          />
         </Box>
       </Modal>
     </Section>

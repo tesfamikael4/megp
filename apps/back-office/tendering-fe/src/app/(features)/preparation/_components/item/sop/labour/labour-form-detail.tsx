@@ -23,9 +23,14 @@ import { DayWork } from '@/models/tender/lot/item/day-work';
 interface FormDetailProps {
   mode: 'new' | 'detail';
   labourId?: string;
+  returnFunction: () => void;
 }
 
-export function LabourFormDetail({ mode, labourId }: FormDetailProps) {
+export function LabourFormDetail({
+  mode,
+  labourId,
+  returnFunction,
+}: FormDetailProps) {
   const labourSchema: ZodType<Partial<DayWork>> = z.object({
     itemNumber: z.string().min(1, { message: 'This field is required' }),
     description: z.string().min(1, { message: 'This field is required' }),
@@ -65,6 +70,7 @@ export function LabourFormDetail({ mode, labourId }: FormDetailProps) {
         ...data,
         itemId: itemId,
       });
+      returnFunction();
       notify('Success', 'labour created successfully');
     } catch (err) {
       notify('Error', 'Error in creating labour');
@@ -77,6 +83,7 @@ export function LabourFormDetail({ mode, labourId }: FormDetailProps) {
         ...data,
         id: labourId?.toString(),
       });
+      returnFunction();
       notify('Success', 'labour updated successfully');
     } catch {
       notify('Error', 'Error in updating labour');
@@ -85,6 +92,7 @@ export function LabourFormDetail({ mode, labourId }: FormDetailProps) {
   const onDelete = async () => {
     try {
       await remove(labourId ?? '');
+      returnFunction();
       notify('Success', 'labour  deleted successfully');
     } catch {
       notify('Error', 'Error in deleting labour');

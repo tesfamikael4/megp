@@ -36,6 +36,15 @@ export default function ContractForm({ spdId }: { spdId: string }) {
   const [opened, { open, close }] = useDisclosure(false);
   const [dowloadFile, { isLoading: isDownloading }] = useLazyGetFilesQuery();
   const [remove, { isLoading: isDeleting }] = useDeleteMutation();
+
+  const onReturnFunction = () => {
+    close();
+    trigger({
+      id: spdId,
+      collectionQuery: { where: [] },
+    });
+  };
+
   const config = {
     columns: [
       { accessor: 'title', title: 'Title', width: 300 },
@@ -48,7 +57,9 @@ export default function ContractForm({ spdId }: { spdId: string }) {
       {
         accessor: 'action',
         header: 'Action',
-        render: (record) => <Action contractForm={record} />,
+        render: (record) => (
+          <Action contractForm={record} returnFunction={onReturnFunction} />
+        ),
         width: 70,
       },
     ],
@@ -86,6 +97,7 @@ export default function ContractForm({ spdId }: { spdId: string }) {
             document.body.appendChild(a);
             a.click();
           });
+        onReturnFunction();
         notify('Success', 'File downloaded successfully');
       } catch (err) {
         notify('Error', 'Something went wrong');
@@ -94,6 +106,7 @@ export default function ContractForm({ spdId }: { spdId: string }) {
     const handleDelete = async () => {
       try {
         await remove(contractForm.id).unwrap();
+        onReturnFunction();
         notifications.show({
           title: 'Success',
           message: 'Contract form Deleted Successfully',
@@ -195,7 +208,11 @@ export default function ContractForm({ spdId }: { spdId: string }) {
         </div>
         <Divider mt={'md'} mb={'md'} />
         <Box className="bg-white rounded shadow-sm ">
-          <ContractFormFormDetail mode="new" adId="" />
+          <ContractFormFormDetail
+            mode="new"
+            adId=""
+            returnFunction={onReturnFunction}
+          />
         </Box>
       </Modal>
     </Section>

@@ -127,6 +127,11 @@ export function ScoringTable({
     );
   };
 
+  const onReturnFunction = () => {
+    close();
+    onRequestChange?.({});
+  };
+
   return (
     <>
       <LoadingOverlay visible={isDeleting} />
@@ -190,6 +195,7 @@ export function ScoringTable({
             mode={mode}
             parentId={adId}
             lotId={lotId}
+            returnFunction={onReturnFunction}
           />
         </Box>
       </Modal>
@@ -303,6 +309,11 @@ export function NodeTree({
       </>
     );
   };
+
+  const onReturnFunction = () => {
+    close();
+  };
+
   return (
     <>
       <LoadingOverlay visible={isDeleting} />
@@ -364,6 +375,7 @@ export function NodeTree({
             mode={mode}
             parentId={adId}
             lotId={lotId}
+            returnFunction={onReturnFunction}
           />
         </Box>
       </Modal>

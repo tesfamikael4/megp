@@ -25,12 +25,14 @@ interface FormDetailProps {
   mode: 'new' | 'detail';
   parentId?: string;
   boqId?: string;
+  returnFunction: () => void;
 }
 
 export function BillOfMaterialFormDetail({
   mode,
   parentId,
   boqId,
+  returnFunction,
 }: FormDetailProps) {
   const spdSchema: ZodType<Partial<BillOfMaterial>> = z.object({
     payItem: z.string().min(1, { message: 'This field is required' }),
@@ -73,6 +75,7 @@ export function BillOfMaterialFormDetail({
         itemId: itemId,
         parentCode: parentId ?? null,
       });
+      returnFunction();
       notify('Success', 'technical scoring created successfully');
     } catch (err) {
       notify('Error', 'Error in creating technical scoring');
@@ -85,6 +88,7 @@ export function BillOfMaterialFormDetail({
         ...data,
         id: boqId?.toString(),
       });
+      returnFunction();
       notify('Success', 'technical scoring updated successfully');
     } catch {
       notify('Error', 'Error in updating technical scoring');
@@ -93,6 +97,7 @@ export function BillOfMaterialFormDetail({
   const onDelete = async () => {
     try {
       await remove(boqId ?? '');
+      returnFunction();
       notify('Success', 'technical scoring  deleted successfully');
     } catch {
       notify('Error', 'Error in deleting technical scoring');

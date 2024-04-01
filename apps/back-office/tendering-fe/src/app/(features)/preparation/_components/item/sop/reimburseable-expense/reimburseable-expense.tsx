@@ -129,6 +129,14 @@ export default function ReimburseableExpense({ item }: { item: Item }) {
     });
   };
 
+  const onReturnFunction = () => {
+    close();
+    trigger({
+      id: item.id,
+      collectionQuery: { where: [] },
+    });
+  };
+
   return (
     <Section
       title="Reimburseable Expense"
@@ -165,6 +173,7 @@ export default function ReimburseableExpense({ item }: { item: Item }) {
           <ReimburseableExpenseFormDetail
             mode={mode}
             reimburseableExpenseId={adId}
+            returnFunction={onReturnFunction}
           />
         </Box>
       </Modal>

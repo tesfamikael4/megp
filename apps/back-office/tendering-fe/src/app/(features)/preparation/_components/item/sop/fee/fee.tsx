@@ -124,6 +124,14 @@ export default function Fee({ item }: { item: Item }) {
     });
   };
 
+  const onReturnFunction = () => {
+    close();
+    trigger({
+      id: item.id,
+      collectionQuery: { where: [] },
+    });
+  };
+
   return (
     <Section
       title="Fee"
@@ -155,7 +163,11 @@ export default function Fee({ item }: { item: Item }) {
         </div>
         <Divider mt={'md'} mb={'md'} />
         <Box className="bg-white rounded shadow-sm ">
-          <FeeFormDetail mode={mode} feeId={adId} />
+          <FeeFormDetail
+            mode={mode}
+            feeId={adId}
+            returnFunction={onReturnFunction}
+          />
         </Box>
       </Modal>
     </Section>

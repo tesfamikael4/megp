@@ -23,9 +23,14 @@ import { SpdPreferenceMargin } from '@/models/spd/preference-margin.model';
 interface FormDetailProps {
   mode: 'new' | 'detail';
   pmId: string;
+  returnFunction: () => void;
 }
 
-export function SpdPreferenceMarginFormDetail({ mode, pmId }: FormDetailProps) {
+export function SpdPreferenceMarginFormDetail({
+  mode,
+  pmId,
+  returnFunction,
+}: FormDetailProps) {
   const spdSchema: ZodType<Partial<SpdPreferenceMargin>> = z.object({
     condition: z.string().min(1, { message: 'This field is required' }),
     description: z.string().min(1, { message: 'This field is required' }),
@@ -59,6 +64,7 @@ export function SpdPreferenceMarginFormDetail({ mode, pmId }: FormDetailProps) {
     logger.log('here');
     try {
       await create({ ...data, spdId: id, preferenceType: '' });
+      returnFunction();
       notify('Success', 'Preference Margin created successfully');
     } catch (err) {
       notify('Error', 'Error in creating preference margin');
@@ -68,6 +74,7 @@ export function SpdPreferenceMarginFormDetail({ mode, pmId }: FormDetailProps) {
   const onUpdate = async (data) => {
     try {
       await update({ ...data, id: id?.toString(), spdId: id });
+      returnFunction();
       notify('Success', 'Preference Margin updated successfully');
     } catch {
       notify('Error', 'Error in updating preference margin');
@@ -76,6 +83,7 @@ export function SpdPreferenceMarginFormDetail({ mode, pmId }: FormDetailProps) {
   const onDelete = async () => {
     try {
       await remove(id?.toString());
+      returnFunction();
       notify('Success', 'Preference Margin  deleted successfully');
     } catch {
       notify('Error', 'Error in deleting preference margin');

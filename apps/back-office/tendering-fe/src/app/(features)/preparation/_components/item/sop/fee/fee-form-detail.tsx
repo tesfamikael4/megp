@@ -17,9 +17,14 @@ import { Fee } from '@/models/tender/lot/item/fee.model';
 interface FormDetailProps {
   mode: 'new' | 'detail';
   feeId?: string;
+  returnFunction: () => void;
 }
 
-export function FeeFormDetail({ mode, feeId }: FormDetailProps) {
+export function FeeFormDetail({
+  mode,
+  feeId,
+  returnFunction,
+}: FormDetailProps) {
   const feeSchema: ZodType<Partial<Fee>> = z.object({
     category: z.string().min(1, { message: 'This field is required' }),
     position: z.string().min(1, { message: 'This field is required' }),
@@ -59,6 +64,7 @@ export function FeeFormDetail({ mode, feeId }: FormDetailProps) {
         itemId: itemId,
         nameOfStaff: '',
       });
+      returnFunction();
       notify('Success', 'fee created successfully');
     } catch (err) {
       notify('Error', 'Error in creating fee');
@@ -71,6 +77,7 @@ export function FeeFormDetail({ mode, feeId }: FormDetailProps) {
         ...data,
         id: feeId?.toString(),
       });
+      returnFunction();
       notify('Success', 'fee updated successfully');
     } catch {
       notify('Error', 'Error in updating fee');
@@ -79,6 +86,7 @@ export function FeeFormDetail({ mode, feeId }: FormDetailProps) {
   const onDelete = async () => {
     try {
       await remove(feeId ?? '');
+      returnFunction();
       notify('Success', 'fee  deleted successfully');
     } catch {
       notify('Error', 'Error in deleting fee');

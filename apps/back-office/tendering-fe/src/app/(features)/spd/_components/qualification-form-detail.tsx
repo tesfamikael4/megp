@@ -26,12 +26,14 @@ interface FormDetailProps {
   mode: 'new' | 'detail';
   adId: string;
   type: 'legal' | 'professional' | 'technical' | 'financial' | 'performance';
+  returnFunction: () => void;
 }
 
 export function SpdQualificationFormDetail({
   mode,
   adId,
   type,
+  returnFunction,
 }: FormDetailProps) {
   const spdSchema: ZodType<Partial<SpdQualification>> = z.object({
     category: z.string().optional(),
@@ -77,6 +79,7 @@ export function SpdQualificationFormDetail({
         order: 1,
         category: type,
       });
+      returnFunction();
       notify('Success', 'Qualification created successfully');
     } catch (err) {
       notify('Error', 'Error in creating spd');
@@ -94,6 +97,7 @@ export function SpdQualificationFormDetail({
         mandate: '',
         id: adId?.toString(),
       });
+      returnFunction();
       notify('Success', 'Qualification updated successfully');
     } catch {
       notify('Error', 'Error in updating spd');

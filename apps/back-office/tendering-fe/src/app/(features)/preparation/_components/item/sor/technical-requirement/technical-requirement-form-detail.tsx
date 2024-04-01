@@ -28,12 +28,14 @@ interface FormDetailProps {
   mode: 'new' | 'detail';
   adId: string;
   type: SorType;
+  returnFunction: () => void;
 }
 
 export function TechnicalRequirementFormDetail({
   mode,
   adId,
   type,
+  returnFunction,
 }: Readonly<FormDetailProps>) {
   const spdSchema: ZodType<Partial<TechnicalRequirement>> = z.object({
     category: z.string().min(1, { message: 'This field is required' }),
@@ -78,6 +80,7 @@ export function TechnicalRequirementFormDetail({
         itemId: itemId,
         sorType: type,
       });
+      returnFunction();
       notify('Success', `${type} created successfully`);
     } catch (err) {
       notify('Error', `Error in creating ${type}`);
@@ -92,6 +95,7 @@ export function TechnicalRequirementFormDetail({
         type: type,
         id: adId?.toString(),
       });
+      returnFunction();
       notify('Success', `${type} updated successfully`);
     } catch {
       notify('Error', `Error in updating ${type}`);
@@ -100,6 +104,7 @@ export function TechnicalRequirementFormDetail({
   const onDelete = async () => {
     try {
       await remove(adId?.toString());
+      returnFunction();
       notify('Success', `${type} deleted successfully`);
     } catch {
       notify('Error', `Error in deleting ${type}`);

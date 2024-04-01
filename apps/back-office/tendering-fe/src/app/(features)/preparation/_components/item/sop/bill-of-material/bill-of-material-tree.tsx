@@ -118,7 +118,9 @@ export function BillOfMaterialTreeTable({
       </>
     );
   };
-
+  const onReturnFunction = () => {
+    close();
+  };
   return (
     <>
       <LoadingOverlay visible={isDeleting} />
@@ -185,7 +187,11 @@ export function BillOfMaterialTreeTable({
         </div>
         <Divider mt={'md'} mb={'md'} />
         <Box className="bg-white rounded shadow-sm ">
-          <BillOfMaterialFormDetail mode={mode} parentId={adId} />
+          <BillOfMaterialFormDetail
+            mode={mode}
+            parentId={adId}
+            returnFunction={onReturnFunction}
+          />
         </Box>
       </Modal>
     </>
@@ -295,6 +301,10 @@ export function NodeTree({
       </>
     );
   };
+
+  const onReturnFunction = () => {
+    close();
+  };
   return (
     <>
       <LoadingOverlay visible={isDeleting} />
@@ -361,7 +371,11 @@ export function NodeTree({
         </div>
         <Divider mt={'md'} mb={'md'} />
         <Box className="bg-white rounded shadow-sm ">
-          <BillOfMaterialFormDetail mode={mode} parentId={adId} />
+          <BillOfMaterialFormDetail
+            mode={mode}
+            parentId={adId}
+            returnFunction={onReturnFunction}
+          />
         </Box>
       </Modal>
     </>

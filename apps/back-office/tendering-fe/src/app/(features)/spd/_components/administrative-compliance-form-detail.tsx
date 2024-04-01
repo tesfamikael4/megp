@@ -1,6 +1,6 @@
 import {
-  Checkbox,
   LoadingOverlay,
+  NativeSelect,
   Stack,
   TextInput,
   Textarea,
@@ -19,18 +19,22 @@ import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { logger, notify } from '@megp/core-fe';
 import { SpdPreliminaryExamination } from '@/models/spd/preliminary-examination.model';
+import { useLazyListByIdQuery } from '../_api/bid-form.api';
 
 interface FormDetailProps {
   mode: 'new' | 'detail';
   adId: string;
   type: 'technical' | 'financial';
+  returnFunction: () => void;
 }
 
 export function SpdAdministrativeComplianceFormDetail({
   mode,
   adId,
   type,
+  returnFunction,
 }: FormDetailProps) {
+  const { id } = useParams();
   const spdSchema: ZodType<Partial<SpdPreliminaryExamination>> = z.object({
     criteria: z.string().min(1, { message: 'This field is required' }),
     type: z.enum(['technical', 'financial']).optional(),
@@ -38,7 +42,7 @@ export function SpdAdministrativeComplianceFormDetail({
     itbReference: z.string().min(1, { message: 'This field is required' }),
     formLink: z.string().min(1, { message: 'This field is required' }),
   });
-
+  const [trigger, { data, isFetching }] = useLazyListByIdQuery();
   const {
     handleSubmit,
     reset,
@@ -50,7 +54,6 @@ export function SpdAdministrativeComplianceFormDetail({
   useEffect(() => {
     logger.log(errors);
   }, [errors]);
-  const { id } = useParams();
 
   const [create, { isLoading: isSaving }] = useCreateMutation();
   const [update, { isLoading: isUpdating }] = useUpdateMutation();
@@ -73,6 +76,7 @@ export function SpdAdministrativeComplianceFormDetail({
         mandate: '',
         order: 1,
       });
+      returnFunction();
       notify('Success', 'Preliminary examination created successfully');
     } catch (err) {
       notify('Error', 'Error in creating preliminary examination');
@@ -82,6 +86,7 @@ export function SpdAdministrativeComplianceFormDetail({
   const onUpdate = async (data) => {
     try {
       await update({ ...data, pdId: id, type: type, id: adId?.toString() });
+      returnFunction();
       notify('Success', 'Preliminary examination updated successfully');
     } catch {
       notify('Error', 'Error in updating preliminary examination');
@@ -90,11 +95,20 @@ export function SpdAdministrativeComplianceFormDetail({
   const onDelete = async () => {
     try {
       await remove(adId?.toString());
+      returnFunction();
       notify('Success', 'Preliminary examination deleted successfully');
     } catch {
       notify('Error', 'Error in deleting preliminary examination');
     }
   };
+
+  useEffect(() => {
+    if (id?.toString())
+      trigger({
+        id: id?.toString(),
+        collectionQuery: { where: [] },
+      });
+  }, [id, trigger]);
 
   useEffect(() => {
     if (mode == 'detail' && selectedSuccess && selected !== undefined) {
@@ -110,7 +124,7 @@ export function SpdAdministrativeComplianceFormDetail({
 
   return (
     <Stack pos="relative">
-      <LoadingOverlay visible={isLoading} />
+      <LoadingOverlay visible={isLoading || isFetching} />
       <Textarea
         label="Criteria"
         withAsterisk
@@ -141,12 +155,19 @@ export function SpdAdministrativeComplianceFormDetail({
         }
         {...register('itbDescription')}
       />
-
-      <TextInput
-        placeholder="Bid Form Link"
+      <NativeSelect
+        placeholder="FormLink"
         withAsterisk
-        label="formLink"
+        label="Bid Form Link"
         error={errors?.formLink ? errors?.formLink?.message?.toString() : ''}
+        data={
+          data?.items
+            ? data?.items.map((link) => ({
+                label: link.title,
+                value: link.code,
+              }))
+            : []
+        }
         {...register('formLink')}
       />
 

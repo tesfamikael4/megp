@@ -13,7 +13,12 @@ import { logger, notify } from '@megp/core-fe';
 import { IconUpload } from '@tabler/icons-react';
 import { usePreSignedUrlMutation } from '../../../_api/item/sor-document.api';
 
-export function DocumentFormDetail() {
+interface DocumentFormDetailProps {
+  returnFunction: () => void;
+}
+export function DocumentFormDetail({
+  returnFunction,
+}: DocumentFormDetailProps) {
   const { itemId } = useParams();
   const [file, setFile] = useState<File[]>();
   const { register, handleSubmit } = useForm();
@@ -24,6 +29,7 @@ export function DocumentFormDetail() {
     try {
       setIsLoading(true);
       await upload(file as unknown as FileList, document.description);
+      returnFunction();
     } catch (error) {
       setIsLoading(false);
       logger.log(error);

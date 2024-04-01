@@ -37,6 +37,10 @@ export function ScoringTable({
       padding={0}
     />
   );
+  const onReturnFunction = () => {
+    close();
+    onRequestChange?.({});
+  };
   useEffect(() => {
     onRequestChange?.({});
   }, [expandedIds]);
@@ -192,7 +196,11 @@ export function ScoringTable({
         </div>
         <Divider mt={'md'} mb={'md'} />
         <Box className="bg-white rounded shadow-sm ">
-          <SpdTechnicalScoringFormDetail mode={mode} parentId={adId} />
+          <SpdTechnicalScoringFormDetail
+            mode={mode}
+            parentId={adId}
+            returnFunction={onReturnFunction}
+          />
         </Box>
       </Modal>
     </>
@@ -220,6 +228,7 @@ export function NodeTree({
       padding={20 + padding}
     />
   );
+
   const Action = ({ data }: any) => {
     const openDeleteModal = () => {
       modals.openConfirmModal({
@@ -302,6 +311,10 @@ export function NodeTree({
       </>
     );
   };
+
+  const onReturnFunction = () => {
+    close();
+  };
   return (
     <>
       <LoadingOverlay visible={isDeleting} />
@@ -368,7 +381,11 @@ export function NodeTree({
         </div>
         <Divider mt={'md'} mb={'md'} />
         <Box className="bg-white rounded shadow-sm ">
-          <SpdTechnicalScoringFormDetail mode={mode} parentId={adId} />
+          <SpdTechnicalScoringFormDetail
+            mode={mode}
+            parentId={adId}
+            returnFunction={onReturnFunction}
+          />
         </Box>
       </Modal>
     </>

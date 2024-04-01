@@ -131,6 +131,14 @@ export default function Equipment({ item }: { item: Item }) {
     });
   };
 
+  const onReturnFunction = () => {
+    close();
+    trigger({
+      id: item.id,
+      collectionQuery: { where: [] },
+    });
+  };
+
   return (
     <Section
       title="Equipment"
@@ -162,7 +170,11 @@ export default function Equipment({ item }: { item: Item }) {
         </div>
         <Divider mt={'md'} mb={'md'} />
         <Box className="bg-white rounded shadow-sm ">
-          <EquipmentFormDetail mode={mode} equipmentId={adId} />
+          <EquipmentFormDetail
+            mode={mode}
+            equipmentId={adId}
+            returnFunction={onReturnFunction}
+          />
         </Box>
       </Modal>
     </Section>

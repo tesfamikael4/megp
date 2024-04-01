@@ -147,7 +147,23 @@ export default function TechnicalRequirement({
       },
     });
   };
-
+  const onReturnFunction = () => {
+    close();
+    trigger({
+      id: item.id,
+      collectionQuery: {
+        where: [
+          [
+            {
+              column: 'type',
+              value: type,
+              operator: '=',
+            },
+          ],
+        ],
+      },
+    });
+  };
   return (
     <Section
       title={type}
@@ -179,7 +195,12 @@ export default function TechnicalRequirement({
         </div>
         <Divider mt={'md'} mb={'md'} />
         <Box className="bg-white rounded shadow-sm ">
-          <TechnicalRequirementFormDetail mode={mode} adId={adId} type={type} />
+          <TechnicalRequirementFormDetail
+            mode={mode}
+            adId={adId}
+            type={type}
+            returnFunction={onReturnFunction}
+          />
         </Box>
       </Modal>
     </Section>
