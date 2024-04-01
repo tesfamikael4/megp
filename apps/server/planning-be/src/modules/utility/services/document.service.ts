@@ -56,6 +56,23 @@ export class DocumentService extends EntityCrudService<Document> {
     return presignedUrl;
   }
 
+  async getPresignedUrlWithDoc(id: string): Promise<any> {
+    const document = await this.repositoryDocument.findOne({
+      where: {
+        itemId: id,
+      },
+    });
+    if (!document) {
+      throw new NotFoundException();
+    }
+    const presignedUrl = await this.minIoService.generatePresignedDownloadUrl({
+      bucketName: document.fileInfo.bucketName,
+      filepath: document.fileInfo.filepath,
+      contentType: document.fileInfo.contentType,
+    });
+    return { presignedUrl, document };
+  }
+
   async getDocumentByItemId(id: string): Promise<any> {
     const document = await this.repositoryDocument.findOne({
       where: {

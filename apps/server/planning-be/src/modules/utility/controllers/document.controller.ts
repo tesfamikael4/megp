@@ -27,6 +27,11 @@ export class DocumentController extends EntityCrudController<Document>(
     return await this.documentService.generatePresignedGetUrl(id);
   }
 
+  @Get('getPresignedUrlWithDoc/:id')
+  async getPresignedUrlWithDoc(@Param('id') id: string) {
+    return await this.documentService.getPresignedUrlWithDoc(id);
+  }
+
   @Get('getDocumentByItemId/:id')
   async getDocumentByItemId(@Param('id') id: string) {
     return await this.documentService.getDocumentByItemId(id);
