@@ -31,7 +31,7 @@ const NewRegistrationLanding = () => {
     },
   ];
   return (
-    <Box mx={24} className="p-5 mx-auto mt-6 mb-6 bg-white border h-[90%]">
+    <Box className="mx-auto bg-white border h-[90%]">
       <Flex className="pl-6" direction={'column'} mb={22}>
         <Text className=" text-emerald-600 font-bold py-1.5 px-2" size="xl">
           Vendor Registration
