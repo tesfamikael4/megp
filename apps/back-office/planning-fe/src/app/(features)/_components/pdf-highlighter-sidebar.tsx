@@ -1,6 +1,6 @@
 'use client';
 
-import { ActionIcon, Alert, Box, Menu, Text } from '@mantine/core';
+import { ActionIcon, Alert, Box, Menu, Tabs, Text } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { useAuth } from '@megp/auth';
 import {
@@ -20,8 +20,10 @@ const updateHash = (highlight: IHighlight) => {
 
 export function Sidebar({
   highlights,
+  workflow,
 }: {
   highlights: { highlight: IHighlight; from: Record<string, string> }[];
+  workflow?: React.ReactNode;
 }): ReactElement {
   const { user } = useAuth();
   const [remove] = useDeleteMutation();
@@ -51,79 +53,90 @@ export function Sidebar({
   };
   return (
     <div className="p-5 border-r" style={{ width: '25vw' }}>
-      <div className="description" style={{ padding: '1rem' }}>
+      <Tabs defaultValue={'comments'}>
+        <Tabs.List>
+          <Tabs.Tab value="comments">Comments</Tabs.Tab>
+          {workflow && <Tabs.Tab value="workflow">Workflow</Tabs.Tab>}
+        </Tabs.List>
+
+        {/* <div className="description" style={{ padding: '1rem' }}>
         <h2 style={{ marginBottom: '1rem' }}>Comments</h2>
-      </div>
+      </div> */}
+        <Tabs.Panel value="comments">
+          <ul className="overflow-y-scroll mostly-customized-scrollbar  h-full pb-10 mt-2">
+            {highlights.map((highlight, index) => (
+              <Box
+                className="mb-2"
+                key={index}
+                onClick={() => {
+                  updateHash(highlight.highlight);
+                }}
+              >
+                <div className="border rounded p-2 mr-5 mb-2 cursor-pointer bg-white">
+                  <p className="border-l-4 px-2 border-[rgb(77,74,184)] font-semibold text-sm flex justify-between">
+                    {highlight?.from.fullName}
+                    <Menu>
+                      <Menu.Target>
+                        <ActionIcon variant="subtle">
+                          <IconChevronDown color="gray" size={14} />
+                        </ActionIcon>
+                      </Menu.Target>
+                      <Menu.Dropdown>
+                        <Menu.Item
+                          leftSection={<IconArrowForwardUp size={14} />}
+                        >
+                          Reply
+                        </Menu.Item>
+                        {highlight.from.id === user?.id && (
+                          <Menu.Item
+                            color="red"
+                            leftSection={<IconTrash size={14} />}
+                            onClick={() =>
+                              openDeleteModal(highlight.highlight.id)
+                            }
+                          >
+                            Delete
+                          </Menu.Item>
+                        )}
+                      </Menu.Dropdown>
+                    </Menu>
+                  </p>
+                  {highlight?.highlight?.content?.text ? (
+                    <Alert className=" ml-2 mt-2 border-l-4 border-[rgb(77,74,184)]">
+                      <p className="text-xs line-clamp-3">
+                        {highlight?.highlight.content.text}
+                      </p>
 
-      <ul className="overflow-y-scroll mostly-customized-scrollbar  h-full pb-10 ">
-        {highlights.map((highlight, index) => (
-          <Box
-            className="mb-2"
-            key={index}
-            onClick={() => {
-              updateHash(highlight.highlight);
-            }}
-          >
-            <div className="border rounded p-2 mr-5 mb-2 cursor-pointer bg-white">
-              <p className="border-l-4 px-2 border-[rgb(77,74,184)] font-semibold text-sm flex justify-between">
-                {highlight?.from.fullName}
-                <Menu>
-                  <Menu.Target>
-                    <ActionIcon variant="subtle">
-                      <IconChevronDown color="gray" size={14} />
-                    </ActionIcon>
-                  </Menu.Target>
-                  <Menu.Dropdown>
-                    <Menu.Item leftSection={<IconArrowForwardUp size={14} />}>
-                      Reply
-                    </Menu.Item>
-                    {highlight.from.id === user?.id && (
-                      <Menu.Item
-                        color="red"
-                        leftSection={<IconTrash size={14} />}
-                        onClick={() => openDeleteModal(highlight.highlight.id)}
-                      >
-                        Delete
-                      </Menu.Item>
-                    )}
-                  </Menu.Dropdown>
-                </Menu>
-              </p>
-              {highlight?.highlight?.content?.text ? (
-                <Alert className=" ml-2 mt-2 border-l-4 border-[rgb(77,74,184)]">
-                  <p className="text-xs line-clamp-3">
-                    {highlight?.highlight.content.text}
+                      <p className="text-xs mt-2">
+                        Page{' '}
+                        {highlight?.highlight.position.boundingRect.pageNumber}
+                      </p>
+                    </Alert>
+                  ) : null}
+
+                  {/* Highlight image */}
+                  {highlight?.highlight?.content?.image ? (
+                    <div
+                      className="border rounded p-2"
+                      style={{ marginTop: '0.5rem' }}
+                    >
+                      <img
+                        alt="Screenshot"
+                        className="highlight__image"
+                        src={highlight?.highlight?.content.image}
+                      />
+                      <p className="text-xs mt-2">
+                        Page{' '}
+                        {highlight?.highlight?.position.boundingRect.pageNumber}
+                      </p>
+                    </div>
+                  ) : null}
+                  <p className="mt-2 text-xs">
+                    {highlight?.highlight?.comment?.text}
                   </p>
 
-                  <p className="text-xs mt-2">
-                    Page {highlight?.highlight.position.boundingRect.pageNumber}
-                  </p>
-                </Alert>
-              ) : null}
-
-              {/* Highlight image */}
-              {highlight?.highlight?.content?.image ? (
-                <div
-                  className="border rounded p-2"
-                  style={{ marginTop: '0.5rem' }}
-                >
-                  <img
-                    alt="Screenshot"
-                    className="highlight__image"
-                    src={highlight?.highlight?.content.image}
-                  />
-                  <p className="text-xs mt-2">
-                    Page{' '}
-                    {highlight?.highlight?.position.boundingRect.pageNumber}
-                  </p>
-                </div>
-              ) : null}
-              <p className="mt-2 text-xs">
-                {highlight?.highlight?.comment?.text}
-              </p>
-
-              {/* reply */}
-              {/* <div className="ml-3 p-2">
+                  {/* reply */}
+                  {/* <div className="ml-3 p-2">
                 <div className="border rounded p-2">
                   <p className="border-l-4 px-2 border-[rgb(77,74,184)] font-semibold text-xs flex justify-between">
                     {highlight?.from.fullName}
@@ -153,10 +166,18 @@ export function Sidebar({
                   </p>
                 </div>
               </div> */}
-            </div>
-          </Box>
-        ))}
-      </ul>
+                </div>
+              </Box>
+            ))}
+          </ul>
+        </Tabs.Panel>
+
+        {workflow && (
+          <Tabs.Panel value="workflow">
+            <div className="mt-2">{workflow}</div>
+          </Tabs.Panel>
+        )}
+      </Tabs>
     </div>
   );
 }

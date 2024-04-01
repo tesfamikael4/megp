@@ -6,6 +6,7 @@ import { Box, LoadingOverlay } from '@mantine/core';
 import { useGetSubmittedPlansQuery } from '@/store/api/pre-budget-plan/pre-budget-plan.api';
 import { useEffect, useState } from 'react';
 import { logger } from '@megp/core-fe';
+import { WorkflowHandling } from '../../planning-approval/workflow';
 
 export default function WorkflowPage() {
   const { id } = useParams();
@@ -34,6 +35,12 @@ export default function WorkflowPage() {
           title={data?.document.fileInfo.originalname}
           objectId={id as string}
           pdfUrl={fileUrl}
+          workflow={
+            <WorkflowHandling
+              itemId={id as string}
+              itemKey={'postBudgetApproval'}
+            />
+          }
         />
       )}
     </Box>

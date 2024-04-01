@@ -56,10 +56,12 @@ export function PDFHighlighter({
   pdfUrl,
   objectId,
   title,
+  workflow,
 }: {
   pdfUrl: string;
   objectId: string;
   title: string;
+  workflow?: React.ReactNode;
 }): ReactElement {
   const [create] = useCreateMutation();
   const [zoomLevel, setZoomLevel] = useState<string>('1');
@@ -246,6 +248,7 @@ export function PDFHighlighter({
           </PdfLoader>
         </div>
         <Sidebar
+          workflow={workflow}
           highlights={
             data?.items?.map((highlight) => ({
               from: {
