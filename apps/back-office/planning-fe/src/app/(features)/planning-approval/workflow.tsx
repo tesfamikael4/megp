@@ -43,6 +43,7 @@ export function WorkflowHandling({
   const [currentStep, setCurrentStep] = useState<Record<string, any>>({});
   const [group, setGroup] = useState<any>();
   const [remark, setRemark] = useState('');
+  const [remarkError, setRemarkError] = useState('');
 
   const [getGroup, { data: groupData }] = useLazyGetGroupQuery();
   const [approve, { isLoading: isApproving }] = useApproveMutation();
@@ -84,6 +85,10 @@ export function WorkflowHandling({
   }, [stepsList]);
 
   const handleApprove = async () => {
+    if (!remark) {
+      setRemarkError('Please add a remark.');
+      return;
+    }
     try {
       await approve({
         metaData: {
@@ -112,6 +117,10 @@ export function WorkflowHandling({
   };
 
   const handleAdjust = async () => {
+    if (!remark) {
+      setRemarkError('Please add a remark.');
+      return;
+    }
     try {
       await approve({
         metaData: {
@@ -141,6 +150,10 @@ export function WorkflowHandling({
   };
 
   const handleGoTo = async (stepId, stepName) => {
+    if (!remark) {
+      setRemarkError('Please add a remark.');
+      return;
+    }
     try {
       await goToStep({
         details: {
@@ -185,7 +198,7 @@ export function WorkflowHandling({
   }
 
   function getMetaData(currentStep, stepId, key) {
-    return currentStep?.find((e) => e.stepId === stepId)[key];
+    return currentStep?.find((e) => e.instanceStepId === stepId)[key];
   }
 
   function getPreviousSteps(stepId) {
@@ -246,14 +259,12 @@ export function WorkflowHandling({
                                     <Text c="#868e96">{`Approved by ${step.approvers[0].approver}`}</Text>
                                   </Accordion.Control>
                                   <Accordion.Panel className="w-full">
-                                    <Paper className="mt-4 py-4" withBorder>
-                                      Remark:{' '}
-                                      {
-                                        currentStep?.metadata.find(
-                                          (e) => e.stepId === step.id,
-                                        )?.remark
-                                      }
-                                    </Paper>
+                                    Remark:{' '}
+                                    {
+                                      currentStep?.metadata.find(
+                                        (e) => e.stepId === step.id,
+                                      )?.remark
+                                    }
                                   </Accordion.Panel>
                                   <Accordion.Panel>
                                     {getMetaData(
@@ -267,7 +278,7 @@ export function WorkflowHandling({
                             ) : (
                               <Text>{`Approval by ${step.approvers[0].approver}`}</Text>
                             )}
-                            {currentStep?.stepId === step.id &&
+                            {currentStep?.instanceStepId === step.id &&
                               currentStep.status != 'Approved' &&
                               !checkIdStepIdExist(
                                 currentStep,
@@ -284,13 +295,18 @@ export function WorkflowHandling({
                                 checkUserGroup()) && (
                                 <>
                                   <Textarea
+                                    withAsterisk
                                     minRows={3}
                                     autosize
                                     label="Remark"
                                     placeholder="Please enter your remarks"
                                     value={remark}
-                                    onChange={(e) => setRemark(e.target.value)}
+                                    onChange={(e) => {
+                                      setRemarkError('');
+                                      setRemark(e.target.value);
+                                    }}
                                     className="max-w-[80%]"
+                                    error={remarkError}
                                   />
                                   <Group>
                                     <Button
@@ -311,14 +327,16 @@ export function WorkflowHandling({
                                       Adjust
                                     </Button>
                                     <Menu>
-                                      <Menu.Target>
-                                        <Button
-                                          leftSection={<IconArrowBackUp />}
-                                          loading={isGoing}
-                                        >
-                                          Go to
-                                        </Button>
-                                      </Menu.Target>
+                                      {index != 0 && (
+                                        <Menu.Target>
+                                          <Button
+                                            leftSection={<IconArrowBackUp />}
+                                            loading={isGoing}
+                                          >
+                                            Go to
+                                          </Button>
+                                        </Menu.Target>
+                                      )}
                                       <Menu.Dropdown>
                                         {getPreviousSteps(
                                           currentStep?.step.order,

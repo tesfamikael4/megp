@@ -26,4 +26,5 @@ export const {
   useLazyGetRolesQuery,
   useLazyGetUsersQuery,
   useGetPermissionsQuery,
+  useLazyGetPermissionsQuery,
 } = workflowIamApi;

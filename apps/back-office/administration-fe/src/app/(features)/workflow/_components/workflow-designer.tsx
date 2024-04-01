@@ -1,5 +1,4 @@
 import {
-  LoadingOverlay,
   Stack,
   Button,
   TextInput,
@@ -7,34 +6,23 @@ import {
   Group,
   Modal,
   Menu,
-  Checkbox,
-  Paper,
-  Divider,
-  Badge,
-  Box,
-  Flex,
-  MenuDropdown,
   Select,
   Switch,
 } from '@mantine/core';
-import { ReactElement, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { DragTable, Table, TableConfig } from '@megp/core-fe';
+import { Table, TableConfig } from '@megp/core-fe';
 import {
   IconCirclePlus,
   IconDeviceFloppy,
   IconDotsVertical,
   IconEdit,
-  IconEye,
   IconMenuOrder,
-  IconPlus,
   IconTrash,
-  IconX,
 } from '@tabler/icons-react';
 import { modals } from '@mantine/modals';
 import { useDisclosure } from '@mantine/hooks';
-import { closestCenter, DndContext, DragOverlay } from '@dnd-kit/core';
+import { closestCenter, DndContext } from '@dnd-kit/core';
 import {
   arrayMove,
   SortableContext,
@@ -43,49 +31,11 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { IconGripVertical } from '@tabler/icons-react';
-import {
-  useLazyGetGroupsQuery,
-  useLazyGetRolesQuery,
-  useLazyGetUsersQuery,
-} from '@/store/api/workflow/workflow-iam.api';
-import { useAuth } from '@megp/auth';
 import { notifications } from '@mantine/notifications';
 import {
   useCreateDefaultStepsMutation,
-  useCreateStepsMutation,
   useGetDefaultStepsQuery,
 } from '@/store/api/workflow/workflow.api';
-
-const Method = ({ cell, selected, setSelected }: any) => {
-  // const [value, setValue] = useState<string | null>();
-
-  return (
-    <Stack className="w-fit bg-white">
-      {(cell.approverType === 'Role' || cell.approverType === 'User') && (
-        <Text fz={14}>Anyone</Text>
-      )}
-      {cell.approverType === 'WorkGroup' && (
-        <Select
-          placeholder="Pick value"
-          onOptionSubmit={(value) => {
-            const temp = selected.map((item: any) => {
-              if (item.approver === cell.approver) {
-                return {
-                  ...item,
-                  approvalMethod: value,
-                };
-              }
-              return item;
-            });
-            setSelected([...temp]);
-          }}
-          defaultValue="Majority"
-          data={['Majority', 'Consensus']}
-        />
-      )}
-    </Stack>
-  );
-};
 
 export function Designer() {
   const { id } = useParams();
@@ -122,7 +72,8 @@ export function Designer() {
 
   const Action = ({ cell }: any) => {
     const [opened, { open, close }] = useDisclosure(false);
-    const [selected, setSelected] = useState<any>([]);
+    const [name, setName] = useState('');
+    const [nameError, setNameError] = useState('');
     const openDeleteModal = () => {
       modals.openConfirmModal({
         title: `Delete ${cell.name}`,
@@ -143,44 +94,6 @@ export function Designer() {
       setData([...temp]);
     };
 
-    const addConfig: TableConfig<any> = {
-      columns: [
-        {
-          id: 'select',
-          header: '',
-          accessorKey: 'select',
-          cell: ({ row: { original } }: any) => (
-            <Checkbox
-              checked={
-                selected.some((item) => item.name === original.name) ||
-                cell.name === original.name
-              }
-              onChange={(e) => {
-                if (e.target.checked) setSelected([...selected, original]);
-                else {
-                  setSelected([
-                    ...selected.filter((s) => s.id !== original.id),
-                  ]);
-                }
-              }}
-            />
-          ),
-          meta: {
-            widget: 'primary',
-          },
-        },
-        {
-          id: 'name',
-          header: 'Name',
-          accessorKey: 'name',
-          cell: (info) => info.getValue(),
-          meta: {
-            widget: 'primary',
-          },
-        },
-      ],
-    };
-
     return (
       <>
         <Menu shadow="md">
@@ -189,7 +102,13 @@ export function Designer() {
           </Menu.Target>
 
           <Menu.Dropdown>
-            <Menu.Item leftSection={<IconEdit size={15} />} onClick={open}>
+            <Menu.Item
+              leftSection={<IconEdit size={15} />}
+              onClick={() => {
+                setName(cell?.name);
+                open();
+              }}
+            >
               Edit
             </Menu.Item>
             <Menu.Divider />
@@ -205,19 +124,31 @@ export function Designer() {
 
         <Modal opened={opened} onClose={close} title="Edit Step" size="xl">
           <Stack>
-            <Table config={addConfig} data={[]} />
+            <TextInput
+              label="Name"
+              value={name}
+              error={nameError}
+              onChange={(e) => {
+                setNameError('');
+                setName(e.target.value);
+              }}
+            />
             <Button
               onClick={() => {
-                const temp = data.map((item: any) => {
-                  if (item.name === cell.name) {
+                if (!name) {
+                  setNameError('Name is required');
+                  return;
+                }
+                const editedData = data?.map((entry) => {
+                  if (entry?.name == cell?.name) {
                     return {
-                      ...item,
-                      ...selected,
+                      ...entry,
+                      name: name,
                     };
                   }
-                  return item;
+                  return entry;
                 });
-                setData([...temp]);
+                setData(editedData);
               }}
               className="ml-auto"
             >
@@ -251,6 +182,7 @@ export function Designer() {
     const [selected] = useState<any>([]);
     const [opened, { open, close }] = useDisclosure(false);
     const [name, setName] = useState<string>('');
+    const [nameError, setNameError] = useState<string>('');
 
     const transformedData = {};
 
@@ -276,75 +208,22 @@ export function Designer() {
           <Stack>
             <TextInput
               label="Name"
+              withAsterisk
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              error={nameError}
+              onChange={(e) => {
+                setNameError('');
+                setName(e.target.value);
+              }}
             />
 
-            {/* <Flex className="w-full flex-grow" gap={'lg'}>
-              {['Role', 'User', 'WorkGroup'].map((e, index) => (
-                <>
-                  <Paper
-                    key={index}
-                    withBorder
-                    onClick={async () => {
-                      setType([...type, e]);
-                      await handleAssignment({ type: e });
-                      setIsSelectorOpened(true);
-                    }}
-                    className="w-1/3 shadow-sm bg-gray-100 flex justify-center py-4 gap-1 cursor-pointer"
-                  >
-                    <IconCirclePlus />
-                    {e}
-                  </Paper>
-                </>
-              ))}
-            </Flex> */}
-            {/* {isSelectorOpened && (
-              <>
-                {type.map((type) => (
-                  <>
-                    <Paper withBorder p="md">
-                      <Stack>
-                        <Text>{type}</Text>
-                        {(roles || groups || users) && (
-                          <Table
-                            config={addConfig}
-                            data={
-                              type === 'Role' && roles
-                                ? roles
-                                : type === 'WorkGroup' && groups
-                                ? groups
-                                : type === 'User' && users
-                                ? users
-                                : []
-                            }
-                          />
-                        )}
-                      </Stack>
-                    </Paper>
-                  </>
-                ))}
-
-                <Button
-                  onClick={() => {
-                    const newData = [
-                      ...data,
-                      { ...transformedData, name, id: data.length + 1 },
-                    ];
-                    setData(newData);
-                    setOrderedData(newData);
-                    close();
-                    setSelected([]);
-                  }}
-                  className="ml-auto"
-                >
-                  Save
-                </Button>
-              </>
-            )} */}
             <Button
               className="ml-auto"
               onClick={() => {
+                if (!name) {
+                  setNameError('Name is required');
+                  return;
+                }
                 setData([...data, { name: name, id: data.length + 1 }]);
                 setOrderedData([...data, { name: name, id: data.length + 1 }]);
               }}
