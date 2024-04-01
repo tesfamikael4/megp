@@ -147,6 +147,8 @@ export class WorkflowInstanceResponse extends UpdateWorkflowInstanceDto {
       response.taskHandler.task = null;
     }
 
+
+
     if (entity?.isrVendor) {
       response.isrvendor = entity?.isrVendor;
       const bainfo = response.isrvendor.bankAccountDetails.map((item) => {
