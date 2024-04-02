@@ -138,17 +138,13 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
   }
 
   async prApprovalDecision(data: any): Promise<void> {
+    const { itemId, status } = data;
     const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
-    const sourceEntity =
-      await this.repositoryProcurementRequisition.findOneOrFail({
-        where: { id: data.itemId },
-      });
-    await entityManager
-      .getRepository(ProcurementRequisition)
-      .update(sourceEntity.id, {
-        status: data.status,
-      });
+    await entityManager.getRepository(ProcurementRequisition).update(itemId, {
+      status: status.toUpperCase(),
+    });
   }
+
   //reports
   async calculateTargetGroupPercentage(
     postBudgetPlanId: string,
