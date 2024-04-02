@@ -32,7 +32,7 @@ import { createHash } from 'crypto';
 import { PdfGeneratorService } from 'src/modules/utility/services/pdf-generator.service';
 import { MinIOService } from 'src/shared/min-io/min-io.service';
 import { DocumentService } from 'src/modules/utility/services/document.service';
-import { HashService } from 'src/modules/utility/services/hash.service';
+import { HashService } from 'src/shared/hash/hash.service';
 
 @Injectable()
 export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
@@ -352,11 +352,8 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
         preProcurementMechanism: true,
       },
     });
-    const transformedData = this.instanceToPlainExclude(data, {
-      exclude: ['createdAt', 'deletedAt'],
-    });
 
-    return this.hashService.hashData(transformedData);
+    return this.hashService.hashData(data);
   }
 
   async hashMatch(id: string, hashData: string) {
@@ -405,21 +402,5 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
       },
       organization,
     );
-  }
-
-  instanceToPlainExclude(
-    obj: Record<string, any>,
-    options: { exclude?: string[] } = {},
-  ): Record<string, any> {
-    const plain: Record<string, any> = {};
-    for (const key in obj) {
-      if (obj.hasOwnProperty(key) && !options.exclude.includes(key)) {
-        plain[key] =
-          typeof obj[key] === 'object' && obj[key] !== null
-            ? this.instanceToPlainExclude(obj[key], options) // Recursively convert nested objects
-            : obj[key];
-      }
-    }
-    return plain;
   }
 }

@@ -1,11 +1,12 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Injectable } from '@nestjs/common';
-import { ExtraCrudService } from 'megp-shared-be';
+import { EntityManager, Repository } from 'typeorm';
+import { Inject, Injectable } from '@nestjs/common';
+import { ENTITY_MANAGER_KEY, ExtraCrudService } from 'megp-shared-be';
 import { State } from 'src/entities/state.entity';
 import { XMachineService } from './xMachine.service';
 import { Step } from 'src/entities';
 import { InstanceStep } from 'src/entities/instance-step.entity';
+import { REQUEST } from '@nestjs/core';
 
 @Injectable()
 export class StateService extends ExtraCrudService<State> {
@@ -17,6 +18,9 @@ export class StateService extends ExtraCrudService<State> {
     private readonly xMachineState: XMachineService,
     @InjectRepository(InstanceStep)
     private readonly repositoryInstanceStep: Repository<InstanceStep>,
+
+    @Inject(REQUEST)
+    private request: Request,
   ) {
     super(repositoryState);
   }
@@ -27,6 +31,8 @@ export class StateService extends ExtraCrudService<State> {
     organizationId: string,
     itemId: string,
   ): Promise<any> {
+    const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
     const steps = await this.repositoryInstanceStep.find({
       where: { activityId, organizationId, itemId },
       order: { order: 'ASC' },
@@ -39,7 +45,9 @@ export class StateService extends ExtraCrudService<State> {
     });
 
     if (!state) {
-      await this.repositoryState.delete({ activityId, organizationId });
+      await entityManager
+        .getRepository(State)
+        .delete({ activityId, organizationId });
     }
     const stateMachineConfig = this.xMachineState.createStateMachineConfig(
       steps as any,
@@ -50,7 +58,7 @@ export class StateService extends ExtraCrudService<State> {
       activityId,
       organizationId,
     });
-    await this.repositoryState.insert(stateEntity);
+    await entityManager.getRepository(State).insert(stateEntity);
     return stateEntity;
   }
 }

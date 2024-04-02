@@ -25,7 +25,7 @@ export class PostBudgetPlanDisbursementService extends ExtraCrudService<PostBudg
         {
           where: {
             postBudgetPlanActivityId: data.postBudgetPlanActivityId,
-            organizationId: data.organizationId,
+            // organizationId: data.organizationId,
           },
         },
       );
@@ -37,10 +37,11 @@ export class PostBudgetPlanDisbursementService extends ExtraCrudService<PostBudg
 
       const act = await this.repositoryPostBudgetPlanActivity.findOneBy({
         id: data.postBudgetPlanActivityId,
-        organizationId: data.organizationId,
-        organizationName: data.organizationName,
+        // organizationId: data.organizationId,
+        // organizationName: data.organizationName,
       });
-      const totalAmount = data.data.reduce((acc, item) => acc + item.amount, 0);
+      const { quarter1, quarter2, quarter3, quarter4 } = data.data[0];
+      const totalAmount = quarter1 + quarter2 + quarter3 + quarter4;
 
       if (+act.estimatedAmount < totalAmount) {
         throw new HttpException(
@@ -57,7 +58,7 @@ export class PostBudgetPlanDisbursementService extends ExtraCrudService<PostBudg
       await this.repositoryPostBudgetPlanDisbursement.create(data.data);
       return await this.repositoryPostBudgetPlanDisbursement.save(data.data);
     } catch (err) {
-      console.log(err);
+      throw err;
     }
   }
 }

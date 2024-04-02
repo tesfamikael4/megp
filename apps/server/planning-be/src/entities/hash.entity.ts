@@ -1,14 +1,17 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
-import { OrgAudit } from 'src/shared/entities';
+import { Audit } from 'src/shared/entities';
 
-@Entity({ name: 'hash' })
-export class Hash extends OrgAudit {
+@Entity({ name: 'hashes' })
+export class Hash extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
   hash: string;
+
+  @Column({ type: 'jsonb' })
+  originalData: any;
 
   @Column()
   objectId: string;
