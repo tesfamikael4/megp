@@ -63,7 +63,13 @@ const tableData = [
   },
 ];
 
-export default function TimelineTab({ activityId }: { activityId?: string }) {
+export default function TimelineTab({
+  activityId,
+  disableFields = false,
+}: {
+  activityId?: string;
+  disableFields?: boolean;
+}) {
   const [data, setData] = useState<any[]>(tableData);
   const { id } = useParams();
 
@@ -190,7 +196,7 @@ export default function TimelineTab({ activityId }: { activityId?: string }) {
             rightSection={
               <Box className=" text-black border-l-2 p-2 mr-6 ">Days </Box>
             }
-            disabled={activityId ? true : false}
+            disabled={activityId ? true : false || disableFields}
           />
         )}
       </>
@@ -240,7 +246,7 @@ export default function TimelineTab({ activityId }: { activityId?: string }) {
           placeholder="Pick date"
           onBlur={onBlur}
           minDate={new Date()}
-          disabled={index != 0 || activityId ? true : false}
+          disabled={index != 0 || activityId ? true : false || disableFields}
         />
       </>
     );
@@ -316,7 +322,12 @@ export default function TimelineTab({ activityId }: { activityId?: string }) {
           )}
         {!activityId && (
           <Group className="mt-2" justify="end">
-            <Button onClick={handleSave} loading={isTimelineCreating} mb={'sm'}>
+            <Button
+              onClick={handleSave}
+              loading={isTimelineCreating}
+              mb={'sm'}
+              disabled={disableFields}
+            >
               <IconDeviceFloppy size={16} /> Save
             </Button>
           </Group>

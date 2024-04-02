@@ -7,22 +7,37 @@ import TimelineTab from '@/app/(features)/procurement-requisition/_components/ti
 import { Requisitioner } from '@/app/(features)/procurement-requisition/_components/requisitioner';
 import { Documents } from '../_components/documents';
 import { useParams, useRouter } from 'next/navigation';
-import { useReadQuery } from '../_api/procurement-requisition.api';
+import { useReadQuery } from '@/store/api/pr/pr.api';
 import { IconChevronLeft, IconMessage2 } from '@tabler/icons-react';
 import { Note } from '../../(app)/_components/note';
 import { useDisclosure } from '@mantine/hooks';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function PrDetailPage() {
   const router = useRouter();
   const { id } = useParams();
-  const { data } = useReadQuery(id?.toString());
+  const { data, isSuccess: succeed } = useReadQuery(id?.toString());
   const [opened, { toggle }] = useDisclosure(false);
   const [currentTab, setCurrentTab] = useState('identification');
+  const [disableFields, setDisableFields] = useState<any>(false);
+
   const activeTabStyle =
     'bg-gray-100 cursor-pointer border-l border-r border-t py-2 px-10 rounded-t text-gray-700 font-medium';
   const inActiveTabStyle =
     'cursor-pointer py-2 px-10 text-gray-700 font-medium';
+
+  // const disableFields =
+  //   data?.status != 'Draft' && data?.status != 'Adjust' ? false : true;
+
+  useEffect(() => {
+    succeed &&
+      setDisableFields(
+        data?.status.toLowerCase() != 'draft' &&
+          data?.status.toLowerCase() != 'Adjust'
+          ? true
+          : false,
+      );
+  }, [data, succeed]);
 
   return (
     <>
@@ -106,19 +121,27 @@ export default function PrDetailPage() {
       <Container size="xl">
         <Box className="mt-5 -mx-4">
           <Flex>
-            {currentTab === 'identification' && <FormDetail mode="detail" />}
-
-            {currentTab === 'method' && (
-              <PrMechanization disableFields={false} />
+            {currentTab === 'identification' && (
+              <FormDetail mode="detail" disableFields={disableFields} />
             )}
 
-            {currentTab === 'items' && <Items />}
+            {currentTab === 'method' && (
+              <PrMechanization disableFields={disableFields} />
+            )}
 
-            {currentTab === 'documents' && <Documents />}
+            {currentTab === 'items' && <Items disableFields={disableFields} />}
 
-            {currentTab === 'timeline' && <TimelineTab />}
+            {currentTab === 'documents' && (
+              <Documents disableFields={disableFields} />
+            )}
 
-            {currentTab === 'requisitioner' && <Requisitioner />}
+            {currentTab === 'timeline' && (
+              <TimelineTab disableFields={disableFields} />
+            )}
+
+            {currentTab === 'requisitioner' && (
+              <Requisitioner disableFields={disableFields} />
+            )}
 
             {opened && (
               <Box className="w-2/4 ml-2">

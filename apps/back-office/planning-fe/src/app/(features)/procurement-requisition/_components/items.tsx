@@ -32,7 +32,13 @@ import { ExpandableTable } from './expandable-table';
 import { ItemDetailForm } from './item-form-detail';
 import { CollectionQuery } from '@megp/entity';
 
-export function Items({ activityId }: { activityId?: string }) {
+export function Items({
+  activityId,
+  disableFields,
+}: {
+  activityId?: string;
+  disableFields?: boolean;
+}) {
   const [opened, { open, close }] = useDisclosure(false);
   const [
     openedImportModal,
@@ -134,7 +140,10 @@ export function Items({ activityId }: { activityId?: string }) {
                 const temp = newItems.filter((i) => i.id != record.id);
                 setNewItems(temp);
               }}
-              disabled={record.annualProcurementPlanBudgetLineId === null}
+              disabled={
+                record.annualProcurementPlanBudgetLineId === null ||
+                disableFields
+              }
             >
               <IconTrash size={14} />
             </ActionIcon>
@@ -149,6 +158,7 @@ export function Items({ activityId }: { activityId?: string }) {
 
     expandedRowContent: (record) => (
       <ItemDetailForm
+        disable={disableFields}
         item={record}
         onSave={handleUpdate}
         isLoading={isUpdating}
@@ -182,6 +192,7 @@ export function Items({ activityId }: { activityId?: string }) {
                     onConfirm: () => handleDelete(record.id),
                   });
                 }}
+                disabled={disableFields}
               >
                 <IconTrash size={14} />
               </ActionIcon>
@@ -296,10 +307,10 @@ export function Items({ activityId }: { activityId?: string }) {
       action={
         !activityId && (
           <Group justify="end" className="my-2" gap="md">
-            <Button onClick={openImportModal}>
+            <Button onClick={openImportModal} disabled={disableFields}>
               <IconFileImport size={18} /> Import
             </Button>
-            <Button onClick={open}>
+            <Button onClick={open} disabled={disableFields}>
               <IconPlus size={18} /> Add
             </Button>
           </Group>

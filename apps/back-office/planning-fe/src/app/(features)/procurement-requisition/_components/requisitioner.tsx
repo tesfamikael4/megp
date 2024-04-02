@@ -13,7 +13,11 @@ import {
 } from '@/store/api/pr/pr.api';
 import { ExpandableTable } from './expandable-table';
 
-export const Requisitioner = () => {
+export const Requisitioner = ({
+  disableFields = false,
+}: {
+  disableFields?: boolean;
+}) => {
   const { organizationId } = useAuth();
   const config = {
     columns: [
@@ -38,6 +42,7 @@ export const Requisitioner = () => {
                   );
                   setRequisitioners([...temp]);
                 }}
+                disabled={disableFields}
               >
                 <IconTrash size={16} />
               </ActionIcon>
@@ -108,7 +113,9 @@ export const Requisitioner = () => {
       collapsible={false}
       action={
         <Group justify="end" className="my-2">
-          <Button onClick={open}>Add</Button>
+          <Button onClick={open} disabled={disableFields}>
+            Add
+          </Button>
         </Group>
       }
     >
@@ -120,7 +127,12 @@ export const Requisitioner = () => {
         />
         {requisitioners.length !== 0 && (
           <Group justify="end" className="my-2">
-            <Button onClick={onCreate} loading={isCreatingLoading} mb={'sm'}>
+            <Button
+              onClick={onCreate}
+              loading={isCreatingLoading}
+              mb={'sm'}
+              disabled={disableFields}
+            >
               <IconDeviceFloppy size={14} />
               Save
             </Button>

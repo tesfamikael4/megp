@@ -131,7 +131,11 @@ export const ItemDetailForm = ({
         </Box>
       </Flex>
       <Group justify="end">
-        <Button onClick={handleSubmit(onSubmit, onError)} loading={isLoading}>
+        <Button
+          onClick={handleSubmit(onSubmit, onError)}
+          loading={isLoading}
+          disabled={disable}
+        >
           {onSave ? 'Save' : 'Done'}
         </Button>
       </Group>
