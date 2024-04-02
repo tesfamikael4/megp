@@ -1,12 +1,13 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
-import { Injectable } from '@nestjs/common';
-import { ExtraCrudService } from 'megp-shared-be';
+import { EntityManager, In, Repository } from 'typeorm';
+import { Inject, Injectable } from '@nestjs/common';
+import { ENTITY_MANAGER_KEY, ExtraCrudService } from 'megp-shared-be';
 import { Step } from '../../../entities';
 import { DefaultStep } from 'src/entities/default-step.entity';
 import { Instance } from 'src/entities/instance.entity';
 import { InstanceStep } from 'src/entities/instance-step.entity';
 import { Activity } from 'src/entities/activity.entity';
+import { REQUEST } from '@nestjs/core';
 
 @Injectable()
 export class InstanceStepService extends ExtraCrudService<InstanceStep> {
@@ -17,11 +18,15 @@ export class InstanceStepService extends ExtraCrudService<InstanceStep> {
     private readonly repositoryDefaultStep: Repository<DefaultStep>,
     @InjectRepository(Activity)
     private readonly repositoryActivity: Repository<Activity>,
+    @Inject(REQUEST)
+    private request: Request,
   ) {
     super(repositoryInstanceStep);
   }
 
   async bulkCreate(steps: any): Promise<InstanceStep[]> {
+    const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
     try {
       const organizationId = steps[0].organizationId;
       const preStep = await this.repositoryInstanceStep.find({
@@ -32,11 +37,13 @@ export class InstanceStepService extends ExtraCrudService<InstanceStep> {
         },
       });
       if (preStep.length > 0) {
-        await this.repositoryInstanceStep.delete({ itemId: steps[0].itemId });
+        await entityManager
+          .getRepository(InstanceStep)
+          .delete({ itemId: steps[0].itemId });
       }
 
       const items = this.repositoryInstanceStep.create(steps);
-      await this.repositoryInstanceStep.insert(items);
+      await entityManager.getRepository(InstanceStep).insert(items);
 
       return items;
     } catch (error) {

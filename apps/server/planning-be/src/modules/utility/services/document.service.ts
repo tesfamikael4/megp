@@ -59,11 +59,11 @@ export class DocumentService extends EntityCrudService<Document> {
   async getPresignedUrlWithDoc(id: string): Promise<any> {
     const document = await this.repositoryDocument.findOne({
       where: {
-        itemId: id,
+        id,
       },
     });
     if (!document) {
-      throw new NotFoundException();
+      throw new NotFoundException('Document not found');
     }
     const presignedUrl = await this.minIoService.generatePresignedDownloadUrl({
       bucketName: document.fileInfo.bucketName,
