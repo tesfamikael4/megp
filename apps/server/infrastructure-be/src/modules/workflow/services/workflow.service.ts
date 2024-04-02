@@ -39,7 +39,7 @@ export class WorkflowService extends EntityCrudService<Workflow> {
       },
     });
 
-    if (!instance) throw new Error('state not found');
+    if (!instance) throw new Error('instance not found');
 
     try {
       const workflowMachine = await this.xMachineService.createMachineConfig(
