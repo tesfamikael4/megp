@@ -43,6 +43,9 @@ export class Account extends Audit {
   })
   status: string;
 
+  @Column({ default: false })
+  isPhoneVerified: boolean;
+
   @Column({ default: 0 })
   failedAttempts: number;
 
