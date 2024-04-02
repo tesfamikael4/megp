@@ -37,7 +37,7 @@ export const BudgetSelector = ({ activity, disableFields }: any) => {
     getSelectedData,
     { data: selectedData, isSuccess: isSelectedDataSuccess },
   ] = useLazyListByIdQuery();
-  const [addBudget] = useAddBudgetMutation();
+  const [addBudget, { isLoading: isSaving }] = useAddBudgetMutation();
   const { data: postBudget, isLoading: isPostBudgetLoading } =
     useGetPostBudgetPlanQuery(budgetYear as string);
 
@@ -242,7 +242,7 @@ export const BudgetSelector = ({ activity, disableFields }: any) => {
       </Modal>
 
       <Group justify="end" className="mt-2">
-        <Button onClick={onSubmit} disabled={disableFields}>
+        <Button onClick={onSubmit} disabled={disableFields} loading={isSaving}>
           Save
         </Button>
       </Group>
