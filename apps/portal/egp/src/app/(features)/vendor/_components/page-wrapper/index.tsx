@@ -53,7 +53,7 @@ const PageWrapper = (props: Props) => {
           </Flex>
         )}
       </Flex>
-      <div className="relative">
+      <div className="relative w-full">
         <LoadingOverlay
           visible={props.isLoading}
           zIndex={1000}

@@ -34,30 +34,45 @@ const PageWrapper: React.FC<PropsWithChildren> = ({ children }) => {
           base: 1,
           md: 2,
           sm: 2,
+          xs: 1,
+        }}
+        spacing={{
+          xs: 0,
         }}
         className="h-full"
       >
         <Box className={classes.leftLayout}>
           <Box className={classes.leftLayoutWrapper}>
-            <Flex align={'center'} gap={'xs'}>
+            <Flex
+              align={'center'}
+              gap={'xs'}
+              className="sm:items-center sm:justify-center"
+            >
               <LogoWithOrg />
             </Flex>
-            <Flex mt={10} className="flex flex-col items-center gap-6">
+            <Flex
+              mt={10}
+              className="flex flex-col  gap-6 sm:items-start items-center sm:justify-center"
+            >
+              <Text visibleFrom="sm" fw={700} fz={38}>
+                Welcome to MANEPS
+              </Text>
               <Text
                 fw={700}
                 fz={{
-                  sm: 38,
-                  base: 16,
+                  xs: 38,
+                  base: 20,
                 }}
+                hiddenFrom="sm"
               >
-                Welcome to MANEPS
+                Welcome, Sign up to MANEPS!
               </Text>
               <Text fz={16} maw={410} visibleFrom="sm" className="text-justify">
                 The MANEPS Malawi Platform is a web-based, collaborative system
                 to manage the full life cycle of a tendering and contract
                 management process, for both government agencies and suppliers.
               </Text>
-              <Group gap={5} grow mt="xs" mb="md" maw={200}>
+              <Group gap={5} grow mt="xs" mb="md" maw={200} visibleFrom="sm">
                 {bars}
               </Group>
             </Flex>

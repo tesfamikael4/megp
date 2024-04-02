@@ -61,4 +61,9 @@ export const managementLinks: MenuLinks.SidebarLinks[] = [
     icon: IconAddressBook,
     link: '/vendor/registration/my-profile',
   },
+  {
+    label: 'My Locker',
+    icon: IconBriefcase,
+    link: '/vendor/my-locker',
+  },
 ];

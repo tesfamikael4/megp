@@ -10,6 +10,7 @@ import UploadModal from './_components/upload-modal';
 import DocumentDetail from './_components/document-detail';
 import { useLazyGetBriefcaseFilesQuery } from '../_api/query';
 import PageWrapper from '../../../_components/page-wrapper';
+import { MyBriefcaseIcon } from './_components/placeholder-icon';
 // import { useDebouncedState } from '@mantine/hooks';
 function Page() {
   const [row, setRow] = useState(null);
@@ -76,9 +77,21 @@ function Page() {
             Add
           </Button>
         }
-        headerBorder
         condition={data && data.length > 0}
         isLoading={isLoading}
+        placeholder={
+          <Flex className=" flex-col gap-3 w-full h-full flex items-center justify-center mt-24">
+            <MyBriefcaseIcon />
+            <Text fw={500} fz={18}>
+              Get Started!
+            </Text>
+            <Text fw={500} fz={14} c="#464665">
+              No documents have been added!
+            </Text>
+            <Button variant="outline">Add Documents</Button>
+          </Flex>
+        }
+        headerBorder
       >
         <Flex mt={'md'}>
           <Box miw={row ? '60%' : '100%'}>
