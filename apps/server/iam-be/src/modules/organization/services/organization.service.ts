@@ -24,6 +24,8 @@ import { defaultOrganizationRoles } from 'src/modules/seeders/seed-data';
 import { AccountsService } from 'src/modules/account/services/account.service';
 import { OrganizationStatus, UserStatus } from 'src/shared/enums';
 import { RoleSystemService } from 'src/modules/role-system/services/role-system.service';
+import { CollectionQuery, QueryConstructor } from 'src/shared/collection-query';
+import { DataResponseFormat } from 'src/shared/api-data';
 
 @Injectable()
 export class OrganizationService extends EntityCrudService<Organization> {
@@ -127,6 +129,29 @@ export class OrganizationService extends EntityCrudService<Organization> {
     organization.status = OrganizationStatus.ACTIVE;
 
     return organization;
+  }
+
+  async findAllOrganizationByMandate(
+    mandateKey: string,
+    query: CollectionQuery,
+  ) {
+    const dataQuery = QueryConstructor.constructQuery<Organization>(
+      this.repositoryOrganization,
+      query,
+    )
+      .leftJoin('organizations.organizationMandates', 'organizationMandates')
+      .leftJoin('organizationMandates.mandate', 'mandate')
+      .andWhere('mandate.key = :mandateKey', { mandateKey: mandateKey });
+
+    const response = new DataResponseFormat<Organization>();
+    if (query.count) {
+      response.total = await dataQuery.getCount();
+    } else {
+      const [result, total] = await dataQuery.getManyAndCount();
+      response.total = total;
+      response.items = result;
+    }
+    return response;
   }
 
   private generateOrganizationCode() {

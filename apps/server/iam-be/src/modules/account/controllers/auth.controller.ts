@@ -208,6 +208,17 @@ export class AuthController {
     return await this.accountsService.confirmNewEmail(payload);
   }
 
+  @Post('request-confirm-phone')
+  async requestConfirmPhone(@CurrentUser() user: any): Promise<any> {
+    return await this.accountsService.requestConfirmPhone(user.id);
+  }
+
+  @Post('confirm-phone')
+  @AllowAnonymous()
+  async confirmPhone(@Body() payload: AcceptAccountDto): Promise<any> {
+    return await this.accountsService.confirmPhone(payload);
+  }
+
   @Get('send-email/:email')
   @AllowAnonymous()
   async sendEmail(@Param('email') email: string): Promise<any> {

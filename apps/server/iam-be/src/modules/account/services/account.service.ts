@@ -359,57 +359,6 @@ export class AccountsService {
     return token;
   }
 
-  async getUserInfo(id: string) {
-    const newAccount = await this.repository
-      .createQueryBuilder('accounts')
-      .leftJoinAndSelect('accounts.users', 'users', `users.status =:status`, {
-        status: UserStatus.ACTIVE,
-      })
-      .leftJoinAndSelect(
-        'users.organization',
-        'organization',
-        `organization.status =:orgStatus`,
-        {
-          orgStatus: OrganizationStatus.ACTIVE,
-        },
-      )
-      .leftJoin(
-        'organization.organizationMandates',
-        'organizationMandates',
-        'organizationMandates.organizationId = users.organizationId',
-      )
-      .leftJoin('organizationMandates.mandate', 'mandate')
-      .leftJoin('mandate.mandatePermissions', 'mandatePermissions')
-      .leftJoinAndSelect('users.userRoles', 'userRoles')
-      .leftJoinAndSelect('userRoles.role', 'role')
-      .leftJoinAndSelect(
-        'role.rolePermissions',
-        'rolePermissions',
-        'mandatePermissions.permissionId = rolePermissions.permissionId',
-      )
-      .leftJoinAndSelect('rolePermissions.permission', 'permissionRole')
-      .leftJoinAndSelect('permissionRole.application', 'applicationRole')
-      .leftJoinAndSelect('users.userRoleSystems', 'userRoleSystems')
-      .leftJoinAndSelect('userRoleSystems.roleSystem', 'roleSystem')
-      .leftJoinAndSelect(
-        'roleSystem.roleSystemPermissions',
-        'roleSystemPermissions',
-        'mandatePermissions.permissionId = roleSystemPermissions.permissionId',
-      )
-      .leftJoinAndSelect(
-        'roleSystemPermissions.permission',
-        'permissionRoleSystem',
-      )
-      .leftJoinAndSelect(
-        'permissionRoleSystem.application',
-        'applicationRoleSystem',
-      )
-      .andWhere('accounts.id =:id', { id })
-      .getOne();
-
-    return newAccount;
-  }
-
   async getUserInfoPayload(accountId: string) {
     return await this.getAccessTokenPayload(accountId);
   }
@@ -855,6 +804,41 @@ export class AccountsService {
     );
     await manager.getRepository(Account).update(emailChangeRequest.accountId, {
       email: emailChangeRequest.newEmail,
+    });
+  }
+
+  async requestConfirmPhone(accountId: string) {
+    const account = await this.repository.findOneBy({ id: accountId });
+    if (!account) {
+      throw new BadRequestException('account_not_found');
+    } else if (!account.phone) {
+      throw new BadRequestException('phone_not_found');
+    } else if (account.isPhoneVerified) {
+      throw new BadRequestException('phone_already_verified');
+    }
+
+    const { accountVerification, otp } = await this.createOTP(
+      account,
+      AccountVerificationTypeEnum.PHONE_VERIFICATION,
+    );
+
+    //TODO: send sms
+
+    return { verificationId: accountVerification.id };
+  }
+
+  async confirmPhone(payload: AcceptAccountDto) {
+    const { verificationId, otp, isOtp }: AcceptAccountDto = payload;
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
+    const accountVerification = await this.verifyOTPBackOffice(
+      verificationId,
+      otp,
+      isOtp,
+    );
+
+    await manager.getRepository(Account).update(accountVerification.accountId, {
+      isPhoneVerified: true,
     });
   }
 
@@ -1336,10 +1320,63 @@ export class AccountsService {
       firstName: userInfo.firstName,
       lastName: userInfo.lastName,
       email: userInfo.email,
+      phone: userInfo.phone,
+      isPhoneVerified: userInfo.isPhoneVerified,
       organizations,
     };
 
     return tokenPayload;
+  }
+
+  private async getUserInfo(id: string) {
+    const newAccount = await this.repository
+      .createQueryBuilder('accounts')
+      .leftJoinAndSelect('accounts.users', 'users', `users.status =:status`, {
+        status: UserStatus.ACTIVE,
+      })
+      .leftJoinAndSelect(
+        'users.organization',
+        'organization',
+        `organization.status =:orgStatus`,
+        {
+          orgStatus: OrganizationStatus.ACTIVE,
+        },
+      )
+      .leftJoin(
+        'organization.organizationMandates',
+        'organizationMandates',
+        'organizationMandates.organizationId = users.organizationId',
+      )
+      .leftJoin('organizationMandates.mandate', 'mandate')
+      .leftJoin('mandate.mandatePermissions', 'mandatePermissions')
+      .leftJoinAndSelect('users.userRoles', 'userRoles')
+      .leftJoinAndSelect('userRoles.role', 'role')
+      .leftJoinAndSelect(
+        'role.rolePermissions',
+        'rolePermissions',
+        'mandatePermissions.permissionId = rolePermissions.permissionId',
+      )
+      .leftJoinAndSelect('rolePermissions.permission', 'permissionRole')
+      .leftJoinAndSelect('permissionRole.application', 'applicationRole')
+      .leftJoinAndSelect('users.userRoleSystems', 'userRoleSystems')
+      .leftJoinAndSelect('userRoleSystems.roleSystem', 'roleSystem')
+      .leftJoinAndSelect(
+        'roleSystem.roleSystemPermissions',
+        'roleSystemPermissions',
+        'mandatePermissions.permissionId = roleSystemPermissions.permissionId',
+      )
+      .leftJoinAndSelect(
+        'roleSystemPermissions.permission',
+        'permissionRoleSystem',
+      )
+      .leftJoinAndSelect(
+        'permissionRoleSystem.application',
+        'applicationRoleSystem',
+      )
+      .andWhere('accounts.id =:id', { id })
+      .getOne();
+
+    return newAccount;
   }
 
   private generateUsername() {
