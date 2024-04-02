@@ -17,12 +17,12 @@ export class StateController extends ExtraCrudController<State>(options) {
     super(stateService);
   }
 
-  @Post()
-  async create(@Body() data: any, @CurrentUser() user): Promise<any> {
-    this.stateService.createState(
-      data.activityId,
-      user.organization.id,
-      data.itemId,
-    );
-  }
+  // @Post()
+  // async create(@Body() data: any, @CurrentUser() user): Promise<any> {
+  //   this.stateService.createState(
+  //     data.activityId,
+  //     user.organization.id,
+  //     data.itemId,
+  //   );
+  // }
 }

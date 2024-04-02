@@ -25,14 +25,13 @@ export class StateService extends ExtraCrudService<State> {
     super(repositoryState);
   }
 
-  // Listen
+  // Listen event
   async createState(
     activityId: string,
     organizationId: string,
     itemId: string,
+    entityManager: EntityManager,
   ): Promise<any> {
-    const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
-
     const steps = await this.repositoryInstanceStep.find({
       where: { activityId, organizationId, itemId },
       order: { order: 'ASC' },
