@@ -12,13 +12,12 @@ import { useLazyReadQuery } from '../_api/activities.api';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { IconPlus } from '@tabler/icons-react';
-import { Section, logger, notify } from '@megp/core-fe';
+import { ExpandableTable, Section, logger, notify } from '@megp/core-fe';
 import {
   useCreatePostBudgetDisbursementMutation,
   useLazyGetPostBudgetDisbursementQuery,
   useGetPostBudgetPlansQuery,
 } from '@/store/api/post-budget-plan/post-budget-plan.api';
-import { ExpandableTable } from '@/app/(features)/_components/expandable-table';
 import { BudgetForm } from './budget-form';
 
 export const BudgetTab = ({ disableFields }: { disableFields?: boolean }) => {
@@ -52,7 +51,7 @@ export const BudgetTab = ({ disableFields }: { disableFields?: boolean }) => {
   const config = {
     idAccessor: 'budgetYear',
     isExpandable: true,
-    expandedRowContent: (record) => {
+    expandedRowContent: (record, collapsible) => {
       return (
         <BudgetForm
           disableFields={disableFields}
@@ -70,6 +69,7 @@ export const BudgetTab = ({ disableFields }: { disableFields?: boolean }) => {
             logger.log({ temp });
 
             setBudgetYearDisbursement(temp);
+            collapsible();
           }}
           disableRemove={
             budgetYearWithApp?.items?.[0].app.budgetYear === record.budgetYear
@@ -226,10 +226,13 @@ export const BudgetTab = ({ disableFields }: { disableFields?: boolean }) => {
       await createDisbursement({
         data: castedData,
         postBudgetPlanActivityId: id,
-      });
+      }).unwrap();
       notify('Success', 'Saved Successfully');
     } catch (err) {
-      notify('Error', 'Something went wrong');
+      logger.log({ err });
+      if (err.status === 430) {
+        notify('Error', err.data.message);
+      } else notify('Error', 'Something went wrong');
     }
   };
   return (

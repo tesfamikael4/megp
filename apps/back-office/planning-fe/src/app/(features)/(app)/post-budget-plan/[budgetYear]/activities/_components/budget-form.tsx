@@ -2,6 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, Flex, Group, Stack, NumberInput } from '@mantine/core';
+import { notify } from '@megp/core-fe';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { ZodType, z } from 'zod';
@@ -46,6 +47,12 @@ export const BudgetForm = ({
       setValue('quarter4', parseInt(data.quarter4));
     }
   }, []);
+
+  const handleOnDone = (data) => {
+    if (data.quarter1 + data.quarter2 + data.quarter3 + data.quarter4 > 0)
+      onDone(data);
+    else notify('Error', 'You must enter an amount at least for one quarter');
+  };
   return (
     <div className="p-5 bg-white">
       <Stack>
@@ -130,7 +137,7 @@ export const BudgetForm = ({
           >
             Remove
           </Button>
-          <Button onClick={handleSubmit(onDone)} disabled={disableFields}>
+          <Button onClick={handleSubmit(handleOnDone)} disabled={disableFields}>
             Done
           </Button>
         </Group>
