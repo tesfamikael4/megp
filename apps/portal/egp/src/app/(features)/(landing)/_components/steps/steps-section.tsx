@@ -60,7 +60,7 @@ export function StepsSection() {
             c="white"
             fw={700}
           >
-            Steps To Be A Supplier
+            Steps To Be A Vendor
           </Text>
           <Flex className="flex-col md:flex-row w-full gap-4">
             {steps.map((step, index) => (

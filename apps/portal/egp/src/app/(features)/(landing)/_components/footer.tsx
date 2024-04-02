@@ -42,14 +42,10 @@ export default function Footer() {
               </Link>
 
               <Text size="xs" className=" text-justify">
-                Electronic Government Procurement (eGP) refers to the use of
-                digital technologies to enable a more efficient and transparent
-                exchange of information, and interactions and transactions
-                between government and the business community in the procurement
-                of goods, services, and works. E-GP automates and streamlines
-                the end-to-end public procurement process from the preparation
-                and publication of annual procurement plans, managing the
-                various tendering activities, and administration of contracts.
+                The Malawi National Electronic Procurement System (MANEPS)
+                Platform is a web-based, collaborative system to manage the full
+                life cycle of a tendering and contract management process, for
+                both government agencies and suppliers.
               </Text>
               <Box>
                 <Link href="#">
@@ -110,7 +106,7 @@ export default function Footer() {
             </Group>
           </Flex>
 
-          <Flex direction={'column'} gap={'lg'} px="md">
+          <Flex direction={'column'} gap={'xl'} px="md">
             {/* contact us */}
             <Flex direction={'column'} gap={5}>
               <Text fw={500}>CONTACT US</Text>
@@ -141,8 +137,15 @@ export default function Footer() {
             <Flex direction={'column'} gap={5}>
               <Text fw={500}>IMPORTANT LINKS</Text>
               <Flex fz={12} direction={'column'}>
-                <Link href="#">https://www.figma.com/file/</Link>
-                <Link href="#">https://www.figma.com/file/</Link>
+                <Link target="_blank" href="https://www.pppda.mw">
+                  https://www.pppda.mw
+                </Link>
+                <Link target="_blank" href="https://www.mra.mw">
+                  https://www.mra.mw
+                </Link>
+                <Link target="_blank" href="https://www.mbrs.gov.mw">
+                  https://www.mbrs.gov.mw
+                </Link>
               </Flex>
             </Flex>
           </Flex>
@@ -150,14 +153,18 @@ export default function Footer() {
 
         <Flex className="flex-col items-center justify-center mx-auto mt-12 ">
           <Text ta={'center'} fz={14}>
-            Copyright © {currentYear}, Procurement and Disposal of Assets
-            Authority
+            Copyright © {currentYear}, PPDA: Public Procurement and Disposal of
+            Assets Authority
           </Text>
           <Flex gap={5} fw={500} className=" items-center justify-center">
             Powered By
-            <div className="w-[80px] h-[40px] relative">
+            <Link
+              href="http://peragosystems.com/home"
+              target="_blank"
+              className="w-[80px] h-[40px] relative"
+            >
               <Image src={'/perago-white.png'} fill alt="perago" />
-            </div>
+            </Link>
           </Flex>
         </Flex>
 

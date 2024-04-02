@@ -12,8 +12,8 @@ const InfoCards = () => {
           Access Business Opportunities
         </Text>
         <Text fw={600} fz={'sm'} c={'gray.6'}>
-          The eGP platform avails various online services and solutions to help
-          you participate in government procurement.
+          The MANPES platform avails various online services and solutions to
+          help you participate in government procurement.
         </Text>
       </Flex>
       <Flex className={styles.cardContainer}>

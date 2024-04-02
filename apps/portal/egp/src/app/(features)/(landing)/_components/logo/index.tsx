@@ -503,7 +503,7 @@ export const LogoFooter = () => {
 };
 export const LogoWithOrg = () => {
   return (
-    <div className="px-4">
+    <div className="">
       <svg
         width="200"
         height="60"

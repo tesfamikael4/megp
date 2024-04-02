@@ -81,7 +81,7 @@ export function SignUp(): JSX.Element {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Stack gap={10} mt={15}>
-        <Flex align="center" justify="center">
+        <Flex align="center" justify="center" mb={20}>
           <Text fw={600} fz={22}>
             Welcome to MANEPS!
           </Text>

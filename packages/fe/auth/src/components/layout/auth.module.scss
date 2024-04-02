@@ -2,12 +2,12 @@
   @apply p-4 w-full flex justify-center flex-wrap rounded-md sm:min-h-[100%];
   background-color: white;
   min-height: 250px;
-  max-width: 380px;
+  max-width: 400px;
 }
 
 .tab {
   @apply w-full;
-  width: 156px;
+  width: 176px;
 
   &[data-active] {
   }

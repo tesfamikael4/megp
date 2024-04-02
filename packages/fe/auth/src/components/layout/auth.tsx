@@ -56,9 +56,11 @@ export function Auth({
     return page[path];
   };
   return (
-    <PageWrapper>
+    <PageWrapper app={options.app as any}>
       <Box className={classes.root}>
-        <Flex className="py-4">
+        <Flex
+          className={`${options.app !== 'bo' ? 'py-4' : ''} ${options.app === 'bo' ? 'pb-4' : ''}`}
+        >
           <Box>
             <Tabs
               classNames={{
@@ -72,7 +74,8 @@ export function Auth({
               value={path[0]}
               variant="pills"
             >
-              {path[0].startsWith('login') || path[0].startsWith('signup') ? (
+              {(options.app !== 'bo' && path[0].startsWith('login')) ||
+              path[0].startsWith('signup') ? (
                 <Tabs.List>
                   <Tabs.Tab data-direction="left" fw={500} value="login">
                     Login
@@ -82,12 +85,18 @@ export function Auth({
                   </Tabs.Tab>
                 </Tabs.List>
               ) : (
-                ''
+                <Tabs.List h={0}>
+                  <Tabs.Tab data-direction="left" fw={500} h={1} value="t" />
+                  <Tabs.Tab data-direction="right" fw={500} value="r" />
+                </Tabs.List>
               )}
-
-              <Tabs.Panel value={path[0]}>
-                <Box maw={310}>{render()}</Box>
-              </Tabs.Panel>
+              {options.app === 'bo' ? (
+                <Box maw={350}>{render()}</Box>
+              ) : (
+                <Tabs.Panel value={path[0]}>
+                  <Box maw={350}>{render()}</Box>
+                </Tabs.Panel>
+              )}
             </Tabs>
           </Box>
         </Flex>

@@ -1,17 +1,16 @@
 .root {
   --page-bg-color: #deffd0;
-  @apply w-full h-full min-h-screen;
+  @apply w-full h-full min-h-screen  py-14;
   background-color: var(--page-bg-color);
 }
 .leftLayout {
-  @apply w-full h-full flex  justify-center items-center mt-12 sm:min-h-screen;
+  @apply w-full h-full flex  justify-center items-center  md:mt-12 md:min-h-screen;
 }
 
 .leftLayoutWrapper {
-  @apply sm:h-[470px] sm:w-[100%] flex flex-col items-start;
-  width: 70%;
+  @apply sm:h-[470px] sm:w-[70%] w-[100%]  flex flex-col  sm:items-start items-center sm:justify-center;
 }
 
 .rightLayout {
-  @apply w-full h-full flex justify-center items-center sm:min-h-screen;
+  @apply w-full h-full flex justify-center items-center mb-10 sm:min-h-screen;
 }
