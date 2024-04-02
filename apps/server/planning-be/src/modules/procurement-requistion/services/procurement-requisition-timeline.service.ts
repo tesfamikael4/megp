@@ -34,13 +34,14 @@ export class ProcurementRequisitionTimelineService extends ExtraCrudService<Proc
           procurementRequisitionTimelines: true,
         },
       });
-    // compare dueDates
-    const checkAppDates = this.compareAppDueDates(
-      procurementRequisition.procurementRequisitionTimelines,
-      timelines,
-    );
-    if (!checkAppDates) {
-      throw new HttpException('Invalid App Due Dates', 430);
+    if (procurementRequisition.isPlanned) {
+      const checkAppDates = this.compareAppDueDates(
+        procurementRequisition.procurementRequisitionTimelines,
+        timelines,
+      );
+      if (!checkAppDates) {
+        throw new HttpException('Invalid App Due Dates', 430);
+      }
     }
     // Validate timelines
     const validationResult = this.validateTimelines(timelines);
