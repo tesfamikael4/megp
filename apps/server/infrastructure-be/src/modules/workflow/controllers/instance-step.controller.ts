@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { ExtraCrudOptions } from 'megp-shared-be';
+import { AllowAnonymous, ExtraCrudOptions } from 'megp-shared-be';
 import { ExtraCrudController } from 'megp-shared-be';
 import { CurrentUser } from 'megp-shared-be';
 import { InstanceStep } from 'src/entities/instance-step.entity';
@@ -19,13 +19,14 @@ export class InstanceStepController extends ExtraCrudController<InstanceStep>(
     super(instanceStepService);
   }
 
-  @Post('bulk-create')
-  async bulkCreate(
-    @Body() steps: InstanceStep[],
-    @Req() req: any,
-  ): Promise<InstanceStep[]> {
-    return this.instanceStepService.bulkCreate(steps);
-  }
+  // @AllowAnonymous()
+  // @Post('bulk-create')
+  // async bulkCreate(
+  //   @Body() steps: any[],
+  //   @Req() req: any,
+  // ): Promise<InstanceStep[]> {
+  //   return this.instanceStepService.bulkCreate(steps);
+  // }
 
   @Get('order-steps/:key/:itemId')
   async orderStep(

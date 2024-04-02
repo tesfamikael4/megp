@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { EntityManager, In, Not, Repository } from 'typeorm';
+import { DataSource, EntityManager, In, Not, Repository } from 'typeorm';
 import { Step } from 'src/entities';
 import { Instance } from 'src/entities/instance.entity';
 import { Activity } from 'src/entities/activity.entity';
@@ -31,49 +31,64 @@ export class InstanceService extends EntityCrudService<Instance> {
     @Inject('WORKFLOW_RMQ_SERVICE')
     private readonly workflowRMQClient: ClientProxy,
 
-    @Inject(REQUEST)
-    private readonly request: Request,
+    // @Inject(REQUEST)
+    // private readonly request: Request,
+
+    private connection: DataSource,
   ) {
     super(repositoryInstance);
     workflowRMQClient.connect();
   }
   // Listen
-  async initiate(data) {
-    const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+  async initiate(data, context) {
+    const queryRunner = this.connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      const entityManager: EntityManager = queryRunner.manager;
 
-    const act = await this.repositoryActivity.findOne({
-      where: {
-        name: data.name,
-      },
-    });
-    const steps = await this.repositoryStep.find({
-      where: { activityId: act.id, organizationId: data.organizationId },
-      order: { order: 'ASC' },
-    });
+      const act = await entityManager.getRepository(Activity).findOne({
+        where: {
+          name: data.name,
+        },
+      });
+      const steps = await this.repositoryStep.find({
+        where: { activityId: act.id, organizationId: data.organizationId },
+        order: { order: 'ASC' },
+      });
 
-    const instanceSteps = steps.map((step) => {
-      return { ...step, itemId: data.id };
-    });
-    const instanceStep =
-      await this.repositoryInstanceStepService.bulkCreate(instanceSteps);
+      const instanceSteps = steps.map((step) => {
+        return { ...step, itemId: data.id };
+      });
+      const instanceStep = await this.repositoryInstanceStepService.bulkCreate(
+        instanceSteps,
+        entityManager,
+      );
 
-    const instanceState = await this.stateService.createState(
-      act.id,
-      data.organizationId,
-      data.id,
-    );
-    const createData = {
-      itemId: data.id,
-      itemName: data.itemName,
-      organizationId: data.organizationId,
-      activityId: act.id,
-      status: instanceStep[0].name,
-      instanceStepId: instanceStep[0].id,
-      metadata: [],
-      stateId: instanceState.id,
-    };
-    const instance = this.repositoryInstance.create(createData);
-    return entityManager.getRepository(Instance).insert(instance);
+      const instanceState = await this.stateService.createState(
+        act.id,
+        data.organizationId,
+        data.id,
+        entityManager,
+      );
+      const createData = {
+        itemId: data.id,
+        itemName: data.itemName,
+        organizationId: data.organizationId,
+        activityId: act.id,
+        status: instanceStep[0].name,
+        instanceStepId: instanceStep[0].id,
+        metadata: [],
+        stateId: instanceState.id,
+      };
+      const instance = this.repositoryInstance.create(createData);
+      return entityManager.getRepository(Instance).insert(instance);
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   async goto(data, organizationId: string) {
