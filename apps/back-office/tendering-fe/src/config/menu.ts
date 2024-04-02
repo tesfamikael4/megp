@@ -39,16 +39,4 @@ export const Menu: MenuItem[] = [
     icon: IconReportAnalytics,
     link: '/report',
   },
-  {
-    label: 'Guarantees',
-    icon: IconCoins,
-    links: [
-      { label: 'Guarantee Request', link: '/guarantee/guarantee-request' },
-      { label: 'Guarantee Release', link: '/guarantee/guarantee-release' },
-      {
-        label: 'Guarantee Forfeit',
-        link: '/guarantee/guarantee-forfeit',
-      },
-    ],
-  },
 ];
