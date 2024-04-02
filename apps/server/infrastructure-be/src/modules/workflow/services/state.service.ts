@@ -30,20 +30,14 @@ export class StateService extends ExtraCrudService<State> {
     activityId: string,
     organizationId: string,
     itemId: string,
+    steps: any,
     entityManager: EntityManager,
   ): Promise<any> {
-    const steps = await this.repositoryInstanceStep.find({
-      where: { activityId, organizationId, itemId },
-      order: { order: 'ASC' },
-    });
-
-    if (steps.length == 0) throw new Error('step not found');
-
     let state: any = await this.repositoryState.findOne({
       where: { activityId, organizationId },
     });
 
-    if (!state) {
+    if (state) {
       await entityManager
         .getRepository(State)
         .delete({ activityId, organizationId });

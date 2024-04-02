@@ -69,6 +69,7 @@ export class InstanceService extends EntityCrudService<Instance> {
         act.id,
         data.organizationId,
         data.id,
+        instanceStep,
         entityManager,
       );
       const createData = {
@@ -82,7 +83,7 @@ export class InstanceService extends EntityCrudService<Instance> {
         stateId: instanceState.id,
       };
       const instance = this.repositoryInstance.create(createData);
-      return entityManager.getRepository(Instance).insert(instance);
+      return await entityManager.getRepository(Instance).insert(instance);
     } catch (error) {
       await queryRunner.rollbackTransaction();
       throw error;
