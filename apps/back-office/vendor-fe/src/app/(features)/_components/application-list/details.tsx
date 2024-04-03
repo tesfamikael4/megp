@@ -265,6 +265,7 @@ export default function RequestDetail({
                   requesterID={response.data.requestorId}
                   requestType={requestType}
                   setHideUnPick={setHideUnPick}
+                  isrVendor={requestType === 'new' && response.data.isrvendor}
                 />
               )}
             </Section>
