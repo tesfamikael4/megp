@@ -100,7 +100,7 @@ export class MpgsPaymentService {
 
       const requestPayload = {
         status: payload.result,
-        invoiceReference: payload.invoiceReference,
+        invoiceReference: paymentInvoice.invoiceReference,
       };
       await axios.post(paymentInvoice.callbackUrl, requestPayload);
     } catch (error) {
