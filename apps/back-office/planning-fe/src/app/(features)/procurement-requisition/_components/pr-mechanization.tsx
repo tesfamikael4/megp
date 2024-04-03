@@ -238,7 +238,7 @@ export const PrMechanization = ({
               data={procurementMethods}
               errors={errors}
               actions={checkIfMethodIsValid}
-              disableFields={!type}
+              disableFields={!type || disableFields}
             />
           </Flex>
           {method === 'Purchased Orders (Call off)' && (

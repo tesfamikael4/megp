@@ -252,6 +252,7 @@ export const FormDetail = ({
                   name="name"
                   label="Procured By"
                   value={value}
+                  disabled={disableFields}
                   withAsterisk
                   error={
                     errors?.procurementApplication
