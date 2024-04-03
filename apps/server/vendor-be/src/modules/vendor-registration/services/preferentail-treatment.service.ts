@@ -1,8 +1,6 @@
 import {
-  BadRequestException,
   HttpException,
   Injectable,
-  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Not, Repository } from 'typeorm';
@@ -15,7 +13,6 @@ import {
   GotoNextStateDto,
 } from 'src/modules/handling/dto/workflow-instance.dto';
 import { BusinessProcessService } from 'src/modules/bpm/services/business-process.service';
-import { VendorRegistrationsService } from 'src/modules/vendor-registration/services/vendor-registration.service';
 import { BusinessAreaEntity, IsrVendorsEntity } from 'src/entities';
 import { BusinessAreaService } from 'src/modules/vendor-registration/services/business-area.service';
 import { FileService } from 'src/modules/vendor-registration/services/file.service';
@@ -59,6 +56,37 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
       },
     });
     return result;
+  }
+  async getMyPreferetialTreatments(userId: string) {
+    const result = await this.ptRepository.find({
+      relations: { service: true },
+      where: {
+        userId: userId,
+        status: ApplicationStatus.APPROVED
+      },
+    });
+    const keys = this.commonService.getServiceCatagoryKeys(ServiceKeyEnum.MSME);
+    const response = []
+    for (const row of result) {
+      if (
+        keys.some((item: any) => row.service.key == item)
+      ) {
+        response.push({
+          certiNumber: row.certiNumber,
+          category: ServiceKeyEnum.MSME,
+          type: row.service.key,
+          certificateUrl: row.certificateUrl,
+        });
+      } else {
+        response.push({
+          certiNumber: row.certiNumber,
+          category: row.service.key,
+          type: row.service.key,
+          certificateUrl: row.certificateUrl,
+        });
+      }
+    }
+    return response;
   }
   async getSubmittedPTByUserId(
     userId: any,
@@ -257,6 +285,7 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
       relations: { service: true },
       where: { userId: user.id, status: ApplicationStatus.DRAFT },
     });
+
     const keys = this.commonService.getServiceCatagoryKeys(ServiceKeyEnum.MSME);
     for (const row of result) {
       if (row.service.key == ServiceKeyEnum.IBM) {

@@ -15,27 +15,23 @@ import { HandlingCommonService } from './handling-common-services';
 import { AssignmentEnum } from '../enums/assignment.enum';
 import { HandlerTypeEnum } from '../enums/handler-type.enum';
 import { ApplicationStatus } from '../enums/application-status.enum';
-import { ServicePricingService } from 'src/modules/pricing/services/service-pricing.service';
 import { In, IsNull, Not, Repository } from 'typeorm';
 import { VendorRegistrationsService } from 'src/modules/vendor-registration/services/vendor-registration.service';
 import { ServiceKeyEnum } from 'src/shared/enums/service-key.enum';
-import { BusinessAreaEntity, Category } from 'src/entities';
+import { BusinessAreaEntity } from 'src/entities';
 import { BusinessAreaService } from 'src/modules/vendor-registration/services/business-area.service';
 import { PreferentailTreatmentService } from 'src/modules/vendor-registration/services/preferentail-treatment.service';
-import { userInfo } from 'os';
 @Injectable()
 export class ApplicationExcutionService {
   constructor(
     @InjectRepository(WorkflowInstanceEntity)
     private readonly wiRepository: Repository<WorkflowInstanceEntity>,
     private readonly commonService: HandlingCommonService,
-    private readonly pricingService: ServicePricingService,
     private readonly vendorService: VendorRegistrationsService,
     private readonly baService: BusinessAreaService,
     private readonly invoiceService: InvoiceService,
     private readonly ptService: PreferentailTreatmentService,
   ) { }
-
   async getCurruntTaskByServiceKey(
     serviceKey: string,
     query: CollectionQuery,
@@ -51,10 +47,6 @@ export class ApplicationExcutionService {
       .innerJoinAndSelect('workflow_instances.taskHandler', 'handler')
       .innerJoinAndSelect('handler.task', 'task')
       .leftJoinAndSelect('workflow_instances.service', 'service')
-      // .innerJoin('workflow_instances.isrVendor', 'v')
-      // .innerJoinAndSelect(BusinessAreaEntity, 'ba', 'ba.vendorId=v.id')
-      .innerJoinAndSelect('workflow_instances.businessProcess', 'bp')
-      .leftJoinAndSelect('workflow_instances.taskTrackers', 'taskTracker')
       .andWhere('service.key In(:...keys)', { keys: keys })
       .andWhere('workflow_instances.status !=:status ', {
         status: ApplicationStatus.COMPLETED,
@@ -63,7 +55,6 @@ export class ApplicationExcutionService {
         handlerType: HandlerTypeEnum.REQUESTOR,
       })
       .orderBy('workflow_instances.submittedAt', 'ASC');
-    // console.log(dataQuery.getSql())
     const d = new DataResponseFormat<WorkflowInstanceResponse>();
     const [result, total] = await dataQuery.getManyAndCount();
     d.items = result.map((entity) => {

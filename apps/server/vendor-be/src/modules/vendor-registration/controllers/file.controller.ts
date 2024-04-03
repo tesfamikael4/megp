@@ -10,7 +10,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { ApiConsumes, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CurrentUser, JwtGuard } from 'src/shared/authorization';
+import { AllowAnonymous, CurrentUser, JwtGuard } from 'src/shared/authorization';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FileService } from '../services/file.service';
 import { Response } from 'express';
@@ -24,7 +24,7 @@ export class UploadController {
   constructor(
     // private tusService: TusService,
     private fileService: FileService,
-  ) {}
+  ) { }
   @Post('upload-payment-receipt/:transactionId/:serviceId/:invoiceId')
   @UseInterceptors(FileInterceptor('attachmentUrl'))
   async uploadPaymentRecept(
@@ -159,6 +159,15 @@ export class UploadController {
     @Res() res,
   ) {
     return await this.fileService.getCertificate(fileId, userInfo.id, res);
+  }
+  @AllowAnonymous()
+  @Get('get-vendor-certificate/:fileId/:userId')
+  async getVendorCertificate(
+    @Param('fileId') fileId: string,
+    @Param('userId') userId: string,
+    @Res() res,
+  ) {
+    return await this.fileService.getCertificate(fileId, userId, res);
   }
 
   @Get('get-file/:fileUploadName/:fileId')

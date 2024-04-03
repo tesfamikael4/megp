@@ -61,6 +61,8 @@ import { BriefcasesController } from './controllers/briefcases.controller';
 import { BriefcasesService } from './services/briefcases.service';
 import { BriefecaseEntity } from 'src/entities/brifecase.entity';
 import { CertificateModule } from '../certificates/certificate.module';
+import { VendorDiscoveryController } from './controllers/vendor-discovery.controller';
+import { VendorDiscoveryService } from './services/vendor-discovery.service';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -114,6 +116,7 @@ import { CertificateModule } from '../certificates/certificate.module';
     BpServiceService,
     PreferentailTreatmentService,
     BriefcasesService,
+    VendorDiscoveryService
     // TusService,
   ],
   controllers: [
@@ -130,6 +133,7 @@ import { CertificateModule } from '../certificates/certificate.module';
     InvoicesController,
     PreferentailTreatmentsController,
     BriefcasesController,
+    VendorDiscoveryController
   ],
 })
-export class VendorRegistrationModule {}
+export class VendorRegistrationModule { }
