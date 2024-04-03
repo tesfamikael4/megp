@@ -11,7 +11,7 @@ import { IPDCMemberService } from '../services/ipdc-member.service';
 import { IPDCMember } from 'src/entities';
 
 const options: ExtraCrudOptions = {
-  entityIdName: 'procurementInstitutionId',
+  entityIdName: 'ipdcId',
   createDto: CreateIPDCMemberDto,
   updateDto: UpdateIPDCMemberDto,
 };

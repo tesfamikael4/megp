@@ -11,7 +11,7 @@ import {
 import { AdhocTeamMemberService } from '../services/adhoc-team-member.service';
 
 const options: ExtraCrudOptions = {
-  entityIdName: 'procurementInstitutionId',
+  entityIdName: 'adhocTeamId',
   createDto: CreateAdhocTeamMemberDto,
   updateDto: UpdateAdhocTeamMemberDto,
 };
