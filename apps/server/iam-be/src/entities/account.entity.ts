@@ -33,7 +33,7 @@ export class Account extends Audit {
   @Column({ type: 'text' })
   lastName: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, unique: true })
   phone: string;
 
   @Column({
