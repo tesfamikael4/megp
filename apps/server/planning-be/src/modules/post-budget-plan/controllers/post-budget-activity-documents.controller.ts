@@ -44,11 +44,9 @@ export class PostBudgetActivityDocumentController extends ExtraCrudController<Po
 
   @Post('post-signed-put-url')
   async preSignedPutUrl(@Body() fileInfo, @Res() res?: any) {
-    const presignedUrl =
-      await this.postBudgetActivityDocumentService.generatePresignedPutUrl(
-        fileInfo,
-      );
-    return res.status(HttpStatus.OK).json({ presignedUrl });
+    return await this.postBudgetActivityDocumentService.generatePresignedPutUrl(
+      fileInfo,
+    );
   }
 
   @Get('preview/:id')

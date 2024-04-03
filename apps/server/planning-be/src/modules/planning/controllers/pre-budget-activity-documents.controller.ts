@@ -50,11 +50,9 @@ export class PreBudgetActivityDocumentController extends ExtraCrudController<Pre
     @CurrentUser() user?: any,
   ) {
     fileInfo.organizationId = user.organization.id;
-    const presignedUrl =
-      await this.preBudgetActivityDocumentService.generatePresignedPutUrl(
-        fileInfo,
-      );
-    return res.status(HttpStatus.OK).json({ presignedUrl });
+    return await this.preBudgetActivityDocumentService.generatePresignedPutUrl(
+      fileInfo,
+    );
   }
 
   @Get('preview/:id')
