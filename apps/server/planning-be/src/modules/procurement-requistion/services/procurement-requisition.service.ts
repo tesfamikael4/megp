@@ -139,8 +139,7 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
 
   async prApprovalDecision(data: any): Promise<void> {
     const { itemId, status } = data;
-    const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
-    await entityManager.getRepository(ProcurementRequisition).update(itemId, {
+    await this.repositoryProcurementRequisition.update(itemId, {
       status: status.toUpperCase(),
     });
   }
