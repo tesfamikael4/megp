@@ -44,9 +44,9 @@ export class ProcurementRequisitionDocumentService extends ExtraCrudService<Proc
       organizationId: user.organization.id,
       organizationName: user.organization.name,
     };
-    await this.repositoryProcurementRequisitionDocument.insert(
-      this.repositoryProcurementRequisitionDocument.create(documentData),
-    );
-    return preSignedUrl.presignedUrl;
+    const doc =
+      this.repositoryProcurementRequisitionDocument.create(documentData);
+    await this.repositoryProcurementRequisitionDocument.insert(doc);
+    return { ...doc, presignedUrl: preSignedUrl.presignedUrl };
   }
 }

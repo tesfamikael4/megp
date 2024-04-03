@@ -18,11 +18,13 @@ export class PostBudgetActivityDocumentService extends ExtraCrudService<PostBudg
     super(repositoryPostBudgetActivityDocument);
   }
 
+  // ! deprecated method, do not use
   async listAllBuckets(): Promise<any> {
     const buckets = await this.minioClientService.client.listBuckets();
     return buckets;
   }
 
+  // ! deprecated method, do not use
   async upload(file): Promise<any> {
     const bucketName = 'megp';
     const name = String(Date.now());
@@ -42,6 +44,7 @@ export class PostBudgetActivityDocumentService extends ExtraCrudService<PostBudg
     };
   }
 
+  // ! deprecated method, do not use
   async download(fileInfo) {
     return this.minioClientService.client.getObject(
       fileInfo.bucketName,
@@ -49,6 +52,7 @@ export class PostBudgetActivityDocumentService extends ExtraCrudService<PostBudg
     );
   }
 
+  // ! deprecated method, do not use
   async generatePresignedGetUrl(fileInfo): Promise<string> {
     const presignedUrl = await this.minioService.generatePresignedDownloadUrl({
       bucketName: fileInfo.bucketName,
@@ -57,7 +61,8 @@ export class PostBudgetActivityDocumentService extends ExtraCrudService<PostBudg
     return presignedUrl;
   }
 
-  async generatePresignedPutUrl(fileInfo): Promise<string> {
+  // ! deprecated method, do not use
+  async generatePresignedPutUrl(fileInfo): Promise<{ presignedUrl: string }> {
     const presignedUrl = await this.minioService.generatePresignedUploadUrl({
       bucketName: fileInfo.bucketName,
       contentType: fileInfo.contentType,
@@ -72,6 +77,6 @@ export class PostBudgetActivityDocumentService extends ExtraCrudService<PostBudg
     });
 
     await this.repositoryPostBudgetActivityDocument.insert(doc);
-    return presignedUrl.presignedUrl;
+    return { presignedUrl: presignedUrl.presignedUrl };
   }
 }

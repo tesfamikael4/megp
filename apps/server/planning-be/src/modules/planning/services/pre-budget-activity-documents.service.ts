@@ -19,11 +19,13 @@ export class PreBudgetActivityDocumentService extends ExtraCrudService<PreBudget
     super(repositoryPreBudgetActivityDocument);
   }
 
+  // ! deprecated method, do not use
   async listAllBuckets(): Promise<any> {
     const buckets = await this.minioClientService.client.listBuckets();
     return buckets;
   }
 
+  // ! deprecated method, do not use
   async upload(file): Promise<any> {
     const bucketName = 'megp';
     const name = String(Date.now());
@@ -43,6 +45,7 @@ export class PreBudgetActivityDocumentService extends ExtraCrudService<PreBudget
     };
   }
 
+  // ! deprecated method, do not use
   async download(fileInfo) {
     return this.minioClientService.client.getObject(
       fileInfo.bucketName,
@@ -50,6 +53,7 @@ export class PreBudgetActivityDocumentService extends ExtraCrudService<PreBudget
     );
   }
 
+  // ! deprecated method, do not use
   async generatePresignedGetUrl(id: string): Promise<any> {
     const fileInfo = await this.repositoryPreBudgetActivityDocument.findOne({
       where: { id },
@@ -66,6 +70,7 @@ export class PreBudgetActivityDocumentService extends ExtraCrudService<PreBudget
     return { presignedUrl };
   }
 
+  // ! deprecated method, do not use
   async generatePresignedPutUrl(
     fileInfo,
   ): Promise<{ presignedUrl: string; id: string }> {
@@ -86,6 +91,7 @@ export class PreBudgetActivityDocumentService extends ExtraCrudService<PreBudget
     return { presignedUrl: presignedUrl.presignedUrl, id: doc.id };
   }
 
+  // ! deprecated method, do not use
   async uploadFailed(id: string): Promise<boolean> {
     await this.repositoryPreBudgetActivityDocument.delete({
       id,
