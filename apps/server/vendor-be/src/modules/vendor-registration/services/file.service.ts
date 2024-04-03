@@ -43,7 +43,7 @@ export class FileService {
     private readonly businessAreaRepository: Repository<BusinessAreaEntity>,
     private readonly busineAreaService: BusinessAreaService,
     private readonly workflowService: WorkflowService,
-  ) {}
+  ) { }
   private updateVendorEnums = [
     VendorStatusEnum.ACTIVE,
     VendorStatusEnum.ADJUSTMENT,
@@ -606,10 +606,6 @@ export class FileService {
         `attachment; filename=${fileId}_certificate.pdf`,
       );
       result.pipe(res);
-      // const result = this.minioClient.presignedGetObject(
-      //   this.bucketName,
-      //   fileId,
-      // );
 
       return result;
     } catch (error) {

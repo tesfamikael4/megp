@@ -1,8 +1,9 @@
-import { Controller, Get, Param, UseGuards } from "@nestjs/common";
+import { Controller, Get, Param, Query, UseGuards } from "@nestjs/common";
 import { ApiBearerAuth, ApiExtraModels, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { DataResponseFormat } from "src/shared/api-data";
-import { JwtGuard } from "src/shared/authorization";
+import { AllowAnonymous } from "src/shared/authorization";
 import { VendorDiscoveryService } from "../services/vendor-discovery.service";
+import { decodeCollectionQuery } from "src/shared/collection-query";
 
 @ApiBearerAuth()
 @Controller('vendors')
@@ -12,14 +13,18 @@ import { VendorDiscoveryService } from "../services/vendor-discovery.service";
 export class VendorDiscoveryController {
     constructor(private readonly vendorService: VendorDiscoveryService) { }
     @Get('vendor-list')
-    async getVendors() {
-        return await this.vendorService.getvendors();
+    @AllowAnonymous()
+    async getVendors(@Query('q') q: string,) {
+        const query = decodeCollectionQuery(q);
+        return await this.vendorService.getvendors(query);
     }
-    @UseGuards(JwtGuard)
+    @AllowAnonymous()
     @Get('get-vendor-detail/:vendorId')
     async getVendorById(@Param('vendorId') vendorId: string) {
+
         return await this.vendorService.getVendorById(vendorId);
     }
+
 
 
 }

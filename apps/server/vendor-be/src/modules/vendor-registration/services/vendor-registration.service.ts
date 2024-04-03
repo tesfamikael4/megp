@@ -847,6 +847,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           this.updateBusinessInterestArea(result);
           await this.setPreferentialSatus(vendorStatusDto.status, vendorStatusDto.userId);
 
+        } else if (this.commonService.getPreferencialServices().some((item) => item == service.key)) {
+          await this.setPreferentialSatus(vendorStatusDto.status, vendorStatusDto.userId);
         }
       } else {
         if (vendorStatusDto.status == VendorStatusEnum.APPROVE) {
@@ -1745,7 +1747,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             },
           },
         },
-        // { id: vendorId },
       ],
       select: {
         id: true,
@@ -1757,6 +1758,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         status: true,
         userId: true,
         vendorAccounts: {
+          id: true,
           accountHolderFullName: true,
           accountNumber: true,
           bankName: true,
@@ -1768,12 +1770,14 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           branchAddress: true,
         },
         shareholders: {
+          id: true,
           firstName: true,
           lastName: true,
           nationality: true,
           share: true,
         },
         beneficialOwnership: {
+          id: true,
           firstName: true,
           lastName: true,
           nationality: true,
@@ -1791,7 +1795,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         beneficialOwnership: true,
         vendorAccounts: true,
         isrVendor: { businessAreas: { servicePrice: true, BpService: true } },
-        // preferentials: true,
       },
     });
     if (!vendorData) throw new HttpException('Vendor not found', 404);
@@ -1802,12 +1805,11 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       let businessarea = {};
       let bl = [];
       const priceRange = this.commonService.formatPriceRange(ba.servicePrice);
-
       for (const lob of vendorData.areasOfBusinessInterest) {
         if (lob.category == ba.category) {
           bl = lob.lineOfBusiness.map((item: any) => item.name);
           businessarea = {
-            category: this.commonService.capitalizeFirstLetter(ba.category),
+            category: ba.category,
             ValueRange: priceRange,
             lineOfBusiness: bl,
             approvedAt: ba.approvedAt,
@@ -1821,7 +1823,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     }
     rest.areasOfBusinessInterest = bussinessAreas;
     const certeficate = await this.baService.getCerteficate(vendorData.id);
-    const preferentails = await this.baService.getPreferentials(vendorData.id);
+    const preferentails = await this.ptService.getMyPreferetialTreatments(vendorData.userId);
+
     const vendor = {
       ...rest,
       certificate: certeficate?.certificateUrl,
@@ -2198,7 +2201,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         vendorEntity.paymentReceipt = vendor.metaData?.paymentReceipt;
 
         const ceretficate = await this.baService.getCerteficate(vendor.id);
-        const preferentails = await this.baService.getPreferentials(vendor.id);
+        const preferentails = await this.ptService.getMyPreferetialTreatments(userId);
+
         const response = {
           ...vendorEntity,
           certificate: ceretficate?.certificateUrl,

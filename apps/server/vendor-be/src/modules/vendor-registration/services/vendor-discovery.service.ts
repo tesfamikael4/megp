@@ -6,6 +6,10 @@ import { BusinessCategories } from "src/modules/handling/enums/business-category
 import { HandlingCommonService } from "src/modules/handling/services/handling-common-services";
 import { In, Repository } from "typeorm";
 import { BusinessAreaService } from "./business-area.service";
+import { CollectionQuery, QueryConstructor } from "src/shared/collection-query";
+import { DataResponseFormat } from "src/shared/api-data";
+import { VendorInitiationResponseDto } from "../dto/vendor-initiation.dto";
+import { PreferentailTreatmentService } from "./preferentail-treatment.service";
 
 @Injectable()
 export class VendorDiscoveryService {
@@ -13,15 +17,28 @@ export class VendorDiscoveryService {
         @InjectRepository(VendorsEntity)
         private readonly vendorRepository: Repository<VendorsEntity>,
         private readonly baService: BusinessAreaService,
-        private readonly utilService: HandlingCommonService
+        private readonly utilService: HandlingCommonService,
+        private readonly ptService: PreferentailTreatmentService
 
     ) {
 
     }
 
-    async getvendors() {
-        const vendorlist = await this.vendorRepository.find({ where: { status: ApplicationStatus.APPROVED } });
-        return vendorlist;
+    async getvendors(query: CollectionQuery): Promise<DataResponseFormat<VendorInitiationResponseDto>> {
+        const dataQuery = QueryConstructor.constructQuery<VendorsEntity>(
+            this.vendorRepository,
+            query,
+        );
+        dataQuery.andWhere('vendors.status=:status', {
+            status: ApplicationStatus.APPROVED,
+        });
+        const [items, total] = await dataQuery.getManyAndCount();
+        const response = new DataResponseFormat<VendorInitiationResponseDto>();
+        response.items = items.map((item) =>
+            VendorInitiationResponseDto.toResponse(item),
+        );
+        response.total = total;
+        return response;
     }
     async getVendorById(vendorId: string) {
         const vendorData = await this.vendorRepository.findOne({
@@ -51,6 +68,7 @@ export class VendorDiscoveryService {
                 status: true,
                 userId: true,
                 vendorAccounts: {
+                    id: true,
                     accountHolderFullName: true,
                     accountNumber: true,
                     bankName: true,
@@ -62,12 +80,14 @@ export class VendorDiscoveryService {
                     branchAddress: true,
                 },
                 shareholders: {
+                    id: true,
                     firstName: true,
                     lastName: true,
                     nationality: true,
                     share: true,
                 },
                 beneficialOwnership: {
+                    id: true,
                     firstName: true,
                     lastName: true,
                     nationality: true,
@@ -85,42 +105,15 @@ export class VendorDiscoveryService {
                 beneficialOwnership: true,
                 vendorAccounts: true,
                 isrVendor: { businessAreas: { servicePrice: true, BpService: true } },
-                // preferentials: true,
+
             },
         });
         const { isrVendor, ...rest } = vendorData;
 
         const priceRanges = vendorData.isrVendor?.businessAreas.map(((item) => item.servicePrice))
         const bussinessAreas = this.utilService.formatingBusinessArea(priceRanges, vendorData.isrVendor?.businessAreas)
-        /*
-                for (const ba of vendorData.isrVendor?.businessAreas) {
-                    //   const business = BusinessAreaDetailResponseDto.toResponse(ba);
-                    let businessarea = {};
-                    let bl = [];
-        
-        
-                    const priceRange = this.commonService.formatPriceRange(ba.servicePrice);
-                    for (const lob of vendorData.areasOfBusinessInterest) {
-                        if (lob.category == ba.category) {
-                            bl = lob.lineOfBusiness.map((item: any) => item.name);
-                            businessarea = {
-                                category: ba.category,
-                                ValueRange: priceRange,
-                                lineOfBusiness: bl,
-                                approvedAt: ba.approvedAt,
-                                expireDate: ba.expireDate,
-                                certificateUrl: ba.certificateUrl,
-                            };
-                            break;
-                        }
-                    }
-                    bussinessAreas.push(businessarea);
-                }
-    */
         const ceretficate = await this.baService.getCerteficate(vendorData.id);
-        const preferentails = await this.baService.getPreferentials(vendorData.id);
-
-        // rest.areasOfBusinessInterest = bussinessAreas;
+        const preferentails = await this.ptService.getMyPreferetialTreatments(vendorData.userId);
         const vendor = {
             ...rest,
             certificate: ceretficate?.certificateUrl,
