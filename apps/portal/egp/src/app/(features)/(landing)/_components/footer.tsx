@@ -133,6 +133,7 @@ export default function Footer() {
                 </Text>
               </Flex>
             </Flex>
+
             {/* Location */}
             <Flex direction={'column'} gap={5}>
               <Text fw={500}>IMPORTANT LINKS</Text>
