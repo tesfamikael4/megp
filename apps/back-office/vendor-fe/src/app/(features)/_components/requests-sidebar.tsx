@@ -60,7 +60,7 @@ export default function RequestsSidebar({
           onChange={(e) => updateFilter(e.target.name, e.target.value)}
         />
       </Box>
-      <Box className={styles.formGroup}>
+      {/* <Box className={styles.formGroup}>
         <Text>Business Category</Text>
         <Select
           value={filter.status}
@@ -69,7 +69,7 @@ export default function RequestsSidebar({
           name={'status'}
           onChange={(e) => updateFilter('status', e)}
         />
-      </Box>
+      </Box> */}
       <Box className={styles.formGroup}>
         <Text>Company Name</Text>
         <TextInput

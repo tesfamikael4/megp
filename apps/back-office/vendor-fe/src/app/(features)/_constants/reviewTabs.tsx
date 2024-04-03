@@ -32,7 +32,7 @@ export const accordionTabs = [
     tabName: 'Bank Account Details',
   },
   {
-    tabValue: 'areasOfBusinessInterestView',
+    tabValue: 'areasOfBusinessInterest',
     tabName: 'Areas of Business Interest',
   },
   {

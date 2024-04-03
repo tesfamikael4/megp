@@ -91,37 +91,34 @@ export default function ApplicationList({
         },
       ]);
     }
-    if (filter.status) {
-      newWhere.push([
-        {
-          column: 'service.key',
-          operator: 'LIKE',
-          value: filter.status,
-        },
-      ]);
-    }
     if (filter.from) {
+      const isoDateString = new Date(filter.from).toISOString();
+      const _from = isoDateString.split('T')[0];
       newWhere.push([
         {
-          column: 'isrVendor.createdAt',
-          operator: '<=',
-          value: new Date(filter.from).toUTCString(),
+          column: 'createdAt',
+          operator: '>=',
+          value: _from,
         },
       ]);
       if (filter.to) {
+        const isoDateString = new Date(filter.to).toISOString();
+        const _end = isoDateString.split('T')[0];
         newWhere.push([
           {
-            column: 'isrVendor.createdAt',
-            operator: '>=',
-            value: new Date(filter.to).toUTCString(),
+            column: 'submittedAt',
+            operator: '<=',
+            value: _end,
           },
         ]);
       } else {
+        const isoDateString = new Date().toISOString();
+        const _end = isoDateString.split('T')[0];
         newWhere.push([
           {
-            column: 'isrVendor.createdAt',
-            operator: '>=',
-            value: new Date().toUTCString(),
+            column: 'submittedAt',
+            operator: '<=',
+            value: _end,
           },
         ]);
       }
@@ -133,7 +130,7 @@ export default function ApplicationList({
         take: 15,
         skip: 0,
         where: newWhere,
-        includes: ['isrVendor', 'isrVendor.basic'],
+        includes: ['isrVendor'],
       },
     });
   };
@@ -258,7 +255,6 @@ export default function ApplicationList({
             {data.total !== 0 && (
               <Text>Total : {data.total.toLocaleString()} results</Text>
             )}
-
             <Pagination
               onChange={setPage}
               size="sm"
