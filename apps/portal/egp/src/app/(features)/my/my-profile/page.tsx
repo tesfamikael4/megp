@@ -98,7 +98,6 @@ export default function MyProfilePage() {
       <Paper shadow="sm" withBorder className="p-10 mt-4">
         <PhoneOTP phone={user.phone as string} email={user.email} />
       </Paper>
-      <ChangeEmail />
     </div>
   );
 }

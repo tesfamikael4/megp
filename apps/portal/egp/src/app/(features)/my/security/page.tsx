@@ -8,6 +8,7 @@ import {
   PasswordInput,
   Text,
   Paper,
+  Flex,
 } from '@mantine/core';
 import { IconDeviceFloppy } from '@tabler/icons-react';
 import { useState } from 'react';
@@ -17,6 +18,7 @@ import { useForm, type SubmitHandler } from 'react-hook-form';
 import { ChangeSecurity } from '@megp/auth/src/components/auth/setSecurity/change-security';
 import { notifications } from '@mantine/notifications';
 import { useAuth } from '@megp/auth';
+import ChangeEmail from '../my-profile/change-email.component';
 
 const schema = z.object({
   oldPassword: z.string().min(1, { message: 'This field is required.' }),
@@ -97,11 +99,15 @@ export default function MyProfilePage() {
         </form>
         <div className="mt-4 mb-4">
           <Paper shadow="sm" withBorder className="p-10">
-            <Text>Change Security Questions</Text>
+            <Flex direction={'column'} className="mb-4">
+              <p className="font-semibold text-xl">Change Security Questions</p>
+              <Divider />
+            </Flex>
             <Divider className="mb-2" />
             <ChangeSecurity mode="update" />
           </Paper>
         </div>
+        <ChangeEmail />
       </Container>
     </>
   );

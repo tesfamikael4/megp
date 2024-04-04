@@ -86,7 +86,7 @@ const PinInputComponent = ({
       notifications.show({
         title: 'Error',
         color: 'red',
-        message: 'Something went wrong. Please try again later.',
+        message: 'Invalid OTP entered.',
       });
     }
   };
@@ -152,7 +152,7 @@ export default function ChangeEmail() {
       notifications.show({
         title: 'Success',
         color: 'green',
-        message: 'Otp Sent Successfully',
+        message: 'OTP Sent Successfully',
       });
       setVerificationId(res?.verificationId);
       setMode('oldConfirm');
@@ -160,7 +160,7 @@ export default function ChangeEmail() {
       notifications.show({
         title: 'Error',
         color: 'red',
-        message: 'Something went wrong. Please try again later.',
+        message: 'Could not send OTP.',
       });
     }
   };
