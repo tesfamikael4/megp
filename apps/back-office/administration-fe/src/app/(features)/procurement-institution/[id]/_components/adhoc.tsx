@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { useCreateMutation, useListByIdQuery } from '../../_api/adhoc.api';
 import { useParams } from 'next/navigation';
 import { AddMembers } from './members';
+import { useCreateAdhocMembersMutation } from '@/store/api/iam/iam.api';
 
 export const Adhoc = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -25,20 +26,24 @@ export const Adhoc = () => {
     minHeight: 200,
     isExpandable: true,
     expandedRowContent: (record) => (
-      <AddMembers record={record} onSave={onMemberSave} />
+      <AddMembers
+        record={record}
+        onSave={(data) => onMemberSave(data, record.id)}
+        page="adhoc"
+      />
     ),
     columns: [
       { accessor: 'name' },
 
-      {
-        accessor: 'members',
-        width: 200,
-        textAlign: 'center',
-        render: (record) => 0,
-      },
+      // {
+      //   accessor: 'members',
+      //   width: 200,
+      //   textAlign: 'center',
+      //   render: (record) => 0,
+      // },
       {
         accessor: 'status',
-        width: 200,
+        width: 150,
         render: (record) => (
           <Badge color={record.status == 'Active' ? 'green' : 'yellow'}>
             {record.status}
@@ -48,8 +53,16 @@ export const Adhoc = () => {
     ],
   };
 
-  const onMemberSave = (members) => {
-    logger.log({ members });
+  const [createMembers] = useCreateAdhocMembersMutation();
+
+  const onMemberSave = async (members, id) => {
+    try {
+      await createMembers({ members, adhocTeamId: id }).unwrap();
+      notify('Success', 'Members added successfully');
+    } catch (err) {
+      logger.log({ err });
+      notify('Error', 'Something went wrong');
+    }
   };
 
   const onSave = async () => {
