@@ -193,6 +193,54 @@ export class TenderService extends EntityCrudService<Tender> {
     return response;
   }
 
+  async getClosedTenders(query: CollectionQuery, req: any) {
+    query.includes.push('bdsSubmission');
+
+    query.where.push([
+      {
+        column: 'organizationId',
+        operator: FilterOperators.EqualTo,
+        value: req.user.organization.id,
+      },
+    ]);
+    query.where.push([
+      {
+        column: 'status',
+        operator: FilterOperators.EqualTo,
+        value: 'PUBLISHED',
+      },
+    ]);
+    query.where.push([
+      {
+        column: 'bdsSubmission.invitationDate',
+        operator: FilterOperators.GreaterThanOrEqualTo,
+        value: new Date(),
+      },
+    ]);
+    query.where.push([
+      {
+        column: 'bdsSubmission.submissionDeadline',
+        operator: FilterOperators.GreaterThanOrEqualTo,
+        value: new Date(),
+      },
+    ]);
+
+    const dataQuery = QueryConstructor.constructQuery<Tender>(
+      this.tenderRepository,
+      query,
+    );
+
+    const response = new DataResponseFormat<Tender>();
+    if (query.count) {
+      response.total = await dataQuery.getCount();
+    } else {
+      const [result, total] = await dataQuery.getManyAndCount();
+      response.total = total;
+      response.items = result;
+    }
+    return response;
+  }
+
   async changeStatus(input: ChangeTenderStatusDto) {
     const tender = await this.tenderRepository.findOneBy({
       id: input.id,

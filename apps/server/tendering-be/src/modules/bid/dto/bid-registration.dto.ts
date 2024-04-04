@@ -12,3 +12,10 @@ export class CreateBidRegistrationDto {
   @IsNotEmpty()
   password: string;
 }
+
+export class CreateBidRegistrationStatusDto {
+  @ApiProperty()
+  @IsUUID()
+  @IsNotEmpty()
+  lotId: string;
+}
