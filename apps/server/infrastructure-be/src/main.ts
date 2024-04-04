@@ -75,6 +75,7 @@ async function bootstrap() {
   );
 
   SwaggerModule.setup('docs', app, document, customOptions);
+
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
