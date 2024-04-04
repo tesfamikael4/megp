@@ -69,24 +69,26 @@ const VendorsList = ({ children }: { children: React.ReactNode }) => {
   ];
 
   if (isLoading) <LoadingOverlay />;
-  if (!data) return null;
+
   return (
     <Container size={'xl'}>
-      <Box mt={'md'}>
-        <Group className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 ">
-          {Object.keys(data).map((key) => {
-            if (whitelist.includes(key))
-              return (
-                <InfoCard
-                  key={key}
-                  icon={infoCard[key]}
-                  title={addSpacesToCamelCase(key)}
-                  count={data[key]}
-                />
-              );
-          })}
-        </Group>
-      </Box>
+      {data && (
+        <Box mt={'md'}>
+          <Group className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 ">
+            {Object.keys(data).map((key) => {
+              if (whitelist.includes(key))
+                return (
+                  <InfoCard
+                    key={key}
+                    icon={infoCard[key]}
+                    title={addSpacesToCamelCase(key)}
+                    count={data[key]}
+                  />
+                );
+            })}
+          </Group>
+        </Box>
+      )}
       <Entity>{children}</Entity>
     </Container>
   );
