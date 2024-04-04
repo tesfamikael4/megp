@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsDateString, IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import { TEAM_TYPE_ENUM } from 'src/shared/enums/team-type.enum';
 
 export class CreateIPDCDto {
   @ApiProperty()
@@ -30,3 +31,15 @@ export class UpdateIPDCDto extends CreateIPDCDto {
 }
 
 export class IPDCDto extends UpdateIPDCDto {}
+
+export class IPDCTeamChangeStatusDto {
+  @ApiProperty()
+  @IsUUID()
+  @IsNotEmpty()
+  id: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  status: TEAM_TYPE_ENUM;
+}
