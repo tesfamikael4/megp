@@ -1,6 +1,5 @@
-import { BpServiceEntity } from 'src/entities/bp-service.entity';
-import { TaskEntity } from 'src/entities/task.entity';
-import { WorkflowInstanceEntity } from 'src/entities/workflow-instance.entity';
+
+import { BpServiceEntity, TaskEntity, WorkflowInstanceEntity } from '@entities';
 import {
   Column,
   Entity,
@@ -9,7 +8,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Audit } from 'src/shared/entities/audit.entity';
+import { Audit } from '@audit';
 
 @Entity({ name: 'business_processes' })
 export class BusinessProcessEntity extends Audit {

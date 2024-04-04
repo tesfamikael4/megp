@@ -6,8 +6,8 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { BpServiceEntity } from 'src/entities/bp-service.entity';
-import { Audit } from 'src/shared/entities/audit.entity';
+import { BpServiceEntity } from '@entities';
+import { Audit } from '@audit';
 import { BusinessAreaEntity } from './business-area.entity';
 @Entity({ name: 'service_pricing' })
 export class ServicePrice extends Audit {

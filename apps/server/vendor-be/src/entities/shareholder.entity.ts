@@ -6,7 +6,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { VendorsEntity } from './vendors.entity';
-import { Audit } from 'src/shared/entities/audit.entity';
+import { Audit } from '@audit';
 @Entity({ name: 'shareholders' })
 export class ShareholdersEntity extends Audit {
   @PrimaryGeneratedColumn('uuid')

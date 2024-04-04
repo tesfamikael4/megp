@@ -1,4 +1,4 @@
-import { Audit } from 'src/shared/entities';
+import { Audit } from '@audit';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({ name: 'message_templates' })
