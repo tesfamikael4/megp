@@ -41,3 +41,9 @@ export * from './scc-guarantee.entity';
 export * from './scc-liability.entity';
 export * from './scc-payment-schedule.entity';
 export * from './scc-payment-term.entity';
+
+export * from './bid-opening-minute.entity';
+export * from './bid-security.entity';
+export * from './bid-opening-checklist.entity';
+export * from './opening.entity';
+export * from './shared-bidder-keys.entity';
