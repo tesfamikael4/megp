@@ -10,6 +10,7 @@ import { ProcurementInstitution } from './procurement-institution.entity';
 import { IPDCMember } from './ipdc-members.entity';
 import { Organization } from './organization.entity';
 import { Audit } from 'src/shared/entities';
+import { TEAM_TYPE_ENUM } from 'src/shared/enums/team-type.enum';
 
 @Entity({ name: 'ipdc' })
 export class IPDC extends Audit {
@@ -29,7 +30,11 @@ export class IPDC extends Audit {
   @OneToMany(() => IPDCMember, (iPDCMember) => iPDCMember.ipdc)
   public ipdcMembers: IPDCMember[];
 
-  @Column({ default: 'Draft' })
+  @Column({
+    type: 'enum',
+    enum: TEAM_TYPE_ENUM,
+    default: TEAM_TYPE_ENUM.DRAFT,
+  })
   status: string;
 
   @Column()
