@@ -8,12 +8,16 @@ import { ExpandableTable, ExpandableTableConfig } from '@megp/core-fe';
 import { useDisclosure } from '@mantine/hooks';
 import UploadModal from './_components/upload-modal';
 import DocumentDetail from './_components/document-detail';
-import { useLazyGetBriefcaseFilesQuery } from '../_api/query';
+import {
+  useGetApproveVendorInfoQuery,
+  useLazyGetBriefcaseFilesQuery,
+} from '../_api/query';
 import PageWrapper from '../../../_components/page-wrapper';
 import { MyBriefcaseIcon } from './_components/placeholder-icon';
 // import { useDebouncedState } from '@mantine/hooks';
 function Page() {
   const [row, setRow] = useState(null);
+  const { data: vendor } = useGetApproveVendorInfoQuery({});
   const [opened, { close, open }] = useDisclosure();
   const config: ExpandableTableConfig = {
     columns: [
@@ -70,12 +74,14 @@ function Page() {
           />
         }
         headerRight={
-          <Button
-            leftSection={<IconPlus size={16} stroke={2.2} />}
-            onClick={open}
-          >
-            Add
-          </Button>
+          vendor && (
+            <Button
+              leftSection={<IconPlus size={16} stroke={2.2} />}
+              onClick={open}
+            >
+              Add
+            </Button>
+          )
         }
         condition={data && data.length > 0}
         isLoading={isLoading}
@@ -88,7 +94,7 @@ function Page() {
             <Text fw={500} fz={14} c="#464665">
               No documents have been added!
             </Text>
-            <Button variant="outline">Add Documents</Button>
+            {vendor && <Button variant="outline">Add Documents</Button>}
           </Flex>
         }
         headerBorder

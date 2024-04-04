@@ -26,7 +26,14 @@ const VendorDetail = () => {
         <>
           <Text className="font-semibold p-2 bg-gray-50">Certificate</Text>
           <Box>
-            <ShowFile url={''} filename="" />
+            <ShowFile
+              url={`${
+                process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api/'
+              }upload/get-file-bo/${'Certificate'}/${
+                data && data['certificate']
+              }/${data?.userId}`}
+              filename={data && data['certificate']}
+            />
           </Box>
         </>
       )}

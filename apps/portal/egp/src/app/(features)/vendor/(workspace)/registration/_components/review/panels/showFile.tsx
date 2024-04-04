@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Flex,
   Image,
   Loader,
@@ -18,10 +19,12 @@ export const ShowFile = ({
   url,
   filename,
   setStatus,
+  zoom,
 }: {
   url: string;
   filename: string;
   setStatus?: Dispatch<SetStateAction<string>>;
+  zoom?: boolean;
 }) => {
   const [opened, { close, open }] = useDisclosure(false);
   const [pdfData, setPdfData] = useState<ArrayBuffer | null>(null);
@@ -33,6 +36,7 @@ export const ShowFile = ({
     setStatus && setStatus(loading ? 'loading' : error ? 'error' : 'success');
   }, [error, loading]);
 
+  console.log(pdfData);
   useEffect(() => {
     const getFile = async () => {
       setPdfData(null);
@@ -92,6 +96,7 @@ export const ShowFile = ({
     getFile();
   }, [url, filename]);
 
+  if (loading) <Loader size={30} />;
   if (error) {
     return (
       <div>
@@ -111,56 +116,104 @@ export const ShowFile = ({
   }
   return (
     <>
-      <ImageModal opened={opened} close={close} url={fileContent as string} />
+      <Modal
+        opened={opened}
+        onClose={close}
+        size={'80%'}
+        centered
+        title={'Attachment'}
+      >
+        <Box style={{ height: '500px' }}>
+          {pdfData ? (
+            <iframe
+              src={`data:application/pdf;base64,${Buffer.from(
+                pdfData as any,
+              ).toString('base64')}`}
+              width="100%"
+              height="100%"
+              title={filename}
+            />
+          ) : (
+            <Image
+              src={fileContent}
+              alt={filename}
+              className="cursor-pointer "
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
+          )}
+        </Box>
+      </Modal>
       <div
-        className="w-full h-full flex items-center justify-center"
+        className="w-full h-full flex gap-2 flex-col items-center justify-center"
         style={{ height: '500px' }}
       >
-        {loading ? (
-          <Loader size={30} />
-        ) : pdfData ? (
-          <iframe
-            src={`data:application/pdf;base64,${Buffer.from(pdfData).toString(
-              'base64',
-            )}`}
-            width="100%"
-            height="100%"
-            title={filename}
-          />
+        {pdfData ? (
+          <Box
+            className="cursor-pointer"
+            onClick={() => open()}
+            style={{
+              width: '100%',
+              height: '100%',
+            }}
+          >
+            <iframe
+              src={`data:application/pdf;base64,${Buffer.from(pdfData).toString(
+                'base64',
+              )}`}
+              width="100%"
+              height="100%"
+              title={filename}
+            />
+          </Box>
         ) : fileContent ? (
           <Image
             src={fileContent}
             alt={filename}
             className="cursor-pointer "
             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-            onClick={() => open()}
           />
         ) : (
-          <p>No content available {error}</p>
+          <p>No content available </p>
+        )}
+
+        {zoom && (pdfData || fileContent) && (
+          <>
+            <Flex className="w-full" justify={'flex-end'}>
+              <Button
+                variant="subtle"
+                onClick={() => {
+                  console.log('Subtle', pdfData);
+                  return open();
+                }}
+              >
+                view full size
+              </Button>
+            </Flex>
+          </>
         )}
       </div>
     </>
   );
 };
 
-const ImageModal = ({
-  opened,
-  close,
-  url,
-}: {
-  opened: boolean;
-  close: () => void;
-  url: string;
-}) => {
-  return (
-    <Modal
-      opened={opened}
-      onClose={close}
-      size={'80%'}
-      centered
-      title={'Attachment'}
-    >
-      <Image src={url} alt="" />
-    </Modal>
-  );
-};
+// const ImageModal = ({
+//   opened,
+//   close,
+//   url,
+// }: {
+//   opened: boolean;
+//   close: () => void;
+//   url: string;
+// }) => {
+//   return (
+//     <Modal
+//       opened={opened}
+//       onClose={close}
+//       size={'80%'}
+//       centered
+//       title={'Attachment'}
+//     >
+//       <Image src={url} alt="" />
+//     </Modal>
+//   );
+// };

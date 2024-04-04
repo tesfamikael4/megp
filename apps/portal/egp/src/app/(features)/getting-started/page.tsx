@@ -21,13 +21,22 @@ import styles from './page.module.scss';
 import { useRouter } from 'next/navigation';
 import Footer from '../(landing)/_components/footer';
 import { useEffect } from 'react';
-import { useGetApproveVendorInfoQuery } from '../vendor/(workspace)/registration/_api/query';
+import {
+  useGetApproveVendorInfoQuery,
+  useGetVendorStatusQuery,
+} from '../vendor/(workspace)/registration/_api/query';
 
 export default function GettingStarted() {
   const router = useRouter();
   const { data, isLoading } = useGetApproveVendorInfoQuery({});
+  const {
+    data: statusData,
+    isLoading: isStatusLoading,
+    isError,
+    error,
+  } = useGetVendorStatusQuery({});
 
-  if (isLoading) {
+  if (isLoading || isStatusLoading) {
     return <LoadingOverlay />;
   }
   if (data) {
@@ -120,7 +129,13 @@ export default function GettingStarted() {
           ]}
         />
         <Flex justify={'flex-end'} w={'100%'}>
-          <Button onClick={() => router.push('/vendor/registration/new/basic')}>
+          <Button
+            onClick={() =>
+              statusData && statusData.status === 'Initial'
+                ? router.push('/vendor/registration/new/basic')
+                : router.push('/vendor/registration/new/detail')
+            }
+          >
             Continue
           </Button>
         </Flex>
