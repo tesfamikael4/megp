@@ -58,7 +58,7 @@ export function HeroSection() {
           >
             <InputWithButton />
             <Flex className="w-full" columnGap={'md'}>
-              {data &&
+              {data ? (
                 (data.status === 'Initial' || data.status === 'Draft') && (
                   <Button
                     bg={'#1D8E3F'}
@@ -76,7 +76,23 @@ export function HeroSection() {
                   >
                     Get Started
                   </Button>
-                )}
+                )
+              ) : (
+                <Button
+                  bg={'#1D8E3F'}
+                  size="sm"
+                  className={classes.btn}
+                  onClick={() => {
+                    router.push('/auth/login');
+                  }}
+                  mx={{
+                    base: 'auto',
+                    md: 'unset',
+                  }}
+                >
+                  Get Started
+                </Button>
+              )}
               {!isAuthenticated && (
                 <Button
                   bg={'transparent'}

@@ -36,7 +36,6 @@ export const ShowFile = ({
     setStatus && setStatus(loading ? 'loading' : error ? 'error' : 'success');
   }, [error, loading]);
 
-  console.log(pdfData);
   useEffect(() => {
     const getFile = async () => {
       setPdfData(null);
@@ -120,10 +119,11 @@ export const ShowFile = ({
         opened={opened}
         onClose={close}
         size={'80%'}
+        fullScreen
         centered
         title={'Attachment'}
       >
-        <Box style={{ height: '500px' }}>
+        <Box style={{ height: '92vh' }}>
           {pdfData ? (
             <iframe
               src={`data:application/pdf;base64,${Buffer.from(
