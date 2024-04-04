@@ -14,6 +14,7 @@ import { Server } from '@tus/server';
 import { S3Store } from '@tus/s3-store';
 import * as Minio from 'minio';
 import { GlobalExceptionFilter } from './shared/exceptions/global-exception.filter';
+import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 //import { JwtAuthGuard } from './authorization';
 
 async function bootstrap() {
@@ -29,6 +30,15 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
 
   app.useGlobalFilters(new GlobalExceptionFilter());
+
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.RMQ,
+    options: {
+      urls: [process.env.RMQ_URL],
+    },
+  });
+
+  await app.startAllMicroservices();
 
   // const reflector = app.get(Reflector);
   // app.useGlobalGuards(new JwtAuthGuard(reflector));
