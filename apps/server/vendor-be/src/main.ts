@@ -15,7 +15,6 @@ import { S3Store } from '@tus/s3-store';
 import * as Minio from 'minio';
 import { GlobalExceptionFilter } from './shared/exceptions/global-exception.filter';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
-//import { JwtAuthGuard } from './authorization';
 
 async function bootstrap() {
   const app: NestExpressApplication = await NestFactory.create(AppModule, {
