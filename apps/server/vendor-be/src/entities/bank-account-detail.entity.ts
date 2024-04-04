@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 import { VendorsEntity } from './vendors.entity';
 import { BanksEntity } from './bank.entity';
-import { Audit } from 'src/shared/entities/audit.entity';
+import { Audit } from '@audit';
 //Vendor Service Application
 @Entity({ name: 'vendors_bank' })
 export class BankAccountDetailEntity extends Audit {
