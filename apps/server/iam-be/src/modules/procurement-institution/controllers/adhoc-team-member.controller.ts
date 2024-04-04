@@ -1,5 +1,5 @@
 import { AdhocTeamMember } from '@entities';
-import { Body, Controller, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, Req } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { ExtraCrudController } from 'src/shared/controller';
@@ -9,6 +9,7 @@ import {
   UpdateAdhocTeamMemberDto,
 } from '../dto/adhoc-team-member.dto';
 import { AdhocTeamMemberService } from '../services/adhoc-team-member.service';
+import { CollectionQuery } from 'src/shared/collection-query';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'adhocTeamId',
@@ -31,5 +32,13 @@ export class AdhocTeamMemberController extends ExtraCrudController<AdhocTeamMemb
     @Req() req: any,
   ): Promise<BulkAdhocTeamMemberDto> {
     return this.adhocTeamMemberService.bulkCreate(members, req);
+  }
+
+  @Get('find-all-adhoc-members/:adhocId')
+  async findAllIPDCMembers(
+    @Param('adhocId') adhocId: string,
+    @Query() query: CollectionQuery,
+  ) {
+    return this.adhocTeamMemberService.findAllIPDCMembers(adhocId, query);
   }
 }

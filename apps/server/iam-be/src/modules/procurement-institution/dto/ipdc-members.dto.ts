@@ -79,6 +79,7 @@ export class IPDCMemberResponseDto extends UpdateIPDCMemberDto {
     const response = new IPDCMemberResponseDto();
 
     response.id = ipdcMember.id;
+    response.type = ipdcMember.type;
     response.userId = ipdcMember.userId;
     response.firstName = ipdcMember.user.account.firstName;
     response.lastName = ipdcMember.user.account.lastName;
