@@ -34,6 +34,22 @@ export const userApi = createApi({
         body: data,
       }),
     }),
+    requestConfirmPhone: builder.mutation<any, {}>({
+      query: (data) => ({
+        url: `/auth/request-confirm-phone`,
+        method: 'POST',
+      }),
+    }),
+    confirmPhone: builder.mutation<
+      any,
+      { verificationId: string; otp: string; isOtp: boolean }
+    >({
+      query: (data) => ({
+        url: `/auth/request-confirm-phone`,
+        method: 'POST',
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -41,4 +57,6 @@ export const {
   useChangeEmailMutation,
   useConfirmOldEmailMutation,
   useConfirmNewEmailMutation,
+  useRequestConfirmPhoneMutation,
+  useConfirmPhoneMutation,
 } = userApi;
