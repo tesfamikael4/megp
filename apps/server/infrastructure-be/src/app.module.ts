@@ -12,7 +12,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { RuleModule } from './modules/rule/rule.module';
 import { NotificationModule } from './modules/notification/notification.module';
 import { NotesModule } from './modules/notes-be/notes.module';
-import { MpgsPaymentModule } from './modules/mpgs-payment/mpgs-payment.module';
+import { PaymentGatewayModule } from './modules/payment-gateway/payment-gateway.module';
 
 @Module({
   imports: [
@@ -27,7 +27,7 @@ import { MpgsPaymentModule } from './modules/mpgs-payment/mpgs-payment.module';
     RuleModule,
     NotificationModule,
     NotesModule,
-    MpgsPaymentModule,
+    PaymentGatewayModule,
   ],
   providers: [
     DataSeeder,

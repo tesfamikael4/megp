@@ -64,6 +64,9 @@ export class MpgsPaymentService {
 
       const invoice = this.paymentInvoiceRepository.create({
         applicationKey: request.applicationKey,
+        type: 'ONLINE',
+        service: request.service,
+        description: request.description,
         amount: request.amount,
         currency: request.currency,
         invoiceReference: request.invoiceReference,

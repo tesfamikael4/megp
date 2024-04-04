@@ -1,11 +1,11 @@
-import { Body, Controller, Get, Post, Req } from '@nestjs/common';
+import { Body, Controller, Post, Req } from '@nestjs/common';
 import { MpgsPaymentService } from '../service/mpgs-payment.service';
 import { ApiTags } from '@nestjs/swagger';
 import { AllowAnonymous } from 'megp-shared-be';
 import { InitiatePaymentDto } from '../dto/initiate-payment.dto';
 
 @Controller('mpgs-payments')
-@ApiTags('MPGS Payment')
+@ApiTags('mpgs Payment')
 @AllowAnonymous()
 export class MpgsPaymentController {
   constructor(private readonly mpgsPaymentService: MpgsPaymentService) {}
