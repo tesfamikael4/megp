@@ -72,14 +72,15 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <Flex className="w-full flex-col border border-l-0 bg-white">
           <Flex className="w-full border-b p-3 flex justify-between">
             <PageTitle />
-            {pathname !== '/vendor/registration/new/basic' && (
-              <DeleteButton
-                onDelete={onCancel}
-                buttonName="Cancel"
-                title={`Cancel Vendor Registration`}
-                message={`Are you sure you want to cancel this vendor registration? If you do you will not be able to recover it.`}
-              />
-            )}
+            {pathname !== '/vendor/registration/new/basic' &&
+              vendorInfo?.data?.status !== 'Adjustment' && (
+                <DeleteButton
+                  onDelete={onCancel}
+                  buttonName="Cancel"
+                  title={`Cancel Vendor Registration`}
+                  message={`Are you sure you want to cancel this vendor registration? If you do you will not be able to recover it.`}
+                />
+              )}
           </Flex>
           <Flex className="py-2 px-3 w-full">{children}</Flex>
         </Flex>

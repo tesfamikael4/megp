@@ -11,10 +11,10 @@ const DocumentDetail = ({ row, setRow, fetch }: any) => {
   const [deleteFile, { isLoading, isSuccess }] =
     useDeleteBriefcaseFileMutation();
 
-  const handleDelete = async () => {
-    if (row.id) {
+  const handleDelete = async (id) => {
+    if (id) {
       try {
-        await deleteFile(row.id)
+        await deleteFile({ id })
           .unwrap()
           .then(() => {
             NotificationService.successNotification(
@@ -48,6 +48,7 @@ const DocumentDetail = ({ row, setRow, fetch }: any) => {
             setStatus={setStatus}
             filename={row.attachmentId}
             url={`${process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api'}/briefcases/download/${row.attachmentId}`}
+            zoom
           />
         </Card.Section>
         {status === 'success' && (
@@ -66,7 +67,7 @@ const DocumentDetail = ({ row, setRow, fetch }: any) => {
             </Text>
             <Flex justify={'flex-end'}>
               <DeleteButton
-                onDelete={handleDelete}
+                onDelete={() => handleDelete((row as any).id)}
                 buttonName="Delete"
                 title={`Delete ${row && (row as any).name}`}
                 message={`Are you sure you want to delete ${row && (row as any).attachmentId}`}

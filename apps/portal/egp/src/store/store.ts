@@ -21,6 +21,7 @@ import { checkPasswordApi } from '@/app/(features)/vendor/_api/bid-response.api'
 import { bidApi } from './api/registered-bid/registered-bid.api';
 import { getTenderSpdApi } from '@/app/(features)/vendor/_api/tender-spd';
 import { getBidFormApi } from '@/app/(features)/vendor/_api/bid-form';
+import { publicVendorsApi } from '@/app/(features)/_api/vendors.api';
 
 export const store = configureStore({
   reducer: {
@@ -43,6 +44,7 @@ export const store = configureStore({
     [bidApi.reducerPath]: bidApi.reducer,
     [getBidFormApi.reducerPath]: getBidFormApi.reducer,
     [getTenderSpdApi.reducerPath]: getTenderSpdApi.reducer,
+    [publicVendorsApi.reducerPath]: publicVendorsApi.reducer,
   },
   devTools: process.env.NODE_ENV !== 'production',
   middleware: (getDefaultMiddleware) => {

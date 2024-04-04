@@ -16,6 +16,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import {
   useGetApproveVendorInfoQuery,
+  useGetVendorStatusQuery,
   useLazyGetApproveVendorInfoQuery,
 } from '@/app/(features)/vendor/(workspace)/registration/_api/query';
 import InputWithButton from './input-with-button';
@@ -24,7 +25,8 @@ export function HeroSection() {
   const { isAuthenticated } = useAuth();
   const router = useRouter();
 
-  const { data } = useGetApproveVendorInfoQuery({});
+  // const { data } = useGetApproveVendorInfoQuery({});
+  const { data, isLoading, isError, error } = useGetVendorStatusQuery({});
 
   // if (isAuthenticated) {
   //   getVendorInfo({});
@@ -56,24 +58,25 @@ export function HeroSection() {
           >
             <InputWithButton />
             <Flex className="w-full" columnGap={'md'}>
-              {!data && (
-                <Button
-                  bg={'#1D8E3F'}
-                  size="sm"
-                  className={classes.btn}
-                  onClick={() => {
-                    isAuthenticated
-                      ? router.push('getting-started')
-                      : router.push('/auth/login');
-                  }}
-                  mx={{
-                    base: 'auto',
-                    md: 'unset',
-                  }}
-                >
-                  Get Started
-                </Button>
-              )}
+              {data &&
+                (data.status === 'Initial' || data.status === 'Draft') && (
+                  <Button
+                    bg={'#1D8E3F'}
+                    size="sm"
+                    className={classes.btn}
+                    onClick={() => {
+                      isAuthenticated
+                        ? router.push('getting-started')
+                        : router.push('/auth/login');
+                    }}
+                    mx={{
+                      base: 'auto',
+                      md: 'unset',
+                    }}
+                  >
+                    Get Started
+                  </Button>
+                )}
               {!isAuthenticated && (
                 <Button
                   bg={'transparent'}
