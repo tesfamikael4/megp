@@ -38,11 +38,11 @@ export class IPDCMemberController extends ExtraCrudController<IPDCMember>(
     return this.IPDCMemberService.bulkCreate(members, req);
   }
 
-  @Get('findAllIPDCMembers/:id')
+  @Get('find-all-ipdc-members/:ipdcId')
   async findAllIPDCMembers(
-    @Param('id') id: string,
+    @Param('ipdcId') ipdcId: string,
     @Query() query: CollectionQuery,
   ) {
-    return this.IPDCMemberService.findAllIPDCMembers(id, query);
+    return this.IPDCMemberService.findAllIPDCMembers(ipdcId, query);
   }
 }
