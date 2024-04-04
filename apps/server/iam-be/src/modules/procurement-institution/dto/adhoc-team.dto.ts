@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsDateString, IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import { TEAM_TYPE_ENUM } from '../../../shared/enums/team-type.enum';
 
 export class CreateAdhocTeamDto {
   @ApiProperty()
@@ -30,3 +31,15 @@ export class UpdateAdhocTeamDto extends CreateAdhocTeamDto {
 }
 
 export class AdhocTeamDto extends UpdateAdhocTeamDto {}
+
+export class AdhocTeamChangeStatusDto {
+  @ApiProperty()
+  @IsUUID()
+  @IsNotEmpty()
+  id: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  status: TEAM_TYPE_ENUM;
+}

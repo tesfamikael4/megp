@@ -1,9 +1,9 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { AdhocTeam } from '@entities';
 import { ExtraCrudService } from 'src/shared/service';
-import { AdhocTeamDto } from '../dto/adhoc-team.dto';
+import { AdhocTeamChangeStatusDto, AdhocTeamDto } from '../dto/adhoc-team.dto';
 
 @Injectable()
 export class AdhocTeamService extends ExtraCrudService<AdhocTeam> {
@@ -19,5 +19,17 @@ export class AdhocTeamService extends ExtraCrudService<AdhocTeam> {
     const item = this.adhocTeamRepository.create({ ...itemData, name });
     await this.adhocTeamRepository.insert(item);
     return item;
+  }
+
+  async changeStatus(itemData: AdhocTeamChangeStatusDto) {
+    const team = await this.adhocTeamRepository.findOne({
+      where: { id: itemData.id },
+    });
+    if (!team) {
+      throw new BadRequestException('Team not found');
+    }
+    await this.adhocTeamRepository.update(itemData.id, {
+      status: itemData.status,
+    });
   }
 }
