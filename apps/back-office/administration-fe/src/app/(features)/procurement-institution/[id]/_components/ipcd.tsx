@@ -27,20 +27,24 @@ export const Ipdc = () => {
     minHeight: 200,
     isExpandable: true,
     expandedRowContent: (record) => (
-      <AddMembers record={record} onSave={onMemberSave} />
+      <AddMembers
+        record={record}
+        onSave={(data) => onMemberSave(data, record.id)}
+        page="ipdc"
+      />
     ),
     columns: [
       { accessor: 'name' },
 
-      {
-        accessor: 'members',
-        width: 200,
-        textAlign: 'center',
-        render: (record) => 0,
-      },
+      // {
+      //   accessor: 'members',
+      //   width: 200,
+      //   textAlign: 'center',
+      //   render: (record) => 0,
+      // },
       {
         accessor: 'status',
-        width: 200,
+        width: 150,
         render: (record) => (
           <Badge color={record.status == 'Active' ? 'green' : 'yellow'}>
             {record.status}
@@ -50,7 +54,7 @@ export const Ipdc = () => {
     ],
   };
 
-  const onMemberSave = async (members) => {
+  const onMemberSave = async (members, id) => {
     try {
       await createMembers({ members, ipdcId: id }).unwrap();
       notify('Success', 'Members added successfully');
@@ -58,7 +62,6 @@ export const Ipdc = () => {
       logger.log({ err });
       notify('Error', 'Something went wrong');
     }
-    logger.log({ members });
   };
 
   const onSave = async () => {
