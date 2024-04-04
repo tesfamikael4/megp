@@ -4,6 +4,7 @@ import axios from 'axios';
 import { PaymentInvoice } from 'src/entities/payment-invoice.entity';
 import { Repository } from 'typeorm';
 import { InitiatePaymentDto } from '../dto/initiate-payment.dto';
+import { randomUUID } from 'crypto';
 
 @Injectable()
 export class MpgsPaymentService {
@@ -14,7 +15,7 @@ export class MpgsPaymentService {
 
   async initiatePayment(request: InitiatePaymentDto) {
     try {
-      const orderId = `ORDER-${Date.now()}`;
+      const orderId = `ORDER-${randomUUID().replace(/-/g, '')}`;
 
       const notificationUrl =
         process.env.MPGS_PAYMENT_NOTIFICATION_URL ??
