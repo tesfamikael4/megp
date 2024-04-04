@@ -37,11 +37,11 @@ export class StateService extends ExtraCrudService<State> {
       where: { activityId, organizationId },
     });
 
-    if (state) {
-      await entityManager
-        .getRepository(State)
-        .delete({ activityId, organizationId });
-    }
+    // if (state) {
+    //   await entityManager
+    //     .getRepository(State)
+    //     .delete({ activityId, organizationId });
+    // }
     const stateMachineConfig = this.xMachineState.createStateMachineConfig(
       steps as any,
     );
