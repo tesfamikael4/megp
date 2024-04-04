@@ -11,10 +11,16 @@ import { BidResponseService } from './service/bid-response.service';
 import { BidResponseController } from './controller/bid-response.controller';
 import { EncryptionHelperService } from './service/encryption-helper.service';
 import { AuthorizationModule } from 'src/shared/authorization';
+import { BidRegistrationDetail } from 'src/entities/bid-registration-detail.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([BidBookmark, BidRegistration, BidResponse]),
+    TypeOrmModule.forFeature([
+      BidBookmark,
+      BidRegistration,
+      BidRegistrationDetail,
+      BidResponse,
+    ]),
     AuthorizationModule,
   ],
   controllers: [
