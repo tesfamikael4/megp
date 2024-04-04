@@ -43,7 +43,10 @@ export class InstanceStepService extends ExtraCrudService<InstanceStep> {
           .delete({ itemId: steps[0].itemId });
       }
 
-      const items = this.repositoryInstanceStep.create(steps);
+      const items = this.repositoryInstanceStep.create({
+        id: undefined,
+        ...steps,
+      });
       await entityManager.getRepository(InstanceStep).insert(items);
 
       return items;
