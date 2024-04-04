@@ -63,6 +63,7 @@ import { BriefecaseEntity } from 'src/entities/brifecase.entity';
 import { CertificateModule } from '../certificates/certificate.module';
 import { VendorDiscoveryController } from './controllers/vendor-discovery.controller';
 import { VendorDiscoveryService } from './services/vendor-discovery.service';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -98,6 +99,19 @@ import { VendorDiscoveryService } from './services/vendor-discovery.service';
     HttpModule,
     ServicePricingModule,
     ServiceModule,
+    ClientsModule.register([
+      {
+        name: 'VENDOR_REGISTRATION_SERVICE',
+        transport: Transport.RMQ,
+        options: {
+          urls: [process.env.RMQ_URL],
+          queue: 'iam',
+          queueOptions: {
+            durable: false,
+          },
+        },
+      },
+    ]),
   ],
   exports: [VendorRegistrationsService, FileService, BusinessAreaService],
   providers: [

@@ -51,6 +51,7 @@ import { HandlingCommonService } from 'src/modules/handling/services/handling-co
 import { BusinessCategories } from 'src/modules/handling/enums/business-category.enum';
 import { PreferentailTreatmentService } from './preferentail-treatment.service';
 import PdfDocumentTemplate from 'src/modules/certificates/templates/pdf-tamplate';
+import { ClientProxy } from '@nestjs/microservices';
 
 @Injectable()
 export class VendorRegistrationsService extends EntityCrudService<VendorsEntity> {
@@ -66,6 +67,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     private readonly profileInfoRepository: Repository<ProfileInfoEntity>,
     @InjectRepository(InvoiceEntity)
     private readonly invoiceRepository: Repository<InvoiceEntity>,
+    @Inject('VENDOR_REGISTRATION_SERVICE')
+    private readonly vendorRegistrationRmqClient: ClientProxy,
     private readonly workflowService: WorkflowService,
     private readonly bpService: BusinessProcessService,
     private readonly serviceService: BpServiceService,
@@ -78,6 +81,14 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
   ) {
     super(vendorRepository);
   }
+
+  testEvent() {
+    this.vendorRegistrationRmqClient.emit(
+      'vendor-registration-completed-test',
+      { test: true },
+    );
+  }
+
   private updateVendorEnums: string[] = [
     VendorStatusEnum.DRAFT,
     VendorStatusEnum.ACTIVE,
@@ -866,7 +877,21 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             result.status = VendorStatusEnum.APPROVED;
           }
           await this.isrVendorsRepository.save(result);
-          await this.saveSRAsVendor(result);
+
+          const newlySavedVendor = await this.saveSRAsVendor(result);
+
+          // TRIGGER RMQ EVENT TO IAM AFTER GENERATING EGP REGISTRATION NUMBER
+          const eventPayload = {
+            name: newlySavedVendor.name,
+            accountId: newlySavedVendor.userId,
+            egpRegistrationNumber: newlySavedVendor.registrationNumber,
+            email: result.address.primaryEmail,
+          };
+
+          this.vendorRegistrationRmqClient.emit(
+            'vendor-registration-completed',
+            eventPayload,
+          );
 
           const bas = await this.baService.getVendorBusinessAreaByInstanceId(
             vendorStatusDto.isrVendorId,
@@ -980,7 +1005,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       initial: isrVendorData.initial,
     };
     vendorEntity.metaData = tempMetadata;
-    await this.vendorRepository.save(vendorEntity);
+    return await this.vendorRepository.save(vendorEntity);
   }
 
   //update vendor while profile update

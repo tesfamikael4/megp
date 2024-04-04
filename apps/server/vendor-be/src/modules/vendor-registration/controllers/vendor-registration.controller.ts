@@ -36,7 +36,7 @@ import { ServiceKeyEnum } from 'src/shared/enums/service-key.enum';
 @ApiResponse({ status: 500, description: 'Internal error' })
 @ApiExtraModels(DataResponseFormat)
 export class VendorRegistrationsController {
-  constructor(private readonly regService: VendorRegistrationsService) { }
+  constructor(private readonly regService: VendorRegistrationsService) {}
   @Get('get-isr-vendors')
   async getVendors() {
     return await this.regService.getIsrVendors();
@@ -326,5 +326,10 @@ export class VendorRegistrationsController {
       'Content-Disposition': 'attachment; filename="document.pdf"',
     });
     result.pipe(res);
+  }
+
+  @Post('event-test')
+  testEvent() {
+    return this.regService.testEvent();
   }
 }
