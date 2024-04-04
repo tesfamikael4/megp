@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { ProcurementInstitution } from './procurement-institution.entity';
 import { AdhocTeamMember } from './adhoc-team-member.entity';
+import { TEAM_TYPE_ENUM } from 'src/shared/enums/team-type.enum';
 
 @Entity({ name: 'adhoc_teams' })
 export class AdhocTeam extends Audit {
@@ -31,7 +32,11 @@ export class AdhocTeam extends Audit {
   )
   public adhocTeamMembers: AdhocTeamMember[];
 
-  @Column({ default: 'Draft' })
+  @Column({
+    type: 'enum',
+    enum: TEAM_TYPE_ENUM,
+    default: TEAM_TYPE_ENUM.DRAFT,
+  })
   status: string;
 
   @Column()

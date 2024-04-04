@@ -62,7 +62,7 @@ export class BulkAdhocTeamMemberDto {
   @ApiProperty()
   @IsUUID()
   @IsNotEmpty()
-  ipdcId: string;
+  adhocTeamId: string;
 }
 
 export class AdhocTeamMemberResponseDto extends UpdateAdhocTeamMemberDto {

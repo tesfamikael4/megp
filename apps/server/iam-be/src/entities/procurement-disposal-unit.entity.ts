@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { ProcurementInstitution } from './procurement-institution.entity';
 import { Unit } from './unit.entity';
+import { TEAM_TYPE_ENUM } from 'src/shared/enums/team-type.enum';
 
 @Entity({ name: 'procurement_disposal_units' })
 export class ProcurementDisposalUnit extends Audit {
@@ -32,6 +33,10 @@ export class ProcurementDisposalUnit extends Audit {
   @JoinColumn({ name: 'unitId' })
   public unit: Unit;
 
-  @Column({ default: 'Draft' })
+  @Column({
+    type: 'enum',
+    enum: TEAM_TYPE_ENUM,
+    default: TEAM_TYPE_ENUM.DRAFT,
+  })
   status: string;
 }
