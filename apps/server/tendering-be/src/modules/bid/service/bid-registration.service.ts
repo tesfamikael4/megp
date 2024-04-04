@@ -8,8 +8,15 @@ import { BidRegistration } from 'src/entities/bid-registration.entity';
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 import { ExtraCrudService } from 'src/shared/service';
 import { EntityManager, Repository } from 'typeorm';
-import { CreateBidRegistrationDto } from '../dto/bid-registration.dto';
-import { EnvelopTypeEnum } from 'src/shared/enums';
+import {
+  CreateBidRegistrationDto,
+  CreateBidRegistrationStatusDto,
+} from '../dto/bid-registration.dto';
+import {
+  BidRegistrationDetailStatusEnum,
+  BidRegistrationStatusEnum,
+  EnvelopTypeEnum,
+} from 'src/shared/enums';
 import {
   CollectionQuery,
   FilterOperators,
@@ -174,7 +181,71 @@ export class BidRegistrationService extends ExtraCrudService<BidRegistration> {
     return response;
   }
 
-  async generatePaymentLink(amount: number) {
+  async submitLot(payload: CreateBidRegistrationStatusDto, user: any) {
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+    const bidderId = user.organization.id;
+
+    const bidRegistrationDetail = await manager
+      .getRepository(BidRegistrationDetail)
+      .findOne({
+        where: {
+          lotId: payload.lotId,
+          bidRegistration: {
+            bidderId: bidderId,
+          },
+        },
+        relations: {
+          bidRegistration: true,
+        },
+      });
+    if (!bidRegistrationDetail) {
+      throw new BadRequestException('bid_registration_not_found');
+    }
+
+    await manager
+      .getRepository(BidRegistrationDetail)
+      .update(bidRegistrationDetail.id, {
+        status: BidRegistrationDetailStatusEnum.SUBMITTED,
+      });
+  }
+
+  async getSubmittedBiddersByLotId(lotId: string, query: CollectionQuery) {
+    query.where.push([
+      {
+        column: 'status',
+        operator: FilterOperators.EqualTo,
+        value: BidRegistrationStatusEnum.REGISTERED,
+      },
+    ]);
+
+    const dataQuery = QueryConstructor.constructQuery<BidRegistration>(
+      this.bidSecurityRepository,
+      query,
+    )
+      .leftJoin(
+        'bid_registrations.bidRegistrationDetails',
+        'bidRegistrationDetails',
+      )
+      .andWhere(
+        'bidRegistrationDetails.status = :submissionStatus AND bidRegistrationDetails.lotId = :lotId',
+        {
+          submissionStatus: BidRegistrationDetailStatusEnum.SUBMITTED,
+          lotId: lotId,
+        },
+      );
+
+    const response = new DataResponseFormat<BidRegistration>();
+    if (query.count) {
+      response.total = await dataQuery.getCount();
+    } else {
+      const [result, total] = await dataQuery.getManyAndCount();
+      response.total = total;
+      response.items = result;
+    }
+    return response;
+  }
+
+  private async generatePaymentLink(amount: number) {
     const paymentInvoice = `INVOICE-${Date.now()}-${amount}`;
     //TODO: call payment gateway API here
 
@@ -185,7 +256,7 @@ export class BidRegistrationService extends ExtraCrudService<BidRegistration> {
     };
   }
 
-  generateInitialEncryption(
+  private generateInitialEncryption(
     dataToEncrypt: string,
     password: string,
     envelopType: string,

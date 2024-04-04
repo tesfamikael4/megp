@@ -37,6 +37,18 @@ export class TenderController extends EntityCrudController<Tender>(options) {
     return await this.tenderService.getActiveTenders(query);
   }
 
+  @Get('closed-tenders')
+  @ApiQuery({
+    name: 'q',
+    type: String,
+    description: 'Collection Query Parameter. Optional',
+    required: false,
+  })
+  async getClosedTenders(@Query('q') q?: string, @Req() req?: any) {
+    const query = decodeCollectionQuery(q);
+    return await this.tenderService.getClosedTenders(query, req);
+  }
+
   @Post('change-status')
   async changeStatus(@Body() itemData: ChangeTenderStatusDto) {
     return this.tenderService.changeStatus(itemData);
