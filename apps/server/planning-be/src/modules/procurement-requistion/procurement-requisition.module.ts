@@ -24,6 +24,7 @@ import { ProcurementRequisitionController } from './controllers/procurement-requ
 import { ProcurementRequisitionService } from './services/procurement-requisition.service';
 import { UtilityModule } from '../utility/utility.module';
 import { MinIOModule } from 'src/shared/min-io';
+import { ReasonService } from '../utility/services/reason.service';
 
 @Module({
   imports: [

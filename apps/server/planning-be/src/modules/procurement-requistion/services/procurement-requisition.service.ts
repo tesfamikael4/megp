@@ -119,7 +119,31 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
         name: true,
         organizationId: true,
       },
+      relations: {
+        procurementMechanisms: true,
+        procurementRequisitionItems: true,
+        procurementRequisitionTimelines: true,
+        procurementRequisitionTechnicalTeams: true,
+      },
     });
+    if (!pr && pr.procurementRequisitionItems.length === 0) {
+      throw new HttpException('Procurement Requisition is empty', 430);
+    }
+    if (pr.procurementRequisitionTimelines.length === 0) {
+      throw new HttpException('Procurement Requisition Timeline is empty', 430);
+    }
+    if (!pr.procurementMechanisms) {
+      throw new HttpException(
+        'Procurement Requisition Mechanism is empty',
+        430,
+      );
+    }
+    if (pr.procurementRequisitionTechnicalTeams.length === 0) {
+      throw new HttpException(
+        'Procurement Requisition Technical Team is empty',
+        430,
+      );
+    }
     const prWithName = {
       itemName: pr.name,
       id: pr.id,
@@ -138,10 +162,12 @@ export class ProcurementRequisitionService extends EntityCrudService<Procurement
   }
 
   async prApprovalDecision(data: any): Promise<void> {
-    const { itemId, status } = data;
-    await this.repositoryProcurementRequisition.update(itemId, {
-      status: status.toUpperCase(),
-    });
+    let { status } = data;
+    status =
+      status.toUpperCase() === ProcurementRequisitionStatusEnum.REJECTED
+        ? ProcurementRequisitionStatusEnum.DRAFT
+        : status.toUpperCase();
+    await this.repositoryProcurementRequisition.update(data.itemId, { status });
   }
 
   //reports

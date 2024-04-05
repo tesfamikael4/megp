@@ -10,4 +10,5 @@ export enum BucketNameEnum {
   TENDER_SCC = 'tender_scc/',
   SOR_DOCUMENT = 'sor_document/',
   TENDERING_DOCUMENT = 'tendering_document/',
+  PROCUREMENT_REQUISITION_DOCUMENT = 'procurement_requisition_document/',
 }

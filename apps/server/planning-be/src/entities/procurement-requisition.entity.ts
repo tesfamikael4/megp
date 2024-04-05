@@ -20,6 +20,8 @@ import { ProcurementRequisitionTimeline } from './procurement-requisition-timeli
 import { Budget } from './budget.entity';
 import { ProcurementRequisitionStatusEnum } from 'src/shared/enums';
 import { PostBudgetPlan } from './post-budget-plan.entity';
+import { Reason } from './reason.entity';
+import { BudgetYear } from './budget-year.entity';
 @Entity({ name: 'procurement_requisitions' })
 @Unique(['procurementReference', 'deletedAt'])
 export class ProcurementRequisition extends OrgAudit {
@@ -69,6 +71,9 @@ export class ProcurementRequisition extends OrgAudit {
 
   @Column({ nullable: true })
   budgetId: string;
+
+  @Column({ nullable: true })
+  budgetYearId: string;
 
   @Column({ nullable: true })
   postBudgetPlanId: string;
@@ -155,6 +160,16 @@ export class ProcurementRequisition extends OrgAudit {
     },
   )
   procurementMechanisms: ProcurementMechanism;
+
+  @ManyToOne(
+    () => BudgetYear,
+    (budgetYear) => budgetYear.procurementRequisitions,
+  )
+  @JoinColumn({ name: 'budgetYearId' })
+  public budgetYear?: BudgetYear;
+
+  @OneToMany(() => Reason, (reasons) => reasons.procurementRequisition)
+  reasons: Reason[];
   @BeforeInsert()
   generateRandomNumbers(): void {
     const randomNumUser = () => Math.floor(100000 + Math.random() * 900000);
