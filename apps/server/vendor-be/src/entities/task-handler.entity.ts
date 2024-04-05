@@ -7,8 +7,8 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { WorkflowInstanceEntity } from './workflow-instance.entity';
-import { TaskEntity } from '@entities';
-import { Audit } from '@audit';
+import { TaskEntity } from 'src/entities/task.entity';
+import { Audit } from 'src/shared/entities';
 @Entity({ name: 'task_handlers' })
 export class TaskHandlerEntity extends Audit {
   @PrimaryGeneratedColumn('uuid')

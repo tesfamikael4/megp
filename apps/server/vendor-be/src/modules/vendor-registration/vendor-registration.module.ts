@@ -35,7 +35,7 @@ import {
   TaskTrackerEntity,
   VendorsEntity,
   WorkflowInstanceEntity,
-} from '@entities';
+} from 'src/entities';
 import { BpmModule } from 'src/modules/bpm/bpm.module';
 import { ServicePricingService } from 'src/modules/pricing/services/service-pricing.service';
 import { HandlingCommonService } from 'src/modules/handling/services/handling-common-services';
@@ -49,7 +49,7 @@ import { InvoiceService } from './services/invoice.service';
 import { HttpModule } from '@nestjs/axios';
 import { FileService } from './services/file.service';
 import { ServicePricingModule } from '../pricing/pricing.module';
-import { ProfileInfoEntity } from '@entities';
+import { ProfileInfoEntity } from 'src/entities/profile-info.entity';
 import { InvoicesController } from './controllers/invoice.controller';
 import { ServiceModule } from '../services/service.module';
 import { BpServiceService } from '../services/services/service.service';

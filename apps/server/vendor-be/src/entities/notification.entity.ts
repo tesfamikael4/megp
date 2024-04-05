@@ -1,4 +1,4 @@
-import { Audit } from '@audit';
+import { Audit } from 'src/shared/entities';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({ name: 'notifications' })

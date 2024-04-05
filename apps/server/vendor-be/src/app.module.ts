@@ -17,7 +17,6 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { TransactionInterceptor } from './shared/interceptors';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ReportModule } from './modules/report/report.module';
-import { DataSeeder } from './modules/seeders/data.seeder';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -38,7 +37,7 @@ import { DataSeeder } from './modules/seeders/data.seeder';
     ReportModule,
   ],
   controllers: [],
-  providers: [DataSeeder,
+  providers: [
     {
       provide: APP_INTERCEPTOR,
       useClass: TransactionInterceptor,
