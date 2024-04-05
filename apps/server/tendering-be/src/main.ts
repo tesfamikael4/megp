@@ -31,6 +31,7 @@ async function bootstrap() {
     },
     customSiteTitle: 'Tendering System API Documentation',
   };
+
   const document = SwaggerModule.createDocument(
     app,
     new DocumentBuilder()
