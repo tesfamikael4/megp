@@ -8,8 +8,6 @@ import {
   SwaggerCustomOptions,
   SwaggerModule,
 } from '@nestjs/swagger';
-
-import { v4 as uuidv4 } from 'uuid';
 import { Server } from '@tus/server';
 import { S3Store } from '@tus/s3-store';
 import * as Minio from 'minio';
