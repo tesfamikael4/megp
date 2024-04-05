@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 
 import { BpServiceEntity } from './bp-service.entity';
-import { Audit } from '@audit';
+import { Audit } from 'src/shared/entities';
 
 @Entity({ name: 'preferential_treatments' })
 export class PreferentialTreatmentsEntity extends Audit {

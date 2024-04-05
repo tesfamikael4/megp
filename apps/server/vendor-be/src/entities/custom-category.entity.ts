@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 
 import { VendorsEntity } from './vendors.entity';
-import { Audit } from '@audit';
+import { Audit } from 'src/shared/entities';
 @Entity({ name: 'custom_categories' })
 export class CustomCategoryEntity extends Audit {
   @PrimaryGeneratedColumn('uuid')

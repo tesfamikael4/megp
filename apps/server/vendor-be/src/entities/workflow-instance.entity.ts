@@ -1,4 +1,4 @@
-
+import { BusinessProcessEntity } from 'src/entities/business-process.entity';
 import {
   Column,
   Entity,
@@ -8,11 +8,11 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { BusinessProcessEntity, TaskHandlerEntity, TaskTrackerEntity } from '@entities';
-
+import { TaskHandlerEntity } from 'src/entities/task-handler.entity';
+import { TaskTrackerEntity } from 'src/entities/task-tracker.entity';
 import { IsrVendorsEntity } from './isr-vendors.entity';
 import { BpServiceEntity } from './bp-service.entity';
-import { Audit } from '@audit';
+import { Audit } from 'src/shared/entities';
 @Entity({ name: 'workflow_instances' })
 export class WorkflowInstanceEntity extends Audit {
   @PrimaryGeneratedColumn('uuid')
