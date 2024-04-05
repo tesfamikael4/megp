@@ -10,7 +10,6 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { logger } from '@megp/core-fe';
-import { IconLoader2 } from '@tabler/icons-react';
 import { getCookie } from 'cookies-next';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import Error from './error.svg';
@@ -20,11 +19,13 @@ export const ShowFile = ({
   filename,
   setStatus,
   zoom,
+  download,
 }: {
   url: string;
   filename: string;
   setStatus?: Dispatch<SetStateAction<string>>;
   zoom?: boolean;
+  download?: boolean;
 }) => {
   const [opened, { close, open }] = useDisclosure(false);
   const [pdfData, setPdfData] = useState<ArrayBuffer | null>(null);
@@ -94,6 +95,32 @@ export const ShowFile = ({
 
     getFile();
   }, [url, filename]);
+
+  const downloadFile = async () => {
+    const token = getCookie('token');
+    await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => {
+        // Check if the response is successful
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.blob();
+      })
+      .then((blob) => {
+        const url = window.URL.createObjectURL(new Blob([blob]));
+        const link: HTMLAnchorElement = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', filename); // Replace 'fileName' with the desired name of the downloaded file
+        document.body.appendChild(link);
+        link.click();
+        (link.parentNode as any).removeChild(link);
+      })
+      .catch((error) => console.error(error));
+  };
 
   if (loading) <Loader size={30} />;
   if (error) {
@@ -187,6 +214,15 @@ export const ShowFile = ({
                 }}
               >
                 view full size
+              </Button>
+              <Button
+                color="blue"
+                variant="subtle"
+                onClick={() => {
+                  return downloadFile();
+                }}
+              >
+                Download
               </Button>
             </Flex>
           </>

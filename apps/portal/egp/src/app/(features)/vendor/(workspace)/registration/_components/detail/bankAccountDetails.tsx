@@ -1,4 +1,5 @@
 import {
+  Checkbox,
   Group,
   LoadingOverlay,
   Stack,
@@ -36,6 +37,7 @@ export const BankAccountDetails: React.FC<Props> = ({
   disabled,
 }) => {
   const { data, isLoading, isSuccess, status } = useGetBankListQuery({});
+  console.log('data', control?._formValues?.bankAccountDetails);
 
   const bankList =
     status === 'fulfilled' && data && data.length
@@ -76,7 +78,7 @@ export const BankAccountDetails: React.FC<Props> = ({
           bankName: '',
           hashValue: '',
           accountType: '',
-          isDefualt: true,
+          isDefualt: false,
         }}
         itemSchema={itemSchema}
         disabled={disabled}
@@ -168,7 +170,16 @@ export const BankAccountDetails: React.FC<Props> = ({
                   {...getInputProps('IBAN')}
                 />
               </Group>
-              <Group grow></Group>
+              <Group grow>
+                {control?._formValues?.bankAccountDetails.every(
+                  (val: any) => !val.isDefualt,
+                ) && (
+                  <Checkbox
+                    label="Is Default"
+                    {...getInputProps('isDefualt')}
+                  />
+                )}
+              </Group>
             </Stack>
           </>
         )}
