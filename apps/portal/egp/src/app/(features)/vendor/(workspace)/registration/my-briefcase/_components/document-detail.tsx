@@ -49,6 +49,7 @@ const DocumentDetail = ({ row, setRow, fetch }: any) => {
             filename={row.attachmentId}
             url={`${process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api'}/briefcases/download/${row.attachmentId}`}
             zoom
+            download
           />
         </Card.Section>
         {status === 'success' && (

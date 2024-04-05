@@ -62,7 +62,7 @@ const NewRegistrationLanding = () => {
           />
         ))}
       </Accordion>
-      <Box className="flex items-center justify-end w-full mt-4 gap-x-3 shrink-0 sm:w-auto">
+      <Box className="flex items-center justify-end w-full mt-4 gap-x-3 shrink-0 sm:w-auto p-4">
         <Button
           className="w-1/2 px-5 text-sm tracking-wide text-white transition-colors duration-200 shrink-0 sm:w-auto "
           onClick={() => router.push('/vendor/registration/new/basic')}
