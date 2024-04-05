@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Step, Workflow } from 'src/entities';
 import { Instance } from 'src/entities/instance.entity';
+import { InstanceStep } from 'src/entities/instance-step.entity';
 import { State } from 'src/entities/state.entity';
 import { In, Not, Repository } from 'typeorm';
 import { setup } from 'xstate';
@@ -34,6 +35,9 @@ export class XMachineService {
   constructor(
     @InjectRepository(Step)
     private readonly repositoryStep: Repository<Step>,
+
+    @InjectRepository(InstanceStep)
+    private readonly repositoryInstanceStep: Repository<InstanceStep>,
     @InjectRepository(Instance)
     private readonly repositoryInstance: Repository<Instance>,
     @InjectRepository(Activity)
@@ -229,7 +233,7 @@ export class XMachineService {
   }
 
   private async checkGroup(stepId: any, details): Promise<any> {
-    const currentStep = await this.repositoryStep.findOne({
+    const currentStep = await this.repositoryInstanceStep.findOne({
       where: { id: stepId, organizationId: details.organizationId },
     });
     if (currentStep.approvers[0].approverType != 'WorkGroup') {
