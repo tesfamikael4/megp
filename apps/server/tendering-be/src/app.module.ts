@@ -11,6 +11,8 @@ import { BdsModule } from './modules/bds/bds.module';
 import { SorModule } from './modules/sor/sor.module';
 import { BidModule } from './modules/bid/bid.module';
 import { SccModule } from './modules/scc/scc.module';
+import { OpeningModule } from './modules/opening/opening.module';
+import { TeamModule } from './modules/team/team.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TransactionInterceptor } from './shared/interceptors';
 
@@ -26,6 +28,8 @@ import { TransactionInterceptor } from './shared/interceptors';
     SorModule,
     BidModule,
     SccModule,
+    OpeningModule,
+    TeamModule,
   ],
   providers: [
     EventEmitterModule,

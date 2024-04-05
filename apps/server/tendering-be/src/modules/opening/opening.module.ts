@@ -15,6 +15,7 @@ import { SharedBidderKeyService } from './service/shared-bidder-key.service';
 import { BidOpeningChecklistController } from './controller/bid-opening-checklist.controller';
 import { BidOpeningMinuteController } from './controller/bid-opening-minute.controller';
 import { BidSecurityController } from './controller/bid-security.controller';
+import { OpeningController } from './controller/opening.controller';
 import { SharedBidderKeyController } from './controller/shared-bidder-key.controller';
 
 @Module({
@@ -35,11 +36,11 @@ import { SharedBidderKeyController } from './controller/shared-bidder-key.contro
     SharedBidderKeyService,
   ],
   controllers: [
-    OpeningService,
+    OpeningController,
     BidOpeningChecklistController,
     BidOpeningMinuteController,
     BidSecurityController,
     SharedBidderKeyController,
   ],
 })
-export class TeamModule {}
+export class OpeningModule {}
