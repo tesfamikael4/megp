@@ -26,6 +26,7 @@ import { TenderClassification } from './tender-classification.entity';
 import { BidBookmark } from './bid-bookmark.entity';
 import { BidRegistration } from './bid-registration.entity';
 import { TenderPersonal } from './tender-personal.entity';
+import { Opening } from './opening.entity';
 
 @Entity({ name: 'tenders' })
 export class Tender extends Audit {
@@ -171,4 +172,7 @@ export class Tender extends Audit {
     },
   )
   bidRegistrations: BidRegistration[];
+
+  @OneToOne(() => Opening, (opening) => opening.tender)
+  opening: Opening;
 }

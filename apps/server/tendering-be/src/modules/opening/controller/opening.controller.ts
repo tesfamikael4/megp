@@ -4,9 +4,11 @@ import { ExtraCrudController } from 'src/shared/controller';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { Opening } from 'src/entities';
 import { OpeningService } from '../service/opening.service';
+import { CreateOpeningDto } from '../dto/opening.dto';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'tenderId',
+  createDto: CreateOpeningDto,
 };
 
 @Controller('opening')

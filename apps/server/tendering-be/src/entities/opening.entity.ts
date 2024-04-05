@@ -1,5 +1,12 @@
 import { OrgAudit } from 'src/shared/entities';
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToOne,
+  JoinColumn,
+} from 'typeorm';
+import { Tender } from './tender.entity';
 
 @Entity({ name: 'openings' })
 export class Opening extends OrgAudit {
@@ -9,8 +16,9 @@ export class Opening extends OrgAudit {
   @Column('uuid')
   tenderId: string;
 
-  @Column('uuid')
-  lotId: string;
+  @OneToOne(() => Tender, (tender) => tender.opening)
+  @JoinColumn()
+  tender: Tender;
 
   @Column('text')
   openingType: string;
