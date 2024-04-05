@@ -28,7 +28,7 @@ export class PreProcurementMechanismService extends ExtraCrudService<PreProcurem
               itemData.preBudgetPlanActivityId,
               element.key,
               element.status,
-              'pre',
+              'preBudgetPlanActivityId',
             );
           },
         );
@@ -54,7 +54,7 @@ export class PreProcurementMechanismService extends ExtraCrudService<PreProcurem
               itemData.preBudgetPlanActivityId,
               element.key,
               element.status,
-              'pre',
+              'preBudgetPlanActivityId',
             );
           },
         );

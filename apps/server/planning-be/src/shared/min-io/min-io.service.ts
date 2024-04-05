@@ -34,7 +34,7 @@ export class MinIOService {
   }
 
   async generatePresignedUploadUrl(fileInfo: {
-    bucketName: string;
+    bucketName?: string;
     originalname: string;
     contentType?: string;
   }): Promise<{ presignedUrl: string; file: any }> {
@@ -43,7 +43,7 @@ export class MinIOService {
     const duration = Number(process.env.DURATION_OF_PRE_SIGNED_DOCUMENT ?? 120);
     const presignedUrl = await this.minioService.client.presignedPutObject(
       BucketNameEnum.MEGP,
-      fileInfo.bucketName + filepath,
+      fileInfo.bucketName ? fileInfo.bucketName : '' + filepath,
       duration,
     );
 

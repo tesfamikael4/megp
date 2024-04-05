@@ -1,5 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { EntityCrudService } from 'src/shared/service';
 import { Reason } from 'src/entities/reason.entity';
@@ -18,10 +18,19 @@ export class ReasonService extends EntityCrudService<Reason> {
       itemData.organizationId = req.user.organization.id;
     }
 
-    const [budgetPlanActivityId, type] = itemData.preBudgetPlanActivityId
-      ? [itemData.preBudgetPlanActivityId, 'preBudgetPlanActivityId']
-      : [itemData.postBudgetPlanActivityId, 'postBudgetPlanActivityId'];
+    let budgetPlanActivityId: string;
+    let type: string;
 
+    if (itemData.preBudgetPlanActivityId) {
+      budgetPlanActivityId = itemData.preBudgetPlanActivityId;
+      type = 'preBudgetPlanActivityId';
+    } else if (itemData.postBudgetPlanActivityId) {
+      budgetPlanActivityId = itemData.postBudgetPlanActivityId;
+      type = 'postBudgetPlanActivityId';
+    } else {
+      budgetPlanActivityId = itemData.procurementRequisitionId;
+      type = 'procurementRequisitionId';
+    }
     const reason = await this.repositoryReason.find({
       where: {
         [type]: budgetPlanActivityId,
@@ -42,13 +51,16 @@ export class ReasonService extends EntityCrudService<Reason> {
     activityId: string,
     key: string,
     status: string,
-    planType: 'pre' | 'post',
+    planType:
+      'preBudgetPlanActivityId'
+      | 'postBudgetPlanActivityId'
+      | 'procurementRequisitionId',
   ) {
     try {
       if (status === 'fail') {
         const countQuery = {
           where: {
-            [`${planType}BudgetPlanActivityId`]: activityId,
+            [planType]: activityId,
             type: key,
           },
         };
