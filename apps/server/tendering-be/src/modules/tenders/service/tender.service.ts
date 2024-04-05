@@ -212,15 +212,8 @@ export class TenderService extends EntityCrudService<Tender> {
     ]);
     query.where.push([
       {
-        column: 'bdsSubmission.invitationDate',
-        operator: FilterOperators.GreaterThanOrEqualTo,
-        value: new Date(),
-      },
-    ]);
-    query.where.push([
-      {
         column: 'bdsSubmission.submissionDeadline',
-        operator: FilterOperators.GreaterThanOrEqualTo,
+        operator: FilterOperators.LessThanOrEqualTo,
         value: new Date(),
       },
     ]);
