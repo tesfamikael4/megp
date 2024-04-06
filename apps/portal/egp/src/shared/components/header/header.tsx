@@ -43,7 +43,7 @@ function Header() {
   const currentPath = usePathname();
 
   const workspace = isAuthenticated
-    ? [{ link: '/vendor/service', label: 'My Workspace' }]
+    ? [{ link: '/my-workspace', label: 'My Workspace' }]
     : [];
 
   const links: {
@@ -51,7 +51,7 @@ function Header() {
     label: string;
     links?: { link: string; label: string }[];
   }[] = [
-    { link: '/vendor/tender', label: 'Procurement Notices' },
+    { link: '/procurement-notice', label: 'Procurement Notices' },
     { link: '/vendor/plans', label: 'Plans' },
     { link: '/vendor/contracts', label: 'Contracts' },
     { link: '/vendor/data', label: 'Data' },
@@ -93,7 +93,7 @@ function Header() {
 
   const items = links.map((link) => {
     const menuItems = link.links?.map((item) => (
-      <Menu.Item key={item.link} onClick={() => router.push(item.link)}>
+      <Menu.Item key={item.link} component={Link} href={item.link}>
         {item.label}
       </Menu.Item>
     ));

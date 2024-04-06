@@ -1,0 +1,27 @@
+.nav {
+  @apply min-h-screen transform-gpu transition-transform border-r;
+  &[data-open='true'] {
+    @apply block md:hidden;
+  }
+  &[data-open='false'] {
+    @apply hidden md:block;
+  }
+  min-width: 250px;
+  /* background-color: var(--mantine-color-gray-1); */
+
+  background-color: var(--mantine-color-body);
+  /* height: rem(700px); */
+  width: 260px;
+  /* padding: var(--mantine-spacing-md); */
+  padding-top: 0;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid
+    light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+}
+
+.main {
+  @apply flex-grow w-full min-h-screen mt-4 p-4;
+  background-color: #f5fbfe;
+  width: 72.8125rem;
+}

@@ -10,6 +10,7 @@ import { contractFormSpdApi } from '@/app/(features)/spd/_api/contract-form-uplo
 import { sorBillOfMaterialBulkCreateApi } from '@/app/(features)/preparation/_api/item/bill-of-material-bulk-create.api';
 import { getClassificationApi } from '@/app/(features)/preparation/_api/tender/get-classification.api';
 import { tenderTemplateApi } from '@/app/(features)/preparation/_api/tender/tender-template.api';
+import { bidDocumentApi } from '@/app/(features)/revision/_api/bid-document.api';
 const { reducers, middleware } = entityApi;
 
 export const store = configureStore({
@@ -26,6 +27,7 @@ export const store = configureStore({
     [tenderTemplateApi.reducerPath]: tenderTemplateApi.reducer,
     [sorBillOfMaterialBulkCreateApi.reducerPath]:
       sorBillOfMaterialBulkCreateApi.reducer,
+    [bidDocumentApi.reducerPath]: bidDocumentApi.reducer,
   },
   devTools: process.env.NODE_ENV !== 'production',
   middleware: (getDefaultMiddleware) =>
@@ -41,6 +43,7 @@ export const store = configureStore({
       getClassificationApi.middleware,
       tenderTemplateApi.middleware,
       sorBillOfMaterialBulkCreateApi.middleware,
+      bidDocumentApi.middleware,
     ]),
 });
 

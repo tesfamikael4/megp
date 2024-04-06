@@ -1,0 +1,17 @@
+.main {
+  @apply p-10;
+}
+.card {
+  @apply w-full p-0;
+  min-height: fit-content;
+  background-color: var(--mantine-color-body);
+}
+.cardHeader {
+  @apply w-full p-3 border-b flex justify-between items-center;
+}
+.cardBody {
+  @apply w-full p-6;
+}
+.cardFooter {
+  @apply w-full p-3 flex justify-end items-center;
+}

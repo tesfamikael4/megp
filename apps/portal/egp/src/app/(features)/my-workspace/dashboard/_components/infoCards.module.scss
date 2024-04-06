@@ -1,0 +1,7 @@
+
+.cardMain {
+    @apply flex-col border rounded p-4;
+}
+.cardCont{
+    @apply items-start justify-between;
+}

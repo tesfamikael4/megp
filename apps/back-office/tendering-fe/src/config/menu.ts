@@ -18,6 +18,7 @@ export const Menu: MenuItem[] = [
     link: '/spd',
   },
   { label: 'Preparation', icon: IconLockSquareRounded, link: '/preparation' },
+  { label: 'Revision', icon: IconLockSquareRounded, link: '/revision' },
   { label: 'Solicitation', icon: IconLockSquareRounded, link: '/solicitation' },
   {
     label: 'Bid Opening',

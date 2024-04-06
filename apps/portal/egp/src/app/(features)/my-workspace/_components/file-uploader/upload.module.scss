@@ -1,0 +1,29 @@
+.root {
+  @apply flex-col gap-1 w-3/4;
+}
+
+.inner {
+  @apply max-w-xs w-full rounded-md flex-row items-center p-2 gap-2;
+  border: calc(0.06rem * var(--mantine-scale)) solid #d2d2d2;
+}
+
+.cardAdd {
+  @apply rounded-md items-center justify-center  flex-col;
+  width: 80px;
+  height: 80px;
+  border: calc(0.1rem * var(--mantine-scale)) dashed #bebbbb;
+  transition: border-color 0.3s;
+  color: #bebbbb;
+}
+.cardAdd:hover {
+  border: calc(0.1rem * var(--mantine-scale)) dashed #8dd1ff;
+}
+.cardImage {
+  @apply border-2 rounded-md items-center justify-center p-0.5 relative;
+  width: 80px;
+  height: 80px;
+}
+
+.trashIcon {
+  @apply absolute top-0 right-0 w-fit;
+}

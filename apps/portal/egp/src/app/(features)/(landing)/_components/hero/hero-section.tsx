@@ -14,12 +14,8 @@ import { IconSearch } from '@tabler/icons-react';
 import { useAuth } from '@megp/auth';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import {
-  useGetApproveVendorInfoQuery,
-  useGetVendorStatusQuery,
-  useLazyGetApproveVendorInfoQuery,
-} from '@/app/(features)/vendor/(workspace)/registration/_api/query';
 import InputWithButton from './input-with-button';
+import { useGetVendorStatusQuery } from '@/app/(features)/my-workspace/registration/_api/query';
 
 export function HeroSection() {
   const { isAuthenticated } = useAuth();
