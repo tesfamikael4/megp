@@ -178,6 +178,18 @@ export class GetBidResponseTenderDto {
   @IsNotEmpty()
   tenderId: string;
 
+  @ApiProperty({
+    default: DocumentTypeEnum.RESPONSE,
+    examples: [
+      DocumentTypeEnum.FINANCIAL_RESPONSE,
+      DocumentTypeEnum.TECHNICAL_RESPONSE,
+      DocumentTypeEnum.RESPONSE,
+    ],
+  })
+  @IsString()
+  @IsNotEmpty()
+  documentType: string;
+
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
