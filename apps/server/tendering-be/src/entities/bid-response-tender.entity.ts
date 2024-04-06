@@ -18,9 +18,12 @@ export class BidResponseTender extends Audit {
   @Column()
   bidRegistrationId: string;
 
-  @ManyToOne(() => BidRegistration, (tender) => tender.bidRegistrations)
+  @ManyToOne(() => BidRegistration, (tender) => tender.bidResponseTenders)
   @JoinColumn()
   bidRegistration: BidRegistration;
+
+  @Column()
+  documentType: string;
 
   @Column()
   key: string;

@@ -11,7 +11,8 @@ import {
 import { BidRegistration } from './bid-registration.entity';
 import { Lot } from './lot.entity';
 import { BidRegistrationDetailStatusEnum } from 'src/shared/enums';
-import { BidResponse } from './bid-response.entity';
+import { BidResponseLot } from './bid-response-lot.entity';
+import { BidResponseItem } from './bid-response-item.entity';
 
 @Entity({ name: 'bid_registration_details' })
 @Unique(['bidRegistrationId', 'lotId'])
@@ -41,8 +42,14 @@ export class BidRegistrationDetail extends Audit {
   status: string;
 
   @OneToMany(
-    () => BidResponse,
-    (bidResponses) => bidResponses.bidRegistrationDetail,
+    () => BidResponseLot,
+    (bidResponseLots) => bidResponseLots.bidRegistrationDetail,
   )
-  bidResponses: BidResponse[];
+  bidResponseLots: BidResponseLot[];
+
+  @OneToMany(
+    () => BidResponseItem,
+    (bidResponseItems) => bidResponseItems.bidRegistrationDetail,
+  )
+  bidResponseItems: BidResponseItem[];
 }

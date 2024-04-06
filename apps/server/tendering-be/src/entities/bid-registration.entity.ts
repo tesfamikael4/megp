@@ -12,6 +12,7 @@ import { Tender } from './tender.entity';
 import { BidRegistrationDetail } from './bid-registration-detail.entity';
 import { BidRegistrationStatusEnum, EnvelopTypeEnum } from 'src/shared/enums';
 import { BidResponseTender } from './bid-response-tender.entity';
+import { BidResponseItem } from './bid-response-item.entity';
 
 @Entity({ name: 'bid_registrations' })
 @Unique(['tenderId', 'bidderId'])
@@ -80,7 +81,7 @@ export class BidRegistration extends Audit {
 
   @OneToMany(
     () => BidResponseTender,
-    (bidRegistrations) => bidRegistrations.bidRegistration,
+    (bidResponseTenders) => bidResponseTenders.bidRegistration,
   )
-  bidRegistrations: BidResponseTender[];
+  bidResponseTenders: BidResponseTender[];
 }
