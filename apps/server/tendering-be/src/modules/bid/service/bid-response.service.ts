@@ -229,6 +229,7 @@ export class BidResponseService extends ExtraCrudService<BidResponseLot> {
       .getRepository(BidResponseTender)
       .findOneBy({
         bidRegistrationId: bidRegistration.id,
+        documentType: itemData.documentType,
         key: itemData.key,
       });
 
