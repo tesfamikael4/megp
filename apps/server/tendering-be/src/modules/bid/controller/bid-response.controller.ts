@@ -10,6 +10,7 @@ import {
   CreateBidResponseItemDto,
   CreateBidResponseTenderDto,
   GetBidResponseDto,
+  GetBidResponseItemDto,
   GetBidResponseTenderDto,
 } from '../dto/bid-response.dto';
 import { JwtGuard } from 'src/shared/authorization';
@@ -69,5 +70,13 @@ export class BidResponseController extends ExtraCrudController<BidResponseLot>(
       payload,
       req,
     );
+  }
+
+  @Post('get-bid-response-item')
+  async getBidResponseItemByKey(
+    @Body() payload: GetBidResponseItemDto,
+    @Req() req?: any,
+  ) {
+    return await this.bidSecurityService.getBidResponseItemByKey(payload, req);
   }
 }

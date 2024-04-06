@@ -11,6 +11,7 @@ import {
   CreateBidResponseItemDto,
   CreateBidResponseTenderDto,
   GetBidResponseDto,
+  GetBidResponseItemDto,
   GetBidResponseTenderDto,
 } from '../dto/bid-response.dto';
 import { BidRegistrationDetail } from 'src/entities/bid-registration-detail.entity';
@@ -238,7 +239,8 @@ export class BidResponseService extends ExtraCrudService<BidResponseLot> {
     );
     return decryptedValue;
   }
-  async getBidResponseItemByKey(itemData: GetBidResponseDto, req?: any) {
+
+  async getBidResponseItemByKey(itemData: GetBidResponseItemDto, req?: any) {
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
     const bidderId = req.user.organization.id;
 
@@ -246,8 +248,9 @@ export class BidResponseService extends ExtraCrudService<BidResponseLot> {
       .getRepository(BidResponseItem)
       .findOne({
         where: {
-          itemId: itemData.lotId,
+          itemId: itemData.itemId,
           bidRegistrationDetail: {
+            lotId: itemData.lotId,
             bidRegistration: {
               bidderId: bidderId,
             },
@@ -274,6 +277,7 @@ export class BidResponseService extends ExtraCrudService<BidResponseLot> {
       itemData.password,
       bidResponseItem.bidRegistrationDetail.bidRegistration.salt,
     );
+
     return decryptedValue;
   }
 

@@ -138,6 +138,40 @@ export class GetBidResponseDto {
   password: string;
 }
 
+export class GetBidResponseItemDto {
+  @ApiProperty()
+  @IsUUID()
+  @IsNotEmpty()
+  lotId: string;
+
+  @ApiProperty()
+  @IsUUID()
+  @IsNotEmpty()
+  itemId: string;
+
+  @ApiProperty({
+    default: DocumentTypeEnum.RESPONSE,
+    examples: [
+      DocumentTypeEnum.FINANCIAL_RESPONSE,
+      DocumentTypeEnum.TECHNICAL_RESPONSE,
+      DocumentTypeEnum.RESPONSE,
+    ],
+  })
+  @IsString()
+  @IsNotEmpty()
+  documentType: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  key: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  password: string;
+}
+
 export class GetBidResponseTenderDto {
   @ApiProperty()
   @IsUUID()
