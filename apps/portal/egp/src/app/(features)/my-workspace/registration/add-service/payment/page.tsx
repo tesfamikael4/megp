@@ -23,11 +23,6 @@ import { useUploadPaymentReceiptUpgradeMutation } from '@/store/api/vendor-upgra
 
 import PaymentMethod from '../../new/_components/payment/payment-method';
 import FileUploader from '../../../_components/uploader';
-import InvoiceTemplate from '../../../_components/dynamicPrintComponent/invoice-sm';
-const VENDOR_URL = process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api';
-
-function Page() {
-  const router = useRouter();
   const [invoiceSlipImageUrl, setInvoiceSlipImageUrl] = useState<string | null>(
     null,
   );
