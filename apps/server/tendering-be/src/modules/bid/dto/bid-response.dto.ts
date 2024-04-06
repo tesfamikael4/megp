@@ -8,14 +8,7 @@ export class CreateBidResponseDto {
   @IsNotEmpty()
   lotId: string;
 
-  @ApiProperty({
-    default: DocumentTypeEnum.RESPONSE,
-    examples: [
-      DocumentTypeEnum.FINANCIAL_RESPONSE,
-      DocumentTypeEnum.TECHNICAL_RESPONSE,
-      DocumentTypeEnum.RESPONSE,
-    ],
-  })
+  @ApiProperty({ default: DocumentTypeEnum.RESPONSE })
   @IsUUID()
   @IsNotEmpty()
   documentType: string;
@@ -47,14 +40,7 @@ export class CreateBidResponseItemDto {
   @IsNotEmpty()
   itemId: string;
 
-  @ApiProperty({
-    default: DocumentTypeEnum.RESPONSE,
-    examples: [
-      DocumentTypeEnum.FINANCIAL_RESPONSE,
-      DocumentTypeEnum.TECHNICAL_RESPONSE,
-      DocumentTypeEnum.RESPONSE,
-    ],
-  })
+  @ApiProperty({ default: DocumentTypeEnum.RESPONSE })
   @IsUUID()
   @IsNotEmpty()
   documentType: string;
@@ -81,14 +67,7 @@ export class CreateBidResponseTenderDto {
   @IsNotEmpty()
   tenderId: string;
 
-  @ApiProperty({
-    default: DocumentTypeEnum.RESPONSE,
-    examples: [
-      DocumentTypeEnum.FINANCIAL_RESPONSE,
-      DocumentTypeEnum.TECHNICAL_RESPONSE,
-      DocumentTypeEnum.RESPONSE,
-    ],
-  })
+  @ApiProperty({ default: DocumentTypeEnum.RESPONSE })
   @IsUUID()
   @IsNotEmpty()
   documentType: string;
@@ -115,14 +94,7 @@ export class GetBidResponseDto {
   @IsNotEmpty()
   lotId: string;
 
-  @ApiProperty({
-    default: DocumentTypeEnum.RESPONSE,
-    examples: [
-      DocumentTypeEnum.FINANCIAL_RESPONSE,
-      DocumentTypeEnum.TECHNICAL_RESPONSE,
-      DocumentTypeEnum.RESPONSE,
-    ],
-  })
+  @ApiProperty({ default: DocumentTypeEnum.RESPONSE })
   @IsString()
   @IsNotEmpty()
   documentType: string;
@@ -149,14 +121,7 @@ export class GetBidResponseItemDto {
   @IsNotEmpty()
   itemId: string;
 
-  @ApiProperty({
-    default: DocumentTypeEnum.RESPONSE,
-    examples: [
-      DocumentTypeEnum.FINANCIAL_RESPONSE,
-      DocumentTypeEnum.TECHNICAL_RESPONSE,
-      DocumentTypeEnum.RESPONSE,
-    ],
-  })
+  @ApiProperty({ default: DocumentTypeEnum.RESPONSE })
   @IsString()
   @IsNotEmpty()
   documentType: string;
@@ -178,14 +143,7 @@ export class GetBidResponseTenderDto {
   @IsNotEmpty()
   tenderId: string;
 
-  @ApiProperty({
-    default: DocumentTypeEnum.RESPONSE,
-    examples: [
-      DocumentTypeEnum.FINANCIAL_RESPONSE,
-      DocumentTypeEnum.TECHNICAL_RESPONSE,
-      DocumentTypeEnum.RESPONSE,
-    ],
-  })
+  @ApiProperty({ default: DocumentTypeEnum.RESPONSE })
   @IsString()
   @IsNotEmpty()
   documentType: string;
@@ -207,14 +165,7 @@ export class CheckPasswordDto {
   @IsNotEmpty()
   tenderId: string;
 
-  @ApiProperty({
-    default: DocumentTypeEnum.RESPONSE,
-    examples: [
-      DocumentTypeEnum.FINANCIAL_RESPONSE,
-      DocumentTypeEnum.TECHNICAL_RESPONSE,
-      DocumentTypeEnum.RESPONSE,
-    ],
-  })
+  @ApiProperty({ default: DocumentTypeEnum.RESPONSE })
   @IsString()
   @IsNotEmpty()
   documentType: string;
