@@ -52,9 +52,9 @@ export class BidRegistrationService extends ExtraCrudService<BidRegistration> {
     });
 
     if (!tender) {
-      throw new BadRequestException('Tender not found');
+      throw new BadRequestException('tender_not_found');
     } else if (tender.bdsSubmission.submissionDeadline < new Date()) {
-      throw new BadRequestException('Submission deadline has passed');
+      throw new BadRequestException('submission_deadline_has_passed');
     }
 
     const bidderId = req.user.organization.id;
@@ -207,6 +207,41 @@ export class BidRegistrationService extends ExtraCrudService<BidRegistration> {
       .update(bidRegistrationDetail.id, {
         status: BidRegistrationDetailStatusEnum.SUBMITTED,
       });
+  }
+
+  async getAllBiddersByTenderId(tenderId: string, query: CollectionQuery) {
+    query.where.push([
+      {
+        column: 'status',
+        operator: FilterOperators.EqualTo,
+        value: BidRegistrationStatusEnum.REGISTERED,
+      },
+    ]);
+    query.where.push([
+      {
+        column: 'tenderId',
+        operator: FilterOperators.EqualTo,
+        value: tenderId,
+      },
+    ]);
+
+    const dataQuery = QueryConstructor.constructQuery<BidRegistration>(
+      this.bidSecurityRepository,
+      query,
+    ).leftJoinAndSelect(
+      'bid_registrations.bidRegistrationDetails',
+      'bidRegistrationDetails',
+    );
+
+    const response = new DataResponseFormat<BidRegistration>();
+    if (query.count) {
+      response.total = await dataQuery.getCount();
+    } else {
+      const [result, total] = await dataQuery.getManyAndCount();
+      response.total = total;
+      response.items = result;
+    }
+    return response;
   }
 
   async getSubmittedBiddersByLotId(lotId: string, query: CollectionQuery) {
