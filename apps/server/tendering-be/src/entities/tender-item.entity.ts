@@ -16,6 +16,7 @@ import { SorFee } from './sor-fee.entity';
 import { SorIncidentalCost } from './sor-incidental-cost.entity';
 import { SorLabor } from './sor-labor.entity';
 import { SorDocument } from './sor-document.entity';
+import { BidResponseItem } from './bid-response-item.entity';
 
 @Entity({ name: 'items' })
 export class Item extends Audit {
@@ -94,4 +95,7 @@ export class Item extends Audit {
 
   @OneToMany(() => SorDocument, (documents) => documents.item)
   documents: SorDocument[];
+
+  @OneToMany(() => BidResponseItem, (bidResponseItems) => bidResponseItems.item)
+  bidResponseItems: BidResponseItem[];
 }

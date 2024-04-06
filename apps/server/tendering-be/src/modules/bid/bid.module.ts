@@ -7,11 +7,13 @@ import { BidRegistration } from 'src/entities/bid-registration.entity';
 import { BidRegistrationDetail } from 'src/entities/bid-registration-detail.entity';
 import { BidRegistrationService } from './service/bid-registration.service';
 import { BidRegistrationController } from './controller/bid-registration.controller';
-import { BidResponse } from 'src/entities/bid-response.entity';
+import { BidResponseLot } from 'src/entities/bid-response-lot.entity';
 import { BidResponseService } from './service/bid-response.service';
 import { BidResponseController } from './controller/bid-response.controller';
 import { EncryptionHelperService } from './service/encryption-helper.service';
 import { AuthorizationModule } from 'src/shared/authorization';
+import { BidResponseTender } from 'src/entities/bid-response-tender.entity';
+import { BidResponseItem } from 'src/entities/bid-response-item.entity';
 
 @Module({
   imports: [
@@ -19,7 +21,9 @@ import { AuthorizationModule } from 'src/shared/authorization';
       BidBookmark,
       BidRegistration,
       BidRegistrationDetail,
-      BidResponse,
+      BidResponseLot,
+      BidResponseTender,
+      BidResponseItem,
     ]),
     AuthorizationModule,
   ],
@@ -35,4 +39,4 @@ import { AuthorizationModule } from 'src/shared/authorization';
     EncryptionHelperService,
   ],
 })
-export class BidModule {}
+export class BidModule { }

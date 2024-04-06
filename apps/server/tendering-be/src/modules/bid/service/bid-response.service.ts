@@ -1,13 +1,14 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { InjectRepository } from '@nestjs/typeorm';
-import { BidResponse } from 'src/entities/bid-response.entity';
+import { BidResponseLot } from 'src/entities/bid-response-lot.entity';
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 import { ExtraCrudService } from 'src/shared/service';
 import { EntityManager, Repository } from 'typeorm';
 import {
   CheckPasswordDto,
   CreateBidResponseDto,
+  CreateBidResponseItemDto,
   CreateBidResponseTenderDto,
   GetBidResponseDto,
   GetBidResponseTenderDto,
@@ -17,12 +18,13 @@ import { DocumentTypeEnum } from 'src/shared/enums';
 import { EncryptionHelperService } from './encryption-helper.service';
 import { BidRegistration } from 'src/entities/bid-registration.entity';
 import { BidResponseTender } from 'src/entities/bid-response-tender.entity';
+import { BidResponseItem } from 'src/entities/bid-response-item.entity';
 
 @Injectable()
-export class BidResponseService extends ExtraCrudService<BidResponse> {
+export class BidResponseService extends ExtraCrudService<BidResponseLot> {
   constructor(
-    @InjectRepository(BidResponse)
-    private readonly bidSecurityRepository: Repository<BidResponse>,
+    @InjectRepository(BidResponseLot)
+    private readonly bidSecurityRepository: Repository<BidResponseLot>,
     private readonly encryptionHelperService: EncryptionHelperService,
     @Inject(REQUEST) private request: Request,
   ) {
@@ -117,6 +119,57 @@ export class BidResponseService extends ExtraCrudService<BidResponse> {
     return item;
   }
 
+  async createBidResponseItem(
+    itemData: CreateBidResponseItemDto,
+    req?: any,
+  ): Promise<any> {
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+    const bidderId = req.user.organization.id;
+
+    const bidRegistrationDetail = await manager
+      .getRepository(BidRegistrationDetail)
+      .findOne({
+        where: {
+          lotId: itemData.lotId,
+          bidRegistration: {
+            bidderId: bidderId,
+          },
+        },
+        relations: {
+          bidRegistration: true,
+        },
+      });
+    if (!bidRegistrationDetail) {
+      throw new BadRequestException('bid_registration_not_found');
+    }
+
+    const isPasswordValid = this.checkPasswordValidity(
+      bidRegistrationDetail.bidRegistration,
+      itemData.documentType,
+      itemData.password,
+    );
+    if (!isPasswordValid) {
+      throw new BadRequestException('invalid_password');
+    }
+
+    const encryptedValue = this.encryptionHelperService.encryptData(
+      JSON.stringify(itemData.value),
+      itemData.password,
+      bidRegistrationDetail.bidRegistration.salt,
+    );
+
+    const item = manager.getRepository(BidResponseItem).create(itemData);
+
+    item.bidRegistrationDetailId = bidRegistrationDetail.id;
+    item.value = encryptedValue;
+
+    await manager
+      .getRepository(BidResponseItem)
+      .upsert(item, ['bidRegistrationDetailId', 'itemId', 'key']);
+
+    return item;
+  }
+
   async getBidResponseByKey(itemData: GetBidResponseDto, req?: any) {
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
     const bidderId = req.user.organization.id;
@@ -185,6 +238,44 @@ export class BidResponseService extends ExtraCrudService<BidResponse> {
     );
     return decryptedValue;
   }
+  async getBidResponseItemByKey(itemData: GetBidResponseDto, req?: any) {
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+    const bidderId = req.user.organization.id;
+
+    const bidResponseItem = await manager
+      .getRepository(BidResponseItem)
+      .findOne({
+        where: {
+          itemId: itemData.lotId,
+          bidRegistrationDetail: {
+            bidRegistration: {
+              bidderId: bidderId,
+            },
+          },
+        },
+        relations: {
+          bidRegistrationDetail: {
+            bidRegistration: true,
+          },
+        },
+      });
+    if (!bidResponseItem) {
+      throw new BadRequestException('bid_registration_not_found');
+    }
+
+    const bidResponse = await this.bidSecurityRepository.findOneBy({
+      bidRegistrationDetailId: bidResponseItem.bidRegistrationDetailId,
+      documentType: itemData.documentType,
+      key: itemData.key,
+    });
+
+    const decryptedValue = this.encryptionHelperService.decryptedData(
+      bidResponse.value,
+      itemData.password,
+      bidResponseItem.bidRegistrationDetail.bidRegistration.salt,
+    );
+    return decryptedValue;
+  }
 
   async checkPassword(itemData: CheckPasswordDto, req?: any) {
     try {
@@ -219,7 +310,7 @@ export class BidResponseService extends ExtraCrudService<BidResponse> {
     }
   }
 
-  checkPasswordValidity(
+  private checkPasswordValidity(
     bidRegistration: BidRegistration,
     documentType: string,
     password: string,

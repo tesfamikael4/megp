@@ -1,12 +1,13 @@
 import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { BidResponse } from 'src/entities/bid-response.entity';
+import { BidResponseLot } from 'src/entities/bid-response-lot.entity';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { BidResponseService } from '../service/bid-response.service';
 import { ExtraCrudController } from 'src/shared/controller';
 import {
   CheckPasswordDto,
   CreateBidResponseDto,
+  CreateBidResponseItemDto,
   CreateBidResponseTenderDto,
   GetBidResponseDto,
   GetBidResponseTenderDto,
@@ -23,7 +24,7 @@ const options: ExtraCrudOptions = {
 @Controller('bid-responses')
 @ApiTags('Bid Response Controller')
 @UseGuards(JwtGuard, VendorGuard())
-export class BidResponseController extends ExtraCrudController<BidResponse>(
+export class BidResponseController extends ExtraCrudController<BidResponseLot>(
   options,
 ) {
   constructor(private readonly bidSecurityService: BidResponseService) {
@@ -36,6 +37,14 @@ export class BidResponseController extends ExtraCrudController<BidResponse>(
     @Req() req?: any,
   ) {
     return await this.bidSecurityService.createBidResponseTender(payload, req);
+  }
+
+  @Post('create-bid-response-item')
+  async createBidResponseItem(
+    @Body() payload: CreateBidResponseItemDto,
+    @Req() req?: any,
+  ) {
+    return await this.bidSecurityService.createBidResponseItem(payload, req);
   }
 
   @Post('check-password')
