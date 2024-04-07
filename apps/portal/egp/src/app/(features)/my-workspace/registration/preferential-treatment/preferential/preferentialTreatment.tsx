@@ -8,15 +8,15 @@ import {
   LoadingOverlay,
   Select,
 } from '@mantine/core';
-import MultiCheckBox from '../../../../_components/multiCheckBox';
+import MultiCheckBox from '../../../_components/multiCheckBox';
 import { PassFormDataProps } from './formShell';
 
-import FileUploader from '@/app/(features)/vendor/_components/uploader';
 import { logger } from '@megp/core-fe';
 import { useGetPreferentialQuery } from '@/store/api/preferential-treatment/preferential-treatment.api';
 import { preferential } from '../../_constants';
 import { PreferentialTreatment as PreferentialTreatmentType } from '@/models/vendorRegistration';
 import { useGetVendorQuery } from '../../_api/query';
+import FileUploader from '../../../_components/uploader';
 
 interface Props extends PassFormDataProps {
   name: any;

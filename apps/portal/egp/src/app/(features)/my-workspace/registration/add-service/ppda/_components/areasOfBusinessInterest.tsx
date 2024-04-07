@@ -1,4 +1,3 @@
-import MultiCheckBox from '@/app/(features)/vendor/_components/multiCheckBox';
 import {
   useAddAdditionalServiceMutation,
   useGetLineOfBusinessQuery,
@@ -25,6 +24,7 @@ import {
 } from '../../../_utils';
 import { Suspense } from 'react';
 import { AreasOfBusinessInterestType } from '@/models/vendorRegistration';
+import MultiCheckBox from '@/app/(features)/my-workspace/_components/multiCheckBox';
 
 export const AreasOfBusinessInterest = ({
   name,

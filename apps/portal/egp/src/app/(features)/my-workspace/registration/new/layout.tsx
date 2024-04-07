@@ -10,7 +10,7 @@ import StyledStepper from './_components/stepper/stepper';
 import PageTitle from '../_components/page-title/title';
 import { useLazyCancelRegistrationQuery } from '@/store/api/vendor_registration/api';
 import { usePathname, useRouter } from 'next/navigation';
-import { NotificationService } from '../../../_components/notification';
+import { NotificationService } from '../../_components/notification';
 import { useGetVendorQuery } from '../_api/query';
 import { VendorLevel } from '@/models/vendorRegistration';
 import { DeleteButton } from '@/app/(features)/_components/delete-button';

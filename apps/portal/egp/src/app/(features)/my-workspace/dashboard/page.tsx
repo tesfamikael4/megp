@@ -1,8 +1,8 @@
 import React from 'react';
 import Dashboard from './_components/dashboard';
-import DashboardCard from '../../_components/card';
 import { IconBriefcase, IconFileCheck, IconFolder } from '@tabler/icons-react';
 import { Avatar } from '@mantine/core';
+import DashboardCard from '../_components/card';
 
 const infoCard = [
   {

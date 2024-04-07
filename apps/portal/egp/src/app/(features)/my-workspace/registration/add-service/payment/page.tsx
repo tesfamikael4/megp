@@ -10,7 +10,6 @@ import {
   Accordion,
 } from '@mantine/core';
 import React, { useEffect, useState } from 'react';
-import InvoiceTemplate from '../../../../_components/dynamicPrintComponent/invoice-sm';
 import {
   useAddAdditionalServiceMutation,
   useGetInvoiceByUserIdQuery,
@@ -21,8 +20,10 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { paymentSlipUploadSchema } from '@/shared/schema/paymentSlipUploadSchema';
 import { useRouter } from 'next/navigation';
 import { useUploadPaymentReceiptUpgradeMutation } from '@/store/api/vendor-upgrade/api';
-import FileUploader from '../../../../_components/uploader';
+
 import PaymentMethod from '../../new/_components/payment/payment-method';
+import FileUploader from '../../../_components/uploader';
+import InvoiceTemplate from '../../../_components/dynamicPrintComponent/invoice-sm';
 const VENDOR_URL = process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api';
 
 function Page() {

@@ -2,7 +2,7 @@
 import React, { Suspense, useEffect } from 'react';
 import { LoadingOverlay } from '@mantine/core';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { NotificationService } from '../../../../_components/notification';
+import { NotificationService } from '../../../_components/notification';
 import { useGetVendorQuery } from '../../_api/query';
 import { AreasOfBusinessInterestForm } from '../_components/ppda/formShell';
 import { usePrivilege } from '../_context/privilege-context';

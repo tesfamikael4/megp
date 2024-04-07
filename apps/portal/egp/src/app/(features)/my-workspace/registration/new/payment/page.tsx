@@ -9,7 +9,6 @@ import {
   Box,
 } from '@mantine/core';
 import { useEffect, useState } from 'react';
-import InvoiceTemplate from '../../../../_components/dynamicPrintComponent/invoice-sm';
 import {
   useGetInvoiceQuery,
   useLazyUploadPaymentSlipQuery,
@@ -23,10 +22,11 @@ import {
   paymentSlipUploadSchema,
 } from '@/shared/schema/paymentSlipUploadSchema';
 import { invoiceArraySchema } from '@/shared/schema/invoiceSchema';
-import { paymentReceiptItemSchema } from '../../../../../../../shared/schema/paymentReceiptItemSchema';
 import { useRouter } from 'next/navigation';
-import { NotificationService } from '../../../../_components/notification';
-import FileUploader from '../../../../_components/uploader';
+import { paymentReceiptItemSchema } from '@/shared/schema/paymentReceiptItemSchema';
+import { NotificationService } from '../../../_components/notification';
+import FileUploader from '../../../_components/uploader';
+import InvoiceTemplate from '../../../_components/dynamicPrintComponent/invoice-sm';
 const VENDOR_URL = process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api';
 
 function Page() {

@@ -5,13 +5,13 @@ import { useRouter } from 'next/navigation';
 import { Control, RegisterOptions, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { NotificationService } from '@/app/(features)/vendor/_components/notification';
 import PreferentialTreatment from './preferentialTreatment';
 import {
   useSubmitRequestMutation,
   useUploadPreferentialAttachmentsMutation,
 } from '@/store/api/preferential-treatment/preferential-treatment.api';
 import { ExtendedRegistrationReturnType } from '../../_components/detail/formShell';
+import { NotificationService } from '../../../_components/notification';
 
 export interface PassFormDataProps {
   register: (

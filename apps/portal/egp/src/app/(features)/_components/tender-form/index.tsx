@@ -13,7 +13,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { logger, notify } from '@megp/core-fe';
-import { useRegistrationMutation } from '../../tender/_api/register.api';
+import { useRegistrationMutation } from '../../procurement-notice/_api/register.api';
 
 interface FormDetailProps {
   tenderId?: string;

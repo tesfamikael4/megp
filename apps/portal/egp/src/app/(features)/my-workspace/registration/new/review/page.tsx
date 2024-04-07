@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import FormPreview from '../../_components/review/form-preview';
 import { useAddFormMutation, useGetVendorQuery } from '../../_api/query';
 import { Button, Flex, LoadingOverlay, Stack } from '@mantine/core';
-import { NotificationService } from '../../../../_components/notification';
+import { NotificationService } from '../../../_components/notification';
 import { useRouter } from 'next/navigation';
 import { usePrivilege } from '../_context/privilege-context';
 

@@ -8,12 +8,12 @@ import {
   LoadingOverlay,
   Select,
 } from '@mantine/core';
-import MultiCheckBox from '../../../../../_components/multiCheckBox';
 import { PassFormDataProps } from './formShell';
 import { usePrivilege } from '../../_context/privilege-context';
 import FileUploader from '@/app/(features)/vendor/_components/uploader';
 import { useGetPreferentialQuery } from '@/store/api/preferential-treatment/preferential-treatment.api';
 import { preferential } from '../../../_constants';
+import MultiCheckBox from '@/app/(features)/my-workspace/_components/multiCheckBox';
 const VENDOR_URL = process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api';
 
 interface Props extends PassFormDataProps {

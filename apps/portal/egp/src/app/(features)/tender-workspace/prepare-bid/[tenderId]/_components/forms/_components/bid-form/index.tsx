@@ -13,7 +13,7 @@ import {
 import { useParams, useSearchParams } from 'next/navigation';
 import { useDisclosure } from '@mantine/hooks';
 import { IconX } from '@tabler/icons-react';
-import { FileViewer } from '@/app/(features)/vendor/_components/file-viewer';
+import { FileViewer } from '@/app/(features)/_components/file-viewer';
 import { useGetBidFormFilesQuery } from '@/app/(features)/procurement-notice/_api/invitation-document.api';
 import { logger } from '@megp/core-fe';
 import { useBidFormDetailQuery } from '@/app/(features)/vendor/_api/bid-form';

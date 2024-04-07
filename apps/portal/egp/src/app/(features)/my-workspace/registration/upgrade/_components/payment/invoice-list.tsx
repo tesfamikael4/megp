@@ -4,6 +4,6 @@ interface InvoiceListProps {
   // form: any;
 }
 
-const InvoiceList: React.FC<InvoiceListProps> = () => {
+const InvoiceListMy: React.FC<InvoiceListProps> = () => {
   return <></>;
 };

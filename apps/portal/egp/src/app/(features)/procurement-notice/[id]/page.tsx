@@ -10,14 +10,14 @@ import {
   Text,
 } from '@mantine/core';
 import { useGetFilesQuery } from '../_api/invitation-document.api';
-import { FileViewer } from '../../_components/file-viewer';
 import { useRegistrationMutation } from '../_api/register.api';
 import { useBookmarkMutation } from '../_api/bookmark.api';
 import { useParams } from 'next/navigation';
 import { useDisclosure } from '@mantine/hooks';
-import { TenderFormDetail } from '../../_components/tender-form';
 import { IconX } from '@tabler/icons-react';
 import { notify } from '@megp/core-fe';
+import { FileViewer } from '../../_components/file-viewer';
+import { TenderFormDetail } from '../../_components/tender-form';
 
 export default function TenderDetailPage() {
   const [opened, { open, close }] = useDisclosure(false);

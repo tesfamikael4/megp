@@ -15,7 +15,7 @@ import {
   useLazyGetMRADataQuery,
   useLazyGetNCICDataQuery,
 } from '../../../_api/query';
-import { NotificationService } from '../../../../../_components/notification';
+import { NotificationService } from '@/app/(features)/my-workspace/_components/notification';
 
 const VendorFormContext = createContext<{
   state: {

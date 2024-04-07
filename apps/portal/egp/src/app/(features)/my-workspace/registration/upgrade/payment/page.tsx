@@ -9,12 +9,12 @@ import {
   Box,
 } from '@mantine/core';
 import React, { useEffect, useState } from 'react';
-import InvoiceTemplate from '../../../../_components/dynamicPrintComponent/invoice-sm';
+import InvoiceTemplate from '../../../_components/dynamicPrintComponent/invoice-sm';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { IPaymentSlipUploadSchema } from '@/shared/schema/paymentSlipUploadSchema';
 import { useRouter } from 'next/navigation';
-import { NotificationService } from '../../../../_components/notification';
+import { NotificationService } from '../../../_components/notification';
 import PaymentMethod from '../../renewal/_components/payment/payment-method';
 import {
   useGetMyInvoiceQuery,

@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react';
 import { Box, Flex, LoadingOverlay } from '@mantine/core';
 import { useRouter } from 'next/navigation';
-import { NotificationService } from '../../../../_components/notification';
+import { NotificationService } from '../../../_components/notification';
 import { validateApprovedVendorServiceSchema } from '@/shared/schema/venderRenewalSchema';
 import ServicesCard from '../_components/ppda/servicesCard';
 import { IconFile } from '@tabler/icons-react';

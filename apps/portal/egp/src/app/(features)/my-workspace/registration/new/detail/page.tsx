@@ -2,11 +2,11 @@
 import { Suspense, useEffect } from 'react';
 import { LoadingOverlay } from '@mantine/core';
 import { useRouter } from 'next/navigation';
-import { NotificationService } from '../../../../_components/notification';
 import { useGetVendorQuery } from '../../_api/query';
 import RegistrationForm from '../../_components/detail/formShell';
 import { usePrivilege } from '../_context/privilege-context';
 import { getInitialValues } from '../../_utils';
+import { NotificationService } from '../../../_components/notification';
 
 export default function Page() {
   const router = useRouter();

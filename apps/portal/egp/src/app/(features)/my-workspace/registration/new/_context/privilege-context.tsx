@@ -7,12 +7,8 @@ import React, {
   useMemo,
   useState,
 } from 'react';
-import { useGetVendorInfoQuery, useGetVendorQuery } from '../../_api/query';
 import { usePathname, useRouter } from 'next/navigation';
-import { NotificationService } from '../../../../_components/notification';
-import { Box, LoadingOverlay } from '@mantine/core';
 import { VendorLevel, VendorStatus } from '@/models/vendorRegistration';
-import { boolean } from 'zod';
 
 type AccessRules = {
   [status in VendorStatus]: {

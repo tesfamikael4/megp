@@ -2,7 +2,6 @@ import React, { Suspense } from 'react';
 import { useFieldArray } from 'react-hook-form';
 import { Fieldset, Flex, Group, LoadingOverlay, Select } from '@mantine/core';
 import { MultiSelect } from '@mantine/core';
-import MultiCheckBox from '../../../../../_components/multiCheckBox';
 import { PassFormDataProps } from './formShell';
 import {
   useGetLineOfBusinessQuery,
@@ -15,6 +14,7 @@ import {
   getFormattedPriceRangeValues,
   getLineOfBusinessMultiSelectData,
 } from '../../../_utils';
+import MultiCheckBox from '@/app/(features)/my-workspace/_components/multiCheckBox';
 interface Props extends PassFormDataProps {
   name: any;
   adjustment?: boolean;
