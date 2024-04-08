@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { VendorsEntity } from './vendors.entity';
-import { Audit } from 'src/shared/entities/audit.entity';
+import { Audit } from '@audit';
 
 @Entity({ name: 'beneficial_ownership' })
 export class BeneficialOwnership extends Audit {

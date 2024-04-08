@@ -6,9 +6,9 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { WorkflowInstanceEntity } from './workflow-instance.entity';
-import { TaskEntity } from 'src/entities/task.entity';
+import { TaskEntity } from '@entities';
 import { TaskCheckListDto } from 'src/modules/bpm/dto/task-check-list.dto';
-import { Audit } from 'src/shared/entities';
+import { Audit } from '@audit';
 @Entity({ name: 'task_trackers' })
 export class TaskTrackerEntity extends Audit {
   @PrimaryGeneratedColumn('uuid')

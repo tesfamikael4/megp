@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 
 import { BankAccountDetailEntity } from './bank-account-detail.entity';
-import { Audit } from 'src/shared/entities';
+import { Audit } from '@audit';
 @Entity({ name: 'banks' })
 export class BanksEntity extends Audit {
   @PrimaryGeneratedColumn('uuid')

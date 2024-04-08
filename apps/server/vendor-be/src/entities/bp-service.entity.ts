@@ -1,6 +1,6 @@
-import { BusinessProcessEntity } from 'src/entities/business-process.entity';
-import { ServicePrice } from 'src/entities/service-price.entity';
-import { Audit } from 'src/shared/entities/audit.entity';
+
+import { BusinessProcessEntity, ServicePrice } from '@entities';
+import { Audit } from '@audit';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { WorkflowInstanceEntity } from './workflow-instance.entity';
 import { BusinessAreaEntity } from './business-area.entity';
