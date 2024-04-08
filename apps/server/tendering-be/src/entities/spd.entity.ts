@@ -119,5 +119,5 @@ export class Spd extends Audit {
   spdContractForm: SpdContractForm[];
 
   @OneToOne(() => TenderSpd, (tender) => tender.spd)
-  tender: TenderSpd;
+  tenderSpd: TenderSpd;
 }
