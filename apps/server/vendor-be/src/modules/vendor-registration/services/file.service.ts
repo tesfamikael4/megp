@@ -200,9 +200,6 @@ export class FileService {
     paymentReceiptDto: any,
   ) {
     try {
-      if (!await this.isTransactionNumberUnique(paymentReceiptDto.transactionNumber)) {
-        throw new HttpException(" Transaction NUmber must be unique", 400)
-      }
       const result = await this.isrVendorsRepository.findOne({
         where: { userId: userId, status: In(this.updateVendorEnums) },
       });
@@ -277,11 +274,6 @@ export class FileService {
   ) {
     const userId = user.id;
     try {
-      if (!await this.isTransactionNumberUnique(paymentReceiptDto.transactionNumber)) {
-        throw new HttpException(" Transaction NUmber must be unique", 400)
-      }
-
-
       const result = await this.isrVendorsRepository.findOne({
         where: { userId: userId, status: In(this.updateVendorEnums) },
       });
@@ -368,24 +360,11 @@ export class FileService {
       throw error;
     }
   }
-  async isTransactionNumberUnique(tranasctionNumber: string): Promise<boolean> {
-    //check transaction number uniqueness
-    const transactionExits = await this.isrVendorsRepository.createQueryBuilder('isr')
-      .where(`isr.paymentReceipt @> '{"transactionId": "${tranasctionNumber}"}'`)
-      .getOne();
-    if (transactionExits) {
-      return false;
-    }
-    return true;
-  }
   async uploadPaymentReceiptAttachment(
     file: Express.Multer.File,
     uploadFileDto: UploadFileDto,
   ) {
     try {
-      if (!await this.isTransactionNumberUnique(uploadFileDto.transactionNumber)) {
-        throw new HttpException(" Transaction NUmber must be unique", 400)
-      }
       const userId = uploadFileDto.userInfo.id;
       const result = await this.isrVendorsRepository.findOne({
         where: { userId: userId, status: In(this.updateVendorEnums) },
@@ -404,7 +383,7 @@ export class FileService {
       const metaData = {
         'Content-Type': file.mimetype,
       };
-      await this.minioClient.putObject(
+      const resultData = await this.minioClient.putObject(
         this.bucketName,
         filename,
         file.buffer,

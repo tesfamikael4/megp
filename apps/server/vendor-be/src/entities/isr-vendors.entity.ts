@@ -1,5 +1,5 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { Audit } from '@audit';
+import { Audit } from 'src/shared/entities/audit.entity';
 import { WorkflowInstanceEntity } from './workflow-instance.entity';
 import { BusinessAreaEntity } from './business-area.entity';
 @Entity({ name: 'isr_vendors' })

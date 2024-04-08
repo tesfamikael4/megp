@@ -1,6 +1,6 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { BpServiceEntity } from './bp-service.entity';
-import { Audit } from '@audit';
+import { Audit } from 'src/shared/entities';
 
 @Entity({ name: 'invoice' })
 export class InvoiceEntity extends Audit {
