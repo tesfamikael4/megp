@@ -180,7 +180,7 @@ export class PreferentailTreatmentService extends EntityCrudService<Preferential
           }
           const baEnt = new BusinessAreaEntity();
           baEnt.vendorId = vendor?.id;
-          baEnt.category = ServiceKeyEnum.preferentialTreatment;
+          baEnt.category = ServiceKeyEnum.PREFERENTIAL_TREATMENT;
           baEnt.status = ApplicationStatus.PENDING;
           baEnt.serviceId = dto.serviceId;
           if (!instanceId) {

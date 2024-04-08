@@ -240,7 +240,7 @@ export const bpsToSeed = [
                     meta: {
                         type: 'Certificate',
                     },
-                },
+                }
             },
             initial: 'Submit Renewal Registration Request',
         },
@@ -350,16 +350,27 @@ export const bpsToSeed = [
                         },
                     },
                 },
-                'Approval of indigenous black Malawian(IBM) Registration Request': {
+                'Approval of indigenous black Malawian(IBM) Registration Request':
+                {
                     on: {
                         ADJUST:
                             'Submission of indigenous black Malawian(IBM) Registration Request',
                         REJECT: 'End',
-                        APPROVE: 'End',
+                        APPROVE: 'Generate Vendor Registration Certificate',
                     },
                     meta: {
                         type: 'Approval',
-                    },
+                    }
+                }
+
+            },
+            'Generate Vendor Registration Certificate': {
+                on: {
+                    FAIL: 'Generate Vendor Registration Certificate',
+                    SUCCESS: 'End',
+                },
+                meta: {
+                    type: 'Certificate',
                 },
             },
             initial:
@@ -441,10 +452,19 @@ export const bpsToSeed = [
                         ADJUST:
                             'Submission of Small Enterprises(SE) Registration Request',
                         REJECT: 'End',
-                        APPROVE: 'End',
+                        APPROVE: 'Generate Vendor Registration Certificate',
                     },
                     meta: {
                         type: 'Approval',
+                    },
+                },
+                'Generate Vendor Registration Certificate': {
+                    on: {
+                        FAIL: 'Generate Vendor Registration Certificate',
+                        SUCCESS: 'End',
+                    },
+                    meta: {
+                        type: 'Certificate',
                     },
                 },
             },
@@ -455,6 +475,7 @@ export const bpsToSeed = [
         organizationId: null,
         organizationName: null,
     },
+    //micro
     {
         tenantId: 0,
         id: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b52',
@@ -480,15 +501,24 @@ export const bpsToSeed = [
                 },
                 'Approval of Micro Enterprise Registration Request': {
                     on: {
-                        ADJUST:
-                            'Submission of Micro Enterprises(ME) Registration Request',
+                        ADJUST: 'Submission of Micro Enterprises(ME) Registration Request',
                         REJECT: 'End',
-                        APPROVE: 'End',
+                        APPROVE: 'Generate Vendor Registration Certificate',
                     },
                     meta: {
                         type: 'Approval',
                     },
                 },
+                'Generate Vendor Registration Certificate': {
+                    on: {
+                        FAIL: 'Generate Vendor Registration Certificate',
+                        SUCCESS: 'End',
+                    },
+                    meta: {
+                        type: 'Certificate',
+                    },
+                },
+
             },
             initial: 'Submission of Micro Enterprises(ME) Registration Request',
         },
@@ -497,6 +527,7 @@ export const bpsToSeed = [
         organizationId: null,
         organizationName: null,
     },
+    //mirginalized group
     {
         tenantId: 0,
         id: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b53',
@@ -524,10 +555,19 @@ export const bpsToSeed = [
                     on: {
                         ADJUST: 'Submission of Marginalized Group Registration Request',
                         REJECT: 'End',
-                        APPROVE: 'End',
+                        APPROVE: 'Generate Vendor Registration Certificate',
                     },
                     meta: {
                         type: 'Approval',
+                    },
+                },
+                'Generate Vendor Registration Certificate': {
+                    on: {
+                        FAIL: 'Generate Vendor Registration Certificate',
+                        SUCCESS: 'End',
+                    },
+                    meta: {
+                        type: 'Certificate',
                     },
                 },
             },
@@ -797,7 +837,19 @@ export const tasksToSeed = [
                 isMandatory: 'true',
             },
         ],
-        orderBy: 1,
+        orderBy: 2,
+    },
+    {
+        id: '85d95fdb-7852-4ddc-912f-0e94d23d15d3',
+        name: 'Generate Vendor Registration Certificate',
+        label: 'Generated Certeficate',
+        description: 'Generate Vendor Registration Certificate',
+        bpId: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b52',
+        handlerType: 'Assignee',
+        taskType: 'Certificate',
+        checkList: [
+        ],
+        orderBy: 3,
     },
     //small
     {
@@ -827,8 +879,23 @@ export const tasksToSeed = [
                 isMandatory: 'true',
             },
         ],
-        orderBy: 1,
+        orderBy: 2,
+    }
+    ,
+    {
+        id: 'c0aa3814-f987-4ff1-af34-0ceda8cc9b51',
+        name: 'Generate Vendor Registration Certificate',
+        label: 'Generated Certeficate',
+        description: 'Generate Vendor Registration Certificate',
+        bpId: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b51',
+        handlerType: 'Assignee',
+        taskType: 'Certificate',
+        checkList: [
+        ],
+        orderBy: 3,
     },
+
+
     //marginalized
     {
         id: '85752a13-201f-45eb-8b6f-118ebf0c89c7',
@@ -857,7 +924,19 @@ export const tasksToSeed = [
                 isMandatory: 'true',
             },
         ],
-        orderBy: 1,
+        orderBy: 2,
+    },
+    {
+        id: '12752a13-205f-11eb-8b5f-118ebf0c21c2',
+        name: 'Generate Vendor Registration Certificate',
+        label: 'Generated Certeficate',
+        description: 'Generate Vendor Registration Certificate',
+        bpId: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b53',
+        handlerType: 'Assignee',
+        taskType: 'Certificate',
+        checkList: [
+        ],
+        orderBy: 3,
     },
     //meduim
     {
@@ -889,6 +968,19 @@ export const tasksToSeed = [
         ],
         orderBy: 1,
     },
+    {
+        id: '16752a13-205f-11eb-8b5f-118ebf0c29c2',
+        name: 'Generate Vendor Registration Certificate',
+        label: 'Generated Certeficate',
+        description: 'Generate Vendor Registration Certificate',
+        bpId: 'c0aa3814-f987-4ff1-af44-0ceda7cc9b40',
+        handlerType: 'Assignee',
+        taskType: 'Certificate',
+        checkList: [
+        ],
+        orderBy: 3,
+    },
+
     ///IBM
     {
         id: '96752a13-205f-45eb-8b5f-118ebf0c89c7',
@@ -909,6 +1001,7 @@ export const tasksToSeed = [
         ],
         orderBy: 1,
     },
+    //
     {
         id: '96752a13-205f-45eb-8b5f-118ebf0c29c7',
         name: 'Approval of indigenous black Malawian(IBM) Registration Request',
@@ -926,7 +1019,20 @@ export const tasksToSeed = [
                 isMandatory: 'true',
             },
         ],
-        orderBy: 1,
+        orderBy: 2,
+    },
+
+    {
+        id: '16752a13-205f-45eb-8b5f-118ebf0c29c1',
+        name: 'Generate Vendor Registration Certificate',
+        label: 'Generated Certeficate',
+        description: 'Generate Vendor Registration Certificate',
+        bpId: '329201c3-3218-4e6c-8478-39bee76a43a6',
+        handlerType: 'Assignee',
+        taskType: 'Certificate',
+        checkList: [
+        ],
+        orderBy: 3,
     },
     //Upgrade Registration Request for Goods, services and Works
     {

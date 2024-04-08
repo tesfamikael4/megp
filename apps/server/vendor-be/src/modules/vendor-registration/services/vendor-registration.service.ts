@@ -208,7 +208,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         }
         await this.businessAreaRepository.save(businessAreaEntities);
         //prefrenctial treatment
-        if (data.preferential?.length) {
+        if (data?.preferential?.length) {
           this.ptService.submitPreferential(
             data.preferential,
             userInfo,
