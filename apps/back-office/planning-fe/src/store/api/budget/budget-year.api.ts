@@ -63,6 +63,14 @@ export const budgetYearApi = createApi({
       }),
       providesTags: ['pr-files'],
     }),
+
+    deleteFile: builder.mutation<any, any>({
+      query: (id) => ({
+        url: `procurement-requisition-documents/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['pr-files'],
+    }),
     downloadFiles: builder.query<any, any>({
       query: (id: string) => ({
         url: `procurement-requisition-documents/download/${id}`,
@@ -81,4 +89,5 @@ export const {
   useGetFilesQuery,
   useLazyDownloadFilesQuery,
   usePreSignedUrlMutation,
+  useDeleteFileMutation,
 } = budgetYearApi;

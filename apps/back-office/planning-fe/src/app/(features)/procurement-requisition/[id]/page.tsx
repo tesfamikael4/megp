@@ -5,7 +5,7 @@ import { ActivityMechanization } from '@/app/(features)/(app)/_components/activi
 import { Items } from '@/app/(features)/procurement-requisition/_components/items';
 import TimelineTab from '@/app/(features)/procurement-requisition/_components/timeline-tab';
 import { Requisitioner } from '@/app/(features)/(app)/_components/requisitioner';
-import { Documents } from '../_components/documents';
+import { Documents } from '@/app/(features)/(app)/_components/documents';
 import { useParams, useRouter } from 'next/navigation';
 import { useReadQuery } from '@/store/api/pr/pr.api';
 import { IconChevronLeft, IconMessage2 } from '@tabler/icons-react';
@@ -126,20 +126,25 @@ export default function PrDetailPage() {
             )}
 
             {currentTab === 'method' && (
-              <ActivityMechanization disableFields={false} page={'pr'} />
+              <ActivityMechanization
+                disableFields={disableFields}
+                page={'pr'}
+              />
             )}
 
             {currentTab === 'items' && <Items disableFields={disableFields} />}
 
             {currentTab === 'documents' && (
-              <Documents disableFields={disableFields} />
+              <Documents page="pr" disableFields={disableFields} />
             )}
 
             {currentTab === 'timeline' && (
               <TimelineTab disableFields={disableFields} />
             )}
 
-            {currentTab === 'requisitioner' && <Requisitioner page="pr" />}
+            {currentTab === 'requisitioner' && (
+              <Requisitioner page="pr" disableFields={disableFields} />
+            )}
 
             {opened && (
               <Box className="w-2/4 ml-2">
