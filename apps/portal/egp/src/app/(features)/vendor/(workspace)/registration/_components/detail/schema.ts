@@ -43,7 +43,7 @@ export const bankAccountSchema = z.object({
   bankId: z.string(),
   hashValue: z.string(),
   branchName: z.string().min(3, { message: 'Bank name is required ' }),
-  isDefualt: z.coerce.boolean().optional(),
+  isDefualt: z.coerce.boolean().default(false).optional(),
 });
 export const shareHoldersSchema = z.object({
   firstName: z

@@ -76,6 +76,9 @@ const renderCell = (header, item, open, setUrl, userId) => {
       </>
     );
   }
+  if ((header.name ?? header) === 'isDefualt') {
+    return <Table.Td>{cellValue ? 'Yes' : 'No'}</Table.Td>;
+  }
 
   return (
     <Table.Td>

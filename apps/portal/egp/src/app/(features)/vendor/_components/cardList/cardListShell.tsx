@@ -131,11 +131,14 @@ export const CardListShell: React.FC<CardListProps> = ({
               ...prevItem,
               [fieldName]: e,
             }))
-        : (e: React.ChangeEvent<HTMLInputElement>) =>
-            setItem((prevItem) => ({
-              ...prevItem,
-              [e.target.name]: e.target.value,
-            })),
+        : type === 'checkbox'
+          ? (value) =>
+              setItem((prevItem) => ({ ...prevItem, [fieldName]: value }))
+          : (e: React.ChangeEvent<HTMLInputElement>) =>
+              setItem((prevItem) => ({
+                ...prevItem,
+                [e.target.name]: e.target.value,
+              })),
     // onChange:
     // type == "select"
     //   ? async (e) => await setValue(name, e)
