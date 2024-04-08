@@ -12,10 +12,11 @@ import { CustomCategoryEntity } from './custom-category.entity';
 import { BusinessCategoryEntity } from './business-category.entity';
 import { BeneficialOwnership } from './beneficial-ownership.entity';
 import { AreasOfBusinessInterestEntity } from './areas-of-business-interest.entity';
-import { Audit } from '@audit';
+import { Audit } from 'src/shared/entities/audit.entity';
 import { WorkflowInstanceEntity } from './workflow-instance.entity';
 import { IsrVendorsEntity } from './isr-vendors.entity';
 import { ProfileInfoEntity } from './profile-info.entity';
+import { PreferentialTreatmentsEntity } from './preferential-treatment.entity';
 @Entity({ name: 'vendors' })
 export class VendorsEntity extends Audit {
   @PrimaryGeneratedColumn('uuid')
