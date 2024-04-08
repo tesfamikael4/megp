@@ -27,6 +27,7 @@ import { paymentReceiptItemSchema } from '../../../../../../../shared/schema/pay
 import { useRouter } from 'next/navigation';
 import { NotificationService } from '../../../../_components/notification';
 import FileUploader from '../../../../_components/uploader';
+import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 const VENDOR_URL = process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api';
 
 function Page() {
@@ -41,7 +42,7 @@ function Page() {
   );
 
   const [uploadFile, uploadFileInfo] = useLazyUploadPaymentSlipQuery();
-  const { register, formState, setValue, watch, handleSubmit } =
+  const { register, formState, setValue, watch, handleSubmit, setError } =
     useForm<IPaymentSlipUploadSchema>({
       defaultValues: {
         invoiceIds: [],
@@ -104,13 +105,26 @@ function Page() {
       NotificationService.successNotification('Payed Successfully!');
       router.push('preferential');
     }
-    if (uploadFileInfo.error) {
-      NotificationService.requestErrorNotification(
-        'Failed to save Payment receipt',
-      );
+    if (uploadFileInfo.isError) {
+      if ((uploadFileInfo.error as any).data.message) {
+        setError('transactionNumber', {
+          message: (uploadFileInfo.error as any).data.message,
+        });
+        NotificationService.requestErrorNotification(
+          (uploadFileInfo.error as any).data.message,
+        );
+      } else
+        NotificationService.requestErrorNotification(
+          'Failed to save Payment receipt',
+        );
     }
     return () => {};
-  }, [invoiceInfo.data, uploadFileInfo.data]);
+  }, [
+    invoiceInfo.data,
+    uploadFileInfo.data,
+    uploadFileInfo.error,
+    uploadFileInfo.isError,
+  ]);
 
   if (invoiceInfo.isLoading) {
     return (
