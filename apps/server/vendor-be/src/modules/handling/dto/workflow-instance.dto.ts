@@ -33,6 +33,7 @@ export class CreateWorkflowInstanceDto {
   @IsOptional()
   data?: any;
   user: any;
+  userId: string;
   /**
    * Transfer Data from DTO object to Entity object
    *

@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { VendorsEntity } from './vendors.entity';
-import { Audit } from 'src/shared/entities';
+import { Audit } from '@audit';
 
 @Entity({ name: 'business_interest_area' })
 export class AreasOfBusinessInterestEntity extends Audit {

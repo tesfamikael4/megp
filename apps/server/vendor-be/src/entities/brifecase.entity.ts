@@ -4,7 +4,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { Audit } from 'src/shared/entities';
+import { Audit } from '@audit';
 @Entity({ name: 'brifecases' })
 export class BriefecaseEntity extends Audit {
   @PrimaryGeneratedColumn('uuid')
