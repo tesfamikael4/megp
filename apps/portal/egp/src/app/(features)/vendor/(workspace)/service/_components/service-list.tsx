@@ -12,16 +12,28 @@ import { useGetApprovedVendorInfoQuery } from '../../registration/_api/query';
 import { services } from '../_constants';
 
 export const ServiceLists = ({ isCompleted }: { isCompleted?: boolean }) => {
-  const { data, isLoading } = useGetApprovedVendorInfoQuery({});
+  const { data, isLoading } = useGetApprovedVendorInfoQuery(
+    {},
+    {
+      refetchOnMountOrArgChange: true,
+    },
+  );
   const router = useRouter();
   if (isLoading) return <LoadingOverlay visible={isLoading} />;
   else {
     const threeMonthsBeforeToday = new Date();
     threeMonthsBeforeToday.setMonth(threeMonthsBeforeToday.getMonth() - 3);
-    const isExpired = data?.services?.some(
-      (service) =>
-        new Date(service.expireDate as string) < threeMonthsBeforeToday,
-    );
+
+    /** temporary */
+    const today = new Date(); // Get today's date
+    const threeDaysFromNow = new Date(today); // Create a new date object with today's date
+    threeDaysFromNow.setDate(today.getDate() + 3); // Add 3 days to today's date
+
+    const isExpired = data?.services?.some((service) => {
+      const _expiredDate = new Date(service.approvedAt as string);
+      _expiredDate.setDate(_expiredDate.getDate() + 1);
+      return _expiredDate < new Date();
+    });
     return (
       <Box className="bg-[#f7f7f7]">
         <Box className=" w-full p-6 min-h-screen bg-white">
@@ -45,7 +57,7 @@ export const ServiceLists = ({ isCompleted }: { isCompleted?: boolean }) => {
             {services.map((service) => {
               if (isCompleted && service.title === 'Add Additional Services')
                 return;
-              // if (!isExpired && service.title === 'Renew registration') return;
+              if (!isExpired && service.title === 'Renew registration') return;
               return <ServiceCard key={service.title} {...service} />;
             })}
           </SimpleGrid>
