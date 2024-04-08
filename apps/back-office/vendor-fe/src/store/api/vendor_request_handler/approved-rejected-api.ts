@@ -36,7 +36,7 @@ export const approvedRejectedApi = createApi({
         }
 
         return {
-          url: `application-execution/get-rejected-vendors${q}`,
+          url: `application-execution/get-rejected-apps${q}`,
           method: 'GET',
         };
       },
