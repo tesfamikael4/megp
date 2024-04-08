@@ -82,7 +82,7 @@ export const Documents = ({
     const handleDownload = async () => {
       try {
         const res = await dowloadFile(data.id).unwrap();
-        await fetch(res)
+        await fetch(res.presignedUrl)
           .then((res) => res.blob())
           .then((blob) => {
             const url = window.URL.createObjectURL(blob);
