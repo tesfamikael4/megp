@@ -20,3 +20,4 @@ export * from './task.entity';
 export * from './vendors.entity';
 export * from './workflow-instance.entity';
 export * from './isr-vendors.entity';
+export * from './profile-info.entity'

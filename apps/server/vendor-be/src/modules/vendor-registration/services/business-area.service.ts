@@ -86,6 +86,7 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
     const bas = await this.getBusinessAreaByInstanceId(instanceId);
     for (const ba of bas) {
       ba.status = ApplicationStatus.CANCELED;
+      ba.approvedAt = new Date();
       await this.update(ba.id, ba);
     }
 

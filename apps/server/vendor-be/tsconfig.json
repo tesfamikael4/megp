@@ -11,8 +11,12 @@
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
+
     "paths": {
      // "@auth": ["./src/accounts/"],
+      "@audit": ["./src/shared/entities/"],
+      "@enums": ["./src/shared/enums/"],
+      "@entities": ["./src/entities/"],
       "@collection-query": ["./src/shared/collection-query/"],
       "@api-data": ["./src/shared/api-data/"],
       "@auth": ["./src/shared/authorization/"],
