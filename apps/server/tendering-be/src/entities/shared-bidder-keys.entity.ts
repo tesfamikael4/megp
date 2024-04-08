@@ -1,21 +1,26 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
+import { BidRegistrationDetail } from './bid-registration-detail.entity';
 
 @Entity({ name: 'shared_bidder_keys' })
 export class SharedBidderKey {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  // @ManyToOne(type => Bidder, bidder => bidder.sharedBidderKeys)
-  // bidder: Bidder;
+  @Column()
+  bidRegistrationDetailId: string;
 
-  // @ManyToOne(type => Lot, lot => lot.sharedBidderKeys)
-  // lot: Lot;
-
-  @Column('uuid')
-  lotId: string;
-
-  @Column('uuid')
-  bidderId: string;
+  @ManyToOne(
+    () => BidRegistrationDetail,
+    (bidRegistrationDetail) => bidRegistrationDetail.sharedBidderKeys,
+  )
+  @JoinColumn()
+  bidRegistrationDetail: BidRegistrationDetail;
 
   @Column()
   envelopeType: string;

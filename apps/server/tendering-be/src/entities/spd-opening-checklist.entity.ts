@@ -4,9 +4,11 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Spd } from './spd.entity';
+import { BidOpeningChecklist } from './bid-opening-checklist.entity';
 
 @Entity({ name: 'spd_opening_checklists' })
 export class SpdOpeningChecklist extends Audit {
@@ -28,4 +30,10 @@ export class SpdOpeningChecklist extends Audit {
   @ManyToOne(() => Spd, (spd) => spd.spdOpeningChecklists)
   @JoinColumn({ name: 'spdId' })
   spd: Spd;
+
+  @OneToMany(
+    () => BidOpeningChecklist,
+    (bidOpeningCheckList) => bidOpeningCheckList.spdOpeningChecklistId,
+  )
+  bidOpeningCheckLists: BidOpeningChecklist[];
 }
