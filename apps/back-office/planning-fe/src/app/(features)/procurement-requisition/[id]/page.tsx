@@ -1,10 +1,10 @@
 'use client';
 import { FormDetail } from '@/app/(features)/procurement-requisition/_components/mannual-pr';
 import { Box, Container, Text, Flex, Tooltip, ActionIcon } from '@mantine/core';
-import { PrMechanization } from '@/app/(features)/procurement-requisition/_components/pr-mechanization';
+import { ActivityMechanization } from '@/app/(features)/(app)/_components/activity-mechanization';
 import { Items } from '@/app/(features)/procurement-requisition/_components/items';
 import TimelineTab from '@/app/(features)/procurement-requisition/_components/timeline-tab';
-import { Requisitioner } from '@/app/(features)/procurement-requisition/_components/requisitioner';
+import { Requisitioner } from '@/app/(features)/(app)/_components/requisitioner';
 import { Documents } from '../_components/documents';
 import { useParams, useRouter } from 'next/navigation';
 import { useReadQuery } from '@/store/api/pr/pr.api';
@@ -126,7 +126,7 @@ export default function PrDetailPage() {
             )}
 
             {currentTab === 'method' && (
-              <PrMechanization disableFields={disableFields} />
+              <ActivityMechanization disableFields={false} page={'pr'} />
             )}
 
             {currentTab === 'items' && <Items disableFields={disableFields} />}
@@ -139,9 +139,7 @@ export default function PrDetailPage() {
               <TimelineTab disableFields={disableFields} />
             )}
 
-            {currentTab === 'requisitioner' && (
-              <Requisitioner disableFields={disableFields} />
-            )}
+            {currentTab === 'requisitioner' && <Requisitioner page="pr" />}
 
             {opened && (
               <Box className="w-2/4 ml-2">

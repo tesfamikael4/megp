@@ -17,6 +17,11 @@ import {
   useCreatePostBudgetRequisitionerMutation,
   useLazyGetPostBudgetRequisitionerQuery,
 } from '@/store/api/post-budget-plan/post-budget-plan.api';
+
+import {
+  useCreateRequisitionerMutation as useCreatePrRequisitionerMutation,
+  useLazyGetRequisitionerQuery as useLazyGetPrRequisitionerQuery,
+} from '@/store/api/pr/pr.api';
 import { ExpandableTable } from '../../_components/expandable-table';
 import { CollectionQuery } from '@megp/entity';
 
@@ -24,7 +29,7 @@ export const Requisitioner = ({
   page,
   disableFields = false,
 }: {
-  page: 'pre' | 'post';
+  page: 'pre' | 'post' | 'pr';
   disableFields?: boolean;
 }) => {
   const [selectedItems, setSelectedItems] = useState<any[]>([]);
@@ -76,6 +81,8 @@ export const Requisitioner = ({
   const { id } = useParams();
   const [opened, { open, close }] = useDisclosure(false);
   const [getUsers, { data: users }] = useLazyGetUsersByPermissionQuery();
+  const [getUsersForPr, { data: usersPr }] = useLazyGetUsersQuery();
+
   const [createPreRequisitioner, { isLoading: isPreCreatingLoading }] =
     useCreatePreBudgetRequisitionerMutation();
   const [createPostRequisitioner, { isLoading: isPostCreatingLoading }] =
@@ -88,6 +95,15 @@ export const Requisitioner = ({
     getPostRequisitioner,
     { data: postRequisitioner, isSuccess: isPostRequisitionerSuccess },
   ] = useLazyGetPostBudgetRequisitionerQuery();
+
+  const [createPrRequisitioner, { isLoading: isPrCreatingLoading }] =
+    useCreatePrRequisitionerMutation();
+
+  const [
+    getPrRequisitioner,
+    { data: prRequisitioner, isSuccess: isPrRequisitionerSuccess },
+  ] = useLazyGetPrRequisitionerQuery();
+
   const [requisitioners, setRequisitioners] = useState<any[]>([]);
   const { organizationId } = useAuth();
 
@@ -98,9 +114,11 @@ export const Requisitioner = ({
         id,
     }));
     if (castedData.length === 0) {
-      notify('Error', 'Please select atleast one requisitioner');
+      notify('Error', 'Please select at least one requisitioner');
       return;
     }
+
+    const castePrData = requisitioners.map((r: any) => r);
 
     try {
       if (page == 'pre') {
@@ -109,6 +127,13 @@ export const Requisitioner = ({
       }
       if (page == 'post') {
         await createPostRequisitioner({ requisitioner: castedData }).unwrap();
+        notify('Success', 'Requisitioner Assigned Successfully');
+      }
+      if (page == 'pr') {
+        await createPrRequisitioner({
+          procurementRequisitionId: id.toString(),
+          officers: castePrData,
+        }).unwrap();
         notify('Success', 'Requisitioner Assigned Successfully');
       }
     } catch (err) {
@@ -124,6 +149,9 @@ export const Requisitioner = ({
     if (page == 'post') {
       getPostRequisitioner(id as string);
     }
+    if (page == 'pr') {
+      getPrRequisitioner(id as string);
+    }
   }, [page]);
 
   useEffect(() => {
@@ -133,13 +161,19 @@ export const Requisitioner = ({
     if (page == 'post' && isPostRequisitionerSuccess) {
       setRequisitioners([...postRequisitioner.items]);
     }
+    if (page == 'pr' && isPrRequisitionerSuccess) {
+      setRequisitioners([...prRequisitioner.items]);
+    }
   }, [
     page,
     isPreRequisitionerSuccess,
     isPostRequisitionerSuccess,
     preRequisitioner,
     postRequisitioner,
+    isPrRequisitionerSuccess,
+    prRequisitioner,
   ]);
+  logger.log(usersPr);
 
   useEffect(() => {
     setSelectedItems(requisitioners);
@@ -167,7 +201,11 @@ export const Requisitioner = ({
           <Button
             disabled={disableFields}
             onClick={onCreate}
-            loading={isPreCreatingLoading || isPostCreatingLoading}
+            loading={
+              isPreCreatingLoading ||
+              isPostCreatingLoading ||
+              isPrCreatingLoading
+            }
           >
             <IconDeviceFloppy size={14} />
             Save
@@ -183,12 +221,17 @@ export const Requisitioner = ({
           <ExpandableTable
             config={addConfig}
             data={
-              users
+              users && page !== 'pr'
                 ? users.items.map((user) => ({
                     name: user.firstName + ' ' + user.lastName,
                     id: user.id,
                   }))
-                : []
+                : page === 'pr' && usersPr
+                  ? usersPr.items.map((user) => ({
+                      name: user.firstName + ' ' + user.lastName,
+                      id: user.id,
+                    }))
+                  : []
             }
             total={users ? users.total : 0}
             onRequestChange={(collectionQuery) => {
@@ -197,11 +240,15 @@ export const Requisitioner = ({
                 ...collectionQuery,
                 include: 'account',
               };
-              getUsers({
-                organizationId: id,
-                collectionQuery: castedCollectionQuery,
-                permissionKey: 'planning:createProcurementRequisition',
-              });
+              {
+                page !== 'pr'
+                  ? getUsers({
+                      organizationId: id,
+                      collectionQuery: castedCollectionQuery,
+                      permissionKey: 'planning:createProcurementRequisition',
+                    })
+                  : getUsersForPr({ id: id, collectionQuery: collectionQuery });
+              }
             }}
           />
 

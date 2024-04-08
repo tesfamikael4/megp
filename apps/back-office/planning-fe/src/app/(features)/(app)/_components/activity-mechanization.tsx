@@ -24,6 +24,14 @@ import {
   useLazyListByIdQuery as useLazyListPostByIdQuery,
   useUpdateMutation as useUpdatePostMutation,
 } from '../_api/post-mechanism';
+
+import {
+  useLazyListByIdQuery as useLazyListPrByIdQuery,
+  useCreateMutation as useCreatePrMutation,
+  useUpdateMutation as useUpdatePrMutation,
+} from '@/app/(features)/procurement-requisition/_api/mechanization.api';
+import { useLazyReadQuery as useLazyReadPrQuery } from '@/app/(features)/procurement-requisition/_api/procurement-requisition.api';
+
 import {
   useValidateProcurementMethodMutation,
   useValidateTargetGroupMutation,
@@ -77,7 +85,7 @@ export const ActivityMechanization = ({
   page,
   disableFields = false,
 }: {
-  page: 'pre' | 'post';
+  page: 'pre' | 'post' | 'pr';
   disableFields?: boolean;
 }) => {
   const {
@@ -96,8 +104,14 @@ export const ActivityMechanization = ({
 
   const [preCreate, { isLoading: isPreCreating }] = useCreateMutation();
   const [postCreate, { isLoading: isPostCreating }] = useCreatePostMutation();
+  const [prCreate, { isLoading: isPrCreating }] = useCreatePrMutation();
+
   const [preUpdate, { isLoading: isPreUpdating }] = useUpdateMutation();
   const [postUpdate, { isLoading: isPostUpdating }] = useUpdatePostMutation();
+  const [prUpdate, { isLoading: isPrUpdating }] = useUpdatePrMutation();
+
+  const [getPr, { data: pr }] = useLazyReadPrQuery();
+
   const [
     getPreMechanism,
     {
@@ -106,6 +120,14 @@ export const ActivityMechanization = ({
       isSuccess: isGetPreMechanismSuccess,
     },
   ] = useLazyListByIdQuery();
+  const [
+    getPrmechanism,
+    {
+      data: prmechanism,
+      isLoading: isGetPrMechanismLoading,
+      isSuccess: isGetPrMechanismSuccess,
+    },
+  ] = useLazyListPrByIdQuery();
   const [
     getPostMechanism,
     {
@@ -131,14 +153,18 @@ export const ActivityMechanization = ({
     const castedData =
       page == 'pre'
         ? { ...data, preBudgetPlanActivityId: id, contract }
-        : { ...data, postBudgetPlanActivityId: id, contract };
-
+        : page == 'post'
+          ? { ...data, postBudgetPlanActivityId: id, contract }
+          : { ...data, procurementRequisitionId: id, contract };
     try {
       if (page == 'pre') {
         await preCreate(castedData).unwrap();
         notify('Success', 'Procurement Method Saved Successfully');
-      } else {
+      } else if (page == 'post') {
         await postCreate(castedData).unwrap();
+        notify('Success', 'Procurement Method Saved Successfully');
+      } else {
+        await prCreate(castedData).unwrap();
         notify('Success', 'Procurement Method Saved Successfully');
       }
     } catch (err) {
@@ -158,19 +184,29 @@ export const ActivityMechanization = ({
             preBudgetPlanActivityId: id,
             contract,
           }
-        : {
-            ...postMechanism?.items[0],
-            ...data,
-            postBudgetPlanActivityId: id,
-            contract,
-          };
+        : page == 'post'
+          ? {
+              ...postMechanism?.items[0],
+              ...data,
+              postBudgetPlanActivityId: id,
+              contract,
+            }
+          : {
+              ...prmechanism?.items[0],
+              ...data,
+              procurementRequisitionId: id,
+              contract,
+            };
 
     try {
       if (page == 'pre') {
         await preUpdate(castedData).unwrap();
         notify('Success', 'Procurement Method updated successfully');
-      } else {
+      } else if (page == 'post') {
         await postUpdate(castedData).unwrap();
+        notify('Success', 'Procurement Method updated successfully');
+      } else {
+        await prUpdate(castedData).unwrap();
         notify('Success', 'Procurement Method updated successfully');
       }
     } catch (err) {
@@ -184,6 +220,7 @@ export const ActivityMechanization = ({
   const onError = (err) => {
     logger.log({ err });
   };
+  logger.log('mide', mode);
 
   const onSubmit = (data) => {
     const castedData = {
@@ -210,7 +247,9 @@ export const ActivityMechanization = ({
     const valueThreshold =
       page == 'pre'
         ? preActivity?.estimatedAmount
-        : postActivity?.estimatedAmount ?? 0;
+        : page == 'post'
+          ? postActivity?.estimatedAmount
+          : pr?.estimatedAmount ?? 0;
     const key: string | undefined = Object.keys(procurementMethodRuleKeys).find(
       (key) => procurementMethodRuleKeys[key] === val,
     );
@@ -255,7 +294,9 @@ export const ActivityMechanization = ({
     const valueThreshold =
       page == 'pre'
         ? preActivity?.estimatedAmount
-        : postActivity?.estimatedAmount ?? 0;
+        : page == 'post'
+          ? postActivity?.estimatedAmount
+          : pr?.estimatedAmount ?? 0;
     const key: string[] = Object.keys(targetGroupRuleKeys).filter((key) =>
       val.includes(targetGroupRuleKeys[key]),
     );
@@ -309,18 +350,26 @@ export const ActivityMechanization = ({
       });
 
       getPreActivity(id as string);
-    } else {
+    } else if (page == 'post') {
       getPostMechanism({
         id: id as string,
         collectionQuery: undefined,
       });
       getPostActivity(id as string);
+    } else {
+      getPrmechanism({
+        id: id as string,
+        collectionQuery: undefined,
+      });
+      getPr(id as string);
     }
   }, [
     getPostActivity,
     getPostMechanism,
     getPreActivity,
     getPreMechanism,
+    getPr,
+    getPrmechanism,
     id,
     page,
   ]);
@@ -358,6 +407,19 @@ export const ActivityMechanization = ({
       setContract(items.contract);
       // setProcurementMethodId(items.id);
     }
+    if (page == 'pr' && isGetPrMechanismSuccess && prmechanism?.total == 1) {
+      const items = prmechanism.items[0];
+      reset({
+        fundingSource: items.fundingSource,
+        isOnline: items.isOnline,
+        procurementMethod: items.procurementMethod,
+        procurementType: items.procurementType,
+        targetGroup: items.targetGroup,
+      });
+      setMode('detail');
+
+      setContract(items.contract);
+    }
   }, [
     isGetPreMechanismSuccess,
     isGetPostMechanismSuccess,
@@ -365,7 +427,8 @@ export const ActivityMechanization = ({
     preMechanism,
     postMechanism,
     reset,
-    setValue,
+    isGetPrMechanismSuccess,
+    prmechanism,
   ]);
   return (
     <Section title="Procurement Method" collapsible={false}>
@@ -377,7 +440,11 @@ export const ActivityMechanization = ({
           }
         >
           <LoadingOverlay
-            visible={isGetPreMechanismLoading || isGetPostMechanismLoading}
+            visible={
+              isGetPreMechanismLoading ||
+              isGetPostMechanismLoading ||
+              isGetPrMechanismLoading
+            }
           />
           <Flex gap="md">
             <CustomSelect
@@ -474,7 +541,9 @@ export const ActivityMechanization = ({
                 isPreCreating ||
                 isPostCreating ||
                 isPreUpdating ||
-                isPostUpdating
+                isPostUpdating ||
+                isPrCreating ||
+                isPrUpdating
               }
               onClick={handleSubmit(onSubmit, onError)}
               disabled={disableFields}
