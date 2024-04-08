@@ -75,7 +75,25 @@ export class BidRegistrationController extends ExtraCrudController<BidRegistrati
     );
   }
 
-  @Get('submitted-bidders/:lotId')
+  @Get('submitted-bidders-by-tender-id/:tenderId')
+  @ApiQuery({
+    name: 'q',
+    type: String,
+    description: 'Collection Query Parameter. Optional',
+    required: false,
+  })
+  async getSubmittedBiddersByTenderId(
+    @Param('tenderId') tenderId: string,
+    @Query('q') q: string,
+  ) {
+    const query = decodeCollectionQuery(q);
+    return await this.bidSecurityService.getSubmittedBiddersByTenderId(
+      tenderId,
+      query,
+    );
+  }
+
+  @Get('submitted-bidders-by-lot-id/:lotId')
   @ApiQuery({
     name: 'q',
     type: String,
