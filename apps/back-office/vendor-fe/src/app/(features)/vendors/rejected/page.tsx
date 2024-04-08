@@ -1,6 +1,6 @@
 'use client';
 import { useLazyGetRejectedVendorListQuery } from '@/store/api/vendor_request_handler/approved-rejected-api';
-import ApplicationList from '../(common)/List';
+import ApplicationList from './_components/List';
 
 const VendorsList = () => {
   const [getFilteredList, { data, isLoading }] =
