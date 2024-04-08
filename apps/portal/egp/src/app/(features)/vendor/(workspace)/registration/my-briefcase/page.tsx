@@ -32,10 +32,6 @@ function Page() {
         },
       },
       {
-        accessor: 'size',
-        title: 'Size',
-      },
-      {
         accessor: 'type',
         title: 'File Type',
         render: (record) => {

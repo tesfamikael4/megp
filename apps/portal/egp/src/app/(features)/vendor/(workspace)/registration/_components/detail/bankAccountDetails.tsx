@@ -176,7 +176,12 @@ export const BankAccountDetails: React.FC<Props> = ({
                 ) && (
                   <Checkbox
                     label="Is Default"
-                    {...getInputProps('isDefualt')}
+                    {...getInputProps('isDefualt', 'checkbox')}
+                    onChange={(event) => {
+                      getInputProps('isDefualt', 'checkbox').onChange(
+                        event.currentTarget.checked,
+                      );
+                    }}
                   />
                 )}
               </Group>
