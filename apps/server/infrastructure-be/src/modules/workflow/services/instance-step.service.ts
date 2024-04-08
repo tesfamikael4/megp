@@ -38,21 +38,17 @@ export class InstanceStepService extends ExtraCrudService<InstanceStep> {
         },
       });
       if (preStep.length > 0) {
-        const items = steps.map(async (step) => {
-          await entityManager
-            .getRepository(InstanceStep)
-            .update({ itemId: step.itemId }, { ...step });
-        });
-        return items;
-      } else {
-        const instanceStep = steps.map((step) => {
-          return { ...step, id: undefined };
-        });
-
-        const items = this.repositoryInstanceStep.create(instanceStep);
-        await entityManager.getRepository(InstanceStep).insert(items);
-        return items;
+        await entityManager
+          .getRepository(InstanceStep)
+          .delete({ itemId: preStep[0].itemId });
       }
+      const instanceStep = steps.map((step) => {
+        return { ...step, id: undefined };
+      });
+
+      const items = this.repositoryInstanceStep.create(instanceStep);
+      await entityManager.getRepository(InstanceStep).insert(items);
+      return items;
     } catch (error) {
       throw error;
     }
