@@ -181,6 +181,32 @@ export class BusinessAreaService extends EntityCrudService<BusinessAreaEntity> {
     });
     return result;
   }
+  async getVendorServicesWithPrice(vendorId: string) {
+    const result = await this.businessAreaRepository.find({
+      where: {
+        vendorId: vendorId,
+        status: VendorStatusEnum.APPROVED,
+        category: In([
+          BusinessCategories.SERVICES,
+          BusinessCategories.GOODS,
+          BusinessCategories.WORKS,
+        ]),
+      },
+      relations: { servicePrice: true }
+    });
+    return result;
+  }
+  async getVendorPreferentials(vendorId: string) {
+    const result = await this.businessAreaRepository.find({
+      where: {
+        vendorId: vendorId,
+        status: VendorStatusEnum.APPROVED,
+        category: ServiceKeyEnum.PREFERENTIAL_TREATMENT
+      },
+      relations: { BpService: true }
+    });
+    return result;
+  }
 
   async getVendorBusinessAreaByInstanceId(
     vendorId: string,

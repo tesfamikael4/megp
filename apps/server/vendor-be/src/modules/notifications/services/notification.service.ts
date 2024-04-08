@@ -21,8 +21,9 @@ export class NotificationsService extends EntityCrudService<Notification> {
     const currentDate = new Date();
     const futureDate = new Date(currentDate);
     // getting services which have expire date 3 month from know
-    futureDate.setMonth(currentDate.getMonth() + 3);
-    const testDate = new Date('2025-01-05 14:48:58.856');
+    //futureDate.setMonth(currentDate.getMonth() + 3);
+    futureDate.setMinutes(currentDate.getMinutes() + 3);
+    const testDate = new Date('2024-04-08 10:55:00.856');
     const service = await this.businessAreaRepository.find({
       where: {
         expireDate: LessThanOrEqual(testDate),
@@ -30,6 +31,8 @@ export class NotificationsService extends EntityCrudService<Notification> {
       },
       relations: { isrVendor: true },
     });
+    console.log("service expired");
+
     // notifying the user will be done here when the Email/any notification mechanism is ready
     return service;
   }

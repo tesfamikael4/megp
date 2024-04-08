@@ -6,7 +6,7 @@ export enum ServiceKeyEnum {
   update = 'update',
 
   PREFERENCTIAL = 'preferential',
-  preferentialTreatment = 'PreferentialTreatment',
+  PREFERENTIAL_TREATMENT = 'PreferentialTreatment',
   goodsNewRegistration = 'GoodsNewRegistration',
   servicesNewRegistration = 'ServicesNewRegistration',
   worksNewRegistration = 'WorksNewRegistration',

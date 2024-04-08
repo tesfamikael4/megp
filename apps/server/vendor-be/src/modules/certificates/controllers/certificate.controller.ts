@@ -4,7 +4,7 @@ import { Response } from 'express';
 import { Readable } from 'stream';
 import { CertificateService } from '../services/certificate.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { CurrentUser, JwtGuard } from 'src/shared/authorization';
+import { AllowAnonymous, CurrentUser, JwtGuard } from 'src/shared/authorization';
 import { FileService } from 'src/modules/vendor-registration/services/file.service';
 @ApiBearerAuth()
 @Controller('certificates')
@@ -13,7 +13,7 @@ export class CertificateController {
   constructor(
     private readonly certificateService: CertificateService,
     private readonly fileService: FileService,
-  ) {}
+  ) { }
   @UseGuards(JwtGuard)
   @Get('generate-certeficate/:vendorId/:instanceId')
   async generateCertificate(
