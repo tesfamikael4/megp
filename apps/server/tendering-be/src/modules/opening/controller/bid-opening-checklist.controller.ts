@@ -1,4 +1,4 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get, Param, Req } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ExtraCrudController } from 'src/shared/controller';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
@@ -18,5 +18,17 @@ export class BidOpeningChecklistController extends ExtraCrudController<BidOpenin
     private readonly bidOpeningChecklistService: BidOpeningChecklistService,
   ) {
     super(bidOpeningChecklistService);
+  }
+  @Get('checklist-status/:lotId/:bidderId')
+  async checklistStatus(
+    @Param('lotId') lotId: string,
+    @Param('bidderId') bidderId: string,
+    @Req() req,
+  ) {
+    return await this.bidOpeningChecklistService.checklistStatus(
+      lotId,
+      bidderId,
+      req,
+    );
   }
 }

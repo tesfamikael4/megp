@@ -19,13 +19,8 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
     super(bidOpeningChecklistsRepository);
   }
 
-  async checklistStatus(
-    tenderId: string,
-    lotId: string,
-    bidderId: string,
-    req: any,
-  ) {
-    const openerId = req.user.organization.userId;
+  async checklistStatus(lotId: string, bidderId: string, req: any) {
+    const openerId = req.user.userId;
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
     const [spdChecklist, checklists] = await Promise.all([
       manager.getRepository(SpdOpeningChecklist).find({
@@ -49,9 +44,11 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
         },
       }),
     ]);
-    const response = checklists.map((checklist) => ({
-      ...checklist,
-      check: spdChecklist.find((x) => x.id == checklist.spdOpeningChecklistId),
+    const response = spdChecklist.map((spdChecklist) => ({
+      ...spdChecklist,
+      check: checklists.find((x) => x.spdOpeningChecklistId == spdChecklist.id)
+        ? true
+        : false,
     }));
 
     return response;
