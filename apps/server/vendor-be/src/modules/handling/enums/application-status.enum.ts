@@ -12,6 +12,6 @@ export enum ApplicationStatus {
   ADJUSTMENT = 'Adjustment',
   CANCEL = 'Cancel',
   CANCELED = 'Canceled',
-  APPROVE = 'Aprove',
+  APPROVE = 'Approve',
   REJECT = 'Reject',
 }
