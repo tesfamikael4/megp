@@ -152,6 +152,15 @@ export class TenderService extends EntityCrudService<Tender> {
     }
   }
 
+  async findOne(id: any, req?: any) {
+    return await this.tenderRepository.findOne({
+      where: { id },
+      relations: {
+        bdsEvaluation: true,
+      },
+    });
+  }
+
   async getActiveTenders(query: CollectionQuery) {
     query.includes.push('bdsSubmission');
 
