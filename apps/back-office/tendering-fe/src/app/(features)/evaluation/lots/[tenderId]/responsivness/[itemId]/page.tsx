@@ -2,7 +2,7 @@
 
 import { DetailTable } from '@/app/(features)/_components/detail-table';
 import { bidders } from '@/app/(features)/evaluation/_constants/data';
-import { TenderOverView } from '@/app/(features)/opening/[id]/_components/tender-overview';
+import { TenderOverView } from '@/app/(features)/opening/_components/tender-overview';
 import { ActionIcon, Button, Box, Badge } from '@mantine/core';
 import { ExpandableTable, ExpandableTableConfig, Section } from '@megp/core-fe';
 import { IconChevronRight } from '@tabler/icons-react';

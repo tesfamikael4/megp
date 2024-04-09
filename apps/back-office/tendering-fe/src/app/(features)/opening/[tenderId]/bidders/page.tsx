@@ -1,30 +1,34 @@
 'use client';
 
-import { ActionIcon, Button, Box, Badge } from '@mantine/core';
-import { ExpandableTable, ExpandableTableConfig, Section } from '@megp/core-fe';
-import { IconChevronRight } from '@tabler/icons-react';
-import { bidders, data } from '../_constants/data';
-import { DetailTable } from '../_components/detail-table';
-import { TenderOverView } from './_components/tender-overview';
+import { Button, Box, Badge } from '@mantine/core';
+import {
+  ExpandableTable,
+  ExpandableTableConfig,
+  Section,
+  notify,
+} from '@megp/core-fe';
+// import { bidders } from '../../_constants/data';
+import { DetailTable } from '../../_components/detail-table';
+import { TenderOverView } from '../../_components/tender-overview';
 import { useParams, useRouter } from 'next/navigation';
+import {
+  useLazyGetAllbiddersByTenderIdQuery,
+  useOpenTenderMutation,
+} from '@/store/api/tendering/tendering.api';
 
 export default function BidOpening() {
   const router = useRouter();
-  const { id } = useParams();
+  const { tenderId } = useParams();
   const config: ExpandableTableConfig = {
     isSearchable: true,
     isExpandable: true,
     expandedRowContent: (record) => <DetailTender tender={record} />,
     columns: [
       {
-        accessor: 'name',
+        accessor: 'bidderName',
         sortable: true,
       },
-      {
-        accessor: 'email',
-        sortable: true,
-        with: 100,
-      },
+
       {
         accessor: 'status',
         width: 150,
@@ -42,22 +46,20 @@ export default function BidOpening() {
           );
         },
       },
-      // {
-      //   accessor: '',
-      //   render: (record) => (
-      //     <ActionIcon
-      //       variant="subtle"
-      //       onClick={(e) => {
-      //         e.stopPropagation();
-      //         router.push(`/opening/${id}/${record.id}`);
-      //       }}
-      //     >
-      //       <IconChevronRight size={14} />
-      //     </ActionIcon>
-      //   ),
-      //   width: 70,
-      // },
     ],
+  };
+
+  const [getBidders, { data: bidders }] = useLazyGetAllbiddersByTenderIdQuery();
+  const [openTender, { isLoading: isOpening }] = useOpenTenderMutation();
+
+  const handleOpenTender = async () => {
+    try {
+      await openTender({ tenderId: tenderId }).unwrap();
+      notify('Success', 'All tenders opened successfully');
+      router.push('/opening');
+    } catch (err) {
+      notify('Error', 'Something went wrong');
+    }
   };
   return (
     <>
@@ -67,19 +69,18 @@ export default function BidOpening() {
         collapsible={false}
         className="mt-2"
         action={
-          <Button
-            onClick={() => {
-              router.push(`/opening/lots/${id}`);
-            }}
-          >
+          <Button onClick={handleOpenTender} loading={isOpening}>
             Open All
           </Button>
         }
       >
         <ExpandableTable
           config={config}
-          data={bidders ?? []}
-          total={bidders?.length}
+          data={bidders?.items ?? []}
+          total={bidders?.total ?? 0}
+          onRequestChange={(request) => {
+            getBidders({ tenderId, collectionQuery: request });
+          }}
         />
       </Section>
     </>

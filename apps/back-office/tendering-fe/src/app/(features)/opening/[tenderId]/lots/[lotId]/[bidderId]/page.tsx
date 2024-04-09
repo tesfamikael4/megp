@@ -1,6 +1,7 @@
 'use client';
 
-import { BidderOverView } from '@/app/(features)/opening/[id]/_components/bidder-overview';
+import { BidderOverView } from '@/app/(features)/opening/[tenderId]/bidders/_components/bidder-overview';
+import { useLazyGetBidOpeningChecklistByLotIdQuery } from '@/store/api/tendering/tendering.api';
 import {
   Box,
   Button,
@@ -12,17 +13,20 @@ import {
 } from '@mantine/core';
 import { ExpandableTable, ExpandableTableConfig, Section } from '@megp/core-fe';
 import { IconAlertCircle, IconCircleCheck } from '@tabler/icons-react';
+import { useParams } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function BiderDetail() {
+  const { lotId, bidderId } = useParams();
   const config: ExpandableTableConfig = {
     columns: [
       {
-        accessor: 'title',
+        accessor: 'name',
         render: (record) =>
-          record.status === 'checked' ? (
+          record.check ? (
             record.title
           ) : (
-            <Text className="text-sm font-semibold">{record.title}</Text>
+            <Text className="text-sm font-semibold">{record.name}</Text>
           ),
       },
       {
@@ -30,7 +34,7 @@ export default function BiderDetail() {
         title: '',
         width: 50,
         render: (record) =>
-          record.status === 'checked' ? (
+          record.check ? (
             <IconCircleCheck size={18} color="green" />
           ) : (
             <IconAlertCircle size={18} color="red" />
@@ -38,26 +42,12 @@ export default function BiderDetail() {
       },
     ],
   };
-  const checklistData = [
-    {
-      title:
-        'Internal auditor as independent party have been invited to witness the bid opening ceremony.',
-      status: 'checked',
-    },
-    {
-      title: 'Other interested observers attended the bid opening ceremony.',
-      status: 'checked',
-    },
-    {
-      title:
-        'Registered representatives from mass media attending the bid opening ceremony',
-      status: 'draft',
-    },
-    {
-      title: 'The Bid Opening Team has opened each bid',
-      status: 'draft',
-    },
-  ];
+  const [getChecklists, { data: checklistData }] =
+    useLazyGetBidOpeningChecklistByLotIdQuery();
+
+  useEffect(() => {
+    getChecklists({ lotId: lotId as string, bidderId: bidderId as string });
+  }, []);
   return (
     <>
       <BidderOverView />
@@ -68,7 +58,7 @@ export default function BiderDetail() {
             className="h-full"
             collapsible={false}
           >
-            <ExpandableTable config={config} data={checklistData} />
+            <ExpandableTable config={config} data={checklistData ?? []} />
           </Section>
         </Box>
         <Box className=" bg-white w-2/4">

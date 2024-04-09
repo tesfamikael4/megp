@@ -1,6 +1,6 @@
 'use client';
 
-import { BidderOverView } from '@/app/(features)/opening/[id]/_components/bidder-overview';
+import { BidderOverView } from '@/app/(features)/opening/[tenderId]/bidders/_components/bidder-overview';
 import {
   Box,
   Button,
