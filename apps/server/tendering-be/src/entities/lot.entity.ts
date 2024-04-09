@@ -5,6 +5,7 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Tender } from './tender.entity';
@@ -17,6 +18,7 @@ import { Item } from './tender-item.entity';
 import { BdsBidSecurity } from './bds-bid-security.entity';
 import { BidRegistrationDetail } from './bid-registration-detail.entity';
 import { BidOpeningChecklist } from './bid-opening-checklist.entity';
+import { Team } from './team.entity';
 
 @Entity({ name: 'lots' })
 export class Lot extends Audit {
@@ -83,4 +85,7 @@ export class Lot extends Audit {
     (bidOpeningCheckList) => bidOpeningCheckList.lot,
   )
   bidOpeningCheckLists: BidOpeningChecklist[];
+
+  @OneToOne(() => Team, (team) => team.lots)
+  team: Team;
 }

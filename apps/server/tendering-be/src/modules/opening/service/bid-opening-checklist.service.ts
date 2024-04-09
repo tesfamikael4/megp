@@ -36,6 +36,7 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
           },
         },
       }),
+      // Todo: check if the opener is the team member
       this.bidOpeningChecklistsRepository.find({
         where: {
           lotId,
@@ -53,4 +54,6 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
 
     return response;
   }
+
+  // async
 }
