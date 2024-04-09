@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsNotEmpty, IsUUID } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsNumber, IsUUID } from 'class-validator';
 import { TeamTypeEnum } from 'src/shared/enums/team-type.enum';
 
 export class CreateTeamDto {
@@ -8,12 +8,13 @@ export class CreateTeamDto {
   @IsNotEmpty()
   lotId: string;
 
-  @ApiProperty({ enum: TeamTypeEnum })
-  @IsEnum(TeamTypeEnum)
-  teamType: TeamTypeEnum;
+  @ApiProperty()
+  // { enum: TeamTypeEnum }
+  // @IsEnum(TeamTypeEnum)
+  teamType: string;
 
   @ApiProperty()
-  @IsUUID()
+  @IsNumber()
   @IsNotEmpty()
-  memberLimit: string;
+  memberLimit: number;
 }

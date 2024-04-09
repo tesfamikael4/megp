@@ -33,8 +33,8 @@ export class Team extends OrgAudit {
   teamMembers: TeamMember[];
 
   @Column({
-    type: 'enum',
-    enum: EnvelopTypeEnum,
+    // type: 'enum',
+    // enum: EnvelopTypeEnum,
   })
   envelopeType: string;
 

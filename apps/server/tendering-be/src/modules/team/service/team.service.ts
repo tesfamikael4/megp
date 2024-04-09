@@ -12,4 +12,14 @@ export class TeamService extends ExtraCrudService<Team> {
   ) {
     super(teamRepository);
   }
+
+  async create(itemData: any, req?: any): Promise<any> {
+    if (req?.user?.organization) {
+      itemData.organizationId = req.user.organization.id;
+      itemData.organizationName = req.user.organization.name;
+    }
+    const item = this.teamRepository.create(itemData);
+    await this.teamRepository.insert(item);
+    return item;
+  }
 }
