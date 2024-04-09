@@ -4,25 +4,29 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
+  Unique,
 } from 'typeorm';
-import { BidRegistrationDetail } from './bid-registration-detail.entity';
+import { BidRegistration } from './bid-registration.entity';
+import { Audit } from 'src/shared/entities';
+import { DocumentTypeEnum } from 'src/shared/enums';
 
 @Entity({ name: 'shared_bidder_keys' })
-export class SharedBidderKey {
+@Unique(['bidRegistrationId', 'envelopeType'])
+export class SharedBidderKey extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
-  bidRegistrationDetailId: string;
+  bidRegistrationId: string;
 
   @ManyToOne(
-    () => BidRegistrationDetail,
-    (bidRegistrationDetail) => bidRegistrationDetail.sharedBidderKeys,
+    () => BidRegistration,
+    (bidRegistration) => bidRegistration.sharedBidderKeys,
   )
   @JoinColumn()
-  bidRegistrationDetail: BidRegistrationDetail;
+  bidRegistration: BidRegistration;
 
-  @Column()
+  @Column({ type: 'enum', enum: DocumentTypeEnum })
   envelopeType: string;
 
   @Column()

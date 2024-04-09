@@ -48,13 +48,13 @@ export class Item extends Audit {
   @Column()
   unitOfMeasure: string;
 
-  @Column()
+  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
   estimatedPrice: number;
 
   @Column()
   estimatedPriceCurrency: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
   marketPrice: number;
 
   @Column({ nullable: true })

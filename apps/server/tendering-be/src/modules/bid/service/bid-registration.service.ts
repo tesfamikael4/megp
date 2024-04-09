@@ -263,11 +263,13 @@ export class BidRegistrationService extends ExtraCrudService<BidRegistration> {
       },
     ]);
 
+    query.includes.push('sharedBidderKeys');
+
     const dataQuery = QueryConstructor.constructQuery<BidRegistration>(
       this.bidSecurityRepository,
       query,
     )
-      .leftJoinAndSelect(
+      .leftJoin(
         'bid_registrations.bidRegistrationDetails',
         'bidRegistrationDetails',
       )

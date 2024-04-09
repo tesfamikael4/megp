@@ -8,6 +8,7 @@ import {
   Unique,
 } from 'typeorm';
 import { BidRegistrationDetail } from './bid-registration-detail.entity';
+import { DocumentTypeEnum } from 'src/shared/enums';
 
 @Entity({ name: 'bid_response_lots' })
 @Unique(['bidRegistrationDetailId', 'key'])
@@ -22,7 +23,7 @@ export class BidResponseLot extends Audit {
   @JoinColumn()
   bidRegistrationDetail: BidRegistrationDetail;
 
-  @Column()
+  @Column({ type: 'enum', enum: DocumentTypeEnum })
   documentType: string;
 
   @Column()
