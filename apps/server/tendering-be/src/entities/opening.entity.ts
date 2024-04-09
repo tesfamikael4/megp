@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { Tender } from './tender.entity';
 import { Team } from './team.entity';
+import { OpeningStatusEnum } from 'src/shared/enums/opening.enum';
 
 @Entity({ name: 'openings' })
 export class Opening extends OrgAudit {
@@ -31,7 +32,11 @@ export class Opening extends OrgAudit {
   @Column()
   openingType: string;
 
-  @Column({ default: 'PENDING' })
+  @Column({
+    type: 'enum',
+    enum: OpeningStatusEnum,
+    default: OpeningStatusEnum.PENDING,
+  })
   status: string;
 
   @Column({ type: 'boolean', default: false })

@@ -48,12 +48,8 @@ export class BidOpeningChecklist extends OrgAudit {
   @Column()
   openerName: string;
 
-  @Column({
-    //   type: 'enum',
-    //   enum: CHECKED_STATUS_ENUM,
-    //   default: CHECKED_STATUS_ENUM.DEFAULT,
-  })
-  checked: string;
+  @Column()
+  checked: boolean;
 
   @Column({ nullable: true })
   remark: string;

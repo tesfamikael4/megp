@@ -23,12 +23,12 @@ export class TeamMember extends OrgAudit {
   @Column('uuid')
   personnelId: string;
 
-  @Column('uuid')
+  @Column()
   personnelName: string;
 
   @Column('boolean')
   isTeamLead: boolean;
 
-  @Column('boolean')
+  @Column({ default: true })
   isActive: boolean;
 }

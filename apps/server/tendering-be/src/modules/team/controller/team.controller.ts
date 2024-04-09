@@ -13,9 +13,11 @@ import { Team } from 'src/entities/team.entity';
 import { ExtraCrudController } from 'src/shared/controller';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { TeamService } from '../service/team.service';
+import { CreateTeamDto } from '../dto/team.dto';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'lotId',
+  createDto: CreateTeamDto,
 };
 
 @Controller('teams')

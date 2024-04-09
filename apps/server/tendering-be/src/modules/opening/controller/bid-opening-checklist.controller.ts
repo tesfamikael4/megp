@@ -4,9 +4,11 @@ import { ExtraCrudController } from 'src/shared/controller';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { BidOpeningChecklist } from 'src/entities';
 import { BidOpeningChecklistService } from '../service/bid-opening-checklist.service';
+import { CreateBidOpeningCheckList } from '../dto/bid-opening-checklist.dto';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'lotId',
+  createDto: CreateBidOpeningCheckList,
 };
 
 @Controller('bid-opening-checklist')
