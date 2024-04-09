@@ -7,8 +7,6 @@ import {
   Section,
   notify,
 } from '@megp/core-fe';
-// import { bidders } from '../../_constants/data';
-import { DetailTable } from '../../_components/detail-table';
 import { TenderOverView } from '../../_components/tender-overview';
 import { useParams, useRouter } from 'next/navigation';
 import {
@@ -21,8 +19,6 @@ export default function BidOpening() {
   const { tenderId } = useParams();
   const config: ExpandableTableConfig = {
     isSearchable: true,
-    isExpandable: true,
-    expandedRowContent: (record) => <DetailTender tender={record} />,
     columns: [
       {
         accessor: 'bidderName',
@@ -56,7 +52,7 @@ export default function BidOpening() {
     try {
       await openTender({ tenderId: tenderId }).unwrap();
       notify('Success', 'All tenders opened successfully');
-      router.push('/opening');
+      router.push(`/opening/${tenderId}`);
     } catch (err) {
       notify('Error', 'Something went wrong');
     }
@@ -86,31 +82,3 @@ export default function BidOpening() {
     </>
   );
 }
-
-const DetailTender = ({ tender }: any) => {
-  const data = [
-    {
-      key: 'Name',
-      value: tender.name,
-    },
-
-    {
-      key: 'Email',
-      value: tender.email,
-    },
-    {
-      key: 'Phone',
-      value: tender.phone,
-    },
-    {
-      key: 'Status',
-      value: tender.status,
-    },
-  ];
-
-  return (
-    <Box className="bg-white p-2">
-      <DetailTable data={data} />
-    </Box>
-  );
-};
