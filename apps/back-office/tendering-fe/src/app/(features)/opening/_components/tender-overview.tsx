@@ -54,7 +54,7 @@ export const TenderOverView = () => {
             </Box>
             <Box>
               <Badge variant="outline" size="xs" color="gray">
-                Single Envelope
+                {data?.bdsSubmission?.envelopType ?? ''}
               </Badge>
               <Text>
                 <Badge variant="outline" size="xs" color="gray">

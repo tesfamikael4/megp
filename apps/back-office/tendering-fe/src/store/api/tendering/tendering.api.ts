@@ -6,6 +6,7 @@ export const tenderingApi = createApi({
   reducerPath: 'tenderingApi',
   refetchOnFocus: true,
   baseQuery: baseQuery(process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api/'),
+  tagTypes: ['opening'],
   endpoints: (builder) => ({
     getTenderDetail: builder.query<any, any>({
       query: (id: string) => `tenders/${id}`,
@@ -26,6 +27,7 @@ export const tenderingApi = createApi({
           url: `/opening/list/${tenderId}`,
         };
       },
+      providesTags: ['opening'],
     }),
 
     getLotsByTenderId: builder.query<any, any>({
@@ -83,6 +85,7 @@ export const tenderingApi = createApi({
         method: 'POST',
         body: data,
       }),
+      invalidatesTags: ['opening'],
     }),
   }),
 });
