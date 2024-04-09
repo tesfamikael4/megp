@@ -53,4 +53,7 @@ export class BidOpeningChecklist extends OrgAudit {
 
   @Column({ nullable: true })
   remark: string;
+
+  @Column()
+  submit: boolean;
 }
