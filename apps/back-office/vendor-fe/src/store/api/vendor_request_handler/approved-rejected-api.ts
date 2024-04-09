@@ -54,6 +54,12 @@ export const approvedRejectedApi = createApi({
       query: ({ vendorId }) =>
         `application-execution/get-vendor-detail/${vendorId}`,
     }),
+    getBPServices: builder.query<any, any>({
+      query: () => ({
+        url: `bp-services`,
+        method: 'GET',
+      }),
+    }),
   }),
 });
 
@@ -65,4 +71,5 @@ export const {
   useLazyGetRejectedVendorListQuery,
   useLazyGetVendorDetailQuery,
   useLazyGetRejectedApplicationDetailQuery,
+  useGetBPServicesQuery,
 } = approvedRejectedApi;

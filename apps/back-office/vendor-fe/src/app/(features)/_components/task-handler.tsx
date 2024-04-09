@@ -280,8 +280,8 @@ export default function TaskHandler({
                   handleButtonClick('NO');
                   if (remark) router.push(`/${requestType}`);
                 }}
-                className="bg-red-600 hover:bg-red-700"
-                loading={loading['NO']}
+                className="bg-yellow-500 hover:bg-yellow-600"
+                loading={loading['ADJUST']}
               >
                 Adjust
               </Button>

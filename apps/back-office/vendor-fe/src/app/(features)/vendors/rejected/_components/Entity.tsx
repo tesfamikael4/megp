@@ -58,7 +58,7 @@ export default function Entity({
         },
         {
           id: 'businessType',
-          header: 'Business Type ',
+          header: 'Form of Business ',
           accessorKey: 'businessType',
           meta: {
             widget: 'expand',
@@ -70,6 +70,24 @@ export default function Entity({
           id: 'countryOfRegistration',
           header: 'Country of Registration',
           accessorKey: 'countryOfRegistration',
+          meta: {
+            widget: 'expand',
+          },
+          cell: (info) => info.getValue(),
+        },
+        {
+          id: 'serviceName',
+          header: 'Service Name',
+          accessorKey: 'serviceName',
+          meta: {
+            widget: 'expand',
+          },
+          cell: (info) => info.getValue(),
+        },
+        {
+          id: 'status',
+          header: 'Status',
+          accessorKey: 'status',
           meta: {
             widget: 'expand',
           },

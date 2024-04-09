@@ -4,32 +4,47 @@ import { Button } from '@mantine/core';
 import { Section } from '@megp/core-fe';
 import { getNationalityValues } from './utils';
 import { CollectionQuery } from '@megp/entity';
-export default function VendorFilterSidebar({
-  filter,
-  setFilter,
-  handleFilter,
-}: {
-  filter: {
-    businessType: string;
-    name: string;
-    country: string;
-  };
+import { useGetBPServicesQuery } from '@/store/api/vendor_request_handler/approved-rejected-api';
+
+export interface FilterObjectType {
+  businessType: string | null;
+  name: string;
+  country: string | null;
+  serviceName?: string | null;
+  status?: string | null;
+}
+export interface ApprovedSidebarProps {
+  filter: FilterObjectType;
   setFilter: any;
   handleFilter: (query: CollectionQuery) => void;
-}) {
+  isRejected?: boolean;
+}
+
+const initialSate: FilterObjectType = {
+  businessType: null,
+  name: '',
+  country: null,
+  serviceName: null,
+  status: null,
+};
+
+export default function VendorFilterSidebar({
+  filter = initialSate,
+  setFilter,
+  handleFilter,
+  isRejected,
+}: ApprovedSidebarProps) {
   const handleUpdateFilter = (name, value) => {
     setFilter({
       ...filter,
       [name]: value,
     });
   };
+  const { data } = useGetBPServicesQuery({});
 
   const handleReset = () => {
-    setFilter({
-      businessType: '',
-      name: '',
-      country: '',
-    });
+    setFilter(initialSate);
+    handleFilter({ take: 15, skip: 0 });
   };
   return (
     <Section
@@ -38,7 +53,7 @@ export default function VendorFilterSidebar({
       className={styles.sidebarwrapper}
     >
       <Box className={styles.formGroup}>
-        <Text>Business Type</Text>
+        <Text>Form of Business</Text>
         <Select
           data={[
             {
@@ -85,20 +100,58 @@ export default function VendorFilterSidebar({
           name="country"
           searchable
           onChange={(value) => handleUpdateFilter('country', value)}
-          placeholder="Enter Country"
+          placeholder="Select Country"
         />
       </Box>
+      {isRejected && (
+        <>
+          <Box className={styles.formGroup}>
+            <Text>Servie Name</Text>
+            <Select
+              data={data ? data.items.map((service) => service.name) : []}
+              value={filter.serviceName}
+              name="serviceName"
+              searchable
+              onChange={(value) => handleUpdateFilter('serviceName', value)}
+              placeholder="Select Service Name"
+            />
+          </Box>
+          <Box className={styles.formGroup}>
+            <Text>Status</Text>
+            <Select
+              data={['Rejected', 'Canceled']}
+              value={filter.status}
+              name="status"
+              searchable
+              onChange={(value) => handleUpdateFilter('status', value)}
+              placeholder="Select Status"
+            />
+          </Box>
+        </>
+      )}
       <Box className={styles.sidebarButtons}>
         <Button
           onClick={() => handleFilter({ take: 15, skip: 0 })}
-          disabled={!filter.name && !filter.businessType && !filter.country}
+          disabled={
+            !filter.name &&
+            !filter.businessType &&
+            !filter.country &&
+            !filter.serviceName &&
+            !filter.status
+          }
           className="bg-primary-900 text-white"
         >
           Filter
         </Button>
         <Button
           onClick={handleReset}
-          disabled={!filter.name && !filter.businessType && !filter.country}
+          disabled={
+            !filter.name &&
+            !filter.businessType &&
+            !filter.country &&
+            !filter.serviceName &&
+            !filter.status
+          }
           className="bg-red-700"
         >
           Clear

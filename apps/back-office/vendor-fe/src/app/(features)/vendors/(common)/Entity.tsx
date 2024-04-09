@@ -58,7 +58,7 @@ export default function Entity({
         },
         {
           id: 'businessType',
-          header: 'Business Type ',
+          header: 'Form of Business',
           accessorKey: 'businessType',
           meta: {
             widget: 'expand',

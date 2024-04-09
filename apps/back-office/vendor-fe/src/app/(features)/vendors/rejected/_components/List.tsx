@@ -23,6 +23,8 @@ const ApplicationList = ({
     businessType: '',
     name: '',
     country: '',
+    serviceName: '',
+    status: '',
   });
 
   // this will handle fetch when all the filter fields are empty
@@ -62,6 +64,24 @@ const ApplicationList = ({
         },
       ]);
     }
+    if (filter.serviceName) {
+      filters.push([
+        {
+          column: 'BpService.name',
+          operator: 'LIKE',
+          value: `${filter.serviceName}`,
+        },
+      ]);
+    }
+    if (filter.status) {
+      filters.push([
+        {
+          column: 'status',
+          operator: 'LIKE',
+          value: `${filter.status}`,
+        },
+      ]);
+    }
 
     const query: CollectionQuery = {
       ...filterInfo,
@@ -90,6 +110,7 @@ const ApplicationList = ({
           filter={filter}
           setFilter={setFilter}
           handleFilter={handleFilter}
+          isRejected={true}
         />
       </Box>
     </Flex>
