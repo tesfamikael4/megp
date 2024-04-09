@@ -290,9 +290,11 @@ export const Documents = ({
     >
       <Box className="pt-2">
         <ExpandableTable
-          data={page == 'pr' ? PrDocuments.items ?? [] : documents?.items ?? []}
+          data={
+            page == 'pr' ? PrDocuments?.items ?? [] : documents?.items ?? []
+          }
           config={config}
-          total={page == 'pr' ? PrDocuments.items ?? 0 : documents?.total ?? 0}
+          total={page == 'pr' ? PrDocuments?.total ?? 0 : documents?.total ?? 0}
         />
 
         <Modal title="Upload New Document" opened={opened} onClose={close}>
