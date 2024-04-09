@@ -32,3 +32,15 @@ export class CreateBidOpeningCheckList {
   @IsOptional()
   remark: string;
 }
+
+export class SubmitDto {
+  @ApiProperty()
+  @IsUUID()
+  @IsNotEmpty()
+  lotId: string;
+
+  @ApiProperty()
+  @IsUUID()
+  @IsNotEmpty()
+  bidderId: string;
+}
