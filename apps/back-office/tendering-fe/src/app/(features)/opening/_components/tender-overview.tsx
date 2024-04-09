@@ -1,12 +1,19 @@
 'use client';
+import { useLazyGetTenderDetailQuery } from '@/store/api/tendering/tendering.api';
 import { ActionIcon, Badge, Box, Flex, Text, Tooltip } from '@mantine/core';
 import { Section } from '@megp/core-fe';
 import { IconChevronLeft, IconEye } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export const TenderOverView = () => {
-  const { id, tenderId } = useParams();
+  const { tenderId } = useParams();
   const router = useRouter();
+  const [getTender, { data }] = useLazyGetTenderDetailQuery();
+
+  useEffect(() => {
+    getTender(tenderId as string);
+  }, [tenderId]);
   return (
     <Section
       title={
@@ -17,19 +24,17 @@ export const TenderOverView = () => {
           className="cursor-pointer"
         >
           <IconChevronLeft size={14} />
-          <Text className="font-semibold">
-            Construction of Community Center
-          </Text>
+          <Text className="font-semibold">{data?.name ?? ''}</Text>
         </Flex>
       }
-      subTitle="RFQ2024001"
+      subTitle={data?.procurementReferenceNumber ?? ''}
       collapsible={false}
       action={
         <Tooltip label="Show opening minute">
           <ActionIcon
             variant="subtle"
             color="gray"
-            onClick={() => router.push(`/opening/minute/${id ?? tenderId}`)}
+            onClick={() => router.push(`/opening/minute/${tenderId}`)}
           >
             <IconEye size={14} />
           </ActionIcon>
@@ -53,7 +58,7 @@ export const TenderOverView = () => {
               </Badge>
               <Text>
                 <Badge variant="outline" size="xs" color="gray">
-                  Item Based
+                  {data?.bdsEvaluation?.awardType ?? ''}
                 </Badge>
               </Text>
             </Box>
@@ -70,8 +75,16 @@ export const TenderOverView = () => {
               </Text>
             </Box>
             <Box>
-              <Text size="sm">Compliance Based</Text>
-              <Text size="sm">Financial Opening - In Progress</Text>
+              <Text size="sm">
+                <Badge variant="outline" size="xs" color="gray">
+                  {data?.bdsEvaluation?.evaluationMethod ?? ''}
+                </Badge>
+              </Text>
+              <Text size="sm">
+                <Badge variant="outline" size="xs" color="gray">
+                  {data?.status ?? ''}
+                </Badge>
+              </Text>
             </Box>
           </Flex>
         </Box>

@@ -4,9 +4,9 @@ import { ActionIcon, Button, Box, Badge } from '@mantine/core';
 import { ExpandableTable, ExpandableTableConfig, Section } from '@megp/core-fe';
 import { IconChevronRight } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
-import { TenderOverView } from '../../../[id]/_components/tender-overview';
-import { bidders } from '../../../_constants/data';
+import { TenderOverView } from '../../../_components/tender-overview';
 import { DetailTable } from '../../../_components/detail-table';
+import { useLazyGetAllbiddersByLotIdQuery } from '@/store/api/tendering/tendering.api';
 
 export default function BidOpening() {
   const router = useRouter();
@@ -17,13 +17,8 @@ export default function BidOpening() {
     expandedRowContent: (record) => <DetailTender tender={record} />,
     columns: [
       {
-        accessor: 'name',
+        accessor: 'bidderName',
         sortable: true,
-      },
-      {
-        accessor: 'email',
-        sortable: true,
-        with: 100,
       },
       {
         accessor: 'status',
@@ -51,7 +46,7 @@ export default function BidOpening() {
             variant="subtle"
             onClick={(e) => {
               e.stopPropagation();
-              router.push(`/opening/lots/${tenderId}/${lotId}/${record.id}`);
+              router.push(`/opening/${tenderId}/lots/${lotId}/${record.id}`);
             }}
           >
             <IconChevronRight size={14} />
@@ -61,6 +56,8 @@ export default function BidOpening() {
       },
     ],
   };
+
+  const [getBidders, { data: bidders }] = useLazyGetAllbiddersByLotIdQuery();
   return (
     <>
       <TenderOverView />
@@ -72,8 +69,11 @@ export default function BidOpening() {
       >
         <ExpandableTable
           config={config}
-          data={bidders ?? []}
-          total={bidders?.length}
+          data={bidders?.items ?? []}
+          total={bidders?.total ?? 0}
+          onRequestChange={(request) => {
+            getBidders({ lotId, collectionQuery: request });
+          }}
         />
       </Section>
     </>

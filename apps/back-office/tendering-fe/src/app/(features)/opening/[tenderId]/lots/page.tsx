@@ -1,12 +1,12 @@
 'use client';
 
-import { Button, ActionIcon, Box, Text } from '@mantine/core';
+import { ActionIcon, Box, Text } from '@mantine/core';
 import { ExpandableTable, ExpandableTableConfig, Section } from '@megp/core-fe';
 import { IconChevronRight } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { data } from '../../_constants/data';
-import { DetailTable } from '../../_components/detail-table';
-import { TenderOverView } from '../../[id]/_components/tender-overview';
+import { TenderOverView } from '../../_components/tender-overview';
+import { useLazyGetLotsByTenderIdQuery } from '@/store/api/tendering/tendering.api';
 
 export default function BidOpening() {
   const router = useRouter();
@@ -21,6 +21,11 @@ export default function BidOpening() {
         width: 400,
         sortable: true,
       },
+      {
+        accessor: 'status',
+        width: 50,
+        sortable: true,
+      },
 
       {
         accessor: '',
@@ -29,7 +34,7 @@ export default function BidOpening() {
             variant="subtle"
             onClick={(e) => {
               e.stopPropagation();
-              router.push(`/opening/lots/${tenderId}/${record.id}`);
+              router.push(`/opening/${tenderId}/lots/${record.id}`);
             }}
           >
             <IconChevronRight size={14} />
@@ -39,14 +44,21 @@ export default function BidOpening() {
       },
     ],
   };
+  const [getLots, { data: lots }] = useLazyGetLotsByTenderIdQuery();
   return (
     <>
       <TenderOverView />
       <Section title="Lots List" collapsible={false} className="mt-2">
         <ExpandableTable
           config={config}
-          data={data ?? []}
-          total={data?.length}
+          data={lots?.items ?? []}
+          total={lots?.total ?? 0}
+          onRequestChange={(request) => {
+            getLots({
+              tenderId,
+              collectionQuery: request,
+            });
+          }}
         />
       </Section>
     </>
