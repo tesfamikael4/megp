@@ -34,6 +34,7 @@ import { WorkflowInstanceEntity } from 'src/entities';
 import { VendorRegistrationsService } from 'src/modules/vendor-registration/services/vendor-registration.service';
 import { VendorInitiationResponseDto } from 'src/modules/vendor-registration/dto/vendor-initiation.dto';
 import { decodeCollectionQuery } from 'src/shared/collection-query/query-mapper';
+import { ApplicationDto } from 'src/modules/vendor-registration/dto/applications.dto';
 
 @ApiBearerAuth()
 @Controller('application-execution')
@@ -191,6 +192,20 @@ export class ApplicationExcutionController {
     const query = decodeCollectionQuery(q);
     return await this.vendorService.getRejectedVendors(user, query);
   }
+  @ApiPaginatedResponse(ApplicationDto)
+  @UseGuards(JwtGuard)
+  @Get('get-rejected-apps')
+  @ApiQuery({
+    name: 'q',
+    type: String,
+    required: false,
+  })
+  async getRejectedApplications(@CurrentUser() user: any, @Query('q') q: string) {
+    const query = decodeCollectionQuery(q);
+    return await this.vendorService.getRejectedApps(user, query);
+  }
+
+
   @UseGuards(JwtGuard)
   @Get('get-rejected-vendor-detail/:vendorId')
   async getRejectedVendorById(@Param('vendorId') vendorId: string) {

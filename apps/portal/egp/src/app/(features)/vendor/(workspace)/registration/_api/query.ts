@@ -21,6 +21,8 @@ export const {
   useGetInvoiceByUserIdQuery,
   useGetApplicationListQuery,
   useGetMyDraftServicesQuery,
+  useLazyGetMyApprovedServicesQuery,
+  useGetMyApprovedServicesQuery,
 } = vendorRegistrationQuery;
 
 export const {

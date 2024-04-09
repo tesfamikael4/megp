@@ -1,15 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-
 import { Readable } from 'stream';
 import { toDataURL } from 'qrcode';
-
-import Certificate from 'src/modules/certificates/templates/vendor-certificate';
 import { VendorRegistrationsService } from 'src/modules/vendor-registration/services/vendor-registration.service';
-import { ServicePrice } from 'src/entities';
 import { WorkflowService } from 'src/modules/bpm/services/workflow.service';
 import { GotoNextStateDto } from 'src/modules/handling/dto/workflow-instance.dto';
 import { FileService } from 'src/modules/vendor-registration/services/file.service';
 import { ApplicationStatus } from 'src/modules/handling/enums/application-status.enum';
+import RegistrationCertificate from '../templates/certificate';
+import { HandlingCommonService } from 'src/modules/handling/services/handling-common-services';
+import { BusinessAreaService } from 'src/modules/vendor-registration/services/business-area.service';
 
 @Injectable()
 export class CertificateService {
@@ -17,35 +16,9 @@ export class CertificateService {
     private readonly vendorService: VendorRegistrationsService,
     private readonly wfService: WorkflowService,
     private readonly fileService: FileService,
-  ) {}
-  formatNumber(priceRange: ServicePrice) {
-    let valueTo = '';
-    let valueFrom = '';
-    const curruncy = priceRange.currency; //currency
-    if (priceRange.valueFrom >= 1000000000) {
-      valueFrom = (priceRange.valueFrom / 1000000000).toFixed(0);
-      if (priceRange.valueTo >= 1000000000) {
-        valueTo = (priceRange.valueTo / 1000000000).toFixed(0);
-        valueTo = ' - ' + curruncy + valueTo + ' billion';
-      }
-      return 'Above ' + curruncy + valueFrom + ' billion ' + valueTo;
-    } else if (priceRange.valueFrom >= 1000000) {
-      if (priceRange.valueTo >= 1000000000) {
-        valueTo = (priceRange.valueTo / 1000000000).toFixed(0);
-        valueTo = ' - ' + curruncy + valueTo + ' billion';
-      } else if (priceRange.valueTo >= 1000000) {
-        valueTo = (priceRange.valueTo / 1000000).toFixed(0);
-        valueTo = ' - ' + curruncy + valueTo + ' million';
-      }
-      const valueFrom = (priceRange.valueFrom / 1000000).toFixed(0);
-      return 'Above ' + curruncy + valueFrom + ' million ' + valueTo;
-    } else if (priceRange.valueFrom >= 1) {
-      valueTo = (priceRange.valueTo / 1000000).toFixed(0);
-      valueTo = curruncy + valueTo + ' million';
-      return 'Up to ' + curruncy + valueTo;
-    }
-    return priceRange.valueFrom.toString();
-  }
+    private readonly commonService: HandlingCommonService,
+    private readonly baService: BusinessAreaService
+  ) { }
 
   async generateCertificate(
     vendorId: string,
@@ -60,7 +33,6 @@ export class CertificateService {
           margin: 0,
         })) ?? '';
       const app = await this.wfService.getInstance(instanceId);
-      console.log('app', app);
       const userId = app?.userId;
       if (app?.status != ApplicationStatus.COMPLETED) {
         const command = new GotoNextStateDto();
@@ -68,46 +40,55 @@ export class CertificateService {
         command.action = 'SUCCESS';
         await this.wfService.gotoNextStep(command, user);
       }
-      console.log('vendorId--', vendorId);
+
+      // vendor basic informations
       const vendorInfo =
         await this.vendorService.getVendorByIdForCertificate(vendorId);
       if (!vendorInfo) throw new NotFoundException();
-      const address = vendorInfo.metaData; // JSON.parse(JSON.stringify();
-      let goodsCategory = '',
-        serviceCategory = '',
-        goodsExpiry = '',
-        serviceExpiry = '',
-        expireDate = '';
-
-      const bas = vendorInfo.isrVendor.businessAreas;
-      bas.map((bArea) => {
-        const range = bArea.servicePrice;
-        const formatedCategory = this.formatNumber(range);
-        if (bArea.category.toLowerCase() == 'goods') {
-          goodsCategory = formatedCategory;
-          goodsExpiry = bArea.expireDate.toLocaleDateString();
-        } else if (bArea.category.toLowerCase() == 'services') {
-          serviceCategory = formatedCategory;
-          serviceExpiry = bArea.expireDate.toLocaleDateString();
+      //registered business classes
+      const bussinessAreas = this.baService.getVendorServicesWithPrice(vendorInfo.id)
+      const bcs = (await bussinessAreas).map((item) => {
+        return {
+          Category: item.category,
+          PriceRange: this.commonService.formatPriceRange(item.servicePrice),
+          IssueDate: item.approvedAt.toLocaleDateString(),
+          ExpiryDate: item.expireDate.toLocaleDateString(),
         }
-      });
-      expireDate = this.formatExpireDates(goodsExpiry, serviceExpiry);
-      const result = await Certificate({
-        id: '',
-        data: [
-          { label: 'Supplier Code', value: vendorInfo.tin },
-          { label: 'Supplier Name', value: vendorInfo.name },
-          { label: 'Postal Address', value: address.address.postalAddress },
-          { label: 'Supplier Location', value: vendorInfo.district },
-          { label: 'Website', value: address.address.website },
-          { label: 'Country of Establishment', value: vendorInfo.origin },
-          { label: 'Goods Category', value: goodsCategory },
-          { label: 'Services Category', value: serviceCategory },
-          { label: 'Expire Date', value: expireDate },
-        ],
-        qrCodeUrl: qrUrl,
-      });
+      })
+      //registered Preferential treatments
+      const pts = await this.baService.getVendorPreferentials(vendorInfo.id);
+      const preferentials = pts.map((item) => {
+        return {
+          Category: item.BpService.name,
+          IssueDate: item.approvedAt.toLocaleDateString(),
+          ExpiryDate: item.expireDate.toLocaleDateString(),
+        }
+      })
 
+      const basic = [
+        {
+          label: 'eGP Registration No',
+          value: vendorInfo?.registrationNumber,
+        },
+        {
+          label: 'Tax Identification No',
+          value: vendorInfo.tin,
+        },
+        {
+          label: 'Vendor Name',
+          value: vendorInfo.name,
+        },
+        {
+          label: 'Country of Registration',
+          value: vendorInfo.origin,
+        },
+        {
+          label: 'Address',
+          value: vendorInfo.metaData.address?.primaryEmail,
+        },
+      ];
+
+      const result = await RegistrationCertificate({ basicInfo: [...basic], businessClass: [...bcs], preferentials: [...preferentials], qrCodeUrl: qrUrl });
       result.on('data', (chunk) => {
         chunks.push(chunk);
       });
@@ -132,23 +113,4 @@ export class CertificateService {
     }
   }
 
-  formatExpireDates(goodsExpiry: string, serviceExpiry: string) {
-    if (goodsExpiry == serviceExpiry) {
-      return goodsExpiry;
-    } else {
-      let gc = '',
-        sc = '';
-      if (goodsExpiry != '') {
-        gc = '(Goods), ';
-      }
-      if (serviceExpiry != '') {
-        sc = '(Services)';
-      }
-      if (goodsExpiry == '' || serviceExpiry == '') {
-        gc = '';
-        sc = '';
-      }
-      return goodsExpiry + `${gc}` + serviceExpiry + `${sc}`;
-    }
-  }
 }

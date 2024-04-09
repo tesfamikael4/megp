@@ -1,11 +1,11 @@
 'use client';
 import { FormDetail } from '@/app/(features)/procurement-requisition/_components/mannual-pr';
 import { Box, Container, Text, Flex, Tooltip, ActionIcon } from '@mantine/core';
-import { PrMechanization } from '@/app/(features)/procurement-requisition/_components/pr-mechanization';
+import { ActivityMechanization } from '@/app/(features)/(app)/_components/activity-mechanization';
 import { Items } from '@/app/(features)/procurement-requisition/_components/items';
 import TimelineTab from '@/app/(features)/procurement-requisition/_components/timeline-tab';
-import { Requisitioner } from '@/app/(features)/procurement-requisition/_components/requisitioner';
-import { Documents } from '../_components/documents';
+import { Requisitioner } from '@/app/(features)/(app)/_components/requisitioner';
+import { Documents } from '@/app/(features)/(app)/_components/documents';
 import { useParams, useRouter } from 'next/navigation';
 import { useReadQuery } from '@/store/api/pr/pr.api';
 import { IconChevronLeft, IconMessage2 } from '@tabler/icons-react';
@@ -126,13 +126,16 @@ export default function PrDetailPage() {
             )}
 
             {currentTab === 'method' && (
-              <PrMechanization disableFields={disableFields} />
+              <ActivityMechanization
+                disableFields={disableFields}
+                page={'pr'}
+              />
             )}
 
             {currentTab === 'items' && <Items disableFields={disableFields} />}
 
             {currentTab === 'documents' && (
-              <Documents disableFields={disableFields} />
+              <Documents page="pr" disableFields={disableFields} />
             )}
 
             {currentTab === 'timeline' && (
@@ -140,7 +143,7 @@ export default function PrDetailPage() {
             )}
 
             {currentTab === 'requisitioner' && (
-              <Requisitioner disableFields={disableFields} />
+              <Requisitioner page="pr" disableFields={disableFields} />
             )}
 
             {opened && (

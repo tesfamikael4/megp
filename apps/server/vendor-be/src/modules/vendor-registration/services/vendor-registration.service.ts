@@ -18,9 +18,10 @@ import {
   BusinessAreaEntity,
   InvoiceEntity,
   IsrVendorsEntity,
+  ProfileInfoEntity,
   ServicePrice,
   VendorsEntity,
-} from 'src/entities';
+} from '@entities';
 import { BusinessProcessService } from 'src/modules/bpm/services/business-process.service';
 import {
   CreateWorkflowInstanceDto,
@@ -39,24 +40,24 @@ import { BusinessAreaDetailResponseDto } from '../dto/business-area.dto';
 import { ServicePricingService } from 'src/modules/pricing/services/service-pricing.service';
 import { BusinessAreaService } from './business-area.service';
 import InitialValueSchema from '../dto/add-vendor.dto';
-import { ProfileInfoEntity } from 'src/entities/profile-info.entity';
+
 import { PaymentStatus } from 'src/shared/enums/payment-status.enum';
 import { ServiceKeyEnum } from 'src/shared/enums/service-key.enum';
 import { ApplicationStatus } from 'src/modules/handling/enums/application-status.enum';
 import { BpServiceService } from 'src/modules/services/services/service.service';
 import { ReceiptDto } from '../dto/receipt.dto';
 import { FileService } from './file.service';
-import { REQUEST } from '@nestjs/core';
 import { HandlingCommonService } from 'src/modules/handling/services/handling-common-services';
 import { BusinessCategories } from 'src/modules/handling/enums/business-category.enum';
 import { PreferentailTreatmentService } from './preferentail-treatment.service';
 import PdfDocumentTemplate from 'src/modules/certificates/templates/pdf-tamplate';
+
+import { ApplicationDto } from '../dto/applications.dto';
 import { ClientProxy } from '@nestjs/microservices';
 
 @Injectable()
 export class VendorRegistrationsService extends EntityCrudService<VendorsEntity> {
   constructor(
-    @Inject(REQUEST) private request: Request,
     @InjectRepository(VendorsEntity)
     private readonly vendorRepository: Repository<VendorsEntity>,
     @InjectRepository(BusinessAreaEntity)
@@ -207,7 +208,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         }
         await this.businessAreaRepository.save(businessAreaEntities);
         //prefrenctial treatment
-        if (data.preferential?.length) {
+        if (data?.preferential?.length) {
           this.ptService.submitPreferential(
             data.preferential,
             userInfo,
@@ -665,7 +666,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     const sids = pts.map((row) => row.serviceId);
     const approvedPts = await this.ptService.getPreviousPTByUserId(
       userId,
-      sids,
+      sids
     );
     const ptRequestes = [];
     const servicestatus = this.getStatus(status);
@@ -675,7 +676,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       );
       if (prevPt && servicestatus == ApplicationStatus.APPROVED) {
         prevPt.status = ApplicationStatus.OUTDATED;
-        this.ptService.update(prevPt.id, prevPt);
+        await this.ptService.update(prevPt.id, prevPt);
       }
       row.status = servicestatus;
       ptRequestes.push(row);
@@ -829,7 +830,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             ba.status = VendorStatusEnum.REJECTED;
           }
           ba.approvedAt = new Date();
-          if (service.key != ServiceKeyEnum.PROFILE_UPDATE) {
+          if ([ServiceKeyEnum.PROFILE_UPDATE, ServiceKeyEnum.REGISTRATION_UPGRADE].filter((item) => item == service.key).length == 0) {
             const expireDate = new Date();
             expireDate.setFullYear(expireDate.getFullYear() + 1);
             ba.expireDate = expireDate;
@@ -892,7 +893,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             'vendor-registration-completed',
             eventPayload,
           );
-
           const bas = await this.baService.getVendorBusinessAreaByInstanceId(
             vendorStatusDto.isrVendorId,
             vendorStatusDto.instanceId,
@@ -921,25 +921,12 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             }
             await this.businessAreaRepository.save(ba);
           }
-
-          const vendor = await this.vendorRepository.findOne({
-            where: { id: vendorStatusDto.isrVendorId },
-          });
-          if (vendor) {
-            vendor.canRequest = true;
-            await this.vendorRepository.update(vendor.id, vendor);
-          }
-
+          this.setPreferentialSatus(vendorStatusDto.status, vendorStatusDto.userId);
+          await this.permitForOtherServiceRequest(vendorStatusDto.isrVendorId);
           return true;
         } else {
           const result = await this.rejectVendor(vendorStatusDto);
-          const vendor = await this.vendorRepository.findOne({
-            where: { id: vendorStatusDto.isrVendorId },
-          });
-          if (vendor) {
-            vendor.canRequest = true;
-            await this.vendorRepository.update(vendor.id, vendor);
-          }
+          await this.permitForOtherServiceRequest(vendorStatusDto.isrVendorId);
           return result;
         }
       }
@@ -949,6 +936,16 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       console.log(error);
       throw error;
     }
+  }
+  async permitForOtherServiceRequest(vendorId: string) {
+    const vendor = await this.vendorRepository.findOne({
+      where: { id: vendorId },
+    });
+    if (vendor) {
+      vendor.canRequest = true;
+      await this.vendorRepository.update(vendor.id, vendor);
+    }
+    return true;
   }
 
   async updateBusinessInterestArea(isrVendor: IsrVendorsEntity) {
@@ -1839,7 +1836,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             lineOfBusiness: bl,
             approvedAt: ba.approvedAt,
             expireDate: ba.expireDate,
-            certificateUrl: ba.certificateUrl,
+            //  certificateUrl: ba.certificateUrl,
           };
           break;
         }
@@ -1876,6 +1873,25 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     return d;
   }
 
+  async getRejectedApps(user: any, query: CollectionQuery) {
+    const jointables = [...query.includes, 'servicePrice', 'BpService', 'isrVendor'];
+    query.includes = jointables;
+    query.orderBy.push({ column: 'updatedAt', direction: 'ASC' });
+    const dataQuery = QueryConstructor.constructQuery<BusinessAreaEntity>(
+      this.businessAreaRepository, query)
+      .andWhere('business_areas.status In(:...statuses)', {
+        statuses: [ApplicationStatus.REJECTED, ApplicationStatus.CANCELED]
+      })
+    /// .orderBy('updatedAt', 'ASC');
+
+    const d = new DataResponseFormat<ApplicationDto>();
+    const [result, total] = await dataQuery.getManyAndCount();
+    d.items = result.map((entity) => {
+      return ApplicationDto.toResponse(entity);
+    });
+    d.total = total;
+    return d;
+  }
   async getRejectedISRVendorById(VendorId: string): Promise<any> {
     const result = await this.isrVendorsRepository.findOne({
       where: { id: VendorId, status: ApplicationStatus.REJECTED },
@@ -1886,8 +1902,14 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     });
     const vendor = {
       ...result,
-      businessAreas: result.businessAreas.map((ba) =>
-        BusinessAreaDetailResponseDto.toResponse(ba),
+      businessAreas: result.businessAreas.map((ba) => {
+        const result = BusinessAreaDetailResponseDto.toResponse(ba)
+        if (ba.servicePrice) {
+          result.priceRange = this.commonService.formatPriceRange(ba.servicePrice);
+        }
+        return result;
+      }
+
       ),
       areasOfBusinessInterest: result.areasOfBusinessInterest.map((entity) => {
         return {
@@ -2398,13 +2420,39 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     if (result == null) return { status: 'no approved service' };
     return result.isrVendor.businessAreas;
   }
+  async cancelProfiles(wfiDto: UpdateWorkflowInstanceDto) {
+    const profile = await this.profileInfoRepository.findOne({ where: { vendorId: wfiDto.requestorId, status: ApplicationStatus.SUBMITTED } })
+    if (profile) {
+      profile.status = ApplicationStatus.CANCELED;
+      await this.profileInfoRepository.update(profile.id, profile);
+    }
+  }
+  async cancelPreferentials(wfiDto: UpdateWorkflowInstanceDto) {
+    try {
+      const pts = await this.ptService.getSubmittedPTByUserId(wfiDto.user.id);
+      const updatePts = [];
+      if (pts.length) {
+        for (const pt of pts) {
+          pt.status = ApplicationStatus.CANCELED;
+          updatePts.push(pt);
+        }
+        await this.ptService.saveAll(updatePts);
+      }
+      return HttpStatus.OK;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
 
   async cancelApplication(wfi: UpdateWorkflowInstanceDto) {
     const vendor = await this.vendorRepository.findOne({
       where: { id: wfi.requestorId },
     });
+    await this.cancelPreferentials(wfi);
+    await this.cancelProfiles(wfi);
     if (vendor) {
       return await this.baService.cancelServiceApplication(wfi.id);
+
     } else {
       await this.baService.cancelServiceApplication(wfi.id);
       const tempVendor = await this.isrVendorsRepository.findOne({
@@ -2414,6 +2462,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       await this.isrVendorsRepository.update(wfi.requestorId, tempVendor);
       return true;
     }
+
   }
   async submitRegistrationRequest(user: any) {
     const data = this.isrVendorsRepository.find({ where: { userId: user.id } });

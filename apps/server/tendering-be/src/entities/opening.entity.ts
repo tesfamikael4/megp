@@ -7,6 +7,8 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { Tender } from './tender.entity';
+import { Team } from './team.entity';
+import { OpeningStatusEnum } from 'src/shared/enums/opening.enum';
 
 @Entity({ name: 'openings' })
 export class Opening extends OrgAudit {
@@ -17,15 +19,26 @@ export class Opening extends OrgAudit {
   tenderId: string;
 
   @OneToOne(() => Tender, (tender) => tender.opening)
-  @JoinColumn()
+  @JoinColumn({ name: 'tenderId' })
   tender: Tender;
 
-  @Column('text')
+  @Column('uuid')
+  teamId: string;
+
+  @OneToOne(() => Team, (team) => team.opening)
+  @JoinColumn({ name: 'teamId' })
+  team: Team;
+
+  @Column()
   openingType: string;
 
-  @Column('text')
+  @Column({
+    type: 'enum',
+    enum: OpeningStatusEnum,
+    default: OpeningStatusEnum.PENDING,
+  })
   status: string;
 
-  @Column('boolean')
+  @Column({ type: 'boolean', default: false })
   isReportReady: boolean;
 }

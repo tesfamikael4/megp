@@ -6,6 +6,7 @@ import { IconChevronRight } from '@tabler/icons-react';
 import { data } from './_constants/data';
 import { DetailTable } from '../_components/detail-table';
 import { useRouter } from 'next/navigation';
+import { useLazyGetClosedTendersQuery } from '@/store/api/tendering/tendering.api';
 
 export default function BidOpening() {
   const router = useRouter();
@@ -15,34 +16,25 @@ export default function BidOpening() {
     expandedRowContent: (record) => <DetailTender tender={record} />,
     columns: [
       {
-        accessor: 'reference',
+        accessor: 'procurementReferenceNumber',
         title: '#Ref',
         width: 100,
         sortable: true,
       },
       {
         accessor: 'name',
+        width: 250,
+        sortable: true,
+      },
+      {
+        accessor: 'procurementCategory',
         width: 150,
         sortable: true,
       },
+
       {
-        accessor: 'envelope',
+        accessor: 'status',
         width: 100,
-        sortable: true,
-      },
-      {
-        accessor: 'bid',
-        width: 100,
-        sortable: true,
-      },
-      {
-        accessor: 'evaluationMethod',
-        width: 100,
-        sortable: true,
-      },
-      {
-        accessor: 'milestone',
-        width: 150,
         sortable: true,
       },
       {
@@ -62,9 +54,19 @@ export default function BidOpening() {
       },
     ],
   };
+
+  //rtk
+  const [getClosedTenders, { data: tenders }] = useLazyGetClosedTendersQuery();
   return (
     <Section title="Tenders List (Opening)" collapsible={false}>
-      <ExpandableTable config={config} data={data ?? []} total={data?.length} />
+      <ExpandableTable
+        config={config}
+        data={tenders?.items ?? []}
+        total={tenders?.total ?? 0}
+        onRequestChange={(collectionQuery) => {
+          getClosedTenders({ collectionQuery });
+        }}
+      />
     </Section>
   );
 }
@@ -73,27 +75,39 @@ const DetailTender = ({ tender }: any) => {
   const data = [
     {
       key: 'Reference',
-      value: tender.reference,
+      value: tender.procurementReferenceNumber,
     },
     {
       key: 'Name',
       value: tender.name,
     },
     {
-      key: 'Envelope',
-      value: tender.envelope,
+      key: 'Procurement Category ',
+      value: tender.procurementCategory,
     },
     {
-      key: 'Bid',
-      value: tender.bid,
+      key: 'Budget Amount',
+      value: tender.budgetAmount.toLocaleString('en-US', {
+        style: 'currency',
+        currency: tender.budgetAmountCurrency,
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+        currencyDisplay: 'code',
+      }),
     },
     {
-      key: 'Evaluation Method',
-      value: tender.evaluationMethod,
+      key: 'Market Estimate',
+      value: tender.marketEstimate.toLocaleString('en-US', {
+        style: 'currency',
+        currency: tender.marketEstimateCurrency,
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+        currencyDisplay: 'code',
+      }),
     },
     {
-      key: 'Milestone',
-      value: tender.milestone,
+      key: 'Status',
+      value: tender.status,
     },
   ];
 

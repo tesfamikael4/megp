@@ -64,6 +64,7 @@ export const Menu: MenuItem[] = [
       {
         label: 'Procurement Requisition Approval',
         link: '/pr-approve',
+        permission: ['iam:approveProcurementRequisition'],
       },
     ],
   },

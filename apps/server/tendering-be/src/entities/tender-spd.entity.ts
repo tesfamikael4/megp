@@ -24,7 +24,7 @@ export class TenderSpd extends Audit {
   @Column()
   spdId: string;
 
-  @OneToOne(() => Spd, (spd) => spd.tender)
+  @OneToOne(() => Spd, (spd) => spd.tenderSpd)
   @JoinColumn()
   spd: Spd;
 

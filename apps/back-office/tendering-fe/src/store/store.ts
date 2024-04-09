@@ -17,6 +17,7 @@ export const store = configureStore({
   reducer: {
     ...reducers,
     [approveSpdApi.reducerPath]: approveSpdApi.reducer,
+    [tenderingApi.reducerPath]: tenderingApi.reducer,
     [technicalScoringTreeApi.reducerPath]: technicalScoringTreeApi.reducer,
     [sorBillOfMaterialTreeApi.reducerPath]: sorBillOfMaterialTreeApi.reducer,
     [templateSpdApi.reducerPath]: templateSpdApi.reducer,

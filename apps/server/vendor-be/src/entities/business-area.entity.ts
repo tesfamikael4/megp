@@ -3,14 +3,13 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { IsrVendorsEntity } from './isr-vendors.entity';
 import { BpServiceEntity } from './bp-service.entity';
 import { ServicePrice } from './service-price.entity';
-import { InvoiceEntity } from './invoice.entity';
-import { Audit } from 'src/shared/entities';
+
+import { Audit } from '@audit';
 
 @Entity({ name: 'business_areas' })
 export class BusinessAreaEntity extends Audit {

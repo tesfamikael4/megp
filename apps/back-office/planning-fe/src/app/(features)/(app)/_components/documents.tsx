@@ -34,6 +34,13 @@ import {
   useDeleteDocumentMutation as usePostDeleteDocumentMutation,
   useLazyDownloadFilesQuery as useLazyDownloadPostFilesQuery,
 } from '@/store/api/post-budget-plan/post-budget-plan.api';
+
+import {
+  useGetFilesQuery as useGetPrFilesQuery,
+  useLazyDownloadFilesQuery as useLazyDownloadPrFilesQuery,
+  useUploadMutation as usePrUploadMutation,
+  useDeleteFileMutation as useDeletePrFileMutation,
+} from '@/store/api/budget/budget-year.api';
 import { useParams } from 'next/navigation';
 import { ExpandableTable } from '../../_components/expandable-table';
 import { FileViewer } from '../../_components/file-viewer';
@@ -42,7 +49,7 @@ export const Documents = ({
   disableFields = false,
   page,
 }: {
-  page: 'pre' | 'post';
+  page: 'pre' | 'post' | 'pr';
   disableFields?: boolean;
 }) => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -51,14 +58,23 @@ export const Documents = ({
   const { register, handleSubmit, setValue } = useForm();
   const [retrieveNewURL] = usePreSignedUrlMutation();
   const [retrieveNewPostURL] = usePostPreSignedUrlMutation();
+  const [retrieveNewPrURL] = usePrUploadMutation();
+
   const [deleteFile, { isLoading: isDeleting }] = useDeleteDocumentMutation();
   const [deletePostFile, { isLoading: isPostDeleting }] =
     usePostDeleteDocumentMutation();
+  const [deletePrFile, { isLoading: isPrDeleting }] = useDeletePrFileMutation();
+
   const { data: documents } = useGetFilesQuery(id);
+  const { data: PrDocuments } = useGetPrFilesQuery(id);
+
   const [dowloadFile, { isLoading: isDownloading }] =
     useLazyDownloadFilesQuery();
   const [dowloadPostFile, { isLoading: isPostDownloading }] =
     useLazyDownloadPostFilesQuery();
+  const [dowloadPrFile, { isLoading: isPrDownloading }] =
+    useLazyDownloadPrFilesQuery();
+
   const [isLoading, setIsLoading] = useState(false);
   const config = {
     columns: [
@@ -100,7 +116,9 @@ export const Documents = ({
         const res =
           page == 'pre'
             ? await dowloadFile(data.id).unwrap()
-            : await dowloadPostFile(data.id).unwrap();
+            : page == 'post'
+              ? await dowloadPostFile(data.id).unwrap()
+              : await dowloadPrFile(data.id).unwrap();
         await fetch(res.presignedUrl)
           .then((res) => res.blob())
           .then((blob) => {
@@ -120,8 +138,10 @@ export const Documents = ({
       try {
         if (page == 'pre') {
           await deleteFile(id).unwrap();
-        } else {
+        } else if (page == 'post') {
           await deletePostFile(id).unwrap();
+        } else {
+          await deletePrFile(id).unwrap();
         }
         notify('Success', 'Document deleted successfully');
       } catch (err) {
@@ -150,7 +170,7 @@ export const Documents = ({
             <Menu.Item
               leftSection={<IconDownload size={15} />}
               onClick={handleDownload}
-              disabled={isDownloading || isPostDownloading}
+              disabled={isDownloading || isPostDownloading || isPrDownloading}
             >
               Download
             </Menu.Item>
@@ -159,7 +179,9 @@ export const Documents = ({
               color="red"
               leftSection={<IconTrash size={15} />}
               onClick={openDeleteModal}
-              disabled={disableFields || isDeleting || isPostDeleting}
+              disabled={
+                disableFields || isDeleting || isPostDeleting || isPrDeleting
+              }
             >
               Delete
             </Menu.Item>
@@ -208,13 +230,25 @@ export const Documents = ({
                 name: name,
                 preBudgetPlanActivityId: id,
               }).unwrap()
-            : await retrieveNewPostURL({
-                originalname: file.name,
-                contentType: file.type,
-                name: name,
-                postBudgetPlanActivityId: id,
-              }).unwrap();
-        await uploadFile(file, url.presignedUrl.presignedUrl);
+            : page === 'post'
+              ? await retrieveNewPostURL({
+                  originalname: file.name,
+                  contentType: file.type,
+                  name: name,
+                  postBudgetPlanActivityId: id,
+                }).unwrap()
+              : await retrieveNewPrURL({
+                  fileInfo: {
+                    originalname: file.name,
+                    contentType: file.type,
+                  },
+                  procurementRequisitionId: id,
+                  title: name,
+                }).unwrap();
+
+        page == 'pr'
+          ? await uploadFile(file, url.presignedUrl)
+          : await uploadFile(file, url.presignedUrl.presignedUrl);
       } catch (error) {
         setIsLoading(false);
         notify('Error', 'Something went wrong while uploading document');
@@ -256,9 +290,11 @@ export const Documents = ({
     >
       <Box className="pt-2">
         <ExpandableTable
-          data={documents?.items ?? []}
+          data={
+            page == 'pr' ? PrDocuments?.items ?? [] : documents?.items ?? []
+          }
           config={config}
-          total={documents?.total ?? 0}
+          total={page == 'pr' ? PrDocuments?.total ?? 0 : documents?.total ?? 0}
         />
 
         <Modal title="Upload New Document" opened={opened} onClose={close}>
@@ -298,19 +334,36 @@ export const Documents = ({
   );
 };
 
-const FilePriview = ({ data, page }: { data: any; page: 'pre' | 'post' }) => {
+const FilePriview = ({
+  data,
+  page,
+}: {
+  data: any;
+  page: 'pre' | 'post' | 'pr';
+}) => {
   const [dowloadFile, { data: url, isLoading }] = useLazyDownloadFilesQuery();
   const [dowloadPostFile, { data: postUrl, isLoading: isPostLoading }] =
     useLazyDownloadPostFilesQuery();
+  const [dowloadPrFile, { data: prUrl, isLoading: isPrLoading }] =
+    useLazyDownloadPrFilesQuery();
 
   useEffect(() => {
-    page == 'pre' ? dowloadFile(data.id) : dowloadPostFile(data.id);
+    page == 'pre'
+      ? dowloadFile(data.id)
+      : page == 'post'
+        ? dowloadPostFile(data.id)
+        : dowloadPrFile(data.id);
   }, [data]);
   return (
     <>
-      <LoadingOverlay visible={isLoading || isPostLoading} />
+      <LoadingOverlay visible={isLoading || isPostLoading || isPrLoading} />
       <FileViewer
-        url={url?.presignedUrl ?? postUrl?.presignedUrl ?? ''}
+        url={
+          url?.presignedUrl ??
+          postUrl?.presignedUrl ??
+          prUrl?.presignedUrl ??
+          ''
+        }
         filename={data.fileName}
       />
     </>

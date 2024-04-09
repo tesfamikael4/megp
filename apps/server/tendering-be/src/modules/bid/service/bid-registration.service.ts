@@ -244,6 +244,48 @@ export class BidRegistrationService extends ExtraCrudService<BidRegistration> {
     return response;
   }
 
+  async getSubmittedBiddersByTenderId(
+    tenderId: string,
+    query: CollectionQuery,
+  ) {
+    query.where.push([
+      {
+        column: 'status',
+        operator: FilterOperators.EqualTo,
+        value: BidRegistrationStatusEnum.REGISTERED,
+      },
+    ]);
+    query.where.push([
+      {
+        column: 'tenderId',
+        operator: FilterOperators.EqualTo,
+        value: tenderId,
+      },
+    ]);
+
+    const dataQuery = QueryConstructor.constructQuery<BidRegistration>(
+      this.bidSecurityRepository,
+      query,
+    )
+      .leftJoinAndSelect(
+        'bid_registrations.bidRegistrationDetails',
+        'bidRegistrationDetails',
+      )
+      .andWhere('bidRegistrationDetails.status = :submissionStatus', {
+        submissionStatus: BidRegistrationDetailStatusEnum.SUBMITTED,
+      });
+
+    const response = new DataResponseFormat<BidRegistration>();
+    if (query.count) {
+      response.total = await dataQuery.getCount();
+    } else {
+      const [result, total] = await dataQuery.getManyAndCount();
+      response.total = total;
+      response.items = result;
+    }
+    return response;
+  }
+
   async getSubmittedBiddersByLotId(lotId: string, query: CollectionQuery) {
     query.where.push([
       {

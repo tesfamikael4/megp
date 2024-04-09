@@ -26,7 +26,7 @@ export const Reasons = ({
   page,
 }: {
   justification: Record<string, any>;
-  page: 'pre' | 'post';
+  page: 'pre' | 'post' | 'pr';
 }) => {
   const [addJustification, { isLoading }] = useAddJustificationMutation();
 
@@ -39,10 +39,13 @@ export const Reasons = ({
   });
 
   const onSubmit = async (data, key) => {
+    logger.log(page);
     try {
       await addJustification({
         ...data,
-        [`${page}BudgetPlanActivityId`]: justification?.[key]?.activityId,
+        [page == 'pr'
+          ? 'procurementRequisitionId'
+          : `${page}BudgetPlanActivityId`]: justification?.[key]?.activityId,
         type: key,
       }).unwrap();
       notify('Success', 'Justification added successfully');

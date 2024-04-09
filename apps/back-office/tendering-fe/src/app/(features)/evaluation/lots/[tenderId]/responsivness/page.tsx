@@ -1,7 +1,7 @@
 'use client';
 
 import { items } from '@/app/(features)/evaluation/_constants/data';
-import { TenderOverView } from '@/app/(features)/opening/[id]/_components/tender-overview';
+import { TenderOverView } from '@/app/(features)/opening/_components/tender-overview';
 import { ActionIcon, Badge, Box, Text } from '@mantine/core';
 import { ExpandableTable, ExpandableTableConfig, Section } from '@megp/core-fe';
 import { IconChevronRight } from '@tabler/icons-react';

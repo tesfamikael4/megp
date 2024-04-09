@@ -1,6 +1,6 @@
 import { Button } from '@mantine/core';
 import { ExpandableTable, Section } from '@megp/core-fe';
-import { TenderOverView } from '../../opening/[id]/_components/tender-overview';
+import { TenderOverView } from '../../opening/_components/tender-overview';
 
 export default function BidAdministrationDetail() {
   return (
