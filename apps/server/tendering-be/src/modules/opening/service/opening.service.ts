@@ -33,6 +33,8 @@ export class OpeningService extends ExtraCrudService<Opening> {
         bdsSubmission: true,
       },
     });
+
+    itemData.teamId = '2539866e-a202-41a9-88f3-0f3ac7133d65';
     itemData.openingType = tender.bdsSubmission.envelopType;
     const item = this.openingRepository.create(itemData);
     await this.openingRepository.insert(item);
