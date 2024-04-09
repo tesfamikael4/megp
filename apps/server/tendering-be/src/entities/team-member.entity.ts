@@ -1,5 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { OrgAudit } from 'src/shared/entities';
+import { Team } from './team.entity';
 
 @Entity({ name: 'team_members' })
 export class TeamMember extends OrgAudit {
@@ -9,17 +16,15 @@ export class TeamMember extends OrgAudit {
   @Column('uuid')
   teamId: string;
 
+  @ManyToOne(() => Team, (team) => team.teamMembers)
+  @JoinColumn({ name: 'teamId' })
+  team: Team;
+
   @Column('uuid')
   personnelId: string;
 
   @Column('uuid')
   personnelName: string;
-
-  // @ManyToOne(type => EvaluationTeam, evaluationTeam => evaluationTeam.members)
-  // team: EvaluationTeam;
-
-  // @ManyToOne(type => User, user => user.teamMembers)
-  // personnel: User;
 
   @Column('boolean')
   isTeamLead: boolean;

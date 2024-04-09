@@ -6,16 +6,4 @@ export class CreateOpeningDto {
   @IsUUID()
   @IsNotEmpty()
   tenderId: string;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  openingType: string;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  status: string;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  isReportReady: boolean;
 }
