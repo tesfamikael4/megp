@@ -33,4 +33,12 @@ export class BidResponseItemController {
       req,
     );
   }
+
+  @Post('get-bid-response-item')
+  async getBidResponseItemByKey(
+    @Body() payload: GetBidResponseItemDto,
+    @Req() req?: any,
+  ) {
+    return await this.bidSecurityService.getBidResponseItemByKey(payload, req);
+  }
 }
