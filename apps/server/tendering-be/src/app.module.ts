@@ -15,6 +15,7 @@ import { SccModule } from './modules/scc/scc.module';
 import { OpeningModule } from './modules/opening/opening.module';
 import { TeamModule } from './modules/team/team.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
+import { TenantInterceptor } from './shared/interceptors/tenant-interceptor';
 
 @Module({
   imports: [
@@ -37,10 +38,10 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
       provide: APP_INTERCEPTOR,
       useClass: TransactionInterceptor,
     },
-    // {
-    //   provide: APP_INTERCEPTOR,
-    //   useClass: TenantInterceptor,
-    // },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: TenantInterceptor,
+    },
   ],
   controllers: [],
 })

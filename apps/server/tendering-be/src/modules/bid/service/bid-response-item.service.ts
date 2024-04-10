@@ -10,8 +10,6 @@ import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 import { BidRegistrationDetail } from 'src/entities/bid-registration-detail.entity';
 import { REQUEST } from '@nestjs/core';
 import { EncryptionHelperService } from './encryption-helper.service';
-import { DocumentTypeEnum } from 'src/shared/enums';
-import { BidRegistration } from 'src/entities/bid-registration.entity';
 import { SorTechnicalRequirement } from 'src/entities';
 
 @Injectable()
