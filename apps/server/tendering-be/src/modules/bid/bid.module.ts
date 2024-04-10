@@ -38,5 +38,6 @@ import { BidResponseItem } from 'src/entities/bid-response-item.entity';
     BidResponseService,
     EncryptionHelperService,
   ],
+  exports: [BidRegistrationService],
 })
-export class BidModule { }
+export class BidModule {}

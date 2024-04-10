@@ -1,12 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsNotEmpty, IsUUID } from 'class-validator';
+import { IsArray, IsBoolean, IsNotEmpty, IsUUID } from 'class-validator';
 
-export class CreateTeamMemberDto {
-  @ApiProperty()
-  @IsUUID()
-  @IsNotEmpty()
-  teamId: string;
-
+export class TeamMember {
   @ApiProperty()
   @IsUUID()
   @IsNotEmpty()
@@ -18,15 +13,22 @@ export class CreateTeamMemberDto {
   personnelName: string;
 
   @ApiProperty()
+  @IsBoolean()
+  @IsNotEmpty()
+  isTeamLead: boolean;
+}
+
+export class CreateTeamMemberDto {
+  @ApiProperty()
   @IsUUID()
   @IsNotEmpty()
-  isTeamLead: string;
+  teamId: string;
 }
 
 export class BulkTeamMemberDto {
-  @ApiProperty({ isArray: true, type: () => CreateTeamMemberDto })
+  @ApiProperty({ isArray: true, type: () => TeamMember })
   @IsArray()
-  members: CreateTeamMemberDto[];
+  members: TeamMember[];
 
   @ApiProperty()
   @IsUUID()

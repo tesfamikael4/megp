@@ -33,4 +33,9 @@ export class BidOpeningChecklistController extends ExtraCrudController<BidOpenin
       req,
     );
   }
+
+  @Get('opening-status/:lotId')
+  async openingStatus(@Param('lotId') lotId: string, @Req() req) {
+    return await this.bidOpeningChecklistService.openingStatus(lotId, req);
+  }
 }

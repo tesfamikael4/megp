@@ -20,5 +20,5 @@ export class CreateTeamDto {
   @ApiProperty()
   @IsUUID()
   @IsNotEmpty()
-  memberLimit: string;
+  memberLimit: number;
 }
