@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsObject, IsString, IsUUID } from 'class-validator';
+import {
+  IsArray,
+  IsNotEmpty,
+  IsObject,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 import { DocumentTypeEnum } from 'src/shared/enums';
 
 export class CreateBidResponseDto {
@@ -29,6 +35,18 @@ export class CreateBidResponseDto {
   password: string;
 }
 
+class ItemValueDto {
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  key: string;
+
+  @ApiProperty()
+  @IsArray()
+  @IsNotEmpty()
+  value: any[];
+}
+
 export class CreateBidResponseItemDto {
   @ApiProperty()
   @IsUUID()
@@ -45,15 +63,10 @@ export class CreateBidResponseItemDto {
   @IsNotEmpty()
   documentType: string;
 
-  @ApiProperty()
-  @IsString()
+  @ApiProperty({ isArray: true, type: () => ItemValueDto })
+  @IsArray()
   @IsNotEmpty()
-  key: string;
-
-  @ApiProperty()
-  @IsObject()
-  @IsNotEmpty()
-  value: any;
+  values: ItemValueDto[];
 
   @ApiProperty()
   @IsString()

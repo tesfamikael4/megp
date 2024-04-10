@@ -15,15 +15,29 @@ import {
 export class BidResponseItemController {
   constructor(private readonly bidSecurityService: BidResponseItemService) {}
 
-  @Post('create-bid-response-item')
-  async createBidResponseItem(
+  @Post('technical-response')
+  async createBidResponseItemTechnicalResponse(
     @Body() payload: CreateBidResponseItemDto,
     @Req() req?: any,
   ) {
-    return await this.bidSecurityService.createBidResponseItem(payload, req);
+    return await this.bidSecurityService.createBidResponseItemTechnicalResponse(
+      payload,
+      req,
+    );
   }
 
-  @Post('get-bid-response-item-sor')
+  @Post('financial-response')
+  async createBidResponseItemFinancialResponse(
+    @Body() payload: CreateBidResponseItemDto,
+    @Req() req?: any,
+  ) {
+    return await this.bidSecurityService.createBidResponseItemFinancialResponse(
+      payload,
+      req,
+    );
+  }
+
+  @Post('get-item-response-sor')
   async getBidResponseItemSorByKey(
     @Body() payload: GetBidResponseItemDto,
     @Req() req?: any,
@@ -34,7 +48,7 @@ export class BidResponseItemController {
     );
   }
 
-  @Post('get-bid-response-item')
+  @Post('get-item-response-by-key')
   async getBidResponseItemByKey(
     @Body() payload: GetBidResponseItemDto,
     @Req() req?: any,
