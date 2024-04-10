@@ -16,4 +16,13 @@ export class BdsBidSecurityService extends ExtraCrudService<BdsBidSecurity> {
   async findOne(lotId: string, req?: any): Promise<BdsBidSecurity | undefined> {
     return await this.bidSecurityRepository.findOneBy({ lotId });
   }
+
+  async update(id: string, itemData: any) {
+    const item = await this.bidSecurityRepository.findOneBy({ lotId: id });
+    await this.bidSecurityRepository.update(item.id, itemData);
+    return {
+      ...item,
+      ...itemData,
+    };
+  }
 }

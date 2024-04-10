@@ -312,6 +312,13 @@ export class BidResponseService extends ExtraCrudService<BidResponseLot> {
       ...(bidRegistrationDetail?.technicalItems ?? []),
     ];
 
+    if (itemId.length < 1) {
+      return {
+        total: 0,
+        items: [],
+      };
+    }
+
     const itemRepository = manager.getRepository(Item);
 
     query.where.push([
@@ -322,12 +329,12 @@ export class BidResponseService extends ExtraCrudService<BidResponseLot> {
       },
     ]);
 
+    const response = new DataResponseFormat<Item>();
     const dataQuery = QueryConstructor.constructQuery<Item>(
       itemRepository,
       query,
     );
 
-    const response = new DataResponseFormat<Item>();
     if (query.count) {
       response.total = await dataQuery.getCount();
     } else {

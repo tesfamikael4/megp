@@ -16,4 +16,13 @@ export class BdsGeneralService extends ExtraCrudService<BdsGeneral> {
   async findOne(tenderId: string, req?: any): Promise<BdsGeneral | undefined> {
     return await this.bdsGeneralRepository.findOneBy({ tenderId });
   }
+
+  async update(id: string, itemData: any) {
+    const item = await this.bdsGeneralRepository.findOneBy({ tenderId: id });
+    await this.bdsGeneralRepository.update(item.id, itemData);
+    return {
+      ...item,
+      ...itemData,
+    };
+  }
 }

@@ -19,4 +19,13 @@ export class BdsEvaluationService extends ExtraCrudService<BdsEvaluation> {
   ): Promise<BdsEvaluation | undefined> {
     return await this.bdsEvaluationRepository.findOneBy({ tenderId });
   }
+
+  async update(id: string, itemData: any) {
+    const item = await this.bdsEvaluationRepository.findOneBy({ tenderId: id });
+    await this.bdsEvaluationRepository.update(item.id, itemData);
+    return {
+      ...item,
+      ...itemData,
+    };
+  }
 }
