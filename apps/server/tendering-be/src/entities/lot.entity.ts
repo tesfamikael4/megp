@@ -86,6 +86,6 @@ export class Lot extends Audit {
   )
   bidOpeningCheckLists: BidOpeningChecklist[];
 
-  @OneToOne(() => Team, (team) => team.lots)
-  team: Team;
+  @OneToMany(() => Team, (team) => team.lots)
+  team: Team[];
 }
