@@ -21,6 +21,12 @@ import { BidRegistration } from 'src/entities/bid-registration.entity';
 import { BidResponseTender } from 'src/entities/bid-response-tender.entity';
 import { BidResponseItem } from 'src/entities/bid-response-item.entity';
 import { Item } from 'src/entities';
+import {
+  CollectionQuery,
+  FilterOperators,
+  QueryConstructor,
+} from 'src/shared/collection-query';
+import { DataResponseFormat } from 'src/shared/api-data';
 
 @Injectable()
 export class BidResponseService extends ExtraCrudService<BidResponseLot> {
@@ -283,7 +289,7 @@ export class BidResponseService extends ExtraCrudService<BidResponseLot> {
     return decryptedValue;
   }
 
-  async getItems(lotId: string, req?: any) {
+  async getItems(lotId: string, query: CollectionQuery, req?: any) {
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
     const bidderId = req.user.organization.id;
 
@@ -306,11 +312,30 @@ export class BidResponseService extends ExtraCrudService<BidResponseLot> {
       ...(bidRegistrationDetail?.technicalItems ?? []),
     ];
 
-    const items = await manager.getRepository(Item).findBy({
-      id: In(itemId),
-    });
+    const itemRepository = manager.getRepository(Item);
 
-    return items;
+    query.where.push([
+      {
+        column: 'id',
+        value: itemId,
+        operator: FilterOperators.In,
+      },
+    ]);
+
+    const dataQuery = QueryConstructor.constructQuery<Item>(
+      itemRepository,
+      query,
+    );
+
+    const response = new DataResponseFormat<Item>();
+    if (query.count) {
+      response.total = await dataQuery.getCount();
+    } else {
+      const [result, total] = await dataQuery.getManyAndCount();
+      response.total = total;
+      response.items = result;
+    }
+    return response;
   }
 
   async checkPassword(itemData: CheckPasswordDto, req?: any) {

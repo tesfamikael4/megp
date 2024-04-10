@@ -42,9 +42,21 @@ export class BidResponseController extends ExtraCrudController<BidResponseLot>(
     super(bidSecurityService);
   }
 
-  @Get('item-response/:lotId')
-  async getItems(@Param('lotId') lotId: string, @Req() req?: any) {
-    return this.bidSecurityService.getItems(lotId, req);
+  @Get('items/:lotId')
+  @ApiQuery({
+    name: 'q',
+    type: String,
+    description: 'Collection Query Parameter. Optional',
+    required: false,
+  })
+  async getItems(
+    @Param('lotId') lotId: string,
+    @Query('q') q: string,
+    @Req() req?: any,
+  ) {
+    const query = decodeCollectionQuery(q);
+
+    return this.bidSecurityService.getItems(lotId, query, req);
   }
 
   @Post('create-bid-response-tender')
