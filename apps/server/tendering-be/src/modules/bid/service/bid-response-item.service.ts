@@ -27,7 +27,7 @@ export class BidResponseItemService {
     private readonly bidSecurityRepository: Repository<BidResponseItem>,
     private readonly encryptionHelperService: EncryptionHelperService,
     @Inject(REQUEST) private request: Request,
-  ) {}
+  ) { }
 
   async createBidResponseItemTechnicalResponse(
     inputDto: CreateBidResponseItemDto,
@@ -119,7 +119,11 @@ export class BidResponseItemService {
     }
 
     const items = [];
+    let rate = 0;
     for (const value of inputDto.values) {
+      const itemRate = this.calculateItemRate(value.value)?.rate ?? 0;
+      rate += itemRate;
+
       const encryptedValue = this.encryptionHelperService.encryptData(
         JSON.stringify(value.value),
         inputDto.password,
@@ -138,6 +142,23 @@ export class BidResponseItemService {
 
       items.push(item);
     }
+
+    const rateEncryptedValue = this.encryptionHelperService.encryptData(
+      JSON.stringify({
+        rate: rate,
+      }),
+      inputDto.password,
+      bidRegistrationDetail.bidRegistration.salt,
+    );
+    const rateItem = manager.getRepository(BidResponseItem).create(inputDto);
+    rateItem.bidRegistrationDetailId = bidRegistrationDetail.id;
+    rateItem.value = rateEncryptedValue;
+    rateItem.key = 'Rate';
+
+    await manager
+      .getRepository(BidResponseItem)
+      .upsert(rateItem, ['bidRegistrationDetailId', 'itemId', 'key']);
+
     return items;
   }
 
@@ -237,12 +258,35 @@ export class BidResponseItemService {
 
       const responses: any[] = JSON.parse(value);
       items = items.map((item) => {
-        let i = { ...item };
-        i = { ...i, ...responses.find((res) => res.id === i.id) };
+        let res = { ...item };
+        res = { ...res, ...responses.find((res) => res.id === res.id) };
 
-        return i;
+        return res;
       });
     }
     return items;
+  }
+
+  calculateItemRate(items: any[], code = null) {
+    const children = items.filter((item) => item.parentCode === code);
+
+    if (children.length === 0) {
+      return null;
+    }
+    return children.map((child) => {
+      const childWithChildren = {
+        ...child,
+        children: this.calculateItemRate(items, child.code),
+      };
+
+      if (childWithChildren.children) {
+        childWithChildren.rate = childWithChildren.children.reduce(
+          (acc: any, curr: any) => acc + curr.rate,
+          0,
+        );
+      }
+
+      return childWithChildren;
+    });
   }
 }
