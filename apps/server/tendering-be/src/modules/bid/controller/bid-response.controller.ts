@@ -26,20 +26,16 @@ import { JwtGuard } from 'src/shared/authorization';
 import { VendorGuard } from 'src/shared/authorization/guards/vendor.guard';
 import { decodeCollectionQuery } from 'src/shared/collection-query';
 
-const options: ExtraCrudOptions = {
-  entityIdName: 'tenderId',
-  createDto: CreateBidResponseDto,
-};
-
 @ApiBearerAuth()
 @Controller('bid-responses')
 @ApiTags('Bid Response Controller')
 @UseGuards(JwtGuard, VendorGuard())
-export class BidResponseController extends ExtraCrudController<BidResponseLot>(
-  options,
-) {
-  constructor(private readonly bidSecurityService: BidResponseService) {
-    super(bidSecurityService);
+export class BidResponseController {
+  constructor(private readonly bidSecurityService: BidResponseService) {}
+
+  @Post()
+  async create(@Body() itemData: CreateBidResponseDto, @Req() req?: any) {
+    return this.bidSecurityService.create(itemData, req);
   }
 
   @Get('items/:lotId')
@@ -59,22 +55,6 @@ export class BidResponseController extends ExtraCrudController<BidResponseLot>(
     return this.bidSecurityService.getItems(lotId, query, req);
   }
 
-  @Post('create-bid-response-tender')
-  async createBidResponseTender(
-    @Body() payload: CreateBidResponseTenderDto,
-    @Req() req?: any,
-  ) {
-    return await this.bidSecurityService.createBidResponseTender(payload, req);
-  }
-
-  @Post('create-bid-response-item')
-  async createBidResponseItem(
-    @Body() payload: CreateBidResponseItemDto,
-    @Req() req?: any,
-  ) {
-    return await this.bidSecurityService.createBidResponseItem(payload, req);
-  }
-
   @Post('check-password')
   async checkPassword(@Body() payload: CheckPasswordDto, @Req() req?: any) {
     return await this.bidSecurityService.checkPassword(payload, req);
@@ -86,24 +66,5 @@ export class BidResponseController extends ExtraCrudController<BidResponseLot>(
     @Req() req?: any,
   ) {
     return await this.bidSecurityService.getBidResponseByKey(payload, req);
-  }
-
-  @Post('get-bid-response-tender')
-  async getBidResponseTenderByKey(
-    @Body() payload: GetBidResponseTenderDto,
-    @Req() req?: any,
-  ) {
-    return await this.bidSecurityService.getBidResponseTenderByKey(
-      payload,
-      req,
-    );
-  }
-
-  @Post('get-bid-response-item')
-  async getBidResponseItemByKey(
-    @Body() payload: GetBidResponseItemDto,
-    @Req() req?: any,
-  ) {
-    return await this.bidSecurityService.getBidResponseItemByKey(payload, req);
   }
 }

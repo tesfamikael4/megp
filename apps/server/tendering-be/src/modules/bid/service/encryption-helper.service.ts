@@ -1,5 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import * as crypto from 'crypto';
+import { BidRegistration } from 'src/entities/bid-registration.entity';
+import { DocumentTypeEnum } from 'src/shared/enums';
 
 @Injectable()
 export class EncryptionHelperService {
@@ -40,5 +42,41 @@ export class EncryptionHelperService {
 
       throw error;
     }
+  }
+
+  checkPasswordValidity(
+    bidRegistration: BidRegistration,
+    documentType: string,
+    password: string,
+  ) {
+    const data = bidRegistration.bidderId + bidRegistration.id;
+
+    if (documentType == DocumentTypeEnum.RESPONSE) {
+      const decrypted = this.decryptedData(
+        bidRegistration.response,
+        password,
+        bidRegistration.salt,
+      );
+
+      return data == decrypted;
+    } else if (documentType == DocumentTypeEnum.FINANCIAL_RESPONSE) {
+      const decrypted = this.decryptedData(
+        bidRegistration.financialResponse,
+        password,
+        bidRegistration.salt,
+      );
+
+      return data == decrypted;
+    } else if (documentType == DocumentTypeEnum.TECHNICAL_RESPONSE) {
+      const decrypted = this.decryptedData(
+        bidRegistration.technicalResponse,
+        password,
+        bidRegistration.salt,
+      );
+
+      return data == decrypted;
+    }
+
+    throw new BadRequestException('invalid_document_type');
   }
 }

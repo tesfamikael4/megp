@@ -41,7 +41,7 @@ export class CreateBidResponseItemDto {
   itemId: string;
 
   @ApiProperty({ default: DocumentTypeEnum.RESPONSE })
-  @IsUUID()
+  @IsString()
   @IsNotEmpty()
   documentType: string;
 
