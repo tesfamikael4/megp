@@ -13,6 +13,7 @@ import {
   CreateBidRegistrationStatusDto,
 } from '../dto/bid-registration.dto';
 import {
+  AwardTypeEnum,
   BidRegistrationDetailStatusEnum,
   BidRegistrationStatusEnum,
   EnvelopTypeEnum,
@@ -45,7 +46,10 @@ export class BidRegistrationService extends ExtraCrudService<BidRegistration> {
         id: itemData.tenderId,
       },
       relations: {
-        lots: true,
+        lots: {
+          items: true,
+        },
+        bdsEvaluation: true,
         tenderParticipationFee: true,
         bdsSubmission: true,
       },
@@ -128,6 +132,12 @@ export class BidRegistrationService extends ExtraCrudService<BidRegistration> {
           bidRegistrationId: bidRegistration.id,
           lotId: lot.id,
         });
+      if (tender.bdsEvaluation.awardType == AwardTypeEnum.LOT_BASED) {
+        const itemId = lot?.items?.map((x) => x.id);
+
+        bidRegistrationDetail.financialItems = itemId;
+        bidRegistrationDetail.financialItems = itemId;
+      }
 
       bidRegistrationDetails.push(bidRegistrationDetail);
     }

@@ -1,5 +1,14 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
+import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { BidResponseLot } from 'src/entities/bid-response-lot.entity';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
 import { BidResponseService } from '../service/bid-response.service';
@@ -15,6 +24,7 @@ import {
 } from '../dto/bid-response.dto';
 import { JwtGuard } from 'src/shared/authorization';
 import { VendorGuard } from 'src/shared/authorization/guards/vendor.guard';
+import { decodeCollectionQuery } from 'src/shared/collection-query';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'tenderId',
@@ -30,6 +40,11 @@ export class BidResponseController extends ExtraCrudController<BidResponseLot>(
 ) {
   constructor(private readonly bidSecurityService: BidResponseService) {
     super(bidSecurityService);
+  }
+
+  @Get('item-response/:lotId')
+  async getItems(@Param('lotId') lotId: string, @Req() req?: any) {
+    return this.bidSecurityService.getItems(lotId, req);
   }
 
   @Post('create-bid-response-tender')

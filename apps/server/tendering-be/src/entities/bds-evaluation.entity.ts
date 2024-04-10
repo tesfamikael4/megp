@@ -7,6 +7,11 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Tender } from './tender.entity';
+import {
+  AwardTypeEnum,
+  EvaluationMethodEnum,
+  SelectionMethodEnum,
+} from 'src/shared/enums';
 
 @Entity({ name: 'bds_evaluations' })
 export class BdsEvaluation extends Audit {
@@ -23,13 +28,13 @@ export class BdsEvaluation extends Audit {
   @Column({ type: 'simple-array' })
   bidEvaluationCurrency: string[];
 
-  @Column()
+  @Column({ type: 'enum', enum: EvaluationMethodEnum })
   evaluationMethod: string;
 
-  @Column()
+  @Column({ type: 'enum', enum: SelectionMethodEnum })
   selectionMethod: string;
 
-  @Column()
+  @Column({ type: 'enum', enum: AwardTypeEnum })
   awardType: string;
 
   @Column()

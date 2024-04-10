@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { BidResponseLot } from 'src/entities/bid-response-lot.entity';
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 import { ExtraCrudService } from 'src/shared/service';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager, In, Repository } from 'typeorm';
 import {
   CheckPasswordDto,
   CreateBidResponseDto,
@@ -20,6 +20,7 @@ import { EncryptionHelperService } from './encryption-helper.service';
 import { BidRegistration } from 'src/entities/bid-registration.entity';
 import { BidResponseTender } from 'src/entities/bid-response-tender.entity';
 import { BidResponseItem } from 'src/entities/bid-response-item.entity';
+import { Item } from 'src/entities';
 
 @Injectable()
 export class BidResponseService extends ExtraCrudService<BidResponseLot> {
@@ -280,6 +281,36 @@ export class BidResponseService extends ExtraCrudService<BidResponseLot> {
     );
 
     return decryptedValue;
+  }
+
+  async getItems(lotId: string, req?: any) {
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+    const bidderId = req.user.organization.id;
+
+    const bidRegistrationDetail = await manager
+      .getRepository(BidRegistrationDetail)
+      .findOne({
+        where: {
+          lotId: lotId,
+          bidRegistration: {
+            bidderId: bidderId,
+          },
+        },
+      });
+    if (!bidRegistrationDetail) {
+      throw new BadRequestException('bid_registration_not_found');
+    }
+
+    const itemId = [
+      ...(bidRegistrationDetail?.financialItems ?? []),
+      ...(bidRegistrationDetail?.technicalItems ?? []),
+    ];
+
+    const items = await manager.getRepository(Item).findBy({
+      id: In(itemId),
+    });
+
+    return items;
   }
 
   async checkPassword(itemData: CheckPasswordDto, req?: any) {
