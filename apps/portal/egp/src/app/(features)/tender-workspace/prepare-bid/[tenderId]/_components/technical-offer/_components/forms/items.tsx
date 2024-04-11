@@ -1,20 +1,81 @@
 'use client';
-import { ExpandableTable, Section } from '@megp/core-fe';
-import { LoadingOverlay, ActionIcon, Button, Box } from '@mantine/core';
-import { IconChevronRight, IconDeviceFloppy } from '@tabler/icons-react';
+import { ExpandableTable, Section, notify } from '@megp/core-fe';
+import { LoadingOverlay, Button, Box } from '@mantine/core';
+import { IconDeviceFloppy } from '@tabler/icons-react';
 
-import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { CollectionQuery } from '@megp/entity';
-import { useLazyItemsQuery } from '@/app/(features)/vendor/_api/item.api';
 import TechnicalRequirement from './technical-requirement/technical-requirement';
 import { SorType } from '@/models/tender/lot/item/technical-requirement.model';
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
+import { useLazyItemsQuery } from '@/app/(features)/tender-workspace/_api/item.api';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm, FormProvider } from 'react-hook-form';
+import { ZodType, z } from 'zod';
+import { PrepareBidContext } from '@/contexts/prepare-bid.context';
+import { Values } from '@/models/tender/bid-response/item-bid-response';
+import { useSaveTechnicalBidResponseMutation } from '@/app/(features)/tender-workspace/_api/item-bid-response.api';
 
 export default function ItemList() {
-  const router = useRouter();
-  const { id } = useParams();
   const searchParams = useSearchParams();
   const [trigger, { data, isFetching }] = useLazyItemsQuery();
+  const password = useContext(PrepareBidContext);
+  const [saveChanges, { isLoading: isSaving }] =
+    useSaveTechnicalBidResponseMutation();
+  const handleSaveChanges = (data) => {
+    const keys = Object.keys(data);
+    let toApi: Values[] = [];
+    keys.forEach((key) => {
+      toApi = [...toApi, { key: key, value: data[key] }];
+    });
+    saveChanges({
+      lotId: searchParams.get('lot'),
+      itemId: data.itemId,
+      documentType: 'RESPONSE',
+      values: toApi,
+      password: password?.password,
+    })
+      .unwrap()
+      .then(() => {
+        notify('Success', 'tender created successfully');
+      })
+      .catch(() => {
+        notify('Error', 'Already Registered');
+      });
+  };
+  const sorTypes = () => {
+    const sorType = {};
+    Object.values(SorType).forEach((item: string) => {
+      sorType[item] = z.array(technicalComplianceSchema);
+    });
+    return sorType;
+  };
+  const technicalComplianceSchema = z.object({
+    category: z.string().optional(),
+    formLink: z.string().optional(),
+    id: z.string().optional(),
+    itemId: z.string().optional(),
+    requirement: z.string().optional(),
+    requirementCondition: z.string().optional(),
+    requirementType: z.string().optional(),
+    sorType: z.string().optional(),
+    compliance: z.enum(['Comply', 'Not Comply'], {
+      required_error: 'this field is required',
+    }),
+    offeredSpecification: z
+      .string()
+      .min(1, { message: 'this field is required' }),
+    remark: z.string().optional(),
+  });
+  const technicalRequirement: ZodType<any> = z.object({
+    specification: z.array(technicalComplianceSchema),
+    itemId: z.string().min(1, { message: 'this field is required' }),
+  });
+
+  const methods = useForm({
+    resolver: zodResolver(technicalRequirement),
+  });
+
   const config = {
     columns: [
       { accessor: 'name', title: 'Name', width: 300 },
@@ -31,50 +92,37 @@ export default function ItemList() {
     isSearchable: true,
     isLoading: isFetching,
     primaryColumn: 'name',
-    expandedRowContent: (qualification) => {
+    expandedRowContent: (item) => {
       return (
         <>
-          <div className="my-4">
-            <TechnicalRequirement
-              item={qualification}
-              type={SorType.SPECIFICATION}
-            />
-          </div>
-          <div className="my-4">
-            <TechnicalRequirement
-              item={qualification}
-              type={SorType.PERSONAL}
-            />
-          </div>
+          <FormProvider {...methods}>
+            <div className="my-4">
+              <TechnicalRequirement item={item} type={SorType.SPECIFICATION} />
+            </div>
+            <div className="my-4">
+              <TechnicalRequirement item={item} type={SorType.PERSONAL} />
+            </div>
 
-          <div className="my-4">
-            <TechnicalRequirement
-              item={qualification}
-              type={SorType.DELIVERY}
-            />
-          </div>
+            <div className="my-4">
+              <TechnicalRequirement item={item} type={SorType.DELIVERY} />
+            </div>
 
-          <div className="my-4">
-            <TechnicalRequirement
-              item={qualification}
-              type={SorType.PACKAGING}
-            />
-          </div>
+            <div className="my-4">
+              <TechnicalRequirement item={item} type={SorType.PACKAGING} />
+            </div>
 
-          <div className="my-4">
-            <TechnicalRequirement
-              item={qualification}
-              type={SorType.WARRANTY}
-            />
-          </div>
-          <div className="my-4">
-            <TechnicalRequirement
-              item={qualification}
-              type={SorType.INCIDENTAL}
-            />
-          </div>
+            <div className="my-4">
+              <TechnicalRequirement item={item} type={SorType.WARRANTY} />
+            </div>
+            <div className="my-4">
+              <TechnicalRequirement item={item} type={SorType.INCIDENTAL} />
+            </div>
+          </FormProvider>
           <Box className="flex justify-end">
-            <Button>
+            <Button
+              loading={isSaving}
+              onClick={methods.handleSubmit(handleSaveChanges)}
+            >
               <IconDeviceFloppy size={14} /> Save Changes
             </Button>
           </Box>
@@ -86,12 +134,6 @@ export default function ItemList() {
   const onRequestChange = (request: CollectionQuery) => {
     trigger({ lotId: searchParams.get('lot') ?? '', collectionQuery: request });
   };
-  useEffect(() => {
-    trigger({
-      lotId: searchParams.get('lot') ?? '',
-      collectionQuery: { skip: 0, top: 10 },
-    });
-  }, [searchParams, trigger]);
 
   return (
     <Section

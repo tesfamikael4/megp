@@ -7,22 +7,24 @@ import {
   TextInput,
   Center,
   Box,
-  Accordion,
 } from '@mantine/core';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   useAddAdditionalServiceMutation,
   useGetInvoiceByUserIdQuery,
-  useLazyUploadPaymentSlipQuery,
 } from '../../_api/query';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { paymentSlipUploadSchema } from '@/shared/schema/paymentSlipUploadSchema';
 import { useRouter } from 'next/navigation';
-import { useUploadPaymentReceiptUpgradeMutation } from '@/store/api/vendor-upgrade/api';
 
 import PaymentMethod from '../../new/_components/payment/payment-method';
 import FileUploader from '../../../_components/uploader';
+import InvoiceTemplate from '../../../_components/dynamicPrintComponent/invoice-sm';
+const VENDOR_URL = process.env.NEXT_PUBLIC_VENDOR_API ?? '/vendors/api';
+
+function Page() {
+  const router = useRouter();
   const [invoiceSlipImageUrl, setInvoiceSlipImageUrl] = useState<string | null>(
     null,
   );

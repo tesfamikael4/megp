@@ -23,7 +23,7 @@ const TenderCard = ({
 }: TenderCardProps) => {
   const router = useRouter();
   const handleNavigation = () => {
-    router.push(`/vendor/tender/${tender?.id}`);
+    router.push(`/procurement-notice/${tender?.id}`);
   };
   return (
     <>
