@@ -1,3 +1,4 @@
+import { GetItemBidResponse } from '@/models/tender/bid-response/item-bid-response';
 import { baseQuery } from '@/store/base-query';
 import { CollectionQuery, encodeCollectionQuery } from '@megp/entity';
 import { createApi } from '@reduxjs/toolkit/query/react';
@@ -22,19 +23,13 @@ export const getItemsApi = createApi({
       },
       providesTags: ['items'],
     }),
-    technicalRequirements: builder.query<any, any>({
-      query: (args: { itemId: string; collectionQuery: CollectionQuery }) => {
-        let q = '';
-        if (args.collectionQuery) {
-          const query = encodeCollectionQuery(args.collectionQuery);
-          q = `?q=${query}`;
-        }
-        return {
-          url: `/sor-technical-requirements/list/${args.itemId}${q}`,
-          method: 'GET',
-        };
-      },
-      providesTags: ['items'],
+    technicalRequirements: builder.mutation<any, any>({
+      query: (data: GetItemBidResponse) => ({
+        url: `bid-item-responses/get-item-response-sor`,
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['items'],
     }),
     getBillOfMaterial: builder.query<any, any>({
       query: (args: { itemId: string; collectionQuery: CollectionQuery }) => {
@@ -105,7 +100,7 @@ export const getItemsApi = createApi({
 
 export const {
   useLazyItemsQuery,
-  useLazyTechnicalRequirementsQuery,
+  useTechnicalRequirementsMutation,
   useGetBillOfMaterialQuery,
   useLazyGetMaterialQuery,
   useLazyGetLaborQuery,

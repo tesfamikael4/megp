@@ -1,22 +1,42 @@
 'use client';
 import { ExpandableTable, Section, logger } from '@megp/core-fe';
-import {
-  SorType,
-  TechnicalRequirement,
-} from '@/models/tender/lot/item/technical-requirement.model';
+import { SorType } from '@/models/tender/lot/item/technical-requirement.model';
 import { CollectionQuery } from '@megp/entity';
 import { Item } from '@/models/tender/lot/item';
 import { useLazyTechnicalRequirementsQuery } from '@/app/(features)/vendor/_api/item.api';
 import { Select, Textarea } from '@mantine/core';
+import { Controller } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
+import { useContext, useEffect } from 'react';
+import { useTechnicalRequirementsMutation } from '@/app/(features)/tender-workspace/_api/item.api';
+import { useSearchParams } from 'next/navigation';
+import { PrepareBidContext } from '@/contexts/prepare-bid.context';
 
 export default function TechnicalRequirement({
   item,
   type = SorType.SPECIFICATION,
-}: {
+}: Readonly<{
   item: Item;
   type?: SorType;
-}) {
-  const [trigger, { data, isFetching }] = useLazyTechnicalRequirementsQuery();
+}>) {
+  const [trigger, { data, isLoading }] = useTechnicalRequirementsMutation();
+  const searchParams = useSearchParams();
+  const prepareBidContext = useContext(PrepareBidContext);
+  const {
+    formState: { errors },
+    reset,
+    register,
+    control,
+  } = useFormContext();
+  useEffect(() => {
+    if (data) {
+      logger.log(data);
+      reset({
+        [type]: data,
+        itemId: item.id,
+      });
+    }
+  }, [data, reset, type]);
   const config = {
     columns: [
       { accessor: 'category', title: 'Category', width: 300 },
@@ -28,12 +48,26 @@ export default function TechnicalRequirement({
       {
         accessor: 'Compliance',
         header: 'Action',
-        render: (record) => (
+        render: (record, index) => (
           <>
-            <Select
-              data={['Comply', 'Not Comply']}
-              className="w-full"
-              withAsterisk
+            <Controller
+              name={`${type}.${index}.compliance`}
+              control={control}
+              render={({ field: { name, value, onChange } }) => (
+                <Select
+                  placeholder="Compliance"
+                  value={value}
+                  data={['Comply', 'Not Comply']}
+                  onChange={(d) => onChange(d)}
+                  error={
+                    errors[type] && (errors[type] ?? '')[`${index}`]
+                      ? (errors[`${type}`] ?? '')[`${index}`][
+                          'compliance'
+                        ]?.message?.toString()
+                      : ''
+                  }
+                />
+              )}
             />
           </>
         ),
@@ -42,35 +76,38 @@ export default function TechnicalRequirement({
       {
         accessor: 'Offered Specification',
         header: 'Action',
-        render: (record) => (
+        render: (record, index) => (
           <>
-            <Textarea withAsterisk autosize minRows={2} />
+            <Textarea
+              autosize
+              minRows={2}
+              error={
+                errors[type] && (errors[type] ?? '')[`${index}`]
+                  ? (errors[`${type}`] ?? '')[`${index}`][
+                      'offeredSpecification'
+                    ]?.message?.toString()
+                  : ''
+              }
+              {...register(`${type}.${index}.offeredSpecification`)}
+            />
           </>
         ),
         width: 300,
       },
     ],
-    isExpandable: true,
-    isSearchable: true,
-    isLoading: isFetching,
+    isExpandable: false,
+    isSearchable: false,
+    isLoading: isLoading,
     primaryColumn: 'name',
   };
 
   const onRequestChange = (request: CollectionQuery) => {
     trigger({
+      lotId: searchParams.get('lot'),
       itemId: item.id,
-      collectionQuery: {
-        ...request,
-        where: [
-          [
-            {
-              column: 'sorType',
-              value: type,
-              operator: '=',
-            },
-          ],
-        ],
-      },
+      documentType: 'RESPONSE',
+      key: type,
+      password: prepareBidContext?.password,
     });
   };
 
@@ -83,8 +120,8 @@ export default function TechnicalRequirement({
     >
       <ExpandableTable
         config={config}
-        data={data?.items ?? []}
-        total={data?.total ?? 0}
+        data={data ?? []}
+        total={data?.length ?? 0}
         onRequestChange={onRequestChange}
       />
     </Section>
