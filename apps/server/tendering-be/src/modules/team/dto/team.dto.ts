@@ -7,7 +7,7 @@ export class CreateTeamDto {
   @ApiProperty()
   @IsUUID()
   @IsNotEmpty()
-  lotId: string;
+  tenderId: string;
 
   @ApiProperty({ enum: TeamRoleEnum })
   @IsEnum(TeamRoleEnum)
