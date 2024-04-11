@@ -20,6 +20,7 @@ import { BidRegistrationDetail } from './bid-registration-detail.entity';
 import { BidOpeningChecklist } from './bid-opening-checklist.entity';
 import { Team } from './team.entity';
 import { MilestonesTracker } from './milestones-tracker.entity';
+import { BidGuarantee } from './bid-guarantee.entity';
 
 @Entity({ name: 'lots' })
 export class Lot extends Audit {
@@ -95,4 +96,7 @@ export class Lot extends Audit {
     (milestonesTracker) => milestonesTracker.lot,
   )
   milestonesTracker: MilestonesTracker;
+
+  @OneToMany(() => BidGuarantee, (bidGuarantee) => bidGuarantee.lot)
+  bidGuarantee: BidGuarantee[];
 }

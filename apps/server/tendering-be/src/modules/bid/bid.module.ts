@@ -18,6 +18,10 @@ import { BidResponseItemController } from './controller/bid-response-item.contro
 import { BidResponseTenderController } from './controller/bid-response-tender.controller';
 import { BidResponseItemService } from './service/bid-response-item.service';
 import { BidResponseTenderService } from './service/bid-response-tender.service';
+import { BidGuaranteeController } from './controller/bid-guarantee.controller';
+import { BidGuaranteeService } from './service/bid-guarantee.service';
+import { BidGuarantee } from 'src/entities/bid-guarantee.entity';
+import { Lot } from 'src/entities';
 
 @Module({
   imports: [
@@ -28,6 +32,8 @@ import { BidResponseTenderService } from './service/bid-response-tender.service'
       BidResponseLot,
       BidResponseTender,
       BidResponseItem,
+      Lot,
+      BidGuarantee,
     ]),
     AuthorizationModule,
   ],
@@ -37,6 +43,7 @@ import { BidResponseTenderService } from './service/bid-response-tender.service'
     BidResponseController,
     BidResponseItemController,
     BidResponseTenderController,
+    BidGuaranteeController,
   ],
   providers: [
     BidBookmarkService,
@@ -45,6 +52,7 @@ import { BidResponseTenderService } from './service/bid-response-tender.service'
     EncryptionHelperService,
     BidResponseItemService,
     BidResponseTenderService,
+    BidGuaranteeService,
   ],
   exports: [BidRegistrationService],
 })
