@@ -53,7 +53,7 @@ export function ExtraCrudController<TEntity extends ObjectLiteral>(
       @Req() req?: any,
     ): Promise<DataResponseFormat<TEntity>> {
       const query = decodeCollectionQuery(q);
-      return this.service.findAll(id, query, options, req);
+      return this.service.findAll(id, query, options);
     }
 
     @Get(':id')
@@ -61,7 +61,7 @@ export function ExtraCrudController<TEntity extends ObjectLiteral>(
       @Param('id') id: string,
       @Req() req?: any,
     ): Promise<TEntity | undefined> {
-      return this.service.findOne(id, req);
+      return this.service.findOne(id);
     }
 
     @Put(':id')
@@ -77,27 +77,6 @@ export function ExtraCrudController<TEntity extends ObjectLiteral>(
     @Delete(':id')
     async softDelete(@Param('id') id: string, @Req() req?: any): Promise<void> {
       return this.service.softDelete(id);
-    }
-
-    @Patch('restore/:id')
-    async restore(@Param('id') id: string, @Req() req?: any): Promise<void> {
-      return this.service.restore(id, req);
-    }
-
-    @Get('list/archived/items/:id')
-    @ApiQuery({
-      name: 'q',
-      type: String,
-      description: 'Collection Query Parameter. Optional',
-      required: false,
-    })
-    async findAllArchived(
-      @Param('id') id: string,
-      @Query('q') q?: string,
-      @Req() req?: any,
-    ): Promise<DataResponseFormat<TEntity>> {
-      const query = decodeCollectionQuery(q);
-      return this.service.findAllArchived(id, query, options, req);
     }
   }
 
