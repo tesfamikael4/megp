@@ -38,60 +38,21 @@ export class EntityCrudService<T extends ObjectLiteral> {
   }
 
   async update(id: string, itemData: any): Promise<T | undefined> {
-    await this.findOneOrFail(id);
-    await this.repository.update(id, itemData);
-    return this.findOne(id);
+    const item = await this.findOneOrFail(id);
+    await this.repository.update(item.id, itemData);
+    return {
+      ...item,
+      ...itemData,
+    };
   }
 
   async softDelete(id: string, req?: any): Promise<void> {
     const item = await this.findOneOrFail(id);
-    await this.repository.softRemove(item);
-  }
-
-  async restore(id: string, req?: any): Promise<void> {
-    await this.findOneOrFailWithDeleted(id);
-    await this.repository.restore(id);
-  }
-
-  async findAllArchived(query: CollectionQuery, req?: any) {
-    query.where.push([
-      { column: 'deletedAt', value: '', operator: 'IsNotNull' },
-    ]);
-
-    const dataQuery = QueryConstructor.constructQuery<T>(
-      this.repository,
-      query,
-    );
-
-    dataQuery.withDeleted();
-
-    const response = new DataResponseFormat<T>();
-    if (query.count) {
-      response.total = await dataQuery.getCount();
-    } else {
-      const [result, total] = await dataQuery.getManyAndCount();
-      response.total = total;
-      response.items = result;
-    }
-    return response;
+    await this.repository.remove(item);
   }
 
   private async findOneOrFail(id: any): Promise<T> {
-    const item = await this.findOne(id);
-    if (!item) {
-      throw new NotFoundException(`not_found`);
-    }
-    return item;
-  }
-
-  private async findOneOrFailWithDeleted(id: any): Promise<T> {
-    const item = await this.repository.findOne({
-      where: {
-        id,
-      },
-      withDeleted: true,
-    });
-
+    const item = await this.repository.findOne(id);
     if (!item) {
       throw new NotFoundException(`not_found`);
     }
