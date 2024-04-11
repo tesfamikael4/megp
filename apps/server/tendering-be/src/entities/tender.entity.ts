@@ -28,6 +28,7 @@ import { BidRegistration } from './bid-registration.entity';
 import { TenderPersonal } from './tender-personal.entity';
 import { Opening } from './opening.entity';
 import { BidOpeningChecklist } from './bid-opening-checklist.entity';
+import { Team } from './team.entity';
 
 @Entity({ name: 'tenders' })
 export class Tender extends Audit {
@@ -182,4 +183,7 @@ export class Tender extends Audit {
     (bidOpeningCheckList) => bidOpeningCheckList.tender,
   )
   bidOpeningCheckLists: BidOpeningChecklist[];
+
+  @OneToMany(() => Team, (team) => team.tender)
+  teams: Team[];
 }
