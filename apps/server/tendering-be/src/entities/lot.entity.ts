@@ -19,6 +19,7 @@ import { BdsBidSecurity } from './bds-bid-security.entity';
 import { BidRegistrationDetail } from './bid-registration-detail.entity';
 import { BidOpeningChecklist } from './bid-opening-checklist.entity';
 import { Team } from './team.entity';
+import { MilestonesTracker } from './milestones-tracker.entity';
 
 @Entity({ name: 'lots' })
 export class Lot extends Audit {
@@ -87,5 +88,11 @@ export class Lot extends Audit {
   bidOpeningCheckLists: BidOpeningChecklist[];
 
   @OneToMany(() => Team, (team) => team.lots)
-  team: Team[];
+  teams: Team[];
+
+  @OneToOne(
+    () => MilestonesTracker,
+    (milestonesTracker) => milestonesTracker.lot,
+  )
+  milestonesTracker: MilestonesTracker;
 }

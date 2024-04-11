@@ -1,5 +1,12 @@
 import { OrgAudit } from 'src/shared/entities';
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  OneToOne,
+} from 'typeorm';
+import { Lot } from './lot.entity';
 
 @Entity({ name: 'milestones_trackers' })
 export class MilestonesTracker extends OrgAudit {
@@ -9,20 +16,20 @@ export class MilestonesTracker extends OrgAudit {
   @Column('uuid')
   lotId: string;
 
-  // @ManyToOne(type => Lot, lot => lot.milestones)
-  // lot: Lot;
+  @OneToOne(() => Lot, (lot) => lot.milestonesTracker)
+  lot: Lot;
 
   @Column('text')
   milestoneType: string;
 
-  @Column('timestamp')
-  plannedStartDate: Date;
+  // @Column('timestamp')
+  // plannedStartDate: Date;
 
   @Column('timestamp', { nullable: true })
   actualStartDate: Date;
 
-  @Column('timestamp')
-  plannedEndDate: Date;
+  // @Column('timestamp')
+  // plannedEndDate: Date;
 
   @Column('timestamp', { nullable: true })
   actualEndDate: Date;

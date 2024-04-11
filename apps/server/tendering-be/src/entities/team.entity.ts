@@ -14,8 +14,9 @@ import { Opening } from './opening.entity';
 import { TeamMember } from './team-member.entity';
 import { EnvelopTypeEnum } from 'src/shared/enums';
 import { TeamRoleEnum } from 'src/shared/enums/team-type.enum';
+import { Tender } from './tender.entity';
 
-@Unique(['lotId', 'teamType'])
+@Unique(['tenderId', 'teamType'])
 @Entity({ name: 'teams' })
 export class Team extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
@@ -24,9 +25,16 @@ export class Team extends OrgAudit {
   @Column('uuid')
   lotId: string;
 
-  @ManyToOne(() => Lot, (lot) => lot.team)
+  @ManyToOne(() => Lot, (lot) => lot.teams)
   @JoinColumn({ name: 'lotId' })
   lots: Lot;
+
+  @Column('uuid')
+  tenderId: string;
+
+  @ManyToOne(() => Tender, (tender) => tender.teams)
+  @JoinColumn({ name: 'tenderId' })
+  tender: Tender;
 
   @OneToOne(() => Opening, (opening) => opening.team)
   opening: Opening;

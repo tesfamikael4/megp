@@ -87,7 +87,13 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
 
     const teamMember = await manager.getRepository(TeamMember).find({
       where: {
-        team: { lotId },
+        team: {
+          tender: {
+            lots: {
+              id: lotId,
+            },
+          },
+        },
       },
     });
     if (!teamMember) {
