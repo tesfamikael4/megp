@@ -16,7 +16,7 @@ import { EnvelopTypeEnum } from 'src/shared/enums';
 import { TeamRoleEnum } from 'src/shared/enums/team-type.enum';
 import { Tender } from './tender.entity';
 
-@Unique(['tenderId', 'teamType'])
+@Unique(['lotId', 'teamType'])
 @Entity({ name: 'teams' })
 export class Team extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')

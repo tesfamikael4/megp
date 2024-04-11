@@ -39,7 +39,7 @@ export class TeamService extends ExtraCrudService<Team> {
     tender.lots.forEach((element) => {
       teams.push({ ...itemData, lotId: element.id });
     });
-    const item = this.teamRepository.create(itemData);
+    const item = this.teamRepository.create(teams);
     await this.teamRepository.insert(item);
     return item;
   }
