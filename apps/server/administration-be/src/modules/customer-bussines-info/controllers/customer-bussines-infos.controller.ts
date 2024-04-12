@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
 import { CustomerBussinesInfoService } from '../services/customer-bussines-info.service';
 import {
   ApiExtraModels,
@@ -19,6 +19,7 @@ import {
   CreateCustomerBussinesInfoDto,
   UpdateCustomerBussinesInfoDto,
 } from '../dto/customer-business-info.dto';
+import { AllowAnonymous, ApiKeyGuard } from 'src/shared/authorization';
 
 const options: EntityCrudOptions = {
   createDto: CreateCustomerBussinesInfoDto,
@@ -45,6 +46,8 @@ export class CustomerBussinesInfosController extends EntityCrudController<Custom
   }
 
   @Get(':tin/:licenseNumber')
+  @AllowAnonymous()
+  @UseGuards(ApiKeyGuard)
   async getTraderInfoByTinAndTradeLicenseNumber(
     @Param() params: GetTraderInfoDto,
   ) {
@@ -54,6 +57,8 @@ export class CustomerBussinesInfosController extends EntityCrudController<Custom
     );
   }
   @Get(':registration_number')
+  @AllowAnonymous()
+  @UseGuards(ApiKeyGuard)
   @ApiParam({ name: 'registration_number', type: 'string', required: true })
   @ApiResponse({
     status: 200,
