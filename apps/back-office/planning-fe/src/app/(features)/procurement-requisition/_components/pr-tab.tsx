@@ -14,19 +14,21 @@ import {
   Flex,
   Group,
   LoadingOverlay,
+  Select,
   Text,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import { notify } from '@megp/core-fe';
 import { IconChevronDown, IconChevronUp, IconCoins } from '@tabler/icons-react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { StatisticCard } from './statistic-card';
 import { useLazyGetPostBudgetPlansQuery } from '@/store/api/post-budget-plan/post-budget-plan.api';
 import { useCanSubmitQuery } from '@/store/api/workflow/workflow.api';
+import { useLazyGetApprovalDocumentsQuery } from '@/store/api/pre-budget-plan/pre-budget-plan.api';
 
-const PlanYearTab = () => {
+const PrTab = () => {
   const badgeColor = {
     Draft: 'yellow',
     Submitted: 'blue',
@@ -39,6 +41,7 @@ const PlanYearTab = () => {
   const [opened, { toggle }] = useDisclosure(false);
   const [mode, setMode] = useState('plan');
   const { id } = useParams();
+  const router = useRouter();
 
   const { data: pr } = useReadQuery(id?.toString());
 
@@ -51,6 +54,9 @@ const PlanYearTab = () => {
   const [getplan, { data: plan }] = useLazyGetPostBudgetPlansQuery();
 
   const [approve, { isLoading }] = useApprovePrMutation();
+
+  const [getApprovalDocuments, { data: documents }] =
+    useLazyGetApprovalDocumentsQuery();
 
   const submitPlan = () => {
     modals.openConfirmModal({
@@ -95,6 +101,10 @@ const PlanYearTab = () => {
     id && triggerItem({ id: id?.toString(), collectionQuery: undefined });
   }, [id, triggerItem]);
 
+  useEffect(() => {
+    if ((pr as any)?.status == 'DRAFT') getApprovalDocuments(id);
+  }, [id, getApprovalDocuments, pr]);
+
   return (
     <Box>
       <Box className="bg-white mb-2 rounded-r-md rounded-b-md">
@@ -107,7 +117,31 @@ const PlanYearTab = () => {
               {(pr as any)?.status}
             </Badge>
           </Group>
-          <Group>
+          <Group gap={5}>
+            {(pr as any)?.status == 'DRAFT' &&
+              documents &&
+              documents.length > 0 && (
+                <Select
+                  placeholder="Comments"
+                  value={(id as string) ?? ''}
+                  data={documents?.map((document) => ({
+                    label: `V${document.version}`,
+                    value: document.id,
+                  }))}
+                  size="xs"
+                  onChange={(value) => {
+                    const link = `/procurement-requisition/${id}/document/${value}`;
+                    if (value !== null) {
+                      if (id) {
+                        router.push(link);
+                      } else {
+                        open(link);
+                      }
+                    }
+                  }}
+                  width={50}
+                />
+              )}
             <Button
               onClick={submitPlan}
               loading={isLoading}
@@ -205,4 +239,4 @@ const PlanYearTab = () => {
   );
 };
 
-export default PlanYearTab;
+export default PrTab;

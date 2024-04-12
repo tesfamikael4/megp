@@ -6,8 +6,8 @@ import { useEffect, useState } from 'react';
 import { PDFHighlighter } from '../../_components/pdf-highlighter';
 import { logger } from '@megp/core-fe';
 
-export const DocumentPage = ({ page }: { page: 'pre' | 'post' }) => {
-  const { documentId } = useParams();
+export const DocumentPage = ({ page }: { page: 'pre' | 'post' | 'pr' }) => {
+  const { documentId, id } = useParams();
   const [getDocument, { data }] = useLazyGetApprovalDocumentDetailByIdQuery();
   const [fileUrl, setFileUrl] = useState<string>('');
 
@@ -29,9 +29,11 @@ export const DocumentPage = ({ page }: { page: 'pre' | 'post' }) => {
   useEffect(() => {
     getDocument(documentId as string);
   }, [documentId]);
+
+  logger.log('documentId', id);
   return (
     <>
-      <PlanningTab page={page} />
+      {page !== 'pr' && <PlanningTab page={page} />}
       <PDFHighlighter
         objectId={documentId as string}
         pdfUrl={fileUrl}
