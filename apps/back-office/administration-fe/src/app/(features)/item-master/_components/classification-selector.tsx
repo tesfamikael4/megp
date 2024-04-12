@@ -15,10 +15,14 @@ import {
   Tooltip,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { ExpandableTable, MantineTree, TreeConfig } from '@megp/core-fe';
+import {
+  ExpandableTable,
+  MantineTree,
+  TreeConfig,
+  notify,
+} from '@megp/core-fe';
 import { IconBinaryTree, IconColumns } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
-// import { ExpandableTable } from '../../_components/expandable-table';
 
 interface ClassificationSelectorProps {
   selectedData: any;
@@ -58,7 +62,6 @@ const ClassificationSelector = ({
     selectedIds: selectedClassification,
     setSelectedIds: setSelectedClassification,
     load: async (data) => {
-      // logger.log({ data });
       const res = await getCommodity({
         where: [
           [
@@ -190,8 +193,15 @@ const ClassificationSelector = ({
         <Group justify="end">
           <Button
             onClick={() => {
-              onDone(selectedClassification[selectedClassification.length - 1]);
-              close();
+              if (selectedClassification.length === 0) {
+                // If no data is selected, set an error message
+                notify('Error', 'Please select a classification.');
+              } else {
+                onDone(
+                  selectedClassification[selectedClassification.length - 1],
+                );
+                close();
+              }
             }}
           >
             Done

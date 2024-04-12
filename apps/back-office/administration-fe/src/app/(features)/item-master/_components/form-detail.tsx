@@ -304,6 +304,7 @@ export function FormDetail({ mode }: FormDetailProps) {
                 }))}
                 label="Measurement"
                 withAsterisk
+                onReset={onReset}
                 className="w-full"
                 error={errors.measurementId?.message as string | undefined}
               />
@@ -334,6 +335,7 @@ export function FormDetail({ mode }: FormDetailProps) {
                 label="Default Units of Measure"
                 withAsterisk
                 className="w-full"
+                onReset={onReset}
                 error={errors.uOMName?.message as string | undefined}
               />
             )}

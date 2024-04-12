@@ -18,12 +18,11 @@ export function Entity({
 
   const config: EntityConfig<Measurement> = useMemo(() => {
     return {
-      basePath: '/item-Categories',
+      basePath: '/item-category',
       mode: 'list',
       entity: 'item-Categories',
       primaryKey: 'id',
-      title: 'Item-Categories',
-      // hasAdd: true,
+      title: 'Item Categories',
 
       onDetail: (selected: Measurement) => {
         route.push(`/item-category/${selected.id}`);
@@ -59,8 +58,8 @@ export function Entity({
     pathname === `/item-category`
       ? 'list'
       : pathname === `/item-category/new`
-      ? 'new'
-      : 'detail';
+        ? 'new'
+        : 'detail';
   const onRequestChange = (request: CollectionQuery) => {
     trigger(request);
   };

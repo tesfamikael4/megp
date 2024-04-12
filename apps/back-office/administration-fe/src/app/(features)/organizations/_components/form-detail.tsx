@@ -3,7 +3,6 @@ import { useReadQuery } from '../_api/organizations.api';
 import { useParams } from 'next/navigation';
 import { useLazyGetOrgTypeQuery } from '@/store/api/budget-category/org-type.api';
 import { useEffect } from 'react';
-import { logger } from '@megp/core-fe';
 
 export function FormDetail() {
   const { id } = useParams();

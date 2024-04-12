@@ -26,8 +26,8 @@ const defaultValues = {
 
 export function FormDetail({ mode }: FormDetailProps) {
   const targetGroupSchema: ZodType<Partial<TargetGroup>> = z.object({
-    name: z.string().min(1, { message: 'This field is required' }),
-    description: z.string().optional(),
+    name: z.string().min(1, { message: 'Name is required' }),
+    description: z.string().min(1, { message: 'Description is required' }),
   });
 
   const {
@@ -140,16 +140,16 @@ export function FormDetail({ mode }: FormDetailProps) {
         {...register('name')}
         error={errors?.name ? errors?.name?.message?.toString() : ''}
         required
-      />{' '}
+      />
       <TextInput
-        // withAsterisk
+        withAsterisk
         label="Description"
         {...register('description')}
         error={
           errors?.description ? errors?.description?.message?.toString() : ''
         }
-        // required
-      />{' '}
+        required
+      />
       <EntityButton
         mode={mode}
         // data={selected}

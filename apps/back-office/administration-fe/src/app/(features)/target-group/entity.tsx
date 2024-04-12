@@ -12,7 +12,7 @@ export function Entity({ children }: { children: React.ReactElement }) {
 
   const config: EntityConfig<TargetGroup> = useMemo(() => {
     return {
-      basePath: '/Target-groups',
+      basePath: '/target-group',
       mode: 'list',
       entity: 'Target-groups',
       primaryKey: 'id',
@@ -61,8 +61,8 @@ export function Entity({ children }: { children: React.ReactElement }) {
     pathname === `/target-group`
       ? 'list'
       : pathname === `/target-group/new`
-      ? 'new'
-      : 'detail';
+        ? 'new'
+        : 'detail';
   const onRequestChange = (request: CollectionQuery) => {
     trigger(request);
   };

@@ -12,7 +12,7 @@ export function Entity({ children }: { children: React.ReactElement }) {
 
   const config: EntityConfig<Measurement> = useMemo(() => {
     return {
-      basePath: '/measurements',
+      basePath: '/measurement',
       mode: 'list',
       entity: 'measurements',
       primaryKey: 'id',
@@ -61,8 +61,8 @@ export function Entity({ children }: { children: React.ReactElement }) {
     pathname === `/measurement`
       ? 'list'
       : pathname === `/measurement/new`
-      ? 'new'
-      : 'detail';
+        ? 'new'
+        : 'detail';
   const onRequestChange = (request: CollectionQuery) => {
     trigger(request);
   };
