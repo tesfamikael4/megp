@@ -18,6 +18,7 @@ export const Applications = [
   { key: 'administration', name: 'Administration', icon: IconAdjustmentsCog },
   { key: 'guarantee', name: 'Guarantee', icon: IconBuildingBank },
   { key: 'iam', name: 'Identity & Access', icon: IconUsersGroup },
+  { key: 'market-place', name: 'Market Place', icon: IconBuildingStore },
   { key: 'planning', name: 'Planning', icon: IconCalendarEvent },
   { key: 'tendering', name: 'Tendering', icon: IconBasketCog },
   { key: 'vendors', name: 'Vendor Management', icon: IconBuildingStore },
