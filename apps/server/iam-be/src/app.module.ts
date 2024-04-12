@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EmailConfig } from './shared/email/email.config';
@@ -16,6 +16,7 @@ import { RoleSystemModule } from './modules/role-system/role-system.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TenantInterceptor, TransactionInterceptor } from '@interceptors';
 import { ProcurementInstitutionModule } from './modules/procurement-institution/procurement-institution.module';
+import { GoogleRecaptchaModule } from '@nestlab/google-recaptcha';
 
 @Module({
   imports: [
@@ -23,6 +24,15 @@ import { ProcurementInstitutionModule } from './modules/procurement-institution/
     TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
     MailerModule.forRootAsync({ useClass: EmailConfig }),
     AuthorizationModule,
+    GoogleRecaptchaModule.forRoot({
+      secretKey:
+        process.env.GOOGLE_RECAPTCHA_SECRET_KEY ??
+        '6LcizbgpAAAAAIzyLr6PyflbnOYWz5GfxgJZ6onD',
+      response: (req) => req.headers.recaptcha,
+      skipIf: process.env.NODE_ENV !== 'development',
+      score: 0.8,
+      debug: process.env.NODE_ENV === 'development',
+    }),
     AccountModule,
     OrganizationModule,
     GroupModule,
