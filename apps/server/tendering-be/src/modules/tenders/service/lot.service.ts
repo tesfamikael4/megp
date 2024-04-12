@@ -17,6 +17,15 @@ export class LotService extends ExtraCrudService<Lot> {
     super(lotRepository);
   }
 
+  async findOne(id: any, req?: any) {
+    return await this.lotRepository.findOne({
+      where: { id },
+      relations: {
+        bdsBidSecurity: true,
+      },
+    });
+  }
+
   async splitItems(itemData: SplitItemDto, req?: any): Promise<any> {
     try {
       const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];

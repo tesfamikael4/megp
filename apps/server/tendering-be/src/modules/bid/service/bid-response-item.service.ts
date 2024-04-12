@@ -11,6 +11,7 @@ import { BidRegistrationDetail } from 'src/entities/bid-registration-detail.enti
 import { REQUEST } from '@nestjs/core';
 import { EncryptionHelperService } from './encryption-helper.service';
 import {
+  Item,
   SorBillOfMaterial,
   SorEquipment,
   SorFee,
@@ -19,6 +20,12 @@ import {
   SorReimburseableExpense,
   SorTechnicalRequirement,
 } from 'src/entities';
+import {
+  CollectionQuery,
+  FilterOperators,
+  QueryConstructor,
+} from 'src/shared/collection-query';
+import { DataResponseFormat } from 'src/shared/api-data';
 
 @Injectable()
 export class BidResponseItemService {
@@ -27,7 +34,7 @@ export class BidResponseItemService {
     private readonly bidSecurityRepository: Repository<BidResponseItem>,
     private readonly encryptionHelperService: EncryptionHelperService,
     @Inject(REQUEST) private request: Request,
-  ) { }
+  ) {}
 
   async createBidResponseItemTechnicalResponse(
     inputDto: CreateBidResponseItemDto,
@@ -121,11 +128,19 @@ export class BidResponseItemService {
     const items = [];
     let rate = 0;
     for (const value of inputDto.values) {
-      const itemRate = this.calculateItemRate(value.value)?.rate ?? 0;
-      rate += itemRate;
+      if (value.key === 'BillOfMaterial') {
+        const itemRate = this.calculateBoQRate(value.value);
+        rate += itemRate?.rate ?? 0;
+
+        value.value = this.assignRateToItems(value.value, itemRate);
+      } else {
+        rate += this.calculateItemRate(value.value);
+      }
 
       const encryptedValue = this.encryptionHelperService.encryptData(
-        JSON.stringify(value.value),
+        JSON.stringify({
+          value: value.value,
+        }),
         inputDto.password,
         bidRegistrationDetail.bidRegistration.salt,
       );
@@ -145,7 +160,9 @@ export class BidResponseItemService {
 
     const rateEncryptedValue = this.encryptionHelperService.encryptData(
       JSON.stringify({
-        rate: rate,
+        value: {
+          rate: rate,
+        },
       }),
       inputDto.password,
       bidRegistrationDetail.bidRegistration.salt,
@@ -197,7 +214,7 @@ export class BidResponseItemService {
         bidResponse.bidRegistrationDetail.bidRegistration.salt,
       );
 
-      const responses: any[] = JSON.parse(value);
+      const responses: any[] = JSON.parse(value)?.value;
       items = items.map((item) => {
         let i = { ...item };
         i = { ...i, ...responses.find((res) => res.id === i.id) };
@@ -256,18 +273,107 @@ export class BidResponseItemService {
         bidResponse.bidRegistrationDetail.bidRegistration.salt,
       );
 
-      const responses: any[] = JSON.parse(value);
+      const responses: any[] = JSON.parse(value)?.value;
       items = items.map((item) => {
-        let res = { ...item };
-        res = { ...res, ...responses.find((res) => res.id === res.id) };
+        let i = { ...item };
+        i = { ...i, ...responses.find((res) => res.id === i.id) };
 
-        return res;
+        return i;
       });
     }
     return items;
   }
 
-  calculateItemRate(items: any[], code = null) {
+  async getFinancialItems(
+    lotId: string,
+    password: string,
+    query: CollectionQuery,
+    req?: any,
+  ) {
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+    const bidderId = req.user.organization.id;
+
+    const bidRegistrationDetail = await manager
+      .getRepository(BidRegistrationDetail)
+      .findOne({
+        where: {
+          lotId: lotId,
+          bidRegistration: {
+            bidderId: bidderId,
+          },
+        },
+        relations: {
+          bidRegistration: true,
+        },
+      });
+    if (!bidRegistrationDetail) {
+      throw new BadRequestException('bid_registration_not_found');
+    }
+
+    const itemId = [
+      ...(bidRegistrationDetail?.financialItems ?? []),
+      ...(bidRegistrationDetail?.technicalItems ?? []),
+    ];
+
+    if (itemId.length < 1) {
+      return {
+        total: 0,
+        items: [],
+      };
+    }
+
+    const itemRepository = manager.getRepository(Item);
+
+    query.where.push([
+      {
+        column: 'id',
+        value: itemId,
+        operator: FilterOperators.In,
+      },
+    ]);
+
+    const response = new DataResponseFormat<Item>();
+    const dataQuery = QueryConstructor.constructQuery<Item>(
+      itemRepository,
+      query,
+    ).leftJoinAndSelect(
+      'items.bidResponseItems',
+      'bidResponseItems',
+      'bidResponseItems.key =:key',
+      { key: 'Rate' },
+    );
+
+    if (query.count) {
+      response.total = await dataQuery.getCount();
+    } else {
+      const [result, total] = await dataQuery.getManyAndCount();
+      const newResult = result.map((item) => {
+        let i: any = { ...item };
+        const encryptedData = i.bidResponseItems.find(
+          (x: any) => x.itemId == i.id,
+        );
+        let decryptedData = null;
+        if (encryptedData) {
+          const data = JSON.parse(
+            this.encryptionHelperService.decryptedData(
+              encryptedData.value,
+              password,
+              bidRegistrationDetail.bidRegistration.salt,
+            ),
+          );
+          decryptedData = data?.value?.rate;
+        }
+        i = { ...i, rate: decryptedData };
+        delete i.bidResponseItems;
+        return i;
+      });
+      response.total = total;
+      response.items = newResult;
+    }
+    return response;
+  }
+
+  private calculateBoQRate(items: any[], code = null) {
     const children = items.filter((item) => item.parentCode === code);
 
     if (children.length === 0) {
@@ -276,17 +382,56 @@ export class BidResponseItemService {
     return children.map((child) => {
       const childWithChildren = {
         ...child,
-        children: this.calculateItemRate(items, child.code),
+        children: this.calculateBoQRate(items, child.code),
       };
 
       if (childWithChildren.children) {
         childWithChildren.rate = childWithChildren.children.reduce(
-          (acc: any, curr: any) => acc + curr.rate,
+          (total: any, current: any) => {
+            if (current.rate == null) {
+              throw new BadRequestException('rate_not_found');
+            }
+            return total + current.rate;
+          },
           0,
         );
       }
 
       return childWithChildren;
     });
+  }
+
+  private calculateItemRate(items: any[]) {
+    return items.reduce((total: any, current: any) => {
+      if (current.rate == null) {
+        throw new BadRequestException('rate_not_found');
+      }
+      return total + current.rate;
+    }, 0);
+  }
+
+  private assignRateToItems(items: any, itemHierarchy: any) {
+    items = items.map((item: any) => {
+      let i = { ...item };
+      i = { ...i, rate: this.findItemRateById(itemHierarchy, item.id) };
+
+      return i;
+    });
+
+    return items;
+  }
+
+  private findItemRateById(items: any, id: string) {
+    if (!items && items.length < 1) {
+      return null;
+    }
+
+    const item = items?.find((item: any) => item.id === id);
+    if (item) {
+      return item.rate;
+    }
+    for (const item of items) {
+      return this.findItemRateById(item.children, id);
+    }
   }
 }

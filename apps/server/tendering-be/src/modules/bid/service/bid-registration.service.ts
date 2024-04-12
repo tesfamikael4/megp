@@ -152,9 +152,11 @@ export class BidRegistrationService extends ExtraCrudService<BidRegistration> {
     };
   }
 
-  async findOne(id: any) {
+  async findOne(id: any, req?: any): Promise<BidRegistration> {
+    const bidderId = req.user.organization.id;
+
     return await this.bidSecurityRepository.findOne({
-      where: { id },
+      where: { tenderId: id, bidderId },
       relations: {
         tender: {
           lots: {
