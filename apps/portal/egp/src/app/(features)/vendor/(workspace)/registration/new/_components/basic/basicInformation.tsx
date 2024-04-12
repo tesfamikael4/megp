@@ -97,6 +97,8 @@ export const BasicInformation = ({ defaultValues }: BasicInformationProps) => {
       origin: data?.origin ?? '',
       tinNumber: data?.tinNumber ?? '',
       tinIssuedDate: data?.tinIssuedDate ?? '',
+      registrationNumber: '',
+      registrationIssuedDate: '',
     });
   };
 
@@ -239,4 +241,3 @@ export const BasicInformation = ({ defaultValues }: BasicInformationProps) => {
     </Box>
   );
 };
-``;

@@ -34,7 +34,7 @@ const BookmarksPage = () => {
             variant="subtle"
             onClick={(e) => {
               e.stopPropagation();
-              router.push(`/vendor/bookmarks/${record.tender.id}`);
+              router.push(`/my-workspace/bookmarks/${record.tender.id}`);
             }}
           >
             <IconChevronRight size={14} />

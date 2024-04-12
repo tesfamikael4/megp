@@ -25,6 +25,8 @@ export default function BasicInformationPage() {
             origin: data.basic.origin ?? '',
             tinNumber: data.basic.tinNumber ?? '',
             tinIssuedDate: data.basic.tinIssuedDate ?? '',
+            registrationNumber: data.basic.registrationNumber ?? '',
+            registrationIssuedDate: data.basic.registrationIssuedDate ?? '',
           }}
         />
       ) : (
@@ -34,6 +36,8 @@ export default function BasicInformationPage() {
             origin: '',
             tinNumber: '',
             tinIssuedDate: '',
+            registrationNumber: '',
+            registrationIssuedDate: '',
           }}
         />
       )}

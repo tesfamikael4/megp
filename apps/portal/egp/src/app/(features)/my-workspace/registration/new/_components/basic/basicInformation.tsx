@@ -30,6 +30,8 @@ type FormData = {
   origin: string;
   tinNumber: string;
   tinIssuedDate: string;
+  registrationNumber: string;
+  registrationIssuedDate: string;
 };
 
 const formDataSchema = z.discriminatedUnion('origin', [
@@ -42,6 +44,17 @@ const formDataSchema = z.discriminatedUnion('origin', [
     tinIssuedDate: z
       .string()
       .min(1, { message: 'TIN Issued Date is required' }),
+    registrationNumber: z
+      .string()
+      .min(6, {
+        message: 'Registration Number must have at least 10 characters',
+      })
+      .max(10, {
+        message: 'Registration Number should not exceed 10 characters',
+      }),
+    registrationIssuedDate: z
+      .string()
+      .min(1, { message: 'Registration Number Issued Date is required' }),
   }),
   z.object({
     origin: z.enum(getNationalityValues('Malawi')),
@@ -80,6 +93,8 @@ export const BasicInformation = ({ defaultValues }: BasicInformationProps) => {
     updateStatus,
   } = usePrivilege();
 
+  console.log({ errors: formState.errors });
+
   useEffect(() => {
     updateAccess('basic');
     updateStatus('Draft');
@@ -97,6 +112,8 @@ export const BasicInformation = ({ defaultValues }: BasicInformationProps) => {
       origin: data?.origin ?? '',
       tinNumber: data?.tinNumber ?? '',
       tinIssuedDate: data?.tinIssuedDate ?? '',
+      registrationNumber: data?.registrationNumber ?? '',
+      registrationIssuedDate: data?.registrationIssuedDate ?? '',
     });
   };
 
@@ -200,6 +217,40 @@ export const BasicInformation = ({ defaultValues }: BasicInformationProps) => {
                 error={
                   formState.errors.tinIssuedDate &&
                   formState.errors.tinIssuedDate.message
+                }
+                {...lockElements('basic')}
+              />
+              <TextInput
+                className="w-full"
+                label="Registration Number"
+                id="name"
+                {...register(`registrationNumber`)}
+                error={
+                  formState.errors.registrationNumber &&
+                  formState.errors.registrationNumber.message
+                }
+                {...lockElements('basic')}
+              />
+
+              <DatePickerInput
+                valueFormat="YYYY/MM/DD"
+                required
+                label="Registration Issued date"
+                leftSection={<IconCalendar size={'1.2rem'} stroke={1.5} />}
+                maxDate={dayjs(new Date()).toDate()}
+                onChange={async (value: any) =>
+                  value &&
+                  (await setValue(
+                    'registrationIssuedDate',
+                    dayjs(value)
+                      .format('YYYY/MM/DD')
+                      .toString()
+                      .replace(/\//g, '-'),
+                  ))
+                }
+                error={
+                  formState.errors.registrationIssuedDate &&
+                  formState.errors.registrationIssuedDate.message
                 }
                 {...lockElements('basic')}
               />

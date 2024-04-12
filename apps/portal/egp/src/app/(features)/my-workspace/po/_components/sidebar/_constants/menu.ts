@@ -5,11 +5,11 @@ export const solicitationLinks: MenuLinks.SidebarLinks[] = [
   {
     label: 'Purchase Order',
     icon: IconShoppingCart,
-    link: '/vendor/po/purchase-order',
+    link: '/my-workspace/po/purchase-order',
   },
   {
     label: 'Award Notice',
     icon: IconAward,
-    link: '/vendor/po/award-notice',
+    link: '/my-workspace/po/award-notice',
   },
 ];

@@ -34,7 +34,7 @@ function StyledStepper() {
       router.push(`basic`);
     }
     if (data?.status === 'Approved' || data?.status === 'Completed') {
-      return router.push('/vendor/service');
+      return router.push('/my-workspace/service');
     }
 
     if (data?.initial) {

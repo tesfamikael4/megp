@@ -70,7 +70,7 @@ export const PreferentialTreatmentForm = ({
   useEffect(() => {
     if (saveAttachmentValues.isSuccess) {
       NotificationService.successNotification('Submitted Successfully!');
-      router.push(`/vendor/registration/track-applications`);
+      router.push(`/my-workspace/registration/track-applications`);
     }
     if (saveAttachmentValues.isError) {
       NotificationService.requestErrorNotification('Error on Request');

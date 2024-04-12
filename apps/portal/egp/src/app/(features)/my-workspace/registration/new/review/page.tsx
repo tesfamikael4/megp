@@ -25,7 +25,7 @@ function Page() {
     }
 
     if (!requestInfo.data) {
-      router.push(`/vendor/services`);
+      router.push(`/my-workspace/services`);
     }
 
     return () => {};
@@ -42,7 +42,7 @@ function Page() {
   useEffect(() => {
     if (saveValues.isSuccess) {
       NotificationService.successNotification('Submitted Successfully!');
-      router.push(`/vendor/registration/track-applications`);
+      router.push(`/my-workspace/registration/track-applications`);
     }
     if (saveValues.isError) {
       NotificationService.requestErrorNotification('Error on Request');

@@ -30,7 +30,7 @@ export default function Page() {
     requestInfo?.data?.status === 'Approved' ||
     requestInfo?.data?.status === 'Completed'
   ) {
-    return router.push('/vendor/service');
+    return router.push('/my-workspace/service');
   }
 
   return (

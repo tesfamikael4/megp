@@ -204,7 +204,7 @@ const RegistrationForm = ({
           NotificationService.successNotification(
             'Form Submitted Successfully',
           );
-          router.push(`/vendor/registration/track-applications`);
+          router.push(`/my-workspace/registration/track-applications`);
         });
     } catch (error) {
       NotificationService.requestErrorNotification(

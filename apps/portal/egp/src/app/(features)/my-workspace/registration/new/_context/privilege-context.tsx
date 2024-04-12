@@ -192,11 +192,13 @@ const PrivilegeContextProvider: React.FC<
   const prevRoutePath = currentIndex > 0 ? validRoutes[currentIndex - 1] : null;
 
   const navigateToNextRoute = () => {
-    nextRoutePath && router.push(`/vendor/registration/new/${nextRoutePath}`);
+    nextRoutePath &&
+      router.push(`/my-workspace/registration/new/${nextRoutePath}`);
   };
 
   const navigateToPrevRoute = (params?: string) => {
-    prevRoutePath && router.push(`/vendor/registration/new/${prevRoutePath}`);
+    prevRoutePath &&
+      router.push(`/my-workspace/registration/new/${prevRoutePath}`);
   };
   // console.log(accessLevel, accessStatus);
   // Use useMemo to memoize the context value

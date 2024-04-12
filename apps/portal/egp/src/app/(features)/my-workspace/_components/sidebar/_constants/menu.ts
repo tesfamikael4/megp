@@ -29,7 +29,7 @@ export const managementLinks: MenuLinks.SidebarLinks[] = [
   {
     label: 'My Tenders',
     icon: IconGavel,
-    link: '/my-workspace/my-tenders',
+    link: '/tender-workspace/prepare-bid',
   },
   {
     label: 'Vendor Service',

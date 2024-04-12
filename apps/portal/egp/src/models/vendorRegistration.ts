@@ -27,6 +27,8 @@ export interface FormData {
     origin: string;
     tinNumber: string;
     tinIssuedDate: '';
+    registrationNumber: string;
+    registrationIssuedDate: string;
   };
   address: {
     postalAddress: string;
@@ -186,6 +188,8 @@ export interface CreateVendorIdRequest {
   origin: string;
   tinNumber: string;
   tinIssuedDate: string;
+  registrationNumber: string;
+  registrationIssuedDate: string;
 }
 export interface CreateVendorIdResponse {
   message?: string;

@@ -34,7 +34,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       cancelRegistration({})
         .unwrap()
         .then(() => {
-          router.push('/vendor/service');
+          router.push('/my-workspace/service');
           router.refresh();
           NotificationService.successNotification('Registration Canceled!');
         });
@@ -55,7 +55,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     );
   }
   if (vendorInfo.isError) {
-    return router.push('/vendor/dashboard');
+    return router.push('/my-workspace/dashboard');
   }
   // if (!vendorInfo.data && !validRoutesCheck(vendorInfo.data?.initial?.status, pathname.split('/')[4] as VendorLevel)) {
   //   return router.push('/vendor/registration/new/basic');
@@ -64,7 +64,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     vendorInfo.data?.status === 'Approved' ||
     vendorInfo?.data?.status === 'Completed'
   ) {
-    return router.push('/vendor/service');
+    return router.push('/my-workspace/service');
   }
   return (
     <PrivilegeContextProvider data={vendorInfo.data} {...vendorInfo}>
@@ -72,7 +72,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <Flex className="w-full flex-col border border-l-0 bg-white">
           <Flex className="w-full border-b p-3 flex justify-between">
             <PageTitle />
-            {pathname !== '/vendor/registration/new/basic' &&
+            {pathname !== '/my-workspace/registration/new/basic' &&
               vendorInfo?.data?.status !== 'Adjustment' && (
                 <DeleteButton
                   onDelete={onCancel}
