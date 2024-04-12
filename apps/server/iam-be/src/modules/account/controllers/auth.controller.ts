@@ -49,6 +49,7 @@ import {
 import { EmailService } from 'src/shared/email/email.service';
 import axios from 'axios';
 import { IgnoreTenantInterceptor } from '@decorators';
+import { Recaptcha } from '@nestlab/google-recaptcha';
 
 @ApiBearerAuth()
 @ApiTags('auth')
@@ -59,12 +60,14 @@ export class AuthController {
     private readonly emailService: EmailService,
   ) {}
 
+  @Recaptcha()
   @Post('signup')
   @AllowAnonymous()
   createAccount(@Body() createAccountDto: CreateAccountDto) {
     return this.accountsService.createAccount(createAccountDto);
   }
 
+  @Recaptcha()
   @Post('login')
   @HttpCode(200)
   @AllowAnonymous()
