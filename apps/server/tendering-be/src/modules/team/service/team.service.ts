@@ -39,10 +39,11 @@ export class TeamService extends ExtraCrudService<Team> {
     const team = await this.teamRepository.find({
       where: {
         tenderId: itemData.tenderId,
+        teamType: itemData.teamType,
       },
     });
     if (team.length > 0) {
-      throw new Error('Team already exits');
+      return team;
     }
     const teams = [];
     if (

@@ -77,7 +77,8 @@ export class TeamMembersService extends ExtraCrudService<TeamMember> {
   // * bulk create team member with team
   async bulkCreateWithTeam(itemData: any, req?: any): Promise<any> {
     const teams = await this.teamService.create(itemData.team, req);
-
+    if (!this.hasOneTeamLead(itemData.members))
+      throw new Error('More than one team lead found');
     const createdMembers = [];
     for (const team of teams) {
       const members = itemData.members.map((item) => {
@@ -91,8 +92,11 @@ export class TeamMembersService extends ExtraCrudService<TeamMember> {
       createdMembers.push(...createdMembersForTeam);
     }
 
-    const insertedMembers =
-      await this.teamMemberRepository.insert(createdMembers);
-    return insertedMembers;
+    await this.teamMemberRepository.insert(createdMembers);
+    return createdMembers;
+  }
+
+  hasOneTeamLead(members: TeamMember[]) {
+    return members.filter((x) => x.isTeamLead == true).length === 1;
   }
 }
