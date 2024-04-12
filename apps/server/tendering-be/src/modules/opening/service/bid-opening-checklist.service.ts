@@ -1,6 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { ExtraCrudService } from 'src/shared/service';
 import { BidOpeningChecklist } from 'src/entities/bid-opening-checklist.entity';
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
@@ -12,6 +12,7 @@ import { TeamMember } from 'src/entities/team-member.entity';
 import { BidRegistrationService } from 'src/modules/bid/service/bid-registration.service';
 import { decodeCollectionQuery } from 'src/shared/collection-query';
 import { BidRegistration } from 'src/entities/bid-registration.entity';
+import { totalmem } from 'os';
 
 @Injectable()
 export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningChecklist> {
@@ -78,7 +79,7 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
     return response;
   }
 
-  async openingStatus(lotId: string, req: any) {
+  async openingStatus(lotId: string, q: string, req: any) {
     // Functionality: Checks if the current user (opener) is part of the team for the given lot,
     // then checks if the opener has completed the opening checklist for each bidder.
     const openerId = req.user.userId;
@@ -104,13 +105,12 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
     }
     //Todo check if the opener has checked all the spd for that bidder
 
-    const query = decodeCollectionQuery('');
+    const query = decodeCollectionQuery(q);
     const bidders = await this.bidSecurityService.getSubmittedBiddersByLotId(
       lotId,
       query,
     );
 
-    // const [spdChecklist, checklists] = await Promise.all([
     const spdChecklist = await manager.getRepository(SpdOpeningChecklist).find({
       where: {
         spd: {
@@ -125,21 +125,30 @@ export class BidOpeningChecklistService extends ExtraCrudService<BidOpeningCheck
       },
     });
 
-    const response: { bidder: BidRegistration; status: string }[] = [];
+    const response: {
+      items: { bidder: BidRegistration; status: string }[];
+      total: number;
+    } = {
+      items: [],
+      total: bidders.total,
+    };
 
-    // Assuming bidders.items is an array of some kind
+    const checklists = await this.bidOpeningChecklistsRepository.find({
+      where: {
+        lotId: lotId,
+        bidderId: In(bidders.items.map((bidder) => bidder.bidderId)),
+        openerId,
+      },
+    });
+
     for (const bidder of bidders.items) {
-      const checklists = await this.bidOpeningChecklistsRepository.find({
-        where: {
-          lotId: lotId,
-          bidderId: bidder.bidderId,
-          openerId,
-        },
-      });
-      if (spdChecklist.length === checklists.length) {
-        response.push({ bidder, status: 'completed' });
+      if (
+        spdChecklist.length ===
+        checklists.filter((x) => x.bidderId == bidder.bidderId).length
+      ) {
+        response.items.push({ bidder, status: 'completed' });
       } else {
-        response.push({ bidder, status: 'not completed' });
+        response.items.push({ bidder, status: 'not completed' });
       }
     }
 
