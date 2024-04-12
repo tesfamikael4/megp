@@ -16,7 +16,7 @@ export function Entity({ children }: { children: React.ReactElement }) {
       mode: 'list',
       entity: 'tag',
       primaryKey: 'id',
-      title: 'Tags',
+      title: 'Item Tags',
       hasAdd: true,
       searchable: true,
       pagination: true,
