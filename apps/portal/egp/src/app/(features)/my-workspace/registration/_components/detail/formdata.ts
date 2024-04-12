@@ -13,6 +13,8 @@ export const formData: GetFormResponse = {
     tinNumber: '',
     businessType: '',
     tinIssuedDate: '',
+    registrationNumber: '',
+    registrationIssuedDate: '',
   },
   address: {
     postalAddress: '',

@@ -40,5 +40,5 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </Flex>
       </Flex>
     );
-  else router.push('/vendor/service');
+  else router.push('/my-workspace/service');
 }

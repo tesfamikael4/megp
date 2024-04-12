@@ -30,6 +30,10 @@ export const AddressInformation: React.FC<PassFormDataProps> = ({
         <TextInput
           label="Postal Address/Zip code"
           {...register(`address.postalAddress`)}
+          disabled={
+            register('basic.origin', 'select').value === 'Malawi' ||
+            register(`address.postalAddress`).disabled
+          }
         />
         <TextInput label="Fax" {...register(`address.fax`)} />
       </Group>

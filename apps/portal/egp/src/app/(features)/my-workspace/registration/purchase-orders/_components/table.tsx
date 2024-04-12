@@ -92,7 +92,7 @@ export default function Table() {
       ]}
       records={records}
       onRowClick={() => {
-        router.push('/vendor/po/purchase-order');
+        router.push('/my-workspace/po/purchase-order');
       }}
       styles={{
         header: {

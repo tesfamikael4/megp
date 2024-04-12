@@ -40,7 +40,7 @@ export default function GettingStarted() {
     return <LoadingOverlay />;
   }
   if (data) {
-    router.push('/vendor/dashboard');
+    router.push('/my-workspace/service');
   }
   return (
     <>
@@ -132,8 +132,8 @@ export default function GettingStarted() {
           <Button
             onClick={() =>
               statusData && statusData.status === 'Initial'
-                ? router.push('/vendor/registration/new/basic')
-                : router.push('/vendor/registration/new/detail')
+                ? router.push('/my-workspace/registration/new/basic')
+                : router.push('/my-workspace/registration/new/detail')
             }
           >
             Continue

@@ -13,7 +13,7 @@ export const BasicInfo: React.FC<PassFormDataProps> = ({ register }) => {
           withAsterisk
           id="name"
           {...register(`basic.name`)}
-          disabled={register('basic.origin', 'select').value !== 'Malawi'}
+          disabled={true}
         />
         <TextInput
           label="Tax Identification Number (TIN)"

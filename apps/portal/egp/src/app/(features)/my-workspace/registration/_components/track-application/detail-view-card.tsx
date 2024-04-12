@@ -70,7 +70,9 @@ const DetailViewCard: React.FC<Props> = ({ data, close }) => {
         {data.status === 'Adjustment' && (
           <Button
             onClick={() => {
-              router.push(`/vendor/registration/${callbackURL(data.key)}`);
+              router.push(
+                `/my-workspace/registration/${callbackURL(data.key)}`,
+              );
             }}
           >
             Adjust

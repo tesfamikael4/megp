@@ -66,7 +66,7 @@ function Page() {
         .unwrap()
         .then((response) => {
           NotificationService.successNotification('Payed Successfully!');
-          router.push('/vendor/registration/track-applications');
+          router.push('/my-workspace/registration/track-applications');
         });
     } catch (error) {
       NotificationService.requestErrorNotification('Something went wrong');

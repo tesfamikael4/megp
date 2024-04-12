@@ -22,7 +22,9 @@ const ServiceLayout = () => {
     isError: isVendorError,
     error: vendorError,
   } = useGetVendorQuery({}, { refetchOnMountOrArgChange: true });
-  const { data, isLoading, isError, error } = useGetVendorStatusQuery({});
+  const { data, isLoading, isError, error } = useGetVendorStatusQuery({
+    refetchOnMountOrArgChange: true,
+  });
   const router = useRouter();
 
   if (isLoading || vendorLoading) return <LoadingOverlay visible={isLoading} />;
