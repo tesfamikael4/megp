@@ -16,9 +16,4 @@ export class CreateTeamDto {
   @ApiProperty({ enum: EnvelopTypeEnum })
   @IsEnum(EnvelopTypeEnum)
   envelopeType: EnvelopTypeEnum;
-
-  @ApiProperty()
-  @IsUUID()
-  @IsNotEmpty()
-  memberLimit: number;
 }

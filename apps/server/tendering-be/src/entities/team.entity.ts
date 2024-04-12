@@ -22,7 +22,7 @@ export class Team extends OrgAudit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column('uuid')
+  @Column({ type: 'uuid', nullable: true })
   lotId: string;
 
   @ManyToOne(() => Lot, (lot) => lot.teams)
@@ -54,6 +54,6 @@ export class Team extends OrgAudit {
   })
   teamType: string;
 
-  @Column('int')
-  memberLimit: number;
+  // @Column('int')
+  // memberLimit: number;
 }
