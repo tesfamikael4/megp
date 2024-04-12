@@ -49,7 +49,11 @@ import {
 import { EmailService } from 'src/shared/email/email.service';
 import axios from 'axios';
 import { IgnoreTenantInterceptor } from '@decorators';
-import { Recaptcha } from '@nestlab/google-recaptcha';
+import {
+  Recaptcha,
+  RecaptchaResult,
+  RecaptchaVerificationResult,
+} from '@nestlab/google-recaptcha';
 
 @ApiBearerAuth()
 @ApiTags('auth')
@@ -73,7 +77,10 @@ export class AuthController {
   @AllowAnonymous()
   @IgnoreTenantInterceptor()
   @ApiResponse({ type: LoginResponseDto, isArray: false, status: 200 })
-  login(@Body() loginDto: LoginDto) {
+  login(
+    @Body() loginDto: LoginDto,
+    @RecaptchaResult() recaptchaResult: RecaptchaVerificationResult,
+  ) {
     return this.accountsService.login(loginDto);
   }
 

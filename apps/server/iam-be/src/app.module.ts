@@ -23,7 +23,6 @@ import { GoogleRecaptchaModule } from '@nestlab/google-recaptcha';
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({ useClass: TypeOrmConfigService }),
     MailerModule.forRootAsync({ useClass: EmailConfig }),
-    AuthorizationModule,
     GoogleRecaptchaModule.forRoot({
       secretKey:
         process.env.GOOGLE_RECAPTCHA_SECRET_KEY ??
@@ -33,6 +32,7 @@ import { GoogleRecaptchaModule } from '@nestlab/google-recaptcha';
       score: 0.8,
       debug: process.env.NODE_ENV === 'development',
     }),
+    AuthorizationModule,
     AccountModule,
     OrganizationModule,
     GroupModule,
