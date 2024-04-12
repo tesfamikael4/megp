@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
 import { FppaVendorService } from '../services/fppa-vendor.service';
 import {
   ApiExtraModels,
@@ -19,6 +19,7 @@ import {
   CreateFppaVendorDto,
   UpdateFppaVendorDto,
 } from '../dto/fppa-vendor.dto';
+import { AllowAnonymous, ApiKeyGuard } from 'src/shared/authorization';
 const options: EntityCrudOptions = {
   createDto: CreateFppaVendorDto,
   updateDto: UpdateFppaVendorDto,
@@ -40,6 +41,8 @@ export class FppaVendorsController extends EntityCrudController<FppaVendor>(
   }
 
   @Get(':tin')
+  @AllowAnonymous()
+  @UseGuards(ApiKeyGuard)
   async getFPPAVenderByTin(@Param() parms: GetFPPAVendorByTinDto) {
     return this.fppaVendorService.getFPPAVenderByTin(parms.tin);
   }

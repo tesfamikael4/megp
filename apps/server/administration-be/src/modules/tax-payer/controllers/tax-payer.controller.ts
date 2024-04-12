@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
 import { TaxPayerService } from '../services/tax-payer.service';
 import { ApiExtraModels, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { TaxPayer } from '@entities';
@@ -10,6 +10,7 @@ import {
 } from '../dto/tin-validation.model';
 import { EntityCrudOptions } from 'src/shared/types/crud-option.type';
 import { CreateTaxPayerDto, UpdateTaxPayerDto } from '../dto/tax-payer.dto';
+import { AllowAnonymous, ApiKeyGuard } from 'src/shared/authorization';
 const options: EntityCrudOptions = {
   createDto: CreateTaxPayerDto,
   updateDto: UpdateTaxPayerDto,
@@ -33,6 +34,8 @@ export class TaxPayersController extends EntityCrudController<TaxPayer>(
   }
 
   @Get(':tin/:issuedDate')
+  @AllowAnonymous()
+  @UseGuards(ApiKeyGuard)
   async getUserByTinAndIssuedDate(
     @Param() parms: GetUserByTinAndIssuedDateDto,
   ) {

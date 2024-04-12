@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
 import { NcicVendorsService } from '../services/ncic-vendors.service';
 import {
   ApiExtraModels,
@@ -18,6 +18,7 @@ import {
 } from '../dto/ncic-vendor.dto';
 import { EntityCrudOptions } from 'src/shared/types/crud-option.type';
 import { GetFPPAVendorByTinDto } from 'src/modules/fppa-vendor/dto/fppa-data-validation';
+import { AllowAnonymous, ApiKeyGuard } from 'src/shared/authorization';
 const options: EntityCrudOptions = {
   createDto: CreateNcicVendorDto,
   updateDto: UpdateNcicVendorDto,
@@ -38,6 +39,8 @@ export class NcicVendorsController extends EntityCrudController<NcicVendor>(
   }
 
   @Get(':tin')
+  @AllowAnonymous()
+  @UseGuards(ApiKeyGuard)
   @ApiOperation({
     summary: 'Get Vendor Information By TIN',
     description:

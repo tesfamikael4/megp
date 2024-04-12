@@ -1,6 +1,7 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { TccDocumentValidationService } from '../services/tcc-document-validation.service';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { AllowAnonymous, ApiKeyGuard } from 'src/shared/authorization';
 
 @Controller('tcc-document-validation')
 @ApiTags('TCC')
@@ -11,6 +12,8 @@ export class TccDocumentValidationController {
   ) {}
 
   @Get(':value')
+  @AllowAnonymous()
+  @UseGuards(ApiKeyGuard)
   @ApiOperation({
     summary: 'Get User Information By Document Id',
     description: 'Retrieve user information by providing the Document Id.',
