@@ -6,6 +6,7 @@ import { Box, LoadingOverlay } from '@mantine/core';
 import { useGetSubmittedPrQuery } from '@/store/api/pr/pr.api';
 import { useEffect, useState } from 'react';
 import { logger } from '@megp/core-fe';
+import { WorkflowHandling } from '../../planning-approval/workflow';
 
 export default function WorkflowPage() {
   const { id } = useParams();
@@ -26,14 +27,21 @@ export default function WorkflowPage() {
     };
     if (data) getFile();
   }, [data]);
+
   return (
     <Box className="min-h-screen">
       <LoadingOverlay visible={isLoading} />
       {data && (
         <PDFHighlighter
           title={data?.document.fileInfo.originalname}
-          objectId={id as string}
+          objectId={data?.document?.id as string}
           pdfUrl={fileUrl}
+          workflow={
+            <WorkflowHandling
+              itemId={id as string}
+              itemKey={'procurementRequisition'}
+            />
+          }
         />
       )}
     </Box>

@@ -114,7 +114,16 @@ export default function ProcurementRequisition() {
     >
       <ExpandableTable
         config={config}
-        data={data?.items ?? []}
+        data={
+          data?.items.map((item) => {
+            return {
+              ...item,
+              status:
+                item.status.charAt(0).toUpperCase() +
+                item.status.slice(1).toLowerCase(),
+            };
+          }) ?? []
+        }
         total={data?.total ?? 0}
         onRequestChange={onRequestChange}
       />
