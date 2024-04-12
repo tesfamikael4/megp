@@ -1,8 +1,8 @@
 'use client';
 import { EntityConfig, EntityLayout } from '@megp/entity';
 import { usePathname, useRouter } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
-import { useLazyListQuery, useListQuery } from './_api/item-master.api';
+import { useMemo } from 'react';
+import { useLazyListQuery } from './_api/item-master.api';
 import { ItemMaster } from '@/models/item-master';
 import { logger } from '@megp/core-fe';
 import { Box } from '@mantine/core';
@@ -10,7 +10,6 @@ import { Box } from '@mantine/core';
 export function Entity({ children }: { children: React.ReactElement }) {
   const route = useRouter();
 
-  // const { data: list, isLoading, isError } = useListQuery({});
   const [getItems, { data: list, isLoading, isError }] = useLazyListQuery({});
 
   logger.log('list', list, isLoading, isError);
@@ -22,8 +21,9 @@ export function Entity({ children }: { children: React.ReactElement }) {
       entity: 'Items',
       primaryKey: 'id',
       primaryContent: 'description',
-      title: `Items`,
+      title: `Item Masters`,
       searchable: true,
+      sortable: true,
       pagination: true,
       onAdd: () => {
         logger.log('new');
@@ -59,9 +59,9 @@ export function Entity({ children }: { children: React.ReactElement }) {
           cell: (info) => info.getValue(),
         },
         {
-          id: 'commodity',
+          id: 'commodityName',
           header: 'Classification ',
-          accessorKey: 'commodity',
+          accessorKey: 'commodityName',
           meta: {
             widget: 'expand',
           },
@@ -91,8 +91,8 @@ export function Entity({ children }: { children: React.ReactElement }) {
     pathname == '/item-master'
       ? 'list'
       : pathname == '/item-master/new'
-      ? 'new'
-      : 'detail';
+        ? 'new'
+        : 'detail';
 
   logger.log('mode', mode, pathname);
 

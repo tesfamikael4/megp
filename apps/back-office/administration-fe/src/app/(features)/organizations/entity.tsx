@@ -42,6 +42,15 @@ export function Entity({ children }: { children: React.ReactElement }) {
             widget: 'multiline',
           },
         },
+        {
+          id: 'shortName',
+          header: 'Short Name',
+          accessorKey: 'shortName',
+          cell: (info) => info.getValue(),
+          meta: {
+            widget: 'multiline',
+          },
+        },
       ],
     };
   }, [route]);
@@ -52,8 +61,8 @@ export function Entity({ children }: { children: React.ReactElement }) {
     pathname === `/organizations`
       ? 'list'
       : pathname === `/organizations/new`
-      ? 'new'
-      : 'detail';
+        ? 'new'
+        : 'detail';
 
   const onRequestChange = (request: CollectionQuery) => {
     request?.where?.push([

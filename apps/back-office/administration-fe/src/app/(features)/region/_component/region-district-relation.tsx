@@ -4,7 +4,7 @@ import { Text } from '@mantine/core';
 import { Relation, RelationConfig } from '@megp/entity';
 import { useParams } from 'next/navigation';
 import { modals } from '@mantine/modals';
-import { logger, notify } from '@megp/core-fe';
+import { logger } from '@megp/core-fe';
 import {
   useListByAppIdQuery as useListRegionId,
   useDeleteMutation,
@@ -36,7 +36,7 @@ const AddDistrict = () => {
         },
       },
     ],
-
+    pagination: true,
     onAdd: () => {
       setMode('new');
       setIsModalOpen(true);
@@ -52,7 +52,7 @@ const AddDistrict = () => {
       title: `Delete `,
       centered: true,
       children: (
-        <Text size="sm">{`Are you sure you want to delete this district `}</Text>
+        <Text size="sm">{`Are you sure you want to delete this District `}</Text>
       ),
       labels: { confirm: 'Yes', cancel: 'No' },
       confirmProps: { color: 'red' },
@@ -70,10 +70,9 @@ const AddDistrict = () => {
         title: 'Success',
         color: 'green',
       });
-      handleCloseModal();
     } catch (err) {
       notifications.show({
-        message: 'errors in deleting district.',
+        message: 'Error in deleting district.',
         title: 'Error',
         color: 'red',
       });

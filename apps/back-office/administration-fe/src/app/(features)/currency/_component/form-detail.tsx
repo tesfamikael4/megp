@@ -28,7 +28,7 @@ const defaultValues = {
 export function FormDetail({ mode }: FormDetailProps) {
   const currencySchema: ZodType<Partial<Currency>> = z.object({
     name: z.string().min(1, { message: 'Name is required' }),
-    description: z.string().optional(),
+    description: z.string().min(1, { message: 'Description is required' }),
     abbreviation: z.string().min(1, { message: 'abbreviation is required' }),
   });
 
@@ -141,25 +141,25 @@ export function FormDetail({ mode }: FormDetailProps) {
         {...register('name')}
         error={errors?.name ? errors?.name?.message?.toString() : ''}
         required
-      />{' '}
+      />
       <TextInput
-        // withAsterisk
+        withAsterisk
         label="Description"
         {...register('description')}
         error={
           errors?.description ? errors?.description?.message?.toString() : ''
         }
-        // required
-      />{' '}
+        required
+      />
       <TextInput
-        // withAsterisk
+        withAsterisk
         label="Abbreviation"
         {...register('abbreviation')}
         error={
           errors?.abbreviation ? errors?.abbreviation?.message?.toString() : ''
         }
-        // required
-      />{' '}
+        required
+      />
       <EntityButton
         mode={mode}
         // data={selected}

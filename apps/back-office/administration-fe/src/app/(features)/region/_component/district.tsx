@@ -28,8 +28,8 @@ export function DistrictForm({
   handleCloseModal,
   districtId,
 }: FormDetailProps) {
-  const measurementSchema: ZodType<Partial<District>> = z.object({
-    name: z.string().min(1, { message: 'This field is required' }),
+  const districtSchema: ZodType<Partial<District>> = z.object({
+    name: z.string().min(1, { message: 'Name is required' }),
   });
 
   const {
@@ -39,7 +39,7 @@ export function DistrictForm({
 
     register,
   } = useForm({
-    resolver: zodResolver(measurementSchema),
+    resolver: zodResolver(districtSchema),
   });
   const { id } = useParams();
 
@@ -53,7 +53,7 @@ export function DistrictForm({
       const result = await create({
         ...data,
         regionId: id?.toString(),
-      });
+      }).unwrap();
       if ('data' in result) {
         handleCloseModal();
       }
@@ -99,12 +99,12 @@ export function DistrictForm({
   }, [districtId, getDistrict, mode]);
 
   useEffect(() => {
-    if (isSuccess) {
+    if (mode == 'detail' && isSuccess && distric !== undefined) {
       reset({
         name: distric?.name,
       });
     }
-  }, [distric, isSuccess, reset]);
+  }, [mode, distric, isSuccess, reset]);
 
   return (
     <Stack pos="relative">
