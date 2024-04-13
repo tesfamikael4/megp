@@ -26,7 +26,7 @@ import { BusinessProcessService } from 'src/modules/bpm/services/business-proces
 import {
   CreateWorkflowInstanceDto,
   GotoNextStateDto,
-  UpdateWorkflowInstanceDto
+  UpdateWorkflowInstanceDto,
 } from 'src/modules/handling/dto/workflow-instance.dto';
 import { VendorStatusEnum } from 'src/shared/enums/vendor-status-enums';
 import { WorkflowService } from 'src/modules/bpm/services/workflow.service';
@@ -54,6 +54,10 @@ import PdfDocumentTemplate from 'src/modules/certificates/templates/pdf-tamplate
 
 import { ApplicationDto } from '../dto/applications.dto';
 import { ClientProxy } from '@nestjs/microservices';
+import { MRAResponseDTO } from '../dto/api-mra.dto';
+import { MBRSResponseDto, RecordDTO } from '../dto/api-mbrs.dto';
+import { StringifyOptions } from 'querystring';
+import { NCICResponseDTO } from '../dto/api-ncic.dto';
 
 @Injectable()
 export class VendorRegistrationsService extends EntityCrudService<VendorsEntity> {
@@ -217,7 +221,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           );
         }
 
-
         const isrVendor = await this.fromInitialValue(data);
         const initial = isrVendor.initial;
         initial.status = VendorStatusEnum.SUBMITTED;
@@ -249,8 +252,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       const bi = {
         category: ba.category,
         lineOfBusiness: ba.lineOfBusiness?.map((lob: any) => lob.name),
-        priceRange: this.commonService.formatPriceRange(priceRange)
-      }
+        priceRange: this.commonService.formatPriceRange(priceRange),
+      };
       formattedData.areasOfBusinessInterest.push(bi);
     }
     formattedData.bankAccountDetails = [];
@@ -277,7 +280,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     return formattedData;
   }
 
-
   async addDraftVendorInformation(data: any, userInfo: any): Promise<any> {
     try {
       const initiatedVendor = await this.isrVendorsRepository.findOne({
@@ -303,18 +305,29 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
                 data.areasOfBusinessInterest[index] === 'work' &&
                 ncicData == null
               ) {
-                ncicData = await this.GetNCICData(isrVendor.tinNumber);
+                ncicData = await this.fetchFromExternalApi(
+                  `ncic-vendors/${isrVendor.tinNumber}`,
+                );
                 if (ncicData == null) {
                   isrVendor.initial.status = VendorStatusEnum.SAVE;
                   isrVendor.initial.level = VendorStatusEnum.PPDA;
                 } else {
                   isrVendor.basic.district = ncicData?.district;
+                  isrVendor.basic.nameOfFirm = ncicData?.nameOfFirm;
+                  isrVendor.basic.nationalOfFirm = ncicData?.nationalOfFirm;
+                  isrVendor.basic.typeOfRegistration =
+                    ncicData?.typeOfRegistration;
+                  isrVendor.basic.branch = ncicData?.branch;
+                  isrVendor.basic.category = ncicData?.category;
                   isrVendor.address.mobilePhone = ncicData?.telephoneNumber;
                   isrVendor.address.postalAddress = ncicData?.postalAddress;
                   isrVendor.address.primaryEmail = ncicData?.email;
+                  isrVendor.address.region = ncicData?.region;
                 }
               } else if (fppaData == null) {
-                fppaData = await this.GetFPPAData(isrVendor.tinNumber);
+                fppaData = await this.fetchFromExternalApi(
+                  `fppa-vendors/${isrVendor.tinNumber}`,
+                );
                 if (fppaData !== null) {
                   isrVendor.basic.businessType = fppaData.businessType;
                   isrVendor.contactPersons.mobileNumber = fppaData.mobileNumber;
@@ -478,8 +491,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           data.initial.level.trim() === VendorStatusEnum.PAYMENT &&
           data.initial.status.trim() === VendorStatusEnum.SAVE
         ) {
-          let ncicData = null;
-          const fppaData = null;
+          let ncicData: NCICResponseDTO = null;
+          let fppaData = null;
           const numberOfService = data.areasOfBusinessInterest.length;
           //to get al/ the registration fee for each service
           let priceRangeIds = [];
@@ -494,7 +507,9 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
                 row.category === BusinessCategories.WORKS &&
                 ncicData == null
               ) {
-                ncicData = await this.GetNCICData(isrVendor.tinNumber);
+                ncicData = await this.fetchFromExternalApi(
+                  `ncic-vendors/${isrVendor.tinNumber}`,
+                );
                 if (ncicData == null) {
                   isrVendor.initial.status = VendorStatusEnum.SAVE;
                   isrVendor.initial.level = VendorStatusEnum.PPDA;
@@ -504,11 +519,20 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
                   isrVendor.address.mobilePhone = ncicData?.telephoneNumber;
                   isrVendor.address.postalAddress = ncicData?.postalAddress;
                   isrVendor.address.primaryEmail = ncicData?.email;
+                  isrVendor.basic.nameOfFirm = ncicData?.nameOfFirm;
+                  isrVendor.basic.nationalOfFirm = ncicData?.nationalOfFirm;
+                  isrVendor.basic.typeOfRegistration =
+                    ncicData?.typeOfRegistration;
+                  isrVendor.basic.branch = ncicData?.branch;
+                  isrVendor.basic.category = ncicData?.category;
+                  isrVendor.address.region = ncicData?.region;
                   // isrVendor.basic.businessType = ncicData?.typeOfRegistration
                   await this.isrVendorsRepository.save(isrVendor);
                 }
               } else if (fppaData == null) {
-                //fppaData= await this.GetFPPAData(isrVendor.tinNumber);
+                fppaData = await this.fetchFromExternalApi(
+                  `fppa-vendors/${isrVendor.tinNumber}`,
+                );
                 //temporary commented
                 if (fppaData !== null) {
                   isrVendor.basic.businessType = fppaData.businessType;
@@ -650,8 +674,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         row.status = ApplicationStatus.OUTDATED;
         profiles.push(row);
       }
-      if (profiles.length)
-        await this.profileInfoRepository.save(profiles);
+      if (profiles.length) await this.profileInfoRepository.save(profiles);
 
       await this.profileInfoRepository.save(profile);
       return await this.mapVendor(vendor, profile);
@@ -661,12 +684,11 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
   }
   async setPreferentialSatus(status: string, userId: string) {
     const pts = await this.ptService.getSubmittedPTByUserId(userId);
-    if (pts.length == 0)
-      return true
+    if (pts.length == 0) return true;
     const sids = pts.map((row) => row.serviceId);
     const approvedPts = await this.ptService.getPreviousPTByUserId(
       userId,
-      sids
+      sids,
     );
     const ptRequestes = [];
     const servicestatus = this.getStatus(status);
@@ -830,7 +852,12 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             ba.status = VendorStatusEnum.REJECTED;
           }
           ba.approvedAt = new Date();
-          if ([ServiceKeyEnum.PROFILE_UPDATE, ServiceKeyEnum.REGISTRATION_UPGRADE].filter((item) => item == service.key).length == 0) {
+          if (
+            [
+              ServiceKeyEnum.PROFILE_UPDATE,
+              ServiceKeyEnum.REGISTRATION_UPGRADE,
+            ].filter((item) => item == service.key).length == 0
+          ) {
             const expireDate = new Date();
             expireDate.setFullYear(expireDate.getFullYear() + 1);
             ba.expireDate = expireDate;
@@ -857,10 +884,19 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         }
         if (ServiceKeyEnum.NEW_REGISTRATION == service.key) {
           this.updateBusinessInterestArea(result);
-          await this.setPreferentialSatus(vendorStatusDto.status, vendorStatusDto.userId);
-
-        } else if (this.commonService.getPreferencialServices().some((item) => item == service.key)) {
-          await this.setPreferentialSatus(vendorStatusDto.status, vendorStatusDto.userId);
+          await this.setPreferentialSatus(
+            vendorStatusDto.status,
+            vendorStatusDto.userId,
+          );
+        } else if (
+          this.commonService
+            .getPreferencialServices()
+            .some((item) => item == service.key)
+        ) {
+          await this.setPreferentialSatus(
+            vendorStatusDto.status,
+            vendorStatusDto.userId,
+          );
         }
       } else {
         if (vendorStatusDto.status == VendorStatusEnum.APPROVE) {
@@ -921,7 +957,10 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
             }
             await this.businessAreaRepository.save(ba);
           }
-          this.setPreferentialSatus(vendorStatusDto.status, vendorStatusDto.userId);
+          this.setPreferentialSatus(
+            vendorStatusDto.status,
+            vendorStatusDto.userId,
+          );
           await this.permitForOtherServiceRequest(vendorStatusDto.isrVendorId);
           return true;
         } else {
@@ -1159,14 +1198,38 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     vendorInitiationDto: VendorInitiationDto,
     userInfo: any,
   ): Promise<any> {
-    if (vendorInitiationDto.country == 'MW') {
+    const initial = {
+      userId: userInfo.id,
+      status: vendorInitiationDto.status,
+      level: vendorInitiationDto.level,
+      issueDate: vendorInitiationDto.tinIssuedDate,
+      isPPDARegistered: false,
+    };
+    if (
+      vendorInitiationDto.origin == 'MW' ||
+      vendorInitiationDto.origin == 'Malawi'
+    ) {
       const mbrsDataDto = new MbrsDataDto();
       mbrsDataDto.tin = vendorInitiationDto.tinNumber;
       mbrsDataDto.issuedDate = vendorInitiationDto.tinIssuedDate;
-      const result = await this.GetMBRSData(mbrsDataDto);
-      if (result == null) throw new NotFoundException('something went wrong');
-      if (!result) throw new NotFoundException('something went wrong');
+
+      if (!vendorInitiationDto.tinIssuedDate)
+        throw new BadRequestException('no tin number issued date found');
+
+      if (!vendorInitiationDto.registrationIssuedDate)
+        throw new BadRequestException('no registration number found');
+
+      if (!vendorInitiationDto.registrationIssuedDate)
+        throw new BadRequestException(
+          'no registration number issued date found',
+        );
+      let isPPDARegistered;
+      [, vendorInitiationDto, isPPDARegistered] =
+        await this.verifyAndGetExternalApiData(vendorInitiationDto);
+
+      if (isPPDARegistered) initial.isPPDARegistered = true;
     }
+
     const vendor = await this.isrVendorsRepository.findOne({
       where: {
         userId: userInfo.id,
@@ -1191,14 +1254,10 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     vendorsEntity.userId = userInfo.id;
     vendorsEntity.tinNumber = vendorInitiationDto?.tinNumber;
     vendorsEntity.status = VendorStatusEnum.DRAFT;
-    const initial = {
-      userId: userInfo.id,
-      status: vendorInitiationDto.status,
-      level: vendorInitiationDto.level,
-      issueDate: vendorInitiationDto.tinIssuedDate,
-    };
     vendorsEntity.initial = initial;
     vendorsEntity.basic = vendorInitiationDto;
+    vendorsEntity.basic.name;
+    vendorsEntity.address = vendorInitiationDto.address;
     try {
       const result = await this.isrVendorsRepository.save(vendorsEntity);
       if (result) {
@@ -1220,6 +1279,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       if (!vendorEntity) {
         throw new HttpException('isr_vendor_not_found', HttpStatus.BAD_REQUEST);
       }
+
       const invoice = await this.invoiceService.getMyInvoice(
         userId,
         ServiceKeyEnum.NEW_REGISTRATION,
@@ -1845,7 +1905,9 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     }
     rest.areasOfBusinessInterest = bussinessAreas;
     const certeficate = await this.baService.getCerteficate(vendorData.id);
-    const preferentails = await this.ptService.getMyPreferetialTreatments(vendorData.userId);
+    const preferentails = await this.ptService.getMyPreferetialTreatments(
+      vendorData.userId,
+    );
 
     const vendor = {
       ...rest,
@@ -1874,14 +1936,20 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
   }
 
   async getRejectedApps(user: any, query: CollectionQuery) {
-    const jointables = [...query.includes, 'servicePrice', 'BpService', 'isrVendor'];
+    const jointables = [
+      ...query.includes,
+      'servicePrice',
+      'BpService',
+      'isrVendor',
+    ];
     query.includes = jointables;
     query.orderBy.push({ column: 'updatedAt', direction: 'ASC' });
     const dataQuery = QueryConstructor.constructQuery<BusinessAreaEntity>(
-      this.businessAreaRepository, query)
-      .andWhere('business_areas.status In(:...statuses)', {
-        statuses: [ApplicationStatus.REJECTED, ApplicationStatus.CANCELED]
-      })
+      this.businessAreaRepository,
+      query,
+    ).andWhere('business_areas.status In(:...statuses)', {
+      statuses: [ApplicationStatus.REJECTED, ApplicationStatus.CANCELED],
+    });
     /// .orderBy('updatedAt', 'ASC');
 
     const d = new DataResponseFormat<ApplicationDto>();
@@ -1903,14 +1971,14 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     const vendor = {
       ...result,
       businessAreas: result.businessAreas.map((ba) => {
-        const result = BusinessAreaDetailResponseDto.toResponse(ba)
+        const result = BusinessAreaDetailResponseDto.toResponse(ba);
         if (ba.servicePrice) {
-          result.priceRange = this.commonService.formatPriceRange(ba.servicePrice);
+          result.priceRange = this.commonService.formatPriceRange(
+            ba.servicePrice,
+          );
         }
         return result;
-      }
-
-      ),
+      }),
       areasOfBusinessInterest: result.areasOfBusinessInterest.map((entity) => {
         return {
           name: entity.lineOfBusiness[0].name,
@@ -2000,15 +2068,15 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         //  baInstanceIds.push(row.instanceId);
         const newPR = vendorEntity.areasOfBusinessInterest.find(
           (element) => element.category === row.category,
-        )
+        );
         newPR.priceRange = row.priceRangeId;
         baResponse.push({
           id: row.id,
           vendorId: row.vendorId,
           pricingId: row.priceRangeId,
           category: row.category,
-          areaOfBusinessInterest: newPR
-        })
+          areaOfBusinessInterest: newPR,
+        });
       }
 
       return {
@@ -2248,7 +2316,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         vendorEntity.paymentReceipt = vendor.metaData?.paymentReceipt;
 
         const ceretficate = await this.baService.getCerteficate(vendor.id);
-        const preferentails = await this.ptService.getMyPreferetialTreatments(userId);
+        const preferentails =
+          await this.ptService.getMyPreferetialTreatments(userId);
 
         const response = {
           ...vendorEntity,
@@ -2323,7 +2392,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           where: {
             vendorId: vendor.id,
             status: In([ApplicationStatus.ADJUSTMENT, ApplicationStatus.DRAFT]),
-          }
+          },
         });
         if (updateInfo?.status == ApplicationStatus.ADJUSTMENT) {
           updateInfo.status = ApplicationStatus.SUBMITTED;
@@ -2345,7 +2414,8 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
         const wfi = new CreateWorkflowInstanceDto();
         wfi.user = userInfo;
         const bp = await this.bpService.findBpWithServiceByKey(
-          VendorStatusEnum.PROFILE_UPDATE_KEY);
+          VendorStatusEnum.PROFILE_UPDATE_KEY,
+        );
         if (!bp)
           throw new NotFoundException('bp service with this key notfound');
         wfi.bpId = bp.id;
@@ -2375,7 +2445,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           instanceNumber: workflowInstance.application.id,
           vendorId: workflowInstance.application.requestorId,
         };
-
       }
     } catch (error) {
       console.log(error);
@@ -2421,7 +2490,12 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     return result.isrVendor.businessAreas;
   }
   async cancelProfiles(wfiDto: UpdateWorkflowInstanceDto) {
-    const profile = await this.profileInfoRepository.findOne({ where: { vendorId: wfiDto.requestorId, status: ApplicationStatus.SUBMITTED } })
+    const profile = await this.profileInfoRepository.findOne({
+      where: {
+        vendorId: wfiDto.requestorId,
+        status: ApplicationStatus.SUBMITTED,
+      },
+    });
     if (profile) {
       profile.status = ApplicationStatus.CANCELED;
       await this.profileInfoRepository.update(profile.id, profile);
@@ -2452,7 +2526,6 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
     await this.cancelProfiles(wfi);
     if (vendor) {
       return await this.baService.cancelServiceApplication(wfi.id);
-
     } else {
       await this.baService.cancelServiceApplication(wfi.id);
       const tempVendor = await this.isrVendorsRepository.findOne({
@@ -2462,12 +2535,148 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       await this.isrVendorsRepository.update(wfi.requestorId, tempVendor);
       return true;
     }
-
   }
   async submitRegistrationRequest(user: any) {
     const data = this.isrVendorsRepository.find({ where: { userId: user.id } });
     const pdf = await PdfDocumentTemplate(data);
 
     return pdf;
+  }
+
+  private async verifyAndGetExternalApiData(itemData: VendorInitiationDto) {
+    try {
+      return await Promise.all([
+        this.verifyMRA(itemData.tinNumber, itemData.tinIssuedDate),
+        this.getAndFormatMBRSData(itemData),
+        this.verifyPPDARegistration(itemData.tinNumber),
+      ]);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  private async verifyPPDARegistration(tinNumber) {
+    try {
+      const ppdaData = await this.fetchFromExternalApi(
+        `fppa-vendors/${tinNumber}`,
+      );
+
+      if (ppdaData) return true;
+      else return false;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  private async getAndFormatMBRSData(itemData: VendorInitiationDto) {
+    try {
+      const mbrsData: MBRSResponseDto = await this.fetchFromExternalApi(
+        `customer-bussines-infos/${itemData.businessRegistrationNumber || 'COYR-8LJ178W'}`,
+      );
+
+      if (
+        itemData.registrationIssuedDate !=
+        this.reformatMBRSDate(mbrsData.records[0].registration_date)
+      )
+        throw new BadRequestException('incorrect_registration_date');
+
+      itemData = this.reformatMBRSData(mbrsData.records[0], itemData);
+
+      return itemData;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  private async verifyMRA(tinNumber: string, tinIssuedDate: string) {
+    try {
+      const mraData: MRAResponseDTO = await this.fetchFromExternalApi(
+        `tax-payers/${tinNumber}/${tinIssuedDate}`,
+      );
+
+      if (!mraData) throw new BadRequestException('invalid_tin_number');
+
+      if (tinIssuedDate != this.reformatMRADate(mraData.registrationDate))
+        throw new BadRequestException('incorrect tin number issued date');
+
+      return mraData;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  private async fetchFromExternalApi(queryUrl: string) {
+    try {
+      const url =
+        (process.env.BASE_ADMINISTRATION_URL ||
+          `https://dev-bo.megp.peragosystems.com`) +
+        `/administration/api/${queryUrl}`;
+
+      const response = await axios.get(url, {
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key':
+            process.env.API_KEY ?? '25bc1622e5fb42cca3d3e62e90a3a20f',
+        },
+      });
+
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  private reformatMBRSData(
+    mbrsRecords: RecordDTO,
+    itemData: VendorInitiationDto,
+  ) {
+    mbrsRecords.partners = mbrsRecords.partners.map((partner) => {
+      partner.share = partner.shares[0]?.number_of_shares || '0';
+      partner.firstName = partner.name;
+      partner.lastName = partner.name;
+      partner.type = partner.id_type;
+      partner.nationality = partner.shares[0]?.name;
+      return partner;
+    });
+
+    itemData.name = mbrsRecords.business_name;
+    // itemData.shareHolders = mbrsRecords.partners;
+    itemData.address = {};
+    itemData.address.postalAddress = mbrsRecords.postal_address;
+    itemData.address.physicalAddress = mbrsRecords.physical_address;
+
+    return itemData;
+  }
+
+  private reformatMRADate(dateString: string) {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+  }
+
+  private reformatMBRSDate(dateString: string) {
+    const months: { [key: string]: string } = {
+      January: '01',
+      February: '02',
+      March: '03',
+      April: '04',
+      May: '05',
+      June: '06',
+      July: '07',
+      August: '08',
+      September: '09',
+      October: '10',
+      November: '11',
+      December: '12',
+    };
+
+    const [day, monthName, year] = dateString.split(' ');
+    const month = months[monthName];
+    const formattedDate = `${year}-${month}-${day.padStart(2, '0')}`;
+
+    return formattedDate;
   }
 }

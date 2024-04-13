@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
 import { VendorsEntity } from 'src/entities';
 
 export class VendorInitiationDto {
@@ -32,6 +32,22 @@ export class VendorInitiationDto {
   @ApiProperty()
   @IsOptional()
   tinIssuedDate?: string;
+
+  @IsOptional()
+  address: any;
+
+  @IsOptional()
+  basic: any;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  businessRegistrationNumber: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  registrationIssuedDate: string;
 
   /**
    * Transfer Data from DTO object to Entity object
