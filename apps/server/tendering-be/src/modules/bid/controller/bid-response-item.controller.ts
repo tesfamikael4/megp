@@ -58,7 +58,18 @@ export class BidResponseItemController {
   }
 
   @Post('financial-response-items')
-  async getItems(@Body() payload: BidResponseItemDto, @Req() req?: any) {
+  async getFinancialItems(
+    @Body() payload: BidResponseItemDto,
+    @Req() req?: any,
+  ) {
     return this.bidSecurityService.getFinancialItems(payload, req);
+  }
+
+  @Post('technical-response-items')
+  async getTechnicalItems(
+    @Body() payload: BidResponseItemDto,
+    @Req() req?: any,
+  ) {
+    return this.bidSecurityService.getTechnicalItems(payload, req);
   }
 }

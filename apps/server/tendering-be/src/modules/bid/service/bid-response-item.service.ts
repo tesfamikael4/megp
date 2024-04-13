@@ -347,6 +347,50 @@ export class BidResponseItemService {
       items: newResult,
     };
   }
+  async getTechnicalItems(inputDto: BidResponseItemDto, req?: any) {
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+    const bidderId = req.user.organization.id;
+
+    const bidRegistrationDetail = await manager
+      .getRepository(BidRegistrationDetail)
+      .findOne({
+        where: {
+          lotId: inputDto.lotId,
+          bidRegistration: {
+            bidderId: bidderId,
+          },
+        },
+        relations: {
+          bidRegistration: true,
+        },
+      });
+    if (!bidRegistrationDetail) {
+      throw new BadRequestException('bid_registration_not_found');
+    }
+
+    const itemId = [
+      ...(bidRegistrationDetail?.financialItems ?? []),
+      ...(bidRegistrationDetail?.technicalItems ?? []),
+    ];
+
+    if (itemId.length < 1) {
+      return {
+        total: 0,
+        items: [],
+      };
+    }
+
+    const [result, total] = await manager.getRepository(Item).findAndCount({
+      where: {
+        id: In(itemId),
+      },
+    });
+
+    return {
+      total,
+      items: result,
+    };
+  }
 
   private calculateBoQRate(items: any[], code = null) {
     const children = items.filter((item) => item.parentCode === code);
