@@ -57,14 +57,13 @@ export class BidResponseDocumentService {
     }
 
     const document = await this.minIOService.generatePresignedUploadUrl(
-      itemData.value.file,
+      itemData.value,
       BucketNameEnum.BID_FORM_DOCUMENT,
     );
 
     const encryptedValue = this.encryptionHelperService.encryptData(
       JSON.stringify({
         value: {
-          ...itemData.value,
           file: document.file,
         },
       }),
