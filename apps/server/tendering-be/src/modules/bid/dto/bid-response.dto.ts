@@ -205,3 +205,20 @@ export class CheckPasswordDto {
   @IsNotEmpty()
   password: string;
 }
+
+export class OpenBidResponseDto {
+  @ApiProperty()
+  @IsUUID()
+  @IsNotEmpty()
+  tenderId: string;
+
+  @ApiProperty({ default: DocumentTypeEnum.RESPONSE })
+  @IsString()
+  @IsNotEmpty()
+  documentType: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  password: string;
+}

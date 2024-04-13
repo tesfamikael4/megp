@@ -180,10 +180,12 @@ export class BidResponseItemService {
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
     const bidderId = req.user.organization.id;
 
-    let items = await manager.getRepository(SorTechnicalRequirement).findBy({
-      itemId: inputDto.itemId,
-      sorType: inputDto.key,
-    });
+    const items = await manager
+      .getRepository(SorTechnicalRequirement)
+      .findAndCountBy({
+        itemId: inputDto.itemId,
+        sorType: inputDto.key,
+      });
 
     const bidResponse = await this.bidSecurityRepository.findOne({
       where: {
@@ -212,14 +214,17 @@ export class BidResponseItemService {
       );
 
       const responses: any[] = JSON.parse(value)?.value;
-      items = items.map((item) => {
+      items[0] = items[0].map((item) => {
         let i = { ...item };
         i = { ...i, ...responses?.find((res) => res.id === i.id) };
 
         return i;
       });
     }
-    return items;
+    return {
+      total: items[1],
+      items: items[0],
+    };
   }
 
   async getBidResponseItemByKey(inputDto: GetBidResponseItemDto, req?: any) {
@@ -240,7 +245,7 @@ export class BidResponseItemService {
       throw new BadRequestException('entity_not_found');
     }
 
-    let items = await manager.getRepository(entityName).findBy({
+    const items = await manager.getRepository(entityName).findAndCountBy({
       itemId: inputDto.itemId,
     });
 
@@ -271,14 +276,14 @@ export class BidResponseItemService {
       );
 
       const responses: any[] = JSON.parse(value)?.value;
-      items = items.map((item) => {
+      items[0] = items[0].map((item) => {
         let i = { ...item };
         i = { ...i, ...responses?.find((res) => res.id === i.id) };
 
         return i;
       });
     }
-    return items;
+    return { total: items[1], items: items[0] };
   }
 
   async getFinancialItems(inputDto: BidResponseItemDto, req?: any) {
