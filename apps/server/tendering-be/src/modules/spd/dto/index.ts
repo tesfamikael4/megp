@@ -1,4 +1,5 @@
 export * from './spd.dto';
+export * from './spd-documentary-evidence.dto';
 export * from './spd-opening-checklist.dto';
 export * from './spd-preference-margin.dto';
 export * from './spd-preliminary-evaluation.dto';

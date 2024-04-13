@@ -7,6 +7,7 @@ import { DocumentManipulatorModule } from 'src/shared/document-manipulator/docum
 import {
   Lot,
   Item,
+  Note,
   ProcurementMechanism,
   ProcurementTechnicalTeam,
   TenderClassification,
@@ -18,6 +19,7 @@ import {
 import {
   ItemController,
   LotController,
+  NoteController,
   ProcurementMechanismController,
   ProcurementTechnicalTeamController,
   TenderClassificationController,
@@ -29,6 +31,7 @@ import {
 import {
   ItemService,
   LotService,
+  NoteService,
   ProcurementMechanismService,
   ProcurementTechnicalTeamService,
   TenderClassificationService,
@@ -45,6 +48,7 @@ import {
       TenderSpd,
       Lot,
       Item,
+      Note,
       ProcurementMechanism,
       ProcurementTechnicalTeam,
       TenderClassification,
@@ -60,6 +64,7 @@ import {
     TenderSpdController,
     ItemController,
     LotController,
+    NoteController,
     ProcurementMechanismController,
     ProcurementTechnicalTeamController,
     TenderClassificationController,
@@ -71,6 +76,7 @@ import {
     TenderService,
     ItemService,
     LotService,
+    NoteService,
     ProcurementMechanismService,
     ProcurementTechnicalTeamService,
     FileHelperService,

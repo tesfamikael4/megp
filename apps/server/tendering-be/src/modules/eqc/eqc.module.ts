@@ -1,26 +1,34 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {
+  EqcDocumentaryEvidence,
   EqcDueDiligence,
   EqcPreferenceMargin,
   EqcPreliminaryExamination,
   EqcQualification,
   EqcTechnicalScoring,
 } from 'src/entities';
-import { EqcDueDiligenceController } from './controller/eqc-due-diligence.controller';
-import { EqcPreferenceMarginController } from './controller/eqc-preference-margin.controller';
-import { EqcPreliminaryExaminationController } from './controller/eqc-preliminary-examination.controller';
-import { EqcQualificationController } from './controller/eqc-qualification.controller';
-import { EqcTechnicalScoringController } from './controller/eqc-technical-scoring.controller';
-import { EqcPreferenceMarginService } from './service/eqc-preference-margin.service';
-import { EqcPreliminaryExaminationService } from './service/eqc-preliminary-examination.service';
-import { EqcQualificationService } from './service/eqc-qualification.service';
-import { EqcTechnicalScoringService } from './service/eqc-technical-scoring.service';
-import { EqcDueDiligenceService } from './service/eqc-due-diligence.service';
+import {
+  EqcDocumentaryEvidenceService,
+  EqcDueDiligenceService,
+  EqcPreferenceMarginService,
+  EqcPreliminaryExaminationService,
+  EqcQualificationService,
+  EqcTechnicalScoringService,
+} from './service';
+import {
+  EqcDocumentaryEvidenceController,
+  EqcDueDiligenceController,
+  EqcPreferenceMarginController,
+  EqcPreliminaryExaminationController,
+  EqcQualificationController,
+  EqcTechnicalScoringController,
+} from './controller';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
+      EqcDocumentaryEvidence,
       EqcDueDiligence,
       EqcPreferenceMargin,
       EqcPreliminaryExamination,
@@ -29,6 +37,7 @@ import { EqcDueDiligenceService } from './service/eqc-due-diligence.service';
     ]),
   ],
   controllers: [
+    EqcDocumentaryEvidenceService,
     EqcDueDiligenceController,
     EqcPreferenceMarginController,
     EqcPreliminaryExaminationController,
@@ -36,6 +45,7 @@ import { EqcDueDiligenceService } from './service/eqc-due-diligence.service';
     EqcTechnicalScoringController,
   ],
   providers: [
+    EqcDocumentaryEvidenceController,
     EqcDueDiligenceService,
     EqcPreferenceMarginService,
     EqcPreliminaryExaminationService,

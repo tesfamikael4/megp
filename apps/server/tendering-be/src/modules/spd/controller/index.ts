@@ -1,4 +1,5 @@
 export * from './spd.controller';
+export * from './spd-documentary-evidence.controller';
 export * from './spd-preference-margin.controller';
 export * from './spd-preliminary-evaluation.controller';
 export * from './spd-professional-setting.controller';

@@ -1,5 +1,6 @@
 export * from './item.service';
 export * from './lot.service';
+export * from './note.service';
 export * from './procurement-mechanism.service';
 export * from './procurement-technical-team.service';
 export * from './tender-classification.service';

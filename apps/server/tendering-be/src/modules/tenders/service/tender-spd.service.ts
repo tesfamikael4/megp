@@ -16,6 +16,8 @@ import {
   EqcQualification,
   EqcTechnicalScoring,
   EqcPreliminaryExamination,
+  EqcDocumentaryEvidence,
+  SpdDocumentaryEvidence,
 } from 'src/entities';
 import { DocxService } from 'src/shared/docx/docx.service';
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
@@ -65,6 +67,7 @@ export class TenderSpdService extends ExtraCrudService<TenderSpd> {
           'spdQualifications',
           'spdTechnicalScores',
           'spdPreliminaryEvaluations',
+          'spdDocumentaryEvidences',
         ],
       });
 
@@ -91,6 +94,9 @@ export class TenderSpdService extends ExtraCrudService<TenderSpd> {
         .delete({ lotId: In(lotIds) });
       await manager
         .getRepository(EqcPreliminaryExamination)
+        .delete({ lotId: In(lotIds) });
+      await manager
+        .getRepository(EqcDocumentaryEvidence)
         .delete({ lotId: In(lotIds) });
       await this.createEqc(manager, lotIds, spd);
 
@@ -154,6 +160,7 @@ export class TenderSpdService extends ExtraCrudService<TenderSpd> {
     const eqcQualificationPayload: EqcQualification[] = [];
     const eqcTechnicalScoringPayload: EqcTechnicalScoring[] = [];
     const eqcPreliminaryExaminationPayload: EqcPreliminaryExamination[] = [];
+    const eqcDocumentaryEvidencePayload: EqcDocumentaryEvidence[] = [];
     lotIds.forEach((lotId: string) => {
       spd.spdQualifications.forEach((qualification: SpdQualification) => {
         const eqcQualification = new EqcQualification();
@@ -214,6 +221,26 @@ export class TenderSpdService extends ExtraCrudService<TenderSpd> {
           eqcPreliminaryExaminationPayload.push(eqcPreliminaryExamination);
         },
       );
+
+      spd.spdDocumentaryEvidences.forEach(
+        (evidence: SpdDocumentaryEvidence) => {
+          const eqcDocumentaryEvidence = new EqcDocumentaryEvidence();
+          eqcDocumentaryEvidence.lotId = lotId;
+          eqcDocumentaryEvidence.spdDocumentaryEvidenceId = evidence.id;
+          eqcDocumentaryEvidence.checkOnFirstCompliance =
+            evidence.checkOnFirstCompliance;
+          eqcDocumentaryEvidence.checkOnFirstOpening =
+            evidence.checkOnFirstOpening;
+          eqcDocumentaryEvidence.checkOnSecondCompliance =
+            evidence.checkOnSecondCompliance;
+          eqcDocumentaryEvidence.checkOnSecondOpening =
+            evidence.checkOnSecondOpening;
+          eqcDocumentaryEvidence.evidenceTitle = evidence.evidenceTitle;
+          eqcDocumentaryEvidence.evidenceType = evidence.evidenceType;
+
+          eqcDocumentaryEvidencePayload.push(eqcDocumentaryEvidence);
+        },
+      );
     });
 
     await manager
@@ -227,5 +254,9 @@ export class TenderSpdService extends ExtraCrudService<TenderSpd> {
     await manager
       .getRepository(EqcPreliminaryExamination)
       .insert(eqcPreliminaryExaminationPayload);
+
+    await manager
+      .getRepository(EqcDocumentaryEvidence)
+      .insert(eqcDocumentaryEvidencePayload);
   }
 }
