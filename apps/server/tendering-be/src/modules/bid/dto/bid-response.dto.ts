@@ -107,6 +107,11 @@ export class UploadBidResponseDocumentDto {
   @IsNotEmpty()
   tenderId: string;
 
+  @ApiProperty()
+  @IsUUID()
+  @IsNotEmpty()
+  bidFormId: string;
+
   @ApiProperty({ default: DocumentTypeEnum.RESPONSE })
   @IsUUID()
   @IsNotEmpty()
