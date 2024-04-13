@@ -37,20 +37,20 @@ import {
     ]),
   ],
   controllers: [
-    EqcDocumentaryEvidenceService,
     EqcDueDiligenceController,
     EqcPreferenceMarginController,
     EqcPreliminaryExaminationController,
     EqcQualificationController,
     EqcTechnicalScoringController,
+    EqcDocumentaryEvidenceController,
   ],
   providers: [
-    EqcDocumentaryEvidenceController,
     EqcDueDiligenceService,
     EqcPreferenceMarginService,
     EqcPreliminaryExaminationService,
     EqcQualificationService,
     EqcTechnicalScoringService,
+    EqcDocumentaryEvidenceService,
   ],
 })
 export class EqcModule {}
