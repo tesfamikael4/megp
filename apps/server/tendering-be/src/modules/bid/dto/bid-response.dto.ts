@@ -7,6 +7,7 @@ import {
   IsUUID,
 } from 'class-validator';
 import { DocumentTypeEnum } from 'src/shared/enums';
+import { FileUploadDto } from 'src/shared/min-io';
 
 export class CreateBidResponseDto {
   @ApiProperty()
@@ -75,6 +76,33 @@ export class CreateBidResponseItemDto {
 }
 
 export class CreateBidResponseTenderDto {
+  @ApiProperty()
+  @IsUUID()
+  @IsNotEmpty()
+  tenderId: string;
+
+  @ApiProperty({ default: DocumentTypeEnum.RESPONSE })
+  @IsUUID()
+  @IsNotEmpty()
+  documentType: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  key: string;
+
+  @ApiProperty()
+  @IsObject()
+  @IsNotEmpty()
+  value: any;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  password: string;
+}
+
+export class UploadBidResponseTenderDto {
   @ApiProperty()
   @IsUUID()
   @IsNotEmpty()
