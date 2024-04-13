@@ -1,22 +1,13 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  Post,
-  Query,
-  Req,
-  UseGuards,
-} from '@nestjs/common';
-import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtGuard } from 'src/shared/authorization';
 import { VendorGuard } from 'src/shared/authorization/guards/vendor.guard';
 import { BidResponseItemService } from '../service/bid-response-item.service';
 import {
+  BidResponseItemDto,
   CreateBidResponseItemDto,
   GetBidResponseItemDto,
 } from '../dto/bid-response.dto';
-import { decodeCollectionQuery } from 'src/shared/collection-query';
 
 @ApiBearerAuth()
 @Controller('bid-item-responses')
@@ -66,25 +57,8 @@ export class BidResponseItemController {
     return await this.bidSecurityService.getBidResponseItemByKey(payload, req);
   }
 
-  @Get('items/:lotId')
-  @ApiQuery({
-    name: 'q',
-    type: String,
-    description: 'Collection Query Parameter. Optional',
-    required: false,
-  })
-  async getItems(
-    @Param('lotId') lotId: string,
-    @Query('q') q: string,
-    @Req() req?: any,
-  ) {
-    const query = decodeCollectionQuery(q);
-
-    return this.bidSecurityService.getFinancialItems(
-      lotId,
-      'P@ssw0rd',
-      query,
-      req,
-    );
+  @Post('financial-response-items')
+  async getItems(@Body() payload: BidResponseItemDto, @Req() req?: any) {
+    return this.bidSecurityService.getFinancialItems(payload, req);
   }
 }
