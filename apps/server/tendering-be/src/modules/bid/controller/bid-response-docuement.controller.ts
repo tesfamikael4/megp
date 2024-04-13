@@ -4,7 +4,7 @@ import { JwtGuard } from 'src/shared/authorization';
 import { VendorGuard } from 'src/shared/authorization/guards/vendor.guard';
 import { BidResponseDocumentService } from '../service/bid-response-document.service';
 import {
-  GetBidResponseTenderDto,
+  BidResponseDocumentDto,
   UploadBidResponseDocumentDto,
 } from '../dto/bid-response.dto';
 
@@ -17,7 +17,7 @@ export class BidResponseDocumentController {
     private readonly bidSecurityService: BidResponseDocumentService,
   ) {}
 
-  @Post('upload-bid-response-document')
+  @Post('upload-response')
   async uploadBidResponseDocument(
     @Body() payload: UploadBidResponseDocumentDto,
     @Req() req?: any,
@@ -28,9 +28,9 @@ export class BidResponseDocumentController {
     );
   }
 
-  @Post('get-bid-response-document')
+  @Post('download-response')
   async getBidResponseDocumentByKey(
-    @Body() payload: GetBidResponseTenderDto,
+    @Body() payload: BidResponseDocumentDto,
     @Req() req?: any,
   ) {
     return await this.bidSecurityService.getBidResponseDocumentByKey(

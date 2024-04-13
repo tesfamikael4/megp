@@ -133,6 +133,33 @@ export class UploadBidResponseDocumentDto {
   password: string;
 }
 
+export class BidResponseDocumentDto {
+  @ApiProperty()
+  @IsUUID()
+  @IsNotEmpty()
+  tenderId: string;
+
+  @ApiProperty()
+  @IsUUID()
+  @IsNotEmpty()
+  bidFormId: string;
+
+  @ApiProperty({ default: DocumentTypeEnum.RESPONSE })
+  @IsUUID()
+  @IsNotEmpty()
+  documentType: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  key: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  password: string;
+}
+
 export class GetBidResponseDto {
   @ApiProperty()
   @IsUUID()

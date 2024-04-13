@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { BidResponseTender } from 'src/entities/bid-response-tender.entity';
 import { EntityManager, Repository } from 'typeorm';
 import {
+  BidResponseDocumentDto,
   GetBidResponseTenderDto,
   UploadBidResponseDocumentDto,
 } from '../dto/bid-response.dto';
@@ -63,9 +64,7 @@ export class BidResponseDocumentService {
 
     const encryptedValue = this.encryptionHelperService.encryptData(
       JSON.stringify({
-        value: {
-          file: document.file,
-        },
+        value: document.file,
       }),
       itemData.password,
       bidRegistrationDetail.bidRegistration.salt,
@@ -83,32 +82,38 @@ export class BidResponseDocumentService {
   }
 
   async getBidResponseDocumentByKey(
-    itemData: GetBidResponseTenderDto,
+    itemData: BidResponseDocumentDto,
     req?: any,
   ) {
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
     const bidderId = req.user.organization.id;
 
-    const bidResponse = await manager.getRepository(BidResponseTender).findOne({
-      where: {
-        documentType: itemData.documentType,
-        key: itemData.key,
-        bidRegistration: {
-          tenderId: itemData.tenderId,
-          bidderId: bidderId,
+    const bidResponseDocument = await manager
+      .getRepository(BidResponseDocument)
+      .findOne({
+        where: {
+          documentType: itemData.documentType,
+          key: itemData.key,
+          bidRegistrationDetail: {
+            bidRegistration: {
+              tenderId: itemData.tenderId,
+              bidderId: bidderId,
+            },
+          },
         },
-      },
-      relations: {
-        bidRegistration: true,
-      },
-    });
-    if (!bidResponse) {
+        relations: {
+          bidRegistrationDetail: {
+            bidRegistration: true,
+          },
+        },
+      });
+    if (!bidResponseDocument) {
       throw new BadRequestException('bid_response_not_found');
     }
     const decryptedValue = this.encryptionHelperService.decryptedData(
-      bidResponse.value,
+      bidResponseDocument.value,
       itemData.password,
-      bidResponse.bidRegistration.salt,
+      bidResponseDocument.bidRegistrationDetail.bidRegistration.salt,
     );
     return decryptedValue;
   }
