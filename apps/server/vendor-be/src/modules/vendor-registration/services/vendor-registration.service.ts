@@ -1216,7 +1216,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
       if (!vendorInitiationDto.tinIssuedDate)
         throw new BadRequestException('no tin number issued date found');
 
-      if (!vendorInitiationDto.registrationIssuedDate)
+      if (!vendorInitiationDto.registrationNumber)
         throw new BadRequestException('no registration number found');
 
       if (!vendorInitiationDto.registrationIssuedDate)
@@ -2571,8 +2571,11 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
   private async getAndFormatMBRSData(itemData: VendorInitiationDto) {
     try {
       const mbrsData: MBRSResponseDto = await this.fetchFromExternalApi(
-        `customer-bussines-infos/${itemData.businessRegistrationNumber || 'COYR-8LJ178W'}`,
+        `customer-bussines-infos/${itemData.registrationNumber || 'COYR-8LJ178W'}`,
       );
+
+      if (mbrsData.count == 0)
+        throw new BadRequestException('you_are_not_registered_on_mbrs');
 
       if (
         itemData.registrationIssuedDate !=
