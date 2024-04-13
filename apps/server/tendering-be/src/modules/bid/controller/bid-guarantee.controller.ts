@@ -7,8 +7,8 @@ import { BidGuaranteeService } from '../service/bid-guarantee.service';
 import {
   CreateBidGuaranteeDto,
   UpdateBidGuaranteeDto,
+  UpdateGuaranteeStatusDto,
 } from '../dto/bid-guarantee.dto';
-import { UpdateGuaranteeStatusDto } from '../dto/update-bid-guarantee-status.dto';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'lotId',

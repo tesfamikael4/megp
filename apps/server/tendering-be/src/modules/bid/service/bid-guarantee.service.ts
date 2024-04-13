@@ -1,18 +1,32 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import { ExtraCrudService } from 'src/shared/service';
 import { BidGuarantee } from 'src/entities/bid-guarantee.entity';
-import { UpdateGuaranteeStatusDto } from '../dto/update-bid-guarantee-status.dto';
 import { Lot } from 'src/entities';
-import { CreateBidGuaranteeDto } from '../dto/bid-guarantee.dto';
+import {
+  CreateBidGuaranteeDto,
+  UpdateGuaranteeStatusDto,
+} from '../dto/bid-guarantee.dto';
+import { BidGuaranteeStatusEnum } from 'src/shared/enums/bid-guarantee-status.enum';
+import { REQUEST } from '@nestjs/core';
+import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
+import { SpdBidForm } from 'src/entities/spd-bid-form.entity';
+import { DocxService } from 'src/shared/docx/docx.service';
+import { BucketNameEnum, MinIOService } from 'src/shared/min-io';
 @Injectable()
 export class BidGuaranteeService extends ExtraCrudService<BidGuarantee> {
   constructor(
     @InjectRepository(BidGuarantee)
     private readonly bidGuaranteeRepository: Repository<BidGuarantee>,
-    @InjectRepository(Lot)
-    private readonly lotRepository: Repository<Lot>,
+    private readonly docxService: DocxService,
+    private readonly minIOService: MinIOService,
+    @Inject(REQUEST) private request: Request,
   ) {
     super(bidGuaranteeRepository);
   }
@@ -22,8 +36,9 @@ export class BidGuaranteeService extends ExtraCrudService<BidGuarantee> {
       itemData.bidderId = req.user.organization.id;
       itemData.bidderName = req.user.organization.name;
     }
+    const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
 
-    const lot = await this.lotRepository.findOne({
+    const lot = await manager.getRepository(Lot).findOne({
       where: {
         id: itemData.lotId,
       },
@@ -56,6 +71,42 @@ export class BidGuaranteeService extends ExtraCrudService<BidGuarantee> {
     if (!guarantee) {
       throw new NotFoundException('Guarantee not found');
     }
+
+    if (updateGuaranteeStatusDto.status == BidGuaranteeStatusEnum.REQUESTED) {
+      const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
+      const spdTemplate = await manager.getRepository(SpdBidForm).findOneBy({
+        type: 'bid-security',
+        spd: {
+          tenderSpd: {
+            tender: {
+              lots: {
+                id: guarantee.lotId,
+              },
+            },
+          },
+        },
+      });
+      if (!spdTemplate) {
+        throw new BadRequestException('template_not_found');
+      }
+
+      const docx = await this.docxService.generateDocx(
+        spdTemplate.documentDocx,
+        {
+          supplierName: guarantee.bidderName,
+          amount: guarantee.amount,
+        },
+      );
+
+      updateGuaranteeStatusDto.document = await this.minIOService.uploadBuffer(
+        docx,
+        'bid_security.pdf',
+        'application/pdf',
+        BucketNameEnum.BID_SECURITY_DOCUMENT,
+      );
+    }
+
     return await super.update(id, updateGuaranteeStatusDto);
   }
 }

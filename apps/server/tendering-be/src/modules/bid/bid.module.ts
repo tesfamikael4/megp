@@ -22,6 +22,8 @@ import { BidGuaranteeController } from './controller/bid-guarantee.controller';
 import { BidGuaranteeService } from './service/bid-guarantee.service';
 import { BidGuarantee } from 'src/entities/bid-guarantee.entity';
 import { Lot } from 'src/entities';
+import { DocxModule } from 'src/shared/docx/docx.module';
+import { MinIOModule } from 'src/shared/min-io';
 
 @Module({
   imports: [
@@ -36,6 +38,8 @@ import { Lot } from 'src/entities';
       BidGuarantee,
     ]),
     AuthorizationModule,
+    DocxModule,
+    MinIOModule,
   ],
   controllers: [
     BidBookmarkController,
