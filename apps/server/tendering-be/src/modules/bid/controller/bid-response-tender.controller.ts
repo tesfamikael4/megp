@@ -6,7 +6,6 @@ import { BidResponseTenderService } from '../service/bid-response-tender.service
 import {
   CreateBidResponseTenderDto,
   GetBidResponseTenderDto,
-  UploadBidResponseTenderDto,
 } from '../dto/bid-response.dto';
 
 @ApiBearerAuth()
@@ -22,14 +21,6 @@ export class BidResponseTenderController {
     @Req() req?: any,
   ) {
     return await this.bidSecurityService.createBidResponseTender(payload, req);
-  }
-
-  @Post('upload-bid-response-tender')
-  async uploadBidResponseTender(
-    @Body() payload: UploadBidResponseTenderDto,
-    @Req() req?: any,
-  ) {
-    return await this.bidSecurityService.uploadBidResponseTender(payload, req);
   }
 
   @Post('get-bid-response-tender')

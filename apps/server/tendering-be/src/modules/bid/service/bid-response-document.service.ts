@@ -3,44 +3,52 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { BidResponseTender } from 'src/entities/bid-response-tender.entity';
 import { EntityManager, Repository } from 'typeorm';
 import {
-  CreateBidResponseTenderDto,
   GetBidResponseTenderDto,
+  UploadBidResponseDocumentDto,
 } from '../dto/bid-response.dto';
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 import { REQUEST } from '@nestjs/core';
 import { EncryptionHelperService } from './encryption-helper.service';
-import { BidRegistration } from 'src/entities/bid-registration.entity';
+import { BucketNameEnum, MinIOService } from 'src/shared/min-io';
+import { BidResponseDocument } from 'src/entities/bid-response-document.entity';
+import { BidRegistrationDetail } from 'src/entities/bid-registration-detail.entity';
 
 @Injectable()
-export class BidResponseTenderService {
+export class BidResponseDocumentService {
   constructor(
-    @InjectRepository(BidResponseTender)
-    private readonly bidSecurityRepository: Repository<BidResponseTender>,
+    @InjectRepository(BidResponseDocument)
+    private readonly bidSecurityRepository: Repository<BidResponseDocument>,
     private readonly encryptionHelperService: EncryptionHelperService,
+    private readonly minIOService: MinIOService,
     @Inject(REQUEST) private request: Request,
   ) {}
 
-  async createBidResponseTender(
-    itemData: CreateBidResponseTenderDto,
+  async uploadBidResponseDocument(
+    itemData: UploadBidResponseDocumentDto,
     req?: any,
   ): Promise<any> {
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
     const bidderId = req.user.organization.id;
 
-    const bidRegistration = await manager
-      .getRepository(BidRegistration)
+    const bidRegistrationDetail = await manager
+      .getRepository(BidRegistrationDetail)
       .findOne({
         where: {
-          tenderId: itemData.tenderId,
-          bidderId: bidderId,
+          bidRegistration: {
+            tenderId: itemData.tenderId,
+            bidderId: bidderId,
+          },
+        },
+        relations: {
+          bidRegistration: true,
         },
       });
-    if (!bidRegistration) {
+    if (!bidRegistrationDetail) {
       throw new BadRequestException('bid_registration_not_found');
     }
 
     const isPasswordValid = this.encryptionHelperService.checkPasswordValidity(
-      bidRegistration,
+      bidRegistrationDetail.bidRegistration,
       itemData.documentType,
       itemData.password,
     );
@@ -48,21 +56,34 @@ export class BidResponseTenderService {
       throw new BadRequestException('invalid_password');
     }
 
-    const encryptedValue = this.encryptionHelperService.encryptData(
-      JSON.stringify(itemData.value),
-      itemData.password,
-      bidRegistration.salt,
+    const document = await this.minIOService.generatePresignedUploadUrl(
+      itemData.value.file,
+      BucketNameEnum.BID_FORM_DOCUMENT,
     );
 
-    const item = manager.getRepository(BidResponseTender).create(itemData);
-    item.bidRegistrationId = bidRegistration.id;
+    const encryptedValue = this.encryptionHelperService.encryptData(
+      JSON.stringify({
+        value: {
+          ...itemData.value,
+          file: document.file,
+        },
+      }),
+      itemData.password,
+      bidRegistrationDetail.bidRegistration.salt,
+    );
+
+    const item = manager.getRepository(BidResponseDocument).create(itemData);
+    item.bidRegistrationDetailId = bidRegistrationDetail.id;
     item.value = encryptedValue;
 
     await this.bidSecurityRepository.upsert(item, ['bidRegistrationId', 'key']);
-    return item;
+    return {
+      ...item,
+      presignedDownload: document.presignedUrl,
+    };
   }
 
-  async getBidResponseTenderByKey(
+  async getBidResponseDocumentByKey(
     itemData: GetBidResponseTenderDto,
     req?: any,
   ) {

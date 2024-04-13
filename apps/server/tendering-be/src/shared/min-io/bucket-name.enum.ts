@@ -11,4 +11,5 @@ export enum BucketNameEnum {
   SOR_DOCUMENT = 'sor_document/',
   TENDERING_DOCUMENT = 'tendering_document/',
   BID_SECURITY_DOCUMENT = 'bid_security_document/',
+  BID_FORM_DOCUMENT = 'bid_form_document/',
 }
