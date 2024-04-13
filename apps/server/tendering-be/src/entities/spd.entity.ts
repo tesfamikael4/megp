@@ -16,6 +16,7 @@ import { SpdBidForm } from './spd-bid-form.entity';
 import { SpdContractForm } from './spd-contract-form.entity';
 import { TenderSpd } from './tender-spd.entity';
 import { SpdOpeningChecklist } from './spd-opening-checklist.entity';
+import { SpdDocumentaryEvidence } from './spd-documentary-evidence.entity';
 
 @Entity({ name: 'spd' })
 export class Spd extends Audit {
@@ -117,6 +118,16 @@ export class Spd extends Audit {
     onDelete: 'CASCADE',
   })
   spdContractForm: SpdContractForm[];
+
+  @OneToMany(
+    () => SpdDocumentaryEvidence,
+    (spdDocumentaryEvidence) => spdDocumentaryEvidence.spd,
+    {
+      cascade: true,
+      onDelete: 'CASCADE',
+    },
+  )
+  spdDocumentaryEvidences: SpdDocumentaryEvidence[];
 
   @OneToOne(() => TenderSpd, (tender) => tender.spd)
   tenderSpd: TenderSpd;

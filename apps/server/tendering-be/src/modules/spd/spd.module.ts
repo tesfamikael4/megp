@@ -4,6 +4,7 @@ import { DocxModule } from 'src/shared/docx/docx.module';
 import { MinIOModule } from 'src/shared/min-io/min-io.module';
 import {
   Spd,
+  SpdDocumentaryEvidence,
   SpdOpeningChecklist,
   SpdPreferenceMargin,
   SpdPreliminaryEvaluation,
@@ -14,6 +15,7 @@ import {
 } from 'src/entities';
 import {
   SpdService,
+  SpdDocumentaryEvidenceService,
   SpdPreferenceMarginService,
   SpdPreliminaryEvaluationService,
   SpdProfessionalSettingService,
@@ -24,6 +26,7 @@ import {
 } from './service';
 import {
   SpdController,
+  SpdDocumentaryEvidenceController,
   SpdPreferenceMarginController,
   SpdPreliminaryEvaluationController,
   SpdProfessionalSettingController,
@@ -45,6 +48,7 @@ import { SpdOpeningChecklistController } from './controller/spd-opening-checklis
   imports: [
     TypeOrmModule.forFeature([
       Spd,
+      SpdDocumentaryEvidence,
       SpdPreferenceMargin,
       SpdPreliminaryEvaluation,
       SpdProfessionalSetting,
@@ -61,6 +65,7 @@ import { SpdOpeningChecklistController } from './controller/spd-opening-checklis
   ],
   providers: [
     SpdService,
+    SpdDocumentaryEvidenceService,
     SpdPreferenceMarginService,
     SpdPreliminaryEvaluationService,
     SpdProfessionalSettingService,
@@ -74,6 +79,7 @@ import { SpdOpeningChecklistController } from './controller/spd-opening-checklis
   ],
   controllers: [
     SpdController,
+    SpdDocumentaryEvidenceController,
     SpdPreferenceMarginController,
     SpdPreliminaryEvaluationController,
     SpdProfessionalSettingController,

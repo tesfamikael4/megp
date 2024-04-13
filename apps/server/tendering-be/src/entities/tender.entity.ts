@@ -29,6 +29,7 @@ import { TenderPersonal } from './tender-personal.entity';
 import { Opening } from './opening.entity';
 import { BidOpeningChecklist } from './bid-opening-checklist.entity';
 import { Team } from './team.entity';
+import { Note } from './note.entity';
 
 @Entity({ name: 'tenders' })
 export class Tender extends Audit {
@@ -186,4 +187,7 @@ export class Tender extends Audit {
 
   @OneToMany(() => Team, (team) => team.tender)
   teams: Team[];
+
+  @OneToMany(() => Note, (note) => note.tender)
+  notes: Note[];
 }

@@ -21,6 +21,7 @@ import { BidOpeningChecklist } from './bid-opening-checklist.entity';
 import { Team } from './team.entity';
 import { MilestonesTracker } from './milestones-tracker.entity';
 import { BidGuarantee } from './bid-guarantee.entity';
+import { EqcDocumentaryEvidence } from './eqc-documentary-evidence.entity';
 
 @Entity({ name: 'lots' })
 export class Lot extends Audit {
@@ -72,6 +73,12 @@ export class Lot extends Audit {
 
   @OneToMany(() => EqcDueDiligence, (eqcDueDelegence) => eqcDueDelegence.lot)
   eqcDueDiligences: EqcDueDiligence[];
+
+  @OneToMany(
+    () => EqcDocumentaryEvidence,
+    (eqcDocumentaryEvidence) => eqcDocumentaryEvidence.lot,
+  )
+  eqcDocumentaryEvidences: EqcDocumentaryEvidence[];
 
   @OneToMany(() => BdsBidSecurity, (bdsBidSecurity) => bdsBidSecurity.lot)
   bdsBidSecurity: BdsBidSecurity[];
