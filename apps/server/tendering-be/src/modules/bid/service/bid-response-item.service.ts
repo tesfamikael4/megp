@@ -1,8 +1,9 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BidResponseItem } from 'src/entities/bid-response-item.entity';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager, In, Repository } from 'typeorm';
 import {
+  BidResponseItemDto,
   CreateBidResponseItemDto,
   GetBidResponseItemDto,
 } from '../dto/bid-response.dto';
@@ -20,12 +21,6 @@ import {
   SorReimburseableExpense,
   SorTechnicalRequirement,
 } from 'src/entities';
-import {
-  CollectionQuery,
-  FilterOperators,
-  QueryConstructor,
-} from 'src/shared/collection-query';
-import { DataResponseFormat } from 'src/shared/api-data';
 
 @Injectable()
 export class BidResponseItemService {
@@ -284,12 +279,7 @@ export class BidResponseItemService {
     return items;
   }
 
-  async getFinancialItems(
-    lotId: string,
-    password: string,
-    query: CollectionQuery,
-    req?: any,
-  ) {
+  async getFinancialItems(inputDto: BidResponseItemDto, req?: any) {
     const manager: EntityManager = this.request[ENTITY_MANAGER_KEY];
     const bidderId = req.user.organization.id;
 
@@ -297,7 +287,7 @@ export class BidResponseItemService {
       .getRepository(BidRegistrationDetail)
       .findOne({
         where: {
-          lotId: lotId,
+          lotId: inputDto.lotId,
           bidRegistration: {
             bidderId: bidderId,
           },
@@ -322,55 +312,40 @@ export class BidResponseItemService {
       };
     }
 
-    const itemRepository = manager.getRepository(Item);
-
-    query.where.push([
-      {
-        column: 'id',
-        value: itemId,
-        operator: FilterOperators.In,
+    const [result, total] = await manager.getRepository(Item).findAndCount({
+      where: {
+        id: In(itemId),
       },
-    ]);
+      relations: {
+        bidResponseItems: true,
+      },
+    });
 
-    const response = new DataResponseFormat<Item>();
-    const dataQuery = QueryConstructor.constructQuery<Item>(
-      itemRepository,
-      query,
-    ).leftJoinAndSelect(
-      'items.bidResponseItems',
-      'bidResponseItems',
-      'bidResponseItems.key =:key',
-      { key: 'Rate' },
-    );
-
-    if (query.count) {
-      response.total = await dataQuery.getCount();
-    } else {
-      const [result, total] = await dataQuery.getManyAndCount();
-      const newResult = result.map((item) => {
-        let i: any = { ...item };
-        const encryptedData = i.bidResponseItems.find(
-          (x: any) => x.itemId == i.id,
-        );
-        let decryptedData = null;
-        if (encryptedData) {
-          const data = JSON.parse(
-            this.encryptionHelperService.decryptedData(
-              encryptedData.value,
-              password,
-              bidRegistrationDetail.bidRegistration.salt,
-            ),
-          );
-          decryptedData = data?.value?.rate;
-        }
-        i = { ...i, rate: decryptedData };
-        delete i.bidResponseItems;
-        return i;
+    const newResult = result.map((item) => {
+      let i: any = { ...item };
+      const encryptedData = i.bidResponseItems.find((x: BidResponseItem) => {
+        return item.id == x.itemId && x.key === 'Rate';
       });
-      response.total = total;
-      response.items = newResult;
-    }
-    return response;
+      let decryptedData = null;
+      if (encryptedData) {
+        const data = JSON.parse(
+          this.encryptionHelperService.decryptedData(
+            encryptedData.value,
+            inputDto.password,
+            bidRegistrationDetail.bidRegistration.salt,
+          ),
+        );
+        decryptedData = data?.value?.rate;
+      }
+      i = { ...i, rate: decryptedData };
+      delete i.bidResponseItems;
+      return i;
+    });
+
+    return {
+      total,
+      items: newResult,
+    };
   }
 
   private calculateBoQRate(items: any[], code = null) {

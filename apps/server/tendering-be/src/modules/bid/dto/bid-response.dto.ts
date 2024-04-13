@@ -172,6 +172,23 @@ export class GetBidResponseTenderDto {
   password: string;
 }
 
+export class BidResponseItemDto {
+  @ApiProperty()
+  @IsUUID()
+  @IsNotEmpty()
+  lotId: string;
+
+  @ApiProperty({ default: DocumentTypeEnum.RESPONSE })
+  @IsString()
+  @IsNotEmpty()
+  documentType: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  password: string;
+}
+
 export class CheckPasswordDto {
   @ApiProperty()
   @IsUUID()
