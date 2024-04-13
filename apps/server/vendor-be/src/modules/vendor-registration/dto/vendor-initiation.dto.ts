@@ -42,7 +42,7 @@ export class VendorInitiationDto {
   @ApiProperty()
   @IsString()
   @IsOptional()
-  businessRegistrationNumber: string;
+  registrationNumber: string;
 
   @ApiProperty()
   @IsString()

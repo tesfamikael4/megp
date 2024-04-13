@@ -40,6 +40,10 @@ export class IsrVendorsEntity extends Audit {
   paymentReceipt: any;
   @Column({ nullable: true })
   remark: string;
+
+  @Column({ nullable: true })
+  registrationNumber: string;
+
   @OneToMany(() => WorkflowInstanceEntity, (wf) => wf.isrVendor)
   instances: WorkflowInstanceEntity[];
 
