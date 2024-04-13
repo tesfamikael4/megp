@@ -7,7 +7,6 @@ import {
   IsUUID,
 } from 'class-validator';
 import { DocumentTypeEnum } from 'src/shared/enums';
-import { FileUploadDto } from 'src/shared/min-io';
 
 export class CreateBidResponseDto {
   @ApiProperty()
@@ -102,7 +101,7 @@ export class CreateBidResponseTenderDto {
   password: string;
 }
 
-export class UploadBidResponseTenderDto {
+export class UploadBidResponseDocumentDto {
   @ApiProperty()
   @IsUUID()
   @IsNotEmpty()

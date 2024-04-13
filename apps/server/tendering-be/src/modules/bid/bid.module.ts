@@ -24,6 +24,9 @@ import { BidGuarantee } from 'src/entities/bid-guarantee.entity';
 import { Lot } from 'src/entities';
 import { DocxModule } from 'src/shared/docx/docx.module';
 import { MinIOModule } from 'src/shared/min-io';
+import { BidResponseDocument } from 'src/entities/bid-response-document.entity';
+import { BidResponseDocumentController } from './controller/bid-response-docuement.controller';
+import { BidResponseDocumentService } from './service/bid-response-document.service';
 
 @Module({
   imports: [
@@ -36,6 +39,7 @@ import { MinIOModule } from 'src/shared/min-io';
       BidResponseItem,
       Lot,
       BidGuarantee,
+      BidResponseDocument,
     ]),
     AuthorizationModule,
     DocxModule,
@@ -47,6 +51,7 @@ import { MinIOModule } from 'src/shared/min-io';
     BidResponseController,
     BidResponseItemController,
     BidResponseTenderController,
+    BidResponseDocumentController,
     BidGuaranteeController,
   ],
   providers: [
@@ -56,6 +61,7 @@ import { MinIOModule } from 'src/shared/min-io';
     EncryptionHelperService,
     BidResponseItemService,
     BidResponseTenderService,
+    BidResponseDocumentService,
     BidGuaranteeService,
   ],
   exports: [BidRegistrationService],

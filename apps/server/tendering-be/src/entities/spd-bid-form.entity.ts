@@ -4,9 +4,11 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Spd } from './spd.entity';
+import { BidResponseDocument } from './bid-response-document.entity';
 
 @Entity({ name: 'spd_bid_forms' })
 export class SpdBidForm extends Audit {
@@ -34,4 +36,10 @@ export class SpdBidForm extends Audit {
   @ManyToOne(() => Spd, (spd) => spd.spdBidForm)
   @JoinColumn({ name: 'spdId' })
   spd: Spd;
+
+  @OneToMany(
+    () => BidResponseDocument,
+    (bidResponseItems) => bidResponseItems.bidForm,
+  )
+  bidResponseDocuments: BidResponseDocument[];
 }
