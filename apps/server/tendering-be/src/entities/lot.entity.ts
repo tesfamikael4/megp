@@ -80,8 +80,8 @@ export class Lot extends Audit {
   )
   eqcDocumentaryEvidences: EqcDocumentaryEvidence[];
 
-  @OneToMany(() => BdsBidSecurity, (bdsBidSecurity) => bdsBidSecurity.lot)
-  bdsBidSecurity: BdsBidSecurity[];
+  @OneToOne(() => BdsBidSecurity, (bdsBidSecurity) => bdsBidSecurity.lot)
+  bdsBidSecurity: BdsBidSecurity;
 
   @OneToMany(
     () => BidRegistrationDetail,

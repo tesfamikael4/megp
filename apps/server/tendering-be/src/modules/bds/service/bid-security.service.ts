@@ -13,12 +13,6 @@ export class BdsBidSecurityService extends ExtraCrudService<BdsBidSecurity> {
     super(bidSecurityRepository);
   }
 
-  async create(itemData: any, req?: any): Promise<any> {
-    const item = this.bidSecurityRepository.create(itemData);
-    await this.bidSecurityRepository.upsert(item, ['lotId', 'bidSecurityForm']);
-    return item;
-  }
-
   async findOne(lotId: string, req?: any): Promise<BdsBidSecurity | undefined> {
     return await this.bidSecurityRepository.findOneBy({ lotId });
   }

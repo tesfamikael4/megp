@@ -3,14 +3,12 @@ import {
   Column,
   Entity,
   JoinColumn,
-  ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
-  Unique,
 } from 'typeorm';
 import { Lot } from './lot.entity';
 
 @Entity({ name: 'bds_bid_securities' })
-@Unique(['lotId', 'bidSecurityForm'])
 export class BdsBidSecurity extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -18,7 +16,7 @@ export class BdsBidSecurity extends Audit {
   @Column({ type: 'uuid' })
   lotId: string;
 
-  @ManyToOne(() => Lot, (Lot) => Lot.bdsBidSecurity)
+  @OneToOne(() => Lot, (Lot) => Lot.bdsBidSecurity)
   @JoinColumn()
   lot: Lot;
 
