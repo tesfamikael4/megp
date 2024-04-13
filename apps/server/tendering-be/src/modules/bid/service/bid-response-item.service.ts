@@ -67,7 +67,9 @@ export class BidResponseItemService {
     const items = [];
     for (const value of inputDto.values) {
       const encryptedValue = this.encryptionHelperService.encryptData(
-        JSON.stringify(value.value),
+        JSON.stringify({
+          value: value.value,
+        }),
         inputDto.password,
         bidRegistrationDetail.bidRegistration.salt,
       );
@@ -212,7 +214,7 @@ export class BidResponseItemService {
       const responses: any[] = JSON.parse(value)?.value;
       items = items.map((item) => {
         let i = { ...item };
-        i = { ...i, ...responses.find((res) => res.id === i.id) };
+        i = { ...i, ...responses?.find((res) => res.id === i.id) };
 
         return i;
       });
@@ -271,7 +273,7 @@ export class BidResponseItemService {
       const responses: any[] = JSON.parse(value)?.value;
       items = items.map((item) => {
         let i = { ...item };
-        i = { ...i, ...responses.find((res) => res.id === i.id) };
+        i = { ...i, ...responses?.find((res) => res.id === i.id) };
 
         return i;
       });
@@ -323,7 +325,7 @@ export class BidResponseItemService {
 
     const newResult = result.map((item) => {
       let i: any = { ...item };
-      const encryptedData = i.bidResponseItems.find((x: BidResponseItem) => {
+      const encryptedData = i.bidResponseItems?.find((x: BidResponseItem) => {
         return item.id == x.itemId && x.key === 'Rate';
       });
       let decryptedData = null;
