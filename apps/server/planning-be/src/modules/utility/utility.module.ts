@@ -10,6 +10,8 @@ import { DocumentService } from './services/document.service';
 import { Document } from 'src/entities/document.entity';
 import { MinIOModule } from 'src/shared/min-io/min-io.module';
 import { DocumentController } from './controllers/document.controller';
+import { SubmittedPlanService } from './services/submitted-plan.service';
+import { SubmittedPlanController } from './controllers/submitted-plan.controller';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Reason, Document]), MinIOModule],
@@ -18,8 +20,19 @@ import { DocumentController } from './controllers/document.controller';
     ReasonService,
     PdfGeneratorService,
     DocumentService,
+    SubmittedPlanService,
   ],
-  controllers: [QrCodeController, ReasonController, DocumentController],
-  exports: [ReasonService, PdfGeneratorService, DocumentService],
+  controllers: [
+    QrCodeController,
+    ReasonController,
+    DocumentController,
+    SubmittedPlanController,
+  ],
+  exports: [
+    ReasonService,
+    PdfGeneratorService,
+    DocumentService,
+    SubmittedPlanService,
+  ],
 })
 export class UtilityModule {}
