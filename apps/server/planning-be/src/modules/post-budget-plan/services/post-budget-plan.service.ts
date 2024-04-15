@@ -21,6 +21,7 @@ import { ClientProxy } from '@nestjs/microservices';
 import { PdfGeneratorService } from 'src/modules/utility/services/pdf-generator.service';
 import { DocumentService } from 'src/modules/utility/services/document.service';
 import { MinIOService } from 'src/shared/min-io/min-io.service';
+import { SubmittedPlan } from 'src/entities/submitted-plan.entity';
 
 @Injectable()
 export class PostBudgetPlanService extends ExtraCrudService<PostBudgetPlan> {
@@ -360,6 +361,13 @@ export class PostBudgetPlanService extends ExtraCrudService<PostBudgetPlan> {
         reasons: true,
       },
     });
+    const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
+    await entityManager.getRepository(SubmittedPlan).insert({
+      plan: { data },
+      objectType: 'postBudgetPlan',
+    });
+
     const buffer = await this.pdfGeneratorService.pdfGenerator(data, 'post');
 
     const fileInfo = await this.minIoService.uploadBuffer(
