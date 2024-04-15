@@ -4,7 +4,7 @@ import { IconInboxOff, IconSearch } from '@tabler/icons-react';
 import { DataTable } from 'mantine-datatable';
 import { type ReactElement, useEffect, useState } from 'react';
 import { type ExpandableTableConfig } from './models';
-import classes from './table.module.scss';
+// import classes from './table.module.scss';
 
 const perPage = 10;
 
@@ -90,11 +90,9 @@ export function ExpandableTable({
         minHeight={config.minHeight ?? 300}
         noRecordsIcon={<IconInboxOff size={40} />}
         noRecordsText={config.noRecordsText ?? 'No Data Found'}
-        striped
-        verticalSpacing="sm"
         withTableBorder
         {...paginationProps}
-        classNames={{ table: classes.table, header: classes.header }}
+        // classNames={{ table: classes.table, header: classes.header }}
         onRowClick={config.onClick ?? undefined}
         onSelectedRecordsChange={(records) => {
           if (config.disableMultiSelect) {
@@ -118,6 +116,12 @@ export function ExpandableTable({
           radius: config.disableMultiSelect ? 'xl' : 'sm',
         }}
         sortStatus={sortStatus}
+        striped
+        styles={{
+          header: {
+            backgroundColor: '#D9D9D9',
+          },
+        }}
       />
     </>
   );

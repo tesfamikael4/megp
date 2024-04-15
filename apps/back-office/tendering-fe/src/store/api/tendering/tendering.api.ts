@@ -68,7 +68,7 @@ export const tenderingApi = createApi({
           q = `?q=${query}`;
         }
         return {
-          url: `/bid-registrations/submitted-bidders-by-lot-id/${lotId}${q}`,
+          url: `/bid-opening-checklist/opening-status/${lotId}${q}`,
         };
       },
     }),
@@ -95,14 +95,27 @@ export const tenderingApi = createApi({
       }),
       invalidatesTags: ['teams'],
     }),
-    getTeamsByLotId: builder.query<any, any>({
-      query: (lotId) => `/teams/list/${lotId}`,
+    getTeamsByTenderId: builder.query<any, any>({
+      query: ({
+        tenderId,
+        collectionQuery,
+      }: {
+        tenderId: string;
+        collectionQuery: CollectionQuery;
+      }) => {
+        let q = '';
+        if (collectionQuery) {
+          const query = encodeCollectionQuery(collectionQuery);
+          q = `?q=${query}`;
+        }
+        return { url: `/teams/list/${tenderId}${q}` };
+      },
       providesTags: ['teams'],
     }),
 
     createTeamMember: builder.mutation<any, any>({
       query: (data) => ({
-        url: `/team-members/bulk-create`,
+        url: `/team-members/bulk-create-with-team`,
         method: 'POST',
         body: data,
       }),
@@ -126,7 +139,7 @@ export const {
   useLazyGetBidOpeningChecklistByLotIdQuery,
   useOpenTenderMutation,
   useCreateTeamMutation,
-  useLazyGetTeamsByLotIdQuery,
+  useLazyGetTeamsByTenderIdQuery,
   useCreateTeamMemberMutation,
   useLazyGetTeamMembersQuery,
 } = tenderingApi;

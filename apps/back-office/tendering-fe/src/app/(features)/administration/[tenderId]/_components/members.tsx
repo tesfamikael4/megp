@@ -15,14 +15,16 @@ import { useAuth } from '@megp/auth';
 import { ExpandableTable, ExpandableTableConfig, notify } from '@megp/core-fe';
 import { IconDotsVertical } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
-import { TeamTypeEnum } from '../../_constatnts/enums';
 import {
   useCreateTeamMemberMutation,
   useLazyGetTeamMembersQuery,
+  useLazyGetTeamsByTenderIdQuery,
 } from '@/store/api/tendering/tendering.api';
+import { useParams } from 'next/navigation';
 
-export const Members = ({ team, collapse }: any) => {
+export const Members = ({ team, collapse, envelopeType, lotId }: any) => {
   const [opened, { open, close }] = useDisclosure(false);
+  const { tenderId } = useParams();
   const [selectedItems, setSelectedItems] = useState<any[]>([]);
   const [members, setMembers] = useState<any[]>([]);
   const { organizationId } = useAuth();
@@ -70,7 +72,7 @@ export const Members = ({ team, collapse }: any) => {
                 <Menu.Divider />
                 <Menu.Item
                   color="red"
-                  onClick={() => removeMember(record.userId)}
+                  onClick={() => removeMember(record.personnelId)}
                 >
                   Delete
                 </Menu.Item>
@@ -86,13 +88,14 @@ export const Members = ({ team, collapse }: any) => {
   //rtk
   const [getUsers, { data: users }] = useLazyGetUsersQuery();
   const [createMembers, { isLoading }] = useCreateTeamMemberMutation();
+  const [getTeams, { data: teams }] = useLazyGetTeamsByTenderIdQuery();
   const [getTeamMember, { data: teamMembers }] = useLazyGetTeamMembersQuery();
 
   //event handler
   const onDone = () => {
     const temp: any[] = [];
     selectedItems.map((item) => {
-      temp.push({ ...item, type: 'MEMBER' });
+      temp.push({ ...item, isTeamLead: false });
     });
 
     setMembers(temp);
@@ -117,8 +120,18 @@ export const Members = ({ team, collapse }: any) => {
   };
 
   const handleSave = async () => {
+    const lot = lotId ? { lotId } : {};
+    const castedData = {
+      members,
+      team: {
+        envelopeType,
+        teamType: team.teamType,
+        tenderId,
+        ...lot,
+      },
+    };
     try {
-      await createMembers({ members, teamId: team.id }).unwrap();
+      await createMembers(castedData).unwrap();
       notify('Success', 'Members added successfully');
       collapse();
     } catch (err) {
@@ -127,8 +140,45 @@ export const Members = ({ team, collapse }: any) => {
   };
 
   useEffect(() => {
-    getTeamMember(team.id);
-  }, [team]);
+    const where = lotId
+      ? [
+          [
+            {
+              column: 'teamType',
+              operator: '=',
+              value: team.teamType,
+            },
+          ],
+          [
+            {
+              column: 'lotId',
+              operator: '=',
+              value: lotId,
+            },
+          ],
+        ]
+      : [
+          [
+            {
+              column: 'teamType',
+              operator: '=',
+              value: team.teamType,
+            },
+          ],
+        ];
+    getTeams({
+      tenderId: tenderId as string,
+      collectionQuery: {
+        where: [...where],
+      },
+    });
+  }, [getTeams, team.teamType, tenderId]);
+
+  useEffect(() => {
+    if (teams && teams.total > 0) {
+      getTeamMember(teams.items[0].id);
+    }
+  }, [getTeamMember, teams]);
 
   useEffect(() => {
     const temp: any[] = [];
@@ -148,6 +198,7 @@ export const Members = ({ team, collapse }: any) => {
         temp.push({
           personnelId: member.personnelId,
           personnelName: member.personnelName,
+          isTeamLead: member.isTeamLead,
         });
       });
       setMembers(temp);
@@ -156,7 +207,7 @@ export const Members = ({ team, collapse }: any) => {
   return (
     <Box className="p-5 bg-white">
       <Flex justify="space-between" className="my-2">
-        <h1>Add Members for {TeamTypeEnum[team.teamType]}</h1>
+        <h1>Add Members for {team.name}</h1>
         <Button onClick={open}>Add</Button>
       </Flex>
       <ExpandableTable data={members} config={config} />
