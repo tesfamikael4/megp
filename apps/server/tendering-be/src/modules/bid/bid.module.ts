@@ -27,6 +27,11 @@ import { MinIOModule } from 'src/shared/min-io';
 import { BidResponseDocument } from 'src/entities/bid-response-document.entity';
 import { BidResponseDocumentController } from './controller/bid-response-docuement.controller';
 import { BidResponseDocumentService } from './service/bid-response-document.service';
+import { BidResponseOpeningService } from './service/bid-response-opening.service';
+import { BidResponseOpeningController } from './controller/bid-response-opening.controller';
+import { OpenedBidResponseItem } from 'src/entities/opened-bid-response-item.entity';
+import { OpenedBidResponseLot } from 'src/entities/opened-bid-response-lot.entity';
+import { OpenedBidResponseTender } from 'src/entities/opened-bid-response-tender.entity';
 
 @Module({
   imports: [
@@ -40,6 +45,9 @@ import { BidResponseDocumentService } from './service/bid-response-document.serv
       Lot,
       BidGuarantee,
       BidResponseDocument,
+      OpenedBidResponseItem,
+      OpenedBidResponseLot,
+      OpenedBidResponseTender,
     ]),
     AuthorizationModule,
     DocxModule,
@@ -52,6 +60,7 @@ import { BidResponseDocumentService } from './service/bid-response-document.serv
     BidResponseItemController,
     BidResponseTenderController,
     BidResponseDocumentController,
+    BidResponseOpeningController,
     BidGuaranteeController,
   ],
   providers: [
@@ -62,6 +71,7 @@ import { BidResponseDocumentService } from './service/bid-response-document.serv
     BidResponseItemService,
     BidResponseTenderService,
     BidResponseDocumentService,
+    BidResponseOpeningService,
     BidGuaranteeService,
   ],
   exports: [BidRegistrationService],

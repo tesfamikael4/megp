@@ -13,6 +13,7 @@ import { BidRegistrationDetail } from './bid-registration-detail.entity';
 import { BidRegistrationStatusEnum, EnvelopTypeEnum } from 'src/shared/enums';
 import { BidResponseTender } from './bid-response-tender.entity';
 import { SharedBidderKey } from './shared-bidder-keys.entity';
+import { OpenedBidResponseTender } from './opened-bid-response-tender.entity';
 
 @Entity({ name: 'bid_registrations' })
 @Unique(['tenderId', 'bidderId'])
@@ -90,4 +91,10 @@ export class BidRegistration extends Audit {
     (sharedBidderKeys) => sharedBidderKeys.bidRegistration,
   )
   sharedBidderKeys: SharedBidderKey[];
+
+  @OneToMany(
+    () => OpenedBidResponseTender,
+    (bidResponseTenders) => bidResponseTenders.bidRegistration,
+  )
+  openedBidResponseTenders: OpenedBidResponseTender[];
 }
