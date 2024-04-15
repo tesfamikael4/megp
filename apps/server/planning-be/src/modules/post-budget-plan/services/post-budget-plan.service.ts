@@ -14,7 +14,7 @@ import {
   decodeCollectionQuery,
 } from 'src/shared/collection-query';
 import { ExtraCrudService } from 'src/shared/service';
-import { PostBudgetPlanActivity } from 'src/entities';
+import { PostBudgetPlanActivity, PostBudgetPlanItem } from 'src/entities';
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 import { REQUEST } from '@nestjs/core';
 import { ClientProxy } from '@nestjs/microservices';
