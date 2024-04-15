@@ -114,7 +114,7 @@ const PlanningTab = ({ page }: { page: 'pre' | 'post' }) => {
       const res = await appCreate('next').unwrap();
       close();
       notify('Success', 'APP Created successfully');
-      router.push(`/pre-budget-plan/${res.id}/activities`);
+      router.push(`/pre-budget-plan/${res?.preBudgetPlans?.id}/activities`);
     } catch (err) {
       if (err.status === 430) {
         notify('Error', err.data.message);
