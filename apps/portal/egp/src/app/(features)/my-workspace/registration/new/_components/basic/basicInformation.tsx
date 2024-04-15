@@ -49,8 +49,8 @@ const formDataSchema = z.discriminatedUnion('origin', [
       .min(6, {
         message: 'Registration Number must have at least 10 characters',
       })
-      .max(10, {
-        message: 'Registration Number should not exceed 10 characters',
+      .max(20, {
+        message: 'Registration Number should not exceed 20 characters',
       }),
     registrationIssuedDate: z
       .string()
