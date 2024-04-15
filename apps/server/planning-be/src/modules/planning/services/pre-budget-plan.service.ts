@@ -403,4 +403,36 @@ export class PreBudgetPlanService extends ExtraCrudService<PreBudgetPlan> {
       organization,
     );
   }
+
+  async checkNCB(preBudgetPlanId: string) {
+    const activities = await this.preBudgetActivityRepository.find({
+      where: {
+        preBudgetPlanId,
+        preProcurementMechanism: {
+          procurementMethod: 'National Competitive Bidding (NCB)',
+        },
+      },
+      relations: {
+        preProcurementMechanism: true,
+      },
+      select: {
+        id: true,
+        preProcurementMechanism: {
+          targetGroup: true,
+        },
+      },
+    });
+    if (activities.length == 0) {
+      return { pass: true };
+    }
+    const ibmActivities = activities.filter((activity) =>
+      activity.preProcurementMechanism.targetGroup.includes('IBM'),
+    );
+
+    const response = {
+      percentage: (ibmActivities.length / activities.length) * 100,
+      pass: ibmActivities.length / activities.length < 0.6 ? false : true,
+    };
+    return response;
+  }
 }

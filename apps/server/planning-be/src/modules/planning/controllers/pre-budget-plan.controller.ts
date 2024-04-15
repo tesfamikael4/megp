@@ -121,4 +121,9 @@ export class PreBudgetPlanController extends ExtraCrudController<PreBudgetPlan>(
     );
     response.send(buffer);
   }
+
+  @Get('check-ncb/:id')
+  async checkNCB(@Param('id') id: string) {
+    return await this.preBudgetPlanService.checkNCB(id);
+  }
 }
