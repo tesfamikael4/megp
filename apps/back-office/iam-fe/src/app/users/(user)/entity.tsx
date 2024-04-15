@@ -1,13 +1,14 @@
 'use client';
 import { CollectionQuery, EntityConfig, EntityLayout } from '@megp/entity';
 import { usePathname, useRouter } from 'next/navigation';
-import { useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLazyListUserQuery } from '../_api/custom.api';
 import { User } from '@/models/user/user';
 import { useAuth } from '@megp/auth';
 
 export function Entity({ children }: { children: React.ReactNode }) {
   const route = useRouter();
+  const [onRequest, setOnRequest] = useState<any>();
 
   const pathname = usePathname();
   const { organizationId } = useAuth();
@@ -18,7 +19,7 @@ export function Entity({ children }: { children: React.ReactNode }) {
     return {
       basePath: '/users',
       mode: 'list',
-      entity: 'user',
+      entity: 'users',
       primaryKey: 'id',
       title: 'Users',
       onAdd: () => {
@@ -27,10 +28,10 @@ export function Entity({ children }: { children: React.ReactNode }) {
       onDetail: (selected: User) => {
         route.push(`/users/${selected?.id}`);
       },
-
-      pagination: true,
       searchable: true,
+      pagination: true,
       sortable: true,
+      primaryContent: 'account.firstName',
       columns: [
         {
           id: 'account.firstName',
@@ -40,20 +41,11 @@ export function Entity({ children }: { children: React.ReactNode }) {
             <div>{row.original.firstName + ' ' + row.original.lastName}</div>
           ),
         },
+
         {
           id: 'account.username',
           header: 'Username',
           accessorKey: 'username',
-          cell: (info) => info.getValue(),
-          meta: {
-            widget: 'primary',
-          },
-        },
-
-        {
-          id: 'status',
-          header: 'Status',
-          accessorKey: 'status',
           cell: (info) => info.getValue(),
         },
       ],
@@ -67,24 +59,23 @@ export function Entity({ children }: { children: React.ReactNode }) {
         ? 'new'
         : 'detail';
 
-  const onRequestChange = (request: CollectionQuery) => {
-    organizationId && trigger({ id: organizationId, collectionQuery: request });
-  };
+  const onRequestChange = useCallback(
+    (request: CollectionQuery) => {
+      organizationId !== undefined &&
+        trigger({ id: organizationId, collectionQuery: request });
+    },
+    [trigger, organizationId],
+  );
+
+  useEffect(() => {
+    setOnRequest(onRequestChange);
+  }, [onRequestChange, onRequest]);
 
   return (
     <EntityLayout
       mode={mode}
       config={config}
-      data={
-        data?.items?.map((item: User) => {
-          return {
-            ...item,
-            status:
-              item.status.charAt(0).toUpperCase() +
-              item.status.slice(1).toLowerCase(),
-          };
-        }) ?? []
-      }
+      data={data?.items ?? []}
       total={data?.total ?? 0}
       detail={children}
       isLoading={isFetching}
