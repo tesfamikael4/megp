@@ -30,8 +30,24 @@ export const iamApi = createApi({
         };
       },
     }),
+    getOrganizations: builder.query<any, any>({
+      query: (collectionQuery) => {
+        let q = '';
+        if (collectionQuery) {
+          const query = encodeCollectionQuery(collectionQuery);
+          q = `?q=${query}`;
+        }
+        return {
+          url: `organizations${q}`,
+          method: 'GET',
+        };
+      },
+    }),
   }),
 });
 
-export const { useLazyGetUsersQuery, useLazyGetUsersByPermissionQuery } =
-  iamApi;
+export const {
+  useLazyGetUsersQuery,
+  useLazyGetUsersByPermissionQuery,
+  useLazyGetOrganizationsQuery,
+} = iamApi;

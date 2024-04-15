@@ -48,6 +48,11 @@ export const Menu: MenuItem[] = [
     link: '/report',
   },
   {
+    label: 'PPDA Report',
+    icon: IconReportAnalytics,
+    link: '/ppda-report',
+  },
+  {
     label: 'Approval',
     icon: IconArrowFork,
     links: [

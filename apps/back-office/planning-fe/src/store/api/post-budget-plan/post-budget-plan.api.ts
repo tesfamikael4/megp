@@ -122,6 +122,23 @@ export const postBudgetPlanApi = createApi({
       }),
       providesTags: ['post-budget-activity-files'],
     }),
+    isValidPostPlan: builder.query<any, any>({
+      query: (id) => `post-budget-plans/check-ncb/${id}`,
+    }),
+    getPostBudgetPlansByOrganizationId: builder.query<any, any>({
+      query: ({ collectionQuery, organizationId }) => {
+        let q = '';
+        if (collectionQuery) {
+          const query = encodeCollectionQuery(collectionQuery);
+          q = `?q=${query}`;
+        }
+        return {
+          url: `post-budget-plans/get-plan-by-organizationId/${organizationId}${q}`,
+          method: 'GET',
+        };
+      },
+      providesTags: ['post-budget-plan'],
+    }),
   }),
 });
 
@@ -133,6 +150,7 @@ export const {
 
   useLazyGetPostBudgetPlansQuery,
   useGetPostBudgetPlansQuery,
+  useGetPostBudgetPlansByOrganizationIdQuery,
   useCreateMultipleItemsMutation,
   useApprovePostBudgetMutation,
   useCreatePostActivityTimelineMutation,
@@ -145,4 +163,5 @@ export const {
   usePreSignedUrlMutation,
   useDeleteDocumentMutation,
   useLazyDownloadFilesQuery,
+  useLazyIsValidPostPlanQuery,
 } = postBudgetPlanApi;
