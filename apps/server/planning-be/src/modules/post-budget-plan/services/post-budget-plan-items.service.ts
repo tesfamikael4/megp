@@ -1,9 +1,16 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import {
+  HttpException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
 import { PostBudgetPlanActivity, PostBudgetPlanItem } from 'src/entities';
 import { ExtraCrudService } from 'src/shared/service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { REQUEST } from '@nestjs/core';
+import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 
 @Injectable()
 export class PostBudgetPlanItemService extends ExtraCrudService<PostBudgetPlanItem> {
@@ -13,6 +20,9 @@ export class PostBudgetPlanItemService extends ExtraCrudService<PostBudgetPlanIt
     @InjectRepository(PostBudgetPlanActivity)
     private readonly repositoryPostBudgetPlanActivity: Repository<PostBudgetPlanActivity>,
     private eventEmitter: EventEmitter2,
+
+    @Inject(REQUEST)
+    private readonly request: Request,
   ) {
     super(repositoryPostBudgetPlanItems);
   }
@@ -164,5 +174,37 @@ export class PostBudgetPlanItemService extends ExtraCrudService<PostBudgetPlanIt
   codeGenerate() {
     const randomNum = Math.floor(1000000 + Math.random() * 9000000); // Generates a random 5-digit number
     return 'REF-' + randomNum.toString();
+  }
+
+  async getConsolidateItems(postBudgetPlanId: string) {
+    const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+
+    const items = await entityManager
+      .getRepository(PostBudgetPlanItem)
+      .createQueryBuilder('post_budget_plan_items')
+      .select([
+        'post_budget_plan_items.description',
+        'post_budget_plan_items.itemCode',
+      ])
+      .addSelect(
+        'SUM(CAST(post_budget_plan_items.quantity AS DECIMAL))',
+        'totalQuantity',
+      ) // Cast quantity to decimal for proper summation
+      .where('post_budget_plan_items.itemCode != :itemCode', {
+        itemCode: 'custom',
+      })
+      .groupBy('post_budget_plan_items.description')
+      .addGroupBy('post_budget_plan_items.itemCode')
+      .getRawMany();
+    return items;
+  }
+
+  async getByItemCode(itemCode: string) {
+    const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
+    return await entityManager.getRepository(PostBudgetPlanItem).find({
+      where: {
+        itemCode,
+      },
+    });
   }
 }

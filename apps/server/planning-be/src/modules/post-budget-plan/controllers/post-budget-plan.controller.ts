@@ -48,6 +48,17 @@ export class PostBudgetPlanController extends ExtraCrudController<PostBudgetPlan
     return this.postBudgetPlanService.create(itemData);
   }
 
+  @Get('get-plan-by-organizationId/:organizationId')
+  async getPlanByOrganizationId(
+    @Query('q') q: string,
+    @Param('organizationId') organizationId: string,
+  ) {
+    return await this.postBudgetPlanService.findPostBudgetPlans(
+      organizationId,
+      q,
+    );
+  }
+
   @Get('get-with-app')
   @ApiPaginatedResponse(PostBudgetPlan)
   async getPostBudgetWithApp(@Query('q') q: string, @CurrentUser() user) {
@@ -77,7 +88,6 @@ export class PostBudgetPlanController extends ExtraCrudController<PostBudgetPlan
   async getReport(@Param('id') id: string) {
     return await this.postBudgetPlanService.getReport(id);
   }
-
   @AllowAnonymous()
   @UseGuards(ApiKeyGuard)
   @Get('get-with-app/pr')
