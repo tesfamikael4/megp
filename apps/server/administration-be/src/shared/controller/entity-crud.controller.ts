@@ -49,7 +49,7 @@ export function EntityCrudController<TEntity extends ObjectLiteral>(
       @Req() req?: any,
     ): Promise<DataResponseFormat<TEntity>> {
       const query = decodeCollectionQuery(q);
-      return this.service.findAll(query);
+      return this.service.findAll(query, req);
     }
 
     @Get(':id')
@@ -57,7 +57,7 @@ export function EntityCrudController<TEntity extends ObjectLiteral>(
       @Param('id') id: string,
       @Req() req?: any,
     ): Promise<TEntity | undefined> {
-      return this.service.findOne(id);
+      return this.service.findOne(id, req);
     }
 
     @Put(':id')
@@ -71,8 +71,8 @@ export function EntityCrudController<TEntity extends ObjectLiteral>(
     }
 
     @Delete(':id')
-    async softDelete(@Param('id') id: string, @Req() req?: any): Promise<void> {
-      return this.service.softDelete(id);
+    async delete(@Param('id') id: string, @Req() req?: any): Promise<void> {
+      return this.service.delete(id, req);
     }
   }
 

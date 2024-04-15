@@ -17,45 +17,56 @@ import { ItemMetaData } from './item-meta-data.entity';
 export class ItemMaster extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
   @Column()
   itemCode: string;
+
   @Column()
   description: string;
+
   @Column()
   commodityCode: string;
-  commodity: Classification;
+
   @Column()
   commodityName: string;
-  @ManyToOne(() => ItemCategory, (entity) => entity.id)
-  @JoinColumn({ name: 'itemSubcategoryId' })
+
   @Column()
   itemSubcategoryId: string;
-
-  itemSubcategory: ItemCategory;
 
   @Column()
   itemSubcategoryName: string;
 
-  @ManyToOne(() => UnitOfMeasurement, (entity) => entity.id)
-  @JoinColumn({ name: 'uOMId' })
   @Column()
   uOMId: string;
-  uom: UnitOfMeasurement;
+
   @Column()
   measurementId: string;
+
   @Column()
   uOMName: string;
 
   @Column({ default: true })
   isActive: boolean;
 
-  @OneToMany(() => ItemTag, (entity) => entity.itemMaster, {
-    cascade: ['insert', 'update'],
+  @OneToMany(() => ItemTag, (itemTag) => itemTag.itemMaster, {
+    cascade: true,
   })
   itemTags: ItemTag[];
 
   @OneToMany(() => ItemMetaData, (itemMetaData) => itemMetaData.itemMaster, {
-    cascade: ['insert', 'update'],
+    cascade: true,
   })
   itemMetaData: ItemMetaData[];
+
+  @ManyToOne(() => ItemCategory)
+  @JoinColumn({ name: 'itemSubcategoryId' })
+  itemSubcategory: ItemCategory;
+
+  // @ManyToOne(() => Classification)
+  // @JoinColumn({ name: 'commodityCode' })
+  // commodity: Classification;
+
+  @ManyToOne(() => UnitOfMeasurement)
+  @JoinColumn({ name: 'uOMId' })
+  uom: UnitOfMeasurement;
 }

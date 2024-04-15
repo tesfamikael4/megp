@@ -1,6 +1,5 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { ApiExtraModels, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { DataResponseFormat } from 'src/shared/api-data';
+import { ApiTags } from '@nestjs/swagger';
 import { MeasurementService } from '../service/measurement.service';
 import {
   CreateMeasurementDto,
@@ -15,8 +14,6 @@ const options: EntityCrudOptions = {
 };
 @Controller('measurements')
 @ApiTags(' measurements')
-@ApiResponse({ status: 500, description: 'Internal error' })
-@ApiExtraModels(DataResponseFormat)
 export class MeasurementController extends EntityCrudController<Measurement>(
   options,
 ) {
@@ -25,6 +22,8 @@ export class MeasurementController extends EntityCrudController<Measurement>(
   }
   @Post()
   async createUniqueData(@Body() measurementDto: CreateMeasurementDto) {
-    return await this.measurementService.createUniqueData(measurementDto);
+    return await this.measurementService.createUniqueMeasurement(
+      measurementDto,
+    );
   }
 }

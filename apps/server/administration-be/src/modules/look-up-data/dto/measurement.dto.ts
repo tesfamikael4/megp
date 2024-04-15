@@ -10,7 +10,6 @@ export class CreateMeasurementDto {
 
   @ApiProperty()
   @IsOptional()
-  // @IsNotEmpty()
   description: string;
 
   static fromDto(dto: CreateMeasurementDto): Measurement {
