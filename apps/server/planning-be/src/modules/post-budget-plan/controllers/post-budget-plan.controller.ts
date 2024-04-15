@@ -105,4 +105,8 @@ export class PostBudgetPlanController extends ExtraCrudController<PostBudgetPlan
   async handleApprovedWorkflow(@Body() data: any) {
     return await this.postBudgetPlanService.approvePostBudget(data);
   }
+  @Get('check-ncb/:id')
+  async checkNCB(@Param('id') id: string) {
+    return await this.postBudgetPlanService.checkNCB(id);
+  }
 }

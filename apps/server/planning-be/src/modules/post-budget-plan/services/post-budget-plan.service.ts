@@ -381,4 +381,36 @@ export class PostBudgetPlanService extends ExtraCrudService<PostBudgetPlan> {
     );
     return buffer;
   }
+
+  async checkNCB(postBudgetPlanId: string) {
+    const activities = await this.postBudgetActivityRepository.find({
+      where: {
+        postBudgetPlanId,
+        postProcurementMechanism: {
+          procurementMethod: 'National Competitive Bidding (NCB)',
+        },
+      },
+      relations: {
+        postProcurementMechanism: true,
+      },
+      select: {
+        id: true,
+        postProcurementMechanism: {
+          targetGroup: true,
+        },
+      },
+    });
+    if (activities.length == 0) {
+      return { pass: true };
+    }
+    const ibmActivities = activities.filter((activity) =>
+      activity.postProcurementMechanism.targetGroup.includes('IBM'),
+    );
+
+    const response = {
+      percentage: (ibmActivities.length / activities.length) * 100,
+      pass: ibmActivities.length / activities.length < 0.6 ? false : true,
+    };
+    return response;
+  }
 }
