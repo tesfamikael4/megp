@@ -308,7 +308,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
                 ncicData = await this.fetchFromExternalApi(
                   `ncic-vendors/${isrVendor.tinNumber}`,
                 );
-                if (ncicData == null) {
+                if (!ncicData) {
                   isrVendor.initial.status = VendorStatusEnum.SAVE;
                   isrVendor.initial.level = VendorStatusEnum.PPDA;
                 } else {
@@ -328,7 +328,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
                 fppaData = await this.fetchFromExternalApi(
                   `fppa-vendors/${isrVendor.tinNumber}`,
                 );
-                if (fppaData !== null) {
+                if (fppaData) {
                   isrVendor.basic.businessType = fppaData.businessType;
                   isrVendor.contactPersons.mobileNumber = fppaData.mobileNumber;
                   continue;
@@ -491,7 +491,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
           data.initial.level.trim() === VendorStatusEnum.PAYMENT &&
           data.initial.status.trim() === VendorStatusEnum.SAVE
         ) {
-          let ncicData: NCICResponseDTO = null;
+          let ncicData: NCICResponseDTO | '' = null;
           let fppaData = null;
           const numberOfService = data.areasOfBusinessInterest.length;
           //to get al/ the registration fee for each service
@@ -510,7 +510,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
                 ncicData = await this.fetchFromExternalApi(
                   `ncic-vendors/${isrVendor.tinNumber}`,
                 );
-                if (ncicData == null) {
+                if (!ncicData) {
                   isrVendor.initial.status = VendorStatusEnum.SAVE;
                   isrVendor.initial.level = VendorStatusEnum.PPDA;
                   await this.isrVendorsRepository.save(isrVendor);
@@ -534,7 +534,7 @@ export class VendorRegistrationsService extends EntityCrudService<VendorsEntity>
                   `fppa-vendors/${isrVendor.tinNumber}`,
                 );
                 //temporary commented
-                if (fppaData !== null) {
+                if (fppaData) {
                   isrVendor.basic.businessType = fppaData.businessType;
                   isrVendor.contactPersons.mobileNumber = fppaData.mobileNumber;
                   await this.isrVendorsRepository.save(isrVendor);
