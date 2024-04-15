@@ -21,6 +21,6 @@ export class DistrictController extends ExtraCrudController<District>(options) {
   }
   @Post()
   async createUniqueData(@Body() districtDto: CreateDistrictDto) {
-    return await this.districtService.createUniqueData(districtDto);
+    return await this.districtService.createUniqueDistrict(districtDto);
   }
 }

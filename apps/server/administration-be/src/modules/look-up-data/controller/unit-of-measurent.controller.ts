@@ -26,6 +26,6 @@ export class UnitOfMeasurementController extends ExtraCrudController<UnitOfMeasu
   }
   @Post()
   async createUniqueData(@Body() UoMDto: CreateUnitOfMeasurementDto) {
-    return await this.uomService.createUniqueData(UoMDto);
+    return await this.uomService.createUniqueUoM(UoMDto);
   }
 }

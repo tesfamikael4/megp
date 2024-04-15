@@ -14,7 +14,7 @@ const options: EntityCrudOptions = {
   updateDto: UpdateTargetGroupDto,
 };
 @Controller('Target-groups')
-@ApiTags(' target group')
+@ApiTags('Target Groups')
 @ApiResponse({ status: 500, description: 'Internal error' })
 @ApiExtraModels(DataResponseFormat)
 export class TargetGroupController extends EntityCrudController<TargetGroup>(
@@ -25,6 +25,6 @@ export class TargetGroupController extends EntityCrudController<TargetGroup>(
   }
   @Post()
   async createUniqueData(@Body() tGDto: CreateTargetGroupDto) {
-    return await this.targetGroupService.createUniqueData(tGDto);
+    return await this.targetGroupService.createUniqueTargetGroup(tGDto);
   }
 }

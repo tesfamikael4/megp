@@ -20,6 +20,6 @@ export class RegionController extends EntityCrudController<Region>(options) {
   }
   @Post()
   async createUniqueData(@Body() regionDto: CreateRegionDto) {
-    return await this.regionService.createUniqueData(regionDto);
+    return await this.regionService.createUniqueDistrict(regionDto);
   }
 }

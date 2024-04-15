@@ -1,6 +1,5 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { ApiExtraModels, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { DataResponseFormat } from 'src/shared/api-data';
+import { ApiTags } from '@nestjs/swagger';
 import { EntityCrudOptions } from 'src/shared/types/crud-option.type';
 import { EntityCrudController } from 'src/shared/controller';
 import { Currency } from 'src/entities/currency.entity';
@@ -12,8 +11,6 @@ const options: EntityCrudOptions = {
 };
 @Controller('currencies')
 @ApiTags(' currency')
-@ApiResponse({ status: 500, description: 'Internal error' })
-@ApiExtraModels(DataResponseFormat)
 export class CurrencyController extends EntityCrudController<Currency>(
   options,
 ) {
@@ -22,6 +19,6 @@ export class CurrencyController extends EntityCrudController<Currency>(
   }
   @Post()
   async createUniqueData(@Body() UoMDto: CreateCurrencyDto) {
-    return await this.currencyService.createUniqueData(UoMDto);
+    return await this.currencyService.createUniqueCurrency(UoMDto);
   }
 }

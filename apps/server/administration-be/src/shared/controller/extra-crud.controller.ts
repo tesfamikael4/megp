@@ -23,10 +23,10 @@ export class BaseAPIDto {}
 export function ExtraCrudController<TEntity extends ObjectLiteral>(
   options: ExtraCrudOptions,
 ) {
-  const { entityIdName, createDto, updateDto } = options;
+  const { createDto, updateDto } = options;
 
   @Controller()
-  @UseInterceptors(/* your interceptors if any */)
+  @UseInterceptors()
   @ApiBearerAuth()
   class ExtraCrudControllerHost {
     constructor(public readonly service: ExtraCrudService<TEntity>) {}
@@ -53,7 +53,7 @@ export function ExtraCrudController<TEntity extends ObjectLiteral>(
       @Req() req?: any,
     ): Promise<DataResponseFormat<TEntity>> {
       const query = decodeCollectionQuery(q);
-      return this.service.findAll(id, query, options);
+      return this.service.findAll(id, query, options, req);
     }
 
     @Get(':id')
@@ -61,7 +61,7 @@ export function ExtraCrudController<TEntity extends ObjectLiteral>(
       @Param('id') id: string,
       @Req() req?: any,
     ): Promise<TEntity | undefined> {
-      return this.service.findOne(id);
+      return this.service.findOne(id, req);
     }
 
     @Put(':id')
@@ -75,8 +75,8 @@ export function ExtraCrudController<TEntity extends ObjectLiteral>(
     }
 
     @Delete(':id')
-    async softDelete(@Param('id') id: string, @Req() req?: any): Promise<void> {
-      return this.service.softDelete(id);
+    async delete(@Param('id') id: string, @Req() req?: any): Promise<void> {
+      return this.service.delete(id);
     }
   }
 

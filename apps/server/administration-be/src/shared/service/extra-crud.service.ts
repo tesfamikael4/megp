@@ -15,7 +15,6 @@ export class ExtraCrudService<T extends ObjectLiteral> {
   async create(itemData: DeepPartial<any>, req?: any): Promise<any> {
     if (req?.user?.organization) {
       itemData.organizationId = req.user.organization.id;
-      itemData.organizationName = req.user.organization.name;
     }
     const item = this.repository.create(itemData);
     await this.repository.insert(item);
@@ -66,12 +65,12 @@ export class ExtraCrudService<T extends ObjectLiteral> {
     };
   }
 
-  async softDelete(id: string, req?: any): Promise<void> {
+  async delete(id: string, req?: any): Promise<void> {
     const item = await this.findOneOrFail(id);
     await this.repository.remove(item);
   }
 
-  private async findOneOrFail(id: any): Promise<T> {
+  public async findOneOrFail(id: any): Promise<T> {
     const item = await this.repository.findOne(id);
     if (!item) {
       throw new NotFoundException(`not_found`);

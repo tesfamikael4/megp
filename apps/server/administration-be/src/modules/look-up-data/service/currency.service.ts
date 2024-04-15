@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Currency } from 'src/entities/currency.entity';
 import { EntityCrudService } from 'src/shared/service';
-import { ILike, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CreateCurrencyDto } from '../dto/currency.dto';
 @Injectable()
 export class CurrencyService extends EntityCrudService<Currency> {
@@ -12,45 +12,21 @@ export class CurrencyService extends EntityCrudService<Currency> {
   ) {
     super(currencyRepository);
   }
-  async createUniqueData(currencyDto: CreateCurrencyDto): Promise<any> {
-    const NameExist = await this.currencyRepository.findOne({
-      where: [
-        { name: ILike(`%${currencyDto.name}%`) },
-        { abbreviation: ILike(`%${currencyDto.abbreviation}%`) },
-      ],
-      withDeleted: true,
+
+  async createUniqueCurrency(currencyDto: CreateCurrencyDto): Promise<any> {
+    const currencyExists = await this.currencyRepository.exists({
+      where: {
+        name: currencyDto.name,
+      },
     });
-    if (NameExist) {
-      // If the existing Currency is soft-deleted, recover it
-      if (NameExist.deletedAt) {
-        await this.currencyRepository.recover(NameExist);
-        // Update abbreviation and description (if needed) and return the recovered Currency
-        NameExist.abbreviation = currencyDto.abbreviation;
-        NameExist.description = currencyDto.description;
-        await this.currencyRepository.save(NameExist);
-        return NameExist;
-      } else {
-        // If the Currency is not soft-deleted, return a message indicating the name exists
-        return {
-          name: currencyDto.name,
-          abbreviation: currencyDto.abbreviation,
-          message: 'Currency already exist.',
-        };
-      }
+    if (currencyExists) {
+      throw new ConflictException({
+        name: currencyDto.name,
+        message: 'This Currency already exist',
+      });
     } else {
-      // If no Currency with the same name exists, create a new one
-      const newCurrency = new Currency();
-      newCurrency.name = currencyDto.name;
-      newCurrency.description = currencyDto.description;
-      newCurrency.abbreviation = currencyDto.abbreviation;
-      try {
-        const result = await this.currencyRepository.save(newCurrency);
-        if (result) {
-          return result;
-        }
-      } catch (error) {
-        throw error;
-      }
+      const newCurrency = await super.create(currencyDto);
+      return newCurrency;
     }
   }
 }
