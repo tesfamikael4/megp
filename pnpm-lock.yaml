@@ -537,7 +537,7 @@ importers:
         specifier: ^1.69.4
         version: 1.70.0
 
-  apps/back-office/market-place:
+  apps/back-office/market-place-fe:
     dependencies:
       '@dnd-kit/core':
         specifier: ^6.1.0
