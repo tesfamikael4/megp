@@ -271,6 +271,11 @@ export class OpenBidResponseDto {
   @IsNotEmpty()
   tenderId: string;
 
+  @ApiProperty()
+  @IsUUID()
+  @IsNotEmpty()
+  bidderId: string;
+
   @ApiProperty({ default: DocumentTypeEnum.RESPONSE })
   @IsString()
   @IsNotEmpty()
