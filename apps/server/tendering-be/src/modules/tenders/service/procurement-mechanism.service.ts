@@ -19,4 +19,15 @@ export class ProcurementMechanismService extends ExtraCrudService<ProcurementMec
   ): Promise<ProcurementMechanism | undefined> {
     return await this.procurementMechanismRepository.findOneBy({ tenderId });
   }
+
+  async update(id: string, itemData: any) {
+    const item = await this.procurementMechanismRepository.findOneBy({
+      tenderId: id,
+    });
+    await this.procurementMechanismRepository.update(item.id, itemData);
+    return {
+      ...item,
+      ...itemData,
+    };
+  }
 }
