@@ -122,6 +122,10 @@ export const preBudgetPlanApi = createApi({
     getApprovalDocumentDetailById: builder.query<any, any>({
       query: (id) => `documents/getPresignedUrlWithDoc/${id}`,
     }),
+
+    isValidPlan: builder.query<any, any>({
+      query: (id) => `pre-budget-plans/check-ncb/${id}`,
+    }),
   }),
 });
 
@@ -145,4 +149,5 @@ export const {
   useLazyDownloadFilesQuery,
   useLazyGetApprovalDocumentsQuery,
   useLazyGetApprovalDocumentDetailByIdQuery,
+  useLazyIsValidPlanQuery,
 } = preBudgetPlanApi;

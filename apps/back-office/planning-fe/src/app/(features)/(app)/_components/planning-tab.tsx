@@ -4,6 +4,7 @@ import {
   useApprovePostBudgetMutation,
   useLazyGetPostBudgetPlanAnalyticsQuery,
   useLazyGetPostBudgetPlansQuery,
+  useLazyIsValidPostPlanQuery,
 } from '@/store/api/post-budget-plan/post-budget-plan.api';
 import {
   useApprovePreBudgetMutation,
@@ -11,6 +12,7 @@ import {
   useLazyGetApprovalDocumentsQuery,
   useLazyGetPreBudgetPlanAnalyticsQuery,
   useLazyGetPreBudgetPlansQuery,
+  useLazyIsValidPlanQuery,
 } from '@/store/api/pre-budget-plan/pre-budget-plan.api';
 import {
   Avatar,
@@ -81,6 +83,10 @@ const PlanningTab = ({ page }: { page: 'pre' | 'post' }) => {
   const [approve, { isLoading }] = useApprovePreBudgetMutation();
   const [approvePost, { isLoading: isPostApproveLoading }] =
     useApprovePostBudgetMutation();
+  const [isValidPrePlan, { isLoading: isValidPrePlanLoading }] =
+    useLazyIsValidPlanQuery();
+  const [isValidPostPlan, { isLoading: isValidPostPlanLoading }] =
+    useLazyIsValidPostPlanQuery();
 
   const { data: canSubmit } = useCanSubmitQuery(
     page == 'pre' ? 'preBudgetApproval' : 'postBudgetApproval',
@@ -155,6 +161,34 @@ const PlanningTab = ({ page }: { page: 'pre' | 'post' }) => {
       } else {
         notify('Error', 'Something went wrong');
       }
+    }
+  };
+
+  const isValidPlan = async () => {
+    try {
+      const res =
+        page == 'pre'
+          ? await isValidPrePlan((selectedYear as any)?.id).unwrap()
+          : isValidPostPlan((selectedYear as any)?.id).unwrap();
+      if (res.pass) {
+        submitPlan();
+      } else {
+        modals.openConfirmModal({
+          title: 'National Competitive Bidding Criteria not met',
+          children: (
+            <Text size="sm">
+              {res?.percentage}% of the National Competitive Bidding Activities
+              are for IBM,Which is less than 60%. Are you sure you want to
+              submit the plan?
+            </Text>
+          ),
+          labels: { confirm: 'Confirm', cancel: 'Cancel' },
+          onConfirm: () => submitPlan(),
+        });
+      }
+    } catch (err) {
+      logger.log(err);
+      notify('Error', 'Something went wrong');
     }
   };
 
@@ -283,8 +317,14 @@ const PlanningTab = ({ page }: { page: 'pre' | 'post' }) => {
                 />
               )}
             <Button
-              onClick={submitPlan}
-              loading={isLoading || isPostApproveLoading}
+              // onClick={submitPlan}
+              onClick={isValidPlan}
+              loading={
+                isLoading ||
+                isPostApproveLoading ||
+                isValidPrePlanLoading ||
+                isValidPostPlanLoading
+              }
               disabled={
                 ((selectedYear as any)?.status != 'Draft' &&
                   (selectedYear as any)?.status != 'Adjust') ||
