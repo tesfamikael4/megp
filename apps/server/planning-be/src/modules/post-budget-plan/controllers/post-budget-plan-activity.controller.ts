@@ -8,7 +8,7 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { PostBudgetPlanActivity } from 'src/entities';
 import { PostBudgetPlanActivityService } from '../services/post-budget-plan-activity.service';
 import { ExtraCrudOptions } from 'src/shared/types/crud-option.type';
@@ -20,6 +20,7 @@ import {
   CurrentUser,
 } from 'src/shared/authorization';
 import { decodeCollectionQuery } from 'src/shared/collection-query';
+import { PostAddBudgetDTO } from '../dtos/post-budget-add-budget.dto';
 
 const options: ExtraCrudOptions = {
   entityIdName: 'postBudgetPlanId',
@@ -54,8 +55,14 @@ export class PostBudgetPlanActivityController extends ExtraCrudController<PostBu
   }
   @AllowAnonymous()
   @Post('add-budget')
-  async addBudget(@Body() payload: any) {
+  @ApiBody({ type: PostAddBudgetDTO })
+  async addBudget(@Body() payload: PostAddBudgetDTO) {
     return await this.postBudgetPlanActivityService.addBudget(payload);
+  }
+
+  @Get('with-budget/:budgetId')
+  async getPostBudgetPlansWithBudgetId(@Param('budgetId') budgetId: string) {
+    return await this.postBudgetPlanActivityService.getBudgets(budgetId);
   }
 
   @Post('change-budget')
