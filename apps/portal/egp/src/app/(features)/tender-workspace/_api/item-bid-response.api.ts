@@ -4,7 +4,7 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 
 export const ItemBidResponseApi = createApi({
   reducerPath: 'ItemBidResponseApi',
-  tagTypes: ['technical-bid-response'],
+  tagTypes: ['technical-bid-response', 'financial-bid-response'],
   refetchOnFocus: true,
   baseQuery: baseQuery(process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api/'),
   endpoints: (builder) => ({
@@ -22,7 +22,7 @@ export const ItemBidResponseApi = createApi({
         method: 'POST',
         body: data,
       }),
-      invalidatesTags: ['technical-bid-response'],
+      invalidatesTags: ['financial-bid-response'],
     }),
   }),
 });

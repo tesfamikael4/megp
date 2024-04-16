@@ -1,49 +1,62 @@
-import { GetItemBidResponse } from '@/models/tender/bid-response/item-bid-response';
+import {
+  BidResponse,
+  GetBidResponse,
+  GetItemBidResponse,
+} from '@/models/tender/bid-response/item-bid-response';
 import { baseQuery } from '@/store/base-query';
 import { CollectionQuery, encodeCollectionQuery } from '@megp/entity';
 import { createApi } from '@reduxjs/toolkit/query/react';
 
 export const getItemsApi = createApi({
   reducerPath: 'getItemsApi',
-  tagTypes: ['items'],
+  tagTypes: ['bid-items'],
   refetchOnFocus: true,
   baseQuery: baseQuery(process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api/'),
   endpoints: (builder) => ({
-    items: builder.query<any, any>({
-      query: (args: { lotId: string; collectionQuery: CollectionQuery }) => {
-        let q = '';
-        if (args.collectionQuery) {
-          const query = encodeCollectionQuery(args.collectionQuery);
-          q = `?q=${query}`;
-        }
-        return {
-          url: `/items/list/${args.lotId}${q}`,
-          method: 'GET',
-        };
-      },
-      providesTags: ['items'],
-    }),
-    technicalRequirements: builder.mutation<any, any>({
-      query: (data: GetItemBidResponse) => ({
+    financialItems: builder.query<any, any>({
+      query: (data: GetBidResponse) => ({
         url: `bid-item-responses/get-item-response-sor`,
         method: 'POST',
         body: data,
       }),
-      invalidatesTags: ['items'],
+      providesTags: ['bid-items'],
     }),
-    getBillOfMaterial: builder.query<any, any>({
-      query: (args: { itemId: string; collectionQuery: CollectionQuery }) => {
+
+    items: builder.query<any, any>({
+      query: (args: {
+        data: GetBidResponse;
+        type: 'financial' | 'technical';
+      }) => {
         let q = '';
-        if (args.collectionQuery) {
-          const query = encodeCollectionQuery(args.collectionQuery);
-          q = `?q=${query}`;
-        }
         return {
-          url: `sor-bill-of-materials/list/${args.itemId}${q}`,
-          method: 'GET',
+          url: `${args.type === 'technical' ? 'bid-item-responses/technical-response-items' : 'bid-item-responses/financial-response-items'}`,
+          method: 'POST',
+          body: args.data,
         };
       },
-      providesTags: ['items'],
+      providesTags: ['bid-items'],
+    }),
+    technicalRequirements: builder.query<any, any>({
+      query: (data: GetItemBidResponse) => {
+        let q = '';
+        return {
+          url: `bid-item-responses/get-item-response-sor`,
+          method: 'POST',
+          body: data,
+        };
+      },
+      providesTags: ['bid-items'],
+    }),
+    getBillOfMaterial: builder.query<any, any>({
+      query: (data: BidResponse) => {
+        let q = '';
+        return {
+          url: `bid-item-responses/get-item-response-by-key`,
+          method: 'POST',
+          body: data,
+        };
+      },
+      providesTags: ['bid-items'],
     }),
     getEquipment: builder.query<any, any>({
       query: (args: { itemId: string; collectionQuery: CollectionQuery }) => {
@@ -53,7 +66,7 @@ export const getItemsApi = createApi({
           method: 'GET',
         };
       },
-      providesTags: ['items'],
+      providesTags: ['bid-items'],
     }),
     getFee: builder.query<any, any>({
       query: (args: { itemId: string; collectionQuery: CollectionQuery }) => {
@@ -63,7 +76,7 @@ export const getItemsApi = createApi({
           method: 'GET',
         };
       },
-      providesTags: ['items'],
+      providesTags: ['bid-items'],
     }),
     getLabor: builder.query<any, any>({
       query: (args: { itemId: string; collectionQuery: CollectionQuery }) => {
@@ -73,7 +86,7 @@ export const getItemsApi = createApi({
           method: 'GET',
         };
       },
-      providesTags: ['items'],
+      providesTags: ['bid-items'],
     }),
     getMaterial: builder.query<any, any>({
       query: (args: { itemId: string; collectionQuery: CollectionQuery }) => {
@@ -83,7 +96,7 @@ export const getItemsApi = createApi({
           method: 'GET',
         };
       },
-      providesTags: ['items'],
+      providesTags: ['bid-items'],
     }),
     getReimbursableExpense: builder.query<any, any>({
       query: (args: { itemId: string; collectionQuery: CollectionQuery }) => {
@@ -93,14 +106,15 @@ export const getItemsApi = createApi({
           method: 'GET',
         };
       },
-      providesTags: ['items'],
+      providesTags: ['bid-items'],
     }),
   }),
 });
 
 export const {
+  useLazyFinancialItemsQuery,
   useLazyItemsQuery,
-  useTechnicalRequirementsMutation,
+  useLazyTechnicalRequirementsQuery,
   useGetBillOfMaterialQuery,
   useLazyGetMaterialQuery,
   useLazyGetLaborQuery,

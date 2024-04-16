@@ -31,7 +31,43 @@ export const getBidFormApi = createApi({
       },
       providesTags: ['bid-form'],
     }),
+    upload: builder.mutation<any, any>({
+      query: (data) => ({
+        url: 'bid-document-responses/upload-response',
+        method: 'POST',
+        body: data,
+      }),
+    }),
+
+    preSignedUrl: builder.mutation<any, any>({
+      query: (data) => ({
+        url: 'bid-document-responses/upload-response',
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['bid-form'],
+    }),
+
+    getFiles: builder.query<any, any>({
+      query: (id: string) => ({
+        url: `bid-form/list/${id}`,
+      }),
+      providesTags: ['bid-form'],
+    }),
+    downloadFiles: builder.query<any, any>({
+      query: (id: string) => ({
+        url: `bid-form/download/${id}`,
+      }),
+      providesTags: ['bid-form'],
+    }),
   }),
 });
 
-export const { useLazyBidFormsQuery, useBidFormDetailQuery } = getBidFormApi;
+export const {
+  useLazyBidFormsQuery,
+  useBidFormDetailQuery,
+  useUploadMutation,
+  useGetFilesQuery,
+  useLazyDownloadFilesQuery,
+  usePreSignedUrlMutation,
+} = getBidFormApi;
