@@ -15,6 +15,7 @@ import {
   useLazyIsValidPlanQuery,
 } from '@/store/api/pre-budget-plan/pre-budget-plan.api';
 import {
+  ActionIcon,
   Avatar,
   Badge,
   Box,
@@ -33,6 +34,7 @@ import {
   IconChevronDown,
   IconChevronUp,
   IconCoins,
+  IconHistory,
   IconPlus,
 } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -292,6 +294,17 @@ const PlanningTab = ({ page }: { page: 'pre' | 'post' }) => {
             </Badge>
           </Group>
           <Group gap={5}>
+            {page == 'post' && (
+              <ActionIcon
+                variant="subtle"
+                onClick={() =>
+                  router.push(`/post-budget-plan/${budgetYear}/history`)
+                }
+              >
+                <IconHistory size={14} />
+              </ActionIcon>
+            )}
+
             {(selectedYear as any)?.status == 'Draft' &&
               documents &&
               documents.length > 0 && (
@@ -299,7 +312,7 @@ const PlanningTab = ({ page }: { page: 'pre' | 'post' }) => {
                   placeholder="Comments"
                   value={(documentId as string) ?? ''}
                   data={documents?.map((document) => ({
-                    label: `V${document.version}`,
+                    label: `Version ${document.version}`,
                     value: document.id,
                   }))}
                   size="xs"
@@ -326,9 +339,12 @@ const PlanningTab = ({ page }: { page: 'pre' | 'post' }) => {
                 isValidPostPlanLoading
               }
               disabled={
-                ((selectedYear as any)?.status != 'Draft' &&
+                (page == 'pre' &&
+                  (selectedYear as any)?.status != 'Draft' &&
                   (selectedYear as any)?.status != 'Adjust') ||
-                canSubmit == false
+                canSubmit == false ||
+                (page == 'post' &&
+                  (selectedYear as any)?.status === 'Submitted')
               }
             >
               {(selectedYear as any)?.status != 'Draft' &&
