@@ -111,7 +111,6 @@ export default function Footer() {
           </Flex>
 
           <Flex direction={'column'} gap={'xl'} px="md">
-            {/* contact us */}
             <Flex direction={'column'} gap={5}>
               <Text fw={500}>CONTACT US</Text>
               <Flex direction={'column'}>
