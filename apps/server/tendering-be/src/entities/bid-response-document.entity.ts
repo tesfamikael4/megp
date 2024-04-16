@@ -12,7 +12,7 @@ import { DocumentTypeEnum } from 'src/shared/enums';
 import { SpdBidForm } from './spd-bid-form.entity';
 
 @Entity({ name: 'bid_response_documents' })
-@Unique(['bidRegistrationDetailId', 'bidFormId', 'key'])
+@Unique(['bidRegistrationDetailId', 'bidFormId'])
 export class BidResponseDocument extends Audit {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -33,9 +33,6 @@ export class BidResponseDocument extends Audit {
 
   @Column({ type: 'enum', enum: DocumentTypeEnum })
   documentType: string;
-
-  @Column()
-  key: string;
 
   @Column({ type: 'text' })
   value: string;
