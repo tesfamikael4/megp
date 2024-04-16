@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsArray,
+  IsBoolean,
   IsNotEmpty,
   IsObject,
   IsString,
@@ -85,7 +86,9 @@ export class CreateBidResponseTenderDto {
   @IsNotEmpty()
   documentType: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    default: 'Document',
+  })
   @IsString()
   @IsNotEmpty()
   key: string;
@@ -113,11 +116,13 @@ export class UploadBidResponseDocumentDto {
   bidFormId: string;
 
   @ApiProperty({ default: DocumentTypeEnum.RESPONSE })
-  @IsUUID()
+  @IsString()
   @IsNotEmpty()
   documentType: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    default: 'Document',
+  })
   @IsString()
   @IsNotEmpty()
   key: string;
@@ -145,7 +150,7 @@ export class BidResponseDocumentDto {
   bidFormId: string;
 
   @ApiProperty({ default: DocumentTypeEnum.RESPONSE })
-  @IsUUID()
+  @IsString()
   @IsNotEmpty()
   documentType: string;
 
@@ -207,6 +212,13 @@ export class GetBidResponseItemDto {
   @IsString()
   @IsNotEmpty()
   password: string;
+
+  @ApiProperty({
+    default: false,
+  })
+  @IsBoolean()
+  @IsNotEmpty()
+  isTree: boolean;
 }
 
 export class GetBidResponseTenderDto {

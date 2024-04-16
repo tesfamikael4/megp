@@ -126,10 +126,15 @@ export class BidResponseItemService {
     let rate = 0;
     for (const value of inputDto.values) {
       if (value.key === 'BillOfMaterial') {
-        const itemRate = this.calculateBoQRate(value.value);
-        rate += itemRate?.rate ?? 0;
+        const itemRate = this.buildBoQHierarchyWithRate(value.value);
+        rate += itemRate?.reduce((total: any, current: any) => {
+          if (current.rate == null) {
+            throw new BadRequestException('rate_not_found');
+          }
+          return total + current.rate * current.quantity;
+        }, 0);
 
-        value.value = this.assignRateToItems(value.value, itemRate);
+        // value.value = this.assignRateToItems(value.value, itemRate);
       } else {
         rate += this.calculateItemRate(value.value);
       }
@@ -268,6 +273,7 @@ export class BidResponseItemService {
       },
     });
 
+    let responses: any[];
     if (bidResponse) {
       const value = this.encryptionHelperService.decryptedData(
         bidResponse.value,
@@ -275,7 +281,12 @@ export class BidResponseItemService {
         bidResponse.bidRegistrationDetail.bidRegistration.salt,
       );
 
-      const responses: any[] = JSON.parse(value)?.value;
+      responses = JSON.parse(value)?.value;
+    }
+
+    if (inputDto.isTree) {
+      items[0] = this.buildBoQHierarchy(items[0], null, responses);
+    } else {
       items[0] = items[0].map((item) => {
         let i = { ...item };
         i = { ...i, ...responses?.find((res) => res.id === i.id) };
@@ -283,6 +294,7 @@ export class BidResponseItemService {
         return i;
       });
     }
+
     return { total: items[1], items: items[0] };
   }
 
@@ -427,25 +439,76 @@ export class BidResponseItemService {
     });
   }
 
+  private buildBoQHierarchy(items: any[], code = null, responses: any) {
+    const children = items?.filter((item) => item.parentCode === code);
+
+    if (!children || children.length === 0) {
+      return null;
+    }
+    return children.map((child) => {
+      const childWithChildren = {
+        ...child,
+        children: this.buildBoQHierarchy(items, child.code, responses),
+      };
+
+      childWithChildren.rate = this.findItemRateById(
+        responses,
+        childWithChildren.id,
+      );
+      return childWithChildren;
+    });
+  }
+
+  private buildBoQHierarchyWithRate(items: any[]) {
+    const calculateItem = (items: any[], current) => {
+      let val = 0;
+      for (const item of items) {
+        if (item.children) {
+          item.rate = calculateItem(item.children, item);
+          val += item.rate;
+        } else {
+          if (!item.rate) {
+            throw new BadRequestException('rate_not_found');
+          }
+          val += item.rate;
+        }
+      }
+      return val * current.quantity;
+    };
+    for (const item of items) {
+      let val = 0;
+      if (item.children) {
+        val += calculateItem(item.children, item);
+        item.rate = val;
+      } else {
+        if (!item.rate) {
+          throw new BadRequestException('false');
+        }
+        item.rate = item.quantity * item.rate;
+      }
+    }
+    return items;
+  }
+
   private calculateItemRate(items: any[]) {
     return items.reduce((total: any, current: any) => {
       if (current.rate == null) {
         throw new BadRequestException('rate_not_found');
       }
-      return total + current.rate;
+      return total + current.rate * current.quantity;
     }, 0);
   }
 
-  private assignRateToItems(items: any, itemHierarchy: any) {
-    items = items.map((item: any) => {
-      let i = { ...item };
-      i = { ...i, rate: this.findItemRateById(itemHierarchy, item.id) };
+  // private assignRateToItems(items: any, itemHierarchy: any) {
+  //   items = items.map((item: any) => {
+  //     let i = { ...item };
+  //     i = { ...i, rate: this.findItemRateById(itemHierarchy, item.id) };
 
-      return i;
-    });
+  //     return i;
+  //   });
 
-    return items;
-  }
+  //   return items;
+  // }
 
   private findItemRateById(items: any, id: string) {
     if (!items && items.length < 1) {
