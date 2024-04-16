@@ -6,7 +6,6 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { Audit } from 'src/shared/entities';
-import { BidGuaranteeTypeEnum } from 'src/shared/enums/bid-guarantee-type.enum';
 import { BidGuaranteeStatusEnum } from 'src/shared/enums/bid-guarantee-status.enum';
 import { Lot } from './lot.entity';
 
@@ -29,12 +28,6 @@ export class BidGuarantee extends Audit {
 
   @Column({ type: 'uuid' })
   lotId: string;
-
-  @Column({
-    type: 'enum',
-    enum: BidGuaranteeTypeEnum,
-  })
-  type: string;
 
   @Column({ type: 'int', nullable: true })
   minValidityDate: number;

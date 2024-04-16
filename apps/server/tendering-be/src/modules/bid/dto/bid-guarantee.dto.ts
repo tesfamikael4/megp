@@ -8,7 +8,6 @@ import {
   IsDate,
 } from 'class-validator';
 import { BidGuaranteeStatusEnum } from 'src/shared/enums/bid-guarantee-status.enum';
-import { BidGuaranteeTypeEnum } from 'src/shared/enums/bid-guarantee-type.enum';
 
 export class UpdateGuaranteeStatusDto {
   @ApiProperty({
@@ -50,11 +49,6 @@ export class CreateBidGuaranteeDto {
 
   @ApiHideProperty()
   organizationName: string;
-
-  @ApiProperty()
-  @IsEnum(BidGuaranteeTypeEnum)
-  @IsNotEmpty()
-  type: string;
 
   @ApiProperty()
   description: string;
