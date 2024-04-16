@@ -12,6 +12,18 @@ export interface GetItemBidResponse {
   key: string;
   password: string;
 }
+export interface GetBidResponse {
+  lotId: string;
+  documentType: ResponseType;
+  password: string;
+}
+export interface BidResponse {
+  lotId: string;
+  itemId: string;
+  documentType: ResponseType;
+  key: string;
+  password: string;
+}
 export type ResponseType =
   | 'RESPONSE'
   | 'FINANCIALRESPONSE'

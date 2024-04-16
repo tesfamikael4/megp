@@ -78,6 +78,8 @@ export default function TenderDetailPage() {
         <Box className="">
           <LoadingOverlay visible={isLoading} />
           <FileViewer
+            height={2226}
+            width={1653}
             url={url?.presignedDownload ?? ''}
             filename="Invitation"
           />

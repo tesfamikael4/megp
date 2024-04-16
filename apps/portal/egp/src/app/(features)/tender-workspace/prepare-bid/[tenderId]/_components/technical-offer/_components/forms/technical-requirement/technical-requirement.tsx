@@ -3,12 +3,11 @@ import { ExpandableTable, Section, logger } from '@megp/core-fe';
 import { SorType } from '@/models/tender/lot/item/technical-requirement.model';
 import { CollectionQuery } from '@megp/entity';
 import { Item } from '@/models/tender/lot/item';
-import { useLazyTechnicalRequirementsQuery } from '@/app/(features)/vendor/_api/item.api';
 import { Select, Textarea } from '@mantine/core';
 import { Controller } from 'react-hook-form';
 import { useFormContext } from 'react-hook-form';
 import { useContext, useEffect } from 'react';
-import { useTechnicalRequirementsMutation } from '@/app/(features)/tender-workspace/_api/item.api';
+import { useLazyTechnicalRequirementsQuery } from '@/app/(features)/tender-workspace/_api/item.api';
 import { useSearchParams } from 'next/navigation';
 import { PrepareBidContext } from '@/contexts/prepare-bid.context';
 
@@ -19,7 +18,7 @@ export default function TechnicalRequirement({
   item: Item;
   type?: SorType;
 }>) {
-  const [trigger, { data, isLoading }] = useTechnicalRequirementsMutation();
+  const [trigger, { data, isLoading }] = useLazyTechnicalRequirementsQuery();
   const searchParams = useSearchParams();
   const prepareBidContext = useContext(PrepareBidContext);
   const {

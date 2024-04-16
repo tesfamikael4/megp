@@ -19,21 +19,23 @@ import { useSaveTechnicalBidResponseMutation } from '@/app/(features)/tender-wor
 export default function ItemList() {
   const searchParams = useSearchParams();
   const [trigger, { data, isFetching }] = useLazyItemsQuery();
-  const password = useContext(PrepareBidContext);
+  const prepareBidContext = useContext(PrepareBidContext);
   const [saveChanges, { isLoading: isSaving }] =
     useSaveTechnicalBidResponseMutation();
   const handleSaveChanges = (data) => {
     const keys = Object.keys(data);
     let toApi: Values[] = [];
     keys.forEach((key) => {
-      toApi = [...toApi, { key: key, value: data[key] }];
+      if (key !== 'itemId') {
+        toApi = [...toApi, { key: key, value: data[key] }];
+      }
     });
     saveChanges({
       lotId: searchParams.get('lot'),
       itemId: data.itemId,
       documentType: 'RESPONSE',
       values: toApi,
-      password: password?.password,
+      password: prepareBidContext?.password,
     })
       .unwrap()
       .then(() => {
@@ -131,10 +133,26 @@ export default function ItemList() {
     },
   };
 
-  const onRequestChange = (request: CollectionQuery) => {
-    trigger({ lotId: searchParams.get('lot') ?? '', collectionQuery: request });
+  const onRequestChange = async (request: CollectionQuery) => {
+    trigger({
+      data: {
+        lotId: searchParams.get('lot'),
+        documentType: 'RESPONSE',
+        password: prepareBidContext?.password,
+      },
+      type: 'technical',
+    });
   };
-
+  useEffect(() => {
+    trigger({
+      data: {
+        lotId: searchParams.get('lot'),
+        documentType: 'RESPONSE',
+        password: prepareBidContext?.password,
+      },
+      type: 'technical',
+    });
+  }, [searchParams, trigger]);
   return (
     <Section
       title="Technical Offer"

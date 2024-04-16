@@ -2,13 +2,20 @@
 import { Section } from '@megp/core-fe';
 import { BillOfMaterialTreeTable } from './bill-of-material-tree';
 import { Item } from '@/models/tender/lot/item';
-import { useGetBillOfMaterialQuery } from '@/app/(features)/vendor/_api/item.api';
+import { useGetBillOfMaterialQuery } from '@/app/(features)/tender-workspace/_api/item.api';
+import { PrepareBidContext } from '@/contexts/prepare-bid.context';
+import { useSearchParams } from 'next/navigation';
+import { useContext } from 'react';
 export default function BillOfMaterial({ item }: { item: Item }) {
+  const searchParams = useSearchParams();
+  const prepareBidContext = useContext(PrepareBidContext);
   const { data: billOfMaterial } = useGetBillOfMaterialQuery({
+    lotId: searchParams.get('lot'),
     itemId: item.id,
-    collectionQuery: {
-      where: [],
-    },
+    documentType: 'RESPONSE',
+    key: 'BillOfMaterial',
+    isTree: true,
+    password: prepareBidContext?.password,
   });
   return (
     <Section
