@@ -74,7 +74,10 @@ export class BidResponseDocumentService {
     item.bidRegistrationDetailId = bidRegistrationDetail.id;
     item.value = encryptedValue;
 
-    await this.bidSecurityRepository.upsert(item, ['bidRegistrationId', 'key']);
+    await this.bidSecurityRepository.upsert(item, [
+      'bidRegistrationDetailId',
+      'bidFormId',
+    ]);
     return {
       ...item,
       presignedDownload: document.presignedUrl,
@@ -93,7 +96,6 @@ export class BidResponseDocumentService {
       .findOne({
         where: {
           documentType: itemData.documentType,
-          key: itemData.key,
           bidRegistrationDetail: {
             bidRegistration: {
               tenderId: itemData.tenderId,

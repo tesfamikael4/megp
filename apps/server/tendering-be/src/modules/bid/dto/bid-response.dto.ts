@@ -120,13 +120,6 @@ export class UploadBidResponseDocumentDto {
   @IsNotEmpty()
   documentType: string;
 
-  @ApiProperty({
-    default: 'Document',
-  })
-  @IsString()
-  @IsNotEmpty()
-  key: string;
-
   @ApiProperty()
   @IsObject()
   @IsNotEmpty()
@@ -153,11 +146,6 @@ export class BidResponseDocumentDto {
   @IsString()
   @IsNotEmpty()
   documentType: string;
-
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  key: string;
 
   @ApiProperty()
   @IsString()
