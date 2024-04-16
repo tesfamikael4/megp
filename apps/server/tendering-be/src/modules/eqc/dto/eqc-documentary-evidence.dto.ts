@@ -11,7 +11,7 @@ export class CreateEqcDocumentaryEvidenceDto {
   @ApiProperty()
   @IsUUID()
   @IsNotEmpty()
-  spdId: string;
+  lotId: string;
 
   @ApiProperty()
   @IsBoolean()
