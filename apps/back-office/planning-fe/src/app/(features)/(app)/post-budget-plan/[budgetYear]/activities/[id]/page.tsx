@@ -5,11 +5,9 @@ import {
   Box,
   Container,
   Flex,
-  Tabs,
   Text,
   Tooltip,
 } from '@mantine/core';
-import { Section } from '@megp/core-fe';
 import { FormDetail } from '@/app/(features)/(app)/_components/activity-form-detail';
 import { Items } from '@/app/(features)/(app)/_components/items';
 import TimelineTab from '@/app/(features)/(app)/_components/timeline-tab';
@@ -20,27 +18,21 @@ import { Requisitioner } from '@/app/(features)/(app)/_components/requisitioner'
 import { IconChevronLeft, IconMessage2 } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useReadQuery } from '../_api/activities.api';
-import {
-  useGetPostBudgetPlanQuery,
-  useGetPostBudgetPlansQuery,
-} from '@/store/api/post-budget-plan/post-budget-plan.api';
+import { useGetPostBudgetPlansQuery } from '@/store/api/post-budget-plan/post-budget-plan.api';
 import { Note } from '../../../../_components/note';
 import { useDisclosure } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
 
 export default function NewActivity() {
   const { budgetYear, id } = useParams();
-  // const { data: postBudget } = useGetPostBudgetPlanQuery(budgetYear as string);
   const { data: planWithApp } = useGetPostBudgetPlansQuery({
     where: [[{ value: budgetYear, operator: '=', column: 'id' }]],
   });
   const [postBudget, setPostBudget] = useState<any>();
   const { data: activity } = useReadQuery(id as string);
   const [opened, { toggle }] = useDisclosure(false);
-
-  const disableFields = postBudget
-    ? postBudget.status != 'Draft' && postBudget.status != 'Adjust'
-    : false;
+  const disableFields =
+    activity?.status == 'USED_IN_PR' || postBudget?.status == 'Submitted';
 
   const badgeColor = {
     Draft: 'yellow',
