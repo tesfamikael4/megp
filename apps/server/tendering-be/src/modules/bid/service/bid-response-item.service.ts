@@ -511,7 +511,7 @@ export class BidResponseItemService {
   // }
 
   private findItemRateById(items: any, id: string) {
-    if (!items && items.length < 1) {
+    if (!items || items.length < 1) {
       return null;
     }
 
