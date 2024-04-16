@@ -32,7 +32,7 @@ build:
     - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"
   before_script:
     - apk --update add nodejs npm git
-    - npm install -g pnpm
+    - npm install -g pnpm@8.6.10
   script:
     - pnpm install --no-frozen-lockfile
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
