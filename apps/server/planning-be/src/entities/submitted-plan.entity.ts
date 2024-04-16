@@ -12,4 +12,10 @@ export class SubmittedPlan extends OrgAudit {
 
   @Column()
   objectType: string;
+
+  @Column({ type: 'uuid' })
+  objectId: string;
+
+  @Column()
+  version: number;
 }

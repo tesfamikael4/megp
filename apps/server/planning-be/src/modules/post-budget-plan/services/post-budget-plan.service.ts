@@ -363,9 +363,24 @@ export class PostBudgetPlanService extends ExtraCrudService<PostBudgetPlan> {
     });
     const entityManager: EntityManager = this.request[ENTITY_MANAGER_KEY];
 
+    const prevSubmitted = await entityManager
+      .getRepository(SubmittedPlan)
+      .findOne({
+        where: {
+          objectId: id,
+          objectType: 'postBudgetPlan',
+        },
+        order: {
+          version: 'DESC',
+        },
+      });
+
     await entityManager.getRepository(SubmittedPlan).insert({
       plan: { data },
       objectType: 'postBudgetPlan',
+      objectId: id,
+      version: prevSubmitted?.version + 1 || 1,
+      ...organization,
     });
 
     const buffer = await this.pdfGeneratorService.pdfGenerator(data, 'post');
