@@ -30,6 +30,7 @@ import { Section } from '@megp/core-fe';
 import ContractForm from '../_components/contract-form';
 import { useApproveSpdMutation } from '../_api/approve-spd.api';
 import OpeningChecklist from '../_components/openinig-checklist';
+import SpdDocumentaryEvidence from '../_components/spd-documentary-evidence-list';
 export default function SpdDetailPage() {
   const router = useRouter();
   const pathname = usePathname();
@@ -270,6 +271,12 @@ export default function SpdDetailPage() {
                 Preference Margin
               </div>
               <SpdPreferenceMargin />
+              <div className="text-lg font-medium mt-4 pt-4 pb-4">
+                Documentary Evidence
+              </div>
+              <div className="py-2">
+                <SpdDocumentaryEvidence />
+              </div>
               <div className="text-lg font-medium mt-4 pt-4 pb-4">
                 Technical Evaluation
               </div>

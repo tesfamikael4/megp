@@ -47,6 +47,8 @@ import {
   useUploadBdsTemplateMutation,
   useUploadSccTemplateMutation,
 } from '../_api/tender/tender-template.api';
+import TenderPersonnelList from '../_components/tender/tender-personnel-list';
+import DocumentaryEvidence from '../_components/lot/evaluation-criteria/documentery-evidence/documentary-evidence';
 
 export default function TenderDetailPage() {
   const router = useRouter();
@@ -338,6 +340,7 @@ export default function TenderDetailPage() {
                 <FormDetail />
               </Section>
               <TenderConfigSpd />
+              <TenderPersonnelList />
 
               <TechnicalTeams />
               <Section
@@ -447,6 +450,12 @@ export default function TenderDetailPage() {
                   </div>
                   <div className="py-2">
                     <Qualification type="financial" lotId={value} />
+                  </div>
+                  <div className="text-lg font-medium mt-4 pt-4 pb-4">
+                    Documentary Evidence
+                  </div>
+                  <div className="py-2">
+                    <DocumentaryEvidence lotId={value} />
                   </div>
                   <div className="text-lg font-medium mt-4 pt-4 pb-4">
                     Technical Evaluation

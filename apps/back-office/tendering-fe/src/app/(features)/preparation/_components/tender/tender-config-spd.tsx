@@ -6,13 +6,12 @@ import {
   Modal,
   Table,
 } from '@mantine/core';
-import { Section, logger, notify } from '@megp/core-fe';
+import { Section, notify } from '@megp/core-fe';
 import { useDisclosure } from '@mantine/hooks';
 import { IconX } from '@tabler/icons-react';
 import {
   useCreateMutation,
   useReadQuery,
-  useUpdateMutation,
 } from '../../_api/tender/tender-spd.api';
 import { useLazyReadQuery as spdUseLazyReadQuery } from '../../_api/tender/config-spd.api';
 import TenderSpd from './tender-spd';
