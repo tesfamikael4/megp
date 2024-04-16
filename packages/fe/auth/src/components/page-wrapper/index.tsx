@@ -1,12 +1,4 @@
-import {
-  Box,
-  Container,
-  Flex,
-  Group,
-  Progress,
-  SimpleGrid,
-  Text,
-} from '@mantine/core';
+import { Box, Container, Flex, Group, Progress, Text } from '@mantine/core';
 import Image from 'next/image';
 import Link from 'next/link';
 import classes from './auth-layout.module.scss';
@@ -35,30 +27,26 @@ export function PageWrapper({
     ));
   return (
     <Container className={classes.root} data-portal={app} fluid>
-      <SimpleGrid
-        className="h-full"
-        cols={{
-          base: 1,
-          md: 2,
-          sm: 2,
-        }}
-      >
+      <Box className={classes.layout}>
         <Box className={classes.leftLayout}>
           <Box className={classes.leftLayoutWrapper}>
-            <Flex align="center" gap="xs">
+            <Flex
+              w={{
+                base: 156,
+                md: 200,
+              }}
+            >
               {app === 'bo' ? <AppBackOfficeLogo /> : <AppLogo />}
             </Flex>
-            <Flex className="flex flex-col items-start gap-2" mt={10}>
-              <Text
-                fw={700}
-                fz={{
-                  sm: 38,
-                  base: 16,
-                }}
-              >
+            <Flex
+              className="flex flex-col items-start gap-2"
+              mt={10}
+              visibleFrom="md"
+            >
+              <Text fw={700} fz={38}>
                 Welcome to MANEPS
               </Text>
-              <Text className="text-justify" fz={16} maw={410} visibleFrom="sm">
+              <Text className="text-justify" fz={16} maw={410}>
                 The Malawi National Electronic Procurement System (MANEPS)
                 Platform is a web-based, collaborative system to manage the full
                 life cycle of a tendering and contract management process, for
@@ -71,7 +59,8 @@ export function PageWrapper({
           </Box>
         </Box>
         <Box className={classes.rightLayout}>{children}</Box>
-      </SimpleGrid>
+      </Box>
+
       <Flex className="w-full justify-center items-center flex-col py-2">
         <Text fz={14} ta="center">
           Copyright © {currentYear}, PPDA: Public Procurement and Disposal of

@@ -3,9 +3,9 @@ export function AppLogo() {
     <div>
       <svg
         fill="none"
-        height="60"
+        height="100%"
         viewBox="0 0 572 160"
-        width="200"
+        width="100%"
         xmlns="http://www.w3.org/2000/svg"
       >
         <path
@@ -30,9 +30,9 @@ export function AppBackOfficeLogo() {
     <div>
       <svg
         fill="none"
-        height="60"
+        height="100%"
         viewBox="0 0 572 160"
-        width="200"
+        width="100%"
         xmlns="http://www.w3.org/2000/svg"
       >
         <path

@@ -37,7 +37,11 @@ const steps: StepProps[] = [
   },
   {
     color: 'blue',
-    icon: <IconCheck size={38} color="white" stroke={1.6} />,
+    icon: (
+      <span className="flex items-center justify-center p-1 rounded-full border-[3px] border-white border-solid">
+        <IconCheck size={38} color="white" stroke={1.6} />
+      </span>
+    ),
     title: 'Get Approved',
     description:
       'Great! you are approved, Lorem ipsum dolor Lorem ipsum dolor Lorem ',

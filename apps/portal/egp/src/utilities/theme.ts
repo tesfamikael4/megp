@@ -5,11 +5,11 @@ export const theme: Partial<MantineThemeOverride> = {
   primaryColor: 'primary',
   primaryShade: 7,
   breakpoints: {
-    xs: '36rem',
-    sm: '48rem',
-    md: '62rem',
-    lg: '75rem',
-    xl: '87.5rem',
+    xs: '412px',
+    sm: '640px',
+    md: '768px',
+    lg: '1024px',
+    xl: '1280px',
   },
 
   colors: {
@@ -31,11 +31,11 @@ export const theme: Partial<MantineThemeOverride> = {
     Container: {
       defaultProps: {
         sizes: {
-          xs: 540,
-          sm: 720,
-          md: 960,
-          lg: 1140,
-          xl: 1320,
+          xs: 412,
+          sm: 640,
+          md: 768,
+          lg: 1024,
+          xl: 1280,
         },
       },
     },

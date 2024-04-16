@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import { PinInput, Text, Button, Flex, Group } from '@mantine/core';
+import { PinInput, Text, Button, Flex, Stack } from '@mantine/core';
 import { setCookie } from 'cookies-next';
 import { notifications } from '@mantine/notifications';
 import { usePathname, useRouter } from 'next/navigation';
@@ -105,47 +105,40 @@ export function Otp({
   // };
 
   return (
-    <div>
-      <Flex className="flex-col justify-center items-center" gap={20} mt={15}>
-        <Flex className=" flex flex-col justify-center items-center gap-6">
-          <Text fw={600} fz={22}>
-            OTP verification
-          </Text>
-          <Text fw={500} fz={14}>
-            Please enter the OTP code you received in your email.
-          </Text>
-        </Flex>
-        <PinInput
-          className="text-center mt-8 mb-5"
-          error={err}
-          length={6}
-          onChange={(otpValue) => {
-            setValue(otpValue);
-            setErr(undefined);
-          }}
-          oneTimeCode
-          type="number"
-        />
-
-        <Group justify="space-between" mt="md">
-          <Button
-            disabled={disabled}
-            h={40}
-            onClick={handleResendClick}
-            w={145}
-          >
-            Resend Code ({formatTime(countdown)})
-          </Button>
-          <Button
-            h={40}
-            loading={isSubmitting}
-            onClick={async () => submitOTP(value)}
-            w={145}
-          >
-            Continue
-          </Button>
-        </Group>
+    <Stack className="mt-6 md:mt-0" gap={10}>
+      <Flex align="center" justify="center" mb={10} visibleFrom="md">
+        <Text fw={600} fz={22}>
+          OTP verification
+        </Text>
       </Flex>
-    </div>
+      <Text fw={500} fz={14}>
+        Please enter the OTP code you received in your email.
+      </Text>
+      <PinInput
+        className="text-center w-full justify-center"
+        error={err}
+        length={6}
+        onChange={(otpValue) => {
+          setValue(otpValue);
+          setErr(undefined);
+        }}
+        oneTimeCode
+        type="number"
+      />
+
+      <Flex gap="sm" justify="center" mt="md">
+        <Button disabled={disabled} h={40} onClick={handleResendClick} w={145}>
+          Resend Code ({formatTime(countdown)})
+        </Button>
+        <Button
+          h={40}
+          loading={isSubmitting}
+          onClick={async () => submitOTP(value)}
+          w={145}
+        >
+          Continue
+        </Button>
+      </Flex>
+    </Stack>
   );
 }
