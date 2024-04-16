@@ -158,6 +158,7 @@ export class TenderService extends EntityCrudService<Tender> {
       relations: {
         bdsEvaluation: true,
         bdsSubmission: true,
+        bdsPreparation: true,
       },
     });
   }
