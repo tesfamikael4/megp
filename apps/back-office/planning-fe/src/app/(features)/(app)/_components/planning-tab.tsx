@@ -35,6 +35,7 @@ import {
   IconChevronUp,
   IconCoins,
   IconHistory,
+  IconInfoCircle,
   IconPlus,
 } from '@tabler/icons-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -166,22 +167,30 @@ const PlanningTab = ({ page }: { page: 'pre' | 'post' }) => {
     }
   };
 
+  const IBMWarningTitle = () => (
+    <Flex gap={5} align={'center'}>
+      <IconInfoCircle size={14} color="red" />
+      <p className="font-semibold">
+        Criteria for National Competitive Bidding not met.
+      </p>
+    </Flex>
+  );
+
   const isValidPlan = async () => {
     try {
       const res =
         page == 'pre'
           ? await isValidPrePlan((selectedYear as any)?.id).unwrap()
-          : isValidPostPlan((selectedYear as any)?.id).unwrap();
+          : await isValidPostPlan((selectedYear as any)?.id).unwrap();
       if (res.pass) {
         submitPlan();
       } else {
         modals.openConfirmModal({
-          title: 'National Competitive Bidding Criteria not met',
+          title: <IBMWarningTitle />,
           children: (
             <Text size="sm">
-              {res?.percentage}% of the National Competitive Bidding Activities
-              are for IBM,Which is less than 60%. Are you sure you want to
-              submit the plan?
+              IBM&apos;s share of National Competitive Bidding activities is
+              below 60%. Confirm submission of the plan?
             </Text>
           ),
           labels: { confirm: 'Confirm', cancel: 'Cancel' },

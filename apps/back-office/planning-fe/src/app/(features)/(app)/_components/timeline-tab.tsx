@@ -1,7 +1,7 @@
 'use client';
 
 import { Box, Button, Group, NumberInput, TextInput } from '@mantine/core';
-import { Section, logger, notify } from '@megp/core-fe';
+import { ExpandableTable, Section, logger, notify } from '@megp/core-fe';
 
 import { useEffect, useState } from 'react';
 import { DateInput } from '@mantine/dates';
@@ -15,7 +15,6 @@ import {
   useCreatePostActivityTimelineMutation,
   useLazyGetPostBudgetTimelineQuery,
 } from '@/store/api/post-budget-plan/post-budget-plan.api';
-import { ExpandableTable } from '../../_components/expandable-table';
 
 const getNewDate = (period: number) => {
   const newDate = new Date().setDate(new Date().getDate() + period);
@@ -93,7 +92,7 @@ export default function TimelineTab({
         accessor: 'timeline',
       },
       {
-        title: 'Period',
+        title: 'Number Of Days',
         accessor: 'period',
         render: (record) => <Period record={record} />,
       },
@@ -147,6 +146,7 @@ export default function TimelineTab({
               <Box className=" text-black border-l-2 p-2 mr-2">Days</Box>
             }
             disabled
+            rightSectionPointerEvents="none"
             value="NA"
           />
         ) : (
