@@ -104,7 +104,7 @@ export default function PostBudget() {
         title="Activities"
         collapsible={false}
         action={
-          postBudgetYear?.status == 'Draft' && (
+          postBudgetYear?.status != 'Submitted' && (
             <Button
               onClick={() =>
                 router.push(`/post-budget-plan/${budgetYear}/activities/new`)
