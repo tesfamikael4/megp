@@ -12,9 +12,13 @@ import { MinIOModule } from 'src/shared/min-io/min-io.module';
 import { DocumentController } from './controllers/document.controller';
 import { SubmittedPlanService } from './services/submitted-plan.service';
 import { SubmittedPlanController } from './controllers/submitted-plan.controller';
+import { SubmittedPlan } from 'src/entities/submitted-plan.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Reason, Document]), MinIOModule],
+  imports: [
+    TypeOrmModule.forFeature([Reason, Document, SubmittedPlan]),
+    MinIOModule,
+  ],
   providers: [
     QrCodeService,
     ReasonService,
