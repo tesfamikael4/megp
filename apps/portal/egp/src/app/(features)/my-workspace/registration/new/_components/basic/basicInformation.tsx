@@ -93,8 +93,6 @@ export const BasicInformation = ({ defaultValues }: BasicInformationProps) => {
     updateStatus,
   } = usePrivilege();
 
-  console.log({ errors: formState.errors });
-
   useEffect(() => {
     updateAccess('basic');
     updateStatus('Draft');
@@ -129,7 +127,14 @@ export const BasicInformation = ({ defaultValues }: BasicInformationProps) => {
       NotificationService.requestErrorNotification(createValues.data?.message);
     }
     if (createValues.isError) {
-      NotificationService.requestErrorNotification('Error on Request');
+      if (
+        (createValues.error as any).data.message ===
+        'you_are_not_registered_on_mbrs'
+      )
+        NotificationService.requestErrorNotification(
+          'You are not registered on MBRS.',
+        );
+      else NotificationService.requestErrorNotification('Error on Request');
     }
 
     return () => {};
