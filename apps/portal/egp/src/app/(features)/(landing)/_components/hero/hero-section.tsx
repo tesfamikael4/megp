@@ -39,8 +39,11 @@ export function HeroSection() {
             className={classes.description}
             mt={'md'}
             ta={{
-              base: 'center',
               md: 'left',
+            }}
+            fz={{
+              base: 'sm',
+              xs: 'lg',
             }}
           >
             Empower Your Business Through MANEPS
@@ -53,37 +56,16 @@ export function HeroSection() {
             className="w-full md:w-1/2"
           >
             <InputWithButton />
-            <Flex className="w-full" columnGap={'md'}>
-              {data ? (
-                (data.status === 'Initial' || data.status === 'Draft') && (
-                  <Button
-                    bg={'#1D8E3F'}
-                    size="sm"
-                    className={classes.btn}
-                    onClick={() => {
-                      isAuthenticated
-                        ? router.push('getting-started')
-                        : router.push('/auth/login');
-                    }}
-                    mx={{
-                      base: 'auto',
-                      md: 'unset',
-                    }}
-                  >
-                    Get Started
-                  </Button>
-                )
-              ) : (
+            <Flex className="w-full gap-4 items-start justify-start">
+              {!data && (
                 <Button
                   bg={'#1D8E3F'}
                   size="sm"
                   className={classes.btn}
                   onClick={() => {
-                    router.push('/auth/login');
-                  }}
-                  mx={{
-                    base: 'auto',
-                    md: 'unset',
+                    isAuthenticated
+                      ? router.push('getting-started')
+                      : router.push('/auth/login');
                   }}
                 >
                   Get Started
@@ -97,10 +79,6 @@ export function HeroSection() {
                   color="white"
                   className={classes.btn}
                   onClick={() => router.push('/auth/login')}
-                  mx={{
-                    base: 'auto',
-                    md: 'unset',
-                  }}
                 >
                   Login
                 </Button>

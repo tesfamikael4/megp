@@ -19,6 +19,7 @@ export const theme = {
     container: {
       padding: '1rem',
       screens: {
+        xs: '412px',
         sm: '640px',
         md: '768px',
         lg: '1024px',
@@ -26,6 +27,7 @@ export const theme = {
       },
     },
     screens: {
+      xs: '412px',
       sm: '640px',
       md: '768px',
       lg: '1024px',

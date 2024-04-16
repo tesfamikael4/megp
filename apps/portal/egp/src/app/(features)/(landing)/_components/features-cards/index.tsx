@@ -12,7 +12,7 @@ const InfoCards = () => {
           Access Business Opportunities
         </Text>
         <Text fw={600} fz={'sm'} c={'gray.6'}>
-          The MANPES platform avails various online services and solutions to
+          The MANEPS platform avails various online services and solutions to
           help you participate in government procurement.
         </Text>
       </Flex>

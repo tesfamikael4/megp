@@ -80,8 +80,8 @@ export function SignUp(): JSX.Element {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <Stack gap={10} mt={15}>
-        <Flex align="center" justify="center" mb={20}>
+      <Stack gap={4} mt={25}>
+        <Flex align="center" justify="center" mb={10} visibleFrom="md">
           <Text fw={600} fz={22}>
             Welcome to MANEPS!
           </Text>
@@ -135,7 +135,7 @@ export function SignUp(): JSX.Element {
           withAsterisk
         />
 
-        <Checkbox label="Keep me logged in " size="xs" />
+        <Checkbox label="Keep me logged in " mb="xs" mt="lg" size="xs" />
         <Button fullWidth h={40} loading={isSigningUp} type="submit">
           Sign up
         </Button>

@@ -1,14 +1,14 @@
 .root {
-  @apply p-4 w-full flex justify-center flex-wrap rounded-md sm:min-h-[100%];
+  @apply p-4 py-8 w-full flex justify-center;
   background-color: white;
   min-height: 250px;
   max-width: 400px;
 }
-
-.tab {
+.tabRoot {
   @apply w-full;
-  width: 176px;
-
+}
+.tab {
+  @apply w-1/2;
   &[data-active] {
   }
   &[data-direction='left'] {

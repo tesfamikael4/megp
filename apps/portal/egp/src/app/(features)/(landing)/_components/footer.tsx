@@ -20,6 +20,10 @@ import {
   IconBrandYoutubeFilled,
   IconPointFilled,
   IconArrowUp,
+  IconPhone,
+  IconPhoneFilled,
+  IconMail,
+  IconLocation,
 } from '@tabler/icons-react';
 import Link from 'next/link';
 import { LogoFooter } from './logo';
@@ -111,26 +115,32 @@ export default function Footer() {
             <Flex direction={'column'} gap={5}>
               <Text fw={500}>CONTACT US</Text>
               <Flex direction={'column'}>
-                <Text size="xs">+1 (999) 888-77-66</Text>
-                <Text size="xs">hello@logoipsum.com</Text>
-                <Text size="xs">Fax:+251111248612 / +251111540120</Text>
-                <Text size="xs">P.O.Box: 6217376, Addis Ababa, Ethiopia</Text>
+                <Flex fz={'xs'} gap={2} className=" items-center">
+                  <IconPhone size={12} />
+                  <Link href="tel:+(265) 887 083 261">+(265) 887 083 261</Link>
+                </Flex>
+                <Flex fz={'xs'} gap={2} className=" items-center">
+                  <IconMail size={12} />
+                  <Link href="mailto:info@ppda.mw">info@ppda.mw</Link>/
+                  <Link href="mailto:dg@ppda.mw">dg@ppda.mw</Link>
+                </Flex>
               </Flex>
             </Flex>
             <Flex direction={'column'} gap={5}>
               <Text fw={500}>LOCATION</Text>
-              <Flex direction={'column'}>
-                <Text fz={12}>
+              <Flex fz={12} className=" items-top">
+                <Link
+                  href="https://maps.google.com/maps?q=2QXG+8FV, Lilongwe, Malawi"
+                  target="blank"
+                >
                   Public Procurement and Disposal of Assets Authority,
                   <br />
-                  The Jireh Bible House,
+                  Jireh Bible House Area 3,
                   <br />
-                  Area 3,Off Colby Road,
+                  Private Bag 383
                   <br />
-                  Private Bag 383,
-                  <br />
-                  Capital City,Lilongwe 3, Malawi
-                </Text>
+                  Lilongwe 3
+                </Link>
               </Flex>
             </Flex>
 

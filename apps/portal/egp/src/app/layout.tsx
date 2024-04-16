@@ -8,8 +8,8 @@ import { AuthProvider } from '@megp/auth/src/context/auth.context';
 import { Inter, Nunito } from 'next/font/google';
 const inter = Inter({ subsets: ['latin'] });
 export const metadata: Metadata = {
-  title: 'EGP',
-  description: 'Malawi electronic government procurements',
+  title: 'MANEPS',
+  description: 'Malawi National Electronic Procurement System',
   icons: {
     icon: '/favicon/android-chrome-512x512.png',
   },

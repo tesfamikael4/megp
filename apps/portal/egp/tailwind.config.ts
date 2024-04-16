@@ -27,6 +27,7 @@ const config: Config = {
       container: {
         padding: '1rem',
         screens: {
+          xs: '412px',
           sm: '640px',
           md: '768px',
           lg: '1024px',
@@ -34,6 +35,7 @@ const config: Config = {
         },
       },
       screens: {
+        xs: '412px',
         sm: '640px',
         md: '768px',
         lg: '1024px',

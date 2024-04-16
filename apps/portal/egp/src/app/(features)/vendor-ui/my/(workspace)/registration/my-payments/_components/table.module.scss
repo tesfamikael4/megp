@@ -1,0 +1,17 @@
+.table {
+  tbody {
+    tr:nth-child(even) {
+      background-color: #e7f4f7;
+    }
+    tr {
+      td {
+        height: 50px;
+        color: #3d556a;
+      }
+    }
+  }
+}
+
+.header {
+  background-color: #e8e8e8;
+}

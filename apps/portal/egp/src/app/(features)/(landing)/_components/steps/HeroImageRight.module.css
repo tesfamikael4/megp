@@ -1,11 +1,16 @@
 .root {
   position: relative;
-  background-image: url('/supplier-min.png');
+  background-image: url('/steps-v-img.jpg');
   background-size: cover;
   background-repeat: no-repeat;
   background-position: 50%;
+  background-repeat: no-repeat;
+  background-position: center;
   @apply min-[780px]:items-center;
   @media (min-width: 780px) {
     height: 500px;
+    background-size: 100% 100% !important;
+
+    background-position: 50%;
   }
 }

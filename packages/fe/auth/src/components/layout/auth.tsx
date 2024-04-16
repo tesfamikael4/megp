@@ -1,5 +1,5 @@
 'use client';
-import { Box, Flex, Tabs } from '@mantine/core';
+import { Box, Flex, Tabs, Text } from '@mantine/core';
 import { useRouter } from 'next/navigation';
 import { ForgotPassword } from '../auth/forgot-password/forgot-password';
 import { SecurityQPassReset } from '../auth/questions-reset/questions-reset';
@@ -39,7 +39,6 @@ export function Auth({
   const options = { ...defaultConfig, ...config };
 
   const router = useRouter();
-
   const render = () => {
     if (options.app === 'bo' && path[0].startsWith('login')) {
       return <Login app="bo" basePath={options.basePath} />;
@@ -57,25 +56,34 @@ export function Auth({
   };
   return (
     <PageWrapper app={options.app as any}>
-      <Box className={classes.root}>
-        <Flex
-          className={`${options.app !== 'bo' ? 'py-4' : ''} ${options.app === 'bo' ? 'pb-4' : ''}`}
-        >
-          <Box>
-            <Tabs
-              classNames={{
-                tab: classes.tab,
-                list: classes.tabList,
-                panel: classes.tabPanel,
-              }}
-              onChange={(value) => {
-                router.push(`${value}`);
-              }}
-              value={path[0]}
-              variant="pills"
-            >
-              {(options.app !== 'bo' && path[0].startsWith('login')) ||
-              path[0].startsWith('signup') ? (
+      <Flex className="w-full flex-col items-center">
+        <Text fw={600} fz={18} hiddenFrom="md" mb={6} mt={24}>
+          {path[0].startsWith('login') && 'Welcome Back!'}
+          {path[0].startsWith('signup') && 'Welcome, Sign up to MANEPS!'}
+          {path[0].startsWith('verification') && 'OTP verification'}
+          {path[0].startsWith('forgot-password') && 'Reset Password'}
+          {path.length > 1 &&
+            path[1].startsWith('otp-reset') &&
+            'Reset Password'}
+        </Text>
+        {options.app !== 'bo' ? (
+          <Box className={classes.root}>
+            {(options.app !== 'bo' && path[0].startsWith('login')) ||
+            path[0].startsWith('signup') ? (
+              <Tabs
+                classNames={{
+                  root: classes.tabRoot,
+                  tab: classes.tab,
+                  list: classes.tabList,
+                  panel: classes.tabPanel,
+                }}
+                onChange={(value) => {
+                  router.push(`${value}`);
+                }}
+                orientation="horizontal"
+                value={path[0]}
+                variant="pills"
+              >
                 <Tabs.List>
                   <Tabs.Tab data-direction="left" fw={500} value="login">
                     Login
@@ -84,23 +92,20 @@ export function Auth({
                     Sign up
                   </Tabs.Tab>
                 </Tabs.List>
-              ) : (
-                <Tabs.List h={0}>
-                  <Tabs.Tab data-direction="left" fw={500} h={1} value="t" />
-                  <Tabs.Tab data-direction="right" fw={500} value="r" />
-                </Tabs.List>
-              )}
-              {options.app === 'bo' ? (
-                <Box maw={350}>{render()}</Box>
-              ) : (
                 <Tabs.Panel value={path[0]}>
-                  <Box maw={350}>{render()}</Box>
+                  <Box className="w-full">{render()}</Box>
                 </Tabs.Panel>
-              )}
-            </Tabs>
+              </Tabs>
+            ) : (
+              <Box className="w-full">{render()}</Box>
+            )}
           </Box>
-        </Flex>
-      </Box>
+        ) : (
+          <Box className={classes.root}>
+            <Box className="w-full">{render()}</Box>
+          </Box>
+        )}
+      </Flex>
     </PageWrapper>
   );
 }

@@ -46,16 +46,16 @@ export function ForgotPassword(): JSX.Element {
   };
 
   return (
-    <form className="flex flex-col" onSubmit={handleSubmit(onSubmit)}>
-      <Stack gap={14} mt={15}>
-        <Flex className=" flex flex-col justify-center items-center gap-6">
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Stack className="mt-6 md:mt-0" gap={10}>
+        <Flex align="center" justify="center" mb={10} visibleFrom="md">
           <Text fw={600} fz={22}>
             Reset Password
           </Text>
-          <Text fw={500} fz={14}>
-            We&lsquo;ll send you a quick link to reset your password
-          </Text>
         </Flex>
+        <Text fw={500} fz={14}>
+          We&lsquo;ll send you a quick link to reset your password
+        </Text>
         <TextInput
           error={errors.email?.message}
           label="Email"

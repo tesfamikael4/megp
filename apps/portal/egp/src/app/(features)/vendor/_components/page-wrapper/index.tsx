@@ -13,6 +13,7 @@ interface Props extends PropsWithChildren {
   isLoading?: boolean;
   condition?: boolean;
   placeholder?: React.ReactNode;
+  withBorder?: boolean;
 }
 
 const PageWrapper = (props: Props) => {

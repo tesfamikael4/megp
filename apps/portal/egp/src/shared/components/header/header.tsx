@@ -65,7 +65,7 @@ function Header() {
         { link: '/about-us', label: 'Procurement Information' },
         { link: '/faq', label: 'FAQ' },
         { link: '/resources', label: 'Resources' },
-        { link: '/about-us', label: 'About E-gp' },
+        { link: '/about-us', label: 'About MANEPS' },
       ],
     },
     ...workspace,

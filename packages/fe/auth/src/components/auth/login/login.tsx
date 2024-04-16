@@ -4,7 +4,6 @@ import {
   PasswordInput,
   Checkbox,
   Text,
-  Group,
   Button,
   Stack,
   Flex,
@@ -77,8 +76,8 @@ export function Login({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <Stack gap={10} mt={15}>
-        <Flex align="center" justify="center" mb={20}>
+      <Stack className="mt-6 md:mt-0" gap={4}>
+        <Flex align="center" justify="center" mb={10} visibleFrom="md">
           <Text fw={600} fz={22}>
             Welcome Back!
           </Text>
@@ -96,10 +95,10 @@ export function Login({
           {...register('password')}
           mt="md"
         />
-        <Group justify="space-between" mt="lg">
+        <Flex justify="space-between" mb="xs" mt="lg">
           <Checkbox
             color="#1199ee"
-            fz={14}
+            fz={13}
             label="Keep me logged in "
             size="xs"
           />
@@ -113,7 +112,7 @@ export function Login({
               Forgot password?
             </Anchor>
           )}
-        </Group>
+        </Flex>
         <Button fullWidth h={40} loading={isSigningIn} type="submit">
           Login
         </Button>

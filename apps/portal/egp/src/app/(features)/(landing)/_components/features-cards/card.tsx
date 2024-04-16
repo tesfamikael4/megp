@@ -36,7 +36,7 @@ export const FeaturesCard = (props: FeaturesCardProps) => {
         </Text>
       </Group>
       <Divider size={'sm'} className="my-4" color={props.color} />
-      <Text fz={12}>{props.description}</Text>
+      <Text fz={14}>{props.description}</Text>
       <Flex className="py-4 justify-end  items-center">
         <IconArrowRight className={styles.arrow} size={18} />
       </Flex>

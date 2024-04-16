@@ -13,41 +13,41 @@ export const featuredContent = [
     color: 'red',
     title: 'Vendor Registration',
     description:
-      'Vendor registration allows businesses to access public sector opportunities. Online registration leads to approval and access to diverse procurement options. Compliance and updates are vital for eligibility and success in government contracts.',
+      'New vendors are welcomed through a streamlined digital registration and onboarding process. This service facilitates the easy submission and verification of business details, enabling access to diverse government procurement opportunities.',
   },
   {
     icon: <IconClipboardList />,
     color: 'cyan',
     title: 'Registered Vendors',
     description:
-      'Registered vendors are authorized companies validated to engage in government procurement via the electronic platform. Registered Vendors access opportunities, demonstrating their reliability and adherence to procurement regulations.',
+      'A comprehensive listing of all registered vendors is available, complete with current statuses such as active and debarred. This directory aids in verifying the eligibility and credibility of businesses involved in government procurement, ensuring fairness in vendor selection.',
   },
   {
     icon: <IconCalendarEvent />,
     color: 'green',
     title: 'Procurement Plans',
     description:
-      'A predetermined acquisition, encompassing goods, services, or works, each accompanied by its allocated budget, designated timeline for procurement, and specified procurement methods.',
+      'Detailed annual procurement plans from various procuring entities are provided. These documents outline anticipated purchases and projects, offering insights into potential opportunities for vendor participation over the coming year.',
   },
   {
     icon: <IconNotes />,
     color: 'yellow',
     title: 'Procurement Notices',
     description:
-      'Official announcements by procurement authorities, providing details of published opportunities for goods, services, or works.',
+      'Up-to-date procurement notices are accessible, allowing for the viewing of tender announcements and the registration for tender participation, including invitation-only bids. This section keeps potential bidders well-informed about government procurement opportunities.',
   },
   {
     icon: <IconPackage />,
     color: 'red',
     title: 'Contract Notices',
     description:
-      'Official announcements by procurement authorities disclosing awarded contracts and upcoming contract opportunities.',
+      'Information on awarded contracts is detailed, including the identities of winning vendors, contract amounts, and delivery dates. This visibility into contract awards fosters a competitive and equitable procurement environment.',
   },
   {
     icon: <IconFiles />,
     color: 'cyan',
     title: 'Procurement Information',
     description:
-      'Digital repository provides essential information on procurement activities, including procurement legislation, standard bidding documents, templates, contract awards, spending trends, and vendor performance metrics.',
+      'A comprehensive view of the procurement process, from planning through sourcing to contract management, is provided. This detailed information deepens insights into government procurement activities, offering significant benefits to all stakeholders.',
   },
 ];
