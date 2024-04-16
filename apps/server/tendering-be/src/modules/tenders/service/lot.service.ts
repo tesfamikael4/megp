@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Item, Lot } from 'src/entities';
 import { ENTITY_MANAGER_KEY } from 'src/shared/interceptors';
 import { ExtraCrudService } from 'src/shared/service';
-import { DeepPartial, EntityManager, In, Repository } from 'typeorm';
+import { EntityManager, In, Repository } from 'typeorm';
 import { SplitItemDto } from '../dto';
 
 @Injectable()
