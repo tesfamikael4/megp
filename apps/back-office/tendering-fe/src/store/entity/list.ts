@@ -186,4 +186,16 @@ export const ENTITY_LIST: EntityStoreConfig[] = [
     entity: 'tender-participation-fees',
     baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
   },
+  {
+    entity: 'tender-personals',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
+  },
+  {
+    entity: 'eqc-documentary-evidences',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
+  },
+  {
+    entity: 'spd-documentary-evidences',
+    baseUrl: process.env.NEXT_PUBLIC_TENDER_API ?? '/tendering/api',
+  },
 ];
