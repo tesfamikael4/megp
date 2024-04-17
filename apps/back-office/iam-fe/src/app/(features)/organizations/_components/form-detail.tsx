@@ -1,4 +1,5 @@
 import {
+  Checkbox,
   LoadingOverlay,
   Select,
   Stack,
@@ -48,6 +49,7 @@ export function FormDetail({ mode }: FormDetailProps) {
     code: z.string().optional(),
     shortName: z.string().min(1, { message: 'This field is required' }),
     description: z.string().optional(),
+    budgetCheckNeeded: z.boolean(),
   });
 
   const {
@@ -194,7 +196,11 @@ export function FormDetail({ mode }: FormDetailProps) {
         minRows={2}
         {...register('description')}
       />
-
+      <Checkbox
+        label="Is Budget Verifications Required"
+        className="w-full mt-4 mb-2"
+        {...register('budgetCheckNeeded')}
+      />
       <Controller
         name="typeId"
         control={control}
