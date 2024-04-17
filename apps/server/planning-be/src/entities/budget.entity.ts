@@ -73,7 +73,7 @@ export class Budget extends OrgAudit {
   @Column({ nullable: true })
   type: string;
 
-  @Column()
+  @Column({ unique: true })
   budgetCode: string;
 
   @Column()
